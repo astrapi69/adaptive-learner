@@ -87,3 +87,12 @@ repos:
         pass_filenames: false
         files: ^README\.md$
         stages: [pre-commit]
+
+      - id: i18n-script-sanity
+        name: i18n script-sanity lint (real umlauts, native scripts, #1755)
+        entry: python scripts/verify_i18n_scripts.py
+        language: python
+        additional_dependencies: ["pyyaml>=6"]
+        pass_filenames: false
+        files: ^backend/config/i18n/(de|el|hi)\.yaml$
+        stages: [pre-commit]

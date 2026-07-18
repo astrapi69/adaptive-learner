@@ -24,7 +24,7 @@
 - Props defined as an interface.
 - Extract complex logic into utility functions or the API client, not into components.
 - Styling: Tailwind CSS (v4) utility classes preferred (adopted v1.54.0+). Do NOT add new entries to global.css; utilities resolve to the existing CSS variables, so theming still works. Existing component CSS is migrated when the component is touched, not proactively. See docs/development/tailwind-migration.md.
-- shadcn/ui: use for UI primitives (Dialog, Tabs, Toast, Button, Input, Select). Add components with `npx shadcn@latest add {component}`. shadcn wraps Radix; prefer it over wiring Radix directly for new UI.
+- shadcn/ui: use for UI primitives (Dialog, Tabs, Toast, Button, Input, Select). Add components with `bunx shadcn@latest add {component}`. shadcn wraps Radix; prefer it over wiring Radix directly for new UI.
 - Radix UI for dialogs, dropdowns, tooltips, tabs, select where shadcn/ui is not yet wired. No custom DOM handling for those.
 - @dnd-kit for drag-and-drop. No manual DnD.
 - Lucide React for icons. No other icon libraries.

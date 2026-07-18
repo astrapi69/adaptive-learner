@@ -75,7 +75,7 @@ Actualiza **18 archivos** automáticamente:
 ```bash
 make sync-versions-check     # sale con error en caso de deriva
 make test                    # 2634 pruebas deben pasar
-cd frontend && npm run build # debe tener éxito
+cd frontend && bun run build # debe tener éxito
 ```
 
 El flujo de trabajo CI de comprobación del lanzamiento

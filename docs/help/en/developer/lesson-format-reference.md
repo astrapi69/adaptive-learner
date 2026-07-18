@@ -2,7 +2,7 @@
 
 > **Generated** from the canonical `learn-content-engine` schema mirror (`schema/lesson.schema.json`, a byte mirror of the pinned engine release) via `make sync-schema` (EXP-039). The app's structural Pydantic layer is regenerated from that mirror; only the semantic validators are hand-written. Do not edit by hand; a format change starts in the engine, then the pin is bumped and the generator re-runs.
 
-Schema version: **1.7** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
+Schema version: **1.8** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
 
 Field descriptions below come verbatim from the model definitions.
 
@@ -183,7 +183,7 @@ One image option in a PICTURE_CHOICE exercise.
 |-------|------|----------|-------------|
 | `is_correct` | `string | null` | no | - |
 | `label` | `string` | yes | minLen=1, maxLen=500 |
-| `src` | `string` | yes | minLen=1, maxLen=500 |
+| `src` | `string | string` | yes | - |
 
 
 ### `StepType` (enum)

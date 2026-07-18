@@ -511,7 +511,7 @@
     "key_vault": {
       "title": "Yapay zekâ anahtarları — şifreli dışa aktarma",
       "intro": "Yapay zekâ anahtarlarınızı tek bir şifreli dosyada başka bir cihaza taşıyın; normal yedekten (anahtar içermez) ayrıdır.",
-      "api_disabled": "Sunucu modunda anahtarlarınız sunucu tarafından yönetilir, bu yüzden burada dışa aktarılacak bir şey yok.",
+      "api_export_disabled": "Sunucu modunda anahtarlarınız dışa aktarılamaz; sunucu tarafında şifreli olarak yönetilir. Anahtar dosyasını içe aktarmak yine de mümkündür.",
       "export_heading": "Dışa aktar",
       "passphrase_hint": "Güçlü bir parola ifadesi seçin. Kurtarılamaz — onsuz dosya açılamaz.",
       "passphrase_label": "Parola ifadesi",
@@ -520,6 +520,11 @@
       "busy": "İşleniyor…",
       "export_button": "Şifreli dosyayı dışa aktar",
       "import_heading": "İçe aktar",
+      "import_hint": "Şifreli anahtar dosyasını seç ya da içeriğini aşağıya yapıştır. İkisi de çalışır.",
+      "import_file_label": "Şifreli anahtar dosyası",
+      "import_text_label": "…ya da anahtar dosyasının içeriğini yapıştır",
+      "import_text_placeholder": "{ \"format\": \"adaptive-learner-keys\", … }",
+      "import_text_invalid": "Bu geçerli bir anahtar dosyasına benzemiyor. Tüm içeriği yapıştırdığından emin ol.",
       "import_button": "Anahtar dosyasını içe aktar",
       "success_export": "Şifreli anahtar dosyası indirildi.",
       "success_import": "Anahtarlar içe aktarıldı. Yapay zekâ özellikleri yeniden hazır.",
@@ -744,7 +749,8 @@
       "test_connection_ok": "Bağlantı tamam",
       "test_key_invalid": "Anahtar geçersiz",
       "test_network_error": "Ağ hatası",
-      "test_backend_only": "Yalnızca arka uç ile test edilebilir"
+      "test_backend_only": "Yalnızca arka uç ile test edilebilir",
+      "import_keys": "İçe aktar"
     },
     "api_key_label": "API anahtarı",
     "api_key_placeholder": "Buraya yapıştır…",
@@ -1955,6 +1961,18 @@
         "empty": "Bu alıştırmada görsel yok."
       },
       "free_text": {
+        "ai_verify": {
+          "button": "Yapay zekâ kontrol etsin",
+          "checking": "Kontrol ediliyor…",
+          "verdict_yes": "Yapay zekâ katılıyor: yanıtın esasen doğru.",
+          "verdict_partial": "Yapay zekâ yanıtının yalnızca kısmen doğru olduğunu düşünüyor.",
+          "verdict_no": "Yapay zekâ doğruluyor: bu yanıt doğru değil.",
+          "verdict_unknown": "Yapay zekâ net bir karar veremedi.",
+          "disclaimer": "Bu yalnızca yapay zekânın görüşüdür - bu alıştırmadaki puanın değişmez.",
+          "no_key": "Bunun için kendi yapay zekâ anahtarın (BYOK) gerekir. İsteğe bağlı - uygulama onsuz da sorunsuz çalışır.",
+          "open_settings": "Yapay zekâ ayarları",
+          "error": "Yapay zekâ isteği başarısız oldu. Lütfen tekrar dene."
+        },
         "submit": "Cevabı kontrol et",
         "retry": "Tekrar dene",
         "placeholder": "Cevabını yaz…",
@@ -2107,6 +2125,8 @@
         "weak_areas": "Zayıf alanlar"
       },
       "mark_complete": "Tamamlandı olarak işaretle",
+      "mark_complete_needs_profile": "İlerlemeni kaydetmek için bir öğrenme profili oluştur",
+      "mark_complete_failed": "Tamamlama kaydedilemedi",
       "next_lesson": "Sonraki ders",
       "repeat": "Dersi tekrarla",
       "retry": "Tekrar pratik yap",
@@ -2128,6 +2148,7 @@
     },
     "error": {
       "load_failed": "Ders yüklenemedi.",
+      "invalid_data": "Bu ders geçersiz veya bozuk veriler içerdiği için açılamıyor. Lütfen içerik yazarıyla iletişime geçin.",
       "missing_params": "Ders seçilmedi. İçerik tarayıcısından bir tane seç."
     },
     "exit": {
@@ -2255,6 +2276,27 @@
       "copy_suffix": "kopya",
       "skipped": "{n} ders doğrulamayı geçemediği için atlandı."
     },
+    "combine": {
+      "title": "Bir sette birleştir",
+      "start": "Bir sette birleştir",
+      "cancel_select": "Seçimi iptal et",
+      "selected_count": "{n} seçildi",
+      "select_aria": "{title} seç",
+      "summary": "Seçilen {n} ders bir sette gruplanacak.",
+      "mixed_languages": "Seçilen dersler dil veya düzey bakımından farklı. Yeni set en yaygın olanı kullanır ({lang}, {level}).",
+      "target_legend": "Hedef set",
+      "mode_new": "Yeni set",
+      "mode_existing": "Mevcut bir sete ekle",
+      "new_title": "Set başlığı",
+      "new_title_placeholder": "Birleştirilmiş setim",
+      "new_description": "Açıklama (isteğe bağlı)",
+      "new_level": "Düzey",
+      "existing_set": "Mevcut set",
+      "keeps_originals": "Orijinal dersler korunur; bu, gruplanmış bir kopya oluşturur.",
+      "confirm": "Birleştir",
+      "success": "Dersler bir sette birleştirildi.",
+      "failed": "Dersler birleştirilemedi."
+    },
     "my_lessons": {
       "export_set": "Set olarak dışa aktar",
       "share": "Toplulukla paylaş",
@@ -2274,6 +2316,8 @@
       "delete_failed": "Ders silinemedi."
     },
     "set_status": {
+      "delete_progress_option": "Öğrenme ilerlememi ve tekrar kartlarını da sil ({lessons} ders, {cards} kart)",
+      "delete_progress_option_nocounts": "Öğrenme ilerlememi ve tekrar kartlarını da sil",
       "all": "Tümü",
       "active": "Etkin",
       "deferred": "Ertelendi",
@@ -2710,8 +2754,36 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "rights_hint": "Yalnızca haklarına sahip olduğun veya kişisel kullanım için olan metinleri yapıştır.",
+      "heading": "Metinden ders oluştur",
+      "intro": "Ders kitabınızın bir bölümünü (örn. bir bölüm) yapıştırın. Yapay zeka bunu kendi kelimeleriyle teori olarak yeniden yazar ve alıştırmalar üretir. Başka bir bölüm eklemek için sihirbazı yeniden çalıştırın.",
+      "text_label": "Ders kitabı bölümü",
+      "text_placeholder": "Bölüm metnini buraya yapıştırın ...",
+      "meta_legend": "Kitap referansı (isteğe bağlı)",
+      "title_label": "Kitap başlığı",
+      "author_label": "Yazar",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "Teori + alıştırma üret",
+      "generating": "Üretiliyor ...",
+      "feature": "metinden ders oluşturmak için",
+      "generated": "{t} teori adımı ve {e} alıştırma üretildi.",
+      "summary": "{t} teori adımı, {e} alıştırma hazır.",
+      "paste_required": "Önce ders kitabınızın bir bölümünü yapıştırın.",
+      "theory_failed": "Yapay zeka kullanılabilir teori üretmedi. Lütfen tekrar deneyin.",
+      "exercises_failed": "Kullanılabilir alıştırma üretilemedi. Lütfen tekrar deneyin.",
+      "generate_failed": "Ders üretilemedi. Lütfen tekrar deneyin.",
+      "generate_to_advance": "Devam etmek için dersi metninizden üretin.",
+      "review_theory": "{n} teori adımı",
+      "review_exercises": "{n} alıştırma",
+      "review_book": "Kitap: {title}"
+    },
     "title": "Ders oluştur",
     "step_of": "Adım {current} / {total}",
+    "edit_title": "Dersi düzenle",
+    "edit_load_error": "Bu ders düzenlemek için yüklenemedi.",
+    "edit_note": "Mevcut bir dersi düzenliyorsunuz. Kaydetmek üzerine yazar; orijinali korumak için 'Kopya olarak kaydet' seçeneğini kullanın.",
     "step_pending": "Bu adım bir sonraki güncellemede geliyor.",
     "nav_label": "Sihirbaz gezinmesi",
     "cancel": "İptal",
@@ -2739,7 +2811,23 @@
       "front_label": "Ön yüz (öğrenilen)",
       "back_label": "Arka yüz (sizin diliniz)",
       "notes_label": "Notlar (isteğe bağlı)",
-      "image_label": "Görsel referansı (isteğe bağlı)",
+      "alt_answers_label": "Diğer kabul edilen yanıtlar (isteğe bağlı)",
+      "alt_answers_add": "Ekle",
+      "alt_answers_remove": "Kabul edilen yanıtı kaldır",
+      "alt_answers_placeholder": "Başka bir kabul edilen yanıt",
+      "alt_answers_hint": "Öğrencinin serbest metin alıştırmasında yazabileceği ek yanıtlar. Arka yüz ana yanıt olarak kalır.",
+      "image_label": "Görsel (isteğe bağlı)",
+      "image_upload": "Resim yükle",
+      "image_remove": "Kaldır",
+      "image_preview_alt": "Kart görseli",
+      "image_path_toggle": "Gelişmiş: bir varlık yolu kullan",
+      "image_path_label": "Varlık yolu",
+      "image_path_hint": "Setin assets/ klasörü içindeki bir yol. Yalnızca depoda yayımlanan setler için.",
+      "image_error": {
+        "unsupported_type": "Yalnızca JPEG, PNG veya WebP görselleri desteklenir.",
+        "too_large": "Bu görsel çok büyük. Daha küçük birini deneyin.",
+        "decode_failed": "Bu görsel okunamadı. Başka bir dosya deneyin."
+      },
       "add": "Kart ekle",
       "import_csv": "CSV içe aktar",
       "csv_hint": "Satırları ön, arka, notlar olarak yapıştırın (virgül veya sekme ile ayrılmış). Örnek: Bonjour, Guten Tag, Resmi selamlama",
@@ -2806,6 +2894,11 @@
       "failed": "Ders kaydedilemedi.",
       "save_local": "Yerel olarak kaydet",
       "save_share": "Kaydet ve paylaş",
+      "save_changes": "Değişiklikleri kaydet",
+      "save_copy": "Kopya olarak kaydet",
+      "copy_suffix": "(kopya)",
+      "updated": "Ders güncellendi!",
+      "copied": "Kopya olarak kaydedildi!",
       "play": "Dersi oynat",
       "create_another": "Başka bir ders oluştur",
       "to_browser": "İçerik tarayıcısına",
@@ -2813,6 +2906,10 @@
       "file_saved": "Ders dosya olarak kaydedildi."
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "Metinden bilgi dersi",
+        "desc": "Bir ders kitabı bölümü yapıştırın; yapay zeka teoriyi kendi kelimeleriyle yazar ve alıştırmalar üretir."
+      },
       "heading": "Bir şablonla başla",
       "blank": {
         "title": "Boş ders",

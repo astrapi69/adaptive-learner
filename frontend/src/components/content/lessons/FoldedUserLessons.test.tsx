@@ -96,11 +96,18 @@ describe("FoldedUserLessons", () => {
         expect(onPlayLesson).toHaveBeenCalledWith(lessons[1]);
     });
 
-    it("offers the shared set actions (edit shows for analysis-origin sets)", () => {
+    it("offers the shared set actions incl. Edit for every own lesson (#1740)", () => {
         renderFolded();
         expect(screen.getByTestId("folded-lesson-l1-edit")).toBeInTheDocument();
         expect(screen.getByTestId("folded-lesson-l1-delete")).toBeInTheDocument();
         expect(screen.getByTestId("folded-lesson-l1-share")).toBeInTheDocument();
+    });
+
+    it("shows Edit for a created/imported-origin set too (#1740)", () => {
+        renderFolded({
+            setsByKey: {"user-generated#mine": setEntry({domain: "imported"})},
+        });
+        expect(screen.getByTestId("folded-lesson-l1-edit")).toBeInTheDocument();
     });
 
     it("skips a lesson whose owning set is missing from the lookup", () => {

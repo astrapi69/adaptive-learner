@@ -12,6 +12,7 @@
  * auto path is the default + only path for now.
  */
 
+import {useEffect, useState} from "react";
 import {Sparkles, Trash2, GripVertical} from "lucide-react";
 import {
     DndContext,
@@ -32,6 +33,7 @@ import {
 import {CSS} from "@dnd-kit/utilities";
 
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import type {
@@ -43,6 +45,24 @@ import type {ContentLessonExercise} from "../../storage/types";
 export const MIN_EXERCISES = 5;
 export const EXERCISE_COUNT_MIN = 5;
 export const EXERCISE_COUNT_MAX = 20;
+
+/**
+ * Coerce a raw exercise-count value onto the valid `[MIN, MAX]` band.
+ *
+ * Non-numeric or non-finite input (empty field, `"abc"`, `NaN`) falls
+ * back to the minimum; out-of-range numbers clamp to the nearest
+ * bound; fractional input rounds. This is the single guard the number
+ * input and the slider both commit through, so they can never diverge
+ * from the generator's expectations (`selectExercises` also caps with
+ * `Math.max(1, count)`).
+ */
+export function clampExerciseCount(value: number): number {
+    if (!Number.isFinite(value)) return EXERCISE_COUNT_MIN;
+    return Math.min(
+        EXERCISE_COUNT_MAX,
+        Math.max(EXERCISE_COUNT_MIN, Math.round(value)),
+    );
+}
 
 const ALL_TYPES: GeneratableType[] = [
     "matching",
@@ -77,6 +97,28 @@ export default function ExerciseGenerator({
         }),
     );
 
+    // Uncommitted text of the number input: lets the user clear + retype
+    // freely (a directly-clamped controlled value would fight mid-edit).
+    // Committed on blur / Enter; the slider commits `config.count`
+    // immediately and this stays in sync via the effect below.
+    const [countDraft, setCountDraft] = useState(String(config.count));
+    useEffect(() => {
+        setCountDraft(String(config.count));
+    }, [config.count]);
+
+    function commitCountDraft() {
+        const clamped = clampExerciseCount(Number(countDraft));
+        setCountDraft(String(clamped));
+        if (clamped !== config.count) {
+            onConfigChange({...config, count: clamped});
+        }
+    }
+
+    const countLabel = t(
+        "create_lesson.exercises.count_label",
+        "Number of exercises",
+    );
+
     function toggleType(type: GeneratableType) {
         const set = new Set(config.types);
         if (set.has(type)) set.delete(type);
@@ -108,28 +150,47 @@ export default function ExerciseGenerator({
                 className="exercise-gen-config flex flex-col gap-4 rounded-lg border border-border bg-card p-4"
                 data-testid="exercise-gen-config"
             >
-                <label className="form-row flex flex-col gap-1.5">
-                    <span className="form-label text-sm font-medium text-fg-primary">
-                        {t("create_lesson.exercises.count_label", "Number of exercises")}:{" "}
-                        <strong data-testid="exercise-count-value">
-                            {config.count}
-                        </strong>
-                    </span>
-                    <input
-                        type="range"
-                        min={EXERCISE_COUNT_MIN}
-                        max={EXERCISE_COUNT_MAX}
-                        value={config.count}
-                        className="w-full accent-[var(--accent)]"
-                        data-testid="exercise-count-slider"
-                        onChange={(e) =>
-                            onConfigChange({
-                                ...config,
-                                count: Number(e.target.value),
-                            })
-                        }
-                    />
-                </label>
+                <div className="form-row flex flex-col gap-1.5">
+                    <label
+                        htmlFor="exercise-count-input"
+                        className="form-label text-sm font-medium text-fg-primary"
+                    >
+                        {countLabel}
+                    </label>
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="range"
+                            min={EXERCISE_COUNT_MIN}
+                            max={EXERCISE_COUNT_MAX}
+                            value={config.count}
+                            className="min-w-0 flex-1 accent-[var(--accent)]"
+                            data-testid="exercise-count-slider"
+                            aria-label={countLabel}
+                            onChange={(e) =>
+                                onConfigChange({
+                                    ...config,
+                                    count: Number(e.target.value),
+                                })
+                            }
+                        />
+                        <Input
+                            id="exercise-count-input"
+                            type="number"
+                            inputMode="numeric"
+                            min={EXERCISE_COUNT_MIN}
+                            max={EXERCISE_COUNT_MAX}
+                            value={countDraft}
+                            className="w-20 shrink-0 text-center"
+                            data-testid="exercise-count-input"
+                            aria-label={countLabel}
+                            onChange={(e) => setCountDraft(e.target.value)}
+                            onBlur={commitCountDraft}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") commitCountDraft();
+                            }}
+                        />
+                    </div>
+                </div>
 
                 <fieldset className="exercise-gen-types m-0 flex flex-col gap-2 border-0 p-0">
                     <legend className="form-label text-sm font-medium text-fg-primary">

@@ -177,6 +177,57 @@ function setSetSetStatusCallCount(): number {
   return setSetStatusMock.mock.calls.length;
 }
 
+describe("handleEditUserSet dispatch (#1740)", () => {
+  function setupWithNavigate() {
+    const navigate = vi.fn();
+    const hook = renderHook(() =>
+      useContentSetActions({
+        navigate: navigate as never,
+        setSets: vi.fn() as never,
+        setPerSetState: vi.fn() as never,
+      }),
+    );
+    return { hook, navigate };
+  }
+
+  it("routes an analysis-origin set back to its import page", () => {
+    const { hook, navigate } = setupWithNavigate();
+    const target = entry({
+      source: "user-generated",
+      id: "analysis-abc123",
+      domain: "analysis",
+    });
+    act(() => hook.result.current.handleEditUserSet(target));
+    expect(navigate).toHaveBeenCalledWith("/import/abc123");
+  });
+
+  it("routes a created/imported set to the pre-filled Lesson Creator", () => {
+    const { hook, navigate } = setupWithNavigate();
+    const target = entry({
+      source: "user-generated",
+      id: "created-my-lesson",
+      domain: "imported",
+    });
+    act(() => hook.result.current.handleEditUserSet(target));
+    expect(navigate).toHaveBeenCalledWith(
+      "/create-lesson/edit/user-generated/created-my-lesson",
+    );
+  });
+
+  it("url-encodes the source and set id in the edit route", () => {
+    const { hook, navigate } = setupWithNavigate();
+    const target = entry({
+      source: "user-generated",
+      id: "created-a b/c",
+      domain: "adaptive",
+    });
+    act(() => hook.result.current.handleEditUserSet(target));
+    expect(navigate).toHaveBeenCalledWith(
+      "/create-lesson/edit/user-generated/created-a%20b%2Fc",
+    );
+  });
+});
+
 describe("dismissal on delete/download (#1709)", () => {
   beforeEach(() => {
     localStorage.clear();

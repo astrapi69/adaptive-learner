@@ -57,6 +57,10 @@ class ElementErrorsRepository(Repository):
     ) -> list[ElementError]:
         """Return the user's rows, newest-updated first."""
 
+    @abstractmethod
+    def delete_by_set_ids(self, user_id: str, set_ids: list[str]) -> int:
+        """Delete the user's rows for the given set ids; return the count (#1821)."""
+
 
 class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
     """SQLAlchemy-backed :class:`ElementErrorsRepository`."""
@@ -122,6 +126,20 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
             stmt = stmt.where(ElementError.mastered.is_(False))
         stmt = stmt.order_by(ElementError.updated_at.desc())
         return list(self._db.execute(stmt).scalars().all())
+
+    def delete_by_set_ids(self, user_id: str, set_ids: list[str]) -> int:
+        """Delete the user's rows for the given set ids; return the count (#1821)."""
+        if not set_ids:
+            return 0
+        deleted = (
+            self._db.query(ElementError)
+            .filter(
+                ElementError.user_id == user_id,
+                ElementError.set_id.in_(set_ids),
+            )
+            .delete(synchronize_session=False)
+        )
+        return int(deleted)
 
 
 __all__ = ["ElementErrorsRepository", "SqlAlchemyElementErrorsRepository"]

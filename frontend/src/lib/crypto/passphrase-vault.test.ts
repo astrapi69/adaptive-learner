@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import {
     decryptFromVault,
     encryptToVault,
+    looksLikeVaultEnvelope,
     VaultDecryptError,
     type VaultEnvelope,
 } from "./passphrase-vault";
@@ -70,5 +71,45 @@ describe("passphrase-vault", () => {
         await expect(
             decryptFromVault(JSON.stringify({ hello: "world" }), "p"),
         ).rejects.toBeInstanceOf(VaultDecryptError);
+    });
+});
+
+describe("looksLikeVaultEnvelope (#1765 paste-content gate)", () => {
+    it("accepts a real encrypted envelope string", async () => {
+        const envelope = await encryptToVault(SECRET, "pass-1234");
+        expect(looksLikeVaultEnvelope(envelope)).toBe(true);
+    });
+
+    it("rejects non-JSON, wrong-shape, and incomplete envelopes", () => {
+        expect(looksLikeVaultEnvelope("not json")).toBe(false);
+        expect(looksLikeVaultEnvelope("{ not: valid }")).toBe(false);
+        expect(looksLikeVaultEnvelope(JSON.stringify({ hello: "world" }))).toBe(
+            false,
+        );
+        // Right marker but missing kdf / cipher / ciphertext fields.
+        expect(
+            looksLikeVaultEnvelope(
+                JSON.stringify({ format: "adaptive-learner-keys", version: 1 }),
+            ),
+        ).toBe(false);
+    });
+
+    it("rejects a foreign format marker", () => {
+        expect(
+            looksLikeVaultEnvelope(
+                JSON.stringify({
+                    format: "some-other-app",
+                    version: 1,
+                    kdf: {
+                        name: "PBKDF2",
+                        hash: "SHA-256",
+                        iterations: 250000,
+                        salt: "x",
+                    },
+                    cipher: { name: "AES-GCM", iv: "y" },
+                    ciphertext: "z",
+                }),
+            ),
+        ).toBe(false);
     });
 });

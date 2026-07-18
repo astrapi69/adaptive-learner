@@ -5,7 +5,7 @@
  * presentation; state + actions come via props.
  */
 
-import {Download, Share2} from "lucide-react";
+import {Copy, Download, Save, Share2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {
@@ -35,8 +35,14 @@ interface ReviewStepProps {
     exercises: ContentLessonExercise[];
     draftChecks: DraftValidationChecks;
     saving: boolean;
+    /** #1740 — editing an existing lesson: the primary action overwrites
+     *  it and a "Save as a copy" action appears instead of "Save and
+     *  share". */
+    editMode?: boolean;
     onSaveLocal: () => void;
     onSaveShare: () => void;
+    /** #1740 — save the edited lesson as a new copy (edit mode only). */
+    onSaveCopy?: () => void;
     t: Translate;
 }
 
@@ -47,8 +53,10 @@ export default function ReviewStep({
     exercises,
     draftChecks,
     saving,
+    editMode = false,
     onSaveLocal,
     onSaveShare,
+    onSaveCopy,
     t,
 }: ReviewStepProps) {
     const canSave = allChecksPass(draftChecks) && !saving;
@@ -124,6 +132,17 @@ export default function ReviewStep({
                     );
                 })}
             </ul>
+            {editMode && (
+                <p
+                    className="form-hint"
+                    data-testid="create-lesson-edit-note"
+                >
+                    {t(
+                        "create_lesson.edit_note",
+                        "Editing an existing lesson. Saving overwrites it; use 'Save as a copy' to keep the original.",
+                    )}
+                </p>
+            )}
             <div className="form-actions">
                 <Button
                     type="button"
@@ -131,21 +150,40 @@ export default function ReviewStep({
                     disabled={!canSave}
                     onClick={onSaveLocal}
                 >
-                    <Download className="h-5 w-5" aria-hidden="true" />
+                    {editMode ? (
+                        <Save className="h-5 w-5" aria-hidden="true" />
+                    ) : (
+                        <Download className="h-5 w-5" aria-hidden="true" />
+                    )}
                     {saving
                         ? t("common.loading", "Loading…")
-                        : t("create_lesson.save.save_local", "Save locally")}
+                        : editMode
+                          ? t("create_lesson.save.save_changes", "Save changes")
+                          : t("create_lesson.save.save_local", "Save locally")}
                 </Button>
-                <Button
-                    type="button"
-                    variant="secondary"
-                    data-testid="create-lesson-save-share"
-                    disabled={!canSave}
-                    onClick={onSaveShare}
-                >
-                    <Share2 className="h-5 w-5" aria-hidden="true" />
-                    {t("create_lesson.save.save_share", "Save and share")}
-                </Button>
+                {editMode ? (
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        data-testid="create-lesson-save-copy"
+                        disabled={!canSave}
+                        onClick={onSaveCopy}
+                    >
+                        <Copy className="h-5 w-5" aria-hidden="true" />
+                        {t("create_lesson.save.save_copy", "Save as a copy")}
+                    </Button>
+                ) : (
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        data-testid="create-lesson-save-share"
+                        disabled={!canSave}
+                        onClick={onSaveShare}
+                    >
+                        <Share2 className="h-5 w-5" aria-hidden="true" />
+                        {t("create_lesson.save.save_share", "Save and share")}
+                    </Button>
+                )}
             </div>
         </section>
     );

@@ -56,8 +56,8 @@ du Hook-Firing testest.
 
 ```bash
 make test-frontend                # führt Vitest aus frontend/ aus
-cd frontend && npx vitest         # Watch-Modus
-cd frontend && npx vitest run src/storage/  # ein Verzeichnis
+cd frontend && bunx vitest         # Watch-Modus
+cd frontend && bunx vitest run src/storage/  # ein Verzeichnis
 ```
 
 Vitest aus `frontend/` ausführen (die Konfiguration liegt in

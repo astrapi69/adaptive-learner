@@ -208,4 +208,20 @@ describe("round-trip export -> import (#1672)", () => {
     expect(result.ok).toBe(true);
     expect(result.set?.lessons[0]).toEqual(original);
   });
+
+  // #1763 — an uploaded card image is stored as a base64 data URI in the
+  // card ``image`` field. It must (a) pass schema validation on import
+  // (proving data URIs are schema-valid there) and (b) survive the
+  // verbatim JSON round-trip unchanged (self-contained, no asset bundle).
+  it("preserves a base64 data-URI card image across export -> import", async () => {
+    const original = lesson();
+    const dataUri = `data:image/jpeg;base64,${"A".repeat(4000)}`;
+    original.cards[0].image = dataUri;
+    const file = new File([lessonJson(original)], "rt-img.json", {
+      type: "application/json",
+    });
+    const result = await parseImportFile(file);
+    expect(result.ok).toBe(true);
+    expect(result.set?.lessons[0].cards[0].image).toBe(dataUri);
+  });
 });

@@ -14,18 +14,15 @@
  */
 
 import { KeyRound } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { SecretInput } from "../../../shared/forms/SecretInput";
+import KeyVaultImportForm from "./KeyVaultImportForm";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import { KEY_VAULT_EXTENSION } from "../../../lib/keys/key-vault";
-import {
-    buildEncryptedKeyVault,
-    importEncryptedKeyVault,
-} from "../../../lib/keys/key-vault-io";
-import { VaultDecryptError } from "../../../lib/crypto/passphrase-vault";
+import { buildEncryptedKeyVault } from "../../../lib/keys/key-vault-io";
 import { getStorage, resolveStorageMode } from "../../../storage";
 import { notify } from "../../../utils/notify";
 
@@ -51,10 +48,7 @@ export default function KeyVaultSection() {
     const [hasKeys, setHasKeys] = useState<boolean | null>(null);
     const [exportPass, setExportPass] = useState("");
     const [exportConfirm, setExportConfirm] = useState("");
-    const [importPass, setImportPass] = useState("");
-    const [importFile, setImportFile] = useState<File | null>(null);
-    const [busy, setBusy] = useState<"export" | "import" | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [busy, setBusy] = useState<"export" | null>(null);
 
     useEffect(() => {
         if (mode !== "dexie" || !userId) {
@@ -85,7 +79,6 @@ export default function KeyVaultSection() {
     const exportValid =
         exportPass.length >= MIN_PASSPHRASE_LENGTH &&
         exportConfirm === exportPass;
-    const importValid = importFile !== null && importPass.length > 0;
 
     async function handleExport(): Promise<void> {
         if (!userId || !exportValid) return;
@@ -128,52 +121,6 @@ export default function KeyVaultSection() {
         }
     }
 
-    async function handleImport(): Promise<void> {
-        if (!userId || !importFile || !importValid) return;
-        setBusy("import");
-        try {
-            const text = await importFile.text();
-            const result = await importEncryptedKeyVault(
-                getStorage().settings,
-                userId,
-                text,
-                importPass,
-            );
-            setImportPass("");
-            setImportFile(null);
-            if (fileInputRef.current) fileInputRef.current.value = "";
-            setHasKeys(result.providers.length > 0 || hasKeys);
-            notify.success(
-                t(
-                    "settings.key_vault.success_import",
-                    "Keys imported. AI features are ready again.",
-                ),
-            );
-        } catch (err) {
-            if (err instanceof VaultDecryptError) {
-                // Expected, user-correctable outcome (wrong passphrase or a
-                // corrupt/foreign file): a plain warning, NOT a red error
-                // toast with a "Report Issue" button — it is not a defect.
-                notify.warning(
-                    t(
-                        "settings.key_vault.error_decrypt",
-                        "Passphrase incorrect or file corrupted.",
-                    ),
-                );
-            } else {
-                // Genuinely unexpected failure — a real error worth reporting.
-                notify.error(
-                    t(
-                        "settings.key_vault.error_import",
-                        "Could not import the key file.",
-                    ),
-                );
-            }
-        } finally {
-            setBusy(null);
-        }
-    }
-
     return (
         <section
             className="settings-section"
@@ -194,15 +141,24 @@ export default function KeyVaultSection() {
             </p>
 
             {mode === "api" ? (
-                <p
-                    className="rounded-app border border-border bg-muted p-3 text-sm text-muted-foreground"
-                    data-testid="key-vault-api-notice"
-                >
-                    {t(
-                        "settings.key_vault.api_disabled",
-                        "In server mode your keys are managed by the server, so there is nothing to export here.",
-                    )}
-                </p>
+                <div className="flex flex-col gap-6">
+                    {/* Export is genuinely server-side (keys never leave the
+                        backend as plaintext); import only needs setApiKey,
+                        which works in both modes (#1812). */}
+                    <p
+                        className="rounded-app border border-border bg-muted p-3 text-sm text-muted-foreground"
+                        data-testid="key-vault-api-notice"
+                    >
+                        {t(
+                            "settings.key_vault.api_export_disabled",
+                            "In server mode keys cannot be exported - they are managed encrypted on the server. Importing a key file still works.",
+                        )}
+                    </p>
+                    <KeyVaultImportForm
+                        userId={userId}
+                        onImported={() => setHasKeys(true)}
+                    />
+                </div>
             ) : (
                 <div className="flex flex-col gap-6">
                     {/* Export */}
@@ -310,51 +266,11 @@ export default function KeyVaultSection() {
                         </div>
                     </div>
 
-                    {/* Import */}
-                    <div className="flex flex-col gap-2" data-testid="key-vault-import">
-                        <h3 className="text-sm font-semibold text-foreground">
-                            {t("settings.key_vault.import_heading", "Import")}
-                        </h3>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept={KEY_VAULT_EXTENSION}
-                            onChange={(e) =>
-                                setImportFile(e.target.files?.[0] ?? null)
-                            }
-                            className="text-sm text-foreground file:mr-3 file:rounded-app file:border file:border-border file:bg-muted file:px-3 file:py-1.5 file:text-sm file:text-foreground hover:file:bg-accent/10"
-                            data-testid="key-vault-import-file"
-                        />
-                        <SecretInput
-                            value={importPass}
-                            onChange={(e) => setImportPass(e.target.value)}
-                            placeholder={t(
-                                "settings.key_vault.passphrase_label",
-                                "Passphrase",
-                            )}
-                            aria-label={t(
-                                "settings.key_vault.passphrase_label",
-                                "Passphrase",
-                            )}
-                            data-testid="key-vault-import-pass"
-                        />
-                        <div>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => void handleImport()}
-                                disabled={busy !== null || !importValid}
-                                data-testid="key-vault-import-button"
-                            >
-                                {busy === "import"
-                                    ? t("settings.key_vault.busy", "Working…")
-                                    : t(
-                                          "settings.key_vault.import_button",
-                                          "Import key file",
-                                      )}
-                            </Button>
-                        </div>
-                    </div>
+                    {/* Import — file OR pasted content, shared decrypt path. */}
+                    <KeyVaultImportForm
+                        userId={userId}
+                        onImported={() => setHasKeys(true)}
+                    />
                 </div>
             )}
         </section>

@@ -83,7 +83,7 @@ themes). Τα κλασικά έξι (`light`, `dark`, `ocean`, `forest`,
 5. **i18n**: πρόσθεσε το `ui.themes.midnight` σε όλους τους οκτώ
    καταλόγους στο `backend/config/i18n/*.yaml` και εκτέλεσε
    `make sync-i18n`.
-6. **Έλεγξε**: `npx vitest run src/styles/themes src/styles/contrast` -
+6. **Έλεγξε**: `bunx vitest run src/styles/themes src/styles/contrast` -
    τα pins πληρότητας και αντίθεσης πρέπει να παραμείνουν πράσινα
    (προσάρμοσε τις τιμές, μέχρι η αντίθεση στο νέο theme να πληροί το
    AA).

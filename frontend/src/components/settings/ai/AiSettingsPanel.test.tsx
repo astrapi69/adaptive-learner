@@ -51,7 +51,15 @@ vi.mock("../../../hooks/settings/useAiKeySettings", () => ({
   }),
 }));
 
-vi.mock("./ConfiguredProvidersTable", () => ({ default: () => null }));
+// Stub the overview table but keep its Import affordance wired, so we can
+// assert AiSettingsPanel passes onOpenKeyImport down to it (#1765).
+vi.mock("./ConfiguredProvidersTable", () => ({
+  default: ({ onImportKeys }: { onImportKeys: () => void }) => (
+    <button type="button" data-testid="configured-providers-import" onClick={onImportKeys}>
+      Import
+    </button>
+  ),
+}));
 vi.mock("./ApiKeyRow", () => ({ default: () => null }));
 vi.mock("./ModelPicker", () => ({ ModelPicker: () => null }));
 
@@ -66,16 +74,17 @@ const settings = {
   has_gemini_key: false,
 } as unknown as UserSettings;
 
-function renderPanel(onOpenKeyExport = vi.fn()) {
+function renderPanel(onOpenKeyExport = vi.fn(), onOpenKeyImport = vi.fn()) {
   render(
     <AiSettingsPanel
       settings={settings}
       onSettingsChange={vi.fn()}
       active={true}
       onOpenKeyExport={onOpenKeyExport}
+      onOpenKeyImport={onOpenKeyImport}
     />,
   );
-  return onOpenKeyExport;
+  return { onOpenKeyExport, onOpenKeyImport };
 }
 
 describe("AiSettingsPanel — key-export link (#1183)", () => {
@@ -94,8 +103,17 @@ describe("AiSettingsPanel — key-export link (#1183)", () => {
 
   it("navigates to the export (Data tab) when the button is clicked", async () => {
     const user = userEvent.setup();
-    const onOpenKeyExport = renderPanel();
+    const { onOpenKeyExport } = renderPanel();
     await user.click(screen.getByTestId("ai-key-export-link"));
     expect(onOpenKeyExport).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("AiSettingsPanel — key-import link from providers overview (#1765)", () => {
+  it("fires onOpenKeyImport when the providers Import button is clicked", async () => {
+    const user = userEvent.setup();
+    const { onOpenKeyImport } = renderPanel();
+    await user.click(screen.getByTestId("configured-providers-import"));
+    expect(onOpenKeyImport).toHaveBeenCalledTimes(1);
   });
 });

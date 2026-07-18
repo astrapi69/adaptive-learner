@@ -43,9 +43,27 @@ exactly like a downloaded lesson.
 Each My Lesson has:
 
 - **Play** — open it in the lesson viewer.
-- **Edit** — re-open the source analysis so you can adjust and
-  re-save (available for analysis-based lessons).
+- **Edit** — opens the **Lesson Creator pre-filled** with the
+  lesson's metadata, cards, and exercises. When saving you choose:
+  **Save changes** (overwrites the same lesson — your learning
+  progress survives for unchanged cards, changed ones start fresh)
+  or **Save as a copy** (creates a new lesson, the original stays
+  untouched). Analysis-based lessons still open the underlying chat
+  analysis. Foreign (downloaded) lessons remain read-only.
 - **Delete** — remove it (with confirmation).
+
+---
+
+## Combine several lessons into a set
+
+Via **"Combine into a set"** in My Lessons you tick several of your
+own lessons and merge them — either into a **new set** (title,
+optional description, level) or into an **existing own set**. If the
+selection mixes languages or levels, a non-blocking hint says so
+(the set takes the most common combination). Colliding lesson files
+automatically get a number suffix instead of overwriting each other.
+The combined set is a normal own set — play, export, and share it as
+usual.
 
 ---
 

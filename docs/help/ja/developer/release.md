@@ -61,7 +61,7 @@ make sync-versions
 ```bash
 make sync-versions-check     # ドリフトがあると非ゼロで終了
 make test                    # 2634テストがパスする必要があります
-cd frontend && npm run build # 成功する必要があります
+cd frontend && bun run build # 成功する必要があります
 ```
 
 リリースゲートCIワークフロー（`.github/workflows/release-gate.yml`）は、すべてのタグプッシュ時に同じ`sync-versions-check`を実行します。ローカルでは一致するがCIで失敗する場合、ローカルの確認とプッシュの間にドリフトが発生しています。

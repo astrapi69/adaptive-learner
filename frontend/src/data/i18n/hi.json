@@ -511,7 +511,7 @@
     "key_vault": {
       "title": "AI कुंजियाँ — एन्क्रिप्टेड निर्यात",
       "intro": "अपनी AI कुंजियाँ एक एन्क्रिप्टेड फ़ाइल में दूसरे डिवाइस पर ले जाएँ, सामान्य बैकअप से अलग (जिसमें कभी कुंजियाँ नहीं होतीं)।",
-      "api_disabled": "सर्वर मोड में आपकी कुंजियाँ सर्वर द्वारा प्रबंधित होती हैं, इसलिए यहाँ निर्यात करने के लिए कुछ नहीं है।",
+      "api_export_disabled": "सर्वर मोड में आपकी कुंजियाँ निर्यात नहीं की जा सकतीं, वे सर्वर पर एन्क्रिप्ट होकर प्रबंधित होती हैं। कुंजी फ़ाइल का आयात अभी भी संभव है।",
       "export_heading": "निर्यात",
       "passphrase_hint": "एक मज़बूत पासफ़्रेज़ चुनें। इसे पुनर्प्राप्त नहीं किया जा सकता — इसके बिना फ़ाइल नहीं खुलेगी।",
       "passphrase_label": "पासफ़्रेज़",
@@ -520,6 +520,11 @@
       "busy": "काम जारी है…",
       "export_button": "एन्क्रिप्टेड फ़ाइल निर्यात करें",
       "import_heading": "आयात",
+      "import_hint": "एन्क्रिप्टेड कुंजी फ़ाइल चुनें या उसकी सामग्री नीचे चिपकाएँ। दोनों तरीके काम करते हैं।",
+      "import_file_label": "एन्क्रिप्टेड कुंजी फ़ाइल",
+      "import_text_label": "…या कुंजी फ़ाइल की सामग्री चिपकाएँ",
+      "import_text_placeholder": "{ \"format\": \"adaptive-learner-keys\", … }",
+      "import_text_invalid": "यह एक मान्य कुंजी फ़ाइल जैसी नहीं दिखती। जाँचें कि आपने पूरी सामग्री चिपकाई है।",
       "import_button": "कुंजी फ़ाइल आयात करें",
       "success_export": "एन्क्रिप्टेड कुंजी फ़ाइल डाउनलोड हो गई।",
       "success_import": "कुंजियाँ आयात हो गईं। AI सुविधाएँ फिर से तैयार हैं।",
@@ -744,7 +749,8 @@
       "test_connection_ok": "कनेक्शन ठीक है",
       "test_key_invalid": "कुंजी अमान्य",
       "test_network_error": "नेटवर्क त्रुटि",
-      "test_backend_only": "केवल बैकएंड के साथ परीक्षण योग्य"
+      "test_backend_only": "केवल बैकएंड के साथ परीक्षण योग्य",
+      "import_keys": "आयात करें"
     },
     "api_key_label": "API कुंजी",
     "api_key_placeholder": "यहाँ पेस्ट करें…",
@@ -1955,6 +1961,18 @@
         "empty": "इस चित्र-चयन अभ्यास में कोई छवियाँ नहीं हैं।"
       },
       "free_text": {
+        "ai_verify": {
+          "button": "AI से जाँच कराएँ",
+          "checking": "जाँच हो रही है…",
+          "verdict_yes": "AI सहमत है: आपका उत्तर मूल रूप से सही है।",
+          "verdict_partial": "AI के अनुसार आपका उत्तर केवल आंशिक रूप से सही है।",
+          "verdict_no": "AI पुष्टि करता है: यह उत्तर सही नहीं है।",
+          "verdict_unknown": "AI स्पष्ट निर्णय नहीं दे सका।",
+          "disclaimer": "यह केवल AI की राय है - इस अभ्यास के लिए आपका स्कोर नहीं बदलता।",
+          "no_key": "इसके लिए आपकी अपनी AI कुंजी (BYOK) चाहिए। वैकल्पिक - ऐप इसके बिना भी ठीक काम करता है।",
+          "open_settings": "AI सेटिंग्स",
+          "error": "AI अनुरोध विफल रहा। कृपया पुनः प्रयास करें।"
+        },
         "submit": "उत्तर जाँचें",
         "retry": "फिर से कोशिश करें",
         "placeholder": "अपना उत्तर लिखें…",
@@ -2066,6 +2084,8 @@
         "weak_areas": "कमज़ोर क्षेत्र"
       },
       "mark_complete": "पूर्ण के रूप में चिह्नित करें",
+      "mark_complete_needs_profile": "अपनी प्रगति सहेजने के लिए एक लर्निंग प्रोफ़ाइल बनाएँ",
+      "mark_complete_failed": "पूर्णता सहेजने में विफल",
       "next_lesson": "अगला पाठ",
       "repeat": "पाठ दोहराएँ",
       "retry": "फिर से अभ्यास करें",
@@ -2128,6 +2148,7 @@
     },
     "error": {
       "load_failed": "पाठ लोड नहीं हो सका।",
+      "invalid_data": "इस पाठ में अमान्य या दूषित डेटा होने के कारण इसे नहीं खोला जा सकता। कृपया सामग्री के लेखक से संपर्क करें।",
       "missing_params": "कोई पाठ चयनित नहीं। चुनने के लिए सामग्री सेट ब्राउज़ करें।"
     },
     "exit": {
@@ -2255,6 +2276,27 @@
       "copy_suffix": "प्रति",
       "skipped": "{n} पाठ छोड़े गए क्योंकि वे सत्यापन में विफल रहे।"
     },
+    "combine": {
+      "title": "एक सेट में संयोजित करें",
+      "start": "एक सेट में संयोजित करें",
+      "cancel_select": "चयन रद्द करें",
+      "selected_count": "{n} चयनित",
+      "select_aria": "{title} चुनें",
+      "summary": "चयनित {n} पाठ एक सेट में समूहित किए जाएंगे।",
+      "mixed_languages": "चयनित पाठ भाषा या स्तर में भिन्न हैं। नया सेट सबसे सामान्य ({lang}, {level}) का उपयोग करता है।",
+      "target_legend": "लक्ष्य सेट",
+      "mode_new": "नया सेट",
+      "mode_existing": "किसी मौजूदा सेट में जोड़ें",
+      "new_title": "सेट शीर्षक",
+      "new_title_placeholder": "मेरा संयोजित सेट",
+      "new_description": "विवरण (वैकल्पिक)",
+      "new_level": "स्तर",
+      "existing_set": "मौजूदा सेट",
+      "keeps_originals": "मूल पाठ सुरक्षित रहते हैं; इससे एक समूहित प्रति बनती है।",
+      "confirm": "संयोजित करें",
+      "success": "पाठ एक सेट में संयोजित किए गए।",
+      "failed": "पाठों को संयोजित नहीं किया जा सका।"
+    },
     "my_lessons": {
       "export_set": "सेट के रूप में निर्यात करें",
       "share": "समुदाय के साथ साझा करें",
@@ -2274,6 +2316,8 @@
       "delete_failed": "पाठ हटाया नहीं जा सका।"
     },
     "set_status": {
+      "delete_progress_option": "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं ({lessons} पाठ, {cards} कार्ड)",
+      "delete_progress_option_nocounts": "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं",
       "all": "सभी",
       "active": "सक्रिय",
       "deferred": "स्थगित",
@@ -2478,37 +2522,37 @@
     },
     "ai_check": {
       "badge": {
-        "verified": "AI-janchaa gaya",
-        "stale": "AI-jaanch puraani",
-        "invalid": "AI-jaanch amaanya"
+        "verified": "AI-जाँचा गया",
+        "stale": "AI-जाँच पुरानी",
+        "invalid": "AI-जाँच अमान्य"
       },
-      "last_checked": "antim jaanch: {when}",
+      "last_checked": "अंतिम जाँच: {when}",
       "checked_with": "इसके साथ जाँचा गया",
       "date": "तिथि",
-      "recheck": "phir se janchein",
+      "recheck": "फिर से जाँचें",
       "export": {
-        "button": "report ko Markdown ke roop mein export karein",
-        "lesson": "paath",
-        "card": "card",
-        "field": "field"
+        "button": "रिपोर्ट को Markdown के रूप में एक्सपोर्ट करें",
+        "lesson": "पाठ",
+        "card": "कार्ड",
+        "field": "फ़ील्ड"
       },
-      "button": "AI se janchein",
-      "title": "AI samagri jaanch",
-      "loading": "card taiyaar kiye ja rahe hain...",
-      "cost_estimate": "~{cards} card, ~{tokens} token, ~{usd}.",
-      "privacy": "aapke card jaanch ke liye aapke configure kiye gaye AI provider ko bheje jaayenge. koi vyaktigat data nahin bheja jaata.",
-      "confirm": "janchein",
-      "progress": "{total} mein se batch {current} ki jaanch ho rahi hai...",
-      "rate_limited": "doosri jaanch chalaane se pehle kripya thoda intezaar karein.",
-      "failed": "AI jaanch uplabdh nahin hai.",
-      "unavailable_mode": "keval browser-storage mode mein uplabdh.",
+      "button": "AI से जाँचें",
+      "title": "AI सामग्री जाँच",
+      "loading": "कार्ड तैयार किए जा रहे हैं...",
+      "cost_estimate": "~{cards} कार्ड, ~{tokens} टोकन, ~{usd}.",
+      "privacy": "आपके कार्ड जाँच के लिए आपके कॉन्फ़िगर किए गए AI प्रदाता को भेजे जाएंगे। कोई व्यक्तिगत डेटा नहीं भेजा जाता।",
+      "confirm": "जाँचें",
+      "progress": "{total} में से बैच {current} की जाँच हो रही है...",
+      "rate_limited": "दूसरी जाँच चलाने से पहले कृपया थोड़ा इंतज़ार करें।",
+      "failed": "AI जाँच उपलब्ध नहीं है।",
+      "unavailable_mode": "केवल ब्राउज़र-स्टोरेज मोड में उपलब्ध।",
       "report": {
-        "summary": "{lessons} paathon mein {cards} card janche gaye",
+        "summary": "{lessons} पाठों में {cards} कार्ड जाँचे गए",
         "ok": "{count} कार्ड ठीक हैं",
-        "issues": "{count} card mein samasyaayein",
-        "all_ok": "sabhi card paas. koi samasya nahin mili.",
-        "problem": "samasya",
-        "suggestion": "sujhaav"
+        "issues": "{count} कार्ड में समस्याएँ",
+        "all_ok": "सभी कार्ड पास। कोई समस्या नहीं मिली।",
+        "problem": "समस्या",
+        "suggestion": "सुझाव"
       }
     },
     "quality": {
@@ -2710,8 +2754,36 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "rights_hint": "केवल वही टेक्स्ट पेस्ट करें जिनके अधिकार आपके पास हैं या जो व्यक्तिगत उपयोग के लिए हैं।",
+      "heading": "टेक्स्ट से पाठ बनाएं",
+      "intro": "अपनी पाठ्यपुस्तक का एक अनुभाग (जैसे एक अध्याय) पेस्ट करें। AI इसे अपने शब्दों में सिद्धांत के रूप में लिखता है और अभ्यास बनाता है। दूसरा अनुभाग जोड़ने के लिए विज़ार्ड को दोबारा चलाएं।",
+      "text_label": "पाठ्यपुस्तक अनुभाग",
+      "text_placeholder": "अध्याय का टेक्स्ट यहां पेस्ट करें ...",
+      "meta_legend": "पुस्तक संदर्भ (वैकल्पिक)",
+      "title_label": "पुस्तक शीर्षक",
+      "author_label": "लेखक",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "सिद्धांत + अभ्यास बनाएं",
+      "generating": "बना रहा है ...",
+      "feature": "टेक्स्ट से पाठ बनाने के लिए",
+      "generated": "{t} सिद्धांत चरण और {e} अभ्यास बनाए गए।",
+      "summary": "{t} सिद्धांत चरण, {e} अभ्यास तैयार।",
+      "paste_required": "पहले अपनी पाठ्यपुस्तक का एक अनुभाग पेस्ट करें।",
+      "theory_failed": "AI ने कोई उपयोगी सिद्धांत नहीं दिया। कृपया फिर से प्रयास करें।",
+      "exercises_failed": "कोई उपयोगी अभ्यास नहीं बना। कृपया फिर से प्रयास करें।",
+      "generate_failed": "पाठ नहीं बनाया जा सका। कृपया फिर से प्रयास करें।",
+      "generate_to_advance": "जारी रखने के लिए अपने टेक्स्ट से पाठ बनाएं।",
+      "review_theory": "{n} सिद्धांत चरण",
+      "review_exercises": "{n} अभ्यास",
+      "review_book": "पुस्तक: {title}"
+    },
     "title": "एक पाठ बनाएँ",
     "step_of": "चरण {current} / {total}",
+    "edit_title": "पाठ संपादित करें",
+    "edit_load_error": "इस पाठ को संपादन के लिए लोड नहीं किया जा सका।",
+    "edit_note": "आप एक मौजूदा पाठ संपादित कर रहे हैं। सहेजने पर यह अधिलेखित हो जाएगा; मूल रखने के लिए 'प्रतिलिपि के रूप में सहेजें' का उपयोग करें।",
     "step_pending": "यह चरण अगले अपडेट में आ रहा है।",
     "nav_label": "विज़ार्ड नेविगेशन",
     "cancel": "रद्द करें",
@@ -2739,7 +2811,23 @@
       "front_label": "आगे (सीखी गई)",
       "back_label": "पीछे (आपकी भाषा)",
       "notes_label": "नोट्स (वैकल्पिक)",
-      "image_label": "छवि संदर्भ (वैकल्पिक)",
+      "alt_answers_label": "अन्य स्वीकृत उत्तर (वैकल्पिक)",
+      "alt_answers_add": "जोड़ें",
+      "alt_answers_remove": "स्वीकृत उत्तर हटाएँ",
+      "alt_answers_placeholder": "एक और स्वीकृत उत्तर",
+      "alt_answers_hint": "अतिरिक्त उत्तर जो शिक्षार्थी मुक्त-पाठ अभ्यास में टाइप कर सकता है। पिछला भाग मुख्य उत्तर बना रहता है।",
+      "image_label": "छवि (वैकल्पिक)",
+      "image_upload": "चित्र अपलोड करें",
+      "image_remove": "हटाएं",
+      "image_preview_alt": "कार्ड छवि",
+      "image_path_toggle": "उन्नत: एसेट पथ का उपयोग करें",
+      "image_path_label": "एसेट पथ",
+      "image_path_hint": "सेट के assets/ फ़ोल्डर के अंदर एक पथ। केवल रिपॉज़िटरी में प्रकाशित सेट के लिए।",
+      "image_error": {
+        "unsupported_type": "केवल JPEG, PNG या WebP छवियाँ समर्थित हैं।",
+        "too_large": "यह छवि बहुत बड़ी है। कोई छोटी छवि आज़माएँ।",
+        "decode_failed": "यह छवि पढ़ी नहीं जा सकी। कोई अन्य फ़ाइल आज़माएँ।"
+      },
       "add": "कार्ड जोड़ें",
       "import_csv": "CSV आयात करें",
       "csv_hint": "पंक्तियों को front, back, notes के रूप में पेस्ट करें (अल्पविराम- या टैब-पृथक)। उदाहरण: Bonjour, Guten Tag, Formal greeting",
@@ -2806,6 +2894,11 @@
       "failed": "पाठ सहेजा नहीं जा सका।",
       "save_local": "स्थानीय रूप से सहेजें",
       "save_share": "सहेजें और साझा करें",
+      "save_changes": "परिवर्तन सहेजें",
+      "save_copy": "प्रतिलिपि के रूप में सहेजें",
+      "copy_suffix": "(प्रतिलिपि)",
+      "updated": "पाठ अपडेट किया गया!",
+      "copied": "प्रतिलिपि के रूप में सहेजा गया!",
       "play": "पाठ चलाएँ",
       "create_another": "एक और पाठ बनाएँ",
       "to_browser": "सामग्री ब्राउज़र पर जाएँ",
@@ -2813,6 +2906,10 @@
       "file_saved": "पाठ फ़ाइल के रूप में सहेजा गया।"
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "टेक्स्ट से ज्ञान पाठ",
+        "desc": "एक पाठ्यपुस्तक अनुभाग पेस्ट करें; AI सिद्धांत अपने शब्दों में लिखता है और अभ्यास बनाता है।"
+      },
       "heading": "टेम्पलेट से शुरू करें",
       "blank": {
         "title": "खाली पाठ",

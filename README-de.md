@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.3.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-6372%20grün-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v2.4.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-9708%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -300,13 +300,13 @@ cd ~/adaptive-learner
 
 ### 4. Entwickler-Setup (Source-Build)
 
-Manuelles Poetry-+-npm-Setup für Mitwirkende.
-Voraussetzungen: Python 3.11+, Node ≥24, Poetry, npm, Make.
+Manuelles Poetry-+-Bun-Setup für Mitwirkende.
+Voraussetzungen: Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
 
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + npm + alle 13 Plugins als Path-Deps
+make install   # Poetry + Bun + alle 13 Plugins als Path-Deps
 make dev       # Backend :18001 + Frontend :15174 (Vite-Dev-Server)
 ```
 
@@ -324,7 +324,7 @@ Vollständige Setup-Anleitung unter
 | KI-Anbieter | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
 | Testing | pytest ^9, Vitest 4 (happy-dom), Playwright (E2E-Smoke) |
-| Tooling | Poetry, npm, Docker, Make, ruff, pre-commit |
+| Tooling | Poetry, Bun, Docker, Make, ruff, pre-commit |
 
 ## Ausgelieferte Plugins
 
@@ -351,9 +351,9 @@ Vollständige Setup-Anleitung unter
 
 ```bash
 make dev               # Backend (18001) + Frontend (15174)
-make test              # Backend + Plugins + Vitest (6372 Tests)
+make test              # Backend + Plugins + Vitest (9708 Tests)
 make test-coverage     # Opt-In-Coverage (CI nachts)
-make sync-versions     # Version über 18 Dateien propagieren
+make sync-versions     # Version über 19 Dateien propagieren
 make sync-i18n         # Backend-YAML → Frontend-JSON-Bundles
 make docs-serve        # MkDocs-Preview auf :8000 mit Hot-Reload
 make prod / prod-down  # docker-compose-Stack
@@ -364,14 +364,14 @@ E2E-Smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
-Verifiziert am 2026-06-15 (v1.79.0):
+Verifiziert am 2026-07-17 (v2.3.0+):
 
 | Suite | Anzahl |
 |---|---|
-| Backend (pytest) | 1215 |
-| Plugins (13 × pytest) | 1018 |
-| Frontend (Vitest 4) | 4139 |
-| **Gesamt** | **6372** |
+| Backend (pytest) | 1415 |
+| Plugins (13 × pytest) | 1080 |
+| Frontend (Vitest 4) | 7213 |
+| **Gesamt** | **9708** |
 
 Plus 17 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
 Onboarding+Assessment, Sitzung (3-Chunk-SSE), Curriculum,

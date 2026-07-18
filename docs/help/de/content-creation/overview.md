@@ -25,6 +25,21 @@ Der **Lektions-Creator** unter `/create-lesson` ist ein
 
 Einstiegspunkte gibt es im Content Browser und im Dashboard.
 
+#### Wissens-Lektion aus Text (Buch-Modus)
+
+Die fünfte Vorlagen-Karte, **„Wissens-Lektion aus Text"**, startet
+einen eigenen 3-Schritt-Fluss (Metadaten → Buchtext → Überprüfen):
+Füge einen Abschnitt (z. B. ein Kapitel) deines Lehrbuchs ein — die
+KI formuliert ihn **in eigenen Worten** als Theorie-Schritte (nie als
+Kopie) und generiert dazu passende Übungen, die auf ihren
+Theorie-Schritt verweisen. Optional lassen sich Buchangaben (Titel,
+Autor, URL, ISBN/ASIN) hinterlegen. Weitere Abschnitte ergänzt du,
+indem du den Assistenten erneut durchläufst.
+
+Anders als der Karten-Weg braucht dieser Modus einen
+**konfigurierten KI-Schlüssel**. Füge nur Texte ein, an denen du die
+Rechte hast oder die für den persönlichen Gebrauch bestimmt sind.
+
 ### 2. Als Datei: das Content-Repo-Format
 
 Eine Lektion ist eine JSON-Datei in einem **Content-Set**. Sets

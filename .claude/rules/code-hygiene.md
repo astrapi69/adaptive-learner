@@ -76,8 +76,8 @@ cd backend && poetry run ruff format .        # format
 
 **Commands:**
 ```bash
-cd frontend && npx eslint src/ --fix    # lint + auto-fix
-cd frontend && npx prettier --write src/ # format
+cd frontend && bunx eslint src/ --fix    # lint + auto-fix
+cd frontend && bunx prettier --write src/ # format
 ```
 
 ### Setup (one-time)
@@ -87,7 +87,7 @@ cd frontend && npx prettier --write src/ # format
 cd backend && poetry add --group dev ruff
 
 # Frontend
-cd frontend && npm install -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-plugin-react-hooks prettier
+cd frontend && bun add -d eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-plugin-react-hooks prettier
 ```
 
 ---

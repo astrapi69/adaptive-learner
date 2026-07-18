@@ -77,11 +77,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install make (the Playwright noble image has none)
+      - name: Install make + unzip (the Playwright noble image has neither)
         # The gate is driven by `make release-test`; the image ships no make and
         # we run as root here, so apt-get it. Browsers are baked in — no
-        # Playwright download step follows.
-        run: apt-get update && apt-get install -y --no-install-recommends make
+        # Playwright download step follows. unzip is needed by
+        # oven-sh/setup-bun below, which unpacks the Bun zip (#1829).
+        run: apt-get update && apt-get install -y --no-install-recommends make unzip
 
       - uses: actions/setup-python@v6
         with:

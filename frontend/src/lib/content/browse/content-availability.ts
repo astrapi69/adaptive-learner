@@ -34,22 +34,29 @@
  */
 
 import { isOfficialSource } from "../repos/source-identity";
-import { USER_GENERATED_SOURCE } from "../../../storage/types/content/content";
 
 /**
  * Sources that can never be "removed" and so never orphan their progress:
- * the official/bundled content (ships offline) and locally user-generated
- * lessons ({@link USER_GENERATED_SOURCE}). Progress on these is always
- * available even when a transient ``listSets`` blip omits the exact row.
+ * the official/bundled content (ships offline). User-generated sets are NOT
+ * short-circuited (#1816): they appear in ``listSets`` with a
+ * ``cached_version`` in both storage modes when they actually exist, so the
+ * exact-hit path covers them and ghost rows get hidden.
  */
 function isAlwaysAvailableSource(source: string): boolean {
-  return isOfficialSource(source) || source === USER_GENERATED_SOURCE;
+  return isOfficialSource(source);
 }
 
-/** A loadable set, identified by its content ``source`` and set ``id``. */
+/** A loadable set, identified by its content ``source`` and set ``id``.
+ *
+ * ``cached_version`` (#1816) carries the download state when the caller
+ * passes full ``listSets`` entries: ``null`` = listed in the index but NOT
+ * downloaded (API mode lists every set of a registered repo), a string =
+ * cached locally. An absent field (plain key callers) counts as loadable.
+ */
 export interface SetKey {
   source: string;
   id: string;
+  cached_version?: string | null;
 }
 
 /** A progress-shaped row carrying its originating repo ``source``. */
@@ -93,6 +100,7 @@ export function buildContentAvailability(
   const pairs = new Set<string>();
   const ids = new Set<string>();
   for (const set of sets) {
+    if (set.cached_version === null) continue;
     pairs.add(pairKey(set.source, set.id));
     ids.add(set.id);
   }

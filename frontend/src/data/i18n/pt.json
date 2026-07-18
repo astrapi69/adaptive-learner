@@ -511,7 +511,7 @@
     "key_vault": {
       "title": "Chaves de IA — exportação criptografada",
       "intro": "Leve suas chaves de IA para outro dispositivo em um único arquivo criptografado, separado do backup normal (que nunca contém chaves).",
-      "api_disabled": "No modo servidor, suas chaves são gerenciadas pelo servidor, então não há nada para exportar aqui.",
+      "api_export_disabled": "No modo servidor, suas chaves não podem ser exportadas: são gerenciadas criptografadas no servidor. A importação de um arquivo de chaves continua possível.",
       "export_heading": "Exportar",
       "passphrase_hint": "Escolha uma frase-senha forte. Ela não pode ser recuperada — sem ela o arquivo não pode ser aberto.",
       "passphrase_label": "Frase-senha",
@@ -520,6 +520,11 @@
       "busy": "Processando…",
       "export_button": "Exportar arquivo criptografado",
       "import_heading": "Importar",
+      "import_hint": "Escolha o arquivo de chaves criptografado ou cole o conteúdo dele abaixo. Ambos funcionam.",
+      "import_file_label": "Arquivo de chaves criptografado",
+      "import_text_label": "…ou cole o conteúdo do arquivo de chaves",
+      "import_text_placeholder": "{ \"format\": \"adaptive-learner-keys\", … }",
+      "import_text_invalid": "Isto não parece um arquivo de chaves válido. Verifique se você colou todo o conteúdo.",
       "import_button": "Importar arquivo de chaves",
       "success_export": "Arquivo de chaves criptografado baixado.",
       "success_import": "Chaves importadas. Os recursos de IA estão prontos novamente.",
@@ -744,7 +749,8 @@
       "test_connection_ok": "Ligação OK",
       "test_key_invalid": "Chave inválida",
       "test_network_error": "Erro de rede",
-      "test_backend_only": "Só pode ser testado com o backend"
+      "test_backend_only": "Só pode ser testado com o backend",
+      "import_keys": "Importar"
     },
     "api_key_label": "Chave de API",
     "api_key_placeholder": "Cole aqui…",
@@ -1955,6 +1961,18 @@
         "empty": "Este exercício não tem imagens."
       },
       "free_text": {
+        "ai_verify": {
+          "button": "Pedir verificação da IA",
+          "checking": "Verificando…",
+          "verdict_yes": "A IA concorda: sua resposta está essencialmente correta.",
+          "verdict_partial": "A IA acha que sua resposta está apenas parcialmente correta.",
+          "verdict_no": "A IA confirma: esta resposta não está certa.",
+          "verdict_unknown": "A IA não conseguiu dar um veredito claro.",
+          "disclaimer": "Esta é apenas a opinião da IA - sua pontuação neste exercício não muda.",
+          "no_key": "Isto precisa da sua própria chave de IA (BYOK). Opcional - o app funciona bem sem ela.",
+          "open_settings": "Configurações de IA",
+          "error": "A solicitação à IA falhou. Tente novamente."
+        },
         "submit": "Verificar resposta",
         "retry": "Tentar de novo",
         "placeholder": "Escreve a tua resposta…",
@@ -2107,6 +2125,8 @@
         "weak_areas": "Áreas fracas"
       },
       "mark_complete": "Marcar como concluída",
+      "mark_complete_needs_profile": "Crie um perfil de aprendizagem para salvar seu progresso",
+      "mark_complete_failed": "Falha ao salvar a conclusão",
       "next_lesson": "Próxima lição",
       "repeat": "Repetir lição",
       "retry": "Praticar novamente",
@@ -2128,6 +2148,7 @@
     },
     "error": {
       "load_failed": "Não foi possível carregar a lição.",
+      "invalid_data": "Esta lição não pode ser aberta porque contém dados inválidos ou corrompidos. Entre em contato com o autor do conteúdo.",
       "missing_params": "Nenhuma lição selecionada. Escolhe uma no explorador de conteúdo."
     },
     "exit": {
@@ -2255,6 +2276,27 @@
       "copy_suffix": "cópia",
       "skipped": "{n} lição(ões) ignorada(s) porque falharam na validação."
     },
+    "combine": {
+      "title": "Combinar em um conjunto",
+      "start": "Combinar em um conjunto",
+      "cancel_select": "Cancelar seleção",
+      "selected_count": "{n} selecionadas",
+      "select_aria": "Selecionar {title}",
+      "summary": "{n} lições selecionadas serão agrupadas em um conjunto.",
+      "mixed_languages": "As lições selecionadas diferem em idioma ou nível. O novo conjunto usa o mais comum ({lang}, {level}).",
+      "target_legend": "Conjunto de destino",
+      "mode_new": "Novo conjunto",
+      "mode_existing": "Adicionar a um conjunto existente",
+      "new_title": "Título do conjunto",
+      "new_title_placeholder": "Meu conjunto combinado",
+      "new_description": "Descrição (opcional)",
+      "new_level": "Nível",
+      "existing_set": "Conjunto existente",
+      "keeps_originals": "As lições originais são mantidas; isto cria uma cópia agrupada.",
+      "confirm": "Combinar",
+      "success": "Lições combinadas em um conjunto.",
+      "failed": "Não foi possível combinar as lições."
+    },
     "my_lessons": {
       "export_set": "Exportar como conjunto",
       "share": "Compartilhar com a comunidade",
@@ -2274,6 +2316,8 @@
       "delete_failed": "Não foi possível excluir a lição."
     },
     "set_status": {
+      "delete_progress_option": "Excluir também meu progresso de aprendizagem e os cartões de revisão ({lessons} lições, {cards} cartões)",
+      "delete_progress_option_nocounts": "Excluir também meu progresso de aprendizagem e os cartões de revisão",
       "all": "Todos",
       "active": "Ativo",
       "deferred": "Adiado",
@@ -2710,8 +2754,36 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "rights_hint": "Cole apenas textos sobre os quais você tem direitos ou destinados a uso pessoal.",
+      "heading": "Criar uma lição a partir de texto",
+      "intro": "Cole uma seção (p. ex. um capítulo) do seu livro. A IA a reescreve com as próprias palavras como teoria e gera exercícios. Adicione outra seção executando o assistente novamente.",
+      "text_label": "Seção do livro",
+      "text_placeholder": "Cole o texto do capítulo aqui ...",
+      "meta_legend": "Referência do livro (opcional)",
+      "title_label": "Título do livro",
+      "author_label": "Autor",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "Gerar teoria + exercícios",
+      "generating": "Gerando ...",
+      "feature": "para criar uma lição a partir de texto",
+      "generated": "{t} passo(s) de teoria e {e} exercício(s) gerados.",
+      "summary": "{t} passo(s) de teoria, {e} exercício(s) prontos.",
+      "paste_required": "Cole primeiro uma seção do seu livro.",
+      "theory_failed": "A IA não retornou teoria utilizável. Tente novamente.",
+      "exercises_failed": "Nenhum exercício utilizável foi gerado. Tente novamente.",
+      "generate_failed": "Não foi possível gerar a lição. Tente novamente.",
+      "generate_to_advance": "Gere a lição a partir do seu texto para continuar.",
+      "review_theory": "{n} passo(s) de teoria",
+      "review_exercises": "{n} exercício(s)",
+      "review_book": "Livro: {title}"
+    },
     "title": "Criar uma lição",
     "step_of": "Passo {current} de {total}",
+    "edit_title": "Editar lição",
+    "edit_load_error": "Não foi possível carregar esta lição para edição.",
+    "edit_note": "Você está editando uma lição existente. Salvar substitui-a; use 'Salvar como cópia' para manter o original.",
     "step_pending": "Este passo chega na próxima atualização.",
     "nav_label": "Navegação do assistente",
     "cancel": "Cancelar",
@@ -2739,7 +2811,23 @@
       "front_label": "Frente (aprendido)",
       "back_label": "Verso (o seu idioma)",
       "notes_label": "Notas (opcional)",
-      "image_label": "Referência de imagem (opcional)",
+      "alt_answers_label": "Outras respostas aceitas (opcional)",
+      "alt_answers_add": "Adicionar",
+      "alt_answers_remove": "Remover resposta aceita",
+      "alt_answers_placeholder": "Outra resposta aceita",
+      "alt_answers_hint": "Respostas adicionais que o aluno pode digitar no exercício de texto livre. O verso continua sendo a resposta principal.",
+      "image_label": "Imagem (opcional)",
+      "image_upload": "Carregar imagem",
+      "image_remove": "Remover",
+      "image_preview_alt": "Imagem do cartão",
+      "image_path_toggle": "Avançado: usar um caminho de recurso",
+      "image_path_label": "Caminho do recurso",
+      "image_path_hint": "Um caminho dentro da pasta assets/ do conjunto. Apenas para conjuntos publicados num repositório.",
+      "image_error": {
+        "unsupported_type": "Apenas são suportadas imagens JPEG, PNG ou WebP.",
+        "too_large": "Essa imagem é demasiado grande. Tente uma mais pequena.",
+        "decode_failed": "Não foi possível ler essa imagem. Tente outro ficheiro."
+      },
       "add": "Adicionar cartão",
       "import_csv": "Importar CSV",
       "csv_hint": "Cole linhas como frente, verso, notas (separadas por vírgula ou tabulação). Exemplo: Bonjour, Guten Tag, Saudação formal",
@@ -2806,6 +2894,11 @@
       "failed": "Não foi possível guardar a lição.",
       "save_local": "Guardar localmente",
       "save_share": "Guardar e partilhar",
+      "save_changes": "Salvar alterações",
+      "save_copy": "Salvar como cópia",
+      "copy_suffix": "(cópia)",
+      "updated": "Lição atualizada!",
+      "copied": "Salva como cópia!",
       "play": "Reproduzir lição",
       "create_another": "Criar outra lição",
       "to_browser": "Para o navegador de conteúdo",
@@ -2813,6 +2906,10 @@
       "file_saved": "Lição guardada como ficheiro."
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "Lição de conhecimento a partir de texto",
+        "desc": "Cole uma seção de livro; a IA escreve a teoria com as próprias palavras e gera exercícios."
+      },
       "heading": "Começar a partir de um modelo",
       "blank": {
         "title": "Lição em branco",

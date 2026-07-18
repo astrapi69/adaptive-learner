@@ -202,6 +202,8 @@ export default function App() {
                 <Route path="/invite" element={<RedeemInvite />} />
                 <Route path="/learning-path" element={<LearningPath />} />
                 <Route path="/create-lesson" element={<CreateLesson />} />
+                {/* #1740 — edit an existing own lesson in the pre-filled wizard. */}
+                <Route path="/create-lesson/edit/:source/:setId" element={<CreateLesson />} />
                 <Route path="/lesson/:setSlug/:setId/:filename" element={<LessonPage />} />
                 <Route path="/review/:setId" element={<ReviewPage />} />
                 <Route path="/adaptive-lesson/:setId" element={<AdaptiveLessonPage />} />

@@ -13,7 +13,7 @@
  * client-side in Dexie mode.
  */
 
-import { Bot, FlaskConical, Gem, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
+import { Bot, Download, FlaskConical, Gem, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useEffect, useState, type ComponentType } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -167,6 +167,9 @@ interface ConfiguredProvidersTableProps {
   onDelete: (provider: AIProvider) => void;
   /** Live-test this provider's stored key. */
   onTest: (provider: AIProvider) => void;
+  /** Jump to the encrypted key IMPORT (Data tab) to load keys from a file
+   *  or pasted content. */
+  onImportKeys: () => void;
 }
 
 /** At-a-glance table of configured AI providers + their key status. */
@@ -179,15 +182,31 @@ export default function ConfiguredProvidersTable({
   onEdit,
   onDelete,
   onTest,
+  onImportKeys,
 }: ConfiguredProvidersTableProps) {
   const { t } = useI18n();
   const rows = AI_PROVIDERS.map((provider) => buildRow(provider, settings, mode));
 
   return (
     <section className="settings-section" data-testid="configured-providers">
-      <h2 className="settings-section-title">
-        {t("settings.providers.title", "Configured AI providers")}
-      </h2>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h2 className="settings-section-title">
+          {t("settings.providers.title", "Configured AI providers")}
+        </h2>
+        {/* #1765 — a direct jump to the encrypted key import (Data tab), so
+            a returning user can load keys from a file or pasted content
+            without hunting for the Data tab. */}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onImportKeys}
+          data-testid="configured-providers-import"
+        >
+          <Download className="h-4 w-4" aria-hidden="true" />
+          <span>{t("settings.providers.import_keys", "Import")}</span>
+        </Button>
+      </div>
       <p className="muted">
         {t(
           "settings.providers.hint",

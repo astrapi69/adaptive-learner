@@ -47,6 +47,7 @@ import {deriveFreeTextAttempt} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../../storage/types";
+import AiVerifyAnswer from "../feedback/AiVerifyAnswer";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import DiffHighlight from "../feedback/DiffHighlight";
 import DirectionInstruction from "../feedback/DirectionInstruction";
@@ -345,6 +346,8 @@ function FreeTextResult({
     input,
     accept,
     canonical,
+    prompt,
+    ttsLang,
     codeMode,
     controlled,
     canCheck,
@@ -359,6 +362,8 @@ function FreeTextResult({
     input: string;
     accept: readonly string[];
     canonical: string;
+    prompt: string;
+    ttsLang: string | null;
     codeMode: boolean;
     controlled: boolean;
     canCheck: boolean;
@@ -460,6 +465,14 @@ function FreeTextResult({
                                     </span>
                                 </div>
                             )}
+                            {/* #1798 — an informational AI second opinion on a
+                                wrong answer. It never changes the score. */}
+                            <AiVerifyAnswer
+                                prompt={prompt}
+                                userAnswer={input}
+                                accept={accept}
+                                targetLanguage={ttsLang}
+                            />
                         </div>
                     )}
                     <AnswerCelebration isCorrect={isCorrect} />
@@ -613,6 +626,8 @@ function FreeTextExercise(
                 input={input}
                 accept={accept}
                 canonical={canonical}
+                prompt={exercise.prompt ?? ""}
+                ttsLang={ttsLang}
                 codeMode={codeMode}
                 controlled={controlled}
                 canCheck={!isInputEmpty}

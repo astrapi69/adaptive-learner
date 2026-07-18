@@ -359,7 +359,7 @@ class TestContentManifest:
         m = ContentManifest(name="Adaptive Learner Content Pilot")
         # #1744: the manifest schema_version default is the ENGINE-generated
         # field default (1.6), decoupled from the lesson-format
-        # CURRENT_SCHEMA_VERSION (1.7 since the extension tier).
+        # CURRENT_SCHEMA_VERSION (1.8 since the engine 0.13.0 pin, #1830).
         assert m.schema_version == ContentManifest.model_fields["schema_version"].default
         assert m.sets == []
         assert m.metadata == {}

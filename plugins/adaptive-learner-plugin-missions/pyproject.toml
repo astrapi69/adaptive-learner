@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-missions"
-version = "2.3.0"
+version = "2.4.0"
 description = "Adaptive Learner: daily missions (EXP-010) - deterministic per-user/per-day goals evaluated against existing learning data."
 authors = ["Asterios Raptis"]
 license = "MIT"

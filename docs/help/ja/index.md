@@ -81,8 +81,9 @@ Adaptive Learner は、6 つの学習メソッドと 7 ステップの学習サ�
 
 ## 現在の状態
 
-**v1.47.0** — Phase 63（レッスンフロー制御）。レッスンの一時停止・中断・
-再開が可能になりました。詳細は
+最新バージョンとその変更点は
+[GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases)
+を参照してください。履歴の詳細は
 [CHANGELOG](https://github.com/astrapi69/adaptive-learner/blob/main/docs/CHANGELOG.md) を参照してください。
 
 [GitHub でフィードバックを送る](https://github.com/astrapi69/adaptive-learner/issues){ .md-button }

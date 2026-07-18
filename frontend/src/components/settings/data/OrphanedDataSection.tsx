@@ -25,7 +25,7 @@ import {
   type DeletionPlan,
 } from "../../../lib/content/browse/orphan-cleanup";
 import { readLearnerState } from "../../../lib/learning/learnerState";
-import { getStorage, resolveStorageMode } from "../../../storage";
+import { getStorage } from "../../../storage";
 import { notify } from "../../../utils/notify";
 
 export default function OrphanedDataSection() {
@@ -35,10 +35,6 @@ export default function OrphanedDataSection() {
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
-    if (resolveStorageMode() !== "dexie") {
-      setPlan(null);
-      return;
-    }
     const userId = readLearnerState().userId;
     if (!userId) {
       setPlan(null);

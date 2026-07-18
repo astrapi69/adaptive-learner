@@ -46,9 +46,30 @@ Bewertung — genau wie eine heruntergeladene Lektion.
 Jede eigene Lektion bietet:
 
 - **Spielen** — im Lektions-Viewer öffnen.
-- **Bearbeiten** — die zugrunde liegende Analyse erneut öffnen, um
-  anzupassen und neu zu speichern (für analyse-basierte Lektionen).
+- **Bearbeiten** — öffnet den **Lektions-Creator vorbefüllt** mit den
+  Metadaten, Karten und Übungen der Lektion. Beim Speichern wählst du:
+  **Änderungen speichern** (überschreibt dieselbe Lektion — dein
+  Lernfortschritt bleibt für unveränderte Karten erhalten, geänderte
+  starten neu) oder **Als Kopie speichern** (legt eine neue Lektion an,
+  das Original bleibt unangetastet). Analyse-basierte Lektionen öffnen
+  weiterhin die zugrunde liegende Chat-Analyse. Fremde
+  (heruntergeladene) Lektionen bleiben schreibgeschützt.
 - **Löschen** — entfernen (mit Bestätigung).
+
+---
+
+## Mehrere Lektionen zu einem Set kombinieren
+
+Über **„Zu einem Set kombinieren"** in „Meine Lektionen" wählst du
+mehrere eigene Lektionen per Häkchen aus und fasst sie zusammen —
+entweder in ein **neues Set** (Titel, optionale Beschreibung,
+Niveau) oder in ein **bestehendes eigenes Set**. Mischt die Auswahl
+Sprachen oder Niveaus, weist ein Hinweis darauf hin (das Set
+übernimmt die häufigste Kombination — nichts wird blockiert).
+Kollidierende Lektionsdateien bekommen automatisch ein
+Nummern-Suffix statt sich zu überschreiben. Das kombinierte Set ist
+ein normales eigenes Set und lässt sich wie gewohnt spielen,
+exportieren und teilen.
 
 ---
 

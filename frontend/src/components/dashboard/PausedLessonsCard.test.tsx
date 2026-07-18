@@ -223,8 +223,17 @@ describe("PausedLessonsCard", () => {
             set_id: `analysis-${uuid}`,
         };
         listMock.mockResolvedValue([row]);
-        // Uncached set + uncached lesson — the opaque-id guard must engage.
-        listSetsMock.mockResolvedValue({sets: []});
+        // The set exists (a ghost row would be hidden entirely, #1816) but
+        // the lesson title is uncached — the opaque-id guard must engage.
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {
+                    source: "user-generated",
+                    id: `analysis-${uuid}`,
+                    cached_version: "1.0.0",
+                },
+            ],
+        });
         getLessonMock.mockResolvedValue(null);
         render(
             <MemoryRouter>

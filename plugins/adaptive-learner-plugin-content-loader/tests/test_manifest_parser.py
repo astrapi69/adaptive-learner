@@ -21,16 +21,16 @@ from adaptive_learner_content_loader.models import (
 
 
 class TestSchemaVersion:
-    def test_current_is_1_7(self) -> None:
-        # #1744: aligned with the engine-canonical schema - the v2.2.0
-        # extension-tier cycle moved the engine to 1.7 while this
-        # app-side constant lagged at 1.6 (additive; major-match keeps
-        # every 1.x lesson loadable). Prior deliberate bump: #1525
-        # (1.5 -> 1.6, native multiple_choice).
-        assert CURRENT_SCHEMA_VERSION == "1.7"
+    def test_current_is_1_8(self) -> None:
+        # #1830: aligned with the engine-canonical schema - the #1774
+        # engine 0.13.0 pin moved the engine to 1.8 (uploaded picture_choice
+        # images) while this app-side constant lagged at 1.7 (additive;
+        # major-match keeps every 1.x lesson loadable). Prior deliberate
+        # bumps: #1744 (1.6 -> 1.7), #1525 (1.5 -> 1.6, native multiple_choice).
+        assert CURRENT_SCHEMA_VERSION == "1.8"
 
     def test_every_1x_minor_is_supported(self) -> None:
-        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.0.0", "1.3.2"]:
+        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.0.0", "1.3.2"]:
             assert is_supported_schema_version(v), v
 
     def test_other_majors_rejected(self) -> None:

@@ -27,13 +27,51 @@ finds them as a complete set.
 
 from __future__ import annotations
 
+import logging
 import os
 from pathlib import Path
 
 from platformdirs import user_cache_dir, user_config_dir, user_data_dir
 
+logger = logging.getLogger(__name__)
+
 PRODUCTION_MARKER_FILENAME = ".adaptive-learner-production"
 APP_NAME = "adaptive_learner"
+
+
+def _strip_snap_sandbox(resolved: Path) -> Path:
+    """Return the real-home equivalent of a snap-sandbox-rewritten path.
+
+    A snap-packaged terminal (e.g. VSCode installed as a snap) rewrites
+    the ``XDG_*`` env vars to ``<home>/snap/<name>/<revision>/...`` - a
+    PER-REVISION directory, so every snap refresh would silently strand
+    the whole data dir and boot a fresh empty one (#1814). When
+    ``resolved`` lies under such a prefix, the three sandbox components
+    (``snap/<name>/<revision>``) are dropped so the path lands in the
+    stable real home. Anything else - including a literal ``snap``
+    segment outside the home directory - passes through unchanged.
+
+    Applied ONLY to the platformdirs branch of the resolvers; an
+    explicit ``ADAPTIVE_LEARNER_*_DIR`` override is admin intent and is
+    honoured verbatim.
+    """
+    home = Path.home().resolve()
+    try:
+        relative = resolved.relative_to(home)
+    except ValueError:
+        return resolved
+    parts = relative.parts
+    if len(parts) < 4 or parts[0] != "snap":
+        return resolved
+    stable = home.joinpath(*parts[3:])
+    logger.warning(
+        "Ignoring snap-sandbox path %s (per-revision, stranded on every "
+        "snap refresh) - using %s instead. Set ADAPTIVE_LEARNER_DATA_DIR / "
+        "_CONFIG_DIR / _CACHE_DIR to override explicitly.",
+        resolved,
+        stable,
+    )
+    return stable
 
 
 def get_data_dir() -> Path:
@@ -48,7 +86,7 @@ def get_data_dir() -> Path:
     """
     if env_dir := os.environ.get("ADAPTIVE_LEARNER_DATA_DIR"):
         return Path(env_dir).expanduser().resolve()
-    return Path(user_data_dir(APP_NAME)).resolve()
+    return _strip_snap_sandbox(Path(user_data_dir(APP_NAME)).resolve())
 
 
 def get_config_dir() -> Path:
@@ -67,7 +105,7 @@ def get_config_dir() -> Path:
     """
     if env_dir := os.environ.get("ADAPTIVE_LEARNER_CONFIG_DIR"):
         return Path(env_dir).expanduser().resolve()
-    return Path(user_config_dir(APP_NAME)).resolve()
+    return _strip_snap_sandbox(Path(user_config_dir(APP_NAME)).resolve())
 
 
 def get_cache_dir() -> Path:
@@ -85,7 +123,7 @@ def get_cache_dir() -> Path:
     """
     if env_dir := os.environ.get("ADAPTIVE_LEARNER_CACHE_DIR"):
         return Path(env_dir).expanduser().resolve()
-    return Path(user_cache_dir(APP_NAME)).resolve()
+    return _strip_snap_sandbox(Path(user_cache_dir(APP_NAME)).resolve())
 
 
 def get_upload_dir() -> Path:

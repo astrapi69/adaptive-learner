@@ -228,4 +228,24 @@ test.describe("Session 2 — Learning flow", () => {
     await expect(nav.xpBadge.first()).toBeVisible();
     await expect(nav.xpTotal.first()).not.toHaveText("0 XP");
   });
+
+  test("anonymous visitor: mark-complete is disabled with a reason (#1787)", async ({
+    page,
+  }) => {
+    // NO seedLearner — lessons are fully reachable without a profile
+    // (e.g. via a per-set share link). Pre-#1787 the button rendered
+    // active and the click was a silent no-op (markCompleted no-ops
+    // without a userId). Policy #335: visible-but-disabled + reason.
+    const content = new ContentPage(page);
+    const lesson = new LessonRunner(page);
+    await content.goto();
+    await content.openBundledLesson();
+    await lesson.playToSummary();
+    await expect(
+      page.getByTestId("lesson-summary-mark-complete"),
+    ).toBeDisabled();
+    await expect(
+      page.getByTestId("lesson-summary-mark-complete-hint"),
+    ).toBeVisible();
+  });
 });

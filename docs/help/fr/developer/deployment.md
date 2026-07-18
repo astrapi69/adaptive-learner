@@ -21,7 +21,7 @@ make dev
 Le déploiement GitHub Pages est un build frontend statique sans backend.
 
 ```bash
-cd frontend && VITE_STORAGE_MODE=dexie npm run build
+cd frontend && VITE_STORAGE_MODE=dexie bun run build
 ```
 
 Le build résultant (`frontend/dist/`) peut être déployé sur n'importe

@@ -48,7 +48,25 @@ vi.mock("../../../lib/keys/key-vault-io", () => ({
 
 vi.mock("../../../lib/crypto/passphrase-vault", () => {
     class VaultDecryptError extends Error {}
-    return { VaultDecryptError };
+    // Mirror the real structural gate closely enough for the UI tests: a
+    // string that carries the envelope format marker is "valid".
+    const looksLikeVaultEnvelope = (raw: string) =>
+        raw.includes('"format"') && raw.includes("adaptive-learner-keys");
+    return { VaultDecryptError, looksLikeVaultEnvelope };
+});
+
+const emitSettingsRefreshMock = vi.fn();
+vi.mock("../../../lib/settings/settings-refresh-bus", () => ({
+    emitSettingsRefresh: () => emitSettingsRefreshMock(),
+}));
+
+/** A minimal well-formed envelope string for the paste path. */
+const VALID_ENVELOPE = JSON.stringify({
+    format: "adaptive-learner-keys",
+    version: 1,
+    kdf: { name: "PBKDF2", hash: "SHA-256", iterations: 250000, salt: "x" },
+    cipher: { name: "AES-GCM", iv: "y" },
+    ciphertext: "z",
 });
 
 beforeEach(() => {
@@ -61,21 +79,48 @@ beforeEach(() => {
     notifyErrorMock.mockReset();
     notifyWarningMock.mockReset();
     notifySuccessMock.mockReset();
+    emitSettingsRefreshMock.mockReset();
     // happy-dom lacks object-URL helpers used by the download path.
     globalThis.URL.createObjectURL = vi.fn(() => "blob:fake");
     globalThis.URL.revokeObjectURL = vi.fn();
 });
 
 describe("KeyVaultSection gating", () => {
-    it("API mode: shows the disabled notice, no export form", async () => {
+    it("API mode: shows the export notice, no export form, but the IMPORT form (#1812)", async () => {
         resolveStorageModeMock.mockReturnValue("api");
         render(<KeyVaultSection />);
         expect(
             await screen.findByTestId("key-vault-api-notice"),
         ).toBeInTheDocument();
         expect(screen.queryByTestId("key-vault-export")).not.toBeInTheDocument();
-        // Keys are never read in API mode.
+        // Import works in server mode (setApiKey is mode-agnostic) - the
+        // form must render, not be gated away with the export half.
+        expect(
+            screen.getByTestId("key-vault-import-button"),
+        ).toBeInTheDocument();
+        // Keys are never read in API mode (export gate only).
         expect(exportApiKeysMock).not.toHaveBeenCalled();
+    });
+
+    it("API mode: pasted envelope + passphrase runs the shared import (#1812)", async () => {
+        resolveStorageModeMock.mockReturnValue("api");
+        render(<KeyVaultSection />);
+        fireEvent.change(await screen.findByTestId("key-vault-import-text"), {
+            target: { value: VALID_ENVELOPE },
+        });
+        fireEvent.change(screen.getByTestId("key-vault-import-pass"), {
+            target: { value: "pass-1234" },
+        });
+        fireEvent.click(screen.getByTestId("key-vault-import-button"));
+        await waitFor(() =>
+            expect(importEncryptedKeyVaultMock).toHaveBeenCalledWith(
+                expect.anything(),
+                "u-1",
+                VALID_ENVELOPE,
+                "pass-1234",
+            ),
+        );
+        expect(notifyErrorMock).not.toHaveBeenCalled();
     });
 
     it("Dexie mode, no keys: export disabled + hint shown", async () => {
@@ -279,5 +324,110 @@ describe("KeyVaultSection passphrase validation is inline, not a toast (#1244)",
         );
         // A wrong passphrase is expected user input, not a defect.
         expect(notifyErrorMock).not.toHaveBeenCalled();
+    });
+});
+
+describe("KeyVaultSection paste-content import path (#1765)", () => {
+    async function renderReady() {
+        exportApiKeysMock.mockResolvedValue({ anthropic: "sk-ant-AAA" });
+        render(<KeyVaultSection />);
+        await screen.findByTestId("key-vault-import-text");
+    }
+
+    it("valid pasted envelope + passphrase enables Import; runs the same decrypt call", async () => {
+        await renderReady();
+        const importButton = screen.getByTestId("key-vault-import-button");
+        expect(importButton).toBeDisabled();
+
+        fireEvent.change(screen.getByTestId("key-vault-import-text"), {
+            target: { value: VALID_ENVELOPE },
+        });
+        // Passphrase still empty → disabled (passphrase always required).
+        expect(importButton).toBeDisabled();
+
+        fireEvent.change(screen.getByTestId("key-vault-import-pass"), {
+            target: { value: "pass-1234" },
+        });
+        expect(importButton).not.toBeDisabled();
+        expect(
+            screen.getByTestId("key-vault-import-text-error"),
+        ).toHaveTextContent("");
+
+        fireEvent.click(importButton);
+        await waitFor(() =>
+            expect(importEncryptedKeyVaultMock).toHaveBeenCalledTimes(1),
+        );
+        // The pasted text is passed to the SHARED decrypt/import function.
+        expect(importEncryptedKeyVaultMock).toHaveBeenCalledWith(
+            expect.anything(),
+            "u-1",
+            VALID_ENVELOPE,
+            "pass-1234",
+        );
+        expect(notifyErrorMock).not.toHaveBeenCalled();
+    });
+
+    it("invalid pasted JSON: inline aria-live error + Import stays disabled", async () => {
+        await renderReady();
+        fireEvent.change(screen.getByTestId("key-vault-import-pass"), {
+            target: { value: "pass-1234" },
+        });
+        fireEvent.change(screen.getByTestId("key-vault-import-text"), {
+            target: { value: "{ not a real envelope }" },
+        });
+
+        const error = screen.getByTestId("key-vault-import-text-error");
+        expect(error).toHaveTextContent(/valid key file/i);
+        expect(error).toHaveAttribute("aria-live", "polite");
+        expect(screen.getByTestId("key-vault-import-text")).toHaveAttribute(
+            "aria-invalid",
+            "true",
+        );
+        expect(screen.getByTestId("key-vault-import-button")).toBeDisabled();
+    });
+
+    it("passphrase field is usable regardless of input path (never disabled)", async () => {
+        await renderReady();
+        const pass = screen.getByTestId("key-vault-import-pass");
+        // No file and no text chosen yet — the passphrase is still editable.
+        expect(pass).not.toBeDisabled();
+        fireEvent.change(pass, { target: { value: "typed-freely" } });
+        expect((pass as HTMLInputElement).value).toBe("typed-freely");
+    });
+
+    it("refreshes the settings view after a successful import (#1765 Part 3)", async () => {
+        await renderReady();
+        fireEvent.change(screen.getByTestId("key-vault-import-text"), {
+            target: { value: VALID_ENVELOPE },
+        });
+        fireEvent.change(screen.getByTestId("key-vault-import-pass"), {
+            target: { value: "pass-1234" },
+        });
+        fireEvent.click(screen.getByTestId("key-vault-import-button"));
+
+        await waitFor(() =>
+            expect(emitSettingsRefreshMock).toHaveBeenCalledTimes(1),
+        );
+    });
+
+    it("file path still works and reaches the shared import (regression)", async () => {
+        await renderReady();
+        fireEvent.change(screen.getByTestId("key-vault-import-file"), {
+            target: { files: [new File([VALID_ENVELOPE], "keys.alk")] },
+        });
+        fireEvent.change(screen.getByTestId("key-vault-import-pass"), {
+            target: { value: "pass-1234" },
+        });
+        fireEvent.click(screen.getByTestId("key-vault-import-button"));
+
+        await waitFor(() =>
+            expect(importEncryptedKeyVaultMock).toHaveBeenCalledTimes(1),
+        );
+        expect(importEncryptedKeyVaultMock).toHaveBeenCalledWith(
+            expect.anything(),
+            "u-1",
+            VALID_ENVELOPE,
+            "pass-1234",
+        );
     });
 });
