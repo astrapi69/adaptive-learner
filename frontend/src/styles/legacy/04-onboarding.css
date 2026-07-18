@@ -53,6 +53,25 @@
   justify-content: space-between;
 }
 
+/* #1817 — pin every toggle-row checkbox to one fixed size. Two causes
+ * made sibling rows render checkboxes at different sizes:
+ *   1. the global `input {...}` base rule (01-base.css) bleeds
+ *      text-input styling onto checkboxes, incl. an @layer base
+ *      `padding: var(--space-2) var(--space-3)` that Firefox/Safari
+ *      apply to a native checkbox (inflating it) while Chrome ignores it;
+ *   2. a native checkbox is a flex item with the default flex-shrink: 1.
+ * This block wins over @layer base (layer order: base < legacy), so
+ * padding: 0 neutralises the inherited text-input padding, flex: none
+ * stops the shrink, and the 1rem square matches the design-system
+ * checkbox size. The wrapping label stays the >=44px touch target. */
+.form-row-toggle input[type="checkbox"] {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
 .form-label-stack {
   display: flex;
   flex-direction: column;
