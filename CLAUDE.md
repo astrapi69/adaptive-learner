@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.3.0** (**polish + consolidation release** on top of
+- **Current state:** **v2.4.0** (**polish + consolidation release** on top of
   the v2.2.0 feature release, NO schema/API/data-model change. Highlights: the
   **EXP-044 CSS concern-split completed** - `global.css` decomposed
   byte-identically into per-concern files under `styles/legacy/` (Peels 1-5

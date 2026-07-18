@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.3.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.4.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-9708%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -470,7 +470,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.3.0**, a polish
+Active development. The current release is **v2.4.0**, a polish
 release completing the **EXP-044 CSS concern-split** (`global.css`
 decomposed byte-identically into per-concern legacy files behind a
 byte-identity gate), reworking the **lesson-player UX** (collapsible

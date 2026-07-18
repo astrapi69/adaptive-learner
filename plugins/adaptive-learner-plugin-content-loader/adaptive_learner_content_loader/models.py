@@ -46,7 +46,14 @@ from .manifest_generated import (
     ContentSetBook,
 )
 
-CURRENT_SCHEMA_VERSION = "1.7"
+CURRENT_SCHEMA_VERSION = "1.8"
+# v1.7 → v1.8 (uploaded picture_choice images, engine 0.13.0 / #1774):
+#   - A ``picture_choice`` image reference accepts, besides the
+#     ``assets/`` relative path, an inline base64 data URI so an
+#     uploaded image can be carried in the lesson itself. Additive,
+#     engine-owned; the app is a schema consumer of the pinned engine.
+#   Still a MINOR bump — major-version match means v1.7 readers load
+#   v1.8 content (they ignore the new optional image format).
 # v1.4 → v1.5 (inline examples):
 #   - New optional ``InlineExample`` list ``examples`` on BOTH the
 #     theory step (``LessonStep``) and the ``Exercise``. An example
