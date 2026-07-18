@@ -37,8 +37,7 @@ import {
 import { configForMode } from "../../lib/learning/lessonModeConfig";
 import { maybeReverseLesson } from "../../lib/reverse/reverse-lesson";
 import LessonReverseNote from "../../components/lesson/chrome/LessonReverseNote";
-import LessonSummary from "../../components/lesson/summary/LessonSummary";
-import LessonResources from "../../components/lesson/steps/LessonResources";
+import LessonSummaryScreen from "../../components/lesson/summary/LessonSummaryScreen";
 import LessonHeader from "../../components/lesson/chrome/LessonHeader";
 import LessonOptionsBar from "../../components/lesson/chrome/LessonOptionsBar";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
@@ -49,33 +48,17 @@ import LessonStatusView, {
   resolveLessonStatusKind,
 } from "../../components/lesson/steps/LessonStatusView";
 import { useLessonAutoRead } from "../../hooks/lesson/audio/useLessonAutoRead";
-import type { ExerciseHandle } from "../../components/exercises";
-import {
-  isPlayableExerciseStep,
-  storedStepResult,
-} from "../../lib/lesson/lesson-step-state";
+import { isPlayableExerciseStep } from "../../lib/lesson/lesson-step-state";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useLesson } from "../../hooks/lesson/session/useLesson";
 import { useLessonFlowControl } from "../../hooks/lesson/session/useLessonFlowControl";
+import { useLessonMotivation } from "../../hooks/lesson/session/useLessonMotivation";
 import { useLessonNavigation } from "../../hooks/lesson/session/useLessonNavigation";
-import {
-  useLessonEnterKey,
-  type LessonEnterNav,
-} from "../../hooks/lesson/interaction/useLessonEnterKey";
-import { useLessonShortcuts } from "../../hooks/lesson/interaction/useLessonShortcuts";
+import { useLessonSetContext } from "../../hooks/lesson/session/useLessonSetContext";
+import { useLessonStepState } from "../../hooks/lesson/session/useLessonStepState";
 import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrientationReanchor";
-import {
-  captureCelebrationSnapshot,
-  celebrateProgressSince,
-} from "../../lib/feedback/celebration-stats";
-import { localTodayIso } from "../../lib/missions/schedule";
 import { clearHintUsage } from "../../lib/hints/hint-usage";
-import { lessonMotivation } from "../../lib/lesson/motivation";
-import { notify } from "../../utils/notify";
-import { celebrateMissions } from "../../lib/praise/celebration-bus";
 import { readLearnerState } from "../../lib/learning/learnerState";
-import { getStorage } from "../../storage";
-import type { ContentSetBook, RawAnswer } from "../../storage/types";
 
 interface UrlParams {
   setSlug: string;
@@ -87,7 +70,7 @@ interface UrlParams {
 export default function LessonPage() {
   const params = useParams<UrlParams>();
   const navigate = useNavigate();
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
 
   const source = useMemo(
     () => (params.setSlug ?? "").replace(/--/g, "/"),
@@ -174,57 +157,22 @@ export default function LessonPage() {
     clearHintUsage();
   }, [source, setId, filename]);
 
-  // BUG P1 / Problem 1 — two-phase "Prüfen" → "Weiter" button.
-  // The active exercise reports whether its answer is checkable
-  // (``answerable``) so the shared button can enable; the parent
-  // drives evaluation through ``exerciseRef`` on the "Prüfen"
-  // click; ``checked`` flips once the answer is graded so the
-  // next click advances. All three reset whenever the step
-  // changes (so a fresh exercise starts at "Prüfen" disabled).
-  const exerciseRef = useRef<ExerciseHandle>(null);
+  // The two-phase check state cluster (exercise handle, answerable /
+  // checked / reviewed flags, render-phase per-step reset, Enter
+  // shortcut) lives in the extracted hook (#1790).
+  const {
+    exerciseRef,
+    answerable,
+    setAnswerable,
+    checked,
+    setChecked,
+    enteredReviewed,
+    reviewedRaw,
+    enterStateRef,
+  } = useLessonStepState({lesson, currentStepIndex, progress});
   // #959 — scroll anchor placed just above the progress bar so a step
   // change can bring the task into view on mobile (see the effect below).
   const stepScrollRef = useRef<HTMLDivElement>(null);
-  const [answerable, setAnswerable] = useState(false);
-  const [checked, setChecked] = useState(false);
-  // Enter-key shortcut (#103). The listener is registered once and
-  // reads the latest step state through a ref (the state is computed
-  // after the loading guards, below). ``enterLockRef`` blocks a
-  // double Check between ``submit()`` and the ``checked`` flip.
-  const lessonShortcutsEnabled = useLessonShortcuts();
-  const enterStateRef = useRef<LessonEnterNav | null>(null);
-  const enterLockRef = useRef(false);
-  // BUG P1 / Problem 2 — when a step is ENTERED with a result
-  // already stored, it renders locked (reviewed) so the learner
-  // cannot re-answer it. ``reviewedRaw`` carries the persisted
-  // answer for an exact reconstruction; ``enteredReviewed`` with
-  // a null ``reviewedRaw`` is a pre-feature legacy row that gets
-  // the compact fallback panel instead.
-  const [enteredReviewed, setEnteredReviewed] = useState(false);
-  const [reviewedRaw, setReviewedRaw] = useState<RawAnswer | null>(null);
-  // Reset the per-step state the instant the step changes.
-  // A render-phase reset (the React "adjust state on prop
-  // change" pattern) runs BEFORE the freshly-mounted child's
-  // ``onInteraction`` effect, so an exercise that is answerable
-  // on mount is not clobbered back to disabled — unlike an
-  // effect, whose parent-after-child ordering would lose that
-  // first signal. ``progress`` updating mid-step (after a check)
-  // does NOT re-run this, so the just-graded step keeps its live
-  // feedback instead of flipping into the locked view.
-  // -1 sentinel so the FIRST render also computes the reviewed
-  // state (a step entered directly on a completed step, e.g. a
-  // resume / deep-link, renders locked — not just steps reached
-  // by in-session navigation).
-  const prevStepIndexRef = useRef(-1);
-  if (prevStepIndexRef.current !== currentStepIndex) {
-    prevStepIndexRef.current = currentStepIndex;
-    const stored = storedStepResult(lesson, currentStepIndex, progress);
-    setAnswerable(false);
-    setChecked(false);
-    setEnteredReviewed(stored != null);
-    setReviewedRaw(stored?.raw_answer ?? null);
-    enterLockRef.current = false;
-  }
 
   // #1009 — timed-mode orchestration (countdown length, timeout
   // auto-advance, correct-answer bonus, end-of-run timing stats). Inert
@@ -262,32 +210,8 @@ export default function LessonPage() {
     continuousAvailable,
   } = useLessonAutoRead({ lesson, currentStepIndex, showResumePrompt, goToStep });
 
-  // Mid-lesson motivation (#586): a subtle toast at the halfway step and
-  // on the last step. The ref guards against StrictMode double-effect +
-  // re-renders so each step fires at most once.
-  const motivationStepRef = useRef<number>(-1);
-  useEffect(() => {
-    if (!lesson) return;
-    const total = lesson.steps.length;
-    if (currentStepIndex >= total) return; // summary screen
-    if (motivationStepRef.current === currentStepIndex) return;
-    motivationStepRef.current = currentStepIndex;
-    const kind = lessonMotivation(currentStepIndex, total);
-    // Pass-through + short so the bottom-right motivation toast never
-    // blocks the sticky lesson footer's Check/Next buttons (#589 fix).
-    const motivationToast = {autoClose: 3000, passThrough: true} as const;
-    if (kind === "halftime") {
-      notify.info(
-        t("lesson.motivation.halftime", "Halfway there — keep going!"),
-        motivationToast,
-      );
-    } else if (kind === "last") {
-      notify.info(
-        t("lesson.motivation.last", "Last one — finish strong!"),
-        motivationToast,
-      );
-    }
-  }, [lesson, currentStepIndex, t]);
+  // Mid-lesson motivation toast (#586) lives in the extracted hook (#1790).
+  useLessonMotivation({lesson, currentStepIndex});
 
   // #959 — the lesson header (set line + title + description) eats too
   // much vertical space on EVERY viewport, so the progress bar + step
@@ -315,95 +239,10 @@ export default function LessonPage() {
   // footer outside the freshly-sized viewport.
   useOrientationReanchor(stepScrollRef, !showResumePrompt);
 
-  // Keyboard shortcut (#103): Enter drives the two-phase Check / Next
-  // button. The listener (shared with the Error-Replay runner via
-  // ``useLessonEnterKey``) reads the latest step state through
-  // ``enterStateRef`` (updated each render after the loading guards).
-  useLessonEnterKey({
-    enabled: lessonShortcutsEnabled,
-    exerciseRef,
-    enterStateRef,
-    enterLockRef,
-  });
-  // Phase 46A — fetch the set's lesson list so the summary
-  // screen's "Next lesson" button knows whether there's a
-  // successor + what filename to navigate to. One extra
-  // storage round-trip on mount; cached by both storages.
-  // ``null`` means "no next lesson" (last in set OR list not
-  // yet loaded). Failures degrade silently — the button just
-  // doesn't render.
-  const [nextLessonFilename, setNextLessonFilename] = useState<string | null>(
-    null,
-  );
-  useEffect(() => {
-    if (!source || !setId || !filename) {
-      setNextLessonFilename(null);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      try {
-        const list = await getStorage().contentLoader.listLessons(
-          source,
-          setId,
-        );
-        if (cancelled) return;
-        const idx = list.lessons.indexOf(filename);
-        if (idx >= 0 && idx < list.lessons.length - 1) {
-          setNextLessonFilename(list.lessons[idx + 1]);
-        } else {
-          setNextLessonFilename(null);
-        }
-      } catch {
-        if (!cancelled) setNextLessonFilename(null);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [source, setId, filename]);
-
-  // Phase 51 bugfix — resolve the set's display title so the
-  // header can show context above the lesson title
-  // ("Set: Français A1 — Beginner" → "Les articles"). Looks up
-  // via listSets + filter; degrades silently if the set isn't
-  // in the discovered list (header just omits the line).
-  const [setTitle, setSetTitle] = useState<string | null>(null);
-  // EXP-029 — the set's domain, used to surface domain-level media.yaml
-  // resources in the "Vertiefe das Thema" section. Falls back to the
-  // lesson's own domain when the set lookup misses.
-  const [setDomain, setSetDomain] = useState<string | null>(null);
-  // #769 — the set's manifest book, surfaced as the first "Vertiefe das
-  // Thema" media item.
-  const [setBook, setSetBook] = useState<ContentSetBook | null>(null);
-  useEffect(() => {
-    if (!setId) {
-      setSetTitle(null);
-      setSetDomain(null);
-      setSetBook(null);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      try {
-        const list = await getStorage().contentLoader.listSets();
-        if (cancelled) return;
-        const match = list.sets.find((s) => s.id === setId);
-        setSetTitle(match?.title ?? null);
-        setSetDomain(match?.domain ?? null);
-        setSetBook(match?.book ?? null);
-      } catch {
-        if (!cancelled) {
-          setSetTitle(null);
-          setSetDomain(null);
-          setSetBook(null);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [setId]);
+  // Next-lesson pointer + set title/domain/book (three silent-degrade
+  // mount reads) live in the extracted hook (#1790).
+  const {nextLessonFilename, setTitle, setDomain, setBook} =
+    useLessonSetContext({source, setId, filename});
 
   const statusKind = resolveLessonStatusKind(
     source,
@@ -537,8 +376,9 @@ export default function LessonPage() {
       <LessonModeProvider mode={lessonMode}>
       {isSummary ? (
         <>
-        <LessonSummary
+        <LessonSummaryScreen
           lesson={played}
+          originalLesson={lesson}
           progress={progress}
           lessonMode={lessonMode}
           timedStats={lessonMode === "timed" ? timed.stats : null}
@@ -549,82 +389,11 @@ export default function LessonPage() {
           source={source}
           setSlug={params.setSlug ?? ""}
           lessonFilename={filename}
-          onMarkComplete={async () => {
-            // Snapshot gamification before completion so
-            // any milestone / badge crossed by the award
-            // can be detected + celebrated afterwards.
-            const userId = learnerUserId ?? "";
-            const before = await captureCelebrationSnapshot(userId);
-            try {
-              await markCompleted();
-            } catch (err) {
-              // #1787 — a failed completion write was invisible on the
-              // summary (the hook's error state only renders for load
-              // failures). Surface it with the actual reason.
-              const detail =
-                err instanceof Error ? err.message : String(err);
-              notify.error(
-                `${t(
-                  "lesson.summary.mark_complete_failed",
-                  "Saving the completion failed",
-                )}: ${detail}`,
-              );
-              return;
-            }
-            await celebrateProgressSince(
-              userId,
-              before,
-              (badge) => ({
-                name: t(badge.name_key, badge.key),
-                description: t(badge.description_key, ""),
-              }),
-              (badge, newTier) => ({
-                name: t(badge.name_key, badge.key),
-                message: t(`gamification.tier.${newTier}`, newTier),
-              }),
-            );
-            // Refresh daily missions so any whose progress
-            // the just-completed lesson advanced flip to
-            // complete (+ award their bonus XP). Best-effort.
-            if (userId) {
-              try {
-                const r = await getStorage().missions.getDaily(userId, {
-                  todayIso: localTodayIso(lang),
-                });
-                const allComplete =
-                  r.missions.length > 0 && r.missions.every((m) => m.completed);
-                celebrateMissions({
-                  newlyCompletedCount: r.newlyCompleted.length,
-                  allComplete,
-                  lang,
-                });
-              } catch {
-                /* missions are supplementary */
-              }
-            }
-          }}
-          onNextLesson={() => {
-            if (nextLessonFilename) {
-              navigate(
-                `/lesson/${params.setSlug}/${setId}/${nextLessonFilename}`,
-              );
-            }
-          }}
-          onRepeat={() => {
-            // #983 — "Practice again": restart the row (clears step
-            // results + score, status -> in_progress) so the next
-            // completion is recorded as a fresh attempt and the
-            // improvement vs the prior run can be shown. attempts /
-            // best_score / attempt_history are preserved by the
-            // storage layer. Then jump back to the first step.
-            void markRestarted().then(() => goToStep(0));
-          }}
-          onExit={() => navigate("/content?tab=my")}
-        />
-        <LessonResources
-          lesson={lesson}
           setDomain={setDomain}
           setBook={setBook}
+          markCompleted={markCompleted}
+          markRestarted={markRestarted}
+          goToStep={goToStep}
         />
         </>
       ) : (
