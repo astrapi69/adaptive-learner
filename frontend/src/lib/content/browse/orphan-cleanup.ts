@@ -112,6 +112,44 @@ export function planRepoDataDeletion(
 }
 
 /**
+ * Plan the deletion of ONE set's learner data on set delete (#1819).
+ *
+ * Lessons are attributed by the exact ``(source, set_id)`` pair. Cards
+ * carry only a bare ``set_id``, so they are planned for deletion only
+ * when NO OTHER listed source still provides that set id - a shared id
+ * keeps its cards (same attribution rule as {@link planRepoDataDeletion}).
+ *
+ * @param source The set's content source (``owner/repo`` / bundled / user).
+ * @param setId The set being deleted.
+ * @param progress All of the user's ``lessonProgress`` rows.
+ * @param cards All of the user's ``elementErrors`` rows.
+ * @param currentSets The loadable-set list BEFORE the delete
+ *   (``listSets().sets``, still including the set being deleted).
+ */
+export function planSetDataDeletion(
+  source: string,
+  setId: string,
+  progress: readonly PlannableProgress[],
+  cards: readonly PlannableCard[],
+  currentSets: readonly SetKey[],
+): DeletionPlan {
+  const setProgress = progress.filter(
+    (row) => row.source === source && row.set_id === setId,
+  );
+  const providedElsewhere = currentSets.some(
+    (set) => set.id === setId && set.source !== source,
+  );
+  const orphanedSetIds = providedElsewhere ? [] : [setId];
+  return {
+    lessonProgressIds: setProgress.map((row) => row.id),
+    orphanedSetIds,
+    lessonCount: setProgress.length,
+    cardCount: distinctCardCount(cards, new Set(orphanedSetIds)),
+  };
+}
+
+
+/**
  * Plan the cleanup of ALL orphaned learner data — progress + cards whose
  * source is no longer connected (#1445 Part C).
  *

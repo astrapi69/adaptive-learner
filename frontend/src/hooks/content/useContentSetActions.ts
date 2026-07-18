@@ -24,6 +24,13 @@ import {
   dismissSets,
   undismissSet,
 } from "../../lib/content/browse/dismissed-sets";
+import {
+  isEmptyPlan,
+  planSetDataDeletion,
+  type DeletionPlan,
+} from "../../lib/content/browse/orphan-cleanup";
+import { purgeSetFromLessonCache } from "../../lib/content/cache/sw-lesson-cache";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
 import { useI18n } from "../ui/useI18n";
@@ -50,13 +57,82 @@ export function useContentSetActions({
   const [deleteTarget, setDeleteTarget] = useState<ContentSetEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
   // #1300 — downloaded-set delete-confirm modal target + status flow.
-  const [deleteSetTarget, setDeleteSetTarget] = useState<ContentSetEntry | null>(null);
+  const [deleteSetTarget, setDeleteSetTargetState] = useState<ContentSetEntry | null>(null);
   const [deletingSet, setDeletingSet] = useState(false);
+  // #1819 — the "what gets deleted" plan for the opt-in progress delete
+  // (null while counting / when no target; mirrors the repo-removal dialog).
+  const [deleteSetPlan, setDeleteSetPlan] = useState<DeletionPlan | null>(null);
   // #1351 — multi-select bulk delete-confirm targets + in-flight flag.
-  const [bulkDeleteTargets, setBulkDeleteTargets] = useState<ContentSetEntry[] | null>(null);
+  const [bulkDeleteTargets, setBulkDeleteTargetsState] = useState<ContentSetEntry[] | null>(null);
   const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [bulkDeletePlan, setBulkDeletePlan] = useState<DeletionPlan | null>(null);
 
   const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
+
+  /** Plan the learner-data deletion for one or more sets (#1819). Counts
+   *  come from live storage reads, never estimates; null on failure so the
+   *  dialog shows the checkbox without a number. */
+  const computeDeletionPlan = async (
+    entries: readonly ContentSetEntry[],
+  ): Promise<DeletionPlan | null> => {
+    const userId = readLearnerState().userId;
+    if (!userId) return null;
+    try {
+      const storage = getStorage();
+      const [progress, cards, setsRes] = await Promise.all([
+        storage.lessonProgress.list(userId),
+        storage.elementErrors.list(userId, { includeMastered: true }),
+        storage.contentLoader.listSets(),
+      ]);
+      const merged: DeletionPlan = {
+        lessonProgressIds: [],
+        orphanedSetIds: [],
+        lessonCount: 0,
+        cardCount: 0,
+      };
+      for (const entry of entries) {
+        const plan = planSetDataDeletion(
+          entry.source,
+          entry.id,
+          progress,
+          cards,
+          setsRes.sets,
+        );
+        merged.lessonProgressIds.push(...plan.lessonProgressIds);
+        merged.orphanedSetIds.push(...plan.orphanedSetIds);
+        merged.lessonCount += plan.lessonCount;
+        merged.cardCount += plan.cardCount;
+      }
+      return merged;
+    } catch {
+      return null;
+    }
+  };
+
+  const setDeleteSetTarget = (entry: ContentSetEntry | null) => {
+    setDeleteSetTargetState(entry);
+    setDeleteSetPlan(null);
+    if (entry) void computeDeletionPlan([entry]).then(setDeleteSetPlan);
+  };
+
+  const setBulkDeleteTargets = (entries: ContentSetEntry[] | null) => {
+    setBulkDeleteTargetsState(entries);
+    setBulkDeletePlan(null);
+    if (entries && entries.length > 0) {
+      void computeDeletionPlan(entries).then(setBulkDeletePlan);
+    }
+  };
+
+  /** Delete the planned learner data after the cache delete (#1819).
+   *  Opt-in only; an empty/unknown plan is a no-op. */
+  const deletePlannedLearnerData = async (plan: DeletionPlan | null) => {
+    const userId = readLearnerState().userId;
+    if (!userId || !plan || isEmptyPlan(plan)) return;
+    await getStorage().learningData.deleteLearningData(userId, {
+      lessonProgressIds: plan.lessonProgressIds,
+      setIds: plan.orphanedSetIds,
+    });
+  };
 
   // #1300 — move a downloaded set between lifecycle statuses. Optimistic:
   // the list updates immediately, then persists (Dexie row; API no-op).
@@ -78,12 +154,15 @@ export function useContentSetActions({
   };
 
   // #1300 — confirm-delete a downloaded set (purges the cached set + its
-  // lessons from IndexedDB; learning progress is not touched).
-  const handleConfirmDeleteSet = async () => {
+  // lessons from the local cache AND the SW lesson cache; learning progress
+  // is deleted only via the opt-in checkbox, #1819).
+  const handleConfirmDeleteSet = async (deleteProgress = false) => {
     if (!deleteSetTarget) return;
     setDeletingSet(true);
     try {
       await getStorage().contentLoader.deleteSet(deleteSetTarget.source, deleteSetTarget.id);
+      await purgeSetFromLessonCache(deleteSetTarget.source, deleteSetTarget.id);
+      if (deleteProgress) await deletePlannedLearnerData(deleteSetPlan);
       // #1709 — remember the explicit deletion so a Refresh (which re-reads
       // the source catalogue) does not restore the set into "Meine Inhalte".
       dismissSet(deleteSetTarget.source, deleteSetTarget.id);
@@ -136,8 +215,9 @@ export function useContentSetActions({
   };
 
   // #1351 — confirm-delete the selected sets. One batched Dexie transaction
-  // (set rows + lessons); learning progress is untouched.
-  const handleConfirmBulkDelete = async () => {
+  // (set rows + lessons) + SW-cache purge; learning progress is deleted only
+  // via the opt-in checkbox (#1819).
+  const handleConfirmBulkDelete = async (deleteProgress = false) => {
     const targets = bulkDeleteTargets;
     if (!targets || targets.length === 0) return;
     setBulkDeleting(true);
@@ -146,6 +226,10 @@ export function useContentSetActions({
       await getStorage().contentLoader.deleteSets(
         targets.map((e) => ({ source: e.source, setId: e.id })),
       );
+      for (const entry of targets) {
+        await purgeSetFromLessonCache(entry.source, entry.id);
+      }
+      if (deleteProgress) await deletePlannedLearnerData(bulkDeletePlan);
       // #1709 — remember the explicit deletions so a Refresh (which re-reads
       // the source catalogue) does not restore the sets into "Meine Inhalte".
       dismissSets(targets.map((e) => ({ source: e.source, setId: e.id })));
@@ -226,6 +310,7 @@ export function useContentSetActions({
     setDeleting(true);
     try {
       await getStorage().contentLoader.deleteSet(deleteTarget.source, deleteTarget.id);
+      await purgeSetFromLessonCache(deleteTarget.source, deleteTarget.id);
       setSets((prev) =>
         prev.filter((row) => !(row.source === deleteTarget.source && row.id === deleteTarget.id)),
       );
@@ -321,6 +406,8 @@ export function useContentSetActions({
     deleteSetTarget,
     setDeleteSetTarget,
     deletingSet,
+    deleteSetPlan,
+    bulkDeletePlan,
     handleSetStatus,
     handleConfirmDeleteSet,
     // #1351 — bulk multi-select actions.

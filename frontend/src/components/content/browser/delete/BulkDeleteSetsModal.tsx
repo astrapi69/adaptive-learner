@@ -8,31 +8,39 @@
  * again anytime.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { useI18n } from "../../../hooks/ui/useI18n";
+import { useI18n } from "../../../../hooks/ui/useI18n";
+import DeleteProgressOption from "./DeleteProgressOption";
+import type { DeletionPlan } from "../../../../lib/content/browse/orphan-cleanup";
 
 export interface BulkDeleteSetsModalProps {
   /** How many sets will be deleted, or 0/null when the dialog is closed. */
   count: number;
   deleting: boolean;
+  /** Aggregated opt-in deletion counts across the selected sets (#1819). */
+  plan?: DeletionPlan | null;
   onCancel: () => void;
-  onConfirm: () => void;
+  /** Confirm the delete; ``deleteProgress`` carries the opt-in choice. */
+  onConfirm: (deleteProgress: boolean) => void;
 }
 
 export default function BulkDeleteSetsModal({
   count,
   deleting,
+  plan = null,
   onCancel,
   onConfirm,
 }: BulkDeleteSetsModalProps) {
   const { t } = useI18n();
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const [deleteProgress, setDeleteProgress] = useState(false);
 
   useEffect(() => {
     if (count === 0) return;
+    setDeleteProgress(false);
     confirmRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCancel();
@@ -62,6 +70,13 @@ export default function BulkDeleteSetsModal({
             "The selected sets and their lessons will be removed from My Content. Your learning progress is kept, and you can download the sets again anytime.",
           )}
         </p>
+        <DeleteProgressOption
+          plan={plan}
+          checked={deleteProgress}
+          disabled={deleting}
+          onChange={setDeleteProgress}
+          testId="bulk-delete-sets-progress-option"
+        />
         <div className="form-actions">
           <Button
             type="button"
@@ -76,7 +91,7 @@ export default function BulkDeleteSetsModal({
             ref={confirmRef}
             type="button"
             variant="destructive"
-            onClick={onConfirm}
+            onClick={() => onConfirm(deleteProgress)}
             disabled={deleting}
             data-testid="bulk-delete-sets-confirm"
           >

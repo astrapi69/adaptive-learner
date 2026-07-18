@@ -2128,6 +2128,8 @@ content:
     deleted: "Ders silindi."
     delete_failed: "Ders silinemedi."
   set_status:
+    delete_progress_option: "Öğrenme ilerlememi ve tekrar kartlarını da sil ({lessons} ders, {cards} kart)"
+    delete_progress_option_nocounts: "Öğrenme ilerlememi ve tekrar kartlarını da sil"
     all: "Tümü"
     active: "Etkin"
     deferred: "Ertelendi"
