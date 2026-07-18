@@ -86,15 +86,41 @@ beforeEach(() => {
 });
 
 describe("KeyVaultSection gating", () => {
-    it("API mode: shows the disabled notice, no export form", async () => {
+    it("API mode: shows the export notice, no export form, but the IMPORT form (#1812)", async () => {
         resolveStorageModeMock.mockReturnValue("api");
         render(<KeyVaultSection />);
         expect(
             await screen.findByTestId("key-vault-api-notice"),
         ).toBeInTheDocument();
         expect(screen.queryByTestId("key-vault-export")).not.toBeInTheDocument();
-        // Keys are never read in API mode.
+        // Import works in server mode (setApiKey is mode-agnostic) - the
+        // form must render, not be gated away with the export half.
+        expect(
+            screen.getByTestId("key-vault-import-button"),
+        ).toBeInTheDocument();
+        // Keys are never read in API mode (export gate only).
         expect(exportApiKeysMock).not.toHaveBeenCalled();
+    });
+
+    it("API mode: pasted envelope + passphrase runs the shared import (#1812)", async () => {
+        resolveStorageModeMock.mockReturnValue("api");
+        render(<KeyVaultSection />);
+        fireEvent.change(await screen.findByTestId("key-vault-import-text"), {
+            target: { value: VALID_ENVELOPE },
+        });
+        fireEvent.change(screen.getByTestId("key-vault-import-pass"), {
+            target: { value: "pass-1234" },
+        });
+        fireEvent.click(screen.getByTestId("key-vault-import-button"));
+        await waitFor(() =>
+            expect(importEncryptedKeyVaultMock).toHaveBeenCalledWith(
+                expect.anything(),
+                "u-1",
+                VALID_ENVELOPE,
+                "pass-1234",
+            ),
+        );
+        expect(notifyErrorMock).not.toHaveBeenCalled();
     });
 
     it("Dexie mode, no keys: export disabled + hint shown", async () => {

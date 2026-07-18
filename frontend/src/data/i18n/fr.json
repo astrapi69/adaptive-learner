@@ -511,7 +511,7 @@
     "key_vault": {
       "title": "Clés d'IA — export chiffré",
       "intro": "Transfère tes clés d'IA vers un autre appareil dans un seul fichier chiffré, séparé de la sauvegarde normale (qui ne contient jamais de clés).",
-      "api_disabled": "En mode serveur, tes clés sont gérées par le serveur ; il n'y a donc rien à exporter ici.",
+      "api_export_disabled": "En mode serveur, tes clés ne peuvent pas être exportées : elles sont gérées chiffrées côté serveur. L'import d'un fichier de clés reste possible.",
       "export_heading": "Exporter",
       "passphrase_hint": "Choisis une phrase secrète forte. Elle ne peut pas être récupérée : sans elle, le fichier ne peut pas être ouvert.",
       "passphrase_label": "Phrase secrète",

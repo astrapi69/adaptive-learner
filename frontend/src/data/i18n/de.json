@@ -511,7 +511,7 @@
     "key_vault": {
       "title": "KI-Schlüssel — verschlüsselter Export",
       "intro": "Übertrage deine KI-Schlüssel in einer verschlüsselten Datei auf ein anderes Gerät — getrennt vom normalen Backup (das nie Schlüssel enthält).",
-      "api_disabled": "Im Server-Modus werden deine Schlüssel serverseitig verwaltet, daher gibt es hier nichts zu exportieren.",
+      "api_export_disabled": "Im Server-Modus können deine Schlüssel nicht exportiert werden - sie werden serverseitig verschlüsselt verwaltet. Der Import einer Schlüsseldatei ist weiterhin möglich.",
       "export_heading": "Exportieren",
       "passphrase_hint": "Wähle eine starke Passphrase. Sie kann nicht wiederhergestellt werden — ohne sie lässt sich die Datei nicht öffnen.",
       "passphrase_label": "Passphrase",

@@ -511,7 +511,7 @@
     "key_vault": {
       "title": "Claves de IA — exportación cifrada",
       "intro": "Lleva tus claves de IA a otro dispositivo en un único archivo cifrado, separado de la copia de seguridad normal (que nunca contiene claves).",
-      "api_disabled": "En modo servidor tus claves las gestiona el servidor, así que aquí no hay nada que exportar.",
+      "api_export_disabled": "En modo servidor tus claves no se pueden exportar: las gestiona el servidor de forma cifrada. La importación de un archivo de claves sigue siendo posible.",
       "export_heading": "Exportar",
       "passphrase_hint": "Elige una frase de contraseña fuerte. No se puede recuperar: sin ella no se puede abrir el archivo.",
       "passphrase_label": "Frase de contraseña",

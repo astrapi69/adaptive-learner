@@ -511,7 +511,7 @@
     "key_vault": {
       "title": "Yapay zekâ anahtarları — şifreli dışa aktarma",
       "intro": "Yapay zekâ anahtarlarınızı tek bir şifreli dosyada başka bir cihaza taşıyın; normal yedekten (anahtar içermez) ayrıdır.",
-      "api_disabled": "Sunucu modunda anahtarlarınız sunucu tarafından yönetilir, bu yüzden burada dışa aktarılacak bir şey yok.",
+      "api_export_disabled": "Sunucu modunda anahtarlarınız dışa aktarılamaz; sunucu tarafında şifreli olarak yönetilir. Anahtar dosyasını içe aktarmak yine de mümkündür.",
       "export_heading": "Dışa aktar",
       "passphrase_hint": "Güçlü bir parola ifadesi seçin. Kurtarılamaz — onsuz dosya açılamaz.",
       "passphrase_label": "Parola ifadesi",

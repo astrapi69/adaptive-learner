@@ -511,7 +511,7 @@
     "key_vault": {
       "title": "Kunci AI — ekspor terenkripsi",
       "intro": "Pindahkan kunci AI Anda ke perangkat lain dalam satu berkas terenkripsi, terpisah dari cadangan biasa (yang tidak pernah berisi kunci).",
-      "api_disabled": "Dalam mode server, kunci Anda dikelola oleh server, jadi tidak ada yang bisa diekspor di sini.",
+      "api_export_disabled": "Dalam mode server, kunci Anda tidak dapat diekspor - kunci dikelola terenkripsi di server. Impor berkas kunci tetap dapat dilakukan.",
       "export_heading": "Ekspor",
       "passphrase_hint": "Pilih frasa sandi yang kuat. Frasa ini tidak dapat dipulihkan — tanpanya berkas tidak dapat dibuka.",
       "passphrase_label": "Frasa sandi",
