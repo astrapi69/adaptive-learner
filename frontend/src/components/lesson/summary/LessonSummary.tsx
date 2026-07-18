@@ -27,6 +27,7 @@ import { CheckCircle2, ChevronRight, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import FormHint from "../../../shared/forms/FormHint";
 import {CorrectionBlock} from "../../exercises";
 import LessonAnswersDetail from "./LessonAnswersDetail";
 import NextStepSuggestions from "./NextStepSuggestions";
@@ -634,8 +635,22 @@ export default function LessonSummary({
           become a dead end (#1426, "Weitermachen-Aktionen bleiben fix"). */}
       {!isCompleted && (
         <div className="lesson-summary-actions">
+          {/* #1787 — an anonymous run (no learner profile) has nowhere to
+              persist a completion (``useLesson.markCompleted`` no-ops
+              without a user), so the button is disabled with a visible
+              reason instead of dying silently (feature-state policy
+              #335: visible-but-disabled, never a dead control). */}
           <Button
             type="button"
+            disabled={!userId}
+            title={
+              !userId
+                ? t(
+                    "lesson.summary.mark_complete_needs_profile",
+                    "Create a learner profile to save your progress",
+                  )
+                : undefined
+            }
             onClick={() => {
               void onMarkComplete();
             }}
@@ -643,6 +658,14 @@ export default function LessonSummary({
           >
             {t("lesson.summary.mark_complete", "Mark as complete")}
           </Button>
+          {!userId && (
+            <FormHint data-testid="lesson-summary-mark-complete-hint">
+              {t(
+                "lesson.summary.mark_complete_needs_profile",
+                "Create a learner profile to save your progress",
+              )}
+            </FormHint>
+          )}
         </div>
       )}
 

@@ -1948,6 +1948,8 @@ lesson:
       no_answer: "(nenhuma)"
       weak_areas: "Áreas fracas"
     mark_complete: "Marcar como concluída"
+    mark_complete_needs_profile: "Crie um perfil de aprendizagem para salvar seu progresso"
+    mark_complete_failed: "Falha ao salvar a conclusão"
     next_lesson: "Próxima lição"
     repeat: "Repetir lição"
     retry: "Praticar novamente"

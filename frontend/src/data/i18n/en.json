@@ -2072,6 +2072,8 @@
         "weak_areas": "Weak areas"
       },
       "mark_complete": "Mark as complete",
+      "mark_complete_needs_profile": "Create a learner profile to save your progress",
+      "mark_complete_failed": "Saving the completion failed",
       "next_lesson": "Next lesson",
       "repeat": "Repeat lesson",
       "retry": "Practice again",
