@@ -2148,6 +2148,7 @@
     },
     "error": {
       "load_failed": "No se pudo cargar la lección.",
+      "invalid_data": "Esta lección no se puede abrir porque contiene datos no válidos o dañados. Ponte en contacto con el autor del contenido.",
       "missing_params": "Ninguna lección seleccionada. Elige una en el explorador de contenido."
     },
     "exit": {
