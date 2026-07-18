@@ -49,6 +49,10 @@ class LessonProgressRepository(Repository):
     def refresh(self, row: LessonProgress) -> None:
         """Refresh the row from the database after commit."""
 
+    @abstractmethod
+    def delete_by_ids(self, user_id: str, row_ids: list[str]) -> int:
+        """Delete the user's rows with the given ids; return the count (#1821)."""
+
 
 class SqlAlchemyLessonProgressRepository(LessonProgressRepository):
     """SQLAlchemy-backed :class:`LessonProgressRepository`."""
@@ -99,6 +103,24 @@ class SqlAlchemyLessonProgressRepository(LessonProgressRepository):
     def refresh(self, row: LessonProgress) -> None:
         """Refresh the row from the database after commit."""
         self._db.refresh(row)
+
+    def delete_by_ids(self, user_id: str, row_ids: list[str]) -> int:
+        """Delete the user's rows with the given ids; return the count (#1821).
+
+        User-scoped by construction: a foreign user's row id never
+        matches, so the call cannot cross user boundaries.
+        """
+        if not row_ids:
+            return 0
+        deleted = (
+            self._db.query(LessonProgress)
+            .filter(
+                LessonProgress.user_id == user_id,
+                LessonProgress.id.in_(row_ids),
+            )
+            .delete(synchronize_session=False)
+        )
+        return int(deleted)
 
 
 __all__ = ["LessonProgressRepository", "SqlAlchemyLessonProgressRepository"]

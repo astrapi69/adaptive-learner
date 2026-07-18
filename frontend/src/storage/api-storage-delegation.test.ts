@@ -235,6 +235,14 @@ describe("ApiStorage — exhaustive delegation", () => {
       [() => apiStorage.elementErrors.reviewQueue("u1", {} as never), "elementErrors.reviewQueue"],
       [() => apiStorage.missions.getDaily("u1", {} as never), "missions.getDaily"],
       [() => apiStorage.missions.regenerate("u1", {} as never), "missions.regenerate"],
+      [
+        () =>
+          apiStorage.learningData.deleteLearningData("u1", {
+            lessonProgressIds: ["lp-1"],
+            setIds: ["set-1"],
+          }),
+        "learningData.delete",
+      ],
     ]);
   });
 
