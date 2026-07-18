@@ -21,9 +21,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const useLessonMock = vi.fn();
 const listLessonsMock = vi.fn();
+const notifyErrorMock = vi.fn();
 
 vi.mock("../../hooks/lesson/session/useLesson", () => ({
   useLesson: () => useLessonMock(),
+}));
+
+// #1787 — the summary mark-complete failure path must toast; capture it.
+vi.mock("../../utils/notify", () => ({
+  notify: {
+    error: (...args: unknown[]) => notifyErrorMock(...args),
+    success: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+  },
 }));
 
 // Phase 46A — LessonPage now fetches the set's lesson list
@@ -769,6 +780,9 @@ describe("LessonPage: ready state rendering", () => {
   });
 
   it("summary mark-complete calls markCompleted", async () => {
+    // #1787 — the button is disabled for an anonymous run, so the click
+    // test needs a learner in localStorage (read at mount).
+    localStorage.setItem("adaptive-learner.user_id", "user-1");
     const markCompleted = vi.fn().mockResolvedValue(undefined);
     useLessonMock.mockReturnValue({
       status: "ready",
@@ -791,6 +805,40 @@ describe("LessonPage: ready state rendering", () => {
     await waitFor(() => {
       expect(markCompleted).toHaveBeenCalled();
     });
+  });
+
+  it("summary mark-complete failure surfaces a toast (#1787)", async () => {
+    localStorage.setItem("adaptive-learner.user_id", "user-1");
+    notifyErrorMock.mockReset();
+    const markCompleted = vi
+      .fn()
+      .mockRejectedValue(new Error("IndexedDB write failed"));
+    useLessonMock.mockReturnValue({
+      status: "ready",
+      lesson: LESSON,
+      progress: PROGRESS,
+      currentStepIndex: 2,
+      error: null,
+      goNext: vi.fn(),
+      goPrev: vi.fn(),
+      goToStep: vi.fn(),
+      goToStepById: vi.fn(),
+      recordStepResult: vi.fn(),
+      markCompleted,
+      refresh: vi.fn(),
+    });
+    renderAtPath(VALID_PATH);
+    act(() => {
+      fireEvent.click(screen.getByTestId("lesson-summary-mark-complete"));
+    });
+    await waitFor(() => {
+      expect(markCompleted).toHaveBeenCalled();
+      expect(notifyErrorMock).toHaveBeenCalledTimes(1);
+    });
+    // Specific, actionable message — never a bare generic (#1787).
+    expect(String(notifyErrorMock.mock.calls[0][0])).toMatch(
+      /IndexedDB write failed/,
+    );
   });
 });
 

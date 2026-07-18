@@ -1906,6 +1906,8 @@ lesson:
       no_answer: (कोई नहीं)
       weak_areas: कमज़ोर क्षेत्र
     mark_complete: पूर्ण के रूप में चिह्नित करें
+    mark_complete_needs_profile: "अपनी प्रगति सहेजने के लिए एक लर्निंग प्रोफ़ाइल बनाएँ"
+    mark_complete_failed: "पूर्णता सहेजने में विफल"
     next_lesson: अगला पाठ
     repeat: पाठ दोहराएँ
     retry: "फिर से अभ्यास करें"

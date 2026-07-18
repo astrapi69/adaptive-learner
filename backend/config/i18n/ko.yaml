@@ -1921,6 +1921,8 @@ lesson:
       no_answer: "(없음)"
       weak_areas: "약한 영역"
     mark_complete: "완료로 표시"
+    mark_complete_needs_profile: "진행 상황을 저장하려면 학습 프로필을 만드세요"
+    mark_complete_failed: "완료 저장에 실패했습니다"
     next_lesson: "다음 레슨"
     repeat: "레슨 반복"
     retry: "다시 연습하기"

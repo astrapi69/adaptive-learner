@@ -555,7 +555,22 @@ export default function LessonPage() {
             // can be detected + celebrated afterwards.
             const userId = learnerUserId ?? "";
             const before = await captureCelebrationSnapshot(userId);
-            await markCompleted();
+            try {
+              await markCompleted();
+            } catch (err) {
+              // #1787 — a failed completion write was invisible on the
+              // summary (the hook's error state only renders for load
+              // failures). Surface it with the actual reason.
+              const detail =
+                err instanceof Error ? err.message : String(err);
+              notify.error(
+                `${t(
+                  "lesson.summary.mark_complete_failed",
+                  "Saving the completion failed",
+                )}: ${detail}`,
+              );
+              return;
+            }
             await celebrateProgressSince(
               userId,
               before,
