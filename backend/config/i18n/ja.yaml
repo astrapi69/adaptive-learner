@@ -1948,6 +1948,8 @@ lesson:
       no_answer: "(なし)"
       weak_areas: "弱点"
     mark_complete: "完了としてマーク"
+    mark_complete_needs_profile: "進捗を保存するには学習プロファイルを作成してください"
+    mark_complete_failed: "完了の保存に失敗しました"
     next_lesson: "次のレッスン"
     repeat: "レッスンを繰り返す"
     retry: "もう一度練習"

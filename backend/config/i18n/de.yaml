@@ -1953,6 +1953,8 @@ lesson:
       no_answer: "(keine)"
       weak_areas: "Schwache Bereiche"
     mark_complete: "Als abgeschlossen markieren"
+    mark_complete_needs_profile: "Lege ein Lernprofil an, um deinen Fortschritt zu speichern"
+    mark_complete_failed: "Abschluss konnte nicht gespeichert werden"
     next_lesson: "Nächste Lektion"
     repeat: "Lektion wiederholen"
     retry: "Erneut üben"

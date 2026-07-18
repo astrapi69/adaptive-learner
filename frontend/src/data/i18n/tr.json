@@ -2113,6 +2113,8 @@
         "weak_areas": "Zayıf alanlar"
       },
       "mark_complete": "Tamamlandı olarak işaretle",
+      "mark_complete_needs_profile": "İlerlemeni kaydetmek için bir öğrenme profili oluştur",
+      "mark_complete_failed": "Tamamlama kaydedilemedi",
       "next_lesson": "Sonraki ders",
       "repeat": "Dersi tekrarla",
       "retry": "Tekrar pratik yap",

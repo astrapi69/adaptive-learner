@@ -309,6 +309,11 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             setProgress(updated);
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
+            // #1787 — rethrow so the summary click handler can toast:
+            // on the summary screen the hook's error state is never
+            // rendered (LessonStatusView only shows load failures), so
+            // swallowing here made a failed completion invisible.
+            throw err;
         }
     }, [
         userId,

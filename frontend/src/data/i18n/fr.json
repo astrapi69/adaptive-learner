@@ -2113,6 +2113,8 @@
         "weak_areas": "Points faibles"
       },
       "mark_complete": "Marquer comme terminée",
+      "mark_complete_needs_profile": "Crée un profil d'apprentissage pour enregistrer ta progression",
+      "mark_complete_failed": "L'enregistrement de la fin de leçon a échoué",
       "next_lesson": "Leçon suivante",
       "repeat": "Recommencer la leçon",
       "retry": "S'entraîner à nouveau",

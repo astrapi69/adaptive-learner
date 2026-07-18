@@ -1921,6 +1921,8 @@ lesson:
       no_answer: "(tidak ada)"
       weak_areas: "Area lemah"
     mark_complete: "Tandai sebagai selesai"
+    mark_complete_needs_profile: "Buat profil belajar untuk menyimpan kemajuanmu"
+    mark_complete_failed: "Gagal menyimpan penyelesaian"
     next_lesson: "Pelajaran berikutnya"
     repeat: "Ulangi pelajaran"
     retry: "Latihan lagi"
