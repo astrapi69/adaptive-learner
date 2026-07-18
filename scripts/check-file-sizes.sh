@@ -7,7 +7,8 @@
 #                                       toleriert, darf aber NICHT wachsen (#372)
 #   Schwellen:
 #     WARN_THRESHOLD  (default 500)  - Warnung im PR, kein Fail
-#     ERROR_THRESHOLD (default 1000) - blockiert den Merge (exit 1)
+#     ERROR_THRESHOLD (default 950) - blockiert den Merge (exit 1; #1801
+#                       nach dem #1450 Burn-down von 1000 heruntergeratcht)
 #
 # Es werden nur versionierte Quellen geprüft (git ls-files). Generierte,
 # gitignorierte Verzeichnisse (site/, frontend/dev-dist/, ...) entfallen damit
@@ -20,7 +21,7 @@
 set -euo pipefail
 
 WARN_THRESHOLD="${WARN_THRESHOLD:-500}"
-ERROR_THRESHOLD="${ERROR_THRESHOLD:-1000}"
+ERROR_THRESHOLD="${ERROR_THRESHOLD:-950}"
 WHITELIST_FILE=".filesize-whitelist"
 BASELINE_FILE=".filesize-baseline"
 

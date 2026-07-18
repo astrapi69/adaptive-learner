@@ -29,404 +29,57 @@
  *
  * Sync is ALWAYS user-initiated (the spec is explicit). Never
  * fires automatically.
+ *
+ * Split (#1795): this file keeps the engine + singleton and is the
+ * stable import hub; persistence, the pairing URI, the table
+ * metadata, and the conflict/outcome contracts live in the sibling
+ * sync-* modules.
  */
 
 import {ApiError} from "../../api/client";
 import {getDb} from "../dexie/db";
 import type {ImportedConversation} from "../../types/domain";
+import {
+    readLastSyncAt,
+    readSyncConfig,
+    writeLastSyncAt,
+    writeSyncConfig,
+    appendSyncHistory,
+    clearSyncHistory,
+    type SyncConfig,
+} from "./sync-persistence";
+import {parsePairingUri} from "./sync-pairing";
+import {SYNC_TABLES, type SyncTable} from "./sync-tables";
+import type {
+    ConflictBundle,
+    ConflictResolver,
+    SyncOutcome,
+} from "./sync-types";
 
-// ----- Persistence ----------------------------------------------------
-
-const KEY_CONFIG = "adaptive-learner.sync.config";
-const KEY_LAST_SYNC = "adaptive-learner.sync.last_sync_at";
-const KEY_HISTORY = "adaptive-learner.sync.history";
-
-export interface SyncConfig {
-    /** Backend host (IP or hostname). */
-    host: string;
-    /** Backend port (default 18001). */
-    port: number;
-    /** The paired user_id; both devices share this after pair. */
-    user_id: string;
-    /** Cached display name for the Settings UI. */
-    user_name: string;
-    /** When pairing succeeded (ISO 8601). */
-    paired_at: string;
-    /** Optional friendly device label the user assigned. */
-    device_name?: string;
-}
-
-export interface SyncHistoryEntry {
-    at: string;
-    success: boolean;
-    pushed: number;
-    pulled: number;
-    conflicts: number;
-    summary: string;
-}
-
-export function readSyncConfig(): SyncConfig | null {
-    try {
-        const raw = localStorage.getItem(KEY_CONFIG);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (
-            parsed &&
-            typeof parsed === "object" &&
-            typeof parsed.host === "string" &&
-            typeof parsed.port === "number" &&
-            typeof parsed.user_id === "string"
-        ) {
-            return parsed as SyncConfig;
-        }
-        return null;
-    } catch {
-        return null;
-    }
-}
-
-export function writeSyncConfig(config: SyncConfig | null): void {
-    try {
-        if (config === null) {
-            localStorage.removeItem(KEY_CONFIG);
-        } else {
-            localStorage.setItem(KEY_CONFIG, JSON.stringify(config));
-        }
-    } catch {
-        /* no-op; localStorage unavailable */
-    }
-}
-
-export function readLastSyncAt(): string | null {
-    try {
-        return localStorage.getItem(KEY_LAST_SYNC);
-    } catch {
-        return null;
-    }
-}
-
-export function writeLastSyncAt(iso: string | null): void {
-    try {
-        if (iso === null) {
-            localStorage.removeItem(KEY_LAST_SYNC);
-        } else {
-            localStorage.setItem(KEY_LAST_SYNC, iso);
-        }
-    } catch {
-        /* no-op */
-    }
-}
-
-export function readSyncHistory(): SyncHistoryEntry[] {
-    try {
-        const raw = localStorage.getItem(KEY_HISTORY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? (parsed as SyncHistoryEntry[]) : [];
-    } catch {
-        return [];
-    }
-}
-
-export function appendSyncHistory(entry: SyncHistoryEntry): void {
-    const history = readSyncHistory();
-    history.unshift(entry);
-    const trimmed = history.slice(0, 5);
-    try {
-        localStorage.setItem(KEY_HISTORY, JSON.stringify(trimmed));
-    } catch {
-        /* no-op */
-    }
-}
-
-// ----- Pairing URI ----------------------------------------------------
-
-/**
- * Pairing URI shape: ``adaptive-learner://sync?host=192.168.1.x&port=18001&token=abc``.
- * Embedded in the QR code on the desktop, parsed on the phone.
- */
-export interface PairingPayload {
-    host: string;
-    port: number;
-    token: string;
-}
-
-export function buildPairingUri(payload: PairingPayload): string {
-    const params = new URLSearchParams({
-        host: payload.host,
-        port: String(payload.port),
-        token: payload.token,
-    });
-    return `adaptive-learner://sync?${params.toString()}`;
-}
-
-export function parsePairingUri(uri: string): PairingPayload | null {
-    if (typeof uri !== "string" || uri.trim() === "") return null;
-    const trimmed = uri.trim();
-    let qs: string;
-    if (trimmed.startsWith("adaptive-learner://sync?")) {
-        qs = trimmed.slice("adaptive-learner://sync?".length);
-    } else if (trimmed.startsWith("?")) {
-        qs = trimmed.slice(1);
-    } else if (trimmed.includes("?")) {
-        qs = trimmed.split("?")[1] ?? "";
-    } else {
-        return null;
-    }
-    const params = new URLSearchParams(qs);
-    const host = params.get("host")?.trim();
-    const portRaw = params.get("port")?.trim();
-    const token = params.get("token")?.trim();
-    if (!host || !portRaw || !token) return null;
-    const port = parseInt(portRaw, 10);
-    if (!Number.isFinite(port) || port <= 0 || port > 65535) return null;
-    return {host, port, token};
-}
-
-// ----- Table sync metadata --------------------------------------------
-
-interface SyncTable {
-    name: string;
-    dexieTable: keyof ReturnType<typeof getDb>;
-    timestampField: string;
-    appendOnly: boolean;
-}
-
-/**
- * Tables we sync, in dependency order. Parent rows ship before
- * children so the receiving side never has a dangling FK.
- */
-const SYNC_TABLES: SyncTable[] = [
-    {name: "users", dexieTable: "users", timestampField: "updated_at", appendOnly: false},
-    {
-        name: "user_settings",
-        dexieTable: "userSettings",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        name: "learning_projects",
-        dexieTable: "learningProjects",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        name: "learning_profiles",
-        dexieTable: "learningProfiles",
-        timestampField: "assessed_at",
-        appendOnly: false,
-    },
-    {name: "curriculums", dexieTable: "curricula", timestampField: "updated_at", appendOnly: false},
-    {
-        name: "learning_topics",
-        dexieTable: "learningTopics",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {name: "lessons", dexieTable: "lessons", timestampField: "updated_at", appendOnly: false},
-    // Append-only:
-    {
-        name: "learning_sessions",
-        dexieTable: "learningSessions",
-        timestampField: "started_at",
-        appendOnly: true,
-    },
-    {
-        name: "session_messages",
-        dexieTable: "sessionMessages",
-        timestampField: "created_at",
-        appendOnly: true,
-    },
-    {
-        name: "session_ratings",
-        dexieTable: "sessionRatings",
-        timestampField: "created_at",
-        appendOnly: true,
-    },
-    {
-        // v1.8.0 / Phase 21B — promoted to MUTABLE. Notes are
-        // user-editable in the UI; the conflict-resolution
-        // pipeline picks a winner by ``updated_at``. The
-        // backend Alembic migration 0006 + the Dexie v4 schema
-        // upgrade back-fill ``updated_at = created_at`` for
-        // historical rows.
-        name: "session_notes",
-        dexieTable: "sessionNotes",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        name: "progress_commits",
-        dexieTable: "progressCommits",
-        timestampField: "committed_at",
-        appendOnly: true,
-    },
-    {
-        name: "method_switches",
-        dexieTable: "methodSwitches",
-        timestampField: "switched_at",
-        appendOnly: true,
-    },
-    {
-        // v1.8.0 / Phase 21A — aligned with backend column names
-        // (``to_step`` + ``evaluated_at``) via the Dexie v3
-        // schema upgrade. Append-only: an evaluation row is the
-        // verdict at the moment of evaluation; later edits would
-        // misrepresent history.
-        name: "step_evaluations",
-        dexieTable: "stepEvaluations",
-        timestampField: "evaluated_at",
-        appendOnly: true,
-    },
-    {
-        // v1.8.0 / Phase 21D — chat-history surface joins sync.
-        // APPEND-ONLY: ``analyzed`` + ``analysis_result`` are NOT
-        // updated post-sync; each device runs its own analysis
-        // (the AI roundtrip is expensive and per-device).
-        name: "imported_conversations",
-        dexieTable: "importedConversations",
-        timestampField: "imported_at",
-        appendOnly: true,
-    },
-    {
-        // v1.8.0 / Phase 21D — paired with imported_conversations.
-        // ``created_at`` added via Dexie v5 + Alembic 0007.
-        name: "imported_messages",
-        dexieTable: "importedMessages",
-        timestampField: "created_at",
-        appendOnly: true,
-    },
-    {
-        // v1.9.0 / Phase 22A — Subjects (global taxonomy) +
-        // Tags (per-user labels). Subjects are MUTABLE (rename /
-        // re-parent / icon edit). Tags are MUTABLE too (rename /
-        // color edit).
-        name: "subjects",
-        dexieTable: "subjects",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        name: "tags",
-        dexieTable: "tags",
-        timestampField: "created_at",
-        appendOnly: false,
-    },
-    {
-        // M:N association rows are APPEND-ONLY: assigning /
-        // unassigning is an insert / delete, never an update.
-        name: "project_subjects",
-        dexieTable: "projectSubjects",
-        timestampField: "created_at",
-        appendOnly: true,
-    },
-    {
-        name: "project_tags",
-        dexieTable: "projectTags",
-        timestampField: "created_at",
-        appendOnly: true,
-    },
-    {
-        // v1.16.0 / Phase 29A — per-user XP / level singleton.
-        // MUTABLE: ``total_xp`` advances on every session-end,
-        // assessment, import. Conflict resolution by
-        // ``updated_at`` picks the device that accumulated more
-        // recently (the user's true cross-device total can drift
-        // briefly during offline use; the last-write wins is
-        // intentional — exact cross-device merging of XP isn't
-        // useful and rewards the wrong behaviour).
-        name: "user_xp",
-        dexieTable: "userXp",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        // v1.16.0 / Phase 29B — badge catalog (global, MUTABLE).
-        // The seed YAML is the source of truth; sync carries the
-        // catalog so a fresh device knows about every available
-        // badge before the user earns any.
-        name: "badges",
-        dexieTable: "badges",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        // v1.16.0 / Phase 29B — earned-badge record. v1.40.0 /
-        // Phase 57: MUTABLE (was append-only) — a dynamic badge's
-        // ``tier`` climbs in place (high-water mark, never demotes), so
-        // last-write-wins on ``updated_at`` is safe (the newer write
-        // always carries the higher-or-equal tier). The v21 Dexie
-        // upgrade back-fills ``updated_at = earned_at`` for pre-tier
-        // rows.
-        name: "user_badges",
-        dexieTable: "userBadges",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        // v1.16.0 / Phase 29C — per-user streak state singleton.
-        // MUTABLE: freezes earned / spent + weekend-mode flag.
-        name: "user_streaks",
-        dexieTable: "userStreaks",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        // v1.17.0 / Phase 30B — Anki flashcard suggestions.
-        // MUTABLE: the user accepts / rejects / edits in-place.
-        name: "anki_card_suggestions",
-        dexieTable: "ankiCards",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-    {
-        // v1.19.0 / Phase 32B — AI-generated study questions.
-        // MUTABLE: the user edits / deletes in-place.
-        name: "study_questions",
-        dexieTable: "studyQuestions",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
-];
-
-const APPEND_ONLY_TABLES = new Set(
-    SYNC_TABLES.filter((t) => t.appendOnly).map((t) => t.name),
-);
-
-// ----- Conflict + resolution shapes -----------------------------------
-
-export interface ConflictBundle {
-    table: string;
-    id: string;
-    local: Record<string, unknown>;
-    remote: Record<string, unknown>;
-}
-
-export type ConflictChoice = "local" | "remote" | "merged";
-
-export interface ConflictResolution {
-    table: string;
-    id: string;
-    chosen: ConflictChoice;
-    merged_data?: Record<string, unknown>;
-}
-
-export interface SyncOutcome {
-    pushed: number;
-    pulled: number;
-    conflictsResolved: number;
-    summary: string;
-}
-
-/**
- * Optional callback the UI hooks in to resolve conflicts. The
- * SyncEngine fires it AFTER push reveals conflicts and BEFORE
- * the final resolve+pull. The callback returns one decision per
- * conflict.
- */
-export type ConflictResolver = (
-    conflicts: ConflictBundle[],
-) => Promise<ConflictResolution[]>;
+export {
+    readLastSyncAt,
+    readSyncConfig,
+    readSyncHistory,
+    writeLastSyncAt,
+    writeSyncConfig,
+    appendSyncHistory,
+    clearSyncHistory,
+    type SyncConfig,
+    type SyncHistoryEntry,
+} from "./sync-persistence";
+export {
+    buildPairingUri,
+    parsePairingUri,
+    type PairingPayload,
+} from "./sync-pairing";
+export {SYNC_TABLES, APPEND_ONLY_TABLES} from "./sync-tables";
+export type {
+    ConflictBundle,
+    ConflictChoice,
+    ConflictResolution,
+    ConflictResolver,
+    SyncOutcome,
+} from "./sync-types";
 
 // ----- Engine ----------------------------------------------------------
 
@@ -488,11 +141,7 @@ export class SyncEngine {
     unpair(): void {
         writeSyncConfig(null);
         writeLastSyncAt(null);
-        try {
-            localStorage.removeItem(KEY_HISTORY);
-        } catch {
-            /* no-op */
-        }
+        clearSyncHistory();
     }
 
     /**
@@ -794,9 +443,6 @@ export function _resetSyncEngineForTests(deps?: SyncEngineDeps): SyncEngine {
     _engine = new SyncEngine(deps);
     return _engine;
 }
-
-// Re-export for any UI module that needs to inspect the table list.
-export {SYNC_TABLES, APPEND_ONLY_TABLES};
 
 // Keep the ``ImportedConversation`` import alive so future v1.1
 // can sync these rows without churning the import surface.
