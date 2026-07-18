@@ -65,7 +65,46 @@ describe("CardEditor", () => {
             back: "Danke",
             notes: "",
             image: "",
+            altAnswers: [],
         });
+    });
+
+    // #1797 — a card can carry additional accepted answers for its
+    // free-text exercise, entered via the shared StringListEditor.
+    it("adds a card with additional accepted answers", () => {
+        const h = setup();
+        fireEvent.change(screen.getByTestId("card-front-input"), {
+            target: {value: "single"},
+        });
+        fireEvent.change(screen.getByTestId("card-back-input"), {
+            target: {value: "Single"},
+        });
+        fireEvent.change(screen.getByTestId("card-alt-answers-input"), {
+            target: {value: "noch Single"},
+        });
+        fireEvent.click(screen.getByTestId("card-alt-answers-add"));
+        fireEvent.click(screen.getByTestId("card-add-button"));
+        expect(h.onAdd).toHaveBeenCalledWith({
+            front: "single",
+            back: "Single",
+            notes: "",
+            image: "",
+            altAnswers: ["noch Single"],
+        });
+    });
+
+    it("shows an alt-answer count badge on a card row", () => {
+        setup([
+            {
+                id: "c1",
+                front: "single",
+                back: "Single",
+                notes: "",
+                image: "",
+                altAnswers: ["noch Single", "alleinstehend"],
+            },
+        ]);
+        expect(screen.getByTestId("card-alt-count-c1").textContent).toContain("2");
     });
 
     it("disables Add until front and back are filled", () => {

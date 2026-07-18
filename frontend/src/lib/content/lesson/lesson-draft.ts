@@ -27,6 +27,11 @@ export interface LessonCardDraft {
     back: string;
     notes: string;
     image: string;
+    /** Additional accepted answers for the generated free-text exercise
+     *  (#1797). ``back`` stays the canonical answer; these are extra
+     *  variants the learner may type. Optional for backward compatibility
+     *  with pre-#1797 drafts; the loader normalises it to ``[]``. */
+    altAnswers?: string[];
 }
 
 export interface LessonDraft {
@@ -47,7 +52,7 @@ export function newCardId(): string {
 
 /** A blank card draft with a fresh id and empty fields. */
 export function emptyCard(): LessonCardDraft {
-    return {id: newCardId(), front: "", back: "", notes: "", image: ""};
+    return {id: newCardId(), front: "", back: "", notes: "", image: "", altAnswers: []};
 }
 
 /** Persist the in-progress draft to localStorage, stamping a fresh
@@ -112,6 +117,9 @@ export function loadLessonDraft(): LessonDraft | null {
                 back: c.back ?? "",
                 notes: c.notes ?? "",
                 image: c.image ?? "",
+                altAnswers: Array.isArray(c.altAnswers)
+                    ? c.altAnswers.filter((a): a is string => typeof a === "string")
+                    : [],
             })),
             updatedAt: parsed.updatedAt ?? new Date().toISOString(),
         };

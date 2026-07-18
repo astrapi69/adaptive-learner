@@ -37,6 +37,11 @@ export interface GeneratorCard {
     example?: string | null;
     /** Optional image reference — enables picture-choice. */
     image?: string | null;
+    /** Additional accepted answers for the free-text exercise (#1797).
+     *  ``back`` stays the canonical answer; these are extra variants the
+     *  learner may type (e.g. "noch Single" alongside "Single"). Empty /
+     *  absent keeps the pre-#1797 behaviour. */
+    altAnswers?: string[];
 }
 
 export interface ExercisePrompts {
@@ -89,9 +94,17 @@ function uniq<T>(items: T[]): T[] {
     return Array.from(new Set(items));
 }
 
-function acceptVariants(translation: string): string[] {
-    const trimmed = translation.trim();
-    return uniq([trimmed, trimmed.toLowerCase()]).filter(Boolean);
+/** The accepted-answer list for a free-text card: the canonical answer
+ *  plus any authored alternatives (#1797), each in its original and
+ *  lowercase form, trimmed, blank-filtered and deduped. Passing no
+ *  alternatives reproduces the pre-#1797 ``[back, back-lowercased]``. */
+function acceptVariants(translation: string, alternatives: string[] = []): string[] {
+    const answers = [translation, ...alternatives];
+    const variants = answers.flatMap((answer) => {
+        const trimmed = answer.trim();
+        return [trimmed, trimmed.toLowerCase()];
+    });
+    return uniq(variants).filter(Boolean);
 }
 
 /** Blank the first whole-string occurrence of ``word`` in
@@ -151,7 +164,7 @@ export function buildFreeText(
         type: "free_text",
         prompt: clampLen(promptTemplate.replace("{word}", c.front.trim()), 1000),
         card_ids: [c.id],
-        accept: acceptVariants(c.back),
+        accept: acceptVariants(c.back, c.altAnswers ?? []),
         distractors: [],
     }));
 }

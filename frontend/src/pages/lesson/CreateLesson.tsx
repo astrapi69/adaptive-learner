@@ -357,6 +357,7 @@ export default function CreateLesson() {
             back: c.back,
             example: c.notes,
             image: c.image,
+            altAnswers: c.altAnswers,
         }));
         setExercises(generateExercises(genCards, genConfig));
         setExerciseError(false);
@@ -541,7 +542,13 @@ export default function CreateLesson() {
     }
 
     // --- card handlers (Step 2) ---
-    function addCard(c: {front: string; back: string; notes: string; image: string}) {
+    function addCard(c: {
+        front: string;
+        back: string;
+        notes: string;
+        image: string;
+        altAnswers: string[];
+    }) {
         setCards((prev) => [...prev, {id: newCardId(), ...c}]);
     }
     function updateCard(id: string, patch: Partial<LessonCardDraft>) {

@@ -34,6 +34,7 @@ import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
 import {CARD_SIDE_MAX_LENGTH} from "../../lib/content/lesson/draft-to-lesson";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
+import StringListEditor from "../../shared/forms/StringListEditor";
 import CardImageField from "./CardImageField";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/lesson/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
@@ -42,7 +43,13 @@ export const MIN_CARDS = 4;
 
 export interface CardEditorProps {
     cards: LessonCardDraft[];
-    onAdd: (card: {front: string; back: string; notes: string; image: string}) => void;
+    onAdd: (card: {
+        front: string;
+        back: string;
+        notes: string;
+        image: string;
+        altAnswers: string[];
+    }) => void;
     onUpdate: (id: string, patch: Partial<LessonCardDraft>) => void;
     onDelete: (id: string) => void;
     onReorder: (cards: LessonCardDraft[]) => void;
@@ -64,6 +71,7 @@ export default function CardEditor({
     const [back, setBack] = useState("");
     const [notes, setNotes] = useState("");
     const [image, setImage] = useState("");
+    const [altAnswers, setAltAnswers] = useState<string[]>([]);
     const [showCsv, setShowCsv] = useState(false);
     const [csvText, setCsvText] = useState("");
     const [confirmClear, setConfirmClear] = useState(false);
@@ -89,11 +97,13 @@ export default function CardEditor({
             back: back.trim(),
             notes: notes.trim(),
             image: image.trim(),
+            altAnswers,
         });
         setFront("");
         setBack("");
         setNotes("");
         setImage("");
+        setAltAnswers([]);
     }
 
     function handleDragEnd(event: DragEndEvent) {
@@ -187,6 +197,33 @@ export default function CardEditor({
                         onChange={(e) => setNotes(e.target.value)}
                     />
                 </label>
+                <div className="form-row">
+                    <StringListEditor
+                        values={altAnswers}
+                        onChange={setAltAnswers}
+                        label={t(
+                            "create_lesson.cards.alt_answers_label",
+                            "Other accepted answers (optional)",
+                        )}
+                        addButtonLabel={t("create_lesson.cards.alt_answers_add", "Add")}
+                        removeItemLabel={t(
+                            "create_lesson.cards.alt_answers_remove",
+                            "Remove accepted answer",
+                        )}
+                        placeholder={t(
+                            "create_lesson.cards.alt_answers_placeholder",
+                            "Another accepted answer",
+                        )}
+                        maxLength={CARD_SIDE_MAX_LENGTH}
+                        testIdPrefix="card-alt-answers"
+                    />
+                    <FormHint>
+                        {t(
+                            "create_lesson.cards.alt_answers_hint",
+                            "Extra answers the learner may type for the free-text exercise. The Back field stays the main answer.",
+                        )}
+                    </FormHint>
+                </div>
                 <div className="form-row">
                     <CardImageField
                         value={image}
@@ -427,6 +464,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
             back: draft.back.trim(),
             notes: draft.notes.trim(),
             image: draft.image.trim(),
+            altAnswers: draft.altAnswers ?? [],
         });
         setEditing(false);
     }
@@ -466,6 +504,25 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     onChange={(e) =>
                         setDraft({...draft, notes: e.target.value})
                     }
+                />
+                <StringListEditor
+                    values={draft.altAnswers ?? []}
+                    onChange={(next) => setDraft({...draft, altAnswers: next})}
+                    label={t(
+                        "create_lesson.cards.alt_answers_label",
+                        "Other accepted answers (optional)",
+                    )}
+                    addButtonLabel={t("create_lesson.cards.alt_answers_add", "Add")}
+                    removeItemLabel={t(
+                        "create_lesson.cards.alt_answers_remove",
+                        "Remove accepted answer",
+                    )}
+                    placeholder={t(
+                        "create_lesson.cards.alt_answers_placeholder",
+                        "Another accepted answer",
+                    )}
+                    maxLength={CARD_SIDE_MAX_LENGTH}
+                    testIdPrefix={`card-edit-alt-answers-${card.id}`}
                 />
                 <CardImageField
                     value={draft.image}
@@ -515,7 +572,21 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                 <GripVertical size={16} aria-hidden="true" />
             </button>
             <span className="card-row-front min-w-0 flex-1 truncate font-medium text-fg-primary">{card.front}</span>
-            <span className="card-row-back min-w-0 flex-1 truncate text-fg-secondary">{card.back}</span>
+            <span className="card-row-back min-w-0 flex-1 truncate text-fg-secondary">
+                {card.back}
+                {(card.altAnswers?.length ?? 0) > 0 && (
+                    <span
+                        className="ml-1.5 rounded-sm bg-bg-elevated px-1 text-xs text-fg-muted"
+                        data-testid={`card-alt-count-${card.id}`}
+                        title={t(
+                            "create_lesson.cards.alt_answers_label",
+                            "Other accepted answers (optional)",
+                        )}
+                    >
+                        +{card.altAnswers?.length}
+                    </span>
+                )}
+            </span>
             <span className="card-row-notes muted hidden min-w-0 flex-1 truncate text-sm text-fg-muted md:block">{card.notes}</span>
             <button
                 type="button"
