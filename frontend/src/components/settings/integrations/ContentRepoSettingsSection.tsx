@@ -27,7 +27,7 @@ import { buildAddRepoLink, parseAddRepoQr } from "../../../lib/content/placement
 import { QrImageUpload } from "../../../shared/qr";
 import ContentRepoRow from "./ContentRepoRow";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { getStorage, resolveStorageMode } from "../../../storage";
+import { getStorage } from "../../../storage";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import {
   planRepoDataDeletion,
@@ -390,7 +390,6 @@ export default function ContentRepoSettingsSection() {
     const source = userRepoSource(repo.owner, repo.repo);
     setRemoveTarget(repo);
     setRemovePlan(null);
-    if (resolveStorageMode() !== "dexie") return; // no local delete in API mode
     const userId = readLearnerState().userId;
     if (!userId) return;
     try {
@@ -847,7 +846,7 @@ export default function ContentRepoSettingsSection() {
       <RemoveRepoDialog
         repo={removeTarget}
         plan={removePlan}
-        canDeleteProgress={resolveStorageMode() === "dexie"}
+        canDeleteProgress
         onConfirm={confirmRemove}
         onCancel={cancelRemove}
       />

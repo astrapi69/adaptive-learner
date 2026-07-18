@@ -304,15 +304,17 @@ export const apiStorage: IStorageService = {
     reviewQueue: (userId, opts) => api.elementErrors.reviewQueue(userId, opts),
   },
 
-  // --- Learner-data maintenance (#1445) --------------------------------
-  // Server-side data is managed via backup/reset, so the local atomic
-  // delete is Dexie-only. The UI gates the delete affordance on the storage
-  // mode; this throw is a safety net if it is ever called in API mode.
+  // --- Learner-data maintenance (#1445 / #1821) ------------------------
   learningData: {
-    deleteLearningData: async () => {
-      throw new Error(
-        "Deleting learner data for removed content is only available in browser (Dexie) storage mode.",
-      );
+    deleteLearningData: async (userId, deletion) => {
+      const result = await api.learningData.delete(userId, {
+        lesson_progress_ids: deletion.lessonProgressIds,
+        set_ids: deletion.setIds,
+      });
+      return {
+        lessonsDeleted: result.lessons_deleted,
+        cardsDeleted: result.cards_deleted,
+      };
     },
   },
 

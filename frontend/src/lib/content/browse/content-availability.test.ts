@@ -41,7 +41,7 @@ describe("buildContentAvailability", () => {
     expect(a.isProgressAvailable("jane/repo", "removed-set")).toBe(false);
   });
 
-  it("isProgressAvailable is always true for official/bundled/user-generated sources", () => {
+  it("isProgressAvailable is always true for official/bundled sources", () => {
     // Even for an id NOT in the list (transient dedup churn), these
     // non-removable sources are never orphaned.
     expect(
@@ -50,9 +50,72 @@ describe("buildContentAvailability", () => {
     expect(a.isProgressAvailable("bundled:adaptive-learner-content", "x")).toBe(
       true,
     );
-    expect(a.isProgressAvailable("user-generated", "any-local-lesson")).toBe(
-      true,
-    );
+  });
+
+  it("user-generated progress needs an exact hit - ghosts are orphaned (#1816)", () => {
+    // A user-generated set that actually exists appears in listSets (both
+    // storage modes cache it), so the exact-hit path covers it; a Dexie-era
+    // ghost row whose set never existed on this backend is hidden.
+    expect(a.isProgressAvailable("user-generated", "my-lesson")).toBe(true);
+    expect(a.isProgressAvailable("user-generated", "ghost-lesson")).toBe(false);
+  });
+});
+
+describe("cached_version gates loadability (#1816)", () => {
+  // API mode lists every set of a registered repo in the index regardless of
+  // download state; cached_version: null marks 'not downloaded' in BOTH
+  // storage modes. An index-only entry must not count as loadable.
+  const ENTRIES = [
+    { source: "jane/repo", id: "downloaded-set", cached_version: "1.0.0" },
+    { source: "jane/repo", id: "index-only-set", cached_version: null },
+    {
+      source: "astrapi69/alc-die-waehrung-des-geistes",
+      id: "waehrung-des-geistes",
+      cached_version: null,
+    },
+    { source: "bundled:adaptive-learner-content", id: "fr-a1" },
+  ];
+  const a = buildContentAvailability(ENTRIES);
+
+  it("a downloaded set is loadable", () => {
+    expect(a.hasSet("jane/repo", "downloaded-set")).toBe(true);
+    expect(a.isProgressAvailable("jane/repo", "downloaded-set")).toBe(true);
+  });
+
+  it("an index-listed but NOT-downloaded set is not loadable (the 404 repro)", () => {
+    expect(a.hasSet("jane/repo", "index-only-set")).toBe(false);
+    expect(a.isProgressAvailable("jane/repo", "index-only-set")).toBe(false);
+    expect(
+      a.isProgressAvailable(
+        "astrapi69/alc-die-waehrung-des-geistes",
+        "waehrung-des-geistes",
+      ),
+    ).toBe(false);
+  });
+
+  it("hasSetId ignores not-downloaded entries too", () => {
+    expect(a.hasSetId("downloaded-set")).toBe(true);
+    expect(a.hasSetId("index-only-set")).toBe(false);
+  });
+
+  it("an entry WITHOUT the cached_version field stays loadable (plain SetKey callers)", () => {
+    expect(a.hasSet("bundled:adaptive-learner-content", "fr-a1")).toBe(true);
+  });
+
+  it("official sources stay always available even when their entry is uncached", () => {
+    const officialUncached = buildContentAvailability([
+      {
+        source: "astrapi69/adaptive-learner-content",
+        id: "psych-a",
+        cached_version: null,
+      },
+    ]);
+    expect(
+      officialUncached.isProgressAvailable(
+        "astrapi69/adaptive-learner-content",
+        "psych-a",
+      ),
+    ).toBe(true);
   });
 });
 
