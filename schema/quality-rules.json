@@ -1,5 +1,5 @@
 {
-  "$schema-version": "1.7",
+  "$schema-version": "1.8",
   "_comment": "GENERATED from scripts/generate_lesson_schema.py (EXP-039). Do not edit. Shared quality minimums for the content quality gate (app + content repo).",
   "rules": {
     "minExerciseTypes": 2,
