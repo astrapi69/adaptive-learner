@@ -27,6 +27,7 @@ import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
 import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
+import { useVisualViewportRealign } from "./hooks/ui/useVisualViewportRealign";
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/onboarding/Landing";
 import SkipToContent from "./components/a11y/SkipToContent";
@@ -96,6 +97,9 @@ const ErrorReportDialog = lazyWithReload(() => import("./components/error/ErrorR
  */
 export default function App() {
   useTheme();
+  // #1569 — reset the iOS phantom window scroll that lands taps ~2 lines
+  // below their visible target (see the hook's TSDoc for the mechanism).
+  useVisualViewportRealign();
   // EXP-023 Phase A — background-sync a connected user content repo on
   // app start when its cache is older than 24h.
   useContentRepoAutoSync();
