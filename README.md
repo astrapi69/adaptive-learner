@@ -470,13 +470,21 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.4.0**, a polish
-release completing the **EXP-044 CSS concern-split** (`global.css`
+Active development. The current release is **v2.4.0**, a feature
+release with a **Create-Lesson authoring upgrade** (a knowledge
+lesson from pasted textbook text, editing and combining your own
+lessons, and card image upload), **free-text multiple accepted
+answers** with an AI second opinion, an **AI key-import** shortcut on
+the settings AI tab, and the content **engine re-pinned to 0.13.0
+(schema 1.8)** so uploaded images feed picture-choice exercises;
+under the hood the **frontend god-file burn-down** completed and a
+**content-load robustness sweep** hardened lesson loading. Prior
+**v2.3.0** completed the **EXP-044 CSS concern-split** (`global.css`
 decomposed byte-identically into per-concern legacy files behind a
-byte-identity gate), reworking the **lesson-player UX** (collapsible
-options panel, footer pause control, slimmer title area), adding
+byte-identity gate), reworked the **lesson-player UX** (collapsible
+options panel, footer pause control, slimmer title area), added
 **listen-first audio** exercises and an authored-difficulty
-cold-start prior for adaptive lessons, and hardening lesson/set
+cold-start prior for adaptive lessons, and hardened lesson/set
 **file import/export**. Prior **v2.2.0** added an
 **extension-exercise tier** (four AI-authored exercise types) and a
 native **multiple_choice** type, with the app consuming the lesson
