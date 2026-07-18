@@ -43,5 +43,6 @@ plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/s
 # Datenstruktur (keine Logik/IO/Rendering), das Frontend-Pendant zu
 # backend/app/models. Aus db.ts ausgelagert (#391), damit db.ts nur
 # noch Schema + Migrationen + Init traegt. Weiter splitten wuerde das
-# Datenmodell zerstreuen, nicht die Kohaesion verbessern.
-frontend/src/storage/db-rows.ts
+# Datenmodell zerstreuen, nicht die Kohaesion verbessern. (Pfad seit dem
+# #868 storage-Split unter dexie/; #1801 korrigierte den stale Eintrag.)
+frontend/src/storage/dexie/db-rows.ts
