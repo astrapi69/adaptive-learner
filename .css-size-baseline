@@ -186,4 +186,12 @@
 # Doku-Kommentar-Zeilen in 01-base.css - die #146/#194-Carve-out-
 # Historie und die :where()-Begruendung am Content-Link-Selektor.
 # Kein neues CSS; der Selektor-Umbau selbst ist zeilenneutral.
-7639
+# 2026-07-18: 7639 -> 7654 (#1817 Toggle-Checkbox-Fix): +15 Zeilen in
+# 04-onboarding.css - eine Fundament-Regel, die die geteilte
+# .form-row-toggle-Primitive ihre Checkbox constrainen laesst
+# (.form-row-toggle input[type="checkbox"] { flex:none; 1rem-Quadrat;
+# padding:0 }), plus 7-Zeilen-Begruendungskommentar. Behebt die
+# uneinheitliche Checkbox-Groesse aller Settings-Toggle-Rows an der
+# Wurzel (statt einer Size-Utility 13x dupliziert). Kein neuer
+# Komponenten-Style; Escape-Hatch fuer eine geteilte Primitive-Reparatur.
+7654

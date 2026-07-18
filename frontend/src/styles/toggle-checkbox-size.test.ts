@@ -22,11 +22,17 @@ import { describe, expect, it } from "vitest";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CSS = readFileSync(join(HERE, "legacy", "04-onboarding.css"), "utf8");
 
-/** Extract the declaration body of a CSS rule by its selector. */
+/** Extract the declaration body of a CSS rule by its exact selector. */
 function ruleBody(css: string, selector: string): string | null {
-  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const match = css.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`));
-  return match ? match[1] : null;
+  const at = css.indexOf(selector);
+  if (at === -1) return null;
+  const open = css.indexOf("{", at + selector.length);
+  const close = css.indexOf("}", open + 1);
+  if (open === -1 || close === -1) return null;
+  // Guard against matching a longer selector that merely starts with `selector`:
+  // everything between the found selector and `{` must be whitespace.
+  if (css.slice(at + selector.length, open).trim() !== "") return null;
+  return css.slice(open + 1, close);
 }
 
 describe("#1817 — shared toggle-checkbox sizing", () => {
