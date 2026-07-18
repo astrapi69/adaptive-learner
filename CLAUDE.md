@@ -9,7 +9,30 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.3.0** (**polish + consolidation release** on top of
+- **Current state:** **v2.4.0** (**feature release** on top of the v2.3.0
+  polish release. Highlights: a **Create-Lesson authoring upgrade** - a knowledge
+  lesson from pasted textbook text #1745, editing an own lesson + combining own
+  lessons into a set #1752, card **image upload** (not a typed asset path) #1764,
+  a typeable exercise count #1761; **free-text multiple accepted answers + an AI
+  second opinion** on a wrong answer #1803; an **AI key-import UX** (the AI tab
+  links to key import, paste-content import, reactive refresh) #1769; the content
+  **engine re-pinned -> 0.13.0 (schema 1.8)** so uploaded images feed
+  `picture_choice` #1774; the **frontend god-file burn-down completed** (ten
+  oversized modules split by concern - Session/ImportDetail/Lesson/Content/
+  dexie-storage/content-loader-dexie/sync-engine/backup/Cloze/WordTiles - behind
+  tightened size/complexity ratchets #1802); a **content-load robustness sweep**
+  (unicode/umlaut card ids + tags #1809, a friendly lesson-load error #1826, a
+  missing-profile mark-complete guard #1788) + **ghost-content lifecycle fixes**
+  (availability oracle requires a cached set #1818, set-deletion purges progress
+  + SW cache #1825, repo-removal opt-in delete in server mode #1822); an i18n
+  script-sanity lint #1759; the Docker/Bun close-out #1772. App schema 1.7 -> 1.8
+  is additive (the engine is canonical, the app a consumer); NO app-side
+  schema/API/data-model change. Release-gate hardening surfaced by the first real
+  `release-prepare` gate run: `unzip` in the Playwright image so setup-bun works
+  #1829, the app `CURRENT_SCHEMA_VERSION` synced to the pinned engine 1.8 #1830,
+  and the #1765 key-vault cross-tab scroll made robust to async layout #1831. See
+  changelog/releases/v2.4.0.md.)
+  Prior **v2.3.0** = (**polish + consolidation release** on top of
   the v2.2.0 feature release, NO schema/API/data-model change. Highlights: the
   **EXP-044 CSS concern-split completed** - `global.css` decomposed
   byte-identically into per-concern files under `styles/legacy/` (Peels 1-5

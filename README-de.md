@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.3.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.4.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-9708%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
@@ -399,20 +399,26 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v1.97.1**, ein
-Schema- + Tooling-Release, in dem das **Lektions-JSON-Schema die
-App-autoritative einzige Quelle der Wahrheit** ist (Schema,
-Qualitätsregeln, Doku und TS-Typen werden aus den Pydantic-Modellen
-der App generiert, der Strukturvalidator ist ajv-gehärtet). Jüngere
-Feature-Arbeit umfasst den **Content-Hub**-Umbau (Tabs Entdecken /
-Meine Inhalte / Import, einen globalen Listen- ⇄ Kachel-Umschalter
-und eine kompakte Such-/Filter-Leiste), das vollständige
-**Lernmodus-System** (Üben / Prüfung / Auf Zeit / Reverse / Zufall /
-Endlos + Fehler trainieren), **Cloze-Mehrfachauswahl** „alle
-zutreffenden auswählen", einen Prüfungsmodus-SRS-Intervallbonus, den
-passphrase-verschlüsselten **`.alk`**-Export der KI-Schlüssel und
-eine vertikale Desktop-Seitenleiste. Per-Release-Notes in
-[`changelog/releases/`](changelog/releases/).
+Aktive Entwicklung. Das aktuelle Release ist **v2.4.0**, ein
+Feature-Release mit einem **Create-Lesson-Authoring-Upgrade** (eine
+Wissens-Lektion aus eingefügtem Lehrbuchtext, das Bearbeiten und
+Kombinieren eigener Lektionen sowie Karten-Bild-Upload),
+**Freitext-Aufgaben mit mehreren akzeptierten Antworten** samt einer
+KI-Zweitmeinung, einem **KI-Schlüssel-Import** direkt auf dem
+Einstellungen-KI-Tab und der auf **0.13.0 (Schema 1.8)** neu
+gepinnten Content-Engine, sodass hochgeladene Bilder
+Picture-Choice-Aufgaben speisen; unter der Haube ist der
+**Frontend-God-File-Burn-Down** abgeschlossen und das Laden von
+Content wurde robuster (Unicode-Karten-IDs, freundliche Ladefehler,
+Geister-Content-Bereinigung). Das vorige **v2.3.0** vollendete den
+**EXP-044-CSS-Concern-Split** (`global.css` byte-identisch in
+Per-Concern-Legacy-Dateien zerlegt, hinter einem
+Byte-Identitäts-Gate), überarbeitete die **Lesson-Player-UX**
+(einklappbares Options-Panel, Pause-Steuerung im Footer, schlankerer
+Titelbereich), ergänzte **Listen-First-Audio** und einen
+Cold-Start-Prior aus der vom Autor gesetzten Schwierigkeit und
+härtete den Datei-Import/-Export von Lektionen/Sets. Per-Release-Notes
+in [`changelog/releases/`](changelog/releases/).
 
 ## Herkunft
 
