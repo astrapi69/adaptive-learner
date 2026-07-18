@@ -1762,3 +1762,23 @@ class ReviewQueueItemOut(BaseModel):
     # element's trajectory ("attempt 5: correct") + weakness tier.
     attempt_count: int = 0
     attempt_history: list[AttemptRecordOut] = Field(default_factory=list)
+
+
+class LearningDataDeleteIn(BaseModel):
+    """Body for the learner-data delete endpoint (#1821).
+
+    Mirrors the frontend ``LearningDataDeletion`` shape: specific
+    lesson-progress row ids plus bare set ids whose element-error
+    (review card) rows are removed. Both lists may be empty - an
+    empty deletion is a valid zero-count no-op.
+    """
+
+    lesson_progress_ids: list[str] = Field(default_factory=list, max_length=1000)
+    set_ids: list[str] = Field(default_factory=list, max_length=1000)
+
+
+class LearningDataDeleteOut(BaseModel):
+    """The real per-table counts removed (#1821)."""
+
+    lessons_deleted: int
+    cards_deleted: int
