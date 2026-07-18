@@ -1961,6 +1961,18 @@
         "empty": "이 그림 선택 연습에는 이미지가 없습니다."
       },
       "free_text": {
+        "ai_verify": {
+          "button": "AI에게 검토 요청",
+          "checking": "검토 중…",
+          "verdict_yes": "AI도 동의합니다: 답이 사실상 정확합니다.",
+          "verdict_partial": "AI는 답이 부분적으로만 맞다고 봅니다.",
+          "verdict_no": "AI도 확인: 이 답은 맞지 않습니다.",
+          "verdict_unknown": "AI가 명확한 판정을 내리지 못했습니다.",
+          "disclaimer": "이는 AI의 의견일 뿐이며, 이 문제의 점수는 바뀌지 않습니다.",
+          "no_key": "이 기능에는 본인의 AI 키(BYOK)가 필요합니다. 선택 사항이며 없어도 앱은 잘 작동합니다.",
+          "open_settings": "AI 설정",
+          "error": "AI 요청에 실패했습니다. 다시 시도해 주세요."
+        },
         "submit": "답 확인",
         "retry": "다시 시도",
         "placeholder": "답을 입력하세요…",

@@ -1811,6 +1811,17 @@ lesson:
       wrong_label: "不正解"
       empty: "この画像選択演習には画像がありません。"
     free_text:
+      ai_verify:
+        button: "AIに確認してもらう"
+        checking: "確認中…"
+        verdict_yes: "AIも同意: あなたの答えは実質的に正しいです。"
+        verdict_partial: "AIはあなたの答えを部分的にしか正しくないと判断しました。"
+        verdict_no: "AIも確認: この答えは正しくありません。"
+        verdict_unknown: "AIは明確な判定を出せませんでした。"
+        disclaimer: "これはAIの意見にすぎません。この問題の採点は変わりません。"
+        no_key: "これには自分のAIキー (BYOK) が必要です。任意です - なくてもアプリは問題なく動きます。"
+        open_settings: "AI設定"
+        error: "AIへのリクエストに失敗しました。もう一度お試しください。"
       submit: "答えを確認"
       retry: "もう一度"
       placeholder: "答えを入力…"

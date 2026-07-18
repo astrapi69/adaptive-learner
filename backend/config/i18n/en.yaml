@@ -1822,6 +1822,17 @@ lesson:
       wrong_label: "Wrong"
       empty: "This picture-choice exercise has no images."
     free_text:
+      ai_verify:
+        button: "Have the AI check"
+        checking: "Checking…"
+        verdict_yes: "The AI agrees: your answer is essentially correct."
+        verdict_partial: "The AI thinks your answer is only partly correct."
+        verdict_no: "The AI agrees this answer isn't right."
+        verdict_unknown: "The AI couldn't give a clear verdict."
+        disclaimer: "This is only the AI's opinion - your score for this exercise is unchanged."
+        no_key: "This needs your own AI key (BYOK). Optional - the app works fine without it."
+        open_settings: "AI settings"
+        error: "The AI request failed. Please try again."
       submit: "Check answer"
       retry: "Try again"
       placeholder: "Type your answer…"

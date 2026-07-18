@@ -1811,6 +1811,17 @@ lesson:
       wrong_label: "Yanlış"
       empty: "Bu alıştırmada görsel yok."
     free_text:
+      ai_verify:
+        button: "Yapay zekâ kontrol etsin"
+        checking: "Kontrol ediliyor…"
+        verdict_yes: "Yapay zekâ katılıyor: yanıtın esasen doğru."
+        verdict_partial: "Yapay zekâ yanıtının yalnızca kısmen doğru olduğunu düşünüyor."
+        verdict_no: "Yapay zekâ doğruluyor: bu yanıt doğru değil."
+        verdict_unknown: "Yapay zekâ net bir karar veremedi."
+        disclaimer: "Bu yalnızca yapay zekânın görüşüdür - bu alıştırmadaki puanın değişmez."
+        no_key: "Bunun için kendi yapay zekâ anahtarın (BYOK) gerekir. İsteğe bağlı - uygulama onsuz da sorunsuz çalışır."
+        open_settings: "Yapay zekâ ayarları"
+        error: "Yapay zekâ isteği başarısız oldu. Lütfen tekrar dene."
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"
       placeholder: "Cevabını yaz…"

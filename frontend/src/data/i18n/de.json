@@ -1961,6 +1961,18 @@
         "empty": "Diese Bild-Auswahl-Übung enthält keine Bilder."
       },
       "free_text": {
+        "ai_verify": {
+          "button": "Von der KI prüfen lassen",
+          "checking": "Wird geprüft …",
+          "verdict_yes": "Die KI stimmt zu: Deine Antwort ist inhaltlich richtig.",
+          "verdict_partial": "Die KI hält deine Antwort für nur teilweise richtig.",
+          "verdict_no": "Die KI bestätigt: Diese Antwort ist nicht richtig.",
+          "verdict_unknown": "Die KI konnte keine klare Einschätzung geben.",
+          "disclaimer": "Das ist nur die Einschätzung der KI - deine Bewertung für diese Übung ändert sich nicht.",
+          "no_key": "Dafür brauchst du deinen eigenen KI-Schlüssel (BYOK). Optional - die App funktioniert auch ohne.",
+          "open_settings": "KI-Einstellungen",
+          "error": "Die KI-Anfrage ist fehlgeschlagen. Bitte versuche es erneut."
+        },
         "submit": "Antwort prüfen",
         "retry": "Erneut versuchen",
         "placeholder": "Antwort eingeben…",
