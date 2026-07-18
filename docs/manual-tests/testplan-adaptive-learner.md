@@ -1,4 +1,4 @@
-# Manueller Testplan — Adaptive Learner v2.3.0+
+# Manueller Testplan - Adaptive Learner v2.3.0+
 
 Stand: 18.07.2026 (Session 6, nach dem v2.3.0-Release)
 Tester: Aster + Beta-Tester
@@ -38,7 +38,7 @@ Noch nie durchgefuehrt. JETZT machen.
 
 - [ ] Daten erzeugen: mindestens 2 Sets herunterladen, 3 Lektionen starten, Theme wechseln
 - [ ] Export: Settings → Daten → Backup erstellen → .alb Datei herunterladen
-- [ ] Dateigrösse pruefen (sollte >1MB sein wenn Sets geladen)
+- [ ] Dateigroesse pruefen (sollte >1MB sein wenn Sets geladen)
 - [ ] Browser-Daten KOMPLETT loeschen:
       DevTools → Application → Storage → "Clear site data"
       UND: IndexedDB "adaptive-learner" loeschen
