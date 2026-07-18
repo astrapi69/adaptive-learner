@@ -2131,6 +2131,8 @@ content:
     deleted: "Leçon supprimée."
     delete_failed: "Impossible de supprimer la leçon."
   set_status:
+    delete_progress_option: "Supprimer aussi ma progression et les cartes de révision ({lessons} leçons, {cards} cartes)"
+    delete_progress_option_nocounts: "Supprimer aussi ma progression et les cartes de révision"
     all: "Tous"
     active: "Actif"
     deferred: "Reporté"

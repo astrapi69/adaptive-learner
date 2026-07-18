@@ -2134,6 +2134,8 @@ content:
     deleted: "Lektion gelöscht."
     delete_failed: "Die Lektion konnte nicht gelöscht werden."
   set_status:
+    delete_progress_option: "Auch meinen Lernfortschritt und die Wiederholungskarten löschen ({lessons} Lektionen, {cards} Karten)"
+    delete_progress_option_nocounts: "Auch meinen Lernfortschritt und die Wiederholungskarten löschen"
     all: "Alle"
     active: "Aktiv"
     deferred: "Zurückgestellt"

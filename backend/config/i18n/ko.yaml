@@ -2140,6 +2140,8 @@ content:
     deleted: "레슨이 삭제되었습니다."
     delete_failed: "레슨을 삭제할 수 없었습니다."
   set_status:
+    delete_progress_option: "학습 진행 상황과 복습 카드도 삭제 ({lessons}개 레슨, {cards}개 카드)"
+    delete_progress_option_nocounts: "학습 진행 상황과 복습 카드도 삭제"
     all: "전체"
     active: "활성"
     deferred: "보류"

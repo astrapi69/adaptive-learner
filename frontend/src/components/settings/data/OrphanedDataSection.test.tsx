@@ -79,12 +79,13 @@ describe("OrphanedDataSection", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("renders nothing in API mode (local delete unsupported)", async () => {
+  it("works in API mode too - the delete has server parity (#1821)", async () => {
     mode = "api";
     seedOrphans();
-    const { container } = render(<OrphanedDataSection />);
-    await waitFor(() => expect(container.firstChild).toBeNull());
-    expect(listProgress).not.toHaveBeenCalled();
+    render(<OrphanedDataSection />);
+    const summary = await screen.findByTestId("orphaned-summary");
+    expect(summary).toHaveTextContent("1 lessons");
+    expect(listProgress).toHaveBeenCalled();
   });
 
   it("shows the orphaned counts when orphaned data exists", async () => {

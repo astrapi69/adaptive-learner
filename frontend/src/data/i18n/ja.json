@@ -2316,6 +2316,8 @@
       "delete_failed": "レッスンを削除できませんでした。"
     },
     "set_status": {
+      "delete_progress_option": "学習の進捗と復習カードも削除する（{lessons} レッスン、{cards} カード）",
+      "delete_progress_option_nocounts": "学習の進捗と復習カードも削除する",
       "all": "すべて",
       "active": "アクティブ",
       "deferred": "保留",

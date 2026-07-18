@@ -63,6 +63,7 @@ from app.routers.github import router as github_router
 from app.routers.help import router as help_router
 from app.routers.identity import router as identity_router
 from app.routers.imports import imports_router, users_imports_router
+from app.routers.learning_data import router as learning_data_router
 from app.routers.lesson_progress import router as lesson_progress_router
 from app.routers.projects import projects_router, users_projects_router
 from app.routers.reset import router as reset_router
@@ -225,6 +226,7 @@ app.include_router(users_imports_router, prefix="/api")
 app.include_router(imports_router, prefix="/api")
 app.include_router(lesson_progress_router, prefix="/api")
 app.include_router(element_errors_router, prefix="/api")
+app.include_router(learning_data_router, prefix="/api")
 app.include_router(subjects_router, prefix="/api")
 app.include_router(tags_router, prefix="/api")
 app.include_router(users_tags_router, prefix="/api")

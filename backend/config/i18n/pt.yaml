@@ -2129,6 +2129,8 @@ content:
     deleted: "Lição excluída."
     delete_failed: "Não foi possível excluir a lição."
   set_status:
+    delete_progress_option: "Excluir também meu progresso de aprendizagem e os cartões de revisão ({lessons} lições, {cards} cartões)"
+    delete_progress_option_nocounts: "Excluir também meu progresso de aprendizagem e os cartões de revisão"
     all: "Todos"
     active: "Ativo"
     deferred: "Adiado"

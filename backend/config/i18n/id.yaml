@@ -2140,6 +2140,8 @@ content:
     deleted: "Pelajaran dihapus."
     delete_failed: "Tidak dapat menghapus pelajaran."
   set_status:
+    delete_progress_option: "Hapus juga kemajuan belajar saya dan kartu ulasan ({lessons} pelajaran, {cards} kartu)"
+    delete_progress_option_nocounts: "Hapus juga kemajuan belajar saya dan kartu ulasan"
     all: "Semua"
     active: "Aktif"
     deferred: "Ditunda"

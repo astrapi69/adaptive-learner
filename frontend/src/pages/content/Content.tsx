@@ -41,8 +41,8 @@ import ContentSearchBar from "../../components/content/browser/ContentSearchBar"
 import FilterMenuButton from "../../shared/forms/FilterMenuButton";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
 import { setSelectionKey } from "../../components/content/browser/ContentSetListView";
-import DeleteSetModal from "../../components/content/browser/DeleteSetModal";
-import BulkDeleteSetsModal from "../../components/content/browser/BulkDeleteSetsModal";
+import DeleteSetModal from "../../components/content/browser/delete/DeleteSetModal";
+import BulkDeleteSetsModal from "../../components/content/browser/delete/BulkDeleteSetsModal";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentFilters } from "../../hooks/content/browse";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
@@ -157,6 +157,8 @@ export default function ContentPage() {
     deleting,
     deleteSetTarget,
     setDeleteSetTarget,
+    deleteSetPlan,
+    bulkDeletePlan,
     deletingSet,
     handleSetStatus,
     handleConfirmDeleteSet,
@@ -412,17 +414,19 @@ export default function ContentPage() {
       <DeleteSetModal
         target={deleteSetTarget}
         deleting={deletingSet}
+        plan={deleteSetPlan}
         onCancel={() => setDeleteSetTarget(null)}
-        onConfirm={() => void handleConfirmDeleteSet()}
+        onConfirm={(deleteProgress) => void handleConfirmDeleteSet(deleteProgress)}
       />
 
       {/* #1351 — destructive confirmation for removing several sets at once. */}
       <BulkDeleteSetsModal
         count={bulkDeleteCount}
         deleting={bulkDeleting}
+        plan={bulkDeletePlan}
         onCancel={() => setBulkDeleteTargets(null)}
-        onConfirm={() =>
-          void handleConfirmBulkDelete().then(() => selection.clear())
+        onConfirm={(deleteProgress) =>
+          void handleConfirmBulkDelete(deleteProgress).then(() => selection.clear())
         }
       />
     </PageContainer>

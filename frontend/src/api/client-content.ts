@@ -10,6 +10,20 @@ import { ApiError, apiCall } from "./client-core";
 export const contentApi = {
   // --- Lesson Progress (Phase 44 / EXP-002 / P-109) ------------------
 
+  // --- Learner-data maintenance (#1821, API half of #1445 Part B) ----
+
+  learningData: {
+    /** POST /api/users/{user_id}/learning-data/delete */
+    delete: (
+      userId: string,
+      body: {lesson_progress_ids: string[]; set_ids: string[]},
+    ) =>
+      apiCall<{lessons_deleted: number; cards_deleted: number}>(
+        `/users/${encodeURIComponent(userId)}/learning-data/delete`,
+        {method: "POST", body},
+      ),
+  },
+
   lessonProgress: {
     /** GET /api/users/{user_id}/lesson-progress */
     list: (userId: string) =>
