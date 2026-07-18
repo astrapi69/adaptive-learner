@@ -1983,6 +1983,7 @@ lesson:
     encourage_3: "Score parfait !"
   error:
     load_failed: "Impossible de charger la leçon."
+    invalid_data: "Cette leçon ne peut pas être ouverte car elle contient des données invalides ou corrompues. Contactez l'auteur du contenu."
     missing_params: "Aucune leçon sélectionnée. Choisis-en une dans l'explorateur de contenu."
   exit:
     title: "Quitter la leçon ?"

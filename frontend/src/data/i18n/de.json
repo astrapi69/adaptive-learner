@@ -2148,6 +2148,7 @@
     },
     "error": {
       "load_failed": "Lektion konnte nicht geladen werden.",
+      "invalid_data": "Diese Lektion kann nicht geöffnet werden, weil sie ungültige oder beschädigte Daten enthält. Bitte kontaktiere den Autor des Inhalts.",
       "missing_params": "Keine Lektion ausgewählt. Wähle eine aus der Inhaltsübersicht."
     },
     "exit": {

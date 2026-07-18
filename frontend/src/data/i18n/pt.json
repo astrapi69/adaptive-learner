@@ -2148,6 +2148,7 @@
     },
     "error": {
       "load_failed": "Não foi possível carregar a lição.",
+      "invalid_data": "Esta lição não pode ser aberta porque contém dados inválidos ou corrompidos. Entre em contato com o autor do conteúdo.",
       "missing_params": "Nenhuma lição selecionada. Escolhe uma no explorador de conteúdo."
     },
     "exit": {

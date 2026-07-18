@@ -2148,6 +2148,7 @@
     },
     "error": {
       "load_failed": "Could not load lesson.",
+      "invalid_data": "This lesson can't be opened because it contains invalid or corrupted data. Please contact the content author.",
       "missing_params": "No lesson selected. Browse content sets to pick one."
     },
     "exit": {
