@@ -67,7 +67,10 @@ import { readingComprehensionPayloadErrors } from "../../exercises/reading-compr
 import { gradedQuizPayloadErrors } from "../../exercises/graded-quiz";
 import { validateLessonShape } from "../validation/lesson-schema-validator";
 
-const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+/** Lowercase unicode slug (#1808): lesson-internal ids/tags accept
+ *  non-ASCII lowercase letters ('währung', 'präsenz'), matching the
+ *  canonical engine schema. Set-level ids/paths stay ASCII elsewhere. */
+const SLUG_RE = /^[\p{Ll}\p{Nd}]+(-[\p{Ll}\p{Nd}]+)*$/u;
 
 /** Localised strings. ``{word}`` in a prompt template is replaced
  *  with the vocabulary word. */
