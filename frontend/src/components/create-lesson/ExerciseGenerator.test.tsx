@@ -144,6 +144,56 @@ describe("ExerciseGenerator — per-row edit (#1844)", () => {
     });
 });
 
+/** Render the generator with a fixed exercise list + selected types, to
+ *  exercise the "why a selected type produced nothing" hints (#1847). */
+function renderWith(
+    exercises: ContentLessonExercise[],
+    types: ExerciseGenConfig["types"],
+) {
+    render(
+        <ExerciseGenerator
+            exercises={exercises}
+            config={{...DEFAULT_EXERCISE_GEN_CONFIG, types}}
+            onConfigChange={vi.fn()}
+            onGenerate={vi.fn()}
+            onReorder={vi.fn()}
+            onDelete={vi.fn()}
+            onUpdate={vi.fn()}
+        />,
+    );
+}
+
+describe("ExerciseGenerator — unmet-type hints (#1847)", () => {
+    it("explains a selected type that produced nothing after generation", () => {
+        renderWith([freeTextEx("f1")], ["free_text", "cloze", "picture_choice"]);
+        expect(screen.getByTestId("exercise-gen-missing")).toBeInTheDocument();
+        expect(
+            screen.getByTestId("exercise-gen-missing-cloze"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("exercise-gen-missing-picture_choice"),
+        ).toBeInTheDocument();
+        // free_text DID produce, so it is not listed.
+        expect(
+            screen.queryByTestId("exercise-gen-missing-free_text"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("shows no hint when every selected type produced at least one", () => {
+        renderWith([freeTextEx("f1")], ["free_text"]);
+        expect(
+            screen.queryByTestId("exercise-gen-missing"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("shows no hint before any generation (empty list)", () => {
+        renderWith([], ["free_text", "cloze"]);
+        expect(
+            screen.queryByTestId("exercise-gen-missing"),
+        ).not.toBeInTheDocument();
+    });
+});
+
 function numberInput(): HTMLInputElement {
     return screen.getByTestId("exercise-count-input") as HTMLInputElement;
 }

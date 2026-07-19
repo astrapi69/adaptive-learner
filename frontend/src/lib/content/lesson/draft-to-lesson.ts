@@ -9,6 +9,7 @@
  */
 
 import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
+import type {GeneratorCard} from "./exercise/exercise-generator";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
     ContentLesson,
@@ -18,6 +19,29 @@ import type {
     SaveUserSetInput,
     UserLessonOrigin,
 } from "../../../storage/types";
+
+/**
+ * Adapt the wizard's draft cards to the generic {@link GeneratorCard}
+ * shape the exercise generator consumes (#1847).
+ *
+ * The ``example`` sentence comes from the card's dedicated ``example``
+ * field — NOT from ``notes`` — so cloze / word-tiles generation is driven
+ * by an explicit, labelled input rather than silently overloading the
+ * notes field. ``image`` feeds picture-choice; ``altAnswers`` feed the
+ * free-text accepted answers.
+ */
+export function draftCardsToGeneratorCards(
+    cards: LessonCardDraft[],
+): GeneratorCard[] {
+    return cards.map((c) => ({
+        id: c.id,
+        front: c.front,
+        back: c.back,
+        example: c.example ?? "",
+        image: c.image,
+        altAnswers: c.altAnswers ?? [],
+    }));
+}
 
 export interface DraftLessonInput {
     meta: LessonMeta;

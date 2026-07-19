@@ -27,6 +27,13 @@ export interface LessonCardDraft {
     back: string;
     notes: string;
     image: string;
+    /** Example sentence that drives cloze + word-tiles generation (#1847).
+     *  For cloze the sentence must contain the ``front`` term (so it can be
+     *  blanked out); for word-tiles it needs at least two words. Separate
+     *  from ``notes`` (a teaching aid) so the generation input is explicit
+     *  and discoverable. Optional for backward compatibility with pre-#1847
+     *  drafts; the loader normalises it to ``""``. */
+    example?: string;
     /** Additional accepted answers for the generated free-text exercise
      *  (#1797). ``back`` stays the canonical answer; these are extra
      *  variants the learner may type. Optional for backward compatibility
@@ -52,7 +59,15 @@ export function newCardId(): string {
 
 /** A blank card draft with a fresh id and empty fields. */
 export function emptyCard(): LessonCardDraft {
-    return {id: newCardId(), front: "", back: "", notes: "", image: "", altAnswers: []};
+    return {
+        id: newCardId(),
+        front: "",
+        back: "",
+        notes: "",
+        image: "",
+        example: "",
+        altAnswers: [],
+    };
 }
 
 /** Persist the in-progress draft to localStorage, stamping a fresh
@@ -117,6 +132,7 @@ export function loadLessonDraft(): LessonDraft | null {
                 back: c.back ?? "",
                 notes: c.notes ?? "",
                 image: c.image ?? "",
+                example: c.example ?? "",
                 altAnswers: Array.isArray(c.altAnswers)
                     ? c.altAnswers.filter((a): a is string => typeof a === "string")
                     : [],

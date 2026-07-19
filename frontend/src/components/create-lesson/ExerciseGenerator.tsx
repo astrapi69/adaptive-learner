@@ -129,6 +129,15 @@ export default function ExerciseGenerator({
         onConfigChange({...config, types: Array.from(set)});
     }
 
+    // #1847 — after a generation, explain any SELECTED type that produced
+    // nothing (cloze/word-tiles need an example sentence; picture-choice
+    // needs card images), so a requested type is never silently dropped.
+    const producedTypes = new Set(exercises.map((e) => e.type));
+    const missingSelectedTypes =
+        exercises.length > 0
+            ? config.types.filter((type) => !producedTypes.has(type))
+            : [];
+
     function handleDragEnd(event: DragEndEvent) {
         const {active, over} = event;
         if (!over || active.id === over.id) return;
@@ -279,6 +288,36 @@ export default function ExerciseGenerator({
                     </FormHint>
                 )}
             </div>
+
+            {/* Why a selected type produced nothing (#1847) */}
+            {missingSelectedTypes.length > 0 && (
+                <div
+                    className="flex flex-col gap-1.5 rounded-lg border border-border bg-card p-3"
+                    data-testid="exercise-gen-missing"
+                    role="status"
+                >
+                    <FormHint as="p" variant="warning">
+                        {t(
+                            "create_lesson.exercises.gen_missing_intro",
+                            "Some selected types produced no exercises:",
+                        )}
+                    </FormHint>
+                    <ul className="m-0 flex list-none flex-col gap-1 p-0">
+                        {missingSelectedTypes.map((type) => (
+                            <li
+                                key={type}
+                                className="text-sm text-fg-secondary"
+                                data-testid={`exercise-gen-missing-${type}`}
+                            >
+                                {t(
+                                    `create_lesson.exercises.gen_none.${type}`,
+                                    type,
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             {/* Preview list (sortable) */}
             <DndContext

@@ -38,6 +38,7 @@ interface WizardStepsProps {
         back: string;
         notes: string;
         image: string;
+        example: string;
         altAnswers: string[];
     }) => void;
     onUpdateCard: (id: string, patch: Partial<LessonCardDraft>) => void;

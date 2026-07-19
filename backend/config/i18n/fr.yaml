@@ -2571,6 +2571,9 @@ create_lesson:
     front_label: "Recto (appris)"
     back_label: "Verso (ta langue)"
     notes_label: "Notes (facultatif)"
+    example_label: "Phrase d'exemple (facultatif)"
+    example_placeholder: "p. ex. Elle lit un livre chaque soir."
+    example_hint: "Active les exercices à trous et de tuiles de mots. Pour le texte à trous, la phrase doit contenir le terme (recto) pour pouvoir le masquer."
     alt_answers_label: "Autres réponses acceptées (facultatif)"
     alt_answers_add: "Ajouter"
     alt_answers_remove: "Supprimer la réponse acceptée"
@@ -2624,6 +2627,13 @@ create_lesson:
       cloze: "Texte à trous"
       word_tiles: "Tuiles de mots"
       picture_choice: "Choix d'image"
+    gen_missing_intro: "Certains types sélectionnés n'ont produit aucun exercice :"
+    gen_none:
+      matching: "Correspondance : ajoutez au moins deux cartes."
+      free_text: "Texte libre : ajoutez au moins une carte."
+      cloze: "Texte à trous : ajoutez à certaines cartes une phrase d'exemple contenant le terme."
+      word_tiles: "Tuiles de mots : ajoutez à certaines cartes une phrase d'exemple d'au moins deux mots."
+      picture_choice: "Choix d'image : ajoutez une image à au moins deux cartes."
     edit:
       edit: "Modifier l'exercice"
       save: "Enregistrer"

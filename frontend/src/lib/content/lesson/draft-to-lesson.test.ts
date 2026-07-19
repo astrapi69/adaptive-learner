@@ -6,6 +6,7 @@ import {
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
+    draftCardsToGeneratorCards,
     draftSetId,
     lessonToDraftInput,
     preservedTheorySteps,
@@ -230,5 +231,56 @@ describe("draft-to-lesson editing (#1740)", () => {
         });
         expect(rebuilt.id).toBe(original.id);
         expect(rebuilt.cards[0].back).toBe("corrected");
+    });
+});
+
+describe("draftCardsToGeneratorCards (#1847)", () => {
+    function draftCard(over: Partial<LessonCardDraft>): LessonCardDraft {
+        return {
+            id: "c1",
+            front: "lis",
+            back: "read",
+            notes: "a teaching note",
+            image: "",
+            example: "",
+            ...over,
+        };
+    }
+
+    it("feeds the generator's example from the card's example field, NOT notes", () => {
+        const [gc] = draftCardsToGeneratorCards([
+            draftCard({notes: "note only", example: "Je lis un livre."}),
+        ]);
+        expect(gc.example).toBe("Je lis un livre.");
+    });
+
+    it("passes image + altAnswers through and defaults a missing example to empty", () => {
+        const [gc] = draftCardsToGeneratorCards([
+            {
+                id: "c2",
+                front: "chat",
+                back: "cat",
+                notes: "",
+                image: "data:image/png;base64,AAA",
+                altAnswers: ["kitty"],
+            },
+        ]);
+        expect(gc.image).toBe("data:image/png;base64,AAA");
+        expect(gc.altAnswers).toEqual(["kitty"]);
+        expect(gc.example).toBe("");
+    });
+
+    it("makes example-bearing cards drive cloze generation end to end", () => {
+        const cards = draftCardsToGeneratorCards([
+            draftCard({id: "c1", front: "lis", example: "Je lis un livre."}),
+            draftCard({id: "c2", front: "mange", example: "Tu manges une pomme."}),
+        ]);
+        const exercises = generateExercises(cards, {
+            count: 10,
+            types: ["cloze"],
+            direction: "auto",
+        });
+        expect(exercises.length).toBeGreaterThan(0);
+        expect(exercises.every((e) => e.type === "cloze")).toBe(true);
     });
 });

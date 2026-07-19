@@ -2811,6 +2811,9 @@
       "front_label": "Vorderseite (gelernt)",
       "back_label": "Rückseite (deine Sprache)",
       "notes_label": "Notizen (optional)",
+      "example_label": "Beispielsatz (optional)",
+      "example_placeholder": "z. B. Sie liest jeden Abend ein Buch.",
+      "example_hint": "Ermöglicht Lückentext- und Wortkachel-Übungen. Beim Lückentext muss der Satz den Begriff (Vorderseite) enthalten, damit er ausgeblendet werden kann.",
       "alt_answers_label": "Weitere akzeptierte Antworten (optional)",
       "alt_answers_add": "Hinzufügen",
       "alt_answers_remove": "Antwort entfernen",
@@ -2867,6 +2870,14 @@
         "cloze": "Lückentext",
         "word_tiles": "Wort-Kacheln",
         "picture_choice": "Bildauswahl"
+      },
+      "gen_missing_intro": "Einige ausgewählte Typen haben keine Übungen ergeben:",
+      "gen_none": {
+        "matching": "Zuordnung: Füge mindestens zwei Karten hinzu.",
+        "free_text": "Freitext: Füge mindestens eine Karte hinzu.",
+        "cloze": "Lückentext: Füge einigen Karten einen Beispielsatz hinzu, der den Begriff enthält.",
+        "word_tiles": "Wort-Kacheln: Füge einigen Karten einen Beispielsatz mit mindestens zwei Wörtern hinzu.",
+        "picture_choice": "Bildauswahl: Füge mindestens zwei Karten ein Bild hinzu."
       },
       "edit": {
         "edit": "Übung bearbeiten",

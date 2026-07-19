@@ -2569,6 +2569,9 @@ create_lesson:
     front_label: "表（学習対象）"
     back_label: "裏（あなたの言語）"
     notes_label: "メモ（任意）"
+    example_label: "例文（任意）"
+    example_placeholder: "例：彼女は毎晩本を読みます。"
+    example_hint: "穴埋めと単語タイルの問題を作成できます。穴埋めでは、空欄にできるように文に用語（表面）を含めてください。"
     alt_answers_label: "その他の正解 (任意)"
     alt_answers_add: "追加"
     alt_answers_remove: "正解を削除"
@@ -2622,6 +2625,13 @@ create_lesson:
       cloze: "穴埋め"
       word_tiles: "単語タイル"
       picture_choice: "画像選択"
+    gen_missing_intro: "選択した一部のタイプでは問題が作成されませんでした:"
+    gen_none:
+      matching: "マッチング：カードを2枚以上追加してください。"
+      free_text: "自由記述：カードを1枚以上追加してください。"
+      cloze: "穴埋め：一部のカードに用語を含む例文を追加してください。"
+      word_tiles: "単語タイル：一部のカードに2語以上の例文を追加してください。"
+      picture_choice: "画像選択：2枚以上のカードに画像を追加してください。"
     edit:
       edit: "問題を編集"
       save: "保存"

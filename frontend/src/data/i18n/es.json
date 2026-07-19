@@ -2811,6 +2811,9 @@
       "front_label": "Anverso (aprendido)",
       "back_label": "Reverso (tu idioma)",
       "notes_label": "Notas (opcional)",
+      "example_label": "Frase de ejemplo (opcional)",
+      "example_placeholder": "p. ej. Ella lee un libro cada noche.",
+      "example_hint": "Habilita ejercicios de hueco y de fichas de palabras. Para el hueco, la frase debe contener el término (anverso) para poder ocultarlo.",
       "alt_answers_label": "Otras respuestas aceptadas (opcional)",
       "alt_answers_add": "Añadir",
       "alt_answers_remove": "Quitar respuesta aceptada",
@@ -2867,6 +2870,14 @@
         "cloze": "Cloze",
         "word_tiles": "Fichas de palabras",
         "picture_choice": "Elección de imagen"
+      },
+      "gen_missing_intro": "Algunos tipos seleccionados no generaron ejercicios:",
+      "gen_none": {
+        "matching": "Correspondencia: añade al menos dos tarjetas.",
+        "free_text": "Texto libre: añade al menos una tarjeta.",
+        "cloze": "Hueco: añade a algunas tarjetas una frase de ejemplo que contenga el término.",
+        "word_tiles": "Fichas de palabras: añade a algunas tarjetas una frase de ejemplo con al menos dos palabras.",
+        "picture_choice": "Imagen: añade una imagen a al menos dos tarjetas."
       },
       "edit": {
         "edit": "Editar ejercicio",

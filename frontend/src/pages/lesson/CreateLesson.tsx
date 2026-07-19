@@ -35,7 +35,6 @@ import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
     type ExerciseGenConfig,
-    type GeneratorCard,
 } from "../../lib/content/lesson/exercise/exercise-generator";
 import {
     clearLessonDraft,
@@ -51,6 +50,7 @@ import {
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
+    draftCardsToGeneratorCards,
     draftSetId,
     lessonToDraftInput,
     preservedTheorySteps,
@@ -351,15 +351,9 @@ export default function CreateLesson() {
     }
 
     function generateLessonExercises() {
-        const genCards: GeneratorCard[] = cards.map((c) => ({
-            id: c.id,
-            front: c.front,
-            back: c.back,
-            example: c.notes,
-            image: c.image,
-            altAnswers: c.altAnswers,
-        }));
-        setExercises(generateExercises(genCards, genConfig));
+        setExercises(
+            generateExercises(draftCardsToGeneratorCards(cards), genConfig),
+        );
         setExerciseError(false);
     }
 
@@ -547,6 +541,7 @@ export default function CreateLesson() {
         back: string;
         notes: string;
         image: string;
+        example: string;
         altAnswers: string[];
     }) {
         setCards((prev) => [...prev, {id: newCardId(), ...c}]);
