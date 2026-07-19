@@ -36,7 +36,7 @@ import {
     generateExercises,
     type ExerciseGenConfig,
     type GeneratorCard,
-} from "../../lib/content/lesson/exercise-generator";
+} from "../../lib/content/lesson/exercise/exercise-generator";
 import {
     clearLessonDraft,
     draftHasContent,

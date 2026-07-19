@@ -17,7 +17,7 @@
 import type {
     ContentLessonClozeBlank,
     ContentLessonExercise,
-} from "../../../storage/types";
+} from "../../../../storage/types";
 
 /** Minimum complete {left,right} pairs a matching exercise needs. */
 export const MATCHING_MIN_PAIRS = 2;

@@ -27,7 +27,7 @@ import {
     countClozeMarkers,
     normalizeExerciseEdit,
     validateExerciseEdit,
-} from "../../lib/content/lesson/exercise-edit";
+} from "../../lib/content/lesson/exercise/exercise-edit";
 import type {
     ContentLessonExercise,
     ContentLessonClozeBlank,
@@ -63,7 +63,7 @@ export default function ExerciseEditor({
 
     return (
         <div
-            className="exercise-editor flex flex-col gap-3"
+            className="flex flex-col gap-3"
             data-testid={`exercise-editor-${id}`}
         >
             <label className="form-field flex flex-col gap-1.5">

@@ -19,7 +19,7 @@ import {
     normalizeExerciseEdit,
     validateExerciseEdit,
 } from "./exercise-edit";
-import type {ContentLessonExercise} from "../../../storage/types";
+import type {ContentLessonExercise} from "../../../../storage/types";
 
 function base(over: Partial<ContentLessonExercise>): ContentLessonExercise {
     return {

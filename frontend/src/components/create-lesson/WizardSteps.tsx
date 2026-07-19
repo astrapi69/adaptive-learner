@@ -12,7 +12,7 @@
 import CardEditor, {MIN_CARDS} from "./CardEditor";
 import ExerciseGenerator, {MIN_EXERCISES} from "./ExerciseGenerator";
 import ReviewStep from "./ReviewStep";
-import type {ExerciseGenConfig} from "../../lib/content/lesson/exercise-generator";
+import type {ExerciseGenConfig} from "../../lib/content/lesson/exercise/exercise-generator";
 import type {
     DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
