@@ -21,6 +21,7 @@ import {
     refreshApiKeyStatus,
     useApiKeyStatus,
 } from "./useApiKeyStatus";
+import {emitSettingsRefresh} from "../../lib/settings/settings-refresh-bus";
 
 const apiSettingsGet = vi.fn();
 vi.mock("../../api/client", async () => {
@@ -156,5 +157,56 @@ describe("useApiKeyStatus", () => {
         });
         await waitFor(() => expect(result.current.hasKey).toBe(true));
         expect(apiSettingsGet).toHaveBeenCalledTimes(2);
+    });
+
+    /**
+     * #1836 — the encrypted key-vault import (and backup restore)
+     * emit on the shared ``settings-refresh-bus`` but never called
+     * ``refreshApiKeyStatus()``. So after an import the AI gates
+     * (NotebookLM/Anki/Import "API key required" notices) stayed
+     * stale until a reload. The hook now subscribes to the bus, so
+     * a single ``emitSettingsRefresh()`` re-fetches System B too.
+     */
+    it("reacts to a settings-refresh-bus emit — an imported key clears the stale snapshot (#1836)", async () => {
+        apiSettingsGet.mockResolvedValue({
+            ...BASE_SETTINGS,
+            active_provider: "anthropic",
+            has_anthropic_key: false,
+        });
+        const {result} = renderHook(() => useApiKeyStatus());
+        await waitFor(() => expect(result.current.ready).toBe(true));
+        expect(result.current.hasKey).toBe(false);
+
+        // A key-vault import writes the key to storage and emits.
+        apiSettingsGet.mockResolvedValue({
+            ...BASE_SETTINGS,
+            active_provider: "anthropic",
+            has_anthropic_key: true,
+        });
+        await act(async () => {
+            emitSettingsRefresh();
+            await Promise.resolve();
+        });
+        await waitFor(() => expect(result.current.hasKey).toBe(true));
+    });
+
+    it("regression: a bus emit while still keyless keeps hasKey=false (#1836)", async () => {
+        apiSettingsGet.mockResolvedValue({
+            ...BASE_SETTINGS,
+            active_provider: "anthropic",
+            has_anthropic_key: false,
+        });
+        const {result} = renderHook(() => useApiKeyStatus());
+        await waitFor(() => expect(result.current.ready).toBe(true));
+        expect(result.current.hasKey).toBe(false);
+
+        // Bus fires but the active provider still has no key — the
+        // notice must NOT be cleared (don't just always hide it).
+        await act(async () => {
+            emitSettingsRefresh();
+            await Promise.resolve();
+        });
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(result.current.hasKey).toBe(false);
     });
 });
