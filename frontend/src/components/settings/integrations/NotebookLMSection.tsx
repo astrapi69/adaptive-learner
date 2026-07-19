@@ -179,7 +179,6 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
       {questionsFeature.isDisabled && (
         <ApiKeyRequiredNotice
           feature={t("ui.api_key.feature_study_questions", "to generate study questions")}
-          settingsHref="/settings?tab=integrations"
         />
       )}
 
