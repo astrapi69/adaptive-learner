@@ -24,11 +24,12 @@ Kein Debattieren, kein Überanalysieren. Root Cause zuerst, dann implementieren.
 GitHub Issue vor jedem Code. `gh issue list --search` für Duplikate. Related-to Referenzen nutzen. Gilt für alle Agenten (CC, CCW, CCWc). ISSUE-LIFECYCLE: Closes/Related im Commit. Bei Sub-Aufgaben Sub-Issue statt Umbrella-Issue (SUB-ISSUE-CLOSES).
 
 **3. Begrenzte Autonomie-Direktive**
-Keine Rückfragen bei bekannten Mustern. Alle Schritte in einem Pass. Entscheidungen basieren auf der Projektarchitektur, nicht auf Rückfragen. Testfehler autonom fixen, bevor gestoppt wird. Commits in logischen Blöcken, Endbericht am Schluss. Proaktive Prompt-Kettung ist erlaubt.
+Keine Rückfragen bei bekannten Mustern. Alle Schritte in einem Pass. Entscheidungen basieren auf der Projektarchitektur, nicht auf Rückfragen. Testfehler autonom fixen, bevor gestoppt wird. Commits in logischen Blöcken, dann Push + PR öffnen (PR-PFLICHT, Punkt 4), Endbericht am Schluss. Autonomie heißt "nicht auf Bestätigung warten" - NICHT "den PR weglassen, weil er nicht ausdrücklich gefordert war". Proaktive Prompt-Kettung ist erlaubt.
 Stopp NUR bei echten Blockern: Abweichung von der EXP-Architektur, unklarer Root Cause, oder ein Defekt, der eine Architekturentscheidung erfordert. Fragen, die aus der bestehenden Architektur beantwortbar sind, lösen keinen Stopp aus. Kosmetisches Patchen über einem ungeklärten Defekt ist verboten.
 
-**4. PR-Target: develop (NICHT main!)**
+**4. PR-Target: develop (NICHT main!) + PR-PFLICHT**
 Gitflow Pflicht. `develop` ist Default-Branch und Integrationsziel. `main` NUR für Releases. Production deployt aus `main`, Preview/Staging aus `develop`. Release-Sperre: kein Code nach `develop`, wenn ein Release-Branch offen ist. No-Amend auf offenen PRs.
+**PR-PFLICHT (Regel in `.claude/rules/ai-workflow.md`):** Jede gepushte Code-Änderung öffnet einen PR gegen `develop` - IMMER, unabhängig davon, ob der Auftrag es explizit verlangt. "Kein PR, nicht angefordert" ist keine gültige Abschluss-Meldung; ein gepushter Branch ohne PR ist unfertige Arbeit. Ausnahmen nur: Release-Sperre und reine Analyse-/Status-/Doku-Frage-Aufträge, die nichts committen. Ein explizites "nur pushen, kein PR" wird respektiert; das Fehlen einer expliziten Aufforderung ist kein Grund, den PR zu überspringen.
 
 ```mermaid
 gitGraph

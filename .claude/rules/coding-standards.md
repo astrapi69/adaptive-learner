@@ -66,6 +66,12 @@
 - Branch naming: feature/{name}, fix/{name}, chore/{name} (from develop);
   release/vX.Y.Z (from develop, merges to main + back to develop);
   hotfix/vX.Y.Z (from main, merges to main + develop).
+- **Open a PR for every pushed code change, by default (PR-PFLICHT,
+  ai-workflow.md).** After committing and pushing a branch, open a PR
+  against `develop` whether or not the task asked for one — a pushed
+  branch with no PR is unfinished work. Skip only for a release freeze
+  or a task that changes no committed files. "No PR, wasn't requested"
+  is not a valid completion report.
 - Do not add `Co-Authored-By` trailers attributing non-human
   collaborators (AI tools, automation bots, MCP agents). Human
   co-authors are attributed via the standard GitHub mechanism.

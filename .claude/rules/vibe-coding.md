@@ -25,6 +25,11 @@ Vollstaendige Policy: docs/policies/VIBE-CODING-POLICY.md
 
 6. GIT: Issue ZUERST (GITHUB-ISSUE-PFLICHT). Closes #XX in jedem
    Commit. Docstrings statt Inline-Kommentare. Ein Concern pro PR.
+   Jede gepushte Code-Aenderung oeffnet einen PR (PR-PFLICHT in
+   ai-workflow.md) - immer, nicht nur auf Anfrage. "Kein PR, nicht
+   angefordert" ist keine gueltige Abschluss-Meldung. Ausnahmen:
+   Release-Sperre (unten) und reine Analyse-/Status-Auftraege ohne
+   Code-Aenderung.
 
 ## Prioritaet (fest, nicht verhandelbar)
 
