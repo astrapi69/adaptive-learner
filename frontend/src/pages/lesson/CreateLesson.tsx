@@ -685,6 +685,11 @@ export default function CreateLesson() {
                     onDeleteExercise={(id) =>
                         setExercises((prev) => prev.filter((e) => e.id !== id))
                     }
+                    onUpdateExercise={(id, updated) =>
+                        setExercises((prev) =>
+                            prev.map((e) => (e.id === id ? updated : e)),
+                        )
+                    }
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}
                     onSaveCopy={editMode ? () => void saveCopy() : undefined}

@@ -48,6 +48,7 @@ interface WizardStepsProps {
     onConfigChange: (config: ExerciseGenConfig) => void;
     onReorderExercises: (exercises: ContentLessonExercise[]) => void;
     onDeleteExercise: (id: string) => void;
+    onUpdateExercise: (id: string, updated: ContentLessonExercise) => void;
     onSaveLocal: () => void;
     onSaveShare: () => void;
     onSaveCopy?: () => void;
@@ -76,6 +77,7 @@ export default function WizardSteps({
     onConfigChange,
     onReorderExercises,
     onDeleteExercise,
+    onUpdateExercise,
     onSaveLocal,
     onSaveShare,
     onSaveCopy,
@@ -118,6 +120,7 @@ export default function WizardSteps({
                         onGenerate={onGenerate}
                         onReorder={onReorderExercises}
                         onDelete={onDeleteExercise}
+                        onUpdate={onUpdateExercise}
                     />
                     {exerciseError && exercises.length < MIN_EXERCISES && (
                         <p
