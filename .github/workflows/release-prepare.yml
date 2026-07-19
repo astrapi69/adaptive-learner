@@ -32,10 +32,10 @@ on:
         required: true
         type: string
       skip_e2e:
-        description: "Skip the extra Playwright smoke (make test-e2e-smoke) — for hotfix speed. The dexie + manual-plan E2E gates inside release-test still run."
+        description: "Skip the advisory extra Playwright smoke (make test-e2e-smoke). Default true (aligned with release.yml, #1837): it is API-mode and flakes on container dev-server cold-start (#1254), and the mandatory make release-test gate (dexie + manual-plan E2E) already covers Playwright. Set false to run it deliberately."
         required: false
         type: boolean
-        default: false
+        default: true
 
 # Read-only: the gate never writes to the repository.
 permissions:
@@ -153,8 +153,10 @@ jobs:
         run: make release-test
 
       - name: Extra Playwright smoke (make test-e2e-smoke)
-        # Intentionally outside release-test (it auto-starts the dev servers);
-        # skippable for hotfix speed via the skip_e2e input.
+        # Intentionally outside release-test (it auto-starts the dev servers).
+        # Advisory + skipped by default (skip_e2e defaults true, #1837): it is
+        # API-mode and flakes on container dev-server cold-start (#1254). Opt in
+        # with skip_e2e=false to run it.
         if: ${{ !inputs.skip_e2e }}
         run: make test-e2e-smoke
 
