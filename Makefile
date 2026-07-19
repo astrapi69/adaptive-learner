@@ -21,7 +21,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test test-fast test-changed test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
-       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-manual-automation \
+       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-webkit test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
        test-one test-watch tdd-help \
        stryker stryker-quick \
@@ -567,6 +567,22 @@ test-dexie-smoke: ## Dexie-mode release gate (build + Playwright preview-mode sm
 	@echo ""
 	@echo "=== Running Dexie-mode Playwright smoke ==="
 	cd e2e && npx playwright test --config=playwright.dexie.config.ts
+
+# WebKit engine gate (#1834). Catches iOS/Safari CSS-ENGINE layout bugs
+# that the Chromium gates structurally cannot — e.g. the lesson-footer
+# Pause/Next overlap that WebKit produces under justify-content:
+# space-between on overflow while Blink clamps. Serves the same
+# Dexie/GH-Pages-shape build under Playwright's `webkit` browser with an
+# emulated iPhone 12 profile. NOT in the default gate chain: the WebKit
+# browser must be installed first (`cd e2e && npx playwright install-deps
+# webkit && npx playwright install webkit`), which needs egress to the
+# Playwright browser CDN.
+test-webkit: ## WebKit lesson-layout gate (#1834); needs `playwright install webkit`
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
+	@echo ""
+	@echo "=== Running WebKit layout gate (iPhone 12 profile) ==="
+	cd e2e && npx playwright test --config=playwright.webkit.config.ts
 
 test-manual-automation: ## Automated manual-test-plan suite (#616; build dexie + Playwright)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
