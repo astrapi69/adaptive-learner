@@ -290,7 +290,6 @@ export default function AnkiPage() {
           {ankiFeature.isDisabled && (
             <ApiKeyRequiredNotice
               feature={t("ui.api_key.feature_anki", "to extract Anki cards")}
-              settingsHref="/settings?tab=integrations"
             />
           )}
           <Button asChild variant="outline">
