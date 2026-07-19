@@ -2569,6 +2569,9 @@ create_lesson:
     front_label: "Frente (aprendido)"
     back_label: "Verso (o seu idioma)"
     notes_label: "Notas (opcional)"
+    example_label: "Frase de exemplo (opcional)"
+    example_placeholder: "ex.: Ela lê um livro todas as noites."
+    example_hint: "Ativa exercícios de lacuna e de peças de palavras. Na lacuna, a frase deve conter o termo (frente) para poder ser ocultado."
     alt_answers_label: "Outras respostas aceitas (opcional)"
     alt_answers_add: "Adicionar"
     alt_answers_remove: "Remover resposta aceita"
@@ -2622,6 +2625,13 @@ create_lesson:
       cloze: "Cloze"
       word_tiles: "Peças de palavras"
       picture_choice: "Escolha de imagem"
+    gen_missing_intro: "Alguns tipos selecionados não geraram exercícios:"
+    gen_none:
+      matching: "Correspondência: adicione pelo menos duas cartas."
+      free_text: "Texto livre: adicione pelo menos uma carta."
+      cloze: "Lacuna: adicione a algumas cartas uma frase de exemplo que contenha o termo."
+      word_tiles: "Peças de palavras: adicione a algumas cartas uma frase de exemplo com pelo menos duas palavras."
+      picture_choice: "Escolha de imagem: adicione uma imagem a pelo menos duas cartas."
     edit:
       edit: "Editar exercício"
       save: "Guardar"

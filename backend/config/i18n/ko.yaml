@@ -2579,6 +2579,9 @@ create_lesson:
     front_label: "앞면 (학습하는 언어)"
     back_label: "뒷면 (당신의 언어)"
     notes_label: "메모 (선택)"
+    example_label: "예문 (선택)"
+    example_placeholder: "예: 그녀는 매일 저녁 책을 읽습니다."
+    example_hint: "빈칸 채우기와 단어 타일 문제를 만들 수 있습니다. 빈칸 채우기에서는 용어(앞면)를 가릴 수 있도록 문장에 포함해야 합니다."
     alt_answers_label: "다른 정답 (선택)"
     alt_answers_add: "추가"
     alt_answers_remove: "정답 삭제"
@@ -2632,6 +2635,13 @@ create_lesson:
       cloze: "빈칸 채우기"
       word_tiles: "단어 타일"
       picture_choice: "그림 선택"
+    gen_missing_intro: "선택한 일부 유형에서 문제가 생성되지 않았습니다:"
+    gen_none:
+      matching: "짝 맞추기: 카드를 두 장 이상 추가하세요."
+      free_text: "자유 입력: 카드를 한 장 이상 추가하세요."
+      cloze: "빈칸 채우기: 일부 카드에 용어가 포함된 예문을 추가하세요."
+      word_tiles: "단어 타일: 일부 카드에 두 단어 이상의 예문을 추가하세요."
+      picture_choice: "그림 선택: 카드 두 장 이상에 이미지를 추가하세요."
     edit:
       edit: "문제 편집"
       save: "저장"

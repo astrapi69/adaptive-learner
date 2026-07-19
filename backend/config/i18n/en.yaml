@@ -2579,6 +2579,9 @@ create_lesson:
     front_label: "Front (learned)"
     back_label: "Back (your language)"
     notes_label: "Notes (optional)"
+    example_label: "Example sentence (optional)"
+    example_placeholder: "e.g. She reads a book every evening."
+    example_hint: "Enables cloze and word-tile exercises. For cloze, the sentence must contain the front term so it can be blanked out."
     alt_answers_label: "Other accepted answers (optional)"
     alt_answers_add: "Add"
     alt_answers_remove: "Remove accepted answer"
@@ -2632,6 +2635,13 @@ create_lesson:
       cloze: "Cloze"
       word_tiles: "Word tiles"
       picture_choice: "Picture choice"
+    gen_missing_intro: "Some selected types produced no exercises:"
+    gen_none:
+      matching: "Matching: add at least two cards."
+      free_text: "Free text: add at least one card."
+      cloze: "Cloze: add an example sentence containing the term to some cards."
+      word_tiles: "Word tiles: add an example sentence with at least two words to some cards."
+      picture_choice: "Picture choice: add an image to at least two cards."
     edit:
       edit: "Edit exercise"
       save: "Save"

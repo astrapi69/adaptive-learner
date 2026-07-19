@@ -2811,6 +2811,9 @@
       "front_label": "Ön yüz (öğrenilen)",
       "back_label": "Arka yüz (sizin diliniz)",
       "notes_label": "Notlar (isteğe bağlı)",
+      "example_label": "Örnek cümle (isteğe bağlı)",
+      "example_placeholder": "örn. Her akşam bir kitap okur.",
+      "example_hint": "Boşluk doldurma ve kelime kartı alıştırmalarını etkinleştirir. Boşluk doldurma için cümle, gizlenebilmesi amacıyla terimi (ön yüz) içermelidir.",
       "alt_answers_label": "Diğer kabul edilen yanıtlar (isteğe bağlı)",
       "alt_answers_add": "Ekle",
       "alt_answers_remove": "Kabul edilen yanıtı kaldır",
@@ -2867,6 +2870,14 @@
         "cloze": "Boşluk doldurma",
         "word_tiles": "Kelime parçaları",
         "picture_choice": "Resim seçimi"
+      },
+      "gen_missing_intro": "Seçilen bazı türler hiç alıştırma üretmedi:",
+      "gen_none": {
+        "matching": "Eşleştirme: en az iki kart ekleyin.",
+        "free_text": "Serbest metin: en az bir kart ekleyin.",
+        "cloze": "Boşluk doldurma: bazı kartlara terimi içeren bir örnek cümle ekleyin.",
+        "word_tiles": "Kelime kartları: bazı kartlara en az iki kelimelik bir örnek cümle ekleyin.",
+        "picture_choice": "Görsel seçme: en az iki karta bir görsel ekleyin."
       },
       "edit": {
         "edit": "Alıştırmayı düzenle",

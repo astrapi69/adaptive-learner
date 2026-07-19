@@ -2579,6 +2579,9 @@ create_lesson:
     front_label: "Depan (yang dipelajari)"
     back_label: "Belakang (bahasamu)"
     notes_label: "Catatan (opsional)"
+    example_label: "Kalimat contoh (opsional)"
+    example_placeholder: "mis. Dia membaca buku setiap malam."
+    example_hint: "Mengaktifkan latihan rumpang dan ubin kata. Untuk rumpang, kalimat harus memuat istilah (sisi depan) agar dapat dikosongkan."
     alt_answers_label: "Jawaban lain yang diterima (opsional)"
     alt_answers_add: "Tambah"
     alt_answers_remove: "Hapus jawaban yang diterima"
@@ -2632,6 +2635,13 @@ create_lesson:
       cloze: "Cloze"
       word_tiles: "Ubin kata"
       picture_choice: "Pilihan gambar"
+    gen_missing_intro: "Beberapa tipe yang dipilih tidak menghasilkan latihan:"
+    gen_none:
+      matching: "Pencocokan: tambahkan minimal dua kartu."
+      free_text: "Teks bebas: tambahkan minimal satu kartu."
+      cloze: "Rumpang: tambahkan kalimat contoh yang memuat istilah pada beberapa kartu."
+      word_tiles: "Ubin kata: tambahkan kalimat contoh dengan minimal dua kata pada beberapa kartu."
+      picture_choice: "Pilihan gambar: tambahkan gambar ke minimal dua kartu."
     edit:
       edit: "Edit latihan"
       save: "Simpan"

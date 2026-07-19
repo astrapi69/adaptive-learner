@@ -48,6 +48,7 @@ export interface CardEditorProps {
         back: string;
         notes: string;
         image: string;
+        example: string;
         altAnswers: string[];
     }) => void;
     onUpdate: (id: string, patch: Partial<LessonCardDraft>) => void;
@@ -71,6 +72,7 @@ export default function CardEditor({
     const [back, setBack] = useState("");
     const [notes, setNotes] = useState("");
     const [image, setImage] = useState("");
+    const [example, setExample] = useState("");
     const [altAnswers, setAltAnswers] = useState<string[]>([]);
     const [showCsv, setShowCsv] = useState(false);
     const [csvText, setCsvText] = useState("");
@@ -97,12 +99,14 @@ export default function CardEditor({
             back: back.trim(),
             notes: notes.trim(),
             image: image.trim(),
+            example: example.trim(),
             altAnswers,
         });
         setFront("");
         setBack("");
         setNotes("");
         setImage("");
+        setExample("");
         setAltAnswers([]);
     }
 
@@ -196,6 +200,30 @@ export default function CardEditor({
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                     />
+                </label>
+                <label className="form-row">
+                    <span className="form-label">
+                        {t(
+                            "create_lesson.cards.example_label",
+                            "Example sentence (optional)",
+                        )}
+                    </span>
+                    <Input
+                        type="text"
+                        data-testid="card-example-input"
+                        value={example}
+                        placeholder={t(
+                            "create_lesson.cards.example_placeholder",
+                            "e.g. Bonjour, comment ça va ?",
+                        )}
+                        onChange={(e) => setExample(e.target.value)}
+                    />
+                    <FormHint>
+                        {t(
+                            "create_lesson.cards.example_hint",
+                            "Enables cloze and word-tile exercises. For cloze, the sentence must contain the front term so it can be blanked out.",
+                        )}
+                    </FormHint>
                 </label>
                 <div className="form-row">
                     <StringListEditor
@@ -464,6 +492,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
             back: draft.back.trim(),
             notes: draft.notes.trim(),
             image: draft.image.trim(),
+            example: (draft.example ?? "").trim(),
             altAnswers: draft.altAnswers ?? [],
         });
         setEditing(false);
@@ -503,6 +532,22 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     value={draft.notes}
                     onChange={(e) =>
                         setDraft({...draft, notes: e.target.value})
+                    }
+                />
+                <Input
+                    type="text"
+                    data-testid={`card-edit-example-${card.id}`}
+                    value={draft.example ?? ""}
+                    placeholder={t(
+                        "create_lesson.cards.example_label",
+                        "Example sentence (optional)",
+                    )}
+                    aria-label={t(
+                        "create_lesson.cards.example_label",
+                        "Example sentence (optional)",
+                    )}
+                    onChange={(e) =>
+                        setDraft({...draft, example: e.target.value})
                     }
                 />
                 <StringListEditor
