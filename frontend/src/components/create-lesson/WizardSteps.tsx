@@ -12,7 +12,7 @@
 import CardEditor, {MIN_CARDS} from "./CardEditor";
 import ExerciseGenerator, {MIN_EXERCISES} from "./ExerciseGenerator";
 import ReviewStep from "./ReviewStep";
-import type {ExerciseGenConfig} from "../../lib/content/lesson/exercise-generator";
+import type {ExerciseGenConfig} from "../../lib/content/lesson/exercise/exercise-generator";
 import type {
     DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
@@ -48,6 +48,7 @@ interface WizardStepsProps {
     onConfigChange: (config: ExerciseGenConfig) => void;
     onReorderExercises: (exercises: ContentLessonExercise[]) => void;
     onDeleteExercise: (id: string) => void;
+    onUpdateExercise: (id: string, updated: ContentLessonExercise) => void;
     onSaveLocal: () => void;
     onSaveShare: () => void;
     onSaveCopy?: () => void;
@@ -76,6 +77,7 @@ export default function WizardSteps({
     onConfigChange,
     onReorderExercises,
     onDeleteExercise,
+    onUpdateExercise,
     onSaveLocal,
     onSaveShare,
     onSaveCopy,
@@ -118,6 +120,7 @@ export default function WizardSteps({
                         onGenerate={onGenerate}
                         onReorder={onReorderExercises}
                         onDelete={onDeleteExercise}
+                        onUpdate={onUpdateExercise}
                     />
                     {exerciseError && exercises.length < MIN_EXERCISES && (
                         <p

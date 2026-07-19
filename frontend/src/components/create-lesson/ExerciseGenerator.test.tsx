@@ -20,7 +20,7 @@ import ExerciseGenerator, {
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     type ExerciseGenConfig,
-} from "../../lib/content/lesson/exercise-generator";
+} from "../../lib/content/lesson/exercise/exercise-generator";
 import type {ContentLessonExercise} from "../../storage/types";
 
 /**
@@ -49,9 +49,100 @@ function Harness({
             onGenerate={() => onGenerateCount?.(config.count)}
             onReorder={vi.fn()}
             onDelete={vi.fn()}
+            onUpdate={vi.fn()}
         />
     );
 }
+
+/** Harness holding a real exercise list so the row edit flow (#1844) can
+ *  round-trip an update / delete through the generator's callbacks. */
+function ListHarness({
+    initial,
+    onDelete = vi.fn(),
+    onUpdate = vi.fn(),
+}: {
+    initial: ContentLessonExercise[];
+    onDelete?: (id: string) => void;
+    onUpdate?: (id: string, updated: ContentLessonExercise) => void;
+}) {
+    const [exercises, setExercises] = useState(initial);
+    return (
+        <ExerciseGenerator
+            exercises={exercises}
+            config={DEFAULT_EXERCISE_GEN_CONFIG}
+            onConfigChange={vi.fn()}
+            onGenerate={vi.fn()}
+            onReorder={setExercises}
+            onDelete={(id) => {
+                onDelete(id);
+                setExercises((prev) => prev.filter((e) => e.id !== id));
+            }}
+            onUpdate={(id, updated) => {
+                onUpdate(id, updated);
+                setExercises((prev) =>
+                    prev.map((e) => (e.id === id ? updated : e)),
+                );
+            }}
+        />
+    );
+}
+
+function freeTextEx(id: string): ContentLessonExercise {
+    return {
+        id,
+        type: "free_text",
+        prompt: "Translate: Bonjour",
+        card_ids: [],
+        distractors: [],
+        accept: ["Guten Tag"],
+    } as ContentLessonExercise;
+}
+
+describe("ExerciseGenerator — per-row edit (#1844)", () => {
+    it("shows an edit + delete control on each row, drag handle present", () => {
+        render(<ListHarness initial={[freeTextEx("f1")]} />);
+        expect(screen.getByTestId("exercise-edit-f1")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-delete-f1")).toBeInTheDocument();
+    });
+
+    it("opens the inline editor with the type-specific fields on edit", () => {
+        render(<ListHarness initial={[freeTextEx("f1")]} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-f1"));
+        expect(screen.getByTestId("exercise-editor-f1")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-edit-accept-f1")).toBeInTheDocument();
+    });
+
+    it("commits an edit through onUpdate and closes the editor", () => {
+        const onUpdate = vi.fn();
+        render(<ListHarness initial={[freeTextEx("f1")]} onUpdate={onUpdate} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-f1"));
+        fireEvent.change(screen.getByTestId("exercise-edit-prompt-f1"), {
+            target: {value: "Say hello"},
+        });
+        fireEvent.click(screen.getByTestId("exercise-edit-save-f1"));
+        expect(onUpdate).toHaveBeenCalledTimes(1);
+        expect(onUpdate.mock.calls[0][0]).toBe("f1");
+        expect(onUpdate.mock.calls[0][1].prompt).toBe("Say hello");
+        expect(screen.queryByTestId("exercise-editor-f1")).not.toBeInTheDocument();
+    });
+
+    it("cancel closes the editor without calling onUpdate", () => {
+        const onUpdate = vi.fn();
+        render(<ListHarness initial={[freeTextEx("f1")]} onUpdate={onUpdate} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-f1"));
+        fireEvent.click(screen.getByTestId("exercise-edit-cancel-f1"));
+        expect(onUpdate).not.toHaveBeenCalled();
+        expect(screen.queryByTestId("exercise-editor-f1")).not.toBeInTheDocument();
+    });
+
+    it("regression: delete still removes the row", () => {
+        const onDelete = vi.fn();
+        render(<ListHarness initial={[freeTextEx("f1")]} onDelete={onDelete} />);
+        fireEvent.click(screen.getByTestId("exercise-delete-f1"));
+        expect(onDelete).toHaveBeenCalledWith("f1");
+        expect(screen.queryByTestId("exercise-row-f1")).not.toBeInTheDocument();
+    });
+});
 
 function numberInput(): HTMLInputElement {
     return screen.getByTestId("exercise-count-input") as HTMLInputElement;

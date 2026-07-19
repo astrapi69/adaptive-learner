@@ -47,7 +47,7 @@ vi.mock("../../lib/content/lesson/lesson-export", () => ({
 import CreateLesson from "./CreateLesson";
 import {PAGE_CONTAINER_CLASSES} from "../../shared/layout/PageContainer";
 import {buildLessonFromDraft} from "../../lib/content/lesson/draft-to-lesson";
-import {generateExercises} from "../../lib/content/lesson/exercise-generator";
+import {generateExercises} from "../../lib/content/lesson/exercise/exercise-generator";
 import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 
 function renderPage() {

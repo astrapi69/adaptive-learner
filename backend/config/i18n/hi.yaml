@@ -2615,6 +2615,37 @@ create_lesson:
       cloze: रिक्त-स्थान भरें
       word_tiles: शब्द-टाइलें
       picture_choice: चित्र चयन
+    edit:
+      edit: "अभ्यास संपादित करें"
+      save: "सहेजें"
+      prompt_label: "प्रश्न / निर्देश"
+      pairs_label: "जोड़े"
+      pair_left: "शब्द"
+      pair_right: "मिलान"
+      pair_add: "जोड़ा जोड़ें"
+      pair_remove: "जोड़ा हटाएँ"
+      accept_label: "स्वीकृत उत्तर"
+      accept_add: "जोड़ें"
+      accept_remove: "स्वीकृत उत्तर हटाएँ"
+      accept_placeholder: "स्वीकृत उत्तर"
+      sentence_label: "वाक्य (प्रत्येक रिक्त स्थान के लिए ___ का उपयोग करें)"
+      sentence_hint: "प्रत्येक रिक्त स्थान को ___ (तीन अंडरस्कोर) से चिह्नित करें।"
+      blank_label: "रिक्त स्थान {n}: स्वीकृत उत्तर"
+      tiles_label: "टाइलें (सही क्रम में)"
+      tile_add: "टाइल जोड़ें"
+      tile_remove: "टाइल हटाएँ"
+      tile_placeholder: "शब्द"
+      images_label: "छवि विकल्प"
+      image_label_label: "लेबल"
+      image_correct: "सही उत्तर"
+      image_add: "छवि जोड़ें"
+      image_remove: "छवि हटाएँ"
+      err_prompt: "एक प्रश्न या निर्देश दर्ज करें।"
+      err_matching: "कम से कम 2 पूर्ण जोड़े जोड़ें (शब्द और मिलान)।"
+      err_free_text: "कम से कम एक स्वीकृत उत्तर जोड़ें।"
+      err_cloze: "प्रत्येक ___ चिह्न के लिए एक रिक्त स्थान चाहिए, और प्रत्येक रिक्त स्थान के लिए एक उत्तर चाहिए।"
+      err_word_tiles: "कम से कम 2 टाइलें जोड़ें।"
+      err_picture_choice: "लेबल और छवि सहित कम से कम 2 छवियाँ जोड़ें, और ठीक एक को सही के रूप में चिह्नित करें।"
     dir:
       auto: स्वतः
       receptive: ग्रहणशील

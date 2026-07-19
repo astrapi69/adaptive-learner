@@ -36,7 +36,7 @@ import {
     generateExercises,
     type ExerciseGenConfig,
     type GeneratorCard,
-} from "../../lib/content/lesson/exercise-generator";
+} from "../../lib/content/lesson/exercise/exercise-generator";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -684,6 +684,11 @@ export default function CreateLesson() {
                     onReorderExercises={setExercises}
                     onDeleteExercise={(id) =>
                         setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onUpdateExercise={(id, updated) =>
+                        setExercises((prev) =>
+                            prev.map((e) => (e.id === id ? updated : e)),
+                        )
                     }
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}
