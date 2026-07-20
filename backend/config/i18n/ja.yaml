@@ -2222,6 +2222,7 @@ content:
     free_prompt: "翻訳してください: {word}"
     cloze_prompt: "抜けている単語を入力してください。"
     tiles_prompt: "単語を並べ替えて文を作ってください（{word}）。"
+    pic_prompt: "次の語に合う画像を選んでください: {word}"
   page_title: "マイコンテンツ"
   intro: "API キーがなくても使える既製のレッスンセットです。ダウンロードはローカルにキャッシュされ、初回取得後はオフラインでも動作します。"
   sources: "ソース"

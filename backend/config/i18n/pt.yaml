@@ -2222,6 +2222,7 @@ content:
     free_prompt: "Traduza: {word}"
     cloze_prompt: "Complete a palavra que falta."
     tiles_prompt: "Organize as palavras para formar a frase ({word})."
+    pic_prompt: "Escolha a imagem para: {word}"
   page_title: "Meus conteúdos"
   intro: "Conjuntos de lições pré-construídos que podes usar sem chave API. Os downloads são armazenados localmente e funcionam offline após a primeira transferência."
   sources: "Fontes"

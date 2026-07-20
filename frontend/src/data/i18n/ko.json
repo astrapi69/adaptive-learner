@@ -2414,7 +2414,8 @@
       "match_prompt": "각 단어를 그 번역과 연결하세요.",
       "free_prompt": "번역하세요: {word}",
       "cloze_prompt": "빠진 단어를 채우세요.",
-      "tiles_prompt": "단어를 문장으로 배열하세요 ({word})."
+      "tiles_prompt": "단어를 문장으로 배열하세요 ({word}).",
+      "pic_prompt": "다음 단어에 맞는 이미지를 고르세요: {word}"
     },
     "page_title": "내 콘텐츠",
     "intro": "API 키 없이 사용할 수 있는 사전 제작 레슨 세트입니다. 다운로드한 항목은 로컬에 캐시되며 첫 다운로드 후에는 오프라인에서도 작동합니다.",

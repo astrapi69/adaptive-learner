@@ -2414,7 +2414,8 @@
       "match_prompt": "Associe chaque mot à sa traduction.",
       "free_prompt": "Traduis : {word}",
       "cloze_prompt": "Complète le mot manquant.",
-      "tiles_prompt": "Remets les mots dans l'ordre pour former la phrase ({word})."
+      "tiles_prompt": "Remets les mots dans l'ordre pour former la phrase ({word}).",
+      "pic_prompt": "Choisis l'image pour : {word}"
     },
     "page_title": "Mes contenus",
     "intro": "Sets de leçons préfabriqués utilisables sans clé API. Les téléchargements sont mis en cache localement et fonctionnent hors-ligne après la première récupération.",
