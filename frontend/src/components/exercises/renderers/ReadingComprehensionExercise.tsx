@@ -31,7 +31,7 @@ import {
     canonicalAnswer,
     type RcQuestion,
 } from "../../../lib/exercises/payload/reading-comprehension";
-import {isFreeTextCorrect} from "./FreeTextExercise";
+import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
