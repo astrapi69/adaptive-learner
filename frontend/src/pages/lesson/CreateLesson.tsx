@@ -38,6 +38,13 @@ import {
 } from "../../lib/content/lesson/exercise/exercise-generator";
 import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
 import {validateExerciseEdit} from "../../lib/content/lesson/exercise/exercise-edit";
+import {validateExtensionExercise} from "../../lib/content/lesson/extension/extension-edit";
+import {
+    buildExtensionLesson,
+    buildExtensionUserSetInput,
+} from "../../lib/content/lesson/extension/extension-to-lesson";
+import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
+import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -107,13 +114,16 @@ const TOTAL_STEPS = 4;
 /** #1743 — the book-text path skips the card + deterministic-exercise
  *  steps: Metadata -> BookText -> Review. */
 const TOTAL_STEPS_BOOK = 3;
+/** #1852 — the extension-authoring path: Metadata -> Extensions -> Review. */
+const TOTAL_STEPS_EXT = 3;
 const DRAFT_AUTOSAVE_MS = 10_000;
 
 const EMPTY_BOOK_FIELDS: BookFields = {title: "", author: "", url: "", asin: ""};
 
-/** Total wizard steps for the active path (book flow skips two steps). */
-function stepCountFor(bookMode: boolean): number {
-    return bookMode ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
+/** Total wizard steps for the active path. The book (#1743) and extension
+ *  (#1852) branches are both 3-step Metadata -> content -> Review flows. */
+function stepCountFor(compactFlow: boolean): number {
+    return compactFlow ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
 }
 
 /** Build the default metadata, seeding source language from the
@@ -178,11 +188,17 @@ export default function CreateLesson() {
     // 3-step Metadata -> BookText -> Review flow; the AI produces the theory
     // steps + exercises from the pasted chunk.
     const [bookMode, setBookMode] = useState(false);
+    // #1852 — the extension-authoring branch (mutually exclusive with
+    // bookMode). Reuses the shared ``exercises`` state for its ext exercises.
+    const [extMode, setExtMode] = useState(false);
     const [bookText, setBookText] = useState("");
     const [bookFields, setBookFields] = useState<BookFields>(EMPTY_BOOK_FIELDS);
     const [theorySteps, setTheorySteps] = useState<TheoryStep[]>([]);
 
-    const totalSteps = stepCountFor(bookMode);
+    // An alternative authoring branch (book-text #1743 / extension #1852)
+    // runs the compact 3-step flow instead of the card-driven one.
+    const compactFlow = bookMode || extMode;
+    const totalSteps = stepCountFor(compactFlow);
 
     /** Resolve the active AI provider seam, or ``null`` when no key /
      *  learner is set (the "no key" signal the BookTextStep gates on). */
@@ -311,6 +327,22 @@ export default function CreateLesson() {
             setStep((s) => Math.min(TOTAL_STEPS_BOOK, s + 1));
             return;
         }
+        if (extMode) {
+            // Extension flow: step 2 requires >= 1 extension exercise, all
+            // complete (reusing the shipped payload validators).
+            if (step === 2) {
+                if (
+                    exercises.length === 0 ||
+                    exercises.some((ex) => !validateExtensionExercise(ex).valid)
+                ) {
+                    setExerciseError(true);
+                    return;
+                }
+                setExerciseError(false);
+            }
+            setStep((s) => Math.min(TOTAL_STEPS_EXT, s + 1));
+            return;
+        }
         if (step === 2) {
             if (cards.length < MIN_CARDS) {
                 setCardError(true);
@@ -345,6 +377,12 @@ export default function CreateLesson() {
      *  BookText step. */
     function startBookMode() {
         setBookMode(true);
+        setStep(2);
+    }
+
+    /** #1852 — enter the extension-authoring path from Step 1. */
+    function startExtMode() {
+        setExtMode(true);
         setStep(2);
     }
 
@@ -432,6 +470,10 @@ export default function CreateLesson() {
                     lesson,
                     normalizeBook(bookFields),
                 );
+            } else if (extMode) {
+                const extInput = {meta, exercises};
+                lesson = buildExtensionLesson(extInput);
+                input = buildExtensionUserSetInput(extInput, lesson);
             } else {
                 lesson = buildLessonFromDraft({meta, cards, exercises});
                 input = buildUserSetInput({meta, cards, exercises}, lesson);
@@ -515,6 +557,7 @@ export default function CreateLesson() {
         setExercises([]);
         setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
         setBookMode(false);
+        setExtMode(false);
         setBookText("");
         setBookFields(EMPTY_BOOK_FIELDS);
         setTheorySteps([]);
@@ -639,6 +682,31 @@ export default function CreateLesson() {
                     onApplyTemplate={applyLessonTemplate}
                     selectedTemplate={selectedTemplate}
                     onStartBookMode={startBookMode}
+                    onStartExtensions={startExtMode}
+                    t={t}
+                />
+            )}
+
+            {extMode && (
+                <ExtensionSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    meta={meta}
+                    exercises={exercises}
+                    advanceBlocked={exerciseError}
+                    saving={saving}
+                    onAddExercise={(exercise) =>
+                        setExercises((prev) => [...prev, exercise])
+                    }
+                    onUpdateExercise={(id, updated) =>
+                        setExercises((prev) =>
+                            prev.map((e) => (e.id === id ? updated : e)),
+                        )
+                    }
+                    onDeleteExercise={(id) =>
+                        setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onSaveLocal={() => void saveLocally()}
                     t={t}
                 />
             )}
@@ -666,7 +734,7 @@ export default function CreateLesson() {
                 />
             )}
 
-            {!bookMode && (
+            {!compactFlow && (
                 <WizardSteps
                     step={step}
                     saved={Boolean(savedEntry)}
@@ -794,109 +862,15 @@ export default function CreateLesson() {
             </nav>
             )}
 
-            {confirmCancel && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-cancel-confirm"
-                >
-                    <div
-                        className="modal-card"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="create-lesson-cancel-title"
-                    >
-                        <h2
-                            id="create-lesson-cancel-title"
-                            className="modal-title"
-                        >
-                            {t(
-                                "create_lesson.cancel_confirm_title",
-                                "Discard this lesson?",
-                            )}
-                        </h2>
-                        <p>
-                            {t(
-                                "create_lesson.cancel_confirm_body",
-                                "Your unsaved lesson will be lost.",
-                            )}
-                        </p>
-                        <div className="form-actions">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                data-testid="create-lesson-cancel-keep"
-                                onClick={() => setConfirmCancel(false)}
-                            >
-                                {t(
-                                    "create_lesson.cancel_keep",
-                                    "Keep editing",
-                                )}
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                data-testid="create-lesson-cancel-discard"
-                                onClick={discard}
-                            >
-                                {t("create_lesson.cancel_discard", "Discard")}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {pendingDraft && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-draft-prompt"
-                >
-                    <div
-                        className="modal-card"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="create-lesson-draft-title"
-                    >
-                        <h2
-                            id="create-lesson-draft-title"
-                            className="modal-title"
-                        >
-                            {t(
-                                "create_lesson.draft.title",
-                                "Draft found",
-                            )}
-                        </h2>
-                        <p>
-                            {t(
-                                "create_lesson.draft.body",
-                                "You have an unfinished lesson. Continue where you left off or start fresh?",
-                            )}
-                        </p>
-                        <div className="form-actions">
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                data-testid="create-lesson-draft-fresh"
-                                onClick={startFresh}
-                            >
-                                {t(
-                                    "create_lesson.draft.start_fresh",
-                                    "Start fresh",
-                                )}
-                            </Button>
-                            <Button
-                                type="button"
-                                data-testid="create-lesson-draft-continue"
-                                onClick={() => applyDraft(pendingDraft)}
-                            >
-                                {t(
-                                    "create_lesson.draft.continue",
-                                    "Continue",
-                                )}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CreateLessonDialogs
+                confirmCancel={confirmCancel}
+                pendingDraft={pendingDraft}
+                onKeepEditing={() => setConfirmCancel(false)}
+                onDiscard={discard}
+                onStartFresh={startFresh}
+                onContinueDraft={applyDraft}
+                t={t}
+            />
         </PageContainer>
     );
 }

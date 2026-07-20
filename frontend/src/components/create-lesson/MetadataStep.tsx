@@ -6,7 +6,7 @@
  * come via props.
  */
 
-import {BookOpen, Info} from "lucide-react";
+import {Blocks, BookOpen, Info} from "lucide-react";
 
 import {Input} from "@/components/ui/input";
 import {
@@ -52,6 +52,8 @@ interface MetadataStepProps {
     /** #1743 — enter the book-text path (paste a chapter, AI writes the
      *  theory + exercises). Separate from the card-based templates. */
     onStartBookMode: () => void;
+    /** #1852 — enter the extension-authoring branch. */
+    onStartExtensions: () => void;
     t: Translate;
 }
 
@@ -63,6 +65,7 @@ export default function MetadataStep({
     sameLanguage,
     onUpdate,
     onApplyTemplate,
+    onStartExtensions,
     selectedTemplate,
     onStartBookMode,
     t,
@@ -134,6 +137,33 @@ export default function MetadataStep({
                             {t(
                                 "create_lesson.templates.knowledge_from_text.desc",
                                 "Paste a textbook section; the AI writes the theory in its own words and generates exercises.",
+                            )}
+                        </span>
+                    </span>
+                </button>
+                {/* #1852 — the extension-authoring path (advanced exercise
+                    types with a different data shape than the core types). */}
+                <button
+                    type="button"
+                    className="template-card mt-1 flex items-start gap-3 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-accent hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    data-testid="template-extensions"
+                    onClick={onStartExtensions}
+                >
+                    <Blocks
+                        className="mt-0.5 h-5 w-5 shrink-0 text-accent"
+                        aria-hidden="true"
+                    />
+                    <span className="flex flex-col gap-1">
+                        <span className="template-card-title font-semibold text-fg-primary">
+                            {t(
+                                "create_lesson.templates.extensions.title",
+                                "Advanced exercise types",
+                            )}
+                        </span>
+                        <span className="template-card-desc muted text-sm text-fg-muted">
+                            {t(
+                                "create_lesson.templates.extensions.desc",
+                                "Categorization and error-correction exercises. Advanced types that may not be supported by every app version.",
                             )}
                         </span>
                     </span>
