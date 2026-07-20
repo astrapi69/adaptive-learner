@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../../api/client";
-import AiSettingsPanel from "../../components/settings/ai/AiSettingsPanel";
+import { AiSettingsPanel } from "@astrapi69/ai-key-vault-react";
 import SettingsSidebar from "../../components/settings/SettingsSidebar";
 import SettingsMobileMenu from "../../components/settings/SettingsMobileMenu";
 import type { SidebarGroup } from "../../lib/settings/sidebar-model";
@@ -269,9 +269,11 @@ export default function Settings() {
             active={activeTab === "general"}
           />
 
+          {/* The AI panel self-manages its settings snapshot through the
+              package's storage adapter; the page's ``settings`` still refreshes
+              via the settings-refresh bus (subscribed below) so the General
+              panel stays in sync after an AI-tab change. */}
           <AiSettingsPanel
-            settings={settings}
-            onSettingsChange={setSettings}
             active={activeTab === "ai"}
             onOpenKeyExport={openKeyExport}
             onOpenKeyImport={openKeyImport}

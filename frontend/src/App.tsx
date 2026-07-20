@@ -3,6 +3,7 @@ import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 
 import { featureRegistry, type FeatureContext } from "./features/featureConfig";
 import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
+import { AiKeyVaultProvider } from "./components/settings/ai/AiKeyVaultProvider";
 import { resolveStorageMode } from "./storage";
 import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie/dexie-user-data";
 import { lazyWithReload } from "./lib/pwa/lazyWithReload";
@@ -160,6 +161,11 @@ export default function App() {
         <FeatureProvider registry={featureRegistry} context={featureContext}>
           <HelpProvider>
             <ConfirmProvider>
+            {/* Provides the storage adapter + provider registry + UI slots to
+                the package's AI settings panel and encrypted key vault, and the
+                context the ``useApiKeyStatus`` gate reads. Inside ConfirmProvider
+                (it injects the confirm dialog) + I18nProvider (it injects ``t``). */}
+            <AiKeyVaultProvider>
             <SkipToContent />
             <UpdatePromptHost />
             <DesktopUpdateHost />
@@ -253,6 +259,7 @@ export default function App() {
               pauseOnHover
               theme="colored"
             />
+            </AiKeyVaultProvider>
             </ConfirmProvider>
           </HelpProvider>
         </FeatureProvider>
