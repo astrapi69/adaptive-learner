@@ -13,7 +13,5 @@ export * from "./QrCodeModal";
 export {default as QrCodeModal} from "./QrCodeModal";
 export * from "./ShortcutHelpDialog";
 export {default as ShortcutHelpDialog} from "./ShortcutHelpDialog";
-export * from "./UpdatePrompt";
-export {default as UpdatePrompt} from "./UpdatePrompt";
 export * from "./ValidationReport";
 export {default as ValidationReport} from "./ValidationReport";

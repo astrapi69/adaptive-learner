@@ -86,10 +86,18 @@ describe("checkForUpdateUnified (mode dispatch)", () => {
   it("uses the service worker in Dexie mode (not GitHub)", async () => {
     vi.resetModules();
     vi.doMock("../../storage", () => ({ resolveStorageMode: () => "dexie" }));
-    const swCheck = vi.fn(async () => ({ status: "current", latestVersion: "1.89.0" }));
-    vi.doMock("../pwa/sw-update", () => ({
-      checkForUpdate: swCheck,
+    // #1873 — the service-worker check now comes from the kit.
+    const swCheck = vi.fn(async () => ({
+      status: "current",
+      latestVersion: "1.89.0",
+      latestHash: "x",
+    }));
+    vi.doMock("@astrapi69/pwa-update", () => ({
+      checkForUpdateReliable: swCheck,
+    }));
+    vi.doMock("../pwa/update-store", () => ({
       CURRENT_BUILD: { version: "1.89.0", buildHash: "x" },
+      versionJsonUrl: () => "/version.json",
     }));
     const fetchImpl = vi.fn();
     const { checkForUpdateUnified } = await import("./updateChecker");
@@ -103,9 +111,12 @@ describe("checkForUpdateUnified (mode dispatch)", () => {
     vi.resetModules();
     vi.doMock("../../storage", () => ({ resolveStorageMode: () => "api" }));
     const swCheck = vi.fn();
-    vi.doMock("../pwa/sw-update", () => ({
-      checkForUpdate: swCheck,
+    vi.doMock("@astrapi69/pwa-update", () => ({
+      checkForUpdateReliable: swCheck,
+    }));
+    vi.doMock("../pwa/update-store", () => ({
       CURRENT_BUILD: { version: "1.89.0", buildHash: "x" },
+      versionJsonUrl: () => "/version.json",
     }));
     const fetchImpl = vi.fn(async () => jsonResponse({ tag_name: "v1.90.0", html_url: "u" }));
     const { checkForUpdateUnified } = await import("./updateChecker");

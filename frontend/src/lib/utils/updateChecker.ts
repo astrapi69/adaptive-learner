@@ -15,8 +15,10 @@
  * Library-first: native ``fetch`` + a tiny semver compare, no new package.
  */
 
+import { checkForUpdateReliable } from "@astrapi69/pwa-update";
+
 import { resolveStorageMode } from "../../storage";
-import { checkForUpdate as checkSwUpdate, CURRENT_BUILD } from "../pwa/sw-update";
+import { CURRENT_BUILD, versionJsonUrl } from "../pwa/update-store";
 
 /** Outcome of an update check (mode-independent shape). */
 export interface UpdateCheckResult {
@@ -136,9 +138,15 @@ export async function checkForUpdateUnified(
   fetchImpl: typeof fetch = fetch,
 ): Promise<UpdateCheckResult> {
   if (resolveStorageMode() === "dexie") {
-    const outcome = await checkSwUpdate();
+    const outcome = await checkForUpdateReliable({
+      build: CURRENT_BUILD,
+      manifestUrl: versionJsonUrl(),
+    });
+    // #1382 — "preparing" (a newer build deployed, its worker not fetchable
+    // yet) is actionable news, so it maps to update-available here rather
+    // than being flattened into "error".
     const status: UpdateCheckResult["status"] =
-      outcome.status === "available"
+      outcome.status === "available" || outcome.status === "preparing"
         ? "update-available"
         : outcome.status === "current"
           ? "up-to-date"

@@ -340,6 +340,25 @@ Click through once for EACH theme:
 - [ ] Known open issue #1569 (caret/touch offset by 1-2 lines in the
       lesson flow): reproduce + add notes to the issue
 
+#### App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
+
+The one path no automated test covers: on iOS/WKWebView a new service
+worker often does NOT activate through skipWaiting + reload, only after
+the app is fully closed and reopened.
+
+- [ ] Install the PWA on the home screen, note the build hash under
+      Settings > About
+- [ ] Deploy a newer build, bring the app back from the background
+      (do not relaunch it): the update banner appears
+- [ ] The banner ALSO shows the hint "close the app and reopen it" -
+      this hint must never be missing on iOS standalone
+- [ ] Tap "Update": the banner disappears and does NOT come back after
+      a reload (accept suppression)
+- [ ] Fully close and reopen the app: the build hash under About is
+      the new one
+- [ ] On a NON-iOS device (Android/desktop) run the same flow: the
+      restart hint must NOT appear there
+
 ### Android Chrome
 - [ ] "Install app" → maskable icon not clipped
 - [ ] PWA works, Dexie mode

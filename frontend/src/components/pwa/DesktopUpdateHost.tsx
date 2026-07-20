@@ -20,7 +20,7 @@ import { RefreshCw, X } from "lucide-react";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
 import { resolveStorageMode } from "../../storage";
-import { CURRENT_BUILD } from "../../lib/pwa/sw-update";
+import { CURRENT_BUILD } from "../../lib/pwa/update-store";
 import {
   checkForUpdate,
   shouldNotifyForUpdate,
