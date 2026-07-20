@@ -155,6 +155,7 @@ Teile landen ebenfalls hier:
 | Generische UI-Komponenten | `frontend/src/shared/` | MatchingTile, ExerciseTimer |
 | Generische Hooks | `frontend/src/shared/` | useDebounce, useTimer |
 | Generische Utilities | `frontend/src/lib/` | eventLogger, formatDuration |
+| Exercise-Logik (Grading + Authoring) | `frontend/src/lib/exercises/` | generateExercises, validateExerciseEdit, createIdFactory (Barrel: `lib/exercises`) |
 | Exercise-Widgets | `frontend/src/components/exercises/` | MatchingExercise, ClozeExercise |
 | Feature-spezifisch | `frontend/src/components/<feature>/` | BackupCompare, ShareWizard |
 

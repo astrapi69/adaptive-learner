@@ -18,7 +18,7 @@ import {
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
-} from "../../lib/content/lesson/extension/extension-edit";
+} from "../../lib/exercises";
 import type {ContentLessonExercise} from "../../storage/types";
 
 /** Stateful harness so edits round-trip through the exercise record. */

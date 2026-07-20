@@ -23,7 +23,7 @@
  * });
  */
 
-import type {ExercisePrompts} from "./exercise-generator";
+import type {ExercisePrompts} from "../../../exercises";
 
 type Translate = (key: string, fallback?: string) => string;
 

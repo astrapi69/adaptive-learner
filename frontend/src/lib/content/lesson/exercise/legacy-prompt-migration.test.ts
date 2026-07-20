@@ -9,7 +9,7 @@
 
 import {describe, expect, it} from "vitest";
 
-import {DEFAULT_EXERCISE_PROMPTS} from "./exercise-generator";
+import {DEFAULT_EXERCISE_PROMPTS} from "../../../exercises";
 import {migrateLegacyExercisePrompts} from "./legacy-prompt-migration";
 import type {ContentLessonExercise} from "../../../../storage/types";
 

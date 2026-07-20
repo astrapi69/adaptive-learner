@@ -40,11 +40,9 @@ import ExerciseEditor from "./ExerciseEditor";
 import {
     createBlankExercise,
     newExerciseId,
-} from "../../lib/content/lesson/exercise/exercise-edit";
-import type {
-    ExerciseGenConfig,
-    GeneratableType,
-} from "../../lib/content/lesson/exercise/exercise-generator";
+    type ExerciseGenConfig,
+    type GeneratableType,
+} from "../../lib/exercises";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export const MIN_EXERCISES = 5;

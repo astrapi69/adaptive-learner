@@ -12,12 +12,20 @@
  * analysis-to-lesson logic exactly so the analysis output is
  * unchanged; ``generateExercises`` adds the creator's config layer
  * (type mix + count cap + drill direction).
+ *
+ * @example
+ * ```ts
+ * const exercises = generateExercises(
+ *   [{id: "c1", front: "eins", back: "one"}],
+ *   {count: 5, types: ["matching", "free_text"], direction: "auto"},
+ * );
+ * ```
  */
 
 import type {
     ContentExerciseDirection,
     ContentLessonExercise,
-} from "../../../../storage/types";
+} from "../../../storage/types";
 
 export type GeneratableType =
     | "matching"

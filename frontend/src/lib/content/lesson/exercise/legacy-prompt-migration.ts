@@ -25,7 +25,7 @@
 import {
     DEFAULT_EXERCISE_PROMPTS,
     type ExercisePrompts,
-} from "./exercise-generator";
+} from "../../../exercises";
 import {localizedExercisePrompts} from "./exercise-prompts";
 import type {ContentLessonExercise} from "../../../../storage/types";
 

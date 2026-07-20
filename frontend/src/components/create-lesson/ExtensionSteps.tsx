@@ -20,7 +20,7 @@ import {
     createBlankExtensionExercise,
     newExtensionExerciseId,
     type ExtensionWizardType,
-} from "../../lib/content/lesson/extension/extension-edit";
+} from "../../lib/exercises";
 import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 

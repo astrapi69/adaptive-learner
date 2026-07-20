@@ -14,7 +14,7 @@ import {
     normalizeExtensionExercise,
     validateExtensionExercise,
 } from "./extension-edit";
-import type {ContentLessonExercise} from "../../../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 function rc(payload: unknown, prompt = "Read + answer"): ContentLessonExercise {
     return {
@@ -122,7 +122,7 @@ describe("validateExtensionExercise — reading_comprehension", () => {
     it("rejects an empty passage", () => {
         const res = validateExtensionExercise(rc({...valid, passage: "   "}));
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("reading_comprehension");
+        expect(res.code).toBe("reading_comprehension");
     });
     it("rejects a multiple_choice question with no correct option", () => {
         const res = validateExtensionExercise(
@@ -180,7 +180,7 @@ describe("validateExtensionExercise — graded_quiz", () => {
             }),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("graded_quiz");
+        expect(res.code).toBe("graded_quiz");
     });
     it("rejects an out-of-range pass_threshold", () => {
         const res = validateExtensionExercise(gq({...valid, pass_threshold: 140}));
@@ -203,7 +203,7 @@ describe("validateExtensionExercise — categorization (reuses payload validator
             cat({categories: [{name: "Sight", items: ["a"]}]}),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("categorization");
+        expect(res.code).toBe("categorization");
     });
     it("rejects an empty prompt", () => {
         const res = validateExtensionExercise(
@@ -218,7 +218,7 @@ describe("validateExtensionExercise — categorization (reuses payload validator
             ),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("prompt");
+        expect(res.code).toBe("prompt");
     });
     it("rejects an item shared across two buckets", () => {
         const res = validateExtensionExercise(
@@ -241,7 +241,7 @@ describe("validateExtensionExercise — categorization (reuses payload validator
             }),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("categorization");
+        expect(res.code).toBe("categorization");
     });
 });
 
@@ -259,7 +259,7 @@ describe("validateExtensionExercise — error_correction", () => {
             ec({tokens: ["a", "b"], error_index: 5, accept: ["x"]}),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("error_correction");
+        expect(res.code).toBe("error_correction");
     });
     it("rejects a correction equal to the marked token", () => {
         const res = validateExtensionExercise(

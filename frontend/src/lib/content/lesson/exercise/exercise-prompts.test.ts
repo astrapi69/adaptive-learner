@@ -20,7 +20,7 @@ import {
     DEFAULT_EXERCISE_PROMPTS,
     generateExercises,
     type GeneratorCard,
-} from "./exercise-generator";
+} from "../../../exercises";
 import {localizedExercisePrompts} from "./exercise-prompts";
 
 const I18N_DIR = join(__dirname, "../../../../data/i18n");

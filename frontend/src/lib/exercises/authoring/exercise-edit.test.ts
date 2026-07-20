@@ -22,7 +22,7 @@ import {
     normalizeExerciseEdit,
     validateExerciseEdit,
 } from "./exercise-edit";
-import type {ContentLessonExercise} from "../../../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 function base(over: Partial<ContentLessonExercise>): ContentLessonExercise {
     return {
@@ -47,7 +47,7 @@ describe("validateExerciseEdit — prompt", () => {
     it("rejects an empty/whitespace prompt on any type", () => {
         const res = validateExerciseEdit(base({prompt: "   ", accept: ["x"]}));
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("prompt");
+        expect(res.code).toBe("prompt");
     });
 });
 
@@ -63,7 +63,7 @@ describe("validateExerciseEdit — free_text", () => {
             base({type: "free_text", accept: ["  "]}),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("free_text");
+        expect(res.code).toBe("free_text");
     });
 });
 
@@ -93,7 +93,7 @@ describe("validateExerciseEdit — matching", () => {
             }),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("matching");
+        expect(res.code).toBe("matching");
     });
 });
 
@@ -119,7 +119,7 @@ describe("validateExerciseEdit — cloze", () => {
             }),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("cloze");
+        expect(res.code).toBe("cloze");
     });
     it("rejects when a blank has no accepted answer", () => {
         const res = validateExerciseEdit(
@@ -161,7 +161,7 @@ describe("validateExerciseEdit — word_tiles", () => {
             base({type: "word_tiles", prompt: "Arrange", tiles: ["Je"]}),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("word_tiles");
+        expect(res.code).toBe("word_tiles");
     });
 });
 
@@ -191,7 +191,7 @@ describe("validateExerciseEdit — picture_choice", () => {
             }),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("picture_choice");
+        expect(res.code).toBe("picture_choice");
     });
     it("rejects when an image is missing src or label", () => {
         const res = validateExerciseEdit(
@@ -301,7 +301,7 @@ describe("validateExerciseEdit — multiple_choice (#1850)", () => {
             mc({options: [{text: "cat", correct: true}, {text: "  ", correct: false}]}),
         );
         expect(res.valid).toBe(false);
-        expect(res.errorKey).toContain("multiple_choice");
+        expect(res.code).toBe("multiple_choice");
     });
     it("rejects duplicate option texts", () => {
         const res = validateExerciseEdit(

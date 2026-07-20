@@ -9,7 +9,7 @@
  */
 
 import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
-import type {GeneratorCard} from "./exercise/exercise-generator";
+import type {GeneratorCard} from "../../exercises";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
     ContentLesson,
