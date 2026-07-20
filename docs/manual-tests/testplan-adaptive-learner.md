@@ -132,6 +132,11 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Rueckwaerts: Matching-Spalten getauscht
 - [ ] Zufall: Karten aus verschiedenen Lektionen gemischt
 - [ ] Endlos: kein Session-Ende, Statistik laeuft
+- [ ] Endlos-Abschluss ("Uebung beendet"): Enter (ohne Klick) loest
+      "Zurueck zum Dashboard" aus (#1864, Button auto-fokussiert)
+- [ ] Fehler-wiederholen-Abschluss ("Alle Fehler korrigiert!"): Enter
+      (ohne Klick) loest "Zurueck zur Lektion" aus (#1864); Klick auf den
+      Button funktioniert weiterhin
 
 ### Neue Uebungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
