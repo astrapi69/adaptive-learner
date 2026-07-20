@@ -334,6 +334,15 @@ describe("AboutTab", () => {
 
     it("uses Dexie's synthetic payload when storage mode is dexie", async () => {
         localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+        // #1875 — pin the UI language to DE. The assertion below reads the
+        // German storage-mode label, but I18nProvider resolves the initial
+        // language as saved -> navigator -> "de": with no saved choice (the
+        // beforeEach clears localStorage) and happy-dom's navigator.language
+        // "en-US", it settles on EN in isolation, so the label stays English
+        // and the wait times out. In the full suite a prior test happens to
+        // leave DE cached, masking this. Seed the saved DE choice so the
+        // language resolves deterministically regardless of run order.
+        localStorage.setItem("adaptive-learner.language", "de");
         _resetStorageCacheForTests();
         const {getStorage} = await import("../../storage");
         vi.spyOn(getStorage().system, "info").mockResolvedValue(dexieInfo);
@@ -347,11 +356,9 @@ describe("AboutTab", () => {
         await waitFor(() => {
             expect(screen.getByTestId("about-content")).toBeTruthy();
         });
-        // I18nProvider defaults to lang="de" and loads the bundled DE
-        // catalog (Phase 29F hotfix), so the storage-mode label resolves
-        // to its DE translation. The catalog is now a lazily-imported
-        // per-language chunk (perf F-1, v1.56.0), so wait for the DE
-        // string to land rather than reading it synchronously.
+        // The DE catalog is a lazily-imported per-language chunk (perf F-1,
+        // v1.56.0), so wait for the German string to land rather than reading
+        // it synchronously.
         await waitFor(() =>
             expect(
                 screen.getByTestId("about-storage-mode").textContent,
