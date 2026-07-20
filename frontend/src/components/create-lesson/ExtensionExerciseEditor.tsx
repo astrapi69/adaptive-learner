@@ -20,9 +20,16 @@ import StringListEditor from "../../shared/forms/StringListEditor";
 import {
     CATEGORIZATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
+    GRADED_QUIZ_EXT_TYPE,
+    READING_COMPREHENSION_EXT_TYPE,
     normalizeExtensionExercise,
     validateExtensionExercise,
+    type WizardSubQuestion,
 } from "../../lib/content/lesson/extension/extension-edit";
+import {
+    GradedQuizFields,
+    ReadingComprehensionFields,
+} from "./extension-fields";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export interface ExtensionExerciseEditorProps {
@@ -93,6 +100,32 @@ export default function ExtensionExerciseEditor({
                     id={id}
                     payload={draft.ext_payload as unknown as ErrorCorrectionPayload}
                     onChange={patchPayload}
+                />
+            )}
+            {draft.type === READING_COMPREHENSION_EXT_TYPE && (
+                <ReadingComprehensionFields
+                    id={id}
+                    payload={
+                        draft.ext_payload as unknown as {
+                            passage: string;
+                            questions: WizardSubQuestion[];
+                        }
+                    }
+                    onChange={patchPayload}
+                    t={t}
+                />
+            )}
+            {draft.type === GRADED_QUIZ_EXT_TYPE && (
+                <GradedQuizFields
+                    id={id}
+                    payload={
+                        draft.ext_payload as unknown as {
+                            pass_threshold?: number;
+                            questions: WizardSubQuestion[];
+                        }
+                    }
+                    onChange={patchPayload}
+                    t={t}
                 />
             )}
 
