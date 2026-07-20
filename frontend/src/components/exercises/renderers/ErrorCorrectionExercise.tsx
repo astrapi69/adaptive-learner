@@ -34,7 +34,7 @@ import {
     asErrorCorrectionPayload,
     canonicalErrorCorrection,
 } from "../../../lib/exercises/payload/error-correction";
-import {isFreeTextCorrect} from "./FreeTextExercise";
+import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";

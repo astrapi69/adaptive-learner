@@ -65,9 +65,67 @@ describe("parseVerifyVerdict (#1798)", () => {
         );
     });
 
-    it("falls back to unknown with the raw text when not JSON", () => {
+    it("shows ONLY the fallback (no raw string) when the reply is not JSON (#1883)", () => {
+        // Unparseable prose must collapse to the localized "unknown" message
+        // with no reason text — never the model's raw reply.
         const result = parseVerifyVerdict("I think it is basically right.");
         expect(result.verdict).toBe("unknown");
-        expect(result.reason).toBe("I think it is basically right.");
+        expect(result.reason).toBe("");
+    });
+
+    it("shows ONLY the fallback (no raw string) when the reply is raw JSON that cannot be salvaged (#1883)", () => {
+        const result = parseVerifyVerdict('{"foo": "bar"} garbage {broken');
+        expect(result.verdict).toBe("unknown");
+        expect(result.reason).toBe("");
+    });
+
+    it("recovers a verdict from JSON wrapped in markdown code fences (#1883)", () => {
+        // The exact shape the prompt flags: the model wraps the JSON in a
+        // ```json fence. It must still parse to a real verdict, not fall back.
+        const raw = "```json\n{\"verdict\": \"no\", \"reason\": \"Wrong term.\"}\n```";
+        const result = parseVerifyVerdict(raw);
+        expect(result.verdict).toBe("no");
+        expect(result.reason).toBe("Wrong term.");
+    });
+
+    it("recovers a verdict from JSON with a trailing comma (#1883)", () => {
+        // Many BYOK models emit a trailing comma, which JSON.parse rejects.
+        const result = parseVerifyVerdict(
+            '{"verdict": "no", "reason": "Different meaning.",}',
+        );
+        expect(result.verdict).toBe("no");
+        expect(result.reason).toBe("Different meaning.");
+    });
+
+    it("recovers a verdict from single-quoted JSON (#1883)", () => {
+        const result = parseVerifyVerdict(
+            "{'verdict': 'yes', 'reason': 'Accepted synonym.'}",
+        );
+        expect(result.verdict).toBe("yes");
+        expect(result.reason).toBe("Accepted synonym.");
+    });
+
+    it("recovers a verdict from smart-quoted JSON (#1883)", () => {
+        const result = parseVerifyVerdict(
+            "{“verdict”: “partial”, “reason”: “Only half right.”}",
+        );
+        expect(result.verdict).toBe("partial");
+    });
+
+    it("tolerates a verdict phrased with extra words (#1883)", () => {
+        const result = parseVerifyVerdict(
+            '{"verdict": "no, the answer is wrong", "reason": "It changes the meaning."}',
+        );
+        expect(result.verdict).toBe("no");
+        expect(result.reason).toBe("It changes the meaning.");
+    });
+
+    it("never surfaces a raw JSON blob as the reason on total failure (#1883)", () => {
+        // A malformed reply with no salvageable verdict must NOT dump the raw
+        // JSON at the learner — that was the display bug.
+        const raw = '{"foo": "bar", "baz": [1, 2,}';
+        const result = parseVerifyVerdict(raw);
+        expect(result.verdict).toBe("unknown");
+        expect(result.reason).toBe("");
     });
 });

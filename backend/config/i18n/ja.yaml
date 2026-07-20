@@ -807,6 +807,12 @@ settings:
     receptive_first: まず認識
     productive_focus: 産出
     balanced: バランス
+  error_replay_scope:
+    title: "間違いをやり直す"
+    hint: "レッスン後に間違いをやり直すとき、間違えた部分だけをもう一度行うか、演習全体を行います。マッチング演習では、「間違いのみ」は間違えたペアだけを表示します（マッチングできるよう、正しいペアもいくつか加えます）。"
+    label: "やり直しの範囲"
+    errors_only: "間違いのみ表示（既定）"
+    whole_set: "セット全体をやり直す"
   matching_resolve:
     title: "解答アニメーション"
     hint: "確認後に「解答を表示」を押したとき、マッチング演習が正しいペアをどのように表示するか。"
