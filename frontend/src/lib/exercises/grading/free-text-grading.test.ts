@@ -180,4 +180,3 @@ describe("isFreeTextNearMiss (#627)", () => {
         expect(isFreeTextNearMiss("", accept)).toBe(false);
     });
 });
-
