@@ -113,18 +113,41 @@ test.describe("Lesson file import/export (#1672)", () => {
 
         // 2. First import — no collision, lands in My Lessons.
         await gotoImportTab(page);
+
+        // #1878 — assert each stage's EXACT settled count instead of sampling
+        // the list dynamically. The My-Lessons list is loaded asynchronously
+        // and re-loaded after every import, so its row count trails the Dexie
+        // state by a beat; the original spec captured baselines mid-render
+        // (``.first()`` visible + ``count()``; ``poll().toBeGreaterThan``) and
+        // compared a later count against them, so a row that rendered between
+        // the ``afterCopy`` sample and the final assertion inflated the count
+        // — the intermittent "Expected 2, Received 3". This is NOT leftover
+        // state from an earlier spec: Playwright wipes IndexedDB per context
+        // (storageState restore), so the only rows here are this test's own
+        // three (``created-…`` save-local + ``imported-…`` + its ``…-copy``).
+        // Each ``toHaveCount`` below therefore doubles as a settle barrier:
+        // it waits for the list to reflect Dexie before the next step, which
+        // also keeps the re-import's collision check (it reads the rendered
+        // set list) deterministic. Counts are absolute because a fresh
+        // context starts with zero user sets.
+        //
+        // The created lesson was saved locally under a ``created-{slug}`` set
+        // id — distinct from the ``imported-{slug}`` id the import derives
+        // from the title, so this first import does not collide.
+        await expect(page.locator(MY_LESSON_ROWS)).toHaveCount(1, {
+            timeout: 15000,
+        });
+
         await openModalAndUpload(page, savedPath);
         await expect(page.getByTestId("import-lesson-collision")).toHaveCount(0);
         await page.getByTestId("import-lesson-confirm").click();
         await expect(page.getByTestId("import-lesson-modal")).toHaveCount(0, {
             timeout: 15000,
         });
-        await expect(
-            page.locator(MY_LESSON_ROWS).first(),
-        ).toBeVisible({timeout: 15000});
-        const afterFirst = await page
-            .locator(MY_LESSON_ROWS)
-            .count();
+        // The created row (1) plus the freshly imported one (2).
+        await expect(page.locator(MY_LESSON_ROWS)).toHaveCount(2, {
+            timeout: 15000,
+        });
 
         // 3. Re-import the SAME file (same page, warm set list) → collision
         //    dialog with three choices.
@@ -137,24 +160,19 @@ test.describe("Lesson file import/export (#1672)", () => {
         await expect(page.getByTestId("import-lesson-copy")).toBeVisible();
         await expect(page.getByTestId("import-lesson-cancel")).toBeVisible();
 
-        // 3a. "Import as copy" → a NEW My-Lessons entry (no overwrite).
+        // 3a. "Import as copy" → a NEW My-Lessons entry (distinct ``…-copy``
+        //     set id), so the list settles at three.
         await page.getByTestId("import-lesson-copy").click();
         await expect(page.getByTestId("import-lesson-modal")).toHaveCount(0, {
             timeout: 15000,
         });
-        await expect
-            .poll(
-                async () =>
-                    page.locator(MY_LESSON_ROWS).count(),
-                {timeout: 15000},
-            )
-            .toBeGreaterThan(afterFirst);
-        const afterCopy = await page
-            .locator(MY_LESSON_ROWS)
-            .count();
+        await expect(page.locator(MY_LESSON_ROWS)).toHaveCount(3, {
+            timeout: 15000,
+        });
 
         // 3b. Re-import again → collision → "Overwrite" (irreversible) →
-        //     succeeds and does NOT add another entry.
+        //     upserts the same ``imported-{slug}`` set id, so it does NOT add
+        //     another entry: the list STAYS at three.
         await openModalAndUpload(page, savedPath);
         await page.getByTestId("import-lesson-confirm").click();
         await expect(page.getByTestId("import-lesson-collision")).toBeVisible({
@@ -164,9 +182,9 @@ test.describe("Lesson file import/export (#1672)", () => {
         await expect(page.getByTestId("import-lesson-modal")).toHaveCount(0, {
             timeout: 15000,
         });
-        await expect(
-            page.locator(MY_LESSON_ROWS),
-        ).toHaveCount(afterCopy, {timeout: 15000});
+        await expect(page.locator(MY_LESSON_ROWS)).toHaveCount(3, {
+            timeout: 15000,
+        });
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
