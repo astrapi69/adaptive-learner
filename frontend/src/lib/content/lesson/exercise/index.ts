@@ -1,11 +1,9 @@
 /**
- * Barrel for the exercise-authoring concern of the lesson pipeline:
- * deterministic generation, per-type inline editing (#1844), and appending
- * generated exercises to an existing lesson.
+ * Barrel for the app-side exercise-prompt concern of the lesson pipeline:
+ * the localized default-prompt templates and the opportunistic legacy-prompt
+ * migration (#1860). The exercise-authoring logic (generation + inline
+ * editing) moved to ``lib/exercises`` in #1862; import it from there.
  */
 
-export * from "./exercise-generator";
 export * from "./exercise-prompts";
-export * from "./append-exercises";
-export * from "./exercise-edit";
 export * from "./legacy-prompt-migration";

@@ -8,27 +8,35 @@
  * them. The blank starts are deliberately invalid so the wizard gate keeps a
  * half-filled extension exercise out of the review step until the author
  * completes it.
+ *
+ * @example
+ * ```ts
+ * const ex = createBlankExtensionExercise(CATEGORIZATION_EXT_TYPE, newExtensionExerciseId());
+ * const issue = validateExtensionExercise(ex); // {valid: false, code: "prompt"}
+ * if (issue.valid) onSave(normalizeExtensionExercise(ex));
+ * ```
  */
 
 import {
     CATEGORIZATION_EXT_TYPE,
     categorizationPayloadErrors,
-} from "../../../exercises/categorization";
+} from "../categorization";
 import {
     ERROR_CORRECTION_EXT_TYPE,
     errorCorrectionPayloadErrors,
-} from "../../../exercises/error-correction";
+} from "../error-correction";
 import {
     READING_COMPREHENSION_EXT_TYPE,
     readingComprehensionPayloadErrors,
     type RcQuestion,
-} from "../../../exercises/reading-comprehension";
+} from "../reading-comprehension";
 import {
     GRADED_QUIZ_EXT_TYPE,
     gradedQuizPayloadErrors,
     type GqQuestion,
-} from "../../../exercises/graded-quiz";
-import type {ContentLessonExercise} from "../../../../storage/types";
+} from "../graded-quiz";
+import type {ContentLessonExercise} from "../../../storage/types";
+import {createIdFactory} from "./id-factory";
 
 export {
     CATEGORIZATION_EXT_TYPE,
@@ -59,25 +67,39 @@ export interface WizardSubQuestion {
     partial_credit?: boolean;
 }
 
-const ERR = "create_lesson.extensions.edit.err_";
+/**
+ * Machine code identifying which rule an extension exercise draft failed.
+ * App-neutral on purpose (#1862): the kit reports WHAT is wrong, the app maps
+ * the code to a localized message (see ``edit-error-keys.ts``). ``prompt`` is
+ * the shared pre-check; the others match the wizard extension type.
+ */
+export type ExtensionEditCode =
+    | "prompt"
+    | "categorization"
+    | "error_correction"
+    | "reading_comprehension"
+    | "graded_quiz";
 
+/** Result of validating an extension exercise draft: whether it is saveable
+ *  and, when not, the machine {@link ExtensionEditCode} of the failed rule. */
 export interface ExtensionEditIssue {
     valid: boolean;
-    errorKey: string | null;
+    code: ExtensionEditCode | null;
 }
 
-const ok: ExtensionEditIssue = {valid: true, errorKey: null};
+const ok: ExtensionEditIssue = {valid: true, code: null};
 
-function fail(suffix: string): ExtensionEditIssue {
-    return {valid: false, errorKey: `${ERR}${suffix}`};
+function fail(code: ExtensionEditCode): ExtensionEditIssue {
+    return {valid: false, code};
 }
 
-let _extSeq = 0;
+const wizardExtensionIds = createIdFactory("ex-ext");
 
-/** Unique id for a wizard-authored extension exercise. */
+/** Unique id for a wizard-authored extension exercise. Backed by a default
+ *  {@link IdFactory}; inject {@link createIdFactory} for an isolated
+ *  sequence (#1862). */
 export function newExtensionExerciseId(): string {
-    _extSeq += 1;
-    return `ex-ext-${_extSeq}`;
+    return wizardExtensionIds.next();
 }
 
 /** A deliberately-invalid blank sub-question (no correct option / no accept
@@ -136,7 +158,7 @@ export function createBlankExtensionExercise(
  * Validate an extension exercise draft for the inline editor. Checks the
  * common prompt, then delegates to the shipped payload validator (plus a
  * wizard-level non-empty-category-name rule for categorization). Returns the
- * first failure (as an i18n key) or ``{valid: true}``.
+ * first failure (as a machine {@link ExtensionEditCode}) or ``{valid: true}``.
  */
 export function validateExtensionExercise(
     ex: ContentLessonExercise,

@@ -25,7 +25,8 @@ import {
     normalizeExtensionExercise,
     validateExtensionExercise,
     type WizardSubQuestion,
-} from "../../lib/content/lesson/extension/extension-edit";
+} from "../../lib/exercises";
+import {extensionEditErrorKey} from "../../lib/content/lesson/edit-error-keys";
 import {
     GradedQuizFields,
     ReadingComprehensionFields,
@@ -129,14 +130,17 @@ export default function ExtensionExerciseEditor({
                 />
             )}
 
-            {!issue.valid && issue.errorKey && (
+            {!issue.valid && issue.code && (
                 <FormHint
                     as="p"
                     variant="warning"
                     role="alert"
                     data-testid={`exercise-ext-error-${id}`}
                 >
-                    {t(issue.errorKey, "Please complete the exercise fields.")}
+                    {t(
+                        extensionEditErrorKey(issue.code),
+                        "Please complete the exercise fields.",
+                    )}
                 </FormHint>
             )}
 

@@ -34,16 +34,14 @@ import {MIN_EXERCISES} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
-    type ExerciseGenConfig,
-} from "../../lib/content/lesson/exercise/exercise-generator";
-import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
-import {validateExerciseEdit} from "../../lib/content/lesson/exercise/exercise-edit";
-import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/legacy-prompt-migration";
-import {validateExtensionExercise} from "../../lib/content/lesson/extension/extension-edit";
-import {
+    validateExerciseEdit,
+    validateExtensionExercise,
     buildExtensionLesson,
-    buildExtensionUserSetInput,
-} from "../../lib/content/lesson/extension/extension-to-lesson";
+    type ExerciseGenConfig,
+} from "../../lib/exercises";
+import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
+import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/legacy-prompt-migration";
+import {buildExtensionUserSetInput} from "../../lib/content/lesson/user-set-input";
 import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
 import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
 import PromptMigrationNotice from "../../components/create-lesson/PromptMigrationNotice";

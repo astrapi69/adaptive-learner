@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {generateExercises} from "./exercise/exercise-generator";
+import {generateExercises} from "../../exercises";
 import {
     allChecksPass,
     buildLessonFromDraft,

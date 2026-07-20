@@ -14,7 +14,7 @@ import ExtensionSteps from "./ExtensionSteps";
 import {
     CATEGORIZATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
-} from "../../lib/content/lesson/extension/extension-edit";
+} from "../../lib/exercises";
 import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 

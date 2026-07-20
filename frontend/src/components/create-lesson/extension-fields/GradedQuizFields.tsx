@@ -9,8 +9,7 @@ import {Plus} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import SubQuestionEditor from "./SubQuestionEditor";
-import {blankSubQuestion} from "../../../lib/content/lesson/extension/extension-edit";
-import type {WizardSubQuestion} from "../../../lib/content/lesson/extension/extension-edit";
+import {blankSubQuestion, type WizardSubQuestion} from "../../../lib/exercises";
 
 type Translate = (key: string, fallback?: string) => string;
 

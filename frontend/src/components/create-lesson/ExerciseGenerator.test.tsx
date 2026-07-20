@@ -20,7 +20,7 @@ import ExerciseGenerator, {
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     type ExerciseGenConfig,
-} from "../../lib/content/lesson/exercise/exercise-generator";
+} from "../../lib/exercises";
 import type {ContentLessonExercise} from "../../storage/types";
 
 /**

@@ -1,21 +1,33 @@
 /**
- * Build a ``ContentLesson`` from the extension-authoring wizard (#1852).
+ * Assembly of exercises into a ``ContentLesson`` — the generic authoring
+ * layer of the exercise kit. Two concerns live here:
  *
- * Mirrors {@link buildBookLesson} (one intro theory step + one exercise
- * step per authored exercise), with the one thing no other builder does:
- * it SETS ``requires_extensions`` — the versioned ``ext:al-...@1`` form —
- * for every distinct extension type used, so a strict consumer's load guard
- * (E-EXT-UNSUPPORTED) accepts the lesson instead of refusing it.
+ *  - {@link appendExercisesToLesson} (AIX-02): wrap generated exercises as
+ *    steps and append them to an existing lesson, re-validating the result.
+ *  - {@link buildExtensionLesson} (#1852): assemble a fresh lesson from
+ *    wizard-authored extension exercises, setting ``requires_extensions``.
+ *
+ * Both are pure + return new objects (inputs never mutated). Schema
+ * validation is delegated to ``validateGeneratedLesson`` (the shared
+ * lesson-schema check); the ``SaveUserSetInput`` storage contract is
+ * deliberately NOT here — it lives app-side in
+ * ``lib/content/lesson/user-set-input.ts``.
+ *
+ * @example
+ * const lesson = buildExtensionLesson({meta, exercises});
+ * const withAi = appendExercisesToLesson(baseLesson, aiExercises);
  */
 
-import {slugify, validateGeneratedLesson} from "../../analysis/analysis-to-lesson";
-import type {LessonMeta} from "../lesson-draft";
+import {
+    slugify,
+    validateGeneratedLesson,
+} from "../../content/analysis/analysis-to-lesson";
+import type {LessonMeta} from "../../content/lesson/lesson-draft";
 import type {
     ContentLesson,
     ContentLessonExercise,
     ContentLessonStep,
-    SaveUserSetInput,
-} from "../../../../storage/types";
+} from "../../../storage/types";
 
 /** Major version every wizard-authored extension is pinned to today. The
  *  exercise ``type`` stays bare (``ext:al-categorization``); only
@@ -25,6 +37,40 @@ const EXTENSION_VERSION = 1;
 export interface ExtensionLessonInput {
     meta: LessonMeta;
     exercises: ContentLessonExercise[];
+}
+
+/** Wrap an exercise as a slug-safe ``exercise`` step. */
+function exerciseStep(exercise: ContentLessonExercise): ContentLessonStep {
+    return {
+        id: `step-${exercise.id}`,
+        type: "exercise",
+        title: null,
+        body: null,
+        exercise,
+    };
+}
+
+/**
+ * Return a copy of ``lesson`` with ``exercises`` appended as exercise steps.
+ * When ``exercises`` is empty the original lesson is returned unchanged.
+ * Throws (via {@link validateGeneratedLesson}) if the merged lesson would be
+ * schema-invalid.
+ *
+ * @param lesson - The base lesson (theory steps, possibly some exercises).
+ * @param exercises - Generated exercises to append.
+ * @returns A new, validated lesson.
+ */
+export function appendExercisesToLesson(
+    lesson: ContentLesson,
+    exercises: ContentLessonExercise[],
+): ContentLesson {
+    if (exercises.length === 0) return lesson;
+    const merged: ContentLesson = {
+        ...lesson,
+        steps: [...lesson.steps, ...exercises.map(exerciseStep)],
+    };
+    validateGeneratedLesson(merged);
+    return merged;
 }
 
 /** Distinct ``requires_extensions`` entries (versioned) for the exercises
@@ -52,6 +98,9 @@ function estimateMinutes(exercises: number): number {
  * Assemble a valid ``ContentLesson`` carrying ``requires_extensions``.
  * Throws (via ``validateGeneratedLesson``) on a schema violation OR an
  * unsupported declared extension, so the caller surfaces it before saving.
+ *
+ * @example
+ * const lesson = buildExtensionLesson({meta, exercises});
  */
 export function buildExtensionLesson(
     input: ExtensionLessonInput,
@@ -87,30 +136,4 @@ export function buildExtensionLesson(
 
     validateGeneratedLesson(lesson);
     return lesson;
-}
-
-/** Stable slug-safe set id (re-saving with the same title overwrites). */
-export function extensionSetId(meta: LessonMeta): string {
-    return `created-${slugify(meta.title) || "lesson"}`;
-}
-
-/** Wrap a built extension lesson in the ``SaveUserSetInput`` that persists
- *  it to "My Lessons". */
-export function buildExtensionUserSetInput(
-    input: ExtensionLessonInput,
-    lesson: ContentLesson,
-): SaveUserSetInput {
-    const {meta} = input;
-    return {
-        set_id: extensionSetId(meta),
-        title: meta.title.trim(),
-        title_native: meta.titleNative.trim() || meta.title.trim(),
-        language: meta.targetLanguage,
-        target_language: meta.targetLanguage,
-        source_language: meta.sourceLanguage,
-        level: meta.level,
-        origin: "imported",
-        description: meta.description.trim() || null,
-        lessons: [lesson],
-    };
 }

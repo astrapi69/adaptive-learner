@@ -9,14 +9,13 @@ import {
     CATEGORIZATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
 } from "./extension-edit";
+import {buildExtensionLesson, requiredExtensionsFor} from "./lesson-assembly";
 import {
-    buildExtensionLesson,
     buildExtensionUserSetInput,
     extensionSetId,
-    requiredExtensionsFor,
-} from "./extension-to-lesson";
-import type {LessonMeta} from "../lesson-draft";
-import type {ContentLessonExercise} from "../../../../storage/types";
+} from "../../content/lesson/user-set-input";
+import type {LessonMeta} from "../../content/lesson/lesson-draft";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 const META: LessonMeta = {
     title: "Dog Training Signals",

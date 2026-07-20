@@ -20,7 +20,7 @@ import type {
   ContentSetEntry,
   UserLessonOrigin,
 } from "../../../storage/types";
-import { appendExercisesToLesson } from "../../content/lesson/exercise/append-exercises";
+import { appendExercisesToLesson } from "../../exercises";
 import { cardsToExercises } from "./cards-to-exercises";
 import { browserDirectProvider, generateExercises } from "./generate-exercises";
 import type { BatchLesson, SetBatchDeps } from "./generate-exercises-for-set";

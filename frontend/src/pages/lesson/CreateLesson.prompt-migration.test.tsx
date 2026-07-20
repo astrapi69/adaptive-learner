@@ -80,7 +80,7 @@ import {buildLessonFromDraft} from "../../lib/content/lesson/draft-to-lesson";
 import {
     DEFAULT_EXERCISE_PROMPTS,
     generateExercises,
-} from "../../lib/content/lesson/exercise/exercise-generator";
+} from "../../lib/exercises";
 import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 
 const META: LessonMeta = {

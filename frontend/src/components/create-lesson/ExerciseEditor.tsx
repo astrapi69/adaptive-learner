@@ -27,7 +27,8 @@ import {
     countClozeMarkers,
     normalizeExerciseEdit,
     validateExerciseEdit,
-} from "../../lib/content/lesson/exercise/exercise-edit";
+} from "../../lib/exercises";
+import {exerciseEditErrorKey} from "../../lib/content/lesson/edit-error-keys";
 import type {
     ContentLessonExercise,
     ContentLessonClozeBlank,
@@ -81,14 +82,17 @@ export default function ExerciseEditor({
 
             <TypeFields draft={draft} onPatch={patch} />
 
-            {!issue.valid && issue.errorKey && (
+            {!issue.valid && issue.code && (
                 <FormHint
                     as="p"
                     variant="warning"
                     role="alert"
                     data-testid={`exercise-edit-error-${id}`}
                 >
-                    {t(issue.errorKey, "Please complete the exercise fields.")}
+                    {t(
+                        exerciseEditErrorKey(issue.code),
+                        "Please complete the exercise fields.",
+                    )}
                 </FormHint>
             )}
 

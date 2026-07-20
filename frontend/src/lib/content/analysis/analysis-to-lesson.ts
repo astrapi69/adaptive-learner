@@ -60,7 +60,7 @@ import {
   buildWordTiles,
   selectExercises,
   type GeneratorCard,
-} from "../lesson/exercise/exercise-generator";
+} from "../../exercises/authoring/exercise-builder";
 import { categorizationPayloadErrors } from "../../exercises/categorization";
 import { errorCorrectionPayloadErrors } from "../../exercises/error-correction";
 import { readingComprehensionPayloadErrors } from "../../exercises/reading-comprehension";

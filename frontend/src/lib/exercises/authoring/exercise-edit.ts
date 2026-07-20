@@ -5,20 +5,29 @@
  * The Lesson Creator generates exercises, then lets the author edit an
  * individual exercise's content in place. These pure helpers gate that
  * edit: {@link validateExerciseEdit} decides whether the current draft is
- * saveable (and, if not, which translated message to show), and
+ * saveable (and, if not, returns the machine {@link ExerciseEditCode} of the
+ * failed rule for the app to localize), and
  * {@link normalizeExerciseEdit} trims + drops empty entries and syncs a
  * cloze exercise's blanks to its marker count before the edit is committed
  * to the exercise record.
  *
  * Kept framework-free so the rules are unit-testable and shared by any
  * future consumer (the #1740 edit-lesson path reuses the same wizard).
+ *
+ * @example
+ * ```ts
+ * const issue = validateExerciseEdit(draft);
+ * if (issue.valid) onSave(normalizeExerciseEdit(draft));
+ * else showError(issue.code); // machine code, app maps to an i18n key
+ * ```
  */
 
 import type {
     ContentLessonClozeBlank,
     ContentLessonExercise,
-} from "../../../../storage/types";
-import type {GeneratableType} from "./exercise-generator";
+} from "../../../storage/types";
+import type {GeneratableType} from "./exercise-builder";
+import {createIdFactory} from "./id-factory";
 
 /** Minimum complete {left,right} pairs a matching exercise needs. */
 export const MATCHING_MIN_PAIRS = 2;
@@ -31,19 +40,32 @@ export const PICTURE_MIN_IMAGES = 2;
 /** Minimum answer options a multiple-choice exercise needs (#1850). */
 export const MC_MIN_OPTIONS = 2;
 
-const ERR = "create_lesson.exercises.edit.err_";
+/**
+ * Machine code identifying which rule an exercise draft failed. App-neutral
+ * on purpose (#1862): the kit reports WHAT is wrong, the app maps the code to
+ * a localized message (see ``edit-error-keys.ts``). ``prompt`` is the shared
+ * pre-check; the others match the exercise ``type``.
+ */
+export type ExerciseEditCode =
+    | "prompt"
+    | "matching"
+    | "cloze"
+    | "word_tiles"
+    | "picture_choice"
+    | "multiple_choice"
+    | "free_text";
 
 /** Result of validating an exercise draft: whether it is saveable and, when
- *  not, the i18n key of the message to show. */
+ *  not, the machine {@link ExerciseEditCode} of the rule it failed. */
 export interface ExerciseEditIssue {
     valid: boolean;
-    errorKey: string | null;
+    code: ExerciseEditCode | null;
 }
 
-const ok: ExerciseEditIssue = {valid: true, errorKey: null};
+const ok: ExerciseEditIssue = {valid: true, code: null};
 
-function fail(suffix: string): ExerciseEditIssue {
-    return {valid: false, errorKey: `${ERR}${suffix}`};
+function fail(code: ExerciseEditCode): ExerciseEditIssue {
+    return {valid: false, code};
 }
 
 /** Count the visible ``___`` blank markers in a cloze sentence. */
@@ -113,7 +135,7 @@ function validateMultipleChoice(ex: ContentLessonExercise): ExerciseEditIssue {
 /**
  * Validate an exercise draft for the inline editor. Checks the common
  * prompt first, then the type-specific structure. Returns the first
- * failure (as an i18n key) or ``{valid: true}``.
+ * failure (as a machine {@link ExerciseEditCode}) or ``{valid: true}``.
  */
 export function validateExerciseEdit(
     ex: ContentLessonExercise,
@@ -205,13 +227,14 @@ function normalizeClozeBlanks(
     return out;
 }
 
-let _exSeq = 0;
+const manualExerciseIds = createIdFactory("ex-manual");
 
 /** Stable-ish unique id for a manually-added exercise (#1849). Distinct from
- *  the generator's ``ex-<n>-<type>`` ids so the two never collide. */
+ *  the generator's ``ex-<n>-<type>`` ids so the two never collide. Backed by a
+ *  default {@link IdFactory}; inject {@link createIdFactory} for an isolated
+ *  sequence (#1862). */
 export function newExerciseId(): string {
-    _exSeq += 1;
-    return `ex-manual-${_exSeq}`;
+    return manualExerciseIds.next();
 }
 
 /**
