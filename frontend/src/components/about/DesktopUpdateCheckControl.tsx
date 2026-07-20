@@ -17,7 +17,7 @@ import { ExternalLink, Loader2, RefreshCw, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { CURRENT_BUILD } from "../../lib/pwa/sw-update";
+import { CURRENT_BUILD } from "../../lib/pwa/update-store";
 import { checkForUpdate, type UpdateCheckResult } from "../../lib/utils/updateChecker";
 import { writeUpdatePrefs } from "../../lib/utils/updatePrefs";
 import ReleaseNotes from "./ReleaseNotes";

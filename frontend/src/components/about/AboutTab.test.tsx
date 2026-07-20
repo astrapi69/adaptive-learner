@@ -19,6 +19,7 @@ import LicenseResourcesSection from "./LicenseResourcesSection";
 import SystemInfoSection from "./SystemInfoSection";
 import VersionSection from "./VersionSection";
 import {I18nProvider} from "../../hooks/ui/useI18n";
+import AppUpdateProvider from "../pwa/AppUpdateProvider";
 import {_resetStorageCacheForTests} from "../../storage";
 import type {SystemInfo} from "../../types/domain";
 
@@ -90,11 +91,25 @@ function tFn(_key: string, fallback?: string): string {
     return fallback ?? _key;
 }
 
+/**
+ * #1873 — VersionSection renders the kit's VersionCard, which reads the
+ * update context. Wrap it the way the app does.
+ */
+function renderVersionSection(info: SystemInfo) {
+    return render(
+        <I18nProvider>
+            <AppUpdateProvider>
+                <VersionSection info={info} t={tFn} />
+            </AppUpdateProvider>
+        </I18nProvider>,
+    );
+}
+
 // ---- VersionSection -------------------------------------------------
 
 describe("VersionSection", () => {
     it("renders version, build hash link, build date", () => {
-        render(<VersionSection info={apiInfo} t={tFn} />);
+        renderVersionSection(apiInfo);
         expect(screen.getByTestId("about-app-version").textContent).toContain(
             "1.1.0",
         );
@@ -109,7 +124,7 @@ describe("VersionSection", () => {
     });
 
     it("renders the 'unknown' sentinel without a commit link", () => {
-        render(<VersionSection info={dexieInfo} t={tFn} />);
+        renderVersionSection(dexieInfo);
         expect(screen.queryByTestId("about-build-hash-link")).toBeNull();
         expect(screen.getByTestId("about-build-hash").textContent).toBe(
             "unknown",
@@ -298,7 +313,9 @@ describe("AboutTab", () => {
         render(
             <MemoryRouter>
                 <I18nProvider>
+                    <AppUpdateProvider>
                     <AboutTab />
+                    </AppUpdateProvider>
                 </I18nProvider>
             </MemoryRouter>,
         );
@@ -320,7 +337,9 @@ describe("AboutTab", () => {
         render(
             <MemoryRouter>
                 <I18nProvider>
+                    <AppUpdateProvider>
                     <AboutTab />
+                    </AppUpdateProvider>
                 </I18nProvider>
             </MemoryRouter>,
         );
@@ -349,7 +368,9 @@ describe("AboutTab", () => {
         render(
             <MemoryRouter>
                 <I18nProvider>
+                    <AppUpdateProvider>
                     <AboutTab />
+                    </AppUpdateProvider>
                 </I18nProvider>
             </MemoryRouter>,
         );

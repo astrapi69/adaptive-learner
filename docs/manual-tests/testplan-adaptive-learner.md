@@ -357,6 +357,26 @@ Fuer JEDES Theme einmal durchklicken:
 - [ ] Bekanntes offenes Issue #1569 (Caret/Touch 1-2 Zeilen versetzt
       im Lesson-Flow): reproduzieren + Notizen ans Issue
 
+#### App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
+
+Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert
+ein neuer Service Worker sich oft NICHT durch skipWaiting + Reload,
+sondern erst nach vollstaendigem Schliessen und Neuoeffnen der App.
+
+- [ ] PWA auf dem Home-Bildschirm installieren, Build-Hash unter
+      Einstellungen > Ueber notieren
+- [ ] Neuen Build deployen, App aus dem Hintergrund zurueckholen
+      (nicht neu starten): Update-Banner erscheint
+- [ ] Banner zeigt ZUSAETZLICH den Hinweis "Schliesse die App und
+      oeffne sie neu" - dieser Hinweis darf auf iOS-Standalone nie
+      fehlen
+- [ ] "Aktualisieren" tippen: Banner verschwindet und kommt auch nach
+      Reload NICHT wieder (Accept-Unterdrueckung)
+- [ ] App vollstaendig schliessen und neu oeffnen: Build-Hash unter
+      Ueber ist der neue
+- [ ] Auf einem NICHT-iOS-Geraet (Android/Desktop) denselben Ablauf:
+      der Neustart-Hinweis darf dort NICHT erscheinen
+
 ### Android Chrome
 - [ ] "App installieren" → Maskable Icon nicht abgeschnitten
 - [ ] PWA funktioniert, Dexie-Modus

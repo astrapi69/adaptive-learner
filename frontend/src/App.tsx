@@ -4,9 +4,10 @@ import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 import { featureRegistry, type FeatureContext } from "./features/featureConfig";
 import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
 import { AiKeyVaultProvider } from "./components/settings/ai/AiKeyVaultProvider";
+import AppUpdateProvider from "./components/pwa/AppUpdateProvider";
 import { resolveStorageMode } from "./storage";
 import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie/dexie-user-data";
-import { lazyWithReload } from "./lib/pwa/lazyWithReload";
+import { lazyWithReload } from "./lib/pwa/lazy-route";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -166,6 +167,7 @@ export default function App() {
                 context the ``useApiKeyStatus`` gate reads. Inside ConfirmProvider
                 (it injects the confirm dialog) + I18nProvider (it injects ``t``). */}
             <AiKeyVaultProvider>
+            <AppUpdateProvider>
             <SkipToContent />
             <UpdatePromptHost />
             <DesktopUpdateHost />
@@ -259,6 +261,7 @@ export default function App() {
               pauseOnHover
               theme="colored"
             />
+            </AppUpdateProvider>
             </AiKeyVaultProvider>
             </ConfirmProvider>
           </HelpProvider>

@@ -1,5 +1,4 @@
 // Barrel for hooks/system (grouped by concern, #809). Re-export only.
-export * from "./useAppUpdate";
 export * from "./useBackupCompare";
 export * from "./useInstallAvailable";
 export * from "./useNotificationPermission";
