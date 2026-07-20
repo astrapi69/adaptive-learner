@@ -368,6 +368,7 @@ review:
   summary_remaining: "아직 {n}개 남았어요. 계속할까요?"
   another_round: "한 번 더"
   your_answer: "당신의 답변:"
+  correct_answer: "정답:"
   summary_corrected: "{total}개 중 {corrected}개 교정됨"
   summary_trend: "좋아요 — 약한 부분이 점점 강해지고 있어요."
   summary_next: "숙달한 항목은 제외되고, 나머지는 곧 복습으로 돌아옵니다."

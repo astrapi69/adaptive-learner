@@ -393,6 +393,7 @@
   },
   "review": {
     "your_answer": "Tu respuesta:",
+    "correct_answer": "Correcto:",
     "summary_corrected": "{corrected} de {total} corregidos",
     "summary_trend": "Bien: tus puntos débiles van mejorando.",
     "summary_next": "Los elementos dominados desaparecen; el resto vuelve pronto para repaso.",

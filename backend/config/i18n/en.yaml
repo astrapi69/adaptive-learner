@@ -366,6 +366,7 @@ adaptive:
     load_failed: "Could not generate adaptive lesson."
 review:
   your_answer: "Your answer:"
+  correct_answer: "Correct:"
   summary_corrected: "{corrected} of {total} corrected"
   summary_trend: "Nice — your weak spots are getting stronger."
   summary_next: "Mastered items drop out; the rest return for review soon."

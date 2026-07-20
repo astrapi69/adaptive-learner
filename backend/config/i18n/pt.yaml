@@ -366,6 +366,7 @@ adaptive:
     load_failed: "Não foi possível gerar a lição adaptativa."
 review:
   your_answer: "A sua resposta:"
+  correct_answer: "Correto:"
   summary_corrected: "{corrected} de {total} corrigidos"
   summary_trend: "Boa — os seus pontos fracos estão a melhorar."
   summary_next: "Os elementos dominados saem; os restantes voltam em breve para revisão."

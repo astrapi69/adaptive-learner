@@ -366,6 +366,7 @@ adaptive:
     load_failed: "アダプティブレッスンを生成できませんでした。"
 review:
   your_answer: "あなたの回答:"
+  correct_answer: "正解:"
   summary_corrected: "{total}問中{corrected}問を修正"
   summary_trend: "いいですね — 弱点が強くなっています。"
   summary_next: "習得した項目は外れ、残りはまもなく復習に戻ります。"

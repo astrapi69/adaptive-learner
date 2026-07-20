@@ -393,6 +393,7 @@
   },
   "review": {
     "your_answer": "आपका उत्तर:",
+    "correct_answer": "सही:",
     "summary_corrected": "{total} में से {corrected} सुधारे गए",
     "summary_trend": "बढ़िया — आपके कमज़ोर बिंदु मज़बूत हो रहे हैं।",
     "summary_next": "महारत प्राप्त तत्व हट जाते हैं; बाकी जल्द ही समीक्षा के लिए लौटते हैं।",
