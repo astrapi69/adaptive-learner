@@ -44,6 +44,7 @@ import {
     buildExtensionUserSetInput,
 } from "../../lib/content/lesson/extension/extension-to-lesson";
 import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
+import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -194,7 +195,10 @@ export default function CreateLesson() {
     const [bookFields, setBookFields] = useState<BookFields>(EMPTY_BOOK_FIELDS);
     const [theorySteps, setTheorySteps] = useState<TheoryStep[]>([]);
 
-    const totalSteps = stepCountFor(bookMode || extMode);
+    // An alternative authoring branch (book-text #1743 / extension #1852)
+    // runs the compact 3-step flow instead of the card-driven one.
+    const compactFlow = bookMode || extMode;
+    const totalSteps = stepCountFor(compactFlow);
 
     /** Resolve the active AI provider seam, or ``null`` when no key /
      *  learner is set (the "no key" signal the BookTextStep gates on). */
@@ -730,7 +734,7 @@ export default function CreateLesson() {
                 />
             )}
 
-            {!bookMode && !extMode && (
+            {!compactFlow && (
                 <WizardSteps
                     step={step}
                     saved={Boolean(savedEntry)}
@@ -858,109 +862,15 @@ export default function CreateLesson() {
             </nav>
             )}
 
-            {confirmCancel && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-cancel-confirm"
-                >
-                    <div
-                        className="modal-card"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="create-lesson-cancel-title"
-                    >
-                        <h2
-                            id="create-lesson-cancel-title"
-                            className="modal-title"
-                        >
-                            {t(
-                                "create_lesson.cancel_confirm_title",
-                                "Discard this lesson?",
-                            )}
-                        </h2>
-                        <p>
-                            {t(
-                                "create_lesson.cancel_confirm_body",
-                                "Your unsaved lesson will be lost.",
-                            )}
-                        </p>
-                        <div className="form-actions">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                data-testid="create-lesson-cancel-keep"
-                                onClick={() => setConfirmCancel(false)}
-                            >
-                                {t(
-                                    "create_lesson.cancel_keep",
-                                    "Keep editing",
-                                )}
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                data-testid="create-lesson-cancel-discard"
-                                onClick={discard}
-                            >
-                                {t("create_lesson.cancel_discard", "Discard")}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {pendingDraft && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-draft-prompt"
-                >
-                    <div
-                        className="modal-card"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="create-lesson-draft-title"
-                    >
-                        <h2
-                            id="create-lesson-draft-title"
-                            className="modal-title"
-                        >
-                            {t(
-                                "create_lesson.draft.title",
-                                "Draft found",
-                            )}
-                        </h2>
-                        <p>
-                            {t(
-                                "create_lesson.draft.body",
-                                "You have an unfinished lesson. Continue where you left off or start fresh?",
-                            )}
-                        </p>
-                        <div className="form-actions">
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                data-testid="create-lesson-draft-fresh"
-                                onClick={startFresh}
-                            >
-                                {t(
-                                    "create_lesson.draft.start_fresh",
-                                    "Start fresh",
-                                )}
-                            </Button>
-                            <Button
-                                type="button"
-                                data-testid="create-lesson-draft-continue"
-                                onClick={() => applyDraft(pendingDraft)}
-                            >
-                                {t(
-                                    "create_lesson.draft.continue",
-                                    "Continue",
-                                )}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CreateLessonDialogs
+                confirmCancel={confirmCancel}
+                pendingDraft={pendingDraft}
+                onKeepEditing={() => setConfirmCancel(false)}
+                onDiscard={discard}
+                onStartFresh={startFresh}
+                onContinueDraft={applyDraft}
+                t={t}
+            />
         </PageContainer>
     );
 }
