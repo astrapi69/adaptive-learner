@@ -1,13 +1,13 @@
 /**
  * Blank-exercise factory + validation for the extension-authoring wizard
- * (#1852). Editors 1+2: ``ext:al-categorization`` + ``ext:al-error-correction``.
+ * (#1852). Editors 1+2: ``ext:al-categorization`` + ``ext:al-error-correction``;
+ * editors 3+4: ``ext:al-reading-comprehension`` + ``ext:al-graded-quiz``.
  *
- * Validation REUSES the shipped per-type payload validators
- * (``categorizationPayloadErrors`` / ``errorCorrectionPayloadErrors``) — the
- * exact rules the renderers + load guard already enforce — rather than
- * re-implementing them. The blank starts are deliberately invalid so the
- * wizard gate keeps a half-filled extension exercise out of the review step
- * until the author completes it.
+ * Validation REUSES the shipped per-type payload validators (the exact rules
+ * the renderers + load guard already enforce) rather than re-implementing
+ * them. The blank starts are deliberately invalid so the wizard gate keeps a
+ * half-filled extension exercise out of the review step until the author
+ * completes it.
  */
 
 import {
@@ -18,18 +18,46 @@ import {
     ERROR_CORRECTION_EXT_TYPE,
     errorCorrectionPayloadErrors,
 } from "../../../exercises/error-correction";
+import {
+    READING_COMPREHENSION_EXT_TYPE,
+    readingComprehensionPayloadErrors,
+    type RcQuestion,
+} from "../../../exercises/reading-comprehension";
+import {
+    GRADED_QUIZ_EXT_TYPE,
+    gradedQuizPayloadErrors,
+    type GqQuestion,
+} from "../../../exercises/graded-quiz";
 import type {ContentLessonExercise} from "../../../../storage/types";
 
-export {CATEGORIZATION_EXT_TYPE, ERROR_CORRECTION_EXT_TYPE};
+export {
+    CATEGORIZATION_EXT_TYPE,
+    ERROR_CORRECTION_EXT_TYPE,
+    READING_COMPREHENSION_EXT_TYPE,
+    GRADED_QUIZ_EXT_TYPE,
+};
 
-/** The extension exercise types the wizard can author today (editors 1+2).
- *  Reading-comprehension + graded-quiz follow in #1852. */
+/** The extension exercise types the wizard can author (#1852, editors 1-4). */
 export const EXTENSION_WIZARD_TYPES = [
     CATEGORIZATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
+    READING_COMPREHENSION_EXT_TYPE,
+    GRADED_QUIZ_EXT_TYPE,
 ] as const;
 
 export type ExtensionWizardType = (typeof EXTENSION_WIZARD_TYPES)[number];
+
+/** A sub-question shape shared by reading-comprehension + graded-quiz. The
+ *  wizard keeps BOTH ``options`` and ``accept`` present so a type switch never
+ *  loses data; normalization drops the branch the chosen type does not use. */
+export interface WizardSubQuestion {
+    prompt: string;
+    type: "multiple_choice" | "free_text";
+    options: {text: string; correct: boolean}[];
+    accept: string[];
+    points?: number;
+    partial_credit?: boolean;
+}
 
 const ERR = "create_lesson.extensions.edit.err_";
 
@@ -52,6 +80,39 @@ export function newExtensionExerciseId(): string {
     return `ex-ext-${_extSeq}`;
 }
 
+/** A deliberately-invalid blank sub-question (no correct option / no accept
+ *  entry yet), optionally carrying graded-quiz points. */
+export function blankSubQuestion(withPoints: boolean): WizardSubQuestion {
+    const base: WizardSubQuestion = {
+        prompt: "",
+        type: "multiple_choice",
+        options: [
+            {text: "", correct: false},
+            {text: "", correct: false},
+        ],
+        accept: [],
+    };
+    return withPoints ? {...base, points: 1, partial_credit: false} : base;
+}
+
+const BLANK_PAYLOAD: Record<ExtensionWizardType, () => unknown> = {
+    [CATEGORIZATION_EXT_TYPE]: () => ({
+        categories: [
+            {name: "", items: []},
+            {name: "", items: []},
+        ],
+    }),
+    [ERROR_CORRECTION_EXT_TYPE]: () => ({tokens: ["", ""], error_index: 0, accept: []}),
+    [READING_COMPREHENSION_EXT_TYPE]: () => ({
+        passage: "",
+        questions: [blankSubQuestion(false)],
+    }),
+    [GRADED_QUIZ_EXT_TYPE]: () => ({
+        pass_threshold: 60,
+        questions: [blankSubQuestion(true)],
+    }),
+};
+
 /**
  * Build an EMPTY extension exercise of ``extType`` (deliberately invalid
  * until filled). Same ``ContentLessonExercise`` shape a real one has: the
@@ -61,30 +122,21 @@ export function createBlankExtensionExercise(
     extType: ExtensionWizardType,
     id: string,
 ): ContentLessonExercise {
-    const base = {id, prompt: "", card_ids: [], distractors: []};
-    if (extType === CATEGORIZATION_EXT_TYPE) {
-        return {
-            ...base,
-            type: extType,
-            ext_payload: {
-                categories: [
-                    {name: "", items: []},
-                    {name: "", items: []},
-                ],
-            },
-        } as ContentLessonExercise;
-    }
     return {
-        ...base,
+        id,
         type: extType,
-        ext_payload: {tokens: ["", ""], error_index: 0, accept: []},
+        prompt: "",
+        card_ids: [],
+        distractors: [],
+        ext_payload: BLANK_PAYLOAD[extType](),
     } as ContentLessonExercise;
 }
 
 /**
  * Validate an extension exercise draft for the inline editor. Checks the
- * common prompt, then delegates to the shipped payload validator. Returns
- * the first failure (as an i18n key) or ``{valid: true}``.
+ * common prompt, then delegates to the shipped payload validator (plus a
+ * wizard-level non-empty-category-name rule for categorization). Returns the
+ * first failure (as an i18n key) or ``{valid: true}``.
  */
 export function validateExtensionExercise(
     ex: ContentLessonExercise,
@@ -93,8 +145,7 @@ export function validateExtensionExercise(
     if (ex.type === CATEGORIZATION_EXT_TYPE) {
         // The shipped payload validator does not require a non-empty category
         // name (uniqueness is enough for the load guard). The authoring wizard
-        // does: an unnamed bucket renders as a blank label, so require every
-        // category to be named on top of the shipped rules.
+        // does: an unnamed bucket renders as a blank label.
         const named = categorizationCategories(ex).every(
             (bucket) => bucket.name.trim().length > 0,
         );
@@ -106,6 +157,16 @@ export function validateExtensionExercise(
         return errorCorrectionPayloadErrors(ex).length === 0
             ? ok
             : fail("error_correction");
+    }
+    if (ex.type === READING_COMPREHENSION_EXT_TYPE) {
+        return readingComprehensionPayloadErrors(ex).length === 0
+            ? ok
+            : fail("reading_comprehension");
+    }
+    if (ex.type === GRADED_QUIZ_EXT_TYPE) {
+        return gradedQuizPayloadErrors(ex).length === 0
+            ? ok
+            : fail("graded_quiz");
     }
     // A type without a wizard editor is never blocked here.
     return ok;
@@ -124,9 +185,44 @@ function categorizationCategories(
     return payload?.categories ?? [];
 }
 
+/** Clean one sub-question: trim the prompt + drop the unused branch (mc keeps
+ *  non-empty-text options, free_text keeps non-empty accepts). Points are
+ *  carried through only for graded-quiz. */
+function normalizeSubQuestion(
+    question: WizardSubQuestion,
+    withPoints: boolean,
+): RcQuestion | GqQuestion {
+    const prompt = question.prompt.trim();
+    const common =
+        question.type === "multiple_choice"
+            ? {
+                  options: (question.options ?? [])
+                      .map((o) => ({text: o.text.trim(), correct: o.correct === true}))
+                      .filter((o) => o.text.length > 0),
+              }
+            : {accept: trimmedNonEmpty(question.accept)};
+    const base = {prompt, type: question.type, ...common};
+    if (!withPoints) return base as RcQuestion;
+    return {
+        ...base,
+        points: Number.isFinite(question.points) ? (question.points as number) : 1,
+        ...(question.type === "multiple_choice" && question.partial_credit
+            ? {partial_credit: true}
+            : {}),
+    } as GqQuestion;
+}
+
+function normalizeSubQuestions(
+    ex: ContentLessonExercise,
+    withPoints: boolean,
+): (RcQuestion | GqQuestion)[] {
+    const payload = ex.ext_payload as {questions?: WizardSubQuestion[]} | undefined;
+    return (payload?.questions ?? []).map((q) => normalizeSubQuestion(q, withPoints));
+}
+
 /**
  * Normalize a validated extension draft before it is committed: trim the
- * prompt and the payload strings, drop empty categories/items/accepts.
+ * prompt + payload strings, drop empty categories/items/accepts/options.
  * ``error_correction`` tokens are POSITIONAL (``error_index`` points into
  * them), so they are trimmed in place, never dropped.
  */
@@ -139,10 +235,7 @@ export function normalizeExtensionExercise(
             | {categories?: {name: string; items: string[]}[]}
             | undefined;
         const categories = (payload?.categories ?? [])
-            .map((c) => ({
-                name: c.name.trim(),
-                items: trimmedNonEmpty(c.items),
-            }))
+            .map((c) => ({name: c.name.trim(), items: trimmedNonEmpty(c.items)}))
             .filter((c) => c.name.length > 0 && c.items.length > 0);
         return {...ex, prompt, ext_payload: {categories}} as ContentLessonExercise;
     }
@@ -159,10 +252,28 @@ export function normalizeExtensionExercise(
         return {
             ...ex,
             prompt,
+            ext_payload: {tokens, error_index, accept: trimmedNonEmpty(payload?.accept)},
+        } as ContentLessonExercise;
+    }
+    if (ex.type === READING_COMPREHENSION_EXT_TYPE) {
+        const payload = ex.ext_payload as {passage?: string} | undefined;
+        return {
+            ...ex,
+            prompt,
             ext_payload: {
-                tokens,
-                error_index,
-                accept: trimmedNonEmpty(payload?.accept),
+                passage: (payload?.passage ?? "").trim(),
+                questions: normalizeSubQuestions(ex, false),
+            },
+        } as ContentLessonExercise;
+    }
+    if (ex.type === GRADED_QUIZ_EXT_TYPE) {
+        const payload = ex.ext_payload as {pass_threshold?: number} | undefined;
+        return {
+            ...ex,
+            prompt,
+            ext_payload: {
+                pass_threshold: payload?.pass_threshold,
+                questions: normalizeSubQuestions(ex, true),
             },
         } as ContentLessonExercise;
     }
