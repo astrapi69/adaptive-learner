@@ -124,6 +124,26 @@ describe("ExerciseDispatcher — ext:al-categorization routing (#1579)", () => {
         expect(screen.getByTestId("graded-quiz-exercise")).toBeInTheDocument();
     });
 
+    it("routes ext:al-dictation to its renderer (#1881 fifth adoption)", () => {
+        const step = {
+            id: "s5",
+            type: "exercise",
+            exercise: {
+                id: "ex5",
+                type: "ext:al-dictation",
+                prompt: "Hoere zu und schreibe.",
+                card_ids: [],
+                distractors: [],
+                ext_payload: {
+                    audio: "assets/audio/bonjour.mp3",
+                    accept: ["Bonjour"],
+                },
+            },
+        } as unknown as ContentLessonStep;
+        renderDispatcher(step);
+        expect(screen.getByTestId("dictation-exercise")).toBeInTheDocument();
+    });
+
     it("an unadopted ext type still falls to the unsupported placeholder", () => {
         renderDispatcher(extStep("ext:acme-cards"));
         expect(

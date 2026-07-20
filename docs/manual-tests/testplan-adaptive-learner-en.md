@@ -155,6 +155,10 @@ Requires domain knowledge. Not automatable.
 - [ ] ext:al-error-correction: find + correct errors
 - [ ] ext:al-reading-comprehension: text + questions
 - [ ] ext:al-graded-quiz: grading + result display
+- [ ] ext:al-dictation (#1881): "Listen first" plays the clip, type the
+      transcription; correct / near-miss ("Almost!") / wrong shows the
+      solution; a lesson with `requires_extensions: ["ext:al-dictation@1"]`
+      loads (not refused by the guard)
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
 

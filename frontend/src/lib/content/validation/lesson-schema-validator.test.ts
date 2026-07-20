@@ -750,3 +750,54 @@ describe("adopted extension ext:al-graded-quiz (#1579, fourth adoption)", () => 
     expect(() => validateGeneratedLesson(badPoints)).toThrow(/positive points/);
   });
 });
+
+describe("adopted extension ext:al-dictation (#1881, fifth adoption)", () => {
+  const dictationExercise = {
+    id: "ex-dict-01",
+    type: "ext:al-dictation",
+    prompt: "Hoere zu und schreibe, was du hoerst.",
+    card_ids: [],
+    distractors: [],
+    ext_payload: {
+      audio: "assets/audio/bonjour.mp3",
+      accept: ["Bonjour", "bonjour"],
+    },
+  };
+
+  const dictationLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-dictation@1"],
+      steps: [
+        {
+          id: "step-dict-01",
+          type: "exercise",
+          exercise: {
+            ...dictationExercise,
+            ...(payloadOverride === undefined
+              ? {}
+              : { ext_payload: payloadOverride }),
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(dictationLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed dictation exercise", () => {
+    expect(() => validateGeneratedLesson(dictationLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses an empty audio reference", () => {
+    const noAudio = dictationLesson({ audio: "", accept: ["Bonjour"] });
+    expect(() => validateGeneratedLesson(noAudio)).toThrow(/audio/);
+  });
+
+  it("validateGeneratedLesson refuses an accept list with no non-empty entry", () => {
+    const noAccept = dictationLesson({ audio: "a.mp3", accept: ["", "  "] });
+    expect(() => validateGeneratedLesson(noAccept)).toThrow(/accept/);
+  });
+});

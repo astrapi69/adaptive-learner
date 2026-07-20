@@ -31,6 +31,7 @@ import {asCategorizationPayload} from "../exercises/payload/categorization";
 import {asErrorCorrectionPayload} from "../exercises/payload/error-correction";
 import {asReadingComprehensionPayload, canonicalAnswer} from "../exercises/payload/reading-comprehension";
 import {asGradedQuizPayload, canonicalAnswer as gradedQuizCanonicalAnswer} from "../exercises/payload/graded-quiz";
+import {canonicalDictationAnswer} from "../exercises/payload/dictation";
 import {resolveConcreteDirection} from "../exercises/direction";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
@@ -235,6 +236,27 @@ export function deriveFreeTextAttempt(
     isCorrect: boolean,
 ): ElementAttempt {
     const canonical = exercise.accept?.[0] ?? "";
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "vocabulary",
+        user_answer: userInput,
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}
+
+/** DICTATION (#1881): single attempt. element_key = the canonical
+ *  transcription (``ext_payload.accept[0]``). ``correct`` is computed by
+ *  DictationExercise via the shared ``isFreeTextCorrect`` matcher; the
+ *  deriver doesn't re-validate. */
+export function deriveDictationAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    userInput: string,
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical = canonicalDictationAnswer(exercise);
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,

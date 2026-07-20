@@ -28,6 +28,7 @@ import ErrorCorrectionExercise from "../renderers/ErrorCorrectionExercise";
 import ReadingComprehensionExercise from "../renderers/ReadingComprehensionExercise";
 import GradedQuizExercise from "../renderers/GradedQuizExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
+import DictationExercise from "../renderers/DictationExercise";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -59,6 +60,7 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-error-correction",
     "ext:al-reading-comprehension",
     "ext:al-graded-quiz",
+    "ext:al-dictation",
 ]);
 
 /** The prop bag every renderer shares (everything except the exercise, the
@@ -75,7 +77,7 @@ type SharedExerciseProps = ControlledExerciseProps & {
 function renderAdoptedExtension(
     ex: ContentLessonExercise,
     ref: Ref<ExerciseHandle>,
-    ids: {setId: string; lessonId: string},
+    ids: {setId: string; lessonId: string; source: string},
     shared: SharedExerciseProps,
 ): ReactElement | null {
     if (ex.type === "ext:al-categorization") {
@@ -89,6 +91,13 @@ function renderAdoptedExtension(
     }
     if (ex.type === "ext:al-graded-quiz") {
         return <GradedQuizExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-dictation") {
+        // The only adopted extension that needs ``source``: it plays an audio
+        // clip from ``ext_payload.audio``, resolved by useAsset from the set's
+        // ``assets/`` — review/adaptive routes pass an empty source and get
+        // the audio-less fallback (ListenFirstAudio renders nothing).
+        return <DictationExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
     }
     return null;
 }
@@ -206,7 +215,7 @@ function ExerciseDispatcher(
             void onComplete(scored);
         },
     };
-    const extElement = renderAdoptedExtension(ex, ref, {setId, lessonId}, shared);
+    const extElement = renderAdoptedExtension(ex, ref, {setId, lessonId, source}, shared);
     if (extElement) return extElement;
     if (ex.type === "matching") {
         return (
