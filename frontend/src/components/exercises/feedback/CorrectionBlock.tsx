@@ -39,6 +39,7 @@ import {
     type LessonEnterNav,
 } from "../../../hooks/lesson/interaction/useLessonEnterKey";
 import {generateClozeFromError} from "../../../lib/exercises/grading/cloze-generator";
+import {resolveCorrectionSourceCard} from "./correction-source-card";
 import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
@@ -147,15 +148,11 @@ export default function CorrectionBlock({
                         err.exercise_id,
                     );
                     if (!sourceExercise) continue;
-                    const sourceCard =
-                        lesson.cards.find(
-                            (c) => c.id === err.element_key,
-                        ) ??
-                        // Fallback: look for any card referenced by the source exercise
-                        lesson.cards.find((c) =>
-                            sourceExercise.card_ids.includes(c.id),
-                        ) ??
-                        null;
+                    const sourceCard = resolveCorrectionSourceCard(
+                        lesson,
+                        sourceExercise,
+                        err.element_key,
+                    );
                     const cloze = generateClozeFromError({
                         error: err,
                         sourceExercise,
