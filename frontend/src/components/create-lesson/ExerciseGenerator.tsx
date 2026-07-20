@@ -13,7 +13,7 @@
  */
 
 import {useEffect, useState} from "react";
-import {Sparkles, Trash2, GripVertical} from "lucide-react";
+import {Sparkles, Trash2, GripVertical, Pencil} from "lucide-react";
 import {
     DndContext,
     type DragEndEvent,
@@ -36,10 +36,11 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
+import ExerciseEditor from "./ExerciseEditor";
 import type {
     ExerciseGenConfig,
     GeneratableType,
-} from "../../lib/content/lesson/exercise-generator";
+} from "../../lib/content/lesson/exercise/exercise-generator";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export const MIN_EXERCISES = 5;
@@ -79,6 +80,7 @@ export interface ExerciseGeneratorProps {
     onGenerate: () => void;
     onReorder: (exercises: ContentLessonExercise[]) => void;
     onDelete: (id: string) => void;
+    onUpdate: (id: string, updated: ContentLessonExercise) => void;
 }
 
 export default function ExerciseGenerator({
@@ -88,6 +90,7 @@ export default function ExerciseGenerator({
     onGenerate,
     onReorder,
     onDelete,
+    onUpdate,
 }: ExerciseGeneratorProps) {
     const {t} = useI18n();
     const sensors = useSensors(
@@ -125,6 +128,15 @@ export default function ExerciseGenerator({
         else set.add(type);
         onConfigChange({...config, types: Array.from(set)});
     }
+
+    // #1847 — after a generation, explain any SELECTED type that produced
+    // nothing (cloze/word-tiles need an example sentence; picture-choice
+    // needs card images), so a requested type is never silently dropped.
+    const producedTypes = new Set(exercises.map((e) => e.type));
+    const missingSelectedTypes =
+        exercises.length > 0
+            ? config.types.filter((type) => !producedTypes.has(type))
+            : [];
 
     function handleDragEnd(event: DragEndEvent) {
         const {active, over} = event;
@@ -277,6 +289,36 @@ export default function ExerciseGenerator({
                 )}
             </div>
 
+            {/* Why a selected type produced nothing (#1847) */}
+            {missingSelectedTypes.length > 0 && (
+                <div
+                    className="flex flex-col gap-1.5 rounded-lg border border-border bg-card p-3"
+                    data-testid="exercise-gen-missing"
+                    role="status"
+                >
+                    <FormHint as="p" variant="warning">
+                        {t(
+                            "create_lesson.exercises.gen_missing_intro",
+                            "Some selected types produced no exercises:",
+                        )}
+                    </FormHint>
+                    <ul className="m-0 flex list-none flex-col gap-1 p-0">
+                        {missingSelectedTypes.map((type) => (
+                            <li
+                                key={type}
+                                className="text-sm text-fg-secondary"
+                                data-testid={`exercise-gen-missing-${type}`}
+                            >
+                                {t(
+                                    `create_lesson.exercises.gen_none.${type}`,
+                                    type,
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             {/* Preview list (sortable) */}
             <DndContext
                 sensors={sensors}
@@ -296,6 +338,7 @@ export default function ExerciseGenerator({
                                 key={ex.id}
                                 exercise={ex}
                                 onDelete={onDelete}
+                                onUpdate={onUpdate}
                             />
                         ))}
                     </ul>
@@ -325,17 +368,48 @@ function describe(ex: ContentLessonExercise): string {
 interface SortableExerciseRowProps {
     exercise: ContentLessonExercise;
     onDelete: (id: string) => void;
+    onUpdate: (id: string, updated: ContentLessonExercise) => void;
 }
 
-function SortableExerciseRow({exercise, onDelete}: SortableExerciseRowProps) {
+function SortableExerciseRow({
+    exercise,
+    onDelete,
+    onUpdate,
+}: SortableExerciseRowProps) {
     const {t} = useI18n();
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} =
         useSortable({id: exercise.id});
+    const [editing, setEditing] = useState(false);
     const style: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.6 : 1,
     };
+
+    if (editing) {
+        return (
+            <li
+                ref={setNodeRef}
+                style={style}
+                className="exercise-row is-editing flex flex-col gap-3 rounded-lg border border-border bg-card p-3"
+                data-testid={`exercise-row-${exercise.id}`}
+                data-type={exercise.type}
+            >
+                <span className="exercise-row-type w-fit rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
+                    {t(`create_lesson.exercises.type.${exercise.type}`, exercise.type)}
+                </span>
+                <ExerciseEditor
+                    exercise={exercise}
+                    onSave={(updated) => {
+                        onUpdate(exercise.id, updated);
+                        setEditing(false);
+                    }}
+                    onCancel={() => setEditing(false)}
+                />
+            </li>
+        );
+    }
+
     return (
         <li
             ref={setNodeRef}
@@ -357,6 +431,15 @@ function SortableExerciseRow({exercise, onDelete}: SortableExerciseRowProps) {
                 {t(`create_lesson.exercises.type.${exercise.type}`, exercise.type)}
             </span>
             <span className="exercise-row-desc muted min-w-0 flex-1 truncate text-sm text-fg-muted">{describe(exercise)}</span>
+            <button
+                type="button"
+                className="card-row-action flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
+                data-testid={`exercise-edit-${exercise.id}`}
+                aria-label={t("create_lesson.exercises.edit.edit", "Edit exercise")}
+                onClick={() => setEditing(true)}
+            >
+                <Pencil size={14} aria-hidden="true" />
+            </button>
             <button
                 type="button"
                 className="card-row-action flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"

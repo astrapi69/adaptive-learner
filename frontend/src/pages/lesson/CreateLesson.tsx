@@ -35,8 +35,7 @@ import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
     type ExerciseGenConfig,
-    type GeneratorCard,
-} from "../../lib/content/lesson/exercise-generator";
+} from "../../lib/content/lesson/exercise/exercise-generator";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -51,6 +50,7 @@ import {
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
+    draftCardsToGeneratorCards,
     draftSetId,
     lessonToDraftInput,
     preservedTheorySteps,
@@ -351,15 +351,9 @@ export default function CreateLesson() {
     }
 
     function generateLessonExercises() {
-        const genCards: GeneratorCard[] = cards.map((c) => ({
-            id: c.id,
-            front: c.front,
-            back: c.back,
-            example: c.notes,
-            image: c.image,
-            altAnswers: c.altAnswers,
-        }));
-        setExercises(generateExercises(genCards, genConfig));
+        setExercises(
+            generateExercises(draftCardsToGeneratorCards(cards), genConfig),
+        );
         setExerciseError(false);
     }
 
@@ -547,6 +541,7 @@ export default function CreateLesson() {
         back: string;
         notes: string;
         image: string;
+        example: string;
         altAnswers: string[];
     }) {
         setCards((prev) => [...prev, {id: newCardId(), ...c}]);
@@ -684,6 +679,11 @@ export default function CreateLesson() {
                     onReorderExercises={setExercises}
                     onDeleteExercise={(id) =>
                         setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onUpdateExercise={(id, updated) =>
+                        setExercises((prev) =>
+                            prev.map((e) => (e.id === id ? updated : e)),
+                        )
                     }
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}

@@ -17,7 +17,7 @@
 import type {
     ContentExerciseDirection,
     ContentLessonExercise,
-} from "../../../storage/types";
+} from "../../../../storage/types";
 
 export type GeneratableType =
     | "matching"

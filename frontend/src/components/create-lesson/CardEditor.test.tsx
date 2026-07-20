@@ -65,8 +65,46 @@ describe("CardEditor", () => {
             back: "Danke",
             notes: "",
             image: "",
+            example: "",
             altAnswers: [],
         });
+    });
+
+    // #1847 — a card can carry an explicit example sentence that drives
+    // cloze + word-tiles generation (separate from the notes field).
+    it("adds a card with an example sentence, trimmed", () => {
+        const h = setup();
+        fireEvent.change(screen.getByTestId("card-front-input"), {
+            target: {value: "lis"},
+        });
+        fireEvent.change(screen.getByTestId("card-back-input"), {
+            target: {value: "read"},
+        });
+        fireEvent.change(screen.getByTestId("card-example-input"), {
+            target: {value: "  Je lis un livre.  "},
+        });
+        fireEvent.click(screen.getByTestId("card-add-button"));
+        expect(h.onAdd).toHaveBeenCalledWith({
+            front: "lis",
+            back: "read",
+            notes: "",
+            image: "",
+            example: "Je lis un livre.",
+            altAnswers: [],
+        });
+    });
+
+    it("edits a card's example sentence", () => {
+        const h = setup([card("c1")]);
+        fireEvent.click(screen.getByTestId("card-edit-c1"));
+        fireEvent.change(screen.getByTestId("card-edit-example-c1"), {
+            target: {value: "Tu lis un livre."},
+        });
+        fireEvent.click(screen.getByTestId("card-edit-save-c1"));
+        expect(h.onUpdate).toHaveBeenCalledWith(
+            "c1",
+            expect.objectContaining({example: "Tu lis un livre."}),
+        );
     });
 
     // #1797 — a card can carry additional accepted answers for its
@@ -89,6 +127,7 @@ describe("CardEditor", () => {
             back: "Single",
             notes: "",
             image: "",
+            example: "",
             altAnswers: ["noch Single"],
         });
     });
