@@ -368,6 +368,7 @@ review:
   summary_remaining: "Masih ada {n} yang jatuh tempo. Lanjutkan?"
   another_round: "Putaran lagi"
   your_answer: "Jawaban Anda:"
+  correct_answer: "Benar:"
   summary_corrected: "{corrected} dari {total} diperbaiki"
   summary_trend: "Bagus — titik lemah Anda semakin kuat."
   summary_next: "Item yang dikuasai keluar; sisanya akan kembali untuk ditinjau segera."

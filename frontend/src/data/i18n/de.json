@@ -393,6 +393,7 @@
   },
   "review": {
     "your_answer": "Deine Antwort:",
+    "correct_answer": "Richtig:",
     "summary_corrected": "{corrected} von {total} korrigiert",
     "summary_trend": "Stark — deine Schwachstellen werden besser.",
     "summary_next": "Gemeisterte Elemente fallen weg; der Rest kommt bald zur Wiederholung.",
