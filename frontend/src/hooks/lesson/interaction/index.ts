@@ -2,3 +2,4 @@
 export * from "./useLessonEnterKey";
 export * from "./useLessonShortcuts";
 export * from "./useExerciseHints";
+export * from "./useErrorReplayScope";

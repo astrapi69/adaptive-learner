@@ -807,6 +807,12 @@ settings:
     receptive_first: Önce tanıma
     productive_focus: Üretme
     balanced: Dengeli
+  error_replay_scope:
+    title: "Hataları tekrar et"
+    hint: "Bir dersten sonra hataları tekrar ederken yalnızca yanlış yaptığınız kısımları mı yoksa alıştırmaların tamamını mı yeniden oynatacağınızı seçin. Eşleştirme alıştırmalarında \"yalnızca hatalar\" yalnızca yanlış çiftleri gösterir (eşleştirecek bir şey olması için birkaç doğru çift eklenir)."
+    label: "Tekrar kapsamı"
+    errors_only: "Yalnızca hataları göster (varsayılan)"
+    whole_set: "Tüm seti tekrar et"
   matching_resolve:
     title: "Çözme animasyonu"
     hint: "Eşleştirme alıştırması, kontrolden sonra 'Çöz'e bastığınızda doğru çiftleri nasıl gösterir."

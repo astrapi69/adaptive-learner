@@ -55,8 +55,10 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 import { useNextStepSuggestions } from "../../../hooks/learning/useNextStepSuggestions";
 import {
   collectFailedExercises,
+  narrowReplayExercises,
   openFailedExercises,
 } from "../../../lib/lesson/error-replay";
+import { useErrorReplayScope } from "../../../hooks/lesson/interaction/useErrorReplayScope";
 import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSessionErrors";
 import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
 import {
@@ -309,6 +311,19 @@ export default function LessonSummary({
     [failedExercises, sessionErrors],
   );
 
+  // #1874 — the replay payload is scoped by the "only errors / whole set"
+  // preference. Matching exercises are trimmed to their wrong pairs (with a
+  // MATCHING_MIN_PAIRS distractor fill for playability); the count/CTA above
+  // still reflects the number of failed exercises, not the trimmed pairs.
+  const errorReplayErrorsOnly = useErrorReplayScope();
+  const replayExercises = useMemo(
+    () =>
+      narrowReplayExercises(openFailed, sessionErrors, {
+        errorsOnly: errorReplayErrorsOnly,
+      }),
+    [openFailed, sessionErrors, errorReplayErrorsOnly],
+  );
+
   const suggestions = useNextStepSuggestions({
     source,
     setId,
@@ -551,9 +566,9 @@ export default function LessonSummary({
         setSlug={setSlug}
         lessonFilename={lessonFilename}
         errorReplay={
-          openFailed.length > 0
+          replayExercises.length > 0
             ? {
-                exercises: openFailed,
+                exercises: replayExercises,
                 cards: lesson.cards,
                 lessonTitle: lesson.title,
               }

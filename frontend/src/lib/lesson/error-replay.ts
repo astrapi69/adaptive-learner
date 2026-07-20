@@ -21,6 +21,7 @@ import type {
     ElementError,
     LessonProgress,
 } from "../../storage/types";
+import {MATCHING_MIN_PAIRS} from "../exercises/authoring/exercise-edit";
 
 /** The failed exercises of a lesson run, in lesson order. Empty when
  *  there's no progress, the lesson was perfect, or only theory steps
@@ -83,5 +84,90 @@ export function openFailedExercises(
         return rows.some(
             (row) => !row.mastered && (row.correct_streak ?? 0) === 0,
         );
+    });
+}
+
+/** An element is "still wrong" when its SRS row is unmastered and its
+ *  correct-streak sits at zero — the same predicate the replay CTA uses. */
+function isElementStillWrong(row: ElementError): boolean {
+    return !row.mastered && (row.correct_streak ?? 0) === 0;
+}
+
+/** The set of still-wrong ``element_key``s for one exercise, drawn from the
+ *  live SRS error rows. For matching, ``element_key === pair.left``. */
+function wrongElementKeys(
+    exerciseId: string,
+    sessionErrors: readonly ElementError[],
+): Set<string> {
+    const keys = new Set<string>();
+    for (const row of sessionErrors) {
+        if (row.exercise_id === exerciseId && isElementStillWrong(row)) {
+            keys.add(row.element_key);
+        }
+    }
+    return keys;
+}
+
+/** Whether the error-replay round replays only the wrong elements
+ *  (default) or the whole failed exercises unchanged (#1874). */
+export interface ReplayScope {
+    /** ``true`` = replay only the wrong elements; ``false`` = whole set. */
+    errorsOnly: boolean;
+}
+
+const DEFAULT_REPLAY_SCOPE: ReplayScope = {errorsOnly: true};
+
+/**
+ * Narrow the error-replay payload to what the learner actually got wrong
+ * (#1874).
+ *
+ * Matching exercises are the reason this exists: a failed matching step
+ * carries its FULL ``pairs`` list, so a mixed-result exercise would replay
+ * every pair, including the already-correct ones. Here each matching
+ * exercise is trimmed to its wrong pairs (identified via the live
+ * ``ElementError`` rows, where ``element_key === pair.left``).
+ *
+ * Mechanical fill: a matching exercise with a single wrong pair is not a
+ * puzzle (nothing to choose between), so when fewer than
+ * {@link MATCHING_MIN_PAIRS} wrong pairs remain, already-correct pairs are
+ * appended as pure distractors — in authored order, deterministic — until
+ * the minimum is reached. They exist only for playability.
+ *
+ * Non-matching exercises pass through unchanged: their failure granularity
+ * already IS the whole exercise (free-text = one prompt; a cloze replays
+ * its blanks as authored). When ``scope.errorsOnly`` is false the learner
+ * asked for the whole set, so everything passes through unchanged.
+ *
+ * Conservative on missing signal: a matching exercise with no wrong-key
+ * rows yet, or where every pair is wrong, is kept whole rather than
+ * emptied.
+ *
+ * @param exercises - the (open) failed exercises to replay.
+ * @param sessionErrors - live ``ElementError`` rows for this lesson.
+ * @param scope - replay scope; defaults to errors-only.
+ */
+export function narrowReplayExercises(
+    exercises: readonly ContentLessonExercise[],
+    sessionErrors: readonly ElementError[],
+    scope: ReplayScope = DEFAULT_REPLAY_SCOPE,
+): ContentLessonExercise[] {
+    if (!scope.errorsOnly) return [...exercises];
+    return exercises.map((exercise) => {
+        if (exercise.type !== "matching") return exercise;
+        const pairs = exercise.pairs ?? [];
+        if (pairs.length <= MATCHING_MIN_PAIRS) return exercise;
+
+        const wrongKeys = wrongElementKeys(exercise.id, sessionErrors);
+        if (wrongKeys.size === 0) return exercise; // no signal → keep whole
+
+        const wrong = pairs.filter((pair) => wrongKeys.has(pair.left));
+        // Nothing to trim (all wrong) or nothing identified → keep whole.
+        if (wrong.length === 0 || wrong.length === pairs.length) return exercise;
+
+        const fillersNeeded = Math.max(0, MATCHING_MIN_PAIRS - wrong.length);
+        const distractors = pairs
+            .filter((pair) => !wrongKeys.has(pair.left))
+            .slice(0, fillersNeeded);
+        return {...exercise, pairs: [...wrong, ...distractors]};
     });
 }

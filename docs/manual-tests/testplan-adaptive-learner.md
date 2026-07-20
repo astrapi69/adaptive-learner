@@ -137,6 +137,17 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Fehler-wiederholen-Abschluss ("Alle Fehler korrigiert!"): Enter
       (ohne Klick) loest "Zurueck zur Lektion" aus (#1864); Klick auf den
       Button funktioniert weiterhin
+- [ ] Fehler wiederholen bei Zuordnung (#1874): Zuordnungs-Uebung mit
+      gemischt richtigen/falschen Paaren spielen, "Fehler wiederholen"
+      oeffnen -> nur die falschen Paare erscheinen (nicht alle). Bei nur
+      einem falschen Paar werden korrekte Paare als Distraktoren aufgefuellt
+      (mind. 2 Paare, damit ueberhaupt zugeordnet werden kann)
+- [ ] Einstellung "Fehler wiederholen" (Settings -> Lernen): Umschalten auf
+      "Ganzes Set wiederholen" -> beim naechsten "Fehler wiederholen"
+      erscheinen tatsaechlich ALLE Paare; zurueck auf "Nur Fehler zeigen"
+      (Standard) -> wieder nur die falschen
+- [ ] Regression andere Typen: Freitext/Lueckentext bei "Fehler
+      wiederholen" weiterhin nur die falschen Elemente
 
 ### Neue Uebungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt

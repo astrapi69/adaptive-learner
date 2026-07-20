@@ -9,6 +9,7 @@ import HintSettingsControl from "../../../../components/settings/controls/lesson
 import LessonModeControl from "../../../../components/settings/controls/lesson/LessonModeControl";
 import ReviewSettingsControl from "../../../../components/settings/controls/lesson/ReviewSettingsControl";
 import SummarySectionsControl from "../../../../components/settings/controls/lesson/SummarySectionsControl";
+import ErrorReplayScopeControl from "../../../../components/settings/controls/lesson/ErrorReplayScopeControl";
 import LearningProfileControl from "../../../../components/assessment/LearningProfileControl";
 import MaxLessonSizeControl from "../../../../components/settings/controls/lesson/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../../../../components/settings/controls/lesson/PausedLessonsRetentionControl";
@@ -164,6 +165,7 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       <ReviewSettingsControl />
       <SrsTransparencySection />
       <SummarySectionsControl />
+      <ErrorReplayScopeControl />
       <section className="settings-section" data-testid="settings-section-feedback">
         <h2 className="settings-section-title">{t("settings.section_feedback", "Feedback")}</h2>
         <FeedbackIntensityControl />

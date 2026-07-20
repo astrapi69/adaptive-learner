@@ -852,6 +852,13 @@
       "productive_focus": "Produzieren",
       "balanced": "Ausgeglichen"
     },
+    "error_replay_scope": {
+      "title": "Fehler wiederholen",
+      "hint": "Beim Wiederholen der Fehler nach einer Lektion nur die falsch beantworteten Teile erneut spielen oder die ganzen Übungen. Bei Zuordnungs-Übungen zeigt \"nur Fehler\" nur die falschen Paare (plus einige richtige, damit es etwas zum Zuordnen gibt).",
+      "label": "Wiederholungsumfang",
+      "errors_only": "Nur Fehler zeigen (Standard)",
+      "whole_set": "Ganzes Set wiederholen"
+    },
     "matching_resolve": {
       "title": "Auflösungs-Effekt",
       "hint": "Wie die Zuordnungsübung die korrekten Paare zeigt, wenn du nach dem Prüfen auf 'Auflösen' tippst.",
