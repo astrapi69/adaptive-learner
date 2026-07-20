@@ -16,6 +16,8 @@ import ExtensionExerciseEditor from "./ExtensionExerciseEditor";
 import {
     CATEGORIZATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
+    GRADED_QUIZ_EXT_TYPE,
+    READING_COMPREHENSION_EXT_TYPE,
 } from "../../lib/content/lesson/extension/extension-edit";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -132,5 +134,113 @@ describe("ExtensionExerciseEditor — error correction", () => {
         render(<Harness exercise={blank} />);
         expect(saveButton("e1")).toBeDisabled();
         expect(screen.getByTestId("exercise-ext-error-e1")).toBeInTheDocument();
+    });
+});
+
+describe("ExtensionExerciseEditor — reading comprehension", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "r1",
+            type: READING_COMPREHENSION_EXT_TYPE,
+            prompt: "Read and answer",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                passage: "Rex ran into the garden.",
+                questions: [
+                    {
+                        prompt: "Where did Rex run?",
+                        type: "multiple_choice",
+                        options: [
+                            {text: "The garden", correct: true},
+                            {text: "The street", correct: false},
+                        ],
+                        accept: [],
+                    },
+                ],
+            },
+        }) as ContentLessonExercise;
+
+    it("renders the passage + a question editor", () => {
+        render(<Harness exercise={ex()} />);
+        expect(screen.getByTestId("exercise-ext-rc-passage-r1")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-ext-rc-q-r1-0")).toBeInTheDocument();
+    });
+
+    it("commits an edited passage on Save (drops the unused accept branch)", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-ext-rc-passage-r1"), {
+            target: {value: "A new passage."},
+        });
+        fireEvent.click(saveButton("r1"));
+        const payload = savedPayload() as {
+            passage: string;
+            questions: {accept?: unknown}[];
+        };
+        expect(payload.passage).toBe("A new passage.");
+        expect(payload.questions[0].accept).toBeUndefined();
+    });
+
+    it("disables Save when the passage is blank", () => {
+        const blank = ex();
+        (blank.ext_payload as {passage: string}).passage = "";
+        render(<Harness exercise={blank} />);
+        expect(saveButton("r1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-ext-error-r1")).toBeInTheDocument();
+    });
+});
+
+describe("ExtensionExerciseEditor — graded quiz", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "q1",
+            type: GRADED_QUIZ_EXT_TYPE,
+            prompt: "Answer the quiz",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                pass_threshold: 60,
+                questions: [
+                    {
+                        prompt: "2+2?",
+                        type: "multiple_choice",
+                        options: [
+                            {text: "4", correct: true},
+                            {text: "5", correct: false},
+                        ],
+                        accept: [],
+                        points: 2,
+                    },
+                ],
+            },
+        }) as ContentLessonExercise;
+
+    it("renders the threshold + points fields", () => {
+        render(<Harness exercise={ex()} />);
+        expect(
+            screen.getByTestId("exercise-ext-gq-threshold-q1"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("exercise-ext-gq-q-q1-0-points"),
+        ).toBeInTheDocument();
+    });
+
+    it("commits an edited points value on Save", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-ext-gq-q-q1-0-points"), {
+            target: {value: "5"},
+        });
+        fireEvent.click(saveButton("q1"));
+        const payload = savedPayload() as {questions: {points: number}[]};
+        expect(payload.questions[0].points).toBe(5);
+    });
+
+    it("disables Save when points are not positive", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-ext-gq-q-q1-0-points"), {
+            target: {value: "0"},
+        });
+        expect(saveButton("q1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-ext-error-q1")).toBeInTheDocument();
     });
 });

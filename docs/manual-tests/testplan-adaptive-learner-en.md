@@ -134,6 +134,11 @@ Requires domain knowledge. Not automatable.
 - [ ] Reverse: matching columns swapped
 - [ ] Shuffle: cards mixed from different lessons
 - [ ] Endless: no session end, statistics keep running
+- [ ] Endless completion ("Practice session complete!"): Enter (without a
+      click) triggers "Back to Dashboard" (#1864, button auto-focused)
+- [ ] Error-replay completion ("All errors corrected!"): Enter (without a
+      click) triggers "Back to lesson" (#1864); clicking the button still
+      works
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
@@ -201,6 +206,21 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       structure" check names a concrete reason, not just a ✗
 - [ ] **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
+- [ ] **Advanced exercise types / extension wizard (#1852):** Step 1 → the
+      "Advanced exercise types" card starts a dedicated 3-step flow (author →
+      review → save) with a non-blocking notice that these types are advanced.
+      Step 2: "Add extension exercise" offers four types — **categorization**,
+      **error correction**, **reading comprehension**, **graded quiz**. Each
+      opens the inline editor with type-specific fields; Save is disabled until
+      the shipped validator passes (categorization: ≥2 named buckets with
+      items; error correction: ≥2 words + a marked error + a correction;
+      reading comprehension: a passage + ≥1 complete question; graded quiz: ≥1
+      question with positive points). Reading comprehension + graded quiz: per
+      question toggle multiple-choice ⇄ free-text, MC options with a correct
+      checkbox, graded quiz additionally points + partial credit + a pass
+      threshold. Review shows the count; "Save locally" → the saved lesson is
+      **playable** (each type renders + is answerable); the set JSON carries
+      `requires_extensions: ["ext:al-...@1"]`
 
 ### Card image upload (#1763 / #1764)
 

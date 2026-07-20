@@ -132,6 +132,11 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Rueckwaerts: Matching-Spalten getauscht
 - [ ] Zufall: Karten aus verschiedenen Lektionen gemischt
 - [ ] Endlos: kein Session-Ende, Statistik laeuft
+- [ ] Endlos-Abschluss ("Uebung beendet"): Enter (ohne Klick) loest
+      "Zurueck zum Dashboard" aus (#1864, Button auto-fokussiert)
+- [ ] Fehler-wiederholen-Abschluss ("Alle Fehler korrigiert!"): Enter
+      (ohne Klick) loest "Zurueck zur Lektion" aus (#1864); Klick auf den
+      Button funktioniert weiterhin
 
 ### Neue Uebungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
@@ -201,6 +206,22 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Lektionsstruktur"-Check nennt einen konkreten Grund, nicht nur ✗
 - [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare
       Titel (auch offline) + einen gedrueckten/ausgewaehlten Zustand
+- [ ] **Erweiterte Uebungstypen / Extension-Wizard (#1852):** Schritt 1 →
+      Karte "Erweiterte Uebungstypen" startet einen eigenen 3-Schritt-Flow
+      (Autoren → Review → Speichern) mit einem nicht-blockierenden Hinweis,
+      dass diese Typen fortgeschritten sind. Schritt 2: "Erweiterungsuebung
+      hinzufuegen" bietet vier Typen — **Kategorisierung**, **Fehlerkorrektur**,
+      **Leseverstaendnis**, **Benotetes Quiz**. Je Typ oeffnet der Inline-Editor
+      mit den passenden Feldern; Speichern ist deaktiviert bis der shipped
+      Validator erfuellt ist (Kategorisierung: ≥2 benannte Buckets mit Items;
+      Fehlerkorrektur: ≥2 Woerter + markierter Fehler + Korrektur;
+      Leseverstaendnis: Text + ≥1 vollstaendige Frage; Benotetes Quiz: ≥1 Frage
+      mit positiven Punkten). Leseverstaendnis + Benotetes Quiz: pro Frage
+      Umschalten Multiple-Choice ⇄ Freitext, MC-Optionen mit Richtig-Haken,
+      Benotetes Quiz zusaetzlich Punkte + Teilpunkte + Bestehensgrenze.
+      Review zeigt die Anzahl; "Lokal speichern" → gespeicherte Lektion
+      **abspielbar** (jeder Typ rendert + ist beantwortbar); die Set-JSON
+      traegt `requires_extensions: ["ext:al-...@1"]`
 
 ### Karten-Bild-Upload (#1763 / #1764)
 
