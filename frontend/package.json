@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.27",
+    "@astrapi69/ai-key-vault": "0.1.0",
+    "@astrapi69/ai-key-vault-react": "0.1.1",
     "@astrapi69/feature-strategy": "^0.1.2",
     "@astrapi69/feature-strategy-react": "^0.1.2",
     "@dnd-kit/core": "^6.3.1",

@@ -35,5 +35,4 @@ export * from "./validation/validation-signature";
 
 // providers/
 export * from "./providers/resolve-provider";
-export * from "./providers/model-recommendations";
 export * from "./providers/pronunciation-ai";
