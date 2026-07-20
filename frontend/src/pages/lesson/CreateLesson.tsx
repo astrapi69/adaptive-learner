@@ -37,6 +37,7 @@ import {
     type ExerciseGenConfig,
 } from "../../lib/content/lesson/exercise/exercise-generator";
 import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
+import {validateExerciseEdit} from "../../lib/content/lesson/exercise/exercise-edit";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -318,7 +319,13 @@ export default function CreateLesson() {
             setCardError(false);
         }
         if (step === 3) {
-            if (exercises.length < MIN_EXERCISES) {
+            // Too few, OR any exercise (generated or manually added) still
+            // incomplete — reuse the same per-type validator as the inline
+            // editor so a half-filled manual exercise can't slip into step 4.
+            if (
+                exercises.length < MIN_EXERCISES ||
+                exercises.some((ex) => !validateExerciseEdit(ex).valid)
+            ) {
                 setExerciseError(true);
                 return;
             }
@@ -687,6 +694,9 @@ export default function CreateLesson() {
                         setExercises((prev) =>
                             prev.map((e) => (e.id === id ? updated : e)),
                         )
+                    }
+                    onAddExercise={(exercise) =>
+                        setExercises((prev) => [...prev, exercise])
                     }
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}

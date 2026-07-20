@@ -393,6 +393,7 @@
   },
   "review": {
     "your_answer": "Tu respuesta:",
+    "correct_answer": "Correcto:",
     "summary_corrected": "{corrected} de {total} corregidos",
     "summary_trend": "Bien: tus puntos débiles van mejorando.",
     "summary_next": "Los elementos dominados desaparecen; el resto vuelve pronto para repaso.",
@@ -2415,7 +2416,8 @@
       "free_prompt": "Traduce: {word}",
       "cloze_prompt": "Completa la palabra que falta.",
       "tiles_prompt": "Ordena las palabras para formar la frase ({word}).",
-      "pic_prompt": "Elige la imagen para: {word}"
+      "pic_prompt": "Elige la imagen para: {word}",
+      "mc_prompt": "Elige la traducción correcta de: {word}"
     },
     "page_title": "Mis contenidos",
     "intro": "Sets de lecciones prediseñados que puedes usar sin clave API. Las descargas se almacenan localmente y funcionan sin conexión tras la primera descarga.",
@@ -2857,6 +2859,9 @@
       "heading": "Generar ejercicios",
       "count_label": "Número de ejercicios",
       "types_label": "Tipos de ejercicio",
+      "add": "Añadir ejercicio",
+      "add_heading": "Elige un tipo de ejercicio",
+      "incomplete_to_advance": "Completa o elimina los ejercicios incompletos para continuar.",
       "direction_label": "Dirección",
       "generate": "Generar ejercicios automáticamente",
       "regenerate": "Regenerar",
@@ -2866,6 +2871,7 @@
       "drag": "Arrastra para reordenar",
       "delete": "Eliminar ejercicio",
       "type": {
+        "multiple_choice": "Opción múltiple",
         "matching": "Emparejar",
         "free_text": "Texto libre",
         "cloze": "Cloze",
@@ -2874,6 +2880,7 @@
       },
       "gen_missing_intro": "Algunos tipos seleccionados no generaron ejercicios:",
       "gen_none": {
+        "multiple_choice": "Opción múltiple: añade al menos dos tarjetas con respuestas distintas.",
         "matching": "Correspondencia: añade al menos dos tarjetas.",
         "free_text": "Texto libre: añade al menos una tarjeta.",
         "cloze": "Hueco: añade a algunas tarjetas una frase de ejemplo que contenga el término.",
@@ -2881,6 +2888,13 @@
         "picture_choice": "Imagen: añade una imagen a al menos dos tarjetas."
       },
       "edit": {
+        "mc_options_label": "Opciones de respuesta",
+        "mc_option_placeholder": "Texto de la opción",
+        "mc_option_add": "Añadir opción",
+        "mc_option_remove": "Quitar opción",
+        "mc_correct": "Respuesta correcta",
+        "mc_multiple_label": "Permitir varias respuestas correctas",
+        "err_multiple_choice": "Añade al menos dos opciones distintas y marca la(s) respuesta(s) correcta(s).",
         "edit": "Editar ejercicio",
         "save": "Guardar",
         "prompt_label": "Pregunta / enunciado",

@@ -393,6 +393,7 @@
   },
   "review": {
     "your_answer": "Deine Antwort:",
+    "correct_answer": "Richtig:",
     "summary_corrected": "{corrected} von {total} korrigiert",
     "summary_trend": "Stark — deine Schwachstellen werden besser.",
     "summary_next": "Gemeisterte Elemente fallen weg; der Rest kommt bald zur Wiederholung.",
@@ -2415,7 +2416,8 @@
       "free_prompt": "Übersetze: {word}",
       "cloze_prompt": "Fülle das fehlende Wort ein.",
       "tiles_prompt": "Bringe die Wörter in die richtige Reihenfolge ({word}).",
-      "pic_prompt": "Wähle das Bild für: {word}"
+      "pic_prompt": "Wähle das Bild für: {word}",
+      "mc_prompt": "Wähle die richtige Übersetzung von: {word}"
     },
     "page_title": "Meine Inhalte",
     "intro": "Vorgefertigte Lektionssets, die ohne API-Schlüssel nutzbar sind. Heruntergeladene Sets werden lokal gespeichert und sind nach dem ersten Abruf offline verfügbar.",
@@ -2857,6 +2859,9 @@
       "heading": "Übungen erstellen",
       "count_label": "Anzahl der Übungen",
       "types_label": "Übungstypen",
+      "add": "Übung hinzufügen",
+      "add_heading": "Übungstyp wählen",
+      "incomplete_to_advance": "Vervollständige oder entferne die unvollständigen Übungen, um fortzufahren.",
       "direction_label": "Richtung",
       "generate": "Übungen automatisch erstellen",
       "regenerate": "Neu generieren",
@@ -2866,6 +2871,7 @@
       "drag": "Zum Umsortieren ziehen",
       "delete": "Übung löschen",
       "type": {
+        "multiple_choice": "Multiple Choice",
         "matching": "Zuordnung",
         "free_text": "Freitext",
         "cloze": "Lückentext",
@@ -2874,6 +2880,7 @@
       },
       "gen_missing_intro": "Einige ausgewählte Typen haben keine Übungen ergeben:",
       "gen_none": {
+        "multiple_choice": "Multiple Choice: Füge mindestens zwei Karten mit unterschiedlichen Antworten hinzu.",
         "matching": "Zuordnung: Füge mindestens zwei Karten hinzu.",
         "free_text": "Freitext: Füge mindestens eine Karte hinzu.",
         "cloze": "Lückentext: Füge einigen Karten einen Beispielsatz hinzu, der den Begriff enthält.",
@@ -2881,6 +2888,13 @@
         "picture_choice": "Bildauswahl: Füge mindestens zwei Karten ein Bild hinzu."
       },
       "edit": {
+        "mc_options_label": "Antwortoptionen",
+        "mc_option_placeholder": "Optionstext",
+        "mc_option_add": "Option hinzufügen",
+        "mc_option_remove": "Option entfernen",
+        "mc_correct": "Richtige Antwort",
+        "mc_multiple_label": "Mehrere richtige Antworten zulassen",
+        "err_multiple_choice": "Füge mindestens zwei unterschiedliche Optionen hinzu und markiere die richtige(n) Antwort(en).",
         "edit": "Übung bearbeiten",
         "save": "Speichern",
         "prompt_label": "Frage / Aufgabenstellung",

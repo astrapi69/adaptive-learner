@@ -60,6 +60,10 @@ async function answer(page: Page): Promise<void> {
         await page.getByTestId("free-text-input").first().fill("x");
         return;
     }
+    if (await page.getByTestId("multiple-choice-exercise").count()) {
+        await page.getByTestId("multiple-choice-input-0").click();
+        return;
+    }
     if (await page.getByTestId("matching-exercise").count()) {
         const lefts = page.getByTestId(/^matching-left-\d+$/);
         const n = await lefts.count();

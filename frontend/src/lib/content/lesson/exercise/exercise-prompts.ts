@@ -47,5 +47,9 @@ export function localizedExercisePrompts(t: Translate): ExercisePrompts {
             "content.lesson_gen.pic_prompt",
             "Pick the image for: {word}",
         ),
+        multipleChoice: t(
+            "content.lesson_gen.mc_prompt",
+            "Choose the correct translation of: {word}",
+        ),
     };
 }

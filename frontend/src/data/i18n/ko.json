@@ -395,6 +395,7 @@
     "summary_remaining": "아직 {n}개 남았어요. 계속할까요?",
     "another_round": "한 번 더",
     "your_answer": "당신의 답변:",
+    "correct_answer": "정답:",
     "summary_corrected": "{total}개 중 {corrected}개 교정됨",
     "summary_trend": "좋아요 — 약한 부분이 점점 강해지고 있어요.",
     "summary_next": "숙달한 항목은 제외되고, 나머지는 곧 복습으로 돌아옵니다.",
@@ -2415,7 +2416,8 @@
       "free_prompt": "번역하세요: {word}",
       "cloze_prompt": "빠진 단어를 채우세요.",
       "tiles_prompt": "단어를 문장으로 배열하세요 ({word}).",
-      "pic_prompt": "다음 단어에 맞는 이미지를 고르세요: {word}"
+      "pic_prompt": "다음 단어에 맞는 이미지를 고르세요: {word}",
+      "mc_prompt": "다음 단어의 올바른 번역을 고르세요: {word}"
     },
     "page_title": "내 콘텐츠",
     "intro": "API 키 없이 사용할 수 있는 사전 제작 레슨 세트입니다. 다운로드한 항목은 로컬에 캐시되며 첫 다운로드 후에는 오프라인에서도 작동합니다.",
@@ -2857,6 +2859,9 @@
       "heading": "연습 생성",
       "count_label": "연습 개수",
       "types_label": "연습 유형",
+      "add": "문제 추가",
+      "add_heading": "문제 유형 선택",
+      "incomplete_to_advance": "계속하려면 미완성 문제를 완성하거나 삭제하세요.",
       "direction_label": "방향",
       "generate": "연습 자동 생성",
       "regenerate": "다시 생성",
@@ -2866,6 +2871,7 @@
       "drag": "드래그하여 순서 변경",
       "delete": "연습 삭제",
       "type": {
+        "multiple_choice": "객관식",
         "matching": "연결",
         "free_text": "자유 입력",
         "cloze": "빈칸 채우기",
@@ -2874,6 +2880,7 @@
       },
       "gen_missing_intro": "선택한 일부 유형에서 문제가 생성되지 않았습니다:",
       "gen_none": {
+        "multiple_choice": "객관식: 서로 다른 답을 가진 카드를 두 장 이상 추가하세요.",
         "matching": "짝 맞추기: 카드를 두 장 이상 추가하세요.",
         "free_text": "자유 입력: 카드를 한 장 이상 추가하세요.",
         "cloze": "빈칸 채우기: 일부 카드에 용어가 포함된 예문을 추가하세요.",
@@ -2881,6 +2888,13 @@
         "picture_choice": "그림 선택: 카드 두 장 이상에 이미지를 추가하세요."
       },
       "edit": {
+        "mc_options_label": "답 선택지",
+        "mc_option_placeholder": "선택지 텍스트",
+        "mc_option_add": "선택지 추가",
+        "mc_option_remove": "선택지 삭제",
+        "mc_correct": "정답",
+        "mc_multiple_label": "복수 정답 허용",
+        "err_multiple_choice": "서로 다른 선택지를 두 개 이상 추가하고 정답을 표시하세요.",
         "edit": "문제 편집",
         "save": "저장",
         "prompt_label": "질문 / 지시문",

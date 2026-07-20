@@ -73,6 +73,12 @@ describe("localizedExercisePrompts (#1855)", () => {
             DEFAULT_EXERCISE_PROMPTS.pictureChoice,
         );
         expect(prompts.pictureChoice).toContain("{word}");
+        // multiple_choice landed on develop mid-fix (#1853) with the same
+        // hardcoded-English shape; keep it covered.
+        expect(prompts.multipleChoice).not.toBe(
+            DEFAULT_EXERCISE_PROMPTS.multipleChoice,
+        );
+        expect(prompts.multipleChoice).toContain("{word}");
     });
 
     it("keeps the English wording under the en catalog (no regression)", () => {
@@ -83,7 +89,7 @@ describe("localizedExercisePrompts (#1855)", () => {
         expect(prompts.wordTiles).toBe(DEFAULT_EXERCISE_PROMPTS.wordTiles);
     });
 
-    it("resolves the picture-choice template in every catalog", () => {
+    it("resolves the picture-choice + multiple-choice templates in every catalog", () => {
         for (const lang of [
             "de",
             "el",
@@ -100,12 +106,16 @@ describe("localizedExercisePrompts (#1855)", () => {
             const t = makeT(loadCatalog(lang));
             // No fallback passed: a missing key echoes the key itself,
             // which is how a not-yet-authored catalog entry shows up.
-            const raw = t("content.lesson_gen.pic_prompt");
-            expect(
-                raw,
-                `${lang}: content.lesson_gen.pic_prompt missing — English ` +
-                    `fallback would burn into generated lessons`,
-            ).not.toBe("content.lesson_gen.pic_prompt");
+            for (const key of [
+                "content.lesson_gen.pic_prompt",
+                "content.lesson_gen.mc_prompt",
+            ]) {
+                expect(
+                    t(key),
+                    `${lang}: ${key} missing — English fallback would ` +
+                        `burn into generated lessons`,
+                ).not.toBe(key);
+            }
             const prompts = localizedExercisePrompts(t);
             if (lang !== "en") {
                 expect(prompts.pictureChoice).not.toBe(

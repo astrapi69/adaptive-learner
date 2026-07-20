@@ -393,6 +393,7 @@
   },
   "review": {
     "your_answer": "A sua resposta:",
+    "correct_answer": "Correto:",
     "summary_corrected": "{corrected} de {total} corrigidos",
     "summary_trend": "Boa — os seus pontos fracos estão a melhorar.",
     "summary_next": "Os elementos dominados saem; os restantes voltam em breve para revisão.",
@@ -2415,7 +2416,8 @@
       "free_prompt": "Traduza: {word}",
       "cloze_prompt": "Complete a palavra que falta.",
       "tiles_prompt": "Organize as palavras para formar a frase ({word}).",
-      "pic_prompt": "Escolha a imagem para: {word}"
+      "pic_prompt": "Escolha a imagem para: {word}",
+      "mc_prompt": "Escolha a tradução correta de: {word}"
     },
     "page_title": "Meus conteúdos",
     "intro": "Conjuntos de lições pré-construídos que podes usar sem chave API. Os downloads são armazenados localmente e funcionam offline após a primeira transferência.",
@@ -2857,6 +2859,9 @@
       "heading": "Gerar exercícios",
       "count_label": "Número de exercícios",
       "types_label": "Tipos de exercício",
+      "add": "Adicionar exercício",
+      "add_heading": "Escolha um tipo de exercício",
+      "incomplete_to_advance": "Complete ou remova os exercícios incompletos para continuar.",
       "direction_label": "Direção",
       "generate": "Gerar exercícios automaticamente",
       "regenerate": "Regenerar",
@@ -2866,6 +2871,7 @@
       "drag": "Arraste para reordenar",
       "delete": "Eliminar exercício",
       "type": {
+        "multiple_choice": "Escolha múltipla",
         "matching": "Correspondência",
         "free_text": "Texto livre",
         "cloze": "Cloze",
@@ -2874,6 +2880,7 @@
       },
       "gen_missing_intro": "Alguns tipos selecionados não geraram exercícios:",
       "gen_none": {
+        "multiple_choice": "Escolha múltipla: adicione pelo menos duas cartas com respostas distintas.",
         "matching": "Correspondência: adicione pelo menos duas cartas.",
         "free_text": "Texto livre: adicione pelo menos uma carta.",
         "cloze": "Lacuna: adicione a algumas cartas uma frase de exemplo que contenha o termo.",
@@ -2881,6 +2888,13 @@
         "picture_choice": "Escolha de imagem: adicione uma imagem a pelo menos duas cartas."
       },
       "edit": {
+        "mc_options_label": "Opções de resposta",
+        "mc_option_placeholder": "Texto da opção",
+        "mc_option_add": "Adicionar opção",
+        "mc_option_remove": "Remover opção",
+        "mc_correct": "Resposta correta",
+        "mc_multiple_label": "Permitir várias respostas corretas",
+        "err_multiple_choice": "Adicione pelo menos duas opções distintas e marque a(s) resposta(s) correta(s).",
         "edit": "Editar exercício",
         "save": "Guardar",
         "prompt_label": "Pergunta / enunciado",
