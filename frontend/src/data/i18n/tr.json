@@ -2415,7 +2415,9 @@
       "match_prompt": "Her kelimeyi çevirisiyle eşleştir.",
       "free_prompt": "Çevir: {word}",
       "cloze_prompt": "Eksik kelimeyi doldur.",
-      "tiles_prompt": "Kelimeleri cümle oluşturacak şekilde sırala ({word})."
+      "tiles_prompt": "Kelimeleri cümle oluşturacak şekilde sırala ({word}).",
+      "pic_prompt": "Şu kelimenin görselini seç: {word}",
+      "mc_prompt": "Şu kelimenin doğru çevirisini seç: {word}"
     },
     "page_title": "İçeriklerim",
     "intro": "API anahtarı olmadan kullanabileceğiniz hazır ders setleri. İndirmeler yerel olarak önbelleğe alınır ve ilk indirmeden sonra çevrimdışı çalışır.",

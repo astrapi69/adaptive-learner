@@ -2415,7 +2415,9 @@
       "match_prompt": "Cocokkan setiap kata dengan terjemahannya.",
       "free_prompt": "Terjemahkan: {word}",
       "cloze_prompt": "Isi kata yang hilang.",
-      "tiles_prompt": "Susun kata-kata menjadi kalimat ({word})."
+      "tiles_prompt": "Susun kata-kata menjadi kalimat ({word}).",
+      "pic_prompt": "Pilih gambar untuk: {word}",
+      "mc_prompt": "Pilih terjemahan yang benar untuk: {word}"
     },
     "page_title": "Konten saya",
     "intro": "Set pelajaran siap pakai yang dapat kamu gunakan tanpa kunci API. Unduhan disimpan secara lokal dan dapat digunakan secara luring setelah pengambilan pertama.",

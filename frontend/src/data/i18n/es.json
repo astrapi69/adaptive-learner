@@ -2415,7 +2415,9 @@
       "match_prompt": "Relaciona cada palabra con su traducción.",
       "free_prompt": "Traduce: {word}",
       "cloze_prompt": "Completa la palabra que falta.",
-      "tiles_prompt": "Ordena las palabras para formar la frase ({word})."
+      "tiles_prompt": "Ordena las palabras para formar la frase ({word}).",
+      "pic_prompt": "Elige la imagen para: {word}",
+      "mc_prompt": "Elige la traducción correcta de: {word}"
     },
     "page_title": "Mis contenidos",
     "intro": "Sets de lecciones prediseñados que puedes usar sin clave API. Las descargas se almacenan localmente y funcionan sin conexión tras la primera descarga.",

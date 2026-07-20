@@ -36,6 +36,7 @@ import {
     generateExercises,
     type ExerciseGenConfig,
 } from "../../lib/content/lesson/exercise/exercise-generator";
+import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
 import {validateExerciseEdit} from "../../lib/content/lesson/exercise/exercise-edit";
 import {
     clearLessonDraft,
@@ -359,7 +360,9 @@ export default function CreateLesson() {
 
     function generateLessonExercises() {
         setExercises(
-            generateExercises(draftCardsToGeneratorCards(cards), genConfig),
+            generateExercises(draftCardsToGeneratorCards(cards), genConfig, {
+                prompts: localizedExercisePrompts(t),
+            }),
         );
         setExerciseError(false);
     }

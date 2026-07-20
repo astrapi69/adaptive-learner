@@ -2415,7 +2415,9 @@
       "match_prompt": "Match each word with its translation.",
       "free_prompt": "Translate: {word}",
       "cloze_prompt": "Fill in the missing word.",
-      "tiles_prompt": "Arrange the words into the sentence ({word})."
+      "tiles_prompt": "Arrange the words into the sentence ({word}).",
+      "pic_prompt": "Pick the image for: {word}",
+      "mc_prompt": "Choose the correct translation of: {word}"
     },
     "page_title": "My content",
     "intro": "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",

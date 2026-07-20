@@ -2228,6 +2228,8 @@ content:
     free_prompt: "Übersetze: {word}"
     cloze_prompt: "Fülle das fehlende Wort ein."
     tiles_prompt: "Bringe die Wörter in die richtige Reihenfolge ({word})."
+    pic_prompt: "Wähle das Bild für: {word}"
+    mc_prompt: "Wähle die richtige Übersetzung von: {word}"
   page_title: "Meine Inhalte"
   intro: "Vorgefertigte Lektionssets, die ohne API-Schlüssel nutzbar sind. Heruntergeladene Sets werden lokal gespeichert und sind nach dem ersten Abruf offline verfügbar."
   sources: "Quellen"
