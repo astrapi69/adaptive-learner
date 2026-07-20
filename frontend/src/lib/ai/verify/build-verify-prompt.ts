@@ -103,27 +103,75 @@ export function buildVerifyMessages(context: VerifyAnswerContext): ChatMessage[]
     return [system, user];
 }
 
+/** Coerce a raw verdict token into one of the three real verdicts. Tolerates
+ *  models that phrase it ("yes, correct" / "no - wrong") instead of returning
+ *  a bare enum value; returns ``null`` for anything unrecognised. */
+function normalizeVerdict(value: string): Exclude<VerifyVerdict, "unknown"> | null {
+    const v = value.trim().toLowerCase();
+    if (v === "yes" || v === "partial" || v === "no") return v;
+    if (/^yes\b/.test(v)) return "yes";
+    if (/^partial/.test(v)) return "partial";
+    if (/^no\b/.test(v)) return "no";
+    return null;
+}
+
+/**
+ * Last-ditch salvage: pull ``verdict`` and ``reason`` straight out of the raw
+ * text with a tolerant regex when {@link extractJsonObject} could not parse it
+ * (single-quoted keys, an unescaped char elsewhere in the object, …). This is
+ * what lets a reply that is "JSON with a clear verdict but not strictly
+ * parseable" still produce a usable verdict instead of leaking as raw text.
+ */
+function salvageVerdict(raw: string): VerifyResult | null {
+    const text = raw ?? "";
+    const verdictMatch = text.match(
+        /["'“”]?\s*verdict\s*["'“”]?\s*:\s*["'“”]?\s*(yes|partial|no)\b/i,
+    );
+    if (!verdictMatch) return null;
+    const reasonMatch = text.match(
+        /["'“”]?\s*reason\s*["'“”]?\s*:\s*["'“”]([\s\S]*?)["'“”]\s*[},]/,
+    );
+    return {
+        verdict: verdictMatch[1].toLowerCase() as VerifyVerdict,
+        reason: reasonMatch ? reasonMatch[1].trim() : "",
+    };
+}
+
+/** A raw reply that still looks like a JSON object must never be shown to the
+ *  learner as prose — that is the display bug. */
+function looksLikeJson(raw: string): boolean {
+    const trimmed = (raw ?? "").trim();
+    return trimmed.startsWith("{") || /["'“”]?\s*verdict\s*["'“”]?\s*:/i.test(trimmed);
+}
+
 /**
  * Parse the model's reply into a typed verdict. Robust to prose- or
- * fence-wrapped JSON via {@link extractJsonObject}. On any structural
- * failure (no JSON, unrecognised verdict) it falls back to ``unknown`` and
- * surfaces the raw text as the reason, so the learner still sees the reply.
+ * fence-wrapped JSON via {@link extractJsonObject}, and to the common
+ * near-JSON deviations (trailing commas, smart/single quotes) via a tolerant
+ * regex salvage. On a genuine failure it falls back to ``unknown``; it
+ * surfaces prose replies as the reason but NEVER dumps a raw JSON blob at the
+ * learner.
  *
  * @param raw - The assistant's reply text.
  */
 export function parseVerifyVerdict(raw: string): VerifyResult {
     const parsed = extractJsonObject(raw);
-    const verdictRaw =
-        parsed && typeof parsed.verdict === "string"
-            ? parsed.verdict.trim().toLowerCase()
-            : "";
     const reasonRaw =
         parsed && typeof parsed.reason === "string" ? parsed.reason.trim() : "";
+    const verdict =
+        parsed && typeof parsed.verdict === "string"
+            ? normalizeVerdict(parsed.verdict)
+            : null;
 
-    if (verdictRaw === "yes" || verdictRaw === "partial" || verdictRaw === "no") {
-        return {verdict: verdictRaw, reason: reasonRaw};
+    if (verdict) {
+        return {verdict, reason: reasonRaw};
     }
-    // Unparseable or unrecognised verdict — keep the reason if we got one,
-    // else show the raw reply so the learner is never left with nothing.
-    return {verdict: "unknown", reason: reasonRaw || (raw ?? "").trim()};
+
+    // Structured parse missed a usable verdict — try the tolerant regex.
+    const salvaged = salvageVerdict(raw);
+    if (salvaged) return salvaged;
+
+    // Genuinely no verdict. Keep a prose reply as the reason so the learner
+    // still sees something, but drop a raw JSON-looking blob (the bug).
+    return {verdict: "unknown", reason: looksLikeJson(raw) ? "" : (raw ?? "").trim()};
 }
