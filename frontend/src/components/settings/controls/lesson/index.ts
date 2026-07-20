@@ -8,6 +8,8 @@ export * from "./ContentViewControl";
 export { default as ContentViewControl } from "./ContentViewControl";
 export * from "./DirectionStrategyControl";
 export { default as DirectionStrategyControl } from "./DirectionStrategyControl";
+export * from "./ErrorReplayScopeControl";
+export { default as ErrorReplayScopeControl } from "./ErrorReplayScopeControl";
 export * from "./HintSettingsControl";
 export { default as HintSettingsControl } from "./HintSettingsControl";
 export * from "./LessonModeControl";

@@ -807,6 +807,12 @@ settings:
     receptive_first: Recognise first
     productive_focus: Produce
     balanced: Balanced
+  error_replay_scope:
+    title: "Retry errors"
+    hint: "When you retry errors after a lesson, replay only the parts you got wrong, or the whole exercises again. For matching exercises, \"only errors\" shows just the wrong pairs (plus a few correct ones so there is something to match)."
+    label: "Retry scope"
+    errors_only: "Only show errors (default)"
+    whole_set: "Replay the whole set"
   matching_resolve:
     title: "Solve animation"
     hint: "How the matching exercise reveals the correct pairs when you press 'Solve' after checking."

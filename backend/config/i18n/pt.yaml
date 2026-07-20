@@ -807,6 +807,12 @@ settings:
     receptive_first: Reconhecer primeiro
     productive_focus: Produzir
     balanced: Equilibrado
+  error_replay_scope:
+    title: "Repetir erros"
+    hint: "Ao repetir os erros após uma lição, jogue novamente apenas as partes que errou ou os exercícios inteiros. Nos exercícios de correspondência, \"apenas erros\" mostra somente os pares errados (mais alguns corretos para haver o que combinar)."
+    label: "Âmbito da repetição"
+    errors_only: "Mostrar apenas os erros (predefinição)"
+    whole_set: "Repetir o conjunto inteiro"
   matching_resolve:
     title: "Animação de resolução"
     hint: "Como o exercício de correspondência revela os pares corretos ao tocar em 'Resolver' após verificar."

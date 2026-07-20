@@ -852,6 +852,13 @@
       "productive_focus": "Producir",
       "balanced": "Equilibrado"
     },
+    "error_replay_scope": {
+      "title": "Repetir errores",
+      "hint": "Al repetir los errores después de una lección, vuelve a mostrar solo las partes que fallaste o los ejercicios completos. En los ejercicios de emparejamiento, \"solo errores\" muestra únicamente los pares incorrectos (más algunos correctos para que haya algo que emparejar).",
+      "label": "Alcance de la repetición",
+      "errors_only": "Mostrar solo los errores (predeterminado)",
+      "whole_set": "Repetir todo el conjunto"
+    },
     "matching_resolve": {
       "title": "Animación al resolver",
       "hint": "Cómo el ejercicio de emparejamiento muestra los pares correctos al pulsar 'Resolver' tras comprobar.",

@@ -810,6 +810,12 @@ settings:
     receptive_first: Kenali dulu
     productive_focus: Produksi
     balanced: Seimbang
+  error_replay_scope:
+    title: "Ulangi kesalahan"
+    hint: "Saat mengulang kesalahan setelah pelajaran, mainkan ulang hanya bagian yang salah atau seluruh latihan. Untuk latihan mencocokkan, \"hanya kesalahan\" menampilkan hanya pasangan yang salah (ditambah beberapa yang benar agar ada yang bisa dicocokkan)."
+    label: "Cakupan pengulangan"
+    errors_only: "Hanya tampilkan kesalahan (default)"
+    whole_set: "Ulangi seluruh set"
   matching_resolve:
     title: "Efek penyelesaian"
     hint: "Cara latihan menjodohkan menampilkan pasangan yang benar saat Anda menekan 'Selesaikan' setelah memeriksa."

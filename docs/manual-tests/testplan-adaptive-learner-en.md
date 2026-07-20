@@ -139,6 +139,15 @@ Requires domain knowledge. Not automatable.
 - [ ] Error-replay completion ("All errors corrected!"): Enter (without a
       click) triggers "Back to lesson" (#1864); clicking the button still
       works
+- [ ] Retry errors for matching (#1874): play a matching exercise with a
+      mix of correct/wrong pairs, open "Retry errors" -> only the wrong
+      pairs appear (not all). With a single wrong pair, correct pairs are
+      added as distractors (min. 2 pairs so there is something to match)
+- [ ] "Retry errors" setting (Settings -> Learning): switch to "Replay the
+      whole set" -> the next "Retry errors" shows ALL pairs; switch back to
+      "Only show errors" (default) -> only the wrong ones again
+- [ ] Regression, other types: free-text/cloze in "Retry errors" still show
+      only the wrong elements
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt

@@ -810,6 +810,12 @@ settings:
     receptive_first: 인식 먼저
     productive_focus: 산출
     balanced: 균형
+  error_replay_scope:
+    title: "오답 다시 풀기"
+    hint: "학습 후 오답을 다시 풀 때 틀린 부분만 다시 풀지, 전체 문제를 다시 풀지 선택합니다. 연결 문제에서 '오답만'은 틀린 짝만 표시합니다(연결할 수 있도록 맞은 짝도 몇 개 함께 표시)."
+    label: "다시 풀기 범위"
+    errors_only: "오답만 표시(기본값)"
+    whole_set: "전체 세트 다시 풀기"
   matching_resolve:
     title: "정답 애니메이션"
     hint: "확인 후 '정답 보기'를 누르면 짝맞추기 연습이 올바른 짝을 어떻게 표시하는지."

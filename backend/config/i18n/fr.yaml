@@ -807,6 +807,12 @@ settings:
     receptive_first: Reconnaître d'abord
     productive_focus: Produire
     balanced: Équilibré
+  error_replay_scope:
+    title: "Revoir les erreurs"
+    hint: "Lorsque vous revoyez vos erreurs après une leçon, rejouez uniquement les parties fausses ou les exercices entiers. Pour les exercices d'association, « erreurs uniquement » n'affiche que les paires fausses (plus quelques paires correctes pour avoir de quoi associer)."
+    label: "Étendue de la reprise"
+    errors_only: "Afficher uniquement les erreurs (par défaut)"
+    whole_set: "Rejouer l'ensemble complet"
   matching_resolve:
     title: "Animation de résolution"
     hint: "Comment l'exercice d'association révèle les paires correctes lorsque tu appuies sur 'Résoudre' après vérification."
