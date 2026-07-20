@@ -38,6 +38,7 @@ import {
 } from "../../lib/content/lesson/exercise/exercise-generator";
 import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
 import {validateExerciseEdit} from "../../lib/content/lesson/exercise/exercise-edit";
+import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/legacy-prompt-migration";
 import {validateExtensionExercise} from "../../lib/content/lesson/extension/extension-edit";
 import {
     buildExtensionLesson,
@@ -45,6 +46,7 @@ import {
 } from "../../lib/content/lesson/extension/extension-to-lesson";
 import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
 import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
+import PromptMigrationNotice from "../../components/create-lesson/PromptMigrationNotice";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -155,6 +157,10 @@ export default function CreateLesson() {
     const [editContext, setEditContext] = useState<EditContext | null>(null);
     const [editLoading, setEditLoading] = useState(editMode);
     const [editError, setEditError] = useState<string | null>(null);
+    // #1860 — how many legacy English prompts were migrated to the UI
+    // language on edit-load (0 = notice hidden). State only, persisted
+    // only if the user saves.
+    const [promptsMigrated, setPromptsMigrated] = useState(0);
 
     const [step, setStep] = useState(1);
     const [meta, setMeta] = useState<LessonMeta>(() =>
@@ -245,9 +251,15 @@ export default function CreateLesson() {
                 const editLesson = lessons[editIndex];
                 const prefill = lessonToDraftInput(editLesson, entry);
                 if (cancelled) return;
+                // #1860 — opportunistically migrate legacy hardcoded-English
+                // prompts (exact-match only) to the UI language. Edit-state
+                // only; persisted only if the user saves.
+                const {exercises: migratedExercises, migratedCount} =
+                    migrateLegacyExercisePrompts(prefill.exercises, t);
                 setMeta(prefill.meta);
                 setCards(prefill.cards);
-                setExercises(prefill.exercises);
+                setExercises(migratedExercises);
+                setPromptsMigrated(migratedCount);
                 setEditContext({
                     source,
                     setId,
@@ -267,6 +279,11 @@ export default function CreateLesson() {
         return () => {
             cancelled = true;
         };
+        // `t` drives the #1860 migration target language but is intentionally
+        // NOT a dep: this is a load-once effect, and re-running on a language
+        // change would reload from storage and clobber unsaved edits. The
+        // migration uses whatever language is active at load time.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editMode, params.source, params.setId]);
 
     // Phase 65B — autosave the draft every 10s while editing. Skipped
@@ -669,6 +686,12 @@ export default function CreateLesson() {
                 loading={editLoading}
                 error={Boolean(editError)}
                 onBack={() => navigate("/content?tab=my")}
+                t={t}
+            />
+
+            <PromptMigrationNotice
+                count={promptsMigrated}
+                onDismiss={() => setPromptsMigrated(0)}
                 t={t}
             />
 

@@ -8,3 +8,4 @@ export * from "./exercise-generator";
 export * from "./exercise-prompts";
 export * from "./append-exercises";
 export * from "./exercise-edit";
+export * from "./legacy-prompt-migration";

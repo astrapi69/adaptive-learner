@@ -2556,6 +2556,8 @@ create_lesson:
   edit_title: "Edit pelajaran"
   edit_load_error: "Tidak dapat memuat pelajaran ini untuk diedit."
   edit_note: "Anda mengedit pelajaran yang sudah ada. Menyimpan akan menimpanya; gunakan 'Simpan sebagai salinan' untuk menyimpan aslinya."
+  prompts_migrated: "{n} instruksi latihan otomatis diterjemahkan ke bahasa Anda."
+  prompts_migrated_dismiss: "Tutup"
   step_pending: "Langkah ini akan hadir pada pembaruan berikutnya."
   nav_label: "Navigasi wizard"
   cancel: "Batal"

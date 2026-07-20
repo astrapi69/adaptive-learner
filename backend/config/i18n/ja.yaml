@@ -2546,6 +2546,8 @@ create_lesson:
   edit_title: "レッスンを編集"
   edit_load_error: "このレッスンを編集用に読み込めませんでした。"
   edit_note: "既存のレッスンを編集しています。保存すると上書きされます。元のレッスンを残すには「コピーとして保存」を使用してください。"
+  prompts_migrated: "{n} 件の演習の指示が自動的にあなたの言語に翻訳されました。"
+  prompts_migrated_dismiss: "閉じる"
   step_pending: "このステップは次回のアップデートで追加されます。"
   nav_label: "ウィザードナビゲーション"
   cancel: "キャンセル"
