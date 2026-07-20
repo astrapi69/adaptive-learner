@@ -134,6 +134,11 @@ Requires domain knowledge. Not automatable.
 - [ ] Reverse: matching columns swapped
 - [ ] Shuffle: cards mixed from different lessons
 - [ ] Endless: no session end, statistics keep running
+- [ ] Endless completion ("Practice session complete!"): Enter (without a
+      click) triggers "Back to Dashboard" (#1864, button auto-focused)
+- [ ] Error-replay completion ("All errors corrected!"): Enter (without a
+      click) triggers "Back to lesson" (#1864); clicking the button still
+      works
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
