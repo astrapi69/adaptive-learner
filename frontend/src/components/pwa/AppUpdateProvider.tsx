@@ -50,10 +50,11 @@ export default function AppUpdateProvider({ children }: { children: ReactNode })
     // above the whole route tree, and a fresh messages object on every render
     // would change the context identity each time and re-render every
     // descendant.
+    // ``t`` is a fresh closure on every render, so depending on it would defeat
+    // the memo; the catalog it reads is keyed by ``lang``, which IS the dep.
     const messages = useMemo(
         () => buildMessages(t),
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- ``t`` is a
-        // fresh closure per render; the catalog it reads is keyed by ``lang``.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [lang],
     );
     return (
