@@ -65,10 +65,27 @@ describe("parseVerifyVerdict (#1798)", () => {
         );
     });
 
-    it("falls back to unknown with the raw text when not JSON", () => {
+    it("shows ONLY the fallback (no raw string) when the reply is not JSON (#1883)", () => {
+        // Unparseable prose must collapse to the localized "unknown" message
+        // with no reason text — never the model's raw reply.
         const result = parseVerifyVerdict("I think it is basically right.");
         expect(result.verdict).toBe("unknown");
-        expect(result.reason).toBe("I think it is basically right.");
+        expect(result.reason).toBe("");
+    });
+
+    it("shows ONLY the fallback (no raw string) when the reply is raw JSON that cannot be salvaged (#1883)", () => {
+        const result = parseVerifyVerdict('{"foo": "bar"} garbage {broken');
+        expect(result.verdict).toBe("unknown");
+        expect(result.reason).toBe("");
+    });
+
+    it("recovers a verdict from JSON wrapped in markdown code fences (#1883)", () => {
+        // The exact shape the prompt flags: the model wraps the JSON in a
+        // ```json fence. It must still parse to a real verdict, not fall back.
+        const raw = "```json\n{\"verdict\": \"no\", \"reason\": \"Wrong term.\"}\n```";
+        const result = parseVerifyVerdict(raw);
+        expect(result.verdict).toBe("no");
+        expect(result.reason).toBe("Wrong term.");
     });
 
     it("recovers a verdict from JSON with a trailing comma (#1883)", () => {

@@ -123,9 +123,28 @@ describe("AiVerifyAnswer (#1798)", () => {
         expect(screen.getByTestId("ai-verify-disclaimer")).toBeInTheDocument();
     });
 
-    it("shows the verdict even when the reply is not clean JSON", async () => {
+    it("recovers a verdict from JSON wrapped in markdown code fences (#1883)", async () => {
         keyStatus.mockReturnValue({ready: true, hasKey: true});
-        aiComplete.mockResolvedValue("It's basically right, same meaning.");
+        aiComplete.mockResolvedValue(
+            '```json\n{"verdict":"no","reason":"Different meaning."}\n```',
+        );
+        renderVerify();
+        fireEvent.click(screen.getByTestId("ai-verify-button"));
+        await waitFor(() =>
+            expect(screen.getByTestId("ai-verify-result")).toHaveAttribute(
+                "data-verdict",
+                "no",
+            ),
+        );
+        expect(screen.getByTestId("ai-verify-reason")).toHaveTextContent(
+            "Different meaning.",
+        );
+    });
+
+    it("shows ONLY the fallback message and no raw string on an unparseable reply (#1883)", async () => {
+        keyStatus.mockReturnValue({ready: true, hasKey: true});
+        const rawReply = "It's basically right, same meaning.";
+        aiComplete.mockResolvedValue(rawReply);
         renderVerify();
         fireEvent.click(screen.getByTestId("ai-verify-button"));
         await waitFor(() =>
@@ -134,8 +153,27 @@ describe("AiVerifyAnswer (#1798)", () => {
                 "unknown",
             ),
         );
-        expect(screen.getByTestId("ai-verify-reason")).toHaveTextContent(
-            "basically right",
+        // The localized fallback title is shown, but the model's raw reply is
+        // NOT surfaced anywhere — no reason paragraph, no raw string leak.
+        expect(screen.queryByTestId("ai-verify-reason")).not.toBeInTheDocument();
+        expect(screen.getByTestId("ai-verify-result")).not.toHaveTextContent(
+            rawReply,
+        );
+    });
+
+    it("never renders a raw JSON blob when the reply is malformed JSON (#1883)", async () => {
+        keyStatus.mockReturnValue({ready: true, hasKey: true});
+        const rawJson = '{"verdict": "no", "reason": "broken",';
+        aiComplete.mockResolvedValue(rawJson);
+        renderVerify();
+        fireEvent.click(screen.getByTestId("ai-verify-button"));
+        await waitFor(() =>
+            expect(screen.getByTestId("ai-verify-result")).toBeInTheDocument(),
+        );
+        // The salvage regex recovers "no" here; either way the literal
+        // ``{"verdict"`` JSON must never appear as displayed text.
+        expect(screen.getByTestId("ai-verify-result")).not.toHaveTextContent(
+            '{"verdict"',
         );
     });
 

@@ -137,20 +137,18 @@ function salvageVerdict(raw: string): VerifyResult | null {
     };
 }
 
-/** A raw reply that still looks like a JSON object must never be shown to the
- *  learner as prose — that is the display bug. */
-function looksLikeJson(raw: string): boolean {
-    const trimmed = (raw ?? "").trim();
-    return trimmed.startsWith("{") || /["'“”]?\s*verdict\s*["'“”]?\s*:/i.test(trimmed);
-}
-
 /**
  * Parse the model's reply into a typed verdict. Robust to prose- or
  * fence-wrapped JSON via {@link extractJsonObject}, and to the common
  * near-JSON deviations (trailing commas, smart/single quotes) via a tolerant
- * regex salvage. On a genuine failure it falls back to ``unknown``; it
- * surfaces prose replies as the reason but NEVER dumps a raw JSON blob at the
- * learner.
+ * regex salvage.
+ *
+ * On a genuine failure it falls back to ``unknown`` with an EMPTY reason: the
+ * UI then shows only the localized "no clear verdict" message and never the
+ * model's raw reply. Surfacing the raw text — a JSON blob OR unstructured
+ * prose — next to the fallback title was the display bug (#1883); the model
+ * is instructed to answer in strict JSON, so any unparseable reply is
+ * misbehaviour, not content worth showing verbatim.
  *
  * @param raw - The assistant's reply text.
  */
@@ -171,7 +169,6 @@ export function parseVerifyVerdict(raw: string): VerifyResult {
     const salvaged = salvageVerdict(raw);
     if (salvaged) return salvaged;
 
-    // Genuinely no verdict. Keep a prose reply as the reason so the learner
-    // still sees something, but drop a raw JSON-looking blob (the bug).
-    return {verdict: "unknown", reason: looksLikeJson(raw) ? "" : (raw ?? "").trim()};
+    // Genuinely no verdict: fallback message ONLY, never the raw reply.
+    return {verdict: "unknown", reason: ""};
 }
