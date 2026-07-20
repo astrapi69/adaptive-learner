@@ -115,6 +115,18 @@ export function extractJsonObject(
 }
 
 function tryParse(candidate: string): Record<string, unknown> | null {
+    const direct = parseObject(candidate);
+    if (direct !== null) return direct;
+    // Strict parse failed. Retry once on a lightly-repaired copy that fixes
+    // the two most common BYOK-model deviations from strict JSON — smart
+    // quotes and trailing commas. This runs ONLY after the strict parse
+    // fails, so valid JSON always takes the fast path unchanged and its
+    // string contents are never touched by the repair.
+    const repaired = repairAlmostJson(candidate);
+    return repaired === candidate ? null : parseObject(repaired);
+}
+
+function parseObject(candidate: string): Record<string, unknown> | null {
     try {
         const data: unknown = JSON.parse(candidate);
         if (data && typeof data === "object" && !Array.isArray(data)) {
@@ -124,4 +136,17 @@ function tryParse(candidate: string): Record<string, unknown> | null {
         /* fall through */
     }
     return null;
+}
+
+/**
+ * Repair the two most common ways a model's "JSON" fails strict parsing:
+ * curly/smart double quotes used as string delimiters, and a trailing comma
+ * before a closing ``}`` / ``]``. Deliberately conservative — it does NOT
+ * touch single quotes (apostrophes make that lossy) and only runs as a
+ * fallback after strict parsing has already failed.
+ */
+function repairAlmostJson(candidate: string): string {
+    return candidate
+        .replace(/[“”]/g, '"')
+        .replace(/,(\s*[}\]])/g, "$1");
 }
