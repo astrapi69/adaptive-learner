@@ -9,7 +9,7 @@ import {
     mcQuestionResult,
     totalPoints,
 } from "./graded-quiz";
-import type {ContentLessonExercise} from "../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 /**
  * Engine-half core for the adopted extension ``ext:al-graded-quiz`` (#1579,

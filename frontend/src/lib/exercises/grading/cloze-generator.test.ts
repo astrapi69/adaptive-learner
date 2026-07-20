@@ -15,7 +15,7 @@ import type {
     ContentLessonCard,
     ContentLessonExercise,
     ElementError,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 function _error(overrides: Partial<ElementError> = {}): ElementError {
     return {

@@ -26,11 +26,11 @@ import {cn} from "@/lib/utils";
 import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
 import {deriveMultipleChoiceAttempt} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
-import {seededShuffle} from "../../../lib/exercises/seeded-shuffle";
+import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
 import {
     correctOptionTexts,
     isMultipleChoiceCorrect,
-} from "../../../lib/exercises/multiple-choice-grading";
+} from "../../../lib/exercises/grading/multiple-choice-grading";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";

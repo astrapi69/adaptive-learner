@@ -14,7 +14,7 @@
  * load guard (``SUPPORTED_EXTENSIONS``) complete the adoption.
  */
 
-import type {ContentLessonExercise} from "../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 /** The adopted extension type; declared by lessons as
  *  ``ext:al-categorization@<major>``. */

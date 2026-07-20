@@ -8,7 +8,7 @@ import {
     categorizationPayloadErrors,
     countCorrectAssignments,
 } from "./categorization";
-import type {ContentLessonExercise} from "../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 /**
  * Engine-half + grading core for the adopted extension

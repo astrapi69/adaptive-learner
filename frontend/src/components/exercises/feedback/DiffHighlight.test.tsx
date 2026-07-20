@@ -11,7 +11,7 @@ import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import DiffHighlight from "./DiffHighlight";
-import { type DiffToken, tokenDiff } from "../../../lib/exercises/token-diff";
+import { type DiffToken, tokenDiff } from "../../../lib/exercises/grading/token-diff";
 
 describe("DiffHighlight: renders each op type", () => {
     it("renders an equal token as plain text with no a11y decoration", () => {

@@ -45,7 +45,7 @@ import ExerciseAnswerToggle, {type AnswerView} from "../feedback/ExerciseAnswerT
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import {deriveFreeTextAttempt} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
-import {tokenDiff} from "../../../lib/exercises/token-diff";
+import {tokenDiff} from "../../../lib/exercises/grading/token-diff";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AiVerifyAnswer from "../feedback/AiVerifyAnswer";
 import AnswerCelebration from "../feedback/AnswerCelebration";

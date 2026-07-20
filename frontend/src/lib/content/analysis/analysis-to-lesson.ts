@@ -61,10 +61,10 @@ import {
   selectExercises,
   type GeneratorCard,
 } from "../../exercises/authoring/exercise-builder";
-import { categorizationPayloadErrors } from "../../exercises/categorization";
-import { errorCorrectionPayloadErrors } from "../../exercises/error-correction";
-import { readingComprehensionPayloadErrors } from "../../exercises/reading-comprehension";
-import { gradedQuizPayloadErrors } from "../../exercises/graded-quiz";
+import { categorizationPayloadErrors } from "../../exercises/payload/categorization";
+import { errorCorrectionPayloadErrors } from "../../exercises/payload/error-correction";
+import { readingComprehensionPayloadErrors } from "../../exercises/payload/reading-comprehension";
+import { gradedQuizPayloadErrors } from "../../exercises/payload/graded-quiz";
 import { validateLessonShape } from "../validation/lesson-schema-validator";
 
 /** Lowercase unicode slug (#1808): lesson-internal ids/tags accept

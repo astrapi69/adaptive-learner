@@ -10,7 +10,7 @@
  * Phase 52B / v1.35.0 / F-112.
  */
 
-import { type DiffToken } from "../../../lib/exercises/token-diff";
+import { type DiffToken } from "../../../lib/exercises/grading/token-diff";
 
 export interface DiffHighlightProps {
     tokens: DiffToken[];

@@ -33,7 +33,7 @@ import {useControlledExercise} from "../../../lib/exercises/useControlledExercis
 import {
     asErrorCorrectionPayload,
     canonicalErrorCorrection,
-} from "../../../lib/exercises/error-correction";
+} from "../../../lib/exercises/payload/error-correction";
 import {isFreeTextCorrect} from "./FreeTextExercise";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";

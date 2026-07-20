@@ -13,7 +13,7 @@
  * pure helpers - no React, no matcher import.
  */
 
-import type {ContentLessonExercise} from "../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 /** The adopted extension type; declared as
  *  ``ext:al-reading-comprehension@<major>``. */

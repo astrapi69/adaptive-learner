@@ -20,21 +20,21 @@
 import {
     CATEGORIZATION_EXT_TYPE,
     categorizationPayloadErrors,
-} from "../categorization";
+} from "../payload/categorization";
 import {
     ERROR_CORRECTION_EXT_TYPE,
     errorCorrectionPayloadErrors,
-} from "../error-correction";
+} from "../payload/error-correction";
 import {
     READING_COMPREHENSION_EXT_TYPE,
     readingComprehensionPayloadErrors,
     type RcQuestion,
-} from "../reading-comprehension";
+} from "../payload/reading-comprehension";
 import {
     GRADED_QUIZ_EXT_TYPE,
     gradedQuizPayloadErrors,
     type GqQuestion,
-} from "../graded-quiz";
+} from "../payload/graded-quiz";
 import type {ContentLessonExercise} from "../../../storage/types";
 import {createIdFactory} from "./id-factory";
 

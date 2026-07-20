@@ -38,7 +38,7 @@ import {
     useLessonEnterKey,
     type LessonEnterNav,
 } from "../../../hooks/lesson/interaction/useLessonEnterKey";
-import {generateClozeFromError} from "../../../lib/exercises/cloze-generator";
+import {generateClozeFromError} from "../../../lib/exercises/grading/cloze-generator";
 import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
