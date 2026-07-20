@@ -18,7 +18,7 @@
  * and typo tolerance instead of duplicating grading logic.
  */
 
-import type {ContentLessonExercise} from "../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 /** The adopted extension type; declared by lessons as
  *  ``ext:al-error-correction@<major>``. */

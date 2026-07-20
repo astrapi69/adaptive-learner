@@ -48,7 +48,7 @@
  *   preserving queue order. No theory steps.
  */
 
-import {generateClozeFromError} from "../exercises/cloze-generator";
+import {generateClozeFromError} from "../exercises/grading/cloze-generator";
 import type {
     ContentLesson,
     ContentLessonCard,

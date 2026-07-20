@@ -6,7 +6,7 @@ import {
     canonicalAnswer,
     readingComprehensionPayloadErrors,
 } from "./reading-comprehension";
-import type {ContentLessonExercise} from "../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 /**
  * Engine-half core for the adopted extension ``ext:al-reading-comprehension``

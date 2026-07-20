@@ -30,7 +30,7 @@ import {
     asReadingComprehensionPayload,
     canonicalAnswer,
     type RcQuestion,
-} from "../../../lib/exercises/reading-comprehension";
+} from "../../../lib/exercises/payload/reading-comprehension";
 import {isFreeTextCorrect} from "./FreeTextExercise";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";

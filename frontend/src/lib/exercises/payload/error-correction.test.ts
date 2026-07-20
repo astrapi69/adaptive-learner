@@ -6,7 +6,7 @@ import {
     canonicalErrorCorrection,
     errorCorrectionPayloadErrors,
 } from "./error-correction";
-import type {ContentLessonExercise} from "../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 /**
  * Engine-half core for the adopted extension ``ext:al-error-correction``

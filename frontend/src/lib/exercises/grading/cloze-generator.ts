@@ -61,7 +61,7 @@ import type {
     ContentLessonCard,
     ContentLessonExercise,
     ElementError,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 export interface GenerateClozeArgs {
     error: ElementError;

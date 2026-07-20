@@ -29,7 +29,7 @@ import {
     mcQuestionResult,
     totalPoints,
     type GqQuestion,
-} from "../../../lib/exercises/graded-quiz";
+} from "../../../lib/exercises/payload/graded-quiz";
 import {isFreeTextCorrect} from "./FreeTextExercise";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";

@@ -36,7 +36,7 @@
  * Pure + deterministic. Same inputs → same output, same order.
  */
 
-import {generateClozeFromError} from "../exercises/cloze-generator";
+import {generateClozeFromError} from "../exercises/grading/cloze-generator";
 import type {
     ContentLesson,
     ContentLessonCard,

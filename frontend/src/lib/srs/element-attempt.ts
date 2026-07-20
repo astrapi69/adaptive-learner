@@ -27,10 +27,10 @@
  *   - word_tiles with 1 tile (edge case) → "vocabulary"
  */
 
-import {asCategorizationPayload} from "../exercises/categorization";
-import {asErrorCorrectionPayload} from "../exercises/error-correction";
-import {asReadingComprehensionPayload, canonicalAnswer} from "../exercises/reading-comprehension";
-import {asGradedQuizPayload, canonicalAnswer as gradedQuizCanonicalAnswer} from "../exercises/graded-quiz";
+import {asCategorizationPayload} from "../exercises/payload/categorization";
+import {asErrorCorrectionPayload} from "../exercises/payload/error-correction";
+import {asReadingComprehensionPayload, canonicalAnswer} from "../exercises/payload/reading-comprehension";
+import {asGradedQuizPayload, canonicalAnswer as gradedQuizCanonicalAnswer} from "../exercises/payload/graded-quiz";
 import {resolveConcreteDirection} from "../exercises/direction";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 

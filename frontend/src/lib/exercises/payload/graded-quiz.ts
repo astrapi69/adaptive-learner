@@ -13,7 +13,7 @@
  * matcher), so this stays a pure, React-free module.
  */
 
-import type {ContentLessonExercise} from "../../storage/types";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 /** The adopted extension type; declared as ``ext:al-graded-quiz@<major>``. */
 export const GRADED_QUIZ_EXT_TYPE = "ext:al-graded-quiz";
