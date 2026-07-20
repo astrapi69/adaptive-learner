@@ -30,7 +30,7 @@ import {
     totalPoints,
     type GqQuestion,
 } from "../../../lib/exercises/payload/graded-quiz";
-import {isFreeTextCorrect} from "./FreeTextExercise";
+import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";

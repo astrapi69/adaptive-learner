@@ -6,7 +6,7 @@ import {
     generateExercises,
     type GeneratorCard,
 } from "./exercise-builder";
-import {isFreeTextCorrect} from "../../../components/exercises/renderers/FreeTextExercise";
+import {isFreeTextCorrect} from "../grading/free-text-grading";
 
 function cards(n: number, withExample = false, withImage = false): GeneratorCard[] {
     const words = ["chat", "chien", "oiseau", "poisson", "cheval", "lapin"];

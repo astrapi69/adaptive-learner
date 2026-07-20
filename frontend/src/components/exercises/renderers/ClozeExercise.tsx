@@ -55,7 +55,7 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "../shell/exercise-control";
-import {isFreeTextCorrect} from "./FreeTextExercise";
+import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
 
 export interface ClozeExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
