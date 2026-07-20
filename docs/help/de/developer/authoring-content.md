@@ -270,6 +270,53 @@ Content ist `multiple_choice` zu bevorzugen: Korrektheit ist ein Flag pro
 Option, die accept/distractor-Disjunktheits-Falle kann nicht passieren. Siehe
 [Multiple Choice erstellen](#multiple-choice-erstellen).
 
+### Extension-Tier (der `ext:`-Namespace)
+
+Neben dem geschlossenen Core-Enum gibt es Aufgabentypen im Namespace
+`ext:<vendor>-<name>`. Für das Core-Schema sind sie strukturell opak: eine
+Lektion, die sie nutzt, deklariert sie in `requires_extensions`, und die
+Payload validiert die registrierte Extension, nie das Core-Schema. Der
+Mechanismus ist in der Engine-Referenz
+[learn-content-engine — `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md)
+beschrieben. Extension-Aufgaben entstehen ausschließlich über den
+Content-Repo-Autorenweg (JSON direkt) — der Lektions-Wizard erzeugt sie
+nicht. Die App hat vier Extension-Typen adoptiert
+(`SUPPORTED_EXT_EXERCISE_TYPES` im `ExerciseDispatcher`; ein
+Paritäts-Gate hält Dispatcher und Load-Guard synchron — alles Ladbare
+ist renderbar):
+
+| Typ | Wofür | Adoptiert |
+|-----|-------|-----------|
+| `ext:al-categorization` | Begriffe in Gruppen einordnen | #1591 (erster Extension-Typ, Inventur #1579) |
+| `ext:al-error-correction` | Fehlerhaften Text korrigieren | #1593 |
+| `ext:al-reading-comprehension` | Leseverständnis (Text + Fragen) | #1603 |
+| `ext:al-graded-quiz` | Benotetes Quiz | #1616; das Demo-Referenz-Set ist in Entdecken / Meine Inhalte ausgeblendet (#1702) |
+
+### Verfügbarkeit im Lektions-Wizard
+
+Spielbar (Renderer vorhanden) und im Wizard erzeugbar sind zwei
+verschiedene Dinge. Alle sechs Core-Typen sind spielbar; die
+KI-Generierung im Create-Lesson-Wizard (`ALL_TYPES` in
+`ExerciseGenerator.tsx`, Gewichte in `exercise-distribution.ts`) bietet
+derzeit fünf davon an:
+
+| Typ | Spielbar | Im Wizard generierbar |
+|-----|----------|-----------------------|
+| `matching` | ja | ja |
+| `free_text` | ja | ja |
+| `cloze` | ja | ja |
+| `word_tiles` | ja | ja |
+| `picture_choice` | ja | ja |
+| `multiple_choice` | ja | **nein** — nativ spielbar seit Schema v1.6 (#1525), aber weder in der Wizard-Typauswahl noch mit Gewicht in der Generierungs-Verteilung |
+| `ext:al-*` (alle vier) | ja | nein — bewusst nur über den Content-Repo-Autorenweg |
+
+**Listen-First ist ein Modus, kein Typ.** Seit #1687 (Entscheidung
+#1600, Option A) können `free_text`- und `matching`-Aufgaben ein
+Audio-Vorschalt-Element erhalten (erst hören, dann antworten). Der
+Aufgabentyp der Übung ändert sich dabei nicht. Option B derselben
+Entscheidung — ein `ext:dictation`-Diktattyp — wurde bewusst
+zurückgestellt (siehe Kandidaten unten).
+
 ### Ohne neuen Typ abbildbar (Konventionen, keine Typen)
 
 | Konzept | Wie |
@@ -283,6 +330,7 @@ Option, die accept/distractor-Disjunktheits-Falle kann nicht passieren. Siehe
 |----------|--------|------|
 | Reihenfolge festlegen / Sortieren | `word_tiles` | Nur bei konkretem Content-Bedarf, dann über das Rezept. |
 | Zahlenfeld (numerischer Vergleich) | `free_text` | Nur bei konkretem Content-Bedarf, dann über das Rezept. |
+| Audio-Diktat (`ext:dictation`) | `free_text` + Listen-First | Option B der Listen-First-Entscheidung (#1600), bewusst zurückgestellt; Adoption dann über das Extension-Rezept. |
 
 ### Bewusst nicht
 
@@ -297,8 +345,8 @@ Option, die accept/distractor-Disjunktheits-Falle kann nicht passieren. Siehe
 ## Übungstyp-Referenz
 
 Die Feld-Referenz je Typ — `matching`, `picture_choice`, `free_text`,
-`word_tiles` und `cloze` mit seinen Modi `type` / `select` /
-`multiselect`: Pflichtfelder, JSON-Beispiele und die semantischen
+`word_tiles`, `multiple_choice` und `cloze` mit seinen Modi `type` /
+`select` / `multiselect`: Pflichtfelder, JSON-Beispiele und die semantischen
 Regeln (Cloze-`___`-Marker == `blanks`, referenzielle Integrität der
 `card_ids`, Disjunktheit von accept/distractors bei multiselect,
 exactly-one-correct bei picture_choice) — lebt in der Engine-Referenz:

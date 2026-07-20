@@ -254,6 +254,50 @@ new text-MC content: correctness is a per-option flag, so the
 accept/distractor-disjointness pitfall cannot happen. See
 [Multiple Choice authoring](#multiple-choice-authoring).
 
+### Extension tier (the `ext:` namespace)
+
+Beyond the closed core enum there are exercise types in the
+`ext:<vendor>-<name>` namespace. They are structurally opaque to the core
+schema: a lesson using them declares them in `requires_extensions`, and
+the payload is validated by the registered extension, never by the core
+schema. The mechanism is described in the engine reference
+[learn-content-engine — `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md).
+Extension exercises are authored exclusively via the content-repo path
+(JSON directly) — the lesson wizard does not generate them. The app has
+adopted four extension types (`SUPPORTED_EXT_EXERCISE_TYPES` in the
+`ExerciseDispatcher`; a parity gate keeps dispatcher and load guard in
+sync — everything loadable is renderable):
+
+| Type | For what | Adopted |
+|------|----------|---------|
+| `ext:al-categorization` | Sort terms into groups | #1591 (first extension type, inventory #1579) |
+| `ext:al-error-correction` | Correct a faulty text | #1593 |
+| `ext:al-reading-comprehension` | Reading comprehension (text + questions) | #1603 |
+| `ext:al-graded-quiz` | Graded quiz | #1616; the demo reference set is hidden from Discover / My Content (#1702) |
+
+### Lesson-wizard availability
+
+Playable (renderer exists) and generatable in the wizard are two
+different things. All six core types are playable; the AI generation in
+the create-lesson wizard (`ALL_TYPES` in `ExerciseGenerator.tsx`, weights
+in `exercise-distribution.ts`) currently offers five of them:
+
+| Type | Playable | Generatable in the wizard |
+|------|----------|---------------------------|
+| `matching` | yes | yes |
+| `free_text` | yes | yes |
+| `cloze` | yes | yes |
+| `word_tiles` | yes | yes |
+| `picture_choice` | yes | yes |
+| `multiple_choice` | yes | **no** — natively playable since schema v1.6 (#1525), but neither in the wizard's type picker nor weighted in the generation distribution |
+| `ext:al-*` (all four) | yes | no — deliberately content-repo authoring only |
+
+**Listen-first is a mode, not a type.** Since #1687 (decision #1600,
+option A) `free_text` and `matching` exercises can carry an audio-first
+element (listen first, then answer). The exercise's type does not change.
+Option B of the same decision — an `ext:dictation` dictation type — was
+deliberately deferred (see the candidates below).
+
 ### Expressible without a new type (conventions, not types)
 
 | Concept | How |
@@ -267,6 +311,7 @@ accept/distractor-disjointness pitfall cannot happen. See
 |-----------|------|------|
 | Ordering / sorting | `word_tiles` | Only on concrete content demand, then via the recipe. |
 | Number field (numeric compare) | `free_text` | Only on concrete content demand, then via the recipe. |
+| Audio dictation (`ext:dictation`) | `free_text` + listen-first | Option B of the listen-first decision (#1600), deliberately deferred; adoption then via the extension recipe. |
 
 ### Deliberately excluded
 
@@ -281,8 +326,8 @@ accept/distractor-disjointness pitfall cannot happen. See
 ## Exercise type reference
 
 The per-type field reference — `matching`, `picture_choice`,
-`free_text`, `word_tiles` and `cloze` with its `type` / `select` /
-`multiselect` modes: required fields, JSON examples and the semantic
+`free_text`, `word_tiles`, `multiple_choice` and `cloze` with its
+`type` / `select` / `multiselect` modes: required fields, JSON examples and the semantic
 rules (cloze `___` markers == `blanks`, `card_ids` referential
 integrity, multiselect accept/distractor disjointness, picture-choice
 exactly-one-correct) — lives in the engine reference:
