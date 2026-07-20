@@ -2933,6 +2933,44 @@
         "balanced": "Balanced"
       }
     },
+    "extensions": {
+      "heading": "Advanced exercise types",
+      "notice": "These exercise types are advanced and may not be supported by every app or older versions.",
+      "add": "Add extension exercise",
+      "add_heading": "Choose an extension type",
+      "min_to_advance": "Add at least one complete extension exercise to continue.",
+      "edit_row": "Edit exercise",
+      "delete_row": "Delete exercise",
+      "type": {
+        "categorization": "Categorization",
+        "error-correction": "Error correction"
+      },
+      "edit": {
+        "prompt_label": "Instruction / prompt",
+        "save": "Save",
+        "err_prompt": "Enter an instruction or prompt.",
+        "err_categorization": "Add at least 2 named categories, each with at least one item.",
+        "err_error_correction": "Add at least 2 words, mark the wrong one, and add at least one accepted correction.",
+        "cat_categories_label": "Categories",
+        "cat_name_placeholder": "Category name",
+        "cat_name_label": "Category name",
+        "cat_remove": "Remove category",
+        "cat_items_label": "Items in this category",
+        "cat_item_add": "Add",
+        "cat_item_remove": "Remove item",
+        "cat_item_placeholder": "Item",
+        "cat_add": "Add category",
+        "ec_tokens_label": "Sentence words (mark the wrong one)",
+        "ec_mark_error": "This word is the error",
+        "ec_token_placeholder": "Word",
+        "ec_token_remove": "Remove word",
+        "ec_token_add": "Add word",
+        "ec_accept_label": "Accepted corrections",
+        "ec_accept_add": "Add",
+        "ec_accept_remove": "Remove correction",
+        "ec_accept_placeholder": "Correct word"
+      }
+    },
     "review": {
       "heading": "Review and save",
       "title": "Title",
@@ -2964,6 +3002,10 @@
       "file_saved": "Lesson saved as a file."
     },
     "templates": {
+      "extensions": {
+        "title": "Advanced exercise types",
+        "desc": "Author categorization and error-correction exercises. Requires an app that supports extensions."
+      },
       "knowledge_from_text": {
         "title": "Knowledge lesson from text",
         "desc": "Paste a textbook section; the AI writes the theory in its own words and generates exercises."

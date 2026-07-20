@@ -2933,6 +2933,44 @@
         "balanced": "Ausgewogen"
       }
     },
+    "extensions": {
+      "heading": "Erweiterte Übungstypen",
+      "notice": "Diese Übungstypen sind fortgeschritten und werden möglicherweise nicht von jeder App oder älteren Versionen unterstützt.",
+      "add": "Erweiterungsübung hinzufügen",
+      "add_heading": "Erweiterungstyp wählen",
+      "min_to_advance": "Füge mindestens eine vollständige Erweiterungsübung hinzu, um fortzufahren.",
+      "edit_row": "Übung bearbeiten",
+      "delete_row": "Übung löschen",
+      "type": {
+        "categorization": "Kategorisierung",
+        "error-correction": "Fehlerkorrektur"
+      },
+      "edit": {
+        "prompt_label": "Anweisung / Aufgabe",
+        "save": "Speichern",
+        "err_prompt": "Gib eine Anweisung oder Aufgabe ein.",
+        "err_categorization": "Füge mindestens 2 benannte Kategorien mit je mindestens einem Element hinzu.",
+        "err_error_correction": "Füge mindestens 2 Wörter hinzu, markiere das falsche und gib mindestens eine akzeptierte Korrektur an.",
+        "cat_categories_label": "Kategorien",
+        "cat_name_placeholder": "Kategoriename",
+        "cat_name_label": "Kategoriename",
+        "cat_remove": "Kategorie entfernen",
+        "cat_items_label": "Elemente in dieser Kategorie",
+        "cat_item_add": "Hinzufügen",
+        "cat_item_remove": "Element entfernen",
+        "cat_item_placeholder": "Element",
+        "cat_add": "Kategorie hinzufügen",
+        "ec_tokens_label": "Satzwörter (markiere das falsche)",
+        "ec_mark_error": "Dieses Wort ist der Fehler",
+        "ec_token_placeholder": "Wort",
+        "ec_token_remove": "Wort entfernen",
+        "ec_token_add": "Wort hinzufügen",
+        "ec_accept_label": "Akzeptierte Korrekturen",
+        "ec_accept_add": "Hinzufügen",
+        "ec_accept_remove": "Korrektur entfernen",
+        "ec_accept_placeholder": "Richtiges Wort"
+      }
+    },
     "review": {
       "heading": "Überprüfen und speichern",
       "title": "Titel",
@@ -2964,6 +3002,10 @@
       "file_saved": "Lektion als Datei gespeichert."
     },
     "templates": {
+      "extensions": {
+        "title": "Erweiterte Übungstypen",
+        "desc": "Erstelle Kategorisierungs- und Fehlerkorrektur-Übungen. Benötigt eine App, die Erweiterungen unterstützt."
+      },
       "knowledge_from_text": {
         "title": "Wissens-Lektion aus Text",
         "desc": "Füge einen Lehrbuch-Abschnitt ein; die KI schreibt die Theorie in eigenen Worten und generiert Übungen."

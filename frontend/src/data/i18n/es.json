@@ -2933,6 +2933,44 @@
         "balanced": "Equilibrado"
       }
     },
+    "extensions": {
+      "heading": "Tipos de ejercicio avanzados",
+      "notice": "Estos tipos de ejercicio son avanzados y puede que no sean compatibles con todas las apps o versiones antiguas.",
+      "add": "Añadir ejercicio de extensión",
+      "add_heading": "Elige un tipo de extensión",
+      "min_to_advance": "Añade al menos un ejercicio de extensión completo para continuar.",
+      "edit_row": "Editar ejercicio",
+      "delete_row": "Eliminar ejercicio",
+      "type": {
+        "categorization": "Categorización",
+        "error-correction": "Corrección de errores"
+      },
+      "edit": {
+        "prompt_label": "Instrucción / enunciado",
+        "save": "Guardar",
+        "err_prompt": "Introduce una instrucción o enunciado.",
+        "err_categorization": "Añade al menos 2 categorías con nombre, cada una con al menos un elemento.",
+        "err_error_correction": "Añade al menos 2 palabras, marca la incorrecta y añade al menos una corrección aceptada.",
+        "cat_categories_label": "Categorías",
+        "cat_name_placeholder": "Nombre de la categoría",
+        "cat_name_label": "Nombre de la categoría",
+        "cat_remove": "Eliminar categoría",
+        "cat_items_label": "Elementos de esta categoría",
+        "cat_item_add": "Añadir",
+        "cat_item_remove": "Eliminar elemento",
+        "cat_item_placeholder": "Elemento",
+        "cat_add": "Añadir categoría",
+        "ec_tokens_label": "Palabras de la frase (marca la incorrecta)",
+        "ec_mark_error": "Esta palabra es el error",
+        "ec_token_placeholder": "Palabra",
+        "ec_token_remove": "Eliminar palabra",
+        "ec_token_add": "Añadir palabra",
+        "ec_accept_label": "Correcciones aceptadas",
+        "ec_accept_add": "Añadir",
+        "ec_accept_remove": "Eliminar corrección",
+        "ec_accept_placeholder": "Palabra correcta"
+      }
+    },
     "review": {
       "heading": "Revisar y guardar",
       "title": "Título",
@@ -2964,6 +3002,10 @@
       "file_saved": "Lección guardada como archivo."
     },
     "templates": {
+      "extensions": {
+        "title": "Tipos de ejercicio avanzados",
+        "desc": "Crea ejercicios de categorización y corrección de errores. Requiere una app compatible con extensiones."
+      },
       "knowledge_from_text": {
         "title": "Lección de conocimiento a partir de texto",
         "desc": "Pega una sección de un libro; la IA escribe la teoría con sus propias palabras y genera ejercicios."

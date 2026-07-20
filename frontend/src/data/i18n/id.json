@@ -2933,6 +2933,44 @@
         "balanced": "Seimbang"
       }
     },
+    "extensions": {
+      "heading": "Tipe latihan lanjutan",
+      "notice": "Tipe latihan ini bersifat lanjutan dan mungkin tidak didukung oleh setiap aplikasi atau versi lama.",
+      "add": "Tambah latihan ekstensi",
+      "add_heading": "Pilih tipe ekstensi",
+      "min_to_advance": "Tambahkan setidaknya satu latihan ekstensi lengkap untuk melanjutkan.",
+      "edit_row": "Edit latihan",
+      "delete_row": "Hapus latihan",
+      "type": {
+        "categorization": "Kategorisasi",
+        "error-correction": "Koreksi kesalahan"
+      },
+      "edit": {
+        "prompt_label": "Instruksi / soal",
+        "save": "Simpan",
+        "err_prompt": "Masukkan instruksi atau soal.",
+        "err_categorization": "Tambahkan minimal 2 kategori bernama, masing-masing dengan minimal satu item.",
+        "err_error_correction": "Tambahkan minimal 2 kata, tandai yang salah, dan tambahkan minimal satu koreksi yang diterima.",
+        "cat_categories_label": "Kategori",
+        "cat_name_placeholder": "Nama kategori",
+        "cat_name_label": "Nama kategori",
+        "cat_remove": "Hapus kategori",
+        "cat_items_label": "Item dalam kategori ini",
+        "cat_item_add": "Tambah",
+        "cat_item_remove": "Hapus item",
+        "cat_item_placeholder": "Item",
+        "cat_add": "Tambah kategori",
+        "ec_tokens_label": "Kata-kata kalimat (tandai yang salah)",
+        "ec_mark_error": "Kata ini adalah kesalahannya",
+        "ec_token_placeholder": "Kata",
+        "ec_token_remove": "Hapus kata",
+        "ec_token_add": "Tambah kata",
+        "ec_accept_label": "Koreksi yang diterima",
+        "ec_accept_add": "Tambah",
+        "ec_accept_remove": "Hapus koreksi",
+        "ec_accept_placeholder": "Kata yang benar"
+      }
+    },
     "review": {
       "heading": "Tinjau dan simpan",
       "title": "Judul",
@@ -2964,6 +3002,10 @@
       "file_saved": "Pelajaran disimpan sebagai berkas."
     },
     "templates": {
+      "extensions": {
+        "title": "Tipe latihan lanjutan",
+        "desc": "Buat latihan kategorisasi dan koreksi kesalahan. Memerlukan aplikasi yang mendukung ekstensi."
+      },
       "knowledge_from_text": {
         "title": "Pelajaran pengetahuan dari teks",
         "desc": "Tempel bagian buku teks; AI menulis teori dengan kata-katanya sendiri dan membuat latihan."
