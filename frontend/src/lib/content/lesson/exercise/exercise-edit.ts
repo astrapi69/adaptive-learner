@@ -18,6 +18,7 @@ import type {
     ContentLessonClozeBlank,
     ContentLessonExercise,
 } from "../../../../storage/types";
+import type {GeneratableType} from "./exercise-generator";
 
 /** Minimum complete {left,right} pairs a matching exercise needs. */
 export const MATCHING_MIN_PAIRS = 2;
@@ -27,6 +28,8 @@ export const FREE_TEXT_MIN_ACCEPT = 1;
 export const WORD_TILES_MIN_TILES = 2;
 /** Minimum image options a picture-choice exercise needs. */
 export const PICTURE_MIN_IMAGES = 2;
+/** Minimum answer options a multiple-choice exercise needs (#1850). */
+export const MC_MIN_OPTIONS = 2;
 
 const ERR = "create_lesson.exercises.edit.err_";
 
@@ -94,6 +97,19 @@ function validatePictureChoice(ex: ContentLessonExercise): ExerciseEditIssue {
     return correctCount === 1 ? ok : fail("picture_choice");
 }
 
+function validateMultipleChoice(ex: ContentLessonExercise): ExerciseEditIssue {
+    const filled = (ex.options ?? []).filter((o) => o.text.trim().length > 0);
+    if (filled.length < MC_MIN_OPTIONS) return fail("multiple_choice");
+    // Option texts must be distinct (schema uniqueness is not ajv-enforced,
+    // so this is the only guard).
+    const texts = new Set(filled.map((o) => o.text.trim()));
+    if (texts.size !== filled.length) return fail("multiple_choice");
+    const correctCount = filled.filter((o) => o.correct === true).length;
+    // multiple: at least one correct; single: exactly one correct.
+    const okCount = ex.multiple === true ? correctCount >= 1 : correctCount === 1;
+    return okCount ? ok : fail("multiple_choice");
+}
+
 /**
  * Validate an exercise draft for the inline editor. Checks the common
  * prompt first, then the type-specific structure. Returns the first
@@ -112,11 +128,13 @@ export function validateExerciseEdit(
             return validateWordTiles(ex);
         case "picture_choice":
             return validatePictureChoice(ex);
+        case "multiple_choice":
+            return validateMultipleChoice(ex);
         case "free_text":
             return validateFreeText(ex);
         default:
-            // Extension / multiple_choice types have no inline editor yet;
-            // treat them as valid so an unknown type is never blocked.
+            // Extension types have no inline editor yet; treat them as valid
+            // so an unknown type is never blocked.
             return ok;
     }
 }
@@ -159,6 +177,15 @@ export function normalizeExerciseEdit(
                         : {}),
                 })),
             };
+        case "multiple_choice":
+            return {
+                ...ex,
+                prompt,
+                multiple: ex.multiple === true,
+                options: (ex.options ?? [])
+                    .map((o) => ({text: o.text.trim(), correct: o.correct === true}))
+                    .filter((o) => o.text.length > 0),
+            };
         default:
             return {...ex, prompt};
     }
@@ -176,4 +203,70 @@ function normalizeClozeBlanks(
         out.push({...source[i], accept: nonEmpty(source[i]?.accept)});
     }
     return out;
+}
+
+let _exSeq = 0;
+
+/** Stable-ish unique id for a manually-added exercise (#1849). Distinct from
+ *  the generator's ``ex-<n>-<type>`` ids so the two never collide. */
+export function newExerciseId(): string {
+    _exSeq += 1;
+    return `ex-manual-${_exSeq}`;
+}
+
+/**
+ * Build an EMPTY exercise of the given type for the manual "+ Add exercise"
+ * entry point (#1849). Same ``ContentLessonExercise`` shape a generated
+ * exercise has — only the id differs — so a manual exercise is
+ * indistinguishable downstream. The empty starts are deliberately invalid
+ * (e.g. 2 blank pairs), so {@link validateExerciseEdit} keeps them out of
+ * step 4 until the author fills them in the inline editor.
+ */
+export function createBlankExercise(
+    type: GeneratableType,
+    id: string,
+): ContentLessonExercise {
+    const base = {id, prompt: "", card_ids: [], distractors: []};
+    switch (type) {
+        case "matching":
+            return {
+                ...base,
+                type,
+                pairs: [
+                    {left: "", right: ""},
+                    {left: "", right: ""},
+                ],
+            } as ContentLessonExercise;
+        case "free_text":
+            return {...base, type, accept: []} as ContentLessonExercise;
+        case "cloze":
+            return {
+                ...base,
+                type,
+                sentence: "___",
+                blanks: [{accept: []}],
+                cloze_mode: "type",
+            } as ContentLessonExercise;
+        case "word_tiles":
+            return {...base, type, tiles: ["", ""]} as ContentLessonExercise;
+        case "picture_choice":
+            return {
+                ...base,
+                type,
+                images: [
+                    {src: "", label: ""},
+                    {src: "", label: ""},
+                ],
+            } as ContentLessonExercise;
+        case "multiple_choice":
+            return {
+                ...base,
+                type,
+                multiple: false,
+                options: [
+                    {text: "", correct: false},
+                    {text: "", correct: false},
+                ],
+            } as ContentLessonExercise;
+    }
 }

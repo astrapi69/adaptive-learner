@@ -253,3 +253,74 @@ describe("ExerciseEditor — picture_choice", () => {
         expect(saveButton("p1")).toBeDisabled();
     });
 });
+
+describe("ExerciseEditor — multiple_choice (#1850)", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "mc1",
+            type: "multiple_choice",
+            prompt: "Pick the translation of chat",
+            card_ids: [],
+            distractors: [],
+            multiple: false,
+            options: [
+                {text: "cat", correct: true},
+                {text: "dog", correct: false},
+            ],
+        }) as ContentLessonExercise;
+
+    it("renders an option row per option + the multiple toggle", () => {
+        render(<Harness exercise={ex()} />);
+        expect(screen.getByTestId("exercise-edit-mc-text-mc1-0")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-edit-mc-correct-mc1-1")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-edit-mc-multiple-mc1")).toBeInTheDocument();
+    });
+
+    it("commits an edited option + moved correct marker on Save", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={ex()} onSaved={onSaved} />);
+        fireEvent.change(screen.getByTestId("exercise-edit-mc-text-mc1-1"), {
+            target: {value: "hound"},
+        });
+        fireEvent.click(screen.getByTestId("exercise-edit-mc-correct-mc1-1"));
+        fireEvent.click(saveButton("mc1"));
+        const options = onSaved.mock.calls[0][0].options;
+        // single-choice: correct moves to option 1 exclusively.
+        expect(options[0].correct).toBe(false);
+        expect(options[1]).toEqual({text: "hound", correct: true});
+    });
+
+    it("adds + removes options", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={ex()} onSaved={onSaved} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-mc-add-mc1"));
+        fireEvent.change(screen.getByTestId("exercise-edit-mc-text-mc1-2"), {
+            target: {value: "kitten"},
+        });
+        fireEvent.click(saveButton("mc1"));
+        expect(onSaved.mock.calls[0][0].options).toHaveLength(3);
+    });
+
+    it("disables Save when a single-choice question has no correct option", () => {
+        render(<Harness exercise={ex()} />);
+        // Deselect the only correct radio is impossible; instead clear its
+        // text so it drops out and no correct option remains.
+        fireEvent.change(screen.getByTestId("exercise-edit-mc-text-mc1-0"), {
+            target: {value: "   "},
+        });
+        expect(saveButton("mc1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-edit-error-mc1")).toBeInTheDocument();
+    });
+
+    it("multiple toggle switches to checkboxes and allows two correct", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={ex()} onSaved={onSaved} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-mc-multiple-mc1"));
+        // now both can be correct
+        fireEvent.click(screen.getByTestId("exercise-edit-mc-correct-mc1-1"));
+        fireEvent.click(saveButton("mc1"));
+        const saved = onSaved.mock.calls[0][0];
+        expect(saved.multiple).toBe(true);
+        expect(saved.options.filter((o: {correct: boolean}) => o.correct)).toHaveLength(2);
+    });
+});

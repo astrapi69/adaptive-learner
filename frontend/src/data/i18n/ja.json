@@ -2856,6 +2856,9 @@
       "heading": "演習を生成",
       "count_label": "演習の数",
       "types_label": "演習の種類",
+      "add": "問題を追加",
+      "add_heading": "問題タイプを選択",
+      "incomplete_to_advance": "続行するには、未完成の問題を完成させるか削除してください。",
       "direction_label": "方向",
       "generate": "演習を自動生成",
       "regenerate": "再生成",
@@ -2865,6 +2868,7 @@
       "drag": "ドラッグして並べ替え",
       "delete": "演習を削除",
       "type": {
+        "multiple_choice": "多肢選択",
         "matching": "マッチング",
         "free_text": "自由記述",
         "cloze": "穴埋め",
@@ -2873,6 +2877,7 @@
       },
       "gen_missing_intro": "選択した一部のタイプでは問題が作成されませんでした:",
       "gen_none": {
+        "multiple_choice": "多肢選択：異なる答えを持つカードを2枚以上追加してください。",
         "matching": "マッチング：カードを2枚以上追加してください。",
         "free_text": "自由記述：カードを1枚以上追加してください。",
         "cloze": "穴埋め：一部のカードに用語を含む例文を追加してください。",
@@ -2880,6 +2885,13 @@
         "picture_choice": "画像選択：2枚以上のカードに画像を追加してください。"
       },
       "edit": {
+        "mc_options_label": "選択肢",
+        "mc_option_placeholder": "選択肢のテキスト",
+        "mc_option_add": "選択肢を追加",
+        "mc_option_remove": "選択肢を削除",
+        "mc_correct": "正解",
+        "mc_multiple_label": "複数の正解を許可する",
+        "err_multiple_choice": "異なる選択肢を2つ以上追加し、正解を選択してください。",
         "edit": "問題を編集",
         "save": "保存",
         "prompt_label": "設問 / 指示",

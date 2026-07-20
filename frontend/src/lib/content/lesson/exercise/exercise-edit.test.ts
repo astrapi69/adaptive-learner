@@ -13,9 +13,12 @@ import {describe, expect, it} from "vitest";
 import {
     FREE_TEXT_MIN_ACCEPT,
     MATCHING_MIN_PAIRS,
+    MC_MIN_OPTIONS,
     PICTURE_MIN_IMAGES,
     WORD_TILES_MIN_TILES,
     countClozeMarkers,
+    createBlankExercise,
+    newExerciseId,
     normalizeExerciseEdit,
     validateExerciseEdit,
 } from "./exercise-edit";
@@ -273,5 +276,144 @@ describe("normalizeExerciseEdit", () => {
         expect(out.type).toBe("free_text");
         expect(out.card_ids).toEqual(["c1"]);
         expect(out.distractors).toEqual(["d1"]);
+    });
+});
+
+describe("validateExerciseEdit — multiple_choice (#1850)", () => {
+    function mc(over: Partial<ContentLessonExercise>): ContentLessonExercise {
+        return base({
+            type: "multiple_choice",
+            prompt: "Pick the translation of chat",
+            multiple: false,
+            options: [
+                {text: "cat", correct: true},
+                {text: "dog", correct: false},
+            ],
+            ...over,
+        });
+    }
+
+    it("accepts >= min options with exactly one correct (single)", () => {
+        expect(validateExerciseEdit(mc({})).valid).toBe(true);
+    });
+    it(`rejects fewer than ${MC_MIN_OPTIONS} non-empty options`, () => {
+        const res = validateExerciseEdit(
+            mc({options: [{text: "cat", correct: true}, {text: "  ", correct: false}]}),
+        );
+        expect(res.valid).toBe(false);
+        expect(res.errorKey).toContain("multiple_choice");
+    });
+    it("rejects duplicate option texts", () => {
+        const res = validateExerciseEdit(
+            mc({options: [{text: "cat", correct: true}, {text: "cat", correct: false}]}),
+        );
+        expect(res.valid).toBe(false);
+    });
+    it("rejects single-choice with no correct option", () => {
+        const res = validateExerciseEdit(
+            mc({options: [{text: "cat", correct: false}, {text: "dog", correct: false}]}),
+        );
+        expect(res.valid).toBe(false);
+    });
+    it("rejects single-choice with two correct options", () => {
+        const res = validateExerciseEdit(
+            mc({options: [{text: "cat", correct: true}, {text: "dog", correct: true}]}),
+        );
+        expect(res.valid).toBe(false);
+    });
+    it("accepts multi-choice with two correct options", () => {
+        expect(
+            validateExerciseEdit(
+                mc({
+                    multiple: true,
+                    options: [
+                        {text: "cat", correct: true},
+                        {text: "feline", correct: true},
+                        {text: "dog", correct: false},
+                    ],
+                }),
+            ).valid,
+        ).toBe(true);
+    });
+    it("rejects multi-choice with no correct option", () => {
+        expect(
+            validateExerciseEdit(
+                mc({
+                    multiple: true,
+                    options: [
+                        {text: "cat", correct: false},
+                        {text: "dog", correct: false},
+                    ],
+                }),
+            ).valid,
+        ).toBe(false);
+    });
+});
+
+describe("normalizeExerciseEdit — multiple_choice (#1850)", () => {
+    it("trims option texts, drops empties, coerces booleans", () => {
+        const out = normalizeExerciseEdit(
+            base({
+                type: "multiple_choice",
+                prompt: "  Pick  ",
+                multiple: false,
+                options: [
+                    {text: " cat ", correct: true},
+                    {text: " ", correct: false},
+                    {text: "dog", correct: false},
+                ],
+            }),
+        );
+        expect(out.prompt).toBe("Pick");
+        expect(out.options).toEqual([
+            {text: "cat", correct: true},
+            {text: "dog", correct: false},
+        ]);
+        expect(out.multiple).toBe(false);
+    });
+});
+
+describe("createBlankExercise + newExerciseId (#1849)", () => {
+    it("produces a fresh unique id each call", () => {
+        const a = newExerciseId();
+        const b = newExerciseId();
+        expect(a).not.toBe(b);
+        expect(a.startsWith("ex-manual-")).toBe(true);
+    });
+
+    const TYPES = [
+        "matching",
+        "free_text",
+        "cloze",
+        "word_tiles",
+        "picture_choice",
+        "multiple_choice",
+    ] as const;
+
+    it("builds a blank of each type that is INVALID until filled", () => {
+        for (const type of TYPES) {
+            const ex = createBlankExercise(type, `id-${type}`);
+            expect(ex.type).toBe(type);
+            expect(ex.id).toBe(`id-${type}`);
+            // Empty prompt alone makes every blank invalid to start.
+            expect(validateExerciseEdit(ex).valid).toBe(false);
+        }
+    });
+
+    it("matching blank has two empty pair slots", () => {
+        const ex = createBlankExercise("matching", "m");
+        expect(ex.pairs).toHaveLength(2);
+        expect(ex.pairs?.[0]).toEqual({left: "", right: ""});
+    });
+    it("multiple_choice blank has two empty single-choice options", () => {
+        const ex = createBlankExercise("multiple_choice", "mc");
+        expect(ex.multiple).toBe(false);
+        expect(ex.options).toHaveLength(2);
+        expect(ex.options?.[0]).toEqual({text: "", correct: false});
+    });
+    it("cloze blank has one marker + one blank", () => {
+        const ex = createBlankExercise("cloze", "c");
+        expect(ex.sentence).toBe("___");
+        expect(ex.blanks).toHaveLength(1);
     });
 });

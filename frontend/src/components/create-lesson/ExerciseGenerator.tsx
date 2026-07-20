@@ -13,7 +13,7 @@
  */
 
 import {useEffect, useState} from "react";
-import {Sparkles, Trash2, GripVertical, Pencil} from "lucide-react";
+import {Sparkles, Trash2, GripVertical, Pencil, Plus} from "lucide-react";
 import {
     DndContext,
     type DragEndEvent,
@@ -37,6 +37,10 @@ import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import ExerciseEditor from "./ExerciseEditor";
+import {
+    createBlankExercise,
+    newExerciseId,
+} from "../../lib/content/lesson/exercise/exercise-edit";
 import type {
     ExerciseGenConfig,
     GeneratableType,
@@ -71,6 +75,7 @@ const ALL_TYPES: GeneratableType[] = [
     "cloze",
     "word_tiles",
     "picture_choice",
+    "multiple_choice",
 ];
 
 export interface ExerciseGeneratorProps {
@@ -81,6 +86,8 @@ export interface ExerciseGeneratorProps {
     onReorder: (exercises: ContentLessonExercise[]) => void;
     onDelete: (id: string) => void;
     onUpdate: (id: string, updated: ContentLessonExercise) => void;
+    /** Append a manually-created exercise (#1849). */
+    onAdd: (exercise: ContentLessonExercise) => void;
 }
 
 export default function ExerciseGenerator({
@@ -91,6 +98,7 @@ export default function ExerciseGenerator({
     onReorder,
     onDelete,
     onUpdate,
+    onAdd,
 }: ExerciseGeneratorProps) {
     const {t} = useI18n();
     const sensors = useSensors(
@@ -99,6 +107,18 @@ export default function ExerciseGenerator({
             coordinateGetter: sortableKeyboardCoordinates,
         }),
     );
+
+    // Manual "+ Add exercise" (#1849): pick a type -> append an empty
+    // exercise of that type and open it straight in the inline editor.
+    const [picking, setPicking] = useState(false);
+    const [autoEditId, setAutoEditId] = useState<string | null>(null);
+
+    function addManual(type: GeneratableType) {
+        const exercise = createBlankExercise(type, newExerciseId());
+        onAdd(exercise);
+        setAutoEditId(exercise.id);
+        setPicking(false);
+    }
 
     // Uncommitted text of the number input: lets the user clear + retype
     // freely (a directly-clamped controlled value would fight mid-edit).
@@ -339,11 +359,67 @@ export default function ExerciseGenerator({
                                 exercise={ex}
                                 onDelete={onDelete}
                                 onUpdate={onUpdate}
+                                autoEdit={ex.id === autoEditId}
                             />
                         ))}
                     </ul>
                 </SortableContext>
             </DndContext>
+
+            {/* Manually add an exercise (#1849) */}
+            <div className="flex flex-col gap-2">
+                {picking ? (
+                    <div
+                        className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3"
+                        data-testid="exercise-add-picker"
+                    >
+                        <span className="form-label text-sm font-medium text-fg-primary">
+                            {t(
+                                "create_lesson.exercises.add_heading",
+                                "Choose an exercise type",
+                            )}
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                            {ALL_TYPES.map((type) => (
+                                <Button
+                                    key={type}
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    data-testid={`exercise-add-type-${type}`}
+                                    onClick={() => addManual(type)}
+                                >
+                                    {t(
+                                        `create_lesson.exercises.type.${type}`,
+                                        type,
+                                    )}
+                                </Button>
+                            ))}
+                        </div>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="w-fit"
+                            data-testid="exercise-add-cancel"
+                            onClick={() => setPicking(false)}
+                        >
+                            {t("create_lesson.cancel", "Cancel")}
+                        </Button>
+                    </div>
+                ) : (
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="w-fit"
+                        data-testid="exercise-add"
+                        onClick={() => setPicking(true)}
+                    >
+                        <Plus size={14} aria-hidden="true" />
+                        {t("create_lesson.exercises.add", "Add exercise")}
+                    </Button>
+                )}
+            </div>
         </section>
     );
 }
@@ -359,6 +435,8 @@ function describe(ex: ContentLessonExercise): string {
             return (ex.tiles ?? []).join(" ");
         case "picture_choice":
             return `${ex.images?.length ?? 0} images`;
+        case "multiple_choice":
+            return `${ex.options?.length ?? 0} options`;
         case "free_text":
         default:
             return ex.prompt;
@@ -369,17 +447,21 @@ interface SortableExerciseRowProps {
     exercise: ContentLessonExercise;
     onDelete: (id: string) => void;
     onUpdate: (id: string, updated: ContentLessonExercise) => void;
+    /** Open straight in the inline editor on mount (a manually-added
+     *  exercise, #1849). */
+    autoEdit?: boolean;
 }
 
 function SortableExerciseRow({
     exercise,
     onDelete,
     onUpdate,
+    autoEdit = false,
 }: SortableExerciseRowProps) {
     const {t} = useI18n();
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} =
         useSortable({id: exercise.id});
-    const [editing, setEditing] = useState(false);
+    const [editing, setEditing] = useState(autoEdit);
     const style: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,

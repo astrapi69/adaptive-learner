@@ -2856,6 +2856,9 @@
       "heading": "연습 생성",
       "count_label": "연습 개수",
       "types_label": "연습 유형",
+      "add": "문제 추가",
+      "add_heading": "문제 유형 선택",
+      "incomplete_to_advance": "계속하려면 미완성 문제를 완성하거나 삭제하세요.",
       "direction_label": "방향",
       "generate": "연습 자동 생성",
       "regenerate": "다시 생성",
@@ -2865,6 +2868,7 @@
       "drag": "드래그하여 순서 변경",
       "delete": "연습 삭제",
       "type": {
+        "multiple_choice": "객관식",
         "matching": "연결",
         "free_text": "자유 입력",
         "cloze": "빈칸 채우기",
@@ -2873,6 +2877,7 @@
       },
       "gen_missing_intro": "선택한 일부 유형에서 문제가 생성되지 않았습니다:",
       "gen_none": {
+        "multiple_choice": "객관식: 서로 다른 답을 가진 카드를 두 장 이상 추가하세요.",
         "matching": "짝 맞추기: 카드를 두 장 이상 추가하세요.",
         "free_text": "자유 입력: 카드를 한 장 이상 추가하세요.",
         "cloze": "빈칸 채우기: 일부 카드에 용어가 포함된 예문을 추가하세요.",
@@ -2880,6 +2885,13 @@
         "picture_choice": "그림 선택: 카드 두 장 이상에 이미지를 추가하세요."
       },
       "edit": {
+        "mc_options_label": "답 선택지",
+        "mc_option_placeholder": "선택지 텍스트",
+        "mc_option_add": "선택지 추가",
+        "mc_option_remove": "선택지 삭제",
+        "mc_correct": "정답",
+        "mc_multiple_label": "복수 정답 허용",
+        "err_multiple_choice": "서로 다른 선택지를 두 개 이상 추가하고 정답을 표시하세요.",
         "edit": "문제 편집",
         "save": "저장",
         "prompt_label": "질문 / 지시문",

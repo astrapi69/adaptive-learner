@@ -2856,6 +2856,9 @@
       "heading": "Übungen erstellen",
       "count_label": "Anzahl der Übungen",
       "types_label": "Übungstypen",
+      "add": "Übung hinzufügen",
+      "add_heading": "Übungstyp wählen",
+      "incomplete_to_advance": "Vervollständige oder entferne die unvollständigen Übungen, um fortzufahren.",
       "direction_label": "Richtung",
       "generate": "Übungen automatisch erstellen",
       "regenerate": "Neu generieren",
@@ -2865,6 +2868,7 @@
       "drag": "Zum Umsortieren ziehen",
       "delete": "Übung löschen",
       "type": {
+        "multiple_choice": "Multiple Choice",
         "matching": "Zuordnung",
         "free_text": "Freitext",
         "cloze": "Lückentext",
@@ -2873,6 +2877,7 @@
       },
       "gen_missing_intro": "Einige ausgewählte Typen haben keine Übungen ergeben:",
       "gen_none": {
+        "multiple_choice": "Multiple Choice: Füge mindestens zwei Karten mit unterschiedlichen Antworten hinzu.",
         "matching": "Zuordnung: Füge mindestens zwei Karten hinzu.",
         "free_text": "Freitext: Füge mindestens eine Karte hinzu.",
         "cloze": "Lückentext: Füge einigen Karten einen Beispielsatz hinzu, der den Begriff enthält.",
@@ -2880,6 +2885,13 @@
         "picture_choice": "Bildauswahl: Füge mindestens zwei Karten ein Bild hinzu."
       },
       "edit": {
+        "mc_options_label": "Antwortoptionen",
+        "mc_option_placeholder": "Optionstext",
+        "mc_option_add": "Option hinzufügen",
+        "mc_option_remove": "Option entfernen",
+        "mc_correct": "Richtige Antwort",
+        "mc_multiple_label": "Mehrere richtige Antworten zulassen",
+        "err_multiple_choice": "Füge mindestens zwei unterschiedliche Optionen hinzu und markiere die richtige(n) Antwort(en).",
         "edit": "Übung bearbeiten",
         "save": "Speichern",
         "prompt_label": "Frage / Aufgabenstellung",

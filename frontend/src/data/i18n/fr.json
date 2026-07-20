@@ -2856,6 +2856,9 @@
       "heading": "Générer des exercices",
       "count_label": "Nombre d'exercices",
       "types_label": "Types d'exercices",
+      "add": "Ajouter un exercice",
+      "add_heading": "Choisissez un type d'exercice",
+      "incomplete_to_advance": "Complétez ou supprimez les exercices incomplets pour continuer.",
       "direction_label": "Direction",
       "generate": "Générer les exercices automatiquement",
       "regenerate": "Régénérer",
@@ -2865,6 +2868,7 @@
       "drag": "Glisser pour réorganiser",
       "delete": "Supprimer l'exercice",
       "type": {
+        "multiple_choice": "Choix multiple",
         "matching": "Association",
         "free_text": "Texte libre",
         "cloze": "Texte à trous",
@@ -2873,6 +2877,7 @@
       },
       "gen_missing_intro": "Certains types sélectionnés n'ont produit aucun exercice :",
       "gen_none": {
+        "multiple_choice": "Choix multiple : ajoutez au moins deux cartes avec des réponses distinctes.",
         "matching": "Correspondance : ajoutez au moins deux cartes.",
         "free_text": "Texte libre : ajoutez au moins une carte.",
         "cloze": "Texte à trous : ajoutez à certaines cartes une phrase d'exemple contenant le terme.",
@@ -2880,6 +2885,13 @@
         "picture_choice": "Choix d'image : ajoutez une image à au moins deux cartes."
       },
       "edit": {
+        "mc_options_label": "Options de réponse",
+        "mc_option_placeholder": "Texte de l'option",
+        "mc_option_add": "Ajouter une option",
+        "mc_option_remove": "Supprimer l'option",
+        "mc_correct": "Bonne réponse",
+        "mc_multiple_label": "Autoriser plusieurs bonnes réponses",
+        "err_multiple_choice": "Ajoutez au moins deux options distinctes et marquez la ou les bonnes réponses.",
         "edit": "Modifier l'exercice",
         "save": "Enregistrer",
         "prompt_label": "Question / consigne",

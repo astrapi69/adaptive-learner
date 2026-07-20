@@ -24,7 +24,8 @@ export type GeneratableType =
     | "free_text"
     | "cloze"
     | "word_tiles"
-    | "picture_choice";
+    | "picture_choice"
+    | "multiple_choice";
 
 export interface GeneratorCard {
     /** Card id referenced from the exercise's ``card_ids``. */
@@ -50,6 +51,7 @@ export interface ExercisePrompts {
     cloze: string;
     wordTiles: string;
     pictureChoice: string;
+    multipleChoice: string;
 }
 
 export const DEFAULT_EXERCISE_PROMPTS: ExercisePrompts = {
@@ -58,6 +60,7 @@ export const DEFAULT_EXERCISE_PROMPTS: ExercisePrompts = {
     cloze: "Fill in the missing word.",
     wordTiles: "Arrange the words into the sentence ({word}).",
     pictureChoice: "Pick the image for: {word}",
+    multipleChoice: "Choose the correct translation of: {word}",
 };
 
 export type ExerciseDirectionStrategy =
@@ -79,7 +82,14 @@ export interface ExerciseGenConfig {
 
 export const DEFAULT_EXERCISE_GEN_CONFIG: ExerciseGenConfig = {
     count: 10,
-    types: ["matching", "free_text", "cloze", "word_tiles", "picture_choice"],
+    types: [
+        "matching",
+        "free_text",
+        "cloze",
+        "word_tiles",
+        "picture_choice",
+        "multiple_choice",
+    ],
     direction: "auto",
     matchingGroupSize: 5,
 };
@@ -256,12 +266,52 @@ export function buildPictureChoice(
     return out;
 }
 
+/** Multiple-choice (#1850): one single-answer question per card — the
+ *  correct option is the card's back, distractors are up to 3 OTHER cards'
+ *  backs. Option texts must be distinct (schema), so duplicate backs are
+ *  skipped; a card that can't reach 2 distinct options is dropped. Needs
+ *  >= 2 cards with distinct backs to be non-degenerate. Always emits
+ *  ``multiple: false`` (single correct); the author flips it to multi in
+ *  the inline editor. */
+export function buildMultipleChoice(
+    cards: GeneratorCard[],
+    prompt: string,
+): ContentLessonExercise[] {
+    const out: ContentLessonExercise[] = [];
+    cards.forEach((c, i) => {
+        const correct = c.back.trim();
+        if (!correct) return;
+        const seen = new Set<string>([correct]);
+        const options = [{text: correct, correct: true}];
+        for (const other of cards) {
+            if (options.length >= 4) break;
+            if (other.id === c.id) continue;
+            const text = other.back.trim();
+            if (!text || seen.has(text)) continue;
+            seen.add(text);
+            options.push({text, correct: false});
+        }
+        if (options.length < 2) return; // no distractor -> degenerate
+        out.push({
+            id: `ex-mc-${i}`,
+            type: "multiple_choice",
+            prompt: clampLen(prompt.replace("{word}", c.front.trim()), 1000),
+            card_ids: [c.id],
+            options,
+            multiple: false,
+            distractors: [],
+        });
+    });
+    return out;
+}
+
 const TYPE_RANK: Record<string, number> = {
     matching: 0,
     free_text: 1,
     cloze: 2,
     word_tiles: 3,
     picture_choice: 4,
+    multiple_choice: 5,
 };
 
 /** Round-robin across buckets (preserves type variety under the cap),
@@ -333,6 +383,8 @@ export function generateExercises(
         buckets.push(buildWordTiles(cards, prompts.wordTiles));
     if (enabled.has("picture_choice"))
         buckets.push(buildPictureChoice(cards, prompts.pictureChoice));
+    if (enabled.has("multiple_choice"))
+        buckets.push(buildMultipleChoice(cards, prompts.multipleChoice));
 
     const selected = selectExercises(buckets, Math.max(1, config.count));
     return selected.map((ex, i) => ({

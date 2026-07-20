@@ -50,6 +50,7 @@ interface WizardStepsProps {
     onReorderExercises: (exercises: ContentLessonExercise[]) => void;
     onDeleteExercise: (id: string) => void;
     onUpdateExercise: (id: string, updated: ContentLessonExercise) => void;
+    onAddExercise: (exercise: ContentLessonExercise) => void;
     onSaveLocal: () => void;
     onSaveShare: () => void;
     onSaveCopy?: () => void;
@@ -79,6 +80,7 @@ export default function WizardSteps({
     onReorderExercises,
     onDeleteExercise,
     onUpdateExercise,
+    onAddExercise,
     onSaveLocal,
     onSaveShare,
     onSaveCopy,
@@ -122,17 +124,23 @@ export default function WizardSteps({
                         onReorder={onReorderExercises}
                         onDelete={onDeleteExercise}
                         onUpdate={onUpdateExercise}
+                        onAdd={onAddExercise}
                     />
-                    {exerciseError && exercises.length < MIN_EXERCISES && (
+                    {exerciseError && (
                         <p
                             className="form-hint form-hint-warning"
                             data-testid="create-lesson-exercise-error"
                             role="alert"
                         >
-                            {t(
-                                "create_lesson.exercises.min_to_advance",
-                                "Generate at least {n} exercises to continue.",
-                            ).replace("{n}", String(MIN_EXERCISES))}
+                            {exercises.length < MIN_EXERCISES
+                                ? t(
+                                      "create_lesson.exercises.min_to_advance",
+                                      "Generate at least {n} exercises to continue.",
+                                  ).replace("{n}", String(MIN_EXERCISES))
+                                : t(
+                                      "create_lesson.exercises.incomplete_to_advance",
+                                      "Complete or remove the incomplete exercises to continue.",
+                                  )}
                         </p>
                     )}
                 </>
