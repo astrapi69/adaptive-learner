@@ -2550,6 +2550,8 @@ create_lesson:
   edit_title: "Lektion bearbeiten"
   edit_load_error: "Diese Lektion konnte nicht zum Bearbeiten geladen werden."
   edit_note: "Du bearbeitest eine vorhandene Lektion. Beim Speichern wird sie überschrieben; mit 'Als Kopie speichern' bleibt das Original erhalten."
+  prompts_migrated: "{n} Übungsanweisung(en) wurden automatisch in deine Sprache übertragen."
+  prompts_migrated_dismiss: "Schließen"
   step_pending: "Dieser Schritt kommt im nächsten Update."
   nav_label: "Assistent-Navigation"
   cancel: "Abbrechen"

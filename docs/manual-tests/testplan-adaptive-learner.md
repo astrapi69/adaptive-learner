@@ -177,6 +177,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-
       schritt bleibt) + "Als Kopie speichern"; Fremd-Repo-Lektionen
       zeigen KEIN Bearbeiten; Analyse-Lektionen fuehren zur Import-Seite
+- [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
+      VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
+      "Match each word with its translation.") ueber "Lektion bearbeiten"
+      oeffnen → die betroffenen Anweisungen erscheinen automatisch in der
+      UI-Sprache + ein dezenter, schliessbarer Hinweis oben ("... automatisch
+      in deine Sprache uebertragen"). NUR bei EXAKT dem alten Default: ein vom
+      Nutzer bewusst abweichend gesetzter Prompt (auch zufaellig englisch)
+      bleibt unveraendert. Editor ohne Speichern verlassen → Original in
+      Dexie unveraendert (kein stiller Schreibvorgang); erst Speichern
+      (Ueberschreiben/Als Kopie) schreibt die migrierte Fassung dauerhaft
 - [ ] **Lektionen kombinieren (#1741):** Meine Inhalte → "Zu Set
       kombinieren"-Umschalter → Checkbox-Auswahl (nur eigene Sets) →
       "Kombinieren"-Dialog: Neues Set (Titel Pflicht) vs. zu bestehendem

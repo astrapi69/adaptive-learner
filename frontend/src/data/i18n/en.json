@@ -2787,6 +2787,8 @@
     "edit_title": "Edit lesson",
     "edit_load_error": "Could not load this lesson for editing.",
     "edit_note": "Editing an existing lesson. Saving overwrites it; use 'Save as a copy' to keep the original.",
+    "prompts_migrated": "{n} exercise instruction(s) were automatically translated to your language.",
+    "prompts_migrated_dismiss": "Dismiss",
     "step_pending": "This step is coming in the next update.",
     "nav_label": "Wizard navigation",
     "cancel": "Cancel",

@@ -179,6 +179,16 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       (overwrites the same id, progress kept) + "Save as a copy";
       foreign-repo lessons show NO Edit; analysis lessons route to the
       import page
+- [ ] **Migrate legacy English prompts on edit (#1860):** open a
+      pre-#1855 legacy lesson (exercise instructions hardcoded in English,
+      e.g. "Match each word with its translation.") via "Edit a lesson" →
+      the affected instructions appear in the UI language automatically +
+      a subtle, dismissible notice at the top ("... automatically
+      translated to your language"). ONLY for the EXACT old default: a
+      prompt the user deliberately set differently (even if coincidentally
+      English) stays unchanged. Leave the editor WITHOUT saving → the
+      original in Dexie is unchanged (no silent write); only saving
+      (overwrite / save-as-copy) persists the migrated version
 - [ ] **Combine lessons (#1741):** My Content → "Combine into a set"
       toggle → checkbox selection (own sets only) → "Combine" dialog:
       New set (title required) vs. add to an existing set; originals are

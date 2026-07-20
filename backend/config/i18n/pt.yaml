@@ -2546,6 +2546,8 @@ create_lesson:
   edit_title: "Editar lição"
   edit_load_error: "Não foi possível carregar esta lição para edição."
   edit_note: "Você está editando uma lição existente. Salvar substitui-a; use 'Salvar como cópia' para manter o original."
+  prompts_migrated: "{n} instrução(ões) de exercício foram traduzidas automaticamente para o seu idioma."
+  prompts_migrated_dismiss: "Fechar"
   step_pending: "Este passo chega na próxima atualização."
   nav_label: "Navegação do assistente"
   cancel: "Cancelar"
