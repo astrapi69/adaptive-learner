@@ -147,9 +147,11 @@ Key points:
 
 Each lesson is a JSON file under `lessons/`, named `NN-slug.json`. A
 lesson is built from **cards** (the vocabulary / facts) and **steps**
-(theory steps with Markdown, plus exercise steps). The five exercise
-types are `matching`, `picture_choice`, `free_text`, `word_tiles`, and
-`cloze`.
+(theory steps with Markdown, plus exercise steps). The six core exercise
+types are `matching`, `picture_choice`, `free_text`, `word_tiles`,
+`cloze`, and `multiple_choice` (native since schema v1.6, #1525);
+additional `ext:` extension types exist — see the
+[exercise type catalog](../help/en/developer/authoring-content.md#exercise-type-catalog-status).
 
 The minimum shape:
 
