@@ -2856,6 +2856,9 @@
       "heading": "Alıştırma oluştur",
       "count_label": "Alıştırma sayısı",
       "types_label": "Alıştırma türleri",
+      "add": "Alıştırma ekle",
+      "add_heading": "Bir alıştırma türü seçin",
+      "incomplete_to_advance": "Devam etmek için eksik alıştırmaları tamamlayın veya kaldırın.",
       "direction_label": "Yön",
       "generate": "Alıştırmaları otomatik oluştur",
       "regenerate": "Yeniden oluştur",
@@ -2865,6 +2868,7 @@
       "drag": "Yeniden sıralamak için sürükleyin",
       "delete": "Alıştırmayı sil",
       "type": {
+        "multiple_choice": "Çoktan seçmeli",
         "matching": "Eşleştirme",
         "free_text": "Serbest metin",
         "cloze": "Boşluk doldurma",
@@ -2873,6 +2877,7 @@
       },
       "gen_missing_intro": "Seçilen bazı türler hiç alıştırma üretmedi:",
       "gen_none": {
+        "multiple_choice": "Çoktan seçmeli: farklı yanıtlara sahip en az iki kart ekleyin.",
         "matching": "Eşleştirme: en az iki kart ekleyin.",
         "free_text": "Serbest metin: en az bir kart ekleyin.",
         "cloze": "Boşluk doldurma: bazı kartlara terimi içeren bir örnek cümle ekleyin.",
@@ -2880,6 +2885,13 @@
         "picture_choice": "Görsel seçme: en az iki karta bir görsel ekleyin."
       },
       "edit": {
+        "mc_options_label": "Yanıt seçenekleri",
+        "mc_option_placeholder": "Seçenek metni",
+        "mc_option_add": "Seçenek ekle",
+        "mc_option_remove": "Seçeneği kaldır",
+        "mc_correct": "Doğru yanıt",
+        "mc_multiple_label": "Birden fazla doğru yanıta izin ver",
+        "err_multiple_choice": "En az iki farklı seçenek ekleyin ve doğru yanıt(lar)ı işaretleyin.",
         "edit": "Alıştırmayı düzenle",
         "save": "Kaydet",
         "prompt_label": "Soru / yönerge",

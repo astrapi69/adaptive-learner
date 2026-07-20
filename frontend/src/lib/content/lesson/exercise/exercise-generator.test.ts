@@ -2,6 +2,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     buildFreeText,
+    buildMultipleChoice,
     generateExercises,
     type GeneratorCard,
 } from "./exercise-generator";
@@ -183,5 +184,45 @@ describe("buildFreeText — multiple accepted answers (#1797)", () => {
         );
         // Unchanged from the pre-#1797 behaviour: back + its lowercase form.
         expect(ex[0].accept).toEqual(["Hallo", "hallo"]);
+    });
+});
+
+describe("buildMultipleChoice (#1850)", () => {
+    const cards: GeneratorCard[] = [
+        {id: "c1", front: "chat", back: "cat"},
+        {id: "c2", front: "chien", back: "dog"},
+        {id: "c3", front: "oiseau", back: "bird"},
+    ];
+
+    it("builds one single-choice question per card with distractors", () => {
+        const out = buildMultipleChoice(cards, "Choose: {word}");
+        expect(out).toHaveLength(3);
+        const first = out[0];
+        expect(first.type).toBe("multiple_choice");
+        expect(first.multiple).toBe(false);
+        expect(first.prompt).toBe("Choose: chat");
+        // Exactly one correct = the card's own back.
+        const correct = (first.options ?? []).filter((o) => o.correct);
+        expect(correct).toHaveLength(1);
+        expect(correct[0].text).toBe("cat");
+        // >= 2 options, all distinct.
+        expect((first.options ?? []).length).toBeGreaterThanOrEqual(2);
+        const texts = (first.options ?? []).map((o) => o.text);
+        expect(new Set(texts).size).toBe(texts.length);
+    });
+
+    it("skips cards that cannot reach two distinct options", () => {
+        // Only one card -> no distractor available -> degenerate -> empty.
+        expect(buildMultipleChoice([cards[0]], "Choose: {word}")).toEqual([]);
+    });
+
+    it("is reachable through generateExercises when selected", () => {
+        const out = generateExercises(cards, {
+            count: 10,
+            types: ["multiple_choice"],
+            direction: "auto",
+        });
+        expect(out.length).toBeGreaterThan(0);
+        expect(out.every((e) => e.type === "multiple_choice")).toBe(true);
     });
 });

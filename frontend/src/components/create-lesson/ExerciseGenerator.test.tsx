@@ -50,6 +50,7 @@ function Harness({
             onReorder={vi.fn()}
             onDelete={vi.fn()}
             onUpdate={vi.fn()}
+            onAdd={vi.fn()}
         />
     );
 }
@@ -83,6 +84,7 @@ function ListHarness({
                     prev.map((e) => (e.id === id ? updated : e)),
                 );
             }}
+            onAdd={(exercise) => setExercises((prev) => [...prev, exercise])}
         />
     );
 }
@@ -159,6 +161,7 @@ function renderWith(
             onReorder={vi.fn()}
             onDelete={vi.fn()}
             onUpdate={vi.fn()}
+            onAdd={vi.fn()}
         />,
     );
 }
@@ -276,5 +279,59 @@ describe("ExerciseGenerator — count number input (#1760)", () => {
         fireEvent.blur(numberInput());
         fireEvent.click(screen.getByTestId("exercise-generate"));
         expect(onGenerateCount).toHaveBeenCalledWith(17);
+    });
+});
+
+describe("ExerciseGenerator — manual add (#1849)", () => {
+    it("offers an Add exercise button that opens the 6-type picker", () => {
+        render(<ListHarness initial={[]} />);
+        expect(screen.queryByTestId("exercise-add-picker")).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        const picker = screen.getByTestId("exercise-add-picker");
+        expect(picker).toBeInTheDocument();
+        for (const type of [
+            "matching",
+            "free_text",
+            "cloze",
+            "word_tiles",
+            "picture_choice",
+            "multiple_choice",
+        ]) {
+            expect(
+                screen.getByTestId(`exercise-add-type-${type}`),
+            ).toBeInTheDocument();
+        }
+    });
+
+    it("picking a type appends a blank exercise opened in the editor", () => {
+        render(<ListHarness initial={[]} />);
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        fireEvent.click(screen.getByTestId("exercise-add-type-matching"));
+        // A row appeared and is in edit mode (the inline editor is open).
+        const editor = screen.getByTestId(/^exercise-editor-/);
+        expect(editor).toBeInTheDocument();
+        // matching editor fields are shown.
+        expect(
+            screen.getByTestId(
+                `${editor.getAttribute("data-testid")!.replace("exercise-editor-", "exercise-edit-pair-left-")}-0`,
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it("a freshly added matching exercise cannot be saved empty", () => {
+        render(<ListHarness initial={[]} />);
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        fireEvent.click(screen.getByTestId("exercise-add-type-matching"));
+        const saveBtn = screen.getByTestId(/^exercise-edit-save-/) as HTMLButtonElement;
+        expect(saveBtn).toBeDisabled();
+    });
+});
+
+describe("ExerciseGenerator — multiple_choice type (#1850)", () => {
+    it("offers a multiple_choice generation checkbox", () => {
+        render(<ListHarness initial={[]} />);
+        expect(
+            screen.getByTestId("exercise-type-multiple_choice"),
+        ).toBeInTheDocument();
     });
 });

@@ -132,6 +132,8 @@ function TypeFields({draft, onPatch}: TypeFieldsProps) {
             return <WordTilesFields draft={draft} onPatch={onPatch} />;
         case "picture_choice":
             return <PictureChoiceFields draft={draft} onPatch={onPatch} />;
+        case "multiple_choice":
+            return <MultipleChoiceFields draft={draft} onPatch={onPatch} />;
         default:
             return null;
     }
@@ -457,6 +459,126 @@ function PictureChoiceFields({draft, onPatch}: TypeFieldsProps) {
             >
                 <Plus size={14} aria-hidden="true" />
                 {t("create_lesson.exercises.edit.image_add", "Add image")}
+            </Button>
+        </fieldset>
+    );
+}
+
+function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
+    const {t} = useI18n();
+    const id = draft.id;
+    const options = draft.options ?? [];
+    const multiple = draft.multiple === true;
+
+    function setText(index: number, text: string) {
+        onPatch({
+            options: options.map((o, i) => (i === index ? {...o, text} : o)),
+        });
+    }
+    function toggleCorrect(index: number) {
+        onPatch({
+            options: options.map((o, i) =>
+                multiple
+                    ? i === index
+                        ? {...o, correct: !o.correct}
+                        : o
+                    : {...o, correct: i === index},
+            ),
+        });
+    }
+    function toggleMultiple() {
+        const next = !multiple;
+        // Switching to single-answer keeps only the first correct option.
+        let nextOptions = options;
+        if (!next) {
+            const first = options.findIndex((o) => o.correct === true);
+            nextOptions = options.map((o, i) => ({...o, correct: i === first}));
+        }
+        onPatch({multiple: next, options: nextOptions});
+    }
+    function addOption() {
+        onPatch({options: [...options, {text: "", correct: false}]});
+    }
+    function removeOption(index: number) {
+        onPatch({options: options.filter((_o, i) => i !== index)});
+    }
+
+    const correctLabel = t(
+        "create_lesson.exercises.edit.mc_correct",
+        "Correct answer",
+    );
+
+    return (
+        <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
+            <legend className="form-label text-sm font-medium text-fg-primary">
+                {t("create_lesson.exercises.edit.mc_options_label", "Answer options")}
+            </legend>
+            <label className="flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    className="accent-[var(--accent)]"
+                    checked={multiple}
+                    data-testid={`exercise-edit-mc-multiple-${id}`}
+                    onChange={toggleMultiple}
+                />
+                <span className="text-sm text-fg-primary">
+                    {t(
+                        "create_lesson.exercises.edit.mc_multiple_label",
+                        "Allow multiple correct answers",
+                    )}
+                </span>
+            </label>
+            {options.map((option, i) => (
+                <div
+                    key={i}
+                    className="flex items-center gap-2"
+                    data-testid={`exercise-edit-mc-option-${id}-${i}`}
+                >
+                    <input
+                        type={multiple ? "checkbox" : "radio"}
+                        name={`exercise-edit-mc-correct-${id}`}
+                        className="accent-[var(--accent)]"
+                        checked={option.correct === true}
+                        aria-label={correctLabel}
+                        data-testid={`exercise-edit-mc-correct-${id}-${i}`}
+                        onChange={() => toggleCorrect(i)}
+                    />
+                    <Input
+                        type="text"
+                        maxLength={500}
+                        value={option.text}
+                        className="min-w-0 flex-1"
+                        aria-label={t(
+                            "create_lesson.exercises.edit.mc_option_placeholder",
+                            "Option text",
+                        )}
+                        data-testid={`exercise-edit-mc-text-${id}-${i}`}
+                        onChange={(e) => setText(i, e.target.value)}
+                    />
+                    <button
+                        type="button"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
+                        aria-label={t(
+                            "create_lesson.exercises.edit.mc_option_remove",
+                            "Remove option",
+                        )}
+                        data-testid={`exercise-edit-mc-remove-${id}-${i}`}
+                        onClick={() => removeOption(i)}
+                    >
+                        <X size={14} aria-hidden="true" />
+                    </button>
+                </div>
+            ))}
+            <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-fit"
+                data-testid={`exercise-edit-mc-add-${id}`}
+                onClick={addOption}
+            >
+                <Plus size={14} aria-hidden="true" />
+                {t("create_lesson.exercises.edit.mc_option_add", "Add option")}
             </Button>
         </fieldset>
     );
