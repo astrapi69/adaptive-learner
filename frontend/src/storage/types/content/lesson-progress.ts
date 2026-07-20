@@ -33,7 +33,11 @@ export type RawAnswer =
   | { kind: "al_reading_comprehension"; answers: string[] }
   /** #1579 — adopted extension ``ext:al-graded-quiz``: the learner's chosen
    *  option texts (or [typed] free-text) per question, in order. */
-  | { kind: "al_graded_quiz"; answers: string[][] };
+  | { kind: "al_graded_quiz"; answers: string[][] }
+  /** #1881 — adopted extension ``ext:al-dictation``: the typed transcription
+   *  of the audio clip, persisted so a revisited, locked exercise restores
+   *  its exact input. */
+  | { kind: "al_dictation"; input: string };
 
 export interface LessonStepResult {
   step_id: string;
