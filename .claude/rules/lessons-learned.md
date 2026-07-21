@@ -268,6 +268,56 @@ Detection: if local tests pass but CI fails on routes returning 404, suspect mis
 - Any specific number, threshold, default value, dropdown range, or feature flag mentioned in the docs MUST come from the code or config that defines it (`backend/config/app.yaml`, `backend/config/i18n/*.yaml`, the schema, the source of the relevant function), not from memory or approximation.
 - If a value isn't easily findable in code, that is a signal to flag the question, not to guess. Wrong defaults in user docs erode trust faster than missing docs do.
 - Example: trash auto-delete default came from `backend/config/app.yaml.example` (`trash_auto_delete_days: 90`); the configurable range came from the `trash_days_*` keys in `backend/config/i18n/*.yaml`. Both are single sources of truth that the docs cite without duplicating.
+- **This file is not exempt from its own rule.** The #1903 issue text
+  claimed `backend/tests/test_plugin_lock_drift_hook.py` "pins the hook with
+  6 self-checks" — quoted from THIS file, never checked against the tree. The
+  file had been removed by the skeleton strip (`76baa114`) long before. A rule
+  file ages exactly like any other doc: when it names a path, a count, or a
+  gate, verify the artifact still exists before repeating the claim
+  downstream. `git log --all -- <path>` answers it in one command.
+
+## Test a tool through the interface it actually uses, not a mock of it
+
+A tool that shells out (git, poetry, docker, a CLI) has an implicit
+dependency on the ENVIRONMENT it resolves — cwd, repo root, PATH, the
+process it runs under. A mocked subprocess layer verifies the parsing logic
+and hides the resolution entirely.
+
+Concrete (#1903): the `plugin-lock-paired-with-pyproject` hook computed its
+repo root from `Path(__file__).resolve().parent.parent`, so it always read
+the checkout the SCRIPT lives in, not the one being committed. Under
+`git worktree` — the standard workflow in this repo — that is the wrong
+repo. The failure is **silent and green**: the hook finds no staged files in
+the foreign repo, concludes "nothing staged, nothing to check", and exits 0.
+A gate that reports success while inspecting the wrong tree is worse than a
+missing gate, because it also buys false confidence.
+
+Nothing about that is visible with mocked git output. It surfaced because
+the new tests build **real throwaway git repos** (`git init` in `tmp_path`,
+real files, real `git add`) and invoke the hook exactly the way pre-commit
+does — as a subprocess with staged paths as argv. Three "must block" tests
+failed in the RED run not because the feature was missing, but because the
+hook was reading somewhere else entirely.
+
+Rules:
+
+- **When a tool resolves its own context, let the test control that
+  context.** Build the real thing in `tmp_path` (git repo, config dir,
+  package tree) and run the tool against it as a subprocess. The setup cost
+  is one fixture; the coverage includes the resolution logic that mocks
+  erase.
+- **Derive the repo root from cwd (`git rev-parse --show-toplevel`), never
+  from `__file__`.** Pre-commit, make targets, and CI all invoke from the
+  repo root; `__file__` additionally breaks under worktrees, symlinked
+  checkouts, and any vendored copy of the script.
+- **A guard that can pass by looking at the wrong place must fail closed.**
+  "Found nothing, so nothing is wrong" is only sound once you have proven you
+  looked in the right tree.
+
+Pairs with "Operational gaps masquerade as wired infrastructure" (a gate that
+never ran) and "A 'flaky' test that fails deterministically on unchanged code
+is stale, not flaky" (a gate whose assertion no longer matches reality). Same
+family: the gate exists, and the gate is not doing the job you believe it is.
 
 ## Alembic migration + fresh test DB
 
