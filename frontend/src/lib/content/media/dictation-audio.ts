@@ -23,7 +23,7 @@
  * ``images[].src`` is a strictly-typed core field).
  */
 
-import {isDataUri} from "./card-image";
+import {isDataUri} from "../lesson/card-image";
 
 /** Maximum accepted raw audio-file size. A data URI is ~1.33x larger, so a
  *  2 MiB clip becomes ~2.7 MiB of base64 — comfortably within the import +

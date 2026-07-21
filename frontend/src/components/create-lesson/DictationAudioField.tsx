@@ -33,7 +33,7 @@ import {
     DICT_AUDIO_ERROR_DECODE,
     isDataUri,
     processAudioFile,
-} from "../../lib/content/lesson/dictation-audio";
+} from "../../lib/content/media/dictation-audio";
 
 type Translate = (key: string, fallback?: string) => string;
 
