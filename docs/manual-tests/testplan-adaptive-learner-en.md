@@ -197,6 +197,12 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       (overwrites the same id, progress kept) + "Save as a copy";
       foreign-repo lessons show NO Edit; analysis lessons route to the
       import page
+- [ ] **Reopen a plain (no-extension) lesson stays saveable (#1919):**
+      create a lesson via Auto-generate (only the six CORE types, no
+      extension exercise), Save locally → reopen via Edit → step to Review:
+      the "Valid lesson structure" check is GREEN and "Save changes" works
+      (previously it failed with "ext_payload must be object" in API/server
+      mode)
 - [ ] **Migrate legacy English prompts on edit (#1860):** open a
       pre-#1855 legacy lesson (exercise instructions hardcoded in English,
       e.g. "Match each word with its translation.") via "Edit a lesson" →
