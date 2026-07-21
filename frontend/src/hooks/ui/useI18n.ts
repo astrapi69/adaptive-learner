@@ -99,6 +99,19 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 let cachedLang = "";
 let cachedStrings: I18nStrings = {};
 
+/**
+ * Clear the module-level catalog cache. TEST-ONLY seam: the cache survives
+ * component unmounts by design (avoids refetching on remount), but that means
+ * it also survives test boundaries within a file — a catalog loaded by one
+ * test would make the next test skip the async first-paint sequence it needs
+ * to exercise. Vitest isolates per file, not per test, so a per-test reset is
+ * the only way to get a clean first-paint. Not for production use.
+ */
+export function _resetI18nCacheForTests(): void {
+    cachedLang = "";
+    cachedStrings = {};
+}
+
 /** Capped backoff schedule for the catalog fetch (#1810): 5 retries over
  *  ~31s bridge a backend restart without hammering a dead endpoint. */
 const CATALOG_RETRY_DELAYS_MS: readonly number[] = [1000, 2000, 4000, 8000, 16000];
