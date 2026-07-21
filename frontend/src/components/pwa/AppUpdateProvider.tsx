@@ -46,17 +46,18 @@ function buildMessages(t: (key: string, fallback?: string) => string): UpdateMes
 
 export default function AppUpdateProvider({ children }: { children: ReactNode }) {
     const { t, lang } = useI18n();
-    // Memoised on the language, NOT rebuilt per render: this provider sits
-    // above the whole route tree, and a fresh messages object on every render
-    // would change the context identity each time and re-render every
-    // descendant.
-    // ``t`` is a fresh closure on every render, so depending on it would defeat
-    // the memo; the catalog it reads is keyed by ``lang``, which IS the dep.
-    const messages = useMemo(
-        () => buildMessages(t),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [lang],
-    );
+    // Memoised on ``t``, NOT on ``lang`` (#1894): the i18n catalogs load as
+    // lazy per-language chunks, so on first paint ``t`` returns the English
+    // caller-fallbacks and only later resolves the real strings. That async
+    // load changes ``t``'s identity WITHOUT changing ``lang``, so a
+    // ``[lang]``-keyed memo would freeze the messages on the first-paint
+    // English fallbacks for the whole session (the About-view bug: the update
+    // control stayed English while its ``locale``-formatted timestamp was
+    // German). ``t`` is a stable ``useCallback`` keyed on ``[strings, lang]``,
+    // so it only changes when the catalog OR the language changes — exactly
+    // when the messages must be rebuilt — and is otherwise referentially
+    // stable, so this does not churn the context identity per render.
+    const messages = useMemo(() => buildMessages(t), [t]);
     return (
         <PwaUpdateProvider
             store={appUpdateStore}
