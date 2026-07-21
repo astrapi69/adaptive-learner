@@ -9,7 +9,11 @@
  */
 
 import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
-import {requiredExtensionsFor, type GeneratorCard} from "../../exercises";
+import {
+    isExtensionType,
+    requiredExtensionsFor,
+    type GeneratorCard,
+} from "../../exercises";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
     ContentLesson,
@@ -170,12 +174,30 @@ export function buildLessonFromDraft(
     return lesson;
 }
 
+/** Restore the invariant "``ext_payload`` present iff the exercise is an
+ *  ``ext:`` extension type" on a reconstructed exercise (#1919).
+ *
+ *  The lesson JSON-Schema types ``ext_payload`` as object-only ("Absent on
+ *  core exercises"), yet the API-mode ``GET .../lessons`` endpoint serves the
+ *  lesson through ``response_model=Lesson`` with the default
+ *  ``exclude_none=False``, so the Pydantic ``Exercise.ext_payload: dict | None``
+ *  is emitted as ``ext_payload: null`` on every core exercise. Copied verbatim
+ *  into the wizard and re-validated, that null fails ajv with
+ *  ``/steps/N/exercise/ext_payload must be object``. A core exercise must carry
+ *  no ``ext_payload`` at all; an extension exercise keeps its real payload. */
+function reconstructExercise(ex: ContentLessonExercise): ContentLessonExercise {
+    if (isExtensionType(ex.type) || !("ext_payload" in ex)) return ex;
+    const {ext_payload: _dropped, ...core} = ex;
+    return core as ContentLessonExercise;
+}
+
 /** Reverse of {@link buildLessonFromDraft}: turn an existing
  *  ``ContentLesson`` (plus its set entry, for level/title_native) back
  *  into the wizard's ``{meta, cards, exercises}`` so the Lesson Creator
- *  can open pre-filled for editing (#1740). Cards and exercises come
- *  straight off the lesson; theory-only structure is carried separately
- *  by the caller (see {@link preservedTheorySteps}). */
+ *  can open pre-filled for editing (#1740). Cards come straight off the
+ *  lesson; exercises are sanitized so a core exercise never carries a
+ *  serialization-introduced ``ext_payload`` (#1919). Theory-only structure
+ *  is carried separately by the caller (see {@link preservedTheorySteps}). */
 export function lessonToDraftInput(
     lesson: ContentLesson,
     entry?: {level?: string | null; title_native?: string | null},
@@ -189,7 +211,7 @@ export function lessonToDraftInput(
     }));
     const exercises: ContentLessonExercise[] = lesson.steps
         .filter((s) => s.type === "exercise" && s.exercise)
-        .map((s) => s.exercise as ContentLessonExercise);
+        .map((s) => reconstructExercise(s.exercise as ContentLessonExercise));
     const meta: LessonMeta = {
         title: lesson.title,
         titleNative: entry?.title_native ?? "",

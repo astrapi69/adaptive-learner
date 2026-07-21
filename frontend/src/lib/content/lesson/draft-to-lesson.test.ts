@@ -289,6 +289,109 @@ describe("draft-to-lesson editing (#1740)", () => {
     });
 });
 
+// #1919 — reopening a saved core-only lesson for editing fails the structural
+// check with "/steps/1/exercise/ext_payload must be object". In API mode the
+// GET lessons endpoint serves the lesson via ``response_model=Lesson`` with the
+// default ``exclude_none=False``, so the Pydantic ``Exercise.ext_payload:
+// dict | None = None`` is emitted as ``ext_payload: null`` on every CORE
+// exercise. The ajv schema types ext_payload as object-only (no null branch;
+// "Absent on core exercises"), while every other optional field tolerates null
+// via ``anyOf: [..., {type: null}]`` — so only ext_payload breaks. (Dexie mode
+// parses via the engine adapter, which omits the key, so it reproduces only in
+// API mode.) Reconstruction must drop ext_payload from core exercises and keep
+// it for real extension exercises.
+describe("draft-to-lesson edit-mode ext_payload reconstruction (#1919)", () => {
+    /** A saved lesson as it comes back from the API-mode GET: the Pydantic
+     *  ``exclude_none=False`` serialization has materialized ``ext_payload:
+     *  null`` on every core exercise. */
+    function reloadedCoreLesson() {
+        const built = buildLessonFromDraft(input());
+        return {
+            ...built,
+            steps: built.steps.map((s) =>
+                s.type === "exercise" && s.exercise
+                    ? {
+                          ...s,
+                          exercise: {
+                              ...s.exercise,
+                              ext_payload: null,
+                          } as unknown as (typeof s)["exercise"],
+                      }
+                    : s,
+            ),
+        };
+    }
+
+    it("strips ext_payload from reconstructed core exercises", () => {
+        const back = lessonToDraftInput(reloadedCoreLesson(), {level: "A1"});
+        expect(back.exercises.length).toBeGreaterThan(0);
+        expect(back.exercises.every((e) => !("ext_payload" in e))).toBe(true);
+    });
+
+    it("re-building a reopened core lesson validates (no ext_payload error)", () => {
+        const reloaded = reloadedCoreLesson();
+        const back = lessonToDraftInput(reloaded, {level: "A1"});
+        // Before the fix this threw "/steps/1/exercise/ext_payload must be object".
+        expect(() =>
+            buildLessonFromDraft(back, {
+                id: reloaded.id,
+                theorySteps: preservedTheorySteps(reloaded.steps, back.meta),
+            }),
+        ).not.toThrow();
+    });
+
+    it("preserves ext_payload for a real extension exercise (no over-correction)", () => {
+        const dictation = {
+            id: "ex-dict",
+            type: "ext:al-dictation",
+            prompt: "Hoere zu und schreibe, was du hoerst.",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {audio: "assets/audio/clip.mp3", accept: ["Bonjour"]},
+        };
+        const base = input();
+        const built = buildLessonFromDraft({
+            ...base,
+            exercises: [
+                ...base.exercises,
+                dictation as unknown as (typeof base.exercises)[number],
+            ],
+        });
+        // Simulate the reload: core exercises gain ext_payload: null, the
+        // extension exercise keeps its real payload object.
+        const reloaded = {
+            ...built,
+            steps: built.steps.map((s) =>
+                s.type === "exercise" &&
+                s.exercise &&
+                s.exercise.type !== "ext:al-dictation"
+                    ? {
+                          ...s,
+                          exercise: {
+                              ...s.exercise,
+                              ext_payload: null,
+                          } as unknown as (typeof s)["exercise"],
+                      }
+                    : s,
+            ),
+        };
+        const back = lessonToDraftInput(reloaded, {level: "A1"});
+        const rebuiltDictation = back.exercises.find(
+            (e) => e.type === "ext:al-dictation",
+        );
+        expect(rebuiltDictation?.ext_payload).toEqual({
+            audio: "assets/audio/clip.mp3",
+            accept: ["Bonjour"],
+        });
+        // Core exercises are still stripped even alongside an extension one.
+        expect(
+            back.exercises
+                .filter((e) => e.type !== "ext:al-dictation")
+                .every((e) => !("ext_payload" in e)),
+        ).toBe(true);
+    });
+});
+
 describe("draftCardsToGeneratorCards (#1847)", () => {
     function draftCard(over: Partial<LessonCardDraft>): LessonCardDraft {
         return {

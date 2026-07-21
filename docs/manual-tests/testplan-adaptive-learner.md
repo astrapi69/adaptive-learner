@@ -197,6 +197,12 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-
       schritt bleibt) + "Als Kopie speichern"; Fremd-Repo-Lektionen
       zeigen KEIN Bearbeiten; Analyse-Lektionen fuehren zur Import-Seite
+- [ ] **Einfache Lektion (ohne Extension) bleibt speicherbar (#1919):**
+      eine Lektion per Auto-Generieren erstellen (nur die sechs CORE-Typen,
+      keine Extension-Uebung), lokal speichern → ueber Bearbeiten erneut
+      oeffnen → zum Review blaettern: der Check "Gueltige Lektionsstruktur"
+      ist GRUEN und "Aenderungen speichern" funktioniert (zuvor scheiterte
+      es mit "ext_payload must be object" im API-/Server-Modus)
 - [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
       VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
       "Match each word with its translation.") ueber "Lektion bearbeiten"
