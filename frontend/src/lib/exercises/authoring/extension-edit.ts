@@ -35,6 +35,7 @@ import {
     gradedQuizPayloadErrors,
     type GqQuestion,
 } from "../payload/graded-quiz";
+import {DICTATION_EXT_TYPE, dictationPayloadErrors} from "../payload/dictation";
 import type {ContentLessonExercise} from "../../../storage/types";
 import {createIdFactory} from "./id-factory";
 
@@ -43,14 +44,17 @@ export {
     ERROR_CORRECTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
+    DICTATION_EXT_TYPE,
 };
 
-/** The extension exercise types the wizard can author (#1852, editors 1-4). */
+/** The extension exercise types the wizard can author (#1852, editors 1-4;
+ *  #1887 added dictation, editor 5). */
 export const EXTENSION_WIZARD_TYPES = [
     CATEGORIZATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
+    DICTATION_EXT_TYPE,
 ] as const;
 
 export type ExtensionWizardType = (typeof EXTENSION_WIZARD_TYPES)[number];
@@ -78,7 +82,8 @@ export type ExtensionEditCode =
     | "categorization"
     | "error_correction"
     | "reading_comprehension"
-    | "graded_quiz";
+    | "graded_quiz"
+    | "dictation";
 
 /** Result of validating an extension exercise draft: whether it is saveable
  *  and, when not, the machine {@link ExtensionEditCode} of the failed rule. */
@@ -133,6 +138,7 @@ const BLANK_PAYLOAD: Record<ExtensionWizardType, () => unknown> = {
         pass_threshold: 60,
         questions: [blankSubQuestion(true)],
     }),
+    [DICTATION_EXT_TYPE]: () => ({audio: "", accept: []}),
 };
 
 /**
@@ -189,6 +195,9 @@ export function validateExtensionExercise(
         return gradedQuizPayloadErrors(ex).length === 0
             ? ok
             : fail("graded_quiz");
+    }
+    if (ex.type === DICTATION_EXT_TYPE) {
+        return dictationPayloadErrors(ex).length === 0 ? ok : fail("dictation");
     }
     // A type without a wizard editor is never blocked here.
     return ok;
@@ -296,6 +305,19 @@ export function normalizeExtensionExercise(
             ext_payload: {
                 pass_threshold: payload?.pass_threshold,
                 questions: normalizeSubQuestions(ex, true),
+            },
+        } as ContentLessonExercise;
+    }
+    if (ex.type === DICTATION_EXT_TYPE) {
+        const payload = ex.ext_payload as
+            | {audio?: string; accept?: string[]}
+            | undefined;
+        return {
+            ...ex,
+            prompt,
+            ext_payload: {
+                audio: (payload?.audio ?? "").trim(),
+                accept: trimmedNonEmpty(payload?.accept),
             },
         } as ContentLessonExercise;
     }

@@ -1,6 +1,8 @@
 /**
- * Inline editor for a wizard-authored EXTENSION exercise (#1852). Editors
- * 1+2: ``ext:al-categorization`` + ``ext:al-error-correction``.
+ * Inline editor for a wizard-authored EXTENSION exercise (#1852; #1887 added
+ * dictation). Dispatches the five authored types: ``ext:al-categorization`` +
+ * ``ext:al-error-correction`` (inline fields), ``ext:al-reading-comprehension``
+ * + ``ext:al-graded-quiz`` + ``ext:al-dictation`` (field components).
  *
  * Same interaction model as the core-type ``ExerciseEditor`` (#1845): a
  * private draft, a Save gated on the shipped payload validator
@@ -19,6 +21,7 @@ import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
 import {
     CATEGORIZATION_EXT_TYPE,
+    DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
@@ -28,6 +31,7 @@ import {
 } from "../../lib/exercises";
 import {extensionEditErrorKey} from "../../lib/content/lesson/edit-error-keys";
 import {
+    DictationFields,
     GradedQuizFields,
     ReadingComprehensionFields,
 } from "./extension-fields";
@@ -47,6 +51,10 @@ interface CategorizationPayload {
 interface ErrorCorrectionPayload {
     tokens: string[];
     error_index: number;
+    accept: string[];
+}
+interface DictationPayload {
+    audio: string;
     accept: string[];
 }
 
@@ -125,6 +133,14 @@ export default function ExtensionExerciseEditor({
                             questions: WizardSubQuestion[];
                         }
                     }
+                    onChange={patchPayload}
+                    t={t}
+                />
+            )}
+            {draft.type === DICTATION_EXT_TYPE && (
+                <DictationFields
+                    id={id}
+                    payload={draft.ext_payload as unknown as DictationPayload}
                     onChange={patchPayload}
                     t={t}
                 />
