@@ -84,10 +84,26 @@ describe("Landing page", () => {
         await waitFor(() => {
             expect(screen.getByTestId("landing")).toBeInTheDocument();
         });
-        expect(screen.getByText(/Adaptive Learner/)).toBeInTheDocument();
+        expect(
+            screen.getByRole("heading", {name: /Adaptive Learner/}),
+        ).toBeInTheDocument();
         expect(screen.getByTestId("landing-lang-de")).toBeInTheDocument();
         expect(screen.getByTestId("landing-lang-en")).toBeInTheDocument();
         expect(screen.getByTestId("landing-start")).toBeInTheDocument();
+    });
+
+    it("never renders a raw i18n key for the intro (#1902)", async () => {
+        // Rendered outside I18nProvider, so useI18n() returns the no-provider
+        // stub t(key, fallback) => fallback ?? key — the same shape as the
+        // first-paint window before the async catalog resolves. A t() call
+        // without a caller fallback would leak the raw dot-notation key here,
+        // exactly as reported on the deployment.
+        renderLanding();
+        await waitFor(() => {
+            expect(screen.getByTestId("landing")).toBeInTheDocument();
+        });
+        expect(screen.queryByText("landing.intro")).not.toBeInTheDocument();
+        expect(document.body.textContent).not.toContain("landing.intro");
     });
 
     it("opens the documentation link in a new tab without losing context (#173)", async () => {
