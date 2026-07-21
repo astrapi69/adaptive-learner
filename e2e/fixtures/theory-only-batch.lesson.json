@@ -1,0 +1,41 @@
+{
+  "id": "e2e-batch-theory-only",
+  "title": "E2E Batch Theory Only",
+  "description": "Theorie-only Lektion fuer die #1896-Geraeteverifikation: das Set hat KEINE Uebungen, also bleibt der Stapel-Generierungs-Button aktiv.",
+  "target_language": "de",
+  "source_language": "de",
+  "domain": "knowledge",
+  "estimated_minutes": 5,
+  "cards": [
+    {
+      "id": "karte-1",
+      "front": "Rettungsgasse - wo?",
+      "back": "Zwischen dem linken und dem unmittelbar rechts daneben liegenden Fahrstreifen.",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": ["verkehrsregeln"]
+    },
+    {
+      "id": "karte-2",
+      "front": "Rettungsgasse - wann?",
+      "back": "Sobald der Verkehr stockt, nicht erst wenn ein Einsatzfahrzeug kommt.",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": ["verkehrsregeln"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "theorie-1",
+      "type": "theory",
+      "title": "Rettungsgasse",
+      "body": "# Rettungsgasse\n\nSobald der Verkehr **stockt**, wird eine Rettungsgasse gebildet - nicht erst, wenn ein Einsatzfahrzeug zu sehen ist."
+    },
+    {
+      "id": "theorie-2",
+      "type": "theory",
+      "title": "Warum so frueh?",
+      "body": "Im stehenden Stau laesst sich nachtraeglich kaum noch Platz schaffen. Deshalb gilt die Regel ab dem ersten Stocken."
+    }
+  ]
+}

@@ -346,6 +346,16 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] Kein Button ohne Key fuehrt zu Error-Toast (disabled + Tooltip)
 
+### Stapel-Generierung "Uebungen fuer alle Lektionen" (#1896)
+- [ ] Meine Inhalte → Meine Lektionen, Set in dem ALLE Lektionen bereits
+      Uebungen haben: Button "Uebungen fuer alle Lektionen generieren" ist
+      SOFORT deaktiviert, Tooltip "Alle Lektionen haben bereits Uebungen."
+      (kein Klick noetig, kein Info-Toast)
+- [ ] Set mit mindestens EINER Lektion ohne Uebungen: Button aktiv,
+      Kosten-Bestaetigung → Fortschritt → Ergebnis-Toast wie bisher
+- [ ] Nach erfolgreichem Durchlauf (alle Lektionen fertig): Button wird
+      ohne Reload deaktiviert
+
 ### KI-Schluessel-Tresor Import (#1765 / #1769)
 - [ ] Settings → KI → "Konfigurierte Provider" → "Importieren" springt zu
       Settings → Daten und scrollt den KeyVault-Import-Block sichtbar (#1765)
