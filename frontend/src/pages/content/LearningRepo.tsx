@@ -137,9 +137,9 @@ export default function LearningRepoPage() {
 
   return (
     <PageContainer testId="learning-repo-page">
-      <header className="learning-repo-header">
-        <h1>{t("repo.page.title", "Learning Repository")}</h1>
-        <div className="learning-repo-actions">
+      <header className="learning-repo-header mb-2 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-xl font-semibold">{t("repo.page.title", "Learning Repository")}</h1>
+        <div className="learning-repo-actions flex flex-wrap items-center gap-2">
           <Button
             type="button"
             variant="secondary"
@@ -204,13 +204,16 @@ export default function LearningRepoPage() {
           </Feature>
         </div>
       </header>
-      <p className="learning-repo-meta">
+      <p className="learning-repo-meta mb-4 text-sm text-fg-secondary">
         {t("repo.page.rendered_at", "Rendered at")}: {new Date(state.rendered_at).toLocaleString()}{" "}
         · {t("repo.page.language", "Language")}: <code>{state.language}</code>
       </p>
 
-      <div className="learning-repo-body">
-        <aside className="learning-repo-sidebar" data-testid="repo-sidebar">
+      <div className="learning-repo-body grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
+        <aside
+          className="learning-repo-sidebar flex flex-col gap-1 self-start"
+          data-testid="repo-sidebar"
+        >
           {fileGroups.root.map((path) => (
             <FileButton
               key={path}
@@ -220,7 +223,7 @@ export default function LearningRepoPage() {
             />
           ))}
           {fileGroups.topics.map(({ folder, paths }) => (
-            <details key={folder} className="learning-repo-topic-group" open>
+            <details key={folder} className="learning-repo-topic-group mt-1" open>
               <summary>{folder}</summary>
               {paths.map((path) => (
                 <FileButton
