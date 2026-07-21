@@ -621,6 +621,15 @@ verify-screenshots: ## Verify per-feature screenshots against the committed base
 	@echo "=== Verifying per-feature screenshots ==="
 	cd e2e && npx playwright test --config=playwright.features.config.ts
 
+capture-blog-screenshots: ## Capture lesson-creator screenshots for the engine blog series (writes only, no baseline)
+	@echo "=== Building frontend ==="
+	cd frontend && bun run build
+	@echo ""
+	@echo "=== Capturing blog screenshots (DOCS_LANG=$(or $(DOCS_LANG),en)) ==="
+	cd e2e && DOCS_LANG=$(or $(DOCS_LANG),en) npx playwright test --config=playwright.docs.config.ts
+	@echo ""
+	@echo "Output: e2e/docs/output/$(or $(DOCS_LANG),en)/ (git-ignored; copy what you need into the article)"
+
 # --- Version sync ---
 
 sync-versions: ## Propagate backend/pyproject.toml version to all subsystems

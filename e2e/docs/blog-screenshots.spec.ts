@@ -1,0 +1,136 @@
+/**
+ * Capture the lesson-creator screenshots used by the engine blog series
+ * (learn-content-engine, docs/blog/create-a-lesson-in-the-app.md, part 3).
+ *
+ * This is a WRITER, not a gate: it asserts only enough to prove it captured
+ * the intended surface (a missing picker or a renamed testid must fail loudly
+ * rather than silently producing a screenshot of the wrong screen), then
+ * writes PNGs for a human to pick from. No baseline, no diff.
+ *
+ * Run it whenever the creator UI changes in a way an article shows. The
+ * screenshots it replaces were previously produced by an ad-hoc script that
+ * was rewritten from scratch twice; this file exists so there is no third time.
+ */
+
+import {mkdirSync} from "node:fs";
+import {join} from "node:path";
+
+import {test, expect, type Page} from "@playwright/test";
+
+import {DOCS_LANG} from "../playwright.docs.config";
+
+const OUT = join(__dirname, "output", DOCS_LANG);
+
+/** Cards for the running example of the article ("Ordering coffee"). */
+const CARDS = [
+    ["coffee", "der Kaffee", "A coffee, please."],
+    ["please", "bitte", "Please wait here."],
+    ["the bill", "die Rechnung", "The bill, please."],
+    ["milk", "die Milch", "Milk with the coffee?"],
+] as const;
+
+test.beforeAll(() => {
+    mkdirSync(OUT, {recursive: true});
+});
+
+/** Open the creator with the UI language pinned to the run's DOCS_LANG. */
+async function openCreator(page: Page): Promise<void> {
+    await page.addInitScript((lang: string) => {
+        localStorage.setItem("adaptive-learner.language", lang);
+    }, DOCS_LANG);
+    await page.goto("/create-lesson", {waitUntil: "networkidle"});
+    await expect(page.getByTestId("create-lesson-title")).toBeVisible();
+}
+
+/** Scroll to the top so the page header is never clipped, then write the PNG. */
+async function shot(page: Page, name: string): Promise<void> {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(300);
+    await page.screenshot({path: join(OUT, `${name}.png`)});
+}
+
+/**
+ * Pick a value in one of the language dropdowns. These are Radix comboboxes
+ * (``button[role=combobox]`` plus a portalled listbox), NOT native selects, so
+ * ``selectOption`` silently does nothing here: open it and click the option.
+ * The visible option label follows the UI language, hence the per-language map.
+ */
+async function pickLanguage(page: Page, testId: string, label: string): Promise<void> {
+    await page.getByTestId(testId).click();
+    await page.getByRole("option", {name: label, exact: true}).click();
+    await expect(page.getByTestId(testId)).toContainText(label);
+}
+
+async function fillMetadata(page: Page, title: string, native: string): Promise<void> {
+    await page.getByTestId("create-lesson-title").fill(title);
+    await page.getByTestId("create-lesson-title-native").fill(native);
+    // The language names in these dropdowns are NOT translated: both the
+    // English and the German UI list them as "English", "German", and so on.
+    // So the same labels work for every DOCS_LANG.
+    await pickLanguage(page, "create-lesson-target-lang", "English");
+    await pickLanguage(page, "create-lesson-source-lang", "German");
+}
+
+test("captures the extension-authoring path", async ({page}) => {
+    await openCreator(page);
+    await fillMetadata(page, "Coffee shop: advanced practice", "Im Café: erweiterte Übungen");
+    await page.getByTestId("create-lesson-templates").scrollIntoViewIfNeeded();
+    await shot(page, "e1-extensions-entry");
+
+    await page.getByTestId("template-extensions").click();
+    await expect(page.getByTestId("create-lesson-extension-step")).toBeVisible();
+
+    await page.getByTestId("extension-add").click();
+    const picker = page.getByTestId("extension-add-picker");
+    await expect(picker).toBeVisible();
+    // Guards the article's central claim: all five adopted types are offered.
+    await expect(picker.getByRole("button")).toHaveCount(6); // 5 types + Cancel
+    await shot(page, "e2-type-picker");
+
+    await page.getByTestId("extension-add-type-dictation").click();
+    const editor = page.locator('[data-testid^="exercise-ext-editor-"]').first();
+    await expect(editor).toBeVisible();
+    const id = (await editor.getAttribute("data-testid"))!.replace("exercise-ext-editor-", "");
+
+    await page.getByTestId(`exercise-ext-prompt-${id}`).fill("Listen and write the sentence.");
+    await page.getByTestId(`exercise-ext-dict-audio-${id}`).fill("assets/audio/coffee-please.mp3");
+    for (const accepted of ["A coffee, please.", "a coffee please"]) {
+        await page.getByTestId(`exercise-ext-dict-accept-${id}-input`).fill(accepted);
+        await page.getByTestId(`exercise-ext-dict-accept-${id}-add`).click();
+    }
+    await shot(page, "e3-dictation-fields");
+});
+
+test("captures the core card and exercise steps", async ({page}) => {
+    await openCreator(page);
+    await fillMetadata(page, "Ordering coffee", "Kaffee bestellen");
+    await page.getByTestId("create-lesson-templates").scrollIntoViewIfNeeded();
+    await shot(page, "s1-metadata");
+
+    const next = page.getByRole("button", {name: /next|weiter/i}).first();
+    await next.click();
+    await expect(page.getByTestId("card-front-input")).toBeVisible();
+
+    for (const [front, back, example] of CARDS) {
+        await page.getByTestId("card-front-input").fill(front);
+        await page.getByTestId("card-back-input").fill(back);
+        await page.getByTestId("card-example-input").fill(example);
+        await page.getByTestId("card-add-button").click();
+    }
+    await expect(page.getByTestId("card-count")).toContainText(String(CARDS.length));
+    await shot(page, "s2-cards");
+
+    await next.click();
+    await expect(page.getByTestId("exercise-gen-config")).toBeVisible();
+    await shot(page, "s3-exercises-config");
+
+    await page.getByTestId("exercise-generate").click();
+    // Count the rendered entries rather than parsing the label: "10 exercises"
+    // contains the character "0", so a text assertion here reads as empty.
+    await expect(page.getByTestId("exercise-list").locator("li")).not.toHaveCount(0);
+    await shot(page, "s3-exercises");
+
+    await page.getByTestId("exercise-add").click();
+    await expect(page.getByTestId("exercise-add-picker")).toBeVisible();
+    await shot(page, "s3-manual-add");
+});
