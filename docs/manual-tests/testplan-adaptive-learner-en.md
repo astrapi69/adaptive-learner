@@ -248,6 +248,19 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       `requires_extensions: ["ext:al-dictation@1"]`** (whether added via the core
       picker OR the extension wizard) and is playable. **Regression:** the
       existing extension-wizard path for dictation still works unchanged
+- [ ] **Dictation audio upload (#1911, Slice 3):** In the dictation editor
+      (core picker OR extension wizard) the audio field shows an **"Upload
+      audio"** button above a **"…assets/audio/clip.mp3"** path input. Click
+      Upload → a file picker offers MP3/OGG/WAV. Pick a real clip → an inline
+      **audio player + "Remove"** appear (the path box stays blank; the base64
+      blob is not shown), and the accept-transcriptions list still works. Save
+      the lesson, play it: **"Listen first" plays the uploaded clip** in the
+      lesson (both storage modes, no assets folder needed — the clip rides in
+      the lesson JSON as a data URI, surviving export/import). **Remove** clears
+      it. **Regression:** typing an `assets/audio/…` path still works as the
+      alternative (no upload). **Errors:** a too-large file (> 2 MB) OR a wrong
+      format (e.g. `.mp4`) shows a clear inline error and does not crash;
+      nothing is stored
 - [ ] **Multiple-choice single/multi mode control (#1888):** In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first

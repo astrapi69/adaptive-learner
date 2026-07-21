@@ -1,17 +1,18 @@
 /**
- * Authoring fields for ``ext:al-dictation`` (#1887, editor 5): a typed audio
+ * Authoring fields for ``ext:al-dictation`` (#1887, editor 5): the audio
  * reference plus the accepted transcriptions the learner may type. Pure +
  * props-driven — the parent owns the ``ext_payload``.
  *
- * v1 takes a typed ``assets/`` path only (no upload — that is a later
- * sub-step, analogous to the card image upload #1764). The accepted answers
- * reuse the shared {@link StringListEditor}; the renderer grades them with the
- * shared free-text matcher, so there is no dictation-specific list control or
- * grader.
+ * The audio reference is edited via {@link DictationAudioField} (#1911, Slice
+ * 3): upload a clip (stored self-contained as a data URI) OR type an
+ * ``assets/`` path — the typed path kept as an alternative, not replaced. The
+ * accepted answers reuse the shared {@link StringListEditor}; the renderer
+ * grades them with the shared free-text matcher, so there is no
+ * dictation-specific list control or grader.
  */
 
-import {Input} from "@/components/ui/input";
 import StringListEditor from "../../../shared/forms/StringListEditor";
+import DictationAudioField from "../DictationAudioField";
 
 type Translate = (key: string, fallback?: string) => string;
 
@@ -36,31 +37,12 @@ export default function DictationFields({
 
     return (
         <div className="flex flex-col gap-3">
-            <label className="form-field flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
-                    {t(
-                        "create_lesson.extensions.edit.dict_audio_label",
-                        "Audio file path",
-                    )}
-                </span>
-                <Input
-                    type="text"
-                    maxLength={500}
-                    value={audio}
-                    placeholder={t(
-                        "create_lesson.extensions.edit.dict_audio_placeholder",
-                        "assets/audio/clip.mp3",
-                    )}
-                    data-testid={`exercise-ext-dict-audio-${id}`}
-                    onChange={(e) => onChange({audio: e.target.value, accept})}
-                />
-                <span className="form-hint text-xs text-fg-muted">
-                    {t(
-                        "create_lesson.extensions.edit.dict_audio_hint",
-                        "Relative path to the audio clip inside the set's assets folder.",
-                    )}
-                </span>
-            </label>
+            <DictationAudioField
+                id={id}
+                value={audio}
+                onChange={(next) => onChange({audio: next, accept})}
+                t={t}
+            />
 
             <StringListEditor
                 values={accept}
