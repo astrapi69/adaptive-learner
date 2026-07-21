@@ -48,7 +48,7 @@ import {
     type ExerciseGenConfig,
     type GeneratableType,
 } from "../../lib/exercises";
-import {exerciseTypeLabelKey} from "../../lib/content/lesson/exercise-type-label";
+import {exerciseTypeLabelKey} from "../../lib/content/lesson/edit-error-keys";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export const MIN_EXERCISES = 5;
