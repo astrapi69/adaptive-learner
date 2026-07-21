@@ -33,6 +33,18 @@ test.beforeAll(() => {
     mkdirSync(OUT, {recursive: true});
 });
 
+/**
+ * A string that only the BACKEND catalog can supply, per language. The
+ * hardcoded first-paint fallbacks do not cover the card step, so seeing this
+ * proves ``/api/i18n/{lang}`` was actually reached. Without the backend a
+ * German run rendered German navigation and English content, which looked like
+ * an i18n gap and was not one.
+ */
+const CATALOG_PROOF = {
+    en: "Add vocabulary cards",
+    de: "Vokabelkarten hinzufügen",
+}[DOCS_LANG];
+
 /** Open the creator with the UI language pinned to the run's DOCS_LANG. */
 async function openCreator(page: Page): Promise<void> {
     await page.addInitScript((lang: string) => {
@@ -53,7 +65,8 @@ async function shot(page: Page, name: string): Promise<void> {
  * Pick a value in one of the language dropdowns. These are Radix comboboxes
  * (``button[role=combobox]`` plus a portalled listbox), NOT native selects, so
  * ``selectOption`` silently does nothing here: open it and click the option.
- * The visible option label follows the UI language, hence the per-language map.
+ * Asserting the trigger afterwards is the point: a silent no-op once shipped
+ * two published screenshots with the wrong language pair.
  */
 async function pickLanguage(page: Page, testId: string, label: string): Promise<void> {
     await page.getByTestId(testId).click();
@@ -107,9 +120,17 @@ test("captures the core card and exercise steps", async ({page}) => {
     await page.getByTestId("create-lesson-templates").scrollIntoViewIfNeeded();
     await shot(page, "s1-metadata");
 
-    const next = page.getByRole("button", {name: /next|weiter/i}).first();
+    // Testid, not the label: the German catalog has both "Weiter" (next) and
+    // "Weiter bearbeiten" (keep editing), so a name regex is ambiguous once
+    // the backend catalog is loaded.
+    const next = page.getByTestId("create-lesson-next");
     await next.click();
     await expect(page.getByTestId("card-front-input")).toBeVisible();
+    // The capture is only usable if the UI really rendered in DOCS_LANG. This
+    // string comes from the backend catalog, so it fails loudly when the
+    // catalog is unreachable instead of writing English screenshots labelled
+    // German.
+    await expect(page.getByText(CATALOG_PROOF, {exact: false}).first()).toBeVisible();
 
     for (const [front, back, example] of CARDS) {
         await page.getByTestId("card-front-input").fill(front);
