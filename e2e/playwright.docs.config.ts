@@ -27,6 +27,11 @@
 
 import {defineConfig, devices} from "@playwright/test";
 
+// Reuse the E2E smoke's throwaway test key instead of writing the literal a
+// second time. One declaration, one place to rotate, and no duplicated
+// secret for secret scanning to flag.
+import {E2E_FERNET_KEY} from "./playwright.config";
+
 const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_DOCS_PREVIEW_PORT) || 4179;
 
@@ -43,14 +48,11 @@ const BACKEND_PORT =
 
 const DOCS_DATA_DIR = "/tmp/adaptive-learner-docs-capture-data";
 
-// Same fixed test key the E2E smoke uses: the capture backend only ever holds
-// throwaway state, and committing it keeps the run self-contained (no .env).
-const DOCS_FERNET_KEY = "i1u3pP7HXVHrUKE2NgUSe3FxLknXVbNZJxs1u-3pV9k=";
 
 const BACKEND_ENV = [
     `ADAPTIVE_LEARNER_PORT=${BACKEND_PORT}`,
     `ADAPTIVE_LEARNER_DATA_DIR=${DOCS_DATA_DIR}`,
-    `ADAPTIVE_LEARNER_SECRET_KEY=${DOCS_FERNET_KEY}`,
+    `ADAPTIVE_LEARNER_SECRET_KEY=${E2E_FERNET_KEY}`,
 ].join(" ");
 
 /** UI language of the captured screenshots. The article set is English. */
