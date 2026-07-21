@@ -2956,7 +2956,8 @@
         "categorization": "분류",
         "error-correction": "오류 수정",
         "reading-comprehension": "독해",
-        "graded-quiz": "채점 퀴즈"
+        "graded-quiz": "채점 퀴즈",
+        "dictation": "받아쓰기"
       },
       "edit": {
         "prompt_label": "지시문 / 문제",
@@ -2966,6 +2967,14 @@
         "err_error_correction": "단어를 2개 이상 추가하고, 틀린 단어를 표시하고, 허용되는 수정을 하나 이상 추가하세요.",
         "err_reading_comprehension": "지문과 완성된 문제를 하나 이상 추가하세요(정답이 있는 객관식 또는 허용 답안이 있는 주관식).",
         "err_graded_quiz": "양의 배점을 가진 완성된 문제를 하나 이상 추가하세요(정답이 있는 객관식 또는 허용 답안이 있는 주관식).",
+        "err_dictation": "오디오 파일 경로와 최소 하나의 허용 전사를 추가하세요.",
+        "dict_audio_label": "오디오 파일 경로",
+        "dict_audio_placeholder": "assets/audio/clip.mp3",
+        "dict_audio_hint": "세트의 assets 폴더 내 오디오 클립에 대한 상대 경로.",
+        "dict_accept_label": "허용되는 전사",
+        "dict_accept_add": "추가",
+        "dict_accept_remove": "전사 제거",
+        "dict_accept_placeholder": "학습자가 입력해야 할 내용",
         "q_list_label": "문제",
         "q_prompt_label": "문제",
         "q_prompt_placeholder": "문제",

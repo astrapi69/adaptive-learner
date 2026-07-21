@@ -59,6 +59,24 @@ export const EXTENSION_WIZARD_TYPES = [
 
 export type ExtensionWizardType = (typeof EXTENSION_WIZARD_TYPES)[number];
 
+/** The reserved prefix of every extension exercise type (``ext:<vendor>-<name>``).
+ *  An exercise whose ``type`` starts with it is opaque to the core schema and
+ *  MUST be declared in the lesson's ``requires_extensions`` (#1895). */
+export const EXTENSION_TYPE_PREFIX = "ext:";
+
+/**
+ * True when ``type`` is an extension exercise type (``ext:`` namespace), as
+ * opposed to a core {@link GeneratableType}. The single predicate every build
+ * + validation path uses so "is this an extension?" is decided in one place.
+ *
+ * @example
+ * isExtensionType("ext:al-dictation"); // true
+ * isExtensionType("matching");         // false
+ */
+export function isExtensionType(type: string): boolean {
+    return type.startsWith(EXTENSION_TYPE_PREFIX);
+}
+
 /** A sub-question shape shared by reading-comprehension + graded-quiz. The
  *  wizard keeps BOTH ``options`` and ``accept`` present so a type switch never
  *  loses data; normalization drops the branch the chosen type does not use. */

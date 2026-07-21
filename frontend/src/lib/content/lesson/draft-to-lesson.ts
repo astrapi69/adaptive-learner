@@ -9,7 +9,7 @@
  */
 
 import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
-import type {GeneratorCard} from "../../exercises";
+import {requiredExtensionsFor, type GeneratorCard} from "../../exercises";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
     ContentLesson,
@@ -144,6 +144,12 @@ export function buildLessonFromDraft(
     });
 
     const theoryCount = steps.filter((s) => s.type !== "exercise").length;
+    // #1895 — a manually-added extension exercise (e.g. dictation via the
+    // core-type picker) MUST declare its extension so the lesson is refused,
+    // not silently mis-rendered, in an app without it. Only set the field when
+    // there is one to declare, so a pure-core lesson never carries a spurious
+    // ``requires_extensions: []``.
+    const requiredExtensions = requiredExtensionsFor(exercises);
     const lesson: ContentLesson = {
         id: opts.id ?? (slugify(meta.title) || "lesson"),
         title: meta.title.trim(),
@@ -153,6 +159,9 @@ export function buildLessonFromDraft(
         estimated_minutes: estimateMinutes(theoryCount, exercises.length),
         cards: lessonCards,
         steps,
+        ...(requiredExtensions.length > 0
+            ? {requires_extensions: requiredExtensions}
+            : {}),
         contributed_by: meta.author.trim() || null,
         contributed_at: meta.author.trim() ? new Date().toISOString() : null,
     };

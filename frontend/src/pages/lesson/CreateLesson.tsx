@@ -34,6 +34,7 @@ import {MIN_EXERCISES} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
+    isExtensionType,
     validateExerciseEdit,
     validateExtensionExercise,
     buildExtensionLesson,
@@ -369,9 +370,15 @@ export default function CreateLesson() {
             // Too few, OR any exercise (generated or manually added) still
             // incomplete — reuse the same per-type validator as the inline
             // editor so a half-filled manual exercise can't slip into step 4.
+            // A manually-added extension exercise (dictation, #1895) validates
+            // through the extension payload validator, not the core one.
+            const incomplete = (ex: ContentLessonExercise): boolean =>
+                isExtensionType(ex.type)
+                    ? !validateExtensionExercise(ex).valid
+                    : !validateExerciseEdit(ex).valid;
             if (
                 exercises.length < MIN_EXERCISES ||
-                exercises.some((ex) => !validateExerciseEdit(ex).valid)
+                exercises.some(incomplete)
             ) {
                 setExerciseError(true);
                 return;

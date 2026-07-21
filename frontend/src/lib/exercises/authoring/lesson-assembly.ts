@@ -22,6 +22,7 @@ import {
     slugify,
     validateGeneratedLesson,
 } from "../../content/analysis/analysis-to-lesson";
+import {isExtensionType} from "./extension-edit";
 import type {LessonMeta} from "../../content/lesson/lesson-draft";
 import type {
     ContentLesson,
@@ -73,14 +74,17 @@ export function appendExercisesToLesson(
     return merged;
 }
 
-/** Distinct ``requires_extensions`` entries (versioned) for the exercises
- *  used, in first-seen order. */
+/** Distinct ``requires_extensions`` entries (versioned) for the EXTENSION
+ *  exercises used, in first-seen order. Core types are skipped (#1895): a
+ *  mixed core+extension list reaching this helper via the main wizard path
+ *  must declare only the extensions, never a core type like ``matching``. */
 export function requiredExtensionsFor(
     exercises: ContentLessonExercise[],
 ): string[] {
     const seen = new Set<string>();
     const out: string[] = [];
     for (const ex of exercises) {
+        if (!isExtensionType(ex.type)) continue;
         const entry = `${ex.type}@${EXTENSION_VERSION}`;
         if (!seen.has(entry)) {
             seen.add(entry);

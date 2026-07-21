@@ -37,12 +37,18 @@ import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import ExerciseEditor from "./ExerciseEditor";
+import ExtensionExerciseEditor from "./ExtensionExerciseEditor";
 import {
     createBlankExercise,
+    createBlankExtensionExercise,
+    DICTATION_EXT_TYPE,
+    isExtensionType,
     newExerciseId,
+    newExtensionExerciseId,
     type ExerciseGenConfig,
     type GeneratableType,
 } from "../../lib/exercises";
+import {exerciseTypeLabelKey} from "../../lib/content/lesson/exercise-type-label";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export const MIN_EXERCISES = 5;
@@ -111,8 +117,16 @@ export default function ExerciseGenerator({
     const [picking, setPicking] = useState(false);
     const [autoEditId, setAutoEditId] = useState<string | null>(null);
 
-    function addManual(type: GeneratableType) {
-        const exercise = createBlankExercise(type, newExerciseId());
+    // Dictation (#1895) is an EXTENSION type reachable from the core picker:
+    // it reuses the extension blank factory + editor, not the core ones.
+    function addManual(type: GeneratableType | typeof DICTATION_EXT_TYPE) {
+        const exercise =
+            type === DICTATION_EXT_TYPE
+                ? createBlankExtensionExercise(
+                      DICTATION_EXT_TYPE,
+                      newExtensionExerciseId(),
+                  )
+                : createBlankExercise(type, newExerciseId());
         onAdd(exercise);
         setAutoEditId(exercise.id);
         setPicking(false);
@@ -393,6 +407,20 @@ export default function ExerciseGenerator({
                                     )}
                                 </Button>
                             ))}
+                            {/* #1895 — Diktat (extension type) as the 7th
+                                option, alongside the six core types. */}
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                data-testid="exercise-add-type-dictation"
+                                onClick={() => addManual(DICTATION_EXT_TYPE)}
+                            >
+                                {t(
+                                    "create_lesson.extensions.type.dictation",
+                                    "Dictation",
+                                )}
+                            </Button>
                         </div>
                         <Button
                             type="button"
@@ -476,16 +504,27 @@ function SortableExerciseRow({
                 data-type={exercise.type}
             >
                 <span className="exercise-row-type w-fit rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
-                    {t(`create_lesson.exercises.type.${exercise.type}`, exercise.type)}
+                    {t(exerciseTypeLabelKey(exercise.type), exercise.type)}
                 </span>
-                <ExerciseEditor
-                    exercise={exercise}
-                    onSave={(updated) => {
-                        onUpdate(exercise.id, updated);
-                        setEditing(false);
-                    }}
-                    onCancel={() => setEditing(false)}
-                />
+                {isExtensionType(exercise.type) ? (
+                    <ExtensionExerciseEditor
+                        exercise={exercise}
+                        onSave={(updated) => {
+                            onUpdate(exercise.id, updated);
+                            setEditing(false);
+                        }}
+                        onCancel={() => setEditing(false)}
+                    />
+                ) : (
+                    <ExerciseEditor
+                        exercise={exercise}
+                        onSave={(updated) => {
+                            onUpdate(exercise.id, updated);
+                            setEditing(false);
+                        }}
+                        onCancel={() => setEditing(false)}
+                    />
+                )}
             </li>
         );
     }
@@ -508,7 +547,7 @@ function SortableExerciseRow({
                 <GripVertical size={16} aria-hidden="true" />
             </button>
             <span className="exercise-row-type shrink-0 rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
-                {t(`create_lesson.exercises.type.${exercise.type}`, exercise.type)}
+                {t(exerciseTypeLabelKey(exercise.type), exercise.type)}
             </span>
             <span className="exercise-row-desc muted min-w-0 flex-1 truncate text-sm text-fg-muted">{describe(exercise)}</span>
             <button

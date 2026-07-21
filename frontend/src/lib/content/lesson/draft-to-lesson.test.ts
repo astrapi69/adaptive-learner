@@ -137,6 +137,61 @@ describe("draft-to-lesson", () => {
     });
 });
 
+// #1895 — a dictation (extension) exercise can now reach the MAIN wizard path
+// via the core-type picker. Whatever the build path, the resulting lesson must
+// declare ``requires_extensions`` so it is refused (not mis-rendered) in an app
+// without the extension. This is the safety generalization the Verify-First
+// step surfaced: only ``buildExtensionLesson`` used to set the field.
+describe("draft-to-lesson requires_extensions generalization (#1895)", () => {
+    const dictationExercise = {
+        id: "ex-dict-manual",
+        type: "ext:al-dictation",
+        prompt: "Hoere zu und schreibe, was du hoerst.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {audio: "assets/audio/clip.mp3", accept: ["Bonjour"]},
+    };
+
+    function draftWithDictation(): DraftLessonInput {
+        const base = input();
+        return {
+            ...base,
+            exercises: [
+                ...base.exercises,
+                dictationExercise as unknown as (typeof base.exercises)[number],
+            ],
+        };
+    }
+
+    it("declares the extension when the draft contains a dictation exercise", () => {
+        const lesson = buildLessonFromDraft(draftWithDictation());
+        expect(lesson.requires_extensions).toContain("ext:al-dictation@1");
+    });
+
+    it("does NOT add requires_extensions for a pure core draft", () => {
+        const lesson = buildLessonFromDraft(input());
+        // Absent or empty — never a spurious [] on every core lesson.
+        expect(lesson.requires_extensions ?? []).toEqual([]);
+    });
+
+    it("the built dictation lesson passes the load guard", () => {
+        // buildLessonFromDraft validates internally; a throw here would mean
+        // the undeclared-extension guard fired -> the field was NOT set.
+        expect(() => buildLessonFromDraft(draftWithDictation())).not.toThrow();
+    });
+
+    it("edit-mode (id + preserved theory) also declares the extension", () => {
+        const lesson = buildLessonFromDraft(draftWithDictation(), {
+            id: "kept-id",
+            theorySteps: [
+                {id: "theory-intro", type: "theory", title: "T", body: "Body"},
+            ],
+        });
+        expect(lesson.id).toBe("kept-id");
+        expect(lesson.requires_extensions).toContain("ext:al-dictation@1");
+    });
+});
+
 // #1740 — lesson editing: reverse mapping, id/set-id override, theory
 // preservation.
 describe("draft-to-lesson editing (#1740)", () => {
