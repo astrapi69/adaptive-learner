@@ -100,6 +100,8 @@ frontend/dev-dist/
 # Playwright results
 /e2e/test-results/
 /e2e/playwright-report/
+# Blog screenshot capture artifacts (hand-picked into engine articles).
+/e2e/docs/output/
 /e2e/playwright-report-manual/
 tmp/
 
