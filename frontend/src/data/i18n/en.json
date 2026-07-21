@@ -2956,7 +2956,8 @@
         "categorization": "Categorization",
         "error-correction": "Error correction",
         "reading-comprehension": "Reading comprehension",
-        "graded-quiz": "Graded quiz"
+        "graded-quiz": "Graded quiz",
+        "dictation": "Dictation"
       },
       "edit": {
         "prompt_label": "Instruction / prompt",
@@ -2966,6 +2967,14 @@
         "err_error_correction": "Add at least 2 words, mark the wrong one, and add at least one accepted correction.",
         "err_reading_comprehension": "Add a passage and at least one complete question (multiple choice with a correct option, or free text with an accepted answer).",
         "err_graded_quiz": "Add at least one complete question with positive points (multiple choice with a correct option, or free text with an accepted answer).",
+        "err_dictation": "Add an audio file path and at least one accepted transcription.",
+        "dict_audio_label": "Audio file path",
+        "dict_audio_placeholder": "assets/audio/clip.mp3",
+        "dict_audio_hint": "Relative path to the audio clip inside the set's assets folder.",
+        "dict_accept_label": "Accepted transcriptions",
+        "dict_accept_add": "Add",
+        "dict_accept_remove": "Remove transcription",
+        "dict_accept_placeholder": "What the learner should type",
         "q_list_label": "Questions",
         "q_prompt_label": "Question",
         "q_prompt_placeholder": "Question",

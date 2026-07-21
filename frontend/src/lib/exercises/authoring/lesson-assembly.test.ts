@@ -60,12 +60,34 @@ const DICT: ContentLessonExercise = {
     ext_payload: {audio: "assets/audio/one.mp3", accept: ["un", "eins"]},
 } as ContentLessonExercise;
 
+const CORE_MATCHING: ContentLessonExercise = {
+    id: "m1",
+    type: "matching",
+    prompt: "Match them",
+    card_ids: [],
+    distractors: [],
+    pairs: [{left: "a", right: "b"}],
+} as ContentLessonExercise;
+
 describe("requiredExtensionsFor", () => {
     it("emits distinct versioned entries in first-seen order", () => {
         expect(requiredExtensionsFor([CAT, EC, CAT])).toEqual([
             "ext:al-categorization@1",
             "ext:al-error-correction@1",
         ]);
+    });
+
+    // #1895 — when a mixed list (core + extension) reaches the generic helper
+    // via the MAIN wizard path, only the extension types belong in
+    // requires_extensions; a core type must never be declared.
+    it("includes only extension types from a mixed list (#1895)", () => {
+        expect(requiredExtensionsFor([CORE_MATCHING, DICT, CORE_MATCHING])).toEqual([
+            "ext:al-dictation@1",
+        ]);
+    });
+
+    it("returns an empty list for a pure core list (#1895)", () => {
+        expect(requiredExtensionsFor([CORE_MATCHING])).toEqual([]);
     });
 });
 

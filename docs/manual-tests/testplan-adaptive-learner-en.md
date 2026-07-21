@@ -236,6 +236,18 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       upload in v1) + the accepted-transcriptions list. Review shows the count;
       "Save locally" → the saved lesson is **playable** (each type renders + is
       answerable); the set JSON carries `requires_extensions: ["ext:al-...@1"]`
+- [ ] **Dictation in the core type picker (#1895):** Main wizard (card-based),
+      Step 3 "Generate exercises" → "Add exercise" opens the "Choose an exercise
+      type" picker. Beside the six core types (Matching, Free text, Cloze, Word
+      tiles, Picture choice, Multiple choice) a **seventh option "Dictation"**
+      appears. Click → a dictation exercise is appended and opens straight in the
+      **same** editor as the extension wizard (audio path + accepted
+      transcriptions), gated by the **same** validator (empty audio path / no
+      transcription → Save disabled; an incomplete dictation also blocks "Next"
+      to Step 4). After saving: the stored lesson **carries
+      `requires_extensions: ["ext:al-dictation@1"]`** (whether added via the core
+      picker OR the extension wizard) and is playable. **Regression:** the
+      existing extension-wizard path for dictation still works unchanged
 - [ ] **Multiple-choice single/multi mode control (#1888):** In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first

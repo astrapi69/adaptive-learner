@@ -18,11 +18,34 @@
  * ```
  */
 
+import {isExtensionType} from "../../exercises";
 import type {ExerciseEditCode, ExtensionEditCode} from "../../exercises";
 
 /** i18n key for a core-exercise edit failure (``create_lesson.exercises.edit.err_<code>``). */
 export function exerciseEditErrorKey(code: ExerciseEditCode): string {
     return `create_lesson.exercises.edit.err_${code}`;
+}
+
+/**
+ * i18n key for an exercise type's short label (#1895). A core
+ * {@link GeneratableType} is labelled under
+ * ``create_lesson.exercises.type.<type>``; an extension type
+ * (``ext:al-dictation`` …) under ``create_lesson.extensions.type.<slug>``
+ * where the slug strips the ``ext:al-`` namespace. This is the single place
+ * that decides which label namespace applies, so a type surfaced in BOTH the
+ * core picker and the extension wizard (dictation) never drifts between two
+ * label conventions.
+ *
+ * @example
+ * t(exerciseTypeLabelKey("matching"));         // create_lesson.exercises.type.matching
+ * t(exerciseTypeLabelKey("ext:al-dictation")); // create_lesson.extensions.type.dictation
+ */
+export function exerciseTypeLabelKey(type: string): string {
+    if (isExtensionType(type)) {
+        const slug = type.replace("ext:al-", "");
+        return `create_lesson.extensions.type.${slug}`;
+    }
+    return `create_lesson.exercises.type.${type}`;
 }
 
 /** i18n key for an extension-exercise edit failure (``create_lesson.extensions.edit.err_<code>``). */

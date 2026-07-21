@@ -239,6 +239,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       akzeptierten Transkriptionen. Review zeigt die Anzahl; "Lokal speichern" →
       gespeicherte Lektion **abspielbar** (jeder Typ rendert + ist beantwortbar);
       die Set-JSON traegt `requires_extensions: ["ext:al-...@1"]`
+- [ ] **Diktat im Core-Typ-Picker (#1895):** Haupt-Wizard (kartenbasiert),
+      Schritt 3 "Uebung generieren" → "Uebung hinzufuegen" oeffnet den Picker
+      "Uebungstyp waehlen". Neben den sechs Core-Typen (Zuordnung, Freitext,
+      Lueckentext, Wort-Kacheln, Bildauswahl, Multiple Choice) erscheint als
+      **siebte Option "Diktat"**. Klick → eine Diktat-Uebung wird angehaengt und
+      oeffnet direkt im **gleichen** Editor wie im Extension-Wizard (Audio-Pfad +
+      akzeptierte Transkriptionen), gegatet durch **denselben** Validator (leerer
+      Audio-Pfad / keine Transkription → Speichern deaktiviert; unvollstaendige
+      Diktat-Uebung blockiert auch "Weiter" nach Schritt 4). Nach dem Speichern:
+      die gespeicherte Lektion **traegt `requires_extensions: ["ext:al-dictation@1"]`**
+      (egal ob ueber den Core-Picker ODER den Extension-Wizard angelegt) und ist
+      abspielbar. **Regression:** der bestehende Extension-Wizard-Weg fuer Diktat
+      funktioniert unveraendert
 - [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,

@@ -327,6 +327,68 @@ describe("ExerciseGenerator — manual add (#1849)", () => {
     });
 });
 
+// #1895 — Diktat (ext:al-dictation) is the 7th picker option, alongside the
+// six core types. It reuses the extension blank factory + the extension editor
+// (DictationFields) + the shipped payload validator — no second logic.
+describe("ExerciseGenerator — dictation core option (#1895)", () => {
+    it("offers Diktat as a 7th type in the picker", () => {
+        render(<ListHarness initial={[]} />);
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        expect(
+            screen.getByTestId("exercise-add-type-dictation"),
+        ).toBeInTheDocument();
+    });
+
+    it("picking Diktat appends an ext:al-dictation exercise in the extension editor", () => {
+        const onAdd = vi.fn();
+        function Harness2() {
+            const [exercises, setExercises] = useState<ContentLessonExercise[]>([]);
+            return (
+                <ExerciseGenerator
+                    exercises={exercises}
+                    config={DEFAULT_EXERCISE_GEN_CONFIG}
+                    onConfigChange={vi.fn()}
+                    onGenerate={vi.fn()}
+                    onReorder={vi.fn()}
+                    onDelete={vi.fn()}
+                    onUpdate={vi.fn()}
+                    onAdd={(exercise) => {
+                        onAdd(exercise);
+                        setExercises((prev) => [...prev, exercise]);
+                    }}
+                />
+            );
+        }
+        render(<Harness2 />);
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        fireEvent.click(screen.getByTestId("exercise-add-type-dictation"));
+        // The exercise handed to onAdd is the dictation EXTENSION type.
+        expect(onAdd).toHaveBeenCalledTimes(1);
+        expect(onAdd.mock.calls[0][0].type).toBe("ext:al-dictation");
+        // The row opened in the EXTENSION editor (reused DictationFields), not
+        // the core ExerciseEditor.
+        const editor = screen.getByTestId(/^exercise-ext-editor-/);
+        expect(editor).toBeInTheDocument();
+        const id = editor.getAttribute("data-testid")!.replace(
+            "exercise-ext-editor-",
+            "",
+        );
+        expect(
+            screen.getByTestId(`exercise-ext-dict-audio-${id}`),
+        ).toBeInTheDocument();
+    });
+
+    it("a freshly added dictation exercise cannot be saved empty", () => {
+        render(<ListHarness initial={[]} />);
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        fireEvent.click(screen.getByTestId("exercise-add-type-dictation"));
+        const saveBtn = screen.getByTestId(
+            /^exercise-ext-save-/,
+        ) as HTMLButtonElement;
+        expect(saveBtn).toBeDisabled();
+    });
+});
+
 describe("ExerciseGenerator — multiple_choice type (#1850)", () => {
     it("offers a multiple_choice generation checkbox", () => {
         render(<ListHarness initial={[]} />);
