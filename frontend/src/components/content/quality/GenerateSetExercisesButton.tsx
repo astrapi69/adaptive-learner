@@ -9,7 +9,7 @@
  * injectable seams so the unit test runs without storage or network.
  */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import {
   type SetBatchDeps,
 } from "../../../lib/ai/generation/generate-exercises-for-set";
 import { buildSetBatchDeps } from "../../../lib/ai/generation/set-batch-deps";
+import { countLessonsWithoutExercises } from "../../../lib/ai/generation/set-exercise-candidates";
 import { resolveActiveAiProvider } from "../../../lib/ai/providers/resolve-provider";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import type { ContentSetEntry } from "../../../storage/types";
@@ -40,6 +41,13 @@ interface GenerateSetExercisesButtonProps {
   prepareDeps?: (entry: ContentSetEntry) => Promise<SetBatchDeps | null>;
   /** Test seam; defaults to the real orchestrator. */
   runBatch?: typeof defaultRunBatch;
+  /**
+   * #1896 — count the lessons that still lack exercises, so the button can
+   * disable itself BEFORE the click when there is nothing to generate.
+   * Defaults to reading the content store; a rejection fails open (the
+   * button stays clickable and the click-path guard takes over).
+   */
+  countPending?: (entry: ContentSetEntry) => Promise<number>;
 }
 
 async function defaultPrepareDeps(
@@ -60,6 +68,7 @@ export default function GenerateSetExercisesButton({
   onDone,
   prepareDeps,
   runBatch = defaultRunBatch,
+  countPending = countLessonsWithoutExercises,
 }: GenerateSetExercisesButtonProps) {
   const confirm = useConfirm();
   const [busy, setBusy] = useState(false);
@@ -67,10 +76,34 @@ export default function GenerateSetExercisesButton({
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(
     null,
   );
+  /** ``null`` = probe not finished (or it failed) — treat as "may generate". */
+  const [pending, setPending] = useState<number | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    countPending(entry)
+      .then((count) => {
+        if (!cancelled) setPending(count);
+      })
+      .catch(() => {
+        if (!cancelled) setPending(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // ``countPending`` is a stable default or a caller-owned seam; re-probing
+    // on identity change would loop on inline arrow props.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entry.source, entry.id, entry.lesson_count]);
+
+  const nothingToGenerate = pending === 0;
+  const disabledReason = nothingToGenerate
+    ? t("content.ai_exercises.batch.none", "All lessons already have exercises.")
+    : undefined;
+
   async function handleClick() {
-    if (busy) return;
+    if (busy || nothingToGenerate) return;
     setBusy(true);
     setNeedsKey(false);
     try {
@@ -89,6 +122,8 @@ export default function GenerateSetExercisesButton({
       const lessons = await deps.loadLessons();
       const candidates = lessons.filter((lesson) => lesson.exerciseCount === 0).length;
       if (candidates === 0) {
+        // Stale probe (or a concurrent edit) — sync the button state too.
+        setPending(0);
         notify.info(
           t("content.ai_exercises.batch.none", "All lessons already have exercises."),
         );
@@ -128,6 +163,7 @@ export default function GenerateSetExercisesButton({
           .replace("{generated}", String(result.generated))
           .replace("{skipped}", String(result.skipped)),
       );
+      setPending(Math.max(0, result.total - result.succeeded));
       if (!result.cancelled) onDone?.();
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
@@ -147,7 +183,13 @@ export default function GenerateSetExercisesButton({
         type="button"
         variant="secondary"
         onClick={handleClick}
-        disabled={busy}
+        disabled={busy || nothingToGenerate}
+        title={disabledReason}
+        aria-label={
+          disabledReason
+            ? `${t("content.ai_exercises.batch.button", "Generate for all lessons")} — ${disabledReason}`
+            : undefined
+        }
         data-testid={`generate-set-exercises-${entry.id}`}
       >
         <Sparkles size={14} aria-hidden="true" />
