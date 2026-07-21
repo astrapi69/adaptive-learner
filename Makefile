@@ -1027,7 +1027,18 @@ endif
 	git push origin develop
 	@echo "=== Delete release/$(VERSION) ==="
 	git branch -d release/$(VERSION)
-	git push origin --delete release/$(VERSION)
+# The release branch is cut locally and need not be pushed (#334 gitflow),
+# so a remote branch may never have existed. Deleting a non-existent remote
+# ref used to fail the whole target with exit 1 AFTER main was already
+# merged, tagged and pushed - an alarming exit code for a no-op cleanup
+# step, which is exactly the signal you do not want to learn to ignore
+# (#1903). Delete it only when it is actually there.
+	@if git ls-remote --exit-code --heads origin release/$(VERSION) >/dev/null 2>&1; then \
+		echo "remote branch exists - deleting"; \
+		git push origin --delete release/$(VERSION); \
+	else \
+		echo "no remote release/$(VERSION) (branch was local-only) - nothing to delete"; \
+	fi
 	@echo ""
 	@echo "Tagged + merged. Next: make release-publish VERSION=$(VERSION)"
 

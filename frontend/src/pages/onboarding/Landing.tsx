@@ -187,7 +187,12 @@ export default function Landing() {
             </header>
 
             <section className="landing-intro">
-                <p>{t("landing.intro")}</p>
+                <p>
+                    {t(
+                        "landing.intro",
+                        "Adaptive Learner finds the method that fits you best from six research-backed learning approaches, and walks you through a seven-step cycle on every session.",
+                    )}
+                </p>
             </section>
 
             <section className="landing-lang" aria-labelledby="lang-label">
