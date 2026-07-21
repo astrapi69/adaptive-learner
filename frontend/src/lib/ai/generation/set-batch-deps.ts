@@ -23,6 +23,7 @@ import type {
 import { appendExercisesToLesson } from "../../exercises";
 import { cardsToExercises } from "./cards-to-exercises";
 import { browserDirectProvider, generateExercises } from "./generate-exercises";
+import { exerciseCountOf } from "./set-exercise-candidates";
 import type { BatchLesson, SetBatchDeps } from "./generate-exercises-for-set";
 import type { ResolvedAiProvider } from "../providers/resolve-provider";
 
@@ -30,10 +31,6 @@ function theoryStepsOf(lesson: ContentLesson): BatchLesson["theorySteps"] {
   return lesson.steps
     .filter((step) => step.type === "theory")
     .map((step) => ({ id: step.id, title: step.title, body: step.body }));
-}
-
-function exerciseCountOf(lesson: ContentLesson): number {
-  return lesson.steps.filter((step) => step.type === "exercise" && step.exercise).length;
 }
 
 function originOf(entry: ContentSetEntry): UserLessonOrigin {

@@ -328,6 +328,16 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] AI content validation: report sensible? provider+model shown?
 - [ ] No button without a key leads to an error toast (disabled + tooltip)
 
+### Batch "Generate for all lessons" (#1896)
+- [ ] My Content → My Lessons, a set where ALL lessons already have
+      exercises: the "Generate for all lessons" button is disabled RIGHT
+      AWAY with the tooltip "All lessons already have exercises."
+      (no click needed, no info toast)
+- [ ] A set with at least ONE lesson without exercises: button active,
+      cost confirm → progress → result toast as before
+- [ ] After a successful full run: the button turns disabled without a
+      reload
+
 ### AI key vault import (#1765 / #1769)
 - [ ] Settings → AI → "Configured providers" → "Import" jumps to
       Settings → Data and scrolls the KeyVault import block into view (#1765)
