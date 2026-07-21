@@ -1,0 +1,123 @@
+name: WebKit gate
+
+# WebKit CSS-engine layout gate (#1843, follow-up to #1834).
+#
+# WHY this exists: the Chromium gates (dexie-smoke, visual-regression) are
+# STRUCTURALLY blind to a whole class of iOS/Safari layout bugs, because they
+# are Blink-vs-WebKit CSS-ENGINE differences, not app logic. The #1834 lesson
+# footer Pause/Next overlap is the canonical case: WebKit OVERLAPS flex items
+# on overflow (``justify-content: space-between``) while Blink clamps to
+# flex-start, so a Chromium bounding-box test can never go red on it. This job
+# runs ``e2e/webkit/*.spec.ts`` under Playwright's real ``webkit`` engine
+# against the same Dexie/GH-Pages-shape preview build (mirrors
+# ``make test-webkit``).
+#
+# CADENCE (#552 / #575): like dexie-smoke and the mutation gates this is
+# expensive and rarely PR-relevant, so it stays OUT of the per-PR loop — manual
+# dispatch + a gated nightly schedule. It is NOT a required PR merge gate.
+#
+# WEBKIT WITHOUT A CDN DOWNLOAD: the issue flagged ``playwright install webkit``
+# needing egress to the Playwright browser CDN as a blocker to confirm. This job
+# sidesteps that entirely by running inside the official Playwright container
+# (``mcr.microsoft.com/playwright``), which ships chromium + firefox + WEBKIT
+# pre-baked — the same reason dexie-smoke.yml uses it for chromium (#317: the CDN
+# was unreachable from the runner; the image is pulled from mcr.microsoft.com,
+# which the runner reaches fine). So there is no ``playwright install`` step.
+#
+# UNVERIFIED UNTIL FIRST DISPATCH (lessons-learned "wired != working"): this
+# workflow has never run. The nightly schedule is GATED behind the repo variable
+# ENABLE_NIGHTLY_WEBKIT (Settings -> Secrets and variables -> Actions ->
+# Variables), off by default, so it is a no-op until a maintainer:
+#   1. triggers it once via workflow_dispatch,
+#   2. confirms a real green (or an actionable red) + the uploaded report,
+#   3. then sets ENABLE_NIGHTLY_WEBKIT="true" to arm the schedule.
+# Adding ``push: [release/**]`` (mirroring dexie-smoke) is a sensible follow-up
+# once that first dispatch has proven the job green.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 04:30 UTC daily; offset from dexie-smoke (04:00) and mutation (03:17) so
+    # the night-shift jobs do not all fire at once. The job body is gated below
+    # so it is a no-op unless ENABLE_NIGHTLY_WEBKIT == "true".
+    - cron: "30 4 * * *"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  webkit-gate:
+    name: WebKit lesson-layout gate
+    runs-on: ubuntu-latest
+    # Manual dispatch always runs; the nightly schedule only runs when the
+    # maintainer has opted in via the repo variable (see the header note).
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' ||
+          vars.ENABLE_NIGHTLY_WEBKIT == 'true' }}
+    # Run inside the official Playwright image so WebKit + its system libs are
+    # PRE-BAKED — no cdn.playwright.dev download (the blocker the issue flags).
+    # Pin the tag to the @playwright/test version in e2e/bun.lock (1.61.1); bump
+    # both together (same rule as dexie-smoke.yml).
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
+      # --user 1001 = the runner user, so checkout-owned files stay writable and
+      # actions/upload-artifact can read the report (Playwright CI docs).
+      options: --user 1001
+    # Pre-baked browsers mean no download phase: build (~2-3 min) + a single
+    # narrow WebKit layout spec fits comfortably.
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      # The image ships Node 22; install 24 to match the repo's engines
+      # (frontend + e2e both require >=24) so CI runs the same runtime as local.
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      # NOT oven-sh/setup-bun here: it unpacks the Bun zip with `unzip`, which
+      # the Playwright noble image does not ship, and the job runs as --user 1001
+      # (no apt). The npm distribution of Bun carries the binary as a plain npm
+      # tarball (no unzip), installed to a user-writable prefix (#1530).
+      - name: Install Bun 1.3.14 (npm; image lacks unzip for setup-bun)
+        run: |
+          npm install --global --prefix "$HOME/.bun-npm" bun@1.3.14
+          echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
+
+      - name: Cache bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      - name: Install e2e deps
+        working-directory: e2e
+        run: bun install --frozen-lockfile
+
+      # These two commands mirror the `make test-webkit` target verbatim; inlined
+      # because the Playwright noble image has no `make` and the --user 1001
+      # (non-root) container cannot apt-get install it. Keep them in lock-step
+      # with the Makefile target if it ever changes. NO `playwright install`
+      # step: WebKit is baked into the container.
+      - name: Build dexie frontend
+        working-directory: frontend
+        run: VITE_STORAGE_MODE=dexie bun run build
+
+      - name: WebKit layout gate
+        working-directory: e2e
+        run: npx playwright test --config=playwright.webkit.config.ts
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: webkit-gate-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+          retention-days: 14
