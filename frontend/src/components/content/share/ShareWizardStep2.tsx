@@ -36,7 +36,7 @@ export default function ShareWizardStep2({ wiz }: { wiz: UseShareWizardResult })
             ).replace("{title}", dup.match?.candidateTitle ?? "")}
           </p>
           <p
-            className="share-wizard-overlap"
+            className="share-wizard-overlap mt-1 text-sm text-fg-secondary"
             data-testid="share-wizard-overlap"
           >
             {t("content.wizard.overlap", "{cards} of {total} cards in common, {ex} matching exercises.")
@@ -47,7 +47,7 @@ export default function ShareWizardStep2({ wiz }: { wiz: UseShareWizardResult })
 
           {showDiff && dup.match && (
             <ul
-              className="share-wizard-diff"
+              className="share-wizard-diff mt-2 list-none space-y-1 p-0 text-sm text-fg-secondary"
               data-testid="share-wizard-diff"
             >
               <li>
@@ -63,9 +63,9 @@ export default function ShareWizardStep2({ wiz }: { wiz: UseShareWizardResult })
             </ul>
           )}
 
-          <div className="share-wizard-dup-actions">
+          <div className="share-wizard-dup-actions mt-3 flex flex-col gap-2">
             {dup.tier === "near_duplicate" && (
-              <label className="share-wizard-mode">
+              <label className="share-wizard-mode flex items-center gap-2">
                 <input
                   type="radio"
                   name="share-mode"
@@ -76,7 +76,7 @@ export default function ShareWizardStep2({ wiz }: { wiz: UseShareWizardResult })
                 {t("content.wizard.suggest_new_only", "Suggest only the new exercises")}
               </label>
             )}
-            <label className="share-wizard-mode">
+            <label className="share-wizard-mode flex items-center gap-2">
               <input
                 type="radio"
                 name="share-mode"
@@ -86,7 +86,7 @@ export default function ShareWizardStep2({ wiz }: { wiz: UseShareWizardResult })
               />
               {t("content.wizard.share_as_variation", "Share anyway — as a variation")}
             </label>
-            <label className="share-wizard-mode">
+            <label className="share-wizard-mode flex items-center gap-2">
               <input
                 type="radio"
                 name="share-mode"
@@ -100,7 +100,7 @@ export default function ShareWizardStep2({ wiz }: { wiz: UseShareWizardResult })
             {mode !== "full" && (
               <input
                 type="text"
-                className="share-wizard-note"
+                className="share-wizard-note mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 placeholder={t("content.wizard.variation_note_placeholder", "How does your version differ? (optional)")}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
