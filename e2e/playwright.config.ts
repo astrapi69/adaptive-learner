@@ -33,7 +33,7 @@ const E2E_DATA_DIR = "/tmp/adaptive-learner-e2e-data";
 // here so the spec run is self-contained (no .env dependency).
 // 32-byte url-safe base64. Fine to commit since it only ever
 // encrypts the test-process's ephemeral API key fixtures.
-const E2E_FERNET_KEY = "i1u3pP7HXVHrUKE2NgUSe3FxLknXVbNZJxs1u-3pV9k=";
+export const E2E_FERNET_KEY = "i1u3pP7HXVHrUKE2NgUSe3FxLknXVbNZJxs1u-3pV9k=";
 
 const BACKEND_ENV = [
     `ADAPTIVE_LEARNER_PORT=${BACKEND_PORT}`,
