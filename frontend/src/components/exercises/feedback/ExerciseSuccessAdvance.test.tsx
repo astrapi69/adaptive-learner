@@ -12,6 +12,7 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import ExerciseSuccessAdvance from "./ExerciseSuccessAdvance";
+import {AutoAdvanceSuppressedProvider} from "./auto-advance-gate";
 import {
     AUTO_ADVANCE_DELAY_MS,
     setLessonAutoAdvanceEnabled,
@@ -120,5 +121,55 @@ describe("ExerciseSuccessAdvance auto-advance (#1330)", () => {
         unmount();
         vi.advanceTimersByTime(AUTO_ADVANCE_DELAY_MS * 2);
         expect(onAdvance).not.toHaveBeenCalled();
+    });
+});
+
+describe("ExerciseSuccessAdvance auto-advance suppression (#1921)", () => {
+    beforeEach(() => {
+        localStorage.clear();
+        vi.useFakeTimers();
+    });
+    afterEach(() => {
+        vi.runOnlyPendingTimers();
+        vi.useRealTimers();
+        localStorage.clear();
+    });
+
+    it("does NOT auto-advance a revisited step even with the setting on", () => {
+        // Regression: Back-navigating onto a completed exercise re-mounts
+        // this control; the timer must not fire so the Back button works.
+        setLessonAutoAdvanceEnabled(true);
+        const onAdvance = vi.fn();
+        render(
+            <AutoAdvanceSuppressedProvider suppressed={true}>
+                <ExerciseSuccessAdvance onAdvance={onAdvance} testIdPrefix="cloze" />
+            </AutoAdvanceSuppressedProvider>,
+        );
+        vi.advanceTimersByTime(AUTO_ADVANCE_DELAY_MS * 3);
+        expect(onAdvance).not.toHaveBeenCalled();
+    });
+
+    it("still allows a manual Continue click when suppressed", () => {
+        setLessonAutoAdvanceEnabled(true);
+        const onAdvance = vi.fn();
+        render(
+            <AutoAdvanceSuppressedProvider suppressed={true}>
+                <ExerciseSuccessAdvance onAdvance={onAdvance} testIdPrefix="cloze" />
+            </AutoAdvanceSuppressedProvider>,
+        );
+        fireEvent.click(screen.getByTestId("cloze-advance"));
+        expect(onAdvance).toHaveBeenCalledTimes(1);
+    });
+
+    it("still auto-advances a fresh check when not suppressed", () => {
+        setLessonAutoAdvanceEnabled(true);
+        const onAdvance = vi.fn();
+        render(
+            <AutoAdvanceSuppressedProvider suppressed={false}>
+                <ExerciseSuccessAdvance onAdvance={onAdvance} testIdPrefix="cloze" />
+            </AutoAdvanceSuppressedProvider>,
+        );
+        vi.advanceTimersByTime(AUTO_ADVANCE_DELAY_MS + 50);
+        expect(onAdvance).toHaveBeenCalledTimes(1);
     });
 });
