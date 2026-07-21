@@ -13,7 +13,7 @@
  */
 
 import {useEffect, useState} from "react";
-import {Sparkles, Trash2, GripVertical} from "lucide-react";
+import {Sparkles, Trash2, GripVertical, Pencil, Plus} from "lucide-react";
 import {
     DndContext,
     type DragEndEvent,
@@ -36,10 +36,19 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
-import type {
-    ExerciseGenConfig,
-    GeneratableType,
-} from "../../lib/content/lesson/exercise-generator";
+import ExerciseEditor from "./ExerciseEditor";
+import ExtensionExerciseEditor from "./ExtensionExerciseEditor";
+import {
+    createBlankExercise,
+    createBlankExtensionExercise,
+    DICTATION_EXT_TYPE,
+    isExtensionType,
+    newExerciseId,
+    newExtensionExerciseId,
+    type ExerciseGenConfig,
+    type GeneratableType,
+} from "../../lib/exercises";
+import {exerciseTypeLabelKey} from "../../lib/content/lesson/edit-error-keys";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export const MIN_EXERCISES = 5;
@@ -70,6 +79,7 @@ const ALL_TYPES: GeneratableType[] = [
     "cloze",
     "word_tiles",
     "picture_choice",
+    "multiple_choice",
 ];
 
 export interface ExerciseGeneratorProps {
@@ -79,6 +89,9 @@ export interface ExerciseGeneratorProps {
     onGenerate: () => void;
     onReorder: (exercises: ContentLessonExercise[]) => void;
     onDelete: (id: string) => void;
+    onUpdate: (id: string, updated: ContentLessonExercise) => void;
+    /** Append a manually-created exercise (#1849). */
+    onAdd: (exercise: ContentLessonExercise) => void;
 }
 
 export default function ExerciseGenerator({
@@ -88,6 +101,8 @@ export default function ExerciseGenerator({
     onGenerate,
     onReorder,
     onDelete,
+    onUpdate,
+    onAdd,
 }: ExerciseGeneratorProps) {
     const {t} = useI18n();
     const sensors = useSensors(
@@ -96,6 +111,26 @@ export default function ExerciseGenerator({
             coordinateGetter: sortableKeyboardCoordinates,
         }),
     );
+
+    // Manual "+ Add exercise" (#1849): pick a type -> append an empty
+    // exercise of that type and open it straight in the inline editor.
+    const [picking, setPicking] = useState(false);
+    const [autoEditId, setAutoEditId] = useState<string | null>(null);
+
+    // Dictation (#1895) is an EXTENSION type reachable from the core picker:
+    // it reuses the extension blank factory + editor, not the core ones.
+    function addManual(type: GeneratableType | typeof DICTATION_EXT_TYPE) {
+        const exercise =
+            type === DICTATION_EXT_TYPE
+                ? createBlankExtensionExercise(
+                      DICTATION_EXT_TYPE,
+                      newExtensionExerciseId(),
+                  )
+                : createBlankExercise(type, newExerciseId());
+        onAdd(exercise);
+        setAutoEditId(exercise.id);
+        setPicking(false);
+    }
 
     // Uncommitted text of the number input: lets the user clear + retype
     // freely (a directly-clamped controlled value would fight mid-edit).
@@ -125,6 +160,15 @@ export default function ExerciseGenerator({
         else set.add(type);
         onConfigChange({...config, types: Array.from(set)});
     }
+
+    // #1847 — after a generation, explain any SELECTED type that produced
+    // nothing (cloze/word-tiles need an example sentence; picture-choice
+    // needs card images), so a requested type is never silently dropped.
+    const producedTypes = new Set(exercises.map((e) => e.type));
+    const missingSelectedTypes =
+        exercises.length > 0
+            ? config.types.filter((type) => !producedTypes.has(type))
+            : [];
 
     function handleDragEnd(event: DragEndEvent) {
         const {active, over} = event;
@@ -277,6 +321,36 @@ export default function ExerciseGenerator({
                 )}
             </div>
 
+            {/* Why a selected type produced nothing (#1847) */}
+            {missingSelectedTypes.length > 0 && (
+                <div
+                    className="flex flex-col gap-1.5 rounded-lg border border-border bg-card p-3"
+                    data-testid="exercise-gen-missing"
+                    role="status"
+                >
+                    <FormHint as="p" variant="warning">
+                        {t(
+                            "create_lesson.exercises.gen_missing_intro",
+                            "Some selected types produced no exercises:",
+                        )}
+                    </FormHint>
+                    <ul className="m-0 flex list-none flex-col gap-1 p-0">
+                        {missingSelectedTypes.map((type) => (
+                            <li
+                                key={type}
+                                className="text-sm text-fg-secondary"
+                                data-testid={`exercise-gen-missing-${type}`}
+                            >
+                                {t(
+                                    `create_lesson.exercises.gen_none.${type}`,
+                                    type,
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             {/* Preview list (sortable) */}
             <DndContext
                 sensors={sensors}
@@ -296,11 +370,82 @@ export default function ExerciseGenerator({
                                 key={ex.id}
                                 exercise={ex}
                                 onDelete={onDelete}
+                                onUpdate={onUpdate}
+                                autoEdit={ex.id === autoEditId}
                             />
                         ))}
                     </ul>
                 </SortableContext>
             </DndContext>
+
+            {/* Manually add an exercise (#1849) */}
+            <div className="flex flex-col gap-2">
+                {picking ? (
+                    <div
+                        className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3"
+                        data-testid="exercise-add-picker"
+                    >
+                        <span className="form-label text-sm font-medium text-fg-primary">
+                            {t(
+                                "create_lesson.exercises.add_heading",
+                                "Choose an exercise type",
+                            )}
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                            {ALL_TYPES.map((type) => (
+                                <Button
+                                    key={type}
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    data-testid={`exercise-add-type-${type}`}
+                                    onClick={() => addManual(type)}
+                                >
+                                    {t(
+                                        `create_lesson.exercises.type.${type}`,
+                                        type,
+                                    )}
+                                </Button>
+                            ))}
+                            {/* #1895 — Diktat (extension type) as the 7th
+                                option, alongside the six core types. */}
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                data-testid="exercise-add-type-dictation"
+                                onClick={() => addManual(DICTATION_EXT_TYPE)}
+                            >
+                                {t(
+                                    "create_lesson.extensions.type.dictation",
+                                    "Dictation",
+                                )}
+                            </Button>
+                        </div>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="w-fit"
+                            data-testid="exercise-add-cancel"
+                            onClick={() => setPicking(false)}
+                        >
+                            {t("create_lesson.cancel", "Cancel")}
+                        </Button>
+                    </div>
+                ) : (
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="w-fit"
+                        data-testid="exercise-add"
+                        onClick={() => setPicking(true)}
+                    >
+                        <Plus size={14} aria-hidden="true" />
+                        {t("create_lesson.exercises.add", "Add exercise")}
+                    </Button>
+                )}
+            </div>
         </section>
     );
 }
@@ -316,6 +461,8 @@ function describe(ex: ContentLessonExercise): string {
             return (ex.tiles ?? []).join(" ");
         case "picture_choice":
             return `${ex.images?.length ?? 0} images`;
+        case "multiple_choice":
+            return `${ex.options?.length ?? 0} options`;
         case "free_text":
         default:
             return ex.prompt;
@@ -325,17 +472,63 @@ function describe(ex: ContentLessonExercise): string {
 interface SortableExerciseRowProps {
     exercise: ContentLessonExercise;
     onDelete: (id: string) => void;
+    onUpdate: (id: string, updated: ContentLessonExercise) => void;
+    /** Open straight in the inline editor on mount (a manually-added
+     *  exercise, #1849). */
+    autoEdit?: boolean;
 }
 
-function SortableExerciseRow({exercise, onDelete}: SortableExerciseRowProps) {
+function SortableExerciseRow({
+    exercise,
+    onDelete,
+    onUpdate,
+    autoEdit = false,
+}: SortableExerciseRowProps) {
     const {t} = useI18n();
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} =
         useSortable({id: exercise.id});
+    const [editing, setEditing] = useState(autoEdit);
     const style: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.6 : 1,
     };
+
+    if (editing) {
+        return (
+            <li
+                ref={setNodeRef}
+                style={style}
+                className="exercise-row is-editing flex flex-col gap-3 rounded-lg border border-border bg-card p-3"
+                data-testid={`exercise-row-${exercise.id}`}
+                data-type={exercise.type}
+            >
+                <span className="exercise-row-type w-fit rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
+                    {t(exerciseTypeLabelKey(exercise.type), exercise.type)}
+                </span>
+                {isExtensionType(exercise.type) ? (
+                    <ExtensionExerciseEditor
+                        exercise={exercise}
+                        onSave={(updated) => {
+                            onUpdate(exercise.id, updated);
+                            setEditing(false);
+                        }}
+                        onCancel={() => setEditing(false)}
+                    />
+                ) : (
+                    <ExerciseEditor
+                        exercise={exercise}
+                        onSave={(updated) => {
+                            onUpdate(exercise.id, updated);
+                            setEditing(false);
+                        }}
+                        onCancel={() => setEditing(false)}
+                    />
+                )}
+            </li>
+        );
+    }
+
     return (
         <li
             ref={setNodeRef}
@@ -354,9 +547,18 @@ function SortableExerciseRow({exercise, onDelete}: SortableExerciseRowProps) {
                 <GripVertical size={16} aria-hidden="true" />
             </button>
             <span className="exercise-row-type shrink-0 rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
-                {t(`create_lesson.exercises.type.${exercise.type}`, exercise.type)}
+                {t(exerciseTypeLabelKey(exercise.type), exercise.type)}
             </span>
             <span className="exercise-row-desc muted min-w-0 flex-1 truncate text-sm text-fg-muted">{describe(exercise)}</span>
+            <button
+                type="button"
+                className="card-row-action flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
+                data-testid={`exercise-edit-${exercise.id}`}
+                aria-label={t("create_lesson.exercises.edit.edit", "Edit exercise")}
+                onClick={() => setEditing(true)}
+            >
+                <Pencil size={14} aria-hidden="true" />
+            </button>
             <button
                 type="button"
                 className="card-row-action flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"

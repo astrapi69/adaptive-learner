@@ -155,6 +155,7 @@ Teile landen ebenfalls hier:
 | Generische UI-Komponenten | `frontend/src/shared/` | MatchingTile, ExerciseTimer |
 | Generische Hooks | `frontend/src/shared/` | useDebounce, useTimer |
 | Generische Utilities | `frontend/src/lib/` | eventLogger, formatDuration |
+| Exercise-Logik (`lib/exercises/`) | `authoring/` (generateExercises, validateExerciseEdit, createIdFactory), `grading/` (tokenDiff, isWordTilesCorrect, isMultipleChoiceCorrect, seededShuffle, generateClozeFromError), `payload/` (categorizationPayloadErrors, …PayloadErrors je Extension-Typ) | Authoring hat den Barrel `lib/exercises` als oeffentliche API; `grading/` + `payload/` werden von den Renderern ueber direkte Pfade importiert (kein Barrel-Re-Export wegen `canonicalAnswer`-Namenskollision zwischen `reading-comprehension` und `graded-quiz`). |
 | Exercise-Widgets | `frontend/src/components/exercises/` | MatchingExercise, ClozeExercise |
 | Feature-spezifisch | `frontend/src/components/<feature>/` | BackupCompare, ShareWizard |
 

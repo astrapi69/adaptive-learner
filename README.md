@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.4.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.5.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-9708%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -470,13 +470,28 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.4.0**, a polish
-release completing the **EXP-044 CSS concern-split** (`global.css`
+Active development. The current release is **v2.5.0**, a feature
+release that turns **Create-Lesson into a full exercise authoring
+tool**: every core exercise type is editable, exercises can be added
+by hand, `multiple_choice` is authorable with a single/multi mode
+control, and an **extension-authoring wizard** covers all four
+AI-authored extension types. **`ext:al-dictation` (audio dictation)**
+joins as the fifth extension type. Under the hood, the PWA update
+system and the AI key vault are now **consumed as published npm
+packages** (`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`), and
+exercise grading, payload validation, and authoring are consolidated
+under `lib/exercises/`. Prior **v2.4.0** shipped a **Create-Lesson
+authoring upgrade** (a knowledge lesson from pasted textbook text,
+editing and combining your own lessons, and card image upload),
+**free-text multiple accepted answers** with an AI second opinion, an
+**AI key-import** shortcut on the settings AI tab, and the content
+**engine re-pinned to 0.13.0 (schema 1.8)** so uploaded images feed
+picture-choice exercises. Prior **v2.3.0** completed the **EXP-044 CSS concern-split** (`global.css`
 decomposed byte-identically into per-concern legacy files behind a
-byte-identity gate), reworking the **lesson-player UX** (collapsible
-options panel, footer pause control, slimmer title area), adding
+byte-identity gate), reworked the **lesson-player UX** (collapsible
+options panel, footer pause control, slimmer title area), added
 **listen-first audio** exercises and an authored-difficulty
-cold-start prior for adaptive lessons, and hardening lesson/set
+cold-start prior for adaptive lessons, and hardened lesson/set
 **file import/export**. Prior **v2.2.0** added an
 **extension-exercise tier** (four AI-authored exercise types) and a
 native **multiple_choice** type, with the app consuming the lesson

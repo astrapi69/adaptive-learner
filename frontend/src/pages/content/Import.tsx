@@ -447,7 +447,6 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         {!analyze.available && (
           <ApiKeyRequiredNotice
             feature={t("ui.api_key.feature_analyze", "to analyze conversations")}
-            settingsHref="/settings?tab=integrations"
           />
         )}
         <textarea

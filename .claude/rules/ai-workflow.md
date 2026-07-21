@@ -57,6 +57,101 @@ PR even cited `Closes #97` and closed the umbrella while leaving itself open.
 They needed a manual verify-and-close sweep. Cite the sub-issue and this does
 not happen.
 
+## PR-PFLICHT: every pushed code change opens a PR — by default, not on request
+
+After ANY code change that is committed and pushed to a branch, a pull
+request against the target branch (`develop`, gitflow #334) MUST be
+opened — WHETHER OR NOT the task explicitly asked for one. This is
+mandatory, not advisory. It applies to ALL agents (ccw, ccw2, ccw3, cc,
+and any other) and ALL repositories.
+
+- **"No PR, wasn't requested" is NOT a valid completion report.** A
+  pushed branch with no PR is unfinished work, not a delivered task.
+  Opening the PR is the last step of the change, in the same turn as
+  the push — not a follow-up the user has to ask for.
+- **A task does not have to name "PR" to require one.** Any task that
+  results in a committed, pushed code change carries the PR obligation
+  implicitly. The default is always **PR**, never "push only".
+- **The PR is how work becomes reviewable and mergeable.** It is the
+  hand-off surface: the diff, the testing evidence, the `Closes #NN`
+  auto-close. A branch that never becomes a PR silently drops out of the
+  Priority-Hierarchy "Merge open PRs" step — the work is invisible.
+
+Do NOT open a PR only in these cases:
+
+1. **No code change.** A pure analysis / status / audit / docs-question
+   task that pushes nothing has nothing to PR. (A task that DOES change
+   committed files — including docs and `.claude/rules/` — is a code
+   change for this rule and gets a PR.)
+2. **Release freeze.** While a `release/X.Y.Z` branch is open and not yet
+   tagged+published, no new PRs against `develop` are opened (see
+   VIBE-CODING-POLICY §"Release Freeze" / vibe-coding.md §"Release-Sperre").
+   Exception: a P0 hotfix that blocks the release itself.
+3. **The user explicitly said "push only, no PR" for this task.** An
+   explicit opt-OUT is honoured; the absence of an explicit opt-IN is NOT
+   a reason to skip.
+
+If a standing instruction in the session/dispatch prompt says the
+opposite ("do not create a PR unless explicitly asked"), that instruction
+is the known root cause of the recurring "pushed but no PR" miss and is
+being retired. Under this project rule the default is PR-always; surface
+the conflict in the final report rather than silently skipping the PR.
+
+Every PR follows the existing conventions: opened against `develop`
+(coding-standards.md §Git), body cites the issue with a closing keyword
+(GITHUB-ISSUE-PFLICHT / SUB-ISSUE-CLOSES above), and — when a PR template
+exists — mirrors its section headings.
+
+## TESTPLAN-PFLICHT: user-visible functionality updates the manual test plan
+
+Every PR that adds or changes USER-VISIBLE functionality — a new button,
+a new wizard step, a new exercise type, a changed user flow — MUST update
+the manual test plan in the SAME PR:
+
+- `docs/manual-tests/testplan-adaptive-learner.md` (German), AND
+- `docs/manual-tests/testplan-adaptive-learner-en.md` (English).
+
+Both language versions stay in sync; updating one without the other is
+an incomplete update. This is mandatory, not advisory. It is the third
+member of the PFLICHT family, alongside GITHUB-ISSUE-PFLICHT and
+PR-PFLICHT above, and applies to ALL agents and ALL repositories that
+carry a manual test plan.
+
+- **"Testplan update wasn't explicitly requested" is NOT a valid reason
+  to skip it.** Exactly like PR-PFLICHT: the obligation is implicit in
+  the change itself. A feature the QA-Tester cannot find in the test
+  plan is a feature that never gets manually verified — it silently
+  drops out of every release-gate walk-through (Visual-Device-Check,
+  launch-readiness runs like #1087).
+- **Same-PR is the default.** If the testplan delta would genuinely
+  blow up the PR's scope (e.g. a large feature landing in slices), the
+  fallback is an IMMEDIATE, referenced follow-up: leave a comment on
+  issue #1087 (the manual-test-plan umbrella) listing the pending
+  testplan additions, and reference that comment from the feature PR.
+  A silent "later" without the #1087 comment is not the fallback — it
+  is exactly the gap this rule closes.
+
+Exempt (no testplan update required):
+
+1. **Pure internal refactorings with no behaviour change** (e.g. the
+   #1450 god-file splits, barrel moves, type extractions).
+2. **Pure infrastructure / CI changes** (workflows, Makefile, gates,
+   tooling).
+3. **Pure documentation / rules fixes** (docs, `.claude/rules/`,
+   journal — including this rule itself).
+4. **Bug fixes that introduce NO new user path** — the feature now
+   works as the test plan already describes; no new test case is
+   needed. BUT: if an existing test-plan step described the buggy
+   behaviour (or a workaround for it), correct that step in the same
+   PR.
+
+Origin: a whole series of features (#1845, #1847, #1849, #1850, #1852
+plus i18n fixes) landed with the test plan updated only afterwards, as
+a separate, explicitly-requested batch task — never as part of the
+feature PR itself. Same structural gap PR-PFLICHT closed for pull
+requests: without a binding rule, the update happens only when someone
+remembers to ask.
+
 ## Session start
 
 On the first message of a session:
@@ -103,6 +198,8 @@ already has an issue):
 7. Playwright smoke tests for UI features: for every new UI feature write at least one spec under `e2e/smoke/`. Must cover: happy path, relevant viewport sizes (600/800/1080 for layout-critical features), data-testid selectors (no brittle CSS selectors). Claude Code WRITES the specs, Aster RUNS them. No feature counts as done without a smoke test.
 8. Add i18n strings in all 8 languages (DE, EN, ES, FR, EL, PT, TR, JA).
 9. Conventional commit.
+10. Push the branch and open a PR against `develop` (PR-PFLICHT above) —
+    always, not only when asked.
 
 ## Order for new plugins
 
@@ -122,6 +219,8 @@ already has an issue):
 2. Implement the change.
 3. Adjust or extend the tests.
 4. Make sure `make test` stays green.
+5. Commit, push, and open a PR against `develop` (PR-PFLICHT above) —
+   always, not only when asked.
 
 ## Not allowed (AI-specific)
 
@@ -579,5 +678,7 @@ responsibility, not a CI gate.
 2. At phase completion: extend docs/CHANGELOG.md, bump the CLAUDE.md version.
 3. Check whether CLAUDE.md, CONCEPT.md, ROADMAP.md, API.md or lessons-learned.md need updates.
 4. Commit everything: `docs: update chat journal and documentation`
-5. For larger milestones: add a summary with statistics to the journal.
-6. For a release: follow release-workflow.md step by step. Do not improvise the release process.
+5. Push the branch and open a PR against `develop` (PR-PFLICHT above) if
+   any code or docs changed this session — always, not only when asked.
+6. For larger milestones: add a summary with statistics to the journal.
+7. For a release: follow release-workflow.md step by step. Do not improvise the release process.

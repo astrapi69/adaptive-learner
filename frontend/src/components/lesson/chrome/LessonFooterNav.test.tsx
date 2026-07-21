@@ -191,8 +191,10 @@ describe("LessonFooterNav — footer pause control (#1642)", () => {
       el.getAttribute("data-testid"),
     );
     expect(ids).toEqual(["lesson-prev", "lesson-pause-btn", "lesson-check"]);
-    // centred distribution so pause sits between the two edges
-    expect(nav.className).toContain("justify-between");
+    // #1834 — centred distribution via an auto-margin on the pause button
+    // (NOT justify-between, which overlaps items on overflow in iOS WebKit).
+    expect(screen.getByTestId("lesson-pause-btn")).toHaveClass("mx-auto");
+    expect(nav.className).not.toContain("justify-between");
   });
 
   it("keeps Previous and Check working after the layout change (no regression)", () => {
@@ -203,5 +205,45 @@ describe("LessonFooterNav — footer pause control (#1642)", () => {
     expect(goPrev).toHaveBeenCalledTimes(1);
     fireEvent.click(screen.getByTestId("lesson-check"));
     expect(onCheck).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("LessonFooterNav — WebKit overlap-proof layout (#1834)", () => {
+  // iOS WebKit distributes NEGATIVE flex free space by overlapping items
+  // under justify-content: space-between, clipping the "Weiter" label with
+  // the adjacent pause button. The fix: no justify-between, every button is
+  // shrink-0 (a label never clips), and the pause is centred with an
+  // auto-margin that clamps to 0 on overflow (margins can't go negative, so
+  // items push apart instead of overlapping).
+
+  it("gives every practice-flow button shrink-0 so no label ever clips", () => {
+    render(<LessonFooterNav {...BASE} />);
+    expect(screen.getByTestId("lesson-prev")).toHaveClass("shrink-0");
+    expect(screen.getByTestId("lesson-pause-btn")).toHaveClass("shrink-0");
+    expect(screen.getByTestId("lesson-check")).toHaveClass("shrink-0");
+  });
+
+  it("gives the Next button shrink-0 once the step is checked", () => {
+    render(<LessonFooterNav {...BASE} checked />);
+    expect(screen.getByTestId("lesson-next")).toHaveClass("shrink-0");
+  });
+
+  it("centres the pause with mx-auto and never uses justify-between", () => {
+    render(<LessonFooterNav {...BASE} />);
+    const nav = screen.getByTestId("lesson-footer");
+    expect(screen.getByTestId("lesson-pause-btn")).toHaveClass("mx-auto");
+    expect(nav.className).not.toContain("justify-between");
+  });
+
+  it("exam flow: pause is pushed to the edge with mr-auto, both shrink-0", () => {
+    render(
+      <LessonFooterNav {...BASE} delayedFeedback onSubmitAndAdvance={() => {}} />,
+    );
+    const nav = screen.getByTestId("lesson-footer");
+    const pause = screen.getByTestId("lesson-pause-btn");
+    expect(pause).toHaveClass("shrink-0");
+    expect(pause).toHaveClass("mr-auto");
+    expect(screen.getByTestId("lesson-next")).toHaveClass("shrink-0");
+    expect(nav.className).not.toContain("justify-between");
   });
 });

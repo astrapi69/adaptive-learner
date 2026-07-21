@@ -9,6 +9,7 @@
  */
 
 import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
+import {requiredExtensionsFor, type GeneratorCard} from "../../exercises";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
     ContentLesson,
@@ -18,6 +19,29 @@ import type {
     SaveUserSetInput,
     UserLessonOrigin,
 } from "../../../storage/types";
+
+/**
+ * Adapt the wizard's draft cards to the generic {@link GeneratorCard}
+ * shape the exercise generator consumes (#1847).
+ *
+ * The ``example`` sentence comes from the card's dedicated ``example``
+ * field — NOT from ``notes`` — so cloze / word-tiles generation is driven
+ * by an explicit, labelled input rather than silently overloading the
+ * notes field. ``image`` feeds picture-choice; ``altAnswers`` feed the
+ * free-text accepted answers.
+ */
+export function draftCardsToGeneratorCards(
+    cards: LessonCardDraft[],
+): GeneratorCard[] {
+    return cards.map((c) => ({
+        id: c.id,
+        front: c.front,
+        back: c.back,
+        example: c.example ?? "",
+        image: c.image,
+        altAnswers: c.altAnswers ?? [],
+    }));
+}
 
 export interface DraftLessonInput {
     meta: LessonMeta;
@@ -120,6 +144,12 @@ export function buildLessonFromDraft(
     });
 
     const theoryCount = steps.filter((s) => s.type !== "exercise").length;
+    // #1895 — a manually-added extension exercise (e.g. dictation via the
+    // core-type picker) MUST declare its extension so the lesson is refused,
+    // not silently mis-rendered, in an app without it. Only set the field when
+    // there is one to declare, so a pure-core lesson never carries a spurious
+    // ``requires_extensions: []``.
+    const requiredExtensions = requiredExtensionsFor(exercises);
     const lesson: ContentLesson = {
         id: opts.id ?? (slugify(meta.title) || "lesson"),
         title: meta.title.trim(),
@@ -129,6 +159,9 @@ export function buildLessonFromDraft(
         estimated_minutes: estimateMinutes(theoryCount, exercises.length),
         cards: lessonCards,
         steps,
+        ...(requiredExtensions.length > 0
+            ? {requires_extensions: requiredExtensions}
+            : {}),
         contributed_by: meta.author.trim() || null,
         contributed_at: meta.author.trim() ? new Date().toISOString() : null,
     };

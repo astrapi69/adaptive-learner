@@ -39,7 +39,7 @@ import {useI18n} from "../../../hooks/ui/useI18n";
 import ExerciseHint from "../feedback/ExerciseHint";
 import {deriveClozeAttempts} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
-import {seededShuffle} from "../../../lib/exercises/seeded-shuffle";
+import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
 import type {ContentLessonExercise} from "../../../storage/types";
 import ClozeMultiSelect from "./ClozeMultiSelect";
 import {
@@ -55,7 +55,7 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "../shell/exercise-control";
-import {isFreeTextCorrect} from "./FreeTextExercise";
+import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
 
 export interface ClozeExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;

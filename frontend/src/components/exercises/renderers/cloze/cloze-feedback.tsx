@@ -18,7 +18,7 @@ import ExerciseAnswerToggle, {
 } from "../../feedback/ExerciseAnswerToggle";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import {tokenDiff} from "../../../../lib/exercises/token-diff";
+import {tokenDiff} from "../../../../lib/exercises/grading/token-diff";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
 import DiffHighlight from "../../feedback/DiffHighlight";

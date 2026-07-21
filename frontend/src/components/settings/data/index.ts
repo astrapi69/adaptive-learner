@@ -6,8 +6,6 @@ export * from "./ExportSection";
 export { default as ExportSection } from "./ExportSection";
 export * from "./InstallAppSection";
 export { default as InstallAppSection } from "./InstallAppSection";
-export * from "./KeyVaultSection";
-export { default as KeyVaultSection } from "./KeyVaultSection";
 export { default as OrphanedDataSection } from "./OrphanedDataSection";
 export * from "./SelectiveExportSection";
 export { default as SelectiveExportSection } from "./SelectiveExportSection";

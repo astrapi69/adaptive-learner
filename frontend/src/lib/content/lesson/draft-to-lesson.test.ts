@@ -1,11 +1,12 @@
 import {describe, expect, it} from "vitest";
 
-import {generateExercises} from "./exercise-generator";
+import {generateExercises} from "../../exercises";
 import {
     allChecksPass,
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
+    draftCardsToGeneratorCards,
     draftSetId,
     lessonToDraftInput,
     preservedTheorySteps,
@@ -136,6 +137,61 @@ describe("draft-to-lesson", () => {
     });
 });
 
+// #1895 — a dictation (extension) exercise can now reach the MAIN wizard path
+// via the core-type picker. Whatever the build path, the resulting lesson must
+// declare ``requires_extensions`` so it is refused (not mis-rendered) in an app
+// without the extension. This is the safety generalization the Verify-First
+// step surfaced: only ``buildExtensionLesson`` used to set the field.
+describe("draft-to-lesson requires_extensions generalization (#1895)", () => {
+    const dictationExercise = {
+        id: "ex-dict-manual",
+        type: "ext:al-dictation",
+        prompt: "Hoere zu und schreibe, was du hoerst.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {audio: "assets/audio/clip.mp3", accept: ["Bonjour"]},
+    };
+
+    function draftWithDictation(): DraftLessonInput {
+        const base = input();
+        return {
+            ...base,
+            exercises: [
+                ...base.exercises,
+                dictationExercise as unknown as (typeof base.exercises)[number],
+            ],
+        };
+    }
+
+    it("declares the extension when the draft contains a dictation exercise", () => {
+        const lesson = buildLessonFromDraft(draftWithDictation());
+        expect(lesson.requires_extensions).toContain("ext:al-dictation@1");
+    });
+
+    it("does NOT add requires_extensions for a pure core draft", () => {
+        const lesson = buildLessonFromDraft(input());
+        // Absent or empty — never a spurious [] on every core lesson.
+        expect(lesson.requires_extensions ?? []).toEqual([]);
+    });
+
+    it("the built dictation lesson passes the load guard", () => {
+        // buildLessonFromDraft validates internally; a throw here would mean
+        // the undeclared-extension guard fired -> the field was NOT set.
+        expect(() => buildLessonFromDraft(draftWithDictation())).not.toThrow();
+    });
+
+    it("edit-mode (id + preserved theory) also declares the extension", () => {
+        const lesson = buildLessonFromDraft(draftWithDictation(), {
+            id: "kept-id",
+            theorySteps: [
+                {id: "theory-intro", type: "theory", title: "T", body: "Body"},
+            ],
+        });
+        expect(lesson.id).toBe("kept-id");
+        expect(lesson.requires_extensions).toContain("ext:al-dictation@1");
+    });
+});
+
 // #1740 — lesson editing: reverse mapping, id/set-id override, theory
 // preservation.
 describe("draft-to-lesson editing (#1740)", () => {
@@ -230,5 +286,56 @@ describe("draft-to-lesson editing (#1740)", () => {
         });
         expect(rebuilt.id).toBe(original.id);
         expect(rebuilt.cards[0].back).toBe("corrected");
+    });
+});
+
+describe("draftCardsToGeneratorCards (#1847)", () => {
+    function draftCard(over: Partial<LessonCardDraft>): LessonCardDraft {
+        return {
+            id: "c1",
+            front: "lis",
+            back: "read",
+            notes: "a teaching note",
+            image: "",
+            example: "",
+            ...over,
+        };
+    }
+
+    it("feeds the generator's example from the card's example field, NOT notes", () => {
+        const [gc] = draftCardsToGeneratorCards([
+            draftCard({notes: "note only", example: "Je lis un livre."}),
+        ]);
+        expect(gc.example).toBe("Je lis un livre.");
+    });
+
+    it("passes image + altAnswers through and defaults a missing example to empty", () => {
+        const [gc] = draftCardsToGeneratorCards([
+            {
+                id: "c2",
+                front: "chat",
+                back: "cat",
+                notes: "",
+                image: "data:image/png;base64,AAA",
+                altAnswers: ["kitty"],
+            },
+        ]);
+        expect(gc.image).toBe("data:image/png;base64,AAA");
+        expect(gc.altAnswers).toEqual(["kitty"]);
+        expect(gc.example).toBe("");
+    });
+
+    it("makes example-bearing cards drive cloze generation end to end", () => {
+        const cards = draftCardsToGeneratorCards([
+            draftCard({id: "c1", front: "lis", example: "Je lis un livre."}),
+            draftCard({id: "c2", front: "mange", example: "Tu manges une pomme."}),
+        ]);
+        const exercises = generateExercises(cards, {
+            count: 10,
+            types: ["cloze"],
+            direction: "auto",
+        });
+        expect(exercises.length).toBeGreaterThan(0);
+        expect(exercises.every((e) => e.type === "cloze")).toBe(true);
     });
 });

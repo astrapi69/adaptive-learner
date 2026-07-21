@@ -12,7 +12,7 @@
 import CardEditor, {MIN_CARDS} from "./CardEditor";
 import ExerciseGenerator, {MIN_EXERCISES} from "./ExerciseGenerator";
 import ReviewStep from "./ReviewStep";
-import type {ExerciseGenConfig} from "../../lib/content/lesson/exercise-generator";
+import type {ExerciseGenConfig} from "../../lib/exercises";
 import type {
     DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
@@ -38,6 +38,7 @@ interface WizardStepsProps {
         back: string;
         notes: string;
         image: string;
+        example: string;
         altAnswers: string[];
     }) => void;
     onUpdateCard: (id: string, patch: Partial<LessonCardDraft>) => void;
@@ -48,6 +49,8 @@ interface WizardStepsProps {
     onConfigChange: (config: ExerciseGenConfig) => void;
     onReorderExercises: (exercises: ContentLessonExercise[]) => void;
     onDeleteExercise: (id: string) => void;
+    onUpdateExercise: (id: string, updated: ContentLessonExercise) => void;
+    onAddExercise: (exercise: ContentLessonExercise) => void;
     onSaveLocal: () => void;
     onSaveShare: () => void;
     onSaveCopy?: () => void;
@@ -76,6 +79,8 @@ export default function WizardSteps({
     onConfigChange,
     onReorderExercises,
     onDeleteExercise,
+    onUpdateExercise,
+    onAddExercise,
     onSaveLocal,
     onSaveShare,
     onSaveCopy,
@@ -118,17 +123,24 @@ export default function WizardSteps({
                         onGenerate={onGenerate}
                         onReorder={onReorderExercises}
                         onDelete={onDeleteExercise}
+                        onUpdate={onUpdateExercise}
+                        onAdd={onAddExercise}
                     />
-                    {exerciseError && exercises.length < MIN_EXERCISES && (
+                    {exerciseError && (
                         <p
                             className="form-hint form-hint-warning"
                             data-testid="create-lesson-exercise-error"
                             role="alert"
                         >
-                            {t(
-                                "create_lesson.exercises.min_to_advance",
-                                "Generate at least {n} exercises to continue.",
-                            ).replace("{n}", String(MIN_EXERCISES))}
+                            {exercises.length < MIN_EXERCISES
+                                ? t(
+                                      "create_lesson.exercises.min_to_advance",
+                                      "Generate at least {n} exercises to continue.",
+                                  ).replace("{n}", String(MIN_EXERCISES))
+                                : t(
+                                      "create_lesson.exercises.incomplete_to_advance",
+                                      "Complete or remove the incomplete exercises to continue.",
+                                  )}
                         </p>
                     )}
                 </>

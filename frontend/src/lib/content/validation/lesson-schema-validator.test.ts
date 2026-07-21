@@ -750,3 +750,115 @@ describe("adopted extension ext:al-graded-quiz (#1579, fourth adoption)", () => 
     expect(() => validateGeneratedLesson(badPoints)).toThrow(/positive points/);
   });
 });
+
+describe("adopted extension ext:al-dictation (#1881, fifth adoption)", () => {
+  const dictationExercise = {
+    id: "ex-dict-01",
+    type: "ext:al-dictation",
+    prompt: "Hoere zu und schreibe, was du hoerst.",
+    card_ids: [],
+    distractors: [],
+    ext_payload: {
+      audio: "assets/audio/bonjour.mp3",
+      accept: ["Bonjour", "bonjour"],
+    },
+  };
+
+  const dictationLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-dictation@1"],
+      steps: [
+        {
+          id: "step-dict-01",
+          type: "exercise",
+          exercise: {
+            ...dictationExercise,
+            ...(payloadOverride === undefined
+              ? {}
+              : { ext_payload: payloadOverride }),
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(dictationLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed dictation exercise", () => {
+    expect(() => validateGeneratedLesson(dictationLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses an empty audio reference", () => {
+    const noAudio = dictationLesson({ audio: "", accept: ["Bonjour"] });
+    expect(() => validateGeneratedLesson(noAudio)).toThrow(/audio/);
+  });
+
+  it("validateGeneratedLesson refuses an accept list with no non-empty entry", () => {
+    const noAccept = dictationLesson({ audio: "a.mp3", accept: ["", "  "] });
+    expect(() => validateGeneratedLesson(noAccept)).toThrow(/accept/);
+  });
+});
+
+// #1895 — the reverse-consistency load guard: a lesson that USES an extension
+// exercise type but never DECLARES it in ``requires_extensions`` would load
+// fine in an app that supports the extension yet mis-render (fall through to
+// unknown-type) in one that does not — exactly the E-EXT-UNSUPPORTED silent
+// failure the load guard exists to forbid. This is the class-closing defense
+// that catches ANY build path (main wizard, book, edit) that fails to declare.
+describe("undeclared extension usage is refused (#1895)", () => {
+  const dictationStep = {
+    id: "step-dict-01",
+    type: "exercise",
+    exercise: {
+      id: "ex-dict-01",
+      type: "ext:al-dictation",
+      prompt: "Hoere zu und schreibe, was du hoerst.",
+      card_ids: [],
+      distractors: [],
+      ext_payload: {
+        audio: "assets/audio/bonjour.mp3",
+        accept: ["Bonjour"],
+      },
+    },
+  };
+
+  it("refuses a dictation exercise used without requires_extensions", () => {
+    const undeclared = makeLesson({
+      steps: [dictationStep],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(undeclared);
+    expect(shape.ok).toBe(false);
+    expect(shape.errors.join(" ")).toContain("ext:al-dictation");
+    expect(shape.errors.join(" ")).toMatch(/not declared|requires_extensions/);
+  });
+
+  it("refuses when requires_extensions declares a DIFFERENT extension", () => {
+    const mismatched = makeLesson({
+      requires_extensions: ["ext:al-categorization@1"],
+      steps: [dictationStep],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(mismatched);
+    expect(shape.ok).toBe(false);
+    expect(shape.errors.join(" ")).toContain("ext:al-dictation");
+  });
+
+  it("accepts when the used extension IS declared (version-tolerant)", () => {
+    const declared = makeLesson({
+      requires_extensions: ["ext:al-dictation@1"],
+      steps: [dictationStep],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(declared);
+    expect(shape.ok).toBe(true);
+    expect(shape.errors).toEqual([]);
+  });
+
+  it("validateGeneratedLesson throws on undeclared extension usage", () => {
+    const undeclared = makeLesson({
+      steps: [dictationStep],
+    } as unknown as Partial<ContentLesson>);
+    expect(() => validateGeneratedLesson(undeclared)).toThrow(/ext:al-dictation/);
+  });
+});

@@ -3,9 +3,11 @@ import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 
 import { featureRegistry, type FeatureContext } from "./features/featureConfig";
 import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
+import { AiKeyVaultProvider } from "./components/settings/ai/AiKeyVaultProvider";
+import AppUpdateProvider from "./components/pwa/AppUpdateProvider";
 import { resolveStorageMode } from "./storage";
 import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie/dexie-user-data";
-import { lazyWithReload } from "./lib/pwa/lazyWithReload";
+import { lazyWithReload } from "./lib/pwa/lazy-route";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,6 +29,7 @@ import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
 import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
+import { useVisualViewportRealign } from "./hooks/ui/useVisualViewportRealign";
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/onboarding/Landing";
 import SkipToContent from "./components/a11y/SkipToContent";
@@ -96,6 +99,9 @@ const ErrorReportDialog = lazyWithReload(() => import("./components/error/ErrorR
  */
 export default function App() {
   useTheme();
+  // #1569 — reset the iOS phantom window scroll that lands taps ~2 lines
+  // below their visible target (see the hook's TSDoc for the mechanism).
+  useVisualViewportRealign();
   // EXP-023 Phase A — background-sync a connected user content repo on
   // app start when its cache is older than 24h.
   useContentRepoAutoSync();
@@ -156,6 +162,12 @@ export default function App() {
         <FeatureProvider registry={featureRegistry} context={featureContext}>
           <HelpProvider>
             <ConfirmProvider>
+            {/* Provides the storage adapter + provider registry + UI slots to
+                the package's AI settings panel and encrypted key vault, and the
+                context the ``useApiKeyStatus`` gate reads. Inside ConfirmProvider
+                (it injects the confirm dialog) + I18nProvider (it injects ``t``). */}
+            <AiKeyVaultProvider>
+            <AppUpdateProvider>
             <SkipToContent />
             <UpdatePromptHost />
             <DesktopUpdateHost />
@@ -249,6 +261,8 @@ export default function App() {
               pauseOnHover
               theme="colored"
             />
+            </AppUpdateProvider>
+            </AiKeyVaultProvider>
             </ConfirmProvider>
           </HelpProvider>
         </FeatureProvider>

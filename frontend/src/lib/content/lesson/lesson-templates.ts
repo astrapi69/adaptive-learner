@@ -9,7 +9,7 @@
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     type ExerciseGenConfig,
-} from "./exercise-generator";
+} from "../../exercises";
 import {emptyCard, type LessonCardDraft} from "./lesson-draft";
 
 export type LessonTemplateKey =

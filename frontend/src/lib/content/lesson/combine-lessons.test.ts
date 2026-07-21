@@ -9,7 +9,7 @@ import {
     type CombineSource,
 } from "./combine-lessons";
 import {buildLessonFromDraft} from "./draft-to-lesson";
-import {generateExercises} from "./exercise-generator";
+import {generateExercises} from "../../exercises";
 import {buildContentSetZip} from "./lesson-export";
 import {parseImportFile} from "./lesson-import";
 import type {LessonMeta} from "./lesson-draft";

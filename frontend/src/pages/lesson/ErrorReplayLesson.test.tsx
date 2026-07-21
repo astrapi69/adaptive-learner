@@ -9,6 +9,7 @@
 
 import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {describe, expect, it} from "vitest";
 
@@ -116,6 +117,24 @@ describe("ErrorReplayLesson", () => {
         fireEvent.click(screen.getByTestId("error-replay-summary-retry"));
         expect(screen.getByTestId("error-replay-step-ex-b")).toBeInTheDocument();
         expect(screen.getByText(/Step 1 of 1/)).toBeInTheDocument();
+    });
+
+    it("all-corrected summary auto-focuses the sole 'Back to lesson' button so Enter returns to the lesson (#1864)", async () => {
+        const user = userEvent.setup();
+        renderWithState({
+            exercises: [FREE("ex-a", "hola")],
+            cards: [],
+            lessonTitle: "Greetings",
+        });
+        await answerAndAdvance("hola"); // correct -> all corrected
+        const summary = await screen.findByTestId("error-replay-summary");
+        expect(summary.getAttribute("data-all-corrected")).toBe("true");
+        // The sole next step is auto-focused; a focused button activates
+        // natively on Enter (no page-level key handler needed).
+        const done = screen.getByTestId("error-replay-summary-done");
+        expect(done).toHaveFocus();
+        await user.keyboard("{Enter}");
+        expect(await screen.findByTestId("lesson")).toBeInTheDocument();
     });
 
     it("Enter checks an answered exercise, then advances (#154)", async () => {

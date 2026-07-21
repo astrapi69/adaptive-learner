@@ -47,10 +47,10 @@ import {
     useWordTilesDnd,
 } from "./word-tiles";
 import {deriveWordTilesAttempt} from "../../../lib/srs/element-attempt";
-import {isWordTilesCorrect} from "../../../lib/exercises/word-tiles-equivalence";
+import {isWordTilesCorrect} from "../../../lib/exercises/grading/word-tiles-equivalence";
 import type {ContentLessonExercise} from "../../../storage/types";
 
-export {isWordTilesCorrect} from "../../../lib/exercises/word-tiles-equivalence";
+export {isWordTilesCorrect} from "../../../lib/exercises/grading/word-tiles-equivalence";
 export {applyDragReorder} from "./word-tiles";
 import DirectionInstruction from "../feedback/DirectionInstruction";
 import {type AnswerView} from "../feedback/ExerciseAnswerToggle";

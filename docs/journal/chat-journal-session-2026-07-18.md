@@ -172,3 +172,42 @@ getriebene Bugfix-Kette rund um die Ghost-Content-Wiederkehr-Klasse.
   Opt-in-Checkbox - eigene Sets verschwinden nach Löschung aus
   listSets, das Oracle versteckt ihren Fortschritt; SW-Purge läuft
   trotzdem. Bei Bedarf als Follow-up nachziehbar.
+
+## Release v2.4.0 (über die GH-Release-Workflows)
+
+- Ausgangspunkt: Statusbericht seit v2.3.0 (44 Commits, 8 Features)
+  -> Empfehlung Minor v2.4.0 -> Freigabe zum Schneiden.
+- `release/2.4.0` von develop geschnitten: Version-Bump 2.3.0 -> 2.4.0
+  (`make sync-versions`, 19 Dateien), `changelog/releases/v2.4.0.md`,
+  Version-Pins verifiziert. Getrieben über `release-prepare.yml` (Gate)
+  + `release-finish.yml` (Merge/Tag/Publish), nicht lokal.
+- Der erste ECHTE `release-prepare`-Gate-Lauf hat sechs vorbestehende
+  Blocker aufgedeckt (keiner aus dem Version-Bump; alle #1661-Klasse -
+  nightly/release-only-Gates, die in der PR-CI nicht laufen):
+  1. `oven-sh/setup-bun@v2` scheitert am fehlenden `unzip` im
+     Playwright-Noble-Image -> `unzip` zur apt-Zeile ergänzt (#1829;
+     `dexie-smoke.yml` dokumentierte die Klasse bereits).
+  2. Docs-Versions-Badges/Header noch v2.3.0 -> `verify_docs.py --fix`.
+  3. Schema-Mirror-Drift: #1774 pinnte die Engine auf 0.13.0/Schema 1.8,
+     liess aber App-`CURRENT_SCHEMA_VERSION` auf 1.7 -> Bump 1.7 -> 1.8
+     + `make sync-schema` regeneriert (#1830, vervollständigt #1774;
+     Major-Match = rückwärtskompatibel, 326/326 content-loader-Tests
+     grün).
+  4. `verify-plugin-locks`: proaktiv geprüft, sauber.
+  5. `test-dexie-smoke` seit 07-15 rot: der #1765 AI-Tab-Import-Sprung
+     scrollt nicht zum `key-vault-import`-Block, weil der Single-rAF-
+     Scroll VOR dem async `KeyVaultSection`-Layout feuert und
+     `pendingScroll` unbedingt geleert wird -> bounded Retry-bis-im-
+     Viewport statt Single-rAF (#1831; tsc + Settings-vitest 58/58 grün).
+  6. Advisory `test-e2e-smoke` (API-Mode) 21/42 rot = dokumentierter
+     #1254-Cold-Start-Flake -> per `skip_e2e=true` übersprungen (wie
+     `release.yml` es standardmässig tut; das mandatorische
+     `make release-test` inkl. dexie-smoke war grün).
+- `release-finish` erfolgreich: Tag `v2.4.0` (`eecca632`) auf main,
+  Back-Merge nach develop (zieht #1829-#1831 nach, macht die Nightly
+  wieder grün), GitHub-Release publiziert, Launcher-Binaries angehängt.
+- Lesson (Ergänzung zur #1661-/„wired != working"-Klasse): der erste
+  echte Lauf eines lange „verdrahteten, nie ausgeführten" Gate-Workflows
+  (`release-prepare.yml`, Header: „NOT used for v1.97.0 ... effective
+  from the next release") deckt latente Infra- UND nightly-only-
+  Produktregressionen gemeinsam auf.

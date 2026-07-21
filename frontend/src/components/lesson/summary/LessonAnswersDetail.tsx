@@ -16,7 +16,7 @@
 
 import {DiffHighlight} from "../../exercises";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {tokenDiff} from "../../../lib/exercises/token-diff";
+import {tokenDiff} from "../../../lib/exercises/grading/token-diff";
 import type {ExerciseBreakdownEntry} from "../../../lib/lesson/lesson-summary";
 
 export interface LessonAnswersDetailProps {

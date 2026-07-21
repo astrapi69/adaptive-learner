@@ -47,7 +47,7 @@ vi.mock("../../lib/content/lesson/lesson-export", () => ({
 import CreateLesson from "./CreateLesson";
 import {PAGE_CONTAINER_CLASSES} from "../../shared/layout/PageContainer";
 import {buildLessonFromDraft} from "../../lib/content/lesson/draft-to-lesson";
-import {generateExercises} from "../../lib/content/lesson/exercise-generator";
+import {generateExercises} from "../../lib/exercises";
 import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 
 function renderPage() {
@@ -611,6 +611,74 @@ describe("CreateLesson — edit mode (#1740)", () => {
             expect(
                 screen.getByTestId("create-lesson-edit-error"),
             ).toBeInTheDocument(),
+        );
+    });
+});
+
+// #1852 — the extension-authoring wizard branch (editors 1+2). A full
+// author-a-categorization-and-save round-trip proving the saved set carries
+// requires_extensions (the load-guard contract for ext lessons).
+describe("CreateLesson — extension wizard (#1852)", () => {
+    beforeEach(() => {
+        saveUserSetMock.mockClear();
+    });
+
+    it("authors a categorization exercise and saves a set with requires_extensions", async () => {
+        renderPage();
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: "Dog Signals"},
+        });
+        // Enter the extension path from the step-1 template card.
+        fireEvent.click(screen.getByTestId("template-extensions"));
+        expect(
+            screen.getByTestId("create-lesson-extension-step"),
+        ).toBeInTheDocument();
+
+        // Add a categorization exercise; it auto-opens in the inline editor.
+        fireEvent.click(screen.getByTestId("extension-add"));
+        fireEvent.click(screen.getByTestId("extension-add-type-categorization"));
+        const editor = screen.getByTestId(/^exercise-ext-editor-/);
+        const id = editor
+            .getAttribute("data-testid")!
+            .replace("exercise-ext-editor-", "");
+
+        fireEvent.change(screen.getByTestId(`exercise-ext-prompt-${id}`), {
+            target: {value: "Sort each signal"},
+        });
+        // Name both buckets and give each one item (add-only StringListEditor).
+        fireEvent.change(screen.getByTestId(`exercise-ext-cat-name-${id}-0`), {
+            target: {value: "Sight"},
+        });
+        fireEvent.change(screen.getByTestId(`exercise-ext-cat-name-${id}-1`), {
+            target: {value: "Sound"},
+        });
+        fireEvent.change(
+            screen.getByTestId(`exercise-ext-cat-items-${id}-0-input`),
+            {target: {value: "flat hand"}},
+        );
+        fireEvent.click(screen.getByTestId(`exercise-ext-cat-items-${id}-0-add`));
+        fireEvent.change(
+            screen.getByTestId(`exercise-ext-cat-items-${id}-1-input`),
+            {target: {value: "Sit"}},
+        );
+        fireEvent.click(screen.getByTestId(`exercise-ext-cat-items-${id}-1-add`));
+
+        // Save the exercise — the row collapses to its preview.
+        fireEvent.click(screen.getByTestId(`exercise-ext-save-${id}`));
+
+        // Advance to review and save locally.
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(
+            screen.getByTestId("create-lesson-extension-review"),
+        ).toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("create-lesson-save-local"));
+
+        await waitFor(() => expect(saveUserSetMock).toHaveBeenCalledOnce());
+        const input = saveUserSetMock.mock.calls[0][0] as unknown as {
+            lessons: {requires_extensions?: string[]}[];
+        };
+        expect(input.lessons[0].requires_extensions).toContain(
+            "ext:al-categorization@1",
         );
     });
 });

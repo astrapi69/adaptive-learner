@@ -132,6 +132,22 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Rueckwaerts: Matching-Spalten getauscht
 - [ ] Zufall: Karten aus verschiedenen Lektionen gemischt
 - [ ] Endlos: kein Session-Ende, Statistik laeuft
+- [ ] Endlos-Abschluss ("Uebung beendet"): Enter (ohne Klick) loest
+      "Zurueck zum Dashboard" aus (#1864, Button auto-fokussiert)
+- [ ] Fehler-wiederholen-Abschluss ("Alle Fehler korrigiert!"): Enter
+      (ohne Klick) loest "Zurueck zur Lektion" aus (#1864); Klick auf den
+      Button funktioniert weiterhin
+- [ ] Fehler wiederholen bei Zuordnung (#1874): Zuordnungs-Uebung mit
+      gemischt richtigen/falschen Paaren spielen, "Fehler wiederholen"
+      oeffnen -> nur die falschen Paare erscheinen (nicht alle). Bei nur
+      einem falschen Paar werden korrekte Paare als Distraktoren aufgefuellt
+      (mind. 2 Paare, damit ueberhaupt zugeordnet werden kann)
+- [ ] Einstellung "Fehler wiederholen" (Settings -> Lernen): Umschalten auf
+      "Ganzes Set wiederholen" -> beim naechsten "Fehler wiederholen"
+      erscheinen tatsaechlich ALLE Paare; zurueck auf "Nur Fehler zeigen"
+      (Standard) -> wieder nur die falschen
+- [ ] Regression andere Typen: Freitext/Lueckentext bei "Fehler
+      wiederholen" weiterhin nur die falschen Elemente
 
 ### Neue Uebungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
@@ -139,6 +155,10 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] ext:al-error-correction: Fehler finden + korrigieren
 - [ ] ext:al-reading-comprehension: Text + Fragen
 - [ ] ext:al-graded-quiz: Bewertung + Ergebnisanzeige
+- [ ] ext:al-dictation (#1881): "Listen first" spielt den Clip, Transkription
+      tippen; richtig / knapp daneben ("Almost!") / falsch zeigt die Loesung;
+      eine Lektion mit `requires_extensions: ["ext:al-dictation@1"]` laedt
+      (wird nicht vom Guard abgelehnt)
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
 
@@ -177,6 +197,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-
       schritt bleibt) + "Als Kopie speichern"; Fremd-Repo-Lektionen
       zeigen KEIN Bearbeiten; Analyse-Lektionen fuehren zur Import-Seite
+- [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
+      VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
+      "Match each word with its translation.") ueber "Lektion bearbeiten"
+      oeffnen → die betroffenen Anweisungen erscheinen automatisch in der
+      UI-Sprache + ein dezenter, schliessbarer Hinweis oben ("... automatisch
+      in deine Sprache uebertragen"). NUR bei EXAKT dem alten Default: ein vom
+      Nutzer bewusst abweichend gesetzter Prompt (auch zufaellig englisch)
+      bleibt unveraendert. Editor ohne Speichern verlassen → Original in
+      Dexie unveraendert (kein stiller Schreibvorgang); erst Speichern
+      (Ueberschreiben/Als Kopie) schreibt die migrierte Fassung dauerhaft
 - [ ] **Lektionen kombinieren (#1741):** Meine Inhalte → "Zu Set
       kombinieren"-Umschalter → Checkbox-Auswahl (nur eigene Sets) →
       "Kombinieren"-Dialog: Neues Set (Titel Pflicht) vs. zu bestehendem
@@ -191,6 +221,48 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Lektionsstruktur"-Check nennt einen konkreten Grund, nicht nur ✗
 - [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare
       Titel (auch offline) + einen gedrueckten/ausgewaehlten Zustand
+- [ ] **Erweiterte Uebungstypen / Extension-Wizard (#1852, #1887):** Schritt 1
+      → Karte "Erweiterte Uebungstypen" startet einen eigenen 3-Schritt-Flow
+      (Autoren → Review → Speichern) mit einem nicht-blockierenden Hinweis,
+      dass diese Typen fortgeschritten sind. Schritt 2: "Erweiterungsuebung
+      hinzufuegen" bietet fuenf Typen — **Kategorisierung**, **Fehlerkorrektur**,
+      **Leseverstaendnis**, **Benotetes Quiz**, **Diktat**. Je Typ oeffnet der
+      Inline-Editor mit den passenden Feldern; Speichern ist deaktiviert bis der
+      shipped Validator erfuellt ist (Kategorisierung: ≥2 benannte Buckets mit
+      Items; Fehlerkorrektur: ≥2 Woerter + markierter Fehler + Korrektur;
+      Leseverstaendnis: Text + ≥1 vollstaendige Frage; Benotetes Quiz: ≥1 Frage
+      mit positiven Punkten; Diktat: nicht-leerer Audio-Pfad + ≥1 akzeptierte
+      Transkription). Leseverstaendnis + Benotetes Quiz: pro Frage Umschalten
+      Multiple-Choice ⇄ Freitext, MC-Optionen mit Richtig-Haken, Benotetes Quiz
+      zusaetzlich Punkte + Teilpunkte + Bestehensgrenze. Diktat (#1887): ein
+      getippter `assets/audio/...`-Pfad (kein Upload in v1) + die Liste der
+      akzeptierten Transkriptionen. Review zeigt die Anzahl; "Lokal speichern" →
+      gespeicherte Lektion **abspielbar** (jeder Typ rendert + ist beantwortbar);
+      die Set-JSON traegt `requires_extensions: ["ext:al-...@1"]`
+- [ ] **Diktat im Core-Typ-Picker (#1895):** Haupt-Wizard (kartenbasiert),
+      Schritt 3 "Uebung generieren" → "Uebung hinzufuegen" oeffnet den Picker
+      "Uebungstyp waehlen". Neben den sechs Core-Typen (Zuordnung, Freitext,
+      Lueckentext, Wort-Kacheln, Bildauswahl, Multiple Choice) erscheint als
+      **siebte Option "Diktat"**. Klick → eine Diktat-Uebung wird angehaengt und
+      oeffnet direkt im **gleichen** Editor wie im Extension-Wizard (Audio-Pfad +
+      akzeptierte Transkriptionen), gegatet durch **denselben** Validator (leerer
+      Audio-Pfad / keine Transkription → Speichern deaktiviert; unvollstaendige
+      Diktat-Uebung blockiert auch "Weiter" nach Schritt 4). Nach dem Speichern:
+      die gespeicherte Lektion **traegt `requires_extensions: ["ext:al-dictation@1"]`**
+      (egal ob ueber den Core-Picker ODER den Extension-Wizard angelegt) und ist
+      abspielbar. **Regression:** der bestehende Extension-Wizard-Weg fuer Diktat
+      funktioniert unveraendert
+- [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** Im MC-Inline-Editor
+      (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
+      ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,
+      vor der ersten Options-Zeile**. Neue MC-Uebung (KI-generiert ODER manuell
+      angelegt): Default ist **"Eine Antwort erlauben"**, die Options-Marker
+      sind Radios (genau eine richtig). Umschalten auf **"Mehrere Antworten
+      erlauben"** → Marker werden Checkboxen, zwei richtige moeglich,
+      gespeicherte Uebung ist mit Mehrfachauswahl **abspielbar**. Zurueck auf
+      "Eine Antwort" → auf genau eine richtige reduziert. Eine bestehende
+      MC-Uebung mit gesetztem `multiple`-Wert oeffnet **unveraendert** in ihrem
+      urspruenglichen Zustand.
 
 ### Karten-Bild-Upload (#1763 / #1764)
 
@@ -274,6 +346,16 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] Kein Button ohne Key fuehrt zu Error-Toast (disabled + Tooltip)
 
+### Stapel-Generierung "Uebungen fuer alle Lektionen" (#1896)
+- [ ] Meine Inhalte → Meine Lektionen, Set in dem ALLE Lektionen bereits
+      Uebungen haben: Button "Uebungen fuer alle Lektionen generieren" ist
+      SOFORT deaktiviert, Tooltip "Alle Lektionen haben bereits Uebungen."
+      (kein Klick noetig, kein Info-Toast)
+- [ ] Set mit mindestens EINER Lektion ohne Uebungen: Button aktiv,
+      Kosten-Bestaetigung → Fortschritt → Ergebnis-Toast wie bisher
+- [ ] Nach erfolgreichem Durchlauf (alle Lektionen fertig): Button wird
+      ohne Reload deaktiviert
+
 ### KI-Schluessel-Tresor Import (#1765 / #1769)
 - [ ] Settings → KI → "Konfigurierte Provider" → "Importieren" springt zu
       Settings → Daten und scrollt den KeyVault-Import-Block sichtbar (#1765)
@@ -310,6 +392,26 @@ Fuer JEDES Theme einmal durchklicken:
       entfernt); Drawer-Links 44px, schliesst nach Navigation
 - [ ] Bekanntes offenes Issue #1569 (Caret/Touch 1-2 Zeilen versetzt
       im Lesson-Flow): reproduzieren + Notizen ans Issue
+
+#### App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
+
+Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert
+ein neuer Service Worker sich oft NICHT durch skipWaiting + Reload,
+sondern erst nach vollstaendigem Schliessen und Neuoeffnen der App.
+
+- [ ] PWA auf dem Home-Bildschirm installieren, Build-Hash unter
+      Einstellungen > Ueber notieren
+- [ ] Neuen Build deployen, App aus dem Hintergrund zurueckholen
+      (nicht neu starten): Update-Banner erscheint
+- [ ] Banner zeigt ZUSAETZLICH den Hinweis "Schliesse die App und
+      oeffne sie neu" - dieser Hinweis darf auf iOS-Standalone nie
+      fehlen
+- [ ] "Aktualisieren" tippen: Banner verschwindet und kommt auch nach
+      Reload NICHT wieder (Accept-Unterdrueckung)
+- [ ] App vollstaendig schliessen und neu oeffnen: Build-Hash unter
+      Ueber ist der neue
+- [ ] Auf einem NICHT-iOS-Geraet (Android/Desktop) denselben Ablauf:
+      der Neustart-Hinweis darf dort NICHT erscheinen
 
 ### Android Chrome
 - [ ] "App installieren" → Maskable Icon nicht abgeschnitten

@@ -1,20 +1,23 @@
 /**
- * VersionSection (Phase 14B).
+ * VersionSection — app version + build hash + build date (Phase 14B, #1873).
  *
- * App version + build hash + build date. In API storage mode the
- * payload comes from ``GET /api/system/info``; in Dexie mode the
- * synthetic browser-only payload (see ``DexieStorage.system.info``)
- * supplies ``unknown`` for the fields it can't determine, and the
- * row renders the sentinel transparently.
+ * A thin adapter over the kit's ``VersionCard``: it maps the app's
+ * ``SystemInfo`` payload onto the card's props and picks the update control
+ * that fits the storage mode. In API storage mode the payload comes from
+ * ``GET /api/system/info``; in Dexie mode the synthetic browser-only payload
+ * (see ``DexieStorage.system.info``) supplies ``unknown`` for the fields it
+ * cannot determine, which the card renders transparently.
  *
- * Build hash links to the GitHub commit when it resolves to a real
- * short-SHA; the ``unknown`` sentinel is rendered as plain text.
+ * The build hash links to the GitHub commit when it resolves to a real
+ * short-SHA; the ``unknown`` sentinel renders as plain text. The app's
+ * existing ``about-*`` test ids are mapped through so the device-verified
+ * E2E selectors keep working.
  */
 
-import type {SystemInfo} from "../../types/domain";
+import { UpdateCheckControl, VersionCard } from "@astrapi69/pwa-update-react";
 
-import {resolveStorageMode} from "../../storage";
-import UpdateCheckControl from "./UpdateCheckControl";
+import type { SystemInfo } from "../../types/domain";
+import { resolveStorageMode } from "../../storage";
 import DesktopUpdateCheckControl from "./DesktopUpdateCheckControl";
 
 interface Props {
@@ -22,75 +25,25 @@ interface Props {
     t: (key: string, fallback?: string) => string;
 }
 
-export default function VersionSection({info, t}: Props) {
+export default function VersionSection({ info }: Props) {
     // #840 — Dexie/PWA keeps the service-worker check; API/desktop uses the
     // GitHub Releases check (no service worker exists in desktop mode).
     const isApiMode = resolveStorageMode() === "api";
-    const commitUrl =
-        info.app.build_hash !== "unknown"
-            ? `${info.app.repository_url}/commit/${info.app.build_hash}`
-            : null;
     return (
-        <article
-            data-testid="about-version-section"
-            style={{
-                padding: 16,
-                border: "1px solid var(--border)",
-                borderRadius: 8,
-                background: "var(--surface)",
+        <VersionCard
+            testId="about-version-section"
+            testIds={{
+                version: "about-app-version",
+                hash: "about-build-hash",
+                hashLink: "about-build-hash-link",
+                date: "about-build-date",
             }}
+            version={info.app.version}
+            buildHash={info.app.build_hash}
+            buildDate={info.app.build_date}
+            commitUrl={(hash) => `${info.app.repository_url}/commit/${hash}`}
         >
-            <h3 style={{marginTop: 0, marginBottom: 12}}>
-                {t("about.version_heading", "Version")}
-            </h3>
-            <dl style={dlStyle}>
-                <dt>
-                    <strong>{t("about.app_label", "Adaptive Learner")}</strong>
-                </dt>
-                <dd data-testid="about-app-version" style={ddStyle}>
-                    v{info.app.version}
-                </dd>
-                <dt>
-                    <strong>{t("about.build_hash_label", "Build")}</strong>
-                </dt>
-                <dd data-testid="about-build-hash" style={ddStyle}>
-                    {commitUrl ? (
-                        <a
-                            href={commitUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            data-testid="about-build-hash-link"
-                        >
-                            {info.app.build_hash}
-                        </a>
-                    ) : (
-                        info.app.build_hash
-                    )}
-                </dd>
-                <dt>
-                    <strong>{t("about.build_date_label", "Build date")}</strong>
-                </dt>
-                <dd data-testid="about-build-date" style={ddStyle}>
-                    {info.app.build_date === "unknown"
-                        ? info.app.build_date
-                        : new Date(info.app.build_date).toLocaleString()}
-                </dd>
-            </dl>
             {isApiMode ? <DesktopUpdateCheckControl /> : <UpdateCheckControl />}
-        </article>
+        </VersionCard>
     );
 }
-
-const dlStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "minmax(0, max-content) minmax(0, 1fr)",
-    gap: "4px 16px",
-    fontSize: "0.9rem",
-    margin: 0,
-};
-
-const ddStyle: React.CSSProperties = {
-    margin: 0,
-    minWidth: 0,
-    wordBreak: "break-all",
-};

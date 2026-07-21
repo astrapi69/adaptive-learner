@@ -34,9 +34,18 @@ import {MIN_EXERCISES} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
+    isExtensionType,
+    validateExerciseEdit,
+    validateExtensionExercise,
+    buildExtensionLesson,
     type ExerciseGenConfig,
-    type GeneratorCard,
-} from "../../lib/content/lesson/exercise-generator";
+} from "../../lib/exercises";
+import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
+import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/legacy-prompt-migration";
+import {buildExtensionUserSetInput} from "../../lib/content/lesson/user-set-input";
+import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
+import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
+import PromptMigrationNotice from "../../components/create-lesson/PromptMigrationNotice";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -51,6 +60,7 @@ import {
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
+    draftCardsToGeneratorCards,
     draftSetId,
     lessonToDraftInput,
     preservedTheorySteps,
@@ -105,13 +115,16 @@ const TOTAL_STEPS = 4;
 /** #1743 — the book-text path skips the card + deterministic-exercise
  *  steps: Metadata -> BookText -> Review. */
 const TOTAL_STEPS_BOOK = 3;
+/** #1852 — the extension-authoring path: Metadata -> Extensions -> Review. */
+const TOTAL_STEPS_EXT = 3;
 const DRAFT_AUTOSAVE_MS = 10_000;
 
 const EMPTY_BOOK_FIELDS: BookFields = {title: "", author: "", url: "", asin: ""};
 
-/** Total wizard steps for the active path (book flow skips two steps). */
-function stepCountFor(bookMode: boolean): number {
-    return bookMode ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
+/** Total wizard steps for the active path. The book (#1743) and extension
+ *  (#1852) branches are both 3-step Metadata -> content -> Review flows. */
+function stepCountFor(compactFlow: boolean): number {
+    return compactFlow ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
 }
 
 /** Build the default metadata, seeding source language from the
@@ -143,6 +156,10 @@ export default function CreateLesson() {
     const [editContext, setEditContext] = useState<EditContext | null>(null);
     const [editLoading, setEditLoading] = useState(editMode);
     const [editError, setEditError] = useState<string | null>(null);
+    // #1860 — how many legacy English prompts were migrated to the UI
+    // language on edit-load (0 = notice hidden). State only, persisted
+    // only if the user saves.
+    const [promptsMigrated, setPromptsMigrated] = useState(0);
 
     const [step, setStep] = useState(1);
     const [meta, setMeta] = useState<LessonMeta>(() =>
@@ -176,11 +193,17 @@ export default function CreateLesson() {
     // 3-step Metadata -> BookText -> Review flow; the AI produces the theory
     // steps + exercises from the pasted chunk.
     const [bookMode, setBookMode] = useState(false);
+    // #1852 — the extension-authoring branch (mutually exclusive with
+    // bookMode). Reuses the shared ``exercises`` state for its ext exercises.
+    const [extMode, setExtMode] = useState(false);
     const [bookText, setBookText] = useState("");
     const [bookFields, setBookFields] = useState<BookFields>(EMPTY_BOOK_FIELDS);
     const [theorySteps, setTheorySteps] = useState<TheoryStep[]>([]);
 
-    const totalSteps = stepCountFor(bookMode);
+    // An alternative authoring branch (book-text #1743 / extension #1852)
+    // runs the compact 3-step flow instead of the card-driven one.
+    const compactFlow = bookMode || extMode;
+    const totalSteps = stepCountFor(compactFlow);
 
     /** Resolve the active AI provider seam, or ``null`` when no key /
      *  learner is set (the "no key" signal the BookTextStep gates on). */
@@ -227,9 +250,15 @@ export default function CreateLesson() {
                 const editLesson = lessons[editIndex];
                 const prefill = lessonToDraftInput(editLesson, entry);
                 if (cancelled) return;
+                // #1860 — opportunistically migrate legacy hardcoded-English
+                // prompts (exact-match only) to the UI language. Edit-state
+                // only; persisted only if the user saves.
+                const {exercises: migratedExercises, migratedCount} =
+                    migrateLegacyExercisePrompts(prefill.exercises, t);
                 setMeta(prefill.meta);
                 setCards(prefill.cards);
-                setExercises(prefill.exercises);
+                setExercises(migratedExercises);
+                setPromptsMigrated(migratedCount);
                 setEditContext({
                     source,
                     setId,
@@ -249,6 +278,11 @@ export default function CreateLesson() {
         return () => {
             cancelled = true;
         };
+        // `t` drives the #1860 migration target language but is intentionally
+        // NOT a dep: this is a load-once effect, and re-running on a language
+        // change would reload from storage and clobber unsaved edits. The
+        // migration uses whatever language is active at load time.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editMode, params.source, params.setId]);
 
     // Phase 65B — autosave the draft every 10s while editing. Skipped
@@ -309,6 +343,22 @@ export default function CreateLesson() {
             setStep((s) => Math.min(TOTAL_STEPS_BOOK, s + 1));
             return;
         }
+        if (extMode) {
+            // Extension flow: step 2 requires >= 1 extension exercise, all
+            // complete (reusing the shipped payload validators).
+            if (step === 2) {
+                if (
+                    exercises.length === 0 ||
+                    exercises.some((ex) => !validateExtensionExercise(ex).valid)
+                ) {
+                    setExerciseError(true);
+                    return;
+                }
+                setExerciseError(false);
+            }
+            setStep((s) => Math.min(TOTAL_STEPS_EXT, s + 1));
+            return;
+        }
         if (step === 2) {
             if (cards.length < MIN_CARDS) {
                 setCardError(true);
@@ -317,7 +367,19 @@ export default function CreateLesson() {
             setCardError(false);
         }
         if (step === 3) {
-            if (exercises.length < MIN_EXERCISES) {
+            // Too few, OR any exercise (generated or manually added) still
+            // incomplete — reuse the same per-type validator as the inline
+            // editor so a half-filled manual exercise can't slip into step 4.
+            // A manually-added extension exercise (dictation, #1895) validates
+            // through the extension payload validator, not the core one.
+            const incomplete = (ex: ContentLessonExercise): boolean =>
+                isExtensionType(ex.type)
+                    ? !validateExtensionExercise(ex).valid
+                    : !validateExerciseEdit(ex).valid;
+            if (
+                exercises.length < MIN_EXERCISES ||
+                exercises.some(incomplete)
+            ) {
                 setExerciseError(true);
                 return;
             }
@@ -340,6 +402,12 @@ export default function CreateLesson() {
         setStep(2);
     }
 
+    /** #1852 — enter the extension-authoring path from Step 1. */
+    function startExtMode() {
+        setExtMode(true);
+        setStep(2);
+    }
+
     /** BookTextStep reports the AI-generated theory + exercises. */
     function handleBookGenerated(
         steps: TheoryStep[],
@@ -351,15 +419,11 @@ export default function CreateLesson() {
     }
 
     function generateLessonExercises() {
-        const genCards: GeneratorCard[] = cards.map((c) => ({
-            id: c.id,
-            front: c.front,
-            back: c.back,
-            example: c.notes,
-            image: c.image,
-            altAnswers: c.altAnswers,
-        }));
-        setExercises(generateExercises(genCards, genConfig));
+        setExercises(
+            generateExercises(draftCardsToGeneratorCards(cards), genConfig, {
+                prompts: localizedExercisePrompts(t),
+            }),
+        );
         setExerciseError(false);
     }
 
@@ -428,6 +492,10 @@ export default function CreateLesson() {
                     lesson,
                     normalizeBook(bookFields),
                 );
+            } else if (extMode) {
+                const extInput = {meta, exercises};
+                lesson = buildExtensionLesson(extInput);
+                input = buildExtensionUserSetInput(extInput, lesson);
             } else {
                 lesson = buildLessonFromDraft({meta, cards, exercises});
                 input = buildUserSetInput({meta, cards, exercises}, lesson);
@@ -511,6 +579,7 @@ export default function CreateLesson() {
         setExercises([]);
         setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
         setBookMode(false);
+        setExtMode(false);
         setBookText("");
         setBookFields(EMPTY_BOOK_FIELDS);
         setTheorySteps([]);
@@ -547,6 +616,7 @@ export default function CreateLesson() {
         back: string;
         notes: string;
         image: string;
+        example: string;
         altAnswers: string[];
     }) {
         setCards((prev) => [...prev, {id: newCardId(), ...c}]);
@@ -624,6 +694,12 @@ export default function CreateLesson() {
                 t={t}
             />
 
+            <PromptMigrationNotice
+                count={promptsMigrated}
+                onDismiss={() => setPromptsMigrated(0)}
+                t={t}
+            />
+
             {!editLoading && !editError && step === 1 && (
                 <MetadataStep
                     meta={meta}
@@ -634,6 +710,31 @@ export default function CreateLesson() {
                     onApplyTemplate={applyLessonTemplate}
                     selectedTemplate={selectedTemplate}
                     onStartBookMode={startBookMode}
+                    onStartExtensions={startExtMode}
+                    t={t}
+                />
+            )}
+
+            {extMode && (
+                <ExtensionSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    meta={meta}
+                    exercises={exercises}
+                    advanceBlocked={exerciseError}
+                    saving={saving}
+                    onAddExercise={(exercise) =>
+                        setExercises((prev) => [...prev, exercise])
+                    }
+                    onUpdateExercise={(id, updated) =>
+                        setExercises((prev) =>
+                            prev.map((e) => (e.id === id ? updated : e)),
+                        )
+                    }
+                    onDeleteExercise={(id) =>
+                        setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onSaveLocal={() => void saveLocally()}
                     t={t}
                 />
             )}
@@ -661,7 +762,7 @@ export default function CreateLesson() {
                 />
             )}
 
-            {!bookMode && (
+            {!compactFlow && (
                 <WizardSteps
                     step={step}
                     saved={Boolean(savedEntry)}
@@ -684,6 +785,14 @@ export default function CreateLesson() {
                     onReorderExercises={setExercises}
                     onDeleteExercise={(id) =>
                         setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onUpdateExercise={(id, updated) =>
+                        setExercises((prev) =>
+                            prev.map((e) => (e.id === id ? updated : e)),
+                        )
+                    }
+                    onAddExercise={(exercise) =>
+                        setExercises((prev) => [...prev, exercise])
                     }
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}
@@ -781,109 +890,15 @@ export default function CreateLesson() {
             </nav>
             )}
 
-            {confirmCancel && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-cancel-confirm"
-                >
-                    <div
-                        className="modal-card"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="create-lesson-cancel-title"
-                    >
-                        <h2
-                            id="create-lesson-cancel-title"
-                            className="modal-title"
-                        >
-                            {t(
-                                "create_lesson.cancel_confirm_title",
-                                "Discard this lesson?",
-                            )}
-                        </h2>
-                        <p>
-                            {t(
-                                "create_lesson.cancel_confirm_body",
-                                "Your unsaved lesson will be lost.",
-                            )}
-                        </p>
-                        <div className="form-actions">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                data-testid="create-lesson-cancel-keep"
-                                onClick={() => setConfirmCancel(false)}
-                            >
-                                {t(
-                                    "create_lesson.cancel_keep",
-                                    "Keep editing",
-                                )}
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                data-testid="create-lesson-cancel-discard"
-                                onClick={discard}
-                            >
-                                {t("create_lesson.cancel_discard", "Discard")}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {pendingDraft && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-draft-prompt"
-                >
-                    <div
-                        className="modal-card"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="create-lesson-draft-title"
-                    >
-                        <h2
-                            id="create-lesson-draft-title"
-                            className="modal-title"
-                        >
-                            {t(
-                                "create_lesson.draft.title",
-                                "Draft found",
-                            )}
-                        </h2>
-                        <p>
-                            {t(
-                                "create_lesson.draft.body",
-                                "You have an unfinished lesson. Continue where you left off or start fresh?",
-                            )}
-                        </p>
-                        <div className="form-actions">
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                data-testid="create-lesson-draft-fresh"
-                                onClick={startFresh}
-                            >
-                                {t(
-                                    "create_lesson.draft.start_fresh",
-                                    "Start fresh",
-                                )}
-                            </Button>
-                            <Button
-                                type="button"
-                                data-testid="create-lesson-draft-continue"
-                                onClick={() => applyDraft(pendingDraft)}
-                            >
-                                {t(
-                                    "create_lesson.draft.continue",
-                                    "Continue",
-                                )}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CreateLessonDialogs
+                confirmCancel={confirmCancel}
+                pendingDraft={pendingDraft}
+                onKeepEditing={() => setConfirmCancel(false)}
+                onDiscard={discard}
+                onStartFresh={startFresh}
+                onContinueDraft={applyDraft}
+                t={t}
+            />
         </PageContainer>
     );
 }

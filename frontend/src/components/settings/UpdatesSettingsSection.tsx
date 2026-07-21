@@ -12,7 +12,7 @@
 import { useState } from "react";
 
 import { useI18n } from "../../hooks/ui/useI18n";
-import { CURRENT_BUILD } from "../../lib/pwa/sw-update";
+import { CURRENT_BUILD } from "../../lib/pwa/update-store";
 import {
   readUpdatePrefs,
   writeUpdatePrefs,

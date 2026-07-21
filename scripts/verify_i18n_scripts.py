@@ -241,6 +241,9 @@ KEY_ALLOWLIST_PATTERNS = tuple(
         r"^ui\.themes\.",
         r"\.danger_zone_input_placeholder$",
         r"^share\.achievement\.hashtag$",
+        # A relative asset FILE PATH example (#1895): identical in every
+        # language, like the en value ("assets/audio/clip.mp3").
+        r"\.dict_audio_placeholder$",
     )
 )
 

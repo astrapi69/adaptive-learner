@@ -30,14 +30,14 @@ import {cn} from "@/lib/utils";
 import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
 import {deriveCategorizationAttempts} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
-import {seededShuffle} from "../../../lib/exercises/seeded-shuffle";
+import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
 import {
     allCategorizationItems,
     asCategorizationPayload,
     authoredBucketFor,
     countCorrectAssignments,
     type CategorizationPayload,
-} from "../../../lib/exercises/categorization";
+} from "../../../lib/exercises/payload/categorization";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";

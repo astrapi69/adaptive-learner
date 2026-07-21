@@ -134,6 +134,20 @@ Requires domain knowledge. Not automatable.
 - [ ] Reverse: matching columns swapped
 - [ ] Shuffle: cards mixed from different lessons
 - [ ] Endless: no session end, statistics keep running
+- [ ] Endless completion ("Practice session complete!"): Enter (without a
+      click) triggers "Back to Dashboard" (#1864, button auto-focused)
+- [ ] Error-replay completion ("All errors corrected!"): Enter (without a
+      click) triggers "Back to lesson" (#1864); clicking the button still
+      works
+- [ ] Retry errors for matching (#1874): play a matching exercise with a
+      mix of correct/wrong pairs, open "Retry errors" -> only the wrong
+      pairs appear (not all). With a single wrong pair, correct pairs are
+      added as distractors (min. 2 pairs so there is something to match)
+- [ ] "Retry errors" setting (Settings -> Learning): switch to "Replay the
+      whole set" -> the next "Retry errors" shows ALL pairs; switch back to
+      "Only show errors" (default) -> only the wrong ones again
+- [ ] Regression, other types: free-text/cloze in "Retry errors" still show
+      only the wrong elements
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
@@ -141,6 +155,10 @@ Requires domain knowledge. Not automatable.
 - [ ] ext:al-error-correction: find + correct errors
 - [ ] ext:al-reading-comprehension: text + questions
 - [ ] ext:al-graded-quiz: grading + result display
+- [ ] ext:al-dictation (#1881): "Listen first" plays the clip, type the
+      transcription; correct / near-miss ("Almost!") / wrong shows the
+      solution; a lesson with `requires_extensions: ["ext:al-dictation@1"]`
+      loads (not refused by the guard)
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
 
@@ -179,6 +197,16 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       (overwrites the same id, progress kept) + "Save as a copy";
       foreign-repo lessons show NO Edit; analysis lessons route to the
       import page
+- [ ] **Migrate legacy English prompts on edit (#1860):** open a
+      pre-#1855 legacy lesson (exercise instructions hardcoded in English,
+      e.g. "Match each word with its translation.") via "Edit a lesson" →
+      the affected instructions appear in the UI language automatically +
+      a subtle, dismissible notice at the top ("... automatically
+      translated to your language"). ONLY for the EXACT old default: a
+      prompt the user deliberately set differently (even if coincidentally
+      English) stays unchanged. Leave the editor WITHOUT saving → the
+      original in Dexie is unchanged (no silent write); only saving
+      (overwrite / save-as-copy) persists the migrated version
 - [ ] **Combine lessons (#1741):** My Content → "Combine into a set"
       toggle → checkbox selection (own sets only) → "Combine" dialog:
       New set (title required) vs. add to an existing set; originals are
@@ -191,6 +219,45 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       structure" check names a concrete reason, not just a ✗
 - [ ] **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
+- [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
+      the "Advanced exercise types" card starts a dedicated 3-step flow (author
+      → review → save) with a non-blocking notice that these types are advanced.
+      Step 2: "Add extension exercise" offers five types — **categorization**,
+      **error correction**, **reading comprehension**, **graded quiz**,
+      **dictation**. Each opens the inline editor with type-specific fields;
+      Save is disabled until the shipped validator passes (categorization: ≥2
+      named buckets with items; error correction: ≥2 words + a marked error + a
+      correction; reading comprehension: a passage + ≥1 complete question;
+      graded quiz: ≥1 question with positive points; dictation: a non-empty
+      audio path + ≥1 accepted transcription). Reading comprehension + graded
+      quiz: per question toggle multiple-choice ⇄ free-text, MC options with a
+      correct checkbox, graded quiz additionally points + partial credit + a
+      pass threshold. Dictation (#1887): a typed `assets/audio/...` path (no
+      upload in v1) + the accepted-transcriptions list. Review shows the count;
+      "Save locally" → the saved lesson is **playable** (each type renders + is
+      answerable); the set JSON carries `requires_extensions: ["ext:al-...@1"]`
+- [ ] **Dictation in the core type picker (#1895):** Main wizard (card-based),
+      Step 3 "Generate exercises" → "Add exercise" opens the "Choose an exercise
+      type" picker. Beside the six core types (Matching, Free text, Cloze, Word
+      tiles, Picture choice, Multiple choice) a **seventh option "Dictation"**
+      appears. Click → a dictation exercise is appended and opens straight in the
+      **same** editor as the extension wizard (audio path + accepted
+      transcriptions), gated by the **same** validator (empty audio path / no
+      transcription → Save disabled; an incomplete dictation also blocks "Next"
+      to Step 4). After saving: the stored lesson **carries
+      `requires_extensions: ["ext:al-dictation@1"]`** (whether added via the core
+      picker OR the extension wizard) and is playable. **Regression:** the
+      existing extension-wizard path for dictation still works unchanged
+- [ ] **Multiple-choice single/multi mode control (#1888):** In the MC inline
+      editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
+      correct?") is a segmented control **at the very top, before the first
+      option row**. A new MC exercise (AI-generated OR manually added) defaults
+      to **"Allow one answer"**, option markers are radios (exactly one
+      correct). Switching to **"Allow multiple answers"** → markers become
+      checkboxes, two correct are possible, and the saved exercise is
+      **playable** with multi-select. Switching back to "Allow one answer" →
+      pruned to exactly one correct. An existing MC exercise with a set
+      `multiple` value opens **unchanged** in its original state.
 
 ### Card image upload (#1763 / #1764)
 
@@ -273,6 +340,16 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] AI content validation: report sensible? provider+model shown?
 - [ ] No button without a key leads to an error toast (disabled + tooltip)
 
+### Batch "Generate for all lessons" (#1896)
+- [ ] My Content → My Lessons, a set where ALL lessons already have
+      exercises: the "Generate for all lessons" button is disabled RIGHT
+      AWAY with the tooltip "All lessons already have exercises."
+      (no click needed, no info toast)
+- [ ] A set with at least ONE lesson without exercises: button active,
+      cost confirm → progress → result toast as before
+- [ ] After a successful full run: the button turns disabled without a
+      reload
+
 ### AI key vault import (#1765 / #1769)
 - [ ] Settings → AI → "Configured providers" → "Import" jumps to
       Settings → Data and scrolls the KeyVault import block into view (#1765)
@@ -309,6 +386,25 @@ Click through once for EACH theme:
       #1512); drawer links 44px, closes after navigation
 - [ ] Known open issue #1569 (caret/touch offset by 1-2 lines in the
       lesson flow): reproduce + add notes to the issue
+
+#### App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
+
+The one path no automated test covers: on iOS/WKWebView a new service
+worker often does NOT activate through skipWaiting + reload, only after
+the app is fully closed and reopened.
+
+- [ ] Install the PWA on the home screen, note the build hash under
+      Settings > About
+- [ ] Deploy a newer build, bring the app back from the background
+      (do not relaunch it): the update banner appears
+- [ ] The banner ALSO shows the hint "close the app and reopen it" -
+      this hint must never be missing on iOS standalone
+- [ ] Tap "Update": the banner disappears and does NOT come back after
+      a reload (accept suppression)
+- [ ] Fully close and reopen the app: the build hash under About is
+      the new one
+- [ ] On a NON-iOS device (Android/desktop) run the same flow: the
+      restart hint must NOT appear there
 
 ### Android Chrome
 - [ ] "Install app" → maskable icon not clipped

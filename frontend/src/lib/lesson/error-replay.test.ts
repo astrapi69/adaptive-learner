@@ -7,6 +7,7 @@ import {describe, expect, it} from "vitest";
 import {
     collectFailedExercises,
     failedExerciseCount,
+    narrowReplayExercises,
     openFailedExercises,
 } from "./error-replay";
 import type {
@@ -195,5 +196,83 @@ describe("openFailedExercises (#1372)", () => {
             "ex-a",
             "ex-c",
         ]);
+    });
+});
+
+function matching(
+    id: string,
+    pairs: {left: string; right: string}[],
+): ContentLessonExercise {
+    return {
+        id,
+        type: "matching",
+        prompt: `match ${id}`,
+        card_ids: [],
+        distractors: [],
+        pairs,
+    } as unknown as ContentLessonExercise;
+}
+
+const FOUR_PAIRS = [
+    {left: "a", right: "A"},
+    {left: "b", right: "B"},
+    {left: "c", right: "C"},
+    {left: "d", right: "D"},
+];
+
+describe("narrowReplayExercises (#1874)", () => {
+    it("4 pairs, 1 wrong → wrong pair + one filler to MIN_PAIRS, not all 4", () => {
+        const mx = matching("mx", FOUR_PAIRS);
+        // Only pair "b" (element_key = left) is still wrong.
+        const errors = [
+            err("mx", {element_key: "a", correct_streak: 2}),
+            err("mx", {element_key: "b", correct_streak: 0}),
+            err("mx", {element_key: "c", mastered: true, correct_streak: 3}),
+            err("mx", {element_key: "d", correct_streak: 1}),
+        ];
+        const [out] = narrowReplayExercises([mx], errors);
+        expect(out.pairs).toHaveLength(2); // MATCHING_MIN_PAIRS
+        expect(out.pairs?.map((p) => p.left)).toContain("b"); // the wrong one
+    });
+
+    it("4 pairs, 3 wrong → exactly the 3 wrong pairs, no fill", () => {
+        const mx = matching("mx", FOUR_PAIRS);
+        const errors = [
+            err("mx", {element_key: "a", correct_streak: 0}),
+            err("mx", {element_key: "b", correct_streak: 0}),
+            err("mx", {element_key: "c", correct_streak: 0}),
+            err("mx", {element_key: "d", correct_streak: 2}), // corrected
+        ];
+        const [out] = narrowReplayExercises([mx], errors);
+        expect(out.pairs?.map((p) => p.left).sort()).toEqual(["a", "b", "c"]);
+    });
+
+    it("errorsOnly=false replays the WHOLE set (all pairs)", () => {
+        const mx = matching("mx", FOUR_PAIRS);
+        const errors = [err("mx", {element_key: "b", correct_streak: 0})];
+        const [out] = narrowReplayExercises([mx], errors, {errorsOnly: false});
+        expect(out.pairs).toHaveLength(4);
+    });
+
+    it("free-text / cloze pass through unchanged (regression)", () => {
+        const ft = ex("ex-a"); // free_text with no pairs
+        const errors = [err("ex-a", {element_key: "k", correct_streak: 0})];
+        const [out] = narrowReplayExercises([ft], errors);
+        expect(out).toBe(ft); // identity — untouched
+    });
+
+    it("keeps a matching exercise whole when all pairs are wrong", () => {
+        const mx = matching("mx", FOUR_PAIRS);
+        const errors = FOUR_PAIRS.map((p) =>
+            err("mx", {element_key: p.left, correct_streak: 0}),
+        );
+        const [out] = narrowReplayExercises([mx], errors);
+        expect(out.pairs).toHaveLength(4);
+    });
+
+    it("keeps a matching exercise whole when there is no wrong-key signal", () => {
+        const mx = matching("mx", FOUR_PAIRS);
+        const [out] = narrowReplayExercises([mx], []);
+        expect(out).toBe(mx);
     });
 });

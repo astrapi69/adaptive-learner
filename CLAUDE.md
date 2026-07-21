@@ -9,7 +9,51 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.4.0** (**polish + consolidation release** on top of
+- **Current state:** **v2.5.0** (**feature release** on top of the v2.4.0
+  authoring release. Highlights: **Create-Lesson becomes a full exercise
+  authoring tool** - all five core types editable in step 3 #1845, manual
+  add-exercise + native `multiple_choice` #1853 with a prominent single/multi
+  mode control #1888, cloze/word_tiles/picture_choice generation made
+  discoverable #1848, and an **extension-authoring wizard** covering all four
+  AI-authored extension types (categorization + error-correction #1859,
+  reading-comprehension + graded-quiz #1865); **`ext:al-dictation` (audio
+  dictation)** adopted as the fifth extension type #1881, added to the wizard
+  #1887 and to the core type picker behind a generalized `requires_extensions`
+  gate #1895; legacy English exercise prompts migrate on edit #1861. Two
+  subsystems become **consumed npm packages** instead of in-tree code: PWA
+  update + version display via `@astrapi69/pwa-update(-react)` #1873, the AI
+  key vault via `@astrapi69/ai-key-vault(-react)` #1868. Exercise grading +
+  payload validation + authoring consolidated under `lib/exercises/` behind one
+  barrel #1862/#1867/#1877. Governance: **PR-PFLICHT** #1846 (a pushed code
+  change opens a PR by default) and **TESTPLAN-PFLICHT** #1858 (user-visible
+  functionality updates the manual test plan in the same PR). iOS/WebKit
+  hardening: footer Pause/Next overlap #1839, tap-offset #1832; a night-shift
+  WebKit layout gate #1843. Engine re-pinned -> 0.13.1. NO schema/API/data-model
+  change against v2.4.0. See changelog/releases/v2.5.0.md.)
+  Prior **v2.4.0** = (**feature release** on top of the v2.3.0
+  polish release. Highlights: a **Create-Lesson authoring upgrade** - a knowledge
+  lesson from pasted textbook text #1745, editing an own lesson + combining own
+  lessons into a set #1752, card **image upload** (not a typed asset path) #1764,
+  a typeable exercise count #1761; **free-text multiple accepted answers + an AI
+  second opinion** on a wrong answer #1803; an **AI key-import UX** (the AI tab
+  links to key import, paste-content import, reactive refresh) #1769; the content
+  **engine re-pinned -> 0.13.0 (schema 1.8)** so uploaded images feed
+  `picture_choice` #1774; the **frontend god-file burn-down completed** (ten
+  oversized modules split by concern - Session/ImportDetail/Lesson/Content/
+  dexie-storage/content-loader-dexie/sync-engine/backup/Cloze/WordTiles - behind
+  tightened size/complexity ratchets #1802); a **content-load robustness sweep**
+  (unicode/umlaut card ids + tags #1809, a friendly lesson-load error #1826, a
+  missing-profile mark-complete guard #1788) + **ghost-content lifecycle fixes**
+  (availability oracle requires a cached set #1818, set-deletion purges progress
+  + SW cache #1825, repo-removal opt-in delete in server mode #1822); an i18n
+  script-sanity lint #1759; the Docker/Bun close-out #1772. App schema 1.7 -> 1.8
+  is additive (the engine is canonical, the app a consumer); NO app-side
+  schema/API/data-model change. Release-gate hardening surfaced by the first real
+  `release-prepare` gate run: `unzip` in the Playwright image so setup-bun works
+  #1829, the app `CURRENT_SCHEMA_VERSION` synced to the pinned engine 1.8 #1830,
+  and the #1765 key-vault cross-tab scroll made robust to async layout #1831. See
+  changelog/releases/v2.4.0.md.)
+  Prior **v2.3.0** = (**polish + consolidation release** on top of
   the v2.2.0 feature release, NO schema/API/data-model change. Highlights: the
   **EXP-044 CSS concern-split completed** - `global.css` decomposed
   byte-identically into per-concern files under `styles/legacy/` (Peels 1-5
