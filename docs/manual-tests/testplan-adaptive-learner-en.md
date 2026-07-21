@@ -219,21 +219,23 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       structure" check names a concrete reason, not just a ✗
 - [ ] **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
-- [ ] **Advanced exercise types / extension wizard (#1852):** Step 1 → the
-      "Advanced exercise types" card starts a dedicated 3-step flow (author →
-      review → save) with a non-blocking notice that these types are advanced.
-      Step 2: "Add extension exercise" offers four types — **categorization**,
-      **error correction**, **reading comprehension**, **graded quiz**. Each
-      opens the inline editor with type-specific fields; Save is disabled until
-      the shipped validator passes (categorization: ≥2 named buckets with
-      items; error correction: ≥2 words + a marked error + a correction;
-      reading comprehension: a passage + ≥1 complete question; graded quiz: ≥1
-      question with positive points). Reading comprehension + graded quiz: per
-      question toggle multiple-choice ⇄ free-text, MC options with a correct
-      checkbox, graded quiz additionally points + partial credit + a pass
-      threshold. Review shows the count; "Save locally" → the saved lesson is
-      **playable** (each type renders + is answerable); the set JSON carries
-      `requires_extensions: ["ext:al-...@1"]`
+- [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
+      the "Advanced exercise types" card starts a dedicated 3-step flow (author
+      → review → save) with a non-blocking notice that these types are advanced.
+      Step 2: "Add extension exercise" offers five types — **categorization**,
+      **error correction**, **reading comprehension**, **graded quiz**,
+      **dictation**. Each opens the inline editor with type-specific fields;
+      Save is disabled until the shipped validator passes (categorization: ≥2
+      named buckets with items; error correction: ≥2 words + a marked error + a
+      correction; reading comprehension: a passage + ≥1 complete question;
+      graded quiz: ≥1 question with positive points; dictation: a non-empty
+      audio path + ≥1 accepted transcription). Reading comprehension + graded
+      quiz: per question toggle multiple-choice ⇄ free-text, MC options with a
+      correct checkbox, graded quiz additionally points + partial credit + a
+      pass threshold. Dictation (#1887): a typed `assets/audio/...` path (no
+      upload in v1) + the accepted-transcriptions list. Review shows the count;
+      "Save locally" → the saved lesson is **playable** (each type renders + is
+      answerable); the set JSON carries `requires_extensions: ["ext:al-...@1"]`
 - [ ] **Multiple-choice single/multi mode control (#1888):** In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first

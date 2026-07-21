@@ -6,6 +6,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     CATEGORIZATION_EXT_TYPE,
+    DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
@@ -57,6 +58,16 @@ function ec(payload: unknown, prompt = "Fix the wrong word"): ContentLessonExerc
         ext_payload: payload,
     } as ContentLessonExercise;
 }
+function dict(payload: unknown, prompt = "Type what you hear"): ContentLessonExercise {
+    return {
+        id: "d1",
+        type: DICTATION_EXT_TYPE,
+        prompt,
+        card_ids: [],
+        distractors: [],
+        ext_payload: payload,
+    } as ContentLessonExercise;
+}
 
 describe("newExtensionExerciseId", () => {
     it("is unique + prefixed", () => {
@@ -86,6 +97,12 @@ describe("createBlankExtensionExercise", () => {
         const p = ex.ext_payload as {passage: string; questions: unknown[]};
         expect(p.passage).toBe("");
         expect(p.questions).toHaveLength(1);
+        expect(validateExtensionExercise(ex).valid).toBe(false);
+    });
+    it("dictation blank has an empty audio + no accept and is invalid", () => {
+        const ex = createBlankExtensionExercise(DICTATION_EXT_TYPE, "d");
+        expect(ex.type).toBe(DICTATION_EXT_TYPE);
+        expect(ex.ext_payload).toEqual({audio: "", accept: []});
         expect(validateExtensionExercise(ex).valid).toBe(false);
     });
     it("graded_quiz blank has a threshold + one question with points and is invalid", () => {
@@ -382,5 +399,44 @@ describe("normalizeExtensionExercise", () => {
             points: 4,
             partial_credit: true,
         });
+    });
+    it("dictation: trims the audio path + drops empty accept entries", () => {
+        const out = normalizeExtensionExercise(
+            dict(
+                {audio: "  assets/audio/one.mp3  ", accept: [" un ", "", "  "]},
+                "  Listen  ",
+            ),
+        );
+        expect(out.prompt).toBe("Listen");
+        expect(out.ext_payload).toEqual({
+            audio: "assets/audio/one.mp3",
+            accept: ["un"],
+        });
+    });
+});
+
+describe("validateExtensionExercise — dictation (reuses payload validator)", () => {
+    it("accepts a non-empty audio path + >= 1 accept entry", () => {
+        const ex = dict({audio: "assets/audio/one.mp3", accept: ["un"]});
+        expect(validateExtensionExercise(ex).valid).toBe(true);
+    });
+    it("rejects an empty prompt", () => {
+        const res = validateExtensionExercise(
+            dict({audio: "assets/audio/one.mp3", accept: ["un"]}, "   "),
+        );
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("prompt");
+    });
+    it("rejects a missing/empty audio path", () => {
+        const res = validateExtensionExercise(dict({audio: "  ", accept: ["un"]}));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("dictation");
+    });
+    it("rejects an empty accept list", () => {
+        const res = validateExtensionExercise(
+            dict({audio: "assets/audio/one.mp3", accept: []}),
+        );
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("dictation");
     });
 });
