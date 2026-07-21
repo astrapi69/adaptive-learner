@@ -31,11 +31,16 @@ name: WebKit gate
 #   1. triggers it once via workflow_dispatch,
 #   2. confirms a real green (or an actionable red) + the uploaded report,
 #   3. then sets ENABLE_NIGHTLY_WEBKIT="true" to arm the schedule.
-# Adding ``push: [release/**]`` (mirroring dexie-smoke) is a sensible follow-up
-# once that first dispatch has proven the job green.
+# The first dispatch is proven green (run 29808755286, #1843), so the gate also
+# runs on ``release/**`` pushes now (mirroring dexie-smoke) to give release prep
+# real-WebKit layout coverage. The release push is exempt from the
+# ENABLE_NIGHTLY_WEBKIT gate below (it always runs on release branches, like the
+# manual dispatch); the repo variable gates only the unattended nightly.
 
 on:
   workflow_dispatch:
+  push:
+    branches: ["release/**"]
   schedule:
     # 04:30 UTC daily; offset from dexie-smoke (04:00) and mutation (03:17) so
     # the night-shift jobs do not all fire at once. The job body is gated below
@@ -49,10 +54,13 @@ jobs:
   webkit-gate:
     name: WebKit lesson-layout gate
     runs-on: ubuntu-latest
-    # Manual dispatch always runs; the nightly schedule only runs when the
-    # maintainer has opted in via the repo variable (see the header note).
+    # Manual dispatch and release-branch pushes always run; the nightly schedule
+    # only runs when the maintainer has opted in via the repo variable (see the
+    # header note). Without the explicit push clause a release push would match
+    # neither branch of the OR and the job would be skipped.
     if: >-
       ${{ github.event_name == 'workflow_dispatch' ||
+          github.event_name == 'push' ||
           vars.ENABLE_NIGHTLY_WEBKIT == 'true' }}
     # Run inside the official Playwright image so WebKit + its system libs are
     # PRE-BAKED — no cdn.playwright.dev download (the blocker the issue flags).
