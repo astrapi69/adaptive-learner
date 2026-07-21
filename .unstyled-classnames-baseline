@@ -1,0 +1,146 @@
+# Unstyled-Classname-Gate - Startbestand / Ratchet (#1892, Refs #1491 #1728).
+#
+# Jeder Eintrag ist ein className-Attribut-WERT, dessen Tokens ALLE tote
+# Klassen sind (weder CSS-Regel unter frontend/src noch emittierte
+# Tailwind-Utility - Abgleich gegen .dead-classnames-baseline). Das Element
+# rendert damit komplett ohne Styling (der #1715/#1732 CreateLesson-Archetyp).
+#
+# Nur VOLLSTAENDIG STATISCHE className-Werte werden erfasst (Plain-String,
+# {"..."} oder Template ohne ${...}); cn()/Identifier/Ternary/dynamische
+# Templates werden als unpruefbar uebersprungen - ein Eintrag ist also ein
+# echtes ungestyltes Element, kein False Positive.
+#
+# Mehr-Token-Werte sind alphabetisch sortiert kanonisiert (reihenfolge-
+# unabhaengig, ein stabiler Eintrag pro Kombination).
+#
+# Diese Liste ist der eingefrorene Startbestand (Ratchet). Der Gate
+# (scripts/check-dead-classnames.py --unstyled) schlaegt NUR bei NEUEN
+# vollstaendig ungestylten className-Attributen an, die hier nicht stehen.
+# Die Liste darf nur SCHRUMPFEN: sobald ein Element token-basiert gestylt
+# (oder die Klasse definiert/entfernt) ist, hier loeschen.
+#
+# Bewusst extern gestylte Fremd-Library-Klassen (assistant-ui .aui-*,
+# floating-ui .popper) bleiben legitim hier stehen (Legitimierungsweg c aus
+# .dead-classnames-baseline).
+#
+# Regenerieren (build-unabhaengig, liest .dead-classnames-baseline):
+#   python3 scripts/check-dead-classnames.py --unstyled --list
+# Migration der Eintraege ist ein eigener Auftrag, NICHT Teil dieses Gates.
+activity-trend
+adaptive-save-row
+adaptive-summary-improvement
+answer-feedback-pulse
+aui-composer
+aui-composer-input
+aui-composer-send
+aui-message aui-message-assistant
+aui-message aui-message-user
+aui-thread
+aui-thread-viewport
+backup-auto
+backup-auto-count
+backup-auto-list
+backup-auto-toggle
+backup-auto-when
+backup-comparison
+backup-comparison-table
+backup-contents
+backup-contents-list
+backup-contents-title
+backup-contents-total
+backup-last
+backup-pressure
+backup-reminder
+backup-summary
+badge-widget-grid
+badge-widget-view-all
+chat-welcome
+cloze-blank-diff
+content-ai-fix
+content-ai-intro
+content-contribution-date
+content-contribution-row
+content-contribution-status
+content-contribution-title
+content-contributions-list
+content-contributor-badge
+content-level-own-count
+content-my-contributions content-section
+content-my-lessons content-section
+content-section-title
+content-set-aicheck-btn
+content-set-quality-btn
+content-source-knowledge
+content-source-other
+content-source-primary
+curriculum-description
+curriculum-description-actions
+custom
+dashboard-create-lesson
+dashboard-filter-bar
+dashboard-filter-controls
+dashboard-filter-header
+dashboard-filter-results
+dashboard-filter-row
+dashboard-learning-path
+dashboard-project-list
+error-replay-summary-score
+extra
+extra-hook
+form-field
+form-hint-inline
+form-select
+free-text-diff
+free-text-diff-row
+learning-repo-actions
+learning-repo-body
+learning-repo-header
+learning-repo-meta
+learning-repo-sidebar
+learning-repo-topic-group
+learning-repo-widget-link
+lesson-resume-actions
+lesson-resume-desc
+lesson-reviewed-fallback
+lesson-reviewed-prompt
+lesson-step-nav
+lesson-summary-breakdown-diff
+lesson-summary-diff
+lesson-summary-explanations
+onboarding-subject-suggestions
+page
+page-header
+picture-tile-skeleton
+provider-chip-model
+review-summary-note
+settings-subsection
+share-wizard-author
+share-wizard-author-name
+share-wizard-author-privacy
+share-wizard-breadcrumb
+share-wizard-celebration
+share-wizard-copy-body
+share-wizard-counts
+share-wizard-diff
+share-wizard-domain-hint
+share-wizard-dup-actions
+share-wizard-existing
+share-wizard-header
+share-wizard-metadata
+share-wizard-metadata-intro
+share-wizard-mode
+share-wizard-newset
+share-wizard-note
+share-wizard-overlap
+share-wizard-path
+share-wizard-placement
+share-wizard-placement-line
+share-wizard-pr-body
+share-wizard-pr-progress
+share-wizard-progress
+share-wizard-thanks
+spaced-rec-body
+spaced-rec-title
+spaced-recs
+speech-button__label
+taxonomy-chip-list
