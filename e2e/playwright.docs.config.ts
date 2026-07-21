@@ -30,6 +30,29 @@ import {defineConfig, devices} from "@playwright/test";
 const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_DOCS_PREVIEW_PORT) || 4179;
 
+// The capture needs a BACKEND, unlike the visual suite which deliberately runs
+// without one. ``useI18n`` resolves a string in three steps: the backend
+// catalog from ``/api/i18n/{lang}``, then a small localized hardcoded subset
+// for first-paint resilience, then the caller's inline English fallback.
+// Without a backend only the subset is localized, so a German run produced
+// German navigation and English everything else - screenshots that looked like
+// an i18n gap but were an artifact of the harness. Its own port so a running
+// dev backend is neither disturbed nor silently reused.
+const BACKEND_PORT =
+    Number(process.env.ADAPTIVE_LEARNER_DOCS_BACKEND_PORT) || 18011;
+
+const DOCS_DATA_DIR = "/tmp/adaptive-learner-docs-capture-data";
+
+// Same fixed test key the E2E smoke uses: the capture backend only ever holds
+// throwaway state, and committing it keeps the run self-contained (no .env).
+const DOCS_FERNET_KEY = "i1u3pP7HXVHrUKE2NgUSe3FxLknXVbNZJxs1u-3pV9k=";
+
+const BACKEND_ENV = [
+    `ADAPTIVE_LEARNER_PORT=${BACKEND_PORT}`,
+    `ADAPTIVE_LEARNER_DATA_DIR=${DOCS_DATA_DIR}`,
+    `ADAPTIVE_LEARNER_SECRET_KEY=${DOCS_FERNET_KEY}`,
+].join(" ");
+
 /** UI language of the captured screenshots. The article set is English. */
 export const DOCS_LANG = process.env.DOCS_LANG === "de" ? "de" : "en";
 
@@ -53,7 +76,20 @@ export default defineConfig({
     },
     webServer: [
         {
-            command: `cd ../frontend && npx vite preview --port ${PREVIEW_PORT} --strictPort`,
+            command:
+                `rm -rf ${DOCS_DATA_DIR} && mkdir -p ${DOCS_DATA_DIR} && ` +
+                `cd ../backend && ${BACKEND_ENV} poetry run uvicorn app.main:app --port ${BACKEND_PORT}`,
+            url: `http://localhost:${BACKEND_PORT}/api/health`,
+            reuseExistingServer: !process.env.CI,
+            timeout: 120_000,
+        },
+        {
+            // ADAPTIVE_LEARNER_PORT points vite's /api proxy at the capture
+            // backend. ``preview`` inherits ``server.proxy``, so this is the
+            // one knob that makes the catalog reachable.
+            command:
+                `cd ../frontend && ADAPTIVE_LEARNER_PORT=${BACKEND_PORT} ` +
+                `npx vite preview --port ${PREVIEW_PORT} --strictPort`,
             url: `http://localhost:${PREVIEW_PORT}`,
             reuseExistingServer: !process.env.CI,
             timeout: 60_000,

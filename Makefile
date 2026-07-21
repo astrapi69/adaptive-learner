@@ -622,7 +622,7 @@ verify-screenshots: ## Verify per-feature screenshots against the committed base
 	cd e2e && npx playwright test --config=playwright.features.config.ts
 
 capture-blog-screenshots: ## Capture lesson-creator screenshots for the engine blog series (writes only, no baseline)
-	@echo "=== Building frontend ==="
+	@echo "=== Building frontend (needs the backend too: the UI language comes from /api/i18n) ==="
 	cd frontend && bun run build
 	@echo ""
 	@echo "=== Capturing blog screenshots (DOCS_LANG=$(or $(DOCS_LANG),en)) ==="
