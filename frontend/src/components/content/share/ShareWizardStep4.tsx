@@ -35,10 +35,10 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
     <section data-testid="share-wizard-step-4">
       {sharedUrl ? (
         <div
-          className="share-wizard-celebration"
+          className="share-wizard-celebration flex flex-col gap-3"
           data-testid="share-wizard-celebration"
         >
-          <p className="share-wizard-thanks">
+          <p className="share-wizard-thanks font-medium">
             {t("content.wizard.thanks", "Thanks for sharing! Your contribution helps other learners.")}
           </p>
           {automated ? (
@@ -64,7 +64,7 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
                   {t("content.wizard.upload_instructions", "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" — GitHub creates the pull request for you.")}
                 </p>
               )}
-              <div className="share-wizard-copy-body">
+              <div className="share-wizard-copy-body flex flex-col gap-2">
                 <Button
                   type="button"
                   variant="secondary"
@@ -76,7 +76,7 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
                     : t("content.wizard.copy_pr_body", "Copy pull-request description")}
                 </Button>
                 <textarea
-                  className="share-wizard-pr-body"
+                  className="share-wizard-pr-body w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   data-testid="share-wizard-pr-body"
                   readOnly
                   rows={6}
@@ -121,7 +121,7 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
           prStage === "uploading" ||
           prStage === "creating" ? (
             <p
-              className="share-wizard-pr-progress"
+              className="share-wizard-pr-progress text-sm text-fg-secondary"
               data-testid="share-wizard-pr-progress"
               role="status"
             >

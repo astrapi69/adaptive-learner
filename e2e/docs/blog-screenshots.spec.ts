@@ -154,4 +154,62 @@ test("captures the core card and exercise steps", async ({page}) => {
     await page.getByTestId("exercise-add").click();
     await expect(page.getByTestId("exercise-add-picker")).toBeVisible();
     await shot(page, "s3-manual-add");
+    await page.getByTestId("exercise-add-cancel").click();
+
+    await next.click();
+    await expect(page.getByTestId("create-lesson-checklist")).toBeVisible();
+    await shot(page, "s4-review");
+
+    // Edit mode reuses this same wizard, so the article's last screenshot needs
+    // a lesson that already exists. Save one, and take its identifiers from the
+    // SAVE RESPONSE rather than guessing a slug: the id is assigned by the
+    // storage layer, and awaiting the response also guarantees the lesson is
+    // persisted before the edit route asks for it. An earlier attempt that
+    // navigated straight after the click found nothing to load.
+    const savedEntry = page.waitForResponse(
+        (response) =>
+            response.url().includes("/user-sets") && response.request().method() === "POST",
+    );
+    await page.getByTestId("create-lesson-save-local").click();
+    const entry = (await (await savedEntry).json()) as {source: string; id: string};
+
+    await page.goto(
+        `/create-lesson/edit/${encodeURIComponent(entry.source)}/${encodeURIComponent(entry.id)}`,
+        {waitUntil: "networkidle"},
+    );
+    // Loaded means the wizard came back prefilled, not that it merely rendered.
+    await expect(page.getByTestId("create-lesson-title")).toHaveValue("Ordering coffee", {
+        timeout: 15_000,
+    });
+    for (let step = 0; step < 3; step++) await next.click();
+    // Both only exist in edit mode (ReviewStep renders them behind editMode), so
+    // together they refuse to capture the create flow while labelling it edit.
+    await expect(page.getByTestId("create-lesson-edit-note")).toBeVisible();
+    await expect(page.getByTestId("create-lesson-save-copy")).toBeVisible();
+    await shot(page, "s7-edit-review");
+});
+
+test("captures the book-text path", async ({page}) => {
+    await openCreator(page);
+    await fillMetadata(page, "Attention and memory", "Aufmerksamkeit und Gedächtnis");
+    await page.getByTestId("create-lesson-templates").scrollIntoViewIfNeeded();
+    // The article shows the template row from the book path's point of view,
+    // so this shot and e1 differ by which entry the reader is being pointed at.
+    await shot(page, "s5-template-book");
+
+    await page.getByTestId("template-knowledge-from-text").click();
+    await expect(page.getByTestId("book-text-input")).toBeVisible();
+    await page.getByTestId("book-text-input").fill(
+        DOCS_LANG === "de"
+            ? "Aufmerksamkeit ist die Zuwendung der Wahrnehmung auf einen Ausschnitt der Umwelt. " +
+              "Sie ist begrenzt: Wer sich auf eine Sache konzentriert, nimmt andere schwächer wahr."
+            : "Attention is the focusing of perception on part of the environment. " +
+              "It is limited: concentrating on one thing weakens the perception of others.",
+    );
+    await page.getByTestId("book-title").fill(
+        DOCS_LANG === "de" ? "Einführung in die Psychologie" : "Introduction to Psychology",
+    );
+    await page.getByTestId("book-author").fill("R. Atkinson");
+    await expect(page.getByTestId("book-rights-hint")).toBeVisible();
+    await shot(page, "s6-book-text");
 });
