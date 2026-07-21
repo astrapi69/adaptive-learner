@@ -239,6 +239,17 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       akzeptierten Transkriptionen. Review zeigt die Anzahl; "Lokal speichern" →
       gespeicherte Lektion **abspielbar** (jeder Typ rendert + ist beantwortbar);
       die Set-JSON traegt `requires_extensions: ["ext:al-...@1"]`
+- [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** Im MC-Inline-Editor
+      (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
+      ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,
+      vor der ersten Options-Zeile**. Neue MC-Uebung (KI-generiert ODER manuell
+      angelegt): Default ist **"Eine Antwort erlauben"**, die Options-Marker
+      sind Radios (genau eine richtig). Umschalten auf **"Mehrere Antworten
+      erlauben"** → Marker werden Checkboxen, zwei richtige moeglich,
+      gespeicherte Uebung ist mit Mehrfachauswahl **abspielbar**. Zurueck auf
+      "Eine Antwort" → auf genau eine richtige reduziert. Eine bestehende
+      MC-Uebung mit gesetztem `multiple`-Wert oeffnet **unveraendert** in ihrem
+      urspruenglichen Zustand.
 
 ### Karten-Bild-Upload (#1763 / #1764)
 

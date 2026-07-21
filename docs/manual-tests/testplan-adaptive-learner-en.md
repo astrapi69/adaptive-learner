@@ -236,6 +236,16 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       upload in v1) + the accepted-transcriptions list. Review shows the count;
       "Save locally" → the saved lesson is **playable** (each type renders + is
       answerable); the set JSON carries `requires_extensions: ["ext:al-...@1"]`
+- [ ] **Multiple-choice single/multi mode control (#1888):** In the MC inline
+      editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
+      correct?") is a segmented control **at the very top, before the first
+      option row**. A new MC exercise (AI-generated OR manually added) defaults
+      to **"Allow one answer"**, option markers are radios (exactly one
+      correct). Switching to **"Allow multiple answers"** → markers become
+      checkboxes, two correct are possible, and the saved exercise is
+      **playable** with multi-select. Switching back to "Allow one answer" →
+      pruned to exactly one correct. An existing MC exercise with a set
+      `multiple` value opens **unchanged** in its original state.
 
 ### Card image upload (#1763 / #1764)
 

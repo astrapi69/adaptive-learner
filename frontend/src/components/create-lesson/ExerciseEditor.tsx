@@ -490,8 +490,8 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
             ),
         });
     }
-    function toggleMultiple() {
-        const next = !multiple;
+    function setMultiple(next: boolean) {
+        if (next === multiple) return;
         // Switching to single-answer keeps only the first correct option.
         let nextOptions = options;
         if (!next) {
@@ -512,78 +512,120 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
         "Correct answer",
     );
 
+    const modes: {value: boolean; key: "single" | "multiple"; label: string}[] = [
+        {
+            value: false,
+            key: "single",
+            label: t(
+                "create_lesson.exercises.edit.mc_mode_single",
+                "Allow one answer",
+            ),
+        },
+        {
+            value: true,
+            key: "multiple",
+            label: t(
+                "create_lesson.exercises.edit.mc_mode_multiple",
+                "Allow multiple answers",
+            ),
+        },
+    ];
+
     return (
         <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
-                {t("create_lesson.exercises.edit.mc_options_label", "Answer options")}
-            </legend>
-            <label className="flex items-center gap-2">
-                <input
-                    type="checkbox"
-                    className="accent-[var(--accent)]"
-                    checked={multiple}
-                    data-testid={`exercise-edit-mc-multiple-${id}`}
-                    onChange={toggleMultiple}
-                />
-                <span className="text-sm text-fg-primary">
-                    {t(
-                        "create_lesson.exercises.edit.mc_multiple_label",
-                        "Allow multiple correct answers",
-                    )}
-                </span>
-            </label>
-            {options.map((option, i) => (
-                <div
-                    key={i}
-                    className="flex items-center gap-2"
-                    data-testid={`exercise-edit-mc-option-${id}-${i}`}
-                >
-                    <input
-                        type={multiple ? "checkbox" : "radio"}
-                        name={`exercise-edit-mc-correct-${id}`}
-                        className="accent-[var(--accent)]"
-                        checked={option.correct === true}
-                        aria-label={correctLabel}
-                        data-testid={`exercise-edit-mc-correct-${id}-${i}`}
-                        onChange={() => toggleCorrect(i)}
-                    />
-                    <Input
-                        type="text"
-                        maxLength={500}
-                        value={option.text}
-                        className="min-w-0 flex-1"
-                        aria-label={t(
-                            "create_lesson.exercises.edit.mc_option_placeholder",
-                            "Option text",
-                        )}
-                        data-testid={`exercise-edit-mc-text-${id}-${i}`}
-                        onChange={(e) => setText(i, e.target.value)}
-                    />
-                    <button
-                        type="button"
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
-                        aria-label={t(
-                            "create_lesson.exercises.edit.mc_option_remove",
-                            "Remove option",
-                        )}
-                        data-testid={`exercise-edit-mc-remove-${id}-${i}`}
-                        onClick={() => removeOption(i)}
-                    >
-                        <X size={14} aria-hidden="true" />
-                    </button>
-                </div>
-            ))}
-            <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="w-fit"
-                data-testid={`exercise-edit-mc-add-${id}`}
-                onClick={addOption}
+            <fieldset
+                className="m-0 flex flex-col gap-1.5 border-0 p-0"
+                data-testid={`exercise-edit-mc-mode-${id}`}
             >
-                <Plus size={14} aria-hidden="true" />
-                {t("create_lesson.exercises.edit.mc_option_add", "Add option")}
-            </Button>
+                <legend className="form-label text-sm font-medium text-fg-primary">
+                    {t(
+                        "create_lesson.exercises.edit.mc_mode_label",
+                        "How many answers are correct?",
+                    )}
+                </legend>
+                <div className="inline-flex w-fit rounded-md border border-border bg-bg-elevated p-0.5">
+                    {modes.map((mode) => {
+                        const active = multiple === mode.value;
+                        return (
+                            <label
+                                key={mode.key}
+                                className={`cursor-pointer rounded-[0.3rem] px-3 py-1.5 text-sm font-medium transition-colors ${
+                                    active
+                                        ? "bg-accent text-[var(--accent-fg)]"
+                                        : "text-fg-secondary hover:text-fg-primary"
+                                }`}
+                            >
+                                <input
+                                    type="radio"
+                                    name={`exercise-edit-mc-mode-radio-${id}`}
+                                    className="sr-only"
+                                    checked={active}
+                                    data-testid={`exercise-edit-mc-mode-${mode.key}-${id}`}
+                                    onChange={() => setMultiple(mode.value)}
+                                />
+                                {mode.label}
+                            </label>
+                        );
+                    })}
+                </div>
+            </fieldset>
+            <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
+                <legend className="form-label text-sm font-medium text-fg-primary">
+                    {t("create_lesson.exercises.edit.mc_options_label", "Answer options")}
+                </legend>
+                {options.map((option, i) => (
+                    <div
+                        key={i}
+                        className="flex items-center gap-2"
+                        data-testid={`exercise-edit-mc-option-${id}-${i}`}
+                    >
+                        <input
+                            type={multiple ? "checkbox" : "radio"}
+                            name={`exercise-edit-mc-correct-${id}`}
+                            className="accent-[var(--accent)]"
+                            checked={option.correct === true}
+                            aria-label={correctLabel}
+                            data-testid={`exercise-edit-mc-correct-${id}-${i}`}
+                            onChange={() => toggleCorrect(i)}
+                        />
+                        <Input
+                            type="text"
+                            maxLength={500}
+                            value={option.text}
+                            className="min-w-0 flex-1"
+                            aria-label={t(
+                                "create_lesson.exercises.edit.mc_option_placeholder",
+                                "Option text",
+                            )}
+                            data-testid={`exercise-edit-mc-text-${id}-${i}`}
+                            onChange={(e) => setText(i, e.target.value)}
+                        />
+                        <button
+                            type="button"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
+                            aria-label={t(
+                                "create_lesson.exercises.edit.mc_option_remove",
+                                "Remove option",
+                            )}
+                            data-testid={`exercise-edit-mc-remove-${id}-${i}`}
+                            onClick={() => removeOption(i)}
+                        >
+                            <X size={14} aria-hidden="true" />
+                        </button>
+                    </div>
+                ))}
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-fit"
+                    data-testid={`exercise-edit-mc-add-${id}`}
+                    onClick={addOption}
+                >
+                    <Plus size={14} aria-hidden="true" />
+                    {t("create_lesson.exercises.edit.mc_option_add", "Add option")}
+                </Button>
+            </fieldset>
         </fieldset>
     );
 }
