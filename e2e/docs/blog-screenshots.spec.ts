@@ -160,12 +160,33 @@ test("captures the core card and exercise steps", async ({page}) => {
     await expect(page.getByTestId("create-lesson-checklist")).toBeVisible();
     await shot(page, "s4-review");
 
-    // NOT captured yet: s7-edit-review, the wizard in edit mode. It needs a
-    // saved lesson reopened via /create-lesson/edit/<source>/<id>, and the id
-    // is assigned by the storage layer rather than derived from the title, so
-    // this side cannot construct the URL. Reaching it means either reading the
-    // saved entry back or clicking through the Content area. Until that is
-    // built, that one article image is the only manual refresh left.
+    // Edit mode reuses this same wizard, so the article's last screenshot needs
+    // a lesson that already exists. Save one, and take its identifiers from the
+    // SAVE RESPONSE rather than guessing a slug: the id is assigned by the
+    // storage layer, and awaiting the response also guarantees the lesson is
+    // persisted before the edit route asks for it. An earlier attempt that
+    // navigated straight after the click found nothing to load.
+    const savedEntry = page.waitForResponse(
+        (response) =>
+            response.url().includes("/user-sets") && response.request().method() === "POST",
+    );
+    await page.getByTestId("create-lesson-save-local").click();
+    const entry = (await (await savedEntry).json()) as {source: string; id: string};
+
+    await page.goto(
+        `/create-lesson/edit/${encodeURIComponent(entry.source)}/${encodeURIComponent(entry.id)}`,
+        {waitUntil: "networkidle"},
+    );
+    // Loaded means the wizard came back prefilled, not that it merely rendered.
+    await expect(page.getByTestId("create-lesson-title")).toHaveValue("Ordering coffee", {
+        timeout: 15_000,
+    });
+    for (let step = 0; step < 3; step++) await next.click();
+    // Both only exist in edit mode (ReviewStep renders them behind editMode), so
+    // together they refuse to capture the create flow while labelling it edit.
+    await expect(page.getByTestId("create-lesson-edit-note")).toBeVisible();
+    await expect(page.getByTestId("create-lesson-save-copy")).toBeVisible();
+    await shot(page, "s7-edit-review");
 });
 
 test("captures the book-text path", async ({page}) => {
