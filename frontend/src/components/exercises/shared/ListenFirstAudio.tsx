@@ -6,7 +6,11 @@
  *
  * Resolution reuses the ``useAsset`` chain picture_choice images use:
  * cached blob from the storage layer, keyed by (source, setId, path).
- * When no blob URL can be produced (review/adaptive routes pass no
+ * An uploaded clip (#1911) arrives as a self-contained ``data:`` URI —
+ * the resolver can't fetch that by path, so it is played DIRECTLY and
+ * never routed through ``useAsset``, mirroring how
+ * ``PictureChoiceExercise`` renders an inline data-URI image.
+ * When no URL can be produced (review/adaptive routes pass no
  * source, cache miss, missing file) the control renders NOTHING — the
  * exercise looks and behaves exactly as it did before #1600. Authored
  * audio is an enhancement, never a gate.
@@ -35,7 +39,16 @@ export default function ListenFirstAudio({
     audioPath,
 }: ListenFirstAudioProps) {
     const {t} = useI18n();
-    const {url} = useAsset(source, setId, audioPath ?? null);
+    // An uploaded clip is a self-contained data URI (#1911): play it directly
+    // and skip the storage asset lookup, which only resolves manifest paths.
+    const isInline =
+        typeof audioPath === "string" && audioPath.trim().startsWith("data:");
+    const asset = useAsset(
+        isInline ? null : source,
+        isInline ? null : setId,
+        isInline ? null : (audioPath ?? null),
+    );
+    const url = isInline ? audioPath.trim() : asset.url;
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     // Release the element (and stop playback) when the URL changes or the

@@ -252,6 +252,20 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       (egal ob ueber den Core-Picker ODER den Extension-Wizard angelegt) und ist
       abspielbar. **Regression:** der bestehende Extension-Wizard-Weg fuer Diktat
       funktioniert unveraendert
+- [ ] **Diktat-Audio-Upload (#1911, Slice 3):** Im Diktat-Editor (Core-Picker
+      ODER Extension-Wizard) zeigt das Audio-Feld einen **"Audio hochladen"**-
+      Button ueber einem **"…assets/audio/clip.mp3"**-Pfad-Eingabefeld. Klick auf
+      Hochladen → ein Dateiauswahldialog bietet MP3/OGG/WAV. Echten Clip waehlen
+      → ein eingebetteter **Audio-Player + "Entfernen"** erscheinen (das Pfad-Feld
+      bleibt leer; der Base64-Blob wird nicht angezeigt), die Liste der
+      akzeptierten Transkriptionen funktioniert weiter. Lektion speichern,
+      abspielen: **"Listen first" spielt den hochgeladenen Clip** in der Lektion
+      (beide Storage-Modi, ohne assets-Ordner — der Clip reist als Data-URI in
+      der Lektion-JSON mit und ueberlebt Export/Import). **Entfernen** loescht
+      ihn. **Regression:** ein getippter `assets/audio/…`-Pfad funktioniert weiter
+      als Alternative (kein Upload). **Fehler:** eine zu grosse Datei (> 2 MB)
+      ODER ein falsches Format (z. B. `.mp4`) zeigt eine klare Inline-Fehlermeldung
+      und stuerzt nicht ab; nichts wird gespeichert
 - [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,

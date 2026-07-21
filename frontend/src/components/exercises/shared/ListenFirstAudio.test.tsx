@@ -57,4 +57,18 @@ describe("ListenFirstAudio (#1600)", () => {
         );
         expect(container).toBeEmptyDOMElement();
     });
+
+    it("plays an inline data-URI clip directly, bypassing the asset resolver (#1911)", () => {
+        // An uploaded clip is a self-contained data URI; the resolver can't
+        // fetch it by path, so it must never be routed through useAsset.
+        useAssetMock.mockReturnValue({url: null, loading: false, error: true});
+        render(
+            <ListenFirstAudio
+                source=""
+                setId=""
+                audioPath="data:audio/mpeg;base64,AAAA"
+            />,
+        );
+        expect(screen.getByTestId("listen-first")).toBeInTheDocument();
+    });
 });
