@@ -254,8 +254,8 @@ describe("ExerciseEditor — picture_choice", () => {
     });
 });
 
-describe("ExerciseEditor — multiple_choice (#1850)", () => {
-    const ex = (): ContentLessonExercise =>
+describe("ExerciseEditor — multiple_choice (#1850, #1888)", () => {
+    const ex = (over?: Partial<ContentLessonExercise>): ContentLessonExercise =>
         ({
             id: "mc1",
             type: "multiple_choice",
@@ -267,13 +267,58 @@ describe("ExerciseEditor — multiple_choice (#1850)", () => {
                 {text: "cat", correct: true},
                 {text: "dog", correct: false},
             ],
+            ...over,
         }) as ContentLessonExercise;
 
-    it("renders an option row per option + the multiple toggle", () => {
+    it("renders an option row per option + the single/multi mode control", () => {
         render(<Harness exercise={ex()} />);
         expect(screen.getByTestId("exercise-edit-mc-text-mc1-0")).toBeInTheDocument();
         expect(screen.getByTestId("exercise-edit-mc-correct-mc1-1")).toBeInTheDocument();
-        expect(screen.getByTestId("exercise-edit-mc-multiple-mc1")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-edit-mc-mode-single-mc1")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-edit-mc-mode-multiple-mc1")).toBeInTheDocument();
+    });
+
+    it("shows the mode control BEFORE the first option row (#1888 discoverability)", () => {
+        render(<Harness exercise={ex()} />);
+        const mode = screen.getByTestId("exercise-edit-mc-mode-single-mc1");
+        const firstOption = screen.getByTestId("exercise-edit-mc-option-mc1-0");
+        // The mode control precedes the first option row in document order.
+        expect(
+            mode.compareDocumentPosition(firstOption) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+    });
+
+    it("defaults a new single-choice exercise to the 'single' mode selected", () => {
+        render(<Harness exercise={ex()} />);
+        expect(screen.getByTestId("exercise-edit-mc-mode-single-mc1")).toBeChecked();
+        expect(
+            screen.getByTestId("exercise-edit-mc-mode-multiple-mc1"),
+        ).not.toBeChecked();
+    });
+
+    it("opens an existing multi-answer exercise with 'multiple' selected, unchanged", () => {
+        render(
+            <Harness
+                exercise={ex({
+                    multiple: true,
+                    options: [
+                        {text: "cat", correct: true},
+                        {text: "kitten", correct: true},
+                        {text: "dog", correct: false},
+                    ],
+                })}
+            />,
+        );
+        expect(
+            screen.getByTestId("exercise-edit-mc-mode-multiple-mc1"),
+        ).toBeChecked();
+        expect(
+            screen.getByTestId("exercise-edit-mc-mode-single-mc1"),
+        ).not.toBeChecked();
+        // The two authored correct options are untouched on open.
+        expect(screen.getByTestId("exercise-edit-mc-correct-mc1-0")).toBeChecked();
+        expect(screen.getByTestId("exercise-edit-mc-correct-mc1-1")).toBeChecked();
     });
 
     it("commits an edited option + moved correct marker on Save", () => {
@@ -312,15 +357,37 @@ describe("ExerciseEditor — multiple_choice (#1850)", () => {
         expect(screen.getByTestId("exercise-edit-error-mc1")).toBeInTheDocument();
     });
 
-    it("multiple toggle switches to checkboxes and allows two correct", () => {
+    it("switching to 'multiple' mode allows two correct answers", () => {
         const onSaved = vi.fn();
         render(<Harness exercise={ex()} onSaved={onSaved} />);
-        fireEvent.click(screen.getByTestId("exercise-edit-mc-multiple-mc1"));
-        // now both can be correct
+        fireEvent.click(screen.getByTestId("exercise-edit-mc-mode-multiple-mc1"));
+        // now both can be correct (checkboxes)
         fireEvent.click(screen.getByTestId("exercise-edit-mc-correct-mc1-1"));
         fireEvent.click(saveButton("mc1"));
         const saved = onSaved.mock.calls[0][0];
         expect(saved.multiple).toBe(true);
         expect(saved.options.filter((o: {correct: boolean}) => o.correct)).toHaveLength(2);
+    });
+
+    it("switching back to 'single' mode prunes to a single correct answer", () => {
+        const onSaved = vi.fn();
+        render(
+            <Harness
+                exercise={ex({
+                    multiple: true,
+                    options: [
+                        {text: "cat", correct: true},
+                        {text: "kitten", correct: true},
+                        {text: "dog", correct: false},
+                    ],
+                })}
+                onSaved={onSaved}
+            />,
+        );
+        fireEvent.click(screen.getByTestId("exercise-edit-mc-mode-single-mc1"));
+        fireEvent.click(saveButton("mc1"));
+        const saved = onSaved.mock.calls[0][0];
+        expect(saved.multiple).toBe(false);
+        expect(saved.options.filter((o: {correct: boolean}) => o.correct)).toHaveLength(1);
     });
 });
