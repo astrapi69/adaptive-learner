@@ -15,6 +15,7 @@ import {describe, expect, it, vi} from "vitest";
 import ExtensionExerciseEditor from "./ExtensionExerciseEditor";
 import {
     CATEGORIZATION_EXT_TYPE,
+    DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
@@ -242,5 +243,59 @@ describe("ExtensionExerciseEditor — graded quiz", () => {
         });
         expect(saveButton("q1")).toBeDisabled();
         expect(screen.getByTestId("exercise-ext-error-q1")).toBeInTheDocument();
+    });
+});
+
+describe("ExtensionExerciseEditor — dictation", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "d1",
+            type: DICTATION_EXT_TYPE,
+            prompt: "Type what you hear",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {audio: "assets/audio/one.mp3", accept: ["un"]},
+        }) as ContentLessonExercise;
+
+    it("renders the audio-path input + the accepted-answers editor", () => {
+        render(<Harness exercise={ex()} />);
+        expect(screen.getByTestId("exercise-ext-dict-audio-d1")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-ext-dict-accept-d1")).toBeInTheDocument();
+    });
+
+    it("commits an edited audio path on Save", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-ext-dict-audio-d1"), {
+            target: {value: "assets/audio/two.mp3"},
+        });
+        fireEvent.click(saveButton("d1"));
+        expect(savedPayload().audio).toBe("assets/audio/two.mp3");
+    });
+
+    it("adds an accepted transcription and commits it on Save", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(
+            screen.getByTestId("exercise-ext-dict-accept-d1-input"),
+            {target: {value: "deux"}},
+        );
+        fireEvent.click(screen.getByTestId("exercise-ext-dict-accept-d1-add"));
+        fireEvent.click(saveButton("d1"));
+        expect(savedPayload().accept).toEqual(["un", "deux"]);
+    });
+
+    it("disables Save when the audio path is blank", () => {
+        const blank = ex();
+        (blank.ext_payload as {audio: string}).audio = "";
+        render(<Harness exercise={blank} />);
+        expect(saveButton("d1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-ext-error-d1")).toBeInTheDocument();
+    });
+
+    it("disables Save when no accepted transcription exists", () => {
+        const blank = ex();
+        (blank.ext_payload as {accept: string[]}).accept = [];
+        render(<Harness exercise={blank} />);
+        expect(saveButton("d1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-ext-error-d1")).toBeInTheDocument();
     });
 });

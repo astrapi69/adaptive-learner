@@ -87,7 +87,7 @@ describe("ExtensionSteps — step 2 authoring", () => {
         expect(screen.getByTestId("extension-add")).toBeInTheDocument();
     });
 
-    it("offers both wizard extension types in the picker", () => {
+    it("offers every wizard extension type in the picker (incl. dictation)", () => {
         render(<Harness />);
         fireEvent.click(screen.getByTestId("extension-add"));
         expect(
@@ -95,6 +95,26 @@ describe("ExtensionSteps — step 2 authoring", () => {
         ).toBeInTheDocument();
         expect(
             screen.getByTestId("extension-add-type-error-correction"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("extension-add-type-reading-comprehension"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("extension-add-type-graded-quiz"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("extension-add-type-dictation"),
+        ).toBeInTheDocument();
+    });
+
+    it("adds a blank dictation exercise that opens directly in the editor", () => {
+        render(<Harness />);
+        fireEvent.click(screen.getByTestId("extension-add"));
+        fireEvent.click(screen.getByTestId("extension-add-type-dictation"));
+        const editor = screen.getByTestId(/^exercise-ext-editor-/);
+        expect(editor).toBeInTheDocument();
+        expect(
+            screen.getByTestId(/^exercise-ext-dict-audio-/),
         ).toBeInTheDocument();
     });
 

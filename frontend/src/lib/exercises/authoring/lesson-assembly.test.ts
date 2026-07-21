@@ -7,6 +7,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     CATEGORIZATION_EXT_TYPE,
+    DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
 } from "./extension-edit";
 import {buildExtensionLesson, requiredExtensionsFor} from "./lesson-assembly";
@@ -50,6 +51,15 @@ const EC: ContentLessonExercise = {
     ext_payload: {tokens: ["The", "dog", "follow"], error_index: 2, accept: ["follows"]},
 } as ContentLessonExercise;
 
+const DICT: ContentLessonExercise = {
+    id: "d1",
+    type: DICTATION_EXT_TYPE,
+    prompt: "Type what you hear",
+    card_ids: [],
+    distractors: [],
+    ext_payload: {audio: "assets/audio/one.mp3", accept: ["un", "eins"]},
+} as ContentLessonExercise;
+
 describe("requiredExtensionsFor", () => {
     it("emits distinct versioned entries in first-seen order", () => {
         expect(requiredExtensionsFor([CAT, EC, CAT])).toEqual([
@@ -79,6 +89,14 @@ describe("buildExtensionLesson", () => {
         expect(() =>
             buildExtensionLesson({meta: META, exercises: [CAT]}),
         ).not.toThrow();
+    });
+
+    it("builds a dictation lesson that carries ext:al-dictation@1 + passes the load guard (#1887)", () => {
+        const lesson = buildExtensionLesson({meta: META, exercises: [DICT]});
+        expect(lesson.requires_extensions).toEqual(["ext:al-dictation@1"]);
+        const exerciseSteps = lesson.steps.filter((s) => s.type === "exercise");
+        expect(exerciseSteps).toHaveLength(1);
+        expect(exerciseSteps[0].exercise?.type).toBe(DICTATION_EXT_TYPE);
     });
 
     it("builds the SaveUserSetInput with a stable set id", () => {
