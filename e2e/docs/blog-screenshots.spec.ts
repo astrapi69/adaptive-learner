@@ -154,4 +154,41 @@ test("captures the core card and exercise steps", async ({page}) => {
     await page.getByTestId("exercise-add").click();
     await expect(page.getByTestId("exercise-add-picker")).toBeVisible();
     await shot(page, "s3-manual-add");
+    await page.getByTestId("exercise-add-cancel").click();
+
+    await next.click();
+    await expect(page.getByTestId("create-lesson-checklist")).toBeVisible();
+    await shot(page, "s4-review");
+
+    // NOT captured yet: s7-edit-review, the wizard in edit mode. It needs a
+    // saved lesson reopened via /create-lesson/edit/<source>/<id>, and the id
+    // is assigned by the storage layer rather than derived from the title, so
+    // this side cannot construct the URL. Reaching it means either reading the
+    // saved entry back or clicking through the Content area. Until that is
+    // built, that one article image is the only manual refresh left.
+});
+
+test("captures the book-text path", async ({page}) => {
+    await openCreator(page);
+    await fillMetadata(page, "Attention and memory", "Aufmerksamkeit und Gedächtnis");
+    await page.getByTestId("create-lesson-templates").scrollIntoViewIfNeeded();
+    // The article shows the template row from the book path's point of view,
+    // so this shot and e1 differ by which entry the reader is being pointed at.
+    await shot(page, "s5-template-book");
+
+    await page.getByTestId("template-knowledge-from-text").click();
+    await expect(page.getByTestId("book-text-input")).toBeVisible();
+    await page.getByTestId("book-text-input").fill(
+        DOCS_LANG === "de"
+            ? "Aufmerksamkeit ist die Zuwendung der Wahrnehmung auf einen Ausschnitt der Umwelt. " +
+              "Sie ist begrenzt: Wer sich auf eine Sache konzentriert, nimmt andere schwächer wahr."
+            : "Attention is the focusing of perception on part of the environment. " +
+              "It is limited: concentrating on one thing weakens the perception of others.",
+    );
+    await page.getByTestId("book-title").fill(
+        DOCS_LANG === "de" ? "Einführung in die Psychologie" : "Introduction to Psychology",
+    );
+    await page.getByTestId("book-author").fill("R. Atkinson");
+    await expect(page.getByTestId("book-rights-hint")).toBeVisible();
+    await shot(page, "s6-book-text");
 });
