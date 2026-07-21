@@ -475,11 +475,13 @@ css-identity-ref: ## EXP-044 concern-split (#1655): build + store the byte-ident
 css-identity-check: ## EXP-044 concern-split (#1655): build + byte-compare the emitted CSS against the stored reference
 	bash scripts/check-css-identity.sh check
 
-check-dead-classnames: ## Usage-side gate: classNames used in TSX but defined nowhere (ratchet via .dead-classnames-baseline, #1491)
+check-dead-classnames: ## Usage-side gates: dead classNames (#1491) + render-unstyled archetype (all-dead className, #1892)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
 	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	python3 scripts/check-dead-classnames.py
+	@echo ""
+	python3 scripts/check-dead-classnames.py --unstyled
 
 audit-legacy-conflicts: ## EXP-044 pre-wrap conflict audit (analysis only, NO gate; Refs #1485). BLOCKS="--block A-B:Label ..." or default --wrapped
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
