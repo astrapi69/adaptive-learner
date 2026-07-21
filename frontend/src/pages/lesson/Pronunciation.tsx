@@ -141,7 +141,7 @@ export default function PronunciationPage() {
   if (!eligible) {
     return (
       <main id="main" className="pronunciation-page" data-testid="pronunciation-ineligible">
-        <header className="page-header">
+        <header className="page-header mb-4 flex flex-col gap-1">
           <h1>{t("pronunciation.title", "Pronunciation Practice")}</h1>
         </header>
         <p className="muted">
@@ -159,7 +159,7 @@ export default function PronunciationPage() {
 
   return (
     <main id="main" className="pronunciation-page" data-testid="pronunciation-page">
-      <header className="page-header">
+      <header className="page-header mb-4 flex flex-col gap-1">
         <h1>{t("pronunciation.title", "Pronunciation Practice")}</h1>
         <p className="muted">
           {t("pronunciation.intro", "Generate a phrase, speak it aloud, and get instant feedback.")}

@@ -40,6 +40,7 @@ import {Check, ChevronRight} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {useI18n} from "../../../hooks/ui/useI18n";
+import {useAutoAdvanceSuppressed} from "./auto-advance-gate";
 import {
     AUTO_ADVANCE_DELAY_MS,
     useLessonAutoAdvance,
@@ -73,6 +74,10 @@ export default function ExerciseSuccessAdvance({
     const {t} = useI18n();
     const buttonRef = useRef<HTMLButtonElement>(null);
     const autoAdvance = useLessonAutoAdvance();
+    // #1921 — a revisit (Back / resume / deep-link onto a completed step)
+    // re-mounts this control; suppress the automatic jump so the Back button
+    // works. The manual "Continue" click below stays live either way.
+    const suppressed = useAutoAdvanceSuppressed();
     // Guard so ``onAdvance`` runs at most once even if the auto-advance
     // timer and a manual Continue click race in the same tick.
     const firedRef = useRef(false);
@@ -96,11 +101,11 @@ export default function ExerciseSuccessAdvance({
     // The timer is cleared on unmount (the step change from a manual click
     // unmounts this component), so the two paths can't double-advance.
     useEffect(() => {
-        if (!autoAdvance) return;
+        if (!autoAdvance || suppressed) return;
         const timer = window.setTimeout(fire, AUTO_ADVANCE_DELAY_MS);
         return () => window.clearTimeout(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [autoAdvance]);
+    }, [autoAdvance, suppressed]);
 
     return (
         <div
