@@ -293,7 +293,11 @@ each card row (`CardImageField`).
 ### Lesson player UX (v2.3.0)
 - [ ] Pause button now lives in the sticky footer (#1644), pausing
       works from there
-- [ ] Title area slimmer, no in-lesson description anymore (#1635)
+- [ ] Auto-advance + "Back" (#1921): with "Advance automatically"
+      (Settings -> Learning) ON, answer an exercise correctly so the app
+      jumps to the next step by itself -> then click "Back": the previous
+      (already-solved) exercise STAYS and does NOT jump forward again;
+      the "Continue" button is still clickable
 - [ ] Lesson summary shows only ONE favorite button (#1649)
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
 

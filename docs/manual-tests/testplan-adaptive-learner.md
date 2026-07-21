@@ -299,6 +299,11 @@ jeder Karten-Zeile (`CardImageField`).
 ### Lesson-Player UX (v2.3.0)
 - [ ] Pause-Button liegt jetzt im Sticky-Footer (#1644), Pausieren
       funktioniert von dort
+- [ ] Auto-Weiter + "Zurueck" (#1921): Einstellung "Automatisch weiter"
+      (Settings -> Lernen) AN -> eine Uebung richtig beantworten, die App
+      springt automatisch zur naechsten Aufgabe -> dann "Zurueck" klicken:
+      die vorherige (bereits geloeste) Aufgabe bleibt stehen und springt
+      NICHT sofort wieder vor; der "Weiter"-Button ist weiter klickbar
 - [ ] Titelbereich schlanker, keine In-Lektion-Beschreibung mehr (#1635)
 - [ ] Lektions-Zusammenfassung zeigt nur EINEN Favoriten-Button (#1649)
 - [ ] Skip-to-Content-Link beim Tabben von oben sichtbar (#1727, a11y)

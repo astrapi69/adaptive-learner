@@ -17,6 +17,7 @@ import TheoryStep from "./TheoryStep";
 import StepExamples from "./StepExamples";
 import AskAiPanel from "../ask/AskAiPanel";
 import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
+import { AutoAdvanceSuppressedProvider } from "../../exercises/feedback/auto-advance-gate";
 import { ExerciseDispatcher } from "../../exercises";
 import type {
   ExerciseHandle,
@@ -219,23 +220,29 @@ export default function LessonStepView({
               context="exercise"
             />
           ) : null}
-          <ExerciseDispatcher
-            ref={exerciseRef}
-            controlled
-            onInteraction={onInteraction}
-            reviewed={reviewedRaw}
-            step={step}
-            setId={setId}
-            lessonId={lessonFilename}
-            source={source}
-            targetLanguage={lesson.target_language}
-            sourceLanguage={lesson.source_language}
-            domain={lesson.domain}
-            cards={lesson.cards}
-            onComplete={handleComplete}
-            onAdvance={onAdvance}
-            advanceLabel={advanceLabel}
-          />
+          {/* #1921 — a step entered in its already-completed (reviewed)
+                    state via Back / resume / deep-link must NOT auto-advance;
+                    only a fresh check earns the automatic jump. The manual
+                    "Continue" success button stays live regardless. */}
+          <AutoAdvanceSuppressedProvider suppressed={enteredReviewed}>
+            <ExerciseDispatcher
+              ref={exerciseRef}
+              controlled
+              onInteraction={onInteraction}
+              reviewed={reviewedRaw}
+              step={step}
+              setId={setId}
+              lessonId={lessonFilename}
+              source={source}
+              targetLanguage={lesson.target_language}
+              sourceLanguage={lesson.source_language}
+              domain={lesson.domain}
+              cards={lesson.cards}
+              onComplete={handleComplete}
+              onAdvance={onAdvance}
+              advanceLabel={advanceLabel}
+            />
+          </AutoAdvanceSuppressedProvider>
           {/* #1321 — deepen the current exercise via the existing BYOK AI
                     path. Self-gating (no key → discreet hint). */}
           {step.exercise && (
