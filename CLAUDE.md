@@ -9,7 +9,28 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.4.0** (**feature release** on top of the v2.3.0
+- **Current state:** **v2.5.0** (**feature release** on top of the v2.4.0
+  authoring release. Highlights: **Create-Lesson becomes a full exercise
+  authoring tool** - all five core types editable in step 3 #1845, manual
+  add-exercise + native `multiple_choice` #1853 with a prominent single/multi
+  mode control #1888, cloze/word_tiles/picture_choice generation made
+  discoverable #1848, and an **extension-authoring wizard** covering all four
+  AI-authored extension types (categorization + error-correction #1859,
+  reading-comprehension + graded-quiz #1865); **`ext:al-dictation` (audio
+  dictation)** adopted as the fifth extension type #1881, added to the wizard
+  #1887 and to the core type picker behind a generalized `requires_extensions`
+  gate #1895; legacy English exercise prompts migrate on edit #1861. Two
+  subsystems become **consumed npm packages** instead of in-tree code: PWA
+  update + version display via `@astrapi69/pwa-update(-react)` #1873, the AI
+  key vault via `@astrapi69/ai-key-vault(-react)` #1868. Exercise grading +
+  payload validation + authoring consolidated under `lib/exercises/` behind one
+  barrel #1862/#1867/#1877. Governance: **PR-PFLICHT** #1846 (a pushed code
+  change opens a PR by default) and **TESTPLAN-PFLICHT** #1858 (user-visible
+  functionality updates the manual test plan in the same PR). iOS/WebKit
+  hardening: footer Pause/Next overlap #1839, tap-offset #1832; a night-shift
+  WebKit layout gate #1843. Engine re-pinned -> 0.13.1. NO schema/API/data-model
+  change against v2.4.0. See changelog/releases/v2.5.0.md.)
+  Prior **v2.4.0** = (**feature release** on top of the v2.3.0
   polish release. Highlights: a **Create-Lesson authoring upgrade** - a knowledge
   lesson from pasted textbook text #1745, editing an own lesson + combining own
   lessons into a set #1752, card **image upload** (not a typed asset path) #1764,
