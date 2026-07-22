@@ -12,9 +12,11 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {fireEvent, render, screen} from "@testing-library/react";
+import {MemoryRouter, useLocation} from "react-router-dom";
 import {afterEach, describe, expect, it, vi} from "vitest";
+
+import {setLessonShortcutsEnabled} from "../../../lib/lesson/lessonShortcutsPref";
 
 const reducedMotionMock = vi.fn(() => false);
 vi.mock("../../../lib/feedback/feedbackPref", () => ({
@@ -62,6 +64,109 @@ function renderCard(
 afterEach(() => {
     reducedMotionMock.mockReset();
     reducedMotionMock.mockReturnValue(false);
+    setLessonShortcutsEnabled(true);
+});
+
+/** Render the card inside a router that reports the current path, so a
+ *  test can assert whether an Enter keystroke navigated (and to where).
+ *  Returns a getter for the live path. */
+function renderWithLocation(
+    suggestions: Suggestions,
+    errorReplay?: ErrorReplayPayload,
+): () => string {
+    let path = "/summary";
+    function Probe() {
+        path = useLocation().pathname;
+        return null;
+    }
+    render(
+        <MemoryRouter initialEntries={["/summary"]}>
+            <NextStepSuggestions
+                suggestions={suggestions}
+                setId="fr-a1"
+                setSlug="bundled:adaptive-learner-content"
+                lessonFilename="03-ser-estar.json"
+                errorReplay={errorReplay}
+            />
+            <Probe />
+        </MemoryRouter>,
+    );
+    return () => path;
+}
+
+describe("NextStepSuggestions Enter shortcut (#1943)", () => {
+    it("Enter activates the primary next-lesson CTA without a prior click", () => {
+        const path = renderWithLocation(
+            makeSuggestions({
+                nextLesson: {
+                    available: true,
+                    lessonFilename: "04-family.json",
+                    title: "Family",
+                    isPaused: false,
+                },
+                primaryAction: "next",
+            }),
+        );
+        expect(path()).toBe("/summary");
+        fireEvent.keyDown(window, {key: "Enter"});
+        expect(path()).toBe(
+            "/lesson/bundled:adaptive-learner-content/fr-a1/04-family.json",
+        );
+    });
+
+    it("Enter picks the PRIMARY card, not a secondary one", () => {
+        const path = renderWithLocation(
+            makeSuggestions({
+                nextLesson: {
+                    available: true,
+                    lessonFilename: "04-family.json",
+                    title: "Family",
+                    isPaused: false,
+                },
+                // A secondary review ("Wiederholung") card is also present.
+                reviewSession: {available: true, dueCount: 5},
+                primaryAction: "next",
+            }),
+        );
+        fireEvent.keyDown(window, {key: "Enter"});
+        // The next-lesson route, NOT /review/... .
+        expect(path()).toBe(
+            "/lesson/bundled:adaptive-learner-content/fr-a1/04-family.json",
+        );
+    });
+
+    it("last lesson without a next card: Enter does nothing, no error", () => {
+        const path = renderWithLocation(
+            makeSuggestions({
+                nextLesson: {available: false, isPaused: false},
+                setComplete: true,
+                setTitle: "Spanish A1",
+                lessonCount: 5,
+                primaryAction: "next",
+            }),
+        );
+        // The set-complete card renders, but its "View Set" CTA is not primary.
+        expect(screen.getByTestId("next-step-card-complete")).toBeInTheDocument();
+        fireEvent.keyDown(window, {key: "Enter"});
+        expect(path()).toBe("/summary");
+    });
+
+    it("does nothing when the Enter shortcut preference is disabled", () => {
+        setLessonShortcutsEnabled(false);
+        const path = renderWithLocation(
+            makeSuggestions({
+                nextLesson: {
+                    available: true,
+                    lessonFilename: "04-family.json",
+                    title: "Family",
+                    isPaused: false,
+                },
+                primaryAction: "next",
+            }),
+        );
+        fireEvent.keyDown(window, {key: "Enter"});
+        expect(path()).toBe("/summary");
+    });
 });
 
 describe("NextStepSuggestions", () => {

@@ -141,6 +141,14 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Fehler-wiederholen-Abschluss ("Alle Fehler korrigiert!"): Enter
       (ohne Klick) loest "Zurueck zur Lektion" aus (#1864); Klick auf den
       Button funktioniert weiterhin
+- [ ] Lektions-Zusammenfassung ("Geschafft: ..."): mit verfuegbarer
+      naechster Lektion loest Enter (ohne Klick) die primaere Karte
+      "Naechste Lektion -> Starten" aus - nicht eine sekundaere Karte
+      (z. B. "Wiederholung"); Klick auf die Buttons funktioniert weiterhin
+      (#1943)
+- [ ] Letzte Lektion eines Sets (keine "Naechste Lektion"): auf der
+      Zusammenfassung passiert bei Enter nichts Falsches - kein Fehler,
+      keine Navigation zu einer nicht vorhandenen Lektion (#1943)
 - [ ] Fehler wiederholen bei Zuordnung (#1874): Zuordnungs-Uebung mit
       gemischt richtigen/falschen Paaren spielen, "Fehler wiederholen"
       oeffnen -> nur die falschen Paare erscheinen (nicht alle). Bei nur
