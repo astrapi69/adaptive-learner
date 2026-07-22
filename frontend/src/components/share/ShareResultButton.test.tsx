@@ -44,7 +44,13 @@ describe("ShareResultButton", () => {
         const arg = share.mock.calls[0][0];
         expect(arg.text).toContain("90%");
         expect(arg.text).toContain("Ansible basics");
-        expect(arg.url).toBe("https://astrapi69.github.io/adaptive-learner/");
+        // #1939 — the app URL is folded INTO the text (not a separate `url`
+        // field iOS could share alone), so the full personalized result
+        // reaches every share target.
+        expect(arg.text).toContain(
+            "https://astrapi69.github.io/adaptive-learner/",
+        );
+        expect(arg.url).toBeUndefined();
         // No image attached when canShare denies files (or none generated).
         expect(arg.files).toBeUndefined();
     });
