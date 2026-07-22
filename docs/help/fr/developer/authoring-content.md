@@ -27,13 +27,19 @@ Un ensemble a trois niveaux :
    le schéma de leçon (voir *Le schéma est la source de vérité
    unique* ci-dessous).
 
-Les ensembles pilotes livrés avec Adaptive Learner se trouvent dans
-le dépôt de contenu séparé
+Les ensembles livrés avec Adaptive Learner se trouvent dans le
+dépôt de contenu séparé
 [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
 (extrait comme checkout frère `../adaptive-learner-content` et
-empaqueté par le build via
+empaqueté hors ligne dans le build GitHub Pages via
 `frontend/scripts/copy-bundled-content.mjs`) et constituent de bons
-modèles.
+modèles. La taille actuelle de la bibliothèque (nombres de leçons /
+d'ensembles / de domaines, le tableau par ensemble et les domaines
+actifs) est le bloc CONTENT-STATS du
+[`README.md`](https://github.com/astrapi69/adaptive-learner#readme)
+du projet — ce bloc est la source de vérité unique, généré à partir
+d'un checkout de contenu frais, de sorte que ce guide ne duplique
+pas les chiffres.
 
 ## Le schéma est la source de vérité unique (EXP-039)
 
@@ -59,9 +65,10 @@ endroits qui dérivaient autrefois ne le peuvent plus :
   free-text), consommés par le validateur de contenu côté client au
   lieu d'une seconde copie entretenue à la main.
 - Les types de leçon TypeScript du frontend et la page MkDocs
-  *Lesson format reference* sont eux aussi générés (**ne les édite
-  pas à la main**) ; ils suivent le miroir de l'engine, relance donc
-  le générateur après chaque re-pin.
+  [Lesson format reference](lesson-format-reference.md) sont eux
+  aussi générés (**ne les édite pas à la main**) ; ils suivent le
+  miroir de l'engine, relance donc le générateur après chaque
+  re-pin.
 
 Une barrière anti-dérive (`make sync-schema-check`, partie de
 `release-test`, plus `backend/tests/test_lesson_schema_drift.py` dans
@@ -124,316 +131,390 @@ l'ancienne clé `language` est acceptée comme `target_language`, et
 L'arbre est organisé par LANGUE SOURCE, puis cible+niveau :
 
 ```
-mon-content-repo/
-  manifest.yaml               # Racine : liste chaque ensemble (avec path + paire)
+my-content-repo/
+  manifest.yaml               # Root: lists every set (with path + pair)
   sets/
-    de/                       # Langue source : allemand
-      fr-a1/                  # Cible français, niveau A1  -> ID fr-a1-from-de
-        manifest.yaml         # Ensemble : liste les leçons
+    de/                       # Source language: German
+      fr-a1/                  # Target French, level A1  -> ID fr-a1-from-de
+        manifest.yaml         # Set: lists the lessons
         lessons/
           01-begruessung.json
           ...
-        assets/               # images / audio optionnels
-    en/                       # Langue source : anglais
+        assets/               # optional images / audio
+    en/                       # Source language: English
       fr-a1/                  # -> ID fr-a1-from-en
         ...
 ```
 
+### Index de recherche (`search-index.json`)
+
+La découverte et la recherche de contenu (la surface *Découvrir*)
+sont pilotées par un `search-index.json` léger publié à la racine du
+dépôt (~4 Ko, métadonnées seulement — aucun contenu de carte). Le
+dépôt de contenu officiel le fournit, et l'app récupère les index de
+chaque dépôt configuré côté client (compatible CORS, mis en cache
+dans localStorage avec un TTL stale-while-revalidate de 24 h) afin
+qu'un apprenant puisse TROUVER un ensemble avant de le télécharger.
+Chaque entrée annonce les `id`, `name`, `description`,
+`source_language` / `target_language`, `level`, `domain`,
+`lesson_count`, `card_count`, `tags` de l'ensemble, un drapeau
+`ai_validated`, un `trust_level`, un `book` compagnon optionnel et un
+horodatage `updated_at`. Garde-le synchronisé avec les manifestes
+d'ensemble ; une PR vers le dépôt officiel le régénère.
+
 ## Format du manifeste
 
-Les deux fichiers de manifeste (racine + ensemble) utilisent la
-même forme avec `schema_version: '1.0'`. Champs obligatoires :
+Le schéma des champs du manifeste (le `manifest.yaml` racine qui
+liste les ensembles du dépôt, et chaque champ obligatoire et
+optionnel : `schema_version`, `name`, et par ensemble `id`, `title`,
+`title_native`, `target_language`, `source_language`, `level`,
+`version`, `lesson_count`, `path`, `domain`, `tags`, `book`) vit dans
+la référence de l'engine :
+[learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
+Le schéma strict de l'engine (les champs inconnus sont rejetés) le
+valide, de sorte que la liste de champs ci-dessus ne peut pas
+dériver. Rédige les champs de paire de langues
+(`target_language` / `source_language`) comme décrit sous
+[Paires de langues](#paires-de-langues-v1440) ; l'alias `language`
+d'avant la v1.2 se charge encore mais est déconseillé pour les
+nouveaux ensembles.
 
-```yaml
-schema_version: '1.0'
-name: Mein Englisch-B1-Set
-description: >-
-  Optionale Langbeschreibung.
-sets:
-  - id: language-en-b1        # slug-sicher, eindeutig
-    title: Englisch B1 (Fortgeschrittene)
-    language: en              # BCP-47 (z.B. en, fr, zh-Hans)
-    level: B1                 # CEFR für Sprachen, frei für andere Domänen
-    version: '1.0.0'          # Semver — pro Set-Release erhöht
-    lesson_count: 12
-    domain: language          # 'language' / 'math' / 'programming' / ...
-    description: >-
-      Optionale Set-Beschreibung.
-    tags:
-      - intermediate
-      - business
-metadata:
-  author: Dein Name
-  license: CC-BY-SA-4.0       # oder die Lizenz deiner Wahl
-```
+Comportement spécifique au chargeur de l'app à garder à l'esprit :
 
-Le manifeste d'ensemble liste en plus chaque fichier de leçon :
+- Le manifeste d'ensemble liste chaque fichier de leçon sous
+  `metadata.lessons`, et le chargeur de contenu itère cette liste
+  **dans l'ordre donné** : les noms de fichiers sur le disque sont
+  sans importance, seul l'ordre du manifeste compte :
 
-```yaml
-metadata:
-  lessons:
-    - 01-intro.json
-    - 02-articles.json
-    - ...
-```
+  ```yaml
+  metadata:
+    lessons:
+      - 01-intro.json
+      - 02-articles.json
+      - ...
+  ```
 
-Le chargeur de contenu itère sur `metadata.lessons` dans l'ordre
-donné ; les noms de fichiers sur le disque sont sans importance —
-seul l'ordre du manifeste compte.
+## Schéma de leçon
 
-## Schéma de leçon (v1.0)
+Chaque leçon est un unique fichier JSON : métadonnées de premier
+niveau (`id`, `title`, `description`, `estimated_minutes`), une liste
+de **cartes** (les plus petites unités apprenables — ids stables,
+paires recto/verso, `notes` en Markdown, `tags` pour le SRS) et une
+liste d'**étapes**, chacune étant soit une étape THEORY (un `body`
+Markdown, éventuellement un lien `example_url` ou des `examples` en
+ligne), soit une étape EXERCISE (exactement un exercice).
 
-Chaque leçon est un unique fichier JSON. Structure de premier
-niveau :
+La référence de format complète, champ par champ — chaque champ,
+chaque type d'exercice, chaque mode de cloze, avec des exemples JSON
+validés par la suite de tests de l'engine — vit dans la **référence
+de l'engine** :
+
+- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  — la référence canonique du format de leçon pour les auteur·rice·s
+  et les validateurs tiers (aucun checkout de l'app nécessaire)
+- le schéma lisible par machine livré avec chaque release de l'engine :
+  `import schema from "learn-content-engine/schema/lesson.schema.json"`
+- le jumeau intégré à l'app : la
+  [Lesson format reference](lesson-format-reference.md) générée
+
+Le schéma livré par l'engine est identique octet pour octet au
+`schema/lesson.schema.json` généré de ce dépôt (imposé par
+`make engine-parity-check`), de sorte que « valide contre l'engine »
+et « valide dans l'app » sont la même affirmation.
+
+## Quel type d'exercice pour quel objectif d'apprentissage
+
+Choisis le type d'exercice selon l'**objectif d'apprentissage**, pas
+pour la variété. La notation par correspondance exacte mot à mot — un
+`word_tiles` de phrase entière, ou un `free_text` de phrase complète —
+échoue pour la **production libre** : un concept peut se formuler de
+bien des façons correctes, si bien qu'un apprenant au contenu juste se
+voit marqué faux mot après mot. C'est le moment le plus démotivant
+qu'une leçon rédigée puisse produire. Fais plutôt correspondre le type
+à l'objectif :
+
+| Objectif d'apprentissage | Bon type |
+|---|---|
+| Un fait avec une seule réponse | `cloze` (un trou) |
+| Reconnaître un concept | choix multiple (`cloze` en mode `select`) / `matching` |
+| Définir un concept | `cloze` avec des trous sur les termes clés |
+| Explication libre / transfert / comparaison | pas encore de type à correspondance exacte — utilise `cloze` / choix multiple pour l'instant ; l'auto-évaluation est prévue |
+| Phrase avec un seul ordre de mots non ambigu (apprentissage des langues) | `word_tiles` |
+
+Règle empirique : réserve `word_tiles` aux phrases dont l'ordre des
+mots est vraiment unique (un exercice de traduction), et rédige les
+définitions et les faits en `cloze` (ou en choix multiple via le mode
+`select` du `cloze`). Ne mets jamais une définition de forme libre
+dans un `word_tiles` ou un `free_text` de phrase complète — il n'y a
+pas de notation par correspondance exacte équitable pour cela. Analyse
+complète : voir EXP-041
+(`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
+
+## Catalogue des types d'exercices (statut)
+
+Une seule référence de chaque type d'exercice : ce qui est livré, ce
+qui est exprimable sans nouveau type, ce qui est candidat et ce qui
+est délibérément exclu. Le modèle canonique n'est **pas** étendu sur
+spéculation — un type n'est livré qu'avec son moteur de rendu (le
+registre `SUPPORTED_EXERCISE_TYPES` doit être égal à l'énumération
+`ExerciseType` ; un test de parité l'impose, la leçon tirée des cas
+v1.4-preview / `picture_choice`). Les nouveaux types sont ajoutés sur
+demande de contenu concrète via la recette
+[Adding a new exercise type](adding-exercise-type.md).
+
+### Implémentés (l'énumération `ExerciseType`)
+
+| Type | Pour quoi (objectif d'apprentissage, EXP-041) | Remarque |
+|------|-----------------------------------|------|
+| `matching` | Reconnaître / associer des concepts | Association par glisser, ≥ 3 paires. |
+| `picture_choice` | Reconnaître à partir d'une vraie **image** | ≥ 2 images, exactement une correcte. Pas pour un QCM textuel. |
+| `free_text` | Produire une réponse courte, de forme factuelle | Correspondance exacte, puis Levenshtein ≤ 1. |
+| `word_tiles` | Un ordre de mots non ambigu (langue) | Tuiles mélangées ; `accept_orderings` pour les variantes. |
+| `cloze` (`type`) | Un fait avec une seule réponse | Un `<input>` par trou. |
+| `cloze` (`select`) | Choix multiple simple (véhicule legacy) | Rendu en boutons cliquables (#1342). `accept[0]` correct + `distractors`. |
+| `cloze` (`multiselect`) | « Sélectionne tout ce qui s'applique » (véhicule legacy) | Correspondance par ensemble exact sur `accept` (tous corrects) + `distractors` (#1195). |
+| `multiple_choice` | **Choix multiple textuel natif** (schéma v1.6, #1525) | `options` (`{text, correct?}`, textes uniques) + `multiple`. Simple = exactement un correct ; multi = correspondance par ensemble exact, pas de points partiels. |
+
+Depuis le schéma v1.6, il existe un type natif `multiple_choice`. Il
+**coexiste** avec le véhicule `cloze` `select`/`multiselect`
+(EXP-036 §4.3, #890) — le choix multiple basé sur cloze existant reste
+valide, rien n'est déprécié. Préfère `multiple_choice` pour les
+nouveaux contenus de QCM textuel : la justesse est un drapeau par
+option, le piège de la disjonction accept/distractors ne peut donc pas
+se produire. Voir [Créer des choix multiples](#creer-des-choix-multiples).
+
+### Palier d'extension (l'espace de noms `ext:`)
+
+Au-delà de l'énumération centrale fermée, il existe des types
+d'exercices dans l'espace de noms `ext:<vendor>-<name>`. Ils sont
+structurellement opaques pour le schéma central : une leçon qui les
+utilise les déclare dans `requires_extensions`, et la charge utile est
+validée par l'extension enregistrée, jamais par le schéma central. Le
+mécanisme est décrit dans la référence de l'engine
+[learn-content-engine — `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md).
+L'app a adopté cinq types d'extension (`SUPPORTED_EXT_EXERCISE_TYPES`
+dans l'`ExerciseDispatcher` ; une barrière de parité garde le
+dispatcher et la garde de chargement synchronisés, de sorte que tout
+ce qui est chargeable est affichable) :
+
+| Type | Pour quoi | Charge utile (`ext_payload`) | Adopté |
+|------|----------|-------------------------|---------|
+| `ext:al-categorization` | Trier des termes en groupes | `categories: [{name, items[]}]`, au moins 2 seaux | #1591 (premier type d'extension, inventaire #1579) |
+| `ext:al-error-correction` | Corriger un texte fautif | `tokens[]` + `error_index` + `accept[]` | #1593 |
+| `ext:al-reading-comprehension` | Compréhension écrite (passage + questions) | `passage` + `questions[]` (chacune une sous-question `multiple_choice` / `free_text`) | #1603 |
+| `ext:al-graded-quiz` | Quiz noté | `questions[]` (chacune avec `points`) + `pass_threshold` optionnel | #1616 ; l'ensemble de démo de référence est masqué de Découvrir / Mes contenus (#1702) |
+| `ext:al-dictation` | Dictée audio (écouter, puis transcrire) | `audio` (un clip `assets/`) + `accept[]` (correspondance de transcription tolérante) | #1881 (cinquième adoption) |
+
+**Deux voies de rédaction.** Les exercices d'extension peuvent être
+rédigés (a) directement en JSON de dépôt de contenu (la voie
+canonique, décrite dans la référence de l'engine), ou (b) dans l'app.
+Le créateur de leçons a reçu un **assistant de rédaction d'extensions**
+(#1852), atteint depuis le modèle *Types d'exercices avancés* à
+l'étape 1, qui couvre les cinq types (#1859 categorization +
+error-correction, #1865 reading-comprehension + graded-quiz, #1887
+dictation). La dictée est aussi accessible depuis le sélecteur de type
+d'exercice central à l'étape 3, derrière une garde `requires_extensions`
+généralisée (#1895). L'une comme l'autre voie émet le même JSON de
+leçon et définit `requires_extensions` (versionné, p. ex.
+`ext:al-dictation@1`).
+
+#### Exemple par type d'extension
+
+Chaque bloc est l'objet d'exercice tel qu'il apparaît dans un `.json`
+de leçon ; les données propres au type vivent sous `ext_payload`. La
+référence canonique des champs est le `docs/extensions.md` de l'engine.
 
 ```json
 {
-  "id": "01-greetings",
-  "title": "Begrüßungen",
-  "description": "Optionale 1-2-Satz-Zusammenfassung.",
-  "estimated_minutes": 12,
-  "cards": [ ... ],
-  "steps": [ ... ]
-}
-```
-
-### Cartes
-
-Une carte est la plus petite unité apprenable — typiquement un
-terme ou un concept unique. Chaque carte a un id stable
-(référencé depuis les exercices) et une paire recto/verso
-(front/back) :
-
-```json
-{
-  "id": "art-le",
-  "front": "le",
-  "back": "der (männlich Singular)",
-  "notes": "Vor konsonantenanfangenden männlichen Substantiven. **le chat**, **le livre**.",
-  "tags": ["article", "definite"]
-}
-```
-
-`notes` accepte du Markdown. Utilise-le pour les règles de
-prononciation, les avertissements sur les faux amis, les remarques
-d'exception — tout ce qui améliore la mémorisation à long terme.
-`tags` pilote le filtrage SRS.
-
-### Étapes
-
-Une leçon est une séquence pas à pas, chaque étape étant soit
-THEORY (un bloc Markdown), soit EXERCISE (l'un des types
-d'exercices) :
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "title": "Warum Artikel wichtig sind",
-  "body": "# Artikel im Französischen\n\nJedes französische Nomen hat ein Geschlecht..."
-}
-```
-
-Une étape de théorie peut porter en option un **lien d'exemple**
-(schéma v1.4, additif — les leçons existantes restent valides sans
-lui). Si présent, le lecteur affiche en dessous un bouton pour
-ouvrir l'exemple :
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "body": "Die Korrelation misst den Zusammenhang...",
-  "example_url": "https://example.com/correlation-visualizer",
-  "example_label": "Interaktive Visualisierung"
-}
-```
-
-- `example_url` (optionnel) : doit être une URL `http(s)`.
-- `example_label` (optionnel) : le texte du lien ; vide devient un
-  « Voir l'exemple » localisé.
-
-Ou un exercice :
-
-```json
-{
-  "id": "ex-match-greetings",
-  "type": "exercise",
-  "title": "Begrüßungen zuordnen",
-  "exercise": {
-    "id": "ex-match-greetings",
-    "type": "matching",
-    "prompt": "Ordne jede Begrüßung ihrer Übersetzung zu.",
-    "card_ids": ["bonjour", "salut"],
-    "pairs": [
-      {"left": "Bonjour", "right": "Hallo"},
-      {"left": "Salut", "right": "Hi"}
+  "type": "ext:al-categorization",
+  "prompt": "Sort each word into fruit or vegetable.",
+  "ext_payload": {
+    "categories": [
+      {"name": "Fruit", "items": ["apple", "banana"]},
+      {"name": "Vegetable", "items": ["carrot", "potato"]}
     ]
   }
 }
 ```
 
+```json
+{
+  "type": "ext:al-error-correction",
+  "prompt": "One word is wrong. Correct it.",
+  "ext_payload": {
+    "tokens": ["The", "two", "child", "are", "playing"],
+    "error_index": 2,
+    "accept": ["children"]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-reading-comprehension",
+  "prompt": "Read the text and answer.",
+  "ext_payload": {
+    "passage": "Marie is sitting in a café. She orders a coffee and reads a book.",
+    "questions": [
+      {
+        "prompt": "Where is Marie?",
+        "type": "multiple_choice",
+        "options": [
+          {"text": "In a café", "correct": true},
+          {"text": "At home"},
+          {"text": "At the station"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-graded-quiz",
+  "prompt": "Greetings quiz.",
+  "ext_payload": {
+    "pass_threshold": 60,
+    "questions": [
+      {
+        "prompt": "How do you say 'hello' in French?",
+        "type": "multiple_choice",
+        "points": 1,
+        "options": [
+          {"text": "Bonjour", "correct": true},
+          {"text": "Merci"},
+          {"text": "Au revoir"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-dictation",
+  "prompt": "Listen and type what you hear.",
+  "ext_payload": {
+    "audio": "assets/audio/comment-ca-va.mp3",
+    "accept": ["Comment ça va ?", "Comment ca va"]
+  }
+}
+```
+
+### Disponibilité dans l'assistant de leçon
+
+Jouable (un moteur de rendu existe), générable (le mélange IA peut le
+produire) et ajoutable manuellement (tu en ajoutes et édites un à la
+main à l'étape 3) sont trois choses différentes. Les six types
+centraux sont tous jouables ET générables : le sélecteur de type dans
+l'assistant de création de leçon (`ALL_TYPES` dans
+`ExerciseGenerator.tsx`) propose chaque type central, et chaque
+exercice de l'étape 3 est éditable en ligne et réordonnable, avec un
+bouton manuel **+ Ajouter un exercice** (#1849, #1853).
+
+| Type | Jouable | Générable (mélange IA) | Ajoutable manuellement (étape 3) |
+|------|----------|----------------------|---------------------------|
+| `matching` | oui | oui | oui |
+| `free_text` | oui | oui | oui |
+| `cloze` | oui | oui | oui |
+| `word_tiles` | oui | oui | oui |
+| `picture_choice` | oui | oui | oui |
+| `multiple_choice` | oui | oui (#1853 ; contrôle du mode simple/multi #1888) | oui |
+| `ext:al-dictation` | oui | non | oui, via le sélecteur central (#1895) ou l'assistant d'extension (#1887) |
+| `ext:al-categorization` | oui | non | via l'assistant d'extension (#1859) |
+| `ext:al-error-correction` | oui | non | via l'assistant d'extension (#1859) |
+| `ext:al-reading-comprehension` | oui | non | via l'assistant d'extension (#1865) |
+| `ext:al-graded-quiz` | oui | non | via l'assistant d'extension (#1865) |
+
+Les quatre types d'extension autres que la dictée sont rédigés dans
+l'assistant d'extension (ou en JSON de dépôt de contenu), jamais
+mélangés dans la génération IA centrale.
+
+**« Écouter d'abord » est un mode, pas un type.** Depuis #1687
+(décision #1600, option A), les exercices `free_text` et `matching`
+peuvent porter un élément audio-d'abord (écouter d'abord, puis
+répondre). Le type de l'exercice ne change pas. L'option B de la même
+décision, un type de dictée, a été livrée comme l'extension
+`ext:al-dictation` (#1881), documentée dans le palier d'extension
+ci-dessus.
+
+### Le créateur de leçons comme outil de rédaction
+
+Le créateur de leçons intégré à l'app (`/create-lesson`) est une
+surface de rédaction complète, pas seulement un bouton de génération
+IA :
+
+- **Chaque exercice de l'étape 3 est éditable en place.** Chaque
+  exercice généré ou ajouté s'ouvre dans un éditeur en ligne (les six
+  types centraux, plus les éditeurs d'extension) ; réordonne par
+  glisser, supprime, ou régénère tout le mélange (#1845).
+- **Ajouter un exercice à la main.** Le bouton **+ Ajouter un
+  exercice** choisit un type et ajoute un exercice vide directement
+  dans l'éditeur en ligne, de sorte que tu peux rédiger sans aucune
+  génération IA (#1849, #1853). Le sélecteur liste les six types
+  centraux plus la dictée (#1895).
+- **La phrase d'exemple pilote la génération.** Une carte (étape 2)
+  peut porter une **phrase d'exemple** optionnelle. C'est ce qui
+  permet la génération de `cloze` et de `word_tiles` pour cette carte
+  (pour le cloze, la phrase doit contenir le terme recto de la carte
+  afin qu'il puisse être masqué), et une image de carte permet le
+  `picture_choice`. Sans eux, ces types sont silencieusement sautés,
+  et l'étape 3 explique quel type sélectionné n'a rien produit (#1847,
+  #1848).
+- **Les invites générées suivent la langue de l'interface.** Les
+  modèles d'instruction d'exercice sont localisés au moment de la
+  génération (#1857), de sorte qu'un auteur sur une interface allemande
+  obtient des invites allemandes, pas des valeurs par défaut anglaises.
+  Quand tu ouvres une leçon plus ancienne pour l'éditer, toute invite
+  d'exercice encore identique octet pour octet à une valeur anglaise
+  legacy est migrée de manière opportuniste vers le modèle de la langue
+  de l'interface (état d'édition seulement, persisté seulement si tu
+  enregistres) (#1861).
+
+### Exprimable sans nouveau type (conventions, pas des types)
+
+| Concept | Comment |
+|---------|-----|
+| Vrai/Faux, Oui/Non | `multiple_choice` à deux options (ou un `cloze` `select` à deux options) |
+| Liste déroulante / bouton radio / case à cocher | Présentation d'un `multiple_choice` / cloze select — pas des types distincts |
+
+### Prévu si nécessaire (candidats — PAS un engagement)
+
+| Candidat | Proche de | Quand |
+|-----------|------|------|
+| Ordonnancement / tri | `word_tiles` | Uniquement sur demande de contenu concrète, puis via la recette. |
+| Champ numérique (comparaison numérique) | `free_text` | Uniquement sur demande de contenu concrète, puis via la recette. |
+
+### Délibérément exclus
+
+| Exclu | Pourquoi (une ligne) |
+|----------|----------------|
+| Dissertation / texte long / dessin / formule / évaluation par les pairs / auto-évaluation libre | Pas notable en binaire par le SRS ; auto-évaluation reportée (#1268). |
+| Upload audio / vidéo / fichier | Stockage + infrastructure ; en conflit avec l'approche hors-ligne d'abord. |
+| Zone active / simulation / memory / mots croisés | Effort de construction sans valeur SRS (une décision ultérieure et distincte, un jour peut-être). |
+| Matrice / Likert / curseur | Types de sondage, pas des types d'apprentissage. |
+| Sélecteurs de date / heure | Types de formulaire, pas des types d'apprentissage. |
+
 ## Référence des types d'exercices
 
-### matching
+La référence des champs par type — `matching`, `picture_choice`,
+`free_text`, `word_tiles`, `multiple_choice` et `cloze` avec ses modes
+`type` / `select` / `multiselect` : champs obligatoires, exemples JSON
+et règles sémantiques (marqueurs `___` du cloze == `blanks`, intégrité
+référentielle des `card_ids`, disjonction accept/distractors du
+multiselect, exactement-un-correct du picture-choice) — vit dans la
+référence de l'engine :
+[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+Chaque exemple JSON qui s'y trouve est extrait et validé par la suite
+de tests de l'engine, de sorte que la référence ne peut pas pourrir.
+Les conventions de rédaction propres à l'app ci-dessous restent ici.
 
-Exercice d'association par glisser-déposer. Le moteur de rendu
-mélange avant l'affichage.
-
-```json
-{
-  "id": "ex-id",
-  "type": "matching",
-  "prompt": "Ordne jedem französischen Nomen seinen Artikel zu.",
-  "card_ids": ["noun-1", "noun-2"],
-  "pairs": [
-    {"left": "chat", "right": "le"},
-    {"left": "chaise", "right": "la"}
-  ]
-}
-```
-
-Chaque paire doit avoir exactement deux clés : `left` + `right`.
-
-### picture_choice
-
-Choix multiple avec des images. ≥ 2 images, exactement une marquée
-comme correcte.
-
-```json
-{
-  "id": "ex-id",
-  "type": "picture_choice",
-  "prompt": "Welche Begrüßung passt zum Abend?",
-  "card_ids": ["card-1"],
-  "images": [
-    {"src": "assets/img/morning.png", "label": "Bonjour"},
-    {"src": "assets/img/evening.png", "label": "Bonsoir", "is_correct": "true"}
-  ],
-  "hint": "Optionaler Markdown-Tipp auf Knopfdruck.",
-  "distractors": ["Bonjour"]
-}
-```
-
-Important : `is_correct` est une **chaîne** `"true"`, pas un booléen
-JSON.
-
-Si le chemin `src` pointe vers un fichier inexistant, le moteur de
-rendu retombe sur le `label` — picture_choice fonctionne donc aussi
-sans ressources d'illustration.
-
-> **N'écris jamais un choix multiple textuel comme
-> `picture_choice`.** Ce type est réservé aux vraies ressources
-> d'image ; avec des options textuelles, il rend des tuiles d'espace
-> réservé, pas un contrôle utilisable (cf.
-> astrapi69/adaptive-learner-content-test#10). Le choix multiple
-> textuel, c'est `multiple_choice` (préféré) ou `cloze` en mode
-> `select` ; voir la section cloze ci-dessous.
-
-### free_text
-
-Saisir la réponse au clavier. Le moteur de rendu fait d'abord une
-correspondance exacte, puis tolérante à Levenshtein.
-
-```json
-{
-  "id": "ex-id",
-  "type": "free_text",
-  "prompt": "Wie sagt man 'Danke' auf Französisch?",
-  "card_ids": ["card-merci"],
-  "accept": ["Merci", "merci", "MERCI"],
-  "hint": "Beginnt mit M.",
-  "distractors": ["Bonjour", "Salut"]
-}
-```
-
-`accept[0]` est la réponse canonique affichée en cas de mauvaise
-tentative. Liste ≥ 3 variantes pour couvrir la casse + la
-ponctuation ; les espaces sont normalisés par le moteur de rendu.
-
-### word_tiles
-
-Mettre des tuiles dans le bon ordre. Le moteur de rendu mélange
-avant l'affichage.
-
-```json
-{
-  "id": "ex-id",
-  "type": "word_tiles",
-  "prompt": "Bring die Kacheln in die Reihenfolge: Ich sehe eine Katze.",
-  "card_ids": ["card-1"],
-  "tiles": ["Je", "vois", "un", "chat"],
-  "hint": "Gleiche Wortreihenfolge wie im Deutschen."
-}
-```
-
-Si plusieurs ordres de mots sont corrects, ajoute
-`accept_orderings` :
-
-```json
-{
-  "tiles": ["Je", "vois", "un", "chat"],
-  "accept_orderings": [
-    [0, 1, 2, 3],
-    [0, 1, 3, 2]
-  ]
-}
-```
-
-Chaque ordre est une permutation des indices de tuiles.
-
-### cloze (phase 52 / v1.35.0 — schéma 1.1)
-
-Texte à trous avec des marqueurs `___` visibles dans la phrase.
-Chaque `___` correspond à une entrée de `blanks[]` (correspondance
-de gauche à droite ; le chargeur vérifie
-`sentence.count("___") == len(blanks)`).
-
-```json
-{
-  "id": "ex-id",
-  "type": "cloze",
-  "prompt": "Setze den unbestimmten Artikel ein.",
-  "card_ids": ["art-un", "noun-chat"],
-  "sentence": "Je vois ___ chat dans le jardin.",
-  "blanks": [
-    {
-      "accept": ["un"],
-      "hint": "männlicher unbestimmter Artikel",
-      "placeholder": "?"
-    }
-  ],
-  "cloze_mode": "type",
-  "distractors": ["le", "la", "les"],
-  "hint": "*un* ist der männliche unbestimmte Artikel."
-}
-```
-
-**Modes de rendu** — définis par exercice via `cloze_mode` :
-
-- `"type"` (par défaut si non défini) : un `<input>` par trou.
-  Validé avec le même correspondance NFC + Levenshtein ≤ 1 que le
-  texte libre, de sorte que les auteur·rice·s n'ont qu'à lister les
-  variantes sémantiques (pas les fautes de frappe).
-- `"select"` : un `<select>` par trou. Les options proviennent de
-  `accept[0]` + des `distractors` de l'exercice, mélangées par trou
-  avec une graine stable. **Nécessite des `distractors` non
-  vides** — le validateur de schéma rejette `cloze_mode: "select"`
-  sans eux.
-
-**Choix multiple : depuis le schéma v1.6, il existe un type natif
-`multiple_choice`.** Il **coexiste** avec la forme `cloze`
-`select`/`multiselect` (EXP-036 §4.3, #890) : le choix multiple basé
-sur cloze existant reste valide, rien n'est déprécié. Préfère
-`multiple_choice` pour les nouveaux contenus de choix multiple
-textuel : la justesse est un drapeau par option, le piège de la
-disjonction accept/distractors ne peut donc pas se produire.
-Vrai/Faux et Oui/Non n'ont pas non plus besoin d'un type propre : un
-`multiple_choice` à deux options (ou un `cloze` `select` à deux
-options) les couvre.
+### Créer des choix multiples
 
 **Préféré (schéma v1.6+, #1525) : le type natif `multiple_choice`.**
-Chaque option porte son propre drapeau `correct`, il n'y a donc pas
+Les options portent leur propre drapeau `correct`, il n'y a donc pas
 de listes accept/distractors séparées à garder disjointes.
 `multiple: false` (par défaut) est le choix simple (exactement une
 bonne réponse) ; `multiple: true` est « sélectionne tout ce qui
@@ -454,18 +535,18 @@ s'applique » (notation par ensemble exact, pas de points partiels) :
 }
 ```
 
-**Forme legacy (toujours pleinement valide : coexistence, rien de
-déprécié) :** avant la v1.6, le choix multiple textuel s'écrivait
-comme `cloze` en mode `select` (EXP-036 §4.3, #890). Une question à
-réponse unique est un cloze à un trou : la `sentence` (se terminant
-par `___`) est la question, l'`accept[0]` du trou est la bonne option
-et les `distractors` sont les mauvaises options. Exemple :
+**Forme legacy (toujours pleinement valide — coexistence, rien de
+déprécié) :** avant la v1.6, le QCM textuel s'écrivait comme `cloze`
+en mode `select` (EXP-036 §4.3, #890). Une question à réponse unique
+est un cloze à un trou : la `sentence` (se terminant par `___`) est la
+question, l'`accept[0]` du trou est la bonne option et les
+`distractors` sont les mauvaises options. Exemple :
 `"sentence": "The capital of France is ___."`,
 `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
 `"distractors": ["Berlin", "Madrid", "Rome"]`.
 
 Tu peux aussi mettre toute la question dans `prompt` et utiliser un
-simple `"sentence": "___"` ; le moteur de rendu affiche un `<select>`
+simple `"sentence": "___"` — le moteur de rendu affiche un `<select>`
 composé de la bonne réponse + des distracteurs, note le choix, donne
 un retour et alimente le SRS :
 
@@ -482,10 +563,17 @@ un retour et alimente le SRS :
 }
 ```
 
+> **N'écris jamais un choix multiple textuel comme `picture_choice`.**
+> Ce type est réservé aux vraies ressources d'image ; avec des options
+> textuelles, il rend des tuiles d'espace réservé, pas un contrôle
+> utilisable (cf.
+> astrapi69/adaptive-learner-content-test#10). Le QCM textuel, c'est
+> `multiple_choice` (préféré) ou `cloze` en mode `select`, comme
+> ci-dessus.
+
 **« Sélectionne tout ce qui s'applique »** (deux bonnes réponses ou
 plus, p. ex. une question d'examen du permis de conduire) utilise
-`cloze_mode: "multiselect"` (correspondance par ensemble exact sur
-`accept` + `distractors`, #1195) :
+`cloze_mode: "multiselect"` :
 
 ```json
 {
@@ -498,17 +586,16 @@ plus, p. ex. une question d'examen du permis de conduire) utilise
 ```
 
 **Plusieurs trous par cloze** sont pris en charge : chaque `___` de
-la phrase est mappé à tour de rôle sur l'entrée suivante de
-`blanks`. Chaque trou peut avoir son propre indice + espace
-réservé + liste d'acceptation. Le SRS d'éléments éclate par trou un
-ElementAttempt — qui remplit le trou A couramment mais manque sans
-cesse le trou B obtient un suivi de maîtrise au niveau du trou.
+la phrase est mappé à tour de rôle sur l'entrée suivante de `blanks`.
+Chaque trou peut avoir son propre indice + espace réservé + liste
+d'acceptation. Le SRS d'éléments éclate par trou un ElementAttempt —
+qui remplit le trou A couramment mais manque sans cesse le trou B
+obtient un suivi de maîtrise au niveau du trou.
 
-**Rôles de jeton sur les cartes (phase 52I / v1.35.0)** —
-métadonnées de carte optionnelles avec lesquelles le générateur de
-cloze peut, à l'exécution (sessions de révision + le tour de
-correction en fin de leçon), choisir un trou sémantiquement
-significatif :
+**Rôles de jeton sur les cartes (phase 52I / v1.35.0)** — métadonnées
+de carte optionnelles avec lesquelles le générateur de cloze peut, à
+l'exécution (sessions de révision + le tour de correction en fin de
+leçon), choisir un trou sémantiquement significatif :
 
 ```json
 {
@@ -526,6 +613,65 @@ significatif :
 `adjective` / `preposition` / `gender_marker` / `tense_marker`.
 Ajouter un rôle est un bump de version mineure du schéma — ne
 l'étends pas en ligne.
+
+## Écritures non latines : convention de translittération
+
+Règles contraignantes pour les ensembles dont la langue cible utilise
+une écriture non latine (japonais, chinois, coréen, grec, hindi, ...).
+Établies et appliquées dans le dépôt de contenu — précédents :
+[content#90](https://github.com/astrapi69/adaptive-learner-content/issues/90),
+[content#91](https://github.com/astrapi69/adaptive-learner-content/issues/91) ;
+balayages des lacunes restantes :
+[content#106](https://github.com/astrapi69/adaptive-learner-content/issues/106),
+[content#107](https://github.com/astrapi69/adaptive-learner-content/issues/107).
+
+**1. Règle de direction.** La translittération n'est que pour la
+langue **cible** non latine quand la langue source écrit en écriture
+latine (de→ja, de→zh, de→ko, ...). Une langue **source** non latine
+avec une cible en écriture latine (hi→en, el→fr) ne reçoit pas de
+translittération — l'apprenant lit déjà sa propre écriture.
+
+**2. Format.** Parenthèses rondes directement après l'original :
+こんにちは (konnichiwa). Dans les étapes de théorie toujours ; dans les
+options et les invites, seulement là où c'est inoffensif (voir la
+règle de non-trahison).
+
+**3. Règle de non-trahison (le cœur).** La translittération ne doit
+jamais livrer la solution. Les tâches de lecture d'écriture, la
+reconnaissance de tons, les tuiles de `word_tiles` et les contextes de
+phrase de cloze restent SANS translittération sur l'élément
+interrogé ; les tâches de sens la reçoivent. Dans le doute, laisse-la
+de côté.
+
+- Exemple positif (association de sens, content#91) : la paire de
+  matching `{"left": "妈 (mā)", "right": "Mama / Mutter"}` — la
+  connaissance interrogée est le sens, l'aide à la lecture ne trahit
+  donc rien.
+- Exemple négatif (lecture d'écriture, content#91) : les exercices de
+  lecture d'écriture `ko-a1/01-hangul-lesen` restent sans
+  translittération, car la romanisation EST la réponse
+  (caractère → son) ; `가 (ga)` dans l'invite donnerait la solution à
+  l'apprenant.
+
+**4. Romanisation standard par langue, cohérente au sein d'un
+ensemble :** japonais Hepburn, chinois Pinyin AVEC marques de ton,
+coréen Revised Romanization, grec/hindi une translittération
+simplifiée courante. Ne mélange jamais les systèmes dans un même
+ensemble.
+
+**5. Tâches de saisie** (`free_text` / cloze en mode `type`) :
+`accept[0]` est la forme romanisée canonique ; accepte en plus les
+variantes courantes — japonais : orthographes Kunrei
+(si/ti/tu/hu/zi, p. ex. `konnitiwa` à côté de `konnichiwa`) ;
+chinois : Pinyin sans tons (`nihao` à côté de `nǐ hǎo`) ; coréen :
+alternatives répandues (p. ex. `annyeong haseyo`). Aide-mémoire :
+**un exercice ne doit jamais échouer sur le clavier de l'apprenant.**
+Précédent (blocage IME, content#107) : un cloze qui n'acceptait que
+가 était insoluble sans IME coréen — le `ga` romanisé devait aussi
+être accepté.
+
+Quel type porte quel objectif d'apprentissage : voir le
+[catalogue des types d'exercices](#catalogue-des-types-dexercices-statut).
 
 ## Direction d'exercice (v1.46.0 / EXP-018)
 
@@ -763,11 +909,12 @@ MÊMES vérifications :
    leçon est envoyé au fournisseur configuré) et ne bloque jamais
    le partage — la vérification basée sur des règles est le verrou.
 2. **Dans la CI du dépôt de contenu.** Une pull request vers
-   `astrapi69/adaptive-learner-content` exécute
-   `scripts/validate_content.py` (reflété sous
-   `docs/ci/adaptive-learner-content/`) et vérifie chaque ensemble
-   avec les mêmes règles, afin qu'une PR manuelle ne contourne pas
-   le verrou.
+   `astrapi69/adaptive-learner-content` exécute son propre
+   `scripts/validate_content.py` (structure contre le miroir de
+   schéma vendorisé et épinglé à l'engine + valeurs minimales de
+   qualité) plus une barrière de conformité à l'engine
+   (`learn-content-engine` `validate()` sur chaque leçon), de sorte
+   qu'une PR manuelle ne peut pas contourner le verrou.
 
 **Valeurs minimales de qualité (verrou strict) :** ≥ 5 exercices
 par leçon, ≥ 2 types d'exercices, ≥ 1 étape de théorie, texte libre
@@ -776,6 +923,24 @@ picture-choice avec distracteurs, aucun recto/verso de carte vide
 et (pour les écritures sources non latines) des versos de carte
 dans l'écriture source. Ce sont des valeurs minimales, pas des
 objectifs — la liste de contrôle ci-dessus en exige davantage.
+
+### Vérification IA de l'ensemble (optionnelle)
+
+En plus de la vérification au moment du partage, un ensemble
+téléchargé peut être passé en revue à l'échelle de l'ensemble via
+*Vérifier avec l'IA*. C'est entièrement optionnel et cela utilise le
+**fournisseur + modèle** que l'apprenant a configurés (Anthropic /
+OpenAI / Gemini) ; les cartes sont envoyées par lots à ce fournisseur
+pour examen. Le flux affiche une estimation de coût, s'exécute avec
+une barre de progression + annulation, et produit un **rapport par
+carte** qui est mis en cache dans le navigateur et peut être exporté
+en **Markdown** (avec une ligne indiquant quel fournisseur + modèle a
+effectué la vérification). Quand le rapport passe, l'ensemble gagne un
+**badge « Vérifié par l'IA »** adossé à un hash de contenu + une
+signature, de sorte qu'une édition ultérieure des cartes invalide le
+badge jusqu'à ce que l'ensemble soit revérifié. La vérification IA
+n'est jamais un verrou — c'est une provenance consultative, pas une
+exigence de publication.
 
 ## Tests locaux
 
@@ -850,23 +1015,34 @@ aux champs documentés.
 `body` non vide (Markdown). Les étapes d'exercice ne doivent pas
 porter de `body` — utilise plutôt le `prompt` de l'exercice.
 
-## Référence : les ensembles pilotes
+## Référence : les ensembles livrés
 
-Les deux ensembles livrés avec Adaptive Learner sont les références
-canoniques :
+Adaptive Learner livre une bibliothèque conséquente couvrant
+plusieurs domaines (langues, programmation, psychologie, IA,
+technologie — voir le bloc CONTENT-STATS du README pour les chiffres
+en direct + le tableau complet par ensemble). Quelques bonnes
+références canoniques dans le dépôt `adaptive-learner-content` :
 
-- `sets/en/fr-a1/` — Français A1 pour anglophones (10 leçons, ~2
-  heures) ; `sets/de/fr-a1/` est l'ensemble pilote germanophone.
-- `sets/en/es-a1/` + `sets/de/es-a1/` — Espagnol A1 (15 leçons par
-  langue source), dans le dépôt `adaptive-learner-content`.
+- `sets/en/fr-a1/` — Français A1 pour anglophones ;
+  `sets/de/fr-a1/` est la contrepartie à source germanophone.
+- `sets/en/es-a1/` + `sets/de/es-a1/` — Espagnol A1 (un par langue
+  source).
+- L'ensemble « Python — Grundlagen » sous `sets/de/` est un exemple
+  `domain: programming` (source allemande == cible), utile comme
+  référence non linguistique.
 
-Les deux suivent les conventions décrites dans ce guide. Lire une
+Ils suivent tous les conventions décrites dans ce guide. Lire une
 leçon complète est le moyen le plus rapide d'intérioriser la
 structure.
 
 ---
 
 ## Voie de participation communautaire (v1.42.0)
+
+> **Guide pas à pas avec captures d'écran :**
+> [Create a lesson in the app, step by step](https://medium.com/@asterios-raptis/create-a-lesson-in-the-app-step-by-step-dadd6927829f)
+> (Medium) parcourt de bout en bout le créateur de leçons intégré à
+> l'app, de la première carte au partage de la leçon terminée.
 
 Tu n'as pas besoin de créer les leçons à la main à partir de zéro.
 Le moyen le plus rapide de contribuer est de **créer et partager
@@ -964,3 +1140,4 @@ une langue source mais manque pour une autre (« Peux-tu aider ? »).
 - [Créer des leçons — aperçu](../content-creation/overview.md) — entrée en matière + créateur de leçons dans l'application
 - [Recommandations de livres](../content-creation/books.md) — gérer `books.yaml` par domaine
 - [Plusieurs dépôts de contenu](../features/content-repos.md) — connecter son propre dépôt
+- [Create a lesson in the app, step by step](https://medium.com/@asterios-raptis/create-a-lesson-in-the-app-step-by-step-dadd6927829f) — parcours externe Medium avec captures d'écran
