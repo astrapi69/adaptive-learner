@@ -192,6 +192,14 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       formuliert Theorie in eigenen Worten + erzeugt Uebungen; OHNE
       KI-Key: freundlicher Hinweis, kein Crash; "Weiter" erst nach
       erfolgreicher Generierung
+- [ ] **Datei-Upload im Buchtext-Schritt (#1927):** Button "Aus Datei
+      laden (EPUB, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
+      Kapitelliste erscheint (Titel aus dem Inhaltsverzeichnis) mit
+      Vorschau + Zeichenzahl; "In Textfeld uebernehmen" fuellt das
+      Textfeld (bei vorhandenem Text: Bestaetigungsdialog "Ersetzen");
+      Markdown-Datei → Split an Ueberschriften; TXT ohne Ueberschriften
+      → ein Abschnitt; kaputte/zu grosse Datei (> 20 MiB) → klare
+      Fehlermeldung, kein Crash; Rechte-Hinweis erwaehnt Hochladen
 - [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-

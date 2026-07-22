@@ -2524,7 +2524,7 @@ missions:
 
 create_lesson:
   book:
-    rights_hint: "Yalnızca haklarına sahip olduğun veya kişisel kullanım için olan metinleri yapıştır."
+    rights_hint: "Yalnızca haklarına sahip olduğun veya kişisel kullanım için olan metinleri yapıştır ya da yükle."
     heading: "Metinden ders oluştur"
     intro: "Ders kitabınızın bir bölümünü (örn. bir bölüm) yapıştırın. Yapay zeka bunu kendi kelimeleriyle teori olarak yeniden yazar ve alıştırmalar üretir. Başka bir bölüm eklemek için sihirbazı yeniden çalıştırın."
     text_label: "Ders kitabı bölümü"
@@ -2547,6 +2547,22 @@ create_lesson:
     review_theory: "{n} teori adımı"
     review_exercises: "{n} alıştırma"
     review_book: "Kitap: {title}"
+    upload:
+      button: "Dosyadan yükle (EPUB, TXT, MD)"
+      parsing: "Dosya okunuyor ..."
+      section_label: "Algılanan bölümler"
+      section_fallback: "Bölüm {n}"
+      apply: "Metin alanına ekle"
+      soft_hint: "Uzun bölüm - daha kısa bölümler daha iyi sonuç verir."
+      err_too_large: "Dosya çok büyük (en fazla {n} MiB)."
+      err_unsupported: "Desteklenmeyen dosya türü. Desteklenenler: EPUB, TXT, Markdown."
+      err_invalid_epub: "Bu dosya EPUB olarak okunamadı."
+      err_no_sections: "Bu dosyada metin bölümü bulunamadı."
+      err_parse_failed: "Dosya okunamadı."
+      err_section_too_long: "Bölüm çok uzun (en fazla {n} karakter). Daha küçük bir bölüm seç."
+      replace_title: "Metin değiştirilsin mi?"
+      replace_message: "Metin alanında zaten içerik var. Seçilen bölümle değiştirilsin mi?"
+      replace_confirm: "Değiştir"
   title: "Ders oluştur"
   step_of: "Adım {current} / {total}"
   edit_title: "Dersi düzenle"

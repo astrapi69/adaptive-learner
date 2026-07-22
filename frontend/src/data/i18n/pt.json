@@ -2765,7 +2765,7 @@
   },
   "create_lesson": {
     "book": {
-      "rights_hint": "Cole apenas textos sobre os quais você tem direitos ou destinados a uso pessoal.",
+      "rights_hint": "Cole ou envie apenas textos sobre os quais você tem direitos ou destinados a uso pessoal.",
       "heading": "Criar uma lição a partir de texto",
       "intro": "Cole uma seção (p. ex. um capítulo) do seu livro. A IA a reescreve com as próprias palavras como teoria e gera exercícios. Adicione outra seção executando o assistente novamente.",
       "text_label": "Seção do livro",
@@ -2787,7 +2787,24 @@
       "generate_to_advance": "Gere a lição a partir do seu texto para continuar.",
       "review_theory": "{n} passo(s) de teoria",
       "review_exercises": "{n} exercício(s)",
-      "review_book": "Livro: {title}"
+      "review_book": "Livro: {title}",
+      "upload": {
+        "button": "Carregar de um arquivo (EPUB, TXT, MD)",
+        "parsing": "Lendo o arquivo ...",
+        "section_label": "Seções detectadas",
+        "section_fallback": "Seção {n}",
+        "apply": "Inserir no campo de texto",
+        "soft_hint": "Seção longa - seções mais curtas dão melhores resultados.",
+        "err_too_large": "Arquivo grande demais (máx. {n} MiB).",
+        "err_unsupported": "Formato de arquivo não suportado. Suportados: EPUB, TXT, Markdown.",
+        "err_invalid_epub": "Este arquivo não pôde ser lido como EPUB.",
+        "err_no_sections": "Nenhuma seção de texto foi encontrada neste arquivo.",
+        "err_parse_failed": "Falha ao ler o arquivo.",
+        "err_section_too_long": "Seção longa demais (máx. {n} caracteres). Escolha uma seção menor.",
+        "replace_title": "Substituir o texto?",
+        "replace_message": "O campo de texto já tem conteúdo. Substituir pela seção selecionada?",
+        "replace_confirm": "Substituir"
+      }
     },
     "title": "Criar uma lição",
     "step_of": "Passo {current} de {total}",

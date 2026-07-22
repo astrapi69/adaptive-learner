@@ -192,6 +192,14 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       rephrases theory in its own words + generates exercises; WITHOUT
       an AI key: friendly notice, no crash; "Next" only after a
       successful generation
+- [ ] **File upload in the book-text step (#1927):** "Load from file
+      (EPUB, TXT, MD)" button above the text field; pick an EPUB → a
+      chapter list appears (titles from the table of contents) with a
+      preview + character count; "Insert into text field" fills the
+      field (with existing text: a "Replace" confirmation dialog);
+      Markdown file → split at headings; TXT without headings → one
+      section; broken / oversized file (> 20 MiB) → clear error
+      message, no crash; the rights hint mentions uploading
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";

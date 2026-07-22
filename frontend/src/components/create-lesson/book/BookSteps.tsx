@@ -7,10 +7,10 @@
 
 import {Button} from "@/components/ui/button";
 import BookTextStep, {type BookFields} from "./BookTextStep";
-import {normalizeBook} from "../../lib/content/lesson/book-to-lesson";
-import type {TheoryStep} from "../../lib/ai/generation/exercise-generation-prompt";
-import type {ResolvedAiProvider} from "../../lib/ai/providers/resolve-provider";
-import type {ContentLessonExercise} from "../../storage/types";
+import {normalizeBook} from "../../../lib/content/lesson/book-to-lesson";
+import type {TheoryStep} from "../../../lib/ai/generation/exercise-generation-prompt";
+import type {ResolvedAiProvider} from "../../../lib/ai/providers/resolve-provider";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
 

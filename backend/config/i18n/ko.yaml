@@ -2534,7 +2534,7 @@ missions:
 
 create_lesson:
   book:
-    rights_hint: "권리를 보유한 텍스트 또는 개인적 용도의 텍스트만 붙여넣으세요."
+    rights_hint: "권리를 보유한 텍스트 또는 개인적 용도의 텍스트만 붙여넣거나 업로드하세요."
     heading: "텍스트에서 레슨 만들기"
     intro: "교과서의 한 섹션(예: 한 장)을 붙여넣으세요. AI가 이를 자신의 말로 이론으로 다시 쓰고 연습문제를 생성합니다. 다른 섹션을 추가하려면 마법사를 다시 실행하세요."
     text_label: "교과서 섹션"
@@ -2557,6 +2557,22 @@ create_lesson:
     review_theory: "이론 단계 {n}개"
     review_exercises: "연습문제 {n}개"
     review_book: "도서: {title}"
+    upload:
+      button: "파일에서 불러오기 (EPUB, TXT, MD)"
+      parsing: "파일을 읽는 중 ..."
+      section_label: "감지된 섹션"
+      section_fallback: "섹션 {n}"
+      apply: "텍스트 필드에 삽입"
+      soft_hint: "긴 섹션입니다. 짧은 섹션이 더 좋은 결과를 냅니다."
+      err_too_large: "파일이 너무 큽니다 (최대 {n} MiB)."
+      err_unsupported: "지원되지 않는 파일 형식입니다. 지원: EPUB, TXT, Markdown."
+      err_invalid_epub: "이 파일을 EPUB으로 읽을 수 없습니다."
+      err_no_sections: "이 파일에서 텍스트 섹션을 찾을 수 없습니다."
+      err_parse_failed: "파일을 읽지 못했습니다."
+      err_section_too_long: "섹션이 너무 깁니다 (최대 {n}자). 더 작은 섹션을 선택하세요."
+      replace_title: "텍스트를 바꿀까요?"
+      replace_message: "텍스트 필드에 이미 내용이 있습니다. 선택한 섹션으로 바꿀까요?"
+      replace_confirm: "바꾸기"
   title: "레슨 만들기"
   step_of: "단계 {current} / {total}"
   edit_title: "레슨 편집"

@@ -143,6 +143,64 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
+    test("book-text path: file upload -> section picker fills the text field (#1927)", async ({
+        page,
+    }) => {
+        const errors: string[] = [];
+        page.on("pageerror", (e) => errors.push(e.message));
+
+        await page.goto("/create-lesson");
+        await expect(page.getByTestId("create-lesson-page")).toBeVisible({
+            timeout: 15000,
+        });
+        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+            await page.getByTestId("create-lesson-draft-fresh").click();
+        }
+        await page.getByTestId("create-lesson-title").fill("Upload-Test");
+        await page.getByTestId("template-knowledge-from-text").click();
+        await expect(page.getByTestId("create-lesson-book-step")).toBeVisible();
+
+        // Upload a small Markdown book; the parser splits it at headings.
+        const markdown = [
+            "# Kapitel Eins",
+            "Pawlow und die klassische Konditionierung.",
+            "# Kapitel Zwei",
+            "Skinner und die operante Konditionierung.",
+        ].join("\n");
+        await page.getByTestId("book-upload-input").setInputFiles({
+            name: "buch.md",
+            mimeType: "text/markdown",
+            buffer: Buffer.from(markdown, "utf-8"),
+        });
+
+        // The picker lists both chapters; applying fills the empty field
+        // without a confirmation dialog.
+        await expect(page.getByTestId("book-upload-picker")).toBeVisible();
+        const select = page.getByTestId("book-upload-section-select");
+        await expect(select.locator("option")).toHaveCount(2);
+        await select.selectOption({index: 1});
+        await expect(page.getByTestId("book-upload-preview")).toContainText(
+            "Skinner",
+        );
+        await page.getByTestId("book-upload-apply").click();
+        await expect(page.getByTestId("book-text-input")).toHaveValue(
+            /Skinner und die operante Konditionierung/,
+        );
+
+        // Applying another section over the now-non-empty field asks first.
+        await select.selectOption({index: 0});
+        await page.getByTestId("book-upload-apply").click();
+        await expect(
+            page.getByTestId("book-upload-replace-confirm"),
+        ).toBeVisible();
+        await page.getByTestId("book-upload-replace-confirm-confirm").click();
+        await expect(page.getByTestId("book-text-input")).toHaveValue(
+            /Pawlow und die klassische Konditionierung/,
+        );
+
+        expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
+    });
+
     test("dictation via the core type picker -> saves + plays (#1895)", async ({
         page,
     }) => {

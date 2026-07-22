@@ -19,17 +19,18 @@ import {BookOpen, Sparkles} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import ApiKeyRequiredNotice from "../settings/ai/ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "../../settings/ai/ApiKeyRequiredNotice";
+import BookFileUpload from "./BookFileUpload";
 import {
     browserDirectProvider,
     generateExercises as defaultGenerate,
-} from "../../lib/ai/generation/generate-exercises";
-import {generateTheoryFromText as defaultGenerateTheory} from "../../lib/ai/generation/generate-theory-from-text";
-import {cardsToExercises} from "../../lib/ai/generation/cards-to-exercises";
-import type {TheoryStep} from "../../lib/ai/generation/exercise-generation-prompt";
-import type {ResolvedAiProvider} from "../../lib/ai/providers/resolve-provider";
-import type {ContentLessonExercise} from "../../storage/types";
-import {notify} from "../../utils/notify";
+} from "../../../lib/ai/generation/generate-exercises";
+import {generateTheoryFromText as defaultGenerateTheory} from "../../../lib/ai/generation/generate-theory-from-text";
+import {cardsToExercises} from "../../../lib/ai/generation/cards-to-exercises";
+import type {TheoryStep} from "../../../lib/ai/generation/exercise-generation-prompt";
+import type {ResolvedAiProvider} from "../../../lib/ai/providers/resolve-provider";
+import type {ContentLessonExercise} from "../../../storage/types";
+import {notify} from "../../../utils/notify";
 
 type Translate = (key: string, fallback?: string) => string;
 
@@ -175,6 +176,12 @@ export default function BookTextStep({
                 </p>
             </div>
 
+            <BookFileUpload
+                currentText={bookText}
+                onApply={onBookTextChange}
+                t={t}
+            />
+
             <label className="form-row flex flex-col gap-1.5">
                 <span className="form-label text-sm font-medium text-fg-primary">
                     {t("create_lesson.book.text_label", "Textbook section")}
@@ -198,7 +205,7 @@ export default function BookTextStep({
             >
                 {t(
                     "create_lesson.book.rights_hint",
-                    "Only paste text you have the rights to, or that is intended for personal use.",
+                    "Only paste or upload text you have the rights to, or that is intended for personal use.",
                 )}
             </p>
 
