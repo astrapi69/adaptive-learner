@@ -444,6 +444,68 @@ only an AI-generate button:
 | Matrix / Likert / slider | Survey types, not learning types. |
 | Date / time pickers | Form types, not learning types. |
 
+### Video content: link it, don't ship it
+
+Native video (and audio) upload is deliberately excluded (see the table
+above): storing media assets locally conflicts with the offline-first
+storage limits. The recommended pattern delivers the same learning value
+without shipping a single byte of video - link the video externally and
+build a reading-comprehension exercise on its transcript.
+
+**1. Link the video as companion media.** Add it to the lesson's
+`resources[]` (a `LessonResource`, EXP-029) so it renders in the lesson's
+*Explore further* ("Vertiefe das Thema") section. A YouTube clip uses
+`type: "youtube"`:
+
+```json
+"resources": [
+  {
+    "type": "youtube",
+    "title": "Se présenter en français (A1)",
+    "url": "https://www.youtube.com/watch?v=XXXXXXXXXXX",
+    "language": "fr",
+    "level": "A1",
+    "free": true
+  }
+]
+```
+
+**2. Assess understanding with the transcript.** Add an
+`ext:al-reading-comprehension` exercise whose `passage` is the video's
+transcript (or a self-contained excerpt from it), with the comprehension
+questions over it:
+
+```json
+{
+  "type": "ext:al-reading-comprehension",
+  "prompt": "Watch the video, then answer.",
+  "ext_payload": {
+    "passage": "Bonjour ! Je m'appelle Camille. J'ai vingt-cinq ans et j'habite à Lyon. Je suis étudiante et j'aime la musique.",
+    "questions": [
+      {
+        "prompt": "Où habite Camille ?",
+        "type": "multiple_choice",
+        "options": [
+          {"text": "À Lyon", "correct": true},
+          {"text": "À Paris"},
+          {"text": "À Marseille"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+The exercise is fully offline and SRS-graded like any other; the video is
+optional enrichment reached through *Explore further*, so a learner with
+no connectivity still gets the transcript-based comprehension.
+
+**The transcript pays for itself twice.** A transcript (or captions) is
+already the accessibility baseline any video should carry for WCAG. Here
+that same transcript becomes the `passage` of the comprehension exercise:
+one artefact, two uses, accessibility compliance and a gradable exercise
+from the same source.
+
 ## Exercise type reference
 
 The per-type field reference — `matching`, `picture_choice`,
