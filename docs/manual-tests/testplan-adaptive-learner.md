@@ -204,6 +204,12 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       formuliert Theorie in eigenen Worten + erzeugt Uebungen; OHNE
       KI-Key: freundlicher Hinweis, kein Crash; "Weiter" erst nach
       erfolgreicher Generierung
+- [ ] **Titel-Pflichtfeld im Buchtext-Pfad (#1946):** Schritt 1 OHNE
+      Titel → Karte "Wissenslektion aus Text" klicken → bleibt auf
+      Schritt 1 mit dem freundlichen Hinweis "Ein Titel ist
+      erforderlich." (NICHT der Buchtext-Schritt, NICHT der rohe
+      Schema-Fehler beim Speichern); mit Titel → Buchtext-Schritt
+      oeffnet normal und Speichern gelingt
 - [ ] **Datei-Upload im Buchtext-Schritt (#1927):** Button "Aus Datei
       laden (EPUB, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
       Kapitelliste erscheint (Titel aus dem Inhaltsverzeichnis) mit

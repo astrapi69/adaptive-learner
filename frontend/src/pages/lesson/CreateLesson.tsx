@@ -395,14 +395,28 @@ export default function CreateLesson() {
     }
 
     /** #1743 — enter the book-text path from Step 1 and advance to the
-     *  BookText step. */
+     *  BookText step. #1946 — gated on a title, exactly like the main
+     *  wizard's step-1 ``handleNext`` guard: without it the user could reach
+     *  the save step title-less and hit the raw ajv error. */
     function startBookMode() {
+        if (!metaValid) {
+            setShowError(true);
+            return;
+        }
+        setShowError(false);
         setBookMode(true);
         setStep(2);
     }
 
-    /** #1852 — enter the extension-authoring path from Step 1. */
+    /** #1852 — enter the extension-authoring path from Step 1. #1946 — same
+     *  title guard as the book path (the extension flow shares the identical
+     *  bypass of the step-1 title validation). */
     function startExtMode() {
+        if (!metaValid) {
+            setShowError(true);
+            return;
+        }
+        setShowError(false);
         setExtMode(true);
         setStep(2);
     }
@@ -449,6 +463,17 @@ export default function CreateLesson() {
 
     async function saveLocally(): Promise<ContentSetEntry | null> {
         if (saving) return null;
+        // #1946 — defense-in-depth: every save path (book / extension / core)
+        // ends in ``validateGeneratedLesson``, which throws the raw ajv
+        // ``/title must NOT have fewer than 1 characters`` on an empty title.
+        // Surface the same friendly message the metadata step uses instead of
+        // leaking that path-based schema error to the user.
+        if (meta.title.trim().length === 0) {
+            notify.error(
+                t("create_lesson.meta.title_required", "A title is required."),
+            );
+            return null;
+        }
         setSaving(true);
         try {
             let lesson: ContentLesson;

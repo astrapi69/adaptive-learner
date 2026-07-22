@@ -203,6 +203,11 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       rephrases theory in its own words + generates exercises; WITHOUT
       an AI key: friendly notice, no crash; "Next" only after a
       successful generation
+- [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
+      a title → click the "Knowledge lesson from text" card → stays on
+      step 1 with the friendly "A title is required." message (NOT the
+      book-text step, NOT the raw schema error on save); with a title →
+      the book-text step opens normally and saving succeeds
 - [ ] **File upload in the book-text step (#1927):** "Load from file
       (EPUB, TXT, MD)" button above the text field; pick an EPUB → a
       chapter list appears (titles from the table of contents) with a
