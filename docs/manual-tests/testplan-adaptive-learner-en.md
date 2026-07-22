@@ -226,9 +226,13 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       New set (title required) vs. add to an existing set; originals are
       kept; mixed languages/levels → non-blocking warning
 - [ ] **Same-language hint (#1721/#1730):** source == target shows a
-      neutral hint, does NOT block "Next"; no "valid language pair" check
-      row on Review anymore; Save enables once the real checklist passes
-      (title, ≥4 cards, ≥5 exercises, ≥2 types, valid structure)
+      neutral hint, does NOT block "Next"; Save enables once the checklist
+      passes
+- [ ] **Language-pair check row (#1929):** Review shows SIX checklist rows
+      (title, "Language pair is valid", ≥4 cards, ≥5 exercises, ≥2 types,
+      valid structure). "Language pair is valid" is green once BOTH source
+      and target are supported codes — a same-language pair (de → de) is
+      VALID (no "source != target" gate)
 - [ ] **Structure-check reason (#1724):** a failing "Valid lesson
       structure" check names a concrete reason, not just a ✗
 - [ ] **Template titles (#1674/#1756):** template cards show readable

@@ -102,6 +102,47 @@ describe("draft-to-lesson", () => {
         expect(allChecksPass(checks)).toBe(true);
     });
 
+    // #1929 — the "language pair is valid" check is rendered again. Its
+    // meaning is "both sides are SUPPORTED language codes", NOT the removed
+    // "source !== target" gate (which wrongly rejected knowledge-domain
+    // lessons). A same-language pair therefore still passes.
+    it("checkDraft marks a supported language pair valid (#1929)", () => {
+        const checks = checkDraft(input());
+        expect(checks.languagePair).toBe(true);
+    });
+
+    it("checkDraft keeps a same-language pair a VALID pair (#1929)", () => {
+        const i = input();
+        const checks = checkDraft({
+            ...i,
+            meta: {...META, sourceLanguage: "de", targetLanguage: "de"},
+        });
+        // The reactivated check must NOT reintroduce the source !== target
+        // gate — de -> de is a valid, supported pair.
+        expect(checks.languagePair).toBe(true);
+        expect(allChecksPass(checks)).toBe(true);
+    });
+
+    it("checkDraft fails languagePair on an unsupported language code (#1929)", () => {
+        const i = input();
+        const checks = checkDraft({
+            ...i,
+            meta: {...META, targetLanguage: "zz"},
+        });
+        expect(checks.languagePair).toBe(false);
+        expect(allChecksPass(checks)).toBe(false);
+    });
+
+    it("checkDraft fails languagePair on an empty language code (#1929)", () => {
+        const i = input();
+        const checks = checkDraft({
+            ...i,
+            meta: {...META, sourceLanguage: ""},
+        });
+        expect(checks.languagePair).toBe(false);
+        expect(allChecksPass(checks)).toBe(false);
+    });
+
     // #1722 — the reproduction: all COUNT checks pass, only the structural
     // validator fails (an empty card side, reachable through the unguarded
     // inline card edit), and the validator's reason must survive into the

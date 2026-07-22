@@ -14,6 +14,7 @@ import {
     requiredExtensionsFor,
     type GeneratorCard,
 } from "../../exercises";
+import {LANGUAGE_OPTIONS} from "../language/language-options";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
     ContentLesson,
@@ -268,8 +269,37 @@ export function buildUserSetInput(
     };
 }
 
+/** The set of supported BCP-47 language codes offered by the authoring
+ *  surfaces ({@link LANGUAGE_OPTIONS}). */
+const SUPPORTED_LANGUAGE_CODES: ReadonlySet<string> = new Set(
+    LANGUAGE_OPTIONS.map((o) => o.code),
+);
+
+/**
+ * True iff both sides of a language pair are supported codes (#1929).
+ *
+ * "Valid" means "both are real, supported languages", NOT "the two
+ * differ". A same-language pair (e.g. ``de -> de``) is a legitimate
+ * knowledge-domain lesson (#1715), so it is a VALID pair — the removed
+ * ``source !== target`` gate was the bug, not this check. An empty or
+ * unknown code (a stale draft, a hand-edited import) is the failure case.
+ */
+export function isValidLanguagePair(
+    source: string,
+    target: string,
+): boolean {
+    return (
+        SUPPORTED_LANGUAGE_CODES.has(source) &&
+        SUPPORTED_LANGUAGE_CODES.has(target)
+    );
+}
+
 export interface DraftValidationChecks {
     hasTitle: boolean;
+    /** Both source and target are supported language codes (#1929).
+     *  A same-language pair is VALID (knowledge-domain lessons, #1715);
+     *  an empty or unknown code fails. */
+    languagePair: boolean;
     enoughCards: boolean;
     enoughExercises: boolean;
     enoughTypes: boolean;
@@ -285,6 +315,7 @@ export interface DraftValidationChecks {
  *  except the ``schemaError`` detail field). */
 const BOOLEAN_CHECK_KEYS = [
     "hasTitle",
+    "languagePair",
     "enoughCards",
     "enoughExercises",
     "enoughTypes",
@@ -318,10 +349,15 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     }
     return {
         hasTitle: meta.title.trim().length > 0,
-        // #1715 — a same-language pair is legitimate for knowledge-domain
-        // lessons (e.g. the ki-einsteiger set: de -> de), so it is no
-        // longer a save gate. Same/differing languages are surfaced as a
-        // non-blocking hint in Step 1, mirroring SaveOfflineLessonModal.
+        // #1929 — "language pair is valid" = both sides are SUPPORTED codes.
+        // #1715 — a same-language pair (de -> de) stays VALID: it is a
+        // legitimate knowledge-domain lesson, surfaced as a neutral hint in
+        // Step 1, never the removed ``source !== target`` gate. Only an empty
+        // or unknown code (stale draft / hand-edited import) fails here.
+        languagePair: isValidLanguagePair(
+            meta.sourceLanguage,
+            meta.targetLanguage,
+        ),
         enoughCards: cards.length >= MIN_CARDS_FOR_SAVE,
         enoughExercises: exercises.length >= MIN_EXERCISES_FOR_SAVE,
         enoughTypes: types.size >= MIN_TYPES_FOR_SAVE,
