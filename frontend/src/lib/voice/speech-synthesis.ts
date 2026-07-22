@@ -24,6 +24,8 @@
  * button doesn't render at all.
  */
 
+import {chunkText} from "./chunk-text";
+
 /** Whether the browser exposes ``window.speechSynthesis``. Gate the
  *  read-aloud UI on this so the button never renders unsupported. */
 export function isSpeechSynthesisSupported(): boolean {
@@ -89,6 +91,14 @@ export function pickVoice(
     return null;
 }
 
+/** The part of a boundary event this module reports to callers. */
+export interface SpeechBoundary {
+    /** ``"word"`` or ``"sentence"``. */
+    name: string;
+    /** Position in the ORIGINAL text, chunk offsets already applied. */
+    charIndex: number;
+}
+
 export interface SpeakOptions {
     /** BCP-47 language code (e.g. "de", "en-US"). Defaults to
      *  whatever the document is in. */
@@ -102,11 +112,14 @@ export interface SpeakOptions {
     onStart?: () => void;
     onEnd?: () => void;
     onError?: (error: SpeechSynthesisErrorEvent) => void;
-    /** Fired as the engine crosses word/sentence boundaries.
-     *  Used by the lesson read-aloud highlight to follow along
-     *  (``event.charIndex`` locates the current token in ``text``).
-     *  Not all browsers/voices emit boundary events. */
-    onBoundary?: (event: SpeechSynthesisEvent) => void;
+    /**
+     * Fired as the engine crosses word/sentence boundaries. Not all
+     * browsers/voices emit them. ``charIndex`` is in the
+     * ORIGINAL text's coordinates even though the text is spoken in chunks
+     * (#1928) — callers that map a position back onto their own content
+     * (e.g. advancing to the next theory step) can rely on it directly.
+     */
+    onBoundary?: (event: SpeechBoundary) => void;
 }
 
 /**
@@ -115,7 +128,12 @@ export interface SpeakOptions {
  * additional ``speak()`` calls which produces overlap when
  * the user clicks twice on the same button.
  *
- * Returns the utterance handle so the caller can pause/cancel it.
+ * Long texts are spoken as a queue of chunked utterances (#1928) rather than
+ * one long one, because iOS Safari silently stops a long utterance after
+ * ~15 seconds. Callers see the same single start/end pair either way.
+ *
+ * Returns the FIRST utterance handle; pause/stop act on the engine, not on a
+ * single utterance, so that handle is only informational.
  */
 export function speak(
     text: string,
@@ -124,19 +142,47 @@ export function speak(
     if (!isSpeechSynthesisSupported() || !text.trim()) return null;
     const synth = window.speechSynthesis;
     synth.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    if (options.voice) utter.voice = options.voice;
-    if (options.lang) utter.lang = options.lang;
-    if (options.rate !== undefined)
-        utter.rate = Math.max(0.5, Math.min(2.0, options.rate));
-    if (options.pitch !== undefined)
-        utter.pitch = Math.max(0.5, Math.min(2.0, options.pitch));
-    if (options.onStart) utter.onstart = options.onStart;
-    if (options.onEnd) utter.onend = options.onEnd;
-    if (options.onError) utter.onerror = options.onError;
-    if (options.onBoundary) utter.onboundary = options.onBoundary;
-    synth.speak(utter);
-    return utter;
+
+    // #1928 — one utterance per chunk instead of one for the whole text: iOS
+    // Safari silently stops a long utterance after ~15s, which cut a typical
+    // theory run off after roughly a tenth of its content. The engine queues
+    // the utterances itself, so speaking them in order plays as one stream.
+    const chunks = chunkText(text);
+    if (chunks.length === 0) return null;
+
+    let first: SpeechSynthesisUtterance | null = null;
+    chunks.forEach((chunk, index) => {
+        const utter = new SpeechSynthesisUtterance(chunk.text);
+        if (options.voice) utter.voice = options.voice;
+        if (options.lang) utter.lang = options.lang;
+        if (options.rate !== undefined)
+            utter.rate = Math.max(0.5, Math.min(2.0, options.rate));
+        if (options.pitch !== undefined)
+            utter.pitch = Math.max(0.5, Math.min(2.0, options.pitch));
+        // Start fires on the FIRST chunk, end/error only on the LAST, so a
+        // caller still sees exactly one start and one end for the whole text.
+        if (index === 0 && options.onStart) utter.onstart = options.onStart;
+        if (index === chunks.length - 1) {
+            if (options.onEnd) utter.onend = options.onEnd;
+            if (options.onError) utter.onerror = options.onError;
+        }
+        // Boundary positions are reported in the ORIGINAL text's coordinates
+        // by adding the chunk's offset — ``useLessonAutoRead`` maps that
+        // charIndex onto a theory step, so a per-chunk index would advance the
+        // lesson to the wrong step.
+        if (options.onBoundary) {
+            const {onBoundary} = options;
+            utter.onboundary = (event) => {
+                onBoundary({
+                    name: event.name,
+                    charIndex: event.charIndex + chunk.offset,
+                });
+            };
+        }
+        synth.speak(utter);
+        if (index === 0) first = utter;
+    });
+    return first;
 }
 
 /** Pause the currently-speaking utterance. No-op on iOS Safari. */
