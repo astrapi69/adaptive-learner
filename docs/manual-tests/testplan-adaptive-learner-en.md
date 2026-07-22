@@ -139,6 +139,13 @@ Requires domain knowledge. Not automatable.
 - [ ] Error-replay completion ("All errors corrected!"): Enter (without a
       click) triggers "Back to lesson" (#1864); clicking the button still
       works
+- [ ] Lesson summary ("You finished: ..."): with a next lesson available,
+      Enter (without a click) triggers the PRIMARY card "Next Lesson ->
+      Start" - not a secondary card (e.g. "Review"); clicking the buttons
+      still works (#1943)
+- [ ] Last lesson of a set (no "Next Lesson"): on the summary, Enter does
+      nothing wrong - no error, no navigation to a non-existent lesson
+      (#1943)
 - [ ] Retry errors for matching (#1874): play a matching exercise with a
       mix of correct/wrong pairs, open "Retry errors" -> only the wrong
       pairs appear (not all). With a single wrong pair, correct pairs are
