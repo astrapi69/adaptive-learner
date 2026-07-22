@@ -227,10 +227,14 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Set; Originale bleiben erhalten; gemischte Sprachen/Level → nicht-
       blockierende Warnung
 - [ ] **Gleiche-Sprache-Hinweis (#1721/#1730):** Quelle == Ziel zeigt
-      neutralen Hinweis, blockiert "Weiter" NICHT; kein "gueltiges
-      Sprachpaar"-Pruefpunkt mehr auf Review; Save wird aktiv sobald die
-      echte Checkliste passt (Titel, ≥4 Karten, ≥5 Uebungen, ≥2 Typen,
-      gueltige Struktur)
+      neutralen Hinweis, blockiert "Weiter" NICHT; Save wird aktiv sobald die
+      Checkliste passt
+- [ ] **Sprachpaar-Pruefpunkt (#1929):** Review zeigt SECHS Checklisten-
+      Punkte (Titel, "Sprachpaar ist gueltig", ≥4 Karten, ≥5 Uebungen,
+      ≥2 Typen, gueltige Struktur). "Sprachpaar ist gueltig" ist gruen,
+      sobald Quell- UND Zielsprache unterstuetzte Codes sind — ein
+      Gleiche-Sprache-Paar (de → de) ist GUELTIG (kein "Quelle != Ziel"-
+      Gate)
 - [ ] **Struktur-Check-Grund (#1724):** fehlgeschlagener "Gueltige
       Lektionsstruktur"-Check nennt einen konkreten Grund, nicht nur ✗
 - [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare

@@ -82,6 +82,16 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await expect(page.getByTestId("create-lesson-step-4")).toBeVisible({
             timeout: 10000,
         });
+        // #1929 — the quality checklist renders SIX rows again, including the
+        // restored "Sprachpaar ist gueltig" row, which is green for the
+        // supported de -> fr pair fillMetadata sets.
+        await expect(
+            page.getByTestId("create-lesson-checklist").locator("li"),
+        ).toHaveCount(6);
+        await expect(page.getByTestId("check-languagePair")).toHaveAttribute(
+            "data-pass",
+            "true",
+        );
         await page.getByTestId("create-lesson-save-local").click();
         await expect(page.getByTestId("create-lesson-saved")).toBeVisible({
             timeout: 15000,

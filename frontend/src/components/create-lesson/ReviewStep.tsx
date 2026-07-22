@@ -21,8 +21,11 @@ const CHECK_ROWS: Array<
     [Exclude<keyof DraftValidationChecks, "schemaError">, string]
 > = [
     ["hasTitle", "Has a title"],
-    // #1715 — the "language pair is valid" row is gone: a same-language
-    // pair is a legitimate knowledge-domain lesson, not a save gate.
+    // #1929 — the "language pair is valid" row is rendered again. It now
+    // means "both sides are supported language codes" (a same-language
+    // knowledge-domain pair is VALID, #1715), not the removed
+    // ``source !== target`` gate.
+    ["languagePair", "Language pair is valid"],
     ["enoughCards", "At least 4 cards"],
     ["enoughExercises", "At least 5 exercises"],
     ["enoughTypes", "At least 2 exercise types"],
