@@ -1,27 +1,33 @@
 /**
  * BookFileUpload — file upload + section picker for the book-text wizard
- * path (#1927).
+ * path (#1927, multi-select + batch #1949).
  *
  * Augments (never replaces) the paste textarea: the user picks an EPUB /
  * TXT / Markdown file, it is parsed CLIENT-SIDE ({@link parseBookFile} —
  * jszip + native DOMParser, no server roundtrip), and the detected
- * chapters appear in an inline picker. Applying a section fills the
- * existing text field via ``onApply``; a non-empty field asks for
- * confirmation first (the wizard is "one section per run", so apply
- * replaces). The parsed book lives only in component state — never in
- * IndexedDB or the draft autosave.
+ * chapters appear in an inline CHECKBOX list (#1949, previously a single
+ * ``<select>``). An exclusion heuristic ({@link defaultSelectedSectionIds})
+ * deselects likely front/back matter (preface, glossary, index, …) by
+ * default while keeping every section visible and checkable.
  *
- * The chapter list is a NATIVE ``<select>`` on purpose: portal-based
- * Radix selects are brittle under happy-dom (see lessons-learned on
- * Radix + Vitest), and a spine can carry 100+ entries — the native
- * control stays keyboard-accessible and trivially testable.
+ * Two apply modes, chosen by the selection count:
+ *   - Exactly one section selected -> "Insert into text field": fills the
+ *     existing textarea via ``onApply`` (the #1927 single path, unchanged;
+ *     a non-empty field asks for confirmation first).
+ *   - More than one -> "Generate N lessons": hands the selected sections
+ *     (in DOCUMENT order) up via ``onGenerateSections`` for batch
+ *     generation — one standalone lesson per section.
  *
- * Presentational + props-driven; the parser is injected for tests
- * (mirrors {@link BookTextStep}'s engine seams).
+ * The parsed book lives only in component state — never in IndexedDB or the
+ * draft autosave. Checkboxes stay native on purpose (portal-based Radix is
+ * brittle under happy-dom; a spine can carry 100+ entries) — keyboard-
+ * accessible and trivially testable.
+ *
+ * Presentational + props-driven; the parser is injected for tests.
  */
 
 import {useMemo, useRef, useState} from "react";
-import {FileUp} from "lucide-react";
+import {FileUp, Sparkles} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import FormHint from "../../../shared/forms/FormHint";
@@ -31,23 +37,33 @@ import {
     MAX_BOOK_FILE_SIZE,
     MAX_SECTION_CHARS,
     SOFT_SECTION_CHARS,
+    defaultSelectedSectionIds,
+    isLikelyNonContentSection,
     parseBookFile as defaultParse,
 } from "../../../lib/content/book-upload";
 import type {
     BookParseErrorCode,
+    BookSection,
     ParsedBook,
 } from "../../../lib/content/book-upload";
+import type {BatchSectionInput} from "../../../lib/ai/generation/generate-book-lessons";
 
 type Translate = (key: string, fallback?: string) => string;
 
-/** Length of the section preview shown under the picker. */
+/** Length of the section preview shown under the picker (single select). */
 const PREVIEW_CHARS = 200;
 
 interface BookFileUploadProps {
     /** Current textarea content — a non-empty value asks before replacing. */
     currentText: string;
-    /** Receives the chosen section's text (replaces the field). */
+    /** Receives the chosen section's text (single-select path; replaces the
+     *  field). */
     onApply: (text: string) => void;
+    /** Receives the selected sections in document order for batch
+     *  generation (multi-select path). */
+    onGenerateSections: (sections: BatchSectionInput[]) => void;
+    /** True while a batch generation is running (disables the button). */
+    generating?: boolean;
     t: Translate;
     /** Test seam; defaults to the real dispatcher. */
     parse?: typeof defaultParse;
@@ -89,23 +105,38 @@ function errorMessage(
     return detail ? `${base} (${detail})` : base;
 }
 
-/** Upload button + inline section picker feeding the book textarea. */
+/** Upload button + inline multi-select section picker feeding the book
+ *  textarea (single) or the batch generator (multi). */
 export default function BookFileUpload({
     currentText,
     onApply,
+    onGenerateSections,
+    generating = false,
     t,
     parse = defaultParse,
 }: BookFileUploadProps) {
     const fileRef = useRef<HTMLInputElement>(null);
     const [busy, setBusy] = useState(false);
     const [book, setBook] = useState<ParsedBook | null>(null);
-    const [selectedId, setSelectedId] = useState("");
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [error, setError] = useState<string | null>(null);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
-    const selected = useMemo(
-        () => book?.sections.find((section) => section.id === selectedId) ?? null,
-        [book, selectedId],
+    /** Sections in DOCUMENT order that are currently checked. */
+    const selectedSections = useMemo<BookSection[]>(
+        () =>
+            book ? book.sections.filter((s) => selectedIds.has(s.id)) : [],
+        [book, selectedIds],
+    );
+
+    /** How many sections the heuristic deselected by default. */
+    const excludedCount = useMemo(
+        () =>
+            book
+                ? book.sections.filter((s) => isLikelyNonContentSection(s.title))
+                      .length
+                : 0,
+        [book],
     );
 
     async function handleFile(file: File | undefined) {
@@ -121,20 +152,30 @@ export default function BookFileUpload({
             });
             if (!result.ok) {
                 setBook(null);
+                setSelectedIds(new Set());
                 setError(errorMessage(t, result.error, result.detail));
                 return;
             }
             setBook(result.book);
-            setSelectedId(result.book.sections[0].id);
+            setSelectedIds(new Set(defaultSelectedSectionIds(result.book.sections)));
         } finally {
             setBusy(false);
             if (fileRef.current) fileRef.current.value = "";
         }
     }
 
-    function applySelected() {
-        if (!selected) return;
-        if (selected.charCount > MAX_SECTION_CHARS) {
+    function toggle(id: string) {
+        setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    }
+
+    /** Single-select apply: fill the textarea (the #1927 path). */
+    function applySingle(section: BookSection) {
+        if (section.charCount > MAX_SECTION_CHARS) {
             setError(
                 t(
                     "create_lesson.book.upload.err_section_too_long",
@@ -148,14 +189,25 @@ export default function BookFileUpload({
             setConfirmOpen(true);
             return;
         }
-        onApply(selected.text);
+        onApply(section.text);
     }
 
+    function handleAction() {
+        if (selectedSections.length === 0) return;
+        if (selectedSections.length === 1) {
+            applySingle(selectedSections[0]);
+            return;
+        }
+        onGenerateSections(
+            selectedSections.map((s) => ({title: s.title, text: s.text})),
+        );
+    }
+
+    const single = selectedSections.length === 1;
+    const previewSection = single ? selectedSections[0] : null;
+
     return (
-        <div
-            className="flex flex-col gap-3"
-            data-testid="book-file-upload"
-        >
+        <div className="flex flex-col gap-3" data-testid="book-file-upload">
             <div className="flex flex-wrap items-center gap-3">
                 <Button
                     type="button"
@@ -205,58 +257,106 @@ export default function BookFileUpload({
                     className="flex flex-col gap-2 rounded-lg border border-border p-3"
                     data-testid="book-upload-picker"
                 >
-                    <label className="flex flex-col gap-1.5">
-                        <span className="text-sm font-medium text-fg-primary">
-                            {t(
-                                "create_lesson.book.upload.section_label",
-                                "Detected sections",
-                            )}
-                        </span>
-                        <select
-                            className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                            value={selectedId}
-                            data-testid="book-upload-section-select"
-                            onChange={(e) => setSelectedId(e.target.value)}
+                    <span className="text-sm font-medium text-fg-primary">
+                        {t(
+                            "create_lesson.book.upload.section_label",
+                            "Detected sections",
+                        )}
+                    </span>
+                    {excludedCount > 0 && (
+                        <p
+                            className="text-xs text-fg-muted"
+                            data-testid="book-upload-exclude-hint"
                         >
-                            {book.sections.map((section) => (
-                                <option key={section.id} value={section.id}>
-                                    {`${section.title} (${section.charCount})`}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-                    {selected && (
+                            {t(
+                                "create_lesson.book.upload.exclude_hint",
+                                "Sections that look like front or back matter (preface, glossary, index, …) are unchecked by default. Check them to include them.",
+                            )}
+                        </p>
+                    )}
+                    <ul
+                        className="flex max-h-64 flex-col gap-1 overflow-y-auto"
+                        data-testid="book-upload-section-list"
+                    >
+                        {book.sections.map((section) => (
+                            <li key={section.id}>
+                                <label className="flex items-center gap-2 rounded-md px-1 py-1 text-sm text-fg-primary hover:bg-muted">
+                                    <input
+                                        type="checkbox"
+                                        className="h-4 w-4 shrink-0 accent-accent"
+                                        checked={selectedIds.has(section.id)}
+                                        onChange={() => toggle(section.id)}
+                                        data-testid={`book-upload-section-checkbox-${section.id}`}
+                                    />
+                                    <span className="truncate">
+                                        {section.title}
+                                    </span>
+                                    <span className="ml-auto shrink-0 text-xs text-fg-muted">
+                                        {section.charCount}
+                                    </span>
+                                </label>
+                            </li>
+                        ))}
+                    </ul>
+
+                    {previewSection && (
                         <p
                             className="text-xs text-fg-muted"
                             data-testid="book-upload-preview"
                         >
-                            {selected.text.slice(0, PREVIEW_CHARS)}
-                            {selected.charCount > PREVIEW_CHARS ? "…" : ""}
+                            {previewSection.text.slice(0, PREVIEW_CHARS)}
+                            {previewSection.charCount > PREVIEW_CHARS ? "…" : ""}
                         </p>
                     )}
-                    {selected && selected.charCount > SOFT_SECTION_CHARS && (
-                        <FormHint
-                            variant="warning"
-                            data-testid="book-upload-soft-hint"
-                        >
-                            {t(
-                                "create_lesson.book.upload.soft_hint",
-                                "Long section — shorter sections give better results.",
-                            )}
-                        </FormHint>
-                    )}
-                    <div>
+                    {previewSection &&
+                        previewSection.charCount > SOFT_SECTION_CHARS && (
+                            <FormHint
+                                variant="warning"
+                                data-testid="book-upload-soft-hint"
+                            >
+                                {t(
+                                    "create_lesson.book.upload.soft_hint",
+                                    "Long section - shorter sections give better results.",
+                                )}
+                            </FormHint>
+                        )}
+
+                    <div className="flex items-center gap-3">
                         <Button
                             type="button"
-                            disabled={!selected}
-                            onClick={applySelected}
+                            disabled={selectedSections.length === 0 || generating}
+                            onClick={handleAction}
                             data-testid="book-upload-apply"
                         >
-                            {t(
-                                "create_lesson.book.upload.apply",
-                                "Insert into text field",
+                            {!single && (
+                                <Sparkles
+                                    size={16}
+                                    aria-hidden="true"
+                                    className="mr-1"
+                                />
                             )}
+                            {single
+                                ? t(
+                                      "create_lesson.book.upload.apply",
+                                      "Insert into text field",
+                                  )
+                                : t(
+                                      "create_lesson.book.upload.generate_n",
+                                      "Generate {n} lessons",
+                                  ).replace(
+                                      "{n}",
+                                      String(selectedSections.length),
+                                  )}
                         </Button>
+                        <span
+                            className="text-xs text-fg-muted"
+                            data-testid="book-upload-selected-count"
+                        >
+                            {t(
+                                "create_lesson.book.upload.selected_count",
+                                "{n} selected",
+                            ).replace("{n}", String(selectedSections.length))}
+                        </span>
                     </div>
                 </div>
             )}
@@ -279,7 +379,7 @@ export default function BookFileUpload({
                 testId="book-upload-replace-confirm"
                 onConfirm={() => {
                     setConfirmOpen(false);
-                    if (selected) onApply(selected.text);
+                    if (single) onApply(selectedSections[0].text);
                 }}
                 onCancel={() => setConfirmOpen(false)}
             />

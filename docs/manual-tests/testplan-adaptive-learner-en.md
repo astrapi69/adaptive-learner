@@ -209,10 +209,8 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       book-text step, NOT the raw schema error on save); with a title →
       the book-text step opens normally and saving succeeds
 - [ ] **File upload in the book-text step (#1927):** "Load from file
-      (EPUB, DOCX, TXT, MD)" button above the text field; pick an EPUB
-      → a chapter list appears (titles from the table of contents) with
-      a preview + character count; "Insert into text field" fills the
-      field (with existing text: a "Replace" confirmation dialog);
+      (EPUB, DOCX, TXT, MD)" button above the text field; pick an EPUB → a
+      section list appears (checkboxes, title + character count);
       Markdown file → split at headings; TXT without headings → one
       section; broken / oversized file (> 20 MiB) → clear error
       message, no crash; the rights hint mentions uploading
@@ -222,6 +220,20 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       styles (only bold-formatted "headings") → ONE whole-document
       section, the text still lands editable in the field; a broken
       .docx → clear error message, no crash
+- [ ] **Multi-select + exclusion heuristic + batch (#1949):** upload a
+      file with several sections INCLUDING a preface / glossary / table
+      of contents → typical non-learning-content sections are UNCHECKED
+      by default, yet still visible and manually checkable (a hint line
+      explains it); EXACTLY ONE section selected → the "Insert into text
+      field" button fills the text field (with existing text: a "Replace"
+      confirmation dialog), preview shown, then the normal single
+      generation (regression); MULTIPLE sections selected → the "Generate
+      N lessons" button starts batch generation with a progress indicator
+      ("Generating lesson 2 of 5 …") → one lesson per section, order =
+      document order (not selection order); Review shows "N lesson(s)" +
+      the title list; Save → one set with N lessons; if a single
+      generation fails, the others continue and the summary reports "X of
+      N" + the failed sections; with no AI key → key hint, no batch
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";

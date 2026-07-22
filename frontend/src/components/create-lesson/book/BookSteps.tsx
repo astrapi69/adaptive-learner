@@ -1,14 +1,21 @@
 /**
- * #1743 — the book-text path's step-2 (paste + generate) and step-3
+ * #1743 — the book-text path's step-2 (paste/upload + generate) and step-3
  * (review + save) rendering, extracted from CreateLesson so the wizard
  * page stays under the complexity gate. Pure presentation: all state +
  * handlers arrive via props.
+ *
+ * #1949 — the book path now models its result as a list of generated
+ * lessons ({@link GeneratedBookLesson}): the single paste path yields a
+ * one-element list, the multi-select upload path yields N. The review step
+ * summarises them (per-lesson titles + totals) and save persists them all
+ * into one set.
  */
 
 import {Button} from "@/components/ui/button";
 import BookTextStep, {type BookFields} from "./BookTextStep";
 import {normalizeBook} from "../../../lib/content/lesson/book-to-lesson";
 import type {TheoryStep} from "../../../lib/ai/generation/exercise-generation-prompt";
+import type {GeneratedBookLesson} from "../../../lib/ai/generation/generate-book-lessons";
 import type {ResolvedAiProvider} from "../../../lib/ai/providers/resolve-provider";
 import type {ContentLessonExercise} from "../../../storage/types";
 
@@ -25,12 +32,15 @@ interface BookStepsProps {
     onBookChange: (patch: Partial<BookFields>) => void;
     language?: string;
     resolveProvider: () => Promise<ResolvedAiProvider | null>;
+    /** Single paste path: theory + exercises for one lesson. */
     onGenerated: (
         theorySteps: TheoryStep[],
         exercises: ContentLessonExercise[],
     ) => void;
-    theorySteps: TheoryStep[];
-    exercises: ContentLessonExercise[];
+    /** #1949 — multi-select batch path: one lesson per selected section. */
+    onBatchGenerated: (lessons: GeneratedBookLesson[]) => void;
+    /** The generated lessons (single = 1, batch = N). */
+    bookLessons: GeneratedBookLesson[];
     /** True when Next was blocked on step 2 (drives the hint, shown only
      *  while nothing has been generated yet). */
     advanceBlocked: boolean;
@@ -51,8 +61,8 @@ export default function BookSteps({
     language,
     resolveProvider,
     onGenerated,
-    theorySteps,
-    exercises,
+    onBatchGenerated,
+    bookLessons,
     advanceBlocked,
     saving,
     onSaveLocal,
@@ -60,9 +70,10 @@ export default function BookSteps({
     t,
 }: BookStepsProps) {
     if (step === 2) {
-        const showAdvanceError =
-            advanceBlocked &&
-            (theorySteps.length === 0 || exercises.length === 0);
+        const showAdvanceError = advanceBlocked && bookLessons.length === 0;
+        // Single lesson generated -> show its theory/exercise counts inline;
+        // a batch (>1) is summarised by BookTextStep's own batch summary.
+        const single = bookLessons.length === 1 ? bookLessons[0] : null;
         return (
             <>
                 <BookTextStep
@@ -73,11 +84,12 @@ export default function BookSteps({
                     language={language}
                     resolveProvider={resolveProvider}
                     onGenerated={onGenerated}
+                    onBatchGenerated={onBatchGenerated}
                     generatedSummary={
-                        theorySteps.length > 0
+                        single
                             ? {
-                                  theory: theorySteps.length,
-                                  exercises: exercises.length,
+                                  theory: single.theorySteps.length,
+                                  exercises: single.exercises.length,
                               }
                             : null
                     }
@@ -101,6 +113,15 @@ export default function BookSteps({
 
     if (step === 3 && !saved) {
         const bookRef = normalizeBook(book);
+        const totalTheory = bookLessons.reduce(
+            (sum, l) => sum + l.theorySteps.length,
+            0,
+        );
+        const totalExercises = bookLessons.reduce(
+            (sum, l) => sum + l.exercises.length,
+            0,
+        );
+        const multi = bookLessons.length > 1;
         return (
             <section
                 className="create-lesson-step flex flex-col gap-4"
@@ -111,17 +132,23 @@ export default function BookSteps({
                     {t("create_lesson.review.heading", "Review & save")}
                 </h2>
                 <ul className="flex flex-col gap-1 text-sm text-fg-primary">
+                    <li data-testid="book-review-lessons">
+                        {t(
+                            "create_lesson.book.review_lessons",
+                            "{n} lesson(s)",
+                        ).replace("{n}", String(bookLessons.length))}
+                    </li>
                     <li data-testid="book-review-theory">
                         {t(
                             "create_lesson.book.review_theory",
                             "{n} theory step(s)",
-                        ).replace("{n}", String(theorySteps.length))}
+                        ).replace("{n}", String(totalTheory))}
                     </li>
                     <li data-testid="book-review-exercises">
                         {t(
                             "create_lesson.book.review_exercises",
                             "{n} exercise(s)",
-                        ).replace("{n}", String(exercises.length))}
+                        ).replace("{n}", String(totalExercises))}
                     </li>
                     {bookRef && (
                         <li data-testid="book-review-book">
@@ -132,6 +159,16 @@ export default function BookSteps({
                         </li>
                     )}
                 </ul>
+                {multi && (
+                    <ol
+                        className="flex list-decimal flex-col gap-0.5 pl-6 text-sm text-fg-muted"
+                        data-testid="book-review-lesson-titles"
+                    >
+                        {bookLessons.map((lesson, i) => (
+                            <li key={`${lesson.title}-${i}`}>{lesson.title}</li>
+                        ))}
+                    </ol>
+                )}
                 <div className="form-actions">
                     <Button
                         type="button"

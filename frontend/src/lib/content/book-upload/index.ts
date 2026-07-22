@@ -10,6 +10,10 @@ export {
 } from "./limits";
 export {ACCEPTED_BOOK_EXTENSIONS, parseBookFile} from "./parse-book-file";
 export {parseTextOrMarkdown} from "./text-parser";
+export {
+    isLikelyNonContentSection,
+    defaultSelectedSectionIds,
+} from "./section-heuristics";
 export type {
     BookFormat,
     BookParseErrorCode,
