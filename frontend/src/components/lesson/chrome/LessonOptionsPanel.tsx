@@ -27,12 +27,16 @@ import { type ReactNode, useId, useState } from "react";
 import { ChevronDown, ChevronRight, SlidersHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useI18n } from "../../../hooks/ui/useI18n";
 
 export interface LessonOptionsPanelProps {
   /** Compact label shown alongside the trigger while collapsed
    *  (typically the current lesson-mode name). */
   summary: string;
+  /** Extra utility classes on the outer section (e.g. flex-row sizing
+   *  when the panel sits beside the progress bar). */
+  className?: string;
   /** The bundled setting controls. */
   children: ReactNode;
 }
@@ -44,6 +48,7 @@ export interface LessonOptionsPanelProps {
  */
 export default function LessonOptionsPanel({
   summary,
+  className,
   children,
 }: LessonOptionsPanelProps) {
   const { t } = useI18n();
@@ -51,7 +56,7 @@ export default function LessonOptionsPanel({
   const bodyId = useId();
 
   return (
-    <section className="px-2" data-testid="lesson-options-panel">
+    <section className={cn("px-2", className)} data-testid="lesson-options-panel">
       <Button
         type="button"
         variant="outline"

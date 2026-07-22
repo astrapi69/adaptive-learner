@@ -126,6 +126,10 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
       hinter dem Panel, nicht mehr direkt sichtbar)
+- [ ] "Optionen"-Button steht in DERSELBEN Zeile wie die Fortschritts-
+      anzeige ("Schritt n von m"), nicht darunter (Desktop: Balken links,
+      Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,
+      kein Ueberlappen) (#1942)
 - [ ] Pruefungsmodus: keine Hilfen, Ergebnis am Ende, 1.5x XP
 - [ ] Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang
 - [ ] Fehler-Modus: nur Fehlerkarten (nach min. 1 Fehler)

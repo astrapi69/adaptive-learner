@@ -255,6 +255,26 @@ describe("LessonPage: ready state rendering", () => {
     expect(screen.getByTestId("lesson-progress-bar")).toBeVisible();
   });
 
+  // #1942 — the progress indicator and the Options button belong in ONE
+  // flex row (progress grows, Options sits beside it) instead of the
+  // Options button stacking on its own line below the bar. DOM-structure
+  // pin: both live under the same flex-row container.
+  it("places the progress bar and options button in one flex row (#1942)", () => {
+    _ready(0);
+    renderAtPath(VALID_PATH);
+    const row = screen.getByTestId("lesson-progress-options-row");
+    const progressBar = screen.getByTestId("lesson-progress-bar");
+    const optionsPanel = screen.getByTestId("lesson-options-panel");
+    // Both share the same row container...
+    expect(row).toContainElement(progressBar);
+    expect(row).toContainElement(optionsPanel);
+    // ...and that container lays them out in a flex row.
+    expect(row.className).toContain("flex");
+    // The progress bar grows to take the available width so the Options
+    // button sits beside it rather than under it.
+    expect(progressBar.className).toContain("flex-1");
+  });
+
   function _renderWithStep(exercise: ContentLessonExercise) {
     const lesson = {
       ...LESSON,
