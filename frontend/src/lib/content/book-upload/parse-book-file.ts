@@ -2,17 +2,24 @@
  * #1927 — entry point: dispatch an uploaded book file to its parser.
  *
  * Guards the size cap BEFORE reading the file, then routes by extension:
- * ``.epub`` -> {@link parseEpub}, ``.txt``/``.md``/``.markdown`` ->
- * {@link parseTextOrMarkdown}. DOCX is phase 2b of #1927.
+ * ``.epub`` -> {@link parseEpub}, ``.docx`` -> {@link parseDocx},
+ * ``.txt``/``.md``/``.markdown`` -> {@link parseTextOrMarkdown}.
  */
 
+import {parseDocx} from "./docx-parser";
 import {parseEpub} from "./epub-parser";
 import {MAX_BOOK_FILE_SIZE} from "./limits";
 import {parseTextOrMarkdown} from "./text-parser";
 import type {BookParseOptions, ParseBookResult} from "./types";
 
-/** File extensions accepted by the upload input (phase 2a). */
-export const ACCEPTED_BOOK_EXTENSIONS = [".epub", ".txt", ".md", ".markdown"];
+/** File extensions accepted by the upload input. */
+export const ACCEPTED_BOOK_EXTENSIONS = [
+    ".epub",
+    ".docx",
+    ".txt",
+    ".md",
+    ".markdown",
+];
 
 function extensionOf(name: string): string {
     const dot = name.lastIndexOf(".");
@@ -39,6 +46,9 @@ export async function parseBookFile(
     try {
         if (extension === ".epub") {
             return await parseEpub(await file.arrayBuffer(), options);
+        }
+        if (extension === ".docx") {
+            return await parseDocx(await file.arrayBuffer(), options);
         }
         if ([".txt", ".md", ".markdown"].includes(extension)) {
             return parseTextOrMarkdown(await file.text(), options);

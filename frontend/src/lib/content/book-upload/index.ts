@@ -1,6 +1,7 @@
 /**
  * #1927 — barrel for the Create-Lesson book file upload parsers.
  */
+export {parseDocx} from "./docx-parser";
 export {parseEpub} from "./epub-parser";
 export {
     MAX_BOOK_FILE_SIZE,

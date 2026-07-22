@@ -66,11 +66,15 @@ function errorMessage(
         ).replace("{n}", maxMiB),
         unsupported_format: t(
             "create_lesson.book.upload.err_unsupported",
-            "Unsupported file type. Supported: EPUB, TXT, Markdown.",
+            "Unsupported file type. Supported: EPUB, DOCX, TXT, Markdown.",
         ),
         invalid_epub: t(
             "create_lesson.book.upload.err_invalid_epub",
             "This file could not be read as an EPUB.",
+        ),
+        invalid_docx: t(
+            "create_lesson.book.upload.err_invalid_docx",
+            "This file could not be read as a DOCX.",
         ),
         no_sections: t(
             "create_lesson.book.upload.err_no_sections",
@@ -173,7 +177,7 @@ export default function BookFileUpload({
                         ? t("create_lesson.book.upload.parsing", "Reading file…")
                         : t(
                               "create_lesson.book.upload.button",
-                              "Load from file (EPUB, TXT, MD)",
+                              "Load from file (EPUB, DOCX, TXT, MD)",
                           )}
                 </Button>
                 <input
