@@ -222,16 +222,47 @@ describe("speak", () => {
         expect(u!.onerror).toBe(onError);
     });
 
-    it("attaches the onBoundary handler (lesson read-aloud follow-along)", () => {
+    it("reports boundaries to the caller (lesson read-aloud follow-along)", () => {
         // QA B1 — the highlight (C5) + continuous auto-advance (C7)
-        // depend on this one line being wired; pin it so removing it
-        // fails the voice-lib suite, not just an indirect page test.
+        // depend on this being wired; pin it so removing it fails the
+        // voice-lib suite, not just an indirect page test.
+        //
+        // Since #1928 the handler is a WRAPPER (it shifts charIndex by the
+        // chunk offset), so this asserts the reported VALUES rather than
+        // callback identity.
         mountMockSynth();
         const onBoundary = vi.fn();
         const u = speak("hello world", {onBoundary});
-        expect(
-            (u as unknown as {onboundary?: unknown}).onboundary,
-        ).toBe(onBoundary);
+        const attached = (u as unknown as {
+            onboundary?: (e: {name: string; charIndex: number}) => void;
+        }).onboundary;
+        expect(attached).toBeTypeOf("function");
+        attached!({name: "word", charIndex: 6});
+        expect(onBoundary).toHaveBeenCalledWith({name: "word", charIndex: 6});
+    });
+
+    // #1928 — the load-bearing invariant: a boundary inside a LATER chunk is
+    // reported in the original text's coordinates, not the chunk's. Without
+    // the offset, useLessonAutoRead would advance to the wrong theory step.
+    it("shifts a later chunk's charIndex into the original text's coordinates", () => {
+        const synth = mountMockSynth();
+        const onBoundary = vi.fn();
+        // Two sentences well over the chunk budget: forces >= 2 utterances.
+        const sentence = "Dies ist ein ausreichend langer Satz zum Testen. ";
+        speak(sentence.repeat(12), {onBoundary});
+
+        const spoken = synth.speak.mock.calls.map(
+            (c: unknown[]) => c[0] as {
+                text: string;
+                onboundary?: (e: {name: string; charIndex: number}) => void;
+            },
+        );
+        expect(spoken.length).toBeGreaterThan(1);
+
+        // Fire a boundary at index 3 of the SECOND chunk.
+        spoken[1].onboundary!({name: "word", charIndex: 3});
+        const reported = onBoundary.mock.calls[0][0] as {charIndex: number};
+        expect(reported.charIndex).toBe(spoken[0].text.length + 3);
     });
 
     it("leaves onBoundary unset when no handler is passed", () => {
