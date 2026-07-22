@@ -209,13 +209,19 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       book-text step, NOT the raw schema error on save); with a title →
       the book-text step opens normally and saving succeeds
 - [ ] **File upload in the book-text step (#1927):** "Load from file
-      (EPUB, TXT, MD)" button above the text field; pick an EPUB → a
-      chapter list appears (titles from the table of contents) with a
-      preview + character count; "Insert into text field" fills the
+      (EPUB, DOCX, TXT, MD)" button above the text field; pick an EPUB
+      → a chapter list appears (titles from the table of contents) with
+      a preview + character count; "Insert into text field" fills the
       field (with existing text: a "Replace" confirmation dialog);
       Markdown file → split at headings; TXT without headings → one
       section; broken / oversized file (> 20 MiB) → clear error
       message, no crash; the rights hint mentions uploading
+- [ ] **DOCX upload (#1927, phase 2b):** a Word file with heading
+      styles (including German Word, "Ueberschrift 1") → chapters are
+      detected and offered as a list; a Word file WITHOUT heading
+      styles (only bold-formatted "headings") → ONE whole-document
+      section, the text still lands editable in the field; a broken
+      .docx → clear error message, no crash
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";

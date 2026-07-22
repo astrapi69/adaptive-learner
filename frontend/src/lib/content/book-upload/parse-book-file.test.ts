@@ -53,4 +53,11 @@ describe("parseBookFile", () => {
         if (result.ok) return;
         expect(result.error).toBe("invalid_epub");
     });
+
+    it("routes .docx bytes to the docx parser (invalid bytes surface invalid_docx)", async () => {
+        const result = await parseBookFile(makeFile("kaputt.DOCX", "no zip"));
+        expect(result.ok).toBe(false);
+        if (result.ok) return;
+        expect(result.error).toBe("invalid_docx");
+    });
 });
