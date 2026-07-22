@@ -102,6 +102,29 @@ vi.mock("../../lib/ai/generation/cards-to-exercises", () => ({
     })),
 }));
 
+// #1927 — book file-upload parser seam. Both incoming reports drove the
+// FILE UPLOAD path (book-upload-button → book-upload-apply), not the paste
+// textarea; mock the parser so the upload → apply → generate → save flow
+// runs without a real EPUB/TXT file. Spreads the real module so the limit
+// constants BookFileUpload imports keep their genuine values.
+vi.mock("../../lib/content/book-upload", async (orig) => ({
+    ...(await orig<typeof import("../../lib/content/book-upload")>()),
+    parseBookFile: vi.fn(async () => ({
+        ok: true,
+        book: {
+            format: "text",
+            sections: [
+                {
+                    id: "s1",
+                    title: "Kapitel 1",
+                    text: "Ein neutraler Reiz wird durch Kopplung zum bedingten Reiz.",
+                    charCount: 57,
+                },
+            ],
+        },
+    })),
+}));
+
 import CreateLesson from "./CreateLesson";
 
 function renderPage() {
@@ -214,6 +237,111 @@ describe("CreateLesson — book wizard title validation (#1946)", () => {
             screen.getByTestId("create-lesson-title-error"),
         ).toBeInTheDocument();
         // And the raw ajv error is never produced.
+        for (const call of notifyErrorMock.mock.calls) {
+            expect(String(call[0])).not.toMatch(/must NOT have fewer/);
+        }
+    });
+});
+
+describe("CreateLesson — book FILE-UPLOAD path (#1946 / #1927)", () => {
+    // Both incoming #1946 reports drove the file-upload path
+    // (book-upload-button → book-upload-apply), whereas the tests above
+    // exercise the paste textarea. These pin the title guard AND a clean
+    // save for the exact path that was reported twice, so the coverage is
+    // visible rather than only implied by the shared upstream guard.
+
+    /** Upload a (parser-mocked) file and apply its detected section into
+     *  the book textarea. The textarea is empty on first apply, so no
+     *  replace-confirm dialog appears. */
+    async function uploadAndApplySection() {
+        const file = new File(["chapter bytes"], "lehrbuch.txt", {
+            type: "text/plain",
+        });
+        fireEvent.change(screen.getByTestId("book-upload-input"), {
+            target: {files: [file]},
+        });
+        await waitFor(() =>
+            expect(screen.getByTestId("book-upload-apply")).toBeInTheDocument(),
+        );
+        fireEvent.click(screen.getByTestId("book-upload-apply"));
+        await waitFor(() =>
+            expect(
+                (screen.getByTestId("book-text-input") as HTMLTextAreaElement)
+                    .value,
+            ).not.toBe(""),
+        );
+    }
+
+    it("the file-upload UI is unreachable without a title (the guard is upstream of the upload button)", () => {
+        renderPage();
+        // No title → the knowledge-from-text template must stay on step 1,
+        // so the book step that hosts the upload button never renders. This
+        // is the preventive half that stops the reported upload → generate →
+        // save-without-title path before it can even start.
+        fireEvent.click(screen.getByTestId("template-knowledge-from-text"));
+        expect(
+            screen.getByTestId("create-lesson-title-error"),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("book-upload-button"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("runs the full path via FILE UPLOAD (upload → apply → generate → save) with a title (regression)", async () => {
+        renderPage();
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: "Klassische Konditionierung"},
+        });
+        fireEvent.click(screen.getByTestId("template-knowledge-from-text"));
+        await uploadAndApplySection();
+        fireEvent.click(screen.getByTestId("book-generate"));
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("book-generated-summary"),
+            ).toBeInTheDocument(),
+        );
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(
+            screen.getByTestId("create-lesson-book-review"),
+        ).toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("book-save-local"));
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("create-lesson-saved"),
+            ).toBeInTheDocument(),
+        );
+        expect(saveUserSetMock).toHaveBeenCalledOnce();
+        const input = saveUserSetMock.mock.calls[0][0] as {title: string};
+        expect(input.title).toBe("Klassische Konditionierung");
+        // The raw ajv error is never surfaced on the upload path either.
+        for (const call of notifyErrorMock.mock.calls) {
+            expect(String(call[0])).not.toMatch(/must NOT have fewer/);
+        }
+    });
+
+    it("after upload + generate, clearing the title blocks the save step (upload path never reaches an empty-title save)", async () => {
+        renderPage();
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: "Temp title"},
+        });
+        fireEvent.click(screen.getByTestId("template-knowledge-from-text"));
+        await uploadAndApplySection();
+        fireEvent.click(screen.getByTestId("book-generate"));
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("book-generated-summary"),
+            ).toBeInTheDocument(),
+        );
+        // Back to step 1, blank the title, try to re-advance — blocked.
+        fireEvent.click(screen.getByTestId("create-lesson-back"));
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: ""},
+        });
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(
+            screen.getByTestId("create-lesson-title-error"),
+        ).toBeInTheDocument();
+        expect(saveUserSetMock).not.toHaveBeenCalled();
         for (const call of notifyErrorMock.mock.calls) {
             expect(String(call[0])).not.toMatch(/must NOT have fewer/);
         }
