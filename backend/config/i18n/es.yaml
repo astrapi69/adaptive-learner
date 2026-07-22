@@ -2526,7 +2526,7 @@ missions:
 
 create_lesson:
   book:
-    rights_hint: "Pega solo textos sobre los que tengas derechos o que sean para uso personal."
+    rights_hint: "Pega o sube solo textos sobre los que tengas derechos o que sean para uso personal."
     heading: "Crear una lección a partir de texto"
     intro: "Pega una sección (p. ej. un capítulo) de tu libro de texto. La IA lo reescribe con sus propias palabras como teoría y genera ejercicios. Añade otra sección ejecutando el asistente de nuevo."
     text_label: "Sección del libro"
@@ -2549,6 +2549,22 @@ create_lesson:
     review_theory: "{n} paso(s) de teoría"
     review_exercises: "{n} ejercicio(s)"
     review_book: "Libro: {title}"
+    upload:
+      button: "Cargar desde archivo (EPUB, TXT, MD)"
+      parsing: "Leyendo el archivo ..."
+      section_label: "Secciones detectadas"
+      section_fallback: "Sección {n}"
+      apply: "Insertar en el campo de texto"
+      soft_hint: "Sección larga - las secciones más cortas dan mejores resultados."
+      err_too_large: "Archivo demasiado grande (máx. {n} MiB)."
+      err_unsupported: "Formato de archivo no compatible. Compatibles: EPUB, TXT, Markdown."
+      err_invalid_epub: "Este archivo no se pudo leer como EPUB."
+      err_no_sections: "No se encontraron secciones de texto en este archivo."
+      err_parse_failed: "No se pudo leer el archivo."
+      err_section_too_long: "Sección demasiado larga (máx. {n} caracteres). Elige una sección más pequeña."
+      replace_title: "¿Reemplazar el texto?"
+      replace_message: "El campo de texto ya tiene contenido. ¿Reemplazarlo por la sección seleccionada?"
+      replace_confirm: "Reemplazar"
   title: "Crear una lección"
   step_of: "Paso {current} de {total}"
   edit_title: "Editar lección"

@@ -2526,7 +2526,7 @@ missions:
 
 create_lesson:
   book:
-    rights_hint: "Ne collez que des textes dont vous détenez les droits ou destinés à un usage personnel."
+    rights_hint: "Ne collez ou ne téléversez que des textes dont vous détenez les droits ou destinés à un usage personnel."
     heading: "Créer une leçon à partir d'un texte"
     intro: "Collez une section (par ex. un chapitre) de votre manuel. L'IA la reformule avec ses propres mots en théorie et génère des exercices. Ajoutez une autre section en relançant l'assistant."
     text_label: "Section du manuel"
@@ -2549,6 +2549,22 @@ create_lesson:
     review_theory: "{n} étape(s) de théorie"
     review_exercises: "{n} exercice(s)"
     review_book: "Livre : {title}"
+    upload:
+      button: "Charger depuis un fichier (EPUB, TXT, MD)"
+      parsing: "Lecture du fichier ..."
+      section_label: "Sections détectées"
+      section_fallback: "Section {n}"
+      apply: "Insérer dans le champ de texte"
+      soft_hint: "Section longue - des sections plus courtes donnent de meilleurs résultats."
+      err_too_large: "Fichier trop volumineux (max. {n} MiB)."
+      err_unsupported: "Format de fichier non pris en charge. Pris en charge : EPUB, TXT, Markdown."
+      err_invalid_epub: "Ce fichier n'a pas pu être lu comme EPUB."
+      err_no_sections: "Aucune section de texte trouvée dans ce fichier."
+      err_parse_failed: "La lecture du fichier a échoué."
+      err_section_too_long: "Section trop longue (max. {n} caractères). Choisissez une section plus petite."
+      replace_title: "Remplacer le texte ?"
+      replace_message: "Le champ de texte contient déjà du contenu. Le remplacer par la section sélectionnée ?"
+      replace_confirm: "Remplacer"
   title: "Créer une leçon"
   step_of: "Étape {current} sur {total}"
   edit_title: "Modifier la leçon"

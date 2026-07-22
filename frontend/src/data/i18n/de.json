@@ -2765,7 +2765,7 @@
   },
   "create_lesson": {
     "book": {
-      "rights_hint": "Füge nur Texte ein, an denen du die Rechte hast oder die für den persönlichen Gebrauch bestimmt sind.",
+      "rights_hint": "Füge nur Texte ein oder lade nur Texte hoch, an denen du die Rechte hast oder die für den persönlichen Gebrauch bestimmt sind.",
       "heading": "Lektion aus Text erstellen",
       "intro": "Füge einen Abschnitt (z. B. ein Kapitel) deines Lehrbuchs ein. Die KI formuliert ihn in eigenen Worten als Theorie und generiert Übungen. Weitere Abschnitte fügst du hinzu, indem du den Assistenten erneut durchläufst.",
       "text_label": "Lehrbuch-Abschnitt",
@@ -2787,7 +2787,24 @@
       "generate_to_advance": "Generiere die Lektion aus deinem Text, um fortzufahren.",
       "review_theory": "{n} Theorie-Schritt(e)",
       "review_exercises": "{n} Übung(en)",
-      "review_book": "Buch: {title}"
+      "review_book": "Buch: {title}",
+      "upload": {
+        "button": "Aus Datei laden (EPUB, TXT, MD)",
+        "parsing": "Datei wird gelesen ...",
+        "section_label": "Erkannte Abschnitte",
+        "section_fallback": "Abschnitt {n}",
+        "apply": "In Textfeld übernehmen",
+        "soft_hint": "Langer Abschnitt - kürzere Abschnitte liefern bessere Ergebnisse.",
+        "err_too_large": "Datei zu groß (max. {n} MiB).",
+        "err_unsupported": "Nicht unterstütztes Dateiformat. Unterstützt: EPUB, TXT, Markdown.",
+        "err_invalid_epub": "Diese Datei konnte nicht als EPUB gelesen werden.",
+        "err_no_sections": "In dieser Datei wurden keine Textabschnitte gefunden.",
+        "err_parse_failed": "Die Datei konnte nicht gelesen werden.",
+        "err_section_too_long": "Abschnitt zu lang (max. {n} Zeichen). Wähle einen kleineren Abschnitt.",
+        "replace_title": "Text ersetzen?",
+        "replace_message": "Das Textfeld enthält bereits Inhalt. Durch den gewählten Abschnitt ersetzen?",
+        "replace_confirm": "Ersetzen"
+      }
     },
     "title": "Lektion erstellen",
     "step_of": "Schritt {current} von {total}",

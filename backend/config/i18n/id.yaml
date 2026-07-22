@@ -2534,7 +2534,7 @@ missions:
 
 create_lesson:
   book:
-    rights_hint: "Tempel hanya teks yang Anda miliki haknya atau yang ditujukan untuk penggunaan pribadi."
+    rights_hint: "Tempel atau unggah hanya teks yang Anda miliki haknya atau yang ditujukan untuk penggunaan pribadi."
     heading: "Buat pelajaran dari teks"
     intro: "Tempel satu bagian (mis. satu bab) dari buku teks Anda. AI menuliskannya kembali dengan kata-katanya sendiri sebagai teori dan membuat latihan. Tambahkan bagian lain dengan menjalankan wizard lagi."
     text_label: "Bagian buku teks"
@@ -2557,6 +2557,22 @@ create_lesson:
     review_theory: "{n} langkah teori"
     review_exercises: "{n} latihan"
     review_book: "Buku: {title}"
+    upload:
+      button: "Muat dari berkas (EPUB, TXT, MD)"
+      parsing: "Membaca berkas ..."
+      section_label: "Bagian yang terdeteksi"
+      section_fallback: "Bagian {n}"
+      apply: "Masukkan ke kolom teks"
+      soft_hint: "Bagian panjang - bagian yang lebih pendek memberi hasil lebih baik."
+      err_too_large: "Berkas terlalu besar (maks. {n} MiB)."
+      err_unsupported: "Jenis berkas tidak didukung. Didukung: EPUB, TXT, Markdown."
+      err_invalid_epub: "Berkas ini tidak dapat dibaca sebagai EPUB."
+      err_no_sections: "Tidak ada bagian teks yang ditemukan dalam berkas ini."
+      err_parse_failed: "Gagal membaca berkas."
+      err_section_too_long: "Bagian terlalu panjang (maks. {n} karakter). Pilih bagian yang lebih kecil."
+      replace_title: "Ganti teks?"
+      replace_message: "Kolom teks sudah berisi konten. Ganti dengan bagian yang dipilih?"
+      replace_confirm: "Ganti"
   title: "Buat pelajaran"
   step_of: "Langkah {current} dari {total}"
   edit_title: "Edit pelajaran"

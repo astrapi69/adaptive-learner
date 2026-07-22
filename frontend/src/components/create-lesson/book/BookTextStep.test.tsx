@@ -3,9 +3,9 @@ import {render, screen, fireEvent, waitFor, cleanup} from "@testing-library/reac
 import {MemoryRouter} from "react-router-dom";
 
 import BookTextStep, {type BookFields} from "./BookTextStep";
-import type {ResolvedAiProvider} from "../../lib/ai/providers/resolve-provider";
-import type {TheoryGenerationResult} from "../../lib/ai/generation/generate-theory-from-text";
-import type {ExerciseGenerationResult} from "../../lib/ai/generation/generate-exercises";
+import type {ResolvedAiProvider} from "../../../lib/ai/providers/resolve-provider";
+import type {TheoryGenerationResult} from "../../../lib/ai/generation/generate-theory-from-text";
+import type {ExerciseGenerationResult} from "../../../lib/ai/generation/generate-exercises";
 
 const t = (_k: string, fallback?: string) => fallback ?? _k;
 

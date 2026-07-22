@@ -2534,7 +2534,7 @@ missions:
 
 create_lesson:
   book:
-    rights_hint: "Only paste text you have the rights to, or that is intended for personal use."
+    rights_hint: "Only paste or upload text you have the rights to, or that is intended for personal use."
     heading: "Create a lesson from text"
     intro: "Paste one section (e.g. a chapter) of your textbook. The AI rewrites it in its own words as theory and generates exercises. Add another section by running the wizard again."
     text_label: "Textbook section"
@@ -2557,6 +2557,22 @@ create_lesson:
     review_theory: "{n} theory step(s)"
     review_exercises: "{n} exercise(s)"
     review_book: "Book: {title}"
+    upload:
+      button: "Load from file (EPUB, TXT, MD)"
+      parsing: "Reading file…"
+      section_label: "Detected sections"
+      section_fallback: "Section {n}"
+      apply: "Insert into text field"
+      soft_hint: "Long section - shorter sections give better results."
+      err_too_large: "File too large (max {n} MiB)."
+      err_unsupported: "Unsupported file type. Supported: EPUB, TXT, Markdown."
+      err_invalid_epub: "This file could not be read as an EPUB."
+      err_no_sections: "No text sections were found in this file."
+      err_parse_failed: "Reading the file failed."
+      err_section_too_long: "Section too long (max {n} characters). Pick a smaller section."
+      replace_title: "Replace text?"
+      replace_message: "The text field already has content. Replace it with the selected section?"
+      replace_confirm: "Replace"
   title: "Create a lesson"
   step_of: "Step {current} of {total}"
   edit_title: "Edit lesson"
