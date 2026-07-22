@@ -430,6 +430,24 @@ Fuer JEDES Theme einmal durchklicken:
 - [ ] Bekanntes offenes Issue #1569 (Caret/Touch 1-2 Zeilen versetzt
       im Lesson-Flow): reproduzieren + Notizen ans Issue
 
+#### Theorie-Vorlesen auf iOS: langer Text (#1928) - PFLICHT
+
+iOS Safari bricht eine ungestueckelte Sprachausgabe nach ~15 Sekunden ab.
+Seit #1928 wird ein Theorie-Block in Stuecke zerlegt und als Warteschlange
+gesprochen. Gemessen: 617 von 621 Theorie-Laeufen liegen ueber der
+Stueckgrenze, ein mittlerer Lauf hat 1551 Zeichen.
+
+- [ ] Auf dem iPhone eine Lektion mit langem Theorie-Text oeffnen,
+      Vorlesen starten
+- [ ] Der Text wird **vollstaendig** vorgelesen und bricht nicht nach
+      ~15 Sekunden ab
+- [ ] Beim mehrteiligen Theorie-Block schaltet die Lektion waehrend des
+      Vorlesens automatisch zum naechsten Schritt weiter (die Stueckelung
+      darf die Position im Text nicht verfaelschen)
+- [ ] Zwischen den Stuecken entsteht kein hoerbares Stocken
+- [ ] Bekanntes Plattform-Limit, KEIN Fehler: Pause/Fortsetzen wirkt auf
+      iOS Safari nicht (dort stoppt + startet die App neu)
+
 #### App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 
 Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert

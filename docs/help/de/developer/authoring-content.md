@@ -466,6 +466,69 @@ Autorenoberfläche, nicht nur ein KI-Generieren-Knopf:
 | Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
 | Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |
 
+### Video-Inhalte: verlinken, nicht mitliefern
+
+Nativer Video- (und Audio-)Upload ist bewusst ausgeschlossen (siehe
+Tabelle oben): Medien-Assets lokal zu speichern widerspricht den
+Offline-First-Speichergrenzen. Das empfohlene Muster liefert denselben
+Lernwert, ohne ein einziges Byte Video mitzuliefern: das Video extern
+verlinken und eine Leseverständnis-Übung über sein Transkript bauen.
+
+**1. Video als begleitendes Medium verlinken.** In die `resources[]` der
+Lektion aufnehmen (ein `LessonResource`, EXP-029), damit es im Abschnitt
+*Vertiefe das Thema* der Lektion erscheint. Ein YouTube-Clip nutzt
+`type: "youtube"`:
+
+```json
+"resources": [
+  {
+    "type": "youtube",
+    "title": "Se présenter en français (A1)",
+    "url": "https://www.youtube.com/watch?v=XXXXXXXXXXX",
+    "language": "fr",
+    "level": "A1",
+    "free": true
+  }
+]
+```
+
+**2. Verständnis über das Transkript prüfen.** Eine
+`ext:al-reading-comprehension`-Übung ergänzen, deren `passage` das
+Transkript des Videos (oder ein in sich geschlossener Ausschnitt daraus)
+ist, mit den Verständnisfragen darüber:
+
+```json
+{
+  "type": "ext:al-reading-comprehension",
+  "prompt": "Sieh dir das Video an und beantworte dann.",
+  "ext_payload": {
+    "passage": "Bonjour ! Je m'appelle Camille. J'ai vingt-cinq ans et j'habite à Lyon. Je suis étudiante et j'aime la musique.",
+    "questions": [
+      {
+        "prompt": "Où habite Camille ?",
+        "type": "multiple_choice",
+        "options": [
+          {"text": "À Lyon", "correct": true},
+          {"text": "À Paris"},
+          {"text": "À Marseille"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+Die Übung ist vollständig offline und wird wie jede andere SRS-bewertet;
+das Video ist optionale Vertiefung, erreichbar über *Vertiefe das Thema*,
+und ein Lernender ohne Verbindung bekommt weiterhin das transkript-basierte
+Leseverständnis.
+
+**Das Transkript zahlt sich doppelt aus.** Ein Transkript (oder Untertitel)
+ist ohnehin die Barrierefreiheits-Grundlage, die jedes Video für die
+WCAG-Konformität mitbringen sollte. Hier wird genau dieses Transkript zur
+`passage` der Verständnis-Übung: ein Artefakt, zwei Verwendungen,
+Barrierefreiheit und eine bewertbare Übung aus derselben Quelle.
+
 ## Übungstyp-Referenz
 
 Die Feld-Referenz je Typ — `matching`, `picture_choice`, `free_text`,

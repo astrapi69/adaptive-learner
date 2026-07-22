@@ -422,6 +422,24 @@ Click through once for EACH theme:
 - [ ] Known open issue #1569 (caret/touch offset by 1-2 lines in the
       lesson flow): reproduce + add notes to the issue
 
+#### Theory read-aloud on iOS: long text (#1928) - MANDATORY
+
+iOS Safari silently stops an unchunked utterance after ~15 seconds. Since
+#1928 a theory block is split into chunks and spoken as a queue. Measured:
+617 of 621 theory runs exceed the chunk budget; a median run is 1551
+characters.
+
+- [ ] On the iPhone, open a lesson with a long theory text and start
+      read-aloud
+- [ ] The text is read **completely** and does not break off after ~15
+      seconds
+- [ ] On a multi-step theory block the lesson auto-advances to the next
+      step while reading (chunking must not distort the position in the
+      text)
+- [ ] No audible stutter between chunks
+- [ ] Known platform limit, NOT a bug: pause/resume has no effect on iOS
+      Safari (it stops and restarts there)
+
 #### App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 
 The one path no automated test covers: on iOS/WKWebView a new service
