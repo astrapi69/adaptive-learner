@@ -132,6 +132,95 @@ interface ManifestItem {
     properties: string;
 }
 
+/** The located OPF package document plus its zip-relative path. */
+interface OpfPackage {
+    opfPath: string;
+    opfDoc: Document;
+}
+
+/** Resolve container.xml -> the OPF package document, or ``null``. */
+async function readOpf(zip: JSZip): Promise<OpfPackage | null> {
+    const containerXml = await zip
+        .file("META-INF/container.xml")
+        ?.async("string");
+    if (!containerXml) return null;
+    const opfPath = parseXml(containerXml)
+        .getElementsByTagName("rootfile")[0]
+        ?.getAttribute("full-path");
+    const opfXml = opfPath ? await zip.file(opfPath)?.async("string") : null;
+    if (!opfPath || !opfXml) return null;
+    return {opfPath, opfDoc: parseXml(opfXml)};
+}
+
+/** Read the OPF manifest into an id -> item map. */
+function readManifest(opfDoc: Document): Map<string, ManifestItem> {
+    const manifest = new Map<string, ManifestItem>();
+    for (const item of Array.from(opfDoc.getElementsByTagName("item"))) {
+        const id = item.getAttribute("id");
+        const href = item.getAttribute("href");
+        if (!id || !href) continue;
+        manifest.set(id, {
+            href,
+            mediaType: item.getAttribute("media-type") ?? "",
+            properties: item.getAttribute("properties") ?? "",
+        });
+    }
+    return manifest;
+}
+
+/** Load one spine item's non-empty block text, or ``null`` to skip it
+ *  (missing file / no body / whitespace-only cover page). */
+async function readSpineItemText(
+    zip: JSZip,
+    path: string,
+): Promise<{text: string; doc: Document} | null> {
+    const xhtml = await zip.file(path)?.async("string");
+    if (!xhtml) return null;
+    const doc = parseXml(xhtml);
+    const body = doc.getElementsByTagName("body")[0];
+    if (!body) return null;
+    const text = extractBlockText(body);
+    return text === "" ? null : {text, doc};
+}
+
+/** First ``h1``/``h2``/``h3`` text of a chapter document, if any. */
+function firstHeading(doc: Document): string | undefined {
+    return ["h1", "h2", "h3"]
+        .map((tag) => doc.getElementsByTagName(tag)[0]?.textContent?.trim())
+        .find((value) => value);
+}
+
+/** Walk the spine in order and collect the non-empty chapter sections. */
+async function collectSections(
+    zip: JSZip,
+    pkg: OpfPackage,
+    manifest: Map<string, ManifestItem>,
+    titles: Map<string, string>,
+    options?: BookParseOptions,
+): Promise<BookSection[]> {
+    const sections: BookSection[] = [];
+    const spineRefs = Array.from(
+        pkg.opfDoc.getElementsByTagName("itemref"),
+    ).map((ref) => ref.getAttribute("idref"));
+    for (const idref of spineRefs) {
+        const item = idref ? manifest.get(idref) : undefined;
+        if (!item) continue;
+        const path = resolveHref(pkg.opfPath, item.href);
+        const loaded = await readSpineItemText(zip, path);
+        if (!loaded) continue;
+        sections.push({
+            id: `section-${sections.length + 1}`,
+            title:
+                titles.get(path) ??
+                firstHeading(loaded.doc) ??
+                fallbackLabel(options, sections.length + 1),
+            text: loaded.text,
+            charCount: loaded.text.length,
+        });
+    }
+    return sections;
+}
+
 /**
  * Parse an EPUB file's bytes into selectable chapter sections.
  *
@@ -153,72 +242,23 @@ export async function parseEpub(
         return {ok: false, error: "invalid_epub", detail};
     }
     try {
-        const containerXml = await zip
-            .file("META-INF/container.xml")
-            ?.async("string");
-        if (!containerXml) {
+        const pkg = await readOpf(zip);
+        if (!pkg) {
             return {
                 ok: false,
                 error: "invalid_epub",
-                detail: "META-INF/container.xml missing",
+                detail: "container.xml or OPF package document missing",
             };
         }
-        const opfPath = parseXml(containerXml)
-            .getElementsByTagName("rootfile")[0]
-            ?.getAttribute("full-path");
-        const opfXml = opfPath ? await zip.file(opfPath)?.async("string") : null;
-        if (!opfPath || !opfXml) {
-            return {
-                ok: false,
-                error: "invalid_epub",
-                detail: "OPF package document missing",
-            };
-        }
-        const opfDoc = parseXml(opfXml);
-
-        const manifest = new Map<string, ManifestItem>();
-        for (const item of Array.from(opfDoc.getElementsByTagName("item"))) {
-            const id = item.getAttribute("id");
-            const href = item.getAttribute("href");
-            if (!id || !href) continue;
-            manifest.set(id, {
-                href,
-                mediaType: item.getAttribute("media-type") ?? "",
-                properties: item.getAttribute("properties") ?? "",
-            });
-        }
-
-        const titles = await loadTocTitles(zip, opfDoc, opfPath, manifest);
-
-        const sections: BookSection[] = [];
-        const spineRefs = Array.from(
-            opfDoc.getElementsByTagName("itemref"),
-        ).map((ref) => ref.getAttribute("idref"));
-        for (const idref of spineRefs) {
-            const item = idref ? manifest.get(idref) : undefined;
-            if (!item) continue;
-            const path = resolveHref(opfPath, item.href);
-            const xhtml = await zip.file(path)?.async("string");
-            if (!xhtml) continue;
-            const doc = parseXml(xhtml);
-            const body = doc.getElementsByTagName("body")[0];
-            if (!body) continue;
-            const text = extractBlockText(body);
-            if (text === "") continue;
-            const heading = ["h1", "h2", "h3"]
-                .map((tag) => doc.getElementsByTagName(tag)[0]?.textContent?.trim())
-                .find((value) => value);
-            sections.push({
-                id: `section-${sections.length + 1}`,
-                title:
-                    titles.get(path) ??
-                    heading ??
-                    fallbackLabel(options, sections.length + 1),
-                text,
-                charCount: text.length,
-            });
-        }
-
+        const manifest = readManifest(pkg.opfDoc);
+        const titles = await loadTocTitles(zip, pkg.opfDoc, pkg.opfPath, manifest);
+        const sections = await collectSections(
+            zip,
+            pkg,
+            manifest,
+            titles,
+            options,
+        );
         if (sections.length === 0) {
             return {ok: false, error: "no_sections"};
         }
