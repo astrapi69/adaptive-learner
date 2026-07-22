@@ -67,6 +67,7 @@ Baseline zu committen.
 | Fehlerbericht — Aktionsverlauf geöffnet (#1480) | `error-report/verlauf.png` | `error-report/verlauf.mobile.png` | v2.1.0 |
 | Fehlerbericht — Vollvorschau (#1480) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | v2.1.0 |
 | Sync — Desktop-only-Hinweis, Dexie-Modus (#335/#1480) | `sync/desktop-only-hinweis.png` | `sync/desktop-only-hinweis.mobile.png` | v2.1.0 |
+| Create-Lesson — Buchtext-Datei-Upload mit Kapitel-Picker (#1927) | `create-lesson/buch-upload-picker.png` | `create-lesson/buch-upload-picker.mobile.png` | v2.5.0+ |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
 > konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.
