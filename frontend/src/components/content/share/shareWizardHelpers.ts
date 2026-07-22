@@ -51,6 +51,8 @@ export const KNOWN_CONTENT_DOMAINS: ReadonlySet<string> = new Set([
   "technology",
   "software",
   "philosophy",
+  "dog-training",
+  "traffic-knowledge",
 ]);
 
 export function defaultOpen(url: string): boolean {

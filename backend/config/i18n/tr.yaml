@@ -2279,6 +2279,8 @@ content:
     domain_software: Yazılım
     domain_philosophy: Felsefe
     domain_language: Dil
+    domain_dog-training: Köpek Eğitimi
+    domain_traffic-knowledge: Trafik Bilgisi
     code_copy: "Kodu kopyala"
     code_output: "Çıktı:"
     no_primary: Diliniz için henüz set yok. Aşağıdan diğer kaynak dillere göz atın.

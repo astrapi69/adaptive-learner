@@ -2281,6 +2281,8 @@ content:
     domain_software: Λογισμικό
     domain_philosophy: Φιλοσοφία
     domain_language: Γλώσσα
+    domain_dog-training: Εκπαίδευση σκύλων
+    domain_traffic-knowledge: Κυκλοφοριακή αγωγή
     code_copy: "Αντιγραφή κώδικα"
     code_output: "Έξοδος:"
     no_primary: Δεν υπάρχουν ακόμη σύνολα για τη γλώσσα σου. Δες άλλες γλώσσες προέλευσης παρακάτω.

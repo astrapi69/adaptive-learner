@@ -2290,6 +2290,8 @@ content:
     domain_software: Software
     domain_philosophy: Philosophy
     domain_language: Language
+    domain_dog-training: Dog Training
+    domain_traffic-knowledge: Traffic Knowledge
     code_copy: "Copy code"
     code_output: "Output:"
     no_primary: No sets for your language yet. Browse other source languages below.

@@ -2281,6 +2281,8 @@ content:
     domain_software: Software
     domain_philosophy: Filosofía
     domain_language: Idioma
+    domain_dog-training: Adiestramiento canino
+    domain_traffic-knowledge: Educación vial
     code_copy: "Copiar código"
     code_output: "Salida:"
     no_primary: Aún no hay conjuntos para tu idioma. Explora otros idiomas de origen abajo.
