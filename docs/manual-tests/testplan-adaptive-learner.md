@@ -211,13 +211,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Schema-Fehler beim Speichern); mit Titel → Buchtext-Schritt
       oeffnet normal und Speichern gelingt
 - [ ] **Datei-Upload im Buchtext-Schritt (#1927):** Button "Aus Datei
-      laden (EPUB, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
+      laden (EPUB, DOCX, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
       Kapitelliste erscheint (Titel aus dem Inhaltsverzeichnis) mit
       Vorschau + Zeichenzahl; "In Textfeld uebernehmen" fuellt das
       Textfeld (bei vorhandenem Text: Bestaetigungsdialog "Ersetzen");
       Markdown-Datei → Split an Ueberschriften; TXT ohne Ueberschriften
       → ein Abschnitt; kaputte/zu grosse Datei (> 20 MiB) → klare
       Fehlermeldung, kein Crash; Rechte-Hinweis erwaehnt Hochladen
+- [ ] **DOCX-Upload (#1927, Phase 2b):** Word-Datei mit
+      Ueberschrift-Formatvorlagen (auch deutsches Word, "Ueberschrift 1")
+      → Kapitel werden erkannt und als Liste angeboten; Word-Datei OHNE
+      Formatvorlagen (nur fett formatierte "Ueberschriften") → EIN
+      Abschnitt "Gesamtes Dokument", Text landet trotzdem editierbar im
+      Feld; kaputte .docx → klare Fehlermeldung, kein Crash
 - [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-

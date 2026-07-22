@@ -18,7 +18,7 @@ export interface BookSection {
 }
 
 /** Source format a book was parsed from. */
-export type BookFormat = "epub" | "text";
+export type BookFormat = "epub" | "docx" | "text";
 
 /** A successfully parsed book: ordered, non-empty sections. */
 export interface ParsedBook {
@@ -34,6 +34,7 @@ export type BookParseErrorCode =
     | "file_too_large"
     | "unsupported_format"
     | "invalid_epub"
+    | "invalid_docx"
     | "no_sections"
     | "parse_failed";
 
