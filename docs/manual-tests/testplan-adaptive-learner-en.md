@@ -128,6 +128,10 @@ Requires domain knowledge. Not automatable.
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628
       it lives behind the panel, no longer directly visible)
+- [ ] "Options" button sits in the SAME ROW as the progress indicator
+      ("Step n of m"), not below it (desktop: bar on the left, button
+      beside it on the right; mobile: tightly packed or a clean wrap,
+      no overlap) (#1942)
 - [ ] Exam mode: no hints, result at the end, 1.5x XP
 - [ ] Timed mode: countdown bar visible, color transition
 - [ ] Error mode: only error cards (after at least 1 error)

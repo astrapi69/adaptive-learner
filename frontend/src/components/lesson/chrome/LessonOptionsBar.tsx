@@ -23,6 +23,9 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 
 export interface LessonOptionsBarProps {
   isSummary: boolean;
+  /** Extra utility classes on the options panel section (e.g. flex-row
+   *  sizing when it sits beside the progress bar). */
+  className?: string;
   userId: string;
   source: string;
   setId: string;
@@ -51,6 +54,7 @@ export interface LessonOptionsBarProps {
  */
 export default function LessonOptionsBar({
   isSummary,
+  className,
   userId,
   source,
   setId,
@@ -76,6 +80,7 @@ export default function LessonOptionsBar({
     <LessonOptionsPanel
       key={`${setId}/${filename}`}
       summary={t(`lesson.mode.${lessonMode}`, lessonMode)}
+      className={className}
     >
       <div className="flex justify-end">
         <LessonFavoriteToggle

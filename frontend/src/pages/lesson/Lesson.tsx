@@ -323,44 +323,61 @@ export default function LessonPage() {
           (auto-hiding) nav. */}
       <div ref={stepScrollRef} aria-hidden="true" className="scroll-mt-4" />
 
-      {/* #959 — keep "Step n of m" visible while reading: the bar sticks to
+      {/* #959 — keep "Step n of m" visible while reading: the row sticks to
           the top of the scroll container (all viewports). The lesson nav
-          auto-hides on scroll-down, so the bar fills the space it vacates;
-          z-10 stays below the nav (z-50) when the nav is shown. */}
-      <LessonProgressBar
-        isSummary={isSummary}
-        currentStepIndex={currentStepIndex}
-        totalSteps={totalSteps}
-        className="sticky top-0 z-10"
-      />
+          auto-hides on scroll-down, so the row fills the space it vacates;
+          z-10 stays below the nav (z-50) when the nav is shown. The
+          bg-token backs the sticky row so scrolled content never bleeds
+          through the gaps around the button.
 
-      {/* #1625 — the lesson's mode/display SETTINGS (favorite, mode
-          toggle, auto read-aloud) are bundled into one compact,
-          collapsible group (LessonOptionsBar) so they stop eating the
-          vertical space above the exercise on mobile. Default collapsed;
-          the group resets to collapsed per lesson and preserves the
-          choice across step changes. Renders nothing on the summary
-          screen. */}
-      <LessonOptionsBar
-        isSummary={isSummary}
-        userId={learnerUserId ?? ""}
-        source={source}
-        setId={setId}
-        filename={filename}
-        title={lesson.title}
-        setTitle={setTitle ?? ""}
-        lessonMode={lessonMode}
-        onModeChange={setLessonMode}
-        modeLocked={isInProgress}
-        showReadAloud={modeConfig.showReadAloud}
-        lesson={lesson}
-        tts={tts}
-        autoRead={autoRead}
-        toggleAutoRead={toggleAutoRead}
-        startContinuous={startContinuous}
-        isContinuous={isContinuous}
-        continuousAvailable={continuousAvailable}
-      />
+          #1942 — the progress indicator and the collapsible options group
+          share ONE flex row: the bar grows to take the available width and
+          the "Options" button sits beside it (instead of stacking on its
+          own line below). ``flex-wrap`` + a bar min-width keeps it graceful
+          — on very narrow viewports (or once the options panel is expanded
+          and its body needs the room) the options block wraps onto its own
+          line. ``items-start`` pins the bar to the top so an expanded panel
+          can't drag it to the vertical centre. */}
+      <div
+        className="sticky top-0 z-10 flex flex-wrap items-start gap-2 bg-bg-primary py-3"
+        data-testid="lesson-progress-options-row"
+      >
+        <LessonProgressBar
+          isSummary={isSummary}
+          currentStepIndex={currentStepIndex}
+          totalSteps={totalSteps}
+          className="my-0 min-w-[8rem] flex-1"
+        />
+
+        {/* #1625 — the lesson's mode/display SETTINGS (favorite, mode
+            toggle, auto read-aloud) are bundled into one compact,
+            collapsible group (LessonOptionsBar) so they stop eating the
+            vertical space above the exercise on mobile. Default collapsed;
+            the group resets to collapsed per lesson and preserves the
+            choice across step changes. Renders nothing on the summary
+            screen. */}
+        <LessonOptionsBar
+          isSummary={isSummary}
+          className="shrink-0"
+          userId={learnerUserId ?? ""}
+          source={source}
+          setId={setId}
+          filename={filename}
+          title={lesson.title}
+          setTitle={setTitle ?? ""}
+          lessonMode={lessonMode}
+          onModeChange={setLessonMode}
+          modeLocked={isInProgress}
+          showReadAloud={modeConfig.showReadAloud}
+          lesson={lesson}
+          tts={tts}
+          autoRead={autoRead}
+          toggleAutoRead={toggleAutoRead}
+          startContinuous={startContinuous}
+          isContinuous={isContinuous}
+          continuousAvailable={continuousAvailable}
+        />
+      </div>
 
       {/* #1009 — timed-mode per-question countdown + time-up notice. */}
       <LessonTimedStatus
