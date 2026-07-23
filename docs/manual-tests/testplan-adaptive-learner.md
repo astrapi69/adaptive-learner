@@ -122,6 +122,14 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verstaendlich)
 - [ ] Picture Choice: Kacheln GLEICHE Hoehe
+- [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
+      authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
+      Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
+      Karten OHNE `difficulty` (der gesamte Alt-Bestand) zeigen KEIN Badge
+      (die Uebung sieht aus wie vorher). Gilt fuer alle Uebungstypen
+      (Matching/Cloze/Free-Text/Word-Tiles/Picture-Choice/Multiple-Choice
+      + ext-Typen). Badge liest in allen 6 Themes sauber (Token-basiert).
+      Nur Transparenz - beeinflusst weder Reihenfolge noch Bewertung.
 
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628

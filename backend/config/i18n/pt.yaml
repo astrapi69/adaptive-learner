@@ -3573,3 +3573,9 @@ exercise:
   listen_first:
     label: "Ouça primeiro"
     aria: "Reproduzir pronúncia"
+  difficulty:
+    tier:
+      easy: "Fácil"
+      medium: "Médio"
+      hard: "Difícil"
+    aria: "Dificuldade: {tier} ({level} de 5)"

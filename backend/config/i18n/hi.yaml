@@ -3559,3 +3559,9 @@ exercise:
   listen_first:
     label: "पहले सुनें"
     aria: "उच्चारण चलाएँ"
+  difficulty:
+    tier:
+      easy: "आसान"
+      medium: "मध्यम"
+      hard: "कठिन"
+    aria: "कठिनाई: {tier} (5 में से {level})"
