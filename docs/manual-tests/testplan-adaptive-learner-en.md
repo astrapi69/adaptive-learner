@@ -294,7 +294,7 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       English) stays unchanged. Leave the editor WITHOUT saving → the
       original in Dexie is unchanged (no silent write); only saving
       (overwrite / save-as-copy) persists the migrated version
-- [ ] **Combine lessons (#1741):** My Content → "Combine into a set"
+- [ ] **Combine lessons (#1741):** [E2E: `combine-lessons.spec.ts`] My Content → "Combine into a set"
       toggle → checkbox selection (own sets only) → "Combine" dialog:
       New set (title required) vs. add to an existing set; originals are
       kept; mixed languages/levels → non-blocking warning
@@ -364,7 +364,7 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       alternative (no upload). **Errors:** a too-large file (> 2 MB) OR a wrong
       format (e.g. `.mp4`) shows a clear inline error and does not crash;
       nothing is stored
-- [ ] **Multiple-choice single/multi mode control (#1888):** In the MC inline
+- [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first
       option row**. A new MC exercise (AI-generated OR manually added) defaults
@@ -375,7 +375,7 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       pruned to exactly one correct. An existing MC exercise with a set
       `multiple` value opens **unchanged** in its original state.
 
-### Card image upload (#1763 / #1764)
+### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
 Location: Create-Lesson Step 2 (card editor), in the add-card form +
 each card row (`CardImageField`).
@@ -402,6 +402,7 @@ each card row (`CardImageField`).
       (already-solved) exercise STAYS and does NOT jump forward again;
       the "Continue" button is still clickable
 - [ ] Lesson summary shows only ONE favorite button (#1649)
+      [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
 
 ### Invalid lesson: friendly error message (#1808 / #1824)
@@ -612,7 +613,7 @@ Run: `make test` (backend part)
 
 ---
 
-## Automated: Dexie-Smoke E2E (Playwright TS, 31 spec files)
+## Automated: Dexie-Smoke E2E (Playwright TS, 45 spec files)
 
 Coverage:
 - Full lesson playthrough (all exercise types)
@@ -622,6 +623,16 @@ Coverage:
 - Settings
 - Backup round-trip (programmatic)
 - All routes reachable (no 404)
+- Card image upload: real file input + canvas encoding, preview, remove,
+  unsupported-type error, asset-path toggle
+  (`card-image-upload.spec.ts`, #1763/#1764)
+- Multiple-choice single/multi mode toggle in the inline editor
+  (radio<->checkbox, second correct option, collapse on switch-back)
+  (`mc-single-multi-toggle.spec.ts`, #1888)
+- Lesson summary renders exactly ONE favorite button
+  (`lesson-summary-favorite.spec.ts`, #1649)
+- Combine lessons: select -> dialog -> new set persisted, originals kept
+  (`combine-lessons.spec.ts`, #1741)
 
 Run: `make test-dexie-smoke`
 
