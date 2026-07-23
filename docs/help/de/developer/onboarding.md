@@ -10,14 +10,14 @@ Klon bis zum gemergten Pull Request.
 
 Voraussetzungen: **Python 3.11+** (3.12 empfohlen — Plugins werden
 gegen 3.12 getestet), **Node 24+** (von Vite 8 vorausgesetzt),
-**Poetry**, **npm** und **GNU Make**.
+**Poetry**, **Bun** und **GNU Make**.
 
 ```bash
 # Klonen
 git clone https://github.com/astrapi69/adaptive-learner.git
 cd adaptive-learner
 
-# Alles installieren: Poetry-Backend + Plugin-Path-Deps + npm-Frontend
+# Alles installieren: Poetry-Backend + Plugin-Path-Deps + Bun-Frontend
 make install
 
 # Grüne Basislinie herstellen, bevor du etwas änderst
@@ -99,7 +99,7 @@ rg "die Fehlermeldung" frontend/src backend/app
 ```
 
 - Frontend-Fehler: öffne die DevTools-Konsole des Browsers.
-- `cd frontend && npx vitest --watch <datei>` gibt dir live
+- `cd frontend && bunx vitest --watch <datei>` gibt dir live
   Test-Feedback beim Editieren (vitest immer aus `frontend/` starten,
   nicht aus dem Repo-Root).
 - **Styling: ausschließlich Tailwind-Utility-Klassen**, keine
@@ -118,7 +118,7 @@ fehlschlägt und danach grün ist.
 
 ```bash
 # Frontend (Vitest) — aus frontend/ starten
-cd frontend && npx vitest run src/pfad/zu/datei.test.ts
+cd frontend && bunx vitest run src/pfad/zu/datei.test.ts
 
 # Backend (pytest)
 cd backend && poetry run pytest tests/pfad/ -v
@@ -138,7 +138,7 @@ Backup-Merge.
 make test            # Backend + Plugins + Frontend-Vitest
 make check-types     # mypy + tsc --noEmit
 make test-dexie-smoke  # GH-Pages-Build, jede Route, ohne Backend
-cd frontend && npm run build
+cd frontend && bun run build
 ```
 
 Alles muss grün sein, bevor du einen PR öffnest.
@@ -238,7 +238,7 @@ make check-complexity-gate   # Complexity-Ratsche
 make check-folder-size       # God-Folder-Guard
 make sync-i18n         # Frontend-i18n aus Backend-YAML regenerieren
 make sync-versions     # kanonische Version propagieren
-cd frontend && npm run build   # Frontend bauen
+cd frontend && bun run build   # Frontend bauen
 ```
 
 `make help` listet jedes Target; das

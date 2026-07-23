@@ -38,12 +38,21 @@ export function isCefr(level: string | null | undefined): boolean {
 
 /** Content domains the share validator recognises as NON-language —
  *  source == target is allowed for these (mirrors the content repo's
- *  validate_content.py domain relaxation). */
+ *  validate_content.py domain relaxation). Covers every non-language
+ *  domain present in the official + registered content repos (psychology,
+ *  programming, ai, technology, software, philosophy, knowledge) plus the
+ *  reserved ``math``. */
 export const KNOWN_CONTENT_DOMAINS: ReadonlySet<string> = new Set([
   "knowledge",
   "programming",
   "psychology",
   "math",
+  "ai",
+  "technology",
+  "software",
+  "philosophy",
+  "dog-training",
+  "traffic-knowledge",
 ]);
 
 export function defaultOpen(url: string): boolean {

@@ -28,9 +28,20 @@ Per the pre-inspection Q2 conservative scope: the hook only checks
 the pyproject-staging direction. Lockfile-only changes (e.g. as a
 follow-up commit after `poetry lock`) are valid and do not trigger.
 
+#1903 — version-only carve-out. ``make sync-versions`` rewrites the
+``version`` field of all 13 plugin pyprojects on every release, but
+poetry does not fold that field into the lock's ``content-hash``:
+``make lock-all-plugins`` right after a bump produces an empty diff,
+so there is no lockfile to pair and the requirement is vacuous. Such
+a diff is allowed through. The carve-out is deliberately narrow — it
+is computed per staged diff, so a version bump that also touches a
+dependency still demands the lock, and an ADDED pyproject never
+qualifies. The v0.30.0 guard keeps its teeth; only the false alarm
+goes away.
+
 Exits:
   0 — every staged plugin pyproject is paired with its lockfile,
-      OR no plugin pyproject is staged
+      is a version-only release bump, OR no plugin pyproject is staged
   1 — at least one plugin pyproject is staged without its lock
   2 — git command failed (defensive; hook can't operate)
 """
@@ -42,10 +53,34 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-PLUGIN_PYPROJECT_RE = re.compile(
-    r"^plugins/adaptive-learner-plugin-[^/]+/pyproject\.toml$"
-)
+PLUGIN_PYPROJECT_RE = re.compile(r"^plugins/adaptive-learner-plugin-[^/]+/pyproject\.toml$")
+# 1903 — a diff that only moves the ``version`` field needs no paired lock:
+# poetry keeps that field out of the lock's content-hash, so ``poetry lock``
+# produces an empty diff and there is nothing to stage alongside.
+VERSION_LINE_RE = re.compile(r'^[+-]\s*version\s*=\s*"[^"]*"\s*$')
+
+
+def _repo_root() -> Path:
+    """Resolve the git repo root from the CURRENT directory.
+
+    Deriving it from ``__file__`` would pin the hook to the checkout it
+    happens to live in, which breaks under ``git worktree`` and makes the
+    hook untestable against a throwaway repo. Pre-commit always invokes
+    hooks from the repo root, so cwd is the authoritative answer.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return Path(__file__).resolve().parent.parent
+    return Path(result.stdout.strip())
+
+
+REPO_ROOT = _repo_root()
 
 
 def _staged_files() -> set[str]:
@@ -65,6 +100,50 @@ def _staged_files() -> set[str]:
         )
         sys.exit(2)
     return {line.strip() for line in result.stdout.splitlines() if line.strip()}
+
+
+def _is_version_only_change(path: str) -> bool:
+    """Whether the staged diff for ``path`` moves nothing but the version field.
+
+    ``make sync-versions`` rewrites ``version = "X.Y.Z"`` in all 13 plugin
+    pyprojects on every release. Poetry does not fold that field into the
+    lock's ``content-hash``, so ``make lock-all-plugins`` yields an empty diff
+    and the pairing requirement is vacuous (verified during the v2.5.0 release;
+    the v2.4.0 bump 5e63588 carried no lockfiles for the same reason).
+
+    Conservative by construction: an added file, an unreadable diff, or ANY
+    changed line that is not a version assignment returns ``False``, so the
+    dependency guard keeps its teeth.
+
+    Args:
+        path: Repo-relative path of a staged plugin ``pyproject.toml``.
+
+    Returns:
+        ``True`` only when every added/removed line is a ``version = "..."``
+        assignment and the file already existed in HEAD.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--cached", "-U0", "--", path],
+            check=True,
+            capture_output=True,
+            text=True,
+            cwd=REPO_ROOT,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return False
+
+    changed: list[str] = []
+    for line in result.stdout.splitlines():
+        if line.startswith(("+++", "---")):
+            continue
+        if line.startswith("new file mode"):
+            # An added pyproject has no prior version to compare against.
+            return False
+        if line.startswith(("+", "-")):
+            changed.append(line)
+
+    return bool(changed) and all(VERSION_LINE_RE.match(line) for line in changed)
 
 
 def _normalize(arg: str) -> str:
@@ -109,8 +188,12 @@ def main(argv: list[str]) -> int:
             continue
         plugin_dir = path.rsplit("/", 1)[0]
         lock_path = f"{plugin_dir}/poetry.lock"
-        if lock_path not in staged:
-            missing.append((path, lock_path))
+        if lock_path in staged:
+            continue
+        if _is_version_only_change(path):
+            # Release bump (#1903) — nothing for poetry to re-lock.
+            continue
+        missing.append((path, lock_path))
 
     if not missing:
         return 0

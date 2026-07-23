@@ -10,7 +10,7 @@
  * Phase 52B / v1.35.0 / F-112.
  */
 
-import { type DiffToken } from "../../../lib/exercises/token-diff";
+import { type DiffToken } from "../../../lib/exercises/grading/token-diff";
 
 export interface DiffHighlightProps {
     tokens: DiffToken[];
@@ -31,14 +31,24 @@ export default function DiffHighlight({ tokens, className }: DiffHighlightProps)
 
 function DiffTokenSpan({ token }: { token: DiffToken }) {
     if (token.type === "equal") {
+        // #1940 — emit the trailing space as an EXTERNAL text node (like
+        // insert/delete/replace), not inside the span. `.diff-token` is
+        // `display: inline-block`, whose box edge collapses trailing
+        // whitespace, so a space kept inside the span vanished and equal-token
+        // runs abutted ("Die KI übt" → "DieKIübt") in the summary answer diff.
+        const trailing = token.text.endsWith(" ");
+        const word = token.text.trimEnd();
         return (
-            <span
-                className="diff-token diff-token-equal"
-                data-testid="diff-token-equal"
-                data-type="equal"
-            >
-                {token.text}
-            </span>
+            <>
+                <span
+                    className="diff-token diff-token-equal"
+                    data-testid="diff-token-equal"
+                    data-type="equal"
+                >
+                    {word}
+                </span>
+                {trailing ? " " : ""}
+            </>
         );
     }
     if (token.type === "insert") {

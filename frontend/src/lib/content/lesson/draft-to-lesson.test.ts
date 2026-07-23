@@ -1,15 +1,19 @@
 import {describe, expect, it} from "vitest";
 
-import {generateExercises} from "./exercise-generator";
+import {generateExercises} from "../../exercises";
 import {
     allChecksPass,
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
+    draftCardsToGeneratorCards,
     draftSetId,
+    lessonToDraftInput,
+    preservedTheorySteps,
     type DraftLessonInput,
 } from "./draft-to-lesson";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
+import type {ContentLessonStep} from "../../../storage/types";
 
 const META: LessonMeta = {
     title: "My French Basics",
@@ -98,6 +102,47 @@ describe("draft-to-lesson", () => {
         expect(allChecksPass(checks)).toBe(true);
     });
 
+    // #1929 — the "language pair is valid" check is rendered again. Its
+    // meaning is "both sides are SUPPORTED language codes", NOT the removed
+    // "source !== target" gate (which wrongly rejected knowledge-domain
+    // lessons). A same-language pair therefore still passes.
+    it("checkDraft marks a supported language pair valid (#1929)", () => {
+        const checks = checkDraft(input());
+        expect(checks.languagePair).toBe(true);
+    });
+
+    it("checkDraft keeps a same-language pair a VALID pair (#1929)", () => {
+        const i = input();
+        const checks = checkDraft({
+            ...i,
+            meta: {...META, sourceLanguage: "de", targetLanguage: "de"},
+        });
+        // The reactivated check must NOT reintroduce the source !== target
+        // gate — de -> de is a valid, supported pair.
+        expect(checks.languagePair).toBe(true);
+        expect(allChecksPass(checks)).toBe(true);
+    });
+
+    it("checkDraft fails languagePair on an unsupported language code (#1929)", () => {
+        const i = input();
+        const checks = checkDraft({
+            ...i,
+            meta: {...META, targetLanguage: "zz"},
+        });
+        expect(checks.languagePair).toBe(false);
+        expect(allChecksPass(checks)).toBe(false);
+    });
+
+    it("checkDraft fails languagePair on an empty language code (#1929)", () => {
+        const i = input();
+        const checks = checkDraft({
+            ...i,
+            meta: {...META, sourceLanguage: ""},
+        });
+        expect(checks.languagePair).toBe(false);
+        expect(allChecksPass(checks)).toBe(false);
+    });
+
     // #1722 — the reproduction: all COUNT checks pass, only the structural
     // validator fails (an empty card side, reachable through the unguarded
     // inline card edit), and the validator's reason must survive into the
@@ -130,5 +175,311 @@ describe("draft-to-lesson", () => {
         expect(checks.schemaError).toBeNull();
         // The extra detail field must not break the boolean aggregate.
         expect(allChecksPass(checks)).toBe(true);
+    });
+});
+
+// #1895 — a dictation (extension) exercise can now reach the MAIN wizard path
+// via the core-type picker. Whatever the build path, the resulting lesson must
+// declare ``requires_extensions`` so it is refused (not mis-rendered) in an app
+// without the extension. This is the safety generalization the Verify-First
+// step surfaced: only ``buildExtensionLesson`` used to set the field.
+describe("draft-to-lesson requires_extensions generalization (#1895)", () => {
+    const dictationExercise = {
+        id: "ex-dict-manual",
+        type: "ext:al-dictation",
+        prompt: "Hoere zu und schreibe, was du hoerst.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {audio: "assets/audio/clip.mp3", accept: ["Bonjour"]},
+    };
+
+    function draftWithDictation(): DraftLessonInput {
+        const base = input();
+        return {
+            ...base,
+            exercises: [
+                ...base.exercises,
+                dictationExercise as unknown as (typeof base.exercises)[number],
+            ],
+        };
+    }
+
+    it("declares the extension when the draft contains a dictation exercise", () => {
+        const lesson = buildLessonFromDraft(draftWithDictation());
+        expect(lesson.requires_extensions).toContain("ext:al-dictation@1");
+    });
+
+    it("does NOT add requires_extensions for a pure core draft", () => {
+        const lesson = buildLessonFromDraft(input());
+        // Absent or empty — never a spurious [] on every core lesson.
+        expect(lesson.requires_extensions ?? []).toEqual([]);
+    });
+
+    it("the built dictation lesson passes the load guard", () => {
+        // buildLessonFromDraft validates internally; a throw here would mean
+        // the undeclared-extension guard fired -> the field was NOT set.
+        expect(() => buildLessonFromDraft(draftWithDictation())).not.toThrow();
+    });
+
+    it("edit-mode (id + preserved theory) also declares the extension", () => {
+        const lesson = buildLessonFromDraft(draftWithDictation(), {
+            id: "kept-id",
+            theorySteps: [
+                {id: "theory-intro", type: "theory", title: "T", body: "Body"},
+            ],
+        });
+        expect(lesson.id).toBe("kept-id");
+        expect(lesson.requires_extensions).toContain("ext:al-dictation@1");
+    });
+});
+
+// #1740 — lesson editing: reverse mapping, id/set-id override, theory
+// preservation.
+describe("draft-to-lesson editing (#1740)", () => {
+    it("round-trips a built lesson back into the wizard draft", () => {
+        const built = buildLessonFromDraft(input());
+        const back = lessonToDraftInput(built, {level: "A1", title_native: null});
+        expect(back.meta.title).toBe("My French Basics");
+        expect(back.meta.sourceLanguage).toBe("de");
+        expect(back.meta.targetLanguage).toBe("fr");
+        expect(back.meta.level).toBe("A1");
+        expect(back.meta.author).toBe("Aster");
+        expect(back.cards).toHaveLength(built.cards.length);
+        expect(back.cards[0].front).toBe(built.cards[0].front);
+        // Exercises come straight off the exercise steps (theory dropped).
+        const exSteps = built.steps.filter((s) => s.type === "exercise");
+        expect(back.exercises).toHaveLength(exSteps.length);
+        expect(back.exercises[0].id).toBe(exSteps[0].exercise?.id);
+    });
+
+    it("re-build after a reverse map keeps a stable, overwriteable shape", () => {
+        const built = buildLessonFromDraft(input());
+        const back = lessonToDraftInput(built, {level: "A1"});
+        const rebuilt = buildLessonFromDraft(back, {
+            id: built.id,
+            theorySteps: preservedTheorySteps(built.steps, back.meta),
+        });
+        expect(rebuilt.id).toBe(built.id);
+        expect(rebuilt.steps.filter((s) => s.type === "exercise")).toHaveLength(
+            built.steps.filter((s) => s.type === "exercise").length,
+        );
+        // The wizard intro is regenerated (wizard lineage), title reflected.
+        expect(rebuilt.steps[0].type).toBe("theory");
+        expect(rebuilt.steps[0].id).toBe("theory-intro");
+    });
+
+    it("opts.id overrides the derived lesson filename (preserves progress)", () => {
+        const lesson = buildLessonFromDraft(input(), {id: "colors"});
+        expect(lesson.id).toBe("colors");
+        // A title change would normally re-slug the id; the override wins.
+        const renamed = buildLessonFromDraft(
+            {...input(), meta: {...META, title: "Farben komplett neu"}},
+            {id: "colors"},
+        );
+        expect(renamed.id).toBe("colors");
+    });
+
+    it("regenerates the intro from the title for wizard-created lineage", () => {
+        const original = buildLessonFromDraft(input()); // has theory-intro
+        const renamedMeta: LessonMeta = {...META, title: "Renamed Lesson"};
+        const theory = preservedTheorySteps(original.steps, renamedMeta);
+        expect(theory).toHaveLength(1);
+        expect(theory[0].id).toBe("theory-intro");
+        expect(theory[0].body).toContain("# Renamed Lesson");
+    });
+
+    it("preserves authored theory verbatim for imported lineage", () => {
+        // An imported lesson: real theory steps, none named theory-intro.
+        const importedSteps: ContentLessonStep[] = [
+            {id: "t1", type: "theory", title: "Grammar", body: "# Grammar\n\nRich text."},
+            {id: "t2", type: "theory", title: "Notes", body: "More authored theory."},
+            {id: "e1", type: "exercise", title: null, body: null, exercise: null},
+        ];
+        const theory = preservedTheorySteps(importedSteps, {...META, title: "Whatever"});
+        expect(theory).toHaveLength(2);
+        expect(theory.map((s) => s.id)).toEqual(["t1", "t2"]);
+        // No synthetic intro was injected (no data the wizard can't hold).
+        expect(theory.some((s) => s.id === "theory-intro")).toBe(false);
+        expect(theory[0].body).toContain("Rich text.");
+    });
+
+    it("buildUserSetInput overrides the set id and origin in edit mode", () => {
+        const i = input();
+        const set = buildUserSetInput(i, buildLessonFromDraft(i), {
+            setId: "created-original-id",
+            origin: "adaptive",
+        });
+        expect(set.set_id).toBe("created-original-id");
+        expect(set.origin).toBe("adaptive");
+    });
+
+    it("a preserved-theory edit (typo fix on a card) still builds a valid lesson", () => {
+        const original = buildLessonFromDraft(input());
+        const back = lessonToDraftInput(original, {level: "A1"});
+        // Fix a typo on a card back — the exercises still reference every
+        // card, so the rebuild under the original id must validate. (The
+        // card's content-derived SRS key changes; that self-orphaning is
+        // the intended behaviour, verified end-to-end elsewhere.)
+        back.cards[0] = {...back.cards[0], back: "corrected"};
+        const rebuilt = buildLessonFromDraft(back, {
+            id: original.id,
+            theorySteps: preservedTheorySteps(original.steps, back.meta),
+        });
+        expect(rebuilt.id).toBe(original.id);
+        expect(rebuilt.cards[0].back).toBe("corrected");
+    });
+});
+
+// #1919 — reopening a saved core-only lesson for editing fails the structural
+// check with "/steps/1/exercise/ext_payload must be object". In API mode the
+// GET lessons endpoint serves the lesson via ``response_model=Lesson`` with the
+// default ``exclude_none=False``, so the Pydantic ``Exercise.ext_payload:
+// dict | None = None`` is emitted as ``ext_payload: null`` on every CORE
+// exercise. The ajv schema types ext_payload as object-only (no null branch;
+// "Absent on core exercises"), while every other optional field tolerates null
+// via ``anyOf: [..., {type: null}]`` — so only ext_payload breaks. (Dexie mode
+// parses via the engine adapter, which omits the key, so it reproduces only in
+// API mode.) Reconstruction must drop ext_payload from core exercises and keep
+// it for real extension exercises.
+describe("draft-to-lesson edit-mode ext_payload reconstruction (#1919)", () => {
+    /** A saved lesson as it comes back from the API-mode GET: the Pydantic
+     *  ``exclude_none=False`` serialization has materialized ``ext_payload:
+     *  null`` on every core exercise. */
+    function reloadedCoreLesson() {
+        const built = buildLessonFromDraft(input());
+        return {
+            ...built,
+            steps: built.steps.map((s) =>
+                s.type === "exercise" && s.exercise
+                    ? {
+                          ...s,
+                          exercise: {
+                              ...s.exercise,
+                              ext_payload: null,
+                          } as unknown as (typeof s)["exercise"],
+                      }
+                    : s,
+            ),
+        };
+    }
+
+    it("strips ext_payload from reconstructed core exercises", () => {
+        const back = lessonToDraftInput(reloadedCoreLesson(), {level: "A1"});
+        expect(back.exercises.length).toBeGreaterThan(0);
+        expect(back.exercises.every((e) => !("ext_payload" in e))).toBe(true);
+    });
+
+    it("re-building a reopened core lesson validates (no ext_payload error)", () => {
+        const reloaded = reloadedCoreLesson();
+        const back = lessonToDraftInput(reloaded, {level: "A1"});
+        // Before the fix this threw "/steps/1/exercise/ext_payload must be object".
+        expect(() =>
+            buildLessonFromDraft(back, {
+                id: reloaded.id,
+                theorySteps: preservedTheorySteps(reloaded.steps, back.meta),
+            }),
+        ).not.toThrow();
+    });
+
+    it("preserves ext_payload for a real extension exercise (no over-correction)", () => {
+        const dictation = {
+            id: "ex-dict",
+            type: "ext:al-dictation",
+            prompt: "Hoere zu und schreibe, was du hoerst.",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {audio: "assets/audio/clip.mp3", accept: ["Bonjour"]},
+        };
+        const base = input();
+        const built = buildLessonFromDraft({
+            ...base,
+            exercises: [
+                ...base.exercises,
+                dictation as unknown as (typeof base.exercises)[number],
+            ],
+        });
+        // Simulate the reload: core exercises gain ext_payload: null, the
+        // extension exercise keeps its real payload object.
+        const reloaded = {
+            ...built,
+            steps: built.steps.map((s) =>
+                s.type === "exercise" &&
+                s.exercise &&
+                s.exercise.type !== "ext:al-dictation"
+                    ? {
+                          ...s,
+                          exercise: {
+                              ...s.exercise,
+                              ext_payload: null,
+                          } as unknown as (typeof s)["exercise"],
+                      }
+                    : s,
+            ),
+        };
+        const back = lessonToDraftInput(reloaded, {level: "A1"});
+        const rebuiltDictation = back.exercises.find(
+            (e) => e.type === "ext:al-dictation",
+        );
+        expect(rebuiltDictation?.ext_payload).toEqual({
+            audio: "assets/audio/clip.mp3",
+            accept: ["Bonjour"],
+        });
+        // Core exercises are still stripped even alongside an extension one.
+        expect(
+            back.exercises
+                .filter((e) => e.type !== "ext:al-dictation")
+                .every((e) => !("ext_payload" in e)),
+        ).toBe(true);
+    });
+});
+
+describe("draftCardsToGeneratorCards (#1847)", () => {
+    function draftCard(over: Partial<LessonCardDraft>): LessonCardDraft {
+        return {
+            id: "c1",
+            front: "lis",
+            back: "read",
+            notes: "a teaching note",
+            image: "",
+            example: "",
+            ...over,
+        };
+    }
+
+    it("feeds the generator's example from the card's example field, NOT notes", () => {
+        const [gc] = draftCardsToGeneratorCards([
+            draftCard({notes: "note only", example: "Je lis un livre."}),
+        ]);
+        expect(gc.example).toBe("Je lis un livre.");
+    });
+
+    it("passes image + altAnswers through and defaults a missing example to empty", () => {
+        const [gc] = draftCardsToGeneratorCards([
+            {
+                id: "c2",
+                front: "chat",
+                back: "cat",
+                notes: "",
+                image: "data:image/png;base64,AAA",
+                altAnswers: ["kitty"],
+            },
+        ]);
+        expect(gc.image).toBe("data:image/png;base64,AAA");
+        expect(gc.altAnswers).toEqual(["kitty"]);
+        expect(gc.example).toBe("");
+    });
+
+    it("makes example-bearing cards drive cloze generation end to end", () => {
+        const cards = draftCardsToGeneratorCards([
+            draftCard({id: "c1", front: "lis", example: "Je lis un livre."}),
+            draftCard({id: "c2", front: "mange", example: "Tu manges une pomme."}),
+        ]);
+        const exercises = generateExercises(cards, {
+            count: 10,
+            types: ["cloze"],
+            direction: "auto",
+        });
+        expect(exercises.length).toBeGreaterThan(0);
+        expect(exercises.every((e) => e.type === "cloze")).toBe(true);
     });
 });

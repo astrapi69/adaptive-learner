@@ -14,3 +14,5 @@ export {default as SearchField} from "./SearchField";
 export * from "./SearchFilterBar";
 export {default as SearchFilterBar} from "./SearchFilterBar";
 export * from "./SecretInput";
+export * from "./StringListEditor";
+export {default as StringListEditor} from "./StringListEditor";

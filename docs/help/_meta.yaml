@@ -52,6 +52,16 @@ navigation:
           tr: Docker Desktop kurulumu
           ja: Docker Desktop のインストール
         slug: install/docker-desktop
+      - title:
+          de: Desktop-Launcher starten
+          en: Start the desktop launcher
+          es: Iniciar el launcher de escritorio
+          fr: Démarrer le launcher de bureau
+          el: Εκκίνηση του Desktop-Launcher
+          pt: Iniciar o launcher de desktop
+          tr: Masaüstü launcher'ı başlatma
+          ja: デスクトップランチャーの起動
+        slug: install/launcher
   - title:
       de: Benutzerhandbuch
       en: User Guide

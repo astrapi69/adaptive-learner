@@ -26,6 +26,7 @@
  * suppresses the animation (no ``is-animated`` class, no delay).
  */
 
+import {useRef, type RefObject} from "react";
 import {
     ArrowRight,
     CheckCircle2,
@@ -39,6 +40,8 @@ import {Link} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
+import {useLessonShortcuts} from "../../../hooks/lesson/interaction/useLessonShortcuts";
+import {useSummaryEnterKey} from "../../../hooks/lesson/interaction/useSummaryEnterKey";
 import type {ErrorTag} from "../../../lib/adaptive/error-classifier";
 import {prefersReducedMotion} from "../../../lib/feedback/feedbackPref";
 import type {NextStepSuggestions as Suggestions} from "../../../hooks/learning/useNextStepSuggestions";
@@ -116,6 +119,7 @@ function NextLessonCard({
     primaryAction,
     animate,
     idx,
+    ctaRef,
 }: {
     data: Suggestions["nextLesson"];
     setSlug: string;
@@ -123,6 +127,7 @@ function NextLessonCard({
     primaryAction: PrimaryAction;
     animate: boolean;
     idx: number;
+    ctaRef: RefObject<HTMLAnchorElement | null>;
 }) {
     const {t} = useI18n();
     const isPrimary = primaryAction === "next";
@@ -162,7 +167,11 @@ function NextLessonCard({
                     )}
             </span>
             <Button asChild variant={isPrimary ? "default" : "secondary"}>
-                <Link to={href} data-testid="next-step-cta-next">
+                <Link
+                    to={href}
+                    ref={isPrimary ? ctaRef : undefined}
+                    data-testid="next-step-cta-next"
+                >
                     {data.isPaused
                         ? t("lesson.next_step.resume", "Resume")
                         : t("lesson.next_step.start", "Start")}
@@ -182,6 +191,7 @@ function ErrorReplayCard({
     primaryAction,
     animate,
     idx,
+    ctaRef,
 }: {
     data: Suggestions["errorReplay"];
     payload: ErrorReplayPayload;
@@ -191,6 +201,7 @@ function ErrorReplayCard({
     primaryAction: PrimaryAction;
     animate: boolean;
     idx: number;
+    ctaRef: RefObject<HTMLAnchorElement | null>;
 }) {
     const {t} = useI18n();
     const isPrimary = primaryAction === "error_replay";
@@ -239,6 +250,7 @@ function ErrorReplayCard({
                 <Link
                     to={`/error-replay/${setSlug}/${setId}/${lessonFilename}`}
                     state={payload}
+                    ref={isPrimary ? ctaRef : undefined}
                     data-testid="next-step-cta-error-replay"
                 >
                     {t("lesson.next_step.start", "Start")}
@@ -292,12 +304,14 @@ function AdaptiveCard({
     primaryAction,
     animate,
     idx,
+    ctaRef,
 }: {
     data: Suggestions["adaptiveLesson"];
     setIdEnc: string;
     primaryAction: PrimaryAction;
     animate: boolean;
     idx: number;
+    ctaRef: RefObject<HTMLAnchorElement | null>;
 }) {
     const {t} = useI18n();
     const isPrimary = primaryAction === "adaptive";
@@ -338,6 +352,7 @@ function AdaptiveCard({
             <Button asChild variant={isPrimary ? "default" : "secondary"}>
                 <Link
                     to={`/adaptive-lesson/${setIdEnc}`}
+                    ref={isPrimary ? ctaRef : undefined}
                     data-testid="next-step-cta-adaptive"
                 >
                     {t("lesson.next_step.start", "Start")}
@@ -354,12 +369,14 @@ function ReviewCard({
     primaryAction,
     animate,
     idx,
+    ctaRef,
 }: {
     data: Suggestions["reviewSession"];
     setIdEnc: string;
     primaryAction: PrimaryAction;
     animate: boolean;
     idx: number;
+    ctaRef: RefObject<HTMLAnchorElement | null>;
 }) {
     const {t} = useI18n();
     const isPrimary = primaryAction === "review";
@@ -389,7 +406,11 @@ function ReviewCard({
                 </span>
             </span>
             <Button asChild variant={isPrimary ? "default" : "secondary"}>
-                <Link to={`/review/${setIdEnc}`} data-testid="next-step-cta-review">
+                <Link
+                    to={`/review/${setIdEnc}`}
+                    ref={isPrimary ? ctaRef : undefined}
+                    data-testid="next-step-cta-review"
+                >
                     {t("lesson.next_step.start", "Start")}
                     <ArrowRight aria-hidden="true" />
                 </Link>
@@ -473,6 +494,19 @@ export default function NextStepSuggestions({
 }: NextStepSuggestionsProps) {
     const {t} = useI18n();
 
+    // #1943 — Enter activates the accent-highlighted PRIMARY next-step
+    // CTA (e.g. "Nächste Lektion -> Starten"). The ref points at whichever
+    // card ``primaryAction`` marks primary; the hook clicks it natively so
+    // React Router navigation (incl. router state) runs as on a real click.
+    // Gated by the same Settings "Enter shortcut" toggle as the step-level
+    // shortcut, and only while this section actually renders a card.
+    const shortcutsEnabled = useLessonShortcuts();
+    const primaryCtaRef = useRef<HTMLAnchorElement>(null);
+    useSummaryEnterKey({
+        enabled: shortcutsEnabled && enabled && !suggestions.loading,
+        ctaRef: primaryCtaRef,
+    });
+
     if (!enabled || suggestions.loading) return null;
 
     const {
@@ -515,6 +549,7 @@ export default function NextStepSuggestions({
                 primaryAction={primaryAction}
                 animate={animate}
                 idx={cards.length}
+                ctaRef={primaryCtaRef}
             />,
         );
     }
@@ -530,6 +565,7 @@ export default function NextStepSuggestions({
                 primaryAction={primaryAction}
                 animate={animate}
                 idx={cards.length}
+                ctaRef={primaryCtaRef}
             />,
         );
     } else if (errorReplay.allCorrected) {
@@ -551,6 +587,7 @@ export default function NextStepSuggestions({
                 primaryAction={primaryAction}
                 animate={animate}
                 idx={cards.length}
+                ctaRef={primaryCtaRef}
             />,
         );
     }
@@ -563,6 +600,7 @@ export default function NextStepSuggestions({
                 primaryAction={primaryAction}
                 animate={animate}
                 idx={cards.length}
+                ctaRef={primaryCtaRef}
             />,
         );
     }

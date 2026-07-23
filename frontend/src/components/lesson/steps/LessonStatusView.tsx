@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import type { ContentLesson } from "../../../storage/types";
 import type { LessonLoadStatus } from "../../../hooks/lesson/session/useLesson";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import { useDevMode } from "../../../hooks/settings/useDevMode";
 
 export type LessonStatusKind = "missing" | "loading" | "not-cached" | "error";
 
@@ -50,6 +51,7 @@ export default function LessonStatusView({
 }: LessonStatusViewProps) {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const devMode = useDevMode();
 
   if (kind === "missing") {
     return (
@@ -104,11 +106,22 @@ export default function LessonStatusView({
     );
   }
 
+  // #1824 — the raw underlying error (a Pydantic validation dump in
+  // API mode, a raw thrown message in Dexie mode) is diagnostic detail,
+  // not user copy. Outside Developer Mode show a friendly, actionable
+  // message; only in Dev Mode append the raw detail (matching the
+  // DEV-MODE-FRIENDLY-ERRORS-01 posture used by the toast layer).
   return (
     <main id="main" className={MAIN_CLASS} data-testid="lesson-error">
       <p>
-        {t("lesson.error.load_failed", "Could not load lesson.")}
-        {error ? ` (${error})` : ""}
+        {devMode
+          ? `${t("lesson.error.load_failed", "Could not load lesson.")}${
+              error ? ` (${error})` : ""
+            }`
+          : t(
+              "lesson.error.invalid_data",
+              "This lesson can't be opened because it contains invalid or corrupted data. Please contact the content author.",
+            )}
       </p>
       <Button type="button" onClick={() => navigate("/content?tab=my")}>
         {t("lesson.action.open_browser", "Open content browser")}

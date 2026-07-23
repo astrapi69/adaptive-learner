@@ -1,5 +1,5 @@
 // Barrel for hooks/settings (grouped by concern, #809). Re-export only.
-export * from "./useAiKeySettings";
+// useAiKeySettings moved into @astrapi69/ai-key-vault-react (useAiKeyStore).
 export * from "./useApiKeyStatus";
 export * from "./useAppMode";
 export * from "./useButtonTooltips";

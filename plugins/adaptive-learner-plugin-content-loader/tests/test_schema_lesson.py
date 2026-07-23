@@ -505,6 +505,47 @@ class TestPictureChoiceExercise:
                 images=[{"src": "a.png", "label": "A", "is_correct": "true"}],
             )
 
+    # Engine 0.13.0 / schema 1.8 (engine#66): ``src`` is an anyOf of the
+    # original assets/ path (<= 500 chars) OR an inline base64 data URI
+    # with its own 250000-char cap (sized for the 150-KiB upload
+    # compression from #1763). RED before the 0.13.0 re-pin.
+    def test_data_uri_src_accepted(self) -> None:
+        data_uri = "data:image/jpeg;base64," + "A" * 10_000
+        ex = _exercise_picture(
+            images=[
+                {"src": data_uri, "label": "Cat", "is_correct": "true"},
+                {"src": "assets/dog.png", "label": "Dog"},
+            ],
+        )
+        assert (ex.images or [])[0].src == data_uri
+
+    def test_data_uri_src_over_cap_rejected(self) -> None:
+        oversized = "data:image/jpeg;base64," + "A" * 250_001
+        with pytest.raises(ValidationError):
+            _exercise_picture(
+                images=[
+                    {"src": oversized, "label": "Cat", "is_correct": "true"},
+                    {"src": "assets/dog.png", "label": "Dog"},
+                ],
+            )
+
+    def test_long_non_data_uri_src_still_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_picture(
+                images=[
+                    {"src": "assets/" + "x" * 600 + ".png", "label": "Cat", "is_correct": "true"},
+                    {"src": "assets/dog.png", "label": "Dog"},
+                ],
+            )
+
+    def test_path_src_regression_stays_valid(self) -> None:
+        ex = _exercise_picture()
+        assert [img.src for img in ex.images or []] == [
+            "assets/cat.png",
+            "assets/dog.png",
+            "assets/bird.png",
+        ]
+
     def test_exactly_one_correct(self) -> None:
         # Zero correct
         with pytest.raises(ValidationError):

@@ -14,7 +14,7 @@ import {
   summarizeGeneratedLesson,
 } from "../../../lib/content/analysis/analysis-to-lesson";
 import { analysisLessonLabels } from "../../../lib/content/analysis/analysis-lesson-labels";
-import { appendExercisesToLesson } from "../../../lib/content/lesson/append-exercises";
+import { appendExercisesToLesson } from "../../../lib/exercises";
 import {splitLesson} from "../../../lib/content/lesson/lesson-splitter";
 import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../../lib/content/language/language-options";
 import {readMaxLessonSize} from "../../../lib/learning/maxLessonSizePref";

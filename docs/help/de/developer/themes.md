@@ -85,7 +85,7 @@ Die vollständige Token-Referenz steht in
    im Inline-`<script>` in `index.html`.
 5. **i18n**: füge `ui.themes.midnight` in allen acht Katalogen unter
    `backend/config/i18n/*.yaml` hinzu und führe `make sync-i18n` aus.
-6. **Prüfe**: `npx vitest run src/styles/themes src/styles/contrast` -
+6. **Prüfe**: `bunx vitest run src/styles/themes src/styles/contrast` -
    die Vollständigkeits- und Kontrast-Pins müssen grün bleiben (passe
    die Werte an, bis der Kontrast im neuen Theme AA erfüllt).
 

@@ -268,6 +268,56 @@ Detection: if local tests pass but CI fails on routes returning 404, suspect mis
 - Any specific number, threshold, default value, dropdown range, or feature flag mentioned in the docs MUST come from the code or config that defines it (`backend/config/app.yaml`, `backend/config/i18n/*.yaml`, the schema, the source of the relevant function), not from memory or approximation.
 - If a value isn't easily findable in code, that is a signal to flag the question, not to guess. Wrong defaults in user docs erode trust faster than missing docs do.
 - Example: trash auto-delete default came from `backend/config/app.yaml.example` (`trash_auto_delete_days: 90`); the configurable range came from the `trash_days_*` keys in `backend/config/i18n/*.yaml`. Both are single sources of truth that the docs cite without duplicating.
+- **This file is not exempt from its own rule.** The #1903 issue text
+  claimed `backend/tests/test_plugin_lock_drift_hook.py` "pins the hook with
+  6 self-checks" — quoted from THIS file, never checked against the tree. The
+  file had been removed by the skeleton strip (`76baa114`) long before. A rule
+  file ages exactly like any other doc: when it names a path, a count, or a
+  gate, verify the artifact still exists before repeating the claim
+  downstream. `git log --all -- <path>` answers it in one command.
+
+## Test a tool through the interface it actually uses, not a mock of it
+
+A tool that shells out (git, poetry, docker, a CLI) has an implicit
+dependency on the ENVIRONMENT it resolves — cwd, repo root, PATH, the
+process it runs under. A mocked subprocess layer verifies the parsing logic
+and hides the resolution entirely.
+
+Concrete (#1903): the `plugin-lock-paired-with-pyproject` hook computed its
+repo root from `Path(__file__).resolve().parent.parent`, so it always read
+the checkout the SCRIPT lives in, not the one being committed. Under
+`git worktree` — the standard workflow in this repo — that is the wrong
+repo. The failure is **silent and green**: the hook finds no staged files in
+the foreign repo, concludes "nothing staged, nothing to check", and exits 0.
+A gate that reports success while inspecting the wrong tree is worse than a
+missing gate, because it also buys false confidence.
+
+Nothing about that is visible with mocked git output. It surfaced because
+the new tests build **real throwaway git repos** (`git init` in `tmp_path`,
+real files, real `git add`) and invoke the hook exactly the way pre-commit
+does — as a subprocess with staged paths as argv. Three "must block" tests
+failed in the RED run not because the feature was missing, but because the
+hook was reading somewhere else entirely.
+
+Rules:
+
+- **When a tool resolves its own context, let the test control that
+  context.** Build the real thing in `tmp_path` (git repo, config dir,
+  package tree) and run the tool against it as a subprocess. The setup cost
+  is one fixture; the coverage includes the resolution logic that mocks
+  erase.
+- **Derive the repo root from cwd (`git rev-parse --show-toplevel`), never
+  from `__file__`.** Pre-commit, make targets, and CI all invoke from the
+  repo root; `__file__` additionally breaks under worktrees, symlinked
+  checkouts, and any vendored copy of the script.
+- **A guard that can pass by looking at the wrong place must fail closed.**
+  "Found nothing, so nothing is wrong" is only sound once you have proven you
+  looked in the right tree.
+
+Pairs with "Operational gaps masquerade as wired infrastructure" (a gate that
+never ran) and "A 'flaky' test that fails deterministically on unchanged code
+is stale, not flaky" (a gate whose assertion no longer matches reality). Same
+family: the gate exists, and the gate is not doing the job you believe it is.
 
 ## Alembic migration + fresh test DB
 
@@ -423,7 +473,7 @@ Rules:
 - Only stable releases, no beta/RC/alpha versions ever in production code
 - "Latest stable" means most recent version that has proven stable (minimum 2 weeks since release)
 - For LTS products (Node.js), prefer Active LTS over Current
-- Review dependencies at each release cycle: run `poetry show --outdated` and `npm outdated` before cutting any release
+- Review dependencies at each release cycle: run `poetry show --outdated` and `bun outdated` before cutting any release
 - Major version bumps get their own commit with migration notes
 - Routine minor/patch bumps can be batched by category
 
@@ -440,7 +490,7 @@ Upstream blockers: when an external dependency (e.g. PluginForge) pins a transit
 Before cutting any release, run dependency currency check:
 - `poetry show --outdated` in backend and each plugin
 - `poetry show --outdated` in launcher
-- `npm outdated` in frontend
+- `bun outdated` in frontend
 
 Apply routine bumps (patch + minor + low-risk minor) as part of release prep. Defer major bumps to dedicated sessions with their own testing cycle.
 
@@ -626,54 +676,36 @@ The chat-style rule and the production-content rule are
 deliberately different. Production text is authored for end
 readers; the chat is a working channel.
 
-### Tooling
+### Tooling (#1755, since 2026-07-17)
 
-`scripts/find_umlaut_candidates.py`, `scripts/replace_umlauts.py`,
-`scripts/build_in_scope_list.py`, and
-`scripts/discover_unknown_umlauts.py` implement a whitelist-based,
-reviewable workflow:
+`scripts/verify_i18n_scripts.py` is the AUTOMATED gate for this
+class (the earlier interactive `find_umlaut_candidates.py` /
+`replace_umlauts.py` / `build_in_scope_list.py` /
+`discover_unknown_umlauts.py` workflow has been removed):
 
-1. Run `python3 scripts/build_in_scope_list.py` to regenerate
-   `/tmp/in-scope-files.txt` from the policy below.
-2. Run `python3 scripts/discover_unknown_umlauts.py` to find any
-   ASCII transliterations NOT yet in `KNOWN_WORDS`. Add real
-   German words to the whitelist (one entry per declined form);
-   add false positives to the script's `NOT_TRANSLITERATIONS`
-   set so future runs stay quiet.
-3. Run `python3 scripts/find_umlaut_candidates.py` against the
-   expanded whitelist; review `/tmp/umlaut-candidates.json`.
-4. Run the replacer with `--dry-run` first; review diffs.
-5. Apply per-file with `y / N / q` prompts; after 5 clean
-   replacements the prompt offers `a` (yes-to-all) — only opt in
-   when every prior diff was clean.
-6. Re-run the finder to confirm 0 remaining candidates.
-7. UTF-8 readback every changed file before committing.
-
-Scope policy (encoded in `build_in_scope_list.py`):
-
-In scope:
-- `backend/config/i18n/de.yaml`
-- `docs/help/_meta.yaml` (display labels are German prose)
-- `docs/help/de/**/*.md`, `docs/journal/**/*.md`,
-  `docs/explorations/**/*.md`
-- `docs/CHANGELOG.md`, `docs/reference/CONCEPT.md`, `docs/ROADMAP.md`,
-  `docs/backlog.md`
-- `plugins/*/content/de/**/*.md`,
-  `plugins/*/adaptive_learner_*/content/de/**/*.md`
-- `README.md`
-
-Explicitly NOT in scope (do not add):
-- `.claude/rules/*.md` — rules are English; only the policy
-  examples reference umlauts as illustration.
-- Source code (`*.py`, `*.ts`, `*.tsx`) — identifiers stay ASCII.
-- Auto-translated non-DE i18n YAMLs (es/fr/pt/tr/ja/el/en) —
-  separate diacritic-coverage track (I18N-DIACRITICS-01).
-
-The finder masks Markdown code regions (fenced + inline +
-indented). For YAML / config files (suffix `.yaml` / `.yml`), the
-indented-code rule is skipped because YAML indentation is data,
-not code. Word-boundary regex (`\b...\b`) prevents partial
-matches inside compound identifiers.
+- **Stage 1 (de):** flags substitute-spelling forms in
+  `backend/config/i18n/de.yaml` via a curated whole-word list
+  (`DE_SUBSTITUTE_WORDS`). Legitimate digraph words (Quelle, Dauer,
+  aktuell) are not listed and can never fire; "musst" is correct
+  post-reform German and must never be added. Extend the list when a
+  new degraded form slips through — never loosen it into a bare
+  digraph scan.
+- **Stage 2 (el/hi):** flags latin TRANSLITERATION (the severest
+  class — functionally a missing translation) when a value's letters
+  are mostly latin in the Greek/Devanagari catalog, after stripping
+  `{placeholders}` and allowlisted technical/brand tokens
+  (`LATIN_ALLOWED_TOKENS` + `KEY_ALLOWLIST_PATTERNS` for theme names
+  etc.). False positives go into the allowlists, not into a weaker
+  threshold.
+- Runs via `make verify-i18n-scripts` and the `i18n-script-sanity`
+  pre-commit hook (scoped to the de/el/hi catalogs, so it also runs
+  in the CI pre-commit job). Hard gate, no baseline.
+- NOT covered by design: missing accents in otherwise-correct-script
+  es/fr/pt/tr values — not machine-detectable without a dictionary;
+  the LLM quality pass (`make i18n-quality-check`, #1296) is the tool
+  for that.
+- German PROSE outside the catalogs (docs/help/de, journal, README
+  German sections) is not gated; review it manually when authoring.
 
 ### Why this matters
 
@@ -689,10 +721,13 @@ Mixed-encoding files (BOTH real umlauts AND ASCII transliterations
 in the same paragraph) are not tooling regressions but author-
 style drift: typing in an environment without a German IME, then
 copy-pasting UTF-8 text from elsewhere. There is no
-heading / code-fence / section boundary to predict it.
-Mitigation: the scripts above run cleanly per-session against
-any new German prose; the `roadmap-archive-reminder` pre-commit
-hook can be extended later to add an umlaut check the same way.
+heading / code-fence / section boundary to predict it. The class
+recurred at scale twice (#1753: the whole #1743 i18n surface
+degraded in 7 of 11 catalogs incl. el/hi latin transliteration;
+#1758: the v1.86.0 ai_check block, found by the first #1755 lint
+run). Mitigation: the `i18n-script-sanity` pre-commit hook now
+gates the de/el/hi CATALOGS automatically (see Tooling above);
+German prose in docs stays a manual-review surface.
 
 ## Global CSS rules: distinguish viewport containers from app container
 
@@ -1872,3 +1907,47 @@ Rules:
   fragile by construction.** If a test passes only because a translation is
   missing, completing the translation breaks it. Prefer locale-agnostic
   assertions from the start.
+
+## Cross-layer assumptions must be pinned against REAL data shapes (the ghost-content recurrence class)
+
+Surfaced 2026-07-18 as the THIRD recurrence of the same class:
+
+1. **#1445/#1446 (v2.1.0):** removing a content repo left ghost progress.
+   Fixed with the availability oracle - but only for the REMOVED-REPO
+   facet, and its tests used hand-built ``{source, id}`` fixtures.
+2. **#1816 (#1818):** the oracle assumed 'listSets contains ONLY loadable
+   sets'. True in Dexie mode, FALSE in API mode (the index lists every
+   set of a registered repo; ``cached_version: null`` marks
+   not-downloaded). Dead Continue-Learning cards + 404 noise. The
+   module was GREEN against its own faulty spec because the fixtures
+   encoded the assumption instead of the real ``ContentSetEntry`` shape.
+3. **#1819:** deleting a set purges only the file cache - progress/SRS
+   rows and the Workbox ``adaptive-learner-lessons`` SW cache survive
+   (deleted lessons were literally served from the SW cache).
+
+### Rules
+
+- **A module that consumes another layer's output must pin that layer's
+  REAL shape in its tests.** Hand-built minimal fixtures encode the
+  author's assumption; when the assumption is wrong, module and tests
+  are green and wrong together. Copy the actual entry shape (here:
+  ``ContentSetEntry`` incl. ``cached_version``) into the fixture, or
+  build fixtures from the producing module's test factories.
+- **Every dual-storage assumption needs an explicit API-vs-Dexie
+  check.** 'listSets = loadable' held in one mode only. When a helper's
+  contract mentions ``listSets`` / ``getLesson`` / any
+  ``IStorageService`` surface, ask per mode: does the invariant hold in
+  BOTH implementations? If unsure, write the one-line probe test per
+  mode instead of assuming.
+- **Content lifecycle is a LIFECYCLE, not a point fix.** Add / remove /
+  delete / re-add each have residue surfaces: DB rows (progress, SRS,
+  favorites), FS/IndexedDB cache, the SW runtime cache, localStorage.
+  A fix that cleans one surface for one operation (repo removal) and
+  not its siblings (set deletion) guarantees the next recurrence. When
+  touching any lifecycle operation, enumerate ALL residue surfaces and
+  either clean them or document per surface WHY they stay (hide-not-
+  delete is fine - silent survival is not).
+- **Recurrences reopen the class, not just the instance.** When a bug
+  is a facet of an earlier fixed class, say so in the issue, link the
+  chain, and extend the ORIGINAL tests so the whole class is pinned -
+  a sibling facet fixed in isolation is the seed of recurrence #3.

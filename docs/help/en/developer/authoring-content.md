@@ -254,6 +254,172 @@ new text-MC content: correctness is a per-option flag, so the
 accept/distractor-disjointness pitfall cannot happen. See
 [Multiple Choice authoring](#multiple-choice-authoring).
 
+### Extension tier (the `ext:` namespace)
+
+Beyond the closed core enum there are exercise types in the
+`ext:<vendor>-<name>` namespace. They are structurally opaque to the core
+schema: a lesson using them declares them in `requires_extensions`, and
+the payload is validated by the registered extension, never by the core
+schema. The mechanism is described in the engine reference
+[learn-content-engine — `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md).
+The app has adopted five extension types (`SUPPORTED_EXT_EXERCISE_TYPES` in
+the `ExerciseDispatcher`; a parity gate keeps dispatcher and load guard in
+sync, so everything loadable is renderable):
+
+| Type | For what | Payload (`ext_payload`) | Adopted |
+|------|----------|-------------------------|---------|
+| `ext:al-categorization` | Sort terms into groups | `categories: [{name, items[]}]`, at least 2 buckets | #1591 (first extension type, inventory #1579) |
+| `ext:al-error-correction` | Correct a faulty text | `tokens[]` + `error_index` + `accept[]` | #1593 |
+| `ext:al-reading-comprehension` | Reading comprehension (passage + questions) | `passage` + `questions[]` (each a `multiple_choice` / `free_text` sub-question) | #1603 |
+| `ext:al-graded-quiz` | Graded quiz | `questions[]` (each with `points`) + optional `pass_threshold` | #1616; the demo reference set is hidden from Discover / My Content (#1702) |
+| `ext:al-dictation` | Audio dictation (listen, then transcribe) | `audio` (an `assets/` clip) + `accept[]` (tolerant transcription match) | #1881 (fifth adoption) |
+
+**Two authoring paths.** Extension exercises can be authored (a) directly as
+content-repo JSON (the canonical path, described in the engine reference), or
+(b) in the app. The Lesson Creator gained an **extension-authoring wizard**
+(#1852), reached from the *Advanced exercise types* template on step 1, that
+covers all five types (#1859 categorization + error-correction, #1865
+reading-comprehension + graded-quiz, #1887 dictation). Dictation is also
+reachable from the core exercise-type picker on step 3, behind a generalized
+`requires_extensions` gate (#1895). Either path emits the same lesson JSON and
+sets `requires_extensions` (versioned, e.g. `ext:al-dictation@1`).
+
+#### Example per extension type
+
+Each block is the exercise object as it appears in a lesson `.json`; the
+type-specific data lives under `ext_payload`. The canonical field reference
+is the engine's `docs/extensions.md`.
+
+```json
+{
+  "type": "ext:al-categorization",
+  "prompt": "Sort each word into fruit or vegetable.",
+  "ext_payload": {
+    "categories": [
+      {"name": "Fruit", "items": ["apple", "banana"]},
+      {"name": "Vegetable", "items": ["carrot", "potato"]}
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-error-correction",
+  "prompt": "One word is wrong. Correct it.",
+  "ext_payload": {
+    "tokens": ["The", "two", "child", "are", "playing"],
+    "error_index": 2,
+    "accept": ["children"]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-reading-comprehension",
+  "prompt": "Read the text and answer.",
+  "ext_payload": {
+    "passage": "Marie is sitting in a café. She orders a coffee and reads a book.",
+    "questions": [
+      {
+        "prompt": "Where is Marie?",
+        "type": "multiple_choice",
+        "options": [
+          {"text": "In a café", "correct": true},
+          {"text": "At home"},
+          {"text": "At the station"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-graded-quiz",
+  "prompt": "Greetings quiz.",
+  "ext_payload": {
+    "pass_threshold": 60,
+    "questions": [
+      {
+        "prompt": "How do you say 'hello' in French?",
+        "type": "multiple_choice",
+        "points": 1,
+        "options": [
+          {"text": "Bonjour", "correct": true},
+          {"text": "Merci"},
+          {"text": "Au revoir"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-dictation",
+  "prompt": "Listen and type what you hear.",
+  "ext_payload": {
+    "audio": "assets/audio/comment-ca-va.mp3",
+    "accept": ["Comment ça va ?", "Comment ca va"]
+  }
+}
+```
+
+### Lesson-wizard availability
+
+Playable (a renderer exists), generatable (the AI mix can produce it) and
+manually addable (you add and edit one by hand in step 3) are three different
+things. All six core types are playable AND generatable: the type picker in
+the create-lesson wizard (`ALL_TYPES` in `ExerciseGenerator.tsx`) offers every
+core type, and every step-3 exercise is inline-editable and reorderable, with
+a manual **+ Add exercise** button (#1849, #1853).
+
+| Type | Playable | Generatable (AI mix) | Manually addable (step 3) |
+|------|----------|----------------------|---------------------------|
+| `matching` | yes | yes | yes |
+| `free_text` | yes | yes | yes |
+| `cloze` | yes | yes | yes |
+| `word_tiles` | yes | yes | yes |
+| `picture_choice` | yes | yes | yes |
+| `multiple_choice` | yes | yes (#1853; single/multi mode control #1888) | yes |
+| `ext:al-dictation` | yes | no | yes, via the core picker (#1895) or the extension wizard (#1887) |
+| `ext:al-categorization` | yes | no | via the extension wizard (#1859) |
+| `ext:al-error-correction` | yes | no | via the extension wizard (#1859) |
+| `ext:al-reading-comprehension` | yes | no | via the extension wizard (#1865) |
+| `ext:al-graded-quiz` | yes | no | via the extension wizard (#1865) |
+
+The four non-dictation extension types are authored in the extension wizard
+(or as content-repo JSON), never mixed into the core AI generation.
+
+**Listen-first is a mode, not a type.** Since #1687 (decision #1600,
+option A) `free_text` and `matching` exercises can carry an audio-first
+element (listen first, then answer). The exercise's type does not change.
+Option B of the same decision, a dictation type, shipped as the
+`ext:al-dictation` extension (#1881), documented in the extension tier above.
+
+### The Lesson Creator as an authoring tool
+
+The in-app Lesson Creator (`/create-lesson`) is a full authoring surface, not
+only an AI-generate button:
+
+- **Every step-3 exercise is editable in place.** Each generated or added
+  exercise opens in an inline editor (all six core types, plus the extension
+  editors); reorder by drag, delete, or regenerate the whole mix (#1845).
+- **Add an exercise by hand.** The **+ Add exercise** button picks a type and
+  appends an empty exercise straight into the inline editor, so you can author
+  without any AI generation (#1849, #1853). The picker lists the six core types
+  plus dictation (#1895).
+- **The example sentence drives generation.** A card (step 2) can carry an
+  optional **example sentence**. It is what enables `cloze` and `word_tiles`
+  generation for that card (for cloze, the sentence must contain the card's
+  front term so it can be blanked out), and a card image enables
+  `picture_choice`. Without them those types are silently skipped, and step 3
+  explains which selected type produced nothing (#1847, #1848).
+
 ### Expressible without a new type (conventions, not types)
 
 | Concept | How |
@@ -278,11 +444,73 @@ accept/distractor-disjointness pitfall cannot happen. See
 | Matrix / Likert / slider | Survey types, not learning types. |
 | Date / time pickers | Form types, not learning types. |
 
+### Video content: link it, don't ship it
+
+Native video (and audio) upload is deliberately excluded (see the table
+above): storing media assets locally conflicts with the offline-first
+storage limits. The recommended pattern delivers the same learning value
+without shipping a single byte of video - link the video externally and
+build a reading-comprehension exercise on its transcript.
+
+**1. Link the video as companion media.** Add it to the lesson's
+`resources[]` (a `LessonResource`, EXP-029) so it renders in the lesson's
+*Explore further* ("Vertiefe das Thema") section. A YouTube clip uses
+`type: "youtube"`:
+
+```json
+"resources": [
+  {
+    "type": "youtube",
+    "title": "Se présenter en français (A1)",
+    "url": "https://www.youtube.com/watch?v=XXXXXXXXXXX",
+    "language": "fr",
+    "level": "A1",
+    "free": true
+  }
+]
+```
+
+**2. Assess understanding with the transcript.** Add an
+`ext:al-reading-comprehension` exercise whose `passage` is the video's
+transcript (or a self-contained excerpt from it), with the comprehension
+questions over it:
+
+```json
+{
+  "type": "ext:al-reading-comprehension",
+  "prompt": "Watch the video, then answer.",
+  "ext_payload": {
+    "passage": "Bonjour ! Je m'appelle Camille. J'ai vingt-cinq ans et j'habite à Lyon. Je suis étudiante et j'aime la musique.",
+    "questions": [
+      {
+        "prompt": "Où habite Camille ?",
+        "type": "multiple_choice",
+        "options": [
+          {"text": "À Lyon", "correct": true},
+          {"text": "À Paris"},
+          {"text": "À Marseille"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+The exercise is fully offline and SRS-graded like any other; the video is
+optional enrichment reached through *Explore further*, so a learner with
+no connectivity still gets the transcript-based comprehension.
+
+**The transcript pays for itself twice.** A transcript (or captions) is
+already the accessibility baseline any video should carry for WCAG. Here
+that same transcript becomes the `passage` of the comprehension exercise:
+one artefact, two uses, accessibility compliance and a gradable exercise
+from the same source.
+
 ## Exercise type reference
 
 The per-type field reference — `matching`, `picture_choice`,
-`free_text`, `word_tiles` and `cloze` with its `type` / `select` /
-`multiselect` modes: required fields, JSON examples and the semantic
+`free_text`, `word_tiles`, `multiple_choice` and `cloze` with its
+`type` / `select` / `multiselect` modes: required fields, JSON examples and the semantic
 rules (cloze `___` markers == `blanks`, `card_ids` referential
 integrity, multiselect accept/distractor disjointness, picture-choice
 exactly-one-correct) — lives in the engine reference:
@@ -782,6 +1010,11 @@ structure.
 
 ## Path to community contribution (v1.42.0)
 
+> **Step-by-step walkthrough with screenshots:**
+> [Create a lesson in the app, step by step](https://medium.com/@asterios-raptis/create-a-lesson-in-the-app-step-by-step-dadd6927829f)
+> (Medium) walks through the in-app Lesson Creator end to end, from the
+> first card to sharing the finished lesson.
+
 You do not have to create lessons from scratch by hand. The
 fastest way to contribute is to **create and share a lesson in the
 app**:
@@ -871,3 +1104,4 @@ one source language but is missing for another ("Can you help?").
 - [Creating lessons — overview](../content-creation/overview.md) — getting started + the in-app Lesson Creator
 - [Book recommendations](../content-creation/books.md) — maintaining `books.yaml` per domain
 - [Multiple content repositories](../features/content-repos.md) — connect your own repo
+- [Create a lesson in the app, step by step](https://medium.com/@asterios-raptis/create-a-lesson-in-the-app-step-by-step-dadd6927829f) — external Medium walkthrough with screenshots

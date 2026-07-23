@@ -24,7 +24,7 @@
 - Props defined as an interface.
 - Extract complex logic into utility functions or the API client, not into components.
 - Styling: Tailwind CSS (v4) utility classes preferred (adopted v1.54.0+). Do NOT add new entries to global.css; utilities resolve to the existing CSS variables, so theming still works. Existing component CSS is migrated when the component is touched, not proactively. See docs/development/tailwind-migration.md.
-- shadcn/ui: use for UI primitives (Dialog, Tabs, Toast, Button, Input, Select). Add components with `npx shadcn@latest add {component}`. shadcn wraps Radix; prefer it over wiring Radix directly for new UI.
+- shadcn/ui: use for UI primitives (Dialog, Tabs, Toast, Button, Input, Select). Add components with `bunx shadcn@latest add {component}`. shadcn wraps Radix; prefer it over wiring Radix directly for new UI.
 - Radix UI for dialogs, dropdowns, tooltips, tabs, select where shadcn/ui is not yet wired. No custom DOM handling for those.
 - @dnd-kit for drag-and-drop. No manual DnD.
 - Lucide React for icons. No other icon libraries.
@@ -66,6 +66,22 @@
 - Branch naming: feature/{name}, fix/{name}, chore/{name} (from develop);
   release/vX.Y.Z (from develop, merges to main + back to develop);
   hotfix/vX.Y.Z (from main, merges to main + develop).
+- **Open a PR for every pushed code change, by default (PR-PFLICHT,
+  ai-workflow.md).** After committing and pushing a branch, open a PR
+  against `develop` whether or not the task asked for one — a pushed
+  branch with no PR is unfinished work. Skip only for a release freeze
+  or a task that changes no committed files. "No PR, wasn't requested"
+  is not a valid completion report.
+- **User-visible functionality updates the manual test plan
+  (TESTPLAN-PFLICHT, ai-workflow.md).** A PR that adds or changes
+  user-visible behaviour (new buttons, wizard steps, exercise types,
+  changed user flows) updates
+  `docs/manual-tests/testplan-adaptive-learner.md` + `-en.md` in the
+  same PR — or, when that would blow up the PR's scope, leaves a
+  referenced follow-up comment on #1087. Exempt: pure refactorings
+  without behaviour change, pure infra/CI, pure docs, and bug fixes
+  that add no new user path. "Testplan update wasn't requested" is not
+  a valid reason to skip.
 - Do not add `Co-Authored-By` trailers attributing non-human
   collaborators (AI tools, automation bots, MCP agents). Human
   co-authors are attributed via the standard GitHub mechanism.

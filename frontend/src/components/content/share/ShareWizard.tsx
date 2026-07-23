@@ -63,13 +63,13 @@ export default function ShareWizard(props: ShareWizardProps) {
         aria-describedby="share-wizard-description"
         className="max-h-[90vh] overflow-y-auto"
       >
-        <header className="share-wizard-header">
+        <header className="share-wizard-header mb-4 flex flex-col gap-1">
           <DialogTitle id="share-wizard-title" className="modal-title">
             {t("content.wizard.title", "Share with the community")}
           </DialogTitle>
           <DialogDescription
             id="share-wizard-description"
-            className="share-wizard-progress"
+            className="share-wizard-progress text-sm text-fg-secondary"
             data-testid="share-wizard-progress"
           >
             {stepLabel}

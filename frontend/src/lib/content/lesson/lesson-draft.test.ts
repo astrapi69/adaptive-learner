@@ -114,4 +114,43 @@ describe("lesson-draft", () => {
     it("newCardId produces unique ids", () => {
         expect(newCardId()).not.toBe(newCardId());
     });
+
+    // #1797 — cards can carry additional accepted answers for the
+    // free-text generator; they must survive a draft round-trip.
+    it("round-trips a card's altAnswers", () => {
+        saveLessonDraft(
+            draft({
+                cards: [
+                    {
+                        id: "c1",
+                        front: "single",
+                        back: "Single",
+                        notes: "",
+                        image: "",
+                        altAnswers: ["noch Single", "alleinstehend"],
+                    },
+                ],
+            }),
+        );
+        const loaded = loadLessonDraft();
+        expect(loaded?.cards[0].altAnswers).toEqual([
+            "noch Single",
+            "alleinstehend",
+        ]);
+    });
+
+    it("defaults altAnswers to an empty array for legacy cards", () => {
+        localStorage.setItem(
+            "adaptive-learner.lesson-draft",
+            JSON.stringify(
+                draft({
+                    cards: [
+                        {id: "c1", front: "Bonjour", back: "Hallo", notes: "", image: ""},
+                    ] as never,
+                }),
+            ),
+        );
+        const loaded = loadLessonDraft();
+        expect(loaded?.cards[0].altAnswers).toEqual([]);
+    });
 });

@@ -25,8 +25,10 @@ const DE: Catalog = {
     landing: {
         title: "Adaptive Learner",
         subtitle: "Lernen, das sich an dich anpasst.",
+        intro: "Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Session.",
         choose_language: "Sprache wählen",
         start_button: "Lernreise beginnen",
+        docs_link: "Dokumentation lesen",
     },
     nav: {
         dashboard: "Dashboard",
@@ -117,8 +119,10 @@ const EN: Catalog = {
     landing: {
         title: "Adaptive Learner",
         subtitle: "Learning that adapts to you.",
+        intro: "Adaptive Learner finds the method that fits you best from six research-backed learning approaches, and walks you through a seven-step cycle on every session.",
         choose_language: "Choose your language",
         start_button: "Start your learning journey",
+        docs_link: "Read the documentation",
     },
     nav: {
         dashboard: "Dashboard",
@@ -211,8 +215,10 @@ const ES: Catalog = {
     landing: {
         title: "Adaptive Learner",
         subtitle: "Aprendizaje que se adapta a ti.",
+        intro: "Adaptive Learner encuentra el método que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigación, y te acompaña en un ciclo de siete pasos en cada sesión.",
         choose_language: "Elige tu idioma",
         start_button: "Comienza tu viaje de aprendizaje",
+        docs_link: "Leer la documentación",
     },
     nav: {
         dashboard: "Panel",
@@ -300,8 +306,10 @@ const FR: Catalog = {
     landing: {
         title: "Adaptive Learner",
         subtitle: "Un apprentissage qui s'adapte a toi.",
+        intro: "Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basées sur la recherche et t'accompagne dans un cycle en sept étapes à chaque session.",
         choose_language: "Choisis ta langue",
         start_button: "Commencer ton parcours d'apprentissage",
+        docs_link: "Lire la documentation",
     },
     nav: {
         dashboard: "Tableau de bord",
@@ -389,8 +397,10 @@ const EL: Catalog = {
     landing: {
         title: "Adaptive Learner",
         subtitle: "Μάθηση που προσαρμόζεται σε σένα.",
+        intro: "Το Adaptive Learner βρίσκει τη μέθοδο που σου ταιριάζει καλύτερα από έξι ερευνητικά τεκμηριωμένες προσεγγίσεις και σε καθοδηγεί σε έναν κύκλο επτά βημάτων σε κάθε συνεδρία.",
         choose_language: "Επίλεξε τη γλώσσα σου",
         start_button: "Ξεκίνα το ταξίδι μάθησής σου",
+        docs_link: "Διαβάστε την τεκμηρίωση",
     },
     nav: {
         dashboard: "Πίνακας",

@@ -142,7 +142,12 @@ VERSION_TARGETS = [
     ("README.md", r"badge/version-v(\d+\.\d+\.\d+)-blue", "README version badge", True),
     ("README.md", r"current release is \*\*v(\d+\.\d+\.\d+)\*\*", "README status release", True),
     ("README-de.md", r"badge/version-v(\d+\.\d+\.\d+)-blue", "README-de version badge", True),
-    ("CLAUDE.md", r"\*\*Current state:\*\* \*\*v(\d+\.\d+\.\d+)\*\*", "CLAUDE.md current state", True),
+    (
+        "CLAUDE.md",
+        r"\*\*Current state:\*\* \*\*v(\d+\.\d+\.\d+)\*\*",
+        "CLAUDE.md current state",
+        True,
+    ),
     ("docs/ROADMAP.md", r"Current state: \*\*v(\d+\.\d+\.\d+)", "ROADMAP.md header", False),
     ("docs/backlog.md", r"State: \*\*post v(\d+\.\d+\.\d+)", "backlog.md header", False),
 ]
@@ -237,7 +242,10 @@ def check_test_counts(report: Report, fix: bool, run_collection: bool) -> None:
     text = read(claude)
     match = re.search(TEST_COUNT_RE, text, re.DOTALL)
     if not match:
-        report.warn("test-counts", "CLAUDE.md: could not parse the 'backend N + plugins N + Vitest N = N tests' line")
+        report.warn(
+            "test-counts",
+            "CLAUDE.md: could not parse the 'backend N + plugins N + Vitest N = N tests' line",
+        )
         return
     backend, plugins, vitest, total = (int(g) for g in match.groups())
     summed = backend + plugins + vitest
@@ -255,9 +263,16 @@ def check_test_counts(report: Report, fix: bool, run_collection: bool) -> None:
             )
             if n:
                 claude.write_text(new_text, encoding="utf-8")
-                report.warn("test-counts", f"CLAUDE.md test total {total} -> {summed} (arithmetic auto-fixed)", fixed=True)
+                report.warn(
+                    "test-counts",
+                    f"CLAUDE.md test total {total} -> {summed} (arithmetic auto-fixed)",
+                    fixed=True,
+                )
         else:
-            report.warn("test-counts", f"CLAUDE.md test total is {total} but {backend}+{plugins}+{vitest}={summed}")
+            report.warn(
+                "test-counts",
+                f"CLAUDE.md test total is {total} but {backend}+{plugins}+{vitest}={summed}",
+            )
 
     consistent_total = summed  # the value the badge should mirror
 
@@ -277,12 +292,20 @@ def check_test_counts(report: Report, fix: bool, run_collection: bool) -> None:
             new_text, n = replace_group(rtext, TEST_BADGE_RE, str(consistent_total))
             if n:
                 path.write_text(new_text, encoding="utf-8")
-                report.warn("test-counts", f"{rel} test badge {badge} -> {consistent_total} (auto-fixed)", fixed=True)
+                report.warn(
+                    "test-counts",
+                    f"{rel} test badge {badge} -> {consistent_total} (auto-fixed)",
+                    fixed=True,
+                )
                 continue
-        report.warn("test-counts", f"{rel} test badge says {badge}, CLAUDE total is {consistent_total}")
+        report.warn(
+            "test-counts", f"{rel} test badge says {badge}, CLAUDE total is {consistent_total}"
+        )
 
     if not run_collection:
-        report.note("test-counts: actual pytest/vitest collection skipped (pass --test-counts to enable the 5% drift check)")
+        report.note(
+            "test-counts: actual pytest/vitest collection skipped (pass --test-counts to enable the 5% drift check)"
+        )
         return
 
     actual = _collect_actual_test_counts(report)
@@ -320,7 +343,9 @@ def _collect_actual_test_counts(report: Report):
         except (OSError, subprocess.SubprocessError) as exc:
             report.note(f"test-counts: pytest collection in {cwd} failed: {exc}")
             return 0
-        m = re.search(r"(\d+) tests? collected", out) or re.search(r"(\d+)/\d+ tests collected", out)
+        m = re.search(r"(\d+) tests? collected", out) or re.search(
+            r"(\d+)/\d+ tests collected", out
+        )
         return int(m.group(1)) if m else 0
 
     backend = collect_pytest(REPO / "backend")
@@ -349,17 +374,54 @@ def _collect_actual_test_counts(report: Report):
 # ---------------------------------------------------------------------------
 
 _STOPWORDS = {
-    "the", "and", "for", "with", "from", "into", "via", "per", "new", "all",
-    "now", "add", "added", "fix", "fixed", "more", "also", "plus", "system",
-    "support", "mode", "page", "phase", "release", "this", "that", "across",
+    "the",
+    "and",
+    "for",
+    "with",
+    "from",
+    "into",
+    "via",
+    "per",
+    "new",
+    "all",
+    "now",
+    "add",
+    "added",
+    "fix",
+    "fixed",
+    "more",
+    "also",
+    "plus",
+    "system",
+    "support",
+    "mode",
+    "page",
+    "phase",
+    "release",
+    "this",
+    "that",
+    "across",
 }
 
 # Generic changelog section headings -- not feature names, skip them.
 _SECTION_HEADINGS = {
-    "added", "changed", "fixed", "removed", "deprecated", "security",
-    "notes", "quality", "under the hood", "also in this release",
-    "dependencies", "decisions confirmed in this release", "what's new",
-    "breaking changes", "migration", "tests", "documentation",
+    "added",
+    "changed",
+    "fixed",
+    "removed",
+    "deprecated",
+    "security",
+    "notes",
+    "quality",
+    "under the hood",
+    "also in this release",
+    "dependencies",
+    "decisions confirmed in this release",
+    "what's new",
+    "breaking changes",
+    "migration",
+    "tests",
+    "documentation",
 }
 
 
@@ -394,14 +456,18 @@ def check_feature_completeness(report: Report) -> None:
                 continue
             if re.match(r"(?i)^bug\b", heading.strip()):
                 continue
-            tokens = [t for t in re.findall(r"[A-Za-z][A-Za-z0-9+-]{2,}", heading.lower()) if t not in _STOPWORDS]
+            tokens = [
+                t
+                for t in re.findall(r"[A-Za-z][A-Za-z0-9+-]{2,}", heading.lower())
+                if t not in _STOPWORDS
+            ]
             if not tokens:
                 continue
             # If NONE of the heading's key tokens appear in the README,
             # the feature is likely unmentioned.
             if not any(t in readme_text for t in tokens):
                 vstr = ".".join(str(p) for p in version)
-                missing.append(f"v{vstr}: \"{heading}\"")
+                missing.append(f'v{vstr}: "{heading}"')
 
     if missing:
         shown = missing[:12]
@@ -499,6 +565,32 @@ def check_themes(report: Report) -> None:
 # Check: mkdocs nav orphans + dead links  (FAIL)
 # ---------------------------------------------------------------------------
 
+# Help-site index pages must be VERSIONLESS (#1766): the deployed front
+# pages drifted into three different stale claims (de/en v1.91.0, es/ja
+# v1.47.0, tr/el v1.20.0) because nothing gated them. Any v-prefixed
+# version-shape literal on an index page fails hard - link to the GitHub
+# Releases page instead of hardcoding a number.
+HELP_INDEX_VERSION_RE = re.compile(r"\bv\d+\.\d+(?:\.\d+)?\b")
+
+
+def check_help_index_versions(report: Report, help_dir: Path | None = None) -> None:
+    """FAIL on any vX.Y[.Z] literal in docs/help/*/index.md (#1766)."""
+    root = help_dir if help_dir is not None else REPO / "docs" / "help"
+    index_pages = sorted(root.glob("*/index.md"))
+    if not index_pages:
+        report.warn("help-index-versions", f"no index pages found under {root}")
+        return
+    for page in index_pages:
+        for line_number, line in enumerate(read(page).splitlines(), start=1):
+            for match in HELP_INDEX_VERSION_RE.finditer(line):
+                report.fail(
+                    "help-index-versions",
+                    f"{page.parent.name}/index.md:{line_number}: version literal "
+                    f"{match.group(0)} (help index pages are versionless - "
+                    "link to GitHub Releases instead, #1766)",
+                )
+
+
 # mkdocs.yml's docs_dir is docs/help; the nav references the German
 # variant (de/<slug>.md). mkdocs-static-i18n maps de->en, so the en/
 # tree is an i18n mirror, not separately listed. We therefore check
@@ -571,9 +663,15 @@ def check_help_coverage(report: Report) -> None:
     only_en = sorted(en - de)
     only_de = sorted(de - en)
     if only_en:
-        report.fail("help-coverage", f"{len(only_en)} EN help page(s) with no DE counterpart: {', '.join(only_en[:8])}")
+        report.fail(
+            "help-coverage",
+            f"{len(only_en)} EN help page(s) with no DE counterpart: {', '.join(only_en[:8])}",
+        )
     if only_de:
-        report.fail("help-coverage", f"{len(only_de)} DE help page(s) with no EN counterpart: {', '.join(only_de[:8])}")
+        report.fail(
+            "help-coverage",
+            f"{len(only_de)} DE help page(s) with no EN counterpart: {', '.join(only_de[:8])}",
+        )
 
     # Route coverage (heuristic): every navigable route should be
     # describable from some help page. Many routes legitimately have
@@ -651,7 +749,9 @@ def check_i18n(report: Report, fix: bool) -> None:
                 f"{path.name}: {len(missing)}/{len(en_keys)} keys missing vs en "
                 f"({len(missing) / len(en_keys):.0%}): {', '.join(shown)} ...",
             )
-    report.note("i18n: backend-YAML <-> frontend-JSON sync drift is gated separately by frontend i18n-sync.test.ts (make test)")
+    report.note(
+        "i18n: backend-YAML <-> frontend-JSON sync drift is gated separately by frontend i18n-sync.test.ts (make test)"
+    )
 
 
 def _run_sync_i18n(report: Report) -> None:
@@ -669,9 +769,16 @@ def _run_sync_i18n(report: Report) -> None:
             timeout=120,
         )
         if result.returncode == 0:
-            report.warn("i18n", "ran sync_i18n_to_frontend.py to refresh frontend JSON from backend YAML (auto-fixed)", fixed=True)
+            report.warn(
+                "i18n",
+                "ran sync_i18n_to_frontend.py to refresh frontend JSON from backend YAML (auto-fixed)",
+                fixed=True,
+            )
         else:
-            report.warn("i18n", f"sync_i18n_to_frontend.py exited {result.returncode}: {result.stderr.strip()[:200]}")
+            report.warn(
+                "i18n",
+                f"sync_i18n_to_frontend.py exited {result.returncode}: {result.stderr.strip()[:200]}",
+            )
     except (OSError, subprocess.SubprocessError) as exc:
         report.warn("i18n", f"could not run sync_i18n_to_frontend.py: {exc}")
 
@@ -688,6 +795,7 @@ CHECKS = {
     "stale-dates": lambda r, o: check_stale_dates(r),
     "themes": lambda r, o: check_themes(r),
     "mkdocs": lambda r, o: check_mkdocs(r),
+    "help-index-versions": lambda r, o: check_help_index_versions(r),
     "help-coverage": lambda r, o: check_help_coverage(r),
     "i18n": lambda r, o: check_i18n(r, o.fix),
 }
@@ -735,7 +843,9 @@ def main(argv: list[str]) -> int:
         help="comma-separated subset of checks to run (default: all)",
     )
     parser.add_argument("--list", action="store_true", help="list registered checks and exit")
-    parser.add_argument("--fix", action="store_true", help="best-effort auto-fix of mechanical drift")
+    parser.add_argument(
+        "--fix", action="store_true", help="best-effort auto-fix of mechanical drift"
+    )
     parser.add_argument(
         "--test-counts",
         dest="test_counts",

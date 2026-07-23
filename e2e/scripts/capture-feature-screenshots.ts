@@ -354,6 +354,43 @@ async function gotoSyncDesktopOnlyNotice(page: Page): Promise<boolean> {
  * Every per-feature baseline. Kebab-case ``<feature-folder>/<shot>`` paths;
  * the test loop appends the viewport suffix + ``.png``.
  */
+/**
+ * Open the Create-Lesson book-text step and upload a small Markdown book
+ * so the #1927 section picker (chapter select + preview + apply) renders.
+ */
+async function gotoBookUploadPicker(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/create-lesson");
+    await expect(page.getByTestId("create-lesson-page")).toBeVisible({
+        timeout: 20_000,
+    });
+    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+        await page.getByTestId("create-lesson-draft-fresh").click();
+    }
+    await page.getByTestId("create-lesson-title").fill("Lernpsychologie");
+    await page.getByTestId("template-knowledge-from-text").click();
+    await expect(page.getByTestId("create-lesson-book-step")).toBeVisible({
+        timeout: 20_000,
+    });
+    const markdown = [
+        "# Die klassische Konditionierung",
+        "Iwan Pawlow zeigte, wie ein neutraler Reiz durch Kopplung mit einem",
+        "unbedingten Reiz eine gelernte Reaktion ausloest.",
+        "# Die operante Konditionierung",
+        "B. F. Skinner beschrieb, wie Verstaerkung und Bestrafung die",
+        "Auftretenswahrscheinlichkeit von Verhalten veraendern.",
+    ].join("\n");
+    await page.getByTestId("book-upload-input").setInputFiles({
+        name: "lernpsychologie.md",
+        mimeType: "text/markdown",
+        buffer: Buffer.from(markdown, "utf-8"),
+    });
+    await expect(page.getByTestId("book-upload-picker")).toBeVisible({
+        timeout: 20_000,
+    });
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
     // --- Tabbed hubs -----------------------------------------------------
     {path: "dashboard-tabs/uebersicht", setup: (p) => gotoDashboardTab(p, "overview")},
@@ -502,6 +539,13 @@ const FEATURES: FeatureShot[] = [
 
     // --- Sync (Dexie-mode desktop-only notice, #335 / #1480) ------------
     {path: "sync/desktop-only-hinweis", setup: gotoSyncDesktopOnlyNotice},
+
+    // --- Create-Lesson book-text file upload (#1927) --------------------
+    {
+        path: "create-lesson/buch-upload-picker",
+        setup: gotoBookUploadPicker,
+        pinTo: "book-file-upload",
+    },
 ];
 
 for (const feature of FEATURES) {

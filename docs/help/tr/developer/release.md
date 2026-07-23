@@ -72,7 +72,7 @@ make sync-versions
 ```bash
 make sync-versions-check     # sapma durumunda sıfır dışı çıkar
 make test                    # 2634 test geçmeli
-cd frontend && npm run build # başarılı olmalı
+cd frontend && bun run build # başarılı olmalı
 ```
 
 ### 6. Commit + etiket

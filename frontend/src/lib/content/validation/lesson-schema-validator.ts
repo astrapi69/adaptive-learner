@@ -74,6 +74,7 @@ export const SUPPORTED_EXTENSIONS: readonly string[] = [
   "ext:al-error-correction",
   "ext:al-reading-comprehension",
   "ext:al-graded-quiz",
+  "ext:al-dictation",
 ];
 
 /** The extension-tier load guard (#1565): structurally a lesson declaring
@@ -93,12 +94,53 @@ function unsupportedExtensionErrors(value: unknown): string[] {
     );
 }
 
+/** The reserved prefix of every extension exercise type. */
+const EXTENSION_TYPE_PREFIX = "ext:";
+
+/** The reverse-consistency guard (#1895): a lesson that USES an extension
+ *  exercise type but never DECLARES it in ``requires_extensions`` loads fine
+ *  in an app that supports the extension yet falls through to unknown-type
+ *  rendering in one that does not - the same E-EXT-UNSUPPORTED silent failure
+ *  {@link unsupportedExtensionErrors} guards from the declaration side. This
+ *  closes the class for EVERY build path (main wizard, book, edit), not just
+ *  the extension wizard that already declares. Refuse loudly, naming the
+ *  undeclared type. */
+function undeclaredExtensionErrors(value: unknown): string[] {
+  const lesson = value as {
+    steps?: unknown;
+    requires_extensions?: unknown;
+  };
+  const steps = Array.isArray(lesson.steps) ? lesson.steps : [];
+  const declared = new Set(
+    (Array.isArray(lesson.requires_extensions) ? lesson.requires_extensions : [])
+      .filter((entry): entry is string => typeof entry === "string")
+      .map((entry) => entry.split("@")[0] ?? entry),
+  );
+  const seen = new Set<string>();
+  const errors: string[] = [];
+  for (const step of steps) {
+    const type = (step as { exercise?: { type?: unknown } })?.exercise?.type;
+    if (typeof type !== "string" || !type.startsWith(EXTENSION_TYPE_PREFIX)) {
+      continue;
+    }
+    if (declared.has(type) || seen.has(type)) continue;
+    seen.add(type);
+    errors.push(
+      `/requires_extensions: exercise type '${type}' is used but not declared in requires_extensions - the lesson would mis-render in an app without it`,
+    );
+  }
+  return errors;
+}
+
 export function validateLessonShape(value: unknown): ShapeResult {
   const ok = validateFn(value) as boolean;
   if (!ok) {
     return { ok: false, errors: (validateFn.errors ?? []).map(formatError) };
   }
-  const extensionErrors = unsupportedExtensionErrors(value);
+  const extensionErrors = [
+    ...unsupportedExtensionErrors(value),
+    ...undeclaredExtensionErrors(value),
+  ];
   if (extensionErrors.length > 0) return { ok: false, errors: extensionErrors };
   return { ok: true, errors: [] };
 }

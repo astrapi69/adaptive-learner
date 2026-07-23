@@ -9,8 +9,9 @@ inşa edilmiş açık kaynaklı bir öğrenme yardımcısıdır. 12 soruluk
 bir değerlendirme yaparsınız, uygulama size hangi yöntemlerin
 uyduğunu keşfeder; ardından yapay zeka destekli oturumlar sizi
 yedi adımlı bir öğrenme döngüsünde ilerletir. Uygulama, gerçekten
-nasıl öğrendiğinize göre öğretme biçimini uyarlar. **v1.20.0**,
-34 geliştirme aşaması tamamlandı.
+nasıl öğrendiğinize göre öğretme biçimini uyarlar. Sürekli
+geliştirilmektedir — güncel sürüm için
+[Releases sayfasına](https://github.com/astrapi69/adaptive-learner/releases) bakın.
 
 [Şimdi deneyin](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
@@ -90,9 +91,8 @@ ilerlemeyi açığa çıkardığı.
 
 ## Durum
 
-Aktif geliştirme. **v1.20.0, 2026-05-22 tarihinde yayımlandı**;
-masaüstü başlatıcı kullanım durumu için `secrets.yaml` dosya
-tabanlı anahtar yapılandırması eklendi.
+Aktif geliştirme. Güncel sürüm ve öne çıkan yenilikler için
+[GitHub Releases sayfasına](https://github.com/astrapi69/adaptive-learner/releases) bakın.
 
 - **2634 test** (786 arka uç + 615 eklenti + 1233 ön uç Vitest
   + 16 Playwright duman testi spec dosyası)

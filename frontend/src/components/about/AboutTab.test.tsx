@@ -19,6 +19,7 @@ import LicenseResourcesSection from "./LicenseResourcesSection";
 import SystemInfoSection from "./SystemInfoSection";
 import VersionSection from "./VersionSection";
 import {I18nProvider} from "../../hooks/ui/useI18n";
+import AppUpdateProvider from "../pwa/AppUpdateProvider";
 import {_resetStorageCacheForTests} from "../../storage";
 import type {SystemInfo} from "../../types/domain";
 
@@ -90,11 +91,25 @@ function tFn(_key: string, fallback?: string): string {
     return fallback ?? _key;
 }
 
+/**
+ * #1873 — VersionSection renders the kit's VersionCard, which reads the
+ * update context. Wrap it the way the app does.
+ */
+function renderVersionSection(info: SystemInfo) {
+    return render(
+        <I18nProvider>
+            <AppUpdateProvider>
+                <VersionSection info={info} t={tFn} />
+            </AppUpdateProvider>
+        </I18nProvider>,
+    );
+}
+
 // ---- VersionSection -------------------------------------------------
 
 describe("VersionSection", () => {
     it("renders version, build hash link, build date", () => {
-        render(<VersionSection info={apiInfo} t={tFn} />);
+        renderVersionSection(apiInfo);
         expect(screen.getByTestId("about-app-version").textContent).toContain(
             "1.1.0",
         );
@@ -109,7 +124,7 @@ describe("VersionSection", () => {
     });
 
     it("renders the 'unknown' sentinel without a commit link", () => {
-        render(<VersionSection info={dexieInfo} t={tFn} />);
+        renderVersionSection(dexieInfo);
         expect(screen.queryByTestId("about-build-hash-link")).toBeNull();
         expect(screen.getByTestId("about-build-hash").textContent).toBe(
             "unknown",
@@ -298,7 +313,9 @@ describe("AboutTab", () => {
         render(
             <MemoryRouter>
                 <I18nProvider>
+                    <AppUpdateProvider>
                     <AboutTab />
+                    </AppUpdateProvider>
                 </I18nProvider>
             </MemoryRouter>,
         );
@@ -320,7 +337,9 @@ describe("AboutTab", () => {
         render(
             <MemoryRouter>
                 <I18nProvider>
+                    <AppUpdateProvider>
                     <AboutTab />
+                    </AppUpdateProvider>
                 </I18nProvider>
             </MemoryRouter>,
         );
@@ -334,24 +353,33 @@ describe("AboutTab", () => {
 
     it("uses Dexie's synthetic payload when storage mode is dexie", async () => {
         localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+        // #1875 — pin the UI language to DE. The assertion below reads the
+        // German storage-mode label, but I18nProvider resolves the initial
+        // language as saved -> navigator -> "de": with no saved choice (the
+        // beforeEach clears localStorage) and happy-dom's navigator.language
+        // "en-US", it settles on EN in isolation, so the label stays English
+        // and the wait times out. In the full suite a prior test happens to
+        // leave DE cached, masking this. Seed the saved DE choice so the
+        // language resolves deterministically regardless of run order.
+        localStorage.setItem("adaptive-learner.language", "de");
         _resetStorageCacheForTests();
         const {getStorage} = await import("../../storage");
         vi.spyOn(getStorage().system, "info").mockResolvedValue(dexieInfo);
         render(
             <MemoryRouter>
                 <I18nProvider>
+                    <AppUpdateProvider>
                     <AboutTab />
+                    </AppUpdateProvider>
                 </I18nProvider>
             </MemoryRouter>,
         );
         await waitFor(() => {
             expect(screen.getByTestId("about-content")).toBeTruthy();
         });
-        // I18nProvider defaults to lang="de" and loads the bundled DE
-        // catalog (Phase 29F hotfix), so the storage-mode label resolves
-        // to its DE translation. The catalog is now a lazily-imported
-        // per-language chunk (perf F-1, v1.56.0), so wait for the DE
-        // string to land rather than reading it synchronously.
+        // The DE catalog is a lazily-imported per-language chunk (perf F-1,
+        // v1.56.0), so wait for the German string to land rather than reading
+        // it synchronously.
         await waitFor(() =>
             expect(
                 screen.getByTestId("about-storage-mode").textContent,

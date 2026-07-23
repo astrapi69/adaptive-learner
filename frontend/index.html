@@ -10,8 +10,16 @@
          user-scalable for accessibility), so manual zoom keeps working; only
          the automatic focus-zoom is suppressed. Trade-off tracked in #1569;
          the axe `meta-viewport` rule is deliberately excluded in the a11y
-         specs with the same reference. -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+         specs with the same reference.
+         #1569 (tap-offset half): `interactive-widget=resizes-content` makes
+         the on-screen keyboard resize the LAYOUT viewport (iOS Safari 17.4+),
+         so `dvh` + the hit-test grid track the keyboard and the visual and
+         layout viewports coincide — the declarative form of what the
+         reverted #1570 shell hook attempted in JS, engine-atomic and free of
+         its zoom-misdetection flaw. Engines without support ignore the key
+         and keep today's overlay behaviour; the useVisualViewportRealign
+         hook (App.tsx) then covers the lingering phantom-scroll offset. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content"/>
     <!-- The .ico fallback is the FIRST tag on purpose: browsers
          that hit /favicon.ico directly (tab restore, bookmarks,
          many crawlers) ignore the <link> tag below entirely.

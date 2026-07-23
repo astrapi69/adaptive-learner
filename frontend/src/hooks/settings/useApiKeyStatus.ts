@@ -44,6 +44,7 @@ import {useCallback, useEffect, useState} from "react";
 
 import type {AIProvider} from "../../lib/constants";
 import {readLearnerState} from "../../lib/learning/learnerState";
+import {subscribeSettingsRefresh} from "../../lib/settings/settings-refresh-bus";
 import {getStorage} from "../../storage";
 
 interface ApiKeyStatus {
@@ -111,6 +112,25 @@ async function fetchSnapshot(userId: string): Promise<Snapshot> {
     return promise;
 }
 
+// The encrypted key-vault import + backup restore mutate the
+// persisted settings and announce it on the shared
+// ``settings-refresh-bus`` (#1765) rather than calling this
+// module directly. Without wiring the two, an imported key stayed
+// invisible to every AI gate (the NotebookLM / Anki / Import "API
+// key required" notices) until a manual reload (#1836). We attach
+// ONCE to the bus — the same emit now drives System B too, so the
+// whole class (import AND the latent backup-restore case) is fixed
+// in one place instead of a third bespoke check.
+let busWired = false;
+
+function ensureBusWiring(): void {
+    if (busWired) return;
+    busWired = true;
+    subscribeSettingsRefresh(() => {
+        void refreshApiKeyStatus();
+    });
+}
+
 /**
  * Imperative refresh hook for Settings to call after a save.
  * Drops the cache and notifies every subscribed component so
@@ -143,6 +163,7 @@ export function useApiKeyStatus(): ApiKeyStatus {
         };
 
     useEffect(() => {
+        ensureBusWiring();
         if (!userId) return;
         if (!CACHE.has(userId)) {
             void fetchSnapshot(userId).then(() => {

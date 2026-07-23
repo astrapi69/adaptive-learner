@@ -182,6 +182,43 @@ test.describe("Lesson read-aloud (TTS)", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
+    // #1928 — iOS Safari silently stops a single utterance after ~15s, which
+    // cut a typical theory run (median 1551 chars over the shipped content)
+    // off after roughly a tenth of its text. ``speak()`` now hands the engine
+    // one utterance PER CHUNK; this pins that it actually happens.
+    //
+    // Runs under Chromium rather than the WebKit gate on purpose: the
+    // chunking is plain JS, and the fake synth above records every utterance,
+    // so the mechanism is observable here. What this canNOT show is the iOS
+    // cutoff itself — that stays a manual device check.
+    test("a theory block is spoken as several chunked utterances", async () => {
+        const errors: string[] = [];
+        page.on("pageerror", (e) => errors.push(e.message));
+
+        await openLessonOptions(page);
+        await page.getByTestId("read-aloud-theory").click();
+        await expect(page.getByTestId("lesson-tts-player")).toBeVisible();
+
+        const spoken = await page.evaluate(
+            () => (window as unknown as {__ttsSpoken: string[]}).__ttsSpoken,
+        );
+
+        // Precondition: the block is long enough for the question to mean
+        // anything. If a future content change makes the first lesson's
+        // theory tiny, this fails loudly instead of passing vacuously.
+        const total = spoken.join("").length;
+        expect(total).toBeGreaterThan(300);
+
+        // The pin: NOT handed over as one long utterance ...
+        expect(spoken.length).toBeGreaterThan(1);
+        // ... and no single utterance exceeds the chunk budget.
+        for (const chunk of spoken) {
+            expect(chunk.length).toBeLessThanOrEqual(250);
+        }
+
+        expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
+    });
+
     test("keyboard shortcut R starts + stops read-aloud", async () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));

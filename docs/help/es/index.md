@@ -106,7 +106,6 @@ contenido a tu perfil.
 ## Estado
 
 ```
-Versión actual : v1.47.0 (Fase 63 — Control de flujo de lecciones)
 Almacenamiento : SQLite (ApiStorage) · IndexedDB (DexieStorage)
 Idiomas UI     : DE · EN · ES · FR · EL · PT · TR · JA
 Proveedores IA : Anthropic · OpenAI · Gemini (clave propia)

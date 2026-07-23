@@ -5,6 +5,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import {VitePWA} from "vite-plugin-pwa";
 import {visualizer} from "rollup-plugin-visualizer";
+import {buildVersion} from "@astrapi69/vite-plugin-build-version";
 
 import pkg from "./package.json" with {type: "json"};
 import {buildPwaManifest} from "./src/pwa/pwa-manifest";
@@ -23,32 +24,6 @@ import {buildPwaManifest} from "./src/pwa/pwa-manifest";
  * installed PWA + SW point at the wrong URLs).
  */
 const base = (process.env.VITE_BASE as string) || "/";
-
-/**
- * #613 — emit a static ``version.json`` (``{version, buildHash}``) into
- * the build root so the running app can fetch it (``cache: "no-store"``)
- * and detect when a newer build is deployed. JSON is intentionally NOT in
- * the Workbox precache globs (which only match js/css/html/svg/png/ico/
- * woff2), so it is always fetched fresh rather than served from a stale
- * precache.
- */
-function emitVersionJson() {
-    return {
-        name: "adaptive-learner:emit-version-json",
-        generateBundle() {
-            // eslint-disable-next-line @typescript-eslint/no-invalid-this
-            (this as {emitFile: (f: unknown) => void}).emitFile({
-                type: "asset",
-                fileName: "version.json",
-                source: JSON.stringify({
-                    version: pkg.version,
-                    buildHash: process.env.VITE_BUILD_HASH || "unknown",
-                    buildDate: process.env.VITE_BUILD_DATE || "unknown",
-                }),
-            });
-        },
-    };
-}
 
 /**
  * Inject the app version into index.html's JSON-LD at build time (and in dev),
@@ -77,30 +52,36 @@ export default defineConfig({
             "@": fileURLToPath(new URL("./src", import.meta.url)),
         },
     },
-    define: {
-        // Single source of truth: package.json. Replaced at build
-        // time (and during vitest runs) by the literal string.
-        // Downstream code reads __APP_VERSION__ instead of
-        // re-declaring a hardcoded constant.
-        __APP_VERSION__: JSON.stringify(pkg.version),
-        __BUILD_HASH__: JSON.stringify(process.env.VITE_BUILD_HASH || "unknown"),
-        __BUILD_DATE__: JSON.stringify(process.env.VITE_BUILD_DATE || "unknown"),
-        // #1172 — deployment-strand provenance. The branch that was built
-        // and the explicit strand ("haupt"/"latest") the deploy workflow
-        // sets. Both default to "unknown" for local/Docker builds where no
-        // workflow injects them; the strand resolver (lib/build/build-info)
-        // then falls back to the branch, and finally the URL.
-        __BUILD_BRANCH__: JSON.stringify(process.env.VITE_BUILD_BRANCH || "unknown"),
-        __BUILD_STRANG__: JSON.stringify(process.env.VITE_BUILD_STRANG || "unknown"),
-    },
     plugins: [
+        // #1873 — emits ``version.json`` into the build root AND defines
+        // __APP_VERSION__ / __BUILD_HASH__ / __BUILD_DATE__ (single source of
+        // truth: package.json). The running app compares the literals against
+        // the deployed manifest to detect a newer build. JSON is intentionally
+        // NOT in the Workbox precache globs below (js/css/html/svg/png/ico/
+        // woff2), so the manifest is always fetched fresh rather than served
+        // from a stale precache.
+        //
+        // #1172 — the deployment-strand literals ride along as extra defines:
+        // the branch that was built and the explicit strand ("haupt"/"latest")
+        // the deploy workflow sets. Both default to "unknown" for local/Docker
+        // builds where no workflow injects them; the strand resolver
+        // (lib/provenance/build-info) then falls back to the branch, and
+        // finally the URL.
+        buildVersion({
+            version: pkg.version,
+            buildHash: process.env.VITE_BUILD_HASH,
+            buildDate: process.env.VITE_BUILD_DATE,
+            extraDefines: {
+                __BUILD_BRANCH__: process.env.VITE_BUILD_BRANCH || "unknown",
+                __BUILD_STRANG__: process.env.VITE_BUILD_STRANG || "unknown",
+            },
+        }),
         // Tailwind v4 Vite plugin. Must run before the React plugin so
         // the generated utility CSS is available to the module graph.
         // Phase A install is ADDITIVE — see
         // docs/development/tailwind-migration.md.
         tailwindcss(),
         react(),
-        emitVersionJson(),
         injectAppVersionHtml(),
         VitePWA({
             // #613 — user-driven updates: the SW installs but WAITS instead

@@ -29,10 +29,12 @@ import { useNavigate } from "react-router-dom";
 import ContentActionButtons from "./browser/ContentActionButtons";
 import MyLessonsSection from "./lessons/MyLessonsSection";
 import ImportLessonModal from "./lessons/ImportLessonModal";
+import CombineLessonsDialog from "./lessons/CombineLessonsDialog";
 import ContentShareDialog from "./share/ContentShareDialog";
 import DeleteLessonModal from "./lessons/DeleteLessonModal";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
 import { useContentSetActions } from "../../hooks/content/useContentSetActions";
+import { useCombineLessons } from "../../hooks/content/combine";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
 import {
@@ -77,6 +79,12 @@ export default function ImportActionsPanel() {
   const userSets = sets.filter((s) => s.source === USER_GENERATED_SOURCE);
   const downloadedSets = sets.filter((s) => s.source !== USER_GENERATED_SOURCE);
 
+  const combine = useCombineLessons({
+    userSets,
+    fetchSetLessons: actions.fetchSetLessons,
+    reload: loadSets,
+  });
+
   return (
     <section data-testid="import-actions-panel">
       <ContentActionButtons onImportLesson={() => setShowImport(true)} navigate={navigate} />
@@ -91,8 +99,24 @@ export default function ImportActionsPanel() {
           onExportSet={(e) => void actions.handleExportSet(e)}
           onShare={(e) => void share.handleShare(e)}
           onDelete={actions.setDeleteTarget}
+          selectMode={combine.selectMode}
+          selectedCount={combine.selectedCount}
+          isSelected={combine.isSelected}
+          onToggleSelectMode={combine.toggleSelectMode}
+          onToggleSelect={combine.toggleSelect}
+          onOpenCombine={combine.openDialog}
         />
       )}
+
+      <CombineLessonsDialog
+        open={combine.dialogOpen}
+        selectedCount={combine.selectedCount}
+        languages={combine.languages}
+        existingTargets={combine.existingTargets}
+        combining={combine.combining}
+        onCancel={combine.closeDialog}
+        onConfirm={(decision) => void combine.combine(decision)}
+      />
 
       <ImportLessonModal
         open={showImport}

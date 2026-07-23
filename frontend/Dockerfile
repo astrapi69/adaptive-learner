@@ -1,12 +1,14 @@
 FROM node:24-slim AS build
 
+# bun is the package manager (#1492/#1496); Node 24 stays the script runtime,
+# mirroring CI (setup-node + setup-bun). Same bun pin as .github/workflows/*.
+RUN npm install --global bun@1.3.14
+
 WORKDIR /app
-COPY package.json package-lock.json* ./
-# --legacy-peer-deps: #266 eslint@10 vs eslint-plugin-react ^9.7 peer cap
-# (same flag every CI workflow uses; without it npm ci fails ERESOLVE).
-RUN npm ci --legacy-peer-deps
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN bun run build
 
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html

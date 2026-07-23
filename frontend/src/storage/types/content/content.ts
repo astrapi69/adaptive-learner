@@ -381,6 +381,11 @@ export interface SaveUserSetInput {
   level: string;
   origin: UserLessonOrigin;
   description?: string | null;
+  /** Optional set-level book block (#769 / #1743). When present, it is
+   *  written to ``sets[].book`` so the lesson's "Vertiefe das Thema"
+   *  section surfaces it. Set by the book-text wizard path; ``null`` /
+   *  absent for a non-book lesson. */
+  book?: ContentSetBook | null;
   /** One or more schema-valid lessons. Stored as
    *  ``lessons/{lesson.id}.json`` so the existing viewer +
    *  ``getLesson`` / ``listLessons`` paths work unchanged. */

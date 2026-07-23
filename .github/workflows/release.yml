@@ -86,8 +86,9 @@ jobs:
           ref: develop
           fetch-depth: 0
 
-      - name: Install make (the Playwright noble image has none)
-        run: apt-get update && apt-get install -y --no-install-recommends make
+      - name: Install make + unzip (the Playwright noble image has neither)
+        # unzip is needed by oven-sh/setup-bun below (unpacks the Bun zip) (#1829).
+        run: apt-get update && apt-get install -y --no-install-recommends make unzip
 
       - name: Changelog precondition (this action never invents a changelog)
         run: |
@@ -238,8 +239,9 @@ jobs:
           ref: release/${{ inputs.version }}
           fetch-depth: 0
 
-      - name: Install make (the Playwright noble image has none)
-        run: apt-get update && apt-get install -y --no-install-recommends make
+      - name: Install make + unzip (the Playwright noble image has neither)
+        # unzip is needed by oven-sh/setup-bun below (unpacks the Bun zip) (#1829).
+        run: apt-get update && apt-get install -y --no-install-recommends make unzip
 
       - uses: actions/setup-python@v6
         with:

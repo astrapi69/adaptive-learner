@@ -30,8 +30,8 @@ import {
     asReadingComprehensionPayload,
     canonicalAnswer,
     type RcQuestion,
-} from "../../../lib/exercises/reading-comprehension";
-import {isFreeTextCorrect} from "./FreeTextExercise";
+} from "../../../lib/exercises/payload/reading-comprehension";
+import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";

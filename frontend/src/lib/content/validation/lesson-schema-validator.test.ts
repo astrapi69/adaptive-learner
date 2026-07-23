@@ -204,6 +204,47 @@ describe("#1205 fixture 5 — picture_choice single correct (imperative)", () =>
     ]);
     expect(() => validateGeneratedLesson(lesson)).not.toThrow();
   });
+
+  // Engine 0.13.0 / schema 1.8 (engine#66): ``src`` is an anyOf of the
+  // original assets/ path (<= 500 chars) OR an inline base64 data URI
+  // with its own 250000-char cap (sized for the 150-KiB upload
+  // compression from #1763). RED before the 0.13.0 re-pin.
+  describe("src formats (schema 1.8, engine 0.13.0)", () => {
+    const dataUriSrc = (base64Length: number): string => `data:image/jpeg;base64,${"A".repeat(base64Length)}`;
+
+    it("accepts a base64 data-URI src longer than the 500-char path cap", () => {
+      const lesson = pictureLesson([
+        { src: dataUriSrc(10_000), label: "A", is_correct: "true" },
+        { src: "assets/img/b.png", label: "B" },
+      ]);
+      expect(validateLessonShape(lesson).ok).toBe(true);
+      expect(() => validateGeneratedLesson(lesson)).not.toThrow();
+    });
+
+    it("rejects a data-URI src beyond the 250000-char cap", () => {
+      const lesson = pictureLesson([
+        { src: dataUriSrc(250_001), label: "A", is_correct: "true" },
+        { src: "assets/img/b.png", label: "B" },
+      ]);
+      expect(validateLessonShape(lesson).ok).toBe(false);
+    });
+
+    it("still rejects a non-data-URI src longer than 500 chars", () => {
+      const lesson = pictureLesson([
+        { src: `assets/img/${"x".repeat(600)}.png`, label: "A", is_correct: "true" },
+        { src: "assets/img/b.png", label: "B" },
+      ]);
+      expect(validateLessonShape(lesson).ok).toBe(false);
+    });
+
+    it("keeps existing path srcs valid (regression for the ecosystem's picture_choice stock)", () => {
+      const lesson = pictureLesson([
+        { src: "assets/img/a.png", label: "A", is_correct: "true" },
+        { src: "assets/img/b.png", label: "B" },
+      ]);
+      expect(validateLessonShape(lesson).ok).toBe(true);
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -274,6 +315,23 @@ describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
     const lesson = makeLesson();
     lesson.steps[1].id = "theory-intro";
     expect(() => validateGeneratedLesson(lesson)).toThrow(/duplicate step/);
+  });
+
+  it("accepts unicode-lowercase card ids and tags (#1808)", () => {
+    const lesson = makeLesson();
+    lesson.cards[0].id = "pr\u00e4senz";
+    lesson.cards[0].tags = ["w\u00e4hrung"];
+    const exerciseStep = lesson.steps.find((step) => step.exercise);
+    if (exerciseStep?.exercise) {
+      exerciseStep.exercise.card_ids = ["pr\u00e4senz"];
+    }
+    expect(() => validateGeneratedLesson(lesson)).not.toThrow();
+  });
+
+  it("still rejects uppercase umlauts and inner spaces", () => {
+    const lesson = makeLesson();
+    lesson.cards[0].tags = ["\u00c4rger"];
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/slug-safe/);
   });
 });
 
@@ -690,5 +748,117 @@ describe("adopted extension ext:al-graded-quiz (#1579, fourth adoption)", () => 
   it("validateGeneratedLesson refuses a non-positive points value", () => {
     const badPoints = gqLesson({ questions: [{ prompt: "x", type: "free_text", accept: ["a"], points: 0 }] });
     expect(() => validateGeneratedLesson(badPoints)).toThrow(/positive points/);
+  });
+});
+
+describe("adopted extension ext:al-dictation (#1881, fifth adoption)", () => {
+  const dictationExercise = {
+    id: "ex-dict-01",
+    type: "ext:al-dictation",
+    prompt: "Hoere zu und schreibe, was du hoerst.",
+    card_ids: [],
+    distractors: [],
+    ext_payload: {
+      audio: "assets/audio/bonjour.mp3",
+      accept: ["Bonjour", "bonjour"],
+    },
+  };
+
+  const dictationLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-dictation@1"],
+      steps: [
+        {
+          id: "step-dict-01",
+          type: "exercise",
+          exercise: {
+            ...dictationExercise,
+            ...(payloadOverride === undefined
+              ? {}
+              : { ext_payload: payloadOverride }),
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(dictationLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed dictation exercise", () => {
+    expect(() => validateGeneratedLesson(dictationLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses an empty audio reference", () => {
+    const noAudio = dictationLesson({ audio: "", accept: ["Bonjour"] });
+    expect(() => validateGeneratedLesson(noAudio)).toThrow(/audio/);
+  });
+
+  it("validateGeneratedLesson refuses an accept list with no non-empty entry", () => {
+    const noAccept = dictationLesson({ audio: "a.mp3", accept: ["", "  "] });
+    expect(() => validateGeneratedLesson(noAccept)).toThrow(/accept/);
+  });
+});
+
+// #1895 — the reverse-consistency load guard: a lesson that USES an extension
+// exercise type but never DECLARES it in ``requires_extensions`` would load
+// fine in an app that supports the extension yet mis-render (fall through to
+// unknown-type) in one that does not — exactly the E-EXT-UNSUPPORTED silent
+// failure the load guard exists to forbid. This is the class-closing defense
+// that catches ANY build path (main wizard, book, edit) that fails to declare.
+describe("undeclared extension usage is refused (#1895)", () => {
+  const dictationStep = {
+    id: "step-dict-01",
+    type: "exercise",
+    exercise: {
+      id: "ex-dict-01",
+      type: "ext:al-dictation",
+      prompt: "Hoere zu und schreibe, was du hoerst.",
+      card_ids: [],
+      distractors: [],
+      ext_payload: {
+        audio: "assets/audio/bonjour.mp3",
+        accept: ["Bonjour"],
+      },
+    },
+  };
+
+  it("refuses a dictation exercise used without requires_extensions", () => {
+    const undeclared = makeLesson({
+      steps: [dictationStep],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(undeclared);
+    expect(shape.ok).toBe(false);
+    expect(shape.errors.join(" ")).toContain("ext:al-dictation");
+    expect(shape.errors.join(" ")).toMatch(/not declared|requires_extensions/);
+  });
+
+  it("refuses when requires_extensions declares a DIFFERENT extension", () => {
+    const mismatched = makeLesson({
+      requires_extensions: ["ext:al-categorization@1"],
+      steps: [dictationStep],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(mismatched);
+    expect(shape.ok).toBe(false);
+    expect(shape.errors.join(" ")).toContain("ext:al-dictation");
+  });
+
+  it("accepts when the used extension IS declared (version-tolerant)", () => {
+    const declared = makeLesson({
+      requires_extensions: ["ext:al-dictation@1"],
+      steps: [dictationStep],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(declared);
+    expect(shape.ok).toBe(true);
+    expect(shape.errors).toEqual([]);
+  });
+
+  it("validateGeneratedLesson throws on undeclared extension usage", () => {
+    const undeclared = makeLesson({
+      steps: [dictationStep],
+    } as unknown as Partial<ContentLesson>);
+    expect(() => validateGeneratedLesson(undeclared)).toThrow(/ext:al-dictation/);
   });
 });

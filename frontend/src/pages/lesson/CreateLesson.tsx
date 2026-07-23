@@ -18,8 +18,8 @@
  */
 
 import {Download} from "lucide-react";
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
@@ -27,17 +27,25 @@ import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
 import {Button} from "@/components/ui/button";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
-import ReviewStep from "../../components/create-lesson/ReviewStep";
-import CardEditor, {MIN_CARDS} from "../../components/create-lesson/CardEditor";
-import ExerciseGenerator, {
-    MIN_EXERCISES,
-} from "../../components/create-lesson/ExerciseGenerator";
+import WizardSteps from "../../components/create-lesson/WizardSteps";
+import EditLoadState from "../../components/create-lesson/EditLoadState";
+import {MIN_CARDS} from "../../components/create-lesson/CardEditor";
+import {MIN_EXERCISES} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
+    isExtensionType,
+    validateExerciseEdit,
+    validateExtensionExercise,
+    buildExtensionLesson,
     type ExerciseGenConfig,
-    type GeneratorCard,
-} from "../../lib/content/lesson/exercise-generator";
+} from "../../lib/exercises";
+import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
+import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/legacy-prompt-migration";
+import {buildExtensionUserSetInput} from "../../lib/content/lesson/user-set-input";
+import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
+import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
+import PromptMigrationNotice from "../../components/create-lesson/PromptMigrationNotice";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -52,23 +60,72 @@ import {
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
+    draftCardsToGeneratorCards,
+    draftSetId,
+    lessonToDraftInput,
+    preservedTheorySteps,
     type DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
+import {
+    buildBookLessons,
+    buildBookLessonsUserSetInput,
+    normalizeBook,
+} from "../../lib/content/lesson/book-to-lesson";
+import type {GeneratedBookLesson} from "../../lib/ai/generation/generate-book-lessons";
 import {downloadLessonJson} from "../../lib/content/lesson/lesson-export";
+import {nextCopySetId} from "../../lib/content/lesson/lesson-import";
+import {BookSteps, type BookFields} from "../../components/create-lesson/book";
+import {resolveActiveAiProvider} from "../../lib/ai/providers/resolve-provider";
+import {readLearnerState} from "../../lib/learning/learnerState";
+import type {TheoryStep} from "../../lib/ai/generation/exercise-generation-prompt";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import {
     applyTemplate,
     type LessonTemplateKey,
 } from "../../lib/content/lesson/lesson-templates";
-import type {
-    ContentLesson,
-    ContentLessonExercise,
-    ContentSetEntry,
+import {
+    USER_GENERATED_SOURCE,
+    type ContentLesson,
+    type ContentLessonExercise,
+    type ContentLessonStep,
+    type ContentSetEntry,
+    type UserLessonOrigin,
 } from "../../storage/types";
 
+/** Edit-mode context (#1740): the existing set/lesson the wizard was
+ *  opened to edit. Held so a save overwrites the SAME set + lesson file
+ *  (preserving filename-keyed progress) and preserves the lesson's
+ *  authored theory + any sibling lessons the wizard doesn't touch. */
+interface EditContext {
+    source: string;
+    setId: string;
+    origin: UserLessonOrigin;
+    /** All lessons in the set (the edited one + untouched siblings). */
+    lessons: ContentLesson[];
+    /** Index (in ``lessons``) of the lesson being edited. */
+    editIndex: number;
+    /** The edited lesson's original steps (for theory preservation). */
+    originalSteps: ContentLessonStep[];
+    /** The edited lesson's id (== its ``lessons/{id}.json`` filename). */
+    lessonId: string;
+}
+
 const TOTAL_STEPS = 4;
+/** #1743 — the book-text path skips the card + deterministic-exercise
+ *  steps: Metadata -> BookText -> Review. */
+const TOTAL_STEPS_BOOK = 3;
+/** #1852 — the extension-authoring path: Metadata -> Extensions -> Review. */
+const TOTAL_STEPS_EXT = 3;
 const DRAFT_AUTOSAVE_MS = 10_000;
+
+const EMPTY_BOOK_FIELDS: BookFields = {title: "", author: "", url: "", asin: ""};
+
+/** Total wizard steps for the active path. The book (#1743) and extension
+ *  (#1852) branches are both 3-step Metadata -> content -> Review flows. */
+function stepCountFor(compactFlow: boolean): number {
+    return compactFlow ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
+}
 
 /** Build the default metadata, seeding source language from the
  *  app language and target from the first differing option. */
@@ -92,6 +149,17 @@ function defaultMeta(appLang: string): LessonMeta {
 export default function CreateLesson() {
     const {t, lang} = useI18n();
     const navigate = useNavigate();
+    const params = useParams();
+    // #1740 — /create-lesson/edit/:source/:setId opens the wizard
+    // pre-filled to edit an existing own lesson.
+    const editMode = Boolean(params.source && params.setId);
+    const [editContext, setEditContext] = useState<EditContext | null>(null);
+    const [editLoading, setEditLoading] = useState(editMode);
+    const [editError, setEditError] = useState<string | null>(null);
+    // #1860 — how many legacy English prompts were migrated to the UI
+    // language on edit-load (0 = notice hidden). State only, persisted
+    // only if the user saves.
+    const [promptsMigrated, setPromptsMigrated] = useState(0);
 
     const [step, setStep] = useState(1);
     const [meta, setMeta] = useState<LessonMeta>(() =>
@@ -116,24 +184,123 @@ export default function CreateLesson() {
     // before any edits. Held until the user chooses.
     const [pendingDraft, setPendingDraft] = useState<LessonDraft | null>(null);
 
-    // On mount: surface a restorable draft (don't auto-apply).
-    useEffect(() => {
-        const draft = loadLessonDraft();
-        if (draftHasContent(draft)) setPendingDraft(draft);
+    // #1756 — which card-based template was applied. Pure feedback state:
+    // the templates fill cards/genConfig silently (visible only on step 2),
+    // so the clicked card renders a pressed state.
+    const [selectedTemplate, setSelectedTemplate] = useState<LessonTemplateKey | null>(null);
+
+    // #1743 — book-text path state. ``bookMode`` switches the wizard to the
+    // 3-step Metadata -> BookText -> Review flow; the AI produces the theory
+    // steps + exercises from the pasted chunk.
+    const [bookMode, setBookMode] = useState(false);
+    // #1852 — the extension-authoring branch (mutually exclusive with
+    // bookMode). Reuses the shared ``exercises`` state for its ext exercises.
+    const [extMode, setExtMode] = useState(false);
+    const [bookText, setBookText] = useState("");
+    const [bookFields, setBookFields] = useState<BookFields>(EMPTY_BOOK_FIELDS);
+    // #1949 — the generated book lessons: the single paste path yields a
+    // one-element list (title "" -> follows meta.title), the multi-select
+    // upload path yields one entry per selected section.
+    const [bookLessons, setBookLessons] = useState<GeneratedBookLesson[]>([]);
+
+    // An alternative authoring branch (book-text #1743 / extension #1852)
+    // runs the compact 3-step flow instead of the card-driven one.
+    const compactFlow = bookMode || extMode;
+    const totalSteps = stepCountFor(compactFlow);
+
+    /** Resolve the active AI provider seam, or ``null`` when no key /
+     *  learner is set (the "no key" signal the BookTextStep gates on). */
+    const resolveProvider = useCallback(async () => {
+        const {userId} = readLearnerState();
+        if (!userId) return null;
+        return resolveActiveAiProvider(userId);
     }, []);
 
+    // On mount: surface a restorable draft (don't auto-apply). Skipped in
+    // edit mode — editing loads the existing lesson, not the draft slot,
+    // and must never clobber an unrelated new-lesson draft (#1740).
+    useEffect(() => {
+        if (editMode) return;
+        const draft = loadLessonDraft();
+        if (draftHasContent(draft)) setPendingDraft(draft);
+    }, [editMode]);
+
+    // #1740 — edit mode: load the existing set, pre-fill the wizard.
+    useEffect(() => {
+        if (!editMode) return;
+        let cancelled = false;
+        const source = decodeURIComponent(params.source as string);
+        const setId = decodeURIComponent(params.setId as string);
+        (async () => {
+            try {
+                const storage = getStorage();
+                const [listing, setsList] = await Promise.all([
+                    storage.contentLoader.listLessons(source, setId),
+                    storage.contentLoader.listSets(),
+                ]);
+                if (listing.lessons.length === 0) {
+                    throw new Error("This set has no lessons to edit.");
+                }
+                const lessons = await Promise.all(
+                    listing.lessons.map((f) =>
+                        storage.contentLoader.getLesson(source, setId, f),
+                    ),
+                );
+                const entry = setsList.sets.find(
+                    (s) => s.source === source && s.id === setId,
+                );
+                const editIndex = 0;
+                const editLesson = lessons[editIndex];
+                const prefill = lessonToDraftInput(editLesson, entry);
+                if (cancelled) return;
+                // #1860 — opportunistically migrate legacy hardcoded-English
+                // prompts (exact-match only) to the UI language. Edit-state
+                // only; persisted only if the user saves.
+                const {exercises: migratedExercises, migratedCount} =
+                    migrateLegacyExercisePrompts(prefill.exercises, t);
+                setMeta(prefill.meta);
+                setCards(prefill.cards);
+                setExercises(migratedExercises);
+                setPromptsMigrated(migratedCount);
+                setEditContext({
+                    source,
+                    setId,
+                    origin: (entry?.domain as UserLessonOrigin) ?? "imported",
+                    lessons,
+                    editIndex,
+                    originalSteps: editLesson.steps,
+                    lessonId: editLesson.id,
+                });
+                setEditLoading(false);
+            } catch (err) {
+                if (cancelled) return;
+                setEditError(err instanceof Error ? err.message : String(err));
+                setEditLoading(false);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+        // `t` drives the #1860 migration target language but is intentionally
+        // NOT a dep: this is a load-once effect, and re-running on a language
+        // change would reload from storage and clobber unsaved edits. The
+        // migration uses whatever language is active at load time.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editMode, params.source, params.setId]);
+
     // Phase 65B — autosave the draft every 10s while editing. Skipped
-    // while the restore prompt is open (we haven't applied a choice yet).
+    // while the restore prompt is open (we haven't applied a choice yet)
+    // and in edit mode (which never writes the shared draft slot, #1740).
     const stateRef = useRef({step, meta, cards});
     stateRef.current = {step, meta, cards};
     useEffect(() => {
-        if (pendingDraft) return;
+        if (pendingDraft || editMode) return;
         const id = setInterval(() => {
             const {step: s, meta: m, cards: c} = stateRef.current;
             saveLessonDraft({schema: 1, step: s, meta: m, cards: c, updatedAt: ""});
         }, DRAFT_AUTOSAVE_MS);
         return () => clearInterval(id);
-    }, [pendingDraft]);
+    }, [pendingDraft, editMode]);
 
     const titleMissing = meta.title.trim().length === 0;
     // #1715 — a same-language pair (source === target) is legitimate
@@ -149,8 +316,10 @@ export default function CreateLesson() {
         () =>
             meta.title.trim().length > 0 ||
             meta.titleNative.trim().length > 0 ||
-            meta.description.trim().length > 0,
-        [meta.title, meta.titleNative, meta.description],
+            meta.description.trim().length > 0 ||
+            bookText.trim().length > 0 ||
+            bookLessons.length > 0,
+        [meta.title, meta.titleNative, meta.description, bookText, bookLessons],
     );
 
     function update(key: keyof LessonMeta, value: string) {
@@ -165,6 +334,35 @@ export default function CreateLesson() {
             }
             setShowError(false);
         }
+        if (bookMode) {
+            // Book flow: step 2 requires at least one generated lesson
+            // (single paste or batch) before advancing to Review.
+            if (step === 2) {
+                if (bookLessons.length === 0) {
+                    setExerciseError(true);
+                    return;
+                }
+                setExerciseError(false);
+            }
+            setStep((s) => Math.min(TOTAL_STEPS_BOOK, s + 1));
+            return;
+        }
+        if (extMode) {
+            // Extension flow: step 2 requires >= 1 extension exercise, all
+            // complete (reusing the shipped payload validators).
+            if (step === 2) {
+                if (
+                    exercises.length === 0 ||
+                    exercises.some((ex) => !validateExtensionExercise(ex).valid)
+                ) {
+                    setExerciseError(true);
+                    return;
+                }
+                setExerciseError(false);
+            }
+            setStep((s) => Math.min(TOTAL_STEPS_EXT, s + 1));
+            return;
+        }
         if (step === 2) {
             if (cards.length < MIN_CARDS) {
                 setCardError(true);
@@ -173,7 +371,19 @@ export default function CreateLesson() {
             setCardError(false);
         }
         if (step === 3) {
-            if (exercises.length < MIN_EXERCISES) {
+            // Too few, OR any exercise (generated or manually added) still
+            // incomplete — reuse the same per-type validator as the inline
+            // editor so a half-filled manual exercise can't slip into step 4.
+            // A manually-added extension exercise (dictation, #1895) validates
+            // through the extension payload validator, not the core one.
+            const incomplete = (ex: ContentLessonExercise): boolean =>
+                isExtensionType(ex.type)
+                    ? !validateExtensionExercise(ex).valid
+                    : !validateExerciseEdit(ex).valid;
+            if (
+                exercises.length < MIN_EXERCISES ||
+                exercises.some(incomplete)
+            ) {
                 setExerciseError(true);
                 return;
             }
@@ -186,17 +396,58 @@ export default function CreateLesson() {
         const {cards: tplCards, config} = applyTemplate(key);
         setCards(tplCards);
         setGenConfig(config);
+        setSelectedTemplate(key);
+    }
+
+    /** #1743 — enter the book-text path from Step 1 and advance to the
+     *  BookText step. #1946 — gated on a title, exactly like the main
+     *  wizard's step-1 ``handleNext`` guard: without it the user could reach
+     *  the save step title-less and hit the raw ajv error. */
+    function startBookMode() {
+        if (!metaValid) {
+            setShowError(true);
+            return;
+        }
+        setShowError(false);
+        setBookMode(true);
+        setStep(2);
+    }
+
+    /** #1852 — enter the extension-authoring path from Step 1. #1946 — same
+     *  title guard as the book path (the extension flow shares the identical
+     *  bypass of the step-1 title validation). */
+    function startExtMode() {
+        if (!metaValid) {
+            setShowError(true);
+            return;
+        }
+        setShowError(false);
+        setExtMode(true);
+        setStep(2);
+    }
+
+    /** Single paste path: one lesson from the pasted chunk. Title "" so the
+     *  lesson tracks ``meta.title`` at save time (regression-preserving). */
+    function handleBookGenerated(
+        steps: TheoryStep[],
+        generated: ContentLessonExercise[],
+    ) {
+        setBookLessons([{title: "", theorySteps: steps, exercises: generated}]);
+        setExerciseError(false);
+    }
+
+    /** #1949 — batch path: one lesson per selected section (titles carried). */
+    function handleBookBatchGenerated(lessons: GeneratedBookLesson[]) {
+        setBookLessons(lessons);
+        setExerciseError(false);
     }
 
     function generateLessonExercises() {
-        const genCards: GeneratorCard[] = cards.map((c) => ({
-            id: c.id,
-            front: c.front,
-            back: c.back,
-            example: c.notes,
-            image: c.image,
-        }));
-        setExercises(generateExercises(genCards, genConfig));
+        setExercises(
+            generateExercises(draftCardsToGeneratorCards(cards), genConfig, {
+                prompts: localizedExercisePrompts(t),
+            }),
+        );
         setExerciseError(false);
     }
 
@@ -206,18 +457,140 @@ export default function CreateLesson() {
         [meta, cards, exercises],
     );
 
+    /** #1740 — the set ids already taken by user-generated sets, so a
+     *  "save as copy" never collides with an existing lesson. */
+    async function listExistingUserSetIds(): Promise<Set<string>> {
+        try {
+            const list = await getStorage().contentLoader.listSets();
+            return new Set(
+                list.sets
+                    .filter((s) => s.source === USER_GENERATED_SOURCE)
+                    .map((s) => s.id),
+            );
+        } catch {
+            return new Set();
+        }
+    }
+
     async function saveLocally(): Promise<ContentSetEntry | null> {
         if (saving) return null;
+        // #1946 — defense-in-depth: every save path (book / extension / core)
+        // ends in ``validateGeneratedLesson``, which throws the raw ajv
+        // ``/title must NOT have fewer than 1 characters`` on an empty title.
+        // Surface the same friendly message the metadata step uses instead of
+        // leaking that path-based schema error to the user.
+        if (meta.title.trim().length === 0) {
+            notify.error(
+                t("create_lesson.meta.title_required", "A title is required."),
+            );
+            return null;
+        }
         setSaving(true);
         try {
-            const lesson = buildLessonFromDraft({meta, cards, exercises});
-            const input = buildUserSetInput({meta, cards, exercises}, lesson);
+            let lesson: ContentLesson;
+            let input: Parameters<
+                ReturnType<typeof getStorage>["contentLoader"]["saveUserSet"]
+            >[0];
+            if (editContext) {
+                // Edit mode (#1740): reuse the existing set id + lesson
+                // filename so the save OVERWRITES in place (progress keyed
+                // on the filename survives), preserve the lesson's authored
+                // theory, and carry any sibling lessons the wizard doesn't
+                // touch.
+                lesson = buildLessonFromDraft(
+                    {meta, cards, exercises},
+                    {
+                        id: editContext.lessonId,
+                        theorySteps: preservedTheorySteps(
+                            editContext.originalSteps,
+                            meta,
+                        ),
+                    },
+                );
+                input = buildUserSetInput({meta, cards, exercises}, lesson, {
+                    setId: editContext.setId,
+                    origin: editContext.origin,
+                });
+                if (editContext.lessons.length > 1) {
+                    input = {
+                        ...input,
+                        lessons: editContext.lessons.map((l, i) =>
+                            i === editContext.editIndex ? lesson : l,
+                        ),
+                    };
+                }
+            } else if (bookMode) {
+                // #1949 — build one lesson per generated entry (single = 1,
+                // batch = N) into a single set.
+                const builtLessons = buildBookLessons(meta, bookLessons);
+                lesson = builtLessons[0];
+                input = buildBookLessonsUserSetInput(
+                    meta,
+                    builtLessons,
+                    normalizeBook(bookFields),
+                );
+            } else if (extMode) {
+                const extInput = {meta, exercises};
+                lesson = buildExtensionLesson(extInput);
+                input = buildExtensionUserSetInput(extInput, lesson);
+            } else {
+                lesson = buildLessonFromDraft({meta, cards, exercises});
+                input = buildUserSetInput({meta, cards, exercises}, lesson);
+            }
             const entry = await getStorage().contentLoader.saveUserSet(input);
-            clearLessonDraft();
+            if (!editMode) clearLessonDraft();
             setSavedLessonId(lesson.id);
             setSavedLesson(lesson);
             setSavedEntry(entry);
-            notify.success(t("create_lesson.save.saved", "Lesson saved!"));
+            notify.success(
+                editMode
+                    ? t("create_lesson.save.updated", "Lesson updated!")
+                    : t("create_lesson.save.saved", "Lesson saved!"),
+            );
+            return entry;
+        } catch (err) {
+            notify.error(
+                `${t("create_lesson.save.failed", "Could not save the lesson.")} ${
+                    err instanceof Error ? err.message : ""
+                }`,
+            );
+            return null;
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    /** #1740 — save the edited lesson as a NEW copy, leaving the original
+     *  untouched (the deliberate alternative to overwriting). */
+    async function saveCopy(): Promise<ContentSetEntry | null> {
+        if (saving || !editContext) return null;
+        setSaving(true);
+        try {
+            const copyMeta: LessonMeta = {
+                ...meta,
+                title: `${meta.title.trim()} ${t(
+                    "create_lesson.save.copy_suffix",
+                    "(copy)",
+                )}`,
+            };
+            const copyInput = {meta: copyMeta, cards, exercises};
+            const lesson = buildLessonFromDraft(copyInput, {
+                theorySteps: preservedTheorySteps(
+                    editContext.originalSteps,
+                    copyMeta,
+                ),
+            });
+            const existing = await listExistingUserSetIds();
+            const setId = nextCopySetId(draftSetId(copyMeta), existing);
+            const input = buildUserSetInput(copyInput, lesson, {
+                setId,
+                origin: "imported",
+            });
+            const entry = await getStorage().contentLoader.saveUserSet(input);
+            setSavedLessonId(lesson.id);
+            setSavedLesson(lesson);
+            setSavedEntry(entry);
+            notify.success(t("create_lesson.save.copied", "Saved as a copy!"));
             return entry;
         } catch (err) {
             notify.error(
@@ -242,6 +615,11 @@ export default function CreateLesson() {
         setCards([]);
         setExercises([]);
         setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
+        setBookMode(false);
+        setExtMode(false);
+        setBookText("");
+        setBookFields(EMPTY_BOOK_FIELDS);
+        setBookLessons([]);
         setSavedEntry(null);
         setSavedLessonId("");
         setSavedLesson(null);
@@ -270,7 +648,14 @@ export default function CreateLesson() {
     }
 
     // --- card handlers (Step 2) ---
-    function addCard(c: {front: string; back: string; notes: string; image: string}) {
+    function addCard(c: {
+        front: string;
+        back: string;
+        notes: string;
+        image: string;
+        example: string;
+        altAnswers: string[];
+    }) {
         setCards((prev) => [...prev, {id: newCardId(), ...c}]);
     }
     function updateCard(id: string, patch: Partial<LessonCardDraft>) {
@@ -289,7 +674,9 @@ export default function CreateLesson() {
     }
 
     function discard() {
-        clearLessonDraft();
+        // #1740 — in edit mode the shared new-lesson draft slot is not
+        // ours to clear (it may hold an unrelated unfinished lesson).
+        if (!editMode) clearLessonDraft();
         navigate("/content?tab=my");
     }
 
@@ -320,18 +707,37 @@ export default function CreateLesson() {
     return (
         <PageContainer testId="create-lesson-page">
             <header className="create-lesson-header mb-6 flex flex-col gap-1">
-                <h1>{t("create_lesson.title", "Create a lesson")}</h1>
-                <p
-                    className="create-lesson-step-indicator text-sm text-fg-muted"
-                    data-testid="create-lesson-step-indicator"
-                >
-                    {t("create_lesson.step_of", "Step {current} of {total}")
-                        .replace("{current}", String(step))
-                        .replace("{total}", String(TOTAL_STEPS))}
-                </p>
+                <h1>
+                    {editMode
+                        ? t("create_lesson.edit_title", "Edit lesson")
+                        : t("create_lesson.title", "Create a lesson")}
+                </h1>
+                {!editLoading && !editError && (
+                    <p
+                        className="create-lesson-step-indicator text-sm text-fg-muted"
+                        data-testid="create-lesson-step-indicator"
+                    >
+                        {t("create_lesson.step_of", "Step {current} of {total}")
+                            .replace("{current}", String(step))
+                            .replace("{total}", String(totalSteps))}
+                    </p>
+                )}
             </header>
 
-            {step === 1 && (
+            <EditLoadState
+                loading={editLoading}
+                error={Boolean(editError)}
+                onBack={() => navigate("/content?tab=my")}
+                t={t}
+            />
+
+            <PromptMigrationNotice
+                count={promptsMigrated}
+                onDismiss={() => setPromptsMigrated(0)}
+                t={t}
+            />
+
+            {!editLoading && !editError && step === 1 && (
                 <MetadataStep
                     meta={meta}
                     showError={showError}
@@ -339,74 +745,95 @@ export default function CreateLesson() {
                     sameLanguage={sameLanguage}
                     onUpdate={update}
                     onApplyTemplate={applyLessonTemplate}
+                    selectedTemplate={selectedTemplate}
+                    onStartBookMode={startBookMode}
+                    onStartExtensions={startExtMode}
                     t={t}
                 />
             )}
 
-            {step === 2 && (
-                <>
-                    <CardEditor
-                        cards={cards}
-                        onAdd={addCard}
-                        onUpdate={updateCard}
-                        onDelete={deleteCard}
-                        onReorder={setCards}
-                        onClearAll={() => setCards([])}
-                        onImport={importCards}
-                    />
-                    {cardError && cards.length < MIN_CARDS && (
-                        <p
-                            className="form-hint form-hint-warning"
-                            data-testid="create-lesson-card-error"
-                            role="alert"
-                        >
-                            {t(
-                                "create_lesson.cards.min_to_advance",
-                                "Add at least {n} cards to continue.",
-                            ).replace("{n}", String(MIN_CARDS))}
-                        </p>
-                    )}
-                </>
-            )}
-
-            {step === 3 && (
-                <>
-                    <ExerciseGenerator
-                        exercises={exercises}
-                        config={genConfig}
-                        onConfigChange={setGenConfig}
-                        onGenerate={generateLessonExercises}
-                        onReorder={setExercises}
-                        onDelete={(id) =>
-                            setExercises((prev) =>
-                                prev.filter((e) => e.id !== id),
-                            )
-                        }
-                    />
-                    {exerciseError && exercises.length < MIN_EXERCISES && (
-                        <p
-                            className="form-hint form-hint-warning"
-                            data-testid="create-lesson-exercise-error"
-                            role="alert"
-                        >
-                            {t(
-                                "create_lesson.exercises.min_to_advance",
-                                "Generate at least {n} exercises to continue.",
-                            ).replace("{n}", String(MIN_EXERCISES))}
-                        </p>
-                    )}
-                </>
-            )}
-
-            {step === 4 && !savedEntry && (
-                <ReviewStep
+            {extMode && (
+                <ExtensionSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
                     meta={meta}
-                    cards={cards}
                     exercises={exercises}
-                    draftChecks={draftChecks}
+                    advanceBlocked={exerciseError}
+                    saving={saving}
+                    onAddExercise={(exercise) =>
+                        setExercises((prev) => [...prev, exercise])
+                    }
+                    onUpdateExercise={(id, updated) =>
+                        setExercises((prev) =>
+                            prev.map((e) => (e.id === id ? updated : e)),
+                        )
+                    }
+                    onDeleteExercise={(id) =>
+                        setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onSaveLocal={() => void saveLocally()}
+                    t={t}
+                />
+            )}
+
+            {bookMode && (
+                <BookSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    bookText={bookText}
+                    onBookTextChange={setBookText}
+                    book={bookFields}
+                    onBookChange={(patch) =>
+                        setBookFields((prev) => ({...prev, ...patch}))
+                    }
+                    language={meta.targetLanguage}
+                    resolveProvider={resolveProvider}
+                    onGenerated={handleBookGenerated}
+                    onBatchGenerated={handleBookBatchGenerated}
+                    bookLessons={bookLessons}
+                    advanceBlocked={exerciseError}
                     saving={saving}
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}
+                    t={t}
+                />
+            )}
+
+            {!compactFlow && (
+                <WizardSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    meta={meta}
+                    cards={cards}
+                    exercises={exercises}
+                    genConfig={genConfig}
+                    cardError={cardError}
+                    exerciseError={exerciseError}
+                    draftChecks={draftChecks}
+                    saving={saving}
+                    editMode={editMode}
+                    onAddCard={addCard}
+                    onUpdateCard={updateCard}
+                    onDeleteCard={deleteCard}
+                    onReorderCards={setCards}
+                    onImportCards={importCards}
+                    onGenerate={generateLessonExercises}
+                    onConfigChange={setGenConfig}
+                    onReorderExercises={setExercises}
+                    onDeleteExercise={(id) =>
+                        setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onUpdateExercise={(id, updated) =>
+                        setExercises((prev) =>
+                            prev.map((e) => (e.id === id ? updated : e)),
+                        )
+                    }
+                    onAddExercise={(exercise) =>
+                        setExercises((prev) => [...prev, exercise])
+                    }
+                    onSaveLocal={() => void saveLocally()}
+                    onSaveShare={() => void saveAndShare()}
+                    onSaveCopy={editMode ? () => void saveCopy() : undefined}
                     t={t}
                 />
             )}
@@ -465,7 +892,7 @@ export default function CreateLesson() {
                 </section>
             )}
 
-            {!savedEntry && (
+            {!savedEntry && !editLoading && !editError && (
             <nav className="create-lesson-nav mt-6 flex flex-wrap items-center justify-end gap-3" aria-label={t(
                 "create_lesson.nav_label",
                 "Wizard navigation",
@@ -488,7 +915,7 @@ export default function CreateLesson() {
                         {t("create_lesson.back", "Back")}
                     </Button>
                 )}
-                {step < TOTAL_STEPS && (
+                {step < totalSteps && (
                     <Button
                         type="button"
                         data-testid="create-lesson-next"
@@ -500,109 +927,15 @@ export default function CreateLesson() {
             </nav>
             )}
 
-            {confirmCancel && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-cancel-confirm"
-                >
-                    <div
-                        className="modal-card"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="create-lesson-cancel-title"
-                    >
-                        <h2
-                            id="create-lesson-cancel-title"
-                            className="modal-title"
-                        >
-                            {t(
-                                "create_lesson.cancel_confirm_title",
-                                "Discard this lesson?",
-                            )}
-                        </h2>
-                        <p>
-                            {t(
-                                "create_lesson.cancel_confirm_body",
-                                "Your unsaved lesson will be lost.",
-                            )}
-                        </p>
-                        <div className="form-actions">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                data-testid="create-lesson-cancel-keep"
-                                onClick={() => setConfirmCancel(false)}
-                            >
-                                {t(
-                                    "create_lesson.cancel_keep",
-                                    "Keep editing",
-                                )}
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                data-testid="create-lesson-cancel-discard"
-                                onClick={discard}
-                            >
-                                {t("create_lesson.cancel_discard", "Discard")}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {pendingDraft && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-draft-prompt"
-                >
-                    <div
-                        className="modal-card"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="create-lesson-draft-title"
-                    >
-                        <h2
-                            id="create-lesson-draft-title"
-                            className="modal-title"
-                        >
-                            {t(
-                                "create_lesson.draft.title",
-                                "Draft found",
-                            )}
-                        </h2>
-                        <p>
-                            {t(
-                                "create_lesson.draft.body",
-                                "You have an unfinished lesson. Continue where you left off or start fresh?",
-                            )}
-                        </p>
-                        <div className="form-actions">
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                data-testid="create-lesson-draft-fresh"
-                                onClick={startFresh}
-                            >
-                                {t(
-                                    "create_lesson.draft.start_fresh",
-                                    "Start fresh",
-                                )}
-                            </Button>
-                            <Button
-                                type="button"
-                                data-testid="create-lesson-draft-continue"
-                                onClick={() => applyDraft(pendingDraft)}
-                            >
-                                {t(
-                                    "create_lesson.draft.continue",
-                                    "Continue",
-                                )}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CreateLessonDialogs
+                confirmCancel={confirmCancel}
+                pendingDraft={pendingDraft}
+                onKeepEditing={() => setConfirmCancel(false)}
+                onDiscard={discard}
+                onStartFresh={startFresh}
+                onContinueDraft={applyDraft}
+                t={t}
+            />
         </PageContainer>
     );
 }

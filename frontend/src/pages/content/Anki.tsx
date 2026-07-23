@@ -216,7 +216,7 @@ export default function AnkiPage() {
 
   return (
     <main id="main" className="anki-page" data-testid="anki-page">
-      <header className="page-header">
+      <header className="page-header mb-4 flex flex-col gap-1">
         <h1>{t("anki.title", "Anki Export")}</h1>
         <p className="muted">
           {t(
@@ -290,7 +290,6 @@ export default function AnkiPage() {
           {ankiFeature.isDisabled && (
             <ApiKeyRequiredNotice
               feature={t("ui.api_key.feature_anki", "to extract Anki cards")}
-              settingsHref="/settings?tab=integrations"
             />
           )}
           <Button asChild variant="outline">

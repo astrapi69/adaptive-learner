@@ -114,6 +114,21 @@ describe("AnkiPage", () => {
     expect(btn.hasAttribute("disabled")).toBe(false);
   });
 
+  it("no-key notice links to the AI settings tab, not Integrations (#1835)", async () => {
+    await seedUser();
+    render(
+      <MemoryRouter>
+        <I18nProvider>
+          <TestFeatureProvider context={{ mode: "dexie", hasAiKey: false }}>
+            <AnkiPage />
+          </TestFeatureProvider>
+        </I18nProvider>
+      </MemoryRouter>,
+    );
+    const link = await screen.findByTestId("api-key-required-link");
+    expect(link.getAttribute("href")).toBe("/settings?tab=ai");
+  });
+
   it("filters by accepted-only", async () => {
     const { userId, projectId } = await seedUser();
     await getStorage().anki.create(userId, {

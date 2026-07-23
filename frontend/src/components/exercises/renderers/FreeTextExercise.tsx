@@ -45,8 +45,13 @@ import ExerciseAnswerToggle, {type AnswerView} from "../feedback/ExerciseAnswerT
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import {deriveFreeTextAttempt} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
-import {tokenDiff} from "../../../lib/exercises/token-diff";
+import {tokenDiff} from "../../../lib/exercises/grading/token-diff";
+import {
+    isFreeTextCorrect,
+    isFreeTextNearMiss,
+} from "../../../lib/exercises/grading/free-text-grading";
 import type {ContentLessonExercise} from "../../../storage/types";
+import AiVerifyAnswer from "../feedback/AiVerifyAnswer";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import DiffHighlight from "../feedback/DiffHighlight";
 import DirectionInstruction from "../feedback/DirectionInstruction";
@@ -56,115 +61,6 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "../shell/exercise-control";
-
-/** Levenshtein edit distance between ``a`` and ``b``.
- *  Two-row DP variant: O(m*n) time, O(n) space. The free-
- *  text exercise compares short authored answers (typically
- *  under 30 chars), so the matrix stays small. */
-function _levenshtein(a: string, b: string): number {
-    if (a === b) return 0;
-    if (a.length === 0) return b.length;
-    if (b.length === 0) return a.length;
-    let prev = new Array<number>(b.length + 1);
-    let curr = new Array<number>(b.length + 1);
-    for (let j = 0; j <= b.length; j++) prev[j] = j;
-    for (let i = 1; i <= a.length; i++) {
-        curr[0] = i;
-        for (let j = 1; j <= b.length; j++) {
-            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-            curr[j] = Math.min(
-                prev[j] + 1,
-                curr[j - 1] + 1,
-                prev[j - 1] + cost,
-            );
-        }
-        [prev, curr] = [curr, prev];
-    }
-    return prev[b.length];
-}
-
-/** Plain-text grading normalization (#1580). NFC + locale-aware lowercase
- *  as before, plus the surface variants a mobile keyboard produces and a
- *  sentence answer should never fail on: the curly-apostrophe/quote family
- *  is unified to ASCII, inner whitespace collapses to single spaces, and
- *  terminal sentence punctuation (``.!?\u2026``) is stripped on both sides
- *  of the comparison. Inner punctuation stays significant. */
-function _normalize(s: string): string {
-    return s
-        .normalize("NFC")
-        .replace(/[\u2018\u2019\u201A\u02BC\u00B4`]/g, "'")
-        .replace(/[\u201C\u201D\u201E\u00AB\u00BB]/g, '"')
-        .trim()
-        .replace(/\s+/g, " ")
-        .replace(/[.!?\u2026]+$/, "")
-        .trim()
-        .toLocaleLowerCase();
-}
-
-/** Edit budget for the fuzzy fallback (#1580). Short answers keep the
- *  strict single-edit rule (D1: "Mercii" passes, "Marci" stays wrong);
- *  sentence-length answers (>= 16 normalized chars) earn a second edit so
- *  one real typo plus one small slip does not fail a correct sentence.
- *  Measured against the AUTHORED candidate, so the learner cannot widen
- *  the budget by padding the input. */
-function _editTolerance(normalizedCandidate: string): number {
-    return normalizedCandidate.length >= 16 ? 2 : 1;
-}
-
-/** Code-answer normalization (schema v1.3). Code is CASE-sensitive,
- *  so we keep case — but we drop ALL whitespace (so "print( 'x' )" ==
- *  "print('x')") and unify quote styles (', ", ` -> "), the two
- *  variations a learner shouldn't be marked wrong for. Authors can
- *  still add explicit ``accept`` entries for cases where spacing is
- *  semantically meaningful. */
-function _normalizeCode(s: string): string {
-    return s.replace(/\s+/g, "").replace(/['"`]/g, '"');
-}
-
-/** True iff ``input`` matches any entry of ``accept``: normalized exact
- *  match first, Levenshtein fallback within ``_editTolerance`` (1 for short
- *  answers, 2 for sentence-length ones, #1580). Empty input never matches.
- *  In ``codeMode`` the normalizer is whitespace-stripping + quote-unifying +
- *  case-preserving, and the budget stays 1 regardless of length (code must
- *  not absorb two edits: println != print). */
-export function isFreeTextCorrect(
-    input: string,
-    accept: readonly string[],
-    codeMode = false,
-): boolean {
-    const norm = codeMode ? _normalizeCode : _normalize;
-    const normInput = norm(input);
-    if (normInput === "") return false;
-    const normCandidates = accept.map(norm);
-    if (normCandidates.includes(normInput)) return true;
-    for (const cand of normCandidates) {
-        const tolerance = codeMode ? 1 : _editTolerance(cand);
-        if (_levenshtein(normInput, cand) <= tolerance) return true;
-    }
-    return false;
-}
-
-/** True iff a WRONG answer is a *near miss* — a small typo within 2 edits
- *  of the closest accepted answer (but not already accepted, which the ≤1
- *  matcher handles). Drives the encouraging "Almost! Watch out for:"
- *  feedback instead of a flat "Not quite." (#627). Empty input is never a
- *  near miss. */
-export function isFreeTextNearMiss(
-    input: string,
-    accept: readonly string[],
-    codeMode = false,
-): boolean {
-    if (isFreeTextCorrect(input, accept, codeMode)) return false;
-    const norm = codeMode ? _normalizeCode : _normalize;
-    const normInput = norm(input);
-    if (normInput === "") return false;
-    return accept.some((cand) => {
-        const normCandidate = norm(cand);
-        const tolerance = codeMode ? 1 : _editTolerance(normCandidate);
-        const distance = _levenshtein(normInput, normCandidate);
-        return distance > 0 && distance <= tolerance + 1;
-    });
-}
 
 export interface FreeTextExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
@@ -345,6 +241,8 @@ function FreeTextResult({
     input,
     accept,
     canonical,
+    prompt,
+    ttsLang,
     codeMode,
     controlled,
     canCheck,
@@ -359,6 +257,8 @@ function FreeTextResult({
     input: string;
     accept: readonly string[];
     canonical: string;
+    prompt: string;
+    ttsLang: string | null;
     codeMode: boolean;
     controlled: boolean;
     canCheck: boolean;
@@ -460,6 +360,14 @@ function FreeTextResult({
                                     </span>
                                 </div>
                             )}
+                            {/* #1798 — an informational AI second opinion on a
+                                wrong answer. It never changes the score. */}
+                            <AiVerifyAnswer
+                                prompt={prompt}
+                                userAnswer={input}
+                                accept={accept}
+                                targetLanguage={ttsLang}
+                            />
                         </div>
                     )}
                     <AnswerCelebration isCorrect={isCorrect} />
@@ -613,6 +521,8 @@ function FreeTextExercise(
                 input={input}
                 accept={accept}
                 canonical={canonical}
+                prompt={exercise.prompt ?? ""}
+                ttsLang={ttsLang}
                 codeMode={codeMode}
                 controlled={controlled}
                 canCheck={!isInputEmpty}

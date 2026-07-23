@@ -398,7 +398,15 @@ function EndlessSummary({stats, elapsedSec, onExit, t}: EndlessSummaryProps) {
                     ))}
                 </dl>
                 <div className="mt-4">
-                    <Button type="button" variant="outline" onClick={onExit} data-testid="endless-summary-exit">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        // #1864 — sole next step on the completion screen:
+                        // auto-focus it so Enter activates it natively.
+                        autoFocus
+                        onClick={onExit}
+                        data-testid="endless-summary-exit"
+                    >
                         <ArrowLeft size={14} aria-hidden="true" />
                         {t("endless.back_to_dashboard", "Back to Dashboard")}
                     </Button>

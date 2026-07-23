@@ -69,11 +69,19 @@ export default function LessonFooterNav({
   // #1642 — pause control, centred in the footer between Previous and the
   // Check/Next action (moved out of the header). Icon-only (44px via
   // ``size="icon"``); pauses an in-progress lesson, otherwise exits.
-  const pauseButton = (
+  //
+  // #1834 — ``shrink-0`` so the icon never deforms, plus an auto-margin
+  // supplied by the caller (``mx-auto`` centres it in the practice flow,
+  // ``mr-auto`` pins it to the left edge in the exam flow). Auto-margins
+  // clamp to 0 when the row overflows (margins never go negative), so the
+  // buttons push apart instead of overlapping the way iOS WebKit does with
+  // ``justify-content: space-between``.
+  const pauseButton = (marginClass: string) => (
     <Button
       type="button"
       variant="ghost"
       size="icon"
+      className={`shrink-0 ${marginClass}`}
       onClick={isInProgress ? onPause : onExit}
       data-testid="lesson-pause-btn"
       aria-label={t("lesson.action.pause", "Pause lesson")}
@@ -92,13 +100,14 @@ export default function LessonFooterNav({
       isExerciseStep && onSubmitAndAdvance ? onSubmitAndAdvance : goNext;
     return (
       <nav
-        className="sticky bottom-0 z-10 mt-4 flex flex-row items-center justify-between gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
+        className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
         data-testid="lesson-footer"
         aria-label={t("lesson.nav.aria_label", "Step navigation")}
       >
-        {pauseButton}
+        {pauseButton("mr-auto")}
         <Button
           type="button"
+          className="shrink-0"
           onClick={advanceExam}
           disabled={isExerciseStep && !answerable}
           title={
@@ -122,14 +131,14 @@ export default function LessonFooterNav({
 
   return (
     <nav
-      className="sticky bottom-0 z-10 mt-4 flex flex-row items-center justify-between gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
+      className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
       data-testid="lesson-footer"
       aria-label={t("lesson.nav.aria_label", "Step navigation")}
     >
       <Button
         type="button"
         variant="outline"
-        className="min-w-[44px]"
+        className="min-w-[44px] shrink-0"
         onClick={goPrev}
         disabled={currentStepIndex === 0}
         data-testid="lesson-prev"
@@ -141,11 +150,12 @@ export default function LessonFooterNav({
           {t("lesson.action.prev", "Previous")}
         </span>
       </Button>
-      {pauseButton}
+      {pauseButton("mx-auto")}
       {!isSummary &&
         (showCheck ? (
           <Button
             type="button"
+            className="shrink-0"
             onClick={onCheck}
             disabled={!answerable}
             title={
@@ -162,7 +172,12 @@ export default function LessonFooterNav({
             {t("lesson.button.check", "Check")}
           </Button>
         ) : (
-          <Button type="button" onClick={goNext} data-testid="lesson-next">
+          <Button
+            type="button"
+            className="shrink-0"
+            onClick={goNext}
+            data-testid="lesson-next"
+          >
             {isLastStep
               ? t("lesson.action.finish", "Finish lesson")
               : t("lesson.button.next", "Next")}

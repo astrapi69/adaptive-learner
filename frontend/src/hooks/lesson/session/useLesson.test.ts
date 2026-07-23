@@ -353,4 +353,31 @@ describe("useLesson: persistence", () => {
         expect(body.mark_completed).toBe(true);
         expect(result.current.progress?.status).toBe("completed");
     });
+
+    it("markCompleted rethrows when the upsert fails (#1787)", async () => {
+        getLessonMock.mockResolvedValue(LESSON_PAYLOAD);
+        getProgressMock.mockResolvedValue(null);
+        upsertProgressMock.mockRejectedValue(
+            new Error("IndexedDB write failed"),
+        );
+        const {result} = renderHook(() =>
+            useLesson({
+                source: SOURCE,
+                setId: SET_ID,
+                lessonFilename: LESSON,
+            }),
+        );
+        await waitFor(() => {
+            expect(result.current.status).toBe("ready");
+        });
+        // Pre-#1787 the failure was swallowed into the hook's error state,
+        // which the summary never renders — the click died silently. The
+        // caller (the summary click handler) must be able to catch + toast.
+        await act(async () => {
+            await expect(result.current.markCompleted()).rejects.toThrow(
+                "IndexedDB write failed",
+            );
+        });
+        expect(result.current.error).toBe("IndexedDB write failed");
+    });
 });

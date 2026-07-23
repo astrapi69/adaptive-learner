@@ -8,7 +8,7 @@ import ContentRepoSettingsSection from "../../../../components/settings/integrat
 import RegistrySubmitSection from "../../../../components/settings/integrations/RegistrySubmitSection";
 import DangerZoneSection from "../../../../components/settings/data/DangerZoneSection";
 import ExportSection from "../../../../components/settings/data/ExportSection";
-import KeyVaultSection from "../../../../components/settings/data/KeyVaultSection";
+import { KeyVaultSection } from "@astrapi69/ai-key-vault-react";
 import SelectiveExportSection from "../../../../components/settings/data/SelectiveExportSection";
 import SyncSection from "../../../../components/sync/SyncSection";
 import { Feature } from "@astrapi69/feature-strategy-react";

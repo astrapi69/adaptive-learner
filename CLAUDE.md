@@ -9,7 +9,78 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.2.0** (**feature release** on top of the v2.1.0
+- **Current state:** **v2.5.0** (**feature release** on top of the v2.4.0
+  authoring release. Highlights: **Create-Lesson becomes a full exercise
+  authoring tool** - all five core types editable in step 3 #1845, manual
+  add-exercise + native `multiple_choice` #1853 with a prominent single/multi
+  mode control #1888, cloze/word_tiles/picture_choice generation made
+  discoverable #1848, and an **extension-authoring wizard** covering all four
+  AI-authored extension types (categorization + error-correction #1859,
+  reading-comprehension + graded-quiz #1865); **`ext:al-dictation` (audio
+  dictation)** adopted as the fifth extension type #1881, added to the wizard
+  #1887 and to the core type picker behind a generalized `requires_extensions`
+  gate #1895; legacy English exercise prompts migrate on edit #1861. Two
+  subsystems become **consumed npm packages** instead of in-tree code: PWA
+  update + version display via `@astrapi69/pwa-update(-react)` #1873, the AI
+  key vault via `@astrapi69/ai-key-vault(-react)` #1868. Exercise grading +
+  payload validation + authoring consolidated under `lib/exercises/` behind one
+  barrel #1862/#1867/#1877. Governance: **PR-PFLICHT** #1846 (a pushed code
+  change opens a PR by default) and **TESTPLAN-PFLICHT** #1858 (user-visible
+  functionality updates the manual test plan in the same PR). iOS/WebKit
+  hardening: footer Pause/Next overlap #1839, tap-offset #1832; a night-shift
+  WebKit layout gate #1843. Engine re-pinned -> 0.13.1. NO schema/API/data-model
+  change against v2.4.0. See changelog/releases/v2.5.0.md.)
+  Prior **v2.4.0** = (**feature release** on top of the v2.3.0
+  polish release. Highlights: a **Create-Lesson authoring upgrade** - a knowledge
+  lesson from pasted textbook text #1745, editing an own lesson + combining own
+  lessons into a set #1752, card **image upload** (not a typed asset path) #1764,
+  a typeable exercise count #1761; **free-text multiple accepted answers + an AI
+  second opinion** on a wrong answer #1803; an **AI key-import UX** (the AI tab
+  links to key import, paste-content import, reactive refresh) #1769; the content
+  **engine re-pinned -> 0.13.0 (schema 1.8)** so uploaded images feed
+  `picture_choice` #1774; the **frontend god-file burn-down completed** (ten
+  oversized modules split by concern - Session/ImportDetail/Lesson/Content/
+  dexie-storage/content-loader-dexie/sync-engine/backup/Cloze/WordTiles - behind
+  tightened size/complexity ratchets #1802); a **content-load robustness sweep**
+  (unicode/umlaut card ids + tags #1809, a friendly lesson-load error #1826, a
+  missing-profile mark-complete guard #1788) + **ghost-content lifecycle fixes**
+  (availability oracle requires a cached set #1818, set-deletion purges progress
+  + SW cache #1825, repo-removal opt-in delete in server mode #1822); an i18n
+  script-sanity lint #1759; the Docker/Bun close-out #1772. App schema 1.7 -> 1.8
+  is additive (the engine is canonical, the app a consumer); NO app-side
+  schema/API/data-model change. Release-gate hardening surfaced by the first real
+  `release-prepare` gate run: `unzip` in the Playwright image so setup-bun works
+  #1829, the app `CURRENT_SCHEMA_VERSION` synced to the pinned engine 1.8 #1830,
+  and the #1765 key-vault cross-tab scroll made robust to async layout #1831. See
+  changelog/releases/v2.4.0.md.)
+  Prior **v2.3.0** = (**polish + consolidation release** on top of
+  the v2.2.0 feature release, NO schema/API/data-model change. Highlights: the
+  **EXP-044 CSS concern-split completed** - `global.css` decomposed
+  byte-identically into per-concern files under `styles/legacy/` (Peels 1-5
+  #1663/#1670/#1675/#1680/#1682 + Batches A-E #1684/#1686/#1688/#1689/#1690),
+  `global.css` is now a pure import manifest, guarded by a byte-identity gate
+  #1657 + an accepted-conflicts allowlist #1630, and the last entangled zone
+  (QR scanner + lesson-mode nav) wrapped into `@layer legacy` #1695 - the
+  v2.2.0 cascade repair is complete; a **lesson-player UX rework** -
+  collapsible options panel #1628, pause control moved into the footer #1644,
+  slimmer title area + in-lesson description dropped #1635, duplicate
+  summary-favorite removed #1649; **listen-first audio** for free_text +
+  matching #1687; the adaptive generator seeds from **authored
+  `card.difficulty` as a cold-start prior** #1683 and tolerates card-less
+  exercise types #1637 + declines context-free clozes #1669; **hardened
+  lesson/set file import/export** (collisions, partial import, size guard,
+  Create-Lesson "Save as file") #1681/#1685; shared `Tile` + `FormHint`
+  primitives #1714/#1720; CI - symmetric backend path gate #1659,
+  visual-baseline gate for visual-critical PRs #1641, forceRerunTriggers for
+  readFileSync-pinned tests #1673; engine re-pin -> 0.12.3 #1678. Fix sweep:
+  Create-Lesson wizard (step-1 redesign #1721, steps 2-4 layout #1737,
+  structure-check reason #1724, raw i18n keys #1674, stale languagePair
+  Save-button regression #1730), Dexie-mode content visibility (deleted sets
+  stay deleted #1719, cached sets from unconfigured sources #1734, demo set
+  hidden #1706, federated book recommendations #1717), skip-to-content label
+  visibility #1727, codeMode in Cloze grading #1700, SPA shell in bundled
+  content/ #1718. See changelog/releases/v2.3.0.md.)
+  Prior **v2.2.0** = (**feature release** on top of the v2.1.0
   polish release. Highlights: the **extension-exercise tier** - four
   AI-authored exercise types adopted from the content engine
   (`ext:al-categorization` #1591, `-error-correction` #1593,
@@ -1601,7 +1672,7 @@ On a conflict between this file and the rules, **the rules win**.
 - **PWA:** vite-plugin-pwa, Workbox SW (NetworkFirst on GET
   `/api/`), SVG + maskable PNG icons
 - **Testing:** pytest ^9, Vitest 4 (happy-dom), Playwright (E2E)
-- **Tooling:** Poetry, npm, Docker, Make, ruff, pre-commit
+- **Tooling:** Poetry, Bun, Docker, Make, ruff, pre-commit
 - **Node engine:** ≥24.0.0
 
 ## Architecture (short)
@@ -1641,7 +1712,7 @@ provider source ("Key from: secrets.yaml" / "environment" /
 ## Commands
 
 ```bash
-make install          # Poetry + npm + plugins
+make install          # Poetry + Bun + plugins
 make dev              # backend (18001) + frontend (15174)
 make dev-bg / dev-down
 make test             # backend + plugins + Vitest (no coverage)
@@ -1651,8 +1722,9 @@ make test-frontend    # Vitest only
 make test-coverage    # opt-in coverage (CI runs the equivalent)
 make prod / prod-down # Docker Compose
 make clean / help
-make sync-versions    # propagate backend/pyproject.toml to all 18 version-bearing files
+make sync-versions    # propagate backend/pyproject.toml to all 19 version-bearing files
 make sync-i18n        # regenerate frontend/src/data/i18n/*.json from backend YAML
+make verify-i18n-scripts  # i18n script-sanity lint: de substitute spelling + el/hi transliteration (#1755)
 make docs-serve / docs-build  # MkDocs site (port 8000)
 make archive-task     # interactive: move closed backlog items to roadmap-archive/YYYY-MM.md
 ```
@@ -1767,9 +1839,9 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.79.0 baseline (verified 2026-06-15):** backend 1215 + plugins
-  1018 + Vitest 4139 = **6372 tests**. E2E
-  smoke (17 spec files) runs separately via
+- **v2.3.0+ baseline (verified 2026-07-17):** backend 1415 + plugins
+  1080 + Vitest 7213 = **9708 tests**. E2E
+  smoke runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (73 specs incl. the Phase 61 interactive journeys —
   full lesson playthrough across all 5 exercise types,
@@ -1796,9 +1868,12 @@ imports are forbidden.
 
 `cd backend && poetry run pre-commit install`. Hooks: standard
 whitespace + YAML/JSON checks, ruff (`--fix` + format),
-`roadmap-archive-reminder` (non-blocking), and
+`roadmap-archive-reminder` (non-blocking),
 `plugin-lock-paired-with-pyproject` (blocks staged plugin
-pyproject changes without a paired `poetry.lock`).
+pyproject changes without a paired `poetry.lock`),
+`validate-bundled-content` (README CONTENT-STATS vs the sibling
+content checkout), and `i18n-script-sanity` (#1755 - real umlauts
+in de, native script in el/hi catalogs).
 
 ## Related projects
 

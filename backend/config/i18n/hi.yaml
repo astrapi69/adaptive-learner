@@ -368,6 +368,7 @@ adaptive:
     load_failed: अनुकूली पाठ तैयार नहीं हो सका।
 review:
   your_answer: "आपका उत्तर:"
+  correct_answer: "सही:"
   summary_corrected: "{total} में से {corrected} सुधारे गए"
   summary_trend: "बढ़िया — आपके कमज़ोर बिंदु मज़बूत हो रहे हैं।"
   summary_next: "महारत प्राप्त तत्व हट जाते हैं; बाकी जल्द ही समीक्षा के लिए लौटते हैं।"
@@ -478,7 +479,7 @@ settings:
   key_vault:
     title: "AI कुंजियाँ — एन्क्रिप्टेड निर्यात"
     intro: "अपनी AI कुंजियाँ एक एन्क्रिप्टेड फ़ाइल में दूसरे डिवाइस पर ले जाएँ, सामान्य बैकअप से अलग (जिसमें कभी कुंजियाँ नहीं होतीं)।"
-    api_disabled: "सर्वर मोड में आपकी कुंजियाँ सर्वर द्वारा प्रबंधित होती हैं, इसलिए यहाँ निर्यात करने के लिए कुछ नहीं है।"
+    api_export_disabled: "सर्वर मोड में आपकी कुंजियाँ निर्यात नहीं की जा सकतीं, वे सर्वर पर एन्क्रिप्ट होकर प्रबंधित होती हैं। कुंजी फ़ाइल का आयात अभी भी संभव है।"
     export_heading: "निर्यात"
     passphrase_hint: "एक मज़बूत पासफ़्रेज़ चुनें। इसे पुनर्प्राप्त नहीं किया जा सकता — इसके बिना फ़ाइल नहीं खुलेगी।"
     passphrase_label: "पासफ़्रेज़"
@@ -487,6 +488,11 @@ settings:
     busy: "काम जारी है…"
     export_button: "एन्क्रिप्टेड फ़ाइल निर्यात करें"
     import_heading: "आयात"
+    import_hint: "एन्क्रिप्टेड कुंजी फ़ाइल चुनें या उसकी सामग्री नीचे चिपकाएँ। दोनों तरीके काम करते हैं।"
+    import_file_label: "एन्क्रिप्टेड कुंजी फ़ाइल"
+    import_text_label: "…या कुंजी फ़ाइल की सामग्री चिपकाएँ"
+    import_text_placeholder: '{ "format": "adaptive-learner-keys", … }'
+    import_text_invalid: "यह एक मान्य कुंजी फ़ाइल जैसी नहीं दिखती। जाँचें कि आपने पूरी सामग्री चिपकाई है।"
     import_button: "कुंजी फ़ाइल आयात करें"
     success_export: "एन्क्रिप्टेड कुंजी फ़ाइल डाउनलोड हो गई।"
     success_import: "कुंजियाँ आयात हो गईं। AI सुविधाएँ फिर से तैयार हैं।"
@@ -707,6 +713,7 @@ settings:
     test_key_invalid: कुंजी अमान्य
     test_network_error: नेटवर्क त्रुटि
     test_backend_only: केवल बैकएंड के साथ परीक्षण योग्य
+    import_keys: "आयात करें"
   api_key_label: API कुंजी
   api_key_placeholder: यहाँ पेस्ट करें…
   api_key_placeholder_replace: सहेजी गई कुंजी को बदलने के लिए नई कुंजी पेस्ट करें…
@@ -801,6 +808,12 @@ settings:
     receptive_first: पहले पहचानें
     productive_focus: उत्पादन करें
     balanced: संतुलित
+  error_replay_scope:
+    title: "गलतियाँ दोहराएँ"
+    hint: "पाठ के बाद गलतियाँ दोहराते समय केवल वे भाग फिर से खेलें जो आपने गलत किए या पूरे अभ्यास। मिलान अभ्यासों में, \"केवल गलतियाँ\" केवल गलत जोड़े दिखाता है (कुछ सही जोड़े भी, ताकि मिलाने के लिए कुछ हो)।"
+    label: "दोहराव का दायरा"
+    errors_only: "केवल गलतियाँ दिखाएँ (डिफ़ॉल्ट)"
+    whole_set: "पूरा सेट दोहराएँ"
   matching_resolve:
     title: "हल एनिमेशन"
     hint: "जाँचने के बाद 'हल दिखाएँ' दबाने पर मिलान अभ्यास सही जोड़े कैसे दिखाता है।"
@@ -1801,6 +1814,17 @@ lesson:
       wrong_label: गलत
       empty: इस चित्र-चयन अभ्यास में कोई छवियाँ नहीं हैं।
     free_text:
+      ai_verify:
+        button: "AI से जाँच कराएँ"
+        checking: "जाँच हो रही है…"
+        verdict_yes: "AI सहमत है: आपका उत्तर मूल रूप से सही है।"
+        verdict_partial: "AI के अनुसार आपका उत्तर केवल आंशिक रूप से सही है।"
+        verdict_no: "AI पुष्टि करता है: यह उत्तर सही नहीं है।"
+        verdict_unknown: "AI स्पष्ट निर्णय नहीं दे सका।"
+        disclaimer: "यह केवल AI की राय है - इस अभ्यास के लिए आपका स्कोर नहीं बदलता।"
+        no_key: "इसके लिए आपकी अपनी AI कुंजी (BYOK) चाहिए। वैकल्पिक - ऐप इसके बिना भी ठीक काम करता है।"
+        open_settings: "AI सेटिंग्स"
+        error: "AI अनुरोध विफल रहा। कृपया पुनः प्रयास करें।"
       submit: उत्तर जाँचें
       retry: फिर से कोशिश करें
       placeholder: अपना उत्तर लिखें…
@@ -1900,6 +1924,8 @@ lesson:
       no_answer: (कोई नहीं)
       weak_areas: कमज़ोर क्षेत्र
     mark_complete: पूर्ण के रूप में चिह्नित करें
+    mark_complete_needs_profile: "अपनी प्रगति सहेजने के लिए एक लर्निंग प्रोफ़ाइल बनाएँ"
+    mark_complete_failed: "पूर्णता सहेजने में विफल"
     next_lesson: अगला पाठ
     repeat: पाठ दोहराएँ
     retry: "फिर से अभ्यास करें"
@@ -1958,6 +1984,7 @@ lesson:
     improvement_singular: '{n} तत्व में सुधार हुआ।'
   error:
     load_failed: पाठ लोड नहीं हो सका।
+    invalid_data: "इस पाठ में अमान्य या दूषित डेटा होने के कारण इसे नहीं खोला जा सकता। कृपया सामग्री के लेखक से संपर्क करें।"
     missing_params: कोई पाठ चयनित नहीं। चुनने के लिए सामग्री सेट ब्राउज़ करें।
   exit:
     title: पाठ छोड़ें?
@@ -2066,6 +2093,26 @@ content:
     copy: "प्रति के रूप में आयात करें"
     copy_suffix: "प्रति"
     skipped: "{n} पाठ छोड़े गए क्योंकि वे सत्यापन में विफल रहे।"
+  combine:
+    title: "एक सेट में संयोजित करें"
+    start: "एक सेट में संयोजित करें"
+    cancel_select: "चयन रद्द करें"
+    selected_count: "{n} चयनित"
+    select_aria: "{title} चुनें"
+    summary: "चयनित {n} पाठ एक सेट में समूहित किए जाएंगे।"
+    mixed_languages: "चयनित पाठ भाषा या स्तर में भिन्न हैं। नया सेट सबसे सामान्य ({lang}, {level}) का उपयोग करता है।"
+    target_legend: "लक्ष्य सेट"
+    mode_new: "नया सेट"
+    mode_existing: "किसी मौजूदा सेट में जोड़ें"
+    new_title: "सेट शीर्षक"
+    new_title_placeholder: "मेरा संयोजित सेट"
+    new_description: "विवरण (वैकल्पिक)"
+    new_level: "स्तर"
+    existing_set: "मौजूदा सेट"
+    keeps_originals: "मूल पाठ सुरक्षित रहते हैं; इससे एक समूहित प्रति बनती है।"
+    confirm: "संयोजित करें"
+    success: "पाठ एक सेट में संयोजित किए गए।"
+    failed: "पाठों को संयोजित नहीं किया जा सका।"
   my_lessons:
     export_set: सेट के रूप में निर्यात करें
     share: समुदाय के साथ साझा करें
@@ -2084,6 +2131,8 @@ content:
     deleted: पाठ हटा दिया गया।
     delete_failed: पाठ हटाया नहीं जा सका।
   set_status:
+    delete_progress_option: "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं ({lessons} पाठ, {cards} कार्ड)"
+    delete_progress_option_nocounts: "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं"
     all: "सभी"
     active: "सक्रिय"
     deferred: "स्थगित"
@@ -2175,6 +2224,8 @@ content:
     free_prompt: 'अनुवाद करें: {word}'
     cloze_prompt: छूटा हुआ शब्द भरें।
     tiles_prompt: शब्दों को वाक्य में क्रमबद्ध करें ({word})।
+    pic_prompt: "इसके लिए चित्र चुनें: {word}"
+    mc_prompt: "इसका सही अनुवाद चुनें: {word}"
   page_title: "मेरी सामग्री"
   intro: पहले से बने पाठ सेट जिन्हें आप API key के बिना उपयोग कर सकते हैं। डाउनलोड स्थानीय रूप से कैश होते हैं और पहली बार लाने के बाद ऑफ़लाइन काम करते हैं।
   sources: स्रोत
@@ -2217,6 +2268,14 @@ content:
     domain_psychology: मनोविज्ञान
     domain_programming: प्रोग्रामिंग
     domain_math: गणित
+    domain_ai: एआई
+    domain_knowledge: ज्ञान
+    domain_technology: प्रौद्योगिकी
+    domain_software: सॉफ़्टवेयर
+    domain_philosophy: दर्शन
+    domain_language: भाषा
+    domain_dog-training: कुत्ता प्रशिक्षण
+    domain_traffic-knowledge: यातायात ज्ञान
     code_copy: कोड कॉपी करें
     code_output: 'आउटपुट:'
     no_primary: आपकी भाषा के लिए अभी कोई सेट नहीं है। नीचे अन्य स्रोत भाषाएँ ब्राउज़ करें।
@@ -2266,35 +2325,35 @@ content:
     fix_failed: सुझाव लागू नहीं किया जा सका।
   ai_check:
     badge:
-      verified: "AI-janchaa gaya"
-      stale: "AI-jaanch puraani"
-      invalid: "AI-jaanch amaanya"
-    last_checked: "antim jaanch: {when}"
+      verified: "AI-जाँचा गया"
+      stale: "AI-जाँच पुरानी"
+      invalid: "AI-जाँच अमान्य"
+    last_checked: "अंतिम जाँच: {when}"
     checked_with: "इसके साथ जाँचा गया"
     date: "तिथि"
-    recheck: "phir se janchein"
+    recheck: "फिर से जाँचें"
     export:
-      button: "report ko Markdown ke roop mein export karein"
-      lesson: "paath"
-      card: "card"
-      field: "field"
-    button: "AI se janchein"
-    title: "AI samagri jaanch"
-    loading: "card taiyaar kiye ja rahe hain..."
-    cost_estimate: "~{cards} card, ~{tokens} token, ~{usd}."
-    privacy: "aapke card jaanch ke liye aapke configure kiye gaye AI provider ko bheje jaayenge. koi vyaktigat data nahin bheja jaata."
-    confirm: "janchein"
-    progress: "{total} mein se batch {current} ki jaanch ho rahi hai..."
-    rate_limited: "doosri jaanch chalaane se pehle kripya thoda intezaar karein."
-    failed: "AI jaanch uplabdh nahin hai."
-    unavailable_mode: "keval browser-storage mode mein uplabdh."
+      button: "रिपोर्ट को Markdown के रूप में एक्सपोर्ट करें"
+      lesson: "पाठ"
+      card: "कार्ड"
+      field: "फ़ील्ड"
+    button: "AI से जाँचें"
+    title: "AI सामग्री जाँच"
+    loading: "कार्ड तैयार किए जा रहे हैं..."
+    cost_estimate: "~{cards} कार्ड, ~{tokens} टोकन, ~{usd}."
+    privacy: "आपके कार्ड जाँच के लिए आपके कॉन्फ़िगर किए गए AI प्रदाता को भेजे जाएंगे। कोई व्यक्तिगत डेटा नहीं भेजा जाता।"
+    confirm: "जाँचें"
+    progress: "{total} में से बैच {current} की जाँच हो रही है..."
+    rate_limited: "दूसरी जाँच चलाने से पहले कृपया थोड़ा इंतज़ार करें।"
+    failed: "AI जाँच उपलब्ध नहीं है।"
+    unavailable_mode: "केवल ब्राउज़र-स्टोरेज मोड में उपलब्ध।"
     report:
-      summary: "{lessons} paathon mein {cards} card janche gaye"
+      summary: "{lessons} पाठों में {cards} कार्ड जाँचे गए"
       ok: "{count} कार्ड ठीक हैं"
-      issues: "{count} card mein samasyaayein"
-      all_ok: "sabhi card paas. koi samasya nahin mili."
-      problem: "samasya"
-      suggestion: "sujhaav"
+      issues: "{count} कार्ड में समस्याएँ"
+      all_ok: "सभी कार्ड पास। कोई समस्या नहीं मिली।"
+      problem: "समस्या"
+      suggestion: "सुझाव"
   quality:
     button: "गुणवत्ता जाँच"
     title: "गुणवत्ता जाँच"
@@ -2459,8 +2518,62 @@ missions:
       title: सप्ताहांत शिक्षार्थी
       description: सप्ताहांत पर सीखें।
 create_lesson:
+  book:
+    rights_hint: "केवल वही टेक्स्ट पेस्ट या अपलोड करें जिनके अधिकार आपके पास हैं या जो व्यक्तिगत उपयोग के लिए हैं।"
+    heading: "टेक्स्ट से पाठ बनाएं"
+    intro: "अपनी पाठ्यपुस्तक का एक अनुभाग (जैसे एक अध्याय) पेस्ट करें। AI इसे अपने शब्दों में सिद्धांत के रूप में लिखता है और अभ्यास बनाता है। दूसरा अनुभाग जोड़ने के लिए विज़ार्ड को दोबारा चलाएं।"
+    text_label: "पाठ्यपुस्तक अनुभाग"
+    text_placeholder: "अध्याय का टेक्स्ट यहां पेस्ट करें ..."
+    meta_legend: "पुस्तक संदर्भ (वैकल्पिक)"
+    title_label: "पुस्तक शीर्षक"
+    author_label: "लेखक"
+    url_label: "URL"
+    asin_label: "ISBN / ASIN"
+    generate: "सिद्धांत + अभ्यास बनाएं"
+    generating: "बना रहा है ..."
+    feature: "टेक्स्ट से पाठ बनाने के लिए"
+    generated: "{t} सिद्धांत चरण और {e} अभ्यास बनाए गए।"
+    summary: "{t} सिद्धांत चरण, {e} अभ्यास तैयार।"
+    paste_required: "पहले अपनी पाठ्यपुस्तक का एक अनुभाग पेस्ट करें।"
+    theory_failed: "AI ने कोई उपयोगी सिद्धांत नहीं दिया। कृपया फिर से प्रयास करें।"
+    exercises_failed: "कोई उपयोगी अभ्यास नहीं बना। कृपया फिर से प्रयास करें।"
+    generate_failed: "पाठ नहीं बनाया जा सका। कृपया फिर से प्रयास करें।"
+    generate_to_advance: "जारी रखने के लिए अपने टेक्स्ट से पाठ बनाएं।"
+    review_theory: "{n} सिद्धांत चरण"
+    review_exercises: "{n} अभ्यास"
+    review_book: "पुस्तक: {title}"
+    review_lessons: "{n} पाठ"
+    batch_progress: "{total} में से {current} पाठ बन रहा है: {title}…"
+    batch_summary: "{n} में से {ok} पाठ बनाए गए।"
+    batch_all_failed: "चयनित अनुभागों से कोई पाठ नहीं बनाया जा सका।"
+    batch_failed_item: "विफल: {title}"
+    upload:
+      button: "फ़ाइल से लोड करें (EPUB, DOCX, TXT, MD)"
+      parsing: "फ़ाइल पढ़ी जा रही है ..."
+      section_label: "पहचाने गए खंड"
+      section_fallback: "खंड {n}"
+      exclude_hint: "जो अनुभाग आरंभिक या अंतिम सामग्री जैसे लगते हैं (प्रस्तावना, शब्दावली, अनुक्रमणिका, …), डिफ़ॉल्ट रूप से अचयनित रहते हैं। उन्हें शामिल करने के लिए चुनें।"
+      generate_n: "{n} पाठ बनाएँ"
+      selected_count: "{n} चयनित"
+      apply: "टेक्स्ट फ़ील्ड में डालें"
+      soft_hint: "लंबा खंड - छोटे खंड बेहतर परिणाम देते हैं।"
+      err_too_large: "फ़ाइल बहुत बड़ी है (अधिकतम {n} MiB)।"
+      err_unsupported: "असमर्थित फ़ाइल प्रकार। समर्थित: EPUB, DOCX, TXT, Markdown।"
+      err_invalid_epub: "यह फ़ाइल EPUB के रूप में नहीं पढ़ी जा सकी।"
+      err_invalid_docx: "यह फ़ाइल DOCX के रूप में नहीं पढ़ी जा सकी।"
+      err_no_sections: "इस फ़ाइल में कोई टेक्स्ट खंड नहीं मिला।"
+      err_parse_failed: "फ़ाइल पढ़ने में विफल।"
+      err_section_too_long: "खंड बहुत लंबा है (अधिकतम {n} अक्षर)। छोटा खंड चुनें।"
+      replace_title: "टेक्स्ट बदलें?"
+      replace_message: "टेक्स्ट फ़ील्ड में पहले से सामग्री है। इसे चुने गए खंड से बदलें?"
+      replace_confirm: "बदलें"
   title: एक पाठ बनाएँ
   step_of: चरण {current} / {total}
+  edit_title: "पाठ संपादित करें"
+  edit_load_error: "इस पाठ को संपादन के लिए लोड नहीं किया जा सका।"
+  edit_note: "आप एक मौजूदा पाठ संपादित कर रहे हैं। सहेजने पर यह अधिलेखित हो जाएगा; मूल रखने के लिए 'प्रतिलिपि के रूप में सहेजें' का उपयोग करें।"
+  prompts_migrated: "{n} अभ्यास निर्देश स्वचालित रूप से आपकी भाषा में अनुवादित किए गए।"
+  prompts_migrated_dismiss: "बंद करें"
   step_pending: यह चरण अगले अपडेट में आ रहा है।
   nav_label: विज़ार्ड नेविगेशन
   cancel: रद्द करें
@@ -2487,7 +2600,25 @@ create_lesson:
     front_label: आगे (सीखी गई)
     back_label: पीछे (आपकी भाषा)
     notes_label: नोट्स (वैकल्पिक)
-    image_label: छवि संदर्भ (वैकल्पिक)
+    example_label: "उदाहरण वाक्य (वैकल्पिक)"
+    example_placeholder: "उदा. वह हर शाम एक किताब पढ़ती है।"
+    example_hint: "क्लोज़ और शब्द-टाइल अभ्यास सक्षम करता है। क्लोज़ के लिए, वाक्य में शब्द (सामने वाला) होना चाहिए ताकि उसे रिक्त किया जा सके।"
+    alt_answers_label: "अन्य स्वीकृत उत्तर (वैकल्पिक)"
+    alt_answers_add: "जोड़ें"
+    alt_answers_remove: "स्वीकृत उत्तर हटाएँ"
+    alt_answers_placeholder: "एक और स्वीकृत उत्तर"
+    alt_answers_hint: "अतिरिक्त उत्तर जो शिक्षार्थी मुक्त-पाठ अभ्यास में टाइप कर सकता है। पिछला भाग मुख्य उत्तर बना रहता है।"
+    image_label: "छवि (वैकल्पिक)"
+    image_upload: "चित्र अपलोड करें"
+    image_remove: "हटाएं"
+    image_preview_alt: "कार्ड छवि"
+    image_path_toggle: "उन्नत: एसेट पथ का उपयोग करें"
+    image_path_label: "एसेट पथ"
+    image_path_hint: "सेट के assets/ फ़ोल्डर के अंदर एक पथ। केवल रिपॉज़िटरी में प्रकाशित सेट के लिए।"
+    image_error:
+      unsupported_type: "केवल JPEG, PNG या WebP छवियाँ समर्थित हैं।"
+      too_large: "यह छवि बहुत बड़ी है। कोई छोटी छवि आज़माएँ।"
+      decode_failed: "यह छवि पढ़ी नहीं जा सकी। कोई अन्य फ़ाइल आज़माएँ।"
     add: कार्ड जोड़ें
     import_csv: CSV आयात करें
     csv_hint: 'पंक्तियों को front, back, notes के रूप में पेस्ट करें (अल्पविराम- या टैब-पृथक)। उदाहरण: Bonjour, Guten Tag, Formal greeting'
@@ -2511,6 +2642,9 @@ create_lesson:
     heading: अभ्यास बनाएँ
     count_label: अभ्यासों की संख्या
     types_label: अभ्यास प्रकार
+    add: "अभ्यास जोड़ें"
+    add_heading: "अभ्यास प्रकार चुनें"
+    incomplete_to_advance: "जारी रखने के लिए अधूरे अभ्यास पूरे करें या हटाएँ।"
     direction_label: दिशा
     generate: अभ्यास स्वतः बनाएँ
     regenerate: फिर से बनाएँ
@@ -2520,16 +2654,142 @@ create_lesson:
     drag: क्रम बदलने के लिए खींचें
     delete: अभ्यास हटाएँ
     type:
+      multiple_choice: "बहुविकल्पी"
       matching: मिलान
       free_text: मुक्त पाठ
       cloze: रिक्त-स्थान भरें
       word_tiles: शब्द-टाइलें
       picture_choice: चित्र चयन
+    gen_missing_intro: "कुछ चयनित प्रकारों ने कोई अभ्यास नहीं बनाया:"
+    gen_none:
+      multiple_choice: "बहुविकल्पी: अलग-अलग उत्तरों वाले कम से कम दो कार्ड जोड़ें।"
+      matching: "मिलान: कम से कम दो कार्ड जोड़ें।"
+      free_text: "मुक्त पाठ: कम से कम एक कार्ड जोड़ें।"
+      cloze: "क्लोज़: कुछ कार्डों में शब्द वाला एक उदाहरण वाक्य जोड़ें।"
+      word_tiles: "शब्द टाइलें: कुछ कार्डों में कम से कम दो शब्दों वाला एक उदाहरण वाक्य जोड़ें।"
+      picture_choice: "चित्र चयन: कम से कम दो कार्डों में एक छवि जोड़ें।"
+    edit:
+      mc_options_label: "उत्तर विकल्प"
+      mc_option_placeholder: "विकल्प पाठ"
+      mc_option_add: "विकल्प जोड़ें"
+      mc_option_remove: "विकल्प हटाएँ"
+      mc_correct: "सही उत्तर"
+      mc_mode_label: "कितने उत्तर सही हैं?"
+      mc_mode_single: "एक उत्तर की अनुमति दें"
+      mc_mode_multiple: "एकाधिक उत्तरों की अनुमति दें"
+      err_multiple_choice: "कम से कम दो अलग-अलग विकल्प जोड़ें और सही उत्तर चिह्नित करें।"
+      edit: "अभ्यास संपादित करें"
+      save: "सहेजें"
+      prompt_label: "प्रश्न / निर्देश"
+      pairs_label: "जोड़े"
+      pair_left: "शब्द"
+      pair_right: "मिलान"
+      pair_add: "जोड़ा जोड़ें"
+      pair_remove: "जोड़ा हटाएँ"
+      accept_label: "स्वीकृत उत्तर"
+      accept_add: "जोड़ें"
+      accept_remove: "स्वीकृत उत्तर हटाएँ"
+      accept_placeholder: "स्वीकृत उत्तर"
+      sentence_label: "वाक्य (प्रत्येक रिक्त स्थान के लिए ___ का उपयोग करें)"
+      sentence_hint: "प्रत्येक रिक्त स्थान को ___ (तीन अंडरस्कोर) से चिह्नित करें।"
+      blank_label: "रिक्त स्थान {n}: स्वीकृत उत्तर"
+      tiles_label: "टाइलें (सही क्रम में)"
+      tile_add: "टाइल जोड़ें"
+      tile_remove: "टाइल हटाएँ"
+      tile_placeholder: "शब्द"
+      images_label: "छवि विकल्प"
+      image_label_label: "लेबल"
+      image_correct: "सही उत्तर"
+      image_add: "छवि जोड़ें"
+      image_remove: "छवि हटाएँ"
+      err_prompt: "एक प्रश्न या निर्देश दर्ज करें।"
+      err_matching: "कम से कम 2 पूर्ण जोड़े जोड़ें (शब्द और मिलान)।"
+      err_free_text: "कम से कम एक स्वीकृत उत्तर जोड़ें।"
+      err_cloze: "प्रत्येक ___ चिह्न के लिए एक रिक्त स्थान चाहिए, और प्रत्येक रिक्त स्थान के लिए एक उत्तर चाहिए।"
+      err_word_tiles: "कम से कम 2 टाइलें जोड़ें।"
+      err_picture_choice: "लेबल और छवि सहित कम से कम 2 छवियाँ जोड़ें, और ठीक एक को सही के रूप में चिह्नित करें।"
     dir:
       auto: स्वतः
       receptive: ग्रहणशील
       productive: उत्पादक
       balanced: संतुलित
+  extensions:
+    heading: "उन्नत अभ्यास प्रकार"
+    notice: "ये अभ्यास प्रकार उन्नत हैं और हो सकता है कि हर ऐप या पुराने संस्करणों में समर्थित न हों।"
+    add: "एक्सटेंशन अभ्यास जोड़ें"
+    add_heading: "एक्सटेंशन प्रकार चुनें"
+    min_to_advance: "जारी रखने के लिए कम से कम एक पूर्ण एक्सटेंशन अभ्यास जोड़ें।"
+    edit_row: "अभ्यास संपादित करें"
+    delete_row: "अभ्यास हटाएं"
+    type:
+      categorization: "वर्गीकरण"
+      error-correction: "त्रुटि सुधार"
+      reading-comprehension: "पठन बोध"
+      graded-quiz: "अंकित प्रश्नोत्तरी"
+      dictation: "श्रुतलेख"
+    edit:
+      prompt_label: "निर्देश / प्रश्न"
+      save: "सहेजें"
+      err_prompt: "कोई निर्देश या प्रश्न दर्ज करें।"
+      err_categorization: "कम से कम 2 नामित श्रेणियाँ जोड़ें, प्रत्येक में कम से कम एक आइटम हो।"
+      err_error_correction: "कम से कम 2 शब्द जोड़ें, गलत शब्द को चिह्नित करें, और कम से कम एक स्वीकृत सुधार जोड़ें।"
+      err_reading_comprehension: "एक गद्यांश और कम से कम एक पूर्ण प्रश्न जोड़ें (एक सही विकल्प के साथ बहुविकल्पीय, या एक स्वीकृत उत्तर के साथ मुक्त-पाठ)।"
+      err_graded_quiz: "सकारात्मक अंकों के साथ कम से कम एक पूर्ण प्रश्न जोड़ें (एक सही विकल्प के साथ बहुविकल्पीय, या एक स्वीकृत उत्तर के साथ मुक्त-पाठ)।"
+      err_dictation: "एक ऑडियो फ़ाइल पथ और कम से कम एक स्वीकृत प्रतिलेखन जोड़ें।"
+      dict_audio_label: "ऑडियो"
+      dict_audio_placeholder: "assets/audio/clip.mp3"
+      dict_audio_hint: "सेट के assets फ़ोल्डर के अंदर ऑडियो क्लिप का सापेक्ष पथ।"
+      dict_audio_upload: "ऑडियो अपलोड करें"
+      dict_audio_remove: "हटाएं"
+      dict_audio_preview_label: "ऑडियो पूर्वावलोकन"
+      dict_audio_path_label: "या एक एसेट पथ टाइप करें"
+      dict_audio_error:
+        unsupported_type: "असमर्थित ऑडियो प्रारूप। MP3, OGG या WAV का उपयोग करें।"
+        too_large: "यह ऑडियो फ़ाइल बहुत बड़ी है (अधिकतम 2 MB)।"
+        decode_failed: "वह ऑडियो फ़ाइल पढ़ी नहीं जा सकी।"
+      dict_accept_label: "स्वीकृत प्रतिलेखन"
+      dict_accept_add: "जोड़ें"
+      dict_accept_remove: "प्रतिलेखन हटाएं"
+      dict_accept_placeholder: "शिक्षार्थी को क्या टाइप करना चाहिए"
+      q_list_label: "प्रश्न"
+      q_prompt_label: "प्रश्न"
+      q_prompt_placeholder: "प्रश्न"
+      q_type_label: "उत्तर प्रकार"
+      q_type_mc: "बहुविकल्पीय"
+      q_type_free: "मुक्त पाठ"
+      q_option_text_placeholder: "उत्तर विकल्प"
+      q_option_correct: "सही"
+      q_option_add: "विकल्प जोड़ें"
+      q_option_remove: "विकल्प हटाएं"
+      q_accept_label: "स्वीकृत उत्तर"
+      q_accept_add: "जोड़ें"
+      q_accept_remove: "स्वीकृत उत्तर हटाएं"
+      q_accept_placeholder: "स्वीकृत उत्तर"
+      q_points_label: "अंक"
+      q_partial_label: "आंशिक अंक की अनुमति दें"
+      q_remove: "प्रश्न हटाएं"
+      q_add: "प्रश्न जोड़ें"
+      rc_passage_label: "पठन गद्यांश"
+      rc_passage_placeholder: "वह पाठ चिपकाएं जिसे शिक्षार्थी उत्तर देने से पहले पढ़ता है।"
+      gq_threshold_label: "उत्तीर्ण सीमा (%)"
+      cat_categories_label: "श्रेणियाँ"
+      cat_name_placeholder: "श्रेणी का नाम"
+      cat_name_label: "श्रेणी का नाम"
+      cat_remove: "श्रेणी हटाएं"
+      cat_items_label: "इस श्रेणी में आइटम"
+      cat_item_add: "जोड़ें"
+      cat_item_remove: "आइटम हटाएं"
+      cat_item_placeholder: "आइटम"
+      cat_add: "श्रेणी जोड़ें"
+      ec_tokens_label: "वाक्य के शब्द (गलत को चिह्नित करें)"
+      ec_mark_error: "यह शब्द त्रुटि है"
+      ec_token_placeholder: "शब्द"
+      ec_token_remove: "शब्द हटाएं"
+      ec_token_add: "शब्द जोड़ें"
+      ec_accept_label: "स्वीकृत सुधार"
+      ec_accept_add: "जोड़ें"
+      ec_accept_remove: "सुधार हटाएं"
+      ec_accept_placeholder: "सही शब्द"
   review:
     heading: समीक्षा करें और सहेजें
     title: शीर्षक
@@ -2548,12 +2808,23 @@ create_lesson:
     failed: पाठ सहेजा नहीं जा सका।
     save_local: स्थानीय रूप से सहेजें
     save_share: सहेजें और साझा करें
+    save_changes: "परिवर्तन सहेजें"
+    save_copy: "प्रतिलिपि के रूप में सहेजें"
+    copy_suffix: "(प्रतिलिपि)"
+    updated: "पाठ अपडेट किया गया!"
+    copied: "प्रतिलिपि के रूप में सहेजा गया!"
     play: पाठ चलाएँ
     create_another: एक और पाठ बनाएँ
     to_browser: सामग्री ब्राउज़र पर जाएँ
     save_file: "फ़ाइल के रूप में सहेजें"
     file_saved: "पाठ फ़ाइल के रूप में सहेजा गया।"
   templates:
+    extensions:
+      title: "उन्नत अभ्यास प्रकार"
+      desc: "वर्गीकरण और त्रुटि-सुधार अभ्यास बनाएं। एक्सटेंशन का समर्थन करने वाला ऐप आवश्यक है।"
+    knowledge_from_text:
+      title: "टेक्स्ट से ज्ञान पाठ"
+      desc: "एक पाठ्यपुस्तक अनुभाग पेस्ट करें; AI सिद्धांत अपने शब्दों में लिखता है और अभ्यास बनाता है।"
     heading: टेम्पलेट से शुरू करें
     blank:
       title: खाली पाठ

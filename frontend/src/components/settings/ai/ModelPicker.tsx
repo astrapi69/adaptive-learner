@@ -32,7 +32,7 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../../api/client";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import type {AIProvider} from "../../../lib/constants";
-import {partitionModels} from "../../../lib/ai/providers/model-recommendations";
+import {BUILTIN_REGISTRY, partitionModels} from "@astrapi69/ai-key-vault";
 import {getStorage} from "../../../storage";
 import type {AvailableModel} from "../../../storage/types";
 
@@ -137,7 +137,10 @@ export function ModelPicker({
 
     // Curated grouping shared by all three providers (#917): pull the
     // recommended families to the top instead of the provider's raw order.
-    const {recommended, rest} = partitionModels(provider, filtered);
+    const {recommended, rest} = partitionModels(
+        BUILTIN_REGISTRY.get(provider).recommendedModels ?? [],
+        filtered,
+    );
 
     const showStaticFallback =
         fetchState.kind === "error" || (fetchState.kind === "loaded" && filtered.length === 0);

@@ -41,6 +41,7 @@ export const KNOWN_EXERCISE_TYPES = [
   "ext:al-error-correction",
   "ext:al-reading-comprehension",
   "ext:al-graded-quiz",
+  "ext:al-dictation",
 ] as const;
 
 /** Schema major the app understands (CURRENT_SCHEMA_VERSION is 1.x). */

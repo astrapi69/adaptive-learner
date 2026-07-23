@@ -9,7 +9,7 @@
 import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const navigateMock = vi.fn();
@@ -23,8 +23,18 @@ const saveUserSetMock = vi.fn(async (input: {set_id: string; title: string}) => 
     source: "user-generated",
     title: input.title,
 }));
+const listLessonsMock = vi.fn();
+const getLessonMock = vi.fn();
+const listSetsMock = vi.fn();
 vi.mock("../../storage", () => ({
-    getStorage: () => ({contentLoader: {saveUserSet: saveUserSetMock}}),
+    getStorage: () => ({
+        contentLoader: {
+            saveUserSet: saveUserSetMock,
+            listLessons: listLessonsMock,
+            getLesson: getLessonMock,
+            listSets: listSetsMock,
+        },
+    }),
 }));
 vi.mock("../../utils/notify", () => ({
     notify: {success: vi.fn(), error: vi.fn(), info: vi.fn(), warning: vi.fn()},
@@ -36,6 +46,9 @@ vi.mock("../../lib/content/lesson/lesson-export", () => ({
 
 import CreateLesson from "./CreateLesson";
 import {PAGE_CONTAINER_CLASSES} from "../../shared/layout/PageContainer";
+import {buildLessonFromDraft} from "../../lib/content/lesson/draft-to-lesson";
+import {generateExercises} from "../../lib/exercises";
+import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 
 function renderPage() {
     return render(
@@ -156,6 +169,30 @@ describe("CreateLesson — card step gate + draft", () => {
         });
         fireEvent.click(screen.getByTestId("create-lesson-next"));
         expect(screen.getByTestId("card-count").textContent).toContain("10");
+    });
+
+    it("marks the clicked template card as selected (#1756)", () => {
+        renderPage();
+        // Before any click no card is pressed.
+        expect(
+            screen.getByTestId("template-vocabulary").getAttribute("aria-pressed"),
+        ).toBe("false");
+        fireEvent.click(screen.getByTestId("template-vocabulary"));
+        expect(
+            screen.getByTestId("template-vocabulary").getAttribute("aria-pressed"),
+        ).toBe("true");
+        // Only ONE card carries the selected state.
+        expect(
+            screen.getByTestId("template-grammar").getAttribute("aria-pressed"),
+        ).toBe("false");
+        // Picking another template moves the selection.
+        fireEvent.click(screen.getByTestId("template-grammar"));
+        expect(
+            screen.getByTestId("template-grammar").getAttribute("aria-pressed"),
+        ).toBe("true");
+        expect(
+            screen.getByTestId("template-vocabulary").getAttribute("aria-pressed"),
+        ).toBe("false");
     });
 
     it("blocks step 3 until at least 4 cards exist", () => {
@@ -426,6 +463,223 @@ describe("CreateLesson — template cards layout (#1715)", () => {
         // Real card chrome: border + padding.
         expect(card.className).toContain("border");
         expect(card.className).toMatch(/\bp-/);
+    });
+});
+
+// #1740 — editing an existing own lesson through the pre-filled wizard.
+describe("CreateLesson — edit mode (#1740)", () => {
+    const EDIT_META: LessonMeta = {
+        title: "Colours A1",
+        titleNative: "Farben A1",
+        sourceLanguage: "de",
+        targetLanguage: "fr",
+        level: "A2",
+        description: "The original topic.",
+        author: "Aster",
+    };
+
+    function fixtureLesson() {
+        const cards = ["rouge", "bleu", "vert", "jaune", "noir"].map((w, i) => ({
+            id: `c${i}`,
+            front: w,
+            back: `farbe-${i}`,
+            notes: "",
+            image: "",
+        }));
+        const exercises = generateExercises(
+            cards.map((c) => ({id: c.id, front: c.front, back: c.back})),
+            {count: 10, types: ["matching", "free_text"], direction: "auto"},
+        );
+        return buildLessonFromDraft({meta: EDIT_META, cards, exercises});
+    }
+
+    function renderEdit(setId = "created-colours-a1") {
+        return render(
+            <MemoryRouter
+                initialEntries={[`/create-lesson/edit/user-generated/${setId}`]}
+            >
+                <Routes>
+                    <Route
+                        path="/create-lesson/edit/:source/:setId"
+                        element={<CreateLesson />}
+                    />
+                </Routes>
+            </MemoryRouter>,
+        );
+    }
+
+    beforeEach(() => {
+        saveUserSetMock.mockClear();
+        const lesson = fixtureLesson();
+        listLessonsMock.mockResolvedValue({
+            set_id: "created-colours-a1",
+            source: "user-generated",
+            version: "1.0.0",
+            lessons: [`${lesson.id}.json`],
+        });
+        getLessonMock.mockResolvedValue(lesson);
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {
+                    source: "user-generated",
+                    id: "created-colours-a1",
+                    level: "A2",
+                    title_native: "Farben A1",
+                    domain: "imported",
+                },
+            ],
+        });
+    });
+
+    it("opens pre-filled with the existing lesson's metadata", async () => {
+        renderEdit();
+        // Edit heading, not "Create a lesson".
+        expect(
+            screen.getByText("Edit lesson"),
+        ).toBeInTheDocument();
+        await waitFor(() =>
+            expect(
+                (screen.getByTestId("create-lesson-title") as HTMLInputElement)
+                    .value,
+            ).toBe("Colours A1"),
+        );
+    });
+
+    async function toReview() {
+        renderEdit();
+        await waitFor(() =>
+            expect(
+                (screen.getByTestId("create-lesson-title") as HTMLInputElement)
+                    .value,
+            ).toBe("Colours A1"),
+        );
+        // Cards + exercises are already pre-filled, so Next advances
+        // through the gates straight to review.
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → 2
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → 3
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → 4
+        expect(screen.getByTestId("create-lesson-step-4")).toBeInTheDocument();
+    }
+
+    it("save overwrites the same set id (not a title-derived new id)", async () => {
+        await toReview();
+        // A rename must NOT change the overwrite target.
+        fireEvent.click(screen.getByTestId("create-lesson-save-local"));
+        await waitFor(() => expect(saveUserSetMock).toHaveBeenCalled());
+        const input = saveUserSetMock.mock.calls[0][0] as unknown as {
+            set_id: string;
+            origin: string;
+            lessons: {id: string}[];
+        };
+        expect(input.set_id).toBe("created-colours-a1");
+        expect(input.origin).toBe("imported");
+        // Same lesson filename id → progress keyed on it survives.
+        expect(input.lessons[0].id).toBe(fixtureLesson().id);
+    });
+
+    it("offers Save-as-copy (not Save-and-share) in edit mode", async () => {
+        await toReview();
+        expect(
+            screen.getByTestId("create-lesson-save-copy"),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("create-lesson-save-share"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("Save-as-copy persists under a fresh, non-colliding set id", async () => {
+        await toReview();
+        fireEvent.click(screen.getByTestId("create-lesson-save-copy"));
+        await waitFor(() => expect(saveUserSetMock).toHaveBeenCalled());
+        const input = saveUserSetMock.mock.calls[0][0] as unknown as {
+            set_id: string;
+            title: string;
+        };
+        expect(input.set_id).not.toBe("created-colours-a1");
+        expect(input.title).toContain("(copy)");
+    });
+
+    it("surfaces an error when the lesson can't be loaded", async () => {
+        listLessonsMock.mockResolvedValue({
+            set_id: "x",
+            source: "user-generated",
+            version: null,
+            lessons: [],
+        });
+        renderEdit();
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("create-lesson-edit-error"),
+            ).toBeInTheDocument(),
+        );
+    });
+});
+
+// #1852 — the extension-authoring wizard branch (editors 1+2). A full
+// author-a-categorization-and-save round-trip proving the saved set carries
+// requires_extensions (the load-guard contract for ext lessons).
+describe("CreateLesson — extension wizard (#1852)", () => {
+    beforeEach(() => {
+        saveUserSetMock.mockClear();
+    });
+
+    it("authors a categorization exercise and saves a set with requires_extensions", async () => {
+        renderPage();
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: "Dog Signals"},
+        });
+        // Enter the extension path from the step-1 template card.
+        fireEvent.click(screen.getByTestId("template-extensions"));
+        expect(
+            screen.getByTestId("create-lesson-extension-step"),
+        ).toBeInTheDocument();
+
+        // Add a categorization exercise; it auto-opens in the inline editor.
+        fireEvent.click(screen.getByTestId("extension-add"));
+        fireEvent.click(screen.getByTestId("extension-add-type-categorization"));
+        const editor = screen.getByTestId(/^exercise-ext-editor-/);
+        const id = editor
+            .getAttribute("data-testid")!
+            .replace("exercise-ext-editor-", "");
+
+        fireEvent.change(screen.getByTestId(`exercise-ext-prompt-${id}`), {
+            target: {value: "Sort each signal"},
+        });
+        // Name both buckets and give each one item (add-only StringListEditor).
+        fireEvent.change(screen.getByTestId(`exercise-ext-cat-name-${id}-0`), {
+            target: {value: "Sight"},
+        });
+        fireEvent.change(screen.getByTestId(`exercise-ext-cat-name-${id}-1`), {
+            target: {value: "Sound"},
+        });
+        fireEvent.change(
+            screen.getByTestId(`exercise-ext-cat-items-${id}-0-input`),
+            {target: {value: "flat hand"}},
+        );
+        fireEvent.click(screen.getByTestId(`exercise-ext-cat-items-${id}-0-add`));
+        fireEvent.change(
+            screen.getByTestId(`exercise-ext-cat-items-${id}-1-input`),
+            {target: {value: "Sit"}},
+        );
+        fireEvent.click(screen.getByTestId(`exercise-ext-cat-items-${id}-1-add`));
+
+        // Save the exercise — the row collapses to its preview.
+        fireEvent.click(screen.getByTestId(`exercise-ext-save-${id}`));
+
+        // Advance to review and save locally.
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(
+            screen.getByTestId("create-lesson-extension-review"),
+        ).toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("create-lesson-save-local"));
+
+        await waitFor(() => expect(saveUserSetMock).toHaveBeenCalledOnce());
+        const input = saveUserSetMock.mock.calls[0][0] as unknown as {
+            lessons: {requires_extensions?: string[]}[];
+        };
+        expect(input.lessons[0].requires_extensions).toContain(
+            "ext:al-categorization@1",
+        );
     });
 });
 

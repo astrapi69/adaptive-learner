@@ -55,6 +55,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_DIR = REPO_ROOT / "frontend" / "src"
 DIST_DIR = REPO_ROOT / "frontend" / "dist"
 BASELINE_FILE = REPO_ROOT / ".dead-classnames-baseline"
+UNSTYLED_BASELINE_FILE = REPO_ROOT / ".unstyled-classnames-baseline"
 AUDIT = "docs/audits/global-css-analysis-2026-07-08.md"
 
 # A token that could be a CSS class in this codebase: lowercase-kebab plus
@@ -354,6 +355,165 @@ def source_files() -> list[Path]:
     )
 
 
+# --------------------------------------------------------------------------
+# --unstyled mode (#1892): the render-unstyled archetype.
+#
+# The base gate above catches new dead class NAMES. This mode catches an
+# element whose className tokens are ALL dead -> it renders with zero CSS
+# (the #1715 / #1732 CreateLesson shape). Its dead oracle is the committed
+# .dead-classnames-baseline (kept accurate by the base gate), so this mode
+# is BUILD-INDEPENDENT: it reads only committed files, no frontend/dist.
+# --------------------------------------------------------------------------
+
+
+def static_class_groups(text: str) -> list[list[str]]:
+    """Per-``className`` class-token lists, PURELY-STATIC values only.
+
+    Returns one token list per ``className`` attribute whose value is fully
+    static and thus fully checkable: a plain string literal, a braced single
+    string literal (``{"..."}``), or a template literal with NO ``${...}``
+    span. Any value routed through a call (``cn(...)``), an identifier, a
+    ternary, or a dynamic template is EXCLUDED entirely -- its complete class
+    set is unprovable, so it can never yield a false unstyled flag. Empty
+    groups (no valid class token, e.g. an i18n-key literal) are dropped.
+
+    Consumed only by the ``--unstyled`` gate; the base #1491 gate uses
+    :func:`extract_used_classes` (which unions tokens across the file and so
+    cannot ask the per-attribute "are ALL tokens dead" question).
+    """
+    groups: list[list[str]] = []
+    n = len(text)
+    for m in CLASSNAME_RE.finditer(text):
+        j = m.end()
+        while j < n and text[j] in " \t\n\r":
+            j += 1
+        if j >= n or text[j] != "=":
+            continue
+        j += 1
+        while j < n and text[j] in " \t\n\r":
+            j += 1
+        if j >= n:
+            continue
+        ch = text[j]
+        content: str | None = None
+        if ch in "\"'":
+            content, _ = _read_quoted(text, j)
+        elif ch == "`":
+            body, _ = _read_backtick(text, j)
+            if "${" not in body:
+                content = body
+        elif ch == "{":
+            expr, _ = _read_braced(text, j)
+            stripped = expr.strip()
+            if stripped[:1] in "\"'":
+                inner, end = _read_quoted(stripped, 0)
+                if end == len(stripped):  # a lone string literal {"..."}
+                    content = inner
+            elif stripped[:1] == "`":
+                body, end = _read_backtick(stripped, 0)
+                if end == len(stripped) and "${" not in body:  # lone {`...`}
+                    content = body
+            # cn(...) / identifier / ternary / dynamic template -> excluded
+        if content is None:
+            continue
+        toks = [t for t in content.split() if CLASS_TOKEN_RE.match(t)]
+        if toks:
+            groups.append(toks)
+    return groups
+
+
+def unstyled_class_values(text: str, dead: set[str]) -> set[str]:
+    """Canonical keys of ``className`` attributes whose EVERY token is dead.
+
+    A key is the sorted, space-joined class tokens (order-independent, so a
+    two-token combo is one stable entry regardless of author order). Only the
+    purely-static classNames from :func:`static_class_groups` are considered.
+    """
+    values: set[str] = set()
+    for toks in static_class_groups(text):
+        if all(t in dead for t in toks):
+            values.add(" ".join(sorted(toks)))
+    return values
+
+
+def load_unstyled_baseline() -> set[str]:
+    if not UNSTYLED_BASELINE_FILE.exists():
+        return set()
+    entries: set[str] = set()
+    for line in UNSTYLED_BASELINE_FILE.read_text(encoding="utf-8").splitlines():
+        line = line.split("#", 1)[0].strip()
+        if line:
+            entries.add(line)
+    return entries
+
+
+def compute_unstyled() -> set[str]:
+    """Canonical unstyled className values across ``frontend/src``.
+
+    Dead oracle = the committed ``.dead-classnames-baseline`` (no build).
+    """
+    dead = load_baseline()
+    values: set[str] = set()
+    for path in source_files():
+        text = strip_comments(path.read_text(encoding="utf-8", errors="replace"))
+        values |= unstyled_class_values(text, dead)
+    return values
+
+
+def run_unstyled(regen: bool) -> int:
+    current = compute_unstyled()
+    if regen:
+        for value in sorted(current):
+            print(value)
+        return 0
+
+    baseline = load_unstyled_baseline()
+    new_unstyled = sorted(current - baseline)
+    migrated = sorted(baseline - current)
+
+    print(
+        "\n=== Unstyled-Classname-Gate (#1892): className mit AUSSCHLIESSLICH "
+        "toten Tokens ==="
+    )
+    print(
+        f"aktuell: {len(current)} | auf Baseline: {len(baseline)} | "
+        f"neu: {len(new_unstyled)}\n"
+    )
+
+    if migrated:
+        print(
+            f"  OK     {len(migrated)} Baseline-Eintrag/-Eintraege nicht mehr "
+            "vorhanden (gestylt/migriert)."
+        )
+        print("         Aus .unstyled-classnames-baseline loeschen (Ratchet runter):")
+        for value in migrated:
+            print(f"           - {value}")
+        print("")
+
+    if new_unstyled:
+        print(
+            f"  ERROR  {len(new_unstyled)} neue vollstaendig ungestylte "
+            "className-Attribut(e):\n"
+        )
+        for value in new_unstyled:
+            print(f'           "{value}"')
+        print(
+            "\nEine className, deren Tokens ALLE tote Klassen sind (weder CSS-Regel\n"
+            "noch emittierte Tailwind-Utility), rendert das Element komplett ohne\n"
+            "Styling (#1715/#1732). Drei Wege:\n"
+            "  (a) das Element mit token-basierten Tailwind-Utilities stylen (die\n"
+            "      tote Klasse als Test-/Baseline-Anker behalten ist ok),\n"
+            "  (b) die fehlende CSS-Regel unter frontend/src definieren, oder\n"
+            "  (c) falls bewusst extern gestylt: den Wert mit begruendetem\n"
+            "      Kommentar in .unstyled-classnames-baseline eintragen.\n"
+            f"Hintergrund: #1728, {AUDIT}"
+        )
+        return 1
+
+    print("  OK     kein neues vollstaendig ungestyltes className-Attribut.\n")
+    return 0
+
+
 def compute_dead() -> tuple[set[str], set[str], int]:
     """Return (used, dead, unchecked). Requires the build CSS to exist."""
     build_css_files = sorted(DIST_DIR.glob("assets/*.css"))
@@ -382,6 +542,13 @@ def main() -> int:
     if not SRC_DIR.is_dir():
         print(f"FEHLER: {SRC_DIR} nicht gefunden.")
         return 1
+
+    # ``--unstyled`` runs the render-unstyled archetype gate (#1892). It is
+    # build-independent (dead oracle = the committed .dead-classnames-baseline),
+    # so it never needs frontend/dist. ``--unstyled --list`` regenerates the
+    # .unstyled-classnames-baseline reproducibly.
+    if "--unstyled" in sys.argv[1:]:
+        return run_unstyled(regen="--list" in sys.argv[1:])
 
     # ``--list`` prints the bare dead class names (one per line) so the
     # baseline can be (re)generated reproducibly. It never consults or

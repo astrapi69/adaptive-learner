@@ -21,7 +21,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test test-fast test-changed test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
-       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-manual-automation \
+       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-webkit test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
        test-one test-watch tdd-help \
        stryker stryker-quick \
@@ -35,6 +35,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
+       verify-i18n-scripts \
        sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
@@ -474,11 +475,13 @@ css-identity-ref: ## EXP-044 concern-split (#1655): build + store the byte-ident
 css-identity-check: ## EXP-044 concern-split (#1655): build + byte-compare the emitted CSS against the stored reference
 	bash scripts/check-css-identity.sh check
 
-check-dead-classnames: ## Usage-side gate: classNames used in TSX but defined nowhere (ratchet via .dead-classnames-baseline, #1491)
+check-dead-classnames: ## Usage-side gates: dead classNames (#1491) + render-unstyled archetype (all-dead className, #1892)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
 	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	python3 scripts/check-dead-classnames.py
+	@echo ""
+	python3 scripts/check-dead-classnames.py --unstyled
 
 audit-legacy-conflicts: ## EXP-044 pre-wrap conflict audit (analysis only, NO gate; Refs #1485). BLOCKS="--block A-B:Label ..." or default --wrapped
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
@@ -567,6 +570,22 @@ test-dexie-smoke: ## Dexie-mode release gate (build + Playwright preview-mode sm
 	@echo "=== Running Dexie-mode Playwright smoke ==="
 	cd e2e && npx playwright test --config=playwright.dexie.config.ts
 
+# WebKit engine gate (#1834). Catches iOS/Safari CSS-ENGINE layout bugs
+# that the Chromium gates structurally cannot — e.g. the lesson-footer
+# Pause/Next overlap that WebKit produces under justify-content:
+# space-between on overflow while Blink clamps. Serves the same
+# Dexie/GH-Pages-shape build under Playwright's `webkit` browser with an
+# emulated iPhone 12 profile. NOT in the default gate chain: the WebKit
+# browser must be installed first (`cd e2e && npx playwright install-deps
+# webkit && npx playwright install webkit`), which needs egress to the
+# Playwright browser CDN.
+test-webkit: ## WebKit lesson-layout gate (#1834); needs `playwright install webkit`
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
+	@echo ""
+	@echo "=== Running WebKit layout gate (iPhone 12 profile) ==="
+	cd e2e && npx playwright test --config=playwright.webkit.config.ts
+
 test-manual-automation: ## Automated manual-test-plan suite (#616; build dexie + Playwright)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
 	cd frontend && VITE_STORAGE_MODE=dexie bun run build
@@ -602,6 +621,15 @@ verify-screenshots: ## Verify per-feature screenshots against the committed base
 	@echo "=== Verifying per-feature screenshots ==="
 	cd e2e && npx playwright test --config=playwright.features.config.ts
 
+capture-blog-screenshots: ## Capture lesson-creator screenshots for the engine blog series (writes only, no baseline)
+	@echo "=== Building frontend (needs the backend too: the UI language comes from /api/i18n) ==="
+	cd frontend && bun run build
+	@echo ""
+	@echo "=== Capturing blog screenshots (DOCS_LANG=$(or $(DOCS_LANG),en)) ==="
+	cd e2e && DOCS_LANG=$(or $(DOCS_LANG),en) npx playwright test --config=playwright.docs.config.ts
+	@echo ""
+	@echo "Output: e2e/docs/output/$(or $(DOCS_LANG),en)/ (git-ignored; copy what you need into the article)"
+
 # --- Version sync ---
 
 sync-versions: ## Propagate backend/pyproject.toml version to all subsystems
@@ -615,6 +643,9 @@ sync-versions-check: ## Exit non-zero if any subsystem version drifts from canon
 
 sync-i18n: ## Regenerate frontend/src/data/i18n/*.json from backend YAML catalogs
 	@python3 scripts/sync_i18n_to_frontend.py
+
+verify-i18n-scripts: ## Script-sanity lint: de substitute spelling + el/hi latin transliteration (#1755, hard gate)
+	@python3 scripts/verify_i18n_scripts.py
 
 i18n-quality-check: ## LLM translation quality-check over the 8 machine-translated catalogs (#1296; needs an Anthropic key). Pass args via ARGS="--langs ja --limit 50"
 	@cd backend && poetry run python ../scripts/i18n_quality_check.py $(ARGS)
@@ -996,7 +1027,18 @@ endif
 	git push origin develop
 	@echo "=== Delete release/$(VERSION) ==="
 	git branch -d release/$(VERSION)
-	git push origin --delete release/$(VERSION)
+# The release branch is cut locally and need not be pushed (#334 gitflow),
+# so a remote branch may never have existed. Deleting a non-existent remote
+# ref used to fail the whole target with exit 1 AFTER main was already
+# merged, tagged and pushed - an alarming exit code for a no-op cleanup
+# step, which is exactly the signal you do not want to learn to ignore
+# (#1903). Delete it only when it is actually there.
+	@if git ls-remote --exit-code --heads origin release/$(VERSION) >/dev/null 2>&1; then \
+		echo "remote branch exists - deleting"; \
+		git push origin --delete release/$(VERSION); \
+	else \
+		echo "no remote release/$(VERSION) (branch was local-only) - nothing to delete"; \
+	fi
 	@echo ""
 	@echo "Tagged + merged. Next: make release-publish VERSION=$(VERSION)"
 

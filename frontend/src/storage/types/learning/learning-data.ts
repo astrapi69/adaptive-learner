@@ -3,10 +3,9 @@
  * review cards for removed / orphaned content (#1445 Parts B + C).
  *
  * Distinct from ``lessonProgress`` / ``elementErrors`` because the delete
- * spans BOTH tables in one atomic transaction (no half state). Dexie mode
- * owns the local IndexedDB store and implements this fully; ApiStorage's
- * server-side data is managed via backup/reset, so it throws — the UI gates
- * the delete affordance on the storage mode.
+ * spans BOTH tables in one atomic transaction (no half state). Both storage
+ * modes implement this fully: Dexie deletes from IndexedDB, ApiStorage
+ * calls ``POST /users/{id}/learning-data/delete`` (#1821).
  */
 
 /** What a deletion removes: specific progress rows + every card of the sets. */
@@ -26,7 +25,7 @@ export interface LearningDataDeletionResult {
 export interface ILearningDataNamespace {
   /**
    * Atomically delete the given progress rows + all review cards for the
-   * given set ids, scoped to ``userId``. Dexie mode only — ApiStorage throws.
+   * given set ids, scoped to ``userId``. Works in both storage modes.
    */
   deleteLearningData(
     userId: string,

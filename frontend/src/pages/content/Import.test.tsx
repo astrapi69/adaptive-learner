@@ -102,6 +102,20 @@ describe("Import page", () => {
         expect(btn.disabled).toBe(true);
     });
 
+    it("no-key notice links to the AI settings tab, not Integrations (#1835)", async () => {
+        render(
+            <TestFeatureProvider context={{mode: "dexie", hasAiKey: false}}>
+                <I18nProvider>
+                    <MemoryRouter>
+                        <Import />
+                    </MemoryRouter>
+                </I18nProvider>
+            </TestFeatureProvider>,
+        );
+        const link = await screen.findByTestId("api-key-required-link");
+        expect(link.getAttribute("href")).toBe("/settings?tab=ai");
+    });
+
     it("shows detected format hint as user types", async () => {
         renderImport();
         await waitFor(() => {

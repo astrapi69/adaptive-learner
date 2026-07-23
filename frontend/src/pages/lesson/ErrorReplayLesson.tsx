@@ -456,6 +456,11 @@ function ErrorReplaySummary({
                 {allCorrected ? (
                     <Button
                         type="button"
+                        // #1864 — the sole next step: auto-focus it so
+                        // Enter activates it natively (a focused button
+                        // owns Enter; useLessonEnterKey steps aside). Only
+                        // done here, where there is one clear next step.
+                        autoFocus
                         onClick={onDone}
                         data-testid="error-replay-summary-done"
                     >

@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.2.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-6372%20grün-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v2.5.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-9708%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -300,13 +300,13 @@ cd ~/adaptive-learner
 
 ### 4. Entwickler-Setup (Source-Build)
 
-Manuelles Poetry-+-npm-Setup für Mitwirkende.
-Voraussetzungen: Python 3.11+, Node ≥24, Poetry, npm, Make.
+Manuelles Poetry-+-Bun-Setup für Mitwirkende.
+Voraussetzungen: Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
 
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + npm + alle 13 Plugins als Path-Deps
+make install   # Poetry + Bun + alle 13 Plugins als Path-Deps
 make dev       # Backend :18001 + Frontend :15174 (Vite-Dev-Server)
 ```
 
@@ -324,7 +324,7 @@ Vollständige Setup-Anleitung unter
 | KI-Anbieter | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
 | Testing | pytest ^9, Vitest 4 (happy-dom), Playwright (E2E-Smoke) |
-| Tooling | Poetry, npm, Docker, Make, ruff, pre-commit |
+| Tooling | Poetry, Bun, Docker, Make, ruff, pre-commit |
 
 ## Ausgelieferte Plugins
 
@@ -351,9 +351,9 @@ Vollständige Setup-Anleitung unter
 
 ```bash
 make dev               # Backend (18001) + Frontend (15174)
-make test              # Backend + Plugins + Vitest (6372 Tests)
+make test              # Backend + Plugins + Vitest (9708 Tests)
 make test-coverage     # Opt-In-Coverage (CI nachts)
-make sync-versions     # Version über 18 Dateien propagieren
+make sync-versions     # Version über 19 Dateien propagieren
 make sync-i18n         # Backend-YAML → Frontend-JSON-Bundles
 make docs-serve        # MkDocs-Preview auf :8000 mit Hot-Reload
 make prod / prod-down  # docker-compose-Stack
@@ -364,14 +364,14 @@ E2E-Smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
-Verifiziert am 2026-06-15 (v1.79.0):
+Verifiziert am 2026-07-17 (v2.3.0+):
 
 | Suite | Anzahl |
 |---|---|
-| Backend (pytest) | 1215 |
-| Plugins (13 × pytest) | 1018 |
-| Frontend (Vitest 4) | 4139 |
-| **Gesamt** | **6372** |
+| Backend (pytest) | 1415 |
+| Plugins (13 × pytest) | 1080 |
+| Frontend (Vitest 4) | 7213 |
+| **Gesamt** | **9708** |
 
 Plus 17 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
 Onboarding+Assessment, Sitzung (3-Chunk-SSE), Curriculum,
@@ -399,20 +399,34 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v1.97.1**, ein
-Schema- + Tooling-Release, in dem das **Lektions-JSON-Schema die
-App-autoritative einzige Quelle der Wahrheit** ist (Schema,
-Qualitätsregeln, Doku und TS-Typen werden aus den Pydantic-Modellen
-der App generiert, der Strukturvalidator ist ajv-gehärtet). Jüngere
-Feature-Arbeit umfasst den **Content-Hub**-Umbau (Tabs Entdecken /
-Meine Inhalte / Import, einen globalen Listen- ⇄ Kachel-Umschalter
-und eine kompakte Such-/Filter-Leiste), das vollständige
-**Lernmodus-System** (Üben / Prüfung / Auf Zeit / Reverse / Zufall /
-Endlos + Fehler trainieren), **Cloze-Mehrfachauswahl** „alle
-zutreffenden auswählen", einen Prüfungsmodus-SRS-Intervallbonus, den
-passphrase-verschlüsselten **`.alk`**-Export der KI-Schlüssel und
-eine vertikale Desktop-Seitenleiste. Per-Release-Notes in
-[`changelog/releases/`](changelog/releases/).
+Aktive Entwicklung. Das aktuelle Release ist **v2.5.0**, ein
+Feature-Release, das **Create-Lesson zu einem vollwertigen
+Aufgaben-Editor** macht: jeder Kern-Aufgabentyp ist bearbeitbar,
+Aufgaben lassen sich von Hand ergänzen, `multiple_choice` ist mit
+einer Single/Multi-Umschaltung autorierbar, und ein
+**Extension-Authoring-Assistent** deckt alle vier KI-autorierten
+Extension-Typen ab. **`ext:al-dictation` (Audio-Diktat)** kommt als
+fünfter Extension-Typ hinzu. Unter der Haube werden das
+PWA-Update-System und der KI-Schlüssel-Tresor jetzt als
+**veröffentlichte npm-Pakete konsumiert**
+(`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`), und Bewertung,
+Payload-Validierung und Authoring von Aufgaben sind unter
+`lib/exercises/` zusammengeführt. Das vorige **v2.4.0** brachte ein
+**Create-Lesson-Authoring-Upgrade** (eine Wissens-Lektion aus
+eingefügtem Lehrbuchtext, das Bearbeiten und Kombinieren eigener
+Lektionen sowie Karten-Bild-Upload),
+**Freitext-Aufgaben mit mehreren akzeptierten Antworten** samt einer
+KI-Zweitmeinung, einen **KI-Schlüssel-Import** direkt auf dem
+Einstellungen-KI-Tab und die auf **0.13.0 (Schema 1.8)** neu
+gepinnte Content-Engine. Das vorige **v2.3.0** vollendete den
+**EXP-044-CSS-Concern-Split** (`global.css` byte-identisch in
+Per-Concern-Legacy-Dateien zerlegt, hinter einem
+Byte-Identitäts-Gate), überarbeitete die **Lesson-Player-UX**
+(einklappbares Options-Panel, Pause-Steuerung im Footer, schlankerer
+Titelbereich), ergänzte **Listen-First-Audio** und einen
+Cold-Start-Prior aus der vom Autor gesetzten Schwierigkeit und
+härtete den Datei-Import/-Export von Lektionen/Sets. Per-Release-Notes
+in [`changelog/releases/`](changelog/releases/).
 
 ## Herkunft
 

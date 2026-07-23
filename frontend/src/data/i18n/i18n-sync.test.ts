@@ -133,6 +133,25 @@ describe("i18n JSON catalogs — Dexie-mode bundled source of truth", () => {
         expect(gamification.card_streak).toBeTruthy();
     });
 
+    // #1854 — the lesson-summary "Why you missed these" diff called
+    // t("review.correct_answer", "Correct:") but no catalog defined the
+    // key, so the English fallback rendered in EVERY language next to a
+    // correctly translated review.your_answer. Pin both labels.
+    it("resolves the summary answer-diff labels in every catalog (#1854)", () => {
+        for (const lang of LANGS) {
+            const review = loadJson(lang).review as Record<string, unknown>;
+            expect(
+                typeof review.your_answer,
+                `${lang}: review.your_answer`,
+            ).toBe("string");
+            expect(
+                typeof review.correct_answer,
+                `${lang}: review.correct_answer (falls back to English ` +
+                    `"Correct:" in production when missing)`,
+            ).toBe("string");
+        }
+    });
+
     // --- repo.* dotted-path regression pin (Phase B1 / v1.33.0)
     //
     // v1.26-1.32 catalogs carried flat keys like ``action_rerender``

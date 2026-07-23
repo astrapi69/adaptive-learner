@@ -100,6 +100,23 @@ let cachedLang = "";
 let cachedStrings: I18nStrings = {};
 
 /**
+ * Clear the module-level catalog cache. TEST-ONLY seam: the cache survives
+ * component unmounts by design (avoids refetching on remount), but that means
+ * it also survives test boundaries within a file — a catalog loaded by one
+ * test would make the next test skip the async first-paint sequence it needs
+ * to exercise. Vitest isolates per file, not per test, so a per-test reset is
+ * the only way to get a clean first-paint. Not for production use.
+ */
+export function _resetI18nCacheForTests(): void {
+    cachedLang = "";
+    cachedStrings = {};
+}
+
+/** Capped backoff schedule for the catalog fetch (#1810): 5 retries over
+ *  ~31s bridge a backend restart without hammering a dead endpoint. */
+const CATALOG_RETRY_DELAYS_MS: readonly number[] = [1000, 2000, 4000, 8000, 16000];
+
+/**
  * Module-level i18n lookup. Walks the same cached catalogue
  * that the in-React ``t()`` uses, so non-React code (notify.ts,
  * service modules) can resolve a translated string without
@@ -158,22 +175,49 @@ export function I18nProvider({children}: {children: ReactNode}) {
             });
     }, []);
 
-    // Fetch strings when language changes
+    // Fetch strings when the language changes, retrying with capped backoff
+    // (#1810). One transient failure (backend restarting, network blip) used
+    // to leave the whole session on the inline fallback strings - a
+    // mixed-locale UI. While retries run, t() serves the fallback strings;
+    // after the final failure the give-up is logged, never swallowed.
     useEffect(() => {
         if (lang === cachedLang && Object.keys(cachedStrings).length > 0) {
             setStrings(cachedStrings);
             return;
         }
-        getStorage()
-            .i18n.get(lang)
-            .then((data) => {
-                cachedLang = lang;
-                cachedStrings = data;
-                setStrings(data);
-            })
-            .catch(() => {
-                /* Silent bootstrap fallback: t() reverts to fallback strings. */
-            });
+        let cancelled = false;
+        let retryTimer: ReturnType<typeof setTimeout> | undefined;
+        const attemptFetch = (retryIndex: number) => {
+            getStorage()
+                .i18n.get(lang)
+                .then((data) => {
+                    if (cancelled) return;
+                    cachedLang = lang;
+                    cachedStrings = data;
+                    setStrings(data);
+                })
+                .catch(() => {
+                    if (cancelled) return;
+                    const delayMs = CATALOG_RETRY_DELAYS_MS[retryIndex];
+                    if (delayMs === undefined) {
+                        console.warn(
+                            `[i18n] Catalog for "${lang}" unreachable after ${
+                                CATALOG_RETRY_DELAYS_MS.length + 1
+                            } attempts - staying on bundled fallback strings.`,
+                        );
+                        return;
+                    }
+                    console.warn(
+                        `[i18n] Catalog fetch for "${lang}" failed - retrying in ${delayMs}ms.`,
+                    );
+                    retryTimer = setTimeout(() => attemptFetch(retryIndex + 1), delayMs);
+                });
+        };
+        attemptFetch(0);
+        return () => {
+            cancelled = true;
+            if (retryTimer !== undefined) clearTimeout(retryTimer);
+        };
     }, [lang]);
 
     // WCAG 2.1 SC 3.1.1 (Language of Page) + SC 3.1.2

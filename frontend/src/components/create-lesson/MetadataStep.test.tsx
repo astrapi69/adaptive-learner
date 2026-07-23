@@ -34,6 +34,9 @@ function setup() {
             sameLanguage={false}
             onUpdate={vi.fn()}
             onApplyTemplate={vi.fn()}
+            selectedTemplate={null}
+            onStartBookMode={vi.fn()}
+            onStartExtensions={vi.fn()}
             t={emptyCatalogT}
         />,
     );

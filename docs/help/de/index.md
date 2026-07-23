@@ -8,7 +8,8 @@ machst einen 12-Fragen-Test, die App findet heraus, welche
 Methoden zu dir passen, dann führen KI-gestützte Sessions
 dich durch einen Sieben-Schritt-Lernzyklus. Die App passt an,
 wie sie unterrichtet, basierend darauf, wie du tatsächlich
-lernst. **v1.91.0**, ausgeliefert über mehr als 90 Releases.
+lernst. Kontinuierlich weiterentwickelt — die aktuelle
+Version findest du auf der [Releases-Seite](https://github.com/astrapi69/adaptive-learner/releases).
 
 [Jetzt ausprobieren](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
@@ -89,12 +90,12 @@ freigeschaltet hat.
 
 ## Status
 
-Aktive Entwicklung. **v1.91.0** ist ein UX-Release, das die
-Hauptnavigation von über 12 Einträgen auf 7 gruppierte
-Einträge (Nielsen-Norman 5-7) reduziert hat — ohne
-Funktionsverlust, plus einer mobilen Bottom-Tab-Leiste.
+Aktive Entwicklung. Die jeweils aktuelle Version und ihre
+Highlights stehen auf der [GitHub-Releases-Seite](https://github.com/astrapi69/adaptive-learner/releases);
+die vollständige Historie liegt in
+[changelog/releases](https://github.com/astrapi69/adaptive-learner/tree/main/changelog/releases).
 
-- **Über 6.000 automatisierte Tests** über Backend, Plugins
+- **Tausende automatisierte Tests** über Backend, Plugins
   und Frontend (Vitest), plus einer Playwright-Smoke- und
   Dexie-Modus-Release-Gate-Suite
 - **11 UI-Sprachen, alle voll übersetzt** (DE / EL / EN / ES /

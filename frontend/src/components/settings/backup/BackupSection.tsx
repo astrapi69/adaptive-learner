@@ -22,6 +22,7 @@ import {Button} from "@/components/ui/button";
 import {BackupCompare} from "./BackupCompare";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {readLearnerState} from "../../../lib/learning/learnerState";
+import {emitSettingsRefresh} from "../../../lib/settings/settings-refresh-bus";
 import {getStorage, resolveStorageMode} from "../../../storage";
 import {SHARE_URL} from "../../../lib/share/generate-share-text";
 import {notify} from "../../../utils/notify";
@@ -647,6 +648,10 @@ export default function BackupSection() {
             setComparison(null);
             setCurrentSnapshot(null);
             setRestoreDiffCounts(null);
+            // #1765 (class fix) — a restore can change user settings (keys,
+            // provider, model overrides). Signal the Settings page to re-read
+            // so the AI tab reflects the restore without a manual reload.
+            emitSettingsRefresh();
             const parts = [
                 t("backup.restored_inserted", "Inserted: {{n}}").replace(
                     "{{n}}",

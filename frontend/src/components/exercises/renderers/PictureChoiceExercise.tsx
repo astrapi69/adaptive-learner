@@ -194,8 +194,9 @@ function PictureResult({
     );
 }
 
-/** Resolve a tile's image source through the Phase-54D chain: authored
- *  asset bytes → legacy resolver callback → placeholder SVG → text-only
+/** Resolve a tile's image source through the Phase-54D chain: inline
+ *  data URI (self-contained, engine schema 1.8) → authored asset bytes →
+ *  legacy resolver callback → placeholder SVG → text-only
  *  (``imgSrc === null``). ``isPlaceholder`` flags the SVG case. */
 function resolvePictureSrc(
     asset: {url: string | null; loading: boolean},
@@ -204,7 +205,9 @@ function resolvePictureSrc(
     choice: Choice,
 ): {imgSrc: string | null; isPlaceholder: boolean} {
     let imgSrc: string | null = null;
-    if (asset.url && !imgFailed) {
+    if (choice.src.startsWith("data:") && !imgFailed) {
+        imgSrc = choice.src;
+    } else if (asset.url && !imgFailed) {
         imgSrc = asset.url;
     } else if (legacyResolveSrc && !imgFailed) {
         const resolved = legacyResolveSrc(choice.src);
@@ -435,7 +438,11 @@ function PictureChoiceTile({
 }: PictureChoiceTileProps) {
     const {t} = useI18n();
     const normalized = _normalizeAssetPath(choice.src);
-    const enabled = Boolean(source && setId && normalized);
+    // Inline data URIs (engine schema 1.8) are self-contained - never
+    // send them through the storage asset lookup.
+    const enabled = Boolean(
+        source && setId && normalized && !choice.src.startsWith("data:"),
+    );
     const asset = useAsset(
         enabled ? source : null,
         enabled ? setId : null,
