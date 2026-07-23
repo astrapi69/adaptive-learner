@@ -131,7 +131,7 @@ horizontal de círculos pequenos para poupar espaço vertical.
 Deslizar para ver na faixa mostra uma sobreposição informativa
 descrevendo o passo do ciclo anterior/seguinte.
 
-## Auto-loop (v1.4.0) + transições de tópico
+## Auto-loop + transições de tópico
 
 O passo 7 já não é um beco sem saída. Assim que o avaliador de
 passo o move para o passo 7 com `advance=true`, uma terceira
@@ -156,14 +156,14 @@ o tópico foi integrado e se deve iniciar um novo ciclo.
 
 O limite máximo `max_cycles=5` por sessão impede loops
 descontrolados. Um fallback determinístico mantém o comportamento
-de limite em 7 do v0.5.0 em caso de falha da IA ou de análise.
+de limite em 7 em caso de falha da IA ou de análise.
 
 O chat renderiza as transições de ciclo como cartões com borda
 tracejada "Ciclo N" no historial da sessão. O diálogo de
 avaliação resume a jornada de múltiplos ciclos quando
 `cycle_count > 1`.
 
-## Avaliação paralela no limite do ciclo (v1.5.0)
+## Avaliação paralela no limite do ciclo
 
 Na transição do passo 6 → 7, tanto o avaliador de passo como o
 avaliador de transição de tópico disparam concorrentemente via

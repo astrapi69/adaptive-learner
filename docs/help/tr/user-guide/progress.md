@@ -17,8 +17,8 @@ Dört bölüm, yukarıdan aşağıya:
 2. **Yöntem dağılımı** — Gösterge Tablosuyla aynı yatay çubuk
    grafik; her yöntem için tam oturum sayısını gösteren fareyle
    üzerine gelme ipuçları ile.
-3. **Adım değerlendirme bilgileri** — yalnızca v0.5.0+ verileri;
-   oturum rotasının ürettiği StepEvaluation satırlarından okur.
+3. **Adım değerlendirme bilgileri** — oturum rotasının
+   ürettiği StepEvaluation satırlarından okur.
 4. **Commit geçmişi** — her ProgressCommit satırı kronolojik sırada,
    en yenisi önde.
 
@@ -69,8 +69,8 @@ Liste tarihe veya anlayışa göre sıralanabilir.
 
 İşlenen notlar kalın / italik / listeler / sözdizimi vurgulu kod
 blokları / bağlantılar gösterir — oturum sonu derecelendirme
-iletişim kutusuna tam olarak yazıldığı şekilde. Pre-v1.14.0'dan
-eski düz metin notlar değiştirilmeden aktarılır.
+iletişim kutusuna tam olarak yazıldığı şekilde. Eski düz metin
+notlar değiştirilmeden aktarılır.
 
 ## Dışa aktarmalar
 

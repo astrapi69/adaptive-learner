@@ -276,6 +276,52 @@ Detection: if local tests pass but CI fails on routes returning 404, suspect mis
   gate, verify the artifact still exists before repeating the claim
   downstream. `git log --all -- <path>` answers it in one command.
 
+## End-user help is versionless; provenance belongs to the changelog
+
+Surfaced across #1766 (index pages) and #1767 (the whole help tree) — a
+recurrence class, not a one-off. End-user help under `docs/help/**` had
+drifted into ~1000 `since vX.Y` / `New in vX.Y` / `(Phase N / vX.Y)`
+feature-provenance markers across 8 locales, each frozen at a different
+release and drifting per-locale (tr/el stalled at v1.20-era wording). To
+a user on the current version, "since v1.35.0" is noise at best and
+implies a recency/optionality that is long gone.
+
+### Rule
+
+- **User help describes the CURRENT behaviour in present tense.** Release
+  provenance (what shipped when) belongs to `changelog/releases/` and the
+  per-locale `changelog.md` "What's new" page — never to the feature
+  prose. Rewrite "since vX the editor is TipTap" to "the editor is
+  TipTap".
+- **No `vX.Y[.Z]` literal in end-user help prose.** Gated hard by
+  `check_help_prose_versions` in `scripts/verify_docs.py`, which scans
+  `docs/help/*/**` and FAILs on any v-version literal. It skips the
+  `developer/` + `api/` reference trees (contributor/integrator docs that
+  legitimately cite schema + hook versions), `changelog.md` (version-based
+  by definition), and `index.md` (its own `check_help_index_versions`
+  gate, #1766).
+- **A genuine exception carries an inline marker.** `<!-- version-exempt:
+  <reason> -->` on the same line, mirroring the design-token
+  `token-exempt:` precedent. Reach for it only when a version literal
+  carries real current meaning (a format/schema contract) — a stale pin
+  like "schema v1.3+; current is v1.4" is NOT that; reword it or link to
+  the authoritative reference instead.
+- **While touching a provenance line, verify the surrounding claim against
+  current behaviour** (docs are specification). The #1767 sweep found the
+  es/el/pt/tr/ja/fr lessons pages still calling the library "the v1.27.0
+  pilot set — French A1, 2 lessons" long after it grew to hundreds; the
+  rewrite dropped both the version and the stale count rather than pinning
+  a new number that would drift again.
+
+### Pairs with
+
+- "Doc values: read from code, not from memory" — a version marker is the
+  degenerate case: the value that is ALWAYS wrong to hardcode in
+  present-tense help.
+- "Cross-layer assumptions must be pinned against REAL data shapes" — same
+  family of per-locale drift going green-and-wrong because nothing gated
+  it.
+
 ## Test a tool through the interface it actually uses, not a mock of it
 
 A tool that shells out (git, poetry, docker, a CLI) has an implicit

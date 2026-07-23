@@ -156,7 +156,7 @@ Dexie — sem deriva possível entre os modos Servidor e Local.
 A sua avaliação dá-lhe um perfil de 6 métodos. O método
 dominante é aquele com que as novas sessões começam. Mas:
 
-- O **avaliador de passo** (duplo prompt v0.5.0) pode sugerir
+- O **avaliador de passo** (duplo prompt) pode sugerir
   permanecer, avançar ou — raramente — recuar por passo do
   ciclo.
 - A **heurística de mudança de método** deteta estagnação

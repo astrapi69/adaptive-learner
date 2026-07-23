@@ -106,7 +106,7 @@ Deliberadamente:
   un tema de aprendizaje? El dominio es una postura, no una línea
   de llegada.
 
-## Capa de gamificación (v1.16.0)
+## Capa de gamificación
 
 Sobre el sustrato de ProgressCommit-como-Git se añaden tres capas
 motivacionales:
@@ -162,4 +162,4 @@ patrones:
 
 Estas son las preguntas que se hace un aprendiz serio. Adaptive
 Learner te da el sustrato para hacerlas; la capa de gamificación
-de v1.16.0 es el azúcar encima, desactivada por defecto en espíritu.
+es el azúcar encima, desactivada por defecto en espíritu.

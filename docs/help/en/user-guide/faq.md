@@ -93,7 +93,7 @@ Yes. Three export paths shipped:
 
 ## What's the voice feature?
 
-Three Web Speech API integrations (since v1.18.0):
+Three Web Speech API integrations:
 
 - **Text-to-Speech** on AI replies + Assessment results — a
   ▶ button next to each speaks it aloud, language-matched.
@@ -119,14 +119,13 @@ weaknesses, error patterns, recommended method, vocabulary
 One click seeds a Curriculum + starts a targeted session
 from the analysis.
 
-The Claude.ai per-conversation Markdown export was the
-v1.19.0 audit case — the parser ships with full timestamp
-extraction + role boundary preservation for that format
-(BL-25 / BL-26 / BL-28 closed in v1.19.1).
+The Claude.ai per-conversation Markdown export is a
+validated import case — the parser ships with full timestamp
+extraction + role boundary preservation for that format.
 
 ## Sync between devices?
 
-Local-network bidirectional sync since v1.0.0. Settings →
+Local-network bidirectional sync. Settings →
 Sync → "Pair this device": scan the QR code on the other
 device's screen (rear camera), or paste the pairing URL.
 Once paired, push + pull buttons exchange data; conflicts

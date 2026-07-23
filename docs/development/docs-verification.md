@@ -38,6 +38,8 @@ correct state).
 | `stale-dates` | WARN | dates >2 months older than the latest release in current-state docs | no |
 | `themes` | FAIL | every `theme-*.css` must define the same canonical token set | no |
 | `mkdocs` | FAIL | help pages on disk with no nav entry (orphans) + nav entries pointing at missing files (dead links) | no |
+| `help-index-versions` | FAIL | any `vX.Y[.Z]` literal on a `docs/help/*/index.md` front page -- they are versionless (#1766) | no |
+| `help-prose-versions` | FAIL | any `vX.Y[.Z]` literal in end-user help prose under `docs/help/*/**` (#1767); skips the `developer/` + `api/` reference trees, `changelog.md`, `index.md`, and `<!-- version-exempt: reason -->` lines | no |
 | `help-coverage` | FAIL/WARN | en<->de help-page parity (FAIL); App.tsx routes with no help page (WARN, heuristic) | no |
 | `i18n` | WARN | any `frontend/src/data/i18n/*.json` missing >5% of the `en` key set | runs `sync_i18n_to_frontend.py` |
 

@@ -1,6 +1,6 @@
 # Onboarding
 
-Seit **v1.64.0** ist der Einstieg bewusst kurz: Der
+Der Einstieg ist bewusst kurz: Der
 **Schnellstart** verlangt nur zwei Felder.
 
 1. **Name** — wie die App dich ansprechen soll.

@@ -1,6 +1,6 @@
 # Onboarding
 
-**v1.64.0**'dan beri giriş bilinçli olarak kısadır: **Hızlı
+Giriş bilinçli olarak kısadır: **Hızlı
 başlangıç** yalnızca iki alan ister.
 
 1. **Ad** — uygulamanın sana nasıl hitap edeceği.

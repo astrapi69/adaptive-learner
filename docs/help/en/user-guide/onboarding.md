@@ -1,6 +1,6 @@
 # Onboarding
 
-Since **v1.64.0** the entry point is deliberately short: the
+The entry point is deliberately short: the
 **quick start** asks for only two fields.
 
 1. **Name** — how the app should address you.

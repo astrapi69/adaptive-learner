@@ -16,8 +16,8 @@ Cuatro secciones, de arriba a abajo:
    horizontal que el Panel principal, con información sobre
    herramientas que muestra el recuento exacto de sesiones por
    método.
-3. **Perspectivas de evaluación de pasos** — solo datos de
-   v0.5.0+; lee de las filas StepEvaluation que produce la ruta
+3. **Perspectivas de evaluación de pasos** — lee de las
+   filas StepEvaluation que produce la ruta
    de sesión.
 4. **Historial de commits** — cada fila ProgressCommit en orden
    cronológico, la más reciente primero.
@@ -71,7 +71,7 @@ lista es ordenable por fecha o por comprensión.
 Las notas renderizadas muestran negrita / cursiva / listas /
 bloques de código con resaltado de sintaxis / enlaces: exactamente
 lo que se escribió en el diálogo de calificación al final de la
-sesión. Las notas de texto plano heredadas anteriores a v1.14.0
+sesión. Las notas de texto plano heredadas
 pasan sin cambios.
 
 ## Exportaciones
