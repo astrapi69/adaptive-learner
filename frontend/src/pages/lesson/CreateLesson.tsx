@@ -31,7 +31,7 @@ import {MIN_CARDS} from "../../components/create-lesson/CardEditor";
 import {
     hasIncompleteExercise,
     minExercisesToAdvance,
-} from "../../components/create-lesson/exercise-gate";
+} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
