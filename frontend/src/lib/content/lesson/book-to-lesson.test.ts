@@ -20,6 +20,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "Pawlow und die Reize",
     author: "Asterios",
+    domain: "language",
 };
 
 const THEORY: TheoryStep[] = [

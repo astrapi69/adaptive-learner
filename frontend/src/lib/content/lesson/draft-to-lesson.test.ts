@@ -23,6 +23,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "A starter lesson.",
     author: "Aster",
+    domain: "language",
 };
 
 function makeCards(n: number): LessonCardDraft[] {
@@ -430,6 +431,55 @@ describe("draft-to-lesson edit-mode ext_payload reconstruction (#1919)", () => {
                 .filter((e) => e.type !== "ext:al-dictation")
                 .every((e) => !("ext_payload" in e)),
         ).toBe(true);
+    });
+});
+
+// #1716 — the CreateLesson wizard can now author an explicit content domain.
+// A known NON-language domain is stamped onto the built lesson (schema v1.3);
+// the default language domain leaves the field absent. Round-trips back on edit.
+describe("draft-to-lesson content domain (#1716)", () => {
+    it("stamps a known non-language domain onto the built lesson", () => {
+        const lesson = buildLessonFromDraft({
+            ...input(),
+            meta: {...META, domain: "psychology"},
+        });
+        expect(lesson.domain).toBe("psychology");
+    });
+
+    it("leaves no domain field for the default language domain", () => {
+        const lesson = buildLessonFromDraft(input());
+        expect(lesson.domain).toBeUndefined();
+    });
+
+    it("does NOT stamp an unknown domain value", () => {
+        const lesson = buildLessonFromDraft({
+            ...input(),
+            meta: {...META, domain: "not-a-real-domain"},
+        });
+        expect(lesson.domain).toBeUndefined();
+    });
+
+    it("lowercases the stamped domain", () => {
+        const lesson = buildLessonFromDraft({
+            ...input(),
+            meta: {...META, domain: "Programming"},
+        });
+        expect(lesson.domain).toBe("programming");
+    });
+
+    it("round-trips a stamped domain back into the wizard draft on edit", () => {
+        const built = buildLessonFromDraft({
+            ...input(),
+            meta: {...META, domain: "knowledge"},
+        });
+        const back = lessonToDraftInput(built, {level: ""});
+        expect(back.meta.domain).toBe("knowledge");
+    });
+
+    it("normalises a missing/unknown lesson domain back to language on edit", () => {
+        const built = buildLessonFromDraft(input());
+        const back = lessonToDraftInput(built, {level: "A1"});
+        expect(back.meta.domain).toBe("language");
     });
 });
 

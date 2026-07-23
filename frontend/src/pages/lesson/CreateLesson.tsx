@@ -57,6 +57,7 @@ import {
     loadLessonDraft,
     newCardId,
     saveLessonDraft,
+    updateMetaField,
     type LessonCardDraft,
     type LessonDraft,
     type LessonMeta,
@@ -144,6 +145,7 @@ function defaultMeta(appLang: string): LessonMeta {
         level: "A1",
         description: "",
         author: readContributorName(),
+        domain: "language",
     };
 }
 
@@ -293,7 +295,10 @@ export default function CreateLesson() {
     );
 
     function update(key: keyof LessonMeta, value: string) {
-        setMeta((prev) => ({...prev, [key]: value}));
+        // #1716 — the pair/level sync for the content domain lives in a pure,
+        // unit-tested helper so both modes stay coherent (knowledge content =
+        // single content language + optional level-less shape).
+        setMeta((prev) => updateMetaField(prev, key, value));
     }
 
     function handleNext() {

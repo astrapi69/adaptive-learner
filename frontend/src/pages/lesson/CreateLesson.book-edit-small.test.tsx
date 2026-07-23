@@ -66,6 +66,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "Ein Kapitel aus einem Buch.",
     author: "Asterios Raptis",
+    domain: "language",
 };
 
 /** A legitimately-small book lesson: four free-text exercises (one type) —

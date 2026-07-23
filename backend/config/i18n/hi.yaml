@@ -2597,6 +2597,9 @@ create_lesson:
     target_lang_label: सीखी गई भाषा
     source_lang_label: आपकी भाषा
     level_label: स्तर
+    content_lang_label: "सामग्री की भाषा"
+    level_none: "कोई स्तर नहीं"
+    domain_hint: "ज्ञान सामग्री एक ही सामग्री भाषा का उपयोग करती है और CEFR स्तर को छोड़ सकती है।"
     same_language: सीखी गई भाषा आपकी भाषा से भिन्न होनी चाहिए।
     description_label: विषय / विवरण
     author_label: लेखक का नाम

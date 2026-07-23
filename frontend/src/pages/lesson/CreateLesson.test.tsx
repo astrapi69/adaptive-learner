@@ -476,6 +476,7 @@ describe("CreateLesson — edit mode (#1740)", () => {
         level: "A2",
         description: "The original topic.",
         author: "Aster",
+        domain: "language",
     };
 
     function fixtureLesson() {

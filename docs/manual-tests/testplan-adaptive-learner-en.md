@@ -301,6 +301,18 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] **Same-language hint (#1721/#1730):** source == target shows a
       neutral hint, does NOT block "Next"; Save enables once the checklist
       passes
+- [ ] **Content-domain selector in Step 1 (#1716):** Step 1 shows a
+      "Domain" field. Default "Language" → source/target languages + CEFR
+      level are shown (as before). Choosing a knowledge domain (e.g.
+      "Psychology", "Programming", "Knowledge") collapses the pair to a
+      single "Content language" (source == target), the level gains a "No
+      level" option, and a hint explains knowledge content. Changing the
+      content language keeps source and target equal. Switching back to
+      "Language" splits the pair again and restores the level to A1 (if it
+      was "No level"). Save → the lesson carries the chosen domain
+      (`domain: psychology` …); a language lesson carries NO `domain` field.
+      Editing a saved knowledge lesson reopens with the right domain +
+      content language
 - [ ] **Language-pair check row (#1929):** Review shows SIX checklist rows
       (title, "Language pair is valid", ≥4 cards, ≥5 exercises, ≥2 types,
       valid structure). "Language pair is valid" is green once BOTH source
