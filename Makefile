@@ -41,7 +41,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
-       clean prod prod-down prod-logs \
+       clean prod prod-down prod-logs docker-build-smoke \
        launcher-test launcher-install launcher-status launcher-check launcher-stop \
        launcher-uninstall launcher-cleanup launcher-port launcher-version launcher-logs \
        launcher-pytest launcher-update-package launcher-venv-fix launcher-tray-check help
@@ -702,6 +702,9 @@ prod-down: ## Stop production
 
 prod-logs: ## Show production logs
 	docker compose -f docker-compose.prod.yml logs -f
+
+docker-build-smoke: ## Build-only smoke for the prod compose images (#1990; launcher/install.sh build path). No `up`.
+	docker compose -f docker-compose.prod.yml build
 
 # --- Launcher (desktop, Docker-based) ---
 

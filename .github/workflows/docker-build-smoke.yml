@@ -1,0 +1,73 @@
+name: Docker build smoke
+
+# Build-only smoke for the production Docker path (#1990), the "no cadence at
+# all" sub-class of #1661: a surface no gate looks at until a user hits it.
+#
+# WHY: the prod Docker path - frontend/Dockerfile + backend/Dockerfile via
+# docker-compose.prod.yml, consumed by the desktop launcher and install.sh -
+# has no automated build consumer. PR CI installs JS/Python deps directly
+# (never through the Dockerfiles); no nightly builds the images; the release
+# checklist marked the Docker build "if active" and it was skipped at v2.2.0 +
+# v2.3.0. Result (#1771): the bun migration (#1496) dropped
+# frontend/package-lock.json but the Dockerfile kept running `npm ci` -> hard
+# EUSAGE break; the entire self-hosted/desktop path was broken for ~2 release
+# cycles, found MANUALLY. #954 was the same shape one migration earlier.
+#
+# WHAT: `docker compose -f docker-compose.prod.yml build` - build only, no
+# `up`, no services, no runtime. That alone would have caught #1771/#954 in
+# <1 min. A full up + healthcheck is a separate, heavier step, not this gate.
+#
+# CADENCE (#1661 scope discipline - targeted, not PR-CI bloat, same posture as
+# dexie-smoke #552):
+#   - pull_request PATH-FILTERED on the Docker inputs only -> fires exactly on
+#     the changes that historically broke the build (Dockerfiles, compose,
+#     lockfiles, nginx template, install.sh), silent for every other PR. This
+#     is NOT a required check (a paths-filtered pull_request workflow does not
+#     run on unrelated PRs, so requiring it would block them - the #1617/#1729
+#     pending-required-check trap); it is a loud, early signal.
+#   - push: release/** -> every release branch builds the images, closing the
+#     "release skipped the Docker build" hole that caused the #1771 latency.
+#   - weekly + workflow_dispatch -> backstop for drift from moving base images.
+#
+# The PR that adds this workflow is itself in the pull_request paths, so it is
+# the first real run (#301 "wired != working" precedent).
+
+on:
+  pull_request:
+    paths:
+      - "frontend/Dockerfile"
+      - "backend/Dockerfile"
+      - "docker-compose*.yml"
+      - "frontend/bun.lock"
+      - "frontend/nginx.conf.template"
+      - "backend/pyproject.toml"
+      - "backend/poetry.lock"
+      - "install.sh"
+      - ".github/workflows/docker-build-smoke.yml"
+  push:
+    branches: ["release/**"]
+  schedule:
+    # Weekly, Monday 05:00 UTC - drift backstop for moving base images.
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-build-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Prod compose images build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      # ubuntu-latest ships Docker + Compose v2. Build only - the images are
+      # never started, so no secrets / env / ports are needed (build args:
+      # none). A failure here is a broken prod/self-hosted/desktop build path.
+      - name: Build prod compose images
+        run: docker compose -f docker-compose.prod.yml build
