@@ -1,7 +1,15 @@
 # Desktop-Launcher starten
 
-Der Desktop-Launcher ist der einfachste Weg, Adaptive Learner auf dem
-eigenen Rechner zu betreiben. Er ist ein kleines Fenster, das alles
+!!! tip "Die meisten Nutzer brauchen den Launcher nicht"
+    Adaptive Learner läuft direkt im Browser, ohne Installation, ohne
+    Docker, ohne Launcher:
+    **[astrapi69.github.io/adaptive-learner](https://astrapi69.github.io/adaptive-learner/)**.
+    Der Desktop-Launcher ist nur für dich, wenn du die App selbst
+    hosten oder Backend-Features (Server-Modus, lokale Synchronisation)
+    lokal betreiben möchtest.
+
+Der Desktop-Launcher ist der einfachste Weg, Adaptive Learner **mit
+eigenem Backend** auf dem eigenen Rechner zu betreiben. Er ist ein kleines Fenster, das alles
 Weitere für dich erledigt: Er prüft, ob Docker läuft, lädt und baut beim
 ersten Start das App-Image (einmalig, 5-10 Minuten sind normal), startet
 die Container und öffnet die App anschließend im Browser unter
@@ -11,63 +19,31 @@ wieder stoppen, den Port ändern oder alles deinstallieren.
 Der Port ist standardmäßig **8501** und im Launcher-Fenster änderbar;
 ist er belegt, weicht der Launcher auf einen freien Port aus.
 
-## Voraussetzung: Docker ist installiert UND läuft
+## Voraussetzung: Docker - der Launcher prüft es selbst
 
-Der Launcher setzt ein laufendes Docker zwingend voraus, denn die App
-selbst läuft als Container-Gruppe. Die häufigste Ursache für einen
-fehlschlagenden Start ist nicht der Launcher, sondern ein Docker, das
-zwar installiert ist, aber gerade nicht läuft. Falls Docker noch fehlt:
+Der Launcher setzt ein laufendes Docker voraus, denn die App selbst
+läuft als Container-Gruppe. Du musst dafür aber **nichts von Hand
+prüfen**: Der Launcher kontrolliert beim Start selbst, ob Docker
+installiert ist und läuft, findet auch einen Docker, der unter einem
+anderen Docker-Kontext läuft (etwa Docker Desktop für Linux oder
+rootless Docker), und zeigt dir eine klare Meldung mit Lösung an,
+falls etwas fehlt. Falls Docker noch gar nicht installiert ist:
 [Docker Desktop installieren](docker-desktop.md).
 
-So prüfst du beides, bevor du den Launcher startest:
+Die Meldungen des Launchers und was sie bedeuten:
 
-### Linux
+| Meldung | Bedeutung | Lösung |
+|---------|-----------|--------|
+| "Docker ist nicht installiert (docker nicht im PATH)." | Der `docker`-Befehl wurde nicht gefunden. | [Docker Desktop installieren](docker-desktop.md). Der Launcher zeigt den Installations-Link direkt an. |
+| "Docker ist installiert, aber nicht gestartet." bzw. "Docker läuft nicht. Geprüfter Kontext '...' (...): ..." | Der Docker-Dienst läuft gerade nicht; die Detail-Form nennt den geprüften Kontext, den Socket und Dockers Original-Fehler. | Den Knopf **"Docker starten"** im Launcher anklicken (Linux) bzw. Docker Desktop öffnen (macOS/Windows), dann **"Erneut prüfen"**. |
+| "Docker ist installiert, aber du hast keine Berechtigung." | Dein Benutzer ist nicht in der `docker`-Gruppe (Linux). | Der Launcher zeigt den passenden Befehl direkt an; danach einmal ab- und wieder anmelden. |
+| "Docker antwortet nicht." | Docker startet vermutlich gerade noch (typisch direkt nach dem Öffnen von Docker Desktop). | Einen Moment warten, dann **"Erneut prüfen"**. |
+| "Docker läuft über Kontext '...' - der aktive Kontext war nicht erreichbar, der Launcher hat sich automatisch verbunden." | Nur eine Information: Docker lief unter einem anderen Kontext, der Launcher hat ihn gefunden und nutzt ihn. | Nichts zu tun. |
+| "Docker Desktop ist installiert, aber nicht im PATH." | Die Docker-Desktop-App ist da, aber ihr Kommandozeilen-Werkzeug (noch) nicht erreichbar. | Docker Desktop über den Launcher-Knopf starten und kurz warten. |
 
-```bash
-docker --version   # ist Docker installiert?
-docker info        # laeuft der Daemon wirklich?
-```
-
-Meldet `docker info` einen Verbindungsfehler, starte den Dienst:
-
-```bash
-systemctl status docker    # Zustand ansehen
-sudo systemctl start docker
-```
-
-Wenn `docker info` nur mit `sudo` funktioniert, fehlt dein Benutzer in
-der `docker`-Gruppe:
-
-```bash
-sudo usermod -aG docker $USER
-```
-
-Danach einmal ab- und wieder anmelden, sonst greift die
-Gruppenänderung nicht.
-
-### macOS
-
-Docker Desktop muss installiert **und gestartet** sein (Wal-Symbol in
-der Menüleiste sichtbar). Docker Desktop startet nach einem Neustart
-des Macs nicht automatisch, außer du hast es in dessen Einstellungen so
-konfiguriert. Bestätigen im Terminal:
-
-```bash
-docker info
-```
-
-### Windows
-
-Docker Desktop (mit WSL2-Backend) muss installiert und gestartet sein.
-Bestätigen in PowerShell:
-
-```powershell
-docker info
-```
-
-Meldet Docker Desktop ein WSL2-Problem, folge seinem Hinweis; WSL2 ist
-die Voraussetzung des Docker-Desktop-Backends, nicht des Launchers
-selbst.
+Die Kontext-Erkennung mit Detail-Meldungen ist ab der auf
+docker-app-launcher#26 folgenden Launcher-Version enthalten; ältere
+Versionen zeigen die kürzeren Meldungen aus derselben Tabelle.
 
 ## Download
 
