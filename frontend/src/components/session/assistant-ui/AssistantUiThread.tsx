@@ -32,11 +32,16 @@
  * Still mounted only behind the opt-in ``?ui=assistant`` flag; the default
  * Session path renders the unchanged ``SessionChat``. Domain panels (step-eval,
  * method-switch, XP) are rendered AROUND this thread by ``Session.tsx`` and are
- * shared with the legacy surface. The imported-session opening turn is a later
- * phase.
+ * shared with the legacy surface.
+ *
+ * Phase 3b part 2 (#1126): imported-session AI opening. When ``autoOpen`` is set,
+ * the thread fires one ``thread.startRun({parentId: null})`` on init so the AI
+ * produces the first lesson question WITHOUT a preceding user bubble (startRun
+ * appends no user message); the adapter recognises the run via
+ * ``runConfig.custom[OPENING_RUN_FLAG]`` and sends a hidden opening trigger.
  */
 
-import {useMemo} from "react";
+import {useEffect, useMemo, useRef} from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -54,7 +59,7 @@ import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
 import MicButton from "../../voice/MicButton";
 import SpeechButton from "../../voice/SpeechButton";
-import {createSessionChatAdapter} from "./session-chat-adapter";
+import {OPENING_RUN_FLAG, createSessionChatAdapter} from "./session-chat-adapter";
 
 interface AssistantUiThreadProps {
     /** LearningSession id the thread streams against. */
@@ -67,6 +72,12 @@ interface AssistantUiThreadProps {
      * regular session.
      */
     introTopic?: string | null;
+    /**
+     * #1126 Phase 3b — when true (an imported-chat session), the AI opens the
+     * conversation on its own with the next lesson question, so the learner
+     * doesn't have to type first. Fires exactly one opening run per session.
+     */
+    autoOpen?: boolean;
 }
 
 /**
@@ -162,11 +173,28 @@ function ComposerMic() {
 export default function AssistantUiThread({
     sessionId,
     introTopic,
+    autoOpen = false,
 }: AssistantUiThreadProps) {
     const {t} = useI18n();
     const runtime = useLocalRuntime(
         useMemo(() => createSessionChatAdapter(sessionId), [sessionId]),
     );
+
+    // Imported-session AI opening (#1126 Phase 3b): fire ONE opening run per
+    // session. ``startRun`` with ``parentId: null`` triggers the adapter with no
+    // user message, so the AI's first question appears with no user bubble. The
+    // ref (keyed by session) guards against React StrictMode's double effect
+    // mount so the opening never fires twice.
+    const openedForSession = useRef<string | null>(null);
+    useEffect(() => {
+        if (!autoOpen) return;
+        if (openedForSession.current === sessionId) return;
+        openedForSession.current = sessionId;
+        runtime.thread.startRun({
+            parentId: null,
+            runConfig: {custom: {[OPENING_RUN_FLAG]: true}},
+        });
+    }, [autoOpen, sessionId, runtime]);
 
     return (
         <AssistantRuntimeProvider runtime={runtime}>
