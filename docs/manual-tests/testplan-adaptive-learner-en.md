@@ -245,6 +245,16 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       the "Valid lesson structure" check is GREEN and "Save changes" works
       (previously it failed with "ext_payload must be object" in API/server
       mode)
+- [ ] **Edit a book-text lesson (#1967):** create a lesson via "Knowledge
+      lesson from text" (the book-text path — theory + generated exercises,
+      NO vocabulary cards), Save locally → reopen via "Edit lesson" → "Next"
+      goes STRAIGHT to the exercise editor with the actually generated
+      exercises (NOT the empty vocabulary-card editor, which previously
+      blocked the Next button); the 3-step flow is Metadata → Exercises →
+      Review; Review has NO "At least 4 cards" row and "Save changes" is
+      enabled; after saving, theory + exercise steps are preserved.
+      Regression: a normal card lesson (Vocabulary list) AND an extension
+      lesson still open correctly for editing
 - [ ] **Migrate legacy English prompts on edit (#1860):** open a
       pre-#1855 legacy lesson (exercise instructions hardcoded in English,
       e.g. "Match each word with its translation.") via "Edit a lesson" →

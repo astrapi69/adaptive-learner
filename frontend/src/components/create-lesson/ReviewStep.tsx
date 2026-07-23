@@ -8,10 +8,7 @@
 import {Copy, Download, Save, Share2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
-import {
-    allChecksPass,
-    type DraftValidationChecks,
-} from "../../lib/content/lesson/draft-to-lesson";
+import type {DraftValidationChecks} from "../../lib/content/lesson/draft-to-lesson";
 import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -42,6 +39,11 @@ interface ReviewStepProps {
      *  it and a "Save as a copy" action appears instead of "Save and
      *  share". */
     editMode?: boolean;
+    /** #1967 — a cardless (theory/exercise) lesson, e.g. one authored via
+     *  the book-text path. A book lesson legitimately has no vocabulary
+     *  cards, so the "At least 4 cards" requirement + summary row are
+     *  dropped and never gate the save. */
+    cardless?: boolean;
     onSaveLocal: () => void;
     onSaveShare: () => void;
     /** #1740 — save the edited lesson as a new copy (edit mode only). */
@@ -57,12 +59,19 @@ export default function ReviewStep({
     draftChecks,
     saving,
     editMode = false,
+    cardless = false,
     onSaveLocal,
     onSaveShare,
     onSaveCopy,
     t,
 }: ReviewStepProps) {
-    const canSave = allChecksPass(draftChecks) && !saving;
+    // #1967 — a cardless lesson drops the card requirement from both the
+    // checklist rows and the save gate; every other check still applies.
+    const rows = cardless
+        ? CHECK_ROWS.filter(([key]) => key !== "enoughCards")
+        : CHECK_ROWS;
+    const canSave =
+        rows.every(([key]) => draftChecks[key]) && !saving;
     return (
         <section
             className="create-lesson-step flex flex-col gap-6"
@@ -84,9 +93,12 @@ export default function ReviewStep({
                     {t("create_lesson.review.pair", "Languages")}:{" "}
                     {meta.sourceLanguage} → {meta.targetLanguage} · {meta.level}
                 </li>
-                <li>
-                    {t("create_lesson.review.cards", "Cards")}: {cards.length}
-                </li>
+                {!cardless && (
+                    <li>
+                        {t("create_lesson.review.cards", "Cards")}:{" "}
+                        {cards.length}
+                    </li>
+                )}
                 <li>
                     {t("create_lesson.review.exercises", "Exercises")}:{" "}
                     {exercises.length}
@@ -96,7 +108,7 @@ export default function ReviewStep({
                 className="create-lesson-checklist flex list-none flex-col gap-1 p-0"
                 data-testid="create-lesson-checklist"
             >
-                {CHECK_ROWS.map(([key, fallback]) => {
+                {rows.map(([key, fallback]) => {
                     const pass = draftChecks[key];
                     // #1722 — a bare ✗ on the structure check is not
                     // actionable; show the validator's concrete reason
