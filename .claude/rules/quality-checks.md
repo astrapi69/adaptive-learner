@@ -590,6 +590,7 @@ PR is not slowed by work that can never block it.
 | | **Content stats drift** (`content-stats.yml`) — daily; validates the README against a FRESH content-repo checkout (drift is driven by the *separate* content repo, so a PR can't predict it) |
 | | **complexity-report** (full radon/eslint warn-view) — daily |
 | | **dexie-smoke** (daily, #552) + mutation testing (`mutmut`, `stryker`) |
+| | **WebKit gate** (`webkit-gate.yml`, #1843) — daily 04:30 UTC + `push: release/**`; the real-`webkit` engine layout gate the Chromium gates are structurally blind to. Like `stryker` its unattended nightly is gated behind a repo variable (`ENABLE_NIGHTLY_WEBKIT == "true"`, off by default); manual `workflow_dispatch` and `release/**` pushes always run. |
 
 Rule of thumb when adding a CI job: if its failure should NOT block a merge,
 it belongs on the night shift, not on the `pull_request` trigger. The local
