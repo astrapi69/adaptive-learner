@@ -2589,6 +2589,11 @@ create_lesson:
   edit_title: "Edit lesson"
   edit_load_error: "Could not load this lesson for editing."
   edit_note: "Editing an existing lesson. Saving overwrites it; use 'Save as a copy' to keep the original."
+  edit:
+    lesson_picker_label: "Lesson in this set ({n})"
+    switch_confirm_title: "Switch lesson?"
+    switch_confirm_body: "Your unsaved changes to the current lesson will be lost."
+    switch_discard: "Discard and switch"
   prompts_migrated: "{n} exercise instruction(s) were automatically translated to your language."
   prompts_migrated_dismiss: "Dismiss"
   step_pending: "This step is coming in the next update."
@@ -2609,6 +2614,9 @@ create_lesson:
     target_lang_label: "Language learned"
     source_lang_label: "Your language"
     level_label: "Level"
+    content_lang_label: "Content language"
+    level_none: "No level"
+    domain_hint: "Knowledge content uses a single content language and can skip the CEFR level."
     same_language: "The language learned must differ from your language."
     description_label: "Topic / description"
     author_label: "Author name"
@@ -3583,3 +3591,9 @@ exercise:
   listen_first:
     label: "Listen first"
     aria: "Play pronunciation"
+  difficulty:
+    tier:
+      easy: "Easy"
+      medium: "Medium"
+      hard: "Hard"
+    aria: "Difficulty: {tier} ({level} of 5)"

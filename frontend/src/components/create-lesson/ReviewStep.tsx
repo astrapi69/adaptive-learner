@@ -8,6 +8,7 @@
 import {Copy, Download, Save, Share2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
+import FormHint from "../../shared/forms/FormHint";
 import type {DraftValidationChecks} from "../../lib/content/lesson/draft-to-lesson";
 import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -160,15 +161,12 @@ export default function ReviewStep({
                 })}
             </ul>
             {editMode && (
-                <p
-                    className="form-hint"
-                    data-testid="create-lesson-edit-note"
-                >
+                <FormHint data-testid="create-lesson-edit-note">
                     {t(
                         "create_lesson.edit_note",
                         "Editing an existing lesson. Saving overwrites it; use 'Save as a copy' to keep the original.",
                     )}
-                </p>
+                </FormHint>
             )}
             <div className="form-actions">
                 <Button

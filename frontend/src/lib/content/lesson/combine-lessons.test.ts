@@ -24,6 +24,7 @@ function lesson(title: string, source = "de", target = "fr") {
         level: "A1",
         description: "topic",
         author: "Aster",
+        domain: "language",
     };
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
     const cards = ["un", "deux", "trois", "quatre", "cinq"].map((w, i) => ({

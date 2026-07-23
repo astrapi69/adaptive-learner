@@ -2822,6 +2822,12 @@
     "edit_title": "Lektion bearbeiten",
     "edit_load_error": "Diese Lektion konnte nicht zum Bearbeiten geladen werden.",
     "edit_note": "Du bearbeitest eine vorhandene Lektion. Beim Speichern wird sie überschrieben; mit 'Als Kopie speichern' bleibt das Original erhalten.",
+    "edit": {
+      "lesson_picker_label": "Lektion in diesem Set ({n})",
+      "switch_confirm_title": "Lektion wechseln?",
+      "switch_confirm_body": "Deine nicht gespeicherten Änderungen an der aktuellen Lektion gehen verloren.",
+      "switch_discard": "Verwerfen und wechseln"
+    },
     "prompts_migrated": "{n} Übungsanweisung(en) wurden automatisch in deine Sprache übertragen.",
     "prompts_migrated_dismiss": "Schließen",
     "step_pending": "Dieser Schritt kommt im nächsten Update.",
@@ -2842,6 +2848,9 @@
       "target_lang_label": "Gelernte Sprache",
       "source_lang_label": "Deine Sprache",
       "level_label": "Niveau",
+      "content_lang_label": "Inhaltssprache",
+      "level_none": "Kein Niveau",
+      "domain_hint": "Wissensinhalte nutzen eine einzige Inhaltssprache und benötigen kein GER-Niveau.",
       "same_language": "Die gelernte Sprache muss sich von deiner Sprache unterscheiden.",
       "description_label": "Thema / Beschreibung",
       "author_label": "Autorenname"
@@ -3913,6 +3922,14 @@
     "listen_first": {
       "label": "Erst anhören",
       "aria": "Aussprache abspielen"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "Leicht",
+        "medium": "Mittel",
+        "hard": "Schwer"
+      },
+      "aria": "Schwierigkeit: {tier} ({level} von 5)"
     }
   }
 }

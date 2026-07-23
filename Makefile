@@ -26,7 +26,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-one test-watch tdd-help \
        stryker stryker-quick \
        verify-theme verify-theme-baseline-update \
-       check-types check-types-backend check-types-frontend check-file-sizes check-css-size css-identity-ref css-identity-check check-dead-classnames audit-legacy-conflicts check-complexity check-complexity-gate check-complexity-gate-update \
+       check-types check-types-backend check-types-frontend check-file-sizes check-css-size css-identity-ref css-identity-check check-dead-classnames check-testid-refs audit-legacy-conflicts check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -482,6 +482,9 @@ check-dead-classnames: ## Usage-side gates: dead classNames (#1491) + render-uns
 	python3 scripts/check-dead-classnames.py
 	@echo ""
 	python3 scripts/check-dead-classnames.py --unstyled
+
+check-testid-refs: ## Testid-reference gate (#1661): a spec-referenced data-testid removed/renamed on a high-visibility surface without an e2e spec change. BASE=<ref> (default origin/develop)
+	python3 scripts/testid_reference_gate.py --base $(if $(BASE),$(BASE),origin/develop)
 
 audit-legacy-conflicts: ## EXP-044 pre-wrap conflict audit (analysis only, NO gate; Refs #1485). BLOCKS="--block A-B:Label ..." or default --wrapped
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="

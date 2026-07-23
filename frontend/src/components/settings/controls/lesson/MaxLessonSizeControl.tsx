@@ -68,7 +68,7 @@ export default function MaxLessonSizeControl() {
                     max={MAX_MAX_LESSON_SIZE}
                     onChange={(e) => onChange(e.target.value)}
                 />
-                <span className="form-hint-inline">
+                <span>
                     {t(
                         "settings.max_lesson_size.range_hint",
                         "(default {default}, range {min}–{max})",

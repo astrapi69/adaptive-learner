@@ -25,6 +25,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "",
     author: "",
+    domain: "language",
 };
 
 const CARDS: LessonCardDraft[] = [];
