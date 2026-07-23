@@ -62,11 +62,36 @@ Then **review every changed PNG** and commit them.
 
 ### When a UI PR intentionally changes the layout
 
-1. `make test-visual-update` (rebuilds dexie + regenerates baselines)
-2. Review every changed PNG — confirm the diff is the intended change,
-   not a regression.
-3. `git add e2e/visual/screenshots/`
+Baselines **must** be rendered in CI, not on a dev machine — font
+anti-aliasing differs per machine (#1532). The CI-first flows:
+
+**Auto-sync (#1662, preferred — no artifact download).** Add the
+`refresh-visual-baselines` label to the PR (or
+`gh workflow run visual-baseline-sync.yml -f pr_number=<N>`). The
+`visual-baseline-sync` workflow renders the baselines in CI and pushes
+them onto the PR branch as a `chore(visual): refresh baselines` commit.
+Then **review every changed PNG in the PR** — auto-sync never means blind
+accept. This removes the manual download → commit handshake that used to
+bounce back to the maintainer machine on every visual-critical PR.
+
+> One-time setup: create the `refresh-visual-baselines` label, and
+> (optional but recommended) add a `VISUAL_BASELINE_TOKEN` PAT secret so
+> the push re-triggers the "Visual baseline gate" automatically. Without
+> the PAT the push still lands; the gate must be re-run once. See
+> [`docs/developer/testing.md`](../../docs/developer/testing.md).
+
+**Manual fallback (maintainer machine, where the artifact download works):**
+
+1. `gh workflow run visual-regression.yml --ref <pr-branch> -f update_baselines=true`
+2. `gh run download <run-id> --name visual-baselines --dir /tmp/vb`
+3. Review every changed PNG — confirm the diff is the intended change,
+   not a regression — then copy the changed PNGs into
+   `e2e/visual/screenshots/`.
 4. Commit: `test(visual): update baseline after <what changed>`
+
+`make test-visual-update` regenerates locally, but a locally-rendered
+baseline drifts from CI's anti-aliasing — use it only to preview a diff,
+not to commit the baselines that CI diffs against.
 
 ## Running the check
 

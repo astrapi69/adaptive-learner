@@ -23,11 +23,17 @@
  *     ``chat-*`` ``data-testid`` selectors the E2E suite already uses, so the
  *     cutover keeps the specs green.
  *
+ * Phase 3a adds Voice parity with ``SessionChat``: dictation (``MicButton``)
+ * writes into the assistant-ui composer via ``useComposerRuntime().setText``,
+ * and each settled assistant bubble carries a read-aloud ``SpeechButton``. Both
+ * buttons hide themselves when the browser lacks Web Speech or the user has the
+ * feature off in Settings, so this never renders a broken control.
+ *
  * Still mounted only behind the opt-in ``?ui=assistant`` flag; the default
  * Session path renders the unchanged ``SessionChat``. Domain panels (step-eval,
  * method-switch, XP) are rendered AROUND this thread by ``Session.tsx`` and are
- * shared with the legacy surface. Voice/Mic + the imported-session opening turn
- * are later phases.
+ * shared with the legacy surface. The imported-session opening turn is a later
+ * phase.
  */
 
 import {useMemo} from "react";
@@ -38,11 +44,16 @@ import {
     ComposerPrimitive,
     MessagePrimitive,
     ThreadPrimitive,
+    useComposerRuntime,
     useLocalRuntime,
+    useMessage,
     type TextMessagePartComponent,
 } from "@assistant-ui/react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
+import {markdownToSpeech} from "../../../lib/lesson/tts-text";
+import MicButton from "../../voice/MicButton";
+import SpeechButton from "../../voice/SpeechButton";
 import {createSessionChatAdapter} from "./session-chat-adapter";
 
 interface AssistantUiThreadProps {
@@ -92,10 +103,47 @@ function UserMessage() {
 }
 
 function AssistantMessage() {
+    // Read-aloud parity with SessionChat: the TTS button reads the whole
+    // assistant turn, so it needs the message's joined text and must wait until
+    // the stream settles (no button on a still-running bubble). Both come from
+    // the message store, not the per-part Text renderer.
+    const messageId = useMessage((message) => message.id);
+    const isRunning = useMessage((message) => message.status?.type === "running");
+    const text = useMessage((message) =>
+        message.content
+            .map((part) => (part.type === "text" ? part.text : ""))
+            .join(""),
+    );
+
     return (
         <div className="chat-message is-assistant" data-testid="chat-message-assistant">
             <MessagePrimitive.Parts components={{Text: AssistantText}} />
+            {!isRunning && text.trim().length > 0 && (
+                <div className="chat-message-actions">
+                    <SpeechButton
+                        text={markdownToSpeech(text)}
+                        testId={`assistant-${messageId}`}
+                    />
+                </div>
+            )}
         </div>
+    );
+}
+
+/**
+ * Dictation control for the assistant-ui composer. Lives inside
+ * ``ComposerPrimitive.Root`` so ``useComposerRuntime`` resolves the thread
+ * composer; each transcript (interim + final) overwrites the composer draft,
+ * mirroring ``SessionChat``'s ``setDraft`` on ``onTranscript``. The user still
+ * presses Send (or Enter) to submit.
+ */
+function ComposerMic() {
+    const composer = useComposerRuntime();
+    return (
+        <MicButton
+            onTranscript={(text) => composer.setText(text)}
+            testId="session-input"
+        />
     );
 }
 
@@ -143,6 +191,7 @@ export default function AssistantUiThread({sessionId}: AssistantUiThreadProps) {
                         data-testid="chat-input"
                         placeholder={t("session.message_placeholder", "Write your reply…")}
                     />
+                    <ComposerMic />
                     <ComposerPrimitive.Send
                         className="btn btn-primary"
                         data-testid="chat-send"

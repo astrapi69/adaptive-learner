@@ -124,6 +124,14 @@ Requires domain knowledge. Not automatable.
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
 - [ ] Free Text: correction READABLE (token diff understandable)
 - [ ] Picture Choice: tiles SAME height
+- [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
+      authored `difficulty` (1-5) shows a small badge above the exercise
+      with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
+      `difficulty` (the whole legacy corpus) show NO badge (exercise looks
+      as before). Applies to every exercise type (Matching/Cloze/Free-Text/
+      Word-Tiles/Picture-Choice/Multiple-Choice + ext types). Badge reads
+      cleanly in all 6 themes (token-backed). Transparency only - it changes
+      neither ordering nor scoring.
 
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628

@@ -1,0 +1,64 @@
+# Testid-reference accompaniment gate (#1661).
+#
+# WHY: the "green PR -> red nightly/push" category (#1661). PR-CI does not
+# run the nightly-only e2e surfaces (dexie-smoke, manual-automation,
+# FeatureShots); a PR that removes or renames a data-testid an e2e spec
+# depends on can merge green and turn the next nightly red. This gate
+# makes ONE cleanly-catchable slice of that category PR-visible: a
+# statically spec-referenced data-testid that disappears net from a
+# high-user-visibility surface (lesson runner, exercises, dashboard,
+# content browser, settings core) without any e2e spec being touched in
+# the same PR.
+#
+# Modeled on visual-baseline-gate.yml (#1641): a fast, targeted gate that
+# checks PRESENCE of the accompanying change, not correctness (the spec
+# edit's correctness stays with the human reviewer + the nightly run).
+#
+# SCOPE BOUNDARY (deliberate, per "wired != working"): this catches the
+# RENAME/REMOVE sub-class only - the testid LITERAL vanishing. The #1656
+# case (a panel rework wrapping testid carriers into a collapsed `hidden`
+# panel; the literal survived) is not machine-catchable from a literal
+# diff and stays a reviewer + nightly concern. See lessons-learned.md
+# "PR-CI vs nightly gates: different test surfaces".
+#
+# Escape hatch: the `testid-refs-unaffected` label, for a removal that is
+# verifiably spec-inert (the referencing spec was already deleted, the
+# testid was dead, ...). `labeled`/`unlabeled` re-evaluate the gate.
+#
+# Fix procedure the failure points to: update the e2e spec(s) that address
+# the removed/renamed testid in THIS PR (grep e2e for the old testid), or
+# add the label if the removal genuinely needs no spec change.
+
+name: Testid reference gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Spec-referenced testids removed on watched surfaces carry a spec update
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Evaluate gate
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HAS_ESCAPE_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'testid-refs-unaffected') }}
+        run: |
+          set -o pipefail
+          if python3 scripts/testid_reference_gate.py --base "$BASE_SHA" --head "$HEAD_SHA"; then
+            exit 0
+          fi
+          if [ "$HAS_ESCAPE_LABEL" = "true" ]; then
+            echo "::warning::Spec-referenced testids were removed on a watched surface without an e2e spec change, but the 'testid-refs-unaffected' label asserts the removal is spec-inert. That assertion is the author's responsibility."
+            exit 0
+          fi
+          exit 1

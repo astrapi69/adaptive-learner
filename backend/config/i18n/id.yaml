@@ -3591,3 +3591,9 @@ exercise:
   listen_first:
     label: "Dengarkan dulu"
     aria: "Putar pelafalan"
+  difficulty:
+    tier:
+      easy: "Mudah"
+      medium: "Sedang"
+      hard: "Sulit"
+    aria: "Kesulitan: {tier} ({level} dari 5)"

@@ -3583,3 +3583,9 @@ exercise:
   listen_first:
     label: "Écoute d'abord"
     aria: "Écouter la prononciation"
+  difficulty:
+    tier:
+      easy: "Facile"
+      medium: "Moyen"
+      hard: "Difficile"
+    aria: "Difficulté : {tier} ({level} sur 5)"

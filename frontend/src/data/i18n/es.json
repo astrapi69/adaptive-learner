@@ -3922,6 +3922,14 @@
     "listen_first": {
       "label": "Escucha primero",
       "aria": "Reproducir pronunciación"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "Fácil",
+        "medium": "Media",
+        "hard": "Difícil"
+      },
+      "aria": "Dificultad: {tier} ({level} de 5)"
     }
   }
 }
