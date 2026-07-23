@@ -5,6 +5,7 @@
     "configFile": "vite.config.ts"
   },
   "coverageAnalysis": "perTest",
+  "inPlace": true,
   "mutate": [
     "src/lib/**/*.{ts,tsx}",
     "src/hooks/**/*.ts",
@@ -24,5 +25,6 @@
     "break": null
   },
   "timeoutMS": 20000,
+  "dryRunTimeoutMinutes": 20,
   "concurrency": 2
 }

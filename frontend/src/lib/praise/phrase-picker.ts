@@ -41,10 +41,15 @@ interface PraiseBundle {
     categories: Record<PraiseCategory, PraisePhrase[]>;
 }
 
+// Stryker disable all: Vite's import.meta.glob macro is parsed statically by
+// the vite:import-glob plugin and requires literal arguments; mutating any
+// part of the call (pattern or options) breaks the parser (Rolldown
+// PARSE_ERROR in the Stryker dry run). See issue #1956.
 const BUNDLES = import.meta.glob<PraiseBundle>("../../data/praise/*.json", {
     eager: true,
     import: "default",
 });
+// Stryker restore all
 
 const CATALOG: Map<string, PraiseBundle> = (() => {
     const map = new Map<string, PraiseBundle>();
