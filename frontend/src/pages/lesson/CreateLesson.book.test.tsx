@@ -125,7 +125,12 @@ vi.mock("../../lib/content/book-upload", async (orig) => ({
     })),
 }));
 
+import {parseBookFile} from "../../lib/content/book-upload";
 import CreateLesson from "./CreateLesson";
+
+/** The module-level mock forces a single section; batch tests override it
+ *  per-run with a multi-section parse (#1949). */
+const parseBookFileMock = vi.mocked(parseBookFile);
 
 function renderPage() {
     return render(
@@ -205,6 +210,66 @@ describe("CreateLesson — book wizard title validation (#1946)", () => {
         for (const call of notifyErrorMock.mock.calls) {
             expect(String(call[0])).not.toMatch(/must NOT have fewer/);
         }
+    });
+
+    it("batch-generates N lessons from selected sections and saves them into one set (#1949)", async () => {
+        renderPage();
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: "Psychologie Grundlagen"},
+        });
+        fireEvent.click(screen.getByTestId("template-knowledge-from-text"));
+        // Parse into 3 sections, one of which is front matter (the real
+        // heuristic — spread from the un-mocked module — deselects "Vorwort").
+        parseBookFileMock.mockResolvedValueOnce({
+            ok: true,
+            book: {
+                format: "text",
+                sections: [
+                    {id: "s1", title: "Vorwort", text: "Danke.", charCount: 6},
+                    {id: "s2", title: "Kapitel 1", text: "Reize.", charCount: 6},
+                    {id: "s3", title: "Kapitel 2", text: "Modelllernen.", charCount: 13},
+                ],
+            },
+        });
+        fireEvent.change(screen.getByTestId("book-upload-input"), {
+            target: {files: [new File(["x"], "buch.md", {type: "text/markdown"})]},
+        });
+        await waitFor(() =>
+            expect(screen.getByTestId("book-upload-picker")).toBeInTheDocument(),
+        );
+        // The heuristic deselected "Vorwort"; the two chapters stay checked.
+        const button = screen.getByTestId("book-upload-apply");
+        expect(button.textContent).toContain("Generate 2");
+        fireEvent.click(button);
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("book-batch-summary"),
+            ).toBeInTheDocument(),
+        );
+        // Advance to review — two lessons summarised.
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(
+            screen.getByTestId("book-review-lessons").textContent,
+        ).toContain("2");
+        fireEvent.click(screen.getByTestId("book-save-local"));
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("create-lesson-saved"),
+            ).toBeInTheDocument(),
+        );
+        expect(saveUserSetMock).toHaveBeenCalledOnce();
+        const input = saveUserSetMock.mock.calls[0][0] as unknown as {
+            title: string;
+            lessons: Array<{title: string}>;
+        };
+        // One set titled by the wizard metadata, two lessons titled by the
+        // selected sections in document order.
+        expect(input.title).toBe("Psychologie Grundlagen");
+        expect(input.lessons).toHaveLength(2);
+        expect(input.lessons.map((l) => l.title)).toEqual([
+            "Kapitel 1",
+            "Kapitel 2",
+        ]);
     });
 
     it("shows a friendly message (never the raw ajv error) if a save is attempted without a title (defense-in-depth)", async () => {

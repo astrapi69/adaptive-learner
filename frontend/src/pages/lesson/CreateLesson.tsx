@@ -67,10 +67,11 @@ import {
     type DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
 import {
-    buildBookLesson,
-    buildBookUserSetInput,
+    buildBookLessons,
+    buildBookLessonsUserSetInput,
     normalizeBook,
 } from "../../lib/content/lesson/book-to-lesson";
+import type {GeneratedBookLesson} from "../../lib/ai/generation/generate-book-lessons";
 import {downloadLessonJson} from "../../lib/content/lesson/lesson-export";
 import {nextCopySetId} from "../../lib/content/lesson/lesson-import";
 import {BookSteps, type BookFields} from "../../components/create-lesson/book";
@@ -197,7 +198,10 @@ export default function CreateLesson() {
     const [extMode, setExtMode] = useState(false);
     const [bookText, setBookText] = useState("");
     const [bookFields, setBookFields] = useState<BookFields>(EMPTY_BOOK_FIELDS);
-    const [theorySteps, setTheorySteps] = useState<TheoryStep[]>([]);
+    // #1949 — the generated book lessons: the single paste path yields a
+    // one-element list (title "" -> follows meta.title), the multi-select
+    // upload path yields one entry per selected section.
+    const [bookLessons, setBookLessons] = useState<GeneratedBookLesson[]>([]);
 
     // An alternative authoring branch (book-text #1743 / extension #1852)
     // runs the compact 3-step flow instead of the card-driven one.
@@ -313,8 +317,9 @@ export default function CreateLesson() {
             meta.title.trim().length > 0 ||
             meta.titleNative.trim().length > 0 ||
             meta.description.trim().length > 0 ||
-            bookText.trim().length > 0,
-        [meta.title, meta.titleNative, meta.description, bookText],
+            bookText.trim().length > 0 ||
+            bookLessons.length > 0,
+        [meta.title, meta.titleNative, meta.description, bookText, bookLessons],
     );
 
     function update(key: keyof LessonMeta, value: string) {
@@ -330,10 +335,10 @@ export default function CreateLesson() {
             setShowError(false);
         }
         if (bookMode) {
-            // Book flow: step 2 requires a successful AI generation (theory
-            // + at least one exercise) before advancing to Review.
+            // Book flow: step 2 requires at least one generated lesson
+            // (single paste or batch) before advancing to Review.
             if (step === 2) {
-                if (theorySteps.length === 0 || exercises.length === 0) {
+                if (bookLessons.length === 0) {
                     setExerciseError(true);
                     return;
                 }
@@ -421,13 +426,19 @@ export default function CreateLesson() {
         setStep(2);
     }
 
-    /** BookTextStep reports the AI-generated theory + exercises. */
+    /** Single paste path: one lesson from the pasted chunk. Title "" so the
+     *  lesson tracks ``meta.title`` at save time (regression-preserving). */
     function handleBookGenerated(
         steps: TheoryStep[],
         generated: ContentLessonExercise[],
     ) {
-        setTheorySteps(steps);
-        setExercises(generated);
+        setBookLessons([{title: "", theorySteps: steps, exercises: generated}]);
+        setExerciseError(false);
+    }
+
+    /** #1949 — batch path: one lesson per selected section (titles carried). */
+    function handleBookBatchGenerated(lessons: GeneratedBookLesson[]) {
+        setBookLessons(lessons);
         setExerciseError(false);
     }
 
@@ -509,11 +520,13 @@ export default function CreateLesson() {
                     };
                 }
             } else if (bookMode) {
-                const bookInput = {meta, theorySteps, exercises};
-                lesson = buildBookLesson(bookInput);
-                input = buildBookUserSetInput(
-                    bookInput,
-                    lesson,
+                // #1949 — build one lesson per generated entry (single = 1,
+                // batch = N) into a single set.
+                const builtLessons = buildBookLessons(meta, bookLessons);
+                lesson = builtLessons[0];
+                input = buildBookLessonsUserSetInput(
+                    meta,
+                    builtLessons,
                     normalizeBook(bookFields),
                 );
             } else if (extMode) {
@@ -606,7 +619,7 @@ export default function CreateLesson() {
         setExtMode(false);
         setBookText("");
         setBookFields(EMPTY_BOOK_FIELDS);
-        setTheorySteps([]);
+        setBookLessons([]);
         setSavedEntry(null);
         setSavedLessonId("");
         setSavedLesson(null);
@@ -776,8 +789,8 @@ export default function CreateLesson() {
                     language={meta.targetLanguage}
                     resolveProvider={resolveProvider}
                     onGenerated={handleBookGenerated}
-                    theorySteps={theorySteps}
-                    exercises={exercises}
+                    onBatchGenerated={handleBookBatchGenerated}
+                    bookLessons={bookLessons}
                     advanceBlocked={exerciseError}
                     saving={saving}
                     onSaveLocal={() => void saveLocally()}

@@ -23,6 +23,7 @@ import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
 import {findRelatedTheoryIndex} from "../../lesson/theory-link";
 import type {LessonMeta} from "./lesson-draft";
 import type {TheoryStep} from "../../ai/generation/exercise-generation-prompt";
+import type {GeneratedBookLesson} from "../../ai/generation/generate-book-lessons";
 import type {
     ContentLesson,
     ContentLessonExercise,
@@ -30,6 +31,8 @@ import type {
     ContentSetBook,
     SaveUserSetInput,
 } from "../../../storage/types";
+
+export type {GeneratedBookLesson};
 
 /** The book-metadata a user can attach in the wizard, written to
  *  ``sets[].book`` (#769). */
@@ -49,14 +52,19 @@ function estimateMinutes(theory: number, exercises: number): number {
 }
 
 /**
- * Assemble a valid ``ContentLesson`` from reformulated theory steps +
- * exercises, writing ``theory_ref`` on each exercise step. Throws (via
- * ``validateGeneratedLesson``) on a schema violation so the caller can
- * surface it before saving.
+ * Assemble a single valid ``ContentLesson`` from reformulated theory steps
+ * + exercises with an EXPLICIT lesson title (the set metadata supplies the
+ * languages / level / author / description). ``usedIds`` guarantees a
+ * unique slug id across a batch of lessons sharing one set. Throws (via
+ * ``validateGeneratedLesson``) on a schema violation.
  */
-export function buildBookLesson(input: BookLessonInput): ContentLesson {
-    const {meta, theorySteps, exercises} = input;
-
+function assembleBookLesson(
+    meta: LessonMeta,
+    title: string,
+    theorySteps: TheoryStep[],
+    exercises: ContentLessonExercise[],
+    usedIds: Set<string>,
+): ContentLesson {
     // The AI theory steps are slug-safe re-ided so the lesson schema
     // (``[a-z0-9-]`` ids) accepts them regardless of what the parser
     // produced.
@@ -89,9 +97,13 @@ export function buildBookLesson(input: BookLessonInput): ContentLesson {
         }
     });
 
+    // An empty entry title falls back to the set title (the single paste
+    // path passes "" so the lesson title/id track ``meta.title`` even if it
+    // was edited after generation — preserving the #1743 id).
+    const resolvedTitle = title.trim() || meta.title.trim();
     const lesson: ContentLesson = {
-        id: slugify(meta.title) || "lesson",
-        title: meta.title.trim(),
+        id: uniqueLessonId(resolvedTitle, usedIds),
+        title: resolvedTitle,
         description: meta.description.trim() || null,
         target_language: meta.targetLanguage,
         source_language: meta.sourceLanguage,
@@ -104,6 +116,57 @@ export function buildBookLesson(input: BookLessonInput): ContentLesson {
 
     validateGeneratedLesson(lesson);
     return lesson;
+}
+
+/** Slug-safe lesson id derived from a title, disambiguated against ids
+ *  already used in the same set (``-2``, ``-3``, …). */
+function uniqueLessonId(title: string, usedIds: Set<string>): string {
+    const base = slugify(title) || "lesson";
+    let id = base;
+    let n = 2;
+    while (usedIds.has(id)) {
+        id = `${base}-${n}`;
+        n += 1;
+    }
+    usedIds.add(id);
+    return id;
+}
+
+/**
+ * Assemble a valid ``ContentLesson`` from reformulated theory steps +
+ * exercises, using ``meta.title`` as the lesson title. Throws on a schema
+ * violation so the caller can surface it before saving.
+ */
+export function buildBookLesson(input: BookLessonInput): ContentLesson {
+    const {meta, theorySteps, exercises} = input;
+    return assembleBookLesson(
+        meta,
+        meta.title,
+        theorySteps,
+        exercises,
+        new Set(),
+    );
+}
+
+/**
+ * #1949 — assemble N standalone lessons (one per generated section) that
+ * share one set. Each lesson carries its own title (the section title);
+ * ids are made unique within the set. Order is preserved.
+ */
+export function buildBookLessons(
+    meta: LessonMeta,
+    generated: GeneratedBookLesson[],
+): ContentLesson[] {
+    const usedIds = new Set<string>();
+    return generated.map((entry) =>
+        assembleBookLesson(
+            meta,
+            entry.title,
+            entry.theorySteps,
+            entry.exercises,
+            usedIds,
+        ),
+    );
 }
 
 /** Normalise the wizard's raw book fields into a {@link BookMeta}, or
@@ -133,16 +196,17 @@ export function bookSetId(meta: LessonMeta): string {
 }
 
 /**
- * Wrap a built book lesson in the ``SaveUserSetInput`` that persists it to
- * "My Lessons", carrying the optional ``book`` block (#769) into
- * ``sets[].book``.
+ * #1949 — wrap one or more built book lessons in the ``SaveUserSetInput``
+ * that persists them to "My Lessons" as a single set, carrying the optional
+ * ``book`` block (#769) into ``sets[].book``. The set title comes from the
+ * wizard metadata; the individual lesson titles are already baked into each
+ * ``ContentLesson``.
  */
-export function buildBookUserSetInput(
-    input: BookLessonInput,
-    lesson: ContentLesson,
+export function buildBookLessonsUserSetInput(
+    meta: LessonMeta,
+    lessons: ContentLesson[],
     book: BookMeta | null,
 ): SaveUserSetInput {
-    const {meta} = input;
     return {
         set_id: bookSetId(meta),
         title: meta.title.trim(),
@@ -154,6 +218,19 @@ export function buildBookUserSetInput(
         origin: "imported",
         description: meta.description.trim() || null,
         book,
-        lessons: [lesson],
+        lessons,
     };
+}
+
+/**
+ * Wrap a single built book lesson in the ``SaveUserSetInput`` that persists
+ * it to "My Lessons". Thin wrapper over {@link buildBookLessonsUserSetInput}
+ * (the single path is the one-lesson case of the batch path).
+ */
+export function buildBookUserSetInput(
+    input: BookLessonInput,
+    lesson: ContentLesson,
+    book: BookMeta | null,
+): SaveUserSetInput {
+    return buildBookLessonsUserSetInput(input.meta, [lesson], book);
 }

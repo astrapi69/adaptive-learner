@@ -212,9 +212,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       oeffnet normal und Speichern gelingt
 - [ ] **Datei-Upload im Buchtext-Schritt (#1927):** Button "Aus Datei
       laden (EPUB, DOCX, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
-      Kapitelliste erscheint (Titel aus dem Inhaltsverzeichnis) mit
-      Vorschau + Zeichenzahl; "In Textfeld uebernehmen" fuellt das
-      Textfeld (bei vorhandenem Text: Bestaetigungsdialog "Ersetzen");
+      Abschnittsliste erscheint (Checkboxen, Titel + Zeichenzahl);
       Markdown-Datei → Split an Ueberschriften; TXT ohne Ueberschriften
       → ein Abschnitt; kaputte/zu grosse Datei (> 20 MiB) → klare
       Fehlermeldung, kein Crash; Rechte-Hinweis erwaehnt Hochladen
@@ -224,6 +222,21 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Formatvorlagen (nur fett formatierte "Ueberschriften") → EIN
       Abschnitt "Gesamtes Dokument", Text landet trotzdem editierbar im
       Feld; kaputte .docx → klare Fehlermeldung, kein Crash
+- [ ] **Mehrfachauswahl + Ausschluss-Heuristik + Batch (#1949):** Datei
+      mit mehreren Abschnitten INKL. Vorwort/Glossar/Inhaltsverzeichnis
+      hochladen → typische Nicht-Lerninhalt-Abschnitte sind
+      standardmaessig ABGEWAEHLT, aber weiterhin sichtbar und manuell
+      ankreuzbar (Hinweiszeile erklaert es); GENAU EIN Abschnitt gewaehlt
+      → Button "In Textfeld uebernehmen" fuellt das Textfeld (bei
+      vorhandenem Text: Bestaetigungsdialog "Ersetzen"), Vorschau sichtbar,
+      danach normale Einzel-Generierung (Regression); MEHRERE Abschnitte
+      gewaehlt → Button "N Lektionen generieren" startet die Batch-
+      Generierung mit Fortschrittsanzeige ("Lektion 2 von 5 …") →
+      eine Lektion pro Abschnitt, Reihenfolge = Dokumentreihenfolge (nicht
+      Auswahlreihenfolge); Review zeigt "N Lektion(en)" + Titel-Liste;
+      Speichern → ein Set mit N Lektionen; schlaegt eine Einzel-Generierung
+      fehl, laufen die uebrigen weiter, Zusammenfassung nennt "X von N" +
+      die fehlgeschlagenen Abschnitte; ohne AI-Key → Key-Hinweis, kein Batch
 - [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-
