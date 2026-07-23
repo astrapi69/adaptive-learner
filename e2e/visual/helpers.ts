@@ -163,13 +163,99 @@ const RECOMMENDED_REPOS_FIXTURE = {
 } as const;
 
 /**
- * Pin the content-repo registry fetch to a frozen fixture so surfaces that
- * render the recommended-repos list (settings-data, content-discover) are
- * deterministic and decoupled from live content-repo edits (#1653).
+ * Frozen ``media.yaml`` fixture (#1696).
+ *
+ * The Content Browser + set-detail surfaces render per-set media-availability
+ * badges (``SetMediaBadges``) from ``media.yaml``, fetched LIVE from the
+ * official content repo on EVERY /content mount (``fetchMediaResources`` is
+ * unconditional — unlike ``books.yaml`` it is not registry-gated). In a fresh
+ * dexie visual run there is no ``localStorage`` cache, so the file is always
+ * fetched live, and its ARRIVAL TIME relative to the fullPage shot toggles
+ * whether the badge row is present — a per-run set-row height (and therefore
+ * page height) swing that ``waitForStableLayout``'s bounded heuristic cannot
+ * fully absorb (the ~700px set-detail variance in #1696). This is the last
+ * live-network timing source feeding those surfaces. Pinning it to this
+ * SYNTHETIC frozen fixture removes the variance the same way — and for the
+ * same reason — as ``RECOMMENDED_REPOS_FIXTURE`` did for the registry (#1653):
+ * the render path stays exercised, only the churning live data is frozen.
+ *
+ * JSON is a subset of YAML, so the plain object serialises straight into the
+ * route body; the shape matches ``parseMediaYaml`` (flat ``<domain>: [...]``).
+ * The ``language`` domain covers the bundled ``fr-a1-from-en`` set the matrix
+ * uses, so that set's badge row renders deterministically.
+ */
+const MEDIA_YAML_FIXTURE = {
+    language: [
+        {
+            type: "youtube",
+            title: "French A1 basics (visual-test fixture)",
+            url: "https://www.youtube.com/watch?v=00000000000",
+            language: "fr",
+            level: "beginner",
+            duration: "12min",
+            free: true,
+        },
+        {
+            type: "article",
+            title: "A1 vocabulary guide (visual-test fixture)",
+            url: "https://example.com/fr-a1-vocab",
+            language: "fr",
+            free: true,
+        },
+    ],
+    psychology: [
+        {
+            type: "podcast",
+            title: "Intro to psychology (visual-test fixture)",
+            url: "https://example.com/psych-podcast",
+            free: true,
+        },
+    ],
+} as const;
+
+/**
+ * Frozen ``books.yaml`` fixture (#1696, defensive).
+ *
+ * ``fetchBookRecommendations`` only requests ``books.yaml`` from registry
+ * entries flagged ``books: true``; ``RECOMMENDED_REPOS_FIXTURE`` above sets no
+ * such flag, so with the registry pinned this file is NOT fetched today. It is
+ * pinned anyway to close the whole class of live content-repo fetches these
+ * surfaces make: should the registry fixture ever gain a ``books: true`` entry,
+ * the book-recommendations section stays deterministic instead of silently
+ * reopening the height variance. Shape matches ``projectDocument``
+ * (``{domains: {<domain>: {books: [...]}}}``).
+ */
+const BOOKS_YAML_FIXTURE = {
+    domains: {
+        language: {
+            books: [
+                {
+                    title: "French A1 companion (visual-test fixture)",
+                    author: "Visual Test",
+                    url: "https://example.com/fr-a1-book",
+                },
+            ],
+        },
+    },
+} as const;
+
+/**
+ * Pin every LIVE content-repo fetch the Content surfaces make to a frozen
+ * fixture, so surfaces that render the recommended-repos list (settings-data,
+ * content-discover) AND the per-set media/book sections (content-browser,
+ * set-detail) are deterministic and decoupled from live content-repo edits
+ * (#1653, #1696):
+ *   - ``recommended-repos.json`` — the federated registry (#1653).
+ *   - ``media.yaml`` — per-set media-availability badges, fetched live on
+ *     every /content mount; its arrival time otherwise shifts set-row (and
+ *     page) height run-to-run (#1696).
+ *   - ``books.yaml`` — per-domain book recommendations (defensive; only
+ *     fetched when a registry entry is flagged, see the fixture note above).
  *
  * ``page.route`` intercepts every matching request for the page's lifetime,
  * so call it ONCE before the first navigation (alongside ``freezeClock`` /
- * ``setTheme``). Surfaces that never fetch the file are unaffected.
+ * ``setTheme``). Surfaces that never fetch a file are unaffected. YAML is a
+ * JSON superset, so the object bodies parse unchanged for the ``.yaml`` files.
  */
 export async function pinContentRegistry(page: Page): Promise<void> {
     await page.route("**/recommended-repos.json", (route) =>
@@ -177,6 +263,20 @@ export async function pinContentRegistry(page: Page): Promise<void> {
             status: 200,
             contentType: "application/json",
             body: JSON.stringify(RECOMMENDED_REPOS_FIXTURE),
+        }),
+    );
+    await page.route("**/media.yaml", (route) =>
+        route.fulfill({
+            status: 200,
+            contentType: "text/yaml",
+            body: JSON.stringify(MEDIA_YAML_FIXTURE),
+        }),
+    );
+    await page.route("**/books.yaml", (route) =>
+        route.fulfill({
+            status: 200,
+            contentType: "text/yaml",
+            body: JSON.stringify(BOOKS_YAML_FIXTURE),
         }),
     );
 }
