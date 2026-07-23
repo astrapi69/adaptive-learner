@@ -34,7 +34,6 @@ import {
 } from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
 import { isDismissedSet } from "../../lib/content/browse/dismissed-sets";
-import { isHiddenSet } from "../../lib/content/repos/hidden-sets";
 import {
   fetchRecommendedRepos,
   recommendedSource,
@@ -278,8 +277,11 @@ export function useContentSetsData(): ContentSetsData {
     try {
       const data = await getStorage().contentLoader.listSets();
       if (!mountedRef.current) return;
-      // #1702 — filter hidden reference/conformance fixtures out of "Meine
-      // Inhalte", covering a set that may already have been downloaded/imported.
+      // #1707 — filter reference/conformance fixtures the manifest marks
+      // ``visibility: "hidden"`` out of "Meine Inhalte", covering a set that
+      // may already have been downloaded/imported. The manifest value flows
+      // through ``asContentSetEntry``; absent ⇒ visible. Replaces the app-side
+      // ``hidden-sets.ts`` blocklist.
       // #1709 — sets the user explicitly deleted (dismissed-sets) are dropped
       // too while they are NOT cached: the source catalogue keeps advertising
       // them, so without this a bare Refresh restored every deleted set. A
@@ -290,7 +292,7 @@ export function useContentSetsData(): ContentSetsData {
       // being referentially stable between renders, so allocate a new array
       // only when an entry is actually removed.
       const dropped = (s: ContentSetEntry) =>
-        isHiddenSet(s.source, s.id) ||
+        s.visibility === "hidden" ||
         (s.cached_version === null && isDismissedSet(s.source, s.id));
       const visible = data.sets.some(dropped)
         ? data.sets.filter((s) => !dropped(s))

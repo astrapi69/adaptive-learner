@@ -156,6 +156,16 @@
           "description": "Semver-style version. Bumped whenever ANY lesson or asset inside the set changes; drives cache invalidation.",
           "title": "Version",
           "type": "string"
+        },
+        "visibility": {
+          "default": "visible",
+          "description": "#83 - consumer-display hint. ``hidden`` asks a consumer app NOT to surface the set to learners (e.g. a conformance/reference fixture that must stay on disk for engine validation but is not learner content). Additive and optional; absent means ``visible``. DISPLAY hint only: the engine and ``scripts/conformance-real.mjs`` still validate hidden sets and never exclude them from engine validation; only consumer apps filter on it.",
+          "enum": [
+            "visible",
+            "hidden"
+          ],
+          "title": "Visibility",
+          "type": "string"
         }
       },
       "required": [

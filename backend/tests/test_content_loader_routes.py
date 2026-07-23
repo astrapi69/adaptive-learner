@@ -185,6 +185,41 @@ def test_list_sets_surfaces_upstream(client: TestClient) -> None:
     assert entry["update_available"] is False
 
 
+def test_list_sets_carries_visibility_flag(client: TestClient) -> None:
+    # #1707 — the /sets response passes the manifest ``visibility`` flag
+    # straight through (the frontend filters on it, in BOTH storage modes);
+    # ``hidden`` is carried, a set without the field defaults to ``visible``.
+    manifest = textwrap.dedent(
+        f"""
+        schema_version: '1.0'
+        name: Visibility Test
+        sets:
+          - id: visible-set
+            title: Visible
+            language: fr
+            level: A1
+            version: '1.0.0'
+            lesson_count: 1
+          - id: graded-quiz-demo-from-de
+            title: Graded Quiz Demo
+            language: fr
+            level: A1
+            version: '1.0.0'
+            lesson_count: 1
+            visibility: hidden
+        """
+    ).strip()
+    transport = _make_mock_transport(
+        {f"/{SOURCE}/main/manifest.yaml": manifest},
+    )
+    with _install_mock_transport(transport):
+        r = client.get("/api/plugins/content-loader/sets")
+    assert r.status_code == 200, r.text
+    by_id = {s["id"]: s for s in r.json()["sets"]}
+    assert by_id["visible-set"]["visibility"] == "visible"
+    assert by_id["graded-quiz-demo-from-de"]["visibility"] == "hidden"
+
+
 def test_list_sets_degrades_when_upstream_404(
     client: TestClient,
 ) -> None:

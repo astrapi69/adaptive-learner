@@ -144,4 +144,28 @@ describe("useContentSetsData — dismissed sets stay deleted across Refresh (#17
 
     expect(result.current.sets.map((s) => s.id)).toEqual(["fr-a1-from-de"]);
   });
+
+  it("filters a set the manifest marks visibility: hidden out of My Content (#1707)", async () => {
+    const hidden = entry({
+      id: "graded-quiz-demo-from-de",
+      cached_version: "1.0.0",
+      visibility: "hidden",
+    });
+    const visible = entry({ id: "fr-a1-from-de", visibility: "visible" });
+    const noField = entry({ id: "es-a1-from-de", visibility: undefined });
+    listSetsMock.mockResolvedValue({
+      sets: [hidden, visible, noField],
+      sources: [],
+    });
+
+    const { result } = renderHook(() => useContentSetsData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    // The hidden fixture is dropped even though it is cached; a visible set and
+    // a set with no visibility field (absent ⇒ visible) both survive.
+    expect(result.current.sets.map((s) => s.id).sort()).toEqual([
+      "es-a1-from-de",
+      "fr-a1-from-de",
+    ]);
+  });
 });
