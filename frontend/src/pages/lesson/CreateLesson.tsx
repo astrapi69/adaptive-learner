@@ -73,8 +73,8 @@ import {
 import {
     editSnapshot,
     mergeEditedLessonIntoSet,
-} from "../../lib/content/lesson/edit-session";
-import {useEditLessonSession} from "../../hooks/content/useEditLessonSession";
+} from "../../lib/content/lesson/edit/edit-session";
+import {useEditLessonSession} from "../../hooks/content/edit/useEditLessonSession";
 import {
     buildBookLessons,
     buildBookLessonsUserSetInput,

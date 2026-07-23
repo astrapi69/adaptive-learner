@@ -8,7 +8,7 @@
  */
 
 import {Button} from "@/components/ui/button";
-import {lessonPickerLabel} from "../../lib/content/lesson/edit-session";
+import {lessonPickerLabel} from "../../lib/content/lesson/edit/edit-session";
 import type {ContentLesson} from "../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
@@ -93,7 +93,7 @@ export function LessonPicker({
     if (lessons.length <= 1) return null;
     return (
         <div
-            className="create-lesson-lesson-picker mb-4 flex flex-col gap-1.5"
+            className="mb-4 flex flex-col gap-1.5"
             data-testid="create-lesson-lesson-picker"
         >
             <label

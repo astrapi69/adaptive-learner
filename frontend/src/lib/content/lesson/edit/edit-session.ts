@@ -12,10 +12,10 @@
  * ``CreateLesson`` stays under the cohesion size gate.
  */
 
-import {getStorage} from "../../../storage";
-import {lessonToDraftInput} from "./draft-to-lesson";
-import {migrateLegacyExercisePrompts} from "./exercise/legacy-prompt-migration";
-import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
+import {getStorage} from "../../../../storage";
+import {lessonToDraftInput} from "../draft-to-lesson";
+import {migrateLegacyExercisePrompts} from "../exercise/legacy-prompt-migration";
+import type {LessonCardDraft, LessonMeta} from "../lesson-draft";
 import type {
     ContentLesson,
     ContentLessonExercise,
@@ -23,7 +23,7 @@ import type {
     ContentSetEntry,
     SaveUserSetInput,
     UserLessonOrigin,
-} from "../../../storage/types";
+} from "../../../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
 

@@ -16,7 +16,7 @@ import type {
     ContentLesson,
     ContentSetEntry,
     SaveUserSetInput,
-} from "../../../storage/types";
+} from "../../../../storage/types";
 
 const t = (_k: string, fallback?: string) => fallback ?? _k;
 

@@ -17,18 +17,18 @@ import type {Dispatch, RefObject, SetStateAction} from "react";
 import {
     buildEditPrefill,
     fetchEditLessonSet,
-} from "../../lib/content/lesson/edit-session";
+} from "../../../lib/content/lesson/edit/edit-session";
 import type {
     LessonCardDraft,
     LessonMeta,
-} from "../../lib/content/lesson/lesson-draft";
+} from "../../../lib/content/lesson/lesson-draft";
 import type {
     ContentLesson,
     ContentLessonExercise,
     ContentLessonStep,
     ContentSetEntry,
     UserLessonOrigin,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
 
