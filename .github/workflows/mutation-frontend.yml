@@ -9,12 +9,30 @@ name: Mutation (Frontend)
 #     Secrets and variables -> Actions -> Variables). Off by
 #     default so it never silently burns CI minutes.
 #
+# Scope / runtime (#1956): the full mutate scope from
+# stryker.config.json is ~27k mutants and takes ~7h at concurrency 2 —
+# it CANNOT finish inside the 120-min job timeout, and a timed-out job
+# uploads no report. So each run (scheduled nightly OR a plain dispatch)
+# mutates an interleaved 1/SHARD_COUNT slice of the files; over
+# SHARD_COUNT nights the union covers the whole scope, and every single
+# run completes with an uploadable report. Override with the `mutate`
+# input to scope a specific glob, or "ALL" for the (very long) full run.
+#
 # IMPORTANT (lessons-learned "wired != working"): trigger this once
 # via workflow_dispatch after merging and confirm the artifact +
 # score before relying on the schedule.
 
 on:
   workflow_dispatch:
+    inputs:
+      mutate:
+        description: >-
+          Mutation scope. Empty = today's nightly shard (a completing
+          ~1/N slice). A glob like "src/api/**/*.ts" scopes to that glob.
+          "ALL" runs the full ~27k-mutant scope (will likely exceed the
+          120-min timeout and upload no report). See #1956.
+        required: false
+        default: ""
   schedule:
     # 03:17 UTC daily; the job body is gated below so it is a no-op
     # unless ENABLE_NIGHTLY_MUTATION == "true".
@@ -60,7 +78,43 @@ jobs:
         working-directory: frontend
         # thresholds.break is null in stryker.config.json, so a low
         # score never fails the job — the report is the deliverable.
-        run: bunx stryker run
+        env:
+          MUTATE_INPUT: ${{ inputs.mutate }}
+          # How many nights it takes to cover the whole scope. Raise this
+          # if a shard ever approaches the 120-min timeout; lower it (down
+          # to 1) to cover more per night. See the header note + #1956.
+          SHARD_COUNT: "8"
+        run: |
+          set -euo pipefail
+          if [ "$MUTATE_INPUT" = "ALL" ]; then
+            echo "Running the FULL mutate scope from stryker.config.json"
+            echo "(~27k mutants; expected to exceed the job timeout)."
+            bunx stryker run
+          elif [ -n "$MUTATE_INPUT" ]; then
+            echo "Running scoped mutation: $MUTATE_INPUT"
+            bunx stryker run --mutate "$MUTATE_INPUT"
+          else
+            # Default: today's interleaved shard of the full scope. Every
+            # (NR-1) % N == idx file is mutated, so the shard is spread
+            # across directories (balances mutant density) and the union
+            # over N days equals the full scope.
+            idx=$(( 10#$(date -u +%j) % SHARD_COUNT ))
+            # Mirror stryker.config.json's mutate scope exactly: lib gets
+            # .ts + .tsx, hooks + api only .ts. sort keeps the ordering
+            # deterministic so a given day always maps to the same shard.
+            mapfile -t files < <(
+              {
+                git ls-files src/lib | grep -E '\.(ts|tsx)$'
+                git ls-files src/hooks src/api | grep -E '\.ts$'
+              } | grep -vE '\.(test|spec)\.|\.d\.ts$|(^|/)test/' | sort -u
+            )
+            shard=$(printf '%s\n' "${files[@]}" \
+              | awk -v n="$SHARD_COUNT" -v i="$idx" '(NR-1) % n == i' \
+              | paste -sd, -)
+            count=$(printf '%s' "$shard" | tr ',' '\n' | grep -c .)
+            echo "Nightly shard ${idx}/${SHARD_COUNT}: ${count} of ${#files[@]} files."
+            bunx stryker run --mutate "$shard"
+          fi
 
       - name: Upload mutation HTML report
         if: always()

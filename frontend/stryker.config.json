@@ -25,5 +25,6 @@
     "break": null
   },
   "timeoutMS": 20000,
+  "dryRunTimeoutMinutes": 20,
   "concurrency": 2
 }
