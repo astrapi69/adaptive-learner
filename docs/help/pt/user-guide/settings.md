@@ -38,7 +38,7 @@ UserSettings; a próxima chamada de IA passa pelo plugin do
 novo fornecedor (modo Servidor) ou pelo cliente HTTP do novo
 fornecedor (modo Local).
 
-O **seletor de Modelo** (desde v1.11.0) é um menu suspenso
+O **seletor de Modelo** é um menu suspenso
 pesquisável agrupado em Recomendado / Todos, preenchido a
 partir do endpoint `/v1/models` em tempo real de cada
 fornecedor (cache de 1h). Cada linha mostra o nome legível +
@@ -49,7 +49,7 @@ o seletor usa os padrões estáticos e apresenta uma dica
 `<Fornecedor>: <Nome do modelo>`; o id completo + janela de
 contexto ficam na dica de ferramenta.
 
-## Chaves de API (Fase 34 / v1.20.0)
+## Chaves de API
 
 Cada fornecedor tem a sua própria linha: uma entrada de chave,
 um botão Guardar, um botão Remover, o emblema de fornecedor
@@ -125,7 +125,7 @@ botões Restaurar + Eliminar + Comparar-como-A/B.
 
 ## Voz
 
-Três alternâncias (desde v1.18.0):
+Três alternâncias:
 
 - **TTS ativado** — adiciona um botão ▶ ao lado das respostas
   da IA + resultados da Avaliação que as lê em voz alta. Escolhe
@@ -144,7 +144,7 @@ Três alternâncias (desde v1.18.0):
 A secção de Voz oculta-se quando nenhum lado da Web Speech API
 (síntese nem reconhecimento) é suportado pelo navegador.
 
-## Aparência (Fase 58 / v1.41.0)
+## Aparência
 
 O seletor de **Tema** em *Geral > Aparência* oferece seis
 temas mais um modo automático:
@@ -171,7 +171,7 @@ legíveis em todos eles.
 
 ## Interface
 
-A **alternância de Gestos** (desde v1.10.0, padrão LIGADO para
+A **alternância de Gestos** (padrão LIGADO para
 dispositivos com toque) cobre a navegação por deslize da
 Avaliação, a revelação por deslize de tópicos do Currículo e
 a espiada de ciclo da Sessão. Também aqui: dicas de ferramentas

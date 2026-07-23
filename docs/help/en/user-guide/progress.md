@@ -14,7 +14,7 @@ Four sections, top to bottom:
 2. **Method distribution** — the same horizontal bar chart
    as the Dashboard, with hover tooltips showing the exact
    session count per method.
-3. **Step-evaluation insights** — only v0.5.0+ data; reads
+3. **Step-evaluation insights** — reads
    from the StepEvaluation rows the session route produces.
 4. **Commit history** — every ProgressCommit row in
    chronological order, newest first.
@@ -65,7 +65,7 @@ TipTap). The list is sortable by date or by understanding.
 Rendered notes show bold / italic / lists / code blocks
 with syntax highlighting / links — exactly what was typed
 in the end-of-session rating dialog. Legacy plain-text notes
-from pre-v1.14.0 pass through unchanged.
+pass through unchanged.
 
 ## Exports
 

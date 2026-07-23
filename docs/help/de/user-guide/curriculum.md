@@ -52,7 +52,7 @@ Rechts in der Curriculum-Ansicht steht die Lektionsliste,
 sortiert nach `order_index`. Jede Zeile zeigt den Lektions-
 titel und einen Ausschnitt; Klick öffnet den Lektions-Editor.
 
-Der Editor ist **TipTap-Rich-Text** (seit v1.14.0): fett /
+Der Editor ist **TipTap-Rich-Text**: fett /
 kursiv / unterstrichen / durchgestrichen, Überschriften
 (H1–H3), Aufzählungs- + Nummerierungs- + Aufgaben-Listen,
 Blockquote, Inline-Code, Fenced Code-Blöcke mit `lowlight`-
@@ -65,8 +65,8 @@ mit horizontalem Scroll + 40-px-Touch-Zielen.
 Curriculum-Beschreibungen, Sitzungsnotizen und Lektions-
 Inhalte nutzen denselben Editor. Markdown- / PDF-Exporte
 gehen durch `renderStoredContent`, das den TipTap-Doc-Baum
-durchläuft und GFM-Markdown erzeugt; Plain-Text-Inhalte von
-vor v1.14.0 werden unverändert durchgereicht.
+durchläuft und GFM-Markdown erzeugt; ältere Plain-Text-Inhalte
+werden unverändert durchgereicht.
 
 ## Wie Curricula zu Sessions passen
 

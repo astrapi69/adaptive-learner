@@ -24,9 +24,8 @@ almacena en caché localmente (en el sistema de archivos en modo
 backend, en IndexedDB en modo navegador puro), de modo que tras la
 primera descarga puedas aprender sin conexión.
 
-El conjunto piloto de la v1.27.0 es **francés A1** (2 lecciones,
-14 tarjetas, 9 ejercicios que cubren los cuatro tipos de
-ejercicio). Cada versión desde entonces ha añadido nuevos: consulta
+La biblioteca incluida abarca varios conjuntos de contenido en
+distintos idiomas y dominios. Cada versión añade más: consulta
 el
 [repo de conjuntos](https://github.com/astrapi69/adaptive-learner-content)
 para ver el catálogo actual.
@@ -159,7 +158,7 @@ con los que más te cuesta.
 
 Una sesión de repaso en `/review/:setId` sintetiza una
 **mini-lección sobre la marcha** a partir de las entradas
-superiores de tu cola. Estrategia mixta desde la **v1.35.0**:
+superiores de tu cola. Estrategia mixta:
 
 - Si fallaste originalmente una palabra en un ejercicio de
   **asociación** o de **elección de imagen**, haces exactamente ese
@@ -182,7 +181,7 @@ Domina 50 elementos mediante repasos y consigues la insignia
 
 ## Ronda de corrección al final de la lección
 
-Nuevo en la **v1.35.0**: cuando completas una lección con errores,
+Cuando completas una lección con errores,
 la página de resumen muestra una pequeña **ronda de corrección**
 entre tu puntuación y el botón "Siguiente lección". Toma hasta
 cinco errores concretos de esa lección y ofrece cada uno como un
@@ -206,7 +205,7 @@ que veas el efecto de tu práctica adicional.
 
 ## Feedback visual de diferencias
 
-También nuevo en la **v1.35.0**: las respuestas incorrectas de
+Las respuestas incorrectas de
 texto libre y de fichas de palabras muestran ahora una
 **diferencia a nivel de token** entre tu entrada y la respuesta
 canónica. Tres colores, nunca solo color:
@@ -221,7 +220,7 @@ canónica. Tres colores, nunca solo color:
 La misma diferencia aparece en el resumen de la lección, en el
 desglose de cada ejercicio, para cada respuesta de texto libre o
 de fichas de palabras cuya entrada del usuario conoce el
-almacenamiento de v1.35.0+.
+almacenamiento.
 
 ---
 
@@ -262,7 +261,7 @@ de forma idéntica contra IndexedDB en modo navegador puro, de modo
 que quienes visiten la página pública de GitHub Pages obtengan el
 ciclo completo de repaso sin backend.
 
-Desde la **v1.33.0**, la gamificación también está alineada: en
+La gamificación también está alineada: en
 modo navegador puro consigues por las lecciones completadas **los
 mismos XP e insignias de lección** que en modo servidor; la lógica
 de estrellas, racha e insignias está portada a TypeScript y

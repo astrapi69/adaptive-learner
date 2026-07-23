@@ -1,6 +1,6 @@
 # Intégration
 
-Depuis la **v1.64.0**, l'entrée en matière est volontairement
+L'entrée en matière est volontairement
 courte : le **démarrage rapide** ne demande que deux champs.
 
 1. **Nom** — comment l'application doit s'adresser à toi.

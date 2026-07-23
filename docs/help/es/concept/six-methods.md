@@ -152,7 +152,7 @@ Servidor y Local.
 Tu evaluación te da un perfil de 6 métodos. El método dominante es
 con el que comienzan las nuevas sesiones. Pero:
 
-- El **evaluador de pasos** (dual-prompt v0.5.0) puede sugerir
+- El **evaluador de pasos** (dual-prompt) puede sugerir
   quedarse, avanzar o —raramente— retroceder en cada paso del
   ciclo.
 - El **heurístico de cambio de método** detecta el estancamiento

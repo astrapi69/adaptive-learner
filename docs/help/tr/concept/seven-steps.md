@@ -122,7 +122,7 @@ küçük daireler satırına dönüşür. Şerit üzerinde kaydırma-ile-gözetl
 önceki / sonraki döngü adımını açıklayan bilgilendirici bir bindirme
 gösterir.
 
-## Otomatik döngü (v1.4.0) + konu geçişleri
+## Otomatik döngü + konu geçişleri
 
 7. adım artık bir çıkmaz sokak değildir. Adım değerlendirici sizi
 `advance=true` ile 7. adıma taşıdıktan sonra, üçüncü bir yapay zeka
@@ -147,14 +147,14 @@ gerektiğini değerlendirir.
 ```
 
 Oturum başına `max_cycles=5` sabit sınırı sonsuz döngüleri önler.
-Deterministik bir yedek, yapay zeka / ayrıştırma hatasında v0.5.0'ın
+Deterministik bir yedek, yapay zeka / ayrıştırma hatasında
 7'de-sınırla davranışını korur.
 
 Sohbet, döngü geçişlerini oturum geçmişinde kesik kenarlı "Döngü N"
 kartları olarak gösterir. Derecelendirme iletişim kutusu, `cycle_count > 1`
 olduğunda çok döngülü yolculuğu özetler.
 
-## Paralel döngü sınırı değerlendirmesi (v1.5.0)
+## Paralel döngü sınırı değerlendirmesi
 
 6. → 7. adım geçişinde hem adım değerlendirici hem de konu-geçiş
 değerlendirici `asyncio.gather` (`app.yaml`'da `async_evaluation: true`)

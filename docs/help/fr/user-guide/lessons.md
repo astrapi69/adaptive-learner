@@ -25,9 +25,8 @@ cache localement (dans le système de fichiers en fonctionnement
 backend, dans IndexedDB en mode purement navigateur), de sorte
 qu'après le premier téléchargement tu peux apprendre hors ligne.
 
-L'ensemble pilote de la v1.27.0 est **Français A1** (2 leçons, 14
-cartes, 9 exercices couvrant les quatre types d'exercices). Chaque
-version depuis lors en ajoute de nouveaux — voir le
+La bibliothèque intégrée couvre plusieurs ensembles de contenu dans
+différentes langues et domaines. Chaque version en ajoute — voir le
 [dépôt d'ensembles](https://github.com/astrapi69/adaptive-learner-content)
 pour le catalogue actuel.
 
@@ -159,7 +158,7 @@ lesquels tu luttes le plus remontent en haut.
 
 Une session de révision sous `/review/:setId` synthétise une
 **mini-leçon à la volée** à partir des entrées du haut de ta file.
-Stratégie mixte depuis la **v1.35.0** :
+Stratégie mixte :
 
 - Si tu as manqué un mot à l'origine dans un exercice
   d'**association** ou de **choix d'image**, tu refais exactement
@@ -183,7 +182,7 @@ révision**.
 
 ## Tour de correction en fin de leçon
 
-Nouveauté de la **v1.35.0** : lorsque tu termines une leçon avec
+Lorsque tu termines une leçon avec
 des erreurs, la page de récapitulatif affiche un petit **tour de
 correction** entre ton score et le bouton « Leçon suivante ». Il
 prend jusqu'à cinq erreurs concrètes de cette leçon et propose
@@ -207,7 +206,7 @@ afin que tu voies l'effet de ton exercice supplémentaire.
 
 ## Retour visuel par diff
 
-Également nouveau dans la **v1.35.0** : les réponses fausses de
+Les réponses fausses de
 texte libre et de tuiles de mots affichent désormais une **diff au
 niveau des jetons** entre ta saisie et la réponse canonique. Trois
 couleurs, jamais la couleur seule :
@@ -223,7 +222,7 @@ couleurs, jamais la couleur seule :
 La même diff apparaît dans le récapitulatif de la leçon, dans la
 décomposition de chaque exercice — pour chaque réponse de texte
 libre ou de tuiles de mots dont la saisie utilisateur est connue
-du stockage v1.35.0+.
+du stockage.
 
 ---
 
@@ -263,7 +262,7 @@ sorte que les utilisateur·rice·s qui visitent le site public
 GitHub Pages obtiennent la boucle de révision complète sans
 backend.
 
-Depuis la **v1.33.0**, la gamification est également alignée : en
+La gamification est également alignée : en
 mode purement navigateur, tu gagnes pour les leçons terminées **les
 mêmes XP et badges de leçon** qu'en mode serveur — la logique des
 étoiles, des séries et des badges est portée en TypeScript et

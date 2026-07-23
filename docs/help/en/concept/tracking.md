@@ -105,7 +105,7 @@ Deliberately:
   for a learning topic? Mastery is a posture, not a
   finish line.
 
-## Gamification layer (v1.16.0)
+## Gamification layer
 
 On top of the ProgressCommit-as-Git substrate, three
 motivational layers ship:
@@ -159,5 +159,5 @@ you learned. The Git model gives you patterns:
 
 These are the questions a serious learner asks themselves.
 Adaptive Learner gives you the substrate to ask them; the
-v1.16.0 gamification layer is sugar on top, off by default
+gamification layer is sugar on top, off by default
 in spirit.

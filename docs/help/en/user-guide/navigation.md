@@ -1,10 +1,9 @@
 # Navigation
 
-v1.91.0 restructured the app's navigation (EXP-037). The primary
-navigation dropped from 12+ entries to a small set of **grouped
-entries** (following the Nielsen-Norman "5-7 items" guidance) with
-**no loss of function** — every page is still reachable, and old
-links keep working through redirects.
+The app's primary navigation is a small set of **grouped
+entries** (EXP-037, following the Nielsen-Norman "5-7 items"
+guidance) with **no loss of function** — every page is reachable,
+and old links keep working through redirects.
 
 <!-- TODO: Screenshot — the grouped primary navigation and the mobile bottom tab bar -->
 

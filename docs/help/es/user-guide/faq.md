@@ -98,7 +98,7 @@ Sí. Se han implementado tres rutas de exportación:
 
 ## ¿Qué es la función de voz?
 
-Tres integraciones con la Web Speech API (desde v1.18.0):
+Tres integraciones con la Web Speech API:
 
 - **Texto a voz** en las respuestas de la IA y los resultados de
   la Evaluación — un botón ▶ junto a cada uno lo lee en voz alta,
@@ -124,20 +124,20 @@ vocabulario (para conversaciones de idiomas) y un plan de estudios
 sugerido. Un clic inicia un Plan de estudios y comienza una sesión
 dirigida a partir del análisis.
 
-La exportación Markdown por conversación de Claude.ai fue el caso
-de auditoría de v1.19.0 — el analizador incluye extracción
+La exportación Markdown por conversación de Claude.ai es un caso
+de importación validado — el analizador incluye extracción
 completa de marcas de tiempo y preservación de límites de roles
-para ese formato (BL-25 / BL-26 / BL-28 cerrados en v1.19.1).
+para ese formato.
 
 ## ¿Sincronización entre dispositivos?
 
-Sincronización bidireccional en la red local desde v1.0.0.
+Sincronización bidireccional en la red local.
 Ajustes → Sincronización → «Emparejar este dispositivo»: escanea
 el código QR en la pantalla del otro dispositivo (cámara trasera)
 o pega la URL de emparejamiento. Una vez emparejados, los botones
 de enviar y recibir intercambian datos; los conflictos pasan por
 un resolvedor de fusión de IA. 28 tablas en la superficie de
-sincronización desde v1.19.0 (asignaturas, etiquetas y preguntas
+sincronización (asignaturas, etiquetas y preguntas
 de estudio incluidas).
 
 ## ¿En qué se diferencia esto de ChatGPT?
