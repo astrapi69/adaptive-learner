@@ -246,7 +246,13 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await page
             .locator('[data-testid^="exercise-ext-prompt-"]')
             .fill("Hoere zu und schreibe, was du hoerst.");
-        const audio = page.locator('[data-testid^="exercise-ext-dict-audio-"]');
+        // #1911 added an upload button (…-audio-upload-…) + hidden file input
+        // (…-audio-file-…) beside the asset-path input, so the bare
+        // "…-audio-" prefix overmatches (#1954). Pin the PATH input: its id
+        // continues with the exercise id ("…-audio-ex-…").
+        const audio = page.locator(
+            '[data-testid^="exercise-ext-dict-audio-ex-"]',
+        );
         await expect(audio).toBeVisible();
         await audio.fill("assets/audio/clip.mp3");
         const acceptInput = page.locator(
