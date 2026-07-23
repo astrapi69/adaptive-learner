@@ -92,7 +92,10 @@ jobs:
             bunx stryker run
           elif [ -n "$MUTATE_INPUT" ]; then
             echo "Running scoped mutation: $MUTATE_INPUT"
-            bunx stryker run --mutate "$MUTATE_INPUT"
+            # --mutate REPLACES the config's mutate array (incl. its test
+            # exclusions), so re-append them to keep test files out.
+            bunx stryker run --mutate \
+              "$MUTATE_INPUT,!src/**/*.test.*,!src/**/*.spec.*,!src/**/*.d.ts,!src/test/**"
           else
             # Default: today's interleaved shard of the full scope. Every
             # (NR-1) % N == idx file is mutated, so the shard is spread
