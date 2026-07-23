@@ -1997,3 +1997,83 @@ Surfaced 2026-07-18 as the THIRD recurrence of the same class:
   is a facet of an earlier fixed class, say so in the issue, link the
   chain, and extend the ORIGINAL tests so the whole class is pinned -
   a sibling facet fixed in isolation is the seed of recurrence #3.
+
+## PR-CI vs nightly gates: different test surfaces (green PR -> red nightly/push)
+
+A green PR merge proves only that the surface the PR-CI *looks at* is
+green. By the #552 cadence, PR-CI runs correctness gates only; the
+visual-baselines, the e2e specs (dexie-smoke, manual-automation,
+FeatureShots) and the Dexie-mode journeys run **nightly / on develop-push
+only**. So any change to a surface only a nightly covers can merge a clean
+PR and turn the next nightly/push run red. This is not a one-off chain -
+it is a recurring **risk category** (#1661): *"green PR -> red
+nightly/push, because the PR-CI never looked at the affected surface."*
+
+### Sub-classes (same signature, different fix lever)
+
+1. **Nightly-only surface** (#1638, #1656). The PR-CI does not run the
+   workflow at all. A lesson-header rework left every `lesson-*` visual
+   baseline stale (#1638); a panel rework moved testid carriers into a
+   collapsed `hidden` panel without touching the e2e specs (#1656).
+2. **Selection mechanics** (#1620, #1665, #1614). The test IS in the
+   PR-CI suite but the selective runner (`vitest --changed` #615, `pytest
+   --testmon`) does not pick it, because it reads its subject via
+   `readFileSync` (invisible to the module graph) instead of importing
+   it. A moved CSS token broke a `readFileSync` hue-pin the PR-CI never
+   ran (#1665); an `index.html` guard kept develop red across five PRs
+   (#1614). Mitigation candidate: Vitest `forceRerunTriggers` for
+   `src/styles/**/*.css` + `index.html` + `data/i18n/*.json`.
+3. **Stale base / semantic merge conflict** (#1729). Two PRs, each
+   tsc-green and textually conflict-free, combine on develop to a type
+   error. `strict: false` branch protection let a PR with 32-minute-old
+   CI merge behind a fresh neighbor. **Decided + shipped (2026-07-16):**
+   Merge Queue is an Org-only feature (422 on this user-owned repo), so
+   the fallback `strict: true` is active on develop - PR merges now
+   require an up-to-date branch, re-running CI on the combined state.
+   `enforce_admins=false` keeps `make release-finish`'s direct back-merge
+   working.
+4. **No cadence at all** (#1771). The verified variant: the surface is
+   not even nightly-covered. The bun migration (#1496) dropped
+   `package-lock.json`; `frontend/Dockerfile` still ran `npm ci` and
+   broke the entire self-hosted/desktop path for ~2 release cycles. No
+   automated consumer existed - discovery was manual. Mitigation
+   candidate: a weekly/release `docker compose build` smoke (build only),
+   analogous to the dexie-smoke pattern (#552).
+
+(Orthogonal, listed for contrast: #1653 `settings-data` baseline churn
+from live `recommended-repos.json` is the *external-data* class (#575),
+not this "spec-not-dragged-along" class.)
+
+### The reviewer rule
+
+**A green PR is NOT authoritative for nightly-only surfaces.** When a PR
+touches a visual-critical path, an e2e-covered surface, or a
+`readFileSync`-pinned subject, the safety net is the full/nightly run -
+which lands *after* the merge. Treat the green PR as "the PR-CI slice is
+green", not "develop is green".
+
+### Shipped mitigations (make the gap PR-visible, targeted)
+
+- **`visual-baseline-gate.yml`** (#1641) - a PR touching visual-critical
+  paths must carry the baseline PNGs; escape label
+  `visual-baselines-unaffected`.
+- **`testid-reference-gate.yml`** (#1661) - a *statically spec-referenced*
+  `data-testid` that is net-removed/renamed on a high-user-visibility
+  surface (lesson runner, exercises, dashboard, content browser, settings
+  core) without any e2e spec change fails a fast PR gate
+  (`scripts/testid_reference_gate.py`, `make check-testid-refs`); escape
+  label `testid-refs-unaffected`. **Catches the rename/remove sub-class
+  only** - the #1656 wrap-into-`hidden` case (literal survives) is not
+  literal-diffable and stays a reviewer + nightly concern.
+
+### The scope discipline (why these gates stay targeted)
+
+Not every nightly-only surface earns a PR gate. Pulling every nightly
+surface into PR-CI collapses the fast-PR/#552 separation and a too-broad
+gate produces false positives and gets bypassed. The criterion: gate the
+**high-user-visibility** surfaces where a silent nightly break masks a
+real user regression (lesson runner, dashboard, content, settings core);
+accept the short red-develop window as the safety net for
+internal/rarely-changed/tooling surfaces. Prefer a **precise** gate (an
+actual diff of the referenced artifact) over a coarse "touched X -> must
+touch Y" presence check, so the false-positive rate stays near zero.

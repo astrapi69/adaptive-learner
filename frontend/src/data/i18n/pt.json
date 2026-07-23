@@ -2822,6 +2822,12 @@
     "edit_title": "Editar lição",
     "edit_load_error": "Não foi possível carregar esta lição para edição.",
     "edit_note": "Você está editando uma lição existente. Salvar substitui-a; use 'Salvar como cópia' para manter o original.",
+    "edit": {
+      "lesson_picker_label": "Lição deste conjunto ({n})",
+      "switch_confirm_title": "Trocar de lição?",
+      "switch_confirm_body": "As alterações não salvas da lição atual serão perdidas.",
+      "switch_discard": "Descartar e trocar"
+    },
     "prompts_migrated": "{n} instrução(ões) de exercício foram traduzidas automaticamente para o seu idioma.",
     "prompts_migrated_dismiss": "Fechar",
     "step_pending": "Este passo chega na próxima atualização.",
