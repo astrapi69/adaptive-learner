@@ -282,7 +282,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       bleibt unveraendert. Editor ohne Speichern verlassen → Original in
       Dexie unveraendert (kein stiller Schreibvorgang); erst Speichern
       (Ueberschreiben/Als Kopie) schreibt die migrierte Fassung dauerhaft
-- [ ] **Lektionen kombinieren (#1741):** Meine Inhalte → "Zu Set
+- [ ] **Lektionen kombinieren (#1741):** [E2E: `combine-lessons.spec.ts`] Meine Inhalte → "Zu Set
       kombinieren"-Umschalter → Checkbox-Auswahl (nur eigene Sets) →
       "Kombinieren"-Dialog: Neues Set (Titel Pflicht) vs. zu bestehendem
       Set; Originale bleiben erhalten; gemischte Sprachen/Level → nicht-
@@ -345,7 +345,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       als Alternative (kein Upload). **Fehler:** eine zu grosse Datei (> 2 MB)
       ODER ein falsches Format (z. B. `.mp4`) zeigt eine klare Inline-Fehlermeldung
       und stuerzt nicht ab; nichts wird gespeichert
-- [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** Im MC-Inline-Editor
+- [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,
       vor der ersten Options-Zeile**. Neue MC-Uebung (KI-generiert ODER manuell
@@ -357,7 +357,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       MC-Uebung mit gesetztem `multiple`-Wert oeffnet **unveraendert** in ihrem
       urspruenglichen Zustand.
 
-### Karten-Bild-Upload (#1763 / #1764)
+### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
 Ort: Create-Lesson Schritt 2 (Karten-Editor), im Hinzufuegen-Formular +
 jeder Karten-Zeile (`CardImageField`).
@@ -385,6 +385,7 @@ jeder Karten-Zeile (`CardImageField`).
       NICHT sofort wieder vor; der "Weiter"-Button ist weiter klickbar
 - [ ] Titelbereich schlanker, keine In-Lektion-Beschreibung mehr (#1635)
 - [ ] Lektions-Zusammenfassung zeigt nur EINEN Favoriten-Button (#1649)
+      [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-Content-Link beim Tabben von oben sichtbar (#1727, a11y)
 
 ### Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
@@ -597,7 +598,7 @@ Ausfuehren: `make test` (Backend-Teil)
 
 ---
 
-## Automatisiert: Dexie-Smoke E2E (Playwright TS, 31 Spec-Dateien)
+## Automatisiert: Dexie-Smoke E2E (Playwright TS, 45 Spec-Dateien)
 
 Abdeckung:
 - Vollstaendiger Lesson-Playthrough (alle Exercise-Typen)
@@ -607,6 +608,16 @@ Abdeckung:
 - Settings
 - Backup Round-Trip (programmatisch)
 - Alle Routes erreichbar (kein 404)
+- Karten-Bild-Upload: echtes File-Input + Canvas-Encoding, Vorschau,
+  Entfernen, Fehler bei falschem Typ, Asset-Pfad-Toggle
+  (`card-image-upload.spec.ts`, #1763/#1764)
+- Multiple-Choice Single/Multi-Umschalter im Inline-Editor
+  (Radio<->Checkbox, zweite Korrekt-Option, Kollaps beim Zurueckschalten)
+  (`mc-single-multi-toggle.spec.ts`, #1888)
+- Lektions-Zusammenfassung zeigt genau EINEN Favoriten-Button
+  (`lesson-summary-favorite.spec.ts`, #1649)
+- Lektionen kombinieren: Auswahl -> Dialog -> neues Set persistiert,
+  Originale bleiben erhalten (`combine-lessons.spec.ts`, #1741)
 
 Ausfuehren: `make test-dexie-smoke`
 
