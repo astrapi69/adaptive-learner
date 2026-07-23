@@ -3580,3 +3580,9 @@ exercise:
   listen_first:
     label: "Άκουσε πρώτα"
     aria: "Αναπαραγωγή προφοράς"
+  difficulty:
+    tier:
+      easy: "Εύκολο"
+      medium: "Μέτριο"
+      hard: "Δύσκολο"
+    aria: "Δυσκολία: {tier} ({level} από 5)"

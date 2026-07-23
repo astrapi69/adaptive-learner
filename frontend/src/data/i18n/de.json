@@ -3919,6 +3919,14 @@
     "listen_first": {
       "label": "Erst anhören",
       "aria": "Aussprache abspielen"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "Leicht",
+        "medium": "Mittel",
+        "hard": "Schwer"
+      },
+      "aria": "Schwierigkeit: {tier} ({level} von 5)"
     }
   }
 }

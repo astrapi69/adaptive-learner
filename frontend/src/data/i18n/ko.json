@@ -3919,6 +3919,14 @@
     "listen_first": {
       "label": "먼저 듣기",
       "aria": "발음 재생"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "쉬움",
+        "medium": "보통",
+        "hard": "어려움"
+      },
+      "aria": "난이도: {tier} (5단계 중 {level})"
     }
   }
 }

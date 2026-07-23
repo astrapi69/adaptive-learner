@@ -3578,3 +3578,9 @@ exercise:
   listen_first:
     label: "Önce dinle"
     aria: "Telaffuzu oynat"
+  difficulty:
+    tier:
+      easy: "Kolay"
+      medium: "Orta"
+      hard: "Zor"
+    aria: "Zorluk: {tier} ({level}/5)"

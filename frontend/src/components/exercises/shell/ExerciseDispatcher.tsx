@@ -34,6 +34,7 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "./exercise-control";
+import ExerciseDifficultyBadge from "../shared/ExerciseDifficultyBadge";
 import ListenFirstAudio from "../shared/ListenFirstAudio";
 import FreeTextExercise from "../renderers/FreeTextExercise";
 import MatchingExercise from "../renderers/MatchingExercise";
@@ -151,6 +152,34 @@ export function resolveListenAudio(
     return null;
 }
 
+/** Authored difficulty for an exercise (#1693 / Option B of #1599): the mean
+ *  authored ``card.difficulty`` (1-5) across the exercise's referenced cards,
+ *  rounded and clamped to 1-5. Values outside 1..5, ``null`` and ``undefined``
+ *  contribute nothing; returns ``null`` when no referenced card carries a
+ *  valid value — the entire pre-#1693 corpus, for which the badge renders
+ *  nothing. Mirrors ``_authoredDifficulty`` in ``lib/adaptive/exercise-pool``,
+ *  the cold-start prior Option A (PR #1683) uses, so the badge SHOWS exactly
+ *  the signal the adaptive generator ACTS on. */
+export function resolveDifficulty(
+    exercise: ContentLessonExercise,
+    cards: ContentLessonCard[],
+): number | null {
+    const values: number[] = [];
+    for (const cid of exercise.card_ids ?? []) {
+        const difficulty = cards.find((c) => c.id === cid)?.difficulty;
+        if (
+            typeof difficulty === "number" &&
+            Number.isFinite(difficulty) &&
+            difficulty >= 1 &&
+            difficulty <= 5
+        ) {
+            values.push(difficulty);
+        }
+    }
+    if (values.length === 0) return null;
+    return Math.round(values.reduce((sum, v) => sum + v, 0) / values.length);
+}
+
 /** Code context for an exercise: true when its FIRST referenced card is
  *  a code/formula card (schema v1.3). Drives the code-aware renderers. */
 export function resolveCodeContext(
@@ -199,6 +228,19 @@ function ExerciseDispatcher(
         return <ExerciseStepPlaceholder step={step} />;
     }
     const {codeMode, codeLanguage} = resolveCodeContext(ex, cards);
+    // #1693 — a transparency-only difficulty indicator, derived from the
+    // exercise's referenced cards (same shape as resolveListenAudio). Rendered
+    // above every renderable exercise; renders nothing when no card carries an
+    // authored difficulty, so the pre-#1693 corpus is unchanged.
+    const difficultyBadge = (
+        <ExerciseDifficultyBadge level={resolveDifficulty(ex, cards)} />
+    );
+    const withBadge = (body: ReactElement): ReactElement => (
+        <>
+            {difficultyBadge}
+            {body}
+        </>
+    );
     const shared = {
         controlled,
         onInteraction,
@@ -216,9 +258,9 @@ function ExerciseDispatcher(
         },
     };
     const extElement = renderAdoptedExtension(ex, ref, {setId, lessonId, source}, shared);
-    if (extElement) return extElement;
+    if (extElement) return withBadge(extElement);
     if (ex.type === "matching") {
-        return (
+        return withBadge(
             <>
                 <ListenFirstAudio
                     source={source}
@@ -239,7 +281,7 @@ function ExerciseDispatcher(
         );
     }
     if (ex.type === "picture_choice") {
-        return (
+        return withBadge(
             <PictureChoiceExercise
                 ref={ref}
                 exercise={ex}
@@ -251,7 +293,7 @@ function ExerciseDispatcher(
         );
     }
     if (ex.type === "free_text") {
-        return (
+        return withBadge(
             <>
                 <ListenFirstAudio
                     source={source}
@@ -270,7 +312,7 @@ function ExerciseDispatcher(
         );
     }
     if (ex.type === "word_tiles") {
-        return (
+        return withBadge(
             <WordTilesExercise
                 ref={ref}
                 exercise={ex}
@@ -284,7 +326,7 @@ function ExerciseDispatcher(
         );
     }
     if (ex.type === "cloze") {
-        return (
+        return withBadge(
             <ClozeExercise
                 ref={ref}
                 exercise={ex}
@@ -295,7 +337,7 @@ function ExerciseDispatcher(
         );
     }
     if (ex.type === "multiple_choice") {
-        return (
+        return withBadge(
             <MultipleChoiceExercise
                 ref={ref}
                 exercise={ex}

@@ -3919,6 +3919,14 @@
     "listen_first": {
       "label": "まず聞く",
       "aria": "発音を再生"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "やさしい",
+        "medium": "ふつう",
+        "hard": "むずかしい"
+      },
+      "aria": "難易度: {tier}（5段階中{level}）"
     }
   }
 }
