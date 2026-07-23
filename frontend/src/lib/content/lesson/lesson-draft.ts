@@ -133,6 +133,56 @@ export function saveLessonDraft(draft: LessonDraft): void {
     }
 }
 
+/** Normalise a stored (possibly partial / legacy) meta into a complete
+ *  {@link LessonMeta}, defaulting every field and repairing an equal
+ *  LANGUAGE-domain pair (#1716 — a same-language pair is intentional for a
+ *  knowledge domain, so it is left as-is). Pure. */
+function normalizeDraftMeta(meta: Partial<LessonMeta>): LessonMeta {
+    const domain =
+        typeof meta.domain === "string" && meta.domain.trim()
+            ? meta.domain
+            : "language";
+    const sourceLanguage = meta.sourceLanguage ?? "en";
+    let targetLanguage = meta.targetLanguage ?? "fr";
+    // A LANGUAGE lesson with an equal pair would leave Step 1 unadvanceable
+    // (the language-pair gate never clears); repair it to a sane default. A
+    // knowledge domain keeps its single content language (source == target).
+    if (targetLanguage === sourceLanguage && domain === "language") {
+        targetLanguage = sourceLanguage === "en" ? "fr" : "en";
+    }
+    return {
+        title: meta.title ?? "",
+        titleNative: meta.titleNative ?? "",
+        sourceLanguage,
+        targetLanguage,
+        level: meta.level ?? "A1",
+        description: meta.description ?? "",
+        author: meta.author ?? "",
+        domain,
+    };
+}
+
+/** Normalise the stored cards: drop entries without a string ``front``,
+ *  default every field, and coerce ``altAnswers`` to a string array. Pure. */
+function normalizeDraftCards(rawCards: unknown): LessonCardDraft[] {
+    const cards = Array.isArray(rawCards)
+        ? (rawCards as LessonCardDraft[]).filter(
+              (c) => c && typeof c.front === "string",
+          )
+        : [];
+    return cards.map((c) => ({
+        id: c.id || newCardId(),
+        front: c.front ?? "",
+        back: c.back ?? "",
+        notes: c.notes ?? "",
+        image: c.image ?? "",
+        example: c.example ?? "",
+        altAnswers: Array.isArray(c.altAnswers)
+            ? c.altAnswers.filter((a): a is string => typeof a === "string")
+            : [],
+    }));
+}
+
 /** Load + defensively validate a stored draft. Returns null when no
  *  draft exists or the stored shape is unusable. */
 export function loadLessonDraft(): LessonDraft | null {
@@ -148,49 +198,11 @@ export function loadLessonDraft(): LessonDraft | null {
         if (!parsed || typeof parsed !== "object" || !parsed.meta) return null;
         const meta = parsed.meta as Partial<LessonMeta>;
         if (typeof meta.title !== "string") return null;
-        const cards = Array.isArray(parsed.cards)
-            ? (parsed.cards as LessonCardDraft[]).filter(
-                  (c) => c && typeof c.front === "string",
-              )
-            : [];
-        const domain =
-            typeof meta.domain === "string" && meta.domain.trim()
-                ? meta.domain
-                : "language";
-        const sourceLanguage = meta.sourceLanguage ?? "en";
-        let targetLanguage = meta.targetLanguage ?? "fr";
-        // #1716 — a same-language pair is INTENTIONAL for a knowledge
-        // (non-language) domain (a single content language), so only repair
-        // an equal LANGUAGE-domain pair. A language lesson with an equal
-        // pair would otherwise leave Step 1 unadvanceable (the language-pair
-        // gate never clears); repair it to a sane different default.
-        if (targetLanguage === sourceLanguage && domain === "language") {
-            targetLanguage = sourceLanguage === "en" ? "fr" : "en";
-        }
         return {
             schema: 1,
             step: typeof parsed.step === "number" ? parsed.step : 1,
-            meta: {
-                title: meta.title ?? "",
-                titleNative: meta.titleNative ?? "",
-                sourceLanguage,
-                targetLanguage,
-                level: meta.level ?? "A1",
-                description: meta.description ?? "",
-                author: meta.author ?? "",
-                domain,
-            },
-            cards: cards.map((c) => ({
-                id: c.id || newCardId(),
-                front: c.front ?? "",
-                back: c.back ?? "",
-                notes: c.notes ?? "",
-                image: c.image ?? "",
-                example: c.example ?? "",
-                altAnswers: Array.isArray(c.altAnswers)
-                    ? c.altAnswers.filter((a): a is string => typeof a === "string")
-                    : [],
-            })),
+            meta: normalizeDraftMeta(meta),
+            cards: normalizeDraftCards(parsed.cards),
             updatedAt: parsed.updatedAt ?? new Date().toISOString(),
         };
     } catch {
