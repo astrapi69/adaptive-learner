@@ -231,6 +231,18 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // 250ms (was 100ms): the post-font reflow on the mobile lesson surface
     // occasionally landed AFTER the shot, shifting the page ~4px (#1540).
     await page.waitForTimeout(250);
+    // #1785 — pin the scroll position to the TOP before the shot. On lesson
+    // routes the auto-hide header (v1.60.0, scroll-direction driven) makes
+    // the nav's presence in the shot depend on whether the seeding clicks
+    // scrolled the page - a height-NEUTRAL nondeterminism the stable-layout
+    // poll below cannot see (observed as per-run theme diffs with the nav
+    // bar present in one run and absent in the next). At the top the header
+    // is always revealed; for surfaces already at the top this is a no-op.
+    await page.evaluate(() => {
+        document.getElementById("root")?.scrollTo(0, 0);
+        window.scrollTo(0, 0);
+    });
+    await page.waitForTimeout(100);
     // #1696 — the fullPage shot must not fire while a list is still loading
     // (async bundled-content / registry renders change the page height
     // run-to-run). Wait for the layout height to settle first. Bounded, so a
