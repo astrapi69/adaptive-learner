@@ -284,6 +284,14 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       Save → only that lesson is replaced, the others survive, and the SET
       title/level/languages are NOT changed (not overwritten by the edited
       lesson's title). Regression: a set with a single lesson shows NO picker
+- [ ] **Book reference survives editing (#1989):** create a lesson via the
+      book-text wizard WITH the "book (optional)" fields filled in (title,
+      author, URL, ISBN/ASIN) + Save → the lesson's "Vertiefe das Thema" section
+      shows the book reference. Reopen via "Edit lesson", change something, Save
+      → the book reference is STILL there (previously it vanished after the first
+      edit). It survives across MULTIPLE edit cycles; "Save as a copy" also keeps
+      the book reference. Regression: a lesson WITHOUT a book gets NO forced
+      empty book object on edit
 - [ ] **Migrate legacy English prompts on edit (#1860):** open a
       pre-#1855 legacy lesson (exercise instructions hardcoded in English,
       e.g. "Match each word with its translation.") via "Edit a lesson" →

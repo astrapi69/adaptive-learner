@@ -292,6 +292,15 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       anderen bleiben erhalten, und der SET-Titel/Level/Sprachen aendern sich
       NICHT (werden nicht durch den Titel der bearbeiteten Lektion ueberschrieben).
       Regression: ein Set mit nur EINER Lektion zeigt KEINE Lektions-Auswahl
+- [ ] **Buchangabe bleibt beim Bearbeiten erhalten (#1989):** eine Lektion ueber
+      den Buchtext-Wizard MIT ausgefuellter "Buchangabe (optional)" (Titel,
+      Autor, URL, ISBN/ASIN) erstellen + speichern → in der Lektion erscheint
+      unter "Vertiefe das Thema" die Buchreferenz. Dann ueber "Lektion
+      bearbeiten" oeffnen, etwas aendern, speichern → die Buchangabe ist
+      WEITERHIN vorhanden (vorher: verschwand nach dem ersten Bearbeiten). Ueber
+      MEHRERE Bearbeitungszyklen bleibt sie erhalten; auch "Als Kopie speichern"
+      uebernimmt die Buchangabe. Regression: eine Lektion OHNE Buchangabe
+      bekommt beim Bearbeiten KEIN leeres Buch-Objekt aufgezwungen
 - [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
       VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
       "Match each word with its translation.") ueber "Lektion bearbeiten"

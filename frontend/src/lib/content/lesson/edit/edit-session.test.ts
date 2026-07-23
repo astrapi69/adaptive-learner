@@ -11,6 +11,7 @@ import {
     editSnapshot,
     lessonPickerLabel,
     mergeEditedLessonIntoSet,
+    withPreservedSetBook,
 } from "./edit-session";
 import type {
     ContentLesson,
@@ -71,6 +72,27 @@ function baseInput(title: string): SaveUserSetInput {
         lessons: [lesson("l0", title)],
     };
 }
+
+describe("withPreservedSetBook (#1989)", () => {
+    it("carries the entry's book block onto the input", () => {
+        const e = entry();
+        e.book = {title: "A Book", author: "Someone", url: null, asin: null};
+        const out = withPreservedSetBook(baseInput("t"), e);
+        expect(out.book).toEqual({
+            title: "A Book",
+            author: "Someone",
+            url: null,
+            asin: null,
+        });
+    });
+
+    it("leaves the input untouched (no forced empty book) when the entry has none", () => {
+        const base = baseInput("t");
+        expect(withPreservedSetBook(base, entry())).toBe(base);
+        expect(withPreservedSetBook(base, undefined)).toBe(base);
+        expect(base.book).toBeUndefined();
+    });
+});
 
 describe("mergeEditedLessonIntoSet (#1971)", () => {
     it("single-lesson set: returns the base input unchanged", () => {
