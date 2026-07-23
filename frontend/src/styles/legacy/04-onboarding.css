@@ -84,11 +84,6 @@
   margin-left: var(--space-1);
 }
 
-.form-hint {
-  color: var(--fg-muted);
-  font-size: 0.85rem;
-}
-
 .form-actions {
   display: flex;
   gap: var(--space-3);

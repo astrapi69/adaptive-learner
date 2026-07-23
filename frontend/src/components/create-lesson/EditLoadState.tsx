@@ -7,6 +7,7 @@
  */
 
 import {Button} from "@/components/ui/button";
+import FormHint from "../../shared/forms/FormHint";
 
 type Translate = (key: string, fallback?: string) => string;
 
@@ -40,12 +41,12 @@ export default function EditLoadState({
                 className="create-lesson-step flex flex-col gap-4"
                 data-testid="create-lesson-edit-error"
             >
-                <p className="form-hint form-hint-warning" role="alert">
+                <FormHint variant="warning" role="alert">
                     {t(
                         "create_lesson.edit_load_error",
                         "Could not load this lesson for editing.",
                     )}
-                </p>
+                </FormHint>
                 <div className="form-actions">
                     <Button
                         type="button"

@@ -12,6 +12,7 @@
  */
 
 import {Button} from "@/components/ui/button";
+import FormHint from "../../../shared/forms/FormHint";
 import BookTextStep, {type BookFields} from "./BookTextStep";
 import {normalizeBook} from "../../../lib/content/lesson/book-to-lesson";
 import type {TheoryStep} from "../../../lib/ai/generation/exercise-generation-prompt";
@@ -96,8 +97,8 @@ export default function BookSteps({
                     t={t}
                 />
                 {showAdvanceError && (
-                    <p
-                        className="form-hint form-hint-warning"
+                    <FormHint
+                        variant="warning"
                         data-testid="create-lesson-book-error"
                         role="alert"
                     >
@@ -105,7 +106,7 @@ export default function BookSteps({
                             "create_lesson.book.generate_to_advance",
                             "Generate the lesson from your text to continue.",
                         )}
-                    </p>
+                    </FormHint>
                 )}
             </>
         );

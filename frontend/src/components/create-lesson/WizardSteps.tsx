@@ -12,6 +12,7 @@
 import CardEditor, {MIN_CARDS} from "./CardEditor";
 import ExerciseGenerator, {MIN_EXERCISES} from "./ExerciseGenerator";
 import ReviewStep from "./ReviewStep";
+import FormHint from "../../shared/forms/FormHint";
 import type {ExerciseGenConfig} from "../../lib/exercises";
 import type {
     DraftValidationChecks,
@@ -100,8 +101,8 @@ export default function WizardSteps({
                         onImport={onImportCards}
                     />
                     {cardError && cards.length < MIN_CARDS && (
-                        <p
-                            className="form-hint form-hint-warning"
+                        <FormHint
+                            variant="warning"
                             data-testid="create-lesson-card-error"
                             role="alert"
                         >
@@ -109,7 +110,7 @@ export default function WizardSteps({
                                 "create_lesson.cards.min_to_advance",
                                 "Add at least {n} cards to continue.",
                             ).replace("{n}", String(MIN_CARDS))}
-                        </p>
+                        </FormHint>
                     )}
                 </>
             )}
@@ -127,8 +128,8 @@ export default function WizardSteps({
                         onAdd={onAddExercise}
                     />
                     {exerciseError && (
-                        <p
-                            className="form-hint form-hint-warning"
+                        <FormHint
+                            variant="warning"
                             data-testid="create-lesson-exercise-error"
                             role="alert"
                         >
@@ -141,7 +142,7 @@ export default function WizardSteps({
                                       "create_lesson.exercises.incomplete_to_advance",
                                       "Complete or remove the incomplete exercises to continue.",
                                   )}
-                        </p>
+                        </FormHint>
                     )}
                 </>
             )}
