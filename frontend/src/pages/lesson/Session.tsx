@@ -172,7 +172,10 @@ export default function Session() {
                 // same session. Default path (no flag) renders the unchanged
                 // SessionChat below, so production is untouched.
                 <Suspense fallback={<div data-testid="aui-loading" />}>
-                    <AssistantUiThread sessionId={session.id} />
+                    <AssistantUiThread
+                        sessionId={session.id}
+                        introTopic={importedTopic}
+                    />
                 </Suspense>
             ) : (
                 <SessionChat

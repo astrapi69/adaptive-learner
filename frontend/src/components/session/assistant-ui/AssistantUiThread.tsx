@@ -59,6 +59,14 @@ import {createSessionChatAdapter} from "./session-chat-adapter";
 interface AssistantUiThreadProps {
     /** LearningSession id the thread streams against. */
     sessionId: string;
+    /**
+     * #1143 parity — for an imported-chat session, the welcome empty-state
+     * names the imported chat's topic (e.g. "Reflexive Verben"). The
+     * assistant-ui thread already opens clean (it loads no prior history), so
+     * this is the only imported-session cue it needs. ``null``/absent for a
+     * regular session.
+     */
+    introTopic?: string | null;
 }
 
 /**
@@ -151,7 +159,10 @@ function ComposerMic() {
  * Render the assistant-ui Thread for one session. Wrap in
  * ``AssistantRuntimeProvider`` with a local runtime backed by our adapter.
  */
-export default function AssistantUiThread({sessionId}: AssistantUiThreadProps) {
+export default function AssistantUiThread({
+    sessionId,
+    introTopic,
+}: AssistantUiThreadProps) {
     const {t} = useI18n();
     const runtime = useLocalRuntime(
         useMemo(() => createSessionChatAdapter(sessionId), [sessionId]),
@@ -172,9 +183,23 @@ export default function AssistantUiThread({sessionId}: AssistantUiThreadProps) {
                                 fontStyle: "italic",
                             }}
                         >
-                            {t(
-                                "session.welcome_empty",
-                                "Ready to learn! Write your first message.",
+                            {introTopic ? (
+                                <>
+                                    <div data-testid="chat-intro-topic">
+                                        {t("session.topic_label", "Topic")}: {introTopic}
+                                    </div>
+                                    <div style={{marginTop: "0.5rem"}}>
+                                        {t(
+                                            "session.welcome_empty",
+                                            "Ready to learn! Write your first message.",
+                                        )}
+                                    </div>
+                                </>
+                            ) : (
+                                t(
+                                    "session.welcome_empty",
+                                    "Ready to learn! Write your first message.",
+                                )
                             )}
                         </div>
                     </ThreadPrimitive.Empty>
