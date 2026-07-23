@@ -2589,6 +2589,11 @@ create_lesson:
   edit_title: "레슨 편집"
   edit_load_error: "편집할 레슨을 불러오지 못했습니다."
   edit_note: "기존 레슨을 편집하고 있습니다. 저장하면 덮어씁니다. 원본을 유지하려면 '사본으로 저장'을 사용하세요."
+  edit:
+    lesson_picker_label: "이 세트의 레슨 ({n})"
+    switch_confirm_title: "레슨을 전환할까요?"
+    switch_confirm_body: "현재 레슨의 저장하지 않은 변경 사항이 사라집니다."
+    switch_discard: "취소하고 전환"
   prompts_migrated: "{n}개의 연습 지시문이 자동으로 사용자의 언어로 번역되었습니다."
   prompts_migrated_dismiss: "닫기"
   step_pending: "이 단계는 다음 업데이트에서 제공됩니다."
