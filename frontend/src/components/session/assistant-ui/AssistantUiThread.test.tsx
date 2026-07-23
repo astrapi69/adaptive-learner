@@ -41,4 +41,20 @@ describe("AssistantUiThread (Phase 2 parity, #1126)", () => {
         render(<AssistantUiThread sessionId="sess-1" />);
         expect(await screen.findByTestId("chat-welcome")).toBeInTheDocument();
     });
+
+    it("names the imported chat's topic in the welcome state (#1143 parity)", async () => {
+        // Imported-chat parity with SessionChat: the clean-open welcome names
+        // the imported topic instead of the generic line only.
+        render(
+            <AssistantUiThread sessionId="sess-1" introTopic="Reflexive Verben" />,
+        );
+        const intro = await screen.findByTestId("chat-intro-topic");
+        expect(intro).toHaveTextContent("Reflexive Verben");
+    });
+
+    it("omits the intro-topic line for a regular (non-imported) session", async () => {
+        render(<AssistantUiThread sessionId="sess-1" />);
+        expect(await screen.findByTestId("chat-welcome")).toBeInTheDocument();
+        expect(screen.queryByTestId("chat-intro-topic")).not.toBeInTheDocument();
+    });
 });
