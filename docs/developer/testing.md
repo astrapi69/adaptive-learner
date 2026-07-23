@@ -43,10 +43,47 @@ build** (no backend, the GH-Pages shape):
   - `make capture-screenshots` — capture/update (`--update-snapshots`);
     `make verify-screenshots` — compare.
 
-Baselines are generated + **reviewed** on a consistent machine (font
-anti-aliasing differs between machines), never in an ephemeral CI/web
-container. **Never** `--update-snapshots` to silence a diff that reveals a real
-bug — fix the bug; regenerate only after an intended visual change.
+Baselines are always **reviewed** image by image, and **never**
+`--update-snapshots`-ed to silence a diff that reveals a real bug — fix
+the bug; regenerate only after an intended visual change. Where they are
+*rendered* differs by surface, because font anti-aliasing differs per
+machine:
+
+- **Per-feature screenshots** (`e2e/visual/features/`): captured on a
+  consistent maintainer machine via `make capture-screenshots`.
+- **Visual-regression baselines** (`e2e/visual/screenshots/`): rendered
+  **in CI**, not on any dev machine (#1532) — see the refresh flow below.
+
+### Refreshing visual-regression baselines (CI-rendered, #1532/#1662)
+
+A visual-critical PR (lesson components/pages, exercise renderers,
+`global.css`/theme CSS) must carry the affected `e2e/visual/screenshots/`
+PNGs — the "Visual baseline gate" (#1640) blocks the merge otherwise. The
+PNGs must come from CI so their anti-aliasing matches the nightly diff.
+
+**Preferred — auto-sync (#1662).** Add the `refresh-visual-baselines`
+label to the PR (or `gh workflow run visual-baseline-sync.yml -f
+pr_number=<N>`). The `visual-baseline-sync` workflow renders the
+baselines in CI and pushes them onto the PR branch as a
+`chore(visual): refresh baselines` commit — no artifact download. Then
+**review every changed PNG in the PR** before merge; auto-sync is a
+proposal, never a blind accept.
+
+**One-time maintainer setup:**
+
+1. Create the `refresh-visual-baselines` label once
+   (`gh label create refresh-visual-baselines -d "Render + push CI visual baselines onto this PR"`).
+2. *(Optional, recommended)* add a `VISUAL_BASELINE_TOKEN` repo secret — a
+   PAT or App token with `contents: write` + `pull-requests: write`. With
+   it, the auto-sync push re-triggers the "Visual baseline gate" and it
+   goes green on its own. Without it the push still lands, but a
+   `GITHUB_TOKEN`-authored push does not re-trigger PR workflows, so the
+   gate check must be re-run once (the workflow's PR comment says so).
+
+**Manual fallback (maintainer machine, artifact download works there):**
+dispatch `visual-regression.yml` with `update_baselines=true`,
+`gh run download <run-id> --name visual-baselines`, review + copy the PNGs
+into `e2e/visual/screenshots/`, commit.
 
 ### Adding a feature screenshot
 
