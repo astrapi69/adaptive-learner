@@ -14,24 +14,84 @@ type Translate = (key: string, fallback?: string) => string;
 interface CreateLessonDialogsProps {
     confirmCancel: boolean;
     pendingDraft: LessonDraft | null;
+    /** #1971 — a requested lesson switch with unsaved edits (target index),
+     *  awaiting confirmation; ``null`` when no switch is pending. */
+    pendingLessonSwitch: number | null;
     onKeepEditing: () => void;
     onDiscard: () => void;
     onStartFresh: () => void;
     onContinueDraft: (draft: LessonDraft) => void;
+    /** #1971 — confirm / cancel discarding unsaved edits to switch lessons. */
+    onConfirmLessonSwitch: () => void;
+    onCancelLessonSwitch: () => void;
     t: Translate;
 }
 
 export default function CreateLessonDialogs({
     confirmCancel,
     pendingDraft,
+    pendingLessonSwitch,
     onKeepEditing,
     onDiscard,
     onStartFresh,
     onContinueDraft,
+    onConfirmLessonSwitch,
+    onCancelLessonSwitch,
     t,
 }: CreateLessonDialogsProps) {
     return (
         <>
+            {pendingLessonSwitch !== null && (
+                <div
+                    className="modal-overlay"
+                    data-testid="create-lesson-switch-confirm"
+                >
+                    <div
+                        className="modal-card"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="create-lesson-switch-title"
+                    >
+                        <h2
+                            id="create-lesson-switch-title"
+                            className="modal-title"
+                        >
+                            {t(
+                                "create_lesson.edit.switch_confirm_title",
+                                "Switch lesson?",
+                            )}
+                        </h2>
+                        <p>
+                            {t(
+                                "create_lesson.edit.switch_confirm_body",
+                                "Your unsaved changes to the current lesson will be lost.",
+                            )}
+                        </p>
+                        <div className="form-actions">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                data-testid="create-lesson-switch-keep"
+                                onClick={onCancelLessonSwitch}
+                            >
+                                {t("create_lesson.cancel_keep", "Keep editing")}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                data-testid="create-lesson-switch-discard"
+                                onClick={onConfirmLessonSwitch}
+                            >
+                                {t(
+                                    "create_lesson.edit.switch_discard",
+                                    "Discard and switch",
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {confirmCancel && (
                 <div
                     className="modal-overlay"
