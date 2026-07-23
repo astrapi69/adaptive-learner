@@ -54,7 +54,7 @@ O lado direito da vista do currículo é a lista de lições,
 ordenada por `order_index`. Cada linha mostra o título da lição
 e um excerto do seu conteúdo; clicar abre o editor de lições.
 
-O editor de lições é **TipTap rich text** (desde v1.14.0):
+O editor de lições é **TipTap rich text**:
 negrito / itálico / sublinhado / tachado, cabeçalhos (H1-H3),
 listas com marcadores + ordenadas + de tarefas, citação em
 bloco, código em linha, blocos de código delimitados com
@@ -69,7 +69,7 @@ As descrições de currículo, notas de sessão e conteúdo de
 lições usam todos o mesmo editor. As exportações Markdown /
 PDF passam por `renderStoredContent` que percorre a árvore de
 documentos TipTap e emite Markdown GFM; o conteúdo em texto
-simples de antes da v1.14.0 passa verbatim.
+simples legado passa verbatim.
 
 ## Como os currículos se ligam às sessões
 

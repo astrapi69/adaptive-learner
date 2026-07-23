@@ -37,7 +37,7 @@ bir sonraki yapay zeka çağrısı yeni sağlayıcının eklentisinden
 (Sunucu modu) veya yeni sağlayıcının HTTP istemcisinden (Yerel
 mod) geçer.
 
-**Model seçici** (v1.11.0'dan beri) Önerilen / Tümü olarak
+**Model seçici** Önerilen / Tümü olarak
 gruplandırılmış, her sağlayıcının canlı `/v1/models` uç noktasından
 (1 saatlik önbellek) doldurulan aranabilir bir açılır menüdür. Her
 satır insan adını + ham kimliği + bağlam penceresi rozetini gösterir.
@@ -46,7 +46,7 @@ statik varsayılanlara geri döner ve bir "çevrimdışı varsayılan
 kullanılıyor" ipucu gösterir. Oturum başlığı `<Sağlayıcı>: <Model
 adı>` okur; tam kimlik + bağlam penceresi araç ipucunda yer alır.
 
-## API anahtarları (Aşama 34 / v1.20.0)
+## API anahtarları
 
 Her sağlayıcının kendi satırı vardır: anahtar girişi, Kaydet
 düğmesi, Kaldır düğmesi, aktif sağlayıcı rozeti, artı yeni
@@ -121,7 +121,7 @@ Sil + A/B Olarak Karşılaştır düğmeleri vardır.
 
 ## Ses
 
-Üç geçiş (v1.18.0'dan beri):
+Üç geçiş:
 
 - **TTS etkin** — yapay zeka yanıtları + Değerlendirme sonuçları
   yanında onları yüksek sesle okuyan bir ▶ düğmesi ekler.
@@ -140,7 +140,7 @@ Sil + A/B Olarak Karşılaştır düğmeleri vardır.
 Ses bölümü, Web Speech API'nin hiçbir tarafı (sentez veya tanıma)
 tarayıcı tarafından desteklenmediğinde kendini gizler.
 
-## Görünüm (Aşama 58 / v1.41.0)
+## Görünüm
 
 *Genel > Görünüm* altındaki **Tema** seçici, otomatik bir mod
 artı altı tema sunar:
@@ -164,7 +164,7 @@ geri bildirimi tümünde okunabilir kalır.
 
 ## Arayüz
 
-**Hareketler geçişi** (v1.10.0'dan beri, dokunmatik cihazlar için
+**Hareketler geçişi** (dokunmatik cihazlar için
 varsayılan AÇIK) Değerlendirme kaydırma navigasyonunu, Müfredat
 konu kaydırma-gösterme özelliğini ve Oturum döngüsü gözetlemeyi
 kapsar. Ayrıca burada: düğme araç ipuçları ve Geliştirici Modu.

@@ -99,7 +99,7 @@ Ja. Drei Export-Pfade ausgeliefert:
 
 ## Was ist das Stimme-Feature?
 
-Drei Web-Speech-API-Integrationen (seit v1.18.0):
+Drei Web-Speech-API-Integrationen:
 
 - **Text-to-Speech** auf KI-Antworten + Assessment-
   Ergebnissen — ein ▶-Knopf neben jedem liest es laut vor,
@@ -126,14 +126,13 @@ Methode, Vokabular (für Sprachgespräche) und einen Lehrplan-
 Vorschlag. Ein Klick sät ein Curriculum + startet eine
 gezielte Session aus der Analyse.
 
-Der Claude.ai-Single-Conversation-Markdown-Export war der
-v1.19.0-Audit-Fall — der Parser liefert volle Zeitstempel-
-Extraktion + Rollengrenzen-Erhalt für dieses Format aus
-(BL-25 / BL-26 / BL-28 in v1.19.1 geschlossen).
+Der Claude.ai-Single-Conversation-Markdown-Export ist ein
+geprüfter Import-Fall — der Parser liefert volle Zeitstempel-
+Extraktion + Rollengrenzen-Erhalt für dieses Format aus.
 
 ## Sync zwischen Geräten?
 
-Bidirektionaler Lokal-Netz-Sync seit v1.0.0. Einstellungen →
+Bidirektionaler Lokal-Netz-Sync. Einstellungen →
 Sync → „Dieses Gerät koppeln": QR-Code vom anderen
 Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
 einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe

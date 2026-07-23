@@ -122,6 +122,14 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verstaendlich)
 - [ ] Picture Choice: Kacheln GLEICHE Hoehe
+- [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
+      authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
+      Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
+      Karten OHNE `difficulty` (der gesamte Alt-Bestand) zeigen KEIN Badge
+      (die Uebung sieht aus wie vorher). Gilt fuer alle Uebungstypen
+      (Matching/Cloze/Free-Text/Word-Tiles/Picture-Choice/Multiple-Choice
+      + ext-Typen). Badge liest in allen 6 Themes sauber (Token-basiert).
+      Nur Transparenz - beeinflusst weder Reihenfolge noch Bewertung.
 
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
@@ -272,6 +280,27 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       erscheinen im Bearbeiten NICHT (keine Karten zum Generieren). WICHTIG:
       Bearbeiten-Oeffnen aendert die gespeicherte Datei NICHT (kein Auto-Save);
       es gehen keine Uebungen verloren
+- [ ] **Set mit mehreren Lektionen bearbeiten (Lektions-Auswahl, #1971):** ein
+      Set, das MEHRERE Lektionen enthaelt (z. B. ein Buchtext-Upload mit
+      Mehrfach-Abschnitts-Auswahl → eine Lektion pro Abschnitt), ueber "Lektion
+      bearbeiten" oeffnen → oben erscheint eine **Lektions-Auswahl** (Dropdown
+      mit allen Lektionen des Sets); die erste Lektion ist vorausgewaehlt und
+      ihre Uebungen sichtbar. Andere Lektion waehlen → deren Theorie/Uebungen
+      werden geladen (vorher unerreichbar). Bei ungespeicherten Aenderungen vor
+      dem Wechsel erscheint ein Bestaetigungsdialog ("Lektion wechseln?"). Eine
+      Lektion bearbeiten + speichern → NUR diese Lektion wird ersetzt, die
+      anderen bleiben erhalten, und der SET-Titel/Level/Sprachen aendern sich
+      NICHT (werden nicht durch den Titel der bearbeiteten Lektion ueberschrieben).
+      Regression: ein Set mit nur EINER Lektion zeigt KEINE Lektions-Auswahl
+- [ ] **Buchangabe bleibt beim Bearbeiten erhalten (#1989):** eine Lektion ueber
+      den Buchtext-Wizard MIT ausgefuellter "Buchangabe (optional)" (Titel,
+      Autor, URL, ISBN/ASIN) erstellen + speichern → in der Lektion erscheint
+      unter "Vertiefe das Thema" die Buchreferenz. Dann ueber "Lektion
+      bearbeiten" oeffnen, etwas aendern, speichern → die Buchangabe ist
+      WEITERHIN vorhanden (vorher: verschwand nach dem ersten Bearbeiten). Ueber
+      MEHRERE Bearbeitungszyklen bleibt sie erhalten; auch "Als Kopie speichern"
+      uebernimmt die Buchangabe. Regression: eine Lektion OHNE Buchangabe
+      bekommt beim Bearbeiten KEIN leeres Buch-Objekt aufgezwungen
 - [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
       VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
       "Match each word with its translation.") ueber "Lektion bearbeiten"
@@ -282,7 +311,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       bleibt unveraendert. Editor ohne Speichern verlassen → Original in
       Dexie unveraendert (kein stiller Schreibvorgang); erst Speichern
       (Ueberschreiben/Als Kopie) schreibt die migrierte Fassung dauerhaft
-- [ ] **Lektionen kombinieren (#1741):** Meine Inhalte → "Zu Set
+- [ ] **Lektionen kombinieren (#1741):** [E2E: `combine-lessons.spec.ts`] Meine Inhalte → "Zu Set
       kombinieren"-Umschalter → Checkbox-Auswahl (nur eigene Sets) →
       "Kombinieren"-Dialog: Neues Set (Titel Pflicht) vs. zu bestehendem
       Set; Originale bleiben erhalten; gemischte Sprachen/Level → nicht-
@@ -290,6 +319,18 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 - [ ] **Gleiche-Sprache-Hinweis (#1721/#1730):** Quelle == Ziel zeigt
       neutralen Hinweis, blockiert "Weiter" NICHT; Save wird aktiv sobald die
       Checkliste passt
+- [ ] **Inhaltsdomain-Auswahl in Schritt 1 (#1716):** Schritt 1 zeigt ein
+      Feld "Bereich" (Domain). Default "Sprache" → Quell-/Zielsprache +
+      GER-Level werden angezeigt (wie bisher). Eine Wissensdomain waehlen
+      (z. B. "Psychologie", "Programmierung", "Wissen") → das Sprachpaar
+      klappt auf EINE "Inhaltssprache" zusammen (Quelle == Ziel), das Level
+      bietet zusaetzlich "Kein Niveau", und ein Hinweis erklaert die
+      Wissensinhalte. Inhaltssprache aendern → Quelle und Ziel bleiben
+      gleich. Zurueck auf "Sprache" → das Paar ist wieder getrennt und das
+      Level faellt auf A1 zurueck (sofern es "Kein Niveau" war). Speichern →
+      die Lektion traegt die gewaehlte Domain (`domain: psychology` …); eine
+      Sprachlektion traegt KEIN `domain`-Feld. Bearbeiten einer gespeicherten
+      Wissenslektion oeffnet wieder mit der richtigen Domain + Inhaltssprache
 - [ ] **Sprachpaar-Pruefpunkt (#1929):** Review zeigt SECHS Checklisten-
       Punkte (Titel, "Sprachpaar ist gueltig", ≥4 Karten, ≥5 Uebungen,
       ≥2 Typen, gueltige Struktur). "Sprachpaar ist gueltig" ist gruen,
@@ -345,7 +386,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       als Alternative (kein Upload). **Fehler:** eine zu grosse Datei (> 2 MB)
       ODER ein falsches Format (z. B. `.mp4`) zeigt eine klare Inline-Fehlermeldung
       und stuerzt nicht ab; nichts wird gespeichert
-- [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** Im MC-Inline-Editor
+- [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,
       vor der ersten Options-Zeile**. Neue MC-Uebung (KI-generiert ODER manuell
@@ -357,7 +398,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       MC-Uebung mit gesetztem `multiple`-Wert oeffnet **unveraendert** in ihrem
       urspruenglichen Zustand.
 
-### Karten-Bild-Upload (#1763 / #1764)
+### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
 Ort: Create-Lesson Schritt 2 (Karten-Editor), im Hinzufuegen-Formular +
 jeder Karten-Zeile (`CardImageField`).
@@ -385,6 +426,7 @@ jeder Karten-Zeile (`CardImageField`).
       NICHT sofort wieder vor; der "Weiter"-Button ist weiter klickbar
 - [ ] Titelbereich schlanker, keine In-Lektion-Beschreibung mehr (#1635)
 - [ ] Lektions-Zusammenfassung zeigt nur EINEN Favoriten-Button (#1649)
+      [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-Content-Link beim Tabben von oben sichtbar (#1727, a11y)
 
 ### Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
@@ -597,7 +639,7 @@ Ausfuehren: `make test` (Backend-Teil)
 
 ---
 
-## Automatisiert: Dexie-Smoke E2E (Playwright TS, 31 Spec-Dateien)
+## Automatisiert: Dexie-Smoke E2E (Playwright TS, 45 Spec-Dateien)
 
 Abdeckung:
 - Vollstaendiger Lesson-Playthrough (alle Exercise-Typen)
@@ -607,6 +649,16 @@ Abdeckung:
 - Settings
 - Backup Round-Trip (programmatisch)
 - Alle Routes erreichbar (kein 404)
+- Karten-Bild-Upload: echtes File-Input + Canvas-Encoding, Vorschau,
+  Entfernen, Fehler bei falschem Typ, Asset-Pfad-Toggle
+  (`card-image-upload.spec.ts`, #1763/#1764)
+- Multiple-Choice Single/Multi-Umschalter im Inline-Editor
+  (Radio<->Checkbox, zweite Korrekt-Option, Kollaps beim Zurueckschalten)
+  (`mc-single-multi-toggle.spec.ts`, #1888)
+- Lektions-Zusammenfassung zeigt genau EINEN Favoriten-Button
+  (`lesson-summary-favorite.spec.ts`, #1649)
+- Lektionen kombinieren: Auswahl -> Dialog -> neues Set persistiert,
+  Originale bleiben erhalten (`combine-lessons.spec.ts`, #1741)
 
 Ausfuehren: `make test-dexie-smoke`
 

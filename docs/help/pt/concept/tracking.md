@@ -111,7 +111,7 @@ Deliberadamente:
   para um tópico de aprendizagem? O domínio é uma postura, não
   uma linha de chegada.
 
-## Camada de gamificação (v1.16.0)
+## Camada de gamificação
 
 Sobre o substrato ProgressCommit-como-Git, três camadas
 motivacionais são incluídas:
@@ -168,5 +168,5 @@ dá-lhe padrões:
 
 Estas são as perguntas que um aprendente sério faz a si mesmo.
 O Adaptive Learner dá-lhe o substrato para as fazer; a camada
-de gamificação v1.16.0 é a cobertura, desativada por
+de gamificação é a cobertura, desativada por
 predisposição.

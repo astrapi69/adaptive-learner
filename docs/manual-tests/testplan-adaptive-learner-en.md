@@ -124,6 +124,14 @@ Requires domain knowledge. Not automatable.
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
 - [ ] Free Text: correction READABLE (token diff understandable)
 - [ ] Picture Choice: tiles SAME height
+- [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
+      authored `difficulty` (1-5) shows a small badge above the exercise
+      with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
+      `difficulty` (the whole legacy corpus) show NO badge (exercise looks
+      as before). Applies to every exercise type (Matching/Cloze/Free-Text/
+      Word-Tiles/Picture-Choice/Multiple-Choice + ext types). Badge reads
+      cleanly in all 6 themes (token-backed). Transparency only - it changes
+      neither ordering nor scoring.
 
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628
@@ -266,6 +274,24 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       produced no exercises" hint + the generate config do NOT appear in edit
       (no cards to generate from). IMPORTANT: opening Edit does NOT change the
       stored file (no auto-save); no exercises are lost
+- [ ] **Edit a multi-lesson set (lesson picker) (#1971):** a set that holds
+      MORE THAN ONE lesson (e.g. a book-text upload with multi-section select →
+      one lesson per section), reopen via "Edit lesson" → a **lesson picker**
+      (dropdown of all lessons in the set) appears at the top; the first lesson
+      is pre-selected with its exercises shown. Pick another lesson → its
+      theory/exercises load (previously unreachable). With unsaved changes,
+      switching prompts a confirm dialog ("Switch lesson?"). Edit one lesson +
+      Save → only that lesson is replaced, the others survive, and the SET
+      title/level/languages are NOT changed (not overwritten by the edited
+      lesson's title). Regression: a set with a single lesson shows NO picker
+- [ ] **Book reference survives editing (#1989):** create a lesson via the
+      book-text wizard WITH the "book (optional)" fields filled in (title,
+      author, URL, ISBN/ASIN) + Save → the lesson's "Vertiefe das Thema" section
+      shows the book reference. Reopen via "Edit lesson", change something, Save
+      → the book reference is STILL there (previously it vanished after the first
+      edit). It survives across MULTIPLE edit cycles; "Save as a copy" also keeps
+      the book reference. Regression: a lesson WITHOUT a book gets NO forced
+      empty book object on edit
 - [ ] **Migrate legacy English prompts on edit (#1860):** open a
       pre-#1855 legacy lesson (exercise instructions hardcoded in English,
       e.g. "Match each word with its translation.") via "Edit a lesson" →
@@ -276,13 +302,25 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       English) stays unchanged. Leave the editor WITHOUT saving → the
       original in Dexie is unchanged (no silent write); only saving
       (overwrite / save-as-copy) persists the migrated version
-- [ ] **Combine lessons (#1741):** My Content → "Combine into a set"
+- [ ] **Combine lessons (#1741):** [E2E: `combine-lessons.spec.ts`] My Content → "Combine into a set"
       toggle → checkbox selection (own sets only) → "Combine" dialog:
       New set (title required) vs. add to an existing set; originals are
       kept; mixed languages/levels → non-blocking warning
 - [ ] **Same-language hint (#1721/#1730):** source == target shows a
       neutral hint, does NOT block "Next"; Save enables once the checklist
       passes
+- [ ] **Content-domain selector in Step 1 (#1716):** Step 1 shows a
+      "Domain" field. Default "Language" → source/target languages + CEFR
+      level are shown (as before). Choosing a knowledge domain (e.g.
+      "Psychology", "Programming", "Knowledge") collapses the pair to a
+      single "Content language" (source == target), the level gains a "No
+      level" option, and a hint explains knowledge content. Changing the
+      content language keeps source and target equal. Switching back to
+      "Language" splits the pair again and restores the level to A1 (if it
+      was "No level"). Save → the lesson carries the chosen domain
+      (`domain: psychology` …); a language lesson carries NO `domain` field.
+      Editing a saved knowledge lesson reopens with the right domain +
+      content language
 - [ ] **Language-pair check row (#1929):** Review shows SIX checklist rows
       (title, "Language pair is valid", ≥4 cards, ≥5 exercises, ≥2 types,
       valid structure). "Language pair is valid" is green once BOTH source
@@ -334,7 +372,7 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       alternative (no upload). **Errors:** a too-large file (> 2 MB) OR a wrong
       format (e.g. `.mp4`) shows a clear inline error and does not crash;
       nothing is stored
-- [ ] **Multiple-choice single/multi mode control (#1888):** In the MC inline
+- [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first
       option row**. A new MC exercise (AI-generated OR manually added) defaults
@@ -345,7 +383,7 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       pruned to exactly one correct. An existing MC exercise with a set
       `multiple` value opens **unchanged** in its original state.
 
-### Card image upload (#1763 / #1764)
+### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
 Location: Create-Lesson Step 2 (card editor), in the add-card form +
 each card row (`CardImageField`).
@@ -372,6 +410,7 @@ each card row (`CardImageField`).
       (already-solved) exercise STAYS and does NOT jump forward again;
       the "Continue" button is still clickable
 - [ ] Lesson summary shows only ONE favorite button (#1649)
+      [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
 
 ### Invalid lesson: friendly error message (#1808 / #1824)
@@ -582,7 +621,7 @@ Run: `make test` (backend part)
 
 ---
 
-## Automated: Dexie-Smoke E2E (Playwright TS, 31 spec files)
+## Automated: Dexie-Smoke E2E (Playwright TS, 45 spec files)
 
 Coverage:
 - Full lesson playthrough (all exercise types)
@@ -592,6 +631,16 @@ Coverage:
 - Settings
 - Backup round-trip (programmatic)
 - All routes reachable (no 404)
+- Card image upload: real file input + canvas encoding, preview, remove,
+  unsupported-type error, asset-path toggle
+  (`card-image-upload.spec.ts`, #1763/#1764)
+- Multiple-choice single/multi mode toggle in the inline editor
+  (radio<->checkbox, second correct option, collapse on switch-back)
+  (`mc-single-multi-toggle.spec.ts`, #1888)
+- Lesson summary renders exactly ONE favorite button
+  (`lesson-summary-favorite.spec.ts`, #1649)
+- Combine lessons: select -> dialog -> new set persisted, originals kept
+  (`combine-lessons.spec.ts`, #1741)
 
 Run: `make test-dexie-smoke`
 

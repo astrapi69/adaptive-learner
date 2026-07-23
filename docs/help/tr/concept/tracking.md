@@ -103,7 +103,7 @@ Kasıtlı olarak:
 - **"Hakimiyet yüzdesi" yok** — bir öğrenme konusu için %100 ne
   anlama gelirdi ki? Hakimiyet bir duruştur, bir bitiş çizgisi değil.
 
-## Oyunlaştırma katmanı (v1.16.0)
+## Oyunlaştırma katmanı
 
 ProgressCommit-as-Git altyapısının üzerine üç motivasyonel katman gelir:
 
@@ -151,5 +151,5 @@ göndermez.
   haklı olarak dürtüyor."
 
 Bunlar ciddi bir öğrenicinin kendine sorduğu sorulardır. Adaptive Learner
-size bunları sorabilmeniz için altyapıyı sunar; v1.16.0 oyunlaştırma katmanı
+size bunları sorabilmeniz için altyapıyı sunar; oyunlaştırma katmanı
 bunun üzerinde, ruhta varsayılan olarak kapalı, şekerdir.

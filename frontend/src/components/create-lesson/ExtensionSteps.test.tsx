@@ -26,6 +26,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "",
     author: "",
+    domain: "language",
 };
 
 const t = (_key: string, fallback?: string) => fallback ?? _key;

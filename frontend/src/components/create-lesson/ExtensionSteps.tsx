@@ -155,8 +155,8 @@ export default function ExtensionSteps({
                 )}
 
                 {advanceBlocked && (
-                    <p
-                        className="form-hint form-hint-warning"
+                    <FormHint
+                        variant="warning"
                         data-testid="create-lesson-extension-error"
                         role="alert"
                     >
@@ -164,7 +164,7 @@ export default function ExtensionSteps({
                             "create_lesson.extensions.min_to_advance",
                             "Add at least one complete extension exercise to continue.",
                         )}
-                    </p>
+                    </FormHint>
                 )}
             </section>
         );

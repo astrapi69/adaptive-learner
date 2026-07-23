@@ -141,7 +141,7 @@ sparen. Swipe-to-Peek auf dem Streifen blendet ein
 Informations-Overlay ein, das den vorherigen / nächsten
 Zyklus-Schritt beschreibt.
 
-## Auto-Loop (v1.4.0) + Thema-Übergänge
+## Auto-Loop + Thema-Übergänge
 
 Schritt 7 ist keine Sackgasse mehr. Sobald der Schritt-
 Bewerter dich mit `advance=true` auf Schritt 7 bringt,
@@ -153,7 +153,7 @@ Bei `integrated=true ∧ continue_recommended=true`:
 `cycle_step` springt auf 1, `cycle_count` erhöht sich um 1,
 ein neues Unterthema wird gewählt. Hartcap `max_cycles=5`
 pro Session verhindert Endlosschleifen. Ein deterministischer
-Fallback erhält das v0.5.0-Cap-bei-7-Verhalten bei jedem
+Fallback erhält das Cap-bei-7-Verhalten bei jedem
 KI- / Parse-Fehler.
 
 Der Chat rendert Zyklus-Übergänge als „Zyklus N"-Karten
@@ -161,7 +161,7 @@ mit gestricheltem Rand im Sitzungsverlauf. Der
 Bewertungsdialog fasst die Multi-Cycle-Reise zusammen, wenn
 `cycle_count > 1`.
 
-## Parallele Zyklus-Grenz-Bewertung (v1.5.0)
+## Parallele Zyklus-Grenz-Bewertung
 
 Beim Schritt-6→7-Übergang feuern Schritt-Bewerter und
 Thema-Übergangs-Bewerter parallel via `asyncio.gather`

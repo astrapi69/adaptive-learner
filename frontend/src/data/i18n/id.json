@@ -2822,6 +2822,12 @@
     "edit_title": "Edit pelajaran",
     "edit_load_error": "Tidak dapat memuat pelajaran ini untuk diedit.",
     "edit_note": "Anda mengedit pelajaran yang sudah ada. Menyimpan akan menimpanya; gunakan 'Simpan sebagai salinan' untuk menyimpan aslinya.",
+    "edit": {
+      "lesson_picker_label": "Pelajaran dalam set ini ({n})",
+      "switch_confirm_title": "Ganti pelajaran?",
+      "switch_confirm_body": "Perubahan yang belum disimpan pada pelajaran ini akan hilang.",
+      "switch_discard": "Buang dan ganti"
+    },
     "prompts_migrated": "{n} instruksi latihan otomatis diterjemahkan ke bahasa Anda.",
     "prompts_migrated_dismiss": "Tutup",
     "step_pending": "Langkah ini akan hadir pada pembaruan berikutnya.",
@@ -2842,6 +2848,9 @@
       "target_lang_label": "Bahasa yang dipelajari",
       "source_lang_label": "Bahasamu",
       "level_label": "Tingkat",
+      "content_lang_label": "Bahasa konten",
+      "level_none": "Tanpa level",
+      "domain_hint": "Konten pengetahuan menggunakan satu bahasa konten dan dapat melewati level CEFR.",
       "same_language": "Bahasa yang dipelajari harus berbeda dari bahasamu.",
       "description_label": "Topik / deskripsi",
       "author_label": "Nama penulis"
@@ -3913,6 +3922,14 @@
     "listen_first": {
       "label": "Dengarkan dulu",
       "aria": "Putar pelafalan"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "Mudah",
+        "medium": "Sedang",
+        "hard": "Sulit"
+      },
+      "aria": "Kesulitan: {tier} ({level} dari 5)"
     }
   }
 }

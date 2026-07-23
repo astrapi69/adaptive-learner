@@ -24,9 +24,8 @@ sistema de ficheiros em funcionamento com backend, no IndexedDB no
 modo apenas browser), para que possas aprender offline após o
 primeiro download.
 
-O conjunto piloto da v1.27.0 é **Francês A1** (2 lições, 14
-cartões, 9 exercícios que cobrem todos os quatro tipos de
-exercício). Cada lançamento desde então adiciona novos — vê o
+A biblioteca incluída abrange vários conjuntos de conteúdo em
+diferentes idiomas e domínios. Cada lançamento adiciona mais — vê o
 [repo de conjuntos](https://github.com/astrapi69/adaptive-learner-content)
 para o catálogo atual.
 
@@ -156,7 +155,7 @@ topo.
 
 Uma sessão de revisão em `/review/:setId` sintetiza uma
 **mini-lição em voo** a partir das entradas no topo da tua fila.
-Estratégia mista desde a **v1.35.0**:
+Estratégia mista:
 
 - Se falhaste uma palavra originalmente num exercício de
   **correspondência** ou de **escolha de imagem**, fazes exatamente
@@ -178,7 +177,7 @@ através de revisões e ganhas o badge **Mestre da revisão**.
 
 ## Ronda de correção no fim da lição
 
-Novidade na **v1.35.0**: Quando concluis uma lição com erros, a
+Quando concluis uma lição com erros, a
 página de resumo mostra uma pequena **ronda de correção** entre a
 tua pontuação e o botão "Próxima lição". Ela pega em até cinco erros
 concretos dessa lição e oferece cada um como um texto com lacunas
@@ -200,7 +199,7 @@ que vejas o efeito do teu exercício adicional.
 
 ## Feedback visual de diff
 
-Também novidade na **v1.35.0**: As respostas erradas de texto livre
+As respostas erradas de texto livre
 e de peças de palavras mostram agora um **diff ao nível do token**
 entre a tua entrada e a resposta canónica. Três cores, nunca apenas
 a cor sozinha:
@@ -214,7 +213,7 @@ a cor sozinha:
 
 O mesmo diff aparece no resumo da lição no detalhamento de cada
 exercício — para cada resposta de texto livre ou de peças de
-palavras cuja entrada do utilizador o armazenamento v1.35.0+ conheça.
+palavras cuja entrada do utilizador o armazenamento conheça.
 
 ---
 
@@ -254,7 +253,7 @@ idêntica contra o IndexedDB no modo apenas browser, de forma que os
 utilizadores que visitam a página pública do GitHub Pages obtêm o
 ciclo completo de revisão sem backend.
 
-Desde a **v1.33.0** também a gamificação está alinhada: no modo
+Também a gamificação está alinhada: no modo
 apenas browser ganhas pelas lições concluídas os **mesmos XP e
 badges de lição** que no modo servidor — a lógica de estrelas,
 Streak e badges está portada para TypeScript e protegida contra

@@ -2,7 +2,7 @@
 
 A lesson made only of theory (no exercises) can be turned into a
 practiceable lesson by having the AI **generate exercises** from
-its cards. This is the EXP-036 pipeline shipped in v1.90.0. It
+its cards. This is the EXP-036 pipeline. It
 needs an AI key configured (Settings → AI); without one the button
 is visible but disabled, with the reason in its tooltip.
 

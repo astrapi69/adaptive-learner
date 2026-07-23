@@ -36,7 +36,7 @@ UserSettings; la siguiente llamada a la IA pasa por el plugin del
 nuevo proveedor (modo Servidor) o el cliente HTTP del nuevo
 proveedor (modo Local).
 
-El **Selector de modelo** (desde v1.11.0) es un desplegable con
+El **Selector de modelo** es un desplegable con
 búsqueda agrupado en Recomendado / Todo, poblado desde el endpoint
 `/v1/models` en vivo de cada proveedor (caché de 1h). Cada fila
 muestra el nombre legible + id bruto + distintivo de ventana de
@@ -47,7 +47,7 @@ encabezado de Sesión lee `<Proveedor>: <Nombre del modelo>`; el id
 completo + la ventana de contexto están en la información sobre
 herramientas.
 
-## Claves API (Fase 34 / v1.20.0)
+## Claves API
 
 Cada proveedor tiene su propia fila: un campo de entrada de clave,
 un botón Guardar, un botón Eliminar, el distintivo de proveedor
@@ -125,7 +125,7 @@ Comparar-como-A/B.
 
 ## Voz
 
-Cuatro alternadores (desde v1.18.0):
+Cuatro alternadores:
 
 - **TTS activado** — añade un botón ▶ junto a las respuestas de
   la IA + los resultados de la Evaluación que los lee en voz alta.
@@ -145,7 +145,7 @@ La sección de Voz se oculta cuando ninguno de los dos lados de la
 Web Speech API (síntesis ni reconocimiento) es compatible con el
 navegador.
 
-## Apariencia (Fase 58 / v1.41.0)
+## Apariencia
 
 El selector de **Tema** en *General > Apariencia* ofrece seis
 temas más un modo automático:
@@ -171,7 +171,7 @@ retroalimentación de ejercicios son legibles en todos ellos.
 
 ## Interfaz
 
-El **alternador de Gestos** (desde v1.10.0, predeterminado
+El **alternador de Gestos** (predeterminado
 ACTIVADO para dispositivos táctiles) cubre la navegación por
 deslizamiento de la Evaluación, el deslizamiento para revelar el
 tema del Plan de estudios y el vistazo del ciclo de Sesión.

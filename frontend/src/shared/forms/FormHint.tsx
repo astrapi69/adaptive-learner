@@ -1,30 +1,30 @@
 /**
  * FormHint — the small, muted helper line under a form control (the "what
  * does this setting do" hint). Renders a `<p>` by default, or a `<span>` for
- * inline use; the `warning` variant carries the existing `form-hint-warning`
- * modifier class.
+ * inline use.
  *
  * Fully presentational and app-agnostic: no i18n, no storage. Bring your own
  * (already-translated) text.
  *
- * NOTE (#1629, additive step — Half A): this wrapper deliberately emits the
- * legacy `form-hint` class (and `form-hint-warning` for the warning variant)
- * so it renders IDENTICALLY to the hand-written `<p className="form-hint">` /
- * `<span className="form-hint form-hint-warning">` it replaces — the legacy
- * rule in `styles/legacy/04-onboarding.css` still styles it (0-diff by
- * construction). Any extra utility (`className`) is merged AFTER, exactly as
- * a per-instance override was before. The follow-up (Half B) moves the
- * defaults into this component as token-backed Tailwind utilities and DELETES
- * the legacy `.form-hint` rule — a single contained, visually-reviewed change
- * here instead of one per consumer; it touches `styles/legacy`
- * (visual-critical) and must run on a machine that can refresh the
- * visual-regression baselines.
+ * NOTE (#1629, Half B): the defaults now live HERE as token-backed Tailwind
+ * utilities (`text-fg-muted text-[0.85rem]`) — the byte-for-byte equivalent of
+ * the deleted legacy `.form-hint` rule (`color: var(--fg-muted); font-size:
+ * 0.85rem`). Any extra utility (`className`) is merged AFTER via `cn()`, so a
+ * per-instance override (e.g. a `text-warning` color) wins exactly as it did
+ * when it beat the legacy rule from the utilities layer.
+ *
+ * The `warning` variant is currently VISUALLY IDENTICAL to the default: the
+ * old `form-hint-warning` modifier never had a CSS rule in the project's
+ * history (it was a dead class — warning hints have always rendered muted).
+ * The prop is kept as the semantic seam so warning hints can be given a real
+ * `--warning` tone in a later, deliberately visually-reviewed pass without
+ * re-touching every call site.
  *
  * @example
  * <FormHint>{t("settings.review_length.hint")}</FormHint>
  *
  * @example
- * // inline, warning tone
+ * // inline, warning tone (semantic marker; renders muted today)
  * <FormHint as="span" variant="warning">{t("create.title_required")}</FormHint>
  */
 
@@ -36,23 +36,24 @@ export interface FormHintProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode;
   /** Element to render. Default `"p"`. */
   as?: "p" | "span";
-  /** `"warning"` adds the `form-hint-warning` modifier class. Default `"default"`. */
+  /**
+   * Semantic tone. `"warning"` currently renders identically to `"default"`
+   * (see the component note); kept as the seam for a future warning-color
+   * pass. Default `"default"`.
+   */
   variant?: "default" | "warning";
 }
 
 export default function FormHint({
   children,
   as = "p",
-  variant = "default",
+  variant: _variant = "default",
   className,
   ...rest
 }: FormHintProps) {
   const Tag = as;
-  // Compute the modifier class OUTSIDE cn() so the ``=== "warning"`` literal
-  // is not mis-read as a class name by the dead-classnames extractor (#1465).
-  const variantClass = variant === "warning" ? "form-hint-warning" : undefined;
   return (
-    <Tag className={cn("form-hint", variantClass, className)} {...rest}>
+    <Tag className={cn("text-fg-muted text-[0.85rem]", className)} {...rest}>
       {children}
     </Tag>
   );

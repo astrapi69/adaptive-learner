@@ -143,16 +143,6 @@
   font-weight: 700;
 }
 
-.tile {
-  background: var(--surface-2);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 120px;
-}
-
 .chart-tile {
   width: 100%;
 }

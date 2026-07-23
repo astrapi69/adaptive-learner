@@ -54,8 +54,8 @@ lecciones, ordenada por `order_index`. Cada fila muestra el título
 de la lección y un fragmento de su contenido; hacer clic abre el
 editor de lecciones.
 
-El editor de lecciones es **texto enriquecido TipTap** (desde
-v1.14.0): negrita / cursiva / subrayado / tachado, encabezados
+El editor de lecciones es **texto enriquecido TipTap**:
+negrita / cursiva / subrayado / tachado, encabezados
 (H1-H3), listas con viñetas + ordenadas + de tareas, cita en
 bloque, código en línea, bloques de código con valla con resaltado
 de sintaxis `lowlight` en 11 lenguajes (bash / css / html / java
@@ -68,7 +68,7 @@ Las descripciones del plan de estudios, las notas de sesión y el
 contenido de las lecciones usan el mismo editor. Las exportaciones
 a Markdown / PDF pasan por `renderStoredContent`, que recorre el
 árbol de documentos TipTap y emite Markdown GFM; el contenido de
-texto plano anterior a v1.14.0 pasa sin cambios.
+texto plano heredado pasa sin cambios.
 
 ## Cómo los planes de estudios se conectan con las sesiones
 
