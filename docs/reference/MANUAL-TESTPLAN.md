@@ -283,19 +283,29 @@ Vorlage zum Kopieren:
 Die Visual-Regression-Suite (`e2e/visual/`) vergleicht Screenshots
 kritischer Oberflächen gegen committete Baseline-PNGs. Wenn ein UI-PR
 das Layout **absichtlich** ändert, müssen die Baselines neu erzeugt und
-**geprüft** werden — auf einer konsistenten Maschine (Font-Antialiasing
-unterscheidet sich zwischen Maschinen):
+**geprüft** werden. Sie werden **in CI** gerendert, nicht auf einer
+Entwicklermaschine — Font-Antialiasing unterscheidet sich pro Maschine
+(#1532).
 
-1. `make test-visual-update` — baut das Dexie-Frontend und erzeugt die
-   Baselines neu (`--update-snapshots`).
-2. Jedes geänderte PNG prüfen — bestätigen, dass der Diff die
-   beabsichtigte Änderung ist, **kein** Regressionsfehler.
-3. `git add e2e/visual/screenshots/`
-4. Commit: `test(visual): update baseline after <was geändert wurde>`
+**Empfohlen — Auto-Sync (#1662):** das Label `refresh-visual-baselines`
+an den PR hängen (oder `gh workflow run visual-baseline-sync.yml -f
+pr_number=<N>`). Der Workflow `visual-baseline-sync` rendert die
+Baselines in CI und pusht sie als Commit
+`chore(visual): refresh baselines` auf den PR-Branch — ohne
+Artifact-Download.
+
+1. Label `refresh-visual-baselines` setzen (bzw. den Workflow
+   dispatchen).
+2. Jedes geänderte PNG im PR prüfen — bestätigen, dass der Diff die
+   beabsichtigte Änderung ist, **kein** Regressionsfehler (Auto-Sync ist
+   nie ein blindes Akzeptieren).
+3. Erst nach der Bildprüfung mergen.
 
 **Niemals** `--update-snapshots` benutzen, um einen Diff zu
 übertünchen, der einen echten Bug zeigt — den Bug fixen, dann neu
-baselinen. Vollständige Anleitung: `e2e/visual/README.md`.
+baselinen. Einmalige Einrichtung (Label, optionaler
+`VISUAL_BASELINE_TOKEN`-PAT) und der manuelle Fallback:
+`docs/developer/testing.md` und `e2e/visual/README.md`.
 
 ---
 
