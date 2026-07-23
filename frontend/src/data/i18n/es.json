@@ -2822,6 +2822,12 @@
     "edit_title": "Editar lección",
     "edit_load_error": "No se pudo cargar esta lección para editarla.",
     "edit_note": "Estás editando una lección existente. Al guardar se sobrescribe; usa 'Guardar como copia' para conservar el original.",
+    "edit": {
+      "lesson_picker_label": "Lección de este conjunto ({n})",
+      "switch_confirm_title": "¿Cambiar de lección?",
+      "switch_confirm_body": "Se perderán los cambios no guardados de la lección actual.",
+      "switch_discard": "Descartar y cambiar"
+    },
     "prompts_migrated": "{n} instrucción(es) de ejercicio se tradujeron automáticamente a tu idioma.",
     "prompts_migrated_dismiss": "Cerrar",
     "step_pending": "Este paso llegará en la próxima actualización.",

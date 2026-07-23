@@ -49,8 +49,8 @@ Müfredat görünümünün sağ tarafı, `order_index` ile sıralanan ders
 listesidir. Her satır ders başlığını ve içeriğinin bir parçasını
 gösterir; tıklamak ders düzenleyiciyi açar.
 
-Ders düzenleyici **TipTap zengin metin** kullanır (v1.14.0'dan
-itibaren): kalın / italik / altı çizili / üzeri çizili, başlıklar
+Ders düzenleyici **TipTap zengin metin** kullanır:
+kalın / italik / altı çizili / üzeri çizili, başlıklar
 (H1-H3), madde işaretli + sıralı + görev listeleri, alıntı,
 satır içi kod, 11 dilde `lowlight` sözdizimi vurgulamalı çitli
 kod blokları (bash / css / html / java / javascript / json /
@@ -61,7 +61,7 @@ yatay kaydırma + 40 piksel dokunma hedefleriyle mobil uyumludur.
 Müfredat açıklamaları, oturum notları ve ders içeriği aynı
 düzenleyiciyi kullanır. Markdown / PDF dışa aktarımları TipTap
 belge ağacında yürüyen ve GFM Markdown yayan `renderStoredContent`
-üzerinden geçer; v1.14.0 öncesindeki düz metin içerik değişmeden
+üzerinden geçer; eski düz metin içerik değişmeden
 geçer.
 
 ## Müfredatların oturumlara bağlantısı

@@ -2583,6 +2583,11 @@ create_lesson:
   edit_title: "Lektion bearbeiten"
   edit_load_error: "Diese Lektion konnte nicht zum Bearbeiten geladen werden."
   edit_note: "Du bearbeitest eine vorhandene Lektion. Beim Speichern wird sie überschrieben; mit 'Als Kopie speichern' bleibt das Original erhalten."
+  edit:
+    lesson_picker_label: "Lektion in diesem Set ({n})"
+    switch_confirm_title: "Lektion wechseln?"
+    switch_confirm_body: "Deine nicht gespeicherten Änderungen an der aktuellen Lektion gehen verloren."
+    switch_discard: "Verwerfen und wechseln"
   prompts_migrated: "{n} Übungsanweisung(en) wurden automatisch in deine Sprache übertragen."
   prompts_migrated_dismiss: "Schließen"
   step_pending: "Dieser Schritt kommt im nächsten Update."

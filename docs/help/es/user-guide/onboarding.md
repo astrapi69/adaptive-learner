@@ -1,6 +1,6 @@
 # Onboarding
 
-Desde la **v1.64.0**, el inicio es deliberadamente breve: el
+El inicio es deliberadamente breve: el
 **inicio rápido** solo requiere dos campos.
 
 1. **Nombre** — cómo debe dirigirse la app a ti.

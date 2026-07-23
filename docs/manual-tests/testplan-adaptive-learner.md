@@ -272,6 +272,18 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       erscheinen im Bearbeiten NICHT (keine Karten zum Generieren). WICHTIG:
       Bearbeiten-Oeffnen aendert die gespeicherte Datei NICHT (kein Auto-Save);
       es gehen keine Uebungen verloren
+- [ ] **Set mit mehreren Lektionen bearbeiten (Lektions-Auswahl, #1971):** ein
+      Set, das MEHRERE Lektionen enthaelt (z. B. ein Buchtext-Upload mit
+      Mehrfach-Abschnitts-Auswahl → eine Lektion pro Abschnitt), ueber "Lektion
+      bearbeiten" oeffnen → oben erscheint eine **Lektions-Auswahl** (Dropdown
+      mit allen Lektionen des Sets); die erste Lektion ist vorausgewaehlt und
+      ihre Uebungen sichtbar. Andere Lektion waehlen → deren Theorie/Uebungen
+      werden geladen (vorher unerreichbar). Bei ungespeicherten Aenderungen vor
+      dem Wechsel erscheint ein Bestaetigungsdialog ("Lektion wechseln?"). Eine
+      Lektion bearbeiten + speichern → NUR diese Lektion wird ersetzt, die
+      anderen bleiben erhalten, und der SET-Titel/Level/Sprachen aendern sich
+      NICHT (werden nicht durch den Titel der bearbeiteten Lektion ueberschrieben).
+      Regression: ein Set mit nur EINER Lektion zeigt KEINE Lektions-Auswahl
 - [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
       VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
       "Match each word with its translation.") ueber "Lektion bearbeiten"

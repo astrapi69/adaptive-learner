@@ -49,7 +49,7 @@ The right side of the curriculum view is the lesson list,
 ordered by `order_index`. Each row shows the lesson title and
 a snippet of its content; clicking opens the lesson editor.
 
-The lesson editor is **TipTap rich text** (since v1.14.0):
+The lesson editor is **TipTap rich text**:
 bold / italic / underline / strike, headings (H1-H3), bullet
 + ordered + task lists, blockquote, inline code, fenced code
 blocks with `lowlight` syntax highlighting across 11
@@ -62,7 +62,7 @@ touch targets.
 Curriculum descriptions, session notes, and lesson content
 all use the same editor. Markdown / PDF exports go through
 `renderStoredContent` which walks the TipTap doc tree and
-emits GFM Markdown; plain-text content from before v1.14.0
+emits GFM Markdown; legacy plain-text content
 passes through verbatim.
 
 ## How curricula connect to sessions

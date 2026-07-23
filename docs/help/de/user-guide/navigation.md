@@ -1,11 +1,9 @@
 # Navigation
 
-v1.91.0 hat die Navigation der App umgebaut (EXP-037). Die
-Hauptnavigation ist von über 12 Einträgen auf eine kleine Zahl
-**gruppierter Einträge** gesunken (gemäß der Nielsen-Norman-
-Empfehlung „5-7 Einträge") — **ohne Funktionsverlust**: jede Seite
-bleibt erreichbar, und alte Links funktionieren über Redirects
-weiter.
+Die Hauptnavigation der App ist eine kleine Zahl **gruppierter
+Einträge** (EXP-037, gemäß der Nielsen-Norman-Empfehlung „5-7
+Einträge") — **ohne Funktionsverlust**: jede Seite bleibt
+erreichbar, und alte Links funktionieren über Redirects weiter.
 
 <!-- TODO: Screenshot — die gruppierte Hauptnavigation und die mobile Bottom-Tab-Leiste -->
 

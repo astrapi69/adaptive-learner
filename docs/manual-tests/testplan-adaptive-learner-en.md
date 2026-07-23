@@ -266,6 +266,16 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       produced no exercises" hint + the generate config do NOT appear in edit
       (no cards to generate from). IMPORTANT: opening Edit does NOT change the
       stored file (no auto-save); no exercises are lost
+- [ ] **Edit a multi-lesson set (lesson picker) (#1971):** a set that holds
+      MORE THAN ONE lesson (e.g. a book-text upload with multi-section select →
+      one lesson per section), reopen via "Edit lesson" → a **lesson picker**
+      (dropdown of all lessons in the set) appears at the top; the first lesson
+      is pre-selected with its exercises shown. Pick another lesson → its
+      theory/exercises load (previously unreachable). With unsaved changes,
+      switching prompts a confirm dialog ("Switch lesson?"). Edit one lesson +
+      Save → only that lesson is replaced, the others survive, and the SET
+      title/level/languages are NOT changed (not overwritten by the edited
+      lesson's title). Regression: a set with a single lesson shows NO picker
 - [ ] **Migrate legacy English prompts on edit (#1860):** open a
       pre-#1855 legacy lesson (exercise instructions hardcoded in English,
       e.g. "Match each word with its translation.") via "Edit a lesson" →

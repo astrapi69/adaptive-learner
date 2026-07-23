@@ -111,7 +111,7 @@ Die Fortschritts-Seite rendert all das als Balkendiagramme.
   einem Lernthema überhaupt heißen? Meisterschaft ist
   eine Haltung, keine Ziellinie.
 
-## Gamification-Schicht (v1.16.0)
+## Gamification-Schicht
 
 Auf der ProgressCommit-als-Git-Grundlage liegen drei
 Motivationsschichten:

@@ -100,7 +100,7 @@ Sim. Três caminhos de exportação incluídos:
 
 ## O que é a funcionalidade de voz?
 
-Três integrações da Web Speech API (desde v1.18.0):
+Três integrações da Web Speech API:
 
 - **Texto para Fala** nas respostas da IA + resultados da
   Avaliação — um botão ▶ ao lado de cada um fala-o em voz
@@ -126,20 +126,19 @@ recomendado, vocabulário (para conversas em idiomas) e um
 currículo sugerido. Um clique semeia um Currículo + inicia
 uma sessão direcionada a partir da análise.
 
-A exportação Markdown por conversa do Claude.ai foi o caso de
-auditoria v1.19.0 — o analisador inclui extração completa de
-timestamps + preservação de limite de papel para esse formato
-(BL-25 / BL-26 / BL-28 fechados na v1.19.1).
+A exportação Markdown por conversa do Claude.ai é um caso de
+importação validado — o analisador inclui extração completa de
+timestamps + preservação de limite de papel para esse formato.
 
 ## Sincronização entre dispositivos?
 
-Sincronização bidirecional em rede local desde v1.0.0.
+Sincronização bidirecional em rede local.
 Definições → Sincronização → "Emparelhar este dispositivo":
 digitalize o código QR no ecrã do outro dispositivo (câmara
 traseira), ou cole o URL de emparelhamento. Uma vez emparelhado,
 os botões de envio + receção trocam dados; os conflitos passam
 por um resolvedor de fusão de IA. 28 tabelas na superfície de
-sincronização a partir de v1.19.0 (assuntos + etiquetas +
+sincronização (assuntos + etiquetas +
 questões de estudo incluídas).
 
 ## Como é diferente do ChatGPT?

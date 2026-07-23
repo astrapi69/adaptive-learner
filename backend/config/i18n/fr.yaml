@@ -2581,6 +2581,11 @@ create_lesson:
   edit_title: "Modifier la leçon"
   edit_load_error: "Impossible de charger cette leçon pour la modifier."
   edit_note: "Vous modifiez une leçon existante. L'enregistrement l'écrase ; utilisez 'Enregistrer comme copie' pour conserver l'original."
+  edit:
+    lesson_picker_label: "Leçon de cet ensemble ({n})"
+    switch_confirm_title: "Changer de leçon ?"
+    switch_confirm_body: "Vos modifications non enregistrées de la leçon actuelle seront perdues."
+    switch_discard: "Abandonner et changer"
   prompts_migrated: "{n} consigne(s) d'exercice ont été traduites automatiquement dans votre langue."
   prompts_migrated_dismiss: "Fermer"
   step_pending: "Cette étape arrive dans la prochaine mise à jour."

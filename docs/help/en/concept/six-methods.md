@@ -152,7 +152,7 @@ parity — no drift possible between Server and Local modes.
 Your assessment gives you a 6-method profile. The dominant
 method is what new sessions start in. But:
 
-- The **step evaluator** (dual-prompt v0.5.0) may suggest
+- The **step evaluator** (dual-prompt) may suggest
   staying, advancing, or — rarely — stepping back per
   cycle step.
 - The **method-switch heuristic** detects stagnation

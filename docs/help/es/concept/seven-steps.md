@@ -132,7 +132,7 @@ horizontal de pequeños círculos para ahorrar espacio vertical.
 Deslizar sobre la tira muestra una superposición informativa que
 describe el paso anterior / siguiente del ciclo.
 
-## Auto-bucle (v1.4.0) + transiciones de tema
+## Auto-bucle + transiciones de tema
 
 El paso 7 ya no es un callejón sin salida. Una vez que el
 evaluador de pasos te mueve al paso 7 con `advance=true`, una
@@ -157,7 +157,7 @@ juzga si el tema ha sido integrado y si iniciar un nuevo ciclo.
 
 El límite máximo de `max_cycles=5` por sesión previene bucles
 sin fin. Un respaldo determinista mantiene el comportamiento del
-límite en el paso 7 de v0.5.0 ante cualquier fallo de la IA o
+límite en el paso 7 ante cualquier fallo de la IA o
 del parsing.
 
 El chat renderiza las transiciones de ciclo como tarjetas con
@@ -165,7 +165,7 @@ borde discontinuo «Ciclo N» en el historial de la sesión. El
 diálogo de calificación resume el viaje de varios ciclos cuando
 `cycle_count > 1`.
 
-## Evaluación paralela en el límite de ciclo (v1.5.0)
+## Evaluación paralela en el límite de ciclo
 
 En la transición del paso 6 → 7, tanto el evaluador de pasos como
 el evaluador de transición de tema se disparan concurrentemente

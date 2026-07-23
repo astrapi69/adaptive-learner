@@ -22,9 +22,8 @@ tıkla. Set yerel olarak önbelleğe alınır (arka uçla çalışırken dosya
 sisteminde, yalnızca tarayıcı modunda IndexedDB'de), böylece ilk
 indirmeden sonra çevrimdışı öğrenebilirsin.
 
-v1.27.0'dan gelen pilot set **Fransızca A1**'dir (2 ders, 14 kart, 9
-alıştırma; dört alıştırma türünün tümünü kapsar). O zamandan beri her
-sürüm yenilerini ekler — güncel katalog için
+Yerleşik kitaplık, farklı diller ve alanlarda birden çok içerik
+seti içerir. Her sürüm yenilerini ekler — güncel katalog için
 [Set reposuna](https://github.com/astrapi69/adaptive-learner-content)
 bak.
 
@@ -144,8 +143,8 @@ hata önce**. Böylece en çok zorlandığın öğeler yukarı çıkar.
 ## Tekrar oturumları
 
 `/review/:setId` altındaki bir tekrar oturumu, kuyruğunun üst
-girişlerinden uçuş anında bir **mini-ders** sentezler. **v1.35.0**'dan
-beri karma strateji:
+girişlerinden uçuş anında bir **mini-ders** sentezler. Karma
+strateji:
 
 - Bir kelimeyi başlangıçta bir **eşleştirme** ya da **resim seçimi**
   alıştırmasında kaçırdıysan, tam olarak bu alıştırmayı yeniden
@@ -165,7 +164,7 @@ Bir tekrar oturumunu tamamladığında aynı değerlendirme + yıldız +
 
 ## Ders sonu düzeltme turu
 
-**v1.35.0**'da yeni: Bir dersi hatalarla tamamladığında, özet sayfası
+Bir dersi hatalarla tamamladığında, özet sayfası
 puanın ile "Sonraki ders" düğmesi arasında küçük bir **düzeltme turu**
 gösterir. Bu turdan dersteki en fazla beş somut hatayı alır ve her
 birini tam olarak kaçırılan kelimeyi / kaçırılan artikeli hedefleyen
@@ -185,7 +184,7 @@ iyileştirildi" satırı görünür.
 
 ## Görsel diff geri bildirimi
 
-Yine **v1.35.0**'da yeni: Yanlış serbest metin ve kelime karosu
+Yanlış serbest metin ve kelime karosu
 yanıtları artık girdin ile kanonik yanıt arasında **Token düzeyinde
 bir diff** gösterir. Üç renk, asla yalnızca renk değil:
 
@@ -197,7 +196,7 @@ bir diff** gösterir. Üç renk, asla yalnızca renk değil:
   `beklenen` olarak gösterilir.
 
 Aynı diff, ders özetinde her alıştırmanın dökümünde görünür — kullanıcı
-girdisi v1.35.0+ deposunun bildiği her serbest metin veya kelime karosu
+girdisi deposunun bildiği her serbest metin veya kelime karosu
 yanıtı için.
 
 ---
@@ -235,7 +234,7 @@ SRS planlaması, yalnızca tarayıcı modunda IndexedDB'ye karşı aynı
 şekilde çalışır, böylece herkese açık GitHub Pages sayfasını ziyaret
 eden kullanıcılar, arka uç olmadan tam tekrar döngüsünü alır.
 
-**v1.33.0**'dan beri gamification de eşitlenmiştir: Yalnızca tarayıcı
+Gamification de eşitlenmiştir: Yalnızca tarayıcı
 modunda, tamamlanan dersler için sunucu modundaki ile **aynı XP ve
 ders rozetlerini** kazanırsın — yıldız, Streak ve rozet mantığı
 TypeScript'e taşınmış ve aynı altın değerlere karşı güvence altına
