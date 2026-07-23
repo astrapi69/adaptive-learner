@@ -17,7 +17,6 @@
  * 65B-65D. Storage-mode-agnostic (works in API + Dexie modes).
  */
 
-import {Download} from "lucide-react";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -25,7 +24,6 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
 import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
-import {Button} from "@/components/ui/button";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
 import WizardSteps from "../../components/create-lesson/WizardSteps";
 import EditLoadState from "../../components/create-lesson/EditLoadState";
@@ -45,6 +43,10 @@ import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/le
 import {buildExtensionUserSetInput} from "../../lib/content/lesson/user-set-input";
 import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
 import ExerciseEditSteps from "../../components/create-lesson/ExerciseEditSteps";
+import {
+    SavedLessonActions,
+    WizardNav,
+} from "../../components/create-lesson/CreateLessonFooter";
 import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
 import PromptMigrationNotice from "../../components/create-lesson/PromptMigrationNotice";
 import {
@@ -908,92 +910,24 @@ export default function CreateLesson() {
             )}
 
             {savedEntry && (
-                <section
-                    className="create-lesson-step flex flex-col gap-4"
-                    data-testid="create-lesson-saved"
-                >
-                    <h2 className="text-xl font-semibold text-fg-primary">{t("create_lesson.save.saved", "Lesson saved!")}</h2>
-                    <div className="form-actions">
-                        <Button
-                            type="button"
-                            data-testid="create-lesson-play"
-                            onClick={playSaved}
-                        >
-                            {t("create_lesson.save.play", "Play lesson")}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            data-testid="create-lesson-save-file"
-                            onClick={exportSavedLesson}
-                        >
-                            <Download className="h-5 w-5" aria-hidden="true" />
-                            {t(
-                                "create_lesson.save.save_file",
-                                "Save as file",
-                            )}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            data-testid="create-lesson-create-another"
-                            onClick={createAnother}
-                        >
-                            {t(
-                                "create_lesson.save.create_another",
-                                "Create another lesson",
-                            )}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            data-testid="create-lesson-to-browser"
-                            // #1253 — "My Lessons" lives on the Import tab now,
-                            // so land the just-created lesson there.
-                            onClick={() => navigate("/content?tab=import")}
-                        >
-                            {t(
-                                "create_lesson.save.to_browser",
-                                "To Content Browser",
-                            )}
-                        </Button>
-                    </div>
-                </section>
+                <SavedLessonActions
+                    onPlay={playSaved}
+                    onExport={exportSavedLesson}
+                    onCreateAnother={createAnother}
+                    onToBrowser={() => navigate("/content?tab=import")}
+                    t={t}
+                />
             )}
 
             {!savedEntry && !editLoading && !editError && (
-            <nav className="create-lesson-nav mt-6 flex flex-wrap items-center justify-end gap-3" aria-label={t(
-                "create_lesson.nav_label",
-                "Wizard navigation",
-            )}>
-                <Button
-                    type="button"
-                    variant="outline"
-                    data-testid="create-lesson-cancel"
-                    onClick={handleCancel}
-                >
-                    {t("create_lesson.cancel", "Cancel")}
-                </Button>
-                {step > 1 && (
-                    <Button
-                        type="button"
-                        variant="outline"
-                        data-testid="create-lesson-back"
-                        onClick={handleBack}
-                    >
-                        {t("create_lesson.back", "Back")}
-                    </Button>
-                )}
-                {step < totalSteps && (
-                    <Button
-                        type="button"
-                        data-testid="create-lesson-next"
-                        onClick={handleNext}
-                    >
-                        {t("create_lesson.next", "Next")}
-                    </Button>
-                )}
-            </nav>
+                <WizardNav
+                    step={step}
+                    totalSteps={totalSteps}
+                    onCancel={handleCancel}
+                    onBack={handleBack}
+                    onNext={handleNext}
+                    t={t}
+                />
             )}
 
             <CreateLessonDialogs
