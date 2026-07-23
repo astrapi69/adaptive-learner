@@ -248,6 +248,17 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       oeffnen → zum Review blaettern: der Check "Gueltige Lektionsstruktur"
       ist GRUEN und "Aenderungen speichern" funktioniert (zuvor scheiterte
       es mit "ext_payload must be object" im API-/Server-Modus)
+- [ ] **Buchtext-Lektion bearbeiten (#1967):** eine ueber "Wissenslektion
+      aus Text" (Buchtext-Pfad) erstellte Lektion (Theorie + generierte
+      Uebungen, KEINE Vokabelkarten) lokal speichern → ueber "Lektion
+      bearbeiten" erneut oeffnen → "Weiter" fuehrt DIREKT zum Uebungs-Editor
+      mit den tatsaechlich generierten Uebungen (NICHT dem leeren
+      Vokabelkarten-Editor, der zuvor die Weiter-Schaltflaeche blockierte);
+      der 3-Schritt-Fluss ist Metadaten → Uebungen → Review; Review hat
+      KEINE "Mindestens 4 Karten"-Zeile und "Aenderungen speichern" ist
+      aktiv; nach Speichern bleiben Theorie- und Uebungsschritte erhalten.
+      Regression: eine normale Karten-Lektion (Vokabel-Liste) UND eine
+      Extension-Lektion oeffnen weiterhin korrekt zum Bearbeiten
 - [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
       VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
       "Match each word with its translation.") ueber "Lektion bearbeiten"

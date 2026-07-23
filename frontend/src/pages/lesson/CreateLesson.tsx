@@ -44,6 +44,7 @@ import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exerci
 import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/legacy-prompt-migration";
 import {buildExtensionUserSetInput} from "../../lib/content/lesson/user-set-input";
 import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
+import ExerciseEditSteps from "../../components/create-lesson/ExerciseEditSteps";
 import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
 import PromptMigrationNotice from "../../components/create-lesson/PromptMigrationNotice";
 import {
@@ -121,10 +122,22 @@ const DRAFT_AUTOSAVE_MS = 10_000;
 
 const EMPTY_BOOK_FIELDS: BookFields = {title: "", author: "", url: "", asin: ""};
 
-/** Total wizard steps for the active path. The book (#1743) and extension
- *  (#1852) branches are both 3-step Metadata -> content -> Review flows. */
+/** Total wizard steps for the active path. Every compact branch — book-text
+ *  (#1743), extension (#1852) and cardless-edit (#1967) — is a 3-step
+ *  Metadata -> content -> Review flow; the card-driven path has 4. */
 function stepCountFor(compactFlow: boolean): number {
     return compactFlow ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
+}
+
+/** The wizard's page heading — "Edit lesson" when reopening an existing
+ *  lesson, otherwise "Create a lesson". */
+function headerTitle(
+    editMode: boolean,
+    t: (key: string, fallback?: string) => string,
+): string {
+    return editMode
+        ? t("create_lesson.edit_title", "Edit lesson")
+        : t("create_lesson.title", "Create a lesson");
 }
 
 /** Build the default metadata, seeding source language from the
@@ -154,6 +167,11 @@ export default function CreateLesson() {
     // pre-filled to edit an existing own lesson.
     const editMode = Boolean(params.source && params.setId);
     const [editContext, setEditContext] = useState<EditContext | null>(null);
+    // #1967 — editing a cardless (theory/exercise) lesson, e.g. one authored
+    // via the book-text path (#1743): the wizard skips the vocabulary-card step
+    // and opens straight on the generated exercises. Set on edit-load once the
+    // reconstructed draft is known to carry no cards.
+    const [cardlessEdit, setCardlessEdit] = useState(false);
     const [editLoading, setEditLoading] = useState(editMode);
     const [editError, setEditError] = useState<string | null>(null);
     // #1860 — how many legacy English prompts were migrated to the UI
@@ -204,8 +222,10 @@ export default function CreateLesson() {
     const [bookLessons, setBookLessons] = useState<GeneratedBookLesson[]>([]);
 
     // An alternative authoring branch (book-text #1743 / extension #1852)
-    // runs the compact 3-step flow instead of the card-driven one.
-    const compactFlow = bookMode || extMode;
+    // runs the compact 3-step flow instead of the card-driven one. The
+    // cardless-edit branch (#1967 — Metadata -> Exercises -> Review) is a third
+    // compact flow, entered only when editing a card-free lesson.
+    const compactFlow = bookMode || extMode || cardlessEdit;
     const totalSteps = stepCountFor(compactFlow);
 
     /** Resolve the active AI provider seam, or ``null`` when no key /
@@ -261,6 +281,10 @@ export default function CreateLesson() {
                 setMeta(prefill.meta);
                 setCards(prefill.cards);
                 setExercises(migratedExercises);
+                // #1967 — a lesson with no vocabulary cards (a book-text /
+                // theory lesson) edits its exercises directly; the card step
+                // and its MIN_CARDS gate would otherwise trap the user.
+                setCardlessEdit(prefill.cards.length === 0);
                 setPromptsMigrated(migratedCount);
                 setEditContext({
                     source,
@@ -363,6 +387,27 @@ export default function CreateLesson() {
             setStep((s) => Math.min(TOTAL_STEPS_EXT, s + 1));
             return;
         }
+        if (cardlessEdit) {
+            // #1967 — cardless edit flow: step 2 is the exercise editor, gated
+            // exactly like the card flow's step 3 (enough + all complete), then
+            // Review. No card step in between.
+            if (step === 2) {
+                const incomplete = (ex: ContentLessonExercise): boolean =>
+                    isExtensionType(ex.type)
+                        ? !validateExtensionExercise(ex).valid
+                        : !validateExerciseEdit(ex).valid;
+                if (
+                    exercises.length < MIN_EXERCISES ||
+                    exercises.some(incomplete)
+                ) {
+                    setExerciseError(true);
+                    return;
+                }
+                setExerciseError(false);
+            }
+            setStep((s) => Math.min(TOTAL_STEPS_BOOK, s + 1));
+            return;
+        }
         if (step === 2) {
             if (cards.length < MIN_CARDS) {
                 setCardError(true);
@@ -409,6 +454,9 @@ export default function CreateLesson() {
             return;
         }
         setShowError(false);
+        // #1967 — entering an alternative authoring mode exits the cardless
+        // edit flow so the two never render side by side.
+        setCardlessEdit(false);
         setBookMode(true);
         setStep(2);
     }
@@ -422,6 +470,7 @@ export default function CreateLesson() {
             return;
         }
         setShowError(false);
+        setCardlessEdit(false);
         setExtMode(true);
         setStep(2);
     }
@@ -617,6 +666,7 @@ export default function CreateLesson() {
         setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
         setBookMode(false);
         setExtMode(false);
+        setCardlessEdit(false);
         setBookText("");
         setBookFields(EMPTY_BOOK_FIELDS);
         setBookLessons([]);
@@ -673,6 +723,17 @@ export default function CreateLesson() {
         ]);
     }
 
+    // --- exercise handlers (shared by every authoring flow) ---
+    function deleteExercise(id: string) {
+        setExercises((prev) => prev.filter((e) => e.id !== id));
+    }
+    function updateExercise(id: string, updated: ContentLessonExercise) {
+        setExercises((prev) => prev.map((e) => (e.id === id ? updated : e)));
+    }
+    function addExercise(exercise: ContentLessonExercise) {
+        setExercises((prev) => [...prev, exercise]);
+    }
+
     function discard() {
         // #1740 — in edit mode the shared new-lesson draft slot is not
         // ours to clear (it may hold an unrelated unfinished lesson).
@@ -704,14 +765,14 @@ export default function CreateLesson() {
         }
     }
 
+    // #1740 — "Save as a copy" is only offered in edit mode; shared by the
+    // card-driven and cardless-edit flows so the ternary lives in one place.
+    const onSaveCopyHandler = editMode ? () => void saveCopy() : undefined;
+
     return (
         <PageContainer testId="create-lesson-page">
             <header className="create-lesson-header mb-6 flex flex-col gap-1">
-                <h1>
-                    {editMode
-                        ? t("create_lesson.edit_title", "Edit lesson")
-                        : t("create_lesson.title", "Create a lesson")}
-                </h1>
+                <h1>{headerTitle(editMode, t)}</h1>
                 {!editLoading && !editError && (
                     <p
                         className="create-lesson-step-indicator text-sm text-fg-muted"
@@ -760,17 +821,9 @@ export default function CreateLesson() {
                     exercises={exercises}
                     advanceBlocked={exerciseError}
                     saving={saving}
-                    onAddExercise={(exercise) =>
-                        setExercises((prev) => [...prev, exercise])
-                    }
-                    onUpdateExercise={(id, updated) =>
-                        setExercises((prev) =>
-                            prev.map((e) => (e.id === id ? updated : e)),
-                        )
-                    }
-                    onDeleteExercise={(id) =>
-                        setExercises((prev) => prev.filter((e) => e.id !== id))
-                    }
+                    onAddExercise={addExercise}
+                    onUpdateExercise={updateExercise}
+                    onDeleteExercise={deleteExercise}
                     onSaveLocal={() => void saveLocally()}
                     t={t}
                 />
@@ -799,6 +852,30 @@ export default function CreateLesson() {
                 />
             )}
 
+            {cardlessEdit && (
+                <ExerciseEditSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    meta={meta}
+                    cards={cards}
+                    exercises={exercises}
+                    genConfig={genConfig}
+                    exerciseError={exerciseError}
+                    draftChecks={draftChecks}
+                    saving={saving}
+                    onGenerate={generateLessonExercises}
+                    onConfigChange={setGenConfig}
+                    onReorderExercises={setExercises}
+                    onDeleteExercise={deleteExercise}
+                    onUpdateExercise={updateExercise}
+                    onAddExercise={addExercise}
+                    onSaveLocal={() => void saveLocally()}
+                    onSaveShare={() => void saveAndShare()}
+                    onSaveCopy={onSaveCopyHandler}
+                    t={t}
+                />
+            )}
+
             {!compactFlow && (
                 <WizardSteps
                     step={step}
@@ -820,20 +897,12 @@ export default function CreateLesson() {
                     onGenerate={generateLessonExercises}
                     onConfigChange={setGenConfig}
                     onReorderExercises={setExercises}
-                    onDeleteExercise={(id) =>
-                        setExercises((prev) => prev.filter((e) => e.id !== id))
-                    }
-                    onUpdateExercise={(id, updated) =>
-                        setExercises((prev) =>
-                            prev.map((e) => (e.id === id ? updated : e)),
-                        )
-                    }
-                    onAddExercise={(exercise) =>
-                        setExercises((prev) => [...prev, exercise])
-                    }
+                    onDeleteExercise={deleteExercise}
+                    onUpdateExercise={updateExercise}
+                    onAddExercise={addExercise}
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}
-                    onSaveCopy={editMode ? () => void saveCopy() : undefined}
+                    onSaveCopy={onSaveCopyHandler}
                     t={t}
                 />
             )}
