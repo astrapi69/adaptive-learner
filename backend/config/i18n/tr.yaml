@@ -2604,6 +2604,9 @@ create_lesson:
     target_lang_label: "Öğrenilen dil"
     source_lang_label: "Sizin diliniz"
     level_label: "Seviye"
+    content_lang_label: "İçerik dili"
+    level_none: "Seviye yok"
+    domain_hint: "Bilgi içeriği tek bir içerik dili kullanır ve CEFR seviyesini atlayabilir."
     same_language: "Öğrenilen dil, sizin dilinizden farklı olmalıdır."
     description_label: "Konu / açıklama"
     author_label: "Yazar adı"
@@ -3578,3 +3581,9 @@ exercise:
   listen_first:
     label: "Önce dinle"
     aria: "Telaffuzu oynat"
+  difficulty:
+    tier:
+      easy: "Kolay"
+      medium: "Orta"
+      hard: "Zor"
+    aria: "Zorluk: {tier} ({level}/5)"

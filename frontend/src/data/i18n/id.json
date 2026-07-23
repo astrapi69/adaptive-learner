@@ -2848,6 +2848,9 @@
       "target_lang_label": "Bahasa yang dipelajari",
       "source_lang_label": "Bahasamu",
       "level_label": "Tingkat",
+      "content_lang_label": "Bahasa konten",
+      "level_none": "Tanpa level",
+      "domain_hint": "Konten pengetahuan menggunakan satu bahasa konten dan dapat melewati level CEFR.",
       "same_language": "Bahasa yang dipelajari harus berbeda dari bahasamu.",
       "description_label": "Topik / deskripsi",
       "author_label": "Nama penulis"
@@ -3919,6 +3922,14 @@
     "listen_first": {
       "label": "Dengarkan dulu",
       "aria": "Putar pelafalan"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "Mudah",
+        "medium": "Sedang",
+        "hard": "Sulit"
+      },
+      "aria": "Kesulitan: {tier} ({level} dari 5)"
     }
   }
 }

@@ -2848,6 +2848,9 @@
       "target_lang_label": "Idioma aprendido",
       "source_lang_label": "Tu idioma",
       "level_label": "Nivel",
+      "content_lang_label": "Idioma del contenido",
+      "level_none": "Sin nivel",
+      "domain_hint": "El contenido de conocimiento usa un solo idioma de contenido y puede prescindir del nivel MCER.",
       "same_language": "El idioma aprendido debe ser distinto de tu idioma.",
       "description_label": "Tema / descripción",
       "author_label": "Nombre del autor"
@@ -3919,6 +3922,14 @@
     "listen_first": {
       "label": "Escucha primero",
       "aria": "Reproducir pronunciación"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "Fácil",
+        "medium": "Media",
+        "hard": "Difícil"
+      },
+      "aria": "Dificultad: {tier} ({level} de 5)"
     }
   }
 }

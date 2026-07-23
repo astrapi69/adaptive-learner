@@ -124,6 +124,14 @@ Requires domain knowledge. Not automatable.
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
 - [ ] Free Text: correction READABLE (token diff understandable)
 - [ ] Picture Choice: tiles SAME height
+- [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
+      authored `difficulty` (1-5) shows a small badge above the exercise
+      with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
+      `difficulty` (the whole legacy corpus) show NO badge (exercise looks
+      as before). Applies to every exercise type (Matching/Cloze/Free-Text/
+      Word-Tiles/Picture-Choice/Multiple-Choice + ext types). Badge reads
+      cleanly in all 6 themes (token-backed). Transparency only - it changes
+      neither ordering nor scoring.
 
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628
@@ -293,6 +301,18 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] **Same-language hint (#1721/#1730):** source == target shows a
       neutral hint, does NOT block "Next"; Save enables once the checklist
       passes
+- [ ] **Content-domain selector in Step 1 (#1716):** Step 1 shows a
+      "Domain" field. Default "Language" → source/target languages + CEFR
+      level are shown (as before). Choosing a knowledge domain (e.g.
+      "Psychology", "Programming", "Knowledge") collapses the pair to a
+      single "Content language" (source == target), the level gains a "No
+      level" option, and a hint explains knowledge content. Changing the
+      content language keeps source and target equal. Switching back to
+      "Language" splits the pair again and restores the level to A1 (if it
+      was "No level"). Save → the lesson carries the chosen domain
+      (`domain: psychology` …); a language lesson carries NO `domain` field.
+      Editing a saved knowledge lesson reopens with the right domain +
+      content language
 - [ ] **Language-pair check row (#1929):** Review shows SIX checklist rows
       (title, "Language pair is valid", ≥4 cards, ≥5 exercises, ≥2 types,
       valid structure). "Language pair is valid" is green once BOTH source

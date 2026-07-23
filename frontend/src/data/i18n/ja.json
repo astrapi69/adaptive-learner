@@ -2848,6 +2848,9 @@
       "target_lang_label": "学習する言語",
       "source_lang_label": "あなたの言語",
       "level_label": "レベル",
+      "content_lang_label": "コンテンツの言語",
+      "level_none": "レベルなし",
+      "domain_hint": "知識コンテンツは単一のコンテンツ言語を使用し、CEFR レベルを省略できます。",
       "same_language": "学習する言語はあなたの言語と異なる必要があります。",
       "description_label": "トピック / 説明",
       "author_label": "著者名"
@@ -3919,6 +3922,14 @@
     "listen_first": {
       "label": "まず聞く",
       "aria": "発音を再生"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "やさしい",
+        "medium": "ふつう",
+        "hard": "むずかしい"
+      },
+      "aria": "難易度: {tier}（5段階中{level}）"
     }
   }
 }

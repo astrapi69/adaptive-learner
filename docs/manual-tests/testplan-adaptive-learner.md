@@ -122,6 +122,14 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verstaendlich)
 - [ ] Picture Choice: Kacheln GLEICHE Hoehe
+- [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
+      authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
+      Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
+      Karten OHNE `difficulty` (der gesamte Alt-Bestand) zeigen KEIN Badge
+      (die Uebung sieht aus wie vorher). Gilt fuer alle Uebungstypen
+      (Matching/Cloze/Free-Text/Word-Tiles/Picture-Choice/Multiple-Choice
+      + ext-Typen). Badge liest in allen 6 Themes sauber (Token-basiert).
+      Nur Transparenz - beeinflusst weder Reihenfolge noch Bewertung.
 
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
@@ -302,6 +310,18 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 - [ ] **Gleiche-Sprache-Hinweis (#1721/#1730):** Quelle == Ziel zeigt
       neutralen Hinweis, blockiert "Weiter" NICHT; Save wird aktiv sobald die
       Checkliste passt
+- [ ] **Inhaltsdomain-Auswahl in Schritt 1 (#1716):** Schritt 1 zeigt ein
+      Feld "Bereich" (Domain). Default "Sprache" → Quell-/Zielsprache +
+      GER-Level werden angezeigt (wie bisher). Eine Wissensdomain waehlen
+      (z. B. "Psychologie", "Programmierung", "Wissen") → das Sprachpaar
+      klappt auf EINE "Inhaltssprache" zusammen (Quelle == Ziel), das Level
+      bietet zusaetzlich "Kein Niveau", und ein Hinweis erklaert die
+      Wissensinhalte. Inhaltssprache aendern → Quelle und Ziel bleiben
+      gleich. Zurueck auf "Sprache" → das Paar ist wieder getrennt und das
+      Level faellt auf A1 zurueck (sofern es "Kein Niveau" war). Speichern →
+      die Lektion traegt die gewaehlte Domain (`domain: psychology` …); eine
+      Sprachlektion traegt KEIN `domain`-Feld. Bearbeiten einer gespeicherten
+      Wissenslektion oeffnet wieder mit der richtigen Domain + Inhaltssprache
 - [ ] **Sprachpaar-Pruefpunkt (#1929):** Review zeigt SECHS Checklisten-
       Punkte (Titel, "Sprachpaar ist gueltig", ≥4 Karten, ≥5 Uebungen,
       ≥2 Typen, gueltige Struktur). "Sprachpaar ist gueltig" ist gruen,

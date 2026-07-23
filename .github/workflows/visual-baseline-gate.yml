@@ -21,6 +21,12 @@
 # trigger types so toggling the label re-evaluates the gate.
 #
 # Refresh procedure (what the failure message points to):
+#   Easiest (#1662): add the `refresh-visual-baselines` label to this PR
+#   (or `gh workflow run visual-baseline-sync.yml -f pr_number=<N>`). The
+#   `visual-baseline-sync` workflow renders the baselines in CI and pushes
+#   them onto this branch as a reviewable commit - no artifact download.
+#
+#   Manual fallback (maintainer machine, download works there):
 #   gh workflow run visual-regression.yml --ref <pr-branch> \
 #     -f update_baselines=true
 #   gh run download <run-id> --name visual-baselines --dir /tmp/vb
@@ -77,5 +83,5 @@ jobs:
             exit 0
           fi
           echo "::error::This PR changes visually-critical paths (lesson components/pages, exercises, global/theme CSS) but contains no e2e/visual/screenshots/ update (#1640)."
-          echo "::error::Either (a) regenerate + review + commit the affected baselines in this PR: dispatch 'visual-regression.yml' on this branch with update_baselines=true, download the 'visual-baselines' artifact, review EVERY changed image, commit the changed PNGs - or (b) if the change is verifiably 0-diff (e.g. audit-CLEAN wrap with a clean verify run), add the 'visual-baselines-unaffected' label."
+          echo "::error::Easiest fix (#1662): add the 'refresh-visual-baselines' label to this PR - the 'visual-baseline-sync' workflow renders the baselines in CI and pushes them onto this branch as a reviewable commit (review every changed PNG before merge, #1532). Alternatives: (a) manually dispatch 'visual-regression.yml' with update_baselines=true, download the 'visual-baselines' artifact, review + commit the changed PNGs - or (b) if the change is verifiably 0-diff (e.g. audit-CLEAN wrap with a clean verify run), add the 'visual-baselines-unaffected' label."
           exit 1

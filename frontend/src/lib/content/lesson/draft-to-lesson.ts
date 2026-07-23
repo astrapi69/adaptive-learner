@@ -14,6 +14,7 @@ import {
     requiredExtensionsFor,
     type GeneratorCard,
 } from "../../exercises";
+import {contentDomainToStamp, isKnownContentDomain} from "../content-domains";
 import {LANGUAGE_OPTIONS} from "../language/language-options";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
@@ -155,6 +156,11 @@ export function buildLessonFromDraft(
     // there is one to declare, so a pure-core lesson never carries a spurious
     // ``requires_extensions: []``.
     const requiredExtensions = requiredExtensionsFor(exercises);
+    // #1716 — stamp an explicit NON-language content domain so a knowledge
+    // lesson (single content language, source == target) is recognised as
+    // intentional domain content. A language lesson carries no ``domain``
+    // field (the schema default), so no spurious ``domain: "language"``.
+    const contentDomain = contentDomainToStamp(meta.domain);
     const lesson: ContentLesson = {
         id: opts.id ?? (slugify(meta.title) || "lesson"),
         title: meta.title.trim(),
@@ -167,6 +173,7 @@ export function buildLessonFromDraft(
         ...(requiredExtensions.length > 0
             ? {requires_extensions: requiredExtensions}
             : {}),
+        ...(contentDomain ? {domain: contentDomain} : {}),
         contributed_by: meta.author.trim() || null,
         contributed_at: meta.author.trim() ? new Date().toISOString() : null,
     };
@@ -221,6 +228,14 @@ export function lessonToDraftInput(
         level: entry?.level ?? "A1",
         description: lesson.description ?? "",
         author: lesson.contributed_by ?? "",
+        // #1716 — carry an explicit NON-language content domain back into the
+        // wizard so editing a knowledge lesson keeps its domain (and its
+        // single-content-language / level-less shape). An unknown or absent
+        // domain normalises to the default ``"language"``.
+        domain:
+            lesson.domain && isKnownContentDomain(lesson.domain)
+                ? lesson.domain
+                : "language",
     };
     return {meta, cards, exercises};
 }

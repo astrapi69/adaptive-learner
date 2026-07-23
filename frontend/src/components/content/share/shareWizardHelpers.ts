@@ -7,6 +7,15 @@
  */
 
 import { CEFR_LEVELS } from "../../../lib/content/language/language-options";
+import {
+  KNOWN_CONTENT_DOMAINS,
+  LEVEL_NONE,
+} from "../../../lib/content/content-domains";
+
+// Re-exported from the shared content-domain module (#1716) so the Share
+// wizard and the Create-Lesson wizard mirror ONE distinction. Existing
+// imports of these names from shareWizardHelpers stay valid.
+export { KNOWN_CONTENT_DOMAINS, LEVEL_NONE };
 
 /** One of the four wizard steps. */
 export type Step = 1 | 2 | 3 | 4;
@@ -36,33 +45,9 @@ export function isCefr(level: string | null | undefined): boolean {
   return CEFR_SET.has((level || "").trim().toUpperCase());
 }
 
-/** Content domains the share validator recognises as NON-language —
- *  source == target is allowed for these (mirrors the content repo's
- *  validate_content.py domain relaxation). Covers every non-language
- *  domain present in the official + registered content repos (psychology,
- *  programming, ai, technology, software, philosophy, knowledge) plus the
- *  reserved ``math``. */
-export const KNOWN_CONTENT_DOMAINS: ReadonlySet<string> = new Set([
-  "knowledge",
-  "programming",
-  "psychology",
-  "math",
-  "ai",
-  "technology",
-  "software",
-  "philosophy",
-  "dog-training",
-  "traffic-knowledge",
-]);
-
 export function defaultOpen(url: string): boolean {
   // window.open returns null when the popup is blocked; the caller
   // uses that to show a manual fallback link.
   const win = window.open(url, "_blank", "noopener,noreferrer");
   return win != null;
 }
-
-// Radix Select forbids a literal empty-string item value, so the
-// explicit "no level" choice uses this sentinel and maps back to ""
-// in onValueChange — keeping the empty-level validation gate reachable.
-export const LEVEL_NONE = "__none__";

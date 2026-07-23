@@ -61,6 +61,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "Ein Buch in Abschnitten.",
     author: "Asterios Raptis",
+    domain: "language",
 };
 
 /** ``idPrefix`` must be slug-safe (lowercase); ``label`` shows in prompts so a

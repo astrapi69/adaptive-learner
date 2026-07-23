@@ -2608,6 +2608,9 @@ create_lesson:
     target_lang_label: "Gelernte Sprache"
     source_lang_label: "Deine Sprache"
     level_label: "Niveau"
+    content_lang_label: "Inhaltssprache"
+    level_none: "Kein Niveau"
+    domain_hint: "Wissensinhalte nutzen eine einzige Inhaltssprache und benötigen kein GER-Niveau."
     same_language: "Die gelernte Sprache muss sich von deiner Sprache unterscheiden."
     description_label: "Thema / Beschreibung"
     author_label: "Autorenname"
@@ -3582,3 +3585,9 @@ exercise:
   listen_first:
     label: "Erst anhören"
     aria: "Aussprache abspielen"
+  difficulty:
+    tier:
+      easy: "Leicht"
+      medium: "Mittel"
+      hard: "Schwer"
+    aria: "Schwierigkeit: {tier} ({level} von 5)"

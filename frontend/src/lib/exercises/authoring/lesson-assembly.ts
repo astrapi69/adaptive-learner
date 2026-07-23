@@ -22,6 +22,7 @@ import {
     slugify,
     validateGeneratedLesson,
 } from "../../content/analysis/analysis-to-lesson";
+import {contentDomainToStamp} from "../../content/content-domains";
 import {isExtensionType} from "./extension-edit";
 import type {LessonMeta} from "../../content/lesson/lesson-draft";
 import type {
@@ -124,6 +125,8 @@ export function buildExtensionLesson(
         });
     });
 
+    // #1716 — carry the chosen NON-language content domain onto the lesson.
+    const contentDomain = contentDomainToStamp(meta.domain);
     const lesson: ContentLesson = {
         id: slugify(meta.title) || "lesson",
         title: meta.title.trim(),
@@ -134,6 +137,7 @@ export function buildExtensionLesson(
         cards: [],
         steps,
         requires_extensions: requiredExtensionsFor(exercises),
+        ...(contentDomain ? {domain: contentDomain} : {}),
         contributed_by: meta.author.trim() || null,
         contributed_at: meta.author.trim() ? new Date().toISOString() : null,
     };

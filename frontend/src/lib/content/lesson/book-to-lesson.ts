@@ -20,6 +20,7 @@
  */
 
 import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
+import {contentDomainToStamp} from "../content-domains";
 import {findRelatedTheoryIndex} from "../../lesson/theory-link";
 import type {LessonMeta} from "./lesson-draft";
 import type {TheoryStep} from "../../ai/generation/exercise-generation-prompt";
@@ -101,6 +102,9 @@ function assembleBookLesson(
     // path passes "" so the lesson title/id track ``meta.title`` even if it
     // was edited after generation — preserving the #1743 id).
     const resolvedTitle = title.trim() || meta.title.trim();
+    // #1716 — carry the chosen NON-language content domain onto the built
+    // lesson (a book-text lesson is knowledge content when so authored).
+    const contentDomain = contentDomainToStamp(meta.domain);
     const lesson: ContentLesson = {
         id: uniqueLessonId(resolvedTitle, usedIds),
         title: resolvedTitle,
@@ -110,6 +114,7 @@ function assembleBookLesson(
         estimated_minutes: estimateMinutes(theorySteps.length, exercises.length),
         cards,
         steps,
+        ...(contentDomain ? {domain: contentDomain} : {}),
         contributed_by: meta.author.trim() || null,
         contributed_at: meta.author.trim() ? new Date().toISOString() : null,
     };
