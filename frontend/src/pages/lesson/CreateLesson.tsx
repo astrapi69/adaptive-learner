@@ -74,6 +74,7 @@ import {
 import {
     editSnapshot,
     mergeEditedLessonIntoSet,
+    withPreservedSetBook,
 } from "../../lib/content/lesson/edit/edit-session";
 import {useEditLessonSession} from "../../hooks/content/edit/useEditLessonSession";
 import {
@@ -503,11 +504,16 @@ export default function CreateLesson() {
                 // #1971 — for a multi-lesson set, replace only the edited
                 // lesson and preserve the SET-level metadata from the original
                 // entry (so editing a non-first lesson never renames the set).
+                // #1989 — also carry the set-level book block (buildUserSetInput
+                // drops it, which would wipe sets[].book on every edit-save).
                 input = mergeEditedLessonIntoSet(
-                    buildUserSetInput({meta, cards, exercises}, lesson, {
-                        setId: editContext.setId,
-                        origin: editContext.origin,
-                    }),
+                    withPreservedSetBook(
+                        buildUserSetInput({meta, cards, exercises}, lesson, {
+                            setId: editContext.setId,
+                            origin: editContext.origin,
+                        }),
+                        editContext.entry,
+                    ),
                     editContext,
                     lesson,
                 );
@@ -574,10 +580,14 @@ export default function CreateLesson() {
             });
             const existing = await listExistingUserSetIds();
             const setId = nextCopySetId(draftSetId(copyMeta), existing);
-            const input = buildUserSetInput(copyInput, lesson, {
-                setId,
-                origin: "imported",
-            });
+            // #1989 — a copy of a book lesson keeps the same book reference.
+            const input = withPreservedSetBook(
+                buildUserSetInput(copyInput, lesson, {
+                    setId,
+                    origin: "imported",
+                }),
+                editContext.entry,
+            );
             const entry = await getStorage().contentLoader.saveUserSet(input);
             setSavedLessonId(lesson.id);
             setSavedLesson(lesson);

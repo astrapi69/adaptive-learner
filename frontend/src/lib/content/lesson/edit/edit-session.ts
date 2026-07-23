@@ -147,3 +147,15 @@ export function mergeEditedLessonIntoSet(
         ),
     };
 }
+
+/** Carry the set-level ``book`` block (#769 / #1743) from the original catalog
+ *  entry onto an edit-save input (#1989). ``buildUserSetInput`` — the edit path
+ *  — has no ``book`` field, so without this a re-save persists ``book: null``
+ *  and wipes the reference. A lesson that never had a book stays without one
+ *  (the input is returned untouched; no forced empty object). */
+export function withPreservedSetBook(
+    input: SaveUserSetInput,
+    entry: ContentSetEntry | undefined,
+): SaveUserSetInput {
+    return entry?.book ? {...input, book: entry.book} : input;
+}
