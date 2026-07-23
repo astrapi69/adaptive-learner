@@ -29,6 +29,17 @@ import type {
  */
 export type SetStatus = "active" | "deferred" | "completed";
 
+/**
+ * #1707 — consumer-display visibility hint mirrored from the manifest set
+ * entry (engine ``SetVisibility``, additive in learn-content-engine 0.14.0).
+ * ``"hidden"`` asks a consumer app NOT to surface the set to learners (a
+ * conformance/reference fixture that must stay on disk for engine validation
+ * but is not learner content). A DISPLAY hint only — the engine still
+ * validates hidden sets. Absent (pre-0.14.0 content, offline-cached rows, or
+ * an API-mode response without the field) is treated as ``"visible"``.
+ */
+export type SetVisibility = "visible" | "hidden";
+
 export interface ContentSetEntry {
   source: string;
   branch: string;
@@ -71,6 +82,11 @@ export interface ContentSetEntry {
   /** Optional set-level book (#769). When present, the lesson's "Vertiefe
    *  das Thema" section auto-inserts it as the first media item. */
   book?: ContentSetBook | null;
+  /** #1707 — consumer-display visibility mirrored from the manifest set
+   *  entry. ``"hidden"`` hides a conformance/reference fixture from "Meine
+   *  Inhalte". Absent ⇒ visible (the storage layer + UI treat a missing
+   *  value as ``"visible"``). */
+  visibility?: SetVisibility;
 }
 
 /** A set's manifest-level book block surfaced to the lesson media section

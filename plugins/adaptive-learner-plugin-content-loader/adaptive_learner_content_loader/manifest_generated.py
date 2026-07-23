@@ -7,8 +7,18 @@
 
 from __future__ import annotations
 
+from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Any
+
+
+class Visibility(str, Enum):
+    """
+    #83 - consumer-display hint. ``hidden`` asks a consumer app NOT to surface the set to learners (e.g. a conformance/reference fixture that must stay on disk for engine validation but is not learner content). Additive and optional; absent means ``visible``. DISPLAY hint only: the engine and ``scripts/conformance-real.mjs`` still validate hidden sets and never exclude them from engine validation; only consumer apps filter on it.
+    """
+
+    VISIBLE = 'visible'
+    HIDDEN = 'hidden'
 
 
 class ContentSetAsset(BaseModel):
@@ -139,6 +149,10 @@ class ContentSet(BaseModel):
     version: str = Field(..., title='Version')
     """
     Semver-style version. Bumped whenever ANY lesson or asset inside the set changes; drives cache invalidation.
+    """
+    visibility: Visibility = Field(Visibility.VISIBLE, title='Visibility')
+    """
+    #83 - consumer-display hint. ``hidden`` asks a consumer app NOT to surface the set to learners (e.g. a conformance/reference fixture that must stay on disk for engine validation but is not learner content). Additive and optional; absent means ``visible``. DISPLAY hint only: the engine and ``scripts/conformance-real.mjs`` still validate hidden sets and never exclude them from engine validation; only consumer apps filter on it.
     """
 
 

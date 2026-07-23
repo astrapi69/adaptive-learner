@@ -177,6 +177,11 @@ class SetEntryResponse(BaseModel):
     # #769 — optional set-level book; the lesson media section auto-inserts
     # it as the first item. ``None`` when the set declares no book.
     book: SetBookResponse | None = None
+    # #1707 — consumer-display visibility mirrored from the manifest set entry
+    # (learn-content-engine 0.14.0). ``"hidden"`` asks the client not to
+    # surface a conformance/reference fixture; the frontend filters on it.
+    # Defaults to ``"visible"`` so pre-0.14.0 manifests stay visible.
+    visibility: str = "visible"
 
     @classmethod
     def from_entry(cls, entry: SetEntry) -> SetEntryResponse:
@@ -199,6 +204,7 @@ class SetEntryResponse(BaseModel):
             cached_version=entry.cached_version,
             update_available=entry.update_available,
             book=SetBookResponse.from_model(entry.set.book),
+            visibility=entry.set.visibility.value,
         )
 
 

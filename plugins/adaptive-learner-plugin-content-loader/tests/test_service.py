@@ -387,6 +387,41 @@ def _set_entry(source: str, set_id: str, version: str):
     )
 
 
+class TestSetEntryResponseVisibility:
+    """#1707 — the /sets wire response carries the manifest ``visibility`` so
+    the client (API mode) can hide reference/conformance fixtures from "Meine
+    Inhalte", the same way the Dexie path does."""
+
+    def test_from_entry_defaults_visibility_visible(self) -> None:
+        from adaptive_learner_content_loader.routes import SetEntryResponse
+
+        resp = SetEntryResponse.from_entry(_set_entry("astrapi69/x", "fr-a1", "1.0.0"))
+        assert resp.visibility == "visible"
+
+    def test_from_entry_carries_visibility_hidden(self) -> None:
+        from adaptive_learner_content_loader.models import ContentSet
+        from adaptive_learner_content_loader.routes import SetEntryResponse
+        from adaptive_learner_content_loader.service import SetEntry
+
+        entry = SetEntry(
+            source="astrapi69/adaptive-learner-content-test",
+            branch="main",
+            set=ContentSet(
+                id="graded-quiz-demo-from-de",
+                title="Graded Quiz Demo",
+                language="fr",
+                level="A1",
+                version="1.0.0",
+                lesson_count=1,
+                visibility="hidden",
+            ),
+            cached_version=None,
+            update_available=False,
+        )
+        resp = SetEntryResponse.from_entry(entry)
+        assert resp.visibility == "hidden"
+
+
 class TestDedupeContentEntries:
     def test_compare_versions(self) -> None:
         from adaptive_learner_content_loader.service import _compare_versions

@@ -27,7 +27,7 @@
 
 import { parseGitHubRepoUrl } from "./content-repos";
 import { buildFileRequest, fetchWithRetry } from "./github-fetch";
-import { isHiddenSet } from "./hidden-sets";
+import type { SetVisibility } from "../../../storage/types";
 
 /** The conventional index filename at a content repo's root. */
 export const SEARCH_INDEX_FILE = "search-index.json";
@@ -71,6 +71,11 @@ export interface SearchableSet {
   repo_url: string;
   /** Display name for the repo (a curated title, else ``owner/repo``). */
   repo_name: string;
+  /** #1707 — consumer-display visibility advertised by the index entry.
+   *  ``"hidden"`` marks a conformance/reference fixture; such entries are
+   *  dropped at parse time so they never enter the catalogue. Absent ⇒
+   *  visible. */
+  visibility?: SetVisibility;
 }
 
 /** A content repo to load a search index from. */
@@ -143,9 +148,14 @@ function normalizeSet(
 ): SearchableSet | null {
   const id = asString(raw.id);
   if (!id) return null;
-  // #1702 — drop hidden reference/conformance fixtures at parse time, so they
-  // never enter the Discover catalogue, its facets/counts, or the written cache.
-  if (isHiddenSet(repoSource, id)) return null;
+  // #1707 — the index entry declares its own ``visibility`` (engine-normalised
+  // to "visible"/"hidden"). Drop a set the repo marks ``hidden`` (a
+  // conformance/reference fixture) at parse time, so it never enters the
+  // Discover catalogue, its facets/counts, or the written cache. Absent / any
+  // other value ⇒ visible. Replaces the app-side ``hidden-sets.ts`` blocklist.
+  const visibility: SetVisibility =
+    asString(raw.visibility) === "hidden" ? "hidden" : "visible";
+  if (visibility === "hidden") return null;
   return {
     id,
     name: asString(raw.name) || id,
@@ -165,6 +175,7 @@ function normalizeSet(
     updated_at: typeof raw.updated_at === "string" ? raw.updated_at : null,
     repo_url: repoSource,
     repo_name: repoName,
+    visibility,
   };
 }
 

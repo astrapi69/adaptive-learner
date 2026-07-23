@@ -13,7 +13,6 @@
  */
 
 import { isOfficialSource } from "./content-repos";
-import { isHiddenSet } from "./hidden-sets";
 import { normalizeSearchText } from "../browse/content-search";
 import type { SearchableSet } from "./search-index-loader";
 
@@ -152,9 +151,11 @@ export function queryDiscoverSets(
   const nq = normalizeSearchText(filters.query);
   const filtered = sets.filter(
     (set) =>
-      // #1702 — display-layer guard so a pre-existing stale cache carrying a
-      // hidden fixture is filtered on render too.
-      !isHiddenSet(set.repo_url, set.id) &&
+      // #1707 — render-time visibility gate. ``normalizeSet`` already drops
+      // ``visibility: "hidden"`` entries at parse (keeping facets/cache clean),
+      // so this guards any ``SearchableSet`` reaching the query by another path
+      // (a stale/injected cache entry). Absent ⇒ visible.
+      set.visibility !== "hidden" &&
       matchesQuery(set, nq) &&
       passesFilters(set, filters),
   );
