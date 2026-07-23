@@ -2822,6 +2822,12 @@
     "edit_title": "Dersi düzenle",
     "edit_load_error": "Bu ders düzenlemek için yüklenemedi.",
     "edit_note": "Mevcut bir dersi düzenliyorsunuz. Kaydetmek üzerine yazar; orijinali korumak için 'Kopya olarak kaydet' seçeneğini kullanın.",
+    "edit": {
+      "lesson_picker_label": "Bu setteki ders ({n})",
+      "switch_confirm_title": "Ders değiştirilsin mi?",
+      "switch_confirm_body": "Geçerli derste kaydedilmemiş değişiklikleriniz kaybolacak.",
+      "switch_discard": "Vazgeç ve değiştir"
+    },
     "prompts_migrated": "{n} alıştırma yönergesi otomatik olarak dilinize çevrildi.",
     "prompts_migrated_dismiss": "Kapat",
     "step_pending": "Bu adım bir sonraki güncellemede geliyor.",

@@ -26,7 +26,9 @@ import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
 import WizardSteps from "../../components/create-lesson/WizardSteps";
-import EditLoadState from "../../components/create-lesson/EditLoadState";
+import EditLoadState, {
+    LessonPicker,
+} from "../../components/create-lesson/EditLoadState";
 import {MIN_CARDS} from "../../components/create-lesson/CardEditor";
 import {
     hasIncompleteExercise,
@@ -40,7 +42,6 @@ import {
     type ExerciseGenConfig,
 } from "../../lib/exercises";
 import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exercise-prompts";
-import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/legacy-prompt-migration";
 import {buildExtensionUserSetInput} from "../../lib/content/lesson/user-set-input";
 import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
 import ExerciseEditSteps from "../../components/create-lesson/ExerciseEditSteps";
@@ -66,10 +67,14 @@ import {
     checkDraft,
     draftCardsToGeneratorCards,
     draftSetId,
-    lessonToDraftInput,
     preservedTheorySteps,
     type DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
+import {
+    editSnapshot,
+    mergeEditedLessonIntoSet,
+} from "../../lib/content/lesson/edit/edit-session";
+import {useEditLessonSession} from "../../hooks/content/edit/useEditLessonSession";
 import {
     buildBookLessons,
     buildBookLessonsUserSetInput,
@@ -92,28 +97,8 @@ import {
     USER_GENERATED_SOURCE,
     type ContentLesson,
     type ContentLessonExercise,
-    type ContentLessonStep,
     type ContentSetEntry,
-    type UserLessonOrigin,
 } from "../../storage/types";
-
-/** Edit-mode context (#1740): the existing set/lesson the wizard was
- *  opened to edit. Held so a save overwrites the SAME set + lesson file
- *  (preserving filename-keyed progress) and preserves the lesson's
- *  authored theory + any sibling lessons the wizard doesn't touch. */
-interface EditContext {
-    source: string;
-    setId: string;
-    origin: UserLessonOrigin;
-    /** All lessons in the set (the edited one + untouched siblings). */
-    lessons: ContentLesson[];
-    /** Index (in ``lessons``) of the lesson being edited. */
-    editIndex: number;
-    /** The edited lesson's original steps (for theory preservation). */
-    originalSteps: ContentLessonStep[];
-    /** The edited lesson's id (== its ``lessons/{id}.json`` filename). */
-    lessonId: string;
-}
 
 const TOTAL_STEPS = 4;
 /** #1743 — the book-text path skips the card + deterministic-exercise
@@ -169,18 +154,11 @@ export default function CreateLesson() {
     // #1740 — /create-lesson/edit/:source/:setId opens the wizard
     // pre-filled to edit an existing own lesson.
     const editMode = Boolean(params.source && params.setId);
-    const [editContext, setEditContext] = useState<EditContext | null>(null);
     // #1967 — editing a cardless (theory/exercise) lesson, e.g. one authored
     // via the book-text path (#1743): the wizard skips the vocabulary-card step
-    // and opens straight on the generated exercises. Set on edit-load once the
-    // reconstructed draft is known to carry no cards.
+    // and opens straight on the generated exercises. Set by the edit session
+    // once the reconstructed draft is known to carry no cards.
     const [cardlessEdit, setCardlessEdit] = useState(false);
-    const [editLoading, setEditLoading] = useState(editMode);
-    const [editError, setEditError] = useState<string | null>(null);
-    // #1860 — how many legacy English prompts were migrated to the UI
-    // language on edit-load (0 = notice hidden). State only, persisted
-    // only if the user saves.
-    const [promptsMigrated, setPromptsMigrated] = useState(0);
 
     const [step, setStep] = useState(1);
     const [meta, setMeta] = useState<LessonMeta>(() =>
@@ -248,72 +226,37 @@ export default function CreateLesson() {
         if (draftHasContent(draft)) setPendingDraft(draft);
     }, [editMode]);
 
-    // #1740 — edit mode: load the existing set, pre-fill the wizard.
-    useEffect(() => {
-        if (!editMode) return;
-        let cancelled = false;
-        const source = decodeURIComponent(params.source as string);
-        const setId = decodeURIComponent(params.setId as string);
-        (async () => {
-            try {
-                const storage = getStorage();
-                const [listing, setsList] = await Promise.all([
-                    storage.contentLoader.listLessons(source, setId),
-                    storage.contentLoader.listSets(),
-                ]);
-                if (listing.lessons.length === 0) {
-                    throw new Error("This set has no lessons to edit.");
-                }
-                const lessons = await Promise.all(
-                    listing.lessons.map((f) =>
-                        storage.contentLoader.getLesson(source, setId, f),
-                    ),
-                );
-                const entry = setsList.sets.find(
-                    (s) => s.source === source && s.id === setId,
-                );
-                const editIndex = 0;
-                const editLesson = lessons[editIndex];
-                const prefill = lessonToDraftInput(editLesson, entry);
-                if (cancelled) return;
-                // #1860 — opportunistically migrate legacy hardcoded-English
-                // prompts (exact-match only) to the UI language. Edit-state
-                // only; persisted only if the user saves.
-                const {exercises: migratedExercises, migratedCount} =
-                    migrateLegacyExercisePrompts(prefill.exercises, t);
-                setMeta(prefill.meta);
-                setCards(prefill.cards);
-                setExercises(migratedExercises);
-                // #1967 — a lesson with no vocabulary cards (a book-text /
-                // theory lesson) edits its exercises directly; the card step
-                // and its MIN_CARDS gate would otherwise trap the user.
-                setCardlessEdit(prefill.cards.length === 0);
-                setPromptsMigrated(migratedCount);
-                setEditContext({
-                    source,
-                    setId,
-                    origin: (entry?.domain as UserLessonOrigin) ?? "imported",
-                    lessons,
-                    editIndex,
-                    originalSteps: editLesson.steps,
-                    lessonId: editLesson.id,
-                });
-                setEditLoading(false);
-            } catch (err) {
-                if (cancelled) return;
-                setEditError(err instanceof Error ? err.message : String(err));
-                setEditLoading(false);
-            }
-        })();
-        return () => {
-            cancelled = true;
-        };
-        // `t` drives the #1860 migration target language but is intentionally
-        // NOT a dep: this is a load-once effect, and re-running on a language
-        // change would reload from storage and clobber unsaved edits. The
-        // migration uses whatever language is active at load time.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [editMode, params.source, params.setId]);
+    // #1971 — live snapshot of the editable draft, read by the edit session to
+    // detect unsaved edits before switching lessons in a multi-lesson set.
+    const draftSnapshotRef = useRef<string>("");
+    draftSnapshotRef.current = editSnapshot(meta, cards, exercises);
+
+    // #1740 / #1971 — edit-mode load + multi-lesson switch live in a hook so
+    // this page stays under the cohesion + complexity gates.
+    const {
+        editContext,
+        editLoading,
+        editError,
+        promptsMigrated,
+        dismissPromptsNotice,
+        pendingLessonSwitch,
+        requestLessonSwitch,
+        confirmLessonSwitch,
+        cancelLessonSwitch,
+    } = useEditLessonSession({
+        editMode,
+        source: params.source,
+        setId: params.setId,
+        t,
+        draftSnapshotRef,
+        setMeta,
+        setCards,
+        setExercises,
+        setCardlessEdit,
+        setStep,
+        setExerciseError,
+        setCardError,
+    });
 
     // Phase 65B — autosave the draft every 10s while editing. Skipped
     // while the restore prompt is open (we haven't applied a choice yet)
@@ -552,18 +495,17 @@ export default function CreateLesson() {
                         ),
                     },
                 );
-                input = buildUserSetInput({meta, cards, exercises}, lesson, {
-                    setId: editContext.setId,
-                    origin: editContext.origin,
-                });
-                if (editContext.lessons.length > 1) {
-                    input = {
-                        ...input,
-                        lessons: editContext.lessons.map((l, i) =>
-                            i === editContext.editIndex ? lesson : l,
-                        ),
-                    };
-                }
+                // #1971 — for a multi-lesson set, replace only the edited
+                // lesson and preserve the SET-level metadata from the original
+                // entry (so editing a non-first lesson never renames the set).
+                input = mergeEditedLessonIntoSet(
+                    buildUserSetInput({meta, cards, exercises}, lesson, {
+                        setId: editContext.setId,
+                        origin: editContext.origin,
+                    }),
+                    editContext,
+                    lesson,
+                );
             } else if (bookMode) {
                 // #1949 — build one lesson per generated entry (single = 1,
                 // batch = N) into a single set.
@@ -790,7 +732,16 @@ export default function CreateLesson() {
 
             <PromptMigrationNotice
                 count={promptsMigrated}
-                onDismiss={() => setPromptsMigrated(0)}
+                onDismiss={dismissPromptsNotice}
+                t={t}
+            />
+
+            <LessonPicker
+                editContext={editContext}
+                loading={editLoading}
+                error={Boolean(editError)}
+                saved={Boolean(savedEntry)}
+                onSelect={requestLessonSwitch}
                 t={t}
             />
 
@@ -927,10 +878,13 @@ export default function CreateLesson() {
             <CreateLessonDialogs
                 confirmCancel={confirmCancel}
                 pendingDraft={pendingDraft}
+                pendingLessonSwitch={pendingLessonSwitch}
                 onKeepEditing={() => setConfirmCancel(false)}
                 onDiscard={discard}
                 onStartFresh={startFresh}
                 onContinueDraft={applyDraft}
+                onConfirmLessonSwitch={confirmLessonSwitch}
+                onCancelLessonSwitch={cancelLessonSwitch}
                 t={t}
             />
         </PageContainer>
