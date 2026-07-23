@@ -6,15 +6,13 @@
  * Fully presentational and app-agnostic: no i18n, no icons, no storage. Bring
  * your own content.
  *
- * NOTE (#1629, additive step — Half A): this wrapper deliberately emits the
- * legacy ``.tile`` class so it renders IDENTICALLY to the hand-written
- * ``<div className="tile">`` it replaces — the legacy rule in
- * ``styles/legacy/06-dashboard.css`` still styles it (0-diff by construction).
- * The follow-up (Half B) moves the defaults into this component as
- * token-backed Tailwind utilities and DELETES the legacy rule — a single
- * contained, visually-reviewed change here instead of one per consumer. That
- * step touches ``styles/legacy`` (visual-critical) and must run on a machine
- * that can refresh the visual-regression baselines.
+ * NOTE (#1629, Half B): the defaults now live HERE as token-backed Tailwind
+ * utilities — the byte-for-byte equivalent of the deleted legacy `.tile` rule
+ * (`background: var(--surface-2); border-radius: var(--radius-md); padding:
+ * var(--space-4); display: flex; align-items: center; justify-content: center;
+ * min-height: 120px`). Extra utilities from `className` are merged AFTER via
+ * `cn()`, so a reflow override (e.g. `flex flex-col items-start`) wins exactly
+ * as it did when it beat the legacy rule from the utilities layer.
  *
  * @example
  * <Tile data-testid="tool-recs-empty">
@@ -32,13 +30,16 @@ import type { HTMLAttributes, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
+const TILE_BASE =
+  "flex min-h-[120px] items-center justify-center rounded-[var(--radius-md)] bg-[var(--surface-2)] p-[var(--space-4)]";
+
 export interface TileProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
 export default function Tile({ children, className, ...rest }: TileProps) {
   return (
-    <div className={cn("tile", className)} {...rest}>
+    <div className={cn(TILE_BASE, className)} {...rest}>
       {children}
     </div>
   );

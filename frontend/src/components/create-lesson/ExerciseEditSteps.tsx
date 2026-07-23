@@ -16,6 +16,7 @@
 
 import ExerciseGenerator from "./ExerciseGenerator";
 import ReviewStep from "./ReviewStep";
+import FormHint from "../../shared/forms/FormHint";
 import type {ExerciseGenConfig} from "../../lib/exercises";
 import type {DraftValidationChecks} from "../../lib/content/lesson/draft-to-lesson";
 import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
@@ -87,8 +88,8 @@ export default function ExerciseEditSteps({
                         hideGenerator
                     />
                     {exerciseError && (
-                        <p
-                            className="form-hint form-hint-warning"
+                        <FormHint
+                            variant="warning"
                             data-testid="create-lesson-exercise-error"
                             role="alert"
                         >
@@ -104,7 +105,7 @@ export default function ExerciseEditSteps({
                                       "create_lesson.exercises.incomplete_to_advance",
                                       "Complete or remove the incomplete exercises to continue.",
                                   )}
-                        </p>
+                        </FormHint>
                     )}
                 </>
             )}

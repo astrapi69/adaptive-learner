@@ -194,4 +194,12 @@
 # uneinheitliche Checkbox-Groesse aller Settings-Toggle-Rows an der
 # Wurzel (statt einer Size-Utility 13x dupliziert). Kein neuer
 # Komponenten-Style; Escape-Hatch fuer eine geteilte Primitive-Reparatur.
-7654
+# 2026-07-23: 7654 -> 7639 (EXP-044 Option C, #1629 Half B): -15 Zeilen.
+# Die god-classes `.form-hint` (04-onboarding.css, -5 inkl. Leerzeile) und
+# `.tile` (06-dashboard.css, -10 inkl. Leerzeile) geloescht - ihre Defaults
+# leben jetzt in den shared-Components FormHint.tsx / Tile.tsx als
+# token-backed Tailwind-Utilities (`text-fg-muted text-[0.85rem]` bzw.
+# `flex min-h-[120px] items-center justify-center rounded-[var(--radius-md)]
+# bg-[var(--surface-2)] p-[var(--space-4)]`). 0-diff: die Utilities rendern
+# identisch zur geloeschten Regel. Kein neues CSS.
+7639

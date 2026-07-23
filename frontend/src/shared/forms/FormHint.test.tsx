@@ -1,10 +1,13 @@
 /**
- * Tests for the shared FormHint helper-line component (#1629, additive Half A).
+ * Tests for the shared FormHint helper-line component (#1629, Half B).
  *
- * Pins the 0-diff-by-construction contract for every form the migrated
- * consumers used: `<p>`/`<span>`, the `warning` modifier, an extra utility
- * class merged AFTER, and attribute passthrough — so it renders identically
- * to the `<p className="form-hint …">` it replaces.
+ * Pins the token-backed contract: the defaults now live in the component as
+ * Tailwind utilities (`text-fg-muted text-[0.85rem]` — the byte-for-byte
+ * equivalent of the deleted legacy `.form-hint` rule), an extra utility is
+ * merged AFTER (so a per-instance override wins), and attributes pass through.
+ * The `warning` variant is currently visually identical to the default (the
+ * `form-hint-warning` modifier never had a CSS rule); the prop is the seam for
+ * a future warning-color pass.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -14,11 +17,11 @@ import { describe, expect, it } from "vitest";
 import FormHint from "./FormHint";
 
 describe("FormHint (#1629)", () => {
-  it("renders a <p class='form-hint'> by default", () => {
+  it("renders a <p> with the token-backed default utilities", () => {
     render(<FormHint data-testid="h">hint</FormHint>);
     const el = screen.getByTestId("h");
     expect(el.tagName).toBe("P");
-    expect(el.className).toBe("form-hint");
+    expect(el.className).toBe("text-fg-muted text-[0.85rem]");
     expect(el).toHaveTextContent("hint");
   });
 
@@ -30,36 +33,37 @@ describe("FormHint (#1629)", () => {
     );
     const el = screen.getByTestId("h");
     expect(el.tagName).toBe("SPAN");
-    expect(el.className).toBe("form-hint");
+    expect(el.className).toBe("text-fg-muted text-[0.85rem]");
   });
 
-  it("adds form-hint-warning for the warning variant", () => {
+  it("renders the warning variant identically to the default (dead modifier)", () => {
     render(
       <FormHint variant="warning" data-testid="h">
         x
       </FormHint>,
     );
-    expect(screen.getByTestId("h").className).toBe("form-hint form-hint-warning");
+    expect(screen.getByTestId("h").className).toBe("text-fg-muted text-[0.85rem]");
   });
 
-  it("merges an extra utility class AFTER form-hint", () => {
+  it("merges an extra utility class AFTER the defaults", () => {
     render(
       <FormHint className="mb-2" data-testid="h">
         x
       </FormHint>,
     );
-    expect(screen.getByTestId("h").className).toBe("form-hint mb-2");
+    expect(screen.getByTestId("h").className).toBe(
+      "text-fg-muted text-[0.85rem] mb-2",
+    );
   });
 
-  it("combines warning + an extra class in the original order", () => {
+  it("lets a per-instance color override win (twMerge last-wins)", () => {
     render(
-      <FormHint variant="warning" className="text-warning" data-testid="h">
+      <FormHint className="text-warning" data-testid="h">
         x
       </FormHint>,
     );
-    expect(screen.getByTestId("h").className).toBe(
-      "form-hint form-hint-warning text-warning",
-    );
+    // twMerge drops the conflicting `text-fg-muted`, keeps the size + override.
+    expect(screen.getByTestId("h").className).toBe("text-[0.85rem] text-warning");
   });
 
   it("passes through arbitrary attributes", () => {
