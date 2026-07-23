@@ -193,10 +193,13 @@ export async function labelsFor(language: string): Promise<Labels> {
     // chunk fetched on demand, shared with ``dexieStorage.i18n.get``.
     // Eager loading pulled all 8 catalogs into the consuming chunk —
     // see docs/audits/performance-audit-2026-06-03.md F-1.
+    // Stryker disable all: static arguments required by Vite's import.meta.glob
+    // macro; mutating any part breaks the vite:import-glob parser (#1956).
     const catalogs = import.meta.glob<Record<string, unknown>>(
         "../../data/i18n/*.json",
         {import: "default"},
     );
+    // Stryker restore all
     const loader =
         catalogs[`../../data/i18n/${language}.json`] ??
         catalogs["../../data/i18n/en.json"];

@@ -33,18 +33,24 @@ type Bundle = {
 // ENGLISH eager: the lingua-franca fallback is always needed, so it is
 // inlined (~50 KB) rather than fetched. Keeps the getters synchronous
 // for every key in every language (EN fallback) from the first render.
+// Stryker disable all: Vite's import.meta.glob macro is parsed statically by
+// the vite:import-glob plugin and requires literal arguments; mutating any
+// part of the call breaks the parser (Rolldown PARSE_ERROR). See issue #1956.
 const EN_BUNDLES = import.meta.glob<Bundle>("../../data/help/*.en.json", {
     eager: true,
     import: "default",
 });
+// Stryker restore all
 
 // Every OTHER language lazy: one chunk per ``{category}.{lang}.json``,
 // fetched on demand by ``loadGlossaryLanguage``. The negative pattern
 // excludes EN so its files are not also emitted as unused lazy chunks.
+// Stryker disable all: static arguments required by import.meta.glob (#1956).
 const LAZY_BUNDLES = import.meta.glob<Bundle>(
     ["../../data/help/*.json", "!../../data/help/*.en.json"],
     {import: "default"},
 );
+// Stryker restore all
 
 const SUPPORTED_LANGS = new Set([
     "en",

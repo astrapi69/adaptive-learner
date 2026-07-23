@@ -2,6 +2,8 @@
 # Stryker mutation testing
 reports/
 .stryker-tmp/
+# Setup shim written into the project root by the vitest-runner in inPlace mode
+stryker-setup-*.js
 
 # Bundle analyzer output (#255, ANALYZE=true npm run build)
 stats.html

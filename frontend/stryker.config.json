@@ -5,6 +5,7 @@
     "configFile": "vite.config.ts"
   },
   "coverageAnalysis": "perTest",
+  "inPlace": true,
   "mutate": [
     "src/lib/**/*.{ts,tsx}",
     "src/hooks/**/*.ts",
