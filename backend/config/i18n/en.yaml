@@ -2668,6 +2668,7 @@ create_lesson:
     count: "{n} exercises"
     min_hint: "{n} exercises needed"
     min_to_advance: "Generate at least {n} exercises to continue."
+    min_one_to_advance: "Add at least one exercise to continue."
     drag: "Drag to reorder"
     delete: "Delete exercise"
     type:

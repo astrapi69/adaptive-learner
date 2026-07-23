@@ -259,6 +259,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       aktiv; nach Speichern bleiben Theorie- und Uebungsschritte erhalten.
       Regression: eine normale Karten-Lektion (Vokabel-Liste) UND eine
       Extension-Lektion oeffnen weiterhin korrekt zum Bearbeiten
+- [ ] **Kleine Buchtext-Lektion (< 5 Uebungen) bearbeiten (#1970):** eine
+      Buchtext-Lektion, bei der der Generator nur wenige Uebungen erzeugt
+      hat (z. B. 4, weil Wort-Kacheln/Bildauswahl/Multiple-Choice mangels
+      Beispielsaetzen/Bildern uebersprungen wurden), lokal speichern → ueber
+      "Lektion bearbeiten" oeffnen → ALLE gespeicherten Uebungen werden
+      angezeigt; "Weiter" ist NICHT durch "5 Uebungen noetig" blockiert und
+      "Aenderungen speichern" ist aktiv (die Mindestanzahl gilt nur fuer die
+      Neuerstellung, nicht fuer das Bearbeiten einer bereits gueltigen
+      Lektion); der irrefuehrende Hinweis "Wort-Kacheln/Bildauswahl/
+      Multiple-Choice ergaben keine Uebungen" + der Generieren-Bereich
+      erscheinen im Bearbeiten NICHT (keine Karten zum Generieren). WICHTIG:
+      Bearbeiten-Oeffnen aendert die gespeicherte Datei NICHT (kein Auto-Save);
+      es gehen keine Uebungen verloren
 - [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
       VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
       "Match each word with its translation.") ueber "Lektion bearbeiten"

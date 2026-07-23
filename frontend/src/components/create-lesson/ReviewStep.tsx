@@ -29,6 +29,14 @@ const CHECK_ROWS: Array<
     ["schemaValid", "Valid lesson structure"],
 ];
 
+/** The create-time count minimums — relaxed when editing an existing lesson
+ *  (#1970), which is already-valid at whatever size it was saved. */
+const COUNT_CHECK_KEYS: ReadonlyArray<keyof DraftValidationChecks> = [
+    "enoughCards",
+    "enoughExercises",
+    "enoughTypes",
+];
+
 interface ReviewStepProps {
     meta: LessonMeta;
     cards: LessonCardDraft[];
@@ -65,11 +73,15 @@ export default function ReviewStep({
     onSaveCopy,
     t,
 }: ReviewStepProps) {
-    // #1967 — a cardless lesson drops the card requirement from both the
-    // checklist rows and the save gate; every other check still applies.
-    const rows = cardless
-        ? CHECK_ROWS.filter(([key]) => key !== "enoughCards")
-        : CHECK_ROWS;
+    // The create-time count minimums (#1967 cards; #1970 exercises + types)
+    // are guidance for a NEW lesson, not requirements for re-saving an existing
+    // one. Editing drops all three; a cardless CREATE drops only the card row.
+    // Title / language pair / schema validity always apply.
+    const rows = CHECK_ROWS.filter(([key]) => {
+        if (editMode && COUNT_CHECK_KEYS.includes(key)) return false;
+        if (cardless && key === "enoughCards") return false;
+        return true;
+    });
     const canSave =
         rows.every(([key]) => draftChecks[key]) && !saving;
     return (

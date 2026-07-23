@@ -2662,6 +2662,7 @@ create_lesson:
     count: "{n} Übungen"
     min_hint: "{n} Übungen nötig"
     min_to_advance: "Erstelle mindestens {n} Übungen, um fortzufahren."
+    min_one_to_advance: "Füge mindestens eine Übung hinzu, um fortzufahren."
     drag: "Zum Umsortieren ziehen"
     delete: "Übung löschen"
     type:

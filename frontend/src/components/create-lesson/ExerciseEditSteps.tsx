@@ -14,7 +14,7 @@
  * authored theory (preserved by the page on save) survives the edit.
  */
 
-import ExerciseGenerator, {MIN_EXERCISES} from "./ExerciseGenerator";
+import ExerciseGenerator from "./ExerciseGenerator";
 import ReviewStep from "./ReviewStep";
 import type {ExerciseGenConfig} from "../../lib/exercises";
 import type {DraftValidationChecks} from "../../lib/content/lesson/draft-to-lesson";
@@ -82,6 +82,9 @@ export default function ExerciseEditSteps({
                         onDelete={onDeleteExercise}
                         onUpdate={onUpdateExercise}
                         onAdd={onAddExercise}
+                        // #1970 — no cards to generate from in the cardless edit
+                        // flow: hide the generate-config + minimum/missing hints.
+                        hideGenerator
                     />
                     {exerciseError && (
                         <p
@@ -89,11 +92,14 @@ export default function ExerciseEditSteps({
                             data-testid="create-lesson-exercise-error"
                             role="alert"
                         >
-                            {exercises.length < MIN_EXERCISES
+                            {/* #1970 — an existing lesson only needs >= 1
+                                exercise (the create-time minimum is relaxed on
+                                edit); otherwise the block is an incomplete one. */}
+                            {exercises.length < 1
                                 ? t(
-                                      "create_lesson.exercises.min_to_advance",
-                                      "Generate at least {n} exercises to continue.",
-                                  ).replace("{n}", String(MIN_EXERCISES))
+                                      "create_lesson.exercises.min_one_to_advance",
+                                      "Add at least one exercise to continue.",
+                                  )
                                 : t(
                                       "create_lesson.exercises.incomplete_to_advance",
                                       "Complete or remove the incomplete exercises to continue.",

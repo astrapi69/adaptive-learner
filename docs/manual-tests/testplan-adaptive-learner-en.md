@@ -255,6 +255,17 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       enabled; after saving, theory + exercise steps are preserved.
       Regression: a normal card lesson (Vocabulary list) AND an extension
       lesson still open correctly for editing
+- [ ] **Edit a small book-text lesson (< 5 exercises) (#1970):** a book-text
+      lesson whose generator produced only a few exercises (e.g. 4, because
+      word-tiles/picture-choice/multiple-choice were skipped for lack of
+      example sentences/images), Save locally → reopen via "Edit lesson" →
+      ALL saved exercises are shown; "Next" is NOT blocked by "5 exercises
+      needed" and "Save changes" is enabled (the minimum count is a
+      create-time requirement, never re-imposed when editing an already-valid
+      lesson); the misleading "word-tiles/picture-choice/multiple-choice
+      produced no exercises" hint + the generate config do NOT appear in edit
+      (no cards to generate from). IMPORTANT: opening Edit does NOT change the
+      stored file (no auto-save); no exercises are lost
 - [ ] **Migrate legacy English prompts on edit (#1860):** open a
       pre-#1855 legacy lesson (exercise instructions hardcoded in English,
       e.g. "Match each word with its translation.") via "Edit a lesson" →
