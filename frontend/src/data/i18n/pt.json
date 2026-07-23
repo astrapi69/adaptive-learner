@@ -2905,6 +2905,7 @@
       "count": "{n} exercícios",
       "min_hint": "{n} exercícios necessários",
       "min_to_advance": "Gere pelo menos {n} exercícios para continuar.",
+      "min_one_to_advance": "Adicione pelo menos um exercício para continuar.",
       "drag": "Arraste para reordenar",
       "delete": "Eliminar exercício",
       "type": {

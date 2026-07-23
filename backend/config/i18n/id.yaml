@@ -2668,6 +2668,7 @@ create_lesson:
     count: "{n} latihan"
     min_hint: "{n} latihan diperlukan"
     min_to_advance: "Buat setidaknya {n} latihan untuk melanjutkan."
+    min_one_to_advance: "Tambahkan setidaknya satu latihan untuk melanjutkan."
     drag: "Seret untuk menyusun ulang"
     delete: "Hapus latihan"
     type:
