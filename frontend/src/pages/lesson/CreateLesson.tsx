@@ -28,12 +28,13 @@ import MetadataStep from "../../components/create-lesson/MetadataStep";
 import WizardSteps from "../../components/create-lesson/WizardSteps";
 import EditLoadState from "../../components/create-lesson/EditLoadState";
 import {MIN_CARDS} from "../../components/create-lesson/CardEditor";
-import {MIN_EXERCISES} from "../../components/create-lesson/ExerciseGenerator";
+import {
+    hasIncompleteExercise,
+    minExercisesToAdvance,
+} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
-    isExtensionType,
-    validateExerciseEdit,
     validateExtensionExercise,
     buildExtensionLesson,
     type ExerciseGenConfig,
@@ -390,17 +391,14 @@ export default function CreateLesson() {
             return;
         }
         if (cardlessEdit) {
-            // #1967 — cardless edit flow: step 2 is the exercise editor, gated
-            // exactly like the card flow's step 3 (enough + all complete), then
-            // Review. No card step in between.
+            // #1967 — cardless edit flow: step 2 is the exercise editor, then
+            // Review. No card step in between. #1970 — cardlessEdit is edit-only,
+            // so the count floor is 1, not the create-time minimum; a
+            // half-filled exercise still blocks.
             if (step === 2) {
-                const incomplete = (ex: ContentLessonExercise): boolean =>
-                    isExtensionType(ex.type)
-                        ? !validateExtensionExercise(ex).valid
-                        : !validateExerciseEdit(ex).valid;
                 if (
-                    exercises.length < MIN_EXERCISES ||
-                    exercises.some(incomplete)
+                    exercises.length < minExercisesToAdvance(true) ||
+                    hasIncompleteExercise(exercises)
                 ) {
                     setExerciseError(true);
                     return;
@@ -411,25 +409,21 @@ export default function CreateLesson() {
             return;
         }
         if (step === 2) {
-            if (cards.length < MIN_CARDS) {
+            // #1970 — the card-count minimum is a create-time requirement;
+            // editing an existing lesson never re-imposes it.
+            if (!editMode && cards.length < MIN_CARDS) {
                 setCardError(true);
                 return;
             }
             setCardError(false);
         }
         if (step === 3) {
-            // Too few, OR any exercise (generated or manually added) still
-            // incomplete — reuse the same per-type validator as the inline
-            // editor so a half-filled manual exercise can't slip into step 4.
-            // A manually-added extension exercise (dictation, #1895) validates
-            // through the extension payload validator, not the core one.
-            const incomplete = (ex: ContentLessonExercise): boolean =>
-                isExtensionType(ex.type)
-                    ? !validateExtensionExercise(ex).valid
-                    : !validateExerciseEdit(ex).valid;
+            // Too few (create-time only, #1970), OR any exercise still
+            // incomplete — the completeness guard applies in both modes so a
+            // half-filled manual exercise can't slip into step 4.
             if (
-                exercises.length < MIN_EXERCISES ||
-                exercises.some(incomplete)
+                exercises.length < minExercisesToAdvance(editMode) ||
+                hasIncompleteExercise(exercises)
             ) {
                 setExerciseError(true);
                 return;

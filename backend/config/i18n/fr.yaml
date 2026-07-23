@@ -2660,6 +2660,7 @@ create_lesson:
     count: "{n} exercices"
     min_hint: "{n} exercices nécessaires"
     min_to_advance: "Génère au moins {n} exercices pour continuer."
+    min_one_to_advance: "Ajoutez au moins un exercice pour continuer."
     drag: "Glisser pour réorganiser"
     delete: "Supprimer l'exercice"
     type:
