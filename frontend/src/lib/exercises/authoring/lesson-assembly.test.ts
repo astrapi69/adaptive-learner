@@ -26,6 +26,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "Practise categorising training signals.",
     author: "Aster",
+    domain: "language",
 };
 
 const CAT: ContentLessonExercise = {

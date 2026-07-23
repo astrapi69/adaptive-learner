@@ -6,6 +6,8 @@
  * on successful save or explicit discard.
  */
 
+import {isKnownContentDomain} from "../content-domains";
+
 export const LESSON_DRAFT_KEY = "adaptive-learner.lesson-draft";
 
 /** Step-1 metadata. Lives here (not in the page component) so the
@@ -19,6 +21,13 @@ export interface LessonMeta {
     level: string;
     description: string;
     author: string;
+    /** Content domain (#1716). ``"language"`` (default) authors a
+     *  source→target language lesson; any {@link KNOWN_CONTENT_DOMAINS}
+     *  value authors knowledge content — a single content language
+     *  (source == target) with an optional level-less shape. Threaded into
+     *  the built lesson's ``domain`` field by the draft/book/extension
+     *  builders. */
+    domain: string;
 }
 
 export interface LessonCardDraft {
@@ -47,6 +56,46 @@ export interface LessonDraft {
     meta: LessonMeta;
     cards: LessonCardDraft[];
     updatedAt: string;
+}
+
+/**
+ * Apply a single Step-1 field edit to the lesson metadata, keeping the
+ * language pair + level coherent with the content domain (#1716).
+ *
+ * A NON-language domain authors knowledge content: a single content
+ * language (source == target, which the validators allow) with an optional
+ * level-less shape. So:
+ *  - switching INTO a knowledge domain collapses the pair (source := target)
+ *    and clears the level to the level-less shape;
+ *  - switching back to the language domain restores a CEFR default when the
+ *    level was left empty;
+ *  - editing either language while a knowledge domain is active mirrors the
+ *    edit across the pair so the single content language stays in sync.
+ *
+ * Pure: returns a new object, never mutates ``meta``.
+ */
+export function updateMetaField(
+    meta: LessonMeta,
+    key: keyof LessonMeta,
+    value: string,
+): LessonMeta {
+    const next: LessonMeta = {...meta, [key]: value};
+    const knowledge = isKnownContentDomain(next.domain);
+    if (key === "domain") {
+        if (knowledge) {
+            next.sourceLanguage = next.targetLanguage;
+            next.level = "";
+        } else if (meta.level === "") {
+            next.level = "A1";
+        }
+    } else if (
+        knowledge &&
+        (key === "targetLanguage" || key === "sourceLanguage")
+    ) {
+        next.sourceLanguage = value;
+        next.targetLanguage = value;
+    }
+    return next;
 }
 
 let _idSeq = 0;
@@ -104,14 +153,18 @@ export function loadLessonDraft(): LessonDraft | null {
                   (c) => c && typeof c.front === "string",
               )
             : [];
+        const domain =
+            typeof meta.domain === "string" && meta.domain.trim()
+                ? meta.domain
+                : "language";
         const sourceLanguage = meta.sourceLanguage ?? "en";
         let targetLanguage = meta.targetLanguage ?? "fr";
-        if (targetLanguage === sourceLanguage) {
-            // A stale or hand-edited draft with an EQUAL language pair
-            // would leave Step 1 permanently unadvanceable: the
-            // same-language guard never clears, so "Next" silently does
-            // nothing no matter what else the user fills in. Repair to a
-            // sane different default so a resumed draft is always usable.
+        // #1716 — a same-language pair is INTENTIONAL for a knowledge
+        // (non-language) domain (a single content language), so only repair
+        // an equal LANGUAGE-domain pair. A language lesson with an equal
+        // pair would otherwise leave Step 1 unadvanceable (the language-pair
+        // gate never clears); repair it to a sane different default.
+        if (targetLanguage === sourceLanguage && domain === "language") {
             targetLanguage = sourceLanguage === "en" ? "fr" : "en";
         }
         return {
@@ -125,6 +178,7 @@ export function loadLessonDraft(): LessonDraft | null {
                 level: meta.level ?? "A1",
                 description: meta.description ?? "",
                 author: meta.author ?? "",
+                domain,
             },
             cards: cards.map((c) => ({
                 id: c.id || newCardId(),
