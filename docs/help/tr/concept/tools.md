@@ -113,22 +113,22 @@ Kartlar aciliyet sırasına göre sıralanır (düşük aralık × daha güçlü
 ağırlık = daha yüksek öncelik). Bunları takip etmek zorunda değilsiniz
 — bunlar emirler değil, dürtmecelerdir.
 
-## Birinci sınıf gönderilen entegrasyonlar (v1.17.0'dan beri)
+## Birinci sınıf gönderilen entegrasyonlar
 
-Üç araç, v1.17.0 ile v1.20.0 arasında "harici öneri"den "yerleşik
-dışa aktarma"ya taşındı:
+Üç araç, harici öneri yerine yerleşik dışa aktarma olarak
+gönderilir:
 
-- **Anki .apkg dışa aktarma** (v1.17.0 / Aşama 30) — `/anki` sayfasında
+- **Anki .apkg dışa aktarma** — `/anki` sayfasında
   yapay zeka tarafından çıkarılan flash kartları inceleyin, istediğiniz
   olanları kabul edin, Dışa Aktar'a tıklayın. `.apkg`, Anki masaüstünde
   doğrudan çalışan sql.js + JSZip aracılığıyla istemci tarafında oluşturulur.
   Manuel aktarım gerekmez.
-- **NotebookLM ZIP paketi** (v1.19.0 / Aşama 32) — İlerleme sayfası
+- **NotebookLM ZIP paketi** — İlerleme sayfası
   → Çalışma paketini indir. ZIP, NotebookLM'nin kaynak yüklemesi için
   biçimlendirilmiş `summary.md`, `vocabulary.md`, `rules.md`, `errors.md`,
   `flashcards.md` ve `sessions/*.md` içerir. NotebookLM'nin herkese açık
   API'sı olmadığından bu en iyi yoldur.
-- **Ses (TTS + STT + Telaffuz Pratiği)** (v1.18.0 / Aşama 31) — Web
+- **Ses (TTS + STT + Telaffuz Pratiği)** — Web
   Speech API entegrasyonları doğrudan Oturum + Değerlendirme'de ve
   Diller olarak etiketlenmiş projeler için özel `/pronunciation` sayfasında.
   Harici araç gerekmez.
@@ -138,7 +138,7 @@ dışa aktarma"ya taşındı:
 Kasıtlı olarak dışlananlar:
 
 - **Duolingo / Babbel / benzer oyunlaştırılmış uygulamalar** — felsefeyle
-  çelişirler. Adaptive Learner XP + rozetler + seriler (v1.16.0) ile
+  çelişirler. Adaptive Learner XP + rozetler + seriler ile
   birlikte gelir, ancak bunlar oyunlaştırılmamış içerik üzerinde bir
   motivasyon katmanı olarak kullanılır, birincil döngü olarak değil.
 - **Khan Academy / Coursera** — bunlar ders tamamlamaya yönelik, beceri

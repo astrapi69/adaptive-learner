@@ -143,7 +143,7 @@ aktarılır.
 Değerlendirmeniz size 6 yöntemli bir profil verir. Baskın yöntem, yeni
 oturumların başladığı yöntemdir. Ama:
 
-- **Adım değerlendirici** (çift istem v0.5.0) her döngü adımı başına
+- **Adım değerlendirici** (çift istem) her döngü adımı başına
   kalmayı, ilerlemeyi ya da — nadiren — geri adım atmayı önerebilir.
 - **Yöntem değiştirme buluşsal yöntemi**, durgunluğu tespit eder (düz
   anlayış + yüksek stres ile üç oturum) ve her iki depolama modunda da

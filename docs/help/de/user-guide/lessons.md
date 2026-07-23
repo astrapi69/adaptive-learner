@@ -247,7 +247,7 @@ bekommen.
 Eine Wiederholungssitzung unter `/review/:setId`
 synthetisiert eine **Mini-Lektion im Flug** aus den
 obersten Einträgen deiner Warteschlange. Gemischte
-Strategie seit **v1.35.0**:
+Strategie:
 
 - Hast du ein Wort ursprünglich in einer **Zuordnungs**-
   oder **Bild-Auswahl**-Übung verfehlt, machst du genau
@@ -272,7 +272,7 @@ du verdienst das Abzeichen **Wiederholungsmeister**.
 
 ## Korrektur-Runde am Lektionsende
 
-Neu in **v1.35.0**: Wenn du eine Lektion mit Fehlern
+Wenn du eine Lektion mit Fehlern
 abschließt, zeigt die Zusammenfassungsseite eine kleine
 **Korrektur-Runde** zwischen deinem Punktestand und dem
 "Nächste Lektion"-Button. Sie nimmt bis zu fünf konkrete
@@ -299,7 +299,7 @@ siehst.
 
 ## Visuelles Diff-Feedback
 
-Ebenfalls neu in **v1.35.0**: Falsche Freitext- und
+Falsche Freitext- und
 Wortkachel-Antworten zeigen jetzt eine **Token-genaue
 Diff** zwischen deiner Eingabe und der kanonischen
 Antwort. Drei Farben, nie nur Farbe allein:
@@ -315,7 +315,7 @@ Antwort. Drei Farben, nie nur Farbe allein:
 Dieselbe Diff erscheint in der Zusammenfassung der
 Lektion in der Aufschlüsselung jeder Übung — für jede
 Freitext- oder Wortkachel-Antwort, deren Nutzer-Eingabe
-der v1.35.0+-Speicher kennt.
+der Speicher kennt.
 
 ---
 
@@ -361,7 +361,7 @@ Nutzer:innen, die die öffentliche GitHub-Pages-Seite
 besuchen, die volle Wiederholungsschleife ohne Backend
 bekommen.
 
-Seit **v1.33.0** ist auch die Gamification angeglichen: Im
+Auch die Gamification ist angeglichen: Im
 reinen Browser-Modus verdienst du für abgeschlossene
 Lektionen **dieselben XP und Lektions-Abzeichen** wie im
 Server-Modus — die Stern-, Streak- und Abzeichen-Logik ist

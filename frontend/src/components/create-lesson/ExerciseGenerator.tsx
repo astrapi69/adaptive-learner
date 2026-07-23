@@ -45,6 +45,8 @@ import {
     isExtensionType,
     newExerciseId,
     newExtensionExerciseId,
+    validateExerciseEdit,
+    validateExtensionExercise,
     type ExerciseGenConfig,
     type GeneratableType,
 } from "../../lib/exercises";
@@ -73,6 +75,27 @@ export function clampExerciseCount(value: number): number {
     );
 }
 
+/** True iff any exercise (core or extension) is still incomplete — the
+ *  half-filled-exercise guard shared by every advance gate (#1970). */
+export function hasIncompleteExercise(
+    exercises: ContentLessonExercise[],
+): boolean {
+    return exercises.some((ex) =>
+        isExtensionType(ex.type)
+            ? !validateExtensionExercise(ex).valid
+            : !validateExerciseEdit(ex).valid,
+    );
+}
+
+/** #1970 — the exercise count below which "Next" is blocked. Editing an
+ *  existing, previously-valid lesson relaxes the create-time ``MIN_EXERCISES``
+ *  to 1: the book generator legitimately produces < 5 exercises (types it
+ *  cannot render are skipped), so such a lesson must stay editable + saveable.
+ *  Creating a new lesson keeps the full minimum. */
+export function minExercisesToAdvance(editMode: boolean): number {
+    return editMode ? 1 : MIN_EXERCISES;
+}
+
 const ALL_TYPES: GeneratableType[] = [
     "matching",
     "free_text",
@@ -92,6 +115,13 @@ export interface ExerciseGeneratorProps {
     onUpdate: (id: string, updated: ContentLessonExercise) => void;
     /** Append a manually-created exercise (#1849). */
     onAdd: (exercise: ContentLessonExercise) => void;
+    /** #1970 — hide the generate-from-cards config, the "some selected types
+     *  produced nothing" explanation, and the create-time minimum hint. Used by
+     *  the cardless (book/theory-lesson) edit flow, where there are no cards to
+     *  generate from — showing the config would mislead the editor and a
+     *  "Generate" click would wipe the loaded exercises. The exercise list +
+     *  add / edit / delete stay. */
+    hideGenerator?: boolean;
 }
 
 export default function ExerciseGenerator({
@@ -103,6 +133,7 @@ export default function ExerciseGenerator({
     onDelete,
     onUpdate,
     onAdd,
+    hideGenerator = false,
 }: ExerciseGeneratorProps) {
     const {t} = useI18n();
     const sensors = useSensors(
@@ -189,7 +220,8 @@ export default function ExerciseGenerator({
                 {t("create_lesson.exercises.heading", "Generate exercises")}
             </h2>
 
-            {/* Config */}
+            {/* Config — hidden in the cardless edit flow (#1970) */}
+            {!hideGenerator && (
             <div
                 className="exercise-gen-config flex flex-col gap-4 rounded-lg border border-border bg-card p-4"
                 data-testid="exercise-gen-config"
@@ -298,6 +330,7 @@ export default function ExerciseGenerator({
                     </Button>
                 </div>
             </div>
+            )}
 
             {/* Count + minimum */}
             <div className="exercise-gen-count flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -307,22 +340,24 @@ export default function ExerciseGenerator({
                         String(exercises.length),
                     )}
                 </span>
-                {exercises.length > 0 && exercises.length < MIN_EXERCISES && (
-                    <FormHint
-                        as="span"
-                        variant="warning"
-                        data-testid="exercise-min-hint"
-                    >
-                        {t(
-                            "create_lesson.exercises.min_hint",
-                            "{n} exercises needed",
-                        ).replace("{n}", String(MIN_EXERCISES))}
-                    </FormHint>
-                )}
+                {!hideGenerator &&
+                    exercises.length > 0 &&
+                    exercises.length < MIN_EXERCISES && (
+                        <FormHint
+                            as="span"
+                            variant="warning"
+                            data-testid="exercise-min-hint"
+                        >
+                            {t(
+                                "create_lesson.exercises.min_hint",
+                                "{n} exercises needed",
+                            ).replace("{n}", String(MIN_EXERCISES))}
+                        </FormHint>
+                    )}
             </div>
 
             {/* Why a selected type produced nothing (#1847) */}
-            {missingSelectedTypes.length > 0 && (
+            {!hideGenerator && missingSelectedTypes.length > 0 && (
                 <div
                     className="flex flex-col gap-1.5 rounded-lg border border-border bg-card p-3"
                     data-testid="exercise-gen-missing"

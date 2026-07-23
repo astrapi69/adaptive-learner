@@ -92,7 +92,7 @@ Evet. Üç dışa aktarma yolu geldi:
 
 ## Ses özelliği nedir?
 
-Üç Web Speech API entegrasyonu (v1.18.0'dan beri):
+Üç Web Speech API entegrasyonu:
 
 - **Yapay zeka yanıtlarında + Değerlendirme sonuçlarında Metinden
   Sese** — her birinin yanındaki ▶ düğmesi dil eşleştirmesiyle
@@ -118,11 +118,11 @@ hedefli bir oturum başlatılır.
 
 ## Cihazlar arasında senkronizasyon?
 
-v1.0.0'dan beri yerel ağ çift yönlü senkronizasyonu. Ayarlar → Senkronizasyon →
+Yerel ağ çift yönlü senkronizasyonu. Ayarlar → Senkronizasyon →
 "Bu cihazı eşleştir": diğer cihazın ekranındaki QR kodunu tarayın (arka
 kamera) ya da eşleştirme URL'sini yapıştırın. Eşleştirildikten sonra
 iter + çeker düğmeleri veri alışverişi yapar; çakışmalar yapay zeka
-birleştirme çözücüden geçer. v1.19.0 itibarıyla senkronizasyon
+birleştirme çözücüden geçer. Senkronizasyon
 yüzeyinde 28 tablo (konular + etiketler + çalışma soruları dahil).
 
 ## Bu ChatGPT'den nasıl farklı?

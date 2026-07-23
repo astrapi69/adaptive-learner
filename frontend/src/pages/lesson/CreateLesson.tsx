@@ -17,7 +17,6 @@
  * 65B-65D. Storage-mode-agnostic (works in API + Dexie modes).
  */
 
-import {Download} from "lucide-react";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -25,17 +24,17 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
 import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
-import {Button} from "@/components/ui/button";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
 import WizardSteps from "../../components/create-lesson/WizardSteps";
 import EditLoadState from "../../components/create-lesson/EditLoadState";
 import {MIN_CARDS} from "../../components/create-lesson/CardEditor";
-import {MIN_EXERCISES} from "../../components/create-lesson/ExerciseGenerator";
+import {
+    hasIncompleteExercise,
+    minExercisesToAdvance,
+} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
-    isExtensionType,
-    validateExerciseEdit,
     validateExtensionExercise,
     buildExtensionLesson,
     type ExerciseGenConfig,
@@ -44,6 +43,11 @@ import {localizedExercisePrompts} from "../../lib/content/lesson/exercise/exerci
 import {migrateLegacyExercisePrompts} from "../../lib/content/lesson/exercise/legacy-prompt-migration";
 import {buildExtensionUserSetInput} from "../../lib/content/lesson/user-set-input";
 import ExtensionSteps from "../../components/create-lesson/ExtensionSteps";
+import ExerciseEditSteps from "../../components/create-lesson/ExerciseEditSteps";
+import {
+    SavedLessonActions,
+    WizardNav,
+} from "../../components/create-lesson/CreateLessonFooter";
 import CreateLessonDialogs from "../../components/create-lesson/CreateLessonDialogs";
 import PromptMigrationNotice from "../../components/create-lesson/PromptMigrationNotice";
 import {
@@ -121,10 +125,22 @@ const DRAFT_AUTOSAVE_MS = 10_000;
 
 const EMPTY_BOOK_FIELDS: BookFields = {title: "", author: "", url: "", asin: ""};
 
-/** Total wizard steps for the active path. The book (#1743) and extension
- *  (#1852) branches are both 3-step Metadata -> content -> Review flows. */
+/** Total wizard steps for the active path. Every compact branch — book-text
+ *  (#1743), extension (#1852) and cardless-edit (#1967) — is a 3-step
+ *  Metadata -> content -> Review flow; the card-driven path has 4. */
 function stepCountFor(compactFlow: boolean): number {
     return compactFlow ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
+}
+
+/** The wizard's page heading — "Edit lesson" when reopening an existing
+ *  lesson, otherwise "Create a lesson". */
+function headerTitle(
+    editMode: boolean,
+    t: (key: string, fallback?: string) => string,
+): string {
+    return editMode
+        ? t("create_lesson.edit_title", "Edit lesson")
+        : t("create_lesson.title", "Create a lesson");
 }
 
 /** Build the default metadata, seeding source language from the
@@ -154,6 +170,11 @@ export default function CreateLesson() {
     // pre-filled to edit an existing own lesson.
     const editMode = Boolean(params.source && params.setId);
     const [editContext, setEditContext] = useState<EditContext | null>(null);
+    // #1967 — editing a cardless (theory/exercise) lesson, e.g. one authored
+    // via the book-text path (#1743): the wizard skips the vocabulary-card step
+    // and opens straight on the generated exercises. Set on edit-load once the
+    // reconstructed draft is known to carry no cards.
+    const [cardlessEdit, setCardlessEdit] = useState(false);
     const [editLoading, setEditLoading] = useState(editMode);
     const [editError, setEditError] = useState<string | null>(null);
     // #1860 — how many legacy English prompts were migrated to the UI
@@ -204,8 +225,10 @@ export default function CreateLesson() {
     const [bookLessons, setBookLessons] = useState<GeneratedBookLesson[]>([]);
 
     // An alternative authoring branch (book-text #1743 / extension #1852)
-    // runs the compact 3-step flow instead of the card-driven one.
-    const compactFlow = bookMode || extMode;
+    // runs the compact 3-step flow instead of the card-driven one. The
+    // cardless-edit branch (#1967 — Metadata -> Exercises -> Review) is a third
+    // compact flow, entered only when editing a card-free lesson.
+    const compactFlow = bookMode || extMode || cardlessEdit;
     const totalSteps = stepCountFor(compactFlow);
 
     /** Resolve the active AI provider seam, or ``null`` when no key /
@@ -261,6 +284,10 @@ export default function CreateLesson() {
                 setMeta(prefill.meta);
                 setCards(prefill.cards);
                 setExercises(migratedExercises);
+                // #1967 — a lesson with no vocabulary cards (a book-text /
+                // theory lesson) edits its exercises directly; the card step
+                // and its MIN_CARDS gate would otherwise trap the user.
+                setCardlessEdit(prefill.cards.length === 0);
                 setPromptsMigrated(migratedCount);
                 setEditContext({
                     source,
@@ -363,26 +390,40 @@ export default function CreateLesson() {
             setStep((s) => Math.min(TOTAL_STEPS_EXT, s + 1));
             return;
         }
+        if (cardlessEdit) {
+            // #1967 — cardless edit flow: step 2 is the exercise editor, then
+            // Review. No card step in between. #1970 — cardlessEdit is edit-only,
+            // so the count floor is 1, not the create-time minimum; a
+            // half-filled exercise still blocks.
+            if (step === 2) {
+                if (
+                    exercises.length < minExercisesToAdvance(true) ||
+                    hasIncompleteExercise(exercises)
+                ) {
+                    setExerciseError(true);
+                    return;
+                }
+                setExerciseError(false);
+            }
+            setStep((s) => Math.min(TOTAL_STEPS_BOOK, s + 1));
+            return;
+        }
         if (step === 2) {
-            if (cards.length < MIN_CARDS) {
+            // #1970 — the card-count minimum is a create-time requirement;
+            // editing an existing lesson never re-imposes it.
+            if (!editMode && cards.length < MIN_CARDS) {
                 setCardError(true);
                 return;
             }
             setCardError(false);
         }
         if (step === 3) {
-            // Too few, OR any exercise (generated or manually added) still
-            // incomplete — reuse the same per-type validator as the inline
-            // editor so a half-filled manual exercise can't slip into step 4.
-            // A manually-added extension exercise (dictation, #1895) validates
-            // through the extension payload validator, not the core one.
-            const incomplete = (ex: ContentLessonExercise): boolean =>
-                isExtensionType(ex.type)
-                    ? !validateExtensionExercise(ex).valid
-                    : !validateExerciseEdit(ex).valid;
+            // Too few (create-time only, #1970), OR any exercise still
+            // incomplete — the completeness guard applies in both modes so a
+            // half-filled manual exercise can't slip into step 4.
             if (
-                exercises.length < MIN_EXERCISES ||
-                exercises.some(incomplete)
+                exercises.length < minExercisesToAdvance(editMode) ||
+                hasIncompleteExercise(exercises)
             ) {
                 setExerciseError(true);
                 return;
@@ -409,6 +450,9 @@ export default function CreateLesson() {
             return;
         }
         setShowError(false);
+        // #1967 — entering an alternative authoring mode exits the cardless
+        // edit flow so the two never render side by side.
+        setCardlessEdit(false);
         setBookMode(true);
         setStep(2);
     }
@@ -422,6 +466,7 @@ export default function CreateLesson() {
             return;
         }
         setShowError(false);
+        setCardlessEdit(false);
         setExtMode(true);
         setStep(2);
     }
@@ -617,6 +662,7 @@ export default function CreateLesson() {
         setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
         setBookMode(false);
         setExtMode(false);
+        setCardlessEdit(false);
         setBookText("");
         setBookFields(EMPTY_BOOK_FIELDS);
         setBookLessons([]);
@@ -673,6 +719,17 @@ export default function CreateLesson() {
         ]);
     }
 
+    // --- exercise handlers (shared by every authoring flow) ---
+    function deleteExercise(id: string) {
+        setExercises((prev) => prev.filter((e) => e.id !== id));
+    }
+    function updateExercise(id: string, updated: ContentLessonExercise) {
+        setExercises((prev) => prev.map((e) => (e.id === id ? updated : e)));
+    }
+    function addExercise(exercise: ContentLessonExercise) {
+        setExercises((prev) => [...prev, exercise]);
+    }
+
     function discard() {
         // #1740 — in edit mode the shared new-lesson draft slot is not
         // ours to clear (it may hold an unrelated unfinished lesson).
@@ -704,14 +761,14 @@ export default function CreateLesson() {
         }
     }
 
+    // #1740 — "Save as a copy" is only offered in edit mode; shared by the
+    // card-driven and cardless-edit flows so the ternary lives in one place.
+    const onSaveCopyHandler = editMode ? () => void saveCopy() : undefined;
+
     return (
         <PageContainer testId="create-lesson-page">
             <header className="create-lesson-header mb-6 flex flex-col gap-1">
-                <h1>
-                    {editMode
-                        ? t("create_lesson.edit_title", "Edit lesson")
-                        : t("create_lesson.title", "Create a lesson")}
-                </h1>
+                <h1>{headerTitle(editMode, t)}</h1>
                 {!editLoading && !editError && (
                     <p
                         className="create-lesson-step-indicator text-sm text-fg-muted"
@@ -760,17 +817,9 @@ export default function CreateLesson() {
                     exercises={exercises}
                     advanceBlocked={exerciseError}
                     saving={saving}
-                    onAddExercise={(exercise) =>
-                        setExercises((prev) => [...prev, exercise])
-                    }
-                    onUpdateExercise={(id, updated) =>
-                        setExercises((prev) =>
-                            prev.map((e) => (e.id === id ? updated : e)),
-                        )
-                    }
-                    onDeleteExercise={(id) =>
-                        setExercises((prev) => prev.filter((e) => e.id !== id))
-                    }
+                    onAddExercise={addExercise}
+                    onUpdateExercise={updateExercise}
+                    onDeleteExercise={deleteExercise}
                     onSaveLocal={() => void saveLocally()}
                     t={t}
                 />
@@ -799,6 +848,30 @@ export default function CreateLesson() {
                 />
             )}
 
+            {cardlessEdit && (
+                <ExerciseEditSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    meta={meta}
+                    cards={cards}
+                    exercises={exercises}
+                    genConfig={genConfig}
+                    exerciseError={exerciseError}
+                    draftChecks={draftChecks}
+                    saving={saving}
+                    onGenerate={generateLessonExercises}
+                    onConfigChange={setGenConfig}
+                    onReorderExercises={setExercises}
+                    onDeleteExercise={deleteExercise}
+                    onUpdateExercise={updateExercise}
+                    onAddExercise={addExercise}
+                    onSaveLocal={() => void saveLocally()}
+                    onSaveShare={() => void saveAndShare()}
+                    onSaveCopy={onSaveCopyHandler}
+                    t={t}
+                />
+            )}
+
             {!compactFlow && (
                 <WizardSteps
                     step={step}
@@ -820,111 +893,35 @@ export default function CreateLesson() {
                     onGenerate={generateLessonExercises}
                     onConfigChange={setGenConfig}
                     onReorderExercises={setExercises}
-                    onDeleteExercise={(id) =>
-                        setExercises((prev) => prev.filter((e) => e.id !== id))
-                    }
-                    onUpdateExercise={(id, updated) =>
-                        setExercises((prev) =>
-                            prev.map((e) => (e.id === id ? updated : e)),
-                        )
-                    }
-                    onAddExercise={(exercise) =>
-                        setExercises((prev) => [...prev, exercise])
-                    }
+                    onDeleteExercise={deleteExercise}
+                    onUpdateExercise={updateExercise}
+                    onAddExercise={addExercise}
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}
-                    onSaveCopy={editMode ? () => void saveCopy() : undefined}
+                    onSaveCopy={onSaveCopyHandler}
                     t={t}
                 />
             )}
 
             {savedEntry && (
-                <section
-                    className="create-lesson-step flex flex-col gap-4"
-                    data-testid="create-lesson-saved"
-                >
-                    <h2 className="text-xl font-semibold text-fg-primary">{t("create_lesson.save.saved", "Lesson saved!")}</h2>
-                    <div className="form-actions">
-                        <Button
-                            type="button"
-                            data-testid="create-lesson-play"
-                            onClick={playSaved}
-                        >
-                            {t("create_lesson.save.play", "Play lesson")}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            data-testid="create-lesson-save-file"
-                            onClick={exportSavedLesson}
-                        >
-                            <Download className="h-5 w-5" aria-hidden="true" />
-                            {t(
-                                "create_lesson.save.save_file",
-                                "Save as file",
-                            )}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            data-testid="create-lesson-create-another"
-                            onClick={createAnother}
-                        >
-                            {t(
-                                "create_lesson.save.create_another",
-                                "Create another lesson",
-                            )}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            data-testid="create-lesson-to-browser"
-                            // #1253 — "My Lessons" lives on the Import tab now,
-                            // so land the just-created lesson there.
-                            onClick={() => navigate("/content?tab=import")}
-                        >
-                            {t(
-                                "create_lesson.save.to_browser",
-                                "To Content Browser",
-                            )}
-                        </Button>
-                    </div>
-                </section>
+                <SavedLessonActions
+                    onPlay={playSaved}
+                    onExport={exportSavedLesson}
+                    onCreateAnother={createAnother}
+                    onToBrowser={() => navigate("/content?tab=import")}
+                    t={t}
+                />
             )}
 
             {!savedEntry && !editLoading && !editError && (
-            <nav className="create-lesson-nav mt-6 flex flex-wrap items-center justify-end gap-3" aria-label={t(
-                "create_lesson.nav_label",
-                "Wizard navigation",
-            )}>
-                <Button
-                    type="button"
-                    variant="outline"
-                    data-testid="create-lesson-cancel"
-                    onClick={handleCancel}
-                >
-                    {t("create_lesson.cancel", "Cancel")}
-                </Button>
-                {step > 1 && (
-                    <Button
-                        type="button"
-                        variant="outline"
-                        data-testid="create-lesson-back"
-                        onClick={handleBack}
-                    >
-                        {t("create_lesson.back", "Back")}
-                    </Button>
-                )}
-                {step < totalSteps && (
-                    <Button
-                        type="button"
-                        data-testid="create-lesson-next"
-                        onClick={handleNext}
-                    >
-                        {t("create_lesson.next", "Next")}
-                    </Button>
-                )}
-            </nav>
+                <WizardNav
+                    step={step}
+                    totalSteps={totalSteps}
+                    onCancel={handleCancel}
+                    onBack={handleBack}
+                    onNext={handleNext}
+                    t={t}
+                />
             )}
 
             <CreateLessonDialogs

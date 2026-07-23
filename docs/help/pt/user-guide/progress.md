@@ -17,8 +17,8 @@ Quatro secções, de cima para baixo:
    horizontal que o Dashboard, com dicas de ferramentas ao
    passar o rato mostrando a contagem exata de sessões por
    método.
-3. **Insights de avaliação de passo** — apenas dados v0.5.0+;
-   lê a partir das linhas StepEvaluation que a rota de sessão
+3. **Insights de avaliação de passo** — lê a partir das
+   linhas StepEvaluation que a rota de sessão
    produz.
 4. **Historial de commits** — cada linha ProgressCommit em
    ordem cronológica, mais recente primeiro.
@@ -72,8 +72,8 @@ ordenada por data ou por compreensão.
 As notas renderizadas mostram negrito / itálico / listas /
 blocos de código com realce de sintaxe / ligações —
 exatamente o que foi escrito no diálogo de avaliação de fim
-de sessão. As notas de texto simples legadas de antes da
-v1.14.0 passam inalteradas.
+de sessão. As notas de texto simples legadas
+passam inalteradas.
 
 ## Exportações
 

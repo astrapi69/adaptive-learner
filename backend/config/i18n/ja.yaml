@@ -2658,6 +2658,7 @@ create_lesson:
     count: "{n} 個の演習"
     min_hint: "{n} 個の演習が必要です"
     min_to_advance: "続けるには少なくとも {n} 個の演習を生成してください。"
+    min_one_to_advance: "続けるには少なくとも1つの演習を追加してください。"
     drag: "ドラッグして並べ替え"
     delete: "演習を削除"
     type:

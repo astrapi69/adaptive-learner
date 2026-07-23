@@ -209,8 +209,8 @@ scheduling.
 ## Review sessions
 
 A review session at `/review/:setId` synthesizes a **mini lesson
-on the fly** from the top entries of your queue. Mixed strategy
-since **v1.35.0**:
+on the fly** from the top entries of your queue. Mixed
+strategy:
 
 - If you originally missed a word in a **matching** or **picture
   choice** exercise, you do exactly that exercise again (with a
@@ -231,7 +231,7 @@ reviews and you earn the **Review Master** badge.
 
 ## End-of-lesson correction round
 
-New in **v1.35.0**: When you finish a lesson with mistakes, the
+When you finish a lesson with mistakes, the
 summary page shows a small **correction round** between your score
 and the "Next lesson" button. It takes up to five specific
 mistakes from this lesson and offers each as a fresh cloze that
@@ -253,7 +253,7 @@ see the effect of your extra practice.
 
 ## Visual diff feedback
 
-Also new in **v1.35.0**: Wrong free-text and word-tile answers now
+Wrong free-text and word-tile answers now
 show a **token-level diff** between your input and the canonical
 answer. Three colors, never color alone:
 
@@ -266,7 +266,7 @@ answer. Three colors, never color alone:
 
 The same diff appears in the lesson summary in each exercise's
 breakdown — for every free-text or word-tile answer whose user
-input the v1.35.0+ storage knows.
+input the storage knows.
 
 ---
 
@@ -303,7 +303,7 @@ SRS scheduling run identically against IndexedDB in browser-only
 mode, so users visiting the public GitHub Pages site get the full
 review loop without a backend.
 
-Since **v1.33.0** the gamification is aligned too: in browser-only
+The gamification is aligned too: in browser-only
 mode you earn **the same XP and lesson badges** for completed
 lessons as in server mode — the star, streak and badge logic is
 ported to TypeScript and pinned against identical golden values.

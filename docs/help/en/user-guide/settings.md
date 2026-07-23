@@ -34,7 +34,7 @@ UserSettings; the next AI call goes through the new
 provider's plugin (Server mode) or the new provider's HTTP
 client (Local mode).
 
-The **Model picker** (since v1.11.0) is a searchable
+The **Model picker** is a searchable
 dropdown grouped Recommended / All, populated from each
 provider's live `/v1/models` endpoint (1h cache). Each row
 shows the human name + raw id + context-window badge. When
@@ -171,7 +171,7 @@ export is also disabled when no exportable key is configured yet.
 
 ## Voice
 
-Three toggles (since v1.18.0):
+Three toggles:
 
 - **TTS enabled** — adds a ▶ button next to AI replies +
   Assessment results that reads them aloud. Picks the
@@ -189,7 +189,7 @@ Three toggles (since v1.18.0):
 The Voice section hides itself when neither Web Speech API
 side (synth nor recognition) is supported by the browser.
 
-## Appearance (Phase 58 / v1.41.0)
+## Appearance
 
 The **Theme** picker under *General > Appearance* offers six
 themes plus an automatic mode:
@@ -212,7 +212,7 @@ exercise feedback stay readable in all of them.
 
 ## Interface
 
-The **Gestures toggle** (since v1.10.0, default ON for touch-capable
+The **Gestures toggle** (default ON for touch-capable
 devices) covers Assessment swipe navigation, Curriculum topic
 swipe-to-reveal, and Session cycle peek. Also here: button tooltips and
 Developer Mode.
