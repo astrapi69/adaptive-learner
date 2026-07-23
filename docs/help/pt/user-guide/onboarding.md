@@ -1,6 +1,6 @@
 # Onboarding
 
-Desde a **v1.64.0** o início é deliberadamente curto: o **início
+O início é deliberadamente curto: o **início
 rápido** exige apenas dois campos.
 
 1. **Nome** — como a aplicação te deve tratar.

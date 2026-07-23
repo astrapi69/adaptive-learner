@@ -35,7 +35,7 @@ UserSettings; der nächste KI-Aufruf geht durch das Plugin des
 neuen Anbieters (Server-Modus) oder den HTTP-Client des neuen
 Anbieters (Lokal-Modus).
 
-Der **Modell-Picker** (seit v1.11.0) ist ein durchsuchbares
+Der **Modell-Picker** ist ein durchsuchbares
 Dropdown, gruppiert in Empfohlen / Alle, gefüllt aus dem
 Live-`/v1/models`-Endpoint jedes Anbieters (1 h Cache). Jede
 Zeile zeigt den Klarnamen + die Roh-ID + ein Kontext-Fenster-
@@ -186,7 +186,7 @@ exportierbarer Schlüssel konfiguriert ist.
 
 ## Stimme
 
-Drei Toggles (seit v1.18.0):
+Drei Toggles:
 
 - **TTS aktiviert** — fügt einen ▶-Knopf neben KI-Antworten
   + Assessment-Ergebnissen ein, der sie laut vorliest. Wählt
@@ -206,7 +206,7 @@ Der Stimme-Abschnitt blendet sich aus, wenn weder die
 Web-Speech-API-Synthese noch die -Erkennung vom Browser
 unterstützt wird.
 
-## Darstellung (Phase 58 / v1.41.0)
+## Darstellung
 
 Der **Farbschema**-Picker unter *Allgemein > Darstellung* bietet
 sechs Themes plus einen automatischen Modus:
@@ -229,7 +229,7 @@ Plaketten und Übungs-Feedback überall lesbar bleiben.
 
 ## Oberfläche
 
-Der **Gesten-Toggle** (seit v1.10.0, Standard EIN auf touch-fähigen
+Der **Gesten-Toggle** (Standard EIN auf touch-fähigen
 Geräten) umfasst Assessment-Swipe-Navigation,
 Curriculum-Topic-Swipe-to-Reveal und Sitzungs-Zyklus-Peek. Ebenfalls
 hier: Button-Tooltips und der Entwicklermodus.

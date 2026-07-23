@@ -130,7 +130,7 @@ row of small circles to save vertical space. Swipe-to-peek
 on the strip shows an informational overlay describing the
 previous / next cycle step.
 
-## Auto-loop (v1.4.0) + topic transitions
+## Auto-loop + topic transitions
 
 Step 7 is no longer a dead end. Once the step-evaluator
 moves you to step 7 with `advance=true`, a third AI call —
@@ -154,14 +154,14 @@ has been integrated and whether to start a new cycle.
 ```
 
 The hard cap `max_cycles=5` per session prevents runaway
-loops. A deterministic fallback keeps the v0.5.0 cap-at-7
+loops. A deterministic fallback keeps the cap-at-7
 behaviour on any AI / parse failure.
 
 The chat renders cycle transitions as dashed-border
 "Cycle N" cards in the session history. The rating dialog
 summarises the multi-cycle journey when `cycle_count > 1`.
 
-## Parallel cycle-boundary evaluation (v1.5.0)
+## Parallel cycle-boundary evaluation
 
 At the step 6 → 7 transition both the step-evaluator and
 the topic-transition evaluator fire concurrently via

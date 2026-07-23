@@ -2,8 +2,8 @@
 
 Eine Lektion, die nur aus Theorie besteht (ohne Übungen), lässt
 sich in eine übbare Lektion verwandeln, indem die KI aus ihren
-Karten **Übungen generiert**. Das ist die EXP-036-Pipeline aus
-v1.90.0. Sie braucht einen konfigurierten KI-Schlüssel
+Karten **Übungen generiert**. Das ist die EXP-036-Pipeline.
+Sie braucht einen konfigurierten KI-Schlüssel
 (Einstellungen → KI); ohne einen ist der Knopf sichtbar, aber
 deaktiviert, mit dem Grund im Tooltip.
 

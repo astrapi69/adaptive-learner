@@ -29,7 +29,7 @@ in einem Git-Repository.
 - Ein **GitHub-Repository** (oeffentlich; privat ist per Repo-Token
   ebenfalls moeglich).
 - Eine Wurzel-**`manifest.yaml`**, die deine Sets auflistet.
-- Lektionen im **Lektionsformat** (Schema v1.3+; aktuell v1.4).
+- Lektionen im **Lektionsformat**.
 - Python 3 mit PyYAML, um vor dem Veroeffentlichen lokal zu validieren.
 
 Die massgeblichen Format-Referenzen liegen im offiziellen Inhalts-Repo:

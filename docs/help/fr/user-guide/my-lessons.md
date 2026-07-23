@@ -74,8 +74,8 @@ La contribution va vers le dépôt de contenu officiel :
 
 ## Format de leçon
 
-Les leçons utilisateur suivent le même schéma JSON que les leçons téléchargées
-(schéma v1.2). Elles sont jouées dans le lecteur de leçon non modifié — aucune
+Les leçons utilisateur suivent le même schéma JSON que les leçons
+téléchargées. Elles sont jouées dans le lecteur de leçon non modifié — aucune
 distinction dans la lecture.
 
 Voir le [guide de création de contenu](../developer/authoring-content.md) pour

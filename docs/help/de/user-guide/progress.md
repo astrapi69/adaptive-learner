@@ -15,8 +15,8 @@ Vier Abschnitte, von oben nach unten:
 2. **Methodenverteilung** — dasselbe horizontale
    Balkendiagramm wie im Dashboard, mit Hover-Tooltips für
    die exakte Anzahl pro Methode.
-3. **Schritt-Auswertungs-Insights** — nur v0.5.0+-Daten;
-   liest die StepEvaluation-Zeilen, die der Session-Route
+3. **Schritt-Auswertungs-Insights** — liest die
+   StepEvaluation-Zeilen, die der Session-Route
    produziert.
 4. **Commit-Historie** — jede ProgressCommit-Zeile
    chronologisch, neueste oben.
@@ -70,7 +70,7 @@ sortierbar.
 Gerenderte Notizen zeigen fett / kursiv / Listen / Code-
 Blöcke mit Syntax-Highlighting / Links — exakt das, was im
 Bewertungsdialog am Sitzungsende getippt wurde.
-Plain-Text-Notizen von vor v1.14.0 werden unverändert
+Ältere Plain-Text-Notizen werden unverändert
 durchgereicht.
 
 ## Exporte
