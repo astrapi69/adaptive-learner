@@ -231,6 +231,18 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // 250ms (was 100ms): the post-font reflow on the mobile lesson surface
     // occasionally landed AFTER the shot, shifting the page ~4px (#1540).
     await page.waitForTimeout(250);
+    // #1785 — pin the scroll position to the TOP before the shot. On lesson
+    // routes the auto-hide header (v1.60.0, scroll-direction driven) makes
+    // the nav's presence in the shot depend on whether the seeding clicks
+    // scrolled the page - a height-NEUTRAL nondeterminism the stable-layout
+    // poll below cannot see (observed as per-run theme diffs with the nav
+    // bar present in one run and absent in the next). At the top the header
+    // is always revealed; for surfaces already at the top this is a no-op.
+    await page.evaluate(() => {
+        document.getElementById("root")?.scrollTo(0, 0);
+        window.scrollTo(0, 0);
+    });
+    await page.waitForTimeout(100);
     // #1696 — the fullPage shot must not fire while a list is still loading
     // (async bundled-content / registry renders change the page height
     // run-to-run). Wait for the layout height to settle first. Bounded, so a
@@ -395,6 +407,21 @@ async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
     await expect(page.getByTestId("matching-result")).toBeVisible({
         timeout: 5_000,
     });
+    // #1785 — "matching-result visible" is NOT the settled graded state:
+    // the per-pair result rows still expand the page height afterwards, so
+    // a fullPage shot fired here captures mid-reflow (the theme-matrix
+    // flake). Pin the LAST wrong-pair hint row (pairs 0+1 are the swapped
+    // ones) and the last correct-pair row, then wait for the page height
+    // to stop moving. Same determinism class as #1696.
+    await expect(page.getByTestId("matching-correct-hint-1")).toBeVisible({
+        timeout: 5_000,
+    });
+    if (n > 2) {
+        await expect(
+            page.getByTestId(`matching-pair-correct-${n - 1}`),
+        ).toBeVisible({timeout: 5_000});
+    }
+    await waitForStableLayout(page);
     return true;
 }
 
