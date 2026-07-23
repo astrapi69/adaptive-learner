@@ -395,6 +395,21 @@ async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
     await expect(page.getByTestId("matching-result")).toBeVisible({
         timeout: 5_000,
     });
+    // #1785 — "matching-result visible" is NOT the settled graded state:
+    // the per-pair result rows still expand the page height afterwards, so
+    // a fullPage shot fired here captures mid-reflow (the theme-matrix
+    // flake). Pin the LAST wrong-pair hint row (pairs 0+1 are the swapped
+    // ones) and the last correct-pair row, then wait for the page height
+    // to stop moving. Same determinism class as #1696.
+    await expect(page.getByTestId("matching-correct-hint-1")).toBeVisible({
+        timeout: 5_000,
+    });
+    if (n > 2) {
+        await expect(
+            page.getByTestId(`matching-pair-correct-${n - 1}`),
+        ).toBeVisible({timeout: 5_000});
+    }
+    await waitForStableLayout(page);
     return true;
 }
 
