@@ -2036,9 +2036,11 @@ nightly/push, because the PR-CI never looked at the affected surface."*
    not even nightly-covered. The bun migration (#1496) dropped
    `package-lock.json`; `frontend/Dockerfile` still ran `npm ci` and
    broke the entire self-hosted/desktop path for ~2 release cycles. No
-   automated consumer existed - discovery was manual. Mitigation
-   candidate: a weekly/release `docker compose build` smoke (build only),
-   analogous to the dexie-smoke pattern (#552).
+   automated consumer existed - discovery was manual. **Shipped (#1990):**
+   `docker-build-smoke.yml` - a build-only `docker compose -f
+   docker-compose.prod.yml build`, path-filtered on the Docker inputs on
+   PRs + on `release/**` + weekly, analogous to the dexie-smoke pattern
+   (#552).
 
 (Orthogonal, listed for contrast: #1653 `settings-data` baseline churn
 from live `recommended-repos.json` is the *external-data* class (#575),
@@ -2065,6 +2067,11 @@ green", not "develop is green".
   label `testid-refs-unaffected`. **Catches the rename/remove sub-class
   only** - the #1656 wrap-into-`hidden` case (literal survives) is not
   literal-diffable and stays a reviewer + nightly concern.
+- **`docker-build-smoke.yml`** (#1990) - build-only `docker compose -f
+  docker-compose.prod.yml build` (the launcher/install.sh path, which no
+  other gate builds), path-filtered on the Docker inputs on PRs + on
+  `release/**` + weekly + dispatch; `make docker-build-smoke` locally. The
+  release checklist's Docker step moves from "if active" to mandatory.
 
 ### The scope discipline (why these gates stay targeted)
 
