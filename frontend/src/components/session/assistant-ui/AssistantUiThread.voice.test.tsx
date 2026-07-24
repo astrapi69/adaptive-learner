@@ -12,7 +12,9 @@ import {render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 vi.mock("../../../storage", () => ({
-    getStorage: () => ({session: {streamMessage: vi.fn()}}),
+    getStorage: () => ({
+        session: {streamMessage: vi.fn(), getMessages: () => Promise.resolve([])},
+    }),
 }));
 
 // Force STT support so MicButton renders (happy-dom has no SpeechRecognition).

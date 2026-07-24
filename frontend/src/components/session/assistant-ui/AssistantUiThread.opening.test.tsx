@@ -12,7 +12,9 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const {streamMessage} = vi.hoisted(() => ({streamMessage: vi.fn()}));
 vi.mock("../../../storage", () => ({
-    getStorage: () => ({session: {streamMessage}}),
+    getStorage: () => ({
+        session: {streamMessage, getMessages: () => Promise.resolve([])},
+    }),
 }));
 
 import AssistantUiThread from "./AssistantUiThread";

@@ -13,7 +13,9 @@ import {describe, expect, it, vi} from "vitest";
 // The adapter reads getStorage() lazily inside run(); mount never calls it.
 // Mock anyway so a construction-time regression can't reach real storage.
 vi.mock("../../../storage", () => ({
-    getStorage: () => ({session: {streamMessage: vi.fn()}}),
+    getStorage: () => ({
+        session: {streamMessage: vi.fn(), getMessages: () => Promise.resolve([])},
+    }),
 }));
 
 import AssistantUiThread from "./AssistantUiThread";

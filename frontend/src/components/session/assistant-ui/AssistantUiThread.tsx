@@ -58,6 +58,7 @@ import {
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
+import {getStorage} from "../../../storage";
 import MicButton from "../../voice/MicButton";
 import SpeechButton from "../../voice/SpeechButton";
 import type {SessionMessageExchangeResult} from "../../../types";
@@ -247,6 +248,37 @@ export default function AssistantUiThread({
             runConfig: {custom: {[OPENING_RUN_FLAG]: true}},
         });
     }, [autoOpen, sessionId, runtime]);
+
+    // Resume-history hydration (#1126 Phase 4b-i-b): a resumed REGULAR session
+    // must show its prior conversation — the legacy SessionChat rendered the
+    // full history on resume; the assistant thread otherwise starts empty. Load
+    // the persisted turns once per session and seed the runtime via
+    // ``thread.reset``. Imported sessions are excluded (``autoOpen`` opens them
+    // clean by design, #1143); the system prompt is dropped (orchestrator
+    // metadata, never a bubble). A new session (only the system row) seeds
+    // nothing, so the welcome empty-state stays. Ref-guarded (once per session,
+    // StrictMode-safe); a load failure degrades to the empty thread.
+    const hydratedForSession = useRef<string | null>(null);
+    useEffect(() => {
+        if (autoOpen) return;
+        if (hydratedForSession.current === sessionId) return;
+        hydratedForSession.current = sessionId;
+        getStorage()
+            .session.getMessages(sessionId)
+            .then((history) => {
+                const prior = history
+                    .filter((message) => message.role !== "system")
+                    .map((message) => ({
+                        role: message.role as "user" | "assistant",
+                        content: message.content,
+                        id: message.id,
+                    }));
+                if (prior.length > 0) runtimeRef.current?.thread.reset(prior);
+            })
+            .catch(() => {
+                /* non-blocking: empty thread + welcome remain */
+            });
+    }, [autoOpen, sessionId]);
 
     return (
         <AssistantRuntimeProvider runtime={runtime}>
