@@ -9,7 +9,17 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.6.1** (**feature release** on top of the v2.5.0
+- **Current state:** **v2.6.1** (**patch release** on top of the v2.6.0
+  feature release. Highlights: the desktop launcher advances two steps -
+  docker-app-launcher 0.15.0 (Docker-permission self-repair + wait-for-Docker
+  #2024) then 0.16.0, and the **localized launcher UI now ships in the binary**
+  #2031/#2032 (the hand-maintained spec never collected the 11 i18n catalogs);
+  the **frozen-binary launcher.json + window-icon + branding fix** #2027/#2028;
+  the Create-Lesson book-template file-upload i18n fix #2018; a canonical
+  feature-overview page #2019 + the #1918 mirror-locale port #2033. NO
+  app-side schema/API/data-model change against v2.6.0. See
+  changelog/releases/v2.6.1.md.)
+  Prior **v2.6.0** = (**feature release** on top of the v2.5.0
   authoring release. Highlights: the **session chat rebuilt on assistant-ui
   and cut over** #1126 - phased parity migration (i18n/theming/markdown
   #1984, Voice/Mic + read-aloud #1986, imported-session clean-open + AI
