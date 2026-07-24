@@ -1,4 +1,4 @@
-"""v0.5.0 — AI-driven cycle-step transition evaluator.
+"""v0.5.0 - AI-driven cycle-step transition evaluator.
 
 The Phase 7 baseline advances ``LearningSession.cycle_step`` by 1
 on every successful user-AI round-trip. Phase 8 replaces that
@@ -59,13 +59,13 @@ from .ai_orchestration import call_ai_complete, call_ai_complete_async
 # ``suggested_step``.
 
 STEP_DESCRIPTIONS: dict[int, str] = {
-    1: "input — the learner is encountering new material for the first time",
-    2: "attempt — the learner is applying what they just learned",
-    3: "error — mistakes are happening and being noticed",
-    4: "feedback — the learner is receiving and processing feedback on mistakes",
-    5: "adapt — the learner is adjusting their approach based on feedback",
-    6: "repeat — the learner is practising a variation with the new understanding",
-    7: "integrate — the learner is connecting the new knowledge to broader context",
+    1: "input - the learner is encountering new material for the first time",
+    2: "attempt - the learner is applying what they just learned",
+    3: "error - mistakes are happening and being noticed",
+    4: "feedback - the learner is receiving and processing feedback on mistakes",
+    5: "adapt - the learner is adjusting their approach based on feedback",
+    6: "repeat - the learner is practising a variation with the new understanding",
+    7: "integrate - the learner is connecting the new knowledge to broader context",
 }
 
 # How to judge readiness PER method. Kept short so the system prompt
@@ -77,7 +77,7 @@ METHOD_EVAL_HINTS: dict[str, str] = {
         "Readiness = the learner can articulate WHY, not only WHAT."
     ),
     "inductive": (
-        "Look for pattern recognition from examples — does the learner generalise from "
+        "Look for pattern recognition from examples - does the learner generalise from "
         "concrete cases to the underlying principle?"
     ),
     "error_based": (
@@ -93,7 +93,7 @@ METHOD_EVAL_HINTS: dict[str, str] = {
         "ties the concept to a concrete, personal context."
     ),
     "ai_adaptive": (
-        "The learner is steering. Readiness = self-direction — clear next-step intent, "
+        "The learner is steering. Readiness = self-direction - clear next-step intent, "
         "productive prompting back to the AI."
     ),
 }
@@ -371,7 +371,7 @@ async def evaluate_step_async(
     output_language: str = "en",
     max_tokens: int = EVALUATION_DEFAULT_MAX_TOKENS,
 ) -> StepEvaluation:
-    """v1.5.0 / Phase 18B — async wrapper around :func:`evaluate_step`.
+    """v1.5.0 / Phase 18B - async wrapper around :func:`evaluate_step`.
 
     Uses :func:`call_ai_complete_async` so the AI roundtrip runs
     either via the (future) ``ai_complete_async`` hook OR via the

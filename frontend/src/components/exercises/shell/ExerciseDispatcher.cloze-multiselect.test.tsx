@@ -7,7 +7,7 @@
  * pin the renderer in isolation. This file closes the gap one level up: it
  * drives a content-set-SHAPED multiselect cloze step through the REAL
  * ``ExerciseDispatcher`` — the same shell ``LessonStepView`` /
- * ``Review`` use — and asserts the checkbox group renders and NO
+ * ``Review`` use - and asserts the checkbox group renders and NO
  * ``<select>`` dropdown is produced. That pins the exact path the user
  * exercises in a live lesson (content JSON → step.exercise → dispatcher →
  * cloze dispatch → ClozeMultiSelect), so a future regression that drops

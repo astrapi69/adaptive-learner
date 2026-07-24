@@ -72,7 +72,7 @@ describe("renderRoadmap — empty", () => {
         const md = renderRoadmap(buildCtx([]), DEFAULT_LABELS);
         expect(md).toContain("# Roadmap");
         expect(md).toContain(
-            "## Next steps\n\n_No active project — start a new session to populate this list._",
+            "## Next steps\n\n_No active project - start a new session to populate this list._",
         );
         expect(md).toContain(
             "## Open topics\n\n_No topics defined yet._",
@@ -126,7 +126,7 @@ describe("renderRoadmap — next-steps suggestion priority", () => {
             DEFAULT_LABELS,
         );
         expect(md).toContain(
-            "Start the next session — last completed session used method **dialogic**",
+            "Start the next session - last completed session used method **dialogic**",
         );
     });
 
@@ -150,7 +150,7 @@ describe("renderRoadmap — next-steps suggestion priority", () => {
         );
         // Chronologically first session was contextual.
         expect(md).toContain(
-            "Start your first learning session — the assessment recommends starting with method **contextual**",
+            "Start your first learning session - the assessment recommends starting with method **contextual**",
         );
     });
 });

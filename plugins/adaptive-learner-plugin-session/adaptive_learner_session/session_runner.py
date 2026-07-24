@@ -135,7 +135,7 @@ class _MessageBody(BaseModel):
 
 
 class _StepEvaluationOut(BaseModel):
-    """v0.5.0 — AI step-evaluation result for the dual-prompt
+    """v0.5.0 - AI step-evaluation result for the dual-prompt
     architecture (Phase 8).
 
     ``advance`` / ``confidence`` / ``reason`` / ``suggested_step``
@@ -164,7 +164,7 @@ class _StepEvaluationOut(BaseModel):
 
 
 class _TimingsOut(BaseModel):
-    """v1.5.0 / Phase 18E — per-message latency breakdown.
+    """v1.5.0 / Phase 18E - per-message latency breakdown.
 
     All values in milliseconds (integer). ``None`` for calls that
     were skipped (e.g. ``topic_transition_ms`` when the route never
@@ -183,7 +183,7 @@ class _TimingsOut(BaseModel):
 
 
 class _TopicTransitionOut(BaseModel):
-    """v1.4.0 — auto-loop topic-transition result.
+    """v1.4.0 - auto-loop topic-transition result.
 
     ``cycle_complete`` / ``continue_recommended`` are the AI's
     raw verdict; ``looped`` is the route's DERIVED decision:
@@ -396,7 +396,7 @@ def persist_user_message(ctx: MessageContext) -> SessionMessage:
 
 
 def _validate_model_against_cache(ctx: MessageContext) -> None:
-    """Phase 24D — sanity-check the chosen model against the provider's
+    """Phase 24D - sanity-check the chosen model against the provider's
     cached available-models list.
 
     When the cache holds a list (the Settings picker fetched it earlier
@@ -485,7 +485,7 @@ def _maybe_parallel_precompute(
     eval_max_tokens: int,
     tt_max_tokens: int,
 ) -> StepEvaluation | None:
-    """Phase 18C — run step-eval + topic-transition concurrently at the
+    """Phase 18C - run step-eval + topic-transition concurrently at the
     step 6 -> 7 boundary (saves ~one AI call of latency at the cycle edge).
 
     Fires only when async evaluation + step-eval + auto-loop are all on
@@ -556,7 +556,7 @@ def _maybe_parallel_precompute(
 
 
 def run_step_evaluation(ctx: MessageContext, *, allow_parallel: bool = True) -> None:
-    """Phase 8B — dual-prompt step evaluation + cycle-step advance.
+    """Phase 8B - dual-prompt step evaluation + cycle-step advance.
 
     When step evaluation is enabled, fires a second AI call returning a
     JSON verdict and applies the suggested step iff ``advance`` and
@@ -680,7 +680,7 @@ def _append_cycle_summary(ctx: MessageContext, transition: TopicTransition) -> N
 
 
 def run_auto_loop(ctx: MessageContext) -> None:
-    """v1.4.0 — auto-loop after step 7.
+    """v1.4.0 - auto-loop after step 7.
 
     When the evaluator just ADVANCED the session INTO step 7 with
     ``advance=true``, ask the AI whether the topic was integrated and what

@@ -38,13 +38,13 @@ describe("buildLearningContext", () => {
         const out = buildLearningContext(
             {
                 topic: "French",
-                completed: [{label: "fr — 01", correct: 8, total: 10}],
+                completed: [{label: "fr - 01", correct: 8, total: 10}],
                 inProgress: null,
                 mistakes: [],
             },
             "en",
         );
-        expect(out).toContain("Completed lessons: fr — 01 (8/10)");
+        expect(out).toContain("Completed lessons: fr - 01 (8/10)");
         expect(out).toContain('You are a tutor for "French"');
     });
 
@@ -53,14 +53,14 @@ describe("buildLearningContext", () => {
             {
                 topic: "French",
                 completed: [],
-                inProgress: {label: "fr — 02", step: 3},
+                inProgress: {label: "fr - 02", step: 3},
                 mistakes: [
                     {element: "bonjour", answered: "bonsoir", expected: "bonjour", count: 2},
                 ],
             },
             "en",
         );
-        expect(out).toContain("Currently working on: fr — 02, step 3");
+        expect(out).toContain("Currently working on: fr - 02, step 3");
         expect(out).toContain(
             'bonjour (answered "bonsoir", correct "bonjour", 2x)',
         );
@@ -94,7 +94,7 @@ describe("buildLearningContext", () => {
         const out = buildLearningContext(
             {
                 topic: "Französisch",
-                completed: [{label: "fr — 01", correct: 8, total: 10}],
+                completed: [{label: "fr - 01", correct: 8, total: 10}],
                 inProgress: null,
                 mistakes: [],
             },

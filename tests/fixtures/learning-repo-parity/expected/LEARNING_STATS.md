@@ -8,7 +8,7 @@ Per-session metrics derived automatically from session evaluations + ratings. Do
 |---|---|---|---|---|---|---|
 | `sess-alp` | deductive | 10/10 | 8/10 | 2/10 | 1 | completed |
 | `sess-bet` | inductive | 10/10 | 8/10 | 2/10 | 2 | completed ✅ exit threshold met |
-| `sess-gam` | deductive | — | — | — | 1 | active |
+| `sess-gam` | deductive | - | - | - | 1 | active |
 
 ## Method switches
 

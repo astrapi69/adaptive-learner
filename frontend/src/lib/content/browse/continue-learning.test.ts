@@ -194,7 +194,7 @@ describe("helpers", () => {
         expect(looksLikeOpaqueId("Français B1")).toBe(false);
         // #854: a hyphenated real set name must NOT be mistaken for an id.
         expect(looksLikeOpaqueId("Ansible-Grundlagen")).toBe(false);
-        expect(looksLikeOpaqueId("Spanisch A1 — Teil 2")).toBe(false);
+        expect(looksLikeOpaqueId("Spanisch A1 - Teil 2")).toBe(false);
     });
 
     it("lessonRoute builds the /lesson route with a slugged source", () => {
@@ -207,7 +207,7 @@ describe("helpers", () => {
 describe("partNumberOf", () => {
     it("extracts the part number from split ids/filenames/titles (#729)", () => {
         expect(partNumberOf("analysis-b8ff9ed4-part-3.json")).toBe(3);
-        expect(partNumberOf("analysis-b8ff9ed4 — Part 2 of 3")).toBe(2);
+        expect(partNumberOf("analysis-b8ff9ed4 - Part 2 of 3")).toBe(2);
         expect(partNumberOf("analysis b8ff9ed4 part 7")).toBe(7);
     });
 

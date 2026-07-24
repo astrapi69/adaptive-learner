@@ -78,7 +78,7 @@ def _split_system_and_chat(
 def _build_config(
     system_instruction: str | None, max_tokens: int
 ) -> genai_types.GenerateContentConfig:
-    """Phase 36 Bug 5 — symmetric with the Anthropic guard:
+    """Phase 36 Bug 5 - symmetric with the Anthropic guard:
     ``system_instruction`` is only set when there is a real value
     so the wire shape stays clean. The google-genai SDK accepts
     ``None`` defensively, but omitting the kwarg matches the
@@ -126,7 +126,7 @@ async def stream(
     api_key: str,
     max_tokens: int = DEFAULT_MAX_TOKENS,
 ):
-    """v1.6.0 / Phase 19 — yield text deltas as Gemini streams them.
+    """v1.6.0 / Phase 19 - yield text deltas as Gemini streams them.
 
     Uses ``client.aio.models.generate_content_stream(...)`` from
     the google-genai SDK, which yields ``GenerateContentResponse``

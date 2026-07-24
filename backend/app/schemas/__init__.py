@@ -287,7 +287,7 @@ class ApiKeyTestOut(BaseModel):
 
 
 class ApiKeyBackupBody(BaseModel):
-    """POST body for ``/api/settings/{user_id}/api-key-backup`` — caches
+    """POST body for ``/api/settings/{user_id}/api-key-backup`` - caches
     a tested-good key as the last-known-good backup for ``provider``."""
 
     provider: AIProvider
@@ -295,7 +295,7 @@ class ApiKeyBackupBody(BaseModel):
 
 
 class ApiKeyBackupInfoOut(BaseModel):
-    """Metadata about a stored backup — never the key itself. ``has``
+    """Metadata about a stored backup - never the key itself. ``has``
     is false when no backup exists; ``tested_at`` is the ISO timestamp
     of the last successful test."""
 
@@ -304,7 +304,7 @@ class ApiKeyBackupInfoOut(BaseModel):
 
 
 class GitHubTokenSetBody(BaseModel):
-    """POST body for ``/api/github/token`` — store a GitHub Personal
+    """POST body for ``/api/github/token`` - store a GitHub Personal
     Access Token (Fernet-encrypted in secrets.yaml). The token needs
     only the ``repo`` scope (fork + push + open PRs)."""
 
@@ -349,7 +349,7 @@ class GitHubManifestUpdate(BaseModel):
 
 
 class GitHubCreatePrBody(BaseModel):
-    """POST body for ``/api/github/create-pr`` — the proxy reads the
+    """POST body for ``/api/github/create-pr`` - the proxy reads the
     stored token and runs the fork -> branch -> commit -> PR flow."""
 
     upstream: str = Field(min_length=1)
@@ -809,7 +809,7 @@ class ProgressCommitCreate(BaseModel):
 
 
 class ProgressCommitUpdate(BaseModel):
-    """Immutable in practice — every field stays optional so a
+    """Immutable in practice - every field stays optional so a
     backfill / data-fix endpoint can correct a bad row without
     deleting it, but the routine session-end path never PATCHes
     a commit.
@@ -882,7 +882,7 @@ class MethodSwitchCreate(BaseModel):
 
 
 class MethodSwitchUpdate(BaseModel):
-    """Same shape as ProgressCommitUpdate — backfill only."""
+    """Same shape as ProgressCommitUpdate - backfill only."""
 
     from_method: LearningMethod | None = None
     to_method: LearningMethod | None = None
@@ -1238,7 +1238,7 @@ class StudyQuestionOut(BaseModel):
 
 
 class StudyQuestionCreate(BaseModel):
-    """Manual insert payload (rarely used — most questions come
+    """Manual insert payload (rarely used - most questions come
     from the AI generator)."""
 
     project_id: str
@@ -1507,7 +1507,7 @@ class LessonProgressUpsert(BaseModel):
         default=None,
         max_length=20,
         description=(
-            "#1007 Phase 2 — the lesson mode the run is played in "
+            "#1007 Phase 2 - the lesson mode the run is played in "
             "(practice/exam/timed/…). Sent on the first upsert; omitted "
             "leaves the stored value unchanged."
         ),
@@ -1533,14 +1533,14 @@ class LessonProgressUpsert(BaseModel):
     mark_paused: bool = Field(
         default=False,
         description=(
-            "Phase 63A — flip ``status`` to ``paused`` and stamp "
+            "Phase 63A - flip ``status`` to ``paused`` and stamp "
             "``paused_at``. step_results stay intact for the resume."
         ),
     )
     mark_abandoned: bool = Field(
         default=False,
         description=(
-            "Phase 63A — flip ``status`` to ``abandoned`` and stamp "
+            "Phase 63A - flip ``status`` to ``abandoned`` and stamp "
             "``abandoned_at``. step_results are cleared; ElementErrors "
             "from completed steps stay (what was learned stays "
             "learned)."
@@ -1549,13 +1549,13 @@ class LessonProgressUpsert(BaseModel):
     mark_resumed: bool = Field(
         default=False,
         description=(
-            "Phase 63C — flip a ``paused`` row back to ``in_progress`` and clear ``paused_at``."
+            "Phase 63C - flip a ``paused`` row back to ``in_progress`` and clear ``paused_at``."
         ),
     )
     mark_restarted: bool = Field(
         default=False,
         description=(
-            "Phase 63C — discard step_results + score and reset "
+            "Phase 63C - discard step_results + score and reset "
             "``status`` to ``in_progress`` regardless of the prior "
             "state. Used by the 'Start Over' path in the resume "
             "dialog. Clears ``paused_at`` and ``abandoned_at``."
@@ -1605,7 +1605,7 @@ class LessonProgressOut(BaseModel):
 
 
 class ElementAttemptIn(BaseModel):
-    """One element attempt — the unit the recording endpoint
+    """One element attempt - the unit the recording endpoint
     consumes. Multiple attempts per exercise (matching fans out
     one per pair); one attempt per submit for the other types.
     """
@@ -1678,7 +1678,7 @@ class ElementAttemptsIn(BaseModel):
 
 
 class AttemptRecordOut(BaseModel):
-    """#603 — one recorded attempt in the per-element history ring buffer."""
+    """#603 - one recorded attempt in the per-element history ring buffer."""
 
     correct: bool
     hint_used: bool = False

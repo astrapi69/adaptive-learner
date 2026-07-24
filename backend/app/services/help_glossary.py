@@ -98,7 +98,7 @@ def get_entry(key: str, lang: str) -> dict[str, object] | None:
 
 
 def clear_cache() -> None:
-    """Drop the YAML cache. Test-only — production never calls
+    """Drop the YAML cache. Test-only - production never calls
     this, but tests that monkeypatch ``_help_dir`` or rewrite
     files must call this in both setup and teardown per the
     "Module-level caches survive test boundaries" rule."""

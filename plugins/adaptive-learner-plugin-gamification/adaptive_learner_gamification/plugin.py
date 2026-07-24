@@ -1,4 +1,4 @@
-"""GamificationPlugin — PluginForge entry point (Phase 29).
+"""GamificationPlugin - PluginForge entry point (Phase 29).
 
 Subscribes to:
 
@@ -83,7 +83,7 @@ class GamificationPlugin(BasePlugin):
         except Exception:  # noqa: BLE001
             logger.exception(
                 "gamification.on_session_complete: hook failed "
-                "(session=%r). Continuing — session close is unaffected.",
+                "(session=%r). Continuing - session close is unaffected.",
                 session.get("id"),
             )
         finally:

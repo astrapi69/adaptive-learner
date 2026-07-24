@@ -74,7 +74,7 @@ def split_lesson(
         part = lesson.model_copy(
             update={
                 "id": f"{lesson.id}-part-{part_num}",
-                "title": f"{lesson.title} — Part {part_num} of {total}",
+                "title": f"{lesson.title} - Part {part_num} of {total}",
                 "cards": part_cards,
                 "steps": list(steps),
                 "estimated_minutes": estimated_minutes,

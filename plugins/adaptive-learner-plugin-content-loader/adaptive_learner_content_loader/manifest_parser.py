@@ -1,4 +1,4 @@
-"""Manifest + lesson parser (Phase 43 / EXP-002 / 2C-cache — P-104).
+"""Manifest + lesson parser (Phase 43 / EXP-002 / 2C-cache - P-104).
 
 Two top-level parsers:
 

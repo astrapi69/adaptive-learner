@@ -45,7 +45,7 @@ def _is_weekend(d: date) -> bool:
 
 
 def get_or_create_user_streak(db: Session, user_id: str):
-    """Singleton getter — creates a zero-state row on first call."""
+    """Singleton getter - creates a zero-state row on first call."""
     from app.models import UserStreak
 
     row = db.query(UserStreak).filter(UserStreak.user_id == user_id).first()

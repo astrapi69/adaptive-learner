@@ -248,7 +248,7 @@ def test_build_system_prompt_names_each_supported_language():
     explicitly names its display language in the directive block."""
     for code, name in LANGUAGE_NAMES.items():
         prompt = build_system_prompt(code)
-        assert "LANGUAGE — IMPORTANT" in prompt
+        assert "LANGUAGE - IMPORTANT" in prompt
         assert f"IN {name}" in prompt, f"language {code!r} should mention {name!r} in the directive"
 
 
@@ -260,7 +260,7 @@ def test_build_system_prompt_falls_back_to_english_for_unknown_lang():
         assert "IN English" in prompt
         # The directive header is always present so the AI can't
         # silently drop the language instruction.
-        assert "LANGUAGE — IMPORTANT" in prompt
+        assert "LANGUAGE - IMPORTANT" in prompt
 
 
 def test_build_system_prompt_normalises_case():

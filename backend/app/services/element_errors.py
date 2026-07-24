@@ -1,4 +1,4 @@
-"""ElementError service — record attempts + mastery detection
+"""ElementError service - record attempts + mastery detection
 (Phase 46B / C5 / P-129; EXP-024 repository migration).
 
 The service owns the upsert transition matrix for the

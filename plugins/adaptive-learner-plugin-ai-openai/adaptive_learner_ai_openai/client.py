@@ -92,7 +92,7 @@ async def stream(
     api_key: str,
     max_tokens: int = DEFAULT_MAX_TOKENS,
 ):
-    """v1.6.0 / Phase 19 — yield text deltas as OpenAI streams them.
+    """v1.6.0 / Phase 19 - yield text deltas as OpenAI streams them.
 
     Uses ``AsyncOpenAI.chat.completions.create(stream=True)``,
     which returns an async iterator of ``ChatCompletionChunk``

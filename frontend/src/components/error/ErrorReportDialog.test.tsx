@@ -155,10 +155,10 @@ describe("ErrorReportDialog rendering", () => {
 
 describe("ErrorReportDialog preview + actions", () => {
     it("preview toggle shows the issue body with the error message", () => {
-        renderDialog({errorMessage: "Boom — divine combustion"});
+        renderDialog({errorMessage: "Boom - divine combustion"});
         fireEvent.click(screen.getByTestId("error-report-toggle-preview"));
         const preview = screen.getByTestId("error-report-full-preview");
-        expect(preview.textContent).toContain("Boom — divine combustion");
+        expect(preview.textContent).toContain("Boom - divine combustion");
         // The button label flips.
         expect(
             screen.getByTestId("error-report-toggle-preview").textContent,

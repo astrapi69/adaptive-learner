@@ -10,7 +10,7 @@
  *   - unresolvable elements drop out (steps < dueCount), so the header
  *     and the progress bar agree.
  *
- * Storage is mocked so the same assertions hold for BOTH storage modes —
+ * Storage is mocked so the same assertions hold for BOTH storage modes -
  * the hook routes everything through ``getStorage()`` and the synthesizer
  * is pure, so the API path and the Dexie path share this exact code.
  */

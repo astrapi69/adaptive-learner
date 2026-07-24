@@ -34,8 +34,8 @@ describe("splitLesson part titles", () => {
     it("uses the language-neutral default when no formatter is given", () => {
         const parts = splitLesson(loadInput(), {maxStepsPerPart: 4});
         expect(parts).toHaveLength(2);
-        expect(parts[0].title).toBe("Les articles — Part 1 of 2");
-        expect(parts[1].title).toBe("Les articles — Part 2 of 2");
+        expect(parts[0].title).toBe("Les articles - Part 1 of 2");
+        expect(parts[1].title).toBe("Les articles - Part 2 of 2");
     });
 
     it("applies a localized formatter to every part title", () => {
