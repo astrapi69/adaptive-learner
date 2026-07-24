@@ -161,7 +161,7 @@ export default function MetadataStep({
                         <span className="template-card-desc muted text-sm text-fg-muted">
                             {t(
                                 "create_lesson.templates.knowledge_from_text.desc",
-                                "Paste a textbook section; the AI writes the theory in its own words and generates exercises.",
+                                "Paste a textbook section or load a book file; the AI writes the theory in its own words and generates exercises.",
                             )}
                         </span>
                     </span>
