@@ -45,7 +45,5 @@ export {
   deleteSetDexie,
   deleteSetsDexie,
   saveUserSetDexie,
-  setSetStatusDexie,
-  setSetsStatusDexie,
   type SetRef,
 } from "./content-loader-user-sets";

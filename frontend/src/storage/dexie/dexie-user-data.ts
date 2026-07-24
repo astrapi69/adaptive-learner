@@ -39,6 +39,10 @@ export const MANAGED_USER_DATA_KEYS = [
     // #1709 — sets the user explicitly deleted from "Meine Inhalte"
     // (lib/content/browse/dismissed-sets); survives a Dexie restore.
     "adaptive-learner.dismissed-sets",
+    // Set lifecycle status (active / deferred / completed) per set
+    // (lib/content/browse/set-status-store); mode-agnostic, survives a
+    // Dexie restore.
+    "adaptive-learner.set-status",
 ] as const;
 
 /**

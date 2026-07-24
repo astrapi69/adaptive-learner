@@ -1,12 +1,20 @@
 /**
- * Set lifecycle status in the Dexie content cache (#1300).
+ * Set lifecycle status — the full persistence cycle at the storage
+ * boundary (recurring status-reset bug).
  *
- * Pins: a freshly downloaded set is "active"; ``setSetStatusDexie``
- * persists a transition on the cached row(s) and survives a subsequent
- * ``listSetsDexie`` (online path rebuilds entries from the manifest, so
- * the status MUST be carried through); a re-download keeps the status;
- * a cached row written before the field existed reads back as "active"
- * (migration-equivalent default); an unknown set is a safe no-op.
+ * Status is NO LONGER a Dexie-row concern: it lives in the mode-agnostic
+ * ``lib/content/browse/set-status-store`` (localStorage + Dexie userData
+ * mirror), overlaid on the read path in BOTH storage modes. These tests
+ * run against the REAL Dexie read path (``listSetsDexie`` over
+ * fake-indexeddb) AND the REAL store (localStorage) — no mock of either —
+ * and model the "reload" (leave + return to "Meine Inhalte") as a second
+ * ``listSetsDexie`` call, exactly what a page remount does.
+ *
+ * The old #1300 ``setSetStatusDexie``/``setSetsStatusDexie`` were removed:
+ * they persisted only on the Dexie row, so API mode never stored anything
+ * and every reload read "active". This suite pins that the store carries
+ * the status through a real Dexie reload, and that batch delete + the
+ * migration default still hold.
  */
 
 import "fake-indexeddb/auto";
@@ -16,9 +24,12 @@ import {
   deleteSetsDexie,
   downloadSetDexie,
   listSetsDexie,
-  setSetStatusDexie,
-  setSetsStatusDexie,
 } from "./content-loader-dexie";
+import {
+  applyStoredStatuses,
+  storeSetStatus,
+  storeSetStatuses,
+} from "../../lib/content/browse/set-status-store";
 import { _resetDbForTests, getDb } from "../dexie/db";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
@@ -87,7 +98,16 @@ async function download() {
   return downloadSetDexie(SOURCE, SET_ID, [{ source: SOURCE, branch: BRANCH }]);
 }
 
+/** A page load: read the real Dexie list, then overlay the real store —
+ *  exactly what ``loadSets`` does on mount. */
+async function loadSetsWithOverlay() {
+  installFetchMock(DOWNLOAD_ROUTES);
+  const { sets } = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+  return applyStoredStatuses(sets);
+}
+
 beforeEach(async () => {
+  localStorage.clear();
   const db = getDb();
   try {
     await db.contentSets.clear();
@@ -98,31 +118,36 @@ beforeEach(async () => {
   await _resetDbForTests();
 });
 
-describe("set status (Dexie cache, #1300)", () => {
-  it("defaults a freshly downloaded set to 'active'", async () => {
+describe("set status — real persistence cycle (store overlay over Dexie read)", () => {
+  it("a freshly downloaded set is 'active' with no stored status", async () => {
     const entry = await download();
     expect(entry.status).toBe("active");
-    const rows = await getDb().contentSets.toArray();
-    expect(rows[0].status).toBe("active");
+    const overlaid = await loadSetsWithOverlay();
+    expect(overlaid.find((s) => s.id === SET_ID)?.status).toBe("active");
   });
 
-  it("setSetStatusDexie persists a transition and listSets carries it", async () => {
+  it("a deferred set stays deferred across a reload (the bug: it reverted to active)", async () => {
     await download();
-    await setSetStatusDexie(SOURCE, SET_ID, "deferred");
+    storeSetStatus(SOURCE, SET_ID, "deferred");
 
-    // Online path: listSets rebuilds the entry from the upstream manifest,
-    // so the status must be threaded through from the cached row.
-    installFetchMock(DOWNLOAD_ROUTES);
-    const { sets } = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
-    const entry = sets.find((s) => s.id === SET_ID);
-    expect(entry?.status).toBe("deferred");
+    const overlaid = await loadSetsWithOverlay();
+    expect(overlaid.find((s) => s.id === SET_ID)?.status).toBe("deferred");
   });
 
-  it("preserves the status across a re-download", async () => {
+  it("survives a second reload (idempotent across remounts)", async () => {
     await download();
-    await setSetStatusDexie(SOURCE, SET_ID, "completed");
-    const reDownloaded = await download();
-    expect(reDownloaded.status).toBe("completed");
+    storeSetStatus(SOURCE, SET_ID, "completed");
+    await loadSetsWithOverlay();
+    const again = await loadSetsWithOverlay();
+    expect(again.find((s) => s.id === SET_ID)?.status).toBe("completed");
+  });
+
+  it("re-activation sticks across a reload", async () => {
+    await download();
+    storeSetStatus(SOURCE, SET_ID, "deferred");
+    storeSetStatus(SOURCE, SET_ID, "active");
+    const overlaid = await loadSetsWithOverlay();
+    expect(overlaid.find((s) => s.id === SET_ID)?.status).toBe("active");
   });
 
   it("reads a row without a status field as 'active' (migration default)", async () => {
@@ -131,15 +156,8 @@ describe("set status (Dexie cache, #1300)", () => {
     await getDb().contentSets.toCollection().modify((row) => {
       delete (row as unknown as Record<string, unknown>).status;
     });
-    installFetchMock(DOWNLOAD_ROUTES);
-    const { sets } = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
-    expect(sets.find((s) => s.id === SET_ID)?.status).toBe("active");
-  });
-
-  it("is a no-op for an unknown set (idempotent, no throw)", async () => {
-    await expect(
-      setSetStatusDexie(SOURCE, "does-not-exist", "deferred"),
-    ).resolves.toBeUndefined();
+    const overlaid = await loadSetsWithOverlay();
+    expect(overlaid.find((s) => s.id === SET_ID)?.status).toBe("active");
   });
 });
 
@@ -159,11 +177,15 @@ describe("bulk set operations (Dexie batch, #1351)", () => {
     { source: SOURCE, setId: "second-set" },
   ];
 
-  it("setSetsStatusDexie updates EVERY referenced set in one transaction", async () => {
-    const db = await twoSets();
-    await setSetsStatusDexie(refs, "completed");
-    const rows = await db.contentSets.toArray();
-    expect(rows.map((r) => r.status)).toEqual(["completed", "completed"]);
+  it("bulk status persists across a reload for every referenced set", async () => {
+    await twoSets();
+    storeSetStatuses(refs, "completed");
+    const overlaid = await loadSetsWithOverlay();
+    // listSetsDexie surfaces the manifest set + the cached-only "second-set".
+    expect(overlaid.find((s) => s.id === SET_ID)?.status).toBe("completed");
+    expect(overlaid.find((s) => s.id === "second-set")?.status).toBe(
+      "completed",
+    );
   });
 
   it("deleteSetsDexie removes every referenced set (and its files) in one transaction", async () => {
@@ -176,8 +198,7 @@ describe("bulk set operations (Dexie batch, #1351)", () => {
     expect(orphanFiles).toBe(0);
   });
 
-  it("both batch helpers are a no-op for an empty list", async () => {
-    await expect(setSetsStatusDexie([], "deferred")).resolves.toBeUndefined();
+  it("deleteSetsDexie is a no-op for an empty list", async () => {
     await expect(deleteSetsDexie([])).resolves.toBeUndefined();
   });
 });
