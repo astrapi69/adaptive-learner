@@ -28,6 +28,7 @@ export type {
     StepEvaluationVerdict,
     SwitchRecommendation,
     ToolRecommendation,
+    TopicTransitionVerdict,
     TrackingSummary,
     User,
     UserSettings,
