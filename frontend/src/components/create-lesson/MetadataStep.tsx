@@ -6,9 +6,11 @@
  * come via props.
  */
 
+import type {Ref} from "react";
 import {Blocks, BookOpen, Info} from "lucide-react";
 
 import {Input} from "@/components/ui/input";
+import {cn} from "@/lib/utils";
 import {
     Select,
     SelectContent,
@@ -61,6 +63,10 @@ const TEMPLATE_FALLBACKS: Record<LessonTemplateKey, {title: string; desc: string
 
 interface MetadataStepProps {
     meta: LessonMeta;
+    /** #2036 — ref to the required title input so the page can scroll it into
+     *  view + focus it on an invalid submit (the inline error otherwise renders
+     *  off-screen at the top of the form on a narrow mobile viewport). */
+    titleInputRef?: Ref<HTMLInputElement>;
     showError: boolean;
     titleMissing: boolean;
     sameLanguage: boolean;
@@ -82,6 +88,7 @@ interface MetadataStepProps {
 /** The metadata-entry step (wizard step 1). */
 export default function MetadataStep({
     meta,
+    titleInputRef,
     showError,
     titleMissing,
     sameLanguage,
@@ -195,13 +202,31 @@ export default function MetadataStep({
                 </button>
             </div>
 
-            <label className="form-row flex flex-col gap-1.5">
+            <label
+                className="form-row flex flex-col gap-1.5"
+                data-testid="create-lesson-title-field"
+            >
                 <span className="form-label text-sm font-medium text-fg-primary">
                     {t("create_lesson.meta.title_label", "Title")} *
                 </span>
                 <Input
+                    ref={titleInputRef}
                     type="text"
                     data-testid="create-lesson-title"
+                    // #2036 — mark the field invalid with the shared --error
+                    // token (same token as the message below) so the required
+                    // state is visible, not conveyed by the text alone.
+                    className={cn(
+                        showError &&
+                            titleMissing &&
+                            "border-[var(--error)] focus-visible:ring-[var(--error)]",
+                    )}
+                    aria-invalid={showError && titleMissing ? true : undefined}
+                    aria-describedby={
+                        showError && titleMissing
+                            ? "create-lesson-title-error"
+                            : undefined
+                    }
                     value={meta.title}
                     placeholder={t(
                         "create_lesson.meta.title_placeholder",
@@ -212,6 +237,7 @@ export default function MetadataStep({
                 />
                 {showError && titleMissing && (
                     <span
+                        id="create-lesson-title-error"
                         className="m-0 text-sm font-medium text-[var(--error)]"
                         data-testid="create-lesson-title-error"
                         role="alert"

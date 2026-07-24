@@ -173,6 +173,11 @@ export default function CreateLesson() {
         DEFAULT_EXERCISE_GEN_CONFIG,
     );
     const [showError, setShowError] = useState(false);
+    // #2036 — ref to the required title input so an invalid step-1 submit can
+    // bring it into view and focus it. The inline title error otherwise renders
+    // at the top of the form while the Next/entry buttons sit below the fold,
+    // so on a narrow mobile viewport the click reads as a dead end.
+    const titleInputRef = useRef<HTMLInputElement>(null);
     const [cardError, setCardError] = useState(false);
     const [exerciseError, setExerciseError] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -302,10 +307,31 @@ export default function CreateLesson() {
         setMeta((prev) => updateMetaField(prev, key, value));
     }
 
+    /** #2036 — flag the missing-title error AND scroll the required title
+     *  field into view with focus. On a narrow (mobile) viewport the inline
+     *  error renders at the top of the form while the Next/entry buttons sit
+     *  below the fold, so without this the invalid submit reads as a dead end.
+     *  Scrolls only when the field is not already fully visible, so a desktop
+     *  submit (title already on screen) never jumps. Shared by all three
+     *  step-1 triggers (Next, book entry, extension entry). */
+    function flagTitleError() {
+        setShowError(true);
+        requestAnimationFrame(() => {
+            const el = titleInputRef.current;
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const fullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+            if (!fullyVisible) {
+                el.scrollIntoView?.({behavior: "smooth", block: "center"});
+            }
+            el.focus?.({preventScroll: true});
+        });
+    }
+
     function handleNext() {
         if (step === 1) {
             if (!metaValid) {
-                setShowError(true);
+                flagTitleError();
                 return;
             }
             setShowError(false);
@@ -395,7 +421,7 @@ export default function CreateLesson() {
      *  the save step title-less and hit the raw ajv error. */
     function startBookMode() {
         if (!metaValid) {
-            setShowError(true);
+            flagTitleError();
             return;
         }
         setShowError(false);
@@ -411,7 +437,7 @@ export default function CreateLesson() {
      *  bypass of the step-1 title validation). */
     function startExtMode() {
         if (!metaValid) {
-            setShowError(true);
+            flagTitleError();
             return;
         }
         setShowError(false);
@@ -763,6 +789,7 @@ export default function CreateLesson() {
             {!editLoading && !editError && step === 1 && (
                 <MetadataStep
                     meta={meta}
+                    titleInputRef={titleInputRef}
                     showError={showError}
                     titleMissing={titleMissing}
                     sameLanguage={sameLanguage}
