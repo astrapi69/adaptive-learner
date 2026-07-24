@@ -226,8 +226,29 @@ Zwei weitere PR-Gates leben in eigenen Workflows:
   erzwingen. Der volle nur-warnende Komplexitätsbericht läuft
   nächtlich.
 - `cohesion-check.yml` — die Dateigrößen-Prüfung (Gate gegen
-  `.filesize-whitelist`). Die begleitende Ordnergrößen-Prüfung
-  läuft lokal über `make check-folder-size`.
+  `.filesize-whitelist`) plus zwei Klassen-Namens-Gates:
+  tote CSS-Klassennamen (`check-dead-classnames.py` gegen
+  `.dead-classnames-baseline`) und das
+  **Ungestylte-className-Gate** (`--unstyled`, Ratsche gegen
+  `.unstyled-classnames-baseline`) — ein `className`, dessen
+  Tokens alle tot sind, blockiert den PR. Die begleitende
+  Ordnergrößen-Prüfung läuft lokal über
+  `make check-folder-size`.
+- `visual-baseline-gate.yml` — ein PR, der visuell-kritische
+  Pfade ändert (Lesson-Komponenten, Exercise-Renderer,
+  Theme-/CSS-Dateien), muss die betroffenen
+  Baseline-Screenshots im selben PR mitbringen; Escape-Label
+  `visual-baselines-unaffected` für nachweislich inerte
+  Änderungen.
+- `testid-reference-gate.yml` — entfernt oder benennt ein PR
+  ein `data-testid` um, das ein E2E-Spec statisch referenziert
+  (auf einer stark nutzer-sichtbaren Fläche), ohne das Spec
+  anzufassen, scheitert das Gate (`make check-testid-refs`);
+  Escape-Label `testid-refs-unaffected`.
+- `docker-build-smoke.yml` — Build-only-Smoke der
+  Produktions-Compose-Images (der Launcher-/install.sh-Pfad),
+  pfadgefiltert bei PRs, zusätzlich auf `release/**`,
+  wöchentlich und per Abruf; lokal `make docker-build-smoke`.
 
 **Nachtschicht / Release (nicht bei PRs):**
 
@@ -238,8 +259,21 @@ Zwei weitere PR-Gates leben in eigenen Workflows:
   (wöchentlich + auf `release/**` + Abruf; nur-warnend)
 - `content-stats.yml` — Content-Statistik-Drift gegen ein
   frisches Content-Checkout (täglich + Abruf)
-- `mutation-frontend.yml` — Stryker-Mutation-Testing (gegatetes
-  Nächtlich + Abruf); Backend-Mutation-Testing nutzt mutmut
+- `mutation-frontend.yml` — Stryker-Mutation-Testing (Nächtlich
+  hinter der Repo-Variable `ENABLE_NIGHTLY_MUTATION` + Abruf;
+  mutiert pro Lauf eine Datei-Scheibe, damit der Lauf ins
+  Job-Zeitlimit passt); Backend-Mutation-Testing nutzt mutmut
+- `webkit-gate.yml` — das echte WebKit-Engine-Layout-Gate
+  (iOS-/Safari-Bugklassen, die die Chromium-Gates strukturell
+  nicht sehen), täglich hinter der Repo-Variable
+  `ENABLE_NIGHTLY_WEBKIT`, immer auf `release/**` und per Abruf
+- `visual-regression.yml` — die visuelle Baseline-Matrix
+  (täglich + Abruf; `update_baselines=true` rendert die
+  Baselines in CI neu und lädt sie als Artefakt hoch)
+- `visual-baseline-sync.yml` — Service-Workflow: rendert die
+  Baselines in CI und pusht sie als Commit auf den PR-Branch
+  (Label `refresh-visual-baselines` oder Abruf mit
+  PR-Nummer) — die Bild-Review vor dem Merge bleibt Pflicht
 
 `.github/workflows/release-gate.yml` läuft bei Tag-Pushes:
 verifiziert, dass alle versionstragenden Dateien im Gleichschritt

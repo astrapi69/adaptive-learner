@@ -1,7 +1,7 @@
 # Adaptive Learner
 
 [![Version](https://img.shields.io/badge/version-v2.5.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-9708%20green-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-10316%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
@@ -143,12 +143,15 @@ Full documentation (German default at `/docs/`, English at
   **Timed** (relaxed / normal / fast countdown), **Reverse**,
   **Shuffle** (interleaved), or **Endless**, plus a gated
   **"train errors"** entry that replays only what you got wrong.
-- **Five exercise types** — Matching, Picture-Choice, Free-Text,
-  Cloze (fill-in-the-blank), Word-Tiles — with token-level diff
-  feedback. **Matching is bidirectional** (start a pair from
-  either column, not only A → B). Cloze covers type / select /
-  **"select all that apply"** multi-answer choices, so multiple
-  choice needs no separate exercise type.
+- **Six core exercise types** — Matching, Picture-Choice,
+  Free-Text, Cloze (fill-in-the-blank), Word-Tiles, and native
+  **Multiple Choice** (single- or multi-answer) — with
+  token-level diff feedback. **Matching is bidirectional** (start
+  a pair from either column, not only A → B). Cloze covers
+  type / select / **"select all that apply"** multi-answer gaps.
+  On top, an **extension tier** a set can ship: categorization,
+  error correction, reading comprehension, graded quiz, and
+  **audio dictation**.
 - **Auto-splitting** of oversized imported lessons into parts,
   with localized part titles ("… - Teil 2" / "… - Part 2").
 - **Adaptive lessons** (rule-based, client-side) synthesised from
@@ -436,14 +439,14 @@ E2E smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
-Verified 2026-07-17 (v2.3.0+):
+Verified 2026-07-24 (post-v2.5.0 develop):
 
 | Suite | Count |
 |---|---|
-| Backend (pytest) | 1415 |
-| Plugins (13 × pytest) | 1080 |
-| Frontend (Vitest 4) | 7213 |
-| **Total** | **9708** |
+| Backend (pytest) | 1475 |
+| Plugins (13 × pytest) | 1096 |
+| Frontend (Vitest 4) | 7745 |
+| **Total** | **10316** |
 
 Plus 17 Playwright smoke spec files covering: landing,
 onboarding+assessment, session (3-chunk SSE), curriculum,

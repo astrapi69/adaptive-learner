@@ -12,12 +12,25 @@ overview; the detailed format specifics are in the linked sources.
 ### 1. In the app: the Lesson Creator
 
 The **Lesson Creator** at `/create-lesson` is a 4-step wizard
-(Metadata → Card Editor → Exercise Generator → Save/Share) and
+(Metadata → Card Editor → Exercise Editor → Save/Share) and
 needs **no AI key**:
 
-- Order cards via drag-and-drop or **import from CSV**.
-- **Auto-generate** exercises from the cards (all five exercise
-  types) or fine-tune them by hand.
+- Order cards via drag-and-drop or **import from CSV**; cards can
+  carry an **uploaded image**.
+- The metadata step offers a **knowledge-domain** selector (e.g.
+  language, programming, psychology, dog training, traffic
+  knowledge).
+- **Auto-generate** exercises from the cards or **edit them fully
+  yourself** in step 3: every core exercise type can be created,
+  changed, and added manually — including native **multiple
+  choice** with a prominent **single/multi selection** toggle.
+- **Dictation** (audio dictation) is available right in the
+  exercise-type picker; upload the audio clip as a file (embedded
+  in the lesson) or type an asset path. The lesson is
+  automatically marked as extension-dependent.
+- The **extension-authoring wizard** builds all five extension
+  exercise types with AI assistance (categorization, error
+  correction, reading comprehension, graded quiz, dictation).
 - **Templates** (Blank / Vocabulary / Grammar / Conversation) and
   **draft auto-save**.
 - **Preview** in the real lesson viewer before saving.
@@ -32,8 +45,26 @@ dedicated 3-step flow (Metadata → Book text → Review): paste one
 section (e.g. a chapter) of your textbook — the AI rewrites it **in
 its own words** as theory steps (never a copy) and generates
 matching exercises that link back to their theory step. Optional
-book metadata (title, author, URL, ISBN/ASIN) can be attached. Add
-further sections by running the wizard again.
+book metadata (title, author, URL, ISBN/ASIN) can be attached; it
+is preserved when you later edit the lesson.
+
+Instead of pasting text you can also **upload a book file**
+(EPUB, DOCX, TXT, or Markdown, up to 20 MiB). The file is parsed
+entirely **in the browser** — nothing is uploaded — and the
+detected chapters appear as a **checkbox list**. Sections that
+look like front or back matter (preface, glossary, index, …) are
+**unchecked by default** by a heuristic, but stay visible and
+selectable:
+
+- **One section selected** — it is inserted into the text field
+  (with a preview; a non-empty field asks first).
+- **Several sections selected** — **batch generation** creates
+  **one lesson per section** and saves them together as a
+  multi-lesson set.
+
+When **editing** a multi-lesson set, a **lesson picker** asks
+which lesson to open; book-text lessons open the exercise editor
+directly.
 
 Unlike the card-based path, this mode requires a **configured AI
 key**. Only paste text you have the rights to, or that is intended
