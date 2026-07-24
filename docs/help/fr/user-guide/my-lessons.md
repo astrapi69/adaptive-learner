@@ -1,7 +1,7 @@
 # Mes leçons
 
 La section **Mes leçons** à `/content` affiche les leçons que vous avez
-créées vous-même — soit générées à partir d'une analyse de chat, soit
+créées vous-même - soit générées à partir d'une analyse de chat, soit
 importées manuellement.
 
 ---
@@ -17,7 +17,7 @@ Après avoir importé et analysé un historique de chat :
    - Matching, texte libre, cloze et assemblage de mots à partir du vocabulaire
 4. Vérifiez et enregistrez
 
-Le générateur est **déterministe et hors ligne** — aucun appel IA n'est requis.
+Le générateur est **déterministe et hors ligne** - aucun appel IA n'est requis.
 La qualité s'adapte à la richesse du vocabulaire dans l'analyse.
 
 ---
@@ -37,7 +37,7 @@ Dans la section **Mes leçons**, chaque leçon possède des actions :
 | Action | Description |
 |--------|-------------|
 | Lire | Lance la leçon dans le lecteur standard |
-| Modifier | Ouvre un éditeur JSON pour modifier la structure |
+| Modifier | Ouvre un éditeur JSON pour modifier la structure. Si un de vos ensembles contient **plusieurs leçons**, un **sélecteur de leçon** demande d'abord laquelle modifier. Les leçons de texte de livre ouvrent directement l'**éditeur d'exercices** ; les métadonnées de livre jointes sont conservées |
 | Supprimer | Supprime la leçon localement |
 | Exporter | Exporte en fichier `.json` ou `.zip` |
 | Partager | Ouvre l'assistant de partage communautaire |
@@ -58,13 +58,13 @@ Cliquez sur **Importer une leçon** dans la section Mes leçons :
 
 L'assistant de partage vous guide à travers :
 
-1. **Validation de contenu** — un validateur côté client vérifie que la leçon
+1. **Validation de contenu** - un validateur côté client vérifie que la leçon
    respecte les normes de qualité (≥ 5 exercices, ≥ 2 types, etc.)
-2. **Révision IA optionnelle** — validation de la traduction / grammaire /
+2. **Révision IA optionnelle** - validation de la traduction / grammaire /
    niveau CECR avec suggestions de correction automatique
-3. **Aperçu de placement** — où la leçon s'inscrirait dans l'arborescence
+3. **Aperçu de placement** - où la leçon s'inscrirait dans l'arborescence
    des contenus de la communauté
-4. **Soumission** — ouvre l'éditeur de PR web de GitHub avec un formulaire
+4. **Soumission** - ouvre l'éditeur de PR web de GitHub avec un formulaire
    pré-rempli
 
 La contribution va vers le dépôt de contenu officiel :
@@ -74,8 +74,8 @@ La contribution va vers le dépôt de contenu officiel :
 
 ## Format de leçon
 
-Les leçons utilisateur suivent le même schéma JSON que les leçons téléchargées
-(schéma v1.2). Elles sont jouées dans le lecteur de leçon non modifié — aucune
+Les leçons utilisateur suivent le même schéma JSON que les leçons
+téléchargées. Elles sont jouées dans le lecteur de leçon non modifié - aucune
 distinction dans la lecture.
 
 Voir le [guide de création de contenu](../developer/authoring-content.md) pour

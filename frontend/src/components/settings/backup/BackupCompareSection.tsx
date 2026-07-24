@@ -42,7 +42,7 @@ export function BackupCompareSection({compare}: BackupCompareSectionProps) {
             <p className="muted">
                 {t(
                     "backup.compare_help",
-                    "Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified — comparison is read-only.",
+                    "Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified - comparison is read-only.",
                 )}
             </p>
             <div className="backup-compare-pickers">

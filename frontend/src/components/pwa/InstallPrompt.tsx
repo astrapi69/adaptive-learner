@@ -137,7 +137,7 @@ export default function InstallPrompt() {
                 <span className="muted install-prompt-subtitle">
                     {t(
                         "install.subtitle",
-                        "Open Adaptive Learner like a real app — no browser tab needed.",
+                        "Open Adaptive Learner like a real app - no browser tab needed.",
                     )}
                 </span>
             </div>

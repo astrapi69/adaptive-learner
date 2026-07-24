@@ -18,6 +18,11 @@ import {
 } from "@/components/ui/select";
 import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {
+    DOMAIN_OPTIONS,
+    isKnownContentDomain,
+    LEVEL_NONE,
+} from "../../lib/content/content-domains";
+import {
     LESSON_TEMPLATE_KEYS,
     type LessonTemplateKey,
 } from "../../lib/content/lesson/lesson-templates";
@@ -25,6 +30,23 @@ import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import FormHint from "../../shared/forms/FormHint";
 
 type Translate = (key: string, fallback?: string) => string;
+
+// English first-paint fallbacks for the domain picker, mirroring the
+// ``content.tree.domain_*`` catalog entries so the select never renders a
+// bare domain id while no catalog is loaded (fresh profile, offline).
+const DOMAIN_FALLBACKS: Record<string, string> = {
+    language: "Language",
+    knowledge: "Knowledge",
+    programming: "Programming",
+    psychology: "Psychology",
+    math: "Mathematics",
+    ai: "AI",
+    technology: "Technology",
+    software: "Software",
+    philosophy: "Philosophy",
+    "dog-training": "Dog Training",
+    "traffic-knowledge": "Traffic Knowledge",
+};
 
 // English first-paint fallbacks for the template cards, mirroring the
 // catalog entries (create_lesson.templates.*): shown only while no catalog
@@ -70,6 +92,9 @@ export default function MetadataStep({
     onStartBookMode,
     t,
 }: MetadataStepProps) {
+    // #1716 — a knowledge (non-language) domain collapses the source/target
+    // pair to a single content language and offers a level-less shape.
+    const knowledgeDomain = isKnownContentDomain(meta.domain);
     return (
         <section
             className="create-lesson-step flex flex-col gap-6"
@@ -214,81 +239,174 @@ export default function MetadataStep({
                 />
             </label>
 
+            {/* #1716 — content domain. ``language`` authors a source→target
+                pair (CEFR level); a knowledge domain authors non-language
+                content: a single content language (source == target) with an
+                optional level-less shape, mirroring the Share wizard's domain
+                handling. */}
+            <label className="form-row flex flex-col gap-1.5">
+                <span className="form-label text-sm font-medium text-fg-primary">
+                    {t("discover.filter.domain", "Domain")}
+                </span>
+                <Select
+                    value={meta.domain}
+                    onValueChange={(v) => onUpdate("domain", v)}
+                >
+                    <SelectTrigger data-testid="create-lesson-domain">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {DOMAIN_OPTIONS.map((d) => (
+                            <SelectItem key={d} value={d}>
+                                {t(
+                                    `content.tree.domain_${d}`,
+                                    DOMAIN_FALLBACKS[d] ?? d,
+                                )}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </label>
+
             <div className="form-row form-row-inline flex flex-col gap-2">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <div className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
-                            {t(
-                                "create_lesson.meta.target_lang_label",
-                                "Language learned",
-                            )}{" "}
-                            *
-                        </span>
-                        <Select
-                            value={meta.targetLanguage}
-                            onValueChange={(v) => onUpdate("targetLanguage", v)}
-                        >
-                            <SelectTrigger data-testid="create-lesson-target-lang">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {LANGUAGE_OPTIONS.map((o) => (
-                                    <SelectItem key={o.code} value={o.code}>
-                                        {o.name}
+                {knowledgeDomain ? (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="form-field flex flex-col gap-1.5">
+                            <span className="form-label text-sm font-medium text-fg-primary">
+                                {t(
+                                    "create_lesson.meta.content_lang_label",
+                                    "Content language",
+                                )}{" "}
+                                *
+                            </span>
+                            <Select
+                                value={meta.targetLanguage}
+                                onValueChange={(v) =>
+                                    onUpdate("targetLanguage", v)
+                                }
+                            >
+                                <SelectTrigger data-testid="create-lesson-content-lang">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {LANGUAGE_OPTIONS.map((o) => (
+                                        <SelectItem key={o.code} value={o.code}>
+                                            {o.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="form-field flex flex-col gap-1.5">
+                            <span className="form-label text-sm font-medium text-fg-primary">
+                                {t("create_lesson.meta.level_label", "Level")}
+                            </span>
+                            <Select
+                                value={meta.level || LEVEL_NONE}
+                                onValueChange={(v) =>
+                                    onUpdate("level", v === LEVEL_NONE ? "" : v)
+                                }
+                            >
+                                <SelectTrigger data-testid="create-lesson-level">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {/* A genuinely level-less knowledge lesson:
+                                        no CEFR level makes sense for a subject. */}
+                                    <SelectItem value={LEVEL_NONE}>
+                                        {t(
+                                            "create_lesson.meta.level_none",
+                                            "No level",
+                                        )}
                                     </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                                    {CEFR_LEVELS.map((lvl) => (
+                                        <SelectItem key={lvl} value={lvl}>
+                                            {lvl}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
-                    <div className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
-                            {t("create_lesson.meta.source_lang_label", "Your language")}
-                        </span>
-                        <Select
-                            value={meta.sourceLanguage}
-                            onValueChange={(v) => onUpdate("sourceLanguage", v)}
-                        >
-                            <SelectTrigger data-testid="create-lesson-source-lang">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {LANGUAGE_OPTIONS.map((o) => (
-                                    <SelectItem key={o.code} value={o.code}>
-                                        {o.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                ) : (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <div className="form-field flex flex-col gap-1.5">
+                            <span className="form-label text-sm font-medium text-fg-primary">
+                                {t(
+                                    "create_lesson.meta.target_lang_label",
+                                    "Language learned",
+                                )}{" "}
+                                *
+                            </span>
+                            <Select
+                                value={meta.targetLanguage}
+                                onValueChange={(v) =>
+                                    onUpdate("targetLanguage", v)
+                                }
+                            >
+                                <SelectTrigger data-testid="create-lesson-target-lang">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {LANGUAGE_OPTIONS.map((o) => (
+                                        <SelectItem key={o.code} value={o.code}>
+                                            {o.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="form-field flex flex-col gap-1.5">
+                            <span className="form-label text-sm font-medium text-fg-primary">
+                                {t(
+                                    "create_lesson.meta.source_lang_label",
+                                    "Your language",
+                                )}
+                            </span>
+                            <Select
+                                value={meta.sourceLanguage}
+                                onValueChange={(v) =>
+                                    onUpdate("sourceLanguage", v)
+                                }
+                            >
+                                <SelectTrigger data-testid="create-lesson-source-lang">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {LANGUAGE_OPTIONS.map((o) => (
+                                        <SelectItem key={o.code} value={o.code}>
+                                            {o.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="form-field flex flex-col gap-1.5">
+                            <span className="form-label text-sm font-medium text-fg-primary">
+                                {t("create_lesson.meta.level_label", "Level")}
+                            </span>
+                            <Select
+                                value={meta.level}
+                                onValueChange={(v) => onUpdate("level", v)}
+                            >
+                                <SelectTrigger data-testid="create-lesson-level">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {CEFR_LEVELS.map((lvl) => (
+                                        <SelectItem key={lvl} value={lvl}>
+                                            {lvl}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
-                    <div className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
-                            {t("create_lesson.meta.level_label", "Level")}
-                        </span>
-                        <Select
-                            value={meta.level}
-                            onValueChange={(v) => onUpdate("level", v)}
-                        >
-                            <SelectTrigger data-testid="create-lesson-level">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {CEFR_LEVELS.map((lvl) => (
-                                    <SelectItem key={lvl} value={lvl}>
-                                        {lvl}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-                {/* #1715 — a same-language pair (source === target) is a
-                    legitimate knowledge-domain lesson (e.g. ki-einsteiger:
-                    de -> de). Surface a neutral, non-blocking hint, mirroring
-                    SaveOfflineLessonModal — never a blocking error. */}
-                {sameLanguage && (
+                )}
+                {knowledgeDomain ? (
                     <FormHint
                         className="flex items-start gap-1.5"
-                        data-testid="create-lesson-same-language-hint"
+                        data-testid="create-lesson-domain-hint"
                     >
                         <Info
                             className="mt-0.5 h-4 w-4 shrink-0"
@@ -296,11 +414,33 @@ export default function MetadataStep({
                         />
                         <span>
                             {t(
-                                "content.save_lesson.same_language_hint",
-                                "Learned and your language are the same — fine for a grammar or knowledge lesson. When shared, it lands in the same-language branch of the content tree.",
+                                "create_lesson.meta.domain_hint",
+                                "Knowledge content uses a single content language and can skip the CEFR level.",
                             )}
                         </span>
                     </FormHint>
+                ) : (
+                    /* #1715 — a same-language pair (source === target) is a
+                       legitimate knowledge lesson even in the language domain
+                       (e.g. de -> de grammar). Surface a neutral, non-blocking
+                       hint, mirroring SaveOfflineLessonModal — never an error. */
+                    sameLanguage && (
+                        <FormHint
+                            className="flex items-start gap-1.5"
+                            data-testid="create-lesson-same-language-hint"
+                        >
+                            <Info
+                                className="mt-0.5 h-4 w-4 shrink-0"
+                                aria-hidden="true"
+                            />
+                            <span>
+                                {t(
+                                    "content.save_lesson.same_language_hint",
+                                    "Learned and your language are the same - fine for a grammar or knowledge lesson. When shared, it lands in the same-language branch of the content tree.",
+                                )}
+                            </span>
+                        </FormHint>
+                    )
                 )}
             </div>
 

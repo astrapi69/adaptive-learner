@@ -3,7 +3,7 @@
 # Currículo
 
 A página do Currículo é o seu material de aprendizagem
-estruturado — o "livro" contra o qual as suas sessões
+estruturado - o "livro" contra o qual as suas sessões
 acontecem. É uma camada opcional mas poderosa sobre as sessões
 de IA de fluxo livre.
 
@@ -15,7 +15,7 @@ múltiplos currículos lado a lado ("Gramática espanhola",
 "Spring Boot para devs Java", "Fundamentos de guitarra
 principal").
 
-- **Os tópicos** formam uma árvore — capítulos e subcapítulos.
+- **Os tópicos** formam uma árvore - capítulos e subcapítulos.
   Cada tópico tem um título, descrição opcional e uma referência
   pai. O botão "Adicionar subtópico" cria um filho.
 - **As lições** são planas sob o currículo. Cada uma tem um
@@ -37,7 +37,7 @@ também em dispositivos móveis). Clique num tópico para
 aprofundar; o fio de navegação abaixo do cabeçalho mostra o
 caminho de volta à raiz.
 
-- **Adicionar tópico** ao nível raiz — irmão de todos os
+- **Adicionar tópico** ao nível raiz - irmão de todos os
   tópicos de nível superior existentes.
 - **Adicionar subtópico** sob o tópico atualmente focado.
 - **Renomear** clicando no título no modo de edição.
@@ -54,7 +54,7 @@ O lado direito da vista do currículo é a lista de lições,
 ordenada por `order_index`. Cada linha mostra o título da lição
 e um excerto do seu conteúdo; clicar abre o editor de lições.
 
-O editor de lições é **TipTap rich text** (desde v1.14.0):
+O editor de lições é **TipTap rich text**:
 negrito / itálico / sublinhado / tachado, cabeçalhos (H1-H3),
 listas com marcadores + ordenadas + de tarefas, citação em
 bloco, código em linha, blocos de código delimitados com
@@ -69,7 +69,7 @@ As descrições de currículo, notas de sessão e conteúdo de
 lições usam todos o mesmo editor. As exportações Markdown /
 PDF passam por `renderStoredContent` que percorre a árvore de
 documentos TipTap e emite Markdown GFM; o conteúdo em texto
-simples de antes da v1.14.0 passa verbatim.
+simples legado passa verbatim.
 
 ## Como os currículos se ligam às sessões
 
@@ -80,7 +80,7 @@ clique na importação analisada semeia um Currículo com tópicos
 + lições que correspondem às lacunas identificadas pela IA.
 
 A IA de sessão não puxa ainda automaticamente o conteúdo de
-lições individuais para o prompt do sistema — é uma retenção
+lições individuais para o prompt do sistema - é uma retenção
 deliberada até a forma de integração currículo-IA se
 estabilizar.
 

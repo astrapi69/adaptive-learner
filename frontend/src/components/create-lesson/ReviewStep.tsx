@@ -8,10 +8,8 @@
 import {Copy, Download, Save, Share2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
-import {
-    allChecksPass,
-    type DraftValidationChecks,
-} from "../../lib/content/lesson/draft-to-lesson";
+import FormHint from "../../shared/forms/FormHint";
+import type {DraftValidationChecks} from "../../lib/content/lesson/draft-to-lesson";
 import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -21,12 +19,23 @@ const CHECK_ROWS: Array<
     [Exclude<keyof DraftValidationChecks, "schemaError">, string]
 > = [
     ["hasTitle", "Has a title"],
-    // #1715 — the "language pair is valid" row is gone: a same-language
-    // pair is a legitimate knowledge-domain lesson, not a save gate.
+    // #1929 — the "language pair is valid" row is rendered again. It now
+    // means "both sides are supported language codes" (a same-language
+    // knowledge-domain pair is VALID, #1715), not the removed
+    // ``source !== target`` gate.
+    ["languagePair", "Language pair is valid"],
     ["enoughCards", "At least 4 cards"],
     ["enoughExercises", "At least 5 exercises"],
     ["enoughTypes", "At least 2 exercise types"],
     ["schemaValid", "Valid lesson structure"],
+];
+
+/** The create-time count minimums — relaxed when editing an existing lesson
+ *  (#1970), which is already-valid at whatever size it was saved. */
+const COUNT_CHECK_KEYS: ReadonlyArray<keyof DraftValidationChecks> = [
+    "enoughCards",
+    "enoughExercises",
+    "enoughTypes",
 ];
 
 interface ReviewStepProps {
@@ -39,6 +48,11 @@ interface ReviewStepProps {
      *  it and a "Save as a copy" action appears instead of "Save and
      *  share". */
     editMode?: boolean;
+    /** #1967 — a cardless (theory/exercise) lesson, e.g. one authored via
+     *  the book-text path. A book lesson legitimately has no vocabulary
+     *  cards, so the "At least 4 cards" requirement + summary row are
+     *  dropped and never gate the save. */
+    cardless?: boolean;
     onSaveLocal: () => void;
     onSaveShare: () => void;
     /** #1740 — save the edited lesson as a new copy (edit mode only). */
@@ -54,12 +68,23 @@ export default function ReviewStep({
     draftChecks,
     saving,
     editMode = false,
+    cardless = false,
     onSaveLocal,
     onSaveShare,
     onSaveCopy,
     t,
 }: ReviewStepProps) {
-    const canSave = allChecksPass(draftChecks) && !saving;
+    // The create-time count minimums (#1967 cards; #1970 exercises + types)
+    // are guidance for a NEW lesson, not requirements for re-saving an existing
+    // one. Editing drops all three; a cardless CREATE drops only the card row.
+    // Title / language pair / schema validity always apply.
+    const rows = CHECK_ROWS.filter(([key]) => {
+        if (editMode && COUNT_CHECK_KEYS.includes(key)) return false;
+        if (cardless && key === "enoughCards") return false;
+        return true;
+    });
+    const canSave =
+        rows.every(([key]) => draftChecks[key]) && !saving;
     return (
         <section
             className="create-lesson-step flex flex-col gap-6"
@@ -81,9 +106,12 @@ export default function ReviewStep({
                     {t("create_lesson.review.pair", "Languages")}:{" "}
                     {meta.sourceLanguage} → {meta.targetLanguage} · {meta.level}
                 </li>
-                <li>
-                    {t("create_lesson.review.cards", "Cards")}: {cards.length}
-                </li>
+                {!cardless && (
+                    <li>
+                        {t("create_lesson.review.cards", "Cards")}:{" "}
+                        {cards.length}
+                    </li>
+                )}
                 <li>
                     {t("create_lesson.review.exercises", "Exercises")}:{" "}
                     {exercises.length}
@@ -93,7 +121,7 @@ export default function ReviewStep({
                 className="create-lesson-checklist flex list-none flex-col gap-1 p-0"
                 data-testid="create-lesson-checklist"
             >
-                {CHECK_ROWS.map(([key, fallback]) => {
+                {rows.map(([key, fallback]) => {
                     const pass = draftChecks[key];
                     // #1722 — a bare ✗ on the structure check is not
                     // actionable; show the validator's concrete reason
@@ -133,15 +161,12 @@ export default function ReviewStep({
                 })}
             </ul>
             {editMode && (
-                <p
-                    className="form-hint"
-                    data-testid="create-lesson-edit-note"
-                >
+                <FormHint data-testid="create-lesson-edit-note">
                     {t(
                         "create_lesson.edit_note",
                         "Editing an existing lesson. Saving overwrites it; use 'Save as a copy' to keep the original.",
                     )}
-                </p>
+                </FormHint>
             )}
             <div className="form-actions">
                 <Button

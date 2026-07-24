@@ -591,6 +591,64 @@ def check_help_index_versions(report: Report, help_dir: Path | None = None) -> N
                 )
 
 
+# End-user help prose must be VERSIONLESS (#1767): the help tree carried
+# ~1000 "since vX.Y" feature-provenance markers across 8 locales that
+# drift per-locale and read as noise to an end user ("since v1.35.0" on a
+# v2.x app implies a recency/optionality that is long gone). User help
+# describes the CURRENT behaviour; release provenance belongs to
+# changelog/releases/. This gate extends the #1766 index check to the
+# whole user-facing help tree.
+#
+# Out of scope (not gated here, per the #1767 scope decision):
+#   - developer/ + api/ trees: contributor/integrator reference that
+#     legitimately cites schema + hook versions (schema v1.4,
+#     ai_complete_async v1.5.0). A different audience, a different
+#     contract.
+#   - changelog.md: the per-locale "What's new" page is version-based by
+#     definition; gating it line-by-line would be absurd.
+#   - index.md: already hard-gated by check_help_index_versions above.
+#
+# Genuine exceptions (a version literal that carries real, current
+# meaning) get an inline `<!-- version-exempt: <reason> -->` marker on
+# the same line, mirroring the design-token `token-exempt:` precedent.
+HELP_PROSE_EXEMPT_DIRS = {"developer", "api"}
+HELP_PROSE_EXEMPT_FILES = {"index.md", "changelog.md"}
+VERSION_EXEMPT_RE = re.compile(r"<!--\s*version-exempt:")
+
+
+def check_help_prose_versions(report: Report, help_dir: Path | None = None) -> None:
+    """FAIL on any vX.Y[.Z] literal in user-facing docs/help prose (#1767).
+
+    Gates every ``docs/help/<locale>/**/*.md`` page except the
+    developer/ + api/ reference trees, the per-locale changelog.md, and
+    index.md (which has its own check). Lines carrying a
+    ``<!-- version-exempt: ... -->`` marker are skipped.
+    """
+    root = help_dir if help_dir is not None else REPO / "docs" / "help"
+    pages = sorted(root.glob("*/**/*.md"))
+    if not pages:
+        report.warn("help-prose-versions", f"no help pages found under {root}")
+        return
+    for page in pages:
+        rel_parts = page.relative_to(root).parts  # (locale, ...segments, file)
+        if page.name in HELP_PROSE_EXEMPT_FILES:
+            continue
+        if HELP_PROSE_EXEMPT_DIRS.intersection(rel_parts[1:-1]):
+            continue
+        rel = page.relative_to(root).as_posix()
+        for line_number, line in enumerate(read(page).splitlines(), start=1):
+            if VERSION_EXEMPT_RE.search(line):
+                continue
+            for match in HELP_INDEX_VERSION_RE.finditer(line):
+                report.fail(
+                    "help-prose-versions",
+                    f"{rel}:{line_number}: version literal {match.group(0)} "
+                    "(end-user help is versionless - describe the current "
+                    "behaviour; release provenance belongs to the changelog, "
+                    "#1767)",
+                )
+
+
 # mkdocs.yml's docs_dir is docs/help; the nav references the German
 # variant (de/<slug>.md). mkdocs-static-i18n maps de->en, so the en/
 # tree is an i18n mirror, not separately listed. We therefore check
@@ -796,6 +854,7 @@ CHECKS = {
     "themes": lambda r, o: check_themes(r),
     "mkdocs": lambda r, o: check_mkdocs(r),
     "help-index-versions": lambda r, o: check_help_index_versions(r),
+    "help-prose-versions": lambda r, o: check_help_prose_versions(r),
     "help-coverage": lambda r, o: check_help_coverage(r),
     "i18n": lambda r, o: check_i18n(r, o.fix),
 }

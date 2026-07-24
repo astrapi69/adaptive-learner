@@ -65,7 +65,7 @@ suficientes para detetar a direção:
 Quais métodos usou realmente? Muitos aprendentes descobrem que
 recorrem por defeito a um método (muitas vezes dedutivo) e
 nunca experimentam os outros. O gráfico de barras no Dashboard
-é um espelho — não uma competição.
+é um espelho - não uma competição.
 
 ### Sequência
 
@@ -80,14 +80,14 @@ importante.
 O avaliador de duplo prompt escreve uma linha `StepEvaluation`
 por troca de IA. O agregador de rastreamento transforma-as em:
 
-- **Confiança média** — quão certo está a IA em média de que
+- **Confiança média** - quão certo está a IA em média de que
   está pronto para avançar. Baixa (< 0.5) significa que o
   material é genuinamente difícil para si. Isso é informação,
   não um veredicto.
-- **Contagem de repetições** — quantas vezes o avaliador disse
+- **Contagem de repetições** - quantas vezes o avaliador disse
   "fique aqui." As fases de repetição intensa são normais para
   tópicos densos.
-- **Tempo por passo** — total de segundos de relógio de parede
+- **Tempo por passo** - total de segundos de relógio de parede
   que passou em cada passo ao longo do projeto (limitado para
   excluir intervalos > 2h). O passo com mais tempo é onde o
   trabalho cognitivo está a acontecer para si.
@@ -99,24 +99,24 @@ barras.
 
 Deliberadamente:
 
-- **Sem métricas de envolvimento** — sem culpa de "minutos por
+- **Sem métricas de envolvimento** - sem culpa de "minutos por
   dia", sem notificações, sem lembretes diários. O Adaptive
   Learner não luta pela sua atenção.
-- **Sem comparação com outros utilizadores** — está sozinho nos
+- **Sem comparação com outros utilizadores** - está sozinho nos
   seus dados (modo Local) ou sozinho com o backend (modo
   Servidor). Sem classificações, sem comparação entre pares.
-- **Sem "lições concluídas"** — não existe um currículo fixo
+- **Sem "lições concluídas"** - não existe um currículo fixo
   para completar. Você define o seu próprio tópico.
-- **Sem "percentagem de domínio"** — o que significaria 100%
+- **Sem "percentagem de domínio"** - o que significaria 100%
   para um tópico de aprendizagem? O domínio é uma postura, não
   uma linha de chegada.
 
-## Camada de gamificação (v1.16.0)
+## Camada de gamificação
 
 Sobre o substrato ProgressCommit-como-Git, três camadas
 motivacionais são incluídas:
 
-- **XP + Níveis** — base de 50 XP por sessão terminada, mais
+- **XP + Níveis** - base de 50 XP por sessão terminada, mais
   +10 por ciclo concluído, +25 por ciclo-passo-7, +50 bónus de
   primeiro método, tudo multiplicado pelo multiplicador de
   sequência (até 2.75× numa sequência de 7 dias). Os níveis
@@ -126,7 +126,7 @@ motivacionais são incluídas:
   consistency 4 / method_explorer 7 / depth 7 / polyglot 3),
   semeados a partir de `badges.yaml` no primeiro arranque.
   Os predicados avaliam após cada sessão.
-- **Mapa de calor de sequência** — 365 dias, estilo GitHub,
+- **Mapa de calor de sequência** - 365 dias, estilo GitHub,
   colunas semanais. Congelamentos: 1 por cada 7 dias de
   sequência, máximo de 3 acumulados, semântica de
   pausa-não-reinício. Alternância de modo de fim de semana
@@ -147,7 +147,7 @@ este perfil do navegador.
 
 No modo Servidor, os dados estão em SQLite no host do backend.
 Excluindo as chaves de API encriptadas, nenhum dos dados de
-linha é sensível no sentido habitual — são apenas nomes de
+linha é sensível no sentido habitual - são apenas nomes de
 métodos, avaliações inteiras, timestamps. Mas são *seus*. O
 Adaptive Learner não envia nenhum deles para qualquer serviço
 de análise ou telemetria de terceiros.
@@ -168,5 +168,5 @@ dá-lhe padrões:
 
 Estas são as perguntas que um aprendente sério faz a si mesmo.
 O Adaptive Learner dá-lhe o substrato para as fazer; a camada
-de gamificação v1.16.0 é a cobertura, desativada por
+de gamificação é a cobertura, desativada por
 predisposição.

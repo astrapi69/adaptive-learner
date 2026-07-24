@@ -9,8 +9,8 @@ olduğunuzla ilgili 12 sorudan oluşur. Her soru yanıtlamak için
 ## Nasıl çalışır
 
 Her soru 3-4 olası yanıt gösterir. Soruların çoğu **tek seçimli**
-(radyo düğmeleri — birini seçin). Birkaçı **çok seçimli** (onay
-kutuları — geçerlilerin hepsini seçin). Uygulama her sorunun
+(radyo düğmeleri - birini seçin). Birkaçı **çok seçimli** (onay
+kutuları - geçerlilerin hepsini seçin). Uygulama her sorunun
 hangi türde olduğunu gösterir.
 
 Mobil ve dokunmatik ekranlarda sorular arasında gezinmek için
@@ -27,12 +27,12 @@ normalleştirir ve 6 yöntemli bir profil üretir.
 
 | Yöntem | Güç |
 |---|---|
-| Tümdengelimli | Önce kurallar, sonra örnekler — teori odaklı |
-| Tümevarımlı | Önce örnekler, kuralı çıkarın — örüntü odaklı |
-| Hata temelli | Hataları tetikle, onlardan öğren — sürtünme odaklı |
-| Diyalogsal | Düşük stresli konuşma — alışveriş odaklı |
-| Bağlamsal | Gerçek dünya senaryoları — durum odaklı |
-| Yapay zeka uyumlu | Yapay zeka her turda seçer — üst düzey odaklı |
+| Tümdengelimli | Önce kurallar, sonra örnekler - teori odaklı |
+| Tümevarımlı | Önce örnekler, kuralı çıkarın - örüntü odaklı |
+| Hata temelli | Hataları tetikle, onlardan öğren - sürtünme odaklı |
+| Diyalogsal | Düşük stresli konuşma - alışveriş odaklı |
+| Bağlamsal | Gerçek dünya senaryoları - durum odaklı |
+| Yapay zeka uyumlu | Yapay zeka her turda seçer - üst düzey odaklı |
 
 [Altı yöntem derinlemesine](../concept/six-methods.md)
 
@@ -60,7 +60,7 @@ modern tarayıcılarda çalışır).
 
 Bir soru birden fazla yanıta izin verdiğinde, seçtiğiniz her
 birinin ağırlığı kaç tane seçtiğinize bölünür. İki yanıt seçmek,
-bir yanıt seçmekle aynı toplam ağırlığı katkılar — dolayısıyla
+bir yanıt seçmekle aynı toplam ağırlığı katkılar - dolayısıyla
 her şeyi seçerek testi manipüle edemezsiniz.
 
 ## Değerlendirmeyi yeniden yapmak
@@ -76,4 +76,4 @@ itibaren değişir.
 
 Testi atlarsanız uygulama varsayılan yöntem olarak **tümdengelimli**
 kullanır ve yine de faydalı oturumlar alırsınız. Hazır olduğunuzda
-değerlendirmeyi yapın — geciktirmenin bir cezası yoktur.
+değerlendirmeyi yapın - geciktirmenin bir cezası yoktur.

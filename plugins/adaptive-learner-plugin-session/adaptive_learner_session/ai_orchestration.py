@@ -149,7 +149,7 @@ async def call_ai_complete_async(
     api_key: str,
     max_tokens: int | None = None,
 ) -> str | None:
-    """v1.5.0 / Phase 18B — async fire of the ai_complete hook.
+    """v1.5.0 / Phase 18B - async fire of the ai_complete hook.
 
     Prefers ``ai_complete_async`` when any registered plugin
     implements it (provider plugin returns a coroutine that the
@@ -205,7 +205,7 @@ async def call_ai_complete_stream(
     api_key: str,
     max_tokens: int | None = None,
 ):
-    """v1.6.0 / Phase 19 — fire the ``ai_complete_stream`` hook.
+    """v1.6.0 / Phase 19 - fire the ``ai_complete_stream`` hook.
 
     Returns an async iterator yielding ``str`` chunks, or ``None``
     when no registered plugin implements the stream hook. Callers

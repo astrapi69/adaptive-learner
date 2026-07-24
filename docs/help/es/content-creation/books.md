@@ -67,5 +67,5 @@ usan tus conjuntos de contenido.
 
 ## Páginas relacionadas
 
-- [Explorador de contenido](../features/content-browser.md) — dónde aparecen las recomendaciones
-- [Crear lecciones — Visión general](overview.md)
+- [Explorador de contenido](../features/content-browser.md) - dónde aparecen las recomendaciones
+- [Crear lecciones - Visión general](overview.md)

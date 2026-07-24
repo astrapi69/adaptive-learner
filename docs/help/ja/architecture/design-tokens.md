@@ -13,7 +13,7 @@
 
 ## トークンのレイヤー
 
-1. **テーマごとのトークン** — 44 個の正規トークンのセットで、
+1. **テーマごとのトークン** - 44 個の正規トークンのセットで、
    テーマごとに 1 回ずつ
    `frontend/src/styles/themes/theme-<id>.css` に定義されます
    （背景、テキスト、ボーダー、インタラクティブ、アクセント、
@@ -21,10 +21,10 @@
    `[data-theme]` を切り替えるとすべてが切り替わります。
    **すべてのテーマがまったく同じセットを定義しなければなりません**
    （`themes.test.ts` でピン留め）。
-2. **テーマ非依存のトークン** — 構造上どのテーマでも同じ値
+2. **テーマ非依存のトークン** - 構造上どのテーマでも同じ値
    （例：ブランドパレット、シンタックスカラー、レイアウトの
    間隔）。これらは `global.css :root` に置かれます。
-3. **レガシーエイリアス** — `--surface`、`--danger` のような古い
+3. **レガシーエイリアス** - `--surface`、`--danger` のような古い
    名前で、正規トークンを**経由して**解決されます。
 
 ---
@@ -49,7 +49,7 @@
 
 1. 既存の `theme-<id>.css` をテンプレートとしてコピーします。
 2. 44 個すべての正規トークンを設定します（同一性は必須です）。
-3. **WCAG AA のコントラスト**に注意します — `contrast.test.ts` が
+3. **WCAG AA のコントラスト**に注意します - `contrast.test.ts` が
    すべてのテーマを計算的に検査します。
 4. テーマを登録します。設定 → 表示 のピッカーがそれを取り込みます。
 
@@ -73,5 +73,5 @@
 
 ## 関連ページ
 
-- [テーマシステム](../developer/themes.md) — 同梱テーマ + ピッカー
-- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — 完全なトークンリスト
+- [テーマシステム](../developer/themes.md) - 同梱テーマ + ピッカー
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) - 完全なトークンリスト

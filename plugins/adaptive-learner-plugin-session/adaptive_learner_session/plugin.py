@@ -1,4 +1,4 @@
-"""SessionPlugin — PluginForge entry point.
+"""SessionPlugin - PluginForge entry point.
 
 Owns two hookimpls + four routes:
 

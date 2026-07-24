@@ -25,7 +25,7 @@ Klasik altı (`light`, `dark`, `ocean`, `forest`, `high-contrast`,
 - **Kanonik renk Token'ları** `frontend/src/styles/themes/theme-<id>.css`
   içinde bulunur, her `data-theme` değeri (`light`, `dark`, `ocean`,
   `forest`, `high-contrast`, `sepia`) için bir blok. Her dosya
-  **eksiksiz** anlamsal Token kümesini tanımlar — açığa düşme yoktur.
+  **eksiksiz** anlamsal Token kümesini tanımlar - açığa düşme yoktur.
 - **Temadan bağımsız Token'lar** (boşluklar, yarıçap, yazı tipleri,
   marka yöntem paleti) ve **Legacy alias'lar** (`--bg`, `--surface`,
   `--fg`, `--danger`, ...) `styles/global.css :root` içinde bulunur.
@@ -69,7 +69,7 @@ bulunur.
 
 1. Mevcut bir dosyayı **kopyala**, örn.
    `cp theme-dark.css theme-midnight.css`, ve seçiciyi
-   `[data-theme="midnight"]` olarak değiştir. **Her** Token'ı koru —
+   `[data-theme="midnight"]` olarak değiştir. **Her** Token'ı koru -
    yalnızca değerleri değiştir. Burada bileşen stilleri yok.
 2. Onu `lib/themes.ts` içinde **kaydet**: `THEMES`'e bir `ThemeMeta`
    girişi ekle (id, İngilizce `label`, `family` light|dark ve Settings
@@ -81,10 +81,10 @@ bulunur.
 5. **i18n**: `ui.themes.midnight`'ı `backend/config/i18n/*.yaml`
    altındaki tüm sekiz katalogda ekle ve `make sync-i18n` çalıştır.
 6. **Denetle**: `bunx vitest run src/styles/themes src/styles/contrast`
-   — eksiksizlik ve kontrast pin'leri yeşil kalmalıdır (yeni temada
+   - eksiksizlik ve kontrast pin'leri yeşil kalmalıdır (yeni temada
    kontrast AA'yı karşılayana kadar değerleri ayarla).
 
-Hepsi bu kadar — ThemePicker, Pre-Paint script'i, diyagramlar ve her
+Hepsi bu kadar - ThemePicker, Pre-Paint script'i, diyagramlar ve her
 bileşen yeni temayı otomatik olarak devralır, çünkü hepsi kanonik
 Token'ları okur.
 
@@ -95,7 +95,7 @@ Token'ları okur.
   zorunlu kılar (belgelenmiş bir allowlist; diyagram çözücüleri,
   dekoratif konfeti ve veri renklerini kapsar).
 - **Her tema her Token'ı tanımlar.** Açıktan miras alınan boşluklar
-  yok — bu, F1 denetim hatasıydı (koyu modda açık hex gösteren
+  yok - bu, F1 denetim hatasıydı (koyu modda açık hex gösteren
   tanımsız Token'lar).
-- **Tema değişimi anlıktır** — bir `data-theme` takası, asla bir
+- **Tema değişimi anlıktır** - bir `data-theme` takası, asla bir
   yeniden yükleme.

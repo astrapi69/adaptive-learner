@@ -11,11 +11,11 @@ seul hook.
 
 | Hook | Usage |
 |------|-------|
-| `ai_complete(prompt, model, messages)` | Appel synchrone — retourne le texte complet |
+| `ai_complete(prompt, model, messages)` | Appel synchrone - retourne le texte complet |
 | `ai_complete_async(prompt, model, messages)` | Variante asynchrone (v1.5.0+) |
-| `ai_complete_stream(prompt, model, messages)` | Streaming SSE (v1.6.0+) — yield de morceaux de texte |
+| `ai_complete_stream(prompt, model, messages)` | Streaming SSE (v1.6.0+) - yield de morceaux de texte |
 
-Tous les trois utilisent `firstresult` — le premier plugin enregistré
+Tous les trois utilisent `firstresult` - le premier plugin enregistré
 qui retourne une valeur non nulle gagne.
 
 ---
@@ -28,7 +28,7 @@ via la configuration du fournisseur.
 
 En mode Dexie, les appels IA transitent **directement du navigateur** au
 fournisseur. Les clés API sont stockées en clair dans localStorage en
-mode Dexie — documenté et attendu pour un déploiement GitHub Pages
+mode Dexie - documenté et attendu pour un déploiement GitHub Pages
 uniquement navigateur.
 
 ---
@@ -37,15 +37,15 @@ uniquement navigateur.
 
 Chaque session d'apprentissage fait tourner **deux instances IA** :
 
-1. **IA enseignante** — génère les explications et les exercices selon la
+1. **IA enseignante** - génère les explications et les exercices selon la
    méthode et l'étape. Reçoit un invite système de la matrice 42 cellules
    (6 méthodes × 7 étapes).
 
-2. **IA évaluatrice** — évalue la réponse de l'apprenant en arrière-plan.
+2. **IA évaluatrice** - évalue la réponse de l'apprenant en arrière-plan.
    Retourne `{advance: bool, confidence: float, reason: str, suggested_step: int}`.
 
 Les deux font appel à `ai_complete_async` en parallèle. L'évaluatrice ne
-reçoit jamais le contexte d'invite de l'enseignante — c'est intentionnel
+reçoit jamais le contexte d'invite de l'enseignante - c'est intentionnel
 pour éviter les biais.
 
 ---
@@ -55,11 +55,11 @@ pour éviter les biais.
 Les invites système vivent dans `backend/config/sessions/` sous
 `{méthode}_{étape}.txt`. Chaque fichier est un template Jinja2 avec :
 
-- `{{ topic }}` — le sujet d'apprentissage du projet
-- `{{ goal }}` — l'objectif d'apprentissage
-- `{{ language }}` — la langue de la session
-- `{{ step }}` — l'étape courante du cycle (1-7)
-- `{{ history_summary }}` — résumé des échanges précédents
+- `{{ topic }}` - le sujet d'apprentissage du projet
+- `{{ goal }}` - l'objectif d'apprentissage
+- `{{ language }}` - la langue de la session
+- `{{ step }}` - l'étape courante du cycle (1-7)
+- `{{ history_summary }}` - résumé des échanges précédents
 
 ---
 

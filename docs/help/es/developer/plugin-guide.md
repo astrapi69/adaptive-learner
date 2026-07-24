@@ -58,7 +58,7 @@ class HelloPlugin(BasePlugin):
     # "adaptive_learner" para que el PluginManager del host (que
     # pasa ``app_id="adaptive_learner"``) reconozca el plugin como
     # dirigido a esta aplicación. La transición v0.9.0 convirtió
-    # esto en un FILTRO DURO — los plugins sin esto son rechazados
+    # esto en un FILTRO DURO - los plugins sin esto son rechazados
     # en el momento del descubrimiento.
     target_application = "adaptive_learner"
     depends_on: list[str] = []
@@ -137,26 +137,26 @@ curl http://localhost:18001/api/plugins/hello/greet
 Todas las especificaciones de hooks viven en
 `backend/app/hookspecs.py`:
 
-1. `get_assessment_questions(lang: str)` — devuelve el paquete de
+1. `get_assessment_questions(lang: str)` - devuelve el paquete de
    preguntas.
-2. `calculate_profile(answers: list)` — calcula los pesos de los
+2. `calculate_profile(answers: list)` - calcula los pesos de los
    métodos (firstresult).
-3. `create_session_prompt(...)` — compone el prompt del sistema
+3. `create_session_prompt(...)` - compone el prompt del sistema
    (firstresult).
-4. `ai_complete(messages, model, api_key, max_tokens)` — llama a
+4. `ai_complete(messages, model, api_key, max_tokens)` - llama a
    la IA de forma síncrona (firstresult, el proveedor enruta por
    prefijo de modelo).
-5. `ai_complete_async(...)` — variante asíncrona para la
+5. `ai_complete_async(...)` - variante asíncrona para la
    evaluación paralela en el límite del ciclo (v1.5.0+, firstresult).
-6. `ai_complete_stream(...)` — variante en streaming que produce
+6. `ai_complete_stream(...)` - variante en streaming que produce
    deltas de texto mediante SSE (v1.6.0+, firstresult).
-7. `recommend_method_switch(history, profile)` — devuelve una
+7. `recommend_method_switch(history, profile)` - devuelve una
    recomendación de cambio o None.
-8. `on_session_complete(session, rating)` — efecto secundario
+8. `on_session_complete(session, rating)` - efecto secundario
    broadcast; la gamificación y el seguimiento escuchan.
-9. `get_progress_summary(project_id, db)` — devuelve un fragmento
+9. `get_progress_summary(project_id, db)` - devuelve un fragmento
    de espacio de nombres del resumen del panel.
-10. `get_tool_recommendations(profile, lang)` — devuelve
+10. `get_tool_recommendations(profile, lang)` - devuelve
     herramientas ordenadas.
 
 [Referencia completa de hookspecs](../api/hooks.md)
@@ -165,7 +165,7 @@ Todas las especificaciones de hooks viven en
 
 Los hooks marcados con `firstresult=True` se detienen en el
 primer plugin que devuelve un valor distinto de None. Útil para
-los casos de «exactamente un plugin debe manejar esto» — como
+los casos de «exactamente un plugin debe manejar esto» - como
 `ai_complete`, donde el plugin del proveedor correspondiente
 devuelve el texto y los demás devuelven None.
 

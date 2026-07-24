@@ -3,22 +3,22 @@
 La página de Ajustes recoge todo lo que puedes modificar sin tocar
 código ni YAML. Secciones de arriba a abajo:
 
-1. **Idioma** — idioma de la interfaz (DE / EN / ES / FR / EL /
+1. **Idioma** - idioma de la interfaz (DE / EN / ES / FR / EL /
    PT / TR / JA, todos completamente traducidos).
-2. **Proveedor de IA + selector de modelo** — qué proveedor ve
+2. **Proveedor de IA + selector de modelo** - qué proveedor ve
    tus mensajes y qué modelo usar.
-3. **Claves API** — claves por proveedor con atribución de origen
+3. **Claves API** - claves por proveedor con atribución de origen
    (entorno / `secrets.yaml` / Ajustes).
-4. **Modo de almacenamiento** — Servidor (FastAPI + SQLite) vs
+4. **Modo de almacenamiento** - Servidor (FastAPI + SQLite) vs
    Local (IndexedDB del navegador).
-5. **Sincronización** — emparejar este dispositivo con otro en la
+5. **Sincronización** - emparejar este dispositivo con otro en la
    red local.
-6. **Copia de seguridad** — exportar / importar / comparar.
-7. **Voz** — alternadores de TTS + STT + pronunciación.
-8. **Interfaz** — gestos + tema + densidad.
-9. **Gamificación** — notificaciones de XP / insignias + modo fin
+6. **Copia de seguridad** - exportar / importar / comparar.
+7. **Voz** - alternadores de TTS + STT + pronunciación.
+8. **Interfaz** - gestos + tema + densidad.
+9. **Gamificación** - notificaciones de XP / insignias + modo fin
    de semana.
-10. **Acerca de** — versión, información del sistema, créditos,
+10. **Acerca de** - versión, información del sistema, créditos,
     donaciones, licencia.
 
 ## Idioma
@@ -36,7 +36,7 @@ UserSettings; la siguiente llamada a la IA pasa por el plugin del
 nuevo proveedor (modo Servidor) o el cliente HTTP del nuevo
 proveedor (modo Local).
 
-El **Selector de modelo** (desde v1.11.0) es un desplegable con
+El **Selector de modelo** es un desplegable con
 búsqueda agrupado en Recomendado / Todo, poblado desde el endpoint
 `/v1/models` en vivo de cada proveedor (caché de 1h). Cada fila
 muestra el nombre legible + id bruto + distintivo de ventana de
@@ -47,24 +47,24 @@ encabezado de Sesión lee `<Proveedor>: <Nombre del modelo>`; el id
 completo + la ventana de contexto están en la información sobre
 herramientas.
 
-## Claves API (Fase 34 / v1.20.0)
+## Claves API
 
 Cada proveedor tiene su propia fila: un campo de entrada de clave,
 un botón Guardar, un botón Eliminar, el distintivo de proveedor
 activo, más el nuevo distintivo de **atribución de origen**:
 
-- **Clave de: Ajustes** — la clave se almacena cifrada con Fernet
+- **Clave de: Ajustes** - la clave se almacena cifrada con Fernet
   en la BD (modo Servidor) o en texto claro en IndexedDB (modo
   Local). Puedes guardar / eliminar libremente.
-- **Clave de: secrets.yaml** — la clave está configurada en
+- **Clave de: secrets.yaml** - la clave está configurada en
   `~/.config/adaptive-learner/secrets.yaml`. El botón Guardar
   está desactivado; edita el archivo directamente para cambiarla.
   Un banner informativo debajo de la fila te recuerda la ruta.
-- **Clave de: entorno** — la clave está configurada mediante la
+- **Clave de: entorno** - la clave está configurada mediante la
   variable de entorno `ADAPTIVE_LEARNER_<PROVEEDOR>_API_KEY`.
   Guardar desactivado; la variable de entorno es la fuente de
   verdad.
-- **Sin clave configurada** — no hay nada configurado en ningún
+- **Sin clave configurada** - no hay nada configurado en ningún
   lado. Escribe y haz clic en Guardar para empezar.
 
 Cadena de resolución (prioridad más alta gana): entorno >
@@ -76,11 +76,11 @@ para el desglose completo.
 El alternador entre almacenamiento **Servidor** y **Local
 (Navegador)**:
 
-- **Servidor** — cada lectura y escritura llega al backend
+- **Servidor** - cada lectura y escritura llega al backend
   FastAPI. Requiere un backend en ejecución. Mejor para el uso
   en múltiples dispositivos con sincronización del lado del
   servidor.
-- **Local (Navegador)** — cada lectura y escritura llega a
+- **Local (Navegador)** - cada lectura y escritura llega a
   IndexedDB en este navegador. Las llamadas a la IA se disparan
   directamente al proveedor. No se requiere backend. Mejor para
   una configuración privada y local en el dispositivo.
@@ -125,19 +125,19 @@ Comparar-como-A/B.
 
 ## Voz
 
-Cuatro alternadores (desde v1.18.0):
+Cuatro alternadores:
 
-- **TTS activado** — añade un botón ▶ junto a las respuestas de
+- **TTS activado** - añade un botón ▶ junto a las respuestas de
   la IA + los resultados de la Evaluación que los lee en voz alta.
   Elige la voz que coincide con el idioma cuando está disponible;
   velocidad + tono limitados a [0,5; 2,0].
-- **Reproducción automática de IA** — habla cada respuesta de la
+- **Reproducción automática de IA** - habla cada respuesta de la
   IA automáticamente (predeterminado DESACTIVADO: el audio
   sorpresa raramente es lo que quieres).
-- **STT activado** — añade un botón 🎤 a la entrada de Sesión que
+- **STT activado** - añade un botón 🎤 a la entrada de Sesión que
   captura el habla y rellena el área de texto con transcripciones
   provisionales antes de enviar.
-- **Práctica de pronunciación activada** — muestra la página
+- **Práctica de pronunciación activada** - muestra la página
   `/pronunciation` desde el inicio rápido del Panel principal para
   proyectos etiquetados como Idiomas.
 
@@ -145,21 +145,21 @@ La sección de Voz se oculta cuando ninguno de los dos lados de la
 Web Speech API (síntesis ni reconocimiento) es compatible con el
 navegador.
 
-## Apariencia (Fase 58 / v1.41.0)
+## Apariencia
 
 El selector de **Tema** en *General > Apariencia* ofrece seis
 temas más un modo automático:
 
-- **Claro** — el predeterminado, brillante y de alto contraste.
-- **Oscuro** — superficies atenuadas para uso con poca luz.
-- **Océano** — tonos azul profundo, calmado y agradable por la
+- **Claro** - el predeterminado, brillante y de alto contraste.
+- **Oscuro** - superficies atenuadas para uso con poca luz.
+- **Océano** - tonos azul profundo, calmado y agradable por la
   noche.
-- **Bosque** — tonos cálidos de verde y ámbar terrosos.
-- **Alto contraste** — accesibilidad primero: negro, blanco y
+- **Bosque** - tonos cálidos de verde y ámbar terrosos.
+- **Alto contraste** - accesibilidad primero: negro, blanco y
   colores de señal audaces, con bordes de tarjeta nítidos. Úsalo
   si necesitas la máxima legibilidad.
-- **Sepia** — tonos cálidos de papel, cómodo para lecturas largas.
-- **Auto (Sistema)** — sigue la configuración de claro/oscuro de
+- **Sepia** - tonos cálidos de papel, cómodo para lecturas largas.
+- **Auto (Sistema)** - sigue la configuración de claro/oscuro de
   tu sistema operativo y cambia automáticamente cuando el sistema
   lo hace.
 
@@ -171,7 +171,7 @@ retroalimentación de ejercicios son legibles en todos ellos.
 
 ## Interfaz
 
-El **alternador de Gestos** (desde v1.10.0, predeterminado
+El **alternador de Gestos** (predeterminado
 ACTIVADO para dispositivos táctiles) cubre la navegación por
 deslizamiento de la Evaluación, el deslizamiento para revelar el
 tema del Plan de estudios y el vistazo del ciclo de Sesión.

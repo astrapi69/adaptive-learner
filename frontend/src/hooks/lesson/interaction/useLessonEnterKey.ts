@@ -23,39 +23,10 @@ import {
     decideLessonEnterAction,
     type LessonEnterState,
 } from "../../../lib/lesson/lessonShortcutsPref";
+import {focusOwnsEnter, isPlainEnter} from "./enterKeyGuards";
 
 /** The decision state plus the advance callback the listener needs. */
 export type LessonEnterNav = LessonEnterState & {goNext: () => void};
-
-/** True for a bare Enter keypress that the lesson shortcut should act
- *  on: the Enter key, with no modifier, not an IME composition, and not
- *  already handled (``defaultPrevented``) by another listener. */
-function isPlainEnter(e: KeyboardEvent): boolean {
-    return (
-        e.key === "Enter" &&
-        !e.shiftKey &&
-        !e.ctrlKey &&
-        !e.metaKey &&
-        !e.altKey &&
-        !e.isComposing &&
-        !e.defaultPrevented
-    );
-}
-
-/** True when the focused element already owns Enter (a button, link,
- *  textarea, select, contenteditable, or ``role=button``), so the
- *  lesson shortcut must step aside. */
-function focusOwnsEnter(el: HTMLElement | null): boolean {
-    const tag = el?.tagName;
-    return (
-        tag === "BUTTON" ||
-        tag === "A" ||
-        tag === "TEXTAREA" ||
-        tag === "SELECT" ||
-        el?.isContentEditable === true ||
-        el?.getAttribute("role") === "button"
-    );
-}
 
 export interface UseLessonEnterKeyOptions {
     /** Gated by the Settings > Learning "Enter shortcut" toggle. */

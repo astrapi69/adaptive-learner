@@ -6,7 +6,7 @@ lecciones. No estás limitado al catálogo oficial: Adaptive Learner
 puede cargar varios repositorios a la vez, conectar los tuyos
 propios y recomendar repos curados (EXP-023).
 
-<!-- TODO: Captura de pantalla — Ajustes → Datos → sección Repositorios de contenido con el repo oficial + un repo propio -->
+<!-- TODO: Captura de pantalla - Ajustes → Datos → sección Repositorios de contenido con el repo oficial + un repo propio -->
 
 ---
 
@@ -53,7 +53,7 @@ Puedes conectar todos los repos que quieras. En la lista de
 
 - **Añadirlos** mediante la URL del repo,
 - **Eliminarlos** (el repo oficial queda protegido),
-- **Reordenarlos** — el orden determina la **prioridad**. Si dos
+- **Reordenarlos** - el orden determina la **prioridad**. Si dos
   repos contienen el mismo conjunto, gana el que está más arriba.
 
 Las instalaciones más antiguas con un solo repo conectado se
@@ -70,7 +70,7 @@ con la URL precargada; el código QR hace lo mismo en el
 smartphone. Así compartes un curso con tu grupo de estudio sin
 teclear nada a mano.
 
-<!-- TODO: Captura de pantalla — Cuadro de diálogo para compartir con código QR -->
+<!-- TODO: Captura de pantalla - Cuadro de diálogo para compartir con código QR -->
 
 ---
 
@@ -84,7 +84,7 @@ ahí resulta un nivel de confianza:
 |---|---|
 | **0** | Aún no validado o validación fallida. |
 | **1** | Técnicamente válido: al menos una lección, sin contenido ejecutable. |
-| **3** | **Recomendado oficialmente** — de la lista curada de recomendaciones. |
+| **3** | **Recomendado oficialmente** - de la lista curada de recomendaciones. |
 
 La validación es puramente técnica (estructura + seguridad). Una
 valoración de contenido/basada en la comunidad (confianza 2)
@@ -125,6 +125,6 @@ accidentalmente al compartir los ajustes.
 
 ## Páginas relacionadas
 
-- [Explorador de contenido](content-browser.md) — encontrar, filtrar y descargar conjuntos
-- [Crear lecciones](../content-creation/overview.md) — aportar contenido propio
-- [Copia de seguridad y restauración](backup.md) — los repos conectados forman parte del snapshot
+- [Explorador de contenido](content-browser.md) - encontrar, filtrar y descargar conjuntos
+- [Crear lecciones](../content-creation/overview.md) - aportar contenido propio
+- [Copia de seguridad y restauración](backup.md) - los repos conectados forman parte del snapshot

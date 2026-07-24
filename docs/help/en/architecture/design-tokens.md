@@ -11,16 +11,16 @@ The full token reference is in
 
 ## The token layers
 
-1. **Per-theme tokens** — the canonical set of 44 tokens, defined
+1. **Per-theme tokens** - the canonical set of 44 tokens, defined
    once per theme in `frontend/src/styles/themes/theme-<id>.css`
    (backgrounds, text, borders, interactive, accent, status,
    exercise feedback, star, charts, shadows). Switching
    `[data-theme]` flips all of them. **Every theme must define the
    exact same set** (pinned by `themes.test.ts`).
-2. **Theme-agnostic tokens** — values that are the same in every
+2. **Theme-agnostic tokens** - values that are the same in every
    theme by construction (e.g. brand palette, syntax colors,
    layout spacing). They live in `global.css :root`.
-3. **Legacy aliases** — old names like `--surface`, `--danger`
+3. **Legacy aliases** - old names like `--surface`, `--danger`
    that resolve **through** the canonical tokens.
 
 ---
@@ -44,7 +44,7 @@ The full token reference is in
 
 1. Copy an existing `theme-<id>.css` as a template.
 2. Set all 44 canonical tokens (parity is mandatory).
-3. Mind **WCAG AA contrast** — `contrast.test.ts` checks all
+3. Mind **WCAG AA contrast** - `contrast.test.ts` checks all
    themes computationally.
 4. Register the theme; the picker under Settings → Appearance
    picks it up.
@@ -68,5 +68,5 @@ addition, `themes.test.ts` (token parity) and `contrast.test.ts`
 
 ## Related pages
 
-- [Theme system](../developer/themes.md) — the shipped themes + picker
-- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — full token list
+- [Theme system](../developer/themes.md) - the shipped themes + picker
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) - full token list

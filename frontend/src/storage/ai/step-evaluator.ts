@@ -20,13 +20,13 @@ const MIN_STEP = 1;
 const MAX_STEP = 7;
 
 const STEP_DESCRIPTIONS: Record<number, string> = {
-    1: "input — the learner is encountering new material for the first time",
-    2: "attempt — the learner is applying what they just learned",
-    3: "error — mistakes are happening and being noticed",
-    4: "feedback — the learner is receiving and processing feedback on mistakes",
-    5: "adapt — the learner is adjusting their approach based on feedback",
-    6: "repeat — the learner is practising a variation with the new understanding",
-    7: "integrate — the learner is connecting the new knowledge to broader context",
+    1: "input - the learner is encountering new material for the first time",
+    2: "attempt - the learner is applying what they just learned",
+    3: "error - mistakes are happening and being noticed",
+    4: "feedback - the learner is receiving and processing feedback on mistakes",
+    5: "adapt - the learner is adjusting their approach based on feedback",
+    6: "repeat - the learner is practising a variation with the new understanding",
+    7: "integrate - the learner is connecting the new knowledge to broader context",
 };
 
 const METHOD_EVAL_HINTS: Record<LearningMethod, string> = {
@@ -34,7 +34,7 @@ const METHOD_EVAL_HINTS: Record<LearningMethod, string> = {
         "Look for rule comprehension and correct application of the underlying theory. " +
         "Readiness = the learner can articulate WHY, not only WHAT.",
     inductive:
-        "Look for pattern recognition from examples — does the learner generalise from " +
+        "Look for pattern recognition from examples - does the learner generalise from " +
         "concrete cases to the underlying principle?",
     error_based:
         "Errors are the point. Readiness = the learner identifies WHAT went wrong AND WHY, " +
@@ -46,7 +46,7 @@ const METHOD_EVAL_HINTS: Record<LearningMethod, string> = {
         "Look for application in the learner's OWN real situation. Readiness = the learner " +
         "ties the concept to a concrete, personal context.",
     ai_adaptive:
-        "The learner is steering. Readiness = self-direction — clear next-step intent, " +
+        "The learner is steering. Readiness = self-direction - clear next-step intent, " +
         "productive prompting back to the AI.",
 };
 

@@ -46,7 +46,7 @@ function buildItems(
       const m = meta.get(cardId);
       const label = m
         ? m.lessonTitle
-          ? `${m.lessonTitle} — ${m.front}`
+          ? `${m.lessonTitle} - ${m.front}`
           : m.front
         : cardId;
       item = { cardId, label, issues: [] };
@@ -141,7 +141,7 @@ export default function QualityCheckDialog({
             <p className="text-xs text-fg-muted">
               {t(
                 "content.quality.offline_note",
-                "Runs offline — accents, articles, and duplicate cards. No API key needed.",
+                "Runs offline - accents, articles, and duplicate cards. No API key needed.",
               )}
             </p>
             <ValidationReport
@@ -166,7 +166,7 @@ export default function QualityCheckDialog({
               }
               allOkText={t(
                 "content.quality.report.all_ok",
-                "No issues found — accents, articles, and duplicates all clean.",
+                "No issues found - accents, articles, and duplicates all clean.",
               )}
               problemLabel={t("content.quality.report.problem", "Problem")}
               suggestionLabel={t(

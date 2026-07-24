@@ -17,14 +17,14 @@ languages:
   - code: ja
     name: 日本語
 
-# Phase 11 (v0.8.0) — Full documentation tree.
+# Phase 11 (v0.8.0) - Full documentation tree.
 #
 # Top-level sections:
 #   - Home (landing page)
-#   - User Guide / Benutzerhandbuch — for learners using the app
-#   - Concept / Konzept — the pedagogical thinking
-#   - Developer Docs / Entwickler-Dokumentation — for contributors
-#   - API Reference / API-Referenz — for integrators
+#   - User Guide / Benutzerhandbuch - for learners using the app
+#   - Concept / Konzept - the pedagogical thinking
+#   - Developer Docs / Entwickler-Dokumentation - for contributors
+#   - API Reference / API-Referenz - for integrators
 #
 # The in-app help panel reads this file directly; mkdocs.yml's
 # nav block is regenerated from here by scripts/generate_mkdocs_nav.py.
@@ -52,6 +52,16 @@ navigation:
           tr: Docker Desktop kurulumu
           ja: Docker Desktop のインストール
         slug: install/docker-desktop
+      - title:
+          de: Desktop-Launcher starten
+          en: Start the desktop launcher
+          es: Iniciar el launcher de escritorio
+          fr: Démarrer le launcher de bureau
+          el: Εκκίνηση του Desktop-Launcher
+          pt: Iniciar o launcher de desktop
+          tr: Masaüstü launcher'ı başlatma
+          ja: デスクトップランチャーの起動
+        slug: install/launcher
   - title:
       de: Benutzerhandbuch
       en: User Guide

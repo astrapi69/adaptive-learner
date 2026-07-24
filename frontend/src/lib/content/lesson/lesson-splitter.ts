@@ -57,7 +57,7 @@ const DEFAULT_MAX_STEPS = 10;
 
 /** Language-neutral default part title (pinned by the parity goldens). */
 function defaultPartTitle({title, part, total}: PartTitleContext): string {
-    return `${title} — Part ${part} of ${total}`;
+    return `${title} - Part ${part} of ${total}`;
 }
 
 /**

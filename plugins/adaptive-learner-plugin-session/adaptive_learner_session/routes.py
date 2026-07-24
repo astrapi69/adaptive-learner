@@ -303,7 +303,7 @@ async def append_message_stream(
     request: Request,  # noqa: ARG001  — kept for symmetry / future use
     db: Session = Depends(get_db),
 ) -> StreamingResponse:
-    """v1.6.0 / Phase 19 — token-streaming variant of /message.
+    """v1.6.0 / Phase 19 - token-streaming variant of /message.
 
     Thin delegation: the SSE wiring (event schema, provider-stream
     fallback, post-stream step-evaluation + topic-transition, setup-error

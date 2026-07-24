@@ -27,7 +27,7 @@ const EXPLANATIONS: Record<ErrorTag, {key: string; fallback: string}> = {
     spelling_accent: {
         key: "review.explain_spelling_accent",
         fallback:
-            "Check the exact spelling and accent marks — a small difference changes the word.",
+            "Check the exact spelling and accent marks - a small difference changes the word.",
     },
     verb_conjugation: {
         key: "review.explain_verb_conjugation",

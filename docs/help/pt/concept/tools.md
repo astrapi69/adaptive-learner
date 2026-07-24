@@ -117,27 +117,27 @@ Assim, um método que não tocou há duas semanas recebe um cartão
 14 dias" (ou não aparece de todo porque a lista tem limite de 5).
 
 Os cartões são ordenados por urgência (intervalo menor × peso
-mais forte = prioridade mais alta). Não tem de os seguir — são
+mais forte = prioridade mais alta). Não tem de os seguir - são
 sugestões, não comandos.
 
-## Integrações integradas de primeira classe (desde v1.17.0)
+## Integrações integradas de primeira classe
 
-Três ferramentas passaram de "recomendação externa" para
-"exportação integrada" entre v1.17.0 e v1.20.0:
+Três ferramentas são incluídas como exportação integrada em vez
+de recomendação externa:
 
-- **Exportação Anki .apkg** (v1.17.0 / Fase 30) — reveja os
+- **Exportação Anki .apkg** - reveja os
   flashcards extraídos pela IA na página `/anki`, aceite os que
   quer, clique em Exportar. O `.apkg` é construído do lado do
   cliente via sql.js + JSZip e funciona diretamente no Anki
   desktop. Sem transferência manual.
-- **Pacote ZIP NotebookLM** (v1.19.0 / Fase 32) — Página de
+- **Pacote ZIP NotebookLM** - Página de
   Progresso → Transferir pacote de estudo. O ZIP contém
   `summary.md`, `vocabulary.md`, `rules.md`, `errors.md`,
   `flashcards.md` e `sessions/*.md` formatados para o upload
   de fontes do NotebookLM. O NotebookLM não tem API pública,
   por isso este é o melhor caminho seguinte.
-- **Voz (TTS + STT + Prática de Pronúncia)** (v1.18.0 /
-  Fase 31) — Integrações da Web Speech API diretamente na
+- **Voz (TTS + STT + Prática de Pronúncia)** -
+  Integrações da Web Speech API diretamente na
   Sessão + Avaliação + uma página `/pronunciation` dedicada
   para projetos de idiomas. Não é necessária nenhuma ferramenta
   externa.
@@ -146,17 +146,17 @@ Três ferramentas passaram de "recomendação externa" para
 
 Deliberadamente excluído:
 
-- **Duolingo / Babbel / aplicações gamificadas semelhantes** —
+- **Duolingo / Babbel / aplicações gamificadas semelhantes** -
   entram em conflito com a filosofia. O Adaptive Learner inclui
-  XP + emblemas + sequências (v1.16.0), mas como camada
+  XP + emblemas + sequências, mas como camada
   motivacional sobre conteúdo não gamificado, não como o loop
   principal.
-- **Khan Academy / Coursera** — orientados para a conclusão de
+- **Khan Academy / Coursera** - orientados para a conclusão de
   cursos, não para a aquisição de competências. Espaço de
   problema diferente.
-- **Memrise** — demasiado próximo do Anki; o catálogo mantém
+- **Memrise** - demasiado próximo do Anki; o catálogo mantém
   uma ferramenta por nicho.
-- **Notion** — excessivo para o nicho de "notas ligadas";
+- **Notion** - excessivo para o nicho de "notas ligadas";
   o Obsidian encaixa de forma limpa sem bloqueio na nuvem.
 
 O catálogo é pequeno por intenção. Adicionar mais diluiria o

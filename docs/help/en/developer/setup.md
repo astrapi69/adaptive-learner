@@ -10,7 +10,7 @@
   `curl -sSL https://install.python-poetry.org | python3 -`.
 - **Bun** 1.3+ (the frontend package manager, #1492).
 - **GNU Make** for the orchestration targets. The Makefile is
-  the source of truth — every CI command is in there.
+  the source of truth - every CI command is in there.
 
 ## Clone + install
 
@@ -22,8 +22,8 @@ make install
 
 `make install` runs:
 
-1. `cd backend && poetry install` — backend + plugin path-deps.
-2. `cd frontend && bun install` — frontend dependencies (Node 24).
+1. `cd backend && poetry install` - backend + plugin path-deps.
+2. `cd frontend && bun install` - frontend dependencies (Node 24).
 3. Installs every plugin in `plugins/` as a path-dep into the
    backend's venv (`develop = true` so edits are live).
 
@@ -38,7 +38,7 @@ The backend reads its config from a three-layer chain
 
 1. **Environment variables** prefixed `ADAPTIVE_LEARNER_*`.
 2. **User secrets** at `~/.config/adaptive_learner/secrets.yaml`
-   — auto-generated as a commented template on first start
+   - auto-generated as a commented template on first start
    (`chmod 0600` on POSIX); never committed to git.
 3. **Defaults** in `backend/config/app.yaml`.
 
@@ -47,14 +47,14 @@ Plus per-provider AI key resolution layered on top:
 the Settings UI), surfaced to the UI as the `key_source_*`
 field on `UserSettingsOut`.
 
-The one mandatory secret is `ADAPTIVE_LEARNER_SECRET_KEY` —
+The one mandatory secret is `ADAPTIVE_LEARNER_SECRET_KEY` -
 used to encrypt user API keys at rest with Fernet. Generate
 one with `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
 Three places to put it (highest priority wins):
 `ADAPTIVE_LEARNER_SECRET_KEY` env var, `secret_key:` in
 `secrets.yaml`, or `make dev-secret` for a one-shot dev key.
 The app fails hard at startup if the key is unset (no
-silent-generated-default footgun — see
+silent-generated-default footgun - see
 [docs/configuration.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md)).
 
 ## Run
@@ -120,7 +120,7 @@ make docs-serve     # serve docs on localhost:8000 with hot-reload
 make docs-build     # build static site to site/
 ```
 
-The docs venv is separate from backend's — MkDocs has its
+The docs venv is separate from backend's - MkDocs has its
 own `docs/pyproject.toml` with mkdocs-material +
 mkdocs-static-i18n.
 

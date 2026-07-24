@@ -107,7 +107,7 @@ describe("lessonCardsToAnki", () => {
 
 describe("ankiFilename", () => {
     it("slugifies the title and appends -anki.txt", () => {
-        expect(ankiFilename("Spanish A1 — Greetings")).toBe(
+        expect(ankiFilename("Spanish A1 - Greetings")).toBe(
             "spanish-a1-greetings-anki.txt",
         );
     });

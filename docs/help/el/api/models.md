@@ -43,7 +43,7 @@ Phase 32 notebooklm) αναφέρονται στο τέλος με ονομασ�
 | model_override_gemini | string \| null | Προεπιλογή `null` |
 
 Το σχήμα μεταφοράς (`UserSettingsOut`) αντικαθιστά τα τρία
-πεδία `api_key_*` με booleans `has_<provider>_key: bool` —
+πεδία `api_key_*` με booleans `has_<provider>_key: bool` -
 το απλό κείμενο δεν μεταφέρεται ποτέ πίσω στον client. Από
 την v1.20.0 / Phase 34, το σχήμα μεταφοράς φέρει επίσης
 `key_source_<provider>: ApiKeySource` (enum:

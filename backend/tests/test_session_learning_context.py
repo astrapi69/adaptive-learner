@@ -128,8 +128,8 @@ def test_start_injects_learning_context(client: TestClient):
     prompt = _start(client, project_id)
 
     assert "LEARNING CONTEXT" in prompt
-    assert "language-fr-a1 — 01 greetings (9/10)" in prompt
-    assert "Currently working on: language-fr-a1 — 02 numbers, step 3" in prompt
+    assert "language-fr-a1 - 01 greetings (9/10)" in prompt
+    assert "Currently working on: language-fr-a1 - 02 numbers, step 3" in prompt
     assert 'bonjour (answered "bonsoir", correct "bonjour", 3x)' in prompt
     assert 'You are a tutor for "French A1"' in prompt
 

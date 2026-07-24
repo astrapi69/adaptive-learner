@@ -19,7 +19,7 @@ verimli biçimde içselleştirmek ister.
 
 **Zayıf olduğu zaman**: kurallar belirsiz, tartışmalı ya da bağlama
 bağlıdır. "İyi zevk" ya da "açıklık"ın saf tümdengelimli öğretimi
-yavan kalır — öğrencinin örtük kalıbın kristalleşmesi için pek çok
+yavan kalır - öğrencinin örtük kalıbın kristalleşmesi için pek çok
 örneğe ihtiyacı vardır.
 
 **Yapay zekanın üslubu**: kesin, yapılandırılmış, eksiksiz. Kuralı
@@ -34,7 +34,7 @@ Kuralı yalnızca öğrenci bir hipotez oluşturduktan sonra açıklayın.
 
 **Güçlü olduğu zaman**: kalıp tanıma tam olarak öğrencinin geliştirmesi
 gereken bilişsel beceridir. Dil öğrenimi, müzik teorisi, satranç
-taktikleri, makine öğrenimi sezgisi — hepsi tümevarımlı pratikten
+taktikleri, makine öğrenimi sezgisi - hepsi tümevarımlı pratikten
 yararlanır.
 
 **Zayıf olduğu zaman**: hız önemlidir. Kural basit ve belirsiz
@@ -60,11 +60,11 @@ tartışmada yaygın yanılgılar). Öğrenci, düzeltici mekanizmayı anlamadan
 **Zayıf olduğu zaman**: öğrenci kırılgan, kaygılı ya da yenidir.
 Dikkatli bir çerçeveleme olmadan "üretken hayal kırıklığı" "Bu konuda
 kötüyüm" duygusuna dönüşebilir. Bu yöntemdeki yapay zekanın `adım 3
-(Hata)` istemi açıkça "kesin biçimde tanıla, doldurmadan" der — bu bir
+(Hata)` istemi açıkça "kesin biçimde tanıla, doldurmadan" der - bu bir
 pedagojik tercih, kişilik kusuru değil.
 
 **Yapay zekanın üslubu**: hata konusunda yüzleştirici, ardından
-mekanizması konusunda derinden açıklayıcı. "Bu, klasik X tuzağıdır —
+mekanizması konusunda derinden açıklayıcı. "Bu, klasik X tuzağıdır -
 Y nedeniyle içine düştünüz. İşte neden bu kadar cazip olduğu."
 
 ## Diyalogsal
@@ -143,8 +143,8 @@ aktarılır.
 Değerlendirmeniz size 6 yöntemli bir profil verir. Baskın yöntem, yeni
 oturumların başladığı yöntemdir. Ama:
 
-- **Adım değerlendirici** (çift istem v0.5.0) her döngü adımı başına
-  kalmayı, ilerlemeyi ya da — nadiren — geri adım atmayı önerebilir.
+- **Adım değerlendirici** (çift istem) her döngü adımı başına
+  kalmayı, ilerlemeyi ya da - nadiren - geri adım atmayı önerebilir.
 - **Yöntem değiştirme buluşsal yöntemi**, durgunluğu tespit eder (düz
   anlayış + yüksek stres ile üç oturum) ve her iki depolama modunda da
   "Şunu denemek ister misiniz [diğer yöntem]?" başlığını yüzeye çıkarır.

@@ -17,7 +17,7 @@ internalise them efficiently.
 
 **Weak when**: the rules are fuzzy, contested, or context-
 dependent. Pure deductive teaching of "good taste" or
-"clarity" lands flat — the learner needs to see many
+"clarity" lands flat - the learner needs to see many
 examples before the implicit pattern crystallises.
 
 **AI's style**: precise, structured, complete. Spells out the
@@ -34,7 +34,7 @@ learner has formed a hypothesis.
 
 **Strong when**: pattern recognition is exactly the cognitive
 skill the learner needs to develop. Language learning,
-music theory, chess tactics, machine learning intuition —
+music theory, chess tactics, machine learning intuition -
 all benefit from inductive practice.
 
 **Weak when**: speed matters. The inductive route is slower
@@ -63,12 +63,12 @@ the corrective mechanism.
 "productive frustration" can tip into "I'm bad at this"
 without a careful framing. The AI's `step 3 (Error)` prompt
 in this method explicitly says "diagnose precisely without
-padding" — that's a teaching choice, not a personality
+padding" - that's a teaching choice, not a personality
 defect.
 
 **AI's style**: confrontational about the mistake, then
 deeply explanatory about its mechanism. "That's the classic
-trap X — you fell into it because Y. Here's why it's so
+trap X - you fell into it because Y. Here's why it's so
 tempting."
 
 ## Dialogic
@@ -145,15 +145,15 @@ completely different texture.
 
 The matrix is exported verbatim to
 `frontend/src/data/session-prompts.json` for Dexie-mode
-parity — no drift possible between Server and Local modes.
+parity - no drift possible between Server and Local modes.
 
 ## Choosing among them
 
 Your assessment gives you a 6-method profile. The dominant
 method is what new sessions start in. But:
 
-- The **step evaluator** (dual-prompt v0.5.0) may suggest
-  staying, advancing, or — rarely — stepping back per
+- The **step evaluator** (dual-prompt) may suggest
+  staying, advancing, or - rarely - stepping back per
   cycle step.
 - The **method-switch heuristic** detects stagnation
   (three sessions of flat understanding + high stress) and

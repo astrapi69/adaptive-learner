@@ -24,9 +24,8 @@ almacena en caché localmente (en el sistema de archivos en modo
 backend, en IndexedDB en modo navegador puro), de modo que tras la
 primera descarga puedas aprender sin conexión.
 
-El conjunto piloto de la v1.27.0 es **francés A1** (2 lecciones,
-14 tarjetas, 9 ejercicios que cubren los cuatro tipos de
-ejercicio). Cada versión desde entonces ha añadido nuevos: consulta
+La biblioteca incluida abarca varios conjuntos de contenido en
+distintos idiomas y dominios. Cada versión añade más: consulta
 el
 [repo de conjuntos](https://github.com/astrapi69/adaptive-learner-content)
 para ver el catálogo actual.
@@ -40,20 +39,33 @@ guía paso a paso por cada tarjeta y ejercicio:
 
 1. Las **tarjetas** presentan material para leer. Haz clic en
    "Siguiente" cuando estés listo.
-2. Los **ejercicios** comprueban lo que has recordado. Hay cuatro
-   tipos disponibles:
-   - **Asociar** — arrastra parejas (palabra ↔ traducción). Las
+2. Los **ejercicios** comprueban lo que has recordado. Los tipos
+   principales:
+   - **Asociar** - arrastra parejas (palabra ↔ traducción). Las
      dos fichas de una pareja encontrada comparten un **color
      propio** y una **insignia numérica**, de modo que la
      asociación sea reconocible de forma segura para daltónicos
      (no solo por color).
-   - **Elección de imagen** — elige la imagen que corresponde a la
+   - **Elección de imagen** - elige la imagen que corresponde a la
      pista.
-   - **Texto libre** — escribe la respuesta.
-   - **Fichas de palabras** — compón una frase a partir de fichas.
-   - **Texto con huecos** — completa un hueco en la frase (se
+   - **Texto libre** - escribe la respuesta.
+   - **Fichas de palabras** - compón una frase a partir de fichas.
+   - **Texto con huecos** - completa un hueco en la frase (se
      genera específicamente a partir de tus errores, ver más
      abajo).
+   - **Opción múltiple** - elige una o (según la tarea) varias
+     respuestas correctas.
+
+   Además, un conjunto puede incluir **tipos de extensión**:
+   categorización, corrección de errores, comprensión lectora,
+   cuestionario calificado y **dictado de audio** (escuchar y
+   luego transcribir).
+
+Si un ejercicio lleva una **dificultad** asignada por el autor,
+una pequeña insignia indica el nivel (**Fácil / Media /
+Difícil**). Es pura transparencia: puedes ver por qué el generador
+adaptativo puede proponer una tarjeta antes o con más frecuencia -
+la insignia no cambia ni la puntuación ni el orden.
 
 Una barra de progreso en la parte superior sigue cuánto has
 avanzado en la lección. Puedes parar en cualquier momento: tu
@@ -159,7 +171,7 @@ con los que más te cuesta.
 
 Una sesión de repaso en `/review/:setId` sintetiza una
 **mini-lección sobre la marcha** a partir de las entradas
-superiores de tu cola. Estrategia mixta desde la **v1.35.0**:
+superiores de tu cola. Estrategia mixta:
 
 - Si fallaste originalmente una palabra en un ejercicio de
   **asociación** o de **elección de imagen**, haces exactamente ese
@@ -182,7 +194,7 @@ Domina 50 elementos mediante repasos y consigues la insignia
 
 ## Ronda de corrección al final de la lección
 
-Nuevo en la **v1.35.0**: cuando completas una lección con errores,
+Cuando completas una lección con errores,
 la página de resumen muestra una pequeña **ronda de corrección**
 entre tu puntuación y el botón "Siguiente lección". Toma hasta
 cinco errores concretos de esa lección y ofrece cada uno como un
@@ -206,22 +218,22 @@ que veas el efecto de tu práctica adicional.
 
 ## Feedback visual de diferencias
 
-También nuevo en la **v1.35.0**: las respuestas incorrectas de
+Las respuestas incorrectas de
 texto libre y de fichas de palabras muestran ahora una
 **diferencia a nivel de token** entre tu entrada y la respuesta
 canónica. Tres colores, nunca solo color:
 
-- **Rojo tachado** — lo que escribiste y no correspondía (con una
+- **Rojo tachado** - lo que escribiste y no correspondía (con una
   marca × para lectores de pantalla y usuarios daltónicos).
-- **Verde** — lo que la respuesta canónica contiene y pasaste por
+- **Verde** - lo que la respuesta canónica contiene y pasaste por
   alto (con una marca +).
-- **Amarillo** con flecha → — una palabra ligeramente incorrecta,
+- **Amarillo** con flecha → - una palabra ligeramente incorrecta,
   representada como `tu-palabra` → `esperada`.
 
 La misma diferencia aparece en el resumen de la lección, en el
 desglose de cada ejercicio, para cada respuesta de texto libre o
 de fichas de palabras cuya entrada del usuario conoce el
-almacenamiento de v1.35.0+.
+almacenamiento.
 
 ---
 
@@ -239,12 +251,12 @@ Cada lección completada otorga XP según una fórmula de estrellas:
 
 Cuatro insignias nuevas se desbloquean en torno a las lecciones:
 
-- **Primera lección** — completa tu primera lección de contenido.
-- **10 lecciones completadas** — completa 10 lecciones de
+- **Primera lección** - completa tu primera lección de contenido.
+- **10 lecciones completadas** - completa 10 lecciones de
   contenido.
-- **Racha de 3 estrellas** — logra tres lecciones seguidas con 3
+- **Racha de 3 estrellas** - logra tres lecciones seguidas con 3
   estrellas.
-- **Maestro del repaso** — domina 50 elementos mediante repetición
+- **Maestro del repaso** - domina 50 elementos mediante repetición
   espaciada.
 
 Las lecciones completadas también cuentan para tu **racha
@@ -262,7 +274,7 @@ de forma idéntica contra IndexedDB en modo navegador puro, de modo
 que quienes visiten la página pública de GitHub Pages obtengan el
 ciclo completo de repaso sin backend.
 
-Desde la **v1.33.0**, la gamificación también está alineada: en
+La gamificación también está alineada: en
 modo navegador puro consigues por las lecciones completadas **los
 mismos XP e insignias de lección** que en modo servidor; la lógica
 de estrellas, racha e insignias está portada a TypeScript y

@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.5.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-9708%20green-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v2.6.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
@@ -143,12 +143,15 @@ Full documentation (German default at `/docs/`, English at
   **Timed** (relaxed / normal / fast countdown), **Reverse**,
   **Shuffle** (interleaved), or **Endless**, plus a gated
   **"train errors"** entry that replays only what you got wrong.
-- **Five exercise types** — Matching, Picture-Choice, Free-Text,
-  Cloze (fill-in-the-blank), Word-Tiles — with token-level diff
-  feedback. **Matching is bidirectional** (start a pair from
-  either column, not only A → B). Cloze covers type / select /
-  **"select all that apply"** multi-answer choices, so multiple
-  choice needs no separate exercise type.
+- **Six core exercise types** — Matching, Picture-Choice,
+  Free-Text, Cloze (fill-in-the-blank), Word-Tiles, and native
+  **Multiple Choice** (single- or multi-answer) — with
+  token-level diff feedback. **Matching is bidirectional** (start
+  a pair from either column, not only A → B). Cloze covers
+  type / select / **"select all that apply"** multi-answer gaps.
+  On top, an **extension tier** a set can ship: categorization,
+  error correction, reading comprehension, graded quiz, and
+  **audio dictation**.
 - **Auto-splitting** of oversized imported lessons into parts,
   with localized part titles ("… - Teil 2" / "… - Part 2").
 - **Adaptive lessons** (rule-based, client-side) synthesised from
@@ -436,14 +439,14 @@ E2E smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
-Verified 2026-07-17 (v2.3.0+):
+Verified 2026-07-24 (v2.6.0):
 
 | Suite | Count |
 |---|---|
-| Backend (pytest) | 1415 |
-| Plugins (13 × pytest) | 1080 |
-| Frontend (Vitest 4) | 7213 |
-| **Total** | **9708** |
+| Backend (pytest) | 1475 |
+| Plugins (13 × pytest) | 1096 |
+| Frontend (Vitest 4) | 7722 |
+| **Total** | **10293** |
 
 Plus 17 Playwright smoke spec files covering: landing,
 onboarding+assessment, session (3-chunk SSE), curriculum,
@@ -470,17 +473,27 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.5.0**, a feature
-release that turns **Create-Lesson into a full exercise authoring
-tool**: every core exercise type is editable, exercises can be added
-by hand, `multiple_choice` is authorable with a single/multi mode
-control, and an **extension-authoring wizard** covers all four
-AI-authored extension types. **`ext:al-dictation` (audio dictation)**
-joins as the fifth extension type. Under the hood, the PWA update
-system and the AI key vault are now **consumed as published npm
-packages** (`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`), and
-exercise grading, payload validation, and authoring are consolidated
-under `lib/exercises/`. Prior **v2.4.0** shipped a **Create-Lesson
+Active development. The current release is **v2.6.0**, a feature
+release whose headline is the **session chat rebuilt on
+assistant-ui and cut over** (the thread is the default chat, the
+self-built SessionChat is removed). Create-Lesson's book path
+becomes a real ingestion tool: **book-text file upload**
+(EPUB/TXT/MD/DOCX) with a chapter picker, **multi-select sections
+with an exclusion heuristic, and batch lesson generation**.
+Dictation authoring completes with an **audio-file upload**, content
+sets can be **hidden via the engine's manifest `visibility` flag**,
+the desktop launcher moves onto **context-aware Docker detection**
+(docker-app-launcher 0.14.1), and CI hardens (required checks on
+develop, testid-reference gate, visual-baseline auto-sync, Docker
+build smoke). Prior **v2.5.0** turned **Create-Lesson into a full
+exercise authoring tool**: every core exercise type is editable,
+exercises can be added by hand, `multiple_choice` is authorable with
+a single/multi mode control, and an **extension-authoring wizard**
+covers all four AI-authored extension types, with
+**`ext:al-dictation` (audio dictation)** joining as the fifth
+extension type; the PWA update system and the AI key vault became
+**consumed npm packages** (`@astrapi69/pwa-update`,
+`@astrapi69/ai-key-vault`). Prior **v2.4.0** shipped a **Create-Lesson
 authoring upgrade** (a knowledge lesson from pasted textbook text,
 editing and combining your own lessons, and card image upload),
 **free-text multiple accepted answers** with an AI second opinion, an

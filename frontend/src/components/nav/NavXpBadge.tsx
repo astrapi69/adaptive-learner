@@ -239,7 +239,7 @@ export default function NavXpBadge() {
               locked: t("gamification.level_detail.locked", "locked"),
               howItWorks: t(
                 "gamification.level_detail.how",
-                "Levels rise on a growing XP curve: 0, 100, 300, 600, 1000 XP — each step needs 100 XP more than the last.",
+                "Levels rise on a growing XP curve: 0, 100, 300, 600, 1000 XP - each step needs 100 XP more than the last.",
               ),
             }}
           />

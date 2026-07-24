@@ -10,7 +10,7 @@ bir değerlendirme yaparsınız, uygulama size hangi yöntemlerin
 uyduğunu keşfeder; ardından yapay zeka destekli oturumlar sizi
 yedi adımlı bir öğrenme döngüsünde ilerletir. Uygulama, gerçekten
 nasıl öğrendiğinize göre öğretme biçimini uyarlar. Sürekli
-geliştirilmektedir — güncel sürüm için
+geliştirilmektedir - güncel sürüm için
 [Releases sayfasına](https://github.com/astrapi69/adaptive-learner/releases) bakın.
 
 [Şimdi deneyin](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
@@ -22,8 +22,8 @@ geliştirilmektedir — güncel sürüm için
 
 ### Bir değil, altı yöntem
 
-Çoğu öğrenme uygulaması tek bir yaklaşım seçer — flash kartlar,
-video, oyunlaştırılmış seriler — ve herkesin aynı şekilde
+Çoğu öğrenme uygulaması tek bir yaklaşım seçer - flash kartlar,
+video, oyunlaştırılmış seriler - ve herkesin aynı şekilde
 öğrendiğini varsayar. Adaptive Learner altı yöntemle gelir
 (tümdengelimli, tümevarımlı, hata temelli, diyalogsal, bağlamsal,
 yapay zeka uyumlu) ve büyüdükçe bunlar arasında geçiş yapmanıza
@@ -36,7 +36,7 @@ yardımcı olur.
 Her oturum Girdi → Deneme → Hata → Geri Bildirim → Uyum →
 Tekrar → Bütünleştirme adımlarından geçer. Çift istemli bir
 yapay zeka, her turda ilerlemeye, kalmaya veya geri adım atmaya
-hazır olup olmadığınızı değerlendirir. Bant değil — gerçek
+hazır olup olmadığınızı değerlendirir. Bant değil - gerçek
 bilişsel tempolu ilerleme.
 
 [Yedi adımlı döngü →](concept/seven-steps.md)
@@ -46,7 +46,7 @@ bilişsel tempolu ilerleme.
 **Yerel mod** (her şey tarayıcınızda, Anthropic / OpenAI / Gemini'ye
 doğrudan yapay zeka çağrıları) ile **Sunucu modu** (FastAPI arka
 ucu) arasında geçiş yapın. Kendi yapay zeka anahtarınızı getirin.
-PWA olarak yükleyin — geçmiş oturumlar ve Kontrol Paneli için
+PWA olarak yükleyin - geçmiş oturumlar ve Kontrol Paneli için
 çevrimdışı çalışır.
 
 [Başlarken →](user-guide/getting-started.md)
@@ -71,7 +71,7 @@ ilerlemeyi açığa çıkardığı.
    (konu, hedef, zaman çerçevesi).
 3. **12 soruluk değerlendirmeyi yapın** (~2 dakika).
 4. **Yapay zeka API anahtarınızı ekleyin** (Anthropic, OpenAI
-   veya Gemini — ücretsiz katmanlar çalışır).
+   veya Gemini - ücretsiz katmanlar çalışır).
 5. **Kontrol Panelinden ilk oturumunuzu başlatın**.
 
 [Tam başlangıç kılavuzu →](user-guide/getting-started.md)
@@ -80,12 +80,12 @@ ilerlemeyi açığa çıkardığı.
 
 ## Belgeler
 
-- [**Kullanıcı Kılavuzu**](user-guide/getting-started.md) —
+- [**Kullanıcı Kılavuzu**](user-guide/getting-started.md) -
   uygulamayı kullanan öğrenenler için.
-- [**Kavram**](concept/philosophy.md) — pedagojik düşünce.
-- [**Geliştirici Belgeleri**](developer/architecture.md) —
+- [**Kavram**](concept/philosophy.md) - pedagojik düşünce.
+- [**Geliştirici Belgeleri**](developer/architecture.md) -
   katkıda bulunanlar ve eklenti yazarları için.
-- [**API Referansı**](api/overview.md) — entegratörler için.
+- [**API Referansı**](api/overview.md) - entegratörler için.
 
 ---
 

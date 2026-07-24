@@ -210,7 +210,7 @@ export default function RegistrySubmitSection() {
         notify.error(
           t(
             "registry.error.no_commit",
-            "Could not resolve the latest commit — check the repository URL and branch.",
+            "Could not resolve the latest commit - check the repository URL and branch.",
           ),
         );
         return;
@@ -270,7 +270,7 @@ export default function RegistrySubmitSection() {
       notify.success(t("registry.copied", "Entry copied to the clipboard."));
     } catch {
       setCopied(false);
-      notify.error(t("registry.copy_failed", "Could not copy — select the text manually."));
+      notify.error(t("registry.copy_failed", "Could not copy - select the text manually."));
     }
   }, [prepared, t]);
 
@@ -336,7 +336,7 @@ export default function RegistrySubmitSection() {
               data-testid="registry-repo-select"
             >
               <option value="">
-                {t("registry.field.pick_placeholder", "— choose or enter below —")}
+                {t("registry.field.pick_placeholder", "- choose or enter below -")}
               </option>
               {repos.map((r) => {
                 const source = userRepoSource(r.owner, r.repo);
@@ -454,7 +454,7 @@ export default function RegistrySubmitSection() {
             >
               {isValidated
                 ? t("registry.status.validated", "Validated locally")
-                : t("registry.status.pending", "Pending — CI will validate")}
+                : t("registry.status.pending", "Pending - CI will validate")}
             </span>
           </div>
           {!isValidated && prepared.reason && (

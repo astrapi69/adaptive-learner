@@ -11,7 +11,7 @@ içinde bulunur.
 
 ## Üç cihaz rolü
 
-Sync arayüzü, cihazın rolüne göre farklı görünür — ve yalnızca
+Sync arayüzü, cihazın rolüne göre farklı görünür - ve yalnızca
 kullanılabilir olduğu yerde gösterilir:
 
 | Rol | Depolama modu | Sync arayüzü |
@@ -24,7 +24,7 @@ kullanılabilir olduğu yerde gösterilir:
 
 ## SYNC-UI-GATE: yalnızca çalışanı göster
 
-Kullanılamayan bir işlev **sunulmaz** — ölü düğmeler yok, devre dışı
+Kullanılamayan bir işlev **sunulmaz** - ölü düğmeler yok, devre dışı
 bırakılmış yer tutucular yok. Şu anda (LAN eşleştirme aşaması henüz
 uygulanmadı) Sync bölümü bu nedenle **yalnızca-API** olarak
 görünür; çalışan bir eşleştirme akışı olmadan mobil-istemci arayüzü
@@ -39,6 +39,6 @@ Dexie modunda **önceden** yeniden etkinleştirilmez.
 
 ## İlgili sayfalar
 
-- [Storage katmanı](../developer/storage-layer.md) — ikili depolama soyutlaması
-- [Yedekleme ve geri yükleme](../features/backup.md) — Sync olmadan manuel veri aktarımı
+- [Storage katmanı](../developer/storage-layer.md) - ikili depolama soyutlaması
+- [Yedekleme ve geri yükleme](../features/backup.md) - Sync olmadan manuel veri aktarımı
 - [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

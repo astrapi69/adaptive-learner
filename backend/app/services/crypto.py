@@ -180,7 +180,7 @@ def get_fernet() -> Fernet:
             f"The encryption key is not a valid Fernet key: {exc}. "
             f"If it came from {ENV_VAR}, re-generate it; if from the "
             f"secret.key file at {secret_key_path()}, the file is "
-            f"corrupt — delete it to regenerate (existing encrypted "
+            f"corrupt - delete it to regenerate (existing encrypted "
             f"keys will be lost and must be re-entered)."
         ) from exc
 

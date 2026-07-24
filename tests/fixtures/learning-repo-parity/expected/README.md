@@ -25,6 +25,6 @@ active
 
 ## See also
 
-- [LEARNING_STATS.md](LEARNING_STATS.md) — error rates, understanding, transfer, intervention log.
-- [CHEATSHEET.md](CHEATSHEET.md) — distilled notes + Meta-Learning Insights.
-- [ROADMAP.md](ROADMAP.md) — next steps.
+- [LEARNING_STATS.md](LEARNING_STATS.md) - error rates, understanding, transfer, intervention log.
+- [CHEATSHEET.md](CHEATSHEET.md) - distilled notes + Meta-Learning Insights.
+- [ROADMAP.md](ROADMAP.md) - next steps.

@@ -467,7 +467,7 @@ class ContentLoaderService:
                 except ContentNotFoundError:
                     logger.warning(
                         "Asset %s declared by %s/%s manifest missing "
-                        "upstream — skipping (frontend will text-fallback)",
+                        "upstream - skipping (frontend will text-fallback)",
                         asset_entry.path,
                         source,
                         set_id,

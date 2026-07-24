@@ -115,11 +115,11 @@ def _build_commit_message(ctx: RenderContext) -> str:
     rating = ctx.latest_rating(latest_session.id) if latest_session is not None else None
 
     if rating is not None:
-        subject = f"Cycle {cycle_n} — U {rating.understanding * 2}/10, T {rating.method_fit * 2}/10"
+        subject = f"Cycle {cycle_n} - U {rating.understanding * 2}/10, T {rating.method_fit * 2}/10"
     elif cycle_n > 0:
-        subject = f"Cycle {cycle_n} — no rating yet"
+        subject = f"Cycle {cycle_n} - no rating yet"
     else:
-        subject = "Initial render — no sessions yet"
+        subject = "Initial render - no sessions yet"
 
     body_lines = [
         "",

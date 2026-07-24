@@ -144,8 +144,6 @@ focus-areas-mastery-split
 focus-areas-progress
 focus-areas-tags
 form-field
-form-hint-inline
-form-hint-warning
 form-row-inline
 form-select
 free-text-diff
@@ -204,7 +202,6 @@ review-summary-note
 settings-subsection
 shadow-elevated
 share-wizard-author
-share-wizard-author-name
 share-wizard-author-privacy
 share-wizard-breadcrumb
 share-wizard-celebration

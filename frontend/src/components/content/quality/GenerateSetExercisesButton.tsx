@@ -187,7 +187,7 @@ export default function GenerateSetExercisesButton({
         title={disabledReason}
         aria-label={
           disabledReason
-            ? `${t("content.ai_exercises.batch.button", "Generate for all lessons")} — ${disabledReason}`
+            ? `${t("content.ai_exercises.batch.button", "Generate for all lessons")} - ${disabledReason}`
             : undefined
         }
         data-testid={`generate-set-exercises-${entry.id}`}

@@ -82,6 +82,16 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await expect(page.getByTestId("create-lesson-step-4")).toBeVisible({
             timeout: 10000,
         });
+        // #1929 — the quality checklist renders SIX rows again, including the
+        // restored "Sprachpaar ist gueltig" row, which is green for the
+        // supported de -> fr pair fillMetadata sets.
+        await expect(
+            page.getByTestId("create-lesson-checklist").locator("li"),
+        ).toHaveCount(6);
+        await expect(page.getByTestId("check-languagePair")).toHaveAttribute(
+            "data-pass",
+            "true",
+        );
         await page.getByTestId("create-lesson-save-local").click();
         await expect(page.getByTestId("create-lesson-saved")).toBeVisible({
             timeout: 15000,
@@ -143,6 +153,80 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
+    test("book-text path: file upload -> section picker fills the text field (#1927/#1949)", async ({
+        page,
+    }) => {
+        const errors: string[] = [];
+        page.on("pageerror", (e) => errors.push(e.message));
+
+        await page.goto("/create-lesson");
+        await expect(page.getByTestId("create-lesson-page")).toBeVisible({
+            timeout: 15000,
+        });
+        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+            await page.getByTestId("create-lesson-draft-fresh").click();
+        }
+        await page.getByTestId("create-lesson-title").fill("Upload-Test");
+        await page.getByTestId("template-knowledge-from-text").click();
+        await expect(page.getByTestId("create-lesson-book-step")).toBeVisible();
+
+        // Upload a small Markdown book; the parser splits it at headings.
+        const markdown = [
+            "# Kapitel Eins",
+            "Pawlow und die klassische Konditionierung.",
+            "# Kapitel Zwei",
+            "Skinner und die operante Konditionierung.",
+        ].join("\n");
+        await page.getByTestId("book-upload-input").setInputFiles({
+            name: "buch.md",
+            mimeType: "text/markdown",
+            buffer: Buffer.from(markdown, "utf-8"),
+        });
+
+        // #1949 multi-select picker: both chapters listed as checkboxes and
+        // (no front/back matter here) checked by default.
+        await expect(page.getByTestId("book-upload-picker")).toBeVisible();
+        const sectionOne = page.getByTestId(
+            "book-upload-section-checkbox-section-1",
+        );
+        const sectionTwo = page.getByTestId(
+            "book-upload-section-checkbox-section-2",
+        );
+        await expect(
+            page
+                .getByTestId("book-upload-section-list")
+                .locator("input[type='checkbox']"),
+        ).toHaveCount(2);
+        await expect(sectionOne).toBeChecked();
+        await expect(sectionTwo).toBeChecked();
+
+        // Narrowing to ONE section switches to the #1927 single path:
+        // preview appears, applying fills the empty field without a
+        // confirmation dialog.
+        await sectionOne.uncheck();
+        await expect(page.getByTestId("book-upload-preview")).toContainText(
+            "Skinner",
+        );
+        await page.getByTestId("book-upload-apply").click();
+        await expect(page.getByTestId("book-text-input")).toHaveValue(
+            /Skinner und die operante Konditionierung/,
+        );
+
+        // Applying another section over the now-non-empty field asks first.
+        await sectionTwo.uncheck();
+        await sectionOne.check();
+        await page.getByTestId("book-upload-apply").click();
+        await expect(
+            page.getByTestId("book-upload-replace-confirm"),
+        ).toBeVisible();
+        await page.getByTestId("book-upload-replace-confirm-confirm").click();
+        await expect(page.getByTestId("book-text-input")).toHaveValue(
+            /Pawlow und die klassische Konditionierung/,
+        );
+
+        expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
+    });
+
     test("dictation via the core type picker -> saves + plays (#1895)", async ({
         page,
     }) => {
@@ -178,7 +262,13 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await page
             .locator('[data-testid^="exercise-ext-prompt-"]')
             .fill("Hoere zu und schreibe, was du hoerst.");
-        const audio = page.locator('[data-testid^="exercise-ext-dict-audio-"]');
+        // #1911 added an upload button (…-audio-upload-…) + hidden file input
+        // (…-audio-file-…) beside the asset-path input, so the bare
+        // "…-audio-" prefix overmatches (#1954). Pin the PATH input: its id
+        // continues with the exercise id ("…-audio-ex-…").
+        const audio = page.locator(
+            '[data-testid^="exercise-ext-dict-audio-ex-"]',
+        );
         await expect(audio).toBeVisible();
         await audio.fill("assets/audio/clip.mp3");
         const acceptInput = page.locator(

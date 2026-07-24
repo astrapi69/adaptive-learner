@@ -1,4 +1,4 @@
-# Content repos — publishing your own repository
+# Content repos - publishing your own repository
 
 Adaptive Learner ships an official content library, but the content
 system is open: you can run your **own content repository** on GitHub,
@@ -27,7 +27,7 @@ of your own: a content repo is just files in a Git repository.
 - A **GitHub repository** (public; private is possible too, via a
   per-repo token).
 - A root **`manifest.yaml`** that lists your sets.
-- Lessons in the **lesson format** (schema v1.3+; current is v1.4).
+- Lessons in the **lesson format**.
 - Python 3 with PyYAML, to validate locally before you publish.
 
 The authoritative format references live in the official content repo:
@@ -132,5 +132,5 @@ app.
 ## See also
 
 - **[Full Content-Repo Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/CONTENT-REPO-GUIDE.md)**
-- [Creating lessons — overview](overview.md)
+- [Creating lessons - overview](overview.md)
 - [Book recommendations](books.md)

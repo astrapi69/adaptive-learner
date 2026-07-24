@@ -53,7 +53,7 @@ ADAPTIVE_LEARNER_*    ~/.config/...yaml      api_key_<provider>
 1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`環境変数。
 2. `~/.config/adaptive_learner/secrets.yaml`の`ai.<provider>.api_key`。
 3. Fernet復号化済みDBカラム。
-4. `None` — AI呼び出しがUIにエラーを表示します。
+4. `None` - AI呼び出しがUIにエラーを表示します。
 
 ソースの帰属は`UserSettingsOut.key_source_*`（列挙型: `env` / `secrets_yaml` / `settings` / `none`）に記録されます。ソースがenvまたはsecrets_yamlの場合、Settings UIはSave / Removeを無効にします。
 

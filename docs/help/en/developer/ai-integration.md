@@ -1,7 +1,7 @@
 # AI integration
 
 Adaptive Learner runs every learning conversation through up
-to **three** AI calls per round-trip — the streamed response,
+to **three** AI calls per round-trip - the streamed response,
 the step evaluator, and (at step 7) the topic-transition
 evaluator. Three providers ship out of the box; new providers
 plug in via the `ai_complete*` hook family.
@@ -68,7 +68,7 @@ which walks the three-layer chain:
 2. `ai.<provider>.api_key` in
    `~/.config/adaptive_learner/secrets.yaml`.
 3. Fernet-decrypted `UserSettings.api_key_<provider>`.
-4. `None` — the call surfaces `ai_error` to the UI.
+4. `None` - the call surfaces `ai_error` to the UI.
 
 `resolve_default_model(db, user_id, provider)` walks the same
 chain for the model override (env > yaml > UI override >
@@ -83,20 +83,20 @@ return None (firstresult stops at the first hit).
 Every `POST /api/plugins/session/{id}/message` for a `user`
 role makes up to three AI calls:
 
-1. **Learning reply** — streamed via `ai_complete_stream`.
+1. **Learning reply** - streamed via `ai_complete_stream`.
    System prompt composed by `build_prompt(project, profile,
    method, cycle_step, lang)` from the 42-cell matrix, with an
    explicit "reply in the learner's language" directive appended
-   (`build_language_directive(lang)`, #827 — see below).
+   (`build_language_directive(lang)`, #827 - see below).
    `max_tokens=1024`. SSE emits `start` / `chunk` /
    `done` events.
-2. **Step evaluator** — separate system prompt
+2. **Step evaluator** - separate system prompt
    (`EVALUATION_SYSTEM_PROMPT`) asking the AI to read the
    exchange and emit a JSON verdict
    (`advance`, `confidence`, `reason`, `suggested_step`).
    `max_tokens=256`. The evaluator's verdict drives the
    `cycle_step` advance (gated by `confidence ≥ 0.6`).
-3. **Topic transition** — only at step 7. A third AI call
+3. **Topic transition** - only at step 7. A third AI call
    judges whether the topic was integrated and whether to
    start a new cycle on a new subtopic. Cap of
    `max_cycles=5` per session.
@@ -114,7 +114,7 @@ response (`learning_ms`, `evaluation_ms`,
 ## The 42-cell prompt matrix
 
 `plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py`
-holds a `dict[method, dict[step, dict[lang, str]]]` — six
+holds a `dict[method, dict[step, dict[lang, str]]]` - six
 methods, seven steps, two languages, 84 cells. Each cell is
 1-2 sentences setting the AI's role + the step's task. A
 context block ("Learning project: 'X' | Goal: 'Y'. Profile
@@ -123,7 +123,7 @@ hint: …") gets appended at compose time.
 For Dexie mode, the prompts are exported verbatim to
 `frontend/src/data/session-prompts.json` and loaded by
 `frontend/src/storage/ai/prompts.ts`. Same text, same context
-block format — no drift possible.
+block format - no drift possible.
 
 ## Output-language directive (#827)
 
@@ -159,7 +159,7 @@ port is byte-identical in
    `aiComplete()`.
 
 Each provider plugin tests its hookimpl + provider call in
-isolation — see `plugins/adaptive-learner-plugin-ai-anthropic/tests/`
+isolation - see `plugins/adaptive-learner-plugin-ai-anthropic/tests/`
 for a template (the provider HTTP call is mocked).
 
 ## Browser-direct calls (Dexie mode)
@@ -171,7 +171,7 @@ directly. Anthropic requires the
 clear the CORS preflight; OpenAI and Gemini accept direct
 browser calls out of the box.
 
-The dual-prompt logic is the same in both modes —
+The dual-prompt logic is the same in both modes -
 `storage/ai/session-flow.ts` calls `aiComplete()` twice and
 parses the evaluator's JSON the same way the backend does.
 Every browser-direct AI feature lives under
@@ -202,24 +202,24 @@ all under `frontend/src/lib/ai/`. The engines are library-grade
 (browser-direct) and API paths inject their own completion
 function:
 
-1. **Generate (AIX-01)** —
+1. **Generate (AIX-01)** -
    `exercise-generation-prompt.ts` builds the prompt from the
    lesson's theory steps; `generate-exercises.ts` calls the AI
    and `exercise-generation-parser.ts` defensively parses the
    reply into structurally valid cards (tolerates fenced output
    and preamble prose).
-2. **Quality gate (AIX-03)** —
+2. **Quality gate (AIX-03)** -
    `exercise-quality-gate.ts` is a deterministic (no AI) filter:
    it rejects duplicates, single-character answers, a distractor
    equal to the correct answer, a matching card with fewer than
    three pairs, etc., and flags soft issues as warnings.
-3. **Balance (AIX-04)** —
+3. **Balance (AIX-04)** -
    `exercise-distribution.ts` reorders (never deletes) the cards
    so no single exercise type is over-represented at the front
    and the same type does not repeat three times in a row while
    another type is available. `distributionGaps()` reports absent
    types so a regeneration prompt can mention them.
-4. **Regenerate with feedback (AIX-05)** — the user's feedback is
+4. **Regenerate with feedback (AIX-05)** - the user's feedback is
    folded back into the prompt for another pass.
 
 A **"generate exercises" button** appears on theory-only lessons
@@ -251,7 +251,7 @@ a provider + model and runs a **"Check with AI"** report:
 
 ## Configured-providers overview + per-provider Test (#810)
 
-The Settings AI tab shows a `ConfiguredProvidersTable` — one row
+The Settings AI tab shows a `ConfiguredProvidersTable` - one row
 per provider with its model, a **masked key preview** (first 4 +
 ellipsis + last 4 via `lib/providers/maskSecret.ts`), the active
 provider radio, and a **per-provider Test button**. The Test hits
@@ -282,7 +282,7 @@ AI-backed feature (session start/resume, conversation analysis,
 Anki extraction, NotebookLM questions/guide, AI lesson
 generation, pronunciation) is in `NEEDS_AI_KEY`: it shows as
 **active** with a usable key, **disabled** (reason
-`api_key_required`) without one, never silently **hidden** —
+`api_key_required`) without one, never silently **hidden** -
 matching the visible-but-disabled feature-state policy (#335).
 
 ## Other AI surfaces (read-only summary)
@@ -290,23 +290,23 @@ matching the visible-but-disabled feature-state policy (#335).
 Several non-session features use the same AI provider plugins
 via `ai_complete*`:
 
-- **Conversation analyzer** (Phase 12 / v0.9.0+) —
+- **Conversation analyzer** (Phase 12 / v0.9.0+) -
   `frontend/src/chat_import/analysis.ts` chunks imported
   transcripts at 16K chars with 2-message overlap, fires
   `ai_complete` per chunk, merges results. Extracts topic /
   weaknesses / error_patterns / recommended_method /
   vocabulary (since v1.20.0). Tolerant JSON parser handles
   Haiku-class misbehaviour (fenced output, preamble prose).
-- **Anki extraction** (Phase 30 / v1.17.0) — `plugins/.../
+- **Anki extraction** (Phase 30 / v1.17.0) - `plugins/.../
   anki/card_extraction.py` extracts flashcard candidates
   from a session or conversation; vocabulary path runs
   client-side without AI when `analysis_result.vocabulary`
   is populated.
 - **NotebookLM study questions + guide** (Phase 32 /
-  v1.19.0) — `plugins/.../notebooklm/question_generator.py`
+  v1.19.0) - `plugins/.../notebooklm/question_generator.py`
   + `study_guide.py`; tolerant JSON parser; user-edited
   questions skip re-generation.
-- **Pronunciation judge** (Phase 31 / v1.18.0) —
+- **Pronunciation judge** (Phase 31 / v1.18.0) -
   `plugins/.../pronunciation.py` generates target phrases
   + judges learner audio similarity (eligibility gated by
   the Languages subject taxonomy).

@@ -20,7 +20,7 @@ beceri edinmenin gerçek bilişsel yolculuğunu yansıtır.
 
 ## Neden bu sıra
 
-Bu yalnızca uygun değil — her adım bir öncekine bağlıdır:
+Bu yalnızca uygun değil - her adım bir öncekine bağlıdır:
 
 - **Girdi → Deneme** önemsiz değildir. Pek çok öğrenci Deneme adımını
   atlayıp doğrudan girdiden "Daha sonra denerim"e geçer. Bu gecikme
@@ -65,7 +65,7 @@ Atlanan her adımın bir bedeli vardır:
 
 Çift istemli yapay zeka değerlendirici, alışverişlerinizi izler ve bilişsel
 bir ritmi atladığınızda mevcut adımda kalmayı önerebilir. "Kal" önerileri
-bunun için vardır — yapay zekanın sinir bozucu olduğundan değil.
+bunun için vardır - yapay zekanın sinir bozucu olduğundan değil.
 
 ## Yapay zeka nasıl karar verir
 
@@ -80,10 +80,10 @@ döndürürse deterministik +1 yedek devreye girer (7. adımda sınırlanır).
 
 Önerilen_adım şu olabilir:
 
-- `current + 1` — normal ilerleme (en yaygın).
-- `current` — kal; öğrencinin burada daha fazla zamana ihtiyacı var.
-- İleri atlama (ör. 1 → 3) — öğrenci girdiyi zaten kavramış.
-- Geri adım (ör. 4 → 2) — öğrenci kafası karışmış ve yeniden
+- `current + 1` - normal ilerleme (en yaygın).
+- `current` - kal; öğrencinin burada daha fazla zamana ihtiyacı var.
+- İleri atlama (ör. 1 → 3) - öğrenci girdiyi zaten kavramış.
+- Geri adım (ör. 4 → 2) - öğrenci kafası karışmış ve yeniden
   denemesi gerekiyor.
 
 Rota öneriyi yalnızca `confidence >= 0.6` olduğunda uygular
@@ -95,15 +95,15 @@ Yedek kararlar her zaman +1 ilerlemesi uygular.
 Aynı yapay zeka çağrısı hem öğrenme yanıtını hem de adım kararını
 çıkarabilirdi. Bunu yapmıyoruz çünkü:
 
-1. **Kaygıların ayrılması** — öğrenme istemi (yöntem, adım) başına
+1. **Kaygıların ayrılması** - öğrenme istemi (yöntem, adım) başına
    oluşturulur. Değerlendirici istem yönteme duyarlı ama adımdan
    bağımsızdır.
-2. **Token bütçeleri** — öğrenme yanıtı 1024 tokenden yararlanır;
+2. **Token bütçeleri** - öğrenme yanıtı 1024 tokenden yararlanır;
    karar yalnızca 256 gerektirir.
-3. **JSON ayrıştırma sağlamlığı** — yapay zekadan tek yanıtta hem
+3. **JSON ayrıştırma sağlamlığı** - yapay zekadan tek yanıtta hem
    düzyazı hem JSON kuyruğu üretmesini istemek kırılgandır. İki kez
    sorarız, temiz ayrıştırırız.
-4. **Yeniden oynatılabilirlik** — bir şeyler ters gittiğinde iki yanıt
+4. **Yeniden oynatılabilirlik** - bir şeyler ters gittiğinde iki yanıt
    ayrı olarak günlüğe alınmıştır ve denetlenebilir.
 
 Bedeli, her gidiş-dönüşte iki API çağrısıdır. Ucuz katman fiyatlandırmasında
@@ -122,11 +122,11 @@ küçük daireler satırına dönüşür. Şerit üzerinde kaydırma-ile-gözetl
 önceki / sonraki döngü adımını açıklayan bilgilendirici bir bindirme
 gösterir.
 
-## Otomatik döngü (v1.4.0) + konu geçişleri
+## Otomatik döngü + konu geçişleri
 
 7. adım artık bir çıkmaz sokak değildir. Adım değerlendirici sizi
 `advance=true` ile 7. adıma taşıdıktan sonra, üçüncü bir yapay zeka
-çağrısı — konu-geçiş değerlendirici — konunun bütünleştirilip
+çağrısı - konu-geçiş değerlendirici - konunun bütünleştirilip
 bütünleştirilmediğini ve yeni bir döngüye başlanıp başlanmaması
 gerektiğini değerlendirir.
 
@@ -147,14 +147,14 @@ gerektiğini değerlendirir.
 ```
 
 Oturum başına `max_cycles=5` sabit sınırı sonsuz döngüleri önler.
-Deterministik bir yedek, yapay zeka / ayrıştırma hatasında v0.5.0'ın
+Deterministik bir yedek, yapay zeka / ayrıştırma hatasında
 7'de-sınırla davranışını korur.
 
 Sohbet, döngü geçişlerini oturum geçmişinde kesik kenarlı "Döngü N"
 kartları olarak gösterir. Derecelendirme iletişim kutusu, `cycle_count > 1`
 olduğunda çok döngülü yolculuğu özetler.
 
-## Paralel döngü sınırı değerlendirmesi (v1.5.0)
+## Paralel döngü sınırı değerlendirmesi
 
 6. → 7. adım geçişinde hem adım değerlendirici hem de konu-geçiş
 değerlendirici `asyncio.gather` (`app.yaml`'da `async_evaluation: true`)

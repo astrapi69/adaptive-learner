@@ -186,13 +186,13 @@ _PRODUCTIVE_WEIGHT = 1.2
 
 
 def _priority_score(item: ReviewQueueItem) -> float:
-    """Weighted error count — productive errors count for more."""
+    """Weighted error count - productive errors count for more."""
     weight = _PRODUCTIVE_WEIGHT if item.direction == "source_to_target" else 1.0
     return item.error_count * weight
 
 
 def weakness_tier(item: ReviewQueueItem) -> int:
-    """#603 Smart Review Queue — rank an element's weakness so the queue
+    """#603 Smart Review Queue - rank an element's weakness so the queue
     orders ``wrong > almost-right > correct``:
 
     - 2 (wrong): the last answer was wrong (``correct_streak == 0``).

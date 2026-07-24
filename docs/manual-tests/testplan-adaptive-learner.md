@@ -122,10 +122,22 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verstaendlich)
 - [ ] Picture Choice: Kacheln GLEICHE Hoehe
+- [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
+      authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
+      Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
+      Karten OHNE `difficulty` (der gesamte Alt-Bestand) zeigen KEIN Badge
+      (die Uebung sieht aus wie vorher). Gilt fuer alle Uebungstypen
+      (Matching/Cloze/Free-Text/Word-Tiles/Picture-Choice/Multiple-Choice
+      + ext-Typen). Badge liest in allen 6 Themes sauber (Token-basiert).
+      Nur Transparenz - beeinflusst weder Reihenfolge noch Bewertung.
 
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
       hinter dem Panel, nicht mehr direkt sichtbar)
+- [ ] "Optionen"-Button steht in DERSELBEN Zeile wie die Fortschritts-
+      anzeige ("Schritt n von m"), nicht darunter (Desktop: Balken links,
+      Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,
+      kein Ueberlappen) (#1942)
 - [ ] Pruefungsmodus: keine Hilfen, Ergebnis am Ende, 1.5x XP
 - [ ] Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang
 - [ ] Fehler-Modus: nur Fehlerkarten (nach min. 1 Fehler)
@@ -137,6 +149,14 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Fehler-wiederholen-Abschluss ("Alle Fehler korrigiert!"): Enter
       (ohne Klick) loest "Zurueck zur Lektion" aus (#1864); Klick auf den
       Button funktioniert weiterhin
+- [ ] Lektions-Zusammenfassung ("Geschafft: ..."): mit verfuegbarer
+      naechster Lektion loest Enter (ohne Klick) die primaere Karte
+      "Naechste Lektion -> Starten" aus - nicht eine sekundaere Karte
+      (z. B. "Wiederholung"); Klick auf die Buttons funktioniert weiterhin
+      (#1943)
+- [ ] Letzte Lektion eines Sets (keine "Naechste Lektion"): auf der
+      Zusammenfassung passiert bei Enter nichts Falsches - kein Fehler,
+      keine Navigation zu einer nicht vorhandenen Lektion (#1943)
 - [ ] Fehler wiederholen bei Zuordnung (#1874): Zuordnungs-Uebung mit
       gemischt richtigen/falschen Paaren spielen, "Fehler wiederholen"
       oeffnen -> nur die falschen Paare erscheinen (nicht alle). Bei nur
@@ -192,11 +212,95 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       formuliert Theorie in eigenen Worten + erzeugt Uebungen; OHNE
       KI-Key: freundlicher Hinweis, kein Crash; "Weiter" erst nach
       erfolgreicher Generierung
+- [ ] **Titel-Pflichtfeld im Buchtext-Pfad (#1946):** Schritt 1 OHNE
+      Titel → Karte "Wissenslektion aus Text" klicken → bleibt auf
+      Schritt 1 mit dem freundlichen Hinweis "Ein Titel ist
+      erforderlich." (NICHT der Buchtext-Schritt, NICHT der rohe
+      Schema-Fehler beim Speichern); mit Titel → Buchtext-Schritt
+      oeffnet normal und Speichern gelingt
+- [ ] **Datei-Upload im Buchtext-Schritt (#1927):** Button "Aus Datei
+      laden (EPUB, DOCX, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
+      Abschnittsliste erscheint (Checkboxen, Titel + Zeichenzahl);
+      Markdown-Datei → Split an Ueberschriften; TXT ohne Ueberschriften
+      → ein Abschnitt; kaputte/zu grosse Datei (> 20 MiB) → klare
+      Fehlermeldung, kein Crash; Rechte-Hinweis erwaehnt Hochladen
+- [ ] **DOCX-Upload (#1927, Phase 2b):** Word-Datei mit
+      Ueberschrift-Formatvorlagen (auch deutsches Word, "Ueberschrift 1")
+      → Kapitel werden erkannt und als Liste angeboten; Word-Datei OHNE
+      Formatvorlagen (nur fett formatierte "Ueberschriften") → EIN
+      Abschnitt "Gesamtes Dokument", Text landet trotzdem editierbar im
+      Feld; kaputte .docx → klare Fehlermeldung, kein Crash
+- [ ] **Mehrfachauswahl + Ausschluss-Heuristik + Batch (#1949):** Datei
+      mit mehreren Abschnitten INKL. Vorwort/Glossar/Inhaltsverzeichnis
+      hochladen → typische Nicht-Lerninhalt-Abschnitte sind
+      standardmaessig ABGEWAEHLT, aber weiterhin sichtbar und manuell
+      ankreuzbar (Hinweiszeile erklaert es); GENAU EIN Abschnitt gewaehlt
+      → Button "In Textfeld uebernehmen" fuellt das Textfeld (bei
+      vorhandenem Text: Bestaetigungsdialog "Ersetzen"), Vorschau sichtbar,
+      danach normale Einzel-Generierung (Regression); MEHRERE Abschnitte
+      gewaehlt → Button "N Lektionen generieren" startet die Batch-
+      Generierung mit Fortschrittsanzeige ("Lektion 2 von 5 …") →
+      eine Lektion pro Abschnitt, Reihenfolge = Dokumentreihenfolge (nicht
+      Auswahlreihenfolge); Review zeigt "N Lektion(en)" + Titel-Liste;
+      Speichern → ein Set mit N Lektionen; schlaegt eine Einzel-Generierung
+      fehl, laufen die uebrigen weiter, Zusammenfassung nennt "X von N" +
+      die fehlgeschlagenen Abschnitte; ohne AI-Key → Key-Hinweis, kein Batch
 - [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-
       schritt bleibt) + "Als Kopie speichern"; Fremd-Repo-Lektionen
       zeigen KEIN Bearbeiten; Analyse-Lektionen fuehren zur Import-Seite
+- [ ] **Einfache Lektion (ohne Extension) bleibt speicherbar (#1919):**
+      eine Lektion per Auto-Generieren erstellen (nur die sechs CORE-Typen,
+      keine Extension-Uebung), lokal speichern → ueber Bearbeiten erneut
+      oeffnen → zum Review blaettern: der Check "Gueltige Lektionsstruktur"
+      ist GRUEN und "Aenderungen speichern" funktioniert (zuvor scheiterte
+      es mit "ext_payload must be object" im API-/Server-Modus)
+- [ ] **Buchtext-Lektion bearbeiten (#1967):** eine ueber "Wissenslektion
+      aus Text" (Buchtext-Pfad) erstellte Lektion (Theorie + generierte
+      Uebungen, KEINE Vokabelkarten) lokal speichern → ueber "Lektion
+      bearbeiten" erneut oeffnen → "Weiter" fuehrt DIREKT zum Uebungs-Editor
+      mit den tatsaechlich generierten Uebungen (NICHT dem leeren
+      Vokabelkarten-Editor, der zuvor die Weiter-Schaltflaeche blockierte);
+      der 3-Schritt-Fluss ist Metadaten → Uebungen → Review; Review hat
+      KEINE "Mindestens 4 Karten"-Zeile und "Aenderungen speichern" ist
+      aktiv; nach Speichern bleiben Theorie- und Uebungsschritte erhalten.
+      Regression: eine normale Karten-Lektion (Vokabel-Liste) UND eine
+      Extension-Lektion oeffnen weiterhin korrekt zum Bearbeiten
+- [ ] **Kleine Buchtext-Lektion (< 5 Uebungen) bearbeiten (#1970):** eine
+      Buchtext-Lektion, bei der der Generator nur wenige Uebungen erzeugt
+      hat (z. B. 4, weil Wort-Kacheln/Bildauswahl/Multiple-Choice mangels
+      Beispielsaetzen/Bildern uebersprungen wurden), lokal speichern → ueber
+      "Lektion bearbeiten" oeffnen → ALLE gespeicherten Uebungen werden
+      angezeigt; "Weiter" ist NICHT durch "5 Uebungen noetig" blockiert und
+      "Aenderungen speichern" ist aktiv (die Mindestanzahl gilt nur fuer die
+      Neuerstellung, nicht fuer das Bearbeiten einer bereits gueltigen
+      Lektion); der irrefuehrende Hinweis "Wort-Kacheln/Bildauswahl/
+      Multiple-Choice ergaben keine Uebungen" + der Generieren-Bereich
+      erscheinen im Bearbeiten NICHT (keine Karten zum Generieren). WICHTIG:
+      Bearbeiten-Oeffnen aendert die gespeicherte Datei NICHT (kein Auto-Save);
+      es gehen keine Uebungen verloren
+- [ ] **Set mit mehreren Lektionen bearbeiten (Lektions-Auswahl, #1971):** ein
+      Set, das MEHRERE Lektionen enthaelt (z. B. ein Buchtext-Upload mit
+      Mehrfach-Abschnitts-Auswahl → eine Lektion pro Abschnitt), ueber "Lektion
+      bearbeiten" oeffnen → oben erscheint eine **Lektions-Auswahl** (Dropdown
+      mit allen Lektionen des Sets); die erste Lektion ist vorausgewaehlt und
+      ihre Uebungen sichtbar. Andere Lektion waehlen → deren Theorie/Uebungen
+      werden geladen (vorher unerreichbar). Bei ungespeicherten Aenderungen vor
+      dem Wechsel erscheint ein Bestaetigungsdialog ("Lektion wechseln?"). Eine
+      Lektion bearbeiten + speichern → NUR diese Lektion wird ersetzt, die
+      anderen bleiben erhalten, und der SET-Titel/Level/Sprachen aendern sich
+      NICHT (werden nicht durch den Titel der bearbeiteten Lektion ueberschrieben).
+      Regression: ein Set mit nur EINER Lektion zeigt KEINE Lektions-Auswahl
+- [ ] **Buchangabe bleibt beim Bearbeiten erhalten (#1989):** eine Lektion ueber
+      den Buchtext-Wizard MIT ausgefuellter "Buchangabe (optional)" (Titel,
+      Autor, URL, ISBN/ASIN) erstellen + speichern → in der Lektion erscheint
+      unter "Vertiefe das Thema" die Buchreferenz. Dann ueber "Lektion
+      bearbeiten" oeffnen, etwas aendern, speichern → die Buchangabe ist
+      WEITERHIN vorhanden (vorher: verschwand nach dem ersten Bearbeiten). Ueber
+      MEHRERE Bearbeitungszyklen bleibt sie erhalten; auch "Als Kopie speichern"
+      uebernimmt die Buchangabe. Regression: eine Lektion OHNE Buchangabe
+      bekommt beim Bearbeiten KEIN leeres Buch-Objekt aufgezwungen
 - [ ] **Alte englische Prompts migrieren beim Bearbeiten (#1860):** eine
       VOR #1855 erzeugte Alt-Lektion (Uebungsanweisungen fest englisch, z. B.
       "Match each word with its translation.") ueber "Lektion bearbeiten"
@@ -207,16 +311,32 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       bleibt unveraendert. Editor ohne Speichern verlassen → Original in
       Dexie unveraendert (kein stiller Schreibvorgang); erst Speichern
       (Ueberschreiben/Als Kopie) schreibt die migrierte Fassung dauerhaft
-- [ ] **Lektionen kombinieren (#1741):** Meine Inhalte → "Zu Set
+- [ ] **Lektionen kombinieren (#1741):** [E2E: `combine-lessons.spec.ts`] Meine Inhalte → "Zu Set
       kombinieren"-Umschalter → Checkbox-Auswahl (nur eigene Sets) →
       "Kombinieren"-Dialog: Neues Set (Titel Pflicht) vs. zu bestehendem
       Set; Originale bleiben erhalten; gemischte Sprachen/Level → nicht-
       blockierende Warnung
 - [ ] **Gleiche-Sprache-Hinweis (#1721/#1730):** Quelle == Ziel zeigt
-      neutralen Hinweis, blockiert "Weiter" NICHT; kein "gueltiges
-      Sprachpaar"-Pruefpunkt mehr auf Review; Save wird aktiv sobald die
-      echte Checkliste passt (Titel, ≥4 Karten, ≥5 Uebungen, ≥2 Typen,
-      gueltige Struktur)
+      neutralen Hinweis, blockiert "Weiter" NICHT; Save wird aktiv sobald die
+      Checkliste passt
+- [ ] **Inhaltsdomain-Auswahl in Schritt 1 (#1716):** Schritt 1 zeigt ein
+      Feld "Bereich" (Domain). Default "Sprache" → Quell-/Zielsprache +
+      GER-Level werden angezeigt (wie bisher). Eine Wissensdomain waehlen
+      (z. B. "Psychologie", "Programmierung", "Wissen") → das Sprachpaar
+      klappt auf EINE "Inhaltssprache" zusammen (Quelle == Ziel), das Level
+      bietet zusaetzlich "Kein Niveau", und ein Hinweis erklaert die
+      Wissensinhalte. Inhaltssprache aendern → Quelle und Ziel bleiben
+      gleich. Zurueck auf "Sprache" → das Paar ist wieder getrennt und das
+      Level faellt auf A1 zurueck (sofern es "Kein Niveau" war). Speichern →
+      die Lektion traegt die gewaehlte Domain (`domain: psychology` …); eine
+      Sprachlektion traegt KEIN `domain`-Feld. Bearbeiten einer gespeicherten
+      Wissenslektion oeffnet wieder mit der richtigen Domain + Inhaltssprache
+- [ ] **Sprachpaar-Pruefpunkt (#1929):** Review zeigt SECHS Checklisten-
+      Punkte (Titel, "Sprachpaar ist gueltig", ≥4 Karten, ≥5 Uebungen,
+      ≥2 Typen, gueltige Struktur). "Sprachpaar ist gueltig" ist gruen,
+      sobald Quell- UND Zielsprache unterstuetzte Codes sind — ein
+      Gleiche-Sprache-Paar (de → de) ist GUELTIG (kein "Quelle != Ziel"-
+      Gate)
 - [ ] **Struktur-Check-Grund (#1724):** fehlgeschlagener "Gueltige
       Lektionsstruktur"-Check nennt einen konkreten Grund, nicht nur ✗
 - [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare
@@ -252,7 +372,21 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       (egal ob ueber den Core-Picker ODER den Extension-Wizard angelegt) und ist
       abspielbar. **Regression:** der bestehende Extension-Wizard-Weg fuer Diktat
       funktioniert unveraendert
-- [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** Im MC-Inline-Editor
+- [ ] **Diktat-Audio-Upload (#1911, Slice 3):** Im Diktat-Editor (Core-Picker
+      ODER Extension-Wizard) zeigt das Audio-Feld einen **"Audio hochladen"**-
+      Button ueber einem **"…assets/audio/clip.mp3"**-Pfad-Eingabefeld. Klick auf
+      Hochladen → ein Dateiauswahldialog bietet MP3/OGG/WAV. Echten Clip waehlen
+      → ein eingebetteter **Audio-Player + "Entfernen"** erscheinen (das Pfad-Feld
+      bleibt leer; der Base64-Blob wird nicht angezeigt), die Liste der
+      akzeptierten Transkriptionen funktioniert weiter. Lektion speichern,
+      abspielen: **"Listen first" spielt den hochgeladenen Clip** in der Lektion
+      (beide Storage-Modi, ohne assets-Ordner — der Clip reist als Data-URI in
+      der Lektion-JSON mit und ueberlebt Export/Import). **Entfernen** loescht
+      ihn. **Regression:** ein getippter `assets/audio/…`-Pfad funktioniert weiter
+      als Alternative (kein Upload). **Fehler:** eine zu grosse Datei (> 2 MB)
+      ODER ein falsches Format (z. B. `.mp4`) zeigt eine klare Inline-Fehlermeldung
+      und stuerzt nicht ab; nichts wird gespeichert
+- [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,
       vor der ersten Options-Zeile**. Neue MC-Uebung (KI-generiert ODER manuell
@@ -264,7 +398,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       MC-Uebung mit gesetztem `multiple`-Wert oeffnet **unveraendert** in ihrem
       urspruenglichen Zustand.
 
-### Karten-Bild-Upload (#1763 / #1764)
+### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
 Ort: Create-Lesson Schritt 2 (Karten-Editor), im Hinzufuegen-Formular +
 jeder Karten-Zeile (`CardImageField`).
@@ -285,8 +419,14 @@ jeder Karten-Zeile (`CardImageField`).
 ### Lesson-Player UX (v2.3.0)
 - [ ] Pause-Button liegt jetzt im Sticky-Footer (#1644), Pausieren
       funktioniert von dort
+- [ ] Auto-Weiter + "Zurueck" (#1921): Einstellung "Automatisch weiter"
+      (Settings -> Lernen) AN -> eine Uebung richtig beantworten, die App
+      springt automatisch zur naechsten Aufgabe -> dann "Zurueck" klicken:
+      die vorherige (bereits geloeste) Aufgabe bleibt stehen und springt
+      NICHT sofort wieder vor; der "Weiter"-Button ist weiter klickbar
 - [ ] Titelbereich schlanker, keine In-Lektion-Beschreibung mehr (#1635)
 - [ ] Lektions-Zusammenfassung zeigt nur EINEN Favoriten-Button (#1649)
+      [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-Content-Link beim Tabben von oben sichtbar (#1727, a11y)
 
 ### Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
@@ -343,6 +483,12 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] "Uebungen generieren" bei theory-only: AI liefert Ergebnis
 - [ ] Qualitaet der generierten Exercises: sinnvoll? Typenvielfalt?
 - [ ] "Sitzung fortsetzen" nach Chat-Import: AI kennt den Kontext
+- [ ] Tutor-Chat (assistant-ui, #1126): tippen → senden (oder Enter), die
+      Antwort streamt herein; die 7-Schritt-Cycle-Progress rueckt vor;
+      Vorlesen + Diktat funktionieren; das Fortsetzen einer regulaeren
+      Sitzung zeigt den bisherigen Gespraechsverlauf
+- [ ] Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
+      (kein User-Turn zuerst), der Chat startet leer
 - [ ] AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] Kein Button ohne Key fuehrt zu Error-Toast (disabled + Tooltip)
 
@@ -392,6 +538,24 @@ Fuer JEDES Theme einmal durchklicken:
       entfernt); Drawer-Links 44px, schliesst nach Navigation
 - [ ] Bekanntes offenes Issue #1569 (Caret/Touch 1-2 Zeilen versetzt
       im Lesson-Flow): reproduzieren + Notizen ans Issue
+
+#### Theorie-Vorlesen auf iOS: langer Text (#1928) - PFLICHT
+
+iOS Safari bricht eine ungestueckelte Sprachausgabe nach ~15 Sekunden ab.
+Seit #1928 wird ein Theorie-Block in Stuecke zerlegt und als Warteschlange
+gesprochen. Gemessen: 617 von 621 Theorie-Laeufen liegen ueber der
+Stueckgrenze, ein mittlerer Lauf hat 1551 Zeichen.
+
+- [ ] Auf dem iPhone eine Lektion mit langem Theorie-Text oeffnen,
+      Vorlesen starten
+- [ ] Der Text wird **vollstaendig** vorgelesen und bricht nicht nach
+      ~15 Sekunden ab
+- [ ] Beim mehrteiligen Theorie-Block schaltet die Lektion waehrend des
+      Vorlesens automatisch zum naechsten Schritt weiter (die Stueckelung
+      darf die Position im Text nicht verfaelschen)
+- [ ] Zwischen den Stuecken entsteht kein hoerbares Stocken
+- [ ] Bekanntes Plattform-Limit, KEIN Fehler: Pause/Fortsetzen wirkt auf
+      iOS Safari nicht (dort stoppt + startet die App neu)
 
 #### App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 
@@ -481,7 +645,7 @@ Ausfuehren: `make test` (Backend-Teil)
 
 ---
 
-## Automatisiert: Dexie-Smoke E2E (Playwright TS, 31 Spec-Dateien)
+## Automatisiert: Dexie-Smoke E2E (Playwright TS, 45 Spec-Dateien)
 
 Abdeckung:
 - Vollstaendiger Lesson-Playthrough (alle Exercise-Typen)
@@ -491,6 +655,16 @@ Abdeckung:
 - Settings
 - Backup Round-Trip (programmatisch)
 - Alle Routes erreichbar (kein 404)
+- Karten-Bild-Upload: echtes File-Input + Canvas-Encoding, Vorschau,
+  Entfernen, Fehler bei falschem Typ, Asset-Pfad-Toggle
+  (`card-image-upload.spec.ts`, #1763/#1764)
+- Multiple-Choice Single/Multi-Umschalter im Inline-Editor
+  (Radio<->Checkbox, zweite Korrekt-Option, Kollaps beim Zurueckschalten)
+  (`mc-single-multi-toggle.spec.ts`, #1888)
+- Lektions-Zusammenfassung zeigt genau EINEN Favoriten-Button
+  (`lesson-summary-favorite.spec.ts`, #1649)
+- Lektionen kombinieren: Auswahl -> Dialog -> neues Set persistiert,
+  Originale bleiben erhalten (`combine-lessons.spec.ts`, #1741)
 
 Ausfuehren: `make test-dexie-smoke`
 

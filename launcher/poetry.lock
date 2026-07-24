@@ -27,14 +27,14 @@ files = [
 
 [[package]]
 name = "docker-app-launcher"
-version = "0.12.1"
+version = "0.14.1"
 description = "Configurable desktop launcher for Docker-based applications"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "docker_app_launcher-0.12.1-py3-none-any.whl", hash = "sha256:4b49bcc67b689333d86967da133ce868142be240f0f798608b7780561698e11d"},
-    {file = "docker_app_launcher-0.12.1.tar.gz", hash = "sha256:4021c277278edcda51d7d2d6a041ffff4ec51cbb08927141ce0b8b2b4f4875c8"},
+    {file = "docker_app_launcher-0.14.1-py3-none-any.whl", hash = "sha256:3543b6065494f5f3e23461ac1717134f6942ef09fc0a9d8e8a8a3892e6cbd843"},
+    {file = "docker_app_launcher-0.14.1.tar.gz", hash = "sha256:d562e75cb99a42e6616b8c8a2fe3324985d0336a453ee5d8b44de74796acec26"},
 ]
 
 [package.dependencies]
@@ -44,6 +44,8 @@ pystray = {version = ">=0.19", optional = true, markers = "extra == \"tray\""}
 pyyaml = ">=6.0"
 
 [package.extras]
+ctk = ["customtkinter (>=5.2)"]
+qt = ["PySide6 (>=6.5) ; python_version < \"3.15\""]
 tray = ["Pillow (>=10.0)", "PyGObject (>=3.42,<3.52) ; sys_platform == \"linux\"", "pystray (>=0.19)"]
 
 [[package]]
@@ -606,4 +608,4 @@ tray = ["pillow", "pystray"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "4d412f3c66f2a788aeda81326711be8b194b98870b009a92e955370e4f3ff65a"
+content-hash = "ef9f23df7f4168b613d97139c1ac307da42cf414e99e7dc0cb0b91b5feaeeadb"

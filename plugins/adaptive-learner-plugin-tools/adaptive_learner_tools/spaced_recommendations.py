@@ -97,8 +97,8 @@ _TITLES: dict[str, tuple[str, str]] = {
         "First practice in {method_en}.",
     ),
     "refresh": (
-        "Auffrischung in {method_de} — länger als zwei Wochen her.",
-        "Refresh {method_en} — over two weeks since the last session.",
+        "Auffrischung in {method_de} - länger als zwei Wochen her.",
+        "Refresh {method_en} - over two weeks since the last session.",
     ),
     "review": (
         "Wiederholung {method_de}.",
@@ -174,7 +174,7 @@ def build_spaced_recommendations(
 
 
 def localise(card: SpacedRecommendation, lang: str) -> dict[str, object]:
-    """Project a card to the wire shape — a single ``title``
+    """Project a card to the wire shape - a single ``title``
     instead of the bilingual ``title_de`` / ``title_en`` columns.
     """
     key = "de" if isinstance(lang, str) and lang.startswith("de") else "en"

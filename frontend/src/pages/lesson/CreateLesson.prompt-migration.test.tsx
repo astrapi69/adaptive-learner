@@ -91,6 +91,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "A legacy lesson.",
     author: "Aster",
+    domain: "language",
 };
 
 /** A lesson whose matching exercise carries the exact old English default

@@ -35,18 +35,18 @@ class Labels:
     readme_topics_heading: str = "Topics"
     readme_no_topics: str = "_No topics traversed yet._"
     readme_see_also_heading: str = "See also"
-    readme_see_stats: str = "[LEARNING_STATS.md](LEARNING_STATS.md) — error rates, understanding, transfer, intervention log."
+    readme_see_stats: str = "[LEARNING_STATS.md](LEARNING_STATS.md) - error rates, understanding, transfer, intervention log."
     readme_see_cheatsheet: str = (
-        "[CHEATSHEET.md](CHEATSHEET.md) — distilled notes + Meta-Learning Insights."
+        "[CHEATSHEET.md](CHEATSHEET.md) - distilled notes + Meta-Learning Insights."
     )
-    readme_see_roadmap: str = "[ROADMAP.md](ROADMAP.md) — next steps."
+    readme_see_roadmap: str = "[ROADMAP.md](ROADMAP.md) - next steps."
 
     # LEARNING_STATS.md
     stats_title: str = "Learning Statistics"
     stats_intro: str = (
         "Per-session metrics derived from `step_evaluations`, "
         "`session_ratings`, and `method_switches`. Generated "
-        "automatically — do not edit by hand."
+        "automatically - do not edit by hand."
     )
     stats_no_sessions: str = "_No sessions yet._"
     stats_sessions_heading: str = "Sessions"
@@ -78,7 +78,7 @@ class Labels:
     cheatsheet_intro: str = (
         "Distilled notes from your sessions. The "
         "**Meta-Learning Insights** section collects notes tagged "
-        '`kind="meta_learning"` — observations about *how* you '
+        '`kind="meta_learning"` - observations about *how* you '
         "learn best (per the Article-3 pattern)."
     )
     cheatsheet_notes_heading: str = "Notes"
@@ -94,16 +94,16 @@ class Labels:
     roadmap_title: str = "Roadmap"
     roadmap_intro: str = "Open topics + recommended next steps."
     roadmap_next_steps_heading: str = "Next steps"
-    roadmap_no_next_steps: str = "_No active project — start a new session to populate this list._"
+    roadmap_no_next_steps: str = "_No active project - start a new session to populate this list._"
     roadmap_resume_active: str = (
         "Resume the active session (method: **{method}**, step {step}/7, cycle {cycle})."
     )
     roadmap_start_first: str = (
-        "Start your first learning session — the assessment "
+        "Start your first learning session - the assessment "
         "recommends starting with method **{method}**."
     )
     roadmap_start_next: str = (
-        "Start the next session — last completed session used method **{method}**."
+        "Start the next session - last completed session used method **{method}**."
     )
     roadmap_open_topics_heading: str = "Open topics"
     roadmap_no_open_topics: str = "_No topics defined yet._"

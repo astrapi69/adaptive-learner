@@ -8,23 +8,23 @@ you answered incorrectly, and schedules them for a focused review
 session later.
 
 Lessons are an **alternative learning path** that needs no AI API
-key — ideal for trying out the app or for content where curated
+key - ideal for trying out the app or for content where curated
 material works better than free chat.
 
 ---
 
 ## Where lessons come from
 
-Lessons live in **content sets** — small bundles published in
+Lessons live in **content sets** - small bundles published in
 public GitHub repos. The **set browser** at `/content` lists every
 available set; click one to download it. The set is cached locally
 (in the filesystem when running with a backend, in IndexedDB in
 browser-only mode), so you can learn offline after the first
 download.
 
-The bundled library has grown to **26 content sets — 424 lessons
+The bundled library has grown to **26 content sets - 424 lessons
 / 5405 cards** across 10 content languages and 5 domains. Every
-release adds more — see the
+release adds more - see the
 [set repo](https://github.com/astrapi69/adaptive-learner-content)
 for the current catalog.
 
@@ -32,31 +32,31 @@ for the current catalog.
 
 ## Lesson modes
 
-You can play a single lesson — or a whole set — in different
+You can play a single lesson - or a whole set - in different
 **modes**. The chosen mode is remembered as your default and is
 stored on the attempt, so progress and statistics know how you
 practised:
 
-- **Practice** — the relaxed default. Every learning aid stays on:
+- **Practice** - the relaxed default. Every learning aid stays on:
   hints, the theory recap, auto-read, and the solution reveal.
-- **Exam** — retrieval under realistic conditions. Hints, theory
+- **Exam** - retrieval under realistic conditions. Hints, theory
   recap, auto-read, and the solution reveal are hidden; feedback is
   delayed to the end, where you get a dedicated **result view** with
   a **pass/fail verdict** against a configurable **pass threshold**
   and a **bonus XP** reward for passing.
-- **Timed ("Auf Zeit")** — a countdown per exercise. Difficulty is
+- **Timed ("Auf Zeit")** - a countdown per exercise. Difficulty is
   selectable: **Relaxed** (2× time), **Normal**, or **Fast**
   (0.7× time). When time runs out the answer locks; at the end you
   get timing stats (answered in time, average / fastest / slowest).
-- **Train errors ("Fehler trainieren")** — replays only the
+- **Train errors ("Fehler trainieren")** - replays only the
   exercises you previously got wrong. The entry point is gated and
   appears once you have mistakes to train.
-- **Reverse** — flips the exercise direction (e.g. produce instead
+- **Reverse** - flips the exercise direction (e.g. produce instead
   of recognise). Exercise types that cannot be reversed are shown in
   their original format.
-- **Shuffle ("Zufall")** — interleaves and shuffles the order so you
+- **Shuffle ("Zufall")** - interleaves and shuffles the order so you
   cannot rely on pure muscle memory.
-- **Endless** — keeps serving exercises continuously for an
+- **Endless** - keeps serving exercises continuously for an
   open-ended practice run.
 
 You can set a **default mode** (and the exam pass threshold and
@@ -71,29 +71,41 @@ step by step through each card and exercise:
 
 1. **Cards** present material to read. Click "Next" when you are
    ready.
-2. **Exercises** test what you remembered. Five types are
-   available:
-   - **Matching** — drag pairs (word ↔ translation). Both tiles of
+2. **Exercises** test what you remembered. The core types:
+   - **Matching** - drag pairs (word ↔ translation). Both tiles of
      a found pair share a **distinct color** and a **number
      badge**, so the pairing is recognizable in a colorblind-safe
      way (not by color alone), and resolving a pair plays a short
      **animation** so the link is easy to follow.
-   - **Picture choice** — pick the image that matches the prompt.
-   - **Free text** — type the answer.
-   - **Word tiles** — assemble a sentence from tiles.
-   - **Cloze** — fill a gap in the sentence (generated
+   - **Picture choice** - pick the image that matches the prompt.
+   - **Free text** - type the answer.
+   - **Word tiles** - assemble a sentence from tiles.
+   - **Cloze** - fill a gap in the sentence (generated
      specifically from your mistakes, see below).
+   - **Multiple choice** - pick one or (depending on the task)
+     several correct answers.
+
+   On top of these, a set can ship **extension types**:
+   categorization, error correction, reading comprehension,
+   graded quiz, and **audio dictation** (listen, then
+   transcribe).
+
+If an exercise carries an author-assigned **difficulty**, a small
+badge names the tier (**Easy / Medium / Hard**). It is pure
+transparency: you can see why the adaptive generator may surface
+a card earlier or more often - the badge never changes scoring or
+ordering.
 
 A **cloze** gap comes in three flavours: *type* the answer,
-*select* one option from a list, or — when several answers are
-correct — **"select all that apply"** (a multi-select / checkbox
+*select* one option from a list, or - when several answers are
+correct - **"select all that apply"** (a multi-select / checkbox
 gap that is only marked right when you pick exactly the correct
 set, no more and no fewer). The multi-answer variant lets authors
 write questions like *"Which of these are prime? 2, 4, 5, 9"*
 without a separate "multiple choice" exercise type.
 
 A progress bar at the top tracks how far you are in the lesson.
-You can stop at any time — your progress is saved per step and
+You can stop at any time - your progress is saved per step and
 resumes where you left off.
 
 ### Enter shortcut
@@ -156,13 +168,13 @@ no backend and works in both storage modes.
 ## Element-level error tracking
 
 Every wrong answer in every exercise type writes a row that points
-to the **specific element you missed** — the single word, pair or
+to the **specific element you missed** - the single word, pair or
 phrase. The app does NOT just remember "you scored 6/10 in lesson
 3"; it remembers "you particularly struggled with *bonjour* and
 *merci*".
 
 When you answer the same element correctly **3 times in a row**,
-it is marked as **mastered** — and removed from the review queue.
+it is marked as **mastered** - and removed from the review queue.
 If you later answer a mastered element incorrectly, it **slips
 back** into the queue. A missed mastery is a forgotten mastery.
 
@@ -196,7 +208,7 @@ top.
 ### Exam-mode bonus
 
 Answering an element correctly in **Exam mode** is stronger
-evidence of retention than getting it right in relaxed practice —
+evidence of retention than getting it right in relaxed practice -
 you recalled it under pressure, without immediate feedback. So an
 exam-passed element earns a **longer next-review interval** than the
 same correct answer would in practice mode. (It is the mirror image
@@ -209,16 +221,16 @@ scheduling.
 ## Review sessions
 
 A review session at `/review/:setId` synthesizes a **mini lesson
-on the fly** from the top entries of your queue. Mixed strategy
-since **v1.35.0**:
+on the fly** from the top entries of your queue. Mixed
+strategy:
 
 - If you originally missed a word in a **matching** or **picture
   choice** exercise, you do exactly that exercise again (with a
-  fresh shuffle — no pure muscle memory).
+  fresh shuffle - no pure muscle memory).
 - If you missed something in **free text** or **word tiles**, the
   review tries to generate a **cloze** exercise that targets
   exactly the missed word. The same knowledge in a different form
-  — flexibility is trained, not just repeating a specific exercise
+  - flexibility is trained, not just repeating a specific exercise
   format.
 - If no clean cloze can be built for an element (e.g. when the
   original prompt did not contain the answer in the sentence), the
@@ -231,14 +243,14 @@ reviews and you earn the **Review Master** badge.
 
 ## End-of-lesson correction round
 
-New in **v1.35.0**: When you finish a lesson with mistakes, the
+When you finish a lesson with mistakes, the
 summary page shows a small **correction round** between your score
 and the "Next lesson" button. It takes up to five specific
 mistakes from this lesson and offers each as a fresh cloze that
 targets exactly the missed word / missed article.
 
 - **Skippable at any time.** The "Next lesson" button stays
-  visible — the correction round is voluntary practice, not a
+  visible - the correction round is voluntary practice, not a
   gate.
 - **Appears only when there is something to correct.** Lessons
   with a perfect score skip it entirely. So do lessons whose
@@ -253,20 +265,20 @@ see the effect of your extra practice.
 
 ## Visual diff feedback
 
-Also new in **v1.35.0**: Wrong free-text and word-tile answers now
+Wrong free-text and word-tile answers now
 show a **token-level diff** between your input and the canonical
 answer. Three colors, never color alone:
 
-- **Red strikethrough** — what you wrote and did not belong (with
+- **Red strikethrough** - what you wrote and did not belong (with
   an × marker for screen readers and colorblind users).
-- **Green** — what the canonical answer contains and you missed
+- **Green** - what the canonical answer contains and you missed
   (with a + marker).
-- **Yellow** with an arrow → — a slightly wrong word, shown as
+- **Yellow** with an arrow → - a slightly wrong word, shown as
   `your-word` → `expected`.
 
 The same diff appears in the lesson summary in each exercise's
-breakdown — for every free-text or word-tile answer whose user
-input the v1.35.0+ storage knows.
+breakdown - for every free-text or word-tile answer whose user
+input the storage knows.
 
 ---
 
@@ -283,10 +295,10 @@ Every completed lesson earns XP by a star formula:
 
 Four new badges unlock around lessons:
 
-- **First lesson** — complete your first content lesson.
-- **10 lessons completed** — complete 10 content lessons.
-- **3-star streak** — get three lessons in a row with 3 stars.
-- **Review Master** — master 50 elements through spaced
+- **First lesson** - complete your first content lesson.
+- **10 lessons completed** - complete 10 content lessons.
+- **3-star streak** - get three lessons in a row with 3 stars.
+- **Review Master** - master 50 elements through spaced
   repetition.
 
 Lesson completions also count toward your **daily streak**, so
@@ -297,15 +309,15 @@ sessions do.
 
 ## Storage modes
 
-Lessons work in **both** storage modes — API (backend) and Dexie
+Lessons work in **both** storage modes - API (backend) and Dexie
 (browser-only / GitHub Pages). Element-level error tracking and
 SRS scheduling run identically against IndexedDB in browser-only
 mode, so users visiting the public GitHub Pages site get the full
 review loop without a backend.
 
-Since **v1.33.0** the gamification is aligned too: in browser-only
+The gamification is aligned too: in browser-only
 mode you earn **the same XP and lesson badges** for completed
-lessons as in server mode — the star, streak and badge logic is
+lessons as in server mode - the star, streak and badge logic is
 ported to TypeScript and pinned against identical golden values.
 There is no longer any feature difference between the modes on
 lesson completion.
@@ -315,6 +327,6 @@ lesson completion.
 ## Privacy
 
 All lesson progress, element-error rows, review-queue states and
-scheduling data stay **on your own device** — in the filesystem
+scheduling data stay **on your own device** - in the filesystem
 (API mode) or in the browser (IndexedDB). Nothing about which
 words you struggle with is sent anywhere.

@@ -59,7 +59,7 @@ class HelloPlugin(BasePlugin):
     # "adaptive_learner", damit der ``PluginManager`` des Hosts
     # (der ``app_id="adaptive_learner"`` übergibt) das Plugin
     # als für diese App vorgesehen erkennt. Der v0.9.0-Übergang
-    # hat dies zu einem HARTEN Filter gemacht — Plugins ohne
+    # hat dies zu einem HARTEN Filter gemacht - Plugins ohne
     # das Attribut werden bei Discovery abgewiesen.
     target_application = "adaptive_learner"
     depends_on: list[str] = []
@@ -101,7 +101,7 @@ class HelloPlugin(BasePlugin):
 ```
 
 Der Plugin-Manager ruft `mount_routes()` für jedes Plugin auf,
-das diese Methode definiert — nach Core-App-Init.
+das diese Methode definiert - nach Core-App-Init.
 
 ## 6. Tests
 
@@ -136,25 +136,25 @@ curl http://localhost:18001/api/plugins/hello/greet
 
 Alle Hookspecs leben in `backend/app/hookspecs.py`:
 
-1. `get_assessment_questions(lang: str)` — Fragepack zurückgeben.
-2. `calculate_profile(answers: list)` — Methodengewichte
+1. `get_assessment_questions(lang: str)` - Fragepack zurückgeben.
+2. `calculate_profile(answers: list)` - Methodengewichte
    berechnen (firstresult).
-3. `create_session_prompt(...)` — System-Prompt
+3. `create_session_prompt(...)` - System-Prompt
    zusammensetzen (firstresult).
-4. `ai_complete(messages, model, api_key, max_tokens)` — KI
+4. `ai_complete(messages, model, api_key, max_tokens)` - KI
    synchron aufrufen (firstresult, Anbieter routet nach
    Modell-Präfix).
-5. `ai_complete_async(...)` — async-Variante für parallele
+5. `ai_complete_async(...)` - async-Variante für parallele
    Zyklus-Grenz-Bewertung (v1.5.0+, firstresult).
-6. `ai_complete_stream(...)` — Streaming-Variante mit
+6. `ai_complete_stream(...)` - Streaming-Variante mit
    Text-Deltas über SSE (v1.6.0+, firstresult).
-7. `recommend_method_switch(history, profile)` —
+7. `recommend_method_switch(history, profile)` -
    Switch-Empfehlung oder None.
-8. `on_session_complete(session, rating)` — Broadcast-
+8. `on_session_complete(session, rating)` - Broadcast-
    Seiteneffekt; Gamification + Tracking hören mit.
-9. `get_progress_summary(project_id, db)` — Namespace-Slice
+9. `get_progress_summary(project_id, db)` - Namespace-Slice
    der Dashboard-Summary zurück.
-10. `get_tool_recommendations(profile, lang)` — gerankte
+10. `get_tool_recommendations(profile, lang)` - gerankte
     Tools zurück.
 
 [Vollständige Hookspec-Referenz](../api/hooks.md)
@@ -163,7 +163,7 @@ Alle Hookspecs leben in `backend/app/hookspecs.py`:
 
 Hooks mit `firstresult=True` halten beim ersten Plugin, das
 einen Nicht-None-Wert liefert. Sinnvoll für "genau ein Plugin
-sollte das übernehmen" — z.B. `ai_complete`, wo das Plugin des
+sollte das übernehmen" - z.B. `ai_complete`, wo das Plugin des
 passenden Anbieters den Text liefert und alle anderen None.
 
 Hooks ohne `firstresult=True` laufen über jedes Plugin

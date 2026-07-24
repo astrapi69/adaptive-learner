@@ -36,7 +36,7 @@ describe("BadgeGrid", () => {
             screen
                 .getByTestId("badge-grid-item-b")
                 .querySelector("[data-earned]"),
-        ).toHaveAttribute("title", "Level 10 — Reach level 10");
+        ).toHaveAttribute("title", "Level 10 - Reach level 10");
     });
 
     it("renders non-interactive cells without onSelect", () => {

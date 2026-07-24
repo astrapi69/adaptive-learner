@@ -24,8 +24,8 @@ eine lange Liste von oben nach unten. Die Tab-Gruppen sind:
 
 Tauscht jeden UI-String beim nächsten Render live aus via
 `PATCH /api/settings/{user_id}`. Alle 11 Sprachen sind
-First-Class — DE / EL / EN / ES / FR / HI / ID / JA / KO / PT /
-TR — jede mit einem voll übersetzten Katalog. Über
+First-Class - DE / EL / EN / ES / FR / HI / ID / JA / KO / PT /
+TR - jede mit einem voll übersetzten Katalog. Über
 `localStorage` persistent.
 
 ## KI-Anbieter + Modell-Picker
@@ -35,7 +35,7 @@ UserSettings; der nächste KI-Aufruf geht durch das Plugin des
 neuen Anbieters (Server-Modus) oder den HTTP-Client des neuen
 Anbieters (Lokal-Modus).
 
-Der **Modell-Picker** (seit v1.11.0) ist ein durchsuchbares
+Der **Modell-Picker** ist ein durchsuchbares
 Dropdown, gruppiert in Empfohlen / Alle, gefüllt aus dem
 Live-`/v1/models`-Endpoint jedes Anbieters (1 h Cache). Jede
 Zeile zeigt den Klarnamen + die Roh-ID + ein Kontext-Fenster-
@@ -49,23 +49,23 @@ Kontext-Fenster sitzen im Tooltip.
 
 Jeder Anbieter hat seine eigene Zeile: ein Schlüssel-
 Eingabefeld, einen Speichern-Knopf, einen Entfernen-Knopf,
-das Aktiv-Anbieter-Badge — plus das neue **Quellen-
+das Aktiv-Anbieter-Badge - plus das neue **Quellen-
 Attributions**-Badge:
 
-- **Schlüssel aus: Einstellungen** — der Schlüssel ist
+- **Schlüssel aus: Einstellungen** - der Schlüssel ist
   Fernet-verschlüsselt in der DB gespeichert (Server-Modus)
   oder im Klartext in IndexedDB (Lokal-Modus). Speichern /
   Entfernen frei nutzbar.
-- **Schlüssel aus: secrets.yaml** — der Schlüssel ist in
+- **Schlüssel aus: secrets.yaml** - der Schlüssel ist in
   `~/.config/adaptive-learner/secrets.yaml` konfiguriert. Der
   Speichern-Knopf ist deaktiviert; bearbeite die Datei direkt,
   um ihn zu ändern. Ein Info-Banner unter der Zeile erinnert
   an den Pfad.
-- **Schlüssel aus: Umgebungsvariable** — der Schlüssel ist
+- **Schlüssel aus: Umgebungsvariable** - der Schlüssel ist
   über die `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungs-
   variable gesetzt. Speichern deaktiviert; die Env-Variable
   ist die Quelle der Wahrheit.
-- **Kein Schlüssel konfiguriert** — nichts ist irgendwo
+- **Kein Schlüssel konfiguriert** - nichts ist irgendwo
   gesetzt. Tippen und auf Speichern klicken, um zu beginnen.
 
 Auflösungskette (höchste Priorität gewinnt): Umgebung >
@@ -80,7 +80,7 @@ des Browsers nicht aus.
 API-Schlüssel sind aus dem normalen Backup (`.alb`) bewusst
 **ausgeschlossen**. Um deine Schlüssel auf ein anderes Gerät oder
 einen anderen Browser zu übertragen, nutze den dedizierten
-**verschlüsselten Schlüssel-Export (`.alk`)** — hier im KI-Tab
+**verschlüsselten Schlüssel-Export (`.alk`)** - hier im KI-Tab
 findest du dazu einen **Verweis-Knopf**, der direkt zum Export im
 **Daten-Tab** springt (siehe *Verschlüsselter Schlüssel-Export*
 unter [Backup](#backup)).
@@ -92,17 +92,17 @@ jeweils mit einer **maskierten Schlüssel-Vorschau**, sodass du auf
 einen Blick siehst, welche Anbieter bereit sind. Jede Zeile hat
 einen **Test-Knopf**, der den Modell-Listen-Endpunkt des Anbieters
 aufruft und ok / ungültiger Schlüssel / Rate-Limit / Netzwerkfehler
-meldet — ein sicherer Check, der keine Generierungs-Tokens
+meldet - ein sicherer Check, der keine Generierungs-Tokens
 verbraucht.
 
 ## Speichermodus
 
 Der Schalter zwischen **Server** und **Lokal (Browser)**:
 
-- **Server** — jeder Lese- und Schreibvorgang geht ans
+- **Server** - jeder Lese- und Schreibvorgang geht ans
   FastAPI-Backend. Setzt ein laufendes Backend voraus. Am
   besten für Multi-Device-Nutzung mit Backend-seitigem Sync.
-- **Lokal (Browser)** — jeder Lese- und Schreibvorgang geht
+- **Lokal (Browser)** - jeder Lese- und Schreibvorgang geht
   an IndexedDB in diesem Browser. KI-Aufrufe gehen direkt an
   den Anbieter. Kein Backend nötig. Am besten für ein
   privates, geräte-lokales Setup.
@@ -146,29 +146,29 @@ Knöpfe.
 
 ### Verschlüsselter Schlüssel-Export (.alk)
 
-Das normale Backup entfernt deine API-Schlüssel — sicher, aber bei
+Das normale Backup entfernt deine API-Schlüssel - sicher, aber bei
 einem Geräte- oder Browser-Wechsel müsstest du sonst jeden
 Schlüssel von Hand neu eingeben. Der **verschlüsselte
 Schlüssel-Export** schließt diese Lücke mit einer separaten,
 passphrasen-geschützten Datei:
 
-- Sie enthält **nur** die sensiblen Zugangsdaten — deine
+- Sie enthält **nur** die sensiblen Zugangsdaten - deine
   **API-Schlüssel** plus die Anbieter-Einstellungen (aktiver
   Anbieter, Modell-Overrides). NICHT den Rest deiner App-Daten (der
   bleibt im `.alb`-Backup).
 - **Export** fragt nach einer Passphrase (plus Bestätigung) und
   lädt eine dedizierte **`.alk`**-Datei herunter. Die Schlüssel
   darin werden mit **AES-GCM-256** verschlüsselt, der Schlüssel
-  dazu via **PBKDF2** aus deiner Passphrase abgeleitet — die Datei
+  dazu via **PBKDF2** aus deiner Passphrase abgeleitet - die Datei
   enthält nie einen Schlüssel im Klartext.
 - **Import** liest eine `.alk`, fragt die Passphrase, entschlüsselt
   und schreibt die Schlüssel + Anbieter-Einstellungen in denselben
   sicheren Speicher wie die manuelle Eingabe (vorhandene Anbieter
   werden überschrieben, fehlende bleiben unangetastet).
 - Eine **falsche Passphrase oder eine manipulierte Datei** wird
-  sauber mit einer einzigen Meldung abgewiesen — **kein
+  sauber mit einer einzigen Meldung abgewiesen - **kein
   Teil-Import**, nichts wird halb geschrieben.
-- Die Passphrase-Felder prüfen sich **direkt beim Tippen** — eine
+- Die Passphrase-Felder prüfen sich **direkt beim Tippen** - eine
   zu kurze Passphrase oder eine nicht passende Bestätigung wird
   gleich am Feld angezeigt (und der Absende-Knopf bleibt
   deaktiviert) statt nach dem Klick als Fehler-Toast. Wie die
@@ -186,19 +186,19 @@ exportierbarer Schlüssel konfiguriert ist.
 
 ## Stimme
 
-Drei Toggles (seit v1.18.0):
+Drei Toggles:
 
-- **TTS aktiviert** — fügt einen ▶-Knopf neben KI-Antworten
+- **TTS aktiviert** - fügt einen ▶-Knopf neben KI-Antworten
   + Assessment-Ergebnissen ein, der sie laut vorliest. Wählt
   die sprach-passende Stimme, wenn verfügbar; Rate + Pitch
   auf [0,5; 2,0] geklemmt.
-- **Auto-Wiedergabe KI** — spricht jede KI-Antwort
-  automatisch (Standard AUS — überraschendes Audio ist
+- **Auto-Wiedergabe KI** - spricht jede KI-Antwort
+  automatisch (Standard AUS - überraschendes Audio ist
   selten, was man will).
-- **STT aktiviert** — fügt einen 🎤-Knopf zum Sitzungs-
+- **STT aktiviert** - fügt einen 🎤-Knopf zum Sitzungs-
   Eingabefeld hinzu, der Sprache aufnimmt und das Textarea
   mit Zwischen-Transkripten füllt, bevor du absendest.
-- **Aussprache-Übung aktiviert** — bringt die
+- **Aussprache-Übung aktiviert** - bringt die
   `/pronunciation`-Seite vom Dashboard-Quick-Start für
   Sprachen-getaggte Projekte zum Vorschein.
 
@@ -206,7 +206,7 @@ Der Stimme-Abschnitt blendet sich aus, wenn weder die
 Web-Speech-API-Synthese noch die -Erkennung vom Browser
 unterstützt wird.
 
-## Darstellung (Phase 58 / v1.41.0)
+## Darstellung
 
 Der **Farbschema**-Picker unter *Allgemein > Darstellung* bietet
 sechs Themes plus einen automatischen Modus:
@@ -229,7 +229,7 @@ Plaketten und Übungs-Feedback überall lesbar bleiben.
 
 ## Oberfläche
 
-Der **Gesten-Toggle** (seit v1.10.0, Standard EIN auf touch-fähigen
+Der **Gesten-Toggle** (Standard EIN auf touch-fähigen
 Geräten) umfasst Assessment-Swipe-Navigation,
 Curriculum-Topic-Swipe-to-Reveal und Sitzungs-Zyklus-Peek. Ebenfalls
 hier: Button-Tooltips und der Entwicklermodus.
@@ -249,7 +249,7 @@ Der **Lernen**-Tab bündelt, wie Lektionen ablaufen: den
 Erinnerungen, das Enter-Tastenkürzel, die bevorzugte Übungsrichtung
 und die im Inhaltsbaum gezeigten Quellsprachen.
 
-Hier liegt auch die **Inhalts-Ansicht** — die globale Einstellung
+Hier liegt auch die **Inhalts-Ansicht** - die globale Einstellung
 *Liste ⇄ Kacheln* für den Content-Hub (Standard **Liste**). Es ist
 dieselbe Einstellung wie der Ansicht-Umschalter in den Tabs *Meine
 Inhalte* / *Entdecken*, eine Änderung an einer Stelle hält also
@@ -289,10 +289,10 @@ DB-Pfad).
 Adaptive Learner läuft auf zwei Deployment-Strängen, und der
 Über-Tab sagt dir jetzt, auf welchem du bist:
 
-- **Haupt** — die stabile Production-Seite
+- **Haupt** - die stabile Production-Seite
   (`https://astrapi69.github.io/adaptive-learner/`). Als dezentes
   Badge dargestellt, ohne Warnoptik.
-- **Latest** — die Preview-/Staging-Seite, gebaut aus `develop`
+- **Latest** - die Preview-/Staging-Seite, gebaut aus `develop`
   (`https://astrapi69.github.io/adaptive-learner-content-test/`).
   Als deutliches **Testversion**-Badge dargestellt, damit du weißt,
   dass sie Fehler enthalten kann.
@@ -307,11 +307,11 @@ raten.
 
 Der Über-Tab hat einen **App teilen**-Eintrag, der einen scannbaren
 **QR-Code** der öffentlichen App-URL zeigt, mit Kopieren- /
-PNG-Laden- / Nativ-Teilen-Aktionen — praktisch, um die App aufs
+PNG-Laden- / Nativ-Teilen-Aktionen - praktisch, um die App aufs
 Handy zu bringen.
 
 Bist du auf dem **Latest**-Strang, bietet das Teilen die
-Preview-URL **nur als Link an — keinen QR-Code** — zusammen mit
+Preview-URL **nur als Link an - keinen QR-Code** - zusammen mit
 einer Instabilitäts-Warnung, damit ein gescannter Code niemand
 unbemerkt auf die instabile Testversion schicken kann. Auf
 **Haupt** funktioniert das Teilen wie bisher mit QR-Code für die

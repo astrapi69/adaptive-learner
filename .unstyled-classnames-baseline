@@ -30,13 +30,6 @@ activity-trend
 adaptive-save-row
 adaptive-summary-improvement
 answer-feedback-pulse
-aui-composer
-aui-composer-input
-aui-composer-send
-aui-message aui-message-assistant
-aui-message aui-message-user
-aui-thread
-aui-thread-viewport
 backup-auto
 backup-auto-count
 backup-auto-list
@@ -58,14 +51,7 @@ chat-welcome
 cloze-blank-diff
 content-ai-fix
 content-ai-intro
-content-contribution-date
-content-contribution-row
-content-contribution-status
-content-contribution-title
-content-contributions-list
-content-contributor-badge
 content-level-own-count
-content-my-contributions content-section
 content-my-lessons content-section
 content-section-title
 content-set-aicheck-btn
@@ -88,16 +74,9 @@ error-replay-summary-score
 extra
 extra-hook
 form-field
-form-hint-inline
 form-select
 free-text-diff
 free-text-diff-row
-learning-repo-actions
-learning-repo-body
-learning-repo-header
-learning-repo-meta
-learning-repo-sidebar
-learning-repo-topic-group
 learning-repo-widget-link
 lesson-resume-actions
 lesson-resume-desc
@@ -109,36 +88,10 @@ lesson-summary-diff
 lesson-summary-explanations
 onboarding-subject-suggestions
 page
-page-header
 picture-tile-skeleton
 provider-chip-model
 review-summary-note
 settings-subsection
-share-wizard-author
-share-wizard-author-name
-share-wizard-author-privacy
-share-wizard-breadcrumb
-share-wizard-celebration
-share-wizard-copy-body
-share-wizard-counts
-share-wizard-diff
-share-wizard-domain-hint
-share-wizard-dup-actions
-share-wizard-existing
-share-wizard-header
-share-wizard-metadata
-share-wizard-metadata-intro
-share-wizard-mode
-share-wizard-newset
-share-wizard-note
-share-wizard-overlap
-share-wizard-path
-share-wizard-placement
-share-wizard-placement-line
-share-wizard-pr-body
-share-wizard-pr-progress
-share-wizard-progress
-share-wizard-thanks
 spaced-rec-body
 spaced-rec-title
 spaced-recs

@@ -115,7 +115,7 @@ def test_persist_commit_message_subject_carries_cycle_and_latest_rating(
         text=True,
     ).stdout.strip()
     # Latest session is s2 → U 10/10, T 8/10. Cycle count = 2.
-    assert last_subject == "Cycle 2 — U 10/10, T 8/10"
+    assert last_subject == "Cycle 2 - U 10/10, T 8/10"
 
 
 def test_persist_commit_subject_when_no_sessions_yet(tmp_path: Path) -> None:
@@ -128,7 +128,7 @@ def test_persist_commit_subject_when_no_sessions_yet(tmp_path: Path) -> None:
         capture_output=True,
         text=True,
     ).stdout.strip()
-    assert subject == "Initial render — no sessions yet"
+    assert subject == "Initial render - no sessions yet"
 
 
 def test_persist_is_idempotent_for_unchanged_tree(tmp_path: Path) -> None:

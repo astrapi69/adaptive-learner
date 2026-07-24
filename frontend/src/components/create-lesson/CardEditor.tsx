@@ -335,8 +335,8 @@ export default function CardEditor({
                                         data-testid={`card-csv-row-${i}`}
                                         data-valid={r.valid ? "true" : "false"}
                                     >
-                                        <span className="truncate">{r.front || "—"}</span>
-                                        <span className="truncate">{r.back || "—"}</span>
+                                        <span className="truncate">{r.front || "-"}</span>
+                                        <span className="truncate">{r.back || "-"}</span>
                                         <span className="muted truncate text-fg-muted">{r.notes}</span>
                                     </li>
                                 ))}

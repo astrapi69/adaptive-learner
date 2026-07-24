@@ -177,6 +177,11 @@ class SetEntryResponse(BaseModel):
     # #769 — optional set-level book; the lesson media section auto-inserts
     # it as the first item. ``None`` when the set declares no book.
     book: SetBookResponse | None = None
+    # #1707 — consumer-display visibility mirrored from the manifest set entry
+    # (learn-content-engine 0.14.0). ``"hidden"`` asks the client not to
+    # surface a conformance/reference fixture; the frontend filters on it.
+    # Defaults to ``"visible"`` so pre-0.14.0 manifests stay visible.
+    visibility: str = "visible"
 
     @classmethod
     def from_entry(cls, entry: SetEntry) -> SetEntryResponse:
@@ -199,6 +204,7 @@ class SetEntryResponse(BaseModel):
             cached_version=entry.cached_version,
             update_available=entry.update_available,
             book=SetBookResponse.from_model(entry.set.book),
+            visibility=entry.set.visibility.value,
         )
 
 
@@ -246,7 +252,7 @@ async def list_sets() -> SetsListResponse:
     summary="Download a content set",
     description=(
         "Fetches a set's manifest + lessons from its source and caches them "
-        "locally (filesystem in API mode). Idempotent — re-downloading a "
+        "locally (filesystem in API mode). Idempotent - re-downloading a "
         "cached set reconciles the version."
     ),
     response_description="The cached set entry.",
@@ -354,7 +360,7 @@ async def get_asset(
     set_id: str,
     asset_path: str,
 ) -> Response:
-    """Phase 54F / v1.37.0 — serve a cached asset by relative
+    """Phase 54F / v1.37.0 - serve a cached asset by relative
     path.
 
     The path-traversal guard lives inside ``cache.read_asset``

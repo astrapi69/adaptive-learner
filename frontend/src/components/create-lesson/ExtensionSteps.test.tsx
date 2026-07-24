@@ -26,6 +26,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "",
     author: "",
+    domain: "language",
 };
 
 const t = (_key: string, fallback?: string) => fallback ?? _key;
@@ -113,8 +114,10 @@ describe("ExtensionSteps — step 2 authoring", () => {
         fireEvent.click(screen.getByTestId("extension-add-type-dictation"));
         const editor = screen.getByTestId(/^exercise-ext-editor-/);
         expect(editor).toBeInTheDocument();
+        // The dictation audio field is present (#1911 added an upload button
+        // alongside the typed-path input, so target the unique upload control).
         expect(
-            screen.getByTestId(/^exercise-ext-dict-audio-/),
+            screen.getByTestId(/^exercise-ext-dict-audio-upload-/),
         ).toBeInTheDocument();
     });
 

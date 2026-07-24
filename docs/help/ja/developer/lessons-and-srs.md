@@ -73,7 +73,7 @@
 
 ### モデル
 
-``app/models/__init__.py:ElementError``（``(user_id, set_id, lesson_id, exercise_id, element_key)``の複合UNIQUEコンストレイント付き）。決定**D2**によるレッスンスコープの要素キー — 2つの異なるレッスンにある同じ単語は2行になります。
+``app/models/__init__.py:ElementError``（``(user_id, set_id, lesson_id, exercise_id, element_key)``の複合UNIQUEコンストレイント付き）。決定**D2**によるレッスンスコープの要素キー - 2つの異なるレッスンにある同じ単語は2行になります。
 
 ```python
 class ElementError(Base):
@@ -93,7 +93,7 @@ class ElementError(Base):
     mastered_at: datetime | None
 ```
 
-設計上、``learning_sessions``から切り離されています（FKなし） — コンテンツレッスンはリレーショナルジョインではなく文字列でコンテンツセット / レッスンIDを参照します。これにより、テーブルはセッション行とは独立してキャッシュの排除を生き残ります。
+設計上、``learning_sessions``から切り離されています（FKなし） - コンテンツレッスンはリレーショナルジョインではなく文字列でコンテンツセット / レッスンIDを参照します。これにより、テーブルはセッション行とは独立してキャッシュの排除を生き残ります。
 
 ### アップサートトランジションマトリックス
 
@@ -126,7 +126,7 @@ class ElementError(Base):
 | 0 | ``last_attempt_at``の1日後 |
 | 1 | 3日後 |
 | 2 | 7日後 |
-| ≥ 3 | マスタリー済み — キューから除外 |
+| ≥ 3 | マスタリー済み - キューから除外 |
 
 ### 優先度ソート
 
@@ -159,7 +159,7 @@ v1.30.0の``ElementError``の作業は意図的に``LearningSession``から切�
 ### スキーマ変更
 
 ```python
-# app/models/__init__.py — Phase 46F.1
+# app/models/__init__.py - Phase 46F.1
 LEARNING_PROJECT_KIND_STANDARD = "standard"
 LEARNING_PROJECT_KIND_CONTENT = "content"
 
@@ -179,10 +179,10 @@ Alembic ``0020_learning_project_kind``は``batch_alter_table`` + ``add_column``�
 
 ``app/services/lesson_session_unification.py``には2つのパブリック関数があります:
 
-- ``find_or_create_content_pseudo_project(db, user_id)`` — 冪等なルックアップ; ミス時のみ作成。
-- ``record_lesson_completion_session(db, *, user_id, lesson_progress_id, score_correct, score_total)`` — ``LearningSession``行を書き込み、コミットし、次に``on_session_complete``を発火させます。
+- ``find_or_create_content_pseudo_project(db, user_id)`` - 冪等なルックアップ; ミス時のみ作成。
+- ``record_lesson_completion_session(db, *, user_id, lesson_progress_id, score_correct, score_total)`` - ``LearningSession``行を書き込み、コミットし、次に``on_session_complete``を発火させます。
 
-両方とも``app/services/lesson_progress.py:upsert_progress``から、行が``in_progress``から``completed``に切り替わるときに呼び出されます。ヘルパー自身のDB書き込みは例外を伝播します（実際のDB問題）が、フック発火パスはセッションプラグインの``routes.py``の``_fire_on_session_complete``パターンに従ってサブスクライバーの例外をラップします — ゲーミフィケーションのクラッシュがサマリー画面で既に確認したレッスンをロールバックすることはできません。
+両方とも``app/services/lesson_progress.py:upsert_progress``から、行が``in_progress``から``completed``に切り替わるときに呼び出されます。ヘルパー自身のDB書き込みは例外を伝播します（実際のDB問題）が、フック発火パスはセッションプラグインの``routes.py``の``_fire_on_session_complete``パターンに従ってサブスクライバーの例外をラップします - ゲーミフィケーションのクラッシュがサマリー画面で既に確認したレッスンをロールバックすることはできません。
 
 ### フロントエンドフィルター
 
@@ -200,12 +200,12 @@ Alembic ``0020_learning_project_kind``は``batch_alter_table`` + ``add_column``�
 
 ``adaptive_learner_gamification.xp_service``が以下を追加します:
 
-- ``compute_stars(correct, total)`` — スコアから0〜3を計算（50% / 75% / 90%のバンド）。フロントエンドの``lib/lesson-summary.ts``の``computeStars``をミラーリングするため、両サイドが同じスター評価を予測します。
-- ``calculate_lesson_session_xp(*, stars, first_attempt, streak_days)`` — 純粋な計算機。30ベース + スターごと10 + 最初の試行で3スター20 + チャット式と同じ+25%/日のストリーク倍率（7日上限）。
-- ``_is_first_attempt(db, lesson_progress_id)`` — ``LessonProgress.step_results`` JSONを読み取り、すべてのステップ行が``attempts == 1``の場合にTrueを返します。
-- ``award_xp_for_lesson_session(db, *, session)`` — プロジェクトFKからuser_idを解決し、式を適用する永続化ラッパー。
+- ``compute_stars(correct, total)`` - スコアから0〜3を計算（50% / 75% / 90%のバンド）。フロントエンドの``lib/lesson-summary.ts``の``computeStars``をミラーリングするため、両サイドが同じスター評価を予測します。
+- ``calculate_lesson_session_xp(*, stars, first_attempt, streak_days)`` - 純粋な計算機。30ベース + スターごと10 + 最初の試行で3スター20 + チャット式と同じ+25%/日のストリーク倍率（7日上限）。
+- ``_is_first_attempt(db, lesson_progress_id)`` - ``LessonProgress.step_results`` JSONを読み取り、すべてのステップ行が``attempts == 1``の場合にTrueを返します。
+- ``award_xp_for_lesson_session(db, *, session)`` - プロジェクトFKからuser_idを解決し、式を適用する永続化ラッパー。
 
-ディスパッチは``GamificationPlugin.on_session_complete``で``session["method"]``に基づいて行われます。チャットメソッドは``award_xp_for_session``に留まります。コンテンツメソッドはレッスン式にルーティングします。統合ヘルパーからのセッションペイロードはレッスン固有のキー（``lesson_progress_id``、``score_correct``、``score_total``）を持ちます; チャットセッションのペイロードはそれらを持たないため、ディスパッチが漏れた場合でもレッスンXPラッパーは適切にデグレードします — ただし``backend/tests/test_lesson_session_unification.py``の回帰ピンテストが正確なレッスンアワード（4/4の最初の試行完了 + 初日のストリークで100 XP）を確認するため、漏れはすぐに表面化します。
+ディスパッチは``GamificationPlugin.on_session_complete``で``session["method"]``に基づいて行われます。チャットメソッドは``award_xp_for_session``に留まります。コンテンツメソッドはレッスン式にルーティングします。統合ヘルパーからのセッションペイロードはレッスン固有のキー（``lesson_progress_id``、``score_correct``、``score_total``）を持ちます; チャットセッションのペイロードはそれらを持たないため、ディスパッチが漏れた場合でもレッスンXPラッパーは適切にデグレードします - ただし``backend/tests/test_lesson_session_unification.py``の回帰ピンテストが正確なレッスンアワード（4/4の最初の試行完了 + 初日のストリークで100 XP）を確認するため、漏れはすぐに表面化します。
 
 ---
 
@@ -215,7 +215,7 @@ Alembic ``0020_learning_project_kind``は``batch_alter_table`` + ``add_column``�
 
 | キー | 述語 | ヘルパー |
 |---|---|---|
-| ``first_lesson`` | ``_completed_lesson_count >= 1`` | ``LessonProgress.status="completed"``をカウント（LearningSession経由ではない — レッスン行が権威的） |
+| ``first_lesson`` | ``_completed_lesson_count >= 1`` | ``LessonProgress.status="completed"``をカウント（LearningSession経由ではない - レッスン行が権威的） |
 | ``lessons_10`` | ``_completed_lesson_count >= 10`` | 同上 |
 | ``three_star_streak`` | ``_last_n_lessons_all_three_star(n=3)`` | ユーザーの最後の3つの完了した``LessonProgress``を``completed_at``の降順で読み取り、``xp_service.compute_stars``で各々を予測 |
 | ``review_master`` | ``_mastered_elements_count >= 50`` | ``ElementError.mastered=True``をカウント |
@@ -226,23 +226,23 @@ Alembic ``0020_learning_project_kind``は``batch_alter_table`` + ``add_column``�
 
 ## ストレージモードの注意事項
 
-要素トラッキング + SRSチェーンは**両方**のストレージモードで同一に動作します — ``IElementErrorsNamespace``コントラクトはモードに依存せず、Dexieモードのリリースゲート（18スペック、``/review``ルートを含む）がリグレッションをブロックします。
+要素トラッキング + SRSチェーンは**両方**のストレージモードで同一に動作します - ``IElementErrorsNamespace``コントラクトはモードに依存せず、Dexieモードのリリースゲート（18スペック、``/review``ルートを含む）がリグレッションをブロックします。
 
-レッスンセッション統合 + ゲーミフィケーションの副作用は**APIモードのみ**です。Dexieモードでは、レッスン完了が``LessonProgress``への書き込み、``ElementError``行の記録、レビューキューの駆動を引き続き行います — ただし``LearningSession``の書き込みと``on_session_complete``フックは発火しません（バックエンドなし、フック可能なものなし）。Dexieモードのユーザーはフルレビューループを得られます; チャットセッションパスからのXP / バッジアワードは引き続き機能しますが、レッスン完了はまだその合計に貢献しません。
+レッスンセッション統合 + ゲーミフィケーションの副作用は**APIモードのみ**です。Dexieモードでは、レッスン完了が``LessonProgress``への書き込み、``ElementError``行の記録、レビューキューの駆動を引き続き行います - ただし``LearningSession``の書き込みと``on_session_complete``フックは発火しません（バックエンドなし、フック可能なものなし）。Dexieモードのユーザーはフルレビューループを得られます; チャットセッションパスからのXP / バッジアワードは引き続き機能しますが、レッスン完了はまだその合計に貢献しません。
 
-ゲーミフィケーションの副作用を``DexieStorage``に統合する将来の作業（Dexieモードユーザーのレッスン完了もローカルでXPを付与するようにする）はv1.31.0の意図的な非目標です — TypeScriptで式実装を複製するか、on_session_completeフックのサービスワーカーシムが必要になり、どちらもv1.31.0のスコープを超えるより大きなリファクタリングになります。
+ゲーミフィケーションの副作用を``DexieStorage``に統合する将来の作業（Dexieモードユーザーのレッスン完了もローカルでXPを付与するようにする）はv1.31.0の意図的な非目標です - TypeScriptで式実装を複製するか、on_session_completeフックのサービスワーカーシムが必要になり、どちらもv1.31.0のスコープを超えるより大きなリファクタリングになります。
 
 ---
 
 ## 次に読むべき場所
 
-- ``backend/app/services/element_errors.py`` — アップサートトランジションマトリックス。
-- ``backend/app/services/element_srs.py`` — スケジューラー。
-- ``backend/app/services/lesson_session_unification.py`` — 擬似プロジェクト + フック発火。
-- ``plugins/adaptive-learner-plugin-gamification/adaptive_learner_gamification/xp_service.py`` — ``calculate_lesson_session_xp`` + ディスパッチ。
-- ``plugins/adaptive-learner-plugin-gamification/adaptive_learner_gamification/badge_service.py`` — 4つの新しい述語。
-- ``frontend/src/lib/learning-project.ts`` — 擬似プロジェクトフィルターヘルパー。
-- ``e2e/dexie/dexie-mode.spec.ts`` — Dexieモードのリグレッションを防ぐリリースゲート（``/lesson/...``のレッスンスペック、``/review/...``のレビュースペック）。
+- ``backend/app/services/element_errors.py`` - アップサートトランジションマトリックス。
+- ``backend/app/services/element_srs.py`` - スケジューラー。
+- ``backend/app/services/lesson_session_unification.py`` - 擬似プロジェクト + フック発火。
+- ``plugins/adaptive-learner-plugin-gamification/adaptive_learner_gamification/xp_service.py`` - ``calculate_lesson_session_xp`` + ディスパッチ。
+- ``plugins/adaptive-learner-plugin-gamification/adaptive_learner_gamification/badge_service.py`` - 4つの新しい述語。
+- ``frontend/src/lib/learning-project.ts`` - 擬似プロジェクトフィルターヘルパー。
+- ``e2e/dexie/dexie-mode.spec.ts`` - Dexieモードのリグレッションを防ぐリリースゲート（``/lesson/...``のレッスンスペック、``/review/...``のレビュースペック）。
 
 ---
 
@@ -250,26 +250,26 @@ Alembic ``0020_learning_project_kind``は``batch_alter_table`` + ``add_column``�
 
 受動的な再生をアクティブな学習に変える3つの重層的な追加:
 
-**トークンdiff + DiffHighlight** — free-textとword-tilesの誤答が、結果の段落の下に`<DiffHighlight tokens={tokenDiff(input, canonical)} />`インラインでレンダリングされるようになりました。レッスンサマリーの演習ごとの内訳は、v1.35.0以降に保存された`user_answer`が利用可能な場合、free-text + word-tilesの同じdiffを表示します（古い行は正規のみの行にフォールバックします）。アルゴリズムは`frontend/src/lib/exercises/token-diff.ts`内 — 純粋な単語レベルLCS、NFC正規化、大文字/小文字 + アクセント感応性。
+**トークンdiff + DiffHighlight** - free-textとword-tilesの誤答が、結果の段落の下に`<DiffHighlight tokens={tokenDiff(input, canonical)} />`インラインでレンダリングされるようになりました。レッスンサマリーの演習ごとの内訳は、v1.35.0以降に保存された`user_answer`が利用可能な場合、free-text + word-tilesの同じdiffを表示します（古い行は正規のみの行にフォールバックします）。アルゴリズムは`frontend/src/lib/exercises/token-diff.ts`内 - 純粋な単語レベルLCS、NFC正規化、大文字/小文字 + アクセント感応性。
 
-**Cloze演習タイプ（スキーマ1.1）** — 5番目のExerciseType: 見えやすい`___`マーカーを使った穴埋め。2つのレンダリングモード: `type`（デフォルト、`<input>`）と`select`（`distractors`からのオプションを持つ`<select>`）。`deriveClozeAttempts`によるブランクごとのSRSファンアウト — ブランクごとに1つのElementAttempt、ブランクごとのマスタリートラッキングがきれいに機能します。レンダラーは`frontend/src/components/exercises/ClozeExercise.tsx`; スキーマは`plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`。
+**Cloze演習タイプ（スキーマ1.1）** - 5番目のExerciseType: 見えやすい`___`マーカーを使った穴埋め。2つのレンダリングモード: `type`（デフォルト、`<input>`）と`select`（`distractors`からのオプションを持つ`<select>`）。`deriveClozeAttempts`によるブランクごとのSRSファンアウト - ブランクごとに1つのElementAttempt、ブランクごとのマスタリートラッキングがきれいに機能します。レンダラーは`frontend/src/components/exercises/ClozeExercise.tsx`; スキーマは`plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`。
 
-**Clozeジェネレーター** — `generateClozeFromError(error, sourceExercise, sourceCard)`がElementErrorからclozeステップを合成します。アルゴリズム:
+**Clozeジェネレーター** - `generateClozeFromError(error, sourceExercise, sourceCard)`がElementErrorからclozeステップを合成します。アルゴリズム:
 
 1. `sourceCard.token_roles`に`token === error.correct_answer`のエントリがある場合、`sourceCard.front`でそのトークンを空白にします。
 2. そうでなければ、`sourceCard.front`が`error.correct_answer`をちょうど1回含む場合、それを空白にします。
 3. そうでなければ、ソースがfree_textでそのプロンプトが答えをちょうど1回含む場合、それを空白にします。
-4. そうでなければnullを返します — 呼び出し元は再生にフォールバックします。
+4. そうでなければnullを返します - 呼び出し元は再生にフォールバックします。
 
 決定論的: 同じ入力 → バイト同一の出力。AI、ランダム性、非同期なし。Distractorsは`error.user_answer`（正解と異なる場合）を最初に、次に`sourceExercise.distractors`をフィルタリングして重複排除したものを含みます。コードは`frontend/src/lib/exercises/cloze-generator.ts`。
 
-**レッスン終了後の修正ラウンド** — `<CorrectionBlock />`が`LessonSummary`内にスコア / 内訳とアクションボタンの間にマウントされます。マウント時に、完了したばかりのレッスンのElementError行を読み取り、未マスタリーの失敗ごとにclozeを生成し（上限5）、ユーザーがそれらを1つずつ処理できるようにします。各完了したclozeは、元の失敗が記録されたのと同じelement_keyに対して新鮮なElementAttempt行を書き込むため、SRSのストリーク + マスタリーが進みます。完璧なスコア / エラーなし / 構築可能なclozeなしの場合に自己非表示します。コードは`frontend/src/components/exercises/CorrectionBlock.tsx`。
+**レッスン終了後の修正ラウンド** - `<CorrectionBlock />`が`LessonSummary`内にスコア / 内訳とアクションボタンの間にマウントされます。マウント時に、完了したばかりのレッスンのElementError行を読み取り、未マスタリーの失敗ごとにclozeを生成し（上限5）、ユーザーがそれらを1つずつ処理できるようにします。各完了したclozeは、元の失敗が記録されたのと同じelement_keyに対して新鮮なElementAttempt行を書き込むため、SRSのストリーク + マスタリーが進みます。完璧なスコア / エラーなし / 構築可能なclozeなしの場合に自己非表示します。コードは`frontend/src/components/exercises/CorrectionBlock.tsx`。
 
-**レビューセッションでのCloze（Phase 52G）** — `synthesizeReviewLesson`のアイテムごとのブランチ（`_buildReviewStep`）が選択するようになりました:
+**レビューセッションでのCloze（Phase 52G）** - `synthesizeReviewLesson`のアイテムごとのブランチ（`_buildReviewStep`）が選択するようになりました:
 
 - free_textまたはword_tilesのソース → clozeを試み、再生にフォールバック
 - matching、picture_choice、cloze → 常に再生
 
 決定基準は`frontend/src/lib/review-lesson.ts`に記載されています。再生ステップのIDは`review-`で始まります; 生成されたclozeステップのIDはトレーサビリティのために`review-cloze-`で始まります。
 
-**カードのトークンロール（Phase 52I）** — カード上のオプションの`token_roles: list[{token, role}]`アノテーション、閉じた列挙型の文法ロール（article / verb / noun / adjective / preposition / gender_marker / tense_marker）。ジェネレーターはこれらを使用して、部分文字列マッチングではなく意味的に意味のある空白を選択します。ロールの追加はマイナーなschema_versionバンプです — 列挙型を閉じたまま保つ。
+**カードのトークンロール（Phase 52I）** - カード上のオプションの`token_roles: list[{token, role}]`アノテーション、閉じた列挙型の文法ロール（article / verb / noun / adjective / preposition / gender_marker / tense_marker）。ジェネレーターはこれらを使用して、部分文字列マッチングではなく意味的に意味のある空白を選択します。ロールの追加はマイナーなschema_versionバンプです - 列挙型を閉じたまま保つ。

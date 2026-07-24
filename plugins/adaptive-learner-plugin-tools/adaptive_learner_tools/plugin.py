@@ -1,4 +1,4 @@
-"""ToolsPlugin — PluginForge entry point."""
+"""ToolsPlugin - PluginForge entry point."""
 
 from __future__ import annotations
 

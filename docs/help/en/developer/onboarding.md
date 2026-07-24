@@ -3,12 +3,12 @@
 A practical, step-by-step walkthrough for a new contributor. Unlike
 the [Architecture](architecture.md) and [Setup](setup.md) pages
 (which explain *what* the system is), this page walks you through
-*doing* your first bug-fix end to end — from a fresh clone to a
+*doing* your first bug-fix end to end - from a fresh clone to a
 merged pull request.
 
 ## 1. Set up the development environment
 
-Prerequisites: **Python 3.11+** (3.12 recommended — plugins test
+Prerequisites: **Python 3.11+** (3.12 recommended - plugins test
 against 3.12), **Node 24+** (required by Vite 8), **Poetry**, **Bun**,
 and **GNU Make**.
 
@@ -33,7 +33,7 @@ backend at **http://localhost:18001**. Both ports are overridable via
 Ctrl-C once to stop both.
 
 If `make install` fails, the usual culprit is Poetry picking the wrong
-Python — run `poetry env use python3.12` in `backend/` and re-install.
+Python - run `poetry env use python3.12` in `backend/` and re-install.
 For the full configuration chain (secrets, AI keys, the mandatory
 `ADAPTIVE_LEARNER_SECRET_KEY`) see [Setup](setup.md).
 
@@ -50,9 +50,9 @@ gh issue list --label bug --state open
 Or on GitHub:
 <https://github.com/astrapi69/adaptive-learner/issues?q=is%3Aissue+is%3Aopen+label%3Abug>
 
-Pick something small to start — look for `good first issue` or a
+Pick something small to start - look for `good first issue` or a
 low-effort `bug`. If no issue exists for the bug you found, **create
-one before you touch code** — and file a *separate* issue for any new
+one before you touch code** - and file a *separate* issue for any new
 bug you discover along the way.
 
 ## 3. Understand the issue
@@ -100,7 +100,7 @@ rg "the error message" frontend/src backend/app
   root).
 - **Styling: Tailwind utility classes only**, no inline color styles
   and no new rules in `global.css`. Colors go through design tokens
-  (CSS variables) — see [Theme system](themes.md).
+  (CSS variables) - see [Theme system](themes.md).
 - **Both storage modes must keep working.** A feature that ships in
   API mode without a Dexie path (or a graceful "not available in
   browser mode" message) is a release blocker.
@@ -111,7 +111,7 @@ Every fix needs at least one test that fails before the change and
 passes after it.
 
 ```bash
-# Frontend (Vitest) — run from frontend/
+# Frontend (Vitest) - run from frontend/
 cd frontend && bunx vitest run src/path/to/file.test.ts
 
 # Backend (pytest)
@@ -153,7 +153,7 @@ Closes #123"
 git push -u origin fix/short-description
 ```
 
-Keep commits **atomic** — each commit leaves the tree green
+Keep commits **atomic** - each commit leaves the tree green
 (`make test` passes). Combine a source change with its test change in
 the same commit when splitting them would create a red intermediate.
 
@@ -182,7 +182,7 @@ CI runs the correctness gates on every PR:
 - Frontend tests (Vitest) + Backend / plugin tests (pytest)
 - TypeScript (`tsc --noEmit`) + mypy + ruff + ESLint
 - Pre-commit hooks
-- Complexity gate (baseline ratchet — new functions must stay under
+- Complexity gate (baseline ratchet - new functions must stay under
   the cyclomatic-complexity threshold)
 - Folder-size + file-size guards (god-file / god-folder prevention)
 - i18n parity (all 11 languages must define every key)

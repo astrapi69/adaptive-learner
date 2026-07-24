@@ -7,7 +7,7 @@
  * at ``tests/fixtures/lesson-xp-parity/`` and assert against
  * the same goldens. Python is the canonical regenerator (set
  * ``LESSON_XP_PARITY_REGEN=1`` on the Python side); this TS
- * test never regenerates — only asserts.
+ * test never regenerates - only asserts.
  *
  * If this test fails after a Python source change, the
  * regen was intentional and the TS port at ``lesson-xp.ts``

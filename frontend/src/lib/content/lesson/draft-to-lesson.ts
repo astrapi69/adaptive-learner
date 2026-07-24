@@ -9,7 +9,13 @@
  */
 
 import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
-import {requiredExtensionsFor, type GeneratorCard} from "../../exercises";
+import {
+    isExtensionType,
+    requiredExtensionsFor,
+    type GeneratorCard,
+} from "../../exercises";
+import {contentDomainToStamp, isKnownContentDomain} from "../content-domains";
+import {LANGUAGE_OPTIONS} from "../language/language-options";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
     ContentLesson,
@@ -150,6 +156,11 @@ export function buildLessonFromDraft(
     // there is one to declare, so a pure-core lesson never carries a spurious
     // ``requires_extensions: []``.
     const requiredExtensions = requiredExtensionsFor(exercises);
+    // #1716 — stamp an explicit NON-language content domain so a knowledge
+    // lesson (single content language, source == target) is recognised as
+    // intentional domain content. A language lesson carries no ``domain``
+    // field (the schema default), so no spurious ``domain: "language"``.
+    const contentDomain = contentDomainToStamp(meta.domain);
     const lesson: ContentLesson = {
         id: opts.id ?? (slugify(meta.title) || "lesson"),
         title: meta.title.trim(),
@@ -162,6 +173,7 @@ export function buildLessonFromDraft(
         ...(requiredExtensions.length > 0
             ? {requires_extensions: requiredExtensions}
             : {}),
+        ...(contentDomain ? {domain: contentDomain} : {}),
         contributed_by: meta.author.trim() || null,
         contributed_at: meta.author.trim() ? new Date().toISOString() : null,
     };
@@ -170,12 +182,30 @@ export function buildLessonFromDraft(
     return lesson;
 }
 
+/** Restore the invariant "``ext_payload`` present iff the exercise is an
+ *  ``ext:`` extension type" on a reconstructed exercise (#1919).
+ *
+ *  The lesson JSON-Schema types ``ext_payload`` as object-only ("Absent on
+ *  core exercises"), yet the API-mode ``GET .../lessons`` endpoint serves the
+ *  lesson through ``response_model=Lesson`` with the default
+ *  ``exclude_none=False``, so the Pydantic ``Exercise.ext_payload: dict | None``
+ *  is emitted as ``ext_payload: null`` on every core exercise. Copied verbatim
+ *  into the wizard and re-validated, that null fails ajv with
+ *  ``/steps/N/exercise/ext_payload must be object``. A core exercise must carry
+ *  no ``ext_payload`` at all; an extension exercise keeps its real payload. */
+function reconstructExercise(ex: ContentLessonExercise): ContentLessonExercise {
+    if (isExtensionType(ex.type) || !("ext_payload" in ex)) return ex;
+    const {ext_payload: _dropped, ...core} = ex;
+    return core as ContentLessonExercise;
+}
+
 /** Reverse of {@link buildLessonFromDraft}: turn an existing
  *  ``ContentLesson`` (plus its set entry, for level/title_native) back
  *  into the wizard's ``{meta, cards, exercises}`` so the Lesson Creator
- *  can open pre-filled for editing (#1740). Cards and exercises come
- *  straight off the lesson; theory-only structure is carried separately
- *  by the caller (see {@link preservedTheorySteps}). */
+ *  can open pre-filled for editing (#1740). Cards come straight off the
+ *  lesson; exercises are sanitized so a core exercise never carries a
+ *  serialization-introduced ``ext_payload`` (#1919). Theory-only structure
+ *  is carried separately by the caller (see {@link preservedTheorySteps}). */
 export function lessonToDraftInput(
     lesson: ContentLesson,
     entry?: {level?: string | null; title_native?: string | null},
@@ -189,7 +219,7 @@ export function lessonToDraftInput(
     }));
     const exercises: ContentLessonExercise[] = lesson.steps
         .filter((s) => s.type === "exercise" && s.exercise)
-        .map((s) => s.exercise as ContentLessonExercise);
+        .map((s) => reconstructExercise(s.exercise as ContentLessonExercise));
     const meta: LessonMeta = {
         title: lesson.title,
         titleNative: entry?.title_native ?? "",
@@ -198,6 +228,14 @@ export function lessonToDraftInput(
         level: entry?.level ?? "A1",
         description: lesson.description ?? "",
         author: lesson.contributed_by ?? "",
+        // #1716 — carry an explicit NON-language content domain back into the
+        // wizard so editing a knowledge lesson keeps its domain (and its
+        // single-content-language / level-less shape). An unknown or absent
+        // domain normalises to the default ``"language"``.
+        domain:
+            lesson.domain && isKnownContentDomain(lesson.domain)
+                ? lesson.domain
+                : "language",
     };
     return {meta, cards, exercises};
 }
@@ -246,8 +284,37 @@ export function buildUserSetInput(
     };
 }
 
+/** The set of supported BCP-47 language codes offered by the authoring
+ *  surfaces ({@link LANGUAGE_OPTIONS}). */
+const SUPPORTED_LANGUAGE_CODES: ReadonlySet<string> = new Set(
+    LANGUAGE_OPTIONS.map((o) => o.code),
+);
+
+/**
+ * True iff both sides of a language pair are supported codes (#1929).
+ *
+ * "Valid" means "both are real, supported languages", NOT "the two
+ * differ". A same-language pair (e.g. ``de -> de``) is a legitimate
+ * knowledge-domain lesson (#1715), so it is a VALID pair — the removed
+ * ``source !== target`` gate was the bug, not this check. An empty or
+ * unknown code (a stale draft, a hand-edited import) is the failure case.
+ */
+export function isValidLanguagePair(
+    source: string,
+    target: string,
+): boolean {
+    return (
+        SUPPORTED_LANGUAGE_CODES.has(source) &&
+        SUPPORTED_LANGUAGE_CODES.has(target)
+    );
+}
+
 export interface DraftValidationChecks {
     hasTitle: boolean;
+    /** Both source and target are supported language codes (#1929).
+     *  A same-language pair is VALID (knowledge-domain lessons, #1715);
+     *  an empty or unknown code fails. */
+    languagePair: boolean;
     enoughCards: boolean;
     enoughExercises: boolean;
     enoughTypes: boolean;
@@ -263,6 +330,7 @@ export interface DraftValidationChecks {
  *  except the ``schemaError`` detail field). */
 const BOOLEAN_CHECK_KEYS = [
     "hasTitle",
+    "languagePair",
     "enoughCards",
     "enoughExercises",
     "enoughTypes",
@@ -296,10 +364,15 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     }
     return {
         hasTitle: meta.title.trim().length > 0,
-        // #1715 — a same-language pair is legitimate for knowledge-domain
-        // lessons (e.g. the ki-einsteiger set: de -> de), so it is no
-        // longer a save gate. Same/differing languages are surfaced as a
-        // non-blocking hint in Step 1, mirroring SaveOfflineLessonModal.
+        // #1929 — "language pair is valid" = both sides are SUPPORTED codes.
+        // #1715 — a same-language pair (de -> de) stays VALID: it is a
+        // legitimate knowledge-domain lesson, surfaced as a neutral hint in
+        // Step 1, never the removed ``source !== target`` gate. Only an empty
+        // or unknown code (stale draft / hand-edited import) fails here.
+        languagePair: isValidLanguagePair(
+            meta.sourceLanguage,
+            meta.targetLanguage,
+        ),
         enoughCards: cards.length >= MIN_CARDS_FOR_SAVE,
         enoughExercises: exercises.length >= MIN_EXERCISES_FOR_SAVE,
         enoughTypes: types.size >= MIN_TYPES_FOR_SAVE,

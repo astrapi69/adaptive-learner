@@ -3,9 +3,9 @@ import {render, screen, fireEvent, waitFor, cleanup} from "@testing-library/reac
 import {MemoryRouter} from "react-router-dom";
 
 import BookTextStep, {type BookFields} from "./BookTextStep";
-import type {ResolvedAiProvider} from "../../lib/ai/providers/resolve-provider";
-import type {TheoryGenerationResult} from "../../lib/ai/generation/generate-theory-from-text";
-import type {ExerciseGenerationResult} from "../../lib/ai/generation/generate-exercises";
+import type {ResolvedAiProvider} from "../../../lib/ai/providers/resolve-provider";
+import type {TheoryGenerationResult} from "../../../lib/ai/generation/generate-theory-from-text";
+import type {ExerciseGenerationResult} from "../../../lib/ai/generation/generate-exercises";
 
 const t = (_k: string, fallback?: string) => fallback ?? _k;
 
@@ -47,6 +47,7 @@ const exercisesOk = vi.fn(
 
 function setup(overrides: Partial<React.ComponentProps<typeof BookTextStep>> = {}) {
     const onGenerated = vi.fn();
+    const onBatchGenerated = vi.fn();
     const props: React.ComponentProps<typeof BookTextStep> = {
         bookText: "Ein neutraler Reiz wird zum bedingten Reiz.",
         onBookTextChange: vi.fn(),
@@ -54,6 +55,7 @@ function setup(overrides: Partial<React.ComponentProps<typeof BookTextStep>> = {
         onBookChange: vi.fn(),
         resolveProvider: vi.fn(async () => CONFIG),
         onGenerated,
+        onBatchGenerated,
         t,
         generateTheory: theoryOk,
         generate: exercisesOk,
@@ -64,7 +66,13 @@ function setup(overrides: Partial<React.ComponentProps<typeof BookTextStep>> = {
             <BookTextStep {...props} />
         </MemoryRouter>,
     );
-    return {onGenerated, props};
+    return {onGenerated, onBatchGenerated, props};
+}
+
+/** A two-chapter markdown file for the real upload parser. */
+function markdownFile(): File {
+    const md = "# Kapitel 1\nInhalt eins.\n\n# Kapitel 2\nInhalt zwei.\n";
+    return new File([md], "buch.md", {type: "text/markdown"});
 }
 
 afterEach(() => {
@@ -141,5 +149,52 @@ describe("BookTextStep", () => {
             target: {value: "KI fuer Einsteiger"},
         });
         expect(onBookChange).toHaveBeenCalledWith({title: "KI fuer Einsteiger"});
+    });
+
+    it("batch-generates one lesson per selected section (#1949)", async () => {
+        const {onBatchGenerated} = setup();
+        // Upload a two-chapter markdown file through the real parser.
+        fireEvent.change(screen.getByTestId("book-upload-input"), {
+            target: {files: [markdownFile()]},
+        });
+        await waitFor(() =>
+            expect(screen.getByTestId("book-upload-picker")).toBeTruthy(),
+        );
+        const button = screen.getByTestId("book-upload-apply");
+        expect(button.textContent).toContain("Generate 2");
+        fireEvent.click(button);
+        await waitFor(() =>
+            expect(onBatchGenerated).toHaveBeenCalledTimes(1),
+        );
+        const lessons = onBatchGenerated.mock.calls[0][0];
+        expect(lessons).toHaveLength(2);
+        expect(lessons.map((l: {title: string}) => l.title)).toEqual([
+            "Kapitel 1",
+            "Kapitel 2",
+        ]);
+        // Each section produced theory + at least one exercise.
+        expect(lessons[0].theorySteps.length).toBeGreaterThan(0);
+        expect(lessons[0].exercises.length).toBeGreaterThan(0);
+        // A batch summary is shown.
+        expect(screen.getByTestId("book-batch-summary").textContent).toContain(
+            "2 of 2",
+        );
+    });
+
+    it("does not batch-generate when no key is set (#1949)", async () => {
+        const {onBatchGenerated} = setup({
+            resolveProvider: vi.fn(async () => null),
+        });
+        fireEvent.change(screen.getByTestId("book-upload-input"), {
+            target: {files: [markdownFile()]},
+        });
+        await waitFor(() =>
+            expect(screen.getByTestId("book-upload-picker")).toBeTruthy(),
+        );
+        fireEvent.click(screen.getByTestId("book-upload-apply"));
+        await waitFor(() =>
+            expect(screen.getByTestId("book-no-key")).toBeTruthy(),
+        );
+        expect(onBatchGenerated).not.toHaveBeenCalled();
     });
 });

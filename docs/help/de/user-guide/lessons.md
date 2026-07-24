@@ -9,7 +9,7 @@ Phrasen du falsch beantwortet hast, und plant sie für eine
 gezielte Wiederholungssitzung später ein.
 
 Lektionen sind ein **alternativer Lernweg**, der keinen
-KI-API-Schlüssel benötigt — ideal zum Ausprobieren der App
+KI-API-Schlüssel benötigt - ideal zum Ausprobieren der App
 oder für Inhalte, bei denen kuratiertes Material besser
 funktioniert als freier Chat.
 
@@ -17,7 +17,7 @@ funktioniert als freier Chat.
 
 ## Woher Lektionen kommen
 
-Lektionen leben in **Inhaltssätzen** — kleinen Bündeln, die
+Lektionen leben in **Inhaltssätzen** - kleinen Bündeln, die
 in öffentlichen GitHub-Repos veröffentlicht sind. Der
 **Set-Browser** unter `/content` listet jeden verfügbaren
 Satz auf; klicke einen an, um ihn herunterzuladen. Der Satz
@@ -25,9 +25,9 @@ wird lokal zwischengespeichert (im Dateisystem bei Backend-
 Betrieb, in IndexedDB im reinen Browser-Modus), sodass du
 nach dem ersten Download offline lernen kannst.
 
-Die gebündelte Bibliothek ist auf **26 Content-Sets — 424
+Die gebündelte Bibliothek ist auf **26 Content-Sets - 424
 Lektionen / 5405 Karten** über 10 Content-Sprachen und 5
-Domänen gewachsen. Jedes Release bringt neue hinzu — siehe
+Domänen gewachsen. Jedes Release bringt neue hinzu - siehe
 das
 [Set-Repo](https://github.com/astrapi69/adaptive-learner-content)
 für den aktuellen Katalog.
@@ -36,39 +36,39 @@ für den aktuellen Katalog.
 
 ## Lernmodi
 
-Du kannst eine einzelne Lektion — oder einen ganzen Satz —
+Du kannst eine einzelne Lektion - oder einen ganzen Satz -
 in verschiedenen **Modi** spielen. Der gewählte Modus wird
 als deine Voreinstellung gemerkt und auf dem Versuch
 gespeichert, sodass Fortschritt und Statistik wissen, wie
 du geübt hast:
 
-- **Üben (Practice)** — der entspannte Standardmodus. Alle
+- **Üben (Practice)** - der entspannte Standardmodus. Alle
   Lernhilfen bleiben an: Hinweise, die Theorie-Wiederholung,
   das Vorlesen und das Aufdecken der Lösung.
-- **Prüfung (Exam)** — Abruf unter realistischen
+- **Prüfung (Exam)** - Abruf unter realistischen
   Bedingungen. Hinweise, Theorie-Wiederholung, Vorlesen und
   das Aufdecken der Lösung sind ausgeblendet; das Feedback
   kommt gebündelt am Ende, mit einer eigenen
   **Ergebnisansicht**, einem **Bestanden/Nicht-bestanden-
   Urteil** gegen eine konfigurierbare **Bestehensschwelle**
   und einem **Bonus-XP** für das Bestehen.
-- **Auf Zeit (Timed)** — ein Countdown pro Übung. Die
+- **Auf Zeit (Timed)** - ein Countdown pro Übung. Die
   Schwierigkeit ist wählbar: **Entspannt** (2× Zeit),
   **Normal** oder **Schnell** (0,7× Zeit). Läuft die Zeit
   ab, wird die Antwort gesperrt; am Ende erhältst du
   Zeit-Statistiken (in der Zeit beantwortet, Durchschnitt /
   schnellste / langsamste).
-- **Fehler trainieren** — wiederholt nur die Übungen, die
+- **Fehler trainieren** - wiederholt nur die Übungen, die
   du zuvor falsch hattest. Der Einstieg ist gesperrt und
   erscheint, sobald du Fehler zum Trainieren hast.
-- **Reverse (Umgekehrt)** — dreht die Übungsrichtung um
+- **Reverse (Umgekehrt)** - dreht die Übungsrichtung um
   (z. B. produzieren statt erkennen). Übungstypen, die sich
   nicht umkehren lassen, werden in ihrem Originalformat
   gezeigt.
-- **Zufall (Shuffle)** — mischt und verschachtelt die
+- **Zufall (Shuffle)** - mischt und verschachtelt die
   Reihenfolge, damit du dich nicht auf reines
   Muskelgedächtnis verlassen kannst.
-- **Endlos (Endless)** — liefert fortlaufend Übungen für
+- **Endlos (Endless)** - liefert fortlaufend Übungen für
   einen offenen Übungslauf.
 
 Einen **Standardmodus** (samt Bestehensschwelle der Prüfung
@@ -85,35 +85,49 @@ jede Karte und Übung:
 
 1. **Karten** präsentieren Material zum Lesen. Klick auf
    "Weiter", wenn du bereit bist.
-2. **Übungen** prüfen, was du dir gemerkt hast. Fünf Typen
-   sind verfügbar:
-   - **Zuordnen** — ziehe Paare (Wort ↔ Übersetzung). Beide
+2. **Übungen** prüfen, was du dir gemerkt hast. Die
+   Kern-Typen:
+   - **Zuordnen** - ziehe Paare (Wort ↔ Übersetzung). Beide
      Kacheln eines gefundenen Paares teilen sich eine
      **eigene Farbe** und ein **Nummern-Badge**, sodass die
      Zuordnung farbenblind-sicher erkennbar ist (nicht nur
      über Farbe), und das Auflösen eines Paares spielt eine
      kurze **Animation**, damit die Verbindung leicht zu
      verfolgen ist.
-   - **Bildauswahl** — wähle das Bild, das zum Hinweis
+   - **Bildauswahl** - wähle das Bild, das zum Hinweis
      passt.
-   - **Freitext** — tippe die Antwort.
-   - **Wort-Kacheln** — setze einen Satz aus Kacheln
+   - **Freitext** - tippe die Antwort.
+   - **Wort-Kacheln** - setze einen Satz aus Kacheln
      zusammen.
-   - **Lückentext** — fülle eine Lücke im Satz (entsteht
+   - **Lückentext** - fülle eine Lücke im Satz (entsteht
      gezielt aus deinen Fehlern, siehe unten).
+   - **Multiple Choice** - wähle eine oder (je nach Aufgabe)
+     mehrere richtige Antworten.
+
+   Dazu kommen **Erweiterungs-Typen**, die ein Set mitbringen
+   kann: Kategorisierung, Fehlerkorrektur, Leseverständnis,
+   benoteter Quiz und **Audio-Diktat** (hören, dann
+   transkribieren).
+
+Trägt eine Übung eine vom Autor vergebene **Schwierigkeit**,
+zeigt ein kleines Badge die Stufe (**Leicht / Mittel /
+Schwer**). Es ist reine Transparenz: Du siehst, warum der
+adaptive Generator eine Karte früher oder häufiger
+vorschlagen kann - an Bewertung oder Reihenfolge ändert das
+Badge nichts.
 
 Eine **Lückentext**-Lücke gibt es in drei Spielarten: Antwort
-*eintippen*, eine Option aus einer Liste *auswählen*, oder — wenn
-mehrere Antworten richtig sind — **„Alle zutreffenden
+*eintippen*, eine Option aus einer Liste *auswählen*, oder - wenn
+mehrere Antworten richtig sind - **„Alle zutreffenden
 auswählen"** (eine Mehrfachauswahl-/Checkbox-Lücke, die nur dann
 als richtig gewertet wird, wenn du genau die korrekte Menge
-ankreuzt — nicht mehr und nicht weniger). Mit der
+ankreuzt - nicht mehr und nicht weniger). Mit der
 Mehrfach-Antwort-Variante können Autoren Fragen wie *„Welche davon
 sind Primzahlen? 2, 4, 5, 9"* schreiben, ohne einen eigenen
 „Multiple-Choice"-Übungstyp.
 
 Eine Fortschrittsanzeige oben verfolgt, wie weit du in der
-Lektion bist. Du kannst jederzeit aufhören — dein
+Lektion bist. Du kannst jederzeit aufhören - dein
 Fortschritt wird pro Schritt gespeichert und setzt dort
 fort, wo du aufgehört hast.
 
@@ -187,13 +201,13 @@ Speichermodi.
 
 Jede falsche Antwort in jedem Übungstyp schreibt eine Zeile,
 die auf das **konkrete Element, das du verfehlt hast**,
-verweist — das einzelne Wort, Paar oder die Phrase. Die App
+verweist - das einzelne Wort, Paar oder die Phrase. Die App
 merkt sich NICHT nur "du hast 6/10 in Lektion 3 erreicht";
 sie merkt sich "du hattest besonders mit *bonjour* und
 *merci* zu kämpfen".
 
 Wenn du dasselbe Element **3 Mal hintereinander** richtig
-beantwortest, wird es als **gemeistert** markiert — und aus
+beantwortest, wird es als **gemeistert** markiert - und aus
 der Wiederholungs-Warteschlange entfernt. Wenn du ein
 gemeistertes Element später falsch beantwortest, **rutscht
 es zurück** in die Warteschlange. Eine verfehlte Meisterung
@@ -231,7 +245,7 @@ Elemente, mit denen du am meisten kämpfst, nach oben.
 ### Prüfungsmodus-Bonus
 
 Ein Element im **Prüfungsmodus** richtig zu beantworten ist ein
-stärkerer Beleg für Behalten als ein Treffer in entspanntem Üben —
+stärkerer Beleg für Behalten als ein Treffer in entspanntem Üben -
 du hast es unter Druck und ohne sofortiges Feedback abgerufen.
 Daher verdient ein im Prüfungsmodus bestandenes Element ein
 **längeres nächstes Wiederholungs-Intervall** als dieselbe richtige
@@ -247,16 +261,16 @@ bekommen.
 Eine Wiederholungssitzung unter `/review/:setId`
 synthetisiert eine **Mini-Lektion im Flug** aus den
 obersten Einträgen deiner Warteschlange. Gemischte
-Strategie seit **v1.35.0**:
+Strategie:
 
 - Hast du ein Wort ursprünglich in einer **Zuordnungs**-
   oder **Bild-Auswahl**-Übung verfehlt, machst du genau
-  diese Übung erneut (mit frischer Mischung — kein reines
+  diese Übung erneut (mit frischer Mischung - kein reines
   Muskelgedächtnis).
 - Hast du etwas in **Freitext** oder **Wortkacheln**
   verfehlt, versucht die Wiederholung, eine **Lückentext**-
   Übung zu erzeugen, die exakt das verfehlte Wort
-  anvisiert. Dasselbe Wissen in anderer Form —
+  anvisiert. Dasselbe Wissen in anderer Form -
   Flexibilität wird trainiert, nicht nur das Wiederholen
   eines speziellen Übungsformats.
 - Falls für ein Element kein sauberer Lückentext gebaut
@@ -272,7 +286,7 @@ du verdienst das Abzeichen **Wiederholungsmeister**.
 
 ## Korrektur-Runde am Lektionsende
 
-Neu in **v1.35.0**: Wenn du eine Lektion mit Fehlern
+Wenn du eine Lektion mit Fehlern
 abschließt, zeigt die Zusammenfassungsseite eine kleine
 **Korrektur-Runde** zwischen deinem Punktestand und dem
 "Nächste Lektion"-Button. Sie nimmt bis zu fünf konkrete
@@ -281,7 +295,7 @@ Lückentext an, der genau das verfehlte Wort / den
 verfehlten Artikel anvisiert.
 
 - **Jederzeit überspringbar.** Der "Nächste Lektion"-
-  Button bleibt sichtbar — die Korrektur-Runde ist
+  Button bleibt sichtbar - die Korrektur-Runde ist
   freiwillige Übung, kein Gate.
 - **Erscheint nur, wenn es etwas zu korrigieren gibt.**
   Lektionen mit perfektem Punktestand überspringen sie
@@ -299,23 +313,23 @@ siehst.
 
 ## Visuelles Diff-Feedback
 
-Ebenfalls neu in **v1.35.0**: Falsche Freitext- und
+Falsche Freitext- und
 Wortkachel-Antworten zeigen jetzt eine **Token-genaue
 Diff** zwischen deiner Eingabe und der kanonischen
 Antwort. Drei Farben, nie nur Farbe allein:
 
-- **Rot durchgestrichen** — was du geschrieben hast und
+- **Rot durchgestrichen** - was du geschrieben hast und
   nicht hingehört (mit einem ×-Marker für Screenreader
   und farbenblinde Nutzer:innen).
-- **Grün** — was die kanonische Antwort enthält und du
+- **Grün** - was die kanonische Antwort enthält und du
   übersehen hast (mit einem +-Marker).
-- **Gelb** mit Pfeil → — ein leicht falsches Wort,
+- **Gelb** mit Pfeil → - ein leicht falsches Wort,
   dargestellt als `dein-wort` → `erwartet`.
 
 Dieselbe Diff erscheint in der Zusammenfassung der
-Lektion in der Aufschlüsselung jeder Übung — für jede
+Lektion in der Aufschlüsselung jeder Übung - für jede
 Freitext- oder Wortkachel-Antwort, deren Nutzer-Eingabe
-der v1.35.0+-Speicher kennt.
+der Speicher kennt.
 
 ---
 
@@ -336,13 +350,13 @@ Sterne-Formel:
 
 Vier neue Abzeichen schalten sich rund um Lektionen frei:
 
-- **Erste Lektion** — schließe deine erste Inhaltslektion
+- **Erste Lektion** - schließe deine erste Inhaltslektion
   ab.
-- **10 Lektionen abgeschlossen** — schließe 10
+- **10 Lektionen abgeschlossen** - schließe 10
   Inhaltslektionen ab.
-- **3-Sterne-Serie** — erreiche drei Lektionen in Folge mit
+- **3-Sterne-Serie** - erreiche drei Lektionen in Folge mit
   3 Sternen.
-- **Wiederholungsmeister** — beherrsche 50 Elemente durch
+- **Wiederholungsmeister** - beherrsche 50 Elemente durch
   verteilte Wiederholung.
 
 Lektionsabschlüsse zählen auch für deine **tägliche Serie**,
@@ -353,7 +367,7 @@ dieselbe Weise füllt wie Chat-Sessions.
 
 ## Speichermodi
 
-Lektionen funktionieren in **beiden** Speichermodi — API
+Lektionen funktionieren in **beiden** Speichermodi - API
 (Backend) und Dexie (nur Browser / GitHub Pages).
 Element-genaue Fehlerverfolgung und SRS-Planung laufen
 identisch gegen IndexedDB im reinen Browser-Modus, sodass
@@ -361,10 +375,10 @@ Nutzer:innen, die die öffentliche GitHub-Pages-Seite
 besuchen, die volle Wiederholungsschleife ohne Backend
 bekommen.
 
-Seit **v1.33.0** ist auch die Gamification angeglichen: Im
+Auch die Gamification ist angeglichen: Im
 reinen Browser-Modus verdienst du für abgeschlossene
 Lektionen **dieselben XP und Lektions-Abzeichen** wie im
-Server-Modus — die Stern-, Streak- und Abzeichen-Logik ist
+Server-Modus - die Stern-, Streak- und Abzeichen-Logik ist
 in TypeScript portiert und gegen identische Goldwerte
 abgesichert. Es gibt keinen Funktionsunterschied mehr
 zwischen den Modi beim Lektionsabschluss.
@@ -375,6 +389,6 @@ zwischen den Modi beim Lektionsabschluss.
 
 Alle Lektionsfortschritte, Element-Fehler-Zeilen,
 Wiederholungs-Warteschlangen-Zustände und Planungsdaten
-bleiben **auf deinem eigenen Gerät** — im Dateisystem
+bleiben **auf deinem eigenen Gerät** - im Dateisystem
 (API-Modus) oder im Browser (IndexedDB). Nichts darüber,
 mit welchen Wörtern du kämpfst, wird irgendwohin gesendet.

@@ -4,7 +4,7 @@
 
 O backend do AdaptiveLearner expõe uma API REST FastAPI. No modo
 Servidor, o frontend comunica com ela; no modo Local (Dexie) a API
-não é acessível — as mesmas operações correm no navegador.
+não é acessível - as mesmas operações correm no navegador.
 
 ## URL base
 
@@ -32,7 +32,7 @@ três camadas (`services.settings.resolve_api_key`):
 3. Coluna Fernet-encriptada `UserSettings.api_key_<provider>`
    (definida via a interface de Definições; nunca retornada ao
    frontend em texto simples).
-4. `None` — a chamada de IA apresenta um erro na interface.
+4. `None` - a chamada de IA apresenta um erro na interface.
 
 `UserSettingsOut.key_source_*` (enum `env | secrets_yaml |
 settings | none`) informa qual camada resolveu a chave ativa,
@@ -101,7 +101,7 @@ No modo de depuração (`ADAPTIVE_LEARNER_DEBUG=true`) a resposta
 também inclui um campo `traceback`. As implementações de produção
 devem deixar a depuração desligada.
 
-A classe `ApiError` do frontend consome ambas as formas — consulte
+A classe `ApiError` do frontend consome ambas as formas - consulte
 `frontend/src/api/client.ts` para o analisador exato.
 
 ## Grupos de endpoints

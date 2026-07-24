@@ -1,7 +1,7 @@
 /**
  * Pure tests for renderer.ts (Phase 49D / v1.32.0 /
  * PHASE-42-STORAGE-ABSTRACTION-01). Orchestrator-level
- * assertions on the ``{path: content}`` map shape — the
+ * assertions on the ``{path: content}`` map shape - the
  * individual renderer tests cover content semantics; here we
  * pin "every meta-file present + topic folders appended".
  */

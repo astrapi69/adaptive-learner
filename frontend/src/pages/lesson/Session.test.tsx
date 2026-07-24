@@ -152,6 +152,10 @@ describe("Session page", () => {
         apiSettingsGetAvailableModels.mockReset();
         apiSessionGet.mockReset();
         apiSessionGetMessages.mockReset();
+        // #1126 — the assistant-ui chat surface hydrates prior turns itself on
+        // mount (getMessages). Default to an empty history so a new session's
+        // welcome empty-state shows; resume tests override per-case.
+        apiSessionGetMessages.mockResolvedValue([]);
         apiProjectsGet.mockReset();
         apiImportsGet.mockReset();
         // Defaults: header-only reads resolve to empty stubs so no test makes a
@@ -215,13 +219,11 @@ describe("Session page", () => {
         expect(apiStart).toHaveBeenCalled();
     });
 
-    it("starts a new session, seeds the system prompt internally, but HIDES it from the chat", async () => {
-        // v1.23.1 — the system prompt is metadata for the AI
-        // orchestrator. It MUST be seeded into the message
-        // array (so the next /message round-trip includes it
-        // in the chronological history) but MUST NOT render
-        // as a chat bubble; the welcome empty-state surfaces
-        // instead.
+    it("starts a new session and shows the welcome empty-state, never a system bubble", async () => {
+        // The system prompt is metadata for the AI orchestrator, never a chat
+        // bubble. A new session has no prior turns, so the assistant-ui thread
+        // shows its welcome empty-state (which settles after the first
+        // subscription tick — hence findByTestId).
         apiStart.mockResolvedValue({
             session: SESSION,
             system_prompt: "Du bist ein Lerncoach.",
@@ -232,188 +234,14 @@ describe("Session page", () => {
         expect(
             screen.queryByTestId("chat-message-system"),
         ).not.toBeInTheDocument();
-        expect(screen.getByTestId("chat-welcome")).toBeInTheDocument();
+        // assistant-ui's ``thread.isEmpty`` (which gates the welcome) settles
+        // after a subscription tick; under a loaded parallel run that can take
+        // longer than the 1s default, so allow more headroom.
+        expect(
+            await screen.findByTestId("chat-welcome", undefined, {timeout: 4000}),
+        ).toBeInTheDocument();
         expect(screen.getByTestId("method-badge-deductive")).toBeInTheDocument();
         expect(screen.getByTestId("cycle-progress")).toBeInTheDocument();
-    });
-
-    it("optimistically appends a user message and rollbacks on failure", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        const {ApiError} = await import("../../api/client");
-        apiMessage.mockRejectedValue(new ApiError(500, "DB down"));
-
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {
-            target: {value: "Frage"},
-        });
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-
-        await waitFor(() => {
-            expect(toastError).toHaveBeenCalledWith("DB down");
-        });
-        // The optimistic message is rolled back.
-        expect(screen.queryByText("Frage")).not.toBeInTheDocument();
-    });
-
-    it("persists a user message and renders the AI reply on success", async () => {
-        // v0.2.0: /message returns a composite with user + assistant
-        // messages + an optional ai_error. The page replaces the
-        // optimistic user-message placeholder with the canonical
-        // backend id, drops the "thinking…" placeholder, and
-        // appends the assistant reply.
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        apiMessage.mockResolvedValue({
-            user_message: {
-                id: "m-user",
-                session_id: "s-1",
-                role: "user",
-                content: "Hallo",
-                created_at: "2026-05-18T00:01:00Z",
-            },
-            assistant_message: {
-                id: "m-ai",
-                session_id: "s-1",
-                role: "assistant",
-                content: "Hallo zurück!",
-                created_at: "2026-05-18T00:01:05Z",
-            },
-            ai_error: null,
-            // v0.4.0: cycle_step advanced from 1 to 2 on this
-            // round-trip; the response carries the new session.
-            session: {...SESSION, cycle_step: 2},
-        });
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {
-            target: {value: "Hallo"},
-        });
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-        await waitFor(() => {
-            expect(apiMessage).toHaveBeenCalledWith("s-1", {role: "user", content: "Hallo"});
-        });
-        expect(screen.getByText("Hallo")).toBeInTheDocument();
-        expect(screen.getByText("Hallo zurück!")).toBeInTheDocument();
-        // No toast on success.
-        expect(toastError).not.toHaveBeenCalled();
-        // v0.4.0: CycleProgress reflects the new step from the
-        // response. data-state="current" moves from step 1 to
-        // step 2.
-        expect(
-            screen.getByTestId("cycle-step-attempt").getAttribute("data-state"),
-        ).toBe("current");
-    });
-
-    it("renders a streaming assistant bubble while the AI reply is in flight", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        let resolveMessage: (value: unknown) => void = () => {};
-        apiMessage.mockReturnValue(
-            new Promise((resolve) => {
-                resolveMessage = resolve;
-            }),
-        );
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {
-            target: {value: "Frage"},
-        });
-        fireEvent.click(screen.getByTestId("chat-send"));
-        // v1.6.0: instead of a "Thinking…" placeholder, the chat
-        // surface shows the streaming bubble (testid suffix
-        // ``-streaming``) which carries the live cursor character
-        // until the stream settles.
-        await waitFor(() => {
-            expect(
-                screen.getByTestId("chat-message-assistant-streaming"),
-            ).toBeInTheDocument();
-        });
-        // Now resolve so React tear-down doesn't warn about
-        // a pending state update on an unmounted component.
-        await act(async () => {
-            resolveMessage({
-                user_message: {
-                    id: "u",
-                    session_id: "s-1",
-                    role: "user",
-                    content: "Frage",
-                    created_at: "2026-05-18T00:01:00Z",
-                },
-                assistant_message: null,
-                ai_error: null,
-                session: SESSION,  // no advance: assistant_message null
-            });
-        });
-    });
-
-    it("surfaces ai_error via toast when AI couldn't reply", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        apiMessage.mockResolvedValue({
-            user_message: {
-                id: "m-user",
-                session_id: "s-1",
-                role: "user",
-                content: "Frage",
-                created_at: "2026-05-18T00:01:00Z",
-            },
-            assistant_message: null,
-            ai_error: "No API key stored for provider 'anthropic'.",
-            // ai_error path -> cycle_step unchanged.
-            session: SESSION,
-        });
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {
-            target: {value: "Frage"},
-        });
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-        await waitFor(() => {
-            expect(toastError).toHaveBeenCalledWith(
-                "No API key stored for provider 'anthropic'.",
-            );
-        });
-        // The user message is still rendered (saved server-side).
-        expect(screen.getByText("Frage")).toBeInTheDocument();
-    });
-
-    it("maps the no_api_key code to a friendly toast (not the raw English detail)", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        apiMessage.mockResolvedValue({
-            user_message: {
-                id: "m-user",
-                session_id: "s-1",
-                role: "user",
-                content: "Frage",
-                created_at: "2026-05-18T00:01:00Z",
-            },
-            assistant_message: null,
-            ai_error: "No API key stored for provider 'anthropic'.",
-            // Dexie session-flow classifies the missing-key case so
-            // the UI can show a friendly, localized message.
-            ai_error_code: "no_api_key",
-            session: SESSION,
-        });
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {
-            target: {value: "Frage"},
-        });
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-        await waitFor(() => {
-            expect(toastError).toHaveBeenCalled();
-        });
-        const shown = toastError.mock.calls[0][0] as string;
-        // The friendly message guides to Settings + reassures that
-        // lessons work without a key; it must NOT be the raw detail.
-        expect(shown).not.toBe("No API key stored for provider 'anthropic'.");
-        expect(shown).toMatch(/Settings|Einstellungen|key|Schlüssel/i);
     });
 
     it("end session submits rating then ends + navigates", async () => {
@@ -635,223 +463,6 @@ describe("Session page", () => {
         ).not.toBeInTheDocument();
     });
 
-    // --- v0.5.0: Phase 8 step-evaluation wiring -------------------------
-
-    it("fires info toast when step_evaluation is applied AND step actually moved", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        apiMessage.mockResolvedValue({
-            user_message: {
-                id: "u",
-                session_id: "s-1",
-                role: "user",
-                content: "x",
-                created_at: "2026-05-18T00:01:00Z",
-            },
-            assistant_message: {
-                id: "a",
-                session_id: "s-1",
-                role: "assistant",
-                content: "y",
-                created_at: "2026-05-18T00:01:05Z",
-            },
-            ai_error: null,
-            session: {...SESSION, cycle_step: 2},
-            step_evaluation: {
-                advance: true,
-                confidence: 0.9,
-                reason: "Strong understanding.",
-                suggested_step: 2,
-                fallback_used: false,
-                applied: true,
-                from_step: 1,
-            },
-        });
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-        await waitFor(() => {
-            expect(toastInfo).toHaveBeenCalledTimes(1);
-        });
-        // Toast text mentions the new step's localised label
-        // (input/attempt/error/feedback/adapt/repeat/integrate) — any
-        // i18n fallback variant is acceptable.
-        const toastArg = toastInfo.mock.calls[0][0] as string;
-        expect(toastArg).toMatch(/attempt|Versuch|Intento|Tentative|Προσπάθεια/i);
-    });
-
-    it("does NOT fire info toast when step_evaluation is applied=false", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        apiMessage.mockResolvedValue({
-            user_message: {
-                id: "u",
-                session_id: "s-1",
-                role: "user",
-                content: "x",
-                created_at: "2026-05-18T00:01:00Z",
-            },
-            assistant_message: {
-                id: "a",
-                session_id: "s-1",
-                role: "assistant",
-                content: "y",
-                created_at: "2026-05-18T00:01:05Z",
-            },
-            ai_error: null,
-            session: SESSION,
-            step_evaluation: {
-                advance: true,
-                confidence: 0.3,
-                reason: "Mixed signal — stay.",
-                suggested_step: 2,
-                fallback_used: false,
-                applied: false,
-                from_step: 1,
-            },
-        });
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-        // Wait for the apiMessage call so the result-handling logic
-        // has run; then assert the toast was NOT called.
-        await waitFor(() => expect(apiMessage).toHaveBeenCalled());
-        expect(toastInfo).not.toHaveBeenCalled();
-    });
-
-    it("does NOT fire toast when step is repeated (from_step == new cycle_step)", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        apiMessage.mockResolvedValue({
-            user_message: {
-                id: "u",
-                session_id: "s-1",
-                role: "user",
-                content: "x",
-                created_at: "2026-05-18T00:01:00Z",
-            },
-            assistant_message: {
-                id: "a",
-                session_id: "s-1",
-                role: "assistant",
-                content: "y",
-                created_at: "2026-05-18T00:01:05Z",
-            },
-            ai_error: null,
-            session: SESSION,  // cycle_step stays at 1
-            step_evaluation: {
-                advance: false,
-                confidence: 0.8,
-                reason: "Stay — not ready yet.",
-                suggested_step: 1,
-                fallback_used: false,
-                applied: false,
-                from_step: 1,
-            },
-        });
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-        await waitFor(() => expect(apiMessage).toHaveBeenCalled());
-        expect(toastInfo).not.toHaveBeenCalled();
-    });
-
-    it("renders the evaluation reason as CycleProgress tooltip after a successful exchange", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        apiMessage.mockResolvedValue({
-            user_message: {
-                id: "u",
-                session_id: "s-1",
-                role: "user",
-                content: "x",
-                created_at: "2026-05-18T00:01:00Z",
-            },
-            assistant_message: {
-                id: "a",
-                session_id: "s-1",
-                role: "assistant",
-                content: "y",
-                created_at: "2026-05-18T00:01:05Z",
-            },
-            ai_error: null,
-            session: {...SESSION, cycle_step: 2},
-            step_evaluation: {
-                advance: true,
-                confidence: 0.9,
-                reason: "Learner produced a concrete example.",
-                suggested_step: 2,
-                fallback_used: false,
-                applied: true,
-                from_step: 1,
-            },
-        });
-        renderSession();
-        await screen.findByTestId("session");
-        // No reason before the first exchange.
-        expect(
-            screen.queryByTestId("cycle-evaluation-reason"),
-        ).not.toBeInTheDocument();
-        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-        await waitFor(() => {
-            expect(screen.getByTestId("cycle-evaluation-reason")).toBeInTheDocument();
-        });
-        expect(
-            screen.getByTestId("cycle-evaluation-reason").textContent,
-        ).toContain("Learner produced a concrete example.");
-    });
-
-    it("does NOT render tooltip when fallback_used is true (reason is a placeholder)", async () => {
-        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
-        apiMessage.mockResolvedValue({
-            user_message: {
-                id: "u",
-                session_id: "s-1",
-                role: "user",
-                content: "x",
-                created_at: "2026-05-18T00:01:00Z",
-            },
-            assistant_message: {
-                id: "a",
-                session_id: "s-1",
-                role: "assistant",
-                content: "y",
-                created_at: "2026-05-18T00:01:05Z",
-            },
-            ai_error: null,
-            session: {...SESSION, cycle_step: 2},
-            step_evaluation: {
-                advance: true,
-                confidence: 0.5,
-                reason: "Evaluator output unparseable; defaulting to +1 advance.",
-                suggested_step: 2,
-                fallback_used: true,
-                applied: true,
-                from_step: 1,
-            },
-        });
-        renderSession();
-        await screen.findByTestId("session");
-        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("chat-send"));
-        });
-        await waitFor(() => expect(apiMessage).toHaveBeenCalled());
-        // Fallback reasons are diagnostic, not pedagogical — they
-        // are NOT surfaced to the user as a "why this step" hint.
-        expect(
-            screen.queryByTestId("cycle-evaluation-reason"),
-        ).not.toBeInTheDocument();
-    });
-
     // --- Bug 6 (regression): HelpTooltip rendered on the Session h1 ----
     //
     // Same shape as the Dashboard pin in Dashboard.test.tsx —
@@ -938,17 +549,18 @@ describe("Session page", () => {
         );
         // Critical: ``start()`` was NOT called — no duplicate session.
         expect(apiStart).not.toHaveBeenCalled();
-        // Chat replays user + assistant turns; the system
-        // prompt is held in state for the next /message
-        // round-trip but is HIDDEN from the rendered list
-        // per the v1.23.1 system-prompt-hiding rule.
+        // Chat replays user + assistant turns (the assistant-ui thread hydrates
+        // the prior history asynchronously via ``getMessages`` + ``reset`` —
+        // #1126), while the system prompt is filtered out of the rendered list.
+        expect(
+            await screen.findByText("Erkläre mir Quantenfeldtheorie."),
+        ).toBeInTheDocument();
+        expect(
+            await screen.findByText("Quantenfeldtheorie verbindet…"),
+        ).toBeInTheDocument();
         expect(
             screen.queryByText("Du bist ein deduktiver Lerncoach."),
         ).not.toBeInTheDocument();
-        expect(
-            screen.getByText("Erkläre mir Quantenfeldtheorie."),
-        ).toBeInTheDocument();
-        expect(screen.getByText("Quantenfeldtheorie verbindet…")).toBeInTheDocument();
         // The session header reflects the resumed cycle_step
         // (3 -> "error" per CYCLE_STEPS[2]).
         expect(

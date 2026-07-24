@@ -89,7 +89,7 @@ def build_message_stream_response(
     payload: _MessageBody,
     db: Session,
 ) -> StreamingResponse:
-    """v1.6.0 / Phase 19 — token-streaming variant of /message.
+    """v1.6.0 / Phase 19 - token-streaming variant of /message.
 
     Mirrors the non-streaming /message orchestration but streams the
     assistant reply back via SSE ``chunk`` events, then emits a final

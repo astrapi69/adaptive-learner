@@ -13,6 +13,7 @@
 import {useMemo, useState} from "react";
 
 import {Button} from "@/components/ui/button";
+import FormHint from "../../../shared/forms/FormHint";
 import {CEFR_LEVELS} from "../../../lib/content/language/language-options";
 import type {CombinedLanguages} from "../../../lib/content/lesson/combine-lessons";
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -103,8 +104,8 @@ export default function CombineLessonsDialog({
                 </p>
 
                 {!languages.consistent && (
-                    <p
-                        className="form-hint form-hint-warning"
+                    <FormHint
+                        variant="warning"
                         data-testid="combine-lessons-mixed-hint"
                         role="status"
                     >
@@ -114,7 +115,7 @@ export default function CombineLessonsDialog({
                         )
                             .replace("{lang}", languages.targetLanguage)
                             .replace("{level}", languages.level)}
-                    </p>
+                    </FormHint>
                 )}
 
                 <fieldset className="flex flex-col gap-2">

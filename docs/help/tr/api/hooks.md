@@ -213,7 +213,7 @@ def on_session_complete(
     """
 ```
 
-Bu hook'taki hatalar YAYILMAMALIDIR — `backend/app/main.py`
+Bu hook'taki hatalar YAYILMAMALIDIR - `backend/app/main.py`
 içindeki `_fire_on_session_complete` sarmalayıcısı onları
 yakalar ve kaydeder.
 

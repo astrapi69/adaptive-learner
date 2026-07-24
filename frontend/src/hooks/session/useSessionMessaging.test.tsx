@@ -1,12 +1,11 @@
 /**
- * useSessionMessaging (#1804).
+ * useSessionMessaging (#1804; slimmed at the #1126 cutover).
  *
- * Hook-level pins for the streaming exchange: chunk accumulation +
- * backend-id reconciliation, session/step-evaluation propagation,
- * the cycle-transition card, the friendly no_api_key mapping, and
- * the rollback of both optimistic bubbles on a stream failure.
- * (The page-level rendering of these states stays pinned by
- * Session.test.tsx.)
+ * Hook-level pins for ``applyExchangeOutcome`` — the domain handling the
+ * assistant-ui thread calls once per completed turn: cycle-step advance +
+ * step-evaluation propagation, the step-advance + auto-loop toasts, and the
+ * friendly no_api_key mapping. (The chat surface owns its own message list, so
+ * there is no streaming/rollback here anymore.)
  */
 
 import {act, renderHook} from "@testing-library/react";
@@ -14,12 +13,9 @@ import {useState} from "react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import {useSessionMessaging} from "./useSessionMessaging";
-import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
-import type {ChatMessage} from "../../components/session/SessionChat";
-import type {LearningSession} from "../../types";
+import type {LearningSession, SessionMessageExchangeResult} from "../../types";
 
-vi.mock("../../storage", () => ({getStorage: vi.fn()}));
 vi.mock("../../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), warning: vi.fn(), info: vi.fn()},
 }));
@@ -34,16 +30,10 @@ const SESSION = {
     status: "active",
 } as unknown as LearningSession;
 
-const streamMessage = vi.fn();
-
-interface StreamHandlers {
-    onStart?: (userMessage: {id: string; content: string}) => void;
-    onChunk: (delta: string) => void;
-    onDone: (final: unknown) => void;
-}
-
 /** Base successful exchange result the tests specialise per case. */
-function exchangeResult(overrides: Record<string, unknown> = {}) {
+function exchangeResult(
+    overrides: Record<string, unknown> = {},
+): SessionMessageExchangeResult {
     return {
         user_message: {id: "u-9", role: "user", content: "hi"},
         assistant_message: {id: "a-9", role: "assistant", content: "hello!"},
@@ -53,110 +43,90 @@ function exchangeResult(overrides: Record<string, unknown> = {}) {
         ai_error: null,
         ai_error_code: null,
         ...overrides,
-    };
+    } as unknown as SessionMessageExchangeResult;
 }
 
 beforeEach(() => {
     vi.mocked(notify.error).mockClear();
     vi.mocked(notify.success).mockClear();
     vi.mocked(notify.info).mockClear();
-    streamMessage.mockReset();
-    vi.mocked(getStorage).mockReturnValue({
-        session: {streamMessage},
-    } as unknown as ReturnType<typeof getStorage>);
 });
 
-/** Harness owning the shared state the way Session.tsx does. */
+/** Harness owning ``session`` the way Session.tsx does. */
 function useHarness() {
     const [session, setSession] = useState<LearningSession | null>(SESSION);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const messaging = useSessionMessaging({
-        session,
-        setSession,
-        messages,
-        setMessages,
-        t,
-    });
-    return {messaging, messages, session};
+    const messaging = useSessionMessaging({setSession, t});
+    return {messaging, session};
 }
 
-function streamsTo(result: ReturnType<typeof exchangeResult>) {
-    streamMessage.mockImplementation(
-        async (_id: string, _body: unknown, handlers: StreamHandlers) => {
-            handlers.onStart?.(result.user_message);
-            handlers.onChunk("hel");
-            handlers.onChunk("lo!");
-            handlers.onDone(result);
-        },
-    );
-}
-
-describe("useSessionMessaging.handleSend", () => {
-    it("reconciles ids, accumulates chunks, and propagates session + verdict", async () => {
-        streamsTo(exchangeResult());
+describe("useSessionMessaging.applyExchangeOutcome", () => {
+    it("advances the cycle step, propagates the verdict, and fires the step-advance toast", () => {
         const {result} = renderHook(useHarness);
-        await act(() => result.current.messaging.handleSend("hi"));
-        expect(result.current.messages).toEqual([
-            {id: "u-9", role: "user", content: "hi"},
-            {id: "a-9", role: "assistant", content: "hello!"},
-        ]);
+        act(() => result.current.messaging.applyExchangeOutcome(exchangeResult()));
         expect(result.current.session?.cycle_step).toBe(2);
         expect(result.current.messaging.stepEvaluation).toEqual({
             applied: true,
             from_step: 1,
         });
         expect(notify.info).toHaveBeenCalled();
-        expect(result.current.messaging.sendingMessage).toBe(false);
     });
 
-    it("appends the cycle-transition card when the auto-loop fired", async () => {
-        streamsTo(
-            exchangeResult({
-                topic_transition: {
-                    looped: true,
-                    new_cycle_count: 2,
-                    summary: "Done with greetings.",
-                    next_topic: "Numbers",
-                },
-            }),
-        );
+    it("fires the cycle_advanced toast when the auto-loop looped", () => {
         const {result} = renderHook(useHarness);
-        await act(() => result.current.messaging.handleSend("hi"));
-        expect(result.current.messages.at(-1)).toEqual(
-            expect.objectContaining({
-                kind: "cycle_transition",
-                cycleNumber: 2,
-                nextTopic: "Numbers",
-            }),
+        act(() =>
+            result.current.messaging.applyExchangeOutcome(
+                exchangeResult({
+                    topic_transition: {
+                        looped: true,
+                        new_cycle_count: 2,
+                        summary: "Done with greetings.",
+                        next_topic: "Numbers",
+                    },
+                }),
+            ),
         );
         expect(notify.success).toHaveBeenCalledWith("Cycle 2 started");
     });
 
-    it("maps the no_api_key classification to the friendly message", async () => {
-        streamsTo(
-            exchangeResult({
-                assistant_message: null,
-                step_evaluation: null,
-                ai_error: "raw provider detail",
-                ai_error_code: "no_api_key",
-            }),
-        );
+    it("does NOT fire the step-advance toast when the verdict was not applied", () => {
         const {result} = renderHook(useHarness);
-        await act(() => result.current.messaging.handleSend("hi"));
+        act(() =>
+            result.current.messaging.applyExchangeOutcome(
+                exchangeResult({
+                    session: {...SESSION, cycle_step: 1},
+                    step_evaluation: {applied: false, from_step: 1},
+                }),
+            ),
+        );
+        expect(notify.info).not.toHaveBeenCalled();
+    });
+
+    it("does NOT fire the step-advance toast when the step was repeated (from_step == cycle_step)", () => {
+        const {result} = renderHook(useHarness);
+        act(() =>
+            result.current.messaging.applyExchangeOutcome(
+                exchangeResult({
+                    session: {...SESSION, cycle_step: 1},
+                    step_evaluation: {applied: true, from_step: 1},
+                }),
+            ),
+        );
+        expect(notify.info).not.toHaveBeenCalled();
+    });
+
+    it("maps the no_api_key classification to the friendly message", () => {
+        const {result} = renderHook(useHarness);
+        act(() =>
+            result.current.messaging.applyExchangeOutcome(
+                exchangeResult({
+                    step_evaluation: null,
+                    ai_error: "raw provider detail",
+                    ai_error_code: "no_api_key",
+                }),
+            ),
+        );
         expect(notify.error).toHaveBeenCalledWith(
             expect.stringContaining("No AI key set."),
         );
-        expect(
-            result.current.messages.filter((m) => m.role === "assistant"),
-        ).toHaveLength(0);
-    });
-
-    it("rolls back both optimistic bubbles when the stream fails", async () => {
-        streamMessage.mockRejectedValue(new Error("stream broke"));
-        const {result} = renderHook(useHarness);
-        await act(() => result.current.messaging.handleSend("hi"));
-        expect(result.current.messages).toEqual([]);
-        expect(notify.error).toHaveBeenCalled();
-        expect(result.current.messaging.sendingMessage).toBe(false);
     });
 });

@@ -35,16 +35,16 @@ export async function startSessionWithMethod(
  *
  *  Three real-world quirks the helper papers over:
  *
- *  1. The chat-send button is disabled while a stream is in
- *     flight (sendingMessage=true) AND when the draft is
- *     empty. We type the text first so the draft is non-empty,
- *     THEN wait for the button to be enabled (handles the
- *     previous-turn-still-streaming case).
- *  2. React's controlled ``draft`` state and Playwright's
- *     ``fill`` race in multi-turn loops: typing per-keystroke
- *     (via ``page.keyboard.type``) updates React state in
- *     step with the DOM value, which a single ``fill`` call
- *     does not always do.
+ *  1. The chat-send button (the assistant-ui composer's Send) is
+ *     disabled while a run is in flight AND when the composer is
+ *     empty. We type the text first so it is non-empty, THEN wait
+ *     for the button to be enabled (handles the previous-turn-
+ *     still-streaming case).
+ *  2. The composer's controlled state and Playwright's ``fill``
+ *     race in multi-turn loops: typing per-keystroke (via
+ *     ``page.keyboard.type``) updates the composer in step with
+ *     the DOM value, which a single ``fill`` call does not always
+ *     do.
  *  3. The bottom-right Toastify container can intercept
  *     pointer events even when no toast is visible (the
  *     react-toastify portal stays in the DOM). ``force: true``

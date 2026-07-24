@@ -2,7 +2,7 @@
   "app": {
     "name": "Adaptive Learner",
     "tagline": "Aprendizado que se adapta a você.",
-    "skeleton_notice": "Estado de esqueleto. Modelos de domínio, plugins e páginas chegam em fases posteriores — veja docs/adaptive-learner-project-reference.md."
+    "skeleton_notice": "Estado de esqueleto. Modelos de domínio, plugins e páginas chegam em fases posteriores - veja docs/adaptive-learner-project-reference.md."
   },
   "common": {
     "ok": "OK",
@@ -80,7 +80,7 @@
     },
     "primary": "Navegação principal",
     "discover": "Descobrir conteúdo",
-    "offline_long": "Offline — as sessões anteriores continuam acessíveis",
+    "offline_long": "Offline - as sessões anteriores continuam acessíveis",
     "sync_pending": "{n} alteração(ões) aguardando sincronização",
     "statistics": "Estatísticas",
     "profile": "Seu perfil",
@@ -98,12 +98,12 @@
     "offline": "Offline",
     "anki": "Anki",
     "dev_badge": "DEV",
-    "dev_badge_tooltip": "Modo desenvolvedor ativo — as notificações de erro mostram detalhes técnicos. Desative em Definições.",
+    "dev_badge_tooltip": "Modo desenvolvedor ativo - as notificações de erro mostram detalhes técnicos. Desative em Definições.",
     "content": "Meu conteúdo",
     "mode_badge_content": "Conteúdo",
     "mode_badge_ai": "IA+Conteúdo",
-    "mode_badge_tooltip_content": "Sem chave API configurada — apenas conteúdo pré-construído. Adiciona uma chave em Definições para ativar as funcionalidades IA.",
-    "mode_badge_tooltip_ai": "Fornecedor de IA configurado — os exercícios usam IA para distratores e dicas. Toca para explorar os conjuntos.",
+    "mode_badge_tooltip_content": "Sem chave API configurada - apenas conteúdo pré-construído. Adiciona uma chave em Definições para ativar as funcionalidades IA.",
+    "mode_badge_tooltip_ai": "Fornecedor de IA configurado - os exercícios usam IA para distratores e dicas. Toca para explorar os conjuntos.",
     "mode_badge_label_content": "Modo: Apenas conteúdo",
     "mode_badge_label_ai": "Modo: IA + Conteúdo",
     "sync_paired": "Sinc.: emparelhado (Configurações > Sinc.)",
@@ -206,7 +206,7 @@
     "add_subtopic": "Adicionar subtópico",
     "rename_topic": "Renomear tópico",
     "topic_title": "Título",
-    "no_topics": "Nenhum tópico ainda — adicione o primeiro para começar.",
+    "no_topics": "Nenhum tópico ainda - adicione o primeiro para começar.",
     "no_curriculum": "Crie um currículo para começar a construir sua árvore de tópicos.",
     "delete_confirm": "Excluir este tópico? Os filhos permanecem como suas próprias raízes.",
     "lessons_title": "Aulas",
@@ -223,7 +223,7 @@
     "description_saved": "Descrição salva.",
     "edit_description": "Editar descrição",
     "lesson_content_aria": "Conteúdo da lição",
-    "lesson_content_placeholder": "Conteúdo da lição — suporta títulos, listas, blocos de código, links.",
+    "lesson_content_placeholder": "Conteúdo da lição - suporta títulos, listas, blocos de código, links.",
     "no_description": "Ainda sem descrição."
   },
   "landing": {
@@ -241,7 +241,7 @@
     "intro": "Conte-nos sobre o seu objetivo de aprendizado. O Adaptive Learner usa essas informações para construir seu perfil e recomendar um método inicial.",
     "concepts_explainer_prefix": "Você define um ",
     "concepts_explainer_mid1": ", depois faz uma avaliação rápida para construir seu ",
-    "concepts_explainer_mid2": " — que orienta cada ",
+    "concepts_explainer_mid2": " - que orienta cada ",
     "concepts_explainer_suffix": " seguinte.",
     "term_learning_project": "projeto de aprendizado",
     "term_learning_profile": "perfil de aprendizado",
@@ -255,13 +255,13 @@
     "field_timeframe_hint": "ex. 4 semanas, um semestre.",
     "field_daily_minutes": "Minutos por dia",
     "field_current_problem": "Problema atual",
-    "field_current_problem_hint": "opcional — o que está te travando agora?",
+    "field_current_problem_hint": "opcional - o que está te travando agora?",
     "submit": "Criar projeto e iniciar avaliação",
     "creating": "Criando projeto…",
     "subject_suggestions": "Disciplinas sugeridas (toque para atribuir):",
     "default_goal": "Aprender {topic}",
     "invite_title": "Quer configurar seu perfil de aprendizagem com mais detalhes?",
-    "invite_subtitle": "Leva um minuto e personaliza suas sessões — você também pode fazer depois.",
+    "invite_subtitle": "Leva um minuto e personaliza suas sessões - você também pode fazer depois.",
     "invite_start_now": "Começar agora",
     "invite_setup_profile": "Configurar perfil",
     "restore_hint": "Já usa o Adaptive Learner? Restaure a partir de um backup.",
@@ -289,7 +289,7 @@
   },
   "assessment": {
     "title": "Avaliação de tipo de aprendizado",
-    "intro": "Doze perguntas curtas determinam seu perfil de aprendizado. Não existe resposta certa ou errada — vá no instinto.",
+    "intro": "Doze perguntas curtas determinam seu perfil de aprendizado. Não existe resposta certa ou errada - vá no instinto.",
     "question_progress": "Pergunta {current} de {total}",
     "next_question": "Próxima pergunta",
     "prev_question": "Pergunta anterior",
@@ -335,7 +335,7 @@
     "review_queue": {
       "loading": "A carregar…",
       "elements": "elemento(s) para rever",
-      "overdue": "em atraso — começa aqui",
+      "overdue": "em atraso - começa aqui",
       "open": "Abrir sessão de revisão",
       "quick": "Revisão rápida"
     },
@@ -371,7 +371,7 @@
     "page_title": "Lição adaptativa",
     "session_title": "Lição adaptativa",
     "loading": "A analisar os teus erros…",
-    "empty_body": "Nada para adaptar ainda — pratica uma lição para acumular dados.",
+    "empty_body": "Nada para adaptar ainda - pratica uma lição para acumular dados.",
     "not_cached_body": "Este conjunto ainda não foi descarregado. Abre o navegador de conteúdo para o descarregar primeiro.",
     "back_to_dashboard": "Voltar ao Painel",
     "transparency": {
@@ -395,14 +395,14 @@
     "your_answer": "A sua resposta:",
     "correct_answer": "Correto:",
     "summary_corrected": "{corrected} de {total} corrigidos",
-    "summary_trend": "Boa — os seus pontos fracos estão a melhorar.",
+    "summary_trend": "Boa - os seus pontos fracos estão a melhorar.",
     "summary_next": "Os elementos dominados saem; os restantes voltam em breve para revisão.",
     "summary_remaining": "Ainda faltam {n}. Continuar?",
     "another_round": "Outra ronda",
     "summary_repeat": "Volte daqui a cerca de 2 dias para manter isto fresco.",
     "explain_heading": "Porque errou estes",
     "explain_article_gender": "Atenção ao género: substantivos terminados em -o são normalmente masculinos (el/un), em -a femininos (la/una). O artigo segue a terminação.",
-    "explain_spelling_accent": "Verifique a ortografia exata e os acentos — uma pequena diferença muda a palavra.",
+    "explain_spelling_accent": "Verifique a ortografia exata e os acentos - uma pequena diferença muda a palavra.",
     "explain_verb_conjugation": "Concorde o verbo com o sujeito e o tempo antes de responder.",
     "explain_word_order": "Cuide da ordem das palavras desta estrutura.",
     "page_title": "Revisão",
@@ -432,7 +432,7 @@
     "metric_mean_understanding": "Compreensão média",
     "metric_mean_stress": "Estresse médio",
     "metric_streak": "Sequência de dias",
-    "no_data": "Nenhuma sessão ainda — comece a primeira para ver tendências.",
+    "no_data": "Nenhuma sessão ainda - comece a primeira para ver tendências.",
     "pronunciation_quick_start": "Prática de Pronúncia"
   },
   "session": {
@@ -464,7 +464,7 @@
     "cycles_completed": "Ciclos concluídos",
     "next_topic": "Próximo tópico:",
     "step_reason_tooltip": "Por que este passo?",
-    "offline_start_blocked": "Você está offline. Novas sessões precisam de conexão de rede — as sessões anteriores continuam acessíveis no Painel.",
+    "offline_start_blocked": "Você está offline. Novas sessões precisam de conexão de rede - as sessões anteriores continuam acessíveis no Painel.",
     "peek_step_prefix": "Passo",
     "rating_notes_aria": "Notas da sessão",
     "rating_notes_placeholder": "O que funcionou, o que não, o que tentar da próxima vez…"
@@ -486,7 +486,7 @@
     "commit_date": "Data",
     "no_commits": "Nenhuma sessão concluída ainda.",
     "step_eval_title": "Insights da avaliação de passos pela IA",
-    "step_eval_empty": "Sem dados de avaliação de passos pela IA ainda — inicie uma sessão para ver insights aqui.",
+    "step_eval_empty": "Sem dados de avaliação de passos pela IA ainda - inicie uma sessão para ver insights aqui.",
     "step_eval_avg_confidence": "Confiança média da IA",
     "step_eval_repeats": "Vezes em que a IA disse 'ainda não está pronto'",
     "step_eval_advances": "Avanços de passo",
@@ -505,16 +505,16 @@
       "deleted": "{lessons} lições e {cards} cartões de revisão excluídos."
     },
     "key_export_link": {
-      "heading": "Chaves de IA — exportação cifrada",
+      "heading": "Chaves de IA - exportação cifrada",
       "hint": "Exporte ou importe as suas chaves de IA num único ficheiro cifrado. Fica junto das outras cópias de segurança no separador Dados.",
       "button": "Ir para a exportação de chaves (separador Dados)"
     },
     "key_vault": {
-      "title": "Chaves de IA — exportação criptografada",
+      "title": "Chaves de IA - exportação criptografada",
       "intro": "Leve suas chaves de IA para outro dispositivo em um único arquivo criptografado, separado do backup normal (que nunca contém chaves).",
       "api_export_disabled": "No modo servidor, suas chaves não podem ser exportadas: são gerenciadas criptografadas no servidor. A importação de um arquivo de chaves continua possível.",
       "export_heading": "Exportar",
-      "passphrase_hint": "Escolha uma frase-senha forte. Ela não pode ser recuperada — sem ela o arquivo não pode ser aberto.",
+      "passphrase_hint": "Escolha uma frase-senha forte. Ela não pode ser recuperada - sem ela o arquivo não pode ser aberto.",
       "passphrase_label": "Frase-senha",
       "confirm_label": "Confirmar frase-senha",
       "no_keys": "Ainda não há chaves de IA para exportar.",
@@ -900,29 +900,29 @@
     "danger_zone_input_placeholder": "RESET",
     "danger_zone_intro": "Exclua permanentemente todo o estado de aprendizagem neste dispositivo.",
     "danger_zone_reset_button": "Redefinir tudo",
-    "danger_zone_warning": "Isto exclui TODOS os seus dados de aprendizagem permanentemente — sessões, progresso, perfis, currículos, importações, cartões Anki, configurações e chaves de API. Esta ação NÃO pode ser desfeita.",
+    "danger_zone_warning": "Isto exclui TODOS os seus dados de aprendizagem permanentemente - sessões, progresso, perfis, currículos, importações, cartões Anki, configurações e chaves de API. Esta ação NÃO pode ser desfeita.",
     "section_sync": "Sincronização"
   },
   "methods": {
     "deductive": {
       "label": "Dedutivo",
-      "summary": "Do geral ao específico — regras primeiro, exemplos depois."
+      "summary": "Do geral ao específico - regras primeiro, exemplos depois."
     },
     "inductive": {
       "label": "Indutivo",
-      "summary": "Do específico ao geral — exemplos primeiro, deduza a regra."
+      "summary": "Do específico ao geral - exemplos primeiro, deduza a regra."
     },
     "error_based": {
       "label": "Baseado em erros",
-      "summary": "Aprenda com os erros — correção com explicação."
+      "summary": "Aprenda com os erros - correção com explicação."
     },
     "dialogic": {
       "label": "Dialógico",
-      "summary": "Pensar em conversa — menos estresse, mais motivação."
+      "summary": "Pensar em conversa - menos estresse, mais motivação."
     },
     "contextual": {
       "label": "Contextual",
-      "summary": "Aplicar em um contexto real — transferir na prática."
+      "summary": "Aplicar em um contexto real - transferir na prática."
     },
     "ai_adaptive": {
       "label": "Adaptativo por IA",
@@ -964,7 +964,7 @@
     "not_found": "Não encontrado.",
     "validation": "Entrada inválida.",
     "conflict": "O registro já existe.",
-    "server": "Erro no servidor — por favor, tente novamente mais tarde."
+    "server": "Erro no servidor - por favor, tente novamente mais tarde."
   },
   "toast": {
     "project_created": "Projeto criado.",
@@ -980,7 +980,7 @@
   "install": {
     "ios": {
       "title": "Instalar como app",
-      "steps": "Toque no ícone Compartilhar e em «Adicionar à Tela de Início» — abre sem a barra do Safari.",
+      "steps": "Toque no ícone Compartilhar e em «Adicionar à Tela de Início» - abre sem a barra do Safari.",
       "aria_label": "Instalar no seu iPhone",
       "dismiss": "Fechar"
     },
@@ -1123,7 +1123,7 @@
     "auto_none": "Ainda não há backups automáticos. O primeiro acontece após 10 sessões ou 7 dias.",
     "storage_pressure": "O armazenamento do navegador está quase cheio ({{pct}}% da cota). Exporte um backup manual agora.",
     "compare_title": "Comparar backups",
-    "compare_help": "Escolha dois arquivos de backup (ou um arquivo mais o estado atual) para ver o que mudou entre eles. Nenhum dado é modificado — a comparação é apenas leitura.",
+    "compare_help": "Escolha dois arquivos de backup (ou um arquivo mais o estado atual) para ver o que mudou entre eles. Nenhum dado é modificado - a comparação é apenas leitura.",
     "compare_slot_a": "Backup A (mais antigo)",
     "compare_slot_b": "Backup B (mais recente)",
     "compare_pick": "Escolher arquivo…",
@@ -1139,7 +1139,7 @@
     "compare_sort_label": "Ordenar:",
     "compare_sort_delta": "Mais mudanças primeiro",
     "compare_sort_alpha": "Alfabético",
-    "compare_no_changes": "Os dois backups são idênticos — nenhuma diferença detectada.",
+    "compare_no_changes": "Os dois backups são idênticos - nenhuma diferença detectada.",
     "compare_section_added": "Adicionados",
     "compare_section_removed": "Removidos",
     "compare_section_changed": "Alterados",
@@ -1147,14 +1147,14 @@
     "compare_old": "Antigo",
     "compare_new": "Novo",
     "compare_field_changes": "alterações de campo",
-    "compare_high_volume_hint": "Tabela com muitos registros — prévias por registro mostradas de forma abreviada.",
+    "compare_high_volume_hint": "Tabela com muitos registros - prévias por registro mostradas de forma abreviada.",
     "compare_export_md": "Exportar como Markdown",
     "compare_markdown_downloaded": "Diferença exportada.",
     "confirm_with_counts": "Restaurar ({{added}} adicionados, {{updated}} atualizados)",
     "auto_compare_as_a": "Comparar como A",
     "auto_compare_as_b": "Comparar como B",
     "compare_auto_label": "Backup automático {{date}}",
-    "auto_compare_missing": "O backup automático não está mais disponível — foi rotacionado."
+    "auto_compare_missing": "O backup automático não está mais disponível - foi rotacionado."
   },
   "export": {
     "title": "Exportar",
@@ -1234,7 +1234,7 @@
     "scan_success_hint": "Verificando com o desktop…",
     "smart_merge": "Mesclagem inteligente (IA)",
     "smart_merge_error": "Falha na mesclagem inteligente.",
-    "smart_merge_ready": "Mesclagem por IA pronta — revise e aplique.",
+    "smart_merge_ready": "Mesclagem por IA pronta - revise e aplique.",
     "smart_merge_running": "Mesclando com IA…",
     "sync_error": "Falha na sincronização.",
     "synced": "Sincronizado",
@@ -1437,7 +1437,7 @@
     "danger_zone_heading": "Zona de Perigo",
     "danger_zone_intro": "Apague permanentemente todos os dados de aprendizado neste dispositivo.",
     "danger_zone_reset_button": "Redefinir tudo",
-    "danger_zone_warning": "Isso apaga TODOS os seus dados de aprendizado permanentemente — sessões, progresso, perfis, currículos, importações, cartões Anki, configurações e chaves de API. Esta ação NÃO pode ser desfeita.",
+    "danger_zone_warning": "Isso apaga TODOS os seus dados de aprendizado permanentemente - sessões, progresso, perfis, currículos, importações, cartões Anki, configurações e chaves de API. Esta ação NÃO pode ser desfeita.",
     "danger_zone_confirm_prompt": "Digite RESET para confirmar",
     "danger_zone_input_placeholder": "RESET",
     "danger_zone_final_button": "Apagar permanentemente",
@@ -1729,9 +1729,9 @@
     "readme_topics_heading": "Tópicos",
     "readme_no_topics": "_Ainda nenhum tópico percorrido._",
     "readme_see_also_heading": "Ver também",
-    "readme_see_stats": "[LEARNING_STATS.md](LEARNING_STATS.md) — taxas de erro, compreensão, transferência, registo de intervenções.",
-    "readme_see_cheatsheet": "[CHEATSHEET.md](CHEATSHEET.md) — notas destiladas + reflexões de Meta-Aprendizagem.",
-    "readme_see_roadmap": "[ROADMAP.md](ROADMAP.md) — próximos passos.",
+    "readme_see_stats": "[LEARNING_STATS.md](LEARNING_STATS.md) - taxas de erro, compreensão, transferência, registo de intervenções.",
+    "readme_see_cheatsheet": "[CHEATSHEET.md](CHEATSHEET.md) - notas destiladas + reflexões de Meta-Aprendizagem.",
+    "readme_see_roadmap": "[ROADMAP.md](ROADMAP.md) - próximos passos.",
     "stats_title": "Estatísticas de aprendizagem",
     "stats_intro": "Métricas por sessão geradas automaticamente a partir das avaliações. Não editar à mão.",
     "stats_no_sessions": "_Ainda nenhuma sessão._",
@@ -1753,7 +1753,7 @@
     "stats_exit_threshold_body": "Um tópico é considerado dominado quando Compreensão ≥ 9/10 E Transferência ≥ 8/10 estáveis por 2 ciclos consecutivos. As linhas marcadas indicam sessões que cumprem essa condição.",
     "stats_exit_pin_marker": "✅ critério atingido",
     "cheatsheet_title": "Cola",
-    "cheatsheet_intro": "Notas destiladas das suas sessões. A secção Reflexões de Meta-Aprendizagem reúne notas marcadas como meta_learning — observações sobre como aprende melhor.",
+    "cheatsheet_intro": "Notas destiladas das suas sessões. A secção Reflexões de Meta-Aprendizagem reúne notas marcadas como meta_learning - observações sobre como aprende melhor.",
     "cheatsheet_notes_heading": "Notas",
     "cheatsheet_meta_learning_heading": "Reflexões de Meta-Aprendizagem",
     "cheatsheet_no_notes": "_Ainda nenhuma nota._",
@@ -1868,13 +1868,13 @@
       "stats_slowest": "Mais lenta: {s}s ({type})"
     },
     "reverse": {
-      "not_reversible": "Este tipo de exercício não pode ser invertido — exibido no formato original."
+      "not_reversible": "Este tipo de exercício não pode ser invertido - exibido no formato original."
     },
     "resources_title": "Aprofunde o tema",
     "resources_domain": "Mais sobre {domain}",
     "motivation": {
-      "halftime": "Na metade — continue!",
-      "last": "A última — termine forte!"
+      "halftime": "Na metade - continue!",
+      "last": "A última - termine forte!"
     },
     "theory": {
       "view_example": "Ver exemplo"
@@ -1962,7 +1962,7 @@
         "submit": "Verificar resposta",
         "retry": "Tentar de novo",
         "result_correct": "Correto!",
-        "result_wrong": "Quase — a opção destacada é a resposta certa.",
+        "result_wrong": "Quase - a opção destacada é a resposta certa.",
         "grid_label": "Opções de imagem",
         "correct_label": "Correto",
         "wrong_label": "Errado",
@@ -2066,7 +2066,7 @@
       "heading": "Repetição concluída",
       "score": "{correct}/{total} corretos agora!",
       "done": "Voltar à lição",
-      "empty": "Nada para repetir — abra isto a partir do resumo de uma lição após cometer erros.",
+      "empty": "Nada para repetir - abra isto a partir do resumo de uma lição após cometer erros.",
       "summary_aria": "Resumo da repetição de erros"
     },
     "next_step": {
@@ -2203,7 +2203,7 @@
     "set_link": {
       "loading": "Carregando o conjunto…",
       "not_found_title": "Conjunto não encontrado",
-      "not_found_body": "Este conjunto não está disponível — pode ainda não ter sido baixado ou não existir.",
+      "not_found_body": "Este conjunto não está disponível - pode ainda não ter sido baixado ou não existir.",
       "go_discover": "Descobrir conteúdo",
       "start": "Começar a aprender",
       "download_start": "Baixar e começar",
@@ -2406,9 +2406,9 @@
       "target_lang_label": "Idioma aprendido",
       "source_lang_label": "Seu idioma",
       "level_label": "Nível",
-      "not_enough_data": "Poucos exercícios — recomenda-se pelo menos {min} para uma lição de idioma completa. Você ainda pode salvá-la (por exemplo, como lição apenas de teoria).",
+      "not_enough_data": "Poucos exercícios - recomenda-se pelo menos {min} para uma lição de idioma completa. Você ainda pode salvá-la (por exemplo, como lição apenas de teoria).",
       "same_language": "O idioma aprendido e o seu idioma devem ser diferentes.",
-      "same_language_hint": "O idioma aprendido e seu idioma são os mesmos — ótimo para uma aula de gramática ou no idioma nativo. Ao compartilhar, aparece no ramo do mesmo idioma da árvore de conteúdo.",
+      "same_language_hint": "O idioma aprendido e seu idioma são os mesmos - ótimo para uma aula de gramática ou no idioma nativo. Ao compartilhar, aparece no ramo do mesmo idioma da árvore de conteúdo.",
       "split_notice": "Esta aula tem {steps} etapas e será salva em {parts} partes (máx. {max} etapas cada).",
       "part_title": "{title} - Parte {n}"
     },
@@ -2480,6 +2480,8 @@
       "domain_software": "Software",
       "domain_philosophy": "Filosofia",
       "domain_language": "Idioma",
+      "domain_dog-training": "Adestramento de cães",
+      "domain_traffic-knowledge": "Conhecimento de trânsito",
       "code_copy": "Copiar código",
       "code_output": "Saída:",
       "no_primary": "Ainda não há conjuntos para o seu idioma. Veja outros idiomas de origem abaixo."
@@ -2513,7 +2515,7 @@
       "level_too_complex": "Lição '{lesson}': o texto tem em média {avg} palavras por lado, alto para o nível {level} (cerca de {cap} esperadas).",
       "source_language_heuristic": "Os versos contêm caracteres próprios de {found}, mas o idioma de origem é '{lang}'.",
       "target_language_heuristic": "As frentes contêm caracteres próprios de {found}, mas o idioma de destino é '{lang}'.",
-      "failed_share_anyway": "A verificação de qualidade encontrou problemas. Você pode compartilhar mesmo assim — os revisores verão as observações no pull request."
+      "failed_share_anyway": "A verificação de qualidade encontrou problemas. Você pode compartilhar mesmo assim - os revisores verão as observações no pull request."
     },
     "ai_validation": {
       "intro": "Uma IA pode também verificar a exatidão da tradução, a gramática e a adequação ao nível.",
@@ -2524,7 +2526,7 @@
       "ai_passed": "Revisão de IA: parece bem.",
       "ai_review": "Revisão de IA: sugestões abaixo.",
       "score": "pontuação",
-      "failed": "Revisão de IA indisponível. Pode partilhar mesmo assim — a verificação de qualidade passou.",
+      "failed": "Revisão de IA indisponível. Pode partilhar mesmo assim - a verificação de qualidade passou.",
       "auto_fix": "Aplicar",
       "applied": "aplicado",
       "fix_applied": "Sugestão aplicada.",
@@ -2765,7 +2767,7 @@
   },
   "create_lesson": {
     "book": {
-      "rights_hint": "Cole apenas textos sobre os quais você tem direitos ou destinados a uso pessoal.",
+      "rights_hint": "Cole ou envie apenas textos sobre os quais você tem direitos ou destinados a uso pessoal.",
       "heading": "Criar uma lição a partir de texto",
       "intro": "Cole uma seção (p. ex. um capítulo) do seu livro. A IA a reescreve com as próprias palavras como teoria e gera exercícios. Adicione outra seção executando o assistente novamente.",
       "text_label": "Seção do livro",
@@ -2787,13 +2789,45 @@
       "generate_to_advance": "Gere a lição a partir do seu texto para continuar.",
       "review_theory": "{n} passo(s) de teoria",
       "review_exercises": "{n} exercício(s)",
-      "review_book": "Livro: {title}"
+      "review_book": "Livro: {title}",
+      "review_lessons": "{n} lição(ões)",
+      "batch_progress": "Gerando a lição {current} de {total}: {title}…",
+      "batch_summary": "{ok} de {n} lição(ões) gerada(s).",
+      "batch_all_failed": "Não foi possível gerar nenhuma lição a partir das seções selecionadas.",
+      "batch_failed_item": "Falhou: {title}",
+      "upload": {
+        "button": "Carregar de um arquivo (EPUB, DOCX, TXT, MD)",
+        "parsing": "Lendo o arquivo ...",
+        "section_label": "Seções detectadas",
+        "section_fallback": "Seção {n}",
+        "exclude_hint": "Seções que parecem material de abertura ou de fechamento (prefácio, glossário, índice, …) ficam desmarcadas por padrão. Marque-as para incluí-las.",
+        "generate_n": "Gerar {n} lições",
+        "selected_count": "{n} selecionada(s)",
+        "apply": "Inserir no campo de texto",
+        "soft_hint": "Seção longa - seções mais curtas dão melhores resultados.",
+        "err_too_large": "Arquivo grande demais (máx. {n} MiB).",
+        "err_unsupported": "Formato de arquivo não suportado. Suportados: EPUB, DOCX, TXT, Markdown.",
+        "err_invalid_epub": "Este arquivo não pôde ser lido como EPUB.",
+        "err_invalid_docx": "Este arquivo não pôde ser lido como DOCX.",
+        "err_no_sections": "Nenhuma seção de texto foi encontrada neste arquivo.",
+        "err_parse_failed": "Falha ao ler o arquivo.",
+        "err_section_too_long": "Seção longa demais (máx. {n} caracteres). Escolha uma seção menor.",
+        "replace_title": "Substituir o texto?",
+        "replace_message": "O campo de texto já tem conteúdo. Substituir pela seção selecionada?",
+        "replace_confirm": "Substituir"
+      }
     },
     "title": "Criar uma lição",
     "step_of": "Passo {current} de {total}",
     "edit_title": "Editar lição",
     "edit_load_error": "Não foi possível carregar esta lição para edição.",
     "edit_note": "Você está editando uma lição existente. Salvar substitui-a; use 'Salvar como cópia' para manter o original.",
+    "edit": {
+      "lesson_picker_label": "Lição deste conjunto ({n})",
+      "switch_confirm_title": "Trocar de lição?",
+      "switch_confirm_body": "As alterações não salvas da lição atual serão perdidas.",
+      "switch_discard": "Descartar e trocar"
+    },
     "prompts_migrated": "{n} instrução(ões) de exercício foram traduzidas automaticamente para o seu idioma.",
     "prompts_migrated_dismiss": "Fechar",
     "step_pending": "Este passo chega na próxima atualização.",
@@ -2814,6 +2848,9 @@
       "target_lang_label": "Idioma aprendido",
       "source_lang_label": "O seu idioma",
       "level_label": "Nível",
+      "content_lang_label": "Idioma do conteúdo",
+      "level_none": "Sem nível",
+      "domain_hint": "O conteúdo de conhecimento usa um único idioma de conteúdo e pode dispensar o nível QECR.",
       "same_language": "O idioma aprendido deve ser diferente do seu idioma.",
       "description_label": "Tema / descrição",
       "author_label": "Nome do autor"
@@ -2877,6 +2914,7 @@
       "count": "{n} exercícios",
       "min_hint": "{n} exercícios necessários",
       "min_to_advance": "Gere pelo menos {n} exercícios para continuar.",
+      "min_one_to_advance": "Adicione pelo menos um exercício para continuar.",
       "drag": "Arraste para reordenar",
       "delete": "Eliminar exercício",
       "type": {
@@ -2968,9 +3006,18 @@
         "err_reading_comprehension": "Adicione um texto e pelo menos uma pergunta completa (múltipla escolha com uma opção correta, ou texto livre com uma resposta aceita).",
         "err_graded_quiz": "Adicione pelo menos uma pergunta completa com pontos positivos (múltipla escolha com uma opção correta, ou texto livre com uma resposta aceita).",
         "err_dictation": "Adicione um caminho de arquivo de áudio e pelo menos uma transcrição aceita.",
-        "dict_audio_label": "Caminho do arquivo de áudio",
+        "dict_audio_label": "Áudio",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "Caminho relativo para o clipe de áudio dentro da pasta assets do conjunto.",
+        "dict_audio_upload": "Enviar áudio",
+        "dict_audio_remove": "Remover",
+        "dict_audio_preview_label": "Pré-visualização de áudio",
+        "dict_audio_path_label": "Ou digite um caminho de recurso",
+        "dict_audio_error": {
+          "unsupported_type": "Formato de áudio não suportado. Use MP3, OGG ou WAV.",
+          "too_large": "Esse arquivo de áudio é muito grande (máx. 2 MB).",
+          "decode_failed": "Não foi possível ler esse arquivo de áudio."
+        },
         "dict_accept_label": "Transcrições aceitas",
         "dict_accept_add": "Adicionar",
         "dict_accept_remove": "Remover transcrição",
@@ -3058,7 +3105,7 @@
       "heading": "Começar a partir de um modelo",
       "blank": {
         "title": "Lição em branco",
-        "desc": "Apenas metadados — adicione os cartões."
+        "desc": "Apenas metadados - adicione os cartões."
       },
       "vocabulary": {
         "title": "Lista de vocabulário",
@@ -3139,7 +3186,7 @@
     "group": {
       "mastery": "{r} recetivo, {p} produtivo dominados",
       "progress_aria": "{completed} de {total} lições concluídas",
-      "toggle_aria": "Conjunto {title} — {completed} de {total} lições concluídas"
+      "toggle_aria": "Conjunto {title} - {completed} de {total} lições concluídas"
     },
     "search_placeholder": "Pesquisar lições…",
     "filter": {
@@ -3164,12 +3211,12 @@
     },
     "clusters": {
       "toggle": "Mostrar grupos de erros",
-      "empty": "Ainda não há padrões de erro comuns — continue a praticar.",
+      "empty": "Ainda não há padrões de erro comuns - continue a praticar.",
       "lessons": "{n} lições",
       "start_adaptive": "Iniciar lição adaptativa",
       "region_label": "Painel de agrupamentos de erros"
     },
-    "search_label": "Buscar lições — pressione Enter para ir à primeira correspondência",
+    "search_label": "Buscar lições - pressione Enter para ir à primeira correspondência",
     "custom": {
       "title": "Meus caminhos de aprendizagem",
       "subtitle": "Monte lições no seu próprio caminho ordenado.",
@@ -3424,7 +3471,7 @@
     "time_hm": "{h} h {m} min",
     "time_m": "{m} min",
     "weak_areas_title": "Áreas para melhorar",
-    "weak_areas_empty": "Ainda não há erros registados — continue!",
+    "weak_areas_empty": "Ainda não há erros registados - continue!",
     "practice": "Praticar",
     "errors": "erros",
     "last_answer": "A sua última resposta:",
@@ -3499,7 +3546,7 @@
     "card_more": "+{n} mais",
     "add": "Adicionar aos favoritos",
     "remove": "Remover dos favoritos",
-    "empty": "Ainda não há favoritos — toque na estrela de uma lição.",
+    "empty": "Ainda não há favoritos - toque na estrela de uma lição.",
     "save_prompt": "Guardar esta lição nos seus favoritos"
   },
   "content_repo": {
@@ -3528,7 +3575,7 @@
     "last_sync": "Última sincronização: {when}",
     "added": "Repositório adicionado.",
     "synced": "Sincronizado: {sets} conjuntos, {lessons} lições.",
-    "token_hint": "Os repositórios privados precisam de um token — cole um abaixo ou defina um token partilhado em Definições → Integrações.",
+    "token_hint": "Os repositórios privados precisam de um token - cole um abaixo ou defina um token partilhado em Definições → Integrações.",
     "trust_official": "Oficial: conteúdo curado e com qualidade garantida pela equipe do projeto.",
     "trust_verified": "Verificado: contribuído pela comunidade e revisado pela equipe.",
     "trust_validated": "Validado: tecnicamente correto; conteúdo não revisado individualmente.",
@@ -3578,7 +3625,7 @@
       "official": "Oficial"
     },
     "trust": {
-      "dropped": "Sincronizado, mas a validação falhou — este repositório está agora marcado como não verificado.",
+      "dropped": "Sincronizado, mas a validação falhou - este repositório está agora marcado como não verificado.",
       "recommended": "Recomendado oficialmente",
       "unknown": "Não verificado",
       "validated": "Validado"
@@ -3713,7 +3760,7 @@
     "loading": "Carregando sessão de prática…",
     "empty_body": "Este conjunto ainda não tem exercícios para praticar.",
     "not_cached_body": "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro.",
-    "paused": "Pausado — respire um pouco.",
+    "paused": "Pausado - respire um pouco.",
     "resume": "Retomar",
     "pause": "Pausar",
     "end": "Encerrar",
@@ -3841,7 +3888,7 @@
     },
     "field": {
       "pick": "Escolha um repositório ligado",
-      "pick_placeholder": "— escolha ou escreva abaixo —",
+      "pick_placeholder": "- escolha ou escreva abaixo -",
       "url": "URL do repositório do GitHub",
       "branch": "Ramo",
       "title": "Título",
@@ -3875,6 +3922,14 @@
     "listen_first": {
       "label": "Ouça primeiro",
       "aria": "Reproduzir pronúncia"
+    },
+    "difficulty": {
+      "tier": {
+        "easy": "Fácil",
+        "medium": "Médio",
+        "hard": "Difícil"
+      },
+      "aria": "Dificuldade: {tier} ({level} de 5)"
     }
   }
 }

@@ -1,7 +1,7 @@
 app:
   name: Adaptive Learner
   tagline: Un apprentissage qui s'adapte a toi.
-  skeleton_notice: État squelette. Les modèles de domaine, plugins et pages arrivent dans les phases suivantes — voir docs/adaptive-learner-project-reference.md.
+  skeleton_notice: État squelette. Les modèles de domaine, plugins et pages arrivent dans les phases suivantes - voir docs/adaptive-learner-project-reference.md.
 common:
   ok: "OK"
   remove: "Supprimer"
@@ -72,7 +72,7 @@ nav:
     more: "Plus"
   primary: "Navigation principale"
   discover: "Découvrir du contenu"
-  offline_long: "Hors ligne — les sessions passées restent lisibles"
+  offline_long: "Hors ligne - les sessions passées restent lisibles"
   sync_pending: "{n} modification(s) en attente de synchronisation"
   statistics: "Statistiques"
   profile: "Ton profil"
@@ -90,12 +90,12 @@ nav:
   offline: Hors ligne
   anki: Anki
   dev_badge: DEV
-  dev_badge_tooltip: "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactive-le dans les Paramètres."
+  dev_badge_tooltip: "Mode développeur actif - les notifications d'erreur affichent les détails techniques. Désactive-le dans les Paramètres."
   content: "Mon contenu"
   mode_badge_content: Contenu
   mode_badge_ai: "IA+Contenu"
-  mode_badge_tooltip_content: "Aucune clé API configurée — uniquement le contenu pré-construit. Ajoute une clé dans les Paramètres pour activer les fonctions IA."
-  mode_badge_tooltip_ai: "Fournisseur IA configuré — les exercices utilisent l'IA pour les distracteurs et les indices. Touche pour parcourir les sets."
+  mode_badge_tooltip_content: "Aucune clé API configurée - uniquement le contenu pré-construit. Ajoute une clé dans les Paramètres pour activer les fonctions IA."
+  mode_badge_tooltip_ai: "Fournisseur IA configuré - les exercices utilisent l'IA pour les distracteurs et les indices. Touche pour parcourir les sets."
   mode_badge_label_content: "Mode : Contenu uniquement"
   mode_badge_label_ai: "Mode : IA + Contenu"
   sync_paired: "Sync : appairé (Paramètres > Sync)"
@@ -193,7 +193,7 @@ curriculum:
   add_subtopic: Ajouter un sous-sujet
   rename_topic: Renommer le sujet
   topic_title: Titre
-  no_topics: Aucun sujet pour l'instant — ajoute le premier pour commencer.
+  no_topics: Aucun sujet pour l'instant - ajoute le premier pour commencer.
   no_curriculum: Crée un programme pour commencer à construire l'arbre des sujets.
   delete_confirm: Supprimer ce sujet ? Ses enfants resteront comme racines propres.
   lessons_title: "Leçons"
@@ -210,7 +210,7 @@ curriculum:
   description_saved: "Description enregistrée."
   edit_description: "Modifier la description"
   lesson_content_aria: "Contenu de la leçon"
-  lesson_content_placeholder: "Contenu de la leçon — prend en charge titres, listes, blocs de code, liens."
+  lesson_content_placeholder: "Contenu de la leçon - prend en charge titres, listes, blocs de code, liens."
   no_description: "Pas encore de description."
 landing:
   title: Adaptive Learner
@@ -226,7 +226,7 @@ onboarding:
   intro: Décris ton objectif. Adaptive Learner utilise ces informations pour construire ton profil et te recommander une méthode de départ.
   concepts_explainer_prefix: "Tu définiras un "
   concepts_explainer_mid1: ", puis tu passes une brève évaluation pour construire ton "
-  concepts_explainer_mid2: " — qui guide chaque "
+  concepts_explainer_mid2: " - qui guide chaque "
   concepts_explainer_suffix: " à venir."
   term_learning_project: "projet d’apprentissage"
   term_learning_profile: "profil d’apprentissage"
@@ -240,13 +240,13 @@ onboarding:
   field_timeframe_hint: ex. 4 semaines, un semestre.
   field_daily_minutes: Minutes par jour
   field_current_problem: Problème actuel
-  field_current_problem_hint: optionnel — qu'est-ce qui te bloque ?
+  field_current_problem_hint: optionnel - qu'est-ce qui te bloque ?
   submit: Créer le projet et lancer l'évaluation
   creating: Création du projet...
   subject_suggestions: "Matières suggérées (touche pour attribuer) :"
   default_goal: "Apprendre {topic}"
   invite_title: "Tu veux configurer ton profil d'apprentissage plus en détail ?"
-  invite_subtitle: "Cela prend une minute et adapte tes sessions — tu peux aussi le faire plus tard."
+  invite_subtitle: "Cela prend une minute et adapte tes sessions - tu peux aussi le faire plus tard."
   invite_start_now: "Commencer tout de suite"
   invite_setup_profile: "Configurer le profil"
   restore_hint: "Tu utilises déjà Adaptive Learner ? Restaure depuis une sauvegarde."
@@ -272,7 +272,7 @@ onboarding:
     later: "Plus tard"
 assessment:
   title: Évaluation du type d'apprentissage
-  intro: Douze courtes questions déterminent ton profil. Il n'y a ni bonne ni mauvaise réponse — répond a l'instinct.
+  intro: Douze courtes questions déterminent ton profil. Il n'y a ni bonne ni mauvaise réponse - répond a l'instinct.
   question_progress: Question {current} sur {total}
   next_question: Question suivante
   prev_question: Question précédente
@@ -285,7 +285,7 @@ assessment:
   read_summary: Lire le résumé
   swipe_hint: "Balaie vers la gauche / droite (ou utilise les flèches) pour naviguer."
 dashboard:
-  # 1417 — the one inviting BYOK card on the Dashboard.
+  # 1417 - the one inviting BYOK card on the Dashboard.
   ai_invite:
     title: "Activer l'aide IA (optionnel)"
     body: "Connecte ton propre fournisseur d'IA (Claude, OpenAI ou Gemini) et reçois des explications et de l'aide directement dans les leçons. L'application fonctionne aussi sans."
@@ -316,7 +316,7 @@ dashboard:
   review_queue:
     loading: "Chargement…"
     elements: "élément(s) à réviser"
-    overdue: "en retard — commence ici"
+    overdue: "en retard - commence ici"
     open: "Ouvrir la session de révision"
     quick: "Révision rapide"
   focus_areas:
@@ -348,7 +348,7 @@ adaptive:
   page_title: "Leçon adaptative"
   session_title: "Leçon adaptative"
   loading: "Analyse de tes erreurs…"
-  empty_body: "Rien à adapter pour l'instant — fais d'abord une leçon pour accumuler des données."
+  empty_body: "Rien à adapter pour l'instant - fais d'abord une leçon pour accumuler des données."
   not_cached_body: "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord."
   back_to_dashboard: "Retour au Tableau de bord"
   transparency:
@@ -368,14 +368,14 @@ review:
   your_answer: "Ta réponse :"
   correct_answer: "Correct :"
   summary_corrected: "{corrected} sur {total} corrigés"
-  summary_trend: "Bien — tes points faibles se renforcent."
+  summary_trend: "Bien - tes points faibles se renforcent."
   summary_next: "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision."
   summary_remaining: "Encore {n} à revoir. On continue ?"
   another_round: "Encore un tour"
   summary_repeat: "Reviens dans environ 2 jours pour garder cela en mémoire."
   explain_heading: "Pourquoi tu les as ratés"
   explain_article_gender: "Attention au genre : les noms en -o sont souvent masculins (el/un), en -a féminins (la/una). L'article suit la terminaison."
-  explain_spelling_accent: "Vérifie l'orthographe exacte et les accents — une petite différence change le mot."
+  explain_spelling_accent: "Vérifie l'orthographe exacte et les accents - une petite différence change le mot."
   explain_verb_conjugation: "Accorde le verbe avec son sujet et son temps avant de répondre."
   explain_word_order: "Soigne l'ordre des mots de cette structure."
   page_title: "Révision"
@@ -403,7 +403,7 @@ review:
   metric_mean_understanding: Compréhension moyenne
   metric_mean_stress: Stress moyen
   metric_streak: Série de jours
-  no_data: Aucune session pour l'instant — lance ta première pour voir les tendances.
+  no_data: Aucune session pour l'instant - lance ta première pour voir les tendances.
   pronunciation_quick_start: Pratique de Prononciation
 session:
   title: Session d'apprentissage
@@ -434,7 +434,7 @@ session:
   cycles_completed: "Cycles terminés"
   next_topic: "Sujet suivant :"
   step_reason_tooltip: Pourquoi cette étape ?
-  offline_start_blocked: Tu es hors ligne. Les nouvelles sessions nécessitent une connexion — les sessions passées restent lisibles depuis le Dashboard.
+  offline_start_blocked: Tu es hors ligne. Les nouvelles sessions nécessitent une connexion - les sessions passées restent lisibles depuis le Dashboard.
   peek_step_prefix: "Étape"
   rating_notes_aria: "Notes de session"
   rating_notes_placeholder: "Ce qui a marché, ce qui n'a pas marché, à essayer la prochaine fois…"
@@ -454,7 +454,7 @@ progress:
   commit_date: Date
   no_commits: Aucune session terminée pour l'instant.
   step_eval_title: Analyses d'évaluation IA par étape
-  step_eval_empty: Pas encore de données d'évaluation — lance une session pour voir l'analyse.
+  step_eval_empty: Pas encore de données d'évaluation - lance une session pour voir l'analyse.
   step_eval_avg_confidence: Confiance IA moyenne
   step_eval_repeats: Fois où l'IA a dit 'pas encore'
   step_eval_advances: Progressions d'étape
@@ -471,11 +471,11 @@ settings:
     confirm_message: "{lessons} leçons et {cards} cartes de révision seront définitivement supprimées. Cette action est irréversible."
     deleted: "{lessons} leçons et {cards} cartes de révision supprimées."
   key_export_link:
-    heading: "Clés IA — export chiffré"
+    heading: "Clés IA - export chiffré"
     hint: "Exporte ou importe tes clés IA dans un seul fichier chiffré. Il se trouve avec les autres sauvegardes dans l'onglet Données."
     button: "Aller à l'export des clés (onglet Données)"
   key_vault:
-    title: "Clés d'IA — export chiffré"
+    title: "Clés d'IA - export chiffré"
     intro: "Transfère tes clés d'IA vers un autre appareil dans un seul fichier chiffré, séparé de la sauvegarde normale (qui ne contient jamais de clés)."
     api_export_disabled: "En mode serveur, tes clés ne peuvent pas être exportées : elles sont gérées chiffrées côté serveur. L'import d'un fichier de clés reste possible."
     export_heading: "Exporter"
@@ -694,7 +694,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  # #810 — tableau des fournisseurs configurés dans l'onglet IA.
+  # #810 - tableau des fournisseurs configurés dans l'onglet IA.
   providers:
     title: Fournisseurs d'IA configurés
     hint: "Les clés enregistrées sont conservées. Seul un aperçu masqué est affiché, jamais la clé complète."
@@ -743,7 +743,7 @@ settings:
   save_failed: Échec de l'enregistrement.
   provider_active: Actif
   active_provider_missing_key: C'est ton fournisseur actif mais aucune clé API n'est enregistrée. Les réponses IA seront ignorées jusqu'à ce qu'une clé soit enregistrée.
-  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  # Phase 34 (v1.20.0) - per-provider key-source badges.
   api_key_source_file: "Clé depuis: secrets.yaml"
   api_key_source_env: "Clé depuis: variable d'environnement"
   api_key_source_settings: "Clé depuis: Paramètres"
@@ -850,24 +850,24 @@ settings:
   danger_zone_input_placeholder: "RESET"
   danger_zone_intro: "Supprime définitivement tout l'état d'apprentissage sur cet appareil."
   danger_zone_reset_button: "Tout réinitialiser"
-  danger_zone_warning: "Cela supprime DÉFINITIVEMENT toutes tes données d'apprentissage — sessions, progression, profils, programmes, imports, cartes Anki, paramètres et clés d'API. Cette action est IRRÉVERSIBLE."
+  danger_zone_warning: "Cela supprime DÉFINITIVEMENT toutes tes données d'apprentissage - sessions, progression, profils, programmes, imports, cartes Anki, paramètres et clés d'API. Cette action est IRRÉVERSIBLE."
   section_sync: "Synchronisation"
 methods:
   deductive:
     label: Déductif
-    summary: Du général au particulier — d'abord les règles, puis les exemples.
+    summary: Du général au particulier - d'abord les règles, puis les exemples.
   inductive:
     label: Inductif
-    summary: Du particulier au général — d'abord les exemples, puis la règle.
+    summary: Du particulier au général - d'abord les exemples, puis la règle.
   error_based:
     label: Centré sur l'erreur
-    summary: Apprendre des erreurs — correction avec explication.
+    summary: Apprendre des erreurs - correction avec explication.
   dialogic:
     label: Dialogique
-    summary: Penser en conversation — reduire le stress, batir la motivation.
+    summary: Penser en conversation - reduire le stress, batir la motivation.
   contextual:
     label: Contextuel
-    summary: Appliquer en contexte réel — pratiquer le transfert.
+    summary: Appliquer en contexte réel - pratiquer le transfert.
   ai_adaptive:
     label: IA adaptative
     summary: L'IA choisit la méthode qui te convient le mieux.
@@ -898,7 +898,7 @@ errors:
   not_found: Non trouve.
   validation: Entrée invalide.
   conflict: L'élément existe déjà.
-  server: Erreur serveur — réessaie plus tard.
+  server: Erreur serveur - réessaie plus tard.
 toast:
   project_created: Projet créé.
   assessment_saved: Profil enregistré.
@@ -912,7 +912,7 @@ toast:
 install:
   ios:
     title: "Installer comme une app"
-    steps: "Touche l’icône Partager, puis « Sur l’écran d’accueil » — l’app s’ouvre sans la barre de Safari."
+    steps: "Touche l’icône Partager, puis « Sur l’écran d’accueil » - l’app s’ouvre sans la barre de Safari."
     aria_label: "Installer sur ton iPhone"
     dismiss: "Fermer"
   title: Ajouter à l'écran d'accueil
@@ -1049,7 +1049,7 @@ backup:
   auto_none: "Aucune sauvegarde automatique pour l’instant. La première s’exécute après 10 sessions ou 7 jours."
   storage_pressure: "Le stockage du navigateur est presque plein ({{pct}}% du quota). Exporte maintenant une sauvegarde manuelle."
   compare_title: "Comparer les sauvegardes"
-  compare_help: "Choisis deux fichiers de sauvegarde (ou un fichier plus l’état actuel) pour voir ce qui a changé. Aucune donnée n’est modifiée — la comparaison est en lecture seule."
+  compare_help: "Choisis deux fichiers de sauvegarde (ou un fichier plus l’état actuel) pour voir ce qui a changé. Aucune donnée n’est modifiée - la comparaison est en lecture seule."
   compare_slot_a: "Sauvegarde A (plus ancienne)"
   compare_slot_b: "Sauvegarde B (plus récente)"
   compare_pick: "Choisir un fichier…"
@@ -1065,7 +1065,7 @@ backup:
   compare_sort_label: "Trier :"
   compare_sort_delta: "Plus de changements d’abord"
   compare_sort_alpha: "Alphabétique"
-  compare_no_changes: "Les deux sauvegardes sont identiques — aucune différence détectée."
+  compare_no_changes: "Les deux sauvegardes sont identiques - aucune différence détectée."
   compare_section_added: "Ajoutés"
   compare_section_removed: "Supprimés"
   compare_section_changed: "Modifiés"
@@ -1073,14 +1073,14 @@ backup:
   compare_old: "Ancien"
   compare_new: "Nouveau"
   compare_field_changes: "modifications de champs"
-  compare_high_volume_hint: "Table à fort volume — les aperçus par enregistrement sont abrégés."
+  compare_high_volume_hint: "Table à fort volume - les aperçus par enregistrement sont abrégés."
   compare_export_md: "Exporter en Markdown"
   compare_markdown_downloaded: "Différences exportées."
   confirm_with_counts: "Restaurer ({{added}} ajoutés, {{updated}} mis à jour)"
   auto_compare_as_a: "Comparer comme A"
   auto_compare_as_b: "Comparer comme B"
   compare_auto_label: "Sauvegarde automatique {{date}}"
-  auto_compare_missing: "La sauvegarde automatique n’est plus disponible — elle a été remplacée."
+  auto_compare_missing: "La sauvegarde automatique n’est plus disponible - elle a été remplacée."
 export:
   title: "Exporter"
   intro: "Télécharge ton parcours d’apprentissage en Markdown ou PDF. Le Markdown est du texte brut que tu peux modifier et partager ; le PDF ouvre la boîte de dialogue d’impression du navigateur pour enregistrer une copie."
@@ -1158,7 +1158,7 @@ sync:
   scan_success_hint: "Vérification avec l’ordinateur…"
   smart_merge: "Fusion intelligente (IA)"
   smart_merge_error: "La fusion intelligente a échoué."
-  smart_merge_ready: "Fusion par IA prête — vérifie et applique."
+  smart_merge_ready: "Fusion par IA prête - vérifie et applique."
   smart_merge_running: "Fusion avec l’IA…"
   sync_error: "La synchronisation a échoué."
   synced: "Synchronisé"
@@ -1327,7 +1327,7 @@ gamification:
   danger_zone_heading: "Zone de danger"
   danger_zone_intro: "Supprime définitivement tout l’état d’apprenant sur cet appareil."
   danger_zone_reset_button: "Tout réinitialiser"
-  danger_zone_warning: "Ceci supprime définitivement TOUTES tes données d’apprentissage — sessions, progression, profils, programmes, imports, cartes Anki, paramètres et clés API. Cette action est IRRÉVERSIBLE."
+  danger_zone_warning: "Ceci supprime définitivement TOUTES tes données d’apprentissage - sessions, progression, profils, programmes, imports, cartes Anki, paramètres et clés API. Cette action est IRRÉVERSIBLE."
   danger_zone_confirm_prompt: "Tape RESET pour confirmer"
   danger_zone_input_placeholder: RESET
   danger_zone_final_button: "Supprimer définitivement"
@@ -1607,9 +1607,9 @@ repo:
   readme_topics_heading: "Sujets"
   readme_no_topics: "_Aucun sujet abordé pour l'instant._"
   readme_see_also_heading: "Voir aussi"
-  readme_see_stats: "[LEARNING_STATS.md](LEARNING_STATS.md) — taux d'erreur, compréhension, transfert, journal des interventions."
-  readme_see_cheatsheet: "[CHEATSHEET.md](CHEATSHEET.md) — notes distillées + observations Méta-Apprentissage."
-  readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) — prochaines étapes."
+  readme_see_stats: "[LEARNING_STATS.md](LEARNING_STATS.md) - taux d'erreur, compréhension, transfert, journal des interventions."
+  readme_see_cheatsheet: "[CHEATSHEET.md](CHEATSHEET.md) - notes distillées + observations Méta-Apprentissage."
+  readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) - prochaines étapes."
   stats_title: "Statistiques d'apprentissage"
   stats_intro: "Métriques par session générées automatiquement à partir des évaluations + appréciations. Ne pas modifier à la main."
   stats_no_sessions: "_Aucune session pour l'instant._"
@@ -1631,7 +1631,7 @@ repo:
   stats_exit_threshold_body: "Un sujet est considéré comme maîtrisé lorsque Compréhension ≥ 9/10 ET Transfert ≥ 8/10 stables sur 2 cycles consécutifs. Les lignes marquées indiquent les sessions remplissant cette condition."
   stats_exit_pin_marker: "✅ critère atteint"
   cheatsheet_title: "Antisèche"
-  cheatsheet_intro: "Notes distillées de tes sessions. La section Méta-Apprentissage rassemble les notes étiquetées meta_learning — observations sur la manière dont tu apprends le mieux."
+  cheatsheet_intro: "Notes distillées de tes sessions. La section Méta-Apprentissage rassemble les notes étiquetées meta_learning - observations sur la manière dont tu apprends le mieux."
   cheatsheet_notes_heading: "Notes"
   cheatsheet_meta_learning_heading: "Observations Méta-Apprentissage"
   cheatsheet_no_notes: "_Aucune note pour l'instant._"
@@ -1732,12 +1732,12 @@ lesson:
     stats_fastest: "La plus rapide : {s}s ({type})"
     stats_slowest: "La plus lente : {s}s ({type})"
   reverse:
-    not_reversible: "Ce type d'exercice ne peut pas être inversé — affiché dans son format d'origine."
+    not_reversible: "Ce type d'exercice ne peut pas être inversé - affiché dans son format d'origine."
   resources_title: "Approfondir le sujet"
   resources_domain: "Plus sur {domain}"
   motivation:
-    halftime: "À mi-chemin — continue !"
-    last: "La dernière — termine en beauté !"
+    halftime: "À mi-chemin - continue !"
+    last: "La dernière - termine en beauté !"
   theory:
     view_example: "Voir l'exemple"
   tts:
@@ -1814,7 +1814,7 @@ lesson:
       submit: "Vérifier la réponse"
       retry: "Réessayer"
       result_correct: "Correct !"
-      result_wrong: "Pas tout à fait — la case mise en évidence est la bonne réponse."
+      result_wrong: "Pas tout à fait - la case mise en évidence est la bonne réponse."
       grid_label: "Choix d'images"
       correct_label: "Correct"
       wrong_label: "Incorrect"
@@ -1905,7 +1905,7 @@ lesson:
     heading: "Reprise terminée"
     score: "{correct}/{total} corrects maintenant !"
     done: "Retour à la leçon"
-    empty: "Rien à refaire — ouvre ceci depuis le résumé d'une leçon après des erreurs."
+    empty: "Rien à refaire - ouvre ceci depuis le résumé d'une leçon après des erreurs."
     summary_aria: "Résumé de la reprise des erreurs"
   next_step:
     title: "Et ensuite ?"
@@ -2215,9 +2215,9 @@ content:
     target_lang_label: Langue apprise
     source_lang_label: Ta langue
     level_label: Niveau
-    not_enough_data: Peu d'exercices — au moins {min} sont recommandés pour une leçon de langue complète. Tu peux quand même l'enregistrer (par exemple comme leçon de théorie uniquement).
+    not_enough_data: Peu d'exercices - au moins {min} sont recommandés pour une leçon de langue complète. Tu peux quand même l'enregistrer (par exemple comme leçon de théorie uniquement).
     same_language: La langue apprise et ta langue doivent être différentes.
-    same_language_hint: "La langue apprise et ta langue sont identiques — parfait pour une leçon de grammaire ou en langue maternelle. Lors du partage, elle apparaît dans la branche de même langue de l'arbre de contenu."
+    same_language_hint: "La langue apprise et ta langue sont identiques - parfait pour une leçon de grammaire ou en langue maternelle. Lors du partage, elle apparaît dans la branche de même langue de l'arbre de contenu."
     split_notice: "Cette leçon contient {steps} étapes et sera enregistrée en {parts} parties (max. {max} étapes chacune)."
     part_title: "{title} - Partie {n}"
   lesson_gen:
@@ -2281,6 +2281,8 @@ content:
     domain_software: Logiciel
     domain_philosophy: Philosophie
     domain_language: Langue
+    domain_dog-training: Éducation canine
+    domain_traffic-knowledge: Code de la route
     code_copy: "Copier le code"
     code_output: "Sortie :"
     no_primary: Pas encore d'ensembles pour ta langue. Parcours d'autres langues source ci-dessous.
@@ -2313,7 +2315,7 @@ content:
     level_too_complex: "Leçon '{lesson}' : le texte fait en moyenne {avg} mots par côté, élevé pour le niveau {level} (environ {cap} attendus)."
     source_language_heuristic: Le verso des cartes contient des caractères propres à {found}, mais la langue source est '{lang}'.
     target_language_heuristic: Le recto des cartes contient des caractères propres à {found}, mais la langue cible est '{lang}'.
-    failed_share_anyway: "Le contrôle qualité a détecté des problèmes. Tu peux quand même partager — les relecteurs verront les remarques notées dans la pull request."
+    failed_share_anyway: "Le contrôle qualité a détecté des problèmes. Tu peux quand même partager - les relecteurs verront les remarques notées dans la pull request."
   ai_validation:
     intro: Une IA peut en plus vérifier l'exactitude des traductions, la grammaire et le niveau.
     privacy: Le contenu de ta leçon sera envoyé à {provider}. Aucune donnée personnelle n'est transmise.
@@ -2526,7 +2528,7 @@ missions:
 
 create_lesson:
   book:
-    rights_hint: "Ne collez que des textes dont vous détenez les droits ou destinés à un usage personnel."
+    rights_hint: "Ne collez ou ne téléversez que des textes dont vous détenez les droits ou destinés à un usage personnel."
     heading: "Créer une leçon à partir d'un texte"
     intro: "Collez une section (par ex. un chapitre) de votre manuel. L'IA la reformule avec ses propres mots en théorie et génère des exercices. Ajoutez une autre section en relançant l'assistant."
     text_label: "Section du manuel"
@@ -2549,11 +2551,41 @@ create_lesson:
     review_theory: "{n} étape(s) de théorie"
     review_exercises: "{n} exercice(s)"
     review_book: "Livre : {title}"
+    review_lessons: "{n} leçon(s)"
+    batch_progress: "Génération de la leçon {current} sur {total} : {title}…"
+    batch_summary: "{ok} leçon(s) sur {n} générée(s)."
+    batch_all_failed: "Aucune leçon n'a pu être générée à partir des sections sélectionnées."
+    batch_failed_item: "Échec : {title}"
+    upload:
+      button: "Charger depuis un fichier (EPUB, DOCX, TXT, MD)"
+      parsing: "Lecture du fichier ..."
+      section_label: "Sections détectées"
+      section_fallback: "Section {n}"
+      exclude_hint: "Les sections qui ressemblent à des pages liminaires ou finales (préface, glossaire, index, …) sont décochées par défaut. Cochez-les pour les inclure."
+      generate_n: "Générer {n} leçons"
+      selected_count: "{n} sélectionnée(s)"
+      apply: "Insérer dans le champ de texte"
+      soft_hint: "Section longue - des sections plus courtes donnent de meilleurs résultats."
+      err_too_large: "Fichier trop volumineux (max. {n} MiB)."
+      err_unsupported: "Format de fichier non pris en charge. Pris en charge : EPUB, DOCX, TXT, Markdown."
+      err_invalid_epub: "Ce fichier n'a pas pu être lu comme EPUB."
+      err_invalid_docx: "Ce fichier n'a pas pu être lu comme DOCX."
+      err_no_sections: "Aucune section de texte trouvée dans ce fichier."
+      err_parse_failed: "La lecture du fichier a échoué."
+      err_section_too_long: "Section trop longue (max. {n} caractères). Choisissez une section plus petite."
+      replace_title: "Remplacer le texte ?"
+      replace_message: "Le champ de texte contient déjà du contenu. Le remplacer par la section sélectionnée ?"
+      replace_confirm: "Remplacer"
   title: "Créer une leçon"
   step_of: "Étape {current} sur {total}"
   edit_title: "Modifier la leçon"
   edit_load_error: "Impossible de charger cette leçon pour la modifier."
   edit_note: "Vous modifiez une leçon existante. L'enregistrement l'écrase ; utilisez 'Enregistrer comme copie' pour conserver l'original."
+  edit:
+    lesson_picker_label: "Leçon de cet ensemble ({n})"
+    switch_confirm_title: "Changer de leçon ?"
+    switch_confirm_body: "Vos modifications non enregistrées de la leçon actuelle seront perdues."
+    switch_discard: "Abandonner et changer"
   prompts_migrated: "{n} consigne(s) d'exercice ont été traduites automatiquement dans votre langue."
   prompts_migrated_dismiss: "Fermer"
   step_pending: "Cette étape arrive dans la prochaine mise à jour."
@@ -2574,6 +2606,9 @@ create_lesson:
     target_lang_label: "Langue apprise"
     source_lang_label: "Ta langue"
     level_label: "Niveau"
+    content_lang_label: "Langue du contenu"
+    level_none: "Aucun niveau"
+    domain_hint: "Le contenu de connaissances utilise une seule langue de contenu et peut se passer du niveau CECR."
     same_language: "La langue apprise doit être différente de ta langue."
     description_label: "Thème / description"
     author_label: "Nom de l'auteur"
@@ -2633,6 +2668,7 @@ create_lesson:
     count: "{n} exercices"
     min_hint: "{n} exercices nécessaires"
     min_to_advance: "Génère au moins {n} exercices pour continuer."
+    min_one_to_advance: "Ajoutez au moins un exercice pour continuer."
     drag: "Glisser pour réorganiser"
     delete: "Supprimer l'exercice"
     type:
@@ -2718,9 +2754,17 @@ create_lesson:
       err_reading_comprehension: "Ajoutez un texte et au moins une question complète (choix multiple avec une option correcte, ou texte libre avec une réponse acceptée)."
       err_graded_quiz: "Ajoutez au moins une question complète avec des points positifs (choix multiple avec une option correcte, ou texte libre avec une réponse acceptée)."
       err_dictation: "Ajoutez un chemin de fichier audio et au moins une transcription acceptée."
-      dict_audio_label: "Chemin du fichier audio"
+      dict_audio_label: "Audio"
       dict_audio_placeholder: "assets/audio/clip.mp3"
       dict_audio_hint: "Chemin relatif vers le clip audio dans le dossier assets de l'ensemble."
+      dict_audio_upload: "Importer l'audio"
+      dict_audio_remove: "Retirer"
+      dict_audio_preview_label: "Aperçu audio"
+      dict_audio_path_label: "Ou saisissez un chemin de ressource"
+      dict_audio_error:
+        unsupported_type: "Format audio non pris en charge. Utilisez MP3, OGG ou WAV."
+        too_large: "Ce fichier audio est trop volumineux (max. 2 Mo)."
+        decode_failed: "Ce fichier audio n'a pas pu être lu."
       dict_accept_label: "Transcriptions acceptées"
       dict_accept_add: "Ajouter"
       dict_accept_remove: "Supprimer la transcription"
@@ -2802,7 +2846,7 @@ create_lesson:
     heading: "Partir d'un modèle"
     blank:
       title: "Leçon vierge"
-      desc: "Métadonnées uniquement — ajoute les cartes toi-même."
+      desc: "Métadonnées uniquement - ajoute les cartes toi-même."
     vocabulary:
       title: "Liste de vocabulaire"
       desc: "10 emplacements de carte, association + texte libre."
@@ -2873,7 +2917,7 @@ learning_path:
   group:
     mastery: "{r} réceptif, {p} productif maîtrisés"
     progress_aria: "{completed} sur {total} leçons terminées"
-    toggle_aria: "Ensemble {title} — {completed} sur {total} leçons terminées"
+    toggle_aria: "Ensemble {title} - {completed} sur {total} leçons terminées"
   search_placeholder: "Rechercher des leçons…"
   filter:
     status: "Filtre d'état"
@@ -2895,11 +2939,11 @@ learning_path:
     region_label: "Statistiques du parcours d'apprentissage"
   clusters:
     toggle: "Afficher les groupes d'erreurs"
-    empty: "Pas encore de schémas d'erreurs communs — continue."
+    empty: "Pas encore de schémas d'erreurs communs - continue."
     lessons: "{n} leçons"
     start_adaptive: "Lancer une leçon adaptative"
     region_label: "Panneau des groupes d'erreurs"
-  search_label: "Rechercher des leçons — appuie sur Entrée pour aller au premier résultat"
+  search_label: "Rechercher des leçons - appuie sur Entrée pour aller au premier résultat"
   custom:
     title: "Mes parcours d'apprentissage"
     subtitle: "Assemble des leçons dans ton propre parcours ordonné."
@@ -3146,7 +3190,7 @@ statistics:
   time_hm: "{h} h {m} min"
   time_m: "{m} min"
   weak_areas_title: "Points à améliorer"
-  weak_areas_empty: "Aucune erreur enregistrée pour l'instant — continue !"
+  weak_areas_empty: "Aucune erreur enregistrée pour l'instant - continue !"
   practice: "S'entraîner"
   errors: "erreurs"
   last_answer: "Ta dernière réponse :"
@@ -3221,7 +3265,7 @@ favorites:
   card_more: "+{n} de plus"
   add: "Ajouter aux favoris"
   remove: "Retirer des favoris"
-  empty: "Aucun favori pour l'instant — touche l'étoile d'une leçon."
+  empty: "Aucun favori pour l'instant - touche l'étoile d'une leçon."
   save_prompt: "Enregistrer cette leçon dans tes favoris"
 content_repo:
   set_not_found: "Le set '{set}' est introuvable dans ce dépôt."
@@ -3246,7 +3290,7 @@ content_repo:
   last_sync: "Dernière synchronisation : {when}"
   added: "Dépôt ajouté."
   synced: "Synchronisé : {sets} ensembles, {lessons} leçons."
-  token_hint: "Les dépôts privés nécessitent un jeton — colles-en un ci-dessous ou définis un jeton partagé dans Réglages → Intégrations."
+  token_hint: "Les dépôts privés nécessitent un jeton - colles-en un ci-dessous ou définis un jeton partagé dans Réglages → Intégrations."
   trust_official: "Officiel : contenu sélectionné et dont la qualité est garantie par l'équipe du projet."
   trust_verified: "Vérifié : proposé par la communauté et relu par l'équipe."
   trust_validated: "Validé : techniquement correct ; contenu non vérifié individuellement."
@@ -3288,7 +3332,7 @@ content_repo:
     private: "Privé"
     official: "Officiel"
   trust:
-    dropped: "Synchronisé, mais la validation a échoué — ce dépôt est désormais marqué comme non vérifié."
+    dropped: "Synchronisé, mais la validation a échoué - ce dépôt est désormais marqué comme non vérifié."
     recommended: "Recommandé officiellement"
     unknown: "Non vérifié"
     validated: "Validé"
@@ -3400,7 +3444,7 @@ endless:
   loading: "Chargement de la session d'entraînement…"
   empty_body: "Cet ensemble n'a pas encore d'exercices à pratiquer."
   not_cached_body: "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord."
-  paused: "En pause — faites une petite pause."
+  paused: "En pause - faites une petite pause."
   resume: "Reprendre"
   pause: "Pause"
   end: "Terminer"
@@ -3510,7 +3554,7 @@ registry:
     prepare_failed: Impossible de préparer la soumission.
   field:
     pick: Choisissez un dépôt connecté
-    pick_placeholder: — choisissez ou saisissez ci-dessous —
+    pick_placeholder: "- choisissez ou saisissez ci-dessous -"
     url: URL du dépôt GitHub
     branch: Branche
     title: Titre
@@ -3539,3 +3583,9 @@ exercise:
   listen_first:
     label: "Écoute d'abord"
     aria: "Écouter la prononciation"
+  difficulty:
+    tier:
+      easy: "Facile"
+      medium: "Moyen"
+      hard: "Difficile"
+    aria: "Difficulté : {tier} ({level} sur 5)"

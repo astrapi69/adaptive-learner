@@ -14,7 +14,7 @@ Der schnellste Weg, Adaptive Learner kennenzulernen, ist die
 
 [**App öffnen**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Diese läuft im **Lokal-Modus** — alle deine Daten bleiben in
+Diese läuft im **Lokal-Modus** - alle deine Daten bleiben in
 deinem Browser (IndexedDB), und KI-Aufrufe gehen direkt aus
 der Seite an Anthropic, OpenAI oder Google Gemini mit deinem
 eigenen API-Schlüssel. Kein Backend dazwischen.
@@ -35,7 +35,7 @@ deiner Plattform ab:
   stattdessen einen kleinen **„Zum Home-Bildschirm
   hinzufügen"**-Hinweis: Tippe auf den **Teilen**-Knopf, dann auf
   **„Zum Home-Bildschirm"**. Der Hinweis erscheint nur in iOS
-  Safari und nur, solange die App noch nicht installiert ist — nach
+  Safari und nur, solange die App noch nicht installiert ist - nach
   der Installation taucht er nie wieder auf.
 
 So oder so wird Adaptive Learner zu einer **eigenständigen App** auf
@@ -67,7 +67,7 @@ KI-Anbieter außerhalb des Browsers sitzt.
    Vorgaben. Danach kannst du „Direkt loslegen" wählen oder
    optional dein Profil im Assistenten genauer einrichten.
    Siehe [Onboarding](onboarding.md).
-3. **Erste Lektion starten** — der schnellste Weg ohne
+3. **Erste Lektion starten** - der schnellste Weg ohne
    KI-Schlüssel: Öffne den
    [Content Browser](../features/content-browser.md) unter
    `/content`, wähle einen Lektionssatz und starte eine
@@ -75,7 +75,7 @@ KI-Anbieter außerhalb des Browsers sitzt.
    Ende siehst du dein Ergebnis mit Sternen. Siehe
    [Lektionen und Wiederholungen](lessons.md). **Tipp:** Am
    besten fängst du mit dem gebündelten Satz
-   **„Adaptive Learner — App-Tutorial"** an — er bringt dir die
+   **„Adaptive Learner - App-Tutorial"** an - er bringt dir die
    App direkt als Lektionen bei. Siehe
    [App-Tutorial](app-tutorial.md).
 4. **Optional: KI-Sessions.** Möchtest du stattdessen das
@@ -101,11 +101,11 @@ Gerät gespeichert.
 
 ## Wie es weitergeht
 
-- [App-Tutorial](app-tutorial.md) — die App direkt im Programm üben (kein KI-Schlüssel nötig)
-- [Lektionen und Wiederholungen](lessons.md) — der Lektionsablauf im Detail
-- [Content Browser](../features/content-browser.md) — Lektionen finden und filtern
-- [Mehrere Content-Repositories](../features/content-repos.md) — eigene Inhaltsquellen verbinden
+- [App-Tutorial](app-tutorial.md) - die App direkt im Programm üben (kein KI-Schlüssel nötig)
+- [Lektionen und Wiederholungen](lessons.md) - der Lektionsablauf im Detail
+- [Content Browser](../features/content-browser.md) - Lektionen finden und filtern
+- [Mehrere Content-Repositories](../features/content-repos.md) - eigene Inhaltsquellen verbinden
 - [Backup und Wiederherstellung](../features/backup.md)
-- [Dein Dashboard verstehen](dashboard.md) — Fortschritt, Streak, XP, Badges
-- [FAQ — häufige Fragen](faq.md)
+- [Dein Dashboard verstehen](dashboard.md) - Fortschritt, Streak, XP, Badges
+- [FAQ - häufige Fragen](faq.md)
 - [Die pädagogische Idee hinter der App](../concept/philosophy.md)

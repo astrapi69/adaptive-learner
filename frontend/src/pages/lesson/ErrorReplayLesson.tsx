@@ -149,7 +149,7 @@ export default function ErrorReplayLesson() {
                 <p className="lesson-not-cached-body">
                     {t(
                         "lesson.error_replay.empty",
-                        "Nothing to retry — open this from a lesson summary after making some mistakes.",
+                        "Nothing to retry - open this from a lesson summary after making some mistakes.",
                     )}
                 </p>
                 <Button

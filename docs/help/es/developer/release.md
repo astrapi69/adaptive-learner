@@ -10,12 +10,12 @@ versión, el CHANGELOG y la etiqueta.
 
 Adaptive Learner sigue el Versionado Semántico 2.0.0:
 
-- **Mayor (X.0.0)** — cambios de ruptura en la API o la
+- **Mayor (X.0.0)** - cambios de ruptura en la API o la
   arquitectura. Reservado para grandes cambios futuros.
-- **Menor (X.Y.0)** — nuevas funcionalidades, compatibles con
+- **Menor (X.Y.0)** - nuevas funcionalidades, compatibles con
   versiones anteriores. Por defecto para cada finalización de
   fase (estamos en v1.20.0 / 34 fases entregadas).
-- **Parche (X.Y.Z)** — correcciones de errores, compatibles con
+- **Parche (X.Y.Z)** - correcciones de errores, compatibles con
   versiones anteriores. Cadenas de hotfixes.
 
 Las etiquetas de prelanzamiento (`-alpha`, `-beta`, `-rc`) no se
@@ -82,14 +82,14 @@ El flujo de trabajo CI de comprobación del lanzamiento
 (`.github/workflows/release-gate.yml`) ejecuta el mismo
 `sync-versions-check` en cada push de etiqueta. Si local
 coincide pero CI falla, la deriva se introdujo entre tu
-comprobación local y el push — investígalo.
+comprobación local y el push - investígalo.
 
 ### 6. Confirmar + etiquetar
 
 ```bash
 git add -A
 git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z — titular de la fase + resumen"
+git tag -a vX.Y.Z -m "vX.Y.Z - titular de la fase + resumen"
 ```
 
 Los mensajes de etiqueta son anotados, de varias líneas y
@@ -146,11 +146,11 @@ Cuando el ciclo de lanzamiento actualiza dependencias (Vite,
 React, etc.), mantén cada actualización como su propio commit.
 Motivos:
 
-- **Granularidad de bisección** — una regresión se aísla a una
+- **Granularidad de bisección** - una regresión se aísla a una
   sola actualización.
-- **Legibilidad del CHANGELOG** — los lectores ven la motivación
+- **Legibilidad del CHANGELOG** - los lectores ven la motivación
   real de cada actualización.
-- **Reversión** — una actualización problemática puede revertirse
+- **Reversión** - una actualización problemática puede revertirse
   de forma independiente.
 
 El patrón completo está documentado en

@@ -571,7 +571,7 @@ def evaluate_user(db: Session, user_id: str) -> BadgeEvalResult:
                     dirty = True
         except Exception:  # noqa: BLE001
             logger.exception(
-                "Badge evaluator for %r raised — skipping this evaluation.",
+                "Badge evaluator for %r raised - skipping this evaluation.",
                 key,
             )
     if dirty:

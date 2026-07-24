@@ -274,7 +274,7 @@ GET /api/plugins/tools/spaced/{project_id}?lang=en
 ]
 ```
 
-## Sessionプラグイン — ストリーミング + 発音（v1.6.0+、v1.18.0+）
+## Sessionプラグイン - ストリーミング + 発音（v1.6.0+、v1.18.0+）
 
 ```
 POST /api/plugins/session/{id}/message/stream  (SSE)
@@ -282,9 +282,9 @@ POST /api/plugins/session/{id}/message/stream  (SSE)
 
 `/message`と同じボディ形式; 3種類のSSEイベントを発行:
 
-- `start` — ペイロード`{user_message}`（ユーザーターンが永続化された）。
-- `chunk` — ペイロード`{delta}`（AIプロバイダーのストリームから到着する1つ以上のテキストチャンク）。
-- `done` — ペイロードは同期的な`/message`レスポンスと同一: アシスタントメッセージ + cycle_step + タイミング + オプションのサイクル遷移カード。
+- `start` - ペイロード`{user_message}`（ユーザーターンが永続化された）。
+- `chunk` - ペイロード`{delta}`（AIプロバイダーのストリームから到着する1つ以上のテキストチャンク）。
+- `done` - ペイロードは同期的な`/message`レスポンスと同一: アシスタントメッセージ + cycle_step + タイミング + オプションのサイクル遷移カード。
 
 ```
 GET  /api/plugins/session/pronunciation/eligibility/{project_id}

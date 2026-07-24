@@ -124,10 +124,22 @@ Requires domain knowledge. Not automatable.
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
 - [ ] Free Text: correction READABLE (token diff understandable)
 - [ ] Picture Choice: tiles SAME height
+- [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
+      authored `difficulty` (1-5) shows a small badge above the exercise
+      with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
+      `difficulty` (the whole legacy corpus) show NO badge (exercise looks
+      as before). Applies to every exercise type (Matching/Cloze/Free-Text/
+      Word-Tiles/Picture-Choice/Multiple-Choice + ext types). Badge reads
+      cleanly in all 6 themes (token-backed). Transparency only - it changes
+      neither ordering nor scoring.
 
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628
       it lives behind the panel, no longer directly visible)
+- [ ] "Options" button sits in the SAME ROW as the progress indicator
+      ("Step n of m"), not below it (desktop: bar on the left, button
+      beside it on the right; mobile: tightly packed or a clean wrap,
+      no overlap) (#1942)
 - [ ] Exam mode: no hints, result at the end, 1.5x XP
 - [ ] Timed mode: countdown bar visible, color transition
 - [ ] Error mode: only error cards (after at least 1 error)
@@ -139,6 +151,13 @@ Requires domain knowledge. Not automatable.
 - [ ] Error-replay completion ("All errors corrected!"): Enter (without a
       click) triggers "Back to lesson" (#1864); clicking the button still
       works
+- [ ] Lesson summary ("You finished: ..."): with a next lesson available,
+      Enter (without a click) triggers the PRIMARY card "Next Lesson ->
+      Start" - not a secondary card (e.g. "Review"); clicking the buttons
+      still works (#1943)
+- [ ] Last lesson of a set (no "Next Lesson"): on the summary, Enter does
+      nothing wrong - no error, no navigation to a non-existent lesson
+      (#1943)
 - [ ] Retry errors for matching (#1874): play a matching exercise with a
       mix of correct/wrong pairs, open "Retry errors" -> only the wrong
       pairs appear (not all). With a single wrong pair, correct pairs are
@@ -192,11 +211,87 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       rephrases theory in its own words + generates exercises; WITHOUT
       an AI key: friendly notice, no crash; "Next" only after a
       successful generation
+- [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
+      a title → click the "Knowledge lesson from text" card → stays on
+      step 1 with the friendly "A title is required." message (NOT the
+      book-text step, NOT the raw schema error on save); with a title →
+      the book-text step opens normally and saving succeeds
+- [ ] **File upload in the book-text step (#1927):** "Load from file
+      (EPUB, DOCX, TXT, MD)" button above the text field; pick an EPUB → a
+      section list appears (checkboxes, title + character count);
+      Markdown file → split at headings; TXT without headings → one
+      section; broken / oversized file (> 20 MiB) → clear error
+      message, no crash; the rights hint mentions uploading
+- [ ] **DOCX upload (#1927, phase 2b):** a Word file with heading
+      styles (including German Word, "Ueberschrift 1") → chapters are
+      detected and offered as a list; a Word file WITHOUT heading
+      styles (only bold-formatted "headings") → ONE whole-document
+      section, the text still lands editable in the field; a broken
+      .docx → clear error message, no crash
+- [ ] **Multi-select + exclusion heuristic + batch (#1949):** upload a
+      file with several sections INCLUDING a preface / glossary / table
+      of contents → typical non-learning-content sections are UNCHECKED
+      by default, yet still visible and manually checkable (a hint line
+      explains it); EXACTLY ONE section selected → the "Insert into text
+      field" button fills the text field (with existing text: a "Replace"
+      confirmation dialog), preview shown, then the normal single
+      generation (regression); MULTIPLE sections selected → the "Generate
+      N lessons" button starts batch generation with a progress indicator
+      ("Generating lesson 2 of 5 …") → one lesson per section, order =
+      document order (not selection order); Review shows "N lesson(s)" +
+      the title list; Save → one set with N lessons; if a single
+      generation fails, the others continue and the summary reports "X of
+      N" + the failed sections; with no AI key → key hint, no batch
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";
       foreign-repo lessons show NO Edit; analysis lessons route to the
       import page
+- [ ] **Reopen a plain (no-extension) lesson stays saveable (#1919):**
+      create a lesson via Auto-generate (only the six CORE types, no
+      extension exercise), Save locally → reopen via Edit → step to Review:
+      the "Valid lesson structure" check is GREEN and "Save changes" works
+      (previously it failed with "ext_payload must be object" in API/server
+      mode)
+- [ ] **Edit a book-text lesson (#1967):** create a lesson via "Knowledge
+      lesson from text" (the book-text path — theory + generated exercises,
+      NO vocabulary cards), Save locally → reopen via "Edit lesson" → "Next"
+      goes STRAIGHT to the exercise editor with the actually generated
+      exercises (NOT the empty vocabulary-card editor, which previously
+      blocked the Next button); the 3-step flow is Metadata → Exercises →
+      Review; Review has NO "At least 4 cards" row and "Save changes" is
+      enabled; after saving, theory + exercise steps are preserved.
+      Regression: a normal card lesson (Vocabulary list) AND an extension
+      lesson still open correctly for editing
+- [ ] **Edit a small book-text lesson (< 5 exercises) (#1970):** a book-text
+      lesson whose generator produced only a few exercises (e.g. 4, because
+      word-tiles/picture-choice/multiple-choice were skipped for lack of
+      example sentences/images), Save locally → reopen via "Edit lesson" →
+      ALL saved exercises are shown; "Next" is NOT blocked by "5 exercises
+      needed" and "Save changes" is enabled (the minimum count is a
+      create-time requirement, never re-imposed when editing an already-valid
+      lesson); the misleading "word-tiles/picture-choice/multiple-choice
+      produced no exercises" hint + the generate config do NOT appear in edit
+      (no cards to generate from). IMPORTANT: opening Edit does NOT change the
+      stored file (no auto-save); no exercises are lost
+- [ ] **Edit a multi-lesson set (lesson picker) (#1971):** a set that holds
+      MORE THAN ONE lesson (e.g. a book-text upload with multi-section select →
+      one lesson per section), reopen via "Edit lesson" → a **lesson picker**
+      (dropdown of all lessons in the set) appears at the top; the first lesson
+      is pre-selected with its exercises shown. Pick another lesson → its
+      theory/exercises load (previously unreachable). With unsaved changes,
+      switching prompts a confirm dialog ("Switch lesson?"). Edit one lesson +
+      Save → only that lesson is replaced, the others survive, and the SET
+      title/level/languages are NOT changed (not overwritten by the edited
+      lesson's title). Regression: a set with a single lesson shows NO picker
+- [ ] **Book reference survives editing (#1989):** create a lesson via the
+      book-text wizard WITH the "book (optional)" fields filled in (title,
+      author, URL, ISBN/ASIN) + Save → the lesson's "Vertiefe das Thema" section
+      shows the book reference. Reopen via "Edit lesson", change something, Save
+      → the book reference is STILL there (previously it vanished after the first
+      edit). It survives across MULTIPLE edit cycles; "Save as a copy" also keeps
+      the book reference. Regression: a lesson WITHOUT a book gets NO forced
+      empty book object on edit
 - [ ] **Migrate legacy English prompts on edit (#1860):** open a
       pre-#1855 legacy lesson (exercise instructions hardcoded in English,
       e.g. "Match each word with its translation.") via "Edit a lesson" →
@@ -207,14 +302,30 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       English) stays unchanged. Leave the editor WITHOUT saving → the
       original in Dexie is unchanged (no silent write); only saving
       (overwrite / save-as-copy) persists the migrated version
-- [ ] **Combine lessons (#1741):** My Content → "Combine into a set"
+- [ ] **Combine lessons (#1741):** [E2E: `combine-lessons.spec.ts`] My Content → "Combine into a set"
       toggle → checkbox selection (own sets only) → "Combine" dialog:
       New set (title required) vs. add to an existing set; originals are
       kept; mixed languages/levels → non-blocking warning
 - [ ] **Same-language hint (#1721/#1730):** source == target shows a
-      neutral hint, does NOT block "Next"; no "valid language pair" check
-      row on Review anymore; Save enables once the real checklist passes
-      (title, ≥4 cards, ≥5 exercises, ≥2 types, valid structure)
+      neutral hint, does NOT block "Next"; Save enables once the checklist
+      passes
+- [ ] **Content-domain selector in Step 1 (#1716):** Step 1 shows a
+      "Domain" field. Default "Language" → source/target languages + CEFR
+      level are shown (as before). Choosing a knowledge domain (e.g.
+      "Psychology", "Programming", "Knowledge") collapses the pair to a
+      single "Content language" (source == target), the level gains a "No
+      level" option, and a hint explains knowledge content. Changing the
+      content language keeps source and target equal. Switching back to
+      "Language" splits the pair again and restores the level to A1 (if it
+      was "No level"). Save → the lesson carries the chosen domain
+      (`domain: psychology` …); a language lesson carries NO `domain` field.
+      Editing a saved knowledge lesson reopens with the right domain +
+      content language
+- [ ] **Language-pair check row (#1929):** Review shows SIX checklist rows
+      (title, "Language pair is valid", ≥4 cards, ≥5 exercises, ≥2 types,
+      valid structure). "Language pair is valid" is green once BOTH source
+      and target are supported codes — a same-language pair (de → de) is
+      VALID (no "source != target" gate)
 - [ ] **Structure-check reason (#1724):** a failing "Valid lesson
       structure" check names a concrete reason, not just a ✗
 - [ ] **Template titles (#1674/#1756):** template cards show readable
@@ -248,7 +359,20 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       `requires_extensions: ["ext:al-dictation@1"]`** (whether added via the core
       picker OR the extension wizard) and is playable. **Regression:** the
       existing extension-wizard path for dictation still works unchanged
-- [ ] **Multiple-choice single/multi mode control (#1888):** In the MC inline
+- [ ] **Dictation audio upload (#1911, Slice 3):** In the dictation editor
+      (core picker OR extension wizard) the audio field shows an **"Upload
+      audio"** button above a **"…assets/audio/clip.mp3"** path input. Click
+      Upload → a file picker offers MP3/OGG/WAV. Pick a real clip → an inline
+      **audio player + "Remove"** appear (the path box stays blank; the base64
+      blob is not shown), and the accept-transcriptions list still works. Save
+      the lesson, play it: **"Listen first" plays the uploaded clip** in the
+      lesson (both storage modes, no assets folder needed — the clip rides in
+      the lesson JSON as a data URI, surviving export/import). **Remove** clears
+      it. **Regression:** typing an `assets/audio/…` path still works as the
+      alternative (no upload). **Errors:** a too-large file (> 2 MB) OR a wrong
+      format (e.g. `.mp4`) shows a clear inline error and does not crash;
+      nothing is stored
+- [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first
       option row**. A new MC exercise (AI-generated OR manually added) defaults
@@ -259,7 +383,7 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       pruned to exactly one correct. An existing MC exercise with a set
       `multiple` value opens **unchanged** in its original state.
 
-### Card image upload (#1763 / #1764)
+### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
 Location: Create-Lesson Step 2 (card editor), in the add-card form +
 each card row (`CardImageField`).
@@ -280,8 +404,13 @@ each card row (`CardImageField`).
 ### Lesson player UX (v2.3.0)
 - [ ] Pause button now lives in the sticky footer (#1644), pausing
       works from there
-- [ ] Title area slimmer, no in-lesson description anymore (#1635)
+- [ ] Auto-advance + "Back" (#1921): with "Advance automatically"
+      (Settings -> Learning) ON, answer an exercise correctly so the app
+      jumps to the next step by itself -> then click "Back": the previous
+      (already-solved) exercise STAYS and does NOT jump forward again;
+      the "Continue" button is still clickable
 - [ ] Lesson summary shows only ONE favorite button (#1649)
+      [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
 
 ### Invalid lesson: friendly error message (#1808 / #1824)
@@ -337,6 +466,11 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] "Generate exercises" on theory-only: AI returns a result
 - [ ] Quality of the generated exercises: sensible? type variety?
 - [ ] "Continue session" after chat import: AI knows the context
+- [ ] Tutor chat (assistant-ui, #1126): type → send (or Enter), the reply
+      streams in; the 7-step cycle progress advances; read-aloud + dictation
+      work; resuming a regular session shows the prior conversation
+- [ ] Imported session opens with the AI asking the first question on its own
+      (no user turn first), the chat starts clean
 - [ ] AI content validation: report sensible? provider+model shown?
 - [ ] No button without a key leads to an error toast (disabled + tooltip)
 
@@ -386,6 +520,24 @@ Click through once for EACH theme:
       #1512); drawer links 44px, closes after navigation
 - [ ] Known open issue #1569 (caret/touch offset by 1-2 lines in the
       lesson flow): reproduce + add notes to the issue
+
+#### Theory read-aloud on iOS: long text (#1928) - MANDATORY
+
+iOS Safari silently stops an unchunked utterance after ~15 seconds. Since
+#1928 a theory block is split into chunks and spoken as a queue. Measured:
+617 of 621 theory runs exceed the chunk budget; a median run is 1551
+characters.
+
+- [ ] On the iPhone, open a lesson with a long theory text and start
+      read-aloud
+- [ ] The text is read **completely** and does not break off after ~15
+      seconds
+- [ ] On a multi-step theory block the lesson auto-advances to the next
+      step while reading (chunking must not distort the position in the
+      text)
+- [ ] No audible stutter between chunks
+- [ ] Known platform limit, NOT a bug: pause/resume has no effect on iOS
+      Safari (it stops and restarts there)
 
 #### App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 
@@ -474,7 +626,7 @@ Run: `make test` (backend part)
 
 ---
 
-## Automated: Dexie-Smoke E2E (Playwright TS, 31 spec files)
+## Automated: Dexie-Smoke E2E (Playwright TS, 45 spec files)
 
 Coverage:
 - Full lesson playthrough (all exercise types)
@@ -484,6 +636,16 @@ Coverage:
 - Settings
 - Backup round-trip (programmatic)
 - All routes reachable (no 404)
+- Card image upload: real file input + canvas encoding, preview, remove,
+  unsupported-type error, asset-path toggle
+  (`card-image-upload.spec.ts`, #1763/#1764)
+- Multiple-choice single/multi mode toggle in the inline editor
+  (radio<->checkbox, second correct option, collapse on switch-back)
+  (`mc-single-multi-toggle.spec.ts`, #1888)
+- Lesson summary renders exactly ONE favorite button
+  (`lesson-summary-favorite.spec.ts`, #1649)
+- Combine lessons: select -> dialog -> new set persisted, originals kept
+  (`combine-lessons.spec.ts`, #1741)
 
 Run: `make test-dexie-smoke`
 

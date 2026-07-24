@@ -16,7 +16,7 @@
  *   record, so a stale dismissal can never hide real local content.
  * - /discover intentionally ignores dismissals — that surface exists to
  *   (re-)discover content, so a deleted set stays one download away.
- * - Keys are ``source::set-id`` (the {@link isHiddenSet} shape), stored in
+ * - Keys are ``source::set-id`` (the ``source``-scoped set identity), stored in
  *   localStorage (works in BOTH storage modes) and write-through-mirrored
  *   into the Dexie ``userData`` canonical store (#791 Teil B pattern), so
  *   the record survives a Dexie restore and rides in the ``.alb`` backup's

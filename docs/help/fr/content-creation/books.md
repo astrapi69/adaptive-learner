@@ -4,7 +4,7 @@ Un dépôt de contenu peut fournir des **livres recommandés** par
 domaine. Le navigateur de contenu les affiche comme lectures
 complémentaires lorsque tu consultes un ensemble de ce domaine.
 C'est optionnel, ce n'est pas un ensemble de leçons, et cela ne
-nécessite aucun backend — cela fonctionne dans les deux modes de
+nécessite aucun backend - cela fonctionne dans les deux modes de
 stockage.
 
 ---
@@ -62,12 +62,12 @@ domains:
 | `tags` | non | Liste de mots-clés. |
 
 La clé sous `domains:` (p. ex. `ai`, `psychology`) est le
-**domaine** auquel les livres sont associés — le même domaine que
+**domaine** auquel les livres sont associés - le même domaine que
 celui qu'utilisent tes ensembles de contenu.
 
 ---
 
 ## Pages connexes
 
-- [Navigateur de contenu](../features/content-browser.md) — où les recommandations apparaissent
-- [Créer des leçons — aperçu](overview.md)
+- [Navigateur de contenu](../features/content-browser.md) - où les recommandations apparaissent
+- [Créer des leçons - aperçu](overview.md)

@@ -67,6 +67,19 @@ class TestContentSetValidators:
         assert s.domain == "psychology"
         assert s.domain_label == "Psychologie"
 
+    def test_visibility_defaults_to_visible(self) -> None:
+        # #1707 — the manifest set entry gained an optional ``visibility``
+        # flag in learn-content-engine 0.14.0. Absent ⇒ visible, so every
+        # pre-0.14.0 manifest keeps loading unchanged.
+        assert _valid_set().visibility.value == "visible"
+
+    def test_accepts_visibility_hidden(self) -> None:
+        # #1707 — a conformance/reference fixture declares ``visibility:
+        # hidden`` so a consumer app hides it. Before this field existed,
+        # extra="forbid" rejected the whole manifest.
+        s = _valid_set(visibility="hidden")
+        assert s.visibility.value == "hidden"
+
     def test_book_defaults_to_none(self) -> None:
         assert _valid_set().book is None
 

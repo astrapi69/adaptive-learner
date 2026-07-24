@@ -1,4 +1,4 @@
-"""GitHub raw-URL adapter (Phase 43 / EXP-002 / 2C-github — P-106).
+"""GitHub raw-URL adapter (Phase 43 / EXP-002 / 2C-github - P-106).
 
 Thin async wrapper around ``httpx.AsyncClient`` that fetches
 files from public GitHub repos via the raw.githubusercontent.com

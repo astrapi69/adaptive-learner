@@ -8,8 +8,8 @@
  *   - At step 7 with a topic_transition response carrying
  *     ``looped: true`` / ``new_cycle_count: 2``, the session
  *     resets to step 1 of cycle 2.
- *   - SessionChat renders the cycle-transition card between
- *     the two cycles.
+ *   - The assistant-ui thread renders the cycle transition inline between
+ *     the two cycles (the summary + next topic as an assistant turn, #1126).
  *   - The session header badge surfaces ``Cycle 2``.
  *   - End → RatingDialog summarises the multi-cycle journey
  *     (the ``rating-cycles-summary`` block appears when
@@ -164,16 +164,23 @@ test.describe("Session auto-loop (multi-cycle)", () => {
         await expect(page.getByTestId("session")).toBeVisible();
         await expect(page.getByTestId("cycle-progress")).toBeVisible();
 
-        // Step 1 -> 2 -> ... -> 7 -> transition. Seven turns.
+        // Step 1 -> 2 -> ... -> 7 -> transition. Seven turns. Wait for each
+        // turn's reply TEXT (robust to the extra assistant bubble the auto-loop
+        // appends after turn 7 — the inline cycle-transition, #1126).
         for (let i = 1; i <= 7; i += 1) {
             await sendChatMessage(page, `Message ${i}`);
-            const assistants = page.getByTestId("chat-message-assistant");
-            await expect(assistants).toHaveCount(i, {timeout: 10_000});
+            await expect(
+                page.getByText(`Mock AI reply ${i}.`),
+            ).toBeVisible({timeout: 10_000});
         }
 
-        // After the 7th message: cycle-transition card +
-        // session-cycle-counter badge.
-        await expect(page.getByTestId("chat-cycle-transition")).toBeVisible();
+        // After the 7th message the auto-loop appends the cycle transition as an
+        // inline assistant turn (#1126): the cycle summary + next topic land in
+        // the visible conversation, and the header badge surfaces Cycle 2.
+        await expect(
+            page.getByText("First cycle complete; subject mostly grasped."),
+        ).toBeVisible();
+        await expect(page.getByText("Past tense — preterite")).toBeVisible();
         await expect(page.getByTestId("session-cycle-counter")).toBeVisible();
         await expect(
             page.getByTestId("session-cycle-counter"),

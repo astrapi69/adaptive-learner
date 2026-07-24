@@ -1,0 +1,213 @@
+# Visual baseline sync (#1662).
+#
+# WHY: the `update_baselines=true` dispatch of `visual-regression.yml`
+# (#1532) renders the baseline PNGs IN CI and uploads them as the
+# `visual-baselines` artifact, deliberately never auto-committing them.
+# Getting that artifact onto the PR branch means download -> review ->
+# commit, an authenticated network step the automated agents working
+# these PRs cannot perform: the artifact host (`*.blob.core.windows.net`)
+# is egress-blocked for CCW/Claude-Code sessions, and non-authenticated
+# web contexts have no `gh` token. So the artifact->commit handshake
+# bounced back to the maintainer's machine on EVERY visual-critical PR
+# (#1540/#1567, #1648/#1649, ...).
+#
+# WHAT: this workflow renders the baselines in CI (same environment as
+# `visual-regression.yml`, so font anti-aliasing matches - #1532) and
+# pushes them straight onto the PR head branch as a
+# `chore(visual): refresh baselines` commit. The artifact download step
+# disappears entirely - the runner already has the freshly rendered PNGs
+# in its checkout.
+#
+# Human review stays MANDATORY (#1532): the push lands as a normal commit
+# IN the PR, reviewed image by image before merge. It is NEVER merged
+# here and NEVER a blind auto-accept. The #1640 presence gate stays; this
+# only changes HOW the baselines get onto the branch, not that they must.
+#
+# HOW to trigger (either works for a human OR an agent):
+#   - add the `refresh-visual-baselines` label to the PR, or
+#   - dispatch this workflow with the PR number:
+#       gh workflow run visual-baseline-sync.yml -f pr_number=<N>
+#
+# ONE-TIME maintainer setup (see docs/developer/testing.md):
+#   - create the `refresh-visual-baselines` label once, and
+#   - (optional but recommended) add a `VISUAL_BASELINE_TOKEN` PAT/App
+#     token secret with `contents: write`. With it, the pushed baseline
+#     commit re-triggers the "Visual baseline gate" so it goes green
+#     automatically. Without it, the push still works but the gate must be
+#     re-run once (a pushed-by-GITHUB_TOKEN commit does not re-trigger PR
+#     workflows) - the PR comment spells this out.
+#   The PR housekeeping steps (label removal + status comment) use the
+#   default GITHUB_TOKEN, scoped via the job `permissions:` block, so they
+#   do NOT depend on the PAT's scope (#2014).
+
+name: Visual baseline sync
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number whose head branch should receive the refreshed baselines."
+        type: string
+        required: true
+
+concurrency:
+  group: visual-baseline-sync-${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  sync:
+    name: Render + push visual baselines onto the PR branch
+    # Label path: only the dedicated label. Dispatch path: always.
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || github.event.label.name == 'refresh-visual-baselines'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.VISUAL_BASELINE_TOKEN || github.token }}
+      HAS_PAT: ${{ secrets.VISUAL_BASELINE_TOKEN != '' }}
+    steps:
+      - name: Resolve PR number
+        id: pr
+        # Event-derived values go through env (never interpolated into the
+        # script body) so a crafted PR number / branch name can't inject.
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+        run: |
+          case "$PR_NUMBER" in
+            ''|*[!0-9]*)
+              echo "::error::PR number must be a positive integer, got: '$PR_NUMBER'."
+              exit 1
+              ;;
+          esac
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Look up the PR head branch
+        id: head
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          data=$(gh pr view "$PR_NUMBER" --repo "$REPO" \
+            --json headRefName,isCrossRepository,state)
+          state=$(echo "$data" | jq -r '.state')
+          cross=$(echo "$data" | jq -r '.isCrossRepository')
+          branch=$(echo "$data" | jq -r '.headRefName')
+          if [ "$state" != "OPEN" ]; then
+            echo "::error::PR #$PR_NUMBER is $state - nothing to sync."
+            exit 1
+          fi
+          if [ "$cross" = "true" ]; then
+            echo "::error::PR #$PR_NUMBER comes from a fork - this workflow cannot push to a fork branch (#1662). Refresh the baselines locally and ask the author to push, or push from a same-repo branch."
+            exit 1
+          fi
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.head.outputs.branch }}
+          token: ${{ secrets.VISUAL_BASELINE_TOKEN || github.token }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      - name: Build dexie frontend
+        working-directory: frontend
+        run: VITE_STORAGE_MODE=dexie bun run build
+
+      - name: Install e2e deps
+        working-directory: e2e
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      # Same config + environment as visual-regression.yml, so the
+      # rendered PNGs match what the nightly diff compares against.
+      - name: Regenerate baselines
+        working-directory: e2e
+        run: npx playwright test --config=playwright.visual.config.ts --update-snapshots
+
+      - name: Commit + push refreshed baselines
+        id: push
+        env:
+          BRANCH: ${{ steps.head.outputs.branch }}
+        run: |
+          if git diff --quiet -- e2e/visual/screenshots; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Baselines already current - nothing to push."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add e2e/visual/screenshots
+          git commit \
+            -m "chore(visual): refresh baselines (#1662)" \
+            -m "CI-rendered visual baselines, auto-synced by visual-baseline-sync. Review every changed PNG before merge (#1532)."
+          git push origin "HEAD:$BRANCH"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "::notice::Pushed refreshed baselines to $BRANCH. Review the changed PNGs image by image (#1532) - NOT auto-merged."
+
+      - name: Remove the trigger label
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          # Use the default GITHUB_TOKEN (scoped via the job ``permissions:``
+          # block) for PR housekeeping, NOT the VISUAL_BASELINE_TOKEN PAT — the
+          # PAT is only needed for the push (so the commit re-triggers the
+          # gate) and may lack pull-requests scope (#2014).
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr edit "$PR_NUMBER" --repo "$REPO" \
+            --remove-label refresh-visual-baselines
+
+      - name: Comment on the PR
+        if: always()
+        continue-on-error: true
+        env:
+          # Default GITHUB_TOKEN (job-``permissions``-scoped), not the PAT — see
+          # the label step above (#2014).
+          GH_TOKEN: ${{ github.token }}
+          CHANGED: ${{ steps.push.outputs.changed }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ "$CHANGED" = "true" ]; then
+            body=$'Refreshed the CI-rendered visual baselines and pushed them to this branch as `chore(visual): refresh baselines` (#1662).\n\n**Review every changed PNG image by image before merge** — auto-sync never means blind accept (#1532).'
+            if [ "$HAS_PAT" != "true" ]; then
+              body="$body"$'\n\n_Pushed with the default `GITHUB_TOKEN`, so the **Visual baseline gate** check does not re-trigger automatically. Re-run that check once (or toggle any label) and it passes now that the baselines are present. Configuring a `VISUAL_BASELINE_TOKEN` PAT removes this last step._'
+            fi
+          elif [ "$CHANGED" = "false" ]; then
+            body=$'`visual-baseline-sync` ran, but the CI-rendered baselines already matched — nothing to push (#1662). If the gate is still red, the visual-critical change may be genuinely 0-diff (consider the `visual-baselines-unaffected` label).'
+          else
+            body=$'`visual-baseline-sync` did not complete — see the workflow run for details (#1662).'
+          fi
+          gh pr comment "$PR_NUMBER" --repo "$REPO" --body "$body"

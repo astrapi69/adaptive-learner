@@ -17,8 +17,8 @@ de ambiente `ADAPTIVE_LEARNER_SECRET_KEY`, ou via `secret_key:`
 em `~/.config/adaptive-learner/secrets.yaml`.
 
 Nenhum dos modos envia telemetria, análises ou as suas
-mensagens para terceiros além do fornecedor de IA que escolheu
-— e esse apenas vê o conteúdo da mensagem que esperaria
+mensagens para terceiros além do fornecedor de IA que escolheu -
+e esse apenas vê o conteúdo da mensagem que esperaria
 (prompt do sistema + o seu texto + as respostas anteriores da
 IA na sessão).
 
@@ -100,15 +100,15 @@ Sim. Três caminhos de exportação incluídos:
 
 ## O que é a funcionalidade de voz?
 
-Três integrações da Web Speech API (desde v1.18.0):
+Três integrações da Web Speech API:
 
 - **Texto para Fala** nas respostas da IA + resultados da
-  Avaliação — um botão ▶ ao lado de cada um fala-o em voz
+  Avaliação - um botão ▶ ao lado de cada um fala-o em voz
   alta, com correspondência de idioma.
-- **Fala para Texto** na entrada da Sessão — um botão 🎤
+- **Fala para Texto** na entrada da Sessão - um botão 🎤
   captura a sua voz e preenche a área de texto com transcrições
   provisórias antes de enviar.
-- **Prática de Pronúncia** para projetos de idiomas — visite
+- **Prática de Pronúncia** para projetos de idiomas - visite
   `/pronunciation`, a IA gera uma frase alvo, você fala, e
   uma IA juiz pontua a semelhança + sugere melhorias.
 
@@ -126,20 +126,19 @@ recomendado, vocabulário (para conversas em idiomas) e um
 currículo sugerido. Um clique semeia um Currículo + inicia
 uma sessão direcionada a partir da análise.
 
-A exportação Markdown por conversa do Claude.ai foi o caso de
-auditoria v1.19.0 — o analisador inclui extração completa de
-timestamps + preservação de limite de papel para esse formato
-(BL-25 / BL-26 / BL-28 fechados na v1.19.1).
+A exportação Markdown por conversa do Claude.ai é um caso de
+importação validado - o analisador inclui extração completa de
+timestamps + preservação de limite de papel para esse formato.
 
 ## Sincronização entre dispositivos?
 
-Sincronização bidirecional em rede local desde v1.0.0.
+Sincronização bidirecional em rede local.
 Definições → Sincronização → "Emparelhar este dispositivo":
 digitalize o código QR no ecrã do outro dispositivo (câmara
 traseira), ou cole o URL de emparelhamento. Uma vez emparelhado,
 os botões de envio + receção trocam dados; os conflitos passam
 por um resolvedor de fusão de IA. 28 tabelas na superfície de
-sincronização a partir de v1.19.0 (assuntos + etiquetas +
+sincronização (assuntos + etiquetas +
 questões de estudo incluídas).
 
 ## Como é diferente do ChatGPT?
@@ -150,16 +149,16 @@ que usa uma IA internamente mas adiciona:
 
 1. **Uma matriz de 6 métodos × 7 passos** de prompts de sistema
    personalizados.
-2. **Avaliação de passo por turno** — uma segunda chamada de IA
+2. **Avaliação de passo por turno** - uma segunda chamada de IA
    julga a prontidão e pode movê-lo para a frente / para trás.
 3. **Auto-loop para novos ciclos** quando o tópico é integrado.
 4. **Um perfil** das suas preferências de aprendizagem da
    avaliação de 12 perguntas.
-5. **Rastreamento a longo prazo** — ProgressCommits, mapa de
+5. **Rastreamento a longo prazo** - ProgressCommits, mapa de
    calor de sequência, XP, emblemas, gráficos de tempo por
    passo. O ChatGPT esquece quando fecha o separador.
-6. **Liberdade de fornecedor** — Anthropic, OpenAI ou Gemini.
-7. **Opção local primeiro** — tudo no seu navegador, nada
+6. **Liberdade de fornecedor** - Anthropic, OpenAI ou Gemini.
+7. **Opção local primeiro** - tudo no seu navegador, nada
    enviado para um servidor (exceto as suas chamadas de IA).
 
 ## E se a IA correr mal?
@@ -168,7 +167,7 @@ O sistema falha visivelmente:
 
 - **Chave de API errada**: a chamada de IA devolve uma mensagem
   de erro clara, apresentada em linha no chat.
-- **Fornecedor em baixo**: o mesmo — o erro renderiza o estado
+- **Fornecedor em baixo**: o mesmo - o erro renderiza o estado
   HTTP da API do fornecedor.
 - **Falha na análise de JSON do avaliador**: um avanço
   determinístico de +1 entra em ação (limitado ao passo 7),

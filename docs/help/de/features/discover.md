@@ -13,7 +13,7 @@ hast. **Entdecken ist der Standard-Tab** des Content-Hubs, damit
 neue Besucher zum Finden von Inhalten geführt werden statt auf einer
 leeren „Meine Inhalte"-Seite zu landen.
 
-<!-- TODO: Screenshot — der Entdecken-Tab mit Such-/Filter-Leiste, Ansicht-Umschalter und Download-Knöpfen pro Set -->
+<!-- TODO: Screenshot - der Entdecken-Tab mit Such-/Filter-Leiste, Ansicht-Umschalter und Download-Knöpfen pro Set -->
 
 ---
 
@@ -22,7 +22,7 @@ leeren „Meine Inhalte"-Seite zu landen.
 Entdecken stützt sich auf einen **Suchindex** über den Katalog. Oben
 sitzt eine **kompakte Such-/Filter-Leiste**: Tippe auf **Suche**, um
 eine Anfrage einzugeben, oder auf **Filter**, um den Katalog mit
-**kombinierbaren Filtern** einzugrenzen — **Sprache**, **Niveau**,
+**kombinierbaren Filtern** einzugrenzen - **Sprache**, **Niveau**,
 **Domäne**, **Trust**-Level und **KI-geprüft**. Suche und Filter
 wirken zusammen, und die Leiste bleibt kompakt (sie klappt nur den
 Teil aus, den du gerade nutzt), damit sie auf kleinen Bildschirmen
@@ -32,7 +32,7 @@ Die Eingabe filtert sofort über Set-Titel, Beschreibungen, Domänen,
 Lektionstitel, Karten-Vorder- und -Rückseiten und Tags. Die Suche
 ist tolerant gegenüber Groß-/Kleinschreibung und Akzenten und
 versteht deutsche Digraphen (ae/oe/ue/ss). Der Index wird bei der
-ersten Interaktion träge aufgebaut — kein Backend-Aufruf, er
+ersten Interaktion träge aufgebaut - kein Backend-Aufruf, er
 funktioniert in beiden Speichermodi.
 
 ---
@@ -55,7 +55,7 @@ das Set in deinen lokalen Cache (IndexedDB im reinen Browser-Modus,
 der Dateisystem-Cache im Server-Modus); danach erscheint es unter
 **Meine Inhalte** und ist offline spielbar.
 
-Jedes Set zeigt ein **Quellen-Badge** — Offiziell / Gebündelt,
+Jedes Set zeigt ein **Quellen-Badge** - Offiziell / Gebündelt,
 dein eigenes verbundenes Repo oder Offiziell empfohlen. Der
 **Trust**-Filter (siehe oben) schränkt den Katalog auf eine einzelne
 Quelle oder ein Trust-Level ein. Siehe
@@ -76,6 +76,6 @@ ebenfalls hier. Alte `/import`-Links leiten dorthin um.
 
 ## Verwandte Seiten
 
-- [Content Browser](content-browser.md) — deine heruntergeladenen „Meine Inhalte"
-- [Mehrere Content-Repositories](content-repos.md) — Quellen und Trust-Level
-- [Lektionen und Wiederholungen](../user-guide/lessons.md) — der Lektionsablauf
+- [Content Browser](content-browser.md) - deine heruntergeladenen „Meine Inhalte"
+- [Mehrere Content-Repositories](content-repos.md) - Quellen und Trust-Level
+- [Lektionen und Wiederholungen](../user-guide/lessons.md) - der Lektionsablauf

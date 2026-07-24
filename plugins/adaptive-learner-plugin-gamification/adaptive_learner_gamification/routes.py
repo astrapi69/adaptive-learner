@@ -75,7 +75,7 @@ def spend_xp(
     body: dict[str, Any],
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
-    """#594 Hint Economy — deduct XP for a spent hint.
+    """#594 Hint Economy - deduct XP for a spent hint.
 
     ``body.amount`` is a non-negative number of points to remove; the
     total is clamped at 0. Returns the new XP state. No badge re-eval —
@@ -104,7 +104,7 @@ def list_user_badges(user_id: str, db: Session = Depends(get_db)) -> list[dict[s
 
 @router.get("/badges")
 def list_badge_catalog(db: Session = Depends(get_db)) -> list[dict[str, Any]]:
-    """Public catalog — no user context. For the marketing surface
+    """Public catalog - no user context. For the marketing surface
     and Settings preview."""
     import json
 
@@ -219,7 +219,7 @@ def manual_award(
     body: _ManualAwardBody,
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
-    """Manual XP grant — admin / test entry point.
+    """Manual XP grant - admin / test entry point.
 
     Exposed publicly because there is no auth layer in this
     project (single-user desktop install). Negative amounts are

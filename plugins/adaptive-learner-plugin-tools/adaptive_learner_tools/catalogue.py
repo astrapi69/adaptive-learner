@@ -40,11 +40,11 @@ TOOLS: list[_Tool] = [
         "name": "Anki",
         "url": "https://apps.ankiweb.net/",
         "why_de": (
-            "Spaced-Repetition-Karteikarten — ideal um Regeln und Fehlerkorrekturen "
+            "Spaced-Repetition-Karteikarten - ideal um Regeln und Fehlerkorrekturen "
             "langfristig zu festigen."
         ),
         "why_en": (
-            "Spaced-repetition flashcards — great for cementing rules and "
+            "Spaced-repetition flashcards - great for cementing rules and "
             "error-corrections long-term."
         ),
         "weight_keys": ["deductive", "error_based"],
@@ -53,11 +53,11 @@ TOOLS: list[_Tool] = [
         "name": "NotebookLM",
         "url": "https://notebooklm.google.com/",
         "why_de": (
-            "Aktiver Wissensaufbau aus eigenen Quellen — passend wenn Beispiele "
+            "Aktiver Wissensaufbau aus eigenen Quellen - passend wenn Beispiele "
             "und Kontext deine Methode sind."
         ),
         "why_en": (
-            "Active knowledge-building from your own sources — fits when "
+            "Active knowledge-building from your own sources - fits when "
             "examples and context are your method."
         ),
         "weight_keys": ["inductive", "contextual"],
@@ -75,11 +75,11 @@ TOOLS: list[_Tool] = [
         "name": "Excalidraw",
         "url": "https://excalidraw.com/",
         "why_de": (
-            "Visuelles Skizzieren — gut um Beispiele zu strukturieren oder "
+            "Visuelles Skizzieren - gut um Beispiele zu strukturieren oder "
             "Alltagssituationen zu modellieren."
         ),
         "why_en": (
-            "Visual sketching — good for structuring examples or modelling everyday situations."
+            "Visual sketching - good for structuring examples or modelling everyday situations."
         ),
         "weight_keys": ["contextual", "inductive"],
     },
@@ -87,11 +87,11 @@ TOOLS: list[_Tool] = [
         "name": "Obsidian",
         "url": "https://obsidian.md/",
         "why_de": (
-            "Wissensgraph aus verlinkten Notizen — Theorie und Beispiele "
+            "Wissensgraph aus verlinkten Notizen - Theorie und Beispiele "
             "wandern in dieselbe Struktur."
         ),
         "why_en": (
-            "Linked-notes knowledge graph — theory and examples land in the same structure."
+            "Linked-notes knowledge graph - theory and examples land in the same structure."
         ),
         "weight_keys": ["deductive", "inductive"],
     },

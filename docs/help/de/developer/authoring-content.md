@@ -2,8 +2,8 @@
 
 Dieser Leitfaden beschreibt Schritt für Schritt, wie man ein
 neues Lektionsset für den Adaptive-Learner-Content-Loader
-aufsetzt. Wer ein Sprach- oder Themenset bauen möchte — für den
-Eigengebrauch oder als Beitrag zum öffentlichen Content-Pool —
+aufsetzt. Wer ein Sprach- oder Themenset bauen möchte - für den
+Eigengebrauch oder als Beitrag zum öffentlichen Content-Pool -
 sollte ihn vor der ersten Lektion einmal komplett durchlesen.
 
 ## Was ist ein Content-Set?
@@ -16,12 +16,12 @@ Speichermodi.
 
 Ein Set hat drei Ebenen:
 
-1. **Root-Manifest** (`manifest.yaml`) — listet jedes Set des
+1. **Root-Manifest** (`manifest.yaml`) - listet jedes Set des
    Repos. Wird vom Set Browser für den Quell-Katalog gelesen.
-2. **Set-Manifest** (`sets/{set-id}/manifest.yaml`) — Schwester
+2. **Set-Manifest** (`sets/{set-id}/manifest.yaml`) - Schwester
    des Root-Manifests, listet die Lektions-Dateien des konkreten
    Sets.
-3. **Lektionsdateien** (`sets/{set-id}/lessons/NN-slug.json`) —
+3. **Lektionsdateien** (`sets/{set-id}/lessons/NN-slug.json`) -
    eine JSON-Datei pro Lektion, bei jedem Download gegen das
    Lektions-Schema validiert (siehe *Das Schema ist die alleinige
    Wahrheitsquelle* weiter unten).
@@ -33,7 +33,7 @@ offline in den GitHub-Pages-Build über
 `frontend/scripts/copy-bundled-content.mjs` gebündelt) und eignen
 sich gut als Vorlage. Die aktuelle Größe der Bibliothek (Lektions-,
 Set- und Domänen-Zahlen, die Set-Tabelle und die aktiven Domänen)
-ist der CONTENT-STATS-Block in der Projekt-[`README.md`](https://github.com/astrapi69/adaptive-learner#readme) —
+ist der CONTENT-STATS-Block in der Projekt-[`README.md`](https://github.com/astrapi69/adaptive-learner#readme) -
 dieser Block ist die alleinige Wahrheitsquelle, aus einem frischen
 Content-Checkout generiert, daher dupliziert dieser Leitfaden die
 Zahlen nicht.
@@ -53,12 +53,12 @@ Artefakte neu, und Byte-Paritäts-Gates beweisen, dass `schema/*.json` dem
 gepinnten Engine-Release gleicht. Die Stellen, die früher
 auseinanderdrifteten, können das nicht mehr:
 
-- `schema/lesson.schema.json` (+ Geschwisterdateien) — das
+- `schema/lesson.schema.json` (+ Geschwisterdateien) - das
   maschinenlesbare JSON-Schema (Draft 2020-12). Referenziere es aus
   einer Lektions-`.json` über einen `"$schema"`-Schlüssel auf
   oberster Ebene, um IDE-Autovervollständigung und Inline-
   Validierung zu bekommen.
-- `schema/quality-rules.json` — die geteilten Qualitäts-Minima
+- `schema/quality-rules.json` - die geteilten Qualitäts-Minima
   (z. B. Übungsanzahl, Anzahl akzeptierter Freitext-Antworten), die
   der client-seitige Content-Validator nutzt statt einer zweiten,
   von Hand gepflegten Kopie.
@@ -81,7 +81,7 @@ eigenen CI gegen diesen Spiegel.
 
 **Prozedur für Formatänderungen (Schema-Autorität in der Engine):**
 eine Änderung am Lektionsformat beginnt in der Engine oder wird dort
-ratifiziert — zuerst Engine-PR + npm-Release; dann bumpt diese App
+ratifiziert - zuerst Engine-PR + npm-Release; dann bumpt diese App
 den Engine-Pin (`frontend/package.json` + `schema/engine-version.txt`)
 und führt `make sync-schema` erneut aus, was den Spiegel auffrischt und
 die strukturelle Pydantic-Schicht regeneriert; nur neue semantische
@@ -94,8 +94,8 @@ Schritt ist sichtbar, nie stiller Drift.
 
 Jedes Content-Set deklariert das Sprach-PAAR, das es vermittelt:
 
-- **`target_language`** — was der Lernende LERNT (z. B. `fr`).
-- **`source_language`** — was der Lernende bereits SPRICHT, also die
+- **`target_language`** - was der Lernende LERNT (z. B. `fr`).
+- **`source_language`** - was der Lernende bereits SPRICHT, also die
   Sprache, in der die Karten-**`back`**-Felder, **`notes`** und der
   **Theorie**-Text geschrieben sind (z. B. `de`).
 
@@ -144,7 +144,7 @@ mein-content-repo/
 
 Content-Discovery und Suche (die *Entdecken*-Oberfläche) werden von
 einer schlanken `search-index.json` im Repo-Root angetrieben (~4 KB,
-nur Metadaten — kein Karteninhalt). Das offizielle Content-Repo
+nur Metadaten - kein Karteninhalt). Das offizielle Content-Repo
 liefert sie aus, und die App holt die Indizes jedes konfigurierten
 Repos clientseitig (CORS-sicher, in localStorage mit 24-h-Stale-
 while-Revalidate-TTL gecacht), damit ein Lernender ein Set FINDEN
@@ -162,8 +162,8 @@ Das Feld-Schema des Manifests, also das Root-`manifest.yaml`, das die
 Sets des Repos auflistet, mit jedem Pflicht- und optionalen Feld
 (`schema_version`, `name` sowie pro Set `id`, `title`, `title_native`,
 `target_language`, `source_language`, `level`, `version`,
-`lesson_count`, `path`, `domain`, `tags`, `book`), steht in der
-Engine-Referenz:
+`lesson_count`, `path`, `domain`, `tags`, `book`, `visibility`), steht
+in der Engine-Referenz:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
 Das strikte Schema der Engine (unbekannte Felder werden abgelehnt)
 validiert es, sodass die obige Feldliste nicht driften kann. Die
@@ -171,6 +171,16 @@ Sprachpaar-Felder (`target_language` / `source_language`) werden wie
 unter [Sprachpaare](#sprachpaare-v1440) beschrieben angegeben; der
 Vor-v1.2-Alias `language` lädt weiterhin, ist für neue Sets aber
 nicht empfohlen.
+
+Das optionale Feld **`visibility`** (Engine 0.14.0+, ohne Angabe
+`visible`) ist ein **Anzeige-Hinweis** für Consumer-Apps:
+`visibility: hidden` bittet die App, das Set Lernenden nicht
+anzuzeigen - gedacht für Referenz-/Konformanz-Fixtures, die für die
+Engine-Validierung im Repo bleiben müssen, aber kein Lerninhalt
+sind. Die App filtert versteckte Sets aus den Browse- und
+Entdecken-Oberflächen (auch wenn sie bereits gecacht sind); die
+Engine validiert sie weiterhin. Eine App-seitige Liste versteckter
+Sets gibt es nicht mehr.
 
 App-spezifisches Loader-Verhalten, das zu beachten ist:
 
@@ -191,18 +201,18 @@ App-spezifisches Loader-Verhalten, das zu beachten ist:
 
 Jede Lektion ist eine einzelne JSON-Datei: Top-Level-Metadaten (`id`,
 `title`, `description`, `estimated_minutes`), eine Liste von **Cards**
-(die kleinsten lernbaren Einheiten — stabile Ids, Front/Back-Paare,
+(die kleinsten lernbaren Einheiten - stabile Ids, Front/Back-Paare,
 Markdown-`notes`, `tags` für das SRS) und eine Liste von **Steps**,
 jeder entweder ein THEORY-Step (ein Markdown-`body`, optional ein
 `example_url`-Link oder inline `examples`) oder ein EXERCISE-Step
 (genau eine Übung).
 
-Die vollständige Feld-für-Feld-Formatreferenz — jedes Feld, jeder
+Die vollständige Feld-für-Feld-Formatreferenz - jedes Feld, jeder
 Aufgabentyp, jeder Cloze-Modus, mit JSON-Beispielen, die von der
-Engine-Testsuite validiert werden — lebt in der **Engine-Referenz**:
+Engine-Testsuite validiert werden - lebt in der **Engine-Referenz**:
 
-- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
-  — die kanonische Lektionsformat-Referenz für Autoren und
+- [learn-content-engine - `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  - die kanonische Lektionsformat-Referenz für Autoren und
   Dritt-Validatoren (kein App-Checkout nötig)
 - das maschinenlesbare Schema, das jedem Engine-Release beiliegt:
   `import schema from "learn-content-engine/schema/lesson.schema.json"`
@@ -211,14 +221,14 @@ Engine-Testsuite validiert werden — lebt in der **Engine-Referenz**:
 
 Das gebündelte Schema der Engine ist byte-identisch mit dem hier
 generierten `schema/lesson.schema.json` (erzwungen durch
-`make engine-parity-check`) — "validiert gegen die Engine" und
+`make engine-parity-check`) - "validiert gegen die Engine" und
 "validiert in der App" sind dieselbe Aussage.
 
 ## Welcher Aufgabentyp für welches Lernziel
 
 Wähle den Aufgabentyp nach dem **Lernziel**, nicht nach Abwechslung.
-Wort-für-Wort-Bewertung per exact-match — ein ganzer Satz als `word_tiles`
-oder ein Volltext-`free_text` — versagt bei **freier Produktion**: ein Konzept
+Wort-für-Wort-Bewertung per exact-match - ein ganzer Satz als `word_tiles`
+oder ein Volltext-`free_text` - versagt bei **freier Produktion**: ein Konzept
 lässt sich auf viele richtige Weisen formulieren, sodass ein inhaltlich
 richtiger Lernender Wort für Wort als falsch markiert wird. Das ist der
 demotivierendste Moment, den eine Lektion erzeugen kann. Koppele den Typ
@@ -229,13 +239,13 @@ stattdessen an das Ziel:
 | Faktenwissen mit einer Antwort | `cloze` (Lücke) |
 | Konzept wiedererkennen | Multiple-Choice (`cloze` im `select`-Modus) / `matching` |
 | Definition eines Konzepts | `cloze` mit Schlüsselbegriff-Lücken |
-| Freie Erklärung / Transfer / Vergleich | noch kein exact-match-Typ — vorerst `cloze` / Multiple-Choice; Self-Assessment ist geplant |
+| Freie Erklärung / Transfer / Vergleich | noch kein exact-match-Typ - vorerst `cloze` / Multiple-Choice; Self-Assessment ist geplant |
 | Satz mit eindeutiger Wortreihenfolge (Sprachenlernen) | `word_tiles` |
 
 Faustregel: `word_tiles` nur für Sätze mit wirklich eindeutiger Wortreihenfolge
 (eine Übersetzungsübung), und Definitionen sowie Faktenwissen als `cloze` (oder
 Multiple-Choice via `cloze` `select`-Modus). Eine freie Definition gehört nie
-in `word_tiles` oder Volltext-`free_text` — dafür gibt es keine faire
+in `word_tiles` oder Volltext-`free_text` - dafür gibt es keine faire
 exact-match-Bewertung. Vollständige Analyse: siehe EXP-041
 (`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
 
@@ -243,7 +253,7 @@ exact-match-Bewertung. Vollständige Analyse: siehe EXP-041
 
 Eine Referenz über jeden Aufgabentyp: was ausgeliefert wird, was ohne neuen
 Typ abbildbar ist, was Kandidat ist und was bewusst ausgeschlossen bleibt. Das
-kanonische Modell wird **nicht** auf Vorrat erweitert — ein Typ wird nur
+kanonische Modell wird **nicht** auf Vorrat erweitert - ein Typ wird nur
 zusammen mit seinem Renderer ausgeliefert (die `SUPPORTED_EXERCISE_TYPES`-
 Registry muss dem `ExerciseType`-Enum entsprechen; ein Paritätstest erzwingt
 das, die Lehre aus dem v1.4-preview- und dem `picture_choice`-Fall). Neue Typen
@@ -264,7 +274,7 @@ kommen bei konkretem Content-Bedarf über das Rezept
 | `multiple_choice` | **Nativer Text-Multiple-Choice** (Schema v1.6, #1525) | `options` (`{text, correct?}`, eindeutige Texte) + `multiple`. Single = genau eine korrekt; Multi = Exakt-Mengen-Abgleich, keine Teilpunkte. |
 
 Seit Schema v1.6 gibt es einen nativen `multiple_choice`-Typ. Er **koexistiert**
-mit dem `cloze`-`select`/`multiselect`-Mittel (EXP-036 §4.3, #890) — bestehender
+mit dem `cloze`-`select`/`multiselect`-Mittel (EXP-036 §4.3, #890) - bestehender
 cloze-basierter MC bleibt gültig, nichts ist deprecated. Für neuen Text-MC-
 Content ist `multiple_choice` zu bevorzugen: Korrektheit ist ein Flag pro
 Option, die accept/distractor-Disjunktheits-Falle kann nicht passieren. Siehe
@@ -277,80 +287,267 @@ Neben dem geschlossenen Core-Enum gibt es Aufgabentypen im Namespace
 Lektion, die sie nutzt, deklariert sie in `requires_extensions`, und die
 Payload validiert die registrierte Extension, nie das Core-Schema. Der
 Mechanismus ist in der Engine-Referenz
-[learn-content-engine — `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md)
-beschrieben. Extension-Aufgaben entstehen ausschließlich über den
-Content-Repo-Autorenweg (JSON direkt) — der Lektions-Wizard erzeugt sie
-nicht. Die App hat vier Extension-Typen adoptiert
+[learn-content-engine - `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md)
+beschrieben. Die App hat fünf Extension-Typen adoptiert
 (`SUPPORTED_EXT_EXERCISE_TYPES` im `ExerciseDispatcher`; ein
-Paritäts-Gate hält Dispatcher und Load-Guard synchron — alles Ladbare
-ist renderbar):
+Paritäts-Gate hält Dispatcher und Load-Guard synchron, sodass alles
+Ladbare renderbar ist):
 
-| Typ | Wofür | Adoptiert |
-|-----|-------|-----------|
-| `ext:al-categorization` | Begriffe in Gruppen einordnen | #1591 (erster Extension-Typ, Inventur #1579) |
-| `ext:al-error-correction` | Fehlerhaften Text korrigieren | #1593 |
-| `ext:al-reading-comprehension` | Leseverständnis (Text + Fragen) | #1603 |
-| `ext:al-graded-quiz` | Benotetes Quiz | #1616; das Demo-Referenz-Set ist in Entdecken / Meine Inhalte ausgeblendet (#1702) |
+| Typ | Wofür | Payload (`ext_payload`) | Adoptiert |
+|-----|-------|-------------------------|-----------|
+| `ext:al-categorization` | Begriffe in Gruppen einordnen | `categories: [{name, items[]}]`, mindestens 2 Gruppen | #1591 (erster Extension-Typ, Inventur #1579) |
+| `ext:al-error-correction` | Fehlerhaften Text korrigieren | `tokens[]` + `error_index` + `accept[]` | #1593 |
+| `ext:al-reading-comprehension` | Leseverständnis (Textpassage + Fragen) | `passage` + `questions[]` (je eine `multiple_choice`- / `free_text`-Teilfrage) | #1603 |
+| `ext:al-graded-quiz` | Benotetes Quiz | `questions[]` (je mit `points`) + optionale `pass_threshold` | #1616; das Demo-Referenz-Set ist in Entdecken / Meine Inhalte ausgeblendet (#1702) |
+| `ext:al-dictation` | Audio-Diktat (hören, dann transkribieren) | `audio` (ein `assets/`-Clip oder ein per Editor-Upload eingebetteter Daten-URI, #1911) + `accept[]` (toleranter Transkriptions-Abgleich) | #1881 (fünfte Adoption) |
+
+**Zwei Autorenwege.** Extension-Aufgaben lassen sich (a) direkt als
+Content-Repo-JSON schreiben (der kanonische Weg, in der Engine-Referenz
+beschrieben) oder (b) in der App. Der Lektions-Creator hat einen
+**Extension-Autoren-Wizard** bekommen (#1852), erreichbar über die Vorlage
+*Erweiterte Aufgabentypen* in Schritt 1, der alle fünf Typen abdeckt (#1859
+Kategorisierung + Fehlerkorrektur, #1865 Leseverständnis + Graded-Quiz, #1887
+Diktat). Diktat ist außerdem über den Core-Aufgabentyp-Picker in Schritt 3
+erreichbar, hinter einem verallgemeinerten `requires_extensions`-Gate (#1895).
+Beide Wege erzeugen dasselbe Lektions-JSON und setzen `requires_extensions`
+(versioniert, z. B. `ext:al-dictation@1`).
+
+#### Beispiel je Extension-Typ
+
+Jeder Block ist das Übungsobjekt, wie es in einer Lektions-`.json` steht; die
+typspezifischen Daten liegen unter `ext_payload`. Die kanonische Feldreferenz
+ist die `docs/extensions.md` der Engine.
+
+```json
+{
+  "type": "ext:al-categorization",
+  "prompt": "Ordne jedes Wort in Obst oder Gemüse ein.",
+  "ext_payload": {
+    "categories": [
+      {"name": "Obst", "items": ["Apfel", "Banane"]},
+      {"name": "Gemüse", "items": ["Karotte", "Kartoffel"]}
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-error-correction",
+  "prompt": "Ein Wort ist falsch. Korrigiere es.",
+  "ext_payload": {
+    "tokens": ["Die", "zwei", "Kind", "spielen"],
+    "error_index": 2,
+    "accept": ["Kinder"]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-reading-comprehension",
+  "prompt": "Lies den Text und antworte.",
+  "ext_payload": {
+    "passage": "Marie sitzt in einem Café. Sie bestellt einen Kaffee und liest ein Buch.",
+    "questions": [
+      {
+        "prompt": "Wo ist Marie?",
+        "type": "multiple_choice",
+        "options": [
+          {"text": "In einem Café", "correct": true},
+          {"text": "Zu Hause"},
+          {"text": "Am Bahnhof"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-graded-quiz",
+  "prompt": "Begrüßungs-Quiz.",
+  "ext_payload": {
+    "pass_threshold": 60,
+    "questions": [
+      {
+        "prompt": "Wie sagt man 'hallo' auf Französisch?",
+        "type": "multiple_choice",
+        "points": 1,
+        "options": [
+          {"text": "Bonjour", "correct": true},
+          {"text": "Merci"},
+          {"text": "Au revoir"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-dictation",
+  "prompt": "Hör zu und tippe, was du hörst.",
+  "ext_payload": {
+    "audio": "assets/audio/comment-ca-va.mp3",
+    "accept": ["Comment ça va ?", "Comment ca va"]
+  }
+}
+```
 
 ### Verfügbarkeit im Lektions-Wizard
 
-Spielbar (Renderer vorhanden) und im Wizard erzeugbar sind zwei
-verschiedene Dinge. Alle sechs Core-Typen sind spielbar; die
-KI-Generierung im Create-Lesson-Wizard (`ALL_TYPES` in
-`ExerciseGenerator.tsx`, Gewichte in `exercise-distribution.ts`) bietet
-derzeit fünf davon an:
+Spielbar (ein Renderer existiert), generierbar (der KI-Mix kann den Typ
+erzeugen) und manuell anlegbar (in Schritt 3 von Hand hinzufügen + bearbeiten)
+sind drei verschiedene Dinge. Alle sechs Core-Typen sind spielbar UND
+generierbar: die Typauswahl im Create-Lesson-Wizard (`ALL_TYPES` in
+`ExerciseGenerator.tsx`) bietet jeden Core-Typ an, und jede Übung in Schritt 3
+ist inline editierbar und umsortierbar, mit einem manuellen **+ Übung
+hinzufügen**-Button (#1849, #1853).
 
-| Typ | Spielbar | Im Wizard generierbar |
-|-----|----------|-----------------------|
-| `matching` | ja | ja |
-| `free_text` | ja | ja |
-| `cloze` | ja | ja |
-| `word_tiles` | ja | ja |
-| `picture_choice` | ja | ja |
-| `multiple_choice` | ja | **nein** — nativ spielbar seit Schema v1.6 (#1525), aber weder in der Wizard-Typauswahl noch mit Gewicht in der Generierungs-Verteilung |
-| `ext:al-*` (alle vier) | ja | nein — bewusst nur über den Content-Repo-Autorenweg |
+| Typ | Spielbar | Generierbar (KI-Mix) | Manuell anlegbar (Schritt 3) |
+|-----|----------|----------------------|------------------------------|
+| `matching` | ja | ja | ja |
+| `free_text` | ja | ja | ja |
+| `cloze` | ja | ja | ja |
+| `word_tiles` | ja | ja | ja |
+| `picture_choice` | ja | ja | ja |
+| `multiple_choice` | ja | ja (#1853; Single-/Multi-Modus-Steuerung #1888) | ja |
+| `ext:al-dictation` | ja | nein | ja, über den Core-Picker (#1895) oder den Extension-Wizard (#1887) |
+| `ext:al-categorization` | ja | nein | über den Extension-Wizard (#1859) |
+| `ext:al-error-correction` | ja | nein | über den Extension-Wizard (#1859) |
+| `ext:al-reading-comprehension` | ja | nein | über den Extension-Wizard (#1865) |
+| `ext:al-graded-quiz` | ja | nein | über den Extension-Wizard (#1865) |
+
+Die vier Nicht-Diktat-Extension-Typen werden im Extension-Wizard (oder als
+Content-Repo-JSON) angelegt, nie in die Core-KI-Generierung gemischt.
 
 **Listen-First ist ein Modus, kein Typ.** Seit #1687 (Entscheidung
 #1600, Option A) können `free_text`- und `matching`-Aufgaben ein
 Audio-Vorschalt-Element erhalten (erst hören, dann antworten). Der
 Aufgabentyp der Übung ändert sich dabei nicht. Option B derselben
-Entscheidung — ein `ext:dictation`-Diktattyp — wurde bewusst
-zurückgestellt (siehe Kandidaten unten).
+Entscheidung, ein Diktattyp, ist als Extension `ext:al-dictation`
+ausgeliefert (#1881) und oben im Extension-Tier dokumentiert.
+
+### Der Lektions-Creator als Autorenwerkzeug
+
+Der App-interne Lektions-Creator (`/create-lesson`) ist eine vollständige
+Autorenoberfläche, nicht nur ein KI-Generieren-Knopf:
+
+- **Jede Übung in Schritt 3 ist an Ort und Stelle editierbar.** Jede
+  generierte oder hinzugefügte Übung öffnet sich in einem Inline-Editor (alle
+  sechs Core-Typen plus die Extension-Editoren); per Drag umsortieren, löschen
+  oder den ganzen Mix neu generieren (#1845).
+- **Eine Übung von Hand anlegen.** Der **+ Übung hinzufügen**-Button wählt
+  einen Typ und hängt eine leere Übung direkt in den Inline-Editor an, sodass
+  ohne jede KI-Generierung geschrieben werden kann (#1849, #1853). Der Picker
+  listet die sechs Core-Typen plus Diktat (#1895).
+- **Der Beispielsatz steuert die Generierung.** Eine Karte (Schritt 2) kann
+  einen optionalen **Beispielsatz** tragen. Er ist es, der die `cloze`- und
+  `word_tiles`-Generierung für diese Karte ermöglicht (bei Cloze muss der Satz
+  den Front-Begriff der Karte enthalten, damit er ausgeblendet werden kann),
+  und ein Kartenbild ermöglicht `picture_choice`. Ohne sie werden diese Typen
+  stillschweigend übersprungen, und Schritt 3 erklärt, welcher ausgewählte Typ
+  nichts produziert hat (#1847, #1848).
 
 ### Ohne neuen Typ abbildbar (Konventionen, keine Typen)
 
 | Konzept | Wie |
 |---------|-----|
 | Wahr/Falsch, Ja/Nein | Zwei-Optionen-`multiple_choice` (oder Zwei-Optionen-`cloze`-`select`) |
-| Dropdown / Radio / Checkbox | Darstellung von `multiple_choice` / cloze select — keine eigenen Typen |
+| Dropdown / Radio / Checkbox | Darstellung von `multiple_choice` / cloze select - keine eigenen Typen |
 
-### Geplant bei Bedarf (Kandidaten — KEINE Zusage)
+### Geplant bei Bedarf (Kandidaten - KEINE Zusage)
 
 | Kandidat | Nah an | Wann |
 |----------|--------|------|
 | Reihenfolge festlegen / Sortieren | `word_tiles` | Nur bei konkretem Content-Bedarf, dann über das Rezept. |
 | Zahlenfeld (numerischer Vergleich) | `free_text` | Nur bei konkretem Content-Bedarf, dann über das Rezept. |
-| Audio-Diktat (`ext:dictation`) | `free_text` + Listen-First | Option B der Listen-First-Entscheidung (#1600), bewusst zurückgestellt; Adoption dann über das Extension-Rezept. |
 
 ### Bewusst nicht
 
 | Ausgeschlossen | Warum (ein Satz) |
 |----------------|------------------|
 | Essay / Langtext / Zeichnen / Formel / Peer-Review / freie Selbstbewertung | Nicht binär SRS-bewertbar; Selbstbewertung zurückgestellt (#1268). |
-| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. |
+| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. Einzige Ausnahme: kurze Diktat-Audio-Clips, die der Übungs-Editor als Daten-URI in die Lektion einbettet. |
 | Hotspot / Simulation / Memory / Kreuzworträtsel | Aufwand ohne SRS-Mehrwert (später ggf. eigene Entscheidung). |
 | Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
 | Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |
 
+### Video-Inhalte: verlinken, nicht mitliefern
+
+Nativer Video- (und Audio-)Upload ist bewusst ausgeschlossen (siehe
+Tabelle oben): Medien-Assets lokal zu speichern widerspricht den
+Offline-First-Speichergrenzen. Das empfohlene Muster liefert denselben
+Lernwert, ohne ein einziges Byte Video mitzuliefern: das Video extern
+verlinken und eine Leseverständnis-Übung über sein Transkript bauen.
+
+**1. Video als begleitendes Medium verlinken.** In die `resources[]` der
+Lektion aufnehmen (ein `LessonResource`, EXP-029), damit es im Abschnitt
+*Vertiefe das Thema* der Lektion erscheint. Ein YouTube-Clip nutzt
+`type: "youtube"`:
+
+```json
+"resources": [
+  {
+    "type": "youtube",
+    "title": "Se présenter en français (A1)",
+    "url": "https://www.youtube.com/watch?v=XXXXXXXXXXX",
+    "language": "fr",
+    "level": "A1",
+    "free": true
+  }
+]
+```
+
+**2. Verständnis über das Transkript prüfen.** Eine
+`ext:al-reading-comprehension`-Übung ergänzen, deren `passage` das
+Transkript des Videos (oder ein in sich geschlossener Ausschnitt daraus)
+ist, mit den Verständnisfragen darüber:
+
+```json
+{
+  "type": "ext:al-reading-comprehension",
+  "prompt": "Sieh dir das Video an und beantworte dann.",
+  "ext_payload": {
+    "passage": "Bonjour ! Je m'appelle Camille. J'ai vingt-cinq ans et j'habite à Lyon. Je suis étudiante et j'aime la musique.",
+    "questions": [
+      {
+        "prompt": "Où habite Camille ?",
+        "type": "multiple_choice",
+        "options": [
+          {"text": "À Lyon", "correct": true},
+          {"text": "À Paris"},
+          {"text": "À Marseille"}
+        ]
+      }
+    ]
+  }
+}
+```
+
+Die Übung ist vollständig offline und wird wie jede andere SRS-bewertet;
+das Video ist optionale Vertiefung, erreichbar über *Vertiefe das Thema*,
+und ein Lernender ohne Verbindung bekommt weiterhin das transkript-basierte
+Leseverständnis.
+
+**Das Transkript zahlt sich doppelt aus.** Ein Transkript (oder Untertitel)
+ist ohnehin die Barrierefreiheits-Grundlage, die jedes Video für die
+WCAG-Konformität mitbringen sollte. Hier wird genau dieses Transkript zur
+`passage` der Verständnis-Übung: ein Artefakt, zwei Verwendungen,
+Barrierefreiheit und eine bewertbare Übung aus derselben Quelle.
+
 ## Übungstyp-Referenz
 
-Die Feld-Referenz je Typ — `matching`, `picture_choice`, `free_text`,
+Die Feld-Referenz je Typ - `matching`, `picture_choice`, `free_text`,
 `word_tiles`, `multiple_choice` und `cloze` mit seinen Modi `type` /
 `select` / `multiselect`: Pflichtfelder, JSON-Beispiele und die semantischen
 Regeln (Cloze-`___`-Marker == `blanks`, referenzielle Integrität der
 `card_ids`, Disjunktheit von accept/distractors bei multiselect,
-exactly-one-correct bei picture_choice) — lebt in der Engine-Referenz:
-[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+exactly-one-correct bei picture_choice) - lebt in der Engine-Referenz:
+[learn-content-engine - `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
 Jedes JSON-Beispiel dort wird von der Engine-Testsuite extrahiert und
 validiert, die Referenz kann also nicht veralten. Die App-spezifischen
 Autoren-Konventionen unten bleiben hier.
@@ -379,7 +576,7 @@ getrennten accept/distractor-Listen, die disjunkt bleiben müssen.
 }
 ```
 
-**Legacy-Mittel (weiterhin voll gültig — Koexistenz, nichts deprecated):**
+**Legacy-Mittel (weiterhin voll gültig - Koexistenz, nichts deprecated):**
 vor v1.6 wurde Text-MC als `cloze` im `select`-Modus erstellt (EXP-036
 §4.3, #890). Eine Single-Choice-Frage ist ein Cloze mit einer Lücke:
 der `sentence` (endet auf `___`) ist die Frage, `accept[0]` der
@@ -389,7 +586,7 @@ ___."`, `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode":
 "select"`, `"distractors": ["Berlin", "Madrid", "Rom"]`.
 
 Du kannst die ganze Frage auch in `prompt` schreiben und einen bloßen
-`"sentence": "___"` verwenden — der Renderer zeigt ein `<select>` aus
+`"sentence": "___"` verwenden - der Renderer zeigt ein `<select>` aus
 richtiger Antwort + Distraktoren, bewertet die Auswahl, gibt Feedback
 und speist das SRS:
 
@@ -430,11 +627,11 @@ Antworten, z. B. eine Führerscheinprüfungs-Frage) nutzt
 Satz wird der Reihe nach auf den nächsten Eintrag in `blanks`
 abgebildet. Jede Lücke kann eigenen Hint + Placeholder +
 Accept-Liste haben. Das Element-SRS fächert pro Lücke einen
-ElementAttempt auf — wer Lücke A fließend füllt, aber Lücke B
+ElementAttempt auf - wer Lücke A fließend füllt, aber Lücke B
 ständig verfehlt, bekommt eine lückengranulare Mastery-
 Verfolgung.
 
-**Token-Rollen auf Cards (Phase 52I / v1.35.0)** — optionale
+**Token-Rollen auf Cards (Phase 52I / v1.35.0)** - optionale
 Card-Metadaten, mit denen der Cloze-Generator zur Laufzeit
 (Review-Sessions + die Korrektur-Runde am Lektionsende) eine
 semantisch bedeutsame Lücke wählen kann:
@@ -453,14 +650,14 @@ semantisch bedeutsame Lücke wählen kann:
 
 Geschlossene Enum von Rollen: `article` / `verb` / `noun` /
 `adjective` / `preposition` / `gender_marker` / `tense_marker`.
-Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump —
+Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump -
 nicht inline erweitern.
 
 ## Nicht-lateinische Schriften: Umschrift-Konvention
 
 Verbindliche Regeln für Sets, deren Zielsprache eine nicht-lateinische
 Schrift verwendet (Japanisch, Chinesisch, Koreanisch, Griechisch,
-Hindi, ...). Im Content-Repo etabliert und angewendet — Präzedenzen:
+Hindi, ...). Im Content-Repo etabliert und angewendet - Präzedenzen:
 [content#90](https://github.com/astrapi69/adaptive-learner-content/issues/90),
 [content#91](https://github.com/astrapi69/adaptive-learner-content/issues/91);
 Restlücken-Sweeps:
@@ -470,7 +667,7 @@ Restlücken-Sweeps:
 **1. Richtungs-Regel.** Umschrift gibt es nur für die nicht-lateinische
 **Ziel**sprache bei lateinisch schreibender Quellsprache (de→ja, de→zh,
 de→ko, ...). Eine nicht-lateinische **Quell**sprache mit lateinischem
-Ziel (hi→en, el→fr) bekommt keine Umschrift — die Lernenden lesen ihre
+Ziel (hi→en, el→fr) bekommt keine Umschrift - die Lernenden lesen ihre
 eigene Schrift bereits.
 
 **2. Format.** Runde Klammern direkt hinter dem Original:
@@ -483,7 +680,7 @@ und Cloze-Satzkontexte bleiben OHNE Umschrift am abgefragten Element;
 Bedeutungs-Aufgaben bekommen sie. Im Zweifel weglassen.
 
 - Positiv-Beispiel (Bedeutungs-Matching, content#91): das Matching-Paar
-  `{"left": "妈 (mā)", "right": "Mama / Mutter"}` — abgefragt wird die
+  `{"left": "妈 (mā)", "right": "Mama / Mutter"}` - abgefragt wird die
   Bedeutung, die Lesehilfe verrät also nichts.
 - Negativ-Beispiel (Schrift-Lesen, content#91): die Schrift-Lese-Aufgaben
   in `ko-a1/01-hangul-lesen` bleiben ohne Umschrift, weil die
@@ -497,12 +694,12 @@ Umschrift. Nie Systeme innerhalb eines Sets mischen.
 
 **5. Tipp-Aufgaben** (`free_text` / Cloze-Modus `type`): `accept[0]`
 ist die kanonische romanisierte Form; gängige Varianten zusätzlich
-akzeptieren — Japanisch: Kunrei-Schreibungen (si/ti/tu/hu/zi, z. B.
+akzeptieren - Japanisch: Kunrei-Schreibungen (si/ti/tu/hu/zi, z. B.
 `konnitiwa` neben `konnichiwa`); Chinesisch: tonloses Pinyin (`nihao`
 neben `nǐ hǎo`); Koreanisch: verbreitete Alternativen (z. B.
 `annyeong haseyo`). Merksatz: **Eine Aufgabe darf nie an der Tastatur
 der Lernenden scheitern.** Präzedenz (IME-Blocker, content#107): ein
-Cloze, das nur 가 akzeptierte, war ohne koreanisches IME unlösbar —
+Cloze, das nur 가 akzeptierte, war ohne koreanisches IME unlösbar -
 das romanisierte `ga` musste zusätzlich akzeptiert werden.
 
 Welcher Typ welches Lernziel trägt: siehe
@@ -513,11 +710,11 @@ Welcher Typ welches Lernziel trägt: siehe
 Jede Übung akzeptiert ein optionales Feld `direction`, das angibt,
 in welche Richtung die Lernenden die Karte üben:
 
-- `target_to_source` (Standard) — REZEPTIV: die Zielsprache wird
+- `target_to_source` (Standard) - REZEPTIV: die Zielsprache wird
   gezeigt, die Quellsprache wird erkannt (leichter).
-- `source_to_target` — PRODUKTIV: die Quellsprache wird gezeigt,
+- `source_to_target` - PRODUKTIV: die Quellsprache wird gezeigt,
   die Zielsprache wird produziert (schwerer).
-- `both` / `random` — überlässt dem Renderer / adaptiven Generator
+- `both` / `random` - überlässt dem Renderer / adaptiven Generator
   die Wahl einer konkreten Richtung pro Versuch.
 
 ```json
@@ -529,7 +726,7 @@ in welche Richtung die Lernenden die Karte üben:
 }
 ```
 
-Das Feld ist additiv — das Schema bleibt bei Version 1.2, und
+Das Feld ist additiv - das Schema bleibt bei Version 1.2, und
 Lektionen ohne `direction` verhalten sich genau wie zuvor
 (rezeptiv). Das SRS verfolgt die Beherrschung pro Richtung: eine
 rezeptiv gemeisterte Karte ist noch nicht produktiv gemeistert.
@@ -556,7 +753,7 @@ deutlich smarter:
      Dashboard (53E)
    - ALTERNATIVE Übungen zu finden, die dasselbe Element
      testen, wenn die ursprüngliche Übung falsch war (53D
-     Variations-Logik — findet Kandidaten, deren Karte einen
+     Variations-Logik - findet Kandidaten, deren Karte einen
      passenden `token_roles`-Eintrag hat)
 
    Füge JEDEN Karten, die eine eigene grammatische Einheit
@@ -567,7 +764,7 @@ deutlich smarter:
 
 2. **Karten-Tags wie `tags: ["article", "masculine"]`** werden
    vom Fehler-Klassifizierer als Fallback gelesen, wenn
-   `token_roles` fehlt. Sie ersetzen nicht `token_roles` — sie
+   `token_roles` fehlt. Sie ersetzen nicht `token_roles` - sie
    sind eine günstige Halbweg-Annotation.
 
 Was wir noch NICHT brauchen (auf einen zukünftigen Schema-Bump
@@ -585,7 +782,7 @@ Faustregel: füge `token_roles` zu jeder Karte hinzu, die einen
 grammatischen Token lehrt. Das ist die mit Abstand
 wirkungsvollste Autoren-Gewohnheit für das adaptive System.
 
-## Assets (Bilder, die ein Set mitbringt) — v1.37.0+
+## Assets (Bilder, die ein Set mitbringt) - v1.37.0+
 
 Picture-Choice-Übungen und Karten-Cover-Bilder kommen aus
 zwei Quellen:
@@ -596,7 +793,7 @@ zwei Quellen:
    für Zahlen, Avatar-Stil für alles andere)
 
 Wenn du ein Set ohne Assets veröffentlichst, funktioniert
-Picture-Choice trotzdem — der Platzhalter-SVG-Generator deckt
+Picture-Choice trotzdem - der Platzhalter-SVG-Generator deckt
 Farben + Zahlen automatisch ab und fällt für alles andere auf
 einen deterministischen Avatar zurück.
 
@@ -665,14 +862,14 @@ für Autoren intuitiven Form bleibt.
   Assets ab, deren deklariertes `size_kb` dieses Limit
   überschreitet. Der Downloader weist auch Assets ab, deren
   tatsächliche Bytegröße die Deklaration um mehr als 10%
-  überschreitet — hält das Manifest ehrlich.
+  überschreitet - hält das Manifest ehrlich.
 - **Pro-Set Soft-Limit**: 10 MiB Gesamtgröße. Der Validator
   warnt, lehnt aber nicht ab.
 - **Akzeptierte Formate**: `.png` / `.jpg` / `.jpeg` /
   `.webp` / `.svg`. Kein GIF (animierte Inhalte lenken ab),
-  kein BMP (keine Kompression). Für Fotos bevorzugt WebP —
+  kein BMP (keine Kompression). Für Fotos bevorzugt WebP -
   deutlich kleiner als PNG bei vergleichbarer Qualität. Für
-  Icons + Diagramme bevorzugt SVG — skaliert sauber + winzige
+  Icons + Diagramme bevorzugt SVG - skaliert sauber + winzige
   Dateigröße.
 
 ### Größen-Empfehlungen
@@ -708,12 +905,12 @@ helfen Autoren-Bilder messbar bei Erkennen + Erinnern.
 Vor dem PR für eine neue Lektion prüfen:
 
 - [ ] **3-5 Theorie-Schritte** + **8-12 Übungen** pro Lektion
-- [ ] **Mindestens 3 Übungstypen** vertreten (matching, picture-choice, free-text, word-tiles oder cloze — cloze ab v1.35.0)
+- [ ] **Mindestens 3 Übungstypen** vertreten (matching, picture-choice, free-text, word-tiles oder cloze - cloze ab v1.35.0)
 - [ ] **Theorie-Schritte ≤ 200 Wörter** je Schritt
 - [ ] **Free-Text-Übungen**: ≥ 3 Akzept-Varianten + ≥ 3 Distraktoren
 - [ ] **Word-Tiles**: ≥ 3 Kacheln je Übung
 - [ ] **estimated_minutes**: 10-15 (realistisch, nicht idealisiert)
-- [ ] **Distraktoren sind falsch-aber-plausibel** — semantisch verwandt, nie zufällig
+- [ ] **Distraktoren sind falsch-aber-plausibel** - semantisch verwandt, nie zufällig
 - [ ] **Card-Notes** liefern echten Mehrwert (Aussprache, falsche Freunde, Ausnahme-Flag)
 - [ ] **Progressive Struktur**: spätere Konzepte bauen auf früheren im selben Set auf
 - [ ] **Kulturelle Genauigkeit**: realer Sprachgebrauch, nicht nur Lehrbuch-Floskeln
@@ -736,7 +933,7 @@ Prüfungen abgesichert:
    Niveau, kulturelle Sensibilität, Natürlichkeit). Der KI-Schritt
    ist nie automatisch, erfordert ausdrückliche Zustimmung (der
    Lektionsinhalt wird an den konfigurierten Anbieter gesendet) und
-   blockiert das Teilen nie — die regelbasierte Prüfung ist das Tor.
+   blockiert das Teilen nie - die regelbasierte Prüfung ist das Tor.
 2. **In der CI des Content-Repos.** Ein Pull Request an
    `astrapi69/adaptive-learner-content` führt dessen eigenes
    `scripts/validate_content.py` aus (Struktur gegen den vendored,
@@ -750,7 +947,7 @@ Prüfungen abgesichert:
 Antworten + Distraktoren, Matching ≥ 3 Paare, Picture-Choice mit
 Distraktoren, keine leeren Karten-Vorder-/Rückseiten und (bei
 nicht-lateinischen Ausgangsschriften) Karten-Rückseiten in der
-Ausgangsschrift. Das sind Mindestwerte, keine Ziele — die
+Ausgangsschrift. Das sind Mindestwerte, keine Ziele - die
 Checkliste oben verlangt mehr.
 
 ### Set-weite KI-Inhaltsprüfung (optional)
@@ -768,7 +965,7 @@ ausgeführt hat). Besteht der Bericht, erhält das Set eine
 **„KI-geprüft"-Plakette**, die durch einen Content-Hash + eine
 Signatur abgesichert ist, sodass eine spätere Änderung an den
 Karten die Plakette ungültig macht, bis das Set erneut geprüft
-wird. Die KI-Prüfung ist nie ein Tor — sie ist beratende
+wird. Die KI-Prüfung ist nie ein Tor - sie ist beratende
 Provenienz, keine Veröffentlichungsvoraussetzung.
 
 ## Lokales Testen
@@ -784,11 +981,11 @@ from adaptive_learner_content_loader.schema import dict_to_lesson
 path = '../adaptive-learner-content/sets/en/fr-a1/lessons/01-greetings.json'
 with open(path) as f:
     lesson = dict_to_lesson(json.load(f))
-print(f'OK: {lesson.id} — {len(lesson.cards)} Cards, {len(lesson.steps)} Steps')
+print(f'OK: {lesson.id} - {len(lesson.cards)} Cards, {len(lesson.steps)} Steps')
 "
 ```
 
-Alle Lektionen eines Content-Repos auf einmal validieren — mit dem
+Alle Lektionen eines Content-Repos auf einmal validieren - mit dem
 Validator des Content-Repos (dasselbe Skript, das dessen CI bei jedem
 PR ausführt):
 
@@ -801,7 +998,7 @@ Er findet jedes Set unter `sets/{source}/{target-level}/` und prüft das
 Schema plus die Qualitäts-Mindestwerte (≥5 Übungen, ≥2 Übungstypen, ≥1
 Theorieschritt, Freitext-Akzepte + Distraktoren, Matching-Paare, keine
 leeren Karten, Karten-ID-Integrität). Neue Lektionen werden automatisch
-erkannt — keine Test-Änderung nötig.
+erkannt - keine Test-Änderung nötig.
 
 ## PR-Workflow
 
@@ -840,22 +1037,22 @@ nicht-dokumentiertes Feld führt zur Ablehnung der gesamten
 Lektion. Halte dich an die dokumentierten Felder.
 
 **Theory-Body**: Theory-Steps benötigen ein nicht-leeres
-`body`-Feld (Markdown). Exercise-Steps dürfen kein `body` tragen
-— nutze stattdessen den `prompt` der Übung.
+`body`-Feld (Markdown). Exercise-Steps dürfen kein `body` tragen -
+nutze stattdessen den `prompt` der Übung.
 
 ## Referenz: die gebündelten Sets
 
 Adaptive Learner liefert eine umfangreiche Bibliothek über mehrere
-Domänen aus (Sprachen, Programmierung, Psychologie, KI, Technik —
+Domänen aus (Sprachen, Programmierung, Psychologie, KI, Technik -
 siehe den CONTENT-STATS-Block in der README für die aktuellen
 Zahlen + die vollständige Set-Tabelle). Ein paar gute kanonische
 Referenzen im `adaptive-learner-content`-Repo:
 
-- `sets/en/fr-a1/` — Französisch A1 für Englischsprachige;
+- `sets/en/fr-a1/` - Französisch A1 für Englischsprachige;
   `sets/de/fr-a1/` ist das deutschsprachige Gegenstück.
-- `sets/en/es-a1/` + `sets/de/es-a1/` — Spanisch A1 (eines je
+- `sets/en/es-a1/` + `sets/de/es-a1/` - Spanisch A1 (eines je
   Quellsprache).
-- Das Set „Python — Grundlagen" unter `sets/de/` ist ein
+- Das Set „Python - Grundlagen" unter `sets/de/` ist ein
   `domain: programming`-Beispiel (deutsche Quelle == Ziel),
   nützlich als Nicht-Sprach-Referenz.
 
@@ -866,6 +1063,11 @@ die Struktur zu verinnerlichen.
 ---
 
 ## Weg zur Community-Beteiligung (v1.42.0)
+
+> **Ausführliche Schritt-für-Schritt-Anleitung mit Screenshots:**
+> [Create a lesson in the app, step by step](https://medium.com/@asterios-raptis/create-a-lesson-in-the-app-step-by-step-dadd6927829f)
+> (Medium) führt den App-internen Lektions-Creator von Anfang bis Ende durch,
+> von der ersten Karte bis zum Teilen der fertigen Lektion.
 
 Du musst Lektionen nicht von Grund auf von Hand erstellen. Der
 schnellste Weg, etwas beizutragen, ist, **eine Lektion in der App
@@ -878,11 +1080,11 @@ zu erstellen und zu teilen**:
 2. Klicke bei „Meine Lektionen" auf **Als Content-Set
    exportieren**, um ein Content-Set als `.zip` herunterzuladen
    (Manifest + Lektionen). Exporte enthalten nur den
-   Lektionsinhalt — keinen Fortschritt, keine Fehlerhistorie,
+   Lektionsinhalt - keinen Fortschritt, keine Fehlerhistorie,
    nichts Persönliches.
 3. Klicke auf **Für die Community bereitstellen**, um einen
    vorausgefüllten **Pull Request** im Inhalts-Repository zu öffnen
-   — die Lektions-JSON wird am richtigen Pfad im Baum committet,
+   - die Lektions-JSON wird am richtigen Pfad im Baum committet,
    kein `.zip`-Anhang nötig.
 4. Die CI des Repos validiert den PR automatisch; ein Maintainer
    prüft die Lektion, bringt das Manifest (id, title, language,
@@ -891,7 +1093,7 @@ zu erstellen und zu teilen**:
    können alle sie aus dem Set-Browser herunterladen.
 
 Das ist der soziale Weg: Die Prüfung ist **manuell** (ein
-Maintainer kuratiert jede Ergänzung — nichts wird automatisch
+Maintainer kuratiert jede Ergänzung - nichts wird automatisch
 veröffentlicht), und der gesamte Ablauf braucht nur GitHub.
 Erzeugte Lektionen werden bereits gegen das Schema validiert, sodass
 eine beigetragene Lektion meist nur etwas Manifest-Feinschliff
@@ -910,14 +1112,14 @@ vierstufigen Assistenten, statt direkt zu GitHub zu springen:
    bist der Erste."*
 2. **Duplikat-Prüfung.** Die Lektion wird mit den bereits in
    diesem Pfad vorhandenen Lektionen verglichen (Karten- und
-   Übungs-Überschneidung — beratend, niemals blockierend). Wenn
+   Übungs-Überschneidung - beratend, niemals blockierend). Wenn
    etwas Ähnliches existiert, kannst du:
-   - **Als Variation teilen** — die Lektion wird mit
+   - **Als Variation teilen** - die Lektion wird mit
      `variation_of: "{original_id}"` plus einer optionalen
      `variation_note` markiert ("Wie unterscheidet sich deine
      Version?").
    - **Nur die neuen Übungen vorschlagen** (bei Beinahe-
-     Duplikaten) — der Assistent extrahiert genau die Übungen,
+     Duplikaten) - der Assistent extrahiert genau die Übungen,
      die dem Original fehlen, samt der zugehörigen Karten, als
      Ergänzungs-Variation.
 3. **Qualitäts-Zusammenfassung.** Die Befunde des regelbasierten
@@ -951,7 +1153,7 @@ Pull-Request-Text führt den Autor in seiner Metadaten-Tabelle auf.
 Geteilte Lektionen werden lokal gemerkt (kein Konto nötig) unter
 **Meine Beiträge** mit einem Zähler und einer
 *Community-Beitragende*-Auszeichnung ab fünf geteilten Lektionen.
-Der Set-Browser zeigt außerdem **Fehlende Lektionen** —
+Der Set-Browser zeigt außerdem **Fehlende Lektionen** -
 ermutigende Vorschläge für das nächste CEFR-Niveau eines
 bestehenden Paars oder eine Zielsprache, die für eine
 Ausgangssprache existiert, für eine andere aber fehlt ("Kannst du
@@ -961,6 +1163,7 @@ helfen?").
 
 ## Verwandte Seiten
 
-- [Lektionen erstellen — Überblick](../content-creation/overview.md) — Einstieg + Lektions-Creator in der App
-- [Buchempfehlungen](../content-creation/books.md) — `books.yaml` pro Domäne pflegen
-- [Mehrere Content-Repositories](../features/content-repos.md) — eigenes Repo verbinden
+- [Lektionen erstellen - Überblick](../content-creation/overview.md) - Einstieg + Lektions-Creator in der App
+- [Buchempfehlungen](../content-creation/books.md) - `books.yaml` pro Domäne pflegen
+- [Mehrere Content-Repositories](../features/content-repos.md) - eigenes Repo verbinden
+- [Create a lesson in the app, step by step](https://medium.com/@asterios-raptis/create-a-lesson-in-the-app-step-by-step-dadd6927829f) - externe Medium-Anleitung mit Screenshots

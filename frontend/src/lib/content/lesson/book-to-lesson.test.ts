@@ -2,6 +2,8 @@ import {describe, it, expect} from "vitest";
 
 import {
     buildBookLesson,
+    buildBookLessons,
+    buildBookLessonsUserSetInput,
     buildBookUserSetInput,
     normalizeBook,
     type BookLessonInput,
@@ -18,6 +20,7 @@ const META: LessonMeta = {
     level: "A1",
     description: "Pawlow und die Reize",
     author: "Asterios",
+    domain: "language",
 };
 
 const THEORY: TheoryStep[] = [
@@ -157,5 +160,60 @@ describe("buildBookUserSetInput", () => {
         const lesson = buildBookLesson(INPUT);
         const setInput = buildBookUserSetInput(INPUT, lesson, null);
         expect(setInput.book).toBeNull();
+    });
+});
+
+describe("buildBookLessons (batch, #1949)", () => {
+    it("builds one lesson per generated entry, in order", () => {
+        const lessons = buildBookLessons(META, [
+            {title: "Kapitel 1: Reize", theorySteps: THEORY, exercises: [REIZ_EXERCISE]},
+            {title: "Kapitel 2: Modelllernen", theorySteps: THEORY, exercises: [MODEL_EXERCISE]},
+        ]);
+        expect(lessons).toHaveLength(2);
+        expect(lessons[0].title).toBe("Kapitel 1: Reize");
+        expect(lessons[1].title).toBe("Kapitel 2: Modelllernen");
+    });
+
+    it("gives each lesson a unique id even when titles collide", () => {
+        const lessons = buildBookLessons(META, [
+            {title: "Einführung", theorySteps: THEORY, exercises: [REIZ_EXERCISE]},
+            {title: "Einführung", theorySteps: THEORY, exercises: [MODEL_EXERCISE]},
+            {title: "", theorySteps: THEORY, exercises: [REIZ_EXERCISE]},
+        ]);
+        const ids = lessons.map((l) => l.id);
+        expect(new Set(ids).size).toBe(3);
+    });
+
+    it("produces schema-valid lessons (validator does not throw)", () => {
+        expect(() =>
+            buildBookLessons(META, [
+                {title: "A", theorySteps: THEORY, exercises: [REIZ_EXERCISE]},
+                {title: "B", theorySteps: THEORY, exercises: [MODEL_EXERCISE]},
+            ]),
+        ).not.toThrow();
+    });
+});
+
+describe("buildBookLessonsUserSetInput (batch, #1949)", () => {
+    it("carries all lessons into one set input with the set metadata", () => {
+        const lessons = buildBookLessons(META, [
+            {title: "Kapitel 1", theorySteps: THEORY, exercises: [REIZ_EXERCISE]},
+            {title: "Kapitel 2", theorySteps: THEORY, exercises: [MODEL_EXERCISE]},
+        ]);
+        const input = buildBookLessonsUserSetInput(META, lessons, null);
+        expect(input.lessons).toHaveLength(2);
+        expect(input.title).toBe("Klassische Konditionierung");
+        expect(input.target_language).toBe("de");
+        expect(input.origin).toBe("imported");
+        expect(input.book).toBeNull();
+    });
+
+    it("carries the book block when present", () => {
+        const lessons = buildBookLessons(META, [
+            {title: "Kapitel 1", theorySteps: THEORY, exercises: [REIZ_EXERCISE]},
+        ]);
+        const book = normalizeBook({title: "KI fuer Einsteiger"});
+        const input = buildBookLessonsUserSetInput(META, lessons, book);
+        expect(input.book?.title).toBe("KI fuer Einsteiger");
     });
 });

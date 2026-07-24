@@ -5,28 +5,28 @@
 Ayarlar sayfası, kod veya YAML'a dokunmadan değiştirebileceğiniz
 her şeyi bir araya getirir. Bölümler, yukarıdan aşağıya:
 
-1. **Dil** — arayüz dili (DE / EN / ES / FR / EL / PT / TR / JA,
+1. **Dil** - arayüz dili (DE / EN / ES / FR / EL / PT / TR / JA,
    tümü tam çevrilmiş).
-2. **Yapay zeka sağlayıcısı + model seçici** — mesajlarınızı hangi
+2. **Yapay zeka sağlayıcısı + model seçici** - mesajlarınızı hangi
    sağlayıcının gördüğü ve hangi modelin kullanılacağı.
-3. **API anahtarları** — sağlayıcı başına anahtarlar, kaynak
+3. **API anahtarları** - sağlayıcı başına anahtarlar, kaynak
    atıfıyla (env / `secrets.yaml` / Ayarlar).
-4. **Depolama modu** — Sunucu (FastAPI + SQLite) ile Yerel
+4. **Depolama modu** - Sunucu (FastAPI + SQLite) ile Yerel
    (tarayıcı IndexedDB) karşılaştırması.
-5. **Eşitleme** — bu cihazı yerel ağ üzerinden başka bir cihazla
+5. **Eşitleme** - bu cihazı yerel ağ üzerinden başka bir cihazla
    eşleştirin.
-6. **Yedek** — dışa aktar / içe aktar / karşılaştır.
-7. **Ses** — TTS + STT + telaffuz geçişleri.
-8. **Arayüz** — hareketler + tema + yoğunluk.
-9. **Oyunlaştırma** — XP / rozet bildirimleri + hafta sonu modu.
-10. **Hakkında** — sürüm, sistem bilgisi, katkıda bulunanlar,
+6. **Yedek** - dışa aktar / içe aktar / karşılaştır.
+7. **Ses** - TTS + STT + telaffuz geçişleri.
+8. **Arayüz** - hareketler + tema + yoğunluk.
+9. **Oyunlaştırma** - XP / rozet bildirimleri + hafta sonu modu.
+10. **Hakkında** - sürüm, sistem bilgisi, katkıda bulunanlar,
     bağışlar, lisans.
 
 ## Dil
 
 `PATCH /api/settings/{user_id}` üzerinden bir sonraki render işleminde
 her arayüz dizesini canlı olarak değiştirir. Tüm 8 dil birinci
-sınıf — DE / EN / ES / FR / EL / PT / TR / JA — her biri tam
+sınıf - DE / EN / ES / FR / EL / PT / TR / JA - her biri tam
 çevrilmiş bir kataloğa sahip. `localStorage` aracılığıyla yeniden
 yüklemeler arasında kalıcıdır.
 
@@ -37,7 +37,7 @@ bir sonraki yapay zeka çağrısı yeni sağlayıcının eklentisinden
 (Sunucu modu) veya yeni sağlayıcının HTTP istemcisinden (Yerel
 mod) geçer.
 
-**Model seçici** (v1.11.0'dan beri) Önerilen / Tümü olarak
+**Model seçici** Önerilen / Tümü olarak
 gruplandırılmış, her sağlayıcının canlı `/v1/models` uç noktasından
 (1 saatlik önbellek) doldurulan aranabilir bir açılır menüdür. Her
 satır insan adını + ham kimliği + bağlam penceresi rozetini gösterir.
@@ -46,24 +46,24 @@ statik varsayılanlara geri döner ve bir "çevrimdışı varsayılan
 kullanılıyor" ipucu gösterir. Oturum başlığı `<Sağlayıcı>: <Model
 adı>` okur; tam kimlik + bağlam penceresi araç ipucunda yer alır.
 
-## API anahtarları (Aşama 34 / v1.20.0)
+## API anahtarları
 
 Her sağlayıcının kendi satırı vardır: anahtar girişi, Kaydet
 düğmesi, Kaldır düğmesi, aktif sağlayıcı rozeti, artı yeni
 **kaynak atıfı** rozeti:
 
-- **Anahtar kaynağı: Ayarlar** — anahtar, veritabanında Fernet
+- **Anahtar kaynağı: Ayarlar** - anahtar, veritabanında Fernet
   şifrelemeli (Sunucu modu) veya IndexedDB'de açık metin (Yerel
   mod) olarak saklanır. Serbestçe Kaydet / Kaldır yapabilirsiniz.
-- **Anahtar kaynağı: secrets.yaml** — anahtar
+- **Anahtar kaynağı: secrets.yaml** - anahtar
   `~/.config/adaptive-learner/secrets.yaml` dosyasında yapılandırılmıştır.
   Kaydet düğmesi devre dışı; değiştirmek için dosyayı doğrudan
   düzenleyin. Satırın altında bir bilgi pankartı yolu hatırlatır.
-- **Anahtar kaynağı: ortam** — anahtar
+- **Anahtar kaynağı: ortam** - anahtar
   `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` ortam değişkeni aracılığıyla
   yapılandırılmıştır. Kaydet devre dışı; env değişkeni gerçeğin
   kaynağıdır.
-- **Anahtar yapılandırılmamış** — hiçbir yerde ayarlanmamış.
+- **Anahtar yapılandırılmamış** - hiçbir yerde ayarlanmamış.
   Başlamak için yazın ve Kaydet'e basın.
 
 Çözüm zinciri (en yüksek öncelik kazanır): env > secrets.yaml
@@ -75,10 +75,10 @@ bakın.
 
 **Sunucu** ile **Yerel (Tarayıcı)** depolama arasındaki geçiş:
 
-- **Sunucu** — her okuma ve yazma FastAPI arka ucuna çarpar.
+- **Sunucu** - her okuma ve yazma FastAPI arka ucuna çarpar.
   Çalışan bir arka uç gerektirir. Arka uç taraflı eşitleme ile
   çoklu cihaz kullanımı için en iyisi.
-- **Yerel (Tarayıcı)** — her okuma ve yazma bu tarayıcıdaki
+- **Yerel (Tarayıcı)** - her okuma ve yazma bu tarayıcıdaki
   IndexedDB'ye çarpar. Yapay zeka çağrıları doğrudan sağlayıcıya
   gider. Arka uç gerekmez. Özel, cihaza yerel kurulum için en iyisi.
 
@@ -121,26 +121,26 @@ Sil + A/B Olarak Karşılaştır düğmeleri vardır.
 
 ## Ses
 
-Üç geçiş (v1.18.0'dan beri):
+Üç geçiş:
 
-- **TTS etkin** — yapay zeka yanıtları + Değerlendirme sonuçları
+- **TTS etkin** - yapay zeka yanıtları + Değerlendirme sonuçları
   yanında onları yüksek sesle okuyan bir ▶ düğmesi ekler.
   Mümkün olduğunda dille eşleşen sesi seçer; hız + perde
   [0,5, 2,0] arasında sınırlandırılır.
-- **Yapay zekayı otomatik oynat** — her yapay zeka yanıtını
-  otomatik olarak seslendirin (varsayılan KAPALI — sürpriz ses
+- **Yapay zekayı otomatik oynat** - her yapay zeka yanıtını
+  otomatik olarak seslendirin (varsayılan KAPALI - sürpriz ses
   nadiren istenen şeydir).
-- **STT etkin** — Oturum giriş alanına konuşmayı yakalayan ve
+- **STT etkin** - Oturum giriş alanına konuşmayı yakalayan ve
   alanı göndermeden önce ara dökümlerle dolduran bir 🎤 düğmesi
   ekler.
-- **Telaffuz Pratiği etkin** — Diller etiketli projeler için
+- **Telaffuz Pratiği etkin** - Diller etiketli projeler için
   Gösterge Tablosu hızlı başlatıcısından `/pronunciation`
   sayfasını açar.
 
 Ses bölümü, Web Speech API'nin hiçbir tarafı (sentez veya tanıma)
 tarayıcı tarafından desteklenmediğinde kendini gizler.
 
-## Görünüm (Aşama 58 / v1.41.0)
+## Görünüm
 
 *Genel > Görünüm* altındaki **Tema** seçici, otomatik bir mod
 artı altı tema sunar:
@@ -164,7 +164,7 @@ geri bildirimi tümünde okunabilir kalır.
 
 ## Arayüz
 
-**Hareketler geçişi** (v1.10.0'dan beri, dokunmatik cihazlar için
+**Hareketler geçişi** (dokunmatik cihazlar için
 varsayılan AÇIK) Değerlendirme kaydırma navigasyonunu, Müfredat
 konu kaydırma-gösterme özelliğini ve Oturum döngüsü gözetlemeyi
 kapsar. Ayrıca burada: düğme araç ipuçları ve Geliştirici Modu.

@@ -133,9 +133,9 @@ The assessment / tracking / tools logic lives under
 
 Bundled data lives in `frontend/src/data/`:
 
-- `assessment-questions.json` — exported verbatim from the
+- `assessment-questions.json` - exported verbatim from the
   backend's `QUESTIONS` list (12 questions, multilingual).
-- `session-prompts.json` — exported verbatim from the backend's
+- `session-prompts.json` - exported verbatim from the backend's
   `_PROMPTS` dict (6 methods × 7 steps).
 
 ## Dexie data integrity
@@ -152,11 +152,11 @@ get-spread-put loses concurrent updates. DexieStorage uses:
 - **Additive forward migrations.** A new index or table raises
   the Dexie schema version; the upgrade backfills / dedupes
   existing rows. An existing version's stores are never mutated
-  in place — a new `version(n)` is added instead.
+  in place - a new `version(n)` is added instead.
 
 ## Backup format
 
-The backup is an `.alb` file — a ZIP, not a single JSON dump.
+The backup is an `.alb` file - a ZIP, not a single JSON dump.
 The ZIP carries a localStorage snapshot alongside the table
 data, so a restore round-trips both IndexedDB / SQLite state
 and the localStorage-backed preferences. Code lives under
@@ -182,19 +182,19 @@ export type StorageMode = "api" | "dexie" | "supabase";
 ```
 
 Wire it into the Settings UI's storage-mode section. No other
-file changes — pages still go through `getStorage()`.
+file changes - pages still go through `getStorage()`.
 
 ## Browser-direct AI calls
 
 `storage/ai/ai-providers.ts` implements three provider clients:
 
-- **Anthropic** — POST to `https://api.anthropic.com/v1/messages`
+- **Anthropic** - POST to `https://api.anthropic.com/v1/messages`
   with the `anthropic-dangerous-direct-browser-access: true`
   header. This is Anthropic's explicit opt-in for browser
   callers; without it CORS rejects.
-- **OpenAI** — POST to `https://api.openai.com/v1/chat/completions`
+- **OpenAI** - POST to `https://api.openai.com/v1/chat/completions`
   with `Authorization: Bearer ${apiKey}`. CORS open by default.
-- **Gemini** — POST to
+- **Gemini** - POST to
   `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}`.
   Query-param auth, no system field; system messages get
   folded into the first user turn.
@@ -213,7 +213,7 @@ In Dexie mode the user's API key sits in IndexedDB cleartext
   the key.
 - Encrypting in IndexedDB would require either a per-session
   password prompt (UX hostile) or a fixed key bundled in the
-  app (security theatre — the attacker has the bundle).
+  app (security theatre - the attacker has the bundle).
 
 The Server-mode behaviour is different: API keys go through
 Fernet encryption at rest (`ADAPTIVE_LEARNER_SECRET_KEY`).
@@ -224,21 +224,21 @@ Both modes also surface a per-provider source attribution
 the UI can render "Key from: secrets.yaml" / "environment" /
 "Settings". In Dexie mode the source collapses to `settings`
 or `none` because the browser sandbox has no filesystem
-access — `secrets.yaml` is a desktop / server-mode concept.
+access - `secrets.yaml` is a desktop / server-mode concept.
 
 ## Mode resolution
 
 `storage/index.ts` resolves the mode in this order:
 
-1. Build-time `VITE_STORAGE_MODE === "dexie"` — a Dexie-only
+1. Build-time `VITE_STORAGE_MODE === "dexie"` - a Dexie-only
    deployment (GH Pages / installed PWA) has no backend, so this
    is authoritative and wins over any persisted preference. A
    stale persisted `"api"` choice could never be satisfied there
    and would 404 every request.
-2. `localStorage["adaptive-learner.storage_mode"]` — the user's
+2. `localStorage["adaptive-learner.storage_mode"]` - the user's
    choice from Settings, consulted only when the build is NOT a
    dexie-only build.
-3. `VITE_STORAGE_MODE` (any other value) — build-time default.
+3. `VITE_STORAGE_MODE` (any other value) - build-time default.
 4. Fallback: `"api"` (local dev default).
 
 The result is cached for the page's lifetime. Test code can

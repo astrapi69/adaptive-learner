@@ -3,7 +3,7 @@
 A content repository can ship **recommended books** per domain.
 The Content Browser shows them as further reading when you look at
 a set in that domain. This is optional, not a lesson set, and
-needs no backend — it works in both storage modes.
+needs no backend - it works in both storage modes.
 
 ---
 
@@ -59,12 +59,12 @@ domains:
 | `tags` | no | List of keywords. |
 
 The key under `domains:` (e.g. `ai`, `psychology`) is the
-**domain** the books are assigned to — the same domain your
+**domain** the books are assigned to - the same domain your
 content sets use.
 
 ---
 
 ## Related pages
 
-- [Content Browser](../features/content-browser.md) — where the recommendations appear
-- [Creating lessons — overview](overview.md)
+- [Content Browser](../features/content-browser.md) - where the recommendations appear
+- [Creating lessons - overview](overview.md)

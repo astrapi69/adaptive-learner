@@ -19,7 +19,7 @@ beim Erwerb einer neuen Fertigkeit.
 
 ## Warum diese Reihenfolge
 
-Sie ist nicht nur bequem — jeder Schritt hängt vom
+Sie ist nicht nur bequem - jeder Schritt hängt vom
 vorherigen ab:
 
 - **Input → Versuch** ist nicht trivial. Viele Lerner
@@ -75,7 +75,7 @@ Jeder übersprungene Schritt kostet dich:
 Der Dual-Prompt-KI-Bewerter beobachtet deine Austausche und
 kann vorschlagen, auf dem aktuellen Schritt zu bleiben, wenn
 du einen kognitiven Takt übersprungen hast. Darum existieren
-"Bleib hier"-Vorschläge — sie sind nicht die KI, die
+"Bleib hier"-Vorschläge - sie sind nicht die KI, die
 nervt.
 
 ## Wie die KI entscheidet
@@ -93,11 +93,11 @@ nicht parsbaren Text liefert, springt ein deterministisches
 
 `suggested_step` kann sein:
 
-- `current + 1` — normaler Vorschub (am häufigsten).
-- `current` — bleiben; der Lerner braucht hier mehr Zeit.
-- Sprung vorwärts (z.B. 1 → 3) — der Lerner hat den Input
+- `current + 1` - normaler Vorschub (am häufigsten).
+- `current` - bleiben; der Lerner braucht hier mehr Zeit.
+- Sprung vorwärts (z.B. 1 → 3) - der Lerner hat den Input
   schon erfasst.
-- Schritt zurück (z.B. 4 → 2) — der Lerner ist
+- Schritt zurück (z.B. 4 → 2) - der Lerner ist
   verwirrt und muss erneut versuchen.
 
 Die Route wendet den Vorschlag nur an, wenn
@@ -110,15 +110,15 @@ Fallback-Urteile wenden den +1-Advance immer an.
 Derselbe KI-Aufruf könnte sowohl die Lernantwort ALS AUCH
 das Schritt-Urteil liefern. Tun wir nicht, weil:
 
-1. **Trennung der Anliegen** — der Lern-Prompt ist pro
+1. **Trennung der Anliegen** - der Lern-Prompt ist pro
    (Methode, Schritt) komponiert. Der Bewerter-Prompt ist
    methoden-bewusst, aber schritt-agnostisch.
-2. **Token-Budgets** — die Lernantwort profitiert von 1024
+2. **Token-Budgets** - die Lernantwort profitiert von 1024
    Tokens; das Urteil braucht nur 256.
-3. **JSON-Parse-Robustheit** — die KI zu bitten, Prosa UND
+3. **JSON-Parse-Robustheit** - die KI zu bitten, Prosa UND
    ein JSON-Schwänzchen in einer Antwort zu liefern, ist
    fragil. Wir fragen zweimal, parsen sauber.
-4. **Replay-Fähigkeit** — wenn etwas merkwürdig läuft,
+4. **Replay-Fähigkeit** - wenn etwas merkwürdig läuft,
    haben wir die zwei Antworten getrennt geloggt und
    können auditieren.
 
@@ -141,19 +141,19 @@ sparen. Swipe-to-Peek auf dem Streifen blendet ein
 Informations-Overlay ein, das den vorherigen / nächsten
 Zyklus-Schritt beschreibt.
 
-## Auto-Loop (v1.4.0) + Thema-Übergänge
+## Auto-Loop + Thema-Übergänge
 
 Schritt 7 ist keine Sackgasse mehr. Sobald der Schritt-
 Bewerter dich mit `advance=true` auf Schritt 7 bringt,
-feuert ein dritter KI-Aufruf — der Thema-Übergangs-
-Bewerter — und entscheidet, ob das Thema integriert ist
+feuert ein dritter KI-Aufruf - der Thema-Übergangs-
+Bewerter - und entscheidet, ob das Thema integriert ist
 und ob ein neuer Zyklus starten soll.
 
 Bei `integrated=true ∧ continue_recommended=true`:
 `cycle_step` springt auf 1, `cycle_count` erhöht sich um 1,
 ein neues Unterthema wird gewählt. Hartcap `max_cycles=5`
 pro Session verhindert Endlosschleifen. Ein deterministischer
-Fallback erhält das v0.5.0-Cap-bei-7-Verhalten bei jedem
+Fallback erhält das Cap-bei-7-Verhalten bei jedem
 KI- / Parse-Fehler.
 
 Der Chat rendert Zyklus-Übergänge als „Zyklus N"-Karten
@@ -161,7 +161,7 @@ mit gestricheltem Rand im Sitzungsverlauf. Der
 Bewertungsdialog fasst die Multi-Cycle-Reise zusammen, wenn
 `cycle_count > 1`.
 
-## Parallele Zyklus-Grenz-Bewertung (v1.5.0)
+## Parallele Zyklus-Grenz-Bewertung
 
 Beim Schritt-6→7-Übergang feuern Schritt-Bewerter und
 Thema-Übergangs-Bewerter parallel via `asyncio.gather`

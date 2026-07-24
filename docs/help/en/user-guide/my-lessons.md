@@ -1,6 +1,6 @@
 # My Lessons: create, save, share
 
-**My Lessons** are lessons *you* create — turned into the same
+**My Lessons** are lessons *you* create - turned into the same
 offline, playable format as downloaded content sets. You can make a
 lesson from an analysed chat, save a good adaptive lesson for replay,
 export a lesson to share with someone else, and import lessons others
@@ -16,7 +16,7 @@ above the downloaded sets.
 
 1. Import a chat and **Analyze** it (see *Import*).
 2. On the analysis result, click **Save as Offline Lesson**.
-3. A preview shows the lesson's structure — how many exercises and
+3. A preview shows the lesson's structure - how many exercises and
    theory steps, the estimated time. Adjust the title if you like.
 4. Click **Save**. The lesson appears under **My Lessons**.
 
@@ -24,7 +24,7 @@ The lesson is built from what the analysis found:
 
 - **Theory** from the topic, summary, sub-topics, your strengths and
   weaknesses, common-mistake patterns, and any suggested curriculum.
-- **Exercises** from the extracted vocabulary — matching and
+- **Exercises** from the extracted vocabulary - matching and
   type-the-translation from each word, plus fill-in-the-blank and
   word-order exercises from any example sentences.
 
@@ -42,27 +42,30 @@ exactly like a downloaded lesson.
 
 Each My Lesson has:
 
-- **Play** — open it in the lesson viewer.
-- **Edit** — opens the **Lesson Creator pre-filled** with the
-  lesson's metadata, cards, and exercises. When saving you choose:
-  **Save changes** (overwrites the same lesson — your learning
+- **Play** - open it in the lesson viewer.
+- **Edit** - opens the **Lesson Creator pre-filled** with the
+  lesson's metadata, cards, and exercises. If one of your sets holds
+  **several lessons**, a **lesson picker** first asks which one to
+  edit. Book-text lessons open the exercise editor directly;
+  attached book metadata is preserved. When saving you choose:
+  **Save changes** (overwrites the same lesson - your learning
   progress survives for unchanged cards, changed ones start fresh)
   or **Save as a copy** (creates a new lesson, the original stays
   untouched). Analysis-based lessons still open the underlying chat
   analysis. Foreign (downloaded) lessons remain read-only.
-- **Delete** — remove it (with confirmation).
+- **Delete** - remove it (with confirmation).
 
 ---
 
 ## Combine several lessons into a set
 
 Via **"Combine into a set"** in My Lessons you tick several of your
-own lessons and merge them — either into a **new set** (title,
+own lessons and merge them - either into a **new set** (title,
 optional description, level) or into an **existing own set**. If the
 selection mixes languages or levels, a non-blocking hint says so
 (the set takes the most common combination). Colliding lesson files
 automatically get a number suffix instead of overwriting each other.
-The combined set is a normal own set — play, export, and share it as
+The combined set is a normal own set - play, export, and share it as
 usual.
 
 ---
@@ -71,7 +74,7 @@ usual.
 
 When you finish an **adaptive lesson**, a **Save this lesson?** button
 appears on the summary. Saving keeps a snapshot you can replay later
-from My Lessons — handy when an adaptive session turned out
+from My Lessons - handy when an adaptive session turned out
 especially useful. The snapshot stays playable even if the adaptive
 generator changes in a later version.
 
@@ -81,20 +84,20 @@ generator changes in a later version.
 
 Each My Lesson can be shared, with no account and no server:
 
-- **Export** — download the lesson as a single `.json` file.
-- **Export as set** — download a content-set `.zip` (manifest +
+- **Export** - download the lesson as a single `.json` file.
+- **Export as set** - download a content-set `.zip` (manifest +
   lessons).
-- **Share with Community** — opens a pre-filled **pull request** on
+- **Share with Community** - opens a pre-filled **pull request** on
   the official content repository. The lesson JSON lands at the
   correct path in the content tree and the repository's validation
   runs automatically; a maintainer reviews and merges it so everyone
   can download it. Small lessons open straight in GitHub's create-file
   editor (the PR title and description are pre-filled); larger lessons
   download the file first and open GitHub's upload page so you drag it
-  in. No account token is needed — GitHub creates the fork and the
+  in. No account token is needed - GitHub creates the fork and the
   pull request for you.
 
-Exported files contain only the lesson content — no progress, no
+Exported files contain only the lesson content - no progress, no
 error history, nothing personal.
 
 ---
@@ -107,4 +110,4 @@ Lessons. If the file is invalid you'll see a specific reason rather
 than a broken import.
 
 This closes the loop: one learner exports a lesson, another imports
-and plays it — completely offline.
+and plays it - completely offline.

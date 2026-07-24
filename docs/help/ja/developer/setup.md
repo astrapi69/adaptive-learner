@@ -20,8 +20,8 @@ make install
 
 `make install`は以下を実行します。
 
-1. `cd backend && poetry install` — バックエンド + プラグインのパス依存関係。
-2. `cd frontend && bun install` — フロントエンドの依存関係（Node 24）。
+1. `cd backend && poetry install` - バックエンド + プラグインのパス依存関係。
+2. `cd frontend && bun install` - フロントエンドの依存関係（Node 24）。
 3. `plugins/`内のすべてのプラグインをバックエンドのvenvにパス依存関係としてインストール（`develop = true`により編集が即時反映）。
 
 `make install`が失敗する場合、最も多い原因はPoetryが誤ったPythonを選択することです。`backend/`（および深く入った場合は各プラグイン）で`poetry env use python3.12`を実行して再インストールしてください。
@@ -31,7 +31,7 @@ make install
 バックエンドは3層のチェーンから設定を読み取ります（優先度が高いものが優先されます）。
 
 1. **環境変数**（`ADAPTIVE_LEARNER_*`プレフィックス付き）。
-2. **ユーザーシークレット**（`~/.config/adaptive_learner/secrets.yaml`）— 最初の起動時にコメント付きテンプレートとして自動生成（POSIXでは`chmod 0600`が適用）; gitにはコミットされません。
+2. **ユーザーシークレット**（`~/.config/adaptive_learner/secrets.yaml`）- 最初の起動時にコメント付きテンプレートとして自動生成（POSIXでは`chmod 0600`が適用）; gitにはコミットされません。
 3. **デフォルト**（`backend/config/app.yaml`内）。
 
 さらにプロバイダーごとのAIキー解決が上乗せされます: **env > secrets.yaml > Fernet暗号化DBカラム**（Settings UIで設定）。`UserSettingsOut`の`key_source_*`フィールドとしてUIに公開されます。

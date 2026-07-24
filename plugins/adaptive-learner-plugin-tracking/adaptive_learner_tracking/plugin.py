@@ -1,4 +1,4 @@
-"""TrackingPlugin — PluginForge entry point.
+"""TrackingPlugin - PluginForge entry point.
 
 Implements two Phase-2 hookspecs:
 

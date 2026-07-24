@@ -10,7 +10,7 @@
   `curl -sSL https://install.python-poetry.org | python3 -`.
 - **Bun** 1.3+ (διαχειριστής πακέτων του frontend, #1492).
 - **GNU Make** για στόχους ενορχήστρωσης. Το Makefile είναι η πηγή
-  αλήθειας — κάθε εντολή CI βρίσκεται εκεί.
+  αλήθειας - κάθε εντολή CI βρίσκεται εκεί.
 
 ## Κλωνοποίηση + εγκατάσταση
 
@@ -22,8 +22,8 @@ make install
 
 Το `make install` εκτελεί:
 
-1. `cd backend && poetry install` — backend + path-deps plugin.
-2. `cd frontend && bun install` — εξαρτήσεις frontend (Node 24).
+1. `cd backend && poetry install` - backend + path-deps plugin.
+2. `cd frontend && bun install` - εξαρτήσεις frontend (Node 24).
 3. Εγκαθιστά κάθε plugin στο `plugins/` ως path-dep στο venv του
    backend (`develop = true` ώστε οι επεξεργασίες να είναι live).
 
@@ -38,7 +38,7 @@ make install
 
 1. **Μεταβλητές περιβάλλοντος** με πρόθεμα `ADAPTIVE_LEARNER_*`.
 2. **Μυστικά χρήστη** στο `~/.config/adaptive_learner/secrets.yaml`
-   — παράγεται αυτόματα ως σχολιασμένο πρότυπο κατά την πρώτη εκκίνηση
+   - παράγεται αυτόματα ως σχολιασμένο πρότυπο κατά την πρώτη εκκίνηση
    (`chmod 0600` σε POSIX)· ποτέ δεν commit στο git.
 3. **Προεπιλογές** στο `backend/config/app.yaml`.
 
@@ -47,7 +47,7 @@ make install
 μέσω UI Ρυθμίσεων), εκτίθεται στο UI ως πεδίο `key_source_*` στο
 `UserSettingsOut`.
 
-Το ένα υποχρεωτικό μυστικό είναι το `ADAPTIVE_LEARNER_SECRET_KEY` —
+Το ένα υποχρεωτικό μυστικό είναι το `ADAPTIVE_LEARNER_SECRET_KEY` -
 χρησιμοποιείται για κρυπτογράφηση API keys χρηστών κατά ανάπαυση με
 Fernet. Παράγαγέ ένα με
 `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
@@ -55,7 +55,7 @@ Fernet. Παράγαγέ ένα με
 μεταβλητή περιβάλλοντος `ADAPTIVE_LEARNER_SECRET_KEY`, `secret_key:`
 στο `secrets.yaml`, ή `make dev-secret` για εφάπαξ κλειδί ανάπτυξης.
 Η εφαρμογή αποτυγχάνει σκληρά κατά εκκίνηση αν το κλειδί δεν έχει οριστεί
-(χωρίς παγίδα σιωπηλά-δημιουργημένης-προεπιλογής — δες
+(χωρίς παγίδα σιωπηλά-δημιουργημένης-προεπιλογής - δες
 [docs/configuration.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md)).
 
 ## Εκτέλεση
@@ -121,7 +121,7 @@ make docs-serve     # σέρβε έγγραφα στο localhost:8000 με hot-r
 make docs-build     # χτίζει στατικό site στο site/
 ```
 
-Το venv docs είναι ξεχωριστό από αυτό του backend — το MkDocs έχει
+Το venv docs είναι ξεχωριστό από αυτό του backend - το MkDocs έχει
 δικό του `docs/pyproject.toml` με mkdocs-material + mkdocs-static-i18n.
 
 ## Συνηθισμένες παγίδες

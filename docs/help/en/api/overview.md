@@ -2,7 +2,7 @@
 
 AdaptiveLearner's backend exposes a FastAPI REST API. In
 Server mode the frontend talks to it; in Local (Dexie) mode
-the API isn't reachable — the same operations run in the
+the API isn't reachable - the same operations run in the
 browser.
 
 ## Base URL
@@ -32,7 +32,7 @@ AI provider keys are resolved via a three-layer chain
 3. Fernet-encrypted `UserSettings.api_key_<provider>` column
    (set via the Settings UI; never returned to the frontend
    in plaintext).
-4. `None` — the AI call surfaces an error to the UI.
+4. `None` - the AI call surfaces an error to the UI.
 
 `UserSettingsOut.key_source_*` (enum
 `env | secrets_yaml | settings | none`) reports which layer
@@ -102,7 +102,7 @@ In debug mode (`ADAPTIVE_LEARNER_DEBUG=true`) the response
 also includes a `traceback` field. Production deployments
 should leave debug off.
 
-The frontend's `ApiError` class consumes both shapes — see
+The frontend's `ApiError` class consumes both shapes - see
 `frontend/src/api/client.ts` for the exact parser.
 
 ## Endpoint groups

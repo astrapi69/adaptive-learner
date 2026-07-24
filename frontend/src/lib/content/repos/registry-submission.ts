@@ -136,7 +136,7 @@ export function buildRegistryPrBody(entry: RegistryEntry): string {
     `| Commit | \`${entry.commit}\` |`,
     `| Title | ${entry.title} |`,
     `| Trust level | ${entry.trust_level} |`,
-    `| Languages | ${entry.languages.length > 0 ? entry.languages.join(", ") : "—"} |`,
+    `| Languages | ${entry.languages.length > 0 ? entry.languages.join(", ") : "-"} |`,
     `| Validation | ${entry.validation.status} |`,
   ];
   if (entry.description) {
@@ -144,7 +144,7 @@ export function buildRegistryPrBody(entry: RegistryEntry): string {
   }
   lines.push(
     "",
-    "_Proposed from Adaptive Learner — Settings › Integrations › Register your repo._",
+    "_Proposed from Adaptive Learner - Settings › Integrations › Register your repo._",
     "_The **Validate registered repos** workflow re-checks the pinned commit on this PR._",
   );
   return lines.join("\n");

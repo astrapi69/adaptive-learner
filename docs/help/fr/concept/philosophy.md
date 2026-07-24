@@ -22,7 +22,7 @@ approches distinctes, chacune ayant ses propres forces selon le contexte :
 Un apprenant débutant en grammaire tire généralement plus de profit de la
 méthode déductive. Le même apprenant, plusieurs semaines plus tard, abordant
 du vocabulaire en contexte, progressera plus vite avec la méthode contextuelle.
-La méthode n'est pas un trait de personnalité — c'est un outil qui convient
+La méthode n'est pas un trait de personnalité - c'est un outil qui convient
 différemment selon la tâche.
 
 ---
@@ -45,7 +45,7 @@ Tout apprentissage est du travail méconnu. Adaptive Learner traite chaque
 session terminée comme un **commit Git** pour votre apprentissage : une
 entrée permanente dans votre historique portant votre note de compréhension,
 votre niveau de stress, la méthode utilisée et l'étape du cycle atteinte.
-Vous pouvez voir — et montrer — ce que vous avez réellement accompli.
+Vous pouvez voir - et montrer - ce que vous avez réellement accompli.
 
 ### 3. Outillage
 

@@ -130,7 +130,7 @@ export default function LessonList({
                                     editable={!submitting}
                                     placeholder={t(
                                         "curriculum.lesson_content_placeholder",
-                                        "Lesson content — supports headings, lists, code blocks, links.",
+                                        "Lesson content - supports headings, lists, code blocks, links.",
                                     )}
                                     testidNamespace={`lesson-edit-content-${lesson.id}`}
                                     minHeight={140}

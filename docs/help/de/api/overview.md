@@ -2,7 +2,7 @@
 
 Das Backend von AdaptiveLearner exponiert eine FastAPI-REST-
 API. Im Server-Modus spricht das Frontend mit ihr; im Lokal-
-(Dexie-)Modus ist die API nicht erreichbar — die gleichen
+(Dexie-)Modus ist die API nicht erreichbar - die gleichen
 Operationen laufen im Browser.
 
 ## Basis-URL
@@ -33,7 +33,7 @@ aufgelöst (`services.settings.resolve_api_key`):
    `UserSettings.api_key_<provider>`-DB-Spalte (über die
    Einstellungs-UI gesetzt; nie im Klartext ans Frontend
    zurückgegeben).
-4. `None` — der KI-Aufruf zeigt einen Fehler in der UI.
+4. `None` - der KI-Aufruf zeigt einen Fehler in der UI.
 
 `UserSettingsOut.key_source_*` (Enum
 `env | secrets_yaml | settings | none`) meldet pro
@@ -103,7 +103,7 @@ Im Debug-Modus (`ADAPTIVE_LEARNER_DEBUG=true`) enthält die
 Response zusätzlich ein `traceback`-Feld. Produktions-
 Deployments sollten Debug ausgeschaltet lassen.
 
-Die `ApiError`-Klasse des Frontends konsumiert beide Formen —
+Die `ApiError`-Klasse des Frontends konsumiert beide Formen -
 siehe `frontend/src/api/client.ts` für den exakten Parser.
 
 ## Endpoint-Gruppen

@@ -22,13 +22,13 @@ describe("MethodSwitchBanner", () => {
         const {rerender} = render(
             <MethodSwitchBanner
                 suggested="error_based"
-                reason="Du machst viele Fehler — Methode passt."
+                reason="Du machst viele Fehler - Methode passt."
                 onAccept={() => {}}
                 onDismiss={() => {}}
             />,
         );
         expect(
-            screen.getByText("Du machst viele Fehler — Methode passt."),
+            screen.getByText("Du machst viele Fehler - Methode passt."),
         ).toBeInTheDocument();
         rerender(
             <MethodSwitchBanner
@@ -41,7 +41,7 @@ describe("MethodSwitchBanner", () => {
         // ratings…" or German equivalent).
         const banner = screen.getByTestId("method-switch-banner");
         expect(banner.textContent ?? "").not.toContain(
-            "Du machst viele Fehler — Methode passt.",
+            "Du machst viele Fehler - Methode passt.",
         );
     });
 

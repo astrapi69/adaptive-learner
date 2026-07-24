@@ -2,7 +2,7 @@
 
 # Derslerim: oluştur, kaydet, paylaş
 
-**Derslerim**, *sizin* oluşturduğunuz derslerdir — indirilen
+**Derslerim**, *sizin* oluşturduğunuz derslerdir - indirilen
 içerik setleriyle aynı çevrimdışı oynanabilir biçime dönüştürülmüş.
 Analiz edilmiş bir sohbetten ders oluşturabilir, iyi bir uyarlamalı
 dersi tekrar oynatmak için kaydedebilir, bir dersi başkasıyla
@@ -19,7 +19,7 @@ Derslerimi, indirilen setlerin üzerinde **Set Tarayıcısı**'nın
 
 1. Bir sohbet içe aktarın ve **Analiz Edin** (bkz. *İçe Aktarma*).
 2. Analiz sonucunda **Çevrimdışı Ders Olarak Kaydet**'e tıklayın.
-3. Bir önizleme dersin yapısını gösterir — kaç alıştırma ve teori
+3. Bir önizleme dersin yapısını gösterir - kaç alıştırma ve teori
    adımı olduğunu, tahmini süreyi. İsterseniz başlığı ayarlayın.
 4. **Kaydet**'e tıklayın. Ders **Derslerim** altında görünür.
 
@@ -27,7 +27,7 @@ Ders, analizin bulduklarından oluşturulur:
 
 - Konu, özet, alt konular, güçlü ve zayıf yönleriniz, yaygın
   hata kalıpları ve önerilen müfredattan **Teori**.
-- Çıkarılan kelime hazinesinden **Alıştırmalar** — her kelimeden
+- Çıkarılan kelime hazinesinden **Alıştırmalar** - her kelimeden
   eşleştirme ve çeviriyi yazma, artı örnek cümlelerden boşluk
   doldurma ve kelime sıralama alıştırmaları.
 
@@ -45,11 +45,14 @@ ders görüntüleyicisinde oynatılır.
 
 Her Dersim şunlara sahiptir:
 
-- **Oynat** — ders görüntüleyicide açın.
-- **Düzenle** — kaynak analizini yeniden açın, böylece
+- **Oynat** - ders görüntüleyicide açın.
+- **Düzenle** - kaynak analizini yeniden açın, böylece
   ayarlayabilir ve yeniden kaydedebilirsiniz (analiz tabanlı
-  dersler için mevcuttur).
-- **Sil** — kaldırın (onay ile birlikte).
+  dersler için mevcuttur). Kendi setlerinizden biri **birden çok
+  ders** içeriyorsa, önce bir **ders seçici** hangisini düzenlemek
+  istediğinizi sorar. Kitap metni dersleri doğrudan alıştırma
+  düzenleyicisini açar; eklenmiş kitap bilgileri korunur.
+- **Sil** - kaldırın (onay ile birlikte).
 
 ---
 
@@ -57,7 +60,7 @@ Her Dersim şunlara sahiptir:
 
 **Uyarlamalı bir dersi** tamamladığınızda özette **Bu dersi
 kaydet?** düğmesi görünür. Kaydetmek, Derslerimden daha sonra
-tekrar oynatmanız için bir anlık görüntü tutar — özellikle
+tekrar oynatmanız için bir anlık görüntü tutar - özellikle
 yararlı çıkan bir uyarlamalı oturumda kullanışlıdır. Anlık
 görüntü, uyarlamalı oluşturucu sonraki bir sürümde değişse bile
 oynanabilir kalır.
@@ -68,15 +71,15 @@ oynanabilir kalır.
 
 Her Dersim, hesap ve sunucu olmaksızın paylaşılabilir:
 
-- **Dışa Aktar** — dersi tek bir `.json` dosyası olarak indirin.
-- **Set olarak dışa aktar** — bir içerik seti `.zip`'i
+- **Dışa Aktar** - dersi tek bir `.json` dosyası olarak indirin.
+- **Set olarak dışa aktar** - bir içerik seti `.zip`'i
   (manifest + dersler) indirin.
-- **Toplulukla Paylaş** — resmi içerik deposunda önceden
+- **Toplulukla Paylaş** - resmi içerik deposunda önceden
   doldurulmuş bir GitHub sorunu açın. Dışa aktarılan dosyayı
   ekleyin; bir bakıcı inceleyip resmi içeriğe ekleyebilir,
   böylece herkes indirebilir.
 
-Dışa aktarılan dosyalar yalnızca ders içeriğini içerir — ilerleme,
+Dışa aktarılan dosyalar yalnızca ders içeriğini içerir - ilerleme,
 hata geçmişi, hiçbir kişisel şey yoktur.
 
 ---
@@ -89,4 +92,4 @@ eklemek için onaylayın. Dosya geçersizse bozuk bir içe aktarma
 yerine belirli bir neden göreceksiniz.
 
 Bu döngüyü kapatır: bir öğrenci bir dersi dışa aktarır, bir diğeri
-içe aktarıp oynatır — tamamen çevrimdışı.
+içe aktarıp oynatır - tamamen çevrimdışı.

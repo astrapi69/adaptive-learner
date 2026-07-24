@@ -9,7 +9,7 @@ répondus, et les planifie pour une session de révision ciblée plus
 tard.
 
 Les leçons sont une **voie d'apprentissage alternative** qui ne
-nécessite aucune clé d'API IA — idéale pour essayer l'application
+nécessite aucune clé d'API IA - idéale pour essayer l'application
 ou pour des contenus où du matériel curaté fonctionne mieux qu'un
 chat libre.
 
@@ -17,7 +17,7 @@ chat libre.
 
 ## D'où viennent les leçons
 
-Les leçons vivent dans des **ensembles de contenu** — de petits
+Les leçons vivent dans des **ensembles de contenu** - de petits
 paquets publiés dans des dépôts GitHub publics. Le **navigateur
 d'ensembles** sous `/content` liste chaque ensemble disponible ;
 clique sur l'un d'eux pour le télécharger. L'ensemble est mis en
@@ -25,9 +25,8 @@ cache localement (dans le système de fichiers en fonctionnement
 backend, dans IndexedDB en mode purement navigateur), de sorte
 qu'après le premier téléchargement tu peux apprendre hors ligne.
 
-L'ensemble pilote de la v1.27.0 est **Français A1** (2 leçons, 14
-cartes, 9 exercices couvrant les quatre types d'exercices). Chaque
-version depuis lors en ajoute de nouveaux — voir le
+La bibliothèque intégrée couvre plusieurs ensembles de contenu dans
+différentes langues et domaines. Chaque version en ajoute - voir le
 [dépôt d'ensembles](https://github.com/astrapi69/adaptive-learner-content)
 pour le catalogue actuel.
 
@@ -40,22 +39,35 @@ te guide pas à pas à travers chaque carte et chaque exercice :
 
 1. **Cartes** : présentent du matériel à lire. Clique sur
    « Suivant » quand tu es prêt.
-2. **Exercices** : vérifient ce que tu as retenu. Quatre types
-   sont disponibles :
-   - **Associer** — fais glisser des paires (mot ↔ traduction).
+2. **Exercices** : vérifient ce que tu as retenu. Les types de
+   base :
+   - **Associer** - fais glisser des paires (mot ↔ traduction).
      Les deux tuiles d'une paire trouvée partagent une **couleur
      propre** et un **badge numéroté**, de sorte que
      l'association est reconnaissable de manière sûre pour le
      daltonisme (pas seulement par la couleur).
-   - **Choix d'image** — choisis l'image qui correspond à
+   - **Choix d'image** - choisis l'image qui correspond à
      l'indice.
-   - **Texte libre** — tape la réponse.
-   - **Tuiles de mots** — assemble une phrase à partir de tuiles.
-   - **Texte à trous** — remplis un trou dans la phrase (généré de
+   - **Texte libre** - tape la réponse.
+   - **Tuiles de mots** - assemble une phrase à partir de tuiles.
+   - **Texte à trous** - remplis un trou dans la phrase (généré de
      manière ciblée à partir de tes erreurs, voir ci-dessous).
+   - **Choix multiple** - choisis une ou (selon la tâche)
+     plusieurs bonnes réponses.
+
+   À cela s'ajoutent des **types d'extension** qu'un ensemble peut
+   apporter : catégorisation, correction d'erreurs, compréhension
+   écrite, quiz noté et **dictée audio** (écouter, puis
+   transcrire).
+
+Si un exercice porte une **difficulté** attribuée par l'auteur, un
+petit badge indique le niveau (**Facile / Moyen / Difficile**).
+C'est de la pure transparence : tu vois pourquoi le générateur
+adaptatif peut proposer une carte plus tôt ou plus souvent - le
+badge ne change ni la notation ni l'ordre.
 
 Une barre de progression en haut suit ta position dans la leçon.
-Tu peux t'arrêter à tout moment — ta progression est enregistrée
+Tu peux t'arrêter à tout moment - ta progression est enregistrée
 par étape et reprend là où tu t'es arrêté.
 
 ### Raccourci Entrée
@@ -114,13 +126,13 @@ backend et fonctionne dans les deux modes de stockage.
 ## Suivi des erreurs au niveau des éléments
 
 Chaque réponse fausse dans chaque type d'exercice écrit une ligne
-qui renvoie à l'**élément concret que tu as manqué** — le mot, la
+qui renvoie à l'**élément concret que tu as manqué** - le mot, la
 paire ou la phrase précis. L'application ne retient PAS seulement
 « tu as obtenu 6/10 à la leçon 3 » ; elle retient « tu as eu
 particulièrement du mal avec *bonjour* et *merci* ».
 
 Si tu réponds correctement au même élément **3 fois de suite**, il
-est marqué comme **maîtrisé** — et retiré de la file d'attente de
+est marqué comme **maîtrisé** - et retiré de la file d'attente de
 révision. Si tu réponds plus tard de manière fausse à un élément
 maîtrisé, il **redescend** dans la file. Une maîtrise manquée est
 une maîtrise oubliée.
@@ -159,16 +171,16 @@ lesquels tu luttes le plus remontent en haut.
 
 Une session de révision sous `/review/:setId` synthétise une
 **mini-leçon à la volée** à partir des entrées du haut de ta file.
-Stratégie mixte depuis la **v1.35.0** :
+Stratégie mixte :
 
 - Si tu as manqué un mot à l'origine dans un exercice
   d'**association** ou de **choix d'image**, tu refais exactement
-  cet exercice (avec un nouveau mélange — pas de simple mémoire
+  cet exercice (avec un nouveau mélange - pas de simple mémoire
   musculaire).
 - Si tu as manqué quelque chose en **texte libre** ou en **tuiles
   de mots**, la révision essaie de générer un exercice de **texte
   à trous** qui vise exactement le mot manqué. Le même savoir sous
-  une autre forme — c'est la flexibilité qui est entraînée, pas
+  une autre forme - c'est la flexibilité qui est entraînée, pas
   seulement la répétition d'un format d'exercice particulier.
 - Si aucun texte à trous propre ne peut être construit pour un
   élément (p. ex. lorsque l'invite d'origine ne contenait pas la
@@ -183,7 +195,7 @@ révision**.
 
 ## Tour de correction en fin de leçon
 
-Nouveauté de la **v1.35.0** : lorsque tu termines une leçon avec
+Lorsque tu termines une leçon avec
 des erreurs, la page de récapitulatif affiche un petit **tour de
 correction** entre ton score et le bouton « Leçon suivante ». Il
 prend jusqu'à cinq erreurs concrètes de cette leçon et propose
@@ -191,7 +203,7 @@ chacune sous forme de nouveau texte à trous visant exactement le
 mot / l'article manqué.
 
 - **Ignorable à tout moment.** Le bouton « Leçon suivante » reste
-  visible — le tour de correction est un exercice volontaire, pas
+  visible - le tour de correction est un exercice volontaire, pas
   un verrou.
 - **N'apparaît que s'il y a quelque chose à corriger.** Les leçons
   avec un score parfait le sautent entièrement. Les leçons dont
@@ -207,23 +219,23 @@ afin que tu voies l'effet de ton exercice supplémentaire.
 
 ## Retour visuel par diff
 
-Également nouveau dans la **v1.35.0** : les réponses fausses de
+Les réponses fausses de
 texte libre et de tuiles de mots affichent désormais une **diff au
 niveau des jetons** entre ta saisie et la réponse canonique. Trois
 couleurs, jamais la couleur seule :
 
-- **Rouge barré** — ce que tu as écrit et qui n'avait pas sa place
+- **Rouge barré** - ce que tu as écrit et qui n'avait pas sa place
   (avec un marqueur × pour les lecteurs d'écran et les
   utilisateur·rice·s daltoniens).
-- **Vert** — ce que la réponse canonique contient et que tu as
+- **Vert** - ce que la réponse canonique contient et que tu as
   oublié (avec un marqueur +).
-- **Jaune** avec flèche → — un mot légèrement faux, présenté sous
+- **Jaune** avec flèche → - un mot légèrement faux, présenté sous
   la forme `ton-mot` → `attendu`.
 
 La même diff apparaît dans le récapitulatif de la leçon, dans la
-décomposition de chaque exercice — pour chaque réponse de texte
+décomposition de chaque exercice - pour chaque réponse de texte
 libre ou de tuiles de mots dont la saisie utilisateur est connue
-du stockage v1.35.0+.
+du stockage.
 
 ---
 
@@ -240,11 +252,11 @@ Chaque leçon terminée gagne des XP selon une formule en étoiles :
 
 Quatre nouveaux badges se débloquent autour des leçons :
 
-- **Première leçon** — termine ta première leçon de contenu.
-- **10 leçons terminées** — termine 10 leçons de contenu.
-- **Série de 3 étoiles** — obtiens trois leçons de suite avec 3
+- **Première leçon** - termine ta première leçon de contenu.
+- **10 leçons terminées** - termine 10 leçons de contenu.
+- **Série de 3 étoiles** - obtiens trois leçons de suite avec 3
   étoiles.
-- **Maître de la révision** — maîtrise 50 éléments par la
+- **Maître de la révision** - maîtrise 50 éléments par la
   répétition espacée.
 
 Les achèvements de leçon comptent aussi pour ta **série
@@ -255,7 +267,7 @@ remplit la heatmap de la même manière que les sessions de chat.
 
 ## Modes de stockage
 
-Les leçons fonctionnent dans les **deux** modes de stockage — API
+Les leçons fonctionnent dans les **deux** modes de stockage - API
 (backend) et Dexie (navigateur seul / GitHub Pages). Le suivi des
 erreurs au niveau des éléments et la planification SRS s'exécutent
 à l'identique contre IndexedDB en mode purement navigateur, de
@@ -263,9 +275,9 @@ sorte que les utilisateur·rice·s qui visitent le site public
 GitHub Pages obtiennent la boucle de révision complète sans
 backend.
 
-Depuis la **v1.33.0**, la gamification est également alignée : en
+La gamification est également alignée : en
 mode purement navigateur, tu gagnes pour les leçons terminées **les
-mêmes XP et badges de leçon** qu'en mode serveur — la logique des
+mêmes XP et badges de leçon** qu'en mode serveur - la logique des
 étoiles, des séries et des badges est portée en TypeScript et
 sécurisée contre des valeurs de référence identiques. Il n'y a plus
 aucune différence de fonctionnalité entre les modes lors de
@@ -277,7 +289,7 @@ l'achèvement d'une leçon.
 
 Toute la progression des leçons, les lignes d'erreurs au niveau
 des éléments, les états de la file d'attente de révision et les
-données de planification restent **sur ton propre appareil** —
+données de planification restent **sur ton propre appareil** -
 dans le système de fichiers (mode API) ou dans le navigateur
 (IndexedDB). Rien sur les mots avec lesquels tu luttes n'est envoyé
 où que ce soit.

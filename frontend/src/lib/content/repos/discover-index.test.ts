@@ -150,14 +150,17 @@ describe("queryDiscoverSets", () => {
     expect(result.map((s) => s.id)).toEqual(["fr", "es"]);
   });
 
-  it("drops hidden reference/conformance sets (#1702)", () => {
+  it("drops sets marked visibility: hidden at render time (#1707)", () => {
     const sets = [
-      makeSet({ id: "de-fr-a1", repo_url: "astrapi69/adaptive-learner-content-test" }),
-      makeSet({
-        id: "graded-quiz-demo-from-de",
-        repo_url: "astrapi69/adaptive-learner-content-test",
-      }),
+      makeSet({ id: "de-fr-a1", visibility: "visible" }),
+      makeSet({ id: "graded-quiz-demo-from-de", visibility: "hidden" }),
     ];
+    const result = queryDiscoverSets(sets, EMPTY_FILTERS, "newest");
+    expect(result.map((s) => s.id)).toEqual(["de-fr-a1"]);
+  });
+
+  it("keeps sets with no visibility field (absent ⇒ visible, #1707)", () => {
+    const sets = [makeSet({ id: "de-fr-a1", visibility: undefined })];
     const result = queryDiscoverSets(sets, EMPTY_FILTERS, "newest");
     expect(result.map((s) => s.id)).toEqual(["de-fr-a1"]);
   });

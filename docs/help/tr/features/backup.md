@@ -5,7 +5,7 @@ ve başka bir cihazda, yeni bir kurulumda ya da bir tarayıcı
 değişikliğinden sonra geri yükleyebilir. Her şeyi **Ayarlar →
 Veriler** altında bulursun.
 
-<!-- TODO: Ekran görüntüsü — Ayarlar → Veriler, "Yedek oluştur" ve "Geri yükle" düğmeleriyle -->
+<!-- TODO: Ekran görüntüsü - Ayarlar → Veriler, "Yedek oluştur" ve "Geri yükle" düğmeleriyle -->
 
 ---
 
@@ -46,7 +46,7 @@ tutar.
    atlandı) yukarı kaydırır.
 
 İçe aktarmada bir şey ters giderse, kendiliğinden kaybolmayan
-**kalıcı bir hata uyarısı** (Toast) görünür — böylece hiçbir hatayı
+**kalıcı bir hata uyarısı** (Toast) görünür - böylece hiçbir hatayı
 gözden kaçırmazsın. Geliştirici modunda (Ayarlar → Arayüz), mesaj bir
 GitHub Issue için teknik ayrıntıları içerir.
 
@@ -58,7 +58,7 @@ Aynı cihazda aynı kullanıcı olmana **gerek yoktur**. Bir yedek, bir
 **yeni kuruluma** ya da **başka bir kullanıcı profili** altına içe
 aktarılabilir. Geri yükleme, verileri aktif profile atar ve bu
 sırada dahili referansları (yabancı anahtarları) temiz biçimde
-yeniden çözer, böylece ilerlemen bütünlüğünü korur — ders adım
+yeniden çözer, böylece ilerlemen bütünlüğünü korur - ders adım
 ilerlemesi, Streak ve Badge'ler dahil.
 
 ---
@@ -74,17 +74,17 @@ değişikliğinden sonra öğrenme akışına hemen geri dönersin.
 
 ## Her iki depolama modu
 
-Yedekleme ve geri yükleme **her iki** depolama modunda da çalışır —
+Yedekleme ve geri yükleme **her iki** depolama modunda da çalışır -
 sunucu (API) ve yalnızca tarayıcı (Dexie/IndexedDB). Format tek bir
 JSON dosyasıdır; özel bir arşiv formatı yoktur.
 
 !!! note "Gizlilik"
     Yedek tamamen senin elinde kalır. Yalnızca koyduğun yere
-    kaydedilir — hiçbir şey bir sunucuya gönderilmez.
+    kaydedilir - hiçbir şey bir sunucuya gönderilmez.
 
 ---
 
 ## İlgili sayfalar
 
-- [Ayarlar](../user-guide/settings.md) — tüm veri eylemlerine genel bakış
-- [Birden Çok İçerik Repository'si](content-repos.md) — bağlı repolar snapshot'ın parçasıdır
+- [Ayarlar](../user-guide/settings.md) - tüm veri eylemlerine genel bakış
+- [Birden Çok İçerik Repository'si](content-repos.md) - bağlı repolar snapshot'ın parçasıdır

@@ -43,6 +43,6 @@ uma tabela de rastreamento.
   é necessária.
 - Sem rastreamento além de `UserMission`; verificações não
   rastreáveis não são atribuídas.
-- As missões são suplementares — uma falha nunca interrompe o
+- As missões são suplementares - uma falha nunca interrompe o
   fluxo da lição (todas as leituras são defensivas). Sem
   penalização por dias perdidos.

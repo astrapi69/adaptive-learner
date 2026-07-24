@@ -34,7 +34,29 @@ describe("ShareButton", () => {
         fireEvent.click(screen.getByTestId("share-button"));
 
         await waitFor(() => expect(onShared).toHaveBeenCalledWith("shared"));
-        expect(share).toHaveBeenCalledWith({text: PROPS.text, url: PROPS.url});
+        // #1939 — URL folded into `text`, no separate `url` field.
+        expect(share).toHaveBeenCalledWith({
+            text: `${PROPS.text} ${PROPS.url}`,
+        });
+    });
+
+    // #1939 — iOS/WebKit drops the `text` field when a separate `url` is
+    // present and shares only the link, so the recipient sees just the app
+    // name. Fold the URL into `text` (like the clipboard + intent paths) so
+    // the message survives on every platform. The single self-contained text
+    // must carry BOTH the caller's text and the URL.
+    it("folds the URL into the shared text so it survives iOS's text-drop", async () => {
+        const share = vi.fn().mockResolvedValue(undefined);
+        (navigator as Navigator & {share?: unknown}).share = share;
+
+        render(<ShareButton {...PROPS} />);
+        fireEvent.click(screen.getByTestId("share-button"));
+
+        await waitFor(() => expect(share).toHaveBeenCalledTimes(1));
+        const payload = share.mock.calls[0][0] as ShareData;
+        expect(payload.text).toBe(`${PROPS.text} ${PROPS.url}`);
+        // No separate `url` field a link-preview target could share alone.
+        expect(payload.url).toBeUndefined();
     });
 
     it("falls back to the clipboard when navigator.share is absent", async () => {
@@ -207,8 +229,7 @@ describe("ShareButton", () => {
 
             await waitFor(() =>
                 expect(share).toHaveBeenCalledWith({
-                    text: PROPS.text,
-                    url: PROPS.url,
+                    text: `${PROPS.text} ${PROPS.url}`,
                 }),
             );
             expect(

@@ -41,7 +41,7 @@ from .prompts import (
 
 
 def _humanize_lesson_label(set_id: str, lesson_filename: str) -> str:
-    """A readable ``<set> — <lesson>`` label from the cache ids.
+    """A readable ``<set> - <lesson>`` label from the cache ids.
 
     The lesson filename (``01-greetings.json``) is stripped + spaced
     (``01 greetings``); resolving the authored lesson title would need a
@@ -52,7 +52,7 @@ def _humanize_lesson_label(set_id: str, lesson_filename: str) -> str:
     if lesson.endswith(".json"):
         lesson = lesson[: -len(".json")]
     lesson = lesson.replace("-", " ").replace("_", " ").strip()
-    return f"{set_id} — {lesson}" if lesson else set_id
+    return f"{set_id} - {lesson}" if lesson else set_id
 
 
 def _learning_context_for(db: Session, project: LearningProject, lang: str) -> str:

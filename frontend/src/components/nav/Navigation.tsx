@@ -208,11 +208,11 @@ export default function Navigation() {
           data-testid="nav-dev-badge"
           title={t(
             "nav.dev_badge_tooltip",
-            "Developer Mode is on — error toasts show full technical detail. Toggle in Settings.",
+            "Developer Mode is on - error toasts show full technical detail. Toggle in Settings.",
           )}
           aria-label={t(
             "nav.dev_badge_tooltip",
-            "Developer Mode is on — error toasts show full technical detail. Toggle in Settings.",
+            "Developer Mode is on - error toasts show full technical detail. Toggle in Settings.",
           )}
         >
           {t("nav.dev_badge", "DEV")}

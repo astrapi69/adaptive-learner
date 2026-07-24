@@ -32,11 +32,11 @@ export interface IStorageService {
   backup: IBackupNamespace;
   export: IExportNamespace;
   imports: IImportsNamespace;
-  // Phase 22 — taxonomy
+  // Phase 22 - taxonomy
   subjects: ISubjectsNamespace;
   tags: ITagsNamespace;
   projectTaxonomy: IProjectTaxonomyNamespace;
-  // Phase 29-32 — gamification + exports
+  // Phase 29-32 - gamification + exports
   gamification: IGamificationNamespace;
   anki: IAnkiNamespace;
   notebooklm: INotebookLmNamespace;
@@ -75,9 +75,9 @@ export interface IStorageService {
 
 Δεδομένα bundle βρίσκονται στο `frontend/src/data/`:
 
-- `assessment-questions.json` — εξαγόμενο αυτούσιο από τη λίστα
+- `assessment-questions.json` - εξαγόμενο αυτούσιο από τη λίστα
   `QUESTIONS` του backend (12 ερωτήσεις × 4 απαντήσεις × 5 γλώσσες).
-- `session-prompts.json` — εξαγόμενο αυτούσιο από το dict `_PROMPTS`
+- `session-prompts.json` - εξαγόμενο αυτούσιο από το dict `_PROMPTS`
   του backend (6 μέθοδοι × 7 βήματα × 2 γλώσσες).
 
 ## Προσθήκη τρίτου storage backend
@@ -99,21 +99,21 @@ export type StorageMode = "api" | "dexie" | "supabase";
 ```
 
 Σύνδεσέ το στο τμήμα storage-mode του UI Ρυθμίσεων. Χωρίς άλλες
-αλλαγές αρχείων — οι σελίδες εξακολουθούν να χρησιμοποιούν το
+αλλαγές αρχείων - οι σελίδες εξακολουθούν να χρησιμοποιούν το
 `getStorage()`.
 
 ## Άμεσες κλήσεις ΤΝ από browser
 
 Το `storage/ai-providers.ts` υλοποιεί τρεις clients παρόχων:
 
-- **Anthropic** — POST στο `https://api.anthropic.com/v1/messages`
+- **Anthropic** - POST στο `https://api.anthropic.com/v1/messages`
   με την επικεφαλίδα `anthropic-dangerous-direct-browser-access: true`.
   Αυτή είναι η ρητή δυνατότητα opt-in του Anthropic για κλήσεις
   από browser· χωρίς αυτή το CORS απορρίπτει.
-- **OpenAI** — POST στο `https://api.openai.com/v1/chat/completions`
+- **OpenAI** - POST στο `https://api.openai.com/v1/chat/completions`
   με `Authorization: Bearer ${apiKey}`. Το CORS είναι ανοιχτό
   από προεπιλογή.
-- **Gemini** — POST στο
+- **Gemini** - POST στο
   `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}`.
   Πιστοποίηση με query-param· χωρίς πεδίο system· τα system messages
   ενσωματώνονται στην πρώτη σειρά χρήστη.
@@ -133,7 +133,7 @@ export type StorageMode = "api" | "dexie" | "supabase";
   το κλειδί.
 - Η κρυπτογράφηση στο IndexedDB θα απαιτούσε είτε προτροπή
   κωδικού ανά συνεδρία (εχθρικό UX) είτε σταθερό κλειδί
-  ενσωματωμένο στην εφαρμογή (θέατρο ασφαλείας — ο εισβολέας
+  ενσωματωμένο στην εφαρμογή (θέατρο ασφαλείας - ο εισβολέας
   έχει το bundle).
 
 Η συμπεριφορά Server-mode είναι διαφορετική: τα API keys περνούν
@@ -145,16 +145,16 @@ export type StorageMode = "api" | "dexie" | "supabase";
 (`UserSettings.key_source_anthropic | openai | gemini`) ώστε το UI
 να αποδίδει "Key from: secrets.yaml" / "environment" / "Settings".
 Στη λειτουργία Dexie η πηγή καταρρέει σε `settings` ή `none`
-επειδή το sandbox browser δεν έχει πρόσβαση στο filesystem —
+επειδή το sandbox browser δεν έχει πρόσβαση στο filesystem -
 το `secrets.yaml` είναι έννοια desktop / server-mode.
 
 ## Επίλυση λειτουργίας
 
 Το `storage/index.ts` επιλύει τη λειτουργία με αυτή τη σειρά:
 
-1. `localStorage["adaptive-learner.storage_mode"]` — επιλογή
+1. `localStorage["adaptive-learner.storage_mode"]` - επιλογή
    χρήστη από Ρυθμίσεις.
-2. `VITE_STORAGE_MODE` — προεπιλογή χρόνου build (το GH Pages
+2. `VITE_STORAGE_MODE` - προεπιλογή χρόνου build (το GH Pages
    το ορίζει σε `"dexie"`).
 3. Εναλλακτική: `"api"`.
 

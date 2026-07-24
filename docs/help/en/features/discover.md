@@ -12,7 +12,7 @@ sets you have not chosen yet. **Discover is the default tab** of the
 Content hub, so a first-time visitor is guided to find content
 instead of an empty "My content" page.
 
-<!-- TODO: Screenshot — the Discover tab with the search/filter bar, view toggle and per-set download buttons -->
+<!-- TODO: Screenshot - the Discover tab with the search/filter bar, view toggle and per-set download buttons -->
 
 ---
 
@@ -21,7 +21,7 @@ instead of an empty "My content" page.
 Discover is backed by a **search index** over the catalog. A
 **compact Search/Filter toggle bar** sits at the top: tap **Search**
 to type a query, or **Filter** to narrow the catalog with
-**combinable filters** — **language**, **level**, **domain**,
+**combinable filters** - **language**, **level**, **domain**,
 **trust** level, and **AI-checked**. Search and filters work
 together, and the bar stays compact (it expands only the part you
 are using) so it does not crowd the results on small screens.
@@ -29,7 +29,7 @@ are using) so it does not crowd the results on small screens.
 Typing filters instantly across set titles, descriptions, domains,
 lesson titles, card fronts and backs, and tags. The search is
 tolerant of case and accents and understands German digraphs
-(ae/oe/ue/ss). The index is built lazily on first interaction — no
+(ae/oe/ue/ss). The index is built lazily on first interaction - no
 backend call, it works in both storage modes.
 
 ---
@@ -51,7 +51,7 @@ set into your local cache (IndexedDB in browser-only mode, the
 filesystem cache in server mode), after which it appears under
 **My content** and can be played offline.
 
-Every set shows a **source badge** — Official / Bundled, your own
+Every set shows a **source badge** - Official / Bundled, your own
 connected repo, or Officially recommended. The **trust** filter (see
 above) narrows the catalog to a single source or trust level. See
 [Multiple content repositories](content-repos.md) for connecting
@@ -70,6 +70,6 @@ now live here too. Old `/import` links redirect into it.
 
 ## Related pages
 
-- [Content Browser](content-browser.md) — your downloaded "My content"
-- [Multiple content repositories](content-repos.md) — sources and trust levels
-- [Lessons and reviews](../user-guide/lessons.md) — the lesson flow
+- [Content Browser](content-browser.md) - your downloaded "My content"
+- [Multiple content repositories](content-repos.md) - sources and trust levels
+- [Lessons and reviews](../user-guide/lessons.md) - the lesson flow

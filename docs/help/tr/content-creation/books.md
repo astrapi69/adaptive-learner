@@ -3,7 +3,7 @@
 Bir İçerik Repository'si, alan başına **önerilen kitaplar**
 getirebilir. İçerik Tarayıcısı, bu alana ait bir seti
 görüntülediğinde bunları ileri okuma olarak gösterir. Bu isteğe
-bağlıdır, bir ders seti değildir ve bir arka uca ihtiyaç duymaz —
+bağlıdır, bir ders seti değildir ve bir arka uca ihtiyaç duymaz -
 her iki depolama modunda da çalışır.
 
 ---
@@ -60,11 +60,11 @@ domains:
 | `tags` | hayır | Anahtar kelime listesi. |
 
 `domains:` altındaki anahtar (örn. `ai`, `psychology`), kitapların
-atandığı **alandır** — İçerik Setlerinin kullandığı aynı alan.
+atandığı **alandır** - İçerik Setlerinin kullandığı aynı alan.
 
 ---
 
 ## İlgili sayfalar
 
-- [İçerik Tarayıcısı](../features/content-browser.md) — önerilerin göründüğü yer
-- [Ders oluşturma — Genel bakış](overview.md)
+- [İçerik Tarayıcısı](../features/content-browser.md) - önerilerin göründüğü yer
+- [Ders oluşturma - Genel bakış](overview.md)

@@ -42,5 +42,5 @@ tablosu ekler.
   değildir.
 - `UserMission`'ın ötesinde takip yok; izlenemeyen kontroller
   atanmaz.
-- Görevler tamamlayıcıdır — bir başarısızlık asla ders akışını
+- Görevler tamamlayıcıdır - bir başarısızlık asla ders akışını
   kırmaz (tüm okumalar savunmacıdır). Kaçırılan günler için ceza yok.

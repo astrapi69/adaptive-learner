@@ -1,9 +1,9 @@
-# Hindi (hi) UI catalog — AI-generated draft, review-pending.
+# Hindi (hi) UI catalog - AI-generated draft, review-pending.
 # Generated from en.yaml; structure mirrors EN (I18N-05).
 app:
   name: अडैप्टिव लर्नर
   tagline: ऐसी शिक्षा जो आपके अनुसार ढलती है।
-  skeleton_notice: स्केलेटन अवस्था। डोमेन मॉडल, प्लगइन और पेज आने वाले चरणों में जुड़ेंगे — देखें docs/adaptive-learner-project-reference.md।
+  skeleton_notice: स्केलेटन अवस्था। डोमेन मॉडल, प्लगइन और पेज आने वाले चरणों में जुड़ेंगे - देखें docs/adaptive-learner-project-reference.md।
 common:
   ok: "ठीक है"
   remove: "हटाएं"
@@ -74,7 +74,7 @@ nav:
     more: "अधिक"
   primary: "मुख्य नेविगेशन"
   discover: "सामग्री खोजें"
-  offline_long: "ऑफ़लाइन — पिछले सत्र पढ़ने योग्य रहते हैं"
+  offline_long: "ऑफ़लाइन - पिछले सत्र पढ़ने योग्य रहते हैं"
   sync_pending: "{n} परिवर्तन सिंक होने की प्रतीक्षा में"
   statistics: "आँकड़े"
   profile: आपकी प्रोफ़ाइल
@@ -92,12 +92,12 @@ nav:
   offline: ऑफ़लाइन
   anki: Anki
   dev_badge: DEV
-  dev_badge_tooltip: डेवलपर मोड चालू है — त्रुटि टोस्ट पूरी तकनीकी जानकारी दिखाते हैं। सेटिंग्स में टॉगल करें।
+  dev_badge_tooltip: डेवलपर मोड चालू है - त्रुटि टोस्ट पूरी तकनीकी जानकारी दिखाते हैं। सेटिंग्स में टॉगल करें।
   content: "मेरी सामग्री"
   mode_badge_content: सामग्री
   mode_badge_ai: AI+सामग्री
-  mode_badge_tooltip_content: कोई API कुंजी कॉन्फ़िगर नहीं — केवल पूर्व-निर्मित सामग्री का उपयोग। AI सुविधाएँ सक्षम करने के लिए सेटिंग्स में कुंजी जोड़ें।
-  mode_badge_tooltip_ai: AI प्रदाता कॉन्फ़िगर — अभ्यास डिस्ट्रैक्टर + संकेत के लिए AI का उपयोग करते हैं। सामग्री सेट देखने के लिए टैप करें।
+  mode_badge_tooltip_content: कोई API कुंजी कॉन्फ़िगर नहीं - केवल पूर्व-निर्मित सामग्री का उपयोग। AI सुविधाएँ सक्षम करने के लिए सेटिंग्स में कुंजी जोड़ें।
+  mode_badge_tooltip_ai: AI प्रदाता कॉन्फ़िगर - अभ्यास डिस्ट्रैक्टर + संकेत के लिए AI का उपयोग करते हैं। सामग्री सेट देखने के लिए टैप करें।
   mode_badge_label_content: 'मोड: केवल सामग्री'
   mode_badge_label_ai: 'मोड: AI + सामग्री'
   sync_paired: 'सिंक: युग्मित (सेटिंग्स > सिंक)'
@@ -195,7 +195,7 @@ curriculum:
   add_subtopic: उपविषय जोड़ें
   rename_topic: विषय का नाम बदलें
   topic_title: शीर्षक
-  no_topics: अभी कोई विषय नहीं — शुरू करने के लिए अपना पहला विषय जोड़ें।
+  no_topics: अभी कोई विषय नहीं - शुरू करने के लिए अपना पहला विषय जोड़ें।
   no_curriculum: विषय वृक्ष बनाना शुरू करने के लिए एक पाठ्यक्रम बनाएँ।
   delete_confirm: इस विषय को हटाएँ? इसके उप-विषय अपने आप में मूल विषय बने रहेंगे।
   lessons_title: पाठ
@@ -212,7 +212,7 @@ curriculum:
   description_saved: विवरण सहेजा गया।
   edit_description: विवरण संपादित करें
   lesson_content_aria: पाठ सामग्री
-  lesson_content_placeholder: पाठ सामग्री — शीर्षक, सूचियाँ, कोड ब्लॉक, लिंक का समर्थन करती है।
+  lesson_content_placeholder: पाठ सामग्री - शीर्षक, सूचियाँ, कोड ब्लॉक, लिंक का समर्थन करती है।
   no_description: अभी कोई विवरण नहीं।
 landing:
   title: अडैप्टिव लर्नर
@@ -228,7 +228,7 @@ onboarding:
   intro: हमें अपने सीखने के लक्ष्य के बारे में बताएँ। Adaptive Learner इसका उपयोग आपकी प्रोफ़ाइल बनाने और एक शुरुआती विधि सुझाने के लिए करता है।
   concepts_explainer_prefix: 'आप एक '
   concepts_explainer_mid1: ' परिभाषित करेंगे, फिर अपनी '
-  concepts_explainer_mid2: ' बनाने के लिए एक संक्षिप्त मूल्यांकन पूरा करेंगे — जो आगे आने वाले हर '
+  concepts_explainer_mid2: ' बनाने के लिए एक संक्षिप्त मूल्यांकन पूरा करेंगे - जो आगे आने वाले हर '
   concepts_explainer_suffix: ' का मार्गदर्शन करती है।'
   term_learning_project: सीखने की परियोजना
   term_learning_profile: सीखने की प्रोफ़ाइल
@@ -242,13 +242,13 @@ onboarding:
   field_timeframe_hint: जैसे 4 सप्ताह, एक सेमेस्टर।
   field_daily_minutes: प्रति दिन मिनट
   field_current_problem: वर्तमान समस्या
-  field_current_problem_hint: वैकल्पिक — अभी आपको क्या रोक रहा है?
+  field_current_problem_hint: वैकल्पिक - अभी आपको क्या रोक रहा है?
   submit: परियोजना बनाएँ और मूल्यांकन शुरू करें
   creating: परियोजना बनाई जा रही है…
   subject_suggestions: 'सुझाए गए विषय (असाइन करने के लिए टैप करें):'
   default_goal: '{topic} सीखें'
   invite_title: अपनी सीखने की प्रोफ़ाइल को अधिक विस्तार से सेट करना चाहते हैं?
-  invite_subtitle: इसमें एक मिनट लगता है और यह आपके सत्रों को अनुकूलित करता है — आप इसे बाद में भी कर सकते हैं।
+  invite_subtitle: इसमें एक मिनट लगता है और यह आपके सत्रों को अनुकूलित करता है - आप इसे बाद में भी कर सकते हैं।
   invite_start_now: सीधे शुरू करें
   invite_setup_profile: प्रोफ़ाइल सेट करें
   restore_hint: पहले से Adaptive Learner के साथ सीख रहे हैं? बैकअप से पुनर्स्थापित करें।
@@ -274,7 +274,7 @@ onboarding:
     later: बाद में
 assessment:
   title: सीखने के प्रकार का मूल्यांकन
-  intro: बारह छोटे प्रश्न आपकी सीखने की प्रोफ़ाइल निर्धारित करते हैं। कोई सही या गलत उत्तर नहीं है — अपने अंतर्मन के अनुसार चुनें।
+  intro: बारह छोटे प्रश्न आपकी सीखने की प्रोफ़ाइल निर्धारित करते हैं। कोई सही या गलत उत्तर नहीं है - अपने अंतर्मन के अनुसार चुनें।
   question_progress: प्रश्न {current} / {total}
   next_question: अगला प्रश्न
   prev_question: पिछला प्रश्न
@@ -287,7 +287,7 @@ assessment:
   read_summary: सारांश पढ़ें
   swipe_hint: नेविगेट करने के लिए बाएँ / दाएँ स्वाइप करें (या ऐरो कुंजियाँ इस्तेमाल करें)।
 dashboard:
-  # 1417 — the one inviting BYOK card on the Dashboard.
+  # 1417 - the one inviting BYOK card on the Dashboard.
   ai_invite:
     title: "AI सहायता चालू करें (वैकल्पिक)"
     body: "अपना खुद का AI प्रदाता (Claude, OpenAI या Gemini) जोड़ें और पाठों में सीधे व्याख्या और सहायता पाएं। ऐप इसके बिना भी अच्छी तरह काम करता है।"
@@ -318,7 +318,7 @@ dashboard:
   review_queue:
     loading: लोड हो रहा है…
     elements: तत्व समीक्षा के लिए बाकी
-    overdue: समय बीत चुका — यहाँ से शुरू करें
+    overdue: समय बीत चुका - यहाँ से शुरू करें
     open: समीक्षा सत्र खोलें
     quick: "त्वरित समीक्षा"
   focus_areas:
@@ -350,7 +350,7 @@ adaptive:
   page_title: अनुकूली पाठ
   session_title: अनुकूली पाठ
   loading: आपकी गलतियों का विश्लेषण हो रहा है…
-  empty_body: अभी अनुकूलित करने को कुछ नहीं — डेटा बनाने के लिए कोई पाठ अभ्यास करें।
+  empty_body: अभी अनुकूलित करने को कुछ नहीं - डेटा बनाने के लिए कोई पाठ अभ्यास करें।
   not_cached_body: यह सेट अभी डाउनलोड नहीं हुआ है। इसे पहले डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।
   back_to_dashboard: डैशबोर्ड पर वापस
   transparency:
@@ -370,14 +370,14 @@ review:
   your_answer: "आपका उत्तर:"
   correct_answer: "सही:"
   summary_corrected: "{total} में से {corrected} सुधारे गए"
-  summary_trend: "बढ़िया — आपके कमज़ोर बिंदु मज़बूत हो रहे हैं।"
+  summary_trend: "बढ़िया - आपके कमज़ोर बिंदु मज़बूत हो रहे हैं।"
   summary_next: "महारत प्राप्त तत्व हट जाते हैं; बाकी जल्द ही समीक्षा के लिए लौटते हैं।"
   summary_remaining: "अभी {n} बाकी। जारी रखें?"
   another_round: "एक और राउंड"
   summary_repeat: "इन्हें ताज़ा रखने के लिए लगभग 2 दिन बाद वापस आएं।"
   explain_heading: "आपने ये क्यों गलत किए"
   explain_article_gender: "लिंग पर ध्यान दें: -o में अंत होने वाले संज्ञा प्रायः पुल्लिंग (el/un), -a स्त्रीलिंग (la/una)। आर्टिकल अंत के अनुसार होता है।"
-  explain_spelling_accent: "सटीक वर्तनी और उच्चारण चिह्न जाँचें — छोटा सा अंतर शब्द बदल देता है।"
+  explain_spelling_accent: "सटीक वर्तनी और उच्चारण चिह्न जाँचें - छोटा सा अंतर शब्द बदल देता है।"
   explain_verb_conjugation: "उत्तर देने से पहले क्रिया को उसके कर्ता और काल से मिलाएँ।"
   explain_word_order: "इस संरचना के शब्द-क्रम का ध्यान रखें।"
   page_title: पुनरावलोकन
@@ -405,7 +405,7 @@ review:
   metric_mean_understanding: औसत समझ
   metric_mean_stress: औसत तनाव
   metric_streak: दिन की श्रृंखला
-  no_data: अभी कोई सत्र नहीं — रुझान देखने के लिए अपना पहला सत्र शुरू करें।
+  no_data: अभी कोई सत्र नहीं - रुझान देखने के लिए अपना पहला सत्र शुरू करें।
   pronunciation_quick_start: उच्चारण अभ्यास
 session:
   title: अधिगम सत्र
@@ -436,7 +436,7 @@ session:
   cycles_completed: पूरे हुए चक्र
   next_topic: 'अगला विषय:'
   step_reason_tooltip: यह चरण क्यों?
-  offline_start_blocked: आप ऑफ़लाइन हैं। नए सत्रों के लिए नेटवर्क कनेक्शन चाहिए — पिछले सत्र डैशबोर्ड से पढ़े जा सकते हैं।
+  offline_start_blocked: आप ऑफ़लाइन हैं। नए सत्रों के लिए नेटवर्क कनेक्शन चाहिए - पिछले सत्र डैशबोर्ड से पढ़े जा सकते हैं।
   peek_step_prefix: चरण
   rating_notes_aria: सत्र नोट्स
   rating_notes_placeholder: क्या काम आया, क्या नहीं, अगली बार क्या आज़माएँ...
@@ -456,7 +456,7 @@ progress:
   commit_date: तारीख
   no_commits: अभी तक कोई पूरा सत्र नहीं।
   step_eval_title: AI चरण-मूल्यांकन अंतर्दृष्टि
-  step_eval_empty: अभी कोई AI चरण-मूल्यांकन डेटा नहीं — यहाँ अंतर्दृष्टि देखने के लिए सत्र शुरू करें।
+  step_eval_empty: अभी कोई AI चरण-मूल्यांकन डेटा नहीं - यहाँ अंतर्दृष्टि देखने के लिए सत्र शुरू करें।
   step_eval_avg_confidence: औसत AI आत्मविश्वास
   step_eval_repeats: AI ने 'अभी तैयार नहीं' कितनी बार कहा
   step_eval_advances: चरण आगे बढ़े
@@ -473,15 +473,15 @@ settings:
     confirm_message: "{lessons} पाठ और {cards} पुनरावलोकन कार्ड स्थायी रूप से हटा दिए जाएंगे। इसे पूर्ववत नहीं किया जा सकता।"
     deleted: "{lessons} पाठ और {cards} पुनरावलोकन कार्ड हटाए गए।"
   key_export_link:
-    heading: "AI कुंजियाँ — एन्क्रिप्टेड निर्यात"
+    heading: "AI कुंजियाँ - एन्क्रिप्टेड निर्यात"
     hint: "अपनी AI कुंजियों को एक एन्क्रिप्टेड फ़ाइल के रूप में निर्यात या आयात करें। यह डेटा टैब में अन्य बैकअप के साथ मौजूद है।"
     button: "कुंजी निर्यात पर जाएँ (डेटा टैब)"
   key_vault:
-    title: "AI कुंजियाँ — एन्क्रिप्टेड निर्यात"
+    title: "AI कुंजियाँ - एन्क्रिप्टेड निर्यात"
     intro: "अपनी AI कुंजियाँ एक एन्क्रिप्टेड फ़ाइल में दूसरे डिवाइस पर ले जाएँ, सामान्य बैकअप से अलग (जिसमें कभी कुंजियाँ नहीं होतीं)।"
     api_export_disabled: "सर्वर मोड में आपकी कुंजियाँ निर्यात नहीं की जा सकतीं, वे सर्वर पर एन्क्रिप्ट होकर प्रबंधित होती हैं। कुंजी फ़ाइल का आयात अभी भी संभव है।"
     export_heading: "निर्यात"
-    passphrase_hint: "एक मज़बूत पासफ़्रेज़ चुनें। इसे पुनर्प्राप्त नहीं किया जा सकता — इसके बिना फ़ाइल नहीं खुलेगी।"
+    passphrase_hint: "एक मज़बूत पासफ़्रेज़ चुनें। इसे पुनर्प्राप्त नहीं किया जा सकता - इसके बिना फ़ाइल नहीं खुलेगी।"
     passphrase_label: "पासफ़्रेज़"
     confirm_label: "पासफ़्रेज़ की पुष्टि करें"
     no_keys: "अभी निर्यात करने के लिए कोई AI कुंजी नहीं है।"
@@ -696,7 +696,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  # #810 — AI tab par configured providers ki suchi tabel.
+  # #810 - AI tab par configured providers ki suchi tabel.
   providers:
     title: कॉन्फ़िगर किए गए AI प्रदाता
     hint: "आपके द्वारा सहेजी गई कुंजियाँ संग्रहीत रहती हैं। केवल मास्क किया गया पूर्वावलोकन दिखाया जाता है, पूरी कुंजी कभी नहीं।"
@@ -851,24 +851,24 @@ settings:
   danger_zone_input_placeholder: RESET
   danger_zone_intro: इस डिवाइस पर शिक्षार्थी की हर स्थिति स्थायी रूप से हटाएँ।
   danger_zone_reset_button: सब कुछ रीसेट करें
-  danger_zone_warning: यह आपका सभी सीखने का डेटा स्थायी रूप से हटा देता है — सत्र, प्रगति, प्रोफ़ाइल, पाठ्यक्रम, आयात, Anki कार्ड, सेटिंग्स और API कुंजियाँ। यह क्रिया पूर्ववत नहीं की जा सकती।
+  danger_zone_warning: यह आपका सभी सीखने का डेटा स्थायी रूप से हटा देता है - सत्र, प्रगति, प्रोफ़ाइल, पाठ्यक्रम, आयात, Anki कार्ड, सेटिंग्स और API कुंजियाँ। यह क्रिया पूर्ववत नहीं की जा सकती।
   section_sync: सिंक
 methods:
   deductive:
     label: निगमनात्मक
-    summary: सामान्य से विशिष्ट — पहले नियम, बाद में उदाहरण।
+    summary: सामान्य से विशिष्ट - पहले नियम, बाद में उदाहरण।
   inductive:
     label: आगमनात्मक
-    summary: विशिष्ट से सामान्य — पहले उदाहरण, फिर नियम निकालें।
+    summary: विशिष्ट से सामान्य - पहले उदाहरण, फिर नियम निकालें।
   error_based:
     label: त्रुटि-आधारित
-    summary: गलतियों से सीखें — सुधार के साथ व्याख्या।
+    summary: गलतियों से सीखें - सुधार के साथ व्याख्या।
   dialogic:
     label: संवादात्मक
-    summary: बातचीत में सोचें — कम तनाव, प्रेरणा बढ़ाएँ।
+    summary: बातचीत में सोचें - कम तनाव, प्रेरणा बढ़ाएँ।
   contextual:
     label: प्रासंगिक
-    summary: वास्तविक संदर्भ में लागू करें — स्थानांतरण का अभ्यास।
+    summary: वास्तविक संदर्भ में लागू करें - स्थानांतरण का अभ्यास।
   ai_adaptive:
     label: AI-अनुकूली
     summary: AI वह विधि चुनता है जो आपके लिए सबसे उपयुक्त हो।
@@ -899,7 +899,7 @@ errors:
   not_found: नहीं मिला।
   validation: अमान्य इनपुट।
   conflict: प्रविष्टि पहले से मौजूद है।
-  server: सर्वर त्रुटि — कृपया बाद में पुनः प्रयास करें।
+  server: सर्वर त्रुटि - कृपया बाद में पुनः प्रयास करें।
 toast:
   project_created: प्रोजेक्ट बनाया गया।
   assessment_saved: प्रोफ़ाइल सहेजी गई।
@@ -913,7 +913,7 @@ toast:
 install:
   ios:
     title: "ऐप के रूप में इंस्टॉल करें"
-    steps: "शेयर आइकन पर टैप करें, फिर «होम स्क्रीन में जोड़ें» — यह Safari बार के बिना खुलता है।"
+    steps: "शेयर आइकन पर टैप करें, फिर «होम स्क्रीन में जोड़ें» - यह Safari बार के बिना खुलता है।"
     aria_label: "अपने iPhone पर इंस्टॉल करें"
     dismiss: "बंद करें"
   title: होम स्क्रीन पर जोड़ें
@@ -1050,7 +1050,7 @@ backup:
   auto_none: अभी तक कोई स्वतः-बैकअप नहीं। पहला बैकअप 10 सत्रों या 7 दिनों के बाद चलता है।
   storage_pressure: ब्राउज़र स्टोरेज लगभग भर गया है (कोटा का {{pct}}%)। अभी एक मैन्युअल बैकअप निर्यात करें।
   compare_title: बैकअप की तुलना करें
-  compare_help: दो बैकअप फ़ाइलें (या एक फ़ाइल और वर्तमान स्थिति) चुनें ताकि उनके बीच क्या बदला है यह देख सकें। कोई डेटा संशोधित नहीं होता — तुलना केवल-पढ़ने योग्य है।
+  compare_help: दो बैकअप फ़ाइलें (या एक फ़ाइल और वर्तमान स्थिति) चुनें ताकि उनके बीच क्या बदला है यह देख सकें। कोई डेटा संशोधित नहीं होता - तुलना केवल-पढ़ने योग्य है।
   compare_slot_a: बैकअप A (पुराना)
   compare_slot_b: बैकअप B (नया)
   compare_pick: फ़ाइल चुनें…
@@ -1066,7 +1066,7 @@ backup:
   compare_sort_label: 'क्रमबद्ध करें:'
   compare_sort_delta: सबसे अधिक परिवर्तन पहले
   compare_sort_alpha: वर्णानुक्रम
-  compare_no_changes: दोनों बैकअप समान हैं — कोई अंतर नहीं मिला।
+  compare_no_changes: दोनों बैकअप समान हैं - कोई अंतर नहीं मिला।
   compare_section_added: जोड़े गए
   compare_section_removed: हटाए गए
   compare_section_changed: बदले गए
@@ -1074,14 +1074,14 @@ backup:
   compare_old: पुराना
   compare_new: नया
   compare_field_changes: फ़ील्ड परिवर्तन
-  compare_high_volume_hint: उच्च-मात्रा तालिका — रिकॉर्ड-स्तरीय पूर्वावलोकन संक्षिप्त दिखाए गए हैं।
+  compare_high_volume_hint: उच्च-मात्रा तालिका - रिकॉर्ड-स्तरीय पूर्वावलोकन संक्षिप्त दिखाए गए हैं।
   compare_export_md: Markdown के रूप में निर्यात करें
   compare_markdown_downloaded: अंतर निर्यात किया गया।
   confirm_with_counts: पुनर्स्थापित करें ({{added}} जोड़े गए, {{updated}} अपडेट किए गए)
   auto_compare_as_a: A के रूप में तुलना करें
   auto_compare_as_b: B के रूप में तुलना करें
   compare_auto_label: स्वतः-बैकअप {{date}}
-  auto_compare_missing: स्वतः-बैकअप अब उपलब्ध नहीं है — इसे हटा दिया गया था।
+  auto_compare_missing: स्वतः-बैकअप अब उपलब्ध नहीं है - इसे हटा दिया गया था।
 export:
   title: निर्यात करें
   intro: अपनी सीखने की यात्रा को Markdown या PDF के रूप में डाउनलोड करें। Markdown सादा पाठ है जिसे आप संपादित और साझा कर सकते हैं; PDF आपके ब्राउज़र का प्रिंट संवाद खोलता है ताकि आप एक प्रति सहेज सकें।
@@ -1159,7 +1159,7 @@ sync:
   scan_success_hint: डेस्कटॉप के साथ सत्यापित किया जा रहा है…
   smart_merge: स्मार्ट मर्ज (एआई)
   smart_merge_error: स्मार्ट मर्ज विफल।
-  smart_merge_ready: एआई मर्ज तैयार — समीक्षा करें और लागू करें।
+  smart_merge_ready: एआई मर्ज तैयार - समीक्षा करें और लागू करें।
   smart_merge_running: एआई के साथ मर्ज किया जा रहा है…
   sync_error: सिंक विफल।
   synced: सिंक हुआ
@@ -1328,7 +1328,7 @@ gamification:
   danger_zone_heading: ख़तरनाक क्षेत्र
   danger_zone_intro: इस डिवाइस पर शिक्षार्थी की सभी स्थिति स्थायी रूप से हटाएँ।
   danger_zone_reset_button: सब कुछ रीसेट करें
-  danger_zone_warning: यह आपके सभी लर्निंग डेटा को स्थायी रूप से हटा देता है — सत्र, प्रगति, प्रोफ़ाइल, पाठ्यक्रम, आयात, Anki कार्ड, सेटिंग्स और API कुंजियाँ। इस कार्रवाई को पूर्ववत नहीं किया जा सकता।
+  danger_zone_warning: यह आपके सभी लर्निंग डेटा को स्थायी रूप से हटा देता है - सत्र, प्रगति, प्रोफ़ाइल, पाठ्यक्रम, आयात, Anki कार्ड, सेटिंग्स और API कुंजियाँ। इस कार्रवाई को पूर्ववत नहीं किया जा सकता।
   danger_zone_confirm_prompt: पुष्टि करने के लिए RESET टाइप करें
   danger_zone_input_placeholder: RESET
   danger_zone_final_button: स्थायी रूप से हटाएँ
@@ -1602,9 +1602,9 @@ repo:
   readme_topics_heading: विषय
   readme_no_topics: _अभी तक कोई विषय नहीं देखा गया।_
   readme_see_also_heading: यह भी देखें
-  readme_see_stats: '[LEARNING_STATS.md](LEARNING_STATS.md) — त्रुटि दरें, समझ, ट्रांसफर, हस्तक्षेप लॉग।'
-  readme_see_cheatsheet: '[CHEATSHEET.md](CHEATSHEET.md) — संक्षिप्त नोट्स + मेटा-लर्निंग अंतर्दृष्टि।'
-  readme_see_roadmap: '[ROADMAP.md](ROADMAP.md) — अगले चरण।'
+  readme_see_stats: '[LEARNING_STATS.md](LEARNING_STATS.md) - त्रुटि दरें, समझ, ट्रांसफर, हस्तक्षेप लॉग।'
+  readme_see_cheatsheet: '[CHEATSHEET.md](CHEATSHEET.md) - संक्षिप्त नोट्स + मेटा-लर्निंग अंतर्दृष्टि।'
+  readme_see_roadmap: '[ROADMAP.md](ROADMAP.md) - अगले चरण।'
   stats_title: लर्निंग आँकड़े
   stats_intro: सत्र मूल्यांकन + रेटिंग से स्वचालित रूप से प्राप्त प्रति-सत्र मेट्रिक्स। हाथ से संपादित न करें।
   stats_no_sessions: _अभी तक कोई सत्र नहीं।_
@@ -1626,7 +1626,7 @@ repo:
   stats_exit_threshold_body: किसी विषय को तब महारत हासिल माना जाता है जब समझ ≥ 9/10 और ट्रांसफर ≥ 8/10 लगातार 2 चक्रों तक स्थिर रहे। पिन की गई पंक्तियाँ उन सत्रों को चिह्नित करती हैं जो इस शर्त को पूरा करते हैं।
   stats_exit_pin_marker: ✅ निकास सीमा पूरी हुई
   cheatsheet_title: चीटशीट
-  cheatsheet_intro: आपके सत्रों से संक्षिप्त नोट्स। मेटा-लर्निंग अंतर्दृष्टि अनुभाग meta_learning टैग किए गए नोट्स एकत्र करता है — इस बारे में अवलोकन कि आप सबसे अच्छा कैसे सीखते हैं।
+  cheatsheet_intro: आपके सत्रों से संक्षिप्त नोट्स। मेटा-लर्निंग अंतर्दृष्टि अनुभाग meta_learning टैग किए गए नोट्स एकत्र करता है - इस बारे में अवलोकन कि आप सबसे अच्छा कैसे सीखते हैं।
   cheatsheet_notes_heading: नोट्स
   cheatsheet_meta_learning_heading: मेटा-लर्निंग अंतर्दृष्टि
   cheatsheet_no_notes: _अभी तक कोई नोट नहीं।_
@@ -1726,12 +1726,12 @@ lesson:
     stats_fastest: "सबसे तेज़: {s}s ({type})"
     stats_slowest: "सबसे धीमी: {s}s ({type})"
   reverse:
-    not_reversible: "इस अभ्यास प्रकार को उलटा नहीं किया जा सकता — इसे मूल रूप में दिखाया गया है।"
+    not_reversible: "इस अभ्यास प्रकार को उलटा नहीं किया जा सकता - इसे मूल रूप में दिखाया गया है।"
   resources_title: "विषय को गहराई से जानें"
   resources_domain: "{domain} के बारे में और जानें"
   motivation:
-    halftime: "आधा हो गया — लगे रहो!"
-    last: "आखिरी — दमदार अंत करो!"
+    halftime: "आधा हो गया - लगे रहो!"
+    last: "आखिरी - दमदार अंत करो!"
   theory:
     view_example: उदाहरण देखें
   tts:
@@ -1808,7 +1808,7 @@ lesson:
       submit: उत्तर जाँचें
       retry: फिर से कोशिश करें
       result_correct: सही!
-      result_wrong: बिल्कुल नहीं — हाइलाइट किया गया टाइल सही उत्तर है।
+      result_wrong: बिल्कुल नहीं - हाइलाइट किया गया टाइल सही उत्तर है।
       grid_label: छवि विकल्प
       correct_label: सही
       wrong_label: गलत
@@ -1949,7 +1949,7 @@ lesson:
     heading: पुनः प्रयास पूर्ण
     score: 'अब {correct}/{total} सही!'
     done: पाठ पर वापस
-    empty: दोहराने के लिए कुछ नहीं — कुछ गलतियाँ करने के बाद इसे पाठ सारांश से खोलें।
+    empty: दोहराने के लिए कुछ नहीं - कुछ गलतियाँ करने के बाद इसे पाठ सारांश से खोलें।
     summary_aria: गलतियाँ दोहराने का सारांश
   next_step:
     title: आगे क्या?
@@ -2023,7 +2023,7 @@ content:
   set_link:
     loading: "सेट लोड हो रहा है…"
     not_found_title: "सेट नहीं मिला"
-    not_found_body: "यह सेट उपलब्ध नहीं है — हो सकता है इसे अभी डाउनलोड न किया गया हो या यह मौजूद न हो।"
+    not_found_body: "यह सेट उपलब्ध नहीं है - हो सकता है इसे अभी डाउनलोड न किया गया हो या यह मौजूद न हो।"
     go_discover: "सामग्री खोजें"
     start: "सीखना शुरू करें"
     download_start: "डाउनलोड करें और शुरू करें"
@@ -2208,9 +2208,9 @@ content:
     target_lang_label: सीखी गई भाषा
     source_lang_label: आपकी भाषा
     level_label: स्तर
-    not_enough_data: कम अभ्यास — पूर्ण भाषा पाठ के लिए कम से कम {min} की अनुशंसा की जाती है। आप फिर भी इसे सहेज सकते हैं (उदाहरण के लिए, केवल-सिद्धांत पाठ के रूप में)।
+    not_enough_data: कम अभ्यास - पूर्ण भाषा पाठ के लिए कम से कम {min} की अनुशंसा की जाती है। आप फिर भी इसे सहेज सकते हैं (उदाहरण के लिए, केवल-सिद्धांत पाठ के रूप में)।
     same_language: सीखी गई भाषा और आपकी भाषा अलग होनी चाहिए।
-    same_language_hint: सीखी गई और आपकी भाषा एक समान है — व्याकरण या मातृभाषा पाठ के लिए ठीक है। साझा करने पर यह सामग्री ट्री की समान-भाषा शाखा में जाता है।
+    same_language_hint: सीखी गई और आपकी भाषा एक समान है - व्याकरण या मातृभाषा पाठ के लिए ठीक है। साझा करने पर यह सामग्री ट्री की समान-भाषा शाखा में जाता है।
     split_notice: इस पाठ में {steps} चरण हैं और इसे {parts} भागों में सहेजा जाएगा (प्रत्येक में अधिकतम {max} चरण)।
     part_title: '{title} - भाग {n}'
   lesson_gen:
@@ -2274,6 +2274,8 @@ content:
     domain_software: सॉफ़्टवेयर
     domain_philosophy: दर्शन
     domain_language: भाषा
+    domain_dog-training: कुत्ता प्रशिक्षण
+    domain_traffic-knowledge: यातायात ज्ञान
     code_copy: कोड कॉपी करें
     code_output: 'आउटपुट:'
     no_primary: आपकी भाषा के लिए अभी कोई सेट नहीं है। नीचे अन्य स्रोत भाषाएँ ब्राउज़ करें।
@@ -2306,7 +2308,7 @@ content:
     level_too_complex: 'पाठ ''{lesson}'': पाठ्य प्रति पक्ष औसतन {avg} शब्द है, जो स्तर {level} के लिए अधिक है (लगभग {cap} अपेक्षित)।'
     source_language_heuristic: कार्ड के पिछले भागों में {found}-विशिष्ट अक्षर हैं लेकिन स्रोत भाषा '{lang}' है।
     target_language_heuristic: कार्ड के अगले भागों में {found}-विशिष्ट अक्षर हैं लेकिन लक्ष्य भाषा '{lang}' है।
-    failed_share_anyway: गुणवत्ता जाँच में समस्याएँ मिलीं। आप फिर भी साझा कर सकते हैं — समीक्षक pull request में दर्ज निष्कर्ष देखेंगे।
+    failed_share_anyway: गुणवत्ता जाँच में समस्याएँ मिलीं। आप फिर भी साझा कर सकते हैं - समीक्षक pull request में दर्ज निष्कर्ष देखेंगे।
   ai_validation:
     intro: एक AI अतिरिक्त रूप से अनुवाद सटीकता, व्याकरण और स्तर अनुकूलता की जाँच कर सकता है।
     privacy: आपकी पाठ सामग्री {provider} को भेजी जाएगी। कोई व्यक्तिगत डेटा प्रेषित नहीं किया जाता।
@@ -2316,7 +2318,7 @@ content:
     ai_passed: 'AI समीक्षा: सब ठीक लगता है।'
     ai_review: 'AI समीक्षा: नीचे सुझाव हैं।'
     score: स्कोर
-    failed: AI समीक्षा उपलब्ध नहीं है। आप फिर भी साझा कर सकते हैं — गुणवत्ता जाँच पास हुई।
+    failed: AI समीक्षा उपलब्ध नहीं है। आप फिर भी साझा कर सकते हैं - गुणवत्ता जाँच पास हुई।
     auto_fix: लागू करें
     applied: लागू किया गया
     fix_applied: सुझाव लागू किया गया।
@@ -2517,7 +2519,7 @@ missions:
       description: सप्ताहांत पर सीखें।
 create_lesson:
   book:
-    rights_hint: "केवल वही टेक्स्ट पेस्ट करें जिनके अधिकार आपके पास हैं या जो व्यक्तिगत उपयोग के लिए हैं।"
+    rights_hint: "केवल वही टेक्स्ट पेस्ट या अपलोड करें जिनके अधिकार आपके पास हैं या जो व्यक्तिगत उपयोग के लिए हैं।"
     heading: "टेक्स्ट से पाठ बनाएं"
     intro: "अपनी पाठ्यपुस्तक का एक अनुभाग (जैसे एक अध्याय) पेस्ट करें। AI इसे अपने शब्दों में सिद्धांत के रूप में लिखता है और अभ्यास बनाता है। दूसरा अनुभाग जोड़ने के लिए विज़ार्ड को दोबारा चलाएं।"
     text_label: "पाठ्यपुस्तक अनुभाग"
@@ -2540,11 +2542,41 @@ create_lesson:
     review_theory: "{n} सिद्धांत चरण"
     review_exercises: "{n} अभ्यास"
     review_book: "पुस्तक: {title}"
+    review_lessons: "{n} पाठ"
+    batch_progress: "{total} में से {current} पाठ बन रहा है: {title}…"
+    batch_summary: "{n} में से {ok} पाठ बनाए गए।"
+    batch_all_failed: "चयनित अनुभागों से कोई पाठ नहीं बनाया जा सका।"
+    batch_failed_item: "विफल: {title}"
+    upload:
+      button: "फ़ाइल से लोड करें (EPUB, DOCX, TXT, MD)"
+      parsing: "फ़ाइल पढ़ी जा रही है ..."
+      section_label: "पहचाने गए खंड"
+      section_fallback: "खंड {n}"
+      exclude_hint: "जो अनुभाग आरंभिक या अंतिम सामग्री जैसे लगते हैं (प्रस्तावना, शब्दावली, अनुक्रमणिका, …), डिफ़ॉल्ट रूप से अचयनित रहते हैं। उन्हें शामिल करने के लिए चुनें।"
+      generate_n: "{n} पाठ बनाएँ"
+      selected_count: "{n} चयनित"
+      apply: "टेक्स्ट फ़ील्ड में डालें"
+      soft_hint: "लंबा खंड - छोटे खंड बेहतर परिणाम देते हैं।"
+      err_too_large: "फ़ाइल बहुत बड़ी है (अधिकतम {n} MiB)।"
+      err_unsupported: "असमर्थित फ़ाइल प्रकार। समर्थित: EPUB, DOCX, TXT, Markdown।"
+      err_invalid_epub: "यह फ़ाइल EPUB के रूप में नहीं पढ़ी जा सकी।"
+      err_invalid_docx: "यह फ़ाइल DOCX के रूप में नहीं पढ़ी जा सकी।"
+      err_no_sections: "इस फ़ाइल में कोई टेक्स्ट खंड नहीं मिला।"
+      err_parse_failed: "फ़ाइल पढ़ने में विफल।"
+      err_section_too_long: "खंड बहुत लंबा है (अधिकतम {n} अक्षर)। छोटा खंड चुनें।"
+      replace_title: "टेक्स्ट बदलें?"
+      replace_message: "टेक्स्ट फ़ील्ड में पहले से सामग्री है। इसे चुने गए खंड से बदलें?"
+      replace_confirm: "बदलें"
   title: एक पाठ बनाएँ
   step_of: चरण {current} / {total}
   edit_title: "पाठ संपादित करें"
   edit_load_error: "इस पाठ को संपादन के लिए लोड नहीं किया जा सका।"
   edit_note: "आप एक मौजूदा पाठ संपादित कर रहे हैं। सहेजने पर यह अधिलेखित हो जाएगा; मूल रखने के लिए 'प्रतिलिपि के रूप में सहेजें' का उपयोग करें।"
+  edit:
+    lesson_picker_label: "इस सेट का पाठ ({n})"
+    switch_confirm_title: "पाठ बदलें?"
+    switch_confirm_body: "वर्तमान पाठ में आपके सहेजे न गए बदलाव खो जाएँगे।"
+    switch_discard: "छोड़ें और बदलें"
   prompts_migrated: "{n} अभ्यास निर्देश स्वचालित रूप से आपकी भाषा में अनुवादित किए गए।"
   prompts_migrated_dismiss: "बंद करें"
   step_pending: यह चरण अगले अपडेट में आ रहा है।
@@ -2565,6 +2597,9 @@ create_lesson:
     target_lang_label: सीखी गई भाषा
     source_lang_label: आपकी भाषा
     level_label: स्तर
+    content_lang_label: "सामग्री की भाषा"
+    level_none: "कोई स्तर नहीं"
+    domain_hint: "ज्ञान सामग्री एक ही सामग्री भाषा का उपयोग करती है और CEFR स्तर को छोड़ सकती है।"
     same_language: सीखी गई भाषा आपकी भाषा से भिन्न होनी चाहिए।
     description_label: विषय / विवरण
     author_label: लेखक का नाम
@@ -2624,6 +2659,7 @@ create_lesson:
     count: '{n} अभ्यास'
     min_hint: '{n} अभ्यास आवश्यक'
     min_to_advance: जारी रखने के लिए कम से कम {n} अभ्यास बनाएँ।
+    min_one_to_advance: "जारी रखने के लिए कम से कम एक अभ्यास जोड़ें।"
     drag: क्रम बदलने के लिए खींचें
     delete: अभ्यास हटाएँ
     type:
@@ -2709,9 +2745,17 @@ create_lesson:
       err_reading_comprehension: "एक गद्यांश और कम से कम एक पूर्ण प्रश्न जोड़ें (एक सही विकल्प के साथ बहुविकल्पीय, या एक स्वीकृत उत्तर के साथ मुक्त-पाठ)।"
       err_graded_quiz: "सकारात्मक अंकों के साथ कम से कम एक पूर्ण प्रश्न जोड़ें (एक सही विकल्प के साथ बहुविकल्पीय, या एक स्वीकृत उत्तर के साथ मुक्त-पाठ)।"
       err_dictation: "एक ऑडियो फ़ाइल पथ और कम से कम एक स्वीकृत प्रतिलेखन जोड़ें।"
-      dict_audio_label: "ऑडियो फ़ाइल पथ"
+      dict_audio_label: "ऑडियो"
       dict_audio_placeholder: "assets/audio/clip.mp3"
       dict_audio_hint: "सेट के assets फ़ोल्डर के अंदर ऑडियो क्लिप का सापेक्ष पथ।"
+      dict_audio_upload: "ऑडियो अपलोड करें"
+      dict_audio_remove: "हटाएं"
+      dict_audio_preview_label: "ऑडियो पूर्वावलोकन"
+      dict_audio_path_label: "या एक एसेट पथ टाइप करें"
+      dict_audio_error:
+        unsupported_type: "असमर्थित ऑडियो प्रारूप। MP3, OGG या WAV का उपयोग करें।"
+        too_large: "यह ऑडियो फ़ाइल बहुत बड़ी है (अधिकतम 2 MB)।"
+        decode_failed: "वह ऑडियो फ़ाइल पढ़ी नहीं जा सकी।"
       dict_accept_label: "स्वीकृत प्रतिलेखन"
       dict_accept_add: "जोड़ें"
       dict_accept_remove: "प्रतिलेखन हटाएं"
@@ -2793,7 +2837,7 @@ create_lesson:
     heading: टेम्पलेट से शुरू करें
     blank:
       title: खाली पाठ
-      desc: केवल मेटाडेटा — कार्ड स्वयं जोड़ें।
+      desc: केवल मेटाडेटा - कार्ड स्वयं जोड़ें।
     vocabulary:
       title: शब्दावली सूची
       desc: 10 कार्ड स्लॉट, मिलान + मुक्त पाठ।
@@ -2863,7 +2907,7 @@ learning_path:
   group:
     mastery: '{r} ग्रहणशील, {p} उत्पादक में महारत'
     progress_aria: '{total} में से {completed} पाठ पूर्ण'
-    toggle_aria: '{title} सेट — {total} में से {completed} पाठ पूर्ण'
+    toggle_aria: '{title} सेट - {total} में से {completed} पाठ पूर्ण'
   search_placeholder: पाठ खोजें…
   filter:
     status: स्थिति फ़िल्टर
@@ -2885,11 +2929,11 @@ learning_path:
     region_label: सीखने के पथ के आँकड़े
   clusters:
     toggle: त्रुटि समूह दिखाएँ
-    empty: अभी तक कोई साझा त्रुटि पैटर्न नहीं — अभ्यास करते रहें।
+    empty: अभी तक कोई साझा त्रुटि पैटर्न नहीं - अभ्यास करते रहें।
     lessons: '{n} पाठ'
     start_adaptive: अनुकूली पाठ शुरू करें
     region_label: त्रुटि समूह पैनल
-  search_label: पाठ खोजें — पहले मिलान पर जाने के लिए Enter दबाएँ
+  search_label: पाठ खोजें - पहले मिलान पर जाने के लिए Enter दबाएँ
   custom:
     title: "मेरे शिक्षण पथ"
     subtitle: "पाठों को अपने क्रमबद्ध पथ में जोड़ें।"
@@ -3130,7 +3174,7 @@ statistics:
   time_hm: "{h} घं {m} मि"
   time_m: "{m} मि"
   weak_areas_title: "सुधार के क्षेत्र"
-  weak_areas_empty: "अभी तक कोई गलती दर्ज नहीं — लगे रहो!"
+  weak_areas_empty: "अभी तक कोई गलती दर्ज नहीं - लगे रहो!"
   practice: "अभ्यास करें"
   errors: "गलतियाँ"
   last_answer: "आपका पिछला उत्तर:"
@@ -3205,7 +3249,7 @@ favorites:
   card_more: "+{n} और"
   add: "पसंदीदा में जोड़ें"
   remove: "पसंदीदा से हटाएँ"
-  empty: "अभी तक कोई पसंदीदा नहीं — किसी पाठ के स्टार पर टैप करें।"
+  empty: "अभी तक कोई पसंदीदा नहीं - किसी पाठ के स्टार पर टैप करें।"
   save_prompt: "इस पाठ को अपने पसंदीदा में सहेजें"
 content_repo:
   set_not_found: "इस रिपॉज़िटरी में सेट '{set}' नहीं मिला।"
@@ -3230,7 +3274,7 @@ content_repo:
   last_sync: "अंतिम समन्वयन: {when}"
   added: "रिपॉज़िटरी जोड़ी गई।"
   synced: "समन्वयित: {sets} सेट, {lessons} पाठ।"
-  token_hint: "निजी रिपॉज़िटरी के लिए टोकन ज़रूरी है — नीचे एक चिपकाएँ, या सेटिंग्स → इंटीग्रेशन में साझा टोकन सेट करें।"
+  token_hint: "निजी रिपॉज़िटरी के लिए टोकन ज़रूरी है - नीचे एक चिपकाएँ, या सेटिंग्स → इंटीग्रेशन में साझा टोकन सेट करें।"
   trust_official: "आधिकारिक: प्रोजेक्ट टीम द्वारा क्यूरेट और गुणवत्ता-सुनिश्चित सामग्री।"
   trust_verified: "सत्यापित: समुदाय द्वारा योगदान और टीम द्वारा समीक्षित।"
   trust_validated: "मान्य: तकनीकी रूप से सही; सामग्री की अलग से समीक्षा नहीं की गई।"
@@ -3272,7 +3316,7 @@ content_repo:
     private: "निजी"
     official: "आधिकारिक"
   trust:
-    dropped: "समन्वयित हुआ, लेकिन सत्यापन विफल रहा — यह रिपॉज़िटरी अब असत्यापित के रूप में चिह्नित है।"
+    dropped: "समन्वयित हुआ, लेकिन सत्यापन विफल रहा - यह रिपॉज़िटरी अब असत्यापित के रूप में चिह्नित है।"
     recommended: "आधिकारिक रूप से अनुशंसित"
     unknown: "असत्यापित"
     validated: "सत्यापित"
@@ -3384,7 +3428,7 @@ endless:
   loading: "अभ्यास सत्र लोड हो रहा है…"
   empty_body: "इस सेट में अभ्यास के लिए अभी कोई अभ्यास नहीं है।"
   not_cached_body: "यह सेट अभी डाउनलोड नहीं हुआ है। पहले इसे डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।"
-  paused: "रुका हुआ — थोड़ा विराम लें।"
+  paused: "रुका हुआ - थोड़ा विराम लें।"
   resume: "जारी रखें"
   pause: "रोकें"
   end: "समाप्त"
@@ -3494,7 +3538,7 @@ registry:
     prepare_failed: प्रस्तुति तैयार नहीं की जा सकी।
   field:
     pick: एक कनेक्टेड रिपॉज़िटरी चुनें
-    pick_placeholder: — चुनें या नीचे लिखें —
+    pick_placeholder: "- चुनें या नीचे लिखें -"
     url: GitHub रिपॉज़िटरी URL
     branch: ब्रांच
     title: शीर्षक
@@ -3513,7 +3557,7 @@ registry:
     instructions: 'इस प्रविष्टि को आधिकारिक सामग्री निर्देशिका के {file} ऐरे में जोड़ें:'
   status:
     validated: स्थानीय रूप से सत्यापित
-    pending: लंबित — CI सत्यापित करेगा
+    pending: लंबित - CI सत्यापित करेगा
   pr:
     created: पुल रिक्वेस्ट खोली गई।
     failed: पुल रिक्वेस्ट नहीं खोली जा सकी।
@@ -3523,3 +3567,9 @@ exercise:
   listen_first:
     label: "पहले सुनें"
     aria: "उच्चारण चलाएँ"
+  difficulty:
+    tier:
+      easy: "आसान"
+      medium: "मध्यम"
+      hard: "कठिन"
+    aria: "कठिनाई: {tier} (5 में से {level})"

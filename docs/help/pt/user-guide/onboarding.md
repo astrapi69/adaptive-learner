@@ -1,10 +1,10 @@
 # Onboarding
 
-Desde a **v1.64.0** o início é deliberadamente curto: o **início
+O início é deliberadamente curto: o **início
 rápido** exige apenas dois campos.
 
-1. **Nome** — como a aplicação te deve tratar.
-2. **Tema** — o que queres aprender. "Gramática espanhola",
+1. **Nome** - como a aplicação te deve tratar.
+2. **Tema** - o que queres aprender. "Gramática espanhola",
    "Fundamentos de machine learning", "Improvisação a solo na
    guitarra". Sê concreto; este é a âncora do teu projeto.
 
@@ -15,16 +15,16 @@ Tudo o resto (objetivo, prazo, minutos por dia, idioma) assume
 
 Após a submissão, a aplicação oferece-te dois caminhos:
 
-- **Começar já** — aterras imediatamente no Dashboard e podes
+- **Começar já** - aterras imediatamente no Dashboard e podes
   iniciar uma lição ou sessão.
-- **Configurar o perfil** — abre o **assistente de onboarding**:
+- **Configurar o perfil** - abre o **assistente de onboarding**:
   uma pergunta por ecrã (objetivo → prazo → minutos por dia →
   problema atual → teste de tipo de aprendizagem opcional), cada
   uma com pré-preenchimento, de forma que "Continuar" funcione
   sempre, além de barra de progresso e "Voltar". As respostas são
   guardadas em ambos os modos de armazenamento.
 
-O **teste de tipo de aprendizagem já não é obrigatório** — só é
+O **teste de tipo de aprendizagem já não é obrigatório** - só é
 acessível através do último passo do assistente. Mais sobre isto em
 [Teste de tipo de aprendizagem](assessment.md).
 
@@ -68,5 +68,5 @@ que realmente queres aprender. O idioma alteras nas Definições.
 
 O teu fornecedor de IA vê as tuas mensagens (esse é justamente o
 sentido do pedido de IA). O próprio Adaptive Learner guarda apenas o
-que escreves — localmente ou no backend FastAPI, consoante o
+que escreves - localmente ou no backend FastAPI, consoante o
 [modo de armazenamento](settings.md) definido.

@@ -1,4 +1,4 @@
-"""Content Engine — the source→canonical boundary (EXP-042), backend half.
+"""Content Engine - the source→canonical boundary (EXP-042), backend half.
 
 The **canonical internal format** is the single-JSON lesson object
 (``schema.Lesson``, ``schema_version`` 1.4, EXP-039). A **source adapter**

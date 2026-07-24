@@ -9,7 +9,7 @@ sessões), o que tem feito (sessões recentes + distribuição de
 métodos) e o que fazer a seguir (ferramentas + recomendações
 espaçadas).
 
-No topo fica a **barra de filtros Assuntos + Etiquetas** —
+No topo fica a **barra de filtros Assuntos + Etiquetas** -
 escolha um assunto (ex.: Línguas → Espanhol) ou uma etiqueta
 para limitar todos os widgets abaixo a projetos com essa
 classificação. Os filtros são partilháveis via parâmetros de
@@ -27,24 +27,24 @@ zeros e liga para a página de Avaliação.
 
 ## XP + Sequência + Emblemas
 
-- **Widget XP** — nível atual + XP total + uma barra de
+- **Widget XP** - nível atual + XP total + uma barra de
   progresso para o próximo nível. Os níveis seguem uma curva
   exponencial (`threshold(n) = 50 * n * (n - 1)`); os níveis
   1-5 ficam em 0 / 100 / 300 / 600 / 1000 XP. Base de 50 XP
   por sessão terminada, mais bónus por ciclo + bónus de
   primeiro método + multiplicador de sequência (até 2.75×
   numa sequência de 7 dias).
-- **Mapa de calor de sequência** (estilo GitHub) — 365 dias
+- **Mapa de calor de sequência** (estilo GitHub) - 365 dias
   de atividade em colunas semanais Seg..Dom. Cinco cores por
   camada via `color-mix` em `var(--accent)`. Ative o modo de
   fim de semana em Definições para ignorar lacunas de Sáb/Dom;
   o estoque de congelamentos (1 por cada 7 dias de sequência,
   máx. 3) funciona como pausa-não-reinício num dia útil perdido.
-- **Apresentação de emblemas** — 24 emblemas em 5 categorias
+- **Apresentação de emblemas** - 24 emblemas em 5 categorias
   (getting_started 3, consistency 4, method_explorer 7, depth
   7, polyglot 3). Os conquistados acendem-se coloridos + com
   data; os bloqueados ficam cinzentos.
-- **Contador de sessões** — mosaicos para sessões, minutos,
+- **Contador de sessões** - mosaicos para sessões, minutos,
   sequência atual, compreensão média, stress médio.
 
 ## Linha do tempo de progresso
@@ -79,7 +79,7 @@ o método contextual e querem experimentá-lo.
 As últimas 5 sessões como uma lista compacta: emblema de método,
 a avaliação de compreensão da sessão (como uma pequena barra),
 e a duração em minutos. Clicar numa linha salta para a página
-de Progresso filtrada para essa sessão — útil quando uma sessão
+de Progresso filtrada para essa sessão - útil quando uma sessão
 específica correu muito bem ou muito mal e quer ver o que
 aconteceu.
 
@@ -87,18 +87,18 @@ aconteceu.
 
 Dois cartões de recomendação ao longo da borda inferior:
 
-- **Ferramentas** — ferramentas externas classificadas
+- **Ferramentas** - ferramentas externas classificadas
   adaptadas ao seu perfil. O Anki + NotebookLM são agora de
   primeira classe com exportações integradas (sem transferência
   manual). Cada uma mostra um "porquê" numa linha no seu idioma
   de interface.
-- **Repetição espaçada** — cartões de ação curtos "faça isto
+- **Repetição espaçada** - cartões de ação curtos "faça isto
   a seguir" orientados pelos métodos que não praticou
   recentemente. Uma política de cinco bandas (primeiro /
   refrescar / revisão / prática / manter) orienta as sugestões
   de intervalo.
 
-Ambas as listas atualizam em cada carregamento do Dashboard —
+Ambas as listas atualizam em cada carregamento do Dashboard -
 são baratas de calcular e refletem a sessão mais recente.
 
 ## Iniciar sessão

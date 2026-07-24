@@ -102,29 +102,40 @@ describe("parseSearchIndex", () => {
     expect(sets[0].book).toBeNull();
   });
 
-  it("drops hidden reference/conformance sets at parse time (#1702)", () => {
+  it("drops sets marked visibility: hidden at parse time (#1707)", () => {
     const sets = parseSearchIndex(
       {
         sets: [
-          { id: "de-fr-a1" },
-          { id: "graded-quiz-demo-from-de" },
+          { id: "de-fr-a1", visibility: "visible" },
+          { id: "graded-quiz-demo-from-de", visibility: "hidden" },
         ],
       },
       "astrapi69/adaptive-learner-content-test",
       "Content Test",
     );
-    // The graded-quiz demo fixture is dropped; the real set survives — and it
-    // never enters the written cache because it's gone before the return.
+    // The hidden fixture is dropped; the visible set survives — and the hidden
+    // one never enters the written cache because it's gone before the return.
     expect(sets.map((s) => s.id)).toEqual(["de-fr-a1"]);
   });
 
-  it("keeps a same-named set from a DIFFERENT repo (source-scoped hide, #1702)", () => {
+  it("treats a missing or non-hidden visibility as visible (#1707)", () => {
     const sets = parseSearchIndex(
-      { sets: [{ id: "graded-quiz-demo-from-de" }] },
+      {
+        sets: [
+          { id: "no-field" },
+          { id: "explicit-visible", visibility: "visible" },
+          { id: "garbage", visibility: "whatever" },
+        ],
+      },
       "someone/other-repo",
       "Other",
     );
-    expect(sets.map((s) => s.id)).toEqual(["graded-quiz-demo-from-de"]);
+    expect(sets.map((s) => s.id)).toEqual([
+      "no-field",
+      "explicit-visible",
+      "garbage",
+    ]);
+    expect(sets.every((s) => s.visibility === "visible")).toBe(true);
   });
 
   it("parses a book companion when present", () => {

@@ -14,7 +14,7 @@ basé sur :
 - Votre statut d'éligibilité (nouveau/actif/vétéran)
 - La difficulté configurée (facile/moyen/difficile ou un mix)
 
-Les missions utilisent les **données existantes** — aucun nouveau suivi
+Les missions utilisent les **données existantes** - aucun nouveau suivi
 n'est requis au-delà du tableau `UserMission`.
 
 ---
@@ -59,7 +59,7 @@ Dans **Paramètres → Apprentissage → Missions**, vous pouvez :
 ## Expiration et joker de série
 
 Les missions non accomplies **expirent à minuit** sans pénalité. Il n'y a
-pas de pénalité pour les missions manquées — elles disparaissent simplement
+pas de pénalité pour les missions manquées - elles disparaissent simplement
 le lendemain.
 
 Si vous êtes en série et que vous manquez un jour entier d'activité,

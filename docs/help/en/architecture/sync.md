@@ -10,7 +10,7 @@ network. The full reference is in
 
 ## Three device roles
 
-The sync UI looks different depending on the device's role — and
+The sync UI looks different depending on the device's role - and
 is only shown where it is usable:
 
 | Role | Storage mode | Sync UI |
@@ -23,7 +23,7 @@ is only shown where it is usable:
 
 ## SYNC-UI-GATE: only show what works
 
-A function that is not available is **not offered** — no dead
+A function that is not available is **not offered** - no dead
 buttons, no greyed-out placeholders. Currently (the LAN pairing
 phase is not yet implemented) the sync section is therefore
 visible **API-only**; without a working pairing flow the
@@ -38,6 +38,6 @@ control appears on the PWA-only deployment.
 
 ## Related pages
 
-- [Storage layer](../developer/storage-layer.md) — the dual storage abstraction
-- [Backup and restore](../features/backup.md) — manual data transfer without sync
+- [Storage layer](../developer/storage-layer.md) - the dual storage abstraction
+- [Backup and restore](../features/backup.md) - manual data transfer without sync
 - [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

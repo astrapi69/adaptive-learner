@@ -12,7 +12,7 @@ trouve dans
 ## Trois rôles d'appareil
 
 L'interface de synchronisation diffère selon le rôle de
-l'appareil — et n'est affichée que là où elle est utilisable :
+l'appareil - et n'est affichée que là où elle est utilisable :
 
 | Rôle | Mode de stockage | Interface de sync |
 |---|---|---|
@@ -24,7 +24,7 @@ l'appareil — et n'est affichée que là où elle est utilisable :
 
 ## SYNC-UI-GATE : n'afficher que ce qui fonctionne
 
-Une fonction non disponible n'est **pas proposée** — pas de
+Une fonction non disponible n'est **pas proposée** - pas de
 boutons morts, pas d'espaces réservés grisés. Actuellement (la
 phase d'appairage LAN n'est pas encore implémentée), la section
 sync est donc visible **uniquement en mode API** ; sans flux
@@ -41,6 +41,6 @@ n'apparaisse sur le déploiement PWA seule.
 
 ## Pages connexes
 
-- [Couche de stockage](../developer/storage-layer.md) — l'abstraction de stockage double
-- [Sauvegarde et restauration](../features/backup.md) — transfert manuel des données sans sync
+- [Couche de stockage](../developer/storage-layer.md) - l'abstraction de stockage double
+- [Sauvegarde et restauration](../features/backup.md) - transfert manuel des données sans sync
 - [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

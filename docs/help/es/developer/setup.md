@@ -11,7 +11,7 @@
   `curl -sSL https://install.python-poetry.org | python3 -`.
 - **Bun** 1.3+ (gestor de paquetes del frontend, #1492).
 - **GNU Make** para los objetivos de orquestación. El Makefile
-  es la fuente de verdad — cada comando de CI está ahí.
+  es la fuente de verdad - cada comando de CI está ahí.
 
 ## Clonar + instalar
 
@@ -23,9 +23,9 @@ make install
 
 `make install` ejecuta:
 
-1. `cd backend && poetry install` — backend + dependencias de
+1. `cd backend && poetry install` - backend + dependencias de
    rutas de los plugins.
-2. `cd frontend && bun install` — dependencias del frontend (Node 24).
+2. `cd frontend && bun install` - dependencias del frontend (Node 24).
 3. Instala cada plugin de `plugins/` como dependencia de ruta en
    el entorno virtual del backend (`develop = true` para que las
    ediciones sean inmediatas).
@@ -42,7 +42,7 @@ El backend lee su configuración de una cadena de tres capas
 
 1. **Variables de entorno** con prefijo `ADAPTIVE_LEARNER_*`.
 2. **Secretos del usuario** en
-   `~/.config/adaptive_learner/secrets.yaml` — generado
+   `~/.config/adaptive_learner/secrets.yaml` - generado
    automáticamente como plantilla comentada en el primer inicio
    (`chmod 0600` en POSIX); nunca se confirma en git.
 3. **Valores por defecto** en `backend/config/app.yaml`.
@@ -52,7 +52,7 @@ Más la resolución de claves de IA por proveedor:
 mediante la interfaz de Ajustes), expuesta en la interfaz como el
 campo `key_source_*` en `UserSettingsOut`.
 
-El único secreto obligatorio es `ADAPTIVE_LEARNER_SECRET_KEY` —
+El único secreto obligatorio es `ADAPTIVE_LEARNER_SECRET_KEY` -
 usado para cifrar las claves de API de los usuarios en reposo con
 Fernet. Genera una con `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
 Tres lugares donde ponerla (la prioridad más alta gana):
@@ -60,7 +60,7 @@ variable de entorno `ADAPTIVE_LEARNER_SECRET_KEY`, `secret_key:`
 en `secrets.yaml`, o `make dev-secret` para una clave de
 desarrollo de un solo uso. La aplicación falla de forma
 contundente al inicio si la clave no está configurada (sin
-trampa de generación silenciosa por defecto — consulta
+trampa de generación silenciosa por defecto - consulta
 [docs/configuration.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md)).
 
 ## Ejecutar
@@ -129,7 +129,7 @@ make docs-serve     # sirve la documentación en localhost:8000 con recarga auto
 make docs-build     # compila el sitio estático en site/
 ```
 
-El entorno virtual de docs es independiente del del backend —
+El entorno virtual de docs es independiente del del backend -
 MkDocs tiene su propio `docs/pyproject.toml` con mkdocs-material
 y mkdocs-static-i18n.
 

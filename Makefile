@@ -26,7 +26,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-one test-watch tdd-help \
        stryker stryker-quick \
        verify-theme verify-theme-baseline-update \
-       check-types check-types-backend check-types-frontend check-file-sizes check-css-size css-identity-ref css-identity-check check-dead-classnames audit-legacy-conflicts check-complexity check-complexity-gate check-complexity-gate-update \
+       check-types check-types-backend check-types-frontend check-file-sizes check-css-size css-identity-ref css-identity-check check-dead-classnames check-testid-refs audit-legacy-conflicts check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -41,7 +41,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
-       clean prod prod-down prod-logs \
+       clean prod prod-down prod-logs docker-build-smoke \
        launcher-test launcher-install launcher-status launcher-check launcher-stop \
        launcher-uninstall launcher-cleanup launcher-port launcher-version launcher-logs \
        launcher-pytest launcher-update-package launcher-venv-fix launcher-tray-check help
@@ -483,6 +483,9 @@ check-dead-classnames: ## Usage-side gates: dead classNames (#1491) + render-uns
 	@echo ""
 	python3 scripts/check-dead-classnames.py --unstyled
 
+check-testid-refs: ## Testid-reference gate (#1661): a spec-referenced data-testid removed/renamed on a high-visibility surface without an e2e spec change. BASE=<ref> (default origin/develop)
+	python3 scripts/testid_reference_gate.py --base $(if $(BASE),$(BASE),origin/develop)
+
 audit-legacy-conflicts: ## EXP-044 pre-wrap conflict audit (analysis only, NO gate; Refs #1485). BLOCKS="--block A-B:Label ..." or default --wrapped
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
 	cd frontend && VITE_STORAGE_MODE=dexie bun run build
@@ -621,6 +624,15 @@ verify-screenshots: ## Verify per-feature screenshots against the committed base
 	@echo "=== Verifying per-feature screenshots ==="
 	cd e2e && npx playwright test --config=playwright.features.config.ts
 
+capture-blog-screenshots: ## Capture lesson-creator screenshots for the engine blog series (writes only, no baseline)
+	@echo "=== Building frontend (needs the backend too: the UI language comes from /api/i18n) ==="
+	cd frontend && bun run build
+	@echo ""
+	@echo "=== Capturing blog screenshots (DOCS_LANG=$(or $(DOCS_LANG),en)) ==="
+	cd e2e && DOCS_LANG=$(or $(DOCS_LANG),en) npx playwright test --config=playwright.docs.config.ts
+	@echo ""
+	@echo "Output: e2e/docs/output/$(or $(DOCS_LANG),en)/ (git-ignored; copy what you need into the article)"
+
 # --- Version sync ---
 
 sync-versions: ## Propagate backend/pyproject.toml version to all subsystems
@@ -690,6 +702,9 @@ prod-down: ## Stop production
 
 prod-logs: ## Show production logs
 	docker compose -f docker-compose.prod.yml logs -f
+
+docker-build-smoke: ## Build-only smoke for the prod compose images (#1990; launcher/install.sh build path). No `up`.
+	docker compose -f docker-compose.prod.yml build
 
 # --- Launcher (desktop, Docker-based) ---
 
@@ -1018,7 +1033,18 @@ endif
 	git push origin develop
 	@echo "=== Delete release/$(VERSION) ==="
 	git branch -d release/$(VERSION)
-	git push origin --delete release/$(VERSION)
+# The release branch is cut locally and need not be pushed (#334 gitflow),
+# so a remote branch may never have existed. Deleting a non-existent remote
+# ref used to fail the whole target with exit 1 AFTER main was already
+# merged, tagged and pushed - an alarming exit code for a no-op cleanup
+# step, which is exactly the signal you do not want to learn to ignore
+# (#1903). Delete it only when it is actually there.
+	@if git ls-remote --exit-code --heads origin release/$(VERSION) >/dev/null 2>&1; then \
+		echo "remote branch exists - deleting"; \
+		git push origin --delete release/$(VERSION); \
+	else \
+		echo "no remote release/$(VERSION) (branch was local-only) - nothing to delete"; \
+	fi
 	@echo ""
 	@echo "Tagged + merged. Next: make release-publish VERSION=$(VERSION)"
 

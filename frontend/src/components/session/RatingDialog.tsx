@@ -146,7 +146,7 @@ export default function RatingDialog({
                                     <li key={c.cycle}>
                                         <strong>{c.topic}</strong>
                                         {c.summary && (
-                                            <span> — {c.summary}</span>
+                                            <span> - {c.summary}</span>
                                         )}
                                     </li>
                                 ))}

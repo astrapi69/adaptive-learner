@@ -565,7 +565,7 @@ def test_analyze_threads_user_language_into_system_prompt(
     assert resp.status_code == 200, resp.text
 
     system_msg = next(m for m in captured["calls"][0]["messages"] if m["role"] == "system")
-    assert "LANGUAGE — IMPORTANT" in system_msg["content"]
+    assert "LANGUAGE - IMPORTANT" in system_msg["content"]
     assert "IN Spanish" in system_msg["content"]
 
 

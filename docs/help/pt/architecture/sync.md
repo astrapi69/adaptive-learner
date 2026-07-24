@@ -11,7 +11,7 @@ dispositivos através da rede local. A referência completa está em
 ## Três papéis de dispositivo
 
 A interface de sincronização tem um aspeto diferente consoante o
-papel do dispositivo — e só é mostrada onde é utilizável:
+papel do dispositivo - e só é mostrada onde é utilizável:
 
 | Papel | Modo de armazenamento | Interface de sync |
 |---|---|---|
@@ -23,7 +23,7 @@ papel do dispositivo — e só é mostrada onde é utilizável:
 
 ## SYNC-UI-GATE: mostrar apenas o que funciona
 
-Uma função não disponível **não é oferecida** — sem botões mortos,
+Uma função não disponível **não é oferecida** - sem botões mortos,
 sem marcadores de posição esbatidos. Atualmente (a fase de
 emparelhamento LAN ainda não está implementada), a secção de
 sincronização é, por isso, visível **apenas no modo API**; sem um
@@ -39,6 +39,6 @@ no deployment apenas-PWA não surja nenhum elemento de controlo morto.
 
 ## Páginas relacionadas
 
-- [Camada de armazenamento](../developer/storage-layer.md) — a abstração dupla de armazenamento
-- [Backup e restauro](../features/backup.md) — transferência manual de dados sem sync
+- [Camada de armazenamento](../developer/storage-layer.md) - a abstração dupla de armazenamento
+- [Backup e restauro](../features/backup.md) - transferência manual de dados sem sync
 - [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

@@ -168,10 +168,18 @@ export default function ShareButton({
                     files = null;
                 }
             }
+            // #1939 — fold the URL INTO the text (never a separate `url`
+            // field). iOS/WebKit share sheets drop `text` when a `url` is
+            // present and share only the link, so the recipient sees just the
+            // app name — the exact bug reported for the lesson-result share.
+            // A single self-contained text is what the clipboard fallback and
+            // the desktop intent URLs already use, so every path stays
+            // consistent and the personalized message always survives.
+            const shareText = url ? `${text} ${url}`.trim() : text;
             const withFiles =
                 files && files.length > 0 && nav.canShare?.({files})
-                    ? {text, url, files}
-                    : {text, url};
+                    ? {text: shareText, files}
+                    : {text: shareText};
             try {
                 await share(withFiles);
                 onShared?.("shared");

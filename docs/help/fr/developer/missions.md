@@ -41,6 +41,6 @@ modes de stockage et n'ajoutent qu'une seule table de suivi.
   pas requise.
 - Pas de suivi au-delà de `UserMission` ; les contrôles non
   traçables ne sont pas assignés.
-- Les missions sont supplémentaires — un échec ne doit jamais
+- Les missions sont supplémentaires - un échec ne doit jamais
   interrompre le flux de la leçon (toutes les lectures sont
   défensives). Aucune pénalité pour les jours manqués.

@@ -13,7 +13,7 @@ sürümdür:
 
 [**Uygulamayı aç**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Bu, **Yerel modda** çalışır — tüm verilerin tarayıcında (IndexedDB)
+Bu, **Yerel modda** çalışır - tüm verilerin tarayıcında (IndexedDB)
 kalır ve yapay zeka çağrıları doğrudan sayfadan, kendi API anahtarınla
 Anthropic, OpenAI ya da Google Gemini'ye gider. Aradan geçen bir arka
 uç yok.
@@ -48,7 +48,7 @@ tarayıcının dışında bulunur.
    "Hemen başla"yı seçebilir ya da isteğe bağlı olarak profilini
    yardımcıda daha ayrıntılı kurabilirsin. [Onboarding](onboarding.md)'a
    bak.
-3. **İlk dersi başlat** — yapay zeka anahtarı olmadan en hızlı yol:
+3. **İlk dersi başlat** - yapay zeka anahtarı olmadan en hızlı yol:
    `/content` altındaki
    [İçerik Tarayıcısı](../features/content-browser.md)'nı aç, bir ders
    seti seç ve bir ders başlat. Kısa teori okur ve alıştırmalar
@@ -67,10 +67,10 @@ tarayıcının dışında bulunur.
 
 ## Nasıl devam edilir
 
-- [Dersler ve tekrarlar](lessons.md) — ders akışı ayrıntılı olarak
-- [İçerik Tarayıcısı](../features/content-browser.md) — ders bulma ve filtreleme
-- [Birden Çok İçerik Repository'si](../features/content-repos.md) — kendi içerik kaynaklarını bağla
+- [Dersler ve tekrarlar](lessons.md) - ders akışı ayrıntılı olarak
+- [İçerik Tarayıcısı](../features/content-browser.md) - ders bulma ve filtreleme
+- [Birden Çok İçerik Repository'si](../features/content-repos.md) - kendi içerik kaynaklarını bağla
 - [Yedekleme ve geri yükleme](../features/backup.md)
-- [Dashboard'unu anlama](dashboard.md) — ilerleme, Streak, XP, Badge'ler
-- [SSS — sık sorulan sorular](faq.md)
+- [Dashboard'unu anlama](dashboard.md) - ilerleme, Streak, XP, Badge'ler
+- [SSS - sık sorulan sorular](faq.md)
 - [Uygulamanın ardındaki pedagojik fikir](../concept/philosophy.md)

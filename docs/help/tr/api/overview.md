@@ -4,7 +4,7 @@
 
 AdaptiveLearner'ın arka ucu bir FastAPI REST API'si sunar.
 Sunucu modunda frontend buna konuşur; Yerel (Dexie) modda
-API'ye ulaşılamaz — aynı işlemler tarayıcıda çalışır.
+API'ye ulaşılamaz - aynı işlemler tarayıcıda çalışır.
 
 ## Temel URL
 
@@ -33,7 +33,7 @@ AI sağlayıcı anahtarları üç katmanlı bir zincir aracılığıyla
 3. Fernet şifreli `UserSettings.api_key_<provider>` sütunu
    (Ayarlar arayüzü aracılığıyla ayarlanır; frontend'e hiçbir
    zaman düz metin olarak döndürülmez).
-4. `None` — AI çağrısı arayüze bir hata gösterir.
+4. `None` - AI çağrısı arayüze bir hata gösterir.
 
 `UserSettingsOut.key_source_*` (enum
 `env | secrets_yaml | settings | none`), Ayarlar arayüzünün
@@ -102,7 +102,7 @@ Hata ayıklama modunda (`ADAPTIVE_LEARNER_DEBUG=true`) yanıt
 ayrıca bir `traceback` alanı içerir. Üretim dağıtımları
 hata ayıklamayı kapalı bırakmalıdır.
 
-Frontend'in `ApiError` sınıfı her iki şekli de kullanır —
+Frontend'in `ApiError` sınıfı her iki şekli de kullanır -
 tam ayrıştırıcı için `frontend/src/api/client.ts`'e bakın.
 
 ## Uç nokta grupları

@@ -373,7 +373,7 @@ function PairedView({
                                 <span style={{opacity: 0.7}}>
                                     {new Date(h.at).toLocaleString()}
                                 </span>{" "}
-                                — {h.summary}
+                                - {h.summary}
                             </li>
                         ))}
                     </ul>

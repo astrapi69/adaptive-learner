@@ -8,8 +8,8 @@ dos minutos.
 ## Cómo funciona
 
 Cada pregunta muestra 3-4 posibles respuestas. La mayoría de las
-preguntas son de **selección única** (botones de opción — elige una).
-Algunas son de **selección múltiple** (casillas de verificación —
+preguntas son de **selección única** (botones de opción - elige una).
+Algunas son de **selección múltiple** (casillas de verificación -
 elige todo lo que corresponda). La aplicación te indica de qué tipo
 es cada pregunta.
 
@@ -28,12 +28,12 @@ y produce un perfil de 6 métodos.
 
 | Método | Fortaleza |
 |--------|-----------|
-| Deductivo | Reglas primero, ejemplos después — orientado a la teoría |
-| Inductivo | Ejemplos primero, deducir la regla — orientado a los patrones |
-| Basado en errores | Provocar errores, aprender de ellos — orientado a la fricción |
-| Dialógico | Conversación sin presión — orientado al intercambio |
-| Contextual | Escenarios del mundo real — orientado a la situación |
-| Adaptativo con IA | La IA elige por turno — orientado a la meta |
+| Deductivo | Reglas primero, ejemplos después - orientado a la teoría |
+| Inductivo | Ejemplos primero, deducir la regla - orientado a los patrones |
+| Basado en errores | Provocar errores, aprender de ellos - orientado a la fricción |
+| Dialógico | Conversación sin presión - orientado al intercambio |
+| Contextual | Escenarios del mundo real - orientado a la situación |
+| Adaptativo con IA | La IA elige por turno - orientado a la meta |
 
 [Los seis métodos en profundidad](../concept/six-methods.md)
 

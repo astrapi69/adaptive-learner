@@ -19,17 +19,26 @@ import {BookOpen, Sparkles} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import ApiKeyRequiredNotice from "../settings/ai/ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "../../settings/ai/ApiKeyRequiredNotice";
+import BookFileUpload from "./BookFileUpload";
 import {
     browserDirectProvider,
     generateExercises as defaultGenerate,
-} from "../../lib/ai/generation/generate-exercises";
-import {generateTheoryFromText as defaultGenerateTheory} from "../../lib/ai/generation/generate-theory-from-text";
-import {cardsToExercises} from "../../lib/ai/generation/cards-to-exercises";
-import type {TheoryStep} from "../../lib/ai/generation/exercise-generation-prompt";
-import type {ResolvedAiProvider} from "../../lib/ai/providers/resolve-provider";
-import type {ContentLessonExercise} from "../../storage/types";
-import {notify} from "../../utils/notify";
+} from "../../../lib/ai/generation/generate-exercises";
+import {generateTheoryFromText as defaultGenerateTheory} from "../../../lib/ai/generation/generate-theory-from-text";
+import {cardsToExercises} from "../../../lib/ai/generation/cards-to-exercises";
+import {generateBookLessonsBatch} from "../../../lib/ai/generation/generate-book-lessons";
+import type {
+    BatchFailure,
+    BatchProgress,
+    BatchSectionInput,
+    GeneratedBookLesson,
+} from "../../../lib/ai/generation/generate-book-lessons";
+import {MAX_SECTION_CHARS} from "../../../lib/content/book-upload";
+import type {TheoryStep} from "../../../lib/ai/generation/exercise-generation-prompt";
+import type {ResolvedAiProvider} from "../../../lib/ai/providers/resolve-provider";
+import type {ContentLessonExercise} from "../../../storage/types";
+import {notify} from "../../../utils/notify";
 
 type Translate = (key: string, fallback?: string) => string;
 
@@ -55,11 +64,13 @@ interface BookTextStepProps {
      * (the "no key" signal — the Dexie caller reads it browser-direct).
      */
     resolveProvider: () => Promise<ResolvedAiProvider | null>;
-    /** Receives the generated theory steps + exercises. */
+    /** Receives the generated theory steps + exercises (single path). */
     onGenerated: (
         theorySteps: TheoryStep[],
         exercises: ContentLessonExercise[],
     ) => void;
+    /** #1949 — receives the batch-generated lessons (multi-select path). */
+    onBatchGenerated: (lessons: GeneratedBookLesson[]) => void;
     /** True once a generation succeeded (drives the summary label). */
     generatedSummary?: {theory: number; exercises: number} | null;
     t: Translate;
@@ -77,6 +88,7 @@ export default function BookTextStep({
     language,
     resolveProvider,
     onGenerated,
+    onBatchGenerated,
     generatedSummary,
     t,
     generateTheory = defaultGenerateTheory,
@@ -84,9 +96,90 @@ export default function BookTextStep({
 }: BookTextStepProps) {
     const [busy, setBusy] = useState(false);
     const [needsKey, setNeedsKey] = useState(false);
+    // #1949 — batch generation state (multi-select upload path).
+    const [batchBusy, setBatchBusy] = useState(false);
+    const [batchProgress, setBatchProgress] = useState<BatchProgress | null>(
+        null,
+    );
+    const [batchSummary, setBatchSummary] = useState<{
+        succeeded: number;
+        total: number;
+        failures: BatchFailure[];
+    } | null>(null);
+
+    /** #1949 — batch: generate one lesson per selected section. Reuses the
+     *  same chunk->lesson pipeline as the single path via
+     *  {@link generateBookLessonsBatch}; a per-section failure never aborts
+     *  the run. */
+    async function runBatch(sections: BatchSectionInput[]) {
+        if (batchBusy || busy) return;
+        setBatchBusy(true);
+        setNeedsKey(false);
+        setBatchSummary(null);
+        setBatchProgress(null);
+        try {
+            const config = await resolveProvider();
+            if (!config) {
+                setNeedsKey(true);
+                return;
+            }
+            const provider = browserDirectProvider(config);
+            const result = await generateBookLessonsBatch(
+                sections,
+                provider,
+                {
+                    language,
+                    clozePrompt: t(
+                        "content.lesson_gen.cloze_prompt",
+                        "Fill in the missing word.",
+                    ),
+                    maxSectionChars: MAX_SECTION_CHARS,
+                },
+                {
+                    generateTheory,
+                    generate,
+                    onProgress: setBatchProgress,
+                },
+            );
+            setBatchSummary({
+                succeeded: result.lessons.length,
+                total: sections.length,
+                failures: result.failures,
+            });
+            if (result.lessons.length === 0) {
+                notify.error(
+                    t(
+                        "create_lesson.book.batch_all_failed",
+                        "No lessons could be generated from the selected sections.",
+                    ),
+                );
+                return;
+            }
+            notify.success(
+                t(
+                    "create_lesson.book.batch_summary",
+                    "{ok} of {n} lesson(s) generated.",
+                )
+                    .replace("{ok}", String(result.lessons.length))
+                    .replace("{n}", String(sections.length)),
+            );
+            onBatchGenerated(result.lessons);
+        } catch (err) {
+            const detail = err instanceof Error ? err.message : String(err);
+            notify.error(
+                `${t(
+                    "create_lesson.book.generate_failed",
+                    "Could not generate the lesson. Please try again.",
+                )} ${detail}`,
+            );
+        } finally {
+            setBatchBusy(false);
+            setBatchProgress(null);
+        }
+    }
 
     async function runGeneration() {
-        if (busy) return;
+        if (busy || batchBusy) return;
         if (bookText.trim() === "") {
             notify.error(
                 t(
@@ -175,6 +268,63 @@ export default function BookTextStep({
                 </p>
             </div>
 
+            <BookFileUpload
+                currentText={bookText}
+                onApply={onBookTextChange}
+                onGenerateSections={(sections) => void runBatch(sections)}
+                generating={batchBusy}
+                t={t}
+            />
+
+            {batchBusy && batchProgress && (
+                <div
+                    className="flex items-center gap-2 text-sm text-fg-primary"
+                    data-testid="book-batch-progress"
+                    role="status"
+                    aria-live="polite"
+                >
+                    <span className="btn-spinner" aria-hidden="true" />
+                    {t(
+                        "create_lesson.book.batch_progress",
+                        "Generating lesson {current} of {total}: {title}…",
+                    )
+                        .replace("{current}", String(batchProgress.current))
+                        .replace("{total}", String(batchProgress.total))
+                        .replace("{title}", batchProgress.title)}
+                </div>
+            )}
+
+            {batchSummary && !batchBusy && (
+                <div
+                    className="flex flex-col gap-1 rounded-lg border border-border p-3 text-sm"
+                    data-testid="book-batch-summary"
+                >
+                    <p className="text-fg-primary">
+                        {t(
+                            "create_lesson.book.batch_summary",
+                            "{ok} of {n} lesson(s) generated.",
+                        )
+                            .replace("{ok}", String(batchSummary.succeeded))
+                            .replace("{n}", String(batchSummary.total))}
+                    </p>
+                    {batchSummary.failures.length > 0 && (
+                        <ul className="flex flex-col gap-0.5 text-xs text-fg-muted">
+                            {batchSummary.failures.map((failure) => (
+                                <li
+                                    key={failure.title}
+                                    data-testid="book-batch-failure"
+                                >
+                                    {t(
+                                        "create_lesson.book.batch_failed_item",
+                                        "Failed: {title}",
+                                    ).replace("{title}", failure.title)}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            )}
+
             <label className="form-row flex flex-col gap-1.5">
                 <span className="form-label text-sm font-medium text-fg-primary">
                     {t("create_lesson.book.text_label", "Textbook section")}
@@ -198,7 +348,7 @@ export default function BookTextStep({
             >
                 {t(
                     "create_lesson.book.rights_hint",
-                    "Only paste text you have the rights to, or that is intended for personal use.",
+                    "Only paste or upload text you have the rights to, or that is intended for personal use.",
                 )}
             </p>
 
@@ -263,7 +413,7 @@ export default function BookTextStep({
                 <Button
                     type="button"
                     onClick={() => void runGeneration()}
-                    disabled={busy}
+                    disabled={busy || batchBusy}
                     data-testid="book-generate"
                 >
                     {busy ? (

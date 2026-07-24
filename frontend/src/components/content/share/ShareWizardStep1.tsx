@@ -76,14 +76,14 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
 
       {/* BUG A/C — editable metadata: old lessons carry bad
           source/target/level the user must be able to fix. */}
-      <p className="share-wizard-metadata-intro">
+      <p className="share-wizard-metadata-intro mb-3 text-sm text-fg-secondary">
         {t(
           "content.wizard.metadata_intro",
           "Check and correct the lesson details before sharing.",
         )}
       </p>
       <div
-        className="share-wizard-metadata"
+        className="share-wizard-metadata flex flex-col gap-3"
         data-testid="share-wizard-metadata"
       >
         <label className="form-row">
@@ -167,7 +167,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
                   the user clear it; the empty-level gate then blocks
                   Continue (BUG C). */}
               <SelectItem value={LEVEL_NONE}>
-                {t("content.wizard.select_level", "— Select level —")}
+                {t("content.wizard.select_level", "- Select level -")}
               </SelectItem>
               {CEFR_LEVELS.map((lvl) => (
                 <SelectItem key={lvl} value={lvl}>
@@ -177,7 +177,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
             </SelectContent>
           </Select>
         </div>
-        <p className="share-wizard-counts">
+        <p className="share-wizard-counts mt-1 text-sm text-fg-secondary">
           <span data-testid="share-wizard-exercise-count">
             {t("content.wizard.exercises_label", "Exercises")}:{" "}
             {exerciseCount}
@@ -195,7 +195,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
         </p>
         {sameLanguage && (
           <p
-            className="share-wizard-domain-hint"
+            className="share-wizard-domain-hint text-sm text-fg-secondary"
             data-testid="share-wizard-domain-hint"
           >
             {t(
@@ -218,32 +218,32 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
       )}
 
       <div
-        className="share-wizard-placement"
+        className="share-wizard-placement mt-4 flex flex-col gap-1 rounded-lg border border-border bg-card p-3"
         data-testid="share-wizard-placement"
       >
-        <p className="share-wizard-placement-line">
+        <p className="share-wizard-placement-line text-sm text-fg-secondary">
           {t("content.wizard.lands_under", "Your lesson lands under")}:
         </p>
-        <p className="share-wizard-breadcrumb">
+        <p className="share-wizard-breadcrumb text-sm">
           <strong>
             {placement.source.toUpperCase()} →{" "}
             {placement.target.toUpperCase()} → {placement.level}
           </strong>
         </p>
-        <code className="share-wizard-path">
+        <code className="share-wizard-path block break-all text-xs text-fg-secondary">
           {placement.path}/lessons/
           {singleLesson ? placement.filename : ""}
         </code>
         {placement.isNewSet ? (
           <p
-            className="share-wizard-newset"
+            className="share-wizard-newset text-sm text-fg-secondary"
             data-testid="share-wizard-newset"
           >
             {t("content.wizard.new_set", "New set! You're the first to contribute here.")}
           </p>
         ) : (
           <p
-            className="share-wizard-existing"
+            className="share-wizard-existing text-sm text-fg-secondary"
             data-testid="share-wizard-existing"
           >
             {t("content.wizard.next_to_existing", "Next to {count} existing lesson(s) in this set.")
@@ -254,7 +254,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
 
       {/* Phase 64C-2 — optional author credit. */}
       <div
-        className="share-wizard-author"
+        className="share-wizard-author mt-4 flex flex-col gap-3"
         data-testid="share-wizard-author"
       >
         <label className="form-row">
@@ -263,7 +263,6 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
           </span>
           <Input
             type="text"
-            className="share-wizard-author-name"
             placeholder={t("content.credit.name_placeholder", "e.g. Maria S.")}
             value={authorName}
             onChange={(e) => {
@@ -287,7 +286,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
           </label>
         )}
         {authorName.trim() && showName && (
-          <p className="share-wizard-author-privacy">
+          <p className="share-wizard-author-privacy text-sm text-fg-secondary">
             {t(
               "content.credit.privacy",
               "Your name will be shown in the lesson and the pull request.",

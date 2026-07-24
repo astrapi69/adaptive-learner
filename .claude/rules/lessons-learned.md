@@ -268,6 +268,102 @@ Detection: if local tests pass but CI fails on routes returning 404, suspect mis
 - Any specific number, threshold, default value, dropdown range, or feature flag mentioned in the docs MUST come from the code or config that defines it (`backend/config/app.yaml`, `backend/config/i18n/*.yaml`, the schema, the source of the relevant function), not from memory or approximation.
 - If a value isn't easily findable in code, that is a signal to flag the question, not to guess. Wrong defaults in user docs erode trust faster than missing docs do.
 - Example: trash auto-delete default came from `backend/config/app.yaml.example` (`trash_auto_delete_days: 90`); the configurable range came from the `trash_days_*` keys in `backend/config/i18n/*.yaml`. Both are single sources of truth that the docs cite without duplicating.
+- **This file is not exempt from its own rule.** The #1903 issue text
+  claimed `backend/tests/test_plugin_lock_drift_hook.py` "pins the hook with
+  6 self-checks" — quoted from THIS file, never checked against the tree. The
+  file had been removed by the skeleton strip (`76baa114`) long before. A rule
+  file ages exactly like any other doc: when it names a path, a count, or a
+  gate, verify the artifact still exists before repeating the claim
+  downstream. `git log --all -- <path>` answers it in one command.
+
+## End-user help is versionless; provenance belongs to the changelog
+
+Surfaced across #1766 (index pages) and #1767 (the whole help tree) — a
+recurrence class, not a one-off. End-user help under `docs/help/**` had
+drifted into ~1000 `since vX.Y` / `New in vX.Y` / `(Phase N / vX.Y)`
+feature-provenance markers across 8 locales, each frozen at a different
+release and drifting per-locale (tr/el stalled at v1.20-era wording). To
+a user on the current version, "since v1.35.0" is noise at best and
+implies a recency/optionality that is long gone.
+
+### Rule
+
+- **User help describes the CURRENT behaviour in present tense.** Release
+  provenance (what shipped when) belongs to `changelog/releases/` and the
+  per-locale `changelog.md` "What's new" page — never to the feature
+  prose. Rewrite "since vX the editor is TipTap" to "the editor is
+  TipTap".
+- **No `vX.Y[.Z]` literal in end-user help prose.** Gated hard by
+  `check_help_prose_versions` in `scripts/verify_docs.py`, which scans
+  `docs/help/*/**` and FAILs on any v-version literal. It skips the
+  `developer/` + `api/` reference trees (contributor/integrator docs that
+  legitimately cite schema + hook versions), `changelog.md` (version-based
+  by definition), and `index.md` (its own `check_help_index_versions`
+  gate, #1766).
+- **A genuine exception carries an inline marker.** `<!-- version-exempt:
+  <reason> -->` on the same line, mirroring the design-token
+  `token-exempt:` precedent. Reach for it only when a version literal
+  carries real current meaning (a format/schema contract) — a stale pin
+  like "schema v1.3+; current is v1.4" is NOT that; reword it or link to
+  the authoritative reference instead.
+- **While touching a provenance line, verify the surrounding claim against
+  current behaviour** (docs are specification). The #1767 sweep found the
+  es/el/pt/tr/ja/fr lessons pages still calling the library "the v1.27.0
+  pilot set — French A1, 2 lessons" long after it grew to hundreds; the
+  rewrite dropped both the version and the stale count rather than pinning
+  a new number that would drift again.
+
+### Pairs with
+
+- "Doc values: read from code, not from memory" — a version marker is the
+  degenerate case: the value that is ALWAYS wrong to hardcode in
+  present-tense help.
+- "Cross-layer assumptions must be pinned against REAL data shapes" — same
+  family of per-locale drift going green-and-wrong because nothing gated
+  it.
+
+## Test a tool through the interface it actually uses, not a mock of it
+
+A tool that shells out (git, poetry, docker, a CLI) has an implicit
+dependency on the ENVIRONMENT it resolves — cwd, repo root, PATH, the
+process it runs under. A mocked subprocess layer verifies the parsing logic
+and hides the resolution entirely.
+
+Concrete (#1903): the `plugin-lock-paired-with-pyproject` hook computed its
+repo root from `Path(__file__).resolve().parent.parent`, so it always read
+the checkout the SCRIPT lives in, not the one being committed. Under
+`git worktree` — the standard workflow in this repo — that is the wrong
+repo. The failure is **silent and green**: the hook finds no staged files in
+the foreign repo, concludes "nothing staged, nothing to check", and exits 0.
+A gate that reports success while inspecting the wrong tree is worse than a
+missing gate, because it also buys false confidence.
+
+Nothing about that is visible with mocked git output. It surfaced because
+the new tests build **real throwaway git repos** (`git init` in `tmp_path`,
+real files, real `git add`) and invoke the hook exactly the way pre-commit
+does — as a subprocess with staged paths as argv. Three "must block" tests
+failed in the RED run not because the feature was missing, but because the
+hook was reading somewhere else entirely.
+
+Rules:
+
+- **When a tool resolves its own context, let the test control that
+  context.** Build the real thing in `tmp_path` (git repo, config dir,
+  package tree) and run the tool against it as a subprocess. The setup cost
+  is one fixture; the coverage includes the resolution logic that mocks
+  erase.
+- **Derive the repo root from cwd (`git rev-parse --show-toplevel`), never
+  from `__file__`.** Pre-commit, make targets, and CI all invoke from the
+  repo root; `__file__` additionally breaks under worktrees, symlinked
+  checkouts, and any vendored copy of the script.
+- **A guard that can pass by looking at the wrong place must fail closed.**
+  "Found nothing, so nothing is wrong" is only sound once you have proven you
+  looked in the right tree.
+
+Pairs with "Operational gaps masquerade as wired infrastructure" (a gate that
+never ran) and "A 'flaky' test that fails deterministically on unchanged code
+is stale, not flaky" (a gate whose assertion no longer matches reality). Same
+family: the gate exists, and the gate is not doing the job you believe it is.
 
 ## Alembic migration + fresh test DB
 
@@ -1901,3 +1997,90 @@ Surfaced 2026-07-18 as the THIRD recurrence of the same class:
   is a facet of an earlier fixed class, say so in the issue, link the
   chain, and extend the ORIGINAL tests so the whole class is pinned -
   a sibling facet fixed in isolation is the seed of recurrence #3.
+
+## PR-CI vs nightly gates: different test surfaces (green PR -> red nightly/push)
+
+A green PR merge proves only that the surface the PR-CI *looks at* is
+green. By the #552 cadence, PR-CI runs correctness gates only; the
+visual-baselines, the e2e specs (dexie-smoke, manual-automation,
+FeatureShots) and the Dexie-mode journeys run **nightly / on develop-push
+only**. So any change to a surface only a nightly covers can merge a clean
+PR and turn the next nightly/push run red. This is not a one-off chain -
+it is a recurring **risk category** (#1661): *"green PR -> red
+nightly/push, because the PR-CI never looked at the affected surface."*
+
+### Sub-classes (same signature, different fix lever)
+
+1. **Nightly-only surface** (#1638, #1656). The PR-CI does not run the
+   workflow at all. A lesson-header rework left every `lesson-*` visual
+   baseline stale (#1638); a panel rework moved testid carriers into a
+   collapsed `hidden` panel without touching the e2e specs (#1656).
+2. **Selection mechanics** (#1620, #1665, #1614). The test IS in the
+   PR-CI suite but the selective runner (`vitest --changed` #615, `pytest
+   --testmon`) does not pick it, because it reads its subject via
+   `readFileSync` (invisible to the module graph) instead of importing
+   it. A moved CSS token broke a `readFileSync` hue-pin the PR-CI never
+   ran (#1665); an `index.html` guard kept develop red across five PRs
+   (#1614). Mitigation candidate: Vitest `forceRerunTriggers` for
+   `src/styles/**/*.css` + `index.html` + `data/i18n/*.json`.
+3. **Stale base / semantic merge conflict** (#1729). Two PRs, each
+   tsc-green and textually conflict-free, combine on develop to a type
+   error. `strict: false` branch protection let a PR with 32-minute-old
+   CI merge behind a fresh neighbor. **Decided + shipped (2026-07-16):**
+   Merge Queue is an Org-only feature (422 on this user-owned repo), so
+   the fallback `strict: true` is active on develop - PR merges now
+   require an up-to-date branch, re-running CI on the combined state.
+   `enforce_admins=false` keeps `make release-finish`'s direct back-merge
+   working.
+4. **No cadence at all** (#1771). The verified variant: the surface is
+   not even nightly-covered. The bun migration (#1496) dropped
+   `package-lock.json`; `frontend/Dockerfile` still ran `npm ci` and
+   broke the entire self-hosted/desktop path for ~2 release cycles. No
+   automated consumer existed - discovery was manual. **Shipped (#1990):**
+   `docker-build-smoke.yml` - a build-only `docker compose -f
+   docker-compose.prod.yml build`, path-filtered on the Docker inputs on
+   PRs + on `release/**` + weekly, analogous to the dexie-smoke pattern
+   (#552).
+
+(Orthogonal, listed for contrast: #1653 `settings-data` baseline churn
+from live `recommended-repos.json` is the *external-data* class (#575),
+not this "spec-not-dragged-along" class.)
+
+### The reviewer rule
+
+**A green PR is NOT authoritative for nightly-only surfaces.** When a PR
+touches a visual-critical path, an e2e-covered surface, or a
+`readFileSync`-pinned subject, the safety net is the full/nightly run -
+which lands *after* the merge. Treat the green PR as "the PR-CI slice is
+green", not "develop is green".
+
+### Shipped mitigations (make the gap PR-visible, targeted)
+
+- **`visual-baseline-gate.yml`** (#1641) - a PR touching visual-critical
+  paths must carry the baseline PNGs; escape label
+  `visual-baselines-unaffected`.
+- **`testid-reference-gate.yml`** (#1661) - a *statically spec-referenced*
+  `data-testid` that is net-removed/renamed on a high-user-visibility
+  surface (lesson runner, exercises, dashboard, content browser, settings
+  core) without any e2e spec change fails a fast PR gate
+  (`scripts/testid_reference_gate.py`, `make check-testid-refs`); escape
+  label `testid-refs-unaffected`. **Catches the rename/remove sub-class
+  only** - the #1656 wrap-into-`hidden` case (literal survives) is not
+  literal-diffable and stays a reviewer + nightly concern.
+- **`docker-build-smoke.yml`** (#1990) - build-only `docker compose -f
+  docker-compose.prod.yml build` (the launcher/install.sh path, which no
+  other gate builds), path-filtered on the Docker inputs on PRs + on
+  `release/**` + weekly + dispatch; `make docker-build-smoke` locally. The
+  release checklist's Docker step moves from "if active" to mandatory.
+
+### The scope discipline (why these gates stay targeted)
+
+Not every nightly-only surface earns a PR gate. Pulling every nightly
+surface into PR-CI collapses the fast-PR/#552 separation and a too-broad
+gate produces false positives and gets bypassed. The criterion: gate the
+**high-user-visibility** surfaces where a silent nightly break masks a
+real user regression (lesson runner, dashboard, content, settings core);
+accept the short red-develop window as the safety net for
+internal/rarely-changed/tooling surfaces. Prefer a **precise** gate (an
+actual diff of the referenced artifact) over a coarse "touched X -> must
+touch Y" presence check, so the false-positive rate stays near zero.

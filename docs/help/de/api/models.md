@@ -43,7 +43,7 @@ Beziehungen: `projects`, `curriculums`, `profiles`,
 | model_override_gemini | string \| null | Standard `null` |
 
 Das Wire-Schema (`UserSettingsOut`) ersetzt die drei
-`api_key_*`-Felder mit `has_<provider>_key: bool`-Booleans —
+`api_key_*`-Felder mit `has_<provider>_key: bool`-Booleans -
 Klartext fließt nie zurück zum Client.
 
 ## LearningProject

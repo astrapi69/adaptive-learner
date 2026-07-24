@@ -76,7 +76,7 @@ export function buildVerifyMessages(context: VerifyAnswerContext): ChatMessage[]
         content: [
             `You are an impartial grader in a learning app. The learner is studying ${subject}.`,
             "An automated checker marked the learner's free-text answer WRONG because it did not exactly match any accepted answer.",
-            "Decide whether the learner's answer is nonetheless essentially/semantically correct for the question — the same meaning, an accepted synonym or paraphrase, or a trivially different spelling.",
+            "Decide whether the learner's answer is nonetheless essentially/semantically correct for the question - the same meaning, an accepted synonym or paraphrase, or a trivially different spelling.",
             "Be fair but honest: do NOT approve an answer that is actually wrong or that changes the meaning.",
             "Reply with ONLY a JSON object, no prose, no code fences:",
             '{"verdict": "yes" | "partial" | "no", "reason": "<one short sentence>"}',

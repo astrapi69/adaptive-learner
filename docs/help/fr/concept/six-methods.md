@@ -50,7 +50,7 @@ musicales, concepts statistiques.
 | Style d'invite IA | Problèmes avec pièges typiques, analyse d'erreur explicite |
 
 **Idéale pour :** faux amis dans les langues, erreurs de décalage en
-programmation, erreurs de signe en maths — tout ce qui a des sources
+programmation, erreurs de signe en maths - tout ce qui a des sources
 d'erreurs classiques.
 
 ---

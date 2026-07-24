@@ -132,7 +132,7 @@ export default function CycleProgress({
             data-testid="cycle-progress"
         >
             <p className="cycle-caption" data-testid="cycle-caption">
-                {caption} —{" "}
+                {caption} -{" "}
                 <strong>{t(`cycle_steps.${currentKey}.label`, currentKey)}</strong>
                 <HelpLink glossaryKey={`step_${currentKey}`} />
             </p>

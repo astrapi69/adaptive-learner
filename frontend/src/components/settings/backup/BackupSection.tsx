@@ -670,7 +670,7 @@ export default function BackupSection() {
                     String(summary.errors.length),
                 ),
             ];
-            const summaryMsg = parts.join(" — ");
+            const summaryMsg = parts.join(" - ");
             if (summary.errors.length > 0) {
                 // Persistent error toast (does not auto-dismiss): the user
                 // must see that some rows failed. Per-table + per-row detail

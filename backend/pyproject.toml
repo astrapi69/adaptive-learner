@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive_learner"
-version = "2.5.0"
+version = "2.6.0"
 description = "Adaptive learning system based on the six-method learning model."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -45,12 +45,12 @@ mypy = ">=1.20,<3.0"
 types-pyyaml = "^6.0.12.20250915"
 pytest-asyncio = "^1.3.0"
 pytest-cov = "^7.1.0"
-ruff = "^0.15.11"
+ruff = ">=0.15.11,<0.17.0"
 pre-commit = "^4.5.1"
 pip-audit = "^2.10.0"
 pytest-randomly = "^4.1.0"
 pytest-testmon = "^2.2.0"
-datamodel-code-generator = "^0.68.1"
+datamodel-code-generator = ">=0.68.1,<0.71.0"
 
 [tool.ruff]
 line-length = 100

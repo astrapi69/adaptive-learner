@@ -84,6 +84,34 @@ describe("DiffHighlight: whitespace handling", () => {
         const { container } = render(<DiffHighlight tokens={tokens} />);
         expect(container.textContent).toMatch(/z$/);
     });
+
+    // #1940 — an equal-token run rendered its trailing space INSIDE the
+    // `.diff-token` inline-block span, where the box edge collapses it, so
+    // "Die KI übt" displayed as "DieKIübt" in the summary answer diff. The
+    // space must live OUTSIDE the span (a text-node sibling), the same
+    // contract as insert/delete/replace, so inline-block can't eat it.
+    it("emits inter-word spaces of consecutive equal tokens as external text nodes", () => {
+        const tokens: DiffToken[] = [
+            { text: "Die ", type: "equal" },
+            { text: "KI ", type: "equal" },
+            { text: "übt", type: "equal" },
+        ];
+        const { container } = render(<DiffHighlight tokens={tokens} />);
+        const wrapper = container.querySelector(".diff-highlight")!;
+        const equalSpans = wrapper.querySelectorAll(".diff-token-equal");
+        // No trailing space trapped inside the inline-block spans.
+        expect(equalSpans[0].textContent).toBe("Die");
+        expect(equalSpans[1].textContent).toBe("KI");
+        expect(equalSpans[2].textContent).toBe("übt");
+        // The separating spaces exist as direct text-node children of the
+        // wrapper (siblings of the spans), so inline-block can't collapse them.
+        const spaceSiblings = Array.from(wrapper.childNodes).filter(
+            (node) =>
+                node.nodeType === Node.TEXT_NODE && node.textContent === " ",
+        );
+        expect(spaceSiblings).toHaveLength(2);
+        expect(wrapper.textContent).toBe("Die KI übt");
+    });
 });
 
 describe("DiffHighlight: integration with tokenDiff", () => {
