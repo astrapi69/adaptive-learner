@@ -22,6 +22,7 @@ import sys
 # every docker_app_launcher submodule the launcher imports lazily, so the
 # frozen binary bundles them.
 from docker_app_launcher.pyinstaller import hidden_imports
+from PyInstaller.utils.hooks import collect_data_files
 
 block_cipher = None
 
@@ -40,6 +41,11 @@ a = Analysis(
         # standalone frozen run (no repo checkout, wrapper chdirs to the
         # bundle root) still resolves the real branding (#2027).
         ("../frontend/branding/adaptive-learner-mark.png", "frontend/branding"),
+        # The package's data files - the 11 i18n catalogs above all. Without
+        # this the frozen GUI falls back to raw key names (the upstream #34
+        # failure class fixed in docker-app-launcher's own spec template;
+        # this spec is hand-maintained, so it needs the same collect).
+        *collect_data_files("docker_app_launcher"),
     ],
     hiddenimports=hidden_imports(),
     hookspath=[],
