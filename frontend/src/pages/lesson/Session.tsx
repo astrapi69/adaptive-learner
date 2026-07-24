@@ -175,6 +175,7 @@ export default function Session() {
                     <AssistantUiThread
                         sessionId={session.id}
                         introTopic={importedTopic}
+                        autoOpen={!!session.imported_conversation_id}
                     />
                 </Suspense>
             ) : (

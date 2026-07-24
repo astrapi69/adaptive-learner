@@ -30,13 +30,6 @@ activity-trend
 adaptive-save-row
 adaptive-summary-improvement
 answer-feedback-pulse
-aui-composer
-aui-composer-input
-aui-composer-send
-aui-message aui-message-assistant
-aui-message aui-message-user
-aui-thread
-aui-thread-viewport
 backup-auto
 backup-auto-count
 backup-auto-list
@@ -81,7 +74,6 @@ error-replay-summary-score
 extra
 extra-hook
 form-field
-form-hint-inline
 form-select
 free-text-diff
 free-text-diff-row
