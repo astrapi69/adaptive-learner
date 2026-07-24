@@ -163,8 +163,8 @@ O esquema de campos do manifesto (o `manifest.yaml` raiz que lista os
 conjuntos do repo, e cada campo obrigatório e opcional:
 `schema_version`, `name`, e por conjunto `id`, `title`,
 `title_native`, `target_language`, `source_language`, `level`,
-`version`, `lesson_count`, `path`, `domain`, `tags`, `book`) fica na
-referência da engine:
+`version`, `lesson_count`, `path`, `domain`, `tags`, `book`,
+`visibility`) fica na referência da engine:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
 O esquema estrito da engine (campos desconhecidos são rejeitados)
 valida-o, por isso a lista de campos acima não pode derivar. Cria os
@@ -172,6 +172,16 @@ campos do par de idiomas (`target_language` / `source_language`) como
 descrito em [Pares de idiomas](#pares-de-idiomas-v1440); o alias
 `language` anterior à v1.2 ainda carrega mas é desaconselhado para
 novos conjuntos.
+
+O campo opcional **`visibility`** (engine 0.14.0+, `visible` quando
+ausente) é uma **indicação de apresentação** para as apps
+consumidoras: `visibility: hidden` pede à app que não mostre o
+conjunto aos aprendizes — pensado para fixtures de
+referência/conformidade que têm de ficar no repo para a validação
+da engine mas não são conteúdo de aprendizagem. A app filtra os
+conjuntos ocultos das superfícies de navegação e do Descobrir
+(mesmo quando já estão em cache); a engine continua a validá-los.
+Já não existe nenhuma lista de conjuntos ocultos do lado da app.
 
 Comportamento do loader específico da app a ter em mente:
 
@@ -296,7 +306,7 @@ renderizável):
 | `ext:al-error-correction` | Corrigir um texto com erro | `tokens[]` + `error_index` + `accept[]` | #1593 |
 | `ext:al-reading-comprehension` | Compreensão de leitura (passagem + perguntas) | `passage` + `questions[]` (cada uma uma subpergunta `multiple_choice` / `free_text`) | #1603 |
 | `ext:al-graded-quiz` | Questionário avaliado | `questions[]` (cada uma com `points`) + `pass_threshold` opcional | #1616; o conjunto de referência de demonstração está oculto do Descobrir / Os Meus Conteúdos (#1702) |
-| `ext:al-dictation` | Ditado de áudio (ouvir, depois transcrever) | `audio` (um clip de `assets/`) + `accept[]` (correspondência tolerante da transcrição) | #1881 (quinta adoção) |
+| `ext:al-dictation` | Ditado de áudio (ouvir, depois transcrever) | `audio` (um clip de `assets/` ou um URI de dados incorporado através do upload no editor, #1911) + `accept[]` (correspondência tolerante da transcrição) | #1881 (quinta adoção) |
 
 **Dois caminhos de autoria.** Os exercícios de extensão podem ser
 criados (a) diretamente como JSON no repo de conteúdo (o caminho
@@ -482,7 +492,7 @@ de autoria completa, não apenas um botão de gerar com IA:
 | Excluído | Porquê (uma linha) |
 |----------|----------------|
 | Redação / texto longo / desenho / fórmula / revisão por pares / autoavaliação livre | Não avaliável de forma binária pelo SRS; autoavaliação adiada (#1268). |
-| Áudio / vídeo / upload de ficheiro | Armazenamento + infraestrutura; conflitua com offline-first. |
+| Áudio / vídeo / upload de ficheiro | Armazenamento + infraestrutura; conflitua com offline-first. Única exceção: clips de áudio de ditado curtos que o editor de exercícios incorpora na lição como URI de dados. |
 | Hotspot / simulação / memória / palavras cruzadas | Esforço de construção sem valor de SRS (uma decisão posterior e separada, se alguma vez). |
 | Matriz / Likert / slider | Tipos de inquérito, não tipos de aprendizagem. |
 | Seletores de data / hora | Tipos de formulário, não tipos de aprendizagem. |

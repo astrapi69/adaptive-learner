@@ -37,7 +37,7 @@ Dans la section **Mes leçons**, chaque leçon possède des actions :
 | Action | Description |
 |--------|-------------|
 | Lire | Lance la leçon dans le lecteur standard |
-| Modifier | Ouvre un éditeur JSON pour modifier la structure |
+| Modifier | Ouvre un éditeur JSON pour modifier la structure. Si un de vos ensembles contient **plusieurs leçons**, un **sélecteur de leçon** demande d'abord laquelle modifier. Les leçons de texte de livre ouvrent directement l'**éditeur d'exercices** ; les métadonnées de livre jointes sont conservées |
 | Supprimer | Supprime la leçon localement |
 | Exporter | Exporte en fichier `.json` ou `.zip` |
 | Partager | Ouvre l'assistant de partage communautaire |

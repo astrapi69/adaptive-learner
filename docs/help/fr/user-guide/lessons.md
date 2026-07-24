@@ -39,8 +39,8 @@ te guide pas à pas à travers chaque carte et chaque exercice :
 
 1. **Cartes** : présentent du matériel à lire. Clique sur
    « Suivant » quand tu es prêt.
-2. **Exercices** : vérifient ce que tu as retenu. Quatre types
-   sont disponibles :
+2. **Exercices** : vérifient ce que tu as retenu. Les types de
+   base :
    - **Associer** — fais glisser des paires (mot ↔ traduction).
      Les deux tuiles d'une paire trouvée partagent une **couleur
      propre** et un **badge numéroté**, de sorte que
@@ -52,6 +52,19 @@ te guide pas à pas à travers chaque carte et chaque exercice :
    - **Tuiles de mots** — assemble une phrase à partir de tuiles.
    - **Texte à trous** — remplis un trou dans la phrase (généré de
      manière ciblée à partir de tes erreurs, voir ci-dessous).
+   - **Choix multiple** — choisis une ou (selon la tâche)
+     plusieurs bonnes réponses.
+
+   À cela s'ajoutent des **types d'extension** qu'un ensemble peut
+   apporter : catégorisation, correction d'erreurs, compréhension
+   écrite, quiz noté et **dictée audio** (écouter, puis
+   transcrire).
+
+Si un exercice porte une **difficulté** attribuée par l'auteur, un
+petit badge indique le niveau (**Facile / Moyen / Difficile**).
+C'est de la pure transparence : tu vois pourquoi le générateur
+adaptatif peut proposer une carte plus tôt ou plus souvent — le
+badge ne change ni la notation ni l'ordre.
 
 Une barre de progression en haut suit ta position dans la leçon.
 Tu peux t'arrêter à tout moment — ta progression est enregistrée

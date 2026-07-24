@@ -36,7 +36,7 @@ alıştırmadan adım adım geçirir:
 
 1. **Kartlar** okumak için materyal sunar. Hazır olduğunda
    "Devam"a tıkla.
-2. **Alıştırmalar** neyi hatırladığını sınar. Dört tür mevcuttur:
+2. **Alıştırmalar** neyi hatırladığını sınar. Çekirdek türler:
    - **Eşleştirme** — çiftleri sürükle (kelime ↔ çeviri). Bulunan bir
      çiftin her iki karosu **kendi rengini** ve bir **numara
      rozetini** paylaşır, böylece eşleştirme renk körlüğüne karşı
@@ -46,6 +46,18 @@ alıştırmadan adım adım geçirir:
    - **Kelime karoları** — karolardan bir cümle oluştur.
    - **Boşluk doldurma** — cümledeki bir boşluğu doldur (hatalarından
      hedefli olarak oluşur, aşağıya bak).
+   - **Çoktan seçmeli** — bir ya da (göreve bağlı olarak) birden çok
+     doğru yanıtı seç.
+
+   Bunların üzerine bir set **uzantı türleri** getirebilir:
+   kategorilere ayırma, hata düzeltme, okuduğunu anlama, puanlı
+   sınav ve **sesli dikte** (dinle, sonra yazıya dök).
+
+Bir alıştırma, yazar tarafından atanmış bir **zorluk** taşıyorsa,
+küçük bir rozet kademeyi adlandırır (**Kolay / Orta / Zor**). Bu saf
+şeffaflıktır: uyarlamalı üretecin bir kartı neden daha erken ya da
+daha sık önerebildiğini görürsün — rozet, puanlamayı da sırayı da
+asla değiştirmez.
 
 Üstteki bir ilerleme göstergesi, derste ne kadar ilerlediğini izler.
 İstediğin zaman durabilirsin — ilerlemen adım başına kaydedilir ve
