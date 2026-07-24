@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.5.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.6.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-10316%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -439,7 +439,7 @@ E2E smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
-Verified 2026-07-24 (post-v2.5.0 develop):
+Verified 2026-07-24 (v2.6.0):
 
 | Suite | Count |
 |---|---|
@@ -473,17 +473,27 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.5.0**, a feature
-release that turns **Create-Lesson into a full exercise authoring
-tool**: every core exercise type is editable, exercises can be added
-by hand, `multiple_choice` is authorable with a single/multi mode
-control, and an **extension-authoring wizard** covers all four
-AI-authored extension types. **`ext:al-dictation` (audio dictation)**
-joins as the fifth extension type. Under the hood, the PWA update
-system and the AI key vault are now **consumed as published npm
-packages** (`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`), and
-exercise grading, payload validation, and authoring are consolidated
-under `lib/exercises/`. Prior **v2.4.0** shipped a **Create-Lesson
+Active development. The current release is **v2.6.0**, a feature
+release whose headline is the **session chat rebuilt on
+assistant-ui and cut over** (the thread is the default chat, the
+self-built SessionChat is removed). Create-Lesson's book path
+becomes a real ingestion tool: **book-text file upload**
+(EPUB/TXT/MD/DOCX) with a chapter picker, **multi-select sections
+with an exclusion heuristic, and batch lesson generation**.
+Dictation authoring completes with an **audio-file upload**, content
+sets can be **hidden via the engine's manifest `visibility` flag**,
+the desktop launcher moves onto **context-aware Docker detection**
+(docker-app-launcher 0.14.1), and CI hardens (required checks on
+develop, testid-reference gate, visual-baseline auto-sync, Docker
+build smoke). Prior **v2.5.0** turned **Create-Lesson into a full
+exercise authoring tool**: every core exercise type is editable,
+exercises can be added by hand, `multiple_choice` is authorable with
+a single/multi mode control, and an **extension-authoring wizard**
+covers all four AI-authored extension types, with
+**`ext:al-dictation` (audio dictation)** joining as the fifth
+extension type; the PWA update system and the AI key vault became
+**consumed npm packages** (`@astrapi69/pwa-update`,
+`@astrapi69/ai-key-vault`). Prior **v2.4.0** shipped a **Create-Lesson
 authoring upgrade** (a knowledge lesson from pasted textbook text,
 editing and combining your own lessons, and card image upload),
 **free-text multiple accepted answers** with an AI second opinion, an

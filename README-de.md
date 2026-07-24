@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.5.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.6.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-10316%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
@@ -368,7 +368,7 @@ E2E-Smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
-Verifiziert am 2026-07-24 (post-v2.5.0 develop):
+Verifiziert am 2026-07-24 (v2.6.0):
 
 | Suite | Anzahl |
 |---|---|
@@ -403,19 +403,29 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.5.0**, ein
-Feature-Release, das **Create-Lesson zu einem vollwertigen
-Aufgaben-Editor** macht: jeder Kern-Aufgabentyp ist bearbeitbar,
-Aufgaben lassen sich von Hand ergänzen, `multiple_choice` ist mit
-einer Single/Multi-Umschaltung autorierbar, und ein
-**Extension-Authoring-Assistent** deckt alle vier KI-autorierten
-Extension-Typen ab. **`ext:al-dictation` (Audio-Diktat)** kommt als
-fünfter Extension-Typ hinzu. Unter der Haube werden das
-PWA-Update-System und der KI-Schlüssel-Tresor jetzt als
-**veröffentlichte npm-Pakete konsumiert**
-(`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`), und Bewertung,
-Payload-Validierung und Authoring von Aufgaben sind unter
-`lib/exercises/` zusammengeführt. Das vorige **v2.4.0** brachte ein
+Aktive Entwicklung. Das aktuelle Release ist **v2.6.0**, ein
+Feature-Release, dessen Kernstück der **auf assistant-ui neu
+aufgebaute und umgestellte Sitzungs-Chat** ist (der Thread ist der
+Standard-Chat, das selbstgebaute SessionChat ist entfernt). Der
+Buch-Pfad von Create-Lesson wird zum echten Ingestion-Werkzeug:
+**Buchtext-Datei-Upload** (EPUB/TXT/MD/DOCX) mit Kapitel-Auswahl,
+**Mehrfachauswahl erkannter Abschnitte mit Ausschluss-Heuristik und
+Batch-Lektionsgenerierung**. Das Diktat-Authoring wird mit einem
+**Audio-Datei-Upload** komplett, Content-Sets lassen sich über das
+**Manifest-Feld `visibility` der Engine ausblenden**, der
+Desktop-Launcher nutzt **kontextbewusste Docker-Erkennung**
+(docker-app-launcher 0.14.1), und die CI wird gehärtet (Required
+Checks auf develop, Testid-Referenz-Gate, Visual-Baseline-Auto-Sync,
+Docker-Build-Smoke). Das vorige **v2.5.0** machte **Create-Lesson zu
+einem vollwertigen Aufgaben-Editor**: jeder Kern-Aufgabentyp ist
+bearbeitbar, Aufgaben lassen sich von Hand ergänzen,
+`multiple_choice` ist mit einer Single/Multi-Umschaltung
+autorierbar, und ein **Extension-Authoring-Assistent** deckt alle
+vier KI-autorierten Extension-Typen ab; **`ext:al-dictation`
+(Audio-Diktat)** kam als fünfter Extension-Typ hinzu, und das
+PWA-Update-System sowie der KI-Schlüssel-Tresor werden als
+**veröffentlichte npm-Pakete konsumiert** (`@astrapi69/pwa-update`,
+`@astrapi69/ai-key-vault`). Das vorige **v2.4.0** brachte ein
 **Create-Lesson-Authoring-Upgrade** (eine Wissens-Lektion aus
 eingefügtem Lehrbuchtext, das Bearbeiten und Kombinieren eigener
 Lektionen sowie Karten-Bild-Upload),

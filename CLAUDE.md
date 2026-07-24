@@ -9,7 +9,36 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.5.0** (**feature release** on top of the v2.4.0
+- **Current state:** **v2.6.0** (**feature release** on top of the v2.5.0
+  authoring release. Highlights: the **session chat rebuilt on assistant-ui
+  and cut over** #1126 - phased parity migration (i18n/theming/markdown
+  #1984, Voice/Mic + read-aloud #1986, imported-session clean-open + AI
+  opening turn, domain wiring #2003, cycle-transition parity #2006,
+  resume-history hydration #2009), then the cutover makes the thread the
+  default chat and removes SessionChat #2012; Create-Lesson's book path
+  becomes an ingestion tool - **book-text file upload** (EPUB/TXT/MD #1927 +
+  DOCX #1950) with chapter picker, **multi-select sections + exclusion
+  heuristic + batch generation** #1953, title required up front #1948, and a
+  **lesson picker** so editing a multi-lesson set offers every lesson #1979;
+  **dictation audio-file upload** #1911 completes the ext:al-dictation
+  authoring chain; **set visibility via the engine manifest `visibility`
+  flag** replaces the hidden-sets.ts blocklist #1993 (engine re-pin
+  0.13.1 -> 0.14.0); a content-domain selector #1983 + dog-training/
+  traffic-knowledge domains #1938; per-exercise difficulty indicator #1982.
+  Launcher: **context-aware Docker detection** via docker-app-launcher
+  0.12.1 -> 0.14.1 #1966/#1977 + self-diagnosis install docs #1961/#1964.
+  CI: ci.yml gates become **required checks on develop** #1969, a
+  **testid-reference gate** #1981, **visual-baseline auto-sync** onto the PR
+  branch #1980, a **Docker build smoke** for the prod compose path #1995.
+  Docs: end-user help versionless + gated #1975, em-dash sweep across all
+  self-authored copy #2013. Fix sweep: iOS read-aloud chunking #1928,
+  iOS share-result drop #1941, Enter on the summary CTA #1944, revisited
+  steps no longer auto-advance #1924, book-lesson edit chain
+  #1968/#1973/#1992, unstyled-page styling sweep #1900/#1912/#1922/#1974,
+  first-paint i18n fallbacks #1902, visual determinism #1978/#1987,
+  release-tooling false alarms #1903. NO app-side schema/API/data-model
+  change against v2.5.0. See changelog/releases/v2.6.0.md.)
+  Prior **v2.5.0** = (**feature release** on top of the v2.4.0
   authoring release. Highlights: **Create-Lesson becomes a full exercise
   authoring tool** - all five core types editable in step 3 #1845, manual
   add-exercise + native `multiple_choice` #1853 with a prominent single/multi
