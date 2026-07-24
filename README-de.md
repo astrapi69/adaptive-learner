@@ -38,194 +38,43 @@ Englisch unter `/docs/en/`):
 
 ## Was du bekommst
 
-### Lern-Kern
+Die vollständige, kanonische Feature-Liste lebt auf der Doku-Site:
+**[Feature-Übersicht](https://astrapi69.github.io/adaptive-learner/docs/features/overview/)**
+(eine Quelle, mit jedem Release aktuell gehalten; dieses README fasst
+nur zusammen). In Kurzform:
 
-- **Sechs Lernmethoden** mit eigenen Prompts pro
-  (Methode, Schritt) — eine 42-Zellen-Prompt-Matrix, abgestimmt
-  auf den Punkt im Zyklus und darauf, wie die gewählte Methode
-  zum Mitmachen einlädt.
-- **Sieben-Schritt-Zyklus** in jeder Sitzung — Input, Fokus,
-  Versuch, Feedback, Verfeinerung, Transfer, Integration. Der
-  Dual-Prompt-Evaluator bewertet jeden Turn und entscheidet
-  „voran", „wiederholen", „überspringen" oder „zurück".
-- **Auto-Loop** über Schritt 7 hinaus — wenn das Thema
-  integriert ist, wählt ein dritter KI-Call ein neues Unterthema
-  und startet einen frischen Zyklus (auf 5 Zyklen pro Sitzung
-  begrenzt zum Schutz vor Endlosschleifen).
-- **Methodenwechsel** — Stagnationserkennung empfiehlt eine
-  andere Methode, wenn die Bewertungen abflachen; Ein-Klick-
-  Annahme im Sitzungs-Header.
-- **Streaming-KI-Antworten** — Token-für-Token-Rendering via
-  SSE; Inline-Cursor während die KI denkt; kein
-  „Denke nach…"-Platzhalter.
-
-### Drei KI-Anbieter
-
-- **Anthropic Claude**, **OpenAI GPT**, **Google Gemini** —
-  als separate Plugins ausgeliefert, alle über die Hooks
-  `ai_complete` / `ai_complete_async` / `ai_complete_stream`
-  geroutet.
-- **Provider-Modellauswahl** — Live-Modellabfrage über den
-  `/v1/models`-Endpunkt jedes Anbieters (1 h gecacht), mit
-  Chat-Only-Filter und einer „Empfohlen / Alle"-Gruppierung in
-  den Einstellungen.
-- **Bring-your-own-Key** — drei Auflösungs-Schichten:
-  - Umgebungsvariablen (CI / Docker).
-  - `~/.config/adaptive_learner/secrets.yaml` (Desktop-Launcher;
-    automatisch erzeugte Vorlage mit `chmod 0600` auf POSIX).
-  - Einstellungs-UI (Fernet-verschlüsselt in SQLite).
-  - Die UI zeigt pro Anbieter die Schlüssel-Quelle
-    („Schlüssel aus: secrets.yaml" / „Umgebungsvariable" /
-    „Einstellungen") und deaktiviert das Eingabefeld, wenn der
-    Schlüssel extern verwaltet wird.
-
-### Duale Speicherung
-
-- **Server-Modus** (`ApiStorage`) — FastAPI-Backend, SQLite,
-  pro Nutzer Fernet-verschlüsselte API-Schlüssel, Sync
-  zwischen Geräten.
-- **Local-First-Modus** (`DexieStorage`) — alles im Browser-
-  IndexedDB, KI-Calls gehen direkt an die Anbieter. Kein
-  Backend nötig; das öffentliche GH-Pages-Deployment nutzt
-  diesen Modus.
-- Ein `IStorageService`-Interface, 22 Namespaces; Umschaltung
-  beim Start über die Einstellungen.
-
-### Sync + Backup
-
-- **Lokales-Netz-Sync** zwischen Geräten — bidirektionaler
-  WLAN-Sync mit KI-Merge-Konfliktauflösung. QR-Code-
-  Kamerascan zum Koppeln (mit Bild-Upload-Fallback für
-  eingeschränkte Browser).
-- **Backup / Restore** — JSON-Export + Import, automatische
-  Rotation, Side-by-Side-Vergleichs-UI mit Feld-Diff.
-  API-Schlüssel werden aus Exporten entfernt.
-
-### Import + Analyse
-
-- **Chat-Verlauf-Import** aus ChatGPT (JSON), Claude (JSON-
-  Bulk-Export), Claude (Single-Conversation-Markdown-Export),
-  Gemini und beliebigem Markdown.
-- **KI-gesteuerte Analyse** extrahiert Thema, Schwächen,
-  Fehlermuster, empfohlene Methode, Vokabular (für
-  Sprachgespräche) und einen Lehrplan-Vorschlag.
-- Ein Klick, um daraus ein **Curriculum zu erzeugen** und
-  eine **gezielte Sitzung** zu starten.
-
-### Exporte
-
-- **Anki .apkg-Export** — KI-extrahierte Karteikarten
-  (Basic + Cloze), auf der `/anki`-Seite geprüft und
-  client-seitig via sql.js + JSZip verpackt.
-- **NotebookLM-ZIP** — Zusammenfassung + Vokabular + Regeln +
-  Fehler + Karteikarten + Sitzungen, formatiert für den
-  NotebookLM-Source-Upload.
-- **Markdown- + PDF-Fortschrittsberichte** — Progress,
-  Sitzungsdetail, Curriculum-Übersicht. Identische
-  Wire-Shape in beiden Speichermodi.
-
-### Inhalts-Browser + interaktive Lektionen
-
-- **Content-Hub** unter `/content` mit drei Tabs — **Entdecken**
-  (Katalog durchsuchen + herunterladen, **der Standard-Tab**),
-  **Meine Inhalte** (deine heruntergeladenen Sätze) und **Import**
-  (Chat-Import + eigene Lektionen + die Erstellen/Importieren-
-  Aktionen). Ein globaler **Listen- ⇄ Kachel-Umschalter** (Standard
-  **Liste**) gilt für beide Inhalts-Tabs, und Entdecken trägt eine
-  kompakte **Such-/Filter-Leiste** (Sprache / Niveau / Domäne /
-  Trust / KI-geprüft).
-- **Herunterladbare Lektions-Sets** aus öffentlichen GitHub-Repos,
-  lokal gecacht (Dateisystem im Server-Modus, IndexedDB im
-  Lokal-Modus); Quell-/Trust-Badge pro Set; eigene Repos
-  verbindbar + ein Bereich für empfohlene Repos. Eine
-  **Deep-Link-Route** (`/content/set/:setId`) öffnet einen
-  einzelnen Satz direkt (beide Speichermodi).
-- **Lernmodi** — eine Lektion oder einen ganzen Satz als **Üben**,
-  **Prüfung** (verzögertes Feedback + Bestanden/Nicht-bestanden-
-  Urteil + XP-Bonus), **Auf Zeit** (Countdown entspannt / normal /
-  schnell), **Reverse**, **Zufall** (verschachtelt) oder **Endlos**
-  spielen, plus einen gesperrten **„Fehler trainieren"**-Einstieg,
-  der nur das Falsche wiederholt.
-- **Sechs Kern-Übungstypen** — Matching, Picture-Choice,
-  Freitext, Cloze (Lückentext), Word-Tiles und natives
-  **Multiple Choice** (Einfach- oder Mehrfachantwort) — mit
-  Token-Diff-Feedback. **Matching ist bidirektional** (Paar von
-  beiden Spalten aus startbar, nicht nur A → B). Cloze deckt
-  Tippen / Auswählen / **„alle zutreffenden auswählen"**
-  (Mehrfachauswahl) ab. Obendrauf ein **Extension-Tier**, das
-  ein Set mitbringen kann: Kategorisierung, Fehlerkorrektur,
-  Leseverständnis, benoteter Quiz und **Audio-Diktat**.
-- **Auto-Splitting** zu großer importierter Lektionen in Teile,
-  mit lokalisierten Teil-Titeln ("… - Teil 2" / "… - Part 2").
-- **Adaptive Lektionen** (regelbasiert, clientseitig) aus der
-  fehlergranularen Historie + **SRS-Wiederholung** (1d/3d/7d),
-  0-3 Sterne und eine Fehler-Wiederholungsrunde.
-- **Lektions-Creator** — ein eigenständiger Assistent ohne
-  API-Key, um eine vollständige Lektion zu bauen und zu teilen.
-- **Buch-Begleiter** — ein Autoren-Repo kann einen `book`-Block
-  deklarieren; der Inhalts-Browser zeigt eine dezente Karte
-  (Cover / Autor / Edition) mit Link zum Buch.
-- **Eigene Lektionen im Baum** — selbst erstellte Lektionen werden
-  in den passenden Baum-Knoten eingefaltet, mit Badge ("Eigene
-  Lektion" / "Eigene Bearbeitung") + "(+N eigene)"-Zähler, in der
-  Suche indiziert.
-
-### Barrierefreiheit
-
-- **WCAG 2.1 AA** über alle 12 Theme-Varianten (rechnerisch
-  gepinnter Kontrast); Skip-to-Content-Link, der den Tastaturfokus
-  auf den Hauptinhalt setzt; Fokus-Management + Fokus-Fallen in
-  modalen Dialogen; farbenblind-sicheres Übungs-Feedback (nie
-  Farbe allein).
-
-### Gamification
-
-- **XP + Level** mit Exponentialkurve, Streak-Multiplikatoren
-  pro abgeschlossener Sitzung, First-Method-Boni.
-- **Sichtbares XP** — ein persistentes XP-/Level-Badge im
-  Nav-Header (aktualisiert bei Routenwechsel / Fokus / XP-relevanten
-  Celebrations) plus eine "+N XP"-Belohnung im Lektions-Abschluss.
-- **28 abgestufte Abzeichen** in 5 Kategorien (Einstieg, Konsistenz,
-  Methoden-Entdecker, Tiefe, Polyglott) mit Bronze/Silber/Gold-Stufen
-  + einer Abzeichen-Galerie, beim ersten Start aus YAML geseedet.
-- **Tägliche Missionen** — bis zu 3 deterministische, adaptive Ziele
-  pro Tag auf dem Dashboard, gegen vorhandene Daten ausgewertet.
-- **Streak-Heatmap** (GitHub-Stil, letzte 365 Tage) mit
-  Wochenend-Modus-Toggle + Freeze-Vorrat (1 Freeze pro 7
-  Streak-Tage, max. 3).
-
-### Sprache (Web Speech API)
-
-- **Text-to-Speech** auf KI-Antworten + Assessment-Ergebnissen.
-- **Speech-to-Text** auf dem Sitzungs-Input (Zwischen-
-  transkripte füllen das Textarea vor dem Absenden).
-- **Aussprache-Übung** für Sprachprojekte (Zielsatz →
-  sprechen → KI bewertet Ähnlichkeit).
-
-### Mobile / PWA
-
-- **Installierbar** auf Chrome / Edge / Safari — „Zum
-  Startbildschirm hinzufügen"-Prompt, Standalone-Anzeige,
-  kein Browser-Tab.
-- **Offline** für vergangene Sitzungen + Dashboard +
-  Fortschritt über den Service Worker (24 h LRU auf
-  GET `/api/`); neue Sitzungen brauchen Netz für den KI-Call.
-- **Swipe-Gesten** — Assessment-Links/Rechts-Navigation,
-  Curriculum-Topic-Swipe-to-Reveal, Sitzungs-Zyklus-Peek;
-  Reduced-Motion wird respektiert.
-- **Mobil getestet** auf iPhone-SE-, iPhone-14-, Pixel-7- und
-  iPad-Viewports.
-
-### Rich-Text + i18n
-
-- **TipTap-Rich-Text** in Sitzungsnotizen + Curriculum-
-  Beschreibungen + Lektionen (Fett/Kursiv, Überschriften,
-  Listen, Blockquotes, Code-Blöcke mit Lowlight-Syntax-
-  Highlighting, Links, Zeichenzähler).
-- **8 Sprachen voll übersetzt**: DE, EN, ES, FR, EL, PT,
-  TR, JA — Single-Source-YAML-Kataloge in
-  `backend/config/i18n/`, via `make sync-i18n` in das
-  Frontend-Dexie-Bundle gespiegelt.
+- **Lern-Kern** - sechs Lernmethoden, ein Sieben-Schritt-Zyklus mit
+  Dual-Prompt-Evaluator, Auto-Loop, Methodenwechsel.
+- **KI-Tutor-Chat** - assistant-ui-Thread mit gestreamten Antworten,
+  Spracheingabe, Vorlesen, Fortsetzung importierter Unterhaltungen;
+  eigener Schlüssel (Anthropic / OpenAI / Gemini).
+- **Übungen** - sechs Kern-Typen (Matching, Bildauswahl, Freitext,
+  Lückentext, Wort-Kacheln, Multiple Choice) plus fünf
+  Extension-Typen (Kategorisierung, Fehlerkorrektur, Leseverständnis,
+  benoteter Quiz, Audio-Diktat).
+- **Lektionen** - sieben Spielmodi (Üben / Prüfung / Auf Zeit /
+  Reverse / Zufall / Endlos / Fehler trainieren), SRS-Wiederholung,
+  adaptive Lektionen aus eigenen Fehlern, Pause/Fortsetzen.
+- **Authoring** - der Create-Lesson-Wizard: bearbeitbare Übungen,
+  Buchtext-Ingestion (Einfügen oder EPUB/DOCX/TXT/MD-Upload mit
+  Kapitel-Auswahl und Batch-Generierung), KI-Übungsgenerierung mit
+  Quality-Gate.
+- **Content** - herunterladbare Lektions-Sets aus föderierten
+  GitHub-Content-Repos, Community-Sharing per Pull Request,
+  Deep-Links und QR-Codes pro Set.
+- **Import + Analyse** - Chat-Verlauf-Import (ChatGPT / Claude /
+  Gemini / Markdown) mit KI-Analyse zu Curricula, Sitzungen oder
+  Offline-Lektionen.
+- **Gamification** - XP, gestufte Badges, Streaks, tägliche
+  Missionen, Celebrations.
+- **Exporte + Backup** - Anki, NotebookLM, Learning Repository,
+  Markdown-/PDF-Berichte, `.alb`-Backups und verschlüsselter
+  `.alk`-Schlüssel-Export.
+- **Plattform** - installierbare Offline-PWA, duale Speicherung
+  (Browser-IndexedDB oder self-hosted Server), lokales Netzwerk-Sync,
+  Desktop-Launcher für Linux/macOS/Windows, elf UI-Sprachen.
+- **Barrierefreiheit** - WCAG-AA-Themes, Tastatur-Navigation,
+  Screenreader-Unterstützung, reduzierte Bewegung, Vorlesen (TTS).
 
 ## Installation
 

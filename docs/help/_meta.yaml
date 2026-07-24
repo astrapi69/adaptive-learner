@@ -254,6 +254,16 @@ navigation:
       ja: 機能
     children:
       - title:
+          de: Feature-Übersicht
+          en: Feature overview
+          es: Resumen de funciones
+          fr: Aperçu des fonctionnalités
+          el: Επισκόπηση λειτουργιών
+          pt: Visão geral das funcionalidades
+          tr: Özelliklere genel bakış
+          ja: 機能の概要
+        slug: features/overview
+      - title:
           de: Content Browser
           en: Content browser
           es: Explorador de contenido
