@@ -1,7 +1,7 @@
 # Adaptive Learner
 
 [![Version](https://img.shields.io/badge/version-v2.6.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-10316%20green-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
@@ -445,8 +445,8 @@ Verified 2026-07-24 (v2.6.0):
 |---|---|
 | Backend (pytest) | 1475 |
 | Plugins (13 × pytest) | 1096 |
-| Frontend (Vitest 4) | 7745 |
-| **Total** | **10316** |
+| Frontend (Vitest 4) | 7722 |
+| **Total** | **10293** |
 
 Plus 17 Playwright smoke spec files covering: landing,
 onboarding+assessment, session (3-chunk SSE), curriculum,
