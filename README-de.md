@@ -1,7 +1,7 @@
 # Adaptive Learner
 
 [![Version](https://img.shields.io/badge/version-v2.5.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-9708%20grün-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-10316%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -146,11 +146,15 @@ Englisch unter `/docs/en/`):
   schnell), **Reverse**, **Zufall** (verschachtelt) oder **Endlos**
   spielen, plus einen gesperrten **„Fehler trainieren"**-Einstieg,
   der nur das Falsche wiederholt.
-- **Fünf Übungstypen** — Matching, Picture-Choice, Freitext,
-  Cloze (Lückentext), Word-Tiles — mit Token-Diff-Feedback.
-  **Matching ist bidirektional** (Paar von beiden Spalten aus
-  startbar, nicht nur A → B). Cloze deckt Tippen / Auswählen /
-  **„alle zutreffenden auswählen"** (Mehrfachauswahl) ab.
+- **Sechs Kern-Übungstypen** — Matching, Picture-Choice,
+  Freitext, Cloze (Lückentext), Word-Tiles und natives
+  **Multiple Choice** (Einfach- oder Mehrfachantwort) — mit
+  Token-Diff-Feedback. **Matching ist bidirektional** (Paar von
+  beiden Spalten aus startbar, nicht nur A → B). Cloze deckt
+  Tippen / Auswählen / **„alle zutreffenden auswählen"**
+  (Mehrfachauswahl) ab. Obendrauf ein **Extension-Tier**, das
+  ein Set mitbringen kann: Kategorisierung, Fehlerkorrektur,
+  Leseverständnis, benoteter Quiz und **Audio-Diktat**.
 - **Auto-Splitting** zu großer importierter Lektionen in Teile,
   mit lokalisierten Teil-Titeln ("… - Teil 2" / "… - Part 2").
 - **Adaptive Lektionen** (regelbasiert, clientseitig) aus der
@@ -364,14 +368,14 @@ E2E-Smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
-Verifiziert am 2026-07-17 (v2.3.0+):
+Verifiziert am 2026-07-24 (post-v2.5.0 develop):
 
 | Suite | Anzahl |
 |---|---|
-| Backend (pytest) | 1415 |
-| Plugins (13 × pytest) | 1080 |
-| Frontend (Vitest 4) | 7213 |
-| **Gesamt** | **9708** |
+| Backend (pytest) | 1475 |
+| Plugins (13 × pytest) | 1096 |
+| Frontend (Vitest 4) | 7745 |
+| **Gesamt** | **10316** |
 
 Plus 17 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
 Onboarding+Assessment, Sitzung (3-Chunk-SSE), Curriculum,

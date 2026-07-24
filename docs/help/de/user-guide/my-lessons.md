@@ -47,13 +47,17 @@ Jede eigene Lektion bietet:
 
 - **Spielen** — im Lektions-Viewer öffnen.
 - **Bearbeiten** — öffnet den **Lektions-Creator vorbefüllt** mit den
-  Metadaten, Karten und Übungen der Lektion. Beim Speichern wählst du:
-  **Änderungen speichern** (überschreibt dieselbe Lektion — dein
-  Lernfortschritt bleibt für unveränderte Karten erhalten, geänderte
-  starten neu) oder **Als Kopie speichern** (legt eine neue Lektion an,
-  das Original bleibt unangetastet). Analyse-basierte Lektionen öffnen
-  weiterhin die zugrunde liegende Chat-Analyse. Fremde
-  (heruntergeladene) Lektionen bleiben schreibgeschützt.
+  Metadaten, Karten und Übungen der Lektion. Enthält ein eigenes Set
+  **mehrere Lektionen**, fragt zuerst ein **Lektions-Picker**, welche
+  du bearbeiten willst. Buchtext-Lektionen öffnen direkt den
+  Übungs-Editor; hinterlegte Buchangaben bleiben erhalten. Beim
+  Speichern wählst du: **Änderungen speichern** (überschreibt dieselbe
+  Lektion — dein Lernfortschritt bleibt für unveränderte Karten
+  erhalten, geänderte starten neu) oder **Als Kopie speichern** (legt
+  eine neue Lektion an, das Original bleibt unangetastet).
+  Analyse-basierte Lektionen öffnen weiterhin die zugrunde liegende
+  Chat-Analyse. Fremde (heruntergeladene) Lektionen bleiben
+  schreibgeschützt.
 - **Löschen** — entfernen (mit Bestätigung).
 
 ---

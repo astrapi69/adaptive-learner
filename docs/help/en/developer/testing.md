@@ -217,8 +217,27 @@ Two more PR gates live in their own workflows:
   pre-existing debt. The full warn-only complexity report runs
   nightly.
 - `cohesion-check.yml` — the file-size guard (gate against
-  `.filesize-whitelist`). The companion folder-size guard runs
-  locally via `make check-folder-size`.
+  `.filesize-whitelist`) plus two class-name gates: dead CSS
+  class names (`check-dead-classnames.py` against
+  `.dead-classnames-baseline`) and the **unstyled-className
+  gate** (`--unstyled`, a ratchet against
+  `.unstyled-classnames-baseline`) — a `className` whose tokens
+  are all dead blocks the PR. The companion folder-size guard
+  runs locally via `make check-folder-size`.
+- `visual-baseline-gate.yml` — a PR that changes
+  visual-critical paths (lesson components, exercise renderers,
+  theme/CSS files) must carry the affected baseline screenshots
+  in the same PR; escape label `visual-baselines-unaffected`
+  for provably inert changes.
+- `testid-reference-gate.yml` — if a PR removes or renames a
+  `data-testid` that an E2E spec statically references (on a
+  high-user-visibility surface) without touching the spec, the
+  gate fails (`make check-testid-refs`); escape label
+  `testid-refs-unaffected`.
+- `docker-build-smoke.yml` — build-only smoke of the production
+  compose images (the launcher / install.sh path), path-filtered
+  on PRs, plus on `release/**`, weekly, and on dispatch;
+  locally `make docker-build-smoke`.
 
 **Night shift / release (not on PRs):**
 
@@ -229,8 +248,22 @@ Two more PR gates live in their own workflows:
   (weekly + on `release/**` + dispatch; warn-only)
 - `content-stats.yml` — content-stats drift vs a fresh content
   checkout (daily + dispatch)
-- `mutation-frontend.yml` — Stryker mutation testing (gated
-  nightly + dispatch); backend mutation testing uses mutmut
+- `mutation-frontend.yml` — Stryker mutation testing (nightly
+  behind the repo variable `ENABLE_NIGHTLY_MUTATION` +
+  dispatch; each run mutates one slice of the files so the run
+  fits the job timeout); backend mutation testing uses mutmut
+- `webkit-gate.yml` — the real-WebKit engine layout gate
+  (iOS/Safari bug classes the Chromium gates structurally
+  cannot see), daily behind the repo variable
+  `ENABLE_NIGHTLY_WEBKIT`, always on `release/**` and on
+  dispatch
+- `visual-regression.yml` — the visual baseline matrix (daily +
+  dispatch; `update_baselines=true` re-renders the baselines in
+  CI and uploads them as an artifact)
+- `visual-baseline-sync.yml` — service workflow: renders the
+  baselines in CI and pushes them as a commit onto the PR
+  branch (label `refresh-visual-baselines`, or dispatch with a
+  PR number) — image review before merge stays mandatory
 
 `.github/workflows/release-gate.yml` runs on tag pushes:
 verifies version pins are synced across all version-bearing

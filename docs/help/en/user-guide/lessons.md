@@ -71,8 +71,7 @@ step by step through each card and exercise:
 
 1. **Cards** present material to read. Click "Next" when you are
    ready.
-2. **Exercises** test what you remembered. Five types are
-   available:
+2. **Exercises** test what you remembered. The core types:
    - **Matching** — drag pairs (word ↔ translation). Both tiles of
      a found pair share a **distinct color** and a **number
      badge**, so the pairing is recognizable in a colorblind-safe
@@ -83,6 +82,19 @@ step by step through each card and exercise:
    - **Word tiles** — assemble a sentence from tiles.
    - **Cloze** — fill a gap in the sentence (generated
      specifically from your mistakes, see below).
+   - **Multiple choice** — pick one or (depending on the task)
+     several correct answers.
+
+   On top of these, a set can ship **extension types**:
+   categorization, error correction, reading comprehension,
+   graded quiz, and **audio dictation** (listen, then
+   transcribe).
+
+If an exercise carries an author-assigned **difficulty**, a small
+badge names the tier (**Easy / Medium / Hard**). It is pure
+transparency: you can see why the adaptive generator may surface
+a card earlier or more often — the badge never changes scoring or
+ordering.
 
 A **cloze** gap comes in three flavours: *type* the answer,
 *select* one option from a list, or — when several answers are

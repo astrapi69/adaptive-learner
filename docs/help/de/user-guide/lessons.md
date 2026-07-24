@@ -85,8 +85,8 @@ jede Karte und Übung:
 
 1. **Karten** präsentieren Material zum Lesen. Klick auf
    "Weiter", wenn du bereit bist.
-2. **Übungen** prüfen, was du dir gemerkt hast. Fünf Typen
-   sind verfügbar:
+2. **Übungen** prüfen, was du dir gemerkt hast. Die
+   Kern-Typen:
    - **Zuordnen** — ziehe Paare (Wort ↔ Übersetzung). Beide
      Kacheln eines gefundenen Paares teilen sich eine
      **eigene Farbe** und ein **Nummern-Badge**, sodass die
@@ -101,6 +101,20 @@ jede Karte und Übung:
      zusammen.
    - **Lückentext** — fülle eine Lücke im Satz (entsteht
      gezielt aus deinen Fehlern, siehe unten).
+   - **Multiple Choice** — wähle eine oder (je nach Aufgabe)
+     mehrere richtige Antworten.
+
+   Dazu kommen **Erweiterungs-Typen**, die ein Set mitbringen
+   kann: Kategorisierung, Fehlerkorrektur, Leseverständnis,
+   benoteter Quiz und **Audio-Diktat** (hören, dann
+   transkribieren).
+
+Trägt eine Übung eine vom Autor vergebene **Schwierigkeit**,
+zeigt ein kleines Badge die Stufe (**Leicht / Mittel /
+Schwer**). Es ist reine Transparenz: Du siehst, warum der
+adaptive Generator eine Karte früher oder häufiger
+vorschlagen kann — an Bewertung oder Reihenfolge ändert das
+Badge nichts.
 
 Eine **Lückentext**-Lücke gibt es in drei Spielarten: Antwort
 *eintippen*, eine Option aus einer Liste *auswählen*, oder — wenn
