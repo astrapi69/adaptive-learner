@@ -31,11 +31,14 @@
 # ONE-TIME maintainer setup (see docs/developer/testing.md):
 #   - create the `refresh-visual-baselines` label once, and
 #   - (optional but recommended) add a `VISUAL_BASELINE_TOKEN` PAT/App
-#     token secret with `contents: write` + `pull-requests: write`. With
-#     it, the push re-triggers the "Visual baseline gate" so it goes green
+#     token secret with `contents: write`. With it, the pushed baseline
+#     commit re-triggers the "Visual baseline gate" so it goes green
 #     automatically. Without it, the push still works but the gate must be
 #     re-run once (a pushed-by-GITHUB_TOKEN commit does not re-trigger PR
 #     workflows) - the PR comment spells this out.
+#   The PR housekeeping steps (label removal + status comment) use the
+#   default GITHUB_TOKEN, scoped via the job `permissions:` block, so they
+#   do NOT depend on the PAT's scope (#2014).
 
 name: Visual baseline sync
 
@@ -56,6 +59,7 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
@@ -174,6 +178,11 @@ jobs:
         if: github.event_name == 'pull_request'
         continue-on-error: true
         env:
+          # Use the default GITHUB_TOKEN (scoped via the job ``permissions:``
+          # block) for PR housekeeping, NOT the VISUAL_BASELINE_TOKEN PAT — the
+          # PAT is only needed for the push (so the commit re-triggers the
+          # gate) and may lack pull-requests scope (#2014).
+          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           REPO: ${{ github.repository }}
         run: |
@@ -184,6 +193,9 @@ jobs:
         if: always()
         continue-on-error: true
         env:
+          # Default GITHUB_TOKEN (job-``permissions``-scoped), not the PAT — see
+          # the label step above (#2014).
+          GH_TOKEN: ${{ github.token }}
           CHANGED: ${{ steps.push.outputs.changed }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           REPO: ${{ github.repository }}
