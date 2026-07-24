@@ -13,6 +13,7 @@ Version findest du auf der [Releases-Seite](https://github.com/astrapi69/adaptiv
 
 [Jetzt ausprobieren](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
+[Feature-Übersicht](../features/overview.md){ .md-button }
 
 ---
 

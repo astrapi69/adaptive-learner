@@ -66,6 +66,7 @@ plugins:
             Lob und Belohnungen: Praise and celebrations
             Tägliche Missionen: Daily missions
             KI-Inhaltsprüfung: AI content check
+            Feature-Übersicht: Feature overview
             Content Browser: Content browser
             Inhalte entdecken: Discover content
             KI-Übungsgenerierung: AI exercise generation
@@ -125,6 +126,7 @@ plugins:
             KI-Inhaltsprüfung: Verificación de contenido con IA
             FAQ: Preguntas frecuentes
             Features: Funciones
+            Feature-Übersicht: Resumen de funciones
             Content Browser: Explorador de contenido
             Inhalte entdecken: Descubrir contenido
             KI-Übungsgenerierung: Generación de ejercicios con IA
@@ -184,6 +186,7 @@ plugins:
             Tägliche Missionen: Missions quotidiennes
             KI-Inhaltsprüfung: Vérification de contenu par IA
             Features: Fonctionnalités
+            Feature-Übersicht: Aperçu des fonctionnalités
             Content Browser: Explorateur de contenu
             Inhalte entdecken: Découvrir du contenu
             KI-Übungsgenerierung: Génération d'exercices par IA
@@ -246,6 +249,7 @@ plugins:
             KI-Inhaltsprüfung: Έλεγχος περιεχομένου με AI
             FAQ: Συχνές ερωτήσεις
             Features: Λειτουργίες
+            Feature-Übersicht: Επισκόπηση λειτουργιών
             Content Browser: Περιήγηση περιεχομένου
             Inhalte entdecken: Ανακάλυψη περιεχομένου
             KI-Übungsgenerierung: Δημιουργία ασκήσεων με AI
@@ -309,6 +313,7 @@ plugins:
             KI-Inhaltsprüfung: Verificação de conteúdo por IA
             FAQ: Perguntas frequentes
             Features: Funcionalidades
+            Feature-Übersicht: Visão geral das funcionalidades
             Content Browser: Explorador de conteúdo
             Inhalte entdecken: Descobrir conteúdo
             KI-Übungsgenerierung: Geração de exercícios por IA
@@ -372,6 +377,7 @@ plugins:
             KI-Inhaltsprüfung: Yapay zekâ ile içerik denetimi
             FAQ: SSS
             Features: Özellikler
+            Feature-Übersicht: Özelliklere genel bakış
             Content Browser: İçerik tarayıcı
             Inhalte entdecken: İçerik keşfet
             KI-Übungsgenerierung: Yapay zekâ ile alıştırma üretimi
@@ -435,6 +441,7 @@ plugins:
             KI-Inhaltsprüfung: AIコンテンツチェック
             FAQ: よくある質問
             Features: 機能
+            Feature-Übersicht: 機能の概要
             Content Browser: コンテンツブラウザ
             Inhalte entdecken: コンテンツを探す
             KI-Übungsgenerierung: AI演習生成
@@ -518,6 +525,7 @@ nav:
   - KI-Inhaltsprüfung: de/user-guide/ai-validation.md
   - FAQ: de/user-guide/faq.md
 - Features:
+  - Feature-Übersicht: de/features/overview.md
   - Content Browser: de/features/content-browser.md
   - Inhalte entdecken: de/features/discover.md
   - KI-Übungsgenerierung: de/features/ai-exercise-generation.md
