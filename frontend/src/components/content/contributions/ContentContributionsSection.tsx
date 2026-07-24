@@ -40,7 +40,7 @@ export default function ContentContributionsSection({
         >
           {t(
             "content.contributions.contributor",
-            "Community Contributor — {n} lessons shared!",
+            "Community Contributor - {n} lessons shared!",
           ).replace("{n}", String(contributions.length))}
         </p>
       )}

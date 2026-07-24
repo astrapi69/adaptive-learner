@@ -83,7 +83,7 @@ export default function AnswerDiff({
                 <span className="text-fg-muted">{yourLabel} </span>
                 {user === "" ? (
                     <span className="italic text-fg-muted">
-                        {emptyAnswerLabel ?? "—"}
+                        {emptyAnswerLabel ?? "-"}
                     </span>
                 ) : (
                     <span className="font-mono">

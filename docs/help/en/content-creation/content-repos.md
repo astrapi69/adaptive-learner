@@ -1,4 +1,4 @@
-# Content repos — publishing your own repository
+# Content repos - publishing your own repository
 
 Adaptive Learner ships an official content library, but the content
 system is open: you can run your **own content repository** on GitHub,
@@ -132,5 +132,5 @@ app.
 ## See also
 
 - **[Full Content-Repo Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/CONTENT-REPO-GUIDE.md)**
-- [Creating lessons — overview](overview.md)
+- [Creating lessons - overview](overview.md)
 - [Book recommendations](books.md)

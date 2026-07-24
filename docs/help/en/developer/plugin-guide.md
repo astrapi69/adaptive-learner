@@ -58,7 +58,7 @@ class HelloPlugin(BasePlugin):
     # "adaptive_learner" so the host's PluginManager (which
     # passes ``app_id="adaptive_learner"``) recognises the
     # plugin as targeted at this app. The v0.9.0 transition
-    # made this a HARD filter — plugins without it are
+    # made this a HARD filter - plugins without it are
     # rejected at discovery time.
     target_application = "adaptive_learner"
     depends_on: list[str] = []
@@ -135,25 +135,25 @@ curl http://localhost:18001/api/plugins/hello/greet
 
 All hook specifications live in `backend/app/hookspecs.py`:
 
-1. `get_assessment_questions(lang: str)` — return question pack.
-2. `calculate_profile(answers: list)` — compute method weights
+1. `get_assessment_questions(lang: str)` - return question pack.
+2. `calculate_profile(answers: list)` - compute method weights
    (firstresult).
-3. `create_session_prompt(...)` — compose the system prompt
+3. `create_session_prompt(...)` - compose the system prompt
    (firstresult).
-4. `ai_complete(messages, model, api_key, max_tokens)` — call
+4. `ai_complete(messages, model, api_key, max_tokens)` - call
    the AI synchronously (firstresult, provider routes by model
    prefix).
-5. `ai_complete_async(...)` — async variant for parallel
+5. `ai_complete_async(...)` - async variant for parallel
    cycle-boundary evaluation (v1.5.0+, firstresult).
-6. `ai_complete_stream(...)` — streaming variant yielding text
+6. `ai_complete_stream(...)` - streaming variant yielding text
    deltas via SSE (v1.6.0+, firstresult).
-7. `recommend_method_switch(history, profile)` — return a
+7. `recommend_method_switch(history, profile)` - return a
    switch recommendation or None.
-8. `on_session_complete(session, rating)` — broadcast side
+8. `on_session_complete(session, rating)` - broadcast side
    effect; gamification + tracking listen.
-9. `get_progress_summary(project_id, db)` — return one
+9. `get_progress_summary(project_id, db)` - return one
    namespace slice of the dashboard summary.
-10. `get_tool_recommendations(profile, lang)` — return ranked
+10. `get_tool_recommendations(profile, lang)` - return ranked
     tools.
 
 [Full hookspec reference](../api/hooks.md)
@@ -162,7 +162,7 @@ All hook specifications live in `backend/app/hookspecs.py`:
 
 Hooks marked `firstresult=True` stop at the first plugin that
 returns a non-None value. Useful for "exactly one plugin
-should handle this" cases — like `ai_complete`, where the
+should handle this" cases - like `ai_complete`, where the
 matching provider's plugin returns the text and others return
 None.
 

@@ -131,7 +131,7 @@ def get_curriculum_for_import(
     repo: ImportsRepository = Depends(get_imports_repo),
     curriculum_repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> CurriculumOut | None:
-    """Phase 36 Bug 3 — return the curriculum auto-generated from
+    """Phase 36 Bug 3 - return the curriculum auto-generated from
     this conversation, or ``null`` if none exists. The frontend
     uses this to flip the "Create curriculum" CTA into a "Go to
     curriculum" navigation so users can no longer accidentally
@@ -152,7 +152,7 @@ def get_curriculum_for_import(
 def get_active_session_for_import(
     conversation_id: str, repo: ImportsRepository = Depends(get_imports_repo)
 ) -> LearningSessionOut | None:
-    """Phase 36 Bug 4 — return the most recent active session
+    """Phase 36 Bug 4 - return the most recent active session
     started from this conversation, or ``null`` if none exists.
     Lets ImportDetail flip the "Start session" CTA into a
     "Continue session" navigate when there is one already

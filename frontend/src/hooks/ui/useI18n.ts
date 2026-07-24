@@ -85,7 +85,7 @@ export function readSavedLang(): string | null {
         // drop is surfaced for debugging rather than swallowed. Never a crash,
         // never a silent swap to another language.
         console.warn(
-            `[i18n] Ignoring stored UI language "${saved}" — not a shipped UI language; using the fallback chain.`,
+            `[i18n] Ignoring stored UI language "${saved}" - not a shipped UI language; using the fallback chain.`,
         );
         return null;
     } catch {

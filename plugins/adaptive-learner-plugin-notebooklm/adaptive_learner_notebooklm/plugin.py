@@ -1,4 +1,4 @@
-"""NotebookLMPlugin — PluginForge entry point (Phase 32)."""
+"""NotebookLMPlugin - PluginForge entry point (Phase 32)."""
 
 from __future__ import annotations
 

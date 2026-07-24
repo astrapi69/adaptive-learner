@@ -6,7 +6,7 @@ ensembles de leçons. Il est construit autour du flux
 d'apprentissage : d'abord la recherche, ensuite la reprise, puis
 le catalogue.
 
-<!-- TODO: Screenshot — Navigateur de contenu avec champ de recherche, zone Continuer l'apprentissage et arborescence des ensembles -->
+<!-- TODO: Screenshot - Navigateur de contenu avec champ de recherche, zone Continuer l'apprentissage et arborescence des ensembles -->
 
 ---
 
@@ -39,11 +39,11 @@ achèvement), ou **ensemble terminé**.
 
 Le catalogue se divise en deux arborescences :
 
-- **Langues** — sous forme d'arbre *langue source → langue cible →
+- **Langues** - sous forme d'arbre *langue source → langue cible →
   niveau*, filtré selon la langue de ton application (tu peux
   activer des langues sources supplémentaires dans Paramètres →
   Apprentissage).
-- **Savoir** — domaines non linguistiques (p. ex. programmation,
+- **Savoir** - domaines non linguistiques (p. ex. programmation,
   psychologie) avec leurs propres icônes.
 
 ---
@@ -53,10 +53,10 @@ Le catalogue se divise en deux arborescences :
 Chaque ensemble téléchargé porte un **badge de source** qui
 indique sa provenance :
 
-- **Officiel** / **Intégré** — issu du catalogue officiel ou
+- **Officiel** / **Intégré** - issu du catalogue officiel ou
   intégré à l'application.
-- **Mon dépôt** — issu d'un dépôt que tu as connecté.
-- **Officiellement recommandé** — issu de la liste de
+- **Mon dépôt** - issu d'un dépôt que tu as connecté.
+- **Officiellement recommandé** - issu de la liste de
   recommandations curatée.
 
 Un **filtre de source** n'affiche au besoin que les ensembles
@@ -98,6 +98,6 @@ construire tes propres leçons, voir
 
 ## Pages connexes
 
-- [Leçons et révisions](../user-guide/lessons.md) — le déroulement d'une leçon
-- [Plusieurs dépôts de contenu](content-repos.md) — connecter et gérer des sources
+- [Leçons et révisions](../user-guide/lessons.md) - le déroulement d'une leçon
+- [Plusieurs dépôts de contenu](content-repos.md) - connecter et gérer des sources
 - [Mes leçons](../user-guide/my-lessons.md)

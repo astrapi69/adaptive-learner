@@ -41,6 +41,6 @@ muerto.
 
 ## Páginas relacionadas
 
-- [Capa de almacenamiento](../developer/storage-layer.md) — la abstracción de almacenamiento dual
-- [Copia de seguridad y restauración](../features/backup.md) — transferencia manual de datos sin sincronización
+- [Capa de almacenamiento](../developer/storage-layer.md) - la abstracción de almacenamiento dual
+- [Copia de seguridad y restauración](../features/backup.md) - transferencia manual de datos sin sincronización
 - [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

@@ -1,12 +1,12 @@
 # Birden Çok İçerik Repository'si
 
-Dersler **İçerik Repository'lerinden** gelir — yapılandırılmış ders
+Dersler **İçerik Repository'lerinden** gelir - yapılandırılmış ders
 setlerini bir araya getiren herkese açık GitHub repolarından. Resmî
 katalogla sınırlı değilsin: Adaptive Learner aynı anda birden çok
 Repository yükleyebilir, kendi Repository'lerini bağlayabilir ve
 küratörlü olanları önerebilir (EXP-023).
 
-<!-- TODO: Ekran görüntüsü — Ayarlar → Veriler → İçerik Repository'leri bölümü; resmî repo + bir kendi repo -->
+<!-- TODO: Ekran görüntüsü - Ayarlar → Veriler → İçerik Repository'leri bölümü; resmî repo + bir kendi repo -->
 
 ---
 
@@ -51,7 +51,7 @@ listede onları şöyle yapabilirsin:
 
 - Repo URL'si üzerinden **ekleme**,
 - **Kaldırma** (resmî repo korumalı kalır),
-- **Yeniden sıralama** — sıra **önceliği** belirler. İki repo aynı
+- **Yeniden sıralama** - sıra **önceliği** belirler. İki repo aynı
   seti taşıyorsa, daha üstte olan kazanır.
 
 Yalnızca bir bağlı repoya sahip eski kurulumlar, otomatik olarak yeni
@@ -67,7 +67,7 @@ Bir repoyu **derin bağlantı** ve **QR kod** ile paylaşabilirsin.
 aynısını akıllı telefonda yapar. Böylece bir kursu, manuel yazma
 gerekmeden öğrenme grubunla paylaşırsın.
 
-<!-- TODO: Ekran görüntüsü — QR kodlu paylaşma iletişim kutusu -->
+<!-- TODO: Ekran görüntüsü - QR kodlu paylaşma iletişim kutusu -->
 
 ---
 
@@ -80,7 +80,7 @@ teknik doğrulamadan** geçer. Bundan bir Trust seviyesi doğar:
 |---|---|
 | **0** | Henüz doğrulanmadı ya da denetim başarısız oldu. |
 | **1** | Teknik olarak geçerli: en az bir ders, çalıştırılabilir içerik yok. |
-| **3** | **Resmî olarak önerilen** — küratörlü öneri listesinden. |
+| **3** | **Resmî olarak önerilen** - küratörlü öneri listesinden. |
 
 Doğrulama tamamen tekniktir (yapı + güvenlik). İçeriğe/topluluğa
 dayalı bir değerlendirme (Trust 2), ortak bir arka uç hizmeti
@@ -100,7 +100,7 @@ tıkla** eklediğin bir keşfetme bölümü bulunur. Bunlar **Resmî olarak
 ## Yerel değerlendirmeler
 
 Her repoya yerel olarak **yıldız** verebilirsin. Bu değerlendirme
-tamamen özeldir ve yalnızca cihazında saklanır — kendi kaynaklarını
+tamamen özeldir ve yalnızca cihazında saklanır - kendi kaynaklarını
 düzenlemene yardımcı olur. Topluluk genelindeki değerlendirmeler de
 ortak bir arka uç hizmeti gerektirir ve ertelenmiştir.
 
@@ -118,6 +118,6 @@ verilmemesi için bilinçli olarak dışa aktarılabilir yapılandırmanın
 
 ## İlgili sayfalar
 
-- [İçerik Tarayıcısı](content-browser.md) — set bulma, filtreleme, indirme
-- [Ders oluşturma](../content-creation/overview.md) — kendi içeriklerini katkıla
-- [Yedekleme ve geri yükleme](backup.md) — bağlı repolar snapshot'ın parçasıdır
+- [İçerik Tarayıcısı](content-browser.md) - set bulma, filtreleme, indirme
+- [Ders oluşturma](../content-creation/overview.md) - kendi içeriklerini katkıla
+- [Yedekleme ve geri yükleme](backup.md) - bağlı repolar snapshot'ın parçasıdır

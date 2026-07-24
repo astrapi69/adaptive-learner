@@ -3,7 +3,7 @@
 # Yapay zeka entegrasyonu
 
 Adaptive Learner, her öğrenme konuşmasını gidiş-dönüş başına
-en fazla **üç** yapay zeka çağrısından geçirir — akışa alınan
+en fazla **üç** yapay zeka çağrısından geçirir - akışa alınan
 yanıt, adım değerlendiricisi ve (7. adımda) konu geçiş
 değerlendiricisi. Üç sağlayıcı hazır olarak gelir; yeni
 sağlayıcılar `ai_complete*` kanca ailesi aracılığıyla eklenir.
@@ -70,7 +70,7 @@ işlevini çağırır:
 2. `~/.config/adaptive_learner/secrets.yaml` içinde
    `ai.<provider>.api_key`.
 3. Fernet ile şifresi çözülmüş `UserSettings.api_key_<provider>`.
-4. `None` — çağrı arayüze `ai_error` gösterir.
+4. `None` - çağrı arayüze `ai_error` gösterir.
 
 `resolve_default_model(db, user_id, provider)`, model geçersiz
 kılma için aynı zinciri yürütür (env > yaml > arayüz geçersiz
@@ -85,18 +85,18 @@ sağlayıcının eklentisi metni döndürür; diğerleri None döndürür
 `user` rolü için her `POST /api/plugins/session/{id}/message`,
 en fazla üç yapay zeka çağrısı yapar:
 
-1. **Öğrenme yanıtı** — `ai_complete_stream` aracılığıyla akışa
+1. **Öğrenme yanıtı** - `ai_complete_stream` aracılığıyla akışa
    alınır. Sistem istemi `build_prompt(project, profile, method,
    cycle_step, lang)` tarafından 42 hücreli matriksten oluşturulur.
    `max_tokens=1024`. SSE `start` / `chunk` / `done` olayları
    yayar.
-2. **Adım değerlendiricisi** — yapay zekadan alışverişi okuyup
+2. **Adım değerlendiricisi** - yapay zekadan alışverişi okuyup
    bir JSON kararı (`advance`, `confidence`, `reason`,
    `suggested_step`) yaymasını isteyen ayrı bir sistem istemi
    (`EVALUATION_SYSTEM_PROMPT`). `max_tokens=256`. Değerlendiricinin
    kararı `cycle_step` ilerlemesini yönetir (`confidence ≥ 0,6`
    ile geçit).
-3. **Konu geçişi** — yalnızca 7. adımda. Üçüncü bir yapay zeka
+3. **Konu geçişi** - yalnızca 7. adımda. Üçüncü bir yapay zeka
    çağrısı, konunun bütünleştirilip bütünleştirilmediğini ve yeni
    bir alt konuda yeni bir döngü başlatılıp başlatılmayacağını
    değerlendirir. Oturum başına `max_cycles=5` sınırı.
@@ -114,7 +114,7 @@ gecikme tasarrufu). Mesaj yanıtının `timings` bloğunda döndürülür
 ## 42 hücreli istem matrisi
 
 `plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py`,
-`dict[method, dict[step, dict[lang, str]]]` tutar — altı yöntem,
+`dict[method, dict[step, dict[lang, str]]]` tutar - altı yöntem,
 yedi adım, iki dil, 84 hücre. Her hücre, yapay zekanın rolünü +
 adımın görevini belirleyen 1-2 cümledir. Derleme zamanında bir
 bağlam bloğu ("Öğrenme projesi: 'X' | Hedef: 'Y'. Profil ipucu:
@@ -123,7 +123,7 @@ bağlam bloğu ("Öğrenme projesi: 'X' | Hedef: 'Y'. Profil ipucu:
 Dexie modu için istemler olduğu gibi
 `frontend/src/data/session-prompts.json` dosyasına aktarılır ve
 `frontend/src/storage/prompts.ts` tarafından yüklenir. Aynı metin,
-aynı bağlam bloğu biçimi — hiçbir kayma mümkün değildir.
+aynı bağlam bloğu biçimi - hiçbir kayma mümkün değildir.
 
 ## Yeni sağlayıcı ekleme
 
@@ -139,7 +139,7 @@ aynı bağlam bloğu biçimi — hiçbir kayma mümkün değildir.
    bir istemci ekleyin ve `aiComplete()` işlevinden ona yönlendirin.
 
 Her sağlayıcı eklentisi, hookimpl + sağlayıcı çağrısını yalıtılmış
-olarak test eder — bir şablon için
+olarak test eder - bir şablon için
 `plugins/adaptive-learner-plugin-ai-anthropic/tests/` bakın (sağlayıcı
 HTTP çağrısı taklit edilir).
 
@@ -151,7 +151,7 @@ CORS ön uçuşunu geçmek için `anthropic-dangerous-direct-browser-access:
 true` başlığını gerektirir; OpenAI ve Gemini doğrudan tarayıcı
 çağrılarını kutudan çıkar şekilde kabul eder.
 
-Çift istemli mantık her iki modda da aynıdır —
+Çift istemli mantık her iki modda da aynıdır -
 `storage/session-flow.ts`, `aiComplete()` işlevini iki kez çağırır ve
 değerlendiricinin JSON'ını arka ucun yaptığıyla aynı şekilde ayrıştırır.
 
@@ -174,23 +174,23 @@ gösterecektir.
 Aynı yapay zeka sağlayıcı eklentilerini `ai_complete*` aracılığıyla
 kullanan çeşitli oturum dışı özellikler:
 
-- **Konuşma analizörü** (Aşama 12 / v0.9.0+) —
+- **Konuşma analizörü** (Aşama 12 / v0.9.0+) -
   `frontend/src/chat_import/analysis.ts`, içe aktarılan dökümleri
   2 mesaj örtüşmesiyle 16K karakter parçalara ayırır, parça başına
   `ai_complete` tetikler, sonuçları birleştirir. Konu / zayıflıklar /
   error_patterns / recommended_method / vocabulary çıkarır
   (v1.20.0'dan beri). Toleranslı JSON ayrıştırıcı Haiku sınıfı
   davranış bozukluklarını işler.
-- **Anki çıkarma** (Aşama 30 / v1.17.0) — `plugins/.../anki/
+- **Anki çıkarma** (Aşama 30 / v1.17.0) - `plugins/.../anki/
   card_extraction.py`, bir oturumdan veya konuşmadan flash kart
   adaylarını çıkarır; `analysis_result.vocabulary` doldurulduğunda
   kelime hazinesi yolu ek yapay zeka çağrısı olmadan istemci
   tarafında çalışır.
 - **NotebookLM çalışma soruları + kılavuzu** (Aşama 32 / v1.19.0)
-  — `plugins/.../notebooklm/question_generator.py` + `study_guide.py`;
+  - `plugins/.../notebooklm/question_generator.py` + `study_guide.py`;
   toleranslı JSON ayrıştırıcı; kullanıcı tarafından düzenlenen
   sorular yeniden oluşturmayı atlar.
-- **Telaffuz yargıcı** (Aşama 31 / v1.18.0) —
+- **Telaffuz yargıcı** (Aşama 31 / v1.18.0) -
   `plugins/.../pronunciation.py`, hedef ifadeler oluşturur + öğrenci
   ses benzerliğini değerlendirir (uygunluk Diller konu taksonomisi
   tarafından geçit uygulanır).

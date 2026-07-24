@@ -147,7 +147,7 @@ export default function SetDeepLink() {
             <p className="mt-3 text-sm text-[var(--fg-muted)]">
               {t(
                 "content.set_link.not_found_body",
-                "This set isn’t available — it may not be downloaded yet, or it doesn’t exist.",
+                "This set isn’t available - it may not be downloaded yet, or it doesn’t exist.",
               )}
             </p>
             <Button

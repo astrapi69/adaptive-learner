@@ -25,7 +25,7 @@ IndexedDB に保持します。**同期**は、これらのデバイスをロー
 
 ## SYNC-UI-GATE：動作するものだけを表示する
 
-利用できない機能は**提供されません** — 機能しないボタンも、
+利用できない機能は**提供されません** - 機能しないボタンも、
 グレーアウトされたプレースホルダーもありません。現在
 （LAN ペアリングフェーズはまだ実装されていません）、同期セクションは
 そのため**API のみ**で表示されます。ペアリングのフローが機能しなければ、
@@ -40,6 +40,6 @@ PWA のみのデプロイで機能しない操作要素が生まれないよう�
 
 ## 関連ページ
 
-- [ストレージレイヤー](../developer/storage-layer.md) — デュアルストレージの抽象化
-- [バックアップと復元](../features/backup.md) — 同期なしの手動データ転送
+- [ストレージレイヤー](../developer/storage-layer.md) - デュアルストレージの抽象化
+- [バックアップと復元](../features/backup.md) - 同期なしの手動データ転送
 - [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

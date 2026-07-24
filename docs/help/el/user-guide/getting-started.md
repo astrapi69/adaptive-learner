@@ -14,7 +14,7 @@
 
 [**Άνοιγμα εφαρμογής**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Αυτή τρέχει σε **τοπικό τρόπο** — όλα τα δεδομένα σου παραμένουν
+Αυτή τρέχει σε **τοπικό τρόπο** - όλα τα δεδομένα σου παραμένουν
 στο πρόγραμμα περιήγησής σου (IndexedDB), και οι κλήσεις AI πηγαίνουν
 απευθείας από τη σελίδα στην Anthropic, την OpenAI ή το Google
 Gemini με το δικό σου κλειδί API. Κανένα backend στο ενδιάμεσο.
@@ -52,7 +52,7 @@ Adaptive Learner γίνεται μια αυτόνομη εφαρμογή στο 
    μπορείς να επιλέξεις «Ξεκίνα αμέσως» ή προαιρετικά να ρυθμίσεις
    με μεγαλύτερη ακρίβεια το προφίλ σου στον οδηγό. Δες το
    [Onboarding](onboarding.md).
-3. **Ξεκίνα το πρώτο μάθημα** — ο γρηγορότερος τρόπος χωρίς κλειδί
+3. **Ξεκίνα το πρώτο μάθημα** - ο γρηγορότερος τρόπος χωρίς κλειδί
    AI: Άνοιξε τον
    [Content Browser](../features/content-browser.md) στο
    `/content`, επίλεξε ένα σύνολο μαθημάτων και ξεκίνα ένα μάθημα.
@@ -72,10 +72,10 @@ Adaptive Learner γίνεται μια αυτόνομη εφαρμογή στο 
 
 ## Πώς συνεχίζεις
 
-- [Μαθήματα και επαναλήψεις](lessons.md) — η ροή των μαθημάτων λεπτομερώς
-- [Content Browser](../features/content-browser.md) — εύρεση και φιλτράρισμα μαθημάτων
-- [Πολλαπλά Content-Repositories](../features/content-repos.md) — σύνδεση δικών σου πηγών περιεχομένου
+- [Μαθήματα και επαναλήψεις](lessons.md) - η ροή των μαθημάτων λεπτομερώς
+- [Content Browser](../features/content-browser.md) - εύρεση και φιλτράρισμα μαθημάτων
+- [Πολλαπλά Content-Repositories](../features/content-repos.md) - σύνδεση δικών σου πηγών περιεχομένου
 - [Backup και επαναφορά](../features/backup.md)
-- [Κατανόηση του Dashboard σου](dashboard.md) — πρόοδος, Streak, XP, Badges
-- [FAQ — συχνές ερωτήσεις](faq.md)
+- [Κατανόηση του Dashboard σου](dashboard.md) - πρόοδος, Streak, XP, Badges
+- [FAQ - συχνές ερωτήσεις](faq.md)
 - [Η παιδαγωγική ιδέα πίσω από την εφαρμογή](../concept/philosophy.md)

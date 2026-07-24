@@ -16,7 +16,7 @@ içindeki `secret_key:` ile belirlediğiniz bir sır kullanılarak Fernet ile
 dinlenme sırasında şifrelenir.
 
 Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
-üçüncü tarafa telemetri, analitik ya da mesajlarınızı göndermez — ve
+üçüncü tarafa telemetri, analitik ya da mesajlarınızı göndermez - ve
 bu sağlayıcı yalnızca beklediğiniz mesaj içeriğini görür (sistem istemi +
 metniniz + oturumdaki yapay zekanın önceki yanıtları).
 
@@ -95,11 +95,11 @@ Evet. Üç dışa aktarma yolu geldi:
 Üç Web Speech API entegrasyonu:
 
 - **Yapay zeka yanıtlarında + Değerlendirme sonuçlarında Metinden
-  Sese** — her birinin yanındaki ▶ düğmesi dil eşleştirmesiyle
+  Sese** - her birinin yanındaki ▶ düğmesi dil eşleştirmesiyle
   yüksek sesle okur.
-- **Oturum girişinde Sesten Metne** — 🎤 düğmesi sesinizi yakalar ve
+- **Oturum girişinde Sesten Metne** - 🎤 düğmesi sesinizi yakalar ve
   göndermeden önce alanı ara dökümlerle doldurur.
-- **Dil projeleri için Telaffuz Pratiği** — `/pronunciation` sayfasını
+- **Dil projeleri için Telaffuz Pratiği** - `/pronunciation` sayfasını
   ziyaret edin, yapay zeka bir hedef cümle oluşturur, siz konuşun ve
   yargıç yapay zeka benzerliği puanlar + geliştirmeler önerir.
 
@@ -132,15 +132,15 @@ yapay zeka kullanan ama şunları ekleyen *yapılandırılmış bir öğrenme
 sistemidir*:
 
 1. **6 yöntem × 7 adım matrisinden** özel sistem istemleri.
-2. **Tur başına adım değerlendirme** — ikinci bir yapay zeka çağrısı
+2. **Tur başına adım değerlendirme** - ikinci bir yapay zeka çağrısı
    hazırlığı değerlendirir ve sizi ileri / geri taşıyabilir.
 3. **Konu bütünleştirildiğinde yeni döngülere otomatik döngü**.
 4. **12 sorulu değerlendirmeden** öğrenme tercihlerinizin **profili**.
-5. **Uzun vadeli takip** — ProgressCommits, seri ısı haritası, XP,
+5. **Uzun vadeli takip** - ProgressCommits, seri ısı haritası, XP,
    rozetler, adım başına süre grafikleri. ChatGPT sekmeyi kapattığınızda
    unutur.
-6. **Sağlayıcı özgürlüğü** — Anthropic, OpenAI ya da Gemini.
-7. **Yerel öncelikli seçenek** — her şey tarayıcınızda, hiçbir şey
+6. **Sağlayıcı özgürlüğü** - Anthropic, OpenAI ya da Gemini.
+7. **Yerel öncelikli seçenek** - her şey tarayıcınızda, hiçbir şey
    bir sunucuya gönderilmez (yapay zeka çağrılarınız hariç).
 
 ## Yapay zeka yanlış giderse ne olur?
@@ -149,7 +149,7 @@ Sistem görünür biçimde başarısız olur:
 
 - **Yanlış API anahtarı**: yapay zeka çağrısı sohbette satır içi
   gösterilen açık bir hata mesajı döndürür.
-- **Sağlayıcı çevrimdışı**: aynı — hata, sağlayıcının API'sindeki
+- **Sağlayıcı çevrimdışı**: aynı - hata, sağlayıcının API'sindeki
   HTTP durumunu gösterir.
 - **Değerlendiricide JSON ayrıştırma hatası**: deterministik +1 ilerleme
   devreye girer (7. adımda sınırlanır), biçimle mücadele eden modellerin

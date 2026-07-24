@@ -1,4 +1,4 @@
-# Lektionen + SRS — Interna
+# Lektionen + SRS - Interna
 
 Diese Seite dokumentiert, wie der v1.27.0–v1.31.0-Stack für
 Inhaltslektionen + SRS über Backend, Frontend und zwei
@@ -80,7 +80,7 @@ siehe [`user-guide/lessons.md`](../user-guide/lessons.md).
 gesetzten UNIQUE-Constraint auf
 ``(user_id, set_id, lesson_id, exercise_id, element_key)``.
 Lektions-bezogene Element-Schlüssel gemäß Entscheidung
-**D2** — dasselbe Wort in zwei verschiedenen Lektionen
+**D2** - dasselbe Wort in zwei verschiedenen Lektionen
 sind zwei Zeilen.
 
 ```python
@@ -101,7 +101,7 @@ class ElementError(Base):
     mastered_at: datetime | None
 ```
 
-Entkoppelt von ``learning_sessions`` (kein FK) — Inhalts-
+Entkoppelt von ``learning_sessions`` (kein FK) - Inhalts-
 lektionen referenzieren Content-Set- / Lektions-IDs als
 String, nicht über einen relationalen Join. Damit überlebt
 die Tabelle Cache-Räumungen unabhängig von jeder Session-
@@ -146,7 +146,7 @@ die nächste Wiederholung einer nicht-gemeisterten Zeile:
 | 0 | 1 Tag nach ``last_attempt_at`` |
 | 1 | 3 Tage |
 | 2 | 7 Tage |
-| ≥ 3 | gemeistert — aus der Warteschlange ausgeschlossen |
+| ≥ 3 | gemeistert - aus der Warteschlange ausgeschlossen |
 
 ### Prioritäts-Sortierung
 
@@ -211,7 +211,7 @@ Drei Entscheidungen treiben die Form:
 ### Schema-Änderung
 
 ```python
-# app/models/__init__.py — Phase 46F.1
+# app/models/__init__.py - Phase 46F.1
 LEARNING_PROJECT_KIND_STANDARD = "standard"
 LEARNING_PROJECT_KIND_CONTENT = "content"
 
@@ -238,10 +238,10 @@ funktioniert.
 ``app/services/lesson_session_unification.py`` hat zwei
 öffentliche Funktionen:
 
-- ``find_or_create_content_pseudo_project(db, user_id)`` —
+- ``find_or_create_content_pseudo_project(db, user_id)`` -
   idempotente Suche; erzeugt nur bei Miss.
 - ``record_lesson_completion_session(db, *, user_id,
-  lesson_progress_id, score_correct, score_total)`` —
+  lesson_progress_id, score_correct, score_total)`` -
   schreibt die ``LearningSession``-Zeile, committet und
   feuert dann ``on_session_complete``.
 
@@ -252,7 +252,7 @@ aufgerufen, wenn die Zeile von ``in_progress`` zu
 Helfers propagieren Ausnahmen (echtes DB-Problem), aber der
 Hook-Feuer-Pfad wickelt Subscriber-Ausnahmen gemäß dem
 Muster ``_fire_on_session_complete`` aus der ``routes.py``
-des Session-Plugins ein — ein Gamification-Crash kann die
+des Session-Plugins ein - ein Gamification-Crash kann die
 Lektion, die der Nutzer auf dem Zusammenfassungsbildschirm
 bereits gesehen hat, nicht zurückrollen.
 
@@ -277,19 +277,19 @@ UI-Policy-Entscheidung, kein Daten-Verstecken.
 
 ``adaptive_learner_gamification.xp_service`` gewinnt:
 
-- ``compute_stars(correct, total)`` — 0-3 aus einem Ergebnis,
+- ``compute_stars(correct, total)`` - 0-3 aus einem Ergebnis,
   mit Banden bei 50 % / 75 % / 90 %. Spiegelt das
   ``computeStars`` des Frontends in ``lib/lesson-summary.ts``,
   sodass beide Seiten dieselbe Sterne-Bewertung projizieren.
 - ``calculate_lesson_session_xp(*, stars, first_attempt,
-  streak_days)`` — reiner Rechner. 30 Basis + 10/Stern +
+  streak_days)`` - reiner Rechner. 30 Basis + 10/Stern +
   20 erster-Versuch-3-Sterne + derselbe +25 %/Tag
   Serien-Multiplikator (bei 7 gedeckelt) wie die
   Chat-Formel.
-- ``_is_first_attempt(db, lesson_progress_id)`` — liest
+- ``_is_first_attempt(db, lesson_progress_id)`` - liest
   ``LessonProgress.step_results``-JSON und gibt True
   zurück, wenn jede Schritt-Zeile ``attempts == 1`` hat.
-- ``award_xp_for_lesson_session(db, *, session)`` —
+- ``award_xp_for_lesson_session(db, *, session)`` -
   Persistenz-Wrapper, der user_id aus dem Projekt-FK auflöst
   und die Formel anwendet.
 
@@ -302,7 +302,7 @@ Helfers trägt die lektions-spezifischen Schlüssel
 (``lesson_progress_id``, ``score_correct``,
 ``score_total``); Chat-Session-Payloads nicht, sodass der
 Lektions-XP-Wrapper graziös degradieren würde, falls der
-Dispatch je leckt — aber der Regressions-Pin-Test in
+Dispatch je leckt - aber der Regressions-Pin-Test in
 ``backend/tests/test_lesson_session_unification.py``
 verifiziert die exakte Lektions-Vergabe (100 XP für einen
 4/4-Erstversuchs-Abschluss + Erst-Tags-Serie), sodass ein
@@ -317,7 +317,7 @@ Vier neue Prädikate, hinzugefügt zu
 
 | Schlüssel | Prädikat | Helfer |
 |---|---|---|
-| ``first_lesson`` | ``_completed_lesson_count >= 1`` | zählt ``LessonProgress.status="completed"`` (nicht via LearningSession — die Lektionszeile ist maßgeblich) |
+| ``first_lesson`` | ``_completed_lesson_count >= 1`` | zählt ``LessonProgress.status="completed"`` (nicht via LearningSession - die Lektionszeile ist maßgeblich) |
 | ``lessons_10`` | ``_completed_lesson_count >= 10`` | dasselbe |
 | ``three_star_streak`` | ``_last_n_lessons_all_three_star(n=3)`` | liest die letzten 3 abgeschlossenen ``LessonProgress`` nach ``completed_at`` desc; projiziert jede via ``xp_service.compute_stars`` |
 | ``review_master`` | ``_mastered_elements_count >= 50`` | zählt ``ElementError.mastered=True`` |
@@ -333,7 +333,7 @@ fängt Drift zwischen den beiden Listen ab.
 ## Speichermodus-Vorbehalte
 
 Die Element-Verfolgung + SRS-Kette funktioniert in
-**beiden** Speichermodi identisch — der
+**beiden** Speichermodi identisch - der
 ``IElementErrorsNamespace``-Vertrag ist modusagnostisch,
 und das Dexie-Mode-Release-Gate (18 Specs inkl.
 ``/review``-Route) blockiert jede Regression.
@@ -343,7 +343,7 @@ Gamification-Seiteneffekte sind **nur im API-Modus**
 verfügbar. Im Dexie-Modus schreibt der Lektionsabschluss
 weiterhin ``LessonProgress``, zeichnet weiterhin
 ``ElementError``-Zeilen auf und treibt weiterhin die
-Wiederholungs-Warteschlange — aber der
+Wiederholungs-Warteschlange - aber der
 ``LearningSession``-Schreibvorgang + der
 ``on_session_complete``-Hook feuern nie (kein Backend,
 nichts zum Aufhängen). Dexie-Modus-Nutzer:innen erhalten
@@ -355,7 +355,7 @@ noch nicht zu dieser Summe bei.
 Eine zukünftige Vereinheitlichung der Gamification-
 Seiteneffekte in ``DexieStorage`` (sodass der
 Lektionsabschluss eines Dexie-Modus-Nutzers auch lokal XP
-vergibt) ist ein bewusstes Nicht-Ziel für v1.31.0 — sie
+vergibt) ist ein bewusstes Nicht-Ziel für v1.31.0 - sie
 würde entweder die Formel-Implementierung in TypeScript
 duplizieren oder einen Service-Worker-Shim des
 ``on_session_complete``-Hooks erfordern. Beide sind größere
@@ -365,19 +365,19 @@ Refactors als der v1.31.0-Umfang zulässt.
 
 ## Wo als Nächstes nachschauen
 
-- ``backend/app/services/element_errors.py`` — die
+- ``backend/app/services/element_errors.py`` - die
   Upsert-Übergangsmatrix.
-- ``backend/app/services/element_srs.py`` — der Scheduler.
-- ``backend/app/services/lesson_session_unification.py`` —
+- ``backend/app/services/element_srs.py`` - der Scheduler.
+- ``backend/app/services/lesson_session_unification.py`` -
   das Pseudo-Projekt + der Hook-Fire.
 - ``plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/xp_service.py`` —
+  adaptive_learner_gamification/xp_service.py`` -
   ``calculate_lesson_session_xp`` + Dispatch.
 - ``plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/badge_service.py`` — die
+  adaptive_learner_gamification/badge_service.py`` - die
   vier neuen Prädikate.
-- ``frontend/src/lib/learning-project.ts`` — der
+- ``frontend/src/lib/learning-project.ts`` - der
   Pseudo-Projekt-Filter-Helfer.
-- ``e2e/dexie/dexie-mode.spec.ts`` — das Release-Gate, das
+- ``e2e/dexie/dexie-mode.spec.ts`` - das Release-Gate, das
   Dexie-Modus-Regressionen verhindert (Lektions-Spec unter
   ``/lesson/...``, Review-Spec unter ``/review/...``).

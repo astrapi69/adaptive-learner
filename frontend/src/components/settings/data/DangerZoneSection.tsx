@@ -248,7 +248,7 @@ export default function DangerZoneSection() {
                         >
                             {t(
                                 "settings.danger_zone_warning",
-                                "This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
+                                "This deletes ALL your learning data permanently - sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
                             )}
                         </p>
                         {step === "typed" && (

@@ -8,14 +8,14 @@ yanlış yanıtladığını tam olarak hatırlar ve bunları daha sonra hedefli
 bir tekrar oturumu için planlar.
 
 Dersler, bir yapay zeka API anahtarına ihtiyaç duymayan **alternatif
-bir öğrenme yoludur** — uygulamayı denemek ya da küratörlü materyalin
+bir öğrenme yoludur** - uygulamayı denemek ya da küratörlü materyalin
 serbest sohbetten daha iyi işlediği içerikler için idealdir.
 
 ---
 
 ## Dersler nereden gelir
 
-Dersler **içerik setlerinde** bulunur — herkese açık GitHub
+Dersler **içerik setlerinde** bulunur - herkese açık GitHub
 repolarında yayınlanmış küçük paketler. `/content` altındaki
 **Set Tarayıcısı**, mevcut her seti listeler; indirmek için birine
 tıkla. Set yerel olarak önbelleğe alınır (arka uçla çalışırken dosya
@@ -23,7 +23,7 @@ sisteminde, yalnızca tarayıcı modunda IndexedDB'de), böylece ilk
 indirmeden sonra çevrimdışı öğrenebilirsin.
 
 Yerleşik kitaplık, farklı diller ve alanlarda birden çok içerik
-seti içerir. Her sürüm yenilerini ekler — güncel katalog için
+seti içerir. Her sürüm yenilerini ekler - güncel katalog için
 [Set reposuna](https://github.com/astrapi69/adaptive-learner-content)
 bak.
 
@@ -37,16 +37,16 @@ alıştırmadan adım adım geçirir:
 1. **Kartlar** okumak için materyal sunar. Hazır olduğunda
    "Devam"a tıkla.
 2. **Alıştırmalar** neyi hatırladığını sınar. Çekirdek türler:
-   - **Eşleştirme** — çiftleri sürükle (kelime ↔ çeviri). Bulunan bir
+   - **Eşleştirme** - çiftleri sürükle (kelime ↔ çeviri). Bulunan bir
      çiftin her iki karosu **kendi rengini** ve bir **numara
      rozetini** paylaşır, böylece eşleştirme renk körlüğüne karşı
      güvenli biçimde tanınır (yalnızca renkle değil).
-   - **Resim seçimi** — ipucuna uyan resmi seç.
-   - **Serbest metin** — yanıtı yaz.
-   - **Kelime karoları** — karolardan bir cümle oluştur.
-   - **Boşluk doldurma** — cümledeki bir boşluğu doldur (hatalarından
+   - **Resim seçimi** - ipucuna uyan resmi seç.
+   - **Serbest metin** - yanıtı yaz.
+   - **Kelime karoları** - karolardan bir cümle oluştur.
+   - **Boşluk doldurma** - cümledeki bir boşluğu doldur (hatalarından
      hedefli olarak oluşur, aşağıya bak).
-   - **Çoktan seçmeli** — bir ya da (göreve bağlı olarak) birden çok
+   - **Çoktan seçmeli** - bir ya da (göreve bağlı olarak) birden çok
      doğru yanıtı seç.
 
    Bunların üzerine bir set **uzantı türleri** getirebilir:
@@ -56,11 +56,11 @@ alıştırmadan adım adım geçirir:
 Bir alıştırma, yazar tarafından atanmış bir **zorluk** taşıyorsa,
 küçük bir rozet kademeyi adlandırır (**Kolay / Orta / Zor**). Bu saf
 şeffaflıktır: uyarlamalı üretecin bir kartı neden daha erken ya da
-daha sık önerebildiğini görürsün — rozet, puanlamayı da sırayı da
+daha sık önerebildiğini görürsün - rozet, puanlamayı da sırayı da
 asla değiştirmez.
 
 Üstteki bir ilerleme göstergesi, derste ne kadar ilerlediğini izler.
-İstediğin zaman durabilirsin — ilerlemen adım başına kaydedilir ve
+İstediğin zaman durabilirsin - ilerlemen adım başına kaydedilir ve
 kaldığın yerden devam eder.
 
 ### Enter kısayolu
@@ -114,12 +114,12 @@ yapıştırmak için uygundur. Dışa aktarma, arka uç olmadan saf bir
 ## Öğe düzeyinde hata izleme
 
 Her alıştırma türündeki her yanlış yanıt, **kaçırdığın somut öğeye**
-işaret eden bir satır yazar — tek kelime, çift ya da kalıp. Uygulama
+işaret eden bir satır yazar - tek kelime, çift ya da kalıp. Uygulama
 SADECE "Ders 3'te 6/10 aldın" demez; "özellikle *bonjour* ve *merci*
 ile zorlandın" der.
 
 Aynı öğeyi **üç kez arka arkaya** doğru yanıtlarsan, o **ustalaşıldı**
-olarak işaretlenir — ve tekrar kuyruğundan çıkarılır. Ustalaşılmış bir
+olarak işaretlenir - ve tekrar kuyruğundan çıkarılır. Ustalaşılmış bir
 öğeyi daha sonra yanlış yanıtlarsan, **geri kayar**. Kaçırılmış bir
 ustalık, unutulmuş bir ustalıktır.
 
@@ -160,11 +160,11 @@ strateji:
 
 - Bir kelimeyi başlangıçta bir **eşleştirme** ya da **resim seçimi**
   alıştırmasında kaçırdıysan, tam olarak bu alıştırmayı yeniden
-  yaparsın (taze karıştırmayla — saf kas hafızası değil).
+  yaparsın (taze karıştırmayla - saf kas hafızası değil).
 - Bir şeyi **serbest metin** ya da **kelime karolarında**
   kaçırdıysan, tekrar tam olarak kaçırılan kelimeyi hedefleyen bir
   **boşluk doldurma** alıştırması üretmeye çalışır. Aynı bilgi farklı
-  biçimde — yalnızca belirli bir alıştırma formatının tekrarı değil,
+  biçimde - yalnızca belirli bir alıştırma formatının tekrarı değil,
   esneklik eğitilir.
 - Bir öğe için temiz bir boşluk doldurma oluşturulamıyorsa (örneğin
   orijinal prompt yanıtı cümlede içermiyorsa), tekrar sessizce orijinal
@@ -183,7 +183,7 @@ birini tam olarak kaçırılan kelimeyi / kaçırılan artikeli hedefleyen
 taze bir boşluk doldurma olarak sunar.
 
 - **İstediğin zaman atlanabilir.** "Sonraki ders" düğmesi görünür
-  kalır — düzeltme turu gönüllü bir alıştırmadır, bir gate değil.
+  kalır - düzeltme turu gönüllü bir alıştırmadır, bir gate değil.
 - **Yalnızca düzeltilecek bir şey varsa görünür.** Kusursuz puanlı
   dersler onu tamamen atlar. Hataları temiz bir boşluk doldurmaya
   dönüştürülemeyen dersler (nadiren) de.
@@ -200,14 +200,14 @@ Yanlış serbest metin ve kelime karosu
 yanıtları artık girdin ile kanonik yanıt arasında **Token düzeyinde
 bir diff** gösterir. Üç renk, asla yalnızca renk değil:
 
-- **Kırmızı üstü çizili** — yazdığın ve oraya ait olmayan (ekran
+- **Kırmızı üstü çizili** - yazdığın ve oraya ait olmayan (ekran
   okuyucular ve renk körü kullanıcılar için bir × işaretiyle).
-- **Yeşil** — kanonik yanıtın içerdiği ve senin gözden kaçırdığın (bir
+- **Yeşil** - kanonik yanıtın içerdiği ve senin gözden kaçırdığın (bir
   + işaretiyle).
-- **Sarı** ok ile → — hafifçe yanlış bir kelime, `senin-kelimen` →
+- **Sarı** ok ile → - hafifçe yanlış bir kelime, `senin-kelimen` →
   `beklenen` olarak gösterilir.
 
-Aynı diff, ders özetinde her alıştırmanın dökümünde görünür — kullanıcı
+Aynı diff, ders özetinde her alıştırmanın dökümünde görünür - kullanıcı
 girdisi deposunun bildiği her serbest metin veya kelime karosu
 yanıtı için.
 
@@ -227,10 +227,10 @@ Tamamlanan her ders, bir yıldız formülüne göre XP kazandırır:
 
 Dersler etrafında dört yeni rozet açılır:
 
-- **İlk ders** — ilk içerik dersini tamamla.
-- **10 ders tamamlandı** — 10 içerik dersini tamamla.
-- **3-yıldız serisi** — arka arkaya üç dersi 3 yıldızla geç.
-- **Tekrar Ustası** — dağıtık tekrar yoluyla 50 öğeye ustalaş.
+- **İlk ders** - ilk içerik dersini tamamla.
+- **10 ders tamamlandı** - 10 içerik dersini tamamla.
+- **3-yıldız serisi** - arka arkaya üç dersi 3 yıldızla geç.
+- **Tekrar Ustası** - dağıtık tekrar yoluyla 50 öğeye ustalaş.
 
 Ders tamamlamaları **günlük serine** de sayılır, böylece içerik
 dersleriyle öğrenmek, ısı haritasını sohbet oturumlarıyla aynı şekilde
@@ -240,7 +240,7 @@ doldurur.
 
 ## Depolama modları
 
-Dersler **her iki** depolama modunda da çalışır — API (arka uç) ve
+Dersler **her iki** depolama modunda da çalışır - API (arka uç) ve
 Dexie (yalnızca tarayıcı / GitHub Pages). Öğe düzeyinde hata izleme ve
 SRS planlaması, yalnızca tarayıcı modunda IndexedDB'ye karşı aynı
 şekilde çalışır, böylece herkese açık GitHub Pages sayfasını ziyaret
@@ -248,7 +248,7 @@ eden kullanıcılar, arka uç olmadan tam tekrar döngüsünü alır.
 
 Gamification de eşitlenmiştir: Yalnızca tarayıcı
 modunda, tamamlanan dersler için sunucu modundaki ile **aynı XP ve
-ders rozetlerini** kazanırsın — yıldız, Streak ve rozet mantığı
+ders rozetlerini** kazanırsın - yıldız, Streak ve rozet mantığı
 TypeScript'e taşınmış ve aynı altın değerlere karşı güvence altına
 alınmıştır. Ders tamamlamada modlar arasında artık işlevsel bir fark
 yoktur.
@@ -258,6 +258,6 @@ yoktur.
 ## Gizlilik
 
 Tüm ders ilerlemeleri, öğe-hata satırları, tekrar-kuyruğu durumları ve
-planlama verileri **kendi cihazında** kalır — dosya sisteminde (API
+planlama verileri **kendi cihazında** kalır - dosya sisteminde (API
 modu) ya da tarayıcıda (IndexedDB). Hangi kelimelerle zorlandığına dair
 hiçbir şey herhangi bir yere gönderilmez.

@@ -1,7 +1,7 @@
 app:
   name: Adaptive Learner
   tagline: 6단계 방법론 모델에 따른 적응형 학습.
-  skeleton_notice: 스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 — docs/adaptive-learner-project-reference.md를 참고하세요.
+  skeleton_notice: 스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 - docs/adaptive-learner-project-reference.md를 참고하세요.
 common:
   ok: "확인"
   remove: "제거"
@@ -72,7 +72,7 @@ nav:
     more: "더보기"
   primary: "기본 탐색"
   discover: "콘텐츠 둘러보기"
-  offline_long: "오프라인 — 지난 세션은 계속 읽을 수 있습니다"
+  offline_long: "오프라인 - 지난 세션은 계속 읽을 수 있습니다"
   sync_pending: "동기화 대기 중인 변경 사항 {n}건"
   statistics: "통계"
   profile: "내 프로필"
@@ -90,12 +90,12 @@ nav:
   offline: 오프라인
   anki: Anki
   dev_badge: DEV
-  dev_badge_tooltip: "개발자 모드가 켜져 있습니다 — 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요."
+  dev_badge_tooltip: "개발자 모드가 켜져 있습니다 - 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요."
   content: "내 콘텐츠"
   mode_badge_content: 콘텐츠
   mode_badge_ai: "AI+콘텐츠"
-  mode_badge_tooltip_content: "API 키가 설정되지 않았습니다 — 사전 제작된 콘텐츠만 사용합니다. AI 기능을 사용하려면 설정에서 키를 추가하세요."
-  mode_badge_tooltip_ai: "AI 제공자가 설정되었습니다 — 연습 문제에 AI를 활용해 오답 보기와 힌트를 생성합니다. 콘텐츠 세트를 둘러보려면 누르세요."
+  mode_badge_tooltip_content: "API 키가 설정되지 않았습니다 - 사전 제작된 콘텐츠만 사용합니다. AI 기능을 사용하려면 설정에서 키를 추가하세요."
+  mode_badge_tooltip_ai: "AI 제공자가 설정되었습니다 - 연습 문제에 AI를 활용해 오답 보기와 힌트를 생성합니다. 콘텐츠 세트를 둘러보려면 누르세요."
   mode_badge_label_content: "모드: 콘텐츠 전용"
   mode_badge_label_ai: "모드: AI + 콘텐츠"
   sync_paired: "동기화: 페어링됨 (설정 > 동기화)"
@@ -193,7 +193,7 @@ curriculum:
   add_subtopic: 하위 주제 추가
   rename_topic: 주제 이름 변경
   topic_title: 제목
-  no_topics: 아직 주제가 없습니다 — 첫 주제를 추가하여 시작하세요.
+  no_topics: 아직 주제가 없습니다 - 첫 주제를 추가하여 시작하세요.
   no_curriculum: 주제 트리를 만들려면 커리큘럼을 생성하세요.
   delete_confirm: 이 주제를 삭제하시겠습니까? 하위 항목은 각자의 최상위 항목으로 유지됩니다.
   lessons_title: 레슨
@@ -210,7 +210,7 @@ curriculum:
   description_saved: "설명이 저장되었습니다."
   edit_description: "설명 편집"
   lesson_content_aria: "레슨 내용"
-  lesson_content_placeholder: "레슨 내용 — 제목, 목록, 코드 블록, 링크를 지원합니다."
+  lesson_content_placeholder: "레슨 내용 - 제목, 목록, 코드 블록, 링크를 지원합니다."
   no_description: "아직 설명이 없습니다."
 landing:
   title: Adaptive Learner
@@ -226,7 +226,7 @@ onboarding:
   intro: 학습 목표를 알려주세요. Adaptive Learner는 이를 바탕으로 프로필을 구성하고 시작 학습법을 추천합니다.
   concepts_explainer_prefix: "당신은"
   concepts_explainer_mid1: "를 정의한 다음, 간단한 평가를 완료해 "
-  concepts_explainer_mid2: "을 구성합니다 — 이는 앞으로의 모든 "
+  concepts_explainer_mid2: "을 구성합니다 - 이는 앞으로의 모든 "
   concepts_explainer_suffix: "을 안내합니다."
   term_learning_project: "학습 프로젝트"
   term_learning_profile: "학습 프로필"
@@ -240,13 +240,13 @@ onboarding:
   field_timeframe_hint: "예: 4주, 한 학기."
   field_daily_minutes: 하루 학습 시간(분)
   field_current_problem: 현재 문제
-  field_current_problem_hint: 선택 — 지금 무엇이 가로막고 있나요?
+  field_current_problem_hint: 선택 - 지금 무엇이 가로막고 있나요?
   submit: 프로젝트를 만들고 평가 시작
   creating: 프로젝트 생성 중…
   subject_suggestions: "추천 과목 (탭하여 지정):"
   default_goal: "{topic} 학습"
   invite_title: "학습 프로필을 더 자세히 설정하시겠어요?"
-  invite_subtitle: "1분이면 되고 세션을 맞춤화해 줍니다 — 나중에 해도 됩니다."
+  invite_subtitle: "1분이면 되고 세션을 맞춤화해 줍니다 - 나중에 해도 됩니다."
   invite_start_now: "바로 시작하기"
   invite_setup_profile: "프로필 설정"
   restore_hint: "이미 Adaptive Learner로 학습 중이신가요? 백업에서 복원하세요."
@@ -285,7 +285,7 @@ assessment:
   read_summary: 요약 읽기
   swipe_hint: "왼쪽 / 오른쪽으로 스와이프 (또는 방향키 사용)하여 이동하세요."
 dashboard:
-  # 1417 — the one inviting BYOK card on the Dashboard.
+  # 1417 - the one inviting BYOK card on the Dashboard.
   ai_invite:
     title: "AI 도움 활성화 (선택 사항)"
     body: "자신의 AI 제공자(Claude, OpenAI 또는 Gemini)를 연결하면 레슨에서 바로 설명과 도움을 받을 수 있습니다. 연결하지 않아도 앱은 그대로 사용할 수 있습니다."
@@ -316,7 +316,7 @@ dashboard:
   review_queue:
     loading: "불러오는 중…"
     elements: "복습할 요소"
-    overdue: "기한 초과 — 여기서 시작하세요"
+    overdue: "기한 초과 - 여기서 시작하세요"
     open: "복습 세션 열기"
     quick: "빠른 복습"
   focus_areas:
@@ -348,7 +348,7 @@ adaptive:
   page_title: "적응형 레슨"
   session_title: "적응형 레슨"
   loading: "오류를 분석하는 중…"
-  empty_body: "아직 적응할 데이터가 없습니다 — 레슨을 연습하여 데이터를 쌓으세요."
+  empty_body: "아직 적응할 데이터가 없습니다 - 레슨을 연습하여 데이터를 쌓으세요."
   not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요."
   back_to_dashboard: "대시보드로 돌아가기"
   transparency:
@@ -370,12 +370,12 @@ review:
   your_answer: "당신의 답변:"
   correct_answer: "정답:"
   summary_corrected: "{total}개 중 {corrected}개 교정됨"
-  summary_trend: "좋아요 — 약한 부분이 점점 강해지고 있어요."
+  summary_trend: "좋아요 - 약한 부분이 점점 강해지고 있어요."
   summary_next: "숙달한 항목은 제외되고, 나머지는 곧 복습으로 돌아옵니다."
   summary_repeat: "약 2일 후에 다시 와서 이 항목들을 신선하게 유지하세요."
   explain_heading: "이 문제들을 틀린 이유"
   explain_article_gender: "성별에 유의하세요: -o로 끝나는 명사는 보통 남성형(el/un), -a는 여성형(la/una)입니다. 관사는 어미를 따릅니다."
-  explain_spelling_accent: "정확한 철자와 강세 표시를 확인하세요 — 작은 차이가 단어를 바꿉니다."
+  explain_spelling_accent: "정확한 철자와 강세 표시를 확인하세요 - 작은 차이가 단어를 바꿉니다."
   explain_verb_conjugation: "답하기 전에 동사를 주어 및 시제에 맞추세요."
   explain_word_order: "이 구조의 어순에 유의하세요."
   page_title: "복습"
@@ -403,7 +403,7 @@ review:
   metric_mean_understanding: 평균 이해도
   metric_mean_stress: 평균 스트레스
   metric_streak: 연속 학습일
-  no_data: 아직 세션이 없습니다 — 첫 세션을 시작하여 추이를 확인하세요.
+  no_data: 아직 세션이 없습니다 - 첫 세션을 시작하여 추이를 확인하세요.
   pronunciation_quick_start: 발음 연습
 session:
   title: 학습 세션
@@ -434,7 +434,7 @@ session:
   cycles_completed: 완료된 주기
   next_topic: '다음 주제:'
   step_reason_tooltip: 이 단계인 이유는?
-  offline_start_blocked: 오프라인 상태입니다. 새 세션에는 네트워크 연결이 필요합니다 — 지난 세션은 대시보드에서 계속 읽을 수 있습니다.
+  offline_start_blocked: 오프라인 상태입니다. 새 세션에는 네트워크 연결이 필요합니다 - 지난 세션은 대시보드에서 계속 읽을 수 있습니다.
   peek_step_prefix: "단계"
   rating_notes_aria: "세션 메모"
   rating_notes_placeholder: "무엇이 잘 됐고, 무엇이 안 됐고, 다음에 무엇을 시도할지…"
@@ -454,7 +454,7 @@ progress:
   commit_date: 날짜
   no_commits: 아직 완료된 세션이 없습니다.
   step_eval_title: AI 단계 평가
-  step_eval_empty: 아직 AI 단계 평가 데이터가 없습니다 — 세션을 시작하면 여기에 인사이트가 표시됩니다.
+  step_eval_empty: 아직 AI 단계 평가 데이터가 없습니다 - 세션을 시작하면 여기에 인사이트가 표시됩니다.
   step_eval_avg_confidence: 평균 AI 신뢰도
   step_eval_repeats: AI가 '아직 준비되지 않음'이라고 한 횟수
   step_eval_advances: 단계 진행
@@ -471,11 +471,11 @@ settings:
     confirm_message: "{lessons}개 레슨과 {cards}개 복습 카드가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
     deleted: "{lessons}개 레슨과 {cards}개 복습 카드를 삭제했습니다."
   key_export_link:
-    heading: "AI 키 — 암호화 내보내기"
+    heading: "AI 키 - 암호화 내보내기"
     hint: "AI 키를 하나의 암호화된 파일로 내보내거나 가져옵니다. 데이터 탭의 다른 백업과 함께 있습니다."
     button: "키 내보내기로 이동 (데이터 탭)"
   key_vault:
-    title: "AI 키 — 암호화 내보내기"
+    title: "AI 키 - 암호화 내보내기"
     intro: "AI 키를 하나의 암호화 파일로 다른 기기로 옮기세요. 일반 백업(키를 포함하지 않음)과는 별개입니다."
     api_export_disabled: "서버 모드에서는 키를 내보낼 수 없습니다. 키는 서버에서 암호화되어 관리됩니다. 키 파일 가져오기는 계속 사용할 수 있습니다."
     export_heading: "내보내기"
@@ -697,7 +697,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  # #810 — AI 탭의 구성된 공급자 목록 표.
+  # #810 - AI 탭의 구성된 공급자 목록 표.
   providers:
     title: 구성된 AI 공급자
     hint: "저장한 키는 그대로 유지됩니다. 전체 키는 표시되지 않으며 마스킹된 미리 보기만 표시됩니다."
@@ -746,7 +746,7 @@ settings:
   save_failed: 저장에 실패했습니다.
   provider_active: 활성
   active_provider_missing_key: 활성 제공자이지만 저장된 API 키가 없습니다. 키가 저장될 때까지 AI 응답은 건너뜁니다.
-  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  # Phase 34 (v1.20.0) - per-provider key-source badges.
   api_key_source_file: "키 출처: secrets.yaml"
   api_key_source_env: "키 출처: 환경 변수"
   api_key_source_settings: "키 출처: 설정"
@@ -850,24 +850,24 @@ settings:
   danger_zone_input_placeholder: "RESET"
   danger_zone_intro: "이 기기의 모든 학습자 상태를 영구히 삭제합니다."
   danger_zone_reset_button: "전체 초기화"
-  danger_zone_warning: "이 작업은 모든 학습 데이터 — 세션, 진행도, 프로필, 커리큘럼, 가져오기, Anki 카드, 설정, API 키 —를 영구히 삭제합니다. 이 작업은 되돌릴 수 없습니다."
+  danger_zone_warning: "이 작업은 모든 학습 데이터(세션, 진행도, 프로필, 커리큘럼, 가져오기, Anki 카드, 설정, API 키)를 영구히 삭제합니다. 이 작업은 되돌릴 수 없습니다."
   section_sync: "동기화"
 methods:
   deductive:
     label: 연역적
-    summary: 일반에서 구체로 — 규칙을 먼저, 예시는 나중에.
+    summary: 일반에서 구체로 - 규칙을 먼저, 예시는 나중에.
   inductive:
     label: 귀납적
-    summary: 구체에서 일반으로 — 예시를 먼저, 규칙을 도출.
+    summary: 구체에서 일반으로 - 예시를 먼저, 규칙을 도출.
   error_based:
     label: 오류 기반
-    summary: 실수에서 배우기 — 교정과 설명.
+    summary: 실수에서 배우기 - 교정과 설명.
   dialogic:
     label: 대화적
-    summary: 대화 속에서 생각하기 — 스트레스를 낮추고 동기를 키웁니다.
+    summary: 대화 속에서 생각하기 - 스트레스를 낮추고 동기를 키웁니다.
   contextual:
     label: 맥락적
-    summary: 실제 맥락에서 적용하기 — 전이를 연습합니다.
+    summary: 실제 맥락에서 적용하기 - 전이를 연습합니다.
   ai_adaptive:
     label: AI 적응형
     summary: AI가 당신에게 가장 잘 맞는 학습법을 선택합니다.
@@ -898,7 +898,7 @@ errors:
   not_found: 찾을 수 없습니다.
   validation: 잘못된 입력입니다.
   conflict: 항목이 이미 존재합니다.
-  server: 서버 오류 — 나중에 다시 시도하세요.
+  server: 서버 오류 - 나중에 다시 시도하세요.
 toast:
   project_created: 프로젝트가 생성되었습니다.
   assessment_saved: 프로필이 저장되었습니다.
@@ -1065,7 +1065,7 @@ backup:
   compare_sort_label: '정렬:'
   compare_sort_delta: 변경 많은 순
   compare_sort_alpha: 알파벳순
-  compare_no_changes: 두 백업이 동일합니다 — 차이점이 감지되지 않았습니다.
+  compare_no_changes: 두 백업이 동일합니다 - 차이점이 감지되지 않았습니다.
   compare_section_added: 추가됨
   compare_section_removed: 제거됨
   compare_section_changed: 변경됨
@@ -1073,14 +1073,14 @@ backup:
   compare_old: 이전
   compare_new: 새로운
   compare_field_changes: 필드 변경
-  compare_high_volume_hint: 대용량 테이블 — 레코드 단위 미리보기는 요약하여 표시됩니다.
+  compare_high_volume_hint: 대용량 테이블 - 레코드 단위 미리보기는 요약하여 표시됩니다.
   compare_export_md: 마크다운으로 내보내기
   compare_markdown_downloaded: 비교 결과를 내보냈습니다.
   confirm_with_counts: 복원 ({{added}}개 추가, {{updated}}개 업데이트)
   auto_compare_as_a: A로 비교
   auto_compare_as_b: B로 비교
   compare_auto_label: 자동 백업 {{date}}
-  auto_compare_missing: 자동 백업을 더 이상 사용할 수 없습니다 — 순환되어 삭제되었습니다.
+  auto_compare_missing: 자동 백업을 더 이상 사용할 수 없습니다 - 순환되어 삭제되었습니다.
 export:
   title: 내보내기
   intro: 학습 여정을 마크다운 또는 PDF로 다운로드하세요. 마크다운은 편집하고 공유할 수 있는 일반 텍스트이며, PDF는 브라우저의 인쇄 대화상자를 열어 사본을 저장할 수 있게 합니다.
@@ -1158,7 +1158,7 @@ sync:
   scan_success_hint: 데스크톱과 확인하는 중…
   smart_merge: 스마트 병합 (AI)
   smart_merge_error: 스마트 병합에 실패했습니다.
-  smart_merge_ready: AI 병합 준비 완료 — 검토 후 적용하세요.
+  smart_merge_ready: AI 병합 준비 완료 - 검토 후 적용하세요.
   smart_merge_running: AI로 병합하는 중…
   sync_error: 동기화에 실패했습니다.
   synced: 동기화됨
@@ -1327,7 +1327,7 @@ gamification:
   danger_zone_heading: 위험 구역
   danger_zone_intro: 이 기기의 모든 학습 데이터를 영구히 삭제합니다.
   danger_zone_reset_button: 전체 초기화
-  danger_zone_warning: 이 작업은 모든 학습 데이터 — 세션, 진행도, 프로필, 커리큘럼, 가져오기, Anki 카드, 설정, API 키 —를 영구히 삭제합니다. 이 작업은 되돌릴 수 없습니다.
+  danger_zone_warning: 이 작업은 모든 학습 데이터(세션, 진행도, 프로필, 커리큘럼, 가져오기, Anki 카드, 설정, API 키)를 영구히 삭제합니다. 이 작업은 되돌릴 수 없습니다.
   danger_zone_confirm_prompt: '확인하려면 RESET을 입력하세요'
   danger_zone_input_placeholder: RESET
   danger_zone_final_button: 영구 삭제
@@ -1431,7 +1431,7 @@ ui:
     high-contrast: "고대비"
     sepia: "세피아"
     auto: "자동 (시스템)"
-  # DEV-MODE-FRIENDLY-ERRORS-01 — status-code-mapped friendly
+  # DEV-MODE-FRIENDLY-ERRORS-01 - status-code-mapped friendly
   # toast strings. Shown in place of HTTP details when
   # Developer Mode is off (default). Dev mode bypasses these
   # and renders the technical message verbatim.
@@ -1616,9 +1616,9 @@ repo:
   readme_topics_heading: "주제"
   readme_no_topics: "_아직 다룬 주제가 없습니다._"
   readme_see_also_heading: "함께 보기"
-  readme_see_stats: "[LEARNING_STATS.md](LEARNING_STATS.md) — 오류율, 이해도, 전이, 개입 기록."
-  readme_see_cheatsheet: "[CHEATSHEET.md](CHEATSHEET.md) — 정리된 메모 + 메타 학습 인사이트."
-  readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) — 다음 단계."
+  readme_see_stats: "[LEARNING_STATS.md](LEARNING_STATS.md) - 오류율, 이해도, 전이, 개입 기록."
+  readme_see_cheatsheet: "[CHEATSHEET.md](CHEATSHEET.md) - 정리된 메모 + 메타 학습 인사이트."
+  readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) - 다음 단계."
   stats_title: "학습 통계"
   stats_intro: "세션 평가와 평점에서 자동으로 도출된 세션별 지표입니다. 수동으로 편집하지 마세요."
   stats_no_sessions: "_아직 세션이 없습니다._"
@@ -1640,7 +1640,7 @@ repo:
   stats_exit_threshold_body: "주제는 2회 연속 주기에 걸쳐 이해도 ≥ 9/10이고 전이 ≥ 8/10으로 안정될 때 숙달된 것으로 간주합니다. 고정된 행은 이 조건을 충족하는 세션을 나타냅니다."
   stats_exit_pin_marker: "✅ 종료 기준 충족"
   cheatsheet_title: "치트시트"
-  cheatsheet_intro: "세션에서 정리한 메모입니다. 메타 학습 인사이트 섹션은 meta_learning으로 태그된 메모 — 당신이 어떻게 가장 잘 배우는지에 대한 관찰 —를 모읍니다."
+  cheatsheet_intro: "세션에서 정리한 메모입니다. 메타 학습 인사이트 섹션은 meta_learning으로 태그된 메모(당신이 어떻게 가장 잘 배우는지에 대한 관찰)를 모읍니다."
   cheatsheet_notes_heading: "메모"
   cheatsheet_meta_learning_heading: "메타 학습 인사이트"
   cheatsheet_no_notes: "_아직 메모가 없습니다._"
@@ -1745,8 +1745,8 @@ lesson:
   resources_title: "더 알아보기"
   resources_domain: "{domain}에 대해 더 보기"
   motivation:
-    halftime: "절반 왔어요 — 계속 가세요!"
-    last: "마지막입니다 — 멋지게 마무리하세요!"
+    halftime: "절반 왔어요 - 계속 가세요!"
+    last: "마지막입니다 - 멋지게 마무리하세요!"
   theory:
     view_example: "예시 보기"
   tts:
@@ -1823,7 +1823,7 @@ lesson:
       submit: "답 확인"
       retry: "다시 시도"
       result_correct: "정답입니다!"
-      result_wrong: "아쉬워요 — 강조된 타일이 정답입니다."
+      result_wrong: "아쉬워요 - 강조된 타일이 정답입니다."
       grid_label: "이미지 선택지"
       correct_label: "정답"
       wrong_label: "오답"
@@ -1964,7 +1964,7 @@ lesson:
     heading: "다시 풀기 완료"
     score: "이제 {correct}/{total} 정답!"
     done: "레슨으로 돌아가기"
-    empty: "다시 풀 항목이 없습니다 — 몇 가지 실수를 한 후 레슨 요약에서 이 화면을 여세요."
+    empty: "다시 풀 항목이 없습니다 - 몇 가지 실수를 한 후 레슨 요약에서 이 화면을 여세요."
     summary_aria: "오답 다시 풀기 요약"
   next_step:
     title: "다음은?"
@@ -2224,9 +2224,9 @@ content:
     target_lang_label: 학습하는 언어
     source_lang_label: 당신의 언어
     level_label: 레벨
-    not_enough_data: "연습이 적습니다 — 완전한 언어 레슨에는 최소 {min}개를 권장합니다. 그래도 저장할 수 있습니다 (예: 이론 전용 레슨으로)."
+    not_enough_data: "연습이 적습니다 - 완전한 언어 레슨에는 최소 {min}개를 권장합니다. 그래도 저장할 수 있습니다 (예: 이론 전용 레슨으로)."
     same_language: 학습하는 언어와 당신의 언어는 서로 달라야 합니다.
-    same_language_hint: "학습하는 언어와 당신의 언어가 같습니다 — 문법이나 모국어 레슨에는 괜찮습니다. 공유하면 콘텐츠 트리의 동일 언어 분기에 배치됩니다."
+    same_language_hint: "학습하는 언어와 당신의 언어가 같습니다 - 문법이나 모국어 레슨에는 괜찮습니다. 공유하면 콘텐츠 트리의 동일 언어 분기에 배치됩니다."
     split_notice: "이 레슨은 {steps}단계로, {parts}개 부분으로 저장됩니다 (부분당 최대 {max}단계)."
     part_title: "{title} - 파트 {n}"
   lesson_gen:
@@ -2324,7 +2324,7 @@ content:
     level_too_complex: "레슨 '{lesson}': 텍스트가 한쪽당 평균 {avg}단어로, 레벨 {level}에 비해 높습니다 (약 {cap}개 예상)."
     source_language_heuristic: 카드 뒷면에 {found} 고유 문자가 포함되어 있지만 출처 언어는 '{lang}'입니다.
     target_language_heuristic: 카드 앞면에 {found} 고유 문자가 포함되어 있지만 목표어는 '{lang}'입니다.
-    failed_share_anyway: "품질 검사에서 문제가 발견되었습니다. 그래도 공유할 수 있습니다 — 검토자가 풀 리퀘스트에 기록된 결과를 보게 됩니다."
+    failed_share_anyway: "품질 검사에서 문제가 발견되었습니다. 그래도 공유할 수 있습니다 - 검토자가 풀 리퀘스트에 기록된 결과를 보게 됩니다."
   ai_validation:
     intro: AI가 추가로 번역 정확성, 문법, 레벨 적합성을 검사할 수 있습니다.
     privacy: 레슨 내용이 {provider}로 전송됩니다. 개인 데이터는 전송되지 않습니다.
@@ -2854,7 +2854,7 @@ create_lesson:
     heading: "템플릿으로 시작"
     blank:
       title: "빈 레슨"
-      desc: "메타데이터만 — 카드는 직접 추가합니다."
+      desc: "메타데이터만 - 카드는 직접 추가합니다."
     vocabulary:
       title: "어휘 목록"
       desc: "카드 슬롯 10개, 연결 + 자유 입력."
@@ -2925,7 +2925,7 @@ learning_path:
   group:
     mastery: "수용 {r}개, 산출 {p}개 숙달"
     progress_aria: "레슨 {total}개 중 {completed}개 완료"
-    toggle_aria: "{title} 세트 — 레슨 {total}개 중 {completed}개 완료"
+    toggle_aria: "{title} 세트 - 레슨 {total}개 중 {completed}개 완료"
   search_placeholder: "레슨 검색…"
   filter:
     status: "상태 필터"
@@ -2947,11 +2947,11 @@ learning_path:
     region_label: "학습 경로 통계"
   clusters:
     toggle: "오류 클러스터 보기"
-    empty: "아직 공통된 오류 패턴이 없습니다 — 계속 연습하세요."
+    empty: "아직 공통된 오류 패턴이 없습니다 - 계속 연습하세요."
     lessons: "레슨 {n}개"
     start_adaptive: "적응형 레슨 시작"
     region_label: "오류 클러스터 패널"
-  search_label: "레슨 검색 — Enter를 눌러 첫 번째 일치 항목으로 이동"
+  search_label: "레슨 검색 - Enter를 눌러 첫 번째 일치 항목으로 이동"
   custom:
     title: "내 학습 경로"
     subtitle: "레슨을 나만의 순서있는 경로로 구성하세요."
@@ -3198,7 +3198,7 @@ statistics:
   time_hm: "{h}시간 {m}분"
   time_m: "{m}분"
   weak_areas_title: "개선할 영역"
-  weak_areas_empty: "아직 추적된 실수가 없습니다 — 계속하세요!"
+  weak_areas_empty: "아직 추적된 실수가 없습니다 - 계속하세요!"
   practice: "연습"
   errors: "오류"
   last_answer: "당신의 마지막 답변:"
@@ -3273,7 +3273,7 @@ favorites:
   card_more: "+{n}개 더"
   add: "즐겨찾기에 추가"
   remove: "즐겨찾기에서 제거"
-  empty: "아직 즐겨찾기가 없습니다 — 레슨의 별을 탭하여 저장하세요."
+  empty: "아직 즐겨찾기가 없습니다 - 레슨의 별을 탭하여 저장하세요."
   save_prompt: "이 레슨을 즐겨찾기에 저장"
 content_repo:
   set_not_found: "이 저장소에서 세트 '{set}'을(를) 찾을 수 없습니다."
@@ -3298,7 +3298,7 @@ content_repo:
   last_sync: "마지막 동기화: {when}"
   added: "저장소가 추가되었습니다."
   synced: "동기화됨: 세트 {sets}개, 레슨 {lessons}개."
-  token_hint: "비공개 저장소에는 토큰이 필요합니다 — 아래에 붙여넣거나, 설정 → 연동에서 공유 토큰을 설정하세요."
+  token_hint: "비공개 저장소에는 토큰이 필요합니다 - 아래에 붙여넣거나, 설정 → 연동에서 공유 토큰을 설정하세요."
   trust_official: "공식: 프로젝트 팀이 큐레이션하고 품질을 보증합니다."
   trust_verified: "검증됨: 커뮤니티가 기여하고 팀이 검토했습니다."
   trust_validated: "유효성 확인됨: 기술적으로 정확하며, 내용은 개별적으로 검토되지 않았습니다."
@@ -3340,7 +3340,7 @@ content_repo:
     private: "비공개"
     official: "공식"
   trust:
-    dropped: "동기화되었지만 검증에 실패했습니다 — 이 저장소는 이제 미검증으로 표시됩니다."
+    dropped: "동기화되었지만 검증에 실패했습니다 - 이 저장소는 이제 미검증으로 표시됩니다."
     recommended: "공식 추천"
     unknown: "미검증"
     validated: "유효성 확인됨"
@@ -3452,7 +3452,7 @@ endless:
   loading: "연습 세션을 불러오는 중…"
   empty_body: "이 세트에는 아직 연습할 문제가 없습니다."
   not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 먼저 콘텐츠 브라우저를 열어 다운로드하세요."
-  paused: "일시정지 — 잠시 쉬어가세요."
+  paused: "일시정지 - 잠시 쉬어가세요."
   resume: "계속"
   pause: "일시정지"
   end: "종료"
@@ -3562,7 +3562,7 @@ registry:
     prepare_failed: 제출을 준비할 수 없습니다.
   field:
     pick: 연결된 리포지토리 선택
-    pick_placeholder: — 선택하거나 아래에 입력 —
+    pick_placeholder: "- 선택하거나 아래에 입력 -"
     url: GitHub 리포지토리 URL
     branch: 브랜치
     title: 제목
@@ -3581,7 +3581,7 @@ registry:
     instructions: '이 항목을 공식 콘텐츠 디렉터리의 {file} 배열에 추가하세요:'
   status:
     validated: 로컬에서 검증됨
-    pending: 대기 중 — CI가 검증합니다
+    pending: 대기 중 - CI가 검증합니다
   pr:
     created: 풀 리퀘스트를 열었습니다.
     failed: 풀 리퀘스트를 열 수 없습니다.

@@ -258,7 +258,7 @@ describe("narrowReplayExercises (#1874)", () => {
         const ft = ex("ex-a"); // free_text with no pairs
         const errors = [err("ex-a", {element_key: "k", correct_streak: 0})];
         const [out] = narrowReplayExercises([ft], errors);
-        expect(out).toBe(ft); // identity — untouched
+        expect(out).toBe(ft); // identity - untouched
     });
 
     it("keeps a matching exercise whole when all pairs are wrong", () => {

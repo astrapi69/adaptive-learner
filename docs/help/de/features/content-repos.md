@@ -1,12 +1,12 @@
 # Mehrere Content-Repositories
 
-Lektionen kommen aus **Content-Repositories** — öffentlichen
+Lektionen kommen aus **Content-Repositories** - öffentlichen
 GitHub-Repos, die strukturierte Lektionssätze bündeln. Du bist
 nicht auf den offiziellen Katalog beschränkt: Adaptive Learner
 kann mehrere Repositories gleichzeitig laden, eigene verbinden
 und kuratierte empfehlen (EXP-023).
 
-<!-- TODO: Screenshot — Einstellungen → Daten → Abschnitt Content-Repositories mit offiziellem Repo + einem eigenen Repo -->
+<!-- TODO: Screenshot - Einstellungen → Daten → Abschnitt Content-Repositories mit offiziellem Repo + einem eigenen Repo -->
 
 ---
 
@@ -51,7 +51,7 @@ Du kannst beliebig viele Repos verbinden. In der Liste unter
 
 - **Hinzufügen** über die Repo-URL,
 - **Entfernen** (das offizielle Repo bleibt geschützt),
-- **Neu anordnen** — die Reihenfolge bestimmt die **Priorität**.
+- **Neu anordnen** - die Reihenfolge bestimmt die **Priorität**.
   Tragen zwei Repos denselben Satz, gewinnt das weiter oben
   stehende.
 
@@ -68,7 +68,7 @@ direkt den „Repository hinzufügen"-Dialog mit vorausgefüllter URL;
 der QR-Code macht dasselbe auf dem Smartphone. So teilst du einen
 Kurs mit deiner Lerngruppe ohne manuelles Abtippen.
 
-<!-- TODO: Screenshot — Teilen-Dialog mit QR-Code -->
+<!-- TODO: Screenshot - Teilen-Dialog mit QR-Code -->
 
 ---
 
@@ -82,7 +82,7 @@ ergibt sich eine Trust-Stufe:
 |---|---|
 | **0** | Noch nicht validiert oder Prüfung fehlgeschlagen. |
 | **1** | Technisch gültig: mindestens eine Lektion, kein ausführbarer Inhalt. |
-| **3** | **Offiziell empfohlen** — aus der kuratierten Empfehlungsliste. |
+| **3** | **Offiziell empfohlen** - aus der kuratierten Empfehlungsliste. |
 
 Die Validierung ist rein technisch (Struktur + Sicherheit). Eine
 inhaltliche/community-basierte Bewertung (Trust 2) braucht einen
@@ -103,7 +103,7 @@ dem Badge **Offiziell empfohlen** (Trust 3).
 ## Lokale Bewertungen
 
 Du kannst jedem Repo lokal **Sterne** geben. Diese Bewertung ist
-rein privat und wird nur auf deinem Gerät gespeichert — sie hilft
+rein privat und wird nur auf deinem Gerät gespeichert - sie hilft
 dir, deine eigenen Quellen zu ordnen. Community-weite Bewertungen
 brauchen ebenfalls einen gemeinsamen Backend-Dienst und sind
 zurückgestellt.
@@ -122,6 +122,6 @@ Einstellungen nicht versehentlich mitgegeben wird.
 
 ## Verwandte Seiten
 
-- [Content Browser](content-browser.md) — Sätze finden, filtern, herunterladen
-- [Lektionen erstellen](../content-creation/overview.md) — eigene Inhalte beisteuern
-- [Backup und Wiederherstellung](backup.md) — verbundene Repos sind Teil des Snapshots
+- [Content Browser](content-browser.md) - Sätze finden, filtern, herunterladen
+- [Lektionen erstellen](../content-creation/overview.md) - eigene Inhalte beisteuern
+- [Backup und Wiederherstellung](backup.md) - verbundene Repos sind Teil des Snapshots

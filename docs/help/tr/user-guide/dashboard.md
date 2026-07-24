@@ -8,7 +8,7 @@ XP + rozetler), şu anda nasıl gittiği (seri ısı haritası + oturum
 sayacı), neler yaptığınız (son oturumlar + yöntem dağılımı) ve
 sırada ne yapacağınız (araç + aralıklı öneriler).
 
-En üstte **Konular + Etiketler filtre çubuğu** bulunur — bir konu
+En üstte **Konular + Etiketler filtre çubuğu** bulunur - bir konu
 (ör. Diller → İspanyolca) veya bir etiket seçerek aşağıdaki tüm
 widget'ları o sınıflandırmaya sahip projelere kısıtlayabilirsiniz.
 Filtreler URL sorgu parametreleri aracılığıyla paylaşılabilir.
@@ -25,23 +25,23 @@ ve Değerlendirme sayfasına bağlantı verir.
 
 ## XP + Seri + Rozetler
 
-- **XP widget'ı** — mevcut seviye + toplam XP + sonraki seviyeye
+- **XP widget'ı** - mevcut seviye + toplam XP + sonraki seviyeye
   ilerleme çubuğu. Seviyeler üstel bir eğriyi izler
   (`threshold(n) = 50 * n * (n - 1)`); 1-5 seviyeleri 0 / 100 /
   300 / 600 / 1000 XP'dedir. Sonlanan her oturum için 50 temel
   XP, ayrıca döngü başına bonuslar + ilk yöntem bonusu + seri
   çarpanı (7 günlük seride 2,75×'e kadar).
-- **Seri ısı haritası** (GitHub tarzı) — haftalık sütunlarda
+- **Seri ısı haritası** (GitHub tarzı) - haftalık sütunlarda
   365 günlük etkinlik Pzt..Paz. `var(--accent)` üzerinde
   `color-mix` ile beş katman rengi. Cumartesi/Pazar boşluklarını
   atlamak için Ayarlar'da hafta sonu modunu açın; dondurma stoğu
   (her 7 seri gününde 1, maks 3), kaçırılan bir hafta içi günde
   sıfırlamak yerine duraklatır.
-- **Rozet vitrini** — 5 kategoride 24 rozet (getting_started 3,
+- **Rozet vitrini** - 5 kategoride 24 rozet (getting_started 3,
   consistency 4, method_explorer 7, depth 7, polyglot 3).
   Kazanılanlar renkli ve tarihli olarak yanar; kilitliler gri
   kalır.
-- **Oturum sayacı** — oturumlar, dakikalar, mevcut seri,
+- **Oturum sayacı** - oturumlar, dakikalar, mevcut seri,
   ortalama anlama, ortalama stres için karolar.
 
 ## İlerleme zaman çizelgesi
@@ -73,23 +73,23 @@ fark eder ve denemek isterler.
 Son 5 oturum kompakt bir liste olarak: yöntem rozeti, oturumun
 anlama puanı (küçük bir çubuk olarak) ve dakika cinsinden süre.
 Bir satıra tıklamak, o oturuma göre filtrelenmiş İlerleme sayfasına
-atlar — belirli bir oturum harika veya berbat geçmişse ve ne
+atlar - belirli bir oturum harika veya berbat geçmişse ve ne
 olduğunu görmek istiyorsanız kullanışlıdır.
 
 ## Araç + aralıklı öneriler
 
 Alt kenarda iki öneri kartı:
 
-- **Araçlar** — profilinize göre özelleştirilmiş sıralı dış
+- **Araçlar** - profilinize göre özelleştirilmiş sıralı dış
   araçlar. Anki + NotebookLM artık birinci sınıf dışa aktarımlarla
   (manuel aktarım gerekmez). Her biri arayüz dilinizde tek satırlık
   "neden" açıklaması gösterir.
-- **Aralıklı tekrar** — yakın zamanda pratiğini yapmadığınız
+- **Aralıklı tekrar** - yakın zamanda pratiğini yapmadığınız
   yöntemler tarafından yönlendirilen kısa "sıradaki bu" eylem
   kartları. Beş bantlı politika (ilk / tazeleme / inceleme /
   pratik / koruma) aralık önerilerini yönlendirir.
 
-Her iki liste de her Kontrol Paneli yüklemesinde güncellenir —
+Her iki liste de her Kontrol Paneli yüklemesinde güncellenir -
 hesaplamaları ucuzdur ve son oturumu yansıtır.
 
 ## Oturum başlat

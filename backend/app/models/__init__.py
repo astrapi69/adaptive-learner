@@ -669,7 +669,7 @@ class ProgressCommit(Base):
 
 
 class StepEvaluation(Base):
-    """v0.5.0 — one Phase-8 dual-prompt evaluation verdict.
+    """v0.5.0 - one Phase-8 dual-prompt evaluation verdict.
 
     Written by the session plugin's /message route on every
     successful round-trip when step_evaluation is enabled. Carries

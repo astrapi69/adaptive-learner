@@ -5,7 +5,7 @@ para encontrar, descargar e iniciar conjuntos de lecciones. Está
 organizado en torno al flujo de aprendizaje: primero la búsqueda,
 luego continuar, y por último el catálogo.
 
-<!-- TODO: Captura de pantalla — Explorador de contenido con campo de búsqueda, sección Continuar aprendizaje y árbol de conjuntos -->
+<!-- TODO: Captura de pantalla - Explorador de contenido con campo de búsqueda, sección Continuar aprendizaje y árbol de conjuntos -->
 
 ---
 
@@ -37,10 +37,10 @@ total), **siguiente** lección con las estrellas tras finalizar, o
 
 El catálogo se divide en dos árboles:
 
-- **Idiomas** — como árbol *idioma de origen → idioma de destino →
+- **Idiomas** - como árbol *idioma de origen → idioma de destino →
   nivel*, filtrado según el idioma de tu app (puedes activar
   idiomas de origen adicionales en Ajustes → Aprendizaje).
-- **Conocimiento** — dominios no lingüísticos (p. ej.
+- **Conocimiento** - dominios no lingüísticos (p. ej.
   programación, psicología) con sus propios iconos.
 
 ---
@@ -50,10 +50,10 @@ El catálogo se divide en dos árboles:
 Cada conjunto descargado lleva una **insignia de origen** que
 muestra de dónde procede:
 
-- **Oficial** / **Incluido** — del catálogo oficial o integrado en
+- **Oficial** / **Incluido** - del catálogo oficial o integrado en
   la app.
-- **Repositorio propio** — de un repositorio que has conectado.
-- **Recomendado oficialmente** — de la lista curada de
+- **Repositorio propio** - de un repositorio que has conectado.
+- **Recomendado oficialmente** - de la lista curada de
   recomendaciones.
 
 Un **filtro de origen** muestra, si lo deseas, solo los conjuntos
@@ -95,6 +95,6 @@ lecciones se explica en
 
 ## Páginas relacionadas
 
-- [Lecciones y repasos](../user-guide/lessons.md) — el flujo de la lección
-- [Varios repositorios de contenido](content-repos.md) — conectar y gestionar orígenes
+- [Lecciones y repasos](../user-guide/lessons.md) - el flujo de la lección
+- [Varios repositorios de contenido](content-repos.md) - conectar y gestionar orígenes
 - [Mis lecciones](../user-guide/my-lessons.md)

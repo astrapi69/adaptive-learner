@@ -129,7 +129,7 @@ function lessonLabel(setTitle: string | null, setId: string, filename: string): 
     if (lesson.endsWith(".json")) lesson = lesson.slice(0, -".json".length);
     lesson = lesson.replace(/[-_]/g, " ").trim();
     const setLabel = setTitle && setTitle.length > 0 ? setTitle : setId;
-    return lesson ? `${setLabel} — ${lesson}` : setLabel;
+    return lesson ? `${setLabel} - ${lesson}` : setLabel;
 }
 
 /**

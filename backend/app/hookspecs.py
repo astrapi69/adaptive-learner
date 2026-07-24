@@ -159,7 +159,7 @@ class AdaptiveLearnerHookSpec:
         api_key: str,
         max_tokens: int | None = None,
     ) -> object:
-        """Async variant of :meth:`ai_complete` — v1.5.0 / Phase 18B.
+        """Async variant of :meth:`ai_complete` - v1.5.0 / Phase 18B.
 
         Returns an *awaitable* yielding the same string. Provider
         plugins can implement THIS hook to use async HTTP clients
@@ -184,7 +184,7 @@ class AdaptiveLearnerHookSpec:
         api_key: str,
         max_tokens: int | None = None,
     ) -> object:
-        """Streaming variant of :meth:`ai_complete` — v1.6.0 / Phase 19.
+        """Streaming variant of :meth:`ai_complete` - v1.6.0 / Phase 19.
 
         Returns an *async iterator* (or an awaitable resolving to
         one) that yields text deltas as the provider streams them.

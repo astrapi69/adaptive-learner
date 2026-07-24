@@ -40,12 +40,12 @@ export function useLessonMotivation({
         const motivationToast = {autoClose: 3000, passThrough: true} as const;
         if (kind === "halftime") {
             notify.info(
-                t("lesson.motivation.halftime", "Halfway there — keep going!"),
+                t("lesson.motivation.halftime", "Halfway there - keep going!"),
                 motivationToast,
             );
         } else if (kind === "last") {
             notify.info(
-                t("lesson.motivation.last", "Last one — finish strong!"),
+                t("lesson.motivation.last", "Last one - finish strong!"),
                 motivationToast,
             );
         }

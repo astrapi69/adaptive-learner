@@ -76,24 +76,24 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         2: {
             "de": (
                 "Gib jetzt eine konkrete Aufgabe, die die soeben vorgestellte "
-                "Regel anwendet. Halte dich zurück — keine Hinweise, keine Lösung, "
+                "Regel anwendet. Halte dich zurück - keine Hinweise, keine Lösung, "
                 "lass die Nutzerin selbst versuchen."
             ),
             "en": (
                 "Give a concrete exercise that applies the rule you just stated. "
-                "Hold back — no hints, no solution; let the learner attempt on "
+                "Hold back - no hints, no solution; let the learner attempt on "
                 "their own."
             ),
         },
         3: {
             "de": (
                 "Die Antwort der Nutzerin weicht ab. Benenne präzise, welcher "
-                "Teilschritt der Regel falsch angewendet wurde — ohne die volle "
+                "Teilschritt der Regel falsch angewendet wurde - ohne die volle "
                 "Lösung zu zeigen."
             ),
             "en": (
                 "The learner's answer is off. Pinpoint exactly which sub-step "
-                "of the rule was applied incorrectly — without revealing the "
+                "of the rule was applied incorrectly - without revealing the "
                 "full solution."
             ),
         },
@@ -123,12 +123,12 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         },
         6: {
             "de": (
-                "Gleiche Regel, frische Aufgabe — eine, die einen anderen "
+                "Gleiche Regel, frische Aufgabe - eine, die einen anderen "
                 "Aspekt derselben Regel betrifft. Lass die Nutzerin erneut "
                 "selbst arbeiten."
             ),
             "en": (
-                "Same rule, fresh exercise — one that exercises a different "
+                "Same rule, fresh exercise - one that exercises a different "
                 "facet of the same principle. Let the learner work alone again."
             ),
         },
@@ -151,13 +151,13 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
             "de": (
                 "Du bist ein induktiver Lernbegleiter. Zeige drei bis vier "
                 "sorgfältig gewählte Beispiele desselben Phänomens nebeneinander. "
-                "Sage NICHT die zugrundeliegende Regel — die soll die Nutzerin "
+                "Sage NICHT die zugrundeliegende Regel - die soll die Nutzerin "
                 "selbst entdecken."
             ),
             "en": (
                 "You are an inductive learning companion. Show three to four "
                 "carefully chosen examples of the same phenomenon side by side. "
-                "Do NOT state the underlying rule — the learner should derive "
+                "Do NOT state the underlying rule - the learner should derive "
                 "it themselves."
             ),
         },
@@ -211,12 +211,12 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         6: {
             "de": (
                 "Bringe weitere Beispiele desselben Phänomens, in einem anderen "
-                "Kontext. Lass die Nutzerin die Regel erneut formulieren — diesmal "
+                "Kontext. Lass die Nutzerin die Regel erneut formulieren - diesmal "
                 "präziser."
             ),
             "en": (
                 "Bring more examples of the same phenomenon in a different "
-                "context. Ask the learner to state the rule again — more "
+                "context. Ask the learner to state the rule again - more "
                 "precisely this time."
             ),
         },
@@ -249,23 +249,23 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         },
         2: {
             "de": (
-                "Lass die Nutzerin antworten. Halte dich strikt zurück — der "
+                "Lass die Nutzerin antworten. Halte dich strikt zurück - der "
                 "Lernwert kommt aus dem Reibungsmoment beim falschen Versuch."
             ),
             "en": (
-                "Let the learner answer. Hold back strictly — the learning "
+                "Let the learner answer. Hold back strictly - the learning "
                 "value comes from the friction of the wrong attempt."
             ),
         },
         3: {
             "de": (
                 "Markiere den Fehler präzise und ohne Polster: 'Das ist die "
-                "typische Falle X — du bist hineingelaufen, weil ...'. Klare "
+                "typische Falle X - du bist hineingelaufen, weil ...'. Klare "
                 "Diagnose statt sanfter Formulierung."
             ),
             "en": (
                 "Mark the mistake precisely and without padding: 'That is the "
-                "classic trap X — you fell into it because ...'. Clear "
+                "classic trap X - you fell into it because ...'. Clear "
                 "diagnosis rather than gentle framing."
             ),
         },
@@ -285,12 +285,12 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         5: {
             "de": (
                 "Die Falle wurde verstanden, aber die Nutzerin tappt erneut "
-                "hinein. Versuche eine andere Falle aus derselben Familie — "
+                "hinein. Versuche eine andere Falle aus derselben Familie - "
                 "ähnlicher Mechanismus, anderer Wortlaut."
             ),
             "en": (
                 "The trap was understood but the learner is falling in again. "
-                "Try a different trap from the same family — same mechanism, "
+                "Try a different trap from the same family - same mechanism, "
                 "different surface wording."
             ),
         },
@@ -329,7 +329,7 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
             "en": (
                 "You are a dialogic learning companion. Open warmly: briefly "
                 "ask what the learner already knows or suspects about the topic. "
-                "Not a lecture stance — a conversation."
+                "Not a lecture stance - a conversation."
             ),
         },
         2: {
@@ -347,12 +347,12 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         3: {
             "de": (
                 "Markiere den Fehler ruhig, mit Neugier statt Korrektur-Reflex. "
-                "Frage zuerst: 'Was hat dich dahin geführt?' — die Diagnose "
+                "Frage zuerst: 'Was hat dich dahin geführt?' - die Diagnose "
                 "läuft über das Gespräch."
             ),
             "en": (
                 "Note the mistake calmly, with curiosity rather than a "
-                "correction reflex. First ask: 'What led you there?' — the "
+                "correction reflex. First ask: 'What led you there?' - the "
                 "diagnosis runs through dialogue."
             ),
         },
@@ -407,22 +407,22 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
             "de": (
                 "Du bist ein kontextueller Lernbegleiter. Stelle ein konkretes "
                 "Alltagsszenario auf, in dem das Thema unmittelbar gebraucht "
-                "wird. Erst Szenario, dann theoretischer Stoff — nie umgekehrt."
+                "wird. Erst Szenario, dann theoretischer Stoff - nie umgekehrt."
             ),
             "en": (
                 "You are a contextual learning companion. Set up a concrete "
                 "real-life scenario where this topic is immediately needed. "
-                "Scenario first, theory only after — never the other way."
+                "Scenario first, theory only after - never the other way."
             ),
         },
         2: {
             "de": (
                 "Die Nutzerin steht im Szenario. Bitte sie um die nächste "
-                "konkrete Handlung — als wäre sie wirklich dort."
+                "konkrete Handlung - als wäre sie wirklich dort."
             ),
             "en": (
                 "The learner stands inside the scenario. Ask for the next "
-                "concrete action — as if they were really there."
+                "concrete action - as if they were really there."
             ),
         },
         3: {
@@ -439,12 +439,12 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         },
         4: {
             "de": (
-                "Setze das Szenario zurück und zeige die bessere Handlung — "
+                "Setze das Szenario zurück und zeige die bessere Handlung - "
                 "im selben konkreten Kontext. Erkläre, was sie kontextuell "
                 "richtig macht."
             ),
             "en": (
-                "Reset the scenario and show the better action — in the same "
+                "Reset the scenario and show the better action - in the same "
                 "concrete context. Explain what makes it contextually correct."
             ),
         },
@@ -511,12 +511,12 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         },
         3: {
             "de": (
-                "Identifiziere den Fehler im Stil der gewählten Methode — "
+                "Identifiziere den Fehler im Stil der gewählten Methode - "
                 "deduktiv präzise, induktiv musterbezogen, fehlerzentriert "
                 "diagnostisch, dialogisch fragend, kontextuell szenisch."
             ),
             "en": (
-                "Identify the mistake in the chosen method's style — "
+                "Identify the mistake in the chosen method's style - "
                 "deductive-precise, inductive-pattern-aware, error-focused-"
                 "diagnostic, dialogic-questioning, contextual-scenic."
             ),
@@ -524,11 +524,11 @@ _PROMPTS: dict[str, dict[int, dict[str, str]]] = {
         4: {
             "de": (
                 "Korrigiere im Modus der gewählten Methode, mit Erklärung. "
-                "Bleibe stilistisch konsistent — kein Methoden-Mix."
+                "Bleibe stilistisch konsistent - kein Methoden-Mix."
             ),
             "en": (
                 "Correct in the chosen method's mode, with explanation. Stay "
-                "stylistically consistent — no method mixing."
+                "stylistically consistent - no method mixing."
             ),
         },
         5: {
@@ -1017,7 +1017,7 @@ class RecentMistake:
 
 @dataclass(frozen=True)
 class LearningContext:
-    """Structured input for :func:`build_learning_context` — the gatherer
+    """Structured input for :func:`build_learning_context` - the gatherer
     (DB / IndexedDB) fills this; the builder only formats it."""
 
     topic: str
@@ -1039,7 +1039,7 @@ class _LearningLabels:
 
 
 _LEARNING_LABELS_EN = _LearningLabels(
-    header=("LEARNING CONTEXT — use it, and do not re-teach what the learner already knows:"),
+    header=("LEARNING CONTEXT - use it, and do not re-teach what the learner already knows:"),
     topic="Topic: ",
     completed="Completed lessons: ",
     none_yet="none yet",
@@ -1054,7 +1054,7 @@ _LEARNING_LABELS_EN = _LearningLabels(
 )
 
 _LEARNING_LABELS_DE = _LearningLabels(
-    header=("LERNKONTEXT — nutze ihn und wiederhole NICHT, was der Lerner schon kann:"),
+    header=("LERNKONTEXT - nutze ihn und wiederhole NICHT, was der Lerner schon kann:"),
     topic="Thema: ",
     completed="Abgeschlossene Lektionen: ",
     none_yet="noch keine",

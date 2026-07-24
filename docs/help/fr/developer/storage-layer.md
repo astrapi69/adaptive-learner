@@ -39,7 +39,7 @@ retourne une implémentation de `IStorageService`. L'interface comprend
 HTTP `fetch()` vers le backend FastAPI correspondant.
 
 Résolution des clés API : la clé du fournisseur actif est lue depuis
-la réponse API — jamais stockée dans le frontend.
+la réponse API - jamais stockée dans le frontend.
 
 ---
 
@@ -85,5 +85,5 @@ Le changement de mode nécessite un rechargement de page (effectué automatiquem
 depuis les Paramètres).
 
 La variable d'environnement de build `VITE_STORAGE_MODE=dexie` définit
-le mode par défaut pour le build GitHub Pages — les utilisateurs ne peuvent
+le mode par défaut pour le build GitHub Pages - les utilisateurs ne peuvent
 pas revenir au mode API sans backend.

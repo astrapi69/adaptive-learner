@@ -436,7 +436,7 @@ export default function MetadataStep({
                             <span>
                                 {t(
                                     "content.save_lesson.same_language_hint",
-                                    "Learned and your language are the same — fine for a grammar or knowledge lesson. When shared, it lands in the same-language branch of the content tree.",
+                                    "Learned and your language are the same - fine for a grammar or knowledge lesson. When shared, it lands in the same-language branch of the content tree.",
                                 )}
                             </span>
                         </FormHint>

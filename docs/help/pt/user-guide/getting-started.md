@@ -13,7 +13,7 @@ pública online:
 
 [**Abrir aplicação**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Esta corre no **modo local** — todos os teus dados permanecem no
+Esta corre no **modo local** - todos os teus dados permanecem no
 teu browser (IndexedDB), e as chamadas de IA vão diretamente da
 página para a Anthropic, OpenAI ou Google Gemini com a tua própria
 chave de API. Sem backend pelo meio.
@@ -50,7 +50,7 @@ fornecedor de IA fica fora do browser.
    Depois podes escolher "Começar já" ou, opcionalmente,
    configurar o teu perfil com mais detalhe no assistente.
    Vê [Onboarding](onboarding.md).
-3. **Iniciar a primeira lição** — o caminho mais rápido sem chave
+3. **Iniciar a primeira lição** - o caminho mais rápido sem chave
    de IA: Abre o
    [Navegador de Conteúdo](../features/content-browser.md) em
    `/content`, escolhe um conjunto de lições e inicia uma lição.
@@ -69,10 +69,10 @@ fornecedor de IA fica fora do browser.
 
 ## Como continuar
 
-- [Lições e revisões](lessons.md) — o fluxo da lição em detalhe
-- [Navegador de Conteúdo](../features/content-browser.md) — encontrar e filtrar lições
-- [Múltiplos repositórios de conteúdo](../features/content-repos.md) — ligar fontes de conteúdo próprias
+- [Lições e revisões](lessons.md) - o fluxo da lição em detalhe
+- [Navegador de Conteúdo](../features/content-browser.md) - encontrar e filtrar lições
+- [Múltiplos repositórios de conteúdo](../features/content-repos.md) - ligar fontes de conteúdo próprias
 - [Backup e restauro](../features/backup.md)
-- [Compreender o teu Dashboard](dashboard.md) — progresso, Streak, XP, Badges
-- [FAQ — perguntas frequentes](faq.md)
+- [Compreender o teu Dashboard](dashboard.md) - progresso, Streak, XP, Badges
+- [FAQ - perguntas frequentes](faq.md)
 - [A ideia pedagógica por trás da aplicação](../concept/philosophy.md)

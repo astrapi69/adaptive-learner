@@ -1,4 +1,4 @@
-"""AiGeminiPlugin — PluginForge entry point.
+"""AiGeminiPlugin - PluginForge entry point.
 
 Owns the ``ai_complete`` hook for any model starting with
 ``gemini-``. Returns ``None`` for any other model so pluggy
@@ -68,7 +68,7 @@ class AiGeminiPlugin(BasePlugin):
         api_key: str,
         max_tokens: int | None = None,
     ):
-        """v1.6.0 / Phase 19 — streaming variant of :meth:`ai_complete`.
+        """v1.6.0 / Phase 19 - streaming variant of :meth:`ai_complete`.
 
         Returns an async generator yielding text deltas. Returns
         ``None`` when the model isn't gemini-prefixed so pluggy

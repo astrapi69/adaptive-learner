@@ -5,7 +5,7 @@ para encontrar, descarregar e iniciar conjuntos de lições. Está
 estruturado em torno do fluxo de aprendizagem: primeiro a pesquisa,
 depois continuar a aprender, depois o catálogo.
 
-<!-- TODO: Captura de ecrã — Navegador de Conteúdo com campo de pesquisa, secção Continuar a Aprender e árvore de conjuntos -->
+<!-- TODO: Captura de ecrã - Navegador de Conteúdo com campo de pesquisa, secção Continuar a Aprender e árvore de conjuntos -->
 
 ---
 
@@ -36,10 +36,10 @@ lição tocada por conjunto, cada uma com exatamente uma ação:
 
 O catálogo divide-se em duas árvores:
 
-- **Idiomas** — como árvore *Idioma de origem → Idioma de destino → Nível*,
+- **Idiomas** - como árvore *Idioma de origem → Idioma de destino → Nível*,
   filtrada pelo idioma da tua aplicação (idiomas de origem
   adicionais podem ser ativados em Definições → Aprendizagem).
-- **Conhecimento** — domínios não linguísticos (p. ex. programação,
+- **Conhecimento** - domínios não linguísticos (p. ex. programação,
   psicologia) com os seus próprios ícones.
 
 ---
@@ -49,10 +49,10 @@ O catálogo divide-se em duas árvores:
 Cada conjunto descarregado traz um **badge de origem** que mostra
 de onde provém:
 
-- **Oficial** / **Bundled** — do catálogo oficial ou
+- **Oficial** / **Bundled** - do catálogo oficial ou
   incorporado na aplicação.
-- **Repositório próprio** — de um repositório que ligaste.
-- **Oficialmente recomendado** — da lista curada de recomendações.
+- **Repositório próprio** - de um repositório que ligaste.
+- **Oficialmente recomendado** - da lista curada de recomendações.
 
 Um **filtro de origem** mostra, se necessário, apenas conjuntos de
 uma origem específica. Mais sobre isto em
@@ -91,6 +91,6 @@ está descrito em [Criar lições](../content-creation/overview.md).
 
 ## Páginas relacionadas
 
-- [Lições e revisões](../user-guide/lessons.md) — o fluxo da lição
-- [Múltiplos repositórios de conteúdo](content-repos.md) — ligar e gerir fontes
+- [Lições e revisões](../user-guide/lessons.md) - o fluxo da lição
+- [Múltiplos repositórios de conteúdo](content-repos.md) - ligar e gerir fontes
 - [As Minhas Lições](../user-guide/my-lessons.md)

@@ -167,7 +167,7 @@ def read_api_key(provider: str) -> str | None:
             return crypto.decrypt_api_key(encrypted.strip())
         except crypto.CryptoDecryptionError:
             logger.warning(
-                "Could not decrypt the stored %s key — the secret.key "
+                "Could not decrypt the stored %s key - the secret.key "
                 "may have changed; the user must re-enter it.",
                 provider,
             )
@@ -229,7 +229,7 @@ def read_github_token() -> str | None:
             return crypto.decrypt_api_key(encrypted.strip())
         except crypto.CryptoDecryptionError:
             logger.warning(
-                "Could not decrypt the stored GitHub token — the "
+                "Could not decrypt the stored GitHub token - the "
                 "secret.key may have changed; the user must re-enter it."
             )
             return None

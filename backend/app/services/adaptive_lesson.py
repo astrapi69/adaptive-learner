@@ -228,7 +228,7 @@ def analyze_errors(
     now: datetime,
     focus_count: int = DEFAULT_FOCUS_COUNT,
 ) -> ErrorAnalysis:
-    """Run the analysis. Pure — same input + same ``now``
+    """Run the analysis. Pure - same input + same ``now``
     always produces the same output. The caller supplies
     ``now`` so tests stay deterministic; production routes
     pass ``datetime.now(UTC)``."""

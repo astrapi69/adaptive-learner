@@ -146,16 +146,16 @@ cd backend && poetry run pre-commit install
 
 さらに、いくつかのPRゲートは独自のワークフローにあります。
 
-- `cohesion-check.yml` — ファイルサイズガード（`.filesize-whitelist`に対するゲート）に加えて、2つのクラス名ゲート: 死んだCSSクラス名（`.dead-classnames-baseline`に対する`check-dead-classnames.py`）と**未スタイルclassNameゲート**（`--unstyled`、`.unstyled-classnames-baseline`に対するラチェット） — トークンがすべて死んでいる`className`はPRをブロックします。対になるフォルダーサイズガードはローカルで`make check-folder-size`により実行します。
-- `visual-baseline-gate.yml` — 視覚的にクリティカルなパス（レッスンコンポーネント、演習レンダラー、テーマ/CSSファイル）を変更するPRは、影響を受けるベースラインスクリーンショットを同じPRで持ち込まなければなりません。証明可能に無害な変更にはエスケープラベル`visual-baselines-unaffected`。
-- `testid-reference-gate.yml` — E2Eスペックが静的に参照する`data-testid`を（ユーザーの目に付きやすいサーフェスで）、スペックに触れずに削除または改名するPRは、このゲートで失敗します（`make check-testid-refs`）。エスケープラベル`testid-refs-unaffected`。
-- `docker-build-smoke.yml` — 本番Composeイメージ（ランチャー/install.shのパス）のビルドのみのスモーク。PRではパスフィルター付き、加えて`release/**`、週次、手動ディスパッチで実行。ローカルでは`make docker-build-smoke`。
+- `cohesion-check.yml` - ファイルサイズガード（`.filesize-whitelist`に対するゲート）に加えて、2つのクラス名ゲート: 死んだCSSクラス名（`.dead-classnames-baseline`に対する`check-dead-classnames.py`）と**未スタイルclassNameゲート**（`--unstyled`、`.unstyled-classnames-baseline`に対するラチェット） - トークンがすべて死んでいる`className`はPRをブロックします。対になるフォルダーサイズガードはローカルで`make check-folder-size`により実行します。
+- `visual-baseline-gate.yml` - 視覚的にクリティカルなパス（レッスンコンポーネント、演習レンダラー、テーマ/CSSファイル）を変更するPRは、影響を受けるベースラインスクリーンショットを同じPRで持ち込まなければなりません。証明可能に無害な変更にはエスケープラベル`visual-baselines-unaffected`。
+- `testid-reference-gate.yml` - E2Eスペックが静的に参照する`data-testid`を（ユーザーの目に付きやすいサーフェスで）、スペックに触れずに削除または改名するPRは、このゲートで失敗します（`make check-testid-refs`）。エスケープラベル`testid-refs-unaffected`。
+- `docker-build-smoke.yml` - 本番Composeイメージ（ランチャー/install.shのパス）のビルドのみのスモーク。PRではパスフィルター付き、加えて`release/**`、週次、手動ディスパッチで実行。ローカルでは`make docker-build-smoke`。
 
 **ナイトシフト / リリース（PRでは実行されない）**のワークフローには、特に次のものがあります。
 
-- `mutation-frontend.yml` — Strykerミューテーションテスト（リポジトリ変数`ENABLE_NIGHTLY_MUTATION`の背後でのナイトリー + 手動ディスパッチ。実行がジョブのタイムアウトに収まるよう、1回の実行でファイルの1スライスをミューテートします）。バックエンドのミューテーションテストはmutmutを使用します。
-- `webkit-gate.yml` — 実WebKitエンジンのレイアウトゲート（Chromiumゲートには構造的に見えないiOS/Safariのバグクラス）。リポジトリ変数`ENABLE_NIGHTLY_WEBKIT`の背後で毎日、`release/**`では常に、手動ディスパッチでも実行されます。
-- `visual-regression.yml` — ビジュアルベースラインのマトリクス（毎日 + 手動ディスパッチ。`update_baselines=true`はベースラインをCIで再レンダリングし、アーティファクトとしてアップロードします）。
-- `visual-baseline-sync.yml` — サービスワークフロー: ベースラインをCIでレンダリングし、コミットとしてPRブランチにプッシュします（ラベル`refresh-visual-baselines`、またはPR番号を指定した手動ディスパッチ） — マージ前の画像レビューは引き続き必須です。
+- `mutation-frontend.yml` - Strykerミューテーションテスト（リポジトリ変数`ENABLE_NIGHTLY_MUTATION`の背後でのナイトリー + 手動ディスパッチ。実行がジョブのタイムアウトに収まるよう、1回の実行でファイルの1スライスをミューテートします）。バックエンドのミューテーションテストはmutmutを使用します。
+- `webkit-gate.yml` - 実WebKitエンジンのレイアウトゲート（Chromiumゲートには構造的に見えないiOS/Safariのバグクラス）。リポジトリ変数`ENABLE_NIGHTLY_WEBKIT`の背後で毎日、`release/**`では常に、手動ディスパッチでも実行されます。
+- `visual-regression.yml` - ビジュアルベースラインのマトリクス（毎日 + 手動ディスパッチ。`update_baselines=true`はベースラインをCIで再レンダリングし、アーティファクトとしてアップロードします）。
+- `visual-baseline-sync.yml` - サービスワークフロー: ベースラインをCIでレンダリングし、コミットとしてPRブランチにプッシュします（ラベル`refresh-visual-baselines`、またはPR番号を指定した手動ディスパッチ） - マージ前の画像レビューは引き続き必須です。
 
 `.github/workflows/release-gate.yml`はタグプッシュ時に実行されます: バージョンピンが同期されていること（12ファイル全体でドリフトなし）、プラグインのロックファイルが一致すること、再生成されたアーティファクトが最新であることを検証します。

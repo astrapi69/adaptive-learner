@@ -165,7 +165,7 @@ export default function LearningStatistics() {
             label: t("statistics.avg_accuracy", "Average accuracy"),
             value:
                 overview.averageAccuracy === null
-                    ? "—"
+                    ? "-"
                     : `${overview.averageAccuracy}%`,
             testId: "stat-accuracy",
         },
@@ -228,7 +228,7 @@ export default function LearningStatistics() {
                     )}
                     emptyLabel={t(
                         "statistics.weak_areas_empty",
-                        "No mistakes tracked yet — keep going!",
+                        "No mistakes tracked yet - keep going!",
                     )}
                     testId="statistics-weak-areas"
                 />

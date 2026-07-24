@@ -28,9 +28,9 @@ passe directement à l'étape 5.
 
 Chaque session fait tourner **deux instances IA en parallèle** :
 
-1. **IA enseignante** — génère les explications, les exemples et les
+1. **IA enseignante** - génère les explications, les exemples et les
    exercices selon la méthode choisie.
-2. **IA évaluatrice** — lit vos réponses et attribue un score de confiance
+2. **IA évaluatrice** - lit vos réponses et attribue un score de confiance
    (0-100 %). Elle décide si le cycle peut avancer ou si une étape doit
    être répétée.
 
@@ -46,7 +46,7 @@ déterminent le rythme de la session.
 | Déductive | 70 % |
 | Inductive | 70 % |
 | Basée sur les erreurs | 75 % |
-| Dialogique | 50 % (plus tolérant — exploration) |
+| Dialogique | 50 % (plus tolérant - exploration) |
 | Contextuelle | 65 % |
 | IA adaptative | Variable selon l'historique |
 
@@ -74,5 +74,5 @@ de modèles d'invites. Chaque cellule adapte le rôle de l'IA, la posture
 pédagogique et les attentes de sortie à la combinaison méthode/étape précise.
 
 Cela signifie que « l'étape 2 en méthode déductive » et « l'étape 2 en
-méthode contextuelle » produisent des exercices fondamentalement différents —
+méthode contextuelle » produisent des exercices fondamentalement différents -
 même si les deux sont des étapes « Attempt ».

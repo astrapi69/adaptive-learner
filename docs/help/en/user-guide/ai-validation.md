@@ -2,11 +2,11 @@
 
 Adaptive Learner can **optionally have an AI review** a downloaded
 lesson set (EXP-033). The AI scans the set's cards for translation,
-grammar and level issues and reports what it finds — it never
+grammar and level issues and reports what it finds - it never
 blocks anything, it only advises. Separately, repositories carry a
 **trust level** you can read at a glance.
 
-<!-- TODO: Screenshot — Content Browser, set card with the "Check with AI" button + "AI-Checked" badge -->
+<!-- TODO: Screenshot - Content Browser, set card with the "Check with AI" button + "AI-Checked" badge -->
 
 ---
 
@@ -16,12 +16,12 @@ Every lesson set shows a source badge with a trust level in the
 Content Browser. It speaks to **provenance**, not to content
 quality:
 
-- **Trust 0 — not validated.** A newly connected repo whose
+- **Trust 0 - not validated.** A newly connected repo whose
   automatic check has not (yet) passed.
-- **Trust 1 — technically validated.** The repo contains at least
+- **Trust 1 - technically validated.** The repo contains at least
   one lesson and no executable code. The check re-runs on every
   sync.
-- **Trust 3 — officially recommended.** A curated repo from the
+- **Trust 3 - officially recommended.** A curated repo from the
   official recommendation list.
 
 Community ratings (Trust 2) and a central index are not yet
@@ -36,7 +36,7 @@ need:
 
 - a **stored API key** (Settings → Integrations) for one of the
   providers (Anthropic, OpenAI or Gemini);
-- **browser mode** (Dexie) — the check runs browser-direct;
+- **browser mode** (Dexie) - the check runs browser-direct;
 - a **downloaded set** (the check works on the locally cached
   cards).
 
@@ -49,7 +49,7 @@ to Settings.
 
 ---
 
-## Check a set — step by step
+## Check a set - step by step
 
 1. Open the **Content Browser** and pick a downloaded set.
 2. Click **"Check with AI"**.
@@ -71,7 +71,7 @@ so you don't get billed twice by accident.
 - **Cached.** The report is stored locally (IndexedDB) and shown
   again next time without paying again. It carries a content hash
   + a signature, so a changed set suggests a fresh check.
-- **Exportable.** You can download the report as **Markdown** —
+- **Exportable.** You can download the report as **Markdown** -
   handy for pasting into a lesson revision or an issue.
 - **Badge.** A checked set shows an **"AI-Checked"** badge in the
   Content Browser so you can see a check exists.

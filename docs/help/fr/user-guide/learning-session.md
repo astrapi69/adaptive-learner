@@ -39,11 +39,11 @@ latérale.
 
 **Conseils pratiques :**
 
-- Répondez franchement — une tentative incomplète est plus précieuse
+- Répondez franchement - une tentative incomplète est plus précieuse
   qu'un refus
 - Signalez à l'IA si quelque chose n'est pas clair : « Je ne comprends
   pas encore »
-- Ne copiez pas des réponses de l'IA — l'évaluateur le détectera via
+- Ne copiez pas des réponses de l'IA - l'évaluateur le détectera via
   une faible confiance lors des variations suivantes
 
 ---
@@ -55,9 +55,9 @@ stress moyen > 3, adéquation < 3), une **bannière de recommandation**
 apparaît en haut de la session.
 
 Vous pouvez :
-- **Accepter** — une nouvelle session avec la méthode recommandée démarre
-- **Refuser** — la suggestion ne réapparaît pas avant 3 sessions de plus
-- **Reporter** — ignorer pour maintenant
+- **Accepter** - une nouvelle session avec la méthode recommandée démarre
+- **Refuser** - la suggestion ne réapparaît pas avant 3 sessions de plus
+- **Reporter** - ignorer pour maintenant
 
 ---
 
@@ -84,7 +84,7 @@ de noter vos insights, erreurs ou questions pour consultation ultérieure.
 
 ## Streaming
 
-Les réponses de l'IA apparaissent en streaming mot par mot — vous ne
+Les réponses de l'IA apparaissent en streaming mot par mot - vous ne
 devez pas attendre la réponse complète. L'évaluation en arrière-plan
 tourne pendant le streaming.
 

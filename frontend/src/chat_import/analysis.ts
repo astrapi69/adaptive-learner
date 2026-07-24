@@ -109,7 +109,7 @@ const BASE_PROMPT_LINES = [
     "      ...",
     "    ],",
     '    "summary":             <string, 1-2 sentences for the UI header>,',
-    '    "vocabulary":          [   // OPTIONAL — see FIELD SEMANTICS',
+    '    "vocabulary":          [   // OPTIONAL - see FIELD SEMANTICS',
     '      {"word": <string>, "translation": <string>,',
     '       "example": <string?>, "phonetic": <string?>,',
     '       "tags": [<string>, ...]?},',
@@ -127,14 +127,14 @@ const BASE_PROMPT_LINES = [
     "- 'weaknesses': recurring gaps, confusions, or unfinished",
     "  threads in the conversation.",
     "- 'error_patterns': specific repeated mistakes the user made",
-    "  (not the same as weaknesses — these are observable errors).",
+    "  (not the same as weaknesses - these are observable errors).",
     "- 'recommended_method': the six-method learning model:",
-    "    deductive   — rule then examples",
-    "    inductive   — examples then rule",
-    "    error_based — fix mistakes as the path to insight",
-    "    dialogic    — back-and-forth questioning",
-    "    contextual  — anchor in the user's real-world situation",
-    "    ai_adaptive — user steers the AI, self-directed",
+    "    deductive   - rule then examples",
+    "    inductive   - examples then rule",
+    "    error_based - fix mistakes as the path to insight",
+    "    dialogic    - back-and-forth questioning",
+    "    contextual  - anchor in the user's real-world situation",
+    "    ai_adaptive - user steers the AI, self-directed",
     "- 'suggested_curriculum': 2-5 lesson stubs the user could",
     "  tackle next. 'priority' 1 = highest.",
     "- 'vocabulary': ONLY include this field if the conversation is",
@@ -154,7 +154,7 @@ const BASE_PROMPT_LINES = [
     "'User confused inductive reasoning with abductive reasoning,",
     "treating any inference-from-examples as induction' is useful.",
     "",
-    "If a section is genuinely empty, return an empty array — don't",
+    "If a section is genuinely empty, return an empty array - don't",
     "invent material.",
     "",
     "REMINDER: start your response with `{`. End with `}`. Nothing else.",
@@ -205,10 +205,10 @@ export function buildSystemPrompt(
         );
     }
     const directive = [
-        "LANGUAGE — CRITICAL:",
+        "LANGUAGE - CRITICAL:",
         `Write ALL free-text string values in ${name}, REGARDLESS of the ` +
             `language used in the transcript. The transcript's own language ` +
-            `does NOT determine the output language — ${name} does. Even if ` +
+            `does NOT determine the output language - ${name} does. Even if ` +
             `the conversation is in another language, the analysis MUST be ` +
             `in ${name}. This applies to:`,
         "- topic, subtopics",
@@ -219,7 +219,7 @@ export function buildSystemPrompt(
         "- vocabulary entries: the 'translation' field (the 'word'",
         "  field stays in whatever language the transcript used)",
         "",
-        "Do NOT translate these — they MUST stay exactly as written:",
+        "Do NOT translate these - they MUST stay exactly as written:",
         "- JSON keys (the names left of `:`)",
         "- user_level enum values: beginner / intermediate / advanced",
         "- recommended_method enum values: deductive / inductive /",

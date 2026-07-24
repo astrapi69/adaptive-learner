@@ -231,7 +231,7 @@ export function BackupCompare({
                 >
                     {t(
                         "backup.compare_no_changes",
-                        "The two backups are identical — no differences detected.",
+                        "The two backups are identical - no differences detected.",
                     )}
                 </p>
             )}
@@ -375,7 +375,7 @@ function BackupCompareTableCard({
                                 data-testid={`backup-compare-summary-${table.table}`}
                             >
                                 {t("backup.compare_high_volume_hint",
-                                    "High-volume table — record-level previews shown abbreviated.")}
+                                    "High-volume table - record-level previews shown abbreviated.")}
                             </p>
                         )}
                     {table.added.length > 0 && (

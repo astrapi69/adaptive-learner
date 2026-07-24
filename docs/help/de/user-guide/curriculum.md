@@ -1,6 +1,6 @@
 # Curriculum
 
-Die Curriculum-Seite ist dein strukturiertes Lernmaterial —
+Die Curriculum-Seite ist dein strukturiertes Lernmaterial -
 das "Buch", gegen das deine Sessions laufen. Eine optionale,
 aber starke Schicht über den freien KI-Sessions.
 
@@ -11,7 +11,7 @@ Liste von **Lektionen**, alles einem Lernenden zugeordnet. Du
 kannst mehrere Curricula nebeneinander führen ("Spanische
 Grammatik", "Spring Boot für Java-Entwickler", "Solo-Gitarre").
 
-- **Themen** bilden einen Baum — Kapitel und Unterkapitel.
+- **Themen** bilden einen Baum - Kapitel und Unterkapitel.
   Jedes Thema hat einen Titel, optional eine Beschreibung und
   einen Eltern-Verweis. Der "Unterthema hinzufügen"-Button
   erzeugt ein Kind.
@@ -34,7 +34,7 @@ Drag-and-Drop sortierbar (auch touch-freundlich auf Mobile).
 Klick auf ein Thema öffnet es; der Breadcrumb unter dem Titel
 zeigt den Weg zur Wurzel zurück.
 
-- **Thema hinzufügen** auf Wurzelebene — Geschwister jeder
+- **Thema hinzufügen** auf Wurzelebene - Geschwister jeder
   bestehenden Top-Level-Themen.
 - **Unterthema hinzufügen** unter dem aktuell fokussierten
   Thema.
@@ -78,7 +78,7 @@ Topics + Lektionen aus den Lücken, die die KI identifiziert
 hat.
 
 Die Session-KI zieht (noch) keine einzelnen Lektions-Inhalte
-in den System-Prompt — das ist ein bewusster Halt, bis sich
+in den System-Prompt - das ist ein bewusster Halt, bis sich
 die Curriculum-KI-Integrations-Form gesetzt hat.
 
 ## Pro-Speichermodus-Verhalten

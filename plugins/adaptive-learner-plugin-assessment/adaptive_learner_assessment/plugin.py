@@ -1,4 +1,4 @@
-"""AssessmentPlugin — PluginForge entry point.
+"""AssessmentPlugin - PluginForge entry point.
 
 Registers two hookimpls + one FastAPI router:
 

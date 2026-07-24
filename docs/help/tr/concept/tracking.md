@@ -61,7 +61,7 @@ derecelendirmesini çizer. Beş nokta yönü anlamak için yeterlidir:
 Gerçekte hangi yöntemleri kullandınız? Pek çok öğrenci kendisini
 varsayılan olarak tek bir yönteme (çoğunlukla tümdengelimli) kilitlediğini
 ve diğerlerini hiç denemediğini keşfeder. Gösterge Tablosundaki çubuk
-grafik bir aynadır — bir yarışma değil.
+grafik bir aynadır - bir yarışma değil.
 
 ### Seri
 
@@ -75,13 +75,13 @@ daha önemlidir.
 Çift istemli değerlendirici, yapay zeka gidiş-dönüşü başına bir
 `StepEvaluation` satırı yazar. Takip toplayıcı bunları şunlara dönüştürür:
 
-- **Ortalama güven** — yapay zekanın sizi ilerlemeye hazır olduğunuz
+- **Ortalama güven** - yapay zekanın sizi ilerlemeye hazır olduğunuz
   konusunda ortalama ne kadar emin olduğu. Düşük (< 0,5), materyalin
   gerçekten sizin için zor olduğu anlamına gelir. Bu bir bilgidir,
   karar değil.
-- **Tekrar sayısı** — değerlendirici kaç kez "burada kal" dedi. Yoğun
+- **Tekrar sayısı** - değerlendirici kaç kez "burada kal" dedi. Yoğun
   konular için yoğun tekrar aşamaları normaldir.
-- **Adım başına süre** — proje genelinde her adımda geçirilen toplam
+- **Adım başına süre** - proje genelinde her adımda geçirilen toplam
   duvar saati saniyesi (> 2s boşlukları hariç tutmak için sınırlandırılmış).
   En fazla zamanı alan adım, sizin için bilişsel çalışmanın gerçekleştiği
   yerdir.
@@ -92,22 +92,22 @@ daha önemlidir.
 
 Kasıtlı olarak:
 
-- **Katılım metrikleri yok** — "günde kaç dakika" suçlaması yok,
+- **Katılım metrikleri yok** - "günde kaç dakika" suçlaması yok,
   bildirim yok, günlük hatırlatma yok. Adaptive Learner dikkatiniz
   için savaşmaz.
-- **Diğer kullanıcılarla karşılaştırma yok** — Yerel modda verilerinizle
+- **Diğer kullanıcılarla karşılaştırma yok** - Yerel modda verilerinizle
   tek başınıza, Sunucu modunda arka uçla tek başınıza. Lider tahtası
   yok, eş karşılaştırması yok.
-- **"Tamamlanan dersler" yok** — tamamlanacak sabit bir müfredat
+- **"Tamamlanan dersler" yok** - tamamlanacak sabit bir müfredat
   yoktur. Kendi konunuzu siz belirlersiniz.
-- **"Hakimiyet yüzdesi" yok** — bir öğrenme konusu için %100 ne
+- **"Hakimiyet yüzdesi" yok** - bir öğrenme konusu için %100 ne
   anlama gelirdi ki? Hakimiyet bir duruştur, bir bitiş çizgisi değil.
 
 ## Oyunlaştırma katmanı
 
 ProgressCommit-as-Git altyapısının üzerine üç motivasyonel katman gelir:
 
-- **XP + Seviyeler** — sona eren oturum başına temel 50 XP, artı
+- **XP + Seviyeler** - sona eren oturum başına temel 50 XP, artı
   tamamlanan döngü başına +10, döngü adım-7 başına +25, ilk-yöntem
   bonusu +50, tümü seri çarpanıyla çarpılır (7 günlük seride en fazla
   2,75×). Seviyeler `eşik(n) = 50 * n * (n - 1)` formülünü izler;
@@ -115,7 +115,7 @@ ProgressCommit-as-Git altyapısının üzerine üç motivasyonel katman gelir:
 - `badges.yaml`'dan ilk başlatmada tohumlanan 5 kategoride
   **24 rozet** (getting_started 3 / consistency 4 / method_explorer 7 /
   depth 7 / polyglot 3). Tahminler her oturumdan sonra değerlendirilir.
-- **Seri ısı haritası** — 365 gün, GitHub tarzı, haftalık sütunlar.
+- **Seri ısı haritası** - 365 gün, GitHub tarzı, haftalık sütunlar.
   Dondurma: her 7 seri günü için 1, en fazla 3 stoklanmış, duraklatma-değil-sıfırlama
   semantiği. Hafta sonu modu değişkeni Cmt/Paz boşluklarını atlar.
 
@@ -132,7 +132,7 @@ profiline erişimi olan başka biri görmedikçe kimse göremez.
 
 Sunucu modunda veriler, arka uç ana bilgisayarındaki SQLite'tadır.
 Şifreli API anahtarları bir yana, satır verilerinin hiçbiri olağan
-anlamda hassas değildir — bunlar yalnızca yöntem adları, tamsayı
+anlamda hassas değildir - bunlar yalnızca yöntem adları, tamsayı
 puanlamalar, zaman damgaları. Ama *sizin*. Adaptive Learner bunların
 hiçbirini herhangi bir üçüncü taraf analitik ya da telemetri hizmetine
 göndermez.

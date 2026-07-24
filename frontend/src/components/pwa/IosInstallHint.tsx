@@ -79,7 +79,7 @@ export default function IosInstallHint() {
                 <span className="text-muted-foreground">
                     {t(
                         "install.ios.steps",
-                        "Tap the Share icon, then “Add to Home Screen” — it opens without the Safari bar.",
+                        "Tap the Share icon, then “Add to Home Screen” - it opens without the Safari bar.",
                     )}
                 </span>
             </div>

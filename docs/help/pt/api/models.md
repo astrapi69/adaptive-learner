@@ -48,7 +48,7 @@ Relações: `projects`, `curriculums`, `profiles`,
 
 O esquema de transferência (`UserSettingsOut`) substitui os
 três campos `api_key_*` por booleanos `has_<provider>_key:
-bool` — texto simples nunca viaja de volta ao cliente.
+bool` - texto simples nunca viaja de volta ao cliente.
 Desde v1.20.0 / Phase 34, o esquema de transferência também
 transporta `key_source_<provider>: ApiKeySource` (enum:
 `env | secrets_yaml | settings | none`) que indica qual

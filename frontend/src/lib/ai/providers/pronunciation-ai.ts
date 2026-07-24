@@ -22,7 +22,7 @@ Rules:
 - {level} difficulty.
 - 3 to 10 words.
 - Use common, conversational vocabulary that highlights {focus}.
-- Output JSON ONLY: {"phrase": "..."} — no prose, no markdown.
+- Output JSON ONLY: {"phrase": "..."} - no prose, no markdown.
 
 {previous_clause}`;
 
@@ -80,7 +80,7 @@ const JUDGE_PROMPT = `You are a pronunciation coach scoring one attempt.
 Target phrase (in {language}): {target}
 What the learner said (auto-transcribed; may have STT errors): {actual}
 
-Return strict JSON only — no prose, no markdown fences:
+Return strict JSON only - no prose, no markdown fences:
 {
   "matches": true,
   "score": 0.85,
@@ -90,7 +90,7 @@ Return strict JSON only — no prose, no markdown fences:
 
 Score guidance: 1.0 = identical, 0.9 = minor differences, 0.7 = recognisable, 0.5 = several errors, 0.3 = barely. matches=true iff score >= 0.7.
 
-Be kind. The transcription may add noise — judge by ear, not by exact text.`;
+Be kind. The transcription may add noise - judge by ear, not by exact text.`;
 
 /**
  * Build the AI judge prompt that scores a pronunciation attempt by comparing

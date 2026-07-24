@@ -3,8 +3,8 @@
 Giriş bilinçli olarak kısadır: **Hızlı
 başlangıç** yalnızca iki alan ister.
 
-1. **Ad** — uygulamanın sana nasıl hitap edeceği.
-2. **Konu** — ne öğrenmek istediğin. "İspanyolca gramer", "Makine
+1. **Ad** - uygulamanın sana nasıl hitap edeceği.
+2. **Konu** - ne öğrenmek istediğin. "İspanyolca gramer", "Makine
    öğrenmesi temelleri", "Gitarda solo doğaçlama". Somut ol; bu,
    projenin çapasıdır.
 
@@ -15,15 +15,15 @@ istediğin zaman değiştirebileceğin makul **varsayılanları** alır.
 
 Gönderdikten sonra uygulama sana iki yol sunar:
 
-- **Hemen başla** — anında Dashboard'a düşersin ve bir ders ya da
+- **Hemen başla** - anında Dashboard'a düşersin ve bir ders ya da
   oturum başlatabilirsin.
-- **Profili kur** — **Onboarding yardımcısını** açar: ekran başına bir
+- **Profili kur** - **Onboarding yardımcısını** açar: ekran başına bir
   soru (hedef → zaman çerçevesi → gün başına dakika → güncel sorun →
   isteğe bağlı öğrenme türü testi), her biri önceden doldurulmuş,
   böylece "İleri" her zaman çalışır, ayrıca ilerleme çubuğu ve "Geri".
   Yanıtlar her iki depolama modunda da kaydedilir.
 
-**Öğrenme türü testi artık zorunlu değildir** — yalnızca yardımcının
+**Öğrenme türü testi artık zorunlu değildir** - yalnızca yardımcının
 son adımı üzerinden erişilebilir. Daha fazlası için
 [Öğrenme türü testi](assessment.md).
 
@@ -63,6 +63,6 @@ uyarlayabilirsin. Dili Ayarlar'da değiştirirsin.
 - Yerel modda **hiçbir telemetri** cihazını terk etmez.
 
 Yapay zeka sağlayıcın mesajlarını görür (yapay zeka isteğinin amacı
-budur). Adaptive Learner'ın kendisi yalnızca yazdığını kaydeder —
+budur). Adaptive Learner'ın kendisi yalnızca yazdığını kaydeder -
 hangi [depolama modunun](settings.md) ayarlı olduğuna bağlı olarak
 yerel olarak ya da FastAPI arka ucunda.

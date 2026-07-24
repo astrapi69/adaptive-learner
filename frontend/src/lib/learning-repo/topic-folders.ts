@@ -60,7 +60,7 @@ function renderTopicStub(topic: TopicSlice, labels: Labels): string {
             lines.push(`- ${method}`);
         }
     } else {
-        lines.push("—");
+        lines.push("-");
     }
     lines.push("");
     return rstripWithNewline(lines.join("\n"));

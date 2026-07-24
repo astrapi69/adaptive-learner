@@ -3,12 +3,12 @@
 Ein praktischer Schritt-für-Schritt-Durchlauf für neue Mitwirkende.
 Anders als die Seiten [Architektur](architecture.md) und
 [Setup](setup.md) (die erklären, *was* das System ist), führt diese
-Seite dich durch das *Tun* deines ersten Bug-Fixes — vom frischen
+Seite dich durch das *Tun* deines ersten Bug-Fixes - vom frischen
 Klon bis zum gemergten Pull Request.
 
 ## 1. Entwicklungsumgebung einrichten
 
-Voraussetzungen: **Python 3.11+** (3.12 empfohlen — Plugins werden
+Voraussetzungen: **Python 3.11+** (3.12 empfohlen - Plugins werden
 gegen 3.12 getestet), **Node 24+** (von Vite 8 vorausgesetzt),
 **Poetry**, **Bun** und **GNU Make**.
 
@@ -33,7 +33,7 @@ Backend auf **http://localhost:18001**. Beide Ports sind über
 überschreibbar. Ein einmaliges Ctrl-C stoppt beide.
 
 Wenn `make install` fehlschlägt, liegt es meist daran, dass Poetry das
-falsche Python wählt — führe `poetry env use python3.12` in `backend/`
+falsche Python wählt - führe `poetry env use python3.12` in `backend/`
 aus und installiere neu. Die vollständige Konfigurationskette
 (Secrets, KI-Schlüssel, der zwingende `ADAPTIVE_LEARNER_SECRET_KEY`)
 steht im [Setup](setup.md).
@@ -51,10 +51,10 @@ gh issue list --label bug --state open
 Oder auf GitHub:
 <https://github.com/astrapi69/adaptive-learner/issues?q=is%3Aissue+is%3Aopen+label%3Abug>
 
-Such dir für den Anfang etwas Kleines — halte Ausschau nach
+Such dir für den Anfang etwas Kleines - halte Ausschau nach
 `good first issue` oder einem `bug` mit geringem Aufwand. Existiert
 für den gefundenen Bug kein Issue, **erstelle eines, bevor du Code
-anfasst** — und lege für jeden neu entdeckten Bug ein *separates*
+anfasst** - und lege für jeden neu entdeckten Bug ein *separates*
 Issue an.
 
 ## 3. Das Issue verstehen
@@ -104,7 +104,7 @@ rg "die Fehlermeldung" frontend/src backend/app
   nicht aus dem Repo-Root).
 - **Styling: ausschließlich Tailwind-Utility-Klassen**, keine
   inline Farb-Styles und keine neuen Regeln in `global.css`. Farben
-  laufen über Design-Tokens (CSS-Variablen) — siehe
+  laufen über Design-Tokens (CSS-Variablen) - siehe
   [Theme-System](themes.md).
 - **Beide Storage-Modi müssen funktionieren.** Ein Feature, das in
   API-Modus erscheint, aber keinen Dexie-Pfad hat (oder keine
@@ -117,7 +117,7 @@ Jeder Fix braucht mindestens einen Test, der vor der Änderung
 fehlschlägt und danach grün ist.
 
 ```bash
-# Frontend (Vitest) — aus frontend/ starten
+# Frontend (Vitest) - aus frontend/ starten
 cd frontend && bunx vitest run src/pfad/zu/datei.test.ts
 
 # Backend (pytest)
@@ -161,7 +161,7 @@ Closes #123"
 git push -u origin fix/kurze-beschreibung
 ```
 
-Halte Commits **atomar** — jeder Commit lässt den Baum grün
+Halte Commits **atomar** - jeder Commit lässt den Baum grün
 (`make test` läuft durch). Kombiniere eine Quelländerung mit ihrer
 Teständerung im selben Commit, wenn ein Trennen einen roten
 Zwischenzustand erzeugen würde.
@@ -192,7 +192,7 @@ Die CI prüft bei jedem PR die Korrektheits-Gates:
 - Frontend-Tests (Vitest) + Backend-/Plugin-Tests (pytest)
 - TypeScript (`tsc --noEmit`) + mypy + ruff + ESLint
 - Pre-commit-Hooks
-- Complexity-Gate (Baseline-Ratsche — neue Funktionen bleiben unter
+- Complexity-Gate (Baseline-Ratsche - neue Funktionen bleiben unter
   der zyklomatischen Komplexitätsschwelle)
 - Folder-Size- + File-Size-Guards (God-File-/God-Folder-Vermeidung)
 - i18n-Parität (alle 11 Sprachen müssen jeden Key definieren)

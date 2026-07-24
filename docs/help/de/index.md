@@ -8,7 +8,7 @@ machst einen 12-Fragen-Test, die App findet heraus, welche
 Methoden zu dir passen, dann führen KI-gestützte Sessions
 dich durch einen Sieben-Schritt-Lernzyklus. Die App passt an,
 wie sie unterrichtet, basierend darauf, wie du tatsächlich
-lernst. Kontinuierlich weiterentwickelt — die aktuelle
+lernst. Kontinuierlich weiterentwickelt - die aktuelle
 Version findest du auf der [Releases-Seite](https://github.com/astrapi69/adaptive-learner/releases).
 
 [Jetzt ausprobieren](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
@@ -20,8 +20,8 @@ Version findest du auf der [Releases-Seite](https://github.com/astrapi69/adaptiv
 
 ### Sechs Methoden, nicht eine
 
-Die meisten Lern-Apps wählen einen Ansatz — Karteikarten,
-Video, gamifizierte Streaks — und unterstellen, dass alle
+Die meisten Lern-Apps wählen einen Ansatz - Karteikarten,
+Video, gamifizierte Streaks - und unterstellen, dass alle
 gleich lernen. Adaptive Learner liefert sechs Methoden
 (deduktiv, induktiv, fehlerbasiert, dialogisch, kontextuell,
 KI-adaptiv) und hilft dir, zwischen ihnen zu wechseln, wenn
@@ -34,8 +34,8 @@ du wächst.
 Jede Session läuft durch Input → Versuch → Fehler →
 Feedback → Anpassen → Wiederholen → Integrieren. Eine
 Dual-Prompt-KI bewertet pro Zug, ob du bereit bist
-vorzurücken, zu bleiben oder zurückzugehen. Kein Förderband
-— echtes kognitives Pacing.
+vorzurücken, zu bleiben oder zurückzugehen. Kein Förderband -
+echtes kognitives Pacing.
 
 [Der Sieben-Schritt-Zyklus →](concept/seven-steps.md)
 
@@ -44,7 +44,7 @@ vorzurücken, zu bleiben oder zurückzugehen. Kein Förderband
 Wechsle zwischen **Lokal-Modus** (alles im Browser, KI-
 Aufrufe direkt an Anthropic / OpenAI / Gemini) und
 **Server-Modus** (FastAPI-Backend). Bring deinen eigenen
-KI-Schlüssel mit. Als PWA installierbar — funktioniert
+KI-Schlüssel mit. Als PWA installierbar - funktioniert
 offline für vergangene Sessions und das Dashboard.
 
 [Erste Schritte →](user-guide/getting-started.md)
@@ -69,7 +69,7 @@ freigeschaltet hat.
    Ziel, Zeitrahmen).
 3. **12-Fragen-Test machen** (~2 Minuten).
 4. **KI-API-Schlüssel hinzufügen** (Anthropic, OpenAI oder
-   Gemini — kostenlose Tiers reichen).
+   Gemini - kostenlose Tiers reichen).
 5. **Erste Session starten** vom Dashboard aus.
 
 [Voller Erste-Schritte-Guide →](user-guide/getting-started.md)
@@ -78,13 +78,13 @@ freigeschaltet hat.
 
 ## Dokumentation
 
-- [**Benutzerhandbuch**](user-guide/getting-started.md) —
+- [**Benutzerhandbuch**](user-guide/getting-started.md) -
   für Lernende, die die App nutzen.
-- [**Konzept**](concept/philosophy.md) — das pädagogische
+- [**Konzept**](concept/philosophy.md) - das pädagogische
   Denken dahinter.
-- [**Entwickler-Doku**](developer/architecture.md) — für
+- [**Entwickler-Doku**](developer/architecture.md) - für
   Contributors und Plugin-Autoren.
-- [**API-Referenz**](api/overview.md) — für Integratoren.
+- [**API-Referenz**](api/overview.md) - für Integratoren.
 
 ---
 
@@ -103,7 +103,7 @@ die vollständige Historie liegt in
 - **13 Plugins** (Assessment / 3 KI-Anbieter / Session /
   Tracking / Tools / Gamification / Anki / NotebookLM /
   Learning-Repo / Content-Loader / Missions)
-- **26 gebündelte Content-Sets** — 424 Lektionen / 5405
+- **26 gebündelte Content-Sets** - 424 Lektionen / 5405
   Karten über 10 Content-Sprachen und 5 Domänen
 - **30 SQLAlchemy-Modelle**, Sync-Oberfläche 30 Tabellen
 - **2 Speichermodi** (Lokal IndexedDB / FastAPI-Backend),

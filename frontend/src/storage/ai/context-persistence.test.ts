@@ -11,7 +11,7 @@
  * IMPORTANT: the assertions below encode the CURRENT freeze behaviour on
  * purpose. When the planned "Rebuild-on-Resume" fix lands (context recomposed
  * from the live DB on every turn instead of frozen at creation), these
- * assertions must be INVERTED — e.g. the second start() then reflects the
+ * assertions must be INVERTED - e.g. the second start() then reflects the
  * mutated analysis, and the prompt is no longer byte-identical to v1. Treat a
  * failure here after that fix as expected, and flip the expectations rather
  * than reverting the fix.

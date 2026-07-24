@@ -15,7 +15,7 @@ Fernet using a secret you set via the
 `secret_key:` in `~/.config/adaptive-learner/secrets.yaml`.
 
 Neither mode sends telemetry, analytics, or your messages to
-any third party other than the AI provider you've chosen — and
+any third party other than the AI provider you've chosen - and
 that one only sees the message content you'd expect (system
 prompt + your text + the AI's prior responses in the session).
 
@@ -95,12 +95,12 @@ Yes. Three export paths shipped:
 
 Three Web Speech API integrations:
 
-- **Text-to-Speech** on AI replies + Assessment results — a
+- **Text-to-Speech** on AI replies + Assessment results - a
   ▶ button next to each speaks it aloud, language-matched.
-- **Speech-to-Text** on the Session input — a 🎤 button
+- **Speech-to-Text** on the Session input - a 🎤 button
   captures your voice and populates the textarea with
   interim transcripts before send.
-- **Pronunciation Practice** for language projects — visit
+- **Pronunciation Practice** for language projects - visit
   `/pronunciation`, the AI generates a target phrase, you
   speak, and a judge AI scores similarity + suggests
   improvements.
@@ -120,7 +120,7 @@ One click seeds a Curriculum + starts a targeted session
 from the analysis.
 
 The Claude.ai per-conversation Markdown export is a
-validated import case — the parser ships with full timestamp
+validated import case - the parser ships with full timestamp
 extraction + role boundary preservation for that format.
 
 ## Sync between devices?
@@ -140,17 +140,17 @@ Learner is a *structured learning system* that uses an AI
 under the hood but adds:
 
 1. **A 6-method × 7-step matrix** of bespoke system prompts.
-2. **Per-turn step evaluation** — a second AI call judges
+2. **Per-turn step evaluation** - a second AI call judges
    readiness and may move you forward / back.
 3. **Auto-loop into new cycles** when the topic is
    integrated.
 4. **A profile** of your learning preferences from the
    12-question assessment.
-5. **Long-term tracking** — ProgressCommits, streak heatmap,
+5. **Long-term tracking** - ProgressCommits, streak heatmap,
    XP, badges, time-per-step charts. ChatGPT forgets when
    you close the tab.
-6. **Provider freedom** — Anthropic, OpenAI, or Gemini.
-7. **Local-first option** — everything in your browser,
+6. **Provider freedom** - Anthropic, OpenAI, or Gemini.
+7. **Local-first option** - everything in your browser,
    nothing sent to a server (except your AI calls).
 
 ## What if the AI goes wrong?
@@ -159,7 +159,7 @@ The system fails visibly:
 
 - **Wrong API key**: the AI call returns a clear error
   message, surfaced inline in the chat.
-- **Provider down**: same — the error renders the HTTP
+- **Provider down**: same - the error renders the HTTP
   status from the provider's API.
 - **JSON parse failure from the evaluator**: a deterministic
   +1 advance kicks in (capped at step 7), with

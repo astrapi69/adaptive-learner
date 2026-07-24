@@ -340,7 +340,7 @@ def check_set_assets_size(
         warnings.append(
             (
                 f"Set {content_set.id!r} declares "
-                f"{len(content_set.assets)} assets — "
+                f"{len(content_set.assets)} assets - "
                 "100+ is unusual for a learning set. "
                 "Double-check for duplicate manifest entries."
             ),

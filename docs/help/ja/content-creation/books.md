@@ -68,5 +68,5 @@ domains:
 
 ## 関連ページ
 
-- [コンテンツブラウザ](../features/content-browser.md) — 推薦が表示される場所
-- [レッスンを作成する — 概要](overview.md)
+- [コンテンツブラウザ](../features/content-browser.md) - 推薦が表示される場所
+- [レッスンを作成する - 概要](overview.md)

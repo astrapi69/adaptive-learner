@@ -40,7 +40,7 @@ export default function ReviewedFallbackPanel({
         data-result={allCorrect ? "correct" : "wrong"}
       >
         <CheckCircle2 size={16} aria-hidden="true" />
-        {t("lesson.reviewed.completed", "Completed")} —{" "}
+        {t("lesson.reviewed.completed", "Completed")} -{" "}
         {t("lesson.summary.score", "Score")}: {correct} / {total}
       </p>
     </section>

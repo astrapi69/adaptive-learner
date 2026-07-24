@@ -294,11 +294,11 @@ export default function ContinueLearning({
                             <span className="flex min-w-0 flex-1 flex-col">
                                 <span
                                     className="truncate font-medium text-foreground"
-                                    title={`${item.setTitle} — ${item.lessonTitle}`}
+                                    title={`${item.setTitle} - ${item.lessonTitle}`}
                                 >
                                     {item.setTitle}
                                     <span className="text-muted-foreground">
-                                        {" — "}
+                                        {" - "}
                                         {item.lessonTitle}
                                     </span>
                                 </span>

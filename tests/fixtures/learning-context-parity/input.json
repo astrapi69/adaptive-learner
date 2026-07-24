@@ -1,10 +1,10 @@
 {
   "topic": "Französisch A1",
   "completed": [
-    {"label": "language-fr-a1 — 01 greetings", "correct": 9, "total": 10},
-    {"label": "language-fr-a1 — 02 numbers", "correct": 7, "total": 12}
+    {"label": "language-fr-a1 - 01 greetings", "correct": 9, "total": 10},
+    {"label": "language-fr-a1 - 02 numbers", "correct": 7, "total": 12}
   ],
-  "in_progress": {"label": "language-fr-a1 — 03 family", "step": 4},
+  "in_progress": {"label": "language-fr-a1 - 03 family", "step": 4},
   "mistakes": [
     {"element": "bonjour", "answered": "bonsoir", "expected": "bonjour", "count": 3},
     {"element": "merci", "answered": "mersi", "expected": "merci", "count": 1}

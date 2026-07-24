@@ -27,7 +27,7 @@ Adaptive Learner coexists with other projects already bound to
 8000 / 5173.
 
 The frontend's Vite proxy forwards `/api/*` to the backend, so
-the frontend always uses `/api` as its base URL — no CORS
+the frontend always uses `/api` as its base URL - no CORS
 config needed for local dev.
 
 For background mode:
@@ -42,11 +42,11 @@ make dev-down   # stop
 `.github/workflows/deploy-gh-pages.yml` builds the frontend
 with:
 
-- `VITE_BASE="/adaptive-learner/"` — prefixes every asset URL
+- `VITE_BASE="/adaptive-learner/"` - prefixes every asset URL
   for the per-repo Pages path.
-- `VITE_STORAGE_MODE="dexie"` — pins DexieStorage as the
+- `VITE_STORAGE_MODE="dexie"` - pins DexieStorage as the
   default mode.
-- `VITE_API_BASE=""` — no backend to point at.
+- `VITE_API_BASE=""` - no backend to point at.
 
 The workflow runs on every push to `develop` (the active
 development branch under gitflow) and on manual dispatch. After
@@ -87,7 +87,7 @@ make prod-down   # docker compose down
 - **frontend** (nginx) that serves the built frontend and
   reverse-proxies `/api/*` to the backend over the compose
   network. nginx listens on container port 80, published to the
-  host on **`${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}`** — this is
+  host on **`${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}`** - this is
   the port the user reaches in the browser.
 - **A named `adaptive-learner-data` volume** mounted at
   `/app/data` (set via `ADAPTIVE_LEARNER_DATA_DIR`) that survives
@@ -99,7 +99,7 @@ The backend image runs as a **non-root user** (`adaptive_learner`,
 created in `backend/Dockerfile`).
 
 `install.sh` and `install.ps1` are the curl-pipe installers
-for end users — they pull a tagged release tarball, set up
+for end users - they pull a tagged release tarball, set up
 `ADAPTIVE_LEARNER_SECRET_KEY`, and `docker compose up`.
 `start.sh` is the equivalent local entry point: it checks Docker,
 generates a random secret into `.env` from `.env.example` when no
@@ -136,7 +136,7 @@ several env vars.
 ## Desktop launcher (cross-OS, Docker-based)
 
 `launcher/` is a PyInstaller-based one-binary desktop launcher.
-It is **not** an embedded server — it orchestrates Docker Compose
+It is **not** an embedded server - it orchestrates Docker Compose
 under the hood. The flow (`adaptive_learner_launcher/__main__.py`)
 is intentionally linear:
 
@@ -144,7 +144,7 @@ is intentionally linear:
    dialogs guide the user to install/start Docker otherwise).
 2. Resolve the app install: on a fresh install, download the
    matching tagged release ZIP from GitHub and extract it
-   (`installer.py`, stdlib only — no git dependency), then
+   (`installer.py`, stdlib only - no git dependency), then
    generate `.env` from `.env.example` with a random secret.
 3. `docker compose up` the prod stack.
 4. Wait for the backend health check, then open the user's

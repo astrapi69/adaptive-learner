@@ -25,24 +25,24 @@ en cero y enlaza a la página de Evaluación.
 
 ## XP + Racha + Insignias
 
-- **Widget de XP** — nivel actual + XP total + una barra de
+- **Widget de XP** - nivel actual + XP total + una barra de
   progreso hasta el siguiente nivel. Los niveles siguen una curva
   exponencial (`threshold(n) = 50 * n * (n - 1)`); los niveles
   1-5 están a 0 / 100 / 300 / 600 / 1000 XP. 50 XP base por
   sesión terminada, más bonificaciones por ciclo + bonificación
   por primer método + multiplicador de racha (hasta 2,75× a los
   7 días de racha).
-- **Mapa de calor de racha** (estilo GitHub) — 365 días de
+- **Mapa de calor de racha** (estilo GitHub) - 365 días de
   actividad en columnas semanales Lun..Dom. Cinco colores de
   nivel mediante `color-mix` en `var(--accent)`. Activa el modo
   fin de semana en Ajustes para omitir los huecos de sáb./dom.;
   la reserva de congelaciones (1 por cada 7 días de racha, máximo
   3) actúa como pausa-no-reinicio en un día de semana faltante.
-- **Galería de insignias** — 24 insignias en 5 categorías
+- **Galería de insignias** - 24 insignias en 5 categorías
   (getting_started 3, consistency 4, method_explorer 7, depth 7,
   polyglot 3). Las obtenidas se iluminan con color y fecha; las
   bloqueadas permanecen grises.
-- **Contador de sesiones** — fichas para sesiones, minutos, racha
+- **Contador de sesiones** - fichas para sesiones, minutos, racha
   actual, comprensión media, estrés medio.
 
 ## Línea de tiempo de progreso
@@ -84,11 +84,11 @@ ver qué ocurrió.
 
 Dos tarjetas de recomendación en el borde inferior:
 
-- **Herramientas** — herramientas externas clasificadas adaptadas
+- **Herramientas** - herramientas externas clasificadas adaptadas
   a tu perfil. Anki + NotebookLM son ahora de primera clase con
   exportaciones integradas (sin transferencia manual). Cada una
   muestra un «por qué» en una línea en tu idioma de interfaz.
-- **Repetición espaciada** — tarjetas cortas de «haz esto a
+- **Repetición espaciada** - tarjetas cortas de «haz esto a
   continuación» impulsadas por los métodos que no has practicado
   recientemente. Una política de cinco bandas (primera vez /
   refrescar / repasar / practicar / mantener) guía las sugerencias

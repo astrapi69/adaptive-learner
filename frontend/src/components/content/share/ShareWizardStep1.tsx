@@ -167,7 +167,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
                   the user clear it; the empty-level gate then blocks
                   Continue (BUG C). */}
               <SelectItem value={LEVEL_NONE}>
-                {t("content.wizard.select_level", "— Select level —")}
+                {t("content.wizard.select_level", "- Select level -")}
               </SelectItem>
               {CEFR_LEVELS.map((lvl) => (
                 <SelectItem key={lvl} value={lvl}>

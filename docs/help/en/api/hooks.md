@@ -208,7 +208,7 @@ def on_session_complete(
     """
 ```
 
-Errors in this hook MUST NOT propagate — the
+Errors in this hook MUST NOT propagate - the
 `_fire_on_session_complete` wrapper in
 `backend/app/main.py` catches and logs them.
 

@@ -20,7 +20,7 @@ Inicia el backend (FastAPI + uvicorn `--reload`) en el puerto
 15174 en paralelo. Presiona Ctrl-C una vez para detener ambos.
 
 El proxy Vite del frontend reenvía `/api/*` al backend, por lo
-que el frontend siempre usa `/api` como URL base — no se necesita
+que el frontend siempre usa `/api` como URL base - no se necesita
 configuración de CORS para el desarrollo local.
 
 Para el modo en segundo plano:
@@ -34,11 +34,11 @@ make dev-down   # detener
 
 `.github/workflows/deploy-gh-pages.yml` compila el frontend con:
 
-- `VITE_BASE="/adaptive-learner/"` — añade el prefijo de la ruta
+- `VITE_BASE="/adaptive-learner/"` - añade el prefijo de la ruta
   de Pages del repositorio a cada URL de recurso.
-- `VITE_STORAGE_MODE="dexie"` — fija DexieStorage como modo por
+- `VITE_STORAGE_MODE="dexie"` - fija DexieStorage como modo por
   defecto.
-- `VITE_API_BASE=""` — no hay backend al que apuntar.
+- `VITE_API_BASE=""` - no hay backend al que apuntar.
 
 El flujo de trabajo se ejecuta en cada push a `main` y en
 despacho manual. Después de la compilación copia
@@ -69,7 +69,7 @@ make prod-down   # docker compose down
   contenedor.
 
 `install.sh` e `install.ps1` son los instaladores de curl-pipe
-para usuarios finales — descargan un tarball de versión etiquetada,
+para usuarios finales - descargan un tarball de versión etiquetada,
 configuran `ADAPTIVE_LEARNER_SECRET_KEY` y ejecutan
 `docker compose up`.
 
@@ -145,4 +145,4 @@ compartido entre ellos:
 | `release-gate.yml` | push de etiqueta | Comprobación de deriva de versiones |
 | `deploy-gh-pages.yml` | push a main, despacho | Compilación + despliegue en GH Pages |
 | `launcher-{linux,macos,windows}.yml` | release: created | Compilar + adjuntar binario del lanzador |
-| `docs.yml` | push a main | Compilación de MkDocs (actualmente inactivo — el sitio proviene del flujo de GH Pages) |
+| `docs.yml` | push a main | Compilación de MkDocs (actualmente inactivo - el sitio proviene del flujo de GH Pages) |

@@ -109,7 +109,7 @@ def get_recommendations(
 def get_spaced_recommendations(
     project_id: str, lang: str = "de", db: Session = Depends(get_db)
 ) -> list[dict[str, Any]]:
-    """v0.4.0 — spaced-repetition action cards for the Dashboard.
+    """v0.4.0 - spaced-repetition action cards for the Dashboard.
 
     Driven by the project's profile + recent ProgressCommit
     recency. Returns an empty list when no profile exists yet

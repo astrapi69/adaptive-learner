@@ -9,11 +9,11 @@
 
 Το Adaptive Learner ακολουθεί Semantic Versioning 2.0.0:
 
-- **Major (X.0.0)** — breaking changes σε API ή αρχιτεκτονική.
+- **Major (X.0.0)** - breaking changes σε API ή αρχιτεκτονική.
   Κρατημένο για μελλοντικές μεγάλες αλλαγές.
-- **Minor (X.Y.0)** — νέα χαρακτηριστικά, backward-compatible.
+- **Minor (X.Y.0)** - νέα χαρακτηριστικά, backward-compatible.
   Προεπιλογή για κάθε ολοκλήρωση φάσης.
-- **Patch (X.Y.Z)** — διορθώσεις σφαλμάτων, backward-compatible.
+- **Patch (X.Y.Z)** - διορθώσεις σφαλμάτων, backward-compatible.
   Αλυσίδες hotfix.
 
 Τα pre-release tags (`-alpha`, `-beta`, `-rc`) δεν χρησιμοποιούνται.
@@ -78,14 +78,14 @@ cd frontend && bun run build # πρέπει να επιτύχει
 Το workflow CI release-gate (`.github/workflows/release-gate.yml`)
 τρέχει το ίδιο `sync-versions-check` σε κάθε tag push. Αν
 τοπικά συμφωνεί αλλά το CI αποτυγχάνει, η απόκλιση εισήχθη
-μεταξύ τοπικού ελέγχου και push — διερεύνησε.
+μεταξύ τοπικού ελέγχου και push - διερεύνησε.
 
 ### 6. Commit + tag
 
 ```bash
 git add -A
 git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z — phase headline + summary"
+git tag -a vX.Y.Z -m "vX.Y.Z - phase headline + summary"
 ```
 
 Τα μηνύματα tag είναι annotated, πολυγραμμικά και συνοψίζουν
@@ -139,11 +139,11 @@ gh release create vX.Y.Z \
 Όταν ο κύκλος release αυξάνει dependencies (Vite, React κ.λπ.),
 κράτα κάθε αύξηση ως δικό της commit. Λόγοι:
 
-- **Λεπτομέρεια bisect** — μια οπισθοδρόμηση απομονώνεται σε
+- **Λεπτομέρεια bisect** - μια οπισθοδρόμηση απομονώνεται σε
   μια αύξηση.
-- **Αναγνωσιμότητα CHANGELOG** — οι αναγνώστες βλέπουν την
+- **Αναγνωσιμότητα CHANGELOG** - οι αναγνώστες βλέπουν την
   πραγματική αιτιολόγηση κάθε αύξησης.
-- **Επαναφορά** — μια κακή αύξηση μπορεί να αναιρεθεί
+- **Επαναφορά** - μια κακή αύξηση μπορεί να αναιρεθεί
   ανεξάρτητα.
 
 Το πλήρες πρότυπο τεκμηριώνεται στο

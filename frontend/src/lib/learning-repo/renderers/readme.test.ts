@@ -2,7 +2,7 @@
  * Pure tests for renderers/readme.ts (Phase 49C / v1.32.0 /
  * PHASE-42-STORAGE-ABSTRACTION-01).
  *
- * Structural assertions — full byte-for-byte parity with the
+ * Structural assertions - full byte-for-byte parity with the
  * Python output is the parity test (49F)'s job. Here we pin
  * the section order, the placeholders that get substituted,
  * and the empty-state branches the Python tests cover.

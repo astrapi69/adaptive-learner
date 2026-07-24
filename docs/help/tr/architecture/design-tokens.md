@@ -13,16 +13,16 @@ içinde bulunur.
 
 ## Token katmanları
 
-1. **Tema başına Token'lar** — `frontend/src/styles/themes/theme-<id>.css`
+1. **Tema başına Token'lar** - `frontend/src/styles/themes/theme-<id>.css`
    içinde tema başına bir kez tanımlanan 44 Token'lık kanonik küme
    (arka planlar, metin, kenarlıklar, etkileşim, vurgu, durum,
    alıştırma geri bildirimi, yıldız, grafikler, gölgeler).
    `[data-theme]` değiştiğinde hepsi değişir. **Her tema tam olarak
    aynı kümeyi tanımlamalıdır** (`themes.test.ts` ile sabitlenmiştir).
-2. **Temadan bağımsız Token'lar** — yapısı gereği her temada aynı
+2. **Temadan bağımsız Token'lar** - yapısı gereği her temada aynı
    olan değerler (örn. marka paleti, sözdizimi renkleri, düzen
    boşlukları). Bunlar `global.css :root` içinde yer alır.
-3. **Legacy alias'lar** — `--surface`, `--danger` gibi kanonik
+3. **Legacy alias'lar** - `--surface`, `--danger` gibi kanonik
    Token'lar **üzerinden** çözülen eski adlar.
 
 ---
@@ -46,7 +46,7 @@ içinde bulunur.
 
 1. Mevcut bir `theme-<id>.css` dosyasını şablon olarak kopyala.
 2. 44 kanonik Token'ın tümünü ayarla (eşlik zorunludur).
-3. **WCAG-AA kontrastına** dikkat et — `contrast.test.ts` tüm
+3. **WCAG-AA kontrastına** dikkat et - `contrast.test.ts` tüm
    temaları hesaplamalı olarak denetler.
 4. Temayı kaydet; Ayarlar → Görünüm altındaki seçici onu devralır.
 
@@ -69,5 +69,5 @@ zorundadır). Buna ek olarak `themes.test.ts` (Token eşliği) ve
 
 ## İlgili sayfalar
 
-- [Tema sistemi](../developer/themes.md) — gönderilen temalar + seçici
-- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — eksiksiz Token listesi
+- [Tema sistemi](../developer/themes.md) - gönderilen temalar + seçici
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) - eksiksiz Token listesi

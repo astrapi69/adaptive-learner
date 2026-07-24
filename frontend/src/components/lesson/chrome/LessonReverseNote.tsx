@@ -46,7 +46,7 @@ export default function LessonReverseNote({
         >
             {t(
                 "lesson.reverse.not_reversible",
-                "This exercise type can't be reversed — shown in its original format.",
+                "This exercise type can't be reversed - shown in its original format.",
             )}
         </p>
     );

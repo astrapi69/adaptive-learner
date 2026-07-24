@@ -356,7 +356,7 @@ def lesson_xp_multiplier_for_mode(mode: str | None) -> float:
 
 
 def _get_or_create_user_xp(db: Session, user_id: str):
-    """Singleton getter — creates a zero row on first call."""
+    """Singleton getter - creates a zero row on first call."""
     from app.models import UserXP
 
     row = db.query(UserXP).filter(UserXP.user_id == user_id).first()
@@ -610,7 +610,7 @@ def spend_xp(
     amount: int,
     reason: str,
 ) -> dict[str, Any]:
-    """#594 Hint Economy — deduct XP for a spent hint.
+    """#594 Hint Economy - deduct XP for a spent hint.
 
     ``amount`` is a non-negative number of points to remove; the total is
     clamped at 0 so a learner can never go negative. Returns the new XP

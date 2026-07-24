@@ -19,7 +19,7 @@ make dev
 
 ポート18001でバックエンド（FastAPI + uvicorn `--reload`）を、ポート15174でフロントエンド（Vite devサーバー）を並行して起動します。Ctrl-Cを一度押すと両方が停止します。
 
-フロントエンドのViteプロキシが`/api/*`をバックエンドに転送するため、フロントエンドは常に`/api`をベースURLとして使用します — ローカル開発ではCORS設定は不要です。
+フロントエンドのViteプロキシが`/api/*`をバックエンドに転送するため、フロントエンドは常に`/api`をベースURLとして使用します - ローカル開発ではCORS設定は不要です。
 
 バックグラウンドモードの場合:
 
@@ -32,9 +32,9 @@ make dev-down   # 停止
 
 `.github/workflows/deploy-gh-pages.yml`は以下の設定でフロントエンドをビルドします。
 
-- `VITE_BASE="/adaptive-learner/"` — すべてのアセットURLにリポジトリごとのPagesパスのプレフィックスを付けます。
-- `VITE_STORAGE_MODE="dexie"` — DexieStorageをデフォルトモードとして固定します。
-- `VITE_API_BASE=""` — 指向するバックエンドはありません。
+- `VITE_BASE="/adaptive-learner/"` - すべてのアセットURLにリポジトリごとのPagesパスのプレフィックスを付けます。
+- `VITE_STORAGE_MODE="dexie"` - DexieStorageをデフォルトモードとして固定します。
+- `VITE_API_BASE=""` - 指向するバックエンドはありません。
 
 ワークフローは`main`へのすべてのプッシュおよび手動ディスパッチで実行されます。ビルド後に`dist/index.html`を`dist/404.html`にコピーしてSPAルーターのフォールバックとし、`actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`を使用して公開します。
 
@@ -53,7 +53,7 @@ make prod-down   # docker compose down
 - **nginx**サイドカーがビルドされたフロントエンド（`frontend/dist/`）を配信し、`/api/*`をバックエンドにプロキシします。
 - コンテナの再起動を越えて生き残る**SQLiteボリューム**。
 
-`install.sh`と`install.ps1`はエンドユーザー向けのcurl-pipeインストーラーです — タグ付きリリースのtarballをプルし、`ADAPTIVE_LEARNER_SECRET_KEY`を設定し、`docker compose up`を実行します。
+`install.sh`と`install.ps1`はエンドユーザー向けのcurl-pipeインストーラーです - タグ付きリリースのtarballをプルし、`ADAPTIVE_LEARNER_SECRET_KEY`を設定し、`docker compose up`を実行します。
 
 インストーラーはリリース時に`install.sh.template` / `install.ps1.template`と`backend/pyproject.toml`のバージョン（`scripts/sync_versions.py`を参照）から再生成されます。生成されたファイルを直接編集しないでください。
 
@@ -96,4 +96,4 @@ make prod-down   # docker compose down
 | `release-gate.yml` | タグpush | バージョンピンのドリフトチェック |
 | `deploy-gh-pages.yml` | mainへのpush、ディスパッチ | GH Pagesビルド + デプロイ |
 | `launcher-{linux,macos,windows}.yml` | release: created | ビルド + ランチャーバイナリの添付 |
-| `docs.yml` | mainへのpush | MkDocsビルド（現在は非アクティブ — サイトはGH Pagesワークフローから） |
+| `docs.yml` | mainへのpush | MkDocsビルド（現在は非アクティブ - サイトはGH Pagesワークフローから） |

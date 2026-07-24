@@ -116,7 +116,7 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
                 )}
                 overdueLabel={t(
                     "dashboard.review_queue.overdue",
-                    "overdue — start here",
+                    "overdue - start here",
                 )}
                 startLabel={t(
                     "dashboard.review_queue.open",

@@ -13,7 +13,7 @@ online version:
 
 [**Open the app**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-It runs in **local mode** — all your data stays in your browser
+It runs in **local mode** - all your data stays in your browser
 (IndexedDB), and AI calls go straight from the page to Anthropic,
 OpenAI or Google Gemini using your own API key. No backend in
 between.
@@ -32,7 +32,7 @@ on your platform:
   so Adaptive Learner shows a small **"Add to Home Screen"** hint
   instead: tap the **Share** button, then **"Add to Home Screen"**.
   The hint appears only on iOS Safari and only while the app is not
-  yet installed — once installed it never shows again.
+  yet installed - once installed it never shows again.
 
 Either way, Adaptive Learner becomes a **standalone app** on your
 phone or desktop, launchable without a browser tab. (When it is
@@ -63,14 +63,14 @@ the browser.
    Afterwards you can choose "Jump right in" or optionally set up
    your profile in more detail in the wizard. See
    [Onboarding](onboarding.md).
-3. **Start your first lesson** — the fastest way without an AI
+3. **Start your first lesson** - the fastest way without an AI
    key: open the
    [Content Browser](../features/content-browser.md) at
    `/content`, choose a lesson set and start a lesson. You read
    short theory and do exercises; at the end you see your result
    with stars. See [Lessons and reviews](lessons.md). **Tip:** the
    best place to begin is the bundled set
-   **"Adaptive Learner — App-Tutorial"**, which teaches you the app
+   **"Adaptive Learner - App-Tutorial"**, which teaches you the app
    directly as lessons. See [App tutorial](app-tutorial.md).
 4. **Optional: AI sessions.** If you would rather have the guided
    six-method learning conversation, store an **API key**
@@ -92,11 +92,11 @@ device.
 
 ## Where to go next
 
-- [App tutorial](app-tutorial.md) — practice the app inside the app (no AI key needed)
-- [Lessons and reviews](lessons.md) — the lesson flow in detail
-- [Content Browser](../features/content-browser.md) — find and filter lessons
-- [Multiple content repositories](../features/content-repos.md) — connect your own content sources
+- [App tutorial](app-tutorial.md) - practice the app inside the app (no AI key needed)
+- [Lessons and reviews](lessons.md) - the lesson flow in detail
+- [Content Browser](../features/content-browser.md) - find and filter lessons
+- [Multiple content repositories](../features/content-repos.md) - connect your own content sources
 - [Backup and restore](../features/backup.md)
-- [Understanding your Dashboard](dashboard.md) — progress, streak, XP, badges
-- [FAQ — frequently asked questions](faq.md)
+- [Understanding your Dashboard](dashboard.md) - progress, streak, XP, badges
+- [FAQ - frequently asked questions](faq.md)
 - [The pedagogical idea behind the app](../concept/philosophy.md)

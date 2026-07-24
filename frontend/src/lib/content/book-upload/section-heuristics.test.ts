@@ -86,7 +86,7 @@ describe("isLikelyNonContentSection", () => {
     it("ignores leading numbering and separators before the keyword", () => {
         expect(isLikelyNonContentSection("1. Vorwort")).toBe(true);
         expect(isLikelyNonContentSection("I. Preface")).toBe(true);
-        expect(isLikelyNonContentSection("  — Glossary")).toBe(true);
+        expect(isLikelyNonContentSection("  - Glossary")).toBe(true);
     });
 
     it("does not flag empty or whitespace titles", () => {

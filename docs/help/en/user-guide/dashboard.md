@@ -6,7 +6,7 @@ how you're doing right now (streak heatmap + session counter),
 what you've been doing (recent sessions + method distribution),
 and what to do next (tool + spaced recommendations).
 
-At the top sits the **Subjects + Tags filter bar** — pick a
+At the top sits the **Subjects + Tags filter bar** - pick a
 subject (e.g. Languages → Spanish) or a tag to scope every
 widget below to projects with that classification. Filters are
 shareable via URL query params.
@@ -23,23 +23,23 @@ all-zero shape and links to the Assessment page.
 
 ## XP + Streak + Badges
 
-- **XP widget** — current level + total XP + a progress bar to
+- **XP widget** - current level + total XP + a progress bar to
   the next level. Levels follow an exponential curve
   (`threshold(n) = 50 * n * (n - 1)`); levels 1-5 sit at
   0 / 100 / 300 / 600 / 1000 XP. Base 50 XP per ended session,
   plus per-cycle bonuses + first-method bonus + streak
   multiplier (up to 2.75× at a 7-day streak).
-- **Streak heatmap** (GitHub-style) — 365 days of activity in
+- **Streak heatmap** (GitHub-style) - 365 days of activity in
   weekly columns Mon..Sun. Five tier colors via
   `color-mix` on `var(--accent)`. Toggle weekend mode in
   Settings to skip Sat/Sun gaps; freeze stockpile (1 per 7
   streak days, max 3) acts as pause-not-reset on a missed
   weekday.
-- **Badge showcase** — 24 badges across 5 categories
+- **Badge showcase** - 24 badges across 5 categories
   (getting_started 3, consistency 4, method_explorer 7, depth
   7, polyglot 3). Earned ones light up colored + dated; locked
   ones stay grey.
-- **Session counter** — tiles for sessions, minutes, current
+- **Session counter** - tiles for sessions, minutes, current
   streak, average understanding, average stress.
 
 ## Progress timeline
@@ -71,23 +71,23 @@ contextual method and want to try it.
 The last 5 sessions as a compact list: method badge, the
 session's understanding rating (as a tiny bar), and the
 duration in minutes. Clicking a row jumps to the Progress page
-filtered to that session — useful when a particular session
+filtered to that session - useful when a particular session
 felt great or terrible and you want to see what happened.
 
 ## Tool + spaced recommendations
 
 Two recommendation cards along the bottom edge:
 
-- **Tools** — ranked external tools tailored to your profile.
+- **Tools** - ranked external tools tailored to your profile.
   Anki + NotebookLM are now first-class with shipped exports
   (no manual handoff). Each shows a one-line "why" in your UI
   language.
-- **Spaced repetition** — short "do this next" action cards
+- **Spaced repetition** - short "do this next" action cards
   driven by which methods you haven't practised recently. A
   five-band policy (first / refresh / review / practice /
   maintain) drives the interval suggestions.
 
-Both lists update on every Dashboard load — they're cheap to
+Both lists update on every Dashboard load - they're cheap to
 compute and reflect the latest session.
 
 ## Start session

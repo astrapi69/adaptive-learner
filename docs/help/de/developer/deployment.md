@@ -27,7 +27,7 @@ damit Adaptive Learner mit anderen Projekten koexistiert, die schon
 auf 8000 / 5173 gebunden sind.
 
 Vites Proxy leitet `/api/*` ans Backend, also nutzt das
-Frontend immer `/api` als Base-URL — keine CORS-Konfig nötig
+Frontend immer `/api` als Base-URL - keine CORS-Konfig nötig
 für die lokale Entwicklung.
 
 Hintergrund-Modus:
@@ -41,11 +41,11 @@ make dev-down   # stoppen
 
 `.github/workflows/deploy-gh-pages.yml` baut das Frontend mit:
 
-- `VITE_BASE="/adaptive-learner/"` — präfixt jede Asset-URL
+- `VITE_BASE="/adaptive-learner/"` - präfixt jede Asset-URL
   für den Pages-Unterpfad.
-- `VITE_STORAGE_MODE="dexie"` — pinnt DexieStorage als
+- `VITE_STORAGE_MODE="dexie"` - pinnt DexieStorage als
   Standardmodus.
-- `VITE_API_BASE=""` — kein Backend zum Anpeilen.
+- `VITE_API_BASE=""` - kein Backend zum Anpeilen.
 
 Der Workflow läuft bei jedem Push auf `develop` (dem aktiven
 Entwicklungs-Branch unter Gitflow) und bei manueller Auslösung.
@@ -88,7 +88,7 @@ make prod-down   # docker compose down
 - **frontend** (nginx), das das gebaute Frontend ausliefert und
   `/api/*` über das Compose-Netzwerk ans Backend reverse-proxied.
   nginx lauscht auf Container-Port 80, host-veröffentlicht auf
-  **`${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}`** — das ist der Port,
+  **`${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}`** - das ist der Port,
   den der Nutzer im Browser erreicht.
 - **Ein benanntes `adaptive-learner-data`-Volume**, gemountet auf
   `/app/data` (gesetzt über `ADAPTIVE_LEARNER_DATA_DIR`), das
@@ -100,7 +100,7 @@ Das Backend-Image läuft als **Nicht-Root-Nutzer**
 (`adaptive_learner`, angelegt in `backend/Dockerfile`).
 
 `install.sh` und `install.ps1` sind die curl-pipe-Installer
-für Endnutzer — sie holen ein Tag-Release-Tarball, setzen
+für Endnutzer - sie holen ein Tag-Release-Tarball, setzen
 `ADAPTIVE_LEARNER_SECRET_KEY` und machen `docker compose up`.
 `start.sh` ist der entsprechende lokale Einstiegspunkt: prüft
 Docker, generiert beim ersten Lauf einen zufälligen Secret in
@@ -135,7 +135,7 @@ Drei Dinge sind in Produktion wichtig:
 ## Desktop-Launcher (Cross-OS, Docker-basiert)
 
 `launcher/` ist ein PyInstaller-basierter One-Binary-Desktop-
-Launcher. Er ist **kein** eingebetteter Server — er orchestriert
+Launcher. Er ist **kein** eingebetteter Server - er orchestriert
 unter der Haube Docker Compose. Der Ablauf
 (`adaptive_learner_launcher/__main__.py`) ist bewusst linear:
 
@@ -144,7 +144,7 @@ unter der Haube Docker Compose. Der Ablauf
    Docker an).
 2. Die App-Installation auflösen: bei einer Neuinstallation das
    passende Tag-Release-ZIP von GitHub herunterladen und auspacken
-   (`installer.py`, nur Stdlib — keine git-Abhängigkeit), dann
+   (`installer.py`, nur Stdlib - keine git-Abhängigkeit), dann
    `.env` aus `.env.example` mit einem zufälligen Secret
    generieren.
 3. Den Prod-Stack per `docker compose up` hochfahren.

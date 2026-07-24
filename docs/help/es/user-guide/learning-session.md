@@ -30,18 +30,18 @@ de progreso de la aplicación se actualiza en consecuencia.
 
 Cada mensaje que envías activa hasta tres llamadas a la IA:
 
-1. **La respuesta de aprendizaje** — transmitida token a token
+1. **La respuesta de aprendizaje** - transmitida token a token
    mediante SSE. Ves el cursor en línea (▍) mientras el asistente
    piensa; los tokens aterrizan en la burbuja a medida que llegan
    (sin marcador de «Pensando...»). El prompt del sistema se
    compone a partir de una matriz de 42 celdas (6 métodos × 7
    pasos), por lo que una Entrada deductiva se siente muy diferente
    a una Repetición contextual.
-2. **El evaluador de pasos** — una segunda llamada a la IA lee el
+2. **El evaluador de pasos** - una segunda llamada a la IA lee el
    intercambio y decide si estás listo para avanzar. Emite
    `advance`, `confidence`, `reason`, `suggested_step`. La
    aplicación aplica la sugerencia cuando la confianza ≥ 0,6.
-3. **El evaluador de transición de tema** (solo en el paso 7) —
+3. **El evaluador de transición de tema** (solo en el paso 7) -
    una tercera llamada a la IA decide si el tema ha sido integrado.
    Si es así Y `continue_recommended`, un nuevo ciclo comienza
    automáticamente con un subtema nuevo (auto-bucle, máximo 5
@@ -52,7 +52,7 @@ notificación «Paso movido de X a Y porque…» cuando realmente se
 aplica. Las tarjetas de transición de ciclo se muestran como
 tarjetas «Ciclo N» con borde discontinuo en el historial del chat.
 
-**Voz activada / desactivada** — un botón de TTS (▶) junto a cada
+**Voz activada / desactivada** - un botón de TTS (▶) junto a cada
 respuesta de la IA la lee en voz alta; un botón de micrófono (🎤)
 en la entrada te permite dictar; las transcripciones provisionales
 rellenan el área de texto para que puedas revisar antes de enviar.

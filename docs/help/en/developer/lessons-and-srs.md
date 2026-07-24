@@ -77,7 +77,7 @@ two plugins. For the user-facing overview see
 ``app/models/__init__.py:ElementError`` with a composite
 UNIQUE constraint on
 ``(user_id, set_id, lesson_id, exercise_id, element_key)``.
-Lesson-scoped element keys per decision **D2** — the same
+Lesson-scoped element keys per decision **D2** - the same
 word in two different lessons is two rows.
 
 ```python
@@ -98,7 +98,7 @@ class ElementError(Base):
     mastered_at: datetime | None
 ```
 
-Decoupled from ``learning_sessions`` (no FK) by design —
+Decoupled from ``learning_sessions`` (no FK) by design -
 content lessons reference content set / lesson IDs by string,
 not via a relational join. This means the table survives
 cache evictions independent of any session row.
@@ -142,7 +142,7 @@ non-mastered row's next review:
 | 0 | 1 day after ``last_attempt_at`` |
 | 1 | 3 days |
 | 2 | 7 days |
-| ≥ 3 | mastered — excluded from the queue |
+| ≥ 3 | mastered - excluded from the queue |
 
 ### Priority sort
 
@@ -206,7 +206,7 @@ Three decisions drive the shape:
 ### Schema change
 
 ```python
-# app/models/__init__.py — Phase 46F.1
+# app/models/__init__.py - Phase 46F.1
 LEARNING_PROJECT_KIND_STANDARD = "standard"
 LEARNING_PROJECT_KIND_CONTENT = "content"
 
@@ -232,10 +232,10 @@ in both directions.
 ``app/services/lesson_session_unification.py`` has two
 public functions:
 
-- ``find_or_create_content_pseudo_project(db, user_id)`` —
+- ``find_or_create_content_pseudo_project(db, user_id)`` -
   idempotent lookup; creates only on miss.
 - ``record_lesson_completion_session(db, *, user_id,
-  lesson_progress_id, score_correct, score_total)`` —
+  lesson_progress_id, score_correct, score_total)`` -
   writes the ``LearningSession`` row, commits, then fires
   ``on_session_complete``.
 
@@ -246,7 +246,7 @@ helper's own DB writes propagate exceptions (real DB
 problem), but the hook-fire path wraps subscriber
 exceptions per the
 ``_fire_on_session_complete`` pattern from the session
-plugin's ``routes.py`` — a gamification crash cannot
+plugin's ``routes.py`` - a gamification crash cannot
 roll back the lesson the user already saw on the summary
 screen.
 
@@ -271,18 +271,18 @@ hiding.
 
 ``adaptive_learner_gamification.xp_service`` gains:
 
-- ``compute_stars(correct, total)`` — 0-3 from a score, with
+- ``compute_stars(correct, total)`` - 0-3 from a score, with
   bands at 50 % / 75 % / 90 %. Mirrors the frontend's
   ``computeStars`` in ``lib/lesson-summary.ts`` so both
   sides project the same star rating.
 - ``calculate_lesson_session_xp(*, stars, first_attempt,
-  streak_days)`` — pure calculator. 30 base + 10/star +
+  streak_days)`` - pure calculator. 30 base + 10/star +
   20 first-attempt-3-star + same +25 %/day streak
   multiplier (capped at 7) as the chat formula.
-- ``_is_first_attempt(db, lesson_progress_id)`` — reads
+- ``_is_first_attempt(db, lesson_progress_id)`` - reads
   ``LessonProgress.step_results`` JSON and returns True iff
   every step row has ``attempts == 1``.
-- ``award_xp_for_lesson_session(db, *, session)`` —
+- ``award_xp_for_lesson_session(db, *, session)`` -
   persistence wrapper that resolves user_id from the
   project FK and applies the formula.
 
@@ -294,7 +294,7 @@ helper carries the lesson-specific keys
 (``lesson_progress_id``, ``score_correct``,
 ``score_total``); chat-session payloads do not, so the
 lesson XP wrapper would degrade gracefully if the dispatch
-ever leaked — but the regression-pin test in
+ever leaked - but the regression-pin test in
 ``backend/tests/test_lesson_session_unification.py``
 asserts the exact lesson award (100 XP for a 4/4
 first-attempt completion + first-day streak) so a leak
@@ -309,7 +309,7 @@ Four new predicates added to
 
 | Key | Predicate | Helper |
 |---|---|---|
-| ``first_lesson`` | ``_completed_lesson_count >= 1`` | counts ``LessonProgress.status="completed"`` (not via LearningSession — the lesson row is authoritative) |
+| ``first_lesson`` | ``_completed_lesson_count >= 1`` | counts ``LessonProgress.status="completed"`` (not via LearningSession - the lesson row is authoritative) |
 | ``lessons_10`` | ``_completed_lesson_count >= 10`` | same |
 | ``three_star_streak`` | ``_last_n_lessons_all_three_star(n=3)`` | reads the user's last 3 completed ``LessonProgress`` by ``completed_at`` desc; projects each via ``xp_service.compute_stars`` |
 | ``review_master`` | ``_mastered_elements_count >= 50`` | counts ``ElementError.mastered=True`` |
@@ -325,14 +325,14 @@ catches drift between the two lists.
 ## Storage-mode caveats
 
 The element-tracking + SRS chain works identically in
-**both** storage modes — the ``IElementErrorsNamespace``
+**both** storage modes - the ``IElementErrorsNamespace``
 contract is mode-agnostic and the dexie-mode release gate
 (18 specs incl. the ``/review`` route) blocks any regression.
 
 The lesson-session unification + gamification side effects
 are **API-mode only**. In Dexie mode the lesson completion
 still writes ``LessonProgress``, still records
-``ElementError`` rows, and still drives the review queue —
+``ElementError`` rows, and still drives the review queue -
 but the ``LearningSession`` write + ``on_session_complete``
 hook never fire (no backend, no hookable). Dexie-mode users
 get the full review loop; the XP / badge awards from the
@@ -342,7 +342,7 @@ yet contribute to that total.
 A future unification of the gamification side effects into
 ``DexieStorage`` (so a Dexie-mode user's lesson completion
 also awards XP locally) is a deliberate non-goal for
-v1.31.0 — it would either duplicate the formula
+v1.31.0 - it would either duplicate the formula
 implementation in TypeScript or require a service-worker
 shim of the on_session_complete hook. Both are larger
 refactors than the v1.31.0 scope allows.
@@ -351,20 +351,20 @@ refactors than the v1.31.0 scope allows.
 
 ## Where to look next
 
-- ``backend/app/services/element_errors.py`` — the upsert
+- ``backend/app/services/element_errors.py`` - the upsert
   transition matrix.
-- ``backend/app/services/element_srs.py`` — the scheduler.
-- ``backend/app/services/lesson_session_unification.py`` —
+- ``backend/app/services/element_srs.py`` - the scheduler.
+- ``backend/app/services/lesson_session_unification.py`` -
   the pseudo-project + hook fire.
 - ``plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/xp_service.py`` —
+  adaptive_learner_gamification/xp_service.py`` -
   ``calculate_lesson_session_xp`` + dispatch.
 - ``plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/badge_service.py`` —
+  adaptive_learner_gamification/badge_service.py`` -
   the four new predicates.
-- ``frontend/src/lib/learning-project.ts`` — the
+- ``frontend/src/lib/learning-project.ts`` - the
   pseudo-project filter helper.
-- ``e2e/dexie/dexie-mode.spec.ts`` — the release gate that
+- ``e2e/dexie/dexie-mode.spec.ts`` - the release gate that
   prevents Dexie-mode regressions (lessons spec at
   ``/lesson/...``, review spec at ``/review/...``).
 
@@ -375,21 +375,21 @@ refactors than the v1.31.0 scope allows.
 Three layered additions that turn passive replay into active
 learning:
 
-**Token-diff + DiffHighlight** — Free-text and word-tiles
+**Token-diff + DiffHighlight** - Free-text and word-tiles
 wrong answers now render `<DiffHighlight tokens={tokenDiff(
 input, canonical)} />` inline below the result paragraph.
 The lesson summary's per-exercise breakdown shows the same
 diff for free-text + word-tiles when the v1.35.0+ stored
 `user_answer` is available (older rows fall back to the
 canonical-only line). Algorithm in
-`frontend/src/lib/exercises/token-diff.ts` — pure word-
+`frontend/src/lib/exercises/token-diff.ts` - pure word-
 level LCS, NFC normalized, case + accent sensitive.
 
-**Cloze exercise type (schema 1.1)** — fifth ExerciseType:
+**Cloze exercise type (schema 1.1)** - fifth ExerciseType:
 fill-in-the-blank with visible `___` markers. Two render
 modes: `type` (default, `<input>`) and `select`
 (`<select>` with options from `distractors`). Per-blank SRS
-fan-out via `deriveClozeAttempts` — one ElementAttempt per
+fan-out via `deriveClozeAttempts` - one ElementAttempt per
 blank, so per-blank mastery tracking lights up cleanly.
 Renderer at
 `frontend/src/components/exercises/ClozeExercise.tsx`;
@@ -397,7 +397,7 @@ schema in
 `plugins/adaptive-learner-plugin-content-loader/
 adaptive_learner_content_loader/schema.py`.
 
-**Cloze generator** — `generateClozeFromError(error,
+**Cloze generator** - `generateClozeFromError(error,
 sourceExercise, sourceCard)` synthesises a cloze step from
 an ElementError. Algorithm:
 
@@ -408,7 +408,7 @@ an ElementError. Algorithm:
    `error.correct_answer` exactly once, blank it.
 3. Otherwise, if the source is free_text and its prompt
    contains the answer exactly once, blank it.
-4. Otherwise return null — caller falls back to replay.
+4. Otherwise return null - caller falls back to replay.
 
 Deterministic: same inputs → byte-identical output. No AI,
 no randomness, no async. Distractors carry
@@ -416,7 +416,7 @@ no randomness, no async. Distractors carry
 then `sourceExercise.distractors` filtered + deduped. Code
 at `frontend/src/lib/exercises/cloze-generator.ts`.
 
-**Lesson-end correction round** —
+**Lesson-end correction round** -
 `<CorrectionBlock />` mounts inside `LessonSummary` between
 the score / breakdown and the action buttons. On mount, it
 reads ElementError rows for the just-finished lesson,
@@ -428,7 +428,7 @@ SRS streak + mastery advances. Self-hides on perfect score
 / no errors / no cloze constructable. Code at
 `frontend/src/components/exercises/CorrectionBlock.tsx`.
 
-**Cloze in review sessions (Phase 52G)** —
+**Cloze in review sessions (Phase 52G)** -
 `synthesizeReviewLesson`'s per-item branch
 (`_buildReviewStep`) now picks:
 
@@ -441,11 +441,11 @@ Decision criteria documented in
 with `review-`; generated cloze step ids start with
 `review-cloze-` for traceability.
 
-**Token-roles on cards (Phase 52I)** — optional
+**Token-roles on cards (Phase 52I)** - optional
 `token_roles: list[{token, role}]` annotation on Card with
 a closed enum of grammatical roles (article / verb / noun
 / adjective / preposition / gender_marker /
 tense_marker). The generator uses these to pick a
 semantically-meaningful blank instead of relying on
 substring matching. Adding a role is a minor
-schema_version bump — keep the enum closed.
+schema_version bump - keep the enum closed.

@@ -1,4 +1,4 @@
-"""LearningRepoPlugin — PluginForge entry point (Phase 42 / BL-30).
+"""LearningRepoPlugin - PluginForge entry point (Phase 42 / BL-30).
 
 Plugin owns its own routes under ``/api/plugins/learning-repo/*``
 and doesn't subscribe to existing hooks. Rendering is a
@@ -21,7 +21,7 @@ class LearningRepoPlugin(BasePlugin):
     version = "0.1.0"
     target_application = "adaptive_learner"
     description = (
-        "Git-backed Learning Repository — per-project Markdown "
+        "Git-backed Learning Repository - per-project Markdown "
         "artefacts (README / LEARNING_STATS / CHEATSHEET / ROADMAP) "
         "auto-emitted from DB state. Optional git integration. "
         "Implements the Article-3 pattern from Asterios Raptis' "

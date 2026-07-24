@@ -43,11 +43,11 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
           </p>
           {automated ? (
             <p data-testid="share-wizard-pr-created">
-              {t("share.pr.success", "Pull request created! Your lesson was committed and a pull request opened on GitHub — the content-repo CI validates it automatically.")}
+              {t("share.pr.success", "Pull request created! Your lesson was committed and a pull request opened on GitHub - the content-repo CI validates it automatically.")}
             </p>
           ) : shareMethod === "pr" && prefilled ? (
             <p data-testid="share-wizard-pr-instructions">
-              {t("content.wizard.submitted", "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" — the content-repo CI validates it automatically.")}
+              {t("content.wizard.submitted", "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" - the content-repo CI validates it automatically.")}
             </p>
           ) : (
             <>
@@ -57,11 +57,11 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
                 // in, but the JSON was too big to pre-fill — the user
                 // pastes the downloaded file's contents.
                 <p data-testid="share-wizard-paste-instructions">
-                  {t("content.wizard.paste_instructions", "Your lesson file was downloaded and GitHub's new-file editor opened at the right path. Open the downloaded file, paste its contents into the editor, then click \"Propose new file\" — the title and description are already filled in.")}
+                  {t("content.wizard.paste_instructions", "Your lesson file was downloaded and GitHub's new-file editor opened at the right path. Open the downloaded file, paste its contents into the editor, then click \"Propose new file\" - the title and description are already filled in.")}
                 </p>
               ) : (
                 <p data-testid="share-wizard-upload-instructions">
-                  {t("content.wizard.upload_instructions", "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" — GitHub creates the pull request for you.")}
+                  {t("content.wizard.upload_instructions", "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" - GitHub creates the pull request for you.")}
                 </p>
               )}
               <div className="share-wizard-copy-body flex flex-col gap-2">

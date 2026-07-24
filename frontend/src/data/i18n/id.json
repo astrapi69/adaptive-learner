@@ -2,7 +2,7 @@
   "app": {
     "name": "Adaptive Learner",
     "tagline": "Pembelajaran adaptif berdasarkan Model Enam Metode.",
-    "skeleton_notice": "Status kerangka. Model domain, plugin, dan halaman akan hadir pada fase mendatang — lihat docs/adaptive-learner-project-reference.md."
+    "skeleton_notice": "Status kerangka. Model domain, plugin, dan halaman akan hadir pada fase mendatang - lihat docs/adaptive-learner-project-reference.md."
   },
   "common": {
     "ok": "OK",
@@ -80,7 +80,7 @@
     },
     "primary": "Navigasi utama",
     "discover": "Jelajahi konten",
-    "offline_long": "Luring — sesi sebelumnya tetap dapat dibaca",
+    "offline_long": "Luring - sesi sebelumnya tetap dapat dibaca",
     "sync_pending": "{n} perubahan menunggu untuk disinkronkan",
     "statistics": "Statistik",
     "profile": "Profil Anda",
@@ -98,12 +98,12 @@
     "offline": "Luring",
     "anki": "Anki",
     "dev_badge": "DEV",
-    "dev_badge_tooltip": "Mode Pengembang aktif — pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan.",
+    "dev_badge_tooltip": "Mode Pengembang aktif - pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan.",
     "content": "Konten saya",
     "mode_badge_content": "Konten",
     "mode_badge_ai": "AI+Konten",
-    "mode_badge_tooltip_content": "Tidak ada kunci API yang dikonfigurasi — hanya menggunakan konten siap pakai. Tambahkan kunci di Pengaturan untuk mengaktifkan fitur AI.",
-    "mode_badge_tooltip_ai": "Penyedia AI dikonfigurasi — latihan menggunakan AI untuk pengecoh + petunjuk. Ketuk untuk menjelajahi set konten.",
+    "mode_badge_tooltip_content": "Tidak ada kunci API yang dikonfigurasi - hanya menggunakan konten siap pakai. Tambahkan kunci di Pengaturan untuk mengaktifkan fitur AI.",
+    "mode_badge_tooltip_ai": "Penyedia AI dikonfigurasi - latihan menggunakan AI untuk pengecoh + petunjuk. Ketuk untuk menjelajahi set konten.",
     "mode_badge_label_content": "Mode: Hanya konten",
     "mode_badge_label_ai": "Mode: AI + Konten",
     "sync_paired": "Sinkron: terpasang (Pengaturan > Sinkron)",
@@ -206,7 +206,7 @@
     "add_subtopic": "Tambah subtopik",
     "rename_topic": "Ganti nama topik",
     "topic_title": "Judul",
-    "no_topics": "Belum ada topik — tambahkan topik pertama Anda untuk memulai.",
+    "no_topics": "Belum ada topik - tambahkan topik pertama Anda untuk memulai.",
     "no_curriculum": "Buat kurikulum untuk mulai membangun pohon topik.",
     "delete_confirm": "Hapus topik ini? Anak-anaknya tetap menjadi akar tersendiri.",
     "lessons_title": "Pelajaran",
@@ -223,7 +223,7 @@
     "description_saved": "Deskripsi disimpan.",
     "edit_description": "Edit deskripsi",
     "lesson_content_aria": "Konten pelajaran",
-    "lesson_content_placeholder": "Konten pelajaran — mendukung judul, daftar, blok kode, tautan.",
+    "lesson_content_placeholder": "Konten pelajaran - mendukung judul, daftar, blok kode, tautan.",
     "no_description": "Belum ada deskripsi."
   },
   "landing": {
@@ -241,7 +241,7 @@
     "intro": "Ceritakan tentang tujuan belajar Anda. Adaptive Learner menggunakan ini untuk membangun profil Anda dan merekomendasikan metode awal.",
     "concepts_explainer_prefix": "Anda akan menentukan sebuah ",
     "concepts_explainer_mid1": ", lalu mengerjakan tes penilaian untuk",
-    "concepts_explainer_mid2": " — yang memandu setiap ",
+    "concepts_explainer_mid2": " - yang memandu setiap ",
     "concepts_explainer_suffix": "memandu.",
     "term_learning_project": "proyek belajar",
     "term_learning_profile": "profil belajar",
@@ -255,13 +255,13 @@
     "field_timeframe_hint": "mis. 4 minggu, satu semester.",
     "field_daily_minutes": "Menit per hari",
     "field_current_problem": "Masalah saat ini",
-    "field_current_problem_hint": "opsional — apa yang menghambat Anda saat ini?",
+    "field_current_problem_hint": "opsional - apa yang menghambat Anda saat ini?",
     "submit": "Buat proyek dan mulai penilaian",
     "creating": "Membuat proyek…",
     "subject_suggestions": "Saran subjek (ketuk untuk menetapkan):",
     "default_goal": "Pelajari {topic}",
     "invite_title": "Ingin mengatur profil belajar Anda lebih detail?",
-    "invite_subtitle": "Hanya butuh semenit dan menyesuaikan sesi Anda — Anda juga bisa melakukannya nanti.",
+    "invite_subtitle": "Hanya butuh semenit dan menyesuaikan sesi Anda - Anda juga bisa melakukannya nanti.",
     "invite_start_now": "Langsung mulai",
     "invite_setup_profile": "Atur profil",
     "restore_hint": "Sudah belajar dengan Adaptive Learner? Pulihkan dari cadangan.",
@@ -289,7 +289,7 @@
   },
   "assessment": {
     "title": "Penilaian tipe belajar",
-    "intro": "Dua belas pertanyaan singkat menentukan profil belajar Anda. Tidak ada jawaban benar atau salah — ikuti kata hati Anda.",
+    "intro": "Dua belas pertanyaan singkat menentukan profil belajar Anda. Tidak ada jawaban benar atau salah - ikuti kata hati Anda.",
     "question_progress": "Pertanyaan {current} dari {total}",
     "next_question": "Pertanyaan berikutnya",
     "prev_question": "Pertanyaan sebelumnya",
@@ -335,7 +335,7 @@
     "review_queue": {
       "loading": "Memuat…",
       "elements": "elemen yang perlu ditinjau",
-      "overdue": "terlewat — mulai dari sini",
+      "overdue": "terlewat - mulai dari sini",
       "open": "Buka sesi ulasan",
       "quick": "Ulasan cepat"
     },
@@ -371,7 +371,7 @@
     "page_title": "Pelajaran Adaptif",
     "session_title": "Pelajaran adaptif",
     "loading": "Menganalisis kesalahan Anda…",
-    "empty_body": "Belum ada yang bisa diadaptasi — kerjakan pelajaran untuk mengumpulkan data.",
+    "empty_body": "Belum ada yang bisa diadaptasi - kerjakan pelajaran untuk mengumpulkan data.",
     "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu.",
     "back_to_dashboard": "Kembali ke Dasbor",
     "transparency": {
@@ -397,12 +397,12 @@
     "your_answer": "Jawaban Anda:",
     "correct_answer": "Benar:",
     "summary_corrected": "{corrected} dari {total} diperbaiki",
-    "summary_trend": "Bagus — titik lemah Anda semakin kuat.",
+    "summary_trend": "Bagus - titik lemah Anda semakin kuat.",
     "summary_next": "Item yang dikuasai keluar; sisanya akan kembali untuk ditinjau segera.",
     "summary_repeat": "Kembalilah sekitar 2 hari lagi untuk menjaganya tetap segar.",
     "explain_heading": "Mengapa Anda melewatkan ini",
     "explain_article_gender": "Perhatikan gendernya: kata benda yang berakhiran -o biasanya maskulin (el/un), -a feminin (la/una). Kata sandang mengikuti akhirannya.",
-    "explain_spelling_accent": "Periksa ejaan dan tanda aksen yang tepat — perbedaan kecil mengubah kata.",
+    "explain_spelling_accent": "Periksa ejaan dan tanda aksen yang tepat - perbedaan kecil mengubah kata.",
     "explain_verb_conjugation": "Sesuaikan kata kerja dengan subjek dan kalanya sebelum menjawab.",
     "explain_word_order": "Perhatikan urutan kata untuk struktur ini.",
     "page_title": "Ulasan",
@@ -432,7 +432,7 @@
     "metric_mean_understanding": "Rata-rata pemahaman",
     "metric_mean_stress": "Rata-rata stres",
     "metric_streak": "Rentetan hari",
-    "no_data": "Belum ada sesi — mulai sesi pertama Anda untuk melihat tren.",
+    "no_data": "Belum ada sesi - mulai sesi pertama Anda untuk melihat tren.",
     "pronunciation_quick_start": "Latihan Pelafalan"
   },
   "session": {
@@ -464,7 +464,7 @@
     "cycles_completed": "Siklus selesai",
     "next_topic": "Topik berikutnya:",
     "step_reason_tooltip": "Mengapa langkah ini?",
-    "offline_start_blocked": "Anda sedang offline. Sesi baru memerlukan koneksi jaringan — sesi sebelumnya tetap bisa dibaca dari Dasbor.",
+    "offline_start_blocked": "Anda sedang offline. Sesi baru memerlukan koneksi jaringan - sesi sebelumnya tetap bisa dibaca dari Dasbor.",
     "peek_step_prefix": "Langkah",
     "rating_notes_aria": "Catatan sesi",
     "rating_notes_placeholder": "Apa yang berhasil, apa yang tidak, apa yang akan dicoba lain kali..."
@@ -486,7 +486,7 @@
     "commit_date": "Tanggal",
     "no_commits": "Belum ada sesi yang selesai.",
     "step_eval_title": "Evaluasi Langkah AI",
-    "step_eval_empty": "Belum ada data evaluasi langkah AI — mulai sesi untuk melihat wawasan di sini.",
+    "step_eval_empty": "Belum ada data evaluasi langkah AI - mulai sesi untuk melihat wawasan di sini.",
     "step_eval_avg_confidence": "Rata-rata keyakinan AI",
     "step_eval_repeats": "Berapa kali AI berkata 'belum siap'",
     "step_eval_advances": "Kemajuan langkah",
@@ -505,16 +505,16 @@
       "deleted": "{lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
     },
     "key_export_link": {
-      "heading": "Kunci AI — ekspor terenkripsi",
+      "heading": "Kunci AI - ekspor terenkripsi",
       "hint": "Ekspor atau impor kunci AI Anda sebagai satu berkas terenkripsi. Berada bersama cadangan lain di tab Data.",
       "button": "Buka ekspor kunci (tab Data)"
     },
     "key_vault": {
-      "title": "Kunci AI — ekspor terenkripsi",
+      "title": "Kunci AI - ekspor terenkripsi",
       "intro": "Pindahkan kunci AI Anda ke perangkat lain dalam satu berkas terenkripsi, terpisah dari cadangan biasa (yang tidak pernah berisi kunci).",
       "api_export_disabled": "Dalam mode server, kunci Anda tidak dapat diekspor - kunci dikelola terenkripsi di server. Impor berkas kunci tetap dapat dilakukan.",
       "export_heading": "Ekspor",
-      "passphrase_hint": "Pilih frasa sandi yang kuat. Frasa ini tidak dapat dipulihkan — tanpanya berkas tidak dapat dibuka.",
+      "passphrase_hint": "Pilih frasa sandi yang kuat. Frasa ini tidak dapat dipulihkan - tanpanya berkas tidak dapat dibuka.",
       "passphrase_label": "Frasa sandi",
       "confirm_label": "Konfirmasi frasa sandi",
       "no_keys": "Belum ada kunci AI untuk diekspor.",
@@ -900,29 +900,29 @@
     "danger_zone_input_placeholder": "RESET",
     "danger_zone_intro": "Hapus permanen setiap bagian status pembelajar di perangkat ini.",
     "danger_zone_reset_button": "Atur Ulang Semuanya",
-    "danger_zone_warning": "Ini menghapus SEMUA data pembelajaran Anda secara permanen — sesi, kemajuan, profil, kurikulum, impor, kartu Anki, pengaturan, dan kunci API. Tindakan ini TIDAK DAPAT dibatalkan.",
+    "danger_zone_warning": "Ini menghapus SEMUA data pembelajaran Anda secara permanen - sesi, kemajuan, profil, kurikulum, impor, kartu Anki, pengaturan, dan kunci API. Tindakan ini TIDAK DAPAT dibatalkan.",
     "section_sync": "Sinkronisasi"
   },
   "methods": {
     "deductive": {
       "label": "Deduktif",
-      "summary": "Umum ke khusus — aturan dulu, contoh kemudian."
+      "summary": "Umum ke khusus - aturan dulu, contoh kemudian."
     },
     "inductive": {
       "label": "Induktif",
-      "summary": "Khusus ke umum — contoh dulu, turunkan aturannya."
+      "summary": "Khusus ke umum - contoh dulu, turunkan aturannya."
     },
     "error_based": {
       "label": "Berbasis kesalahan",
-      "summary": "Belajar dari kesalahan — koreksi ditambah penjelasan."
+      "summary": "Belajar dari kesalahan - koreksi ditambah penjelasan."
     },
     "dialogic": {
       "label": "Dialogis",
-      "summary": "Berpikir dalam percakapan — kurangi stres, bangun motivasi."
+      "summary": "Berpikir dalam percakapan - kurangi stres, bangun motivasi."
     },
     "contextual": {
       "label": "Kontekstual",
-      "summary": "Terapkan dalam konteks nyata — latih transfer."
+      "summary": "Terapkan dalam konteks nyata - latih transfer."
     },
     "ai_adaptive": {
       "label": "Adaptif-AI",
@@ -964,7 +964,7 @@
     "not_found": "Tidak ditemukan.",
     "validation": "Masukan tidak valid.",
     "conflict": "Entri sudah ada.",
-    "server": "Kesalahan server — silakan coba lagi nanti."
+    "server": "Kesalahan server - silakan coba lagi nanti."
   },
   "toast": {
     "project_created": "Proyek dibuat.",
@@ -980,7 +980,7 @@
   "install": {
     "ios": {
       "title": "Pasang sebagai aplikasi",
-      "steps": "Ketuk ikon Bagikan, lalu «Tambahkan ke Layar Utama» — terbuka tanpa bilah Safari.",
+      "steps": "Ketuk ikon Bagikan, lalu «Tambahkan ke Layar Utama» - terbuka tanpa bilah Safari.",
       "aria_label": "Pasang di iPhone Anda",
       "dismiss": "Tutup"
     },
@@ -1123,7 +1123,7 @@
     "auto_none": "Belum ada pencadangan otomatis. Yang pertama berjalan setelah 10 sesi atau 7 hari.",
     "storage_pressure": "Penyimpanan peramban hampir penuh ({{pct}}% dari kuota). Ekspor cadangan manual sekarang.",
     "compare_title": "Bandingkan Cadangan",
-    "compare_help": "Pilih dua file cadangan (atau satu file ditambah keadaan saat ini) untuk melihat apa yang berubah di antaranya. Tidak ada data yang diubah — perbandingan bersifat hanya-baca.",
+    "compare_help": "Pilih dua file cadangan (atau satu file ditambah keadaan saat ini) untuk melihat apa yang berubah di antaranya. Tidak ada data yang diubah - perbandingan bersifat hanya-baca.",
     "compare_slot_a": "Cadangan A (lebih lama)",
     "compare_slot_b": "Cadangan B (lebih baru)",
     "compare_pick": "Pilih file…",
@@ -1139,7 +1139,7 @@
     "compare_sort_label": "Urutkan:",
     "compare_sort_delta": "Paling banyak perubahan dulu",
     "compare_sort_alpha": "Menurut abjad",
-    "compare_no_changes": "Kedua cadangan identik — tidak ada perbedaan terdeteksi.",
+    "compare_no_changes": "Kedua cadangan identik - tidak ada perbedaan terdeteksi.",
     "compare_section_added": "Ditambahkan",
     "compare_section_removed": "Dihapus",
     "compare_section_changed": "Diubah",
@@ -1147,14 +1147,14 @@
     "compare_old": "Lama",
     "compare_new": "Baru",
     "compare_field_changes": "perubahan bidang",
-    "compare_high_volume_hint": "Tabel bervolume tinggi — pratinjau tingkat catatan ditampilkan secara disingkat.",
+    "compare_high_volume_hint": "Tabel bervolume tinggi - pratinjau tingkat catatan ditampilkan secara disingkat.",
     "compare_export_md": "Ekspor sebagai Markdown",
     "compare_markdown_downloaded": "Diff diekspor.",
     "confirm_with_counts": "Pulihkan ({{added}} ditambahkan, {{updated}} diperbarui)",
     "auto_compare_as_a": "Bandingkan sebagai A",
     "auto_compare_as_b": "Bandingkan sebagai B",
     "compare_auto_label": "Pencadangan otomatis {{date}}",
-    "auto_compare_missing": "Pencadangan otomatis tidak lagi tersedia — sudah dirotasi keluar."
+    "auto_compare_missing": "Pencadangan otomatis tidak lagi tersedia - sudah dirotasi keluar."
   },
   "export": {
     "title": "Ekspor",
@@ -1234,7 +1234,7 @@
     "scan_success_hint": "Memverifikasi dengan desktop…",
     "smart_merge": "Gabungan Cerdas (AI)",
     "smart_merge_error": "Gabungan cerdas gagal.",
-    "smart_merge_ready": "Gabungan AI siap — tinjau dan terapkan.",
+    "smart_merge_ready": "Gabungan AI siap - tinjau dan terapkan.",
     "smart_merge_running": "Menggabungkan dengan AI…",
     "sync_error": "Sinkronisasi gagal.",
     "synced": "Tersinkronisasi",
@@ -1437,7 +1437,7 @@
     "danger_zone_heading": "Zona Bahaya",
     "danger_zone_intro": "Hapus secara permanen semua data pembelajaran di perangkat ini.",
     "danger_zone_reset_button": "Atur Ulang Semuanya",
-    "danger_zone_warning": "Ini menghapus SEMUA data belajar Anda secara permanen — sesi, kemajuan, profil, kurikulum, impor, kartu Anki, pengaturan, dan kunci API. Tindakan ini TIDAK DAPAT dibatalkan.",
+    "danger_zone_warning": "Ini menghapus SEMUA data belajar Anda secara permanen - sesi, kemajuan, profil, kurikulum, impor, kartu Anki, pengaturan, dan kunci API. Tindakan ini TIDAK DAPAT dibatalkan.",
     "danger_zone_confirm_prompt": "Ketik RESET untuk mengonfirmasi",
     "danger_zone_input_placeholder": "RESET",
     "danger_zone_final_button": "Hapus permanen",
@@ -1729,9 +1729,9 @@
     "readme_topics_heading": "Topik",
     "readme_no_topics": "_Belum ada topik yang ditelusuri._",
     "readme_see_also_heading": "Lihat juga",
-    "readme_see_stats": "[LEARNING_STATS.md](LEARNING_STATS.md) — tingkat kesalahan, pemahaman, transfer, log intervensi.",
-    "readme_see_cheatsheet": "[CHEATSHEET.md](CHEATSHEET.md) — catatan ringkas + Wawasan Meta-Pembelajaran.",
-    "readme_see_roadmap": "[ROADMAP.md](ROADMAP.md) — langkah berikutnya.",
+    "readme_see_stats": "[LEARNING_STATS.md](LEARNING_STATS.md) - tingkat kesalahan, pemahaman, transfer, log intervensi.",
+    "readme_see_cheatsheet": "[CHEATSHEET.md](CHEATSHEET.md) - catatan ringkas + Wawasan Meta-Pembelajaran.",
+    "readme_see_roadmap": "[ROADMAP.md](ROADMAP.md) - langkah berikutnya.",
     "stats_title": "Statistik Pembelajaran",
     "stats_intro": "Metrik per sesi yang dihasilkan otomatis dari evaluasi sesi + penilaian. Jangan diedit secara manual.",
     "stats_no_sessions": "_Belum ada sesi._",
@@ -1753,7 +1753,7 @@
     "stats_exit_threshold_body": "Sebuah topik dianggap dikuasai ketika Pemahaman ≥ 9/10 DAN Transfer ≥ 8/10 stabil selama 2 siklus berturut-turut. Baris yang disematkan menandai sesi yang memenuhi kondisi ini.",
     "stats_exit_pin_marker": "✅ ambang keluar tercapai",
     "cheatsheet_title": "Lembar Contekan",
-    "cheatsheet_intro": "Catatan ringkas dari sesi Anda. Bagian Wawasan Meta-Pembelajaran mengumpulkan catatan bertanda meta_learning — pengamatan tentang bagaimana Anda belajar paling baik.",
+    "cheatsheet_intro": "Catatan ringkas dari sesi Anda. Bagian Wawasan Meta-Pembelajaran mengumpulkan catatan bertanda meta_learning - pengamatan tentang bagaimana Anda belajar paling baik.",
     "cheatsheet_notes_heading": "Catatan",
     "cheatsheet_meta_learning_heading": "Wawasan Meta-Pembelajaran",
     "cheatsheet_no_notes": "_Belum ada catatan._",
@@ -1868,13 +1868,13 @@
       "stats_slowest": "Terlama: {s}d ({type})"
     },
     "reverse": {
-      "not_reversible": "Tipe latihan ini tidak dapat dibalik — ditampilkan dalam format aslinya."
+      "not_reversible": "Tipe latihan ini tidak dapat dibalik - ditampilkan dalam format aslinya."
     },
     "resources_title": "Jelajahi lebih lanjut",
     "resources_domain": "Lebih lanjut tentang {domain}",
     "motivation": {
-      "halftime": "Setengah jalan — terus lanjutkan!",
-      "last": "Yang terakhir — selesaikan dengan kuat!"
+      "halftime": "Setengah jalan - terus lanjutkan!",
+      "last": "Yang terakhir - selesaikan dengan kuat!"
     },
     "theory": {
       "view_example": "Lihat contoh"
@@ -1962,7 +1962,7 @@
         "submit": "Periksa jawaban",
         "retry": "Coba lagi",
         "result_correct": "Benar!",
-        "result_wrong": "Belum tepat — ubin yang disorot adalah jawaban yang benar.",
+        "result_wrong": "Belum tepat - ubin yang disorot adalah jawaban yang benar.",
         "grid_label": "Pilihan gambar",
         "correct_label": "Benar",
         "wrong_label": "Salah",
@@ -2118,7 +2118,7 @@
       "heading": "Pengulangan selesai",
       "score": "{correct}/{total} benar sekarang!",
       "done": "Kembali ke pelajaran",
-      "empty": "Tidak ada yang perlu diulang — buka ini dari ringkasan pelajaran setelah membuat beberapa kesalahan.",
+      "empty": "Tidak ada yang perlu diulang - buka ini dari ringkasan pelajaran setelah membuat beberapa kesalahan.",
       "summary_aria": "Ringkasan pengulangan kesalahan"
     },
     "next_step": {
@@ -2203,7 +2203,7 @@
     "set_link": {
       "loading": "Memuat set…",
       "not_found_title": "Set tidak ditemukan",
-      "not_found_body": "Set ini tidak tersedia — mungkin belum diunduh atau tidak ada.",
+      "not_found_body": "Set ini tidak tersedia - mungkin belum diunduh atau tidak ada.",
       "go_discover": "Temukan konten",
       "start": "Mulai belajar",
       "download_start": "Unduh & mulai",
@@ -2406,9 +2406,9 @@
       "target_lang_label": "Bahasa yang dipelajari",
       "source_lang_label": "Bahasamu",
       "level_label": "Tingkat",
-      "not_enough_data": "Sedikit latihan — minimal {min} disarankan untuk pelajaran bahasa lengkap. Kamu tetap bisa menyimpannya (misalnya sebagai pelajaran teori saja).",
+      "not_enough_data": "Sedikit latihan - minimal {min} disarankan untuk pelajaran bahasa lengkap. Kamu tetap bisa menyimpannya (misalnya sebagai pelajaran teori saja).",
       "same_language": "Bahasa yang dipelajari dan bahasamu harus berbeda.",
-      "same_language_hint": "Bahasa yang dipelajari dan bahasamu sama — tidak masalah untuk pelajaran tata bahasa atau bahasa ibu. Saat dibagikan, pelajaran ini akan masuk ke cabang bahasa-sama pada pohon konten.",
+      "same_language_hint": "Bahasa yang dipelajari dan bahasamu sama - tidak masalah untuk pelajaran tata bahasa atau bahasa ibu. Saat dibagikan, pelajaran ini akan masuk ke cabang bahasa-sama pada pohon konten.",
       "split_notice": "Pelajaran ini memiliki {steps} langkah dan akan disimpan sebagai {parts} bagian (maksimal {max} langkah per bagian).",
       "part_title": "{title} - Bagian {n}"
     },
@@ -2515,7 +2515,7 @@
       "level_too_complex": "Pelajaran '{lesson}': teks rata-rata {avg} kata per halaman, tinggi untuk tingkat {level} (sekitar {cap} diharapkan).",
       "source_language_heuristic": "Sisi belakang kartu mengandung karakter khas {found} tetapi bahasa sumbernya '{lang}'.",
       "target_language_heuristic": "Sisi depan kartu mengandung karakter khas {found} tetapi bahasa targetnya '{lang}'.",
-      "failed_share_anyway": "Pemeriksaan kualitas menemukan masalah. Kamu tetap dapat membagikannya — peninjau akan melihat temuan yang dicatat dalam pull request."
+      "failed_share_anyway": "Pemeriksaan kualitas menemukan masalah. Kamu tetap dapat membagikannya - peninjau akan melihat temuan yang dicatat dalam pull request."
     },
     "ai_validation": {
       "intro": "AI juga dapat memeriksa keakuratan terjemahan, tata bahasa, dan kesesuaian tingkat.",
@@ -2526,7 +2526,7 @@
       "ai_passed": "Tinjauan AI: tampak baik.",
       "ai_review": "Tinjauan AI: saran di bawah.",
       "score": "skor",
-      "failed": "Tinjauan AI tidak tersedia. Kamu tetap dapat membagikannya — pemeriksaan kualitas lulus.",
+      "failed": "Tinjauan AI tidak tersedia. Kamu tetap dapat membagikannya - pemeriksaan kualitas lulus.",
       "auto_fix": "Terapkan",
       "applied": "diterapkan",
       "fix_applied": "Saran diterapkan.",
@@ -3105,7 +3105,7 @@
       "heading": "Mulai dari templat",
       "blank": {
         "title": "Pelajaran Kosong",
-        "desc": "Hanya metadata — tambahkan kartu sendiri."
+        "desc": "Hanya metadata - tambahkan kartu sendiri."
       },
       "vocabulary": {
         "title": "Daftar Kosakata",
@@ -3186,7 +3186,7 @@
     "group": {
       "mastery": "{r} reseptif, {p} produktif dikuasai",
       "progress_aria": "{completed} dari {total} pelajaran selesai",
-      "toggle_aria": "Set {title} — {completed} dari {total} pelajaran selesai"
+      "toggle_aria": "Set {title} - {completed} dari {total} pelajaran selesai"
     },
     "search_placeholder": "Cari pelajaran…",
     "filter": {
@@ -3211,12 +3211,12 @@
     },
     "clusters": {
       "toggle": "Tampilkan klaster kesalahan",
-      "empty": "Belum ada pola kesalahan bersama — teruslah berlatih.",
+      "empty": "Belum ada pola kesalahan bersama - teruslah berlatih.",
       "lessons": "{n} pelajaran",
       "start_adaptive": "Mulai pelajaran adaptif",
       "region_label": "Panel klaster kesalahan"
     },
-    "search_label": "Cari pelajaran — tekan Enter untuk menuju hasil pertama",
+    "search_label": "Cari pelajaran - tekan Enter untuk menuju hasil pertama",
     "custom": {
       "title": "Jalur belajar saya",
       "subtitle": "Susun pelajaran menjadi jalur Anda sendiri yang terurut.",
@@ -3471,7 +3471,7 @@
     "time_hm": "{h}j {m}mnt",
     "time_m": "{m}mnt",
     "weak_areas_title": "Area untuk ditingkatkan",
-    "weak_areas_empty": "Belum ada kesalahan yang terlacak — teruskan!",
+    "weak_areas_empty": "Belum ada kesalahan yang terlacak - teruskan!",
     "practice": "Latih",
     "errors": "kesalahan",
     "last_answer": "Jawaban terakhirmu:",
@@ -3546,7 +3546,7 @@
     "card_more": "+{n} lagi",
     "add": "Tambahkan ke favorit",
     "remove": "Hapus dari favorit",
-    "empty": "Belum ada favorit — ketuk bintang pada sebuah pelajaran untuk menyimpannya.",
+    "empty": "Belum ada favorit - ketuk bintang pada sebuah pelajaran untuk menyimpannya.",
     "save_prompt": "Simpan pelajaran ini ke favoritmu"
   },
   "content_repo": {
@@ -3575,7 +3575,7 @@
     "last_sync": "Sinkronisasi terakhir: {when}",
     "added": "Repositori ditambahkan.",
     "synced": "Tersinkronkan: {sets} set, {lessons} pelajaran.",
-    "token_hint": "Repositori privat memerlukan token — tempel satu di bawah, atau atur token bersama di Pengaturan → Integrasi.",
+    "token_hint": "Repositori privat memerlukan token - tempel satu di bawah, atau atur token bersama di Pengaturan → Integrasi.",
     "trust_official": "Resmi: Dikurasi dan dijamin kualitasnya oleh tim proyek.",
     "trust_verified": "Terverifikasi: Disumbangkan oleh komunitas dan ditinjau oleh tim.",
     "trust_validated": "Tervalidasi: Secara teknis benar; konten tidak ditinjau satu per satu.",
@@ -3625,7 +3625,7 @@
       "official": "Resmi"
     },
     "trust": {
-      "dropped": "Tersinkronkan, tetapi validasi gagal — repositori ini sekarang ditandai Belum diverifikasi.",
+      "dropped": "Tersinkronkan, tetapi validasi gagal - repositori ini sekarang ditandai Belum diverifikasi.",
       "recommended": "Direkomendasikan secara resmi",
       "unknown": "Belum diverifikasi",
       "validated": "Tervalidasi"
@@ -3760,7 +3760,7 @@
     "loading": "Memuat sesi latihan…",
     "empty_body": "Set ini belum memiliki latihan untuk dikerjakan.",
     "not_cached_body": "Set ini belum diunduh. Buka peramban konten untuk mengunduhnya terlebih dahulu.",
-    "paused": "Dijeda — istirahat sejenak.",
+    "paused": "Dijeda - istirahat sejenak.",
     "resume": "Lanjutkan",
     "pause": "Jeda",
     "end": "Akhiri",
@@ -3888,7 +3888,7 @@
     },
     "field": {
       "pick": "Pilih repositori yang terhubung",
-      "pick_placeholder": "— pilih atau ketik di bawah —",
+      "pick_placeholder": "- pilih atau ketik di bawah -",
       "url": "URL repositori GitHub",
       "branch": "Cabang",
       "title": "Judul",
@@ -3910,7 +3910,7 @@
     },
     "status": {
       "validated": "Divalidasi secara lokal",
-      "pending": "Menunggu — CI akan memvalidasi"
+      "pending": "Menunggu - CI akan memvalidasi"
     },
     "pr": {
       "created": "Permintaan tarik dibuka.",

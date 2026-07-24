@@ -52,7 +52,7 @@ def create_curriculum(repo: CurriculumRepository, payload: CurriculumCreate) -> 
 def get_curriculum_for_conversation(
     repo: CurriculumRepository, conversation_id: str
 ) -> Curriculum | None:
-    """Phase 36 Bug 3 — return the curriculum created from this
+    """Phase 36 Bug 3 - return the curriculum created from this
     conversation (if any). Used by ImportDetail to flip the
     "Create curriculum" CTA into a "Go to curriculum" navigation.
 
@@ -154,7 +154,7 @@ def _would_create_cycle(repo: CurriculumRepository, topic_id: str, new_parent_id
 def update_topic(
     repo: CurriculumRepository, topic_id: str, payload: LearningTopicUpdate
 ) -> LearningTopic:
-    """Patch the topic. ``parent_id`` swaps need a cycle check —
+    """Patch the topic. ``parent_id`` swaps need a cycle check -
     setting a topic's parent to one of its own descendants would
     create an infinite loop in the tree walk.
     """

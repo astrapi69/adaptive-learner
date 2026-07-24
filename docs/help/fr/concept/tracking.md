@@ -1,7 +1,7 @@
 # Suivi de l'apprentissage
 
 Adaptive Learner traite chaque session d'apprentissage terminée comme un
-**commit Git** pour vos connaissances. Cette analogie n'est pas accessoire —
+**commit Git** pour vos connaissances. Cette analogie n'est pas accessoire -
 elle est au cœur du modèle de données.
 
 ---
@@ -57,7 +57,7 @@ enregistrés comme badges. Les badges ont trois niveaux : bronze, argent, or.
 
 **Séries**
 Un apprentissage quotidien sans interruption incrémente votre série. Les
-séries expirent après 24 heures sans activité — avec trois gels de série
+séries expirent après 24 heures sans activité - avec trois gels de série
 par mois pour les jours de déplacement ou de maladie.
 
 ---

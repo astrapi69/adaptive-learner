@@ -80,7 +80,7 @@ utilizador, consulte
 `app/models/__init__.py:ElementError` com uma restrição UNIQUE
 composta em
 `(user_id, set_id, lesson_id, exercise_id, element_key)`.
-Chaves de elemento com âmbito de lição por decisão **D2** — a
+Chaves de elemento com âmbito de lição por decisão **D2** - a
 mesma palavra em duas lições diferentes é duas linhas.
 
 ```python
@@ -101,7 +101,7 @@ class ElementError(Base):
     mastered_at: datetime | None
 ```
 
-Desacoplado de `learning_sessions` (sem FK) por design —
+Desacoplado de `learning_sessions` (sem FK) por design -
 as lições de conteúdo referenciam IDs de conjunto de conteúdo /
 lição por string, não via join relacional. Isso significa que a
 tabela sobrevive a evicções de cache independentemente de qualquer
@@ -146,7 +146,7 @@ revisão de uma linha não dominada:
 | 0 | 1 dia após `last_attempt_at` |
 | 1 | 3 dias |
 | 2 | 7 dias |
-| ≥ 3 | dominado — excluído da fila |
+| ≥ 3 | dominado - excluído da fila |
 
 ### Ordenação por prioridade
 
@@ -207,7 +207,7 @@ Três decisões orientam a forma:
 ### Alteração de esquema
 
 ```python
-# app/models/__init__.py — Fase 46F.1
+# app/models/__init__.py - Fase 46F.1
 LEARNING_PROJECT_KIND_STANDARD = "standard"
 LEARNING_PROJECT_KIND_CONTENT = "content"
 
@@ -233,10 +233,10 @@ ambas as direções.
 `app/services/lesson_session_unification.py` tem duas funções
 públicas:
 
-- `find_or_create_content_pseudo_project(db, user_id)` —
+- `find_or_create_content_pseudo_project(db, user_id)` -
   pesquisa idempotente; cria apenas em caso de ausência.
 - `record_lesson_completion_session(db, *, user_id,
-  lesson_progress_id, score_correct, score_total)` —
+  lesson_progress_id, score_correct, score_total)` -
   escreve a linha `LearningSession`, faz commit, depois dispara
   `on_session_complete`.
 
@@ -246,7 +246,7 @@ passa de `in_progress` para `completed`. As próprias escritas de
 BD do helper propagam exceções (problema real de BD), mas o
 caminho de disparo do hook envolve exceções de subscritores por
 padrão `_fire_on_session_complete` do `routes.py` do plugin de
-sessão — uma falha de gamificação não pode reverter a lição que
+sessão - uma falha de gamificação não pode reverter a lição que
 o utilizador já viu no ecrã de resumo.
 
 ### Filtro frontend
@@ -270,18 +270,18 @@ política de UI, não ocultamento de dados.
 
 `adaptive_learner_gamification.xp_service` ganha:
 
-- `compute_stars(correct, total)` — 0 a 3 a partir de uma
+- `compute_stars(correct, total)` - 0 a 3 a partir de uma
   pontuação, com bandas em 50% / 75% / 90%. Espelha o
   `computeStars` do frontend em `lib/lesson-summary.ts` para que
   ambos os lados projetem a mesma classificação em estrelas.
 - `calculate_lesson_session_xp(*, stars, first_attempt,
-  streak_days)` — calculadora pura. 30 base + 10/estrela + 20
+  streak_days)` - calculadora pura. 30 base + 10/estrela + 20
   primeira-tentativa-3-estrelas + mesmo multiplicador de
   sequência +25%/dia (limitado a 7) que a fórmula de chat.
-- `_is_first_attempt(db, lesson_progress_id)` — lê o JSON
+- `_is_first_attempt(db, lesson_progress_id)` - lê o JSON
   `LessonProgress.step_results` e retorna True sse cada linha de
   passo tem `attempts == 1`.
-- `award_xp_for_lesson_session(db, *, session)` — invólucro de
+- `award_xp_for_lesson_session(db, *, session)` - invólucro de
   persistência que resolve user_id a partir do FK do projeto e
   aplica a fórmula.
 
@@ -293,7 +293,7 @@ transporta as chaves específicas da lição
 (`lesson_progress_id`, `score_correct`, `score_total`); os
 payloads de sessão de chat não têm, por isso o invólucro XP de
 lição degradaria graciosamente se o despacho alguma vez
-vazasse — mas o teste de pin de regressão em
+vazasse - mas o teste de pin de regressão em
 `backend/tests/test_lesson_session_unification.py` asserta o prémio
 exato da lição (100 XP para uma conclusão de primeira tentativa
 4/4 + sequência de primeiro dia) para que um vazamento
@@ -308,7 +308,7 @@ Quatro novos predicados adicionados a
 
 | Chave | Predicado | Helper |
 |---|---|---|
-| `first_lesson` | `_completed_lesson_count >= 1` | conta `LessonProgress.status="completed"` (não via LearningSession — a linha de lição é autoritária) |
+| `first_lesson` | `_completed_lesson_count >= 1` | conta `LessonProgress.status="completed"` (não via LearningSession - a linha de lição é autoritária) |
 | `lessons_10` | `_completed_lesson_count >= 10` | idem |
 | `three_star_streak` | `_last_n_lessons_all_three_star(n=3)` | lê as últimas 3 `LessonProgress` concluídas do utilizador por `completed_at` desc; projeta cada uma via `xp_service.compute_stars` |
 | `review_master` | `_mastered_elements_count >= 50` | conta `ElementError.mastered=True` |
@@ -324,7 +324,7 @@ deriva entre as duas listas.
 ## Ressalvas do modo de armazenamento
 
 A cadeia de rastreamento de elementos + SRS funciona identicamente
-em **ambos** os modos de armazenamento — o contrato
+em **ambos** os modos de armazenamento - o contrato
 `IElementErrorsNamespace` é agnóstico ao modo e o portão de
 lançamento do modo Dexie (18 especificações incl. a rota
 `/review`) bloqueia qualquer regressão.
@@ -332,7 +332,7 @@ lançamento do modo Dexie (18 especificações incl. a rota
 A unificação de sessão de lição + efeitos secundários de
 gamificação são **apenas para o modo API**. No modo Dexie, a
 conclusão da lição ainda escreve `LessonProgress`, ainda regista
-linhas `ElementError` e ainda dirige a fila de revisão — mas a
+linhas `ElementError` e ainda dirige a fila de revisão - mas a
 escrita `LearningSession` + hook `on_session_complete` nunca
 disparam (sem backend, sem hookable). Os utilizadores no modo Dexie
 obtêm o ciclo de revisão completo; os prémios XP / emblemas do
@@ -342,7 +342,7 @@ lições ainda não contribuem para esse total.
 Uma futura unificação dos efeitos secundários de gamificação em
 `DexieStorage` (para que a conclusão de lição de um utilizador no
 modo Dexie também atribua XP localmente) é um não-objetivo
-deliberado para a v1.31.0 — exigiria duplicar a implementação da
+deliberado para a v1.31.0 - exigiria duplicar a implementação da
 fórmula em TypeScript ou um shim de service-worker do hook
 on_session_complete. Ambas são refatorações maiores do que o
 âmbito v1.31.0 permite.
@@ -351,20 +351,20 @@ on_session_complete. Ambas são refatorações maiores do que o
 
 ## Onde procurar a seguir
 
-- `backend/app/services/element_errors.py` — a matriz de
+- `backend/app/services/element_errors.py` - a matriz de
   transição upsert.
-- `backend/app/services/element_srs.py` — o agendador.
-- `backend/app/services/lesson_session_unification.py` —
+- `backend/app/services/element_srs.py` - o agendador.
+- `backend/app/services/lesson_session_unification.py` -
   o pseudo-projeto + disparo do hook.
 - `plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/xp_service.py` —
+  adaptive_learner_gamification/xp_service.py` -
   `calculate_lesson_session_xp` + despacho.
 - `plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/badge_service.py` —
+  adaptive_learner_gamification/badge_service.py` -
   os quatro novos predicados.
-- `frontend/src/lib/learning-project.ts` — o helper de filtro
+- `frontend/src/lib/learning-project.ts` - o helper de filtro
   de pseudo-projeto.
-- `e2e/dexie/dexie-mode.spec.ts` — o portão de lançamento que
+- `e2e/dexie/dexie-mode.spec.ts` - o portão de lançamento que
   previne regressões no modo Dexie (especificação de lições em
   `/lesson/...`, especificação de revisão em `/review/...`).
 
@@ -375,22 +375,22 @@ on_session_complete. Ambas são refatorações maiores do que o
 Três adições em camadas que transformam a reprodução passiva em
 aprendizagem ativa:
 
-**Diferença de token + DiffHighlight** — As respostas erradas de
+**Diferença de token + DiffHighlight** - As respostas erradas de
 texto livre e mosaicos de palavras agora renderizam
 `<DiffHighlight tokens={tokenDiff(input, canonical)} />` inline
 abaixo do parágrafo de resultado. A análise por exercício do resumo
 da lição mostra a mesma diferença para texto livre + mosaicos de
 palavras quando o `user_answer` armazenado em v1.35.0+ está
 disponível (linhas mais antigas voltam para a linha apenas canónica).
-Algoritmo em `frontend/src/lib/exercises/token-diff.ts` — LCS puro
+Algoritmo em `frontend/src/lib/exercises/token-diff.ts` - LCS puro
 ao nível de palavras, normalizado NFC, sensível a maiúsculas +
 acentos.
 
-**Tipo de exercício Cloze (esquema 1.1)** — quinto ExerciseType:
+**Tipo de exercício Cloze (esquema 1.1)** - quinto ExerciseType:
 preencher-os-espaços com marcadores `___` visíveis. Dois modos de
 renderização: `type` (padrão, `<input>`) e `select`
 (`<select>` com opções de `distractors`). Fan-out SRS por espaço
-via `deriveClozeAttempts` — um ElementAttempt por espaço, para que
+via `deriveClozeAttempts` - um ElementAttempt por espaço, para que
 o rastreamento de domínio por espaço funcione claramente.
 Renderizador em
 `frontend/src/components/exercises/ClozeExercise.tsx`;
@@ -398,7 +398,7 @@ esquema em
 `plugins/adaptive-learner-plugin-content-loader/
 adaptive_learner_content_loader/schema.py`.
 
-**Gerador Cloze** — `generateClozeFromError(error,
+**Gerador Cloze** - `generateClozeFromError(error,
 sourceExercise, sourceCard)` sintetiza um passo cloze a partir de
 um ElementError. Algoritmo:
 
@@ -409,7 +409,7 @@ um ElementError. Algoritmo:
    `error.correct_answer` exatamente uma vez, esvazia-o.
 3. Caso contrário, se a fonte é free_text e o seu prompt
    contém a resposta exatamente uma vez, esvazia-a.
-4. Caso contrário, retorna null — o chamador volta para
+4. Caso contrário, retorna null - o chamador volta para
    reprodução.
 
 Determinístico: mesmas entradas → saída byte-idêntica. Sem IA,
@@ -418,7 +418,7 @@ sem aleatoriedade, sem async. Os distractores transportam
 depois `sourceExercise.distractors` filtrado + deduplicado. Código
 em `frontend/src/lib/exercises/cloze-generator.ts`.
 
-**Ronda de correção no final da lição** —
+**Ronda de correção no final da lição** -
 `<CorrectionBlock />` monta dentro de `LessonSummary` entre a
 pontuação / análise e os botões de ação. Na montagem, lê linhas
 ElementError para a lição recém-concluída, gera um cloze para
@@ -429,7 +429,7 @@ a sequência SRS + domínio avance. Auto-oculta-se numa pontuação
 perfeita / sem erros / sem cloze construível. Código em
 `frontend/src/components/exercises/CorrectionBlock.tsx`.
 
-**Cloze em sessões de revisão (Fase 52G)** —
+**Cloze em sessões de revisão (Fase 52G)** -
 O ramo por item de `synthesizeReviewLesson`
 (`_buildReviewStep`) agora escolhe:
 
@@ -442,10 +442,10 @@ Critérios de decisão documentados em
 começam com `review-`; os ids de passo cloze gerados começam com
 `review-cloze-` para rastreabilidade.
 
-**Papéis de token nos cartões (Fase 52I)** — anotação opcional
+**Papéis de token nos cartões (Fase 52I)** - anotação opcional
 `token_roles: list[{token, role}]` em Card com um enum fechado de
 papéis gramaticais (article / verb / noun / adjective /
 preposition / gender_marker / tense_marker). O gerador usa estes
 para escolher um espaço semanticamente significativo em vez de
 depender da correspondência de substring. Adicionar um papel é um
-incremento menor de schema_version — mantenha o enum fechado.
+incremento menor de schema_version - mantenha o enum fechado.

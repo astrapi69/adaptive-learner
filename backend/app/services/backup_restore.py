@@ -590,7 +590,7 @@ def _insert_new_record(
     if missing_parent is not None:
         return (
             "skipped",
-            f"{table}: {record_id} skipped — references a missing {missing_parent} row",
+            f"{table}: {record_id} skipped - references a missing {missing_parent} row",
         )
     fresh = spec.model()
     _apply_columns(table, record, fresh, allow_pk=True)

@@ -21,7 +21,7 @@ competência.
 
 ## Porquê esta ordem
 
-Não é apenas conveniente — cada passo depende do anterior:
+Não é apenas conveniente - cada passo depende do anterior:
 
 - **Input → Tentativa** não é trivial. Muitos aprendentes saltam
   a Tentativa e vão diretamente do input para "tentarei mais
@@ -69,7 +69,7 @@ Cada passo saltado tem um custo:
 
 O avaliador de IA de duplo prompt observa as suas trocas e pode
 sugerir ficar no passo atual quando saltou um ritmo cognitivo.
-É por isso que existem sugestões de "ficar" — não é a IA a ser
+É por isso que existem sugestões de "ficar" - não é a IA a ser
 irritante.
 
 ## Como a IA decide
@@ -86,11 +86,11 @@ ao passo 7).
 
 O suggested_step pode ser:
 
-- `atual + 1` — avanço normal (o mais comum).
-- `atual` — ficar; o aprendente precisa de mais tempo aqui.
-- Um salto para a frente (ex.: 1 → 3) — o aprendente já
+- `atual + 1` - avanço normal (o mais comum).
+- `atual` - ficar; o aprendente precisa de mais tempo aqui.
+- Um salto para a frente (ex.: 1 → 3) - o aprendente já
   compreende o input.
-- Um passo atrás (ex.: 4 → 2) — o aprendente está confuso e
+- Um passo atrás (ex.: 4 → 2) - o aprendente está confuso e
   precisa de tentar novamente.
 
 A rota aplica a sugestão apenas quando
@@ -103,15 +103,15 @@ o avanço de +1.
 A mesma chamada de IA poderia produzir tanto a resposta de
 aprendizagem como o veredicto de passo. Não o fazemos porque:
 
-1. **Separação de preocupações** — o prompt de aprendizagem é
+1. **Separação de preocupações** - o prompt de aprendizagem é
    composto por (método, passo). O prompt do avaliador é
    consciente do método mas agnóstico quanto ao passo.
-2. **Orçamentos de tokens** — a resposta de aprendizagem
+2. **Orçamentos de tokens** - a resposta de aprendizagem
    beneficia de 1024 tokens; o veredicto precisa apenas de 256.
-3. **Robustez na análise de JSON** — pedir à IA para produzir
+3. **Robustez na análise de JSON** - pedir à IA para produzir
    prosa E uma cauda JSON numa única resposta é frágil.
    Perguntamos duas vezes, analisamos de forma limpa.
-4. **Repetibilidade** — quando algo corre mal, temos as duas
+4. **Repetibilidade** - quando algo corre mal, temos as duas
    respostas registadas separadamente e podemos auditar.
 
 O custo são duas chamadas de API por troca. Com preços de tier
@@ -135,7 +135,7 @@ descrevendo o passo do ciclo anterior/seguinte.
 
 O passo 7 já não é um beco sem saída. Assim que o avaliador de
 passo o move para o passo 7 com `advance=true`, uma terceira
-chamada de IA — o avaliador de transição de tópico — julga se
+chamada de IA - o avaliador de transição de tópico - julga se
 o tópico foi integrado e se deve iniciar um novo ciclo.
 
 ```

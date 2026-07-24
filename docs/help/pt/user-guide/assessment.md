@@ -9,8 +9,8 @@ o teste completo corre em menos de dois minutos.
 ## Como funciona
 
 Cada pergunta mostra 3-4 respostas possíveis. A maioria das
-perguntas é de **seleção única** (botões de opção — escolha um).
-Algumas são de **seleção múltipla** (caixas de verificação —
+perguntas é de **seleção única** (botões de opção - escolha um).
+Algumas são de **seleção múltipla** (caixas de verificação -
 escolha tudo o que se aplica). A aplicação indica qual o tipo
 de cada pergunta.
 
@@ -29,12 +29,12 @@ e produz um perfil de 6 métodos.
 
 | Método | Ponto forte |
 |---|---|
-| Dedutivo | Regras primeiro, exemplos depois — orientado pela teoria |
-| Indutivo | Exemplos primeiro, derivar a regra — orientado por padrões |
-| Baseado em erros | Provocar erros, aprender com eles — orientado pelo atrito |
-| Dialógico | Conversa sem stress — orientado pela troca |
-| Contextual | Cenários do mundo real — orientado pela situação |
-| Adaptativo por IA | A IA escolhe por turno — orientado pela meta |
+| Dedutivo | Regras primeiro, exemplos depois - orientado pela teoria |
+| Indutivo | Exemplos primeiro, derivar a regra - orientado por padrões |
+| Baseado em erros | Provocar erros, aprender com eles - orientado pelo atrito |
+| Dialógico | Conversa sem stress - orientado pela troca |
+| Contextual | Cenários do mundo real - orientado pela situação |
+| Adaptativo por IA | A IA escolhe por turno - orientado pela meta |
 
 [Os seis métodos em profundidade](../concept/six-methods.md)
 
@@ -62,7 +62,7 @@ alta (Web Speech API; funciona em navegadores modernos).
 
 Quando uma pergunta permite múltiplas respostas, o peso de cada
 escolha é dividido pelo número que escolheu. Escolher duas
-respostas contribui com o mesmo peso total que escolher uma —
+respostas contribui com o mesmo peso total que escolher uma -
 por isso não pode enganar o teste escolhendo sempre tudo.
 
 ## Refazer a avaliação
@@ -77,4 +77,4 @@ comportamento da IA muda a partir da próxima sessão em diante.
 
 Se saltar o teste, a aplicação usa **dedutivo** como método
 padrão e ainda obterá sessões úteis. Faça a avaliação quando
-estiver pronto — não há penalização por adiar.
+estiver pronto - não há penalização por adiar.

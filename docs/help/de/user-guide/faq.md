@@ -10,12 +10,12 @@ dieses Browser-Profil sie lesen.
 
 Im **Server-Modus** liegen die Daten in der SQLite-Datenbank,
 die das FastAPI-Backend verwaltet. API-Schlüssel werden mit
-Fernet at-rest verschlüsselt — über das Geheimnis aus der
+Fernet at-rest verschlüsselt - über das Geheimnis aus der
 `ADAPTIVE_LEARNER_SECRET_KEY`-Umgebungsvariable, oder über
 `secret_key:` in `~/.config/adaptive-learner/secrets.yaml`.
 
 Kein Modus sendet Telemetrie, Analytics oder deine Nachrichten
-an Dritte — außer an den von dir gewählten KI-Anbieter, der
+an Dritte - außer an den von dir gewählten KI-Anbieter, der
 nur das sieht, was du erwarten würdest (System-Prompt + dein
 Text + bisherige KI-Antworten der Sitzung).
 
@@ -102,12 +102,12 @@ Ja. Drei Export-Pfade ausgeliefert:
 Drei Web-Speech-API-Integrationen:
 
 - **Text-to-Speech** auf KI-Antworten + Assessment-
-  Ergebnissen — ein ▶-Knopf neben jedem liest es laut vor,
+  Ergebnissen - ein ▶-Knopf neben jedem liest es laut vor,
   sprach-angepasst.
-- **Speech-to-Text** auf dem Sitzungs-Input — ein 🎤-Knopf
+- **Speech-to-Text** auf dem Sitzungs-Input - ein 🎤-Knopf
   nimmt deine Stimme auf und füllt das Textarea mit
   Zwischen-Transkripten vor dem Absenden.
-- **Aussprache-Übung** für Sprachprojekte — besuche
+- **Aussprache-Übung** für Sprachprojekte - besuche
   `/pronunciation`, die KI erzeugt einen Zielsatz, du
   sprichst, und eine Judge-KI bewertet Ähnlichkeit +
   schlägt Verbesserungen vor.
@@ -127,7 +127,7 @@ Vorschlag. Ein Klick sät ein Curriculum + startet eine
 gezielte Session aus der Analyse.
 
 Der Claude.ai-Single-Conversation-Markdown-Export ist ein
-geprüfter Import-Fall — der Parser liefert volle Zeitstempel-
+geprüfter Import-Fall - der Parser liefert volle Zeitstempel-
 Extraktion + Rollengrenzen-Erhalt für dieses Format aus.
 
 ## Sync zwischen Geräten?
@@ -148,18 +148,18 @@ unter der Haube eine KI nutzt, aber zusätzlich bringt:
 
 1. **Eine 6-Methoden × 7-Schritte-Matrix** maßgeschneiderter
    System-Prompts.
-2. **Pro-Turn-Schritt-Bewertung** — ein zweiter KI-Aufruf
+2. **Pro-Turn-Schritt-Bewertung** - ein zweiter KI-Aufruf
    beurteilt die Bereitschaft und kann dich vorwärts /
    zurück bewegen.
 3. **Auto-Loop in neue Zyklen**, wenn das Thema integriert
    ist.
 4. **Ein Profil** deiner Lernpräferenzen aus dem 12-Fragen-
    Test.
-5. **Langfristiges Tracking** — ProgressCommits, Streak-
+5. **Langfristiges Tracking** - ProgressCommits, Streak-
    Heatmap, XP, Abzeichen, Zeit-pro-Schritt-Charts. ChatGPT
    vergisst, wenn du den Tab schließt.
-6. **Anbieter-Freiheit** — Anthropic, OpenAI oder Gemini.
-7. **Local-First-Option** — alles in deinem Browser, nichts
+6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini.
+7. **Local-First-Option** - alles in deinem Browser, nichts
    wird an einen Server gesendet (außer deine KI-Aufrufe).
 
 ## Was, wenn die KI danebenliegt?
@@ -168,7 +168,7 @@ Das System scheitert sichtbar:
 
 - **Falscher API-Schlüssel**: Der KI-Aufruf gibt eine klare
   Fehlermeldung zurück, inline im Chat.
-- **Anbieter down**: dasselbe — die Fehler-Anzeige rendert
+- **Anbieter down**: dasselbe - die Fehler-Anzeige rendert
   den HTTP-Status der Anbieter-API.
 - **JSON-Parse-Fehler vom Bewerter**: ein deterministisches
   +1-Advance greift (bei Schritt 7 gekappt), mit

@@ -1,4 +1,4 @@
-"""Article-1 § 8 exit-threshold logic — single source of truth.
+"""Article-1 § 8 exit-threshold logic - single source of truth.
 
 Both the LEARNING_STATS.md generator and the git-tagger consume
 this module. Lifting the logic out of ``meta/stats.py`` keeps

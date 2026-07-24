@@ -20,7 +20,7 @@ o domínio e quer internalizá-las eficientemente.
 
 **Funciona mal quando**: as regras são difusas, contestadas ou
 dependentes do contexto. O ensino puramente dedutivo de "bom
-gosto" ou "clareza" não resulta — o aprendente precisa de ver
+gosto" ou "clareza" não resulta - o aprendente precisa de ver
 muitos exemplos antes de o padrão implícito cristalizar.
 
 **Estilo da IA**: preciso, estruturado, completo. Enuncia a
@@ -38,7 +38,7 @@ apenas depois de o aprendente ter formado uma hipótese.
 **Funciona bem quando**: o reconhecimento de padrões é
 exatamente a competência cognitiva que o aprendente precisa de
 desenvolver. Aprendizagem de línguas, teoria musical, táticas
-de xadrez, intuição de aprendizagem automática — todos
+de xadrez, intuição de aprendizagem automática - todos
 beneficiam da prática indutiva.
 
 **Funciona mal quando**: a velocidade é importante. O caminho
@@ -67,11 +67,11 @@ o mecanismo corretivo.
 iniciante. A "frustração produtiva" pode transformar-se em
 "não sou bom nisto" sem um enquadramento cuidadoso. O prompt da
 IA para o `passo 3 (Erro)` neste método diz explicitamente
-"diagnosticar com precisão sem rodeios" — é uma escolha
+"diagnosticar com precisão sem rodeios" - é uma escolha
 pedagógica, não um defeito de personalidade.
 
 **Estilo da IA**: confronta o erro, depois explica o seu
-mecanismo em profundidade. "Essa é a armadilha clássica X —
+mecanismo em profundidade. "Essa é a armadilha clássica X -
 caiu nela porque Y. Eis porque é tão tentadora."
 
 ## Dialógico
@@ -149,7 +149,7 @@ diferente.
 
 A matriz é exportada verbatim para
 `frontend/src/data/session-prompts.json` para paridade no modo
-Dexie — sem deriva possível entre os modos Servidor e Local.
+Dexie - sem deriva possível entre os modos Servidor e Local.
 
 ## Escolher entre eles
 
@@ -157,7 +157,7 @@ A sua avaliação dá-lhe um perfil de 6 métodos. O método
 dominante é aquele com que as novas sessões começam. Mas:
 
 - O **avaliador de passo** (duplo prompt) pode sugerir
-  permanecer, avançar ou — raramente — recuar por passo do
+  permanecer, avançar ou - raramente - recuar por passo do
   ciclo.
 - A **heurística de mudança de método** deteta estagnação
   (três sessões com compreensão estável + stress elevado) e

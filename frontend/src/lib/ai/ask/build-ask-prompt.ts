@@ -72,7 +72,7 @@ export function buildAskAiMessages(
     role: "system",
     content: [
       `You are a helpful, concise tutor inside a learning app. The learner is studying ${subject}.`,
-      `They are reading the following ${blockLabel} and want to go deeper — explain it, clarify, or give a concrete example.`,
+      `They are reading the following ${blockLabel} and want to go deeper - explain it, clarify, or give a concrete example.`,
       `Answer ONLY about this ${blockLabel}; do not invent unrelated content. If the question is off-topic for it, say so briefly.`,
       `Reply in the learner's UI language (BCP-47 code: ${context.uiLanguage}). Keep it focused and short.`,
       "",

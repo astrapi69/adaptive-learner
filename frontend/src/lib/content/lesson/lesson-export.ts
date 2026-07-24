@@ -170,7 +170,7 @@ export function buildPrBody(details: CommunityPrDetails): string {
   }
   lines.push(
     "",
-    "_Created with Adaptive Learner — My Lessons > Share with Community._",
+    "_Created with Adaptive Learner - My Lessons > Share with Community._",
     "_The content-repo CI validation runs automatically on this PR._",
   );
   return lines.join("\n");

@@ -1,4 +1,4 @@
-# Leçons et SRS — fonctionnement interne
+# Leçons et SRS - fonctionnement interne
 
 Cette page documente la manière dont la pile de fonctionnalités
 leçons + SRS (v1.27.0–v1.31.0) est câblée entre le backend, le
@@ -77,7 +77,7 @@ frontend et deux plugins. Pour la vue utilisateur, consultez
 `app/models/__init__.py:ElementError` avec une contrainte UNIQUE
 composite sur
 `(user_id, set_id, lesson_id, exercise_id, element_key)`.
-Clés d'éléments scoped par leçon selon la décision **D2** — le
+Clés d'éléments scoped par leçon selon la décision **D2** - le
 même mot dans deux leçons différentes produit deux lignes.
 
 ```python
@@ -98,7 +98,7 @@ class ElementError(Base):
     mastered_at: datetime | None
 ```
 
-Découplé de `learning_sessions` (pas de FK) par conception — les
+Découplé de `learning_sessions` (pas de FK) par conception - les
 leçons de contenu référencent les IDs de l'ensemble et de la leçon
 par string, sans jointure relationnelle. La table survit donc aux
 évictions du cache indépendamment de toute ligne de session.
@@ -143,7 +143,7 @@ prochaine révision d'une ligne non maîtrisée :
 | 0 | 1 jour après `last_attempt_at` |
 | 1 | 3 jours |
 | 2 | 7 jours |
-| ≥ 3 | maîtrisé — exclu de la file |
+| ≥ 3 | maîtrisé - exclu de la file |
 
 ### Tri par priorité
 
@@ -204,7 +204,7 @@ Trois décisions déterminent la forme :
 ### Changement de schéma
 
 ```python
-# app/models/__init__.py — Phase 46F.1
+# app/models/__init__.py - Phase 46F.1
 LEARNING_PROJECT_KIND_STANDARD = "standard"
 LEARNING_PROJECT_KIND_CONTENT = "content"
 
@@ -230,17 +230,17 @@ deux sens.
 `app/services/lesson_session_unification.py` comporte deux
 fonctions publiques :
 
-- `find_or_create_content_pseudo_project(db, user_id)` —
+- `find_or_create_content_pseudo_project(db, user_id)` -
   recherche idempotente ; crée uniquement si absent.
 - `record_lesson_completion_session(db, *, user_id,
-  lesson_progress_id, score_correct, score_total)` —
+  lesson_progress_id, score_correct, score_total)` -
   écrit la ligne `LearningSession`, effectue le commit, puis
   déclenche `on_session_complete`.
 
 Les deux sont invoquées depuis
 `app/services/lesson_progress.py:upsert_progress` quand la
 ligne passe de `in_progress` à `completed`. Le chemin de
-déclenchement du hook encapsule les exceptions des abonnés —
+déclenchement du hook encapsule les exceptions des abonnés -
 un plantage de la gamification ne peut pas annuler la leçon que
 l'utilisateur a déjà vue sur l'écran de résumé.
 
@@ -265,18 +265,18 @@ de données.
 
 `adaptive_learner_gamification.xp_service` gagne :
 
-- `compute_stars(correct, total)` — de 0 à 3 étoiles selon un
+- `compute_stars(correct, total)` - de 0 à 3 étoiles selon un
   score, avec des bandes à 50 % / 75 % / 90 %. Reproduit le
   `computeStars` du frontend dans `lib/lesson-summary.ts` afin
   que les deux côtés projettent le même nombre d'étoiles.
 - `calculate_lesson_session_xp(*, stars, first_attempt,
-  streak_days)` — calculateur pur. 30 de base + 10/étoile +
+  streak_days)` - calculateur pur. 30 de base + 10/étoile +
   20 (première tentative 3 étoiles) + même multiplicateur de
   série +25 %/jour (plafonné à 7) que la formule chat.
-- `_is_first_attempt(db, lesson_progress_id)` — lit le JSON
+- `_is_first_attempt(db, lesson_progress_id)` - lit le JSON
   `LessonProgress.step_results` et retourne True si et
   seulement si chaque ligne de pas a `attempts == 1`.
-- `award_xp_for_lesson_session(db, *, session)` — couche de
+- `award_xp_for_lesson_session(db, *, session)` - couche de
   persistance qui résout l'user_id à partir de la FK du projet
   et applique la formule.
 
@@ -294,7 +294,7 @@ Quatre nouveaux prédicats ajoutés à
 
 | Clé | Prédicat | Utilitaire |
 |---|---|---|
-| `first_lesson` | `_completed_lesson_count >= 1` | compte les `LessonProgress.status="completed"` (pas via LearningSession — la ligne de leçon fait autorité) |
+| `first_lesson` | `_completed_lesson_count >= 1` | compte les `LessonProgress.status="completed"` (pas via LearningSession - la ligne de leçon fait autorité) |
 | `lessons_10` | `_completed_lesson_count >= 10` | idem |
 | `three_star_streak` | `_last_n_lessons_all_three_star(n=3)` | lit les 3 derniers `LessonProgress` complétés par `completed_at` desc ; projette chacun via `xp_service.compute_stars` |
 | `review_master` | `_mastered_elements_count >= 50` | compte `ElementError.mastered=True` |
@@ -309,7 +309,7 @@ détecte toute dérive entre les deux listes.
 ## Spécificités selon le mode de stockage
 
 La chaîne de suivi des éléments + SRS fonctionne de manière
-identique dans **les deux** modes de stockage — le contrat
+identique dans **les deux** modes de stockage - le contrat
 `IElementErrorsNamespace` est agnostique au mode et la porte
 de sortie Dexie (18 specs incluant la route `/review`) bloque
 toute régression.
@@ -318,7 +318,7 @@ L'unification leçon-session + les effets secondaires de
 gamification sont **limités au mode API**. En mode Dexie, la
 complétion de leçon écrit toujours `LessonProgress`, enregistre
 toujours les lignes `ElementError`, et alimente toujours la file
-de révision — mais l'écriture `LearningSession` + le hook
+de révision - mais l'écriture `LearningSession` + le hook
 `on_session_complete` ne se déclenchent jamais (pas de backend,
 pas de hook possible). Les utilisateurs Dexie bénéficient de la
 boucle de révision complète ; les attributions XP/badges du
@@ -329,20 +329,20 @@ ne contribuent pas encore à ce total.
 
 ## Où chercher
 
-- `backend/app/services/element_errors.py` — la matrice de
+- `backend/app/services/element_errors.py` - la matrice de
   transition upsert.
-- `backend/app/services/element_srs.py` — le planificateur.
-- `backend/app/services/lesson_session_unification.py` —
+- `backend/app/services/element_srs.py` - le planificateur.
+- `backend/app/services/lesson_session_unification.py` -
   le pseudo-projet + le déclenchement du hook.
 - `plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/xp_service.py` —
+  adaptive_learner_gamification/xp_service.py` -
   `calculate_lesson_session_xp` + dispatch.
 - `plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/badge_service.py` —
+  adaptive_learner_gamification/badge_service.py` -
   les quatre nouveaux prédicats.
-- `frontend/src/lib/learning-project.ts` — l'utilitaire de
+- `frontend/src/lib/learning-project.ts` - l'utilitaire de
   filtre du pseudo-projet.
-- `e2e/dexie/dexie-mode.spec.ts` — la porte de sortie qui
+- `e2e/dexie/dexie-mode.spec.ts` - la porte de sortie qui
   prévient les régressions en mode Dexie (spec leçon sur
   `/lesson/...`, spec révision sur `/review/...`).
 
@@ -353,22 +353,22 @@ ne contribuent pas encore à ce total.
 Trois ajouts en couches qui transforment la relecture passive en
 apprentissage actif :
 
-**Token-diff + DiffHighlight** — les mauvaises réponses en texte
+**Token-diff + DiffHighlight** - les mauvaises réponses en texte
 libre et word-tiles affichent désormais
 `<DiffHighlight tokens={tokenDiff(input, canonical)} />` en
 ligne sous le paragraphe de résultat. Le résumé de leçon affiche
 le même diff pour les exercices texte libre + word-tiles quand le
 `user_answer` stocké en v1.35.0+ est disponible (les lignes plus
 anciennes replient sur la ligne canonique uniquement). Algorithme
-dans `frontend/src/lib/exercises/token-diff.ts` — LCS pur au
+dans `frontend/src/lib/exercises/token-diff.ts` - LCS pur au
 niveau des mots, normalisé NFC, sensible à la casse et aux
 accents.
 
-**Type d'exercice Cloze (schéma 1.1)** — cinquième ExerciseType :
+**Type d'exercice Cloze (schéma 1.1)** - cinquième ExerciseType :
 remplissage avec des marqueurs `___` visibles. Deux modes
 d'affichage : `type` (par défaut, `<input>`) et `select`
 (`<select>` avec options issues de `distractors`). Suivi SRS
-par blanc via `deriveClozeAttempts` — un ElementAttempt par
+par blanc via `deriveClozeAttempts` - un ElementAttempt par
 blanc, permettant un suivi de maîtrise par blanc clair.
 Composant dans
 `frontend/src/components/exercises/ClozeExercise.tsx` ;
@@ -376,7 +376,7 @@ schéma dans
 `plugins/adaptive-learner-plugin-content-loader/
 adaptive_learner_content_loader/schema.py`.
 
-**Générateur de Cloze** — `generateClozeFromError(error,
+**Générateur de Cloze** - `generateClozeFromError(error,
 sourceExercise, sourceCard)` synthétise une étape Cloze à partir
 d'un ElementError. Algorithme :
 
@@ -387,7 +387,7 @@ d'un ElementError. Algorithme :
    `error.correct_answer` exactement une fois, mettre `___`.
 3. Sinon, si la source est free_text et que son prompt contient
    la réponse exactement une fois, mettre `___`.
-4. Sinon, retourner null — l'appelant replie sur la relecture.
+4. Sinon, retourner null - l'appelant replie sur la relecture.
 
 Déterministe : mêmes entrées → sortie identique octet à octet.
 Pas d'IA, pas d'aléatoire, pas d'async. Les distracteurs portent
@@ -395,7 +395,7 @@ Pas d'IA, pas d'aléatoire, pas d'async. Les distracteurs portent
 réponse), puis `sourceExercise.distractors` filtrés et dédupliqués.
 Code dans `frontend/src/lib/exercises/cloze-generator.ts`.
 
-**Round de correction en fin de leçon** —
+**Round de correction en fin de leçon** -
 `<CorrectionBlock />` se monte dans `LessonSummary` entre le
 score/résumé et les boutons d'action. Au montage, il lit les
 lignes ElementError de la leçon qui vient de se terminer, génère
@@ -407,7 +407,7 @@ Se masque automatiquement en cas de score parfait / aucune erreur
 / aucun Cloze constructible. Code dans
 `frontend/src/components/exercises/CorrectionBlock.tsx`.
 
-**Cloze dans les sessions de révision (Phase 52G)** —
+**Cloze dans les sessions de révision (Phase 52G)** -
 la branche par élément de `synthesizeReviewLesson`
 (`_buildReviewStep`) choisit désormais :
 
@@ -415,11 +415,11 @@ la branche par élément de `synthesizeReviewLesson`
   relecture
 - matching, picture_choice, cloze → toujours relecture
 
-**Rôles de tokens sur les cartes (Phase 52I)** — annotation
+**Rôles de tokens sur les cartes (Phase 52I)** - annotation
 optionnelle `token_roles: list[{token, role}]` sur Card avec
 un ensemble fermé de rôles grammaticaux (article / verb / noun
 / adjective / preposition / gender_marker / tense_marker). Le
 générateur s'en sert pour choisir un blanc sémantiquement
 significatif au lieu de se fier à la correspondance par
 sous-chaîne. Ajouter un rôle est un bump mineur de
-`schema_version` — garder l'ensemble fermé.
+`schema_version` - garder l'ensemble fermé.

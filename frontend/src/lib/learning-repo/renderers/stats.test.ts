@@ -133,7 +133,7 @@ describe("renderStats — session table", () => {
         // s-1: understanding 4*2=8, transfer 3*2=6, stress 2*2=4
         expect(md).toMatch(/\| `s-1[^|]+\| deductive \| 8\/10 \| 6\/10 \| 4\/10 \|/);
         // s-2: no rating → em-dashes
-        expect(md).toMatch(/\| `s-2[^|]+\| deductive \| — \| — \| — \|/);
+        expect(md).toMatch(/\| `s-2[^|]+\| deductive \| - \| - \| - \|/);
     });
 
     it("pins the exit-threshold marker on qualifying rows", () => {

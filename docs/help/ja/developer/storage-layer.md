@@ -30,11 +30,11 @@ export interface IStorageService {
   backup: IBackupNamespace;
   export: IExportNamespace;
   imports: IImportsNamespace;
-  // Phase 22 — taxonomy
+  // Phase 22 - taxonomy
   subjects: ISubjectsNamespace;
   tags: ITagsNamespace;
   projectTaxonomy: IProjectTaxonomyNamespace;
-  // Phase 29-32 — gamification + exports
+  // Phase 29-32 - gamification + exports
   gamification: IGamificationNamespace;
   anki: IAnkiNamespace;
   notebooklm: INotebookLmNamespace;
@@ -66,8 +66,8 @@ export interface IStorageService {
 
 バンドルデータは`frontend/src/data/`に格納されます。
 
-- `assessment-questions.json` — バックエンドの`QUESTIONS`リストからそのままエクスポート（12問 × 4回答 × 5言語）。
-- `session-prompts.json` — バックエンドの`_PROMPTS`辞書からそのままエクスポート（6メソッド × 7ステップ × 2言語）。
+- `assessment-questions.json` - バックエンドの`QUESTIONS`リストからそのままエクスポート（12問 × 4回答 × 5言語）。
+- `session-prompts.json` - バックエンドの`_PROMPTS`辞書からそのままエクスポート（6メソッド × 7ステップ × 2言語）。
 
 ## 3番目のストレージバックエンドの追加
 
@@ -91,9 +91,9 @@ Settings UIのストレージモードセクションに配線します。他の
 
 `storage/ai-providers.ts`は3つのプロバイダークライアントを実装しています。
 
-- **Anthropic** — `anthropic-dangerous-direct-browser-access: true`ヘッダーを付けて`https://api.anthropic.com/v1/messages`にPOST。これはAnthropicのブラウザ呼び出し元向けの明示的なオプトインです。このヘッダーがないとCORSが拒否します。
-- **OpenAI** — `Authorization: Bearer ${apiKey}`を付けて`https://api.openai.com/v1/chat/completions`にPOST。CORSはデフォルトで開放されています。
-- **Gemini** — `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}`にPOST。クエリパラメーター認証で、systemフィールドなし。systemメッセージは最初のユーザーターンに折り込まれます。
+- **Anthropic** - `anthropic-dangerous-direct-browser-access: true`ヘッダーを付けて`https://api.anthropic.com/v1/messages`にPOST。これはAnthropicのブラウザ呼び出し元向けの明示的なオプトインです。このヘッダーがないとCORSが拒否します。
+- **OpenAI** - `Authorization: Bearer ${apiKey}`を付けて`https://api.openai.com/v1/chat/completions`にPOST。CORSはデフォルトで開放されています。
+- **Gemini** - `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}`にPOST。クエリパラメーター認証で、systemフィールドなし。systemメッセージは最初のユーザーターンに折り込まれます。
 
 3つすべてがエラーを`ApiError(status, "Provider: detail")`に正規化するため、既存のフロントエンドトースト / GitHub Issue UXが分岐なしにレンダリングできます。
 
@@ -113,8 +113,8 @@ v1.20.0 / Phase 34以降、両モードともプロバイダーごとのソー�
 
 `storage/index.ts`は次の順序でモードを解決します。
 
-1. `localStorage["adaptive-learner.storage_mode"]` — Settingsでのユーザー選択。
-2. `VITE_STORAGE_MODE` — ビルド時のデフォルト（GH Pagesでは`"dexie"`に設定）。
+1. `localStorage["adaptive-learner.storage_mode"]` - Settingsでのユーザー選択。
+2. `VITE_STORAGE_MODE` - ビルド時のデフォルト（GH Pagesでは`"dexie"`に設定）。
 3. フォールバック: `"api"`。
 
 結果はページのライフタイム中キャッシュされます。テストコードは`_resetStorageCacheForTests()`でリセットできます。

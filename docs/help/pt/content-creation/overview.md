@@ -1,8 +1,8 @@
-# Criar lições — Visão geral
+# Criar lições - Visão geral
 
 O Adaptive Learner vive de conteúdos. Podes construir as tuas
-próprias lições — diretamente na aplicação ou como ficheiro no
-formato de repositório de conteúdo — e partilhá-las com a
+próprias lições - diretamente na aplicação ou como ficheiro no
+formato de repositório de conteúdo - e partilhá-las com a
 comunidade. Esta página dá a visão geral; os detalhes pormenorizados
 do formato estão nas fontes ligadas.
 
@@ -24,7 +24,7 @@ O **Criador de Lições** em `/create-lesson` é um assistente de
 - **Gera automaticamente** exercícios a partir dos cartões ou
   **edita-os totalmente tu mesmo** no passo 3: todos os tipos de
   exercício do núcleo podem ser criados, alterados e adicionados
-  manualmente — incluindo **escolha múltipla** nativa com um
+  manualmente - incluindo **escolha múltipla** nativa com um
   controlo destacado de **resposta única/múltipla**.
 - O **Ditado** (ditado de áudio) está disponível diretamente no
   seletor de tipos de exercício; carregas o clip de áudio como
@@ -46,7 +46,7 @@ Existem pontos de entrada no Navegador de Conteúdo e no Dashboard.
 
 O quinto cartão de modelo, **«Lição de conhecimento a partir de
 texto»**, inicia um fluxo próprio de 3 passos (Metadados → Texto do
-livro → Rever): cola uma secção (p. ex. um capítulo) do teu manual —
+livro → Rever): cola uma secção (p. ex. um capítulo) do teu manual -
 a IA reformula-a **por palavras próprias** como passos de teoria
 (nunca uma cópia) e gera exercícios adequados que remetem para o seu
 passo de teoria. Opcionalmente podes registar os dados do livro
@@ -55,15 +55,15 @@ lição mais tarde.
 
 Em vez de colar texto podes também **carregar um ficheiro de livro**
 (EPUB, DOCX, TXT ou Markdown, até 20 MiB). O ficheiro é analisado
-inteiramente **no navegador** — nada é enviado para um servidor — e
+inteiramente **no navegador** - nada é enviado para um servidor - e
 os capítulos detetados aparecem como **lista de caixas de seleção**.
 Secções que parecem material inicial ou final (prefácio, glossário,
 índice, …) ficam **desmarcadas por predefinição** por uma
 heurística, mas continuam visíveis e selecionáveis:
 
-- **Uma secção selecionada** — é inserida no campo de texto (com
+- **Uma secção selecionada** - é inserida no campo de texto (com
   pré-visualização; um campo já preenchido pede confirmação).
-- **Várias secções selecionadas** — a **geração em lote** cria
+- **Várias secções selecionadas** - a **geração em lote** cria
   **uma lição por secção** e guarda-as em conjunto como um conjunto
   de várias lições.
 
@@ -107,6 +107,6 @@ ela nunca bloqueia a partilha.
 
 ## Páginas relacionadas
 
-- [Criar conteúdos de lições (programador)](../developer/authoring-content.md) — detalhes do esquema, assets, cartões de código/fórmula
-- [Recomendações de livros](books.md) — manter `books.yaml`
-- [Múltiplos repositórios de conteúdo](../features/content-repos.md) — ligar repo próprio
+- [Criar conteúdos de lições (programador)](../developer/authoring-content.md) - detalhes do esquema, assets, cartões de código/fórmula
+- [Recomendações de livros](books.md) - manter `books.yaml`
+- [Múltiplos repositórios de conteúdo](../features/content-repos.md) - ligar repo próprio

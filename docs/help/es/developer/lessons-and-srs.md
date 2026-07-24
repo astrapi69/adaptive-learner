@@ -144,7 +144,7 @@ próxima revisión de una fila no dominada:
 | 0 | 1 día después de `last_attempt_at` |
 | 1 | 3 días |
 | 2 | 7 días |
-| ≥ 3 | dominado — excluido de la cola |
+| ≥ 3 | dominado - excluido de la cola |
 
 ### Ordenación por prioridad
 
@@ -207,7 +207,7 @@ Tres decisiones condicionan la forma:
 ### Cambio de esquema
 
 ```python
-# app/models/__init__.py — Fase 46F.1
+# app/models/__init__.py - Fase 46F.1
 LEARNING_PROJECT_KIND_STANDARD = "standard"
 LEARNING_PROJECT_KIND_CONTENT = "content"
 
@@ -233,10 +233,10 @@ recoge la columna para que el viaje de ida y vuelta a través de
 `app/services/lesson_session_unification.py` tiene dos
 funciones públicas:
 
-- `find_or_create_content_pseudo_project(db, user_id)` —
+- `find_or_create_content_pseudo_project(db, user_id)` -
   búsqueda idempotente; solo crea en caso de no encontrar.
 - `record_lesson_completion_session(db, *, user_id,
-  lesson_progress_id, score_correct, score_total)` —
+  lesson_progress_id, score_correct, score_total)` -
   escribe la fila `LearningSession`, hace commit y luego dispara
   `on_session_complete`.
 
@@ -270,18 +270,18 @@ El filtro es una decisión de política de UI, no de ocultación de datos.
 
 `adaptive_learner_gamification.xp_service` incorpora:
 
-- `compute_stars(correct, total)` — de 0 a 3 a partir de una
+- `compute_stars(correct, total)` - de 0 a 3 a partir de una
   puntuación, con bandas en 50 % / 75 % / 90 %. Espeja el
   `computeStars` del frontend en `lib/lesson-summary.ts` para que
   ambos lados proyecten la misma calificación en estrellas.
 - `calculate_lesson_session_xp(*, stars, first_attempt,
-  streak_days)` — calculador puro. 30 base + 10/estrella +
+  streak_days)` - calculador puro. 30 base + 10/estrella +
   20 primer-intento-3-estrellas + el mismo multiplicador de racha
   +25 %/día (limitado a 7) que la fórmula de chat.
-- `_is_first_attempt(db, lesson_progress_id)` — lee
+- `_is_first_attempt(db, lesson_progress_id)` - lee
   `LessonProgress.step_results` JSON y devuelve True si y solo si
   cada fila de paso tiene `attempts == 1`.
-- `award_xp_for_lesson_session(db, *, session)` — envoltorio
+- `award_xp_for_lesson_session(db, *, session)` - envoltorio
   de persistencia que resuelve user_id a partir del FK del proyecto
   y aplica la fórmula.
 
@@ -293,7 +293,7 @@ unificación lleva las claves específicas de la lección
 (`lesson_progress_id`, `score_correct`,
 `score_total`); los payloads de sesiones de chat no las tienen, por lo
 que el envoltorio de XP de lección degradaría con elegancia si
-el despacho alguna vez se filtrara — pero la prueba de fijación de
+el despacho alguna vez se filtrara - pero la prueba de fijación de
 regresiones en
 `backend/tests/test_lesson_session_unification.py`
 afirma el premio exacto de la lección (100 XP para una
@@ -351,19 +351,19 @@ permite el alcance de v1.31.0.
 
 ## Dónde buscar a continuación
 
-- `backend/app/services/element_errors.py` — la matriz de transición de upsert.
-- `backend/app/services/element_srs.py` — el planificador.
-- `backend/app/services/lesson_session_unification.py` —
+- `backend/app/services/element_errors.py` - la matriz de transición de upsert.
+- `backend/app/services/element_srs.py` - el planificador.
+- `backend/app/services/lesson_session_unification.py` -
   el pseudo-proyecto + disparo del hook.
 - `plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/xp_service.py` —
+  adaptive_learner_gamification/xp_service.py` -
   `calculate_lesson_session_xp` + despacho.
 - `plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/badge_service.py` —
+  adaptive_learner_gamification/badge_service.py` -
   los cuatro nuevos predicados.
-- `frontend/src/lib/learning-project.ts` — el helper de filtro del
+- `frontend/src/lib/learning-project.ts` - el helper de filtro del
   pseudo-proyecto.
-- `e2e/dexie/dexie-mode.spec.ts` — el gate de lanzamiento que
+- `e2e/dexie/dexie-mode.spec.ts` - el gate de lanzamiento que
   previene regresiones en modo Dexie (spec de lecciones en
   `/lesson/...`, spec de repaso en `/review/...`).
 
@@ -374,7 +374,7 @@ permite el alcance de v1.31.0.
 Tres adiciones en capas que transforman el repaso pasivo en
 aprendizaje activo:
 
-**Token-diff + DiffHighlight** — las respuestas incorrectas de
+**Token-diff + DiffHighlight** - las respuestas incorrectas de
 texto libre y fichas de palabras ahora muestran `<DiffHighlight tokens={tokenDiff(
 input, canonical)} />` en línea debajo del párrafo de resultado.
 El desglose por ejercicio del resumen de lección muestra el mismo
@@ -384,7 +384,7 @@ solo la línea canónica). Algoritmo en
 `frontend/src/lib/exercises/token-diff.ts`: LCS puro a nivel de
 palabra, normalizado con NFC, sensible a mayúsculas y acentos.
 
-**Tipo de ejercicio cloze (esquema 1.1)** — quinto ExerciseType:
+**Tipo de ejercicio cloze (esquema 1.1)** - quinto ExerciseType:
 rellenar el hueco con marcadores `___` visibles. Dos modos de
 representación: `type` (por defecto, `<input>`) y `select`
 (`<select>` con opciones de `distractors`). Fan-out de SRS por
@@ -396,7 +396,7 @@ esquema en
 `plugins/adaptive-learner-plugin-content-loader/
 adaptive_learner_content_loader/schema.py`.
 
-**Generador de cloze** — `generateClozeFromError(error,
+**Generador de cloze** - `generateClozeFromError(error,
 sourceExercise, sourceCard)` sintetiza un paso cloze a partir
 de un ElementError. Algoritmo:
 
@@ -415,7 +415,7 @@ sin aleatoriedad, sin async. Los distractores llevan
 luego `sourceExercise.distractors` filtrados y deduplicados. Código
 en `frontend/src/lib/exercises/cloze-generator.ts`.
 
-**Ronda de corrección al final de la lección** —
+**Ronda de corrección al final de la lección** -
 `<CorrectionBlock />` se monta dentro de `LessonSummary` entre
 la puntuación/desglose y los botones de acción. Al montarse,
 lee las filas ElementError de la lección recién finalizada,
@@ -427,7 +427,7 @@ la racha + maestría del SRS avanza. Se oculta por sí solo en caso
 de puntuación perfecta / sin errores / sin cloze construible. Código en
 `frontend/src/components/exercises/CorrectionBlock.tsx`.
 
-**Cloze en sesiones de repaso (Fase 52G)** —
+**Cloze en sesiones de repaso (Fase 52G)** -
 la rama por elemento de `synthesizeReviewLesson`
 (`_buildReviewStep`) ahora elige:
 
@@ -439,7 +439,7 @@ Criterios de decisión documentados en
 empiezan con `review-`; los IDs de pasos cloze generados empiezan
 con `review-cloze-` para la trazabilidad.
 
-**Token-roles en fichas (Fase 52I)** — anotación opcional
+**Token-roles en fichas (Fase 52I)** - anotación opcional
 `token_roles: list[{token, role}]` en Card con un enum cerrado de
 roles gramaticales (article / verb / noun
 / adjective / preposition / gender_marker /

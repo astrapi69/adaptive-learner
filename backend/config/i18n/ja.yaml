@@ -1,7 +1,7 @@
 app:
   name: Adaptive Learner
   tagline: 6メソッドモデルに基づく適応学習。
-  skeleton_notice: スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます — docs/adaptive-learner-project-reference.md を参照してください。
+  skeleton_notice: スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます - docs/adaptive-learner-project-reference.md を参照してください。
 common:
   ok: "OK"
   remove: "削除"
@@ -72,7 +72,7 @@ nav:
     more: "その他"
   primary: "メインナビゲーション"
   discover: "コンテンツを見つける"
-  offline_long: "オフライン — 過去のセッションは引き続き閲覧できます"
+  offline_long: "オフライン - 過去のセッションは引き続き閲覧できます"
   sync_pending: "{n} 件の変更が同期待ちです"
   statistics: "統計"
   profile: "あなたのプロフィール"
@@ -90,12 +90,12 @@ nav:
   offline: オフライン
   anki: Anki
   dev_badge: DEV
-  dev_badge_tooltip: "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
+  dev_badge_tooltip: "開発者モードがオンです - エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
   content: "マイコンテンツ"
   mode_badge_content: コンテンツ
   mode_badge_ai: "AI+コンテンツ"
-  mode_badge_tooltip_content: "API キーが設定されていません — 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。"
-  mode_badge_tooltip_ai: "AI プロバイダー設定済み — 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。"
+  mode_badge_tooltip_content: "API キーが設定されていません - 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。"
+  mode_badge_tooltip_ai: "AI プロバイダー設定済み - 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。"
   mode_badge_label_content: "モード: コンテンツのみ"
   mode_badge_label_ai: "モード: AI + コンテンツ"
   sync_paired: "同期：ペアリング済み（設定 > 同期）"
@@ -193,7 +193,7 @@ curriculum:
   add_subtopic: サブトピックを追加
   rename_topic: トピックの名前を変更
   topic_title: タイトル
-  no_topics: まだトピックがありません — 最初のものを追加して始めましょう。
+  no_topics: まだトピックがありません - 最初のものを追加して始めましょう。
   no_curriculum: トピックツリーを構築するためにカリキュラムを作成してください。
   delete_confirm: このトピックを削除しますか? 子トピックは独自のルートとして残ります。
   lessons_title: レッスン
@@ -210,7 +210,7 @@ curriculum:
   description_saved: "説明を保存しました。"
   edit_description: "説明を編集"
   lesson_content_aria: "レッスンの内容"
-  lesson_content_placeholder: "レッスンの内容 — 見出し、リスト、コードブロック、リンクに対応。"
+  lesson_content_placeholder: "レッスンの内容 - 見出し、リスト、コードブロック、リンクに対応。"
   no_description: "まだ説明はありません。"
 landing:
   title: Adaptive Learner
@@ -226,7 +226,7 @@ onboarding:
   intro: 学習目標について教えてください。Adaptive Learner はこれをもとに プロフィールを構築し、開始する方法を推奨します。
   concepts_explainer_prefix: "あなたは"
   concepts_explainer_mid1: "、それから評価テストを受けて、あなたの"
-  concepts_explainer_mid2: "— これはあなたの各"
+  concepts_explainer_mid2: "、これはあなたの各"
   concepts_explainer_suffix: "の指針になります。"
   term_learning_project: "学習プロジェクト"
   term_learning_profile: "学習プロフィール"
@@ -240,7 +240,7 @@ onboarding:
   field_timeframe_hint: '例: 4 週間、1 学期。'
   field_daily_minutes: 1 日あたりの分
   field_current_problem: 現在の問題
-  field_current_problem_hint: 任意 — 今、何が妨げになっていますか?
+  field_current_problem_hint: 任意 - 今、何が妨げになっていますか?
   submit: プロジェクトを作成して評価を開始
   creating: プロジェクトを作成中…
   subject_suggestions: "おすすめの科目（タップで割り当て）："
@@ -272,7 +272,7 @@ onboarding:
     later: "後で"
 assessment:
   title: 学習タイプ評価
-  intro: 12 の短い質問で学習プロフィールを判定します。正解も不正解もありません — 直感で答えてください。
+  intro: 12 の短い質問で学習プロフィールを判定します。正解も不正解もありません - 直感で答えてください。
   question_progress: 質問 {current} / {total}
   next_question: 次の質問
   prev_question: 前の質問
@@ -285,7 +285,7 @@ assessment:
   read_summary: サマリーを読み上げ
   swipe_hint: "スワイプで左右に移動（または矢印キーを使用）。"
 dashboard:
-  # 1417 — the one inviting BYOK card on the Dashboard.
+  # 1417 - the one inviting BYOK card on the Dashboard.
   ai_invite:
     title: "AIサポートを有効にする（任意）"
     body: "自分のAIプロバイダー（Claude、OpenAI、Gemini）を接続すると、レッスン内で直接説明やサポートを受けられます。接続しなくてもアプリはそのまま使えます。"
@@ -316,7 +316,7 @@ dashboard:
   review_queue:
     loading: "読み込み中…"
     elements: "件の要素を復習"
-    overdue: "件 期限切れ — ここから開始"
+    overdue: "件 期限切れ - ここから開始"
     open: "復習セッションを開く"
     quick: "クイック復習"
   focus_areas:
@@ -348,7 +348,7 @@ adaptive:
   page_title: "アダプティブレッスン"
   session_title: "アダプティブレッスン"
   loading: "ミスを分析中…"
-  empty_body: "まだ適応するものがありません — レッスンを練習してデータを蓄積してください。"
+  empty_body: "まだ適応するものがありません - レッスンを練習してデータを蓄積してください。"
   not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   back_to_dashboard: "ダッシュボードに戻る"
   transparency:
@@ -368,7 +368,7 @@ review:
   your_answer: "あなたの回答:"
   correct_answer: "正解:"
   summary_corrected: "{total}問中{corrected}問を修正"
-  summary_trend: "いいですね — 弱点が強くなっています。"
+  summary_trend: "いいですね - 弱点が強くなっています。"
   summary_next: "習得した項目は外れ、残りはまもなく復習に戻ります。"
   summary_remaining: "あと {n} 件。続けますか？"
   another_round: "もう1ラウンド"
@@ -403,7 +403,7 @@ review:
   metric_mean_understanding: 平均理解度
   metric_mean_stress: 平均ストレス
   metric_streak: 連続日数
-  no_data: まだセッションがありません — 最初のセッションを始めて傾向を確認しましょう。
+  no_data: まだセッションがありません - 最初のセッションを始めて傾向を確認しましょう。
   pronunciation_quick_start: 発音練習
 session:
   title: 学習セッション
@@ -434,7 +434,7 @@ session:
   cycles_completed: 完了したサイクル
   next_topic: '次のトピック:'
   step_reason_tooltip: なぜこのステップ?
-  offline_start_blocked: オフラインです。新しいセッションにはネットワーク接続が必要です — 過去のセッションはダッシュボードから読み続けられます。
+  offline_start_blocked: オフラインです。新しいセッションにはネットワーク接続が必要です - 過去のセッションはダッシュボードから読み続けられます。
   peek_step_prefix: "ステップ"
   rating_notes_aria: "セッションのメモ"
   rating_notes_placeholder: "うまくいったこと、いかなかったこと、次に試すこと…"
@@ -454,7 +454,7 @@ progress:
   commit_date: 日付
   no_commits: まだ完了したセッションはありません。
   step_eval_title: AI ステップ評価
-  step_eval_empty: まだ AI ステップ評価データがありません — セッションを開始してここにインサイトを表示しましょう。
+  step_eval_empty: まだ AI ステップ評価データがありません - セッションを開始してここにインサイトを表示しましょう。
   step_eval_avg_confidence: AI の平均信頼度
   step_eval_repeats: AI が「まだ準備ができていない」と言った回数
   step_eval_advances: ステップ前進
@@ -471,11 +471,11 @@ settings:
     confirm_message: "{lessons} 個のレッスンと {cards} 枚の復習カードが完全に削除されます。この操作は元に戻せません。"
     deleted: "{lessons} 個のレッスンと {cards} 枚の復習カードを削除しました。"
   key_export_link:
-    heading: "AIキー — 暗号化エクスポート"
+    heading: "AIキー - 暗号化エクスポート"
     hint: "AIキーを1つの暗号化ファイルとしてエクスポートまたはインポートします。データタブの他のバックアップと同じ場所にあります。"
     button: "キーのエクスポートへ移動（データタブ）"
   key_vault:
-    title: "AIキー — 暗号化エクスポート"
+    title: "AIキー - 暗号化エクスポート"
     intro: "AIキーを1つの暗号化ファイルで別のデバイスに移行します。通常のバックアップ（キーを含みません）とは別です。"
     api_export_disabled: "サーバーモードではキーをエクスポートできません。キーはサーバー側で暗号化されて管理されます。キーファイルのインポートは引き続き可能です。"
     export_heading: "エクスポート"
@@ -694,7 +694,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  # #810 — AIタブの設定済みプロバイダー一覧表。
+  # #810 - AIタブの設定済みプロバイダー一覧表。
   providers:
     title: 設定済みのAIプロバイダー
     hint: "保存したキーは保持されます。マスクされたプレビューのみが表示され、完全なキーは表示されません。"
@@ -743,7 +743,7 @@ settings:
   save_failed: 保存に失敗しました。
   provider_active: アクティブ
   active_provider_missing_key: これはアクティブなプロバイダーですが、API キーが保存されていません。 キーが保存されるまで AI の応答はスキップされます。
-  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  # Phase 34 (v1.20.0) - per-provider key-source badges.
   api_key_source_file: "キーの出所: secrets.yaml"
   api_key_source_env: "キーの出所: 環境変数"
   api_key_source_settings: "キーの出所: 設定"
@@ -855,19 +855,19 @@ settings:
 methods:
   deductive:
     label: 演繹的
-    summary: 一般から具体へ — まず規則、次に例。
+    summary: 一般から具体へ - まず規則、次に例。
   inductive:
     label: 帰納的
-    summary: 具体から一般へ — まず例、規則は自分で導く。
+    summary: 具体から一般へ - まず例、規則は自分で導く。
   error_based:
     label: 誤りベース
-    summary: 間違いから学ぶ — 訂正と説明をセットで。
+    summary: 間違いから学ぶ - 訂正と説明をセットで。
   dialogic:
     label: 対話的
-    summary: 会話の中で考える — ストレスを下げ、動機を高める。
+    summary: 会話の中で考える - ストレスを下げ、動機を高める。
   contextual:
     label: 文脈的
-    summary: 実際の文脈で応用する — 転移を練習する。
+    summary: 実際の文脈で応用する - 転移を練習する。
   ai_adaptive:
     label: AI 適応型
     summary: AI があなたに最適な方法を選びます。
@@ -898,7 +898,7 @@ errors:
   not_found: 見つかりませんでした。
   validation: 入力が無効です。
   conflict: エントリーは既に存在します。
-  server: サーバーエラー — しばらくしてからもう一度お試しください。
+  server: サーバーエラー - しばらくしてからもう一度お試しください。
 toast:
   project_created: プロジェクトを作成しました。
   assessment_saved: プロフィールを保存しました。
@@ -1049,7 +1049,7 @@ backup:
   auto_none: まだ自動バックアップはありません。最初のものは 10 セッション後または 7 日後に実行されます。
   storage_pressure: ブラウザストレージがほぼいっぱいです (クォータの {{pct}}%)。今すぐ手動バックアップをエクスポートしてください。
   compare_title: バックアップを比較
-  compare_help: 2 つのバックアップファイル (または 1 つのファイルと現在の状態) を 選択して、それらの間で何が変わったかを確認します。データは 変更されません — 比較は読み取り専用です。
+  compare_help: 2 つのバックアップファイル (または 1 つのファイルと現在の状態) を 選択して、それらの間で何が変わったかを確認します。データは 変更されません - 比較は読み取り専用です。
   compare_slot_a: バックアップ A (古い方)
   compare_slot_b: バックアップ B (新しい方)
   compare_pick: ファイルを選択…
@@ -1065,7 +1065,7 @@ backup:
   compare_sort_label: '並べ替え:'
   compare_sort_delta: 変更の多い順
   compare_sort_alpha: アルファベット順
-  compare_no_changes: 2 つのバックアップは同一です — 差分は検出されませんでした。
+  compare_no_changes: 2 つのバックアップは同一です - 差分は検出されませんでした。
   compare_section_added: 追加
   compare_section_removed: 削除
   compare_section_changed: 変更
@@ -1073,14 +1073,14 @@ backup:
   compare_old: 旧
   compare_new: 新
   compare_field_changes: フィールド変更
-  compare_high_volume_hint: 大量レコードのテーブル — レコード単位のプレビューは要約表示されます。
+  compare_high_volume_hint: 大量レコードのテーブル - レコード単位のプレビューは要約表示されます。
   compare_export_md: Markdown としてエクスポート
   compare_markdown_downloaded: 差分をエクスポートしました。
   confirm_with_counts: 復元 ({{added}} 件追加、{{updated}} 件更新)
   auto_compare_as_a: A として比較
   auto_compare_as_b: B として比較
   compare_auto_label: 自動バックアップ {{date}}
-  auto_compare_missing: 自動バックアップは利用できなくなりました — ローテーションで削除されました。
+  auto_compare_missing: 自動バックアップは利用できなくなりました - ローテーションで削除されました。
 export:
   title: エクスポート
   intro: 学習の旅を Markdown または PDF としてダウンロードします。Markdown は 編集と共有ができるプレーンテキストです。PDF はブラウザの印刷 ダイアログを開くので、コピーを保存できます。
@@ -1158,7 +1158,7 @@ sync:
   scan_success_hint: デスクトップと検証中…
   smart_merge: スマートマージ (AI)
   smart_merge_error: スマートマージに失敗しました。
-  smart_merge_ready: AI マージの準備ができました — 確認して適用してください。
+  smart_merge_ready: AI マージの準備ができました - 確認して適用してください。
   smart_merge_running: AI でマージ中…
   sync_error: 同期に失敗しました。
   synced: 同期済み
@@ -1327,7 +1327,7 @@ gamification:
   danger_zone_heading: 危険ゾーン
   danger_zone_intro: このデバイス上のすべての学習データを完全に削除します。
   danger_zone_reset_button: すべてをリセット
-  danger_zone_warning: すべての学習データを完全に削除します — セッション、進捗、プロフィール、カリキュラム、インポート、Anki カード、設定、API キー。この操作は元に戻せません。
+  danger_zone_warning: すべての学習データを完全に削除します - セッション、進捗、プロフィール、カリキュラム、インポート、Anki カード、設定、API キー。この操作は元に戻せません。
   danger_zone_confirm_prompt: '確認のため RESET と入力してください'
   danger_zone_input_placeholder: RESET
   danger_zone_final_button: 完全に削除
@@ -1605,9 +1605,9 @@ repo:
   readme_topics_heading: "トピック"
   readme_no_topics: "_まだトピックは扱われていません。_"
   readme_see_also_heading: "関連項目"
-  readme_see_stats: "[LEARNING_STATS.md](LEARNING_STATS.md) — エラー率、理解度、転移、介入ログ。"
-  readme_see_cheatsheet: "[CHEATSHEET.md](CHEATSHEET.md) — 凝縮されたノート + メタ学習の洞察。"
-  readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) — 次のステップ。"
+  readme_see_stats: "[LEARNING_STATS.md](LEARNING_STATS.md) - エラー率、理解度、転移、介入ログ。"
+  readme_see_cheatsheet: "[CHEATSHEET.md](CHEATSHEET.md) - 凝縮されたノート + メタ学習の洞察。"
+  readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) - 次のステップ。"
   stats_title: "学習統計"
   stats_intro: "セッションごとの指標は評価から自動生成されます。手動で編集しないでください。"
   stats_no_sessions: "_セッションはまだありません。_"
@@ -1629,7 +1629,7 @@ repo:
   stats_exit_threshold_body: "理解度 ≥ 9/10 かつ 転移 ≥ 8/10 が 2 サイクル連続で安定したとき、そのトピックは習得済みとみなされます。マークされた行はこの条件を満たすセッションを示します。"
   stats_exit_pin_marker: "✅ 終了基準を満たしました"
   cheatsheet_title: "チートシート"
-  cheatsheet_intro: "セッションから凝縮したノートです。メタ学習の洞察セクションは meta_learning タグ付きノートを集めます — どのように学ぶのが一番かについての観察です。"
+  cheatsheet_intro: "セッションから凝縮したノートです。メタ学習の洞察セクションは meta_learning タグ付きノートを集めます - どのように学ぶのが一番かについての観察です。"
   cheatsheet_notes_heading: "ノート"
   cheatsheet_meta_learning_heading: "メタ学習の洞察"
   cheatsheet_no_notes: "_ノートはまだありません。_"
@@ -1730,12 +1730,12 @@ lesson:
     stats_fastest: "最速: {s}秒 ({type})"
     stats_slowest: "最遅: {s}秒 ({type})"
   reverse:
-    not_reversible: "この問題形式は反転できません — 元の形式で表示しています。"
+    not_reversible: "この問題形式は反転できません - 元の形式で表示しています。"
   resources_title: "さらに学ぶ"
   resources_domain: "{domain} についてもっと見る"
   motivation:
-    halftime: "折り返し地点です — その調子！"
-    last: "最後の問題です — 力強くフィニッシュ！"
+    halftime: "折り返し地点です - その調子！"
+    last: "最後の問題です - 力強くフィニッシュ！"
   theory:
     view_example: "例を見る"
   tts:
@@ -1812,7 +1812,7 @@ lesson:
       submit: "答えを確認"
       retry: "もう一度"
       result_correct: "正解です！"
-      result_wrong: "惜しい — 強調されたタイルが正解です。"
+      result_wrong: "惜しい - 強調されたタイルが正解です。"
       grid_label: "画像の選択肢"
       correct_label: "正解"
       wrong_label: "不正解"
@@ -2215,7 +2215,7 @@ content:
     level_label: レベル
     not_enough_data: 演習が少なめです。完全な語学レッスンには少なくとも{min}個を推奨します。それでも保存できます（例：理論のみのレッスンとして）。
     same_language: 学習する言語とあなたの言語は異なる必要があります。
-    same_language_hint: "学習言語とあなたの言語が同じです — 文法や母語のレッスンには問題ありません。共有する場合、コンテンツツリーの同言語ブランチに表示されます。"
+    same_language_hint: "学習言語とあなたの言語が同じです - 文法や母語のレッスンには問題ありません。共有する場合、コンテンツツリーの同言語ブランチに表示されます。"
     split_notice: "このレッスンには {steps} ステップがあり、{parts} パートとして保存されます（各パート最大 {max} ステップ）。"
     part_title: "{title} - パート{n}"
   lesson_gen:
@@ -2844,7 +2844,7 @@ create_lesson:
     heading: "テンプレートから開始"
     blank:
       title: "空のレッスン"
-      desc: "メタデータのみ — カードは自分で追加します。"
+      desc: "メタデータのみ - カードは自分で追加します。"
     vocabulary:
       title: "単語リスト"
       desc: "10枚のカード枠、マッチング + 自由記述。"
@@ -2915,7 +2915,7 @@ learning_path:
   group:
     mastery: "受容 {r}、産出 {p} 習得済み"
     progress_aria: "{total} レッスン中 {completed} 完了"
-    toggle_aria: "{title} セット — {total} 件中 {completed} 件のレッスンが完了"
+    toggle_aria: "{title} セット - {total} 件中 {completed} 件のレッスンが完了"
   search_placeholder: "レッスンを検索…"
   filter:
     status: "ステータスフィルター"
@@ -2937,11 +2937,11 @@ learning_path:
     region_label: "学習パスの統計"
   clusters:
     toggle: "エラークラスタを表示"
-    empty: "共通のエラーパターンはまだありません — 練習を続けましょう。"
+    empty: "共通のエラーパターンはまだありません - 練習を続けましょう。"
     lessons: "{n} レッスン"
     start_adaptive: "アダプティブレッスンを開始"
     region_label: "エラークラスターパネル"
-  search_label: "レッスンを検索 — Enter キーで最初の一致に移動"
+  search_label: "レッスンを検索 - Enter キーで最初の一致に移動"
   custom:
     title: "マイ学習パス"
     subtitle: "レッスンを自分だけの順番にまとめましょう。"
@@ -3442,7 +3442,7 @@ endless:
   loading: "練習セッションを読み込み中…"
   empty_body: "このセットにはまだ練習する問題がありません。"
   not_cached_body: "このセットはまだダウンロードされていません。先にコンテンツブラウザーを開いてダウンロードしてください。"
-  paused: "一時停止中 — ひと休みしましょう。"
+  paused: "一時停止中 - ひと休みしましょう。"
   resume: "再開"
   pause: "一時停止"
   end: "終了"
@@ -3552,7 +3552,7 @@ registry:
     prepare_failed: 提出を準備できませんでした。
   field:
     pick: 接続済みのリポジトリを選択
-    pick_placeholder: — 選択するか下に入力 —
+    pick_placeholder: "- 選択するか下に入力 -"
     url: GitHub リポジトリ URL
     branch: ブランチ
     title: タイトル
@@ -3571,7 +3571,7 @@ registry:
     instructions: 'このエントリを公式コンテンツディレクトリの {file} 配列に追加してください:'
   status:
     validated: ローカルで検証済み
-    pending: 保留中 — CI が検証します
+    pending: 保留中 - CI が検証します
   pr:
     created: プルリクエストを開きました。
     failed: プルリクエストを開けませんでした。

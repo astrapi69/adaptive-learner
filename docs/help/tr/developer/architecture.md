@@ -71,7 +71,7 @@ zinciri yürütür:
 2. `~/.config/adaptive_learner/secrets.yaml` içinde
    `ai.<provider>.api_key`.
 3. Fernet ile şifresi çözülmüş DB sütunu.
-4. `None` — AI çağrısı arayüze bir hata gösterir.
+4. `None` - AI çağrısı arayüze bir hata gösterir.
 
 Kaynak atıfı, `UserSettingsOut.key_source_*` üzerinde
 (`env` / `secrets_yaml` / `settings` / `none` enum) yaşar.

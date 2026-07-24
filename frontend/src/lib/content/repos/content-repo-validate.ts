@@ -183,7 +183,7 @@ export async function validateUserRepo(
       status === 404
         ? "Repository or manifest.yaml not found."
         : status === 401 || status === 403
-          ? "Access denied — check the repository and your GitHub token."
+          ? "Access denied - check the repository and your GitHub token."
           : "Repository unreachable.";
     // Could not FETCH the manifest → transient I/O, not a content verdict.
     return { ok: false, setCount: 0, lessonCount: 0, reason, transient: true };

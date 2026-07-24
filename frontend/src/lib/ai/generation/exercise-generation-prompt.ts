@@ -146,7 +146,7 @@ export function buildExerciseGenerationPrompt(
     `- Write every exercise in the same language as the theory (${language}).`,
     "- Use ONLY content that appears in the theory. Invent nothing; do not",
     "  add facts, terms, or modules the text does not mention.",
-    "- Produce at least 3 DIFFERENT exercise types across the set — but only",
+    "- Produce at least 3 DIFFERENT exercise types across the set - but only",
     "  types that suit each concept (suitability beats variety; see TYPE",
     "  SELECTION below).",
     "- Allowed types ONLY: matching, picture_choice, free_text, word_tiles,",

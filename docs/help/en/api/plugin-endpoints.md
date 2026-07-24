@@ -283,7 +283,7 @@ Returns spaced-repetition action cards driven by recency:
 ]
 ```
 
-## Session plugin — streaming + pronunciation (v1.6.0+, v1.18.0+)
+## Session plugin - streaming + pronunciation (v1.6.0+, v1.18.0+)
 
 ```
 POST /api/plugins/session/{id}/message/stream  (SSE)
@@ -291,11 +291,11 @@ POST /api/plugins/session/{id}/message/stream  (SSE)
 
 Same body shape as `/message`; emits three SSE event types:
 
-- `start` — payload `{user_message}` (the user turn now
+- `start` - payload `{user_message}` (the user turn now
   persisted).
-- `chunk` — payload `{delta}` (one or more text chunks
+- `chunk` - payload `{delta}` (one or more text chunks
   arriving from the AI provider's stream).
-- `done` — payload identical to the synchronous `/message`
+- `done` - payload identical to the synchronous `/message`
   response: assistant message + cycle_step + timings +
   optional cycle-transition card.
 

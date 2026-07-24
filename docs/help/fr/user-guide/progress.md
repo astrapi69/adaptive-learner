@@ -20,7 +20,7 @@ La section en haut de la page agrège les données d'évaluation de l'IA
 | Reculs | Combien de fois avez-vous reculé d'une étape |
 | Répartition par étape | Quelle étape prend le plus de temps ? |
 
-Ces données révèlent des schémas — par exemple : si l'étape 2 (Attempt)
+Ces données révèlent des schémas - par exemple : si l'étape 2 (Attempt)
 génère régulièrement des répétitions, cela indique que le matériel d'input
 de l'étape 1 n'est pas suffisamment clair.
 
@@ -29,7 +29,7 @@ de l'étape 1 n'est pas suffisamment clair.
 ## Historique des commits
 
 En dessous de l'aperçu se trouve votre historique de **ProgressCommit**
-complet — une entrée par session complétée.
+complet - une entrée par session complétée.
 
 Chaque entrée affiche :
 - Date et heure
@@ -65,7 +65,7 @@ La page Progression propose plusieurs options d'exportation :
 
 ## Lien avec les plugins
 
-- **Learning Repository** — exporte toutes les données de progression
+- **Learning Repository** - exporte toutes les données de progression
   vers un dépôt Git avec des commits sémantiques
-- **Anki** — les flashcards extraites sont liées à leurs sessions sources
-- **NotebookLM** — les questions générées peuvent être filtrées par session
+- **Anki** - les flashcards extraites sont liées à leurs sessions sources
+- **NotebookLM** - les questions générées peuvent être filtrées par session

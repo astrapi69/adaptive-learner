@@ -311,7 +311,7 @@ function renderAdaptiveLessonStatus(
         <p className="lesson-not-cached-body">
           {t(
             "adaptive.empty_body",
-            "Nothing to adapt yet — practice a lesson to build up data.",
+            "Nothing to adapt yet - practice a lesson to build up data.",
           )}
         </p>
         <p>

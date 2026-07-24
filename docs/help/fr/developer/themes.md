@@ -28,7 +28,7 @@ restent inchangés.
   `frontend/src/styles/themes/theme-<id>.css`, un bloc par valeur
   `data-theme` (`light`, `dark`, `ocean`, `forest`,
   `high-contrast`, `sepia`). Chaque fichier définit le jeu de
-  jetons sémantiques **complet** — il n'y a pas de repli sur le
+  jetons sémantiques **complet** - il n'y a pas de repli sur le
   clair.
 - **Les jetons indépendants du thème** (espacements, rayon,
   polices, la palette de méthodes de marque) et les **alias
@@ -76,7 +76,7 @@ jetons se trouve dans
 
 1. **Copie** un fichier existant, p. ex.
    `cp theme-dark.css theme-midnight.css`, et change le sélecteur en
-   `[data-theme="midnight"]`. Conserve **chaque** jeton — ne change
+   `[data-theme="midnight"]`. Conserve **chaque** jeton - ne change
    que les valeurs. Aucun style de composant ici.
 2. **Enregistre**-le dans `lib/themes.ts` : ajoute à `THEMES` une
    entrée `ThemeMeta` (id, `label` anglais, `family` light|dark et
@@ -90,11 +90,11 @@ jetons se trouve dans
    catalogues sous `backend/config/i18n/*.yaml` et exécute
    `make sync-i18n`.
 6. **Vérifie** : `bunx vitest run src/styles/themes src/styles/contrast`
-   — les épingles de complétude et de contraste doivent rester
+   - les épingles de complétude et de contraste doivent rester
    vertes (ajuste les valeurs jusqu'à ce que le contraste satisfasse
    AA dans le nouveau thème).
 
-C'est tout — le ThemePicker, le script pré-rendu, les graphiques et
+C'est tout - le ThemePicker, le script pré-rendu, les graphiques et
 chaque composant reprennent automatiquement le nouveau thème, car
 ils lisent tous les jetons canoniques.
 
@@ -105,7 +105,7 @@ ils lisent tous les jetons canoniques.
   `.tsx` (une allowlist documentée couvre les résolveurs de
   graphiques, les confettis décoratifs et les couleurs de données).
 - **Chaque thème définit chaque jeton.** Pas de lacunes avec
-  héritage du clair — c'était l'erreur de l'audit F1 (jetons non
+  héritage du clair - c'était l'erreur de l'audit F1 (jetons non
   définis qui affichaient un hex clair en mode sombre).
-- **Le changement de thème est immédiat** — un échange de
+- **Le changement de thème est immédiat** - un échange de
   `data-theme`, jamais un rechargement.

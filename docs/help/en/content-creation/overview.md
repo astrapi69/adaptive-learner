@@ -1,8 +1,8 @@
-# Creating lessons — overview
+# Creating lessons - overview
 
 Adaptive Learner thrives on content. You can build your own
-lessons — directly in the app or as a file in the content-repo
-format — and share them with the community. This page gives the
+lessons - directly in the app or as a file in the content-repo
+format - and share them with the community. This page gives the
 overview; the detailed format specifics are in the linked sources.
 
 ---
@@ -22,7 +22,7 @@ needs **no AI key**:
   knowledge).
 - **Auto-generate** exercises from the cards or **edit them fully
   yourself** in step 3: every core exercise type can be created,
-  changed, and added manually — including native **multiple
+  changed, and added manually - including native **multiple
   choice** with a prominent **single/multi selection** toggle.
 - **Dictation** (audio dictation) is available right in the
   exercise-type picker; upload the audio clip as a file (embedded
@@ -42,7 +42,7 @@ Entry points exist in the Content Browser and on the Dashboard.
 
 The fifth template card, **"Knowledge lesson from text"**, starts a
 dedicated 3-step flow (Metadata → Book text → Review): paste one
-section (e.g. a chapter) of your textbook — the AI rewrites it **in
+section (e.g. a chapter) of your textbook - the AI rewrites it **in
 its own words** as theory steps (never a copy) and generates
 matching exercises that link back to their theory step. Optional
 book metadata (title, author, URL, ISBN/ASIN) can be attached; it
@@ -50,15 +50,15 @@ is preserved when you later edit the lesson.
 
 Instead of pasting text you can also **upload a book file**
 (EPUB, DOCX, TXT, or Markdown, up to 20 MiB). The file is parsed
-entirely **in the browser** — nothing is uploaded — and the
+entirely **in the browser** - nothing is uploaded - and the
 detected chapters appear as a **checkbox list**. Sections that
 look like front or back matter (preface, glossary, index, …) are
 **unchecked by default** by a heuristic, but stay visible and
 selectable:
 
-- **One section selected** — it is inserted into the text field
+- **One section selected** - it is inserted into the text field
   (with a preview; a non-empty field asks first).
-- **Several sections selected** — **batch generation** creates
+- **Several sections selected** - **batch generation** creates
   **one lesson per section** and saves them together as a
   multi-lesson set.
 
@@ -101,6 +101,6 @@ AI-assisted content review; it never blocks sharing.
 
 ## Related pages
 
-- [Authoring lesson content (developer)](../developer/authoring-content.md) — schema details, assets, code/formula cards
-- [Book recommendations](books.md) — maintaining `books.yaml`
-- [Multiple content repositories](../features/content-repos.md) — connect your own repo
+- [Authoring lesson content (developer)](../developer/authoring-content.md) - schema details, assets, code/formula cards
+- [Book recommendations](books.md) - maintaining `books.yaml`
+- [Multiple content repositories](../features/content-repos.md) - connect your own repo

@@ -22,7 +22,7 @@ frontend (servidor de desenvolvimento Vite) na porta 15174 em
 paralelo. Prima Ctrl-C uma vez para parar ambos.
 
 O proxy Vite do frontend redireciona `/api/*` para o backend, por
-isso o frontend usa sempre `/api` como URL base — sem necessidade
+isso o frontend usa sempre `/api` como URL base - sem necessidade
 de configuração CORS para desenvolvimento local.
 
 Para modo em segundo plano:
@@ -36,11 +36,11 @@ make dev-down   # parar
 
 `.github/workflows/deploy-gh-pages.yml` compila o frontend com:
 
-- `VITE_BASE="/adaptive-learner/"` — prefixo de cada URL de
+- `VITE_BASE="/adaptive-learner/"` - prefixo de cada URL de
   recurso para o caminho de Pages por repositório.
-- `VITE_STORAGE_MODE="dexie"` — fixa o DexieStorage como modo
+- `VITE_STORAGE_MODE="dexie"` - fixa o DexieStorage como modo
   padrão.
-- `VITE_API_BASE=""` — sem backend para apontar.
+- `VITE_API_BASE=""` - sem backend para apontar.
 
 O workflow corre em cada push para `main` e em despacho manual.
 Após a compilação, copia `dist/index.html` para `dist/404.html`
@@ -70,7 +70,7 @@ make prod-down   # docker compose down
 - **Um volume SQLite** que sobrevive a reinícios do contentor.
 
 `install.sh` e `install.ps1` são os instaladores curl-pipe para
-utilizadores finais — descarregam um arquivo de lançamento com
+utilizadores finais - descarregam um arquivo de lançamento com
 etiqueta, configuram `ADAPTIVE_LEARNER_SECRET_KEY` e executam
 `docker compose up`.
 
@@ -145,4 +145,4 @@ Cada workflow corre em isolamento; sem estado partilhado entre eles:
 | `release-gate.yml` | push de etiqueta | Verificação de deriva de pins de versão |
 | `deploy-gh-pages.yml` | push para main, despacho | Compilação + implementação GH Pages |
 | `launcher-{linux,macos,windows}.yml` | release: created | Compilar + anexar binário do launcher |
-| `docs.yml` | push para main | Compilação MkDocs (atualmente inativa — o site vem do workflow GH Pages) |
+| `docs.yml` | push para main | Compilação MkDocs (atualmente inativa - o site vem do workflow GH Pages) |

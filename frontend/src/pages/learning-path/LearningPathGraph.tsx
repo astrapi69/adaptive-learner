@@ -315,7 +315,7 @@ export default function LearningPathGraph({
                         className="learning-path-search"
                         aria-label={t(
                             "learning_path.search_label",
-                            "Search lessons — press Enter to navigate to the first match",
+                            "Search lessons - press Enter to navigate to the first match",
                         )}
                         placeholder={t(
                             "learning_path.search_placeholder",
@@ -368,7 +368,7 @@ export default function LearningPathGraph({
                         >
                             {t(
                                 "learning_path.clusters.empty",
-                                "No shared error patterns yet — keep practising.",
+                                "No shared error patterns yet - keep practising.",
                             )}
                         </p>
                     ) : (

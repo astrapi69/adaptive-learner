@@ -3,7 +3,7 @@
 Ein Content-Repository kann pro Domäne **empfohlene Bücher**
 mitliefern. Der Content Browser zeigt sie als weiterführende
 Literatur an, wenn du einen Satz dieser Domäne ansiehst. Das ist
-optional, kein Lektionssatz, und braucht kein Backend — es
+optional, kein Lektionssatz, und braucht kein Backend - es
 funktioniert in beiden Speichermodi.
 
 ---
@@ -61,12 +61,12 @@ domains:
 | `tags` | nein | Liste von Schlagworten. |
 
 Der Schlüssel unter `domains:` (z. B. `ai`, `psychology`) ist die
-**Domäne**, der die Bücher zugeordnet werden — dieselbe Domäne,
+**Domäne**, der die Bücher zugeordnet werden - dieselbe Domäne,
 die deine Content-Sets verwenden.
 
 ---
 
 ## Verwandte Seiten
 
-- [Content Browser](../features/content-browser.md) — wo die Empfehlungen erscheinen
-- [Lektionen erstellen — Überblick](overview.md)
+- [Content Browser](../features/content-browser.md) - wo die Empfehlungen erscheinen
+- [Lektionen erstellen - Überblick](overview.md)

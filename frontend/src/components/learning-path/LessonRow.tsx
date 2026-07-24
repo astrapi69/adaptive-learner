@@ -149,7 +149,7 @@ export default function LessonRow({lesson}: LessonRowProps) {
                     data-testid="lesson-row-nostars"
                     aria-hidden="true"
                 >
-                    —
+-
                 </span>
             )}
             {attempted && (
@@ -176,7 +176,7 @@ export default function LessonRow({lesson}: LessonRowProps) {
             >
                 {lesson.lastActivity
                     ? relativeTime(new Date(lesson.lastActivity), lang)
-                    : "—"}
+                    : "-"}
             </span>
         </Link>
     );

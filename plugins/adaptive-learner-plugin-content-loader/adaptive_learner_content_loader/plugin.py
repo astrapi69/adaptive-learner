@@ -1,4 +1,4 @@
-"""ContentLoaderPlugin — PluginForge entry point (Phase 43 / EXP-002).
+"""ContentLoaderPlugin - PluginForge entry point (Phase 43 / EXP-002).
 
 Plugin owns its own routes under
 ``/api/plugins/content-loader/*`` and exposes three content

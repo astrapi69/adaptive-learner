@@ -6,7 +6,7 @@
  * ``tests/fixtures/lesson-splitter-parity/`` and assert against the
  * same goldens. Python is the canonical golden generator (run
  * ``LESSON_SPLITTER_PARITY_REGEN=1`` on the Python side to update);
- * this TS test only asserts — never regenerates.
+ * this TS test only asserts - never regenerates.
  *
  * If this test fails after a Python source change, the regen was
  * intentional and the TS port in ``lesson-splitter.ts`` must converge.
@@ -69,7 +69,7 @@ describe("lesson-splitter parity", () => {
         const lesson = loadInput();
         const parts = splitLesson(lesson, {maxStepsPerPart: 10});
         expect(parts).toHaveLength(1);
-        expect(parts[0]).toBe(lesson); // same reference — no copy
+        expect(parts[0]).toBe(lesson); // same reference - no copy
         expect(summarize(parts)).toEqual(loadGolden("no_split"));
     });
 });

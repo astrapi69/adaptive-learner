@@ -454,7 +454,7 @@ describe("Discover source-language filter (#1343)", () => {
     // language switch"): a UI-language change resets the content-language
     // filter to the new language, overriding even an explicit "All". The reset
     // itself lives in the single language choke point (`setLang` in `useI18n`,
-    // covered by its own test); here we assert Discover's half — it follows the
+    // covered by its own test); here we assert Discover's half - it follows the
     // new locale once that override has been cleared.
     seedTwoSourceLanguages();
     // Pre-switch: the user had explicitly chosen "All languages".

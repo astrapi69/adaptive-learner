@@ -1,4 +1,4 @@
-# Crear lecciones — Visión general
+# Crear lecciones - Visión general
 
 Adaptive Learner vive de los contenidos. Puedes construir tus
 propias lecciones, directamente en la app o como archivo en el
@@ -24,7 +24,7 @@ El **creador de lecciones** en `/create-lesson` es un asistente de
 - **Generar ejercicios automáticamente** a partir de las tarjetas
   o **editarlos por completo tú mismo** en el paso 3: todos los
   tipos de ejercicio principales se pueden crear, cambiar y añadir
-  manualmente — incluida la **opción múltiple** nativa con un
+  manualmente - incluida la **opción múltiple** nativa con un
   conmutador destacado de **selección única/múltiple**.
 - El **dictado** (dictado de audio) está disponible directamente
   en el selector de tipos de ejercicio; sube el clip de audio como
@@ -48,7 +48,7 @@ Dashboard.
 La quinta tarjeta de plantilla, **"Lección de conocimiento a
 partir de texto"**, inicia un flujo propio de 3 pasos (Metadatos →
 Texto del libro → Revisión): pega una sección (p. ej. un capítulo)
-de tu libro de texto — la IA la reformula **con sus propias
+de tu libro de texto - la IA la reformula **con sus propias
 palabras** como pasos de teoría (nunca como copia) y genera
 ejercicios a juego que enlazan con su paso de teoría.
 Opcionalmente se pueden adjuntar datos del libro (título, autor,
@@ -57,16 +57,16 @@ adelante.
 
 En lugar de pegar texto también puedes **subir un archivo de
 libro** (EPUB, DOCX, TXT o Markdown, hasta 20 MiB). El archivo se
-procesa por completo **en el navegador** — no se sube nada — y los
+procesa por completo **en el navegador** - no se sube nada - y los
 capítulos detectados aparecen como una **lista con casillas de
 verificación**. Las secciones que parecen preliminares o finales
 (prólogo, glosario, índice, …) quedan **desmarcadas por defecto**
 mediante una heurística, pero siguen visibles y seleccionables:
 
-- **Una sección seleccionada** — se inserta en el campo de texto
+- **Una sección seleccionada** - se inserta en el campo de texto
   (con vista previa; si el campo no está vacío, se pregunta
   primero).
-- **Varias secciones seleccionadas** — la **generación por lotes**
+- **Varias secciones seleccionadas** - la **generación por lotes**
   crea **una lección por sección** y las guarda juntas como un
   conjunto de varias lecciones.
 
@@ -111,6 +111,6 @@ por IA; nunca bloquea el compartir.
 
 ## Páginas relacionadas
 
-- [Crear contenido de lecciones (desarrolladores)](../developer/authoring-content.md) — detalles del esquema, assets, tarjetas de código/fórmula
-- [Recomendaciones de libros](books.md) — mantener `books.yaml`
-- [Varios repositorios de contenido](../features/content-repos.md) — conectar un repo propio
+- [Crear contenido de lecciones (desarrolladores)](../developer/authoring-content.md) - detalles del esquema, assets, tarjetas de código/fórmula
+- [Recomendaciones de libros](books.md) - mantener `books.yaml`
+- [Varios repositorios de contenido](../features/content-repos.md) - conectar un repo propio

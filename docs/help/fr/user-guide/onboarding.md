@@ -3,8 +3,8 @@
 L'entrée en matière est volontairement
 courte : le **démarrage rapide** ne demande que deux champs.
 
-1. **Nom** — comment l'application doit s'adresser à toi.
-2. **Sujet** — ce que tu veux apprendre. « Grammaire espagnole »,
+1. **Nom** - comment l'application doit s'adresser à toi.
+2. **Sujet** - ce que tu veux apprendre. « Grammaire espagnole »,
    « Bases du machine learning », « Improvisation solo à la
    guitare ». Sois concret ; c'est l'ancre de ton projet.
 
@@ -16,16 +16,16 @@ moment.
 
 Après l'envoi, l'application te propose deux voies :
 
-- **Démarrer directement** — tu arrives immédiatement sur le
+- **Démarrer directement** - tu arrives immédiatement sur le
   tableau de bord et peux démarrer une leçon ou une session.
-- **Configurer le profil** — ouvre l'**assistant d'intégration** :
+- **Configurer le profil** - ouvre l'**assistant d'intégration** :
   une question par écran (objectif → échéance → minutes par jour →
   problème actuel → test de style d'apprentissage optionnel),
   chacune préremplie, de sorte que « Suivant » fonctionne toujours,
   plus une barre de progression et « Retour ». Les réponses sont
   enregistrées dans les deux modes de stockage.
 
-Le **test de style d'apprentissage n'est plus obligatoire** — il
+Le **test de style d'apprentissage n'est plus obligatoire** - il
 n'est accessible que via la dernière étape de l'assistant. Pour en
 savoir plus : [Test de style d'apprentissage](assessment.md).
 
@@ -71,5 +71,5 @@ dans les paramètres.
 
 Ton fournisseur d'IA voit tes messages (c'est bien le but de la
 requête IA). Adaptive Learner lui-même n'enregistre que ce que tu
-tapes — localement ou dans le backend FastAPI, selon le
+tapes - localement ou dans le backend FastAPI, selon le
 [mode de stockage](settings.md) configuré.

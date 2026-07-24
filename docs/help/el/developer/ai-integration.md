@@ -1,7 +1,7 @@
 # Ενσωμάτωση ΤΝ
 
 Το Adaptive Learner εκτελεί κάθε συνομιλία μάθησης μέσω έως
-**τριών** κλήσεων ΤΝ ανά γύρο — η streamed απάντηση, ο αξιολογητής
+**τριών** κλήσεων ΤΝ ανά γύρο - η streamed απάντηση, ο αξιολογητής
 βήματος και (στο βήμα 7) ο αξιολογητής μετάβασης θέματος. Τρεις
 πάροχοι έρχονται έτοιμοι· νέοι πάροχοι συνδέονται μέσω της
 οικογένειας hooks `ai_complete*`.
@@ -68,7 +68,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 2. `ai.<provider>.api_key` στο
    `~/.config/adaptive_learner/secrets.yaml`.
 3. Fernet-αποκρυπτογραφημένο `UserSettings.api_key_<provider>`.
-4. `None` — η κλήση εμφανίζει `ai_error` στο UI.
+4. `None` - η κλήση εμφανίζει `ai_error` στο UI.
 
 Η `resolve_default_model(db, user_id, provider)` διατρέχει την
 ίδια αλυσίδα για την παράκαμψη μοντέλου (env > yaml > παράκαμψη UI >
@@ -83,18 +83,18 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 Κάθε `POST /api/plugins/session/{id}/message` για ρόλο `user`
 κάνει έως τρεις κλήσεις ΤΝ:
 
-1. **Απάντηση μάθησης** — streamed μέσω `ai_complete_stream`.
+1. **Απάντηση μάθησης** - streamed μέσω `ai_complete_stream`.
    Η system prompt συντίθεται από `build_prompt(project, profile,
    method, cycle_step, lang)` από τον πίνακα 42 κελιών.
    `max_tokens=1024`. Το SSE εκπέμπει γεγονότα `start` / `chunk` /
    `done`.
-2. **Αξιολογητής βήματος** — ξεχωριστή system prompt
+2. **Αξιολογητής βήματος** - ξεχωριστή system prompt
    (`EVALUATION_SYSTEM_PROMPT`) που ζητά από την ΤΝ να διαβάσει
    την ανταλλαγή και να εκπέμψει ετυμηγορία JSON
    (`advance`, `confidence`, `reason`, `suggested_step`).
    `max_tokens=256`. Η ετυμηγορία καθορίζει την προώθηση
    `cycle_step` (με πύλη `confidence ≥ 0.6`).
-3. **Μετάβαση θέματος** — μόνο στο βήμα 7. Μια τρίτη κλήση ΤΝ
+3. **Μετάβαση θέματος** - μόνο στο βήμα 7. Μια τρίτη κλήση ΤΝ
    κρίνει αν το θέμα ενσωματώθηκε και αν να ξεκινήσει νέος κύκλος
    σε νέο υποθέμα. Όριο `max_cycles=5` ανά συνεδρία.
 
@@ -111,7 +111,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 ## Ο πίνακας προτροπών 42 κελιών
 
 Το `plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py`
-περιέχει ένα `dict[method, dict[step, dict[lang, str]]]` — έξι
+περιέχει ένα `dict[method, dict[step, dict[lang, str]]]` - έξι
 μέθοδοι, επτά βήματα, δύο γλώσσες, 84 κελιά. Κάθε κελί είναι
 1-2 προτάσεις που ορίζουν τον ρόλο της ΤΝ + το task του βήματος.
 Ένα μπλοκ πλαισίου ("Learning project: 'X' | Goal: 'Y'. Profile
@@ -120,7 +120,7 @@ hint: …") προσαρτάται κατά τη σύνθεση.
 Για τη λειτουργία Dexie, οι προτροπές εξάγονται αυτούσιες στο
 `frontend/src/data/session-prompts.json` και φορτώνονται από
 `frontend/src/storage/prompts.ts`. Ίδιο κείμενο, ίδια μορφή
-μπλοκ πλαισίου — δεν είναι δυνατή απόκλιση.
+μπλοκ πλαισίου - δεν είναι δυνατή απόκλιση.
 
 ## Προσθήκη νέου παρόχου
 
@@ -138,7 +138,7 @@ hint: …") προσαρτάται κατά τη σύνθεση.
    από το `aiComplete()`.
 
 Κάθε plugin παρόχου τεστάρει τον hookimpl + κλήση παρόχου σε
-απομόνωση — δες `plugins/adaptive-learner-plugin-ai-anthropic/tests/`
+απομόνωση - δες `plugins/adaptive-learner-plugin-ai-anthropic/tests/`
 για πρότυπο (η HTTP κλήση παρόχου γίνεται mock).
 
 ## Άμεσες κλήσεις από browser (λειτουργία Dexie)
@@ -150,7 +150,7 @@ hint: …") προσαρτάται κατά τη σύνθεση.
 το CORS preflight· OpenAI και Gemini δέχονται άμεσες κλήσεις
 από browser.
 
-Η λογική διπλής προτροπής είναι ίδια και στις δύο λειτουργίες —
+Η λογική διπλής προτροπής είναι ίδια και στις δύο λειτουργίες -
 το `storage/session-flow.ts` καλεί `aiComplete()` δύο φορές και
 αναλύει το JSON του αξιολογητή με τον ίδιο τρόπο που το κάνει
 το backend.
@@ -173,7 +173,7 @@ cycle_step. Ορίσου υψηλότερα για πιο συντηρητική
 Πολλές μη-συνεδριακές λειτουργίες χρησιμοποιούν τα ίδια plugin
 παρόχων μέσω `ai_complete*`:
 
-- **Αναλυτής συνομιλιών** (Phase 12 / v0.9.0+) —
+- **Αναλυτής συνομιλιών** (Phase 12 / v0.9.0+) -
   Το `frontend/src/chat_import/analysis.ts` χωρίζει σε τμήματα τις
   εισαγόμενες αντιγραφές στα 16K χαρακτήρες με επικάλυψη 2 μηνυμάτων,
   εκτελεί `ai_complete` ανά τμήμα, συγχωνεύει αποτελέσματα. Εξάγει
@@ -181,15 +181,15 @@ cycle_step. Ορίσου υψηλότερα για πιο συντηρητική
   vocabulary (από v1.20.0). Ανεκτικός αναλυτής JSON χειρίζεται
   ακατάλληλη συμπεριφορά Haiku-class (φραγμένη έξοδος, εισαγωγικό
   πεζόλογο).
-- **Εξαγωγή Anki** (Phase 30 / v1.17.0) — Το `plugins/.../
+- **Εξαγωγή Anki** (Phase 30 / v1.17.0) - Το `plugins/.../
   anki/card_extraction.py` εξάγει υποψήφιες κάρτες flash από
   συνεδρία ή συνομιλία· η διαδρομή λεξιλογίου εκτελείται
   client-side χωρίς ΤΝ όταν υπάρχει `analysis_result.vocabulary`.
 - **Ερωτήσεις μελέτης NotebookLM + οδηγός** (Phase 32 /
-  v1.19.0) — `plugins/.../notebooklm/question_generator.py`
+  v1.19.0) - `plugins/.../notebooklm/question_generator.py`
   + `study_guide.py`· ανεκτικός αναλυτής JSON· οι ερωτήσεις που
   επεξεργάστηκε ο χρήστης παραλείπουν αναδημιουργία.
-- **Κριτής προφοράς** (Phase 31 / v1.18.0) —
+- **Κριτής προφοράς** (Phase 31 / v1.18.0) -
   Το `plugins/.../pronunciation.py` παράγει στοχευμένες φράσεις
   + κρίνει ομοιότητα ηχογράφησης μαθητή (επιλεξιμότητα καθορίζεται
   από την ταξινομία θεμάτων Languages).

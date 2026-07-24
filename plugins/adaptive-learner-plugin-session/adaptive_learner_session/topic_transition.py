@@ -1,4 +1,4 @@
-"""v1.4.0 — topic-transition evaluator for the auto-loop feature.
+"""v1.4.0 - topic-transition evaluator for the auto-loop feature.
 
 When the step evaluator (``step_evaluator.py``) signals that the
 learner has reached step 7 (``integrate``) AND advance=true, the
@@ -286,7 +286,7 @@ async def evaluate_topic_transition_async(
     output_language: str = "en",
     max_tokens: int = TRANSITION_DEFAULT_MAX_TOKENS,
 ) -> TopicTransition:
-    """v1.5.0 / Phase 18B — async wrapper around
+    """v1.5.0 / Phase 18B - async wrapper around
     :func:`evaluate_topic_transition`. Built for the asyncio.gather
     parallel-evaluation path in the v1.5.0 message route. Same
     deterministic-fallback contract.

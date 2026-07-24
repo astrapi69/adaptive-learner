@@ -111,15 +111,15 @@ export const DEFAULT_LABELS: Labels = {
     readme_no_topics: "_No topics traversed yet._",
     readme_see_also_heading: "See also",
     readme_see_stats:
-        "[LEARNING_STATS.md](LEARNING_STATS.md) — error rates, understanding, transfer, intervention log.",
+        "[LEARNING_STATS.md](LEARNING_STATS.md) - error rates, understanding, transfer, intervention log.",
     readme_see_cheatsheet:
-        "[CHEATSHEET.md](CHEATSHEET.md) — distilled notes + Meta-Learning Insights.",
-    readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) — next steps.",
+        "[CHEATSHEET.md](CHEATSHEET.md) - distilled notes + Meta-Learning Insights.",
+    readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) - next steps.",
 
     // LEARNING_STATS.md
     stats_title: "Learning Statistics",
     stats_intro:
-        "Per-session metrics derived from `step_evaluations`, `session_ratings`, and `method_switches`. Generated automatically — do not edit by hand.",
+        "Per-session metrics derived from `step_evaluations`, `session_ratings`, and `method_switches`. Generated automatically - do not edit by hand.",
     stats_no_sessions: "_No sessions yet._",
     stats_sessions_heading: "Sessions",
     stats_table_session: "Session",
@@ -143,7 +143,7 @@ export const DEFAULT_LABELS: Labels = {
     // CHEATSHEET.md
     cheatsheet_title: "Cheatsheet",
     cheatsheet_intro:
-        'Distilled notes from your sessions. The **Meta-Learning Insights** section collects notes tagged `kind="meta_learning"` — observations about *how* you learn best (per the Article-3 pattern).',
+        'Distilled notes from your sessions. The **Meta-Learning Insights** section collects notes tagged `kind="meta_learning"` - observations about *how* you learn best (per the Article-3 pattern).',
     cheatsheet_notes_heading: "Notes",
     cheatsheet_meta_learning_heading: "Meta-Learning Insights",
     cheatsheet_no_notes: "_No notes yet._",
@@ -155,13 +155,13 @@ export const DEFAULT_LABELS: Labels = {
     roadmap_intro: "Open topics + recommended next steps.",
     roadmap_next_steps_heading: "Next steps",
     roadmap_no_next_steps:
-        "_No active project — start a new session to populate this list._",
+        "_No active project - start a new session to populate this list._",
     roadmap_resume_active:
         "Resume the active session (method: **{method}**, step {step}/7, cycle {cycle}).",
     roadmap_start_first:
-        "Start your first learning session — the assessment recommends starting with method **{method}**.",
+        "Start your first learning session - the assessment recommends starting with method **{method}**.",
     roadmap_start_next:
-        "Start the next session — last completed session used method **{method}**.",
+        "Start the next session - last completed session used method **{method}**.",
     roadmap_open_topics_heading: "Open topics",
     roadmap_no_open_topics: "_No topics defined yet._",
 

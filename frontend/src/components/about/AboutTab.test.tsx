@@ -353,7 +353,7 @@ describe("AboutTab", () => {
 
     it("uses Dexie's synthetic payload when storage mode is dexie", async () => {
         localStorage.setItem("adaptive-learner.storage_mode", "dexie");
-        // #1875 — pin the UI language to DE. The assertion below reads the
+        // #1875 - pin the UI language to DE. The assertion below reads the
         // German storage-mode label, but I18nProvider resolves the initial
         // language as saved -> navigator -> "de": with no saved choice (the
         // beforeEach clears localStorage) and happy-dom's navigator.language

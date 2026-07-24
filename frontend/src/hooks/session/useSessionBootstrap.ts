@@ -144,7 +144,7 @@ export function useSessionBootstrap({
             setStartError(
                 t(
                     "session.offline_start_blocked",
-                    "You're offline. New sessions need a network connection — past sessions stay readable from the Dashboard.",
+                    "You're offline. New sessions need a network connection - past sessions stay readable from the Dashboard.",
                 ),
             );
             setLoading(false);

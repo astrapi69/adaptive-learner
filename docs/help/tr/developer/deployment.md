@@ -22,8 +22,8 @@ portunda frontend'i (Vite dev sunucusu) paralel olarak başlatır.
 Her ikisini de durdurmak için bir kez Ctrl-C basın.
 
 Frontend'in Vite proxy'si `/api/*`'yi arka uca yönlendirir,
-bu nedenle frontend her zaman `/api`'yi temel URL olarak kullanır
-— yerel geliştirme için CORS yapılandırması gerekmez.
+bu nedenle frontend her zaman `/api`'yi temel URL olarak kullanır -
+yerel geliştirme için CORS yapılandırması gerekmez.
 
 Arka plan modu için:
 
@@ -36,11 +36,11 @@ make dev-down   # stop
 
 `.github/workflows/deploy-gh-pages.yml`, frontend'i şunlarla derler:
 
-- `VITE_BASE="/adaptive-learner/"` — her varlık URL'sine sayfa başına
+- `VITE_BASE="/adaptive-learner/"` - her varlık URL'sine sayfa başına
   Pages yolunu önek olarak ekler.
-- `VITE_STORAGE_MODE="dexie"` — DexieStorage'ı varsayılan mod olarak
+- `VITE_STORAGE_MODE="dexie"` - DexieStorage'ı varsayılan mod olarak
   sabitler.
-- `VITE_API_BASE=""` — işaret edilecek arka uç yok.
+- `VITE_API_BASE=""` - işaret edilecek arka uç yok.
 
 İş akışı, `main`'e her push'ta ve manuel dağıtımda çalışır. Derleme
 sonrası, SPA-yönlendirici geri dönüşü için `dist/index.html`'yi
@@ -70,7 +70,7 @@ make prod-down   # docker compose down
   birimi**.
 
 `install.sh` ve `install.ps1`, son kullanıcılar için curl-pipe
-yükleyicileridir — etiketli bir sürüm tarbalını çeker, ayarlar
+yükleyicileridir - etiketli bir sürüm tarbalını çeker, ayarlar
 yapar ve `docker compose up` çalıştırır.
 
 Yükleyiciler, sürüm zamanında `install.sh.template` /
@@ -139,4 +139,4 @@ durum yoktur:
 | `release-gate.yml` | etiket push | Sürüm pin sapma denetimi |
 | `deploy-gh-pages.yml` | main'e push, dispatch | GH Pages derleme + dağıtım |
 | `launcher-{linux,macos,windows}.yml` | release: created | Derleme + başlatıcı ikilisini ekle |
-| `docs.yml` | main'e push | MkDocs derleme (şu anda etkin değil — site GH Pages iş akışından geliyor) |
+| `docs.yml` | main'e push | MkDocs derleme (şu anda etkin değil - site GH Pages iş akışından geliyor) |

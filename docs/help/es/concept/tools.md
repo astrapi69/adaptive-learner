@@ -127,18 +127,18 @@ Las tarjetas se ordenan por urgencia (intervalo menor × peso mayor
 Tres herramientas se incluyen como exportación integrada en lugar
 de recomendación externa:
 
-- **Exportación Anki .apkg** — revisa las
+- **Exportación Anki .apkg** - revisa las
   tarjetas de memoria extraídas por la IA en la página `/anki`,
   acepta las que quieras y haz clic en Exportar. El `.apkg` se
   construye en el cliente mediante sql.js + JSZip y funciona
   directamente en Anki de escritorio. Sin transferencia manual.
-- **Paquete ZIP de NotebookLM** — página de
+- **Paquete ZIP de NotebookLM** - página de
   Progreso → Descargar paquete de estudio. El ZIP contiene
   `summary.md`, `vocabulary.md`, `rules.md`, `errors.md`,
   `flashcards.md` y `sessions/*.md` formateados para la carga
   de fuentes de NotebookLM. NotebookLM no tiene API pública, así
   que este es el mejor camino alternativo.
-- **Voz (TTS + STT + Práctica de pronunciación)** —
+- **Voz (TTS + STT + Práctica de pronunciación)** -
   integraciones de la Web Speech API directamente en
   la Sesión y la Evaluación, y una página dedicada `/pronunciation`
   para proyectos de idiomas. No se necesita herramienta externa.
@@ -147,16 +147,16 @@ de recomendación externa:
 
 Excluido deliberadamente:
 
-- **Duolingo / Babbel / aplicaciones gamificadas similares** —
+- **Duolingo / Babbel / aplicaciones gamificadas similares** -
   conflictan con la filosofía. Adaptive Learner sí incluye XP +
   insignias + rachas, pero como una capa motivacional
   sobre contenido no gamificado, no como el bucle principal.
-- **Khan Academy / Coursera** — están orientadas a la finalización
+- **Khan Academy / Coursera** - están orientadas a la finalización
   de cursos, no a la adquisición de habilidades. Espacio de
   problema diferente.
-- **Memrise** — demasiado similar a Anki; el catálogo mantiene
+- **Memrise** - demasiado similar a Anki; el catálogo mantiene
   una herramienta por nicho.
-- **Notion** — exagerado para el nicho de «notas enlazadas»;
+- **Notion** - exagerado para el nicho de «notas enlazadas»;
   Obsidian encaja perfectamente sin dependencia de la nube.
 
 El catálogo es pequeño a propósito. Agregar más diluiría la señal.
