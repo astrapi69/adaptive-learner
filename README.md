@@ -146,9 +146,13 @@ screen.
 
 ### 2. Desktop app (native launcher)
 
-Pre-built single-binary executables that bootstrap the backend
-and open the app in your default browser. No Docker, no
-terminal needed.
+Pre-built single-binary executables that manage the backend for
+you and open the app in your default browser. The launcher drives
+Docker itself, so you still need Docker installed and running, but
+no manual Docker or Compose commands. The per-platform start guide
+(set the execute bit on Linux, get past Gatekeeper on macOS or
+SmartScreen on Windows, verify the checksum) is at
+[Start the desktop launcher](https://astrapi69.github.io/adaptive-learner/docs/en/install/launcher/).
 
 Download from the
 [**latest GitHub release**](https://github.com/astrapi69/adaptive-learner/releases/latest):
