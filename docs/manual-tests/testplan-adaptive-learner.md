@@ -218,6 +218,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       erforderlich." (NICHT der Buchtext-Schritt, NICHT der rohe
       Schema-Fehler beim Speichern); mit Titel → Buchtext-Schritt
       oeffnet normal und Speichern gelingt
+- [ ] **[MOBILE] Titel-Warnung wird sichtbar gescrollt (#2036):** iPhone /
+      schmaler Viewport, Schritt 1 OHNE Titel, nach unten zum Weiter-Button
+      scrollen (Titelfeld oben ausserhalb des Sichtbereichs) → Weiter
+      druecken: die Ansicht scrollt zum Titelfeld, das Feld erhaelt den Fokus
+      und ist als ungueltig markiert (roter Rahmen), der Hinweis "Ein Titel
+      ist erforderlich." ist im Sichtbereich (KEIN Dead-End, keine Reaktion
+      fehlt). Gilt fuer alle drei Einstiege: Weiter (Karten-Pfad), Karte
+      "Wissenslektion aus Text" (Buch) und Karte "Erweiterungen" (Extension).
+      Desktop-Regression: ist das Feld schon sichtbar, gibt es keinen
+      Scroll-Sprung
 - [ ] **Datei-Upload im Buchtext-Schritt (#1927):** Button "Aus Datei
       laden (EPUB, DOCX, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
       Abschnittsliste erscheint (Checkboxen, Titel + Zeichenzahl);
