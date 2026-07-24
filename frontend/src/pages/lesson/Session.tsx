@@ -1,8 +1,8 @@
 import {lazy, Suspense} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 
-// assistant-ui adoption Phase 0 (#1126): lazy so its ~47-package bundle only
-// loads behind the opt-in ``?ui=assistant`` flag, never on the default path.
+// assistant-ui adoption (#1126): the session chat surface. Lazy so its
+// ~47-package bundle is a separate chunk off the default route load.
 const AssistantUiThread = lazy(
     () => import("../../components/session/assistant-ui/AssistantUiThread"),
 );
@@ -10,7 +10,6 @@ const AssistantUiThread = lazy(
 import MethodSwitchBanner from "../../components/session/MethodSwitchBanner";
 import SessionHeader from "../../components/session/SessionHeader";
 import RatingDialog from "../../components/session/RatingDialog";
-import SessionChat from "../../components/session/SessionChat";
 import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import {Button} from "@/components/ui/button";
 import {FEATURES} from "../../features/featureConfig";
@@ -28,25 +27,23 @@ import {
 /**
  * Session page (project-reference §8 row ``/session``).
  *
- * Flow (v0.2.0):
+ * Flow:
  *
  *   1. Mount: read project_id from localStorage. Missing -> redirect
  *      to /onboarding.
- *   2. POST /api/plugins/session/start with {project_id, lang}.
- *      Seed the chat with the returned ``system_prompt`` as the
- *      first "system" message so the user sees what method /
- *      step the AI was primed with.
- *   3. Chat loop: user types in SessionChat -> POST /message.
- *      The backend orchestrates AI server-side; the SSE channel
- *      feeds tokens into the assistant bubble as they arrive.
- *   4. End session: opens RatingDialog. Submit -> POST /rate,
- *      then POST /end. On success, navigate to /dashboard.
+ *   2. Bootstrap: start a new session (or resume ``?session=<id>``).
+ *   3. Chat loop: the ``AssistantUiThread`` (assistant-ui, #1126) owns the
+ *      conversation via an adapter over ``getStorage().session.*`` (both
+ *      storage modes + the #1122 context rebuild); each completed turn calls
+ *      ``applyExchangeOutcome`` so the shell advances the cycle step, surfaces
+ *      the step-evaluation verdict, and fires the auto-loop / step toasts.
+ *   4. End session: opens RatingDialog. Submit -> rate, then end. On success,
+ *      navigate to /dashboard.
  *
- * Split (#1804): the page is the composition shell. Its former 15
- * state atoms live in five hooks under ``hooks/session/`` —
- * ``useSessionBootstrap`` (start/resume + core data),
- * ``useSessionHeaderData`` (project topic / imported topic / model
- * info), ``useSessionMessaging`` (the SSE exchange),
+ * Split (#1804): the page is the composition shell. Its state lives in hooks
+ * under ``hooks/session/`` — ``useSessionBootstrap`` (start/resume + core
+ * data), ``useSessionHeaderData`` (project topic / imported topic / model
+ * info), ``useSessionMessaging`` (step-eval verdict + ``applyExchangeOutcome``),
  * ``useMethodSwitch`` (recommendation + accept/dismiss), and
  * ``useSessionRating`` (rate-then-end).
  */
@@ -66,8 +63,6 @@ export default function Session() {
     const {
         session,
         setSession,
-        messages,
-        setMessages,
         loading,
         startError,
         userSettings,
@@ -86,12 +81,8 @@ export default function Session() {
         userSettings,
     });
 
-    const {sendingMessage, stepEvaluation, handleSend, applyExchangeOutcome} =
-        useSessionMessaging({
-        session,
+    const {stepEvaluation, applyExchangeOutcome} = useSessionMessaging({
         setSession,
-        messages,
-        setMessages,
         t,
     });
 
@@ -168,26 +159,27 @@ export default function Session() {
                     />
                 )}
 
-            {searchParams.get("ui") === "assistant" && session?.id ? (
-                // Phase 0 spike (#1126): opt-in assistant-ui thread for the
-                // same session. Default path (no flag) renders the unchanged
-                // SessionChat below, so production is untouched.
-                <Suspense fallback={<div data-testid="aui-loading" />}>
-                    <AssistantUiThread
-                        sessionId={session.id}
-                        introTopic={importedTopic}
-                        autoOpen={!!session.imported_conversation_id}
-                        onExchange={applyExchangeOutcome}
-                    />
-                </Suspense>
-            ) : (
-                <SessionChat
-                    messages={messages}
-                    onSend={handleSend}
-                    disabled={sendingMessage}
+            {/* #1126 — the session chat surface is the assistant-ui thread
+                (adapter over getStorage().session.*; both storage modes + the
+                #1122 context rebuild). Lazy-loaded as its own chunk. */}
+            <Suspense
+                fallback={
+                    <div
+                        className="muted"
+                        role="status"
+                        data-testid="session-chat-loading"
+                    >
+                        {t("common.loading", "Loading…")}
+                    </div>
+                }
+            >
+                <AssistantUiThread
+                    sessionId={session.id}
                     introTopic={importedTopic}
+                    autoOpen={!!session.imported_conversation_id}
+                    onExchange={applyExchangeOutcome}
                 />
-            )}
+            </Suspense>
 
             <div className="form-actions">
                 <Button
