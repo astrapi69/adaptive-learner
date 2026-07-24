@@ -153,7 +153,7 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
-    test("book-text path: file upload -> section picker fills the text field (#1927)", async ({
+    test("book-text path: file upload -> section picker fills the text field (#1927/#1949)", async ({
         page,
     }) => {
         const errors: string[] = [];
@@ -183,12 +183,27 @@ test.describe("Lesson Creator — build + save a lesson", () => {
             buffer: Buffer.from(markdown, "utf-8"),
         });
 
-        // The picker lists both chapters; applying fills the empty field
-        // without a confirmation dialog.
+        // #1949 multi-select picker: both chapters listed as checkboxes and
+        // (no front/back matter here) checked by default.
         await expect(page.getByTestId("book-upload-picker")).toBeVisible();
-        const select = page.getByTestId("book-upload-section-select");
-        await expect(select.locator("option")).toHaveCount(2);
-        await select.selectOption({index: 1});
+        const sectionOne = page.getByTestId(
+            "book-upload-section-checkbox-section-1",
+        );
+        const sectionTwo = page.getByTestId(
+            "book-upload-section-checkbox-section-2",
+        );
+        await expect(
+            page
+                .getByTestId("book-upload-section-list")
+                .locator("input[type='checkbox']"),
+        ).toHaveCount(2);
+        await expect(sectionOne).toBeChecked();
+        await expect(sectionTwo).toBeChecked();
+
+        // Narrowing to ONE section switches to the #1927 single path:
+        // preview appears, applying fills the empty field without a
+        // confirmation dialog.
+        await sectionOne.uncheck();
         await expect(page.getByTestId("book-upload-preview")).toContainText(
             "Skinner",
         );
@@ -198,7 +213,8 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         );
 
         // Applying another section over the now-non-empty field asks first.
-        await select.selectOption({index: 0});
+        await sectionTwo.uncheck();
+        await sectionOne.check();
         await page.getByTestId("book-upload-apply").click();
         await expect(
             page.getByTestId("book-upload-replace-confirm"),
