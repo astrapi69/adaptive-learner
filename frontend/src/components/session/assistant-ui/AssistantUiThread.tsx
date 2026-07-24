@@ -52,6 +52,7 @@ import {
     useComposerRuntime,
     useLocalRuntime,
     useMessage,
+    type AssistantRuntime,
     type TextMessagePartComponent,
 } from "@assistant-ui/react";
 
@@ -60,6 +61,7 @@ import {markdownToSpeech} from "../../../lib/lesson/tts-text";
 import MicButton from "../../voice/MicButton";
 import SpeechButton from "../../voice/SpeechButton";
 import type {SessionMessageExchangeResult} from "../../../types";
+import {formatCycleTransition} from "./cycle-transition";
 import {OPENING_RUN_FLAG, createSessionChatAdapter} from "./session-chat-adapter";
 
 interface AssistantUiThreadProps {
@@ -186,18 +188,49 @@ export default function AssistantUiThread({
 }: AssistantUiThreadProps) {
     const {t} = useI18n();
     // Keep the adapter memo stable per session while always invoking the latest
-    // onExchange (which closes over fresh session/step state each render).
+    // onExchange (which closes over fresh session/step state each render) and
+    // reading the latest runtime/t (assigned after useLocalRuntime, below).
     const onExchangeRef = useRef(onExchange);
     onExchangeRef.current = onExchange;
+    const runtimeRef = useRef<AssistantRuntime | null>(null);
+    const tRef = useRef(t);
+    tRef.current = t;
     const runtime = useLocalRuntime(
         useMemo(
             () =>
                 createSessionChatAdapter(sessionId, {
-                    onExchange: (result) => onExchangeRef.current?.(result),
+                    onExchange: (result) => {
+                        onExchangeRef.current?.(result);
+                        // #1126 Phase 4b-i — cycle-transition parity. On an
+                        // auto-loop, append the cycle summary + next topic as an
+                        // inline assistant turn (the assistant thread has no
+                        // ``messages`` array for the legacy card), preserving the
+                        // learning content in the visible conversation.
+                        const transition = result.topic_transition;
+                        if (transition?.looped && runtimeRef.current) {
+                            // Object form with role "assistant" so it is a
+                            // STATIC message (no run triggered). The string form
+                            // defaults to role "user" and starts a run — which
+                            // would both show a user bubble and loop.
+                            runtimeRef.current.thread.append({
+                                role: "assistant",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: formatCycleTransition(
+                                            transition,
+                                            tRef.current,
+                                        ),
+                                    },
+                                ],
+                            });
+                        }
+                    },
                 }),
             [sessionId],
         ),
     );
+    runtimeRef.current = runtime;
 
     // Imported-session AI opening (#1126 Phase 3b): fire ONE opening run per
     // session. ``startRun`` with ``parentId: null`` triggers the adapter with no

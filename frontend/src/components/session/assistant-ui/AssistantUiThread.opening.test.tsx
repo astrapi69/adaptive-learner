@@ -49,4 +49,41 @@ describe("AssistantUiThread AI opening (Phase 3b part 2, #1126)", () => {
         expect(await screen.findByTestId("chat-welcome")).toBeInTheDocument();
         expect(streamMessage).not.toHaveBeenCalled();
     });
+
+    it("appends the cycle summary inline on an auto-loop (#1126 Phase 4b-i parity)", async () => {
+        // The completed turn reports a looped transition; the thread must show
+        // the cycle summary + next topic as a SECOND assistant turn inline — not
+        // drop it to a bare toast.
+        streamMessage.mockImplementation(async (...args: unknown[]) => {
+            const handlers = args[2] as
+                | {
+                      onChunk: (d: string) => void;
+                      onDone: (r: unknown) => void;
+                  }
+                | undefined;
+            if (!handlers) return;
+            handlers.onChunk("Erste Frage?");
+            handlers.onDone({
+                session: {cycle_step: 1},
+                step_evaluation: null,
+                topic_transition: {
+                    looped: true,
+                    new_cycle_count: 2,
+                    summary: "Du hast reflexive Verben geübt.",
+                    next_topic: "Modalverben",
+                    next_topic_rationale: "",
+                },
+            });
+        });
+
+        render(<AssistantUiThread sessionId="sess-1" autoOpen />);
+
+        // The opening reply is there …
+        expect(await screen.findByText(/Erste Frage\?/)).toBeInTheDocument();
+        // … and the auto-loop summary + next topic landed inline.
+        expect(
+            await screen.findByText(/Du hast reflexive Verben geübt\./),
+        ).toBeInTheDocument();
+        expect(await screen.findByText(/Modalverben/)).toBeInTheDocument();
+    });
 });
