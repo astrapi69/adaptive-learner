@@ -12,10 +12,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from adaptive_learner_launcher import __main__, __version__
 from docker_app_launcher import actions
 from docker_app_launcher.config import LauncherConfig
-
-from adaptive_learner_launcher import __main__, __version__
 
 LAUNCHER_JSON = Path(__file__).resolve().parent.parent / "launcher.json"
 
@@ -162,3 +161,80 @@ class TestResolveAppDir:
         monkeypatch.setattr(__main__, "_package_main", lambda args: 0)
         assert __main__.main(["--status"]) == 0
         assert chdirs == []
+
+
+class TestFrozenConfigResolution:
+    """#2027: the frozen one-file binary must find the bundled launcher.json.
+
+    In a PyInstaller one-file build the entry module's ``__file__`` is
+    ``_MEIPASS/__main__.py`` (no package subdirectory), so resolving
+    ``parent.parent / launcher.json`` escapes the bundle and the package
+    silently falls back to the all-defaults config ("My App" window title).
+    """
+
+    def test_config_path_prefers_bundle_root_when_frozen(self, monkeypatch, tmp_path) -> None:
+        bundled = tmp_path / "launcher.json"
+        bundled.write_text("{}", encoding="utf-8")
+        monkeypatch.setattr(__main__.sys, "frozen", True, raising=False)
+        monkeypatch.setattr(__main__.sys, "_MEIPASS", str(tmp_path), raising=False)
+        assert __main__._config_path() == bundled
+
+    def test_config_path_source_checkout_unchanged(self) -> None:
+        assert __main__._config_path() == LAUNCHER_JSON
+
+    def test_frozen_standalone_runs_from_bundle_root(self, monkeypatch, tmp_path) -> None:
+        """No repo found + no compose in CWD: run from the bundle root so the
+        bundled, config-relative window icon resolves."""
+        bundle = tmp_path / "bundle"
+        bundle.mkdir()
+        (bundle / "launcher.json").write_text("{}", encoding="utf-8")
+        start_cwd = tmp_path / "somewhere"
+        start_cwd.mkdir()
+        monkeypatch.chdir(start_cwd)
+        monkeypatch.setattr(__main__.sys, "frozen", True, raising=False)
+        monkeypatch.setattr(__main__.sys, "_MEIPASS", str(bundle), raising=False)
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: None)
+        seen: dict[str, Path] = {}
+
+        def fake_package_main(args):
+            seen["cwd"] = Path.cwd()
+            return 0
+
+        monkeypatch.setattr(__main__, "_package_main", fake_package_main)
+        assert __main__.main([]) == 0
+        assert seen["cwd"] == bundle
+
+    def test_frozen_cwd_with_compose_stays_untouched(self, monkeypatch, tmp_path) -> None:
+        """A user running the binary from inside their own clone keeps that
+        CWD (the package resolves the compose stack there)."""
+        clone = tmp_path / "clone"
+        clone.mkdir()
+        (clone / "docker-compose.prod.yml").write_text("", encoding="utf-8")
+        bundle = tmp_path / "bundle"
+        bundle.mkdir()
+        monkeypatch.chdir(clone)
+        monkeypatch.setattr(__main__.sys, "frozen", True, raising=False)
+        monkeypatch.setattr(__main__.sys, "_MEIPASS", str(bundle), raising=False)
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: None)
+        seen: dict[str, Path] = {}
+
+        def fake_package_main(args):
+            seen["cwd"] = Path.cwd()
+            return 0
+
+        monkeypatch.setattr(__main__, "_package_main", fake_package_main)
+        assert __main__.main([]) == 0
+        assert seen["cwd"] == clone
+
+
+class TestBranding:
+    """#2027 secondary: window icon must be resolvable in every run mode."""
+
+    def test_icon_path_exists_in_repo(self) -> None:
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        repo_root = LAUNCHER_JSON.parent.parent
+        assert (repo_root / cfg.icon_path).is_file()
+
+    def test_spec_bundles_icon_at_config_relative_path(self) -> None:
+        spec = (LAUNCHER_JSON.parent / "adaptive-learner-launcher.spec").read_text(encoding="utf-8")
+        assert "frontend/branding/adaptive-learner-mark.png" in spec

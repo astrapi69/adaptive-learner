@@ -24,10 +24,34 @@ from docker_app_launcher.__main__ import main as _package_main
 from adaptive_learner_launcher import __version__
 
 # launcher.json sits at the launcher/ root, beside this package directory.
-# Resolving from __file__ makes the launcher work from any CWD (and the
-# PyInstaller spec bundles launcher.json next to the executable).
+# Resolving from __file__ makes the launcher work from any CWD. In the
+# frozen one-file build the entry module's ``__file__`` is
+# ``_MEIPASS/__main__.py`` (NO package subdirectory), so the source-checkout
+# arithmetic ``parent.parent / launcher.json`` would escape the bundle
+# (e.g. ``/tmp/launcher.json``) and the fail-open package config loader
+# would silently fall back to the all-defaults "My App" branding (#2027).
 _PACKAGE_DIR = Path(__file__).resolve().parent
-_CONFIG_PATH = _PACKAGE_DIR.parent / "launcher.json"
+
+
+def _bundle_root() -> Path | None:
+    """Return the PyInstaller extraction root when frozen, else ``None``."""
+    if getattr(sys, "frozen", False):
+        return Path(getattr(sys, "_MEIPASS", _PACKAGE_DIR))
+    return None
+
+
+def _config_path() -> Path:
+    """Locate ``launcher.json`` for both run modes (#2027).
+
+    Frozen one-file binary: the spec bundles it at the bundle root
+    (``_MEIPASS/launcher.json``). Source checkout: it sits at the
+    ``launcher/`` root beside this package directory.
+    """
+    root = _bundle_root()
+    if root is not None:
+        return root / "launcher.json"
+    return _PACKAGE_DIR.parent / "launcher.json"
+
 
 # The Compose stack the launcher manages. docker-app-launcher resolves the
 # compose file - and writes the ``.env`` the published host port lives in -
@@ -82,8 +106,17 @@ def main(argv: list[str] | None = None) -> int:
     app_dir = _resolve_app_dir()
     if app_dir is not None:
         os.chdir(app_dir)
+    else:
+        # Standalone frozen run (no repo checkout found anywhere): run from
+        # the bundle root so the config-relative window icon bundled by the
+        # spec resolves (#2027). A CWD that already carries the compose file
+        # (a user launching from inside their own clone) is left untouched -
+        # the package resolves the stack there.
+        bundle = _bundle_root()
+        if bundle is not None and not (Path.cwd() / _COMPOSE_FILE).is_file():
+            os.chdir(bundle)
     if not any(arg == "--config" or arg.startswith("--config=") for arg in args):
-        args = ["--config", str(_CONFIG_PATH), *args]
+        args = ["--config", str(_config_path()), *args]
     return _package_main(args)
 
 
