@@ -2084,3 +2084,87 @@ accept the short red-develop window as the safety net for
 internal/rarely-changed/tooling surfaces. Prefer a **precise** gate (an
 actual diff of the referenced artifact) over a coarse "touched X -> must
 touch Y" presence check, so the false-positive rate stays near zero.
+
+## Engine re-pin without `make sync-schema` is invisible until the release gate
+
+Surfaced 2026-07-24 as the single red gate of the v2.6.0 release run.
+The #1993 engine re-pin (`learn-content-engine` 0.13.3 -> 0.14.0, the
+manifest `visibility` field) merged green through every PR gate - but
+the mirrored `schema/content-set.schema.json` was never regenerated.
+The drift sat latent because `sync-schema-check` runs ONLY inside
+`make release-test` (release cycle), not on PRs: the first signal was
+a red `make release-test` while cutting the release, fixed on the
+release branch (commit b67e6043 on release/2.6.0).
+
+### Rule
+
+- **Every PR that re-pins `learn-content-engine` runs `make sync-schema`
+  in the SAME PR and commits the regenerated mirror** (schema files +
+  generated plugin/TS artefacts). "The pin bump is green" proves
+  nothing about the mirror - no PR gate compares them.
+- When reviewing an engine re-pin, the tell is cheap: a bump of the
+  `learn-content-engine` pin with NO diff under `schema/` or the
+  generated artefacts is suspicious by default; verify with
+  `make sync-schema-check` before merging.
+- Same shape as the #575 PR-CI-vs-nightly classes: a gate that runs
+  on a slower cadence than the change class it guards leaves a latent
+  window. If engine re-pins become frequent, promote
+  `sync-schema-check` into the PR path filter for
+  `frontend/package.json` changes touching the engine pin.
+
+### Pairs with
+
+- "PR-CI vs nightly gates: different test surfaces" - the cadence-gap
+  family this belongs to.
+- "Cross-layer assumptions must be pinned against REAL data shapes" -
+  the mirror IS the pinned shape; regenerating it is how the pin
+  stays honest.
+
+## Frozen-only behaviour is proven on the real artifact, not the source-tree run
+
+Surfaced 2026-07-24 via #2027: the launcher's frozen one-file binary
+showed the package-default "My App" window title for multiple releases.
+Root cause: in a PyInstaller one-file build the entry module's
+`__file__` is `_MEIPASS/__main__.py` (NO package subdirectory), so the
+source-checkout arithmetic `parent.parent / "launcher.json"` escaped
+the bundle (`/tmp/launcher.json`, ENOENT) and the fail-open upstream
+config loader silently produced an all-defaults config. All 17 wrapper
+tests and every `--check`/`--version` source-run probe were green the
+whole time; the defect existed ONLY in the frozen binary, and only
+strace (path probes) + xdotool (real window title) against the actual
+built artifact exposed it (fix: PR #2028; upstream fail-open warning
+filed as docker-app-launcher#32).
+
+### Rules
+
+- **Path resolution in wrapper/packaging code never trusts `__file__`
+  arithmetic alone.** In the frozen branch prefer `sys._MEIPASS`
+  explicitly (see `_bundle_root()` / `_config_path()` in
+  `launcher/adaptive_learner_launcher/__main__.py`), and pin the
+  frozen layout with tests that monkeypatch `sys.frozen` +
+  `sys._MEIPASS` (the four #2028 regression tests are the template).
+- **For any change to launcher/packaging/spec code: the source-tree
+  run is a PRE-CHECK, the built-artifact test is the PROOF.** Build
+  the real binary (`poetry run pyinstaller ... --clean`) or download
+  the CI artifact, run it standalone (outside the repo checkout), and
+  verify the user-visible claim on the artifact itself - window title
+  via xdotool, file access via strace, CLI via the binary. A green
+  test suite plus a green source run proves nothing about the frozen
+  path.
+- **A fail-open fallback in a dependency masks this class.** When a
+  wrapper passes an explicit resource path into a dependency that
+  silently falls back on a miss, the miss is invisible; prefer
+  dependencies that warn (upstream ask: docker-app-launcher#32), and
+  in the meantime make the wrapper's resolution testable so the miss
+  cannot happen silently.
+
+### Pairs with
+
+- "Test a tool through the interface it actually uses, not a mock of
+  it" - the same family: the interface users actually run is the
+  frozen binary.
+- "Operational gaps masquerade as wired infrastructure" - bundled
+  data (the spec's `launcher.json` + icon datas) that nothing at
+  runtime actually reads is wired, not working.
+- "install.sh VERSION drift" - the older sibling: test THE SCRIPT /
+  THE ARTIFACT, not the files it was built from.

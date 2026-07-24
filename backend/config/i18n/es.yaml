@@ -2842,7 +2842,7 @@ create_lesson:
       desc: "Crea ejercicios de categorización y corrección de errores. Requiere una app compatible con extensiones."
     knowledge_from_text:
       title: "Lección de conocimiento a partir de texto"
-      desc: "Pega una sección de un libro; la IA escribe la teoría con sus propias palabras y genera ejercicios."
+      desc: "Pega una sección de un libro o carga un archivo de libro; la IA escribe la teoría con sus propias palabras y genera ejercicios."
     heading: "Empezar con una plantilla"
     blank:
       title: "Lección en blanco"

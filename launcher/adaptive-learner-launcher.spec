@@ -22,6 +22,7 @@ import sys
 # every docker_app_launcher submodule the launcher imports lazily, so the
 # frozen binary bundles them.
 from docker_app_launcher.pyinstaller import hidden_imports
+from PyInstaller.utils.hooks import collect_data_files
 
 block_cipher = None
 
@@ -31,11 +32,20 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        # The launcher config: __main__ resolves ``../launcher.json`` relative
-        # to the package dir, which is the bundle root (_MEIPASS) when frozen.
+        # The launcher config: __main__._config_path() reads it from the
+        # bundle root (sys._MEIPASS) when frozen (#2027).
         ("launcher.json", "."),
         # Window icon (resolved best-effort at runtime; never fatal if absent).
         ("adaptive-learner.png", "."),
+        # The window icon at launcher.json's config-relative icon_path, so a
+        # standalone frozen run (no repo checkout, wrapper chdirs to the
+        # bundle root) still resolves the real branding (#2027).
+        ("../frontend/branding/adaptive-learner-mark.png", "frontend/branding"),
+        # The package's data files - the 11 i18n catalogs above all. Without
+        # this the frozen GUI falls back to raw key names (the upstream #34
+        # failure class fixed in docker-app-launcher's own spec template;
+        # this spec is hand-maintained, so it needs the same collect).
+        *collect_data_files("docker_app_launcher"),
     ],
     hiddenimports=hidden_imports(),
     hookspath=[],
@@ -99,8 +109,8 @@ if sys.platform == "darwin":
         info_plist={
             "CFBundleName": "AdaptiveLearner Launcher",
             "CFBundleDisplayName": "AdaptiveLearner Launcher",
-            "CFBundleVersion": "2.6.0",
-            "CFBundleShortVersionString": "2.6.0",
+            "CFBundleVersion": "2.6.1",
+            "CFBundleShortVersionString": "2.6.1",
             "NSHighResolutionCapable": True,
             "NSRequiresAquaSystemAppearance": False,
         },

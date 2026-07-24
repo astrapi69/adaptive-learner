@@ -12,6 +12,7 @@ version on the [Releases page](https://github.com/astrapi69/adaptive-learner/rel
 
 [Try it now](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
+[Feature overview](../features/overview.md){ .md-button }
 
 ---
 
