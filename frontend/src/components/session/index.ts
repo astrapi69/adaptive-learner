@@ -8,8 +8,6 @@ export * from "./RatingDialog";
 export { default as RatingDialog } from "./RatingDialog";
 export * from "./RecentSessions";
 export { default as RecentSessions } from "./RecentSessions";
-export * from "./SessionChat";
-export { default as SessionChat } from "./SessionChat";
 export * from "./SessionCounter";
 export { default as SessionCounter } from "./SessionCounter";
 export * from "./SessionHeader";

@@ -21,7 +21,6 @@ import {useEffect} from "react";
 import type {NavigateFunction} from "react-router-dom";
 
 import {ApiError} from "../../api/client";
-import type {ChatMessage} from "../../components/session/SessionChat";
 import {LEARNING_METHODS} from "../../lib/constants";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
@@ -31,14 +30,15 @@ import type {LearningSession, UserSettings} from "../../types";
 type Translate = (key: string, fallback?: string) => string;
 
 /**
- * Own the session / messages / loading / error / user-settings state
- * and run the start-or-resume bootstrap effect.
+ * Own the session / loading / error / user-settings state and run the
+ * start-or-resume bootstrap effect. The chat surface (assistant-ui thread) owns
+ * its own message list and hydrates prior turns itself (#1126), so this hook no
+ * longer loads or returns a ``messages`` array.
  *
  * @example
- * const {session, setSession, messages, setMessages, loading,
- *     startError, userSettings} = useSessionBootstrap({
- *     gateAvailable: sessionGate.available, resumeId, methodParam,
- *     lang, online, navigate, t});
+ * const {session, setSession, loading, startError, userSettings} =
+ *     useSessionBootstrap({gateAvailable: sessionGate.available, resumeId,
+ *     methodParam, lang, online, navigate, t});
  */
 export function useSessionBootstrap({
     gateAvailable,
@@ -58,7 +58,6 @@ export function useSessionBootstrap({
     t: Translate;
 }) {
     const [session, setSession] = useState<LearningSession | null>(null);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [loading, setLoading] = useState(true);
     const [startError, setStartError] = useState<string | null>(null);
     const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
@@ -84,27 +83,14 @@ export function useSessionBootstrap({
         if (resumeId) {
             let cancelled = false;
             setLoading(true);
-            Promise.all([
-                getStorage().session.get(resumeId),
-                getStorage().session.getMessages(resumeId),
-            ])
-                .then(([existingSession, history]) => {
+            // The assistant-ui thread hydrates prior turns itself (#1126), so
+            // resume only needs the session record here. Imported sessions open
+            // clean; regular ones get their history seeded by the thread.
+            getStorage()
+                .session.get(resumeId)
+                .then((existingSession) => {
                     if (cancelled) return;
                     setSession(existingSession);
-                    const mapped = history.map((row) => ({
-                        id: row.id,
-                        role: row.role,
-                        content: row.content,
-                    }));
-                    // #1143 — an imported-chat session opens CLEAN: keep only
-                    // the system message (so the topic intro shows) and hide any
-                    // prior exchange. The AI still sees the full history (it is
-                    // rebuilt from the DB on each turn, #1122).
-                    setMessages(
-                        existingSession.imported_conversation_id
-                            ? mapped.filter((m) => m.role === "system")
-                            : mapped,
-                    );
                     setLoading(false);
                     const userId = readLearnerState().userId;
                     if (userId) {
@@ -165,13 +151,6 @@ export function useSessionBootstrap({
             .then((result) => {
                 if (cancelled) return;
                 setSession(result.session);
-                setMessages([
-                    {
-                        id: "system-prompt",
-                        role: "system",
-                        content: result.system_prompt,
-                    },
-                ]);
                 setLoading(false);
                 // Resolve the user's active provider so the
                 // session header can surface it. Fire-and-forget;
@@ -211,8 +190,6 @@ export function useSessionBootstrap({
     return {
         session,
         setSession,
-        messages,
-        setMessages,
         loading,
         startError,
         userSettings,

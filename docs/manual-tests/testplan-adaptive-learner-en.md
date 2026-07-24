@@ -466,6 +466,11 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] "Generate exercises" on theory-only: AI returns a result
 - [ ] Quality of the generated exercises: sensible? type variety?
 - [ ] "Continue session" after chat import: AI knows the context
+- [ ] Tutor chat (assistant-ui, #1126): type → send (or Enter), the reply
+      streams in; the 7-step cycle progress advances; read-aloud + dictation
+      work; resuming a regular session shows the prior conversation
+- [ ] Imported session opens with the AI asking the first question on its own
+      (no user turn first), the chat starts clean
 - [ ] AI content validation: report sensible? provider+model shown?
 - [ ] No button without a key leads to an error toast (disabled + tooltip)
 

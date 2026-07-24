@@ -483,6 +483,12 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] "Uebungen generieren" bei theory-only: AI liefert Ergebnis
 - [ ] Qualitaet der generierten Exercises: sinnvoll? Typenvielfalt?
 - [ ] "Sitzung fortsetzen" nach Chat-Import: AI kennt den Kontext
+- [ ] Tutor-Chat (assistant-ui, #1126): tippen → senden (oder Enter), die
+      Antwort streamt herein; die 7-Schritt-Cycle-Progress rueckt vor;
+      Vorlesen + Diktat funktionieren; das Fortsetzen einer regulaeren
+      Sitzung zeigt den bisherigen Gespraechsverlauf
+- [ ] Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
+      (kein User-Turn zuerst), der Chat startet leer
 - [ ] AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] Kein Button ohne Key fuehrt zu Error-Toast (disabled + Tooltip)
 
