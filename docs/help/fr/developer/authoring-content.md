@@ -168,8 +168,8 @@ Le schéma des champs du manifeste (le `manifest.yaml` racine qui
 liste les ensembles du dépôt, et chaque champ obligatoire et
 optionnel : `schema_version`, `name`, et par ensemble `id`, `title`,
 `title_native`, `target_language`, `source_language`, `level`,
-`version`, `lesson_count`, `path`, `domain`, `tags`, `book`) vit dans
-la référence de l'engine :
+`version`, `lesson_count`, `path`, `domain`, `tags`, `book`,
+`visibility`) vit dans la référence de l'engine :
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
 Le schéma strict de l'engine (les champs inconnus sont rejetés) le
 valide, de sorte que la liste de champs ci-dessus ne peut pas
@@ -178,6 +178,17 @@ dériver. Rédige les champs de paire de langues
 [Paires de langues](#paires-de-langues-v1440) ; l'alias `language`
 d'avant la v1.2 se charge encore mais est déconseillé pour les
 nouveaux ensembles.
+
+Le champ optionnel **`visibility`** (engine 0.14.0+, `visible` en
+l'absence d'indication) est une **indication d'affichage** pour les
+apps consommatrices : `visibility: hidden` demande à l'app de ne pas
+présenter l'ensemble aux apprenants — pensé pour les fixtures de
+référence / de conformité qui doivent rester dans le dépôt pour la
+validation de l'engine mais ne sont pas du contenu d'apprentissage.
+L'app filtre les ensembles masqués hors des surfaces de navigation
+et de *Découvrir* (même quand ils sont déjà en cache) ; l'engine
+continue de les valider. Il n'y a plus de liste d'ensembles masqués
+côté app à maintenir.
 
 Comportement spécifique au chargeur de l'app à garder à l'esprit :
 
@@ -303,7 +314,7 @@ ce qui est chargeable est affichable) :
 | `ext:al-error-correction` | Corriger un texte fautif | `tokens[]` + `error_index` + `accept[]` | #1593 |
 | `ext:al-reading-comprehension` | Compréhension écrite (passage + questions) | `passage` + `questions[]` (chacune une sous-question `multiple_choice` / `free_text`) | #1603 |
 | `ext:al-graded-quiz` | Quiz noté | `questions[]` (chacune avec `points`) + `pass_threshold` optionnel | #1616 ; l'ensemble de démo de référence est masqué de Découvrir / Mes contenus (#1702) |
-| `ext:al-dictation` | Dictée audio (écouter, puis transcrire) | `audio` (un clip `assets/`) + `accept[]` (correspondance de transcription tolérante) | #1881 (cinquième adoption) |
+| `ext:al-dictation` | Dictée audio (écouter, puis transcrire) | `audio` (un clip `assets/` ou un URI de données intégré via le téléversement de l'éditeur, #1911) + `accept[]` (correspondance de transcription tolérante) | #1881 (cinquième adoption) |
 
 **Deux voies de rédaction.** Les exercices d'extension peuvent être
 rédigés (a) directement en JSON de dépôt de contenu (la voie
@@ -492,7 +503,7 @@ IA :
 | Exclu | Pourquoi (une ligne) |
 |----------|----------------|
 | Dissertation / texte long / dessin / formule / évaluation par les pairs / auto-évaluation libre | Pas notable en binaire par le SRS ; auto-évaluation reportée (#1268). |
-| Upload audio / vidéo / fichier | Stockage + infrastructure ; en conflit avec l'approche hors-ligne d'abord. |
+| Upload audio / vidéo / fichier | Stockage + infrastructure ; en conflit avec l'approche hors-ligne d'abord. Seule exception : les courts clips audio de dictée que l'éditeur d'exercices intègre dans la leçon sous forme d'URI de données. |
 | Zone active / simulation / memory / mots croisés | Effort de construction sans valeur SRS (une décision ultérieure et distincte, un jour peut-être). |
 | Matrice / Likert / curseur | Types de sondage, pas des types d'apprentissage. |
 | Sélecteurs de date / heure | Types de formulaire, pas des types d'apprentissage. |

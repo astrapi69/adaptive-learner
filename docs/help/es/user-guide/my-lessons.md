@@ -54,6 +54,10 @@ Cada lección en Mis lecciones tiene:
 - **Reproducir** — ábrela en el visor de lecciones.
 - **Editar** — vuelve a abrir el análisis fuente para ajustar y
   volver a guardar (disponible para lecciones basadas en análisis).
+  Si uno de tus conjuntos contiene **varias lecciones**, un
+  **selector de lecciones** pregunta primero cuál quieres editar.
+  Las lecciones de texto de libro abren directamente el editor de
+  ejercicios; los datos del libro adjuntos se conservan.
 - **Eliminar** — elimínala (con confirmación).
 
 ---

@@ -39,8 +39,8 @@ guía paso a paso por cada tarjeta y ejercicio:
 
 1. Las **tarjetas** presentan material para leer. Haz clic en
    "Siguiente" cuando estés listo.
-2. Los **ejercicios** comprueban lo que has recordado. Hay cuatro
-   tipos disponibles:
+2. Los **ejercicios** comprueban lo que has recordado. Los tipos
+   principales:
    - **Asociar** — arrastra parejas (palabra ↔ traducción). Las
      dos fichas de una pareja encontrada comparten un **color
      propio** y una **insignia numérica**, de modo que la
@@ -53,6 +53,19 @@ guía paso a paso por cada tarjeta y ejercicio:
    - **Texto con huecos** — completa un hueco en la frase (se
      genera específicamente a partir de tus errores, ver más
      abajo).
+   - **Opción múltiple** — elige una o (según la tarea) varias
+     respuestas correctas.
+
+   Además, un conjunto puede incluir **tipos de extensión**:
+   categorización, corrección de errores, comprensión lectora,
+   cuestionario calificado y **dictado de audio** (escuchar y
+   luego transcribir).
+
+Si un ejercicio lleva una **dificultad** asignada por el autor,
+una pequeña insignia indica el nivel (**Fácil / Media /
+Difícil**). Es pura transparencia: puedes ver por qué el generador
+adaptativo puede proponer una tarjeta antes o con más frecuencia —
+la insignia no cambia ni la puntuación ni el orden.
 
 Una barra de progreso en la parte superior sigue cuánto has
 avanzado en la lección. Puedes parar en cualquier momento: tu

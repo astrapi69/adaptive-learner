@@ -164,6 +164,52 @@ backend — το frontend lint τρέχει κατά CI, όχι κατά pre-com
 3. Frontend Vitest + tsc + lint
 4. ruff check + format-check
 
+Περισσότερες πύλες PR ζουν σε δικά τους workflows:
+
+- `cohesion-check.yml` — ο έλεγχος μεγέθους αρχείων (πύλη έναντι
+  του `.filesize-whitelist`) συν δύο πύλες ονομάτων κλάσεων: νεκρά
+  ονόματα κλάσεων CSS (`check-dead-classnames.py` έναντι του
+  `.dead-classnames-baseline`) και η **πύλη unstyled-className**
+  (`--unstyled`, ratchet έναντι του
+  `.unstyled-classnames-baseline`) — ένα `className` του οποίου
+  όλα τα tokens είναι νεκρά μπλοκάρει το PR. Ο συνοδευτικός
+  έλεγχος μεγέθους φακέλων τρέχει τοπικά μέσω
+  `make check-folder-size`.
+- `visual-baseline-gate.yml` — ένα PR που αλλάζει οπτικά κρίσιμες
+  διαδρομές (Lesson-components, exercise renderers, αρχεία
+  theme/CSS) πρέπει να φέρνει τα επηρεαζόμενα baseline screenshots
+  στο ίδιο PR· escape label `visual-baselines-unaffected` για
+  αποδεδειγμένα αδρανείς αλλαγές.
+- `testid-reference-gate.yml` — αν ένα PR αφαιρεί ή μετονομάζει
+  ένα `data-testid` που ένα E2E spec αναφέρει στατικά (σε μια
+  έντονα ορατή για τον χρήστη επιφάνεια) χωρίς να αγγίξει το spec,
+  η πύλη αποτυγχάνει (`make check-testid-refs`)· escape label
+  `testid-refs-unaffected`.
+- `docker-build-smoke.yml` — build-only smoke των production
+  compose images (η διαδρομή launcher / install.sh), φιλτραρισμένο
+  κατά διαδρομές σε PRs, επιπλέον σε `release/**`, εβδομαδιαία και
+  κατόπιν dispatch· τοπικά `make docker-build-smoke`.
+
+**Νυχτερινή βάρδια / Release (όχι σε PRs):**
+
+- `mutation-frontend.yml` — Stryker mutation testing (νυχτερινά
+  πίσω από τη μεταβλητή repo `ENABLE_NIGHTLY_MUTATION` + dispatch·
+  κάθε εκτέλεση μεταλλάσσει μία φέτα των αρχείων, ώστε ο γύρος να
+  χωρά στο χρονικό όριο του job)· το mutation testing του backend
+  χρησιμοποιεί mutmut
+- `webkit-gate.yml` — η πύλη layout με πραγματική μηχανή WebKit
+  (κλάσεις σφαλμάτων iOS/Safari που οι πύλες Chromium δομικά δεν
+  μπορούν να δουν), καθημερινά πίσω από τη μεταβλητή repo
+  `ENABLE_NIGHTLY_WEBKIT`, πάντα σε `release/**` και κατόπιν
+  dispatch
+- `visual-regression.yml` — η μήτρα των οπτικών baselines
+  (καθημερινά + dispatch· με `update_baselines=true` τα baselines
+  ξανααποδίδονται στο CI και ανεβαίνουν ως artifact)
+- `visual-baseline-sync.yml` — service workflow: αποδίδει τα
+  baselines στο CI και τα κάνει push ως commit στο branch του PR
+  (label `refresh-visual-baselines`, ή dispatch με αριθμό PR) — η
+  εξέταση των εικόνων πριν από το merge παραμένει υποχρεωτική
+
 Το `.github/workflows/release-gate.yml` τρέχει σε tag pushes:
 επαληθεύει ότι τα version pins είναι συγχρονισμένα (χωρίς
 απόκλιση σε 12 αρχεία), τα lockfiles plugin ταιριάζουν,

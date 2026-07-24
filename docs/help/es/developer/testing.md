@@ -166,6 +166,53 @@ PR:
 3. Vitest del frontend + tsc + lint
 4. ruff check + comprobación de formato
 
+Otros gates de PR viven en flujos de trabajo propios:
+
+- `cohesion-check.yml` — la comprobación de tamaño de archivo
+  (gate contra `.filesize-whitelist`) más dos gates de nombres de
+  clase: nombres de clase CSS muertos (`check-dead-classnames.py`
+  contra `.dead-classnames-baseline`) y el **gate de className sin
+  estilos** (`--unstyled`, un trinquete contra
+  `.unstyled-classnames-baseline`) — un `className` cuyos tokens
+  están todos muertos bloquea el PR. La comprobación de tamaño de
+  carpeta acompañante se ejecuta localmente con
+  `make check-folder-size`.
+- `visual-baseline-gate.yml` — un PR que cambia rutas visualmente
+  críticas (componentes de lección, renderizadores de ejercicios,
+  archivos de tema/CSS) debe incluir en el mismo PR las capturas
+  de referencia (baselines) afectadas; etiqueta de escape
+  `visual-baselines-unaffected` para cambios demostrablemente
+  inertes.
+- `testid-reference-gate.yml` — si un PR elimina o renombra un
+  `data-testid` que una spec E2E referencia estáticamente (en una
+  superficie muy visible para el usuario) sin tocar la spec, el
+  gate falla (`make check-testid-refs`); etiqueta de escape
+  `testid-refs-unaffected`.
+- `docker-build-smoke.yml` — smoke de solo build de las imágenes
+  de Compose de producción (la ruta del launcher / install.sh),
+  filtrado por rutas en PRs, además en `release/**`, semanalmente
+  y bajo demanda; localmente `make docker-build-smoke`.
+
+**Turno de noche / release (no en PRs):**
+
+- `mutation-frontend.yml` — mutation testing con Stryker
+  (nocturno tras la variable de repo `ENABLE_NIGHTLY_MUTATION` +
+  bajo demanda; cada ejecución muta una porción de los archivos
+  para que la ejecución quepa en el límite de tiempo del job); el
+  mutation testing del backend usa mutmut
+- `webkit-gate.yml` — el gate de layout con el motor WebKit real
+  (clases de bugs de iOS/Safari que los gates de Chromium no
+  pueden ver estructuralmente), diario tras la variable de repo
+  `ENABLE_NIGHTLY_WEBKIT`, siempre en `release/**` y bajo demanda
+- `visual-regression.yml` — la matriz de baselines visuales
+  (diaria + bajo demanda; `update_baselines=true` vuelve a
+  renderizar los baselines en CI y los sube como artefacto)
+- `visual-baseline-sync.yml` — flujo de trabajo de servicio:
+  renderiza los baselines en CI y los empuja como commit a la
+  rama del PR (etiqueta `refresh-visual-baselines`, o bajo demanda
+  con un número de PR) — la revisión de las imágenes antes del
+  merge sigue siendo obligatoria
+
 `.github/workflows/release-gate.yml` se ejecuta en pushes de
 etiquetas: verifica que las versiones estén sincronizadas (sin
 deriva en 12 archivos), que los lockfiles de plugins coincidan y
