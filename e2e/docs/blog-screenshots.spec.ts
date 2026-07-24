@@ -52,6 +52,15 @@ async function openCreator(page: Page): Promise<void> {
     }, DOCS_LANG);
     await page.goto("/create-lesson", {waitUntil: "networkidle"});
     await expect(page.getByTestId("create-lesson-title")).toBeVisible();
+    // A newer-release banner (DesktopUpdateHost) overlays the wizard's bottom
+    // edge when the deployed version lags the latest release: it intercepts
+    // the Next click and would sit in every screenshot. Dismiss it for the
+    // session; "Later" also persists the dismissed version.
+    const updateBanner = page.getByTestId("desktop-update-banner");
+    if (await updateBanner.isVisible().catch(() => false)) {
+        await page.getByTestId("desktop-update-banner-later").click();
+        await expect(updateBanner).toBeHidden();
+    }
 }
 
 /** Scroll to the top so the page header is never clipped, then write the PNG. */
@@ -212,4 +221,42 @@ test("captures the book-text path", async ({page}) => {
     await page.getByTestId("book-author").fill("R. Atkinson");
     await expect(page.getByTestId("book-rights-hint")).toBeVisible();
     await shot(page, "s6-book-text");
+
+    // #1927/#1953 — the second way into the same step: upload a book file and
+    // pick sections (multi-select, batch generation). A generated markdown
+    // "book" keeps the fixture inline; the front-matter chapter proves the
+    // exclusion heuristic visibly (it arrives unchecked, with the hint).
+    const chapter = (title: string, body: string) => `# ${title}\n\n${body.repeat(4)}`;
+    const BOOK_MD =
+        DOCS_LANG === "de"
+            ? [
+                  chapter("Vorwort", "Dank an alle Leserinnen und Leser dieser Einführung. "),
+                  chapter(
+                      "Kapitel 1: Aufmerksamkeit",
+                      "Aufmerksamkeit ist die Zuwendung der Wahrnehmung auf einen Ausschnitt der Umwelt. Sie ist begrenzt und lässt sich lenken. ",
+                  ),
+                  chapter(
+                      "Kapitel 2: Gedächtnis",
+                      "Das Gedächtnis speichert Erfahrungen in mehreren Stufen, vom sensorischen Register bis zum Langzeitgedächtnis. ",
+                  ),
+              ].join("\n\n")
+            : [
+                  chapter("Preface", "Thanks to every reader of this introduction. "),
+                  chapter(
+                      "Chapter 1: Attention",
+                      "Attention is the focusing of perception on part of the environment. It is limited and can be directed. ",
+                  ),
+                  chapter(
+                      "Chapter 2: Memory",
+                      "Memory stores experience in stages, from the sensory register to long-term memory. ",
+                  ),
+              ].join("\n\n");
+    await page.getByTestId("book-upload-input").setInputFiles({
+        name: DOCS_LANG === "de" ? "einfuehrung-psychologie.md" : "introduction-psychology.md",
+        mimeType: "text/markdown",
+        buffer: Buffer.from(BOOK_MD, "utf-8"),
+    });
+    await expect(page.getByTestId("book-upload-picker")).toBeVisible();
+    await expect(page.getByTestId("book-upload-section-list").locator("li")).toHaveCount(3);
+    await shot(page, "s6b-book-upload");
 });
