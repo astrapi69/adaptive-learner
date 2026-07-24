@@ -1,0 +1,148 @@
+# Iniciar el lanzador de escritorio
+
+!!! tip "La mayoría de los usuarios no necesitan el lanzador"
+    Adaptive Learner se ejecuta directamente en el navegador, sin
+    instalación, sin Docker, sin lanzador:
+    **[astrapi69.github.io/adaptive-learner](https://astrapi69.github.io/adaptive-learner/)**.
+    El lanzador de escritorio solo es para ti si quieres alojar la app
+    por tu cuenta o ejecutar funciones de backend (modo servidor,
+    sincronización local) de forma local.
+
+El lanzador de escritorio es la forma más sencilla de ejecutar Adaptive
+Learner **con su propio backend** en tu equipo. Es una pequeña ventana
+que se encarga de todo lo demás por ti: comprueba que Docker está en
+ejecución, descarga y compila la imagen de la app en el primer inicio
+(una sola vez, 5-10 minutos es normal), arranca los contenedores y luego
+abre la app en tu navegador en `http://localhost:8501`. Desde la misma
+ventana también puedes detener la app, cambiar el puerto o desinstalarlo
+todo.
+
+El puerto es **8501** de forma predeterminada y se puede cambiar en la
+ventana del lanzador; si está ocupado, el lanzador recurre a un puerto
+libre.
+
+## Requisito previo: Docker - el lanzador lo comprueba por sí mismo
+
+El lanzador requiere un Docker en ejecución, porque la propia app se
+ejecuta como un grupo de contenedores. **No** necesitas verificar nada
+manualmente: al iniciarse, el lanzador comprueba por sí mismo si Docker
+está instalado y en ejecución, también encuentra un Docker que se
+ejecuta bajo un contexto de Docker distinto (como Docker Desktop para
+Linux o Docker sin privilegios de root) y muestra un mensaje claro con
+una solución cuando falta algo. Si Docker todavía no está instalado en
+absoluto: [Instalar Docker Desktop](docker-desktop.md).
+
+Los mensajes del lanzador y lo que significan:
+
+| Mensaje | Significado | Solución |
+|---------|-------------|----------|
+| "Docker no está instalado (docker no está en el PATH)." | No se encontró el comando `docker`. | [Instalar Docker Desktop](docker-desktop.md). El lanzador muestra el enlace de instalación directamente. |
+| "Docker está instalado pero no iniciado." o "Docker no está en ejecución. Contexto comprobado '...' (...): ..." | El servicio de Docker no está en ejecución en este momento; la forma detallada nombra el contexto probado, el socket y el error original de Docker. | Haz clic en el botón **"Iniciar Docker"** del lanzador (Linux) o abre Docker Desktop (macOS/Windows), luego **"Reintentar"**. |
+| "Docker está instalado, pero no tienes permiso." | Tu usuario no está en el grupo `docker` (Linux). | El lanzador muestra el comando exacto; después cierra sesión y vuelve a iniciarla. |
+| "Docker no responde." | Lo más probable es que Docker aún se esté iniciando (típico justo después de abrir Docker Desktop). | Espera un momento y luego **"Reintentar"**. |
+| "Docker se ejecuta mediante el contexto '...' - el contexto activo no era accesible, el lanzador se conectó automáticamente." | Solo informativo: Docker se ejecutaba bajo un contexto distinto, el lanzador lo encontró y lo usa. | Nada que hacer. |
+| "Docker Desktop está instalado pero no en el PATH." | La app de Docker Desktop está presente, pero su herramienta de línea de comandos (todavía) no es accesible. | Inicia Docker Desktop mediante el botón del lanzador y espera un momento. |
+
+La detección de contextos con mensajes detallados se incluye a partir de
+la versión del lanzador posterior a docker-app-launcher#26; las
+versiones anteriores muestran los mensajes más cortos de la misma tabla.
+
+## Descarga
+
+Los tres lanzadores se publican con cada versión en
+[github.com/astrapi69/adaptive-learner/releases](https://github.com/astrapi69/adaptive-learner/releases):
+
+| Plataforma | Archivo | Suma de comprobación |
+|------------|---------|----------------------|
+| Linux | `adaptive-learner-launcher` | `adaptive-learner-launcher.sha256` |
+| macOS | `adaptive-learner-launcher-macos.zip` | `adaptive-learner-launcher-macos.zip.sha256` |
+| Windows | `adaptive-learner-launcher.exe` | `adaptive-learner-launcher.exe.sha256` |
+
+## Linux
+
+1. Verifica la suma de comprobación (ambos archivos en la misma
+   carpeta):
+
+    ```bash
+    sha256sum -c adaptive-learner-launcher.sha256
+    ```
+
+2. Asigna el permiso de ejecución. La descarga desde el navegador
+   siempre se lo quita al binario, así que este paso es **siempre**
+   necesario:
+
+    ```bash
+    chmod +x adaptive-learner-launcher
+    ```
+
+3. Inícialo, lo más fácil desde el terminal:
+
+    ```bash
+    ./adaptive-learner-launcher
+    ```
+
+    El doble clic en el gestor de archivos también puede funcionar,
+    según tu entorno; GNOME/Nautilus requiere "Permitir la ejecución del
+    archivo como programa" en Propiedades > Permisos. Iniciarlo desde el
+    terminal tiene la ventaja de que ves los mensajes de error
+    directamente.
+
+Errores frecuentes:
+
+- **"Permission denied"**: se omitió el paso 2 (`chmod +x`).
+- **Error de GLIBC al iniciar**: el binario se compila en Ubuntu 22.04 y
+  necesita glibc 2.35 o más reciente (Ubuntu 22.04+, Debian 12+,
+  Fedora 36+). En distribuciones más antiguas, ejecuta la app mediante
+  `install.sh` o directamente con Docker Compose.
+- **La app no es accesible en el navegador**: la app se ejecuta solo de
+  forma local (`localhost`), por lo que no hace falta ninguna regla de
+  cortafuegos. Si el navegador no se abre automáticamente, abre
+  `http://localhost:8501` manualmente (o el puerto que se muestre en la
+  ventana del lanzador).
+
+## macOS
+
+1. Verifica la suma de comprobación y descomprime el ZIP:
+
+    ```bash
+    shasum -a 256 -c adaptive-learner-launcher-macos.zip.sha256
+    unzip adaptive-learner-launcher-macos.zip
+    ```
+
+2. En la primera apertura, Gatekeeper bloquea el binario por proceder de
+   un "desarrollador no identificado". Dos formas de evitarlo:
+
+    - Haz clic derecho (o Ctrl-clic) en el binario > **Abrir** >
+      confirma **Abrir** en el diálogo. macOS lo recuerda para todos los
+      inicios posteriores.
+    - O bien: Ajustes del Sistema > **Privacidad y seguridad** >
+      desplázate hasta la app bloqueada y haz clic en **Abrir de todos
+      modos**.
+
+## Windows
+
+1. Verifica la suma de comprobación (PowerShell, ambos archivos en la
+   misma carpeta):
+
+    ```powershell
+    Get-FileHash .\adaptive-learner-launcher.exe -Algorithm SHA256
+    Get-Content .\adaptive-learner-launcher.exe.sha256
+    ```
+
+    Los dos valores de hash deben coincidir.
+
+2. Haz doble clic en `adaptive-learner-launcher.exe`. En el primer
+   inicio, SmartScreen advierte ("Windows protegió su PC"): haz clic en
+   **Más información** y luego en **Ejecutar de todas formas**.
+
+## Si algo sale mal
+
+- El propio lanzador muestra un diálogo de aviso cuando Docker no está
+  en ejecución y ofrece iniciar Docker Desktop.
+- El primer inicio descarga y compila la imagen de la app; la lista de
+  pasos en la ventana del lanzador (Check Docker / Download / Build /
+  Start / Ready) muestra el progreso. Los inicios posteriores son
+  rápidos.
+- Mientras la app está en ejecución, siempre puedes acceder a ella en
+  `http://localhost:8501` (o el puerto que hayas cambiado); el botón
+  "Abrir en el navegador" del lanzador hace lo mismo.
