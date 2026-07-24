@@ -90,7 +90,7 @@ AA を検査します。完全なトークンリファレンスは
 5. **i18n**：`backend/config/i18n/*.yaml` の 8 つすべての
    カタログに `ui.themes.midnight` を追加し、`make sync-i18n` を
    実行します。
-6. **検査**：`bunx vitest run src/styles/themes src/styles/contrast` —
+6. **検査**：`bunx vitest run src/styles/themes src/styles/contrast` -
    完全性とコントラストのピンがグリーンのままでなければなりません
    （新しいテーマでコントラストが AA を満たすまで値を調整します）。
 

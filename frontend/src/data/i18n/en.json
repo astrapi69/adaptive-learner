@@ -2,7 +2,7 @@
   "app": {
     "name": "Adaptive Learner",
     "tagline": "Learning that adapts to you.",
-    "skeleton_notice": "Skeleton state. Domain models, plugins and pages land in upcoming phases — see docs/adaptive-learner-project-reference.md."
+    "skeleton_notice": "Skeleton state. Domain models, plugins and pages land in upcoming phases - see docs/adaptive-learner-project-reference.md."
   },
   "common": {
     "ok": "OK",
@@ -80,7 +80,7 @@
     },
     "primary": "Primary navigation",
     "discover": "Discover content",
-    "offline_long": "Offline — past sessions stay readable",
+    "offline_long": "Offline - past sessions stay readable",
     "sync_pending": "{n} change(s) waiting to sync",
     "statistics": "Statistics",
     "profile": "Your profile",
@@ -98,12 +98,12 @@
     "offline": "Offline",
     "anki": "Anki",
     "dev_badge": "DEV",
-    "dev_badge_tooltip": "Developer Mode is on — error toasts show full technical detail. Toggle in Settings.",
+    "dev_badge_tooltip": "Developer Mode is on - error toasts show full technical detail. Toggle in Settings.",
     "content": "My content",
     "mode_badge_content": "Content",
     "mode_badge_ai": "AI+Content",
-    "mode_badge_tooltip_content": "No API key configured — using pre-built content only. Add a key in Settings to enable AI features.",
-    "mode_badge_tooltip_ai": "AI provider configured — exercises use AI for distractors + hints. Tap to browse content sets.",
+    "mode_badge_tooltip_content": "No API key configured - using pre-built content only. Add a key in Settings to enable AI features.",
+    "mode_badge_tooltip_ai": "AI provider configured - exercises use AI for distractors + hints. Tap to browse content sets.",
     "mode_badge_label_content": "Mode: Content only",
     "mode_badge_label_ai": "Mode: AI + Content",
     "sync_paired": "Sync: paired (Settings > Sync)",
@@ -206,7 +206,7 @@
     "add_subtopic": "Add subtopic",
     "rename_topic": "Rename topic",
     "topic_title": "Title",
-    "no_topics": "No topics yet — add your first to get started.",
+    "no_topics": "No topics yet - add your first to get started.",
     "no_curriculum": "Create a curriculum to start building a topic tree.",
     "delete_confirm": "Delete this topic? Its children stay as their own roots.",
     "lessons_title": "Lessons",
@@ -223,7 +223,7 @@
     "description_saved": "Description saved.",
     "edit_description": "Edit description",
     "lesson_content_aria": "Lesson content",
-    "lesson_content_placeholder": "Lesson content — supports headings, lists, code blocks, links.",
+    "lesson_content_placeholder": "Lesson content - supports headings, lists, code blocks, links.",
     "no_description": "No description yet."
   },
   "landing": {
@@ -241,7 +241,7 @@
     "intro": "Tell us about your learning goal. Adaptive Learner uses this to build your profile and recommend a starting method.",
     "concepts_explainer_prefix": "You'll define a ",
     "concepts_explainer_mid1": ", then complete a brief assessment to build your ",
-    "concepts_explainer_mid2": " — which guides every ",
+    "concepts_explainer_mid2": " - which guides every ",
     "concepts_explainer_suffix": " ahead.",
     "term_learning_project": "learning project",
     "term_learning_profile": "learning profile",
@@ -255,13 +255,13 @@
     "field_timeframe_hint": "e.g. 4 weeks, one semester.",
     "field_daily_minutes": "Minutes per day",
     "field_current_problem": "Current problem",
-    "field_current_problem_hint": "optional — what is blocking you right now?",
+    "field_current_problem_hint": "optional - what is blocking you right now?",
     "submit": "Create project and start assessment",
     "creating": "Creating project…",
     "subject_suggestions": "Suggested subjects (tap to assign):",
     "default_goal": "Learn {topic}",
     "invite_title": "Want to set up your learning profile in more detail?",
-    "invite_subtitle": "It takes a minute and tailors your sessions — you can also do it later.",
+    "invite_subtitle": "It takes a minute and tailors your sessions - you can also do it later.",
     "invite_start_now": "Jump right in",
     "invite_setup_profile": "Set up profile",
     "restore_hint": "Already learning with Adaptive Learner? Restore from a backup.",
@@ -289,7 +289,7 @@
   },
   "assessment": {
     "title": "Learning-type assessment",
-    "intro": "Twelve short questions determine your learning profile. There is no right or wrong answer — go with your gut.",
+    "intro": "Twelve short questions determine your learning profile. There is no right or wrong answer - go with your gut.",
     "question_progress": "Question {current} of {total}",
     "next_question": "Next question",
     "prev_question": "Previous question",
@@ -335,7 +335,7 @@
     "review_queue": {
       "loading": "Loading…",
       "elements": "element(s) due for review",
-      "overdue": "overdue — start here",
+      "overdue": "overdue - start here",
       "open": "Open review session",
       "quick": "Quick review"
     },
@@ -371,7 +371,7 @@
     "page_title": "Adaptive Lesson",
     "session_title": "Adaptive lesson",
     "loading": "Analyzing your errors…",
-    "empty_body": "Nothing to adapt yet — practice a lesson to build up data.",
+    "empty_body": "Nothing to adapt yet - practice a lesson to build up data.",
     "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
     "back_to_dashboard": "Back to Dashboard",
     "transparency": {
@@ -395,14 +395,14 @@
     "your_answer": "Your answer:",
     "correct_answer": "Correct:",
     "summary_corrected": "{corrected} of {total} corrected",
-    "summary_trend": "Nice — your weak spots are getting stronger.",
+    "summary_trend": "Nice - your weak spots are getting stronger.",
     "summary_next": "Mastered items drop out; the rest return for review soon.",
     "summary_remaining": "Still {n} due. Keep going?",
     "another_round": "Another round",
     "summary_repeat": "Come back in about 2 days to keep these fresh.",
     "explain_heading": "Why you missed these",
     "explain_article_gender": "Watch the gender: nouns ending in -o are usually masculine (el/un), -a feminine (la/una). The article follows the ending.",
-    "explain_spelling_accent": "Check the exact spelling and accent marks — a small difference changes the word.",
+    "explain_spelling_accent": "Check the exact spelling and accent marks - a small difference changes the word.",
     "explain_verb_conjugation": "Match the verb to its subject and tense before answering.",
     "explain_word_order": "Mind the word order for this structure.",
     "page_title": "Review",
@@ -432,7 +432,7 @@
     "metric_mean_understanding": "Mean understanding",
     "metric_mean_stress": "Mean stress",
     "metric_streak": "Day streak",
-    "no_data": "No sessions yet — start your first one to see trends.",
+    "no_data": "No sessions yet - start your first one to see trends.",
     "pronunciation_quick_start": "Pronunciation Practice"
   },
   "session": {
@@ -464,7 +464,7 @@
     "cycles_completed": "Cycles completed",
     "next_topic": "Next topic:",
     "step_reason_tooltip": "Why this step?",
-    "offline_start_blocked": "You're offline. New sessions need a network connection — past sessions stay readable from the Dashboard.",
+    "offline_start_blocked": "You're offline. New sessions need a network connection - past sessions stay readable from the Dashboard.",
     "peek_step_prefix": "Step",
     "rating_notes_aria": "Session notes",
     "rating_notes_placeholder": "What worked, what didn't, what to try next time..."
@@ -486,7 +486,7 @@
     "commit_date": "Date",
     "no_commits": "No completed sessions yet.",
     "step_eval_title": "AI step-evaluation insights",
-    "step_eval_empty": "No AI step-evaluation data yet — start a session to see insights here.",
+    "step_eval_empty": "No AI step-evaluation data yet - start a session to see insights here.",
     "step_eval_avg_confidence": "Avg AI confidence",
     "step_eval_repeats": "Times AI said 'not ready yet'",
     "step_eval_advances": "Step advances",
@@ -505,16 +505,16 @@
       "deleted": "Deleted {lessons} lessons and {cards} review cards."
     },
     "key_export_link": {
-      "heading": "AI keys — encrypted export",
+      "heading": "AI keys - encrypted export",
       "hint": "Export or import your AI keys as a single encrypted file. It lives with the other backups in the Data tab.",
       "button": "Go to key export (Data tab)"
     },
     "key_vault": {
-      "title": "AI keys — encrypted export",
+      "title": "AI keys - encrypted export",
       "intro": "Move your AI keys to another device in one encrypted file, separate from the normal backup (which never contains keys).",
       "api_export_disabled": "In server mode your keys cannot be exported - they are managed encrypted on the server. Importing a key file still works.",
       "export_heading": "Export",
-      "passphrase_hint": "Choose a strong passphrase. It cannot be recovered — without it the file cannot be opened.",
+      "passphrase_hint": "Choose a strong passphrase. It cannot be recovered - without it the file cannot be opened.",
       "passphrase_label": "Passphrase",
       "confirm_label": "Confirm passphrase",
       "no_keys": "There are no AI keys to export yet.",
@@ -737,7 +737,7 @@
     "provider_gemini": "Google Gemini",
     "providers": {
       "title": "Configured AI providers",
-      "hint": "Keys you have saved stay stored. Only a masked preview is shown — never the full key.",
+      "hint": "Keys you have saved stay stored. Only a masked preview is shown - never the full key.",
       "status_active": "Active",
       "status_empty": "Empty",
       "status_desktop_only": "Desktop only",
@@ -900,29 +900,29 @@
     "danger_zone_input_placeholder": "RESET",
     "danger_zone_intro": "Permanently delete every piece of learner state on this device.",
     "danger_zone_reset_button": "Reset Everything",
-    "danger_zone_warning": "This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
+    "danger_zone_warning": "This deletes ALL your learning data permanently - sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
     "section_sync": "Sync"
   },
   "methods": {
     "deductive": {
       "label": "Deductive",
-      "summary": "General to specific — rules first, examples after."
+      "summary": "General to specific - rules first, examples after."
     },
     "inductive": {
       "label": "Inductive",
-      "summary": "Specific to general — examples first, derive the rule."
+      "summary": "Specific to general - examples first, derive the rule."
     },
     "error_based": {
       "label": "Error-based",
-      "summary": "Learn from mistakes — correction plus explanation."
+      "summary": "Learn from mistakes - correction plus explanation."
     },
     "dialogic": {
       "label": "Dialogic",
-      "summary": "Think in conversation — lower stress, build motivation."
+      "summary": "Think in conversation - lower stress, build motivation."
     },
     "contextual": {
       "label": "Contextual",
-      "summary": "Apply in a real context — practice transfer."
+      "summary": "Apply in a real context - practice transfer."
     },
     "ai_adaptive": {
       "label": "AI-adaptive",
@@ -964,7 +964,7 @@
     "not_found": "Not found.",
     "validation": "Invalid input.",
     "conflict": "Entry already exists.",
-    "server": "Server error — please try again later."
+    "server": "Server error - please try again later."
   },
   "toast": {
     "project_created": "Project created.",
@@ -980,7 +980,7 @@
   "install": {
     "ios": {
       "title": "Install as an app",
-      "steps": "Tap the Share icon, then “Add to Home Screen” — it opens without the Safari bar.",
+      "steps": "Tap the Share icon, then “Add to Home Screen” - it opens without the Safari bar.",
       "aria_label": "Install on your iPhone",
       "dismiss": "Dismiss"
     },
@@ -1123,7 +1123,7 @@
     "auto_none": "No auto-backups yet. The first one runs after 10 sessions or 7 days.",
     "storage_pressure": "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now.",
     "compare_title": "Compare Backups",
-    "compare_help": "Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified — comparison is read-only.",
+    "compare_help": "Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified - comparison is read-only.",
     "compare_slot_a": "Backup A (older)",
     "compare_slot_b": "Backup B (newer)",
     "compare_pick": "Pick file…",
@@ -1139,7 +1139,7 @@
     "compare_sort_label": "Sort:",
     "compare_sort_delta": "Most changes first",
     "compare_sort_alpha": "Alphabetical",
-    "compare_no_changes": "The two backups are identical — no differences detected.",
+    "compare_no_changes": "The two backups are identical - no differences detected.",
     "compare_section_added": "Added",
     "compare_section_removed": "Removed",
     "compare_section_changed": "Changed",
@@ -1147,14 +1147,14 @@
     "compare_old": "Old",
     "compare_new": "New",
     "compare_field_changes": "field changes",
-    "compare_high_volume_hint": "High-volume table — record-level previews shown abbreviated.",
+    "compare_high_volume_hint": "High-volume table - record-level previews shown abbreviated.",
     "compare_export_md": "Export as Markdown",
     "compare_markdown_downloaded": "Diff exported.",
     "confirm_with_counts": "Restore ({{added}} added, {{updated}} updated)",
     "auto_compare_as_a": "Compare as A",
     "auto_compare_as_b": "Compare as B",
     "compare_auto_label": "Auto-backup {{date}}",
-    "auto_compare_missing": "Auto-backup is no longer available — it was rotated out."
+    "auto_compare_missing": "Auto-backup is no longer available - it was rotated out."
   },
   "export": {
     "title": "Export",
@@ -1234,7 +1234,7 @@
     "scan_success_hint": "Verifying with the desktop…",
     "smart_merge": "Smart Merge (AI)",
     "smart_merge_error": "Smart merge failed.",
-    "smart_merge_ready": "AI merge ready — review and apply.",
+    "smart_merge_ready": "AI merge ready - review and apply.",
     "smart_merge_running": "Merging with AI…",
     "sync_error": "Sync failed.",
     "synced": "Synced",
@@ -1437,7 +1437,7 @@
     "danger_zone_heading": "Danger Zone",
     "danger_zone_intro": "Permanently delete every piece of learner state on this device.",
     "danger_zone_reset_button": "Reset Everything",
-    "danger_zone_warning": "This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
+    "danger_zone_warning": "This deletes ALL your learning data permanently - sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
     "danger_zone_confirm_prompt": "Type RESET to confirm",
     "danger_zone_input_placeholder": "RESET",
     "danger_zone_final_button": "Delete permanently",
@@ -1729,9 +1729,9 @@
     "readme_topics_heading": "Topics",
     "readme_no_topics": "_No topics traversed yet._",
     "readme_see_also_heading": "See also",
-    "readme_see_stats": "[LEARNING_STATS.md](LEARNING_STATS.md) — error rates, understanding, transfer, intervention log.",
-    "readme_see_cheatsheet": "[CHEATSHEET.md](CHEATSHEET.md) — distilled notes + Meta-Learning Insights.",
-    "readme_see_roadmap": "[ROADMAP.md](ROADMAP.md) — next steps.",
+    "readme_see_stats": "[LEARNING_STATS.md](LEARNING_STATS.md) - error rates, understanding, transfer, intervention log.",
+    "readme_see_cheatsheet": "[CHEATSHEET.md](CHEATSHEET.md) - distilled notes + Meta-Learning Insights.",
+    "readme_see_roadmap": "[ROADMAP.md](ROADMAP.md) - next steps.",
     "stats_title": "Learning Statistics",
     "stats_intro": "Per-session metrics derived automatically from session evaluations + ratings. Do not edit by hand.",
     "stats_no_sessions": "_No sessions yet._",
@@ -1753,7 +1753,7 @@
     "stats_exit_threshold_body": "A topic is considered mastered when Understanding ≥ 9/10 AND Transfer ≥ 8/10 stable over 2 consecutive cycles. Pinned rows mark sessions that satisfy this condition.",
     "stats_exit_pin_marker": "✅ exit threshold met",
     "cheatsheet_title": "Cheatsheet",
-    "cheatsheet_intro": "Distilled notes from your sessions. The Meta-Learning Insights section collects notes tagged meta_learning — observations about how you learn best.",
+    "cheatsheet_intro": "Distilled notes from your sessions. The Meta-Learning Insights section collects notes tagged meta_learning - observations about how you learn best.",
     "cheatsheet_notes_heading": "Notes",
     "cheatsheet_meta_learning_heading": "Meta-Learning Insights",
     "cheatsheet_no_notes": "_No notes yet._",
@@ -1868,13 +1868,13 @@
       "stats_slowest": "Slowest: {s}s ({type})"
     },
     "reverse": {
-      "not_reversible": "This exercise type can't be reversed — shown in its original format."
+      "not_reversible": "This exercise type can't be reversed - shown in its original format."
     },
     "resources_title": "Explore further",
     "resources_domain": "More on {domain}",
     "motivation": {
-      "halftime": "Halfway there — keep going!",
-      "last": "Last one — finish strong!"
+      "halftime": "Halfway there - keep going!",
+      "last": "Last one - finish strong!"
     },
     "theory": {
       "view_example": "View example"
@@ -1962,7 +1962,7 @@
         "submit": "Check answer",
         "retry": "Try again",
         "result_correct": "Correct!",
-        "result_wrong": "Not quite — the highlighted tile is the right answer.",
+        "result_wrong": "Not quite - the highlighted tile is the right answer.",
         "grid_label": "Image choices",
         "correct_label": "Correct",
         "wrong_label": "Wrong",
@@ -2118,7 +2118,7 @@
       "heading": "Retry complete",
       "score": "{correct}/{total} correct now!",
       "done": "Back to lesson",
-      "empty": "Nothing to retry — open this from a lesson summary after making some mistakes.",
+      "empty": "Nothing to retry - open this from a lesson summary after making some mistakes.",
       "summary_aria": "Retry errors summary"
     },
     "next_step": {
@@ -2203,7 +2203,7 @@
     "set_link": {
       "loading": "Loading set…",
       "not_found_title": "Set not found",
-      "not_found_body": "This set isn’t available — it may not be downloaded yet, or it doesn’t exist.",
+      "not_found_body": "This set isn’t available - it may not be downloaded yet, or it doesn’t exist.",
       "go_discover": "Discover content",
       "start": "Start learning",
       "download_start": "Download & start",
@@ -2406,9 +2406,9 @@
       "target_lang_label": "Language learned",
       "source_lang_label": "Your language",
       "level_label": "Level",
-      "not_enough_data": "Few exercises — at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).",
+      "not_enough_data": "Few exercises - at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).",
       "same_language": "The language learned and your language must be different.",
-      "same_language_hint": "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
+      "same_language_hint": "Learned and your language are the same - fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
       "split_notice": "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each).",
       "part_title": "{title} - Part {n}"
     },
@@ -2515,7 +2515,7 @@
       "level_too_complex": "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected).",
       "source_language_heuristic": "Card backs contain {found}-specific characters but the source language is '{lang}'.",
       "target_language_heuristic": "Card fronts contain {found}-specific characters but the target language is '{lang}'.",
-      "failed_share_anyway": "Quality check found issues. You can share anyway — reviewers will see the findings noted in the pull request."
+      "failed_share_anyway": "Quality check found issues. You can share anyway - reviewers will see the findings noted in the pull request."
     },
     "ai_validation": {
       "intro": "An AI can additionally check translation accuracy, grammar and level fit.",
@@ -2526,7 +2526,7 @@
       "ai_passed": "AI review: looks good.",
       "ai_review": "AI review: suggestions below.",
       "score": "score",
-      "failed": "AI review unavailable. You can still share — the quality check passed.",
+      "failed": "AI review unavailable. You can still share - the quality check passed.",
       "auto_fix": "Apply",
       "applied": "applied",
       "fix_applied": "Suggestion applied.",
@@ -3105,7 +3105,7 @@
       "heading": "Start from a template",
       "blank": {
         "title": "Blank Lesson",
-        "desc": "Just metadata — add cards yourself."
+        "desc": "Just metadata - add cards yourself."
       },
       "vocabulary": {
         "title": "Vocabulary List",
@@ -3186,7 +3186,7 @@
     "group": {
       "mastery": "{r} receptive, {p} productive mastered",
       "progress_aria": "{completed} of {total} lessons completed",
-      "toggle_aria": "{title} set — {completed} of {total} lessons completed"
+      "toggle_aria": "{title} set - {completed} of {total} lessons completed"
     },
     "search_placeholder": "Search lessons…",
     "filter": {
@@ -3211,12 +3211,12 @@
     },
     "clusters": {
       "toggle": "Show error clusters",
-      "empty": "No shared error patterns yet — keep practising.",
+      "empty": "No shared error patterns yet - keep practising.",
       "lessons": "{n} lessons",
       "start_adaptive": "Start adaptive lesson",
       "region_label": "Error clusters panel"
     },
-    "search_label": "Search lessons — press Enter to navigate to the first match",
+    "search_label": "Search lessons - press Enter to navigate to the first match",
     "custom": {
       "title": "My Learning Paths",
       "subtitle": "Assemble lessons into your own ordered path.",
@@ -3471,7 +3471,7 @@
     "time_hm": "{h}h {m}m",
     "time_m": "{m}m",
     "weak_areas_title": "Areas to improve",
-    "weak_areas_empty": "No mistakes tracked yet — keep going!",
+    "weak_areas_empty": "No mistakes tracked yet - keep going!",
     "practice": "Practice",
     "errors": "errors",
     "last_answer": "Your last answer:",
@@ -3546,7 +3546,7 @@
     "card_more": "+{n} more",
     "add": "Add to favorites",
     "remove": "Remove from favorites",
-    "empty": "No favorites yet — tap the star on a lesson to save it.",
+    "empty": "No favorites yet - tap the star on a lesson to save it.",
     "save_prompt": "Save this lesson to your favorites"
   },
   "content_repo": {
@@ -3575,7 +3575,7 @@
       "filled": "Repository details filled from the QR code."
     },
     "synced": "Synced: {sets} sets, {lessons} lessons.",
-    "token_hint": "Private repositories need a token — paste one below, or set a shared token in Settings → Integrations.",
+    "token_hint": "Private repositories need a token - paste one below, or set a shared token in Settings → Integrations.",
     "trust_official": "Official: Curated and quality-assured by the project team.",
     "trust_verified": "Verified: Contributed by the community and reviewed by the team.",
     "trust_validated": "Validated: Technically correct; content not individually reviewed.",
@@ -3625,7 +3625,7 @@
       "official": "Official"
     },
     "trust": {
-      "dropped": "Synced, but validation failed — this repository is now marked Unverified.",
+      "dropped": "Synced, but validation failed - this repository is now marked Unverified.",
       "recommended": "Officially recommended",
       "unknown": "Unverified",
       "validated": "Validated"
@@ -3760,7 +3760,7 @@
     "loading": "Loading practice session…",
     "empty_body": "This set has no exercises to practise yet.",
     "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
-    "paused": "Paused — take a breather.",
+    "paused": "Paused - take a breather.",
     "resume": "Resume",
     "pause": "Pause",
     "end": "End",

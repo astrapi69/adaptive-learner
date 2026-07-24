@@ -197,7 +197,7 @@ describe("ContinueLearning", () => {
         // The row link must be allowed to shrink below its content width.
         expect(link.className).toContain("min-w-0");
         // The title line truncates and exposes the full text via `title`.
-        const title = screen.getByTitle(`${LONG} — ${LONG}`);
+        const title = screen.getByTitle(`${LONG} - ${LONG}`);
         expect(title.className).toContain("truncate");
     });
 
@@ -240,7 +240,7 @@ describe("ContinueLearning", () => {
         renderSection({});
         await screen.findByTestId("continue-learning-link-fr-a1");
         expect(screen.getByText(/French A1/)).toBeInTheDocument();
-        expect(screen.getByTitle("French A1 — Greetings")).toBeInTheDocument();
+        expect(screen.getByTitle("French A1 - Greetings")).toBeInTheDocument();
     });
 
     it("keeps every row shrinkable when several cards are shown", async () => {

@@ -17,14 +17,14 @@ languages:
   - code: ja
     name: 日本語
 
-# Phase 11 (v0.8.0) — Full documentation tree.
+# Phase 11 (v0.8.0) - Full documentation tree.
 #
 # Top-level sections:
 #   - Home (landing page)
-#   - User Guide / Benutzerhandbuch — for learners using the app
-#   - Concept / Konzept — the pedagogical thinking
-#   - Developer Docs / Entwickler-Dokumentation — for contributors
-#   - API Reference / API-Referenz — for integrators
+#   - User Guide / Benutzerhandbuch - for learners using the app
+#   - Concept / Konzept - the pedagogical thinking
+#   - Developer Docs / Entwickler-Dokumentation - for contributors
+#   - API Reference / API-Referenz - for integrators
 #
 # The in-app help panel reads this file directly; mkdocs.yml's
 # nav block is regenerated from here by scripts/generate_mkdocs_nav.py.

@@ -1,4 +1,4 @@
-"""AiAnthropicPlugin — PluginForge entry point.
+"""AiAnthropicPlugin - PluginForge entry point.
 
 Owns the ``ai_complete`` hook for any model starting with
 ``claude-``. Returns ``None`` for any other model so pluggy falls
@@ -72,7 +72,7 @@ class AiAnthropicPlugin(BasePlugin):
         api_key: str,
         max_tokens: int | None = None,
     ):
-        """v1.6.0 / Phase 19 — streaming variant of :meth:`ai_complete`.
+        """v1.6.0 / Phase 19 - streaming variant of :meth:`ai_complete`.
 
         Returns an async generator yielding text deltas as
         Anthropic streams them. Returns ``None`` when the requested

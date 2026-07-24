@@ -35,7 +35,7 @@ cd backend && poetry run pytest --pdb  # bei erstem Fehler in Debugger
 Tests leben in `backend/tests/`. Fixtures in `conftest.py`
 liefern pro Test eine frische In-Memory-SQLite-DB, den
 `TestClient` und einen gemockten Plugin-Manager. Test-
-Isolation ist hart — `ADAPTIVE_LEARNER_TEST=1` wird vor jedem
+Isolation ist hart - `ADAPTIVE_LEARNER_TEST=1` wird vor jedem
 `app.*`-Import gesetzt.
 
 ## Plugin-Tests
@@ -48,7 +48,7 @@ make test-plugin-session       # nur eines
 cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ```
 
-Plugin-Tests laden die FastAPI-App nicht — sie üben die
+Plugin-Tests laden die FastAPI-App nicht - sie üben die
 Plugin-Module isoliert. Mock den `pluggy.PluginManager`, wenn
 du Hook-Firing testest.
 
@@ -99,7 +99,7 @@ beforeEach(async () => {
 });
 ```
 
-Jeder Test bekommt eine frische In-Memory-IndexedDB — kein
+Jeder Test bekommt eine frische In-Memory-IndexedDB - kein
 Leak.
 
 **api/client.ts-Mocks** (Legacy-Seiten):
@@ -133,7 +133,7 @@ Smoke-Specs decken die kritischen User-Pfade ab:
 - Curriculum anlegen
 - Mobile Viewports (iPhone SE, iPhone 14, Pixel 7, iPad)
 
-Specs nutzen ausschließlich `data-testid`-Selektoren — keine
+Specs nutzen ausschließlich `data-testid`-Selektoren - keine
 brüchigen CSS-Selektoren. Smoke-Specs sind NICHT im
 `make test`-Pfad; sie brauchen eine laufende App
 (`make dev-bg` zuerst).
@@ -141,13 +141,13 @@ brüchigen CSS-Selektoren. Smoke-Specs sind NICHT im
 Neben `e2e/smoke/` enthält der `e2e/`-Baum drei weitere
 Spec-Familien:
 
-- `e2e/dexie/` — das Dexie-Modus-Release-Gate. Baut das
+- `e2e/dexie/` - das Dexie-Modus-Release-Gate. Baut das
   Frontend mit `VITE_STORAGE_MODE=dexie` (die GitHub-Pages-Form,
   ohne Backend) und läuft jede über die Navigation erreichbare
   Route ab; jeder Fehler-Toast oder Seitenabsturz lässt es
   scheitern. Ausführen mit `make test-dexie-smoke`.
-- `e2e/visual/` — Visuelle Baseline-Regressions-Specs.
-- `e2e/manual-automation/` — Playwright-Automatisierung des
+- `e2e/visual/` - Visuelle Baseline-Regressions-Specs.
+- `e2e/manual-automation/` - Playwright-Automatisierung des
   manuellen Testplans.
 
 ## Coverage
@@ -209,7 +209,7 @@ nur-warnenden Suiten laufen zur Nachtschicht und beim Release.
 6. Docs-Drift-Verifizierer (`verify_docs.py` + mkdocs-nav-Sync)
 
 **Test Impact Analysis (#615):** bei einem PR laufen nur die
-betroffenen Tests — `vitest run --changed origin/<base>` und
+betroffenen Tests - `vitest run --changed origin/<base>` und
 `pytest --testmon`. Push auf `develop` / `main`, die
 nächtlichen Läufe und der Release-Lauf führen immer die VOLLE
 Suite aus. Der Rückfall auf die volle Suite ist automatisch
@@ -217,7 +217,7 @@ Suite aus. Der Rückfall auf die volle Suite ist automatisch
 
 Zwei weitere PR-Gates leben in eigenen Workflows:
 
-- `complexity-check.yml` — das Komplexitäts-Ratschen-Gate
+- `complexity-check.yml` - das Komplexitäts-Ratschen-Gate
   (`make check-complexity-gate`, radon für Python +
   ESLint-Komplexität für TS). Es ist ein Baseline-Ratschen: es
   scheitert nur an NEUEN oder verschlechterten Verstößen
@@ -225,55 +225,55 @@ Zwei weitere PR-Gates leben in eigenen Workflows:
   Komplexität, ohne ein Aufräumen der bestehenden Schuld zu
   erzwingen. Der volle nur-warnende Komplexitätsbericht läuft
   nächtlich.
-- `cohesion-check.yml` — die Dateigrößen-Prüfung (Gate gegen
+- `cohesion-check.yml` - die Dateigrößen-Prüfung (Gate gegen
   `.filesize-whitelist`) plus zwei Klassen-Namens-Gates:
   tote CSS-Klassennamen (`check-dead-classnames.py` gegen
   `.dead-classnames-baseline`) und das
   **Ungestylte-className-Gate** (`--unstyled`, Ratsche gegen
-  `.unstyled-classnames-baseline`) — ein `className`, dessen
+  `.unstyled-classnames-baseline`) - ein `className`, dessen
   Tokens alle tot sind, blockiert den PR. Die begleitende
   Ordnergrößen-Prüfung läuft lokal über
   `make check-folder-size`.
-- `visual-baseline-gate.yml` — ein PR, der visuell-kritische
+- `visual-baseline-gate.yml` - ein PR, der visuell-kritische
   Pfade ändert (Lesson-Komponenten, Exercise-Renderer,
   Theme-/CSS-Dateien), muss die betroffenen
   Baseline-Screenshots im selben PR mitbringen; Escape-Label
   `visual-baselines-unaffected` für nachweislich inerte
   Änderungen.
-- `testid-reference-gate.yml` — entfernt oder benennt ein PR
+- `testid-reference-gate.yml` - entfernt oder benennt ein PR
   ein `data-testid` um, das ein E2E-Spec statisch referenziert
   (auf einer stark nutzer-sichtbaren Fläche), ohne das Spec
   anzufassen, scheitert das Gate (`make check-testid-refs`);
   Escape-Label `testid-refs-unaffected`.
-- `docker-build-smoke.yml` — Build-only-Smoke der
+- `docker-build-smoke.yml` - Build-only-Smoke der
   Produktions-Compose-Images (der Launcher-/install.sh-Pfad),
   pfadgefiltert bei PRs, zusätzlich auf `release/**`,
   wöchentlich und per Abruf; lokal `make docker-build-smoke`.
 
 **Nachtschicht / Release (nicht bei PRs):**
 
-- `dexie-smoke.yml` — Dexie-Modus-E2E-Gate (täglich + auf
+- `dexie-smoke.yml` - Dexie-Modus-E2E-Gate (täglich + auf
   `release/**` + Abruf; lokal `make test-dexie-smoke`)
-- `coverage.yml` — Coverage-Bericht (täglich + Abruf)
-- `security-scan.yml` — pip-audit / npm audit / bandit
+- `coverage.yml` - Coverage-Bericht (täglich + Abruf)
+- `security-scan.yml` - pip-audit / npm audit / bandit
   (wöchentlich + auf `release/**` + Abruf; nur-warnend)
-- `content-stats.yml` — Content-Statistik-Drift gegen ein
+- `content-stats.yml` - Content-Statistik-Drift gegen ein
   frisches Content-Checkout (täglich + Abruf)
-- `mutation-frontend.yml` — Stryker-Mutation-Testing (Nächtlich
+- `mutation-frontend.yml` - Stryker-Mutation-Testing (Nächtlich
   hinter der Repo-Variable `ENABLE_NIGHTLY_MUTATION` + Abruf;
   mutiert pro Lauf eine Datei-Scheibe, damit der Lauf ins
   Job-Zeitlimit passt); Backend-Mutation-Testing nutzt mutmut
-- `webkit-gate.yml` — das echte WebKit-Engine-Layout-Gate
+- `webkit-gate.yml` - das echte WebKit-Engine-Layout-Gate
   (iOS-/Safari-Bugklassen, die die Chromium-Gates strukturell
   nicht sehen), täglich hinter der Repo-Variable
   `ENABLE_NIGHTLY_WEBKIT`, immer auf `release/**` und per Abruf
-- `visual-regression.yml` — die visuelle Baseline-Matrix
+- `visual-regression.yml` - die visuelle Baseline-Matrix
   (täglich + Abruf; `update_baselines=true` rendert die
   Baselines in CI neu und lädt sie als Artefakt hoch)
-- `visual-baseline-sync.yml` — Service-Workflow: rendert die
+- `visual-baseline-sync.yml` - Service-Workflow: rendert die
   Baselines in CI und pusht sie als Commit auf den PR-Branch
   (Label `refresh-visual-baselines` oder Abruf mit
-  PR-Nummer) — die Bild-Review vor dem Merge bleibt Pflicht
+  PR-Nummer) - die Bild-Review vor dem Merge bleibt Pflicht
 
 `.github/workflows/release-gate.yml` läuft bei Tag-Pushes:
 verifiziert, dass alle versionstragenden Dateien im Gleichschritt

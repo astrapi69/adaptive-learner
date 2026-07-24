@@ -698,7 +698,7 @@ function isEqual(a: unknown, b: unknown): boolean {
 }
 
 function renderValue(value: unknown): string {
-    if (value === null || value === undefined) return "—";
+    if (value === null || value === undefined) return "-";
     if (typeof value === "boolean") return value ? "true" : "false";
     if (typeof value === "string") return value;
     return JSON.stringify(value);

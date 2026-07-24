@@ -99,7 +99,7 @@ class ItemCreate(BaseModel):
     content: str
 
 def get_items(user_id: str, db: Session) -> list:
-    # Pas d'HTTPException ici — utilisez des sous-classes AdaptiveLearnerError
+    # Pas d'HTTPException ici - utilisez des sous-classes AdaptiveLearnerError
     return db.query(...).filter_by(user_id=user_id).all()
 
 def create_item(body: ItemCreate, db: Session):
@@ -149,7 +149,7 @@ poetry add --editable ../plugins/adaptive-learner-plugin-monplugin
 #     - monplugin
 ```
 
-Redémarrez le backend — votre plugin sera découvert via les entry points.
+Redémarrez le backend - votre plugin sera découvert via les entry points.
 
 ---
 
@@ -180,7 +180,7 @@ Ajoutez un fichier `backend/config/plugins/monplugin.yaml` :
 ```yaml
 enabled: true
 max_items: 50      # paramètre configurable par l'utilisateur
-debug_mode: false  # INTERNE — pas de contrôle UI
+debug_mode: false  # INTERNE - pas de contrôle UI
 ```
 
 Lisez-le depuis votre plugin :

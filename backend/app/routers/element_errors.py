@@ -86,7 +86,7 @@ def review_queue(
         default=None,
         ge=0,
         description=(
-            "#603 — cap the returned items (a review session uses "
+            "#603 - cap the returned items (a review session uses "
             "MAX_REVIEW_SESSION=20). Omit for the full queue (the "
             "'N due' count)."
         ),

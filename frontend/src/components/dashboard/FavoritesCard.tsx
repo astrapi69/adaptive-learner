@@ -57,7 +57,7 @@ export default function FavoritesCard({userId}: FavoritesCardProps) {
                 removeLabel={t("favorites.remove", "Remove from favorites")}
                 emptyLabel={t(
                     "favorites.empty",
-                    "No favorites yet — tap the star on a lesson to save it.",
+                    "No favorites yet - tap the star on a lesson to save it.",
                 )}
                 testId="favorites-list"
             />

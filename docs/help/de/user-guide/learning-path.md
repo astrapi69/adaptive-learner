@@ -2,7 +2,7 @@
 
 Die Seite **Lernpfad** (`/learning-path`) beantwortet auf einen Blick
 zwei Fragen: *Wo stehe ich, und was kommt als Nächstes?* Standardmäßig
-zeigt sie deinen **persönlichen** Pfad — eine kompakte, zweistufige
+zeigt sie deinen **persönlichen** Pfad - eine kompakte, zweistufige
 Liste der heruntergeladenen Lektionssets, sortiert nach deiner
 letzten Aktivität. Eine interaktive **Graph**-Ansicht steht weiterhin
 als Alternative zur Verfügung.
@@ -16,21 +16,21 @@ als Alternative zur Verfügung.
 
 ## Persönliche Ansicht (Standard)
 
-### Ebene 1 — Set-Übersicht
+### Ebene 1 - Set-Übersicht
 
 Jedes heruntergeladene Set ist **eine Zeile**:
 
 | Element | Bedeutung |
 |---------|-----------|
 | Domänen-Symbol + Titel | Der Kurs (Gehirn = Psychologie, Flagge = Sprache, Code = Programmierung) |
-| Mini-Fortschrittsleiste | Ein Punkt pro Lektion — gefüllt = erledigt, halb = in Arbeit, leer = nicht begonnen |
+| Mini-Fortschrittsleiste | Ein Punkt pro Lektion - gefüllt = erledigt, halb = in Arbeit, leer = nicht begonnen |
 | Prozent | Anteil der abgeschlossenen Lektionen des Sets |
 | Letzte Aktivität | Wann du zuletzt an diesem Set gearbeitet hast („gestern", „vor 3 Tagen") |
 | Aktuelle Lektion | Die Lektion, die als Nächstes ansteht |
 | Aktionsschaltfläche | **Fortsetzen** / **Starten** / **Nächstes Level verfügbar** / **Abgeschlossen** |
 
 Die Sets sind nach letzter Aktivität sortiert (neueste zuerst). Noch
-nicht begonnene heruntergeladene Sets rutschen nach unten — und
+nicht begonnene heruntergeladene Sets rutschen nach unten - und
 unter diesen steht das **zuletzt heruntergeladene Set zuerst**, ein
 gerade frisch heruntergeladenes Set ist also oben in der
 Noch-nicht-begonnen-Gruppe statt vergraben. Wenn du
@@ -38,20 +38,20 @@ alle Lektionen eines Kurses abgeschlossen hast und das nächste
 CEFR-Level existiert, bietet die Zeile **Nächstes Level verfügbar**
 an.
 
-### Ebene 2 — Lektionsdetail
+### Ebene 2 - Lektionsdetail
 
 Klicke auf eine Set-Zeile, um sie direkt aufzuklappen (kein
-Seitenwechsel). Jede Lektion zeigt Nummer und Titel, Sterne (0–3 oder
-— wenn nie versucht), Beherrschung pro Richtung (**rezeptiv** /
+Seitenwechsel). Jede Lektion zeigt Nummer und Titel, Sterne (0–3 oder -
+wenn nie versucht), Beherrschung pro Richtung (**rezeptiv** /
 **produktiv**) und das Datum deines letzten Versuchs. Der Marker ▶
 hebt die aktuelle Lektion des Sets hervor. Klicke auf eine Lektion,
 um sie zu starten oder fortzusetzen.
 
 Am Ende des aufgeklappten Sets:
 
-- **Adaptive Lektion starten** — eine aus deinen Fehlern in diesem
+- **Adaptive Lektion starten** - eine aus deinen Fehlern in diesem
   Set erzeugte Lektion.
-- **Fehler wiederholen (N)** — wiederhole die offenen Fehler des Sets
+- **Fehler wiederholen (N)** - wiederhole die offenen Fehler des Sets
   (nur sichtbar, wenn es welche gibt).
 
 Klicke erneut auf die Set-Zeile, um sie wieder einzuklappen.
@@ -67,7 +67,7 @@ wird gespeichert.
 ### Nicht heruntergeladen
 
 Ein einklappbarer Abschnitt am Ende listet Lektionssets auf, die du
-noch nicht heruntergeladen hast — jeweils mit einer Schaltfläche
+noch nicht heruntergeladen hast - jeweils mit einer Schaltfläche
 **Herunterladen**. Beim Herunterladen rückt das Set nach oben in deine
 aktive Liste.
 
@@ -91,16 +91,16 @@ Zusammenfassung; klicke auf die Kopfzeile zum Ein- oder Ausklappen.
 
 ### Graph-Steuerung
 
-- **Statusfilter** — alle / nicht begonnen / in Arbeit / gemeistert.
-- **Richtungsfilter** — alle, oder nur Lektionen ohne rezeptive bzw.
+- **Statusfilter** - alle / nicht begonnen / in Arbeit / gemeistert.
+- **Richtungsfilter** - alle, oder nur Lektionen ohne rezeptive bzw.
   produktive Beherrschung.
-- **Suche** — Treffer hervorheben; mit **Enter** zum ersten Treffer
+- **Suche** - Treffer hervorheben; mit **Enter** zum ersten Treffer
   springen.
-- **Statistik** — abgeschlossene Lektionen, rezeptiv gemeistert,
+- **Statistik** - abgeschlossene Lektionen, rezeptiv gemeistert,
   produktiv gemeistert.
-- **Fehler-Cluster anzeigen** — gemeinsame Fehlermuster (z. B.
+- **Fehler-Cluster anzeigen** - gemeinsame Fehlermuster (z. B.
   *Artikelgeschlecht*) mit adaptiver Lektion per Klick.
-- **Layout zurücksetzen** — das automatische Layout wiederherstellen
+- **Layout zurücksetzen** - das automatische Layout wiederherstellen
   und deine gezogenen Positionen löschen (pro Benutzer im
   Browser-Speicher).
 
@@ -114,7 +114,7 @@ Seite läuft bis hinunter zu 375 px Breite sauber um.
 ## Tipps
 
 - Die **aktuelle Lektion** (▶) ist immer dein bester nächster Schritt
-  — basierend auf deiner Fehlerhistorie, nicht nur auf der
+  - basierend auf deiner Fehlerhistorie, nicht nur auf der
   Lektionsreihenfolge.
 - Eine pausierte Lektion bleibt über ihre Zeile oder die
   Dashboard-Karte „Pausierte Lektionen" fortsetzbar.

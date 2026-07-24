@@ -32,7 +32,7 @@ describe("buildStudyGuidePrompt", () => {
     expect(prompt).toContain("Topic: Spanish A1");
     expect(prompt).toContain("Goal: Conversational basics");
     expect(prompt).toContain("deductive: 0.4");
-    expect(prompt).toContain("hola → hi — Hola!");
+    expect(prompt).toContain("hola → hi - Hola!");
     expect(prompt).toContain("=== Session 2026-06-01 (deductive) ===");
   });
 

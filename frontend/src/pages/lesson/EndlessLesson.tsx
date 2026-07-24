@@ -172,7 +172,7 @@ export default function EndlessLessonPage() {
                     role="status"
                 >
                     <p className="text-fg-secondary">
-                        {t("endless.paused", "Paused — take a breather.")}
+                        {t("endless.paused", "Paused - take a breather.")}
                     </p>
                 </section>
             ) : step && isExerciseStep ? (

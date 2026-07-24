@@ -11,16 +11,16 @@
 
 ## Τα στρώματα token
 
-1. **Tokens ανά theme** — το κανονικό σύνολο των 44 tokens, οριζόμενα
+1. **Tokens ανά theme** - το κανονικό σύνολο των 44 tokens, οριζόμενα
    από μία φορά ανά theme στο `frontend/src/styles/themes/theme-<id>.css`
    (φόντα, κείμενο, περιγράμματα, διαδραστικά, τονισμός, κατάσταση,
    ανατροφοδότηση ασκήσεων, αστέρι, charts, σκιές). Μια αλλαγή του
    `[data-theme]` ανατρέπει όλα. **Κάθε theme πρέπει να ορίζει ακριβώς
    το ίδιο σύνολο** (καρφωμένο μέσω `themes.test.ts`).
-2. **Tokens ανεξάρτητα από theme** — τιμές που εκ κατασκευής είναι ίδιες
+2. **Tokens ανεξάρτητα από theme** - τιμές που εκ κατασκευής είναι ίδιες
    σε κάθε theme (π.χ. παλέτα μάρκας, χρώματα σύνταξης, αποστάσεις
    διάταξης). Βρίσκονται στο `global.css :root`.
-3. **Legacy-Aliase** — παλιά ονόματα όπως `--surface`, `--danger`, που
+3. **Legacy-Aliase** - παλιά ονόματα όπως `--surface`, `--danger`, που
    επιλύονται **μέσω** των κανονικών tokens.
 
 ---
@@ -44,7 +44,7 @@
 
 1. Αντίγραψε ένα υπάρχον `theme-<id>.css` ως πρότυπο.
 2. Όρισε και τα 44 κανονικά tokens (η ισοτιμία είναι υποχρεωτική).
-3. Πρόσεξε την **αντίθεση WCAG-AA** — το `contrast.test.ts` ελέγχει
+3. Πρόσεξε την **αντίθεση WCAG-AA** - το `contrast.test.ts` ελέγχει
    όλα τα themes υπολογιστικά.
 4. Καταχώρισε το theme· ο picker στις Ρυθμίσεις → Εμφάνιση το
    αναλαμβάνει.
@@ -68,5 +68,5 @@ Tailwind-Utilities με σταθερή παλέτα (πρέπει να είνα�
 
 ## Σχετικές σελίδες
 
-- [Σύστημα Theme](../developer/themes.md) — τα παρεχόμενα themes + picker
-- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — πλήρης λίστα token
+- [Σύστημα Theme](../developer/themes.md) - τα παρεχόμενα themes + picker
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) - πλήρης λίστα token

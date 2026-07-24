@@ -9,11 +9,11 @@ choice, CHANGELOG, and tag.
 
 Adaptive Learner follows Semantic Versioning 2.0.0:
 
-- **Major (X.0.0)** — breaking changes in API or
+- **Major (X.0.0)** - breaking changes in API or
   architecture. Reserved for future big shifts.
-- **Minor (X.Y.0)** — new features, backward-compatible.
+- **Minor (X.Y.0)** - new features, backward-compatible.
   Default for each phase completion (we're at v1.91.0).
-- **Patch (X.Y.Z)** — bug fixes, backward-compatible. Hotfix
+- **Patch (X.Y.Z)** - bug fixes, backward-compatible. Hotfix
   chains.
 
 Pre-release tags (`-alpha`, `-beta`, `-rc`) are not used.
@@ -77,14 +77,14 @@ cd frontend && bun run build # must succeed
 The release-gate CI workflow (`.github/workflows/release-gate.yml`)
 runs the same `sync-versions-check` on every tag push. If
 local agrees but CI fails, the drift was introduced between
-your local check and the push — investigate.
+your local check and the push - investigate.
 
 ### 6. Commit + tag
 
 ```bash
 git add -A
 git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z — phase headline + summary"
+git tag -a vX.Y.Z -m "vX.Y.Z - phase headline + summary"
 ```
 
 Tag messages are annotated, multi-line, and summarise the
@@ -137,10 +137,10 @@ the chain when multiple hotfixes land back-to-back.
 When the release cycle bumps dependencies (Vite, React,
 manuscripta, etc.), keep each bump as its own commit. Reasons:
 
-- **Bisect granularity** — a regression isolates to one bump.
-- **CHANGELOG legibility** — readers see the actual
+- **Bisect granularity** - a regression isolates to one bump.
+- **CHANGELOG legibility** - readers see the actual
   motivation for each bump.
-- **Rollback** — a bad bump can be reverted independently.
+- **Rollback** - a bad bump can be reverted independently.
 
 The full pattern is documented in
 `.claude/rules/release-workflow.md`. The rules-as-docs

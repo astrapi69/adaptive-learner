@@ -298,7 +298,7 @@ export default function SaveOfflineLessonModal({
           >
             {t(
               "content.save_lesson.not_enough_data",
-              "Few exercises — at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).",
+              "Few exercises - at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).",
             ).replace("{min}", String(MIN_SHAREABLE_EXERCISES))}
           </FormHint>
         )}
@@ -308,7 +308,7 @@ export default function SaveOfflineLessonModal({
           >
             {t(
               "content.save_lesson.same_language_hint",
-              "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
+              "Learned and your language are the same - fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
             )}
           </FormHint>
         )}

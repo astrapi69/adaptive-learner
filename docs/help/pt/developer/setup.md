@@ -12,7 +12,7 @@
   `curl -sSL https://install.python-poetry.org | python3 -`.
 - **Bun** 1.3+ (gerenciador de pacotes do frontend, #1492).
 - **GNU Make** para os alvos de orquestração. O Makefile é a fonte
-  de verdade — todos os comandos de CI estão lá.
+  de verdade - todos os comandos de CI estão lá.
 
 ## Clonar + instalar
 
@@ -24,8 +24,8 @@ make install
 
 `make install` executa:
 
-1. `cd backend && poetry install` — backend + dependências de caminho dos plugins.
-2. `cd frontend && bun install` — dependências frontend (Node 24).
+1. `cd backend && poetry install` - backend + dependências de caminho dos plugins.
+2. `cd frontend && bun install` - dependências frontend (Node 24).
 3. Instala cada plugin em `plugins/` como dependência de caminho no
    venv do backend (`develop = true` para que as edições sejam em
    direto).
@@ -41,7 +41,7 @@ camadas (maior prioridade ganha):
 
 1. **Variáveis de ambiente** com prefixo `ADAPTIVE_LEARNER_*`.
 2. **Segredos do utilizador** em `~/.config/adaptive_learner/secrets.yaml`
-   — gerado automaticamente como modelo comentado no primeiro
+   - gerado automaticamente como modelo comentado no primeiro
    arranque (`chmod 0600` no POSIX); nunca comprometido no git.
 3. **Padrões** em `backend/config/app.yaml`.
 
@@ -50,7 +50,7 @@ Mais a resolução de chave de IA por fornecedor por cima:
 via a interface de Definições), exposta à interface como o campo
 `key_source_*` em `UserSettingsOut`.
 
-O único segredo obrigatório é `ADAPTIVE_LEARNER_SECRET_KEY` —
+O único segredo obrigatório é `ADAPTIVE_LEARNER_SECRET_KEY` -
 utilizado para encriptar as chaves de API do utilizador em repouso
 com Fernet. Gere uma com
 `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
@@ -59,7 +59,7 @@ variável de ambiente `ADAPTIVE_LEARNER_SECRET_KEY`, `secret_key:` em
 `secrets.yaml`, ou `make dev-secret` para uma chave de desenvolvimento
 de uso único.
 A aplicação falha imediatamente no arranque se a chave não estiver
-definida (sem valor padrão gerado silenciosamente — consulte
+definida (sem valor padrão gerado silenciosamente - consulte
 [docs/configuration.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md)).
 
 ## Executar
@@ -126,7 +126,7 @@ make docs-serve     # servir docs em localhost:8000 com recarregamento em tempo 
 make docs-build     # compilar site estático para site/
 ```
 
-O venv de documentação é separado do backend — o MkDocs tem o seu
+O venv de documentação é separado do backend - o MkDocs tem o seu
 próprio `docs/pyproject.toml` com mkdocs-material +
 mkdocs-static-i18n.
 

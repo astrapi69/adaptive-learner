@@ -20,7 +20,7 @@ make dev
 Πάτησε Ctrl-C μία φορά για να σταματήσουν και τα δύο.
 
 Το Vite proxy του frontend προωθεί `/api/*` στο backend, οπότε
-το frontend χρησιμοποιεί πάντα `/api` ως base URL — δεν χρειάζεται
+το frontend χρησιμοποιεί πάντα `/api` ως base URL - δεν χρειάζεται
 διαμόρφωση CORS για τοπική ανάπτυξη.
 
 Για λειτουργία παρασκηνίου:
@@ -34,11 +34,11 @@ make dev-down   # διακοπή
 
 Το `.github/workflows/deploy-gh-pages.yml` χτίζει το frontend με:
 
-- `VITE_BASE="/adaptive-learner/"` — προθεματίζει κάθε URL asset
+- `VITE_BASE="/adaptive-learner/"` - προθεματίζει κάθε URL asset
   για τη διαδρομή Pages ανά repo.
-- `VITE_STORAGE_MODE="dexie"` — καρφώνει το DexieStorage ως
+- `VITE_STORAGE_MODE="dexie"` - καρφώνει το DexieStorage ως
   προεπιλεγμένη λειτουργία.
-- `VITE_API_BASE=""` — κανένα backend στο οποίο να δείχνει.
+- `VITE_API_BASE=""` - κανένα backend στο οποίο να δείχνει.
 
 Το workflow τρέχει σε κάθε push στο `main` και σε χειροκίνητη
 εντολή. Μετά το build αντιγράφει `dist/index.html` σε
@@ -66,7 +66,7 @@ make prod-down   # docker compose down
 - **Ένα SQLite volume** που επιβιώνει από επανεκκινήσεις container.
 
 Τα `install.sh` και `install.ps1` είναι οι curl-pipe installers
-για τελικούς χρήστες — κατεβάζουν tagged release tarball,
+για τελικούς χρήστες - κατεβάζουν tagged release tarball,
 ρυθμίζουν `ADAPTIVE_LEARNER_SECRET_KEY` και εκτελούν
 `docker compose up`.
 
@@ -140,4 +140,4 @@ PyInstaller. Το GitHub Actions χτίζει τρία binaries ανά release:
 | `release-gate.yml` | tag push | Έλεγχος απόκλισης pin έκδοσης |
 | `deploy-gh-pages.yml` | push στο main, dispatch | Build + deploy GH Pages |
 | `launcher-{linux,macos,windows}.yml` | release: created | Build + επισύναψη binary launcher |
-| `docs.yml` | push στο main | Build MkDocs (αυτή τη στιγμή ανενεργό — το site έρχεται από workflow GH Pages) |
+| `docs.yml` | push στο main | Build MkDocs (αυτή τη στιγμή ανενεργό - το site έρχεται από workflow GH Pages) |

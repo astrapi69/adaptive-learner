@@ -252,7 +252,7 @@ async def list_sets() -> SetsListResponse:
     summary="Download a content set",
     description=(
         "Fetches a set's manifest + lessons from its source and caches them "
-        "locally (filesystem in API mode). Idempotent — re-downloading a "
+        "locally (filesystem in API mode). Idempotent - re-downloading a "
         "cached set reconciles the version."
     ),
     response_description="The cached set entry.",
@@ -360,7 +360,7 @@ async def get_asset(
     set_id: str,
     asset_path: str,
 ) -> Response:
-    """Phase 54F / v1.37.0 — serve a cached asset by relative
+    """Phase 54F / v1.37.0 - serve a cached asset by relative
     path.
 
     The path-traversal guard lives inside ``cache.read_asset``

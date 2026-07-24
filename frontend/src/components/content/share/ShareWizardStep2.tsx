@@ -84,7 +84,7 @@ export default function ShareWizardStep2({ wiz }: { wiz: UseShareWizardResult })
                 onChange={() => setMode("variation")}
                 data-testid="share-wizard-mode-variation"
               />
-              {t("content.wizard.share_as_variation", "Share anyway — as a variation")}
+              {t("content.wizard.share_as_variation", "Share anyway - as a variation")}
             </label>
             <label className="share-wizard-mode flex items-center gap-2">
               <input

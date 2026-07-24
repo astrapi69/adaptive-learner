@@ -3,7 +3,7 @@
 Um repositório de conteúdo pode fornecer **livros recomendados**
 por domínio. O Navegador de Conteúdo mostra-os como literatura
 complementar quando vês um conjunto desse domínio. Isto é opcional,
-não é um conjunto de lições, e não precisa de backend — funciona
+não é um conjunto de lições, e não precisa de backend - funciona
 em ambos os modos de armazenamento.
 
 ---
@@ -60,12 +60,12 @@ domains:
 | `tags` | não | Lista de palavras-chave. |
 
 A chave sob `domains:` (p. ex. `ai`, `psychology`) é o **domínio**
-ao qual os livros são atribuídos — o mesmo domínio que os teus
+ao qual os livros são atribuídos - o mesmo domínio que os teus
 conjuntos de conteúdo usam.
 
 ---
 
 ## Páginas relacionadas
 
-- [Navegador de Conteúdo](../features/content-browser.md) — onde as recomendações aparecem
-- [Criar lições — Visão geral](overview.md)
+- [Navegador de Conteúdo](../features/content-browser.md) - onde as recomendações aparecem
+- [Criar lições - Visão geral](overview.md)

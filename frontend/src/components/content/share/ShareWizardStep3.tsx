@@ -29,7 +29,7 @@ export default function ShareWizardStep3({ wiz }: { wiz: UseShareWizardResult })
             className="content-share-failed"
             data-testid="share-wizard-quality-issues"
           >
-            {t("content.validation.failed_share_anyway", "Quality check found issues. You can share anyway — reviewers will see the findings noted in the pull request.")}
+            {t("content.validation.failed_share_anyway", "Quality check found issues. You can share anyway - reviewers will see the findings noted in the pull request.")}
           </p>
           <ul className="content-share-issues">
             {liveValidation.issues.map((issue, i) => (

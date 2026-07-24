@@ -7,8 +7,8 @@ unter zwei Minuten.
 ## Wie er funktioniert
 
 Jede Frage zeigt 3-4 Antwortmöglichkeiten. Die meisten Fragen
-sind **Einfachauswahl** (Radio-Buttons — eine wählen). Einige
-sind **Mehrfachauswahl** (Checkboxen — alles wählen, was
+sind **Einfachauswahl** (Radio-Buttons - eine wählen). Einige
+sind **Mehrfachauswahl** (Checkboxen - alles wählen, was
 passt). Die App zeigt dir an, welcher Typ jeweils gilt.
 
 Auf Mobil und Touch-Geräten **wischst du nach links oder
@@ -26,12 +26,12 @@ Fragenzahl und erzeugt ein 6-Methoden-Profil.
 
 | Methode | Stärke |
 |---|---|
-| Deduktiv | Erst Regel, dann Beispiele — theoriegetrieben |
-| Induktiv | Erst Beispiele, dann Regel — mustergetrieben |
-| Fehlerbasiert | Fehler provozieren und daraus lernen — reibungsgetrieben |
-| Dialogisch | Entspanntes Gespräch — austauschgetrieben |
-| Kontextuell | Alltagsszenarien — situationsgetrieben |
-| KI-adaptiv | Die KI wählt pro Zug — meta-getrieben |
+| Deduktiv | Erst Regel, dann Beispiele - theoriegetrieben |
+| Induktiv | Erst Beispiele, dann Regel - mustergetrieben |
+| Fehlerbasiert | Fehler provozieren und daraus lernen - reibungsgetrieben |
+| Dialogisch | Entspanntes Gespräch - austauschgetrieben |
+| Kontextuell | Alltagsszenarien - situationsgetrieben |
+| KI-adaptiv | Die KI wählt pro Zug - meta-getrieben |
 
 [Die sechs Methoden im Detail](../concept/six-methods.md)
 
@@ -60,8 +60,8 @@ modernen Browsern).
 
 Wenn eine Frage mehrere Antworten zulässt, wird das Gewicht
 jeder Auswahl durch die Anzahl der Picks geteilt. Zwei
-Antworten zu wählen trägt insgesamt genauso viel bei wie eine
-— so kannst du den Test nicht durch "alles ankreuzen"
+Antworten zu wählen trägt insgesamt genauso viel bei wie eine -
+so kannst du den Test nicht durch "alles ankreuzen"
 verzerren.
 
 ## Test wiederholen
@@ -77,5 +77,5 @@ Session.
 
 Wenn du den Test überspringst, nutzt die App **deduktiv** als
 Standardmethode und die Sessions sind trotzdem nützlich. Mach
-den Test, wenn du soweit bist — es gibt keine Strafe für ein
+den Test, wenn du soweit bist - es gibt keine Strafe für ein
 spätes Nachholen.

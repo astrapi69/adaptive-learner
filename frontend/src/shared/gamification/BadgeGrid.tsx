@@ -74,7 +74,7 @@ export default function BadgeGrid({
                 const title = item.earned
                     ? item.label
                     : item.hint
-                      ? `${item.label} — ${item.hint}`
+                      ? `${item.label} - ${item.hint}`
                       : item.label;
                 const inner = (
                     <span

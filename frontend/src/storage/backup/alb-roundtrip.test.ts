@@ -3,7 +3,7 @@
  * the BACKUP-AKZEPTANZTEST): seed real data + an avatar, export through the
  * actual ``createDexieBackup`` -> ``buildAlbBytes``, read it back through the
  * real ``readBackupFile`` (magic-byte detection + manifest), and restore into
- * a fresh DB through the real ``restoreDexieBackup``. Then assert the data —
+ * a fresh DB through the real ``restoreDexieBackup``. Then assert the data -
  * including the avatar, carried as an asset, not base64 — survived intact.
  */
 

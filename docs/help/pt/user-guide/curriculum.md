@@ -3,7 +3,7 @@
 # Currículo
 
 A página do Currículo é o seu material de aprendizagem
-estruturado — o "livro" contra o qual as suas sessões
+estruturado - o "livro" contra o qual as suas sessões
 acontecem. É uma camada opcional mas poderosa sobre as sessões
 de IA de fluxo livre.
 
@@ -15,7 +15,7 @@ múltiplos currículos lado a lado ("Gramática espanhola",
 "Spring Boot para devs Java", "Fundamentos de guitarra
 principal").
 
-- **Os tópicos** formam uma árvore — capítulos e subcapítulos.
+- **Os tópicos** formam uma árvore - capítulos e subcapítulos.
   Cada tópico tem um título, descrição opcional e uma referência
   pai. O botão "Adicionar subtópico" cria um filho.
 - **As lições** são planas sob o currículo. Cada uma tem um
@@ -37,7 +37,7 @@ também em dispositivos móveis). Clique num tópico para
 aprofundar; o fio de navegação abaixo do cabeçalho mostra o
 caminho de volta à raiz.
 
-- **Adicionar tópico** ao nível raiz — irmão de todos os
+- **Adicionar tópico** ao nível raiz - irmão de todos os
   tópicos de nível superior existentes.
 - **Adicionar subtópico** sob o tópico atualmente focado.
 - **Renomear** clicando no título no modo de edição.
@@ -80,7 +80,7 @@ clique na importação analisada semeia um Currículo com tópicos
 + lições que correspondem às lacunas identificadas pela IA.
 
 A IA de sessão não puxa ainda automaticamente o conteúdo de
-lições individuais para o prompt do sistema — é uma retenção
+lições individuais para o prompt do sistema - é uma retenção
 deliberada até a forma de integração currículo-IA se
 estabilizar.
 

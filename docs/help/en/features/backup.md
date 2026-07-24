@@ -5,7 +5,7 @@ single file and restore it on another device, in a fresh
 installation, or after switching browsers. You find everything
 under **Settings → Data**.
 
-<!-- TODO: Screenshot — Settings → Data with the "Create backup" and "Restore" buttons -->
+<!-- TODO: Screenshot - Settings → Data with the "Create backup" and "Restore" buttons -->
 
 ---
 
@@ -46,7 +46,7 @@ most recent snapshots, so you are never left without a backup.
    see exactly what was imported.
 
 If something goes wrong during the import, a **persistent error
-notice** (toast) appears that does not disappear on its own — so
+notice** (toast) appears that does not disappear on its own - so
 you never miss an error. In Developer Mode (Settings → Interface)
 the message contains the technical details for a GitHub issue.
 
@@ -58,7 +58,7 @@ You do **not** have to be the same user on the same device. A
 backup can be imported into a **fresh installation** or under a
 **different user profile**. The restore assigns the data to the
 active profile and cleanly re-resolves internal references
-(foreign keys) in the process, so your progress stays coherent —
+(foreign keys) in the process, so your progress stays coherent -
 including lesson step progress, streak and badges.
 
 ---
@@ -75,20 +75,20 @@ learning flow.
 
 ## Both storage modes
 
-Backup and restore work in **both** storage modes — server (API)
+Backup and restore work in **both** storage modes - server (API)
 and browser-only (Dexie/IndexedDB). The backup is an **`.alb`
-file** — a ZIP archive that bundles the data tables, the
+file** - a ZIP archive that bundles the data tables, the
 localStorage snapshot and the content sets. `.alb` files are
 accepted at every backup-import surface (Settings → Data and the
 Danger Zone). Older single-JSON backups still import cleanly.
 
 !!! note "Privacy"
     The backup stays entirely in your hands. It is only stored
-    wherever you put it — nothing is sent to a server.
+    wherever you put it - nothing is sent to a server.
 
 ---
 
 ## Related pages
 
-- [Settings](../user-guide/settings.md) — an overview of all data actions
-- [Multiple content repositories](content-repos.md) — connected repos are part of the snapshot
+- [Settings](../user-guide/settings.md) - an overview of all data actions
+- [Multiple content repositories](content-repos.md) - connected repos are part of the snapshot

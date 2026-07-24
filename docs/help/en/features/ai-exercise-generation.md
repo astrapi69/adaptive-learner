@@ -6,20 +6,20 @@ its cards. This is the EXP-036 pipeline. It
 needs an AI key configured (Settings → AI); without one the button
 is visible but disabled, with the reason in its tooltip.
 
-<!-- TODO: Screenshot — the "Generate exercises" button on a theory-only lesson -->
+<!-- TODO: Screenshot - the "Generate exercises" button on a theory-only lesson -->
 
 ---
 
 ## The pipeline
 
-Generation is not a single AI call — it is a
+Generation is not a single AI call - it is a
 **generate → quality-gate → balance → feedback** pipeline:
 
 1. **Generate.** A generation prompt asks the model for exercises
    across the supported types; a defensive JSON parser tolerates
    the usual model formatting quirks.
 2. **Quality gate.** A deterministic gate rejects exercises that
-   are malformed, trivial, or duplicate existing ones — before you
+   are malformed, trivial, or duplicate existing ones - before you
    ever see them.
 3. **Balance.** The set of generated exercises is balanced across
    exercise types so a lesson is not all of one shape.
@@ -42,7 +42,7 @@ Generation is not a single AI call — it is a
 Because the quality gate is deterministic, generated exercises
 meet the same minimum bar as authored ones (enough exercises,
 more than one type, no empty cards). Generation augments authored
-content — it never silently overwrites your existing exercises.
+content - it never silently overwrites your existing exercises.
 
 For checking *existing* content quality (authored or generated),
 see [AI content check](../user-guide/ai-validation.md).
@@ -51,6 +51,6 @@ see [AI content check](../user-guide/ai-validation.md).
 
 ## Related pages
 
-- [AI content check](../user-guide/ai-validation.md) — set-wide quality checks
-- [Creating lessons](../content-creation/overview.md) — build lessons yourself
-- [Lessons and reviews](../user-guide/lessons.md) — the exercise types
+- [AI content check](../user-guide/ai-validation.md) - set-wide quality checks
+- [Creating lessons](../content-creation/overview.md) - build lessons yourself
+- [Lessons and reviews](../user-guide/lessons.md) - the exercise types

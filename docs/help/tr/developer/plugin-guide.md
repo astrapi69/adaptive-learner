@@ -135,25 +135,25 @@ curl http://localhost:18001/api/plugins/hello/greet
 
 Tüm hook spesifikasyonları `backend/app/hookspecs.py`'de yaşar:
 
-1. `get_assessment_questions(lang: str)` — soru paketi döndür.
-2. `calculate_profile(answers: list)` — yöntem ağırlıklarını
+1. `get_assessment_questions(lang: str)` - soru paketi döndür.
+2. `calculate_profile(answers: list)` - yöntem ağırlıklarını
    hesapla (firstresult).
-3. `create_session_prompt(...)` — sistem istemini oluştur
+3. `create_session_prompt(...)` - sistem istemini oluştur
    (firstresult).
-4. `ai_complete(messages, model, api_key, max_tokens)` — AI'yi
+4. `ai_complete(messages, model, api_key, max_tokens)` - AI'yi
    eş zamanlı olarak çağır (firstresult, sağlayıcı model
    önekine göre yönlendirir).
-5. `ai_complete_async(...)` — paralel döngü sınırı değerlendirmesi
+5. `ai_complete_async(...)` - paralel döngü sınırı değerlendirmesi
    için async varyant (v1.5.0+, firstresult).
-6. `ai_complete_stream(...)` — SSE aracılığıyla metin deltalarını
+6. `ai_complete_stream(...)` - SSE aracılığıyla metin deltalarını
    verimleyen akış varyantı (v1.6.0+, firstresult).
-7. `recommend_method_switch(history, profile)` — bir geçiş
+7. `recommend_method_switch(history, profile)` - bir geçiş
    önerisi veya None döndür.
-8. `on_session_complete(session, rating)` — yayın yan etkisi;
+8. `on_session_complete(session, rating)` - yayın yan etkisi;
    oyunlaştırma + takip dinler.
-9. `get_progress_summary(project_id, db)` — gösterge tablosu
+9. `get_progress_summary(project_id, db)` - gösterge tablosu
    özetinin bir ad alanı dilimini döndür.
-10. `get_tool_recommendations(profile, lang)` — sıralı araçları
+10. `get_tool_recommendations(profile, lang)` - sıralı araçları
     döndür.
 
 [Tam hookspec referansı](../api/hooks.md)
@@ -162,7 +162,7 @@ Tüm hook spesifikasyonları `backend/app/hookspecs.py`'de yaşar:
 
 `firstresult=True` ile işaretlenen hook'lar, None olmayan bir
 değer döndüren ilk eklentide durur. "Tam olarak bir eklenti bunu
-yönetmeli" durumları için yararlıdır — `ai_complete` gibi, eşleşen
+yönetmeli" durumları için yararlıdır - `ai_complete` gibi, eşleşen
 sağlayıcının eklentisi metni döndürür ve diğerleri None döndürür.
 
 `firstresult=True` olmayan hook'lar her eklentide çalışır (liste

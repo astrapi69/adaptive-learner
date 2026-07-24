@@ -87,11 +87,11 @@ paso 7).
 
 El `suggested_step` puede ser:
 
-- `actual + 1` — avance normal (el más común).
-- `actual` — quedarse; el aprendiz necesita más tiempo aquí.
-- Un salto hacia adelante (p. ej., 1 → 3) — el aprendiz ya
+- `actual + 1` - avance normal (el más común).
+- `actual` - quedarse; el aprendiz necesita más tiempo aquí.
+- Un salto hacia adelante (p. ej., 1 → 3) - el aprendiz ya
   comprende la entrada.
-- Un paso hacia atrás (p. ej., 4 → 2) — el aprendiz está
+- Un paso hacia atrás (p. ej., 4 → 2) - el aprendiz está
   confundido y necesita volver a intentarlo.
 
 La ruta aplica la sugerencia solo cuando
@@ -104,15 +104,15 @@ aplican el avance de +1.
 La misma llamada de IA podría emitir tanto la respuesta de
 aprendizaje como el veredicto del paso. No lo hacemos porque:
 
-1. **Separación de responsabilidades** — el prompt de aprendizaje
+1. **Separación de responsabilidades** - el prompt de aprendizaje
    se compone por (método, paso). El prompt del evaluador es
    consciente del método pero agnóstico al paso.
-2. **Presupuestos de tokens** — la respuesta de aprendizaje se
+2. **Presupuestos de tokens** - la respuesta de aprendizaje se
    beneficia de 1024 tokens; el veredicto necesita solo 256.
-3. **Robustez del parsing de JSON** — pedirle a la IA que produzca
+3. **Robustez del parsing de JSON** - pedirle a la IA que produzca
    prosa Y una cola JSON en una sola respuesta es frágil. Se
    pregunta dos veces, se parsea con limpieza.
-4. **Reproducibilidad** — cuando algo sale mal, tenemos las dos
+4. **Reproducibilidad** - cuando algo sale mal, tenemos las dos
    respuestas registradas por separado y podemos auditarlas.
 
 El coste son dos llamadas a la API por turno. A precios del nivel
@@ -136,7 +136,7 @@ describe el paso anterior / siguiente del ciclo.
 
 El paso 7 ya no es un callejón sin salida. Una vez que el
 evaluador de pasos te mueve al paso 7 con `advance=true`, una
-tercera llamada a la IA — el evaluador de transición de tema —
+tercera llamada a la IA - el evaluador de transición de tema -
 juzga si el tema ha sido integrado y si iniciar un nuevo ciclo.
 
 ```

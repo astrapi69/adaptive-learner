@@ -12,18 +12,18 @@ référence complète des jetons se trouve dans
 
 ## Les couches de jetons
 
-1. **Jetons par thème** — le jeu canonique de 44 jetons, défini
+1. **Jetons par thème** - le jeu canonique de 44 jetons, défini
    une fois par thème dans
    `frontend/src/styles/themes/theme-<id>.css` (arrière-plans,
    texte, bordures, interactif, accent, statut, retour
    d'exercice, étoile, graphiques, ombres). Un changement de
    `[data-theme]` bascule tous. **Chaque thème doit définir
    exactement le même jeu** (épinglé par `themes.test.ts`).
-2. **Jetons indépendants du thème** — des valeurs qui, par
+2. **Jetons indépendants du thème** - des valeurs qui, par
    construction, sont identiques dans chaque thème (p. ex. palette
    de marque, couleurs de syntaxe, espacements de mise en page).
    Ils vivent dans `global.css :root`.
-3. **Alias hérités** — d'anciens noms comme `--surface`,
+3. **Alias hérités** - d'anciens noms comme `--surface`,
    `--danger`, qui se résolvent **à travers** les jetons
    canoniques.
 
@@ -49,7 +49,7 @@ référence complète des jetons se trouve dans
 
 1. Copie un `theme-<id>.css` existant comme modèle.
 2. Définis les 44 jetons canoniques (la parité est obligatoire).
-3. Veille au **contraste WCAG AA** — `contrast.test.ts` vérifie
+3. Veille au **contraste WCAG AA** - `contrast.test.ts` vérifie
    tous les thèmes par le calcul.
 4. Enregistre le thème ; le sélecteur sous Paramètres → Apparence
    le reprend.
@@ -75,5 +75,5 @@ thèmes).
 
 ## Pages connexes
 
-- [Système de thèmes](../developer/themes.md) — les thèmes livrés + le sélecteur
-- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — liste complète des jetons
+- [Système de thèmes](../developer/themes.md) - les thèmes livrés + le sélecteur
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) - liste complète des jetons

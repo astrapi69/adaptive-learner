@@ -74,11 +74,11 @@ adecuación del método, paso del ciclo.
 
 Esto permite:
 
-- **Historial auditable** — puedes ver exactamente cómo evolucionó
+- **Historial auditable** - puedes ver exactamente cómo evolucionó
   tu comprensión sesión a sesión.
-- **Análisis de regresión** — si tu comprensión baja después de un
+- **Análisis de regresión** - si tu comprensión baja después de un
   descanso, el sistema lo detecta y ajusta el ritmo.
-- **Exportaciones reproducibles** — el repositorio de aprendizaje
+- **Exportaciones reproducibles** - el repositorio de aprendizaje
   (plugin opcional) convierte el historial de commits en archivos
   Markdown que puedes versionar con Git de verdad.
 
@@ -88,15 +88,15 @@ Esto permite:
 
 El diseño descansa sobre tres pilares técnicos:
 
-1. **Repetición espaciada** — la ciencia detrás del recuerdo a largo
+1. **Repetición espaciada** - la ciencia detrás del recuerdo a largo
    plazo. Las tarjetas se programan en seis bandas (+1d, +3d, +7d,
    +14d, +30d) según el rendimiento.
 
-2. **Recuperación activa** — forzarte a recordar activamente (en
+2. **Recuperación activa** - forzarte a recordar activamente (en
    lugar de releer pasivamente) consolida el conocimiento.
    El evaluador del paso 2 (intento) lo mide.
 
-3. **IA adaptativa** — la IA no solo responde sino que también
+3. **IA adaptativa** - la IA no solo responde sino que también
    evalúa, diagnostica y adapta. El sistema de doble prompt es lo
    que distingue a Adaptive Learner de un chatbot con buenas
    respuestas.
@@ -105,13 +105,13 @@ El diseño descansa sobre tres pilares técnicos:
 
 ## Principios de diseño
 
-- **Sin paywalls** — todos los plugins son MIT; la clave de la IA
+- **Sin paywalls** - todos los plugins son MIT; la clave de la IA
   es tuya.
-- **Primero sin conexión** — el modo Dexie funciona completamente
+- **Primero sin conexión** - el modo Dexie funciona completamente
   en el navegador, sin servidor.
-- **Sin gamificación coercitiva** — XP e insignias son un espejo
+- **Sin gamificación coercitiva** - XP e insignias son un espejo
   del progreso, no un sistema de incentivos. Sin clasificaciones,
   sin presión social.
-- **Sin caja negra** — el código es abierto; puedes auditar exactamente
+- **Sin caja negra** - el código es abierto; puedes auditar exactamente
   cómo se construyen los prompts, cómo se calcula el perfil y cómo
   funciona el evaluador.

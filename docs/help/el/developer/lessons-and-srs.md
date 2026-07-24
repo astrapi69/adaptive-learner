@@ -78,7 +78,7 @@
 ``app/models/__init__.py:ElementError`` με σύνθετο περιορισμό
 UNIQUE στο
 ``(user_id, set_id, lesson_id, exercise_id, element_key)``.
-Κλειδιά στοιχείων εντός μαθήματος σύμφωνα με την απόφαση **D2** —
+Κλειδιά στοιχείων εντός μαθήματος σύμφωνα με την απόφαση **D2** -
 η ίδια λέξη σε δύο διαφορετικά μαθήματα είναι δύο εγγραφές.
 
 ```python
@@ -99,7 +99,7 @@ class ElementError(Base):
     mastered_at: datetime | None
 ```
 
-Αποσυνδεδεμένο από το ``learning_sessions`` (χωρίς FK) σκόπιμα —
+Αποσυνδεδεμένο από το ``learning_sessions`` (χωρίς FK) σκόπιμα -
 τα μαθήματα περιεχομένου αναφέρουν IDs συνόλου / μαθήματος
 περιεχομένου ως συμβολοσειρές, όχι μέσω relational join. Αυτό
 σημαίνει ότι ο πίνακας επιβιώνει στην εκκαθάριση cache
@@ -145,7 +145,7 @@ Dexie (``make test-dexie-smoke``) εντοπίζει οποιαδήποτε
 | 0 | 1 ημέρα μετά το ``last_attempt_at`` |
 | 1 | 3 ημέρες |
 | 2 | 7 ημέρες |
-| ≥ 3 | κατακτημένο — εξαιρείται από την ουρά |
+| ≥ 3 | κατακτημένο - εξαιρείται από την ουρά |
 
 ### Ταξινόμηση προτεραιότητας
 
@@ -209,7 +209,7 @@ Dexie (``make test-dexie-smoke``) εντοπίζει οποιαδήποτε
 ### Αλλαγή σχήματος
 
 ```python
-# app/models/__init__.py — Phase 46F.1
+# app/models/__init__.py - Phase 46F.1
 LEARNING_PROJECT_KIND_STANDARD = "standard"
 LEARNING_PROJECT_KIND_CONTENT = "content"
 
@@ -235,10 +235,10 @@ class LearningProject(Base):
 Το ``app/services/lesson_session_unification.py`` έχει δύο
 δημόσιες συναρτήσεις:
 
-- ``find_or_create_content_pseudo_project(db, user_id)`` —
+- ``find_or_create_content_pseudo_project(db, user_id)`` -
   ιδεμποτής αναζήτηση· δημιουργεί μόνο σε απόκρυψη.
 - ``record_lesson_completion_session(db, *, user_id,
-  lesson_progress_id, score_correct, score_total)`` —
+  lesson_progress_id, score_correct, score_total)`` -
   γράφει την εγγραφή ``LearningSession``, υποβάλλει και στη
   συνέχεια εκτελεί ``on_session_complete``.
 
@@ -249,7 +249,7 @@ class LearningProject(Base):
 (πραγματικό πρόβλημα DB), αλλά η διαδρομή εκτέλεσης του hook
 περιτυλίγει εξαιρέσεις συνδρομητών σύμφωνα με το πρότυπο
 ``_fire_on_session_complete`` από το ``routes.py`` του session
-plugin — μια κατάρρευση gamification δεν μπορεί να αναιρέσει
+plugin - μια κατάρρευση gamification δεν μπορεί να αναιρέσει
 το μάθημα που ο χρήστης είδε ήδη στην οθόνη σύνοψης.
 
 ### Φίλτρο frontend
@@ -273,18 +273,18 @@ plugin — μια κατάρρευση gamification δεν μπορεί να α�
 
 Το ``adaptive_learner_gamification.xp_service`` αποκτά:
 
-- ``compute_stars(correct, total)`` — 0-3 από βαθμολογία, με
+- ``compute_stars(correct, total)`` - 0-3 από βαθμολογία, με
   ζώνες στο 50% / 75% / 90%. Αντικατοπτρίζει το ``computeStars``
   του frontend στο ``lib/lesson-summary.ts`` ώστε και οι δύο
   πλευρές να προβάλλουν την ίδια αξιολόγηση αστεριών.
 - ``calculate_lesson_session_xp(*, stars, first_attempt,
-  streak_days)`` — αμιγής υπολογιστής. Βάση 30 + 10/αστέρι +
+  streak_days)`` - αμιγής υπολογιστής. Βάση 30 + 10/αστέρι +
   20 για πρώτη-απόπειρα-3-αστέρων + ίδιος πολλαπλασιαστής
   +25%/ημέρα streak (με ανώτατο 7) όπως ο τύπος chat.
-- ``_is_first_attempt(db, lesson_progress_id)`` — διαβάζει
+- ``_is_first_attempt(db, lesson_progress_id)`` - διαβάζει
   το JSON ``LessonProgress.step_results`` και επιστρέφει True
   αν κάθε εγγραφή βήματος έχει ``attempts == 1``.
-- ``award_xp_for_lesson_session(db, *, session)`` —
+- ``award_xp_for_lesson_session(db, *, session)`` -
   περιτύλιγμα επιμονής που επιλύει το user_id από το FK του
   project και εφαρμόζει τον τύπο.
 
@@ -296,7 +296,7 @@ plugin — μια κατάρρευση gamification δεν μπορεί να α�
 (``lesson_progress_id``, ``score_correct``,
 ``score_total``)· τα ωφέλιμα φορτία συνεδρίας chat δεν τα φέρουν,
 οπότε ο συντελεστής XP μαθήματος θα υποβαθμιζόταν ομαλά αν
-η αποστολή διέρρεε — αλλά η δοκιμή pin παλινδρόμησης στο
+η αποστολή διέρρεε - αλλά η δοκιμή pin παλινδρόμησης στο
 ``backend/tests/test_lesson_session_unification.py``
 βεβαιώνει την ακριβή απονομή μαθήματος (100 XP για 4/4
 ολοκλήρωση πρώτης-απόπειρας + streak πρώτης ημέρας) οπότε
@@ -311,7 +311,7 @@ plugin — μια κατάρρευση gamification δεν μπορεί να α�
 
 | Κλειδί | Κατηγόρημα | Βοηθητικό |
 |---|---|---|
-| ``first_lesson`` | ``_completed_lesson_count >= 1`` | μετρά ``LessonProgress.status="completed"`` (όχι μέσω LearningSession — η εγγραφή μαθήματος είναι αυθεντική) |
+| ``first_lesson`` | ``_completed_lesson_count >= 1`` | μετρά ``LessonProgress.status="completed"`` (όχι μέσω LearningSession - η εγγραφή μαθήματος είναι αυθεντική) |
 | ``lessons_10`` | ``_completed_lesson_count >= 10`` | το ίδιο |
 | ``three_star_streak`` | ``_last_n_lessons_all_three_star(n=3)`` | διαβάζει τα τελευταία 3 ολοκληρωμένα ``LessonProgress`` του χρήστη κατά ``completed_at`` desc· προβάλλει κάθε ένα μέσω ``xp_service.compute_stars`` |
 | ``review_master`` | ``_mastered_elements_count >= 50`` | μετρά ``ElementError.mastered=True`` |
@@ -327,7 +327,7 @@ consistency + 2 depth). Η υπάρχουσα δοκιμή συμμετρίας
 ## Προειδοποιήσεις λειτουργίας αποθήκευσης
 
 Η αλυσίδα παρακολούθησης στοιχείων + SRS λειτουργεί πανομοιότυπα
-και στις **δύο** λειτουργίες αποθήκευσης — το συμβόλαιο
+και στις **δύο** λειτουργίες αποθήκευσης - το συμβόλαιο
 ``IElementErrorsNamespace`` είναι ανεξάρτητο λειτουργίας και
 η πύλη έκδοσης λειτουργίας Dexie (18 προδιαγραφές συμπεριλαμβανομένης
 της διαδρομής ``/review``) αποκλείει οποιαδήποτε παλινδρόμηση.
@@ -336,7 +336,7 @@ consistency + 2 depth). Η υπάρχουσα δοκιμή συμμετρίας
 είναι **μόνο για λειτουργία API**. Σε λειτουργία Dexie η
 ολοκλήρωση μαθήματος εξακολουθεί να γράφει ``LessonProgress``,
 εξακολουθεί να καταγράφει εγγραφές ``ElementError`` και
-εξακολουθεί να τροφοδοτεί την ουρά επανεξέτασης — αλλά η
+εξακολουθεί να τροφοδοτεί την ουρά επανεξέτασης - αλλά η
 εγγραφή ``LearningSession`` + το hook ``on_session_complete``
 δεν εκτελούνται ποτέ (χωρίς backend, χωρίς hookable). Οι χρήστες
 λειτουργίας Dexie αποκτούν τον πλήρη βρόχο επανεξέτασης·
@@ -347,7 +347,7 @@ consistency + 2 depth). Η υπάρχουσα δοκιμή συμμετρίας
 Μια μελλοντική ενοποίηση των παρενεργειών gamification στο
 ``DexieStorage`` (ώστε η ολοκλήρωση μαθήματος χρήστη λειτουργίας
 Dexie να απονέμει επίσης XP τοπικά) είναι σκόπιμα εκτός
-στόχου για την v1.31.0 — θα απαιτούσε είτε αντιγραφή της
+στόχου για την v1.31.0 - θα απαιτούσε είτε αντιγραφή της
 υλοποίησης τύπου σε TypeScript είτε ένα shim service-worker
 για το hook on_session_complete. Και τα δύο είναι μεγαλύτερες
 αναδιαμορφώσεις από ό,τι επιτρέπει το πεδίο της v1.31.0.
@@ -356,20 +356,20 @@ Dexie να απονέμει επίσης XP τοπικά) είναι σκόπι�
 
 ## Πού να κοιτάξετε στη συνέχεια
 
-- ``backend/app/services/element_errors.py`` — ο πίνακας
+- ``backend/app/services/element_errors.py`` - ο πίνακας
   μεταβάσεων upsert.
-- ``backend/app/services/element_srs.py`` — ο χρονοπρογραμματιστής.
-- ``backend/app/services/lesson_session_unification.py`` —
+- ``backend/app/services/element_srs.py`` - ο χρονοπρογραμματιστής.
+- ``backend/app/services/lesson_session_unification.py`` -
   το ψευδο-project + εκτέλεση hook.
 - ``plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/xp_service.py`` —
+  adaptive_learner_gamification/xp_service.py`` -
   ``calculate_lesson_session_xp`` + αποστολή.
 - ``plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/badge_service.py`` —
+  adaptive_learner_gamification/badge_service.py`` -
   τα τέσσερα νέα κατηγορήματα.
-- ``frontend/src/lib/learning-project.ts`` — το βοηθητικό
+- ``frontend/src/lib/learning-project.ts`` - το βοηθητικό
   φίλτρου ψευδο-project.
-- ``e2e/dexie/dexie-mode.spec.ts`` — η πύλη έκδοσης που
+- ``e2e/dexie/dexie-mode.spec.ts`` - η πύλη έκδοσης που
   αποτρέπει παλινδρομήσεις λειτουργίας Dexie (προδιαγραφή
   μαθημάτων στο ``/lesson/...``, προδιαγραφή επανεξέτασης
   στο ``/review/...``).
@@ -381,22 +381,22 @@ Dexie να απονέμει επίσης XP τοπικά) είναι σκόπι�
 Τρεις διαστρωματωμένες προσθήκες που μετατρέπουν την παθητική
 αναπαραγωγή σε ενεργή μάθηση:
 
-**Token-diff + DiffHighlight** — Λανθασμένες απαντήσεις
+**Token-diff + DiffHighlight** - Λανθασμένες απαντήσεις
 free-text και word-tiles αποδίδουν πλέον `<DiffHighlight tokens={tokenDiff(
 input, canonical)} />` inline κάτω από την παράγραφο αποτελέσματος.
 Η ανά-άσκηση ανάλυση της σύνοψης μαθήματος εμφανίζει την ίδια
 διαφορά για free-text + word-tiles όταν το αποθηκευμένο
 `user_answer` της v1.35.0+ είναι διαθέσιμο (παλαιότερες εγγραφές
 υποβαθμίζονται στη γραμμή μόνο-κανονικής). Αλγόριθμος στο
-`frontend/src/lib/exercises/token-diff.ts` — αμιγές LCS σε
+`frontend/src/lib/exercises/token-diff.ts` - αμιγές LCS σε
 επίπεδο λέξης, κανονικοποιημένο NFC, ευαίσθητο σε πεζά/κεφαλαία
 + τόνους.
 
-**Τύπος άσκησης Cloze (σχήμα 1.1)** — πέμπτος ExerciseType:
+**Τύπος άσκησης Cloze (σχήμα 1.1)** - πέμπτος ExerciseType:
 συμπλήρωση κενού με ορατούς δείκτες `___`. Δύο λειτουργίες
 απόδοσης: `type` (προεπιλογή, `<input>`) και `select`
 (`<select>` με επιλογές από `distractors`). Ανά-κενό fan-out
-SRS μέσω `deriveClozeAttempts` — ένα ElementAttempt ανά κενό,
+SRS μέσω `deriveClozeAttempts` - ένα ElementAttempt ανά κενό,
 ώστε η παρακολούθηση κατάκτησης ανά κενό να λειτουργεί καθαρά.
 Αποδότης στο
 `frontend/src/components/exercises/ClozeExercise.tsx`·
@@ -404,7 +404,7 @@ SRS μέσω `deriveClozeAttempts` — ένα ElementAttempt ανά κενό,
 `plugins/adaptive-learner-plugin-content-loader/
 adaptive_learner_content_loader/schema.py`.
 
-**Γεννήτρια Cloze** — `generateClozeFromError(error,
+**Γεννήτρια Cloze** - `generateClozeFromError(error,
 sourceExercise, sourceCard)` συνθέτει ένα βήμα cloze από
 ένα ElementError. Αλγόριθμος:
 
@@ -415,7 +415,7 @@ sourceExercise, sourceCard)` συνθέτει ένα βήμα cloze από
    το `error.correct_answer` ακριβώς μία φορά, το αδειάζει.
 3. Διαφορετικά, αν η πηγή είναι free_text και το prompt της
    περιέχει την απάντηση ακριβώς μία φορά, την αδειάζει.
-4. Διαφορετικά επιστρέφει null — ο καλών υποβαθμίζεται σε
+4. Διαφορετικά επιστρέφει null - ο καλών υποβαθμίζεται σε
    αναπαραγωγή.
 
 Ντετερμινιστική: ίδιες εισόδους → byte-ταυτόσημη έξοδος. Χωρίς
@@ -425,7 +425,7 @@ sourceExercise, sourceCard)` συνθέτει ένα βήμα cloze από
 από διπλότυπα. Κώδικας στο
 `frontend/src/lib/exercises/cloze-generator.ts`.
 
-**Γύρος διόρθωσης στο τέλος μαθήματος** —
+**Γύρος διόρθωσης στο τέλος μαθήματος** -
 Το `<CorrectionBlock />` τοποθετείται μέσα στο `LessonSummary`
 μεταξύ της βαθμολογίας / ανάλυσης και των κουμπιών ενεργειών.
 Κατά την τοποθέτηση, διαβάζει εγγραφές ElementError για το
@@ -438,7 +438,7 @@ ElementAttempt έναντι του ίδιου element_key κατά του οπο
 σφάλμα / μη κατασκευάσιμο cloze. Κώδικας στο
 `frontend/src/components/exercises/CorrectionBlock.tsx`.
 
-**Cloze σε συνεδρίες επανεξέτασης (Phase 52G)** —
+**Cloze σε συνεδρίες επανεξέτασης (Phase 52G)** -
 Ο κλάδος ανά-στοιχείο του `synthesizeReviewLesson`
 (`_buildReviewStep`) επιλέγει πλέον:
 
@@ -451,10 +451,10 @@ ElementAttempt έναντι του ίδιου element_key κατά του οπο
 αρχίζουν με `review-`· τα παραγόμενα IDs βήματος cloze αρχίζουν
 με `review-cloze-` για ανιχνευσιμότητα.
 
-**Token-roles σε κάρτες (Phase 52I)** — προαιρετική
+**Token-roles σε κάρτες (Phase 52I)** - προαιρετική
 αρπαγή `token_roles: list[{token, role}]` σε Card με κλειστό
 enum γραμματικών ρόλων (article / verb / noun / adjective /
 preposition / gender_marker / tense_marker). Η γεννήτρια τα
 χρησιμοποιεί για να επιλέξει ένα σημαντικό κενό αντί να
 βασιστεί σε αντιστοίχιση υποσυμβολοσειράς. Η προσθήκη ρόλου
-είναι αύξηση ελάσσονος schema_version — κρατήστε το enum κλειστό.
+είναι αύξηση ελάσσονος schema_version - κρατήστε το enum κλειστό.

@@ -123,7 +123,7 @@ function openTopicsBlock(
     }
     for (const topic of ctx.topics) {
         const methods =
-            topic.methods.length === 0 ? "—" : topic.methods.join(", ");
+            topic.methods.length === 0 ? "-" : topic.methods.join(", ");
         lines.push(
             `- **${topic.title}** (${topic.session_ids.length} sessions; methods: ${methods})`,
         );

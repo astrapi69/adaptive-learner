@@ -5,7 +5,7 @@ Adaptive Learner puede guardar todo tu estado de aprendizaje en un
 instalación nueva o tras cambiar de navegador. Encuentras todo en
 **Ajustes → Datos**.
 
-<!-- TODO: Captura de pantalla — Ajustes → Datos con los botones "Crear copia de seguridad" y "Restaurar" -->
+<!-- TODO: Captura de pantalla - Ajustes → Datos con los botones "Crear copia de seguridad" y "Restaurar" -->
 
 ---
 
@@ -93,5 +93,5 @@ ningún formato de archivo propietario.
 
 ## Páginas relacionadas
 
-- [Ajustes](../user-guide/settings.md) — todas las acciones de datos de un vistazo
-- [Varios repositorios de contenido](content-repos.md) — los repos conectados forman parte del snapshot
+- [Ajustes](../user-guide/settings.md) - todas las acciones de datos de un vistazo
+- [Varios repositorios de contenido](content-repos.md) - los repos conectados forman parte del snapshot

@@ -1,7 +1,7 @@
 [
   {
     "id": "fr-a1-01-part-1",
-    "title": "Les articles — Part 1 of 3",
+    "title": "Les articles - Part 1 of 3",
     "estimated_minutes": 6,
     "step_ids": [
       "s1",
@@ -15,7 +15,7 @@
   },
   {
     "id": "fr-a1-01-part-2",
-    "title": "Les articles — Part 2 of 3",
+    "title": "Les articles - Part 2 of 3",
     "estimated_minutes": 6,
     "step_ids": [
       "s4",
@@ -29,7 +29,7 @@
   },
   {
     "id": "fr-a1-01-part-3",
-    "title": "Les articles — Part 3 of 3",
+    "title": "Les articles - Part 3 of 3",
     "estimated_minutes": 4,
     "step_ids": [
       "s7",

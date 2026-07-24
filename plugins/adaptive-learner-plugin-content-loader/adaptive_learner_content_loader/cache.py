@@ -1,4 +1,4 @@
-"""Filesystem cache (Phase 43 / EXP-002 / 2C-cache — P-105).
+"""Filesystem cache (Phase 43 / EXP-002 / 2C-cache - P-105).
 
 Backend-side cache for downloaded content sets. The browser-side
 equivalent (Dexie tables ``contentSets`` + ``contentSetFiles``)

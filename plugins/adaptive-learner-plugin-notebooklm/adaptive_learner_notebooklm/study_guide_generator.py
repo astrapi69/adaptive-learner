@@ -112,7 +112,7 @@ def _vocabulary_lines(project: dict[str, Any]) -> list[str]:
         return []
     lines = ["\nVocabulary entries (from analyzed conversations):"]
     for v in vocab[:50]:  # top 50 to bound context
-        example = f" — {v.get('example')}" if v.get("example") else ""
+        example = f" - {v.get('example')}" if v.get("example") else ""
         lines.append(f"  - {v.get('word', '?')} → {v.get('translation', '?')}{example}")
     return lines
 
@@ -147,7 +147,7 @@ def _append_session_blocks(pieces: list[str], sessions: list[dict[str, Any]]) ->
 
 
 def parse_response(raw: str) -> str:
-    """The study guide is freeform Markdown — the parser just
+    """The study guide is freeform Markdown - the parser just
     strips an outer ```markdown ... ``` fence if present. The
     route layer hands the resulting string straight to the
     download response."""

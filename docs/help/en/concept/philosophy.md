@@ -3,8 +3,8 @@
 > The best learning method is no fixed method.
 
 That's the thesis at the heart of AdaptiveLearner. Most
-"learning apps" pick one approach — flashcards, video
-lectures, gamified streaks — and assume everyone learns the
+"learning apps" pick one approach - flashcards, video
+lectures, gamified streaks - and assume everyone learns the
 same way. They don't.
 
 ## Why one method isn't enough
@@ -22,7 +22,7 @@ methods:
 
 A learner who can fluidly switch between methods learns
 faster, retains longer, and burns out less. The point of
-AdaptiveLearner is not to find your One True Method — it's
+AdaptiveLearner is not to find your One True Method - it's
 to make method-switching cheap, natural, and pedagogically
 justified.
 
@@ -33,8 +33,8 @@ humans actually learn:
 
 | Method | Core stance |
 |---|---|
-| Deductive | Theory first — rules, then examples |
-| Inductive | Examples first — derive rules from patterns |
+| Deductive | Theory first - rules, then examples |
+| Inductive | Examples first - derive rules from patterns |
 | Error-based | Provoke mistakes, learn from them |
 | Dialogic | Conversational exchange, low pressure |
 | Contextual | Real-world scenarios, situated practice |
@@ -51,7 +51,7 @@ what the learner just did.
 
 Each session walks through a 7-step learning cycle: Input,
 Attempt, Error, Feedback, Adapt, Repeat, Integrate. Most
-learning happens between Error and Feedback (steps 3-4) —
+learning happens between Error and Feedback (steps 3-4) -
 that's where the actual cognitive work lives. The other
 steps exist to give errors something to push against and a
 place to land.
@@ -86,13 +86,13 @@ across weeks and months.
 ## The three pillars
 
 Three external tool categories sit alongside AdaptiveLearner
-sessions — we don't try to reinvent them:
+sessions - we don't try to reinvent them:
 
-1. **Spaced repetition** (Anki) — for long-term retention
+1. **Spaced repetition** (Anki) - for long-term retention
    of rules + error-corrections.
-2. **Active recall** (NotebookLM) — for building knowledge
+2. **Active recall** (NotebookLM) - for building knowledge
    from your own sources.
-3. **Adaptive AI prompts** (Claude / ChatGPT / Gemini) —
+3. **Adaptive AI prompts** (Claude / ChatGPT / Gemini) -
    for one-off explanations + flexible inquiry.
 
 The Dashboard's Tool Recommendations card ranks these five

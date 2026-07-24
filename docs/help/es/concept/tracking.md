@@ -77,13 +77,13 @@ El evaluador de doble prompt escribe una fila `StepEvaluation`
 por cada turno de la IA. El agregador de seguimiento los convierte
 en:
 
-- **Confianza media** — qué segura está la IA en promedio de que
+- **Confianza media** - qué segura está la IA en promedio de que
   estás listo para avanzar. Bajo (< 0,5) significa que el material
   es genuinamente difícil para ti. Es información, no un veredicto.
-- **Recuento de repeticiones** — con qué frecuencia dijo el
+- **Recuento de repeticiones** - con qué frecuencia dijo el
   evaluador «quédate aquí». Las fases de mucha repetición son
   normales para temas densos.
-- **Tiempo por paso** — total de segundos reales que has pasado en
+- **Tiempo por paso** - total de segundos reales que has pasado en
   cada paso a lo largo del proyecto (limitado para excluir huecos
   de > 2 h). El paso con más tiempo es donde ocurre el trabajo
   cognitivo para ti.
@@ -94,15 +94,15 @@ La página de Progreso muestra todo esto como gráficos de barras.
 
 Deliberadamente:
 
-- **Sin métricas de participación** — sin culpa de «minutos al día»,
+- **Sin métricas de participación** - sin culpa de «minutos al día»,
   sin notificaciones, sin recordatorios diarios. Adaptive Learner
   no lucha por tu atención.
-- **Sin comparación con otros usuarios** — estás solo con tus datos
+- **Sin comparación con otros usuarios** - estás solo con tus datos
   (modo Local) o solo con el backend (modo Servidor). Sin
   clasificaciones, sin comparación entre pares.
-- **Sin «lecciones completadas»** — no hay un plan de estudios fijo
+- **Sin «lecciones completadas»** - no hay un plan de estudios fijo
   que completar. Tú fijas tu propio tema.
-- **Sin «porcentaje de dominio»** — ¿qué significaría el 100% para
+- **Sin «porcentaje de dominio»** - ¿qué significaría el 100% para
   un tema de aprendizaje? El dominio es una postura, no una línea
   de llegada.
 
@@ -111,7 +111,7 @@ Deliberadamente:
 Sobre el sustrato de ProgressCommit-como-Git se añaden tres capas
 motivacionales:
 
-- **XP + Niveles** — 50 XP base por sesión terminada, más +10 por
+- **XP + Niveles** - 50 XP base por sesión terminada, más +10 por
   ciclo completado, +25 por ciclo-paso-7, +50 de bonificación por
   primer método, todo multiplicado por el multiplicador de racha
   (hasta 2,75× a los 7 días de racha). Los niveles siguen
@@ -121,7 +121,7 @@ motivacionales:
   consistency 4 / method_explorer 7 / depth 7 / polyglot 3),
   sembradas desde `badges.yaml` al primer inicio. Los predicados
   se evalúan después de cada sesión.
-- **Mapa de calor de racha** — 365 días, estilo GitHub, columnas
+- **Mapa de calor de racha** - 365 días, estilo GitHub, columnas
   semanales. Congelaciones: 1 por cada 7 días de racha, máximo 3
   acumuladas, semántica de pausa-no-reinicio. Alternancia de modo
   fin de semana que omite los huecos de sáb./dom.

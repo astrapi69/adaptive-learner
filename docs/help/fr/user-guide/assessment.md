@@ -1,6 +1,6 @@
 # Test d'évaluation
 
-Le test d'évaluation produit votre **profil d'apprentissage** — un vecteur
+Le test d'évaluation produit votre **profil d'apprentissage** - un vecteur
 pondéré sur les six méthodes qui guide les recommandations de session.
 
 ---
@@ -56,7 +56,7 @@ couverte montre visuellement votre répartition.
 ## Repasser le test
 
 Vous pouvez repasser le test à tout moment depuis **Paramètres → Apprentissage**.
-Un nouveau profil remplace l'ancien — les sessions passées ne sont pas
+Un nouveau profil remplace l'ancien - les sessions passées ne sont pas
 affectées.
 
 **Quand repasser le test :**

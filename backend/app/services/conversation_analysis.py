@@ -117,14 +117,14 @@ _BASE_PROMPT_LINES: tuple[str, ...] = (
     "- 'weaknesses': recurring gaps, confusions, or unfinished",
     "  threads in the conversation.",
     "- 'error_patterns': specific repeated mistakes the user made",
-    "  (not the same as weaknesses — these are observable errors).",
+    "  (not the same as weaknesses - these are observable errors).",
     "- 'recommended_method': the six-method learning model:",
-    "    deductive   — rule then examples",
-    "    inductive   — examples then rule",
-    "    error_based — fix mistakes as the path to insight",
-    "    dialogic    — back-and-forth questioning",
-    "    contextual  — anchor in the user's real-world situation",
-    "    ai_adaptive — user steers the AI, self-directed",
+    "    deductive   - rule then examples",
+    "    inductive   - examples then rule",
+    "    error_based - fix mistakes as the path to insight",
+    "    dialogic    - back-and-forth questioning",
+    "    contextual  - anchor in the user's real-world situation",
+    "    ai_adaptive - user steers the AI, self-directed",
     "- 'suggested_curriculum': 2-5 lesson stubs the user could",
     "  tackle next. 'priority' 1 = highest.",
     "",
@@ -132,7 +132,7 @@ _BASE_PROMPT_LINES: tuple[str, ...] = (
     "'User confused inductive reasoning with abductive reasoning,",
     "treating any inference-from-examples as induction' is useful.",
     "",
-    "If a section is genuinely empty, return an empty array — don't",
+    "If a section is genuinely empty, return an empty array - don't",
     "invent material.",
     "",
     "REMINDER: start your response with `{`. End with `}`. Nothing else.",
@@ -177,7 +177,7 @@ def build_system_prompt(
             "content accordingly.\n\n"
         )
     directive = (
-        "LANGUAGE — IMPORTANT:\n"
+        "LANGUAGE - IMPORTANT:\n"
         f"Write all free-text string values IN {name}. This applies to:\n"
         "- topic, subtopics\n"
         "- strengths, weaknesses, error_patterns\n"
@@ -185,7 +185,7 @@ def build_system_prompt(
         "- summary\n"
         "- suggested_curriculum entries: both title and description\n"
         "\n"
-        "Do NOT translate these — they MUST stay exactly as written:\n"
+        "Do NOT translate these - they MUST stay exactly as written:\n"
         "- JSON keys (the names left of `:`)\n"
         "- user_level enum values: beginner / intermediate / advanced\n"
         "- recommended_method enum values: deductive / inductive /\n"

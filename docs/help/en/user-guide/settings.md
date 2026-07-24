@@ -22,8 +22,8 @@ to bottom. The tab groups are:
 ## Language
 
 Live-swaps every UI string on the next render via `PATCH
-/api/settings/{user_id}`. All 11 languages are first-class —
-DE / EL / EN / ES / FR / HI / ID / JA / KO / PT / TR — each
+/api/settings/{user_id}`. All 11 languages are first-class -
+DE / EL / EN / ES / FR / HI / ID / JA / KO / PT / TR - each
 with a fully translated catalog. Persisted across reloads via
 `localStorage`.
 
@@ -50,17 +50,17 @@ Each provider has its own row: a key-entry input, a Save
 button, a Remove button, the active-provider badge, plus the
 new **source attribution** badge:
 
-- **Key from: Settings** — the key is stored Fernet-encrypted
+- **Key from: Settings** - the key is stored Fernet-encrypted
   in the DB (Server mode) or cleartext in IndexedDB (Local
   mode). You can Save / Remove freely.
-- **Key from: secrets.yaml** — the key is configured in
+- **Key from: secrets.yaml** - the key is configured in
   `~/.config/adaptive-learner/secrets.yaml`. The Save button
   is disabled; edit the file directly to change it. An info
   banner under the row reminds you of the path.
-- **Key from: environment** — the key is configured via the
+- **Key from: environment** - the key is configured via the
   `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` environment variable.
   Save disabled; the env var is the source of truth.
-- **No key configured** — nothing's set anywhere. Type and
+- **No key configured** - nothing's set anywhere. Type and
   hit Save to start.
 
 Resolution chain (highest priority wins): env > secrets.yaml
@@ -72,7 +72,7 @@ toggle) and do not trigger the browser's password manager.
 
 API keys are deliberately **excluded** from the normal backup
 (`.alb`). To carry your keys to another device or browser, use the
-dedicated **encrypted key export (`.alk`)** — there is a
+dedicated **encrypted key export (`.alk`)** - there is a
 **reference button** here in the AI tab that jumps straight to it
 on the **Data tab** (see *Encrypted key export* under
 [Backup](#backup)).
@@ -83,17 +83,17 @@ A **configured-providers overview** lists the AI providers you
 have set up, each with a **masked key preview** so you can see at
 a glance which providers are ready. Every row has a **Test button**
 that calls the provider's models-list endpoint and reports back
-ok / invalid key / rate-limited / network error — a safe check
+ok / invalid key / rate-limited / network error - a safe check
 that does not spend generation tokens.
 
 ## Storage mode
 
 The toggle between **Server** and **Local (Browser)** storage:
 
-- **Server** — every read and write hits the FastAPI backend.
+- **Server** - every read and write hits the FastAPI backend.
   Requires a running backend. Best for multi-device usage
   with backend-side sync.
-- **Local (Browser)** — every read and write hits IndexedDB
+- **Local (Browser)** - every read and write hits IndexedDB
   in this browser. AI calls fire direct to the provider. No
   backend required. Best for a private, device-local setup.
 
@@ -138,23 +138,23 @@ device or browser switch otherwise forces you to re-enter every
 key by hand. The **encrypted key export** closes that gap with a
 separate, passphrase-protected file:
 
-- It carries **only** the sensitive credentials — your **API keys**
+- It carries **only** the sensitive credentials - your **API keys**
   plus the provider settings (active provider, model overrides). It
   does NOT contain the rest of your app data (that stays in the
   `.alb` backup).
 - **Export** asks for a passphrase (plus confirmation) and
   downloads a dedicated **`.alk`** file. The keys inside are
   encrypted with **AES-GCM-256**, with the key derived from your
-  passphrase via **PBKDF2** — the file never contains a key in
+  passphrase via **PBKDF2** - the file never contains a key in
   plaintext.
 - **Import** reads an `.alk`, asks for the passphrase, decrypts and
   writes the keys + provider settings back into the same secure
   storage manual entry uses (present providers are overwritten,
   absent ones left alone).
 - A **wrong passphrase or a tampered file** is rejected cleanly
-  with a single message and **no partial import** — nothing is
+  with a single message and **no partial import** - nothing is
   half-written.
-- The passphrase fields validate **inline** as you type — a
+- The passphrase fields validate **inline** as you type - a
   too-short passphrase or a mismatched confirmation is shown right at
   the field (and the submit button stays disabled) instead of firing
   an error toast after you click. Like the API-key inputs, these
@@ -173,16 +173,16 @@ export is also disabled when no exportable key is configured yet.
 
 Three toggles:
 
-- **TTS enabled** — adds a ▶ button next to AI replies +
+- **TTS enabled** - adds a ▶ button next to AI replies +
   Assessment results that reads them aloud. Picks the
   language-matched voice when available; rate + pitch
   clamped to [0.5, 2.0].
-- **Auto-play AI** — speaks every AI reply automatically
-  (default OFF — surprise audio is rarely what you want).
-- **STT enabled** — adds a 🎤 button to the Session input
+- **Auto-play AI** - speaks every AI reply automatically
+  (default OFF - surprise audio is rarely what you want).
+- **STT enabled** - adds a 🎤 button to the Session input
   that captures speech and populates the textarea with
   interim transcripts before send.
-- **Pronunciation Practice enabled** — surfaces the
+- **Pronunciation Practice enabled** - surfaces the
   `/pronunciation` page from the Dashboard quick-start for
   Languages-tagged projects.
 
@@ -231,7 +231,7 @@ exam pass threshold, timed-mode difficulty (see
 shortcut, the preferred exercise direction, and the source languages
 shown in the content tree.
 
-It also holds the **content view** control — the global *list ⇄ grid*
+It also holds the **content view** control - the global *list ⇄ grid*
 preference for the Content hub (default **list**). It is the same
 preference as the in-tab view toggle on *My content* / *Discover*, so
 changing it in either place keeps both in sync.
@@ -267,10 +267,10 @@ SQLAlchemy / Pydantic / PluginForge versions, DB path).
 Adaptive Learner runs on two deployment strands, and the About tab
 now tells you which one you are on:
 
-- **Main** — the stable production site
+- **Main** - the stable production site
   (`https://astrapi69.github.io/adaptive-learner/`). Shown as a
   discreet badge, no warning styling.
-- **Latest** — the preview/staging site built from `develop`
+- **Latest** - the preview/staging site built from `develop`
   (`https://astrapi69.github.io/adaptive-learner-content-test/`).
   Shown as a clear **test-version** badge so you know it may
   contain bugs.
@@ -284,10 +284,10 @@ info reads as "unknown" rather than guessing.
 
 The About tab has a **Share the app** entry that shows a scannable
 **QR code** of the public app URL, with copy / download-PNG /
-native-share actions — handy for getting the app onto a phone.
+native-share actions - handy for getting the app onto a phone.
 
 When you are on the **Latest** strand, sharing offers the preview
-URL as a **link only — no QR code** — together with an
+URL as a **link only - no QR code** - together with an
 instability warning, so a scanned code can never silently send
 someone to the unstable test version. On **Main**, sharing works
 as before with the QR code for the production URL.

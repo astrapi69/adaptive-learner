@@ -1,4 +1,4 @@
-"""LEARNING_STATS.md generator — the load-bearing meta-file.
+"""LEARNING_STATS.md generator - the load-bearing meta-file.
 
 Per Article 3's STATS.md example: per-cycle table of error
 rate, understanding, transfer, method effectiveness, plus a
@@ -86,7 +86,7 @@ def _session_row(
 
 def _format_rating(rating: SessionRating | None, field: str) -> str:
     if rating is None:
-        return "—"
+        return "-"
     # SessionRating scores are 1–5. Article 1 § 8 reasons in
     # /10. We scale the column display to /10 so the rendered
     # numbers match the exit-threshold contract everywhere in

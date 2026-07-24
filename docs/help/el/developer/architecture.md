@@ -71,7 +71,7 @@ ADAPTIVE_LEARNER_*    ~/.config/...yaml      api_key_<provider>
 2. `ai.<provider>.api_key` στο
    `~/.config/adaptive_learner/secrets.yaml`.
 3. Fernet-αποκρυπτογραφημένη στήλη DB.
-4. `None` — η κλήση ΤΝ εμφανίζει σφάλμα στο UI.
+4. `None` - η κλήση ΤΝ εμφανίζει σφάλμα στο UI.
 
 Η απόδοση πηγής αποθηκεύεται στο `UserSettingsOut.key_source_*`
 (enum: `env` / `secrets_yaml` / `settings` / `none`).

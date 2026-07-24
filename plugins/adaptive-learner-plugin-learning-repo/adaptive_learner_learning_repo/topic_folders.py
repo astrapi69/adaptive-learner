@@ -57,6 +57,6 @@ def _render_topic_stub(topic: TopicSlice, labels: Labels) -> str:
         for method in topic.methods:
             lines.append(f"- {method}")
     else:
-        lines.append("—")
+        lines.append("-")
     lines.append("")
     return "\n".join(lines).rstrip() + "\n"

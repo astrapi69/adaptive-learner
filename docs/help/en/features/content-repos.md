@@ -1,11 +1,11 @@
 # Multiple content repositories
 
-Lessons come from **content repositories** — public GitHub repos
+Lessons come from **content repositories** - public GitHub repos
 that bundle structured lesson sets. You are not limited to the
 official catalog: Adaptive Learner can load multiple repositories
 at once, connect your own, and recommend curated ones (EXP-023).
 
-<!-- TODO: Screenshot — Settings → Data → Content repositories section with the official repo + one own repo -->
+<!-- TODO: Screenshot - Settings → Data → Content repositories section with the official repo + one own repo -->
 
 ---
 
@@ -50,7 +50,7 @@ You can connect as many repos as you like. In the list under
 
 - **Add** one via its repo URL,
 - **Remove** one (the official repo stays protected),
-- **Reorder** them — the order determines the **priority**.
+- **Reorder** them - the order determines the **priority**.
   If two repos carry the same set, the one listed higher wins.
 
 Older installations with only a single connected repo are
@@ -66,7 +66,7 @@ directly on the recipient's side with the URL pre-filled; the QR
 code does the same on a smartphone. This lets you share a course
 with your learning group without manual typing.
 
-<!-- TODO: Screenshot — Share dialog with QR code -->
+<!-- TODO: Screenshot - Share dialog with QR code -->
 
 ---
 
@@ -80,7 +80,7 @@ level:
 |---|---|
 | **0** | Not yet validated or validation failed. |
 | **1** | Technically valid: at least one lesson, no executable content. |
-| **3** | **Officially recommended** — from the curated recommendation list. |
+| **3** | **Officially recommended** - from the curated recommendation list. |
 
 The validation is purely technical (structure + safety). A
 content/community-based rating (Trust 2) needs a shared backend
@@ -101,7 +101,7 @@ repositories with **one click**. They appear with the
 ## Local ratings
 
 You can give each repo local **stars**. This rating is entirely
-private and stored only on your device — it helps you organize
+private and stored only on your device - it helps you organize
 your own sources. Community-wide ratings also need a shared
 backend service and are deferred.
 
@@ -119,6 +119,6 @@ you share your settings.
 
 ## Related pages
 
-- [Content Browser](content-browser.md) — find, filter, download sets
-- [Creating lessons](../content-creation/overview.md) — contribute your own content
-- [Backup and restore](backup.md) — connected repos are part of the snapshot
+- [Content Browser](content-browser.md) - find, filter, download sets
+- [Creating lessons](../content-creation/overview.md) - contribute your own content
+- [Backup and restore](backup.md) - connected repos are part of the snapshot

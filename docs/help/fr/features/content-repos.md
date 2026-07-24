@@ -1,12 +1,12 @@
 # Plusieurs dépôts de contenu
 
-Les leçons proviennent de **dépôts de contenu** — des dépôts
+Les leçons proviennent de **dépôts de contenu** - des dépôts
 GitHub publics qui regroupent des ensembles de leçons
 structurés. Tu n'es pas limité au catalogue officiel : Adaptive
 Learner peut charger plusieurs dépôts en même temps, en connecter
 de personnels et en recommander de curatés (EXP-023).
 
-<!-- TODO: Screenshot — Paramètres → Données → section Dépôts de contenu avec le dépôt officiel + un dépôt personnel -->
+<!-- TODO: Screenshot - Paramètres → Données → section Dépôts de contenu avec le dépôt officiel + un dépôt personnel -->
 
 ---
 
@@ -54,7 +54,7 @@ Tu peux connecter autant de dépôts que tu veux. Dans la liste sous
 
 - **Ajouter** via l'URL du dépôt,
 - **Retirer** (le dépôt officiel reste protégé),
-- **Réorganiser** — l'ordre détermine la **priorité**. Si deux
+- **Réorganiser** - l'ordre détermine la **priorité**. Si deux
   dépôts contiennent le même ensemble, celui placé plus haut
   l'emporte.
 
@@ -72,7 +72,7 @@ pré-remplie ; le code QR fait de même sur le smartphone. Tu
 partages ainsi un cours avec ton groupe d'apprentissage sans
 ressaisie manuelle.
 
-<!-- TODO: Screenshot — Boîte de dialogue de partage avec code QR -->
+<!-- TODO: Screenshot - Boîte de dialogue de partage avec code QR -->
 
 ---
 
@@ -86,7 +86,7 @@ en résulte un niveau de confiance :
 |---|---|
 | **0** | Pas encore validé ou vérification échouée. |
 | **1** | Techniquement valide : au moins une leçon, aucun contenu exécutable. |
-| **3** | **Officiellement recommandé** — issu de la liste de recommandations curatée. |
+| **3** | **Officiellement recommandé** - issu de la liste de recommandations curatée. |
 
 La validation est purement technique (structure + sécurité). Une
 évaluation de contenu/communautaire (confiance 2) nécessite un
@@ -108,7 +108,7 @@ recommandé** (confiance 3).
 
 Tu peux attribuer localement des **étoiles** à chaque dépôt. Cette
 évaluation est purement privée et n'est enregistrée que sur ton
-appareil — elle t'aide à organiser tes propres sources. Les
+appareil - elle t'aide à organiser tes propres sources. Les
 évaluations à l'échelle de la communauté nécessitent elles aussi
 un service backend partagé et sont reportées.
 
@@ -127,6 +127,6 @@ paramètres.
 
 ## Pages connexes
 
-- [Navigateur de contenu](content-browser.md) — trouver, filtrer, télécharger des ensembles
-- [Créer des leçons](../content-creation/overview.md) — contribuer ses propres contenus
-- [Sauvegarde et restauration](backup.md) — les dépôts connectés font partie de l'instantané
+- [Navigateur de contenu](content-browser.md) - trouver, filtrer, télécharger des ensembles
+- [Créer des leçons](../content-creation/overview.md) - contribuer ses propres contenus
+- [Sauvegarde et restauration](backup.md) - les dépôts connectés font partie de l'instantané

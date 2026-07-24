@@ -3,7 +3,7 @@
 # Missões diárias
 
 As missões diárias dão-lhe alguns objetivos concretos e atingíveis
-para cada dia — uma razão para abrir a aplicação e um incentivo
+para cada dia - uma razão para abrir a aplicação e um incentivo
 suave para criar um hábito de aprendizagem. São **opcionais**: a
 aplicação funciona exatamente da mesma forma sem elas, e **não há
 penalização** por perder um dia. Amanhã traz simplesmente um novo
@@ -22,7 +22,7 @@ conjunto de missões.
   missões em todos os seus dispositivos, e a mesma missão nunca
   é atribuída dois dias seguidos.
 - O progresso atualiza-se automaticamente a partir do que já faz
-  — terminar lições, rever elementos, dominar palavras. Quando
+  - terminar lições, rever elementos, dominar palavras. Quando
   uma missão é concluída, ganha o **XP** bónus correspondente.
 - À meia-noite local, as missões por concluir expiram silenciosamente
   e são atribuídas novas.
@@ -33,7 +33,7 @@ conjunto de missões.
 
 - ativar ou desativar as missões diárias (ativas por padrão),
 - escolher **quantas** por dia (1 a 3),
-- escolher a **mistura de dificuldade** — Equilibrada (padrão),
+- escolher a **mistura de dificuldade** - Equilibrada (padrão),
   Fácil ou Desafiante,
 - **reiniciar** as missões de hoje para obter um novo conjunto.
 
@@ -42,5 +42,5 @@ conjunto de missões.
 Se mantiver uma sequência de missões e depois perder um único dia,
 um congelamento de sequência (ganho ao longo do tempo) pode cobrir
 essa lacuna para que a sua sequência sobreviva. Um segundo dia
-perdido termina-a — mas, novamente, nunca há penalização, apenas
+perdido termina-a - mas, novamente, nunca há penalização, apenas
 um recomeço.

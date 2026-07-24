@@ -496,7 +496,7 @@ function ReviewSummary({
                 correct > 0
                     ? t(
                           "review.summary_trend",
-                          "Nice — your weak spots are getting stronger.",
+                          "Nice - your weak spots are getting stronger.",
                       )
                     : undefined
             }

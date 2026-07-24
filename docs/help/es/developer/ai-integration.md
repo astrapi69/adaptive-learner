@@ -2,7 +2,7 @@
 
 Adaptive Learner ejecuta cada conversación de aprendizaje a
 través de hasta **tres** llamadas a la IA por viaje de ida y
-vuelta — la respuesta en streaming, el evaluador de pasos y (en
+vuelta - la respuesta en streaming, el evaluador de pasos y (en
 el paso 7) el evaluador de transición de tema. Tres proveedores
 se incluyen por defecto; los nuevos proveedores se conectan
 mediante la familia de hooks `ai_complete*`.
@@ -70,7 +70,7 @@ que recorre la cadena de tres capas:
 2. `ai.<proveedor>.api_key` en
    `~/.config/adaptive_learner/secrets.yaml`.
 3. `UserSettings.api_key_<proveedor>` descifrado con Fernet.
-4. `None` — la llamada muestra `ai_error` en la interfaz.
+4. `None` - la llamada muestra `ai_error` en la interfaz.
 
 `resolve_default_model(db, user_id, provider)` recorre la misma
 cadena para el sobreescritura del modelo (env > yaml > sobreescritura
@@ -85,18 +85,18 @@ devuelven None (firstresult se detiene en el primer resultado).
 Cada `POST /api/plugins/session/{id}/message` para un rol `user`
 realiza hasta tres llamadas a la IA:
 
-1. **Respuesta de aprendizaje** — en streaming mediante
+1. **Respuesta de aprendizaje** - en streaming mediante
    `ai_complete_stream`. Prompt del sistema compuesto por
    `build_prompt(project, profile, method, cycle_step, lang)`
    desde la matriz de 42 celdas. `max_tokens=1024`. SSE emite
    eventos `start` / `chunk` / `done`.
-2. **Evaluador de pasos** — prompt del sistema separado
+2. **Evaluador de pasos** - prompt del sistema separado
    (`EVALUATION_SYSTEM_PROMPT`) que pide a la IA leer el
    intercambio y emitir un veredicto JSON (`advance`,
    `confidence`, `reason`, `suggested_step`). `max_tokens=256`.
    El veredicto del evaluador dirige el avance de `cycle_step`
    (condicionado a `confidence ≥ 0.6`).
-3. **Transición de tema** — solo en el paso 7. Una tercera
+3. **Transición de tema** - solo en el paso 7. Una tercera
    llamada a la IA juzga si el tema fue integrado y si se debe
    iniciar un nuevo ciclo en un nuevo subtema. Límite de
    `max_cycles=5` por sesión.
@@ -115,7 +115,7 @@ y la transición de tema de forma concurrente mediante
 ## La matriz de prompts de 42 celdas
 
 `plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py`
-contiene un `dict[method, dict[step, dict[lang, str]]]` — seis
+contiene un `dict[method, dict[step, dict[lang, str]]]` - seis
 métodos, siete pasos, dos idiomas, 84 celdas. Cada celda es 1-2
 oraciones que establecen el rol de la IA + la tarea del paso. Un
 bloque de contexto («Proyecto de aprendizaje: 'X' | Objetivo: 'Y'.
@@ -124,7 +124,7 @@ Pista del perfil: …») se adjunta en el momento de la composición.
 Para el modo Dexie, los prompts se exportan literalmente a
 `frontend/src/data/session-prompts.json` y los carga
 `frontend/src/storage/prompts.ts`. El mismo texto, el mismo
-formato de bloque de contexto — sin deriva posible.
+formato de bloque de contexto - sin deriva posible.
 
 ## Añadir un nuevo proveedor
 
@@ -142,7 +142,7 @@ formato de bloque de contexto — sin deriva posible.
    `aiComplete()`.
 
 Cada plugin de proveedor prueba su hookimpl + la llamada al
-proveedor de forma aislada — consulta
+proveedor de forma aislada - consulta
 `plugins/adaptive-learner-plugin-ai-anthropic/tests/` como
 plantilla (la llamada HTTP al proveedor está simulada).
 
@@ -155,7 +155,7 @@ directamente. Anthropic requiere el encabezado
 la verificación previa CORS; OpenAI y Gemini aceptan llamadas
 directas desde el navegador por defecto.
 
-La lógica de doble prompt es la misma en ambos modos —
+La lógica de doble prompt es la misma en ambos modos -
 `storage/session-flow.ts` llama a `aiComplete()` dos veces y
 analiza el JSON del evaluador de la misma manera que lo hace el
 backend.
@@ -178,7 +178,7 @@ interfaz de Ajustes.
 Varias funciones fuera de sesión usan los mismos plugins de
 proveedor de IA mediante `ai_complete*`:
 
-- **Analizador de conversaciones** (Fase 12 / v0.9.0+) —
+- **Analizador de conversaciones** (Fase 12 / v0.9.0+) -
   `frontend/src/chat_import/analysis.ts` divide los
   transcripts importados en fragmentos de 16K caracteres con
   superposición de 2 mensajes, dispara `ai_complete` por
@@ -187,16 +187,16 @@ proveedor de IA mediante `ai_complete*`:
   vocabulario (desde v1.20.0). El analizador JSON tolerante
   maneja el comportamiento defectuoso de modelos de clase Haiku
   (salida entre vallas de código, prosa de preámbulo).
-- **Extracción Anki** (Fase 30 / v1.17.0) — `.../anki/card_extraction.py`
+- **Extracción Anki** (Fase 30 / v1.17.0) - `.../anki/card_extraction.py`
   extrae candidatos a tarjetas de memoria de una sesión o
   conversación; la ruta de vocabulario se ejecuta del lado del
   cliente sin IA cuando `analysis_result.vocabulary` está
   relleno.
 - **Preguntas de estudio NotebookLM + guía** (Fase 32 / v1.19.0)
-  — `.../notebooklm/question_generator.py` + `study_guide.py`;
+  - `.../notebooklm/question_generator.py` + `study_guide.py`;
   analizador JSON tolerante; las preguntas editadas por el usuario
   omiten la regeneración.
-- **Juez de pronunciación** (Fase 31 / v1.18.0) —
+- **Juez de pronunciación** (Fase 31 / v1.18.0) -
   `.../pronunciation.py` genera frases objetivo y juzga la
   similitud del audio del aprendiz (habilitación condicionada a
   la taxonomía de asignatura de Idiomas).

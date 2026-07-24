@@ -1,6 +1,6 @@
 # Cheatsheet
 
-Distilled notes from your sessions. The Meta-Learning Insights section collects notes tagged meta_learning — observations about how you learn best.
+Distilled notes from your sessions. The Meta-Learning Insights section collects notes tagged meta_learning - observations about how you learn best.
 
 ## Notes
 

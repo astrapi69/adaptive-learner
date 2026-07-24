@@ -105,7 +105,7 @@ async def stream(
     api_key: str,
     max_tokens: int = DEFAULT_MAX_TOKENS,
 ):
-    """v1.6.0 / Phase 19 — yield text deltas as Anthropic streams them.
+    """v1.6.0 / Phase 19 - yield text deltas as Anthropic streams them.
 
     Uses ``AsyncAnthropic.messages.stream`` (an async context
     manager) and yields each text delta via the SDK's

@@ -7,8 +7,8 @@ whole test runs under two minutes.
 ## How it works
 
 Each question shows 3-4 possible answers. Most questions are
-**single-select** (radio buttons — pick one). A few are
-**multi-select** (checkboxes — pick everything that applies).
+**single-select** (radio buttons - pick one). A few are
+**multi-select** (checkboxes - pick everything that applies).
 The app shows you which type each question is.
 
 On mobile and touch devices, **swipe left or right** to
@@ -26,12 +26,12 @@ and produces a 6-method profile.
 
 | Method | Strength |
 |---|---|
-| Deductive | Rules first, examples after — theory-driven |
-| Inductive | Examples first, derive the rule — pattern-driven |
-| Error-based | Provoke mistakes, learn from them — friction-driven |
-| Dialogic | Low-stress conversation — exchange-driven |
-| Contextual | Real-world scenarios — situation-driven |
-| AI-adaptive | The AI picks per turn — meta-driven |
+| Deductive | Rules first, examples after - theory-driven |
+| Inductive | Examples first, derive the rule - pattern-driven |
+| Error-based | Provoke mistakes, learn from them - friction-driven |
+| Dialogic | Low-stress conversation - exchange-driven |
+| Contextual | Real-world scenarios - situation-driven |
+| AI-adaptive | The AI picks per turn - meta-driven |
 
 [The six methods in depth](../concept/six-methods.md)
 
@@ -59,7 +59,7 @@ summary aloud (Web Speech API; works in modern browsers).
 
 When a question allows multiple answers, the weight of each
 pick is divided by how many you picked. Choosing two answers
-contributes the same total weight as choosing one — so you
+contributes the same total weight as choosing one - so you
 can't game the test by always picking everything.
 
 ## Retaking the assessment
@@ -74,5 +74,5 @@ changes from the next session onwards.
 
 If you skip the test, the app uses **deductive** as the
 default method and you'll still get useful sessions. Take the
-assessment when you're ready — there's no penalty for
+assessment when you're ready - there's no penalty for
 delaying.

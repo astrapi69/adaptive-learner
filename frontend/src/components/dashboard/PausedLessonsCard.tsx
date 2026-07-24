@@ -271,7 +271,7 @@ export default function PausedLessonsCard({
                             >
                                 {row.setTitle}
                                 <span className="font-normal text-muted-foreground">
-                                    {" — "}
+                                    {" - "}
                                     {row.lessonTitle}
                                 </span>
                             </span>

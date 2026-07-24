@@ -115,7 +115,7 @@ So a method you haven't touched in two weeks gets a
 list is capped to 5).
 
 The cards are sorted by urgency (lower interval × stronger
-weight = higher priority). You don't have to follow them —
+weight = higher priority). You don't have to follow them -
 they're nudges, not commands.
 
 ## First-class shipped integrations
@@ -123,18 +123,18 @@ they're nudges, not commands.
 Three tools ship as built-in exports rather than external
 recommendations:
 
-- **Anki .apkg export** — review
+- **Anki .apkg export** - review
   AI-extracted flashcards on the `/anki` page, accept the
   ones you want, click Export. The `.apkg` is built
   client-side via sql.js + JSZip and works directly in
   Anki desktop. No manual handoff.
-- **NotebookLM ZIP package** —
+- **NotebookLM ZIP package** -
   Progress page → Download study package. The ZIP contains
   `summary.md`, `vocabulary.md`, `rules.md`, `errors.md`,
   `flashcards.md`, and `sessions/*.md` formatted for
   NotebookLM's source upload. NotebookLM has no public API,
   so this is the next-best path.
-- **Voice (TTS + STT + Pronunciation Practice)** — Web
+- **Voice (TTS + STT + Pronunciation Practice)** - Web
   Speech API integrations directly in the
   Session + Assessment + a dedicated `/pronunciation` page
   for language projects. No external tool needed.
@@ -143,16 +143,16 @@ recommendations:
 
 Deliberately excluded:
 
-- **Duolingo / Babbel / similar gamified apps** — they
+- **Duolingo / Babbel / similar gamified apps** - they
   conflict with the philosophy. Adaptive Learner does ship
   XP + badges + streaks, but as a motivational
   layer over un-gamified content, not as the primary loop.
-- **Khan Academy / Coursera** — they're course-completion
+- **Khan Academy / Coursera** - they're course-completion
   oriented, not skill-acquisition oriented. Different
   problem space.
-- **Memrise** — too close to Anki; the catalogue keeps one
+- **Memrise** - too close to Anki; the catalogue keeps one
   tool per niche.
-- **Notion** — overkill for the "linked notes" niche;
+- **Notion** - overkill for the "linked notes" niche;
   Obsidian fits cleanly without a cloud lock-in.
 
 The catalogue is small on purpose. Adding more would dilute

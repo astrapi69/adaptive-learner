@@ -132,7 +132,7 @@ lifespan = create_lifespan(manager, _startup_config, debug=DEBUG)
 app = FastAPI(
     title="Adaptive Learner API",
     description=(
-        "API for the Adaptive Learner platform — an adaptive learning system "
+        "API for the Adaptive Learner platform - an adaptive learning system "
         "built on the six-method learning model.\n\n"
         "**Authentication:** this is a single-user, local-first app; endpoints "
         "require no auth token. AI provider keys are stored encrypted "

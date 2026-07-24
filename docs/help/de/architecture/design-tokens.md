@@ -11,16 +11,16 @@ nicht nur Konvention. Die vollständige Token-Referenz steht in
 
 ## Die Token-Schichten
 
-1. **Pro-Theme-Tokens** — der kanonische Satz von 44 Tokens, je
+1. **Pro-Theme-Tokens** - der kanonische Satz von 44 Tokens, je
    einmal pro Theme in `frontend/src/styles/themes/theme-<id>.css`
    definiert (Hintergründe, Text, Ränder, Interaktiv, Akzent,
    Status, Übungs-Feedback, Stern, Charts, Schatten). Ein Wechsel
    von `[data-theme]` kippt alle. **Jedes Theme muss exakt
    denselben Satz definieren** (durch `themes.test.ts` gepinnt).
-2. **Theme-agnostische Tokens** — Werte, die konstruktionsbedingt
+2. **Theme-agnostische Tokens** - Werte, die konstruktionsbedingt
    in jedem Theme gleich sind (z. B. Marken-Palette, Syntax-Farben,
    Layout-Abstände). Sie leben in `global.css :root`.
-3. **Legacy-Aliase** — alte Namen wie `--surface`, `--danger`, die
+3. **Legacy-Aliase** - alte Namen wie `--surface`, `--danger`, die
    **durch** die kanonischen Tokens auflösen.
 
 ---
@@ -44,7 +44,7 @@ nicht nur Konvention. Die vollständige Token-Referenz steht in
 
 1. Kopiere ein bestehendes `theme-<id>.css` als Vorlage.
 2. Setze alle 44 kanonischen Tokens (die Parität ist Pflicht).
-3. Achte auf **WCAG-AA-Kontrast** — `contrast.test.ts` prüft alle
+3. Achte auf **WCAG-AA-Kontrast** - `contrast.test.ts` prüft alle
    Themes rechnerisch.
 4. Registriere das Theme; der Picker unter Einstellungen →
    Darstellung übernimmt es.
@@ -68,5 +68,5 @@ alle Themes).
 
 ## Verwandte Seiten
 
-- [Theme-System](../developer/themes.md) — die ausgelieferten Themes + Picker
-- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — vollständige Token-Liste
+- [Theme-System](../developer/themes.md) - die ausgelieferten Themes + Picker
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) - vollständige Token-Liste

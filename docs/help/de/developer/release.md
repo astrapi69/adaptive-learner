@@ -9,11 +9,11 @@ Schritte sind nur Versionswahl, CHANGELOG und Tag.
 
 AdaptiveLearner folgt Semantic Versioning 2.0.0:
 
-- **Major (X.0.0)** — Breaking Changes in API oder
+- **Major (X.0.0)** - Breaking Changes in API oder
   Architektur. Selten in der 0.x-Phase.
-- **Minor (0.X.0)** — neue Features, rückwärtskompatibel.
+- **Minor (0.X.0)** - neue Features, rückwärtskompatibel.
   Standard für jede Phasen-Abschluss.
-- **Patch (0.X.Y)** — Bugfixes, rückwärtskompatibel.
+- **Patch (0.X.Y)** - Bugfixes, rückwärtskompatibel.
   Hotfix-Ketten.
 
 Pre-Release-Tags (`-alpha`, `-beta`, `-rc`) werden nicht
@@ -78,14 +78,14 @@ Der Release-Gate-CI-Workflow
 (`.github/workflows/release-gate.yml`) führt den gleichen
 `sync-versions-check` bei jedem Tag-Push aus. Wenn lokal
 zustimmt, aber CI scheitert, wurde der Drift zwischen
-deinem lokalen Check und dem Push eingeführt — investigieren.
+deinem lokalen Check und dem Push eingeführt - investigieren.
 
 ### 6. Committen + taggen
 
 ```bash
 git add -A
 git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z — Phase-Headline + Zusammenfassung"
+git tag -a vX.Y.Z -m "vX.Y.Z - Phase-Headline + Zusammenfassung"
 ```
 
 Tag-Messages sind annotiert, mehrzeilig und fassen das
@@ -142,11 +142,11 @@ Wenn der Release-Zyklus Dependencies hochzieht (Vite, React,
 manuscripta etc.), jeden Bump als eigenen Commit halten.
 Gründe:
 
-- **Bisect-Granularität** — eine Regression isoliert auf
+- **Bisect-Granularität** - eine Regression isoliert auf
   einen Bump.
-- **CHANGELOG-Lesbarkeit** — Leser sehen die echte
+- **CHANGELOG-Lesbarkeit** - Leser sehen die echte
   Motivation pro Bump.
-- **Rollback** — ein schlechter Bump lässt sich isoliert
+- **Rollback** - ein schlechter Bump lässt sich isoliert
   zurücknehmen.
 
 Das volle Pattern ist in `.claude/rules/release-workflow.md`

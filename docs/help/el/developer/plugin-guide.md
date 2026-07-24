@@ -59,7 +59,7 @@ class HelloPlugin(BasePlugin):
     # "adaptive_learner" ώστε το PluginManager του host (που
     # περνά ``app_id="adaptive_learner"``) να αναγνωρίζει το
     # plugin ως στοχευμένο σε αυτήν την εφαρμογή. Η μετάβαση
-    # v0.9.0 το έκανε ΣΚΛΗΡΟ φίλτρο — plugins χωρίς αυτό
+    # v0.9.0 το έκανε ΣΚΛΗΡΟ φίλτρο - plugins χωρίς αυτό
     # απορρίπτονται κατά την ανακάλυψη.
     target_application = "adaptive_learner"
     depends_on: list[str] = []
@@ -136,25 +136,25 @@ curl http://localhost:18001/api/plugins/hello/greet
 
 Όλες οι προδιαγραφές hooks βρίσκονται στο `backend/app/hookspecs.py`:
 
-1. `get_assessment_questions(lang: str)` — επιστρέφει πακέτο ερωτήσεων.
-2. `calculate_profile(answers: list)` — υπολογίζει βάρη μεθόδων
+1. `get_assessment_questions(lang: str)` - επιστρέφει πακέτο ερωτήσεων.
+2. `calculate_profile(answers: list)` - υπολογίζει βάρη μεθόδων
    (firstresult).
-3. `create_session_prompt(...)` — συνθέτει την system prompt
+3. `create_session_prompt(...)` - συνθέτει την system prompt
    (firstresult).
-4. `ai_complete(messages, model, api_key, max_tokens)` — καλεί
+4. `ai_complete(messages, model, api_key, max_tokens)` - καλεί
    την ΤΝ συγχρονικά (firstresult, δρομολόγηση παρόχου κατά πρόθεμα
    μοντέλου).
-5. `ai_complete_async(...)` — ασύγχρονη παραλλαγή για παράλληλη
+5. `ai_complete_async(...)` - ασύγχρονη παραλλαγή για παράλληλη
    αξιολόγηση ορίου κύκλου (v1.5.0+, firstresult).
-6. `ai_complete_stream(...)` — παραλλαγή streaming που παράγει
+6. `ai_complete_stream(...)` - παραλλαγή streaming που παράγει
    τμήματα κειμένου μέσω SSE (v1.6.0+, firstresult).
-7. `recommend_method_switch(history, profile)` — επιστρέφει
+7. `recommend_method_switch(history, profile)` - επιστρέφει
    σύσταση εναλλαγής ή None.
-8. `on_session_complete(session, rating)` — broadcast παρενέργεια·
+8. `on_session_complete(session, rating)` - broadcast παρενέργεια·
    το gamification + tracking ακούνε.
-9. `get_progress_summary(project_id, db)` — επιστρέφει μία
+9. `get_progress_summary(project_id, db)` - επιστρέφει μία
    τομή namespace της σύνοψης Ταμπλό.
-10. `get_tool_recommendations(profile, lang)` — επιστρέφει
+10. `get_tool_recommendations(profile, lang)` - επιστρέφει
     κατατεταγμένα εργαλεία.
 
 [Πλήρης αναφορά hookspec](../api/hooks.md)
@@ -163,7 +163,7 @@ curl http://localhost:18001/api/plugins/hello/greet
 
 Τα hooks με `firstresult=True` σταματούν στο πρώτο plugin που
 επιστρέφει μη-None τιμή. Χρήσιμο για περιπτώσεις "ακριβώς ένα
-plugin πρέπει να χειριστεί αυτό" — όπως το `ai_complete`, όπου το
+plugin πρέπει να χειριστεί αυτό" - όπως το `ai_complete`, όπου το
 plugin του αντίστοιχου παρόχου επιστρέφει το κείμενο και τα
 υπόλοιπα επιστρέφουν None.
 

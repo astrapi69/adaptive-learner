@@ -7,7 +7,7 @@ altında bulunur.
 
 ---
 
-## v1.69.0 — Örnek bağlantılar + kitap önerileri
+## v1.69.0 - Örnek bağlantılar + kitap önerileri
 
 - **Teoride örnek bağlantılar:** Bir teori adımı, isteğe bağlı bir
   "Örneği görüntüle" bağlantısı taşıyabilir.
@@ -17,7 +17,7 @@ altında bulunur.
 - **Yedek düzeltmesi:** Set başlığı geri yükleme sırasında
   manifest'ten doğru okunur.
 
-## v1.68.0 — Sonuç dışa aktarma + teori geri bağlantıları
+## v1.68.0 - Sonuç dışa aktarma + teori geri bağlantıları
 
 - **Ders sonucunu dışa aktar:** "Sonucu kopyala" / "Dosya olarak
   kaydet" (yapay zeka asistanları için Markdown raporu).
@@ -27,14 +27,14 @@ altında bulunur.
   rozetleri (renk körlüğüne karşı güvenli).
 - Birkaç yerde **Dark-Mode kontrastı** düzeltildi.
 
-## v1.67.1 — Yedek geri yükleme + dağıtım kararlılığı
+## v1.67.1 - Yedek geri yükleme + dağıtım kararlılığı
 
 - Sistematik **yedek geri yükleme** düzeltmesi.
 - Eski dağıtım chunk'ında otomatik yeniden yükleme.
 - Subject filtre cilası (≤ 1 Subject'te gizlenir, en çok kullanılan
   önce).
 
-## v1.65.0 — Sürdürülebilir Assessment + Enter kısayolu
+## v1.65.0 - Sürdürülebilir Assessment + Enter kısayolu
 
 - **Sürdürülebilir Assessment:** Testi yarıda bırak ve daha sonra
   kaldığın yerden devam et.
@@ -42,27 +42,27 @@ altında bulunur.
   ilerler (Ayarlar → Öğrenme altında değiştirilebilir).
 - Daha belirgin eşleştirme alıştırmaları + Design-Token geçişi.
 
-## v1.64.0 — Onboarding yenilemesi
+## v1.64.0 - Onboarding yenilemesi
 
 - **Yalnızca ad + konu ile hızlı başlangıç**; geri kalan varsayılanları
   alır.
 - İsteğe bağlı **Onboarding yardımcısı** (ekran başına bir soru).
 - **Assessment artık isteğe bağlı** ([Onboarding](user-guide/onboarding.md)).
 
-## v1.63.0 — WCAG-AA tema ön ayarları
+## v1.63.0 - WCAG-AA tema ön ayarları
 
 - **6 önerilen tema** (Catppuccin Latte/Mocha, Supabase, Graphite,
   Soft Pop, Amethyst Haze), hesaplamalı olarak AA uyumlu
   ([Tema sistemi](developer/themes.md)).
 - Sistematik i18n denetimi; kullanıcı odaklı Dashboard filtresi.
 
-## v1.62.0 — Yedek bütünlüğü + Build kökeni
+## v1.62.0 - Yedek bütünlüğü + Build kökeni
 
 - **Yedek geri yükleme**nin sertleştirilmesi (veri türü dönüşümü, FK
   sırası).
 - About, "unknown" yerine gerçek Build bilgilerini gösterir.
 
-## v1.61.0 — Düğme uyumluluğu + ders sürdürme
+## v1.61.0 - Düğme uyumluluğu + ders sürdürme
 
 - Uygulama genelinde shadcn düğme uyumluluğu.
 - **Duraklatılmış ders** tam olarak kaldığı adımda devam eder.
@@ -84,4 +84,4 @@ altında bulunur.
 ## İlgili sayfalar
 
 - [İlk adımlar](user-guide/getting-started.md)
-- [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases) — eksiksiz notlar
+- [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases) - eksiksiz notlar

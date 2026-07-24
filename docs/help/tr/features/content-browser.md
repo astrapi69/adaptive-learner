@@ -5,7 +5,7 @@ indirmek ve başlatmak için merkezi başvuru noktandır. Öğrenme
 akışına göre kurgulanmıştır: önce arama, sonra devam etme, ardından
 katalog.
 
-<!-- TODO: Ekran görüntüsü — Arama alanı, devam-etme bölümü ve set ağacıyla İçerik Tarayıcısı -->
+<!-- TODO: Ekran görüntüsü - Arama alanı, devam-etme bölümü ve set ağacıyla İçerik Tarayıcısı -->
 
 ---
 
@@ -36,10 +36,10 @@ bir tamamlamadan sonra yıldızlarıyla birlikte **sonraki** ders, ya da
 
 Katalog iki ağaca ayrılır:
 
-- **Diller** — *Kaynak dil → Hedef dil → Seviye* ağacı olarak,
+- **Diller** - *Kaynak dil → Hedef dil → Seviye* ağacı olarak,
   uygulama diline göre filtrelenir (ek kaynak dilleri Ayarlar →
   Öğrenme altında etkinleştirebilirsin).
-- **Bilgi** — kendi simgeleriyle dil-dışı alanlar (örn.
+- **Bilgi** - kendi simgeleriyle dil-dışı alanlar (örn.
   programlama, psikoloji).
 
 ---
@@ -49,9 +49,9 @@ Katalog iki ağaca ayrılır:
 İndirilen her set, nereden geldiğini gösteren bir **kaynak rozeti**
 taşır:
 
-- **Resmî** / **Bundled** — resmî katalogdan ya da uygulamaya gömülü.
-- **Kendi repom** — bağladığın bir Repository'den.
-- **Resmî olarak önerilen** — küratörlü öneri listesinden.
+- **Resmî** / **Bundled** - resmî katalogdan ya da uygulamaya gömülü.
+- **Kendi repom** - bağladığın bir Repository'den.
+- **Resmî olarak önerilen** - küratörlü öneri listesinden.
 
 Bir **kaynak filtresi**, gerektiğinde yalnızca belirli bir kaynaktan
 gelen setleri gösterir. Daha fazlası için
@@ -90,6 +90,6 @@ eylemleriyle görünür. Kendi derslerini nasıl oluşturacağını
 
 ## İlgili sayfalar
 
-- [Dersler ve tekrarlar](../user-guide/lessons.md) — ders akışı
-- [Birden Çok İçerik Repository'si](content-repos.md) — kaynakları bağlama ve yönetme
+- [Dersler ve tekrarlar](../user-guide/lessons.md) - ders akışı
+- [Birden Çok İçerik Repository'si](content-repos.md) - kaynakları bağlama ve yönetme
 - [Derslerim](../user-guide/my-lessons.md)

@@ -82,7 +82,7 @@ def _open_topics_block(ctx: RenderContext, labels: Labels) -> list[str]:
         lines.extend([labels.roadmap_no_open_topics, ""])
         return lines
     for topic in ctx.topics:
-        methods = ", ".join(topic.methods) if topic.methods else "—"
+        methods = ", ".join(topic.methods) if topic.methods else "-"
         lines.append(f"- **{topic.title}** ({len(topic.session_ids)} sessions; methods: {methods})")
     lines.append("")
     return lines

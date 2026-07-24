@@ -2,7 +2,7 @@
 
 # Müfredat
 
-Müfredat sayfası, yapılandırılmış öğrenme materyalinizdir —
+Müfredat sayfası, yapılandırılmış öğrenme materyalinizdir -
 oturumlarınızın gerçekleştiği "kitap". Serbest akışlı yapay zeka
 oturumlarının üzerine eklenen isteğe bağlı ama güçlü bir katmandır.
 
@@ -13,7 +13,7 @@ listesinden oluşur. Yan yana birden fazla müfredatınız olabilir
 ("İspanyolca dilbilgisi", "Java geliştiricileri için Spring Boot",
 "Ritim gitarı temelleri").
 
-- **Konular** bir ağaç oluşturur — bölümler ve alt bölümler. Her
+- **Konular** bir ağaç oluşturur - bölümler ve alt bölümler. Her
   konunun bir başlığı, isteğe bağlı açıklaması ve üst referansı
   vardır. "Alt konu ekle" düğmesi bir alt öğe oluşturur.
 - **Dersler** müfredatın altında düz biçimde yer alır. Her birinin
@@ -33,11 +33,11 @@ sıralanabilen (mobilde dokunmayı destekler) konu ağacını gösterir.
 Bir konuya tıklamak derinleşmeyi sağlar; başlığın altındaki içerik
 haritası köke geri yolu gösterir.
 
-- **Kök düzeyinde konu ekle** — mevcut her üst düzey konunun
+- **Kök düzeyinde konu ekle** - mevcut her üst düzey konunun
   kardeşi olarak.
-- **Alt konu ekle** — mevcut odaklı konunun altına.
-- **Yeniden adlandır** — düzenleme modunda başlığa tıklayarak.
-- **Sil** — konuyu VE alt öğelerini kaldırır (Dexie modu basamakları
+- **Alt konu ekle** - mevcut odaklı konunun altına.
+- **Yeniden adlandır** - düzenleme modunda başlığa tıklayarak.
+- **Sil** - konuyu VE alt öğelerini kaldırır (Dexie modu basamakları
   tek bir işlemde yönetir; API modu arka uca devreder).
 
 Ağaç yalnızca meta veridir; konuların kendi içerikleri yoktur.
@@ -73,7 +73,7 @@ tek tıklama, yapay zekanın tespit ettiği boşluklarla eşleşen
 konular + derslerle bir Müfredat başlatır.
 
 Oturum yapay zekası, bireysel ders içeriğini henüz otomatik olarak
-sistem istemine çekmez — bu, müfredat-yapay zeka entegrasyon şekli
+sistem istemine çekmez - bu, müfredat-yapay zeka entegrasyon şekli
 yerleşene kadar kasıtlı olarak beklemeye alınmıştır.
 
 ## Depolama modu başına davranış

@@ -12,7 +12,7 @@
   `curl -sSL https://install.python-poetry.org | python3 -`.
 - **Bun** 1.3+ (frontend paket yöneticisi, #1492).
 - **GNU Make** düzenleme hedefleri için. Makefile tek yetkili
-  kaynak — her CI komutu orada bulunur.
+  kaynak - her CI komutu orada bulunur.
 
 ## Klon + kurulum
 
@@ -24,10 +24,10 @@ make install
 
 `make install` şunları çalıştırır:
 
-1. `cd backend && poetry install` — arka uç + eklenti path-dep'leri.
-2. `cd frontend && bun install` — frontend bağımlılıkları (Node 24).
+1. `cd backend && poetry install` - arka uç + eklenti path-dep'leri.
+2. `cd frontend && bun install` - frontend bağımlılıkları (Node 24).
 3. `plugins/` altındaki her eklentiyi arka ucun venv'ine path-dep
-   olarak kurar (`develop = true` — düzenlemeler canlı olarak yansır).
+   olarak kurar (`develop = true` - düzenlemeler canlı olarak yansır).
 
 `make install` başarısız olursa en yaygın neden Poetry'nin yanlış
 Python'u seçmesidir. `backend/` dizininde (ve derine girdiyseniz her
@@ -40,7 +40,7 @@ Arka uç yapılandırmasını üç katmanlı bir zincirden okur
 
 1. **Ortam değişkenleri** `ADAPTIVE_LEARNER_*` önekiyle.
 2. **Kullanıcı sırları** `~/.config/adaptive_learner/secrets.yaml`
-   konumunda — ilk başlatmada yorumlu bir şablon olarak otomatik
+   konumunda - ilk başlatmada yorumlu bir şablon olarak otomatik
    oluşturulur (POSIX'te `chmod 0600`); git'e hiçbir zaman teslim edilmez.
 3. **Varsayılanlar** `backend/config/app.yaml` içinde.
 
@@ -49,7 +49,7 @@ Bunların üzerine katmanlanan AI anahtar çözümleme:
 arayüzü aracılığıyla ayarlanır), `UserSettingsOut` üzerindeki
 `key_source_*` alanı olarak arayüze sunulur.
 
-Tek zorunlu sır `ADAPTIVE_LEARNER_SECRET_KEY` — kullanıcı API
+Tek zorunlu sır `ADAPTIVE_LEARNER_SECRET_KEY` - kullanıcı API
 anahtarlarını Fernet ile beklemede şifrelemek için kullanılır.
 Şu komutla oluşturun:
 `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
@@ -57,7 +57,7 @@ anahtarlarını Fernet ile beklemede şifrelemek için kullanılır.
 `ADAPTIVE_LEARNER_SECRET_KEY` ortam değişkeni, `secrets.yaml`
 içinde `secret_key:`, veya tek seferlik geliştirme anahtarı için
 `make dev-secret`. Anahtar ayarlanmamışsa uygulama başlangıçta
-sert biçimde başarısız olur (sessiz oluşturulan varsayılan yok —
+sert biçimde başarısız olur (sessiz oluşturulan varsayılan yok -
 bkz.
 [docs/configuration.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md)).
 
@@ -126,7 +126,7 @@ make docs-serve     # dokümanları sıcak yeniden yüklemeyle localhost:8000'de
 make docs-build     # statik siteyi site/ dizinine derler
 ```
 
-Dokümanlar venv'i arka ucunkinden ayrıdır — MkDocs,
+Dokümanlar venv'i arka ucunkinden ayrıdır - MkDocs,
 mkdocs-material + mkdocs-static-i18n ile kendi `docs/pyproject.toml`
 dosyasına sahiptir.
 

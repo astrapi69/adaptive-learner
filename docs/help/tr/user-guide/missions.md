@@ -3,7 +3,7 @@
 # Günlük görevler
 
 Günlük görevler, her gün için birkaç somut ve ulaşılabilir hedef
-sunar — uygulamayı açmak için bir neden ve öğrenme alışkanlığına
+sunar - uygulamayı açmak için bir neden ve öğrenme alışkanlığına
 doğru nazik bir dürtü. **İsteğe bağlıdırlar**: uygulama onlar
 olmadan da tamamen aynı şekilde çalışır ve bir günü kaçırmak için
 **hiçbir ceza yoktur**. Yarın sadece taze bir set gelir.
@@ -21,7 +21,7 @@ olmadan da tamamen aynı şekilde çalışır ve bir günü kaçırmak için
   aynı görevleri gösterir ve aynı görev arka arkaya iki kez
   verilmez.
 - İlerleme, zaten yaptığınız şeylerden otomatik olarak güncellenir
-  — dersleri tamamlamak, öğeleri incelemek, kelimelere ulaşmak.
+  - dersleri tamamlamak, öğeleri incelemek, kelimelere ulaşmak.
   Bir görev tamamlandığında bonus **XP** kazanırsınız.
 - Yerel gece yarısında tamamlanmamış görevler sessizce sona erer
   ve yenileri atanır.
@@ -32,7 +32,7 @@ olmadan da tamamen aynı şekilde çalışır ve bir günü kaçırmak için
 
 - günlük görevleri **açma veya kapatma** (varsayılan olarak açık),
 - günde **kaç tane** olacağını seçme (1-3),
-- bir **zorluk karışımı** seçme — Dengeli (varsayılan), Kolay
+- bir **zorluk karışımı** seçme - Dengeli (varsayılan), Kolay
   veya Zorlu,
 - taze bir set almak için bugünün görevlerini **sıfırlama**.
 
@@ -40,5 +40,5 @@ olmadan da tamamen aynı şekilde çalışır ve bir günü kaçırmak için
 
 Görev serisini devam ettirip ardından tek bir günü kaçırırsanız,
 zamanla kazanılan bir seri dondurması o bir boşluğu kapatabilir
-ve seriniz devam eder. İkinci bir kaçırılan gün bitirir — ama
+ve seriniz devam eder. İkinci bir kaçırılan gün bitirir - ama
 yine de hiçbir ceza yoktur, sadece taze bir başlangıç.

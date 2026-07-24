@@ -33,11 +33,11 @@ export interface IStorageService {
   backup: IBackupNamespace;
   export: IExportNamespace;
   imports: IImportsNamespace;
-  // Fase 22 — taxonomía
+  // Fase 22 - taxonomía
   subjects: ISubjectsNamespace;
   tags: ITagsNamespace;
   projectTaxonomy: IProjectTaxonomyNamespace;
-  // Fases 29-32 — gamificación + exportaciones
+  // Fases 29-32 - gamificación + exportaciones
   gamification: IGamificationNamespace;
   anki: IAnkiNamespace;
   notebooklm: INotebookLmNamespace;
@@ -76,10 +76,10 @@ Los submódulos bajo `storage/` llevan la lógica portada:
 
 Los datos incluidos viven en `frontend/src/data/`:
 
-- `assessment-questions.json` — exportado literalmente de la
+- `assessment-questions.json` - exportado literalmente de la
   lista `QUESTIONS` del backend (12 preguntas × 4 respuestas ×
   5 idiomas).
-- `session-prompts.json` — exportado literalmente del diccionario
+- `session-prompts.json` - exportado literalmente del diccionario
   `_PROMPTS` del backend (6 métodos × 7 pasos × 2 idiomas).
 
 ## Añadir un tercer backend de almacenamiento
@@ -101,20 +101,20 @@ export type StorageMode = "api" | "dexie" | "supabase";
 ```
 
 Conéctalo a la sección de modo de almacenamiento de la interfaz
-de Ajustes. No se necesitan otros cambios de archivo — las páginas
+de Ajustes. No se necesitan otros cambios de archivo - las páginas
 siguen usando `getStorage()`.
 
 ## Llamadas a la IA directas desde el navegador
 
 `storage/ai-providers.ts` implementa tres clientes de proveedor:
 
-- **Anthropic** — POST a `https://api.anthropic.com/v1/messages`
+- **Anthropic** - POST a `https://api.anthropic.com/v1/messages`
   con el encabezado `anthropic-dangerous-direct-browser-access: true`.
   Este es el opt-in explícito de Anthropic para llamadores desde
   el navegador; sin él CORS rechaza.
-- **OpenAI** — POST a `https://api.openai.com/v1/chat/completions`
+- **OpenAI** - POST a `https://api.openai.com/v1/chat/completions`
   con `Authorization: Bearer ${apiKey}`. CORS abierto por defecto.
-- **Gemini** — POST a
+- **Gemini** - POST a
   `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}`.
   Autenticación por parámetro de consulta, sin campo system; los
   mensajes del sistema se pliegan en el primer turno del usuario.
@@ -133,7 +133,7 @@ de amenaza aceptable:
 - El proveedor de IA es el ÚNICO endpoint de red que ve la clave.
 - Cifrar en IndexedDB requeriría una contraseña por sesión (hostil
   para la UX) o una clave fija incluida en la aplicación (teatro
-  de seguridad — el atacante tiene el paquete).
+  de seguridad - el atacante tiene el paquete).
 
 El comportamiento en modo Servidor es diferente: las claves API
 pasan por el cifrado Fernet en reposo (`ADAPTIVE_LEARNER_SECRET_KEY`).
@@ -145,16 +145,16 @@ atribución de origen por proveedor
 la interfaz pueda mostrar «Clave de: secrets.yaml» / «entorno» /
 «Ajustes». En el modo Dexie el origen se reduce a `settings` o
 `none` porque el sandbox del navegador no tiene acceso al sistema
-de archivos — `secrets.yaml` es un concepto de escritorio /
+de archivos - `secrets.yaml` es un concepto de escritorio /
 modo servidor.
 
 ## Resolución de modo
 
 `storage/index.ts` resuelve el modo en este orden:
 
-1. `localStorage["adaptive-learner.storage_mode"]` — elección del
+1. `localStorage["adaptive-learner.storage_mode"]` - elección del
    usuario desde Ajustes.
-2. `VITE_STORAGE_MODE` — valor por defecto en tiempo de
+2. `VITE_STORAGE_MODE` - valor por defecto en tiempo de
    compilación (GH Pages lo establece en `"dexie"`).
 3. Fallback: `"api"`.
 

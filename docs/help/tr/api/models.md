@@ -44,7 +44,7 @@ spesifikasyonuna bakın.
 | model_override_gemini | string \| null | Varsayılan `null` |
 
 Tel şema (`UserSettingsOut`), üç `api_key_*` alanını
-`has_<provider>_key: bool` boolean'larıyla değiştirir —
+`has_<provider>_key: bool` boolean'larıyla değiştirir -
 düz metin hiçbir zaman istemciye geri gitmez. v1.20.0 / Aşama 34'ten
 itibaren, tel şema ayrıca çözümleyicinin hangi katmanı seçtiğini
 bildiren `key_source_<provider>: ApiKeySource` enum'unu taşır

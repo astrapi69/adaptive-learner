@@ -1,4 +1,4 @@
-# Content-Repos — eigenes Repository veroeffentlichen
+# Content-Repos - eigenes Repository veroeffentlichen
 
 Adaptive Learner liefert eine offizielle Inhaltsbibliothek mit, aber das
 Content-System ist offen: Du kannst dein **eigenes Content-Repository**
@@ -17,7 +17,7 @@ Lektionen fuer ein Sprachpaar und Niveau (z. B. "Spanisch A1 fuer
 Deutschsprachige") oder fuer ein Sachgebiet (z. B. "Python-Grundlagen").
 
 Die offizielle Bibliothek und alle Nutzer-Repos verwenden **dasselbe
-Format** — es gibt kein separates "offizielles" Schema. Sobald dein Repo
+Format** - es gibt kein separates "offizielles" Schema. Sobald dein Repo
 die Validierung besteht, ist es eine vollwertige Inhaltsquelle. Du
 brauchst keinen eigenen Server: ein Content-Repo besteht nur aus Dateien
 in einem Git-Repository.
@@ -84,19 +84,19 @@ Quellen-Badge. Repos lassen sich auch per `/add-repo`-Link und
 QR-Code teilen.
 
 In die **Empfohlenen Repositories** in der App kommt ein Repo nur ueber
-die kuratierte `recommended-repos.json` des Projektteams — das ist der
+die kuratierte `recommended-repos.json` des Projektteams - das ist der
 Kanal fuer die offizielle Empfehlung (Trust 3).
 
 ---
 
 ## Trust-Levels
 
-Das Trust-Level sagt, wie stark der Inhalt geprueft wurde — es geht um
+Das Trust-Level sagt, wie stark der Inhalt geprueft wurde - es geht um
 Herkunft und Pruefung, nicht um ein Qualitaetsurteil.
 
 | Level | Name | Bedeutung |
 |-------|------|-----------|
-| **1** | Validiert | Schema korrekt, Qualitaets-Mindestanforderungen bestanden — automatisch beim Sync. Inhalt nicht einzeln geprueft. |
+| **1** | Validiert | Schema korrekt, Qualitaets-Mindestanforderungen bestanden - automatisch beim Sync. Inhalt nicht einzeln geprueft. |
 | **2** | Verifiziert | Von der Community beigetragen und von einem Maintainer inhaltlich geprueft. |
 | **3** | Offiziell | Vom Projektteam kuratiert und qualitaetsgesichert. |
 
@@ -137,5 +137,5 @@ validiere und verbinde das Repo in der App.
 ## Weiterfuehrend
 
 - **[Vollstaendiger Content-Repo-Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/CONTENT-REPO-GUIDE.md)**
-- [Lektionen erstellen — Ueberblick](overview.md)
+- [Lektionen erstellen - Ueberblick](overview.md)
 - [Buchempfehlungen](books.md)

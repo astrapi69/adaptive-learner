@@ -1,7 +1,7 @@
 # KI-Integration
 
 Adaptive Learner fährt jede Lern-Konversation durch bis zu
-**drei** KI-Aufrufe pro Roundtrip — die gestreamte Antwort, den
+**drei** KI-Aufrufe pro Roundtrip - die gestreamte Antwort, den
 Schritt-Bewerter und (bei Schritt 7) den
 Themen-Übergangs-Bewerter. Drei Anbieter sind out-of-the-box
 dabei; neue Anbieter klinken sich über die `ai_complete*`-Hook-
@@ -69,7 +69,7 @@ das die Drei-Schichten-Kette durchläuft:
 2. `ai.<provider>.api_key` in
    `~/.config/adaptive_learner/secrets.yaml`.
 3. Fernet-entschlüsseltes `UserSettings.api_key_<provider>`.
-4. `None` — der Aufruf reicht `ai_error` an die UI durch.
+4. `None` - der Aufruf reicht `ai_error` an die UI durch.
 
 `resolve_default_model(db, user_id, provider)` durchläuft
 dieselbe Kette für das Modell-Override (env > yaml > UI-Override >
@@ -84,20 +84,20 @@ None (firstresult stoppt beim ersten Treffer).
 Jeder `POST /api/plugins/session/{id}/message` für eine
 `user`-Rolle macht bis zu drei KI-Aufrufe:
 
-1. **Lernantwort** — gestreamt über `ai_complete_stream`. Der
+1. **Lernantwort** - gestreamt über `ai_complete_stream`. Der
    System-Prompt wird von `build_prompt(project, profile, method,
    cycle_step, lang)` aus der 42-Zellen-Matrix komponiert, mit
    einer explizit angehängten "antworte in der Sprache des
-   Lernenden"-Direktive (`build_language_directive(lang)`, #827 —
+   Lernenden"-Direktive (`build_language_directive(lang)`, #827 -
    siehe unten). `max_tokens=1024`. SSE emittiert
    `start` / `chunk` / `done`-Events.
-2. **Schritt-Bewerter** — separater System-Prompt
+2. **Schritt-Bewerter** - separater System-Prompt
    (`EVALUATION_SYSTEM_PROMPT`), der die KI bittet, den Austausch
    zu lesen und ein JSON-Urteil zu emittieren (`advance`,
    `confidence`, `reason`, `suggested_step`). `max_tokens=256`.
    Das Urteil des Bewerters treibt den `cycle_step`-Vorschub
    (gedeckelt durch `confidence ≥ 0.6`).
-3. **Themen-Übergang** — nur bei Schritt 7. Ein dritter KI-Aufruf
+3. **Themen-Übergang** - nur bei Schritt 7. Ein dritter KI-Aufruf
    beurteilt, ob das Thema integriert wurde und ob ein neuer
    Zyklus auf einem neuen Unterthema starten soll. Deckel von
    `max_cycles=5` pro Session.
@@ -115,7 +115,7 @@ Latenz). Im `timings`-Block der Message-Antwort zurückgegeben
 ## Die 42-Zellen-Prompt-Matrix
 
 `plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py`
-hält ein `dict[method, dict[step, dict[lang, str]]]` — sechs
+hält ein `dict[method, dict[step, dict[lang, str]]]` - sechs
 Methoden, sieben Schritte, zwei Sprachen, 84 Zellen. Jede
 Zelle ist 1-2 Sätze, die die Rolle der KI und die Aufgabe des
 Schritts setzen. Ein Kontextblock ("Lernprojekt: 'X' | Ziel:
@@ -124,7 +124,7 @@ Schritts setzen. Ein Kontextblock ("Lernprojekt: 'X' | Ziel:
 Für den Dexie-Modus werden die Prompts wortgetreu nach
 `frontend/src/data/session-prompts.json` exportiert und von
 `frontend/src/storage/ai/prompts.ts` geladen. Gleicher Text,
-gleicher Kontextblock — kein Drift möglich.
+gleicher Kontextblock - kein Drift möglich.
 
 ## Ausgabesprachen-Direktive (#827)
 
@@ -136,7 +136,7 @@ Sprache des Lernenden"-Anweisung an den komponierten System-
 Prompt angehängt. Sie benennt die Sprache des Lernenden
 (englischer Name + Endonym), damit die KI in ihr antwortet,
 unabhängig davon, in welcher Sprache der Prompt selbst
-geschrieben ist — über alle **11** UI-Sprachen.
+geschrieben ist - über alle **11** UI-Sprachen.
 
 Das Backend baut sie in
 `plugins/adaptive-learner-plugin-session/.../prompts.py`
@@ -162,7 +162,7 @@ auseinanderlaufen.
    `aiComplete()` dorthin routen.
 
 Jedes Anbieter-Plugin testet seinen Hookimpl + HTTP-Aufruf
-isoliert — siehe `plugins/adaptive-learner-plugin-ai-anthropic/tests/`
+isoliert - siehe `plugins/adaptive-learner-plugin-ai-anthropic/tests/`
 als Vorlage (der HTTP-Aufruf wird gemockt).
 
 ## Browser-Direkt-Aufrufe (Dexie-Modus)
@@ -174,7 +174,7 @@ direkt. Anthropic erfordert den
 CORS-Freigabe; OpenAI und Gemini akzeptieren direkte Browser-
 Aufrufe standardmäßig.
 
-Die Dual-Prompt-Logik ist in beiden Modi identisch —
+Die Dual-Prompt-Logik ist in beiden Modi identisch -
 `storage/ai/session-flow.ts` ruft `aiComplete()` zweimal und
 parst das Evaluator-JSON genau wie das Backend. Jedes
 browser-direkte KI-Feature liegt unter `frontend/src/lib/ai/`
@@ -204,26 +204,26 @@ sind library-grade (keine App-State-Imports) und nehmen einen
 Provider-SEAM, damit der Dexie-Pfad (browser-direkt) und der
 API-Pfad ihre eigene Completion-Funktion injizieren:
 
-1. **Generieren (AIX-01)** —
+1. **Generieren (AIX-01)** -
    `exercise-generation-prompt.ts` baut den Prompt aus den
    Theorie-Schritten der Lektion; `generate-exercises.ts` ruft
    die KI und `exercise-generation-parser.ts` parst die Antwort
    defensiv in strukturell gültige Karten (toleriert
    Code-Fences und Vorspann-Prosa).
-2. **Quality-Gate (AIX-03)** —
+2. **Quality-Gate (AIX-03)** -
    `exercise-quality-gate.ts` ist ein deterministischer (KI-
    freier) Filter: er verwirft Duplikate, Ein-Zeichen-Antworten,
    einen Distraktor gleich der richtigen Antwort, eine
    Matching-Karte mit weniger als drei Paaren usw. und markiert
    weiche Probleme als Warnungen.
-3. **Balancieren (AIX-04)** —
+3. **Balancieren (AIX-04)** -
    `exercise-distribution.ts` ordnet die Karten um (löscht nie),
    damit kein einzelner Übungstyp vorne überrepräsentiert ist und
    derselbe Typ nicht dreimal in Folge auftaucht, solange ein
    anderer Typ verfügbar ist. `distributionGaps()` meldet
    abwesende Typen, damit ein Regenerierungs-Prompt sie erwähnen
    kann.
-4. **Mit Feedback regenerieren (AIX-05)** — das Feedback des
+4. **Mit Feedback regenerieren (AIX-05)** - das Feedback des
    Nutzers fließt für einen weiteren Durchlauf in den Prompt
    zurück.
 
@@ -260,7 +260,7 @@ prüfen"**-Bericht:
 
 ## Konfigurierte-Anbieter-Übersicht + Pro-Anbieter-Test (#810)
 
-Der Einstellungen-KI-Tab zeigt eine `ConfiguredProvidersTable` —
+Der Einstellungen-KI-Tab zeigt eine `ConfiguredProvidersTable` -
 eine Zeile pro Anbieter mit seinem Modell, einer **maskierten
 Key-Vorschau** (erste 4 + Auslassung + letzte 4 über
 `lib/providers/maskSecret.ts`), dem Aktiv-Anbieter-Radio und
@@ -296,7 +296,7 @@ Kontext. Jedes KI-gestützte Feature (Session-Start/-Wiederaufnahme,
 Konversationsanalyse, Anki-Extraktion, NotebookLM-Fragen/-Leitfaden,
 KI-Lektionsgenerierung, Aussprache) ist in `NEEDS_AI_KEY`: es
 zeigt sich als **aktiv** mit nutzbarem Key, **deaktiviert**
-(Grund `api_key_required`) ohne einen, nie still **versteckt** —
+(Grund `api_key_required`) ohne einen, nie still **versteckt** -
 gemäß der sichtbar-aber-deaktiviert-Feature-State-Policy (#335).
 
 ## Weitere KI-Oberflächen (Nur-Lese-Zusammenfassung)
@@ -304,7 +304,7 @@ gemäß der sichtbar-aber-deaktiviert-Feature-State-Policy (#335).
 Mehrere Nicht-Session-Features nutzen dieselben KI-Anbieter-
 Plugins über `ai_complete*`:
 
-- **Konversationsanalysator** (Phase 12 / v0.9.0+) —
+- **Konversationsanalysator** (Phase 12 / v0.9.0+) -
   `frontend/src/chat_import/analysis.ts` zerteilt importierte
   Transkripte bei 16K Zeichen mit 2-Nachrichten-Überlappung,
   feuert `ai_complete` pro Chunk, merged die Ergebnisse.
@@ -312,16 +312,16 @@ Plugins über `ai_complete*`:
   recommended_method / vocabulary (seit v1.20.0). Toleranter
   JSON-Parser fängt Haiku-Klasse-Fehlverhalten ab (Fenced-
   Output, Vorspann-Prosa).
-- **Anki-Extraktion** (Phase 30 / v1.17.0) — `plugins/.../
+- **Anki-Extraktion** (Phase 30 / v1.17.0) - `plugins/.../
   anki/card_extraction.py` extrahiert Flashcard-Kandidaten aus
   einer Session oder Konversation; der Vokabel-Pfad läuft
   clientseitig ohne KI, wenn `analysis_result.vocabulary`
   befüllt ist.
 - **NotebookLM-Lernfragen + Leitfaden** (Phase 32 /
-  v1.19.0) — `plugins/.../notebooklm/question_generator.py`
+  v1.19.0) - `plugins/.../notebooklm/question_generator.py`
   + `study_guide.py`; toleranter JSON-Parser; nutzer-editierte
   Fragen überspringen die Re-Generierung.
-- **Aussprache-Bewerter** (Phase 31 / v1.18.0) —
+- **Aussprache-Bewerter** (Phase 31 / v1.18.0) -
   `plugins/.../pronunciation.py` generiert Zielphrasen
   + bewertet die Audio-Ähnlichkeit des Lernenden (Eignung
   gegated durch die Sprachen-Subject-Taxonomie).

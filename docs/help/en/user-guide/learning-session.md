@@ -1,7 +1,7 @@
 # A learning session
 
 A session is one focused conversation with the AI through the
-seven-step learning cycle. Sessions are short — 15-45 minutes
+seven-step learning cycle. Sessions are short - 15-45 minutes
 is typical. The Dashboard's "Start session" button creates a
 new one; the app picks the learning method (your dominant from
 the assessment) and the cycle's starting step (usually 1 = Input).
@@ -17,7 +17,7 @@ its own viewer with no AI chat. See
 | # | Step | What happens |
 |---|---|---|
 | 1 | Input | The AI presents new material in the active method's style |
-| 2 | Attempt | You apply what you just learned — the AI poses a task |
+| 2 | Attempt | You apply what you just learned - the AI poses a task |
 | 3 | Error | A mistake shows up; the AI marks it precisely |
 | 4 | Feedback | The AI explains the correction in depth |
 | 5 | Adapt | You adjust your approach; the AI may re-frame |
@@ -35,17 +35,17 @@ app's progress bar updates accordingly.
 
 Every message you send triggers up to three AI calls:
 
-1. **The learning reply** — streamed token-by-token via SSE.
+1. **The learning reply** - streamed token-by-token via SSE.
    You see the inline cursor (▍) while the assistant thinks;
    tokens land in the bubble as they arrive (no "Thinking..."
    placeholder). The system prompt is composed from a 42-cell
    matrix (6 methods × 7 steps), so a deductive Input feels
    very different from a contextual Repeat.
-2. **The step evaluator** — a second AI call reads the
+2. **The step evaluator** - a second AI call reads the
    exchange and decides whether you're ready to advance. It
    emits `advance`, `confidence`, `reason`, `suggested_step`.
    The app applies the suggestion when confidence ≥ 0.6.
-3. **The topic-transition evaluator** (only at step 7) —
+3. **The topic-transition evaluator** (only at step 7) -
    a third AI call decides whether the topic has been
    integrated. If yes AND `continue_recommended`, a new cycle
    starts automatically with a fresh subtopic (auto-loop,
@@ -56,7 +56,7 @@ moved from X to Y because…" notification when it actually
 applies. Cycle-transition cards render as dashed-border
 "Cycle N" cards in the chat history.
 
-**Voice on / off** — a TTS button (▶) next to each AI reply
+**Voice on / off** - a TTS button (▶) next to each AI reply
 reads it aloud; a microphone button (🎤) on the input lets you
 dictate; interim transcripts populate the textarea so you can
 review before sending. Both are Web Speech API; toggle in
@@ -96,11 +96,11 @@ The Session page has an "End session" button. Before the
 session closes you fill a short rating: understanding,
 stress, and method-fit on a 1-5 scale, plus an optional
 **rich-text note** (TipTap: bold, italic, lists, code blocks
-with syntax highlighting, links). The note is yours — the AI
+with syntax highlighting, links). The note is yours - the AI
 doesn't read it.
 
 The ratings + multi-cycle journey summary turn into a
-`ProgressCommit` row — the Git-style snapshot of one
+`ProgressCommit` row - the Git-style snapshot of one
 session. Completing a session awards XP (50 base × streak
 multiplier, plus per-cycle bonuses), checks for newly-earned
 badges, and updates your streak. See

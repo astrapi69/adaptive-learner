@@ -53,7 +53,7 @@ pluginSettings, learningRepo, missions, github). Both
 backings implement every method. `DexieStorage` is split into
 per-domain namespace modules under `storage/dexie/`,
 `storage/gamification/`, `storage/lessons/`,
-`storage/content/`, etc. — not one god-file.
+`storage/content/`, etc. - not one god-file.
 
 The factory reads
 `localStorage["adaptive-learner.storage_mode"]` then
@@ -76,7 +76,7 @@ Every AI call walks the chain via
 2. `ai.<provider>.api_key` in
    `~/.config/adaptive_learner/secrets.yaml`.
 3. Fernet-decrypted DB column.
-4. `None` — the AI call surfaces an error to the UI.
+4. `None` - the AI call surfaces an error to the UI.
 
 Source attribution lives on `UserSettingsOut.key_source_*`
 (enum: `env` / `secrets_yaml` / `settings` / `none`).
@@ -208,12 +208,12 @@ reusable `NavGroup`. On mobile a `BottomTabBar` shows 5 tabs
 bottom sheet (hidden during lessons + on the funnel). Several
 pages are tabbed hubs:
 
-- **Dashboard** — Overview / Activity / Missions tabs
+- **Dashboard** - Overview / Activity / Missions tabs
   (`DashboardOverviewTab` / `DashboardActivityTab` /
   `DashboardMissionsTab`; only the active tab mounts).
-- **ProgressHub** (`/progress`) — Übersicht / Statistik /
+- **ProgressHub** (`/progress`) - Übersicht / Statistik /
   Meine Pfade.
-- **DiscoverHub** (`/discover`) — adds an Import tab;
+- **DiscoverHub** (`/discover`) - adds an Import tab;
   **ContentHub** is "Meine Inhalte" (downloaded content only).
 
 Old links stay alive via redirects (`/statistics` →
@@ -221,7 +221,7 @@ Old links stay alive via redirects (`/statistics` →
 
 ## Theming
 
-CSS-variable design tokens drive every visual property —
+CSS-variable design tokens drive every visual property -
 12 theme files (`light`, `dark`, `ocean`, `forest`,
 `high-contrast`, `sepia` + the recommended WCAG-AA presets
 `catppuccin-latte/-mocha`, `supabase`, `graphite`,

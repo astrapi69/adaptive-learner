@@ -41,19 +41,19 @@ guía paso a paso por cada tarjeta y ejercicio:
    "Siguiente" cuando estés listo.
 2. Los **ejercicios** comprueban lo que has recordado. Los tipos
    principales:
-   - **Asociar** — arrastra parejas (palabra ↔ traducción). Las
+   - **Asociar** - arrastra parejas (palabra ↔ traducción). Las
      dos fichas de una pareja encontrada comparten un **color
      propio** y una **insignia numérica**, de modo que la
      asociación sea reconocible de forma segura para daltónicos
      (no solo por color).
-   - **Elección de imagen** — elige la imagen que corresponde a la
+   - **Elección de imagen** - elige la imagen que corresponde a la
      pista.
-   - **Texto libre** — escribe la respuesta.
-   - **Fichas de palabras** — compón una frase a partir de fichas.
-   - **Texto con huecos** — completa un hueco en la frase (se
+   - **Texto libre** - escribe la respuesta.
+   - **Fichas de palabras** - compón una frase a partir de fichas.
+   - **Texto con huecos** - completa un hueco en la frase (se
      genera específicamente a partir de tus errores, ver más
      abajo).
-   - **Opción múltiple** — elige una o (según la tarea) varias
+   - **Opción múltiple** - elige una o (según la tarea) varias
      respuestas correctas.
 
    Además, un conjunto puede incluir **tipos de extensión**:
@@ -64,7 +64,7 @@ guía paso a paso por cada tarjeta y ejercicio:
 Si un ejercicio lleva una **dificultad** asignada por el autor,
 una pequeña insignia indica el nivel (**Fácil / Media /
 Difícil**). Es pura transparencia: puedes ver por qué el generador
-adaptativo puede proponer una tarjeta antes o con más frecuencia —
+adaptativo puede proponer una tarjeta antes o con más frecuencia -
 la insignia no cambia ni la puntuación ni el orden.
 
 Una barra de progreso en la parte superior sigue cuánto has
@@ -223,11 +223,11 @@ texto libre y de fichas de palabras muestran ahora una
 **diferencia a nivel de token** entre tu entrada y la respuesta
 canónica. Tres colores, nunca solo color:
 
-- **Rojo tachado** — lo que escribiste y no correspondía (con una
+- **Rojo tachado** - lo que escribiste y no correspondía (con una
   marca × para lectores de pantalla y usuarios daltónicos).
-- **Verde** — lo que la respuesta canónica contiene y pasaste por
+- **Verde** - lo que la respuesta canónica contiene y pasaste por
   alto (con una marca +).
-- **Amarillo** con flecha → — una palabra ligeramente incorrecta,
+- **Amarillo** con flecha → - una palabra ligeramente incorrecta,
   representada como `tu-palabra` → `esperada`.
 
 La misma diferencia aparece en el resumen de la lección, en el
@@ -251,12 +251,12 @@ Cada lección completada otorga XP según una fórmula de estrellas:
 
 Cuatro insignias nuevas se desbloquean en torno a las lecciones:
 
-- **Primera lección** — completa tu primera lección de contenido.
-- **10 lecciones completadas** — completa 10 lecciones de
+- **Primera lección** - completa tu primera lección de contenido.
+- **10 lecciones completadas** - completa 10 lecciones de
   contenido.
-- **Racha de 3 estrellas** — logra tres lecciones seguidas con 3
+- **Racha de 3 estrellas** - logra tres lecciones seguidas con 3
   estrellas.
-- **Maestro del repaso** — domina 50 elementos mediante repetición
+- **Maestro del repaso** - domina 50 elementos mediante repetición
   espaciada.
 
 Las lecciones completadas también cuentan para tu **racha

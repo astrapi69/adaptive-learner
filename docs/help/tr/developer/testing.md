@@ -31,7 +31,7 @@ cd backend && poetry run pytest --pdb
 Testler `backend/tests/` dizininde bulunur. `conftest.py`
 içindeki fikstürler test başına taze bir bellek içi SQLite veritabanı,
 `TestClient` ve sahte bir eklenti yöneticisi sağlar. Test izolasyonu
-katıdır — herhangi bir `app.*` içe aktarımından önce
+katıdır - herhangi bir `app.*` içe aktarımından önce
 `ADAPTIVE_LEARNER_TEST=1` ayarlanır.
 
 ## Eklenti testleri
@@ -44,7 +44,7 @@ make test-plugin-session       # yalnızca biri
 cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ```
 
-Eklenti testleri FastAPI uygulamasını yüklemez — eklentinin
+Eklenti testleri FastAPI uygulamasını yüklemez - eklentinin
 modüllerini izole olarak test eder. Hook tetiklemeyi test ederken
 `pluggy.PluginManager`'ı sahte yapın.
 
@@ -85,7 +85,7 @@ beforeEach(async () => {
 });
 ```
 
-Her test taze bir bellek içi IndexedDB alır — sızıntı yok.
+Her test taze bir bellek içi IndexedDB alır - sızıntı yok.
 
 **api/client.ts sahte yapıları** (eski sayfalar):
 
@@ -117,7 +117,7 @@ Duman testleri kritik kullanıcı yollarını kapsar:
 - Müfredat oluşturma
 - Mobil görünüm alanları (iPhone SE, iPhone 14, Pixel 7, iPad)
 
-Testler yalnızca `data-testid` seçicileri kullanır — kırılgan CSS
+Testler yalnızca `data-testid` seçicileri kullanır - kırılgan CSS
 seçicileri yok. Duman testleri `make test` yolunda değildir;
 çalışan bir uygulama gerektirir (önce `make dev-bg` çalıştırın).
 
@@ -151,7 +151,7 @@ cd backend && poetry run pre-commit install
 
 Kancalar: ruff check (otomatik düzeltme), ruff format, sondaki
 boşluk, dosya sonu düzeltici, check-yaml, check-merge-conflict.
-Yalnızca arka uç — frontend lint, ön teslimde değil CI zamanında
+Yalnızca arka uç - frontend lint, ön teslimde değil CI zamanında
 çalışır.
 
 ## CI
@@ -165,49 +165,49 @@ Yalnızca arka uç — frontend lint, ön teslimde değil CI zamanında
 
 Diğer PR-gate'leri kendi workflow'larında yaşar:
 
-- `cohesion-check.yml` — dosya boyutu koruması
+- `cohesion-check.yml` - dosya boyutu koruması
   (`.filesize-whitelist` karşısında gate) artı iki sınıf-adı
   gate'i: ölü CSS sınıf adları (`check-dead-classnames.py`,
   `.dead-classnames-baseline` karşısında) ve
   **stillenmemiş-className gate'i** (`--unstyled`,
-  `.unstyled-classnames-baseline` karşısında bir ratchet) — tüm
+  `.unstyled-classnames-baseline` karşısında bir ratchet) - tüm
   token'ları ölü olan bir `className`, PR'ı engeller. Eşlik eden
   klasör boyutu koruması yerelde `make check-folder-size` ile
   çalışır.
-- `visual-baseline-gate.yml` — görsel açıdan kritik yolları (ders
+- `visual-baseline-gate.yml` - görsel açıdan kritik yolları (ders
   bileşenleri, alıştırma renderer'ları, tema/CSS dosyaları)
   değiştiren bir PR, etkilenen baseline ekran görüntülerini aynı
   PR'da getirmelidir; kanıtlanabilir şekilde etkisiz değişiklikler
   için kaçış etiketi `visual-baselines-unaffected`.
-- `testid-reference-gate.yml` — bir PR, bir E2E spec'inin statik
+- `testid-reference-gate.yml` - bir PR, bir E2E spec'inin statik
   olarak referans verdiği bir `data-testid`'yi (kullanıcıya çok
   görünür bir yüzeyde) spec'e dokunmadan kaldırır ya da yeniden
   adlandırırsa gate başarısız olur (`make check-testid-refs`);
   kaçış etiketi `testid-refs-unaffected`.
-- `docker-build-smoke.yml` — üretim compose imajlarının yalnızca
+- `docker-build-smoke.yml` - üretim compose imajlarının yalnızca
   build içeren duman testi (launcher / install.sh yolu), PR'larda
   yol filtreli, ayrıca `release/**` üzerinde, haftalık ve manuel
   tetiklemeyle; yerelde `make docker-build-smoke`.
 
 **Gece vardiyası / Release (PR'larda değil):**
 
-- `mutation-frontend.yml` — Stryker mutasyon testleri (gecelik,
+- `mutation-frontend.yml` - Stryker mutasyon testleri (gecelik,
   `ENABLE_NIGHTLY_MUTATION` repo değişkeninin arkasında + manuel
   tetikleme; her çalıştırma, iş zaman sınırına sığmak için
   dosyaların bir dilimini mutasyona uğratır); arka uç mutasyon
   testleri mutmut kullanır
-- `webkit-gate.yml` — gerçek WebKit engine yerleşim gate'i
+- `webkit-gate.yml` - gerçek WebKit engine yerleşim gate'i
   (Chromium gate'lerinin yapısal olarak göremediği iOS/Safari
   hata sınıfları), günlük olarak `ENABLE_NIGHTLY_WEBKIT` repo
   değişkeninin arkasında, `release/**` üzerinde her zaman ve
   manuel tetiklemeyle
-- `visual-regression.yml` — görsel baseline matrisi (günlük +
+- `visual-regression.yml` - görsel baseline matrisi (günlük +
   manuel tetikleme; `update_baselines=true`, baseline'ları CI'da
   yeniden render eder ve artefakt olarak yükler)
-- `visual-baseline-sync.yml` — servis workflow'u: baseline'ları
+- `visual-baseline-sync.yml` - servis workflow'u: baseline'ları
   CI'da render eder ve PR dalına bir commit olarak push'lar
   (`refresh-visual-baselines` etiketi ya da PR numarasıyla manuel
-  tetikleme) — merge öncesi görsel inceleme zorunlu kalır
+  tetikleme) - merge öncesi görsel inceleme zorunlu kalır
 
 `.github/workflows/release-gate.yml`, etiket push'larında çalışır:
 sürüm pinlerinin eşitlenmiş olduğunu (12 dosyada sapma yok),

@@ -20,26 +20,26 @@ de aprendizaje respaldados por investigación, hace un seguimiento de
 tu progreso a nivel de elemento y adapta tanto el método como el
 contenido a tu perfil.
 
-- **Seis métodos de aprendizaje** — deductivo, inductivo, basado en
+- **Seis métodos de aprendizaje** - deductivo, inductivo, basado en
   errores, dialógico, contextual y adaptativo con IA.
-- **Ciclo de siete pasos** — entrada → intento → error →
+- **Ciclo de siete pasos** - entrada → intento → error →
   retroalimentación → adaptación → repetición → integración.
-- **Evaluador de doble prompt** — un segundo agente de IA mide tu
+- **Evaluador de doble prompt** - un segundo agente de IA mide tu
   comprensión y avanza el ciclo automáticamente.
-- **Funciona sin conexión** — el modo Dexie almacena todo en el
+- **Funciona sin conexión** - el modo Dexie almacena todo en el
   navegador; no necesitas servidor.
 
 ---
 
 ## Inicio rápido
 
-1. **Crea un proyecto de aprendizaje** — tema, objetivo, plazo,
+1. **Crea un proyecto de aprendizaje** - tema, objetivo, plazo,
    minutos al día.
-2. **Realiza la evaluación** — 12 preguntas te sitúan en el radar
+2. **Realiza la evaluación** - 12 preguntas te sitúan en el radar
    de seis métodos.
-3. **Inicia una sesión** — la IA aplica tu método dominante.
-4. **Valora la sesión** — comprensión, estrés, adecuación del método.
-5. **Repasa** — el panel muestra qué repasar hoy.
+3. **Inicia una sesión** - la IA aplica tu método dominante.
+4. **Valora la sesión** - comprensión, estrés, adecuación del método.
+5. **Repasa** - el panel muestra qué repasar hoy.
 
 ---
 

@@ -52,7 +52,7 @@ export const SetGroupNodeView = memo(function SetGroupNodeView({data, onToggle}:
                 aria-expanded={!data.collapsed}
                 aria-label={t(
                     "learning_path.group.toggle_aria",
-                    "{title} set — {completed} of {total} lessons completed",
+                    "{title} set - {completed} of {total} lessons completed",
                 )
                     .replace("{title}", data.title)
                     .replace("{completed}", String(data.completed))

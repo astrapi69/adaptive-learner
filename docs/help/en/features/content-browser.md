@@ -4,18 +4,18 @@ The **Content Browser** ("Meine Inhalte" / "My content") is the
 **My content tab of the Content hub** at `/content`. It shows only
 the lesson sets you have already downloaded, with the search field
 on top and your local catalog below. To find and download *new*
-sets, use the **Discover** tab — see
+sets, use the **Discover** tab - see
 [Discover content](discover.md). Discover is the **default tab**, so
 opening `/content` lands you on the catalog; switch to *My content*
 once you have downloaded something.
 
 The page header carries the title **Meine Inhalte** and a small
 **info button** (the ⓘ icon). The intro text is no longer shown
-permanently — click the info button to read what this tab is for
+permanently - click the info button to read what this tab is for
 (your downloaded content, with its sources) without it taking up
 space the rest of the time.
 
-<!-- TODO: Screenshot — Content Browser with title, info button, view toggle and set tree -->
+<!-- TODO: Screenshot - Content Browser with title, info button, view toggle and set tree -->
 
 ---
 
@@ -36,9 +36,9 @@ catalog tree, with highlighting, a match count and an empty state.
 A **view toggle** lets you switch how your downloaded sets are
 shown:
 
-- **List** — a compact, flat list that is fast to scroll,
+- **List** - a compact, flat list that is fast to scroll,
   especially on mobile. This is the **default**.
-- **Grid (tiles)** — the richer *source → target → level* tree
+- **Grid (tiles)** - the richer *source → target → level* tree
   view.
 
 Your choice is a **global content-view preference**: it applies to
@@ -52,7 +52,7 @@ downloaded first), not alphabetically, so what you just pulled in is
 easy to find.
 
 > **Continue Learning moved.** The "Weitermachen" (Continue
-> Learning) panel is no longer on this tab — it lives on the
+> Learning) panel is no longer on this tab - it lives on the
 > **Dashboard**, which is the one place that owns it. See
 > [Dashboard](../user-guide/dashboard.md).
 
@@ -70,10 +70,10 @@ list, including **by source**, to narrow it down to what you want.
 
 The catalog splits into two trees:
 
-- **Languages** — as a tree *source language → target language → level*,
+- **Languages** - as a tree *source language → target language → level*,
   filtered to your app language (you can enable additional source
   languages in Settings → Learning).
-- **Knowledge** — non-language domains (e.g. programming,
+- **Knowledge** - non-language domains (e.g. programming,
   psychology) with their own icons.
 
 ---
@@ -82,7 +82,7 @@ The catalog splits into two trees:
 
 Every set has its own **deep link** at `/content/set/:setId` that
 opens that set directly, skipping the catalog tree. Open the link
-and you land on the set — in both storage modes. This is what makes
+and you land on the set - in both storage modes. This is what makes
 **per-set sharing** possible: a set-level QR code or share link can
 now point at a specific set, not just the app root.
 
@@ -97,10 +97,10 @@ with a way back to the catalog, rather than an error.
 Every downloaded set carries a **source badge** that shows where
 it came from:
 
-- **Official** / **Bundled** — from the official catalog or
+- **Official** / **Bundled** - from the official catalog or
   built into the app.
-- **Own repo** — from a repository you connected yourself.
-- **Officially recommended** — from the curated recommendation
+- **Own repo** - from a repository you connected yourself.
+- **Officially recommended** - from the curated recommendation
   list.
 
 A **source filter** lets you show only sets from a specific source
@@ -140,8 +140,8 @@ first and grouped by category above five entries.
 
 ## My Lessons (now on the Import tab)
 
-Lessons you created or imported yourself — together with the
-import/creation **action buttons** — moved to the **Import tab** of
+Lessons you created or imported yourself - together with the
+import/creation **action buttons** - moved to the **Import tab** of
 the Content hub. There they sit next to chat import as one "bring
 your own content" surface, with the same actions to play, edit,
 delete, export and share. The *My content* tab keeps the
@@ -154,6 +154,6 @@ lessons is described under
 
 ## Related pages
 
-- [Lessons and reviews](../user-guide/lessons.md) — the lesson flow
-- [Multiple content repositories](content-repos.md) — connect and manage sources
+- [Lessons and reviews](../user-guide/lessons.md) - the lesson flow
+- [Multiple content repositories](content-repos.md) - connect and manage sources
 - [My Lessons](../user-guide/my-lessons.md)

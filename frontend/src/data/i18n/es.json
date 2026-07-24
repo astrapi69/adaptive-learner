@@ -2,7 +2,7 @@
   "app": {
     "name": "Adaptive Learner",
     "tagline": "Aprendizaje que se adapta a ti.",
-    "skeleton_notice": "Estado esqueleto. Los modelos de dominio, plugins y páginas llegan en fases próximas — ver docs/adaptive-learner-project-reference.md."
+    "skeleton_notice": "Estado esqueleto. Los modelos de dominio, plugins y páginas llegan en fases próximas - ver docs/adaptive-learner-project-reference.md."
   },
   "common": {
     "ok": "Aceptar",
@@ -80,7 +80,7 @@
     },
     "primary": "Navegación principal",
     "discover": "Descubrir contenido",
-    "offline_long": "Sin conexión — las sesiones anteriores siguen disponibles",
+    "offline_long": "Sin conexión - las sesiones anteriores siguen disponibles",
     "sync_pending": "{n} cambio(s) pendientes de sincronizar",
     "statistics": "Estadísticas",
     "profile": "Tu perfil",
@@ -98,12 +98,12 @@
     "offline": "Sin conexión",
     "anki": "Anki",
     "dev_badge": "DEV",
-    "dev_badge_tooltip": "Modo Desarrollador activo — los avisos de error muestran detalles técnicos. Cámbialo en Ajustes.",
+    "dev_badge_tooltip": "Modo Desarrollador activo - los avisos de error muestran detalles técnicos. Cámbialo en Ajustes.",
     "content": "Mi contenido",
     "mode_badge_content": "Contenido",
     "mode_badge_ai": "IA+Contenido",
-    "mode_badge_tooltip_content": "Sin clave API configurada — solo contenido predefinido. Añade una clave en Ajustes para activar funciones de IA.",
-    "mode_badge_tooltip_ai": "Proveedor de IA configurado — los ejercicios usan IA para distractores y pistas. Pulsa para explorar los sets.",
+    "mode_badge_tooltip_content": "Sin clave API configurada - solo contenido predefinido. Añade una clave en Ajustes para activar funciones de IA.",
+    "mode_badge_tooltip_ai": "Proveedor de IA configurado - los ejercicios usan IA para distractores y pistas. Pulsa para explorar los sets.",
     "mode_badge_label_content": "Modo: Solo contenido",
     "mode_badge_label_ai": "Modo: IA + Contenido",
     "sync_paired": "Sinc.: emparejado (Ajustes > Sinc.)",
@@ -206,7 +206,7 @@
     "add_subtopic": "Añadir subtema",
     "rename_topic": "Renombrar tema",
     "topic_title": "Título",
-    "no_topics": "Todavía no hay temas — añade el primero para empezar.",
+    "no_topics": "Todavía no hay temas - añade el primero para empezar.",
     "no_curriculum": "Crea un currículo para empezar a construir un árbol de temas.",
     "delete_confirm": "¿Eliminar este tema? Sus hijos quedarán como raíces propias.",
     "lessons_title": "Lecciones",
@@ -223,7 +223,7 @@
     "description_saved": "Descripción guardada.",
     "edit_description": "Editar descripción",
     "lesson_content_aria": "Contenido de la lección",
-    "lesson_content_placeholder": "Contenido de la lección — admite encabezados, listas, bloques de código, enlaces.",
+    "lesson_content_placeholder": "Contenido de la lección - admite encabezados, listas, bloques de código, enlaces.",
     "no_description": "Aún no hay descripción."
   },
   "landing": {
@@ -241,7 +241,7 @@
     "intro": "Cuéntanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un método inicial.",
     "concepts_explainer_prefix": "Definirás un ",
     "concepts_explainer_mid1": ", y luego completas una breve evaluación para construir tu ",
-    "concepts_explainer_mid2": " — que guía cada ",
+    "concepts_explainer_mid2": " - que guía cada ",
     "concepts_explainer_suffix": " por delante.",
     "term_learning_project": "proyecto de aprendizaje",
     "term_learning_profile": "perfil de aprendizaje",
@@ -255,7 +255,7 @@
     "field_timeframe_hint": "p. ej. 4 semanas, un semestre.",
     "field_daily_minutes": "Minutos por día",
     "field_current_problem": "Problema actual",
-    "field_current_problem_hint": "opcional — ¿qué te bloquea ahora mismo?",
+    "field_current_problem_hint": "opcional - ¿qué te bloquea ahora mismo?",
     "submit": "Crear proyecto e iniciar evaluación",
     "creating": "Creando proyecto...",
     "subject_suggestions": "Materias sugeridas (toca para asignar):",
@@ -289,7 +289,7 @@
   },
   "assessment": {
     "title": "Evaluación del tipo de aprendizaje",
-    "intro": "Doce preguntas cortas determinan tu perfil de aprendizaje. No hay respuestas correctas o incorrectas — responde por intuición.",
+    "intro": "Doce preguntas cortas determinan tu perfil de aprendizaje. No hay respuestas correctas o incorrectas - responde por intuición.",
     "question_progress": "Pregunta {current} de {total}",
     "next_question": "Siguiente pregunta",
     "prev_question": "Pregunta anterior",
@@ -335,7 +335,7 @@
     "review_queue": {
       "loading": "Cargando…",
       "elements": "elemento(s) para repasar",
-      "overdue": "atrasados — empieza aquí",
+      "overdue": "atrasados - empieza aquí",
       "open": "Abrir sesión de repaso",
       "quick": "Repaso rápido"
     },
@@ -371,7 +371,7 @@
     "page_title": "Lección adaptativa",
     "session_title": "Lección adaptativa",
     "loading": "Analizando tus errores…",
-    "empty_body": "Aún no hay nada que adaptar — practica una lección para acumular datos.",
+    "empty_body": "Aún no hay nada que adaptar - practica una lección para acumular datos.",
     "not_cached_body": "Este conjunto aún no se ha descargado. Abre el navegador de contenido para descargarlo primero.",
     "back_to_dashboard": "Volver al Panel",
     "transparency": {
@@ -432,7 +432,7 @@
     "metric_mean_understanding": "Comprensión media",
     "metric_mean_stress": "Estrés medio",
     "metric_streak": "Racha de días",
-    "no_data": "Todavía no hay sesiones — comienza la primera para ver las tendencias.",
+    "no_data": "Todavía no hay sesiones - comienza la primera para ver las tendencias.",
     "pronunciation_quick_start": "Práctica de Pronunciación"
   },
   "session": {
@@ -464,7 +464,7 @@
     "cycles_completed": "Ciclos completados",
     "next_topic": "Siguiente tema:",
     "step_reason_tooltip": "¿Por qué este paso?",
-    "offline_start_blocked": "Estás sin conexión. Las nuevas sesiones necesitan red — las anteriores siguen siendo legibles desde el Dashboard.",
+    "offline_start_blocked": "Estás sin conexión. Las nuevas sesiones necesitan red - las anteriores siguen siendo legibles desde el Dashboard.",
     "peek_step_prefix": "Paso",
     "rating_notes_aria": "Notas de la sesión",
     "rating_notes_placeholder": "Qué funcionó, qué no, qué probar la próxima vez…"
@@ -486,7 +486,7 @@
     "commit_date": "Fecha",
     "no_commits": "Todavía no hay sesiones completadas.",
     "step_eval_title": "Análisis de evaluación IA por paso",
-    "step_eval_empty": "Aún no hay datos de evaluación — inicia una sesión para ver el análisis.",
+    "step_eval_empty": "Aún no hay datos de evaluación - inicia una sesión para ver el análisis.",
     "step_eval_avg_confidence": "Confianza IA media",
     "step_eval_repeats": "Veces que la IA dijo 'aún no'",
     "step_eval_advances": "Avances de paso",
@@ -510,7 +510,7 @@
       "button": "Ir a la exportación de claves (pestaña Datos)"
     },
     "key_vault": {
-      "title": "Claves de IA — exportación cifrada",
+      "title": "Claves de IA - exportación cifrada",
       "intro": "Lleva tus claves de IA a otro dispositivo en un único archivo cifrado, separado de la copia de seguridad normal (que nunca contiene claves).",
       "api_export_disabled": "En modo servidor tus claves no se pueden exportar: las gestiona el servidor de forma cifrada. La importación de un archivo de claves sigue siendo posible.",
       "export_heading": "Exportar",
@@ -906,23 +906,23 @@
   "methods": {
     "deductive": {
       "label": "Deductivo",
-      "summary": "De lo general a lo particular — primero las reglas, luego los ejemplos."
+      "summary": "De lo general a lo particular - primero las reglas, luego los ejemplos."
     },
     "inductive": {
       "label": "Inductivo",
-      "summary": "De lo particular a lo general — primero los ejemplos, luego la regla."
+      "summary": "De lo particular a lo general - primero los ejemplos, luego la regla."
     },
     "error_based": {
       "label": "Basado en errores",
-      "summary": "Aprender de los errores — corrección con explicación."
+      "summary": "Aprender de los errores - corrección con explicación."
     },
     "dialogic": {
       "label": "Dialógico",
-      "summary": "Pensar en conversación — bajar el estrés, construir motivación."
+      "summary": "Pensar en conversación - bajar el estrés, construir motivación."
     },
     "contextual": {
       "label": "Contextual",
-      "summary": "Aplicar en contexto real — practicar la transferencia."
+      "summary": "Aplicar en contexto real - practicar la transferencia."
     },
     "ai_adaptive": {
       "label": "IA adaptativa",
@@ -964,7 +964,7 @@
     "not_found": "No encontrado.",
     "validation": "Entrada inválida.",
     "conflict": "El elemento ya existe.",
-    "server": "Error del servidor — inténtalo más tarde."
+    "server": "Error del servidor - inténtalo más tarde."
   },
   "toast": {
     "project_created": "Proyecto creado.",
@@ -1729,9 +1729,9 @@
     "readme_topics_heading": "Temas",
     "readme_no_topics": "_Aún no se han abordado temas._",
     "readme_see_also_heading": "Véase también",
-    "readme_see_stats": "[LEARNING_STATS.md](LEARNING_STATS.md) — tasas de error, comprensión, transferencia, registro de intervenciones.",
-    "readme_see_cheatsheet": "[CHEATSHEET.md](CHEATSHEET.md) — notas destiladas + reflexiones de Meta-Learning.",
-    "readme_see_roadmap": "[ROADMAP.md](ROADMAP.md) — próximos pasos.",
+    "readme_see_stats": "[LEARNING_STATS.md](LEARNING_STATS.md) - tasas de error, comprensión, transferencia, registro de intervenciones.",
+    "readme_see_cheatsheet": "[CHEATSHEET.md](CHEATSHEET.md) - notas destiladas + reflexiones de Meta-Learning.",
+    "readme_see_roadmap": "[ROADMAP.md](ROADMAP.md) - próximos pasos.",
     "stats_title": "Estadísticas de aprendizaje",
     "stats_intro": "Métricas por sesión generadas automáticamente a partir de evaluaciones + valoraciones. No editar manualmente.",
     "stats_no_sessions": "_Aún no hay sesiones._",
@@ -1753,7 +1753,7 @@
     "stats_exit_threshold_body": "Un tema se considera dominado cuando Comprensión ≥ 9/10 Y Transferencia ≥ 8/10 estables durante 2 ciclos consecutivos. Las filas marcadas señalan sesiones que cumplen esta condición.",
     "stats_exit_pin_marker": "✅ criterio alcanzado",
     "cheatsheet_title": "Chuleta",
-    "cheatsheet_intro": "Notas destiladas de tus sesiones. La sección Reflexiones de Meta-Learning recoge notas etiquetadas como meta_learning — observaciones sobre cómo aprendes mejor.",
+    "cheatsheet_intro": "Notas destiladas de tus sesiones. La sección Reflexiones de Meta-Learning recoge notas etiquetadas como meta_learning - observaciones sobre cómo aprendes mejor.",
     "cheatsheet_notes_heading": "Notas",
     "cheatsheet_meta_learning_heading": "Reflexiones de Meta-Learning",
     "cheatsheet_no_notes": "_Aún no hay notas._",
@@ -1868,7 +1868,7 @@
       "stats_slowest": "Más lenta: {s}s ({type})"
     },
     "reverse": {
-      "not_reversible": "Este tipo de ejercicio no se puede invertir — se muestra en su formato original."
+      "not_reversible": "Este tipo de ejercicio no se puede invertir - se muestra en su formato original."
     },
     "resources_title": "Profundiza en el tema",
     "resources_domain": "Más sobre {domain}",
@@ -1962,7 +1962,7 @@
         "submit": "Comprobar respuesta",
         "retry": "Intentar de nuevo",
         "result_correct": "¡Correcto!",
-        "result_wrong": "Casi — la opción resaltada es la respuesta correcta.",
+        "result_wrong": "Casi - la opción resaltada es la respuesta correcta.",
         "grid_label": "Opciones de imagen",
         "correct_label": "Correcto",
         "wrong_label": "Incorrecto",
@@ -2408,7 +2408,7 @@
       "level_label": "Nivel",
       "not_enough_data": "Pocos ejercicios: se recomiendan al menos {min} para una lección de idioma completa. Puedes guardarla igualmente (por ejemplo, como lección solo de teoría).",
       "same_language": "El idioma aprendido y tu idioma deben ser diferentes.",
-      "same_language_hint": "El idioma aprendido y tu idioma son iguales — válido para una lección de gramática o en lengua materna. Al compartirla, aparecerá en la rama del mismo idioma del árbol de contenido.",
+      "same_language_hint": "El idioma aprendido y tu idioma son iguales - válido para una lección de gramática o en lengua materna. Al compartirla, aparecerá en la rama del mismo idioma del árbol de contenido.",
       "split_notice": "Esta lección tiene {steps} pasos y se guardará en {parts} partes (máx. {max} pasos cada una).",
       "part_title": "{title} - Parte {n}"
     },
@@ -3186,7 +3186,7 @@
     "group": {
       "mastery": "{r} receptivo, {p} productivo dominados",
       "progress_aria": "{completed} de {total} lecciones completadas",
-      "toggle_aria": "Conjunto {title} — {completed} de {total} lecciones completadas"
+      "toggle_aria": "Conjunto {title} - {completed} de {total} lecciones completadas"
     },
     "search_placeholder": "Buscar lecciones…",
     "filter": {
@@ -3211,12 +3211,12 @@
     },
     "clusters": {
       "toggle": "Mostrar grupos de errores",
-      "empty": "Aún no hay patrones de error comunes — sigue practicando.",
+      "empty": "Aún no hay patrones de error comunes - sigue practicando.",
       "lessons": "{n} lecciones",
       "start_adaptive": "Iniciar lección adaptativa",
       "region_label": "Panel de grupos de errores"
     },
-    "search_label": "Buscar lecciones — pulsa Enter para ir a la primera coincidencia",
+    "search_label": "Buscar lecciones - pulsa Enter para ir a la primera coincidencia",
     "custom": {
       "title": "Mis rutas de aprendizaje",
       "subtitle": "Reúne lecciones en tu propia ruta ordenada.",
@@ -3888,7 +3888,7 @@
     },
     "field": {
       "pick": "Elige un repositorio conectado",
-      "pick_placeholder": "— elige o escribe abajo —",
+      "pick_placeholder": "- elige o escribe abajo -",
       "url": "URL del repositorio de GitHub",
       "branch": "Rama",
       "title": "Título",

@@ -378,7 +378,7 @@ describe("buildSystemPrompt (Phase 36 Bug 2)", () => {
     it("names every supported language in the directive", () => {
         for (const [code, name] of Object.entries(LANGUAGE_NAMES)) {
             const prompt = buildSystemPrompt(code);
-            expect(prompt).toContain("LANGUAGE — CRITICAL");
+            expect(prompt).toContain("LANGUAGE - CRITICAL");
             expect(prompt).toContain(`in ${name}`);
         }
     });
@@ -394,7 +394,7 @@ describe("buildSystemPrompt (Phase 36 Bug 2)", () => {
         for (const bogus of ["xx", "", "  ", "klingon"]) {
             const prompt = buildSystemPrompt(bogus);
             expect(prompt).toContain("in English");
-            expect(prompt).toContain("LANGUAGE — CRITICAL");
+            expect(prompt).toContain("LANGUAGE - CRITICAL");
         }
     });
 

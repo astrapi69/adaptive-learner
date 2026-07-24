@@ -1,4 +1,4 @@
-"""AnkiPlugin — PluginForge entry point (Phase 30).
+"""AnkiPlugin - PluginForge entry point (Phase 30).
 
 Hookspec coverage is minimal — the plugin owns its own routes
 under ``/api/plugins/anki/*`` and doesn't subscribe to existing
