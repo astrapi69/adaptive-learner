@@ -118,4 +118,42 @@ describe("createSessionChatAdapter (Phase 0 seam, #1126)", () => {
             collect(adapter.run(opts) as AsyncIterable<RunResult>),
         ).rejects.toThrow("provider down");
     });
+
+    it("forwards the completed exchange result to onExchange (#1126 Phase 4a)", async () => {
+        const finalResult = {session: {cycle_step: 3}, step_evaluation: null};
+        streamMessage.mockImplementation(async (...args: unknown[]) => {
+            const handlers = args[2] as
+                | {onChunk: (d: string) => void; onDone: (r: unknown) => void}
+                | undefined;
+            if (!handlers) return;
+            handlers.onChunk("hi");
+            handlers.onDone(finalResult);
+        });
+        const onExchange = vi.fn();
+        const adapter = createSessionChatAdapter("sess-1", {onExchange});
+        const opts = {
+            messages: [userMessage("Q")],
+            abortSignal: new AbortController().signal,
+        } as unknown as Parameters<typeof adapter.run>[0];
+
+        await collect(adapter.run(opts) as AsyncIterable<RunResult>);
+
+        // The domain seam receives the full exchange exactly once, so the
+        // session shell can advance the cycle / step-eval (parity with legacy).
+        expect(onExchange).toHaveBeenCalledTimes(1);
+        expect(onExchange).toHaveBeenCalledWith(finalResult);
+    });
+
+    it("does not call onExchange when the run sends nothing", async () => {
+        const onExchange = vi.fn();
+        const adapter = createSessionChatAdapter("sess-1", {onExchange});
+        const opts = {
+            messages: [],
+            abortSignal: new AbortController().signal,
+        } as unknown as Parameters<typeof adapter.run>[0];
+
+        await collect(adapter.run(opts) as AsyncIterable<RunResult>);
+        expect(onExchange).not.toHaveBeenCalled();
+        expect(streamMessage).not.toHaveBeenCalled();
+    });
 });

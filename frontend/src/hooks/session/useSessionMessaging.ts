@@ -12,7 +12,7 @@
  * ownership rule from the WordTiles/Cloze splits).
  */
 
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import type {Dispatch, SetStateAction} from "react";
 
 import {ApiError} from "../../api/client";
@@ -54,6 +54,79 @@ export function useSessionMessaging({
     const [sendingMessage, setSendingMessage] = useState(false);
     const [stepEvaluation, setStepEvaluation] =
         useState<StepEvaluationVerdict | null>(null);
+
+    /**
+     * Apply the domain (non-message-list) side of a completed exchange: advance
+     * the cycle step, surface the step-evaluation verdict, and fire the
+     * auto-loop / step-advance / ai_error toasts. Shared so the assistant-ui
+     * thread (#1126 Phase 4a) drives the SAME learning mechanics as the legacy
+     * SessionChat path — the assistant path has no ``messages`` array, so the
+     * message-list parts (streaming reconcile + the cycle-transition card) stay
+     * in ``handleSend``; everything else lives here.
+     */
+    const applyExchangeOutcome = useCallback(
+        (result: SessionMessageExchangeResult) => {
+            // v0.4.0: the backend bumps cycle_step on each successful
+            // round-trip; keep local session state in sync so CycleProgress
+            // reflects the new step.
+            setSession(result.session);
+            // v0.5.0: surface the step-evaluation verdict (null when the route
+            // bypassed the evaluator — the tooltip just hides).
+            setStepEvaluation(result.step_evaluation);
+
+            const transition = result.topic_transition;
+            if (transition && transition.looped) {
+                notify.success(
+                    t("session.cycle_advanced", "Cycle {n} started").replace(
+                        "{n}",
+                        String(transition.new_cycle_count),
+                    ),
+                );
+            }
+            if (
+                result.step_evaluation &&
+                result.step_evaluation.applied &&
+                result.step_evaluation.from_step !== result.session.cycle_step
+            ) {
+                // The AI accepted advance + the step actually moved. Fire a
+                // brief toast naming the new step.
+                const newStepKey =
+                    CYCLE_STEPS[
+                        Math.min(
+                            CYCLE_STEPS.length,
+                            Math.max(1, result.session.cycle_step),
+                        ) - 1
+                    ];
+                const stepLabel = t(
+                    `cycle_steps.${newStepKey}.label`,
+                    newStepKey,
+                );
+                notify.info(
+                    t("session.step_advance_toast", "Moving to: {step}").replace(
+                        "{step}",
+                        stepLabel,
+                    ),
+                );
+            }
+            if (result.ai_error) {
+                // Map known classifications (no AI key / no provider) to a
+                // friendly, localized message; others fall through to the raw
+                // detail.
+                const code = result.ai_error_code;
+                if (code === "no_api_key" || code === "no_provider") {
+                    notify.error(
+                        t(
+                            "session.no_api_key",
+                            "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.",
+                        ),
+                    );
+                } else {
+                    notify.error(result.ai_error);
+                }
+            }
+        },
+        [setSession, t],
+    );
 
     const handleSend = async (content: string) => {
         if (!session || sendingMessage) return;
@@ -134,19 +207,11 @@ export function useSessionMessaging({
                 }
                 return next;
             });
-            // v0.4.0: the backend bumps cycle_step on each
-            // successful round-trip. Update local session state
-            // so CycleProgress reflects the new step.
-            setSession(result.session);
-            // v0.5.0: surface the step-evaluation verdict.
-            // ``step_evaluation`` is null when the route bypassed
-            // the evaluator — the tooltip just hides and no toast
-            // fires.
-            setStepEvaluation(result.step_evaluation);
-
-            // v1.4.0 — auto-loop. When the topic-transition
-            // evaluator successfully looped the session into a
-            // new cycle, append a transition card to the chat.
+            // v1.4.0 — auto-loop. When the topic-transition evaluator
+            // successfully looped the session into a new cycle, append a
+            // transition card to the chat. This is message-list specific (the
+            // assistant-ui thread has no ``messages`` array), so it stays here;
+            // the cycle/step/toast handling is shared via applyExchangeOutcome.
             const transition = result.topic_transition;
             if (transition && transition.looped) {
                 setMessages((prev) => [
@@ -160,58 +225,8 @@ export function useSessionMessaging({
                         nextTopic: transition.next_topic ?? "",
                     },
                 ]);
-                notify.success(
-                    t(
-                        "session.cycle_advanced",
-                        "Cycle {n} started",
-                    ).replace("{n}", String(transition.new_cycle_count)),
-                );
             }
-            if (
-                result.step_evaluation &&
-                result.step_evaluation.applied &&
-                result.step_evaluation.from_step !==
-                    result.session.cycle_step
-            ) {
-                // The AI accepted advance + the step actually
-                // moved (rules out same-step "applied" where the
-                // evaluator suggested the current step). Fire a
-                // brief toast naming the new step.
-                const newStepKey =
-                    CYCLE_STEPS[
-                        Math.min(
-                            CYCLE_STEPS.length,
-                            Math.max(1, result.session.cycle_step),
-                        ) - 1
-                    ];
-                const stepLabel = t(
-                    `cycle_steps.${newStepKey}.label`,
-                    newStepKey,
-                );
-                notify.info(
-                    t(
-                        "session.step_advance_toast",
-                        "Moving to: {step}",
-                    ).replace("{step}", stepLabel),
-                );
-            }
-            if (result.ai_error) {
-                // Map known classifications (no AI key / no provider
-                // configured) to a friendly, localized message.
-                // Unclassified / provider errors fall through to the
-                // raw detail.
-                const code = result.ai_error_code;
-                if (code === "no_api_key" || code === "no_provider") {
-                    notify.error(
-                        t(
-                            "session.no_api_key",
-                            "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.",
-                        ),
-                    );
-                } else {
-                    notify.error(result.ai_error);
-                }
-            }
+            applyExchangeOutcome(result);
         } catch (err) {
             // Roll back both optimistic appends + surface the
             // detail so the user knows the message was not saved.
@@ -228,5 +243,5 @@ export function useSessionMessaging({
         }
     };
 
-    return {sendingMessage, stepEvaluation, handleSend};
+    return {sendingMessage, stepEvaluation, handleSend, applyExchangeOutcome};
 }

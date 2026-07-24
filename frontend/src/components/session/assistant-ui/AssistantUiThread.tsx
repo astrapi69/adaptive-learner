@@ -59,6 +59,7 @@ import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
 import MicButton from "../../voice/MicButton";
 import SpeechButton from "../../voice/SpeechButton";
+import type {SessionMessageExchangeResult} from "../../../types";
 import {OPENING_RUN_FLAG, createSessionChatAdapter} from "./session-chat-adapter";
 
 interface AssistantUiThreadProps {
@@ -78,6 +79,13 @@ interface AssistantUiThreadProps {
      * doesn't have to type first. Fires exactly one opening run per session.
      */
     autoOpen?: boolean;
+    /**
+     * #1126 Phase 4a — domain wiring. Called once per completed turn with the
+     * full exchange result so the session shell advances the cycle step,
+     * surfaces the step-evaluation verdict, and fires the auto-loop /
+     * step-advance toasts (parity with SessionChat's ``handleSend``).
+     */
+    onExchange?: (result: SessionMessageExchangeResult) => void;
 }
 
 /**
@@ -174,10 +182,21 @@ export default function AssistantUiThread({
     sessionId,
     introTopic,
     autoOpen = false,
+    onExchange,
 }: AssistantUiThreadProps) {
     const {t} = useI18n();
+    // Keep the adapter memo stable per session while always invoking the latest
+    // onExchange (which closes over fresh session/step state each render).
+    const onExchangeRef = useRef(onExchange);
+    onExchangeRef.current = onExchange;
     const runtime = useLocalRuntime(
-        useMemo(() => createSessionChatAdapter(sessionId), [sessionId]),
+        useMemo(
+            () =>
+                createSessionChatAdapter(sessionId, {
+                    onExchange: (result) => onExchangeRef.current?.(result),
+                }),
+            [sessionId],
+        ),
     );
 
     // Imported-session AI opening (#1126 Phase 3b): fire ONE opening run per

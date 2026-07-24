@@ -86,7 +86,8 @@ export default function Session() {
         userSettings,
     });
 
-    const {sendingMessage, stepEvaluation, handleSend} = useSessionMessaging({
+    const {sendingMessage, stepEvaluation, handleSend, applyExchangeOutcome} =
+        useSessionMessaging({
         session,
         setSession,
         messages,
@@ -176,6 +177,7 @@ export default function Session() {
                         sessionId={session.id}
                         introTopic={importedTopic}
                         autoOpen={!!session.imported_conversation_id}
+                        onExchange={applyExchangeOutcome}
                     />
                 </Suspense>
             ) : (

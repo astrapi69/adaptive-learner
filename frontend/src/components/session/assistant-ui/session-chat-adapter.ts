@@ -23,6 +23,20 @@
 import type {ChatModelAdapter, ChatModelRunOptions, ThreadMessage} from "@assistant-ui/react";
 
 import {getStorage} from "../../../storage";
+import type {SessionMessageExchangeResult} from "../../../types";
+
+/**
+ * Domain-side callbacks the thread wires into the adapter (#1126 Phase 4a).
+ * ``onExchange`` receives the full ``SessionMessageExchangeResult`` from each
+ * completed turn so the session shell can advance the cycle step, surface the
+ * step-evaluation verdict, and fire the auto-loop / step-advance toasts — the
+ * same domain handling the legacy SessionChat path does via
+ * ``useSessionMessaging.handleSend``. Without it, the assistant thread would
+ * stream text but silently drop the learning mechanics.
+ */
+export interface SessionChatAdapterCallbacks {
+    onExchange?: (result: SessionMessageExchangeResult) => void;
+}
 
 /**
  * ``runConfig.custom`` flag the thread sets to request an AI opening turn.
@@ -64,11 +78,19 @@ function lastUserText(messages: readonly ThreadMessage[]): string {
  * yields the accumulating text as assistant-ui run results.
  *
  * @param sessionId - The LearningSession id the thread is attached to.
+ * @param callbacks - Domain-side hooks; ``onExchange`` fires once per completed
+ *   turn with the full exchange result (cycle step, step evaluation, topic
+ *   transition), so the session shell keeps the learning mechanics in sync.
  *
  * @example
- * const runtime = useLocalRuntime(createSessionChatAdapter(session.id));
+ * const runtime = useLocalRuntime(
+ *     createSessionChatAdapter(session.id, {onExchange: applyExchangeOutcome}),
+ * );
  */
-export function createSessionChatAdapter(sessionId: string): ChatModelAdapter {
+export function createSessionChatAdapter(
+    sessionId: string,
+    callbacks?: SessionChatAdapterCallbacks,
+): ChatModelAdapter {
     return {
         async *run({messages, runConfig, abortSignal}: ChatModelRunOptions) {
             // Normal turn: the latest user message. Opening turn: no user
@@ -84,6 +106,7 @@ export function createSessionChatAdapter(sessionId: string): ChatModelAdapter {
             let notify: (() => void) | null = null;
             let finished = false;
             let failure: unknown = null;
+            let exchange: SessionMessageExchangeResult | null = null;
             const waitForNext = () =>
                 new Promise<void>((resolve) => {
                     notify = resolve;
@@ -103,7 +126,8 @@ export function createSessionChatAdapter(sessionId: string): ChatModelAdapter {
                             queue.push(delta);
                             wake();
                         },
-                        onDone: () => {
+                        onDone: (result) => {
+                            exchange = result;
                             finished = true;
                             wake();
                         },
@@ -129,6 +153,11 @@ export function createSessionChatAdapter(sessionId: string): ChatModelAdapter {
 
             await streamed;
             if (failure) throw failure;
+
+            // Feed the completed turn to the session shell so it advances the
+            // cycle step, surfaces the step-evaluation verdict, and fires the
+            // auto-loop / step-advance toasts — parity with the legacy path.
+            if (exchange) callbacks?.onExchange?.(exchange);
         },
     };
 }
