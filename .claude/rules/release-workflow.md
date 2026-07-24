@@ -365,8 +365,12 @@ cd backend && poetry build
 # Frontend
 cd frontend && bun run build
 
-# Docker (if active)
-docker build -t adaptive_learner:test .
+# Docker: build the production compose images (MANDATORY since #1990 -
+# no longer "if active"). This is the build path the desktop launcher +
+# install.sh use; the docker-build-smoke.yml CI gate runs the same command
+# on release/** branches, but run it locally too before tagging. Build only,
+# no `up`.
+make docker-build-smoke
 ```
 
 On a build error: stop, report, fix, restart.
@@ -493,7 +497,7 @@ as "done". Missing items block the release.
 - [ ] Backend `poetry build` successful (skipped iff `package-mode = false`)
 - [ ] Frontend `bun run build` successful
 - [ ] `cd launcher && poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm` succeeds (MANDATORY for any release touching launcher/ or its embedded version)
-- [ ] Docker build successful (if active)
+- [ ] `make docker-build-smoke` successful (MANDATORY since #1990: builds the prod compose images - the launcher/install.sh path; also gated in CI on `release/**` via `docker-build-smoke.yml`)
 - [ ] Git tag created and pushed
 - [ ] GitHub release published
 - [ ] Docker image pushed (if active)

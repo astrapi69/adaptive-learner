@@ -128,4 +128,8 @@ jobs:
           path: |
             e2e/playwright-report
             e2e/test-results
+          # A green run produces no report/trace (default `list` reporter
+          # writes no playwright-report; test-results only fills on failure),
+          # so an empty upload is the correct, expected state — don't warn.
+          if-no-files-found: ignore
           retention-days: 14
