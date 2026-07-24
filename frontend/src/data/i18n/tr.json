@@ -3100,7 +3100,7 @@
       },
       "knowledge_from_text": {
         "title": "Metinden bilgi dersi",
-        "desc": "Bir ders kitabı bölümü yapıştırın; yapay zeka teoriyi kendi kelimeleriyle yazar ve alıştırmalar üretir."
+        "desc": "Bir ders kitabı bölümü yapıştırın veya bir kitap dosyası yükleyin; yapay zeka teoriyi kendi kelimeleriyle yazar ve alıştırmalar üretir."
       },
       "heading": "Bir şablonla başla",
       "blank": {

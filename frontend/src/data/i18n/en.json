@@ -3100,7 +3100,7 @@
       },
       "knowledge_from_text": {
         "title": "Knowledge lesson from text",
-        "desc": "Paste a textbook section; the AI writes the theory in its own words and generates exercises."
+        "desc": "Paste a textbook section or load a book file; the AI writes the theory in its own words and generates exercises."
       },
       "heading": "Start from a template",
       "blank": {

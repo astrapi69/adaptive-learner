@@ -3100,7 +3100,7 @@
       },
       "knowledge_from_text": {
         "title": "Wissens-Lektion aus Text",
-        "desc": "Füge einen Lehrbuch-Abschnitt ein; die KI schreibt die Theorie in eigenen Worten und generiert Übungen."
+        "desc": "Füge einen Lehrbuch-Abschnitt ein oder lade eine Buchdatei; die KI schreibt die Theorie in eigenen Worten und generiert Übungen."
       },
       "heading": "Mit Vorlage starten",
       "blank": {
