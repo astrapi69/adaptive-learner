@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.6.0** (**feature release** on top of the v2.5.0
+- **Current state:** **v2.6.1** (**feature release** on top of the v2.5.0
   authoring release. Highlights: the **session chat rebuilt on assistant-ui
   and cut over** #1126 - phased parity migration (i18n/theming/markdown
   #1984, Voice/Mic + read-aloud #1986, imported-session clean-open + AI

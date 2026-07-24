@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.6.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.6.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -321,7 +321,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.6.0**, a feature
+Active development. The current release is **v2.6.1**, a feature
 release whose headline is the **session chat rebuilt on
 assistant-ui and cut over** (the thread is the default chat, the
 self-built SessionChat is removed). Create-Lesson's book path
