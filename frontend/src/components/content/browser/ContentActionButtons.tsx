@@ -18,7 +18,7 @@ import {
   Plus,
   Upload,
 } from "lucide-react";
-import type { NavigateFunction } from "react-router-dom";
+import type { NavigateFunction } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter} from "react-router";
 import App from "./App";
 import {initSyncQueueReplay} from "./lib/pwa/sync-queue";
 // Tailwind first: it declares the @layer order (theme, base, components,

@@ -11,12 +11,12 @@
 
 import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const navigateMock = vi.fn();
-vi.mock("react-router-dom", async (orig) => ({
-    ...(await orig<typeof import("react-router-dom")>()),
+vi.mock("react-router", async (orig) => ({
+    ...(await orig<typeof import("react-router")>()),
     useNavigate: () => navigateMock,
 }));
 

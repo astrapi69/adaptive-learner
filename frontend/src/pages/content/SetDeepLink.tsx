@@ -25,7 +25,7 @@
 
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import SetShareButton from "../../components/content/share/SetShareButton";

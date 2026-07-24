@@ -8,7 +8,7 @@ import AppUpdateProvider from "./components/pwa/AppUpdateProvider";
 import { resolveStorageMode } from "./storage";
 import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie/dexie-user-data";
 import { lazyWithReload } from "./lib/pwa/lazy-route";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./styles/toast-theme.css";

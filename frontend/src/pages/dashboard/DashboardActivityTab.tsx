@@ -8,7 +8,7 @@
  * data is fetched once by the Dashboard and passed in.
  */
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import ActivityTrend from "../../components/dashboard/ActivityTrend";
 import LearningRepoWidget from "../../components/dashboard/LearningRepoWidget";

@@ -15,7 +15,7 @@
 
 import { Compass } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";

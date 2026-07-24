@@ -28,7 +28,7 @@
  */
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 
 import PageContainer from "../../shared/layout/PageContainer";
 import { useInfoHint } from "../../shared/feedback/useInfoHint";

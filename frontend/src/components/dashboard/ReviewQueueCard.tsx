@@ -16,7 +16,7 @@
 
 import {RefreshCw, Zap} from "lucide-react";
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import DueReviewCard from "../../shared/gamification/DueReviewCard";
 import {useI18n} from "../../hooks/ui/useI18n";

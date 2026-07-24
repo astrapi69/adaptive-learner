@@ -21,7 +21,7 @@
 
 import {ArrowRight, BookOpen, PartyPopper, RotateCcw} from "lucide-react";
 import {useEffect, useMemo, useRef, useState, type Ref} from "react";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router";
 
 import {Button} from "@/components/ui/button";
 

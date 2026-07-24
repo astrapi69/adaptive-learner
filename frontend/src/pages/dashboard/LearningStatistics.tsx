@@ -18,7 +18,7 @@
  */
 
 import {useEffect, useMemo, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 import {Flame, GraduationCap, Target, Timer} from "lucide-react";
 
 import ActivityHeatmap from "../../shared/gamification/ActivityHeatmap";

@@ -15,7 +15,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router";
 
 import InitialsAvatar from "../../shared/media/InitialsAvatar";
 import { useI18n } from "../../hooks/ui/useI18n";
