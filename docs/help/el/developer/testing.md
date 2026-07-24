@@ -4,7 +4,7 @@
 `make test` σε κάθε αλλαγή. Η στρατηγική είναι πυραμίδα: unit
 στη βάση, integration στη μέση, E2E smoke στην κορυφή.
 
-## Αριθμός δοκιμών (v1.20.0)
+## Αριθμός δοκιμών
 
 | Επίπεδο | Αριθμός | Εργαλείο |
 |---|---|---|
@@ -156,16 +156,39 @@ backend - το frontend lint τρέχει κατά CI, όχι κατά pre-commi
 
 ## CI
 
-Το `.github/workflows/ci.yml` τρέχει σε κάθε push στο main
-+ κάθε PR:
+Το CI χωρίζεται σε δύο βαθμίδες: οι πύλες ορθότητας τρέχουν σε κάθε
+PR (πρέπει να περάσουν για να γίνει merge), ενώ οι ακριβές ή
+μόνο-προειδοποιητικές σουίτες τρέχουν στη νυχτερινή βάρδια και κατά
+την κυκλοφορία (release).
 
-1. Backend tests (matrix Python 3.12 + 3.13)
-2. Plugin tests (ένα job ανά plugin· matrix-strategy)
-3. Frontend Vitest + tsc + lint
-4. ruff check + format-check
+Το `.github/workflows/ci.yml` τρέχει σε push στο `develop` / `main`
+και σε κάθε PR (Python 3.12):
+
+1. Backend tests (pytest)
+2. Plugin tests (`make test-plugins`, και τα 13 μέσω του backend venv)
+3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`), έλεγχος
+   κυκλικών εξαρτήσεων, Stylelint, Vitest, `vite build`, `npm audit`
+4. Pre-commit hooks σε όλα τα αρχεία
+5. Backend ruff + mypy + pip-audit
+6. Ελεγκτής απόκλισης τεκμηρίωσης (`verify_docs.py` + συγχρονισμός
+   mkdocs-nav)
+
+**Test Impact Analysis (#615):** σε ένα PR τρέχουν μόνο τα
+επηρεαζόμενα τεστ - `vitest run --changed origin/<base>` και
+`pytest --testmon`. Τα push στο `develop` / `main`, οι νυχτερινές
+εκτελέσεις και οι εκτελέσεις release τρέχουν πάντα την ΠΛΗΡΗ σουίτα.
+Η μετάπτωση στην πλήρη σουίτα είναι αυτόματη (μη επιλύσιμο base ref ή
+αστοχία της cache του testmon).
 
 Περισσότερες πύλες PR ζουν σε δικά τους workflows:
 
+- `complexity-check.yml` - η πύλη ratchet πολυπλοκότητας
+  (`make check-complexity-gate`, radon για Python + ESLint complexity
+  για TS). Είναι ratchet πάνω σε baseline: αποτυγχάνει μόνο σε ΝΕΟΥΣ ή
+  επιδεινωμένους παραβάτες σε σχέση με το `.complexity-baseline`, οπότε
+  μπλοκάρει τη νέα πολυπλοκότητα χωρίς να επιβάλλει σάρωση του
+  προϋπάρχοντος χρέους. Η πλήρης, μόνο-προειδοποιητική αναφορά
+  πολυπλοκότητας τρέχει νυχτερινά.
 - `cohesion-check.yml` - ο έλεγχος μεγέθους αρχείων (πύλη έναντι
   του `.filesize-whitelist`) συν δύο πύλες ονομάτων κλάσεων: νεκρά
   ονόματα κλάσεων CSS (`check-dead-classnames.py` έναντι του
@@ -192,6 +215,14 @@ backend - το frontend lint τρέχει κατά CI, όχι κατά pre-commi
 
 **Νυχτερινή βάρδια / Release (όχι σε PRs):**
 
+- `dexie-smoke.yml` - η πύλη E2E της λειτουργίας Dexie (καθημερινά +
+  σε `release/**` + dispatch· τοπικά `make test-dexie-smoke`)
+- `coverage.yml` - αναφορά κάλυψης (καθημερινά + dispatch)
+- `security-scan.yml` - pip-audit / npm audit / bandit (εβδομαδιαία +
+  σε `release/**` + dispatch· μόνο προειδοποιητικό)
+- `content-stats.yml` - απόκλιση στατιστικών περιεχομένου έναντι ενός
+  φρέσκου checkout του αποθετηρίου περιεχομένου (καθημερινά +
+  dispatch)
 - `mutation-frontend.yml` - Stryker mutation testing (νυχτερινά
   πίσω από τη μεταβλητή repo `ENABLE_NIGHTLY_MUTATION` + dispatch·
   κάθε εκτέλεση μεταλλάσσει μία φέτα των αρχείων, ώστε ο γύρος να
@@ -211,6 +242,6 @@ backend - το frontend lint τρέχει κατά CI, όχι κατά pre-commi
   εξέταση των εικόνων πριν από το merge παραμένει υποχρεωτική
 
 Το `.github/workflows/release-gate.yml` τρέχει σε tag pushes:
-επαληθεύει ότι τα version pins είναι συγχρονισμένα (χωρίς
-απόκλιση σε 12 αρχεία), τα lockfiles plugin ταιριάζουν,
-τα αναγεννώμενα artifacts είναι ενημερωμένα.
+επαληθεύει ότι τα version pins είναι συγχρονισμένα σε όλα τα αρχεία
+που φέρουν έκδοση (χωρίς απόκλιση), ότι τα lockfiles των plugins
+ταιριάζουν και ότι τα αναγεννώμενα artifacts είναι ενημερωμένα.

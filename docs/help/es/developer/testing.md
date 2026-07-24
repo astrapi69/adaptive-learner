@@ -5,7 +5,7 @@ La disciplina de pruebas de AdaptiveLearner se aplica mediante
 unitarias en la base, integración en el medio, humo E2E en la
 cima.
 
-## Recuentos de pruebas (v1.20.0)
+## Recuentos de pruebas
 
 | Capa | Recuento | Herramienta |
 |---|---|---|
@@ -158,16 +158,41 @@ se ejecuta en tiempo de CI, no en pre-commit.
 
 ## CI
 
-`.github/workflows/ci.yml` se ejecuta en cada push a main + cada
-PR:
+La CI se divide en dos niveles: los gates de corrección se ejecutan
+en cada PR (deben pasar para poder fusionar), y las suites caras o
+solo de aviso se ejecutan en el turno de noche y en el momento del
+release.
 
-1. Pruebas del backend (matriz Python 3.12 + 3.13)
-2. Pruebas de plugins (un trabajo por plugin; estrategia de matriz)
-3. Vitest del frontend + tsc + lint
-4. ruff check + comprobación de formato
+`.github/workflows/ci.yml` se ejecuta en cada push a `develop` /
+`main` y en cada PR (Python 3.12):
+
+1. Pruebas del backend (pytest)
+2. Pruebas de plugins (`make test-plugins`, los 13 mediante el venv
+   del backend)
+3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
+   comprobación de dependencias circulares, Stylelint, Vitest,
+   `vite build`, `npm audit`
+4. Hooks de pre-commit sobre todos los archivos
+5. ruff + mypy + pip-audit del backend
+6. Verificador de deriva de la documentación (`verify_docs.py` +
+   sincronización de la navegación de mkdocs)
+
+**Test Impact Analysis (#615):** en un PR solo se ejecutan las
+pruebas afectadas - `vitest run --changed origin/<base>` y
+`pytest --testmon`. Los push a `develop` / `main`, las ejecuciones
+nocturnas y las de release ejecutan siempre la suite COMPLETA. El
+retorno a la suite completa es automático (una referencia base no
+resoluble o un fallo de la caché de testmon).
 
 Otros gates de PR viven en flujos de trabajo propios:
 
+- `complexity-check.yml` - el gate de trinquete de complejidad
+  (`make check-complexity-gate`, radon para Python + complejidad de
+  ESLint para TS). Es un trinquete de línea base: solo falla ante
+  infractores NUEVOS o que empeoran frente a `.complexity-baseline`,
+  de modo que bloquea la complejidad nueva sin forzar una limpieza
+  de la deuda preexistente. El informe completo de complejidad, solo
+  de aviso, se ejecuta cada noche.
 - `cohesion-check.yml` - la comprobación de tamaño de archivo
   (gate contra `.filesize-whitelist`) más dos gates de nombres de
   clase: nombres de clase CSS muertos (`check-dead-classnames.py`
@@ -195,6 +220,13 @@ Otros gates de PR viven en flujos de trabajo propios:
 
 **Turno de noche / release (no en PRs):**
 
+- `dexie-smoke.yml` - el gate E2E del modo Dexie (diario + en
+  `release/**` + bajo demanda; localmente `make test-dexie-smoke`)
+- `coverage.yml` - informe de cobertura (diario + bajo demanda)
+- `security-scan.yml` - pip-audit / npm audit / bandit (semanal +
+  en `release/**` + bajo demanda; solo de aviso)
+- `content-stats.yml` - deriva de las estadísticas de contenido
+  frente a un checkout fresco del contenido (diaria + bajo demanda)
 - `mutation-frontend.yml` - mutation testing con Stryker
   (nocturno tras la variable de repo `ENABLE_NIGHTLY_MUTATION` +
   bajo demanda; cada ejecución muta una porción de los archivos
@@ -214,6 +246,7 @@ Otros gates de PR viven en flujos de trabajo propios:
   merge sigue siendo obligatoria
 
 `.github/workflows/release-gate.yml` se ejecuta en pushes de
-etiquetas: verifica que las versiones estén sincronizadas (sin
-deriva en 12 archivos), que los lockfiles de plugins coincidan y
-que los artefactos regenerados estén actualizados.
+etiquetas: verifica que los pins de versión estén sincronizados en
+todos los archivos que llevan versión (sin deriva), que los
+lockfiles de plugins coincidan y que los artefactos regenerados
+estén actualizados.

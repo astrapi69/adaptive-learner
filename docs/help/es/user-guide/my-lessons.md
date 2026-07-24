@@ -52,12 +52,19 @@ descargada.
 Cada lección en Mis lecciones tiene:
 
 - **Reproducir** - ábrela en el visor de lecciones.
-- **Editar** - vuelve a abrir el análisis fuente para ajustar y
-  volver a guardar (disponible para lecciones basadas en análisis).
-  Si uno de tus conjuntos contiene **varias lecciones**, un
+- **Editar** - abre el **creador de lecciones prerrellenado** con
+  los metadatos, las tarjetas y los ejercicios de la lección. Si
+  uno de tus conjuntos contiene **varias lecciones**, un
   **selector de lecciones** pregunta primero cuál quieres editar.
   Las lecciones de texto de libro abren directamente el editor de
-  ejercicios; los datos del libro adjuntos se conservan.
+  ejercicios; los metadatos del libro adjuntos se conservan. Al
+  guardar eliges entre **Guardar cambios** (sobrescribe la misma
+  lección - tu progreso de aprendizaje se conserva para las
+  tarjetas sin cambios, las modificadas empiezan de cero) y
+  **Guardar como copia** (crea una lección nueva y el original
+  queda intacto). Las lecciones basadas en análisis siguen
+  abriendo el análisis de chat subyacente. Las lecciones ajenas
+  (descargadas) permanecen de solo lectura.
 - **Eliminar** - elimínala (con confirmación).
 
 ---

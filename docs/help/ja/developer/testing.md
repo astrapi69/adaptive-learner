@@ -4,17 +4,17 @@
 
 AdaptiveLearnerのテスト規律は、すべての変更に対して`make test`によって強制されます。戦略はピラミッド形式です。ベースにユニットテスト、中間に統合テスト、頂点にE2Eスモークテストが位置します。
 
-## テスト数（v1.20.0）
+## テスト数
 
-| レイヤー | 件数 | ツール |
-|---|---|---|
-| バックエンドユニット + 統合 | 786 | pytest ^9 |
-| プラグインテスト（10プラグイン） | 615 | pytest ^9 |
-| フロントエンドユニット + 統合 | 1233 | Vitest 4 |
-| E2Eスモーク | 16スペックファイル | Playwright |
-| **合計（`make test`）** | **2634** | |
+| レイヤー | ツール |
+|---|---|
+| バックエンドユニット + 統合 | pytest ^9 |
+| プラグインテスト（13プラグイン） | pytest ^9 |
+| フロントエンドユニット + 統合 | Vitest 4 |
+| E2Eスモーク | Playwright |
+| Dexieモードのリリースゲート | Playwright |
 
-プラグイン内訳: assessment 110 + ai-anthropic 34 + ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 + tools 58 + gamification 23 + anki 20 + notebooklm 27。
+テスト数はリリースごとに増えていきます。同期がずれてしまう数値の重複を避けるため、このページには合計をハードコードしません。テスト数とカバレッジの唯一の正準かつ常に最新のソースは`docs/audits/current-coverage.md`です。13のプラグインは、assessment、3つのAIプロバイダー（anthropic / openai / gemini）、session、tracking、tools、gamification、anki、notebooklm、learning-repo、content-loader、missionsです。
 
 ## バックエンドpytest
 
@@ -137,25 +137,36 @@ cd backend && poetry run pre-commit install
 
 ## CI
 
-`.github/workflows/ci.yml`はmainへのすべてのプッシュとすべてのPRで実行されます。
+CIは2つの層に分かれます。正しさのゲートはすべてのPRで実行され（マージには合格が必須です）、コストの高いスイートや警告のみのスイートはナイトシフトとリリース時に実行されます。
 
-1. バックエンドテスト（Python 3.12 + 3.13マトリクス）
-2. プラグインテスト（プラグインごとに1ジョブ; マトリクス戦略）
-3. フロントエンドVitest + tsc + lint
-4. ruff check + format-check
+`.github/workflows/ci.yml`は`develop` / `main`へのプッシュとすべてのPRで実行されます（Python 3.12）。
+
+1. バックエンドテスト（pytest）
+2. プラグインテスト（`make test-plugins`、バックエンドのvenv経由で13個すべて）
+3. フロントエンド: `tsc --noEmit`、ESLint（`--max-warnings 0`）、循環依存チェック、Stylelint、Vitest、`vite build`、`npm audit`
+4. すべてのファイルに対するpre-commitフック
+5. バックエンドのruff + mypy + pip-audit
+6. ドキュメントのドリフト検証（`verify_docs.py` + mkdocs-navの同期）
+
+**Test Impact Analysis (#615):** PRでは影響を受けるテストのみが実行されます - `vitest run --changed origin/<base>`と`pytest --testmon`。`develop` / `main`へのプッシュ、ナイトリー実行、リリース実行では常にフルスイートが実行されます。フルスイートへのフォールバックは自動です（ベース参照を解決できない場合、またはtestmonのキャッシュミス）。
 
 さらに、いくつかのPRゲートは独自のワークフローにあります。
 
+- `complexity-check.yml` - 複雑度ラチェットゲート（`make check-complexity-gate`、Pythonにはradon、TSにはESLintの複雑度ルール）。これはベースラインラチェットです。`.complexity-baseline`に対して新規または悪化した違反がある場合にのみ失敗するため、既存の負債の一掃を強制することなく、新しい複雑度をブロックします。警告のみの完全な複雑度レポートはナイトリーで実行されます。
 - `cohesion-check.yml` - ファイルサイズガード（`.filesize-whitelist`に対するゲート）に加えて、2つのクラス名ゲート: 死んだCSSクラス名（`.dead-classnames-baseline`に対する`check-dead-classnames.py`）と**未スタイルclassNameゲート**（`--unstyled`、`.unstyled-classnames-baseline`に対するラチェット） - トークンがすべて死んでいる`className`はPRをブロックします。対になるフォルダーサイズガードはローカルで`make check-folder-size`により実行します。
-- `visual-baseline-gate.yml` - 視覚的にクリティカルなパス（レッスンコンポーネント、演習レンダラー、テーマ/CSSファイル）を変更するPRは、影響を受けるベースラインスクリーンショットを同じPRで持ち込まなければなりません。証明可能に無害な変更にはエスケープラベル`visual-baselines-unaffected`。
-- `testid-reference-gate.yml` - E2Eスペックが静的に参照する`data-testid`を（ユーザーの目に付きやすいサーフェスで）、スペックに触れずに削除または改名するPRは、このゲートで失敗します（`make check-testid-refs`）。エスケープラベル`testid-refs-unaffected`。
+- `visual-baseline-gate.yml` - 視覚的にクリティカルなパス（レッスンコンポーネント、演習レンダラー、テーマ/CSSファイル）を変更するPRは、影響を受けるベースラインスクリーンショットを同じPRで持ち込まなければなりません。証明可能に無害な変更にはエスケープラベル`visual-baselines-unaffected`を使います。
+- `testid-reference-gate.yml` - E2Eスペックが静的に参照する`data-testid`を（ユーザーの目に付きやすいサーフェスで）、スペックに触れずに削除または改名するPRは、このゲートで失敗します（`make check-testid-refs`）。エスケープラベルは`testid-refs-unaffected`。
 - `docker-build-smoke.yml` - 本番Composeイメージ（ランチャー/install.shのパス）のビルドのみのスモーク。PRではパスフィルター付き、加えて`release/**`、週次、手動ディスパッチで実行。ローカルでは`make docker-build-smoke`。
 
-**ナイトシフト / リリース（PRでは実行されない）**のワークフローには、特に次のものがあります。
+**ナイトシフト / リリース（PRでは実行されない）:**
 
-- `mutation-frontend.yml` - Strykerミューテーションテスト（リポジトリ変数`ENABLE_NIGHTLY_MUTATION`の背後でのナイトリー + 手動ディスパッチ。実行がジョブのタイムアウトに収まるよう、1回の実行でファイルの1スライスをミューテートします）。バックエンドのミューテーションテストはmutmutを使用します。
-- `webkit-gate.yml` - 実WebKitエンジンのレイアウトゲート（Chromiumゲートには構造的に見えないiOS/Safariのバグクラス）。リポジトリ変数`ENABLE_NIGHTLY_WEBKIT`の背後で毎日、`release/**`では常に、手動ディスパッチでも実行されます。
-- `visual-regression.yml` - ビジュアルベースラインのマトリクス（毎日 + 手動ディスパッチ。`update_baselines=true`はベースラインをCIで再レンダリングし、アーティファクトとしてアップロードします）。
-- `visual-baseline-sync.yml` - サービスワークフロー: ベースラインをCIでレンダリングし、コミットとしてPRブランチにプッシュします（ラベル`refresh-visual-baselines`、またはPR番号を指定した手動ディスパッチ） - マージ前の画像レビューは引き続き必須です。
+- `dexie-smoke.yml` - DexieモードのE2Eゲート（毎日 + `release/**` + 手動ディスパッチ。ローカルでは`make test-dexie-smoke`）
+- `coverage.yml` - カバレッジレポート（毎日 + 手動ディスパッチ）
+- `security-scan.yml` - pip-audit / npm audit / bandit（週次 + `release/**` + 手動ディスパッチ。警告のみ）
+- `content-stats.yml` - フレッシュなコンテンツリポジトリのチェックアウトに対するコンテンツ統計ドリフトの検査（毎日 + 手動ディスパッチ）
+- `mutation-frontend.yml` - Strykerミューテーションテスト（リポジトリ変数`ENABLE_NIGHTLY_MUTATION`の背後でのナイトリー + 手動ディスパッチ。実行がジョブのタイムアウトに収まるよう、1回の実行でファイルの1スライスをミューテートします）。バックエンドのミューテーションテストはmutmutを使用します
+- `webkit-gate.yml` - 実WebKitエンジンのレイアウトゲート（Chromiumのゲートには構造的に見えないiOS/Safariのバグクラス）。リポジトリ変数`ENABLE_NIGHTLY_WEBKIT`の背後で毎日、`release/**`では常に、手動ディスパッチでも実行されます
+- `visual-regression.yml` - ビジュアルベースラインのマトリクス（毎日 + 手動ディスパッチ。`update_baselines=true`はベースラインをCIで再レンダリングし、アーティファクトとしてアップロードします）
+- `visual-baseline-sync.yml` - サービスワークフロー: ベースラインをCIでレンダリングし、コミットとしてPRブランチにプッシュします（ラベル`refresh-visual-baselines`、またはPR番号を指定した手動ディスパッチ） - マージ前の画像レビューは引き続き必須です
 
-`.github/workflows/release-gate.yml`はタグプッシュ時に実行されます: バージョンピンが同期されていること（12ファイル全体でドリフトなし）、プラグインのロックファイルが一致すること、再生成されたアーティファクトが最新であることを検証します。
+`.github/workflows/release-gate.yml`はタグプッシュ時に実行されます。バージョンピンがバージョンを持つすべてのファイルにわたって同期されていること（ドリフトなし）、プラグインのロックファイルが一致していること、再生成されるアーティファクトが最新であることを検証します。

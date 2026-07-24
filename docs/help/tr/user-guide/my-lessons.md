@@ -46,12 +46,18 @@ ders görüntüleyicisinde oynatılır.
 Her Dersim şunlara sahiptir:
 
 - **Oynat** - ders görüntüleyicide açın.
-- **Düzenle** - kaynak analizini yeniden açın, böylece
-  ayarlayabilir ve yeniden kaydedebilirsiniz (analiz tabanlı
-  dersler için mevcuttur). Kendi setlerinizden biri **birden çok
-  ders** içeriyorsa, önce bir **ders seçici** hangisini düzenlemek
-  istediğinizi sorar. Kitap metni dersleri doğrudan alıştırma
-  düzenleyicisini açar; eklenmiş kitap bilgileri korunur.
+- **Düzenle** - dersin meta verileri, kartları ve alıştırmalarıyla
+  **önceden doldurulmuş ders oluşturma sihirbazını** açar. Kendi
+  setlerinizden biri **birden çok ders** içeriyorsa, önce bir
+  **ders seçici** hangisini düzenlemek istediğinizi sorar. Kitap
+  metni dersleri doğrudan alıştırma düzenleyicisini açar; eklenmiş
+  kitap bilgileri korunur. Kaydederken seçim yaparsınız:
+  **Değişiklikleri kaydet** (aynı dersin üzerine yazar; değişmeyen
+  kartların öğrenme ilerlemesi korunur, değişenler sıfırdan başlar)
+  ya da **Kopya olarak kaydet** (yeni bir ders oluşturur, orijinal
+  dokunulmadan kalır). Analiz tabanlı dersler yine temelindeki
+  sohbet analizini açar. İndirilen yabancı dersler salt okunur
+  kalır.
 - **Sil** - kaldırın (onay ile birlikte).
 
 ---

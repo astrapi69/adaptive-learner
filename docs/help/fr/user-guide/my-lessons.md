@@ -37,7 +37,7 @@ Dans la section **Mes leçons**, chaque leçon possède des actions :
 | Action | Description |
 |--------|-------------|
 | Lire | Lance la leçon dans le lecteur standard |
-| Modifier | Ouvre un éditeur JSON pour modifier la structure. Si un de vos ensembles contient **plusieurs leçons**, un **sélecteur de leçon** demande d'abord laquelle modifier. Les leçons de texte de livre ouvrent directement l'**éditeur d'exercices** ; les métadonnées de livre jointes sont conservées |
+| Modifier | Ouvre le **créateur de leçons pré-rempli** avec les métadonnées, les cartes et les exercices de la leçon. Si un de vos ensembles contient **plusieurs leçons**, un **sélecteur de leçon** demande d'abord laquelle modifier. Les leçons de texte de livre ouvrent directement l'**éditeur d'exercices** ; les métadonnées de livre jointes sont conservées. À l'enregistrement, vous choisissez entre **Enregistrer les modifications** (écrase la même leçon - la progression d'apprentissage des cartes inchangées est conservée, les cartes modifiées repartent de zéro) et **Enregistrer comme copie** (crée une nouvelle leçon, l'original reste intact). Les leçons issues d'une analyse ouvrent toujours l'analyse de chat sous-jacente ; les leçons téléchargées d'autres auteurs restent en lecture seule |
 | Supprimer | Supprime la leçon localement |
 | Exporter | Exporte en fichier `.json` ou `.zip` |
 | Partager | Ouvre l'assistant de partage communautaire |
