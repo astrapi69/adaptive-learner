@@ -1,12 +1,12 @@
 # Múltiplos repositórios de conteúdo
 
-As lições vêm de **repositórios de conteúdo** — repositórios
+As lições vêm de **repositórios de conteúdo** - repositórios
 GitHub públicos que agrupam conjuntos estruturados de lições. Não
 estás limitado ao catálogo oficial: o Adaptive Learner pode
 carregar múltiplos repositórios em simultâneo, ligar os teus
 próprios e recomendar repositórios curados (EXP-023).
 
-<!-- TODO: Captura de ecrã — Definições → Dados → secção Repositórios de conteúdo com o repo oficial + um repo próprio -->
+<!-- TODO: Captura de ecrã - Definições → Dados → secção Repositórios de conteúdo com o repo oficial + um repo próprio -->
 
 ---
 
@@ -52,7 +52,7 @@ Podes ligar quantos repos quiseres. Na lista em
 
 - **Adicionar** através do URL do repo,
 - **Remover** (o repo oficial permanece protegido),
-- **Reordenar** — a ordem determina a **prioridade**.
+- **Reordenar** - a ordem determina a **prioridade**.
   Se dois repos trouxerem o mesmo conjunto, ganha o que está mais
   acima.
 
@@ -69,7 +69,7 @@ diretamente o diálogo "Adicionar repositório" com o URL
 pré-preenchido; o código QR faz o mesmo no smartphone. Assim
 partilhas um curso com o teu grupo de estudo sem digitação manual.
 
-<!-- TODO: Captura de ecrã — diálogo de partilha com código QR -->
+<!-- TODO: Captura de ecrã - diálogo de partilha com código QR -->
 
 ---
 
@@ -83,7 +83,7 @@ Trust:
 |---|---|
 | **0** | Ainda não validado ou verificação falhou. |
 | **1** | Tecnicamente válido: pelo menos uma lição, sem conteúdo executável. |
-| **3** | **Oficialmente recomendado** — da lista curada de recomendações. |
+| **3** | **Oficialmente recomendado** - da lista curada de recomendações. |
 
 A validação é puramente técnica (estrutura + segurança). Uma
 avaliação baseada em conteúdo/comunidade (Trust 2) precisa de um
@@ -104,7 +104,7 @@ badge **Oficialmente recomendado** (Trust 3).
 ## Avaliações locais
 
 Podes atribuir **estrelas** localmente a cada repo. Esta avaliação
-é puramente privada e é guardada apenas no teu dispositivo — ajuda-te
+é puramente privada e é guardada apenas no teu dispositivo - ajuda-te
 a organizar as tuas próprias fontes. Avaliações à escala da
 comunidade também precisam de um serviço de backend partilhado e
 estão adiadas.
@@ -123,6 +123,6 @@ partilhar as definições.
 
 ## Páginas relacionadas
 
-- [Navegador de Conteúdo](content-browser.md) — encontrar, filtrar, descarregar conjuntos
-- [Criar lições](../content-creation/overview.md) — contribuir com conteúdos próprios
-- [Backup e restauro](backup.md) — os repos ligados fazem parte do snapshot
+- [Navegador de Conteúdo](content-browser.md) - encontrar, filtrar, descarregar conjuntos
+- [Criar lições](../content-creation/overview.md) - contribuir com conteúdos próprios
+- [Backup e restauro](backup.md) - os repos ligados fazem parte do snapshot

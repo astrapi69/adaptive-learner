@@ -6,7 +6,7 @@ v1.61.0. As notas técnicas completas por versão estão em
 
 ---
 
-## v1.69.0 — Links de exemplo + recomendações de livros
+## v1.69.0 - Links de exemplo + recomendações de livros
 
 - **Links de exemplo na teoria:** Um passo de teoria pode trazer um
   link opcional "Ver exemplo".
@@ -16,7 +16,7 @@ v1.61.0. As notas técnicas completas por versão estão em
 - **Correção de backup:** o título do conjunto é lido corretamente
   do manifesto ao restaurar.
 
-## v1.68.0 — Exportação de resultados + retro-links de teoria
+## v1.68.0 - Exportação de resultados + retro-links de teoria
 
 - **Exportar resultado da lição:** "Copiar resultado" / "Guardar
   como ficheiro" (relatório Markdown para assistentes de IA).
@@ -26,14 +26,14 @@ v1.61.0. As notas técnicas completas por versão estão em
   badges numéricos (seguro para daltónicos).
 - **Contraste do modo escuro** corrigido em vários pontos.
 
-## v1.67.1 — Restauro de backup + estabilidade do deploy
+## v1.67.1 - Restauro de backup + estabilidade do deploy
 
 - Correção **sistemática de restauro de backup**.
 - Recarregamento automático em chunk de deploy desatualizado.
 - Polimento do filtro de Subject (oculto com ≤ 1 Subject,
   mais usado primeiro).
 
-## v1.65.0 — Avaliação retomável + atalho Enter
+## v1.65.0 - Avaliação retomável + atalho Enter
 
 - **Avaliação retomável:** interromper o teste e continuar mais
   tarde de onde paraste.
@@ -42,14 +42,14 @@ v1.61.0. As notas técnicas completas por versão estão em
 - Exercícios de correspondência mais claros + revisão dos design
   tokens.
 
-## v1.64.0 — Reformulação do onboarding
+## v1.64.0 - Reformulação do onboarding
 
 - **Início rápido apenas com Nome + Tema**; o resto assume
   predefinições.
 - **Assistente de onboarding** opcional (uma pergunta por ecrã).
 - A **avaliação é agora opcional** ([Onboarding](user-guide/onboarding.md)).
 
-## v1.63.0 — Presets de tema WCAG AA
+## v1.63.0 - Presets de tema WCAG AA
 
 - **6 temas recomendados** (Catppuccin Latte/Mocha, Supabase,
   Graphite, Soft Pop, Amethyst Haze), conformes com AA por cálculo
@@ -57,13 +57,13 @@ v1.61.0. As notas técnicas completas por versão estão em
 - Auditoria sistemática de i18n; filtro do Dashboard orientado ao
   utilizador.
 
-## v1.62.0 — Integridade do backup + proveniência da build
+## v1.62.0 - Integridade do backup + proveniência da build
 
 - Reforço do **restauro de backup** (coerção de tipos de dados,
   ordem de FK).
 - O About mostra informações reais da build em vez de "unknown".
 
-## v1.61.0 — Conformidade dos botões + retoma de lição
+## v1.61.0 - Conformidade dos botões + retoma de lição
 
 - Conformidade de botões shadcn em toda a aplicação.
 - **Lição pausada** continua no passo exato.
@@ -86,4 +86,4 @@ v1.61.0. As notas técnicas completas por versão estão em
 ## Páginas relacionadas
 
 - [Primeiros passos](user-guide/getting-started.md)
-- [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases) — notas completas
+- [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases) - notas completas

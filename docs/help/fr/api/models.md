@@ -43,7 +43,7 @@ Relations : `projects`, `curriculums`, `profiles`,
 | model_override_gemini | string \| null | Défaut `null` |
 
 Le schéma réseau (`UserSettingsOut`) remplace les trois champs
-`api_key_*` par des booléens `has_<provider>_key: bool` — le
+`api_key_*` par des booléens `has_<provider>_key: bool` - le
 texte clair ne revient jamais vers le client. Depuis v1.20.0 /
 Phase 34, le schéma réseau porte également
 `key_source_<provider>: ApiKeySource` (enum :

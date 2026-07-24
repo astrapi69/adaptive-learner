@@ -61,7 +61,7 @@ spot direction:
 
 Which methods have you actually used? Many learners discover
 they default to one method (often deductive) and never try
-the others. The bar chart on the Dashboard is a mirror — not
+the others. The bar chart on the Dashboard is a mirror - not
 a competition.
 
 ### Streak
@@ -76,13 +76,13 @@ low-key. The other side of the chart is more important.
 The dual-prompt evaluator writes a `StepEvaluation` row per
 AI round-trip. The tracking aggregator turns these into:
 
-- **Average confidence** — how sure the AI is on average
+- **Average confidence** - how sure the AI is on average
   that you're ready to advance. Low (< 0.5) means the
   material is genuinely hard for you. That's information,
   not a verdict.
-- **Repeat count** — how often the evaluator said "stay
+- **Repeat count** - how often the evaluator said "stay
   here." Heavy-repeat phases are normal for dense topics.
-- **Time per step** — total wall-clock seconds you've
+- **Time per step** - total wall-clock seconds you've
   spent on each step across the project (clamped to
   exclude > 2h gaps). The step with the most time is
   where the cognitive work is happening for you.
@@ -93,15 +93,15 @@ The Progress page renders all of this as bar charts.
 
 Deliberately:
 
-- **No engagement metrics** — no "minutes per day" guilt,
+- **No engagement metrics** - no "minutes per day" guilt,
   no notifications, no daily reminders. Adaptive Learner
   doesn't fight for your attention.
-- **No comparison to other users** — you're alone in your
+- **No comparison to other users** - you're alone in your
   data (Local mode) or alone with the backend (Server
   mode). No leaderboards, no peer comparison.
-- **No "lessons completed"** — there's no fixed curriculum
+- **No "lessons completed"** - there's no fixed curriculum
   to complete. You set your own topic.
-- **No "mastery percent"** — what would 100% even mean
+- **No "mastery percent"** - what would 100% even mean
   for a learning topic? Mastery is a posture, not a
   finish line.
 
@@ -110,7 +110,7 @@ Deliberately:
 On top of the ProgressCommit-as-Git substrate, three
 motivational layers ship:
 
-- **XP + Levels** — base 50 XP per ended session, plus
+- **XP + Levels** - base 50 XP per ended session, plus
   +10 per completed cycle, +25 per cycle-step-7, +50
   first-method bonus, all multiplied by the streak
   multiplier (up to 2.75× at a 7-day streak). Levels
@@ -120,7 +120,7 @@ motivational layers ship:
   consistency 4 / method_explorer 7 / depth 7 /
   polyglot 3), seeded from `badges.yaml` on first start.
   Predicates evaluate after every session.
-- **Streak heatmap** — 365 days, GitHub-style, weekly
+- **Streak heatmap** - 365 days, GitHub-style, weekly
   columns. Freezes: 1 per 7 streak days, max 3 stockpiled,
   pause-not-reset semantics. Weekend mode toggle skips
   Sat/Sun gaps.
@@ -140,7 +140,7 @@ profile.
 
 In Server mode the data is in SQLite on the backend host.
 Encrypted API keys aside, none of the row data is sensitive
-in the usual sense — it's just method names, integer ratings,
+in the usual sense - it's just method names, integer ratings,
 timestamps. But it's *yours*. Adaptive Learner sends none of
 it to any third-party analytics or telemetry service.
 

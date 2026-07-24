@@ -99,7 +99,7 @@ class ElementError(Base):
 ```
 
 ``learning_sessions``'dan tasarım gereği ayrıştırılmıştır (FK
-yok) — içerik dersleri, ilişkisel birleştirme yoluyla değil,
+yok) - içerik dersleri, ilişkisel birleştirme yoluyla değil,
 dize ile içerik seti / ders kimliklerine başvurur.
 
 ### Upsert geçiş matrisi
@@ -138,7 +138,7 @@ bir satırın sonraki incelemesini tahmin eder:
 | 0 | ``last_attempt_at``'dan 1 gün sonra |
 | 1 | 3 gün |
 | 2 | 7 gün |
-| ≥ 3 | ustalaşıldı — kuyruktan hariç |
+| ≥ 3 | ustalaşıldı - kuyruktan hariç |
 
 ### Öncelik sıralaması
 
@@ -180,7 +180,7 @@ hook'lar olmadan bunu alır.
 ### Şema değişikliği
 
 ```python
-# app/models/__init__.py — Phase 46F.1
+# app/models/__init__.py - Phase 46F.1
 LEARNING_PROJECT_KIND_STANDARD = "standard"
 LEARNING_PROJECT_KIND_CONTENT = "content"
 
@@ -200,12 +200,12 @@ class LearningProject(Base):
 
 ``adaptive_learner_gamification.xp_service`` şunları kazanır:
 
-- ``compute_stars(correct, total)`` — %50 / %75 / %90 bantlarıyla
+- ``compute_stars(correct, total)`` - %50 / %75 / %90 bantlarıyla
   0-3 yıldız puan.
 - ``calculate_lesson_session_xp(*, stars, first_attempt, streak_days)``
-  — saf hesaplayıcı. 30 taban + yıldız başına 10 + aynı sohbet
+  - saf hesaplayıcı. 30 taban + yıldız başına 10 + aynı sohbet
   formülüyle seri çarpanı.
-- ``award_xp_for_lesson_session(db, *, session)`` — formülü uygulayan
+- ``award_xp_for_lesson_session(db, *, session)`` - formülü uygulayan
   kalıcılık sarmalayıcısı.
 
 Dağıtım, ``GamificationPlugin.on_session_complete``'de
@@ -233,7 +233,7 @@ Element takip + SRS zinciri **her iki** depolama modunda da aynı
 şekilde çalışır. Ders oturumu birleştirme + oyunlaştırma yan
 etkileri **yalnızca API modundadır**. Dexie modunda ders
 tamamlanması hâlâ ``LessonProgress`` yazar, hâlâ ``ElementError``
-satırları kaydeder ve hâlâ inceleme kuyruğunu yönlendirir — ancak
+satırları kaydeder ve hâlâ inceleme kuyruğunu yönlendirir - ancak
 ``LearningSession`` yazma + ``on_session_complete`` hook'u hiçbir
 zaman tetiklenmez (arka uç yok, hook yok).
 
@@ -241,14 +241,14 @@ zaman tetiklenmez (arka uç yok, hook yok).
 
 ## Sonraki nereden bakılır
 
-- ``backend/app/services/element_errors.py`` — upsert geçiş matrisi.
-- ``backend/app/services/element_srs.py`` — zamanlayıcı.
-- ``backend/app/services/lesson_session_unification.py`` —
+- ``backend/app/services/element_errors.py`` - upsert geçiş matrisi.
+- ``backend/app/services/element_srs.py`` - zamanlayıcı.
+- ``backend/app/services/lesson_session_unification.py`` -
   sözde proje + hook tetikleme.
 - ``plugins/adaptive-learner-plugin-gamification/
-  adaptive_learner_gamification/xp_service.py`` —
+  adaptive_learner_gamification/xp_service.py`` -
   ``calculate_lesson_session_xp`` + dağıtım.
-- ``frontend/src/lib/learning-project.ts`` — sözde proje
+- ``frontend/src/lib/learning-project.ts`` - sözde proje
   filtre yardımcısı.
 
 ---
@@ -257,29 +257,29 @@ zaman tetiklenmez (arka uç yok, hook yok).
 
 Pasif tekrarı aktif öğrenmeye dönüştüren üç katmanlı ekleme:
 
-**Token-diff + DiffHighlight** — Free_text ve word_tiles yanlış
+**Token-diff + DiffHighlight** - Free_text ve word_tiles yanlış
 cevapları artık sonuç paragrafının hemen altında
 `<DiffHighlight tokens={tokenDiff(input, canonical)} />` oluşturur.
-Algoritma `frontend/src/lib/exercises/token-diff.ts`'de — saf
+Algoritma `frontend/src/lib/exercises/token-diff.ts`'de - saf
 kelime düzeyinde LCS, NFC normalleştirilmiş.
 
-**Cloze alıştırma türü (şema 1.1)** — beşinci ExerciseType: görünür
+**Cloze alıştırma türü (şema 1.1)** - beşinci ExerciseType: görünür
 `___` işaretçileriyle boşluk doldurma. İki oluşturma modu: `type`
 (varsayılan, `<input>`) ve `select` (`distractors`'dan seçeneklerle
 `<select>`).
 
-**Cloze oluşturucu** — `generateClozeFromError(error,
+**Cloze oluşturucu** - `generateClozeFromError(error,
 sourceExercise, sourceCard)`, bir ElementError'dan bir cloze adımı
 sentezler. Deterministik: aynı girişler → bayt özdeş çıktı. AI
 yok, rastgelelik yok, async yok.
 
-**Ders sonu düzeltme turu** — `<CorrectionBlock />`, puan /
+**Ders sonu düzeltme turu** - `<CorrectionBlock />`, puan /
 döküm ile eylem düğmeleri arasında `LessonSummary` içinde monte
 edilir. Monte edildiğinde, az önce bitirilen ders için ElementError
 satırlarını okur, ustalaşılmamış her başarısızlık için bir cloze
 oluşturur (5 sınırı) ve kullanıcıyı bunlar aracılığıyla yürütür.
 
-**İnceleme oturumlarında cloze (Aşama 52G)** —
+**İnceleme oturumlarında cloze (Aşama 52G)** -
 `synthesizeReviewLesson`'ın per-item dalı (`_buildReviewStep`) şimdi seçer:
 
 - free_text veya word_tiles kaynağı → cloze dene, tekrara geri dön

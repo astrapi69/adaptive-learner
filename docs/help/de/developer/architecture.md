@@ -54,7 +54,7 @@ pluginSettings, learningRepo, missions, github). Beide Backings
 implementieren jede Methode. `DexieStorage` ist in
 domänenspezifische Namespace-Module unter `storage/dexie/`,
 `storage/gamification/`, `storage/lessons/`, `storage/content/`
-usw. aufgeteilt — kein God-File.
+usw. aufgeteilt - kein God-File.
 
 Die Factory liest
 `localStorage["adaptive-learner.storage_mode"]`, dann
@@ -77,7 +77,7 @@ Jeder KI-Aufruf läuft die Kette über
 2. `ai.<provider>.api_key` in
    `~/.config/adaptive_learner/secrets.yaml`.
 3. Fernet-entschlüsselte DB-Spalte.
-4. `None` — der KI-Aufruf zeigt einen Fehler in der UI.
+4. `None` - der KI-Aufruf zeigt einen Fehler in der UI.
 
 Die Quellenangabe liegt auf `UserSettingsOut.key_source_*`
 (Enum: `env` / `secrets_yaml` / `settings` / `none`). Die
@@ -210,12 +210,12 @@ Entdecken, Fortschritt, Mehr) plus ein "Mehr"-Bottom-Sheet
 (während Lektionen und im Funnel ausgeblendet). Mehrere Seiten
 sind tab-basierte Hubs:
 
-- **Dashboard** — Tabs Overview / Activity / Missions
+- **Dashboard** - Tabs Overview / Activity / Missions
   (`DashboardOverviewTab` / `DashboardActivityTab` /
   `DashboardMissionsTab`; nur der aktive Tab wird gemountet).
-- **ProgressHub** (`/progress`) — Übersicht / Statistik /
+- **ProgressHub** (`/progress`) - Übersicht / Statistik /
   Meine Pfade.
-- **DiscoverHub** (`/discover`) — ergänzt einen Import-Tab;
+- **DiscoverHub** (`/discover`) - ergänzt einen Import-Tab;
   **ContentHub** ist "Meine Inhalte" (nur heruntergeladene
   Inhalte).
 
@@ -224,7 +224,7 @@ Alte Links bleiben über Redirects erhalten (`/statistics` →
 
 ## Theming
 
-CSS-Variablen-Design-Tokens steuern jede visuelle Eigenschaft —
+CSS-Variablen-Design-Tokens steuern jede visuelle Eigenschaft -
 12 Theme-Dateien (`light`, `dark`, `ocean`, `forest`,
 `high-contrast`, `sepia` + die empfohlenen WCAG-AA-Presets
 `catppuccin-latte/-mocha`, `supabase`, `graphite`, `soft-pop`,

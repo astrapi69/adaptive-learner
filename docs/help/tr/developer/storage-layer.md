@@ -34,11 +34,11 @@ export interface IStorageService {
   backup: IBackupNamespace;
   export: IExportNamespace;
   imports: IImportsNamespace;
-  // Aşama 22 — taksonomi
+  // Aşama 22 - taksonomi
   subjects: ISubjectsNamespace;
   tags: ITagsNamespace;
   projectTaxonomy: IProjectTaxonomyNamespace;
-  // Aşama 29-32 — oyunlaştırma + dışa aktarmalar
+  // Aşama 29-32 - oyunlaştırma + dışa aktarmalar
   gamification: IGamificationNamespace;
   anki: IAnkiNamespace;
   notebooklm: INotebookLmNamespace;
@@ -76,9 +76,9 @@ project_tags vb.) birebir yansıtır.
 
 Paketlenmiş veriler `frontend/src/data/` dizininde yaşar:
 
-- `assessment-questions.json` — arka ucun `QUESTIONS` listesinden
+- `assessment-questions.json` - arka ucun `QUESTIONS` listesinden
   olduğu gibi dışa aktarılmış (12 soru × 4 cevap × 5 dil).
-- `session-prompts.json` — arka ucun `_PROMPTS` sözlüğünden olduğu
+- `session-prompts.json` - arka ucun `_PROMPTS` sözlüğünden olduğu
   gibi dışa aktarılmış (6 yöntem × 7 adım × 2 dil).
 
 ## Üçüncü bir depolama arka ucu ekleme
@@ -100,20 +100,20 @@ export type StorageMode = "api" | "dexie" | "supabase";
 ```
 
 Ayarlar arayüzünün depolama modu bölümüne bağlayın. Başka dosya
-değişikliği gerekmez — sayfalar hâlâ `getStorage()` üzerinden gider.
+değişikliği gerekmez - sayfalar hâlâ `getStorage()` üzerinden gider.
 
 ## Tarayıcı doğrudan AI çağrıları
 
 `storage/ai-providers.ts` üç sağlayıcı istemcisi uygular:
 
-- **Anthropic** — `https://api.anthropic.com/v1/messages` adresine
+- **Anthropic** - `https://api.anthropic.com/v1/messages` adresine
   `anthropic-dangerous-direct-browser-access: true` başlığıyla POST
   yapar. Bu, Anthropic'in tarayıcı arayanlara yönelik açık katılım
   seçeneğidir; olmadan CORS reddeder.
-- **OpenAI** — `https://api.openai.com/v1/chat/completions` adresine
+- **OpenAI** - `https://api.openai.com/v1/chat/completions` adresine
   `Authorization: Bearer ${apiKey}` ile POST yapar. CORS varsayılan
   olarak açıktır.
-- **Gemini** — `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}`
+- **Gemini** - `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}`
   adresine POST yapar. Sorgu parametresi kimlik doğrulaması, sistem
   alanı yok; sistem mesajları ilk kullanıcı dönüşüne katlanır.
 
@@ -130,7 +130,7 @@ Dexie modunda kullanıcının API anahtarı IndexedDB düz metninde
 - AI sağlayıcı, anahtarı gören TEK ağ uç noktasıdır.
 - IndexedDB'de şifrelemek, ya oturum başına bir parola istemi gerektirir
   (kullanıcı deneyimi düşman) ya da uygulamaya paketlenmiş sabit bir
-  anahtar gerektirir (güvenlik göstermeliği — saldırganın paketi var).
+  anahtar gerektirir (güvenlik göstermeliği - saldırganın paketi var).
 
 Sunucu modu davranışı farklıdır: API anahtarları beklemede Fernet
 şifrelemesiyle geçer (`ADAPTIVE_LEARNER_SECRET_KEY`). ApiStorage
@@ -148,9 +148,9 @@ daralır; tarayıcı sandbox'u dosya sistemi erişimine sahip olmadığından
 
 `storage/index.ts` modu şu sırayla çözümler:
 
-1. `localStorage["adaptive-learner.storage_mode"]` — Ayarlar'dan
+1. `localStorage["adaptive-learner.storage_mode"]` - Ayarlar'dan
    kullanıcı seçimi.
-2. `VITE_STORAGE_MODE` — derleme zamanı varsayılanı (GH Pages bunu
+2. `VITE_STORAGE_MODE` - derleme zamanı varsayılanı (GH Pages bunu
    `"dexie"` olarak ayarlar).
 3. Geri dönüş: `"api"`.
 

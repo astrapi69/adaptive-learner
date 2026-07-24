@@ -2,8 +2,8 @@
 
 Ce guide décrit pas à pas comment mettre en place un nouvel
 ensemble de leçons pour le chargeur de contenu d'Adaptive Learner.
-Qui veut construire un ensemble linguistique ou thématique — pour
-son propre usage ou comme contribution au pool de contenu public —
+Qui veut construire un ensemble linguistique ou thématique - pour
+son propre usage ou comme contribution au pool de contenu public -
 devrait le lire entièrement une fois avant la première leçon.
 
 ## Qu'est-ce qu'un ensemble de contenu ?
@@ -16,13 +16,13 @@ comparaison de versions dans les deux modes de stockage.
 
 Un ensemble a trois niveaux :
 
-1. **Manifeste racine** (`manifest.yaml`) — liste chaque ensemble
+1. **Manifeste racine** (`manifest.yaml`) - liste chaque ensemble
    du dépôt. Lu par le navigateur d'ensembles pour le catalogue de
    sources.
-2. **Manifeste d'ensemble** (`sets/{set-id}/manifest.yaml`) —
+2. **Manifeste d'ensemble** (`sets/{set-id}/manifest.yaml`) -
    sœur du manifeste racine, liste les fichiers de leçon de
    l'ensemble concret.
-3. **Fichiers de leçon** (`sets/{set-id}/lessons/NN-slug.json`) —
+3. **Fichiers de leçon** (`sets/{set-id}/lessons/NN-slug.json`) -
    un fichier JSON par leçon, validé à chaque téléchargement contre
    le schéma de leçon (voir *Le schéma est la source de vérité
    unique* ci-dessous).
@@ -37,7 +37,7 @@ modèles. La taille actuelle de la bibliothèque (nombres de leçons /
 d'ensembles / de domaines, le tableau par ensemble et les domaines
 actifs) est le bloc CONTENT-STATS du
 [`README.md`](https://github.com/astrapi69/adaptive-learner#readme)
-du projet — ce bloc est la source de vérité unique, généré à partir
+du projet - ce bloc est la source de vérité unique, généré à partir
 d'un checkout de contenu frais, de sorte que ce guide ne duplique
 pas les chiffres.
 
@@ -99,9 +99,9 @@ jamais de dérive silencieuse.
 Chaque ensemble de contenu déclare la PAIRE de langues qu'il
 transmet :
 
-- **`target_language`** — ce que l'apprenant APPREND (p. ex.
+- **`target_language`** - ce que l'apprenant APPREND (p. ex.
   `fr`).
-- **`source_language`** — ce que l'apprenant PARLE déjà, donc la
+- **`source_language`** - ce que l'apprenant PARLE déjà, donc la
   langue dans laquelle sont écrits les champs **`back`** des cartes,
   les **`notes`** et le texte de **théorie** (p. ex. `de`).
 
@@ -150,7 +150,7 @@ my-content-repo/
 
 La découverte et la recherche de contenu (la surface *Découvrir*)
 sont pilotées par un `search-index.json` léger publié à la racine du
-dépôt (~4 Ko, métadonnées seulement — aucun contenu de carte). Le
+dépôt (~4 Ko, métadonnées seulement - aucun contenu de carte). Le
 dépôt de contenu officiel le fournit, et l'app récupère les index de
 chaque dépôt configuré côté client (compatible CORS, mis en cache
 dans localStorage avec un TTL stale-while-revalidate de 24 h) afin
@@ -182,7 +182,7 @@ nouveaux ensembles.
 Le champ optionnel **`visibility`** (engine 0.14.0+, `visible` en
 l'absence d'indication) est une **indication d'affichage** pour les
 apps consommatrices : `visibility: hidden` demande à l'app de ne pas
-présenter l'ensemble aux apprenants — pensé pour les fixtures de
+présenter l'ensemble aux apprenants - pensé pour les fixtures de
 référence / de conformité qui doivent rester dans le dépôt pour la
 validation de l'engine mais ne sont pas du contenu d'apprentissage.
 L'app filtre les ensembles masqués hors des surfaces de navigation
@@ -209,19 +209,19 @@ Comportement spécifique au chargeur de l'app à garder à l'esprit :
 
 Chaque leçon est un unique fichier JSON : métadonnées de premier
 niveau (`id`, `title`, `description`, `estimated_minutes`), une liste
-de **cartes** (les plus petites unités apprenables — ids stables,
+de **cartes** (les plus petites unités apprenables - ids stables,
 paires recto/verso, `notes` en Markdown, `tags` pour le SRS) et une
 liste d'**étapes**, chacune étant soit une étape THEORY (un `body`
 Markdown, éventuellement un lien `example_url` ou des `examples` en
 ligne), soit une étape EXERCISE (exactement un exercice).
 
-La référence de format complète, champ par champ — chaque champ,
+La référence de format complète, champ par champ - chaque champ,
 chaque type d'exercice, chaque mode de cloze, avec des exemples JSON
-validés par la suite de tests de l'engine — vit dans la **référence
+validés par la suite de tests de l'engine - vit dans la **référence
 de l'engine** :
 
-- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
-  — la référence canonique du format de leçon pour les auteur·rice·s
+- [learn-content-engine - `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  - la référence canonique du format de leçon pour les auteur·rice·s
   et les validateurs tiers (aucun checkout de l'app nécessaire)
 - le schéma lisible par machine livré avec chaque release de l'engine :
   `import schema from "learn-content-engine/schema/lesson.schema.json"`
@@ -236,8 +236,8 @@ et « valide dans l'app » sont la même affirmation.
 ## Quel type d'exercice pour quel objectif d'apprentissage
 
 Choisis le type d'exercice selon l'**objectif d'apprentissage**, pas
-pour la variété. La notation par correspondance exacte mot à mot — un
-`word_tiles` de phrase entière, ou un `free_text` de phrase complète —
+pour la variété. La notation par correspondance exacte mot à mot - un
+`word_tiles` de phrase entière, ou un `free_text` de phrase complète -
 échoue pour la **production libre** : un concept peut se formuler de
 bien des façons correctes, si bien qu'un apprenant au contenu juste se
 voit marqué faux mot après mot. C'est le moment le plus démotivant
@@ -249,14 +249,14 @@ qu'une leçon rédigée puisse produire. Fais plutôt correspondre le type
 | Un fait avec une seule réponse | `cloze` (un trou) |
 | Reconnaître un concept | choix multiple (`cloze` en mode `select`) / `matching` |
 | Définir un concept | `cloze` avec des trous sur les termes clés |
-| Explication libre / transfert / comparaison | pas encore de type à correspondance exacte — utilise `cloze` / choix multiple pour l'instant ; l'auto-évaluation est prévue |
+| Explication libre / transfert / comparaison | pas encore de type à correspondance exacte - utilise `cloze` / choix multiple pour l'instant ; l'auto-évaluation est prévue |
 | Phrase avec un seul ordre de mots non ambigu (apprentissage des langues) | `word_tiles` |
 
 Règle empirique : réserve `word_tiles` aux phrases dont l'ordre des
 mots est vraiment unique (un exercice de traduction), et rédige les
 définitions et les faits en `cloze` (ou en choix multiple via le mode
 `select` du `cloze`). Ne mets jamais une définition de forme libre
-dans un `word_tiles` ou un `free_text` de phrase complète — il n'y a
+dans un `word_tiles` ou un `free_text` de phrase complète - il n'y a
 pas de notation par correspondance exacte équitable pour cela. Analyse
 complète : voir EXP-041
 (`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
@@ -266,7 +266,7 @@ complète : voir EXP-041
 Une seule référence de chaque type d'exercice : ce qui est livré, ce
 qui est exprimable sans nouveau type, ce qui est candidat et ce qui
 est délibérément exclu. Le modèle canonique n'est **pas** étendu sur
-spéculation — un type n'est livré qu'avec son moteur de rendu (le
+spéculation - un type n'est livré qu'avec son moteur de rendu (le
 registre `SUPPORTED_EXERCISE_TYPES` doit être égal à l'énumération
 `ExerciseType` ; un test de parité l'impose, la leçon tirée des cas
 v1.4-preview / `picture_choice`). Les nouveaux types sont ajoutés sur
@@ -288,7 +288,7 @@ demande de contenu concrète via la recette
 
 Depuis le schéma v1.6, il existe un type natif `multiple_choice`. Il
 **coexiste** avec le véhicule `cloze` `select`/`multiselect`
-(EXP-036 §4.3, #890) — le choix multiple basé sur cloze existant reste
+(EXP-036 §4.3, #890) - le choix multiple basé sur cloze existant reste
 valide, rien n'est déprécié. Préfère `multiple_choice` pour les
 nouveaux contenus de QCM textuel : la justesse est un drapeau par
 option, le piège de la disjonction accept/distractors ne peut donc pas
@@ -302,7 +302,7 @@ structurellement opaques pour le schéma central : une leçon qui les
 utilise les déclare dans `requires_extensions`, et la charge utile est
 validée par l'extension enregistrée, jamais par le schéma central. Le
 mécanisme est décrit dans la référence de l'engine
-[learn-content-engine — `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md).
+[learn-content-engine - `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md).
 L'app a adopté cinq types d'extension (`SUPPORTED_EXT_EXERCISE_TYPES`
 dans l'`ExerciseDispatcher` ; une barrière de parité garde le
 dispatcher et la garde de chargement synchronisés, de sorte que tout
@@ -489,9 +489,9 @@ IA :
 | Concept | Comment |
 |---------|-----|
 | Vrai/Faux, Oui/Non | `multiple_choice` à deux options (ou un `cloze` `select` à deux options) |
-| Liste déroulante / bouton radio / case à cocher | Présentation d'un `multiple_choice` / cloze select — pas des types distincts |
+| Liste déroulante / bouton radio / case à cocher | Présentation d'un `multiple_choice` / cloze select - pas des types distincts |
 
-### Prévu si nécessaire (candidats — PAS un engagement)
+### Prévu si nécessaire (candidats - PAS un engagement)
 
 | Candidat | Proche de | Quand |
 |-----------|------|------|
@@ -510,14 +510,14 @@ IA :
 
 ## Référence des types d'exercices
 
-La référence des champs par type — `matching`, `picture_choice`,
+La référence des champs par type - `matching`, `picture_choice`,
 `free_text`, `word_tiles`, `multiple_choice` et `cloze` avec ses modes
 `type` / `select` / `multiselect` : champs obligatoires, exemples JSON
 et règles sémantiques (marqueurs `___` du cloze == `blanks`, intégrité
 référentielle des `card_ids`, disjonction accept/distractors du
-multiselect, exactement-un-correct du picture-choice) — vit dans la
+multiselect, exactement-un-correct du picture-choice) - vit dans la
 référence de l'engine :
-[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+[learn-content-engine - `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
 Chaque exemple JSON qui s'y trouve est extrait et validé par la suite
 de tests de l'engine, de sorte que la référence ne peut pas pourrir.
 Les conventions de rédaction propres à l'app ci-dessous restent ici.
@@ -546,7 +546,7 @@ s'applique » (notation par ensemble exact, pas de points partiels) :
 }
 ```
 
-**Forme legacy (toujours pleinement valide — coexistence, rien de
+**Forme legacy (toujours pleinement valide - coexistence, rien de
 déprécié) :** avant la v1.6, le QCM textuel s'écrivait comme `cloze`
 en mode `select` (EXP-036 §4.3, #890). Une question à réponse unique
 est un cloze à un trou : la `sentence` (se terminant par `___`) est la
@@ -557,7 +557,7 @@ question, l'`accept[0]` du trou est la bonne option et les
 `"distractors": ["Berlin", "Madrid", "Rome"]`.
 
 Tu peux aussi mettre toute la question dans `prompt` et utiliser un
-simple `"sentence": "___"` — le moteur de rendu affiche un `<select>`
+simple `"sentence": "___"` - le moteur de rendu affiche un `<select>`
 composé de la bonne réponse + des distracteurs, note le choix, donne
 un retour et alimente le SRS :
 
@@ -599,11 +599,11 @@ plus, p. ex. une question d'examen du permis de conduire) utilise
 **Plusieurs trous par cloze** sont pris en charge : chaque `___` de
 la phrase est mappé à tour de rôle sur l'entrée suivante de `blanks`.
 Chaque trou peut avoir son propre indice + espace réservé + liste
-d'acceptation. Le SRS d'éléments éclate par trou un ElementAttempt —
+d'acceptation. Le SRS d'éléments éclate par trou un ElementAttempt -
 qui remplit le trou A couramment mais manque sans cesse le trou B
 obtient un suivi de maîtrise au niveau du trou.
 
-**Rôles de jeton sur les cartes (phase 52I / v1.35.0)** — métadonnées
+**Rôles de jeton sur les cartes (phase 52I / v1.35.0)** - métadonnées
 de carte optionnelles avec lesquelles le générateur de cloze peut, à
 l'exécution (sessions de révision + le tour de correction en fin de
 leçon), choisir un trou sémantiquement significatif :
@@ -622,14 +622,14 @@ leçon), choisir un trou sémantiquement significatif :
 
 Énumération fermée de rôles : `article` / `verb` / `noun` /
 `adjective` / `preposition` / `gender_marker` / `tense_marker`.
-Ajouter un rôle est un bump de version mineure du schéma — ne
+Ajouter un rôle est un bump de version mineure du schéma - ne
 l'étends pas en ligne.
 
 ## Écritures non latines : convention de translittération
 
 Règles contraignantes pour les ensembles dont la langue cible utilise
 une écriture non latine (japonais, chinois, coréen, grec, hindi, ...).
-Établies et appliquées dans le dépôt de contenu — précédents :
+Établies et appliquées dans le dépôt de contenu - précédents :
 [content#90](https://github.com/astrapi69/adaptive-learner-content/issues/90),
 [content#91](https://github.com/astrapi69/adaptive-learner-content/issues/91) ;
 balayages des lacunes restantes :
@@ -640,7 +640,7 @@ balayages des lacunes restantes :
 langue **cible** non latine quand la langue source écrit en écriture
 latine (de→ja, de→zh, de→ko, ...). Une langue **source** non latine
 avec une cible en écriture latine (hi→en, el→fr) ne reçoit pas de
-translittération — l'apprenant lit déjà sa propre écriture.
+translittération - l'apprenant lit déjà sa propre écriture.
 
 **2. Format.** Parenthèses rondes directement après l'original :
 こんにちは (konnichiwa). Dans les étapes de théorie toujours ; dans les
@@ -655,7 +655,7 @@ interrogé ; les tâches de sens la reçoivent. Dans le doute, laisse-la
 de côté.
 
 - Exemple positif (association de sens, content#91) : la paire de
-  matching `{"left": "妈 (mā)", "right": "Mama / Mutter"}` — la
+  matching `{"left": "妈 (mā)", "right": "Mama / Mutter"}` - la
   connaissance interrogée est le sens, l'aide à la lecture ne trahit
   donc rien.
 - Exemple négatif (lecture d'écriture, content#91) : les exercices de
@@ -672,13 +672,13 @@ ensemble.
 
 **5. Tâches de saisie** (`free_text` / cloze en mode `type`) :
 `accept[0]` est la forme romanisée canonique ; accepte en plus les
-variantes courantes — japonais : orthographes Kunrei
+variantes courantes - japonais : orthographes Kunrei
 (si/ti/tu/hu/zi, p. ex. `konnitiwa` à côté de `konnichiwa`) ;
 chinois : Pinyin sans tons (`nihao` à côté de `nǐ hǎo`) ; coréen :
 alternatives répandues (p. ex. `annyeong haseyo`). Aide-mémoire :
 **un exercice ne doit jamais échouer sur le clavier de l'apprenant.**
 Précédent (blocage IME, content#107) : un cloze qui n'acceptait que
-가 était insoluble sans IME coréen — le `ga` romanisé devait aussi
+가 était insoluble sans IME coréen - le `ga` romanisé devait aussi
 être accepté.
 
 Quel type porte quel objectif d'apprentissage : voir le
@@ -689,11 +689,11 @@ Quel type porte quel objectif d'apprentissage : voir le
 Chaque exercice accepte un champ optionnel `direction`, qui indique
 dans quel sens les apprenants pratiquent la carte :
 
-- `target_to_source` (par défaut) — RÉCEPTIF : la langue cible est
+- `target_to_source` (par défaut) - RÉCEPTIF : la langue cible est
   montrée, la langue source est reconnue (plus facile).
-- `source_to_target` — PRODUCTIF : la langue source est montrée, la
+- `source_to_target` - PRODUCTIF : la langue source est montrée, la
   langue cible est produite (plus difficile).
-- `both` / `random` — laisse le moteur de rendu / le générateur
+- `both` / `random` - laisse le moteur de rendu / le générateur
   adaptatif choisir une direction concrète par tentative.
 
 ```json
@@ -705,7 +705,7 @@ dans quel sens les apprenants pratiquent la carte :
 }
 ```
 
-Le champ est additif — le schéma reste en version 1.2, et les
+Le champ est additif - le schéma reste en version 1.2, et les
 leçons sans `direction` se comportent exactement comme avant
 (réceptif). Le SRS suit la maîtrise par direction : une carte
 maîtrisée en réceptif n'est pas encore maîtrisée en productif. Les
@@ -734,7 +734,7 @@ plus intelligent :
      (53E)
    - Trouver des exercices ALTERNATIFS qui testent le même élément
      lorsque l'exercice d'origine était faux (logique de variation
-     53D — trouve les candidats dont la carte a une entrée
+     53D - trouve les candidats dont la carte a une entrée
      `token_roles` correspondante)
 
    Ajoute à CHAQUE carte qui enseigne une unité grammaticale propre
@@ -745,7 +745,7 @@ plus intelligent :
 
 2. **Les tags de carte comme `tags: ["article", "masculine"]`**
    sont lus par le classificateur d'erreurs comme repli quand
-   `token_roles` manque. Ils ne remplacent pas `token_roles` — ils
+   `token_roles` manque. Ils ne remplacent pas `token_roles` - ils
    sont une annotation économique à mi-chemin.
 
 Ce dont nous n'avons PAS encore besoin (reporté à un futur bump de
@@ -763,7 +763,7 @@ Règle empirique : ajoute `token_roles` à chaque carte qui enseigne
 un jeton grammatical. C'est de loin l'habitude d'auteur la plus
 efficace pour le système adaptatif.
 
-## Ressources (images qu'un ensemble apporte) — v1.37.0+
+## Ressources (images qu'un ensemble apporte) - v1.37.0+
 
 Les exercices picture-choice et les images de couverture de carte
 proviennent de deux sources :
@@ -775,7 +775,7 @@ proviennent de deux sources :
    tout le reste)
 
 Si tu publies un ensemble sans ressources, picture-choice
-fonctionne quand même — le générateur de SVG d'espace réservé
+fonctionne quand même - le générateur de SVG d'espace réservé
 couvre automatiquement les couleurs + les nombres et retombe pour
 tout le reste sur un avatar déterministe.
 
@@ -843,15 +843,15 @@ reste sous la forme intuitive pour les auteur·rice·s.
 - **Limite par ressource** : 500 KiB. Le validateur de manifeste
   rejette les ressources dont la `size_kb` déclarée dépasse cette
   limite. Le téléchargeur rejette aussi les ressources dont la
-  taille réelle en octets dépasse la déclaration de plus de 10 % —
+  taille réelle en octets dépasse la déclaration de plus de 10 % -
   cela maintient le manifeste honnête.
 - **Limite souple par ensemble** : 10 MiB de taille totale. Le
   validateur avertit, mais ne rejette pas.
 - **Formats acceptés** : `.png` / `.jpg` / `.jpeg` / `.webp` /
   `.svg`. Pas de GIF (le contenu animé distrait), pas de BMP (pas
-  de compression). Pour les photos, privilégie WebP — nettement
+  de compression). Pour les photos, privilégie WebP - nettement
   plus petit que PNG à qualité comparable. Pour les icônes +
-  diagrammes, privilégie SVG — il s'adapte proprement + taille de
+  diagrammes, privilégie SVG - il s'adapte proprement + taille de
   fichier minuscule.
 
 ### Recommandations de taille
@@ -889,12 +889,12 @@ reconnaissance + à la mémorisation.
 Avant la PR d'une nouvelle leçon, vérifie :
 
 - [ ] **3-5 étapes de théorie** + **8-12 exercices** par leçon
-- [ ] **Au moins 3 types d'exercices** représentés (matching, picture-choice, free-text, word-tiles ou cloze — cloze à partir de la v1.35.0)
+- [ ] **Au moins 3 types d'exercices** représentés (matching, picture-choice, free-text, word-tiles ou cloze - cloze à partir de la v1.35.0)
 - [ ] **Étapes de théorie ≤ 200 mots** par étape
 - [ ] **Exercices de texte libre** : ≥ 3 variantes d'acceptation + ≥ 3 distracteurs
 - [ ] **Word-tiles** : ≥ 3 tuiles par exercice
 - [ ] **estimated_minutes** : 10-15 (réaliste, pas idéalisé)
-- [ ] **Les distracteurs sont faux mais plausibles** — sémantiquement liés, jamais aléatoires
+- [ ] **Les distracteurs sont faux mais plausibles** - sémantiquement liés, jamais aléatoires
 - [ ] **Les notes de carte** apportent une réelle plus-value (prononciation, faux amis, marqueur d'exception)
 - [ ] **Structure progressive** : les concepts ultérieurs s'appuient sur les précédents dans le même ensemble
 - [ ] **Exactitude culturelle** : usage réel de la langue, pas seulement des tournures de manuel
@@ -918,7 +918,7 @@ MÊMES vérifications :
    sensibilité culturelle, naturel). L'étape IA n'est jamais
    automatique, exige un consentement explicite (le contenu de la
    leçon est envoyé au fournisseur configuré) et ne bloque jamais
-   le partage — la vérification basée sur des règles est le verrou.
+   le partage - la vérification basée sur des règles est le verrou.
 2. **Dans la CI du dépôt de contenu.** Une pull request vers
    `astrapi69/adaptive-learner-content` exécute son propre
    `scripts/validate_content.py` (structure contre le miroir de
@@ -933,7 +933,7 @@ par leçon, ≥ 2 types d'exercices, ≥ 1 étape de théorie, texte libre
 picture-choice avec distracteurs, aucun recto/verso de carte vide
 et (pour les écritures sources non latines) des versos de carte
 dans l'écriture source. Ce sont des valeurs minimales, pas des
-objectifs — la liste de contrôle ci-dessus en exige davantage.
+objectifs - la liste de contrôle ci-dessus en exige davantage.
 
 ### Vérification IA de l'ensemble (optionnelle)
 
@@ -950,7 +950,7 @@ effectué la vérification). Quand le rapport passe, l'ensemble gagne un
 **badge « Vérifié par l'IA »** adossé à un hash de contenu + une
 signature, de sorte qu'une édition ultérieure des cartes invalide le
 badge jusqu'à ce que l'ensemble soit revérifié. La vérification IA
-n'est jamais un verrou — c'est une provenance consultative, pas une
+n'est jamais un verrou - c'est une provenance consultative, pas une
 exigence de publication.
 
 ## Tests locaux
@@ -966,11 +966,11 @@ from adaptive_learner_content_loader.schema import dict_to_lesson
 path = '../adaptive-learner-content/sets/en/fr-a1/lessons/01-greetings.json'
 with open(path) as f:
     lesson = dict_to_lesson(json.load(f))
-print(f'OK: {lesson.id} — {len(lesson.cards)} Cards, {len(lesson.steps)} Steps')
+print(f'OK: {lesson.id} - {len(lesson.cards)} Cards, {len(lesson.steps)} Steps')
 "
 ```
 
-Valider toutes les leçons d'un dépôt de contenu d'un coup — avec le
+Valider toutes les leçons d'un dépôt de contenu d'un coup - avec le
 validateur du dépôt de contenu (le même script que sa CI exécute à
 chaque PR) :
 
@@ -984,7 +984,7 @@ vérifie le schéma plus les valeurs minimales de qualité (≥5
 exercices, ≥2 types d'exercices, ≥1 étape de théorie, acceptations
 de texte libre + distracteurs, paires de matching, aucune carte
 vide, intégrité des ID de carte). Les nouvelles leçons sont
-détectées automatiquement — aucune modification de test nécessaire.
+détectées automatiquement - aucune modification de test nécessaire.
 
 ## Flux de travail des PR
 
@@ -1024,21 +1024,21 @@ aux champs documentés.
 
 **Corps de théorie** : les étapes de théorie nécessitent un champ
 `body` non vide (Markdown). Les étapes d'exercice ne doivent pas
-porter de `body` — utilise plutôt le `prompt` de l'exercice.
+porter de `body` - utilise plutôt le `prompt` de l'exercice.
 
 ## Référence : les ensembles livrés
 
 Adaptive Learner livre une bibliothèque conséquente couvrant
 plusieurs domaines (langues, programmation, psychologie, IA,
-technologie — voir le bloc CONTENT-STATS du README pour les chiffres
+technologie - voir le bloc CONTENT-STATS du README pour les chiffres
 en direct + le tableau complet par ensemble). Quelques bonnes
 références canoniques dans le dépôt `adaptive-learner-content` :
 
-- `sets/en/fr-a1/` — Français A1 pour anglophones ;
+- `sets/en/fr-a1/` - Français A1 pour anglophones ;
   `sets/de/fr-a1/` est la contrepartie à source germanophone.
-- `sets/en/es-a1/` + `sets/de/es-a1/` — Espagnol A1 (un par langue
+- `sets/en/es-a1/` + `sets/de/es-a1/` - Espagnol A1 (un par langue
   source).
-- L'ensemble « Python — Grundlagen » sous `sets/de/` est un exemple
+- L'ensemble « Python - Grundlagen » sous `sets/de/` est un exemple
   `domain: programming` (source allemande == cible), utile comme
   référence non linguistique.
 
@@ -1066,10 +1066,10 @@ une leçon dans l'application** :
 2. Dans « Mes leçons », clique sur **Exporter comme ensemble de
    contenu** pour télécharger un ensemble de contenu en `.zip`
    (manifeste + leçons). Les exports ne contiennent que le contenu
-   de la leçon — aucune progression, aucun historique d'erreurs,
+   de la leçon - aucune progression, aucun historique d'erreurs,
    rien de personnel.
 3. Clique sur **Mettre à disposition de la communauté** pour ouvrir
-   une **pull request** pré-remplie dans le dépôt de contenu — le
+   une **pull request** pré-remplie dans le dépôt de contenu - le
    JSON de leçon est committé au bon chemin dans l'arbre, sans
    pièce jointe `.zip` nécessaire.
 4. La CI du dépôt valide automatiquement la PR ; un mainteneur
@@ -1079,7 +1079,7 @@ une leçon dans l'application** :
    depuis le navigateur d'ensembles.
 
 C'est la voie sociale : la vérification est **manuelle** (un
-mainteneur cure chaque ajout — rien n'est publié automatiquement),
+mainteneur cure chaque ajout - rien n'est publié automatiquement),
 et tout le déroulement ne nécessite que GitHub. Les leçons générées
 sont déjà validées contre le schéma, de sorte qu'une leçon
 contribuée ne nécessite généralement qu'un peu de peaufinage du
@@ -1098,13 +1098,13 @@ quatre étapes, au lieu de sauter directement vers GitHub :
    *« Nouvel ensemble ! Tu es le premier. »*
 2. **Vérification des doublons.** La leçon est comparée aux leçons
    déjà présentes dans ce chemin (chevauchement de cartes et
-   d'exercices — consultatif, jamais bloquant). Si quelque chose de
+   d'exercices - consultatif, jamais bloquant). Si quelque chose de
    similaire existe, tu peux :
-   - **Partager comme variation** — la leçon est marquée avec
+   - **Partager comme variation** - la leçon est marquée avec
      `variation_of: "{original_id}"` plus une `variation_note`
      optionnelle (« En quoi ta version diffère-t-elle ? »).
    - **Ne proposer que les nouveaux exercices** (pour les
-     quasi-doublons) — l'assistant extrait exactement les exercices
+     quasi-doublons) - l'assistant extrait exactement les exercices
      qui manquent à l'original, avec les cartes associées, comme
      variation complémentaire.
 3. **Récapitulatif de qualité.** Les constats du validateur basé
@@ -1140,7 +1140,7 @@ Les leçons partagées sont mémorisées localement (aucun compte
 nécessaire) sous **Mes contributions** avec un compteur et une
 distinction de *Contributeur communautaire* à partir de cinq leçons
 partagées. Le navigateur d'ensembles affiche en outre **Leçons
-manquantes** — des suggestions encourageantes pour le niveau CEFR
+manquantes** - des suggestions encourageantes pour le niveau CEFR
 suivant d'une paire existante ou une langue cible qui existe pour
 une langue source mais manque pour une autre (« Peux-tu aider ? »).
 
@@ -1148,7 +1148,7 @@ une langue source mais manque pour une autre (« Peux-tu aider ? »).
 
 ## Pages connexes
 
-- [Créer des leçons — aperçu](../content-creation/overview.md) — entrée en matière + créateur de leçons dans l'application
-- [Recommandations de livres](../content-creation/books.md) — gérer `books.yaml` par domaine
-- [Plusieurs dépôts de contenu](../features/content-repos.md) — connecter son propre dépôt
-- [Create a lesson in the app, step by step](https://medium.com/@asterios-raptis/create-a-lesson-in-the-app-step-by-step-dadd6927829f) — parcours externe Medium avec captures d'écran
+- [Créer des leçons - aperçu](../content-creation/overview.md) - entrée en matière + créateur de leçons dans l'application
+- [Recommandations de livres](../content-creation/books.md) - gérer `books.yaml` par domaine
+- [Plusieurs dépôts de contenu](../features/content-repos.md) - connecter son propre dépôt
+- [Create a lesson in the app, step by step](https://medium.com/@asterios-raptis/create-a-lesson-in-the-app-step-by-step-dadd6927829f) - parcours externe Medium avec captures d'écran

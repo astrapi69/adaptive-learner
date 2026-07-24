@@ -18,7 +18,7 @@ will sie effizient verinnerlichen.
 
 **Schwach wenn**: die Regeln unscharf, umstritten oder
 kontextabhängig sind. Reines deduktives Lehren von "gutem
-Geschmack" oder "Klarheit" verpufft — der Lerner muss viele
+Geschmack" oder "Klarheit" verpufft - der Lerner muss viele
 Beispiele sehen, bevor sich das implizite Muster kristallisiert.
 
 **KI-Stil**: präzise, strukturiert, vollständig. Buchstabiert
@@ -35,7 +35,7 @@ enthüllen, nachdem der Lerner eine Hypothese gebildet hat.
 **Stark wenn**: Mustererkennung genau die kognitive
 Fertigkeit ist, die der Lerner aufbauen muss.
 Sprachlernen, Musiktheorie, Schach-Taktik, Machine-Learning-
-Intuition — alle profitieren von induktiver Übung.
+Intuition - alle profitieren von induktiver Übung.
 
 **Schwach wenn**: Geschwindigkeit zählt. Der induktive Weg
 ist langsamer als der deduktive, wenn die Regel einfach und
@@ -63,11 +63,11 @@ Korrekturmechanismus versteht.
 Die "produktive Frustration" kann in "ich kann das nicht"
 umschlagen ohne sorgfältige Rahmung. Der `Schritt 3
 (Fehler)`-Prompt der KI in dieser Methode sagt explizit
-"präzise diagnostizieren ohne Polster" — das ist eine
+"präzise diagnostizieren ohne Polster" - das ist eine
 Lehrentscheidung, kein Persönlichkeitsdefekt.
 
 **KI-Stil**: konfrontativ beim Fehler, dann tief erklärend zu
-seinem Mechanismus. "Das ist die typische Falle X — du bist
+seinem Mechanismus. "Das ist die typische Falle X - du bist
 hineingelaufen, weil Y. Hier ist, warum sie so verführerisch
 ist."
 
@@ -149,7 +149,7 @@ es angehen würde. Gleicher Schritt, komplett andere Textur.
 
 Die Matrix wird unverändert nach
 `frontend/src/data/session-prompts.json` exportiert für
-Dexie-Modus-Parität — kein Drift möglich zwischen
+Dexie-Modus-Parität - kein Drift möglich zwischen
 Server- und Lokal-Modus.
 
 ## Wie auswählen
@@ -158,7 +158,7 @@ Dein Test liefert dir ein 6-Methoden-Profil. Die dominante
 Methode ist, womit neue Sessions starten. Aber:
 
 - Der **Session-Bewerter** kann pro Zyklus-Schritt
-  vorschlagen, zu bleiben, vorzurücken oder — selten —
+  vorschlagen, zu bleiben, vorzurücken oder - selten -
   zurückzugehen.
 - Die **Methodenwechsel-Heuristik** erkennt Stagnation (drei
   Sessions flaches Verständnis + hoher Stress) und blendet

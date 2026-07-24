@@ -212,7 +212,7 @@ def on_session_complete(
     """
 ```
 
-Les erreurs dans ce hook NE DOIVENT PAS se propager — le
+Les erreurs dans ce hook NE DOIVENT PAS se propager - le
 wrapper `_fire_on_session_complete` dans
 `backend/app/main.py` les capture et les journalise.
 

@@ -3,8 +3,8 @@
 The entry point is deliberately short: the
 **quick start** asks for only two fields.
 
-1. **Name** — how the app should address you.
-2. **Topic** — what you want to learn. "Spanish grammar",
+1. **Name** - how the app should address you.
+2. **Topic** - what you want to learn. "Spanish grammar",
    "Machine learning basics", "Solo improvisation on the guitar".
    Be specific; this is the anchor for your project.
 
@@ -15,15 +15,15 @@ sensible **defaults** that you can change at any time.
 
 After submitting, the app offers you two paths:
 
-- **Jump right in** — you land straight on the Dashboard and can
+- **Jump right in** - you land straight on the Dashboard and can
   start a lesson or session.
-- **Set up profile** — opens the **onboarding wizard**: one
+- **Set up profile** - opens the **onboarding wizard**: one
   question per screen (goal → timeframe → minutes per day →
   current problem → optional learning-style assessment), each
   pre-filled so "Next" always works, plus a progress bar and
   "Back". The answers are saved in both storage modes.
 
-The **learning-style assessment is no longer mandatory** — it is
+The **learning-style assessment is no longer mandatory** - it is
 only reachable via the wizard's final step. More on this under
 [Learning-style assessment](assessment.md).
 
@@ -64,6 +64,6 @@ want to learn. You change the language in the settings.
 - **No telemetry** leaves your device in local mode.
 
 Your AI provider sees your messages (that is the point of the AI
-request). Adaptive Learner itself only stores what you type —
+request). Adaptive Learner itself only stores what you type -
 locally or in the FastAPI backend, depending on which
 [storage mode](settings.md) is set.

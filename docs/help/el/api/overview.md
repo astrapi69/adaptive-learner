@@ -2,7 +2,7 @@
 
 Το backend του AdaptiveLearner εκθέτει ένα REST API μέσω FastAPI. Σε
 λειτουργία Server το frontend επικοινωνεί μαζί του· σε λειτουργία
-Local (Dexie) το API δεν είναι προσβάσιμο — οι ίδιες λειτουργίες
+Local (Dexie) το API δεν είναι προσβάσιμο - οι ίδιες λειτουργίες
 εκτελούνται στον browser.
 
 ## Βασικό URL
@@ -32,7 +32,7 @@ server να κάνει forward διαφανώς.
 3. Κρυπτογραφημένη με Fernet στήλη `UserSettings.api_key_<provider>`
    (ορίζεται μέσω του UI Ρυθμίσεων· δεν επιστρέφεται ποτέ στο
    frontend ως απλό κείμενο).
-4. `None` — η κλήση ΤΝ επιστρέφει σφάλμα στο UI.
+4. `None` - η κλήση ΤΝ επιστρέφει σφάλμα στο UI.
 
 Το `UserSettingsOut.key_source_*` (enum
 `env | secrets_yaml | settings | none`) αναφέρει ποιο επίπεδο
@@ -103,7 +103,7 @@ auth, Tailscale, VPN κ.λπ.) όταν εκτίθενται σε δίκτυο.
 deployments πρέπει να αφήνουν τη λειτουργία αποσφαλμάτωσης
 απενεργοποιημένη.
 
-Η κλάση `ApiError` του frontend χρησιμοποιεί και τις δύο μορφές —
+Η κλάση `ApiError` του frontend χρησιμοποιεί και τις δύο μορφές -
 βλ. `frontend/src/api/client.ts` για τον ακριβή αναλυτή.
 
 ## Ομάδες endpoints

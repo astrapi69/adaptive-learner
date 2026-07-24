@@ -167,7 +167,7 @@ function PictureResult({
                             ? t("lesson.exercise.picture.result_correct", "Correct!")
                             : t(
                                   "lesson.exercise.picture.result_wrong",
-                                  "Not quite — the highlighted tile is the right answer.",
+                                  "Not quite - the highlighted tile is the right answer.",
                               )}
                     </p>
                     {isCorrect && showAnswerToggle && onAdvance && (

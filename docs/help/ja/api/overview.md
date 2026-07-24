@@ -21,7 +21,7 @@ AIプロバイダーキーは3層のチェーンを通じて解決されます�
 1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`環境変数。
 2. `~/.config/adaptive_learner/secrets.yaml`内の`ai.<provider>.api_key`。
 3. Fernet暗号化された`UserSettings.api_key_<provider>`カラム（Settings UIで設定; 平文でフロントエンドに返されることはない）。
-4. `None` — AIコールはUIにエラーを表示します。
+4. `None` - AIコールはUIにエラーを表示します。
 
 `UserSettingsOut.key_source_*`（列挙型`env | secrets_yaml | settings | none`）は、Settings UIのソースバッジのために、プロバイダーごとにアクティブキーを解決したレイヤーを報告します。
 

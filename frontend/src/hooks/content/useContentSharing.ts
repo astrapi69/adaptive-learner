@@ -213,7 +213,7 @@ export function useContentSharing({ sets, fetchSetLessons }: UseContentSharingDe
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       notify.warning(
-        `${t("content.ai_validation.failed", "AI review unavailable. You can still share — the quality check passed.")} ${detail}`,
+        `${t("content.ai_validation.failed", "AI review unavailable. You can still share - the quality check passed.")} ${detail}`,
       );
     } finally {
       setAiRunning(false);

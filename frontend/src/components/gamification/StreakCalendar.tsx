@@ -116,7 +116,7 @@ export default function StreakCalendar({entries}: StreakCalendarProps) {
                                 title={
                                     cell.date === ""
                                         ? ""
-                                        : `${cell.date} — ${cell.count}`
+                                        : `${cell.date} - ${cell.count}`
                                 }
                                 aria-label={cellLabel}
                                 role={cell.date !== "" ? "img" : undefined}

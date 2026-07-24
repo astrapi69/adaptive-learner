@@ -455,7 +455,7 @@ interface LearningLabels {
 
 const LEARNING_LABELS_EN: LearningLabels = {
     header:
-        "LEARNING CONTEXT — use it, and do not re-teach what the learner " +
+        "LEARNING CONTEXT - use it, and do not re-teach what the learner " +
         "already knows:",
     topic: "Topic: ",
     completed: "Completed lessons: ",
@@ -472,7 +472,7 @@ const LEARNING_LABELS_EN: LearningLabels = {
 
 const LEARNING_LABELS_DE: LearningLabels = {
     header:
-        "LERNKONTEXT — nutze ihn und wiederhole NICHT, was der Lerner schon " +
+        "LERNKONTEXT - nutze ihn und wiederhole NICHT, was der Lerner schon " +
         "kann:",
     topic: "Thema: ",
     completed: "Abgeschlossene Lektionen: ",

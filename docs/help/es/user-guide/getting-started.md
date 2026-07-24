@@ -51,7 +51,7 @@ proveedor de IA reside fuera del navegador.
    predeterminados. Después puedes elegir "Empezar directamente" o,
    de forma opcional, configurar tu perfil con más detalle en el
    asistente. Consulta [Onboarding](onboarding.md).
-3. **Inicia tu primera lección** — la vía más rápida sin clave de
+3. **Inicia tu primera lección** - la vía más rápida sin clave de
    IA: abre el
    [explorador de contenido](../features/content-browser.md) en
    `/content`, elige un conjunto de lecciones e inicia una
@@ -71,10 +71,10 @@ proveedor de IA reside fuera del navegador.
 
 ## Cómo continuar
 
-- [Lecciones y repasos](lessons.md) — el flujo de la lección en detalle
-- [Explorador de contenido](../features/content-browser.md) — encontrar y filtrar lecciones
-- [Varios repositorios de contenido](../features/content-repos.md) — conectar tus propios orígenes de contenido
+- [Lecciones y repasos](lessons.md) - el flujo de la lección en detalle
+- [Explorador de contenido](../features/content-browser.md) - encontrar y filtrar lecciones
+- [Varios repositorios de contenido](../features/content-repos.md) - conectar tus propios orígenes de contenido
 - [Copia de seguridad y restauración](../features/backup.md)
-- [Entender tu Dashboard](dashboard.md) — progreso, racha, XP, insignias
-- [FAQ — preguntas frecuentes](faq.md)
+- [Entender tu Dashboard](dashboard.md) - progreso, racha, XP, insignias
+- [FAQ - preguntas frecuentes](faq.md)
 - [La idea pedagógica detrás de la app](../concept/philosophy.md)

@@ -72,7 +72,7 @@ Cada llamada a la IA recorre la cadena mediante
 2. `ai.<proveedor>.api_key` en
    `~/.config/adaptive_learner/secrets.yaml`.
 3. Columna BD descifrada con Fernet.
-4. `None` — la llamada a la IA muestra un error en la interfaz.
+4. `None` - la llamada a la IA muestra un error en la interfaz.
 
 La atribución del origen vive en `UserSettingsOut.key_source_*`
 (enumeración: `env` / `secrets_yaml` / `settings` / `none`).

@@ -17,7 +17,7 @@ phrases sont cyclées sans répétition pour la même session.
 **Animations CSS**
 
 Une pulsation légère ou un flash accompagne les bonnes réponses. Ces
-animations utilisent uniquement des transitions CSS (transform + opacity) —
+animations utilisent uniquement des transitions CSS (transform + opacity) -
 aucune bibliothèque d'animation n'est requise. L'option `prefers-reduced-motion`
 du système d'exploitation désactive toutes les animations.
 
@@ -32,7 +32,7 @@ canvas ni bibliothèque).
 Lors d'événements importants (série de 7/30/100 jours, maîtrise de
 50/100/500 éléments, montée de niveau), une superposition s'affiche
 brièvement avec un message de félicitations et se ferme automatiquement.
-Les superpositions sont mises en file d'attente — elles apparaissent une
+Les superpositions sont mises en file d'attente - elles apparaissent une
 par une et ne se chevauchent jamais.
 
 ---
@@ -56,7 +56,7 @@ toujours **Subtil**, quelle que soit la valeur configurée.
 
 **Désactivés par défaut.** Activez-les dans **Paramètres → Interface → Sons**.
 
-Les effets sonores sont **synthétisés à l'exécution** via Web Audio API —
+Les effets sonores sont **synthétisés à l'exécution** via Web Audio API -
 aucun fichier audio n'est embarqué dans l'application. L'AudioContext est
 créé de manière paresseuse lors du premier son déclenché dans un geste
 utilisateur.

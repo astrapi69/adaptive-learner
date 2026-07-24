@@ -3,8 +3,8 @@
 Der Einstieg ist bewusst kurz: Der
 **Schnellstart** verlangt nur zwei Felder.
 
-1. **Name** — wie die App dich ansprechen soll.
-2. **Thema** — was du lernen willst. „Spanische Grammatik",
+1. **Name** - wie die App dich ansprechen soll.
+2. **Thema** - was du lernen willst. „Spanische Grammatik",
    „Machine-Learning-Grundlagen", „Solo-Improvisation auf der
    Gitarre". Sei konkret; das ist der Anker für dein Projekt.
 
@@ -15,16 +15,16 @@ nimmt sinnvolle **Vorgaben** an, die du jederzeit ändern kannst.
 
 Nach dem Absenden bietet dir die App zwei Wege:
 
-- **Direkt loslegen** — du landest sofort auf dem Dashboard und
+- **Direkt loslegen** - du landest sofort auf dem Dashboard und
   kannst eine Lektion oder Session starten.
-- **Profil einrichten** — öffnet den **Onboarding-Assistenten**:
+- **Profil einrichten** - öffnet den **Onboarding-Assistenten**:
   eine Frage pro Bildschirm (Ziel → Zeitrahmen → Minuten pro Tag
   → aktuelles Problem → optionaler Lerntyp-Test), jede mit
   Vorbelegung, sodass „Weiter" immer funktioniert, dazu
   Fortschrittsbalken und „Zurück". Die Antworten werden in beiden
   Speichermodi gespeichert.
 
-Der **Lerntyp-Test ist nicht mehr verpflichtend** — er ist nur
+Der **Lerntyp-Test ist nicht mehr verpflichtend** - er ist nur
 noch über den letzten Schritt des Assistenten erreichbar. Mehr
 dazu unter [Lerntyp-Test](assessment.md).
 
@@ -69,5 +69,5 @@ du in den Einstellungen.
 
 Dein KI-Anbieter sieht deine Nachrichten (das ist ja der Sinn
 der KI-Anfrage). Adaptive Learner selbst speichert nur, was du
-tippst — lokal oder im FastAPI-Backend, je nachdem welcher
+tippst - lokal oder im FastAPI-Backend, je nachdem welcher
 [Speichermodus](settings.md) eingestellt ist.

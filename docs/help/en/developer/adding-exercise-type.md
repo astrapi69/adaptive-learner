@@ -10,7 +10,7 @@ presentation or a convention already covered by the
 [exercise type catalog](authoring-content.md#exercise-type-catalog-status)
 (text multiple choice, True/False, dropdown/radio/checkbox are **not** new
 types). It must be **binary SRS-gradable** (a single correct/incorrect outcome
-per element) — that is the line the catalog's "deliberately excluded" list
+per element) - that is the line the catalog's "deliberately excluded" list
 draws.
 
 ## Steps
@@ -34,12 +34,12 @@ draws.
 5. **Register the renderer.** Add the branch + the type to
    `SUPPORTED_EXERCISE_TYPES` in
    `frontend/src/components/exercises/shell/ExerciseDispatcher.tsx`. The
-   **registry must equal the enum** — a parity test enforces it, so an
+   **registry must equal the enum** - a parity test enforces it, so an
    unrendered type fails CI (the invariant that prevents dead schema).
 6. **Wire grading / SRS.** Emit an `ExerciseScored` from the renderer via
    `useControlledExercise`; the shared `onComplete` → `recordStepResult` path
    in `LessonStepView.tsx` already fans each attempt out through
-   `getStorage().elementErrors.recordBulk` — reuse it, do not add a second
+   `getStorage().elementErrors.recordBulk` - reuse it, do not add a second
    recording path.
 7. **Content-repo validation.** Extend the client validator
    (`frontend/src/lib/content/validation/content-validator.ts`) and, if the

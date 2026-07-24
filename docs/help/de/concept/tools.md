@@ -123,25 +123,25 @@ taucht gar nicht auf, weil die Liste auf 5 gedeckelt ist).
 
 Die Karten sind nach Dringlichkeit sortiert (niedrigeres
 Intervall × stärkeres Gewicht = höhere Priorität). Du musst
-ihnen nicht folgen — sie sind Stupser, keine Befehle.
+ihnen nicht folgen - sie sind Stupser, keine Befehle.
 
 ## First-Class ausgelieferte Integrationen
 
 Drei Werkzeuge sind als eingebauter Export ausgeliefert statt
 als externe Empfehlung:
 
-- **Anki .apkg-Export** — auf der
+- **Anki .apkg-Export** - auf der
   `/anki`-Seite KI-extrahierte Karteikarten prüfen, die
   gewünschten annehmen, Export klicken. Die `.apkg`-Datei
   wird client-seitig via sql.js + JSZip gebaut und
   funktioniert direkt in Anki-Desktop. Kein manueller
   Übergang.
-- **NotebookLM-ZIP-Paket** — auf der
+- **NotebookLM-ZIP-Paket** - auf der
   Fortschritts-Seite das Studien-Paket herunterladen. Das
   ZIP enthält `summary.md`, `vocabulary.md`, `rules.md`,
   `errors.md`, `flashcards.md` und `sessions/*.md`,
   formatiert für den NotebookLM-Source-Upload.
-- **Sprache (TTS + STT + Aussprache-Übung)** —
+- **Sprache (TTS + STT + Aussprache-Übung)** -
   Web-Speech-API-Integrationen direkt in
   Session + Assessment + eine eigene
   `/pronunciation`-Seite für Sprachprojekte. Kein externes
@@ -151,17 +151,17 @@ als externe Empfehlung:
 
 Bewusst ausgelassen:
 
-- **Duolingo / Babbel / ähnliche gamifizierte Apps** — sie
+- **Duolingo / Babbel / ähnliche gamifizierte Apps** - sie
   widersprechen der Philosophie. Adaptive Learner liefert
   zwar XP + Abzeichen + Streaks, aber als
   Motivationsschicht über un-gamifiziertem Inhalt, nicht
   als primäre Schleife.
-- **Khan Academy / Coursera** — sie sind kurs-
+- **Khan Academy / Coursera** - sie sind kurs-
   abschluss-orientiert, nicht fertigkeits-erwerb-
   orientiert. Anderer Problemraum.
-- **Memrise** — zu nah an Anki; der Katalog behält ein
+- **Memrise** - zu nah an Anki; der Katalog behält ein
   Werkzeug pro Nische.
-- **Notion** — Overkill für die „verlinkte Notizen"-Nische;
+- **Notion** - Overkill für die „verlinkte Notizen"-Nische;
   Obsidian passt sauber ohne Cloud-Lock-in.
 
 Der Katalog ist absichtlich klein. Mehr hinzuzufügen würde

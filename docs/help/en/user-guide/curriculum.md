@@ -1,6 +1,6 @@
 # Curriculum
 
-The Curriculum page is your structured learning material — the
+The Curriculum page is your structured learning material - the
 "book" against which your sessions happen. It's an optional but
 powerful layer on top of free-flowing AI sessions.
 
@@ -11,7 +11,7 @@ A curriculum is a tree of **topics** plus a flat list of
 multiple curricula side by side ("Spanish grammar", "Spring
 Boot for Java devs", "Lead guitar fundamentals").
 
-- **Topics** form a tree — chapters and sub-chapters. Each
+- **Topics** form a tree - chapters and sub-chapters. Each
   topic has a title, optional description, and a parent
   reference. The "Add subtopic" button creates a child.
 - **Lessons** are flat under the curriculum. Each has a title
@@ -32,7 +32,7 @@ drag-and-drop reorderable (touch-friendly on mobile too).
 Click a topic to drill in; the breadcrumb under the heading
 shows the path back to the root.
 
-- **Add topic** at the root level — sibling of every existing
+- **Add topic** at the root level - sibling of every existing
   top-level topic.
 - **Add subtopic** under the currently-focused topic.
 - **Rename** by clicking the title in edit mode.
@@ -74,7 +74,7 @@ import seeds a Curriculum with topics + lessons matching the
 gaps the AI identified.
 
 The session AI does not (yet) auto-pull individual lesson
-content into the system prompt — that's a deliberate hold
+content into the system prompt - that's a deliberate hold
 until the curriculum-AI integration shape settles.
 
 ## Per-storage-mode behaviour

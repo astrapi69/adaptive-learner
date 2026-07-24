@@ -3,11 +3,11 @@
 Adaptive Learner kann einen heruntergeladenen Lektionssatz
 **optional von einer KI prüfen** lassen (EXP-033). Die KI
 durchsucht die Karten des Satzes auf Übersetzungs-, Grammatik-
-und Niveau-Probleme und meldet, was ihr auffällt — sie blockiert
+und Niveau-Probleme und meldet, was ihr auffällt - sie blockiert
 nichts, sie berät nur. Davon getrennt zeigen Repositories eine
 **Trust-Stufe**, die du auf einen Blick einschätzen kannst.
 
-<!-- TODO: Screenshot — Content Browser, Satzkarte mit Button „Mit KI prüfen" + Badge „KI-geprüft" -->
+<!-- TODO: Screenshot - Content Browser, Satzkarte mit Button „Mit KI prüfen" + Badge „KI-geprüft" -->
 
 ---
 
@@ -17,12 +17,12 @@ Jeder Lektionssatz trägt im Content Browser ein Quell-Badge mit
 einer Trust-Stufe. Sie sagt etwas über die **Herkunft**, nicht
 über die inhaltliche Qualität:
 
-- **Trust 0 — nicht geprüft.** Ein neu verbundenes Repo, dessen
+- **Trust 0 - nicht geprüft.** Ein neu verbundenes Repo, dessen
   automatische Prüfung (noch) nicht bestanden ist.
-- **Trust 1 — technisch geprüft.** Das Repo enthält mindestens
+- **Trust 1 - technisch geprüft.** Das Repo enthält mindestens
   eine Lektion und keinen ausführbaren Code. Die Prüfung läuft
   bei jeder Synchronisierung erneut.
-- **Trust 3 — offiziell empfohlen.** Ein kuratiertes Repo aus der
+- **Trust 3 - offiziell empfohlen.** Ein kuratiertes Repo aus der
   offiziellen Empfehlungsliste.
 
 Gemeinschafts-Bewertungen (Trust 2) und ein zentraler Index sind
@@ -38,7 +38,7 @@ Du brauchst dafür:
 - einen **gespeicherten API-Schlüssel** (Einstellungen →
   Integrationen) für einen der Anbieter (Anthropic, OpenAI oder
   Gemini);
-- den **Browser-Modus** (Dexie) — die Prüfung läuft
+- den **Browser-Modus** (Dexie) - die Prüfung läuft
   browser-direkt;
 - einen **heruntergeladenen Satz** (die Prüfung arbeitet auf den
   lokal gespeicherten Karten).
@@ -53,7 +53,7 @@ Hinweis führt zu den Einstellungen.
 
 ---
 
-## Einen Satz prüfen — Schritt für Schritt
+## Einen Satz prüfen - Schritt für Schritt
 
 1. Öffne den **Content Browser** und wähle einen
    heruntergeladenen Satz.
@@ -79,7 +79,7 @@ Minute), damit nicht versehentlich mehrfach abgerechnet wird.
   Signatur, sodass ein veränderter Satz eine neue Prüfung
   nahelegt.
 - **Exportierbar.** Du kannst den Bericht als **Markdown**
-  herunterladen — praktisch, um ihn in eine Lektion-Überarbeitung
+  herunterladen - praktisch, um ihn in eine Lektion-Überarbeitung
   oder ein Issue einzufügen.
 - **Badge.** Ein geprüfter Satz zeigt im Content Browser ein
   **„KI-geprüft"**-Badge, damit du siehst, dass eine Prüfung

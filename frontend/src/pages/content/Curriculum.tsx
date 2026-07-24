@@ -373,7 +373,7 @@ export default function Curriculum() {
                         <p className="muted" data-testid="curriculum-empty">
                             {t(
                                 "curriculum.no_topics",
-                                "No topics yet — add your first to get started.",
+                                "No topics yet - add your first to get started.",
                             )}
                         </p>
                     ) : (

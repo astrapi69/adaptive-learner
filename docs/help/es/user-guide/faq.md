@@ -16,7 +16,7 @@ variable de entorno `ADAPTIVE_LEARNER_SECRET_KEY` o mediante
 
 Ninguno de los dos modos envía telemetría, analíticas ni tus
 mensajes a ningún tercero aparte del proveedor de IA que hayas
-elegido — y ese solo ve el contenido del mensaje que cabría
+elegido - y ese solo ve el contenido del mensaje que cabría
 esperar (prompt del sistema + tu texto + las respuestas previas
 de la IA en la sesión).
 
@@ -101,12 +101,12 @@ Sí. Se han implementado tres rutas de exportación:
 Tres integraciones con la Web Speech API:
 
 - **Texto a voz** en las respuestas de la IA y los resultados de
-  la Evaluación — un botón ▶ junto a cada uno lo lee en voz alta,
+  la Evaluación - un botón ▶ junto a cada uno lo lee en voz alta,
   coincidiendo con el idioma.
-- **Voz a texto** en la entrada de Sesión — un botón 🎤 captura
+- **Voz a texto** en la entrada de Sesión - un botón 🎤 captura
   tu voz y rellena el área de texto con transcripciones
   provisionales antes de enviar.
-- **Práctica de pronunciación** para proyectos de idiomas — visita
+- **Práctica de pronunciación** para proyectos de idiomas - visita
   `/pronunciation`, la IA genera una frase objetivo, tú hablas y
   una IA evaluadora puntúa la similitud y sugiere mejoras.
 
@@ -125,7 +125,7 @@ sugerido. Un clic inicia un Plan de estudios y comienza una sesión
 dirigida a partir del análisis.
 
 La exportación Markdown por conversación de Claude.ai es un caso
-de importación validado — el analizador incluye extracción
+de importación validado - el analizador incluye extracción
 completa de marcas de tiempo y preservación de límites de roles
 para ese formato.
 
@@ -148,17 +148,17 @@ IA internamente pero añade:
 
 1. **Una matriz de 6 métodos × 7 pasos** de prompts del sistema
    especializados.
-2. **Evaluación de paso por turno** — una segunda llamada a la IA
+2. **Evaluación de paso por turno** - una segunda llamada a la IA
    juzga la disposición y puede moverte hacia adelante o hacia
    atrás.
 3. **Auto-bucle en nuevos ciclos** cuando el tema está integrado.
 4. **Un perfil** de tus preferencias de aprendizaje a partir de
    la evaluación de 12 preguntas.
-5. **Seguimiento a largo plazo** — ProgressCommits, mapa de calor
+5. **Seguimiento a largo plazo** - ProgressCommits, mapa de calor
    de racha, XP, insignias, gráficos de tiempo por paso. ChatGPT
    olvida cuando cierras la pestaña.
-6. **Libertad de proveedor** — Anthropic, OpenAI o Gemini.
-7. **Opción local primero** — todo en tu navegador, nada enviado
+6. **Libertad de proveedor** - Anthropic, OpenAI o Gemini.
+7. **Opción local primero** - todo en tu navegador, nada enviado
    a un servidor (excepto tus llamadas a la IA).
 
 ## ¿Qué pasa si la IA falla?
@@ -167,7 +167,7 @@ El sistema falla de forma visible:
 
 - **Clave API incorrecta**: la llamada a la IA devuelve un
   mensaje de error claro, mostrado en línea en el chat.
-- **Proveedor caído**: igual — el error muestra el estado HTTP
+- **Proveedor caído**: igual - el error muestra el estado HTTP
   de la API del proveedor.
 - **Fallo de análisis JSON del evaluador**: se activa un avance
   determinista de +1 (limitado al paso 7), con `fallback_used: true`

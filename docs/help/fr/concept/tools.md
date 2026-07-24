@@ -1,12 +1,12 @@
 # Les trois piliers d'outils
 
 Adaptive Learner s'intègre avec trois outils d'apprentissage complémentaires.
-Ensemble, ils couvrent les différentes phases de l'apprentissage — de
+Ensemble, ils couvrent les différentes phases de l'apprentissage - de
 l'acquisition initiale à la maîtrise à long terme.
 
 ---
 
-## Anki — Répétition espacée
+## Anki - Répétition espacée
 
 [Anki](https://apps.ankiweb.net/) est le système de flashcards de référence
 pour la répétition espacée. Il planifie les révisions au moment optimal
@@ -26,7 +26,7 @@ nécessite une mémorisation à long terme.
 
 ---
 
-## NotebookLM — Questions d'autoévaluation
+## NotebookLM - Questions d'autoévaluation
 
 [NotebookLM](https://notebooklm.google.com/) de Google est un outil
 d'apprentissage basé sur vos propres documents. Il génère des questions
@@ -45,7 +45,7 @@ vérification que vous pouvez réexpliquer un concept.
 
 ---
 
-## Tuteur IA adaptatif — Apprentissage interactif
+## Tuteur IA adaptatif - Apprentissage interactif
 
 La fonctionnalité principale de l'application : un tuteur IA qui adapte
 ses explications, ses exercices et son rythme à votre profil d'apprentissage.

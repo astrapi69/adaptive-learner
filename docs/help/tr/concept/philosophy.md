@@ -5,8 +5,8 @@
 > En iyi öğrenme yöntemi, sabit bir yöntem değildir.
 
 AdaptiveLearner'ın özündeki tez budur. Çoğu "öğrenme uygulaması"
-tek bir yaklaşım seçer — flash kartlar, video dersler, oyunlaştırılmış
-seriler — ve herkesin aynı şekilde öğrendiğini varsayar. Oysa öyle değil.
+tek bir yaklaşım seçer - flash kartlar, video dersler, oyunlaştırılmış
+seriler - ve herkesin aynı şekilde öğrendiğini varsayar. Oysa öyle değil.
 
 ## Neden tek bir yöntem yetmez
 
@@ -22,7 +22,7 @@ Farklı konular, farklı yöntemleri gerektirir. *Aynı* konu bile,
 
 Yöntemler arasında akıcı biçimde geçiş yapabilen bir öğrenci daha hızlı
 öğrenir, daha uzun süre hatırlar ve daha az tükenir. AdaptiveLearner'ın
-amacı Tek Gerçek Yönteminizi bulmak değil — yöntem değiştirmeyi kolay,
+amacı Tek Gerçek Yönteminizi bulmak değil - yöntem değiştirmeyi kolay,
 doğal ve pedagojik açıdan haklı kılmaktır.
 
 ## Altı yöntem
@@ -32,8 +32,8 @@ altı yöntem seçtik:
 
 | Yöntem | Temel tutum |
 |---|---|
-| Tümdengelimli | Önce teori — kurallar, sonra örnekler |
-| Tümevarımlı | Önce örnekler — kalıplardan kuralları türet |
+| Tümdengelimli | Önce teori - kurallar, sonra örnekler |
+| Tümevarımlı | Önce örnekler - kalıplardan kuralları türet |
 | Hata tabanlı | Hataları tetikle, onlardan öğren |
 | Diyalogsal | Konuşma alışverişi, düşük baskı |
 | Bağlamsal | Gerçek yaşam senaryoları, yerleşik pratik |
@@ -49,7 +49,7 @@ insanların yapamadığı bir şeyi yapabildiğinin dürüst bir kabulüdür:
 
 Her oturum 7 adımlık bir öğrenme döngüsünden geçer: Girdi, Deneme,
 Hata, Geri Bildirim, Uyum, Tekrar, Bütünleştirme. Öğrenmenin büyük
-kısmı Hata ve Geri Bildirim arasında gerçekleşir (3-4. adımlar) —
+kısmı Hata ve Geri Bildirim arasında gerçekleşir (3-4. adımlar) -
 gerçek bilişsel çalışma orada yaşar. Diğer adımlar, hatalara karşı
 durabilecekleri bir zemin ve düşebilecekleri bir yer sağlamak için
 vardır.
@@ -79,14 +79,14 @@ bir anlık görüntüsünü saklar.
 
 ## Üç sütun
 
-AdaptiveLearner oturumlarının yanında üç harici araç kategorisi yer alır —
+AdaptiveLearner oturumlarının yanında üç harici araç kategorisi yer alır -
 onları yeniden icat etmeye çalışmıyoruz:
 
-1. **Aralıklı tekrar** (Anki) — kuralların ve hata düzeltmelerinin
+1. **Aralıklı tekrar** (Anki) - kuralların ve hata düzeltmelerinin
    uzun vadeli hatırlanması için.
-2. **Aktif hatırlama** (NotebookLM) — kendi kaynaklarınızdan bilgi
+2. **Aktif hatırlama** (NotebookLM) - kendi kaynaklarınızdan bilgi
    oluşturmak için.
-3. **Uyumlu yapay zeka istemleri** (Claude / ChatGPT / Gemini) —
+3. **Uyumlu yapay zeka istemleri** (Claude / ChatGPT / Gemini) -
    tek seferlik açıklamalar ve esnek araştırma için.
 
 Gösterge Tablosunun Araç Önerileri kartı bu beş aracı (artı Excalidraw

@@ -2,7 +2,7 @@
 
 # As Minhas Lições: criar, guardar, partilhar
 
-**As Minhas Lições** são lições que *você* cria — convertidas no
+**As Minhas Lições** são lições que *você* cria - convertidas no
 mesmo formato offline e jogável que os conjuntos de conteúdo
 descarregados. Pode criar uma lição a partir de uma conversa
 analisada, guardar uma boa lição adaptativa para repetir, exportar
@@ -19,7 +19,7 @@ Encontrará As Minhas Lições no topo do **Navegador de Conjuntos**
 
 1. Importe uma conversa e **Analise-a** (ver *Importação*).
 2. No resultado da análise, clique em **Guardar como Lição Offline**.
-3. Uma pré-visualização mostra a estrutura da lição — quantos
+3. Uma pré-visualização mostra a estrutura da lição - quantos
    exercícios e passos teóricos, o tempo estimado. Ajuste o título
    se quiser.
 4. Clique em **Guardar**. A lição aparece em **As Minhas Lições**.
@@ -29,7 +29,7 @@ A lição é construída a partir do que a análise encontrou:
 - **Teoria** a partir do tópico, resumo, subtópicos, os seus pontos
   fortes e fracos, padrões de erros comuns e qualquer currículo
   sugerido.
-- **Exercícios** a partir do vocabulário extraído — correspondência e
+- **Exercícios** a partir do vocabulário extraído - correspondência e
   escrever-a-tradução para cada palavra, mais preencher-os-espaços e
   exercícios de ordenação de palavras a partir de quaisquer frases
   de exemplo.
@@ -49,14 +49,14 @@ pontuação completa, exatamente como uma lição descarregada.
 
 Cada Minha Lição tem:
 
-- **Jogar** — abrir no visualizador de lições.
-- **Editar** — reabrir a análise de origem para poder ajustar e
+- **Jogar** - abrir no visualizador de lições.
+- **Editar** - reabrir a análise de origem para poder ajustar e
   reguardar (disponível para lições baseadas em análise). Se um dos
   seus conjuntos contiver **várias lições**, um **seletor de
   lições** pergunta primeiro qual quer editar. As lições de texto
   de livro abrem diretamente o editor de exercícios; os metadados
   do livro anexados são preservados.
-- **Eliminar** — removê-la (com confirmação).
+- **Eliminar** - removê-la (com confirmação).
 
 ---
 
@@ -64,7 +64,7 @@ Cada Minha Lição tem:
 
 Quando termina uma **lição adaptativa**, um botão **Guardar esta
 lição?** aparece no resumo. Guardar mantém um instantâneo que pode
-repetir mais tarde a partir de As Minhas Lições — útil quando uma
+repetir mais tarde a partir de As Minhas Lições - útil quando uma
 sessão adaptativa se revelou especialmente útil. O instantâneo
 permanece jogável mesmo que o gerador adaptativo mude numa versão
 posterior.
@@ -75,15 +75,15 @@ posterior.
 
 Cada Minha Lição pode ser partilhada, sem conta e sem servidor:
 
-- **Exportar** — descarregar a lição como um único ficheiro `.json`.
-- **Exportar como conjunto** — descarregar um `.zip` de conjunto de
+- **Exportar** - descarregar a lição como um único ficheiro `.json`.
+- **Exportar como conjunto** - descarregar um `.zip` de conjunto de
   conteúdo (manifesto + lições).
-- **Partilhar com a Comunidade** — abre uma issue pré-preenchida no
+- **Partilhar com a Comunidade** - abre uma issue pré-preenchida no
   GitHub no repositório de conteúdo oficial. Anexe o ficheiro
   exportado; um mantenedor revê-o e pode adicioná-lo ao conteúdo
   oficial para que todos o possam descarregar.
 
-Os ficheiros exportados contêm apenas o conteúdo da lição — sem
+Os ficheiros exportados contêm apenas o conteúdo da lição - sem
 progresso, sem historial de erros, nada pessoal.
 
 ---
@@ -97,4 +97,4 @@ inválido, verá uma razão específica em vez de uma importação
 quebrada.
 
 Isto fecha o ciclo: um aprendente exporta uma lição, outro importa
-e joga — completamente offline.
+e joga - completamente offline.

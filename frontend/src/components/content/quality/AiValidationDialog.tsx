@@ -62,7 +62,7 @@ export default function AiValidationDialog({
 
   const reportItems: ValidationReportItem[] = state.issueRows.map((row) => ({
     cardId: row.cardId,
-    label: row.lessonTitle ? `${row.lessonTitle} — ${row.front}` : row.front,
+    label: row.lessonTitle ? `${row.lessonTitle} - ${row.front}` : row.front,
     issues: row.result.issues,
   }));
 
@@ -252,7 +252,7 @@ export default function AiValidationDialog({
               }
               allOkText={t(
                 "content.ai_check.report.all_ok",
-                "All cards passed — no issues found.",
+                "All cards passed - no issues found.",
               )}
               problemLabel={t("content.ai_check.report.problem", "Problem")}
               suggestionLabel={t("content.ai_check.report.suggestion", "Suggestion")}

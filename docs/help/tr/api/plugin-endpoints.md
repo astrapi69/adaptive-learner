@@ -287,7 +287,7 @@ döndürür:
 ]
 ```
 
-## Oturum eklentisi — akış + telaffuz (v1.6.0+, v1.18.0+)
+## Oturum eklentisi - akış + telaffuz (v1.6.0+, v1.18.0+)
 
 ```
 POST /api/plugins/session/{id}/message/stream  (SSE)
@@ -295,10 +295,10 @@ POST /api/plugins/session/{id}/message/stream  (SSE)
 
 `/message` ile aynı gövde şekli; üç SSE olay türü yayar:
 
-- `start` — yük `{user_message}` (artık kalıcı kullanıcı dönüşü).
-- `chunk` — yük `{delta}` (AI sağlayıcısının akışından gelen bir
+- `start` - yük `{user_message}` (artık kalıcı kullanıcı dönüşü).
+- `chunk` - yük `{delta}` (AI sağlayıcısının akışından gelen bir
   veya birden fazla metin parçası).
-- `done` — yük, senkron `/message` yanıtıyla özdeş: asistan mesajı
+- `done` - yük, senkron `/message` yanıtıyla özdeş: asistan mesajı
   + cycle_step + zamanlamalar + isteğe bağlı döngü geçiş kartı.
 
 ```

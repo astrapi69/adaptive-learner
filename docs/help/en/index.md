@@ -7,7 +7,7 @@ on a research-backed six-method model. You take a 12-question
 assessment, the app discovers which methods suit you, then
 AI-supported sessions walk you through a seven-step learning
 cycle. The app adapts how it teaches based on how you
-actually learn. Continuously developed — find the current
+actually learn. Continuously developed - find the current
 version on the [Releases page](https://github.com/astrapi69/adaptive-learner/releases).
 
 [Try it now](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
@@ -19,8 +19,8 @@ version on the [Releases page](https://github.com/astrapi69/adaptive-learner/rel
 
 ### Six methods, not one
 
-Most learning apps pick one approach — flashcards, video,
-gamified streaks — and assume everyone learns the same way.
+Most learning apps pick one approach - flashcards, video,
+gamified streaks - and assume everyone learns the same way.
 Adaptive Learner ships six methods (deductive, inductive,
 error-based, dialogic, contextual, AI-adaptive) and helps you
 switch between them as you grow.
@@ -32,7 +32,7 @@ switch between them as you grow.
 Each session walks through Input → Attempt → Error →
 Feedback → Adapt → Repeat → Integrate. A dual-prompt AI
 evaluates per turn whether you're ready to advance,
-stay, or step back. No conveyor belt — real cognitive
+stay, or step back. No conveyor belt - real cognitive
 pacing.
 
 [The seven-step cycle →](concept/seven-steps.md)
@@ -42,7 +42,7 @@ pacing.
 Toggle between **Local mode** (everything in your browser,
 AI calls direct to Anthropic / OpenAI / Gemini) and
 **Server mode** (FastAPI backend). Bring your own AI key.
-Install as a PWA — works offline for past sessions and
+Install as a PWA - works offline for past sessions and
 Dashboard.
 
 [Getting started →](user-guide/getting-started.md)
@@ -65,7 +65,7 @@ time, what method-switch unlocked progress.
 2. **Pick your language** + **onboard your learning project**
    (topic, goal, timeframe).
 3. **Take the 12-question assessment** (~2 minutes).
-4. **Add your AI API key** (Anthropic, OpenAI, or Gemini —
+4. **Add your AI API key** (Anthropic, OpenAI, or Gemini -
    free tiers work).
 5. **Start your first session** from the Dashboard.
 
@@ -75,13 +75,13 @@ time, what method-switch unlocked progress.
 
 ## Documentation
 
-- [**User Guide**](user-guide/getting-started.md) — for
+- [**User Guide**](user-guide/getting-started.md) - for
   learners using the app.
-- [**Concept**](concept/philosophy.md) — the pedagogical
+- [**Concept**](concept/philosophy.md) - the pedagogical
   thinking.
-- [**Developer Docs**](developer/architecture.md) — for
+- [**Developer Docs**](developer/architecture.md) - for
   contributors and plugin authors.
-- [**API Reference**](api/overview.md) — for integrators.
+- [**API Reference**](api/overview.md) - for integrators.
 
 ---
 
@@ -100,7 +100,7 @@ the full history is in
 - **13 plugins** (assessment / 3 AI providers / session /
   tracking / tools / gamification / anki / notebooklm /
   learning-repo / content-loader / missions)
-- **26 bundled content sets** — 424 lessons / 5405 cards
+- **26 bundled content sets** - 424 lessons / 5405 cards
   across 10 content languages and 5 domains
 - **30 SQLAlchemy models**, sync surface 30 tables
 - **2 storage modes** (Local IndexedDB / FastAPI backend),

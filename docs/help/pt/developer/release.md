@@ -11,12 +11,12 @@ a escolha de versão, CHANGELOG e etiqueta.
 
 O Adaptive Learner segue o Versionamento Semântico 2.0.0:
 
-- **Maior (X.0.0)** — alterações incompatíveis na API ou
+- **Maior (X.0.0)** - alterações incompatíveis na API ou
   arquitetura. Reservado para grandes mudanças futuras.
-- **Menor (X.Y.0)** — novas funcionalidades, compatíveis com
+- **Menor (X.Y.0)** - novas funcionalidades, compatíveis com
   versões anteriores. Padrão para cada conclusão de fase (estamos
   na v1.20.0 / 34 fases lançadas).
-- **Correção (X.Y.Z)** — correções de bugs, compatíveis com
+- **Correção (X.Y.Z)** - correções de bugs, compatíveis com
   versões anteriores. Cadeias de hotfix.
 
 As etiquetas pré-lançamento (`-alpha`, `-beta`, `-rc`) não são
@@ -82,14 +82,14 @@ O workflow de CI do portão de lançamento
 (`.github/workflows/release-gate.yml`) executa o mesmo
 `sync-versions-check` em cada push de etiqueta. Se o local
 concorda mas o CI falha, a deriva foi introduzida entre a sua
-verificação local e o push — investigue.
+verificação local e o push - investigue.
 
 ### 6. Commit + etiqueta
 
 ```bash
 git add -A
 git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z — destaque da fase + resumo"
+git tag -a vX.Y.Z -m "vX.Y.Z - destaque da fase + resumo"
 ```
 
 As mensagens de etiqueta são anotadas, multi-linha e resumem o
@@ -144,11 +144,11 @@ consecutivamente.
 Quando o ciclo de lançamento faz avançar dependências (Vite, React,
 etc.), mantenha cada incremento como o seu próprio commit. Razões:
 
-- **Granularidade de bisect** — uma regressão isola-se num único
+- **Granularidade de bisect** - uma regressão isola-se num único
   incremento.
-- **Legibilidade do CHANGELOG** — os leitores veem a motivação
+- **Legibilidade do CHANGELOG** - os leitores veem a motivação
   real de cada incremento.
-- **Reversão** — um incremento problemático pode ser revertido
+- **Reversão** - um incremento problemático pode ser revertido
   independentemente.
 
 O padrão completo está documentado em

@@ -9,7 +9,7 @@ votre progression, vos recommandations et l'accès rapide à tous vos projets.
 
 ### Diagramme radar
 
-Affiche votre profil d'apprentissage actuel — la surface couverte par
+Affiche votre profil d'apprentissage actuel - la surface couverte par
 les six méthodes. La méthode dominante est surlignée.
 
 Si vous n'avez pas encore passé le test d'évaluation, ce widget propose

@@ -130,7 +130,7 @@ export default function AiVerifyAnswer({
                         <p className="m-0 text-fg-primary">
                             {t(
                                 "lesson.exercise.free_text.ai_verify.no_key",
-                                "This needs your own AI key (BYOK). Optional — the app works fine without it.",
+                                "This needs your own AI key (BYOK). Optional - the app works fine without it.",
                             )}
                         </p>
                         <Link
@@ -157,7 +157,7 @@ export default function AiVerifyAnswer({
                 setError(
                     t(
                         "lesson.exercise.free_text.ai_verify.no_key",
-                        "This needs your own AI key (BYOK). Optional — the app works fine without it.",
+                        "This needs your own AI key (BYOK). Optional - the app works fine without it.",
                     ),
                 );
                 return;
@@ -253,7 +253,7 @@ export default function AiVerifyAnswer({
                     >
                         {t(
                             "lesson.exercise.free_text.ai_verify.disclaimer",
-                            "This is only the AI's opinion — your score for this exercise is unchanged.",
+                            "This is only the AI's opinion - your score for this exercise is unchanged.",
                         )}
                     </p>
                 </div>

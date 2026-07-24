@@ -17,8 +17,8 @@ de ambiente `ADAPTIVE_LEARNER_SECRET_KEY`, ou via `secret_key:`
 em `~/.config/adaptive-learner/secrets.yaml`.
 
 Nenhum dos modos envia telemetria, análises ou as suas
-mensagens para terceiros além do fornecedor de IA que escolheu
-— e esse apenas vê o conteúdo da mensagem que esperaria
+mensagens para terceiros além do fornecedor de IA que escolheu -
+e esse apenas vê o conteúdo da mensagem que esperaria
 (prompt do sistema + o seu texto + as respostas anteriores da
 IA na sessão).
 
@@ -103,12 +103,12 @@ Sim. Três caminhos de exportação incluídos:
 Três integrações da Web Speech API:
 
 - **Texto para Fala** nas respostas da IA + resultados da
-  Avaliação — um botão ▶ ao lado de cada um fala-o em voz
+  Avaliação - um botão ▶ ao lado de cada um fala-o em voz
   alta, com correspondência de idioma.
-- **Fala para Texto** na entrada da Sessão — um botão 🎤
+- **Fala para Texto** na entrada da Sessão - um botão 🎤
   captura a sua voz e preenche a área de texto com transcrições
   provisórias antes de enviar.
-- **Prática de Pronúncia** para projetos de idiomas — visite
+- **Prática de Pronúncia** para projetos de idiomas - visite
   `/pronunciation`, a IA gera uma frase alvo, você fala, e
   uma IA juiz pontua a semelhança + sugere melhorias.
 
@@ -127,7 +127,7 @@ currículo sugerido. Um clique semeia um Currículo + inicia
 uma sessão direcionada a partir da análise.
 
 A exportação Markdown por conversa do Claude.ai é um caso de
-importação validado — o analisador inclui extração completa de
+importação validado - o analisador inclui extração completa de
 timestamps + preservação de limite de papel para esse formato.
 
 ## Sincronização entre dispositivos?
@@ -149,16 +149,16 @@ que usa uma IA internamente mas adiciona:
 
 1. **Uma matriz de 6 métodos × 7 passos** de prompts de sistema
    personalizados.
-2. **Avaliação de passo por turno** — uma segunda chamada de IA
+2. **Avaliação de passo por turno** - uma segunda chamada de IA
    julga a prontidão e pode movê-lo para a frente / para trás.
 3. **Auto-loop para novos ciclos** quando o tópico é integrado.
 4. **Um perfil** das suas preferências de aprendizagem da
    avaliação de 12 perguntas.
-5. **Rastreamento a longo prazo** — ProgressCommits, mapa de
+5. **Rastreamento a longo prazo** - ProgressCommits, mapa de
    calor de sequência, XP, emblemas, gráficos de tempo por
    passo. O ChatGPT esquece quando fecha o separador.
-6. **Liberdade de fornecedor** — Anthropic, OpenAI ou Gemini.
-7. **Opção local primeiro** — tudo no seu navegador, nada
+6. **Liberdade de fornecedor** - Anthropic, OpenAI ou Gemini.
+7. **Opção local primeiro** - tudo no seu navegador, nada
    enviado para um servidor (exceto as suas chamadas de IA).
 
 ## E se a IA correr mal?
@@ -167,7 +167,7 @@ O sistema falha visivelmente:
 
 - **Chave de API errada**: a chamada de IA devolve uma mensagem
   de erro clara, apresentada em linha no chat.
-- **Fornecedor em baixo**: o mesmo — o erro renderiza o estado
+- **Fornecedor em baixo**: o mesmo - o erro renderiza o estado
   HTTP da API do fornecedor.
 - **Falha na análise de JSON do avaliador**: um avanço
   determinístico de +1 entra em ação (limitado ao passo 7),

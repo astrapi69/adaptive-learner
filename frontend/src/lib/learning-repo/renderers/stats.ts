@@ -105,7 +105,7 @@ function formatRating(
     field: "understanding" | "method_fit" | "stress",
 ): string {
     if (rating === null) {
-        return "—";
+        return "-";
     }
     // 1-5 stored, scaled x2 to /10 for display per Article-1
     // § 8 (and to match the exit-threshold contract).

@@ -9,11 +9,11 @@ humaines se limitent au choix de version, au CHANGELOG et au tag.
 
 Adaptive Learner suit le Versionnement Sémantique 2.0.0 :
 
-- **Majeur (X.0.0)** — changements incompatibles dans l'API ou
+- **Majeur (X.0.0)** - changements incompatibles dans l'API ou
   l'architecture. Réservé aux grandes évolutions futures.
-- **Mineur (X.Y.0)** — nouvelles fonctionnalités, rétrocompatibles.
+- **Mineur (X.Y.0)** - nouvelles fonctionnalités, rétrocompatibles.
   Valeur par défaut pour chaque complétion de phase.
-- **Correctif (X.Y.Z)** — corrections de bogues, rétrocompatibles.
+- **Correctif (X.Y.Z)** - corrections de bogues, rétrocompatibles.
   Chaînes de correctifs.
 
 Les tags de pré-publication (`-alpha`, `-beta`, `-rc`) ne sont
@@ -82,7 +82,7 @@ exécute le même `sync-versions-check` à chaque push de tag.
 ```bash
 git add -A
 git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z — titre de phase + résumé"
+git tag -a vX.Y.Z -m "vX.Y.Z - titre de phase + résumé"
 ```
 
 Les messages de tag sont annotés, multi-lignes et résument la
@@ -138,11 +138,11 @@ Lors de la mise à jour des dépendances dans le cycle de
 publication (Vite, React, etc.), garder chaque mise à jour dans
 son propre commit. Raisons :
 
-- **Granularité de bisect** — une régression s'isole en un seul
+- **Granularité de bisect** - une régression s'isole en un seul
   bump.
-- **Lisibilité du CHANGELOG** — les lecteurs voient la motivation
+- **Lisibilité du CHANGELOG** - les lecteurs voient la motivation
   réelle de chaque bump.
-- **Rollback** — un mauvais bump peut être annulé indépendamment.
+- **Rollback** - un mauvais bump peut être annulé indépendamment.
 
 Le pattern complet est documenté dans
 `.claude/rules/release-workflow.md`. La discipline

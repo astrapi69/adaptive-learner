@@ -365,7 +365,7 @@ export default function Onboarding() {
                     <p className="onboarding-intro">
                         {t(
                             "onboarding.invite_subtitle",
-                            "It takes a minute and tailors your sessions — you can also do it later.",
+                            "It takes a minute and tailors your sessions - you can also do it later.",
                         )}
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -444,7 +444,7 @@ export default function Onboarding() {
                     </HelpTooltip>
                     {t(
                         "onboarding.concepts_explainer_mid2",
-                        " — which guides every ",
+                        " - which guides every ",
                     )}
                     <HelpTooltip glossaryKey="learning_session">
                         {t(

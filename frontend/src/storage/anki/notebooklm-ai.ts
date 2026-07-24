@@ -42,19 +42,19 @@ const _ALLOWED_DIFFICULTIES = new Set<StudyQuestionDifficulty>([
 const _STUDY_GUIDE_HEADER = `You are a study guide author. Produce a comprehensive Markdown study guide for the project below.
 
 Structure:
-1. Title (H1) — the project's topic.
-2. Overview (H2) — one paragraph: goal + timeframe + level.
-3. Key Concepts (H2) — H3 per concept, 1-2 paragraph summary each.
-4. Common Mistakes (H2) — bullet list with brief corrections.
-5. Practice Exercises (H2) — 5-10 exercises across difficulty levels.
-6. Vocabulary (H2) — IF the project is a language-learning one; otherwise omit. Table of word | translation | example.
-7. Further Study (H2) — 3-5 next-step suggestions.
+1. Title (H1) - the project's topic.
+2. Overview (H2) - one paragraph: goal + timeframe + level.
+3. Key Concepts (H2) - H3 per concept, 1-2 paragraph summary each.
+4. Common Mistakes (H2) - bullet list with brief corrections.
+5. Practice Exercises (H2) - 5-10 exercises across difficulty levels.
+6. Vocabulary (H2) - IF the project is a language-learning one; otherwise omit. Table of word | translation | example.
+7. Further Study (H2) - 3-5 next-step suggestions.
 
 Rules:
 - Output Markdown ONLY. No prose framing, no JSON, no code fences around the whole thing.
 - Use short paragraphs (NotebookLM-optimised).
 - Use H2 for sections, H3 for sub-concepts.
-- Cite content from the project — don't invent topics that aren't there.
+- Cite content from the project - don't invent topics that aren't there.
 
 Project data follows:
 
@@ -95,7 +95,7 @@ export function buildStudyGuidePrompt(ctx: StudyGuideContext): string {
   if (ctx.vocabulary.length > 0) {
     pieces.push("\nVocabulary entries (from analyzed conversations):");
     for (const v of ctx.vocabulary.slice(0, 50)) {
-      const example = v.example ? ` — ${v.example}` : "";
+      const example = v.example ? ` - ${v.example}` : "";
       pieces.push(`  - ${v.word || "?"} → ${v.translation || "?"}${example}`);
     }
   }
@@ -134,7 +134,7 @@ const _QUESTION_PROMPT = `You are an active-recall question generator for a self
 
 Read the following learning material and produce {limit} high-value study questions.
 
-Output STRICT JSON only — an array of objects with this shape:
+Output STRICT JSON only - an array of objects with this shape:
 [
   {
     "question": "What is the difference between X and Y?",
@@ -153,7 +153,7 @@ Rules:
 - Keep "expected_answer" concise (1-3 sentences).
 - Each "topic" is 1-3 words (e.g. "subjunctive mood", "for-loop syntax").
 - Skip trivial recall.
-- Output the array only — no prose, no markdown fences.
+- Output the array only - no prose, no markdown fences.
 
 Material:
 {content}`;

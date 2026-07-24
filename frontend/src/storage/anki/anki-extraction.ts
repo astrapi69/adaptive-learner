@@ -31,7 +31,7 @@ export interface DexieAiConfig {
 
 const EXTRACTION_PROMPT = `You are a flashcard generator. Read the following learning material and extract up to {limit} high-value flashcards.
 
-Output STRICT JSON only — an array of objects with this shape:
+Output STRICT JSON only - an array of objects with this shape:
 [
   {"type": "basic", "front": "Q", "back": "A", "tags": ["t1"]},
   {"type": "cloze", "front": "Sentence with {{c1::blank}}", "back": "extra info or empty", "tags": []}
@@ -43,7 +43,7 @@ Rules:
 - Tags are short lowercase words; lists may be empty.
 - Skip trivial recall (definitions everyone already knows).
 - Prefer concepts the learner struggled with or asked about.
-- Output the array only — no prose, no markdown fences.
+- Output the array only - no prose, no markdown fences.
 
 Material:
 {content}`;

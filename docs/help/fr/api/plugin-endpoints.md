@@ -284,7 +284,7 @@ la récence :
 ]
 ```
 
-## Plugin Session — streaming + prononciation (v1.6.0+, v1.18.0+)
+## Plugin Session - streaming + prononciation (v1.6.0+, v1.18.0+)
 
 ```
 POST /api/plugins/session/{id}/message/stream  (SSE)
@@ -293,11 +293,11 @@ POST /api/plugins/session/{id}/message/stream  (SSE)
 Même forme de corps que `/message` ; émet trois types d'événements
 SSE :
 
-- `start` — payload `{user_message}` (le tour utilisateur
+- `start` - payload `{user_message}` (le tour utilisateur
   maintenant persisté).
-- `chunk` — payload `{delta}` (un ou plusieurs morceaux de texte
+- `chunk` - payload `{delta}` (un ou plusieurs morceaux de texte
   arrivant depuis le stream du fournisseur IA).
-- `done` — payload identique à la réponse synchrone `/message` :
+- `done` - payload identique à la réponse synchrone `/message` :
   message de l'assistant + cycle_step + timings + carte de
   transition de cycle optionnelle.
 

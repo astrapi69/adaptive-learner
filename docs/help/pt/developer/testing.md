@@ -31,7 +31,7 @@ cd backend && poetry run pytest --pdb
 Os testes vivem em `backend/tests/`. As fixtures em `conftest.py`
 fornecem uma BD SQLite fresca em memória por teste, o
 `TestClient` e um gestor de plugins simulado. O isolamento de
-testes é rigoroso — `ADAPTIVE_LEARNER_TEST=1` é definido antes de
+testes é rigoroso - `ADAPTIVE_LEARNER_TEST=1` é definido antes de
 qualquer importação de `app.*`.
 
 ## Testes de plugins
@@ -44,7 +44,7 @@ make test-plugin-session       # apenas um
 cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ```
 
-Os testes de plugins não carregam a aplicação FastAPI — exercitam
+Os testes de plugins não carregam a aplicação FastAPI - exercitam
 os módulos do plugin em isolamento. Simule o `pluggy.PluginManager`
 ao testar o disparo de hooks.
 
@@ -85,7 +85,7 @@ beforeEach(async () => {
 });
 ```
 
-Cada teste obtém um IndexedDB fresco em memória — sem fugas.
+Cada teste obtém um IndexedDB fresco em memória - sem fugas.
 
 **Simulações de api/client.ts** (páginas legadas):
 
@@ -117,7 +117,7 @@ As especificações smoke cobrem os caminhos críticos do utilizador:
 - Criação de currículo
 - Viewports mobile (iPhone SE, iPhone 14, Pixel 7, iPad)
 
-As especificações usam apenas seletores `data-testid` — sem
+As especificações usam apenas seletores `data-testid` - sem
 seletores CSS frágeis. As especificações smoke NÃO estão no
 caminho `make test`; precisam de uma aplicação em execução
 (primeiro `make dev-bg`).
@@ -153,7 +153,7 @@ cd backend && poetry run pre-commit install
 
 Hooks: ruff check (correção automática), ruff format, espaços em
 branco finais, corretor de fim de ficheiro, check-yaml,
-check-merge-conflict. Apenas backend — o lint do frontend corre
+check-merge-conflict. Apenas backend - o lint do frontend corre
 em tempo de CI, não em pré-commit.
 
 ## CI
@@ -167,27 +167,27 @@ em tempo de CI, não em pré-commit.
 
 Mais alguns gates de PR vivem em workflows próprios:
 
-- `cohesion-check.yml` — a verificação do tamanho dos ficheiros
+- `cohesion-check.yml` - a verificação do tamanho dos ficheiros
   (gate contra `.filesize-whitelist`) mais dois gates de nomes de
   classe: nomes de classe CSS mortos (`check-dead-classnames.py`
   contra `.dead-classnames-baseline`) e o **gate de className sem
   estilo** (`--unstyled`, um ratchet contra
-  `.unstyled-classnames-baseline`) — um `className` cujos tokens
+  `.unstyled-classnames-baseline`) - um `className` cujos tokens
   estão todos mortos bloqueia o PR. A verificação do tamanho das
   pastas que o acompanha corre localmente via
   `make check-folder-size`.
-- `visual-baseline-gate.yml` — um PR que altera caminhos
+- `visual-baseline-gate.yml` - um PR que altera caminhos
   visualmente críticos (componentes de lição, renderers de
   exercícios, ficheiros de tema/CSS) tem de trazer os screenshots
   de baseline afetados no mesmo PR; label de escape
   `visual-baselines-unaffected` para alterações comprovadamente
   inertes.
-- `testid-reference-gate.yml` — se um PR remove ou renomeia um
+- `testid-reference-gate.yml` - se um PR remove ou renomeia um
   `data-testid` que um spec E2E referencia estaticamente (numa
   superfície muito visível para o utilizador) sem tocar no spec,
   o gate falha (`make check-testid-refs`); label de escape
   `testid-refs-unaffected`.
-- `docker-build-smoke.yml` — smoke só de build das imagens
+- `docker-build-smoke.yml` - smoke só de build das imagens
   Compose de produção (o caminho do launcher / install.sh),
   filtrado por caminhos nos PRs, além de em `release/**`,
   semanalmente e por dispatch; localmente
@@ -195,22 +195,22 @@ Mais alguns gates de PR vivem em workflows próprios:
 
 **Turno noturno / Release (não nos PRs):**
 
-- `mutation-frontend.yml` — mutation testing com Stryker (noturno
+- `mutation-frontend.yml` - mutation testing com Stryker (noturno
   atrás da variável de repo `ENABLE_NIGHTLY_MUTATION` + dispatch;
   cada execução muta uma fatia dos ficheiros para caber no limite
   de tempo do job); o mutation testing do backend usa mutmut
-- `webkit-gate.yml` — o gate de layout no motor WebKit real
+- `webkit-gate.yml` - o gate de layout no motor WebKit real
   (classes de bugs de iOS/Safari que os gates Chromium
   estruturalmente não conseguem ver), diário atrás da variável de
   repo `ENABLE_NIGHTLY_WEBKIT`, sempre em `release/**` e por
   dispatch
-- `visual-regression.yml` — a matriz de baselines visuais (diária
+- `visual-regression.yml` - a matriz de baselines visuais (diária
   + dispatch; `update_baselines=true` volta a renderizar as
   baselines no CI e carrega-as como artefacto)
-- `visual-baseline-sync.yml` — workflow de serviço: renderiza as
+- `visual-baseline-sync.yml` - workflow de serviço: renderiza as
   baselines no CI e faz push delas como commit para o branch do
   PR (label `refresh-visual-baselines`, ou dispatch com um número
-  de PR) — a revisão das imagens antes do merge continua
+  de PR) - a revisão das imagens antes do merge continua
   obrigatória
 
 `.github/workflows/release-gate.yml` corre em pushes de etiqueta:

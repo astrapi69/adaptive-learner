@@ -72,7 +72,7 @@ Cada chamada de IA percorre a cadeia via
 2. `ai.<provider>.api_key` em
    `~/.config/adaptive_learner/secrets.yaml`.
 3. Coluna DB desencriptada com Fernet.
-4. `None` — a chamada de IA apresenta um erro na interface.
+4. `None` - a chamada de IA apresenta um erro na interface.
 
 A atribuição de fonte vive em `UserSettingsOut.key_source_*`
 (enum: `env` / `secrets_yaml` / `settings` / `none`).

@@ -10,7 +10,7 @@
   `curl -sSL https://install.python-poetry.org | python3 -`.
 - **Bun** 1.3+ (Paketmanager des Frontends, #1492).
 - **GNU Make** für die Orchestrierungs-Targets. Das Makefile
-  ist die Source of Truth — jeder CI-Befehl steht dort.
+  ist die Source of Truth - jeder CI-Befehl steht dort.
 
 ## Klonen + installieren
 
@@ -22,11 +22,11 @@ make install
 
 `make install` führt aus:
 
-1. `cd backend && poetry install` — Backend + Plugin-
+1. `cd backend && poetry install` - Backend + Plugin-
    Path-Deps.
-2. `cd frontend && bun install` — Frontend-Dependencies (Node 24).
+2. `cd frontend && bun install` - Frontend-Dependencies (Node 24).
 3. Installiert jedes Plugin aus `plugins/` als Path-Dep ins
-   Backend-Venv (`develop = true` — Änderungen wirken sofort).
+   Backend-Venv (`develop = true` - Änderungen wirken sofort).
 
 Wenn `make install` scheitert, ist die häufigste Ursache, dass
 Poetry das falsche Python wählt. In `backend/` (und jedem
@@ -41,11 +41,11 @@ Das Backend liest seine Konfig aus einer 3-Schichten-Kette:
 2. **User-Overlay** unter
    `~/.config/adaptive_learner/secrets.yaml` (gitignored,
    optional).
-3. **Umgebungsvariablen** mit Präfix `ADAPTIVE_LEARNER_*` —
+3. **Umgebungsvariablen** mit Präfix `ADAPTIVE_LEARNER_*` -
    höchste Priorität.
 
-Die einzige Pflicht-Variable ist `ADAPTIVE_LEARNER_SECRET_KEY`
-— wird genutzt, um User-API-Keys mit Fernet zu verschlüsseln.
+Die einzige Pflicht-Variable ist `ADAPTIVE_LEARNER_SECRET_KEY` -
+wird genutzt, um User-API-Keys mit Fernet zu verschlüsseln.
 Erzeugen mit `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
 Wenn nicht gesetzt, generiert `start.sh` automatisch einen und
 schreibt ihn in `~/.config/adaptive_learner/secrets.yaml`.
@@ -82,7 +82,7 @@ E2E-Tests:
 cd e2e && npx playwright test
 ```
 
-Nur Smoke-Specs — noch keine umfassende UI-Abdeckung. Smoke-
+Nur Smoke-Specs - noch keine umfassende UI-Abdeckung. Smoke-
 Specs decken Landing, Onboarding, Session, Settings,
 Curriculum und mobile Viewports ab.
 
@@ -111,7 +111,7 @@ make docs-serve     # lokal auf localhost:8000 mit Hot-Reload
 make docs-build     # statische Seite nach site/ bauen
 ```
 
-Das Docs-Venv ist getrennt vom Backend-Venv — MkDocs hat ein
+Das Docs-Venv ist getrennt vom Backend-Venv - MkDocs hat ein
 eigenes `docs/pyproject.toml` mit mkdocs-material +
 mkdocs-static-i18n.
 

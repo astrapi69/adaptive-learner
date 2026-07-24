@@ -29,11 +29,11 @@ export function NavModeBadge({ mode }: { mode: string }) {
         mode === "ai-augmented"
           ? t(
               "nav.mode_badge_tooltip_ai",
-              "AI provider configured — exercises use AI for distractors + hints. Tap to browse content sets.",
+              "AI provider configured - exercises use AI for distractors + hints. Tap to browse content sets.",
             )
           : t(
               "nav.mode_badge_tooltip_content",
-              "No API key configured — using pre-built content only. Add a key in Settings to enable AI features.",
+              "No API key configured - using pre-built content only. Add a key in Settings to enable AI features.",
             )
       }
       aria-label={

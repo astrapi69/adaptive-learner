@@ -134,9 +134,9 @@ Die Assessment- / Tracking- / Tools-Logik liegt unter
 
 Gebündelte Daten leben in `frontend/src/data/`:
 
-- `assessment-questions.json` — wortgetreu aus der Backend-
+- `assessment-questions.json` - wortgetreu aus der Backend-
   `QUESTIONS`-Liste exportiert (12 Fragen, mehrsprachig).
-- `session-prompts.json` — wortgetreu aus dem Backend-
+- `session-prompts.json` - wortgetreu aus dem Backend-
   `_PROMPTS`-Dict (6 Methoden × 7 Schritte).
 
 ## Dexie-Datenintegrität
@@ -154,12 +154,12 @@ naives get-spread-put nebenläufige Updates. DexieStorage nutzt:
 - **Additive Vorwärts-Migrationen.** Ein neuer Index oder eine
   neue Tabelle erhöht die Dexie-Schema-Version; das Upgrade
   füllt bestehende Rows nach bzw. dedupliziert sie. Die Stores
-  einer bestehenden Version werden nie in-place verändert —
+  einer bestehenden Version werden nie in-place verändert -
   stattdessen wird eine neue `version(n)` ergänzt.
 
 ## Backup-Format
 
-Das Backup ist eine `.alb`-Datei — ein ZIP, kein einzelner
+Das Backup ist eine `.alb`-Datei - ein ZIP, kein einzelner
 JSON-Dump. Das ZIP trägt neben den Tabellendaten auch einen
 localStorage-Snapshot, sodass ein Restore sowohl den
 IndexedDB- / SQLite-State als auch die localStorage-gestützten
@@ -185,23 +185,23 @@ Modus im Typ `StorageMode` in
 export type StorageMode = "api" | "dexie" | "supabase";
 ```
 
-In die Settings-Speicher-Modus-Sektion einbinden. Sonst nichts
-— Seiten gehen weiterhin über `getStorage()`.
+In die Settings-Speicher-Modus-Sektion einbinden. Sonst nichts -
+Seiten gehen weiterhin über `getStorage()`.
 
 ## Browser-Direkt-KI-Aufrufe
 
 `storage/ai/ai-providers.ts` implementiert drei
 Anbieter-Clients:
 
-- **Anthropic** — POST auf `https://api.anthropic.com/v1/messages`
+- **Anthropic** - POST auf `https://api.anthropic.com/v1/messages`
   mit dem Header
   `anthropic-dangerous-direct-browser-access: true`. Das ist
   Anthropics expliziter Opt-in für Browser-Aufrufe; ohne ihn
   weist CORS ab.
-- **OpenAI** — POST auf
+- **OpenAI** - POST auf
   `https://api.openai.com/v1/chat/completions` mit
   `Authorization: Bearer ${apiKey}`. CORS standardmäßig offen.
-- **Gemini** — POST auf
+- **Gemini** - POST auf
   `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}`.
   Query-Param-Auth, kein System-Feld; System-Nachrichten
   werden in den ersten User-Turn eingefaltet.
@@ -222,7 +222,7 @@ Bedrohungsmodell:
   Schlüssel jemals sieht.
 - Verschlüsseln in IndexedDB würde entweder einen Passwort-
   Prompt pro Session bedeuten (UX-feindlich) oder einen
-  fixen Key in der App (Security-Theater — der Angreifer hat
+  fixen Key in der App (Security-Theater - der Angreifer hat
   das Bundle).
 
 Das Server-Modus-Verhalten ist anders: API-Keys gehen durch
@@ -235,23 +235,23 @@ Zuordnung (`UserSettings.key_source_anthropic | openai |
 gemini`), sodass die UI "Key from: secrets.yaml" /
 "environment" / "Settings" rendern kann. Im Dexie-Modus
 kollabiert die Quelle zu `settings` oder `none`, weil die
-Browser-Sandbox keinen Dateisystem-Zugriff hat —
+Browser-Sandbox keinen Dateisystem-Zugriff hat -
 `secrets.yaml` ist ein Desktop- / Server-Modus-Konzept.
 
 ## Modus-Auflösung
 
 `storage/index.ts` löst den Modus in dieser Reihenfolge auf:
 
-1. Build-Zeit `VITE_STORAGE_MODE === "dexie"` — ein
+1. Build-Zeit `VITE_STORAGE_MODE === "dexie"` - ein
    Dexie-Only-Deployment (GH-Pages / installierte PWA) hat kein
    Backend, daher ist dies maßgeblich und gewinnt über jede
    persistierte Präferenz. Eine veraltete persistierte
    `"api"`-Wahl könnte dort nie erfüllt werden und würde jeden
    Request mit 404 quittieren.
-2. `localStorage["adaptive-learner.storage_mode"]` — die Wahl
+2. `localStorage["adaptive-learner.storage_mode"]` - die Wahl
    des Users aus den Einstellungen, nur konsultiert, wenn der
    Build KEIN Dexie-Only-Build ist.
-3. `VITE_STORAGE_MODE` (jeder andere Wert) — Build-Zeit-Standard.
+3. `VITE_STORAGE_MODE` (jeder andere Wert) - Build-Zeit-Standard.
 4. Fallback: `"api"` (Standard im lokalen Dev).
 
 Das Ergebnis wird für die Lebensdauer der Seite gecached.

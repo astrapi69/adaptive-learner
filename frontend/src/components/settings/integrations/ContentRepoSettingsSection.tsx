@@ -315,7 +315,7 @@ export default function ContentRepoSettingsSection() {
           notify.error(
             t(
               "content_repo.trust.dropped",
-              "Synced, but validation failed — this repository is now marked Unverified.",
+              "Synced, but validation failed - this repository is now marked Unverified.",
             ),
           );
         } else if (!options.quiet) {
@@ -684,7 +684,7 @@ export default function ContentRepoSettingsSection() {
           >
             {t(
               "content_repo.token_hint",
-              "Private repositories need a token — paste one below, or set a shared token in Settings → Integrations.",
+              "Private repositories need a token - paste one below, or set a shared token in Settings → Integrations.",
             )}
           </p>
         )}

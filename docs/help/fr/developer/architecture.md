@@ -47,11 +47,11 @@ l'une ou l'autre implémentation selon la configuration.
 
 Les clés API pour les fournisseurs IA sont résolues dans l'ordre :
 
-1. **Variable d'environnement** (`ANTHROPIC_API_KEY`, etc.) — priorité maximale
-2. **`~/.config/adaptive_learner/secrets.yaml`** — pour la gestion locale
-3. **Colonne DB chiffrée Fernet** — entrée via l'interface Paramètres
+1. **Variable d'environnement** (`ANTHROPIC_API_KEY`, etc.) - priorité maximale
+2. **`~/.config/adaptive_learner/secrets.yaml`** - pour la gestion locale
+3. **Colonne DB chiffrée Fernet** - entrée via l'interface Paramètres
 
-La résolution se fait à chaque appel — les changements de configuration
+La résolution se fait à chaque appel - les changements de configuration
 sont immédiatement effectifs sans redémarrage.
 
 ---
@@ -109,7 +109,7 @@ Mode Dexie : UI (React) → getStorage() (DexieStorage) → Dexie → IndexedDB
 |--------|-------------|
 | Frontend | `ApiError` → toast convivial via clés i18n `ui.errors.*` |
 | Client API | Erreur HTTP → converti en `ApiError` |
-| Routeur | Transparent — ne capture rien |
+| Routeur | Transparent - ne capture rien |
 | Service | Lève des sous-classes `AdaptiveLearnerError` |
 | Plugin | Mêmes sous-classes que les services |
 | Externe | `ExternalServiceError(service, message)` |
@@ -124,7 +124,7 @@ statuts HTTP.
 
 Six thèmes CSS auto-contenus dans `frontend/src/styles/themes/theme-*.css`,
 plus un mode `auto` qui suit le système d'exploitation. Chaque thème définit
-le jeu complet de tokens sémantiques — aucune dépendance entre thèmes.
+le jeu complet de tokens sémantiques - aucune dépendance entre thèmes.
 
 Voir [Système de thèmes](themes.md) pour tous les détails.
 

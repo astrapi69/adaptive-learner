@@ -41,7 +41,7 @@ export default function XPWidget({ state }: XPWidgetProps) {
           value={state.xp_into_level}
           max={denom}
           size={56}
-          ariaLabel={`${t("gamification.level", "Level")} ${state.level} — ${pct}%`}
+          ariaLabel={`${t("gamification.level", "Level")} ${state.level} - ${pct}%`}
           testId="xp-widget-ring"
         >
           {state.level}
@@ -57,7 +57,7 @@ export default function XPWidget({ state }: XPWidgetProps) {
       </div>
       <Progress
         value={pct}
-        aria-label={`${t("gamification.level", "Level")} ${state.level} — ${pct}%`}
+        aria-label={`${t("gamification.level", "Level")} ${state.level} - ${pct}%`}
         className="my-1 h-2"
         data-testid="xp-widget-bar"
       />

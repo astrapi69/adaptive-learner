@@ -1,7 +1,7 @@
 # Neuen Aufgabentyp hinzufügen
 
 Das kanonische Modell wird **nicht** auf Vorrat erweitert. Ein neuer
-Aufgabentyp kommt nur, wenn konkreter Content ihn braucht — und dann als eine
+Aufgabentyp kommt nur, wenn konkreter Content ihn braucht - und dann als eine
 kleine, additive PR. Dies ist das verbindliche Rezept, abgeleitet aus der
 realen `cloze`/`select`-Multiple-Choice-Arbeit (#1342) und der EXP-039-
 Schema-Pipeline.
@@ -11,7 +11,7 @@ Darstellungsform oder eine Konvention, die der
 [Aufgabentyp-Katalog](authoring-content.md#aufgabentyp-katalog-status) schon
 abdeckt (Text-Multiple-Choice, Wahr/Falsch, Dropdown/Radio/Checkbox sind
 **keine** neuen Typen). Er muss **binär SRS-bewertbar** sein (ein einziges
-korrekt/falsch-Ergebnis pro Element) — das ist die Grenze, die die
+korrekt/falsch-Ergebnis pro Element) - das ist die Grenze, die die
 „Bewusst nicht"-Liste des Katalogs zieht.
 
 ## Schritte
@@ -36,13 +36,13 @@ korrekt/falsch-Ergebnis pro Element) — das ist die Grenze, die die
 5. **Renderer registrieren.** Den Branch + den Typ zu
    `SUPPORTED_EXERCISE_TYPES` in
    `frontend/src/components/exercises/shell/ExerciseDispatcher.tsx` ergänzen.
-   Die **Registry muss dem Enum entsprechen** — ein Paritätstest erzwingt das,
+   Die **Registry muss dem Enum entsprechen** - ein Paritätstest erzwingt das,
    sodass ein nicht gerenderter Typ die CI bricht (die Invariante, die totes
    Schema verhindert).
 6. **Bewertung / SRS anschließen.** Aus dem Renderer via
    `useControlledExercise` ein `ExerciseScored` ausgeben; der geteilte
    `onComplete`-→-`recordStepResult`-Pfad in `LessonStepView.tsx` fächert jeden
-   Versuch bereits über `getStorage().elementErrors.recordBulk` auf — diesen
+   Versuch bereits über `getStorage().elementErrors.recordBulk` auf - diesen
    wiederverwenden, keinen zweiten Aufzeichnungspfad bauen.
 7. **Content-Repo-Validierung.** Den Client-Validator
    (`frontend/src/lib/content/validation/content-validator.ts`) erweitern und,

@@ -24,8 +24,8 @@ Français A1
 ```
 
 Chaque nœud peut être :
-- **Sujet** — conteneur organisationnel
-- **Leçon** — unité de contenu avec un éditeur de texte enrichi
+- **Sujet** - conteneur organisationnel
+- **Leçon** - unité de contenu avec un éditeur de texte enrichi
 
 ---
 
@@ -42,7 +42,7 @@ Vous pouvez :
 
 ## Leçons avec éditeur TipTap
 
-Chaque sujet peut contenir des **leçons** — des notes enrichies dans un
+Chaque sujet peut contenir des **leçons** - des notes enrichies dans un
 éditeur TipTap avec :
 
 - Titres, paragraphes, listes

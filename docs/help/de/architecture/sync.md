@@ -11,7 +11,7 @@ verbinden. Die vollständige Referenz steht in
 ## Drei Geräte-Rollen
 
 Die Sync-Oberfläche sieht je nach Rolle des Geräts
-unterschiedlich aus — und wird nur dort gezeigt, wo sie nutzbar
+unterschiedlich aus - und wird nur dort gezeigt, wo sie nutzbar
 ist:
 
 | Rolle | Speichermodus | Sync-UI |
@@ -24,7 +24,7 @@ ist:
 
 ## SYNC-UI-GATE: nur anzeigen, was funktioniert
 
-Eine nicht verfügbare Funktion wird **nicht angeboten** — keine
+Eine nicht verfügbare Funktion wird **nicht angeboten** - keine
 toten Knöpfe, keine ausgegrauten Platzhalter. Aktuell (die
 LAN-Pairing-Phase ist noch nicht implementiert) ist der
 Sync-Bereich daher **API-only** sichtbar; ohne funktionierenden
@@ -39,6 +39,6 @@ Nur-PWA-Deployment kein totes Bedienelement entsteht.
 
 ## Verwandte Seiten
 
-- [Storage-Layer](../developer/storage-layer.md) — die duale Speicher-Abstraktion
-- [Backup und Wiederherstellung](../features/backup.md) — manueller Datentransfer ohne Sync
+- [Storage-Layer](../developer/storage-layer.md) - die duale Speicher-Abstraktion
+- [Backup und Wiederherstellung](../features/backup.md) - manueller Datentransfer ohne Sync
 - [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

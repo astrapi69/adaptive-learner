@@ -3,8 +3,8 @@
 El inicio es deliberadamente breve: el
 **inicio rápido** solo requiere dos campos.
 
-1. **Nombre** — cómo debe dirigirse la app a ti.
-2. **Tema** — qué quieres aprender. "Gramática española",
+1. **Nombre** - cómo debe dirigirse la app a ti.
+2. **Tema** - qué quieres aprender. "Gramática española",
    "Fundamentos de machine learning", "Improvisación de guitarra
    en solitario". Sé concreto; ese es el ancla de tu proyecto.
 
@@ -16,9 +16,9 @@ cualquier momento.
 
 Tras enviar, la app te ofrece dos vías:
 
-- **Empezar directamente** — llegas de inmediato al Dashboard y
+- **Empezar directamente** - llegas de inmediato al Dashboard y
   puedes iniciar una lección o sesión.
-- **Configurar el perfil** — abre el **asistente de onboarding**:
+- **Configurar el perfil** - abre el **asistente de onboarding**:
   una pregunta por pantalla (objetivo → plazo → minutos por día →
   problema actual → prueba de tipo de aprendizaje opcional), cada
   una con valor previo, de modo que "Siguiente" siempre funcione,

@@ -11,17 +11,17 @@ não toca em nenhum componente. Esta regra é imposta por testes, não
 
 ## As camadas de tokens
 
-1. **Tokens por tema** — o conjunto canónico de 44 tokens,
+1. **Tokens por tema** - o conjunto canónico de 44 tokens,
    definido uma vez por tema em
    `frontend/src/styles/themes/theme-<id>.css` (fundos, texto,
    bordas, interativo, acento, status, feedback de exercícios,
    estrela, gráficos, sombras). Mudar `[data-theme]` inverte
    todos. **Cada tema tem de definir exatamente o mesmo
    conjunto** (fixado por `themes.test.ts`).
-2. **Tokens agnósticos ao tema** — valores que, por construção,
+2. **Tokens agnósticos ao tema** - valores que, por construção,
    são iguais em todos os temas (p. ex. paleta da marca, cores de
    sintaxe, espaçamentos de layout). Ficam em `global.css :root`.
-3. **Aliases legados** — nomes antigos como `--surface`, `--danger`,
+3. **Aliases legados** - nomes antigos como `--surface`, `--danger`,
    que resolvem **através** dos tokens canónicos.
 
 ---
@@ -45,7 +45,7 @@ não toca em nenhum componente. Esta regra é imposta por testes, não
 
 1. Copia um `theme-<id>.css` existente como modelo.
 2. Define todos os 44 tokens canónicos (a paridade é obrigatória).
-3. Atenta ao **contraste WCAG AA** — `contrast.test.ts` verifica
+3. Atenta ao **contraste WCAG AA** - `contrast.test.ts` verifica
    todos os temas computacionalmente.
 4. Regista o tema; o seletor em Definições → Aparência adota-o.
 
@@ -68,5 +68,5 @@ todos os temas).
 
 ## Páginas relacionadas
 
-- [Sistema de temas](../developer/themes.md) — os temas fornecidos + seletor
-- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — lista completa de tokens
+- [Sistema de temas](../developer/themes.md) - os temas fornecidos + seletor
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) - lista completa de tokens

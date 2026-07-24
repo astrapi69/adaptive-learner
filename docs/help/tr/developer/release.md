@@ -11,11 +11,11 @@ CHANGELOG ve etikettir.
 
 Adaptive Learner, Anlamsal Sürüm Oluşturma 2.0.0'ı izler:
 
-- **Major (X.0.0)** — API veya mimaride yıkıcı değişiklikler.
+- **Major (X.0.0)** - API veya mimaride yıkıcı değişiklikler.
   Gelecekteki büyük değişimler için ayrılmıştır.
-- **Minor (X.Y.0)** — geriye dönük uyumlu yeni özellikler.
+- **Minor (X.Y.0)** - geriye dönük uyumlu yeni özellikler.
   Her aşama tamamlanması için varsayılan.
-- **Patch (X.Y.Z)** — geriye dönük uyumlu hata düzeltmeleri.
+- **Patch (X.Y.Z)** - geriye dönük uyumlu hata düzeltmeleri.
   Hotfix zincirleri.
 
 Ön sürüm etiketleri (`-alpha`, `-beta`, `-rc`) kullanılmaz.
@@ -80,7 +80,7 @@ cd frontend && bun run build # başarılı olmalı
 ```bash
 git add -A
 git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z — phase headline + summary"
+git tag -a vX.Y.Z -m "vX.Y.Z - phase headline + summary"
 ```
 
 Etiket mesajları açıklamalı, çok satırlı ve sürümü özetler.
@@ -129,10 +129,10 @@ arkaya geldiğinde zinciri kaydeder.
 Sürüm döngüsü bağımlılıkları (Vite, React vb.) artırdığında,
 her artışı kendi commit'i olarak tutun. Nedenler:
 
-- **Bisect ayrıntı düzeyi** — bir regresyon tek bir artışa
+- **Bisect ayrıntı düzeyi** - bir regresyon tek bir artışa
   izole edilir.
-- **CHANGELOG okunabilirliği** — okuyucular her artışın gerçek
+- **CHANGELOG okunabilirliği** - okuyucular her artışın gerçek
   motivasyonunu görür.
-- **Geri alma** — kötü bir artış bağımsız olarak geri alınabilir.
+- **Geri alma** - kötü bir artış bağımsız olarak geri alınabilir.
 
 Tam desen `.claude/rules/release-workflow.md`'de belgelenmiştir.

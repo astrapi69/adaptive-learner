@@ -1,4 +1,4 @@
-# Adaptive Learner — Documentation
+# Adaptive Learner - Documentation
 
 Bienvenue dans la documentation d'Adaptive Learner. Utilisez la navigation
 latérale pour parcourir les sections, ou commencez par le guide ci-dessous.
@@ -9,21 +9,21 @@ latérale pour parcourir les sections, ou commencez par le guide ci-dessous.
 
 **Vous débutez ?**
 
-1. [Premiers pas](user-guide/getting-started.md) — installation, première session
-2. [Test d'évaluation](user-guide/assessment.md) — trouver vos méthodes d'apprentissage
-3. [Session d'apprentissage](user-guide/learning-session.md) — comprendre le cycle en 7 étapes
+1. [Premiers pas](user-guide/getting-started.md) - installation, première session
+2. [Test d'évaluation](user-guide/assessment.md) - trouver vos méthodes d'apprentissage
+3. [Session d'apprentissage](user-guide/learning-session.md) - comprendre le cycle en 7 étapes
 
 **Vous souhaitez comprendre le concept ?**
 
-- [Philosophie](concept/philosophy.md) — pourquoi plusieurs méthodes ?
-- [Les six méthodes](concept/six-methods.md) — comparaison et cas d'usage
-- [Le cycle en sept étapes](concept/seven-steps.md) — comment une session fonctionne
+- [Philosophie](concept/philosophy.md) - pourquoi plusieurs méthodes ?
+- [Les six méthodes](concept/six-methods.md) - comparaison et cas d'usage
+- [Le cycle en sept étapes](concept/seven-steps.md) - comment une session fonctionne
 
 **Vous développez ou déployez ?**
 
-- [Architecture](developer/architecture.md) — 4 couches, stockage dual, plugins
-- [Guide de configuration](developer/setup.md) — prérequis, installation, lancement
-- [Guide des plugins](developer/plugin-guide.md) — écrire son propre plugin
+- [Architecture](developer/architecture.md) - 4 couches, stockage dual, plugins
+- [Guide de configuration](developer/setup.md) - prérequis, installation, lancement
+- [Guide des plugins](developer/plugin-guide.md) - écrire son propre plugin
 
 ---
 

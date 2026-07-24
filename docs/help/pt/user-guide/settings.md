@@ -5,30 +5,30 @@
 A página de Definições reúne tudo o que pode ajustar sem
 tocar em código ou YAML. Secções, de cima para baixo:
 
-1. **Idioma** — idioma da interface (DE / EN / ES / FR / EL /
+1. **Idioma** - idioma da interface (DE / EN / ES / FR / EL /
    PT / TR / JA, todos totalmente traduzidos).
-2. **Fornecedor de IA + seletor de modelo** — qual fornecedor
+2. **Fornecedor de IA + seletor de modelo** - qual fornecedor
    vê as suas mensagens e qual modelo usar.
-3. **Chaves de API** — chaves por fornecedor com atribuição de
+3. **Chaves de API** - chaves por fornecedor com atribuição de
    fonte (env / `secrets.yaml` / Definições).
-4. **Modo de armazenamento** — Servidor (FastAPI + SQLite) vs
+4. **Modo de armazenamento** - Servidor (FastAPI + SQLite) vs
    Local (IndexedDB do navegador).
-5. **Sincronização** — emparelhe este dispositivo com outro
+5. **Sincronização** - emparelhe este dispositivo com outro
    pela rede local.
-6. **Backup** — exportar / importar / comparar.
-7. **Voz** — alternâncias de TTS + STT + pronúncia.
-8. **Interface** — gestos + tema + densidade.
-9. **Gamificação** — notificações de XP / emblemas + modo de
+6. **Backup** - exportar / importar / comparar.
+7. **Voz** - alternâncias de TTS + STT + pronúncia.
+8. **Interface** - gestos + tema + densidade.
+9. **Gamificação** - notificações de XP / emblemas + modo de
    fim de semana.
-10. **Sobre** — versão, informações do sistema, créditos,
+10. **Sobre** - versão, informações do sistema, créditos,
     doações, licença.
 
 ## Idioma
 
 Troca em tempo real todas as strings da interface na próxima
 renderização via `PATCH /api/settings/{user_id}`. Todos os 8
-idiomas são de primeira classe — DE / EN / ES / FR / EL / PT /
-TR / JA — cada um com um catálogo totalmente traduzido.
+idiomas são de primeira classe - DE / EN / ES / FR / EL / PT /
+TR / JA - cada um com um catálogo totalmente traduzido.
 Persistido entre recarregamentos via `localStorage`.
 
 ## Fornecedor de IA + seletor de modelo
@@ -55,18 +55,18 @@ Cada fornecedor tem a sua própria linha: uma entrada de chave,
 um botão Guardar, um botão Remover, o emblema de fornecedor
 ativo, mais o novo emblema de **atribuição de fonte**:
 
-- **Chave de: Definições** — a chave está armazenada com
+- **Chave de: Definições** - a chave está armazenada com
   encriptação Fernet na BD (modo Servidor) ou em texto simples
   no IndexedDB (modo Local). Pode Guardar / Remover livremente.
-- **Chave de: secrets.yaml** — a chave está configurada em
+- **Chave de: secrets.yaml** - a chave está configurada em
   `~/.config/adaptive-learner/secrets.yaml`. O botão Guardar
   está desativado; edite o ficheiro diretamente para alterá-la.
   Um banner informativo abaixo da linha lembra-o do caminho.
-- **Chave de: ambiente** — a chave está configurada via a
+- **Chave de: ambiente** - a chave está configurada via a
   variável de ambiente `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`.
   Guardar desativado; a variável de ambiente é a fonte da
   verdade.
-- **Sem chave configurada** — nada está definido em lado
+- **Sem chave configurada** - nada está definido em lado
   nenhum. Escreva e clique em Guardar para começar.
 
 Cadeia de resolução (maior prioridade ganha): env >
@@ -78,10 +78,10 @@ para a análise completa.
 A alternância entre armazenamento **Servidor** e **Local
 (Navegador)**:
 
-- **Servidor** — cada leitura e escrita atinge o backend
+- **Servidor** - cada leitura e escrita atinge o backend
   FastAPI. Requer um backend em execução. Melhor para uso em
   múltiplos dispositivos com sincronização do lado do backend.
-- **Local (Navegador)** — cada leitura e escrita atinge o
+- **Local (Navegador)** - cada leitura e escrita atinge o
   IndexedDB neste navegador. As chamadas de IA disparam
   diretamente para o fornecedor. Sem backend necessário. Melhor
   para uma configuração privada e local do dispositivo.
@@ -127,17 +127,17 @@ botões Restaurar + Eliminar + Comparar-como-A/B.
 
 Três alternâncias:
 
-- **TTS ativado** — adiciona um botão ▶ ao lado das respostas
+- **TTS ativado** - adiciona um botão ▶ ao lado das respostas
   da IA + resultados da Avaliação que as lê em voz alta. Escolhe
   a voz correspondente ao idioma quando disponível; taxa +
   pitch limitados a [0.5, 2.0].
-- **Reprodução automática da IA** — fala cada resposta da IA
-  automaticamente (padrão DESLIGADO — áudio surpresa raramente
+- **Reprodução automática da IA** - fala cada resposta da IA
+  automaticamente (padrão DESLIGADO - áudio surpresa raramente
   é o que quer).
-- **STT ativado** — adiciona um botão 🎤 à entrada da Sessão
+- **STT ativado** - adiciona um botão 🎤 à entrada da Sessão
   que captura a fala e preenche a área de texto com transcrições
   provisórias antes de enviar.
-- **Prática de Pronúncia ativada** — apresenta a página
+- **Prática de Pronúncia ativada** - apresenta a página
   `/pronunciation` a partir do início rápido do Dashboard para
   projetos marcados como Línguas.
 

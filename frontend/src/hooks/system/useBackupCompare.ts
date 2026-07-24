@@ -120,7 +120,7 @@ export function useBackupCompare(userId: string | null) {
                 throw new Error(
                     t(
                         "backup.auto_compare_missing",
-                        "Auto-backup is no longer available — it was rotated out.",
+                        "Auto-backup is no longer available - it was rotated out.",
                     ),
                 );
             }

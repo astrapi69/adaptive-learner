@@ -284,7 +284,7 @@ GET /api/plugins/tools/spaced/{project_id}?lang=en
 ]
 ```
 
-## Plugin συνεδρίας — streaming + προφορά (v1.6.0+, v1.18.0+)
+## Plugin συνεδρίας - streaming + προφορά (v1.6.0+, v1.18.0+)
 
 ```
 POST /api/plugins/session/{id}/message/stream  (SSE)
@@ -293,11 +293,11 @@ POST /api/plugins/session/{id}/message/stream  (SSE)
 Ίδιο σχήμα σώματος με το `/message`· εκπέμπει τρεις τύπους
 συμβάντων SSE:
 
-- `start` — ωφέλιμο φορτίο `{user_message}` (η σειρά χρήστη
+- `start` - ωφέλιμο φορτίο `{user_message}` (η σειρά χρήστη
   αποθηκεύτηκε τώρα).
-- `chunk` — ωφέλιμο φορτίο `{delta}` (ένα ή περισσότερα τμήματα
+- `chunk` - ωφέλιμο φορτίο `{delta}` (ένα ή περισσότερα τμήματα
   κειμένου που φτάνουν από τη ροή του παρόχου ΤΝ).
-- `done` — ωφέλιμο φορτίο πανομοιότυπο με τη σύγχρονη απόκριση
+- `done` - ωφέλιμο φορτίο πανομοιότυπο με τη σύγχρονη απόκριση
   `/message`: μήνυμα assistant + cycle_step + χρόνοι +
   προαιρετική κάρτα μετάβασης κύκλου.
 

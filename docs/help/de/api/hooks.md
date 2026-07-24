@@ -171,7 +171,7 @@ def on_session_complete(
     """
 ```
 
-Fehler in diesem Hook DÜRFEN NICHT propagieren — der
+Fehler in diesem Hook DÜRFEN NICHT propagieren - der
 `_fire_on_session_complete`-Wrapper in
 `backend/app/main.py` fängt und loggt sie.
 

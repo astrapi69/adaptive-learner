@@ -3,8 +3,8 @@
 > Die beste Lernmethode ist keine feste Methode.
 
 Das ist die These im Kern von AdaptiveLearner. Die meisten
-"Lern-Apps" wählen einen Ansatz — Karteikarten, Videolektion,
-gamifizierte Streaks — und unterstellen, dass alle gleich
+"Lern-Apps" wählen einen Ansatz - Karteikarten, Videolektion,
+gamifizierte Streaks - und unterstellen, dass alle gleich
 lernen. Das tun sie nicht.
 
 ## Warum eine Methode nicht reicht
@@ -23,7 +23,7 @@ verlangt verschiedene Methoden:
 Ein Lerner, der fließend zwischen Methoden wechseln kann,
 lernt schneller, behält länger und brennt seltener aus. Der
 Sinn von AdaptiveLearner ist nicht, deine Eine Wahre Methode
-zu finden — er ist, Methodenwechsel billig, natürlich und
+zu finden - er ist, Methodenwechsel billig, natürlich und
 pädagogisch gerechtfertigt zu machen.
 
 ## Die sechs Methoden
@@ -33,8 +33,8 @@ abdecken, wie Menschen tatsächlich lernen:
 
 | Methode | Kern-Haltung |
 |---|---|
-| Deduktiv | Theorie zuerst — Regeln, dann Beispiele |
-| Induktiv | Beispiele zuerst — Regeln aus Mustern ableiten |
+| Deduktiv | Theorie zuerst - Regeln, dann Beispiele |
+| Induktiv | Beispiele zuerst - Regeln aus Mustern ableiten |
 | Fehlerbasiert | Fehler provozieren und daraus lernen |
 | Dialogisch | Gespräch, niedriger Druck |
 | Kontextuell | Alltagsszenarien, situierte Praxis |
@@ -52,7 +52,7 @@ wählen, basierend darauf, was der Lerner gerade getan hat.
 Jede Session durchläuft einen 7-Schritt-Zyklus: Input,
 Versuch, Fehler, Feedback, Anpassen, Wiederholen,
 Integrieren. Das meiste Lernen passiert zwischen Fehler und
-Feedback (Schritte 3-4) — dort lebt die eigentliche
+Feedback (Schritte 3-4) - dort lebt die eigentliche
 kognitive Arbeit. Die anderen Schritte sind da, damit Fehler
 etwas haben, woran sie sich reiben, und einen Platz, an dem
 sie landen.
@@ -88,13 +88,13 @@ werden.
 ## Die drei Säulen
 
 Drei externe Werkzeug-Kategorien stehen neben AdaptiveLearner-
-Sessions — wir versuchen nicht, sie neu zu erfinden:
+Sessions - wir versuchen nicht, sie neu zu erfinden:
 
-1. **Spaced Repetition** (Anki) — für langfristiges
+1. **Spaced Repetition** (Anki) - für langfristiges
    Behalten von Regeln + Fehlerkorrekturen.
-2. **Active Recall** (NotebookLM) — für Wissensaufbau aus
+2. **Active Recall** (NotebookLM) - für Wissensaufbau aus
    eigenen Quellen.
-3. **Adaptive KI-Prompts** (Claude / ChatGPT / Gemini) —
+3. **Adaptive KI-Prompts** (Claude / ChatGPT / Gemini) -
    für einmalige Erklärungen + flexible Befragung.
 
 Die Tool-Empfehlungs-Karte im Dashboard rankt diese fünf

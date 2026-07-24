@@ -2,7 +2,7 @@
 
 The **Learning Path** page (`/learning-path`) answers two questions at
 a glance: *where am I, and what comes next?* By default it shows your
-**Personal** path — a compact, two-level list of the lesson sets you
+**Personal** path - a compact, two-level list of the lesson sets you
 have downloaded, sorted by your most recent activity. An interactive
 **Graph** view is still available as an alternative.
 
@@ -14,39 +14,39 @@ have downloaded, sorted by your most recent activity. An interactive
 
 ## Personal view (default)
 
-### Level 1 — set overview
+### Level 1 - set overview
 
 Each downloaded set is **one row**:
 
 | Element | Meaning |
 |---------|---------|
 | Domain icon + title | The course (brain = psychology, flag = language, code = programming) |
-| Mini progress track | One dot per lesson — filled = done, half = in progress, hollow = not started |
+| Mini progress track | One dot per lesson - filled = done, half = in progress, hollow = not started |
 | Percentage | Share of the set's lessons completed |
 | Last activity | When you last worked on this set ("yesterday", "3 days ago") |
 | Current lesson | The lesson you should do next |
 | Action button | **Resume** / **Start** / **Next level available** / **Completed** |
 
 Sets are sorted by last activity (most recent first). Untouched
-downloaded sets sink to the bottom — and among those, the **most
+downloaded sets sink to the bottom - and among those, the **most
 recently downloaded set comes first**, so a set you just downloaded
 is right at the top of the not-yet-started group instead of buried.
 When you finish every lesson of a course and the next CEFR level
 exists, the row offers **Next level available**.
 
-### Level 2 — lesson detail
+### Level 2 - lesson detail
 
 Click a set row to expand it inline (no page change). Each lesson
-shows its number and title, stars (0–3, or — if never attempted),
+shows its number and title, stars (0–3, or - if never attempted),
 per-direction mastery (**receptive** / **productive**), and the date
 of your last attempt. The ▶ marker highlights the set's current
 lesson. Click any lesson to start or resume it.
 
 At the bottom of the expanded set:
 
-- **Start adaptive lesson** — a lesson generated from your errors in
+- **Start adaptive lesson** - a lesson generated from your errors in
   this set.
-- **Retry errors (N)** — review the set's outstanding mistakes (shown
+- **Retry errors (N)** - review the set's outstanding mistakes (shown
   only when there are any).
 
 Click the set row again to collapse it.
@@ -82,16 +82,16 @@ mastery summary; click its header to collapse or expand.
 
 ### Graph controls
 
-- **Status filter** — all / not started / in progress / mastered.
-- **Direction filter** — all, or only lessons missing receptive or
+- **Status filter** - all / not started / in progress / mastered.
+- **Direction filter** - all, or only lessons missing receptive or
   productive mastery.
-- **Search** — highlight matches; press **Enter** to jump to the
+- **Search** - highlight matches; press **Enter** to jump to the
   first one.
-- **Stats** — lessons completed, receptive mastered, productive
+- **Stats** - lessons completed, receptive mastered, productive
   mastered.
-- **Show error clusters** — shared mistake patterns (e.g. *article
+- **Show error clusters** - shared mistake patterns (e.g. *article
   gender*) with a one-click adaptive lesson.
-- **Reset layout** — restore the automatic layout and clear your
+- **Reset layout** - restore the automatic layout and clear your
   dragged positions (saved per user in browser storage).
 
 ## Keyboard access
@@ -102,7 +102,7 @@ least 44 px and the page reflows cleanly down to 375 px wide.
 
 ## Tips
 
-- The **current lesson** (▶) is always your best next step — based on
+- The **current lesson** (▶) is always your best next step - based on
   your error history, not just lesson order.
 - A paused lesson stays resumable from its row or the Dashboard Paused
   Lessons card.

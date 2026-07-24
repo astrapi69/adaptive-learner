@@ -19,7 +19,7 @@ skill.
 
 ## Why this order
 
-It's not just convenient — each step depends on the previous:
+It's not just convenient - each step depends on the previous:
 
 - **Input → Attempt** is non-trivial. Many learners skip
   Attempt and go straight from input to "I'll try later."
@@ -68,7 +68,7 @@ Each skipped step costs you:
 
 The dual-prompt AI evaluator watches your exchanges and can
 suggest staying on the current step when you've skipped a
-cognitive beat. This is why "stay" suggestions exist —
+cognitive beat. This is why "stay" suggestions exist -
 they're not the AI being annoying.
 
 ## How the AI decides
@@ -86,11 +86,11 @@ unparseable text, a deterministic +1 fallback applies
 
 The suggested_step can be:
 
-- `current + 1` — normal advance (most common).
-- `current` — stay; the learner needs more time here.
-- A skip forward (e.g. 1 → 3) — the learner already
+- `current + 1` - normal advance (most common).
+- `current` - stay; the learner needs more time here.
+- A skip forward (e.g. 1 → 3) - the learner already
   grasps the input.
-- A step backward (e.g. 4 → 2) — the learner is confused
+- A step backward (e.g. 4 → 2) - the learner is confused
   and needs to re-attempt.
 
 The route applies the suggestion only when
@@ -102,15 +102,15 @@ in app.yaml). Fallback verdicts always apply the +1 advance.
 The same AI call could output both the learning reply AND
 the step verdict. We don't, because:
 
-1. **Separation of concerns** — the learning prompt is
+1. **Separation of concerns** - the learning prompt is
    composed per (method, step). The evaluator prompt is
    method-aware but step-agnostic.
-2. **Token budgets** — the learning reply benefits from
+2. **Token budgets** - the learning reply benefits from
    1024 tokens; the verdict needs only 256.
-3. **JSON parse robustness** — asking the AI to produce
+3. **JSON parse robustness** - asking the AI to produce
    prose AND a JSON tail in one response is fragile. We
    ask twice, parse cleanly.
-4. **Replay-ability** — when something goes weird, we have
+4. **Replay-ability** - when something goes weird, we have
    the two responses logged separately and can audit.
 
 The cost is two API calls per round-trip. At cheap-tier
@@ -133,8 +133,8 @@ previous / next cycle step.
 ## Auto-loop + topic transitions
 
 Step 7 is no longer a dead end. Once the step-evaluator
-moves you to step 7 with `advance=true`, a third AI call —
-the topic-transition evaluator — judges whether the topic
+moves you to step 7 with `advance=true`, a third AI call -
+the topic-transition evaluator - judges whether the topic
 has been integrated and whether to start a new cycle.
 
 ```

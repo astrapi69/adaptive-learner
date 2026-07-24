@@ -40,12 +40,12 @@ para utilizadores médios.
 
 O Adaptive Learner traça o seguinte:
 
-1. **O seu perfil de aprendizagem** — quais métodos correspondem
+1. **O seu perfil de aprendizagem** - quais métodos correspondem
    ao seu estilo cognitivo (medido pelo teste de avaliação).
-2. **O seu estado de sessão** — stress, compreensão, adequação
+2. **O seu estado de sessão** - stress, compreensão, adequação
    do método (medidos em tempo real pelo avaliador de duplo
    prompt).
-3. **A trajetória do tópico** — quais métodos produziram
+3. **A trajetória do tópico** - quais métodos produziram
    progresso *para este tópico* nas últimas sessões.
 
 A confluência destas três fontes de dados orienta o método, a
@@ -91,13 +91,13 @@ sinaliza se o ciclo deve avançar, repetir ou mudar de método.
 
 Cada par de métodos tem uma tensão produtiva:
 
-- **Dedutivo vs. indutivo** — clareza imediata vs. compreensão
+- **Dedutivo vs. indutivo** - clareza imediata vs. compreensão
   mais profunda
-- **Baseado em erros vs. dialógico** — desafio vs. segurança
-- **Contextual vs. baseado em regras** — transferência vs.
+- **Baseado em erros vs. dialógico** - desafio vs. segurança
+- **Contextual vs. baseado em regras** - transferência vs.
   solidez
 
-O sistema não elimina estas tensões — navega-as. Quando o stress
+O sistema não elimina estas tensões - navega-as. Quando o stress
 é alto, muda para métodos mais seguros. Quando a confiança está
 sólida, aumenta a exigência. O objetivo é manter o aprendente na
 zona de desenvolvimento proximal: desafiado mas não

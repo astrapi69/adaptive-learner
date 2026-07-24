@@ -7,20 +7,20 @@ Sie braucht einen konfigurierten KI-Schlüssel
 (Einstellungen → KI); ohne einen ist der Knopf sichtbar, aber
 deaktiviert, mit dem Grund im Tooltip.
 
-<!-- TODO: Screenshot — der „Übungen generieren"-Knopf an einer reinen Theorie-Lektion -->
+<!-- TODO: Screenshot - der „Übungen generieren"-Knopf an einer reinen Theorie-Lektion -->
 
 ---
 
 ## Die Pipeline
 
-Die Generierung ist kein einzelner KI-Aufruf — sie ist eine
+Die Generierung ist kein einzelner KI-Aufruf - sie ist eine
 **Generieren → Qualitäts-Gate → Balancieren → Feedback**-Pipeline:
 
 1. **Generieren.** Ein Generierungs-Prompt fordert vom Modell
    Übungen über die unterstützten Typen an; ein defensiver
    JSON-Parser verträgt die üblichen Formatierungs-Macken.
 2. **Qualitäts-Gate.** Ein deterministisches Gate verwirft Übungen,
-   die fehlerhaft, trivial oder Duplikate bestehender sind — bevor
+   die fehlerhaft, trivial oder Duplikate bestehender sind - bevor
    du sie überhaupt siehst.
 3. **Balancieren.** Die erzeugten Übungen werden über die
    Übungstypen balanciert, damit eine Lektion nicht nur aus einer
@@ -45,7 +45,7 @@ Die Generierung ist kein einzelner KI-Aufruf — sie ist eine
 Weil das Qualitäts-Gate deterministisch ist, erfüllen generierte
 Übungen dieselbe Mindesthürde wie handgeschriebene (genug Übungen,
 mehr als ein Typ, keine leeren Karten). Die Generierung ergänzt
-handgeschriebene Inhalte — sie überschreibt deine bestehenden
+handgeschriebene Inhalte - sie überschreibt deine bestehenden
 Übungen nie stillschweigend.
 
 Zum Prüfen *bestehender* Inhaltsqualität (handgeschrieben oder
@@ -55,6 +55,6 @@ generiert) siehe [KI-Inhaltsprüfung](../user-guide/ai-validation.md).
 
 ## Verwandte Seiten
 
-- [KI-Inhaltsprüfung](../user-guide/ai-validation.md) — set-weite Qualitätschecks
-- [Lektionen erstellen](../content-creation/overview.md) — Lektionen selbst bauen
-- [Lektionen und Wiederholungen](../user-guide/lessons.md) — die Übungstypen
+- [KI-Inhaltsprüfung](../user-guide/ai-validation.md) - set-weite Qualitätschecks
+- [Lektionen erstellen](../content-creation/overview.md) - Lektionen selbst bauen
+- [Lektionen und Wiederholungen](../user-guide/lessons.md) - die Übungstypen

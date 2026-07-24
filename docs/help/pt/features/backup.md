@@ -5,7 +5,7 @@ num único ficheiro e restaurá-lo noutro dispositivo, numa
 instalação nova ou após uma mudança de browser. Encontras tudo em
 **Definições → Dados**.
 
-<!-- TODO: Captura de ecrã — Definições → Dados com os botões "Criar backup" e "Restaurar" -->
+<!-- TODO: Captura de ecrã - Definições → Dados com os botões "Criar backup" e "Restaurar" -->
 
 ---
 
@@ -47,7 +47,7 @@ salvaguarda.
    para que vejas exatamente o que foi importado.
 
 Se algo correr mal durante a importação, aparece um **aviso de erro
-permanente** (toast) que não desaparece por si — assim não passas
+permanente** (toast) que não desaparece por si - assim não passas
 nenhum erro despercebido. No modo programador (Definições →
 Interface), a mensagem contém os detalhes técnicos para um issue no
 GitHub.
@@ -61,7 +61,7 @@ backup pode ser importado numa **instalação nova** ou sob um
 **perfil de utilizador diferente**. O restauro atribui os dados ao
 perfil ativo e, ao fazê-lo, resolve corretamente de novo as
 referências internas (chaves estrangeiras), para que o teu progresso
-permaneça coerente — incluindo o progresso de passos das lições,
+permaneça coerente - incluindo o progresso de passos das lições,
 Streak e Badges.
 
 ---
@@ -79,17 +79,17 @@ mudança de dispositivo ou browser.
 ## Ambos os modos de armazenamento
 
 O backup e o restauro funcionam em **ambos** os modos de
-armazenamento — servidor (API) e apenas browser (Dexie/IndexedDB).
+armazenamento - servidor (API) e apenas browser (Dexie/IndexedDB).
 O formato é um único ficheiro JSON; não existe nenhum formato de
 arquivo proprietário.
 
 !!! note "Privacidade"
     O backup fica inteiramente nas tuas mãos. É guardado apenas
-    onde o colocares — nada é enviado para um servidor.
+    onde o colocares - nada é enviado para um servidor.
 
 ---
 
 ## Páginas relacionadas
 
-- [Definições](../user-guide/settings.md) — todas as ações de dados num relance
-- [Múltiplos repositórios de conteúdo](content-repos.md) — os repos ligados fazem parte do snapshot
+- [Definições](../user-guide/settings.md) - todas as ações de dados num relance
+- [Múltiplos repositórios de conteúdo](content-repos.md) - os repos ligados fazem parte do snapshot

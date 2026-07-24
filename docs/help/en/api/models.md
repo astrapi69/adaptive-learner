@@ -42,7 +42,7 @@ Relationships: `projects`, `curriculums`, `profiles`,
 | model_override_gemini | string \| null | Default `null` |
 
 The wire schema (`UserSettingsOut`) replaces the three
-`api_key_*` fields with `has_<provider>_key: bool` booleans —
+`api_key_*` fields with `has_<provider>_key: bool` booleans -
 cleartext never travels back to the client. Since v1.20.0 /
 Phase 34, the wire schema also carries
 `key_source_<provider>: ApiKeySource` (enum:

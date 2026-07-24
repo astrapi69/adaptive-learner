@@ -6,7 +6,7 @@ v1.61.0. Las notas técnicas completas por versión están en
 
 ---
 
-## v1.69.0 — Enlaces de ejemplo + recomendaciones de libros
+## v1.69.0 - Enlaces de ejemplo + recomendaciones de libros
 
 - **Enlaces de ejemplo en la teoría:** un paso de teoría puede
   llevar un enlace opcional "Ver ejemplo".
@@ -18,7 +18,7 @@ v1.61.0. Las notas técnicas completas por versión están en
 - **Corrección de copia de seguridad:** el título del conjunto se
   lee correctamente del manifiesto al restaurar.
 
-## v1.68.0 — Exportar resultados + retroenlaces de teoría
+## v1.68.0 - Exportar resultados + retroenlaces de teoría
 
 - **Exportar el resultado de la lección:** "Copiar resultado" /
   "Guardar como archivo" (informe Markdown para asistentes de IA).
@@ -28,7 +28,7 @@ v1.61.0. Las notas técnicas completas por versión están en
   insignias numéricas (seguro para daltónicos).
 - **Contraste en modo oscuro** corregido en varios lugares.
 
-## v1.67.1 — Restauración de copias + estabilidad de despliegue
+## v1.67.1 - Restauración de copias + estabilidad de despliegue
 
 - Corrección sistemática de la **restauración de copias de
   seguridad**.
@@ -36,7 +36,7 @@ v1.61.0. Las notas técnicas completas por versión están en
 - Pulido del filtro de Subject (oculto con ≤ 1 Subject, más usados
   primero).
 
-## v1.65.0 — Evaluación reanudable + atajo Enter
+## v1.65.0 - Evaluación reanudable + atajo Enter
 
 - **Evaluación reanudable:** interrumpir la prueba y continuar más
   tarde donde lo dejaste.
@@ -45,7 +45,7 @@ v1.61.0. Las notas técnicas completas por versión están en
 - Ejercicios de asociación más claros + revisión de tokens de
   diseño.
 
-## v1.64.0 — Rediseño del onboarding
+## v1.64.0 - Rediseño del onboarding
 
 - **Inicio rápido con solo nombre + tema**; el resto toma valores
   predeterminados.
@@ -54,7 +54,7 @@ v1.61.0. Las notas técnicas completas por versión están en
 - La **evaluación ahora es opcional**
   ([Onboarding](user-guide/onboarding.md)).
 
-## v1.63.0 — Presets de temas WCAG AA
+## v1.63.0 - Presets de temas WCAG AA
 
 - **6 temas recomendados** (Catppuccin Latte/Mocha, Supabase,
   Graphite, Soft Pop, Amethyst Haze), conformes con AA de forma
@@ -62,14 +62,14 @@ v1.61.0. Las notas técnicas completas por versión están en
 - Auditoría sistemática de i18n; filtro del Dashboard
   personalizado.
 
-## v1.62.0 — Integridad de copias + procedencia de la build
+## v1.62.0 - Integridad de copias + procedencia de la build
 
 - Endurecimiento de la **restauración de copias de seguridad**
   (coerción de tipos de datos, orden de claves foráneas).
 - About muestra información real de la build en lugar de
   "unknown".
 
-## v1.61.0 — Conformidad de botones + reanudar lección
+## v1.61.0 - Conformidad de botones + reanudar lección
 
 - Conformidad de botones shadcn en toda la app.
 - La **lección pausada** continúa en el paso exacto.
@@ -92,4 +92,4 @@ v1.61.0. Las notas técnicas completas por versión están en
 ## Páginas relacionadas
 
 - [Primeros pasos](user-guide/getting-started.md)
-- [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases) — notas completas
+- [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases) - notas completas

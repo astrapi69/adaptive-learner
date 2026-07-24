@@ -255,7 +255,7 @@ el perfil del proyecto:
   {
     "name": "Anki",
     "url": "https://apps.ankiweb.net/",
-    "why": "Tarjetas de repetición espaciada — ideales para consolidar reglas y correcciones de errores a largo plazo.",
+    "why": "Tarjetas de repetición espaciada - ideales para consolidar reglas y correcciones de errores a largo plazo.",
     "weight_keys": ["deductive", "error_based"],
     "score": 0.5
   },
@@ -284,7 +284,7 @@ recencia:
 ]
 ```
 
-## Plugin de sesión — streaming + pronunciación (v1.6.0+, v1.18.0+)
+## Plugin de sesión - streaming + pronunciación (v1.6.0+, v1.18.0+)
 
 ```
 POST /api/plugins/session/{id}/message/stream  (SSE)
@@ -292,11 +292,11 @@ POST /api/plugins/session/{id}/message/stream  (SSE)
 
 El mismo cuerpo que `/message`; emite tres tipos de eventos SSE:
 
-- `start` — payload `{user_message}` (el turno del usuario ya
+- `start` - payload `{user_message}` (el turno del usuario ya
   persistido).
-- `chunk` — payload `{delta}` (uno o más fragmentos de texto
+- `chunk` - payload `{delta}` (uno o más fragmentos de texto
   llegando del streaming del proveedor de IA).
-- `done` — payload idéntico a la respuesta síncrona de `/message`:
+- `done` - payload idéntico a la respuesta síncrona de `/message`:
   mensaje del asistente + cycle_step + tiempos +
   tarjeta de transición de ciclo opcional.
 

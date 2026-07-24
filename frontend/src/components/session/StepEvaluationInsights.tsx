@@ -30,7 +30,7 @@ export default function StepEvaluationInsights({summary}: Props) {
                 <p className="muted">
                     {t(
                         "progress.step_eval_empty",
-                        "No AI step-evaluation data yet — start a session to see insights here.",
+                        "No AI step-evaluation data yet - start a session to see insights here.",
                     )}
                 </p>
             </Tile>
