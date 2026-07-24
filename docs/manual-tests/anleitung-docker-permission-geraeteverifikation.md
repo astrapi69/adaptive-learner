@@ -22,14 +22,28 @@ Bis zum nächsten regulären Release: die frischen Dispatch-Artifacts
 2026-08-07):
 
 ```bash
-gh run download 30096224072 --repo astrapi69/adaptive-learner --name adaptive-learner-launcher-linux
-gh run download 30096225630 --repo astrapi69/adaptive-learner --name adaptive-learner-launcher-macos
-gh run download 30096227284 --repo astrapi69/adaptive-learner --name adaptive-learner-launcher-windows
+# Jeweils den neuesten gruenen Dispatch-Run je Plattform nehmen
+# (aeltere Runs vor dem #2027-Fix zeigen noch den "My App"-Fenstertitel):
+gh run list --repo astrapi69/adaptive-learner --workflow=launcher-linux.yml --limit 3
+gh run download <run-id> --repo astrapi69/adaptive-learner --name adaptive-learner-launcher-linux
+gh run download <run-id> --repo astrapi69/adaptive-learner --name adaptive-learner-launcher-macos
+gh run download <run-id> --repo astrapi69/adaptive-learner --name adaptive-learner-launcher-windows
 chmod +x adaptive-learner-launcher
 ```
 
 Ab dem nächsten Release hängen die 0.15.0-Binaries regulär am
 GitHub-Release (Assets-Sektion).
+
+## Teil 0 (alle Plattformen): Branding (#2027)
+
+- [ ] GUI starten: der Fenstertitel lautet "Adaptive Learner" - NICHT
+      "My App" (der Paket-Default, den der #2027-Bug bei jedem
+      Frozen-Binary zeigte).
+- [ ] Fenster-/Taskleisten-Icon: wo der Desktop per-Fenster-Icons
+      anzeigt, erscheint die Adaptive-Learner-Marke. Hinweis: GNOME
+      unter Wayland ignoriert per-Fenster-Icons weitgehend und zeigt
+      ein generisches Icon, solange keine .desktop-Datei installiert
+      ist - das ist Compositor-Verhalten, kein Launcher-Fehler.
 
 ## Teil 1 (Linux): Permission-Fehler wird korrekt erkannt
 

@@ -31,11 +31,15 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        # The launcher config: __main__ resolves ``../launcher.json`` relative
-        # to the package dir, which is the bundle root (_MEIPASS) when frozen.
+        # The launcher config: __main__._config_path() reads it from the
+        # bundle root (sys._MEIPASS) when frozen (#2027).
         ("launcher.json", "."),
         # Window icon (resolved best-effort at runtime; never fatal if absent).
         ("adaptive-learner.png", "."),
+        # The window icon at launcher.json's config-relative icon_path, so a
+        # standalone frozen run (no repo checkout, wrapper chdirs to the
+        # bundle root) still resolves the real branding (#2027).
+        ("../frontend/branding/adaptive-learner-mark.png", "frontend/branding"),
     ],
     hiddenimports=hidden_imports(),
     hookspath=[],
