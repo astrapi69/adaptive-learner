@@ -21,7 +21,7 @@ import {
     type ReactElement,
     type Ref,
 } from "react";
-import {useNavigate, useParams, type NavigateFunction} from "react-router-dom";
+import {useNavigate, useParams, type NavigateFunction} from "react-router";
 
 import {
     ExerciseDispatcher,

@@ -10,8 +10,8 @@ import {renderHook, waitFor} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 const navigate = vi.fn();
-vi.mock("react-router-dom", async (importOriginal) => {
-    const actual = await importOriginal<typeof import("react-router-dom")>();
+vi.mock("react-router", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("react-router")>();
     return {...actual, useNavigate: () => navigate};
 });
 

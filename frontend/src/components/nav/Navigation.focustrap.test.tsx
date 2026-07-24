@@ -13,7 +13,7 @@
 
 import {fireEvent, render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter} from "react-router";
 import {afterAll, describe, expect, it} from "vitest";
 
 import {stubMatchMedia} from "../../test-utils/match-media-stub";

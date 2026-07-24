@@ -1,5 +1,5 @@
 import {lazy, Suspense} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router";
 
 // assistant-ui adoption (#1126): the session chat surface. Lazy so its
 // ~47-package bundle is a separate chunk off the default route load.

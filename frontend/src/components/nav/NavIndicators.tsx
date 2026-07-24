@@ -11,7 +11,7 @@
  */
 
 import { Moon, Sun } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../hooks/ui/useI18n";

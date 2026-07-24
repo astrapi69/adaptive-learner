@@ -28,7 +28,7 @@
  */
 
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";

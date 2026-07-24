@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import {useI18n} from "../../ui/useI18n";
 import {notify} from "../../../utils/notify";

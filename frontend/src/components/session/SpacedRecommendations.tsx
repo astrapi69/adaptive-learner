@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";

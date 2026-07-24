@@ -11,7 +11,7 @@
 
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";

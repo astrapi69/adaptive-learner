@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState, type FormEvent} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import AddTopicDialog from "../../components/topic/AddTopicDialog";
 import CurriculumDescriptionEditor from "../../components/topic/CurriculumDescriptionEditor";

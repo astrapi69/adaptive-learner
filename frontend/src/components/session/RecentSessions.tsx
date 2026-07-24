@@ -1,4 +1,4 @@
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import MethodBadge from "./MethodBadge";
 import {useI18n} from "../../hooks/ui/useI18n";

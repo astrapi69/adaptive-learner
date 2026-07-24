@@ -1,6 +1,6 @@
 import {afterEach, beforeEach, describe, it, expect, vi} from "vitest";
 import {render, screen, fireEvent} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter} from "react-router";
 
 import SetRow from "./SetRow";
 import {setDevModeEnabled} from "../../hooks/settings/useDevMode";

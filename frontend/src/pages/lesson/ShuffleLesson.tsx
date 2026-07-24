@@ -27,7 +27,7 @@ import {
     useParams,
     useSearchParams,
     type NavigateFunction,
-} from "react-router-dom";
+} from "react-router";
 
 import {
     ExerciseDispatcher,

@@ -14,7 +14,7 @@
  * to the single-set deep link ``/content/set/:setId``.
  */
 
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { Checkbox } from "@/components/ui/checkbox";
 

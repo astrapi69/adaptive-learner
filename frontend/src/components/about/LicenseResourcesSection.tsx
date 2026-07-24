@@ -7,7 +7,7 @@
  * same payload so they stay aligned with the deployment target.
  */
 
-import {Link} from "react-router-dom";
+import {Link} from "react-router";
 
 import type {SystemInfo} from "../../types/domain";
 import {docsHomeUrl} from "../../lib/help/help-routes";

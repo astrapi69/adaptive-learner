@@ -23,7 +23,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 
 import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
 import LessonExitDialog from "../../components/lesson/dialogs/LessonExitDialog";

@@ -18,7 +18,7 @@
  */
 
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
