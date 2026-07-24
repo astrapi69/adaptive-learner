@@ -2850,7 +2850,7 @@ create_lesson:
       desc: "Buat latihan kategorisasi dan koreksi kesalahan. Memerlukan aplikasi yang mendukung ekstensi."
     knowledge_from_text:
       title: "Pelajaran pengetahuan dari teks"
-      desc: "Tempel bagian buku teks; AI menulis teori dengan kata-katanya sendiri dan membuat latihan."
+      desc: "Tempel bagian buku teks atau muat berkas buku; AI menulis teori dengan kata-katanya sendiri dan membuat latihan."
     heading: "Mulai dari templat"
     blank:
       title: "Pelajaran Kosong"

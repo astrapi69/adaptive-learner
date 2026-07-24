@@ -3100,7 +3100,7 @@
       },
       "knowledge_from_text": {
         "title": "Leçon de connaissances à partir d'un texte",
-        "desc": "Collez une section de manuel ; l'IA rédige la théorie avec ses propres mots et génère des exercices."
+        "desc": "Collez une section de manuel ou chargez un fichier de livre ; l'IA rédige la théorie avec ses propres mots et génère des exercices."
       },
       "heading": "Partir d'un modèle",
       "blank": {
