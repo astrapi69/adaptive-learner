@@ -1839,8 +1839,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v2.3.0+ baseline (verified 2026-07-17):** backend 1415 + plugins
-  1080 + Vitest 7213 = **9708 tests**. E2E
+- **post-v2.5.0 baseline (verified 2026-07-24):** backend 1475 + plugins
+  1096 + Vitest 7745 = **10316 tests**. E2E
   smoke runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (73 specs incl. the Phase 61 interactive journeys —

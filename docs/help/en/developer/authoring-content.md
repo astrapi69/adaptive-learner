@@ -151,13 +151,22 @@ The manifest field schema (the root `manifest.yaml` that lists the
 repo's sets, and every required and optional field: `schema_version`,
 `name`, and per set `id`, `title`, `title_native`, `target_language`,
 `source_language`, `level`, `version`, `lesson_count`, `path`,
-`domain`, `tags`, `book`) lives in the engine reference:
+`domain`, `tags`, `book`, `visibility`) lives in the engine reference:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
 The engine's strict schema (unknown fields are rejected) validates it,
 so the field list above cannot drift. Author the language-pair fields
 (`target_language` / `source_language`) as described under
 [Language pairs](#language-pairs-v1440); the pre-v1.2 `language` alias
 still loads but is discouraged for new sets.
+
+The optional **`visibility`** field (engine 0.14.0+, `visible` when
+absent) is a **display hint** for consumer apps: `visibility: hidden`
+asks the app not to surface the set to learners — meant for
+reference/conformance fixtures that must stay in the repo for engine
+validation but are not learner content. The app filters hidden sets
+out of the browse and discover surfaces (even when already cached);
+the engine still validates them. There is no app-side hidden-set
+list to maintain.
 
 App-specific loader behaviour to keep in mind:
 
@@ -272,7 +281,7 @@ sync, so everything loadable is renderable):
 | `ext:al-error-correction` | Correct a faulty text | `tokens[]` + `error_index` + `accept[]` | #1593 |
 | `ext:al-reading-comprehension` | Reading comprehension (passage + questions) | `passage` + `questions[]` (each a `multiple_choice` / `free_text` sub-question) | #1603 |
 | `ext:al-graded-quiz` | Graded quiz | `questions[]` (each with `points`) + optional `pass_threshold` | #1616; the demo reference set is hidden from Discover / My Content (#1702) |
-| `ext:al-dictation` | Audio dictation (listen, then transcribe) | `audio` (an `assets/` clip) + `accept[]` (tolerant transcription match) | #1881 (fifth adoption) |
+| `ext:al-dictation` | Audio dictation (listen, then transcribe) | `audio` (an `assets/` clip or a data URI embedded via the editor upload, #1911) + `accept[]` (tolerant transcription match) | #1881 (fifth adoption) |
 
 **Two authoring paths.** Extension exercises can be authored (a) directly as
 content-repo JSON (the canonical path, described in the engine reference), or
@@ -439,7 +448,7 @@ only an AI-generate button:
 | Excluded | Why (one line) |
 |----------|----------------|
 | Essay / long text / drawing / formula / peer review / free self-assessment | Not binary SRS-gradable; self-assessment deferred (#1268). |
-| Audio / video / file upload | Storage + infrastructure; conflicts with offline-first. |
+| Audio / video / file upload | Storage + infrastructure; conflicts with offline-first. Sole exception: short dictation audio clips the exercise editor embeds into the lesson as a data URI. |
 | Hotspot / simulation / memory / crossword | Build effort without SRS value (a later, separate decision if ever). |
 | Matrix / Likert / slider | Survey types, not learning types. |
 | Date / time pickers | Form types, not learning types. |

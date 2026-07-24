@@ -162,8 +162,8 @@ Das Feld-Schema des Manifests, also das Root-`manifest.yaml`, das die
 Sets des Repos auflistet, mit jedem Pflicht- und optionalen Feld
 (`schema_version`, `name` sowie pro Set `id`, `title`, `title_native`,
 `target_language`, `source_language`, `level`, `version`,
-`lesson_count`, `path`, `domain`, `tags`, `book`), steht in der
-Engine-Referenz:
+`lesson_count`, `path`, `domain`, `tags`, `book`, `visibility`), steht
+in der Engine-Referenz:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
 Das strikte Schema der Engine (unbekannte Felder werden abgelehnt)
 validiert es, sodass die obige Feldliste nicht driften kann. Die
@@ -171,6 +171,16 @@ Sprachpaar-Felder (`target_language` / `source_language`) werden wie
 unter [Sprachpaare](#sprachpaare-v1440) beschrieben angegeben; der
 Vor-v1.2-Alias `language` lädt weiterhin, ist für neue Sets aber
 nicht empfohlen.
+
+Das optionale Feld **`visibility`** (Engine 0.14.0+, ohne Angabe
+`visible`) ist ein **Anzeige-Hinweis** für Consumer-Apps:
+`visibility: hidden` bittet die App, das Set Lernenden nicht
+anzuzeigen — gedacht für Referenz-/Konformanz-Fixtures, die für die
+Engine-Validierung im Repo bleiben müssen, aber kein Lerninhalt
+sind. Die App filtert versteckte Sets aus den Browse- und
+Entdecken-Oberflächen (auch wenn sie bereits gecacht sind); die
+Engine validiert sie weiterhin. Eine App-seitige Liste versteckter
+Sets gibt es nicht mehr.
 
 App-spezifisches Loader-Verhalten, das zu beachten ist:
 
@@ -289,7 +299,7 @@ Ladbare renderbar ist):
 | `ext:al-error-correction` | Fehlerhaften Text korrigieren | `tokens[]` + `error_index` + `accept[]` | #1593 |
 | `ext:al-reading-comprehension` | Leseverständnis (Textpassage + Fragen) | `passage` + `questions[]` (je eine `multiple_choice`- / `free_text`-Teilfrage) | #1603 |
 | `ext:al-graded-quiz` | Benotetes Quiz | `questions[]` (je mit `points`) + optionale `pass_threshold` | #1616; das Demo-Referenz-Set ist in Entdecken / Meine Inhalte ausgeblendet (#1702) |
-| `ext:al-dictation` | Audio-Diktat (hören, dann transkribieren) | `audio` (ein `assets/`-Clip) + `accept[]` (toleranter Transkriptions-Abgleich) | #1881 (fünfte Adoption) |
+| `ext:al-dictation` | Audio-Diktat (hören, dann transkribieren) | `audio` (ein `assets/`-Clip oder ein per Editor-Upload eingebetteter Daten-URI, #1911) + `accept[]` (toleranter Transkriptions-Abgleich) | #1881 (fünfte Adoption) |
 
 **Zwei Autorenwege.** Extension-Aufgaben lassen sich (a) direkt als
 Content-Repo-JSON schreiben (der kanonische Weg, in der Engine-Referenz
@@ -461,7 +471,7 @@ Autorenoberfläche, nicht nur ein KI-Generieren-Knopf:
 | Ausgeschlossen | Warum (ein Satz) |
 |----------------|------------------|
 | Essay / Langtext / Zeichnen / Formel / Peer-Review / freie Selbstbewertung | Nicht binär SRS-bewertbar; Selbstbewertung zurückgestellt (#1268). |
-| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. |
+| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. Einzige Ausnahme: kurze Diktat-Audio-Clips, die der Übungs-Editor als Daten-URI in die Lektion einbettet. |
 | Hotspot / Simulation / Memory / Kreuzworträtsel | Aufwand ohne SRS-Mehrwert (später ggf. eigene Entscheidung). |
 | Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
 | Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |

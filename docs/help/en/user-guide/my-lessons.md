@@ -44,7 +44,10 @@ Each My Lesson has:
 
 - **Play** — open it in the lesson viewer.
 - **Edit** — opens the **Lesson Creator pre-filled** with the
-  lesson's metadata, cards, and exercises. When saving you choose:
+  lesson's metadata, cards, and exercises. If one of your sets holds
+  **several lessons**, a **lesson picker** first asks which one to
+  edit. Book-text lessons open the exercise editor directly;
+  attached book metadata is preserved. When saving you choose:
   **Save changes** (overwrites the same lesson — your learning
   progress survives for unchanged cards, changed ones start fresh)
   or **Save as a copy** (creates a new lesson, the original stays
