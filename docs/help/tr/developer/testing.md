@@ -6,7 +6,7 @@ AdaptiveLearner'ın test disiplini, her değişiklikte `make test`
 tarafından uygulanır. Strateji bir piramittir: tabanda birim
 testleri, ortada entegrasyon, üstte E2E duman testleri.
 
-## Test sayıları (v1.20.0)
+## Test sayıları
 
 | Katman | Sayı | Araç |
 |---|---|---|
@@ -156,51 +156,82 @@ Yalnızca arka uç - frontend lint, ön teslimde değil CI zamanında
 
 ## CI
 
-`.github/workflows/ci.yml`, main'e her push + her PR'de çalışır:
+CI iki katmana ayrılır: doğruluk kapıları her PR'de çalışır (merge
+için geçmeleri zorunludur); pahalı ya da yalnızca uyarı veren
+takımlar gece vardiyasında ve release zamanında çalışır.
 
-1. Arka uç testleri (Python 3.12 + 3.13 matrisi)
-2. Eklenti testleri (eklenti başına bir iş; matris-stratejisi)
-3. Frontend Vitest + tsc + lint
-4. ruff check + format-check
+`.github/workflows/ci.yml`, `develop` / `main` dallarına push'ta ve
+her PR'de çalışır (Python 3.12):
 
-Diğer PR-gate'leri kendi workflow'larında yaşar:
+1. Arka uç testleri (pytest)
+2. Eklenti testleri (`make test-plugins`, arka uç venv'i üzerinden
+   13'ünün tümü)
+3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`), döngüsel
+   bağımlılık denetimi, Stylelint, Vitest, `vite build`,
+   `npm audit`
+4. Tüm dosyalarda pre-commit kancaları
+5. Arka uç ruff + mypy + pip-audit
+6. Dokümantasyon sapma doğrulayıcısı (`verify_docs.py` +
+   mkdocs-nav eşitlemesi)
 
+**Test Impact Analysis (#615):** bir PR'de yalnızca etkilenen
+testler çalışır - `vitest run --changed origin/<base>` ve
+`pytest --testmon`. `develop` / `main` push'ları, gece koşuları ve
+release koşuları her zaman TAM takımı çalıştırır. Tam takıma geri
+dönüş otomatiktir (çözülemeyen base ref'i ya da testmon önbellek
+kaçırması).
+
+Diğer PR kapıları kendi workflow'larında yaşar:
+
+- `complexity-check.yml` - karmaşıklık ratchet kapısı
+  (`make check-complexity-gate`, Python için radon + TS için ESLint
+  complexity). Bir baseline ratchet'idir: yalnızca
+  `.complexity-baseline` karşısında YENİ ya da gerileyen ihlallerde
+  başarısız olur; böylece var olan borcun topluca temizlenmesini
+  zorlamadan yeni karmaşıklığı engeller. Yalnızca uyarı veren tam
+  karmaşıklık raporu gece çalışır.
 - `cohesion-check.yml` - dosya boyutu koruması
-  (`.filesize-whitelist` karşısında gate) artı iki sınıf-adı
-  gate'i: ölü CSS sınıf adları (`check-dead-classnames.py`,
-  `.dead-classnames-baseline` karşısında) ve
-  **stillenmemiş-className gate'i** (`--unstyled`,
-  `.unstyled-classnames-baseline` karşısında bir ratchet) - tüm
-  token'ları ölü olan bir `className`, PR'ı engeller. Eşlik eden
-  klasör boyutu koruması yerelde `make check-folder-size` ile
-  çalışır.
+  (`.filesize-whitelist` karşısında kapı) artı iki sınıf adı
+  kapısı: ölü CSS sınıf adları (`check-dead-classnames.py`,
+  `.dead-classnames-baseline` karşısında) ve **stillenmemiş
+  className kapısı** (`--unstyled`, `.unstyled-classnames-baseline`
+  karşısında bir ratchet) - tüm token'ları ölü olan bir `className`
+  PR'ı engeller. Eşlik eden klasör boyutu koruması yerelde
+  `make check-folder-size` ile çalışır.
 - `visual-baseline-gate.yml` - görsel açıdan kritik yolları (ders
   bileşenleri, alıştırma renderer'ları, tema/CSS dosyaları)
   değiştiren bir PR, etkilenen baseline ekran görüntülerini aynı
-  PR'da getirmelidir; kanıtlanabilir şekilde etkisiz değişiklikler
-  için kaçış etiketi `visual-baselines-unaffected`.
+  PR'de getirmek zorundadır; kanıtlanabilir şekilde etkisiz
+  değişiklikler için kaçış etiketi `visual-baselines-unaffected`.
 - `testid-reference-gate.yml` - bir PR, bir E2E spec'inin statik
   olarak referans verdiği bir `data-testid`'yi (kullanıcıya çok
   görünür bir yüzeyde) spec'e dokunmadan kaldırır ya da yeniden
-  adlandırırsa gate başarısız olur (`make check-testid-refs`);
+  adlandırırsa kapı başarısız olur (`make check-testid-refs`);
   kaçış etiketi `testid-refs-unaffected`.
 - `docker-build-smoke.yml` - üretim compose imajlarının yalnızca
-  build içeren duman testi (launcher / install.sh yolu), PR'larda
+  build içeren duman testi (launcher / install.sh yolu), PR'lerde
   yol filtreli, ayrıca `release/**` üzerinde, haftalık ve manuel
   tetiklemeyle; yerelde `make docker-build-smoke`.
 
-**Gece vardiyası / Release (PR'larda değil):**
+**Gece vardiyası / release (PR'lerde değil):**
 
+- `dexie-smoke.yml` - Dexie modu E2E kapısı (günlük + `release/**`
+  üzerinde + manuel tetikleme; yerelde `make test-dexie-smoke`)
+- `coverage.yml` - kapsam raporu (günlük + manuel tetikleme)
+- `security-scan.yml` - pip-audit / npm audit / bandit (haftalık +
+  `release/**` üzerinde + manuel tetikleme; yalnızca uyarı)
+- `content-stats.yml` - taze bir içerik checkout'una karşı içerik
+  istatistikleri sapması (günlük + manuel tetikleme)
 - `mutation-frontend.yml` - Stryker mutasyon testleri (gecelik,
   `ENABLE_NIGHTLY_MUTATION` repo değişkeninin arkasında + manuel
   tetikleme; her çalıştırma, iş zaman sınırına sığmak için
   dosyaların bir dilimini mutasyona uğratır); arka uç mutasyon
   testleri mutmut kullanır
-- `webkit-gate.yml` - gerçek WebKit engine yerleşim gate'i
-  (Chromium gate'lerinin yapısal olarak göremediği iOS/Safari
-  hata sınıfları), günlük olarak `ENABLE_NIGHTLY_WEBKIT` repo
-  değişkeninin arkasında, `release/**` üzerinde her zaman ve
-  manuel tetiklemeyle
+- `webkit-gate.yml` - gerçek WebKit motoruyla çalışan yerleşim
+  kapısı (Chromium kapılarının yapısal olarak göremediği
+  iOS/Safari hata sınıfları), günlük olarak `ENABLE_NIGHTLY_WEBKIT`
+  repo değişkeninin arkasında, `release/**` üzerinde ve manuel
+  tetiklemede her zaman
 - `visual-regression.yml` - görsel baseline matrisi (günlük +
   manuel tetikleme; `update_baselines=true`, baseline'ları CI'da
   yeniden render eder ve artefakt olarak yükler)
@@ -210,6 +241,6 @@ Diğer PR-gate'leri kendi workflow'larında yaşar:
   tetikleme) - merge öncesi görsel inceleme zorunlu kalır
 
 `.github/workflows/release-gate.yml`, etiket push'larında çalışır:
-sürüm pinlerinin eşitlenmiş olduğunu (12 dosyada sapma yok),
-eklenti kilit dosyalarının eşleştiğini, yeniden oluşturulan
+sürüm pinlerinin sürüm taşıyan tüm dosyalarda eşitlendiğini (sapma
+yok), eklenti kilit dosyalarının eşleştiğini ve yeniden üretilen
 artefaktların güncel olduğunu doğrular.

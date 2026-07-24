@@ -50,12 +50,18 @@ pontuação completa, exatamente como uma lição descarregada.
 Cada Minha Lição tem:
 
 - **Jogar** - abrir no visualizador de lições.
-- **Editar** - reabrir a análise de origem para poder ajustar e
-  reguardar (disponível para lições baseadas em análise). Se um dos
-  seus conjuntos contiver **várias lições**, um **seletor de
-  lições** pergunta primeiro qual quer editar. As lições de texto
-  de livro abrem diretamente o editor de exercícios; os metadados
-  do livro anexados são preservados.
+- **Editar** - abre o **Criador de Lições pré-preenchido** com os
+  metadados, os cartões e os exercícios da lição. Se um dos seus
+  conjuntos contiver **várias lições**, um **seletor de lições**
+  pergunta primeiro qual quer editar. As lições de texto de livro
+  abrem diretamente o editor de exercícios; os metadados do livro
+  anexados são preservados. Ao guardar, escolha entre **Guardar
+  alterações** (substitui a mesma lição - o seu progresso de
+  aprendizagem mantém-se para os cartões inalterados, os alterados
+  recomeçam do zero) e **Guardar como cópia** (cria uma nova lição,
+  o original fica intacto). As lições baseadas em análise continuam
+  a abrir a análise de chat subjacente. As lições de terceiros
+  (descarregadas) permanecem só de leitura.
 - **Eliminar** - removê-la (com confirmação).
 
 ---
