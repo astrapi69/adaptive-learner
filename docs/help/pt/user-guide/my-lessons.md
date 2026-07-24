@@ -51,7 +51,11 @@ Cada Minha Lição tem:
 
 - **Jogar** — abrir no visualizador de lições.
 - **Editar** — reabrir a análise de origem para poder ajustar e
-  reguardar (disponível para lições baseadas em análise).
+  reguardar (disponível para lições baseadas em análise). Se um dos
+  seus conjuntos contiver **várias lições**, um **seletor de
+  lições** pergunta primeiro qual quer editar. As lições de texto
+  de livro abrem diretamente o editor de exercícios; os metadados
+  do livro anexados são preservados.
 - **Eliminar** — removê-la (com confirmação).
 
 ---

@@ -155,7 +155,7 @@ Manifest alan şeması (reponun setlerini listeleyen root `manifest.yaml`
 ve her zorunlu ve isteğe bağlı alan: `schema_version`, `name` ve set
 başına `id`, `title`, `title_native`, `target_language`,
 `source_language`, `level`, `version`, `lesson_count`, `path`,
-`domain`, `tags`, `book`) engine referansında bulunur:
+`domain`, `tags`, `book`, `visibility`) engine referansında bulunur:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
 Engine'in katı şeması (bilinmeyen alanlar reddedilir) bunu doğrular,
 bu yüzden yukarıdaki alan listesi sapamaz. Dil çifti alanlarını
@@ -163,6 +163,16 @@ bu yüzden yukarıdaki alan listesi sapamaz. Dil çifti alanlarını
 [Dil çiftleri](#dil-ciftleri-v1440) altında açıklandığı gibi yaz; v1.2
 öncesi `language` takma adı hala yüklenir ancak yeni setler için
 önerilmez.
+
+İsteğe bağlı **`visibility`** alanı (engine 0.14.0+, belirtilmezse
+`visible`), tüketici uygulamalar için bir **görüntüleme ipucudur**:
+`visibility: hidden`, uygulamadan seti öğrenenlere göstermemesini
+ister — engine doğrulaması için repoda kalması gereken ama öğrenme
+içeriği olmayan referans/uygunluk fixture'ları için düşünülmüştür.
+Uygulama, gizli setleri tarama ve Keşfet yüzeylerinden filtreler
+(zaten önbelleğe alınmış olsalar bile); engine onları doğrulamaya
+devam eder. Uygulama tarafında bakımı yapılacak bir gizli set
+listesi artık yoktur.
 
 Akılda tutulması gereken uygulamaya özgü yükleyici davranışı:
 
@@ -282,7 +292,7 @@ edilebilir):
 | `ext:al-error-correction` | Hatalı bir metni düzelt | `tokens[]` + `error_index` + `accept[]` | #1593 |
 | `ext:al-reading-comprehension` | Okuduğunu anlama (metin + sorular) | `passage` + `questions[]` (her biri bir `multiple_choice` / `free_text` alt sorusu) | #1603 |
 | `ext:al-graded-quiz` | Puanlı sınav | `questions[]` (her biri `points` ile) + isteğe bağlı `pass_threshold` | #1616; demo referans seti Keşfet / İçeriğim'den gizlidir (#1702) |
-| `ext:al-dictation` | Sesli dikte (dinle, sonra yazıya dök) | `audio` (bir `assets/` klibi) + `accept[]` (toleranslı yazıya döküm eşleşmesi) | #1881 (beşinci benimseme) |
+| `ext:al-dictation` | Sesli dikte (dinle, sonra yazıya dök) | `audio` (bir `assets/` klibi ya da editör yüklemesiyle gömülmüş bir data URI'si, #1911) + `accept[]` (toleranslı yazıya döküm eşleşmesi) | #1881 (beşinci benimseme) |
 
 **İki yazım yolu.** Uzantı alıştırmaları (a) doğrudan içerik-repo JSON'ı
 olarak (kanonik yol, engine referansında açıklanmıştır) veya (b)
@@ -464,7 +474,7 @@ AI-üret düğmesi değil, tam bir yazım yüzeyidir:
 | Hariç tutulan | Neden (tek satır) |
 |----------|----------------|
 | Makale / uzun metin / çizim / formül / akran değerlendirmesi / serbest öz değerlendirme | İkili olarak SRS-puanlanabilir değil; öz değerlendirme ertelendi (#1268). |
-| Ses / video / dosya yükleme | Depolama + altyapı; çevrimdışı-öncelikli ile çelişir. |
+| Ses / video / dosya yükleme | Depolama + altyapı; çevrimdışı-öncelikli ile çelişir. Tek istisna: alıştırma düzenleyicisinin data URI'si olarak derse gömdüğü kısa dikte ses klipleri. |
 | Hotspot / simülasyon / hafıza / bulmaca | SRS değeri olmadan yapım eforu (varsa daha sonra ayrı bir karar). |
 | Matris / Likert / kaydırıcı | Anket türleri, öğrenme türleri değil. |
 | Tarih / saat seçicileri | Form türleri, öğrenme türleri değil. |

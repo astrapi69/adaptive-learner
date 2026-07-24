@@ -38,8 +38,8 @@ conduz-te passo a passo por cada cartão e exercício:
 
 1. **Cartões** apresentam material para ler. Clica em "Continuar"
    quando estiveres pronto.
-2. **Exercícios** testam o que memorizaste. Estão disponíveis
-   quatro tipos:
+2. **Exercícios** testam o que memorizaste. Os tipos do
+   núcleo:
    - **Correspondência** — arrasta pares (palavra ↔ tradução). Ambas
      as peças de um par encontrado partilham uma **cor própria** e
      um **badge numérico**, para que a correspondência seja
@@ -51,6 +51,19 @@ conduz-te passo a passo por cada cartão e exercício:
    - **Peças de palavras** — monta uma frase a partir de peças.
    - **Texto com lacunas** — preenche uma lacuna na frase (surge
      deliberadamente dos teus erros, ver abaixo).
+   - **Escolha múltipla** — escolhe uma ou (conforme a tarefa)
+     várias respostas corretas.
+
+   A estes juntam-se **tipos de extensão** que um conjunto pode
+   trazer: categorização, correção de erros, compreensão de
+   leitura, questionário avaliado e **ditado de áudio** (ouvir,
+   depois transcrever).
+
+Se um exercício traz uma **dificuldade** atribuída pelo autor, um
+pequeno badge indica o nível (**Fácil / Médio / Difícil**). É pura
+transparência: vês porque é que o gerador adaptativo pode propor um
+cartão mais cedo ou com mais frequência — o badge não altera nem a
+pontuação nem a ordem.
 
 Um indicador de progresso no topo acompanha até onde estás na
 lição. Podes parar a qualquer momento — o teu progresso é guardado

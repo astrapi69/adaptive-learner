@@ -48,7 +48,10 @@ Her Dersim şunlara sahiptir:
 - **Oynat** — ders görüntüleyicide açın.
 - **Düzenle** — kaynak analizini yeniden açın, böylece
   ayarlayabilir ve yeniden kaydedebilirsiniz (analiz tabanlı
-  dersler için mevcuttur).
+  dersler için mevcuttur). Kendi setlerinizden biri **birden çok
+  ders** içeriyorsa, önce bir **ders seçici** hangisini düzenlemek
+  istediğinizi sorar. Kitap metni dersleri doğrudan alıştırma
+  düzenleyicisini açar; eklenmiş kitap bilgileri korunur.
 - **Sil** — kaldırın (onay ile birlikte).
 
 ---
