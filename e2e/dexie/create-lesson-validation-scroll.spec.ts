@@ -127,13 +127,20 @@ test.describe("#2036 desktop regression (no scroll jump when already visible)", 
     }) => {
         await openFresh(page);
         const title = page.getByTestId("create-lesson-title");
-        // The whole step-1 form fits: both the title and the Next button are
-        // already visible (so the click does not scroll the page).
-        await expect(title).toBeInViewport();
-        await expect(page.getByTestId("create-lesson-next")).toBeInViewport();
+        const next = page.getByTestId("create-lesson-next");
+
+        // Settle the scroll position BEFORE measuring. Playwright scrolls a
+        // click target into view automatically, and ``toBeInViewport()`` is
+        // satisfied by PARTIAL visibility - so on a shorter/denser render (CI)
+        // the click itself shifted the page a few px and the assertion below
+        // measured Playwright's scroll, not ours (observed: 7px).
+        await next.scrollIntoViewIfNeeded();
+        // Precondition for this regression: the title is fully on screen, so
+        // flagTitleError() must NOT scroll at all.
+        await expect(title).toBeInViewport({ratio: 1});
         const topBefore = await rectTop(page, "create-lesson-title");
 
-        await page.getByTestId("create-lesson-next").click();
+        await next.click();
 
         await expect(
             page.getByTestId("create-lesson-title-error"),
