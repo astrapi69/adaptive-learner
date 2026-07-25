@@ -238,3 +238,43 @@ class TestBranding:
     def test_spec_bundles_icon_at_config_relative_path(self) -> None:
         spec = (LAUNCHER_JSON.parent / "adaptive-learner-launcher.spec").read_text(encoding="utf-8")
         assert "frontend/branding/adaptive-learner-mark.png" in spec
+
+
+class TestExplicitConfigContract:
+    """#32 (upstream 0.19.0): a missing explicit --config is a HARD error.
+
+    The wrapper always injects its resolved --config path; with 0.19.0 a
+    wrong bundled path can no longer silently launch the all-defaults
+    "My App" window (the #2027 class) - it exits 2 with the path on stderr.
+    """
+
+    def test_wrapper_always_injects_explicit_config(self, monkeypatch) -> None:
+        seen: dict[str, list[str]] = {}
+
+        def fake_package_main(args):
+            seen["args"] = list(args)
+            return 0
+
+        monkeypatch.setattr(__main__, "_package_main", fake_package_main)
+        assert __main__.main([]) == 0
+        assert seen["args"][0] == "--config"
+        assert seen["args"][1] == str(__main__._config_path())
+
+    def test_wrapper_respects_caller_config(self, monkeypatch) -> None:
+        seen: dict[str, list[str]] = {}
+
+        def fake_package_main(args):
+            seen["args"] = list(args)
+            return 0
+
+        monkeypatch.setattr(__main__, "_package_main", fake_package_main)
+        assert __main__.main(["--config", "/somewhere/else.json", "--check"]) == 0
+        assert seen["args"].count("--config") == 1
+        assert seen["args"][1] == "/somewhere/else.json"
+
+    def test_missing_explicit_config_fails_hard(self, tmp_path, capsys) -> None:
+        missing = tmp_path / "does-not-exist.json"
+        rc = __main__.main(["--config", str(missing), "--check"])
+        assert rc == 2
+        err = capsys.readouterr().err
+        assert str(missing) in err
