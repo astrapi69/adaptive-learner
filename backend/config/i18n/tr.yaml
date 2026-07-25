@@ -221,6 +221,8 @@ landing:
   checking_session: Tekrar hoş geldin…
   recovered_toast: Tekrar hoş geldin! Öğrenme verilerin hâlâ burada.
   intro: Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı arasından sana en uygun yöntemi bulur ve her oturumda yedi adımlı bir döngüden geçirir.
+  port_change_hint: "Adaptive Learner'ı daha önce başka bir bağlantı noktasında kullandınız mı? Öğrenme verileriniz önceki web adresinde kalır. Önceki bağlantı noktasına dönün, bir yedek dışa aktarın ve burada içe aktarın."
+  port_change_link: "Verilerinizi nasıl taşırsınız"
 onboarding:
   title: Bir öğrenme projesi oluştur
   intro: Bize öğrenme hedefini anlat. Adaptive Learner bunu kullanarak profilini oluşturur ve sana başlangıç için bir yöntem önerir.

@@ -62,6 +62,16 @@ navigation:
           tr: Masaüstü launcher'ı başlatma
           ja: デスクトップランチャーの起動
         slug: install/launcher
+      - title:
+          de: Den Port ändern
+          en: Changing the port
+          es: Cambiar el puerto
+          fr: Changer de port
+          el: Αλλαγή θύρας
+          pt: Mudar a porta
+          tr: Bağlantı noktasını değiştirme
+          ja: ポートの変更
+        slug: install/changing-the-port
   - title:
       de: Benutzerhandbuch
       en: User Guide

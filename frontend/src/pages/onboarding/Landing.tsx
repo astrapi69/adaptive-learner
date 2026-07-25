@@ -16,7 +16,8 @@ import {
     setUserId,
 } from "../../lib/learning/learnerState";
 import {getStorage, resolveStorageMode} from "../../storage";
-import {docsHomeUrl} from "../../lib/help/help-routes";
+import {docsHomeUrl, docsUrlForSlug} from "../../lib/help/help-routes";
+import {shouldShowPortChangeHint} from "../../lib/backup/portChangeHint";
 
 /**
  * Landing page (project-reference §8 row ``/``).
@@ -153,6 +154,19 @@ export default function Landing() {
         setLanguage(newLang);
     };
 
+    // Port-change data-loss nudge (#2069): shown only on a
+    // self-hosted Dexie origin (an explicit port), where a launcher
+    // port change moves the app to a new origin and hides the
+    // origin-bound IndexedDB. API mode auto-recovers via
+    // identity.yaml; the canonical GH Pages Dexie build has no port.
+    // This render path IS the empty/unrecovered state (recovery
+    // already failed above), so the hint never reaches a learner
+    // whose data is present.
+    const showPortHint = shouldShowPortChangeHint({
+        mode: resolveStorageMode(),
+        port: typeof window === "undefined" ? "" : window.location.port,
+    });
+
     if (checking) {
         return (
             <main
@@ -237,6 +251,27 @@ export default function Landing() {
                     {t("landing.docs_link", "Read the documentation")}
                 </a>
             </p>
+
+            {showPortHint && (
+                <p
+                    className="mt-3 mx-auto max-w-lg text-center text-sm leading-relaxed text-fg-muted"
+                    data-testid="landing-port-change-hint"
+                >
+                    {t(
+                        "landing.port_change_hint",
+                        "Used Adaptive Learner before on a different port? Your learning data stays with the previous web address. Go back to the previous port, export a backup, then import it here.",
+                    )}{" "}
+                    <a
+                        href={docsUrlForSlug("install/changing-the-port", lang)}
+                        data-testid="landing-port-change-link"
+                        className="landing-secondary-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {t("landing.port_change_link", "How to move your data")}
+                    </a>
+                </p>
+            )}
         </main>
     );
 }

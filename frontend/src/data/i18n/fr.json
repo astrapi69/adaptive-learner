@@ -234,7 +234,9 @@
     "docs_link": "Lire la documentation",
     "checking_session": "Bon retour...",
     "recovered_toast": "Bon retour ! Tes données d'apprentissage sont toujours là.",
-    "intro": "Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basées sur la recherche et t'accompagne dans un cycle en sept étapes à chaque session."
+    "intro": "Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basées sur la recherche et t'accompagne dans un cycle en sept étapes à chaque session.",
+    "port_change_hint": "Vous avez déjà utilisé Adaptive Learner sur un autre port ? Vos données d'apprentissage restent liées à l'adresse web précédente. Revenez au port précédent, exportez une sauvegarde, puis importez-la ici.",
+    "port_change_link": "Comment emporter vos données"
   },
   "onboarding": {
     "title": "Créer un projet d'apprentissage",

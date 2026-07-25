@@ -17,7 +17,9 @@ die Container und öffnet die App anschließend im Browser unter
 wieder stoppen, den Port ändern oder alles deinstallieren.
 
 Der Port ist standardmäßig **8501** und im Launcher-Fenster änderbar;
-ist er belegt, weicht der Launcher auf einen freien Port aus.
+ist er belegt, weicht der Launcher auf einen freien Port aus. Wenn du
+den Browser-Speichermodus nutzt, ändert ein Portwechsel auch, wo deine
+Daten liegen - lies vorher [Den Port ändern](changing-the-port.md).
 
 ## Voraussetzung: Docker - der Launcher prüft es selbst
 
