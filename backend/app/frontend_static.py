@@ -22,8 +22,82 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.responses import JSONResponse
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 logger = logging.getLogger(__name__)
+
+
+class SPAStaticFiles(StaticFiles):
+    """Static files with the SPA fallback nginx's ``try_files`` provided.
+
+    A path that resolves to no real file (a client-side route like
+    ``/content/set/:id`` from a share link, or ``/add-repo`` from a QR
+    code) serves ``index.html`` so the router takes over after hydration.
+    Real assets and existing files are served as themselves. API routes
+    are registered BEFORE this mount and are never affected (#2058).
+    """
+
+    async def get_response(self, path: str, scope):  # type: ignore[override]
+        try:
+            return await super().get_response(path, scope)
+        except StarletteHTTPException as exc:
+            if exc.status_code == 404 and not (path == "api" or path.startswith("api/")):
+                return await super().get_response("index.html", scope)
+            raise
+
+
+class BodySizeLimitMiddleware:
+    """Reject oversized request bodies with 413 (#2058).
+
+    nginx enforced ``client_max_body_size 50M`` in front of the API; the
+    single-container mode keeps that parity here. The check covers the
+    declared ``Content-Length`` and, as a backstop, counts streamed chunks
+    for chunked uploads without a length header.
+    """
+
+    def __init__(self, app: ASGIApp, max_bytes: int = 50 * 1024 * 1024) -> None:
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        headers = {
+            k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope.get("headers", [])
+        }
+        declared = headers.get("content-length")
+        if declared is not None and declared.isdigit() and int(declared) > self.max_bytes:
+            await self._reject(scope, receive, send)
+            return
+        received = 0
+        rejected = False
+
+        async def counting_receive():
+            nonlocal received, rejected
+            message = await receive()
+            if message["type"] == "http.request":
+                received += len(message.get("body", b""))
+                if received > self.max_bytes:
+                    rejected = True
+            return message
+
+        try:
+            await self.app(scope, counting_receive, send)
+        finally:
+            if rejected:
+                logger.warning("Request body exceeded %d bytes (chunked)", self.max_bytes)
+
+    async def _reject(self, scope: Scope, receive: Receive, send: Send) -> None:
+        response = JSONResponse(
+            status_code=413,
+            content={
+                "detail": f"Request body exceeds the {self.max_bytes // (1024 * 1024)} MB limit."
+            },
+        )
+        await response(scope, receive, send)
 
 
 def default_dist_dir() -> Path:
@@ -59,8 +133,10 @@ def mount_frontend_static(app: FastAPI, dist_dir: Path | None = None) -> bool:
             target,
         )
         return False
-    # ``html=True`` serves index.html for ``/`` (the SPA entry point). Mounted
-    # last, so API + plugin routes registered earlier take precedence.
-    app.mount("/", StaticFiles(directory=str(target), html=True), name="frontend")
+    # ``html=True`` serves index.html for ``/`` (the SPA entry point);
+    # :class:`SPAStaticFiles` adds the deep-route fallback nginx's
+    # ``try_files`` used to provide. Mounted last, so API + plugin routes
+    # registered earlier take precedence.
+    app.mount("/", SPAStaticFiles(directory=str(target), html=True), name="frontend")
     logger.info("Serving built frontend from %s at / (single-origin LAN mode)", target)
     return True

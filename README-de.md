@@ -141,8 +141,8 @@ Beide Skripte klonen das getaggte Release nach
 `~/adaptive-learner/`, erzeugen einen
 `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet-Verschlüsselung at
 rest), bauen die Docker-Images und starten den Stack unter
-`http://localhost:8501` (ein Port; nginx serviert das
-statische Frontend und proxyt `/api/*` an FastAPI).
+`http://localhost:8501` (ein Port, ein Container; FastAPI
+liefert das statische Frontend und `/api/*` selbst).
 
 ```bash
 cd ~/adaptive-learner
