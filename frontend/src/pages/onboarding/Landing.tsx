@@ -254,7 +254,7 @@ export default function Landing() {
 
             {showPortHint && (
                 <p
-                    className="landing-port-hint"
+                    className="mt-3 mx-auto max-w-lg text-center text-sm leading-relaxed text-fg-muted"
                     data-testid="landing-port-change-hint"
                 >
                     {t(
