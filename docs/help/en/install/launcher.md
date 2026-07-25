@@ -16,7 +16,10 @@ the same window you can also stop the app, change the port, or
 uninstall everything.
 
 The port defaults to **8501** and can be changed in the launcher
-window; if it is taken, the launcher falls back to a free port.
+window; if it is taken, the launcher falls back to a free port. If you
+use browser storage mode, changing the port also changes where your
+data lives - see [Changing the port](changing-the-port.md) before you
+do it.
 
 ## Prerequisite: Docker - the launcher checks it itself
 

@@ -221,6 +221,8 @@ landing:
   checking_session: おかえりなさい…
   recovered_toast: おかえりなさい！学習データはまだここにあります。
   intro: Adaptive Learner は、研究に基づく 6 つの学習アプローチからあなたに 最適な方法を見つけ、毎セッションで 7 ステップのサイクルをガイドします。
+  port_change_hint: "以前 Adaptive Learner を別のポートで使っていましたか？学習データは以前のウェブアドレスに残っています。前のポートに戻ってバックアップをエクスポートし、ここでインポートしてください。"
+  port_change_link: "データを移行する方法"
 onboarding:
   title: 学習プロジェクトを作成
   intro: 学習目標について教えてください。Adaptive Learner はこれをもとに プロフィールを構築し、開始する方法を推奨します。

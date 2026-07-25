@@ -221,6 +221,8 @@ landing:
   checking_session: Welcome back…
   recovered_toast: Welcome back! Your learning data is still here.
   intro: Adaptive Learner finds the method that fits you best from six research-backed learning approaches, and walks you through a seven-step cycle on every session.
+  port_change_hint: "Used Adaptive Learner before on a different port? Your learning data stays with the previous web address. Go back to the previous port, export a backup, then import it here."
+  port_change_link: "How to move your data"
 onboarding:
   title: Create a learning project
   intro: Tell us about your learning goal. Adaptive Learner uses this to build your profile and recommend a starting method.

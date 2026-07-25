@@ -234,7 +234,9 @@
     "docs_link": "Leer la documentación",
     "checking_session": "Bienvenido de nuevo...",
     "recovered_toast": "Bienvenido de nuevo. Tus datos de aprendizaje siguen aquí.",
-    "intro": "Adaptive Learner encuentra el método que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigación, y te acompaña en un ciclo de siete pasos en cada sesión."
+    "intro": "Adaptive Learner encuentra el método que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigación, y te acompaña en un ciclo de siete pasos en cada sesión.",
+    "port_change_hint": "¿Ya usaste Adaptive Learner en otro puerto? Tus datos de aprendizaje permanecen en la dirección web anterior. Vuelve al puerto anterior, exporta una copia de seguridad e impórtala aquí.",
+    "port_change_link": "Cómo llevar tus datos contigo"
   },
   "onboarding": {
     "title": "Crear un proyecto de aprendizaje",

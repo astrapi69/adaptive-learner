@@ -234,7 +234,9 @@
     "docs_link": "Leia a documentação",
     "checking_session": "Bem-vindo de volta…",
     "recovered_toast": "Bem-vindo de volta! Seus dados de aprendizado ainda estão aqui.",
-    "intro": "O Adaptive Learner identifica o método que melhor se encaixa em você entre seis abordagens de aprendizado embasadas em pesquisa, e te guia por um ciclo de sete passos em cada sessão."
+    "intro": "O Adaptive Learner identifica o método que melhor se encaixa em você entre seis abordagens de aprendizado embasadas em pesquisa, e te guia por um ciclo de sete passos em cada sessão.",
+    "port_change_hint": "Já usou o Adaptive Learner noutra porta? Os seus dados de aprendizagem permanecem no endereço web anterior. Volte à porta anterior, exporte uma cópia de segurança e importe-a aqui.",
+    "port_change_link": "Como levar os seus dados"
   },
   "onboarding": {
     "title": "Criar um projeto de aprendizado",

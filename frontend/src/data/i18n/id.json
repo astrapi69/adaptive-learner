@@ -234,7 +234,9 @@
     "docs_link": "Baca dokumentasi",
     "checking_session": "Selamat datang kembali…",
     "recovered_toast": "Selamat datang kembali! Data belajar Anda masih ada di sini.",
-    "intro": "Adaptive Learner menemukan metode yang paling cocok untuk Anda dari enam pendekatan belajar berbasis riset, dan memandu Anda melalui siklus tujuh langkah di setiap sesi."
+    "intro": "Adaptive Learner menemukan metode yang paling cocok untuk Anda dari enam pendekatan belajar berbasis riset, dan memandu Anda melalui siklus tujuh langkah di setiap sesi.",
+    "port_change_hint": "Sudah pernah memakai Adaptive Learner di port lain? Data belajar Anda tetap berada di alamat web sebelumnya. Kembali ke port sebelumnya, ekspor cadangan, lalu impor di sini.",
+    "port_change_link": "Cara memindahkan data Anda"
   },
   "onboarding": {
     "title": "Buat proyek belajar",

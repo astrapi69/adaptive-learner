@@ -77,6 +77,13 @@ Never run yet. Do it NOW.
 - [ ] CHANGE the port: 8501 → 9000 → app reachable on 9000
 - [ ] Port indicator: green when running (not red)
 
+### Port change: data portability (#2069)
+- [ ] Server mode (default): populate data, change the port, reopen → sets + progress still there (backend data survives; auto-recovered on the Landing route via identity.yaml)
+- [ ] Browser storage mode (Settings > Data > storage mode): populate data, change the port, reopen → empty app with the "Used Adaptive Learner before on a different port?" hint on the welcome screen (data NOT deleted, just tied to the old origin)
+- [ ] The hint links to the "Changing the port" help page
+- [ ] Recovery (browser mode): back to the old port → Settings > Data > Export backup (`.alb`) → new port → "Restore from backup" → sets, progress, exercises, settings all restored
+- [ ] Canonical web version (astrapi69.github.io, browser mode, no explicit port): the hint does NOT appear
+
 ### States
 - [ ] Not installed: [Install] visible
 - [ ] Running: [Open in browser] [Stop] [Uninstall]
