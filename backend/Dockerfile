@@ -1,3 +1,15 @@
+# Stage 0: Frontend build - bun-built statics served by FastAPI (#2058).
+# Mirrors the retired frontend/Dockerfile build stage (same bun pin as CI).
+FROM node:24-slim AS frontend-build
+
+RUN npm install --global bun@1.3.14
+
+WORKDIR /frontend
+COPY frontend/package.json frontend/bun.lock ./
+RUN bun install --frozen-lockfile
+COPY frontend/ .
+RUN bun run build
+
 # Stage 1: Build - resolve and install all production dependencies
 FROM python:3.12-slim AS builder
 
@@ -43,6 +55,13 @@ WORKDIR /app
 
 # Copy backend application code
 COPY backend/ .
+
+# The built frontend statics, served by FastAPI itself (#2058): the
+# lifespan mounts them (SPA fallback included) when
+# ADAPTIVE_LEARNER_SERVE_FRONTEND is set - single container, no nginx.
+COPY --from=frontend-build /frontend/dist /app/static
+ENV ADAPTIVE_LEARNER_SERVE_FRONTEND=1
+ENV ADAPTIVE_LEARNER_FRONTEND_DIST=/app/static
 
 # Create non-root user and data directory
 RUN groupadd -r adaptive_learner && useradd -r -g adaptive_learner adaptive_learner && \
