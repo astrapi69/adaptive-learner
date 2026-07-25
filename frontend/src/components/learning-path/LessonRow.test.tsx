@@ -1,6 +1,6 @@
 import {describe, it, expect} from "vitest";
 import {render, screen} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter} from "react-router";
 
 import LessonRow from "./LessonRow";
 import type {PersonalPathLesson} from "../../lib/learning-path/personal-path";

@@ -1,6 +1,6 @@
 import { Map as MapIcon, Mic, Pencil } from "lucide-react";
 import { Suspense, lazy, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 
 import DashboardFilterBar from "../../components/dashboard/DashboardFilterBar";
 import QuickStartButton from "../../components/dashboard/QuickStartButton";

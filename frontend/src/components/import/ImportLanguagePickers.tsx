@@ -38,11 +38,14 @@ export default function ImportLanguagePickers({
       data-testid="import-language-pickers"
     >
       <div className="form-row">
-        <span className="form-label">
+        <span className="form-label" id="import-source-language-label">
           {t("import.chat_language", "Chat language (you speak)")}
         </span>
         <Select value={sourceLang || undefined} onValueChange={onSourceChange}>
-          <SelectTrigger data-testid="import-source-language">
+          <SelectTrigger
+            data-testid="import-source-language"
+            aria-labelledby="import-source-language-label"
+          >
             <SelectValue placeholder={t("import.select_language", "Select a language…")} />
           </SelectTrigger>
           <SelectContent>
@@ -55,9 +58,12 @@ export default function ImportLanguagePickers({
         </Select>
       </div>
       <div className="form-row">
-        <span className="form-label">{t("import.learning_language", "Learning language")}</span>
+        <span className="form-label" id="import-target-language-label">{t("import.learning_language", "Learning language")}</span>
         <Select value={targetLang || undefined} onValueChange={onTargetChange}>
-          <SelectTrigger data-testid="import-target-language">
+          <SelectTrigger
+            data-testid="import-target-language"
+            aria-labelledby="import-target-language-label"
+          >
             <SelectValue placeholder={t("import.select_language", "Select a language…")} />
           </SelectTrigger>
           <SelectContent>

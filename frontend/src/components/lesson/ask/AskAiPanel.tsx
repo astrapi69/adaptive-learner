@@ -25,7 +25,7 @@
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { Bot, Loader2, Send, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { useApiKeyStatus } from "../../../hooks/settings/useApiKeyStatus";
 import { useI18n } from "../../../hooks/ui/useI18n";

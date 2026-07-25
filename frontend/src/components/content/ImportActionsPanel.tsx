@@ -24,7 +24,7 @@
  */
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import ContentActionButtons from "./browser/ContentActionButtons";
 import MyLessonsSection from "./lessons/MyLessonsSection";

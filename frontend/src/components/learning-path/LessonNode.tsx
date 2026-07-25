@@ -5,7 +5,7 @@
  */
 
 import {Handle, Position, type Node, type NodeProps} from "@xyflow/react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import {LessonNodeView, type LessonNodeData} from "./LessonNodeView";
 

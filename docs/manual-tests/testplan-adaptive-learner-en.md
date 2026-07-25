@@ -216,6 +216,15 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       step 1 with the friendly "A title is required." message (NOT the
       book-text step, NOT the raw schema error on save); with a title →
       the book-text step opens normally and saving succeeds
+- [ ] **[MOBILE] Title warning is scrolled into view (#2036):** iPhone /
+      narrow viewport, step 1 WITHOUT a title, scroll down to the Next button
+      (the title field is off-screen above) → press Next: the view scrolls to
+      the title field, the field takes focus and is marked invalid (red
+      border), and the "A title is required." message is in view (NO
+      dead-end / no missing reaction). Applies to all three entries: Next
+      (card path), the "Knowledge lesson from text" card (book) and the
+      "Extensions" card (extension). Desktop regression: if the field is
+      already visible there is no scroll jump
 - [ ] **File upload in the book-text step (#1927):** "Load from file
       (EPUB, DOCX, TXT, MD)" button above the text field; pick an EPUB → a
       section list appears (checkboxes, title + character count);
@@ -412,6 +421,14 @@ each card row (`CardImageField`).
 - [ ] Lesson summary shows only ONE favorite button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
+- [ ] **[MOBILE/VoiceOver, non-blocking] Select fields are announced with a
+      name (#2037):** turn on iOS VoiceOver, open `/create-lesson` step 1 and
+      swipe across the select fields (domain, language(s), level): VoiceOver
+      announces the VISIBLE label plus the chosen value for each (e.g.
+      "Level, A1, combo box") - NOT just the value, and not an unnamed
+      "button". Same in the Share wizard and the chat-import language
+      pickers. Automated coverage via axe (`select-a11y.spec.ts`); this item
+      is the real-screen-reader cross-check in the next iOS session
 
 ### Invalid lesson: friendly error message (#1808 / #1824)
 - [ ] German umlaut cards (`währung`, `präsenz`) load correctly

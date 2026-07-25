@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, screen} from "@testing-library/react";
-import {MemoryRouter, Route, Routes, useNavigate} from "react-router-dom";
+import {MemoryRouter, Route, Routes, useNavigate} from "react-router";
 import {afterAll, describe, expect, it} from "vitest";
 
 import {stubMatchMedia} from "../../test-utils/match-media-stub";

@@ -16,7 +16,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const listSetsMock = vi.fn();
@@ -57,8 +57,8 @@ vi.mock("../../utils/notify", () => ({
 }));
 
 const navigateMock = vi.fn();
-vi.mock("react-router-dom", async (orig) => {
-  const actual = await orig<typeof import("react-router-dom")>();
+vi.mock("react-router", async (orig) => {
+  const actual = await orig<typeof import("react-router")>();
   return { ...actual, useNavigate: () => navigateMock };
 });
 

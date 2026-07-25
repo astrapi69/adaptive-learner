@@ -13,7 +13,7 @@ import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
 
 const navigate = vi.fn();
 let params = new URLSearchParams();
-vi.mock("react-router-dom", () => ({
+vi.mock("react-router", () => ({
   useNavigate: () => navigate,
   useSearchParams: () => [params, vi.fn()],
 }));

@@ -18,7 +18,7 @@
  */
 
 import {useMemo, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import ShortcutHelpDialog from "../../shared/feedback/ShortcutHelpDialog";
 import {

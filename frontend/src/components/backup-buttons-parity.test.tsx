@@ -16,16 +16,16 @@
 
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter} from "react-router";
 
 import BackupSection from "./settings/backup/BackupSection";
 import DangerZoneSection from "./settings/data/DangerZoneSection";
 import {setUserId} from "../lib/learning/learnerState";
 import type {BackupPayload} from "../types/domain";
 
-vi.mock("react-router-dom", async () => {
+vi.mock("react-router", async () => {
     const actual =
-        await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
+        await vi.importActual<typeof import("react-router")>("react-router");
     return {...actual, useNavigate: () => vi.fn()};
 });
 

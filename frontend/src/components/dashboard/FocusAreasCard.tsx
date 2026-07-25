@@ -29,7 +29,7 @@
 
 import {Sparkles} from "lucide-react";
 import {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link} from "react-router";
 
 import {analyzeErrors} from "../../lib/adaptive/error-analyzer";
 import {

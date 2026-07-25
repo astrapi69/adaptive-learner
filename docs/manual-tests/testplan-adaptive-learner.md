@@ -218,6 +218,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       erforderlich." (NICHT der Buchtext-Schritt, NICHT der rohe
       Schema-Fehler beim Speichern); mit Titel → Buchtext-Schritt
       oeffnet normal und Speichern gelingt
+- [ ] **[MOBILE] Titel-Warnung wird sichtbar gescrollt (#2036):** iPhone /
+      schmaler Viewport, Schritt 1 OHNE Titel, nach unten zum Weiter-Button
+      scrollen (Titelfeld oben ausserhalb des Sichtbereichs) → Weiter
+      druecken: die Ansicht scrollt zum Titelfeld, das Feld erhaelt den Fokus
+      und ist als ungueltig markiert (roter Rahmen), der Hinweis "Ein Titel
+      ist erforderlich." ist im Sichtbereich (KEIN Dead-End, keine Reaktion
+      fehlt). Gilt fuer alle drei Einstiege: Weiter (Karten-Pfad), Karte
+      "Wissenslektion aus Text" (Buch) und Karte "Erweiterungen" (Extension).
+      Desktop-Regression: ist das Feld schon sichtbar, gibt es keinen
+      Scroll-Sprung
 - [ ] **Datei-Upload im Buchtext-Schritt (#1927):** Button "Aus Datei
       laden (EPUB, DOCX, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
       Abschnittsliste erscheint (Checkboxen, Titel + Zeichenzahl);
@@ -428,6 +438,15 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Lektions-Zusammenfassung zeigt nur EINEN Favoriten-Button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-Content-Link beim Tabben von oben sichtbar (#1727, a11y)
+- [ ] **[MOBILE/VoiceOver, nicht blockierend] Auswahlfelder werden benannt
+      angesagt (#2037):** iOS VoiceOver einschalten, `/create-lesson`
+      Schritt 1 oeffnen und ueber die Auswahlfelder (Domain, Sprache(n),
+      Niveau) wischen: VoiceOver sagt jeweils das SICHTBARE Label plus den
+      gewaehlten Wert an (z. B. "Niveau, A1, Auswahlfeld") - NICHT nur den
+      Wert und nicht "Button" ohne Namen. Gleiches im Teilen-Assistenten
+      und bei den Chat-Import-Sprachwaehlern. Automatisiert abgedeckt via
+      axe (`select-a11y.spec.ts`); dieser Punkt ist die Gegenprobe mit
+      echtem Screenreader in der naechsten iOS-Session
 
 ### Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
 - [ ] Deutsche Umlaut-Karten (`währung`, `präsenz`) laden korrekt

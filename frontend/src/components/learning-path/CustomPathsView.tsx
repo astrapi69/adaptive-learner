@@ -17,7 +17,7 @@
 
 import {ArrowDown, ArrowUp, Plus, X} from "lucide-react";
 import {useCallback, useEffect, useMemo, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {

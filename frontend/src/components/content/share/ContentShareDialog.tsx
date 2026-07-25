@@ -8,7 +8,7 @@
  * page-level callbacks. Renders nothing when no share is in flight.
  */
 
-import type { NavigateFunction } from "react-router-dom";
+import type { NavigateFunction } from "react-router";
 
 import { Button } from "@/components/ui/button";
 

@@ -45,7 +45,7 @@ import {
   useParams,
   useSearchParams,
   type NavigateFunction,
-} from "react-router-dom";
+} from "react-router";
 
 import SaveAdaptiveLessonButton from "../../components/content/lessons/SaveAdaptiveLessonButton";
 import {

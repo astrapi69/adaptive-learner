@@ -19,7 +19,7 @@
 import { Download, FileCode, GitCommit, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Markdown from "react-markdown";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";

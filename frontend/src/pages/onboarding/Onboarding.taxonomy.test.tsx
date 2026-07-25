@@ -12,7 +12,7 @@ import "fake-indexeddb/auto";
 
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {act, fireEvent, render, screen} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter} from "react-router";
 
 import Onboarding from "./Onboarding";
 import {I18nProvider} from "../../hooks/ui/useI18n";
@@ -20,9 +20,9 @@ import {_resetDbForTests} from "../../storage/dexie/db";
 import {_resetStorageCacheForTests, getStorage} from "../../storage";
 
 const mockNavigate = vi.fn();
-vi.mock("react-router-dom", async () => {
-    const actual = await vi.importActual<typeof import("react-router-dom")>(
-        "react-router-dom",
+vi.mock("react-router", async () => {
+    const actual = await vi.importActual<typeof import("react-router")>(
+        "react-router",
     );
     return {...actual, useNavigate: () => mockNavigate};
 });

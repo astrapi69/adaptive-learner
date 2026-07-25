@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 
 import { ApiError } from "../../api/client";
 import { AiSettingsPanel } from "@astrapi69/ai-key-vault-react";
