@@ -21,7 +21,7 @@ platformdirs = "^4.9.6"
 # them the launcher falls back to a plain window close - no crash.
 pystray = {version = ">=0.19.4,<0.20.0", optional = true}
 pillow = {version = "^12.2.0", optional = true}
-docker-app-launcher = {version = "^0.17.0", extras = ["tray"]}
+docker-app-launcher = {version = "^0.18.0", extras = ["tray"]}
 
 [tool.poetry.extras]
 tray = ["pystray", "pillow"]
