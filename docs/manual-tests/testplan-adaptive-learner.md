@@ -438,6 +438,15 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Lektions-Zusammenfassung zeigt nur EINEN Favoriten-Button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-Content-Link beim Tabben von oben sichtbar (#1727, a11y)
+- [ ] **[MOBILE/VoiceOver, nicht blockierend] Auswahlfelder werden benannt
+      angesagt (#2037):** iOS VoiceOver einschalten, `/create-lesson`
+      Schritt 1 oeffnen und ueber die Auswahlfelder (Domain, Sprache(n),
+      Niveau) wischen: VoiceOver sagt jeweils das SICHTBARE Label plus den
+      gewaehlten Wert an (z. B. "Niveau, A1, Auswahlfeld") - NICHT nur den
+      Wert und nicht "Button" ohne Namen. Gleiches im Teilen-Assistenten
+      und bei den Chat-Import-Sprachwaehlern. Automatisiert abgedeckt via
+      axe (`select-a11y.spec.ts`); dieser Punkt ist die Gegenprobe mit
+      echtem Screenreader in der naechsten iOS-Session
 
 ### Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
 - [ ] Deutsche Umlaut-Karten (`währung`, `präsenz`) laden korrekt
