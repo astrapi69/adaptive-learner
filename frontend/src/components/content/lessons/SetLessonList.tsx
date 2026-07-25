@@ -17,7 +17,7 @@ import { ChevronDown, ChevronRight, Play, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { lessonFilename } from "../../../lib/content/lesson/delete-lesson";
+import { lessonFilename } from "../../../lib/content/lesson/delete/delete-lesson";
 import { getStorage } from "../../../storage";
 import type { LessonDeleteTarget } from "../../../hooks/content/useContentSetActions";
 import type { ContentSetEntry } from "../../../storage/types";

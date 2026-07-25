@@ -12,7 +12,7 @@ import {
   lessonFilename,
   removeLessonFromSet,
 } from "./delete-lesson";
-import type { ContentLesson, ContentSetEntry } from "../../../storage/types";
+import type { ContentLesson, ContentSetEntry } from "../../../../storage/types";
 
 function lesson(id: string, title = id): ContentLesson {
   return { id, title, cards: [], steps: [] } as unknown as ContentLesson;

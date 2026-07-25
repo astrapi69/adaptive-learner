@@ -38,7 +38,7 @@ import {
   purgeLessonFromLessonCache,
   purgeSetFromLessonCache,
 } from "../../lib/content/cache/sw-lesson-cache";
-import { removeLessonFromSet } from "../../lib/content/lesson/delete-lesson";
+import { removeLessonFromSet } from "../../lib/content/lesson/delete/delete-lesson";
 import { removeFavorite } from "../../lib/favorites/favorites";
 import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";

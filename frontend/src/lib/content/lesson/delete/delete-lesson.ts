@@ -12,13 +12,13 @@
  * purge, SW-cache purge, favorite removal) lives in ``useContentSetActions``.
  */
 
-import { USER_GENERATED_SOURCE } from "../../../storage/types";
+import { USER_GENERATED_SOURCE } from "../../../../storage/types";
 import type {
   ContentLesson,
   ContentSetEntry,
   SaveUserSetInput,
   UserLessonOrigin,
-} from "../../../storage/types";
+} from "../../../../storage/types";
 
 /** The cache filename of a lesson — mirrors ``saveUserSet``'s
  *  ``lessons/{id}.json`` layout (the ``lessons/`` prefix is stripped by
