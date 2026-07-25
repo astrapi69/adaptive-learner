@@ -24,6 +24,11 @@ import {
   storeSetStatus,
   storeSetStatuses,
 } from "./set-status-store";
+import {
+  applyLocalStorageSnapshot,
+  captureLocalStorageSnapshot,
+  isExcludedLocalStorageKey,
+} from "../../backup/localStorageSnapshot";
 import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 
 const KEY = "adaptive-learner.set-status";
@@ -152,6 +157,47 @@ describe("set-status-store — corruption tolerance", () => {
     );
     const map = readSetStatuses();
     expect(map).toEqual({ "owner/repo::ok": "deferred" });
+  });
+});
+
+describe("set-status-store — backup portability (Export -> wipe -> Import)", () => {
+  it("is NOT excluded from the backup snapshot (per-device UI state, not a secret)", () => {
+    // Regression pin: the store key must never drift into the backup
+    // exclusion list, or set status would silently stop surviving a
+    // restore/device migration.
+    expect(isExcludedLocalStorageKey("adaptive-learner.set-status")).toBe(false);
+  });
+
+  it("deferred/completed marks survive a storage wipe via the .alb localStorage snapshot", () => {
+    // The store's key is `adaptive-learner.`-namespaced, so it rides the
+    // generic localStorage snapshot the backup attaches in BOTH storage
+    // modes (the backend ignores the block; the frontend applies it).
+    storeSetStatus("owner/repo", "psych", "deferred");
+    storeSetStatuses(
+      [{ source: "owner/repo", setId: "python" }],
+      "completed",
+    );
+
+    // Export: capture the snapshot the backup would carry.
+    const snapshot = captureLocalStorageSnapshot();
+    expect(snapshot["adaptive-learner.set-status"]).toBeTruthy();
+
+    // Simulated WKWebView / browser eviction: the store is gone.
+    localStorage.clear();
+    expect(getSetStatus("owner/repo", "psych")).toBeNull();
+
+    // Import: apply the snapshot back.
+    applyLocalStorageSnapshot(snapshot);
+
+    // The deferral/completion is back, and the read overlay reflects it.
+    expect(getSetStatus("owner/repo", "psych")).toBe("deferred");
+    expect(getSetStatus("owner/repo", "python")).toBe("completed");
+    const overlaid = applyStoredStatuses([
+      entry({ source: "owner/repo", id: "psych", status: "active" }),
+      entry({ source: "owner/repo", id: "python", status: "active" }),
+    ]);
+    expect(overlaid[0].status).toBe("deferred");
+    expect(overlaid[1].status).toBe("completed");
   });
 });
 
