@@ -358,18 +358,15 @@ export const apiStorage: IStorageService = {
      *  sets). */
     saveUserSet: (input) => api.contentLoader.saveUserSet(input),
     deleteSet: (source, setId) => api.contentLoader.deleteSet(source, setId),
-    /** #1351 — no batch endpoint; delete sequentially. Status is a
-     *  browser-local concept in API mode, so bulk status is a no-op. */
+    /** #1351 — no batch endpoint; delete sequentially. Set lifecycle
+     *  status is a per-device UI decision persisted browser-side in
+     *  ``lib/content/browse/set-status-store`` (not a storage concern in
+     *  either mode). */
     deleteSets: async (refs) => {
       for (const { source, setId } of refs) {
         await api.contentLoader.deleteSet(source, setId);
       }
     },
-    setSetsStatus: () => Promise.resolve(),
-    /** #1300 — set status is a browser-local Dexie concept; API mode has
-     *  no per-set status column, so this is a no-op (every set reads back
-     *  as "active"). Keeps the feature working without a backend route. */
-    setSetStatus: () => Promise.resolve(),
     /** Phase 60 / v1.44.0 — opt-in AI content review (backend
      *  resolves the AI key server-side). */
     aiValidate: (input) => api.contentLoader.aiValidate(input),

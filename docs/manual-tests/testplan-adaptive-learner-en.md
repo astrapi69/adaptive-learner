@@ -448,6 +448,24 @@ each card row (`CardImageField`).
 - [ ] Per-set share link opens the set detail page directly (#1572)
 - [ ] Add a registered content repo (register-a-repo #1511)
 
+### Set status persists (active/deferred/completed, both modes)
+
+Where: My Content (`/content?tab=my`) → the set actions menu (three dots)
+of a downloaded set. Test in BOTH storage modes (Desktop/server = API
+mode; GitHub-Pages PWA = Dexie mode), since the bug used to occur only in
+API mode.
+
+- [ ] Set a set to **Deferred** → switch to another view (e.g. Dashboard)
+      → return to My Content → the status is STILL "Deferred" (not back to
+      "Active")
+- [ ] Check both return paths: once via the menu/navigation, once via the
+      browser Back button
+- [ ] Exercise every transition: active → deferred → completed → active
+      again; each survives a view switch
+- [ ] Second stage (real persistence proof): fully close and reopen the app
+      → the deferred status is still there
+- [ ] iPhone PWA: same flow (originally observed there)
+
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)

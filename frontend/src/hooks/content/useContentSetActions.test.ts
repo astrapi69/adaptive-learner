@@ -6,7 +6,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useContentSetActions } from "./useContentSetActions";
@@ -14,21 +14,18 @@ import {
   dismissSet,
   isDismissedSet,
 } from "../../lib/content/browse/dismissed-sets";
+import { getSetStatus } from "../../lib/content/browse/set-status-store";
 import type { ContentSetEntry } from "../../storage/types";
 
 const deleteSetMock = vi.fn();
-const setSetStatusMock = vi.fn();
 const deleteSetsMock = vi.fn();
-const setSetsStatusMock = vi.fn();
 const downloadSetMock = vi.fn();
 
 vi.mock("../../storage", () => ({
   getStorage: () => ({
     contentLoader: {
       deleteSet: (...a: unknown[]) => deleteSetMock(...a),
-      setSetStatus: (...a: unknown[]) => setSetStatusMock(...a),
       deleteSets: (...a: unknown[]) => deleteSetsMock(...a),
-      setSetsStatus: (...a: unknown[]) => setSetsStatusMock(...a),
       downloadSet: (...a: unknown[]) => downloadSetMock(...a),
     },
   }),
@@ -81,6 +78,7 @@ function setup(initial: ContentSetEntry[]) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
 });
 
 describe("handleConfirmDeleteSet (#1349)", () => {
@@ -113,39 +111,33 @@ describe("handleConfirmDeleteSet (#1349)", () => {
     expect(getSets().map((s) => s.id)).toEqual(["psych"]);
   });
 
-  it("bulk status change persists via setSetStatus for the set", async () => {
-    setSetStatusMock.mockResolvedValue(undefined);
+  it("persists a status change to the mode-agnostic store + optimistic list", () => {
     const target = entry({ id: "psych" });
-    const { hook } = setup([target]);
-    await act(async () => {
-      await hook.result.current.handleSetStatus(target, "deferred");
+    const { hook, getSets } = setup([target]);
+    act(() => {
+      hook.result.current.handleSetStatus(target, "deferred");
     });
-    await waitFor(() =>
-      expect(setSetStatusMock).toHaveBeenCalledWith("owner/repo", "psych", "deferred"),
-    );
+    // Persisted to the browser-local store (works in BOTH storage modes —
+    // the prior storage-layer call was a no-op in API mode).
+    expect(getSetStatus("owner/repo", "psych")).toBe("deferred");
+    // Optimistic list update.
+    expect(getSets().find((s) => s.id === "psych")?.status).toBe("deferred");
   });
 });
 
 describe("bulk actions (#1351)", () => {
-  it("handleBulkSetStatus persists ALL selected in ONE batched call + optimistic map", async () => {
-    setSetsStatusMock.mockResolvedValue(undefined);
+  it("handleBulkSetStatus persists ALL selected to the store + optimistic map", () => {
     const a = entry({ id: "a" });
     const b = entry({ id: "b" });
     const c = entry({ id: "c" });
     const { hook, getSets } = setup([a, b, c]);
-    await act(async () => {
-      await hook.result.current.handleBulkSetStatus([a, b], "completed");
+    act(() => {
+      hook.result.current.handleBulkSetStatus([a, b], "completed");
     });
-    // One batched round-trip with both pairs (not N single calls).
-    expect(setSetSetStatusCallCount()).toBe(0); // single API untouched
-    expect(setSetsStatusMock).toHaveBeenCalledTimes(1);
-    expect(setSetsStatusMock).toHaveBeenCalledWith(
-      [
-        { source: "owner/repo", setId: "a" },
-        { source: "owner/repo", setId: "b" },
-      ],
-      "completed",
-    );
+    // Both selected sets persisted; the unselected one untouched.
+    expect(getSetStatus("owner/repo", "a")).toBe("completed");
+    expect(getSetStatus("owner/repo", "b")).toBe("completed");
+    expect(getSetStatus("owner/repo", "c")).toBeNull();
     // Optimistic: only the selected rows changed status.
     const byId = Object.fromEntries(getSets().map((s) => [s.id, s.status]));
     expect(byId.a).toBe("completed");
@@ -172,10 +164,6 @@ describe("bulk actions (#1351)", () => {
     expect(getSets().map((s) => s.id)).toEqual(["b"]);
   });
 });
-
-function setSetSetStatusCallCount(): number {
-  return setSetStatusMock.mock.calls.length;
-}
 
 describe("handleEditUserSet dispatch (#1740)", () => {
   function setupWithNavigate() {

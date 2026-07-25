@@ -466,6 +466,24 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Per-Set Share-Link oeffnet direkt die Set-Detailseite (#1572)
 - [ ] Registrierten Content-Repo hinzufuegen (register-a-repo #1511)
 
+### Set-Status bleibt erhalten (aktiv/zurueckgestellt/abgeschlossen, beide Modi)
+
+Ort: Meine Inhalte (`/content?tab=my`) → Set-Aktionen-Menue (Drei-Punkte)
+eines heruntergeladenen Sets. In BEIDEN Speichermodi pruefen (Desktop/
+Server = API-Modus; GitHub-Pages-PWA = Dexie-Modus), da der Bug frueher nur
+im API-Modus auftrat.
+
+- [ ] Set auf **Zurueckgestellt** setzen → in eine andere Maske wechseln
+      (z. B. Dashboard) → zurueck zu Meine Inhalte → Status ist WEITERHIN
+      "Zurueckgestellt" (nicht wieder "Aktiv")
+- [ ] Rueckweg pruefen: einmal ueber das Menue/Navigation, einmal ueber den
+      Browser-Zurueck-Button
+- [ ] Alle Uebergaenge testen: aktiv → zurueckgestellt → abgeschlossen →
+      wieder aktiv; jeder bleibt nach einem Maskenwechsel erhalten
+- [ ] Zweite Stufe (echter Persistenz-Beweis): App komplett schliessen und
+      neu oeffnen → zurueckgestellter Status ist noch da
+- [ ] iPhone-PWA: gleicher Ablauf (dort urspruenglich beobachtet)
+
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
       Aktualisieren → Set kommt NICHT zurueck (#1719)

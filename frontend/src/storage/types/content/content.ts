@@ -260,20 +260,18 @@ export interface IContentLoaderNamespace {
   /** Phase 59C / v1.42.0 — delete a cached set (used by My Lessons
    *  to remove a user-generated lesson). Idempotent. */
   deleteSet(source: string, setId: string): Promise<void>;
-  /** #1300 — set the lifecycle status of a downloaded set
-   *  (active / deferred / completed) in "Meine Inhalte". Dexie mode
-   *  persists it on the cached row(s); API mode is a no-op (the field
-   *  is browser-local). Idempotent. */
-  setSetStatus(source: string, setId: string, status: SetStatus): Promise<void>;
-  /** #1351 — bulk variants for the "Meine Inhalte" multi-select bar.
-   *  Dexie mode runs them as ONE transaction (batch, not N round-trips);
-   *  API mode deletes sequentially and treats status as a no-op (the
-   *  status field is browser-local). Idempotent. */
+  /** #1351 — bulk delete for the "Meine Inhalte" multi-select bar.
+   *  Dexie mode runs it as ONE transaction (batch, not N round-trips);
+   *  API mode deletes sequentially. Idempotent.
+   *
+   *  Lifecycle status (active / deferred / completed) is NOT a storage
+   *  concern: it is a per-device UI decision persisted in the
+   *  mode-agnostic ``lib/content/browse/set-status-store`` (localStorage
+   *  + Dexie userData mirror), identical in both modes. The prior
+   *  storage-layer ``setSetStatus``/``setSetsStatus`` were removed because
+   *  the Dexie-row-only persistence left API mode a no-op — the status
+   *  reverted to "active" on every reload. */
   deleteSets(refs: { source: string; setId: string }[]): Promise<void>;
-  setSetsStatus(
-    refs: { source: string; setId: string }[],
-    status: SetStatus,
-  ): Promise<void>;
   /** Phase 60 / v1.44.0 — OPT-IN AI content validation. Sends the
    *  lesson content to the user's configured AI provider and
    *  returns a structured review (translation / distractor /

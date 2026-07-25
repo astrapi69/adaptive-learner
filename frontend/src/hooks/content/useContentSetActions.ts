@@ -25,6 +25,10 @@ import {
   undismissSet,
 } from "../../lib/content/browse/dismissed-sets";
 import {
+  storeSetStatus,
+  storeSetStatuses,
+} from "../../lib/content/browse/set-status-store";
+import {
   isEmptyPlan,
   planSetDataDeletion,
   type DeletionPlan,
@@ -135,22 +139,18 @@ export function useContentSetActions({
   };
 
   // #1300 — move a downloaded set between lifecycle statuses. Optimistic:
-  // the list updates immediately, then persists (Dexie row; API no-op).
-  const handleSetStatus = async (entry: ContentSetEntry, status: SetStatus) => {
+  // the list updates immediately, then persists to the mode-agnostic
+  // set-status store (single source of truth in BOTH storage modes — the
+  // prior Dexie-row-only persistence left API mode a no-op, so the status
+  // reverted to "active" on every reload).
+  const handleSetStatus = (entry: ContentSetEntry, status: SetStatus) => {
     setSets((prev) =>
       prev.map((row) =>
         row.source === entry.source && row.id === entry.id ? { ...row, status } : row,
       ),
     );
-    try {
-      await getStorage().contentLoader.setSetStatus(entry.source, entry.id, status);
-      notify.success(t("content.set_status.changed", "Status updated."));
-    } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(
-        `${t("content.set_status.change_failed", "Could not update the status.")} ${detail}`,
-      );
-    }
+    storeSetStatus(entry.source, entry.id, status);
+    notify.success(t("content.set_status.changed", "Status updated."));
   };
 
   // #1300 — confirm-delete a downloaded set (purges the cached set + its
@@ -183,10 +183,11 @@ export function useContentSetActions({
     }
   };
 
-  // #1351 — bulk status change over the selected sets. One batched storage
-  // call (Dexie transaction), one optimistic list update. On success the
-  // caller clears the selection; a short toast confirms.
-  const handleBulkSetStatus = async (
+  // #1351 — bulk status change over the selected sets. One optimistic list
+  // update + one write to the mode-agnostic set-status store (single source
+  // of truth in BOTH storage modes). On success the caller clears the
+  // selection; a short toast confirms.
+  const handleBulkSetStatus = (
     entries: ContentSetEntry[],
     status: SetStatus,
   ) => {
@@ -195,23 +196,16 @@ export function useContentSetActions({
     setSets((prev) =>
       prev.map((row) => (keys.has(setKey(row)) ? { ...row, status } : row)),
     );
-    try {
-      await getStorage().contentLoader.setSetsStatus(
-        entries.map((e) => ({ source: e.source, setId: e.id })),
-        status,
-      );
-      notify.success(
-        t("content.set_status.bulk_changed", "Status updated for {n} sets.").replace(
-          "{n}",
-          String(entries.length),
-        ),
-      );
-    } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(
-        `${t("content.set_status.change_failed", "Could not update the status.")} ${detail}`,
-      );
-    }
+    storeSetStatuses(
+      entries.map((e) => ({ source: e.source, setId: e.id })),
+      status,
+    );
+    notify.success(
+      t("content.set_status.bulk_changed", "Status updated for {n} sets.").replace(
+        "{n}",
+        String(entries.length),
+      ),
+    );
   };
 
   // #1351 — confirm-delete the selected sets. One batched Dexie transaction

@@ -34,6 +34,7 @@ import {
 } from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
 import { isDismissedSet } from "../../lib/content/browse/dismissed-sets";
+import { applyStoredStatuses } from "../../lib/content/browse/set-status-store";
 import {
   fetchRecommendedRepos,
   recommendedSource,
@@ -297,7 +298,11 @@ export function useContentSetsData(): ContentSetsData {
       const visible = data.sets.some(dropped)
         ? data.sets.filter((s) => !dropped(s))
         : data.sets;
-      setSets(visible);
+      // Recurring status-reset fix — overlay the mode-agnostic set-status
+      // store so a deferred/completed set stays that way across a remount
+      // (leave + return to the page), in BOTH storage modes. Referentially
+      // stable: returns the same array when no status differs.
+      setSets(applyStoredStatuses(visible));
       setSources(data.sources);
     } catch (err) {
       if (!mountedRef.current) return;
