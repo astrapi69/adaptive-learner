@@ -20,9 +20,30 @@ const Select = SelectPrimitive.Root;
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
+/**
+ * #2037 — the trigger renders as ``<button role="combobox">``, and the ARIA
+ * ``combobox`` role does NOT support "name from content": the selected value
+ * inside the button (e.g. "English") never becomes the accessible name, so
+ * axe reports ``button-name`` (impact: critical) and a screen reader
+ * announces an unlabelled combobox.
+ *
+ * The name therefore has to be supplied by the author, and it differs per
+ * instance ("Level", "Source language", ...), so it cannot be defaulted
+ * centrally. What IS centralised is the REQUIREMENT: the props demand either
+ * ``aria-labelledby`` (preferred - point it at the field's existing visible
+ * label so the announced name always matches the rendered, translated text)
+ * or ``aria-label``. Omitting both is a compile error, so a new Select can
+ * never silently ship unlabelled again.
+ */
+type SelectTriggerProps = Omit<
+    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
+    "aria-label" | "aria-labelledby"
+> &
+    ({"aria-labelledby": string} | {"aria-label": string});
+
 const SelectTrigger = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Trigger>,
-    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
+    SelectTriggerProps
 >(({className, children, ...props}, ref) => (
     <SelectPrimitive.Trigger
         ref={ref}

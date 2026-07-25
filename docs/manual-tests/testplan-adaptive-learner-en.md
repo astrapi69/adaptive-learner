@@ -421,6 +421,14 @@ each card row (`CardImageField`).
 - [ ] Lesson summary shows only ONE favorite button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
+- [ ] **[MOBILE/VoiceOver, non-blocking] Select fields are announced with a
+      name (#2037):** turn on iOS VoiceOver, open `/create-lesson` step 1 and
+      swipe across the select fields (domain, language(s), level): VoiceOver
+      announces the VISIBLE label plus the chosen value for each (e.g.
+      "Level, A1, combo box") - NOT just the value, and not an unnamed
+      "button". Same in the Share wizard and the chat-import language
+      pickers. Automated coverage via axe (`select-a11y.spec.ts`); this item
+      is the real-screen-reader cross-check in the next iOS session
 
 ### Invalid lesson: friendly error message (#1808 / #1824)
 - [ ] German umlaut cards (`währung`, `präsenz`) load correctly
