@@ -61,6 +61,14 @@ class ElementErrorsRepository(Repository):
     def delete_by_set_ids(self, user_id: str, set_ids: list[str]) -> int:
         """Delete the user's rows for the given set ids; return the count (#1821)."""
 
+    @abstractmethod
+    def delete_by_lessons(self, user_id: str, lessons: list[tuple[str, str]]) -> int:
+        """Delete the user's rows for the given ``(set_id, lesson_id)`` pairs.
+
+        Lesson-scoped delete (#2064): a sibling lesson of the same set keeps its
+        rows. Returns the count deleted.
+        """
+
 
 class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
     """SQLAlchemy-backed :class:`ElementErrorsRepository`."""
@@ -139,6 +147,23 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
             )
             .delete(synchronize_session=False)
         )
+        return int(deleted)
+
+    def delete_by_lessons(self, user_id: str, lessons: list[tuple[str, str]]) -> int:
+        """Delete the user's rows for the given ``(set_id, lesson_id)`` pairs (#2064)."""
+        if not lessons:
+            return 0
+        deleted = 0
+        for set_id, lesson_id in lessons:
+            deleted += (
+                self._db.query(ElementError)
+                .filter(
+                    ElementError.user_id == user_id,
+                    ElementError.set_id == set_id,
+                    ElementError.lesson_id == lesson_id,
+                )
+                .delete(synchronize_session=False)
+            )
         return int(deleted)
 
 

@@ -490,6 +490,36 @@ API mode.
 - [ ] Book recommendations come from the federated registry, not the
       removed official `books.yaml` (#1717)
 
+### Delete a single lesson (#2064)
+
+Location: My Content (`/content?tab=my`) → My Lessons → a set with
+SEVERAL lessons (e.g. after a book import) → "Manage lessons".
+
+- [ ] Prep: import/generate a book (several lessons in one set) OR a
+      multi-lesson own set; play 1-2 lessons (create progress + review
+      cards)
+- [ ] "Manage lessons" expands the per-lesson list; each lesson has Play
+      + Delete
+- [ ] Delete opens a confirm dialog that names the lesson and says it
+      CANNOT be undone
+- [ ] The "Also delete my learning progress" checkbox shows the REAL
+      review-card count of the lesson (cannot be undone)
+- [ ] Delete WITHOUT the checkbox: the lesson leaves the list,
+      lesson_count drops, sibling lessons are untouched; the deleted
+      lesson's progress is kept (orphaned, cleanable later)
+- [ ] Delete WITH the checkbox: progress + review cards of ONLY this
+      lesson are gone, sibling progress remains
+- [ ] No renumbering: the surviving lessons keep their titles/order,
+      deep links to them still work
+- [ ] Deleting the last lesson of a set removes the WHOLE set from My
+      Content
+- [ ] Keyboard-operable dialog: the Delete button is focused,
+      Escape/Cancel dismisses
+- [ ] Check BOTH modes: desktop/server (API) AND GitHub Pages (Dexie)
+- [ ] Backup time-point: make a backup (.alb) BEFORE deleting → delete
+      the lesson → import the backup → the lesson is back (correct: a
+      backup is a snapshot, NOT a bug)
+
 ### Disconnect content repo vs. delete progress (#1651 / #1652)
 
 Location: Settings → Data → content-repo list → "Remove".

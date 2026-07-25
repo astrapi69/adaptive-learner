@@ -2142,6 +2142,15 @@ content:
     delete_confirm: "Diese Lektion löschen? Das kann nicht rückgängig gemacht werden."
     deleted: "Lektion gelöscht."
     delete_failed: "Die Lektion konnte nicht gelöscht werden."
+  lesson_delete:
+    manage_lessons: "Lektionen verwalten"
+    confirm_body: "Diese Lektion wird aus dem Set entfernt. Das lässt sich nicht rückgängig machen - ein zuvor erstelltes Backup enthält sie noch."
+    delete_progress_option: "Auch meinen Lernfortschritt für diese Lektion löschen ({cards} Wiederholungskarten)"
+    delete_progress_option_nocounts: "Auch meinen Lernfortschritt für diese Lektion löschen"
+    action_delete: "Lektion löschen"
+    deleted: "Lektion gelöscht."
+    delete_failed: "Die Lektion konnte nicht gelöscht werden."
+    delete_aria: "Lektion {title} löschen"
   set_status:
     delete_progress_option: "Auch meinen Lernfortschritt und die Wiederholungskarten löschen ({lessons} Lektionen, {cards} Karten)"
     delete_progress_option_nocounts: "Auch meinen Lernfortschritt und die Wiederholungskarten löschen"

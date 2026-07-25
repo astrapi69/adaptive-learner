@@ -21,6 +21,13 @@ export interface DeleteProgressOptionProps {
     disabled?: boolean;
     onChange: (checked: boolean) => void;
     testId: string;
+    /** Override the with-counts label i18n key (default: set-delete copy).
+     *  #2064 — the single-lesson delete passes lesson-oriented copy. */
+    labelKey?: string;
+    labelFallback?: string;
+    /** Override the number-free label i18n key (default: set-delete copy). */
+    noCountsKey?: string;
+    noCountsFallback?: string;
 }
 
 export default function DeleteProgressOption({
@@ -29,19 +36,17 @@ export default function DeleteProgressOption({
     disabled = false,
     onChange,
     testId,
+    labelKey = "content.set_status.delete_progress_option",
+    labelFallback = "Also delete my learning progress and review cards ({lessons} lessons, {cards} cards)",
+    noCountsKey = "content.set_status.delete_progress_option_nocounts",
+    noCountsFallback = "Also delete my learning progress and review cards",
 }: DeleteProgressOptionProps) {
     const {t} = useI18n();
     const label = plan
-        ? t(
-              "content.set_status.delete_progress_option",
-              "Also delete my learning progress and review cards ({lessons} lessons, {cards} cards)",
-          )
+        ? t(labelKey, labelFallback)
               .replace("{lessons}", String(plan.lessonCount))
               .replace("{cards}", String(plan.cardCount))
-        : t(
-              "content.set_status.delete_progress_option_nocounts",
-              "Also delete my learning progress and review cards",
-          );
+        : t(noCountsKey, noCountsFallback);
     return (
         <label className="flex items-start gap-2 text-sm text-fg-secondary">
             <input

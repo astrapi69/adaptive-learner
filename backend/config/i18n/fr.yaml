@@ -2139,6 +2139,15 @@ content:
     delete_confirm: "Supprimer cette leçon ? Cette action est irréversible."
     deleted: "Leçon supprimée."
     delete_failed: "Impossible de supprimer la leçon."
+  lesson_delete:
+    manage_lessons: "Gérer les leçons"
+    confirm_body: "Cette leçon sera retirée du jeu. Cette action est irréversible ; une sauvegarde créée auparavant la contient toujours."
+    delete_progress_option: "Supprimer aussi ma progression pour cette leçon ({cards} cartes de révision)"
+    delete_progress_option_nocounts: "Supprimer aussi ma progression pour cette leçon"
+    action_delete: "Supprimer la leçon"
+    deleted: "Leçon supprimée."
+    delete_failed: "Impossible de supprimer la leçon."
+    delete_aria: "Supprimer la leçon {title}"
   set_status:
     delete_progress_option: "Supprimer aussi ma progression et les cartes de révision ({lessons} leçons, {cards} cartes)"
     delete_progress_option_nocounts: "Supprimer aussi ma progression et les cartes de révision"

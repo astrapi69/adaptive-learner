@@ -310,6 +310,10 @@ export const apiStorage: IStorageService = {
       const result = await api.learningData.delete(userId, {
         lesson_progress_ids: deletion.lessonProgressIds,
         set_ids: deletion.setIds,
+        lesson_cards: deletion.lessonCards?.map((card) => ({
+          set_id: card.set_id,
+          lesson_id: card.lesson_id,
+        })),
       });
       return {
         lessonsDeleted: result.lessons_deleted,

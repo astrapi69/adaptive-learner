@@ -16,7 +16,11 @@ export const contentApi = {
     /** POST /api/users/{user_id}/learning-data/delete */
     delete: (
       userId: string,
-      body: {lesson_progress_ids: string[]; set_ids: string[]},
+      body: {
+        lesson_progress_ids: string[];
+        set_ids: string[];
+        lesson_cards?: {set_id: string; lesson_id: string}[];
+      },
     ) =>
       apiCall<{lessons_deleted: number; cards_deleted: number}>(
         `/users/${encodeURIComponent(userId)}/learning-data/delete`,
