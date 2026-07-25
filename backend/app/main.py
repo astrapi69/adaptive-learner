@@ -25,6 +25,7 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from pluginforge import PluginManager
 from pluginforge.config import load_i18n
@@ -39,6 +40,7 @@ from app.config import (
     resolve_cors_origins,
 )
 from app.exceptions import AdaptiveLearnerError, NotFoundError
+from app.frontend_static import BodySizeLimitMiddleware
 from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
 from app.middleware.rate_limit import (
@@ -156,6 +158,13 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+# Single-container parity (#2058): nginx used to enforce
+# ``client_max_body_size 50M`` in front of the API and (in principle)
+# response compression; with FastAPI serving the frontend directly, both
+# live here. The limit matches the retired nginx value.
+app.add_middleware(BodySizeLimitMiddleware, max_bytes=50 * 1024 * 1024)
+app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 # Per-IP, per-tier API rate limiting (protects AI-credit-burning
 # endpoints from abusive / runaway clients). Switches live on

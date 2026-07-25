@@ -191,8 +191,8 @@ irm https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.ps
 Both scripts clone the tagged release into `~/adaptive-learner/`,
 generate an `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet at-rest
 encryption), build the Docker images, and start the stack at
-`http://localhost:8501` (single port; nginx serves the static
-frontend and proxies `/api/*` to FastAPI).
+`http://localhost:8501` (single port, single container; FastAPI
+serves the static frontend and `/api/*` itself).
 
 ```bash
 cd ~/adaptive-learner
