@@ -295,4 +295,66 @@ describe("Landing page", () => {
             replace: true,
         });
     });
+
+    // --- #2069: port-change data-loss hint on the empty state -----------
+    // The recovery path stays on the mocked ApiStorage (identity.yaml
+    // null by default -> Landing renders). The hint decision reads
+    // ``resolveStorageMode()`` + ``window.location.port`` fresh each
+    // render, so we drive it via localStorage + happyDOM.setURL.
+
+    describe("port-change data-loss hint (#2069)", () => {
+        function setPort(port: string): void {
+            const w = window as unknown as {
+                happyDOM?: {setURL?: (url: string) => void};
+            };
+            w.happyDOM?.setURL?.(
+                port ? `http://localhost:${port}/` : "http://localhost/",
+            );
+        }
+
+        afterEach(() => {
+            setPort(""); // reset origin so later tests are unaffected
+        });
+
+        it("shows the hint on a self-hosted Dexie origin with a port", async () => {
+            localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+            setPort("8501");
+            renderLanding();
+            const hint = await screen.findByTestId("landing-port-change-hint");
+            expect(hint).toBeInTheDocument();
+            const link = screen.getByTestId(
+                "landing-port-change-link",
+            ) as HTMLAnchorElement;
+            expect(link.getAttribute("href")).toContain(
+                "install/changing-the-port",
+            );
+            expect(link.target).toBe("_blank");
+            expect(link.rel).toContain("noopener");
+        });
+
+        it("hides the hint on the canonical Dexie deployment (no port)", async () => {
+            localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+            setPort(""); // https/443, no explicit port (GH Pages)
+            renderLanding();
+            await waitFor(() => {
+                expect(screen.getByTestId("landing")).toBeInTheDocument();
+            });
+            expect(
+                screen.queryByTestId("landing-port-change-hint"),
+            ).not.toBeInTheDocument();
+        });
+
+        it("hides the hint in API mode even with a port", async () => {
+            // Default mode is api (storage_mode unset); server data
+            // auto-recovers, so the hint would mislead.
+            setPort("8501");
+            renderLanding();
+            await waitFor(() => {
+                expect(screen.getByTestId("landing")).toBeInTheDocument();
+            });
+            expect(
+                screen.queryByTestId("landing-port-change-hint"),
+            ).not.toBeInTheDocument();
+        });
+    });
 });

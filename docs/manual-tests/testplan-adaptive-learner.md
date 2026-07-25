@@ -75,6 +75,13 @@ Noch nie durchgefuehrt. JETZT machen.
 - [ ] Port WECHSELN: 8501 → 9000 → App erreichbar auf 9000
 - [ ] Port-Indikator: gruen wenn laeuft (nicht rot)
 
+### Portwechsel: Datenmitnahme (#2069)
+- [ ] Servermodus (Default): Daten anlegen, Port wechseln, neu oeffnen → Sets + Fortschritt weiter da (Backend-Daten ueberleben; auf der Landing-Seite via identity.yaml automatisch wiederhergestellt)
+- [ ] Browser-Speichermodus (Einstellungen > Daten > Speichermodus): Daten anlegen, Port wechseln, neu oeffnen → leere App mit Hinweis "Hast du Adaptive Learner schon einmal unter einem anderen Port genutzt?" auf dem Willkommensbildschirm (Daten NICHT geloescht, nur an den alten Origin gebunden)
+- [ ] Der Hinweis verlinkt auf die Hilfeseite "Den Port aendern"
+- [ ] Wiederherstellung (Browser-Modus): zurueck zum alten Port → Einstellungen > Daten > Backup exportieren (`.alb`) → neuer Port → "Aus Backup wiederherstellen" → Sets, Fortschritt, Uebungen, Einstellungen wieder da
+- [ ] Kanonische Web-Version (astrapi69.github.io, Browser-Modus, kein expliziter Port): der Hinweis erscheint NICHT
+
 ### Zustaende
 - [ ] Nicht installiert: [Installieren] sichtbar
 - [ ] Laeuft: [Im Browser oeffnen] [Stoppen] [Deinstallieren]

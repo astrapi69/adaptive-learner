@@ -53,6 +53,7 @@ plugins:
           nav_translations:
             Docker Desktop installieren: Install Docker Desktop
             Desktop-Launcher starten: Start the desktop launcher
+            Den Port ändern: Changing the port
             Benutzerhandbuch: User Guide
             Erste Schritte: Getting started
             App-Tutorial: App tutorial
@@ -107,6 +108,7 @@ plugins:
             Installation: Instalación
             Docker Desktop installieren: Instalar Docker Desktop
             Desktop-Launcher starten: Iniciar el launcher de escritorio
+            Den Port ändern: Cambiar el puerto
             Benutzerhandbuch: Guía del usuario
             Erste Schritte: Primeros pasos
             App-Tutorial: Tutorial de la app
@@ -170,6 +172,7 @@ plugins:
           nav_translations:
             Docker Desktop installieren: Installer Docker Desktop
             Desktop-Launcher starten: Démarrer le launcher de bureau
+            Den Port ändern: Changer de port
             Benutzerhandbuch: Guide de l'utilisateur
             Erste Schritte: Premiers pas
             App-Tutorial: Tutoriel de l'app
@@ -230,6 +233,7 @@ plugins:
             Installation: Εγκατάσταση
             Docker Desktop installieren: Εγκατάσταση Docker Desktop
             Desktop-Launcher starten: Εκκίνηση του Desktop-Launcher
+            Den Port ändern: Αλλαγή θύρας
             Benutzerhandbuch: Οδηγός χρήσης
             Erste Schritte: Ξεκινώντας
             App-Tutorial: Οδηγός εφαρμογής
@@ -294,6 +298,7 @@ plugins:
             Installation: Instalação
             Docker Desktop installieren: Instalar o Docker Desktop
             Desktop-Launcher starten: Iniciar o launcher de desktop
+            Den Port ändern: Mudar a porta
             Benutzerhandbuch: Guia do usuário
             Erste Schritte: Primeiros passos
             App-Tutorial: Tutorial do app
@@ -358,6 +363,7 @@ plugins:
             Installation: Kurulum
             Docker Desktop installieren: Docker Desktop kurulumu
             Desktop-Launcher starten: Masaüstü launcher'ı başlatma
+            Den Port ändern: Bağlantı noktasını değiştirme
             Benutzerhandbuch: Kullanıcı kılavuzu
             Erste Schritte: Başlarken
             App-Tutorial: Uygulama eğitimi
@@ -422,6 +428,7 @@ plugins:
             Installation: インストール
             Docker Desktop installieren: Docker Desktop のインストール
             Desktop-Launcher starten: デスクトップランチャーの起動
+            Den Port ändern: ポートの変更
             Benutzerhandbuch: ユーザーガイド
             Erste Schritte: はじめに
             App-Tutorial: アプリチュートリアル
@@ -506,6 +513,7 @@ nav:
 - Installation:
   - Docker Desktop installieren: de/install/docker-desktop.md
   - Desktop-Launcher starten: de/install/launcher.md
+  - Den Port ändern: de/install/changing-the-port.md
 - Benutzerhandbuch:
   - Erste Schritte: de/user-guide/getting-started.md
   - App-Tutorial: de/user-guide/app-tutorial.md
