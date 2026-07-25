@@ -1748,6 +1748,61 @@ public visitors cannot.
   Dexie-mode path works for real instead of merely degrading
   gracefully.
 
+## One-mode fix: a storage change is proven in BOTH modes or it is not proven (#2053)
+
+Surfaced 2026-07-25 fixing the recurring set-status-reset bug
+(#2038 / #2050). A change to a persistence/storage concern that is
+implemented and tested in only ONE of the two storage backings
+(Dexie vs API), then declared done, ships **broken in the other
+mode** — and the passing test in the fixed mode gives false
+confidence.
+
+### The precedent chain
+
+- **#1300 / #1351** added the set lifecycle status
+  (active / deferred / completed) but persisted it **only on the
+  Dexie content-cache row**. ``ApiStorage.setSetStatus`` /
+  ``setSetsStatus`` were pure no-ops — the interface comment even
+  CODIFIED it: *"API mode is a no-op (the field is browser-local)"*.
+  The Dexie-side test (``set-status.test.ts``) was green, so the
+  feature was declared done. In API (server / desktop) mode the
+  status reverted to "active" on every reload, for multiple
+  releases, "thought fixed" each time.
+- **#2038 / #2050** fixed it: one mode-agnostic store
+  (``lib/content/browse/set-status-store.ts`` — localStorage + Dexie
+  ``userData`` mirror, the ``dismissed-sets`` pattern) overlaid on
+  the read path in both modes, **with a test per mode**.
+
+### Rule
+
+- **Every storage/persistence change MUST be proven in BOTH modes
+  (Dexie + API) by at least one test each.** A green test in one
+  mode is NOT evidence for the other. When the write path or read
+  overlay differs per mode, each branch needs its own assertion.
+- **A per-mode no-op is a red flag, not a shortcut.** A
+  ``() => Promise.resolve()`` on one implementation of an
+  ``IStorageService`` method means that mode silently drops the
+  data. If a value is browser-local (no backend column), give it
+  ONE mode-agnostic home (localStorage + Dexie ``userData`` mirror,
+  registered in ``MANAGED_USER_DATA_KEYS`` and rides the ``.alb``
+  backup's ``local_storage`` snapshot) instead of a Dexie-only row
+  write paired with an API no-op.
+- **Backup portability is part of the same check.** A new
+  browser-local store must survive Export → wipe → Import in both
+  modes. Prefix-namespaced (``adaptive-learner.``) keys ride the
+  snapshot automatically unless excluded — pin it with a round-trip
+  test so it can never silently drift into the exclusion list.
+
+### Pairs with
+
+- "Dexie-mode is part of the contract: same-commit or not at all"
+  (above) — that rule says a feature must WORK in both modes; this
+  one says it must be TESTED in both modes. A feature that works in
+  one mode and is tested only there is the exact gap that let
+  #1300/#1351 look done.
+- "Operational gaps masquerade as wired infrastructure" — a test
+  that exercises one mode is operationally half-wired.
+
 ## Source-language default: set at import time, inherited downstream
 
 Languages are captured at IMPORT time (v1.54.0): the import detail page
