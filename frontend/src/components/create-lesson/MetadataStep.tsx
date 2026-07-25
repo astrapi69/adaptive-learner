@@ -271,14 +271,17 @@ export default function MetadataStep({
                 optional level-less shape, mirroring the Share wizard's domain
                 handling. */}
             <label className="form-row flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span id="create-lesson-domain-label" className="form-label text-sm font-medium text-fg-primary">
                     {t("discover.filter.domain", "Domain")}
                 </span>
                 <Select
                     value={meta.domain}
                     onValueChange={(v) => onUpdate("domain", v)}
                 >
-                    <SelectTrigger data-testid="create-lesson-domain">
+                    <SelectTrigger
+                        data-testid="create-lesson-domain"
+                        aria-labelledby="create-lesson-domain-label"
+                    >
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -298,7 +301,7 @@ export default function MetadataStep({
                 {knowledgeDomain ? (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="form-field flex flex-col gap-1.5">
-                            <span className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-content-lang-label" className="form-label text-sm font-medium text-fg-primary">
                                 {t(
                                     "create_lesson.meta.content_lang_label",
                                     "Content language",
@@ -311,7 +314,10 @@ export default function MetadataStep({
                                     onUpdate("targetLanguage", v)
                                 }
                             >
-                                <SelectTrigger data-testid="create-lesson-content-lang">
+                                <SelectTrigger
+                                    data-testid="create-lesson-content-lang"
+                                    aria-labelledby="create-lesson-content-lang-label"
+                                >
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -324,7 +330,7 @@ export default function MetadataStep({
                             </Select>
                         </div>
                         <div className="form-field flex flex-col gap-1.5">
-                            <span className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-level-label" className="form-label text-sm font-medium text-fg-primary">
                                 {t("create_lesson.meta.level_label", "Level")}
                             </span>
                             <Select
@@ -333,7 +339,10 @@ export default function MetadataStep({
                                     onUpdate("level", v === LEVEL_NONE ? "" : v)
                                 }
                             >
-                                <SelectTrigger data-testid="create-lesson-level">
+                                <SelectTrigger
+                                    data-testid="create-lesson-level"
+                                    aria-labelledby="create-lesson-level-label"
+                                >
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -357,7 +366,7 @@ export default function MetadataStep({
                 ) : (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         <div className="form-field flex flex-col gap-1.5">
-                            <span className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-target-lang-label" className="form-label text-sm font-medium text-fg-primary">
                                 {t(
                                     "create_lesson.meta.target_lang_label",
                                     "Language learned",
@@ -370,7 +379,10 @@ export default function MetadataStep({
                                     onUpdate("targetLanguage", v)
                                 }
                             >
-                                <SelectTrigger data-testid="create-lesson-target-lang">
+                                <SelectTrigger
+                                    data-testid="create-lesson-target-lang"
+                                    aria-labelledby="create-lesson-target-lang-label"
+                                >
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -383,7 +395,7 @@ export default function MetadataStep({
                             </Select>
                         </div>
                         <div className="form-field flex flex-col gap-1.5">
-                            <span className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-source-lang-label" className="form-label text-sm font-medium text-fg-primary">
                                 {t(
                                     "create_lesson.meta.source_lang_label",
                                     "Your language",
@@ -395,7 +407,10 @@ export default function MetadataStep({
                                     onUpdate("sourceLanguage", v)
                                 }
                             >
-                                <SelectTrigger data-testid="create-lesson-source-lang">
+                                <SelectTrigger
+                                    data-testid="create-lesson-source-lang"
+                                    aria-labelledby="create-lesson-source-lang-label"
+                                >
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -408,14 +423,17 @@ export default function MetadataStep({
                             </Select>
                         </div>
                         <div className="form-field flex flex-col gap-1.5">
-                            <span className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-level-2-label" className="form-label text-sm font-medium text-fg-primary">
                                 {t("create_lesson.meta.level_label", "Level")}
                             </span>
                             <Select
                                 value={meta.level}
                                 onValueChange={(v) => onUpdate("level", v)}
                             >
-                                <SelectTrigger data-testid="create-lesson-level">
+                                <SelectTrigger
+                                    data-testid="create-lesson-level"
+                                    aria-labelledby="create-lesson-level-2-label"
+                                >
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>

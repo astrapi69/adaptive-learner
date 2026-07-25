@@ -32,6 +32,10 @@ const ROUTES = [
     "/settings",
     "/import",
     "/anki",
+    // #2037 — the Lesson Creator carries 6 of the app's 11 Select triggers
+    // and was outside this scan, which is why their missing accessible names
+    // (axe ``button-name``, critical) went unnoticed. Scanned from now on.
+    "/create-lesson",
 ] as const;
 
 /**
