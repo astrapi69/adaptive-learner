@@ -2146,6 +2146,15 @@ content:
     delete_confirm: "Hapus pelajaran ini? Tindakan ini tidak dapat dibatalkan."
     deleted: "Pelajaran dihapus."
     delete_failed: "Tidak dapat menghapus pelajaran."
+  lesson_delete:
+    manage_lessons: "Kelola pelajaran"
+    confirm_body: "Pelajaran ini akan dihapus dari set. Tindakan ini tidak dapat dibatalkan - cadangan yang Anda buat sebelumnya masih memuatnya."
+    delete_progress_option: "Hapus juga kemajuan belajar saya untuk pelajaran ini ({cards} kartu ulasan)"
+    delete_progress_option_nocounts: "Hapus juga kemajuan belajar saya untuk pelajaran ini"
+    action_delete: "Hapus pelajaran"
+    deleted: "Pelajaran dihapus."
+    delete_failed: "Tidak dapat menghapus pelajaran."
+    delete_aria: "Hapus pelajaran {title}"
   set_status:
     delete_progress_option: "Hapus juga kemajuan belajar saya dan kartu ulasan ({lessons} pelajaran, {cards} kartu)"
     delete_progress_option_nocounts: "Hapus juga kemajuan belajar saya dan kartu ulasan"

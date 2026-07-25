@@ -29,6 +29,17 @@ import {
 /** A progress row shaped for planning (id + repo attribution). */
 export interface PlannableProgress extends SourcedSetRow {
   id: string;
+  /** The lesson filename this row belongs to (#2064 lesson-scoped delete). */
+  lesson_filename?: string;
+}
+
+/** A lesson-scoped card selector: every ``elementErrors`` row of ONE lesson,
+ *  addressed by its set id + lesson id (== filename). Used by the
+ *  single-lesson delete (#2064) where cards are removed per lesson, not per
+ *  whole set. */
+export interface LessonCardRef {
+  set_id: string;
+  lesson_id: string;
 }
 
 /** An SRS row shaped for planning + honest card counting. */
@@ -44,6 +55,10 @@ export interface DeletionPlan {
   lessonProgressIds: string[];
   /** Bare set ids whose ``elementErrors`` rows to delete. */
   orphanedSetIds: string[];
+  /** Lesson-scoped card selectors (#2064). Empty for set/repo/orphan plans,
+   *  which delete cards by whole set id via ``orphanedSetIds``; populated only
+   *  by {@link planLessonDataDeletion} for a single-lesson delete. */
+  lessonCards?: LessonCardRef[];
   /** Number of lessons (progress rows) removed. */
   lessonCount: number;
   /** Number of distinct review cards removed (deduped across SRS directions,
@@ -174,6 +189,58 @@ export function planOrphanCleanup(
     orphanedSetIds,
     lessonCount: orphaned.length,
     cardCount: distinctCardCount(cards, new Set(orphanedSetIds)),
+  };
+}
+
+/**
+ * Plan the deletion of ONE lesson's learner data (#2064 single-lesson delete).
+ *
+ * A lesson is identified by ``source`` + ``set_id`` + ``lesson_filename``.
+ * Progress is attributed by the exact triple; cards carry only ``set_id`` +
+ * ``lesson_id`` (== the filename), so they are attributed by that pair. Unlike
+ * the set/repo planners this never deletes cards by whole set id — a sibling
+ * lesson of the same set keeps its cards ({@link lessonCards} names the exact
+ * lesson).
+ *
+ * @param source The set's content source (user-generated / bundled / owner/repo).
+ * @param setId The set the lesson belongs to.
+ * @param lessonFilename The lesson file (e.g. ``01-intro.json``), matched against
+ *   ``lessonProgress.lesson_filename`` and ``elementErrors.lesson_id``.
+ * @param progress All of the user's ``lessonProgress`` rows.
+ * @param cards All of the user's ``elementErrors`` rows.
+ */
+export function planLessonDataDeletion(
+  source: string,
+  setId: string,
+  lessonFilename: string,
+  progress: readonly PlannableProgress[],
+  cards: readonly PlannableCard[],
+): DeletionPlan {
+  const lessonProgress = progress.filter(
+    (row) =>
+      row.source === source &&
+      row.set_id === setId &&
+      row.lesson_filename === lessonFilename,
+  );
+  const lessonCards = cards.filter(
+    (card) => card.set_id === setId && (card.lesson_id ?? "") === lessonFilename,
+  );
+  const distinct = new Set<string>();
+  for (const card of lessonCards) {
+    distinct.add(
+      `${card.set_id}#${card.lesson_id ?? ""}#${card.exercise_id ?? ""}#${
+        card.element_key ?? ""
+      }`,
+    );
+  }
+  return {
+    lessonProgressIds: lessonProgress.map((row) => row.id),
+    orphanedSetIds: [],
+    lessonCards: lessonCards.length
+      ? [{ set_id: setId, lesson_id: lessonFilename }]
+      : [],
+    lessonCount: lessonProgress.length,
+    cardCount: distinct.size,
   };
 }
 

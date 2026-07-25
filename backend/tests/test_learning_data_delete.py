@@ -144,6 +144,57 @@ def test_empty_deletion_is_a_valid_no_op(client: TestClient, user_id: str) -> No
     assert response.json() == {"lessons_deleted": 0, "cards_deleted": 0}
 
 
+def _upsert_attempt_lesson(
+    client: TestClient, user_id: str, *, set_id: str, lesson_id: str, element_key: str
+) -> None:
+    response = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                {
+                    "set_id": set_id,
+                    "lesson_id": lesson_id,
+                    "exercise_id": "ex-1",
+                    "element_key": element_key,
+                    "element_type": "vocabulary",
+                    "user_answer": "wrong",
+                    "correct_answer": "right",
+                    "correct": False,
+                }
+            ]
+        },
+    )
+    assert response.status_code == 200, response.text
+
+
+def test_lesson_cards_delete_only_the_target_lesson(client: TestClient, user_id: str) -> None:
+    """#2064 — a single-lesson delete removes one lesson's cards, keeping siblings."""
+    drop_progress = _upsert_progress(client, user_id, set_id="book42", filename="01-intro.json")
+    _upsert_progress(client, user_id, set_id="book42", filename="02-body.json")
+    _upsert_attempt_lesson(
+        client, user_id, set_id="book42", lesson_id="01-intro.json", element_key="a"
+    )
+    _upsert_attempt_lesson(
+        client, user_id, set_id="book42", lesson_id="02-body.json", element_key="b"
+    )
+
+    response = client.post(
+        DELETE_PATH.format(user_id=user_id),
+        json={
+            "lesson_progress_ids": [drop_progress],
+            "set_ids": [],
+            "lesson_cards": [{"set_id": "book42", "lesson_id": "01-intro.json"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json() == {"lessons_deleted": 1, "cards_deleted": 1}
+
+    remaining_progress = _list_progress(client, user_id)
+    assert [row["lesson_filename"] for row in remaining_progress] == ["02-body.json"]
+    remaining_errors = _list_errors(client, user_id)
+    assert {row["lesson_id"] for row in remaining_errors} == {"02-body.json"}
+
+
 def test_unknown_user_returns_404(client: TestClient) -> None:
     response = client.post(
         DELETE_PATH.format(user_id="no-such-user"),

@@ -38,6 +38,7 @@ def delete_learning_data(
         learning_data_service.LearningDataDeletion(
             lesson_progress_ids=payload.lesson_progress_ids,
             set_ids=payload.set_ids,
+            lesson_cards=[(c.set_id, c.lesson_id) for c in payload.lesson_cards],
         ),
     )
     return LearningDataDeleteOut(

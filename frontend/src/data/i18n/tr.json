@@ -2323,6 +2323,16 @@
       "deleted": "Ders silindi.",
       "delete_failed": "Ders silinemedi."
     },
+    "lesson_delete": {
+      "manage_lessons": "Dersleri yönet",
+      "confirm_body": "Bu ders setten kaldırılacak. Bu işlem geri alınamaz; daha önce oluşturduğunuz bir yedek onu hâlâ içeriyor.",
+      "delete_progress_option": "Bu dersin öğrenme ilerlememi de sil ({cards} tekrar kartı)",
+      "delete_progress_option_nocounts": "Bu dersin öğrenme ilerlememi de sil",
+      "action_delete": "Dersi sil",
+      "deleted": "Ders silindi.",
+      "delete_failed": "Ders silinemedi.",
+      "delete_aria": "{title} dersini sil"
+    },
     "set_status": {
       "delete_progress_option": "Öğrenme ilerlememi ve tekrar kartlarını da sil ({lessons} ders, {cards} kart)",
       "delete_progress_option_nocounts": "Öğrenme ilerlememi ve tekrar kartlarını da sil",

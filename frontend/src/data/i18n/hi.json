@@ -2323,6 +2323,16 @@
       "deleted": "पाठ हटा दिया गया।",
       "delete_failed": "पाठ हटाया नहीं जा सका।"
     },
+    "lesson_delete": {
+      "manage_lessons": "पाठ प्रबंधित करें",
+      "confirm_body": "यह पाठ सेट से हटा दिया जाएगा। इसे पूर्ववत नहीं किया जा सकता - पहले बनाया गया बैकअप अब भी इसे रखता है।",
+      "delete_progress_option": "इस पाठ की मेरी सीखने की प्रगति भी हटाएँ ({cards} समीक्षा कार्ड)",
+      "delete_progress_option_nocounts": "इस पाठ की मेरी सीखने की प्रगति भी हटाएँ",
+      "action_delete": "पाठ हटाएँ",
+      "deleted": "पाठ हटा दिया गया।",
+      "delete_failed": "पाठ हटाया नहीं जा सका।",
+      "delete_aria": "पाठ {title} हटाएँ"
+    },
     "set_status": {
       "delete_progress_option": "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं ({lessons} पाठ, {cards} कार्ड)",
       "delete_progress_option_nocounts": "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं",

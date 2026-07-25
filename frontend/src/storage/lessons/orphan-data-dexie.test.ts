@@ -130,3 +130,52 @@ describe("deleteLearningDataDexie (#1445)", () => {
     expect(result).toEqual({lessonsDeleted: 0, cardsDeleted: 0});
   });
 });
+
+describe("deleteLearningDataDexie lessonCards (#2064 single-lesson delete)", () => {
+  it("deletes only the target lesson's cards, keeping sibling lessons", async () => {
+    const p1 = await seedProgress("user-generated", "book42", "01-intro.json");
+    await seedProgress("user-generated", "book42", "02-body.json");
+    await recordElementAttemptsDexie(USER, [
+      attempt({set_id: "book42", lesson_id: "01-intro.json", element_key: "a"}),
+      attempt({set_id: "book42", lesson_id: "01-intro.json", element_key: "b"}),
+      attempt({set_id: "book42", lesson_id: "02-body.json", element_key: "c"}),
+    ]);
+
+    const result = await deleteLearningDataDexie(USER, {
+      lessonProgressIds: [p1.id],
+      setIds: [],
+      lessonCards: [{set_id: "book42", lesson_id: "01-intro.json"}],
+    });
+
+    expect(result.lessonsDeleted).toBe(1);
+    expect(result.cardsDeleted).toBe(2);
+    const db = getDb();
+    // Sibling lesson's progress + card survive.
+    const progress = await db.lessonProgress.toArray();
+    expect(progress.map((r) => r.lesson_filename)).toEqual(["02-body.json"]);
+    const cards = await db.elementErrors.toArray();
+    expect(cards.every((c) => c.lesson_id === "02-body.json")).toBe(true);
+    expect(cards.length).toBeGreaterThan(0);
+  });
+
+  it("never touches another user's cards for the same set+lesson", async () => {
+    await recordElementAttemptsDexie(USER, [
+      attempt({set_id: "book42", lesson_id: "01-intro.json", element_key: "a"}),
+    ]);
+    await recordElementAttemptsDexie("user-2", [
+      attempt({set_id: "book42", lesson_id: "01-intro.json", element_key: "a"}),
+    ]);
+
+    await deleteLearningDataDexie(USER, {
+      lessonProgressIds: [],
+      setIds: [],
+      lessonCards: [{set_id: "book42", lesson_id: "01-intro.json"}],
+    });
+
+    const db = getDb();
+    const mine = await db.elementErrors.where("user_id").equals(USER).count();
+    const theirs = await db.elementErrors.where("user_id").equals("user-2").count();
+    expect(mine).toBe(0);
+    expect(theirs).toBe(1);
+  });
+});

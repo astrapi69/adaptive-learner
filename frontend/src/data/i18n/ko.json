@@ -2323,6 +2323,16 @@
       "deleted": "레슨이 삭제되었습니다.",
       "delete_failed": "레슨을 삭제할 수 없었습니다."
     },
+    "lesson_delete": {
+      "manage_lessons": "레슨 관리",
+      "confirm_body": "이 레슨이 세트에서 제거됩니다. 이 작업은 되돌릴 수 없습니다. 이전에 만든 백업에는 여전히 남아 있습니다.",
+      "delete_progress_option": "이 레슨의 학습 진행 상황도 삭제 (복습 카드 {cards}개)",
+      "delete_progress_option_nocounts": "이 레슨의 학습 진행 상황도 삭제",
+      "action_delete": "레슨 삭제",
+      "deleted": "레슨이 삭제되었습니다.",
+      "delete_failed": "레슨을 삭제할 수 없습니다.",
+      "delete_aria": "레슨 {title} 삭제"
+    },
     "set_status": {
       "delete_progress_option": "학습 진행 상황과 복습 카드도 삭제 ({lessons}개 레슨, {cards}개 카드)",
       "delete_progress_option_nocounts": "학습 진행 상황과 복습 카드도 삭제",

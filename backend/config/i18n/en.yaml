@@ -2146,6 +2146,15 @@ content:
     delete_confirm: "Delete this lesson? This cannot be undone."
     deleted: "Lesson deleted."
     delete_failed: "Could not delete the lesson."
+  lesson_delete:
+    manage_lessons: "Manage lessons"
+    confirm_body: "This lesson will be removed from the set. This cannot be undone - a backup you made earlier still contains it."
+    delete_progress_option: "Also delete my learning progress for this lesson ({cards} review cards)"
+    delete_progress_option_nocounts: "Also delete my learning progress for this lesson"
+    action_delete: "Delete lesson"
+    deleted: "Lesson deleted."
+    delete_failed: "Could not delete the lesson."
+    delete_aria: "Delete lesson {title}"
   set_status:
     delete_progress_option: "Also delete my learning progress and review cards ({lessons} lessons, {cards} cards)"
     delete_progress_option_nocounts: "Also delete my learning progress and review cards"

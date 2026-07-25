@@ -2135,6 +2135,15 @@ content:
     delete_confirm: "Excluir esta lição? Isso não pode ser desfeito."
     deleted: "Lição excluída."
     delete_failed: "Não foi possível excluir a lição."
+  lesson_delete:
+    manage_lessons: "Gerenciar lições"
+    confirm_body: "Esta lição será removida do conjunto. Esta ação não pode ser desfeita; um backup criado anteriormente ainda a contém."
+    delete_progress_option: "Excluir também meu progresso de aprendizagem desta lição ({cards} cartões de revisão)"
+    delete_progress_option_nocounts: "Excluir também meu progresso de aprendizagem desta lição"
+    action_delete: "Excluir lição"
+    deleted: "Lição excluída."
+    delete_failed: "Não foi possível excluir a lição."
+    delete_aria: "Excluir a lição {title}"
   set_status:
     delete_progress_option: "Excluir também meu progresso de aprendizagem e os cartões de revisão ({lessons} lições, {cards} cartões)"
     delete_progress_option_nocounts: "Excluir também meu progresso de aprendizagem e os cartões de revisão"

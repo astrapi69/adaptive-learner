@@ -10,8 +10,10 @@ import { Layers } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import type { LessonDeleteTarget } from "../../../hooks/content/useContentSetActions";
 import type { ContentSetEntry } from "../../../storage/types";
 import GenerateSetExercisesButton from "../quality/GenerateSetExercisesButton";
+import SetLessonList from "./SetLessonList";
 import UserSetActions from "./UserSetActions";
 
 interface MyLessonsSectionProps {
@@ -23,6 +25,9 @@ interface MyLessonsSectionProps {
   onExportSet: (entry: ContentSetEntry) => void;
   onShare: (entry: ContentSetEntry) => void;
   onDelete: (entry: ContentSetEntry) => void;
+  // #2064 — per-lesson list actions for a multi-lesson user set.
+  onPlayLessonFile: (entry: ContentSetEntry, filename: string) => void;
+  onRequestDeleteLesson: (target: LessonDeleteTarget) => void;
   // #1741 — combine-into-a-set selection mode.
   selectMode: boolean;
   selectedCount: number;
@@ -41,6 +46,8 @@ export default function MyLessonsSection({
   onExportSet,
   onShare,
   onDelete,
+  onPlayLessonFile,
+  onRequestDeleteLesson,
   selectMode,
   selectedCount,
   isSelected,
@@ -159,6 +166,15 @@ export default function MyLessonsSection({
               <div className="mt-2">
                 <GenerateSetExercisesButton entry={entry} t={t} />
               </div>
+              {/* #2064 — a multi-lesson set (e.g. a book import) can drop
+                  individual lessons from the lesson list. */}
+              {entry.lesson_count > 1 && (
+                <SetLessonList
+                  entry={entry}
+                  onPlayLesson={onPlayLessonFile}
+                  onRequestDelete={onRequestDeleteLesson}
+                />
+              )}
             </li>
           ))}
         </ul>

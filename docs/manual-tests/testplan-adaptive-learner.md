@@ -492,6 +492,37 @@ im API-Modus auftrat.
 - [ ] Buch-Empfehlungen kommen aus der foederierten Registry, nicht aus
       der entfernten offiziellen `books.yaml` (#1717)
 
+### Einzelne Lektion loeschen (#2064)
+
+Ort: Meine Inhalte (`/content?tab=my`) → Meine Lektionen → ein Set mit
+MEHREREN Lektionen (z. B. nach einem Buch-Import) → "Lektionen verwalten".
+
+- [ ] Vorbereitung: Buch importieren/erzeugen (mehrere Lektionen in einem
+      Set) ODER ein mehrlektioniges eigenes Set; 1-2 Lektionen spielen
+      (Fortschritt + Wiederholungskarten erzeugen)
+- [ ] "Lektionen verwalten" klappt die Einzel-Lektionsliste auf; jede
+      Lektion hat Abspielen + Loeschen
+- [ ] Loeschen oeffnet einen Bestaetigungsdialog, der die Lektion benennt
+      und sagt, dass es NICHT rueckgaengig gemacht werden kann
+- [ ] Haekchen "Auch meinen Lernfortschritt loeschen" zeigt die ECHTE
+      Karten-Anzahl der Lektion (nicht rueckgaengig)
+- [ ] Loeschen OHNE Haekchen: Lektion verschwindet aus der Liste,
+      lesson_count sinkt, Geschwister-Lektionen bleiben unveraendert;
+      Fortschritt der geloeschten Lektion bleibt (verwaist, spaeter
+      aufraeumbar)
+- [ ] Loeschen MIT Haekchen: Fortschritt + Wiederholungskarten NUR dieser
+      Lektion sind weg, Geschwister-Fortschritt bleibt
+- [ ] Keine Umnummerierung: die verbleibenden Lektionen behalten ihre
+      Titel/Reihenfolge, Deep-Links auf sie funktionieren weiter
+- [ ] Letzte Lektion eines Sets loeschen entfernt das GANZE Set aus Meine
+      Inhalte
+- [ ] Dialog per Tastatur bedienbar: Loeschen-Button ist fokussiert,
+      Escape/Abbrechen schliesst
+- [ ] BEIDE Modi pruefen: Desktop/Server (API) UND GitHub Pages (Dexie)
+- [ ] Backup-Zeitpunkt: VOR dem Loeschen ein Backup (.alb) erstellen →
+      Lektion loeschen → Backup importieren → die Lektion ist wieder da
+      (korrekt: ein Backup ist eine Momentaufnahme, KEIN Bug)
+
 ### Content-Repo trennen vs. Fortschritt loeschen (#1651 / #1652)
 
 Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".

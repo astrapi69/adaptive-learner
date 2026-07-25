@@ -1764,17 +1764,26 @@ class ReviewQueueItemOut(BaseModel):
     attempt_history: list[AttemptRecordOut] = Field(default_factory=list)
 
 
+class LessonCardScopeIn(BaseModel):
+    """A single lesson's cards, addressed by set id + lesson id (#2064)."""
+
+    set_id: str
+    lesson_id: str
+
+
 class LearningDataDeleteIn(BaseModel):
-    """Body for the learner-data delete endpoint (#1821).
+    """Body for the learner-data delete endpoint (#1821, #2064).
 
     Mirrors the frontend ``LearningDataDeletion`` shape: specific
-    lesson-progress row ids plus bare set ids whose element-error
-    (review card) rows are removed. Both lists may be empty - an
-    empty deletion is a valid zero-count no-op.
+    lesson-progress row ids, bare set ids whose element-error (review
+    card) rows are removed, and - for a single-lesson delete (#2064) -
+    exact ``(set_id, lesson_id)`` pairs whose cards are removed. All
+    lists may be empty; an empty deletion is a valid zero-count no-op.
     """
 
     lesson_progress_ids: list[str] = Field(default_factory=list, max_length=1000)
     set_ids: list[str] = Field(default_factory=list, max_length=1000)
+    lesson_cards: list[LessonCardScopeIn] = Field(default_factory=list, max_length=1000)
 
 
 class LearningDataDeleteOut(BaseModel):
