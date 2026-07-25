@@ -174,14 +174,105 @@ describe("CreateLesson — editing a multi-lesson set (#1971)", () => {
             "B Frage 0",
         );
 
+        // Switch to lesson B (no unsaved edits -> switches directly). #2061 —
+        // the wizard stays on the exercise step; only the content switches.
+        fireEvent.change(
+            screen.getByTestId("create-lesson-lesson-select"),
+            {target: {value: "1"}},
+        );
+        await waitFor(() =>
+            expect(screen.getByTestId("exercise-list")).toHaveTextContent(
+                "B Frage 0",
+            ),
+        );
+        expect(screen.getByTestId("exercise-list")).not.toHaveTextContent(
+            "A Frage 0",
+        );
+    });
+
+    it("keeps the current step when switching lesson (#2061)", async () => {
+        renderEdit();
+        await screen.findByTestId("create-lesson-lesson-select");
+        // Advance to the exercise editor (step 2 of the cardless flow).
+        await goToExercises();
+        expect(screen.getByTestId("exercise-list")).toHaveTextContent(
+            "A Frage 0",
+        );
+
         // Switch to lesson B (no unsaved edits -> switches directly).
         fireEvent.change(
             screen.getByTestId("create-lesson-lesson-select"),
             {target: {value: "1"}},
         );
-        // Back on step 1 for the newly-selected lesson; advance to its exercises.
+
+        // The exercises switch to lesson B WITHOUT the wizard falling back to
+        // step 1: the metadata step (step 1) never re-renders and the exercise
+        // editor (step 3 testid) stays mounted.
+        await waitFor(() =>
+            expect(screen.getByTestId("exercise-list")).toHaveTextContent(
+                "B Frage 0",
+            ),
+        );
+        expect(screen.queryByTestId("create-lesson-step-1")).toBeNull();
+        expect(screen.getByTestId("create-lesson-step-3")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-list")).not.toHaveTextContent(
+            "A Frage 0",
+        );
+    });
+
+    it("keeps the review step (step 3) when switching lesson (#2061)", async () => {
+        renderEdit();
+        await screen.findByTestId("create-lesson-lesson-select");
+        // Advance to the review step (step 3 of the cardless flow).
         await goToExercises();
-        expect(screen.getByTestId("exercise-list")).toHaveTextContent("B Frage 0");
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        await screen.findByTestId("create-lesson-save-local");
+
+        // Switch lesson: stays on the review step, no fall back to step 1.
+        fireEvent.change(
+            screen.getByTestId("create-lesson-lesson-select"),
+            {target: {value: "1"}},
+        );
+        await waitFor(() =>
+            expect(screen.getByTestId("create-lesson-lesson-select")).toHaveValue(
+                "1",
+            ),
+        );
+        expect(screen.queryByTestId("create-lesson-step-1")).toBeNull();
+        expect(screen.getByTestId("create-lesson-save-local")).toBeInTheDocument();
+    });
+
+    it("switching to a lesson with no exercises stays on the step (#2061)", async () => {
+        seedSet(
+            buildBookLessons(META, [
+                {
+                    title: "Abschnitt A",
+                    theorySteps: [{id: "a1", title: "A", body: "Text A"}],
+                    exercises: freeText("sa", "A"),
+                },
+                {
+                    title: "Abschnitt B",
+                    theorySteps: [{id: "b1", title: "B", body: "Text B"}],
+                    exercises: [],
+                },
+            ]),
+        );
+        renderEdit();
+        await screen.findByTestId("create-lesson-lesson-select");
+        await goToExercises();
+
+        // Switch to the exercise-less lesson B: no crash, no jump to step 1.
+        fireEvent.change(
+            screen.getByTestId("create-lesson-lesson-select"),
+            {target: {value: "1"}},
+        );
+        await waitFor(() =>
+            expect(screen.getByTestId("create-lesson-lesson-select")).toHaveValue(
+                "1",
+            ),
+        );
+        expect(screen.queryByTestId("create-lesson-step-1")).toBeNull();
+        expect(screen.getByTestId("create-lesson-step-3")).toBeInTheDocument();
         expect(screen.getByTestId("exercise-list")).not.toHaveTextContent(
             "A Frage 0",
         );

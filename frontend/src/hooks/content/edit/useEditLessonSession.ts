@@ -32,6 +32,14 @@ import type {
 
 type Translate = (key: string, fallback?: string) => string;
 
+/** Wizard step counts for the edit flow, mirrored from ``CreateLesson`` (the
+ *  page owns the canonical constants). Edit mode is only ever the card-driven
+ *  4-step flow or the cardless (book/theory) 3-step flow; a lesson switch
+ *  clamps the preserved step to the target lesson's flow so a switch onto a
+ *  shorter flow never lands past its last step. */
+const EDIT_TOTAL_STEPS = 4;
+const EDIT_TOTAL_STEPS_CARDLESS = 3;
+
 /** The set/lesson the wizard was opened to edit (#1740). Held so a save
  *  overwrites the SAME set + lesson file (progress keyed on the filename
  *  survives), preserves the lesson's authored theory + sibling lessons, and
@@ -121,6 +129,9 @@ export function useEditLessonSession({
             lessons: ContentLesson[],
             index: number,
             entry: ContentSetEntry | undefined,
+            /** #2061 — reset the wizard to step 1 (initial edit-load) vs preserve
+             *  the current step (a picker switch within an open edit session). */
+            resetStep: boolean,
         ) => {
             const p = buildEditPrefill(lessons[index], entry, t);
             setMeta(p.meta);
@@ -140,7 +151,17 @@ export function useEditLessonSession({
                 entry,
             });
             loadedSnapshotRef.current = p.snapshot;
-            setStep(1);
+            if (resetStep) {
+                setStep(1);
+            } else {
+                // #2061 — keep the user on the step they were on; only clamp when
+                // the target lesson's flow (cardless=3, card=4) is shorter, so a
+                // switch never leaves the wizard past the last step.
+                const total = p.cardless
+                    ? EDIT_TOTAL_STEPS_CARDLESS
+                    : EDIT_TOTAL_STEPS;
+                setStep((s) => Math.min(s, total));
+            }
             setExerciseError(false);
             setCardError(false);
         },
@@ -165,7 +186,7 @@ export function useEditLessonSession({
             try {
                 const {lessons, entry} = await fetchEditLessonSet(source, setId);
                 if (cancelled) return;
-                applyEditLesson(source, setId, lessons, 0, entry);
+                applyEditLesson(source, setId, lessons, 0, entry, true);
                 setEditLoading(false);
             } catch (err) {
                 if (cancelled) return;
@@ -190,6 +211,8 @@ export function useEditLessonSession({
                 editContext.lessons,
                 index,
                 editContext.entry,
+                // #2061 — a picker switch preserves the current wizard step.
+                false,
             );
         },
         [editContext, applyEditLesson],

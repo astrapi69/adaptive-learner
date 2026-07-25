@@ -442,3 +442,30 @@ class TestSourceBootstrap:
         )
         assert __main__.main(["--check"]) == 0
         assert seen["cwd"] == app_dir
+
+
+class TestDeploymentModeContract:
+    """0.20.0 (#2059): a malformed dockerfile-mode block is a hard error."""
+
+    def test_missing_dockerfile_is_a_named_hard_error(self, monkeypatch, tmp_path) -> None:
+        from docker_app_launcher import actions
+        from docker_app_launcher.docker import lifecycle
+
+        monkeypatch.chdir(tmp_path)
+        # install() binds check_docker inside the lifecycle module - patch
+        # THAT reference, not the actions facade re-export (on a runner
+        # without Docker the facade patch leaves the real guard active,
+        # which is exactly how this test went red on macOS CI only).
+        monkeypatch.setattr(lifecycle, "check_docker", lambda *a, **kw: (True, "ok"))
+        bad = LauncherConfig(
+            app_name="al-test-negativ",
+            deployment_mode="dockerfile",
+            dockerfile_file="does-not-exist.Dockerfile",
+        ).resolve()
+        ok, msg = actions.install(bad)
+        assert ok is False
+        assert "does-not-exist.Dockerfile" in msg
+
+    def test_empty_mode_stays_compose(self) -> None:
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        assert cfg.deployment_mode == ""

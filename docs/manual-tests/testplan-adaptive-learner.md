@@ -302,6 +302,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       anderen bleiben erhalten, und der SET-Titel/Level/Sprachen aendern sich
       NICHT (werden nicht durch den Titel der bearbeiteten Lektion ueberschrieben).
       Regression: ein Set mit nur EINER Lektion zeigt KEINE Lektions-Auswahl
+- [ ] **Lektionswechsel behaelt den Schritt (#2061):** ein Set mit mehreren
+      Lektionen ueber "Lektion bearbeiten" oeffnen, zu **Schritt 2 (Uebungen)**
+      navigieren (Uebungsliste sichtbar) → im Dropdown "Lektion in diesem Set"
+      eine ANDERE Lektion waehlen → der Wizard BLEIBT auf Schritt 2, nur die
+      Uebungsliste wechselt auf die gewaehlte Lektion (vorher: Ruecksprung auf
+      Schritt 1, "Weiter" musste erneut gedrueckt werden). Gleiches auf
+      Schritt 3 (Ueberpruefung): der Schritt bleibt erhalten. Randfaelle: Wechsel
+      auf eine Lektion OHNE Uebungen zeigt eine leere Liste ohne Absturz und ohne
+      Ruecksprung; bei ungespeicherten Aenderungen erscheint weiterhin zuerst der
+      "Lektion wechseln?"-Bestaetigungsdialog. Desktop + iOS-Standalone pruefen
 - [ ] **Buchangabe bleibt beim Bearbeiten erhalten (#1989):** eine Lektion ueber
       den Buchtext-Wizard MIT ausgefuellter "Buchangabe (optional)" (Titel,
       Autor, URL, ISBN/ASIN) erstellen + speichern → in der Lektion erscheint

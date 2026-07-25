@@ -293,6 +293,15 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       Save → only that lesson is replaced, the others survive, and the SET
       title/level/languages are NOT changed (not overwritten by the edited
       lesson's title). Regression: a set with a single lesson shows NO picker
+- [ ] **Switching lesson keeps the step (#2061):** open a multi-lesson set via
+      "Edit lesson", navigate to **step 2 (exercises)** (exercise list visible) →
+      pick a DIFFERENT lesson in the "Lesson in this set" dropdown → the wizard
+      STAYS on step 2, only the exercise list switches to the chosen lesson
+      (previously: it fell back to step 1 and "Next" had to be pressed again).
+      Same on step 3 (review): the step is preserved. Edge cases: switching to a
+      lesson with NO exercises shows an empty list with no crash and no fall-back;
+      with unsaved changes the "Switch lesson?" confirm dialog still appears
+      first. Verify on Desktop + iOS standalone
 - [ ] **Book reference survives editing (#1989):** create a lesson via the
       book-text wizard WITH the "book (optional)" fields filled in (title,
       author, URL, ISBN/ASIN) + Save → the lesson's "Vertiefe das Thema" section
