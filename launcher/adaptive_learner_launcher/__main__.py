@@ -15,13 +15,19 @@ in ``launcher.json``, not code here.
 
 from __future__ import annotations
 
+import io
+import json
 import os
+import shutil
 import sys
+import tarfile
+import tempfile
+import urllib.request
 from pathlib import Path
 
 from docker_app_launcher.__main__ import main as _package_main
 
-from adaptive_learner_launcher import __version__
+from adaptive_learner_launcher import __version__, bundle_manifest
 
 # launcher.json sits at the launcher/ root, beside this package directory.
 # Resolving from __file__ makes the launcher work from any CWD. In the
@@ -90,31 +96,122 @@ def _resolve_app_dir() -> Path | None:
     return None
 
 
+def _download(url: str, timeout: float = 60.0):
+    """Open ``url`` for reading (seam for the bootstrap tests)."""
+    return urllib.request.urlopen(url, timeout=timeout)  # noqa: S310 - fixed https URL
+
+
+def _bootstrap_app_source() -> Path | int:
+    """Provision the tagged source tree for a standalone frozen run (#2054).
+
+    The engine has no download step (the compose lifecycle needs the whole
+    source tree as build context, which cannot live inside a one-file
+    binary), so the wrapper restores the documented "Download" step: fetch
+    the GitHub tag archive matching the wrapper's own app version and
+    unpack it to ``$ADAPTIVE_LEARNER_DIR`` (default ``~/adaptive-learner``).
+
+    Returns the provisioned directory, or an exit code on failure (hard
+    and named, #32 philosophy - never a silent fall-through to a broken
+    compose lookup in ``_MEIPASS``).
+    """
+    try:
+        app_version = str(json.loads(_config_path().read_text(encoding="utf-8"))["app_version"])
+    except (OSError, ValueError, KeyError) as exc:
+        print(f"Cannot read app_version from {_config_path()}: {exc}", file=sys.stderr)
+        return 4
+    target = Path(os.environ.get("ADAPTIVE_LEARNER_DIR") or "~/adaptive-learner").expanduser()
+    url = f"https://github.com/astrapi69/adaptive-learner/archive/refs/tags/v{app_version}.tar.gz"
+    print(f"Downloading the Adaptive Learner v{app_version} source tree ...")
+    try:
+        with _download(url) as resp:
+            payload = resp.read()
+    except Exception as exc:  # noqa: BLE001 - any network failure ends the run
+        print(
+            f"Could not download {url}: {exc}\n"
+            f"Provision the source manually instead: run install.sh, or\n"
+            f"git clone https://github.com/astrapi69/adaptive-learner {target}\n"
+            f"(or point ADAPTIVE_LEARNER_DIR at an existing checkout).",
+            file=sys.stderr,
+        )
+        return 4
+    root_dir = f"adaptive-learner-{app_version}"
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            with tarfile.open(fileobj=io.BytesIO(payload), mode="r:gz") as tar:
+                try:
+                    tar.extractall(tmp, filter="data")
+                except TypeError:  # pragma: no cover - Python without tar filters
+                    tar.extractall(tmp)  # noqa: S202 - trusted fixed-URL archive
+            extracted = Path(tmp) / root_dir
+            if not (extracted / _COMPOSE_FILE).is_file():
+                print(f"Archive {url} carries no {_COMPOSE_FILE}.", file=sys.stderr)
+                return 4
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if target.exists():
+                print(
+                    f"{target} exists but holds no {_COMPOSE_FILE}; refusing to overwrite it.\n"
+                    f"Move it away or point ADAPTIVE_LEARNER_DIR elsewhere.",
+                    file=sys.stderr,
+                )
+                return 4
+            shutil.move(str(extracted), str(target))
+    except (OSError, tarfile.TarError) as exc:
+        print(f"Could not unpack the source archive: {exc}", file=sys.stderr)
+        return 4
+    print(f"Source tree ready at {target}.")
+    return target
+
+
 def main(argv: list[str] | None = None) -> int:
     """Delegate to docker-app-launcher with Adaptive Learner's config.
 
     Returns a process exit code. ``--version`` reports the Adaptive
-    Learner launcher version; everything else routes through the package.
-    Before delegating, the working directory is moved to the Compose stack
-    (when found) so the package resolves the compose file and writes ``.env``
-    next to it.
+    Learner launcher version; ``--verify-bundle`` checks the frozen
+    bundle against the asset manifest; everything else routes through
+    the package. Before delegating, the working directory is moved to
+    the Compose stack - found, or freshly provisioned (#2054) - so the
+    package resolves the compose file and writes ``.env`` next to it.
     """
     args = list(sys.argv[1:] if argv is None else argv)
     if "--version" in args:
         print(f"adaptive_learner_launcher {__version__}")
         return 0
+    bundle = _bundle_root()
+    if "--verify-bundle" in args:
+        if bundle is None:
+            print("Not a frozen binary - nothing to verify.")
+            return 0
+        missing = bundle_manifest.missing_assets(bundle)
+        for path in missing:
+            print(f"missing bundle asset: {path}", file=sys.stderr)
+        if missing:
+            return 3
+        print("Bundle complete.")
+        return 0
+    if bundle is not None:
+        # Fail loudly BEFORE the engine starts when the bundle is
+        # incomplete - the full gap list in one run (#2054, #32
+        # philosophy), instead of one stray path per device session.
+        missing = bundle_manifest.missing_assets(bundle)
+        if missing:
+            for path in missing:
+                print(f"missing bundle asset: {path}", file=sys.stderr)
+            return 3
     app_dir = _resolve_app_dir()
     if app_dir is not None:
         os.chdir(app_dir)
     else:
-        # Standalone frozen run (no repo checkout found anywhere): run from
-        # the bundle root so the config-relative window icon bundled by the
-        # spec resolves (#2027). A CWD that already carries the compose file
-        # (a user launching from inside their own clone) is left untouched -
-        # the package resolves the stack there.
-        bundle = _bundle_root()
+        # Standalone frozen run, no repo checkout anywhere. A CWD that
+        # already carries the compose file (a user launching from inside
+        # their own clone) keeps priority; otherwise provision the tagged
+        # source tree and run from it (#2054) - the former
+        # chdir-to-bundle-root fallback only relocated the missing-compose
+        # failure into /tmp/_MEI*.
         if bundle is not None and not (Path.cwd() / _COMPOSE_FILE).is_file():
-            os.chdir(bundle)
+            provisioned = _bootstrap_app_source()
+            if isinstance(provisioned, int):
+                return provisioned
+            os.chdir(provisioned)
     if not any(arg == "--config" or arg.startswith("--config=") for arg in args):
         args = ["--config", str(_config_path()), *args]
     return _package_main(args)
