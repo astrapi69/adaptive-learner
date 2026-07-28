@@ -27,7 +27,7 @@ from pathlib import Path
 
 from docker_app_launcher.__main__ import main as _package_main
 
-from adaptive_learner_launcher import __version__, bundle_manifest
+from adaptive_learner_launcher import __version__, bundle_manifest, deployment_assets
 
 # launcher.json sits at the launcher/ root, beside this package directory.
 # Resolving from __file__ makes the launcher work from any CWD. In the
@@ -162,6 +162,42 @@ def _bootstrap_app_source() -> Path | int:
     return target
 
 
+def _deployment_readiness_problem() -> list[str] | None:
+    """Diagnose an unrunnable deployment mode BEFORE claiming to install.
+
+    ``docker-app-launcher`` 0.21.0 bases app-relative paths on the config
+    file's own directory (upstream #64). Frozen, that directory is the
+    PyInstaller bundle, so ``backend/Dockerfile`` resolves to
+    ``/tmp/_MEIxxxx/backend/Dockerfile`` even when a complete source tree
+    sits at the working directory (#2109).
+
+    The package's own message for that state points at the deployment
+    settings, which is the wrong cause: the config is right and the
+    resolution is wrong. This returns the honest diagnosis instead, or
+    ``None`` when the mode can run.
+    """
+    config_file = _config_path()
+    if not config_file.is_file():
+        return None  # a missing config is already handled, loudly, upstream
+    try:
+        raw = json.loads(config_file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None  # malformed config is upstream's hard error to report
+
+    base = config_file.resolve().parent
+    report = deployment_assets.check(
+        mode=raw.get("deployment_mode") or "compose",
+        base=base,
+        compose_file=raw.get("compose_file") or _COMPOSE_FILE,
+        dockerfile=raw.get("dockerfile_file") or "backend/Dockerfile",
+        build_context=raw.get("build_context") or ".",
+        elsewhere=[Path.cwd()],
+    )
+    if report.ok:
+        return None
+    return report.explain()
+
+
 def main(argv: list[str] | None = None) -> int:
     """Delegate to docker-app-launcher with Adaptive Learner's config.
 
@@ -214,6 +250,18 @@ def main(argv: list[str] | None = None) -> int:
             os.chdir(provisioned)
     if not any(arg == "--config" or arg.startswith("--config=") for arg in args):
         args = ["--config", str(_config_path()), *args]
+    # Only the actions that actually build or start need the mode's assets.
+    # --status / --stop / --uninstall must keep working on a broken install,
+    # and the window must still open so the user can read the diagnosis.
+    problem = (
+        _deployment_readiness_problem()
+        if any(arg in ("--install", "--start") for arg in args)
+        else None
+    )
+    if problem is not None:
+        for line in problem:
+            print(line, file=sys.stderr)
+        return 5
     return _package_main(args)
 
 

@@ -9,6 +9,7 @@ runs and routes through the package) plus a config-loads test (the bundled
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from pathlib import Path
@@ -616,3 +617,166 @@ class TestPermissionDeniedClassification:
             finally:
                 server.close()
                 sock_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
+
+
+class TestDeploymentReadiness:
+    """#2109: the mode's assets must resolve from the base actually used.
+
+    The device failure was not a missing artifact. `~/adaptive-learner`
+    held a complete source tree and the launcher still looked in
+    `/tmp/_MEIxxxx/backend/Dockerfile`, because docker-app-launcher 0.21.0
+    bases app-relative paths on the CONFIG FILE's directory (upstream #64)
+    - which, frozen, is the bundle. A bundle-completeness check cannot see
+    that: every file existed, just not where the resolution pointed.
+    """
+
+    def test_reports_what_it_checked(self) -> None:
+        """Point 4 of the gate contract: a checker that measured nothing
+        must not look like a clean one."""
+        from adaptive_learner_launcher import deployment_assets
+
+        report = deployment_assets.check(
+            mode="dockerfile", base=Path("/nonexistent"), dockerfile="backend/Dockerfile"
+        )
+        assert report.checked, "the report names nothing it looked at"
+        assert "backend/Dockerfile" in " ".join(report.checked)
+
+    def test_missing_dockerfile_is_reported(self, tmp_path) -> None:
+        from adaptive_learner_launcher import deployment_assets
+
+        report = deployment_assets.check(
+            mode="dockerfile", base=tmp_path, dockerfile="backend/Dockerfile"
+        )
+        assert not report.ok
+        # Separator-agnostic: the report prints native paths, so Windows
+        # says backend\\Dockerfile and Linux says backend/Dockerfile.
+        assert any("backend" in miss and "Dockerfile" in miss for miss in report.missing)
+
+    def test_complete_tree_is_ok(self, tmp_path) -> None:
+        from adaptive_learner_launcher import deployment_assets
+
+        (tmp_path / "backend").mkdir()
+        (tmp_path / "backend" / "Dockerfile").write_text("FROM scratch\n", encoding="utf-8")
+        report = deployment_assets.check(
+            mode="dockerfile", base=tmp_path, dockerfile="backend/Dockerfile"
+        )
+        assert report.ok, report.missing
+
+    def test_compose_mode_checks_the_compose_file(self, tmp_path) -> None:
+        from adaptive_learner_launcher import deployment_assets
+
+        report = deployment_assets.check(
+            mode="compose", base=tmp_path, compose_file="docker-compose.prod.yml"
+        )
+        assert not report.ok
+        assert any("docker-compose.prod.yml" in miss for miss in report.missing)  # no separator
+
+    def test_unknown_mode_fails_closed(self, tmp_path) -> None:
+        """'I do not know this mode' may never read as 'nothing to check'."""
+        from adaptive_learner_launcher import deployment_assets
+
+        report = deployment_assets.check(mode="teleport", base=tmp_path)
+        assert not report.ok
+        assert any("teleport" in miss for miss in report.missing)
+
+    def test_finds_the_tree_the_user_actually_has(self, tmp_path) -> None:
+        """The diagnosis that makes the message actionable: the file exists,
+        just not under the base the launcher will use."""
+        from adaptive_learner_launcher import deployment_assets
+
+        bundle = tmp_path / "bundle"
+        real = tmp_path / "app"
+        (real / "backend").mkdir(parents=True)
+        (real / "backend" / "Dockerfile").write_text("FROM scratch\n", encoding="utf-8")
+        bundle.mkdir()
+
+        report = deployment_assets.check(
+            mode="dockerfile",
+            base=bundle,
+            dockerfile="backend/Dockerfile",
+            elsewhere=[real],
+        )
+        assert not report.ok
+        assert report.found_elsewhere, "the alternative location was not reported"
+        assert str(real) in " ".join(report.found_elsewhere)
+
+    def test_launcher_json_mode_is_covered_by_the_manifest(self) -> None:
+        """Both modes of the shipped config must be checkable, not just one."""
+        from adaptive_learner_launcher import deployment_assets
+
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        report = deployment_assets.check_config(cfg, base=LAUNCHER_JSON.parent.parent)
+        assert report.ok, report.missing
+        assert len(report.checked) >= 1
+
+
+class TestReadinessMessage:
+    """The message must name the real cause, not blame the config (#2109)."""
+
+    def test_frozen_bundle_base_produces_the_honest_diagnosis(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        bundle = tmp_path / "bundle"
+        bundle.mkdir()
+        (bundle / "launcher.json").write_text(
+            json.dumps(
+                {
+                    "app_name": "Adaptive Learner",
+                    "deployment_mode": "dockerfile",
+                    "dockerfile_file": "backend/Dockerfile",
+                    "build_context": ".",
+                }
+            ),
+            encoding="utf-8",
+        )
+        tree = tmp_path / "app"
+        (tree / "backend").mkdir(parents=True)
+        (tree / "backend" / "Dockerfile").write_text("FROM scratch\n", encoding="utf-8")
+
+        monkeypatch.setattr(__main__, "_config_path", lambda: bundle / "launcher.json")
+        monkeypatch.chdir(tree)
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: tree)
+        called: list[list[str]] = []
+        monkeypatch.setattr(__main__, "_package_main", lambda a: called.append(a) or 0)
+
+        rc = __main__.main(["--install"])
+        err = capsys.readouterr().err
+
+        assert rc == 5, "an unrunnable mode must not report success"
+        assert not called, "the package was invoked despite an unrunnable mode"
+        normalised = err.replace("\\", "/")
+        assert "backend/Dockerfile" in normalised
+        assert str(tree).replace("\\", "/") in normalised, (
+            "the message does not say where the file really is"
+        )
+        assert "path-resolution bug" in err
+        assert "setting you need to change" in err
+
+    def test_runnable_mode_delegates_untouched(self, monkeypatch, tmp_path) -> None:
+        """The guard may not add a failure mode of its own."""
+        bundle = tmp_path / "bundle"
+        (bundle / "backend").mkdir(parents=True)
+        (bundle / "backend" / "Dockerfile").write_text("FROM scratch\n", encoding="utf-8")
+        (bundle / "launcher.json").write_text(
+            json.dumps({"deployment_mode": "dockerfile", "dockerfile_file": "backend/Dockerfile"}),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(__main__, "_config_path", lambda: bundle / "launcher.json")
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: None)
+        monkeypatch.setattr(__main__, "_bundle_root", lambda: None)
+        seen: list[list[str]] = []
+        monkeypatch.setattr(__main__, "_package_main", lambda a: seen.append(a) or 0)
+
+        assert __main__.main(["--install"]) == 0
+        assert seen, "the package was not reached on a runnable mode"
+
+    def test_missing_config_is_left_to_the_package(self, monkeypatch, tmp_path) -> None:
+        """Fail closed elsewhere: this guard does not swallow the #32 error."""
+        monkeypatch.setattr(__main__, "_config_path", lambda: tmp_path / "gone.json")
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: None)
+        monkeypatch.setattr(__main__, "_bundle_root", lambda: None)
+        seen: list[list[str]] = []
+        monkeypatch.setattr(__main__, "_package_main", lambda a: seen.append(a) or 7)
+
+        assert __main__.main(["--install"]) == 7
+        assert seen, "the package must still get its chance to report the missing config"
