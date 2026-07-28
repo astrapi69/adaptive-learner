@@ -84,6 +84,35 @@ jobs:
       - name: Build adaptive-learner-launcher.exe
         run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
 
+      # #2101: nothing ever started a produced .exe. SmartScreen only bites
+      # on a downloaded file (Mark of the Web), so a runner-local start is
+      # the honest half of the question: does the binary itself run?
+      # --version and --verify-bundle are handled before any Tk import.
+      - name: Smoke-run the built binary (#2101)
+        # The spec builds a WINDOWED exe (console=False), so the GUI
+        # subsystem detaches it: `& $bin` returns immediately, $LASTEXITCODE
+        # stays empty, and the exe's output arrives after the step has
+        # already decided. The first run of this gate failed exactly that
+        # way while the binary was fine ("exit " with no number, then
+        # "adaptive_learner_launcher 2.6.1" printed afterwards).
+        # Start-Process -Wait -PassThru is what actually waits and yields a
+        # real exit code; output goes to files because a windowed process
+        # has no console to inherit.
+        run: |
+          $bin = "dist\adaptive-learner-launcher.exe"
+          function Invoke-Smoke($label, $flag) {
+            $out = "smoke-$label.out"; $err = "smoke-$label.err"
+            $p = Start-Process -FilePath $bin -ArgumentList $flag -Wait -PassThru `
+                 -NoNewWindow -RedirectStandardOutput $out -RedirectStandardError $err
+            Write-Host "--- $flag (exit $($p.ExitCode)) ---"
+            if (Test-Path $out) { Get-Content $out | Write-Host }
+            if ((Test-Path $err) -and (Get-Item $err).Length -gt 0) { Get-Content $err | Write-Host }
+            if ($p.ExitCode -ne 0) { throw "$flag failed with exit $($p.ExitCode)" }
+          }
+          Invoke-Smoke "version" "--version"
+          Invoke-Smoke "bundle" "--verify-bundle"
+          Write-Host "RESULT: the binary starts and its bundle is complete"
+
       - name: Compute SHA256 checksum
         run: |
           $hash = (Get-FileHash -Algorithm SHA256 dist\adaptive-learner-launcher.exe).Hash.ToLower()
