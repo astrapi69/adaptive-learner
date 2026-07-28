@@ -101,6 +101,16 @@ jobs:
         # Windows build, same entrypoint, same excludes.
         run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
 
+      # #2101: same gap as macOS/Windows - the artifact was never started.
+      # Linux is the one platform where the binary is the primary
+      # distribution path, so it gets the same proof, not less.
+      - name: Smoke-run the built binary (#2101)
+        run: |
+          set -e
+          ./dist/adaptive-learner-launcher --version
+          ./dist/adaptive-learner-launcher --verify-bundle
+          echo "RESULT: the binary starts and its bundle is complete"
+
       - name: Compute SHA256 checksum
         run: |
           hash=$(sha256sum dist/adaptive-learner-launcher | awk '{print $1}')
