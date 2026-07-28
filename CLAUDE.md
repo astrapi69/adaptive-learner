@@ -32,7 +32,7 @@ Full reference: .claude/rules/architecture.md
 | coding-standards.md | backend/plugins/frontend | Naming, formatting, Git, function design, tests, security |
 | code-hygiene.md | backend/plugins/frontend | Linting, error handling architecture, API conventions, logging |
 | design-tokens.md | frontend CSS/TSX | CSS variables, no hardcoded colors, theme enforcement |
-| lessons-learned.md | always | Known pitfalls from real development |
+| lessons-learned.md + lessons/*.md | always | Pitfall catalogue: index + 7 themed files (core, backend, frontend, content-storage, ci-gates, release-packaging, docs-i18n) |
 | quality-checks.md | tests | Test strategy, coverage targets, mutation testing |
 | release-workflow.md | on release | 11-step release process |
 | reusability.md | backend/plugins/frontend | Props-driven, barrel exports, implementation hierarchy |

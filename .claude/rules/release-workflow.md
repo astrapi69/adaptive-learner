@@ -219,7 +219,7 @@ cd frontend && bun outdated
 
 Apply routine bumps (patch + minor within the same major) as part of the release. Major bumps with breaking changes get their own dedicated session, not bundled into a release.
 
-See `lessons-learned.md` "Release-cycle dependency review" for the stability filter and red-flag rules.
+See `lessons/release-packaging.md` "Release-cycle dependency review" for the stability filter and red-flag rules.
 
 ## Step 5: Tests
 

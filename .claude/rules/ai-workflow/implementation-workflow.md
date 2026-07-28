@@ -86,4 +86,4 @@ See architecture.md for architectural details. Additionally note:
 - 15 official TipTap extensions + 1 community (@pentestpad/tiptap-extension-figure) — used for rich-text in session notes, curriculum descriptions, and lesson content.
 - Deployment: Docker Compose, port 18001 (backend) + 15174 (frontend dev), install.sh one-liner. GitHub-Pages-shape build runs Dexie-mode at `https://astrapi69.github.io/adaptive-learner/`.
 - IMPORTANT: Before writing custom code, ALWAYS check whether a TipTap extension or library already exists.
-- IMPORTANT: See lessons-learned.md for known pitfalls.
+- IMPORTANT: See lessons-learned.md (index) and lessons/*.md for known pitfalls.

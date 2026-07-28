@@ -73,7 +73,7 @@ The round-trip runs AFTER the change is live (restart the backend so the new
 logging is active). "It passes `make test`" is never the merge justification
 for a backup change - the round-trip is. If it crashes: fix, re-import,
 re-capture until the import completes with zero unexpected errors. No commit
-before a clean round-trip exists. Pairs with lessons-learned.md "Operational
+before a clean round-trip exists. Pairs with lessons/core.md "Operational
 gaps masquerade as wired infrastructure".
 
 ## Visual Device Check (MANDATORY for visual features)
