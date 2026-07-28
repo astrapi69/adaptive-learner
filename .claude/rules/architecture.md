@@ -133,7 +133,7 @@ For complex plugin UIs: Web Components as custom elements (compiled JS bundle in
 
 15 official extensions + 1 community (Figure/Figcaption via @pentestpad/tiptap-extension-figure). 24 toolbar buttons. Used as the editor for session-rating notes, curriculum descriptions, and lesson content (since v1.14.0).
 
-**IMPORTANT**: the image node is registered as `imageFigure`, NOT `image` — see lessons-learned.md for the gotcha.
+**IMPORTANT**: the image node is registered as `imageFigure`, NOT `image` — see lessons/frontend.md for the gotcha.
 
 Before writing custom code, ALWAYS check whether an official TipTap extension exists.
 
@@ -207,7 +207,7 @@ IndexedDB is multi-tab + async, so naive `get` -> spread -> `put` loses concurre
 - **Unique indexes are the DB-level backstop**, not just app logic: `&user_id` on the `userXp` / `userStreaks` / `userSettings` singletons, `&key` on badges, and the compound `&[user_id+badge_id]` on `userBadges`. The create-race ensure-helpers rely on these.
 - **Schema bumps are additive forward migrations**. A new index or table raises the Dexie schema version (e.g. the v25 -> v27 dedup + unique-index migration); the upgrade backfills/dedupes existing rows. Never mutate an existing version's stores in place — add a new `version(n)`. (Backend half of the same discipline: the repository pattern + `UniqueViolationError`, see the Repository-pattern section.)
 
-**Rule**: every new feature MUST work in both modes. A feature that ships in API mode without a Dexie path (or without a graceful "not available in browser mode" message) is a release blocker — see lessons-learned.md "Dexie-mode is part of the contract: same-commit or not at all".
+**Rule**: every new feature MUST work in both modes. A feature that ships in API mode without a Dexie path (or without a graceful "not available in browser mode" message) is a release blocker — see lessons/content-storage.md "Dexie-mode is part of the contract: same-commit or not at all".
 
 ### SYNC-UI-GATE: render sync UI only for the role that can use it
 
