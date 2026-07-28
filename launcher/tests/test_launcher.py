@@ -9,6 +9,8 @@ runs and routes through the package) plus a config-loads test (the bundled
 
 from __future__ import annotations
 
+import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -469,3 +471,72 @@ class TestDeploymentModeContract:
     def test_empty_mode_stays_compose(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
         assert cfg.deployment_mode == ""
+
+
+class TestPermissionDeniedClassification:
+    """0.21.0 (#2098): an EACCES socket is a PERMISSION problem, never "down".
+
+    The device finding this guards is the Ubuntu one: Docker is running, the
+    user is not in the ``docker`` group, and a launcher that reports "Docker
+    is not started" sends them to restart a daemon that was never stopped.
+    These run against the REAL installed docker-app-launcher classifier - a
+    mocked classifier would only prove that the mock returns what it was told.
+    """
+
+    def test_bare_permission_error_is_classified_as_permission(self) -> None:
+        from docker_app_launcher.docker import py_client
+
+        assert py_client._classify_exception(PermissionError(13, "Permission denied")) == (
+            "permission"
+        )
+
+    def test_permission_error_buried_in_args_is_still_found(self) -> None:
+        """requests/urllib3 nest the real errno inside args, not __cause__."""
+        from docker_app_launcher.docker import py_client
+
+        buried = Exception(
+            "Connection aborted.", PermissionError(13, "Permission denied")
+        )
+        assert py_client._classify_exception(buried) == "permission"
+
+    def test_socket_absent_is_down_not_permission(self) -> None:
+        """The counter-case: a missing socket must NOT read as a group problem."""
+        import errno
+
+        from docker_app_launcher.docker import py_client
+
+        gone = ConnectionRefusedError(errno.ECONNREFUSED, "Connection refused")
+        assert py_client._classify_exception(gone) == "down"
+
+    @pytest.mark.skipif(
+        not sys.platform.startswith("linux"),
+        reason=(
+            "unix-socket probe: Windows has no AF_UNIX, and the macOS runner's "
+            "pytest tmp_path (/private/var/folders/...) blows the 104-char "
+            "sun_path limit. The docker socket this guards is a Linux concern."
+        ),
+    )
+    def test_ping_against_an_unreadable_socket_reports_permission(self) -> None:
+        """End to end through ping(): a real chmod-000 socket path, no mocks."""
+        import socket
+        import stat
+        import tempfile
+
+        from docker_app_launcher.docker import py_client
+
+        # NOT tmp_path: sun_path is capped at ~104 bytes, and pytest's
+        # per-test directory names eat most of that budget.
+        with tempfile.TemporaryDirectory(prefix="alsock") as tmp:
+            sock_path = Path(tmp) / "d.sock"
+            server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            server.bind(str(sock_path))
+            server.listen(1)
+            try:
+                sock_path.chmod(0o000)
+                if os.access(sock_path, os.R_OK):  # root ignores the mode bits
+                    pytest.skip("running as root - the mode bits do not deny us")
+                status, detail = py_client.ping(f"unix://{sock_path}", timeout=2.0)
+                assert status == "permission", f"got {status}: {detail}"
+            finally:
+                server.close()
+                sock_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
