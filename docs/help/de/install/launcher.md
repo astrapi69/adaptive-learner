@@ -24,7 +24,7 @@ Daten liegen - lies vorher [Den Port ändern](changing-the-port.md).
 ## Voraussetzung: Docker - der Launcher prüft es selbst
 
 Der Launcher setzt ein laufendes Docker voraus, denn die App selbst
-läuft als Container-Gruppe. Du musst dafür aber **nichts von Hand
+läuft in einem Container. Du musst dafür aber **nichts von Hand
 prüfen**: Der Launcher kontrolliert beim Start selbst, ob Docker
 installiert ist und läuft, findet auch einen Docker, der unter einem
 anderen Docker-Kontext läuft (etwa Docker Desktop für Linux oder
@@ -57,6 +57,20 @@ Alle drei Launcher liegen bei jedem Release unter
 | Linux | `adaptive-learner-launcher` | `adaptive-learner-launcher.sha256` |
 | macOS | `adaptive-learner-launcher-macos.zip` | `adaptive-learner-launcher-macos.zip.sha256` |
 | Windows | `adaptive-learner-launcher.exe` | `adaptive-learner-launcher.exe.sha256` |
+
+### Was geprüft ist und was nicht
+
+Jedes dieser Programme wird beim Bauen einmal gestartet, auf genau dem
+Betriebssystem, für das es gedacht ist. Dass es startet, ist damit
+belegt - unter Linux, unter Windows und unter macOS auf Apple Silicon.
+
+Nicht belegt ist, wie dein Betriebssystem auf eine **heruntergeladene**
+Datei reagiert: die Programme tragen keine kostenpflichtige Signatur,
+deshalb warnt macOS beim ersten Öffnen ("nicht verifizierter
+Entwickler") und Windows zeigt den SmartScreen-Hinweis. Das ist eine
+Warnung, kein Defekt - wie du sie einmalig bestätigst, steht unten bei
+[macOS](#macos) und [Windows](#windows). Prüf davor die Prüfsumme; sie
+ist der verlässlichere Nachweis als jeder Dialog.
 
 ## Linux
 
