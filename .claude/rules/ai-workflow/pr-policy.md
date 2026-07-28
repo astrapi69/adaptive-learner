@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: Pull request policy - mandatory PR for every pushed code change
 globs:
   - "**/*"

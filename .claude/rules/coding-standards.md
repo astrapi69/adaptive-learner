@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: Python and TypeScript coding standards, naming conventions, formatting, Git workflow, function design, error reporting, tests, security, performance
 globs:
   - backend/**/*.py

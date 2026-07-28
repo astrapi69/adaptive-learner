@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: CI + gate pitfalls - PR-vs-nightly surfaces, environment drift, engine re-pin schema drift, GitHub Action majors
 globs:
   - .github/**/*

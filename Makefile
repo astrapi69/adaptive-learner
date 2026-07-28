@@ -32,7 +32,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       ci ci-full verify-docs verify-docs-fix verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -814,6 +814,12 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 
 ci-full: ci ## Everything in `make ci` plus the build-dependent gates (needs bun install)
 	@echo "== dead classnames"     && $(MAKE) --no-print-directory check-dead-classnames
+
+rule-change-log: ## Append declared rule changes to docs/rule-change-log.md. RANGE=<base>..<head>
+	@python3 scripts/append_rule_change_log.py --range $(or $(RANGE),origin/develop..HEAD)
+
+rule-change-log-check: ## Fail when a declared rule change is missing from the log
+	@python3 scripts/append_rule_change_log.py --range $(or $(RANGE),origin/develop..HEAD) --check
 
 verify-normative-changes: ## Normative/gate-status changes (#2079) must be declared. BASE=<ref> (default origin/develop)
 	@python3 scripts/verify_normative_changes.py --base $(or $(BASE),origin/develop)

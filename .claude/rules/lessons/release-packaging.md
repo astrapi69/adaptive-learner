@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: Release, packaging and dependency pitfalls - version pins, frozen binaries, poetry semantics, install.sh, hotfix tags
 globs:
   - launcher/**/*

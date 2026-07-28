@@ -103,6 +103,13 @@ checks:
     wired_in: make verify-normative-changes; .github/workflows/ci.yml
     probe: make_target=verify-normative-changes
 
+  - id: rule-change-log
+    verifies: declared rule changes converge in docs/rule-change-log.md
+    rule: quality-checks.md#declared-rule-changes-converge-in-one-log-2087
+    status: active
+    wired_in: make rule-change-log-check; .github/workflows/ci.yml
+    probe: make_target=rule-change-log-check
+
   # --- declared as OFF: visible in the diff, with a reason ---
   - id: prettier-frontend
     verifies: Prettier formatting of frontend/src

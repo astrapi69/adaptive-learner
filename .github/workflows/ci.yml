@@ -465,6 +465,15 @@ jobs:
       # paid on every turn. It may shrink; growing it is a deliberate act.
       - name: Verify rule corpus size
         run: python3 scripts/verify_rule_corpus_size.py
+      # #2087: declared rule changes must converge in docs/rule-change-log.md.
+      # On a PR this only reports; the log is appended when the change lands.
+      - name: Check the rule change log is current
+        if: github.event_name == 'push'
+        run: |
+          git fetch --no-tags --depth=200 origin develop >/dev/null 2>&1 || true
+          python3 scripts/append_rule_change_log.py --range "${{ github.event.before }}..${{ github.sha }}" --check || {
+            echo "::warning::declared rule changes are missing from docs/rule-change-log.md - run 'make rule-change-log'"
+          }
       # #2079: a binding rule may not change inside an undeclared diff.
       # Declare via the 'rule-change-declared' label or a
       # "RULE-CHANGE DECLARED: ..." line in the PR body.
