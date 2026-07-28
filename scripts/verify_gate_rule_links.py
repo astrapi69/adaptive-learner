@@ -28,6 +28,7 @@ Exit codes: 0 ok, 1 drift.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import sys
 from pathlib import Path
@@ -89,6 +90,27 @@ def parse_manifest(path: Path) -> tuple[list[dict[str, str]], dict[str, str], di
     return gates, no_rule, retired
 
 
+def section_body(path: Path, anchor: str) -> str | None:
+    """The body of the ``##`` section whose slug is ``anchor`` (heading included)."""
+    if not path.is_file():
+        return None
+    cur: str | None = None
+    buf: list[str] = []
+    for line in path.read_text(encoding="utf-8").split("\n"):
+        if line.startswith("## "):
+            if cur == anchor:
+                return "\n".join(buf)
+            cur, buf = slugify(line[3:]), [line]
+        elif cur is not None:
+            buf.append(line)
+    return "\n".join(buf) if cur == anchor else None
+
+
+def body_digest(body: str) -> str:
+    """Same digest shape as the lessons inventory (#2073) - one convention."""
+    return hashlib.sha256(body.strip().encode("utf-8")).hexdigest()[:16]
+
+
 def headings(path: Path) -> set[str]:
     """Anchor slugs of every ``##``+ heading in a markdown file."""
     if not path.is_file():
@@ -135,6 +157,21 @@ def main() -> int:
             problems.append(
                 f"gate '{wf}' enforces '{target}' but that section is missing from {rel}"
             )
+        else:
+            # Existence is not content (#2079): keeping the heading while
+            # hollowing out the body used to pass. The declared body_sha pins
+            # the text the gate actually enforces; changing it means updating
+            # the hash, which shows up in the diff and in review.
+            declared_sha = gate.get("body_sha", "")
+            body = section_body(rule_path, anchor)
+            if not declared_sha:
+                problems.append(f"gate '{wf}' has no body_sha for '{target}' - add it")
+            elif body is None or body_digest(body) != declared_sha:
+                problems.append(
+                    f"gate '{wf}': the body of '{target}' changed "
+                    f"(declared {declared_sha}, actual {body_digest(body or '')}) - "
+                    f"review the change, then update body_sha in gates.yaml"
+                )
 
     # Backward: rule text -> workflow must exist. Only WORKFLOW citations
     # count: either an explicit .github/workflows/ path, or a bare name in

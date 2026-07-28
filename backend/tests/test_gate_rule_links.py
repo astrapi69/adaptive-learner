@@ -100,3 +100,45 @@ def test_green_again_once_the_section_is_restored(tree: Path) -> None:
     assert _run(tree).returncode == 1
     path.write_text(original, encoding="utf-8")
     assert _run(tree).returncode == 0
+
+
+class TestBodyHash:
+    """#2079: existence is not content - a hollowed-out section must fail."""
+
+    def test_red_when_the_body_is_hollowed_out_but_the_heading_stays(self, tree: Path) -> None:
+        path = tree / ".claude" / "rules" / "quality-checks.md"
+        text = path.read_text(encoding="utf-8")
+        start = text.index("## Visual-Baseline duty for visually critical PRs (#1640)")
+        end = text.index("## Mutation Testing")
+        gutted = "## Visual-Baseline duty for visually critical PRs (#1640)\n\nSee the CI gate.\n\n"
+        path.write_text(text[:start] + gutted + text[end:], encoding="utf-8")
+
+        result = _run(tree)
+        assert result.returncode == 1
+        assert "the body of" in result.stderr
+        assert "update body_sha" in result.stderr
+
+
+class TestFailsClosed:
+    """#2080 test contract, rule 3: a gate whose own basis is missing or
+    unreadable must NEVER report green."""
+
+    def test_missing_manifest_fails(self, tree: Path) -> None:
+        (tree / ".claude" / "rules" / "gates.yaml").unlink()
+        result = _run(tree)
+        assert result.returncode == 1
+        assert "missing manifest" in result.stderr
+
+    def test_unreadable_manifest_fails(self, tree: Path) -> None:
+        (tree / ".claude" / "rules" / "gates.yaml").write_text(
+            "\x00\x00 not yaml", encoding="utf-8"
+        )
+        result = _run(tree)
+        assert result.returncode == 1
+
+    def test_missing_workflow_dir_fails(self, tree: Path) -> None:
+        import shutil as _shutil
+
+        _shutil.rmtree(tree / ".github" / "workflows")
+        result = _run(tree)
+        assert result.returncode == 1

@@ -249,6 +249,29 @@ enforcing nothing, for as long as nobody read the WARN. That signature -
 "an active check that warns instead of asserting" - is what the `no_warn`
 probe pins.
 
+## Normative changes are declared, not buried (#2079)
+
+`make verify-normative-changes` diffs the rule surface against the PR base and
+reports two classes separately:
+
+- **normative language** - added or removed lines in `.claude/rules/**.md`
+  carrying a binding keyword (MUST / MUSS / PFLICHT / MANDATORY / NEVER /
+  NIEMALS / ALWAYS / IMMER / required / forbidden);
+- **gate status** - in `gates.yaml`: a gate decoupled into `no_rule:`, a still
+  existing workflow moved to `retired:`, a coupled gate dropped, or a changed
+  `enforces:` anchor. The #2075 coverage check forces a workflow to be
+  CLASSIFIED, not correctly classified - this closes that.
+
+Findings are not an error by themselves; they must be DECLARED - the
+`rule-change-declared` label, or a line `RULE-CHANGE DECLARED: <what and why>`
+in the PR body or a commit message. Passable on purpose, never by accident.
+
+Existence is not content: each coupled gate additionally carries a `body_sha`
+of the rule section it enforces. Keeping the heading while hollowing out the
+body used to pass; now the hash must be updated, which lands in the diff.
+Origin: the condensation flipped "MANDATORY on UI PRs" to "recommended but not
+mandatory" inside a 561-line deletion framed as cleanup.
+
 ## CI cadence: PR gates vs the night shift (#575)
 
 PRs run correctness gates only - the checks whose failure must block a merge.
