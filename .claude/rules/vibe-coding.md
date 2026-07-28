@@ -7,7 +7,7 @@ alwaysApply: true
 
 # Vibe Coding Rules
 
-Full policy: docs/policies/VIBE-CODING-POLICY.md
+Full policy: `docs/policies/VIBE-CODING-POLICY.md`
 
 ## Short rules for every task
 

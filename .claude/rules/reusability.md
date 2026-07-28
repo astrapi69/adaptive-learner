@@ -1,5 +1,5 @@
 ---
-description: Reusability rules - props-driven components, barrel exports, generic naming, token-backed utilities, implementation hierarchy (language -> framework -> library -> self)
+description: Reusability rules - props-driven components, barrel exports, generic naming, token-backed utilities, implementation hierarchy
 globs:
   - frontend/src/**/*.ts
   - frontend/src/**/*.tsx
@@ -10,52 +10,52 @@ alwaysApply: false
 
 # Reusability Rules
 
-Vollständige Policy: docs/policies/REUSABILITY-POLICY.md
+Full policy: `docs/policies/REUSABILITY-POLICY.md`
 
 ## Core Rules
 
-- Props-driven: alle Daten/Callbacks über Props oder Seams
-- Keine Seiteneffekte beim Import
-- Barrel Exports (index.ts / __init__.py) für Modulgrenzen
-- Generische Benennung (MatchingTile, nicht LessonMatchingTile)
-- Token-backed Tailwind-Utilities, keine fixed-palette Klassen, keine Hardcodes
-- Wiederverwendbare Teile in frontend/src/shared/ (app-unabhängig)
-- TSDoc/Docstring mit Verwendungsbeispiel Pflicht
-- App-spezifischer State nur über Props, nie direkt importieren
+- **Props-driven:** all data/callbacks via Props or Seams
+- **No side effects on import**
+- **Barrel Exports** (`index.ts` / `__init__.py`) for module boundaries
+- **Generic naming** (`MatchingTile`, not `LessonMatchingTile`)
+- **Token-backed Tailwind utilities**, no fixed-palette classes, no hardcodes
+- **Reusable parts in `frontend/src/shared/`** (app-independent)
+- **TSDoc/Docstring with usage example** mandatory
+- **App-specific state only via Props**, never import directly
 
-## Implementierungs-Hierarchie
+## Implementation Hierarchy (Language → Framework → Library → Self)
 
-Vor jeder neuen Utility die Hierarchie top-down durchgehen, bei der ersten passenden Stufe stoppen:
+Before every new utility, go through the hierarchy top-down, stop at the first matching level:
 
-### 1. Sprache/Runtime zuerst (native APIs, keine Bundle-Kosten)
+### 1. Language/Runtime first (native APIs, no bundle cost)
 
-**JS/TS:** `Intl`, `crypto.subtle`, `URL`, `fetch`, `structuredClone`, `Array`/`Set`/`Map`, `IntersectionObserver`
+**JS/TS:** `Intl`, `crypto.subtle`, `URL`, `fetch`, `structuredClone`, `Array` / `Set` / `Map`, `IntersectionObserver`
 
 **Python:** `pathlib`, `dataclasses`, `json`, `hashlib`, `functools`, `unicodedata`
 
-### 2. Framework (was schon da ist)
+### 2. Framework (what's already there)
 
 **React:** Hooks/Context, Vite `define`/`import.meta.env`
 
 **FastAPI:** `Depends`/`BackgroundTasks`
 
-### 3. Library (npm/PyPI, nur wenn 1+2 nicht reichen)
+### 3. Library (npm/PyPI, only if 1+2 don't suffice)
 
-- Bereits vorhandene Dependency vor neuer
-- Neue muss > 1000 weekly downloads haben
-- Letztes Release < 6 Monate
-- < 100 kB für < 50 LOC
-- Keine CVEs
+- Existing dependency before new one
+- New must have > 1000 weekly downloads
+- Last release < 6 months
+- < 100 kB for < 50 LOC
+- No CVEs
 
-### 4. Selbst schreiben (nur wenn 1-3 nicht passen)
+### 4. Write yourself (only if 1-3 don't fit)
 
-- Library-Grade (keine App-Imports, eigene Typen, TSDoc, einzeln nutzbar)
-- Kohäsion < 500 Zeilen / ein Concern
+- Library-grade (no app imports, own types, TSDoc, usable standalone)
+- Cohesion < 500 lines / one concern
 - Complexity cc < 20
-- Eigene Tests
-- PR dokumentiert WARUM selbst gebaut (welche Stufe, welcher Grund)
+- Own tests
+- PR documents WHY self-built (which level, which reason)
 
-## Referenzen
+## References
 
-- Vollständige Policy: docs/policies/VIBE-CODING-POLICY.md §7
-- Worked reference: docs/audits/2026-06-17-library-first-audit.md
+- Full policy: `docs/policies/VIBE-CODING-POLICY.md` §7
+- Worked reference: `docs/audits/2026-06-17-library-first-audit.md`
