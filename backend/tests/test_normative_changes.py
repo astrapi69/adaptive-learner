@@ -135,3 +135,33 @@ def test_yaml_only_keywords_do_not_fire(repo: Path) -> None:
         encoding="utf-8",
     )
     assert _run(repo).returncode == 0
+
+
+class TestSizeDrop:
+    """#2081: a large byte drop in a rule file is never cosmetic."""
+
+    def test_red_on_the_real_incident_shape(self, repo: Path) -> None:
+        """quality-checks.md lost 66 percent under a 'condensation' label."""
+        path = repo / ".claude" / "rules" / "quality-checks.md"
+        text = path.read_text(encoding="utf-8")
+        path.write_text(text[: len(text) // 3], encoding="utf-8")
+
+        result = _run(repo)
+        assert result.returncode == 2
+        assert "size drop" in result.stdout
+        assert "not formatting" in result.stdout
+
+    def test_declared_condensation_passes(self, repo: Path) -> None:
+        """The #2074 split legitimately moved 128k out of one file - declaring stays possible."""
+        path = repo / ".claude" / "rules" / "quality-checks.md"
+        text = path.read_text(encoding="utf-8")
+        path.write_text(text[: len(text) // 3], encoding="utf-8")
+        body = "RULE-CHANGE DECLARED: sections moved to lessons/, inventory proves completeness"
+        assert _run(repo, "--pr-body", body).returncode == 0
+
+    def test_small_edits_do_not_fire(self, repo: Path) -> None:
+        """A normal edit must not trip the threshold - no alarm fatigue."""
+        path = repo / ".claude" / "rules" / "quality-checks.md"
+        text = path.read_text(encoding="utf-8")
+        path.write_text(text.replace("## Test Pyramid", "## Test pyramid"), encoding="utf-8")
+        assert _run(repo).returncode == 0

@@ -43,6 +43,11 @@ NORMATIVE_RE = re.compile(
     re.IGNORECASE,
 )
 DECLARATION_MARKER = "RULE-CHANGE DECLARED"
+# A rule file that loses this much text is never "just formatting" (#2081).
+# Either threshold trips: a fifth of the file, or 1500 bytes outright. The
+# incident lost 66 percent of quality-checks.md under a "condensation" label.
+SIZE_DROP_RATIO = 0.20
+SIZE_DROP_BYTES = 1500
 ESCAPE_LABEL = "rule-change-declared"
 RULES_GLOB = ".claude/rules"
 
@@ -73,6 +78,28 @@ def normative_findings(root: Path, base: str) -> list[str]:
         if line[:1] in "+-" and NORMATIVE_RE.search(line[1:]):
             verb = "added" if line[0] == "+" else "removed"
             findings.append(f"{current}: {verb}: {line[1:].strip()[:140]}")
+    return findings
+
+
+def size_drop_findings(root: Path, base: str) -> list[str]:
+    """Rule files that shrank enough that "cosmetic" is not a credible label."""
+    changed = git(root, "diff", "--name-only", base, "--", RULES_GLOB).split("\n")
+    findings: list[str] = []
+    for rel in sorted(f for f in changed if f.endswith(".md")):
+        old = git(root, "show", f"{base}:{rel}")
+        if not old:
+            continue
+        path = root / rel
+        new_len = len(path.read_text(encoding="utf-8")) if path.is_file() else 0
+        lost = len(old) - new_len
+        if lost <= 0:
+            continue
+        ratio = lost / len(old)
+        if ratio >= SIZE_DROP_RATIO or lost >= SIZE_DROP_BYTES:
+            findings.append(
+                f"{rel}: lost {lost} bytes ({ratio:.0%} of the file) - "
+                f"a drop this size is a content change, not formatting"
+            )
     return findings
 
 
@@ -163,6 +190,7 @@ def main() -> int:
     )
     findings = [("normative language", f) for f in normative_findings(root, args.base)]
     findings += [("gate status", f) for f in gate_status_findings(root, args.base)]
+    findings += [("size drop", f) for f in size_drop_findings(root, args.base)]
 
     if not findings:
         print(f"no normative or gate-status changes against {args.base}")
@@ -177,7 +205,8 @@ def main() -> int:
         return 0
 
     print(
-        f"\nUNDECLARED. A binding rule may not change inside an undeclared diff.\n"
+        f"\nUNDECLARED. A binding rule may not change - and a rule file may not\n"
+        f"shrink substantially - inside an undeclared diff.\n"
         f"Declare it: add the '{ESCAPE_LABEL}' label to the PR, or put a line\n"
         f"'{DECLARATION_MARKER}: <what changes and why>' in the PR body or a commit message.",
         file=sys.stderr,

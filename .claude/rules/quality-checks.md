@@ -272,6 +272,27 @@ body used to pass; now the hash must be updated, which lands in the diff.
 Origin: the condensation flipped "MANDATORY on UI PRs" to "recommended but not
 mandatory" inside a 561-line deletion framed as cleanup.
 
+## Condensation PRs are content-neutral or declared (#2081)
+
+A PR framed as condensation, cleanup, reflow or formatting may not contain
+content deletions or weakenings. Either it is content-neutral - and says so
+with evidence - or it declares the deletions explicitly and is reviewed as a
+content change. The framing is what makes reviewers skim; that is precisely
+why the framing carries an obligation.
+
+Threshold, enforced by `make verify-normative-changes`: a rule file that loses
+at least 20 percent of its bytes, or at least 1500 bytes outright, must be
+declared. A drop that size is a content change, whatever the PR title says.
+
+Declaring is one line - the `rule-change-declared` label, or
+`RULE-CHANGE DECLARED: <what and why>` in the PR body or a commit message.
+Legitimate large moves stay possible: the lessons split moved 128k out of one
+file and declared it, with a per-section inventory proving nothing was lost.
+
+Origin: the condensation commit that cut 66 percent of this file carried two
+policy inversions and four deleted load-bearing sections. It never reached
+develop - an audit caught it - but nothing structural would have.
+
 ## CI cadence: PR gates vs the night shift (#575)
 
 PRs run correctness gates only - the checks whose failure must block a merge.
