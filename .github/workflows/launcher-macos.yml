@@ -82,8 +82,39 @@ jobs:
           ./scripts/verify_version_pins.sh "$VERSION"
           python3 scripts/sync_versions.py --check
 
+      # #2117: the backend job caches its Poetry virtualenv (ci.yml); this one
+      # never did, so every run rebuilds pycairo/pygobject from source over
+      # the network - the exposure the retry below papers over. Keyed on the
+      # lockfile, so a dependency change still gets a clean resolve.
+      - name: Cache Poetry virtualenv (launcher)
+        uses: actions/cache@v6
+        with:
+          path: ~/Library/Caches/pypoetry/virtualenvs
+          key: poetry-launcher-macos-py3.12-${{ hashFiles('launcher/poetry.lock') }}
+          restore-keys: |
+            poetry-launcher-macos-py3.12-
+
+      # #2117: pycairo ships no wheel for this platform (17 wheels, all Windows, plus one
+      # sdist), so every run compiles it - and pygobject - from source,
+      # fetching build requirements into an isolated env. A truncated fetch
+      # anywhere in that chain surfaces as "BadZipFile / File is not a zip
+      # file" or "Cannot install build-system.requires". Seen three times in
+      # one day, twice on this job. Bounded retry, and each attempt is
+      # visible: a silent retry would hide a real, permanent breakage.
       - name: Install launcher dependencies
-        run: poetry install --no-interaction --no-ansi
+        run: |
+          for attempt in 1 2 3; do
+            echo "::group::poetry install (attempt $attempt/3)"
+            if poetry install --no-interaction --no-ansi; then
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "::endgroup::"
+            echo "::warning::poetry install failed on attempt $attempt/3"
+            sleep $((attempt * 15))
+          done
+          echo "::error::poetry install failed three times - this is not the #2117 flake"
+          exit 1
 
       - name: Run launcher unit tests
         run: poetry run pytest tests/ -v
