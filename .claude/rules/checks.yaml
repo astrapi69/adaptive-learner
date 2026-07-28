@@ -61,8 +61,8 @@ checks:
     probe: make_target=verify-check-inventory
 
   - id: complexity-gate
-    verifies: new or regressed complexity offenders versus .complexity-baseline
-    rule: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    verifies: new or regressed complexity offenders versus .complexity-baseline; fails closed without radon or baseline
+    rule: quality-checks.md#gate-test-contract-three-tests-and-fail-closed-2083
     status: active
     wired_in: make check-complexity-gate; .github/workflows/complexity-check.yml
     probe: make_target=check-complexity-gate
