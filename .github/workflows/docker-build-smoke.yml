@@ -66,6 +66,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # #2112: a CI checkout carries no linked content repo, so the build
+      # alone would pass while a maintainer's working tree still drags a
+      # node_modules with absolute symlinks into the context. The guard
+      # checks the RULES, not today's directory listing.
+      - name: Verify the build context excludes dependency directories
+        run: python3 scripts/verify_docker_context.py
+
       # ubuntu-latest ships Docker + Compose v2. Build only - the images are
       # never started, so no secrets / env / ports are needed (build args:
       # none). A failure here is a broken prod/self-hosted/desktop build path.

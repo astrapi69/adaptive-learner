@@ -138,3 +138,7 @@ docs/review/i18n-csv/
 # EXP-044 concern-split byte-identity reference (#1655) - local artifact
 .css-identity-ref
 .css-identity-ref.sha256
+
+# Runtime config the launcher writes next to the app tree (#2109).
+# Generated per machine, never committed.
+.adaptive-learner-launcher.json

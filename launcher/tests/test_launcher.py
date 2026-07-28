@@ -254,7 +254,12 @@ class TestExplicitConfigContract:
         monkeypatch.setattr(__main__, "_package_main", fake_package_main)
         assert __main__.main([]) == 0
         assert seen["args"][0] == "--config"
-        assert seen["args"][1] == str(__main__._config_path())
+        # Since #2109 the injected config is the ANCHORED copy: same content
+        # plus an explicit install_dir, so app-relative paths resolve against
+        # the app tree instead of the config file's own directory.
+        injected = Path(seen["args"][1])
+        assert injected.is_file()
+        assert json.loads(injected.read_text(encoding="utf-8"))["install_dir"] == str(Path.cwd())
 
     def test_wrapper_respects_caller_config(self, monkeypatch) -> None:
         seen: dict[str, list[str]] = {}
@@ -713,9 +718,7 @@ class TestDeploymentReadiness:
 class TestReadinessMessage:
     """The message must name the real cause, not blame the config (#2109)."""
 
-    def test_frozen_bundle_base_produces_the_honest_diagnosis(
-        self, monkeypatch, tmp_path, capsys
-    ) -> None:
+    def _bundle_with(self, tmp_path, **extra):
         bundle = tmp_path / "bundle"
         bundle.mkdir()
         (bundle / "launcher.json").write_text(
@@ -725,50 +728,74 @@ class TestReadinessMessage:
                     "deployment_mode": "dockerfile",
                     "dockerfile_file": "backend/Dockerfile",
                     "build_context": ".",
+                    **extra,
                 }
             ),
             encoding="utf-8",
         )
+        return bundle
+
+    def test_bundle_config_no_longer_drags_the_base_into_the_bundle(
+        self, monkeypatch, tmp_path
+    ) -> None:
+        """The #2109 device case: config in the bundle, tree on disk.
+
+        Before the anchoring this resolved to _MEIxxxx/backend/Dockerfile
+        and the install died. It must now resolve against the app tree.
+        """
+        bundle = self._bundle_with(tmp_path)
         tree = tmp_path / "app"
         (tree / "backend").mkdir(parents=True)
         (tree / "backend" / "Dockerfile").write_text("FROM scratch\n", encoding="utf-8")
 
         monkeypatch.setattr(__main__, "_config_path", lambda: bundle / "launcher.json")
-        monkeypatch.chdir(tree)
         monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: tree)
+        monkeypatch.setattr(__main__, "_bundle_root", lambda: None)
+        seen: dict[str, list[str]] = {}
+        monkeypatch.setattr(__main__, "_package_main", lambda a: seen.setdefault("args", a) and 0)
+
+        assert __main__.main([]) == 0, "the GUI path must reach the package again"
+        injected = Path(seen["args"][seen["args"].index("--config") + 1])
+        assert json.loads(injected.read_text(encoding="utf-8"))["install_dir"] == str(tree)
+
+    def test_missing_tree_produces_the_honest_diagnosis(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        """No action argument - the GUI path, which is where the device hit it."""
+        bundle = self._bundle_with(tmp_path)
+        empty = tmp_path / "empty"
+        empty.mkdir()
+
+        monkeypatch.setattr(__main__, "_config_path", lambda: bundle / "launcher.json")
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: empty)
+        monkeypatch.setattr(__main__, "_bundle_root", lambda: None)
         called: list[list[str]] = []
         monkeypatch.setattr(__main__, "_package_main", lambda a: called.append(a) or 0)
 
-        rc = __main__.main(["--install"])
+        rc = __main__.main([])
         err = capsys.readouterr().err
 
         assert rc == 5, "an unrunnable mode must not report success"
         assert not called, "the package was invoked despite an unrunnable mode"
         normalised = err.replace("\\", "/")
         assert "backend/Dockerfile" in normalised
-        assert str(tree).replace("\\", "/") in normalised, (
-            "the message does not say where the file really is"
-        )
-        assert "path-resolution bug" in err
-        assert "setting you need to change" in err
+        assert "path-resolution bug" in err or "cannot run" in err
 
-    def test_runnable_mode_delegates_untouched(self, monkeypatch, tmp_path) -> None:
-        """The guard may not add a failure mode of its own."""
-        bundle = tmp_path / "bundle"
-        (bundle / "backend").mkdir(parents=True)
-        (bundle / "backend" / "Dockerfile").write_text("FROM scratch\n", encoding="utf-8")
-        (bundle / "launcher.json").write_text(
-            json.dumps({"deployment_mode": "dockerfile", "dockerfile_file": "backend/Dockerfile"}),
-            encoding="utf-8",
-        )
+    def test_read_only_actions_still_work_on_a_broken_install(
+        self, monkeypatch, tmp_path
+    ) -> None:
+        """--status / --stop / --uninstall must not be blocked by the guard."""
+        bundle = self._bundle_with(tmp_path)
+        empty = tmp_path / "empty"
+        empty.mkdir()
         monkeypatch.setattr(__main__, "_config_path", lambda: bundle / "launcher.json")
-        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: None)
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: empty)
         monkeypatch.setattr(__main__, "_bundle_root", lambda: None)
         seen: list[list[str]] = []
         monkeypatch.setattr(__main__, "_package_main", lambda a: seen.append(a) or 0)
 
-        assert __main__.main(["--install"]) == 0
-        assert seen, "the package was not reached on a runnable mode"
+        assert __main__.main(["--status"]) == 0
+        assert seen, "the package must still be reached for a read-only action"
 
     def test_missing_config_is_left_to_the_package(self, monkeypatch, tmp_path) -> None:
         """Fail closed elsewhere: this guard does not swallow the #32 error."""

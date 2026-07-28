@@ -15,6 +15,18 @@ frontend/node_modules
 frontend/dist
 frontend/.env
 
+# EVERY node_modules, at any depth (#2112). The single frontend/ entry
+# above missed nested ones, and the content checkout carries a
+# node_modules/.bin whose symlinks point ABSOLUTELY into a sibling repo.
+# Those targets are outside the build context, so the links dangle in the
+# container and Vite's recursive copy of public/ dies on stat().
+**/node_modules
+
+# The linked content repo under public/ (gitignored here, so it never
+# reaches a user's tarball - but a maintainer build from the working tree
+# would drag it in). Content is downloaded at runtime, not baked in.
+frontend/public/content
+
 # Backend dev artifacts
 backend/__pycache__
 backend/.pytest_cache
