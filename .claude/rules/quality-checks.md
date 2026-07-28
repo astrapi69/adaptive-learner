@@ -216,6 +216,20 @@ mutation testing IS wired: `frontend/stryker.config.json` (vitest runner,
 schedule is a no-op unless the repo variable `ENABLE_NIGHTLY_MUTATION` is
 `"true"`).
 
+## Gate and rule stay coupled (#2075)
+
+Every rule-enforcing CI gate names the rule section it enforces in
+`.claude/rules/gates.yaml`, and `make verify-gate-rule-links` fails in BOTH
+directions: a gate whose rule section does not exist, and a rule citing a
+workflow that is gone. A new workflow must be classified as either a coupled
+gate or explicitly `no_rule:` - it cannot slip in unclassified. Historical
+citations of removed workflows go under `retired:` with a reason.
+
+Origin: the #1640 visual-baseline gate kept running while its rule section
+had been deleted by a condensation commit - enforcement without a documented
+rule, and nothing detected it. Retiring a gate now means removing BOTH halves
+in the same PR; the check fails on either half alone.
+
 ## CI cadence: PR gates vs the night shift (#575)
 
 PRs run correctness gates only - the checks whose failure must block a merge.

@@ -449,3 +449,11 @@ jobs:
         run: python3 scripts/verify_docs.py
       - name: Verify mkdocs nav is in sync with _meta.yaml
         run: python3 scripts/generate_mkdocs_nav.py --check
+      # #2075: a gate may not enforce a rule section that does not exist,
+      # and a rule may not cite a workflow that is gone. Both directions.
+      - name: Verify gate <-> rule links
+        run: python3 scripts/verify_gate_rule_links.py
+      # #2073: the themed lessons catalogue must stay complete - no section
+      # silently lost in a reorganization.
+      - name: Verify lessons inventory
+        run: python3 scripts/verify_lessons_inventory.py --compare .claude/rules/lessons/.inventory-baseline.json
