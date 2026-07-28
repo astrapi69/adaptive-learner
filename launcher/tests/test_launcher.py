@@ -9,6 +9,8 @@ runs and routes through the package) plus a config-loads test (the bundled
 
 from __future__ import annotations
 
+import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -74,11 +76,10 @@ class TestConfigLoads:
     def test_launcher_json_declares_internal_ports(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
         assert cfg.show_advanced_ports is True
-        assert cfg.internal_ports == {"backend": 8000, "nginx": 80}
-        assert cfg.env_internal_port_keys == {
-            "backend": "ADAPTIVE_LEARNER_BACKEND_PORT",
-            "nginx": "ADAPTIVE_LEARNER_NGINX_PORT",
-        }
+        # Single container since #2058: the nginx service is gone, so only
+        # the backend port stays expert-tunable.
+        assert cfg.internal_ports == {"backend": 8000}
+        assert cfg.env_internal_port_keys == {"backend": "ADAPTIVE_LEARNER_BACKEND_PORT"}
 
     def test_legacy_names_drive_cleanup(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
@@ -466,6 +467,152 @@ class TestDeploymentModeContract:
         assert ok is False
         assert "does-not-exist.Dockerfile" in msg
 
-    def test_empty_mode_stays_compose(self) -> None:
+    def test_launcher_json_uses_dockerfile_mode(self) -> None:
+        """#2060: the end-user path builds through docker-py, not Compose."""
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
-        assert cfg.deployment_mode == ""
+        assert cfg.deployment_mode == "dockerfile"
+        assert cfg.dockerfile_file == "backend/Dockerfile"
+        assert cfg.build_context == "."
+        assert cfg.container_port == 8000
+        assert cfg.container_volumes == {"adaptive-learner-data": "/app/data"}
+        assert cfg.container_env["ADAPTIVE_LEARNER_DATA_DIR"] == "/app/data"
+        assert cfg.container_env["ADAPTIVE_LEARNER_PORT"] == "8000"
+        assert cfg.container_env["ADAPTIVE_LEARNER_SERVE_FRONTEND"] == "1"
+        assert cfg.container_env["ADAPTIVE_LEARNER_FRONTEND_DIST"] == "/app/static"
+
+    def test_declared_dockerfile_and_context_exist_in_the_repo(self) -> None:
+        repo_root = LAUNCHER_JSON.parent.parent
+        assert (repo_root / "backend" / "Dockerfile").is_file()
+        # The compose file stays as the documented power-user alternative.
+        assert (repo_root / "docker-compose.prod.yml").is_file()
+
+    def test_container_env_matches_the_compose_service(self) -> None:
+        """Both paths run the same image; they may not drift apart."""
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        compose = (LAUNCHER_JSON.parent.parent / "docker-compose.prod.yml").read_text(
+            encoding="utf-8"
+        )
+        for key, value in cfg.container_env.items():
+            if key == "ADAPTIVE_LEARNER_PORT":
+                continue  # compose interpolates this one from the .env
+            assert f"{key}={value}" in compose, f"{key} drifted from the compose service"
+
+
+class TestClassicBuilderConstraint:
+    """dockerfile mode builds via docker-py over the Engine API.
+
+    That is the CLASSIC builder: multi-stage yes, BuildKit-only syntax no.
+    A cache mount or a heredoc added here would not fail in CI (which has
+    buildx) - it would fail on the end user's Docker 20.10 device, which is
+    exactly the version chain this mode exists to remove.
+    """
+
+    BUILDKIT_ONLY = (
+        "RUN --mount=",
+        "COPY --link",
+        "# syntax=",
+        "--mount=type=cache",
+        "--mount=type=secret",
+        "--mount=type=bind",
+    )
+
+    def _dockerfiles(self) -> list[Path]:
+        repo_root = LAUNCHER_JSON.parent.parent
+        return [
+            path
+            for path in repo_root.rglob("Dockerfile*")
+            if ".git" not in path.parts and "node_modules" not in path.parts
+        ]
+
+    def test_the_repo_has_dockerfiles_to_check(self) -> None:
+        """A scanner that finds no files reports green for the wrong reason."""
+        assert self._dockerfiles(), "no Dockerfile found - the scan proves nothing"
+
+    def test_no_buildkit_only_syntax(self) -> None:
+        offenders: list[str] = []
+        for path in self._dockerfiles():
+            text = path.read_text(encoding="utf-8")
+            for lineno, line in enumerate(text.splitlines(), start=1):
+                for marker in self.BUILDKIT_ONLY:
+                    if marker in line:
+                        offenders.append(f"{path}:{lineno}: {marker}")
+        assert not offenders, "BuildKit-only syntax breaks the classic builder:\n" + "\n".join(
+            offenders
+        )
+
+    def test_heredocs_are_absent(self) -> None:
+        """`RUN <<EOF` needs BuildKit; the classic builder chokes on it."""
+        import re
+
+        pattern = re.compile(r"^\s*(RUN|COPY)\s+.*<<-?\s*\w+", re.MULTILINE)
+        for path in self._dockerfiles():
+            assert not pattern.search(path.read_text(encoding="utf-8")), f"heredoc in {path}"
+
+
+class TestPermissionDeniedClassification:
+    """0.21.0 (#2098): an EACCES socket is a PERMISSION problem, never "down".
+
+    The device finding this guards is the Ubuntu one: Docker is running, the
+    user is not in the ``docker`` group, and a launcher that reports "Docker
+    is not started" sends them to restart a daemon that was never stopped.
+    These run against the REAL installed docker-app-launcher classifier - a
+    mocked classifier would only prove that the mock returns what it was told.
+    """
+
+    def test_bare_permission_error_is_classified_as_permission(self) -> None:
+        from docker_app_launcher.docker import py_client
+
+        assert py_client._classify_exception(PermissionError(13, "Permission denied")) == (
+            "permission"
+        )
+
+    def test_permission_error_buried_in_args_is_still_found(self) -> None:
+        """requests/urllib3 nest the real errno inside args, not __cause__."""
+        from docker_app_launcher.docker import py_client
+
+        buried = Exception(
+            "Connection aborted.", PermissionError(13, "Permission denied")
+        )
+        assert py_client._classify_exception(buried) == "permission"
+
+    def test_socket_absent_is_down_not_permission(self) -> None:
+        """The counter-case: a missing socket must NOT read as a group problem."""
+        import errno
+
+        from docker_app_launcher.docker import py_client
+
+        gone = ConnectionRefusedError(errno.ECONNREFUSED, "Connection refused")
+        assert py_client._classify_exception(gone) == "down"
+
+    @pytest.mark.skipif(
+        not sys.platform.startswith("linux"),
+        reason=(
+            "unix-socket probe: Windows has no AF_UNIX, and the macOS runner's "
+            "pytest tmp_path (/private/var/folders/...) blows the 104-char "
+            "sun_path limit. The docker socket this guards is a Linux concern."
+        ),
+    )
+    def test_ping_against_an_unreadable_socket_reports_permission(self) -> None:
+        """End to end through ping(): a real chmod-000 socket path, no mocks."""
+        import socket
+        import stat
+        import tempfile
+
+        from docker_app_launcher.docker import py_client
+
+        # NOT tmp_path: sun_path is capped at ~104 bytes, and pytest's
+        # per-test directory names eat most of that budget.
+        with tempfile.TemporaryDirectory(prefix="alsock") as tmp:
+            sock_path = Path(tmp) / "d.sock"
+            server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            server.bind(str(sock_path))
+            server.listen(1)
+            try:
+                sock_path.chmod(0o000)
+                if os.access(sock_path, os.R_OK):  # root ignores the mode bits
+                    pytest.skip("running as root - the mode bits do not deny us")
+                status, detail = py_client.ping(f"unix://{sock_path}", timeout=2.0)
+                assert status == "permission", f"got {status}: {detail}"
+            finally:
+                server.close()
+                sock_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
