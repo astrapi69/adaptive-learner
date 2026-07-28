@@ -23,8 +23,8 @@ do it.
 
 ## Prerequisite: Docker - the launcher checks it itself
 
-The launcher requires a running Docker, because the app itself runs as
-a group of containers. You do **not** need to verify anything manually:
+The launcher requires a running Docker, because the app itself runs in
+a container. You do **not** need to verify anything manually:
 on start the launcher itself checks whether Docker is installed and
 running, also finds a Docker running under a different Docker context
 (such as Docker Desktop for Linux or rootless Docker), and shows a
@@ -56,6 +56,19 @@ All three launchers ship with every release at
 | Linux | `adaptive-learner-launcher` | `adaptive-learner-launcher.sha256` |
 | macOS | `adaptive-learner-launcher-macos.zip` | `adaptive-learner-launcher-macos.zip.sha256` |
 | Windows | `adaptive-learner-launcher.exe` | `adaptive-learner-launcher.exe.sha256` |
+
+### What is verified, and what is not
+
+Every one of these is started once while it is being built, on exactly
+the operating system it is meant for. So it is established that it
+starts - on Linux, on Windows, and on macOS on Apple Silicon.
+
+What is not established is how your operating system reacts to a
+**downloaded** file: the programs carry no paid signature, so macOS
+warns on first open ("unidentified developer") and Windows shows the
+SmartScreen notice. That is a warning, not a defect - how to confirm it
+once is under [macOS](#macos) and [Windows](#windows) below. Verify the
+checksum first; it is more reliable evidence than any dialog.
 
 ## Linux
 
