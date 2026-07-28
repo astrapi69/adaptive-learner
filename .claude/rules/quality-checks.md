@@ -293,6 +293,32 @@ Origin: the condensation commit that cut 66 percent of this file carried two
 policy inversions and four deleted load-bearing sections. It never reached
 develop - an audit caught it - but nothing structural would have.
 
+## Gate test contract: three tests, and fail closed (#2083)
+
+Every gate carries three tests. Two are obvious, the third is the one that
+keeps being missed:
+
+1. **It detects the violation.** A RED proof that reproduces the incident.
+2. **It passes on a clean tree.** Without this, a gate "passes" by failing
+   unconditionally and nobody notices for a while.
+3. **It fails CLOSED when its own basis is missing or broken.** Absent config,
+   unreadable baseline, crashed helper, incomplete work tree: none of these may
+   ever report green. "I could not check" is not "there is nothing to find".
+
+A deliberate partial run stays possible, but only through an explicit,
+named opt-in (e.g. `COMPLEXITY_GATE_ALLOW_PARTIAL=1`) - never by silence.
+
+Run every build-free gate locally with `make ci` before pushing; `make ci-full`
+adds the gates that need an installed frontend (they build the Tailwind
+oracle). A gate that only bites after the push costs a round trip.
+
+Origin: three fail-open findings within one day. The `no_warn` probe (#2077)
+passed when `verify_docs` could not run at all; the language gate (#2079)
+passed because a `**` pathspec matched almost no files; and the complexity
+ratchet reported "gate passed" when radon was unavailable or its baseline was
+gone, because "no analyzer" silently read as "no offenders". All three were
+fail-open inside tooling built to prevent fail-open.
+
 ## CI cadence: PR gates vs the night shift (#575)
 
 PRs run correctness gates only - the checks whose failure must block a merge.
