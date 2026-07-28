@@ -10,6 +10,10 @@ argued, it is checked:
   (section title + SHA-256 of the section body) to stdout as JSON.
 * ``--compare <baseline.json>`` rebuilds the inventory from the working
   tree and fails when any section is missing, duplicated, or altered.
+* ``--update-baseline <baseline.json>`` rewrites the baseline from the
+  current tree. Adding or editing a lesson is a deliberate act: the
+  regenerated baseline lands in the same diff, so the change is visible
+  in review instead of slipping past the gate.
 
 Stdlib only, no network, safe to run in CI and from pre-commit.
 
@@ -100,11 +104,24 @@ def main() -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--snapshot", metavar="REF", help="write the inventory of REF's monolith")
     group.add_argument("--compare", metavar="BASELINE", help="compare the tree against BASELINE")
+    group.add_argument(
+        "--update-baseline",
+        metavar="BASELINE",
+        help="rewrite BASELINE from the current tree (deliberate; shows up in the diff)",
+    )
     args = parser.parse_args()
 
     if args.snapshot:
         json.dump(inventory_from_ref(args.snapshot), sys.stdout, indent=2, sort_keys=True)
         print()
+        return 0
+
+    if args.update_baseline:
+        found, _ = inventory_from_tree()
+        Path(args.update_baseline).write_text(
+            json.dumps(found, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        print(f"baseline rewritten: {len(found)} sections")
         return 0
 
     baseline = json.loads(Path(args.compare).read_text(encoding="utf-8"))
