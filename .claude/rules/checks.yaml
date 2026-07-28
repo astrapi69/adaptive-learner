@@ -88,6 +88,13 @@ checks:
     wired_in: make verify-i18n-scripts; .pre-commit-config.yaml
     probe: make_target=verify-i18n-scripts
 
+  - id: rule-corpus-size
+    verifies: the always-injected rule corpus may shrink, not grow silently
+    rule: quality-checks.md#the-rule-corpus-has-a-ceiling-2091
+    status: active
+    wired_in: make verify-rule-corpus-size; .github/workflows/ci.yml
+    probe: make_target=verify-rule-corpus-size
+
   - id: normative-changes
     verifies: normative-keyword and gate-status changes are declared, not buried in a diff
     rule: quality-checks.md#normative-changes-are-declared-not-buried-2079

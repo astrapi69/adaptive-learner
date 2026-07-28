@@ -295,8 +295,8 @@ develop - an audit caught it - but nothing structural would have.
 
 ## Gate test contract: three tests, and fail closed (#2083)
 
-Every gate carries three tests. Two are obvious, the third is the one that
-keeps being missed:
+Every gate carries these tests. The first two are obvious, the last two are
+the ones that keep being missed:
 
 1. **It detects the violation.** A RED proof that reproduces the incident.
 2. **It passes on a clean tree.** Without this, a gate "passes" by failing
@@ -304,6 +304,9 @@ keeps being missed:
 3. **It fails CLOSED when its own basis is missing or broken.** Absent config,
    unreadable baseline, crashed helper, incomplete work tree: none of these may
    ever report green. "I could not check" is not "there is nothing to find".
+4. **It reports WHAT it measured.** A gate that scans a set must print the size
+   of that set and pass a test on it. Otherwise an empty set reads as a clean
+   one - "0 findings" and "0 files looked at" print the same green.
 
 A deliberate partial run stays possible, but only through an explicit,
 named opt-in (e.g. `COMPLEXITY_GATE_ALLOW_PARTIAL=1`) - never by silence.
@@ -318,6 +321,31 @@ passed because a `**` pathspec matched almost no files; and the complexity
 ratchet reported "gate passed" when radon was unavailable or its baseline was
 gone, because "no analyzer" silently read as "no offenders". All three were
 fail-open inside tooling built to prevent fail-open.
+
+## The rule corpus has a ceiling (#2091)
+
+Every `.claude/rules/**/*.md` file and `CLAUDE.md` is injected into every
+prompt of every session. The corpus is not a library you consult; it is a
+cost paid on every turn, by every agent, forever. At the time of writing it
+is around 278k characters - roughly 69k tokens per prompt.
+
+`make verify-rule-corpus-size` ratchets it: the measured total may shrink,
+and the ceiling then follows it down (`make verify-rule-corpus-size` with
+`--update-baseline`). It may not grow silently. Growth stays possible - via
+`make verify-rule-corpus-size-raise`, which writes the higher ceiling into
+`.claude/rules/.corpus-baseline.json`, where the raise is visible in the diff
+and belongs in the commit message.
+
+So a new rule section is a trade, not an addition: condense or delete
+something first (declared, per the condensation rule above), or say in the
+commit what the corpus bought for the space.
+
+The measure is characters, not estimated tokens: characters are exact and
+tokenizer-independent, so the reading never moves without a content change.
+
+Origin: the rule-integrity series (#2071 ... #2085) added several thousand
+characters, every one of them justified. That is the failure mode - each
+addition defensible, the sum unmeasured.
 
 ## CI cadence: PR gates vs the night shift (#575)
 
