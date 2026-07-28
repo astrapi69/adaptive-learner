@@ -5,56 +5,38 @@ globs:
 alwaysApply: false
 ---
 
-# Release workflow
+# Release Workflow
 
-The permanent workflow for AdaptiveLearner releases. Claude Code reads
-this file automatically when a release is due.
+The permanent workflow for AdaptiveLearner releases. Claude Code reads this file automatically when a release is due.
 
-Prompt triggers: "release new version", "new release", "deploy new version"
+**Prompt triggers**: "release new version", "new release", "deploy new version"
 
-**Architecture reference:** the 4-Tier version-propagation model
-(canonical / auto-propagated / runtime-derived / manual content),
-the full Tier-2 file inventory, and the `make release-*`
-aggregate-target catalogue live in
-[docs/development/release-automation.md](../../docs/development/release-automation.md).
-This file is the human-side workflow; the doc is the tooling
-reference.
-
----
+**Architecture reference**: the 4-Tier version-propagation model, the full Tier-2 file inventory, and the `make release-*` aggregate-target catalogue live in `docs/development/release-automation.md`. This file is the human-side workflow; the doc is the tooling reference.
 
 ## Gitflow (#334): cut the release on a release branch, not on main
 
-`main` holds releases only; `develop` is the active branch (the GitHub
-default). A release is prepared on a `release/*` branch cut from `develop`,
-then merged to `main` (where it is tagged) and back to `develop`:
+`main` holds releases only; `develop` is the active branch (the GitHub default). A release is prepared on a `release/*` branch cut from `develop`, then merged to `main` (where it is tagged) and back to `develop`:
 
-```
+```bash
 make release-prepare VERSION=X.Y.Z     # checkout develop, create release/X.Y.Z
 # on release/X.Y.Z: bump backend/pyproject.toml, make sync-versions,
 # draft changelog/releases/vX.Y.Z.md, make release-test, commit
+
 make release-finish VERSION=X.Y.Z      # merge --no-ff to main + tag, merge back to develop, delete branch
+
 make release-publish VERSION=X.Y.Z     # GitHub Release from the changelog file
 ```
 
-The Step 1-11 detail below is the per-step substance (version bump,
-changelog, gates, GitHub release, post-release docs) — it now runs ON the
-`release/*` branch, and the tag lands on `main` via the `release-finish`
-merge instead of a direct push to `main`. Hotfixes are the only exception:
-branch `hotfix/vX.Y.Z` from `main`, fix, tag, merge back to `develop`.
-
----
+The Step 1-11 detail below is the per-step substance (version bump, changelog, gates, GitHub release, post-release docs) — it now runs ON the `release/*` branch, and the tag lands on `main` via the `release-finish` merge instead of a direct push to `main`. Hotfixes are the only exception: branch `hotfix/vX.Y.Z` from `main`, fix, tag, merge back to `develop`.
 
 ## Ground rules
 
-- Do not skip manual steps: the checklist at the end is mandatory
-- Every release is a logical boundary: do not release in the middle of a feature
-- Tests must be green: red tests block the release, no exceptions
-- The CHANGELOG is for humans: do not paste raw commit messages, summarize meaningfully
-- Version bump follows SemVer, even in the 0.x phase
-- Gitflow: the release is cut on `release/*` from `develop` and merged to
-  `main`; never develop or hand-tag directly on `main` (#334)
-
----
+- **Do not skip manual steps**: the checklist at the end is mandatory
+- **Every release is a logical boundary**: do not release in the middle of a feature
+- **Tests must be green**: red tests block the release, no exceptions
+- **The CHANGELOG is for humans**: do not paste raw commit messages, summarize meaningfully
+- **Version bump follows SemVer**, even in the 0.x phase
+- **Gitflow**: the release is cut on `release/*` from `develop` and merged to `main`; never develop or hand-tag directly on `main` (#334). See `coding-standards.md` §Git for the full branching model.
 
 ## Step 1: Capture the current state
 
@@ -75,51 +57,45 @@ git diff ${LAST_TAG}..HEAD --stat | tail -1
 grep -H "version" backend/pyproject.toml frontend/package.json 2>/dev/null | head -5
 ```
 
-Show the user the summary and wait for confirmation before the
-release continues.
-
----
+Show the user the summary and wait for confirmation before the release continues.
 
 ## Step 2: Version bump per SemVer
 
 Analyze the commits to decide:
 
 | Commit type | Bump |
-|-------------|------|
+|---|---|
 | `BREAKING CHANGE` in the body or `!` after the type | Major (v1.0.0) |
 | `feat:` | Minor (v0.X.0) |
 | `fix:`, `perf:`, `refactor:` without breaking changes | Patch (v0.X.Y) |
 | Only `docs:`, `chore:`, `test:` | Patch (v0.X.Y) |
 
-In the 0.x phase a major bump is rare. Breaking changes usually
-lead to a minor bump with a breaking-changes section in the CHANGELOG.
+In the 0.x phase a major bump is rare. Breaking changes usually lead to a minor bump with a breaking-changes section in the CHANGELOG.
 
-Propose the new version with rationale. Wait for user OK or
-correction.
-
----
+Propose the new version with rationale. Wait for user OK or correction.
 
 ## Step 3: Generate CHANGELOG.md
 
-Build a clean CHANGELOG entry from the commits. Do not paste raw,
-group and summarize.
+Build a clean CHANGELOG entry from the commits. Do not paste raw, group and summarize.
 
-Groups in this order:
-- **Breaking Changes** (only when needed, at the top)
-- **Added** (feat:)
-- **Changed** (refactor:, perf:)
-- **Deprecated**
-- **Removed**
-- **Fixed** (fix:)
-- **Security**
+**Groups in this order**:
 
-Format rules:
+1. Breaking Changes (only when needed, at the top)
+2. Added (`feat:`)
+3. Changed (`refactor:`, `perf:`)
+4. Deprecated
+5. Removed
+6. Fixed (`fix:`)
+7. Security
+
+**Format rules**:
+
 - Past tense or present, consistent within the entry
 - Take the scope from the commit when it helps (e.g. "Gamification plugin: ...")
 - Collapse multiple commits touching the same feature
 - Drop or briefly mention internal refactorings without user impact
 
-Example structure:
+**Example structure**:
 
 ```markdown
 ## [0.10.0] - 2026-04-XX
@@ -134,30 +110,19 @@ Example structure:
 - Important changes to existing features
 ```
 
-Also produce a separate file `changelog/releases/v0.X.0.md`
-containing only the new entry, for the GitHub release notes.
+Also produce a separate file `changelog/releases/v0.X.0.md` containing only the new entry, for the GitHub release notes.
 
-Commit:
-```
-docs: changelog for v0.X.0
-```
-
----
+**Commit**: `docs: changelog for v0.X.0`
 
 ## Step 4: Bump version
 
-AdaptiveLearner ships in lock-step. ALL components carry the same
-version string at every release. Only ONE file is hand-edited;
-everything else is propagated by tooling.
+AdaptiveLearner ships in lock-step. ALL components carry the same version string at every release. Only ONE file is hand-edited; everything else is propagated by tooling.
 
 ### Hand-edit (the ONLY editable version source)
 
 - [ ] `backend/pyproject.toml`: `version`
 
-That is the entire human-side checklist. Do not touch any other
-version field; do not touch `frontend/package.json`'s version,
-do not touch any `plugins/*/pyproject.toml`, do not touch the
-launcher spec or `__init__.py`. The tool does it.
+That is the entire human-side checklist. Do not touch any other version field; do not touch `frontend/package.json`'s version, do not touch any `plugins/*/pyproject.toml`, do not touch the launcher spec or `__init__.py`. The tool does it.
 
 ### Propagate to all subsystems
 
@@ -166,14 +131,13 @@ make sync-versions
 ```
 
 This single command updates:
+
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py` (`__version__` literal)
-- `launcher/adaptive-learner-launcher.spec` (CFBundleVersion +
-  CFBundleShortVersionString, both same value)
+- `launcher/adaptive-learner-launcher.spec` (CFBundleVersion + CFBundleShortVersionString, both same value)
 - All 13 `plugins/*/pyproject.toml`
-- `install.sh` (regenerated from `install.sh.template` via
-  `scripts/generate_install_sh.sh`)
+- `install.sh` (regenerated from `install.sh.template` via `scripts/generate_install_sh.sh`)
 
 ### Verify
 
@@ -182,19 +146,9 @@ make sync-versions-check
 scripts/verify_version_pins.sh <new-version>
 ```
 
-`make sync-versions-check` exits non-zero if any subsystem
-drifts from canonical. `verify_version_pins.sh` runs the same
-check plus regression detectors for hardcoded literals in the
-"DO NOT EDIT" tier (Python `__version__ = "..."` outside
-`_build_info`, any reintroduction of the removed
-`COMPATIBLE_VERSION` symbol, frontend `APP_VERSION = "..."`
-literals, `install.sh` template sync). Both must succeed
-before tagging.
+`make sync-versions-check` exits non-zero if any subsystem drifts from canonical. `verify_version_pins.sh` runs the same check plus regression detectors for hardcoded literals in the "DO NOT EDIT" tier (Python `__version__ = "..."` outside `_build_info`, any reintroduction of the removed `COMPATIBLE_VERSION` symbol, frontend `APP_VERSION = "..."` literals, `install.sh` template sync). Both must succeed before tagging.
 
-CI runs the same checks at `release-gate.yml` (on tag push) and
-again as the first step of every launcher build job (on
-`release: created`). Artifact attachment is blocked if either
-fails - this is hard enforcement, not advisory.
+CI runs the same checks at `release-gate.yml` (on tag push) and again as the first step of every launcher build job (on `release: created`). Artifact attachment is blocked if either fails - this is hard enforcement, not advisory.
 
 ### Tag and push
 
@@ -209,7 +163,7 @@ git push origin main --tags
 
 | Derived location | Source | Mechanism |
 |---|---|---|
-| `backend/app/__init__.py:__version__` | `backend/pyproject.toml` | tomllib parse at module import |
+| `backend/app/__init__.py:__version__` | `backend/pyproject.toml` | `tomllib` parse at module import |
 | `install.sh` | `install.sh.template` + `backend/pyproject.toml` | release-time substitution via `scripts/generate_install_sh.sh` (called by `sync-versions`) |
 | `launcher/adaptive_learner_launcher/installer.py:ADAPTIVE_LEARNER_TARGET_VERSION` | `backend/pyproject.toml` | PyInstaller build-time injection via `adaptive-learner-launcher.spec` writing `_build_info.py` |
 | `launcher/adaptive_learner_launcher/__init__.py:__version__` | `backend/pyproject.toml` | `make sync-versions` literal substitution (literal kept for frozen-binary compatibility) |
@@ -221,10 +175,7 @@ git push origin main --tags
 
 (`frontend/bun.lock` carries no app version, unlike npm's `package-lock.json` which duplicated it in two top-level fields; the `make sync-versions` surgery for it was removed when the frontend moved to Bun, #1492.)
 
-If a hardcoded version literal appears anywhere in the "DO NOT
-EDIT" list, the derivation is broken. Fix the derivation, do not
-edit the literal. The verify script's regression detectors catch
-new literals.
+If a hardcoded version literal appears anywhere in the "DO NOT EDIT" list, the derivation is broken. Fix the derivation, do not edit the literal. The verify script's regression detectors catch new literals.
 
 ### Conditional documentation updates (manual, only when needed)
 
@@ -233,18 +184,13 @@ new literals.
 
 ### External Adaptive Learner-owned dependencies
 
-One library that the Adaptive Learner project also maintains is
-pinned via the standard Poetry mechanism, NOT under
-`make sync-versions` automation. It has an independent release
-lifecycle:
+One library that the Adaptive Learner project also maintains is pinned via the standard Poetry mechanism, NOT under `make sync-versions` automation. It has an independent release lifecycle:
 
 - `pluginforge` (plugin framework, also used by other apps)
 
 At each Adaptive Learner release, manually verify:
 
-- [ ] `pluginforge` pin in `backend/pyproject.toml` and every
-      `plugins/*/pyproject.toml` matches the latest released
-      `pluginforge` on PyPI
+- [ ] `pluginforge` pin in `backend/pyproject.toml` and every `plugins/*/pyproject.toml` matches the latest released `pluginforge` on PyPI
 
 Quick check:
 
@@ -255,19 +201,11 @@ grep -rn "pluginforge" \
   | grep "version\|\^"
 ```
 
-The current deferral from `make sync-versions` rests on an
-assumption of low drift. If you find PluginForge drifting more
-than once between Adaptive Learner releases, bring it under
-`sync-versions` automation. Concrete repeated drift overrides
-the deferral.
+The current deferral from `make sync-versions` rests on an assumption of low drift. If you find PluginForge drifting more than once between Adaptive Learner releases, bring it under `sync-versions` automation. Concrete repeated drift overrides the deferral.
 
 ### Other release-time considerations
 
-The `make sync-versions` step covers all AdaptiveLearner-internal
-versions. The external-dep block above is the only manual
-checkpoint at release time.
-
----
+The `make sync-versions` step covers all AdaptiveLearner-internal versions. The external-dep block above is the only manual checkpoint at release time.
 
 ## Step 4b: Dependency currency check
 
@@ -279,24 +217,15 @@ cd launcher && poetry show --outdated
 cd frontend && bun outdated
 ```
 
-Apply routine bumps (patch + minor within the same major) as part
-of the release. Major bumps with breaking changes get their own
-dedicated session, not bundled into a release.
+Apply routine bumps (patch + minor within the same major) as part of the release. Major bumps with breaking changes get their own dedicated session, not bundled into a release.
 
-See ``lessons-learned.md`` "Release-cycle dependency review" for
-the stability filter and red-flag rules.
-
----
+See `lessons-learned.md` "Release-cycle dependency review" for the stability filter and red-flag rules.
 
 ## Step 5: Tests
 
-Full test suite. **Every command in this list is MANDATORY.**
-The 2026-05-04 v0.26.0 → v0.26.3 hotfix chain (four mechanical
-point releases for a chmod bit, a PyInstaller spec NameError,
-a mypy `[no-any-return]`, and a ruff-format nit) happened
-because the local pre-tag verification was skipped in favor of
-running only `make test`. Each hotfix was caught by a CI gate
-that the local sweep would have caught first. Do not skip.
+Full test suite. Every command in this list is MANDATORY.
+
+The 2026-05-04 v0.26.0 → v0.26.3 hotfix chain (four mechanical point releases for a chmod bit, a PyInstaller spec NameError, a mypy `[no-any-return]`, and a ruff-format nit) happened because the local pre-tag verification was skipped in favor of running only `make test`. Each hotfix was caught by a CI gate that the local sweep would have caught first. Do not skip.
 
 ```bash
 # Backend + all plugins
@@ -356,12 +285,11 @@ make verify-docs-discipline
 cd launcher && poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
 ```
 
-ALL must be green. On a red test:
+**ALL must be green.** On a red test:
+
 1. Abort the release
 2. Analyze and fix the problem
 3. Only then restart the release from step 1
-
----
 
 ## Step 6: Verify the build
 
@@ -382,8 +310,6 @@ make docker-build-smoke
 
 On a build error: stop, report, fix, restart.
 
----
-
 ## Step 7: Git tag and push
 
 ```bash
@@ -392,42 +318,30 @@ git push origin main
 git push origin v0.X.0
 ```
 
----
-
 ## Step 8: Create the GitHub Release
 
-Before invoking `gh release create`, build the per-release notes
-file by combining the static prerequisites template with the
-version-specific changelog:
+Before invoking `gh release create`, build the per-release notes file by combining the static prerequisites template with the version-specific changelog:
 
-1. Open `.github/RELEASE_TEMPLATE.md`. Copy the "Before you
-   install", "Download", and "Verifying downloads" sections into
-   `changelog/releases/v0.X.0.md` if not already present.
-2. Replace the trailing `## What's new` placeholder with the
-   per-version changelog excerpt produced in Step 3.
+1. Open `.github/RELEASE_TEMPLATE.md`. Copy the "Before you install", "Download", and "Verifying downloads" sections into `changelog/releases/v0.X.0.md` if not already present.
+2. Replace the trailing `## What's new` placeholder with the per-version changelog excerpt produced in Step 3.
 
-The template is a static reference; nothing reads it
-automatically. The reason it exists at all is to stop every
-release from rewriting the prerequisites block (Docker required,
-guide URLs, hash-verify commands) from memory and producing
-inconsistent or incomplete release pages.
+The template is a static reference; nothing reads it automatically. The reason it exists at all is to stop every release from rewriting the prerequisites block (Docker required, guide URLs, hash-verify commands) from memory and producing inconsistent or incomplete release pages.
 
 Then with the gh CLI (preferred):
+
 ```bash
 gh release create v0.X.0 \
   --title "AdaptiveLearner v0.X.0" \
   --notes-file changelog/releases/v0.X.0.md
 ```
 
-If the gh CLI is not available: print instructions for manual
-creation on GitHub:
-- URL: https://github.com/astrapi69/adaptive_learner/releases/new
-- Tag: select v0.X.0
-- Title: AdaptiveLearner v0.X.0
-- Notes: paste the contents of changelog/releases/v0.X.0.md
-- Click "Publish release"
+If the gh CLI is not available: print instructions for manual creation on GitHub:
 
----
+- URL: `https://github.com/astrapi69/adaptive_learner/releases/new`
+- Tag: select `v0.X.0`
+- Title: `AdaptiveLearner v0.X.0`
+- Notes: paste the contents of `changelog/releases/v0.X.0.md`
+- Click "Publish release"
 
 ## Step 9: Tag and push the Docker image
 
@@ -441,56 +355,40 @@ docker push adaptive_learner:latest
 
 If not active: skip this step and note it in the release log.
 
----
-
 ## Step 10: Deploy the documentation site
 
 When the help system with MkDocs is set up:
 
 - A GitHub Action triggers automatically on push to main
 - No manual step
-- Verify: https://astrapi69.github.io/adaptive_learner/ shows the new content
+- Verify: `https://astrapi69.github.io/adaptive_learner/` shows the new content
 - Check the action status: `gh run list --workflow=docs.yml --limit=1`
 
-On a failed deploy: pull the error from the action logs and fix it,
-but the release is still out.
-
----
+On a failed deploy: pull the error from the action logs and fix it, but the release is still out.
 
 ## Step 11: Post-release documentation
 
-- `docs/journal/chat-journal-session-{today}.md`:
-  release entry with version, date, main changes, deploy time
-- `ROADMAP.md`:
-  mark every item included in the release as `[x]`
-- `CLAUDE.md`:
-  update on new endpoints or architectural changes
-- `.claude/rules/lessons-learned.md`:
-  if anything noteworthy happened during the release (new pitfall,
-  workflow improvement), document it
+- `docs/journal/chat-journal-session-{today}.md`: release entry with version, date, main changes, deploy time
+- `ROADMAP.md`: mark every item included in the release as `[x]`
+- `CLAUDE.md`: update on new endpoints or architectural changes
+- `.claude/rules/lessons-learned.md`: if anything noteworthy happened during the release (new pitfall, workflow improvement), document it
 
-Commit:
-```
-docs: post-release documentation v0.X.0
-```
+**Commit**: `docs: post-release documentation v0.X.0`
 
 ```bash
 git push origin main
 ```
 
----
-
 ## Final checklist
 
-This checklist MUST be fully checked off before the release counts
-as "done". Missing items block the release.
+This checklist MUST be fully checked off before the release counts as "done". Missing items block the release.
 
 - [ ] Reviewed the commits since the last tag
 - [ ] Version number picked per SemVer and confirmed by the user
 - [ ] CHANGELOG.md with the new entry committed
-- [ ] changelog/releases/v0.X.0.md created for the GitHub release
+- [ ] `changelog/releases/v0.X.0.md` created for the GitHub release
 - [ ] Version updated in all pyproject.toml and package.json
-- [ ] Version updated in __version__ and other Python modules
+- [ ] Version updated in version and other Python modules
 - [ ] pluginforge and other externally-owned Adaptive Learner deps at the current version
 - [ ] `make test` green
 - [ ] Frontend `tsc --noEmit` clean
@@ -514,32 +412,25 @@ as "done". Missing items block the release.
 - [ ] CLAUDE.md updated (if needed)
 - [ ] Post-release commit pushed
 
----
-
 ## Troubleshooting
 
 ### Tests fail right before the release
 
-Do not break out of the workflow. Abort the release, fix the test,
-commit, restart from step 1. No workarounds like "disable the test
-for this release".
+Do not break out of the workflow. Abort the release, fix the test, commit, restart from step 1. No workarounds like "disable the test for this release".
 
 ### Build broken because of dependencies
 
-`poetry lock --no-update` and `bun install` in both projects, then
-rebuild. On persistent errors: abort the release, solve the problem
-in its own commit.
+`poetry lock --no-update` and `bun install` in both projects, then rebuild. On persistent errors: abort the release, solve the problem in its own commit.
 
 ### GitHub Action for the docs failed
 
-The release tag stays valid. The docs deploy is a separate problem
-that can be fixed after the release. Note it in the chat journal.
+The release tag stays valid. The docs deploy is a separate problem that can be fixed after the release. Note it in the chat journal.
 
 ### Docker push fails
 
 Check the login: `docker login`. Check the tag: `docker images | grep adaptive_learner`.
-On a registry problem: the release is still valid; retry the push
-when the registry is available again.
+
+On a registry problem: the release is still valid; retry the push when the registry is available again.
 
 ### Wrong version number after a tag push
 
@@ -548,34 +439,20 @@ git tag -d v0.X.0
 git push origin :refs/tags/v0.X.0
 ```
 
-Then a new tag with the correct number. CAUTION: only if the tag
-has not yet been published as a GitHub release and nobody has
-already pulled it.
-
----
+Then a new tag with the correct number. **CAUTION**: only if the tag has not yet been published as a GitHub release and nobody has already pulled it.
 
 ## Versioning convention
 
 AdaptiveLearner follows Semantic Versioning 2.0.0:
 
-- **Major (X.0.0)**: breaking changes in the API or fundamental
-  architectural changes. Rare in the 0.x phase.
-- **Minor (0.X.0)**: new features, backward-compatible. Small
-  breaking changes are acceptable in 0.x, but must be called out
-  prominently in the CHANGELOG.
-- **Patch (0.X.Y)**: bug fixes, backward-compatible.
+- **Major** (X.0.0): breaking changes in the API or fundamental architectural changes. Rare in the 0.x phase.
+- **Minor** (0.X.0): new features, backward-compatible. Small breaking changes are acceptable in 0.x, but must be called out prominently in the CHANGELOG.
+- **Patch** (0.X.Y): bug fixes, backward-compatible.
 
-Pre-release tags (`-alpha`, `-beta`, `-rc`) are currently not used.
-Releases are always stable.
-
----
+Pre-release tags (`-alpha`, `-beta`, `-rc`) are currently not used. Releases are always stable.
 
 ## Note for Claude Code
 
-This workflow is a guide, not a rigid script. If the user explicitly
-asks for a deviation (e.g. "skip Docker this time"), accept it and
-document in the chat journal WHY it was deviated from.
+This workflow is a guide, not a rigid script. If the user explicitly asks for a deviation (e.g. "skip Docker this time"), accept it and document in the chat journal WHY it was deviated from.
 
-But: checklist items that touch safety (tests green, build successful,
-correct version) must NEVER be skipped, not even on instruction.
-Better to postpone the release than to ship broken software.
+But: checklist items that touch safety (tests green, build successful, correct version) must NEVER be skipped, not even on instruction. Better to postpone the release than to ship broken software.
