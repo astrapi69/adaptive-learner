@@ -26,6 +26,114 @@ Sortiert nach Prioritaet. Launch-Blocker zuerst.
 
 ---
 
+## Manuelle Geraete-QA - Konsolidierte Checkliste (Stand 25.07.2026)
+
+Alles hier kann NUR manuell erledigt werden. Zwei Sessions, einmal iPhone,
+einmal Ubuntu.
+
+### Session A: iPhone (iOS PWA/Standalone)
+
+Voraussetzung: #2050 gemerged, aktueller develop-Stand deployed (bzw.
+Preview).
+
+#### A1. BACKUP-AKZEPTANZTEST (Launch-Gate, seit fruehen Sessions offen)
+
+Echter Round-Trip, keine Simulation:
+
+- [ ] App im Standalone-Modus mit realen Daten: mindestens ein importiertes
+      Set, Lernfortschritt in mehreren Lektionen, ein Set auf
+      "zurueckgestellt" (deferred), ein Set abgeschlossen, eigene Uebung
+      angelegt.
+- [ ] Backup exportieren (.alb), Datei nachweislich ausserhalb der App
+      sichern (Dateien-App/AirDrop).
+- [ ] Harter Wipe: App-Daten vollstaendig loeschen (Safari-Websitedaten fuer
+      die Domain entfernen, App neu installieren/oeffnen - das ist die echte
+      WKWebView-Eviction, nicht `localStorage.clear()`).
+- [ ] Frischen Zustand verifizieren: App leer.
+- [ ] Backup importieren.
+- [ ] Pruefen: Lernfortschritt vorhanden, Deferred-Markierung vorhanden (der
+      #2050-Pfad!), abgeschlossenes Set korrekt, eigene Uebung vorhanden,
+      Einstellungen plausibel.
+- [ ] Danach eine Lektion normal weiterlernen - kein Folgefehler.
+
+Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen:
+Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
+
+#### A2. Mobile Scroll-to-Error (#2039, Visual-Device-Check vor Merge)
+
+- [ ] Formular mit Validierungsfehler ausserhalb des Viewports provozieren
+      (langes Formular, Fehler oben, Abschicken von unten).
+- [ ] Erwartet: automatischer Scroll zum ersten Fehlerfeld, Fehler sichtbar
+      und fokussiert.
+- [ ] Einmal Hochformat, einmal mit eingeblendeter Tastatur.
+
+#### A3. Rueckstands-Issues iOS
+
+- [ ] Die offenen iOS-Verifikationspunkte aus dem Tracker in derselben
+      Session abarbeiten (Liste aus den jeweiligen Issues, jeweils Ergebnis
+      als Issue-Kommentar).
+
+#### A4. Lektion loeschen (#2064, gemerged) - ueberschneidet sich mit A1
+
+Dieses Feature verlangt laut Testplan beide Speichermodi plus
+Backup-Round-Trip inklusive iOS-Standalone. Das ist in der Substanz
+derselbe Ablauf wie A1. Beides in einem Durchgang erledigen (siehe auch
+den Abschnitt "Einzelne Lektion loeschen (#2064)" weiter unten):
+
+- [ ] In "Meine Inhalte" eine Lektion mit vorhandenem Lernfortschritt
+      loeschen.
+- [ ] Bestaetigungsdialog pruefen: Nennt er den Lernfortschritt (gelernte
+      Karten), nicht nur die Uebungszahl?
+- [ ] Nach dem Loeschen: Lektion weg, keine verwaisten Karten in der
+      Wiederholung, Favorit entfernt, Nummerierung mit Luecke wie
+      entschieden.
+- [ ] Backup von VOR dem Loeschen importieren: Lektion kommt zurueck (Backup
+      ist ein Zeitpunkt, so entschieden). Das ist erwartetes Verhalten, kein
+      Fehler.
+- [ ] Beide Speichermodi.
+
+#### A5. Wizard-Schritt-Reset (#2061, gemerged) - kurz, auch am Desktop moeglich
+
+- [ ] Buch-Set oeffnen, "Lektion bearbeiten", zu Schritt 2 navigieren.
+- [ ] Im Dropdown ein anderes Kapitel waehlen: Schritt 2 bleibt, Uebungen der
+      neuen Lektion erscheinen.
+- [ ] Randfaelle: Wechsel zu einer Lektion ohne Uebungen, Rueckwaertswechsel.
+
+### Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
+
+Voraussetzung: die Launcher-Session ist geliefert (Modusentscheidung, Pin
+auf >=0.21.0, neue Binaries mit Run-IDs). Nur diese Binaries verwenden, alle
+aelteren sind obsolet.
+
+- [ ] Daemon laeuft + Testnutzer OHNE docker-Gruppe (qatest):
+      Permission-Meldung + pkexec-Fix-Angebot, NICHT "Docker starten". [seit
+      dem 0.16.0-Fehlschlag ohne realen Beweis]
+- [ ] pkexec-Fix ausfuehren, echte Neuanmeldung: Zustand wechselt zu "Docker
+      laeuft".
+- [ ] Konsole sichtbar, Detection-Zeilen streamen, Text-Wrap korrekt, Fenster
+      resizable.
+- [ ] Branding "Adaptive Learner", About: Launcher 0.21.0, App 2.6.0 mit
+      Quellen-Label.
+- [ ] Setup laeuft durch bis zum erreichbaren App-Frontend im Browser.
+      Beweisziel je nach Modus: im dockerfile-Modus Build und Start ohne
+      Compose und ohne buildx auf dem Docker-20.10-Geraet, im compose-Modus
+      vollstaendige Bereitschaftsmeldung mit funktionierender Anleitung.
+- [ ] Zweitstart bei laufendem Launcher: fokussiert das bestehende Fenster
+      (#31).
+- [ ] Stoppen, erneut starten, deinstallieren: keine Fehler, Konsole meldet
+      nachvollziehbar.
+- [ ] Portwechsel NICHT testen, bis das Origin-Datenverlustrisiko geklaert ist
+      (eigener Auftrag laeuft).
+
+### Reihenfolge-Empfehlung
+
+Session A zuerst und in einem Durchgang: A1 und A4 teilen sich den
+Backup-Round-Trip, A2 und A5 sind kurze Zusatzpruefungen. Damit faellt in
+einer Sitzung das aelteste Launch-Gate zusammen mit zwei frisch gemergten
+Features. Session B erst, wenn die neuen Binaries vorliegen.
+
+---
+
 ## PRIO 1: BACKUP-AKZEPTANZTEST (Launch-Gate!)
 
 **Neuer Testfall unter PRIO 1 Backup-Akzeptanztest:**

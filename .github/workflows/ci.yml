@@ -461,6 +461,10 @@ jobs:
       # into a no-op; turning one off requires a declared reason.
       - name: Verify check inventory
         run: python3 scripts/verify_check_inventory.py
+      # #2091: the rule corpus is injected into every prompt, so its size is
+      # paid on every turn. It may shrink; growing it is a deliberate act.
+      - name: Verify rule corpus size
+        run: python3 scripts/verify_rule_corpus_size.py
       # #2087: declared rule changes must converge in docs/rule-change-log.md.
       # On a PR this only reports; the log is appended when the change lands.
       - name: Check the rule change log is current
