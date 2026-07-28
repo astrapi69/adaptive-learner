@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: Test strategy, coverage targets, mutation testing, BACKUP-AKZEPTANZTEST, visual device check, feature screenshots, test pyramid, pre-commit checklists
 globs:
   - backend/tests/**/*.py

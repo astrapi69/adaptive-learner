@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: Cross-cutting pitfall classes that apply no matter which file you touch - data-loss prevention, wired-vs-working, real-interface testing, audit discipline
 globs:
   - "**/*"

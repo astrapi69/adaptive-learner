@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: Content + dual-storage lifecycle pitfalls - Dexie/API parity, ghost content, source-language inheritance
 globs:
   - frontend/src/storage/**/*
