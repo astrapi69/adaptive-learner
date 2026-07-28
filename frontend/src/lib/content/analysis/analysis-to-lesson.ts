@@ -66,6 +66,7 @@ import { errorCorrectionPayloadErrors } from "../../exercises/payload/error-corr
 import { readingComprehensionPayloadErrors } from "../../exercises/payload/reading-comprehension";
 import { gradedQuizPayloadErrors } from "../../exercises/payload/graded-quiz";
 import { dictationPayloadErrors } from "../../exercises/payload/dictation";
+import { imageDescriptionPayloadErrors } from "../../exercises/payload/image-description";
 import { validateLessonShape } from "../validation/lesson-schema-validator";
 
 /** Lowercase unicode slug (#1808): lesson-internal ids/tags accept
@@ -653,6 +654,10 @@ const EXERCISE_TYPE_CHECKS: Record<string, ExerciseCheck> = {
   },
   "ext:al-dictation": (exercise, fail) => {
     const payloadErrors = dictationPayloadErrors(exercise);
+    if (payloadErrors.length > 0) fail(payloadErrors[0]);
+  },
+  "ext:al-image-description": (exercise, fail) => {
+    const payloadErrors = imageDescriptionPayloadErrors(exercise);
     if (payloadErrors.length > 0) fail(payloadErrors[0]);
   },
 };

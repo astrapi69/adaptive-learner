@@ -802,6 +802,73 @@ describe("adopted extension ext:al-dictation (#1881, fifth adoption)", () => {
   });
 });
 
+describe("adopted extension ext:al-image-description (#2095, sixth adoption)", () => {
+  const imageExercise = {
+    id: "ex-imgdesc-01",
+    type: "ext:al-image-description",
+    prompt: "Describe what you see.",
+    card_ids: [],
+    distractors: [],
+    ext_payload: {
+      image: "assets/img/cat.png",
+      accept: ["a cat", "cat"],
+    },
+  };
+
+  const imageLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-image-description@1"],
+      steps: [
+        {
+          id: "step-imgdesc-01",
+          type: "exercise",
+          exercise: {
+            ...imageExercise,
+            ...(payloadOverride === undefined
+              ? {}
+              : { ext_payload: payloadOverride }),
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(imageLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed image-description exercise", () => {
+    expect(() => validateGeneratedLesson(imageLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson accepts an embedded data URI image", () => {
+    const embedded = imageLesson({
+      image: "data:image/jpeg;base64,/9j/4AAQSkZJRg==",
+      accept: ["a cat"],
+    });
+    expect(() => validateGeneratedLesson(embedded)).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses an empty image reference", () => {
+    const noImage = imageLesson({ image: "", accept: ["a cat"] });
+    expect(() => validateGeneratedLesson(noImage)).toThrow(/image/);
+  });
+
+  it("validateGeneratedLesson refuses a remote image URL (offline-first)", () => {
+    const remote = imageLesson({
+      image: "https://example.com/cat.png",
+      accept: ["a cat"],
+    });
+    expect(() => validateGeneratedLesson(remote)).toThrow(/image|remote/);
+  });
+
+  it("validateGeneratedLesson refuses an accept list with no non-empty entry", () => {
+    const noAccept = imageLesson({ image: "assets/img/cat.png", accept: ["", "  "] });
+    expect(() => validateGeneratedLesson(noAccept)).toThrow(/accept/);
+  });
+});
+
 // #1895 — the reverse-consistency load guard: a lesson that USES an extension
 // exercise type but never DECLARES it in ``requires_extensions`` would load
 // fine in an app that supports the extension yet mis-render (fall through to
