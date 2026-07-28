@@ -36,6 +36,10 @@ import {
     type GqQuestion,
 } from "../payload/graded-quiz";
 import {DICTATION_EXT_TYPE, dictationPayloadErrors} from "../payload/dictation";
+import {
+    IMAGE_DESCRIPTION_EXT_TYPE,
+    imageDescriptionPayloadErrors,
+} from "../payload/image-description";
 import type {ContentLessonExercise} from "../../../storage/types";
 import {createIdFactory} from "./id-factory";
 
@@ -45,16 +49,18 @@ export {
     READING_COMPREHENSION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
     DICTATION_EXT_TYPE,
+    IMAGE_DESCRIPTION_EXT_TYPE,
 };
 
 /** The extension exercise types the wizard can author (#1852, editors 1-4;
- *  #1887 added dictation, editor 5). */
+ *  #1887 added dictation, editor 5; #2095 added image-description, editor 6). */
 export const EXTENSION_WIZARD_TYPES = [
     CATEGORIZATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
     DICTATION_EXT_TYPE,
+    IMAGE_DESCRIPTION_EXT_TYPE,
 ] as const;
 
 export type ExtensionWizardType = (typeof EXTENSION_WIZARD_TYPES)[number];
@@ -101,7 +107,8 @@ export type ExtensionEditCode =
     | "error_correction"
     | "reading_comprehension"
     | "graded_quiz"
-    | "dictation";
+    | "dictation"
+    | "image_description";
 
 /** Result of validating an extension exercise draft: whether it is saveable
  *  and, when not, the machine {@link ExtensionEditCode} of the failed rule. */
@@ -157,6 +164,7 @@ const BLANK_PAYLOAD: Record<ExtensionWizardType, () => unknown> = {
         questions: [blankSubQuestion(true)],
     }),
     [DICTATION_EXT_TYPE]: () => ({audio: "", accept: []}),
+    [IMAGE_DESCRIPTION_EXT_TYPE]: () => ({image: "", accept: []}),
 };
 
 /**
@@ -217,6 +225,11 @@ export function validateExtensionExercise(
     if (ex.type === DICTATION_EXT_TYPE) {
         return dictationPayloadErrors(ex).length === 0 ? ok : fail("dictation");
     }
+    if (ex.type === IMAGE_DESCRIPTION_EXT_TYPE) {
+        return imageDescriptionPayloadErrors(ex).length === 0
+            ? ok
+            : fail("image_description");
+    }
     // A type without a wizard editor is never blocked here.
     return ok;
 }
@@ -269,26 +282,26 @@ function normalizeSubQuestions(
     return (payload?.questions ?? []).map((q) => normalizeSubQuestion(q, withPoints));
 }
 
-/**
- * Normalize a validated extension draft before it is committed: trim the
- * prompt + payload strings, drop empty categories/items/accepts/options.
- * ``error_correction`` tokens are POSITIONAL (``error_index`` points into
- * them), so they are trimmed in place, never dropped.
- */
-export function normalizeExtensionExercise(
-    ex: ContentLessonExercise,
-): ContentLessonExercise {
-    const prompt = ex.prompt.trim();
-    if (ex.type === CATEGORIZATION_EXT_TYPE) {
+/** Per-type ``ext_payload`` normalizer. Keyed by the wizard type so the
+ *  cascade lives in a dispatch table (one small function per type) rather than
+ *  one growing if-chain — each entry stays individually testable + low
+ *  complexity as more types are adopted. */
+type ExtensionPayloadNormalizer = (ex: ContentLessonExercise) => unknown;
+
+const NORMALIZE_EXTENSION_PAYLOAD: Record<
+    ExtensionWizardType,
+    ExtensionPayloadNormalizer
+> = {
+    [CATEGORIZATION_EXT_TYPE]: (ex) => {
         const payload = ex.ext_payload as
             | {categories?: {name: string; items: string[]}[]}
             | undefined;
         const categories = (payload?.categories ?? [])
             .map((c) => ({name: c.name.trim(), items: trimmedNonEmpty(c.items)}))
             .filter((c) => c.name.length > 0 && c.items.length > 0);
-        return {...ex, prompt, ext_payload: {categories}} as ContentLessonExercise;
-    }
-    if (ex.type === ERROR_CORRECTION_EXT_TYPE) {
+        return {categories};
+    },
+    [ERROR_CORRECTION_EXT_TYPE]: (ex) => {
         const payload = ex.ext_payload as
             | {tokens?: string[]; error_index?: number; accept?: string[]}
             | undefined;
@@ -298,46 +311,59 @@ export function normalizeExtensionExercise(
             Math.max(0, Math.trunc(rawIndex)),
             Math.max(0, tokens.length - 1),
         );
-        return {
-            ...ex,
-            prompt,
-            ext_payload: {tokens, error_index, accept: trimmedNonEmpty(payload?.accept)},
-        } as ContentLessonExercise;
-    }
-    if (ex.type === READING_COMPREHENSION_EXT_TYPE) {
+        return {tokens, error_index, accept: trimmedNonEmpty(payload?.accept)};
+    },
+    [READING_COMPREHENSION_EXT_TYPE]: (ex) => {
         const payload = ex.ext_payload as {passage?: string} | undefined;
         return {
-            ...ex,
-            prompt,
-            ext_payload: {
-                passage: (payload?.passage ?? "").trim(),
-                questions: normalizeSubQuestions(ex, false),
-            },
-        } as ContentLessonExercise;
-    }
-    if (ex.type === GRADED_QUIZ_EXT_TYPE) {
+            passage: (payload?.passage ?? "").trim(),
+            questions: normalizeSubQuestions(ex, false),
+        };
+    },
+    [GRADED_QUIZ_EXT_TYPE]: (ex) => {
         const payload = ex.ext_payload as {pass_threshold?: number} | undefined;
         return {
-            ...ex,
-            prompt,
-            ext_payload: {
-                pass_threshold: payload?.pass_threshold,
-                questions: normalizeSubQuestions(ex, true),
-            },
-        } as ContentLessonExercise;
-    }
-    if (ex.type === DICTATION_EXT_TYPE) {
+            pass_threshold: payload?.pass_threshold,
+            questions: normalizeSubQuestions(ex, true),
+        };
+    },
+    [DICTATION_EXT_TYPE]: (ex) => {
         const payload = ex.ext_payload as
             | {audio?: string; accept?: string[]}
             | undefined;
         return {
-            ...ex,
-            prompt,
-            ext_payload: {
-                audio: (payload?.audio ?? "").trim(),
-                accept: trimmedNonEmpty(payload?.accept),
-            },
-        } as ContentLessonExercise;
-    }
-    return {...ex, prompt};
+            audio: (payload?.audio ?? "").trim(),
+            accept: trimmedNonEmpty(payload?.accept),
+        };
+    },
+    [IMAGE_DESCRIPTION_EXT_TYPE]: (ex) => {
+        const payload = ex.ext_payload as
+            | {image?: string; accept?: string[]}
+            | undefined;
+        return {
+            image: (payload?.image ?? "").trim(),
+            accept: trimmedNonEmpty(payload?.accept),
+        };
+    },
+};
+
+/**
+ * Normalize a validated extension draft before it is committed: trim the
+ * prompt + payload strings, drop empty categories/items/accepts/options.
+ * ``error_correction`` tokens are POSITIONAL (``error_index`` points into
+ * them), so they are trimmed in place, never dropped. A type without a
+ * wizard normalizer keeps its payload untouched (only the prompt is trimmed).
+ */
+export function normalizeExtensionExercise(
+    ex: ContentLessonExercise,
+): ContentLessonExercise {
+    const prompt = ex.prompt.trim();
+    const normalizePayload =
+        NORMALIZE_EXTENSION_PAYLOAD[ex.type as ExtensionWizardType];
+    if (!normalizePayload) return {...ex, prompt};
+    return {
+        ...ex,
+        prompt,
+        ext_payload: normalizePayload(ex),
+    } as ContentLessonExercise;
 }

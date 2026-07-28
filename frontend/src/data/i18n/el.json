@@ -3007,7 +3007,8 @@
         "error-correction": "Διόρθωση λαθών",
         "reading-comprehension": "Κατανόηση κειμένου",
         "graded-quiz": "Βαθμολογημένο κουίζ",
-        "dictation": "Υπαγόρευση"
+        "dictation": "Υπαγόρευση",
+        "image-description": "Περιγραφή εικόνας"
       },
       "edit": {
         "prompt_label": "Οδηγία / εκφώνηση",
@@ -3034,6 +3035,14 @@
         "dict_accept_add": "Προσθήκη",
         "dict_accept_remove": "Αφαίρεση μεταγραφής",
         "dict_accept_placeholder": "Τι πρέπει να πληκτρολογήσει ο μαθητής",
+        "err_image_description": "Προσθέστε μια εικόνα και τουλάχιστον μία αποδεκτή απάντηση.",
+        "imgdesc_image_label": "Εικόνα προς περιγραφή",
+        "imgdesc_image_preview_alt": "Εικόνα προς περιγραφή",
+        "imgdesc_image_budget_hint": "Η εικόνα συμπιέζεται και ενσωματώνεται (έως ~150 KB, 512 px) ώστε η άσκηση να λειτουργεί εκτός σύνδεσης και να περιλαμβάνεται στο αντίγραφο ασφαλείας. Οι απομακρυσμένοι σύνδεσμοι δεν επιτρέπονται.",
+        "imgdesc_accept_label": "Αποδεκτές απαντήσεις",
+        "imgdesc_accept_add": "Προσθήκη",
+        "imgdesc_accept_remove": "Αφαίρεση απάντησης",
+        "imgdesc_accept_placeholder": "Τι πρέπει να πληκτρολογήσει ο μαθητής",
         "q_list_label": "Ερωτήσεις",
         "q_prompt_label": "Ερώτηση",
         "q_prompt_placeholder": "Ερώτηση",

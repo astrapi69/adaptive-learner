@@ -37,7 +37,8 @@ export type RawAnswer =
   /** #1881 — adopted extension ``ext:al-dictation``: the typed transcription
    *  of the audio clip, persisted so a revisited, locked exercise restores
    *  its exact input. */
-  | { kind: "al_dictation"; input: string };
+  | { kind: "al_dictation"; input: string }
+  | { kind: "al_image_description"; input: string };
 
 export interface LessonStepResult {
   step_id: string;

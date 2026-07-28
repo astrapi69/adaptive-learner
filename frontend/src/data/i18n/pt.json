@@ -3007,7 +3007,8 @@
         "error-correction": "Correção de erros",
         "reading-comprehension": "Compreensão de leitura",
         "graded-quiz": "Questionário avaliado",
-        "dictation": "Ditado"
+        "dictation": "Ditado",
+        "image-description": "Descrição de imagem"
       },
       "edit": {
         "prompt_label": "Instrução / enunciado",
@@ -3034,6 +3035,14 @@
         "dict_accept_add": "Adicionar",
         "dict_accept_remove": "Remover transcrição",
         "dict_accept_placeholder": "O que o aluno deve digitar",
+        "err_image_description": "Adicione uma imagem e pelo menos uma resposta aceita.",
+        "imgdesc_image_label": "Imagem a descrever",
+        "imgdesc_image_preview_alt": "Imagem a descrever",
+        "imgdesc_image_budget_hint": "A imagem é compactada e incorporada (máx. ~150 KB, 512 px) para que o exercício funcione offline e seja incluído no backup. Links remotos não são permitidos.",
+        "imgdesc_accept_label": "Respostas aceitas",
+        "imgdesc_accept_add": "Adicionar",
+        "imgdesc_accept_remove": "Remover resposta",
+        "imgdesc_accept_placeholder": "O que o aluno deve digitar",
         "q_list_label": "Perguntas",
         "q_prompt_label": "Pergunta",
         "q_prompt_placeholder": "Pergunta",

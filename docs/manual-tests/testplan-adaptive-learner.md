@@ -294,6 +294,17 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       tippen; richtig / knapp daneben ("Almost!") / falsch zeigt die Loesung;
       eine Lektion mit `requires_extensions: ["ext:al-dictation@1"]` laedt
       (wird nicht vom Guard abgelehnt)
+- [ ] ext:al-image-description (#2095): das Bild wird gezeigt, eine
+      Freitext-Beschreibung tippen; richtig / knapp daneben ("Almost!") /
+      falsch zeigt die Loesung; eine Lektion mit
+      `requires_extensions: ["ext:al-image-description@1"]` laedt (nicht vom
+      Guard abgelehnt). Ein eingebettetes Bild wird OHNE Netzverbindung
+      angezeigt (Offline-First); eine Lektion mit einer entfernten
+      `http(s)://`-Bild-URL wird vom Guard abgelehnt. Vorlesen: der Prompt hat
+      einen Lautsprecher-Button (die Anweisung wird vorgelesen, nie die
+      Antwort). a11y-Hinweis: dieser Typ ist bewusst visuell voraussetzungs-
+      behaftet (die Antwort IST die Bildbeschreibung) - ein Screenreader hoert
+      ein neutrales Bild-Label, nicht die Loesung.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
 
@@ -480,14 +491,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       → Karte "Erweiterte Uebungstypen" startet einen eigenen 3-Schritt-Flow
       (Autoren → Review → Speichern) mit einem nicht-blockierenden Hinweis,
       dass diese Typen fortgeschritten sind. Schritt 2: "Erweiterungsuebung
-      hinzufuegen" bietet fuenf Typen — **Kategorisierung**, **Fehlerkorrektur**,
-      **Leseverstaendnis**, **Benotetes Quiz**, **Diktat**. Je Typ oeffnet der
+      hinzufuegen" bietet sechs Typen — **Kategorisierung**, **Fehlerkorrektur**,
+      **Leseverstaendnis**, **Benotetes Quiz**, **Diktat**,
+      **Bildbeschreibung**. Je Typ oeffnet der
       Inline-Editor mit den passenden Feldern; Speichern ist deaktiviert bis der
       shipped Validator erfuellt ist (Kategorisierung: ≥2 benannte Buckets mit
       Items; Fehlerkorrektur: ≥2 Woerter + markierter Fehler + Korrektur;
       Leseverstaendnis: Text + ≥1 vollstaendige Frage; Benotetes Quiz: ≥1 Frage
       mit positiven Punkten; Diktat: nicht-leerer Audio-Pfad + ≥1 akzeptierte
-      Transkription). Leseverstaendnis + Benotetes Quiz: pro Frage Umschalten
+      Transkription; Bildbeschreibung: nicht-leeres Bild + ≥1 akzeptierte
+      Antwort). Leseverstaendnis + Benotetes Quiz: pro Frage Umschalten
       Multiple-Choice ⇄ Freitext, MC-Optionen mit Richtig-Haken, Benotetes Quiz
       zusaetzlich Punkte + Teilpunkte + Bestehensgrenze. Diktat (#1887): ein
       getippter `assets/audio/...`-Pfad (kein Upload in v1) + die Liste der
@@ -521,6 +534,26 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       als Alternative (kein Upload). **Fehler:** eine zu grosse Datei (> 2 MB)
       ODER ein falsches Format (z. B. `.mp4`) zeigt eine klare Inline-Fehlermeldung
       und stuerzt nicht ab; nichts wird gespeichert
+- [ ] **Bildbeschreibung-Authoring (#2095):** Im Extension-Wizard
+      **Bildbeschreibung** waehlen. Der Editor zeigt einen **"Bild
+      hochladen"**-Button (Label "Zu beschreibendes Bild", NICHT "(optional)"),
+      einen sichtbaren Groessen-Hinweis ("komprimiert und eingebettet, max.
+      ~150 KB / 512 px, externe Links nicht erlaubt") und eine Liste
+      **"Akzeptierte Antworten"**. Echtes JPG/PNG/WebP hochladen → Inline-
+      Vorschau + "Entfernen" erscheinen; das Bild wird als Data-URI komprimiert
+      (kein assets-Ordner noetig). Speichern ist deaktiviert bis es ein Bild UND
+      ≥1 akzeptierte Antwort gibt. Lektion speichern, abspielen: das **Bild wird
+      gezeigt**, Beschreibung tippen, richtig / knapp daneben / falsch zeigt die
+      Loesung. **Offline:** Netz ausschalten und neu laden — das eingebettete
+      Bild wird WEITERHIN angezeigt (es reist in der Lektion-JSON, keine
+      entfernte URL). **Fehler:** ein Bild, das nicht unter das Budget
+      schrumpfbar ist, zeigt eine klare Inline-Fehlermeldung, nichts wird
+      gespeichert. **iOS-Standalone (PFLICHT):** in einer installierten iOS-PWA
+      eine Bildbeschreibung-Lektion mit hochgeladenem Foto anlegen, Backup
+      exportieren (`.alb`), neu installieren/loeschen, importieren → Lektion
+      oeffnen: Bild + akzeptierte Antworten sind intakt und das Bild wird ohne
+      Netz angezeigt (beweist, dass das eingebettete Bild den iOS-IndexedDB- +
+      Backup-Round-Trip ueberlebt, die bekannte Verdraengungs-Risikoflaeche)
 - [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,

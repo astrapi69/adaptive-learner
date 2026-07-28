@@ -9,6 +9,7 @@ import {
     DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
+    IMAGE_DESCRIPTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     createBlankExtensionExercise,
     newExtensionExerciseId,
@@ -68,6 +69,16 @@ function dict(payload: unknown, prompt = "Type what you hear"): ContentLessonExe
         ext_payload: payload,
     } as ContentLessonExercise;
 }
+function img(payload: unknown, prompt = "Describe the image"): ContentLessonExercise {
+    return {
+        id: "i1",
+        type: IMAGE_DESCRIPTION_EXT_TYPE,
+        prompt,
+        card_ids: [],
+        distractors: [],
+        ext_payload: payload,
+    } as ContentLessonExercise;
+}
 
 describe("newExtensionExerciseId", () => {
     it("is unique + prefixed", () => {
@@ -103,6 +114,12 @@ describe("createBlankExtensionExercise", () => {
         const ex = createBlankExtensionExercise(DICTATION_EXT_TYPE, "d");
         expect(ex.type).toBe(DICTATION_EXT_TYPE);
         expect(ex.ext_payload).toEqual({audio: "", accept: []});
+        expect(validateExtensionExercise(ex).valid).toBe(false);
+    });
+    it("image_description blank has an empty image + no accept and is invalid", () => {
+        const ex = createBlankExtensionExercise(IMAGE_DESCRIPTION_EXT_TYPE, "i");
+        expect(ex.type).toBe(IMAGE_DESCRIPTION_EXT_TYPE);
+        expect(ex.ext_payload).toEqual({image: "", accept: []});
         expect(validateExtensionExercise(ex).valid).toBe(false);
     });
     it("graded_quiz blank has a threshold + one question with points and is invalid", () => {
@@ -438,5 +455,71 @@ describe("validateExtensionExercise — dictation (reuses payload validator)", (
         );
         expect(res.valid).toBe(false);
         expect(res.code).toBe("dictation");
+    });
+});
+
+describe("normalizeExtensionExercise — image_description", () => {
+    it("trims the image reference + drops empty accept entries", () => {
+        const out = normalizeExtensionExercise(
+            img(
+                {image: "  data:image/jpeg;base64,AAAA  ", accept: [" a cat ", "", "  "]},
+                "  Describe  ",
+            ),
+        );
+        expect(out.prompt).toBe("Describe");
+        expect(out.ext_payload).toEqual({
+            image: "data:image/jpeg;base64,AAAA",
+            accept: ["a cat"],
+        });
+    });
+
+    it("emits an ext_payload with no null/undefined keys and is idempotent (#1919)", () => {
+        // The #1919 reconstruction hands the SAVED payload back verbatim, and
+        // Save re-normalizes it: normalize(normalize(x)) must equal normalize(x),
+        // with every key concretely valued (never undefined) so API-mode
+        // ``exclude_none`` cannot serialize a rejected ``null``.
+        const once = normalizeExtensionExercise(
+            img({image: "assets/img/cat.png", accept: ["a cat"]}),
+        );
+        const twice = normalizeExtensionExercise(once);
+        expect(twice.ext_payload).toEqual(once.ext_payload);
+        const payload = once.ext_payload as Record<string, unknown>;
+        for (const value of Object.values(payload)) {
+            expect(value).not.toBeUndefined();
+            expect(value).not.toBeNull();
+        }
+    });
+});
+
+describe("validateExtensionExercise — image_description (reuses payload validator)", () => {
+    it("accepts a non-empty image + >= 1 accept entry", () => {
+        const ex = img({image: "assets/img/cat.png", accept: ["a cat"]});
+        expect(validateExtensionExercise(ex).valid).toBe(true);
+    });
+    it("rejects an empty prompt", () => {
+        const res = validateExtensionExercise(
+            img({image: "assets/img/cat.png", accept: ["a cat"]}, "   "),
+        );
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("prompt");
+    });
+    it("rejects a missing/empty image", () => {
+        const res = validateExtensionExercise(img({image: "  ", accept: ["a cat"]}));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("image_description");
+    });
+    it("rejects a remote image URL (offline-first)", () => {
+        const res = validateExtensionExercise(
+            img({image: "https://example.com/cat.png", accept: ["a cat"]}),
+        );
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("image_description");
+    });
+    it("rejects an empty accept list", () => {
+        const res = validateExtensionExercise(
+            img({image: "assets/img/cat.png", accept: []}),
+        );
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("image_description");
     });
 });
