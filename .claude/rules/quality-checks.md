@@ -230,6 +230,25 @@ had been deleted by a condensation commit - enforcement without a documented
 rule, and nothing detected it. Retiring a gate now means removing BOTH halves
 in the same PR; the check fails on either half alone.
 
+## Checks are declared, not silently disabled (#2077)
+
+`.claude/rules/checks.yaml` inventories every check and gate: what it
+verifies, the rule section it belongs to, and its status. `make
+verify-check-inventory` proves each `status: active` entry is actually wired
+(Makefile target present, script present, symbol called) and, for checks that
+can degrade while still running, that they have NOT turned into a no-op.
+
+Turning a check off stays allowed - but only by setting `status: disabled`
+WITH a reason, which appears in the diff and in review. Silent disabling is
+what becomes impossible.
+
+Origin: the test-count arithmetic and the README badge cross-check in
+`verify_docs.py` stopped matching after a reflow dropped the bold from the
+count line. The check still ran, emitted a WARN and returned: alive-looking,
+enforcing nothing, for as long as nobody read the WARN. That signature -
+"an active check that warns instead of asserting" - is what the `no_warn`
+probe pins.
+
 ## CI cadence: PR gates vs the night shift (#575)
 
 PRs run correctness gates only - the checks whose failure must block a merge.
