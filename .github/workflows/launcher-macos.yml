@@ -101,6 +101,34 @@ jobs:
       - name: Build .app bundle
         run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
 
+      # #2101: until now nothing ever STARTED a produced binary - the
+      # artifact was called a "smoke artifact" and was never smoked. On
+      # Apple silicon an unsigned Mach-O is SIGKILLed by the kernel
+      # ("Killed: 9") regardless of Gatekeeper, so "it built" says nothing
+      # about "it runs". --version and --verify-bundle are both handled
+      # before any Tk import, so they work on a headless runner.
+      - name: Smoke-run the built binary (#2101)
+        run: |
+          set -u
+          BIN="dist/AdaptiveLearner Launcher.app/Contents/MacOS/adaptive-learner-launcher"
+          [ -x "$BIN" ] || BIN=$(find "dist/AdaptiveLearner Launcher.app/Contents/MacOS" -type f -perm +111 | head -1)
+          echo "binary: $BIN"
+          echo "--- codesign state ---"
+          codesign -dv "$BIN" 2>&1 || echo "(unsigned)"
+          echo "--- run: --version ---"
+          if "$BIN" --version; then
+            echo "RESULT: the binary starts as built"
+          else
+            code=$?
+            echo "RESULT: the as-built binary FAILED with exit $code (137/SIGKILL = unsigned Mach-O)"
+            echo "--- retrying after an ad-hoc signature ---"
+            codesign --force --deep --sign - "dist/AdaptiveLearner Launcher.app"
+            "$BIN" --version
+            echo "RESULT: an ad-hoc signature fixes it - the build must sign"
+          fi
+          echo "--- run: --verify-bundle ---"
+          "$BIN" --verify-bundle
+
       - name: Zip .app bundle
         # Notarization / distribution expect the .app inside a ZIP or DMG.
         # We ship ZIP only for initial D-02 to keep the pipeline simple.

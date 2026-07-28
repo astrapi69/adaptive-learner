@@ -76,11 +76,10 @@ class TestConfigLoads:
     def test_launcher_json_declares_internal_ports(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
         assert cfg.show_advanced_ports is True
-        assert cfg.internal_ports == {"backend": 8000, "nginx": 80}
-        assert cfg.env_internal_port_keys == {
-            "backend": "ADAPTIVE_LEARNER_BACKEND_PORT",
-            "nginx": "ADAPTIVE_LEARNER_NGINX_PORT",
-        }
+        # Single container since #2058: the nginx service is gone, so only
+        # the backend port stays expert-tunable.
+        assert cfg.internal_ports == {"backend": 8000}
+        assert cfg.env_internal_port_keys == {"backend": "ADAPTIVE_LEARNER_BACKEND_PORT"}
 
     def test_legacy_names_drive_cleanup(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
@@ -468,9 +467,86 @@ class TestDeploymentModeContract:
         assert ok is False
         assert "does-not-exist.Dockerfile" in msg
 
-    def test_empty_mode_stays_compose(self) -> None:
+    def test_launcher_json_uses_dockerfile_mode(self) -> None:
+        """#2060: the end-user path builds through docker-py, not Compose."""
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
-        assert cfg.deployment_mode == ""
+        assert cfg.deployment_mode == "dockerfile"
+        assert cfg.dockerfile_file == "backend/Dockerfile"
+        assert cfg.build_context == "."
+        assert cfg.container_port == 8000
+        assert cfg.container_volumes == {"adaptive-learner-data": "/app/data"}
+        assert cfg.container_env["ADAPTIVE_LEARNER_DATA_DIR"] == "/app/data"
+        assert cfg.container_env["ADAPTIVE_LEARNER_PORT"] == "8000"
+        assert cfg.container_env["ADAPTIVE_LEARNER_SERVE_FRONTEND"] == "1"
+        assert cfg.container_env["ADAPTIVE_LEARNER_FRONTEND_DIST"] == "/app/static"
+
+    def test_declared_dockerfile_and_context_exist_in_the_repo(self) -> None:
+        repo_root = LAUNCHER_JSON.parent.parent
+        assert (repo_root / "backend" / "Dockerfile").is_file()
+        # The compose file stays as the documented power-user alternative.
+        assert (repo_root / "docker-compose.prod.yml").is_file()
+
+    def test_container_env_matches_the_compose_service(self) -> None:
+        """Both paths run the same image; they may not drift apart."""
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        compose = (LAUNCHER_JSON.parent.parent / "docker-compose.prod.yml").read_text(
+            encoding="utf-8"
+        )
+        for key, value in cfg.container_env.items():
+            if key == "ADAPTIVE_LEARNER_PORT":
+                continue  # compose interpolates this one from the .env
+            assert f"{key}={value}" in compose, f"{key} drifted from the compose service"
+
+
+class TestClassicBuilderConstraint:
+    """dockerfile mode builds via docker-py over the Engine API.
+
+    That is the CLASSIC builder: multi-stage yes, BuildKit-only syntax no.
+    A cache mount or a heredoc added here would not fail in CI (which has
+    buildx) - it would fail on the end user's Docker 20.10 device, which is
+    exactly the version chain this mode exists to remove.
+    """
+
+    BUILDKIT_ONLY = (
+        "RUN --mount=",
+        "COPY --link",
+        "# syntax=",
+        "--mount=type=cache",
+        "--mount=type=secret",
+        "--mount=type=bind",
+    )
+
+    def _dockerfiles(self) -> list[Path]:
+        repo_root = LAUNCHER_JSON.parent.parent
+        return [
+            path
+            for path in repo_root.rglob("Dockerfile*")
+            if ".git" not in path.parts and "node_modules" not in path.parts
+        ]
+
+    def test_the_repo_has_dockerfiles_to_check(self) -> None:
+        """A scanner that finds no files reports green for the wrong reason."""
+        assert self._dockerfiles(), "no Dockerfile found - the scan proves nothing"
+
+    def test_no_buildkit_only_syntax(self) -> None:
+        offenders: list[str] = []
+        for path in self._dockerfiles():
+            text = path.read_text(encoding="utf-8")
+            for lineno, line in enumerate(text.splitlines(), start=1):
+                for marker in self.BUILDKIT_ONLY:
+                    if marker in line:
+                        offenders.append(f"{path}:{lineno}: {marker}")
+        assert not offenders, "BuildKit-only syntax breaks the classic builder:\n" + "\n".join(
+            offenders
+        )
+
+    def test_heredocs_are_absent(self) -> None:
+        """`RUN <<EOF` needs BuildKit; the classic builder chokes on it."""
+        import re
+
+        pattern = re.compile(r"^\s*(RUN|COPY)\s+.*<<-?\s*\w+", re.MULTILINE)
+        for path in self._dockerfiles():
+            assert not pattern.search(path.read_text(encoding="utf-8")), f"heredoc in {path}"
 
 
 class TestPermissionDeniedClassification:
