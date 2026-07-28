@@ -18,12 +18,14 @@ import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import ContinueLearning from "./ContinueLearning";
+import {storeSetStatus} from "../../lib/content/browse/set-status-store";
 import type {LessonProgress} from "../../storage/types";
 
 const listProgressMock = vi.fn();
 const listSetsMock = vi.fn();
 const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
+const reviewQueueMock = vi.fn();
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
@@ -33,6 +35,7 @@ vi.mock("../../storage", () => ({
             listLessons: listLessonsMock,
             getLesson: getLessonMock,
         },
+        elementErrors: {reviewQueue: reviewQueueMock},
     }),
 }));
 
@@ -83,9 +86,12 @@ beforeEach(() => {
     listSetsMock.mockReset();
     listLessonsMock.mockReset();
     getLessonMock.mockReset();
+    reviewQueueMock.mockReset();
+    localStorage.clear();
     listSetsMock.mockResolvedValue({sets: [], sources: []});
     listLessonsMock.mockResolvedValue({lessons: []});
     getLessonMock.mockResolvedValue(null);
+    reviewQueueMock.mockResolvedValue([]);
 });
 
 describe("ContinueLearning", () => {
@@ -288,6 +294,87 @@ describe("ContinueLearning", () => {
         // Newest (b) first, then (c). "a" is dropped by the cap.
         expect(items[0]).toHaveAttribute("data-testid", "continue-learning-item-b");
         expect(items[1]).toHaveAttribute("data-testid", "continue-learning-item-c");
+    });
+
+    // #2123 — a finished set with nothing due is not a "continue" target.
+    it("drops a completed set with no due reviews (honest empty state)", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "done",
+                lesson_filename: "01.json",
+                updated_at: "2026-06-03T10:00:00Z",
+                status: "completed",
+                score_correct: 10,
+                score_total: 10,
+            }),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "done", title: "Finished"}],
+            sources: [],
+        });
+        // Single lesson, completed → resolves to set_complete (finished set).
+        listLessonsMock.mockResolvedValue({lessons: ["01.json"]});
+        reviewQueueMock.mockResolvedValue([]);
+
+        renderSection({showWhenEmpty: true});
+        // The finished set is dropped; the honest empty state shows instead of
+        // proposing a set with nothing to do.
+        await screen.findByTestId("continue-learning-empty-link");
+        expect(
+            screen.queryByTestId("continue-learning-item-done"),
+        ).not.toBeInTheDocument();
+    });
+
+    // #2123 — a completed set IS worth surfacing when cards are due, but as a
+    // review nudge routed to the review session, not a "Set completed" row.
+    it("surfaces a completed set with due reviews as a review row to /review", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "done",
+                lesson_filename: "01.json",
+                updated_at: "2026-06-03T10:00:00Z",
+                status: "completed",
+                score_correct: 10,
+                score_total: 10,
+            }),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "done", title: "Finished"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json"]});
+        getLessonMock.mockResolvedValue({id: "01", title: "T", steps: [{}], cards: []});
+        reviewQueueMock.mockResolvedValue([
+            {element_key: "e1", set_id: "done", overdue: true},
+            {element_key: "e2", set_id: "done", overdue: true},
+        ]);
+
+        renderSection({});
+        const link = await screen.findByTestId("continue-learning-link-done");
+        expect(link).toHaveAttribute("href", "/review/done");
+        const review = screen.getByTestId("continue-learning-review-done");
+        expect(review.textContent).toContain("2");
+    });
+
+    // #2123 — a deferred set the learner set aside is not proposed when idle.
+    it("drops a deferred set with no due reviews", async () => {
+        localStorage.clear();
+        storeSetStatus("owner/repo", "later", "deferred", localStorage);
+        listProgressMock.mockResolvedValue([
+            progress({set_id: "later", lesson_filename: "02.json", updated_at: "2026-06-03T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "later", title: "Later"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json", "03.json"]});
+        reviewQueueMock.mockResolvedValue([]);
+
+        renderSection({showWhenEmpty: true});
+        await screen.findByTestId("continue-learning-empty-link");
+        expect(
+            screen.queryByTestId("continue-learning-item-later"),
+        ).not.toBeInTheDocument();
     });
 
     it("hides progress whose source repo was removed (#1445)", async () => {

@@ -642,6 +642,27 @@ im API-Modus auftrat.
       neu oeffnen → zurueckgestellter Status ist noch da
 - [ ] iPhone-PWA: gleicher Ablauf (dort urspruenglich beobachtet)
 
+### Weitermachen-Vorschlag: keine abgeschlossenen/zurueckgestellten Sets ohne faellige Wiederholungen (#2123)
+
+Ort: Dashboard → Uebersicht, oberster Block "Weitermachen" / "Continue
+Learning". In BEIDEN Speichermodi pruefen (API + Dexie), die Logik ist
+modus-unabhaengig.
+
+- [ ] Ein Set komplett durchspielen (alle Lektionen abschliessen) ODER ueber
+      das Set-Aktionen-Menue auf "Abgeschlossen" setzen, KEINE faelligen
+      Wiederholungskarten → der "Weitermachen"-Block schlaegt dieses Set NICHT
+      mehr vor (frueher stand es dort als "Set abgeschlossen")
+- [ ] Kein offenes Set UND keine faelligen Karten → ehrlicher Leerzustand
+      ("Starte deine erste Lektion", Link zu Meine Inhalte) statt irgendein
+      Set als Lueckenfueller
+- [ ] Abgeschlossenes Set MIT faelligen Wiederholungen → erscheint als
+      Wiederholungs-Zeile ("N Elemente faellig") und fuehrt in die
+      Wiederholungs-Session (`/review/{setId}`), nicht als "Set abgeschlossen"
+- [ ] Zurueckgestelltes Set ohne faellige Karten → wird NICHT vorgeschlagen
+- [ ] Angefangenes (aktives) Set → wird weiterhin zum Fortsetzen vorgeschlagen
+- [ ] Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets
+      (jeweils zuletzt-bearbeitet zuerst)
+
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
       Aktualisieren → Set kommt NICHT zurueck (#1719)

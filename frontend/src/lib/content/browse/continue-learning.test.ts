@@ -12,18 +12,23 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    classifyEntryCandidate,
     completedStepCount,
     groupRecentProgress,
     lessonLabelFromFilename,
     lessonRoute,
     looksLikeOpaqueId,
     partNumberOf,
+    rankEntrySuggestions,
     resolveContinueAction,
     resolveLessonTitle,
     resolveSetTitle,
     rowStars,
+    type ContinueMode,
+    type EntryRankInput,
+    type EntryTier,
 } from "./continue-learning";
-import type {LessonProgress} from "../../../storage/types";
+import type {LessonProgress, SetStatus} from "../../../storage/types";
 
 function progress(
     over: Partial<LessonProgress> & {
@@ -214,6 +219,145 @@ describe("partNumberOf", () => {
     it("returns null when there is no part marker", () => {
         expect(partNumberOf("03-articles.json")).toBeNull();
         expect(partNumberOf("Spanish A1")).toBeNull();
+    });
+});
+
+function candidate(opts: {
+    setId: string;
+    updatedAt: string;
+    status?: SetStatus;
+    dueCount?: number;
+    mode?: ContinueMode;
+}): EntryRankInput {
+    const row = progress({
+        set_id: opts.setId,
+        lesson_filename: "01.json",
+        updated_at: opts.updatedAt,
+    });
+    return {
+        group: {source: row.source, setId: opts.setId, mostRecent: row},
+        action: {mode: opts.mode ?? "resume", targetFilename: "01.json"},
+        status: opts.status ?? "active",
+        dueCount: opts.dueCount ?? 0,
+    };
+}
+
+describe("classifyEntryCandidate (#2123)", () => {
+    it("an active, still-open set is a 'started' suggestion", () => {
+        expect(
+            classifyEntryCandidate(
+                candidate({setId: "a", updatedAt: "x", mode: "resume"}),
+            ),
+        ).toBe<EntryTier>("started");
+    });
+
+    it("DROPS a completed set with no due reviews (the reported bug)", () => {
+        // lifecycle completed, and also the finished 'set_complete' action:
+        // both signal a finished set. Nothing due → not a sensible suggestion.
+        expect(
+            classifyEntryCandidate(
+                candidate({setId: "a", updatedAt: "x", status: "completed", dueCount: 0}),
+            ),
+        ).toBeNull();
+        expect(
+            classifyEntryCandidate(
+                candidate({setId: "a", updatedAt: "x", mode: "set_complete", dueCount: 0}),
+            ),
+        ).toBeNull();
+    });
+
+    it("keeps a completed set as a 'review' suggestion when reviews are due", () => {
+        expect(
+            classifyEntryCandidate(
+                candidate({setId: "a", updatedAt: "x", status: "completed", dueCount: 3}),
+            ),
+        ).toBe<EntryTier>("review");
+    });
+
+    it("DROPS a deferred set with no due reviews (learner set it aside)", () => {
+        expect(
+            classifyEntryCandidate(
+                candidate({setId: "a", updatedAt: "x", status: "deferred", dueCount: 0}),
+            ),
+        ).toBeNull();
+    });
+
+    it("keeps a deferred set as a 'review' suggestion when reviews are due", () => {
+        expect(
+            classifyEntryCandidate(
+                candidate({setId: "a", updatedAt: "x", status: "deferred", dueCount: 2}),
+            ),
+        ).toBe<EntryTier>("review");
+    });
+});
+
+describe("rankEntrySuggestions (#2123)", () => {
+    it("a completed set without due cards yields a DIFFERENT suggestion", () => {
+        // RED proof: an in-progress set plus a (newer) completed-without-due
+        // set. Before the fix the completed set (newest) would lead; the rule
+        // drops it, so the in-progress set is the suggestion.
+        const ranked = rankEntrySuggestions(
+            [
+                candidate({setId: "started", updatedAt: "2026-06-01T10:00:00Z", mode: "resume"}),
+                candidate({
+                    setId: "done",
+                    updatedAt: "2026-06-05T10:00:00Z",
+                    status: "completed",
+                    dueCount: 0,
+                }),
+            ],
+            5,
+        );
+        expect(ranked.map((r) => r.group.setId)).toEqual(["started"]);
+    });
+
+    it("a completed-without-due set alone yields NO suggestion (honest empty state)", () => {
+        const ranked = rankEntrySuggestions(
+            [candidate({setId: "done", updatedAt: "x", status: "completed", dueCount: 0})],
+            5,
+        );
+        expect(ranked).toEqual([]);
+    });
+
+    it("ranks due-review sets before started sets", () => {
+        const ranked = rankEntrySuggestions(
+            [
+                candidate({setId: "started", updatedAt: "2026-06-09T10:00:00Z", mode: "resume"}),
+                candidate({
+                    setId: "review",
+                    updatedAt: "2026-06-01T10:00:00Z",
+                    status: "completed",
+                    dueCount: 4,
+                }),
+            ],
+            5,
+        );
+        expect(ranked.map((r) => r.group.setId)).toEqual(["review", "started"]);
+    });
+
+    it("within a tier, sorts newest-touched first", () => {
+        const ranked = rankEntrySuggestions(
+            [
+                candidate({setId: "older", updatedAt: "2026-06-01T10:00:00Z", mode: "resume"}),
+                candidate({setId: "newer", updatedAt: "2026-06-08T10:00:00Z", mode: "resume"}),
+            ],
+            5,
+        );
+        expect(ranked.map((r) => r.group.setId)).toEqual(["newer", "older"]);
+    });
+
+    it("caps at maxItems after dropping", () => {
+        const ranked = rankEntrySuggestions(
+            [
+                candidate({setId: "a", updatedAt: "2026-06-01T10:00:00Z", mode: "resume"}),
+                candidate({setId: "b", updatedAt: "2026-06-02T10:00:00Z", mode: "resume"}),
+                candidate({setId: "drop", updatedAt: "2026-06-09T10:00:00Z", status: "completed", dueCount: 0}),
+                candidate({setId: "c", updatedAt: "2026-06-03T10:00:00Z", mode: "resume"}),
+            ],
+            2,
+        );
+        expect(ranked).toHaveLength(2);
+        expect(ranked.map((r) => r.group.setId)).toEqual(["c", "b"]);
     });
 });
 
