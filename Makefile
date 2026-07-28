@@ -32,7 +32,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       verify-docs verify-docs-fix verify-gate-rule-links verify-lessons-inventory check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -793,6 +793,12 @@ verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-
 
 verify-docs: ## Verify documentation for drift (version/counts/features/help/i18n/themes; stdlib only)
 	@python3 scripts/verify_docs.py
+
+verify-gate-rule-links: ## Gate <-> rule coupling (#2075): no gate without its rule section, no rule citing a dead gate
+	@python3 scripts/verify_gate_rule_links.py
+
+verify-lessons-inventory: ## Lessons catalogue completeness (#2073): every section present + byte-identical
+	@python3 scripts/verify_lessons_inventory.py --compare .claude/rules/lessons/.inventory-baseline.json
 
 verify-docs-fix: ## Best-effort auto-fix of mechanical docs drift (version badges, counts, i18n sync)
 	@python3 scripts/verify_docs.py --fix
