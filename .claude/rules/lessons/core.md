@@ -6,6 +6,86 @@ alwaysApply: true
 ---
 
 # Cross-cutting pitfalls
+## Claimed work is not executed work
+
+Output that LOOKS like executed changes is not evidence that anything
+happened. Two shapes, both seen on 2026-07-28:
+
+- **Text that looks like tool calls.** A session handed over a block of
+  fix scripts plus "all critical fixes are implemented, the gate should be
+  green now". Nothing had run: the working tree was clean, the dead
+  references were still there, the gate still red, and the `/tmp` scripts the
+  text claimed to have written did not exist.
+- **A tool whose output reads like success.** A commit was rolled back by a
+  pre-commit `end-of-file-fixer` colliding with the stash ("Stashed changes
+  conflicted with hook auto-fixes... Rolling back fixes"). Every hook line
+  above it said `Passed`. It surfaced only because `gh pr create` answered
+  "No commits between develop and ..." and `git log -1` was checked.
+
+**Rule: before building on any claimed change, verify the artifact, not the
+narrative.** `git status`, `git log -1` (did HEAD actually move?), and the
+gate's own exit code. This applies to work handed over by another session,
+by a human, and to your own previous step - a hook, a merge or a push can
+undo it silently. Related: "Push ist nicht gelandet" and the stacked-PR rule
+that a change counts as landed only when proven on the integration branch.
+
+## Claimed enforcement without enforcement
+
+Three different mechanisms produce one identical state - the system says a
+rule is enforced when it is not:
+
+1. **A rule hollowed out by a change framed as cosmetic.** A "condensation"
+   commit (-66 % bytes) flipped "MANDATORY on UI PRs" to "recommended but not
+   mandatory", added an escape clause to a PFLICHT gate, and deleted the
+   #1640 rule section whose CI gate kept running.
+2. **A check silently switched off.** The test-count arithmetic and the README
+   badge cross-check in `verify_docs.py` stopped matching after a reflow
+   dropped a bold marker: the check still ran, warned, and returned. The rule
+   still applied; the enforcement was gone.
+3. **A mechanism that was never real.** The rule files carried
+   `alwaysApply` / `globs` frontmatter for scope-gated loading. Claude Code
+   loads every `.claude/rules/**.md` regardless and strips the frontmatter -
+   the mechanism was documented, believed, and inert. A context-saving figure
+   was reported from it before anyone verified it.
+
+A fourth variant lives inside the tooling built against the other three:
+gates that pass because they cannot check. Three in one day - a probe that
+passed when its helper crashed, a language gate whose `**` pathspec matched
+almost no files, and a complexity ratchet that reported success without an
+analyzer or a baseline.
+
+**Rules:**
+
+- **A weakening of a binding rule is never accepted inside a cleanup diff.**
+  Either the PR is content-neutral, or it declares the change and is reviewed
+  as a content change (`quality-checks.md` "Condensation PRs are
+  content-neutral or declared").
+- **Disabling a check is allowed only declared**, with a reason, in
+  `.claude/rules/checks.yaml`. Silence is not an option; the diff must show it.
+- **A documented mechanism must be proven before you rely on it** - and before
+  you quote numbers derived from it. "The config says so" is not proof.
+- **A gate that cannot check must never report green** (`quality-checks.md`
+  "Gate test contract").
+
+Especially critical with parallel agent sessions: one session can undermine
+the rules another session is working under, and neither notices, because both
+read the same file and only one of them changed it.
+
+## Proposed mass scripts are inspected, not executed
+
+A suggested `sed`, a regex sweep over normative terms, a "restore all the
+bold" heuristic: check each target individually instead of running the sweep.
+Precedents from one session: a global
+`sed 's/ai-workflow.md/ai-workflow\/pr-policy.md/'` would have bent two
+DIFFERENT references (a PR rule and a testplan rule) onto the same target,
+and a heuristic bold-restore keyed on "never/always/must" would have
+emphasised arbitrary lines instead of the ones that were bold before. Both
+looked reasonable in the proposal and were wrong against the actual files.
+
+The cheap alternative is always available: read the matches, map each to its
+real target, apply them one by one, and diff the result against the previous
+state.
+
 ## Never run an ad-hoc script against the real `SessionLocal`
 
 Surfaced 2026-06-02 during BACKUP-API-RESTORE-01. While debugging a failing test, a one-off `poetry run python -c "..."` script imported a test helper (`_wipe_all_tables`) AND `app.database.SessionLocal`, then ran it. Because the script set NO environment variables, `SessionLocal` bound to the REAL engine pointed at the production-marked data dir (`~/.local/share/adaptive_learner/`, carrying `.adaptive-learner-production`). The helper's `DELETE FROM <every table>` + `db.commit()` wiped the DB. With `PRAGMA secure_delete=ON`, the freed pages were zeroed — the data was unrecoverable from the file. (This time it was only test data.)
