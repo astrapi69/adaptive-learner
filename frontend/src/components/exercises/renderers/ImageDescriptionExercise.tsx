@@ -76,6 +76,25 @@ function _normalizeAssetPath(raw: string): string {
     return raw.startsWith("assets/") ? raw.slice("assets/".length) : raw;
 }
 
+/** Reconstruct the locked review state from a persisted answer: the initial
+ *  input to restore and the pre-computed verdict (or null when not reviewed).
+ *  Extracted so the main component stays flat. */
+function reviewedImageState(
+    reviewed: ImageDescriptionExerciseProps["reviewed"],
+    accept: string[],
+): {initialInput: string; reviewedResult: {correct: number; total: number} | null} {
+    const reviewedAnswer =
+        reviewed?.kind === "al_image_description" ? reviewed : null;
+    if (!reviewedAnswer) return {initialInput: "", reviewedResult: null};
+    return {
+        initialInput: reviewedAnswer.input,
+        reviewedResult: {
+            correct: isFreeTextCorrect(reviewedAnswer.input, accept) ? 1 : 0,
+            total: 1,
+        },
+    };
+}
+
 function ImageDescriptionExercise(
     {
         exercise,
@@ -99,19 +118,11 @@ function ImageDescriptionExercise(
     const accept = payload?.accept ?? [];
     const canonical = canonicalImageDescriptionAnswer(exercise);
 
-    const reviewedAnswer =
-        reviewed?.kind === "al_image_description" ? reviewed : null;
-    const [input, setInput] = useState<string>(reviewedAnswer?.input ?? "");
+    const {initialInput, reviewedResult} = reviewedImageState(reviewed, accept);
+    const [input, setInput] = useState<string>(initialInput);
 
     const isInputCorrect = isFreeTextCorrect(input, accept);
     const canCheck = input.trim() !== "";
-
-    const reviewedResult = reviewedAnswer
-        ? {
-              correct: isFreeTextCorrect(reviewedAnswer.input, accept) ? 1 : 0,
-              total: 1,
-          }
-        : null;
 
     const {submitted, result, submit, reset} = useControlledExercise({
         ref,
@@ -156,23 +167,11 @@ function ImageDescriptionExercise(
             className="flex flex-col gap-3"
             data-testid="image-description-exercise"
         >
-            {exercise.prompt && (
-                <div className="exercise-prompt-row">
-                    <p
-                        className="m-0 flex-auto font-medium"
-                        data-testid="image-description-prompt"
-                    >
-                        <InlineMarkdown>{exercise.prompt}</InlineMarkdown>
-                    </p>
-                    {ttsLang && !codeMode && (
-                        <ReadAloudButton
-                            text={exercise.prompt}
-                            lang={ttsLang}
-                            testId="image-description-prompt"
-                        />
-                    )}
-                </div>
-            )}
+            <ImageDescriptionPrompt
+                prompt={exercise.prompt}
+                ttsLang={ttsLang}
+                codeMode={codeMode}
+            />
 
             <ImageStimulus image={payload.image} source={source} setId={setId} />
 
@@ -215,6 +214,39 @@ function ImageDescriptionExercise(
                 onRetry={reset}
             />
         </section>
+    );
+}
+
+/** The prompt row: the instruction plus (when a ``ttsLang`` is supplied and
+ *  the content is not code) a read-aloud speaker button. The button reads the
+ *  INSTRUCTION, never the answer (the answer is the image). Extracted so the
+ *  main component stays flat. */
+function ImageDescriptionPrompt({
+    prompt,
+    ttsLang,
+    codeMode,
+}: {
+    prompt: string;
+    ttsLang: string | null;
+    codeMode: boolean;
+}) {
+    if (!prompt) return null;
+    return (
+        <div className="exercise-prompt-row">
+            <p
+                className="m-0 flex-auto font-medium"
+                data-testid="image-description-prompt"
+            >
+                <InlineMarkdown>{prompt}</InlineMarkdown>
+            </p>
+            {ttsLang && !codeMode && (
+                <ReadAloudButton
+                    text={prompt}
+                    lang={ttsLang}
+                    testId="image-description-prompt"
+                />
+            )}
+        </div>
     );
 }
 
