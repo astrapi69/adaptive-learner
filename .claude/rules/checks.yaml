@@ -91,6 +91,7 @@ checks:
   - id: normative-changes
     verifies: normative-keyword and gate-status changes are declared, not buried in a diff
     rule: quality-checks.md#normative-changes-are-declared-not-buried-2079
+    also_enforces: quality-checks.md#condensation-prs-are-content-neutral-or-declared-2081
     status: active
     wired_in: make verify-normative-changes; .github/workflows/ci.yml
     probe: make_target=verify-normative-changes

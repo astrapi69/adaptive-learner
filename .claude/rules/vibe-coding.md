@@ -23,6 +23,13 @@ Full policy: `docs/policies/VIBE-CODING-POLICY.md`
 
 - **GIT**: Issue FIRST (GITHUB-ISSUE-PFLICHT). Closes #XX in every commit. Docstrings over inline comments. One concern per PR. Every pushed code change opens a PR (PR-PFLICHT in ai-workflow/pr-policy.md) — always, not only on request. "No PR, not requested" is not a valid completion report. Exceptions: release freeze (below) and pure analysis/status tasks without code change.
 
+## Condensation is not a free pass
+
+A PR framed as cleanup, reflow or condensation is held to the same standard as
+any content change: no silent deletions, no weakened rules. Above the byte
+threshold it must be declared. See quality-checks.md "Condensation PRs are
+content-neutral or declared (#2081)".
+
 ## Priority (fixed, non-negotiable)
 
 1. Merge open PRs
