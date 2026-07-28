@@ -30,34 +30,34 @@ import {Check, X} from "lucide-react";
 import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
-import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
-import {useAsset} from "../../../hooks/ui/useAsset";
+import {useI18n} from "../../../../hooks/ui/useI18n";
+import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
+import {useAsset} from "../../../../hooks/ui/useAsset";
 import {cn} from "@/lib/utils";
 import {Input} from "@/components/ui/input";
-import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
-import ReadAloudButton from "../../lesson/tts/ReadAloudButton";
-import {deriveImageDescriptionAttempt} from "../../../lib/srs/element-attempt";
-import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
+import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
+import ReadAloudButton from "../../../lesson/tts/ReadAloudButton";
+import {deriveImageDescriptionAttempt} from "../../../../lib/srs/element-attempt";
+import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
 import {
     asImageDescriptionPayload,
     canonicalImageDescriptionAnswer,
     isRemoteImageUrl,
-} from "../../../lib/exercises/payload/image-description";
+} from "../../../../lib/exercises/payload/image-description";
 import {
     isFreeTextCorrect,
     isFreeTextNearMiss,
-} from "../../../lib/exercises/grading/free-text-grading";
-import type {ContentLessonExercise} from "../../../storage/types";
-import AnswerCelebration from "../feedback/AnswerCelebration";
-import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
-import ExerciseFooter from "../shell/ExerciseFooter";
-import ExerciseHint from "../feedback/ExerciseHint";
+} from "../../../../lib/exercises/grading/free-text-grading";
+import type {ContentLessonExercise} from "../../../../storage/types";
+import AnswerCelebration from "../../feedback/AnswerCelebration";
+import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
+import ExerciseFooter from "../../shell/ExerciseFooter";
+import ExerciseHint from "../../feedback/ExerciseHint";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
     ExerciseScored,
-} from "../shell/exercise-control";
+} from "../../shell/exercise-control";
 
 export interface ImageDescriptionExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;

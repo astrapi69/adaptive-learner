@@ -19,7 +19,7 @@ import MatchingExercise from "./MatchingExercise";
 import ClozeExercise from "./ClozeExercise";
 import PictureChoiceExercise from "./PictureChoiceExercise";
 import WordTilesExercise from "./WordTilesExercise";
-import ImageDescriptionExercise from "./ImageDescriptionExercise";
+import ImageDescriptionExercise from "./image-description/ImageDescriptionExercise";
 
 function setMockSynth(): void {
     const orig = (globalThis as unknown as {window: typeof window}).window;

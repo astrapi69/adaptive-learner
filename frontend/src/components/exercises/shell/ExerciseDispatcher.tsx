@@ -29,7 +29,7 @@ import ReadingComprehensionExercise from "../renderers/ReadingComprehensionExerc
 import GradedQuizExercise from "../renderers/GradedQuizExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
 import DictationExercise from "../renderers/DictationExercise";
-import ImageDescriptionExercise from "../renderers/ImageDescriptionExercise";
+import ImageDescriptionExercise from "../renderers/image-description/ImageDescriptionExercise";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,

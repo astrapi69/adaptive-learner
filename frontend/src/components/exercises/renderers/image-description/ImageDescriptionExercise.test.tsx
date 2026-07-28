@@ -17,7 +17,7 @@ import {describe, expect, it, vi} from "vitest";
 // Stub the asset resolver: a non-null (source, setId, path) triple resolves to
 // a fake blob URL; anything else is a miss. Its own resolution chain is covered
 // by useAsset's own test.
-vi.mock("../../../hooks/ui/useAsset", () => ({
+vi.mock("../../../../hooks/ui/useAsset", () => ({
     useAsset: (
         source: string | null,
         setId: string | null,
@@ -29,7 +29,7 @@ vi.mock("../../../hooks/ui/useAsset", () => ({
 }));
 
 import ImageDescriptionExercise from "./ImageDescriptionExercise";
-import type {ContentLessonExercise} from "../../../storage/types";
+import type {ContentLessonExercise} from "../../../../storage/types";
 
 const DATA_URI = "data:image/jpeg;base64,/9j/4AAQSkZJRg==";
 
