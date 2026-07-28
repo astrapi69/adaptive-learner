@@ -162,7 +162,44 @@ def _bootstrap_app_source() -> Path | int:
     return target
 
 
-def _deployment_readiness_problem() -> list[str] | None:
+ANCHORED_CONFIG_NAME = ".adaptive-learner-launcher.json"
+
+
+def _anchored_config_path(app_dir: Path) -> Path:
+    """Return a config whose ``install_dir`` points at the real app tree.
+
+    ``docker-app-launcher`` 0.21.0 bases app-relative paths on the config
+    file's own directory when the config carries no ``install_dir``
+    (upstream #64, ``config.py:426``). Frozen, that directory is the
+    PyInstaller bundle, so ``backend/Dockerfile`` and
+    ``docker-compose.prod.yml`` both resolve under ``/tmp/_MEIxxxx`` -
+    no matter that the wrapper has just chdir'd into a complete source
+    tree (#2109). Both deployment modes broke on it, and the GUI hits it
+    without ever passing an action argument.
+
+    Rather than leave the base to an accident of where the config file
+    happens to sit, the bundled config is written next to the app tree
+    with ``install_dir`` set explicitly. An explicit value wins over the
+    derived one, so the resolution lands where the files actually are.
+
+    Falls back to the bundled path when the copy cannot be written (a
+    read-only app dir); the readiness guard then reports the real cause
+    instead of the package blaming the settings.
+    """
+    source = _config_path()
+    if not source.is_file():
+        return source
+    try:
+        data = json.loads(source.read_text(encoding="utf-8"))
+        data["install_dir"] = str(app_dir)
+        target = app_dir / ANCHORED_CONFIG_NAME
+        target.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        return target
+    except (OSError, json.JSONDecodeError):
+        return source
+
+
+def _deployment_readiness_problem(*, config_file: Path | None = None) -> list[str] | None:
     """Diagnose an unrunnable deployment mode BEFORE claiming to install.
 
     ``docker-app-launcher`` 0.21.0 bases app-relative paths on the config
@@ -176,7 +213,7 @@ def _deployment_readiness_problem() -> list[str] | None:
     resolution is wrong. This returns the honest diagnosis instead, or
     ``None`` when the mode can run.
     """
-    config_file = _config_path()
+    config_file = config_file or _config_path()
     if not config_file.is_file():
         return None  # a missing config is already handled, loudly, upstream
     try:
@@ -184,7 +221,7 @@ def _deployment_readiness_problem() -> list[str] | None:
     except (OSError, json.JSONDecodeError):
         return None  # malformed config is upstream's hard error to report
 
-    base = config_file.resolve().parent
+    base = Path(raw["install_dir"]) if raw.get("install_dir") else config_file.resolve().parent
     report = deployment_assets.check(
         mode=raw.get("deployment_mode") or "compose",
         base=base,
@@ -249,14 +286,20 @@ def main(argv: list[str] | None = None) -> int:
                 return provisioned
             os.chdir(provisioned)
     if not any(arg == "--config" or arg.startswith("--config=") for arg in args):
-        args = ["--config", str(_config_path()), *args]
+        args = ["--config", str(_anchored_config_path(Path.cwd())), *args]
     # Only the actions that actually build or start need the mode's assets.
     # --status / --stop / --uninstall must keep working on a broken install,
     # and the window must still open so the user can read the diagnosis.
+    # The GUI passes no action argument at all - and the window's Install
+    # button is exactly where the device hit this (#2109). So the check
+    # runs for the GUI too; only the read-only actions are exempt, since
+    # --status / --stop / --uninstall must keep working on a broken
+    # install.
+    read_only = ("--status", "--stop", "--uninstall", "--check")
     problem = (
-        _deployment_readiness_problem()
-        if any(arg in ("--install", "--start") for arg in args)
-        else None
+        None
+        if any(arg in read_only for arg in args)
+        else _deployment_readiness_problem(config_file=Path(args[args.index("--config") + 1]))
     )
     if problem is not None:
         for line in problem:
