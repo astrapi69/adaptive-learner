@@ -28,6 +28,108 @@ Sorted by priority. Launch blockers first.
 
 ---
 
+## Manual device QA - consolidated checklist (as of 2026-07-25)
+
+Everything here can ONLY be done manually. Two sessions: one iPhone, one
+Ubuntu.
+
+### Session A: iPhone (iOS PWA/standalone)
+
+Prerequisite: #2050 merged, current `develop` deployed (or a preview build).
+
+#### A1. BACKUP ACCEPTANCE TEST (launch gate, open since early sessions)
+
+A real round-trip, not a simulation:
+
+- [ ] App in standalone mode with real data: at least one imported set,
+      learning progress in several lessons, one set set to "deferred", one
+      set completed, an own exercise created.
+- [ ] Export the backup (`.alb`), demonstrably save the file OUTSIDE the app
+      (Files app / AirDrop).
+- [ ] Hard wipe: delete the app data completely (remove Safari website data
+      for the domain, reinstall/reopen the app - that is the real WKWebView
+      eviction, NOT `localStorage.clear()`).
+- [ ] Verify the fresh state: app empty.
+- [ ] Import the backup.
+- [ ] Check: learning progress present, the deferred marker present (the
+      #2050 path!), completed set correct, own exercise present, settings
+      plausible.
+- [ ] Then continue one lesson normally - no follow-on error.
+
+Document the result (partial failures individually too). On ANY deviation:
+screenshot + which step, which becomes an issue with forensics.
+
+#### A2. Mobile scroll-to-error (#2039, visual device check before merge)
+
+- [ ] Provoke a validation error outside the viewport (long form, error at
+      the top, submit from the bottom).
+- [ ] Expected: automatic scroll to the first error field, error visible and
+      focused.
+- [ ] Once in portrait, once with the keyboard shown.
+
+#### A3. iOS backlog issues
+
+- [ ] Work through the open iOS verification points from the tracker in the
+      same session (list from the respective issues, each result as an issue
+      comment).
+
+#### A4. Delete a lesson (#2064, merged) - overlaps with A1
+
+Per the test plan this feature requires both storage modes plus a backup
+round-trip including iOS standalone. In substance that is the same flow as
+A1. Do both in one pass (see also the "Delete a single lesson (#2064)"
+section further below):
+
+- [ ] In "My Content" delete a lesson that has learning progress.
+- [ ] Check the confirm dialog: does it name the learning progress (learned
+      cards), not just the exercise count?
+- [ ] After deletion: lesson gone, no orphaned review cards, favorite
+      removed, numbering with a gap as decided.
+- [ ] Import a backup from BEFORE the deletion: the lesson comes back (a
+      backup is a point in time, as decided). That is expected behaviour, not
+      a bug.
+- [ ] Both storage modes.
+
+#### A5. Wizard step reset (#2061, merged) - short, doable on desktop too
+
+- [ ] Open a book set, "Edit lesson", navigate to step 2.
+- [ ] Pick a different chapter in the dropdown: step 2 stays, the new
+      lesson's exercises appear.
+- [ ] Edge cases: switch to a lesson without exercises, switch backwards.
+
+### Session B: Ubuntu (launcher binary, after the launcher session)
+
+Prerequisite: the launcher session is delivered (mode decision, pin to
+>=0.21.0, new binaries with run IDs). Use only these binaries; all older ones
+are obsolete.
+
+- [ ] Daemon running + a test user WITHOUT the docker group (qatest):
+      permission message + pkexec-fix offer, NOT "Start Docker". [since the
+      0.16.0 failure without real proof]
+- [ ] Run the pkexec fix, real re-login: state switches to "Docker running".
+- [ ] Console visible, detection lines streaming, text wrap correct, window
+      resizable.
+- [ ] Branding "Adaptive Learner", About: launcher 0.21.0, app 2.6.0 with a
+      source label.
+- [ ] Setup runs through to a reachable app frontend in the browser. Proof
+      goal per mode: in dockerfile mode a build and start WITHOUT Compose and
+      WITHOUT buildx on the Docker-20.10 device; in compose mode the full
+      readiness message with a working guide.
+- [ ] Second start while the launcher is running: focuses the existing window
+      (#31).
+- [ ] Stop, restart, uninstall: no errors, the console reports intelligibly.
+- [ ] Do NOT test a port change until the origin data-loss risk is resolved
+      (a separate task is in flight).
+
+### Recommended order
+
+Session A first and in one pass: A1 and A4 share the backup round-trip, A2
+and A5 are short extra checks. That makes the oldest launch gate coincide
+with two freshly merged features in one sitting. Session B only once the new
+binaries are available.
+
+---
+
 ## PRIO 1: BACKUP ACCEPTANCE TEST (launch gate!)
 
 **New test case under PRIO 1 backup acceptance test:**
