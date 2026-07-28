@@ -10,6 +10,7 @@ runs and routes through the package) plus a config-loads test (the bundled
 from __future__ import annotations
 
 import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -507,23 +508,35 @@ class TestPermissionDeniedClassification:
         gone = ConnectionRefusedError(errno.ECONNREFUSED, "Connection refused")
         assert py_client._classify_exception(gone) == "down"
 
-    def test_ping_against_an_unreadable_socket_reports_permission(self, tmp_path) -> None:
+    @pytest.mark.skipif(
+        not sys.platform.startswith("linux"),
+        reason=(
+            "unix-socket probe: Windows has no AF_UNIX, and the macOS runner's "
+            "pytest tmp_path (/private/var/folders/...) blows the 104-char "
+            "sun_path limit. The docker socket this guards is a Linux concern."
+        ),
+    )
+    def test_ping_against_an_unreadable_socket_reports_permission(self) -> None:
         """End to end through ping(): a real chmod-000 socket path, no mocks."""
         import socket
         import stat
+        import tempfile
 
         from docker_app_launcher.docker import py_client
 
-        sock_path = tmp_path / "docker.sock"
-        server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        server.bind(str(sock_path))
-        server.listen(1)
-        try:
-            sock_path.chmod(0o000)
-            if os.access(sock_path, os.R_OK):  # root ignores the mode bits
-                pytest.skip("running as root - the mode bits do not deny us")
-            status, detail = py_client.ping(f"unix://{sock_path}", timeout=2.0)
-            assert status == "permission", f"got {status}: {detail}"
-        finally:
-            server.close()
-            sock_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
+        # NOT tmp_path: sun_path is capped at ~104 bytes, and pytest's
+        # per-test directory names eat most of that budget.
+        with tempfile.TemporaryDirectory(prefix="alsock") as tmp:
+            sock_path = Path(tmp) / "d.sock"
+            server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            server.bind(str(sock_path))
+            server.listen(1)
+            try:
+                sock_path.chmod(0o000)
+                if os.access(sock_path, os.R_OK):  # root ignores the mode bits
+                    pytest.skip("running as root - the mode bits do not deny us")
+                status, detail = py_client.ping(f"unix://{sock_path}", timeout=2.0)
+                assert status == "permission", f"got {status}: {detail}"
+            finally:
+                server.close()
+                sock_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
