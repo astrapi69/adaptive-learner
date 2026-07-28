@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: Test-Driven Development workflow - Red-Green-Refactor cycle, four-test-per-feature guideline, bug-fix discipline
 globs:
   - backend/tests/**/*.py

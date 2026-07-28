@@ -1,4 +1,6 @@
 ---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
 description: Backend + plugin pitfalls - Alembic, FastAPI lifespan, filesystem isolation, plugin config, module-level caches, PluginForge
 globs:
   - backend/**/*.py
