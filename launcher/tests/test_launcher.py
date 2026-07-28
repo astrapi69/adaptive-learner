@@ -648,7 +648,9 @@ class TestDeploymentReadiness:
             mode="dockerfile", base=tmp_path, dockerfile="backend/Dockerfile"
         )
         assert not report.ok
-        assert any("backend/Dockerfile" in miss for miss in report.missing)
+        # Separator-agnostic: the report prints native paths, so Windows
+        # says backend\\Dockerfile and Linux says backend/Dockerfile.
+        assert any("backend" in miss and "Dockerfile" in miss for miss in report.missing)
 
     def test_complete_tree_is_ok(self, tmp_path) -> None:
         from adaptive_learner_launcher import deployment_assets
@@ -667,7 +669,7 @@ class TestDeploymentReadiness:
             mode="compose", base=tmp_path, compose_file="docker-compose.prod.yml"
         )
         assert not report.ok
-        assert any("docker-compose.prod.yml" in miss for miss in report.missing)
+        assert any("docker-compose.prod.yml" in miss for miss in report.missing)  # no separator
 
     def test_unknown_mode_fails_closed(self, tmp_path) -> None:
         """'I do not know this mode' may never read as 'nothing to check'."""
@@ -742,8 +744,11 @@ class TestReadinessMessage:
 
         assert rc == 5, "an unrunnable mode must not report success"
         assert not called, "the package was invoked despite an unrunnable mode"
-        assert "backend/Dockerfile" in err
-        assert str(tree) in err, "the message does not say where the file really is"
+        normalised = err.replace("\\", "/")
+        assert "backend/Dockerfile" in normalised
+        assert str(tree).replace("\\", "/") in normalised, (
+            "the message does not say where the file really is"
+        )
         assert "path-resolution bug" in err
         assert "setting you need to change" in err
 
