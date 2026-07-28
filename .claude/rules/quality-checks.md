@@ -67,8 +67,14 @@ No backup-touching PR merges until a REAL round-trip in `make dev` runs to compl
 ### When it does NOT apply
 
 - Pure documentation changes to backup help pages
-- UI-only changes to the backup section (styling, i18n, layout) without logic changes
 - Changes to unrelated routers or services
+
+The round-trip runs AFTER the change is live (restart the backend so the new
+logging is active). "It passes `make test`" is never the merge justification
+for a backup change - the round-trip is. If it crashes: fix, re-import,
+re-capture until the import completes with zero unexpected errors. No commit
+before a clean round-trip exists. Pairs with lessons-learned.md "Operational
+gaps masquerade as wired infrastructure".
 
 ## Visual Device Check (MANDATORY for visual features)
 
@@ -98,9 +104,42 @@ No screenshot = no merge for visual features. Unit tests and Playwright verify f
 - Test-only changes
 - Documentation-only changes
 
-## Feature Screenshots (Recommended)
+## Feature Screenshots (MANDATORY on UI PRs)
 
-For non-visual features that change user-facing behavior, a screenshot is recommended but not mandatory. It helps reviewers understand the change without running the app.
+Every new or visually changed feature MUST get a screenshot in
+`e2e/visual/features/`. This applies to EVERY PR containing UI changes; pure
+backend, launcher, test and docs PRs are exempt.
+
+1. Add a `FeatureShot` entry to the `FEATURES` map in
+   `e2e/scripts/capture-feature-screenshots.ts`.
+2. Run `make capture-screenshots`.
+3. Commit the new PNGs: `git add e2e/visual/features/`.
+4. Update the catalogue table in `e2e/visual/features/README.md`.
+
+Settings: 1280x720 (desktop) + 375x812 (mobile, `.mobile.png` suffix), default
+theme (dark), German, PNG, realistic test data. Generate and review on a
+consistent machine (font anti-aliasing differs per machine), not in the
+ephemeral CI container - on-demand, but mandatory on UI PRs. NEVER use
+`--update-snapshots` to paper over a diff that shows a real bug; fix the bug.
+Features Playwright cannot reach (the desktop launcher) are added manually.
+Full flow: docs/developer/testing.md + e2e/visual/features/README.md.
+
+## Visual-Baseline duty for visually critical PRs (#1640)
+
+A PR that changes visually critical paths (lesson components/pages, exercise
+renderers, `global.css` / `tailwind.css` / theme files) MUST carry the affected
+`e2e/visual/screenshots/` baselines IN THE SAME PR - never hope for the next
+nightly run. Enforced by `.github/workflows/visual-baseline-gate.yml`.
+
+Flow: `gh workflow run visual-regression.yml --ref <pr-branch> -f
+update_baselines=true`, download the `visual-baselines` artifact, review EVERY
+changed image individually (#1532: never auto-commit), commit the changed PNGs.
+The gate only checks the PRESENCE of a baseline change; correctness stays the
+human image review. Escape: the `visual-baselines-unaffected` label for
+provably inert changes (the author owns that claim; a dispatched 0-diff run is
+the expected evidence). Origin: twice within an hour (2026-07-14) a
+lesson-header PR merged without baseline regeneration (#1628 -> #1638, then
+#1635) - the nightly-only cadence (#552) leaves that window open.
 
 ## Mutation Testing
 
@@ -128,7 +167,7 @@ cd backend && poetry run mutmut html
 - Surviving mutants in trivial code (formatting, logging): ignore or document.
 - Killed mutants: tests are working as expected.
 
-**Configuration**: `mutmut` config in `backend/setup.cfg` or `pyproject.toml`. Mutate only service and utility modules, not routes or tests.
+**Status**: not set up in this repo (no Makefile target, no `[tool.mutmut]` section). When wiring it, configure `[tool.mutmut]` in `backend/pyproject.toml` and mutate only service and utility modules, not routes or tests.
 
 ### TypeScript (Stryker)
 
@@ -156,42 +195,67 @@ Every commit MUST pass:
 
 See code-hygiene.md for the full pre-commit configuration.
 
-## Makefile Targets for Quality Checks
+## Makefile targets for quality checks
 
-```makefile
-# Fast checks (every commit)
-check-types:
-	cd frontend && bunx tsc --noEmit
+Real targets (verified against the Makefile):
 
-# All fast checks together (before push)
-check-all: test check-types
-	@echo "All checks passed."
-
-# All tests together
-test-all: test test-frontend
-	@echo "All tests passed."
-
-# Mutation testing (nightly/manual)
-mutmut-backend:
-	cd backend && poetry run mutmut run
-
-mutmut-export:
-	cd plugins/adaptive-learner-plugin-export && poetry run mutmut run
-
-mutmut-results:
-	cd backend && poetry run mutmut results
-
-mutmut-html:
-	cd backend && poetry run mutmut html
-	@echo "Report: backend/html/index.html"
-
-# Frontend mutation testing (nightly/manual)
-stryker:
-	cd frontend && bunx stryker run
-
-stryker-api:
-	cd frontend && bunx stryker run --mutate "src/api/**/*.ts"
+```bash
+make test              # backend + plugins + Vitest (the everyday gate)
+make test-coverage     # opt-in, slow + thermally heavy
+make check-types       # backend + frontend type checks
+make stryker           # frontend mutation testing (slow; nightly/manual)
+make stryker-quick MUTATE="src/lib/lesson/**/*.ts"   # scoped mutation run
 ```
+
+NOT wired yet (proposals, do not cite them as existing): aggregate
+`check-all` / `test-all`, and any `mutmut-*` target - `mutmut` has no
+Makefile target and no `[tool.mutmut]` config in this repo. Frontend
+mutation testing IS wired: `frontend/stryker.config.json` (vitest runner,
+`coverageAnalysis: perTest`, `thresholds.break: null`) plus
+`.github/workflows/mutation-frontend.yml` (dispatch always; the nightly
+schedule is a no-op unless the repo variable `ENABLE_NIGHTLY_MUTATION` is
+`"true"`).
+
+## CI cadence: PR gates vs the night shift (#575)
+
+PRs run correctness gates only - the checks whose failure must block a merge.
+Everything informational, warn-only, or driven by external state runs on the
+night shift (schedule + `workflow_dispatch`).
+
+| Every PR (correctness gates) | Night shift (schedule + dispatch) |
+|---|---|
+| `ci.yml`: backend / plugin / frontend tests, ruff + mypy, pre-commit, docs-drift verifier | Security scan (pip-audit / npm audit / bandit), weekly + `push: release/**` |
+| `complexity-check.yml` (baseline ratchet, hard fail) | Coverage (`coverage.yml`) - a report, not a gate |
+| `cohesion-check.yml`, `visual-baseline-gate.yml`, `testid-reference-gate.yml` | Content-stats drift, complexity report, dexie-smoke (#552), mutation testing |
+| `docker-build-smoke.yml` (path-filtered, #1990) | WebKit gate (#1843, `ENABLE_NIGHTLY_WEBKIT`) |
+
+Rule of thumb: if a job's failure should NOT block a merge, it belongs on the
+night shift, not on the `pull_request` trigger.
+
+## Test Impact Analysis (#615)
+
+On a PR run only the tests whose covered code changed; on develop/main push,
+nightly and release run the FULL suite.
+
+| Trigger | Frontend | Backend | E2E (Dexie) |
+|---|---|---|---|
+| PR | `vitest --changed origin/<base>` | `pytest --testmon` | nightly only |
+| develop push | full | full | nightly only |
+| Nightly (04:00 UTC) | full | full | full |
+| Release (`make release-test`) | full | full | full |
+
+Plugin tests stay full (too cheap to optimise). Fallback to the full suite is
+automatic (unresolvable base ref, or a testmon cache miss) - never a silent
+skip. The full suite is the safety net against false negatives: NEVER weaken
+the nightly to make a selective PR run green; debug the selective mechanism
+instead.
+
+Project-wide target: 85-95 % of modules at MEDIUM or above. Frontend coverage
+is NOT subordinate to backend coverage - user-facing bugs destroy trust as
+effectively as backend bugs destroy data. 100 % coverage is not the goal.
+Meaningful coverage is the goal: tests must assert real behaviour properties,
+not just line execution; regression pins for known bug classes count for more
+than line count.
 
 ## Test Writing Guidelines
 

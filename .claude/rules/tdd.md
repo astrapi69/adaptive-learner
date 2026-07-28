@@ -30,7 +30,7 @@ No production code before the failing test.
 
 Write only the code that makes the test green.
 
-YAGNI: no premature optimization, no code "for later" (aligns with `ai-workflow.md` "Only what is needed now").
+YAGNI: no premature optimization, no code "for later" (aligns with `ai-workflow/implementation-workflow.md` "Only what is needed now").
 
 `tsc --noEmit` + vitest (frontend) or pytest (backend) green.
 

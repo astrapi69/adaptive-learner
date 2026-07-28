@@ -213,7 +213,7 @@ read on demand:
   pyramid, coverage targets, mutation testing
 - [lessons-learned.md](.claude/rules/lessons-learned.md) - known
   pitfalls (TipTap, import, export, Alembic logging)
-- [ai-workflow.md](.claude/rules/ai-workflow.md) - session
+- [ai-workflow/](.claude/rules/ai-workflow/) - session
   workflow, documentation protocol
 - [release-workflow.md](.claude/rules/release-workflow.md) -
   release process

@@ -111,9 +111,9 @@ Adaptive Learner-specific, NOT part of PluginForge.
 
 ### Theming
 
-5 themes: Classic, Cool Modern, Nord, Notebook, Studio (each with Light + Dark = 10 variants). Audit recipe to verify the current count: `grep -oE 'data-app-theme="[a-z-]+"' frontend/src/styles/global.css | sort -u`.
+12 themes, one CSS file each in `frontend/src/styles/themes/`: amethyst-haze, catppuccin-latte, catppuccin-mocha, dark, forest, graphite, high-contrast, light, ocean, sepia, soft-pop, supabase. Audit recipe to verify the current count: `ls frontend/src/styles/themes/theme-*.css | wc -l` (the old `data-app-theme` grep matches nothing - the attribute is `data-theme`).
 
-Everything via CSS variables. The canonical tokens live in frontend/src/styles/global.css + styles/themes/theme-*.css. Tailwind CSS (v4) consumes those CSS variables via a `@theme` mapping in frontend/src/styles/tailwind.css (theme integration: CSS variables mapped into the Tailwind config). Switching `[data-theme]` flips the variables, so every Tailwind utility recolors automatically across all 6 themes. New UI uses Tailwind utilities (which still resolve to the CSS variables); do not add new hand-written rules to global.css.
+Everything via CSS variables. The canonical tokens live in frontend/src/styles/global.css + styles/themes/theme-*.css. Tailwind CSS (v4) consumes those CSS variables via a `@theme` mapping in frontend/src/styles/tailwind.css (theme integration: CSS variables mapped into the Tailwind config). Switching `[data-theme]` flips the variables, so every Tailwind utility recolors automatically across all themes. New UI uses Tailwind utilities (which still resolve to the CSS variables); do not add new hand-written rules to global.css.
 
 ### Plugin UI (manifest-driven)
 

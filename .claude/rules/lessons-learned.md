@@ -97,10 +97,14 @@ React 18 in development mode (Strict Mode and/or its testing-library equivalent)
 If the test sets `mockImplementationOnce(returnValue)` per test, the FIRST useEffect call consumes the implementation and the SECOND call falls through to the default `vi.fn()` (which returns `undefined`) — the component then sees the default empty state and the test fails on a stale assertion.
 
 **Fixes**:
-- Use `mockImplementation(...)` (no `Once`). The implementation persists across both effect mounts. Per-test `afterEach { mock.mockClear() }` (NOT `mockReset`) keeps the implementation alive across test boundaries while still resetting call history.
-- Set a default implementation in the `vi.mock` factory itself, e.g. `getPlugin: vi.fn(async () => ({ settings: {} }))`. Tests that don't care about the response can rely on the default; tests that do override per-test via `mockImplementation`. `mockClear` (not `mockReset`) preserves the factory default between tests.
+- **Use `mockImplementation(...)` (no `Once`).** The implementation persists across both effect mounts. Per-test `afterEach { mock.mockClear() }` (NOT `mockReset`) keeps the implementation alive across test boundaries while still resetting call history.
+- **Set a default implementation in the `vi.mock` factory itself**, e.g. `getPlugin: vi.fn(async () => ({ settings: {} }))`. Tests that don't care about the response can rely on the default; tests that do override per-test via `mockImplementation`. `mockClear` (not `mockReset`) preserves the factory default between tests.
 
 The `mockClear` vs `mockReset` distinction matters specifically because of the factory-default pattern: `mockReset` strips the factory's implementation and the next test starts with a vanilla `vi.fn()` returning undefined, which crashes the next render's `useEffect` chain with `Cannot read properties of undefined (reading 'then')`.
+
+## Globals invoked with `new` need a function constructor, not an arrow
+
+`vi.stubGlobal("XMLHttpRequest", vi.fn(() => fakeXhr))` fails with `TypeError: () => fakeXhr is not a constructor` - arrow functions cannot be invoked with `new`. Stub with a regular function expression instead: `vi.stubGlobal("XMLHttpRequest", function () { return fakeXhr; })` (an explicitly returned object replaces the implicit `this`, so the pre-built fake becomes the result of `new`). Generalizes to every global callers invoke with `new` (`WebSocket`, `Worker`, `Notification`, ...): arrows break silently, a regular function or a class works.
 
 ## Alembic `fileConfig` silences every existing logger
 
@@ -212,9 +216,9 @@ Nothing about that is visible with mocked git output. It surfaced because the ne
 
 ### Rules
 
-- When a tool resolves its own context, let the test control that context. Build the real thing in `tmp_path` (git repo, config dir, package tree) and run the tool against it as a subprocess. The setup cost is one fixture; the coverage includes the resolution logic that mocks erase.
-- Derive the repo root from cwd (`git rev-parse --show-toplevel`), never from `__file__`. Pre-commit, make targets, and CI all invoke from the repo root; `__file__` additionally breaks under worktrees, symlinked checkouts, and any vendored copy of the script.
-- A guard that can pass by looking at the wrong place must fail closed. "Found nothing, so nothing is wrong" is only sound once you have proven you looked in the right tree.
+- **When a tool resolves its own context, let the test control that context.** Build the real thing in `tmp_path` (git repo, config dir, package tree) and run the tool against it as a subprocess. The setup cost is one fixture; the coverage includes the resolution logic that mocks erase.
+- **Derive the repo root from cwd (`git rev-parse --show-toplevel`), never from `__file__`.** Pre-commit, make targets, and CI all invoke from the repo root; `__file__` additionally breaks under worktrees, symlinked checkouts, and any vendored copy of the script.
+- **A guard that can pass by looking at the wrong place must fail closed.** "Found nothing, so nothing is wrong" is only sound once you have proven you looked in the right tree.
 
 Pairs with "Operational gaps masquerade as wired infrastructure" (a gate that never ran) and "A 'flaky' test that fails deterministically on unchanged code is stale, not flaky" (a gate whose assertion no longer matches reality). Same family: the gate exists, and the gate is not doing the job you believe it is.
 
@@ -492,10 +496,10 @@ Per-subsystem SSoT (one canonical pyproject per Python subsystem, one canonical 
 
 ### Rules for working in this codebase
 
-- Do not hand-edit any version field except `backend/pyproject.toml`. Even the assistant doing the work follows this rule. If the assistant bypasses the tool and edits a downstream pyproject directly, the tool's value is zero from day one. Run `make sync-versions` and let the diff speak.
-- Each release commit's diff for non-canonical version fields must be reproducible by re-running `make sync-versions` from a clean checkout. That's the bisect contract: any historical commit can be re-derived from `backend/pyproject.toml` + the tool.
-- A new subsystem with its own version field: add it to `scripts/sync_versions.py`'s `collect_targets()` AND the regression detector in `verify_version_pins.sh` AND the CI gate. Three artifacts per new pin; never one or two.
-- The `--check` mode of every sync/verify script must be idempotent: running it twice in a row produces the same answer, never writes, never depends on environment state beyond the repo. CI relies on that property.
+- **Do not hand-edit any version field except `backend/pyproject.toml`.** Even the assistant doing the work follows this rule. If the assistant bypasses the tool and edits a downstream pyproject directly, the tool's value is zero from day one. Run `make sync-versions` and let the diff speak.
+- **Each release commit's diff for non-canonical version fields must be reproducible by re-running `make sync-versions` from a clean checkout.** That's the bisect contract: any historical commit can be re-derived from `backend/pyproject.toml` + the tool.
+- **A new subsystem with its own version field**: add it to `scripts/sync_versions.py`'s `collect_targets()` AND the regression detector in `verify_version_pins.sh` AND the CI gate. Three artifacts per new pin; never one or two.
+- **The `--check` mode of every sync/verify script must be idempotent**: running it twice in a row produces the same answer, never writes, never depends on environment state beyond the repo. CI relies on that property.
 
 ## Diagnostic features must fail open
 
@@ -613,8 +617,8 @@ The chat-style rule and the production-content rule are deliberately different. 
 
 `scripts/verify_i18n_scripts.py` is the AUTOMATED gate for this class (the earlier interactive `find_umlaut_candidates.py` / `replace_umlauts.py` / `build_in_scope_list.py` / `discover_unknown_umlauts.py` workflow has been removed):
 
-- Stage 1 (de): flags substitute-spelling forms in `backend/config/i18n/de.yaml` via a curated whole-word list (`DE_SUBSTITUTE_WORDS`). Legitimate digraph words (Quelle, Dauer, aktuell) are not listed and can never fire; "musst" is correct post-reform German and must never be added. Extend the list when a new degraded form slips through — never loosen it into a bare digraph scan.
-- Stage 2 (el/hi): flags latin TRANSLITERATION (the severest class — functionally a missing translation) when a value's letters are mostly latin in the Greek/Devanagari catalog, after stripping `{placeholders}` and allowlisted technical/brand tokens (`LATIN_ALLOWED_TOKENS` + `KEY_ALLOWLIST_PATTERNS` for theme names etc.). False positives go into the allowlists, not into a weaker threshold.
+- **Stage 1 (de):** flags substitute-spelling forms in `backend/config/i18n/de.yaml` via a curated whole-word list (`DE_SUBSTITUTE_WORDS`). Legitimate digraph words (Quelle, Dauer, aktuell) are not listed and can never fire; "musst" is correct post-reform German and must never be added. Extend the list when a new degraded form slips through — never loosen it into a bare digraph scan.
+- **Stage 2 (el/hi):** flags latin TRANSLITERATION (the severest class — functionally a missing translation) when a value's letters are mostly latin in the Greek/Devanagari catalog, after stripping `{placeholders}` and allowlisted technical/brand tokens (`LATIN_ALLOWED_TOKENS` + `KEY_ALLOWLIST_PATTERNS` for theme names etc.). False positives go into the allowlists, not into a weaker threshold.
 
 Runs via `make verify-i18n-scripts` and the `i18n-script-sanity` pre-commit hook (scoped to the de/el/hi catalogs, so it also runs in the CI pre-commit job). Hard gate, no baseline.
 
@@ -696,8 +700,8 @@ Rule: when adding a new persistent path under `get_data_dir()`, also add it to `
 
 AdaptiveLearner's plugins are installed two different ways depending on context:
 
-- `make test` path: the backend's combined `poetry.lock` resolves every plugin as a path-dep (`adaptive-learner-plugin-{name} = {path = "../plugins/...", develop = true}`). One `poetry install` from `backend/` brings every plugin's external deps in via the backend's lock.
-- CI plugin-matrix path: `.github/workflows/ci.yml` and `.github/workflows/coverage.yml` run `poetry install --no-interaction --no-ansi` inside each plugin directory against THAT plugin's own `poetry.lock`. The backend lock is irrelevant here.
+- **`make test` path:** the backend's combined `poetry.lock` resolves every plugin as a path-dep (`adaptive-learner-plugin-{name} = {path = "../plugins/...", develop = true}`). One `poetry install` from `backend/` brings every plugin's external deps in via the backend's lock.
+- **CI plugin-matrix path:** `.github/workflows/ci.yml` and `.github/workflows/coverage.yml` run `poetry install --no-interaction --no-ansi` inside each plugin directory against THAT plugin's own `poetry.lock`. The backend lock is irrelevant here.
 
 When a shared external dep (e.g. fastapi) bumps in every pyproject (backend + 10 plugins), the backend lock and the per-plugin locks drift independently. If only the backend lock gets regenerated:
 
@@ -767,10 +771,10 @@ Dropping the empty-subtitle criterion lifted detection from 6 / 209 to 8 / 209 w
 
 ### The lesson generalizes
 
-- Specs that predict a data shape are predictions, not contracts. A heuristic that looks principled on paper can silently miss the cases that matter once you point it at real data.
-- Run the audit against actual data BEFORE writing code, not after. "After" means the code is committed, possibly shipped, and the regression is harder to undo than to prevent. The medium-import walker session (2026-04-23) had the inverse cost: a `find` vs `find_all` bug silently truncated ~33% of imports for an entire release cycle, and the fix needed a one-off data-fix script + a regression-pin test. The MEDIUM-COMMENTS-IMPORT-01 audit caught the same class of bug BEFORE landing — no data-fix script needed, no production rows mis-classified.
-- The audit input doesn't have to be production data. In the MEDIUM-COMMENTS-IMPORT-01 session, the production DB was empty (the user had cleared it), so the audit ran directly against the raw Medium HTML export in the user's Downloads directory. Working from the source bytes instead of the parsed-and-imported rows is often cleaner: the audit isolates the heuristic from walker / importer drift.
-- Surfacing the audit in the pre-inspection report is what makes the decision visible. Without the report saying "6 / 209 under the spec, 8 / 209 with empty-subtitle dropped, the user's own reference case is in the missing 2," the spec would have been confirmed unchanged. The report makes the discrepancy a decision point instead of an implementation surprise.
+- **Specs that predict a data shape are predictions, not contracts.** A heuristic that looks principled on paper can silently miss the cases that matter once you point it at real data.
+- **Run the audit against actual data BEFORE writing code, not after.** "After" means the code is committed, possibly shipped, and the regression is harder to undo than to prevent. The medium-import walker session (2026-04-23) had the inverse cost: a `find` vs `find_all` bug silently truncated ~33% of imports for an entire release cycle, and the fix needed a one-off data-fix script + a regression-pin test. The MEDIUM-COMMENTS-IMPORT-01 audit caught the same class of bug BEFORE landing — no data-fix script needed, no production rows mis-classified.
+- **The audit input doesn't have to be production data.** In the MEDIUM-COMMENTS-IMPORT-01 session, the production DB was empty (the user had cleared it), so the audit ran directly against the raw Medium HTML export in the user's Downloads directory. Working from the source bytes instead of the parsed-and-imported rows is often cleaner: the audit isolates the heuristic from walker / importer drift.
+- **Surfacing the audit in the pre-inspection report** is what makes the decision visible. Without the report saying "6 / 209 under the spec, 8 / 209 with empty-subtitle dropped, the user's own reference case is in the missing 2," the spec would have been confirmed unchanged. The report makes the discrepancy a decision point instead of an implementation surprise.
 
 Concrete rule: when a feature ships with a heuristic, a detection rule, a threshold, or any other prediction about data shape, run the prediction against real data in pre-inspection. Report counts + sample cases. Treat the spec as the starting hypothesis, not the final design.
 
@@ -782,9 +786,9 @@ The job completed in 1m12s (vs. 20-40min expected) because `mutmut run` errored 
 
 ### The lesson generalizes
 
-- "Wired" ≠ "working". A workflow / hook / cron / scheduled job that was committed without being executed end-to-end is a hypothesis, not a feature. Audits should validate that wired infrastructure actually runs to completion, not just that the YAML / config exists.
+- **"Wired" ≠ "working".** A workflow / hook / cron / scheduled job that was committed without being executed end-to-end is a hypothesis, not a feature. Audits should validate that wired infrastructure actually runs to completion, not just that the YAML / config exists.
 - The right time to flip such switches is at wire time, not at audit time. A maintainer who wires mutmut / Hypothesis / any new pipeline should `workflow_dispatch` the workflow at least once before declaring the work done, and surface the artifact + result in the same PR / commit. The 2026-05-02 mutmut wiring shipped without this validation; the bug then lay dormant for 10 days.
-- Audits that find these gaps are doing their job. The audit didn't fail to "implement mutmut"; it accurately reported that the wired mutmut workflow is operationally blocked, which is a more useful data point than another abstract "we should adopt mutmut" recommendation.
+- **Audits that find these gaps are doing their job.** The audit didn't fail to "implement mutmut"; it accurately reported that the wired mutmut workflow is operationally blocked, which is a more useful data point than another abstract "we should adopt mutmut" recommendation.
 
 Concrete rule: when wiring a new CI workflow, schedule it, or otherwise add infrastructure that runs on a delayed trigger (nightly cron, on-tag, on-paths-only, gated by repo variable), trigger it manually at least once in the same session, download the artifact, and confirm the result is what you intended. Document the first run's outcome in the PR description or the related audit doc. A workflow that ships without a known-good first run is technical debt masquerading as feature delivery.
 
@@ -995,7 +999,7 @@ Release notes describe intent and feature changes. action.yml declares the actua
 Concrete examples from the 2026-05-14 sweep that caught this:
 
 - `actions/upload-artifact@v5.0.0` — release notes said "preliminary support for Node.js 24" and the bump from v4 was marked BREAKING CHANGE. Both signals pointed at "v5 is the Node-24 baseline". But `action.yml` at v5 declared `runs.using: 'node20'`. v6 was the actual transition (declared `node24`).
-- `actions/configure-pages@v5.0.0` — release notes talked about Next.js breaking changes without mentioning the Node runtime at all, leading to inference (from sibling pages actions on Node 24) that v5 was Node-24. But `action.yml` declared `node20`. v6 added Node 24.
+- **`actions/configure-pages@v5.0.0`** — release notes talked about Next.js breaking changes without mentioning the Node runtime at all, leading to inference (from sibling pages actions on Node 24) that v5 was Node-24. But `action.yml` declared `node20`. v6 added Node 24.
 
 The trap is amplified by the `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` env-var: if it's already in place, runtime tests look green because the env-var coerces Node 24 regardless of the action.yml declaration. The action.yml read is the only honest signal.
 
@@ -1073,8 +1077,8 @@ PluginForge v0.9.0 made `target_application` enforcement a hard filter (retired 
 
 The two channels mean different things:
 
-- `get_load_errors()` / `DiscoveryResult.errors`: a plugin that the manager TRIED to load and that FAILED (import error, hookspec mismatch, missing required attribute, activation exception). This is a real fault the operator should see.
-- `DiscoveryResult.filtered` (v0.9.0+): a plugin that was intentionally not loaded because its identity gate said "not for this host." This is correct behaviour, not a failure.
+- **`get_load_errors()` / `DiscoveryResult.errors`**: a plugin that the manager TRIED to load and that FAILED (import error, hookspec mismatch, missing required attribute, activation exception). This is a real fault the operator should see.
+- **`DiscoveryResult.filtered`** (v0.9.0+): a plugin that was intentionally not loaded because its identity gate said "not for this host." This is correct behaviour, not a failure.
 
 ### Operational consequence for the v0.9.0+ era
 
@@ -1227,9 +1231,9 @@ The Dexie-mode E2E gate runs nightly + release-only, NOT on PRs (#552 cadence). 
 
 ### Rules
 
-- E2E text assertions must not hardcode one locale's wording when the app renders in a different default locale (German here). Match a locale-robust pattern (`/passed|erfolgreich/i`) or assert on a stable, non-translated signal (a testid state, a count, a success CSS token), not the prose.
-- Any i18n PR that adds/changes a translated string that an E2E spec asserts on is a latent break for the nightly/release gates. When translating a string, grep the E2E specs for the old English wording (`grep -rn "toContainText(/<word>/" e2e/`) and update the assertion in the same PR — even though the PR's own CI won't run the affected gate.
-- A previously-passing assertion that depended on an i18n FALLBACK is fragile by construction. If a test passes only because a translation is missing, completing the translation breaks it. Prefer locale-agnostic assertions from the start.
+- **E2E text assertions must not hardcode one locale's wording** when the app renders in a different default locale (German here). Match a locale-robust pattern (`/passed|erfolgreich/i`) or assert on a stable, non-translated signal (a testid state, a count, a success CSS token), not the prose.
+- **Any i18n PR that adds/changes a translated string that an E2E spec asserts on is a latent break** for the nightly/release gates. When translating a string, grep the E2E specs for the old English wording (`grep -rn "toContainText(/<word>/" e2e/`) and update the assertion in the same PR — even though the PR's own CI won't run the affected gate.
+- **A previously-passing assertion that depended on an i18n FALLBACK is fragile by construction.** If a test passes only because a translation is missing, completing the translation breaks it. Prefer locale-agnostic assertions from the start.
 
 ## Cross-layer assumptions must be pinned against REAL data shapes (the ghost-content recurrence class)
 
@@ -1244,7 +1248,7 @@ Surfaced 2026-07-18 as the THIRD recurrence of the same class:
 - A module that consumes another layer's output must pin that layer's REAL shape in its tests. Hand-built minimal fixtures encode the author's assumption; when the assumption is wrong, module and tests are green and wrong together. Copy the actual entry shape (here: `ContentSetEntry` incl. `cached_version`) into the fixture, or build fixtures from the producing module's test factories.
 - Every dual-storage assumption needs an explicit API-vs-Dexie check. 'listSets = loadable' held in one mode only. When a helper's contract mentions `listSets` / `getLesson` / any `IStorageService` surface, ask per mode: does the invariant hold in BOTH implementations? If unsure, write the one-line probe test per mode instead of assuming.
 - Content lifecycle is a LIFECYCLE, not a point fix. Add / remove / delete / re-add each have residue surfaces: DB rows (progress, SRS, favorites), FS/IndexedDB cache, the SW runtime cache, localStorage. A fix that cleans one surface for one operation (repo removal) and not its siblings (set deletion) guarantees the next recurrence. When touching any lifecycle operation, enumerate ALL residue surfaces and either clean them or document per surface WHY they stay (hide-not-delete is fine - silent survival is not).
-- Recurrences reopen the class, not just the instance. When a bug is a facet of an earlier fixed class, say so in the issue, link the chain, and extend the ORIGINAL tests so the whole class is pinned - a sibling facet fixed in isolation is the seed of recurrence #3.
+- **Recurrences reopen the class, not just the instance.** When a bug is a facet of an earlier fixed class, say so in the issue, link the chain, and extend the ORIGINAL tests so the whole class is pinned - a sibling facet fixed in isolation is the seed of recurrence #3.
 
 ## PR-CI vs nightly gates: different test surfaces (green PR -> red nightly/push)
 
@@ -1268,9 +1272,9 @@ A green PR is NOT authoritative for nightly-only surfaces. When a PR touches a v
 
 ### Shipped mitigations (make the gap PR-visible, targeted)
 
-- `visual-baseline-gate.yml` (#1641) - a PR touching visual-critical paths must carry the baseline PNGs; escape label `visual-baselines-unaffected`.
+- **`visual-baseline-gate.yml`** (#1641) - a PR touching visual-critical paths must carry the baseline PNGs; escape label `visual-baselines-unaffected`.
 - `testid-reference-gate.yml` (#1661) - a statically spec-referenced `data-testid` that is net-removed/renamed on a high-user-visibility surface (lesson runner, exercises, dashboard, content browser, settings core) without any e2e spec change fails a fast PR gate (`scripts/testid_reference_gate.py`, `make check-testid-refs`); escape label `testid-refs-unaffected`. Catches the rename/remove sub-class only - the #1656 wrap-into-`hidden` case (literal survives) is not literal-diffable and stays a reviewer + nightly concern.
-- `docker-build-smoke.yml` (#1990) - build-only `docker compose -f docker-compose.prod.yml build` (the launcher/install.sh path, which no other gate builds), path-filtered on the Docker inputs on PRs + on `release/**` + weekly + dispatch; `make docker-build-smoke` locally. The release checklist's Docker step moves from "if active" to mandatory.
+- **`docker-build-smoke.yml`** (#1990) - build-only `docker compose -f docker-compose.prod.yml build` (the launcher/install.sh path, which no other gate builds), path-filtered on the Docker inputs on PRs + on `release/**` + weekly + dispatch; `make docker-build-smoke` locally. The release checklist's Docker step moves from "if active" to mandatory.
 
 ### The scope discipline (why these gates stay targeted)
 
@@ -1296,8 +1300,8 @@ Surfaced 2026-07-24 via #2027: the launcher's frozen one-file binary showed the 
 
 ### Rules
 
-- Path resolution in wrapper/packaging code never trusts `__file__` arithmetic alone. In the frozen branch prefer `sys._MEIPASS` explicitly (see `_bundle_root()` / `_config_path()` in `launcher/adaptive_learner_launcher/__main__.py`), and pin the frozen layout with tests that monkeypatch `sys.frozen` + `sys._MEIPASS` (the four #2028 regression tests are the template).
-- For any change to launcher/packaging/spec code: the source-tree run is a PRE-CHECK, the built-artifact test is the PROOF. Build the real binary (`poetry run pyinstaller ... --clean`) or download the CI artifact, run it standalone (outside the repo checkout), and verify the user-visible claim on the artifact itself - window title via xdotool, file access via strace, CLI via the binary. A green test suite plus a green source run proves nothing about the frozen path.
-- A fail-open fallback in a dependency masks this class. When a wrapper passes an explicit resource path into a dependency that silently falls back on a miss, the miss is invisible; prefer dependencies that warn (upstream ask: docker-app-launcher#32), and in the meantime make the wrapper's resolution testable so the miss cannot happen silently.
+- **Path resolution in wrapper/packaging code never trusts `__file__` arithmetic alone.** In the frozen branch prefer `sys._MEIPASS` explicitly (see `_bundle_root()` / `_config_path()` in `launcher/adaptive_learner_launcher/__main__.py`), and pin the frozen layout with tests that monkeypatch `sys.frozen` + `sys._MEIPASS` (the four #2028 regression tests are the template).
+- **For any change to launcher/packaging/spec code: the source-tree run is a PRE-CHECK, the built-artifact test is the PROOF.** Build the real binary (`poetry run pyinstaller ... --clean`) or download the CI artifact, run it standalone (outside the repo checkout), and verify the user-visible claim on the artifact itself - window title via xdotool, file access via strace, CLI via the binary. A green test suite plus a green source run proves nothing about the frozen path.
+- **A fail-open fallback in a dependency masks this class.** When a wrapper passes an explicit resource path into a dependency that silently falls back on a miss, the miss is invisible; prefer dependencies that warn (upstream ask: docker-app-launcher#32), and in the meantime make the wrapper's resolution testable so the miss cannot happen silently.
 
 Pairs with "Test a tool through the interface it actually uses, not a mock of it" - the same family: the interface users actually run is the frozen binary. "Operational gaps masquerade as wired infrastructure" - bundled data (the spec's `launcher.json` + icon datas) that nothing at runtime actually reads is wired, not working. "install.sh VERSION drift" - the older sibling: test THE SCRIPT / THE ARTIFACT, not the files it was built from.

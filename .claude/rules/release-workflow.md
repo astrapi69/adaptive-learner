@@ -388,7 +388,7 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
 - [ ] CHANGELOG.md with the new entry committed
 - [ ] `changelog/releases/v0.X.0.md` created for the GitHub release
 - [ ] Version updated in all pyproject.toml and package.json
-- [ ] Version updated in version and other Python modules
+- [ ] Version updated in `__version__` and other Python modules
 - [ ] pluginforge and other externally-owned Adaptive Learner deps at the current version
 - [ ] `make test` green
 - [ ] Frontend `tsc --noEmit` clean

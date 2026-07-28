@@ -15,13 +15,13 @@ Full policy: `docs/policies/VIBE-CODING-POLICY.md`
 
 - **LAYER ARCHITECTURE**: No business logic in components. No DB queries in routers. No direct fetch calls. Dependency direction: Router -> Service -> Repository -> Models.
 
-- **TESTS**: Every behavior change needs tests. Backup changes additionally need the manual round-trip (BACKUP-AKZEPTANZTEST). User-visible functionality updates the manual test plan (TESTPLAN-PFLICHT in ai-workflow.md: DE + EN in the same PR, otherwise referenced follow-up comment on #1087; "not requested" is not a valid reason). PR-CI: selective tests (vitest --changed, pytest --testmon). Nightly + Release: full suite.
+- **TESTS**: Every behavior change needs tests. Backup changes additionally need the manual round-trip (BACKUP-AKZEPTANZTEST). User-visible functionality updates the manual test plan (TESTPLAN-PFLICHT in ai-workflow/testplan-policy.md: DE + EN in the same PR, otherwise referenced follow-up comment on #1087; "not requested" is not a valid reason). PR-CI: selective tests (vitest --changed, pytest --testmon). Nightly + Release: full suite.
 
 - **DEPENDENCIES**: No new dependencies without manual check on maintenance status and security. Prefer existing dependencies.
 
 - **REFACTORING**: Split god-files, do not whitelist. Whitelist only for single-concern files (models, schemas, static data).
 
-- **GIT**: Issue FIRST (GITHUB-ISSUE-PFLICHT). Closes #XX in every commit. Docstrings over inline comments. One concern per PR. Every pushed code change opens a PR (PR-PFLICHT in ai-workflow.md) — always, not only on request. "No PR, not requested" is not a valid completion report. Exceptions: release freeze (below) and pure analysis/status tasks without code change.
+- **GIT**: Issue FIRST (GITHUB-ISSUE-PFLICHT). Closes #XX in every commit. Docstrings over inline comments. One concern per PR. Every pushed code change opens a PR (PR-PFLICHT in ai-workflow/pr-policy.md) — always, not only on request. "No PR, not requested" is not a valid completion report. Exceptions: release freeze (below) and pure analysis/status tasks without code change.
 
 ## Priority (fixed, non-negotiable)
 

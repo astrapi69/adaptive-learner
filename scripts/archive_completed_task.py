@@ -3,7 +3,8 @@
 active ROADMAP / backlog files into the monthly archive bucket.
 
 The active files (``docs/ROADMAP.md`` + ``docs/backlog.md``) hold
-ONLY open work per the ai-workflow.md "Continuous archival rule".
+ONLY open work per the ai-workflow/documentation-protocol.md
+"Continuous archival rule".
 A task marked ``- [x] **ID**: ...`` is fair game: this script
 identifies the block, asks for confirmation, then moves it into
 ``docs/roadmap-archive/YYYY-MM.md`` (the current month, UTC) under

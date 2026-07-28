@@ -22,7 +22,12 @@ Full reference: .claude/rules/architecture.md
 ## Rules (.claude/rules/)
 | File | Scope | Content |
 |---|---|---|
-| ai-workflow.md | always | GitHub issue policy, PR policy, testplan policy, session flow |
+| ai-workflow/github-issue-policy.md | always | GITHUB-ISSUE-PFLICHT, issue lifecycle, sub-issue closing, issue queue |
+| ai-workflow/pr-policy.md | always | PR-PFLICHT: every pushed change opens a PR |
+| ai-workflow/testplan-policy.md | always | TESTPLAN-PFLICHT: user-visible changes update the manual test plan |
+| ai-workflow/implementation-workflow.md | always | Session start, order for features/plugins/changes, not-allowed list |
+| ai-workflow/documentation-protocol.md | always | Journal, doc updates, archival, numeric-claims verification |
+| ai-workflow/test-coverage-audits.md | tests | When/how to run coverage audits, where coverage runs |
 | architecture.md | backend/plugins/frontend/docs | 4-layer architecture, plugin structure, UI strategy, dual storage |
 | coding-standards.md | backend/plugins/frontend | Naming, formatting, Git, function design, tests, security |
 | code-hygiene.md | backend/plugins/frontend | Linting, error handling architecture, API conventions, logging |
