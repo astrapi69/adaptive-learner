@@ -85,7 +85,7 @@ See architecture.md for architectural details. Additionally note:
 - Tests: see `docs/audits/current-coverage.md` for current counts. `make test` covers backend+plugins+Vitest, E2E is separate.
 - 30 SQLAlchemy models in `backend/app/models/__init__.py` (single-file domain model).
 - 13 plugins shipped (assessment, session, tracking, tools, gamification, anki, notebooklm, learning-repo, content-loader, missions, ai-anthropic, ai-openai, ai-gemini).
-- 15 official TipTap extensions + 1 community (@pentestpad/tiptap-extension-figure) — used for rich-text in session notes, curriculum descriptions, and lesson content.
+- TipTap (official extensions only, see `frontend/package.json`) — rich text in session notes, curriculum descriptions, and lesson content.
 - Deployment: Docker Compose, port 18001 (backend) + 15174 (frontend dev), install.sh one-liner. GitHub-Pages-shape build runs Dexie-mode at `https://astrapi69.github.io/adaptive-learner/`.
 - IMPORTANT: Before writing custom code, ALWAYS check whether a TipTap extension or library already exists.
 - IMPORTANT: See lessons-learned.md (index) and lessons/*.md for known pitfalls.

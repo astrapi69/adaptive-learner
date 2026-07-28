@@ -41,7 +41,7 @@ with the new date.
 |---|---|---|
 | [lessons/core.md](lessons/core.md) | always | Data-loss prevention (never bind the real `SessionLocal`), wired-vs-working, test through the real interface, real-data audit before implementing, atomic-commit bound, stale-vs-flaky, fresh-deploy confirmation, code structure |
 | [lessons/backend.md](lessons/backend.md) | backend + plugins | Alembic (`fileConfig`, migrations), FastAPI lifespan async, filesystem isolation, plugin config location, module-level cache leaks, PluginForge filter-vs-error, per-plugin install paths |
-| [lessons/frontend.md](lessons/frontend.md) | frontend | TipTap (`imageFigure`, storage reads), React effect + i18n-mock traps, CSS specificity, testid prefixes, Vitest/happy-dom, TypeScript/Vite toolchain, prettier hook |
+| [lessons/frontend.md](lessons/frontend.md) | frontend | TipTap (storage format, `.ProseMirror`, storage reads), React effect + i18n-mock traps, CSS specificity, testid prefixes, Vitest/happy-dom, TypeScript/Vite toolchain, prettier hook |
 | [lessons/content-storage.md](lessons/content-storage.md) | storage + content | Dexie-mode contract, dual-mode proof, ghost-content recurrence class, source-language inheritance |
 | [lessons/ci-gates.md](lessons/ci-gates.md) | CI, Makefile, scripts | PR-CI vs nightly surfaces, local-vs-CI drift, i18n breaking a nightly gate, engine re-pin schema drift, GitHub Action majors |
 | [lessons/release-packaging.md](lessons/release-packaging.md) | launcher, installers, pins | Version-pin single source, frozen-artifact proof, poetry `lock` vs `update`, transitive surfacing, hotfix tags, fail-open diagnostics |
