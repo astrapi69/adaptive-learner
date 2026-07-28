@@ -113,6 +113,53 @@ jobs:
           Invoke-Smoke "bundle" "--verify-bundle"
           Write-Host "RESULT: the binary starts and its bundle is complete"
 
+      # #2106: the step above proves the .exe starts AS BUILT. A user runs
+      # it AS DOWNLOADED, and a downloaded file carries the Mark of the Web
+      # - a Zone.Identifier alternate data stream with ZoneId=3 - which is
+      # what SmartScreen keys on. The stream is written, read back as
+      # proof, and the exe started from a copy that carries it.
+      - name: Smoke-run the DOWNLOADED artifact (Mark of the Web, #2106)
+        run: |
+          $work = Join-Path $env:RUNNER_TEMP "downloaded"
+          Remove-Item -Recurse -Force $work -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Path $work | Out-Null
+          $bin = Join-Path $work "adaptive-learner-launcher.exe"
+          Copy-Item dist\adaptive-learner-launcher.exe $bin
+
+          # Exactly what a browser writes next to a downloaded file.
+          $motw = "[ZoneTransfer]`r`nZoneId=3`r`nReferrerUrl=https://github.com/astrapi69/adaptive-learner/releases`r`n"
+          Set-Content -Path $bin -Stream Zone.Identifier -Value $motw
+
+          Write-Host "--- proof the Mark of the Web is really set ---"
+          $read = Get-Content -Path $bin -Stream Zone.Identifier -ErrorAction SilentlyContinue
+          if (-not ($read -match "ZoneId=3")) {
+            throw "Zone.Identifier was not written - the test would prove nothing"
+          }
+          $read | Write-Host
+
+          Write-Host "--- start the marked .exe ---"
+          $out = Join-Path $work "motw.out"; $err = Join-Path $work "motw.err"
+          $p = Start-Process -FilePath $bin -ArgumentList "--version" -Wait -PassThru `
+               -NoNewWindow -RedirectStandardOutput $out -RedirectStandardError $err
+          if (Test-Path $out) { Get-Content $out | Write-Host }
+          if ((Test-Path $err) -and (Get-Item $err).Length -gt 0) { Get-Content $err | Write-Host }
+          Write-Host "exit code: $($p.ExitCode)"
+
+          # The Mark of the Web survives the start: proof the file we ran is
+          # the marked one, not a stripped copy.
+          $still = Get-Content -Path $bin -Stream Zone.Identifier -ErrorAction SilentlyContinue
+          if (-not ($still -match "ZoneId=3")) { throw "the mark vanished - wrong file was started" }
+
+          if ($p.ExitCode -ne 0) {
+            Write-Host "RESULT: the DOWNLOADED (marked) .exe is BLOCKED - exit $($p.ExitCode). See #2106."
+            throw "marked .exe failed to start"
+          }
+          Write-Host "RESULT: the DOWNLOADED (marked) .exe starts - exit 0"
+          Write-Host "LIMIT OF THIS TEST: SmartScreen is a shell/reputation prompt shown on"
+          Write-Host "interactive launch. A non-interactive Start-Process does not summon it,"
+          Write-Host "so a green result here does NOT mean a user sees no prompt. What it does"
+          Write-Host "prove is that the Mark of the Web alone does not stop the binary."
+
       - name: Compute SHA256 checksum
         run: |
           $hash = (Get-FileHash -Algorithm SHA256 dist\adaptive-learner-launcher.exe).Hash.ToLower()
