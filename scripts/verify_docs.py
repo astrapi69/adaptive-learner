@@ -142,12 +142,10 @@ VERSION_TARGETS = [
     ("README.md", r"badge/version-v(\d+\.\d+\.\d+)-blue", "README version badge", True),
     ("README.md", r"current release is \*\*v(\d+\.\d+\.\d+)\*\*", "README status release", True),
     ("README-de.md", r"badge/version-v(\d+\.\d+\.\d+)-blue", "README-de version badge", True),
-    (
-        "CLAUDE.md",
-        r"\*\*Current state:\*\* \*\*v(\d+\.\d+\.\d+)\*\*",
-        "CLAUDE.md current state",
-        True,
-    ),
+    # CLAUDE.md deliberately carries NO inline version since the #2071
+    # condensation: it points at backend/pyproject.toml as the canonical
+    # source, so there is nothing here to compare. The test-count line
+    # (checked separately below) still carries a vX.Y.Z baseline label.
     ("docs/ROADMAP.md", r"Current state: \*\*v(\d+\.\d+\.\d+)", "ROADMAP.md header", False),
     ("docs/backlog.md", r"State: \*\*post v(\d+\.\d+\.\d+)", "backlog.md header", False),
 ]
@@ -232,7 +230,8 @@ def check_plugins(report: Report, fix: bool) -> None:
 
 # Matches the CLAUDE.md baseline line, e.g.
 #   backend 1025 (+1 skipped) + plugins 950 + Vitest 2503 = **4478 tests**
-TEST_COUNT_RE = r"backend (\d+).*?\+ plugins\s+(\d+) \+ Vitest (\d+) = \*\*(\d+) tests\*\*"
+# Bold around the total is optional since the #2071 reflow.
+TEST_COUNT_RE = r"backend (\d+).*?\+ plugins\s+(\d+) \+ Vitest (\d+) = \*{0,2}(\d+) tests\*{0,2}"
 # README/README-de test badge, e.g. badge/tests-2634%20green  /  ...-2634%20grün
 TEST_BADGE_RE = r"badge/tests-(\d+)%20"
 

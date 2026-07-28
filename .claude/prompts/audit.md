@@ -44,7 +44,7 @@ If the convention itself is stale, flag it as Outdated under section 4.
   `quality-checks.md` ("Coverage targets per module type"): services HIGH (>= 80%),
   routers MEDIUM-HIGH (>= 70%), `api/client.ts` HIGH (>= 90%), data-critical E2E
   flows MUST HAVE.
-- Numeric claims: per `ai-workflow.md` "Numeric claims verification", every test
+- Numeric claims: per `ai-workflow/documentation-protocol.md` "Numeric claims verification", every test
   count or coverage % must be verified by running the authoritative command in the
   same session, NOT recalled from `current-coverage.md` if the audit is producing
   fresh numbers.
