@@ -272,6 +272,20 @@ body used to pass; now the hash must be updated, which lands in the diff.
 Origin: the condensation flipped "MANDATORY on UI PRs" to "recommended but not
 mandatory" inside a 561-line deletion framed as cleanup.
 
+## Declared rule changes converge in one log (#2087)
+
+Every `RULE-CHANGE DECLARED:` block is appended to
+[`docs/rule-change-log.md`](../../docs/rule-change-log.md) by
+`scripts/append_rule_change_log.py`, from the merged commits - by the machine,
+not by whoever remembers. `make rule-change-log` appends, `make
+rule-change-log-check` fails when a declaration is missing from the log.
+
+Why: the declaration duty makes a change visible inside its own PR, but PRs
+here are created and merged autonomously. Without one place where the
+declarations converge, a declaration is a line in a commit message nobody
+reads. This file is where a human sees in a few minutes what moved in the
+binding wording.
+
 ## Condensation PRs are content-neutral or declared (#2081)
 
 A PR framed as condensation, cleanup, reflow or formatting may not contain
