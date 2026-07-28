@@ -32,7 +32,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -806,6 +806,7 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 	@echo "== rule corpus size"    && $(MAKE) --no-print-directory verify-rule-corpus-size
 	@echo "== complexity ratchet"  && $(MAKE) --no-print-directory check-complexity-gate
 	@echo "== testid references"   && $(MAKE) --no-print-directory check-testid-refs
+	@echo "== docker context"      && $(MAKE) --no-print-directory verify-docker-context
 	@echo "== file sizes"          && $(MAKE) --no-print-directory check-file-sizes
 	@echo ""
 	@echo "All build-free gates passed. Two gates need a frontend build and"
@@ -829,6 +830,9 @@ verify-check-inventory: ## Check inventory (#2077): an active check may not be s
 
 verify-lessons-inventory: ## Lessons catalogue completeness (#2073): every section present + byte-identical
 	@python3 scripts/verify_lessons_inventory.py --compare .claude/rules/lessons/.inventory-baseline.json
+
+verify-docker-context: ## Docker build context (#2112): no node_modules survives the ignore rules
+	@python3 scripts/verify_docker_context.py
 
 verify-rule-corpus-size: ## Rule corpus ratchet (#2091): the always-injected context may shrink, not grow
 	@python3 scripts/verify_rule_corpus_size.py
