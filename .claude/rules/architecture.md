@@ -56,7 +56,7 @@ plugins/adaptive-learner-plugin-{name}/
 - Configuration via YAML (backend/config/plugins/{name}.yaml), NOT hardcoded.
 - Extend i18n strings in backend/config/i18n/{lang}.yaml (8 languages: DE, EN, ES, FR, EL, PT, TR, JA, all fully translated).
 - Plugin dependencies as a class attribute: `depends_on = ["session"]`.
-- All plugins are free (MIT). Licensing infrastructure exists but is dormant (`LICENSING_ENABLED = False`).
+- All plugins are free (MIT). There is no licensing infrastructure any more (see below).
 
 ### Repository pattern (data layer, EXP-024)
 
@@ -83,14 +83,13 @@ Third-party plugins are installed as a ZIP through Settings > Plugins:
 - Plugin names: lowercase letters, digits, hyphens only
 - Path traversal check on ZIP paths
 
-### Licensing
+### Licensing: removed
 
-Adaptive Learner-specific, NOT part of PluginForge.
-
-- Code in backend/app/licensing.py.
-- HMAC-SHA256 signed license keys, offline-validatable.
-- Licenses in config/licenses.json, managed through the Settings UI.
-- Format: ADAPTIVE_LEARNER-{PLUGIN}-v{N}-{base64 payload}.{base64 signature}
+There is none. Every plugin is MIT, `backend/app/licensing.py` is gone, and no
+license key, license store or Licenses tab exists any more. Do not reintroduce
+per-plugin licensing without an architecture decision - the previous
+infrastructure (HMAC-signed offline keys in `config/licenses.json`) was carried
+dormant for a long time and cost more attention than it ever earned.
 
 ## Frontend (React/TypeScript)
 
@@ -133,9 +132,9 @@ For complex plugin UIs: Web Components as custom elements (compiled JS bundle in
 
 ### TipTap editor (rich-text in notes / curriculum / lessons)
 
-15 official extensions + 1 community (Figure/Figcaption via @pentestpad/tiptap-extension-figure). 24 toolbar buttons. Used as the editor for session-rating notes, curriculum descriptions, and lesson content (since v1.14.0).
+Official `@tiptap/*` extensions only, no community packages (the full set is the `@tiptap/extension-*` list in `frontend/package.json`; the editor itself is `frontend/src/components/editor/RichTextEditor.tsx`). Used for session-rating notes, curriculum descriptions and lesson content.
 
-**IMPORTANT**: the image node is registered as `imageFigure`, NOT `image` — see lessons/frontend.md for the gotcha.
+Images use `@tiptap/extension-image`, so the node type is `image`. Anything that generates TipTap JSON (importers, converters, AI output) emits `image`; the editor's schema rejects unknown node types and then renders the WHOLE document empty, with no browser console error.
 
 Before writing custom code, ALWAYS check whether an official TipTap extension exists.
 
