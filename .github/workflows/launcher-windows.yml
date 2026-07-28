@@ -84,6 +84,21 @@ jobs:
       - name: Build adaptive-learner-launcher.exe
         run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
 
+      # #2101: nothing ever started a produced .exe. SmartScreen only bites
+      # on a downloaded file (Mark of the Web), so a runner-local start is
+      # the honest half of the question: does the binary itself run?
+      # --version and --verify-bundle are handled before any Tk import.
+      - name: Smoke-run the built binary (#2101)
+        run: |
+          $bin = "dist\adaptive-learner-launcher.exe"
+          Write-Host "--- run: --version ---"
+          & $bin --version
+          if ($LASTEXITCODE -ne 0) { throw "the built .exe failed to start (exit $LASTEXITCODE)" }
+          Write-Host "--- run: --verify-bundle ---"
+          & $bin --verify-bundle
+          if ($LASTEXITCODE -ne 0) { throw "bundle verification failed (exit $LASTEXITCODE)" }
+          Write-Host "RESULT: the binary starts and its bundle is complete"
+
       - name: Compute SHA256 checksum
         run: |
           $hash = (Get-FileHash -Algorithm SHA256 dist\adaptive-learner-launcher.exe).Hash.ToLower()
