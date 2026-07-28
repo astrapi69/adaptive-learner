@@ -29,6 +29,7 @@ import ReadingComprehensionExercise from "../renderers/ReadingComprehensionExerc
 import GradedQuizExercise from "../renderers/GradedQuizExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
 import DictationExercise from "../renderers/DictationExercise";
+import ImageDescriptionExercise from "../renderers/ImageDescriptionExercise";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -62,6 +63,7 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-reading-comprehension",
     "ext:al-graded-quiz",
     "ext:al-dictation",
+    "ext:al-image-description",
 ]);
 
 /** The prop bag every renderer shares (everything except the exercise, the
@@ -99,6 +101,13 @@ function renderAdoptedExtension(
         // ``assets/`` — review/adaptive routes pass an empty source and get
         // the audio-less fallback (ListenFirstAudio renders nothing).
         return <DictationExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-image-description") {
+        // Needs ``source`` for the same reason dictation does: the image can be
+        // an ``assets/`` path resolved by useAsset (an embedded data URI is
+        // self-contained and needs none). Review/adaptive routes pass an empty
+        // source and get the no-image fallback.
+        return <ImageDescriptionExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
     }
     return null;
 }

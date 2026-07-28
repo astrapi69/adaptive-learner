@@ -185,6 +185,16 @@ Requires domain knowledge. Not automatable.
       transcription; correct / near-miss ("Almost!") / wrong shows the
       solution; a lesson with `requires_extensions: ["ext:al-dictation@1"]`
       loads (not refused by the guard)
+- [ ] ext:al-image-description (#2095): the image is shown, type a free-text
+      description; correct / near-miss ("Almost!") / wrong shows the solution;
+      a lesson with `requires_extensions: ["ext:al-image-description@1"]`
+      loads (not refused by the guard). An embedded image renders WITHOUT a
+      network connection (offline-first); a lesson whose image is a remote
+      `http(s)://` URL is refused by the guard. Read-aloud: the prompt gets a
+      speaker button (the instruction is spoken, never the answer). a11y note:
+      this type is visually gated by design (the answer IS the image
+      description) — a screen reader hears a neutral image label, not the
+      solution.
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
 
@@ -358,14 +368,16 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
       the "Advanced exercise types" card starts a dedicated 3-step flow (author
       → review → save) with a non-blocking notice that these types are advanced.
-      Step 2: "Add extension exercise" offers five types — **categorization**,
+      Step 2: "Add extension exercise" offers six types — **categorization**,
       **error correction**, **reading comprehension**, **graded quiz**,
-      **dictation**. Each opens the inline editor with type-specific fields;
+      **dictation**, **image description**. Each opens the inline editor with
+      type-specific fields;
       Save is disabled until the shipped validator passes (categorization: ≥2
       named buckets with items; error correction: ≥2 words + a marked error + a
       correction; reading comprehension: a passage + ≥1 complete question;
       graded quiz: ≥1 question with positive points; dictation: a non-empty
-      audio path + ≥1 accepted transcription). Reading comprehension + graded
+      audio path + ≥1 accepted transcription; image description: a non-empty
+      image + ≥1 accepted answer). Reading comprehension + graded
       quiz: per question toggle multiple-choice ⇄ free-text, MC options with a
       correct checkbox, graded quiz additionally points + partial credit + a
       pass threshold. Dictation (#1887): a typed `assets/audio/...` path (no
@@ -397,6 +409,24 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       alternative (no upload). **Errors:** a too-large file (> 2 MB) OR a wrong
       format (e.g. `.mp4`) shows a clear inline error and does not crash;
       nothing is stored
+- [ ] **Image-description authoring (#2095):** In the extension wizard pick
+      **image description**. The editor shows an **"Upload image"** button
+      (labelled "Image to describe", NOT "(optional)"), a visible size-budget
+      hint ("compressed and embedded, max ~150 KB / 512 px, remote links not
+      allowed"), and an **"Accepted answers"** list. Upload a real JPG/PNG/WebP
+      → inline preview + "Remove" appear; the image is compressed to a data URI
+      (no assets folder needed). Save is disabled until there is an image AND
+      ≥1 accepted answer. Save the lesson, play it: the **image is shown**, type
+      a description, correct / near-miss / wrong shows the solution. **Offline:**
+      turn off the network and reload — the embedded image STILL renders (it
+      rides in the lesson JSON, not a remote URL). **Errors:** an image that
+      cannot be shrunk under the budget shows a clear inline error, nothing is
+      stored. **iOS standalone (MANDATORY):** on an installed iOS PWA, author an
+      image-description lesson with an uploaded photo, Export the backup (`.alb`),
+      reinstall/wipe, Import → open the lesson: the image + accepted answers are
+      intact and the image displays with no network (proves the embedded image
+      survives the iOS IndexedDB + backup round-trip, the known eviction-risk
+      surface)
 - [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first

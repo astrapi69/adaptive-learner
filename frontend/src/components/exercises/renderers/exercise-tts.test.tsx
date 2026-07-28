@@ -19,6 +19,7 @@ import MatchingExercise from "./MatchingExercise";
 import ClozeExercise from "./ClozeExercise";
 import PictureChoiceExercise from "./PictureChoiceExercise";
 import WordTilesExercise from "./WordTilesExercise";
+import ImageDescriptionExercise from "./ImageDescriptionExercise";
 
 function setMockSynth(): void {
     const orig = (globalThis as unknown as {window: typeof window}).window;
@@ -106,6 +107,18 @@ const WORD_TILES: ContentLessonExercise = {
     tiles: ["yo", "hablo"],
     distractors: [],
 };
+
+const IMAGE_DESCRIPTION: ContentLessonExercise = {
+    id: "ex-i",
+    type: "ext:al-image-description",
+    prompt: "Describe what you see.",
+    card_ids: [],
+    distractors: [],
+    ext_payload: {
+        image: "data:image/jpeg;base64,/9j/4AAQSkZJRg==",
+        accept: ["a cat"],
+    },
+} as unknown as ContentLessonExercise;
 
 beforeEach(() => {
     localStorage.clear();
@@ -245,6 +258,40 @@ describe("exercise prompt read-aloud (C2)", () => {
         expect(
             container.querySelector(
                 '[data-testid="read-aloud-word-tiles-prompt"]',
+            ),
+        ).toBeNull();
+    });
+
+    // #2095 — the image-description prompt is read aloud (the instruction, NOT
+    // the answer: the answer is the image, which cannot be spoken). Registers
+    // the sixth adopted type in the per-exercise-type read-aloud rule table.
+    it("image_description surfaces a prompt speaker button with ttsLang", () => {
+        render(
+            <I18nProvider>
+                <ImageDescriptionExercise
+                    exercise={IMAGE_DESCRIPTION}
+                    ttsLang="es"
+                    onComplete={vi.fn()}
+                />
+            </I18nProvider>,
+        );
+        expect(
+            screen.getByTestId("read-aloud-image-description-prompt"),
+        ).toBeTruthy();
+    });
+
+    it("image_description renders NO read-aloud without a ttsLang (Review/Adaptive)", () => {
+        const {container} = render(
+            <I18nProvider>
+                <ImageDescriptionExercise
+                    exercise={IMAGE_DESCRIPTION}
+                    onComplete={vi.fn()}
+                />
+            </I18nProvider>,
+        );
+        expect(
+            container.querySelector(
+                '[data-testid="read-aloud-image-description-prompt"]',
             ),
         ).toBeNull();
     });

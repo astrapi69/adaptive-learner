@@ -39,6 +39,9 @@ export interface CardImageFieldProps {
     previewAlt?: string;
     /** Testid prefix, so add-form and per-row edit instances stay distinct. */
     idPrefix?: string;
+    /** Field label. Defaults to the card "Image (optional)" copy; override
+     *  where the image is required (e.g. the image-description exercise). */
+    label?: string;
 }
 
 export default function CardImageField({
@@ -46,6 +49,7 @@ export default function CardImageField({
     onChange,
     previewAlt,
     idPrefix = "card",
+    label,
 }: CardImageFieldProps) {
     const {t} = useI18n();
     const fileRef = useRef<HTMLInputElement>(null);
@@ -79,7 +83,7 @@ export default function CardImageField({
     return (
         <div className="flex flex-col gap-2">
             <span className="form-label text-sm font-medium text-fg-primary">
-                {t("create_lesson.cards.image_label", "Image (optional)")}
+                {label ?? t("create_lesson.cards.image_label", "Image (optional)")}
             </span>
 
             {hasImage ? (
