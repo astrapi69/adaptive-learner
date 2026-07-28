@@ -140,52 +140,22 @@ Pairs with "Operational gaps masquerade as wired infrastructure" (a gate that ne
 - On export problems: check whether HTML is converted back to Markdown correctly.
 - Test roundtrips: import -> edit -> re-export -> diff against the original input.
 
-## Code structure
+## Hard to test is a design verdict, not a testing problem
 
-### Avoid God Methods
+When a function needs a pile of mocks to exercise, the function is wrong, not
+the test. In practice that means: service functions carry no FastAPI types
+(no `Request`, no `Response`, no `Depends`), helpers take plain parameters,
+and context between functions travels in a dataclass or TypedDict rather than
+a loose dict. The decomposition rules themselves (max function length, God
+Method anti-pattern, guard clauses) live in coding-standards.md "Function
+Design and Cohesion"; the error-handling layering lives in code-hygiene.md
+"Error handling architecture".
 
-- Route handlers longer than 50 lines must be decomposed.
-- Typical symptom: if/elif cascades for different formats/types in one handler.
-- Solution: ExportContext dataclass + one function per format group + testable helper functions.
-- Every extracted function must be testable without reconstructing the whole request context.
-- See coding-standards.md "Function design" for the correct pattern.
-
-### Testability as a design criterion
-
-If a function is hard to test (lots of mocking needed), that is a signal of bad design.
-
-- Service functions must have no FastAPI dependencies (no Request, no Response, no Depends).
-- Helper functions (validate_format, build_filename, detect_manual_toc) must be callable with simple parameters.
-- Data classes (dataclass, TypedDict) instead of loose dicts for context between functions.
-
-### Error-handling mistakes we made
-
-- HTTPException thrown directly from services. Makes services untestable without a FastAPI context. Solution: our own exception hierarchy (AdaptiveLearnerError).
-- Bare `except Exception: pass` in plugin code. Errors vanish silently. Solution: catch specific exceptions, at least log them.
-- External tool errors (AI provider HTTP errors, edge-TTS unavailable) passed up unwrapped. The user sees a cryptic error message. Solution: ExternalServiceError with a clear service name.
-- Frontend: API calls without catch. User clicks "Export" and nothing happens. Solution: always try/catch with toast feedback and finally for the loading state.
-
-### Error reporting rules
-
-- Error details must make a GitHub Issue directly actionable, without follow-up questions.
-- Chain: AdaptiveLearnerError (detail + str(e)) -> API response (detail + traceback in debug mode) -> frontend ApiError -> toast with "Report issue" button -> GitHub Issue (title, stacktrace, browser, app version).
-- EVERY except block MUST call logger.error() with exc_info=True.
-- EVERY except block MUST include str(e) in the AdaptiveLearnerError subclass (NOT HTTPException).
-- EVERY frontend catch block MUST call toast.error() with the ApiError object, NOT just with a string.
-- Generic error messages like "Export failed" or "Import failed" without details are FORBIDDEN. They make GitHub Issues worthless.
-- File upload functions (fetch instead of request()) must throw ApiError on failure, not Error.
-- The global exception handler in main.py logs every unhandled error with its stacktrace.
-- In debug mode the backend response includes the stacktrace (for the "Report issue" button).
-
-### Plugin settings: visible or INTERNAL, never hidden
-
-Plugin settings are either UI-visible (user-relevant) or marked `# INTERNAL` (YAML-only). Hidden active settings that influence user behavior are a bug, because the user has no way to change the behavior without a YAML editor and repo access.
-
-Dead settings (in the YAML but not read by the code) are just as bad: they are a lie to the user. When refactoring a plugin, always check whether old YAML fields are still consumed before leaving them in place.
-
-Generic plugin settings panel on the frontend: renders booleans as a checkbox, numbers as a number input, strings as a text input, arrays as an OrderedListEditor, objects as a JSON textarea with an "Advanced" hint. Rendering a boolean as a text input (`value="true"`) is a UX bug because the user cannot tell it is a switch.
-
-Configuration values that vary between learning projects MUST live on the `LearningProject` model, NOT in the plugin YAML. Plugin YAML is plugin-global and applies to all projects at once - anyone who needs per-project granularity adds a column (see the pattern on `LearningProject.daily_minutes`, `LearningProject.current_problem`).
+The plugin-settings panel renders a boolean as a checkbox, a number as a
+number input, a string as a text input, an array as an OrderedListEditor and
+an object as a JSON textarea. Rendering a boolean as a text input
+(`value="true"`) is a UX bug: the user cannot tell it is a switch. Which
+settings are visible at all is architecture.md "Plugin settings visibility".
 
 ## Review architectural decisions before implementing
 
