@@ -181,7 +181,6 @@ Summary:
 
 - Never commit ADAPTIVE_LEARNER_SECRET_KEY.
 - .env files in .gitignore.
-- License keys only through LicenseStore (backend/app/licensing.py).
 - Validate user uploads (file type, size) before storage.
 - Plugin ZIP installation: name validation + path traversal check.
 

@@ -8,25 +8,6 @@ alwaysApply: false
 ---
 
 # Frontend pitfalls
-## TipTap image node in AdaptiveLearner is `imageFigure`, not `image`
-
-AdaptiveLearner's editor (`frontend/src/components/Editor.tsx`) does NOT load `@tiptap/extension-image`. It loads `@pentestpad/tiptap-extension-figure`, which registers its node under `name: "imageFigure"`. `@tiptap/extension-image` IS in `package.json` but is never imported.
-
-**Consequence**: any TipTap doc that contains a plain `{type: "image", ...}` node fails the editor's strict ProseMirror schema. The unknown node breaks doc construction and the editor renders empty — for the WHOLE doc, not just the image.
-
-Anyone writing an HTML→TipTap converter, a TipTap-emitting importer, or generating TipTap JSON from any other source (AI, scraper, migration) MUST emit `imageFigure`, not `image`. Same attrs (`{src, alt, title}`) — the imageFigure node spec is `content: "inline*"` so omitting `content` is fine; the schema accepts both `{type, attrs}` and `{type, attrs, content: []}`.
-
-**Symptom of the wrong type**: title + metadata appear in the editor chrome, the editor body is empty, no console error in the browser (ProseMirror logs the schema rejection at debug level only). The article-list dashboard shows everything fine because it reads `Article.title` directly, not `content_json`. The bug is invisible until someone actually opens the editor.
-
-**Why this is easy to miss**:
-- TipTap's official docs and tutorials universally use `image` in code samples, so any importer modeled on those docs gets the type wrong by default.
-- The toolbar's image-upload button works regardless: `Figure.addCommands.setImage(...)` dispatches an `imageFigure`-typed node internally, masking that the schema doesn't accept the literal name `image`.
-- The editor's own markdown serializer at `Editor.tsx:1396` handles `type === "image"` as if it expected to see one, which is misleading; the serializer is reading nodes already in the doc, where they would only appear if some other extension produced them.
-
-If a switch to `@tiptap/extension-image` ever happens (e.g. dropping the Figure extension), be aware that both extensions register a `setImage` command. Adding both side-by-side will silently shadow one toolbar behavior.
-
-Walker shipped with this bug originally (commit `b986397`); fix landed in `cfd8b57` along with a regression-pin test in `tests/test_walker.py::test_image_node_type_is_imageFigure_not_image` that fails loudly with the actionable error message if the type ever regresses to `image`. A one-time data-fix script at `scripts/fix_medium_import_image_nodes.py` patched the 209 already-imported articles (152 had image nodes; 451 nodes total renamed).
-
 ## React 18 dev-mode double-effect-mount strands `mockImplementationOnce`
 
 React 18 in development mode (Strict Mode and/or its testing-library equivalent) deliberately mounts components twice and runs effects twice to surface non-idempotent setup. Combined with happy-dom + Vitest, the result is that a `useEffect` calling an API mock fires twice on the first render.
@@ -43,39 +24,20 @@ The `mockClear` vs `mockReset` distinction matters specifically because of the f
 
 `vi.stubGlobal("XMLHttpRequest", vi.fn(() => fakeXhr))` fails with `TypeError: () => fakeXhr is not a constructor` - arrow functions cannot be invoked with `new`. Stub with a regular function expression instead: `vi.stubGlobal("XMLHttpRequest", function () { return fakeXhr; })` (an explicitly returned object replaces the implicit `this`, so the pre-built fake becomes the result of `new`). Generalizes to every global callers invoke with `new` (`WebSocket`, `Worker`, `Notification`, ...): arrows break silently, a regular function or a class works.
 
-## TipTap editor
+## TipTap: JSON is the storage format, and it renders inside `.ProseMirror`
 
-### Storage format
+TipTap stores JSON - not HTML, not Markdown, and it cannot render Markdown.
+Markdown has to become HTML before it becomes TipTap JSON (on import: the
+Python `markdown` library, then JSON; switching the editor mode converts in
+whichever direction the user moved).
 
-TipTap stores as JSON. NOT HTML, NOT Markdown. TipTap CANNOT render Markdown. Markdown must be converted to HTML before storage.
+Its DOM lives inside `.ProseMirror`, so component CSS has to account for that
+level: `.ProseMirror p.classname`, not `.tiptap-editor classname` - see the
+specificity trap below for how easily that loses to a `:not()` base rule.
 
-- On import: convert Markdown files to HTML with the Python `markdown` library, then store as TipTap JSON.
-- When switching WYSIWYG -> Markdown: convert JSON to Markdown (nodeToMarkdown).
-- When switching Markdown -> WYSIWYG: convert Markdown to HTML, then to JSON.
-
-### Extensions
-
-- StarterKit does NOT include an image extension. `@tiptap/extension-image` is required separately.
-- Figure/Figcaption: use `@pentestpad/tiptap-extension-figure`, NO custom code.
-- Character count: use `@tiptap/extension-character-count`, NO custom code.
-- Currently 15 official + 1 community extension installed (see CLAUDE.md).
-- Before writing custom code, ALWAYS check whether an official TipTap extension exists.
-
-### Peer dependencies
-
-Community extensions (`@pentestpad/tiptap-extension-figure`, `tiptap-footnotes`) can silently upgrade to `@tiptap/core` v3. Always pin with `--save-exact`.
-
-- `@pentestpad/tiptap-extension-figure`: pin to 1.0.12 (last v2-compatible); 1.1.0 requires `@tiptap/core` ^3.19.
-- `tiptap-footnotes`: pin to 2.0.4 (last v2-compatible); 3.0.x requires `@tiptap/core` ^3.0.
-
-`npm ci` in CI fails on peer-dep conflicts. Do NOT use `--legacy-peer-deps` as a fix.
-
-### CSS
-
-TipTap renders inside `.ProseMirror`. CSS selectors have to account for that.
-
-- Specificity: `.ProseMirror p.classname` instead of `.tiptap-editor classname`.
-- All styles MUST work through CSS variables (3 themes x light/dark = 6 variants).
+Before writing a custom extension, check whether an official one exists. The
+editor is `frontend/src/components/editor/RichTextEditor.tsx`; the current
+extension set and storage-format contract live in `architecture.md`.
 
 ## TypeScript 6 no longer auto-includes all `@types/*`
 
