@@ -1,0 +1,288 @@
+---
+description: Documentation update protocol - when to update CLAUDE.md, CHANGELOG, ROADMAP, API docs
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Documentation Protocol
+
+Every session is documented. This is mandatory, not optional. The documentation serves as a retrospective and as a knowledge base for future sessions.
+
+## Chat journal
+
+Session journals (`docs/journal/chat-journal-session-YYYY-MM-DD.md`) are committed to `docs/journal/` as part of the end-of-session workflow. They are part of project history, not local notes.
+
+Every relevant step of the work is recorded. Format per entry:
+
+```markdown
+## {No}. {Short title} ({HH:MM})
+- Original prompt: what was said/asked
+- Optimized prompt: how it could have been phrased more precisely
+- Goal: what should be achieved
+- Result: what was actually done
+- Commit: {hash} (if code was changed)
+```
+
+At the end of every session: a summary with statistics (commits, tests, new/changed files, main results).
+
+**What belongs in the journal:**
+- Every implemented change (feature, fix, refactoring)
+- Architectural decisions and their rationale
+- Problems that came up and how they were solved
+- Prompt optimizations (original vs. better wording)
+
+**What does NOT belong in the journal:**
+- Small talk, repetitions, typo fixes
+
+## When to update CLAUDE.md
+
+CLAUDE.md is loaded on EVERY prompt. It has to stay lean (target: under 8000 characters, ~2000 tokens). Only content that is ALWAYS relevant:
+
+- Project description, repository, version, pointers to ROADMAP/CHANGELOG/API
+- Pointer to .claude/rules/ with short descriptions
+- Tech stack keywords (no package version numbers)
+- Architecture summary in 2-3 sentences
+- Makefile targets
+- Session-start checklist
+- Data model in short form
+- Plugin table (name, tier, dependency, short description)
+- Directory structure, top level only
+- Core conventions (max 10 bullets)
+- Overall test counts
+
+**Update when:**
+- A plugin is added, removed, or its tier changes
+- A new dependency joins the tech stack
+- Test counts have changed substantially
+- New Makefile targets
+- Data model changes (new fields, new ChapterTypes)
+- Version bumped
+
+**NOT in CLAUDE.md:**
+- Full directory tree down to the file level (-> becomes redundant with file exploration)
+- Complete package tables with version numbers (-> package.json/pyproject.toml)
+- Every API endpoint individually (-> docs/API.md)
+- Completed phase details (-> docs/CHANGELOG.md)
+- Detailed deployment instructions (-> README.md)
+- Migration status tables (-> historical, belongs in the CHANGELOG)
+
+## When to update docs/CHANGELOG.md
+
+IMMEDIATELY when a phase is completed. Do not accumulate in CLAUDE.md.
+
+- New entry at the TOP with phase number, version, description.
+- Format: bullet-point list of the main changes, structured the same way as existing entries.
+- After the entry: set the CLAUDE.md version to the new version, update test counts.
+
+## When to update docs/API.md
+
+- New endpoint added
+- Endpoint removed or renamed
+- Query parameters changed
+
+## When to update docs/ROADMAP.md
+
+- New open task
+- Task completed (checkbox)
+- Phase planned or prioritized
+
+## ROADMAP priority tiers
+
+`docs/ROADMAP.md` and `docs/backlog.md` are sorted by priority. Section headers `## P0` through `## P5` mark the tiers, top to bottom; a `## Blocked / Upstream Wait` section sits between P5 and the archive link.
+
+| Tier | Meaning |
+|------|---------|
+| P0 | Deadline pressure, active blocker, security issue, or production-data risk. "Do this now." |
+| P1 | Architecture / hygiene debt. Code-rule violations, test isolation gaps, things that would block a clean release. |
+| P2 | High-value user features. Anything moving AdaptiveLearner from "toy to serious tool". |
+| P3 | Infrastructure / quality. Test coverage, CI / tooling, internal refactors with no user-visible effect. |
+| P4 | Roadmap / future phases. Items deliberately deferred to a later phase. |
+| P5 | Speculative / nice-to-have. No concrete trigger or user demand. |
+| Blocked / Upstream Wait | Items waiting on an external trigger (npm publish, paid-API access, hardware availability, user report). NOT P0 even when critical. |
+
+Within each tier, sub-order by:
+1. Smaller scope first (faster wins).
+2. Items unblocking other items first.
+3. Alphabetical by ID as final tiebreaker.
+
+Document the tier of each item by section header. Do NOT add P-prefixes to the IDs themselves (T-01 stays T-01, not P2-T-01). The tier is a section header, the ID is the task.
+
+## Backlog-as-pointer convention
+
+`docs/backlog.md` is a daily-planning view of `docs/ROADMAP.md`. It is NOT a duplicate definition store.
+
+- A task that lives in ROADMAP must NOT have its full body duplicated in backlog. Use a one-line pointer instead: `- **DEP-02**: TipTap 2 -> 3 (BLOCKED) — see ROADMAP > Blocked / Upstream Wait.`
+- A task that lives only in backlog (no ROADMAP entry) keeps its full body. The backlog is the queue for not-yet-promoted ideas.
+- When backlog and ROADMAP disagree, ROADMAP wins.
+
+## Archive
+
+Completed tasks are archived to `docs/roadmap-archive/`:
+
+- `phase-1-complete.md` (v0.1.0..v0.14.0). One-time Phase 1 -> 2 transition snapshot.
+- `v0.25.0-cleanup-2026-05-02.md` (Phase 2 work shipped between v0.15.0 and v0.25.0). One-time bulk extract.
+- `backlog-recently-closed-2026-05-02.md` (backlog "Recently closed" prose). One-time bulk extract.
+- `YYYY-MM.md` (e.g. `2026-05.md`). Continuous-archival monthly bucket. One file per month, written by `scripts/archive_completed_task.py`. Each session's closures land here under a `## Archived YYYY-MM-DD` section, newest day first.
+
+Active files (`ROADMAP.md` and `backlog.md`) contain ONLY open `- [ ]` items. Do not re-add closed tasks to the active files; if a closed task needs to come back, create a new ID. Stable IDs across the archive boundary mean single-word prompts like "implement T-01" still resolve.
+
+## Continuous archival rule
+
+When a task in `ROADMAP.md` or `backlog.md` is marked `[x]` AND the work is genuinely done, archive it in the same commit that closes it. Active files contain ONLY open work; completed tasks live in `docs/roadmap-archive/YYYY-MM.md`.
+
+## Definition of done
+
+A task is done when ALL of:
+
+1. Code is implemented and merged to `develop` (gitflow #334; `main` holds releases only).
+2. Tests for the change are green (`make test`).
+3. Documentation is updated (CLAUDE.md, API docs, help articles).
+4. CHANGELOG entry exists if the change is user-facing.
+5. No follow-up work blocks closing the task (otherwise: split into sub-tasks).
+
+## Workflow
+
+1. Complete the work.
+2. Mark the task `[x]` in `ROADMAP.md` or `backlog.md`.
+3. Run `make archive-task` (interactive) or `make archive-task-dry` to preview.
+4. Confirm each `[x]` candidate with `y` / `n` / `s` (skip-all).
+5. Confirmed items move to `docs/roadmap-archive/YYYY-MM.md`.
+6. Commit ROADMAP, backlog, archive file together with the same change that closes the task: `feat(scope): implement T-01 (archived)`.
+
+For scripted use (single ID, no prompt): `python3 scripts/archive_completed_task.py --id T-01`.
+
+A pre-commit hook (`roadmap-archive-reminder` in `.pre-commit-config.yaml`) prints a non-blocking reminder when staged changes introduce new `[x]` lines without an accompanying archive update. The hook always exits 0; archival is the user's responsibility, not a CI gate.
+
+## What NOT to do
+
+- Do NOT batch up `[x]` items across releases. The 2026-05-02 cleanup was a one-time recovery operation; the steady state is one task per archival.
+- Do NOT archive items that are technically done but missing tests or docs. Finish them first.
+- Do NOT delete tasks from active files without archiving. The archive is the audit trail.
+- Do NOT manually edit archived task IDs. They are stable identifiers across history; future single-word prompts depend on them.
+- Do NOT cross-month-consolidate the monthly buckets. An annual rollup is a separate decision; do not pre-empt it.
+
+## When to update CONCEPT.md
+
+- Architectural decision made or changed
+- New plugin in the catalog (planned or implemented)
+- Open question answered or new one raised
+- Business model or licensing changed
+- Tech stack change (new library, framework swap)
+- UI strategy changed (new slots, new libraries)
+
+## When to update lessons-learned.md
+
+- New pitfall discovered (bug caused by a wrong pattern)
+- Workaround found for a library limitation
+- Import/export edge case solved
+- CSS/TipTap specificity problem solved
+
+## End-of-session flow
+
+1. Write a chat-journal entry covering all changes from the session.
+2. At phase completion: extend docs/CHANGELOG.md, bump the CLAUDE.md version.
+3. Check whether CLAUDE.md, CONCEPT.md, ROADMAP.md, API.md or lessons-learned.md need updates.
+4. Commit everything: `docs: update chat journal and documentation`
+5. Push the branch and open a PR against `develop` (PR-PFLICHT) if any code or docs changed this session — always, not only when asked.
+6. For larger milestones: add a summary with statistics to the journal.
+7. For a release: follow release-workflow.md step by step. Do not improvise the release process.
+
+## Single source of truth for volatile statistics
+
+Numbers that change with every feature or test session live in ONE canonical location. Other documentation references that location instead of duplicating the number.
+
+| Statistic | Canonical location | Example reference |
+|-----------|-------------------|-------------------|
+| Test counts, coverage percentages, pyramid stats | docs/audits/current-coverage.md | "See docs/audits/current-coverage.md for test statistics." |
+| ChapterType list and count | backend/app/models/__init__.py (the ChapterType enum) | "See the ChapterType enum in models for the full list." |
+| Supported i18n languages | backend/config/i18n/ (the directory listing) | "See config/i18n/ for supported languages." |
+| Plugin catalog | CLAUDE.md plugin table | Reference CLAUDE.md or config/plugins/. |
+
+Never duplicate these numbers in CLAUDE.md, README.md, ROADMAP.md, CONCEPT.md, rule files, or release notes. Historical documents (CHANGELOG, chat journals) are exempt because they record what was true at a point in time.
+
+**Rationale:** duplicated numbers drift out of sync within one session. A single source is always correct because there is only one place to update.
+
+**When writing documentation:** if you need to mention a count, write the principle or the reference, not the number. Example: "AdaptiveLearner supports multiple languages (see config/i18n/)" instead of "AdaptiveLearner supports 8 languages".
+
+## Numeric claims verification
+
+Any numeric claim about the project must be verified by running the authoritative command in the same session it is reported. This rule applies to ALL of:
+
+- Public documentation (README, CHANGELOG, blog posts, release notes, GitHub releases)
+- Internal documentation (session journals, coverage audits, explorations, handover documents)
+- Commit messages and pull-request descriptions
+- Chat summaries and status reports
+- Any claim made to the user about project size or status
+
+Numbers covered by this rule include (non-exhaustive):
+
+- Test counts (backend, plugin, frontend, smoke, aggregate)
+- File counts, line counts, commit counts
+- Plugin counts (number of plugins)
+- Coverage percentages
+- Release counts, version-in-use counts
+- Any "N passed / N failed / N skipped" statistic
+
+Verification means running the actual command, not:
+
+- Grep output (grep can miss entries due to line-parsing or pagination)
+- Memory of a previous count
+- Inferring from another count
+- Hardcoded numbers from an old session journal
+
+If a command cannot be run in the current session (environment issue, network issue), the number must be marked as "approximate" or "as of [last verified date]" and flagged for verification in the next session.
+
+### Required verification commands for common numbers
+
+- **Backend tests:** `cd backend && poetry run pytest --collect-only -q | tail -5`
+- **Plugin tests total:** iterate all plugins:
+  ```bash
+  for dir in plugins/*/; do
+    echo "=== $dir ==="
+    cd "$dir" && poetry run pytest --collect-only -q 2>/dev/null | tail -3
+    cd - >/dev/null
+  done
+  ```
+- **Plugin count:** `ls -d plugins/*/ | wc -l`
+- **Frontend Vitest:** `cd frontend && bunx vitest --run --reporter=verbose 2>&1 | tail -5`
+- **Playwright smoke:** `cd frontend && npx playwright test e2e/smoke/ 2>&1 | tail -5`
+- **LOC (approximate):** `git ls-files | xargs wc -l | tail -1`
+
+### Incident record
+
+This rule exists because of two repeated incidents:
+
+- v0.19.1 article session (2026-04-20): plugin test count reported as 317, actual 409. Caught pre-publication.
+- v0.20.0 release journal (2026-04-20): plugin test count reported as 317 again, actual 409. Caught in internal docs.
+
+Both were grep-parse errors where `export` plugin (92 tests) was missed in the parse. Both would have been prevented by running the full per-plugin iteration.
+
+### When the user provides a number
+
+If a user states a number in conversation (e.g. "we have 31 failing tests"), this number is a starting point, not authoritative. Re-verify before echoing it back in any document or commit. Users are frequently working from their own stale sources.
+
+## Self-clarification rule
+
+When a question arises mid-task that cannot be answered from the current context, do NOT guess. Three options, in order of preference:
+
+1. **Answer it from evidence in the repo.** Check git history, adjacent files, related rules in `.claude/rules/`, or existing patterns. If a defensible answer exists in the repo, use it and note the basis in the final report.
+
+2. **Park the question with a clear marker.** If no evidence resolves it, write the section as best you can with the most conservative assumption, mark the spot in the file with an inline HTML comment `<!-- TODO(clarify): <specific question> -->`, and continue. Do not block the session waiting for an answer to a non-blocking question.
+
+3. **Stop and ask ONLY if the question blocks meaningful progress** (e.g. cannot proceed without knowing whether to keep or remove a major section, cannot tell which of two contradictory sources is canonical, would otherwise risk a destructive change).
+
+At the end of every session, the final report MUST include a "Questions and assumptions" section listing:
+
+- Each parked question with location and the conservative assumption that was taken
+- Each evidence-based answer that was derived, with the source
+- Any STOP-blocking questions that came up and how they were resolved
+
+This applies to features, refactors, audits, and documentation work alike. The goal is that no silent guess ever ships - either the answer is grounded in repo evidence, or the open question is visible in the artifact and the report.
+
+## Communication
+
+- Direct, factual, no sugar-coating.
+- If something is unclear: ask, do not guess.
+- If something violates the architecture: say so, do not silently work around it.
+- Suggestions are welcome, but mark them as suggestions.
