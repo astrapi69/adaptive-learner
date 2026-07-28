@@ -1,3 +1,10 @@
+---
+description: Vibe coding policy - release freeze, no-amend-on-open-PR, library-first hierarchy
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
 # Vibe Coding Rules
 
 Vollstaendige Policy: docs/policies/VIBE-CODING-POLICY.md

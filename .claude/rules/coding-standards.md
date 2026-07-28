@@ -1,3 +1,13 @@
+---
+description: Python and TypeScript coding standards, naming conventions, formatting, Git workflow, function design, error reporting, tests, security, performance
+globs:
+  - backend/**/*.py
+  - plugins/**/*.py
+  - frontend/src/**/*.ts
+  - frontend/src/**/*.tsx
+alwaysApply: false
+---
+
 # Coding standards
 
 ## General

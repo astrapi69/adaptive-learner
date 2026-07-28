@@ -1,3 +1,10 @@
+---
+description: Complete release process - version bump, changelog, tests, GitHub release, Docker, docs deployment
+globs:
+  - "**/*"
+alwaysApply: false
+---
+
 # Release workflow
 
 The permanent workflow for AdaptiveLearner releases. Claude Code reads

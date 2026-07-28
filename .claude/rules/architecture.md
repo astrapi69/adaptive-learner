@@ -1,3 +1,13 @@
+---
+description: Layered architecture, plugin structure, repository pattern, frontend UI strategy, dual storage, sync gate, error handling, plugin versions, plugin settings visibility, offline/local-first
+globs:
+  - backend/**/*.py
+  - plugins/**/*.py
+  - frontend/src/**/*
+  - docs/**/*.md
+alwaysApply: false
+---
+
 # Architecture rules
 
 ## Layered architecture (4 layers, ALWAYS respected)

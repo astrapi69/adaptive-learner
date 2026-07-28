@@ -53,7 +53,7 @@ Coverage runs on CI, not as part of the normal local workflow. Running full cove
 
 - `make test` - default everyday command. Fast, no coverage. Stays green as the gate after every change.
 - `make test-coverage` - explicit opt-in. Runs backend, frontend, and every plugin with `pytest --cov` and `vitest --coverage`. Frontend coverage requires Node 20+; lower versions fail with a `node:inspector/promises` ImportError. CI uses Node 24 so this is only a local concern.
-- `.github/workflows/coverage.yml` - night shift (#575): runs daily (03:00 UTC) + `workflow_dispatch`, not on PRs (coverage is a report, not a merge gate). Uploads HTML reports + coverage.xml as GitHub Actions artifacts (14 day retention).
+- `../../../.github/workflows/coverage.yml` - night shift (#575): runs daily (03:00 UTC) + `workflow_dispatch`, not on PRs (coverage is a report, not a merge gate). Uploads HTML reports + coverage.xml as GitHub Actions artifacts (14 day retention).
 
 To pull the latest coverage reports without running coverage locally:
 

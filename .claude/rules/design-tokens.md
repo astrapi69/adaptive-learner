@@ -1,3 +1,12 @@
+---
+description: Design token architecture, CSS variables, Tailwind integration, theme enforcement
+globs:
+  - frontend/src/**/*.css
+  - frontend/src/**/*.tsx
+  - frontend/src/styles/**/*
+alwaysApply: false
+---
+
 # Design token architecture
 
 All visual properties are driven by design tokens (CSS variables).

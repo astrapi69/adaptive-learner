@@ -1,3 +1,13 @@
+---
+description: Test-Driven Development workflow - Red-Green-Refactor cycle, four-test-per-feature guideline, bug-fix discipline
+globs:
+  - backend/tests/**/*.py
+  - plugins/*/tests/**/*.py
+  - frontend/src/**/*.test.ts
+  - frontend/src/**/*.test.tsx
+alwaysApply: false
+---
+
 # Test-Driven Development (TDD)
 
 This is the WORKFLOW rule for writing code. It sits on top of the test

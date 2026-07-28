@@ -1,3 +1,10 @@
+---
+description: Known pitfalls and patterns from real development - data loss prevention, CI drift, TipTap quirks, test isolation, deployment traps
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
 # Known pitfalls and patterns
 
 These rules come from real development and solve problems that would otherwise come back over and over.

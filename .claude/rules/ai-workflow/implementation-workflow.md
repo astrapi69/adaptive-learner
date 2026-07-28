@@ -34,7 +34,7 @@ When the user says "continue", "next item", "go on" or similar:
 4. Backend logic (service module, then route).
 5. Frontend (extend API client, then UI).
 6. Write unit and integration tests (pytest, Vitest).
-7. Playwright smoke tests for UI features: for every new UI feature write at least one spec under `e2e/smoke/`. Must cover: happy path, relevant viewport sizes (600/800/1080 for layout-critical features), data-testid selectors (no brittle CSS selectors). Claude Code WRITES the specs, Aster RUNS them. No feature counts as done without a smoke test.
+7. Playwright smoke tests for UI features: for every new UI feature write at least one spec under `../../../e2e/smoke`. Must cover: happy path, relevant viewport sizes (600/800/1080 for layout-critical features), data-testid selectors (no brittle CSS selectors). Claude Code WRITES the specs, Aster RUNS them. No feature counts as done without a smoke test.
 8. Add i18n strings in all 8 languages (DE, EN, ES, FR, EL, PT, TR, JA).
 9. Conventional commit.
 10. Push the branch and open a PR against `develop` (PR-PFLICHT) — always, not only when asked.
@@ -79,7 +79,7 @@ Additionally for the AI:
 
 See architecture.md for architectural details. Additionally note:
 
-- Current version: see `backend/pyproject.toml` (canonical) — every other version-bearing file derives via `make sync-versions`.
+- Current version: see `../../../backend/pyproject.toml` (canonical) — every other version-bearing file derives via `make sync-versions`.
 - Tests: see `docs/audits/current-coverage.md` for current counts. `make test` covers backend+plugins+Vitest, E2E is separate.
 - 28 SQLAlchemy models in `backend/app/models/__init__.py` (single-file domain model).
 - 13 plugins shipped (assessment, session, tracking, tools, gamification, anki, notebooklm, learning-repo, content-loader, missions, ai-anthropic, ai-openai, ai-gemini).

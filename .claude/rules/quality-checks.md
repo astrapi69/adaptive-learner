@@ -1,3 +1,14 @@
+---
+description: Test strategy, coverage targets, mutation testing, BACKUP-AKZEPTANZTEST, visual device check, feature screenshots, test pyramid
+globs:
+  - backend/tests/**/*.py
+  - plugins/*/tests/**/*.py
+  - frontend/src/**/*.test.ts
+  - frontend/src/**/*.test.tsx
+  - e2e/**/*.spec.ts
+alwaysApply: false
+---
+
 # Quality checks and test strategy
 
 ## BACKUP-AKZEPTANZTEST (acceptance gate, MANDATORY)

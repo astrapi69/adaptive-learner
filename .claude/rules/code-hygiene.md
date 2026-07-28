@@ -1,3 +1,14 @@
+---
+description: Automated code quality enforcement, formatting, linting, pre-commit hooks, error handling architecture, API conventions, logging, docstrings
+globs:
+  - backend/**/*.py
+  - plugins/**/*.py
+  - frontend/src/**/*.ts
+  - frontend/src/**/*.tsx
+  - .pre-commit-config.yaml
+alwaysApply: false
+---
+
 # Code hygiene
 
 Automated enforcement of code quality. These rules make every commit look consistent, whether written by a human or an AI.
