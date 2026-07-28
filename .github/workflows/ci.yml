@@ -461,3 +461,16 @@ jobs:
       # into a no-op; turning one off requires a declared reason.
       - name: Verify check inventory
         run: python3 scripts/verify_check_inventory.py
+      # #2079: a binding rule may not change inside an undeclared diff.
+      # Declare via the 'rule-change-declared' label or a
+      # "RULE-CHANGE DECLARED: ..." line in the PR body.
+      - name: Verify normative + gate-status changes are declared
+        if: github.event_name == 'pull_request'
+        env:
+          HAS_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'rule-change-declared') }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
+          ARGS=(--base "origin/${{ github.base_ref }}" --pr-body "$PR_BODY")
+          [ "$HAS_LABEL" = "true" ] && ARGS+=(--declared)
+          python3 scripts/verify_normative_changes.py "${ARGS[@]}"

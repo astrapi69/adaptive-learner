@@ -21,46 +21,57 @@
 gates:
   - workflow: ci.yml
     enforces: quality-checks.md#gate-and-rule-stay-coupled-2075
+    body_sha: 0884e60bace9aa5d
     note: hosts the verify-gate-rule-links + verify-lessons-inventory steps
 
   - workflow: visual-baseline-gate.yml
     enforces: quality-checks.md#visual-baseline-duty-for-visually-critical-prs-1640
+    body_sha: 7bec2fdde2c984b2
     note: visually critical PRs carry their baseline updates (escape label visual-baselines-unaffected)
 
   - workflow: testid-reference-gate.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
+    body_sha: e6920e09d284021a
     note: spec-referenced testids may not be removed without touching the spec (escape label testid-refs-unaffected)
 
   - workflow: docker-build-smoke.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
+    body_sha: e6920e09d284021a
     note: builds the prod compose path no other gate builds (the #1771 no-cadence class)
 
   - workflow: complexity-check.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    body_sha: 1c527114127397ac
     note: baseline ratchet on PRs, full warn-only report on the night shift
 
   - workflow: dexie-smoke.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    body_sha: 1c527114127397ac
     note: nightly + release only, never on PRs (expensive, rarely PR-relevant)
 
   - workflow: coverage.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    body_sha: 1c527114127397ac
     note: a report, not a merge gate - night shift by design
 
   - workflow: security-scan.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    body_sha: 1c527114127397ac
     note: warn-only, weekly + release branches
 
   - workflow: webkit-gate.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    body_sha: 1c527114127397ac
     note: real-WebKit layout gate the Chromium gates are blind to
 
   - workflow: engine-schema-parity.yml
     enforces: lessons/ci-gates.md#engine-re-pin-without-make-sync-schema-is-invisible-until-the-release-gate
+    body_sha: 3b21b7970742be58
     note: the mirrored schema must match the pinned engine
 
   - workflow: content-stats.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    body_sha: 1c527114127397ac
     note: driven by the separate content repo, so a PR cannot predict it - night shift
 
 # Workflows that deliberately enforce no documented rule.

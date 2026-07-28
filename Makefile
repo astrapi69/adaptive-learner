@@ -32,7 +32,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       verify-docs verify-docs-fix verify-gate-rule-links verify-lessons-inventory verify-check-inventory check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       verify-docs verify-docs-fix verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -796,6 +796,9 @@ verify-docs: ## Verify documentation for drift (version/counts/features/help/i18
 
 verify-gate-rule-links: ## Gate <-> rule coupling (#2075): no gate without its rule section, no rule citing a dead gate
 	@python3 scripts/verify_gate_rule_links.py
+
+verify-normative-changes: ## Normative/gate-status changes (#2079) must be declared. BASE=<ref> (default origin/develop)
+	@python3 scripts/verify_normative_changes.py --base $(or $(BASE),origin/develop)
 
 verify-check-inventory: ## Check inventory (#2077): an active check may not be silently unwired or degraded
 	@python3 scripts/verify_check_inventory.py
