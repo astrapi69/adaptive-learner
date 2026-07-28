@@ -11,7 +11,7 @@ Every session is documented. This is mandatory, not optional. The documentation 
 
 ## Chat journal
 
-Session journals (`docs/journal/chat-journal-session-YYYY-MM-DD.md`) are committed to `../../../docs/journal` as part of the end-of-session workflow. They are part of project history, not local notes.
+Session journals (`docs/journal/chat-journal-session-YYYY-MM-DD.md`) are committed to `docs/journal/` as part of the end-of-session workflow. They are part of project history, not local notes.
 
 Every relevant step of the work is recorded. Format per entry:
 
@@ -89,7 +89,7 @@ IMMEDIATELY when a phase is completed. Do not accumulate in CLAUDE.md.
 
 ## ROADMAP priority tiers
 
-`../../../docs/ROADMAP.md` and `../../../docs/backlog.md` are sorted by priority. Section headers `## P0` through `## P5` mark the tiers, top to bottom; a `## Blocked / Upstream Wait` section sits between P5 and the archive link.
+`docs/ROADMAP.md` and `docs/backlog.md` are sorted by priority. Section headers `## P0` through `## P5` mark the tiers, top to bottom; a `## Blocked / Upstream Wait` section sits between P5 and the archive link.
 
 | Tier | Meaning |
 |------|---------|
@@ -110,7 +110,7 @@ Document the tier of each item by section header. Do NOT add P-prefixes to the I
 
 ## Backlog-as-pointer convention
 
-`../../../docs/backlog.md` is a daily-planning view of `../../../docs/ROADMAP.md`. It is NOT a duplicate definition store.
+`docs/backlog.md` is a daily-planning view of `docs/ROADMAP.md`. It is NOT a duplicate definition store.
 
 - A task that lives in ROADMAP must NOT have its full body duplicated in backlog. Use a one-line pointer instead: `- **DEP-02**: TipTap 2 -> 3 (BLOCKED) — see ROADMAP > Blocked / Upstream Wait.`
 - A task that lives only in backlog (no ROADMAP entry) keeps its full body. The backlog is the queue for not-yet-promoted ideas.
@@ -118,12 +118,12 @@ Document the tier of each item by section header. Do NOT add P-prefixes to the I
 
 ## Archive
 
-Completed tasks are archived to `../../../docs/roadmap-archive`:
+Completed tasks are archived to `docs/roadmap-archive/`:
 
 - `phase-1-complete.md` (v0.1.0..v0.14.0). One-time Phase 1 -> 2 transition snapshot.
 - `v0.25.0-cleanup-2026-05-02.md` (Phase 2 work shipped between v0.15.0 and v0.25.0). One-time bulk extract.
 - `backlog-recently-closed-2026-05-02.md` (backlog "Recently closed" prose). One-time bulk extract.
-- `YYYY-MM.md` (e.g. `2026-05.md`). Continuous-archival monthly bucket. One file per month, written by `../../../scripts/archive_completed_task.py`. Each session's closures land here under a `## Archived YYYY-MM-DD` section, newest day first.
+- `YYYY-MM.md` (e.g. `2026-05.md`). Continuous-archival monthly bucket. One file per month, written by `scripts/archive_completed_task.py`. Each session's closures land here under a `## Archived YYYY-MM-DD` section, newest day first.
 
 Active files (`ROADMAP.md` and `backlog.md`) contain ONLY open `- [ ]` items. Do not re-add closed tasks to the active files; if a closed task needs to come back, create a new ID. Stable IDs across the archive boundary mean single-word prompts like "implement T-01" still resolve.
 
@@ -152,7 +152,7 @@ A task is done when ALL of:
 
 For scripted use (single ID, no prompt): `python3 scripts/archive_completed_task.py --id T-01`.
 
-A pre-commit hook (`roadmap-archive-reminder` in `../../../.pre-commit-config.yaml`) prints a non-blocking reminder when staged changes introduce new `[x]` lines without an accompanying archive update. The hook always exits 0; archival is the user's responsibility, not a CI gate.
+A pre-commit hook (`roadmap-archive-reminder` in `.pre-commit-config.yaml`) prints a non-blocking reminder when staged changes introduce new `[x]` lines without an accompanying archive update. The hook always exits 0; archival is the user's responsibility, not a CI gate.
 
 ## What NOT to do
 
@@ -262,11 +262,18 @@ Both were grep-parse errors where `export` plugin (92 tests) was missed in the p
 
 If a user states a number in conversation (e.g. "we have 31 failing tests"), this number is a starting point, not authoritative. Re-verify before echoing it back in any document or commit. Users are frequently working from their own stale sources.
 
+## Communication
+
+- Direct, factual, no sugar-coating.
+- If something is unclear: ask, do not guess.
+- If something violates the architecture: say so, do not silently work around it.
+- Suggestions are welcome, but mark them as suggestions.
+
 ## Self-clarification rule
 
 When a question arises mid-task that cannot be answered from the current context, do NOT guess. Three options, in order of preference:
 
-1. **Answer it from evidence in the repo.** Check git history, adjacent files, related rules in `..`, or existing patterns. If a defensible answer exists in the repo, use it and note the basis in the final report.
+1. **Answer it from evidence in the repo.** Check git history, adjacent files, related rules in `.claude/rules/`, or existing patterns. If a defensible answer exists in the repo, use it and note the basis in the final report.
 
 2. **Park the question with a clear marker.** If no evidence resolves it, write the section as best you can with the most conservative assumption, mark the spot in the file with an inline HTML comment `<!-- TODO(clarify): <specific question> -->`, and continue. Do not block the session waiting for an answer to a non-blocking question.
 
@@ -279,10 +286,3 @@ At the end of every session, the final report MUST include a "Questions and assu
 - Any STOP-blocking questions that came up and how they were resolved
 
 This applies to features, refactors, audits, and documentation work alike. The goal is that no silent guess ever ships - either the answer is grounded in repo evidence, or the open question is visible in the artifact and the report.
-
-## Communication
-
-- Direct, factual, no sugar-coating.
-- If something is unclear: ask, do not guess.
-- If something violates the architecture: say so, do not silently work around it.
-- Suggestions are welcome, but mark them as suggestions.

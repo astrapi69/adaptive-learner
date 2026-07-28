@@ -20,7 +20,7 @@ After ANY code change that is committed and pushed to a branch, a pull request a
 
 Do NOT open a PR only in these cases:
 
-1. **No code change.** A pure analysis / status / audit / docs-question task that pushes nothing has nothing to PR. (A task that DOES change committed files — including docs and `..` — is a code change for this rule and gets a PR.)
+1. **No code change.** A pure analysis / status / audit / docs-question task that pushes nothing has nothing to PR. (A task that DOES change committed files — including docs and `.claude/rules/` — is a code change for this rule and gets a PR.)
 
 2. **Release freeze.** While a `release/X.Y.Z` branch is open and not yet tagged+published, no new PRs against `develop` are opened (see VIBE-CODING-POLICY §"Release Freeze" / vibe-coding.md §"Release-Sperre"). Exception: a P0 hotfix that blocks the release itself.
 
