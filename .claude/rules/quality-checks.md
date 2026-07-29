@@ -329,7 +329,12 @@ the ones that keep being missed:
    is measured is part of the gate and belongs in the output, or someone closes
    a local red by lowering the ceiling. Where variance is unavoidable, the
    tolerance is named and pinned in BOTH directions - an unexpected shrink is a
-   finding too.
+   finding too. A drifting oracle is dangerous in ONE direction: upward it
+   turns the gate red and someone looks, downward it lowers the bar in silence
+   and worse code fits under a limit that is only apparently the same. So a
+   gate on a drifting oracle never tightens its baseline automatically - that
+   would freeze the drift as an improvement (radon in the complexity gate,
+   the built Tailwind CSS in the classname gates; pinning is #2138).
 
 Precedents for point 5, all found by failures rather than by design (#2132):
 `docker image inspect .Size` reports 113 MB under the containerd image store
