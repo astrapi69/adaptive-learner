@@ -78,3 +78,9 @@ jobs:
       # none). A failure here is a broken prod/self-hosted/desktop build path.
       - name: Build prod compose images
         run: docker compose -f docker-compose.prod.yml build
+
+      # #2132: from publication onward (#2110) the image size is a user
+      # cost, not an internal metric - every learner downloads it on first
+      # install. Ratchet it right after the build, while the image is here.
+      - name: Verify the image has not grown
+        run: python3 scripts/verify_image_size.py --image adaptive-learner

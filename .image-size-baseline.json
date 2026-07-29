@@ -1,0 +1,4 @@
+{
+  "note": "Ceiling for the published image (#2132). Compressed bytes - what crosses the wire on a pull. Lower it with --update-baseline; raising it needs --allow-raise and belongs in a commit that says why.",
+  "compressed_bytes": 112286353
+}
