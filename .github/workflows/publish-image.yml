@@ -1,0 +1,198 @@
+name: Publish image (GHCR)
+
+# Publishes the single-container app image to GHCR (#2142, implements the
+# #2110 Option A decision: users pull a built image instead of building one).
+#
+# Triggered on `release: created`, the same hook launcher-{linux,macos,
+# windows}.yml use. That is deliberate: release.yml's own comment explains
+# why artifacts are NOT built inside the release driver - they would
+# duplicate and drift. The image is part of the release, not published
+# beside it.
+#
+# workflow_dispatch defaults to a DRY RUN: it builds both architectures and
+# does not push, so the pipeline can be exercised without putting a public
+# image outside a real release.
+#
+# Why every step here exists:
+#   - multi-arch, because macOS users run an arm64 Docker Desktop and an
+#     amd64-only image either refuses or crawls under emulation;
+#   - visibility, because a GHCR package is NOT public on first publish and
+#     a private one fails a user's first pull with a 401 that reads like a
+#     broken release;
+#   - anonymous pull, because a pull that works with the CI credentials
+#     proves nothing about an end user;
+#   - version agreement, because an image that claims a release it is not is
+#     worse than a missing image.
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build both architectures without pushing (default: yes)"
+        required: false
+        default: true
+        type: boolean
+      version:
+        description: "Version to tag when NOT a dry run (X.Y.Z, no leading v)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    name: Build multi-arch and push
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      image: ${{ steps.resolve.outputs.image }}
+      digest: ${{ steps.push.outputs.digest }}
+      pushed: ${{ steps.resolve.outputs.pushed }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Resolve version and push mode
+        id: resolve
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "release" ]; then
+            version="${GITHUB_REF_NAME#v}"
+            pushed=true
+          else
+            version="${{ inputs.version }}"
+            pushed=${{ inputs.dry_run == false }}
+            if [ -z "$version" ]; then
+              version="$(python3 -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('backend/pyproject.toml').read_text())['tool']['poetry']['version'])")"
+            fi
+          fi
+          # The canonical version lives in backend/pyproject.toml; everything
+          # else derives from it (make sync-versions). A tag that disagrees
+          # with it means the release was cut wrong - fail here, not later.
+          canonical="$(python3 -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('backend/pyproject.toml').read_text())['tool']['poetry']['version'])")"
+          if [ "$version" != "$canonical" ]; then
+            echo "::error::tag version $version != backend/pyproject.toml $canonical"
+            exit 1
+          fi
+          image="${REGISTRY}/${GITHUB_REPOSITORY,,}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "image=$image"     >> "$GITHUB_OUTPUT"
+          echo "pushed=$pushed"   >> "$GITHUB_OUTPUT"
+          echo "Publishing $image:$version (push=$pushed)"
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: steps.resolve.outputs.pushed == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build (and push) multi-arch
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: backend/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: ${{ steps.resolve.outputs.pushed == 'true' }}
+          tags: |
+            ${{ steps.resolve.outputs.image }}:${{ steps.resolve.outputs.version }}
+            ${{ steps.resolve.outputs.image }}:latest
+          provenance: true
+          sbom: true
+
+      - name: Make the package public
+        # A GHCR package is private on first publish. Left private, every
+        # user's first pull is a 401 that looks like a broken release.
+        if: steps.resolve.outputs.pushed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pkg="${GITHUB_REPOSITORY#*/}"
+          gh api -X PATCH "user/packages/container/${pkg}" -f visibility=public \
+            || gh api -X PATCH "orgs/${GITHUB_REPOSITORY%%/*}/packages/container/${pkg}" -f visibility=public \
+            || echo "::warning::could not set visibility via API - set it once in the package settings"
+
+  verify-anonymous-pull:
+    name: Pull it the way a user does
+    needs: build-and-push
+    if: needs.build-and-push.outputs.pushed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Pull without any credentials
+        # No docker/login-action in this job on purpose. If the package is
+        # private, this is where it fails - before a user finds out.
+        run: |
+          set -euo pipefail
+          image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
+          docker logout ghcr.io || true
+          rm -f ~/.docker/config.json || true
+          for arch in amd64 arm64; do
+            echo "::group::anonymous pull $image ($arch)"
+            docker pull --platform "linux/$arch" "$image"
+            echo "::endgroup::"
+          done
+          echo "RESULT: anonymous pull works for amd64 and arm64"
+
+      - name: The version in the image must be the released version
+        # Three strings have to agree: the release tag, the version baked
+        # into the image, and what /api/health reports at runtime. Anything
+        # else ships an image claiming a release it is not.
+        run: |
+          set -euo pipefail
+          image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
+          expected="${{ needs.build-and-push.outputs.version }}"
+          docker run -d --name verify -p 18711:8000 \
+            -e ADAPTIVE_LEARNER_PORT=8000 -e ADAPTIVE_LEARNER_DATA_DIR=/app/data \
+            --platform linux/amd64 "$image"
+          for _ in $(seq 1 60); do
+            sleep 2
+            if curl -sf http://127.0.0.1:18711/api/health >/tmp/health.json; then break; fi
+          done
+          cat /tmp/health.json
+          reported="$(python3 -c "import json;print(json.load(open('/tmp/health.json'))['version'])")"
+          docker rm -f verify >/dev/null
+          if [ "$reported" != "$expected" ]; then
+            echo "::error::/api/health reports $reported, release is $expected"
+            exit 1
+          fi
+          echo "RESULT: tag, image and /api/health all report $expected"
+
+      - name: The published image must respect the size ceiling
+        # #2133 ratchets what a user downloads. Running it against a local
+        # build only would gate a different artifact than the published one.
+        run: |
+          set -euo pipefail
+          image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
+          python3 scripts/verify_image_size.py --image "$image"
+
+      - name: Record tag and digest
+        run: |
+          {
+            echo "### Published image"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| image | \`${{ needs.build-and-push.outputs.image }}\` |"
+            echo "| tag | \`${{ needs.build-and-push.outputs.version }}\` |"
+            echo "| digest | \`${{ needs.build-and-push.outputs.digest }}\` |"
+            echo "| platforms | linux/amd64, linux/arm64 |"
+            echo ""
+            echo "Anonymous pull verified without credentials."
+          } >> "$GITHUB_STEP_SUMMARY"
