@@ -807,3 +807,106 @@ class TestReadinessMessage:
 
         assert __main__.main(["--install"]) == 7
         assert seen, "the package must still get its chance to report the missing config"
+
+
+class TestDockerConfigSanitising:
+    """#2126: a broken credential helper must not abort the build.
+
+    docker-py enumerates EVERY configured registry before a build
+    (`auth.py:285`), executing `docker-credential-<name>` for each. A
+    leftover `credsStore: gcloud` with no binary raises StoreError - the
+    CLI is lenient here, the SDK is not. The app needs no credentials at
+    all: every FROM is a public library image.
+
+    Blanking DOCKER_CONFIG would fix it and break something worse -
+    `context/config.py:54` resolves the contexts directory relative to
+    the config file, so the user's active context would silently vanish.
+    """
+
+    def _user_config(self, home, **extra):
+        docker_dir = home / ".docker"
+        (docker_dir / "contexts" / "meta").mkdir(parents=True)
+        (docker_dir / "config.json").write_text(
+            json.dumps(
+                {
+                    "credsStore": "gcloud",
+                    "credHelpers": {"eu.gcr.io": "gcloud"},
+                    "auths": {"registry.example.com": {"auth": "dXNlcjpwYXNz"}},
+                    "currentContext": "desktop-linux",
+                    "proxies": {"default": {"httpProxy": "http://proxy.invalid:3128"}},
+                    **extra,
+                }
+            ),
+            encoding="utf-8",
+        )
+        return docker_dir
+
+    def test_credential_keys_are_dropped(self, tmp_path) -> None:
+        from adaptive_learner_launcher import docker_config
+
+        source = self._user_config(tmp_path)
+        result = docker_config.sanitised_config_dir(tmp_path / "out", source=source)
+        written = json.loads((result / "config.json").read_text(encoding="utf-8"))
+        assert "credsStore" not in written
+        assert "credHelpers" not in written
+        assert "auths" not in written
+
+    def test_the_active_context_survives(self, tmp_path) -> None:
+        """Dropping the context would point the launcher at another daemon."""
+        from adaptive_learner_launcher import docker_config
+
+        source = self._user_config(tmp_path)
+        result = docker_config.sanitised_config_dir(tmp_path / "out", source=source)
+        written = json.loads((result / "config.json").read_text(encoding="utf-8"))
+        assert written["currentContext"] == "desktop-linux"
+        # contexts/ is resolved RELATIVE to the config file (context/config.py:54)
+        assert (result / "contexts").exists()
+
+    def test_proxies_are_carried_over(self, tmp_path) -> None:
+        """Kept deliberately: the CLI reads them, docker-py does not."""
+        from adaptive_learner_launcher import docker_config
+
+        source = self._user_config(tmp_path)
+        result = docker_config.sanitised_config_dir(tmp_path / "out", source=source)
+        written = json.loads((result / "config.json").read_text(encoding="utf-8"))
+        assert written["proxies"]["default"]["httpProxy"] == "http://proxy.invalid:3128"
+
+    def test_reports_what_it_removed(self, tmp_path) -> None:
+        """Point 4: the caller must be able to log what changed, not guess."""
+        from adaptive_learner_launcher import docker_config
+
+        source = self._user_config(tmp_path)
+        report = docker_config.describe(source=source)
+        assert "credsStore" in report
+        assert "gcloud" in report
+
+    def test_no_user_config_needs_no_sanitising(self, tmp_path) -> None:
+        from adaptive_learner_launcher import docker_config
+
+        assert docker_config.sanitised_config_dir(tmp_path / "out", source=tmp_path / "absent") is None
+
+    def test_unreadable_config_is_not_silently_ignored(self, tmp_path) -> None:
+        """Fail closed: a config we cannot parse must not read as 'nothing to do'."""
+        from adaptive_learner_launcher import docker_config
+
+        source = tmp_path / ".docker"
+        source.mkdir()
+        (source / "config.json").write_text("{not json", encoding="utf-8")
+        with pytest.raises(ValueError):
+            docker_config.sanitised_config_dir(tmp_path / "out", source=source)
+
+    def test_the_real_thing_stops_raising(self, tmp_path, monkeypatch) -> None:
+        """End to end through docker-py's own loader - no mock of the bug."""
+        docker_auth = pytest.importorskip("docker.auth")
+        source = self._user_config(tmp_path)
+
+        monkeypatch.setenv("DOCKER_CONFIG", str(source))
+        with pytest.raises(Exception) as raised:
+            docker_auth.load_config().get_all_credentials()
+        assert "docker-credential-gcloud" in str(raised.value), "the RED premise no longer holds"
+
+        from adaptive_learner_launcher import docker_config
+
+        clean = docker_config.sanitised_config_dir(tmp_path / "out", source=source)
+        monkeypatch.setenv("DOCKER_CONFIG", str(clean))
+        assert docker_auth.load_config().get_all_credentials() == {}
