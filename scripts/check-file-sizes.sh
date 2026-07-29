@@ -93,7 +93,12 @@ baseline_count=0
 
 printf "\n=== Kohäsions-Check: Dateigrößen ===\n"
 printf "Warn-Schwelle: %d Zeilen | Error-Schwelle: %d Zeilen\n" "$WARN_THRESHOLD" "$ERROR_THRESHOLD"
-printf "Whitelist: %d Eintraege | Baseline: %d Eintraege\n\n" "$whitelist_count" "$baseline_count"
+printf "Whitelist: %d Eintraege | Baseline: %d Eintraege\n" "$whitelist_count" "$baseline_count"
+# Gate-Testvertrag Punkt 5 (#2135): WO gemessen wurde gehoert in die
+# Ausgabe. Die Auswahl umfasst versionierte UND neue, nicht-ignorierte
+# Dateien - ein noch nicht committetes God-File faellt also sofort auf,
+# und die Zahl haengt bewusst vom Arbeitsbaum ab.
+printf "Quelle: git ls-files --cached --others --exclude-standard (versioniert + neu, nicht ignoriert) | %d Datei(en) geprueft\n\n" "$(printf '%s\n' "$FILES" | grep -c .)"
 
 for relpath in $FILES; do
     [[ -f "$relpath" ]] || continue

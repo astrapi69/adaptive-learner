@@ -11,3 +11,9 @@
 # TypeScript eslint complexity > 20. New over-threshold functions block
 # immediately; existing offenders below are grandfathered (ratchet may
 # only shrink). File-level granularity matches .filesize-baseline.
+#
+# Punkt-5-Pruefung (#2135, 2026-07-29): das Urteil haengt an der
+# radon-Version, die NICHT gepinnt ist (aus PATH oder .radon-venv). Ein
+# Versionswechsel kann eine Funktion ueber die cc-20-Linie schieben, ohne dass
+# sich Code aendert. Das Gate druckt die aufgeloeste Version jetzt mit, damit
+# eine lokal/CI-Abweichung zuordenbar ist statt raetselhaft. GEPRUEFT.

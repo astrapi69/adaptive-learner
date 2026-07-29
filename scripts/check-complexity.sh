@@ -125,6 +125,7 @@ case "$MODE" in
         ;;
     update)
         produce_eslint_json
+        RADON_VERSION="$(("${RADON[@]}" --version 2>/dev/null || echo unavailable) | head -1)" \
         python3 "$ROOT/scripts/complexity_gate.py" \
             --radon-json "$RADON_JSON" --eslint-json "$ESLINT_JSON" \
             --baseline "$BASELINE" --update-baseline
@@ -132,6 +133,7 @@ case "$MODE" in
         ;;
     gate)
         produce_eslint_json
+        RADON_VERSION="$(("${RADON[@]}" --version 2>/dev/null || echo unavailable) | head -1)" \
         python3 "$ROOT/scripts/complexity_gate.py" \
             --radon-json "$RADON_JSON" --eslint-json "$ESLINT_JSON" \
             --baseline "$BASELINE"

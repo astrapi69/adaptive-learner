@@ -19,6 +19,11 @@
 # Regenerieren (nach einem VITE_STORAGE_MODE=dexie npm run build):
 #   python3 scripts/check-dead-classnames.py --list
 # Migration der Eintraege ist ein eigener Auftrag, NICHT Teil dieses Gates.
+#
+# Punkt-5-Pruefung (#2135, 2026-07-29): das Orakel ist das GEBAUTE
+# Tailwind-CSS (frontend/dist), also build- und Tailwind-versionsabhaengig -
+# deshalb laeuft dieses Gate in `make ci-full`, nicht in `make ci`. Eintraege
+# sind Namen, keine Zahlen; eine Toleranz ergibt hier keinen Sinn. GEPRUEFT.
 activity-trend
 adaptive-save-row
 adaptive-summary-improvement
