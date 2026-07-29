@@ -92,6 +92,11 @@ def describe_conflict(client: Any) -> str | None:
             "Then keep the one you want and rename or remove the other. Only the",
             "database, the uploads and .config/adaptive_learner (which holds the",
             "encryption key for stored provider keys) matter; .cache is derived.",
+            "",
+            "Your stored provider keys live in the SAME volume as the key that",
+            "decrypts them, so whichever volume you keep, its keys keep working",
+            "and the other one's are simply gone - you would re-enter them. There",
+            "is no state where a key looks present but silently fails.",
             "Browser-storage mode is unaffected - that data never lived here.",
         ]
     )

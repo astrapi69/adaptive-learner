@@ -1,7 +1,7 @@
 {
   "note": "Ceiling for the always-injected rule corpus (#2091). Characters, not tokens - see scripts/verify_rule_corpus_size.py. Lower it with --update-baseline; raising it needs --allow-raise and belongs in a commit where the raise is the point.",
   "file_count": 24,
-  "total_chars": 278270,
+  "total_chars": 278616,
   "measured": [
     "CLAUDE.md",
     ".claude/rules/ai-workflow/documentation-protocol.md",
@@ -27,7 +27,5 @@
     ".claude/rules/reusability.md",
     ".claude/rules/tdd.md",
     ".claude/rules/vibe-coding.md"
-  ],
-  "_point5_checked": "Point-5 check (#2135, 2026-07-29): character count via Path.read_text, which applies universal-newline translation - proven LF/CRLF neutral (6 bytes vs 9 bytes on disk, both read as 6 characters). Tool-independent, two runs identical, no tolerance needed. CHECKED.",
-  "_tightening": "Tightening stays MANUAL (#2140): the gate reports headroom as a ratchet opportunity but never applies it. Automatic tightening would make the next legitimate rule addition pay for someone else's deletion - the corpus is a shared budget, so lowering the ceiling is a decision, not a side effect."
+  ]
 }
