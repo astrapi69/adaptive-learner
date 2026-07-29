@@ -1,6 +1,7 @@
 name: arm64 runner probe
 on:
-  workflow_dispatch:
+  push:
+    branches: [ci/2142-ghcr-publish]
 permissions:
   contents: read
 jobs:
