@@ -21,6 +21,8 @@ name: Publish image (GHCR)
 #     broken release;
 #   - anonymous pull, because a pull that works with the CI credentials
 #     proves nothing about an end user;
+#   - one verification job per architecture on a NATIVE runner, because a
+#     built-but-never-started arm64 image is a promise, not a proof;
 #   - version agreement, because an image that claims a release it is not is
 #     worse than a missing image.
 
@@ -127,11 +129,26 @@ jobs:
             || echo "::warning::could not set visibility via API - set it once in the package settings"
 
   verify-anonymous-pull:
-    name: Pull it the way a user does
+    # One job per architecture, each on a NATIVE runner. The first version of
+    # this workflow pulled both architectures on an amd64 runner and started
+    # only the amd64 one - so the arm64 image would have shipped without a
+    # single process ever having run inside it, and a native wheel broken
+    # under emulation would have been found by an Apple-silicon user. Native
+    # arm64 runners are free for public repositories (probed: ubuntu-24.04-arm
+    # reports aarch64), so the emulation-only failure class is gone too.
+    name: Pull and run it the way a user does (${{ matrix.arch }})
     needs: build-and-push
     if: needs.build-and-push.outputs.pushed == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v7
 
@@ -143,12 +160,13 @@ jobs:
           image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
           docker logout ghcr.io || true
           rm -f ~/.docker/config.json || true
-          for arch in amd64 arm64; do
-            echo "::group::anonymous pull $image ($arch)"
-            docker pull --platform "linux/$arch" "$image"
-            echo "::endgroup::"
-          done
-          echo "RESULT: anonymous pull works for amd64 and arm64"
+          docker pull "$image"
+          got="$(docker image inspect "$image" --format '{{.Architecture}}')"
+          if [ "$got" != "${{ matrix.arch }}" ]; then
+            echo "::error::pulled $got on a ${{ matrix.arch }} runner - the manifest list is wrong"
+            exit 1
+          fi
+          echo "RESULT: anonymous pull on a native ${{ matrix.arch }} runner yields a $got image"
 
       - name: The version in the image must be the released version
         # Three strings have to agree: the release tag, the version baked
@@ -160,7 +178,7 @@ jobs:
           expected="${{ needs.build-and-push.outputs.version }}"
           docker run -d --name verify -p 18711:8000 \
             -e ADAPTIVE_LEARNER_PORT=8000 -e ADAPTIVE_LEARNER_DATA_DIR=/app/data \
-            --platform linux/amd64 "$image"
+            "$image"
           for _ in $(seq 1 60); do
             sleep 2
             if curl -sf http://127.0.0.1:18711/api/health >/tmp/health.json; then break; fi
@@ -172,7 +190,7 @@ jobs:
             echo "::error::/api/health reports $reported, release is $expected"
             exit 1
           fi
-          echo "RESULT: tag, image and /api/health all report $expected"
+          echo "RESULT: on ${{ matrix.arch }}, tag, image and /api/health all report $expected"
 
       - name: The published image must respect the size ceiling
         # #2133 ratchets what a user downloads. Running it against a local
@@ -194,5 +212,6 @@ jobs:
             echo "| digest | \`${{ needs.build-and-push.outputs.digest }}\` |"
             echo "| platforms | linux/amd64, linux/arm64 |"
             echo ""
-            echo "Anonymous pull verified without credentials."
+            echo "Anonymous pull AND a health check on native amd64 and arm64 runners,"
+            echo "without credentials."
           } >> "$GITHUB_STEP_SUMMARY"
