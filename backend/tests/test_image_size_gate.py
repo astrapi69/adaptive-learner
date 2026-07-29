@@ -120,3 +120,22 @@ def test_a_real_regression_still_fails(tmp_path: Path) -> None:
     result = _run("--size-bytes", str(110_000_000), baseline=baseline)
     assert result.returncode == 1
     assert "over the ceiling" in result.stderr
+
+
+def test_headroom_beyond_the_tolerance_is_offered(tmp_path: Path) -> None:
+    """#2140: a real shrink must be offered, or the space is silently reusable."""
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps({"compressed_bytes": 120_000_000}), encoding="utf-8")
+    result = _run("--size-bytes", str(100_000_000), baseline=baseline)
+    assert result.returncode == 0, result.stderr
+    assert "ratchet opportunity" in result.stdout.lower()
+    assert "--update-baseline" in result.stdout
+
+
+def test_headroom_inside_the_jitter_tolerance_is_not_offered(tmp_path: Path) -> None:
+    """Rebuild noise is not an improvement - offering it would train noise-chasing."""
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps({"compressed_bytes": 120_000_000}), encoding="utf-8")
+    result = _run("--size-bytes", str(119_950_000), baseline=baseline)
+    assert result.returncode == 0
+    assert "ratchet opportunity" not in result.stdout.lower()
