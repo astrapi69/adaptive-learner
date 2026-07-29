@@ -26,6 +26,10 @@
 # Regenerieren (build-unabhaengig, liest .dead-classnames-baseline):
 #   python3 scripts/check-dead-classnames.py --unstyled --list
 # Migration der Eintraege ist ein eigener Auftrag, NICHT Teil dieses Gates.
+#
+# Punkt-5-Pruefung (#2135, 2026-07-29): gleiche Grundlage wie
+# .dead-classnames-baseline - gebautes Tailwind-CSS als Orakel, deshalb
+# `make ci-full`. Namen statt Zahlen. GEPRUEFT.
 activity-trend
 adaptive-save-row
 adaptive-summary-improvement

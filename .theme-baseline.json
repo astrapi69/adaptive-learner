@@ -1,4 +1,5 @@
 {
   "_comment": "Baseline of known theme/token violations for scripts/verify_theme.py. Ratchet: only NEW violations fail --enforce. Prune entries as they are fixed; do not add by hand.",
-  "violations": {}
+  "violations": {},
+  "_point5_checked": "Point-5 check (#2135, 2026-07-29): parsed from versioned CSS with the stdlib only - no build, no external tool. Entries are violation names, not numbers. CHECKED."
 }
