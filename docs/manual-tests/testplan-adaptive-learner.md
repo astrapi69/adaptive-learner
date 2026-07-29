@@ -663,6 +663,31 @@ modus-unabhaengig.
 - [ ] Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets
       (jeweils zuletzt-bearbeitet zuerst)
 
+### Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
+
+Ort: Meine Inhalte, ein bereits GELERNTES Set (Fortschritt + Wiederholungskarten
+vorhanden), fuer das ein Update verfuegbar ist. In BEIDEN Speichermodi pruefen.
+Hintergrund: ein Update, das Uebungs-/Karten-Identitaeten aendert (z. B. eine
+Antwort-Korrektur), wuerde Wiederholungskarten verwaisen. Der Schutz haengt an
+einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
+
+- [ ] Vorbereitung: ein Set lernen (mind. eine Lektion, ein paar Fehler erzeugen
+      -> Wiederholungskarten), fuer das eine geaenderte Fassung mit GEAENDERTER
+      Antwort/Kartenfront bereitsteht.
+- [ ] Manuelles Update anstossen (Button "Update" am Set): Es erscheint eine
+      Bestaetigung mit bezifferter Angabe ("N Wiederholungskarten / N Lektionen
+      wuerden zurueckgesetzt"), NICHT ein stilles Ueberschreiben.
+- [ ] "Aktuelle Version behalten" -> nichts wird aktualisiert, Fortschritt bleibt,
+      Set zeigt weiterhin "Update verfuegbar" (sichtbar + erneut entscheidbar).
+- [ ] "Trotzdem aktualisieren" -> Update wird angewendet.
+- [ ] Harmloses Update (nur neue Lektion/Uebung ergaenzt, keine bestehende
+      Kennung geaendert) -> KEINE Nachfrage, laeuft direkt durch.
+- [ ] Auto-Sync (nur bei verbundenem Nutzer-Repo, 24h): ein identitaets-aenderndes
+      Update wird im Hintergrund NICHT still angewendet; das Set bleibt auf der
+      bisherigen Fassung und zeigt "Update verfuegbar" (kein Hintergrund-Dialog,
+      kein Datenverlust).
+- [ ] iOS-Standalone (PWA): gleicher manueller Ablauf, Bestaetigung erscheint.
+
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
       Aktualisieren → Set kommt NICHT zurueck (#1719)
