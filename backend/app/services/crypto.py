@@ -6,10 +6,19 @@ service have a single typed entry point and tests get a clean
 
 Key resolution:
 
-- The encryption key comes from the ``ADAPTIVE_LEARNER_SECRET_KEY``
-  environment variable. This module reads ``os.environ`` directly;
-  every other source feeds it.
-- Three feeder paths (any one works; first hit wins):
+- The machine-local ``secret.key`` file (``~/.config/adaptive_learner/
+  secret.key``, see :func:`secret_key_path`) is the source of truth.
+  Once it exists it is read verbatim and the env var is intentionally
+  ignored, so a changed ``ADAPTIVE_LEARNER_SECRET_KEY`` can never orphan
+  ciphertext the file's key still decrypts. See
+  :func:`_read_or_create_key_file`.
+- On FIRST use, when no file exists yet, the key is SEEDED from
+  ``ADAPTIVE_LEARNER_SECRET_KEY`` if that env var is set, otherwise a
+  fresh key is GENERATED; either way it is persisted to ``secret.key``.
+  A fresh install therefore comes up with a working key and no env var
+  set — this is intended, not an error (see "Error surface" below).
+- That first-boot seed value can come from three feeder paths that
+  populate the env var (any one works; first hit wins):
 
   1. **Local dev (recommended)** — ``make dev-secret`` generates a
      Fernet key and persists it to ``.adaptive-learner/dev-secret.env``
@@ -23,23 +32,36 @@ Key resolution:
      populates ``ADAPTIVE_LEARNER_SECRET_KEY`` from this value at
      startup when the env is unset.
 
-- Tests bypass all three by writing the env var directly in
-  ``conftest.py`` before any ``app.*`` import.
+- Tests bypass all of this by writing the env var (or the key file)
+  directly in ``conftest.py`` before any ``app.*`` import.
 - Generate a key with::
 
       python3 -c "from cryptography.fernet import Fernet; \
                   print(Fernet.generate_key().decode())"
 
-Error surface (typed, fail-fast):
+Error surface (typed):
 
-- :class:`CryptoConfigurationError` — the env var is missing or its
-  value is not a valid Fernet key. Raised at the first call to
-  :func:`get_fernet`, and also from :func:`validate_at_startup`,
-  which the FastAPI lifespan invokes once per process so the error
-  surfaces before any request lands rather than from a random
-  ``encrypt_api_key`` callsite hours later.
+- A **missing key is NOT an error**: with no ``secret.key`` file and no
+  ``ADAPTIVE_LEARNER_SECRET_KEY`` set, a fresh key is generated and
+  persisted (see :func:`_read_or_create_key_file`) — nothing is raised.
+- :class:`CryptoConfigurationError` — raised only when a key is present
+  but unusable, or cannot be established at all:
+
+    * an existing ``secret.key`` file cannot be READ (OSError), or
+    * a new ``secret.key`` file cannot be WRITTEN and no
+      ``ADAPTIVE_LEARNER_SECRET_KEY`` value exists to fall back on
+      in-memory, or
+    * the resolved key value is not a valid Fernet key.
+
+  Raised at the first call to :func:`get_fernet`, and eagerly from
+  :func:`validate_at_startup`, which the FastAPI lifespan invokes once
+  per process so a real misconfiguration surfaces at boot rather than
+  from a random ``encrypt_api_key`` callsite hours later.
 - :class:`CryptoDecryptionError` — the ciphertext could not be
-  decrypted (likely the key was rotated, or the row is corrupted).
+  decrypted (likely the key was rotated / lost, or the row is
+  corrupted). Callers in :mod:`app.services.secrets_service` catch this
+  at read time, warn that the stored key must be re-entered, and fall
+  through rather than crash.
 - :class:`ValidationError` — input is empty / not a string. Re-uses
   the global validation error class so the API surface stays
   consistent.
@@ -69,9 +91,13 @@ _SECRET_KEY_FILENAME = "secret.key"
 
 
 class CryptoConfigurationError(AdaptiveLearnerError):
-    """The encryption key is missing or malformed. Raised at
-    startup so the deployer sees the failure before the first
-    settings request lands."""
+    """The encryption key is present but unusable, or cannot be
+    established at all: an existing ``secret.key`` file that cannot be
+    read, a new one that cannot be written with no env-var fallback, or
+    a value that is not a valid Fernet key. A merely ABSENT key is NOT
+    this error — it is generated (see :func:`_read_or_create_key_file`).
+    Raised eagerly at startup so the deployer sees a real failure before
+    the first settings request lands."""
 
     status_code = 500
 
@@ -196,12 +222,15 @@ def reset_fernet_cache() -> None:
 
 
 def validate_at_startup() -> None:
-    """Surface a missing / malformed secret key before any request.
+    """Establish the secret key eagerly, before any request.
 
-    Called once from the FastAPI lifespan. Raises
-    :class:`CryptoConfigurationError`; the deployer sees the error
-    at boot rather than from a random settings-PATCH handler
-    hours later.
+    Called once from the FastAPI lifespan. Creating the key file when
+    absent is part of this (a fresh install comes up with a working
+    key), so a missing key is NOT surfaced as an error. Raises
+    :class:`CryptoConfigurationError` only for a genuinely unusable key
+    — an unreadable / unwritable file, or a malformed value — so the
+    deployer sees that failure at boot rather than from a random
+    settings-PATCH handler hours later.
     """
     get_fernet()
 
