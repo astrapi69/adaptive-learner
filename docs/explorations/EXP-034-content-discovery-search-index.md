@@ -7,7 +7,17 @@ v1.4 — die Manifeste, aus denen der Index generiert wird), EXP-023
 (Multi-Content-Repository — `recommended-repos.json`, Trust-Level, mehrere
 Repos), EXP-032/033 (Content-Validierung — `ai_validated` / `trust_level`
 im Index), EXP-030 (Multi-User — Voraussetzung erst für den optionalen
-Aggregator-Service in Phase 2) · **Issue:** —
+Aggregator-Service in Phase 2), **EXP-045 (Content-ID-Stabilität — harte
+Vorbedingung, siehe unten)** · **Issue:** —
+
+> **VORBEDINGUNG (Datenintegrität, EXP-045 / #2128):** Discovery baut den
+> Verteilungs- und Aktualisierungsweg im grossen Massstab. Solange Übungs-/
+> Karten-IDs Content-Updates nicht stabil überstehen (heute nicht der Fall —
+> KI-/Buch-Inhalte sind positionsbasiert, `element_key` ist der Antworttext),
+> vervielfacht ein Discovery-Rollout den stillen Datenverlust aus #2128 über
+> 100+ Community-Repos. **Kein Discovery-Rollout, bevor die Identitätsfrage
+> geklärt ist** (EXP-045, Option A+C). Diese Abhängigkeit gilt für Phase 1
+> (Repo-Index → Per-Set-Download), nicht erst für den Aggregator.
 
 > Design-Dokument. Kein Code. Es beschreibt, **wie** ein Lernender
 > Lernmaterial **findet, bevor** er es vollständig herunterlädt — analog
