@@ -82,21 +82,58 @@ def measure(image: str) -> int | None:
     return compressed
 
 
-def load_baseline(path: Path) -> tuple[int | None, str | None]:
+def load_baseline(path: Path, arch: str | None = None) -> tuple[int | None, str | None]:
+    """The ceiling for ``arch``, or the single legacy one when arch is None.
+
+    A missing per-architecture ceiling fails CLOSED rather than falling
+    back to another architecture's number: two published architectures are
+    two environments (#2136 point 5), and borrowing one's measurement for
+    the other is precisely the mistake that rule exists to prevent.
+    """
     if not path.is_file():
         return None, f"missing baseline {path} - cannot ratchet against nothing"
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         return None, f"unreadable baseline {path}: {exc}"
+
+    if arch:
+        per_arch = data.get("per_arch")
+        if not isinstance(per_arch, dict):
+            return None, f"baseline {path} carries no per_arch ceilings"
+        value = per_arch.get(arch)
+        if not isinstance(value, int) or value <= 0:
+            return None, (
+                f"no ceiling recorded for {arch} - an unmeasured architecture may not "
+                f"borrow another one's number.\nSeed it from a CI run on a native "
+                f"{arch} runner:\n  python3 scripts/verify_image_size.py --image <ref> "
+                f"--arch {arch} --update-baseline"
+            )
+        return value, None
+
     value = data.get("compressed_bytes")
     if not isinstance(value, int) or value <= 0:
         return None, f"baseline {path} has no usable compressed_bytes"
     return value, None
 
 
-def write_baseline(path: Path, compressed: int) -> None:
+def write_baseline(path: Path, compressed: int, arch: str | None = None) -> None:
+    existing = {}
+    if path.is_file():
+        try:
+            existing = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            existing = {}
+    if arch:
+        # Touch only this architecture - overwriting the sibling would erase a
+        # measurement taken in a different environment.
+        per_arch = dict(existing.get("per_arch") or {})
+        per_arch[arch] = compressed
+        existing["per_arch"] = per_arch
+        path.write_text(json.dumps(existing, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        return
     payload = {
+        **{k: v for k, v in existing.items() if k in ("per_arch", "_tightening")},
         "note": (
             "Ceiling for the published image (#2132). Compressed bytes - what "
             "crosses the wire on a pull. Lower it with --update-baseline; "
@@ -114,6 +151,7 @@ def main() -> int:
     parser.add_argument("--size-bytes", type=int, default=None, help="skip docker, use this size")
     parser.add_argument("--update-baseline", action="store_true")
     parser.add_argument("--allow-raise", action="store_true", help="permit a HIGHER ceiling")
+    parser.add_argument("--arch", default=None, help="which architecture this reading belongs to")
     args = parser.parse_args()
 
     baseline_path = Path(args.baseline) if args.baseline else Path.cwd() / BASELINE_PATH
@@ -132,8 +170,9 @@ def main() -> int:
 
     # The proof of what was measured: without it, an unmeasured run and a
     # clean one print the same green (#2083 point 4).
+    where = f" [{args.arch}]" if args.arch else ""
     print(
-        f"image {args.image}: measured {compressed} bytes gzipped "
+        f"image {args.image}{where}: measured {compressed} bytes gzipped "
         f"({compressed / 1024 / 1024:.0f} MB - what a pull transfers)"
     )
     if args.size_bytes is None:
@@ -143,7 +182,7 @@ def main() -> int:
         # red by lowering the ceiling.
         print("  reading from this machine; the ceiling is measured in CI")
 
-    ceiling, error = load_baseline(baseline_path)
+    ceiling, error = load_baseline(baseline_path, args.arch)
     if error and not args.update_baseline:
         print(error, file=sys.stderr)
         return 1
@@ -157,7 +196,7 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-        write_baseline(baseline_path, compressed)
+        write_baseline(baseline_path, compressed, args.arch)
         print(f"baseline set: {ceiling} -> {compressed}")
         return 0
 
