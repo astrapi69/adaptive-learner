@@ -1,4 +1,5 @@
 {
-  "note": "Ceiling for the published image (#2132). Compressed bytes - what crosses the wire on a pull. Lower it with --update-baseline; raising it needs --allow-raise and belongs in a commit that says why.",
-  "compressed_bytes": 112286353
+  "note": "Ceiling for the published image (#2132). Compressed bytes - what crosses the wire on a pull. MEASURED IN CI (ubuntu-latest, docker-build-smoke.yml), because that is the environment that gates. A local run can legitimately differ by base-image and apt-package drift - 125.6 MB in CI against 112.3 MB locally on the same commit - so never lower this to match a laptop. Lower it with --update-baseline from a CI measurement; raising it needs --allow-raise and belongs in a commit that says why.",
+  "compressed_bytes": 125602358,
+  "measured_in": "ci/ubuntu-latest"
 }

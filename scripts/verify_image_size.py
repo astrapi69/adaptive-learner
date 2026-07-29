@@ -136,6 +136,12 @@ def main() -> int:
         f"image {args.image}: measured {compressed} bytes gzipped "
         f"({compressed / 1024 / 1024:.0f} MB - what a pull transfers)"
     )
+    if args.size_bytes is None:
+        # The ceiling is a CI measurement. A local build legitimately differs
+        # (base-image digests and apt package versions drift), so say which
+        # environment this reading came from before anyone "fixes" a local
+        # red by lowering the ceiling.
+        print("  reading from this machine; the ceiling is measured in CI")
 
     ceiling, error = load_baseline(baseline_path)
     if error and not args.update_baseline:
