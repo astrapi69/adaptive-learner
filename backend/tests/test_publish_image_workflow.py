@@ -87,3 +87,36 @@ def test_the_size_gate_runs_against_the_published_image(parsed: dict) -> None:
     steps = parsed["jobs"]["verify-anonymous-pull"]["steps"]
     body = "\n".join(str(step.get("run", "")) for step in steps)
     assert "verify_image_size.py --image" in body
+
+
+def test_every_architecture_is_actually_started(parsed: dict) -> None:
+    """Built is not run. The first version of this workflow pulled arm64 on an
+    amd64 runner and started only amd64, so the arm64 image would have shipped
+    without a single process ever having run inside it."""
+    job = parsed["jobs"]["verify-anonymous-pull"]
+    arches = {entry["arch"] for entry in job["strategy"]["matrix"]["include"]}
+    assert arches == {"amd64", "arm64"}, f"only verified on {arches}"
+    body = "\n".join(str(step.get("run", "")) for step in job["steps"])
+    assert "docker run -d --name verify" in body, "no architecture is started"
+    assert "/api/health" in body
+
+
+def test_verification_runs_on_native_runners(parsed: dict) -> None:
+    """Native arm64 runners are free for public repos (probed: ubuntu-24.04-arm
+    reports aarch64), which also removes the emulation-only failure class."""
+    include = parsed["jobs"]["verify-anonymous-pull"]["strategy"]["matrix"]["include"]
+    runners = {entry["arch"]: entry["runner"] for entry in include}
+    assert runners["arm64"].endswith("-arm"), f"arm64 verified on {runners['arm64']}"
+    body = "\n".join(
+        str(step.get("run", "")) for step in parsed["jobs"]["verify-anonymous-pull"]["steps"]
+    )
+    assert "--platform" not in body, "a forced platform would hide what the runner really pulled"
+
+
+def test_the_pulled_architecture_is_asserted(parsed: dict) -> None:
+    """Proof that the manifest list actually serves per-architecture images."""
+    body = "\n".join(
+        str(step.get("run", "")) for step in parsed["jobs"]["verify-anonymous-pull"]["steps"]
+    )
+    assert "{{.Architecture}}" in body
+    assert "the manifest list is wrong" in body
