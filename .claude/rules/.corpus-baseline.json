@@ -28,5 +28,6 @@
     ".claude/rules/tdd.md",
     ".claude/rules/vibe-coding.md"
   ],
-  "_point5_checked": "Point-5 check (#2135, 2026-07-29): character count via Path.read_text, which applies universal-newline translation - proven LF/CRLF neutral (6 bytes vs 9 bytes on disk, both read as 6 characters). Tool-independent, two runs identical, no tolerance needed. CHECKED."
+  "_point5_checked": "Point-5 check (#2135, 2026-07-29): character count via Path.read_text, which applies universal-newline translation - proven LF/CRLF neutral (6 bytes vs 9 bytes on disk, both read as 6 characters). Tool-independent, two runs identical, no tolerance needed. CHECKED.",
+  "_tightening": "Tightening stays MANUAL (#2140): the gate reports headroom as a ratchet opportunity but never applies it. Automatic tightening would make the next legitimate rule addition pay for someone else's deletion - the corpus is a shared budget, so lowering the ceiling is a decision, not a side effect."
 }
