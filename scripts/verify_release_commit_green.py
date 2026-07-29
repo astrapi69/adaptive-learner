@@ -37,6 +37,7 @@ import argparse
 import json
 import subprocess
 import sys
+from pathlib import Path
 
 # Conclusions that do not block a release. "neutral" and "skipped" are
 # normal for path-filtered jobs; everything else (failure, cancelled,
@@ -84,6 +85,43 @@ def load_json(source: str) -> list[dict] | None:
     return data
 
 
+def release_driven_job_names(repo_root: Path) -> tuple[list[str], str | None]:
+    """Display names of every job in a release-driven workflow.
+
+    Derived from the workflows rather than hardcoded, so a fifth publisher
+    is excluded without anyone remembering to add it. Returns the names and
+    an error message when the scan itself could not be performed - finding
+    nothing to exclude is only sound if we know we looked in the right place.
+    """
+    directory = repo_root / ".github" / "workflows"
+    if not directory.is_dir():
+        return [], f"cannot scan {directory} - the exclusion basis is missing"
+    names: list[str] = []
+    found_release_workflow = False
+    for path in sorted(directory.glob("*.yml")):
+        text = path.read_text(encoding="utf-8")
+        if "release:" not in text or "types: [created]" not in text:
+            continue
+        found_release_workflow = True
+        for line in text.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("name:") and line.startswith("    name:"):
+                value = stripped[len("name:") :].strip().strip("\"'")
+                # A matrix job is declared as "<name> (${{ matrix.x }})" and
+                # renders as "<name> (amd64)". Cut the interpolation AND the
+                # opening bracket, so the base name is what the prefix match
+                # below expects.
+                base = value.split("${{")[0].strip().rstrip("(").strip()
+                if base:
+                    names.append(base)
+    if not found_release_workflow:
+        return [], (
+            f"no release-driven workflows found under {directory} - refusing to "
+            "publish on an exclusion set that could not be established"
+        )
+    return names, None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sha", help="the commit being published from")
@@ -93,8 +131,14 @@ def main() -> int:
         "--ignore",
         action="append",
         default=[],
-        help="check name to exclude (the publishing run is itself in progress)",
+        help="check name to exclude (matched as a prefix, for matrix jobs)",
     )
+    parser.add_argument(
+        "--exclude-release-jobs",
+        action="store_true",
+        help="exclude the whole release-driven run, derived from the workflows (#2149)",
+    )
+    parser.add_argument("--repo-root", default=".", help="where to scan for workflows")
     args = parser.parse_args()
 
     if args.from_json:
@@ -109,13 +153,25 @@ def main() -> int:
     if runs is None:
         return 1
 
-    considered = [run for run in runs if run.get("name") not in set(args.ignore)]
+    excluded = list(args.ignore)
+    if args.exclude_release_jobs:
+        derived, scan_error = release_driven_job_names(Path(args.repo_root))
+        if scan_error:
+            print(scan_error, file=sys.stderr)
+            return 1
+        excluded += derived
+
+    def is_excluded(name: str) -> bool:
+        # Prefix, not equality: a matrix job appears as "<name> (amd64)".
+        return any(name == prefix or name.startswith(prefix + " (") for prefix in excluded)
+
+    considered = [run for run in runs if not is_excluded(str(run.get("name", "")))]
     names = ", ".join(sorted(str(run.get("name", "?")) for run in considered))
     print(f"release precondition: {len(considered)} check(s) considered")
     if considered:
         print(f"  {names}")
-    if args.ignore:
-        print(f"  ignored: {', '.join(args.ignore)}")
+    if excluded:
+        print(f"  excluded ({len(excluded)}): {', '.join(sorted(set(excluded)))}")
 
     if not considered:
         print(
