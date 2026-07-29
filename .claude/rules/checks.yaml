@@ -102,6 +102,13 @@ checks:
     wired_in: make verify-docker-context; .github/workflows/docker-build-smoke.yml
     probe: make_target=verify-docker-context
 
+  - id: image-size
+    verifies: the published image's compressed size may shrink, not grow silently
+    rule: "-"
+    status: active
+    wired_in: make verify-image-size; .github/workflows/docker-build-smoke.yml
+    probe: make_target=verify-image-size
+
   - id: normative-changes
     verifies: normative-keyword and gate-status changes are declared, not buried in a diff
     rule: quality-checks.md#normative-changes-are-declared-not-buried-2079
