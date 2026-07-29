@@ -27,7 +27,12 @@ from pathlib import Path
 
 from docker_app_launcher.__main__ import main as _package_main
 
-from adaptive_learner_launcher import __version__, bundle_manifest, deployment_assets
+from adaptive_learner_launcher import (
+    __version__,
+    bundle_manifest,
+    deployment_assets,
+    docker_config,
+)
 
 # launcher.json sits at the launcher/ root, beside this package directory.
 # Resolving from __file__ makes the launcher work from any CWD. In the
@@ -199,6 +204,30 @@ def _anchored_config_path(app_dir: Path) -> Path:
         return source
 
 
+
+def _use_credential_free_docker_config(app_dir: Path) -> None:
+    """Point DOCKER_CONFIG at a copy without credential settings (#2126).
+
+    docker-py resolves credentials for every configured registry before a
+    build and dies on a helper binary that is not installed - a leftover
+    ``credsStore: gcloud`` is enough. We need no credentials: every FROM
+    is a public library image. So the resolution is removed rather than
+    tolerated, while ``currentContext`` and the contexts directory are
+    preserved - dropping those would point the launcher at a different
+    daemon, which is a worse failure because it is a quiet one.
+    """
+    target = app_dir / ".docker"
+    try:
+        prepared = docker_config.sanitised_config_dir(target)
+    except ValueError as exc:
+        print(f"Leaving the docker client config alone: {exc}", file=sys.stderr)
+        return
+    if prepared is None:
+        return
+    print(docker_config.describe())
+    os.environ["DOCKER_CONFIG"] = str(prepared)
+
+
 def _deployment_readiness_problem(*, config_file: Path | None = None) -> list[str] | None:
     """Diagnose an unrunnable deployment mode BEFORE claiming to install.
 
@@ -285,6 +314,7 @@ def main(argv: list[str] | None = None) -> int:
             if isinstance(provisioned, int):
                 return provisioned
             os.chdir(provisioned)
+    _use_credential_free_docker_config(Path.cwd())
     if not any(arg == "--config" or arg.startswith("--config=") for arg in args):
         args = ["--config", str(_anchored_config_path(Path.cwd())), *args]
     # Only the actions that actually build or start need the mode's assets.

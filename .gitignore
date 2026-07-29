@@ -142,3 +142,6 @@ docs/review/i18n-csv/
 # Runtime config the launcher writes next to the app tree (#2109).
 # Generated per machine, never committed.
 .adaptive-learner-launcher.json
+
+# Credential-free docker client config the launcher prepares (#2126).
+.docker/
