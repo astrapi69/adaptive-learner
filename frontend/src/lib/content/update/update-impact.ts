@@ -34,6 +34,55 @@ export interface PeekLesson {
     exercises: PeekExercise[];
 }
 
+/** matching: one key per authored pair (``pair.left``). */
+function matchingKeys(ex: PeekExercise): Set<string> {
+    const keys = new Set<string>();
+    for (const p of ex.pairs ?? []) {
+        if (p && typeof p.left === "string") keys.add(p.left);
+    }
+    return keys;
+}
+
+/** free_text (and the cloze fallback): the first accepted answer. */
+function firstAcceptKey(ex: PeekExercise): Set<string> {
+    return ex.accept?.[0] !== undefined ? new Set([ex.accept[0]]) : new Set();
+}
+
+/** word_tiles: the canonical ``tiles.join(" ")`` phrase. */
+function wordTilesKeys(ex: PeekExercise): Set<string> {
+    return ex.tiles ? new Set([ex.tiles.join(" ")]) : new Set();
+}
+
+/** picture_choice: the correct image's label. */
+function pictureChoiceKeys(ex: PeekExercise): Set<string> {
+    const keys = new Set<string>();
+    for (const img of ex.images ?? []) {
+        if (img && img.is_correct === "true" && typeof img.label === "string") {
+            keys.add(img.label);
+        }
+    }
+    return keys;
+}
+
+/** cloze: one key per blank (``blank.accept[0]``), or the exercise-level
+ *  ``accept[0]`` when there are no authored blanks. */
+function clozeKeys(ex: PeekExercise): Set<string> {
+    if (!ex.blanks || ex.blanks.length === 0) return firstAcceptKey(ex);
+    const keys = new Set<string>();
+    for (const b of ex.blanks) {
+        if (b?.accept?.[0] !== undefined) keys.add(b.accept[0]);
+    }
+    return keys;
+}
+
+const ELEMENT_KEY_EXTRACTORS: Record<string, (ex: PeekExercise) => Set<string>> = {
+    matching: matchingKeys,
+    free_text: firstAcceptKey,
+    word_tiles: wordTilesKeys,
+    picture_choice: pictureChoiceKeys,
+    cloze: clozeKeys,
+};
+
 /**
  * The element_keys an exercise contributes to the SRS, mirroring
  * ``lib/srs/element-attempt.ts`` for the five shipped content types. For any
@@ -42,39 +91,8 @@ export interface PeekLesson {
  * at-risk — the guard must never under-warn (silently lose progress).
  */
 export function exerciseElementKeys(ex: PeekExercise): Set<string> {
-    const keys = new Set<string>();
-    switch (ex.type) {
-        case "matching":
-            for (const p of ex.pairs ?? []) {
-                if (p && typeof p.left === "string") keys.add(p.left);
-            }
-            break;
-        case "free_text":
-            if (ex.accept?.[0] !== undefined) keys.add(ex.accept[0]);
-            break;
-        case "word_tiles":
-            if (ex.tiles) keys.add(ex.tiles.join(" "));
-            break;
-        case "picture_choice":
-            for (const img of ex.images ?? []) {
-                if (img && img.is_correct === "true" && typeof img.label === "string") {
-                    keys.add(img.label);
-                }
-            }
-            break;
-        case "cloze":
-            if (ex.blanks && ex.blanks.length > 0) {
-                for (const b of ex.blanks) {
-                    if (b?.accept?.[0] !== undefined) keys.add(b.accept[0]);
-                }
-            } else if (ex.accept?.[0] !== undefined) {
-                keys.add(ex.accept[0]);
-            }
-            break;
-        default:
-            break; // unhandled type -> empty set -> conservatively at-risk
-    }
-    return keys;
+    const extractor = ELEMENT_KEY_EXTRACTORS[ex.type ?? ""];
+    return extractor ? extractor(ex) : new Set();
 }
 
 /** Fold peeked lessons into the {@link IncomingSetIdentities} the impact
