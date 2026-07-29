@@ -32,6 +32,7 @@ from adaptive_learner_launcher import (
     bundle_manifest,
     deployment_assets,
     docker_config,
+    volume_migration,
 )
 
 # launcher.json sits at the launcher/ root, beside this package directory.
@@ -228,6 +229,31 @@ def _use_credential_free_docker_config(app_dir: Path) -> None:
     os.environ["DOCKER_CONFIG"] = str(prepared)
 
 
+
+def _volume_conflict() -> list[str] | None:
+    """Stop when two data volumes both hold data (#2154).
+
+    The config points at the compose-created volume, so the normal case
+    needs no decision - existing data is simply found again. But a user who
+    worked in dockerfile mode since #2100 may have written into the plain
+    volume too, and then either choice strands somebody's learning history.
+    That is not a decision a launcher gets to make silently.
+    """
+    try:
+        import docker
+    except ImportError:
+        return None
+    try:
+        client = docker.from_env(timeout=30)
+    except Exception:  # noqa: BLE001 - no engine: the docker guard reports that
+        return None
+    try:
+        message = volume_migration.describe_conflict(client)
+    except Exception:  # noqa: BLE001 - never let the guard break the launcher
+        return None
+    return message.splitlines() if message else None
+
+
 def _deployment_readiness_problem(*, config_file: Path | None = None) -> list[str] | None:
     """Diagnose an unrunnable deployment mode BEFORE claiming to install.
 
@@ -331,6 +357,12 @@ def main(argv: list[str] | None = None) -> int:
         if any(arg in read_only for arg in args)
         else _deployment_readiness_problem(config_file=Path(args[args.index("--config") + 1]))
     )
+    if problem is None and not any(arg in read_only for arg in args):
+        problem = _volume_conflict()
+        if problem is not None:
+            for line in problem:
+                print(line, file=sys.stderr)
+            return 6
     if problem is not None:
         for line in problem:
             print(line, file=sys.stderr)
