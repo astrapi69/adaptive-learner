@@ -59,18 +59,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # #2145: `release: created` fires whether or not this commit's checks
+      # #2145 / #2149: `release: created` fires whether or not this commit's checks
       # ran, let alone passed. Inferring "CI was green" from the existence of
       # a release is a conclusion, not a check - and publishing is the least
       # reversible thing this project does. Pending, unknown or empty counts
       # as not green; the step names how many checks it considered.
+      # The WHOLE release-driven run is excluded, derived from the
+      # workflows: all four publishers fire on this event, so excluding
+      # only itself made each one see the other three as pending and
+      # refuse - deterministically, on every release (#2149).
       - name: Refuse to publish from a commit that was not green
         if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 scripts/verify_release_commit_green.py \
-            --sha "${{ github.sha }}" --ignore "Build launcher .app bundle"
+            --sha "${{ github.sha }}" --exclude-release-jobs
 
 
       - name: Set up Python

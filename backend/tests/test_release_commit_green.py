@@ -130,12 +130,102 @@ def test_every_release_driven_workflow_has_the_precondition() -> None:
     assert not missing, f"publish without checking the commit was green: {missing}"
 
 
-def test_each_publisher_ignores_only_itself() -> None:
-    """Ignoring is how the check avoids deadlocking on its own run - it must
-    not become a way to wave someone else's red check through."""
+def test_publishers_do_not_deadlock_each_other() -> None:
+    """#2149: all four fire on the same event and each creates a check run.
+
+    With one exclusion per job, every job saw the other three as pending and
+    refused - deterministically, on every release. The exclusion set must be
+    the whole release-driven run, not just the asking job.
+    """
     for path in sorted((REPO_ROOT / ".github" / "workflows").glob("*.yml")):
         text = path.read_text(encoding="utf-8")
         if "verify_release_commit_green.py" not in text:
             continue
-        ignores = [line for line in text.splitlines() if "--ignore" in line]
-        assert len(ignores) == 1, f"{path.name} ignores more than one check: {ignores}"
+        assert "--exclude-release-jobs" in text, (
+            f"{path.name} excludes only itself and will deadlock on its siblings"
+        )
+
+
+def test_release_jobs_are_derived_not_hardcoded() -> None:
+    """A fifth publisher must be excluded without anyone remembering to."""
+    import subprocess
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--from-json",
+            "-",
+            "--exclude-release-jobs",
+            "--repo-root",
+            str(REPO_ROOT),
+        ],
+        input=json.dumps(
+            [
+                _run_of("Build launcher binary", "in_progress", None),
+                _run_of("Build launcher.exe", "in_progress", None),
+                _run_of("Build launcher .app bundle", "in_progress", None),
+                _run_of("Build multi-arch and push", "in_progress", None),
+                _run_of("Pull and run it the way a user does (arm64)", "in_progress", None),
+                _run_of("CI", "completed", "success"),
+            ]
+        ),
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "1 check(s) considered" in result.stdout, result.stdout
+
+
+def test_a_red_regular_check_still_blocks_with_the_exclusion() -> None:
+    """Excluding the release run must not wave the commit's own CI through."""
+    import subprocess
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--from-json",
+            "-",
+            "--exclude-release-jobs",
+            "--repo-root",
+            str(REPO_ROOT),
+        ],
+        input=json.dumps(
+            [
+                _run_of("Build launcher binary", "in_progress", None),
+                _run_of("CI", "completed", "failure"),
+            ]
+        ),
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 1
+    assert "CI" in result.stderr
+
+
+def test_the_exclusion_scan_fails_closed_without_workflows(tmp_path) -> None:
+    """No workflows found means the basis is broken, not that nothing matched."""
+    import subprocess
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--from-json",
+            "-",
+            "--exclude-release-jobs",
+            "--repo-root",
+            str(tmp_path),
+        ],
+        input=json.dumps([_run_of("CI", "completed", "success")]),
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 1
+    # Either cause is fail-closed: the directory is absent, or it holds no
+    # release-driven workflow. Both mean the exclusion set is unestablished.
+    assert (
+        "exclusion basis is missing" in result.stderr
+        or "no release-driven workflows" in result.stderr
+    )
