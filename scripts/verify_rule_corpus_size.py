@@ -163,7 +163,18 @@ def main() -> int:
         )
         return 1
 
-    print(f"  within the ceiling ({ceiling}, headroom {ceiling - total})")
+    headroom = ceiling - total
+    print(f"  within the ceiling ({ceiling}, headroom {headroom})")
+    if headroom > 0:
+        # #2140: a ratchet that never follows an improvement down is a
+        # blanket - the space a deletion won can be spent again later, for
+        # free, with nothing saying so. Reported, not applied: tightening
+        # silently would make the next legitimate rule addition pay for
+        # someone else's deletion.
+        print(
+            f"  ratchet opportunity: {headroom} chars below the ceiling - lower it with\n"
+            "    python3 scripts/verify_rule_corpus_size.py --update-baseline"
+        )
     return 0
 
 

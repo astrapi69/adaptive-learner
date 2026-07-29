@@ -179,7 +179,18 @@ def main() -> int:
             f"{JITTER_TOLERANCE // 1024 // 1024} MB rebuild-jitter tolerance"
         )
     else:
-        print(f"  within the ceiling ({ceiling}, headroom {ceiling - compressed} bytes)")
+        headroom = ceiling - compressed
+        print(f"  within the ceiling ({ceiling}, headroom {headroom} bytes)")
+        if headroom > JITTER_TOLERANCE:
+            # #2140: below the ceiling by more than rebuild noise is a real
+            # shrink. Offer it - never apply it: this ceiling is a CI
+            # measurement, and a local run lowering it would pin the whole
+            # project to one laptop's number.
+            print(
+                f"  ratchet opportunity: {headroom / 1024 / 1024:.0f} MB below the "
+                "ceiling - lower it from a CI measurement with\n"
+                "    python3 scripts/verify_image_size.py --update-baseline"
+            )
     return 0
 
 

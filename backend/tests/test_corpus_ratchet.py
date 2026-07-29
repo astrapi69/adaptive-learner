@@ -108,3 +108,27 @@ def test_raising_the_ceiling_needs_an_explicit_flag(tree: Path) -> None:
 
     assert _run(tree, "--update-baseline", "--allow-raise").returncode == 0
     assert _run(tree).returncode == 0
+
+
+def test_headroom_is_offered_as_a_ratchet_opportunity(tree: Path) -> None:
+    """#2140: a ratchet that never follows an improvement down is a blanket.
+
+    The space gained by a deletion can otherwise be spent again later, for
+    free, with no gate saying anything.
+    """
+    baseline = tree / BASELINE
+    data = json.loads(baseline.read_text(encoding="utf-8"))
+    data["total_chars"] += 5000
+    baseline.write_text(json.dumps(data), encoding="utf-8")
+
+    result = _run(tree)
+    assert result.returncode == 0, result.stderr
+    assert "ratchet opportunity" in result.stdout.lower()
+    assert "--update-baseline" in result.stdout
+
+
+def test_no_opportunity_line_when_there_is_no_headroom(tree: Path) -> None:
+    """It may not nag on a corpus that is exactly on the line."""
+    result = _run(tree)
+    assert result.returncode == 0
+    assert "ratchet opportunity" not in result.stdout.lower()
