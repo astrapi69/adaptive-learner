@@ -614,6 +614,25 @@ API mode.
       → the deferred status is still there
 - [ ] iPhone PWA: same flow (originally observed there)
 
+### Continue-Learning suggestion: no completed/deferred sets without due reviews (#2123)
+
+Where: Dashboard → Overview, the top "Continue Learning" / "Weitermachen"
+block. Test in BOTH storage modes (API + Dexie); the logic is
+mode-agnostic.
+
+- [ ] Finish a set completely (all lessons) OR set it to "Completed" via the
+      set actions menu, with NO cards due → the Continue-Learning block no
+      longer proposes that set (it used to show up as "Set completed")
+- [ ] No open set AND no due cards → an honest empty state ("Start your first
+      lesson", link to My Content) instead of a filler set
+- [ ] A completed set WITH due reviews → shown as a review row ("N elements
+      due") that leads into the review session (`/review/{setId}`), not as
+      "Set completed"
+- [ ] A deferred set with no due cards → NOT proposed
+- [ ] A started (active) set → still proposed to resume
+- [ ] Order: due reviews first, then started sets (each most-recently-touched
+      first)
+
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)
