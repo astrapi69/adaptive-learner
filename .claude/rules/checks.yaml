@@ -109,6 +109,13 @@ checks:
     wired_in: make verify-image-size; .github/workflows/docker-build-smoke.yml
     probe: make_target=verify-image-size
 
+  - id: release-commit-green
+    verifies: no release-driven job publishes from a commit whose checks did not pass
+    rule: quality-checks.md#gate-test-contract-five-tests-and-fail-closed-2083
+    status: active
+    wired_in: .github/workflows/publish-image.yml; launcher-{linux,macos,windows}.yml
+    probe: script_exists=scripts/verify_release_commit_green.py
+
   - id: normative-changes
     verifies: normative-keyword and gate-status changes are declared, not buried in a diff
     rule: quality-checks.md#normative-changes-are-declared-not-buried-2079
