@@ -23,6 +23,14 @@ Usage::
     python3 scripts/verify_lessons_inventory.py --compare base.json
 
 Exit codes: 0 ok, 1 drift, 2 usage error.
+
+Point-5 check (#2135, 2026-07-29): the baseline stores SHA-256 over
+stripped section bodies read via ``read_text``, whose universal-newline
+translation makes it LF/CRLF neutral (proven: 6 bytes vs 9 on disk, both
+read as 6 characters). Stdlib only, two runs identical, identifiers
+rather than measurements - no tolerance applies. The baseline file
+itself carries no note: its top-level keys ARE the section map, so a
+prose key there is counted as a section and breaks the gate.
 """
 
 from __future__ import annotations

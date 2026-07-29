@@ -15,6 +15,14 @@
 # Splitting wird in #372 verfolgt (Cohesion Phase 2).
 #
 # Format: <relativer Pfad>  <max-Zeilen>   (# = Kommentar)
+#
+# Punkt-5-Pruefung (#2135, 2026-07-29): die Auswahl ist
+# `git ls-files --cached --others --exclude-standard`, umfasst also auch
+# NEUE, noch nicht committete Dateien - nachgewiesen: eine untracked Datei
+# mit 1200 Zeilen aendert das Urteil. Das ist BEABSICHTIGT (ein God-File soll
+# vor dem Commit auffallen), heisst aber, dass die Zahl vom Arbeitsbaum
+# abhaengt. Das Gate nennt seine Quelle und die geprueften Dateien jetzt in
+# der Ausgabe. GEPRUEFT.
 
 
 # (Launcher modules removed in #1064 - the launcher now delegates to the

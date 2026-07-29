@@ -27,5 +27,6 @@
     ".claude/rules/reusability.md",
     ".claude/rules/tdd.md",
     ".claude/rules/vibe-coding.md"
-  ]
+  ],
+  "_point5_checked": "Point-5 check (#2135, 2026-07-29): character count via Path.read_text, which applies universal-newline translation - proven LF/CRLF neutral (6 bytes vs 9 bytes on disk, both read as 6 characters). Tool-independent, two runs identical, no tolerance needed. CHECKED."
 }

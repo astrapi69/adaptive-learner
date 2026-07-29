@@ -119,6 +119,19 @@ def write_baseline(path: str, worst: dict[str, int]) -> None:
         handle.write("\n".join(header + body) + "\n")
 
 
+def _radon_version() -> str:
+    """Which radon produced this reading, as resolved by the shell wrapper.
+
+    The wrapper picks radon from PATH or from .radon-venv and passes what it
+    found through RADON_VERSION; asking again here would resolve a DIFFERENT
+    radon than the one that produced the JSON.
+    """
+    reported = os.environ.get("RADON_VERSION", "").strip()
+    if not reported or reported == "unavailable":
+        return "radon unavailable (see the gate's own fail-closed handling)"
+    return f"radon {reported} (unpinned - a version change can move a function across cc 20)"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--radon-json", required=True)
@@ -150,15 +163,18 @@ def main() -> int:
         elif cc > frozen:
             violations.append(f"REGRESS  {path} (worst cc {cc} > baseline {frozen})")
             if in_actions:
-                print(
-                    f"::error file={path}::Complexity regressed to {cc} "
-                    f"(baseline {frozen})"
-                )
+                print(f"::error file={path}::Complexity regressed to {cc} (baseline {frozen})")
 
     tolerated = sum(1 for p in current if p in baseline and current[p] <= baseline[p])
     improvable = sorted(p for p in baseline if p not in current)
 
     print("\n=== Complexity ratchet gate ===")
+    # Gate test contract point 5 (#2135): the verdict depends on the analyzer
+    # version - radon is resolved from PATH or .radon-venv and is NOT pinned,
+    # so a version change can move a function across the cc-20 line without a
+    # code change. Print which one produced this reading, so a local/CI
+    # disagreement is attributable instead of mysterious.
+    print(f"Analyzer         : {_radon_version()}")
     print(f"Baseline files   : {len(baseline)}")
     print(f"Current offenders: {len(current)}  (tolerated: {tolerated})")
     if improvable:
