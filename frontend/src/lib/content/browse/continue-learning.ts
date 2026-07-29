@@ -15,7 +15,7 @@
  */
 
 import {computeStars, type StarRating} from "../../lesson/lesson-summary";
-import type {LessonProgress} from "../../../storage/types";
+import type {LessonProgress, SetStatus} from "../../../storage/types";
 
 /** One set's most-recently-touched lesson-progress row. */
 export interface ContinueLearningGroup {
@@ -24,8 +24,11 @@ export interface ContinueLearningGroup {
     mostRecent: LessonProgress;
 }
 
-/** What the learner should do next for a given set. */
-export type ContinueMode = "resume" | "next" | "set_complete";
+/** What the learner should do next for a given set. ``"review"`` is a
+ *  display-only tier (a finished/deferred set with cards due, #2123) — it is
+ *  never returned by ``resolveContinueAction``, only assigned by the consumer
+ *  when the ranking classifies the set into the review tier. */
+export type ContinueMode = "resume" | "next" | "set_complete" | "review";
 
 export interface ResolvedContinueAction {
     mode: ContinueMode;
@@ -110,6 +113,81 @@ export function resolveContinueAction(
         };
     }
     return {mode: "set_complete", targetFilename: mostRecent.lesson_filename};
+}
+
+/**
+ * Which tier a candidate set falls into for the entry ("Weitermachen")
+ * suggestion. ``"review"`` — cards are due; ``"started"`` — an active,
+ * still-open set to resume/continue. Dropped candidates return ``null``.
+ */
+export type EntryTier = "review" | "started";
+
+/**
+ * The per-set inputs the entry-suggestion ranking needs beyond the grouped
+ * progress row: the resolved next action, the set's effective lifecycle
+ * status, and how many review cards are currently due for it.
+ */
+export interface EntryRankInput {
+    group: ContinueLearningGroup;
+    action: ResolvedContinueAction;
+    /** Effective lifecycle status from the set-status store (default "active"). */
+    status: SetStatus;
+    /** Count of review cards currently overdue for this set. */
+    dueCount: number;
+}
+
+/**
+ * Classify a candidate set for the entry suggestion, or return ``null`` to
+ * DROP it (#2123).
+ *
+ * The entry must propose something worth doing next:
+ *   - A finished set (lifecycle ``"completed"`` OR its most-recent row
+ *     resolves to ``"set_complete"``) or a ``"deferred"`` set is only worth
+ *     surfacing when reviews are due — then it is a ``"review"`` suggestion;
+ *     with nothing due it is DROPPED. A completed set with nothing to do was
+ *     the reported bug: it was proposed as the top "continue" target.
+ *   - Any other set is active and still open → a ``"started"`` suggestion
+ *     (resume / next lesson).
+ *
+ * Note: a still-open set that also has due cards stays ``"started"`` — the
+ * natural next step is to resume the lesson, not to jump into review; the
+ * review nudge is for sets with no forward progress left.
+ */
+export function classifyEntryCandidate(input: EntryRankInput): EntryTier | null {
+    const finished =
+        input.status === "completed" || input.action.mode === "set_complete";
+    if (finished || input.status === "deferred") {
+        return input.dueCount > 0 ? "review" : null;
+    }
+    return "started";
+}
+
+/**
+ * Filter + order the entry suggestions (#2123). Review-tier sets first
+ * (cards are due), then started sets, each newest-touched first; dropped
+ * candidates removed; capped at ``maxItems``. When everything drops, the
+ * caller shows the honest empty state rather than a filler set.
+ */
+export function rankEntrySuggestions(
+    inputs: readonly EntryRankInput[],
+    maxItems: number,
+): EntryRankInput[] {
+    const tierRank: Record<EntryTier, number> = {review: 0, started: 1};
+    return inputs
+        .map((input) => ({input, tier: classifyEntryCandidate(input)}))
+        .filter(
+            (x): x is {input: EntryRankInput; tier: EntryTier} => x.tier !== null,
+        )
+        .sort((a, b) => {
+            const byTier = tierRank[a.tier] - tierRank[b.tier];
+            if (byTier !== 0) return byTier;
+            return a.input.group.mostRecent.updated_at >
+                b.input.group.mostRecent.updated_at
+                ? -1
+                : 1;
+        })
+        .slice(0, Math.max(0, maxItems))
+        .map((x) => x.input);
 }
 
 /** Human-readable label from a lesson filename. Strips the
