@@ -83,6 +83,7 @@ no_rule:
   manual-automation.yml: executes the manual test plan, does not gate a rule
   deploy-gh-pages.yml: deployment
   deploy-preview.yml: deployment
+  image-size-measure.yml: measurement only (#2151 - reports a size, enforces nothing, writes nothing)
   publish-image.yml: build/publish (GHCR image, #2142 - enforces no documented rule)
   launcher-linux.yml: build/publish
   launcher-macos.yml: build/publish
