@@ -1,0 +1,12 @@
+name: arm64 runner probe
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - run: |
+          echo "arch: $(uname -m)"
+          echo "runner: $RUNNER_OS $RUNNER_ARCH"
