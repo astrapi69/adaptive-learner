@@ -212,7 +212,7 @@ jobs:
         run: |
           set -euo pipefail
           image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
-          python3 scripts/verify_image_size.py --image "$image"
+          python3 scripts/verify_image_size.py --image "$image" --arch "${{ matrix.arch }}"
 
       - name: Record tag and digest
         run: |

@@ -139,3 +139,57 @@ def test_headroom_inside_the_jitter_tolerance_is_not_offered(tmp_path: Path) -> 
     result = _run("--size-bytes", str(119_950_000), baseline=baseline)
     assert result.returncode == 0
     assert "ratchet opportunity" not in result.stdout.lower()
+
+
+def test_arch_selects_its_own_ceiling(tmp_path: Path) -> None:
+    """#2147: two published architectures are two environments (#2136 point 5)."""
+    baseline = tmp_path / "b.json"
+    baseline.write_text(
+        json.dumps({"per_arch": {"amd64": 100_000_000, "arm64": 130_000_000}}), encoding="utf-8"
+    )
+    over = _run("--size-bytes", str(125_000_000), "--arch", "amd64", baseline=baseline)
+    assert over.returncode == 1, "amd64 ceiling was not applied"
+    under = _run("--size-bytes", str(125_000_000), "--arch", "arm64", baseline=baseline)
+    assert under.returncode == 0, under.stderr
+
+
+def test_a_missing_arch_ceiling_fails_closed(tmp_path: Path) -> None:
+    """An unmeasured architecture must not borrow the other one's number."""
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps({"per_arch": {"amd64": 100_000_000}}), encoding="utf-8")
+    result = _run("--size-bytes", "1000", "--arch", "arm64", baseline=baseline)
+    assert result.returncode == 1
+    assert "no ceiling recorded for arm64" in result.stderr
+    assert "--update-baseline" in result.stderr
+
+
+def test_the_arch_is_named_in_the_output(tmp_path: Path) -> None:
+    """Point 4 + point 5: say WHICH environment this reading belongs to."""
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps({"per_arch": {"arm64": 130_000_000}}), encoding="utf-8")
+    result = _run("--size-bytes", "1000", "--arch", "arm64", baseline=baseline)
+    assert result.returncode == 0, result.stderr
+    assert "arm64" in result.stdout
+
+
+def test_updating_writes_only_that_arch(tmp_path: Path) -> None:
+    baseline = tmp_path / "b.json"
+    baseline.write_text(
+        json.dumps({"per_arch": {"amd64": 100_000_000, "arm64": 130_000_000}}), encoding="utf-8"
+    )
+    assert (
+        _run(
+            "--size-bytes", "90000000", "--arch", "amd64", "--update-baseline", baseline=baseline
+        ).returncode
+        == 0
+    )
+    written = json.loads(baseline.read_text(encoding="utf-8"))["per_arch"]
+    assert written["amd64"] == 90_000_000
+    assert written["arm64"] == 130_000_000, "the other architecture was overwritten"
+
+
+def test_the_committed_baseline_carries_per_arch_ceilings() -> None:
+    """The repo must actually ship what the workflow relies on."""
+    data = json.loads(BASELINE.read_text(encoding="utf-8"))
+    assert "per_arch" in data, "no per-architecture ceilings committed"
+    assert set(data["per_arch"]) >= {"amd64"}, data["per_arch"]
