@@ -309,9 +309,9 @@ Origin: the condensation commit that cut 66 percent of this file carried two
 policy inversions and four deleted load-bearing sections. It never reached
 develop - an audit caught it - but nothing structural would have.
 
-## Gate test contract: three tests, and fail closed (#2083)
+## Gate test contract: five tests, and fail closed (#2083)
 
-Every gate carries these tests. The first two are obvious, the last two are
+Every gate carries these tests. The first two are obvious, the last three are
 the ones that keep being missed:
 
 1. **It detects the violation.** A RED proof that reproduces the incident.
@@ -323,6 +323,20 @@ the ones that keep being missed:
 4. **It reports WHAT it measured.** A gate that scans a set must print the size
    of that set and pass a test on it. Otherwise an empty set reads as a clean
    one - "0 findings" and "0 files looked at" print the same green.
+5. **Its number means the same thing everywhere.** Before a measurement becomes
+   a threshold: does it depend on tool version, storage driver, platform,
+   encoding or time? Is it stable across two runs of identical input? WHERE it
+   is measured is part of the gate and belongs in the output, or someone closes
+   a local red by lowering the ceiling. Where variance is unavoidable, the
+   tolerance is named and pinned in BOTH directions - an unexpected shrink is a
+   finding too.
+
+Precedents for point 5, all found by failures rather than by design (#2132):
+`docker image inspect .Size` reports 113 MB under the containerd image store
+and 491 MB under the classic graphdriver for the same image; two builds of
+identical content differed by 47651 bytes from tar ordering and gzip framing;
+and a locally seeded ceiling sat 13.3 MB under the CI measurement of the same
+commit, so the gate failed on its first CI run while nothing had grown (#2134).
 
 A deliberate partial run stays possible, but only through an explicit,
 named opt-in (e.g. `COMPLEXITY_GATE_ALLOW_PARTIAL=1`) - never by silence.
