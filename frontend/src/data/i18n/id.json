@@ -2182,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "Pembaruan dapat mengatur ulang sebagian progres ulasan",
+      "message": "Memperbarui \"{title}\" mengubah materi yang sedang kamu pelajari. Sekitar {cards} kartu ulasan dan {lessons} pelajaran dengan progres tersimpan tidak lagi cocok dengan versi baru dan akan diatur ulang. Pelajaran yang sudah selesai tetap ada; hanya ulasan yang berubah yang terpengaruh.",
+      "confirm": "Perbarui saja",
+      "cancel": "Pertahankan versi saat ini"
+    },
     "share": {
       "button": "Bagikan",
       "aria": "Bagikan set '{title}'",
