@@ -206,4 +206,12 @@
 # Punkt-5-Pruefung (#2135, 2026-07-29): `wc -l` auf eine versionierte
 # Datei. Werkzeugunabhaengig, zeilenendungs-neutral, zwei Laeufe identisch.
 # Keine Toleranz noetig. GEPRUEFT - nicht erneut pruefen.
-7639
+# 2026-07-30: 7639 -> 7648 (a11y anchor-color layering, commit ffa8166,
+# via den release/2.7.0-Rueckmerge cbfe6bb): +9 Fundament-Zeilen in
+# styles/legacy/01-base.css, die die Basis-Ankerfarbe in @layer legacy
+# legen, damit klassen-gestylte Anker wieder gewinnen (#1597-Regression).
+# Legitime Fundament-Erweiterung; der urspruengliche Fix hat die Baseline
+# nicht mitgezogen, sie stand seither 9 Zeilen unter dem Ist-Stand. Kein
+# neuer Komponenten-Style. Hier nachgezogen, weil dieser Branch develop
+# aktualisiert hat und den offenen Ratchet erbt.
+7648
