@@ -229,3 +229,54 @@ def test_the_exclusion_scan_fails_closed_without_workflows(tmp_path) -> None:
         "exclusion basis is missing" in result.stderr
         or "no release-driven workflows" in result.stderr
     )
+
+
+import importlib.util as _ilu
+
+_spec = _ilu.spec_from_file_location("verify_release_commit_green_under_test", SCRIPT)
+vg = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(vg)
+
+
+class TestRepoResolution:
+    """#2178: the bare ``commits/<sha>`` path 404s under ``gh api`` - the
+    gate failed closed on EVERY release event, both attempts, and the
+    publish chain could never pass. The incident (two identical 404s
+    plus the local bare-vs-prefixed repro) is the RED proof."""
+
+    def test_explicit_repo_wins(self, monkeypatch) -> None:
+        monkeypatch.setenv("GITHUB_REPOSITORY", "env/repo")
+        assert vg.resolve_repo("owner/name") == "owner/name"
+
+    def test_actions_env_is_the_default(self, monkeypatch) -> None:
+        monkeypatch.setenv("GITHUB_REPOSITORY", "astrapi69/adaptive-learner")
+        assert vg.resolve_repo(None) == "astrapi69/adaptive-learner"
+
+    def test_no_repo_anywhere_fails_closed_with_a_named_reason(
+        self, monkeypatch, capsys
+    ) -> None:
+        monkeypatch.delenv("GITHUB_REPOSITORY", raising=False)
+        assert vg.fetch("deadbeef", None) is None
+        err = capsys.readouterr().err
+        assert "GITHUB_REPOSITORY" in err
+        assert "refusing to guess" in err
+
+    def test_fetch_builds_the_prefixed_path(self, monkeypatch) -> None:
+        monkeypatch.setenv("GITHUB_REPOSITORY", "astrapi69/adaptive-learner")
+        seen: dict[str, list[str]] = {}
+
+        def fake_run(command, **kwargs):
+            seen["command"] = command
+
+            class R:
+                returncode = 0
+                stdout = ""
+                stderr = ""
+
+            return R()
+
+        monkeypatch.setattr(vg.subprocess, "run", fake_run)
+        assert vg.fetch("deadbeef", None) == []
+        target = seen["command"][3]
+        assert target == "repos/astrapi69/adaptive-learner/commits/deadbeef/check-runs"
+        assert not target.startswith("commits/"), "the bare path is the #2178 404"

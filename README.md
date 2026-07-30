@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.7.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.7.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -321,7 +321,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.7.0**, whose headline
+Active development. The current release is **v2.7.1**, whose headline
 is the **distribution switch**: the desktop launcher now **pulls a
 published, per-architecture verified image from GHCR** instead of
 building on the user's device (building from source stays for
