@@ -144,3 +144,17 @@ When reviewing an engine re-pin, the tell is cheap: a bump of the `learn-content
 Same shape as the #575 PR-CI-vs-nightly classes: a gate that runs on a slower cadence than the change class it guards leaves a latent window. If engine re-pins become frequent, promote `sync-schema-check` into the PR path filter for `frontend/package.json` changes touching the engine pin.
 
 Pairs with "PR-CI vs nightly gates: different test surfaces" - the cadence-gap family this belongs to. "Cross-layer assumptions must be pinned against REAL data shapes" - the mirror IS the pinned shape; regenerating it is how the pin stays honest.
+
+## A ratchet baseline is itself a measurement - a stale branch measures against a stale baseline
+
+Surfaced 2026-07-30 (#2180). A ratchet gate (css-size, rule-corpus, filesize, complexity) compares a CURRENT measurement against a frozen baseline; both halves live in the tree, so both drift. A branch behind its base carries an OLD baseline AND old content, so the same baseline number means something different on the branch than in CI - CI evaluates the branch MERGED WITH the base, whose content has moved. One case: a rule-corpus add read 480 over the ceiling in CI but 386 locally, because the branch's baseline (278616) lagged develop's (279758) and develop's rule files had grown too.
+
+Rule: before reading OR raising any ratchet baseline on a feature branch, merge the base branch (develop) in FIRST, then measure. Reproduce the gate's oracle - "current vs baseline on the MERGED tree" - never the branch-only view; a raise against a stale merge base is a guess. This is the ratchet corollary of the gate contract's "its number means the same thing everywhere" (quality-checks.md point 5): the number moved because the branch was stale, not because the tool was nondeterministic - same fix, pin WHERE it is measured (the merged tree).
+
+## Release/hotfix back-merges land ratchet-tripping changes on develop ungated
+
+Surfaced 2026-07-30, TWICE in one day (version badges, then css-size, #2182). Both times develop went red on a ratchet by a commit that changed what the ratchet MEASURES without moving its baseline, and both reached develop via `make release-finish`'s back-merge, NOT a feature PR.
+
+Decide the vector in one look when a ratchet-tripping commit is on develop: `git log --first-parent origin/develop` does NOT list the sha AND `git rev-list --merges --ancestry-path <sha>..origin/develop` names a `Release` / `Merge release ... back into develop` merge -> it came through the release/hotfix flow. That flow runs `enforce_admins=false` (a deliberate admin merge so `release-finish` works), so branch-protection required checks NEVER run against it. Version bumps and late foundation fixes (the #2175 a11y anchor layer) happen ON the release/hotfix branch; the back-merge lands them ungated; develop is then red for EVERY branch (no PR can go green) until a human notices.
+
+Rule: a change made on a release/hotfix branch that trips a ratchet moves that ratchet's baseline IN THE SAME BRANCH, before `make release-finish` - whoever bumps a version or adds a foundation CSS line owns the matching baseline bump. The structural fix (ratchet gates inside `make release-test`, or a develop-push gate) is tracked in #2182; until it lands, check the ratchet gates on develop after every release/hotfix back-merge. Pairs with "Operational gaps masquerade as wired infrastructure" and core.md "Claimed enforcement without enforcement" - a gate the release channel routes around is advisory on exactly the changes releases make.
