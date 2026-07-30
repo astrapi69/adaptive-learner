@@ -2359,6 +2359,13 @@
       "delete_failed": "Impossible de supprimer la leçon.",
       "delete_aria": "Supprimer la leçon {title}"
     },
+    "lesson_order": {
+      "move_up": "Déplacer la leçon {title} vers le haut",
+      "move_down": "Déplacer la leçon {title} vers le bas",
+      "already_first": "{title} est déjà la première leçon",
+      "already_last": "{title} est déjà la dernière leçon",
+      "moved": "{title} est maintenant à la position {position} sur {total}"
+    },
     "set_status": {
       "delete_progress_option": "Supprimer aussi ma progression et les cartes de révision ({lessons} leçons, {cards} cartes)",
       "delete_progress_option_nocounts": "Supprimer aussi ma progression et les cartes de révision",

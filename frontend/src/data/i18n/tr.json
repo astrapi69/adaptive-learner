@@ -2359,6 +2359,13 @@
       "delete_failed": "Ders silinemedi.",
       "delete_aria": "{title} dersini sil"
     },
+    "lesson_order": {
+      "move_up": "{title} dersini yukarı taşı",
+      "move_down": "{title} dersini aşağı taşı",
+      "already_first": "{title} zaten ilk ders",
+      "already_last": "{title} zaten son ders",
+      "moved": "{title} şimdi {total} içinden {position}. sırada"
+    },
     "set_status": {
       "delete_progress_option": "Öğrenme ilerlememi ve tekrar kartlarını da sil ({lessons} ders, {cards} kart)",
       "delete_progress_option_nocounts": "Öğrenme ilerlememi ve tekrar kartlarını da sil",

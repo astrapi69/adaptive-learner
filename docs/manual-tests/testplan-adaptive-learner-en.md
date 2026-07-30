@@ -97,6 +97,31 @@ section further below):
       lesson's exercises appear.
 - [ ] Edge cases: switch to a lesson without exercises, switch backwards.
 
+#### A6. Reorder lessons (#2172, merged)
+
+Display order is its own field; moving a lesson changes the sort, never a
+lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
+
+- [ ] In "My Content" expand a multi-lesson (book) set -> "Manage lessons".
+- [ ] Each lesson shows Up/Down controls. On the first row "Up" is disabled,
+      on the last row "Down" is disabled (no dead clicking).
+- [ ] Keyboard only: Tab to the Up/Down control, trigger with Space/Enter.
+      The screen reader announces an understandable label ("Move lesson X up")
+      and, after the move, the new position ("X is now at position n of m").
+- [ ] The order is saved IMMEDIATELY - there is no separate Save action.
+      Reload the page (or collapse and re-expand the set): the changed order
+      persists.
+- [ ] Existing sets: without an explicit move, the current order is shown
+      unchanged (no silent resort).
+- [ ] Identity untouched: after several moves of a lesson that has learning
+      progress, the progress stays attached, no orphaned review cards, delete
+      still hits the correct lesson.
+- [ ] Backup round-trip: Export -> wipe storage -> Import brings the chosen
+      order back.
+- [ ] Both storage modes (API + Dexie).
+- [ ] iOS standalone (PWA from the home screen): moving via touch and the
+      position feedback work, and the order survives closing and reopening.
+
 ### Session B: Ubuntu (launcher binary, after the launcher session)
 
 Prerequisite: the launcher session is delivered (mode decision, pin to

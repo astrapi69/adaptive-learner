@@ -2168,6 +2168,12 @@ content:
     deleted: "Lição excluída."
     delete_failed: "Não foi possível excluir a lição."
     delete_aria: "Excluir a lição {title}"
+  lesson_order:
+    move_up: "Mover a lição {title} para cima"
+    move_down: "Mover a lição {title} para baixo"
+    already_first: "{title} já é a primeira lição"
+    already_last: "{title} já é a última lição"
+    moved: "{title} está agora na posição {position} de {total}"
   set_status:
     delete_progress_option: "Excluir também meu progresso de aprendizagem e os cartões de revisão ({lessons} lições, {cards} cartões)"
     delete_progress_option_nocounts: "Excluir também meu progresso de aprendizagem e os cartões de revisão"

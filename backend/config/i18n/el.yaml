@@ -2170,6 +2170,12 @@ content:
     deleted: "Το μάθημα διαγράφηκε."
     delete_failed: "Δεν ήταν δυνατή η διαγραφή του μαθήματος."
     delete_aria: "Διαγραφή μαθήματος {title}"
+  lesson_order:
+    move_up: "Μετακίνηση του μαθήματος {title} προς τα πάνω"
+    move_down: "Μετακίνηση του μαθήματος {title} προς τα κάτω"
+    already_first: "Το {title} είναι ήδη το πρώτο μάθημα"
+    already_last: "Το {title} είναι ήδη το τελευταίο μάθημα"
+    moved: "Το {title} βρίσκεται τώρα στη θέση {position} από {total}"
   set_status:
     delete_progress_option: "Να διαγραφούν επίσης η πρόοδός μου και οι κάρτες επανάληψης ({lessons} μαθήματα, {cards} κάρτες)"
     delete_progress_option_nocounts: "Να διαγραφούν επίσης η πρόοδός μου και οι κάρτες επανάληψης"
