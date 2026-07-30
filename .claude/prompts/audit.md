@@ -19,7 +19,7 @@ Before flagging anything, consult:
 - `.claude/rules/architecture.md` (4-layer architecture, plugin shape, UI strategy)
 - `.claude/rules/coding-standards.md` (naming, function design, tests, dependencies)
 - `.claude/rules/code-hygiene.md` (error handling architecture, API conventions)
-- `.claude/rules/lessons-learned.md` (known pitfalls)
+- `.claude/rules/lessons-learned.md` + `.claude/rules/lessons/*.md` (known pitfalls)
 - `.claude/rules/quality-checks.md` (test pyramid, coverage targets, mutation testing)
 - `docs/ROADMAP.md` (current phase, open items, BLOCKED markers)
 - `docs/backlog.md` (top priorities, "Blocked or waiting" table, recently closed)
@@ -44,7 +44,7 @@ If the convention itself is stale, flag it as Outdated under section 4.
   `quality-checks.md` ("Coverage targets per module type"): services HIGH (>= 80%),
   routers MEDIUM-HIGH (>= 70%), `api/client.ts` HIGH (>= 90%), data-critical E2E
   flows MUST HAVE.
-- Numeric claims: per `ai-workflow.md` "Numeric claims verification", every test
+- Numeric claims: per `ai-workflow/documentation-protocol.md` "Numeric claims verification", every test
   count or coverage % must be verified by running the authoritative command in the
   same session, NOT recalled from `current-coverage.md` if the audit is producing
   fresh numbers.
@@ -78,7 +78,7 @@ If the convention itself is stale, flag it as Outdated under section 4.
 - TipTap storage: TipTap JSON is the canonical format for the three rich-text
   fields (`SessionNote.body`, `Curriculum.description`, `Lesson.content`); never
   HTML or Markdown. Custom TipTap extensions are forbidden when an official one
-  exists. Image nodes are `imageFigure`, NOT `image` (see lessons-learned.md).
+  exists. Image nodes are `imageFigure`, NOT `image` (see lessons/frontend.md).
 - Function design: max 40 lines, single responsibility, abstraction-level
   consistent. Route handlers thin (validate, call service, return). Anti-pattern:
   `# Step 1` / `# Step 2` comments inside one function.

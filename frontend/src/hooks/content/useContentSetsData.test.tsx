@@ -18,6 +18,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useContentSetsData } from "./useContentSetsData";
 import { dismissSet } from "../../lib/content/browse/dismissed-sets";
+import { storeSetStatus } from "../../lib/content/browse/set-status-store";
 import type { ContentSetEntry } from "../../storage/types";
 
 const listSetsMock = vi.fn();
@@ -167,5 +168,41 @@ describe("useContentSetsData — dismissed sets stay deleted across Refresh (#17
       "es-a1-from-de",
       "fr-a1-from-de",
     ]);
+  });
+});
+
+describe("useContentSetsData — lifecycle status survives a reload (status-reset fix)", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    listSetsMock.mockReset();
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+  });
+
+  it("overlays the stored status so a deferred set does NOT read back as active", async () => {
+    // The storage layer returns the set with the default "active" status
+    // (API mode has no status column; a fresh Dexie row reads active) — the
+    // exact byte the bug produced. The store must overlay the deferral.
+    const set = entry({ id: "es-a1-from-de", cached_version: "1.0.0", status: "active" });
+    listSetsMock.mockResolvedValue({ sets: [set], sources: [] });
+    storeSetStatus(set.source, set.id, "deferred");
+
+    const { result } = renderHook(() => useContentSetsData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.sets.find((s) => s.id === "es-a1-from-de")?.status).toBe(
+      "deferred",
+    );
+  });
+
+  it("leaves an unstored set at its own status (no spurious overlay)", async () => {
+    const set = entry({ id: "fr-a1-from-de", cached_version: "1.0.0", status: "active" });
+    listSetsMock.mockResolvedValue({ sets: [set], sources: [] });
+
+    const { result } = renderHook(() => useContentSetsData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.sets.find((s) => s.id === "fr-a1-from-de")?.status).toBe(
+      "active",
+    );
   });
 });

@@ -7,7 +7,7 @@
  * bulk status (#1351).
  */
 
-import type { ContentSetEntry, SaveUserSetInput, SetStatus } from "../types";
+import type { ContentSetEntry, SaveUserSetInput } from "../types";
 import { USER_GENERATED_SOURCE } from "../types";
 import { getDb } from "../dexie/db";
 import type { ContentSetRow, ContentSetFileRow } from "../dexie/db";
@@ -70,24 +70,6 @@ export async function saveUserSetDexie(
   return rowToCachedEntry(row);
 }
 
-/**
- * #1300 — set the lifecycle status (active / deferred / completed) on
- * every cached row for a source/set_id pair. Idempotent; a no-op when
- * the set isn't cached. Drives the "Meine Inhalte" status filter.
- */
-export async function setSetStatusDexie(
-  source: string,
-  setId: string,
-  status: SetStatus,
-): Promise<void> {
-  const db = getDb();
-  await db.contentSets
-    .where("set_id")
-    .equals(setId)
-    .filter((r) => r.source === source)
-    .modify({ status });
-}
-
 /** Delete every cached row (set + files) for a source/set_id pair. */
 export async function deleteSetDexie(
   source: string,
@@ -113,24 +95,6 @@ export async function deleteSetsDexie(refs: SetRef[]): Promise<void> {
   await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
     for (const { source, setId } of refs) {
       await _purgeSetRows(source, setId);
-    }
-  });
-}
-
-/** #1351 — set the lifecycle status on many sets in ONE ``rw`` transaction. */
-export async function setSetsStatusDexie(
-  refs: SetRef[],
-  status: SetStatus,
-): Promise<void> {
-  if (refs.length === 0) return;
-  const db = getDb();
-  await db.transaction("rw", db.contentSets, async () => {
-    for (const { source, setId } of refs) {
-      await db.contentSets
-        .where("set_id")
-        .equals(setId)
-        .filter((r) => r.source === source)
-        .modify({ status });
     }
   });
 }

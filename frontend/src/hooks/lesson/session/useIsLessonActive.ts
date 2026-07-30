@@ -1,4 +1,4 @@
-import {useLocation} from "react-router-dom";
+import {useLocation} from "react-router";
 
 /**
  * True while the user is inside an active learning surface — a

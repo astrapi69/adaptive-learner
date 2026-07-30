@@ -25,25 +25,30 @@
  * Browser, where the set tree below already covers discovery).
  */
 
-import {ArrowRight, CheckCircle2, Play, Star} from "lucide-react";
+import {ArrowRight, CheckCircle2, History, Play, Star} from "lucide-react";
 import {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {
+    classifyEntryCandidate,
     completedStepCount,
     groupRecentProgress,
     lessonRoute,
+    rankEntrySuggestions,
     resolveContinueAction,
     resolveLessonTitle,
     resolveSetTitle,
     rowStars,
     type ContinueMode,
+    type EntryRankInput,
 } from "../../lib/content/browse/continue-learning";
 import {
     buildContentAvailability,
     filterAvailableProgress,
 } from "../../lib/content/browse/content-availability";
+import {getSetStatus} from "../../lib/content/browse/set-status-store";
+import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {getStorage} from "../../storage";
 import ShareResultButton from "../share/ShareResultButton";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
@@ -72,6 +77,8 @@ interface DisplayItem {
     /** Resume step counter. */
     stepsDone?: number;
     totalSteps?: number;
+    /** Number of review cards due (mode "review"). */
+    reviewDue?: number;
     /** Completed lesson's stars (modes "next" + "set_complete"). */
     stars?: number;
     /** Completed lesson's score (modes "next" + "set_complete"), for the
@@ -131,20 +138,35 @@ export default function ContinueLearning({
         let cancelled = false;
         void (async () => {
             const storage = getStorage();
-            const [progress, setsRes] = await Promise.all([
+            const [progress, setsRes, reviewQueue] = await Promise.all([
                 safe(() => storage.lessonProgress.list(userId)),
                 safe(() => storage.contentLoader.listSets()),
+                safe(() => storage.elementErrors.reviewQueue(userId)),
             ]);
             if (cancelled) return;
             const sets: ContentSetEntry[] = setsRes?.sets ?? [];
+
+            // #2123 — how many review cards are currently overdue per set, so
+            // the suggestion can rank due reviews first and drop a finished /
+            // deferred set that has nothing due. Deduped across EXP-018
+            // directions, matching the NavReviewsBadge / reminder counts.
+            const dueBySet = new Map<string, number>();
+            for (const qItem of dedupeReviewQueueByElement(
+                (reviewQueue ?? []).filter((item) => item.overdue),
+            )) {
+                dueBySet.set(qItem.set_id, (dueBySet.get(qItem.set_id) ?? 0) + 1);
+            }
 
             // #1445 Part A — hide progress whose content can no longer be
             // loaded (its source repo was removed). The Dexie rows are left
             // untouched; re-adding the repo brings the cards back.
             const availability = buildContentAvailability(sets);
             const loadable = filterAvailableProgress(progress ?? [], availability);
-            const groups = groupRecentProgress(loadable, maxItems);
-            const resolved = await Promise.all(
+            // Group ALL sets with progress (no early cap): the suggestion rule
+            // may drop the newest set (finished, nothing due) in favour of an
+            // older still-open one, so ranking has to see every candidate.
+            const groups = groupRecentProgress(loadable, loadable.length);
+            const rankInputs: EntryRankInput[] = await Promise.all(
                 groups.map(async (group) => {
                     const listing = await safe(() =>
                         storage.contentLoader.listLessons(
@@ -156,11 +178,26 @@ export default function ContinueLearning({
                         group.mostRecent,
                         listing?.lessons ?? [],
                     );
+                    return {
+                        group,
+                        action,
+                        status: getSetStatus(group.source, group.setId) ?? "active",
+                        dueCount: dueBySet.get(group.setId) ?? 0,
+                    };
+                }),
+            );
+            if (cancelled) return;
 
-                    // Fetch lesson detail for the displayed lessons —
-                    // bounded by maxItems, cheap from the local cache,
-                    // and guarded so a miss falls back to a filename
-                    // label.
+            const ranked = rankEntrySuggestions(rankInputs, maxItems);
+            const resolved = await Promise.all(
+                ranked.map(async (input) => {
+                    const {group, action} = input;
+                    const isReview =
+                        classifyEntryCandidate(input) === "review";
+
+                    // Fetch lesson detail for the displayed lessons — bounded
+                    // by maxItems, cheap from the local cache, and guarded so
+                    // a miss falls back to a filename label.
                     const rowLesson = await safe(() =>
                         storage.contentLoader.getLesson(
                             group.source,
@@ -169,7 +206,7 @@ export default function ContinueLearning({
                         ),
                     );
                     const nextLesson =
-                        action.mode === "next"
+                        !isReview && action.mode === "next"
                             ? await safe(() =>
                                   storage.contentLoader.getLesson(
                                       group.source,
@@ -184,15 +221,34 @@ export default function ContinueLearning({
                         group.mostRecent.lesson_filename,
                         lessonFallbackLabel,
                     );
+                    const setTitle = resolveSetTitle(
+                        sets,
+                        group.source,
+                        group.setId,
+                        importedAnalysisLabel,
+                    );
+
+                    // A finished / deferred set with cards due surfaces as a
+                    // review nudge routed to the set's review session, never
+                    // as a misleading "Set completed" row (#2123).
+                    if (isReview) {
+                        const item: DisplayItem = {
+                            source: group.source,
+                            setId: group.setId,
+                            setTitle,
+                            mode: "review",
+                            targetRoute: `/review/${encodeURIComponent(group.setId)}`,
+                            lessonTitle,
+                            reviewDue: input.dueCount,
+                            updatedAt: group.mostRecent.updated_at,
+                        };
+                        return item;
+                    }
+
                     const item: DisplayItem = {
                         source: group.source,
                         setId: group.setId,
-                        setTitle: resolveSetTitle(
-                            sets,
-                            group.source,
-                            group.setId,
-                            importedAnalysisLabel,
-                        ),
+                        setTitle,
                         mode: action.mode,
                         targetRoute: lessonRoute(
                             group.source,
@@ -283,7 +339,9 @@ export default function ContinueLearning({
                             data-testid={`continue-learning-link-${item.setId}`}
                         >
                             <span className="text-accent" aria-hidden="true">
-                                {item.mode === "set_complete" ? (
+                                {item.mode === "review" ? (
+                                    <History size={20} />
+                                ) : item.mode === "set_complete" ? (
                                     <CheckCircle2 size={20} />
                                 ) : item.mode === "next" ? (
                                     <ArrowRight size={20} />
@@ -303,6 +361,20 @@ export default function ContinueLearning({
                                     </span>
                                 </span>
                                 <span className="flex min-w-0 text-sm text-muted-foreground">
+                                    {item.mode === "review" && (
+                                        <span
+                                            className="min-w-0 truncate"
+                                            data-testid={`continue-learning-review-${item.setId}`}
+                                        >
+                                            {t(
+                                                "lesson.next_step.review_due",
+                                                "{count} due",
+                                            ).replace(
+                                                "{count}",
+                                                String(item.reviewDue ?? 0),
+                                            )}
+                                        </span>
+                                    )}
                                     {item.mode === "resume" && (
                                         <span
                                             className="min-w-0 truncate"

@@ -1,6 +1,6 @@
 import { HelpCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import MenuToggleButton from "../../shared/layout/MenuToggleButton";

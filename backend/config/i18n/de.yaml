@@ -221,6 +221,8 @@ landing:
   checking_session: Willkommen zurück …
   recovered_toast: Willkommen zurück! Deine Lerndaten sind noch da.
   intro: Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Session.
+  port_change_hint: "Hast du Adaptive Learner schon einmal unter einem anderen Port verwendet? Deine Lerndaten bleiben an der vorherigen Web-Adresse. Wechsle zurück zum vorherigen Port, exportiere ein Backup und importiere es hier."
+  port_change_link: "So nimmst du deine Daten mit"
 onboarding:
   title: Lernprojekt anlegen
   intro: Beschreibe dein Lernziel. Adaptive Learner nutzt diese Angaben für dein Profil und die ersten Methoden-Empfehlungen.
@@ -2014,6 +2016,11 @@ lesson:
     action_restart: "Neu starten"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  update_guard:
+    title: 'Aktualisierung könnte einige Wiederholungen zurücksetzen'
+    message: 'Die Aktualisierung von „{title}“ ändert Inhalte, die du bereits lernst. Etwa {cards} Wiederholungskarten und {lessons} Lektionen mit gespeichertem Fortschritt passen nicht mehr zur neuen Version und würden zurückgesetzt. Deine abgeschlossenen Lektionen bleiben; betroffen sind nur die geänderten Wiederholungen.'
+    confirm: 'Trotzdem aktualisieren'
+    cancel: 'Aktuelle Version behalten'
   share:
     button: "Teilen"
     aria: "Set '{title}' teilen"
@@ -2140,6 +2147,15 @@ content:
     delete_confirm: "Diese Lektion löschen? Das kann nicht rückgängig gemacht werden."
     deleted: "Lektion gelöscht."
     delete_failed: "Die Lektion konnte nicht gelöscht werden."
+  lesson_delete:
+    manage_lessons: "Lektionen verwalten"
+    confirm_body: "Diese Lektion wird aus dem Set entfernt. Das lässt sich nicht rückgängig machen - ein zuvor erstelltes Backup enthält sie noch."
+    delete_progress_option: "Auch meinen Lernfortschritt für diese Lektion löschen ({cards} Wiederholungskarten)"
+    delete_progress_option_nocounts: "Auch meinen Lernfortschritt für diese Lektion löschen"
+    action_delete: "Lektion löschen"
+    deleted: "Lektion gelöscht."
+    delete_failed: "Die Lektion konnte nicht gelöscht werden."
+    delete_aria: "Lektion {title} löschen"
   set_status:
     delete_progress_option: "Auch meinen Lernfortschritt und die Wiederholungskarten löschen ({lessons} Lektionen, {cards} Karten)"
     delete_progress_option_nocounts: "Auch meinen Lernfortschritt und die Wiederholungskarten löschen"
@@ -2747,6 +2763,7 @@ create_lesson:
       reading-comprehension: "Leseverständnis"
       graded-quiz: "Benotetes Quiz"
       dictation: "Diktat"
+      image-description: "Bildbeschreibung"
     edit:
       prompt_label: "Anweisung / Aufgabe"
       save: "Speichern"
@@ -2771,6 +2788,14 @@ create_lesson:
       dict_accept_add: "Hinzufügen"
       dict_accept_remove: "Transkription entfernen"
       dict_accept_placeholder: "Was die lernende Person eingeben soll"
+      err_image_description: "Füge ein Bild und mindestens eine akzeptierte Antwort hinzu."
+      imgdesc_image_label: "Zu beschreibendes Bild"
+      imgdesc_image_preview_alt: "Zu beschreibendes Bild"
+      imgdesc_image_budget_hint: "Das Bild wird komprimiert und eingebettet (max. ~150 KB, 512 px), damit die Übung offline funktioniert und im Backup enthalten ist. Externe Links sind nicht erlaubt."
+      imgdesc_accept_label: "Akzeptierte Antworten"
+      imgdesc_accept_add: "Hinzufügen"
+      imgdesc_accept_remove: "Antwort entfernen"
+      imgdesc_accept_placeholder: "Was der Lernende eingeben soll"
       q_list_label: "Fragen"
       q_prompt_label: "Frage"
       q_prompt_placeholder: "Frage"

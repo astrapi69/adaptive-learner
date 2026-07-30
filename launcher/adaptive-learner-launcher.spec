@@ -24,6 +24,8 @@ import sys
 from docker_app_launcher.pyinstaller import hidden_imports
 from PyInstaller.utils.hooks import collect_data_files
 
+from adaptive_learner_launcher import bundle_manifest
+
 block_cipher = None
 
 
@@ -32,19 +34,17 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        # The launcher config: __main__._config_path() reads it from the
-        # bundle root (sys._MEIPASS) when frozen (#2027).
-        ("launcher.json", "."),
-        # Window icon (resolved best-effort at runtime; never fatal if absent).
-        ("adaptive-learner.png", "."),
-        # The window icon at launcher.json's config-relative icon_path, so a
-        # standalone frozen run (no repo checkout, wrapper chdirs to the
-        # bundle root) still resolves the real branding (#2027).
-        ("../frontend/branding/adaptive-learner-mark.png", "frontend/branding"),
-        # The package's data files - the 11 i18n catalogs above all. Without
-        # this the frozen GUI falls back to raw key names (the upstream #34
-        # failure class fixed in docker-app-launcher's own spec template;
-        # this spec is hand-maintained, so it needs the same collect).
+        # ONE source of truth (#2054): every wrapper-owned asset comes from
+        # bundle_manifest.BUNDLE_ASSETS, which the wrapper's start-up
+        # self-check and --verify-bundle assert against at runtime - the
+        # spec cannot bundle something the check does not know, and vice
+        # versa. docker-compose.prod.yml is deliberately NOT here: its
+        # build contexts need the whole source tree, which the wrapper
+        # provisions at runtime instead (_bootstrap_app_source).
+        *bundle_manifest.spec_datas(),
+        # The package's data files - the 11 i18n catalogs above all
+        # (upstream #34 class); their presence is pinned via
+        # bundle_manifest.BUNDLE_DIRS.
         *collect_data_files("docker_app_launcher"),
     ],
     hiddenimports=hidden_imports(),
@@ -109,8 +109,8 @@ if sys.platform == "darwin":
         info_plist={
             "CFBundleName": "AdaptiveLearner Launcher",
             "CFBundleDisplayName": "AdaptiveLearner Launcher",
-            "CFBundleVersion": "2.6.1",
-            "CFBundleShortVersionString": "2.6.1",
+            "CFBundleVersion": "2.7.0",
+            "CFBundleShortVersionString": "2.7.0",
             "NSHighResolutionCapable": True,
             "NSRequiresAquaSystemAppearance": False,
         },

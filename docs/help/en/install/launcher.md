@@ -8,20 +8,32 @@
     app or run backend features (server mode, local sync) locally.
 
 The desktop launcher is the easiest way to run Adaptive Learner **with
-its own backend** on your own machine. It is a small window that does everything else for you: it
-checks that Docker is running, downloads and builds the app image on the
-first start (one-time, 5-10 minutes is normal), starts the containers,
-and then opens the app in your browser at `http://localhost:8501`. From
-the same window you can also stop the app, change the port, or
-uninstall everything.
+its own backend** on your own machine. It is a small window that does
+everything else for you: it checks that Docker is running, downloads the
+ready-built app image from GitHub's registry on the first start (about
+110-120 MB, a few minutes on a normal connection - nothing is built on
+your machine), starts the container, and then opens the app in your
+browser at `http://localhost:8501`. From the same window you can also
+stop the app, change the port, update, or uninstall everything.
+
+## The three ways to install
+
+| Way | For whom | What happens |
+|-----|----------|--------------|
+| **Launcher (standard)** | Everyone | Downloads the published image from `ghcr.io/astrapi69/adaptive-learner` and runs it. This page. |
+| **Registry-free (archive)** | Machines without registry access | Download the image archive for your processor from the same release page as the launcher, place it next to the launcher's data - it is loaded INTO the pinned reference instead of being pulled. Archive and launcher must come from the **same release**; a mismatched version fails hard with the file named. |
+| **From source (developers)** | Self-builders | Clone the repository, then `install.sh` or the compose stack. Builds locally; unchanged by this release. |
 
 The port defaults to **8501** and can be changed in the launcher
-window; if it is taken, the launcher falls back to a free port.
+window; if it is taken, the launcher falls back to a free port. If you
+use browser storage mode, changing the port also changes where your
+data lives - see [Changing the port](changing-the-port.md) before you
+do it.
 
 ## Prerequisite: Docker - the launcher checks it itself
 
-The launcher requires a running Docker, because the app itself runs as
-a group of containers. You do **not** need to verify anything manually:
+The launcher requires a running Docker, because the app itself runs in
+a container. You do **not** need to verify anything manually:
 on start the launcher itself checks whether Docker is installed and
 running, also finds a Docker running under a different Docker context
 (such as Docker Desktop for Linux or rootless Docker), and shows a
@@ -53,6 +65,25 @@ All three launchers ship with every release at
 | Linux | `adaptive-learner-launcher` | `adaptive-learner-launcher.sha256` |
 | macOS | `adaptive-learner-launcher-macos.zip` | `adaptive-learner-launcher-macos.zip.sha256` |
 | Windows | `adaptive-learner-launcher.exe` | `adaptive-learner-launcher.exe.sha256` |
+
+### What is verified, and what is not
+
+Every one of these is started once while it is being built, on exactly
+the operating system it is meant for. So it is established that it
+starts - on Linux, on Windows, and on macOS on Apple Silicon. The app
+image is verified per release: an anonymous download (no login) and a
+real start with a health check, separately for both processor types
+(Intel/AMD and ARM), on machines of that type. Not yet measured is the
+registry download on very old Docker engines (20.10-era); the engine
+chain itself is proven on such an engine against a different registry,
+and the GitHub-registry measurement is tracked upstream.
+
+What is not established is how your operating system reacts to a
+**downloaded** file: the programs carry no paid signature, so macOS
+warns on first open ("unidentified developer") and Windows shows the
+SmartScreen notice. That is a warning, not a defect - how to confirm it
+once is under [macOS](#macos) and [Windows](#windows) below. Verify the
+checksum first; it is more reliable evidence than any dialog.
 
 ## Linux
 
@@ -129,9 +160,13 @@ Known pitfalls:
 
 - The launcher itself shows a notice dialog when Docker is not running
   and offers to start Docker Desktop.
-- The first start downloads and builds the app image; the step
-  checklist in the launcher window (Check Docker / Download / Build /
-  Start / Ready) shows the progress. Later starts are fast.
+- The first start downloads the app image; the step checklist in the
+  launcher window shows the progress, and every downloaded megabyte is
+  visible - never a silent long wait. Later starts are fast and work
+  offline.
+- `--doctor` on the command line prints one readiness report:
+  configuration, Docker, tools, port, and state - all preconditions in
+  one pass.
 - While the app is running you can always reach it at
   `http://localhost:8501` (or your changed port); the "Open in
   browser" button in the launcher does the same.

@@ -7,7 +7,7 @@ mistake that produced the v0.30.0 release CI red-on-main: editing
 ``poetry lock`` in the same plugin directory before committing.
 
 The shape — `make test` green but per-plugin CI red — is documented
-in `.claude/rules/lessons-learned.md` "Two installation paths
+in `.claude/rules/lessons/ci-gates.md` "Two installation paths
 diverge: `make test` vs per-plugin CI". The backend's combined
 ``poetry.lock`` can satisfy a path-dep install while each plugin's
 own ``poetry.lock`` lags. CI runs `poetry install --no-interaction`
@@ -221,7 +221,7 @@ def main(argv: list[str]) -> int:
         "  2. `git add <plugin-dir>/poetry.lock` to stage the regenerated\n"
         "     lockfile alongside the pyproject change.\n"
         "  3. Re-run the commit; this hook will pass.\n"
-        "\nSee .claude/rules/lessons-learned.md "
+        "\nSee .claude/rules/lessons/ci-gates.md "
         '"Two installation paths diverge: `make test` vs per-plugin CI".',
         file=sys.stderr,
     )

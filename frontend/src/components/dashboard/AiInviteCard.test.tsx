@@ -14,7 +14,7 @@
  */
 
 import {fireEvent, render, screen} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import AiInviteCard from "./AiInviteCard";

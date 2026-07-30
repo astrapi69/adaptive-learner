@@ -234,7 +234,9 @@
     "docs_link": "Lire la documentation",
     "checking_session": "Bon retour...",
     "recovered_toast": "Bon retour ! Tes données d'apprentissage sont toujours là.",
-    "intro": "Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basées sur la recherche et t'accompagne dans un cycle en sept étapes à chaque session."
+    "intro": "Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basées sur la recherche et t'accompagne dans un cycle en sept étapes à chaque session.",
+    "port_change_hint": "Vous avez déjà utilisé Adaptive Learner sur un autre port ? Vos données d'apprentissage restent liées à l'adresse web précédente. Revenez au port précédent, exportez une sauvegarde, puis importez-la ici.",
+    "port_change_link": "Comment emporter vos données"
   },
   "onboarding": {
     "title": "Créer un projet d'apprentissage",
@@ -2180,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "La mise à jour peut réinitialiser une partie des révisions",
+      "message": "Mettre à jour « {title} » modifie du contenu que tu apprends déjà. Environ {cards} cartes de révision et {lessons} leçons avec une progression enregistrée ne correspondent plus à la nouvelle version et seraient réinitialisées. Tes leçons terminées restent; seules les révisions modifiées sont concernées.",
+      "confirm": "Mettre à jour quand même",
+      "cancel": "Garder la version actuelle"
+    },
     "share": {
       "button": "Partager",
       "aria": "Partager le set '{title}'",
@@ -2322,6 +2330,16 @@
       "delete_confirm": "Supprimer cette leçon ? Cette action est irréversible.",
       "deleted": "Leçon supprimée.",
       "delete_failed": "Impossible de supprimer la leçon."
+    },
+    "lesson_delete": {
+      "manage_lessons": "Gérer les leçons",
+      "confirm_body": "Cette leçon sera retirée du jeu. Cette action est irréversible ; une sauvegarde créée auparavant la contient toujours.",
+      "delete_progress_option": "Supprimer aussi ma progression pour cette leçon ({cards} cartes de révision)",
+      "delete_progress_option_nocounts": "Supprimer aussi ma progression pour cette leçon",
+      "action_delete": "Supprimer la leçon",
+      "deleted": "Leçon supprimée.",
+      "delete_failed": "Impossible de supprimer la leçon.",
+      "delete_aria": "Supprimer la leçon {title}"
     },
     "set_status": {
       "delete_progress_option": "Supprimer aussi ma progression et les cartes de révision ({lessons} leçons, {cards} cartes)",
@@ -2995,7 +3013,8 @@
         "error-correction": "Correction d'erreurs",
         "reading-comprehension": "Compréhension écrite",
         "graded-quiz": "Quiz noté",
-        "dictation": "Dictée"
+        "dictation": "Dictée",
+        "image-description": "Description d'image"
       },
       "edit": {
         "prompt_label": "Consigne / énoncé",
@@ -3022,6 +3041,14 @@
         "dict_accept_add": "Ajouter",
         "dict_accept_remove": "Supprimer la transcription",
         "dict_accept_placeholder": "Ce que l'apprenant doit saisir",
+        "err_image_description": "Ajoutez une image et au moins une réponse acceptée.",
+        "imgdesc_image_label": "Image à décrire",
+        "imgdesc_image_preview_alt": "Image à décrire",
+        "imgdesc_image_budget_hint": "L'image est compressée et intégrée (max. ~150 KB, 512 px) pour que l'exercice fonctionne hors ligne et soit inclus dans la sauvegarde. Les liens distants ne sont pas autorisés.",
+        "imgdesc_accept_label": "Réponses acceptées",
+        "imgdesc_accept_add": "Ajouter",
+        "imgdesc_accept_remove": "Supprimer la réponse",
+        "imgdesc_accept_placeholder": "Ce que l'apprenant doit saisir",
         "q_list_label": "Questions",
         "q_prompt_label": "Question",
         "q_prompt_placeholder": "Question",

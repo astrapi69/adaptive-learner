@@ -28,12 +28,14 @@ import {
   fetchMediaResources,
 } from "../../lib/content/media/media-loader";
 import { type UserFoldInput } from "../../lib/content/browse/content-tree";
+import { sortSetsByLanguageRelevance } from "../../lib/content/browse/relevance-sort";
 import {
   listContributions,
   type SharedContribution,
 } from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
 import { isDismissedSet } from "../../lib/content/browse/dismissed-sets";
+import { applyStoredStatuses } from "../../lib/content/browse/set-status-store";
 import {
   fetchRecommendedRepos,
   recommendedSource,
@@ -79,7 +81,7 @@ export interface ContentSetsData {
 
 /** Loads the set list and all the data the page composes around it. */
 export function useContentSetsData(): ContentSetsData {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [sets, setSets] = useState<ContentSetEntry[]>([]);
   const [sources, setSources] = useState<ContentSetSource[]>([]);
   // #141 — per-domain book recommendations, fetched once from the
@@ -297,7 +299,15 @@ export function useContentSetsData(): ContentSetsData {
       const visible = data.sets.some(dropped)
         ? data.sets.filter((s) => !dropped(s))
         : data.sets;
-      setSets(visible);
+      // Sets matching the user's UI language come first; the manifest
+      // order stays the fallback (a German user no longer starts at the
+      // Hindi-source pairs). Referentially stable when nothing moves.
+      const ordered = sortSetsByLanguageRelevance(visible, lang);
+      // Recurring status-reset fix — overlay the mode-agnostic set-status
+      // store so a deferred/completed set stays that way across a remount
+      // (leave + return to the page), in BOTH storage modes. Referentially
+      // stable: returns the same array when no status differs.
+      setSets(applyStoredStatuses(ordered));
       setSources(data.sources);
     } catch (err) {
       if (!mountedRef.current) return;
@@ -310,7 +320,7 @@ export function useContentSetsData(): ContentSetsData {
         setRefreshing(false);
       }
     }
-  }, [t]);
+  }, [t, lang]);
 
   useEffect(() => {
     void loadSets();

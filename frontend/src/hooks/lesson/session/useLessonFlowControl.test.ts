@@ -17,7 +17,7 @@ import {describe, expect, it, vi} from "vitest";
 import {useLessonFlowControl} from "./useLessonFlowControl";
 import type {LessonProgress} from "../../../storage/types";
 
-vi.mock("react-router-dom", () => ({
+vi.mock("react-router", () => ({
     useNavigate: () => vi.fn(),
 }));
 vi.mock("../../ui/useI18n", () => ({

@@ -14,7 +14,7 @@ AdaptiveLearner runs in Docker. You need Docker Desktop installed and running be
 - [Docker installation guide (English)](https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/install/docker-desktop.md) - includes a "Is Docker safe to install?" section
 - [Docker-Installationsanleitung (Deutsch)](https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/de/install/docker-desktop.md) - mit Abschnitt "Ist Docker sicher zu installieren?"
 
-The launcher detects Docker, downloads AdaptiveLearner automatically, and opens it in your browser. The first launch takes 5-10 minutes (Docker images build, ~2 GB disk space).
+The launcher detects Docker, downloads the ready-built AdaptiveLearner image from GitHub's registry (about 110-120 MB compressed, roughly 500 MB on disk - nothing is built on your machine), and opens the app in your browser. Later starts are fast and work offline.
 
 ## Download
 
@@ -22,7 +22,7 @@ The launcher detects Docker, downloads AdaptiveLearner automatically, and opens 
 |----------|------|
 | Windows | `adaptive-learner-launcher.exe` |
 | macOS (Apple silicon) | `adaptive-learner-launcher-macos.zip` |
-| Linux | `adaptive-learner-launcher-linux` (ELF binary) |
+| Linux | `adaptive-learner-launcher` (ELF binary) |
 
 Each platform also ships a `*.sha256` checksum next to the binary.
 

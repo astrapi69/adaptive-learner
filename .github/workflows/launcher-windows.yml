@@ -48,6 +48,24 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # #2145 / #2149: `release: created` fires whether or not this commit's checks
+      # ran, let alone passed. Inferring "CI was green" from the existence of
+      # a release is a conclusion, not a check - and publishing is the least
+      # reversible thing this project does. Pending, unknown or empty counts
+      # as not green; the step names how many checks it considered.
+      # The WHOLE release-driven run is excluded, derived from the
+      # workflows: all four publishers fire on this event, so excluding
+      # only itself made each one see the other three as pending and
+      # refuse - deterministically, on every release (#2149).
+      - name: Refuse to publish from a commit that was not green
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/verify_release_commit_green.py \
+            --sha "${{ github.sha }}" --exclude-release-jobs
+
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -72,8 +90,36 @@ jobs:
           ./scripts/verify_version_pins.sh "$VERSION"
           python3 scripts/sync_versions.py --check
 
+      # #2117: the backend job caches its Poetry virtualenv (ci.yml); this one
+      # never did, so every run rebuilds pycairo/pygobject from source over
+      # the network - the exposure the retry below papers over. Keyed on the
+      # lockfile, so a dependency change still gets a clean resolve.
+      - name: Cache Poetry virtualenv (launcher)
+        uses: actions/cache@v6
+        with:
+          path: ~\AppData\Local\pypoetry\Cache\virtualenvs
+          key: poetry-launcher-windows-py3.12-${{ hashFiles('launcher/poetry.lock') }}
+          restore-keys: |
+            poetry-launcher-windows-py3.12-
+
+      # #2117: same bounded retry as the Linux job. Windows gets prebuilt
+      # wheels for pycairo, so it is far less exposed - but a truncated
+      # download is not platform-specific, and a silent retry would hide a
+      # permanent breakage, so each attempt is logged.
       - name: Install launcher dependencies
-        run: poetry install --no-interaction --no-ansi
+        run: |
+          $ErrorActionPreference = "Continue"
+          foreach ($attempt in 1..3) {
+            Write-Host "::group::poetry install (attempt $attempt/3)"
+            poetry install --no-interaction --no-ansi
+            $code = $LASTEXITCODE
+            Write-Host "::endgroup::"
+            if ($code -eq 0) { exit 0 }
+            Write-Host "::warning::poetry install failed on attempt $attempt/3"
+            Start-Sleep -Seconds ($attempt * 15)
+          }
+          Write-Host "::error::poetry install failed three times - this is not the #2117 flake"
+          exit 1
 
       - name: Run launcher unit tests
         run: poetry run pytest tests/ -v
@@ -83,6 +129,82 @@ jobs:
 
       - name: Build adaptive-learner-launcher.exe
         run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
+
+      # #2101: nothing ever started a produced .exe. SmartScreen only bites
+      # on a downloaded file (Mark of the Web), so a runner-local start is
+      # the honest half of the question: does the binary itself run?
+      # --version and --verify-bundle are handled before any Tk import.
+      - name: Smoke-run the built binary (#2101)
+        # The spec builds a WINDOWED exe (console=False), so the GUI
+        # subsystem detaches it: `& $bin` returns immediately, $LASTEXITCODE
+        # stays empty, and the exe's output arrives after the step has
+        # already decided. The first run of this gate failed exactly that
+        # way while the binary was fine ("exit " with no number, then
+        # "adaptive_learner_launcher 2.6.1" printed afterwards).
+        # Start-Process -Wait -PassThru is what actually waits and yields a
+        # real exit code; output goes to files because a windowed process
+        # has no console to inherit.
+        run: |
+          $bin = "dist\adaptive-learner-launcher.exe"
+          function Invoke-Smoke($label, $flag) {
+            $out = "smoke-$label.out"; $err = "smoke-$label.err"
+            $p = Start-Process -FilePath $bin -ArgumentList $flag -Wait -PassThru `
+                 -NoNewWindow -RedirectStandardOutput $out -RedirectStandardError $err
+            Write-Host "--- $flag (exit $($p.ExitCode)) ---"
+            if (Test-Path $out) { Get-Content $out | Write-Host }
+            if ((Test-Path $err) -and (Get-Item $err).Length -gt 0) { Get-Content $err | Write-Host }
+            if ($p.ExitCode -ne 0) { throw "$flag failed with exit $($p.ExitCode)" }
+          }
+          Invoke-Smoke "version" "--version"
+          Invoke-Smoke "bundle" "--verify-bundle"
+          Write-Host "RESULT: the binary starts and its bundle is complete"
+
+      # #2106: the step above proves the .exe starts AS BUILT. A user runs
+      # it AS DOWNLOADED, and a downloaded file carries the Mark of the Web
+      # - a Zone.Identifier alternate data stream with ZoneId=3 - which is
+      # what SmartScreen keys on. The stream is written, read back as
+      # proof, and the exe started from a copy that carries it.
+      - name: Smoke-run the DOWNLOADED artifact (Mark of the Web, #2106)
+        run: |
+          $work = Join-Path $env:RUNNER_TEMP "downloaded"
+          Remove-Item -Recurse -Force $work -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Path $work | Out-Null
+          $bin = Join-Path $work "adaptive-learner-launcher.exe"
+          Copy-Item dist\adaptive-learner-launcher.exe $bin
+
+          # Exactly what a browser writes next to a downloaded file.
+          $motw = "[ZoneTransfer]`r`nZoneId=3`r`nReferrerUrl=https://github.com/astrapi69/adaptive-learner/releases`r`n"
+          Set-Content -Path $bin -Stream Zone.Identifier -Value $motw
+
+          Write-Host "--- proof the Mark of the Web is really set ---"
+          $read = Get-Content -Path $bin -Stream Zone.Identifier -ErrorAction SilentlyContinue
+          if (-not ($read -match "ZoneId=3")) {
+            throw "Zone.Identifier was not written - the test would prove nothing"
+          }
+          $read | Write-Host
+
+          Write-Host "--- start the marked .exe ---"
+          $out = Join-Path $work "motw.out"; $err = Join-Path $work "motw.err"
+          $p = Start-Process -FilePath $bin -ArgumentList "--version" -Wait -PassThru `
+               -NoNewWindow -RedirectStandardOutput $out -RedirectStandardError $err
+          if (Test-Path $out) { Get-Content $out | Write-Host }
+          if ((Test-Path $err) -and (Get-Item $err).Length -gt 0) { Get-Content $err | Write-Host }
+          Write-Host "exit code: $($p.ExitCode)"
+
+          # The Mark of the Web survives the start: proof the file we ran is
+          # the marked one, not a stripped copy.
+          $still = Get-Content -Path $bin -Stream Zone.Identifier -ErrorAction SilentlyContinue
+          if (-not ($still -match "ZoneId=3")) { throw "the mark vanished - wrong file was started" }
+
+          if ($p.ExitCode -ne 0) {
+            Write-Host "RESULT: the DOWNLOADED (marked) .exe is BLOCKED - exit $($p.ExitCode). See #2106."
+            throw "marked .exe failed to start"
+          }
+          Write-Host "RESULT: the DOWNLOADED (marked) .exe starts - exit 0"
+          Write-Host "LIMIT OF THIS TEST: SmartScreen is a shell/reputation prompt shown on"
+          Write-Host "interactive launch. A non-interactive Start-Process does not summon it,"
+          Write-Host "so a green result here does NOT mean a user sees no prompt. What it does"
+          Write-Host "prove is that the Mark of the Web alone does not stop the binary."
 
       - name: Compute SHA256 checksum
         run: |

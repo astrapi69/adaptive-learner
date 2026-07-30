@@ -10,7 +10,7 @@
  * preserving: identical testids, text, and handlers.
  */
 
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import {
   splitHighlight,

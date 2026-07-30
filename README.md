@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.6.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.7.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -191,8 +191,8 @@ irm https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.ps
 Both scripts clone the tagged release into `~/adaptive-learner/`,
 generate an `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet at-rest
 encryption), build the Docker images, and start the stack at
-`http://localhost:8501` (single port; nginx serves the static
-frontend and proxies `/api/*` to FastAPI).
+`http://localhost:8501` (single port, single container; FastAPI
+serves the static frontend and `/api/*` itself).
 
 ```bash
 cd ~/adaptive-learner
@@ -321,19 +321,20 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.6.1**, a feature
-release whose headline is the **session chat rebuilt on
-assistant-ui and cut over** (the thread is the default chat, the
-self-built SessionChat is removed). Create-Lesson's book path
-becomes a real ingestion tool: **book-text file upload**
-(EPUB/TXT/MD/DOCX) with a chapter picker, **multi-select sections
-with an exclusion heuristic, and batch lesson generation**.
-Dictation authoring completes with an **audio-file upload**, content
-sets can be **hidden via the engine's manifest `visibility` flag**,
-the desktop launcher moves onto **context-aware Docker detection**
-(docker-app-launcher 0.14.1), and CI hardens (required checks on
-develop, testid-reference gate, visual-baseline auto-sync, Docker
-build smoke). Prior **v2.5.0** turned **Create-Lesson into a full
+Active development. The current release is **v2.7.0**, whose headline
+is the **distribution switch**: the desktop launcher now **pulls a
+published, per-architecture verified image from GHCR** instead of
+building on the user's device (building from source stays for
+self-builders), guarded by a **volume-migration stop** that never
+chooses between two data sets silently. The app adds
+**image-description exercises** (`ext:al-image-description`),
+**single-lesson deletion**, and a **set-update guard** that stops
+content updates from silently orphaning learning progress (dialog in
+11 languages). Prior **v2.6.x** rebuilt the **session chat on
+assistant-ui**, made Create-Lesson's book path a real ingestion tool
+(**book-file upload** with chapter multi-select and batch generation),
+completed dictation authoring with an **audio-file upload**, and
+hardened CI. Prior **v2.5.0** turned **Create-Lesson into a full
 exercise authoring tool**: every core exercise type is editable,
 exercises can be added by hand, `multiple_choice` is authorable with
 a single/multi mode control, and an **extension-authoring wizard**

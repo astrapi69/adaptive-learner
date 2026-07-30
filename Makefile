@@ -32,7 +32,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -793,6 +793,58 @@ verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-
 
 verify-docs: ## Verify documentation for drift (version/counts/features/help/i18n/themes; stdlib only)
 	@python3 scripts/verify_docs.py
+
+verify-gate-rule-links: ## Gate <-> rule coupling (#2075): no gate without its rule section, no rule citing a dead gate
+	@python3 scripts/verify_gate_rule_links.py
+
+ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-based gates
+	@echo "== docs drift"          && $(MAKE) --no-print-directory verify-docs
+	@echo "== gate <-> rule links" && $(MAKE) --no-print-directory verify-gate-rule-links
+	@echo "== check inventory"     && $(MAKE) --no-print-directory verify-check-inventory
+	@echo "== lessons inventory"   && $(MAKE) --no-print-directory verify-lessons-inventory
+	@echo "== normative changes"   && $(MAKE) --no-print-directory verify-normative-changes
+	@echo "== rule corpus size"    && $(MAKE) --no-print-directory verify-rule-corpus-size
+	@echo "== complexity ratchet"  && $(MAKE) --no-print-directory check-complexity-gate
+	@echo "== testid references"   && $(MAKE) --no-print-directory check-testid-refs
+	@echo "== docker context"      && $(MAKE) --no-print-directory verify-docker-context
+	@echo "== file sizes"          && $(MAKE) --no-print-directory check-file-sizes
+	@echo ""
+	@echo "All build-free gates passed. Two gates need a frontend build and"
+	@echo "installed deps, so they are NOT in this target: 'make check-dead-classnames'"
+	@echo "(builds the Tailwind oracle) and the visual/e2e gates. Test suites: make test."
+
+ci-full: ci ## Everything in `make ci` plus the build-dependent gates (needs bun install)
+	@echo "== dead classnames"     && $(MAKE) --no-print-directory check-dead-classnames
+
+rule-change-log: ## Append declared rule changes to docs/rule-change-log.md. RANGE=<base>..<head>
+	@python3 scripts/append_rule_change_log.py --range $(or $(RANGE),origin/develop..HEAD)
+
+rule-change-log-check: ## Fail when a declared rule change is missing from the log
+	@python3 scripts/append_rule_change_log.py --range $(or $(RANGE),origin/develop..HEAD) --check
+
+verify-normative-changes: ## Normative/gate-status changes (#2079) must be declared. BASE=<ref> (default origin/develop)
+	@python3 scripts/verify_normative_changes.py --base $(or $(BASE),origin/develop)
+
+verify-check-inventory: ## Check inventory (#2077): an active check may not be silently unwired or degraded
+	@python3 scripts/verify_check_inventory.py
+
+verify-lessons-inventory: ## Lessons catalogue completeness (#2073): every section present + byte-identical
+	@python3 scripts/verify_lessons_inventory.py --compare .claude/rules/lessons/.inventory-baseline.json
+
+verify-image-size: ## Published image ratchet (#2132): compressed size may shrink, not grow
+	@python3 scripts/verify_image_size.py
+
+verify-image-size-raise: ## Deliberately raise the image ceiling - say WHY in the commit
+	@python3 scripts/verify_image_size.py --update-baseline --allow-raise
+
+verify-docker-context: ## Docker build context (#2112): no node_modules survives the ignore rules
+	@python3 scripts/verify_docker_context.py
+
+verify-rule-corpus-size: ## Rule corpus ratchet (#2091): the always-injected context may shrink, not grow
+	@python3 scripts/verify_rule_corpus_size.py
+
+verify-rule-corpus-size-raise: ## Deliberately raise the corpus ceiling - say WHY in the commit
+	@python3 scripts/verify_rule_corpus_size.py --update-baseline --allow-raise
 
 verify-docs-fix: ## Best-effort auto-fix of mechanical docs drift (version badges, counts, i18n sync)
 	@python3 scripts/verify_docs.py --fix

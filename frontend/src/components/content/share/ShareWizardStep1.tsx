@@ -98,14 +98,17 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
           />
         </label>
         <div className="form-row">
-          <span className="form-label">
+          <span className="form-label" id="share-wizard-edit-source-label">
             {t("content.wizard.edit_source", "Source language (you speak)")}
           </span>
           <Select
             value={editSource || undefined}
             onValueChange={(v) => setEditSource(v)}
           >
-            <SelectTrigger data-testid="share-wizard-edit-source">
+            <SelectTrigger
+              data-testid="share-wizard-edit-source"
+              aria-labelledby="share-wizard-edit-source-label"
+            >
               <SelectValue
                 placeholder={t(
                   "content.wizard.select_language",
@@ -123,14 +126,17 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
           </Select>
         </div>
         <div className="form-row">
-          <span className="form-label">
+          <span className="form-label" id="share-wizard-edit-target-label">
             {t("content.wizard.edit_target", "Target language (you learn)")}
           </span>
           <Select
             value={editTarget || undefined}
             onValueChange={(v) => setEditTarget(v)}
           >
-            <SelectTrigger data-testid="share-wizard-edit-target">
+            <SelectTrigger
+              data-testid="share-wizard-edit-target"
+              aria-labelledby="share-wizard-edit-target-label"
+            >
               <SelectValue
                 placeholder={t(
                   "content.wizard.select_language",
@@ -148,7 +154,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
           </Select>
         </div>
         <div className="form-row">
-          <span className="form-label">
+          <span className="form-label" id="share-wizard-edit-level-label">
             {t("content.wizard.edit_level", "Level (CEFR)")}
           </span>
           <Select
@@ -159,7 +165,10 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
               setEditLevel(v === LEVEL_NONE ? "" : v)
             }
           >
-            <SelectTrigger data-testid="share-wizard-edit-level">
+            <SelectTrigger
+              data-testid="share-wizard-edit-level"
+              aria-labelledby="share-wizard-edit-level-label"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

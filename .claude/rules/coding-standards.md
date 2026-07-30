@@ -1,10 +1,22 @@
-# Coding standards
+---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
+description: Python and TypeScript coding standards, naming conventions, formatting, Git workflow, function design, error reporting, tests, security, performance
+globs:
+  - backend/**/*.py
+  - plugins/**/*.py
+  - frontend/src/**/*.ts
+  - frontend/src/**/*.tsx
+alwaysApply: false
+---
+
+# Coding Standards
 
 ## General
 
-- Developer: Asterios Raptis (solo developer, AI-assisted).
-- Goal: pragmatic, maintainable, quickly deliverable. No over-engineering.
-- When unclear: ask rather than guess.
+Developer: Asterios Raptis (solo developer, AI-assisted).
+Goal: pragmatic, maintainable, quickly deliverable. No over-engineering.
+When unclear: ask rather than guess.
 
 ## Python (Backend + Plugins)
 
@@ -40,8 +52,8 @@
 - No I-prefix for interfaces. `LearningProject`, not `ILearningProject`.
 - Backup format: JSON via `/api/backup/export` + `/api/backup/import`. No proprietary archive extension.
 - No generic names: data, info, result, temp, item, obj, val, tmp, x are forbidden.
-  Use instead: session_data, plugin_info, evaluation_result, lesson_item.
-  Exception: loop variables (i, j) and lambdas.
+- Use instead: session_data, plugin_info, evaluation_result, lesson_item.
+- Exception: loop variables (i, j) and lambdas.
 
 ## Formatting
 
@@ -58,76 +70,44 @@
 - Conventional Commits: feat:, fix:, refactor:, docs:, test:, chore:
 - Provide a scope when it's clear: feat(export): ..., fix(editor): ...
 - One commit per logical change, not everything in one.
-- **Gitflow (#334):** `develop` is the active development branch; `main`
-  holds releases only (tags vX.Y.Z). Branch `feature/*` / `fix/*` / `chore/*`
-  FROM `develop` and open PRs AGAINST `develop`, never `main`. `main` is
-  written only by a `release/*` merge (or a `hotfix/*` for emergencies — the
-  one case that branches from `main`). Do NOT develop on `main`.
-- Branch naming: feature/{name}, fix/{name}, chore/{name} (from develop);
-  release/vX.Y.Z (from develop, merges to main + back to develop);
-  hotfix/vX.Y.Z (from main, merges to main + develop).
-- **Open a PR for every pushed code change, by default (PR-PFLICHT,
-  ai-workflow.md).** After committing and pushing a branch, open a PR
-  against `develop` whether or not the task asked for one — a pushed
-  branch with no PR is unfinished work. Skip only for a release freeze
-  or a task that changes no committed files. "No PR, wasn't requested"
-  is not a valid completion report.
-- **User-visible functionality updates the manual test plan
-  (TESTPLAN-PFLICHT, ai-workflow.md).** A PR that adds or changes
-  user-visible behaviour (new buttons, wizard steps, exercise types,
-  changed user flows) updates
-  `docs/manual-tests/testplan-adaptive-learner.md` + `-en.md` in the
-  same PR — or, when that would blow up the PR's scope, leaves a
-  referenced follow-up comment on #1087. Exempt: pure refactorings
-  without behaviour change, pure infra/CI, pure docs, and bug fixes
-  that add no new user path. "Testplan update wasn't requested" is not
-  a valid reason to skip.
-- Do not add `Co-Authored-By` trailers attributing non-human
-  collaborators (AI tools, automation bots, MCP agents). Human
-  co-authors are attributed via the standard GitHub mechanism.
-  Exceptions require an explicit note in the commit body
-  stating who authorized the attribution.
-- **No `--amend` + force-push on an open PR.** Never amend and force-push a
-  PR that could be merged concurrently (by another session or a maintainer).
-  The force-push can desync GitHub's PR head, and the PR may then merge the
-  PRE-amend commit — silently dropping the amended change. Always add a NEW
-  commit instead of amending; the squash-merge still produces a single clean
-  commit. (Origin: the #412 routes split force-pushed an eof fix that #412
-  then merged without, breaking the pre-commit gate on develop until #414.)
+- Gitflow (#334): `develop` is the active development branch; `main` holds releases only (tags vX.Y.Z). Branch `feature/*` / `fix/*` / `chore/*` FROM `develop` and open PRs AGAINST `develop`, never `main`. `main` is written only by a `release/*` merge (or a `hotfix/*` for emergencies — the one case that branches from `main`). Do NOT develop on `main`.
+- Branch naming: feature/{name}, fix/{name}, chore/{name} (from develop); release/vX.Y.Z (from develop, merges to main + back to develop); hotfix/vX.Y.Z (from main, merges to main + develop).
+- Open a PR for every pushed code change, by default (PR-PFLICHT, ai-workflow/pr-policy.md). After committing and pushing a branch, open a PR against `develop` whether or not the task asked for one — a pushed branch with no PR is unfinished work. Skip only for a release freeze or a task that changes no committed files. "No PR, wasn't requested" is not a valid completion report.
+- User-visible functionality updates the manual test plan (TESTPLAN-PFLICHT, ai-workflow/testplan-policy.md). A PR that adds or changes user-visible behaviour (new buttons, wizard steps, exercise types, changed user flows) updates `docs/manual-tests/testplan-adaptive-learner.md` + `-en.md` in the same PR — or, when that would blow up the PR's scope, leaves a referenced follow-up comment on #1087. Exempt: pure refactorings without behaviour change, pure infra/CI, pure docs, and bug fixes that add no new user path. "Testplan update wasn't requested" is not a valid reason to skip.
+- Do not add `Co-Authored-By` trailers attributing non-human collaborators (AI tools, automation bots, MCP agents). Human co-authors are attributed via the standard GitHub mechanism. Exceptions require an explicit note in the commit body stating who authorized the attribution.
+- No `--amend` + force-push on an open PR. Never amend and force-push a PR that could be merged concurrently (by another session or a maintainer). The force-push can desync GitHub's PR head, and the PR may then merge the PRE-amend commit — silently dropping the amended change. Always add a NEW commit instead of amending; the squash-merge still produces a single clean commit. (Origin: the #412 routes split force-pushed an eof fix that #412 then merged without, breaking the pre-commit gate on develop until #414.)
 
-## Function design and cohesion
+## Function Design and Cohesion
 
-### Ground rules
+### Ground Rules
 
 - Every function has exactly one responsibility.
 - Max 40 lines per function. Anything over 50 is an immediate refactoring signal.
 - Functions that do multiple things (parse AND save, validate AND transform) get split into separate functions.
 - Indicator of low cohesion: comments like "# Step 1", "# Step 2", "# Now do X" inside a single function. Every step is its own function.
+- Do not mix abstraction levels. A function operates at ONE abstraction level.
+  - WRONG: db.query() and string formatting in the same function.
+  - RIGHT: a high-level function calls low-level helper functions.
 
-### Do not mix abstraction levels
-
-- A function operates at ONE abstraction level.
-- WRONG: db.query() and string formatting in the same function.
-- RIGHT: a high-level function calls low-level helper functions.
-
-### Route handlers
+### Route Handlers
 
 - routes.py contains ONLY routing logic: validate input, call a service, return the response.
 - Business logic belongs in service modules or helper functions, NOT in route handlers.
 - Different code paths (if/elif cascades for formats, types, etc.) get extracted into their own functions.
 
-### Data between functions
+### Data Between Functions
 
 - Shared data: a dataclass or TypedDict, NOT loose dicts passed around.
 - Every extracted function must be individually testable without reconstructing the whole context.
 
-### Crash early
+### Crash Early
 
 - Catch invalid inputs at the start of the function, not deeply nested.
 - Pydantic validation for API input.
 - Guard clauses instead of deeply nested if/else.
 
-**Anti-pattern (God Method):**
+### Anti-pattern (God Method):
+
 ```python
 # WRONG: 150+ lines, 8 responsibilities
 @router.post("/{session_id}/message")
@@ -137,7 +117,8 @@ def message(session_id, body, ...):
     # award XP, evaluate badges, update streak, ...
 ```
 
-**Right (decomposed):**
+### Right (decomposed):
+
 ```python
 # routes.py - ONLY routing
 @router.post("/{session_id}/message")
@@ -162,15 +143,17 @@ def persist_step_evaluation(db: Session, eval_input: StepEvaluationInput) -> Non
 
 ## Boy Scout Rule
 
-- Leave code cleaner than you found it. Small improvements on every change.
-- This also applies to Claude Code: if you touch a function and it violates rules, fix the violation along with it.
+Leave code cleaner than you found it. Small improvements on every change.
 
-## Error reporting
+This also applies to Claude Code: if you touch a function and it violates rules, fix the violation along with it.
 
-Error details must be precise enough that a GitHub Issue built from them is directly actionable, without follow-up questions.
+## Error Reporting
 
-Chain: AdaptiveLearnerError -> API response (detail + traceback) -> ApiError -> toast with "Report issue" -> GitHub Issue
+See code-hygiene.md "Error handling architecture" for the complete error-handling specification.
 
+Summary:
+- Error details must be precise enough that a GitHub Issue built from them is directly actionable, without follow-up questions.
+- Chain: AdaptiveLearnerError -> API response (detail + traceback) -> ApiError -> toast with "Report issue" -> GitHub Issue
 - No `except` without logger.error(). Never swallow an exception.
 - Exception detail must contain the reason, not just the function name.
 - Services: include str(e) in AdaptiveLearnerError subclasses (NOT HTTPException, see code-hygiene.md).
@@ -198,7 +181,6 @@ Chain: AdaptiveLearnerError -> API response (detail + traceback) -> ApiError -> 
 
 - Never commit ADAPTIVE_LEARNER_SECRET_KEY.
 - .env files in .gitignore.
-- License keys only through LicenseStore (backend/app/licensing.py).
 - Validate user uploads (file type, size) before storage.
 - Plugin ZIP installation: name validation + path traversal check.
 
@@ -212,8 +194,12 @@ Chain: AdaptiveLearnerError -> API response (detail + traceback) -> ApiError -> 
 
 New dependencies only after asking. Existing stack:
 
-Backend: FastAPI, SQLAlchemy 2.0, Pydantic v2, pluginforge, aiosqlite, cryptography (Fernet), platformdirs, PyYAML
-Frontend: React 19, TypeScript 6 (strict), TipTap 2 (15+1 extensions), Vite 8, Tailwind CSS 4 + shadcn/ui, Radix UI, Lucide, react-toastify, Recharts 3, Dexie 4, sql.js + jszip
-Testing: pytest, Playwright (E2E), Vitest 4 (happy-dom)
-Linting/formatting: ruff (Python), ESLint + Prettier (TypeScript), pre-commit
-Tooling: Poetry, npm, Docker, Make
+**Backend:** FastAPI, SQLAlchemy 2.0, Pydantic v2, pluginforge, aiosqlite, cryptography (Fernet), platformdirs, PyYAML
+
+**Frontend:** React 19, TypeScript 6 (strict), TipTap 2 (15+1 extensions), Vite 8, Tailwind CSS 4 + shadcn/ui, Radix UI, Lucide, react-toastify, Recharts 3, Dexie 4, sql.js + jszip
+
+**Testing:** pytest, Playwright (E2E), Vitest 4 (happy-dom)
+
+**Linting/formatting:** ruff (Python), ESLint + Prettier (TypeScript), pre-commit
+
+**Tooling:** Poetry, npm, Docker, Make

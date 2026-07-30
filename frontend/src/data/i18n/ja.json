@@ -234,7 +234,9 @@
     "docs_link": "ドキュメントを読む",
     "checking_session": "おかえりなさい…",
     "recovered_toast": "おかえりなさい！学習データはまだここにあります。",
-    "intro": "Adaptive Learner は、研究に基づく 6 つの学習アプローチからあなたに 最適な方法を見つけ、毎セッションで 7 ステップのサイクルをガイドします。"
+    "intro": "Adaptive Learner は、研究に基づく 6 つの学習アプローチからあなたに 最適な方法を見つけ、毎セッションで 7 ステップのサイクルをガイドします。",
+    "port_change_hint": "以前 Adaptive Learner を別のポートで使っていましたか？学習データは以前のウェブアドレスに残っています。前のポートに戻ってバックアップをエクスポートし、ここでインポートしてください。",
+    "port_change_link": "データを移行する方法"
   },
   "onboarding": {
     "title": "学習プロジェクトを作成",
@@ -2180,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "更新すると一部の復習の進捗がリセットされる場合があります",
+      "message": "「{title}」を更新すると、すでに学習中の内容が変わります。保存済みの進捗がある復習カード約{cards}件とレッスン{lessons}件が新しいバージョンと一致しなくなり、リセットされます。完了したレッスンは残り、変更された復習だけが影響を受けます。",
+      "confirm": "それでも更新する",
+      "cancel": "現在のバージョンを保持"
+    },
     "share": {
       "button": "共有",
       "aria": "セット「{title}」を共有",
@@ -2322,6 +2330,16 @@
       "delete_confirm": "このレッスンを削除しますか？元に戻せません。",
       "deleted": "レッスンを削除しました。",
       "delete_failed": "レッスンを削除できませんでした。"
+    },
+    "lesson_delete": {
+      "manage_lessons": "レッスンを管理",
+      "confirm_body": "このレッスンはセットから削除されます。この操作は元に戻せません。以前に作成したバックアップにはまだ含まれています。",
+      "delete_progress_option": "このレッスンの学習の進捗も削除する（復習カード{cards}枚）",
+      "delete_progress_option_nocounts": "このレッスンの学習の進捗も削除する",
+      "action_delete": "レッスンを削除",
+      "deleted": "レッスンを削除しました。",
+      "delete_failed": "レッスンを削除できませんでした。",
+      "delete_aria": "レッスン{title}を削除"
     },
     "set_status": {
       "delete_progress_option": "学習の進捗と復習カードも削除する（{lessons} レッスン、{cards} カード）",
@@ -2995,7 +3013,8 @@
         "error-correction": "誤り訂正",
         "reading-comprehension": "読解",
         "graded-quiz": "採点クイズ",
-        "dictation": "ディクテーション"
+        "dictation": "ディクテーション",
+        "image-description": "画像の説明"
       },
       "edit": {
         "prompt_label": "指示 / 問題文",
@@ -3022,6 +3041,14 @@
         "dict_accept_add": "追加",
         "dict_accept_remove": "書き起こしを削除",
         "dict_accept_placeholder": "学習者が入力すべき内容",
+        "err_image_description": "画像と、少なくとも1つの受理される回答を追加してください。",
+        "imgdesc_image_label": "説明する画像",
+        "imgdesc_image_preview_alt": "説明する画像",
+        "imgdesc_image_budget_hint": "画像は圧縮して埋め込まれ（最大 ~150 KB、512 px）、演習がオフラインで動作しバックアップに含まれるようにします。リモートリンクは許可されていません。",
+        "imgdesc_accept_label": "受理される回答",
+        "imgdesc_accept_add": "追加",
+        "imgdesc_accept_remove": "回答を削除",
+        "imgdesc_accept_placeholder": "学習者が入力すべき内容",
         "q_list_label": "設問",
         "q_prompt_label": "設問",
         "q_prompt_placeholder": "設問",

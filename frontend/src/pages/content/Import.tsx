@@ -16,7 +16,7 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";

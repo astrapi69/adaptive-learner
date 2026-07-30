@@ -234,7 +234,9 @@
     "docs_link": "Belgeleri oku",
     "checking_session": "Tekrar hoş geldin…",
     "recovered_toast": "Tekrar hoş geldin! Öğrenme verilerin hâlâ burada.",
-    "intro": "Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı arasından sana en uygun yöntemi bulur ve her oturumda yedi adımlı bir döngüden geçirir."
+    "intro": "Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı arasından sana en uygun yöntemi bulur ve her oturumda yedi adımlı bir döngüden geçirir.",
+    "port_change_hint": "Adaptive Learner'ı daha önce başka bir bağlantı noktasında kullandınız mı? Öğrenme verileriniz önceki web adresinde kalır. Önceki bağlantı noktasına dönün, bir yedek dışa aktarın ve burada içe aktarın.",
+    "port_change_link": "Verilerinizi nasıl taşırsınız"
   },
   "onboarding": {
     "title": "Bir öğrenme projesi oluştur",
@@ -2180,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "Güncelleme bazı tekrar ilerlemesini sıfırlayabilir",
+      "message": "\"{title}\" güncellemesi, zaten öğrenmekte olduğun içeriği değiştirir. Kayıtlı ilerlemesi olan yaklaşık {cards} tekrar kartı ve {lessons} ders yeni sürümle artık eşleşmez ve sıfırlanır. Tamamladığın dersler kalır; yalnızca değişen tekrarlar etkilenir.",
+      "confirm": "Yine de güncelle",
+      "cancel": "Mevcut sürümü koru"
+    },
     "share": {
       "button": "Paylaş",
       "aria": "'{title}' setini paylaş",
@@ -2322,6 +2330,16 @@
       "delete_confirm": "Bu ders silinsin mi? Bu geri alınamaz.",
       "deleted": "Ders silindi.",
       "delete_failed": "Ders silinemedi."
+    },
+    "lesson_delete": {
+      "manage_lessons": "Dersleri yönet",
+      "confirm_body": "Bu ders setten kaldırılacak. Bu işlem geri alınamaz; daha önce oluşturduğunuz bir yedek onu hâlâ içeriyor.",
+      "delete_progress_option": "Bu dersin öğrenme ilerlememi de sil ({cards} tekrar kartı)",
+      "delete_progress_option_nocounts": "Bu dersin öğrenme ilerlememi de sil",
+      "action_delete": "Dersi sil",
+      "deleted": "Ders silindi.",
+      "delete_failed": "Ders silinemedi.",
+      "delete_aria": "{title} dersini sil"
     },
     "set_status": {
       "delete_progress_option": "Öğrenme ilerlememi ve tekrar kartlarını da sil ({lessons} ders, {cards} kart)",
@@ -2995,7 +3013,8 @@
         "error-correction": "Hata düzeltme",
         "reading-comprehension": "Okuduğunu anlama",
         "graded-quiz": "Notlu test",
-        "dictation": "Dikte"
+        "dictation": "Dikte",
+        "image-description": "Görsel açıklaması"
       },
       "edit": {
         "prompt_label": "Yönerge / soru",
@@ -3022,6 +3041,14 @@
         "dict_accept_add": "Ekle",
         "dict_accept_remove": "Transkripsiyonu kaldır",
         "dict_accept_placeholder": "Öğrencinin yazması gereken şey",
+        "err_image_description": "Bir görsel ve en az bir kabul edilen yanıt ekleyin.",
+        "imgdesc_image_label": "Açıklanacak görsel",
+        "imgdesc_image_preview_alt": "Açıklanacak görsel",
+        "imgdesc_image_budget_hint": "Görsel, alıştırmanın çevrimdışı çalışması ve yedekte yer alması için sıkıştırılıp gömülür (en fazla ~150 KB, 512 px). Uzak bağlantılara izin verilmez.",
+        "imgdesc_accept_label": "Kabul edilen yanıtlar",
+        "imgdesc_accept_add": "Ekle",
+        "imgdesc_accept_remove": "Yanıtı kaldır",
+        "imgdesc_accept_placeholder": "Öğrencinin yazması gereken şey",
         "q_list_label": "Sorular",
         "q_prompt_label": "Soru",
         "q_prompt_placeholder": "Soru",

@@ -28,6 +28,108 @@ Sorted by priority. Launch blockers first.
 
 ---
 
+## Manual device QA - consolidated checklist (as of 2026-07-25)
+
+Everything here can ONLY be done manually. Two sessions: one iPhone, one
+Ubuntu.
+
+### Session A: iPhone (iOS PWA/standalone)
+
+Prerequisite: #2050 merged, current `develop` deployed (or a preview build).
+
+#### A1. BACKUP ACCEPTANCE TEST (launch gate, open since early sessions)
+
+A real round-trip, not a simulation:
+
+- [ ] App in standalone mode with real data: at least one imported set,
+      learning progress in several lessons, one set set to "deferred", one
+      set completed, an own exercise created.
+- [ ] Export the backup (`.alb`), demonstrably save the file OUTSIDE the app
+      (Files app / AirDrop).
+- [ ] Hard wipe: delete the app data completely (remove Safari website data
+      for the domain, reinstall/reopen the app - that is the real WKWebView
+      eviction, NOT `localStorage.clear()`).
+- [ ] Verify the fresh state: app empty.
+- [ ] Import the backup.
+- [ ] Check: learning progress present, the deferred marker present (the
+      #2050 path!), completed set correct, own exercise present, settings
+      plausible.
+- [ ] Then continue one lesson normally - no follow-on error.
+
+Document the result (partial failures individually too). On ANY deviation:
+screenshot + which step, which becomes an issue with forensics.
+
+#### A2. Mobile scroll-to-error (#2039, visual device check before merge)
+
+- [ ] Provoke a validation error outside the viewport (long form, error at
+      the top, submit from the bottom).
+- [ ] Expected: automatic scroll to the first error field, error visible and
+      focused.
+- [ ] Once in portrait, once with the keyboard shown.
+
+#### A3. iOS backlog issues
+
+- [ ] Work through the open iOS verification points from the tracker in the
+      same session (list from the respective issues, each result as an issue
+      comment).
+
+#### A4. Delete a lesson (#2064, merged) - overlaps with A1
+
+Per the test plan this feature requires both storage modes plus a backup
+round-trip including iOS standalone. In substance that is the same flow as
+A1. Do both in one pass (see also the "Delete a single lesson (#2064)"
+section further below):
+
+- [ ] In "My Content" delete a lesson that has learning progress.
+- [ ] Check the confirm dialog: does it name the learning progress (learned
+      cards), not just the exercise count?
+- [ ] After deletion: lesson gone, no orphaned review cards, favorite
+      removed, numbering with a gap as decided.
+- [ ] Import a backup from BEFORE the deletion: the lesson comes back (a
+      backup is a point in time, as decided). That is expected behaviour, not
+      a bug.
+- [ ] Both storage modes.
+
+#### A5. Wizard step reset (#2061, merged) - short, doable on desktop too
+
+- [ ] Open a book set, "Edit lesson", navigate to step 2.
+- [ ] Pick a different chapter in the dropdown: step 2 stays, the new
+      lesson's exercises appear.
+- [ ] Edge cases: switch to a lesson without exercises, switch backwards.
+
+### Session B: Ubuntu (launcher binary, after the launcher session)
+
+Prerequisite: the launcher session is delivered (mode decision, pin to
+>=0.21.0, new binaries with run IDs). Use only these binaries; all older ones
+are obsolete.
+
+- [ ] Daemon running + a test user WITHOUT the docker group (qatest):
+      permission message + pkexec-fix offer, NOT "Start Docker". [since the
+      0.16.0 failure without real proof]
+- [ ] Run the pkexec fix, real re-login: state switches to "Docker running".
+- [ ] Console visible, detection lines streaming, text wrap correct, window
+      resizable.
+- [ ] Branding "Adaptive Learner", About: launcher 0.21.0, app 2.6.0 with a
+      source label.
+- [ ] Setup runs through to a reachable app frontend in the browser. Proof
+      goal per mode: in dockerfile mode a build and start WITHOUT Compose and
+      WITHOUT buildx on the Docker-20.10 device; in compose mode the full
+      readiness message with a working guide.
+- [ ] Second start while the launcher is running: focuses the existing window
+      (#31).
+- [ ] Stop, restart, uninstall: no errors, the console reports intelligibly.
+- [ ] Do NOT test a port change until the origin data-loss risk is resolved
+      (a separate task is in flight).
+
+### Recommended order
+
+Session A first and in one pass: A1 and A4 share the backup round-trip, A2
+and A5 are short extra checks. That makes the oldest launch gate coincide
+with two freshly merged features in one sitting. Session B only once the new
+binaries are available.
+
+---
+
 ## PRIO 1: BACKUP ACCEPTANCE TEST (launch gate!)
 
 **New test case under PRIO 1 backup acceptance test:**
@@ -76,6 +178,13 @@ Never run yet. Do it NOW.
 - [ ] Port read-only when running
 - [ ] CHANGE the port: 8501 → 9000 → app reachable on 9000
 - [ ] Port indicator: green when running (not red)
+
+### Port change: data portability (#2069)
+- [ ] Server mode (default): populate data, change the port, reopen → sets + progress still there (backend data survives; auto-recovered on the Landing route via identity.yaml)
+- [ ] Browser storage mode (Settings > Data > storage mode): populate data, change the port, reopen → empty app with the "Used Adaptive Learner before on a different port?" hint on the welcome screen (data NOT deleted, just tied to the old origin)
+- [ ] The hint links to the "Changing the port" help page
+- [ ] Recovery (browser mode): back to the old port → Settings > Data > Export backup (`.alb`) → new port → "Restore from backup" → sets, progress, exercises, settings all restored
+- [ ] Canonical web version (astrapi69.github.io, browser mode, no explicit port): the hint does NOT appear
 
 ### States
 - [ ] Not installed: [Install] visible
@@ -178,6 +287,16 @@ Requires domain knowledge. Not automatable.
       transcription; correct / near-miss ("Almost!") / wrong shows the
       solution; a lesson with `requires_extensions: ["ext:al-dictation@1"]`
       loads (not refused by the guard)
+- [ ] ext:al-image-description (#2095): the image is shown, type a free-text
+      description; correct / near-miss ("Almost!") / wrong shows the solution;
+      a lesson with `requires_extensions: ["ext:al-image-description@1"]`
+      loads (not refused by the guard). An embedded image renders WITHOUT a
+      network connection (offline-first); a lesson whose image is a remote
+      `http(s)://` URL is refused by the guard. Read-aloud: the prompt gets a
+      speaker button (the instruction is spoken, never the answer). a11y note:
+      this type is visually gated by design (the answer IS the image
+      description) — a screen reader hears a neutral image label, not the
+      solution.
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
 
@@ -216,6 +335,15 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       step 1 with the friendly "A title is required." message (NOT the
       book-text step, NOT the raw schema error on save); with a title →
       the book-text step opens normally and saving succeeds
+- [ ] **[MOBILE] Title warning is scrolled into view (#2036):** iPhone /
+      narrow viewport, step 1 WITHOUT a title, scroll down to the Next button
+      (the title field is off-screen above) → press Next: the view scrolls to
+      the title field, the field takes focus and is marked invalid (red
+      border), and the "A title is required." message is in view (NO
+      dead-end / no missing reaction). Applies to all three entries: Next
+      (card path), the "Knowledge lesson from text" card (book) and the
+      "Extensions" card (extension). Desktop regression: if the field is
+      already visible there is no scroll jump
 - [ ] **File upload in the book-text step (#1927):** "Load from file
       (EPUB, DOCX, TXT, MD)" button above the text field; pick an EPUB → a
       section list appears (checkboxes, title + character count);
@@ -284,6 +412,15 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       Save → only that lesson is replaced, the others survive, and the SET
       title/level/languages are NOT changed (not overwritten by the edited
       lesson's title). Regression: a set with a single lesson shows NO picker
+- [ ] **Switching lesson keeps the step (#2061):** open a multi-lesson set via
+      "Edit lesson", navigate to **step 2 (exercises)** (exercise list visible) →
+      pick a DIFFERENT lesson in the "Lesson in this set" dropdown → the wizard
+      STAYS on step 2, only the exercise list switches to the chosen lesson
+      (previously: it fell back to step 1 and "Next" had to be pressed again).
+      Same on step 3 (review): the step is preserved. Edge cases: switching to a
+      lesson with NO exercises shows an empty list with no crash and no fall-back;
+      with unsaved changes the "Switch lesson?" confirm dialog still appears
+      first. Verify on Desktop + iOS standalone
 - [ ] **Book reference survives editing (#1989):** create a lesson via the
       book-text wizard WITH the "book (optional)" fields filled in (title,
       author, URL, ISBN/ASIN) + Save → the lesson's "Vertiefe das Thema" section
@@ -333,14 +470,16 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
       the "Advanced exercise types" card starts a dedicated 3-step flow (author
       → review → save) with a non-blocking notice that these types are advanced.
-      Step 2: "Add extension exercise" offers five types — **categorization**,
+      Step 2: "Add extension exercise" offers six types — **categorization**,
       **error correction**, **reading comprehension**, **graded quiz**,
-      **dictation**. Each opens the inline editor with type-specific fields;
+      **dictation**, **image description**. Each opens the inline editor with
+      type-specific fields;
       Save is disabled until the shipped validator passes (categorization: ≥2
       named buckets with items; error correction: ≥2 words + a marked error + a
       correction; reading comprehension: a passage + ≥1 complete question;
       graded quiz: ≥1 question with positive points; dictation: a non-empty
-      audio path + ≥1 accepted transcription). Reading comprehension + graded
+      audio path + ≥1 accepted transcription; image description: a non-empty
+      image + ≥1 accepted answer). Reading comprehension + graded
       quiz: per question toggle multiple-choice ⇄ free-text, MC options with a
       correct checkbox, graded quiz additionally points + partial credit + a
       pass threshold. Dictation (#1887): a typed `assets/audio/...` path (no
@@ -372,6 +511,24 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       alternative (no upload). **Errors:** a too-large file (> 2 MB) OR a wrong
       format (e.g. `.mp4`) shows a clear inline error and does not crash;
       nothing is stored
+- [ ] **Image-description authoring (#2095):** In the extension wizard pick
+      **image description**. The editor shows an **"Upload image"** button
+      (labelled "Image to describe", NOT "(optional)"), a visible size-budget
+      hint ("compressed and embedded, max ~150 KB / 512 px, remote links not
+      allowed"), and an **"Accepted answers"** list. Upload a real JPG/PNG/WebP
+      → inline preview + "Remove" appear; the image is compressed to a data URI
+      (no assets folder needed). Save is disabled until there is an image AND
+      ≥1 accepted answer. Save the lesson, play it: the **image is shown**, type
+      a description, correct / near-miss / wrong shows the solution. **Offline:**
+      turn off the network and reload — the embedded image STILL renders (it
+      rides in the lesson JSON, not a remote URL). **Errors:** an image that
+      cannot be shrunk under the budget shows a clear inline error, nothing is
+      stored. **iOS standalone (MANDATORY):** on an installed iOS PWA, author an
+      image-description lesson with an uploaded photo, Export the backup (`.alb`),
+      reinstall/wipe, Import → open the lesson: the image + accepted answers are
+      intact and the image displays with no network (proves the embedded image
+      survives the iOS IndexedDB + backup round-trip, the known eviction-risk
+      surface)
 - [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first
@@ -412,6 +569,14 @@ each card row (`CardImageField`).
 - [ ] Lesson summary shows only ONE favorite button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
+- [ ] **[MOBILE/VoiceOver, non-blocking] Select fields are announced with a
+      name (#2037):** turn on iOS VoiceOver, open `/create-lesson` step 1 and
+      swipe across the select fields (domain, language(s), level): VoiceOver
+      announces the VISIBLE label plus the chosen value for each (e.g.
+      "Level, A1, combo box") - NOT just the value, and not an unnamed
+      "button". Same in the Share wizard and the chat-import language
+      pickers. Automated coverage via axe (`select-a11y.spec.ts`); this item
+      is the real-screen-reader cross-check in the next iOS session
 
 ### Invalid lesson: friendly error message (#1808 / #1824)
 - [ ] German umlaut cards (`währung`, `präsenz`) load correctly
@@ -431,6 +596,68 @@ each card row (`CardImageField`).
 - [ ] Per-set share link opens the set detail page directly (#1572)
 - [ ] Add a registered content repo (register-a-repo #1511)
 
+### Set status persists (active/deferred/completed, both modes)
+
+Where: My Content (`/content?tab=my`) → the set actions menu (three dots)
+of a downloaded set. Test in BOTH storage modes (Desktop/server = API
+mode; GitHub-Pages PWA = Dexie mode), since the bug used to occur only in
+API mode.
+
+- [ ] Set a set to **Deferred** → switch to another view (e.g. Dashboard)
+      → return to My Content → the status is STILL "Deferred" (not back to
+      "Active")
+- [ ] Check both return paths: once via the menu/navigation, once via the
+      browser Back button
+- [ ] Exercise every transition: active → deferred → completed → active
+      again; each survives a view switch
+- [ ] Second stage (real persistence proof): fully close and reopen the app
+      → the deferred status is still there
+- [ ] iPhone PWA: same flow (originally observed there)
+
+### Continue-Learning suggestion: no completed/deferred sets without due reviews (#2123)
+
+Where: Dashboard → Overview, the top "Continue Learning" / "Weitermachen"
+block. Test in BOTH storage modes (API + Dexie); the logic is
+mode-agnostic.
+
+- [ ] Finish a set completely (all lessons) OR set it to "Completed" via the
+      set actions menu, with NO cards due → the Continue-Learning block no
+      longer proposes that set (it used to show up as "Set completed")
+- [ ] No open set AND no due cards → an honest empty state ("Start your first
+      lesson", link to My Content) instead of a filler set
+- [ ] A completed set WITH due reviews → shown as a review row ("N elements
+      due") that leads into the review session (`/review/{setId}`), not as
+      "Set completed"
+- [ ] A deferred set with no due cards → NOT proposed
+- [ ] A started (active) set → still proposed to resume
+- [ ] Order: due reviews first, then started sets (each most-recently-touched
+      first)
+
+### Update guard: no silent progress loss on a set update (#2128)
+
+Where: My Content, an already-LEARNED set (progress + review cards present) that
+has an update available. Test in BOTH storage modes. Background: an update that
+changes exercise/card identities (e.g. an answer fix) would orphan review cards.
+The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
+
+- [ ] Prep: learn a set (at least one lesson, make a few mistakes -> review
+      cards) for which a changed version with a CHANGED answer/card front exists.
+- [ ] Trigger a manual update (the set's "Update" button): a confirmation appears
+      with counts ("N review cards / N lessons would be reset"), NOT a silent
+      overwrite.
+- [ ] "Keep current version" -> nothing updates, progress stays, the set still
+      shows "Update available" (visible + re-decidable).
+- [ ] "Update anyway" -> the update applies.
+- [ ] A harmless update (only a new lesson/exercise added, no existing identity
+      changed) -> NO prompt, applies straight away.
+- [ ] Auto-sync (only with a connected user repo, 24h): an identity-changing
+      update is NOT silently applied in the background; the set stays on the
+      current version and shows "Update available" (no background dialog, no
+      data loss).
+- [ ] iOS standalone (PWA): same manual flow, the confirmation appears.
+- [ ] Language check (#2160): the confirmation text appears in the app language
+      (not English), spot-checked across several languages (de/ja/ko/el/hi).
+
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)
@@ -438,6 +665,36 @@ each card row (`CardImageField`).
       My Content (not silently hidden) (#1731/#1734)
 - [ ] Book recommendations come from the federated registry, not the
       removed official `books.yaml` (#1717)
+
+### Delete a single lesson (#2064)
+
+Location: My Content (`/content?tab=my`) → My Lessons → a set with
+SEVERAL lessons (e.g. after a book import) → "Manage lessons".
+
+- [ ] Prep: import/generate a book (several lessons in one set) OR a
+      multi-lesson own set; play 1-2 lessons (create progress + review
+      cards)
+- [ ] "Manage lessons" expands the per-lesson list; each lesson has Play
+      + Delete
+- [ ] Delete opens a confirm dialog that names the lesson and says it
+      CANNOT be undone
+- [ ] The "Also delete my learning progress" checkbox shows the REAL
+      review-card count of the lesson (cannot be undone)
+- [ ] Delete WITHOUT the checkbox: the lesson leaves the list,
+      lesson_count drops, sibling lessons are untouched; the deleted
+      lesson's progress is kept (orphaned, cleanable later)
+- [ ] Delete WITH the checkbox: progress + review cards of ONLY this
+      lesson are gone, sibling progress remains
+- [ ] No renumbering: the surviving lessons keep their titles/order,
+      deep links to them still work
+- [ ] Deleting the last lesson of a set removes the WHOLE set from My
+      Content
+- [ ] Keyboard-operable dialog: the Delete button is focused,
+      Escape/Cancel dismisses
+- [ ] Check BOTH modes: desktop/server (API) AND GitHub Pages (Dexie)
+- [ ] Backup time-point: make a backup (.alb) BEFORE deleting → delete
+      the lesson → import the backup → the lesson is back (correct: a
+      backup is a snapshot, NOT a bug)
 
 ### Disconnect content repo vs. delete progress (#1651 / #1652)
 

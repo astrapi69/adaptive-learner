@@ -221,6 +221,8 @@ landing:
   checking_session: Welcome back…
   recovered_toast: Welcome back! Your learning data is still here.
   intro: Adaptive Learner finds the method that fits you best from six research-backed learning approaches, and walks you through a seven-step cycle on every session.
+  port_change_hint: "Used Adaptive Learner before on a different port? Your learning data stays with the previous web address. Go back to the previous port, export a backup, then import it here."
+  port_change_link: "How to move your data"
 onboarding:
   title: Create a learning project
   intro: Tell us about your learning goal. Adaptive Learner uses this to build your profile and recommend a starting method.
@@ -2020,6 +2022,11 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  update_guard:
+    title: 'Update may reset some review progress'
+    message: 'Updating "{title}" changes content you are already learning. About {cards} review cards and {lessons} lessons with saved progress no longer match the new version and would be reset. Your finished lessons stay; only the changed review items are affected.'
+    confirm: 'Update anyway'
+    cancel: 'Keep current version'
   share:
     button: "Share"
     aria: "Share set '{title}'"
@@ -2146,6 +2153,15 @@ content:
     delete_confirm: "Delete this lesson? This cannot be undone."
     deleted: "Lesson deleted."
     delete_failed: "Could not delete the lesson."
+  lesson_delete:
+    manage_lessons: "Manage lessons"
+    confirm_body: "This lesson will be removed from the set. This cannot be undone - a backup you made earlier still contains it."
+    delete_progress_option: "Also delete my learning progress for this lesson ({cards} review cards)"
+    delete_progress_option_nocounts: "Also delete my learning progress for this lesson"
+    action_delete: "Delete lesson"
+    deleted: "Lesson deleted."
+    delete_failed: "Could not delete the lesson."
+    delete_aria: "Delete lesson {title}"
   set_status:
     delete_progress_option: "Also delete my learning progress and review cards ({lessons} lessons, {cards} cards)"
     delete_progress_option_nocounts: "Also delete my learning progress and review cards"
@@ -2753,6 +2769,7 @@ create_lesson:
       reading-comprehension: "Reading comprehension"
       graded-quiz: "Graded quiz"
       dictation: "Dictation"
+      image-description: "Image description"
     edit:
       prompt_label: "Instruction / prompt"
       save: "Save"
@@ -2777,6 +2794,14 @@ create_lesson:
       dict_accept_add: "Add"
       dict_accept_remove: "Remove transcription"
       dict_accept_placeholder: "What the learner should type"
+      err_image_description: "Add an image and at least one accepted answer."
+      imgdesc_image_label: "Image to describe"
+      imgdesc_image_preview_alt: "Image to describe"
+      imgdesc_image_budget_hint: "The image is compressed and embedded (max ~150 KB, 512 px) so the exercise works offline and travels in the backup. Remote links are not allowed."
+      imgdesc_accept_label: "Accepted answers"
+      imgdesc_accept_add: "Add"
+      imgdesc_accept_remove: "Remove answer"
+      imgdesc_accept_placeholder: "What the learner should type"
       q_list_label: "Questions"
       q_prompt_label: "Question"
       q_prompt_placeholder: "Question"

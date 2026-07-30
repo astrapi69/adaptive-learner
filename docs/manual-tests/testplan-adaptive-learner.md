@@ -26,6 +26,114 @@ Sortiert nach Prioritaet. Launch-Blocker zuerst.
 
 ---
 
+## Manuelle Geraete-QA - Konsolidierte Checkliste (Stand 25.07.2026)
+
+Alles hier kann NUR manuell erledigt werden. Zwei Sessions, einmal iPhone,
+einmal Ubuntu.
+
+### Session A: iPhone (iOS PWA/Standalone)
+
+Voraussetzung: #2050 gemerged, aktueller develop-Stand deployed (bzw.
+Preview).
+
+#### A1. BACKUP-AKZEPTANZTEST (Launch-Gate, seit fruehen Sessions offen)
+
+Echter Round-Trip, keine Simulation:
+
+- [ ] App im Standalone-Modus mit realen Daten: mindestens ein importiertes
+      Set, Lernfortschritt in mehreren Lektionen, ein Set auf
+      "zurueckgestellt" (deferred), ein Set abgeschlossen, eigene Uebung
+      angelegt.
+- [ ] Backup exportieren (.alb), Datei nachweislich ausserhalb der App
+      sichern (Dateien-App/AirDrop).
+- [ ] Harter Wipe: App-Daten vollstaendig loeschen (Safari-Websitedaten fuer
+      die Domain entfernen, App neu installieren/oeffnen - das ist die echte
+      WKWebView-Eviction, nicht `localStorage.clear()`).
+- [ ] Frischen Zustand verifizieren: App leer.
+- [ ] Backup importieren.
+- [ ] Pruefen: Lernfortschritt vorhanden, Deferred-Markierung vorhanden (der
+      #2050-Pfad!), abgeschlossenes Set korrekt, eigene Uebung vorhanden,
+      Einstellungen plausibel.
+- [ ] Danach eine Lektion normal weiterlernen - kein Folgefehler.
+
+Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen:
+Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
+
+#### A2. Mobile Scroll-to-Error (#2039, Visual-Device-Check vor Merge)
+
+- [ ] Formular mit Validierungsfehler ausserhalb des Viewports provozieren
+      (langes Formular, Fehler oben, Abschicken von unten).
+- [ ] Erwartet: automatischer Scroll zum ersten Fehlerfeld, Fehler sichtbar
+      und fokussiert.
+- [ ] Einmal Hochformat, einmal mit eingeblendeter Tastatur.
+
+#### A3. Rueckstands-Issues iOS
+
+- [ ] Die offenen iOS-Verifikationspunkte aus dem Tracker in derselben
+      Session abarbeiten (Liste aus den jeweiligen Issues, jeweils Ergebnis
+      als Issue-Kommentar).
+
+#### A4. Lektion loeschen (#2064, gemerged) - ueberschneidet sich mit A1
+
+Dieses Feature verlangt laut Testplan beide Speichermodi plus
+Backup-Round-Trip inklusive iOS-Standalone. Das ist in der Substanz
+derselbe Ablauf wie A1. Beides in einem Durchgang erledigen (siehe auch
+den Abschnitt "Einzelne Lektion loeschen (#2064)" weiter unten):
+
+- [ ] In "Meine Inhalte" eine Lektion mit vorhandenem Lernfortschritt
+      loeschen.
+- [ ] Bestaetigungsdialog pruefen: Nennt er den Lernfortschritt (gelernte
+      Karten), nicht nur die Uebungszahl?
+- [ ] Nach dem Loeschen: Lektion weg, keine verwaisten Karten in der
+      Wiederholung, Favorit entfernt, Nummerierung mit Luecke wie
+      entschieden.
+- [ ] Backup von VOR dem Loeschen importieren: Lektion kommt zurueck (Backup
+      ist ein Zeitpunkt, so entschieden). Das ist erwartetes Verhalten, kein
+      Fehler.
+- [ ] Beide Speichermodi.
+
+#### A5. Wizard-Schritt-Reset (#2061, gemerged) - kurz, auch am Desktop moeglich
+
+- [ ] Buch-Set oeffnen, "Lektion bearbeiten", zu Schritt 2 navigieren.
+- [ ] Im Dropdown ein anderes Kapitel waehlen: Schritt 2 bleibt, Uebungen der
+      neuen Lektion erscheinen.
+- [ ] Randfaelle: Wechsel zu einer Lektion ohne Uebungen, Rueckwaertswechsel.
+
+### Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
+
+Voraussetzung: die Launcher-Session ist geliefert (Modusentscheidung, Pin
+auf >=0.21.0, neue Binaries mit Run-IDs). Nur diese Binaries verwenden, alle
+aelteren sind obsolet.
+
+- [ ] Daemon laeuft + Testnutzer OHNE docker-Gruppe (qatest):
+      Permission-Meldung + pkexec-Fix-Angebot, NICHT "Docker starten". [seit
+      dem 0.16.0-Fehlschlag ohne realen Beweis]
+- [ ] pkexec-Fix ausfuehren, echte Neuanmeldung: Zustand wechselt zu "Docker
+      laeuft".
+- [ ] Konsole sichtbar, Detection-Zeilen streamen, Text-Wrap korrekt, Fenster
+      resizable.
+- [ ] Branding "Adaptive Learner", About: Launcher 0.21.0, App 2.6.0 mit
+      Quellen-Label.
+- [ ] Setup laeuft durch bis zum erreichbaren App-Frontend im Browser.
+      Beweisziel je nach Modus: im dockerfile-Modus Build und Start ohne
+      Compose und ohne buildx auf dem Docker-20.10-Geraet, im compose-Modus
+      vollstaendige Bereitschaftsmeldung mit funktionierender Anleitung.
+- [ ] Zweitstart bei laufendem Launcher: fokussiert das bestehende Fenster
+      (#31).
+- [ ] Stoppen, erneut starten, deinstallieren: keine Fehler, Konsole meldet
+      nachvollziehbar.
+- [ ] Portwechsel NICHT testen, bis das Origin-Datenverlustrisiko geklaert ist
+      (eigener Auftrag laeuft).
+
+### Reihenfolge-Empfehlung
+
+Session A zuerst und in einem Durchgang: A1 und A4 teilen sich den
+Backup-Round-Trip, A2 und A5 sind kurze Zusatzpruefungen. Damit faellt in
+einer Sitzung das aelteste Launch-Gate zusammen mit zwei frisch gemergten
+Features. Session B erst, wenn die neuen Binaries vorliegen.
+
+---
+
 ## PRIO 1: BACKUP-AKZEPTANZTEST (Launch-Gate!)
 
 **Neuer Testfall unter PRIO 1 Backup-Akzeptanztest:**
@@ -74,6 +182,13 @@ Noch nie durchgefuehrt. JETZT machen.
 - [ ] Port read-only wenn laeuft
 - [ ] Port WECHSELN: 8501 → 9000 → App erreichbar auf 9000
 - [ ] Port-Indikator: gruen wenn laeuft (nicht rot)
+
+### Portwechsel: Datenmitnahme (#2069)
+- [ ] Servermodus (Default): Daten anlegen, Port wechseln, neu oeffnen → Sets + Fortschritt weiter da (Backend-Daten ueberleben; auf der Landing-Seite via identity.yaml automatisch wiederhergestellt)
+- [ ] Browser-Speichermodus (Einstellungen > Daten > Speichermodus): Daten anlegen, Port wechseln, neu oeffnen → leere App mit Hinweis "Hast du Adaptive Learner schon einmal unter einem anderen Port genutzt?" auf dem Willkommensbildschirm (Daten NICHT geloescht, nur an den alten Origin gebunden)
+- [ ] Der Hinweis verlinkt auf die Hilfeseite "Den Port aendern"
+- [ ] Wiederherstellung (Browser-Modus): zurueck zum alten Port → Einstellungen > Daten > Backup exportieren (`.alb`) → neuer Port → "Aus Backup wiederherstellen" → Sets, Fortschritt, Uebungen, Einstellungen wieder da
+- [ ] Kanonische Web-Version (astrapi69.github.io, Browser-Modus, kein expliziter Port): der Hinweis erscheint NICHT
 
 ### Zustaende
 - [ ] Nicht installiert: [Installieren] sichtbar
@@ -179,6 +294,17 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       tippen; richtig / knapp daneben ("Almost!") / falsch zeigt die Loesung;
       eine Lektion mit `requires_extensions: ["ext:al-dictation@1"]` laedt
       (wird nicht vom Guard abgelehnt)
+- [ ] ext:al-image-description (#2095): das Bild wird gezeigt, eine
+      Freitext-Beschreibung tippen; richtig / knapp daneben ("Almost!") /
+      falsch zeigt die Loesung; eine Lektion mit
+      `requires_extensions: ["ext:al-image-description@1"]` laedt (nicht vom
+      Guard abgelehnt). Ein eingebettetes Bild wird OHNE Netzverbindung
+      angezeigt (Offline-First); eine Lektion mit einer entfernten
+      `http(s)://`-Bild-URL wird vom Guard abgelehnt. Vorlesen: der Prompt hat
+      einen Lautsprecher-Button (die Anweisung wird vorgelesen, nie die
+      Antwort). a11y-Hinweis: dieser Typ ist bewusst visuell voraussetzungs-
+      behaftet (die Antwort IST die Bildbeschreibung) - ein Screenreader hoert
+      ein neutrales Bild-Label, nicht die Loesung.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
 
@@ -218,6 +344,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       erforderlich." (NICHT der Buchtext-Schritt, NICHT der rohe
       Schema-Fehler beim Speichern); mit Titel → Buchtext-Schritt
       oeffnet normal und Speichern gelingt
+- [ ] **[MOBILE] Titel-Warnung wird sichtbar gescrollt (#2036):** iPhone /
+      schmaler Viewport, Schritt 1 OHNE Titel, nach unten zum Weiter-Button
+      scrollen (Titelfeld oben ausserhalb des Sichtbereichs) → Weiter
+      druecken: die Ansicht scrollt zum Titelfeld, das Feld erhaelt den Fokus
+      und ist als ungueltig markiert (roter Rahmen), der Hinweis "Ein Titel
+      ist erforderlich." ist im Sichtbereich (KEIN Dead-End, keine Reaktion
+      fehlt). Gilt fuer alle drei Einstiege: Weiter (Karten-Pfad), Karte
+      "Wissenslektion aus Text" (Buch) und Karte "Erweiterungen" (Extension).
+      Desktop-Regression: ist das Feld schon sichtbar, gibt es keinen
+      Scroll-Sprung
 - [ ] **Datei-Upload im Buchtext-Schritt (#1927):** Button "Aus Datei
       laden (EPUB, DOCX, TXT, MD)" ueber dem Textfeld; EPUB waehlen →
       Abschnittsliste erscheint (Checkboxen, Titel + Zeichenzahl);
@@ -292,6 +428,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       anderen bleiben erhalten, und der SET-Titel/Level/Sprachen aendern sich
       NICHT (werden nicht durch den Titel der bearbeiteten Lektion ueberschrieben).
       Regression: ein Set mit nur EINER Lektion zeigt KEINE Lektions-Auswahl
+- [ ] **Lektionswechsel behaelt den Schritt (#2061):** ein Set mit mehreren
+      Lektionen ueber "Lektion bearbeiten" oeffnen, zu **Schritt 2 (Uebungen)**
+      navigieren (Uebungsliste sichtbar) → im Dropdown "Lektion in diesem Set"
+      eine ANDERE Lektion waehlen → der Wizard BLEIBT auf Schritt 2, nur die
+      Uebungsliste wechselt auf die gewaehlte Lektion (vorher: Ruecksprung auf
+      Schritt 1, "Weiter" musste erneut gedrueckt werden). Gleiches auf
+      Schritt 3 (Ueberpruefung): der Schritt bleibt erhalten. Randfaelle: Wechsel
+      auf eine Lektion OHNE Uebungen zeigt eine leere Liste ohne Absturz und ohne
+      Ruecksprung; bei ungespeicherten Aenderungen erscheint weiterhin zuerst der
+      "Lektion wechseln?"-Bestaetigungsdialog. Desktop + iOS-Standalone pruefen
 - [ ] **Buchangabe bleibt beim Bearbeiten erhalten (#1989):** eine Lektion ueber
       den Buchtext-Wizard MIT ausgefuellter "Buchangabe (optional)" (Titel,
       Autor, URL, ISBN/ASIN) erstellen + speichern → in der Lektion erscheint
@@ -345,14 +491,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       → Karte "Erweiterte Uebungstypen" startet einen eigenen 3-Schritt-Flow
       (Autoren → Review → Speichern) mit einem nicht-blockierenden Hinweis,
       dass diese Typen fortgeschritten sind. Schritt 2: "Erweiterungsuebung
-      hinzufuegen" bietet fuenf Typen — **Kategorisierung**, **Fehlerkorrektur**,
-      **Leseverstaendnis**, **Benotetes Quiz**, **Diktat**. Je Typ oeffnet der
+      hinzufuegen" bietet sechs Typen — **Kategorisierung**, **Fehlerkorrektur**,
+      **Leseverstaendnis**, **Benotetes Quiz**, **Diktat**,
+      **Bildbeschreibung**. Je Typ oeffnet der
       Inline-Editor mit den passenden Feldern; Speichern ist deaktiviert bis der
       shipped Validator erfuellt ist (Kategorisierung: ≥2 benannte Buckets mit
       Items; Fehlerkorrektur: ≥2 Woerter + markierter Fehler + Korrektur;
       Leseverstaendnis: Text + ≥1 vollstaendige Frage; Benotetes Quiz: ≥1 Frage
       mit positiven Punkten; Diktat: nicht-leerer Audio-Pfad + ≥1 akzeptierte
-      Transkription). Leseverstaendnis + Benotetes Quiz: pro Frage Umschalten
+      Transkription; Bildbeschreibung: nicht-leeres Bild + ≥1 akzeptierte
+      Antwort). Leseverstaendnis + Benotetes Quiz: pro Frage Umschalten
       Multiple-Choice ⇄ Freitext, MC-Optionen mit Richtig-Haken, Benotetes Quiz
       zusaetzlich Punkte + Teilpunkte + Bestehensgrenze. Diktat (#1887): ein
       getippter `assets/audio/...`-Pfad (kein Upload in v1) + die Liste der
@@ -386,6 +534,26 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       als Alternative (kein Upload). **Fehler:** eine zu grosse Datei (> 2 MB)
       ODER ein falsches Format (z. B. `.mp4`) zeigt eine klare Inline-Fehlermeldung
       und stuerzt nicht ab; nichts wird gespeichert
+- [ ] **Bildbeschreibung-Authoring (#2095):** Im Extension-Wizard
+      **Bildbeschreibung** waehlen. Der Editor zeigt einen **"Bild
+      hochladen"**-Button (Label "Zu beschreibendes Bild", NICHT "(optional)"),
+      einen sichtbaren Groessen-Hinweis ("komprimiert und eingebettet, max.
+      ~150 KB / 512 px, externe Links nicht erlaubt") und eine Liste
+      **"Akzeptierte Antworten"**. Echtes JPG/PNG/WebP hochladen → Inline-
+      Vorschau + "Entfernen" erscheinen; das Bild wird als Data-URI komprimiert
+      (kein assets-Ordner noetig). Speichern ist deaktiviert bis es ein Bild UND
+      ≥1 akzeptierte Antwort gibt. Lektion speichern, abspielen: das **Bild wird
+      gezeigt**, Beschreibung tippen, richtig / knapp daneben / falsch zeigt die
+      Loesung. **Offline:** Netz ausschalten und neu laden — das eingebettete
+      Bild wird WEITERHIN angezeigt (es reist in der Lektion-JSON, keine
+      entfernte URL). **Fehler:** ein Bild, das nicht unter das Budget
+      schrumpfbar ist, zeigt eine klare Inline-Fehlermeldung, nichts wird
+      gespeichert. **iOS-Standalone (PFLICHT):** in einer installierten iOS-PWA
+      eine Bildbeschreibung-Lektion mit hochgeladenem Foto anlegen, Backup
+      exportieren (`.alb`), neu installieren/loeschen, importieren → Lektion
+      oeffnen: Bild + akzeptierte Antworten sind intakt und das Bild wird ohne
+      Netz angezeigt (beweist, dass das eingebettete Bild den iOS-IndexedDB- +
+      Backup-Round-Trip ueberlebt, die bekannte Verdraengungs-Risikoflaeche)
 - [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,
@@ -428,6 +596,15 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Lektions-Zusammenfassung zeigt nur EINEN Favoriten-Button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-Content-Link beim Tabben von oben sichtbar (#1727, a11y)
+- [ ] **[MOBILE/VoiceOver, nicht blockierend] Auswahlfelder werden benannt
+      angesagt (#2037):** iOS VoiceOver einschalten, `/create-lesson`
+      Schritt 1 oeffnen und ueber die Auswahlfelder (Domain, Sprache(n),
+      Niveau) wischen: VoiceOver sagt jeweils das SICHTBARE Label plus den
+      gewaehlten Wert an (z. B. "Niveau, A1, Auswahlfeld") - NICHT nur den
+      Wert und nicht "Button" ohne Namen. Gleiches im Teilen-Assistenten
+      und bei den Chat-Import-Sprachwaehlern. Automatisiert abgedeckt via
+      axe (`select-a11y.spec.ts`); dieser Punkt ist die Gegenprobe mit
+      echtem Screenreader in der naechsten iOS-Session
 
 ### Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
 - [ ] Deutsche Umlaut-Karten (`währung`, `präsenz`) laden korrekt
@@ -447,6 +624,72 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Per-Set Share-Link oeffnet direkt die Set-Detailseite (#1572)
 - [ ] Registrierten Content-Repo hinzufuegen (register-a-repo #1511)
 
+### Set-Status bleibt erhalten (aktiv/zurueckgestellt/abgeschlossen, beide Modi)
+
+Ort: Meine Inhalte (`/content?tab=my`) → Set-Aktionen-Menue (Drei-Punkte)
+eines heruntergeladenen Sets. In BEIDEN Speichermodi pruefen (Desktop/
+Server = API-Modus; GitHub-Pages-PWA = Dexie-Modus), da der Bug frueher nur
+im API-Modus auftrat.
+
+- [ ] Set auf **Zurueckgestellt** setzen → in eine andere Maske wechseln
+      (z. B. Dashboard) → zurueck zu Meine Inhalte → Status ist WEITERHIN
+      "Zurueckgestellt" (nicht wieder "Aktiv")
+- [ ] Rueckweg pruefen: einmal ueber das Menue/Navigation, einmal ueber den
+      Browser-Zurueck-Button
+- [ ] Alle Uebergaenge testen: aktiv → zurueckgestellt → abgeschlossen →
+      wieder aktiv; jeder bleibt nach einem Maskenwechsel erhalten
+- [ ] Zweite Stufe (echter Persistenz-Beweis): App komplett schliessen und
+      neu oeffnen → zurueckgestellter Status ist noch da
+- [ ] iPhone-PWA: gleicher Ablauf (dort urspruenglich beobachtet)
+
+### Weitermachen-Vorschlag: keine abgeschlossenen/zurueckgestellten Sets ohne faellige Wiederholungen (#2123)
+
+Ort: Dashboard → Uebersicht, oberster Block "Weitermachen" / "Continue
+Learning". In BEIDEN Speichermodi pruefen (API + Dexie), die Logik ist
+modus-unabhaengig.
+
+- [ ] Ein Set komplett durchspielen (alle Lektionen abschliessen) ODER ueber
+      das Set-Aktionen-Menue auf "Abgeschlossen" setzen, KEINE faelligen
+      Wiederholungskarten → der "Weitermachen"-Block schlaegt dieses Set NICHT
+      mehr vor (frueher stand es dort als "Set abgeschlossen")
+- [ ] Kein offenes Set UND keine faelligen Karten → ehrlicher Leerzustand
+      ("Starte deine erste Lektion", Link zu Meine Inhalte) statt irgendein
+      Set als Lueckenfueller
+- [ ] Abgeschlossenes Set MIT faelligen Wiederholungen → erscheint als
+      Wiederholungs-Zeile ("N Elemente faellig") und fuehrt in die
+      Wiederholungs-Session (`/review/{setId}`), nicht als "Set abgeschlossen"
+- [ ] Zurueckgestelltes Set ohne faellige Karten → wird NICHT vorgeschlagen
+- [ ] Angefangenes (aktives) Set → wird weiterhin zum Fortsetzen vorgeschlagen
+- [ ] Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets
+      (jeweils zuletzt-bearbeitet zuerst)
+
+### Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
+
+Ort: Meine Inhalte, ein bereits GELERNTES Set (Fortschritt + Wiederholungskarten
+vorhanden), fuer das ein Update verfuegbar ist. In BEIDEN Speichermodi pruefen.
+Hintergrund: ein Update, das Uebungs-/Karten-Identitaeten aendert (z. B. eine
+Antwort-Korrektur), wuerde Wiederholungskarten verwaisen. Der Schutz haengt an
+einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
+
+- [ ] Vorbereitung: ein Set lernen (mind. eine Lektion, ein paar Fehler erzeugen
+      -> Wiederholungskarten), fuer das eine geaenderte Fassung mit GEAENDERTER
+      Antwort/Kartenfront bereitsteht.
+- [ ] Manuelles Update anstossen (Button "Update" am Set): Es erscheint eine
+      Bestaetigung mit bezifferter Angabe ("N Wiederholungskarten / N Lektionen
+      wuerden zurueckgesetzt"), NICHT ein stilles Ueberschreiben.
+- [ ] "Aktuelle Version behalten" -> nichts wird aktualisiert, Fortschritt bleibt,
+      Set zeigt weiterhin "Update verfuegbar" (sichtbar + erneut entscheidbar).
+- [ ] "Trotzdem aktualisieren" -> Update wird angewendet.
+- [ ] Harmloses Update (nur neue Lektion/Uebung ergaenzt, keine bestehende
+      Kennung geaendert) -> KEINE Nachfrage, laeuft direkt durch.
+- [ ] Auto-Sync (nur bei verbundenem Nutzer-Repo, 24h): ein identitaets-aenderndes
+      Update wird im Hintergrund NICHT still angewendet; das Set bleibt auf der
+      bisherigen Fassung und zeigt "Update verfuegbar" (kein Hintergrund-Dialog,
+      kein Datenverlust).
+- [ ] iOS-Standalone (PWA): gleicher manueller Ablauf, Bestaetigung erscheint.
+- [ ] Sprache pruefen (#2160): der Bestaetigungstext erscheint in der App-Sprache
+      (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
+
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
       Aktualisieren → Set kommt NICHT zurueck (#1719)
@@ -454,6 +697,37 @@ jeder Karten-Zeile (`CardImageField`).
       Inhalte sichtbar (nicht still versteckt) (#1731/#1734)
 - [ ] Buch-Empfehlungen kommen aus der foederierten Registry, nicht aus
       der entfernten offiziellen `books.yaml` (#1717)
+
+### Einzelne Lektion loeschen (#2064)
+
+Ort: Meine Inhalte (`/content?tab=my`) → Meine Lektionen → ein Set mit
+MEHREREN Lektionen (z. B. nach einem Buch-Import) → "Lektionen verwalten".
+
+- [ ] Vorbereitung: Buch importieren/erzeugen (mehrere Lektionen in einem
+      Set) ODER ein mehrlektioniges eigenes Set; 1-2 Lektionen spielen
+      (Fortschritt + Wiederholungskarten erzeugen)
+- [ ] "Lektionen verwalten" klappt die Einzel-Lektionsliste auf; jede
+      Lektion hat Abspielen + Loeschen
+- [ ] Loeschen oeffnet einen Bestaetigungsdialog, der die Lektion benennt
+      und sagt, dass es NICHT rueckgaengig gemacht werden kann
+- [ ] Haekchen "Auch meinen Lernfortschritt loeschen" zeigt die ECHTE
+      Karten-Anzahl der Lektion (nicht rueckgaengig)
+- [ ] Loeschen OHNE Haekchen: Lektion verschwindet aus der Liste,
+      lesson_count sinkt, Geschwister-Lektionen bleiben unveraendert;
+      Fortschritt der geloeschten Lektion bleibt (verwaist, spaeter
+      aufraeumbar)
+- [ ] Loeschen MIT Haekchen: Fortschritt + Wiederholungskarten NUR dieser
+      Lektion sind weg, Geschwister-Fortschritt bleibt
+- [ ] Keine Umnummerierung: die verbleibenden Lektionen behalten ihre
+      Titel/Reihenfolge, Deep-Links auf sie funktionieren weiter
+- [ ] Letzte Lektion eines Sets loeschen entfernt das GANZE Set aus Meine
+      Inhalte
+- [ ] Dialog per Tastatur bedienbar: Loeschen-Button ist fokussiert,
+      Escape/Abbrechen schliesst
+- [ ] BEIDE Modi pruefen: Desktop/Server (API) UND GitHub Pages (Dexie)
+- [ ] Backup-Zeitpunkt: VOR dem Loeschen ein Backup (.alb) erstellen →
+      Lektion loeschen → Backup importieren → die Lektion ist wieder da
+      (korrekt: ein Backup ist eine Momentaufnahme, KEIN Bug)
 
 ### Content-Repo trennen vs. Fortschritt loeschen (#1651 / #1652)
 

@@ -234,7 +234,9 @@
     "docs_link": "Leia a documentação",
     "checking_session": "Bem-vindo de volta…",
     "recovered_toast": "Bem-vindo de volta! Seus dados de aprendizado ainda estão aqui.",
-    "intro": "O Adaptive Learner identifica o método que melhor se encaixa em você entre seis abordagens de aprendizado embasadas em pesquisa, e te guia por um ciclo de sete passos em cada sessão."
+    "intro": "O Adaptive Learner identifica o método que melhor se encaixa em você entre seis abordagens de aprendizado embasadas em pesquisa, e te guia por um ciclo de sete passos em cada sessão.",
+    "port_change_hint": "Já usou o Adaptive Learner noutra porta? Os seus dados de aprendizagem permanecem no endereço web anterior. Volte à porta anterior, exporte uma cópia de segurança e importe-a aqui.",
+    "port_change_link": "Como levar os seus dados"
   },
   "onboarding": {
     "title": "Criar um projeto de aprendizado",
@@ -2180,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "A atualização pode redefinir parte da revisão",
+      "message": "Atualizar «{title}» altera conteúdo que você já está aprendendo. Cerca de {cards} cartões de revisão e {lessons} lições com progresso salvo já não correspondem à nova versão e seriam redefinidos. Suas lições concluídas permanecem; apenas as revisões alteradas são afetadas.",
+      "confirm": "Atualizar mesmo assim",
+      "cancel": "Manter a versão atual"
+    },
     "share": {
       "button": "Compartilhar",
       "aria": "Compartilhar o conjunto '{title}'",
@@ -2322,6 +2330,16 @@
       "delete_confirm": "Excluir esta lição? Isso não pode ser desfeito.",
       "deleted": "Lição excluída.",
       "delete_failed": "Não foi possível excluir a lição."
+    },
+    "lesson_delete": {
+      "manage_lessons": "Gerenciar lições",
+      "confirm_body": "Esta lição será removida do conjunto. Esta ação não pode ser desfeita; um backup criado anteriormente ainda a contém.",
+      "delete_progress_option": "Excluir também meu progresso de aprendizagem desta lição ({cards} cartões de revisão)",
+      "delete_progress_option_nocounts": "Excluir também meu progresso de aprendizagem desta lição",
+      "action_delete": "Excluir lição",
+      "deleted": "Lição excluída.",
+      "delete_failed": "Não foi possível excluir a lição.",
+      "delete_aria": "Excluir a lição {title}"
     },
     "set_status": {
       "delete_progress_option": "Excluir também meu progresso de aprendizagem e os cartões de revisão ({lessons} lições, {cards} cartões)",
@@ -2995,7 +3013,8 @@
         "error-correction": "Correção de erros",
         "reading-comprehension": "Compreensão de leitura",
         "graded-quiz": "Questionário avaliado",
-        "dictation": "Ditado"
+        "dictation": "Ditado",
+        "image-description": "Descrição de imagem"
       },
       "edit": {
         "prompt_label": "Instrução / enunciado",
@@ -3022,6 +3041,14 @@
         "dict_accept_add": "Adicionar",
         "dict_accept_remove": "Remover transcrição",
         "dict_accept_placeholder": "O que o aluno deve digitar",
+        "err_image_description": "Adicione uma imagem e pelo menos uma resposta aceita.",
+        "imgdesc_image_label": "Imagem a descrever",
+        "imgdesc_image_preview_alt": "Imagem a descrever",
+        "imgdesc_image_budget_hint": "A imagem é compactada e incorporada (máx. ~150 KB, 512 px) para que o exercício funcione offline e seja incluído no backup. Links remotos não são permitidos.",
+        "imgdesc_accept_label": "Respostas aceitas",
+        "imgdesc_accept_add": "Adicionar",
+        "imgdesc_accept_remove": "Remover resposta",
+        "imgdesc_accept_placeholder": "O que o aluno deve digitar",
         "q_list_label": "Perguntas",
         "q_prompt_label": "Pergunta",
         "q_prompt_placeholder": "Pergunta",

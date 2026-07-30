@@ -449,3 +449,41 @@ jobs:
         run: python3 scripts/verify_docs.py
       - name: Verify mkdocs nav is in sync with _meta.yaml
         run: python3 scripts/generate_mkdocs_nav.py --check
+      # #2075: a gate may not enforce a rule section that does not exist,
+      # and a rule may not cite a workflow that is gone. Both directions.
+      - name: Verify gate <-> rule links
+        run: python3 scripts/verify_gate_rule_links.py
+      # #2073: the themed lessons catalogue must stay complete - no section
+      # silently lost in a reorganization.
+      - name: Verify lessons inventory
+        run: python3 scripts/verify_lessons_inventory.py --compare .claude/rules/lessons/.inventory-baseline.json
+      # #2077: an inventoried check may not be silently unwired or degraded
+      # into a no-op; turning one off requires a declared reason.
+      - name: Verify check inventory
+        run: python3 scripts/verify_check_inventory.py
+      # #2091: the rule corpus is injected into every prompt, so its size is
+      # paid on every turn. It may shrink; growing it is a deliberate act.
+      - name: Verify rule corpus size
+        run: python3 scripts/verify_rule_corpus_size.py
+      # #2087: declared rule changes must converge in docs/rule-change-log.md.
+      # On a PR this only reports; the log is appended when the change lands.
+      - name: Check the rule change log is current
+        if: github.event_name == 'push'
+        run: |
+          git fetch --no-tags --depth=200 origin develop >/dev/null 2>&1 || true
+          python3 scripts/append_rule_change_log.py --range "${{ github.event.before }}..${{ github.sha }}" --check || {
+            echo "::warning::declared rule changes are missing from docs/rule-change-log.md - run 'make rule-change-log'"
+          }
+      # #2079: a binding rule may not change inside an undeclared diff.
+      # Declare via the 'rule-change-declared' label or a
+      # "RULE-CHANGE DECLARED: ..." line in the PR body.
+      - name: Verify normative + gate-status changes are declared
+        if: github.event_name == 'pull_request'
+        env:
+          HAS_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'rule-change-declared') }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
+          ARGS=(--base "origin/${{ github.base_ref }}" --pr-body "$PR_BODY")
+          [ "$HAS_LABEL" = "true" ] && ARGS+=(--declared)
+          python3 scripts/verify_normative_changes.py "${ARGS[@]}"

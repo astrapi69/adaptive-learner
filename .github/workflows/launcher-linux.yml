@@ -51,6 +51,24 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # #2145 / #2149: `release: created` fires whether or not this commit's checks
+      # ran, let alone passed. Inferring "CI was green" from the existence of
+      # a release is a conclusion, not a check - and publishing is the least
+      # reversible thing this project does. Pending, unknown or empty counts
+      # as not green; the step names how many checks it considered.
+      # The WHOLE release-driven run is excluded, derived from the
+      # workflows: all four publishers fire on this event, so excluding
+      # only itself made each one see the other three as pending and
+      # refuse - deterministically, on every release (#2149).
+      - name: Refuse to publish from a commit that was not green
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/verify_release_commit_green.py \
+            --sha "${{ github.sha }}" --exclude-release-jobs
+
+
       - name: Install system dependencies
         # tkinter is not bundled with the manylinux Python wheels used
         # by actions/setup-python on Linux runners. Install the system
@@ -86,8 +104,39 @@ jobs:
       - name: Install GObject system libraries (PyGObject in the tray extra)
         run: sudo apt-get update && sudo apt-get install -y libgirepository1.0-dev libcairo2-dev pkg-config
 
+      # #2117: the backend job caches its Poetry virtualenv (ci.yml); this one
+      # never did, so every run rebuilds pycairo/pygobject from source over
+      # the network - the exposure the retry below papers over. Keyed on the
+      # lockfile, so a dependency change still gets a clean resolve.
+      - name: Cache Poetry virtualenv (launcher)
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-launcher-linux-py3.12-${{ hashFiles('launcher/poetry.lock') }}
+          restore-keys: |
+            poetry-launcher-linux-py3.12-
+
+      # #2117: pycairo ships NO Linux wheel (17 wheels, all Windows, plus one
+      # sdist), so every run compiles it - and pygobject - from source,
+      # fetching build requirements into an isolated env. A truncated fetch
+      # anywhere in that chain surfaces as "BadZipFile / File is not a zip
+      # file" or "Cannot install build-system.requires". Seen three times in
+      # one day, twice on this job. Bounded retry, and each attempt is
+      # visible: a silent retry would hide a real, permanent breakage.
       - name: Install launcher dependencies
-        run: poetry install --no-interaction --no-ansi
+        run: |
+          for attempt in 1 2 3; do
+            echo "::group::poetry install (attempt $attempt/3)"
+            if poetry install --no-interaction --no-ansi; then
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "::endgroup::"
+            echo "::warning::poetry install failed on attempt $attempt/3"
+            sleep $((attempt * 15))
+          done
+          echo "::error::poetry install failed three times - this is not the #2117 flake"
+          exit 1
 
       - name: Run launcher unit tests
         run: poetry run pytest tests/ -v
@@ -100,6 +149,16 @@ jobs:
         # are Windows-only and are skipped on Linux). Same spec as the
         # Windows build, same entrypoint, same excludes.
         run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
+
+      # #2101: same gap as macOS/Windows - the artifact was never started.
+      # Linux is the one platform where the binary is the primary
+      # distribution path, so it gets the same proof, not less.
+      - name: Smoke-run the built binary (#2101)
+        run: |
+          set -e
+          ./dist/adaptive-learner-launcher --version
+          ./dist/adaptive-learner-launcher --verify-bundle
+          echo "RESULT: the binary starts and its bundle is complete"
 
       - name: Compute SHA256 checksum
         run: |

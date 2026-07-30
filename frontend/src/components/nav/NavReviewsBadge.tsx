@@ -12,7 +12,7 @@
 
 import {RefreshCw} from "lucide-react";
 import {useEffect, useState} from "react";
-import {NavLink, useLocation} from "react-router-dom";
+import {NavLink, useLocation} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {

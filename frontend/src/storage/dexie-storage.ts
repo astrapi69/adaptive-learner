@@ -72,8 +72,6 @@ import {
 import {
   deleteSetDexie,
   deleteSetsDexie,
-  setSetStatusDexie,
-  setSetsStatusDexie,
   activeSourcesDexie,
   downloadSetDexie,
   getAssetDexie,
@@ -283,12 +281,10 @@ export const dexieStorage: IStorageService = {
      *  downloaded sets. */
     saveUserSet: (input) => saveUserSetDexie(input, new Date().toISOString()),
     deleteSet: (source, setId) => deleteSetDexie(source, setId),
-    /** #1351 — bulk delete + bulk status in one transaction. */
+    /** #1351 — bulk delete in one transaction. Lifecycle status lives in
+     *  the mode-agnostic ``lib/content/browse/set-status-store``, not on
+     *  the cached row. */
     deleteSets: (refs) => deleteSetsDexie(refs),
-    setSetsStatus: (refs, status) => setSetsStatusDexie(refs, status),
-    /** #1300 — persist the set's lifecycle status on the cached row(s). */
-    setSetStatus: (source, setId, status) =>
-      setSetStatusDexie(source, setId, status),
     aiValidate: (input) => aiValidateDexie(input),
     aiValidateCards: (input) => aiValidateCardsDexie(input),
     getAiValidationCache: (source, setId) =>

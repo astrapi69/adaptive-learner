@@ -22,7 +22,7 @@
 
 import { Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router";
 
 import LevelProgressCard from "../../shared/gamification/LevelProgressCard";
 import XpBadge from "../../shared/gamification/XpBadge";

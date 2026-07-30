@@ -9,7 +9,7 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { purgeSetFromLessonCache } from "./sw-lesson-cache";
+import { purgeLessonFromLessonCache, purgeSetFromLessonCache } from "./sw-lesson-cache";
 
 function fakeCacheStorage(urls: string[]) {
   const requests = urls.map((url) => ({ url }) as Request);
@@ -66,5 +66,31 @@ describe("purgeSetFromLessonCache", () => {
       }),
     });
     expect(await purgeSetFromLessonCache("jane/repo", "waehrung")).toBe(0);
+  });
+});
+
+describe("purgeLessonFromLessonCache (#2064)", () => {
+  it("deletes only the target lesson's entry, keeping siblings", async () => {
+    const { deleted } = fakeCacheStorage([
+      "http://x/api/plugins/content-loader/sets/user-generated/book42/lessons/01-intro.json",
+      "http://x/api/plugins/content-loader/sets/user-generated/book42/lessons/02-body.json",
+      "http://x/api/plugins/content-loader/sets/user-generated/other/lessons/01-intro.json",
+    ]);
+    const removed = await purgeLessonFromLessonCache(
+      "user-generated",
+      "book42",
+      "01-intro.json",
+    );
+    expect(removed).toBe(1);
+    expect(deleted).toEqual([
+      "http://x/api/plugins/content-loader/sets/user-generated/book42/lessons/01-intro.json",
+    ]);
+  });
+
+  it("is a safe no-op when the Cache API is unavailable", async () => {
+    vi.stubGlobal("caches", undefined);
+    expect(
+      await purgeLessonFromLessonCache("user-generated", "book42", "01-intro.json"),
+    ).toBe(0);
   });
 });

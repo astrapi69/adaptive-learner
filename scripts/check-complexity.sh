@@ -55,12 +55,37 @@ else
 fi
 
 # Produce the radon JSON (rank E and worse) once; empty object on failure.
+#
+# FAIL-CLOSED in gate mode (#2083): "no analyzer" must never read as "no
+# offenders". In warn mode the watcher still degrades gracefully, but a GATE
+# that cannot analyse anything may not report success - that is the fail-open
+# class this contract exists for. Set COMPLEXITY_GATE_ALLOW_PARTIAL=1 to
+# accept a deliberately partial run.
 echo "{}" > "$RADON_JSON"
 if [ "${#RADON[@]}" -gt 0 ]; then
-    "${RADON[@]}" cc "${TARGETS[@]}" --min D -j > "$RADON_JSON" 2>/dev/null \
-        || echo "{}" > "$RADON_JSON"
+    if ! "${RADON[@]}" cc "${TARGETS[@]}" --min D -j > "$RADON_JSON" 2>/dev/null; then
+        echo "{}" > "$RADON_JSON"
+        if [ "$MODE" = "gate" ] && [ "${COMPLEXITY_GATE_ALLOW_PARTIAL:-0}" != "1" ]; then
+            echo "ERROR: radon failed - the gate cannot verify Python complexity." >&2
+            echo "       Refusing to report success (set COMPLEXITY_GATE_ALLOW_PARTIAL=1 to override)." >&2
+            exit 1
+        fi
+    fi
+elif [ "$MODE" = "gate" ] && [ "${COMPLEXITY_GATE_ALLOW_PARTIAL:-0}" != "1" ]; then
+    echo "ERROR: radon unavailable - the gate cannot verify Python complexity." >&2
+    echo "       Refusing to report success (set COMPLEXITY_GATE_ALLOW_PARTIAL=1 to override)." >&2
+    exit 1
 else
     echo "radon unavailable - Python complexity is skipped this run." >&2
+fi
+
+# A ratchet without its baseline cannot ratchet: an absent baseline would make
+# every offender look "new" (or, with an empty scan, make everything look
+# clean). Gate mode demands the file (#2083).
+if [ "$MODE" = "gate" ] && [ ! -f "$BASELINE" ]; then
+    echo "ERROR: $BASELINE is missing - a ratchet gate without its baseline" >&2
+    echo "       cannot decide anything. Run 'make check-complexity-gate-update'." >&2
+    exit 1
 fi
 
 # --- eslint JSON (only needed for gate / update) -------------------------
@@ -100,6 +125,7 @@ case "$MODE" in
         ;;
     update)
         produce_eslint_json
+        RADON_VERSION="$(("${RADON[@]}" --version 2>/dev/null || echo unavailable) | head -1)" \
         python3 "$ROOT/scripts/complexity_gate.py" \
             --radon-json "$RADON_JSON" --eslint-json "$ESLINT_JSON" \
             --baseline "$BASELINE" --update-baseline
@@ -107,6 +133,7 @@ case "$MODE" in
         ;;
     gate)
         produce_eslint_json
+        RADON_VERSION="$(("${RADON[@]}" --version 2>/dev/null || echo unavailable) | head -1)" \
         python3 "$ROOT/scripts/complexity_gate.py" \
             --radon-json "$RADON_JSON" --eslint-json "$ESLINT_JSON" \
             --baseline "$BASELINE"

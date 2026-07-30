@@ -1,0 +1,31 @@
+{
+  "note": "Ceiling for the always-injected rule corpus (#2091). Characters, not tokens - see scripts/verify_rule_corpus_size.py. Lower it with --update-baseline; raising it needs --allow-raise and belongs in a commit where the raise is the point.",
+  "file_count": 24,
+  "total_chars": 279758,
+  "measured": [
+    "CLAUDE.md",
+    ".claude/rules/ai-workflow/documentation-protocol.md",
+    ".claude/rules/ai-workflow/github-issue-policy.md",
+    ".claude/rules/ai-workflow/implementation-workflow.md",
+    ".claude/rules/ai-workflow/pr-policy.md",
+    ".claude/rules/ai-workflow/test-coverage-audits.md",
+    ".claude/rules/ai-workflow/testplan-policy.md",
+    ".claude/rules/architecture.md",
+    ".claude/rules/code-hygiene.md",
+    ".claude/rules/coding-standards.md",
+    ".claude/rules/design-tokens.md",
+    ".claude/rules/lessons/backend.md",
+    ".claude/rules/lessons/ci-gates.md",
+    ".claude/rules/lessons/content-storage.md",
+    ".claude/rules/lessons/core.md",
+    ".claude/rules/lessons/docs-i18n.md",
+    ".claude/rules/lessons/frontend.md",
+    ".claude/rules/lessons/release-packaging.md",
+    ".claude/rules/lessons-learned.md",
+    ".claude/rules/quality-checks.md",
+    ".claude/rules/release-workflow.md",
+    ".claude/rules/reusability.md",
+    ".claude/rules/tdd.md",
+    ".claude/rules/vibe-coding.md"
+  ]
+}

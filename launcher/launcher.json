@@ -7,10 +7,11 @@
   "compose_file": "docker-compose.prod.yml",
   "default_port": 8501,
   "env_port_key": "ADAPTIVE_LEARNER_PUBLIC_PORT",
-  "internal_ports": {"backend": 8000, "nginx": 80},
+  "internal_ports": {
+    "backend": 8000
+  },
   "env_internal_port_keys": {
-    "backend": "ADAPTIVE_LEARNER_BACKEND_PORT",
-    "nginx": "ADAPTIVE_LEARNER_NGINX_PORT"
+    "backend": "ADAPTIVE_LEARNER_BACKEND_PORT"
   },
   "show_advanced_ports": true,
   "health_check_path": "/api/health",
@@ -27,8 +28,10 @@
   "releases_url": "https://github.com/astrapi69/adaptive-learner/releases/latest",
   "docs_url": "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md",
   "update_check_enabled": true,
-  "app_version": "2.6.1",
-  "legacy_names": ["adaptive_learner"],
+  "app_version": "2.7.0",
+  "legacy_names": [
+    "adaptive_learner"
+  ],
   "cleanup_configs": [
     "~/.config/adaptive_learner",
     "~/.local/share/adaptive_learner"
@@ -37,5 +40,21 @@
     "~/.config/",
     "~/.local/share/",
     "~/"
-  ]
+  ],
+  "deployment_mode": "image",
+  "image_reference": "ghcr.io/astrapi69/adaptive-learner:2.7.0",
+  "container_port": 8000,
+  "container_volumes": {
+    "adaptive-learner_adaptive-learner-data": "/app/data"
+  },
+  "container_env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "ADAPTIVE_LEARNER_DEBUG": "false",
+    "ADAPTIVE_LEARNER_DATA_DIR": "/app/data",
+    "ADAPTIVE_LEARNER_PORT": "8000",
+    "ADAPTIVE_LEARNER_SERVE_FRONTEND": "1",
+    "ADAPTIVE_LEARNER_FRONTEND_DIST": "/app/static"
+  },
+  "_image_reference_note": "Pinned to the app version TAG, not a digest (#2110 Teil 4): the reference is committed in the release commit, BEFORE publish-image.yml pushes - the digest does not exist yet at commit time, the tag is deterministic. Tags are pushed once per release and never moved; the digest is recorded by the publish run's summary and the release notes. The tag's version segment is rewritten by make sync-versions (same class as app_version), so it cannot drift from backend/pyproject.toml.",
+  "_container_volumes_note": "The PREFIXED name is deliberate (#2154), not a typo to tidy up. Compose prefixes volume names with the project name, so the compose path created adaptive-learner_adaptive-learner-data and the user's database, uploads and Fernet secret.key live there. docker-py takes container_volumes literally, so declaring the bare name would mount a DIFFERENT, empty volume and the app would look freshly installed while the data sat invisible next to it. The name carries a compose artifact forever; that is the price of finding existing data without asking the user to act."
 }

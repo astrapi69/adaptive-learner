@@ -12,7 +12,7 @@ delete atomic - no half state.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from app.exceptions import NotFoundError
 from app.repositories.element_errors_repo import ElementErrorsRepository
@@ -21,10 +21,15 @@ from app.repositories.lesson_progress_repo import LessonProgressRepository
 
 @dataclass(frozen=True)
 class LearningDataDeletion:
-    """What to delete: specific progress rows + every card of the sets."""
+    """What to delete: specific progress rows + review cards.
+
+    Cards are addressed either by whole ``set_ids`` or, for a single-lesson
+    delete (#2064), by exact ``(set_id, lesson_id)`` pairs in ``lesson_cards``.
+    """
 
     lesson_progress_ids: list[str]
     set_ids: list[str]
+    lesson_cards: list[tuple[str, str]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -61,6 +66,7 @@ def delete_learning_data(
         raise NotFoundError(f"User {user_id} not found")
     lessons_deleted = progress_repo.delete_by_ids(user_id, deletion.lesson_progress_ids)
     cards_deleted = errors_repo.delete_by_set_ids(user_id, deletion.set_ids)
+    cards_deleted += errors_repo.delete_by_lessons(user_id, deletion.lesson_cards)
     progress_repo.commit()
     return LearningDataDeletionResult(
         lessons_deleted=lessons_deleted,

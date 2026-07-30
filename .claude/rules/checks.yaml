@@ -1,0 +1,184 @@
+# Check inventory (#2077).
+#
+# In verify_docs.py the test-count arithmetic and the README badge
+# cross-check were silently disabled: a reflow dropped the bold from
+# "= **10293 tests**", the regex stopped matching, the check emitted a
+# WARN and returned. The rule still applied, the enforcement was gone,
+# and nothing said so. Together with the #1640 case (#2075) the system
+# claimed enforcement in both directions that it did not have.
+#
+# This inventory is the declaration surface. scripts/verify_check_inventory.py
+# fails when an entry declared `active` is not actually wired, or has
+# degraded into a no-op. Turning a check off stays possible - but only by
+# declaring `status: disabled` WITH a reason, which shows up in the diff.
+# Silent disabling is what becomes impossible.
+#
+# Fields:
+#   id       - stable name, also the label the check prints
+#   verifies - one line: what breaks if this check is gone
+#   rule     - rule section it enforces (file#anchor), or "-" when the
+#              check guards a mechanism rather than a prose rule
+#   status   - active | disabled
+#   reason   - REQUIRED when status is disabled
+#   wired_in - where it runs: make target and/or workflow file
+#   probe    - how the checker proves it is alive (see the script):
+#              make_target / script_exists / called_in / no_warn
+
+checks:
+  - id: docs-drift
+    verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
+    rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml
+    probe: make_target=verify-docs
+
+  - id: docs-test-count-arithmetic
+    verifies: the CLAUDE.md test-count line adds up and matches the README badge
+    rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
+    status: active
+    wired_in: scripts/verify_docs.py check_test_counts
+    probe: no_warn=could not parse the
+
+  - id: gate-rule-links
+    verifies: no gate without its rule section, no rule citing a dead gate, no unclassified workflow
+    rule: quality-checks.md#gate-and-rule-stay-coupled-2075
+    status: active
+    wired_in: make verify-gate-rule-links; .github/workflows/ci.yml
+    probe: make_target=verify-gate-rule-links
+
+  - id: lessons-inventory
+    verifies: every pitfall section survives a catalogue reorganization, byte-identical
+    rule: "-"
+    status: active
+    wired_in: make verify-lessons-inventory; .github/workflows/ci.yml
+    probe: make_target=verify-lessons-inventory
+
+  - id: check-inventory
+    verifies: this inventory itself - an active check may not be silently unwired
+    rule: quality-checks.md#checks-are-declared-not-silently-disabled-2077
+    status: active
+    wired_in: make verify-check-inventory; .github/workflows/ci.yml
+    probe: make_target=verify-check-inventory
+
+  - id: complexity-gate
+    verifies: new or regressed complexity offenders versus .complexity-baseline; fails closed without radon or baseline
+    rule: quality-checks.md#gate-test-contract-three-tests-and-fail-closed-2083
+    status: active
+    wired_in: make check-complexity-gate; .github/workflows/complexity-check.yml
+    probe: make_target=check-complexity-gate
+
+  - id: testid-reference-gate
+    verifies: spec-referenced testids are not removed without touching the spec
+    rule: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
+    status: active
+    wired_in: make check-testid-refs; .github/workflows/testid-reference-gate.yml
+    probe: make_target=check-testid-refs
+
+  - id: theme-token-matrix
+    verifies: every theme defines the same token set and passes WCAG contrast
+    rule: design-tokens.md#enforcement-frontendsrcstylesno-hardcoded-colorstestts
+    status: active
+    wired_in: make verify-theme
+    probe: make_target=verify-theme
+
+  - id: i18n-script-sanity
+    verifies: de substitute spellings and el/hi latin transliteration in the catalogs
+    rule: lessons/docs-i18n.md#german-content-uses-real-umlauts
+    status: active
+    wired_in: make verify-i18n-scripts; .pre-commit-config.yaml
+    probe: make_target=verify-i18n-scripts
+
+  - id: rule-corpus-size
+    verifies: the always-injected rule corpus may shrink, not grow silently
+    rule: quality-checks.md#the-rule-corpus-has-a-ceiling-2091
+    status: active
+    wired_in: make verify-rule-corpus-size; .github/workflows/ci.yml
+    probe: make_target=verify-rule-corpus-size
+
+  - id: docker-context
+    verifies: no node_modules survives the .dockerignore rules (absolute symlinks dangle in the container)
+    rule: "-"
+    status: active
+    wired_in: make verify-docker-context; .github/workflows/docker-build-smoke.yml
+    probe: make_target=verify-docker-context
+
+  - id: image-size
+    verifies: the published image's compressed size may shrink, not grow silently
+    rule: "-"
+    status: active
+    wired_in: make verify-image-size; .github/workflows/docker-build-smoke.yml
+    probe: make_target=verify-image-size
+
+  - id: release-commit-green
+    verifies: no release-driven job publishes from a commit whose checks did not pass
+    rule: quality-checks.md#gate-test-contract-five-tests-and-fail-closed-2083
+    status: active
+    wired_in: .github/workflows/publish-image.yml; launcher-{linux,macos,windows}.yml
+    probe: script_exists=scripts/verify_release_commit_green.py
+
+  - id: normative-changes
+    verifies: normative-keyword and gate-status changes are declared, not buried in a diff
+    rule: quality-checks.md#normative-changes-are-declared-not-buried-2079
+    also_enforces: quality-checks.md#condensation-prs-are-content-neutral-or-declared-2081
+    status: active
+    wired_in: make verify-normative-changes; .github/workflows/ci.yml
+    probe: make_target=verify-normative-changes
+
+  - id: rule-change-log
+    verifies: declared rule changes converge in docs/rule-change-log.md
+    rule: quality-checks.md#declared-rule-changes-converge-in-one-log-2087
+    status: active
+    wired_in: make rule-change-log-check; .github/workflows/ci.yml
+    probe: make_target=rule-change-log-check
+
+  # --- declared as OFF: visible in the diff, with a reason ---
+  - id: prettier-frontend
+    verifies: Prettier formatting of frontend/src
+    rule: "-"
+    status: disabled
+    reason: >-
+      frontend/ has no prettier config, so the hook reformats 4-space files to
+      its 2-space defaults; CI skips it via SKIP=prettier-frontend,eslint in
+      ci.yml. Re-enable together with a committed .prettierrc.
+    wired_in: .pre-commit-config.yaml (skipped in ci.yml)
+    probe: none
+
+  - id: eslint-precommit
+    verifies: ESLint inside the pre-commit job
+    rule: "-"
+    status: disabled
+    reason: >-
+      the pre-commit job installs no frontend deps, so the hook cannot resolve
+      @eslint/js (#268). ESLint runs with deps in the Frontend Tests job.
+    wired_in: .pre-commit-config.yaml (skipped in ci.yml)
+    probe: none
+
+  - id: prettier-ci-check
+    verifies: bun run format:check in CI
+    rule: "-"
+    status: disabled
+    reason: >-
+      wired with continue-on-error until the tree is fully formatted and the
+      format-on-touch hook has caught up (ci.yml "Prettier check (non-blocking)").
+    wired_in: .github/workflows/ci.yml
+    probe: none
+
+  - id: nightly-mutation
+    verifies: frontend mutation testing on a schedule
+    rule: quality-checks.md#mutation-testing
+    status: disabled
+    reason: >-
+      the scheduled run is a no-op unless the repo variable
+      ENABLE_NIGHTLY_MUTATION is "true"; manual workflow_dispatch always runs.
+    wired_in: .github/workflows/mutation-frontend.yml
+    probe: none
+
+  - id: nightly-webkit
+    verifies: real-WebKit layout gate on a schedule
+    rule: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    status: disabled
+    reason: >-
+      the scheduled run is gated behind ENABLE_NIGHTLY_WEBKIT (off by default);
+      workflow_dispatch and release/** pushes always run (#1843).
+    wired_in: .github/workflows/webkit-gate.yml
+    probe: none

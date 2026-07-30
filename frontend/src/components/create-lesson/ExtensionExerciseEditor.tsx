@@ -24,6 +24,7 @@ import {
     DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
+    IMAGE_DESCRIPTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     normalizeExtensionExercise,
     validateExtensionExercise,
@@ -33,6 +34,7 @@ import {extensionEditErrorKey} from "../../lib/content/lesson/edit-error-keys";
 import {
     DictationFields,
     GradedQuizFields,
+    ImageDescriptionFields,
     ReadingComprehensionFields,
 } from "./extension-fields";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -55,6 +57,10 @@ interface ErrorCorrectionPayload {
 }
 interface DictationPayload {
     audio: string;
+    accept: string[];
+}
+interface ImageDescriptionPayload {
+    image: string;
     accept: string[];
 }
 
@@ -141,6 +147,14 @@ export default function ExtensionExerciseEditor({
                 <DictationFields
                     id={id}
                     payload={draft.ext_payload as unknown as DictationPayload}
+                    onChange={patchPayload}
+                    t={t}
+                />
+            )}
+            {draft.type === IMAGE_DESCRIPTION_EXT_TYPE && (
+                <ImageDescriptionFields
+                    id={id}
+                    payload={draft.ext_payload as unknown as ImageDescriptionPayload}
                     onChange={patchPayload}
                     t={t}
                 />

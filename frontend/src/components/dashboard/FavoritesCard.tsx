@@ -9,7 +9,7 @@
  * useFavorites.
  */
 
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import FavoritesList from "../../shared/media/FavoritesList";
 import {useFavorites} from "../../hooks/learning/useFavorites";

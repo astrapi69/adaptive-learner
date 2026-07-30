@@ -257,7 +257,11 @@ export default defineConfig({
                 manualChunks: (id: string) => {
                     if (!id.includes("node_modules")) return undefined;
                     const chunkMap: Record<string, string[]> = {
-                        "vendor-react": ["react", "react-dom", "react-router-dom"],
+                        // #2040 — react-router v8 removed the react-router-dom
+                        // package (DOM bindings live in react-router itself),
+                        // so match the real package or the router silently
+                        // falls out of the vendor-react chunk.
+                        "vendor-react": ["react", "react-dom", "react-router"],
                         "vendor-ui": ["react-toastify"],
                         "vendor-charts": ["recharts", "d3-shape", "d3-scale", "d3-array", "d3-path", "d3-color", "d3-interpolate", "d3-format", "d3-time", "d3-time-format"],
                         "vendor-tree": ["tree-model"],

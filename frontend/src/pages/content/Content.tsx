@@ -28,7 +28,7 @@
  */
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 
 import PageContainer from "../../shared/layout/PageContainer";
 import { useInfoHint } from "../../shared/feedback/useInfoHint";
@@ -41,6 +41,7 @@ import ContentSearchBar from "../../components/content/browser/ContentSearchBar"
 import FilterMenuButton from "../../shared/forms/FilterMenuButton";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
 import { setSelectionKey } from "../../components/content/browser/ContentSetListView";
+import ConfirmDialog from "../../shared/feedback/ConfirmDialog";
 import DeleteSetModal from "../../components/content/browser/delete/DeleteSetModal";
 import BulkDeleteSetsModal from "../../components/content/browser/delete/BulkDeleteSetsModal";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
@@ -175,6 +176,9 @@ export default function ContentPage() {
     handleExportSet,
     fetchSetLessons,
     handleDownload,
+    updateGuard,
+    confirmUpdate,
+    dismissUpdateGuard,
   } = useContentSetActions({ navigate, setSets, setPerSetState });
 
   // #1351 — multi-select state for the bulk-action bar.
@@ -428,6 +432,36 @@ export default function ContentPage() {
         onConfirm={(deleteProgress) =>
           void handleConfirmBulkDelete(deleteProgress).then(() => selection.clear())
         }
+      />
+
+      {/* #2128 — a manual update that would orphan the learner's progress/SRS
+          is held behind this quantified confirmation instead of overwriting
+          silently. Strings live in content.update_guard.* (all 11 catalogs,
+          #2160); the inline text is the fallback of record. */}
+      <ConfirmDialog
+        open={updateGuard !== null}
+        title={t(
+          "content.update_guard.title",
+          "Update may reset some review progress",
+        )}
+        message={
+          updateGuard
+            ? t(
+                "content.update_guard.message",
+                'Updating "{title}" changes content you are already learning. {cards} review card(s) and {lessons} lesson(s) with saved progress no longer match this new version and would be reset. Your completed lessons stay; only the changed review items are affected.',
+              )
+                .replace("{title}", updateGuard.entry.title ?? updateGuard.entry.id)
+                .replace("{cards}", String(updateGuard.impact.lostCards.length))
+                .replace(
+                  "{lessons}",
+                  String(updateGuard.impact.lostLessons.length),
+                )
+            : ""
+        }
+        confirmLabel={t("content.update_guard.confirm", "Update anyway")}
+        cancelLabel={t("content.update_guard.cancel", "Keep current version")}
+        onConfirm={() => void confirmUpdate()}
+        onCancel={dismissUpdateGuard}
       />
     </PageContainer>
   );

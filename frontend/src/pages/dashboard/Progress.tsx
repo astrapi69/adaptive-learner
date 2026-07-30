@@ -1,5 +1,5 @@
 import {Fragment, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 import MethodBadge from "../../components/session/MethodBadge";
 import NotebookLMSection from "../../components/settings/integrations/NotebookLMSection";

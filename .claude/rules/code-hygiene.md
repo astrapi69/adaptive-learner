@@ -1,3 +1,16 @@
+---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
+description: Automated code quality enforcement, formatting, linting, pre-commit hooks, error handling architecture, API conventions, logging, docstrings
+globs:
+  - backend/**/*.py
+  - plugins/**/*.py
+  - frontend/src/**/*.ts
+  - frontend/src/**/*.tsx
+  - .pre-commit-config.yaml
+alwaysApply: false
+---
+
 # Code hygiene
 
 Automated enforcement of code quality. These rules make every commit look consistent, whether written by a human or an AI.
@@ -8,25 +21,24 @@ Automated enforcement of code quality. These rules make every commit look consis
 
 ```toml
 # backend/pyproject.toml
-
 [tool.ruff]
 target-version = "py311"
 line-length = 100
 
 [tool.ruff.lint]
 select = [
-    "E",    # pycodestyle errors
-    "W",    # pycodestyle warnings
-    "F",    # pyflakes
-    "I",    # isort
-    "N",    # pep8-naming
-    "UP",   # pyupgrade
-    "B",    # flake8-bugbear
-    "SIM",  # flake8-simplify
-    "TCH",  # flake8-type-checking
+  "E",    # pycodestyle errors
+  "W",    # pycodestyle warnings
+  "F",    # pyflakes
+  "I",    # isort
+  "N",    # pep8-naming
+  "UP",   # pyupgrade
+  "B",    # flake8-bugbear
+  "SIM",  # flake8-simplify
+  "TCH",  # flake8-type-checking
 ]
 ignore = [
-    "E501",  # line-length (handled by the formatter)
+  "E501",  # line-length (handled by the formatter)
 ]
 
 [tool.ruff.lint.isort]
@@ -37,7 +49,8 @@ quote-style = "double"
 indent-style = "space"
 ```
 
-**Commands:**
+Commands:
+
 ```bash
 cd backend && poetry run ruff check .         # lint
 cd backend && poetry run ruff check --fix .   # auto-fix
@@ -74,7 +87,8 @@ cd backend && poetry run ruff format .        # format
 }
 ```
 
-**Commands:**
+Commands:
+
 ```bash
 cd frontend && bunx eslint src/ --fix    # lint + auto-fix
 cd frontend && bunx prettier --write src/ # format
@@ -89,8 +103,6 @@ cd backend && poetry add --group dev ruff
 # Frontend
 cd frontend && bun add -d eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-plugin-react-hooks prettier
 ```
-
----
 
 ## Pre-commit hooks
 
@@ -107,28 +119,24 @@ repos:
         language: system
         pass_filenames: false
         files: ^backend/
-
       - id: ruff-format
         name: ruff format check
         entry: bash -c 'cd backend && poetry run ruff format --check .'
         language: system
         pass_filenames: false
         files: ^backend/
-
       - id: eslint
         name: eslint
-        entry: bash -c 'cd frontend && npx eslint src/ --max-warnings=0'
+        entry: bash -c 'cd frontend && bunx eslint src/ --max-warnings=0'
         language: system
         pass_filenames: false
         files: ^frontend/src/
-
       - id: prettier
         name: prettier check
-        entry: bash -c 'cd frontend && npx prettier --check src/'
+        entry: bash -c 'cd frontend && bunx prettier --check src/'
         language: system
         pass_filenames: false
         files: ^frontend/src/
-
       - id: pytest-quick
         name: pytest (backend only)
         entry: bash -c 'cd backend && poetry run pytest tests/ -x -q'
@@ -137,13 +145,15 @@ repos:
         files: ^backend/
 ```
 
-**Setup:**
+Setup:
+
 ```bash
 pip install pre-commit
 pre-commit install
 ```
 
-**After that, on every `git commit` the following happens automatically:**
+After that, on every `git commit` the following happens automatically:
+
 1. Python code is checked for lint errors (ruff)
 2. Python formatting is checked (ruff format)
 3. TypeScript is checked for errors (ESLint)
@@ -152,11 +162,9 @@ pre-commit install
 
 If anything fails: the commit is rejected and the errors are shown.
 
----
-
 ## Error handling architecture
 
-### Principle: handle errors at the right layer
+**Principle: handle errors at the right layer**
 
 ```
 Frontend       Shows the user what went wrong (toast). Catches ApiError.
@@ -178,7 +186,6 @@ Every layer catches only what it can handle itself. Everything else is passed up
 
 ```python
 # backend/app/exceptions.py
-
 class AdaptiveLearnerError(Exception):
     """Base class for all AdaptiveLearner errors."""
     def __init__(self, message: str, detail: str | None = None):
@@ -209,16 +216,12 @@ class ExternalServiceError(AdaptiveLearnerError):
         super().__init__(f"{service}: {message}")
 ```
 
-The actual hierarchy lives in
-`backend/app/exceptions.py`. Add a new subclass when a new
-domain error needs to map to a distinct HTTP status; do NOT
-overload an existing one.
+The actual hierarchy lives in `backend/app/exceptions.py`. Add a new subclass when a new domain error needs to map to a distinct HTTP status; do NOT overload an existing one.
 
 ### Backend: global exception handler
 
 ```python
 # backend/app/main.py - register once
-
 ERROR_STATUS_MAP = {
     NotFoundError: 404,
     ValidationError: 400,
@@ -240,7 +243,7 @@ async def adaptive_learner_error_handler(request, exc: AdaptiveLearnerError):
 
 ### Backend: who throws what
 
-**Services** throw domain exceptions, NEVER HTTPException:
+**Services throw domain exceptions, NEVER HTTPException:**
 
 ```python
 # RIGHT
@@ -267,7 +270,7 @@ def get_learning_project(project_id: str, db: Session) -> LearningProject:
     raise HTTPException(status_code=404, ...)  # NOT in services
 ```
 
-**Routers** are thin, the exception handler takes over:
+**Routers are thin, the exception handler takes over:**
 
 ```python
 # RIGHT
@@ -277,7 +280,7 @@ def get_project_endpoint(project_id: str, db: Session = Depends(get_db)):
     # NotFoundError -> exception handler -> 404 automatically
 ```
 
-**Plugins** throw the same domain exceptions as core services:
+**Plugins throw the same domain exceptions as core services:**
 
 ```python
 class SessionPlugin(BasePlugin):
@@ -287,7 +290,7 @@ class SessionPlugin(BasePlugin):
         return _build_prompt(profile, step)
 ```
 
-**External tools** are wrapped:
+**External tools are wrapped:**
 
 ```python
 async def call_ai_provider(prompt: str, model: str) -> str:
@@ -304,11 +307,11 @@ async def call_ai_provider(prompt: str, model: str) -> str:
 
 ### Backend: rules
 
-- Services throw AdaptiveLearnerError subclasses, NEVER HTTPException.
+- Services throw `AdaptiveLearnerError` subclasses, NEVER `HTTPException`.
 - Routers catch NOTHING. The global exception handler takes over.
 - No bare `except Exception`. Catch specific exceptions.
-- Always wrap external errors (AI providers, Edge-TTS, ...) into ExternalServiceError with the service name.
-- Plugin errors surface as domain exceptions (NotFoundError / ValidationError / ExternalServiceError) — same shapes the core uses.
+- Always wrap external errors (AI providers, Edge-TTS, ...) into `ExternalServiceError` with the service name.
+- Plugin errors surface as domain exceptions (`NotFoundError` / `ValidationError` / `ExternalServiceError`) — same shapes the core uses.
 - HTTP 422 comes from Pydantic automatically.
 - Logging: 4xx as WARNING, 5xx as ERROR with traceback.
 
@@ -399,17 +402,15 @@ catch (error) {
 ### Frontend: rules
 
 - ALWAYS show API errors to the user (toast), never swallow them.
-- No console.log for user feedback. Only toasts (react-toastify).
+- No `console.log` for user feedback. Only toasts (react-toastify).
 - Set loading states during API calls (no "dead" UI).
-- ApiError class for all API errors, not generic Error.
+- `ApiError` class for all API errors, not generic `Error`.
 - Error messages via i18n, no hardcoded strings.
-- finally block for the loading-state reset.
+- `finally` block for the loading-state reset.
 - Toast on server errors (5xx) with a "Report issue" button that opens a GitHub Issue.
 - The GitHub Issue contains: error detail as title, stacktrace (from the debug response), browser info, app version.
 - Generic error messages ("Session failed", "Import failed") are forbidden, they make issues worthless.
 - Production users see friendly `ui.errors.*` strings, not raw HTTP detail or stack traces. Developer Mode in Settings (off by default) flips this on for debugging.
-
----
 
 ## API conventions
 
@@ -424,14 +425,13 @@ POST   /api/projects                    # create
 PUT    /api/projects/{id}               # full update
 PATCH  /api/projects/{id}               # partial update
 DELETE /api/projects/{id}               # delete
-
 GET    /api/projects/{id}/sessions      # subresource list
 POST   /api/projects/{id}/sessions      # subresource create
 ```
 
 ### Response format
 
-```json
+```typescript
 // Success (single)
 { "id": "abc", "topic": "Spanish", "goal": "Conversational fluency in 3 months" }
 
@@ -445,14 +445,13 @@ POST   /api/projects/{id}/sessions      # subresource create
 { "detail": [{ "loc": ["body", "topic"], "msg": "field required", "type": "value_error.missing" }] }
 ```
 
-**Rules:**
+### Rules:
+
 - No envelope (no `{ "data": ..., "status": "ok" }`). The HTTP status is enough.
 - IDs are UUIDs as strings.
 - Timestamps as ISO 8601 (UTC).
 - Lists are NOT paginated. Pagination only when needed.
-- Plugin endpoints under /api/plugins/{plugin-name}/... (e.g. /api/plugins/learning-repo/render/{project_id}).
-
----
+- Plugin endpoints under `/api/plugins/{plugin-name}/...` (e.g. `/api/plugins/learning-repo/render/{project_id}`).
 
 ## Logging
 
@@ -460,7 +459,6 @@ POST   /api/projects/{id}/sessions      # subresource create
 
 ```python
 import logging
-
 logger = logging.getLogger(__name__)
 
 # RIGHT: structured, with context
@@ -473,48 +471,40 @@ print("session done")              # no print
 logger.info(f"Ended {session}")   # no objects inside messages, use extra
 ```
 
-**Log levels:**
-- DEBUG: detailed developer info (only with ADAPTIVE_LEARNER_DEBUG=true).
-- INFO: important actions (session started, plugin loaded, backup created).
-- WARNING: unexpected behavior that is not critical (plugin not found, fallback used).
-- ERROR: errors that affect the user (AI provider unreachable, DB error).
+Log levels:
+
+- **DEBUG**: detailed developer info (only with `ADAPTIVE_LEARNER_DEBUG=true`).
+- **INFO**: important actions (session started, plugin loaded, backup created).
+- **WARNING**: unexpected behavior that is not critical (plugin not found, fallback used).
+- **ERROR**: errors that affect the user (AI provider unreachable, DB error).
 
 ### Frontend
 
-- No console.log in production code.
-- console.warn and console.error only for real developer warnings.
+- No `console.log` in production code.
+- `console.warn` and `console.error` only for real developer warnings.
 - User feedback exclusively via toast notifications (react-toastify).
-
----
 
 ## Documentation: docstrings over inline comments
 
-DOC-DOCSTRINGS-NOT-INLINE (applies to all agents and all repos):
-prefer self-explanatory code (speaking variable + function names) and
-put explanation in a docstring / doc-block, NOT in an inline comment.
+**DOC-DOCSTRINGS-NOT-INLINE** (applies to all agents and all repos): prefer self-explanatory code (speaking variable + function names) and put explanation in a docstring / doc-block, NOT in an inline comment.
 
 **Forbidden:**
-- Inline `#` / `//` comments that explain WHAT the code does
-  (`# increment counter`, `// set the value`).
-- Inline comments that belong in the commit message
-  (`# this fixes the bug`).
-- Authorship / tooling markers (`# added by CC`, `# AI-generated`) —
-  already banned in coding-standards.md.
+
+- Inline `#` / `//` comments that explain WHAT the code does (`# increment counter`, `// set the value`).
+- Inline comments that belong in the commit message (`# this fixes the bug`).
+- Authorship / tooling markers (`# added by CC`, `# AI-generated`) — already banned in coding-standards.md.
 - Commented-out code. Delete it; git keeps the history.
 
 **Still allowed:**
-- `TODO:` / `FIXME:` WITH an issue reference
-  (`# TODO(#53): extract to shared util`).
-- A short inline note for a genuinely non-obvious WHY that has no
-  natural docstring home — a regex, a tricky algorithm step, a
-  workaround for an external quirk. Reach for this last, not first.
+
+- `TODO:` / `FIXME:` WITH an issue reference (`# TODO(#53): extract to shared util`).
+- A short inline note for a genuinely non-obvious WHY that has no natural docstring home — a regex, a tricky algorithm step, a workaround for an external quirk. Reach for this last, not first.
 - License headers.
 
 **Required:**
-- Google-style docstrings for every public Python function, class,
-  and method (see the format below).
-- TSDoc (`/** ... */`) for every exported TS function, hook, and
-  component.
+
+- Google-style docstrings for every public Python function, class, and method (see the format below).
+- TSDoc (`/** ... */`) for every exported TS function, hook, and component.
 
 ```python
 def restore_backup(backup_data: dict, user_id: str) -> RestoreResult:
@@ -578,8 +568,6 @@ def award_xp_for_session(
         NotFoundError: when the project FK doesn't resolve.
     """
 ```
-
----
 
 ## Summary: what happens automatically on every commit
 

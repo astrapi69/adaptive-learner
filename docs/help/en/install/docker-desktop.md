@@ -8,9 +8,9 @@ guide walks you through installing Docker Desktop.
 ## What you need
 
 - About 800 MB of download for Docker Desktop itself.
-- About 2 GB of disk for the Adaptive Learner image on the first run
-  (this happens once; later starts are fast).
-- A few minutes for the first build (5-10 minutes is normal).
+- About 110-120 MB of download plus roughly 500 MB of disk for the
+  Adaptive Learner image on the first run (this happens once; later
+  starts are fast and work offline).
 
 ## Install
 
@@ -26,8 +26,9 @@ guide walks you through installing Docker Desktop.
 ## Start the launcher
 
 Once Docker Desktop is running, start the Adaptive Learner launcher
-again. It checks Docker first, then downloads, builds, and starts the
-app, and finally offers an "Open in browser" button.
+again. It checks Docker first, then downloads and starts the app, and
+finally offers an "Open in browser" button. Nothing is built on your
+machine - the launcher pulls a ready-built, verified image.
 
 If Docker is not yet running when you start the launcher, it shows a
 notice with a "Start Docker" button so you can bring it up without

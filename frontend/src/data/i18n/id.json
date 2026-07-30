@@ -234,7 +234,9 @@
     "docs_link": "Baca dokumentasi",
     "checking_session": "Selamat datang kembali…",
     "recovered_toast": "Selamat datang kembali! Data belajar Anda masih ada di sini.",
-    "intro": "Adaptive Learner menemukan metode yang paling cocok untuk Anda dari enam pendekatan belajar berbasis riset, dan memandu Anda melalui siklus tujuh langkah di setiap sesi."
+    "intro": "Adaptive Learner menemukan metode yang paling cocok untuk Anda dari enam pendekatan belajar berbasis riset, dan memandu Anda melalui siklus tujuh langkah di setiap sesi.",
+    "port_change_hint": "Sudah pernah memakai Adaptive Learner di port lain? Data belajar Anda tetap berada di alamat web sebelumnya. Kembali ke port sebelumnya, ekspor cadangan, lalu impor di sini.",
+    "port_change_link": "Cara memindahkan data Anda"
   },
   "onboarding": {
     "title": "Buat proyek belajar",
@@ -2180,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "Pembaruan dapat mengatur ulang sebagian progres ulasan",
+      "message": "Memperbarui \"{title}\" mengubah materi yang sedang kamu pelajari. Sekitar {cards} kartu ulasan dan {lessons} pelajaran dengan progres tersimpan tidak lagi cocok dengan versi baru dan akan diatur ulang. Pelajaran yang sudah selesai tetap ada; hanya ulasan yang berubah yang terpengaruh.",
+      "confirm": "Perbarui saja",
+      "cancel": "Pertahankan versi saat ini"
+    },
     "share": {
       "button": "Bagikan",
       "aria": "Bagikan set '{title}'",
@@ -2322,6 +2330,16 @@
       "delete_confirm": "Hapus pelajaran ini? Tindakan ini tidak dapat dibatalkan.",
       "deleted": "Pelajaran dihapus.",
       "delete_failed": "Tidak dapat menghapus pelajaran."
+    },
+    "lesson_delete": {
+      "manage_lessons": "Kelola pelajaran",
+      "confirm_body": "Pelajaran ini akan dihapus dari set. Tindakan ini tidak dapat dibatalkan - cadangan yang Anda buat sebelumnya masih memuatnya.",
+      "delete_progress_option": "Hapus juga kemajuan belajar saya untuk pelajaran ini ({cards} kartu ulasan)",
+      "delete_progress_option_nocounts": "Hapus juga kemajuan belajar saya untuk pelajaran ini",
+      "action_delete": "Hapus pelajaran",
+      "deleted": "Pelajaran dihapus.",
+      "delete_failed": "Tidak dapat menghapus pelajaran.",
+      "delete_aria": "Hapus pelajaran {title}"
     },
     "set_status": {
       "delete_progress_option": "Hapus juga kemajuan belajar saya dan kartu ulasan ({lessons} pelajaran, {cards} kartu)",
@@ -2995,7 +3013,8 @@
         "error-correction": "Koreksi kesalahan",
         "reading-comprehension": "Pemahaman bacaan",
         "graded-quiz": "Kuis bernilai",
-        "dictation": "Dikte"
+        "dictation": "Dikte",
+        "image-description": "Deskripsi gambar"
       },
       "edit": {
         "prompt_label": "Instruksi / soal",
@@ -3022,6 +3041,14 @@
         "dict_accept_add": "Tambah",
         "dict_accept_remove": "Hapus transkripsi",
         "dict_accept_placeholder": "Apa yang harus diketik pelajar",
+        "err_image_description": "Tambahkan gambar dan setidaknya satu jawaban yang diterima.",
+        "imgdesc_image_label": "Gambar yang akan dideskripsikan",
+        "imgdesc_image_preview_alt": "Gambar yang akan dideskripsikan",
+        "imgdesc_image_budget_hint": "Gambar dikompresi dan disematkan (maks. ~150 KB, 512 px) agar latihan berfungsi offline dan ikut dalam cadangan. Tautan jarak jauh tidak diizinkan.",
+        "imgdesc_accept_label": "Jawaban yang diterima",
+        "imgdesc_accept_add": "Tambah",
+        "imgdesc_accept_remove": "Hapus jawaban",
+        "imgdesc_accept_placeholder": "Apa yang harus diketik pelajar",
         "q_list_label": "Pertanyaan",
         "q_prompt_label": "Pertanyaan",
         "q_prompt_placeholder": "Pertanyaan",

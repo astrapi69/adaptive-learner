@@ -221,6 +221,8 @@ landing:
   checking_session: Bienvenido de nuevo...
   recovered_toast: Bienvenido de nuevo. Tus datos de aprendizaje siguen aquí.
   intro: Adaptive Learner encuentra el método que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigación, y te acompaña en un ciclo de siete pasos en cada sesión.
+  port_change_hint: "¿Ya usaste Adaptive Learner en otro puerto? Tus datos de aprendizaje permanecen en la dirección web anterior. Vuelve al puerto anterior, exporta una copia de seguridad e impórtala aquí."
+  port_change_link: "Cómo llevar tus datos contigo"
 onboarding:
   title: Crear un proyecto de aprendizaje
   intro: Cuéntanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un método inicial.
@@ -2011,6 +2013,11 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  update_guard:
+    title: 'La actualización puede restablecer parte del repaso'
+    message: 'Actualizar «{title}» cambia contenido que ya estás aprendiendo. Unas {cards} tarjetas de repaso y {lessons} lecciones con progreso guardado ya no coinciden con la nueva versión y se restablecerían. Tus lecciones terminadas se mantienen; solo se ven afectados los repasos que cambiaron.'
+    confirm: 'Actualizar de todos modos'
+    cancel: 'Conservar la versión actual'
   share:
     button: "Compartir"
     aria: "Compartir el conjunto '{title}'"
@@ -2137,6 +2144,15 @@ content:
     delete_confirm: "¿Eliminar esta lección? Esto no se puede deshacer."
     deleted: "Lección eliminada."
     delete_failed: "No se pudo eliminar la lección."
+  lesson_delete:
+    manage_lessons: "Gestionar lecciones"
+    confirm_body: "Esta lección se eliminará del conjunto. Esta acción no se puede deshacer; una copia de seguridad creada antes todavía la contiene."
+    delete_progress_option: "Eliminar también mi progreso de aprendizaje de esta lección ({cards} tarjetas de repaso)"
+    delete_progress_option_nocounts: "Eliminar también mi progreso de aprendizaje de esta lección"
+    action_delete: "Eliminar lección"
+    deleted: "Lección eliminada."
+    delete_failed: "No se pudo eliminar la lección."
+    delete_aria: "Eliminar la lección {title}"
   set_status:
     delete_progress_option: "Eliminar también mi progreso de aprendizaje y las tarjetas de repaso ({lessons} lecciones, {cards} tarjetas)"
     delete_progress_option_nocounts: "Eliminar también mi progreso de aprendizaje y las tarjetas de repaso"
@@ -2745,6 +2761,7 @@ create_lesson:
       reading-comprehension: "Comprensión lectora"
       graded-quiz: "Cuestionario calificado"
       dictation: "Dictado"
+      image-description: "Descripción de imagen"
     edit:
       prompt_label: "Instrucción / enunciado"
       save: "Guardar"
@@ -2769,6 +2786,14 @@ create_lesson:
       dict_accept_add: "Añadir"
       dict_accept_remove: "Eliminar transcripción"
       dict_accept_placeholder: "Lo que el estudiante debe escribir"
+      err_image_description: "Añade una imagen y al menos una respuesta aceptada."
+      imgdesc_image_label: "Imagen a describir"
+      imgdesc_image_preview_alt: "Imagen a describir"
+      imgdesc_image_budget_hint: "La imagen se comprime e incrusta (máx. ~150 KB, 512 px) para que el ejercicio funcione sin conexión y se incluya en la copia de seguridad. No se permiten enlaces remotos."
+      imgdesc_accept_label: "Respuestas aceptadas"
+      imgdesc_accept_add: "Añadir"
+      imgdesc_accept_remove: "Eliminar respuesta"
+      imgdesc_accept_placeholder: "Lo que el estudiante debe escribir"
       q_list_label: "Preguntas"
       q_prompt_label: "Pregunta"
       q_prompt_placeholder: "Pregunta"

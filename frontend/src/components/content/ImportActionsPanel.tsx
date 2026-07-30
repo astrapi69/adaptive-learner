@@ -24,9 +24,10 @@
  */
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import ContentActionButtons from "./browser/ContentActionButtons";
+import DeleteLessonFromSetModal from "./lessons/DeleteLessonFromSetModal";
 import MyLessonsSection from "./lessons/MyLessonsSection";
 import ImportLessonModal from "./lessons/ImportLessonModal";
 import CombineLessonsDialog from "./lessons/CombineLessonsDialog";
@@ -99,6 +100,8 @@ export default function ImportActionsPanel() {
           onExportSet={(e) => void actions.handleExportSet(e)}
           onShare={(e) => void share.handleShare(e)}
           onDelete={actions.setDeleteTarget}
+          onPlayLessonFile={(e, filename) => actions.openLessonFile(e.source, e.id, filename)}
+          onRequestDeleteLesson={actions.setDeleteLessonTarget}
           selectMode={combine.selectMode}
           selectedCount={combine.selectedCount}
           isSelected={combine.isSelected}
@@ -145,6 +148,14 @@ export default function ImportActionsPanel() {
         deleting={actions.deleting}
         onCancel={() => actions.setDeleteTarget(null)}
         onConfirm={actions.handleDeleteUserSet}
+      />
+
+      <DeleteLessonFromSetModal
+        target={actions.deleteLessonTarget}
+        deleting={actions.deletingLesson}
+        plan={actions.deleteLessonPlan}
+        onCancel={() => actions.setDeleteLessonTarget(null)}
+        onConfirm={(deleteProgress) => void actions.handleConfirmDeleteLesson(deleteProgress)}
       />
     </section>
   );

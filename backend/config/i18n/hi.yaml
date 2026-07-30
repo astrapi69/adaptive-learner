@@ -223,6 +223,8 @@ landing:
   checking_session: वापसी पर स्वागत है…
   recovered_toast: वापसी पर स्वागत है! आपका सीखने का डेटा अभी भी यहीं है।
   intro: Adaptive Learner छह शोध-आधारित सीखने के तरीकों में से वह विधि ढूँढता है जो आपके लिए सबसे उपयुक्त हो, और हर सत्र में आपको सात-चरणीय चक्र के माध्यम से ले जाता है।
+  port_change_hint: "क्या आपने पहले Adaptive Learner को किसी दूसरे पोर्ट पर इस्तेमाल किया था? आपका सीखने का डेटा पिछले वेब पते के साथ ही रहता है। पिछले पोर्ट पर वापस जाएँ, एक बैकअप निर्यात करें, और उसे यहाँ आयात करें।"
+  port_change_link: "अपना डेटा कैसे ले जाएँ"
 onboarding:
   title: एक सीखने की परियोजना बनाएँ
   intro: हमें अपने सीखने के लक्ष्य के बारे में बताएँ। Adaptive Learner इसका उपयोग आपकी प्रोफ़ाइल बनाने और एक शुरुआती विधि सुझाने के लिए करता है।
@@ -2004,6 +2006,11 @@ lesson:
     action_resume: जारी रखें
     action_restart: फिर से शुरू करें
 content:
+  update_guard:
+    title: 'अपडेट से कुछ दोहराव प्रगति रीसेट हो सकती है'
+    message: '"{title}" को अपडेट करने से वह सामग्री बदल जाती है जिसे आप पहले से सीख रहे हैं। सहेजी गई प्रगति वाले लगभग {cards} दोहराव कार्ड और {lessons} पाठ नए संस्करण से मेल नहीं खाते और रीसेट हो जाएंगे। आपके पूरे किए गए पाठ बने रहेंगे, केवल बदले गए दोहराव प्रभावित होते हैं।'
+    confirm: 'फिर भी अपडेट करें'
+    cancel: 'मौजूदा संस्करण रखें'
   share:
     button: "साझा करें"
     aria: "सेट '{title}' साझा करें"
@@ -2130,6 +2137,15 @@ content:
     delete_confirm: यह पाठ हटाएँ? इसे पूर्ववत नहीं किया जा सकता।
     deleted: पाठ हटा दिया गया।
     delete_failed: पाठ हटाया नहीं जा सका।
+  lesson_delete:
+    manage_lessons: "पाठ प्रबंधित करें"
+    confirm_body: "यह पाठ सेट से हटा दिया जाएगा। इसे पूर्ववत नहीं किया जा सकता - पहले बनाया गया बैकअप अब भी इसे रखता है।"
+    delete_progress_option: "इस पाठ की मेरी सीखने की प्रगति भी हटाएँ ({cards} समीक्षा कार्ड)"
+    delete_progress_option_nocounts: "इस पाठ की मेरी सीखने की प्रगति भी हटाएँ"
+    action_delete: "पाठ हटाएँ"
+    deleted: "पाठ हटा दिया गया।"
+    delete_failed: "पाठ हटाया नहीं जा सका।"
+    delete_aria: "पाठ {title} हटाएँ"
   set_status:
     delete_progress_option: "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं ({lessons} पाठ, {cards} कार्ड)"
     delete_progress_option_nocounts: "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं"
@@ -2736,6 +2752,7 @@ create_lesson:
       reading-comprehension: "पठन बोध"
       graded-quiz: "अंकित प्रश्नोत्तरी"
       dictation: "श्रुतलेख"
+      image-description: "छवि विवरण"
     edit:
       prompt_label: "निर्देश / प्रश्न"
       save: "सहेजें"
@@ -2760,6 +2777,14 @@ create_lesson:
       dict_accept_add: "जोड़ें"
       dict_accept_remove: "प्रतिलेखन हटाएं"
       dict_accept_placeholder: "शिक्षार्थी को क्या टाइप करना चाहिए"
+      err_image_description: "एक छवि और कम से कम एक स्वीकृत उत्तर जोड़ें।"
+      imgdesc_image_label: "वर्णन करने के लिए छवि"
+      imgdesc_image_preview_alt: "वर्णन करने के लिए छवि"
+      imgdesc_image_budget_hint: "छवि को संपीड़ित करके एम्बेड किया जाता है (अधिकतम ~150 KB, 512 px) ताकि अभ्यास ऑफ़लाइन काम करे और बैकअप में शामिल रहे। दूरस्थ लिंक की अनुमति नहीं है।"
+      imgdesc_accept_label: "स्वीकृत उत्तर"
+      imgdesc_accept_add: "जोड़ें"
+      imgdesc_accept_remove: "उत्तर हटाएं"
+      imgdesc_accept_placeholder: "शिक्षार्थी को क्या टाइप करना चाहिए"
       q_list_label: "प्रश्न"
       q_prompt_label: "प्रश्न"
       q_prompt_placeholder: "प्रश्न"

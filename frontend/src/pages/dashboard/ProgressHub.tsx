@@ -18,7 +18,7 @@
  */
 
 import { Suspense, lazy } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 import { useI18n } from "../../hooks/ui/useI18n";
 

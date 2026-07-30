@@ -59,6 +59,24 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # #2145 / #2149: `release: created` fires whether or not this commit's checks
+      # ran, let alone passed. Inferring "CI was green" from the existence of
+      # a release is a conclusion, not a check - and publishing is the least
+      # reversible thing this project does. Pending, unknown or empty counts
+      # as not green; the step names how many checks it considered.
+      # The WHOLE release-driven run is excluded, derived from the
+      # workflows: all four publishers fire on this event, so excluding
+      # only itself made each one see the other three as pending and
+      # refuse - deterministically, on every release (#2149).
+      - name: Refuse to publish from a commit that was not green
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/verify_release_commit_green.py \
+            --sha "${{ github.sha }}" --exclude-release-jobs
+
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -82,8 +100,39 @@ jobs:
           ./scripts/verify_version_pins.sh "$VERSION"
           python3 scripts/sync_versions.py --check
 
+      # #2117: the backend job caches its Poetry virtualenv (ci.yml); this one
+      # never did, so every run rebuilds pycairo/pygobject from source over
+      # the network - the exposure the retry below papers over. Keyed on the
+      # lockfile, so a dependency change still gets a clean resolve.
+      - name: Cache Poetry virtualenv (launcher)
+        uses: actions/cache@v6
+        with:
+          path: ~/Library/Caches/pypoetry/virtualenvs
+          key: poetry-launcher-macos-py3.12-${{ hashFiles('launcher/poetry.lock') }}
+          restore-keys: |
+            poetry-launcher-macos-py3.12-
+
+      # #2117: pycairo ships no wheel for this platform (17 wheels, all Windows, plus one
+      # sdist), so every run compiles it - and pygobject - from source,
+      # fetching build requirements into an isolated env. A truncated fetch
+      # anywhere in that chain surfaces as "BadZipFile / File is not a zip
+      # file" or "Cannot install build-system.requires". Seen three times in
+      # one day, twice on this job. Bounded retry, and each attempt is
+      # visible: a silent retry would hide a real, permanent breakage.
       - name: Install launcher dependencies
-        run: poetry install --no-interaction --no-ansi
+        run: |
+          for attempt in 1 2 3; do
+            echo "::group::poetry install (attempt $attempt/3)"
+            if poetry install --no-interaction --no-ansi; then
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "::endgroup::"
+            echo "::warning::poetry install failed on attempt $attempt/3"
+            sleep $((attempt * 15))
+          done
+          echo "::error::poetry install failed three times - this is not the #2117 flake"
+          exit 1
 
       - name: Run launcher unit tests
         run: poetry run pytest tests/ -v
@@ -101,12 +150,84 @@ jobs:
       - name: Build .app bundle
         run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
 
+      # #2101: until now nothing ever STARTED a produced binary - the
+      # artifact was called a "smoke artifact" and was never smoked. On
+      # Apple silicon an unsigned Mach-O is SIGKILLed by the kernel
+      # ("Killed: 9") regardless of Gatekeeper, so "it built" says nothing
+      # about "it runs". --version and --verify-bundle are both handled
+      # before any Tk import, so they work on a headless runner.
+      - name: Smoke-run the built binary (#2101)
+        run: |
+          set -u
+          BIN="dist/AdaptiveLearner Launcher.app/Contents/MacOS/adaptive-learner-launcher"
+          [ -x "$BIN" ] || BIN=$(find "dist/AdaptiveLearner Launcher.app/Contents/MacOS" -type f -perm +111 | head -1)
+          echo "binary: $BIN"
+          echo "--- codesign state ---"
+          codesign -dv "$BIN" 2>&1 || echo "(unsigned)"
+          echo "--- run: --version ---"
+          if "$BIN" --version; then
+            echo "RESULT: the binary starts as built"
+          else
+            code=$?
+            echo "RESULT: the as-built binary FAILED with exit $code (137/SIGKILL = unsigned Mach-O)"
+            echo "--- retrying after an ad-hoc signature ---"
+            codesign --force --deep --sign - "dist/AdaptiveLearner Launcher.app"
+            "$BIN" --version
+            echo "RESULT: an ad-hoc signature fixes it - the build must sign"
+          fi
+          echo "--- run: --verify-bundle ---"
+          "$BIN" --verify-bundle
+
       - name: Zip .app bundle
         # Notarization / distribution expect the .app inside a ZIP or DMG.
         # We ship ZIP only for initial D-02 to keep the pipeline simple.
         run: |
           cd dist
           zip -r adaptive-learner-launcher-macos.zip "AdaptiveLearner Launcher.app"
+
+      # #2106: the step above proves the binary starts AS BUILT. A user
+      # runs it AS DOWNLOADED, and a downloaded file carries
+      # com.apple.quarantine - which is what Gatekeeper acts on. Command
+      # line unzip does not propagate the flag, so it is set explicitly on
+      # both the ZIP and the extracted app, read back as proof, and the
+      # system assessment is logged verbatim: that sentence is what a
+      # user's Mac decides on.
+      - name: Smoke-run the DOWNLOADED artifact (quarantined, #2106)
+        run: |
+          set -u
+          WORK="$RUNNER_TEMP/downloaded"
+          rm -rf "$WORK" && mkdir -p "$WORK"
+          cp dist/adaptive-learner-launcher-macos.zip "$WORK/"
+          cd "$WORK"
+          # The exact shape Safari writes: flags;timestamp;agent;uuid
+          xattr -w com.apple.quarantine \
+            "0083;$(printf '%x' $(date +%s));Safari;$(uuidgen)" \
+            adaptive-learner-launcher-macos.zip
+          unzip -q adaptive-learner-launcher-macos.zip
+          APP="AdaptiveLearner Launcher.app"
+          xattr -w com.apple.quarantine \
+            "0083;$(printf '%x' $(date +%s));Safari;$(uuidgen)" "$APP"
+          echo "--- proof the attribute is really set ---"
+          xattr -p com.apple.quarantine "$APP" \
+            || { echo "FAIL: quarantine attribute was not set - the test would prove nothing"; exit 1; }
+          echo "--- system assessment (spctl), verbatim ---"
+          set +e
+          spctl -a -vvv -t exec "$APP" 2>&1
+          echo "spctl verdict exit code: $?"
+          echo "--- start the quarantined app ---"
+          BIN="$APP/Contents/MacOS/adaptive-learner-launcher"
+          out=$("$BIN" --version 2>&1); code=$?
+          set -e
+          echo "$out"
+          echo "exit code: $code"
+          if [ "$code" -eq 0 ]; then
+            echo "RESULT: the DOWNLOADED (quarantined) app starts - exit 0"
+          else
+            echo "RESULT: the DOWNLOADED (quarantined) app is BLOCKED - exit $code"
+            echo "This is a finding, not a flake: a user would have to right-click > Open,"
+            echo "or clear the flag with xattr -d com.apple.quarantine. See #2106."
+            exit 1
+          fi
 
       - name: Compute SHA256 checksum
         run: |

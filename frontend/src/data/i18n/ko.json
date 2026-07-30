@@ -234,7 +234,9 @@
     "docs_link": "문서 읽기",
     "checking_session": "다시 오신 것을 환영합니다…",
     "recovered_toast": "다시 오신 것을 환영합니다! 학습 데이터가 그대로 남아 있습니다.",
-    "intro": "Adaptive Learner는 연구로 입증된 여섯 가지 학습법 중 당신에게 가장 잘 맞는 방법을 찾아내고, 모든 세션에서 일곱 단계 주기를 안내합니다."
+    "intro": "Adaptive Learner는 연구로 입증된 여섯 가지 학습법 중 당신에게 가장 잘 맞는 방법을 찾아내고, 모든 세션에서 일곱 단계 주기를 안내합니다.",
+    "port_change_hint": "이전에 다른 포트에서 Adaptive Learner를 사용하셨나요? 학습 데이터는 이전 웹 주소에 그대로 남아 있습니다. 이전 포트로 돌아가 백업을 내보낸 다음 여기에서 가져오세요.",
+    "port_change_link": "데이터를 옮기는 방법"
   },
   "onboarding": {
     "title": "학습 프로젝트 만들기",
@@ -2180,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "업데이트하면 일부 복습 진행 상황이 초기화될 수 있습니다",
+      "message": "\"{title}\"을(를) 업데이트하면 이미 학습 중인 콘텐츠가 변경됩니다. 저장된 진행 상황이 있는 복습 카드 약 {cards}개와 레슨 {lessons}개가 새 버전과 더 이상 일치하지 않아 초기화됩니다. 완료한 레슨은 유지되며 변경된 복습만 영향을 받습니다.",
+      "confirm": "그래도 업데이트",
+      "cancel": "현재 버전 유지"
+    },
     "share": {
       "button": "공유",
       "aria": "세트 '{title}' 공유",
@@ -2322,6 +2330,16 @@
       "delete_confirm": "이 레슨을 삭제하시겠습니까? 되돌릴 수 없습니다.",
       "deleted": "레슨이 삭제되었습니다.",
       "delete_failed": "레슨을 삭제할 수 없었습니다."
+    },
+    "lesson_delete": {
+      "manage_lessons": "레슨 관리",
+      "confirm_body": "이 레슨이 세트에서 제거됩니다. 이 작업은 되돌릴 수 없습니다. 이전에 만든 백업에는 여전히 남아 있습니다.",
+      "delete_progress_option": "이 레슨의 학습 진행 상황도 삭제 (복습 카드 {cards}개)",
+      "delete_progress_option_nocounts": "이 레슨의 학습 진행 상황도 삭제",
+      "action_delete": "레슨 삭제",
+      "deleted": "레슨이 삭제되었습니다.",
+      "delete_failed": "레슨을 삭제할 수 없습니다.",
+      "delete_aria": "레슨 {title} 삭제"
     },
     "set_status": {
       "delete_progress_option": "학습 진행 상황과 복습 카드도 삭제 ({lessons}개 레슨, {cards}개 카드)",
@@ -2995,7 +3013,8 @@
         "error-correction": "오류 수정",
         "reading-comprehension": "독해",
         "graded-quiz": "채점 퀴즈",
-        "dictation": "받아쓰기"
+        "dictation": "받아쓰기",
+        "image-description": "이미지 설명"
       },
       "edit": {
         "prompt_label": "지시문 / 문제",
@@ -3022,6 +3041,14 @@
         "dict_accept_add": "추가",
         "dict_accept_remove": "전사 제거",
         "dict_accept_placeholder": "학습자가 입력해야 할 내용",
+        "err_image_description": "이미지와 최소 하나의 허용 답변을 추가하세요.",
+        "imgdesc_image_label": "설명할 이미지",
+        "imgdesc_image_preview_alt": "설명할 이미지",
+        "imgdesc_image_budget_hint": "이미지는 압축되어 포함되므로(최대 ~150 KB, 512 px) 연습 문제가 오프라인에서 작동하고 백업에 함께 담깁니다. 원격 링크는 허용되지 않습니다.",
+        "imgdesc_accept_label": "허용되는 답변",
+        "imgdesc_accept_add": "추가",
+        "imgdesc_accept_remove": "답변 제거",
+        "imgdesc_accept_placeholder": "학습자가 입력해야 할 내용",
         "q_list_label": "문제",
         "q_prompt_label": "문제",
         "q_prompt_placeholder": "문제",

@@ -1,61 +1,56 @@
+---
+# globs/alwaysApply below document INTENT only - Claude Code loads every rule
+# file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
+description: Vibe coding policy - release freeze, no-amend-on-open-PR, priority order, layer architecture, test discipline, dependency control
+globs:
+   - "**/*"
+alwaysApply: true
+---
+
 # Vibe Coding Rules
 
-Vollstaendige Policy: docs/policies/VIBE-CODING-POLICY.md
+Full policy: `docs/policies/VIBE-CODING-POLICY.md`
 
-## Kurzregeln fuer jeden Task
+## Short rules for every task
 
-1. PROMPT-PRAEZISION: Referenziere existierende Patterns (guardedFetch,
-   IStorageService, Repository Pattern, PluginForge Hooks) statt neu
-   zu erfinden. Nenne Datei, Funktion, erwartetes Verhalten.
+- **PROMPT-PRECISION**: Reference existing patterns (guardedFetch, IStorageService, Repository Pattern, PluginForge Hooks) instead of reinventing. Name file, function, expected behavior.
 
-2. SCHICHTARCHITEKTUR: Keine Business-Logik in Komponenten. Keine
-   DB-Queries in Routern. Keine direkten fetch-Calls. Dependency
-   Direction: Router -> Service -> Repository -> Models.
+- **LAYER ARCHITECTURE**: No business logic in components. No DB queries in routers. No direct fetch calls. Dependency direction: Router -> Service -> Repository -> Models.
 
-3. TESTS: Jede Verhaltensaenderung braucht Tests. Backup-Aenderungen
-   brauchen zusaetzlich den manuellen Round-Trip (BACKUP-AKZEPTANZTEST).
-   Nutzersichtbare Funktionalitaet aktualisiert den manuellen Testplan
-   (TESTPLAN-PFLICHT in ai-workflow.md: DE + EN im selben PR, sonst
-   referenzierter Follow-up-Kommentar auf #1087; "nicht gefordert" ist
-   keine gueltige Begruendung). PR-CI: selektive Tests
-   (vitest --changed, pytest --testmon).
-   Nightly + Release: volle Suite.
+- **TESTS**: Every behavior change needs tests. Backup changes additionally need the manual round-trip (BACKUP-AKZEPTANZTEST). User-visible functionality updates the manual test plan (TESTPLAN-PFLICHT in ai-workflow/testplan-policy.md: DE + EN in the same PR, otherwise referenced follow-up comment on #1087; "not requested" is not a valid reason). PR-CI: selective tests (vitest --changed, pytest --testmon). Nightly + Release: full suite.
 
-4. DEPENDENCIES: Keine neuen Dependencies ohne manuelle Pruefung auf
-   Wartungsstatus und Sicherheit. Bestehende Dependencies bevorzugen.
+- **DEPENDENCIES**: No new dependencies without manual check on maintenance status and security. Prefer existing dependencies.
 
-5. REFACTORING: God-Files splitten, nicht whitelisten. Whitelist nur
-   fuer Single-Concern Dateien (Models, Schemas, statische Daten).
+- **REFACTORING**: Split god-files, do not whitelist. Whitelist only for single-concern files (models, schemas, static data).
 
-6. GIT: Issue ZUERST (GITHUB-ISSUE-PFLICHT). Closes #XX in jedem
-   Commit. Docstrings statt Inline-Kommentare. Ein Concern pro PR.
-   Jede gepushte Code-Aenderung oeffnet einen PR (PR-PFLICHT in
-   ai-workflow.md) - immer, nicht nur auf Anfrage. "Kein PR, nicht
-   angefordert" ist keine gueltige Abschluss-Meldung. Ausnahmen:
-   Release-Sperre (unten) und reine Analyse-/Status-Auftraege ohne
-   Code-Aenderung.
+- **GIT**: Issue FIRST (GITHUB-ISSUE-PFLICHT). Closes #XX in every commit. Docstrings over inline comments. One concern per PR. Every pushed code change opens a PR (PR-PFLICHT in ai-workflow/pr-policy.md) — always, not only on request. "No PR, not requested" is not a valid completion report. Exceptions: release freeze (below) and pure analysis/status tasks without code change.
 
-## Prioritaet (fest, nicht verhandelbar)
+## Condensation is not a free pass
 
-1. Offene PRs mergen
-2. P0/P1 Bugs
-3. Infrastruktur (CI, Security, Guards)
-4. UI-Fixes
-5. Cleanup/Refactoring
+A PR framed as cleanup, reflow or condensation is held to the same standard as
+any content change: no silent deletions, no weakened rules. Above the byte
+threshold it must be declared. See quality-checks.md "Condensation PRs are
+content-neutral or declared (#2081)".
+
+## Priority (fixed, non-negotiable)
+
+1. Merge open PRs
+2. P0/P1 bugs
+3. Infrastructure (CI, security, guards)
+4. UI fixes
+5. Cleanup/refactoring
 6. Features
 7. Release
 
-Fundament vor Features. Erst messen, dann absichern.
+Foundation before features. Measure first, then secure.
 
-## Release-Sperre
+## Release freeze
 
-Wenn ein Release-Branch geschnitten ist (release/X.XX.0 existiert),
-gilt bis der Release getaggt und gepublisht ist:
+When a release branch is cut (release/X.XX.0 exists), until the release is tagged and published:
 
-- Keine neuen PRs gegen develop oeffnen
-- Keine Merges nach develop
-- Kein neuer Code, nur Release-Workflow
-  (release-test, release-finish, release-publish, Journal)
-- Ausnahme: ein P0-Hotfix der den Release selbst blockiert
+- No new PRs against develop
+- No merges to develop
+- No new code, only release workflow (release-test, release-finish, release-publish, journal)
+- Exception: a P0 hotfix that blocks the release itself
 
-Erst taggen, dann weiterarbeiten.
+Tag first, then continue working.
