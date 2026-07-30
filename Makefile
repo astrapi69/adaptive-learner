@@ -977,6 +977,17 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Documentation drift gate (verify-docs-discipline) ==="
 	@$(MAKE) verify-docs-discipline
 	@echo ""
+	@echo "=== Ratchet gates (#2182: close the release-branch ratchet gap) ==="
+	@echo "The PR-CI ratchets never run against a release/hotfix branch's own"
+	@echo "commits (the back-merge to develop is a direct admin merge, not a PR)."
+	@echo "Run them here so release-finish cannot ship a tripped ratchet onto"
+	@echo "develop. Prevention only - the channel stays open until enforce_admins"
+	@echo "is on (the closure; see issue #2182)."
+	@$(MAKE) check-css-size
+	@$(MAKE) verify-rule-corpus-size
+	@$(MAKE) check-complexity-gate
+	@bash scripts/check-file-sizes.sh
+	@echo ""
 	@echo "=== Subsystem lock-step (sync-versions --check) ==="
 	@$(MAKE) sync-versions-check
 	@echo ""
