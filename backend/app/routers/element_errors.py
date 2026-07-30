@@ -24,6 +24,8 @@ from app.repositories.element_errors_repo import ElementErrorsRepository
 from app.schemas import (
     ElementAttemptsIn,
     ElementErrorOut,
+    ElementKeyRemapResult,
+    ElementKeyRemapsIn,
     ReviewQueueItemOut,
 )
 from app.services import element_errors as element_errors_service
@@ -134,3 +136,26 @@ def record_element_attempts(
     )
     repo.commit()
     return [ElementErrorOut.model_validate(row) for row in rows]
+
+
+@router.post(
+    "/{user_id}/element-errors/remap",
+    response_model=ElementKeyRemapResult,
+)
+def remap_element_keys(
+    user_id: str,
+    payload: ElementKeyRemapsIn,
+    repo: ElementErrorsRepository = Depends(get_element_errors_repo),
+) -> ElementKeyRemapResult:
+    """One-off ja/ko/zh recovery (#2161): rewrite orphaned ``element_key``
+    values old -> new for this user. Idempotent + no double-map (a target that
+    already exists is skipped); all remaps in the call land atomically. The
+    client sends one set's remaps per call and only after verifying each
+    ``new`` key exists in the current content."""
+    _require_user(repo, user_id)
+    applied, skipped = element_errors_service.remap_element_keys(
+        repo,
+        user_id,
+        [(r.set_id, r.lesson_id, r.exercise_id, r.old, r.new) for r in payload.remaps],
+    )
+    return ElementKeyRemapResult(applied=applied, skipped=skipped)

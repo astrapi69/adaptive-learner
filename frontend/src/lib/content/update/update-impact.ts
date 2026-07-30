@@ -24,7 +24,7 @@ export interface PeekExercise {
     pairs?: ({left?: string} | null)[] | null;
     accept?: string[] | null;
     tiles?: string[] | null;
-    images?: ({label?: string; is_correct?: string} | null)[] | null;
+    images?: ({label?: string | null; is_correct?: string | null} | null)[] | null;
     blanks?: ({accept?: string[]} | null)[] | null;
 }
 

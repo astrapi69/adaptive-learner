@@ -683,6 +683,93 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
 - [ ] Language check (#2160): the confirmation text appears in the app language
       (not English), spot-checked across several languages (de/ja/ko/el/hi).
 
+### Recovery: review progress after the ja/ko/zh correction (#2161)
+
+Location: Dashboard (Overview). Background: the three A1 sets Japanese, Korean
+and Chinese were re-published in July 2026 with a transliteration fix that
+changed the answer text of 172 review items (66 ja / 58 ko / 48 zh). Review
+cards are keyed by the answer text, so cards already created for the changed
+items quietly fell out of scheduling. Check in BOTH storage modes. Only these
+three sets are affected; all other sets are untouched.
+
+- [ ] Setup: learn one of the sets (ja/ko/zh A1) in the OLD version and create a
+      few review cards, then move it to the corrected version (or seed test data
+      with the old answer keys).
+- [ ] The notice appears on the Dashboard ONLY when affected cards are actually
+      present in your own data. No notice when nothing is affected.
+- [ ] The notice shows, per affected set, the number of affected cards and offers
+      "Export backup" (recommended, not forced).
+- [ ] "Export backup" -> produces the same .alb file as Settings → Data (toast
+      with the filename).
+- [ ] "Relink review cards" -> a numeric result ("N relinked, N already
+      correct"). The notice then disappears for that set (no re-asking).
+- [ ] Idempotency: triggering again (or reloading) changes nothing more; the
+      notice does not come back for that set.
+- [ ] Partial recovery: if a set changed again after the fix, unmappable cards
+      are reported by count and left unchanged (not silently dropped).
+- [ ] "Start set fresh" -> inline confirm; only after confirming are the set's
+      progress + review cards removed; the notice is then gone for that set.
+- [ ] No double-map / no orphaned rows: after relinking, no review lands on the
+      wrong card and there are no duplicate cards.
+- [ ] Backup behavior: import a backup taken BEFORE recovery -> the old
+      (orphaned) keys are back, the notice reappears and can be applied again.
+- [ ] iOS standalone (PWA): same flow, notice + both actions work.
+- [ ] Language check: notice and result texts appear in the app language (not
+      English), sampled across several languages (de/ja/ko/el/hi).
+
+#### Producing the state (test precondition)
+
+The notice shows only when affected review cards are present in your own data.
+Producing that state needs access to the stored data (developer tools), and that
+is NOT possible in iOS standalone mode: it requires the Safari Web Inspector on a
+Mac, and the QA machine runs Ubuntu. Hence the platform rule:
+
+- The produced state is created and tested on the DESKTOP (app in the browser,
+  developer tools available).
+- On the PHONE (iOS standalone) test ONLY if real affected data is present.
+
+First check (two-stage):
+
+- [ ] On the phone, open the Dashboard. If the notice shows by itself, real
+      affected data is present -> test there. Then the product condition applies:
+      run "Export backup" (the button in the notice) FIRST.
+- [ ] If no notice shows on the phone, the check moves to the DESKTOP; produce
+      the state there. An orphaned entry can no longer be created through normal
+      use (the corrected version already emits the new key), so this step needs
+      developer tools (marked as such):
+
+- [ ] Take a backup (Settings -> Data -> Export backup) so the starting state is
+      restorable.
+- [ ] Learn Japanese A1, lesson "01-begruessungen", the matching exercise
+      (ex-match-begruessung) once and answer "こんにちは" wrong on purpose -> a
+      review card is created on the NEW key "こんにちは (konnichiwa)".
+- [ ] [Developer tools] Reset that card's key to the old form "こんにちは"
+      (makes it orphaned):
+      - Server mode (SQLite at
+        ~/.local/share/adaptive_learner/adaptive_learner.db), one row:
+        `UPDATE element_errors SET element_key='こんにちは'
+        WHERE set_id='ja-a1-from-de' AND lesson_id='01-begruessungen.json'
+        AND exercise_id='ex-match-begruessung'
+        AND element_key='こんにちは (konnichiwa)';`
+      - Dexie mode (browser DevTools -> Application -> IndexedDB ->
+        elementErrors): delete the new-key row and re-add it, replacing only the
+        key segment "こんにちは (konnichiwa)" with "こんにちは" in both the
+        `element_key` field and the `id` key (leave every other segment,
+        including direction, unchanged).
+- [ ] Reload the Dashboard -> the notice appears (1 affected card, Japanese A1).
+
+Way back (repeatable, no traces):
+
+- [ ] After the test, import the backup taken in step 1 (Settings -> Data ->
+      Import) -> exact starting state, no traces.
+- [ ] [Developer tools] Or reverse the UPDATE (server) / set the test row back to
+      the new key (Dexie).
+
+Not covered: if the state is produced and tested only on the desktop, the
+notice's behaviour in iOS standalone mode remains UNPROVEN (it cannot be produced
+there without a Mac Web Inspector). That is a valid result, but note it
+explicitly as open - do not silently equate it with the desktop result.
+
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)

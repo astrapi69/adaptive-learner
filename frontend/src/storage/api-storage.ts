@@ -302,6 +302,7 @@ export const apiStorage: IStorageService = {
     recordBulk: (userId, attempts) =>
       api.elementErrors.recordBulk(userId, attempts),
     reviewQueue: (userId, opts) => api.elementErrors.reviewQueue(userId, opts),
+    remapKeys: (userId, remaps) => api.elementErrors.remap(userId, remaps),
   },
 
   // --- Learner-data maintenance (#1445 / #1821) ------------------------

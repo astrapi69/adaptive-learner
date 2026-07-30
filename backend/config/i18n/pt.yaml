@@ -2016,6 +2016,23 @@ content:
     message: 'Atualizar «{title}» altera conteúdo que você já está aprendendo. Cerca de {cards} cartões de revisão e {lessons} lições com progresso salvo já não correspondem à nova versão e seriam redefinidos. Suas lições concluídas permanecem; apenas as revisões alteradas são afetadas.'
     confirm: 'Atualizar mesmo assim'
     cancel: 'Manter a versão atual'
+  recovery:
+    title: 'Restaurar o progresso de revisão das lições corrigidas'
+    message: 'Corrigimos algumas lições de japonês, coreano e chinês (A1). Os cartões de revisão que você já criou para os itens alterados não correspondem mais e, por isso, não são agendados. Você pode revinculá-los às lições corrigidas ou recomeçar um conjunto. Apenas esses conjuntos são afetados; os demais permanecem intactos.'
+    backup_hint: 'Recomendado antes: exporte um backup para poder desfazer isto se necessário.'
+    backup_action: 'Exportar backup'
+    backup_saved: 'Backup salvo: {filename}'
+    set_cards: '{count} cartões de revisão afetados'
+    restore: 'Revincular cartões de revisão'
+    restart: 'Recomeçar o conjunto'
+    restart_confirm: 'Recomeçar? O progresso salvo e os cartões de revisão deste conjunto serão removidos.'
+    restart_confirm_yes: 'Sim, recomeçar'
+    restart_cancel: 'Cancelar'
+    restore_result: '{applied} cartões de revisão revinculados ({skipped} já estavam corretos).'
+    restore_unmapped: 'Não foi possível revincular {unmapped} cartões porque a lição mudou novamente; eles ficaram inalterados.'
+    restart_result: 'Conjunto reiniciado. Você pode começar do início.'
+    working: 'Processando…'
+    failed: 'Algo deu errado. Nada foi alterado; tente novamente.'
   share:
     button: "Compartilhar"
     aria: "Compartilhar o conjunto '{title}'"

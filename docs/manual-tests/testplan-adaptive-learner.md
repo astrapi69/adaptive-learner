@@ -721,6 +721,105 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
 - [ ] Sprache pruefen (#2160): der Bestaetigungstext erscheint in der App-Sprache
       (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
 
+### Wiederherstellung: Wiederholungsfortschritt nach ja/ko/zh-Korrektur (#2161)
+
+Ort: Dashboard (Uebersicht). Hintergrund: die drei A1-Sets Japanisch, Koreanisch
+und Chinesisch wurden im Juli 2026 mit einer Umschrift-Korrektur neu
+veroeffentlicht, die die Antworttexte von 172 Wiederholungs-Elementen aenderte
+(66 ja / 58 ko / 48 zh). Wiederholungskarten haengen am Antworttext, also fielen
+bereits angelegte Karten fuer die geaenderten Elemente still aus der Planung.
+In BEIDEN Speichermodi pruefen. Nur diese drei Sets sind betroffen; alle anderen
+Sets bleiben unberuehrt.
+
+- [ ] Vorbereitung: eines der Sets (ja/ko/zh A1) in der ALTEN Fassung lernen und
+      ein paar Wiederholungskarten erzeugen, dann auf die korrigierte Fassung
+      bringen (bzw. Testdaten mit den alten Antwort-Keys).
+- [ ] Der Hinweis erscheint auf dem Dashboard NUR, wenn tatsaechlich betroffene
+      Karten in den eigenen Daten liegen. Kein Hinweis, wenn nichts betroffen ist.
+- [ ] Der Hinweis nennt je betroffenem Set die Anzahl betroffener Karten und
+      bietet "Sicherung erstellen" an (empfohlen, nicht erzwungen).
+- [ ] "Sicherung erstellen" -> es wird dieselbe .alb-Datei wie unter
+      Settings → Daten erzeugt (Toast mit Dateiname).
+- [ ] "Wiederholungskarten neu verknuepfen" -> beziffertes Ergebnis
+      ("N neu verknuepft, N bereits korrekt"). Danach verschwindet der Hinweis
+      fuer dieses Set (kein erneutes Nachfragen).
+- [ ] Idempotenz: erneut ausloesen (bzw. Seite neu laden) aendert nichts mehr;
+      der Hinweis kommt fuer dieses Set nicht zurueck.
+- [ ] Teil-Wiederherstellung: falls ein Set nach der Korrektur erneut geaendert
+      wurde, werden nicht zuordenbare Karten als Anzahl gemeldet und unveraendert
+      gelassen (nicht still verworfen).
+- [ ] "Set neu beginnen" -> Inline-Rueckfrage, erst nach Bestaetigung werden
+      Fortschritt + Wiederholungskarten dieses Sets entfernt; danach ist der
+      Hinweis fuer das Set weg.
+- [ ] Kein Doppel-Mapping / keine verwaisten Zeilen: nach dem Neu-Verknuepfen
+      keine Wiederholung auf einer falschen Karte, keine doppelten Karten.
+- [ ] Backup-Verhalten: eine VOR der Wiederherstellung erstellte Sicherung
+      importieren -> die alten (verwaisten) Keys sind wieder da, der Hinweis
+      erscheint erneut und laesst sich erneut anwenden.
+- [ ] iOS-Standalone (PWA): gleicher Ablauf, Hinweis + beide Aktionen
+      funktionieren.
+- [ ] Sprache pruefen: Hinweis- und Ergebnistexte erscheinen in der App-Sprache
+      (nicht englisch), stichprobenartig in mehreren Sprachen (de/ja/ko/el/hi).
+
+#### Zustand herstellen (Voraussetzung fuer den Test)
+
+Der Hinweis erscheint nur, wenn betroffene Wiederholungskarten in den eigenen
+Daten liegen. Der Herstell-Weg braucht Zugriff auf die Speicherinhalte
+(Entwicklerwerkzeuge), und der ist im iOS-Standalone-Modus NICHT gangbar: dafuer
+braucht es den Safari-Web-Inspector auf einem Mac, der QA-Rechner laeuft unter
+Ubuntu. Daher die Plattformregel:
+
+- Der erzeugte Zustand wird auf dem DESKTOP hergestellt und geprueft (App im
+  Browser, Entwicklerwerkzeuge verfuegbar).
+- Auf dem TELEFON (iOS-Standalone) wird NUR geprueft, wenn echte betroffene
+  Daten vorliegen.
+
+Zuerst-pruefen (zweistufig):
+
+- [ ] Auf dem Telefon das Dashboard oeffnen. Erscheint der Hinweis von selbst,
+      liegen ECHTE betroffene Daten vor -> dort testen. Dann gilt die
+      Produktbedingung: VORHER "Sicherung erstellen" (Knopf im Hinweis).
+- [ ] Erscheint auf dem Telefon kein Hinweis, wandert die Pruefung auf den
+      DESKTOP; dort den Zustand herstellen. Ein verwaister Eintrag entsteht nicht
+      mehr ueber die normale Bedienung (die korrigierte Fassung erzeugt bereits
+      den neuen Key), daher braucht dieser Schritt Entwicklerwerkzeuge (so
+      gekennzeichnet):
+
+- [ ] Sicherung ziehen (Settings -> Daten -> Sicherung erstellen), damit der
+      Ausgangszustand wiederherstellbar ist.
+- [ ] Japanisch A1, Lektion "01-begruessungen", die Zuordnungs-Uebung
+      (ex-match-begruessung) einmal lernen und bei "こんにちは" absichtlich falsch
+      antworten -> es entsteht eine Wiederholungskarte auf dem NEUEN Key
+      "こんにちは (konnichiwa)".
+- [ ] [Entwicklerwerkzeuge] Den Key dieser Karte auf die alte Form
+      "こんにちは" zuruecksetzen (macht sie verwaist):
+      - Server-Modus (SQLite unter
+        ~/.local/share/adaptive_learner/adaptive_learner.db), eine Zeile:
+        `UPDATE element_errors SET element_key='こんにちは'
+        WHERE set_id='ja-a1-from-de' AND lesson_id='01-begruessungen.json'
+        AND exercise_id='ex-match-begruessung'
+        AND element_key='こんにちは (konnichiwa)';`
+      - Dexie-Modus (Browser-DevTools -> Application -> IndexedDB ->
+        elementErrors): die neue Zeile loeschen und neu anlegen; im Feld
+        `element_key` und im Schluessel `id` jeweils nur das Key-Segment
+        "こんにちは (konnichiwa)" durch "こんにちは" ersetzen (alle anderen
+        Segmente inkl. direction unveraendert lassen).
+- [ ] Dashboard neu laden -> der Hinweis erscheint (1 betroffene Karte,
+      Japanisch A1).
+
+Weg zurueck (Test wiederholbar, keine Spuren):
+
+- [ ] Nach dem Test die in Schritt 1 gezogene Sicherung importieren
+      (Settings -> Daten -> Import) -> exakter Ausgangszustand, keine Spuren.
+- [ ] [Entwicklerwerkzeuge] Alternativ das UPDATE umkehren (Server) bzw. die
+      Testzeile wieder auf den neuen Key setzen (Dexie).
+
+Nicht abgedeckt: Wird der Zustand nur auf dem Desktop erzeugt und geprueft,
+bleibt das Verhalten des Hinweises im iOS-Standalone-Modus UNBELEGT (die
+Herstellung ist dort ohne Mac-Web-Inspector nicht moeglich). Das ist ein
+zulaessiges Ergebnis, aber ausdruecklich als offen zu vermerken, nicht
+stillschweigend mit dem Desktop-Ergebnis gleichzusetzen.
+
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
       Aktualisieren → Set kommt NICHT zurueck (#1719)

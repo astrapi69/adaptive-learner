@@ -20,8 +20,12 @@ import type {
     AttemptRecord,
     ElementAttempt,
     ElementError,
+    ElementKeyRemap,
     ReviewQueueItem,
 } from "../types";
+
+/** The two drill directions an element_key row can carry (EXP-018). */
+const DIRECTIONS = ["source_to_target", "target_to_source"] as const;
 
 /** Phase 46 D4: 3 consecutive correct → mastered. Same
  *  constant as ``backend/app/services/element_errors.py``;
@@ -227,6 +231,49 @@ export async function recordElementAttemptsDexie(
         }
     });
     return result.map(rowToWire);
+}
+
+/**
+ * #2161 one-off recovery: rewrite orphaned ``element_key`` old -> new. The
+ * whole call runs in ONE ``rw`` transaction, so a failure mid-batch rolls the
+ * lot back (all-or-nothing). For each remap, both drill directions are moved:
+ * the old-key row is copied to the new-key id and the old row deleted. A row
+ * is SKIPPED (never overwritten) when a new-key row already exists, so no two
+ * rows collapse onto one card (no double-map) and a re-run is a no-op
+ * (idempotent — the old rows are already gone). Returns the counts.
+ */
+export async function remapElementKeysDexie(
+    userId: string,
+    remaps: readonly ElementKeyRemap[],
+): Promise<{applied: number; skipped: number}> {
+    if (remaps.length === 0) return {applied: 0, skipped: 0};
+    const db = getDb();
+    let applied = 0;
+    let skipped = 0;
+    await db.transaction("rw", db.elementErrors, async () => {
+        for (const remap of remaps) {
+            for (const direction of DIRECTIONS) {
+                const oldId = [
+                    userId, remap.set_id, remap.lesson_id, remap.exercise_id, remap.old, direction,
+                ].join("#");
+                const oldRow = await db.elementErrors.get(oldId);
+                if (!oldRow) continue;
+                const newId = [
+                    userId, remap.set_id, remap.lesson_id, remap.exercise_id, remap.new, direction,
+                ].join("#");
+                if (oldId === newId) continue; // no-op mapping, nothing to do
+                const existingNew = await db.elementErrors.get(newId);
+                if (existingNew) {
+                    skipped += 1; // target already present -> never collapse
+                    continue;
+                }
+                await db.elementErrors.put({...oldRow, id: newId, element_key: remap.new});
+                await db.elementErrors.delete(oldId);
+                applied += 1;
+            }
+        }
+    });
+    return {applied, skipped};
 }
 
 export interface ListElementErrorsOpts {
