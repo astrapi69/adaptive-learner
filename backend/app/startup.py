@@ -146,9 +146,11 @@ def create_lifespan(manager: PluginManager, startup_config: dict[str, Any], *, d
         mark_data_dir_as_production()
         init_db()
 
-        # Fail-fast on a missing / malformed ADAPTIVE_LEARNER_SECRET_KEY.
-        # Surfaces the misconfiguration here at boot, not from a random
-        # POST /api/settings/.../api-key call hours later. See
+        # Establish the machine-local secret.key eagerly (created when
+        # absent - a fresh install is not an error). Fail-fast only on a
+        # genuinely unusable key: an unreadable / unwritable file, or a
+        # malformed value - surfaced here at boot rather than from a
+        # random POST /api/settings/.../api-key call hours later. See
         # app.services.crypto.validate_at_startup.
         crypto_service.validate_at_startup()
 
