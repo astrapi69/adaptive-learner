@@ -18,3 +18,4 @@ declared").
 | 2026-07-30 | `fa45a73a` | - | release checklist smoke item now demands the "N passed / M silenced" numbers (M matching the budget baseline) - the v2.6.1 tick was set while this suite never ran (its journal lists only dexie-smoke + manual-automation); the GHCR-publish item replaces "Docker image pushed (if active)" and demands th |
 | 2026-07-30 | `b04bc8c4` | - | release-workflow.md Step 8 replaced with the mandatory draft-first dispatch sequence; corpus ceiling 283083 -> 284295. |
 | 2026-07-30 | `a3c76763` | - | Step-8 sequence extended by the completeness checkpoint; corpus ceiling raised accordingly. |
+| 2026-07-30 | `b6c0eed5` | #2182 | extend the parallel-agent-sessions note (lessons/core.md) so lane ownership also covers findings and lessons - the second lane references the first lane's finding instead of re-filing it. Additive; no rule weakened or deleted. |
