@@ -226,6 +226,37 @@ jobs:
           image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
           python3 scripts/verify_image_size.py --image "$image" --arch "${{ matrix.arch }}"
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: The page must APPEAR, not merely respond (#2197)
+        # Every earlier station proved proxies (health JSON, status codes,
+        # script tags). This one executes the page in a real Chromium:
+        # a known element must be visible and the console must be free of
+        # errors and blocked resources - the v2.8.0 white page shipped
+        # through a fully green chain of proxies. Also pins the bare-
+        # container security posture: debug=false (#2198) and a CSP that
+        # is not the deny-everything API policy on the SPA.
+        run: |
+          set -euo pipefail
+          image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
+          docker run -d --name verify-page -p 18712:8000 \
+            -e ADAPTIVE_LEARNER_PORT=8000 -e ADAPTIVE_LEARNER_DATA_DIR=/app/data \
+            -e ADAPTIVE_LEARNER_SERVE_FRONTEND=1 -e ADAPTIVE_LEARNER_FRONTEND_DIST=/app/static \
+            "$image"
+          for _ in $(seq 1 60); do sleep 2; curl -sf http://127.0.0.1:18712/api/health >/tmp/h.json && break; done
+          cat /tmp/h.json
+          grep -q '"debug":false' /tmp/h.json || { echo "::error::bare container reports debug!=false (#2198)"; exit 1; }
+          curl -sI http://127.0.0.1:18712/ | tee /tmp/root-headers.txt | grep -i "content-security-policy"
+          if grep -i "content-security-policy" /tmp/root-headers.txt | grep -q "default-src 'none'"; then
+            echo "::error::the SPA still ships the deny-everything API CSP (#2197)"; exit 1
+          fi
+          cd e2e && npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          node scripts/verify-container-page.mjs http://127.0.0.1:18712
+          docker rm -f verify-page >/dev/null
+
       - name: Record tag and digest
         run: |
           {
