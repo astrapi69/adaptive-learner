@@ -124,3 +124,13 @@ def test_the_pulled_architecture_is_asserted(parsed: dict) -> None:
     )
     assert "{{.Architecture}}" in body
     assert "the manifest list is wrong" in body
+
+
+def test_the_page_is_executed_not_just_requested(workflow: str) -> None:
+    """#2197: the v2.8.0 white page shipped through a fully green chain of
+    PROXIES (health JSON, status codes, script tags). The chain must run
+    the page in a real browser and demand capability - element visible,
+    console clean - plus the bare-container posture (#2198)."""
+    assert "verify-container-page.mjs" in workflow
+    assert '"debug":false' in workflow
+    assert "default-src 'none'" in workflow
