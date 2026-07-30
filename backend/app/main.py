@@ -93,7 +93,7 @@ if not CONFIG_PATH.exists() and CONFIG_EXAMPLE_PATH.exists():
     shutil.copy2(CONFIG_EXAMPLE_PATH, CONFIG_PATH)
     logger.info("Created config/app.yaml from app.yaml.example")
 
-DEBUG = os.getenv("ADAPTIVE_LEARNER_DEBUG", "true").lower() in ("true", "1", "yes")
+DEBUG = os.getenv("ADAPTIVE_LEARNER_DEBUG", "false").lower() in ("true", "1", "yes")
 
 
 manager = PluginManager(
@@ -177,13 +177,15 @@ app.state.rate_limit_exempt = resolve_exempt_ips()
 app.add_middleware(RateLimitMiddleware)
 
 # Security headers (defense-in-depth; Phase 61 audit P3 "no CSP header
-# anywhere"). The backend is API-only -- it serves JSON, never an SPA --
-# so a strict, deny-everything CSP is safe for normal responses (CSP on
-# a JSON response does not constrain the separate page that fetched it;
-# it only hardens the rare case of a response being opened directly in a
-# browser). The DEBUG-only Swagger / ReDoc UI is the one exception: it is
-# real HTML that loads scripts + styles from a CDN and inline, so those
-# paths get a relaxed policy instead of the strict default.
+# anywhere"). API responses are JSON, so the strict deny-everything CSP
+# is right for them. But since #2058 this backend ALSO serves the built
+# SPA (single-container mode) - and shipping the API policy on those
+# responses is a white page for every user (#2197, found the day v2.8.0
+# first reached a device). Three response classes therefore: /api/* gets
+# the strict policy, the Swagger/ReDoc paths get the CDN-aware docs
+# policy, and everything else gets the SPA policy that
+# ``frontend_static.mount_frontend_static`` computed from the real
+# index.html - falling back to strict when no frontend is mounted.
 _DOCS_PATHS = frozenset({"/api/docs", "/api/redoc", "/openapi.json"})
 _STRICT_CSP = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
 _DOCS_CSP = (
@@ -209,7 +211,13 @@ async def security_headers(request: Request, call_next):
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("X-Frame-Options", "DENY")
     response.headers.setdefault("Referrer-Policy", "no-referrer")
-    csp = _DOCS_CSP if request.url.path in _DOCS_PATHS else _STRICT_CSP
+    path = request.url.path
+    if path in _DOCS_PATHS:
+        csp = _DOCS_CSP
+    elif path == "/api" or path.startswith("/api/"):
+        csp = _STRICT_CSP
+    else:
+        csp = getattr(request.app.state, "spa_csp", None) or _STRICT_CSP
     response.headers.setdefault("Content-Security-Policy", csp)
     return response
 

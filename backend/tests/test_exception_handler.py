@@ -63,6 +63,9 @@ def test_5xx_domain_error_includes_stacktrace_in_debug(monkeypatch):
     """A 502 ExternalServiceError in DEBUG mode must carry the
     stacktrace + endpoint + method so the frontend
     error-report dialog can pre-fill the GitHub issue body."""
+    import app.main as main_module
+
+    monkeypatch.setattr(main_module, "DEBUG", True)
     resp = _hit_error_via_dependency(
         monkeypatch,
         "/api/users/whatever",
@@ -71,8 +74,9 @@ def test_5xx_domain_error_includes_stacktrace_in_debug(monkeypatch):
     assert resp.status_code == 502
     body = resp.json()
     assert "Anthropic" in body["detail"]
-    # DEBUG defaults to true in tests; the handler must emit
-    # all three fields.
+    # Since #2198 the bare default is debug=false (the image is a public
+    # artifact); this test pins the DEBUG-mode BEHAVIOUR, so it enables
+    # it explicitly instead of relying on an unsafe default.
     assert isinstance(body.get("stacktrace"), str)
     assert "ExternalServiceError" in body["stacktrace"]
     assert body.get("endpoint") == "/api/users/whatever"

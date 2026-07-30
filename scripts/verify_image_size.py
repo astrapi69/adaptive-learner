@@ -40,9 +40,14 @@ BASELINE_PATH = Path(".image-size-baseline.json")
 # Two rebuilds of identical content do not produce byte-identical archives:
 # tar ordering and gzip framing jitter. Measured across two builds of the
 # same tree: 47 651 bytes apart, 0.04 %. A byte-exact ceiling would flap on
-# that and teach everyone to ignore the gate. 2 MB is far above the jitter
-# and far below any real regression (dropping pandoc moved 57 MB).
-JITTER_TOLERANCE = 2 * 1024 * 1024
+# that and teach everyone to ignore the gate. The tolerance is ~4.2x the
+# MEASURED jitter (200 000 / 47 651) - wide enough to never flap on noise,
+# narrow enough that real growth surfaces early. The previous 2 MB was 42x
+# the jitter: it stopped catching noise and started absorbing real growth
+# (the v2.8.0 amd64 image sat 66 106 bytes over the ceiling and the gate
+# said nothing worth acting on). A number without a stated relation to the
+# measured noise is arbitrary (#2135 point 5).
+JITTER_TOLERANCE = 200_000
 
 
 def measure(image: str) -> int | None:
@@ -215,21 +220,26 @@ def main() -> int:
     if compressed > ceiling:
         print(
             f"  {compressed - ceiling} bytes above the ceiling but inside the "
-            f"{JITTER_TOLERANCE // 1024 // 1024} MB rebuild-jitter tolerance"
+            f"{JITTER_TOLERANCE} byte rebuild-jitter tolerance"
         )
     else:
         headroom = ceiling - compressed
         print(f"  within the ceiling ({ceiling}, headroom {headroom} bytes)")
         if headroom > JITTER_TOLERANCE:
-            # #2140: below the ceiling by more than rebuild noise is a real
-            # shrink. Offer it - never apply it: this ceiling is a CI
-            # measurement, and a local run lowering it would pin the whole
-            # project to one laptop's number.
+            # An unexpected shrink is a FINDING, not a bonus (#2135: the
+            # tolerance is named in BOTH directions). A ceiling far above
+            # the artifact reports nothing when the artifact loses content
+            # it should carry - red until a human verifies nothing was
+            # lost and takes the ratchet down (still never automatic).
+            sys.stdout.flush()
             print(
-                f"  ratchet opportunity: {headroom / 1024 / 1024:.0f} MB below the "
-                "ceiling - lower it from a CI measurement with\n"
-                "    python3 scripts/verify_image_size.py --update-baseline"
+                f"\nimage is {headroom} bytes BELOW the ceiling - more than the "
+                f"{JITTER_TOLERANCE} byte noise tolerance. An unexpected shrink "
+                "is a finding: verify nothing was lost, then lower the ceiling:\n"
+                "    python3 scripts/verify_image_size.py --update-baseline",
+                file=sys.stderr,
             )
+            return 1
     return 0
 
 
