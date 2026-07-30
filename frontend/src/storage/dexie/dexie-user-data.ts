@@ -43,6 +43,11 @@ export const MANAGED_USER_DATA_KEYS = [
     // (lib/content/browse/set-status-store); mode-agnostic, survives a
     // Dexie restore.
     "adaptive-learner.set-status",
+    // Per-set lesson display order (#2172, lib/content/browse/lesson-order-store).
+    // An ordered list OF the lesson filenames, a display preference, never a
+    // rename, so lesson identity (and thus progress/SRS) is untouched.
+    // Mode-agnostic, survives a Dexie restore + rides the .alb backup.
+    "adaptive-learner.lesson-order",
 ] as const;
 
 /**

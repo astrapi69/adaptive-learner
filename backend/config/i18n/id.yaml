@@ -2027,6 +2027,23 @@ content:
     message: 'Memperbarui "{title}" mengubah materi yang sedang kamu pelajari. Sekitar {cards} kartu ulasan dan {lessons} pelajaran dengan progres tersimpan tidak lagi cocok dengan versi baru dan akan diatur ulang. Pelajaran yang sudah selesai tetap ada; hanya ulasan yang berubah yang terpengaruh.'
     confirm: 'Perbarui saja'
     cancel: 'Pertahankan versi saat ini'
+  recovery:
+    title: 'Pulihkan progres ulasan untuk pelajaran yang diperbaiki'
+    message: 'Kami memperbaiki beberapa pelajaran bahasa Jepang, Korea, dan Tionghoa (A1). Kartu ulasan yang sudah Anda buat untuk item yang berubah tidak lagi cocok sehingga tidak dijadwalkan. Anda dapat menautkannya kembali ke pelajaran yang diperbaiki atau memulai ulang satu set. Hanya set ini yang terpengaruh; set Anda yang lain tetap utuh.'
+    backup_hint: 'Disarankan lebih dulu: ekspor cadangan agar Anda dapat membatalkannya jika perlu.'
+    backup_action: 'Ekspor cadangan'
+    backup_saved: 'Cadangan disimpan: {filename}'
+    set_cards: '{count} kartu ulasan terpengaruh'
+    restore: 'Tautkan ulang kartu ulasan'
+    restart: 'Mulai ulang set'
+    restart_confirm: 'Mulai ulang? Progres tersimpan dan kartu ulasan untuk set ini akan dihapus.'
+    restart_confirm_yes: 'Ya, mulai ulang'
+    restart_cancel: 'Batal'
+    restore_result: '{applied} kartu ulasan ditautkan ulang ({skipped} sudah benar).'
+    restore_unmapped: '{unmapped} kartu tidak dapat ditautkan ulang karena pelajaran berubah lagi; kartu dibiarkan tak berubah.'
+    restart_result: 'Set direset. Anda dapat memulai dari awal.'
+    working: 'Memproses…'
+    failed: 'Terjadi kesalahan. Tidak ada yang diubah; silakan coba lagi.'
   share:
     button: "Bagikan"
     aria: "Bagikan set '{title}'"
@@ -2162,6 +2179,12 @@ content:
     deleted: "Pelajaran dihapus."
     delete_failed: "Tidak dapat menghapus pelajaran."
     delete_aria: "Hapus pelajaran {title}"
+  lesson_order:
+    move_up: "Pindahkan pelajaran {title} ke atas"
+    move_down: "Pindahkan pelajaran {title} ke bawah"
+    already_first: "{title} sudah menjadi pelajaran pertama"
+    already_last: "{title} sudah menjadi pelajaran terakhir"
+    moved: "{title} kini berada di posisi {position} dari {total}"
   set_status:
     delete_progress_option: "Hapus juga kemajuan belajar saya dan kartu ulasan ({lessons} pelajaran, {cards} kartu)"
     delete_progress_option_nocounts: "Hapus juga kemajuan belajar saya dan kartu ulasan"

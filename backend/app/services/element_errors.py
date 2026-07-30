@@ -209,6 +209,22 @@ def record_attempts(
     return [record_attempt(repo, user_id, a) for a in attempts]
 
 
+def remap_element_keys(
+    repo: ElementErrorsRepository,
+    user_id: str,
+    remaps: list[tuple[str, str, str, str, str]],
+) -> tuple[int, int]:
+    """Apply the one-off ja/ko/zh recovery remaps (#2161) in a single
+    transaction: all remaps in this call land together or roll back together
+    (all-or-nothing; the caller passes one set's remaps per call). Returns
+    ``(applied, skipped)``."""
+    if not remaps:
+        return (0, 0)
+    applied, skipped = repo.remap_element_keys(user_id, remaps)
+    repo.commit()
+    return (applied, skipped)
+
+
 def list_for_user(
     repo: ElementErrorsRepository,
     user_id: str,

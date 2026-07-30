@@ -2027,6 +2027,23 @@ content:
     message: '"{title}"을(를) 업데이트하면 이미 학습 중인 콘텐츠가 변경됩니다. 저장된 진행 상황이 있는 복습 카드 약 {cards}개와 레슨 {lessons}개가 새 버전과 더 이상 일치하지 않아 초기화됩니다. 완료한 레슨은 유지되며 변경된 복습만 영향을 받습니다.'
     confirm: '그래도 업데이트'
     cancel: '현재 버전 유지'
+  recovery:
+    title: '수정된 레슨의 복습 진행 상황 복원'
+    message: '일본어, 한국어, 중국어(A1) 일부 레슨을 수정했습니다. 변경된 항목에 대해 이미 만든 복습 카드가 더 이상 일치하지 않아 예약되지 않습니다. 수정된 레슨에 다시 연결하거나 세트를 처음부터 다시 시작할 수 있습니다. 이 세트만 영향을 받으며 다른 세트는 그대로 유지됩니다.'
+    backup_hint: '먼저 권장: 필요할 때 되돌릴 수 있도록 백업을 내보내세요.'
+    backup_action: '백업 내보내기'
+    backup_saved: '백업이 저장되었습니다: {filename}'
+    set_cards: '영향받는 복습 카드 {count}개'
+    restore: '복습 카드 다시 연결'
+    restart: '세트 처음부터 다시 시작'
+    restart_confirm: '처음부터 다시 시작할까요? 이 세트의 저장된 진행 상황과 복습 카드가 삭제됩니다.'
+    restart_confirm_yes: '예, 다시 시작'
+    restart_cancel: '취소'
+    restore_result: '복습 카드 {applied}개를 다시 연결했습니다({skipped}개는 이미 올바른 상태였습니다).'
+    restore_unmapped: '레슨이 다시 변경되어 {unmapped}개 카드는 다시 연결할 수 없었습니다. 변경하지 않고 그대로 두었습니다.'
+    restart_result: '세트가 초기화되었습니다. 처음부터 시작할 수 있습니다.'
+    working: '처리 중…'
+    failed: '문제가 발생했습니다. 아무것도 변경되지 않았습니다. 다시 시도해 주세요.'
   share:
     button: "공유"
     aria: "세트 '{title}' 공유"
@@ -2162,6 +2179,12 @@ content:
     deleted: "레슨이 삭제되었습니다."
     delete_failed: "레슨을 삭제할 수 없습니다."
     delete_aria: "레슨 {title} 삭제"
+  lesson_order:
+    move_up: "{title} 레슨을 위로 이동"
+    move_down: "{title} 레슨을 아래로 이동"
+    already_first: "{title}은(는) 이미 첫 번째 레슨입니다"
+    already_last: "{title}은(는) 이미 마지막 레슨입니다"
+    moved: "{title}이(가) 이제 {total}개 중 {position}번째입니다"
   set_status:
     delete_progress_option: "학습 진행 상황과 복습 카드도 삭제 ({lessons}개 레슨, {cards}개 카드)"
     delete_progress_option_nocounts: "학습 진행 상황과 복습 카드도 삭제"
