@@ -206,4 +206,10 @@
 # Punkt-5-Pruefung (#2135, 2026-07-29): `wc -l` auf eine versionierte
 # Datei. Werkzeugunabhaengig, zeilenendungs-neutral, zwei Laeufe identisch.
 # Keine Toleranz noetig. GEPRUEFT - nicht erneut pruefen.
-7639
+# 2026-07-30: 7639 -> 7648 (develop-Nachzug, commit ffa81660
+# "fix(a11y): layer the base anchor color so class-styled anchors win
+# again"): +9 Zeilen in 01-base.css - der Base-Anker-Farb-Layer, damit
+# klassen-gestylte Anker wieder gewinnen. Legitime Fundament-Erweiterung
+# (Base-Reset-Ebene), aber der a11y-Fix hob die Baseline nicht mit an, so
+# dass develop rot blieb. Hier nachgetragen; nicht aus dieser Recovery-PR.
+7648
