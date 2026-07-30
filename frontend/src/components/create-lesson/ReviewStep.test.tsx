@@ -87,3 +87,32 @@ describe("ReviewStep language-pair check (#1929)", () => {
         expect(checklist.querySelectorAll("li")).toHaveLength(6);
     });
 });
+
+describe("ReviewStep copy-progress note (#2201)", () => {
+    it("states the copy's learning-progress consequence in edit mode", () => {
+        render(
+            <ReviewStep
+                meta={META}
+                cards={CARDS}
+                exercises={EXERCISES}
+                draftChecks={checks()}
+                saving={false}
+                editMode
+                onSaveLocal={() => {}}
+                onSaveShare={() => {}}
+                onSaveCopy={() => {}}
+                t={t}
+            />,
+        );
+        expect(
+            screen.getByTestId("create-lesson-copy-progress-note"),
+        ).toHaveTextContent(/progress/i);
+    });
+
+    it("omits the copy-progress note when not editing", () => {
+        renderStep();
+        expect(
+            screen.queryByTestId("create-lesson-copy-progress-note"),
+        ).toBeNull();
+    });
+});

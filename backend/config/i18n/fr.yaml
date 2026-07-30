@@ -2620,6 +2620,7 @@ create_lesson:
   edit_title: "Modifier la leçon"
   edit_load_error: "Impossible de charger cette leçon pour la modifier."
   edit_note: "Vous modifiez une leçon existante. L'enregistrement l'écrase ; utilisez 'Enregistrer comme copie' pour conserver l'original."
+  copy_progress_note: "Une copie démarre sans progression d'apprentissage ; l'original conserve sa progression et ses cartes de révision."
   edit:
     lesson_picker_label: "Leçon de cet ensemble ({n})"
     switch_confirm_title: "Changer de leçon ?"

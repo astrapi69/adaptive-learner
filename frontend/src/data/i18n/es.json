@@ -2865,6 +2865,7 @@
     "edit_title": "Editar lección",
     "edit_load_error": "No se pudo cargar esta lección para editarla.",
     "edit_note": "Estás editando una lección existente. Al guardar se sobrescribe; usa 'Guardar como copia' para conservar el original.",
+    "copy_progress_note": "Una copia empieza sin progreso de aprendizaje; el original conserva su progreso y sus tarjetas de repaso.",
     "edit": {
       "lesson_picker_label": "Lección de este conjunto ({n})",
       "switch_confirm_title": "¿Cambiar de lección?",
