@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
 **Stand:** 2026-07-30 (v2.8.0)
-**Anzahl EXPs:** 44 (Zeilen der Uebersichtstabelle; die Nummern 019 und 043
+**Anzahl EXPs:** 44 (Zeilen der Übersichtstabelle; die Nummern 019 und 043
 existieren nicht, 001-017 sind in `docs/roadmap-archive/phase-1-complete.md`
 archiviert und bleiben als historische Zeilen stehen)
 

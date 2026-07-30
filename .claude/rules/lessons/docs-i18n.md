@@ -80,9 +80,8 @@ Production German content uses proper UTF-8 umlauts (ä, ö, ü, ß), NOT ASCII 
 - Variable / function / class / identifier names.
 - File names, directory names.
 - Git branch names, commit messages.
-- This chat with the user (per the user's style preference, ASCII-only in chat communication).
 
-The chat-style rule and the production-content rule are deliberately different. Production text is authored for end readers; the chat is a working channel.
+Chat with the user is NOT an ASCII exception: the standing instruction is real UTF-8 umlauts in all prose, and the chat is prose. Only the machine-facing tokens above (identifiers, filenames, branch/commit strings) stay ASCII.
 
 ### Tooling (#1755, since 2026-07-17)
 
