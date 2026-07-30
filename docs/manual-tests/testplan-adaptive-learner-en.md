@@ -658,6 +658,40 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
 - [ ] Language check (#2160): the confirmation text appears in the app language
       (not English), spot-checked across several languages (de/ja/ko/el/hi).
 
+### Recovery: review progress after the ja/ko/zh correction (#2161)
+
+Location: Dashboard (Overview). Background: the three A1 sets Japanese, Korean
+and Chinese were re-published in July 2026 with a transliteration fix that
+changed the answer text of 172 review items (66 ja / 58 ko / 48 zh). Review
+cards are keyed by the answer text, so cards already created for the changed
+items quietly fell out of scheduling. Check in BOTH storage modes. Only these
+three sets are affected; all other sets are untouched.
+
+- [ ] Setup: learn one of the sets (ja/ko/zh A1) in the OLD version and create a
+      few review cards, then move it to the corrected version (or seed test data
+      with the old answer keys).
+- [ ] The notice appears on the Dashboard ONLY when affected cards are actually
+      present in your own data. No notice when nothing is affected.
+- [ ] The notice shows, per affected set, the number of affected cards and offers
+      "Export backup" (recommended, not forced).
+- [ ] "Export backup" -> produces the same .alb file as Settings → Data (toast
+      with the filename).
+- [ ] "Relink review cards" -> a numeric result ("N relinked, N already
+      correct"). The notice then disappears for that set (no re-asking).
+- [ ] Idempotency: triggering again (or reloading) changes nothing more; the
+      notice does not come back for that set.
+- [ ] Partial recovery: if a set changed again after the fix, unmappable cards
+      are reported by count and left unchanged (not silently dropped).
+- [ ] "Start set fresh" -> inline confirm; only after confirming are the set's
+      progress + review cards removed; the notice is then gone for that set.
+- [ ] No double-map / no orphaned rows: after relinking, no review lands on the
+      wrong card and there are no duplicate cards.
+- [ ] Backup behavior: import a backup taken BEFORE recovery -> the old
+      (orphaned) keys are back, the notice reappears and can be applied again.
+- [ ] iOS standalone (PWA): same flow, notice + both actions work.
+- [ ] Language check: notice and result texts appear in the app language (not
+      English), sampled across several languages (de/ja/ko/el/hi).
+
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)

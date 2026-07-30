@@ -690,6 +690,46 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
 - [ ] Sprache pruefen (#2160): der Bestaetigungstext erscheint in der App-Sprache
       (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
 
+### Wiederherstellung: Wiederholungsfortschritt nach ja/ko/zh-Korrektur (#2161)
+
+Ort: Dashboard (Uebersicht). Hintergrund: die drei A1-Sets Japanisch, Koreanisch
+und Chinesisch wurden im Juli 2026 mit einer Umschrift-Korrektur neu
+veroeffentlicht, die die Antworttexte von 172 Wiederholungs-Elementen aenderte
+(66 ja / 58 ko / 48 zh). Wiederholungskarten haengen am Antworttext, also fielen
+bereits angelegte Karten fuer die geaenderten Elemente still aus der Planung.
+In BEIDEN Speichermodi pruefen. Nur diese drei Sets sind betroffen; alle anderen
+Sets bleiben unberuehrt.
+
+- [ ] Vorbereitung: eines der Sets (ja/ko/zh A1) in der ALTEN Fassung lernen und
+      ein paar Wiederholungskarten erzeugen, dann auf die korrigierte Fassung
+      bringen (bzw. Testdaten mit den alten Antwort-Keys).
+- [ ] Der Hinweis erscheint auf dem Dashboard NUR, wenn tatsaechlich betroffene
+      Karten in den eigenen Daten liegen. Kein Hinweis, wenn nichts betroffen ist.
+- [ ] Der Hinweis nennt je betroffenem Set die Anzahl betroffener Karten und
+      bietet "Sicherung erstellen" an (empfohlen, nicht erzwungen).
+- [ ] "Sicherung erstellen" -> es wird dieselbe .alb-Datei wie unter
+      Settings → Daten erzeugt (Toast mit Dateiname).
+- [ ] "Wiederholungskarten neu verknuepfen" -> beziffertes Ergebnis
+      ("N neu verknuepft, N bereits korrekt"). Danach verschwindet der Hinweis
+      fuer dieses Set (kein erneutes Nachfragen).
+- [ ] Idempotenz: erneut ausloesen (bzw. Seite neu laden) aendert nichts mehr;
+      der Hinweis kommt fuer dieses Set nicht zurueck.
+- [ ] Teil-Wiederherstellung: falls ein Set nach der Korrektur erneut geaendert
+      wurde, werden nicht zuordenbare Karten als Anzahl gemeldet und unveraendert
+      gelassen (nicht still verworfen).
+- [ ] "Set neu beginnen" -> Inline-Rueckfrage, erst nach Bestaetigung werden
+      Fortschritt + Wiederholungskarten dieses Sets entfernt; danach ist der
+      Hinweis fuer das Set weg.
+- [ ] Kein Doppel-Mapping / keine verwaisten Zeilen: nach dem Neu-Verknuepfen
+      keine Wiederholung auf einer falschen Karte, keine doppelten Karten.
+- [ ] Backup-Verhalten: eine VOR der Wiederherstellung erstellte Sicherung
+      importieren -> die alten (verwaisten) Keys sind wieder da, der Hinweis
+      erscheint erneut und laesst sich erneut anwenden.
+- [ ] iOS-Standalone (PWA): gleicher Ablauf, Hinweis + beide Aktionen
+      funktionieren.
+- [ ] Sprache pruefen: Hinweis- und Ergebnistexte erscheinen in der App-Sprache
+      (nicht englisch), stichprobenartig in mehreren Sprachen (de/ja/ko/el/hi).
+
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
       Aktualisieren → Set kommt NICHT zurueck (#1719)
