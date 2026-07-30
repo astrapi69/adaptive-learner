@@ -339,8 +339,16 @@ binaries by itself - the checklist carries the trigger:
 4. Launcher binaries: take the artifacts of the GREEN main-push builds of
    the tag commit (never rebuild - bit-drift), attach with `.sha256` files
    via `gh release upload`.
-5. Only after every station is green: `gh release edit vX.Y.Z --draft=false`.
-   Record the publish run id in the checklist item below.
+5. COMPLETENESS CHECKPOINT before going visible: the draft's asset list
+   MUST equal the expected set - 3 binaries + 3 `.sha256`, the per-arch
+   image archives + `.sha256` (the install docs describe the registry-free
+   path as AVAILABLE), and the digest recorded in the notes. Missing
+   anything: do not publish - a visible release must not point at
+   something absent (the image rule, applied to assets). If archives are
+   deliberately deferred, the docs must say "announced", not available.
+6. Only after every station is green AND the checkpoint passed:
+   `gh release edit vX.Y.Z --draft=false`. Record the publish run id in
+   the checklist item below.
 
 
 Before invoking `gh release create`, build the per-release notes file by combining the static prerequisites template with the version-specific changelog:
