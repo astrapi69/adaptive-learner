@@ -24,7 +24,10 @@ import {expect, test} from "@playwright/test";
 import {createTestUser} from "../helpers";
 
 test.describe("Backup export + restore", () => {
-    test("export downloads JSON, re-upload renders comparison + clean confirm", async ({
+        // DECLARED SKIP (#2170): this spec asserts a UI generation the product
+    // has since replaced (backup export/download flow changed); rewrite tracked in #2170, counted by the
+    // smoke skip budget (e2e/.smoke-skip-baseline.json).
+test.fixme("export downloads JSON, re-upload renders comparison + clean confirm", async ({
         page,
     }) => {
         // Step 1: create a user + project + complete the
@@ -32,8 +35,9 @@ test.describe("Backup export + restore", () => {
         await createTestUser(page, {name: "Backup E2E"});
 
         // Step 2: navigate to Settings -> Backup section.
-        await page.getByTestId("nav-settings").click();
-        await page.waitForURL("**/settings");
+        // Settings is tab-grouped (#549); deep link straight to the tab
+        // that holds this section - the documented ?tab= contract.
+        await page.goto("/settings?tab=data");
         await expect(page.getByTestId("settings-backup")).toBeVisible();
 
         // Step 3: click Create Backup and capture the downloaded

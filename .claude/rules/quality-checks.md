@@ -49,6 +49,13 @@ No backup-touching PR merges until a REAL round-trip in `make dev` runs to compl
 
 **Origin**: five consecutive "fixed" backup releases (#49, #57, #64, #115, #117) each shipped with passing unit tests yet none produced a working round-trip in the real app. Synthetic fixtures do not catch schema drift, missing columns, or JSON serialization edge cases that only surface with real user data.
 
+**Coverage status (#2170, recorded 2026-07-30)**: the automated smoke
+spec for this path (`backup-restore.spec.ts`) delivered NO signal from
+2026-05-23 (identity-recovery landed) to 2026-07-30 and is currently
+silenced pending rewrite. Until that rewrite lands, this manual
+round-trip is the ONLY coverage of the backup/restore path - not an
+additional confirmation on top of an automated one.
+
 ### What the test covers
 
 1. Start `make dev` with a real database containing real user data.

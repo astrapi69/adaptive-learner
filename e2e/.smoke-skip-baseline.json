@@ -1,0 +1,4 @@
+{
+  "note": "Budget for SILENCED smoke specs (test.fixme/test.skip and every alias) - counted by backend/tests/test_smoke_skip_budget.py (#2170). Silencing is a declared, budgeted decision, never a habit: growth fails the gate until this number is raised in the same commit with a reason; shrink is offered by the gate but entered by a human (#2140). Seeded 2026-07-30 with the seven v2.7.0-release skips (five stale-spec classes, see #2170) minus the sync-pairing rewrite that went green.",
+  "max_silenced_specs": 6
+}

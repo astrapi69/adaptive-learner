@@ -35,8 +35,9 @@ test.describe("Sync pairing UI", () => {
     }) => {
         await createTestUser(page, {name: "Sync Desktop E2E"});
 
-        await page.getByTestId("nav-settings").click();
-        await page.waitForURL("**/settings");
+        // Settings is tab-grouped (#549); deep link straight to the tab
+        // that holds this section - the documented ?tab= contract.
+        await page.goto("/settings?tab=data");
         await expect(page.getByTestId("settings-sync")).toBeVisible();
         await expect(
             page.getByTestId("sync-desktop-unpaired"),
@@ -55,47 +56,22 @@ test.describe("Sync pairing UI", () => {
         await expect(page.getByTestId("sync-copy-link")).toBeVisible();
     });
 
-    test("phone unpaired (mobile viewport): scan button + paste fallback visible", async ({
+    test("browser mode (mobile viewport): sync section shows the desktop-only notice", async ({
         page,
     }) => {
-        // Flip storage mode to dexie BEFORE navigation so the
-        // SyncSection renders the PhoneUnpairedView. Also flip
-        // the viewport to a mobile size — the prompt's "test at
-        // 375 / 1024" rule applies here because the layout is
-        // genuinely viewport-sensitive.
+        // SYNC-UI-GATE (#335): in Dexie/browser mode the sync feature is
+        // DISABLED with a desktop_only notice - the pairing UI this spec
+        // used to assert was deliberately retired until Phase 1 LAN mode
+        // lands, and must NOT reappear here (#2170: the old assertion
+        // pinned removed behaviour). The section header stays visible so
+        // the learner knows the feature exists.
         await page.setViewportSize({width: 375, height: 812});
         await page.addInitScript(() => {
             localStorage.setItem("adaptive-learner.storage_mode", "dexie");
         });
         await createTestUser(page, {name: "Sync Phone E2E"});
-
-        // Mobile viewport: nav-settings is hidden behind the
-        // hamburger drawer. Open it first.
-        await page.getByTestId("nav-hamburger").click();
-        await page.getByTestId("nav-settings").click();
-        await page.waitForURL("**/settings");
-        await expect(
-            page.getByTestId("sync-phone-unpaired"),
-        ).toBeVisible();
-        await expect(page.getByTestId("sync-scan-button")).toBeVisible();
-        // Paste fallback lives inside a <details> element —
-        // expand it before the textarea + button become
-        // visible.
-        await page.getByTestId("sync-paste-fallback").click();
-        await expect(page.getByTestId("sync-pair-input")).toBeVisible();
-        await expect(page.getByTestId("sync-pair-button")).toBeVisible();
-
-        // Enter an obviously-invalid pairing URI; pair button
-        // surfaces an error toast without breaking the page.
-        await page
-            .getByTestId("sync-pair-input")
-            .fill("not-a-valid-uri");
-        await page.getByTestId("sync-pair-button").click();
-        // The page must remain on /settings (no crash, no
-        // navigation away).
-        await expect(page.getByTestId("settings-sync")).toBeVisible();
-        await expect(
-            page.getByTestId("sync-phone-unpaired"),
-        ).toBeVisible();
+        await page.goto("/settings?tab=data");
+        await expect(page.getByTestId("settings-sync-desktop-only")).toBeVisible();
+        await expect(page.getByTestId("sync-phone-unpaired")).toHaveCount(0);
     });
 });

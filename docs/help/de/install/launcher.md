@@ -9,12 +9,23 @@
     lokal betreiben möchtest.
 
 Der Desktop-Launcher ist der einfachste Weg, Adaptive Learner **mit
-eigenem Backend** auf dem eigenen Rechner zu betreiben. Er ist ein kleines Fenster, das alles
-Weitere für dich erledigt: Er prüft, ob Docker läuft, lädt und baut beim
-ersten Start das App-Image (einmalig, 5-10 Minuten sind normal), startet
-die Container und öffnet die App anschließend im Browser unter
+eigenem Backend** auf dem eigenen Rechner zu betreiben. Er ist ein
+kleines Fenster, das alles Weitere für dich erledigt: Er prüft, ob
+Docker läuft, lädt beim ersten Start das fertig gebaute App-Image aus
+der GitHub-Registry (etwa 110-120 MB, wenige Minuten bei normaler
+Verbindung - auf deinem Rechner wird nichts gebaut), startet den
+Container und öffnet die App anschließend im Browser unter
 `http://localhost:8501`. Aus demselben Fenster kannst du die App auch
-wieder stoppen, den Port ändern oder alles deinstallieren.
+wieder stoppen, den Port ändern, aktualisieren oder alles
+deinstallieren.
+
+## Die drei Installationswege
+
+| Weg | Für wen | Was passiert |
+|-----|---------|--------------|
+| **Launcher (Standard)** | Alle | Lädt das veröffentlichte Image von `ghcr.io/astrapi69/adaptive-learner` und startet es. Diese Seite. |
+| **Registryfrei (Archiv)** | Rechner ohne Registry-Zugang | Lade das Image-Archiv für deinen Prozessor von derselben Release-Seite wie den Launcher und lege es zu den Launcher-Daten - es wird in die hinterlegte Referenz GELADEN statt bezogen. Archiv und Launcher müssen aus dem **selben Release** stammen; eine andere Version führt zum harten Fehler mit Dateinamen. |
+| **Aus dem Quellbaum (Entwickler)** | Selbstbauer | Repository klonen, dann `install.sh` oder der Compose-Stack. Baut lokal; durch dieses Release unverändert. |
 
 Der Port ist standardmäßig **8501** und im Launcher-Fenster änderbar;
 ist er belegt, weicht der Launcher auf einen freien Port aus. Wenn du
@@ -63,6 +74,13 @@ Alle drei Launcher liegen bei jedem Release unter
 Jedes dieser Programme wird beim Bauen einmal gestartet, auf genau dem
 Betriebssystem, für das es gedacht ist. Dass es startet, ist damit
 belegt - unter Linux, unter Windows und unter macOS auf Apple Silicon.
+Das App-Image wird je Release geprüft: ein anonymer Download (ohne
+Anmeldung) und ein echter Start mit Gesundheitsprüfung, getrennt für
+beide Prozessortypen (Intel/AMD und ARM), auf Maschinen des jeweiligen
+Typs. Noch nicht gemessen ist der Registry-Download auf sehr alten
+Docker-Engines (20.10-Ära); die Engine-Kette selbst ist auf einer
+solchen Engine gegen eine andere Registry belegt, die Messung gegen die
+GitHub-Registry läuft upstream.
 
 Nicht belegt ist, wie dein Betriebssystem auf eine **heruntergeladene**
 Datei reagiert: die Programme tragen keine kostenpflichtige Signatur,
@@ -147,9 +165,13 @@ Bekannte Stolpersteine:
 
 - Der Launcher zeigt selbst einen Hinweis-Dialog, wenn Docker nicht
   läuft, und bietet an, Docker Desktop zu starten.
-- Der erste Start lädt und baut das App-Image; die Schritt-Checkliste
-  im Launcher-Fenster (Check Docker / Download / Build / Start / Ready)
-  zeigt den Fortschritt. Spätere Starts sind schnell.
+- Der erste Start lädt das App-Image; die Schritt-Checkliste im
+  Launcher-Fenster zeigt den Fortschritt, jedes geladene Megabyte ist
+  sichtbar - nie ein stilles langes Warten. Spätere Starts sind schnell
+  und funktionieren offline.
+- `--doctor` auf der Kommandozeile liefert einen Bereitschaftsbericht:
+  Konfiguration, Docker, Werkzeuge, Port und Zustand - alle
+  Voraussetzungen in einem Durchgang.
 - Läuft die App, erreichst du sie jederzeit unter
   `http://localhost:8501` (oder deinem geänderten Port); der Button
   "Im Browser öffnen" im Launcher tut dasselbe.
