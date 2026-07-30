@@ -252,7 +252,9 @@ jobs:
           if grep -i "content-security-policy" /tmp/root-headers.txt | grep -q "default-src 'none'"; then
             echo "::error::the SPA still ships the deny-everything API CSP (#2197)"; exit 1
           fi
-          cd e2e && npm ci --no-audit --no-fund
+          # e2e is bun-managed (bun.lock, no package-lock - the #1496
+          # class that already broke frontend/Dockerfile's npm ci once).
+          cd e2e && npm install --no-audit --no-fund
           npx playwright install --with-deps chromium
           node scripts/verify-container-page.mjs http://127.0.0.1:18712
           docker rm -f verify-page >/dev/null
