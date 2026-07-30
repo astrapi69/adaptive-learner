@@ -480,7 +480,10 @@ class TestDeploymentModeContract:
         assert cfg.dockerfile_file == "backend/Dockerfile"
         assert cfg.build_context == "."
         assert cfg.container_port == 8000
-        assert cfg.container_volumes == {"adaptive-learner-data": "/app/data"}
+        # The PREFIXED name: compose created it that way, and the data lives
+        # there (#2154). Pinned so it cannot be "tidied up" back into a
+        # silent data loss.
+        assert cfg.container_volumes == {"adaptive-learner_adaptive-learner-data": "/app/data"}
         assert cfg.container_env["ADAPTIVE_LEARNER_DATA_DIR"] == "/app/data"
         assert cfg.container_env["ADAPTIVE_LEARNER_PORT"] == "8000"
         assert cfg.container_env["ADAPTIVE_LEARNER_SERVE_FRONTEND"] == "1"
@@ -910,3 +913,151 @@ class TestDockerConfigSanitising:
         clean = docker_config.sanitised_config_dir(tmp_path / "out", source=source)
         monkeypatch.setenv("DOCKER_CONFIG", str(clean))
         assert docker_auth.load_config().get_all_credentials() == {}
+
+
+class TestVolumeNameMigration:
+    """#2154: the compose volume carries the data, the plain one was empty.
+
+    Compose prefixes with the project name, so the compose path created
+    `adaptive-learner_adaptive-learner-data`, while launcher.json since
+    #2100 declared the plain name - which docker-py takes literally and
+    Docker creates silently. Users who installed in the compose era and
+    then updated got an empty database while their projects and the Fernet
+    secret.key sat in the other volume.
+    """
+
+    class _FakeVolumes:
+        def __init__(self, present):
+            self._present = present
+
+        def get(self, name):
+            if name not in self._present:
+                raise RuntimeError("no such volume")
+            return object()
+
+    class _FakeContainers:
+        def __init__(self, contents):
+            self._contents = contents
+
+        def run(self, image, command, volumes, remove):  # noqa: ARG002
+            name = next(iter(volumes))
+            return "\n".join(self._contents.get(name, [])).encode()
+
+    class _FakeClient:
+        def __init__(self, contents):
+            self.volumes = TestVolumeNameMigration._FakeVolumes(set(contents))
+            self.containers = TestVolumeNameMigration._FakeContainers(contents)
+
+    def test_config_points_at_the_volume_that_holds_the_data(self) -> None:
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        assert cfg.container_volumes == {"adaptive-learner_adaptive-learner-data": "/app/data"}
+
+    def test_no_conflict_when_only_the_compose_volume_has_data(self) -> None:
+        from adaptive_learner_launcher import volume_migration
+
+        client = self._FakeClient({"adaptive-learner_adaptive-learner-data": ["adaptive_learner.db"]})
+        assert volume_migration.describe_conflict(client) is None
+
+    def test_no_conflict_when_the_second_volume_is_empty(self) -> None:
+        from adaptive_learner_launcher import volume_migration
+
+        client = self._FakeClient(
+            {
+                "adaptive-learner_adaptive-learner-data": ["adaptive_learner.db"],
+                "adaptive-learner-data": [],
+            }
+        )
+        assert volume_migration.describe_conflict(client) is None
+
+    def test_lost_found_alone_is_not_data(self) -> None:
+        """An empty ext4 volume is not somebody's learning history."""
+        from adaptive_learner_launcher import volume_migration
+
+        client = self._FakeClient(
+            {
+                "adaptive-learner_adaptive-learner-data": ["adaptive_learner.db"],
+                "adaptive-learner-data": ["lost+found"],
+            }
+        )
+        assert volume_migration.describe_conflict(client) is None
+
+    def test_both_with_data_stops_and_names_both(self) -> None:
+        """The one case where every choice loses something."""
+        from adaptive_learner_launcher import volume_migration
+
+        client = self._FakeClient(
+            {
+                "adaptive-learner_adaptive-learner-data": ["adaptive_learner.db", ".config"],
+                "adaptive-learner-data": ["adaptive_learner.db"],
+            }
+        )
+        message = volume_migration.describe_conflict(client)
+        assert message is not None
+        assert "adaptive-learner_adaptive-learner-data" in message
+        assert "adaptive-learner-data" in message
+        assert "your call, not the program's" in message
+        # It must hand over the read-only inspection commands, not just a verdict.
+        assert "-v adaptive-learner_adaptive-learner-data:/d:ro" in message
+
+    def test_it_says_browser_mode_is_unaffected(self) -> None:
+        """Scoping matters for the reader: Dexie data never lived here."""
+        from adaptive_learner_launcher import volume_migration
+
+        client = self._FakeClient(
+            {
+                "adaptive-learner_adaptive-learner-data": ["adaptive_learner.db"],
+                "adaptive-learner-data": ["adaptive_learner.db"],
+            }
+        )
+        assert "Browser-storage mode is unaffected" in volume_migration.describe_conflict(client)
+
+
+class TestComposeNameCoverage:
+    """#2154 structurally: every declared resource name vs what compose makes.
+
+    Compose prefixes VOLUMES and NETWORKS with the project name but leaves
+    an explicit `container_name` alone. One field already diverged
+    silently; this walks all of them so the next one cannot.
+    """
+
+    def _compose(self) -> str:
+        return (LAUNCHER_JSON.parent.parent / "docker-compose.prod.yml").read_text(encoding="utf-8")
+
+    def test_it_examines_every_declared_name(self) -> None:
+        """Point 4: an empty scan must not read as a clean one."""
+        cfg = json.loads(LAUNCHER_JSON.read_text(encoding="utf-8"))
+        declared = {
+            key: cfg.get(key)
+            for key in ("container_name", "image_name", "compose_project", "container_volumes")
+            if cfg.get(key)
+        }
+        print(f"examined {len(declared)} declared resource name(s): {', '.join(declared)}")
+        assert len(declared) >= 3
+
+    def test_volume_names_match_what_compose_creates(self) -> None:
+        cfg = json.loads(LAUNCHER_JSON.read_text(encoding="utf-8"))
+        project = cfg["compose_project"]
+        compose = self._compose()
+        for declared in cfg.get("container_volumes", {}):
+            # The compose file declares the UNPREFIXED name; docker creates
+            # "<project>_<name>". So the launcher must declare the prefixed one.
+            assert declared.startswith(f"{project}_"), (
+                f"{declared} is not what compose creates - it would mount a "
+                f"different, empty volume (#2154)"
+            )
+            bare = declared[len(project) + 1 :]
+            assert f"  {bare}:" in compose, f"{bare} is not declared in the compose file"
+
+    def test_no_network_is_declared_yet_and_that_is_deliberate(self) -> None:
+        """The same prefixing applies to networks - none exist, so none can drift."""
+        cfg = json.loads(LAUNCHER_JSON.read_text(encoding="utf-8"))
+        assert "container_networks" not in cfg, (
+            "a declared network would need the same project prefix (#2154)"
+        )
+        assert "networks:" not in self._compose(), "the compose file grew a network - re-check the prefixes"
+
+    def test_container_name_is_not_prefixed(self) -> None:
+        """Compose does NOT prefix an explicit container_name - proof it is
+        the volumes that need the prefix, not everything."""
+        cfg = json.loads(LAUNCHER_JSON.read_text(encoding="utf-8"))
+        assert f"container_name: {cfg['container_name']}" in self._compose()

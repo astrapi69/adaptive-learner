@@ -385,6 +385,11 @@ git push origin main
 
 This checklist MUST be fully checked off before the release counts as "done". Missing items block the release.
 
+- [ ] `launcher/launcher.json` `container_volumes` still names the PREFIXED
+      volume (#2154). Shipping the bare name mounts an empty volume while the
+      user's database, uploads and Fernet key sit invisible in the other one.
+      The "no user notification needed" answer holds only while no release
+      goes out carrying the bare name.
 - [ ] Reviewed the commits since the last tag
 - [ ] Version number picked per SemVer and confirmed by the user
 - [ ] CHANGELOG.md with the new entry committed

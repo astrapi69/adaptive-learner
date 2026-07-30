@@ -193,3 +193,18 @@ def test_the_committed_baseline_carries_per_arch_ceilings() -> None:
     data = json.loads(BASELINE.read_text(encoding="utf-8"))
     assert "per_arch" in data, "no per-architecture ceilings committed"
     assert set(data["per_arch"]) >= {"amd64"}, data["per_arch"]
+
+
+def test_the_measurement_paths_are_documented_as_equivalent() -> None:
+    """The ceiling is seeded from one path and enforced against another.
+
+    Measured 2026-07-29: the same image locally and after a registry
+    round-trip differed by 14 bytes of 112325662. The finding lives next to
+    the baseline so nobody has to re-derive it - and so a future packaging
+    change (different registry, image store, zstd layers) has something to
+    invalidate rather than an unstated assumption.
+    """
+    data = json.loads(BASELINE.read_text(encoding="utf-8"))
+    note = data.get("_measurement_paths", "")
+    assert note, "no record of whether seeding and enforcement measure the same thing"
+    assert "14 bytes" in note, "the note carries no measured evidence"
