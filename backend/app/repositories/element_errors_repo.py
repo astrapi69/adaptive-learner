@@ -69,6 +69,24 @@ class ElementErrorsRepository(Repository):
         rows. Returns the count deleted.
         """
 
+    @abstractmethod
+    def remap_element_keys(
+        self,
+        user_id: str,
+        remaps: list[tuple[str, str, str, str, str]],
+    ) -> tuple[int, int]:
+        """One-off recovery re-key (#2161): rewrite ``element_key`` from ``old``
+        to ``new`` for matching rows.
+
+        Each ``remap`` is ``(set_id, lesson_id, exercise_id, old, new)`` and is
+        applied across BOTH drill directions. A remap is SKIPPED when a target
+        row (same composite key incl. direction, with ``new``) already exists,
+        so no two rows collapse onto one card (no double-map) and a second run
+        is a no-op (idempotent). Does not commit — the caller owns the
+        transaction boundary (all-or-nothing per call). Returns
+        ``(applied, skipped)``.
+        """
+
 
 class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
     """SQLAlchemy-backed :class:`ElementErrorsRepository`."""
@@ -165,6 +183,46 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
                 .delete(synchronize_session=False)
             )
         return int(deleted)
+
+    def remap_element_keys(
+        self,
+        user_id: str,
+        remaps: list[tuple[str, str, str, str, str]],
+    ) -> tuple[int, int]:
+        """See the abstract contract. In-place ``element_key`` rewrite (the
+        row ``id`` is a stable uuid, so the identity survives); the UNIQUE
+        (user, set, lesson, exercise, element_key, direction) constraint is
+        respected because a pre-existing target is skipped, never overwritten."""
+        applied = skipped = 0
+        for set_id, lesson_id, exercise_id, old_key, new_key in remaps:
+            rows = list(
+                self._db.execute(
+                    select(ElementError).where(
+                        ElementError.user_id == user_id,
+                        ElementError.set_id == set_id,
+                        ElementError.lesson_id == lesson_id,
+                        ElementError.exercise_id == exercise_id,
+                        ElementError.element_key == old_key,
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            for row in rows:
+                target = self.find(
+                    user_id=user_id,
+                    set_id=set_id,
+                    lesson_id=lesson_id,
+                    exercise_id=exercise_id,
+                    element_key=new_key,
+                    direction=row.direction,
+                )
+                if target is not None:
+                    skipped += 1
+                    continue
+                row.element_key = new_key
+                applied += 1
+        return applied, skipped
 
 
 __all__ = ["ElementErrorsRepository", "SqlAlchemyElementErrorsRepository"]

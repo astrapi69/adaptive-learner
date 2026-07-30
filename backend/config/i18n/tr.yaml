@@ -2016,6 +2016,23 @@ content:
     message: '"{title}" güncellemesi, zaten öğrenmekte olduğun içeriği değiştirir. Kayıtlı ilerlemesi olan yaklaşık {cards} tekrar kartı ve {lessons} ders yeni sürümle artık eşleşmez ve sıfırlanır. Tamamladığın dersler kalır; yalnızca değişen tekrarlar etkilenir.'
     confirm: 'Yine de güncelle'
     cancel: 'Mevcut sürümü koru'
+  recovery:
+    title: 'Düzeltilen dersler için tekrar ilerlemesini geri yükle'
+    message: 'Bazı Japonca, Korece ve Çince (A1) derslerini düzelttik. Değişen ögeler için oluşturduğunuz tekrar kartları artık eşleşmiyor ve bu yüzden planlanmıyor. Bunları düzeltilmiş derslerle yeniden bağlayabilir ya da bir seti baştan başlatabilirsiniz. Yalnızca bu setler etkilenir; diğer setleriniz olduğu gibi kalır.'
+    backup_hint: 'Önce önerilir: gerektiğinde geri alabilmek için bir yedek dışa aktarın.'
+    backup_action: 'Yedek dışa aktar'
+    backup_saved: 'Yedek kaydedildi: {filename}'
+    set_cards: '{count} etkilenen tekrar kartı'
+    restore: 'Tekrar kartlarını yeniden bağla'
+    restart: 'Seti baştan başlat'
+    restart_confirm: 'Baştan başlansın mı? Bu setin kayıtlı ilerlemesi ve tekrar kartları kaldırılacak.'
+    restart_confirm_yes: 'Evet, baştan başlat'
+    restart_cancel: 'İptal'
+    restore_result: '{applied} tekrar kartı yeniden bağlandı ({skipped} zaten doğruydu).'
+    restore_unmapped: 'Ders yeniden değiştiği için {unmapped} kart yeniden bağlanamadı; değiştirilmeden bırakıldı.'
+    restart_result: 'Set sıfırlandı. Baştan başlayabilirsiniz.'
+    working: 'İşleniyor…'
+    failed: 'Bir şeyler ters gitti. Hiçbir şey değiştirilmedi; lütfen tekrar deneyin.'
   share:
     button: "Paylaş"
     aria: "'{title}' setini paylaş"
@@ -2151,6 +2168,12 @@ content:
     deleted: "Ders silindi."
     delete_failed: "Ders silinemedi."
     delete_aria: "{title} dersini sil"
+  lesson_order:
+    move_up: "{title} dersini yukarı taşı"
+    move_down: "{title} dersini aşağı taşı"
+    already_first: "{title} zaten ilk ders"
+    already_last: "{title} zaten son ders"
+    moved: "{title} şimdi {total} içinden {position}. sırada"
   set_status:
     delete_progress_option: "Öğrenme ilerlememi ve tekrar kartlarını da sil ({lessons} ders, {cards} kart)"
     delete_progress_option_nocounts: "Öğrenme ilerlememi ve tekrar kartlarını da sil"

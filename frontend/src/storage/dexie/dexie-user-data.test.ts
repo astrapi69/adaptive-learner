@@ -83,13 +83,14 @@ describe("syncUserDataAtBoot (#791)", () => {
         expect(await getDb().userData.get(CONTRIB_KEY)).toBeUndefined();
     });
 
-    it("covers the contributions, contributor-name, custom-paths, dismissed-sets and set-status keys", () => {
+    it("covers the contributions, contributor-name, custom-paths, dismissed-sets, set-status and lesson-order keys", () => {
         expect(MANAGED_USER_DATA_KEYS).toEqual([
             "adaptive-learner.contributions",
             "adaptive-learner.contributor-name",
             "adaptive-learner.custom-paths",
             "adaptive-learner.dismissed-sets",
             "adaptive-learner.set-status",
+            "adaptive-learner.lesson-order",
         ]);
     });
 });

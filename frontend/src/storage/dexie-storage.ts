@@ -90,6 +90,7 @@ import {
   computeReviewQueueDexie,
   listElementErrorsDexie,
   recordElementAttemptsDexie,
+  remapElementKeysDexie,
 } from "./lessons/element-errors-dexie";
 import { deleteLearningDataDexie } from "./lessons/orphan-data-dexie";
 import type {
@@ -242,6 +243,7 @@ export const dexieStorage: IStorageService = {
     recordBulk: (userId, attempts) =>
       recordElementAttemptsDexie(userId, attempts),
     reviewQueue: (userId, opts) => computeReviewQueueDexie(userId, opts),
+    remapKeys: (userId, remaps) => remapElementKeysDexie(userId, remaps),
   },
 
   // --- Learner-data maintenance (#1445) --------------------------------

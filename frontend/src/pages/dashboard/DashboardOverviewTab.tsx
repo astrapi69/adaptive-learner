@@ -12,6 +12,7 @@ import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import FavoritesCard from "../../components/dashboard/FavoritesCard";
 import FocusAreasCard from "../../components/dashboard/FocusAreasCard";
 import PausedLessonsCard from "../../components/dashboard/PausedLessonsCard";
+import RecoveryNotice from "../../components/recovery/RecoveryNotice";
 import ReviewQueueCard from "../../components/dashboard/ReviewQueueCard";
 import HelpLink from "../../components/help/HelpLink";
 import HelpTooltip from "../../components/help/HelpTooltip";
@@ -34,6 +35,10 @@ export default function DashboardOverviewTab({
   const { t } = useI18n();
   return (
     <div data-testid="dashboard-tab-overview-panel">
+      {/* #2161 — one-off ja/ko/zh review-progress recovery. Self-gating: renders
+          nothing unless this learner actually holds recoverable review cards. */}
+      <RecoveryNotice />
+
       {/* #931 — learner content first: Continue learning, then Review due,
           then quick stats, then the secondary actionable cards. */}
       {userId && (
