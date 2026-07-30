@@ -118,7 +118,7 @@ def test_every_release_driven_workflow_has_the_precondition() -> None:
     release_driven = [
         path
         for path in workflows
-        if "release:\n    types: [created]" in path.read_text(encoding="utf-8")
+        if "release:\n    types: [published]" in path.read_text(encoding="utf-8")
     ]
     print(f"examined {len(workflows)} workflow(s), {len(release_driven)} release-driven")
     assert len(release_driven) >= 4, f"expected the four publishers, found {len(release_driven)}"

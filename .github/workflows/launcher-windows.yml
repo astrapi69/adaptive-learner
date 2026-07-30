@@ -19,7 +19,7 @@ on:
       - "launcher/**"
       - ".github/workflows/launcher-windows.yml"
   release:
-    types: [created]
+    types: [published]  # NOT created: drafts never fire it, and publishing a draft fires only published - draft-first releases (v2.8.0 finding) need this type; it fires exactly once for both draft-publish and direct-publish
   workflow_dispatch:
 
 permissions:
