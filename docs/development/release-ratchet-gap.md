@@ -193,50 +193,39 @@ follows it instead of hitting the wall and reaching for the off switch.
 
 ## Appendix: develop-push detection gate (ready to apply)
 
-Workflow (`.github/workflows/ratchet-develop-gate.yml`) — DETECTION, second
-line, does not close the channel:
+Shipped as `.github/workflows/ratchet-develop-gate.yml` (PR #2193) — DETECTION,
+second line, does not close the channel. It runs the three **dependency-free**
+ratchets (bash + Python stdlib) on push to develop:
 
 ```yaml
-name: Ratchet develop gate (detection)
-
-# DETECTION, not closure (#2182). Runs the ratchet gates on push to develop -
-# the back-merge target - so a ratchet tripped by a release/hotfix back-merge
-# is reported at the push, not discovered by the next PR. It makes develop red
-# AFTER develop is red; it does not stop the bad state. The closure is
-# enforce_admins=true (see docs/development/release-ratchet-gap.md).
-
 on:
   push:
     branches: [develop]
 
+permissions:
+  contents: read
+
 jobs:
-  ratchet-gates:
+  ratchet-detection:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: CSS size ratchet
+      - name: CSS size ratchet (.css-size-baseline)
         run: bash scripts/check-css-size.sh
-      - name: File-size ratchet
+      - name: File-size ratchet (.filesize-baseline)
         run: bash scripts/check-file-sizes.sh
-      - name: Rule-corpus ratchet
+      - name: Rule-corpus ratchet (.corpus-baseline.json)
         run: python3 scripts/verify_rule_corpus_size.py
-      - name: Complexity ratchet
-        run: make check-complexity-gate
 ```
 
-Gate/rule coupling (`.claude/rules/gates.yaml`) — classify as `no_rule:` with a
-reason, since it enforces no single rule section (it re-runs existing ratchets
-on a different trigger):
+Complexity is intentionally omitted from the detector (it needs radon + eslint);
+it is covered by release-test (#2190) and its own PR gate, so the push-detector
+stays dependency-free and fast.
 
-```yaml
-# ratchet-develop-gate.yml is a detection re-run of existing ratchet gates on
-# push to develop (#2182); it enforces no new rule section of its own.
-no_rule:
-  - ratchet-develop-gate.yml
-```
-
-Check inventory (`.claude/rules/checks.yaml`) — register as `status: active`
-with the same detection framing so it is not mistaken for closure.
+Gate/rule coupling: the workflow is classified in `.claude/rules/gates.yaml`
+under `no_rule:` with a reason (it enforces no new rule section — it re-runs
+existing ratchets on a different trigger), which `make verify-gate-rule-links`
+requires for every workflow.
