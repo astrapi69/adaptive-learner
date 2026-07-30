@@ -9,7 +9,7 @@
   "Audit findings need production-vs-dev environment classification before urgency-tier": "a1c7a4802f281b09",
   "CI vs local environment drift": "5e459eda4171f852",
   "CSS specificity trap: `h2 + p` loses to `p:not(:first-child)`": "8ae9c6d8d5927fd8",
-  "Claimed enforcement without enforcement": "2f5a0a8ecd25d033",
+  "Claimed enforcement without enforcement": "7998a5bd92298334",
   "Claimed work is not executed work": "6ef4eeaef9071891",
   "Commit ordering for breaking-change dependency upgrades": "8563cc9a3cba2133",
   "Cross-layer assumptions must be pinned against REAL data shapes (the ghost-content recurrence class)": "410c8bd44a28dbba",
