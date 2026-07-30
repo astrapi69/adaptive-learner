@@ -436,8 +436,8 @@ export default function ContentPage() {
 
       {/* #2128 — a manual update that would orphan the learner's progress/SRS
           is held behind this quantified confirmation instead of overwriting
-          silently. (i18n: English fallback for now; full 11-locale strings
-          are a tracked follow-up.) */}
+          silently. Strings live in content.update_guard.* (all 11 catalogs,
+          #2160); the inline text is the fallback of record. */}
       <ConfirmDialog
         open={updateGuard !== null}
         title={t(

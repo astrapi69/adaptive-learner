@@ -2182,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "Update may reset some review progress",
+      "message": "Updating \"{title}\" changes content you are already learning. About {cards} review cards and {lessons} lessons with saved progress no longer match the new version and would be reset. Your finished lessons stay; only the changed review items are affected.",
+      "confirm": "Update anyway",
+      "cancel": "Keep current version"
+    },
     "share": {
       "button": "Share",
       "aria": "Share set '{title}'",

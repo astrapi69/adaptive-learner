@@ -655,6 +655,8 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
       current version and shows "Update available" (no background dialog, no
       data loss).
 - [ ] iOS standalone (PWA): same manual flow, the confirmation appears.
+- [ ] Language check (#2160): the confirmation text appears in the app language
+      (not English), spot-checked across several languages (de/ja/ko/el/hi).
 
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →
