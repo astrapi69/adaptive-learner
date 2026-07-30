@@ -80,7 +80,7 @@ describe("remapElementKeysDexie (#2161)", () => {
         let n = 0;
         const spy = vi
             .spyOn(db.elementErrors, "put")
-            .mockImplementation((row: never) => {
+            .mockImplementation((row) => {
                 n += 1;
                 if (n >= 2) throw new Error("forced mid-batch failure");
                 return realPut(row);

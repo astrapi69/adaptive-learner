@@ -9,7 +9,13 @@
 
 import {describe, expect, it} from "vitest";
 
-import {detectRecoverable, type IncidentMapping, type SrsKeyRow} from "./jkz-recovery";
+import {
+    detectRecoverable,
+    partitionByCurrentContent,
+    type IncidentMapping,
+    type Remap,
+    type SrsKeyRow,
+} from "./jkz-recovery";
 
 const MAP: IncidentMapping[] = [
     {set_id: "ja-a1-from-de", lesson_id: "01.json", exercise_id: "ex-a", old: "こんにちは", new: "こんにちは (konnichiwa)"},
@@ -62,5 +68,36 @@ describe("detectRecoverable (#2161)", () => {
         );
         expect(res.count).toBe(2);
         expect(res.affectedSets).toEqual(["ja-a1-from-de", "ko-a1-from-de"]);
+    });
+});
+
+describe("partitionByCurrentContent (condition 3 — verify targets)", () => {
+    const remap = (over: Partial<Remap> = {}): Remap => ({
+        set_id: "ja-a1-from-de",
+        lesson_id: "01.json",
+        exercise_id: "ex-a",
+        oldKey: "こんにちは",
+        newKey: "こんにちは (konnichiwa)",
+        ...over,
+    });
+
+    it("keeps remaps whose new key is present in current content", () => {
+        const lookup = () => new Set(["こんにちは (konnichiwa)"]);
+        const {applicable, unmappable} = partitionByCurrentContent([remap()], lookup);
+        expect(applicable).toHaveLength(1);
+        expect(unmappable).toHaveLength(0);
+    });
+
+    it("reports remaps whose target no longer exists (set updated again) as unmappable", () => {
+        const lookup = () => new Set(["something else entirely"]);
+        const {applicable, unmappable} = partitionByCurrentContent([remap()], lookup);
+        expect(applicable).toHaveLength(0);
+        expect(unmappable).toHaveLength(1);
+    });
+
+    it("treats a missing lesson/exercise (undefined lookup) as unmappable", () => {
+        const {applicable, unmappable} = partitionByCurrentContent([remap()], () => undefined);
+        expect(applicable).toHaveLength(0);
+        expect(unmappable).toHaveLength(1);
     });
 });
