@@ -67,3 +67,61 @@ def test_it_builds_exactly_one_platform(text: str) -> None:
     """Two platforms produce a manifest that cannot be loaded, hence measured."""
     assert "platforms: linux/${{ inputs.arch }}" in text
     assert "load: true" in text
+
+
+def _evaluate_runner_expression(expression: str, arch: str) -> object:
+    """Evaluate the ``runs-on`` expression with GitHub's operator semantics.
+
+    GitHub expressions return operands, not booleans: ``a && b`` yields
+    ``a`` when falsy else ``b``; ``a || b`` yields ``a`` when truthy else
+    ``b``; ``&&`` binds tighter than ``||``. Asserting the EFFECT (which
+    runner label comes out per architecture) instead of the literal string
+    is what run 30531619694 was missing: ``a && b && c`` reads plausibly
+    and still sends every architecture to ``c`` (#2163).
+    """
+    inner = expression.strip()
+    assert inner.startswith("${{") and inner.endswith("}}"), inner
+    tokens = inner[3:-2].split()
+
+    def atom(token: str) -> object:
+        if token == "inputs.arch":
+            return arch
+        assert token.startswith("'") and token.endswith("'"), token
+        return token[1:-1]
+
+    or_parts: list[list[str]] = [[]]
+    for token in tokens:
+        if token == "||":
+            or_parts.append([])
+        else:
+            or_parts[-1].append(token)
+
+    def eval_and(part: list[str]) -> object:
+        value: object = atom(part[0]) if part[1:2] != ["=="] else atom(part[0]) == atom(part[2])
+        rest = part[3:] if part[1:2] == ["=="] else part[1:]
+        while rest:
+            assert rest[0] == "&&", rest
+            if not value:
+                return value
+            value = atom(rest[1])
+            rest = rest[2:]
+        return value
+
+    result: object = False
+    for part in or_parts:
+        result = eval_and(part)
+        if result:
+            return result
+    return result
+
+
+def test_each_arch_reaches_its_native_runner(parsed: dict) -> None:
+    """arm64 must land on the arm runner, amd64 on ubuntu-latest (#2163).
+
+    Run 30531619694 proved the broken form fails closed but measures
+    nothing: the assert step refused an amd64 runner for an arm64 request,
+    so the workflow could never produce the number it exists for.
+    """
+    expression = parsed["jobs"]["measure"]["runs-on"]
+    assert _evaluate_runner_expression(expression, "arm64") == "ubuntu-24.04-arm"
+    assert _evaluate_runner_expression(expression, "amd64") == "ubuntu-latest"
