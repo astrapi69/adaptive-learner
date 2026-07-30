@@ -2018,6 +2018,23 @@ content:
     message: 'Mettre à jour « {title} » modifie du contenu que tu apprends déjà. Environ {cards} cartes de révision et {lessons} leçons avec une progression enregistrée ne correspondent plus à la nouvelle version et seraient réinitialisées. Tes leçons terminées restent; seules les révisions modifiées sont concernées.'
     confirm: 'Mettre à jour quand même'
     cancel: 'Garder la version actuelle'
+  recovery:
+    title: 'Restaurer la progression de révision des leçons corrigées'
+    message: 'Nous avons corrigé certaines leçons de japonais, de coréen et de chinois (A1). Les cartes de révision que vous aviez créées pour les éléments modifiés ne correspondent plus et ne sont donc plus programmées. Vous pouvez les relier aux leçons corrigées ou recommencer un ensemble. Seuls ces ensembles sont concernés ; vos autres ensembles restent intacts.'
+    backup_hint: 'Recommandé d’abord : exportez une sauvegarde afin de pouvoir annuler si nécessaire.'
+    backup_action: 'Exporter une sauvegarde'
+    backup_saved: 'Sauvegarde enregistrée : {filename}'
+    set_cards: '{count} cartes de révision concernées'
+    restore: 'Relier les cartes de révision'
+    restart: 'Recommencer l’ensemble'
+    restart_confirm: 'Recommencer ? La progression enregistrée et les cartes de révision de cet ensemble seront supprimées.'
+    restart_confirm_yes: 'Oui, recommencer'
+    restart_cancel: 'Annuler'
+    restore_result: '{applied} cartes de révision reliées ({skipped} étaient déjà correctes).'
+    restore_unmapped: '{unmapped} cartes n’ont pas pu être reliées car la leçon a de nouveau changé ; elles restent inchangées.'
+    restart_result: 'Ensemble réinitialisé. Vous pouvez recommencer depuis le début.'
+    working: 'Traitement…'
+    failed: 'Une erreur est survenue. Rien n’a été modifié ; veuillez réessayer.'
   share:
     button: "Partager"
     aria: "Partager le set '{title}'"
@@ -2153,6 +2170,12 @@ content:
     deleted: "Leçon supprimée."
     delete_failed: "Impossible de supprimer la leçon."
     delete_aria: "Supprimer la leçon {title}"
+  lesson_order:
+    move_up: "Déplacer la leçon {title} vers le haut"
+    move_down: "Déplacer la leçon {title} vers le bas"
+    already_first: "{title} est déjà la première leçon"
+    already_last: "{title} est déjà la dernière leçon"
+    moved: "{title} est maintenant à la position {position} sur {total}"
   set_status:
     delete_progress_option: "Supprimer aussi ma progression et les cartes de révision ({lessons} leçons, {cards} cartes)"
     delete_progress_option_nocounts: "Supprimer aussi ma progression et les cartes de révision"

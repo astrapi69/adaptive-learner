@@ -121,12 +121,31 @@ export interface ReviewQueueItem {
  * DexieStorage runs the transition matrix + SRS scheduling
  * client-side via ``element-errors-dexie.ts``.
  */
+/** One #2161 recovery re-key: rewrite an orphaned ``element_key`` from ``old``
+ *  to ``new`` for a specific (set, lesson, exercise). */
+export interface ElementKeyRemap {
+  set_id: string;
+  lesson_id: string;
+  exercise_id: string;
+  old: string;
+  new: string;
+}
+
 export interface IElementErrorsNamespace {
   list(
     userId: string,
     opts?: { setId?: string; includeMastered?: boolean },
   ): Promise<ElementError[]>;
   recordBulk(userId: string, attempts: readonly ElementAttempt[]): Promise<ElementError[]>;
+  /** #2161 one-off recovery: rewrite orphaned element_key old -> new for the
+   *  given remaps. Idempotent and no double-map (a target row that already
+   *  exists is skipped, never collapsed). One call is atomic (all-or-nothing);
+   *  the caller passes ONE set's remaps per call. Returns the counts. Works in
+   *  both storage modes. */
+  remapKeys(
+    userId: string,
+    remaps: readonly ElementKeyRemap[],
+  ): Promise<{ applied: number; skipped: number }>;
   /** Projected review queue: active (non-mastered) elements with
    *  computed suggested_review_at + overdue flag, sorted by urgency
    *  (overdue → weakness tier → error frequency → oldest error first,

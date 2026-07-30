@@ -335,3 +335,112 @@ def test_review_queue_filters_by_set_id(
     rows = r.json()
     assert len(rows) == 1
     assert rows[0]["set_id"] == "set-a"
+
+
+# --- #2161 one-off recovery remap -------------------------------------------
+
+
+def _record(client: TestClient, user_id: str, *, element_key: str) -> None:
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={"attempts": [{
+            "set_id": "ja-a1-from-de",
+            "lesson_id": "01-begruessungen.json",
+            "exercise_id": "ex-match-begruessung",
+            "element_key": element_key,
+            "element_type": "vocabulary",
+            "user_answer": "x",
+            "correct_answer": element_key,
+            "correct": False,
+        }]},
+    )
+    assert r.status_code in (200, 201), r.text
+
+
+def _keys(client: TestClient, user_id: str) -> list[str]:
+    r = client.get(f"/api/users/{user_id}/element-errors")
+    return sorted(row["element_key"] for row in r.json())
+
+
+_REMAP = {
+    "set_id": "ja-a1-from-de",
+    "lesson_id": "01-begruessungen.json",
+    "exercise_id": "ex-match-begruessung",
+    "old": "こんにちは",
+    "new": "こんにちは (konnichiwa)",
+}
+
+
+def test_remap_rewrites_orphaned_key(client: TestClient, user_id: str) -> None:
+    _record(client, user_id, element_key="こんにちは")
+    r = client.post(
+        f"/api/users/{user_id}/element-errors/remap",
+        json={"remaps": [_REMAP]},
+    )
+    assert r.status_code == 200, r.text
+    assert r.json() == {"applied": 1, "skipped": 0}
+    assert _keys(client, user_id) == ["こんにちは (konnichiwa)"]
+
+
+def test_remap_is_idempotent(client: TestClient, user_id: str) -> None:
+    _record(client, user_id, element_key="こんにちは")
+    first = client.post(
+        f"/api/users/{user_id}/element-errors/remap", json={"remaps": [_REMAP]},
+    ).json()
+    second = client.post(
+        f"/api/users/{user_id}/element-errors/remap", json={"remaps": [_REMAP]},
+    ).json()
+    assert first == {"applied": 1, "skipped": 0}
+    # Second run: the old-key row is gone -> nothing to apply, same state.
+    assert second == {"applied": 0, "skipped": 0}
+    assert _keys(client, user_id) == ["こんにちは (konnichiwa)"]
+
+
+def test_remap_skips_when_target_exists_no_double_map(
+    client: TestClient, user_id: str,
+) -> None:
+    # The learner has progress on BOTH the old and the (already) new key.
+    _record(client, user_id, element_key="こんにちは")
+    _record(client, user_id, element_key="こんにちは (konnichiwa)")
+    r = client.post(
+        f"/api/users/{user_id}/element-errors/remap", json={"remaps": [_REMAP]},
+    ).json()
+    # The old row is left alone (no collapse onto the existing new row).
+    assert r == {"applied": 0, "skipped": 1}
+    assert _keys(client, user_id) == ["こんにちは", "こんにちは (konnichiwa)"]
+
+
+def test_remap_is_atomic_on_mid_batch_failure(
+    client: TestClient, user_id: str, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Force a failure AFTER the first remap has mutated its row: nothing must
+    # persist (all-or-nothing per call).
+    _record(client, user_id, element_key="こんにちは")
+    _record(client, user_id, element_key="さようなら")
+    from app.repositories import element_errors_repo as repo_mod
+
+    real_find = repo_mod.SqlAlchemyElementErrorsRepository.find
+    calls = {"n": 0}
+
+    def boom(self, **kw):  # type: ignore[no-untyped-def]
+        calls["n"] += 1
+        if calls["n"] >= 2:
+            raise RuntimeError("forced mid-batch failure")
+        return real_find(self, **kw)
+
+    monkeypatch.setattr(
+        repo_mod.SqlAlchemyElementErrorsRepository, "find", boom,
+    )
+    # TestClient re-raises unhandled server exceptions; the point is that the
+    # request dies mid-batch AFTER the first row was mutated in-memory.
+    with pytest.raises(RuntimeError, match="forced mid-batch failure"):
+        client.post(
+            f"/api/users/{user_id}/element-errors/remap",
+            json={"remaps": [
+                _REMAP,
+                {**_REMAP, "old": "さようなら", "new": "さようなら (sayounara)"},
+            ]},
+        )
+    monkeypatch.undo()
+    # No commit happened -> both rows keep their ORIGINAL keys (all-or-nothing).
+    assert _keys(client, user_id) == ["こんにちは", "さようなら"]

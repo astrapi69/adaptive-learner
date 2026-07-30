@@ -1,0 +1,1217 @@
+{
+  "incident": "content-transliteration-2026-07",
+  "version": 1,
+  "note": "One-off recovery map for the ja/ko/zh element_key rewrite (2026-07-05..07). NOT a general mechanism. Maps a learner's orphaned SRS element_key (as originally published) to the current content's element_key, so review scheduling re-resolves.",
+  "generated_from": "adaptive-learner-content @ f60dac361f34",
+  "set_ids": [
+    "ja-a1-from-de",
+    "ko-a1-from-de",
+    "zh-a1-from-de"
+  ],
+  "mappings": [
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "01-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "こんにちは",
+      "new": "こんにちは (konnichiwa)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "01-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "おはようございます",
+      "new": "おはようございます (ohayou gozaimasu)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "01-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "こんばんは",
+      "new": "こんばんは (konbanwa)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "01-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "さようなら",
+      "new": "さようなら (sayounara)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "01-begruessungen.json",
+      "exercise_id": "ex-pic-sayounara",
+      "old": "さようなら",
+      "new": "さようなら (sayounara)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "02-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "はじめまして",
+      "new": "はじめまして (hajimemashite)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "02-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "どうぞよろしく",
+      "new": "どうぞよろしく (douzo yoroshiku)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "02-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "お名前は",
+      "new": "お名前は (onamae wa)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "02-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "わたし",
+      "new": "わたし (watashi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "02-sich-vorstellen.json",
+      "exercise_id": "ex-pic-namae",
+      "old": "名前",
+      "new": "名前 (namae)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "03-zahlen-1-20.json",
+      "exercise_id": "ex-match-zahlen",
+      "old": "一",
+      "new": "一 (ichi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "03-zahlen-1-20.json",
+      "exercise_id": "ex-match-zahlen",
+      "old": "三",
+      "new": "三 (san)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "03-zahlen-1-20.json",
+      "exercise_id": "ex-match-zahlen",
+      "old": "五",
+      "new": "五 (go)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "03-zahlen-1-20.json",
+      "exercise_id": "ex-match-zahlen",
+      "old": "十",
+      "new": "十 (juu)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "03-zahlen-1-20.json",
+      "exercise_id": "ex-pic-go",
+      "old": "五",
+      "new": "五 (go)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "04-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "メニュー",
+      "new": "メニュー (menyuu)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "04-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "水",
+      "new": "水 (mizu)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "04-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "お会計",
+      "new": "お会計 (okaikei)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "04-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "おいしい",
+      "new": "おいしい (oishii)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "04-im-restaurant.json",
+      "exercise_id": "ex-pic-ocha",
+      "old": "お茶",
+      "new": "お茶 (ocha)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "05-einkaufen.json",
+      "exercise_id": "ex-match-kosoado",
+      "old": "これ",
+      "new": "これ (kore)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "05-einkaufen.json",
+      "exercise_id": "ex-match-kosoado",
+      "old": "それ",
+      "new": "それ (sore)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "05-einkaufen.json",
+      "exercise_id": "ex-match-kosoado",
+      "old": "あれ",
+      "new": "あれ (are)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "05-einkaufen.json",
+      "exercise_id": "ex-match-kosoado",
+      "old": "高い",
+      "new": "高い (takai)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "05-einkaufen.json",
+      "exercise_id": "ex-pic-kaban",
+      "old": "かばん",
+      "new": "かばん (kaban)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "06-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-wochentage",
+      "old": "月曜日",
+      "new": "月曜日 (getsuyoubi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "06-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-wochentage",
+      "old": "水曜日",
+      "new": "水曜日 (suiyoubi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "06-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-wochentage",
+      "old": "土曜日",
+      "new": "土曜日 (doyoubi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "06-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-wochentage",
+      "old": "日曜日",
+      "new": "日曜日 (nichiyoubi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "06-uhrzeit-und-tage.json",
+      "exercise_id": "ex-pic-nichiyoubi",
+      "old": "日曜日",
+      "new": "日曜日 (nichiyoubi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "母",
+      "new": "母 (haha)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "父",
+      "new": "父 (chichi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "兄",
+      "new": "兄 (ani)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "妹",
+      "new": "妹 (imouto)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-match-hoeflich",
+      "old": "母",
+      "new": "母 (haha)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-match-hoeflich",
+      "old": "父",
+      "new": "父 (chichi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-match-hoeflich",
+      "old": "お母さん",
+      "new": "お母さん (okaasan)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-match-hoeflich",
+      "old": "お父さん",
+      "new": "お父さん (otousan)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "07-familie.json",
+      "exercise_id": "ex-pic-chichi",
+      "old": "父",
+      "new": "父 (chichi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-match-richtung",
+      "old": "右",
+      "new": "右 (migi)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-match-richtung",
+      "old": "左",
+      "new": "左 (hidari)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-match-richtung",
+      "old": "まっすぐ",
+      "new": "まっすぐ (massugu)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-match-richtung",
+      "old": "駅",
+      "new": "駅 (eki)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-match-koko",
+      "old": "ここ",
+      "new": "ここ (koko)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-match-koko",
+      "old": "そこ",
+      "new": "そこ (soko)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-match-koko",
+      "old": "あそこ",
+      "new": "あそこ (asoko)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-match-koko",
+      "old": "どこ",
+      "new": "どこ (doko)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "08-wegbeschreibung.json",
+      "exercise_id": "ex-pic-eki",
+      "old": "駅",
+      "new": "駅 (eki)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-match-adjektive",
+      "old": "大きい",
+      "new": "大きい (ookii)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-match-adjektive",
+      "old": "小さい",
+      "new": "小さい (chiisai)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-match-adjektive",
+      "old": "新しい",
+      "new": "新しい (atarashii)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-match-adjektive",
+      "old": "古い",
+      "new": "古い (furui)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-match-gegensatz",
+      "old": "暑い",
+      "new": "暑い (atsui)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-match-gegensatz",
+      "old": "寒い",
+      "new": "寒い (samui)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-match-gegensatz",
+      "old": "高い",
+      "new": "高い (takai)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-match-gegensatz",
+      "old": "安い",
+      "new": "安い (yasui)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "09-adjektive.json",
+      "exercise_id": "ex-pic-samui",
+      "old": "寒い",
+      "new": "寒い (samui)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-match-hoeflichkeit",
+      "old": "お願いします",
+      "new": "お願いします (onegaishimasu)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-match-hoeflichkeit",
+      "old": "ありがとうございます",
+      "new": "ありがとうございます (arigatou gozaimasu)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-match-hoeflichkeit",
+      "old": "ごめんなさい",
+      "new": "ごめんなさい (gomennasai)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-match-hoeflichkeit",
+      "old": "どうぞ",
+      "new": "どうぞ (douzo)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-match-essen",
+      "old": "いただきます",
+      "new": "いただきます (itadakimasu)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-match-essen",
+      "old": "ごちそうさまでした",
+      "new": "ごちそうさまでした (gochisousama deshita)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-match-essen",
+      "old": "ありがとう",
+      "new": "ありがとう (arigatou)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-match-essen",
+      "old": "どういたしまして",
+      "new": "どういたしまして (douitashimashite)"
+    },
+    {
+      "set_id": "ja-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsformen.json",
+      "exercise_id": "ex-pic-sumimasen",
+      "old": "すみません",
+      "new": "すみません (sumimasen)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "안녕하세요",
+      "new": "안녕하세요 (annyeonghaseyo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "감사합니다",
+      "new": "감사합니다 (gamsahamnida)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "네",
+      "new": "네 (ne)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "아니요",
+      "new": "아니요 (aniyo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-pick-entschuldigung",
+      "old": "죄송합니다",
+      "new": "죄송합니다 (joesonghamnida)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "이름",
+      "new": "이름 (ireum)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "사람",
+      "new": "사람 (saram)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "학생",
+      "new": "학생 (haksaeng)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "독일",
+      "new": "독일 (dogil)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-pick-herkunft",
+      "old": "독일에서 왔어요",
+      "new": "독일에서 왔어요 (dogireseo wasseoyo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "04-zahlen.json",
+      "exercise_id": "ex-match-sino",
+      "old": "일",
+      "new": "일 (il)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "04-zahlen.json",
+      "exercise_id": "ex-match-sino",
+      "old": "이",
+      "new": "이 (i)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "04-zahlen.json",
+      "exercise_id": "ex-match-sino",
+      "old": "삼",
+      "new": "삼 (sam)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "04-zahlen.json",
+      "exercise_id": "ex-match-sino",
+      "old": "오",
+      "new": "오 (o)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "04-zahlen.json",
+      "exercise_id": "ex-match-nativ",
+      "old": "하나",
+      "new": "하나 (hana)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "04-zahlen.json",
+      "exercise_id": "ex-match-nativ",
+      "old": "둘",
+      "new": "둘 (dul)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "04-zahlen.json",
+      "exercise_id": "ex-match-nativ",
+      "old": "셋",
+      "new": "셋 (set)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "04-zahlen.json",
+      "exercise_id": "ex-match-nativ",
+      "old": "다섯",
+      "new": "다섯 (daseot)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "물",
+      "new": "물 (mul)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "밥",
+      "new": "밥 (bap)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "메뉴",
+      "new": "메뉴 (menyu)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "계산서",
+      "new": "계산서 (gyesanseo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-pick-hunger",
+      "old": "배고파요",
+      "new": "배고파요 (baegopayo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-match-einkaufen",
+      "old": "이거",
+      "new": "이거 (igeo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-match-einkaufen",
+      "old": "그거",
+      "new": "그거 (geugeo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-match-einkaufen",
+      "old": "저거",
+      "new": "저거 (jeogeo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-match-einkaufen",
+      "old": "원",
+      "new": "원 (won)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-pick-billig",
+      "old": "싸요",
+      "new": "싸요 (ssayo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-tage",
+      "old": "월요일",
+      "new": "월요일 (woryoil)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-tage",
+      "old": "수요일",
+      "new": "수요일 (suyoil)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-tage",
+      "old": "금요일",
+      "new": "금요일 (geumyoil)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-tage",
+      "old": "일요일",
+      "new": "일요일 (iryoil)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-pick-samstag",
+      "old": "토요일",
+      "new": "토요일 (toyoil)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "엄마",
+      "new": "엄마 (eomma)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "아빠",
+      "new": "아빠 (appa)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "가족",
+      "new": "가족 (gajok)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "할머니",
+      "new": "할머니 (halmeoni)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-geschwister",
+      "old": "형",
+      "new": "형 (hyeong)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-geschwister",
+      "old": "누나",
+      "new": "누나 (nuna)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-geschwister",
+      "old": "오빠",
+      "new": "오빠 (oppa)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-geschwister",
+      "old": "언니",
+      "new": "언니 (eonni)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-match-adjektive",
+      "old": "좋다",
+      "new": "좋다 (jota)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-match-adjektive",
+      "old": "나쁘다",
+      "new": "나쁘다 (nappeuda)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-match-adjektive",
+      "old": "크다",
+      "new": "크다 (keuda)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-match-adjektive",
+      "old": "작다",
+      "new": "작다 (jakda)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-match-gefuehle",
+      "old": "예쁘다",
+      "new": "예쁘다 (yeppeuda)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-match-gefuehle",
+      "old": "피곤하다",
+      "new": "피곤하다 (pigonhada)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-match-gefuehle",
+      "old": "행복하다",
+      "new": "행복하다 (haengbokada)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-match-gefuehle",
+      "old": "슬프다",
+      "new": "슬프다 (seulpeuda)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "09-gefuehle-und-adjektive.json",
+      "exercise_id": "ex-pick-glueck",
+      "old": "행복하다",
+      "new": "행복하다 (haengbokada)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsstufen.json",
+      "exercise_id": "ex-match-stufen",
+      "old": "가요",
+      "new": "가요 (gayo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsstufen.json",
+      "exercise_id": "ex-match-stufen",
+      "old": "갑니다",
+      "new": "갑니다 (gamnida)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsstufen.json",
+      "exercise_id": "ex-match-stufen",
+      "old": "먹어요",
+      "new": "먹어요 (meogeoyo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsstufen.json",
+      "exercise_id": "ex-match-stufen",
+      "old": "먹습니다",
+      "new": "먹습니다 (meokseumnida)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsstufen.json",
+      "exercise_id": "ex-match-begriffe",
+      "old": "-요",
+      "new": "-요 (-yo)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsstufen.json",
+      "exercise_id": "ex-match-begriffe",
+      "old": "-ㅂ니다/-습니다",
+      "new": "-ㅂ니다/-습니다 (-mnida / -seumnida)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsstufen.json",
+      "exercise_id": "ex-match-begriffe",
+      "old": "반말",
+      "new": "반말 (banmal)"
+    },
+    {
+      "set_id": "ko-a1-from-de",
+      "lesson_id": "10-hoeflichkeitsstufen.json",
+      "exercise_id": "ex-match-begriffe",
+      "old": "존댓말",
+      "new": "존댓말 (jondaenmal)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "01-toene-und-pinyin.json",
+      "exercise_id": "ex-match-toene",
+      "old": "妈",
+      "new": "妈 (mā)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "01-toene-und-pinyin.json",
+      "exercise_id": "ex-match-toene",
+      "old": "麻",
+      "new": "麻 (má)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "01-toene-und-pinyin.json",
+      "exercise_id": "ex-match-toene",
+      "old": "马",
+      "new": "马 (mǎ)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "01-toene-und-pinyin.json",
+      "exercise_id": "ex-match-toene",
+      "old": "骂",
+      "new": "骂 (mà)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "你好",
+      "new": "你好 (nǐ hǎo)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "再见",
+      "new": "再见 (zàijiàn)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "谢谢",
+      "new": "谢谢 (xièxie)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-match-begruessung",
+      "old": "对不起",
+      "new": "对不起 (duìbuqǐ)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "02-begruessungen.json",
+      "exercise_id": "ex-pic-zaijian",
+      "old": "再见",
+      "new": "再见 (zàijiàn)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "我叫",
+      "new": "我叫 (wǒ jiào)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "我是",
+      "new": "我是 (wǒ shì)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "名字",
+      "new": "名字 (míngzi)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-match-vorstellen",
+      "old": "德国人",
+      "new": "德国人 (Déguórén)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "03-sich-vorstellen.json",
+      "exercise_id": "ex-pic-chinese",
+      "old": "中国人",
+      "new": "中国人 (Zhōngguórén)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "04-zahlen-1-100.json",
+      "exercise_id": "ex-match-zahlen",
+      "old": "一",
+      "new": "一 (yī)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "04-zahlen-1-100.json",
+      "exercise_id": "ex-match-zahlen",
+      "old": "三",
+      "new": "三 (sān)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "04-zahlen-1-100.json",
+      "exercise_id": "ex-match-zahlen",
+      "old": "五",
+      "new": "五 (wǔ)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "04-zahlen-1-100.json",
+      "exercise_id": "ex-match-zahlen",
+      "old": "十",
+      "new": "十 (shí)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "04-zahlen-1-100.json",
+      "exercise_id": "ex-pic-vier",
+      "old": "四",
+      "new": "四 (sì)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "菜单",
+      "new": "菜单 (càidān)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "水",
+      "new": "水 (shuǐ)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "茶",
+      "new": "茶 (chá)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-match-restaurant",
+      "old": "买单",
+      "new": "买单 (mǎidān)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "05-im-restaurant.json",
+      "exercise_id": "ex-pic-tee",
+      "old": "茶",
+      "new": "茶 (chá)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-match-einkaufen",
+      "old": "贵",
+      "new": "贵 (guì)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-match-einkaufen",
+      "old": "便宜",
+      "new": "便宜 (piányi)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-match-einkaufen",
+      "old": "这个",
+      "new": "这个 (zhège)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-match-einkaufen",
+      "old": "钱",
+      "new": "钱 (qián)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "06-einkaufen.json",
+      "exercise_id": "ex-pic-billig",
+      "old": "贵",
+      "new": "贵 (guì)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-tage",
+      "old": "星期一",
+      "new": "星期一 (xīngqīyī)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-tage",
+      "old": "星期三",
+      "new": "星期三 (xīngqīsān)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-tage",
+      "old": "星期五",
+      "new": "星期五 (xīngqīwǔ)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-match-tage",
+      "old": "星期日",
+      "new": "星期日 (xīngqīrì)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "07-uhrzeit-und-tage.json",
+      "exercise_id": "ex-pic-heute",
+      "old": "今天",
+      "new": "今天 (jīntiān)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "妈妈",
+      "new": "妈妈 (māma)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "爸爸",
+      "new": "爸爸 (bàba)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "哥哥",
+      "new": "哥哥 (gēge)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-match-familie",
+      "old": "妹妹",
+      "new": "妹妹 (mèimei)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "08-familie.json",
+      "exercise_id": "ex-pic-vater",
+      "old": "爸爸",
+      "new": "爸爸 (bàba)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "09-zaehlwoerter.json",
+      "exercise_id": "ex-match-zaehlwoerter",
+      "old": "个",
+      "new": "个 (gè)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "09-zaehlwoerter.json",
+      "exercise_id": "ex-match-zaehlwoerter",
+      "old": "张",
+      "new": "张 (zhāng)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "09-zaehlwoerter.json",
+      "exercise_id": "ex-match-zaehlwoerter",
+      "old": "本",
+      "new": "本 (běn)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "09-zaehlwoerter.json",
+      "exercise_id": "ex-match-zaehlwoerter",
+      "old": "杯",
+      "new": "杯 (bēi)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "09-zaehlwoerter.json",
+      "exercise_id": "ex-pic-buch-zw",
+      "old": "本",
+      "new": "本 (běn)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "10-einfache-saetze.json",
+      "exercise_id": "ex-match-saetze",
+      "old": "是",
+      "new": "是 (shì)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "10-einfache-saetze.json",
+      "exercise_id": "ex-match-saetze",
+      "old": "不是",
+      "new": "不是 (bú shì)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "10-einfache-saetze.json",
+      "exercise_id": "ex-match-saetze",
+      "old": "没有",
+      "new": "没有 (méiyǒu)"
+    },
+    {
+      "set_id": "zh-a1-from-de",
+      "lesson_id": "10-einfache-saetze.json",
+      "exercise_id": "ex-match-saetze",
+      "old": "很",
+      "new": "很 (hěn)"
+    }
+  ]
+}
