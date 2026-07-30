@@ -43,7 +43,7 @@ Dieses Feature verlangt laut Testplan beide Speichermodi plus Backup-Round-Trip 
 
 ## Session B: Ubuntu (Launcher-Binary, nach dem ersten GHCR-Release)
 
-Voraussetzung: **Ein Release muss durchgelaufen sein, sodass das Image unter der konfigurierten GHCR-Referenz tatsächlich existiert** - das sind die **v2.7.1-Binaries** (v2.7.0 publizierte wegen des Gate-Fehlers #2178 keine Artefakte). Vorher scheitert die Installation am Bezug und der Lauf beweist nichts. Pin steht auf 0.25.0, Modus ist `image`, K1 bestätigt: einzelner Service.
+Voraussetzung: **Ein Release muss durchgelaufen sein, sodass das Image unter der konfigurierten GHCR-Referenz tatsächlich existiert** - das sind die **v2.7.1-Binaries** (v2.7.0 publizierte wegen des Gate-Fehlers #2178 keine Artefakte). Vorher scheitert die Installation am Bezug und der Lauf beweist nichts. Pin steht auf 0.25.1, Modus ist `image`, K1 bestätigt: einzelner Service.
 
 **Vorher Daten sichern.** Nach dem Volume-Fix mountet der Launcher das präfixierte Volume, und das ist dein Juni-Volume mit der echten Datenbank vom 22.06. Der Lauf arbeitet auf realen Daten. Also: Backup-Export aus der App, zusätzlich eine Kopie des Volumes, und erst dann anfangen. Die Sicherung einmal zurücklesen, nicht nur prüfen dass die Datei existiert. Ein anonymes Volume aus einem parallelen Prozess steht ebenfalls auf dem Gerät, vor dem Lauf entfernen oder bewusst stehen lassen, damit der Ausgangszustand bekannt ist.
 
@@ -67,7 +67,7 @@ Ein Lauf auf dem QA-Gerät mit den damaligen Binaries ist bis einschließlich Be
 
 ### Gruppe 2: neu in 0.25.0, wertvoll aber nicht gatend
 
-6. Konsole sichtbar, Kommandos und Exit-Codes im Log, Text-Wrap korrekt, Fenster resizable. Branding "Adaptive Learner", About: Launcher 0.25.0, App 2.7.1 mit Quellen-Label.
+6. Konsole sichtbar, Kommandos und Exit-Codes im Log, Text-Wrap korrekt, Fenster resizable. Branding "Adaptive Learner", About: Launcher 0.25.1, App 2.7.1 mit Quellen-Label.
 7. **Fortschrittsbalken:** Er verschwindet nach Erfolg und nach Fehlschlag. Ein stehenbleibender Balken ist ab 0.25.0 ein Befund und kein bekannter Fehler mehr.
 8. **Abbrechen:** Bezug starten, abbrechen. Balken weg, Meldung nennt die behaltenen Schichten, Installation sofort erneut möglich, zweiter Versuch spürbar schneller.
 9. **Abbruch einer Aktualisierung:** früh abbrechen. Meldung sagt, dass die App gestoppt ist und dass Start die vorherige Version zurückbringt. Start drücken, prüfen dass sie zurückkommt.
