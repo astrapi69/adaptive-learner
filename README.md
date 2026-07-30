@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.8.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.8.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -82,33 +82,33 @@ summarizes). In short:
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
-| Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 |
-| Englisch A2 — Grundlagen | de | en | A2 | 15 |
-| Englisch B1 — Mittelstufe | de | en | B1 | 15 |
-| Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 |
-| Spanisch A2 — Grundlagen | de | es | A2 | 15 |
-| Spanisch B1 — Mittelstufe | de | es | B1 | 15 |
-| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 |
-| Französisch A2 — Grundlagen | de | fr | A2 | 15 |
-| Französisch B1 — Mittelstufe | de | fr | B1 | 15 |
-| Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 |
-| Japanisch Schrift: Hiragana (Vorstufe) | de | ja | A0 | 10 |
-| Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 |
-| Koreanisch A1 (für Deutschsprachige) | de | ko | A1 | 10 |
-| Portugiesisch (Brasilianisch) A1 (für Deutschsprachige) | de | pt | A1 | 10 |
-| Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 |
-| German A1 (for English speakers) | en | de | A1 | 5 |
-| German A2 (for English speakers) | en | de | A2 | 5 |
+| अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 |
+| अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 |
+| French A1 (for English speakers) | en | fr | A1 | 15 |
 | Spanish A1 (for English speakers) | en | es | A1 | 15 |
 | Spanish A2 — Elementary | en | es | A2 | 15 |
 | Spanish B1 — Intermediate | en | es | B1 | 15 |
 | Spanish B2 (for English speakers) | en | es | B2 | 5 |
-| French A1 (for English speakers) | en | fr | A1 | 15 |
+| German A1 (for English speakers) | en | de | A1 | 5 |
+| German A2 (for English speakers) | en | de | A2 | 5 |
 | French A2 — Elementary | en | fr | A2 | 15 |
 | French B1 (for English speakers) | en | fr | B1 | 5 |
+| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 |
 | Γαλλικά A1 (για ελληνόφωνους) | el | fr | A1 | 8 |
-| अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 |
-| अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 |
+| Französisch A2 — Grundlagen | de | fr | A2 | 15 |
+| Französisch B1 — Mittelstufe | de | fr | B1 | 15 |
+| Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 |
+| Spanisch A2 — Grundlagen | de | es | A2 | 15 |
+| Spanisch B1 — Mittelstufe | de | es | B1 | 15 |
+| Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 |
+| Englisch A2 — Grundlagen | de | en | A2 | 15 |
+| Englisch B1 — Mittelstufe | de | en | B1 | 15 |
+| Japanisch Schrift: Hiragana (Vorstufe) | de | ja | A0 | 10 |
+| Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 |
+| Koreanisch A1 (für Deutschsprachige) | de | ko | A1 | 10 |
+| Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 |
+| Portugiesisch (Brasilianisch) A1 (für Deutschsprachige) | de | pt | A1 | 10 |
+| Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 |
 | Adaptive Learner — App-Tutorial | de | de | Einsteiger | 12 |
 <!-- CONTENT-STATS:END -->
 
