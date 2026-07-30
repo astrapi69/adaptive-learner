@@ -99,6 +99,37 @@ den Abschnitt "Einzelne Lektion loeschen (#2064)" weiter unten):
       neuen Lektion erscheinen.
 - [ ] Randfaelle: Wechsel zu einer Lektion ohne Uebungen, Rueckwaertswechsel.
 
+#### A6. Lektionsreihenfolge verschieben (#2172, gemerged)
+
+Die Anzeigereihenfolge ist ein eigenes Feld; Verschieben aendert die
+Sortierung, nie die Identitaet einer Lektion. iOS-Standalone ist der heiklere
+Fall (Verschieben auf dem Telefon).
+
+- [ ] In "Meine Inhalte" ein mehrlektionales (Buch-)Set aufklappen ->
+      "Lektionen verwalten".
+- [ ] Je Lektion sind Auf/Ab-Bedienelemente sichtbar. Beim ersten Eintrag ist
+      "Auf" deaktiviert, beim letzten "Ab" deaktiviert (kein wirkungsloses
+      Klicken).
+- [ ] Nur mit der Tastatur bedienbar: mit Tab zum Auf/Ab-Element, mit
+      Leertaste/Enter ausloesen. Der Screenreader liest eine verstaendliche
+      Bezeichnung ("Lektion X nach oben verschieben") und nach dem Verschieben
+      die neue Position ("X ist jetzt an Position n von m").
+- [ ] Reihenfolge ist SOFORT gespeichert - keine gesonderte Speichern-Aktion.
+      Seite neu laden (oder Set zu- und wieder aufklappen): die geaenderte
+      Reihenfolge bleibt.
+- [ ] Bestehende Sets: ohne eigenes Verschieben zeigt sich die bisherige
+      Reihenfolge unveraendert (kein stilles Umsortieren).
+- [ ] Identitaet unberuehrt: nach mehreren Verschiebungen einer Lektion mit
+      vorhandenem Lernfortschritt bleibt der Fortschritt zugeordnet, keine
+      verwaisten Wiederholungskarten, Loeschen trifft weiter die richtige
+      Lektion.
+- [ ] Backup-Round-Trip: Export -> Speicher leeren -> Import bringt die
+      gewaehlte Reihenfolge zurueck.
+- [ ] Beide Speichermodi (API + Dexie).
+- [ ] iOS-Standalone (PWA vom Home-Bildschirm): Verschieben per Touch und die
+      Positions-Rueckmeldung funktionieren, Reihenfolge bleibt nach dem
+      Schliessen und Wiederoeffnen.
+
 ### Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
 
 Voraussetzung: die Launcher-Session ist geliefert (Modusentscheidung, Pin
