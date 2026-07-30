@@ -20,25 +20,16 @@ Echter Round-Trip, keine Simulation:
 
 Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen: Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
 
-### A1b. PFLICHT: Recovery-Round-Trip ja/ko/zh (#2161, mit vorab definierter Konsequenz)
+### A1b. Recovery-Round-Trip (geschuldete Vorbedingung, nachzuholen)
 
-Der manuelle Round-Trip war als Vorbedingung des #2171-Merges formuliert und
-wurde übergangen (REC-JKZ-Träger, Befund 30.07.). Er ist damit PFLICHTPUNKT
-dieser Session, keine Notiz:
+Dieser Punkt war als Vorbedingung des Merges von #2171 formuliert und wurde übergangen. Er wird hier nachgeholt, nicht weggelassen.
 
-1. Zustand herstellen wie im Testplan beschrieben (verwaiste Zeilen eines
-   korrigierten ja/ko/zh-A1-Sets; "how to produce the state" steht im
-   Recovery-Abschnitt von `testplan-adaptive-learner*.md`).
-2. Der Hinweis erscheint NUR in diesem Zustand (Gegenprobe: Profil ohne
-   verwaiste Zeilen sieht nichts).
-3. Sicherung wird VOR der Reparatur angeboten; Reparatur nur auf Klick.
-4. Nach der Reparatur: Karten werden wieder eingeplant, Fortschritt hängt an
-   den korrigierten Lektionen, beide Speichermodi.
+1. Prüfen, ob der Wiederherstellungs-Hinweis von selbst erscheint. Erscheint er, liegen echte betroffene Daten vor, dann hier prüfen und **vorher sichern**.
+2. Erscheint er nicht, wandert die Prüfung auf den Desktop, wo der Zustand mit Entwicklerwerkzeugen herstellbar ist. Die Anleitung dazu steht im Testplan. Im iOS-Standalone-Modus ist das nicht möglich, weil dafür ein Mac nötig wäre.
+3. Wiederherstellen wählen, danach prüfen: Fortschritt zugeordnet, keine verwaisten Zeilen, Zahlen in der Rückmeldung plausibel.
+4. Danach das vor der Wiederherstellung erstellte Backup importieren: Der alte Zustand kommt zurück und der Hinweis erscheint wieder. Das ist erwartetes Verhalten.
 
-**Vorab definierte Konsequenz bei Befund:** Issue mit Forensik (Screenshot +
-Export der Sicherung), Fix als Patch-Release ohne Eile - der Hinweis ist
-zustandsgetrieben und erreicht nur bereits Betroffene, deren Zustand ohne
-Recovery sicher kaputt ist. KEIN Release-Rollback.
+**Konsequenz bei einem Fund:** Patch in einem Folgerelease, kein Rollback. Der Hinweis ist zustandsgetrieben und erreicht niemanden, der nicht betroffen ist. Nicht improvisieren, Fund melden.
 
 ### A2. #2039 Mobile Scroll-to-Error (Visual-Device-Check vor Merge)
 1. Formular mit Validierungsfehler außerhalb des Viewports provozieren (langes Formular, Fehler oben, abschicken von unten).
@@ -61,9 +52,10 @@ Dieses Feature verlangt laut Testplan beide Speichermodi plus Backup-Round-Trip 
 2. Im Dropdown ein anderes Kapitel wählen: Schritt 2 bleibt, Übungen der neuen Lektion erscheinen.
 3. Randfälle: Wechsel zu einer Lektion ohne Übungen, Rückwärtswechsel.
 
+
 ## Session B: Ubuntu (Launcher-Binary, nach dem ersten GHCR-Release)
 
-Voraussetzung: **Ein Release muss durchgelaufen sein, sodass das Image unter der konfigurierten GHCR-Referenz tatsächlich existiert** - das sind die **v2.8.0-Binaries** (v2.7.0 publizierte wegen des Gate-Fehlers #2178 keine Artefakte). Vorher scheitert die Installation am Bezug und der Lauf beweist nichts. Pin steht auf 0.25.1, Modus ist `image`, K1 bestätigt: einzelner Service.
+Voraussetzung: **Ein Release muss durchgelaufen sein, sodass das Image unter der konfigurierten GHCR-Referenz tatsächlich existiert.** Vorher scheitert die Installation am Bezug und der Lauf beweist nichts. Pin steht auf 0.25.1, Modus ist `image`, K1 bestätigt: einzelner Service.
 
 **Vorher Daten sichern.** Nach dem Volume-Fix mountet der Launcher das präfixierte Volume, und das ist dein Juni-Volume mit der echten Datenbank vom 22.06. Der Lauf arbeitet auf realen Daten. Also: Backup-Export aus der App, zusätzlich eine Kopie des Volumes, und erst dann anfangen. Die Sicherung einmal zurücklesen, nicht nur prüfen dass die Datei existiert. Ein anonymes Volume aus einem parallelen Prozess steht ebenfalls auf dem Gerät, vor dem Lauf entfernen oder bewusst stehen lassen, damit der Ausgangszustand bekannt ist.
 
@@ -85,10 +77,10 @@ Ein Lauf auf dem QA-Gerät mit den damaligen Binaries ist bis einschließlich Be
 4. Nach Gruppenbeitritt und echter Neuanmeldung: Status wird grün.
 5. **Kernbeweis:** Installation anstoßen. Der Bezug läuft auf dem Alt-Docker über die Engine-API durch, ohne Compose-Plugin und ohne buildx. Container startet, App unter dem angezeigten Port erreichbar, Frontend und Gesundheitsendpunkt antworten. Im Log keine Credential-Zeile. Das ist die einzige Aussage, die CI bisher nicht liefern kann.
 
-### Gruppe 2: neu in 0.25.0, wertvoll aber nicht gatend
+### Gruppe 2: neu seit 0.24.0, wertvoll aber nicht gatend
 
-6. Konsole sichtbar, Kommandos und Exit-Codes im Log, Text-Wrap korrekt, Fenster resizable. Branding "Adaptive Learner", About: Launcher 0.25.1, App 2.8.0 mit Quellen-Label.
-7. **Fortschrittsbalken:** Er verschwindet nach Erfolg und nach Fehlschlag. Ein stehenbleibender Balken ist ab 0.25.0 ein Befund und kein bekannter Fehler mehr.
+6. Konsole sichtbar, Kommandos und Exit-Codes im Log, Text-Wrap korrekt, Fenster resizable. Branding "Adaptive Learner", About: Launcher 0.25.1, App 2.7.0 mit Quellen-Label.
+7. **Fortschrittsbalken:** Er verschwindet nach Erfolg und nach Fehlschlag. Ein stehenbleibender Balken ist ab 0.25.x ein Befund und kein bekannter Fehler mehr.
 8. **Abbrechen:** Bezug starten, abbrechen. Balken weg, Meldung nennt die behaltenen Schichten, Installation sofort erneut möglich, zweiter Versuch spürbar schneller.
 9. **Abbruch einer Aktualisierung:** früh abbrechen. Meldung sagt, dass die App gestoppt ist und dass Start die vorherige Version zurückbringt. Start drücken, prüfen dass sie zurückkommt.
 10. Bei Stoppen und Deinstallieren erscheint **kein** Abbrechen-Bedienelement.
@@ -102,4 +94,4 @@ Ein Lauf auf dem QA-Gerät mit den damaligen Binaries ist bis einschließlich Be
 
 ## Reihenfolge-Empfehlung
 
-Session A zuerst und in einem Durchgang: A1 und A4 teilen sich den Backup-Round-Trip, A2 und A5 sind kurze Zusatzprüfungen. Damit fällt in einer Sitzung das älteste Launch-Gate zusammen mit zwei frisch gemergten Features. Session B erst, wenn ein Release durchgelaufen ist und das Image unter der konfigurierten Referenz existiert.
+Session A zuerst und in einem Durchgang: A1, A1b und A4 teilen sich denselben Backup-Round-Trip, das ist ein Durchgang und nicht drei, A2 und A5 sind kurze Zusatzprüfungen. Damit fällt in einer Sitzung das älteste Launch-Gate zusammen mit zwei frisch gemergten Features. Session B erst, wenn ein Release durchgelaufen ist und das Image unter der konfigurierten Referenz existiert.

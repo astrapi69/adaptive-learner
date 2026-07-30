@@ -1,5 +1,6 @@
 {
   "A \"flaky\" test that fails deterministically on unchanged code is stale, not flaky": "7476e60e65cba178",
+  "A ratchet baseline is itself a measurement - a stale branch measures against a stale baseline": "3e90c69c66ddfdbd",
   "Alembic `fileConfig` silences every existing logger": "6eab9630f14e0b4d",
   "Alembic migration + fresh test DB": "c956110ac3f1a5c3",
   "An i18n string change can break a nightly-only E2E gate invisibly": "5538a45cc0be9ac3",
@@ -44,6 +45,7 @@
   "React 18 dev-mode double-effect-mount strands `mockImplementationOnce`": "653a01e6385e93a8",
   "React `useEffect` deps + i18n test mocks: the `t` function isn't stable": "9502e20fb37905d9",
   "Real-world data audit BEFORE implementation prevents spec-vs-reality drift": "14013692f877ebf9",
+  "Release/hotfix back-merges land ratchet-tripping changes on develop ungated": "479d2c528a5232b7",
   "Review architectural decisions before implementing": "1bc7eb3ab7dbad74",
   "Run vitest from `frontend/`, not the repo root": "c800b7fad4fc7077",
   "Shallow clone update trap": "c80cfbfd39f2cfcb",
