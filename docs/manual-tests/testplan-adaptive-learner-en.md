@@ -695,15 +695,23 @@ three sets are affected; all other sets are untouched.
 #### Producing the state (test precondition)
 
 The notice shows only when affected review cards are present in your own data.
-FIRST check whether the QA device already has such data:
+Producing that state needs access to the stored data (developer tools), and that
+is NOT possible in iOS standalone mode: it requires the Safari Web Inspector on a
+Mac, and the QA machine runs Ubuntu. Hence the platform rule:
 
-- [ ] Open the Dashboard. If the notice already shows, real affected data is
-      present -> test on real data, produce nothing. Then the product condition
-      applies: run "Export backup" (the button in the notice) FIRST.
+- The produced state is created and tested on the DESKTOP (app in the browser,
+  developer tools available).
+- On the PHONE (iOS standalone) test ONLY if real affected data is present.
 
-If no notice shows, produce the state. An orphaned entry can no longer be
-created through normal use (the corrected version already emits the new key), so
-this step needs developer tools (marked as such):
+First check (two-stage):
+
+- [ ] On the phone, open the Dashboard. If the notice shows by itself, real
+      affected data is present -> test there. Then the product condition applies:
+      run "Export backup" (the button in the notice) FIRST.
+- [ ] If no notice shows on the phone, the check moves to the DESKTOP; produce
+      the state there. An orphaned entry can no longer be created through normal
+      use (the corrected version already emits the new key), so this step needs
+      developer tools (marked as such):
 
 - [ ] Take a backup (Settings -> Data -> Export backup) so the starting state is
       restorable.
@@ -731,6 +739,11 @@ Way back (repeatable, no traces):
       Import) -> exact starting state, no traces.
 - [ ] [Developer tools] Or reverse the UPDATE (server) / set the test row back to
       the new key (Dexie).
+
+Not covered: if the state is produced and tested only on the desktop, the
+notice's behaviour in iOS standalone mode remains UNPROVEN (it cannot be produced
+there without a Mac Web Inspector). That is a valid result, but note it
+explicitly as open - do not silently equate it with the desktop result.
 
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →

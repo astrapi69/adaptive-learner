@@ -733,16 +733,26 @@ Sets bleiben unberuehrt.
 #### Zustand herstellen (Voraussetzung fuer den Test)
 
 Der Hinweis erscheint nur, wenn betroffene Wiederholungskarten in den eigenen
-Daten liegen. ZUERST pruefen, ob das QA-Geraet solche Daten schon hat:
+Daten liegen. Der Herstell-Weg braucht Zugriff auf die Speicherinhalte
+(Entwicklerwerkzeuge), und der ist im iOS-Standalone-Modus NICHT gangbar: dafuer
+braucht es den Safari-Web-Inspector auf einem Mac, der QA-Rechner laeuft unter
+Ubuntu. Daher die Plattformregel:
 
-- [ ] Dashboard oeffnen. Erscheint der Hinweis bereits, liegen ECHTE betroffene
-      Daten vor -> auf echten Daten testen, nichts herstellen. Dann gilt die
+- Der erzeugte Zustand wird auf dem DESKTOP hergestellt und geprueft (App im
+  Browser, Entwicklerwerkzeuge verfuegbar).
+- Auf dem TELEFON (iOS-Standalone) wird NUR geprueft, wenn echte betroffene
+  Daten vorliegen.
+
+Zuerst-pruefen (zweistufig):
+
+- [ ] Auf dem Telefon das Dashboard oeffnen. Erscheint der Hinweis von selbst,
+      liegen ECHTE betroffene Daten vor -> dort testen. Dann gilt die
       Produktbedingung: VORHER "Sicherung erstellen" (Knopf im Hinweis).
-
-Erscheint kein Hinweis, den Zustand herstellen. Ein verwaister Eintrag entsteht
-nicht mehr ueber die normale Bedienung (die korrigierte Fassung erzeugt bereits
-den neuen Key), daher braucht dieser Schritt Entwicklerwerkzeuge (so
-gekennzeichnet):
+- [ ] Erscheint auf dem Telefon kein Hinweis, wandert die Pruefung auf den
+      DESKTOP; dort den Zustand herstellen. Ein verwaister Eintrag entsteht nicht
+      mehr ueber die normale Bedienung (die korrigierte Fassung erzeugt bereits
+      den neuen Key), daher braucht dieser Schritt Entwicklerwerkzeuge (so
+      gekennzeichnet):
 
 - [ ] Sicherung ziehen (Settings -> Daten -> Sicherung erstellen), damit der
       Ausgangszustand wiederherstellbar ist.
@@ -772,6 +782,12 @@ Weg zurueck (Test wiederholbar, keine Spuren):
       (Settings -> Daten -> Import) -> exakter Ausgangszustand, keine Spuren.
 - [ ] [Entwicklerwerkzeuge] Alternativ das UPDATE umkehren (Server) bzw. die
       Testzeile wieder auf den neuen Key setzen (Dexie).
+
+Nicht abgedeckt: Wird der Zustand nur auf dem Desktop erzeugt und geprueft,
+bleibt das Verhalten des Hinweises im iOS-Standalone-Modus UNBELEGT (die
+Herstellung ist dort ohne Mac-Web-Inspector nicht moeglich). Das ist ein
+zulaessiges Ergebnis, aber ausdruecklich als offen zu vermerken, nicht
+stillschweigend mit dem Desktop-Ergebnis gleichzusetzen.
 
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
