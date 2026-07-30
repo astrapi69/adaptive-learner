@@ -18,12 +18,18 @@ vi.mock("../../../storage", () => ({
   }),
 }));
 
-const { validateUserRepo, listRepoManifestSets } = vi.hoisted(() => ({
-  validateUserRepo: vi.fn(),
-  listRepoManifestSets: vi.fn(),
-}));
+const { validateUserRepo, listRepoManifestSets, assessSetUpdate } = vi.hoisted(
+  () => ({
+    validateUserRepo: vi.fn(),
+    listRepoManifestSets: vi.fn(),
+    assessSetUpdate: vi.fn(),
+  }),
+);
 vi.mock("./content-repo-validate", () => ({ validateUserRepo, listRepoManifestSets }));
 vi.mock("./repo-token", () => ({ resolveRepoToken: () => "" }));
+// #2128 — the auto-sync guard; default to "safe" (null) so the existing sync
+// tests still exercise the download path.
+vi.mock("../update/assess-set-update", () => ({ assessSetUpdate }));
 
 import {
   addUserRepo,
@@ -63,6 +69,8 @@ beforeEach(() => {
   validateUserRepo.mockResolvedValue({ ok: true, setCount: 0, lessonCount: 0 });
   listRepoManifestSets.mockReset();
   listRepoManifestSets.mockResolvedValue([]);
+  assessSetUpdate.mockReset();
+  assessSetUpdate.mockResolvedValue(null); // default: every set safe to apply
   update.mockResolvedValue({ plugin: "content-loader", settings: {} });
 });
 
@@ -197,6 +205,46 @@ describe("syncUserRepo(source)", () => {
     );
     expect(jane).toMatchObject({ set_count: 2, lesson_count: 12, trust: 1 });
     expect(jane.last_synced).toEqual(expect.any(String));
+  });
+
+  it("#2128 — holds (does NOT download) a set whose update would orphan progress; safe sets still apply", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a")] },
+    });
+    listRepoManifestSets.mockResolvedValue([
+      { id: "safe", lessonCount: 3 },
+      { id: "breaks", lessonCount: 4 },
+    ]);
+    downloadSet.mockResolvedValue({});
+    assessSetUpdate.mockImplementation(async (_source: string, setId: string) =>
+      setId === "breaks"
+        ? { lostLessons: [], lostCards: [{}], breaking: true }
+        : null,
+    );
+
+    const res = await syncUserRepo("jane/a");
+
+    // The breaking set is held at its cached version (its update_available
+    // stays true); only the safe set is written.
+    expect(downloadSet).toHaveBeenCalledTimes(1);
+    expect(downloadSet).toHaveBeenCalledWith("jane/a", "safe");
+    expect(downloadSet).not.toHaveBeenCalledWith("jane/a", "breaks");
+    expect(res.lessonCount).toBe(3); // only the applied set counts
+  });
+
+  it("#2128 — a failed assessment holds the set too (never a silent overwrite)", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a")] },
+    });
+    listRepoManifestSets.mockResolvedValue([{ id: "deck-1", lessonCount: 3 }]);
+    downloadSet.mockResolvedValue({});
+    assessSetUpdate.mockRejectedValue(new Error("network"));
+
+    await syncUserRepo("jane/a");
+
+    expect(downloadSet).not.toHaveBeenCalled();
   });
 
   it("touches ONLY the target source — no listSets over all sources, no other-repo writes (#1388)", async () => {
