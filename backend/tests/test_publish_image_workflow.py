@@ -47,14 +47,15 @@ def test_builds_both_architectures(workflow: str) -> None:
     assert "linux/amd64,linux/arm64" in workflow
 
 
-def test_publishes_on_the_release_event(parsed: dict) -> None:
-    """Same hook as the launcher binaries - part of the release, not beside it."""
+def test_runs_on_demand_only_never_on_release_events(parsed: dict) -> None:
+    """Option 1 (v2.8.0): created never fires for drafts; published would
+    re-run the chain on draft-publish against a non-bit-identical rebuild
+    (~48k bytes drift between identical-content builds) - the verified
+    artifact must BE the shipped one. The chain runs via workflow_dispatch,
+    triggered by the release checklist BEFORE the draft goes visible."""
     triggers = parsed[True] if True in parsed else parsed["on"]
-    assert "release" in triggers
-    # published, NOT created: drafts never fire created, and publishing
-    # a draft fires only published - draft-first releases depend on this
-    # (v2.8.0 finding; fires exactly once for draft- and direct-publish).
-    assert triggers["release"]["types"] == ["published"]
+    assert "release" not in triggers, "release-event trigger reintroduced (double-run class)"
+    assert "workflow_dispatch" in triggers
 
 
 def test_dispatch_defaults_to_a_dry_run(parsed: dict) -> None:
