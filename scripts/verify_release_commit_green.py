@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -45,9 +46,30 @@ from pathlib import Path
 PASSING = {"success", "neutral", "skipped"}
 
 
+def resolve_repo(repo: str | None) -> str | None:
+    """``--repo``, else the Actions-provided ``GITHUB_REPOSITORY``.
+
+    ``gh api`` does NOT resolve a bare ``commits/...`` path against the
+    current repo - that convenience exists only for ``{owner}/{repo}``
+    placeholders. The bare fallback therefore 404'd on EVERY ``release:``
+    run and the gate failed closed forever (#2178): correct per contract
+    point 3, but a publish chain that can never pass. In Actions the env
+    var is always present; passing ``--repo`` explicitly still wins.
+    """
+    return repo or os.environ.get("GITHUB_REPOSITORY") or None
+
+
 def fetch(sha: str, repo: str | None) -> list[dict] | None:
     """Check runs for exactly this commit, or ``None`` when unreadable."""
-    target = f"repos/{repo}/commits/{sha}/check-runs" if repo else f"commits/{sha}/check-runs"
+    repo = resolve_repo(repo)
+    if repo is None:
+        print(
+            "could not read the check status: no --repo given and "
+            "GITHUB_REPOSITORY is unset - refusing to guess the repository",
+            file=sys.stderr,
+        )
+        return None
+    target = f"repos/{repo}/commits/{sha}/check-runs"
     command = ["gh", "api", "--paginate", target, "--jq", ".check_runs[]"]
     try:
         result = subprocess.run(command, capture_output=True, text=True, timeout=120)
@@ -125,7 +147,7 @@ def release_driven_job_names(repo_root: Path) -> tuple[list[str], str | None]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sha", help="the commit being published from")
-    parser.add_argument("--repo", default=None, help="owner/name (default: the current repo)")
+    parser.add_argument("--repo", default=None, help="owner/name (default: $GITHUB_REPOSITORY)")
     parser.add_argument("--from-json", default=None, help="read check runs from a file or '-'")
     parser.add_argument(
         "--ignore",
