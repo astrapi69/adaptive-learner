@@ -174,13 +174,22 @@ code {
  * specificity (0,0,1): the layered-utility case stays protected by
  * the carve-outs, and any unlayered class rule wins by normal
  * specificity again. */
-a:where(:not([data-slot="button"]):not(.btn)) {
-  color: var(--accent);
-  text-decoration: none;
-}
+/* Layered into ``legacy`` (the EARLIEST app layer) on purpose (#2175):
+ * this file is not yet tranche-wrapped, and an UNLAYERED rule beats any
+ * layered one regardless of specificity - so this zero-specificity base
+ * color silently overrode every class-styled anchor living in already-
+ * wrapped tranches (first found: nav-mode-badge rendering accent over a
+ * success-tinted bg at 3.93:1). Inside ``legacy`` the #1723 intent holds
+ * again: weakest link color, any class rule wins. */
+@layer legacy {
+  a:where(:not([data-slot="button"]):not(.btn)) {
+    color: var(--accent);
+    text-decoration: none;
+  }
 
-a:where(:not([data-slot="button"]):not(.btn)):hover {
-  text-decoration: underline;
+  a:where(:not([data-slot="button"]):not(.btn)):hover {
+    text-decoration: underline;
+  }
 }
 
 /* The HTML ``hidden`` attribute must always win. An element-level
