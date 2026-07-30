@@ -25,7 +25,7 @@
   "Filesystem isolation: production data lives outside the project tree": "e1c8e2b61c762264",
   "Frozen-only behaviour is proven on the real artifact, not the source-tree run": "ca379eacf3ec0436",
   "General patterns": "0856baac360bf881",
-  "German content uses real umlauts": "5d44e3d33425b57b",
+  "German content uses real umlauts": "699164379ae2a698",
   "Gitignored config + stale example = silent CI drift": "223b7e4739280f27",
   "Global CSS rules: distinguish viewport containers from app container": "b4f99548a7310ac2",
   "Globals invoked with `new` need a function constructor, not an arrow": "a4dea1b3aef8e43b",
