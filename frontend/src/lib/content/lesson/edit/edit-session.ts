@@ -108,6 +108,26 @@ export function buildEditPrefill(
     };
 }
 
+/**
+ * Resolve which lesson of a set the edit wizard should open on (#2210).
+ *
+ * A per-row Edit passes the lesson's ``{id}.json`` filename (or the bare id,
+ * as folded rows carry it) via the edit route's ``?lesson=`` hint, so the
+ * wizard lands on THAT lesson instead of always the first. The hint is matched
+ * tolerantly against the lesson id with an optional ``.json`` suffix. An
+ * absent, empty, or unknown hint resolves to 0 - the historical "open the
+ * first lesson" behavior, so an entry that carries no lesson is unchanged.
+ */
+export function resolveEditLessonIndex(
+    lessons: readonly ContentLesson[],
+    lessonParam?: string | null,
+): number {
+    if (!lessonParam) return 0;
+    const wanted = lessonParam.replace(/\.json$/, "");
+    const index = lessons.findIndex((lesson) => lesson.id === wanted);
+    return index === -1 ? 0 : index;
+}
+
 /** A short, human label for a lesson in the picker — its title, or a
  *  1-based fallback when a lesson carries no title. */
 export function lessonPickerLabel(lesson: ContentLesson, index: number): string {

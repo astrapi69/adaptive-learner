@@ -27,6 +27,8 @@ interface MyLessonsSectionProps {
   onDelete: (entry: ContentSetEntry) => void;
   // #2064 — per-lesson list actions for a multi-lesson user set.
   onPlayLessonFile: (entry: ContentSetEntry, filename: string) => void;
+  // #2210 — edit one specific lesson of a multi-lesson set (by filename).
+  onEditLessonFile: (entry: ContentSetEntry, filename: string) => void;
   onRequestDeleteLesson: (target: LessonDeleteTarget) => void;
   // #1741 — combine-into-a-set selection mode.
   selectMode: boolean;
@@ -47,6 +49,7 @@ export default function MyLessonsSection({
   onShare,
   onDelete,
   onPlayLessonFile,
+  onEditLessonFile,
   onRequestDeleteLesson,
   selectMode,
   selectedCount,
@@ -150,6 +153,9 @@ export default function MyLessonsSection({
               {/* #226 — the shared action set drops onto its own
                   full-width line so the up-to-6 buttons wrap below the
                   meta instead of overflowing the card. */}
+              {/* #2210 — a multi-lesson set has no set-level Edit (it would
+                  guess a lesson); the per-lesson Edit in SetLessonList below
+                  is the entry. A single-lesson set keeps it (unambiguous). */}
               <UserSetActions
                 entry={entry}
                 communitySharingEnabled={communitySharingEnabled}
@@ -160,6 +166,7 @@ export default function MyLessonsSection({
                 onExportSet={onExportSet}
                 onShare={onShare}
                 onDelete={onDelete}
+                showEdit={entry.lesson_count <= 1}
               />
               {/* AIX-06 (#833) — batch-generate exercises for every
                   theory-only lesson in this set. */}
@@ -172,6 +179,7 @@ export default function MyLessonsSection({
                 <SetLessonList
                   entry={entry}
                   onPlayLesson={onPlayLessonFile}
+                  onEditLesson={onEditLessonFile}
                   onRequestDelete={onRequestDeleteLesson}
                 />
               )}
