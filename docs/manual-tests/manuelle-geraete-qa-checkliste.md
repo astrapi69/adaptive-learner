@@ -20,6 +20,26 @@ Echter Round-Trip, keine Simulation:
 
 Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen: Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
 
+### A1b. PFLICHT: Recovery-Round-Trip ja/ko/zh (#2161, mit vorab definierter Konsequenz)
+
+Der manuelle Round-Trip war als Vorbedingung des #2171-Merges formuliert und
+wurde übergangen (REC-JKZ-Träger, Befund 30.07.). Er ist damit PFLICHTPUNKT
+dieser Session, keine Notiz:
+
+1. Zustand herstellen wie im Testplan beschrieben (verwaiste Zeilen eines
+   korrigierten ja/ko/zh-A1-Sets; "how to produce the state" steht im
+   Recovery-Abschnitt von `testplan-adaptive-learner*.md`).
+2. Der Hinweis erscheint NUR in diesem Zustand (Gegenprobe: Profil ohne
+   verwaiste Zeilen sieht nichts).
+3. Sicherung wird VOR der Reparatur angeboten; Reparatur nur auf Klick.
+4. Nach der Reparatur: Karten werden wieder eingeplant, Fortschritt hängt an
+   den korrigierten Lektionen, beide Speichermodi.
+
+**Vorab definierte Konsequenz bei Befund:** Issue mit Forensik (Screenshot +
+Export der Sicherung), Fix als Patch-Release ohne Eile - der Hinweis ist
+zustandsgetrieben und erreicht nur bereits Betroffene, deren Zustand ohne
+Recovery sicher kaputt ist. KEIN Release-Rollback.
+
 ### A2. #2039 Mobile Scroll-to-Error (Visual-Device-Check vor Merge)
 1. Formular mit Validierungsfehler außerhalb des Viewports provozieren (langes Formular, Fehler oben, abschicken von unten).
 2. Erwartet: automatischer Scroll zum ersten Fehlerfeld, Fehler sichtbar und fokussiert.
@@ -43,7 +63,7 @@ Dieses Feature verlangt laut Testplan beide Speichermodi plus Backup-Round-Trip 
 
 ## Session B: Ubuntu (Launcher-Binary, nach dem ersten GHCR-Release)
 
-Voraussetzung: **Ein Release muss durchgelaufen sein, sodass das Image unter der konfigurierten GHCR-Referenz tatsächlich existiert** - das sind die **v2.7.1-Binaries** (v2.7.0 publizierte wegen des Gate-Fehlers #2178 keine Artefakte). Vorher scheitert die Installation am Bezug und der Lauf beweist nichts. Pin steht auf 0.25.1, Modus ist `image`, K1 bestätigt: einzelner Service.
+Voraussetzung: **Ein Release muss durchgelaufen sein, sodass das Image unter der konfigurierten GHCR-Referenz tatsächlich existiert** - das sind die **v2.8.0-Binaries** (v2.7.0 publizierte wegen des Gate-Fehlers #2178 keine Artefakte). Vorher scheitert die Installation am Bezug und der Lauf beweist nichts. Pin steht auf 0.25.1, Modus ist `image`, K1 bestätigt: einzelner Service.
 
 **Vorher Daten sichern.** Nach dem Volume-Fix mountet der Launcher das präfixierte Volume, und das ist dein Juni-Volume mit der echten Datenbank vom 22.06. Der Lauf arbeitet auf realen Daten. Also: Backup-Export aus der App, zusätzlich eine Kopie des Volumes, und erst dann anfangen. Die Sicherung einmal zurücklesen, nicht nur prüfen dass die Datei existiert. Ein anonymes Volume aus einem parallelen Prozess steht ebenfalls auf dem Gerät, vor dem Lauf entfernen oder bewusst stehen lassen, damit der Ausgangszustand bekannt ist.
 
@@ -67,7 +87,7 @@ Ein Lauf auf dem QA-Gerät mit den damaligen Binaries ist bis einschließlich Be
 
 ### Gruppe 2: neu in 0.25.0, wertvoll aber nicht gatend
 
-6. Konsole sichtbar, Kommandos und Exit-Codes im Log, Text-Wrap korrekt, Fenster resizable. Branding "Adaptive Learner", About: Launcher 0.25.1, App 2.7.1 mit Quellen-Label.
+6. Konsole sichtbar, Kommandos und Exit-Codes im Log, Text-Wrap korrekt, Fenster resizable. Branding "Adaptive Learner", About: Launcher 0.25.1, App 2.8.0 mit Quellen-Label.
 7. **Fortschrittsbalken:** Er verschwindet nach Erfolg und nach Fehlschlag. Ein stehenbleibender Balken ist ab 0.25.0 ein Befund und kein bekannter Fehler mehr.
 8. **Abbrechen:** Bezug starten, abbrechen. Balken weg, Meldung nennt die behaltenen Schichten, Installation sofort erneut möglich, zweiter Versuch spürbar schneller.
 9. **Abbruch einer Aktualisierung:** früh abbrechen. Meldung sagt, dass die App gestoppt ist und dass Start die vorherige Version zurückbringt. Start drücken, prüfen dass sie zurückkommt.
