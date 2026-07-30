@@ -17,7 +17,10 @@ Docker/nginx production path are untouched (they never set the flag).
 
 from __future__ import annotations
 
+import base64
+import hashlib
 import logging
+import re
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -110,6 +113,42 @@ def default_dist_dir() -> Path:
     return Path(__file__).resolve().parents[2] / "frontend" / "dist"
 
 
+_INLINE_SCRIPT_RE = re.compile(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", re.S)
+
+
+def spa_csp_for(index_html: str) -> str:
+    """Same-origin CSP for the served SPA, inline scripts allowed by HASH.
+
+    Computed from the REAL ``index.html`` at mount time (#2197): the two
+    inline blocks Vite ships (the FOUC-critical theme init and the
+    Schema.org JSON-LD) are allowed via their sha256 hashes, so a changed
+    snippet re-hashes itself on the next start instead of silently
+    breaking - and ``script-src`` never needs ``unsafe-inline``.
+    ``style-src`` keeps ``unsafe-inline`` for React/Recharts style
+    attributes; blob/data cover the PWA worker, audio and images.
+    """
+    hashes = " ".join(
+        "'sha256-" + base64.b64encode(hashlib.sha256(m.group(1).encode()).digest()).decode() + "'"
+        for m in _INLINE_SCRIPT_RE.finditer(index_html)
+    )
+    script_src = f"script-src 'self' {hashes}".rstrip()
+    return (
+        "default-src 'self'; "
+        f"{script_src}; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: blob:; "
+        "font-src 'self' data:; "
+        "connect-src 'self'; "
+        "media-src 'self' blob: data:; "
+        "worker-src 'self' blob:; "
+        "manifest-src 'self'; "
+        "object-src 'none'; "
+        "frame-ancestors 'none'; "
+        "base-uri 'self'; "
+        "form-action 'self'"
+    )
+
+
 def mount_frontend_static(app: FastAPI, dist_dir: Path | None = None) -> bool:
     """Mount the built frontend at ``/`` as a catch-all, if it exists.
 
@@ -138,5 +177,9 @@ def mount_frontend_static(app: FastAPI, dist_dir: Path | None = None) -> bool:
     # ``try_files`` used to provide. Mounted last, so API + plugin routes
     # registered earlier take precedence.
     app.mount("/", SPAStaticFiles(directory=str(target), html=True), name="frontend")
+    # The security-headers middleware serves this to every non-API path
+    # once set; without it the SPA shipped the deny-everything API CSP
+    # and rendered a white page (#2197).
+    app.state.spa_csp = spa_csp_for((target / "index.html").read_text(encoding="utf-8"))
     logger.info("Serving built frontend from %s at / (single-origin LAN mode)", target)
     return True
