@@ -155,9 +155,16 @@ not passed the required checks will be **rejected for admins too** — so
    the current flow but makes the bypass a named, auditable action rather than
    a standing hole.
 
-Option 1 is the stronger fit for the principle (no bypass at all); option 2
-preserves the current muscle memory at the cost of a scripted toggle. Either
-is acceptable; a standing `enforce_admins=false` is not.
+**DECIDED (2026-07-30): Option 1.** Route the back-merge through a PR. Option 2
+is **rejected**: a switch a script flips automatically is not an *explained*
+bypass, it is an *automated* one — it opens the channel in the exact moment it
+matters and creates the impression it is closed. That is worse than today's
+open channel, because false confidence is added on top. What you actually lose
+with Option 1 is smaller than it sounds: an emergency fix still goes through a
+PR; what falls away is merging a *red* PR with no action. Turning the setting
+off briefly is meant to be a conscious act whose switch-off stays visible in the
+audit log — you lose the ability to do it *silently*, not the ability itself.
+Option 1 is implemented in #2199 (`make release-finish` opens the back-merge PR).
 
 **Do not enable it without adopting one of the two** — otherwise the next
 release's `release-finish` will fail, and the likely reaction under time
@@ -229,3 +236,135 @@ Gate/rule coupling: the workflow is classified in `.claude/rules/gates.yaml`
 under `no_rule:` with a reason (it enforces no new rule section — it re-runs
 existing ratchets on a different trigger), which `make verify-gate-rule-links`
 requires for every workflow.
+
+## Pre-flight before enabling `enforce_admins` (do BOTH before flipping the switch)
+
+Two things must be checked **before** the toggle, not after — after, they are a
+release-time outage instead of a finding. Neither is hypothetical; the first is
+the single most common failure of this exact change.
+
+### Check 1 — a path-filtered required context blocks the back-merge PR forever
+
+Under `enforce_admins=true` the back-merge PR must pass **every** required check.
+If a required check's workflow is **path-filtered** and the back-merge does not
+touch those paths, the workflow never runs, the context **never reports**, and a
+PR with a never-reporting required check is **permanently blocked** — the exact
+state in which someone turns the switch back off and never returns.
+
+The back-merge diff (release/X.Y.Z vs develop) of a **clean release** is just the
+release-prep commits: version bump + `make sync-versions` + changelog. It touches
+`backend/pyproject.toml`, `launcher/adaptive_learner_launcher/__init__.py`,
+`launcher/*.spec`, `frontend/package.json`, `plugins/*/pyproject.toml`,
+`install.sh`, `changelog/**`, `CHANGELOG.md`. It does **not** touch
+`backend/app/**`, `plugins/**/*.py`, or `frontend/src/**`.
+
+Every PR-triggered workflow checked against that file set (checked set = **11**
+`pull_request` workflows):
+
+| Workflow | Job / context | Trigger | Version-bump back-merge triggers it? |
+|---|---|---|---|
+| `ci.yml` | Backend/Frontend/Plugin Tests, ruff+mypy, Pre-commit, Docs drift, Detect areas | full (no paths) | **yes** |
+| `visual-baseline-gate.yml` | Visual-critical changes carry baselines | full | **yes** |
+| `testid-reference-gate.yml` | Testid reference gate | full | **yes** |
+| `cohesion-check.yml` | `file-size-check`, `dead-classnames-check` | paths incl. `**.py` | **yes** (via `launcher/__init__.py`) |
+| `docker-build-smoke.yml` | `build` | paths incl. `backend/pyproject.toml`, `install.sh` | **yes** |
+| `complexity-check.yml` | **`complexity-gate`** | paths: `backend/app/**.py`, `plugins/**/*.py`, `frontend/src/**`, `.complexity-baseline`, … | **NO** |
+| `launcher-{linux,macos,windows}.yml` | build/publish | paths: `launcher/**` | yes (heavy; unlikely required) |
+
+**The prime suspect is `complexity-gate`.** It is a hard ratchet gate — plausibly
+a required context — and it is the ONE gate a clean version-bump back-merge does
+not trigger. If it is required, every clean release's back-merge PR blocks.
+
+This session cannot read the required-context list (the branch-protection detail
+API is not exposed here). The release manager runs, before flipping the switch:
+
+```bash
+gh api repos/astrapi69/adaptive-learner/branches/develop/protection \
+  --jq '.required_status_checks.contexts'
+```
+
+Then cross-check that list against the table above:
+
+- If it contains ONLY full-trigger contexts (the `ci.yml` jobs,
+  `Visual-critical changes carry baselines`, `Testid reference gate`,
+  `file-size-check`, `dead-classnames-check`, `build`) → a clean back-merge PR
+  can go green. **Safe to enable.**
+- If it contains `complexity-gate` (or any other path-filtered context that the
+  table marks "NO") → **NOT safe yet.** Apply the fix below first.
+
+**Answer to "can a back-merge PR go green after enabling?": only after this
+cross-check. It is a genuine maybe, decided by the required-context list — not an
+all-clear.** (Test-contract note: the checked set is the 11 `pull_request`
+workflows above; a check over zero contexts would not be an all-clear, so the
+required list must actually be read, not assumed empty.)
+
+#### The fix for a non-reporting required context (cheap, standard)
+
+Make the workflow **run on every PR** and decide **internally** whether to do
+work, so its context always reports. Replace the workflow-level `paths:` filter
+with an internal path check (e.g. `dorny/paths-filter` or a `git diff --name-only`
+step) that fast-passes when no relevant file changed:
+
+```yaml
+on:
+  pull_request:            # no top-level paths: filter -> the context ALWAYS reports
+jobs:
+  complexity-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with: { fetch-depth: 0 }
+      - id: changed
+        run: |
+          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" \
+             | grep -qE '^(backend/app/.*\.py|plugins/.*\.py|frontend/src/|\.complexity-baseline)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false (no complexity-relevant paths) - passing"; echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.changed.outputs.run == 'true'
+        run: make check-complexity-gate
+```
+
+The context `complexity-gate` now reports success on a paths-irrelevant
+back-merge instead of never reporting. Apply the same shape to any other
+required context the cross-check flags. Do this in its own PR, **before** the
+toggle.
+
+### Check 2 — does the pushed release branch create a lock? (No.)
+
+`make release-finish` now `git push`es `release/X.Y.Z` so the back-merge PR can
+exist. Checked whether a release branch's existence locks other tracks:
+
+- **No automated freeze gate.** No `pull_request` workflow fails a develop PR
+  based on a release branch existing (grepped all `pull_request` workflows for
+  release-branch-existence / `ls-remote` / freeze conditions — zero hits). The
+  "release-freeze" is a **policy** (vibe-coding.md: hold develop PRs while a
+  release branch is open), followed by humans, not enforced by a gate.
+- **The remote release branch is already the status quo.** `release.yml`
+  (`release-prepare`) already `git push -u --force origin release/<version>` during
+  prep, and the `release/**`-triggered gates (dexie-smoke, webkit-gate,
+  security-scan, manual-automation, docker-build-smoke) already run there. The
+  finish-time push is a no-op in the automated flow; in the local-only flow it is
+  the first push, and it triggers those same release-branch gates once — harmless,
+  the release is already tagged.
+
+So the pushed branch creates **no automated lock**. The only residue is the
+branch itself, which must be deleted after the PR merges.
+
+**Branch deletion — make it not linger.** The back-merge PR is `--head
+release/X.Y.Z`; enable GitHub's "automatically delete head branches" so the
+branch is removed on merge. `release-finish` no longer deletes it (it cannot —
+the PR still needs it). A forgotten branch causes no automated lock (per above),
+but it does keep the policy-freeze "a release is open" signal alive to a human
+reader, so delete it. If auto-delete is off, the release checklist's final step
+is `git push origin --delete release/X.Y.Z` after the back-merge PR merges.
+
+### Is enabling safe *now*?
+
+**Not yet — one reader-action gates it:** run the `gh api … contexts` call and
+confirm the required list contains no path-filtered context the Check-1 table
+marks "NO" (prime suspect: `complexity-gate`). If it does, apply the Check-1 fix
+in its own PR first. Check 2 is clear (no branch-existence lock; just enable
+auto-delete of head branches). Once Check 1 is confirmed/fixed, enabling is safe
+and #2199's PR-routed back-merge keeps `release-finish` working.
