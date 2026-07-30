@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.8.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.8.2-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-10293%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
@@ -252,7 +252,7 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.8.1** (Sicherheits-Patch auf v2.8.0 - CSP #2197, Debug-Default #2198); das v2.8.0-Kernstück ist dessen
+Aktive Entwicklung. Das aktuelle Release ist **v2.8.2** (Sicherheits-Patch auf v2.8.0 - CSP #2197, Debug-Default #2198, Lesson-Validator-Eval #2205; v2.8.1 wurde nie veröffentlicht); das v2.8.0-Kernstück ist dessen
 Kernstück der **Vertriebswechsel** ist: Der Desktop-Launcher **bezieht
 jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der
 GHCR** statt auf dem Gerät zu bauen (Selbstbauen aus dem Quellbaum
