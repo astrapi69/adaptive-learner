@@ -1,4 +1,4 @@
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 
 import {generateExercises} from "../../exercises";
 import {
@@ -531,5 +531,42 @@ describe("draftCardsToGeneratorCards (#1847)", () => {
         });
         expect(exercises.length).toBeGreaterThan(0);
         expect(exercises.every((e) => e.type === "cloze")).toBe(true);
+    });
+});
+
+describe("checkDraft empty-state console silence (#2205 station)", () => {
+    it("does not console.error for the pristine empty draft", () => {
+        const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+        try {
+            checkDraft({
+                meta: {
+                    title: "",
+                    titleNative: "",
+                    sourceLanguage: "de",
+                    targetLanguage: "fr",
+                    level: "A1",
+                    description: "",
+                    author: "",
+                    domain: "language",
+                },
+                cards: [],
+                exercises: [],
+            });
+            expect(spy).not.toHaveBeenCalled();
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
+    it("still console.errors when a non-empty draft is structurally invalid", () => {
+        const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+        try {
+            const bad = input(5);
+            bad.meta = {...bad.meta, title: ""};
+            checkDraft(bad);
+            expect(spy).toHaveBeenCalled();
+        } finally {
+            spy.mockRestore();
+        }
     });
 });

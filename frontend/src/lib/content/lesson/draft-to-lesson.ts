@@ -360,7 +360,15 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
         schemaError = err instanceof Error ? err.message : String(err);
         // #1722 — a bare ✗ is not actionable; keep the precise validator
         // reason available in the dev console alongside the checklist.
-        console.error("create-lesson: draft structure invalid:", schemaError);
+        // The pristine empty draft fails the schema by construction and is
+        // the page's normal initial state — that one stays silent.
+        const pristine =
+            meta.title.trim().length === 0 &&
+            cards.length === 0 &&
+            exercises.length === 0;
+        if (!pristine) {
+            console.error("create-lesson: draft structure invalid:", schemaError);
+        }
     }
     return {
         hasTitle: meta.title.trim().length > 0,
