@@ -2341,6 +2341,13 @@
       "delete_failed": "Could not delete the lesson.",
       "delete_aria": "Delete lesson {title}"
     },
+    "lesson_order": {
+      "move_up": "Move lesson {title} up",
+      "move_down": "Move lesson {title} down",
+      "already_first": "{title} is already the first lesson",
+      "already_last": "{title} is already the last lesson",
+      "moved": "{title} is now at position {position} of {total}"
+    },
     "set_status": {
       "delete_progress_option": "Also delete my learning progress and review cards ({lessons} lessons, {cards} cards)",
       "delete_progress_option_nocounts": "Also delete my learning progress and review cards",

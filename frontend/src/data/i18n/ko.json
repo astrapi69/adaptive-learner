@@ -2341,6 +2341,13 @@
       "delete_failed": "레슨을 삭제할 수 없습니다.",
       "delete_aria": "레슨 {title} 삭제"
     },
+    "lesson_order": {
+      "move_up": "{title} 레슨을 위로 이동",
+      "move_down": "{title} 레슨을 아래로 이동",
+      "already_first": "{title}은(는) 이미 첫 번째 레슨입니다",
+      "already_last": "{title}은(는) 이미 마지막 레슨입니다",
+      "moved": "{title}이(가) 이제 {total}개 중 {position}번째입니다"
+    },
     "set_status": {
       "delete_progress_option": "학습 진행 상황과 복습 카드도 삭제 ({lessons}개 레슨, {cards}개 카드)",
       "delete_progress_option_nocounts": "학습 진행 상황과 복습 카드도 삭제",

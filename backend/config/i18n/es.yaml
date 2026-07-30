@@ -2153,6 +2153,12 @@ content:
     deleted: "Lección eliminada."
     delete_failed: "No se pudo eliminar la lección."
     delete_aria: "Eliminar la lección {title}"
+  lesson_order:
+    move_up: "Mover la lección {title} hacia arriba"
+    move_down: "Mover la lección {title} hacia abajo"
+    already_first: "{title} ya es la primera lección"
+    already_last: "{title} ya es la última lección"
+    moved: "{title} está ahora en la posición {position} de {total}"
   set_status:
     delete_progress_option: "Eliminar también mi progreso de aprendizaje y las tarjetas de repaso ({lessons} lecciones, {cards} tarjetas)"
     delete_progress_option_nocounts: "Eliminar también mi progreso de aprendizaje y las tarjetas de repaso"
