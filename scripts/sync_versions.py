@@ -164,29 +164,41 @@ def update_init_version_literal(
 def update_launcher_json_app_version(
     path: Path, new_version: str, dry_run: bool
 ) -> bool:
-    """Update the ``app_version`` field in ``launcher.json`` (surgical).
+    """Update the version-bearing fields in ``launcher.json`` (surgical).
 
-    ``launcher.json`` is the docker-app-launcher config; its ``app_version``
-    drives the update check (compared against the latest GitHub release) and
-    must track the canonical version. A regex on the single value keeps the
-    rest of the hand-formatted JSON untouched (no full reserialization)."""
+    ``launcher.json`` is the docker-app-launcher config. Its ``app_version``
+    drives the update check (compared against the latest GitHub release);
+    the ``image_reference`` tag pins which published GHCR image the image
+    mode pulls (#2110 Teil 4) - both must track the canonical version. A
+    regex per value keeps the rest of the hand-formatted JSON untouched
+    (no full reserialization)."""
     if not path.is_file():
         return False
     content = path.read_text(encoding="utf-8")
-    pattern = re.compile(r'("app_version"\s*:\s*)"([^"]+)"')
-    match = pattern.search(content)
-    if not match:
-        return False
-    if match.group(2) == new_version:
-        return False
-    new_content = pattern.sub(rf'\g<1>"{new_version}"', content, count=1)
-    if not dry_run:
-        path.write_text(new_content, encoding="utf-8")
-    print(
-        f"  {path.relative_to(REPO)}: app_version "
-        f"{match.group(2)} -> {new_version}"
+    changed = False
+    fields = (
+        ("app_version", re.compile(r'("app_version"\s*:\s*")([^"]+)(")')),
+        (
+            "image_reference",
+            re.compile(
+                r'("image_reference"\s*:\s*"ghcr\.io/astrapi69/adaptive-learner:)([^"]+)(")'
+            ),
+        ),
     )
-    return True
+    display = path.relative_to(REPO) if path.is_relative_to(REPO) else path
+    for field, pattern in fields:
+        match = pattern.search(content)
+        if not match or match.group(2) == new_version:
+            continue
+        content = pattern.sub(rf"\g<1>{new_version}\g<3>", content, count=1)
+        print(
+            f"  {display}: {field} "
+            f"{match.group(2)} -> {new_version}"
+        )
+        changed = True
+    if changed and not dry_run:
+        path.write_text(content, encoding="utf-8")
+    return changed
 
 
 _INSTALL_PLACEHOLDER = "@@ADAPTIVE_LEARNER_VERSION@@"
