@@ -473,12 +473,24 @@ class TestDeploymentModeContract:
         assert ok is False
         assert "does-not-exist.Dockerfile" in msg
 
-    def test_launcher_json_uses_dockerfile_mode(self) -> None:
-        """#2060: the end-user path builds through docker-py, not Compose."""
+    def test_launcher_json_uses_image_mode(self) -> None:
+        """#2110 Teil 4: the end-user path pulls the published image.
+
+        Users never build. The reference is pinned to the app-version TAG
+        (a digest does not exist yet when the release commit is made);
+        `make sync-versions` rewrites the tag, and the from_json round trip
+        proves the config is valid image-mode config for the pinned engine.
+        """
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
-        assert cfg.deployment_mode == "dockerfile"
-        assert cfg.dockerfile_file == "backend/Dockerfile"
-        assert cfg.build_context == "."
+        assert cfg.deployment_mode == "image"
+        assert cfg.image_reference == f"ghcr.io/astrapi69/adaptive-learner:{__version__}"
+        assert cfg.image_archive == ""
+        # The build-path fields are engine defaults now, no longer declared:
+        # a declared build path in an image-mode config would be a dead
+        # setting (architecture.md: dead settings are forbidden).
+        raw = json.loads(LAUNCHER_JSON.read_text(encoding="utf-8"))
+        assert "dockerfile_file" not in raw
+        assert "build_context" not in raw
         assert cfg.container_port == 8000
         # The PREFIXED name: compose created it that way, and the data lives
         # there (#2154). Pinned so it cannot be "tidied up" back into a
@@ -489,7 +501,8 @@ class TestDeploymentModeContract:
         assert cfg.container_env["ADAPTIVE_LEARNER_SERVE_FRONTEND"] == "1"
         assert cfg.container_env["ADAPTIVE_LEARNER_FRONTEND_DIST"] == "/app/static"
 
-    def test_declared_dockerfile_and_context_exist_in_the_repo(self) -> None:
+    def test_source_tree_paths_for_dockerfile_mode_still_exist(self) -> None:
+        """dockerfile mode stays the source-tree path (#2110 Teil 5)."""
         repo_root = LAUNCHER_JSON.parent.parent
         assert (repo_root / "backend" / "Dockerfile").is_file()
         # The compose file stays as the documented power-user alternative.
@@ -709,13 +722,45 @@ class TestDeploymentReadiness:
         assert str(real) in " ".join(report.found_elsewhere)
 
     def test_launcher_json_mode_is_covered_by_the_manifest(self) -> None:
-        """Both modes of the shipped config must be checkable, not just one."""
+        """The shipped config's mode must be checkable, not just one mode."""
         from adaptive_learner_launcher import deployment_assets
 
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
         report = deployment_assets.check_config(cfg, base=LAUNCHER_JSON.parent.parent)
         assert report.ok, report.missing
         assert len(report.checked) >= 1
+
+    def test_image_mode_without_archive_is_ready_anywhere(self, tmp_path) -> None:
+        """No filesystem prerequisites: the image is pulled, not built.
+
+        The check must still NAME that verdict (gate contract point 4) -
+        an empty check list is a stated result, not a forgotten look.
+        """
+        from adaptive_learner_launcher import deployment_assets
+
+        report = deployment_assets.check(mode="image", base=tmp_path / "empty-nonexistent")
+        assert report.ok, report.missing
+        assert report.checked, "the verdict must say what was (not) checked"
+
+    def test_image_mode_with_missing_archive_is_reported(self, tmp_path) -> None:
+        """upstream #78: a configured archive resolves against the base."""
+        from adaptive_learner_launcher import deployment_assets
+
+        report = deployment_assets.check(
+            mode="image", base=tmp_path, image_archive="adaptive-learner-amd64.tar.gz"
+        )
+        assert not report.ok
+        assert any("adaptive-learner-amd64.tar.gz" in miss for miss in report.missing)
+
+    def test_image_mode_with_present_archive_is_ok(self, tmp_path) -> None:
+        from adaptive_learner_launcher import deployment_assets
+
+        (tmp_path / "adaptive-learner-amd64.tar.gz").write_bytes(b"stub")
+        report = deployment_assets.check(
+            mode="image", base=tmp_path, image_archive="adaptive-learner-amd64.tar.gz"
+        )
+        assert report.ok, report.missing
+        assert "adaptive-learner-amd64.tar.gz" in " ".join(report.checked)
 
 
 class TestReadinessMessage:
@@ -1061,3 +1106,242 @@ class TestComposeNameCoverage:
         the volumes that need the prefix, not everything."""
         cfg = json.loads(LAUNCHER_JSON.read_text(encoding="utf-8"))
         assert f"container_name: {cfg['container_name']}" in self._compose()
+
+
+class TestImageModeStandalone:
+    """#2110 Teil 4: image mode needs no source tree, so no download.
+
+    The #2054 bootstrap exists only because dockerfile/compose need a
+    build context. A frozen image-mode run anchors in the launcher's
+    config dir instead - stable, writable, and the same across runs, so
+    the stored port and the anchored config land where the next run
+    reads them.
+    """
+
+    def _image_config(self, tmp_path: Path) -> Path:
+        cfg = tmp_path / "launcher.json"
+        cfg.write_text(
+            json.dumps(
+                {
+                    "app_name": "X",
+                    "app_version": "9.9.9",
+                    "deployment_mode": "image",
+                    "image_reference": "ghcr.io/astrapi69/adaptive-learner:9.9.9",
+                    "config_dir": str(tmp_path / "anchor"),
+                }
+            ),
+            encoding="utf-8",
+        )
+        return cfg
+
+    def test_frozen_image_mode_never_downloads_the_source_tree(
+        self, monkeypatch, tmp_path
+    ) -> None:
+        cfg = self._image_config(tmp_path)
+        bundle = tmp_path / "bundle"
+        _fill_bundle(bundle)
+        monkeypatch.setattr(__main__, "_config_path", lambda: cfg)
+        monkeypatch.setattr(__main__.sys, "frozen", True, raising=False)
+        monkeypatch.setattr(__main__.sys, "_MEIPASS", str(bundle), raising=False)
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: None)
+        start_cwd = tmp_path / "elsewhere"
+        start_cwd.mkdir()
+        monkeypatch.chdir(start_cwd)
+
+        def boom(url, timeout=60.0):  # pragma: no cover
+            raise AssertionError("image mode must not download a source tree")
+
+        monkeypatch.setattr(__main__, "_download", boom)
+        seen: dict[str, Path] = {}
+
+        def fake_package_main(args):
+            seen["cwd"] = Path.cwd()
+            return 0
+
+        monkeypatch.setattr(__main__, "_package_main", fake_package_main)
+        assert __main__.main(["--status"]) == 0
+        assert seen["cwd"] == tmp_path / "anchor"
+        assert (tmp_path / "anchor").is_dir(), "the anchor dir must be created"
+
+    def test_dockerfile_mode_still_bootstraps(self, monkeypatch, tmp_path) -> None:
+        """The guard is mode-scoped: the #2054 path stays for the source modes."""
+        cfg = tmp_path / "launcher.json"
+        cfg.write_text(
+            json.dumps(
+                {"app_name": "X", "app_version": "9.9.9", "deployment_mode": "dockerfile"}
+            ),
+            encoding="utf-8",
+        )
+        bundle = tmp_path / "bundle"
+        _fill_bundle(bundle)
+        monkeypatch.setattr(__main__, "_config_path", lambda: cfg)
+        monkeypatch.setattr(__main__.sys, "frozen", True, raising=False)
+        monkeypatch.setattr(__main__.sys, "_MEIPASS", str(bundle), raising=False)
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: None)
+        start_cwd = tmp_path / "elsewhere"
+        start_cwd.mkdir()
+        monkeypatch.chdir(start_cwd)
+        attempted: list[str] = []
+
+        def offline(url, timeout=60.0):
+            attempted.append(url)
+            raise OSError("network unreachable")
+
+        monkeypatch.setattr(__main__, "_download", offline)
+        assert __main__.main(["--status"]) == 4
+        assert attempted, "dockerfile mode without a tree must still try the bootstrap"
+
+
+class TestSyncVersionsLauncherJson:
+    """The image_reference tag is a version pin and may not drift (#2110).
+
+    Same class as app_version: hand-editing is the stale-pin bug the
+    sync tooling exists to prevent; `sync_versions.py --check` (run by
+    verify_version_pins.sh and the release gate) must flag a drifted tag.
+    """
+
+    def _sync_module(self):
+        import importlib.util
+
+        script = LAUNCHER_JSON.parent.parent / "scripts" / "sync_versions.py"
+        spec = importlib.util.spec_from_file_location("sync_versions_under_test", script)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def _stale_config(self, tmp_path: Path) -> Path:
+        target = tmp_path / "launcher.json"
+        target.write_text(
+            json.dumps(
+                {
+                    "app_version": "1.0.0",
+                    "image_reference": "ghcr.io/astrapi69/adaptive-learner:1.0.0",
+                    "other": "untouched",
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        return target
+
+    def test_both_version_fields_are_rewritten(self, tmp_path) -> None:
+        sync = self._sync_module()
+        target = self._stale_config(tmp_path)
+        assert sync.update_launcher_json_app_version(target, "9.9.9", False) is True
+        written = json.loads(target.read_text(encoding="utf-8"))
+        assert written["app_version"] == "9.9.9"
+        assert written["image_reference"] == "ghcr.io/astrapi69/adaptive-learner:9.9.9"
+        assert written["other"] == "untouched"
+
+    def test_dry_run_reports_but_writes_nothing(self, tmp_path) -> None:
+        sync = self._sync_module()
+        target = self._stale_config(tmp_path)
+        before = target.read_text(encoding="utf-8")
+        assert sync.update_launcher_json_app_version(target, "9.9.9", True) is True
+        assert target.read_text(encoding="utf-8") == before
+
+    def test_current_versions_are_a_no_op(self, tmp_path) -> None:
+        sync = self._sync_module()
+        target = self._stale_config(tmp_path)
+        assert sync.update_launcher_json_app_version(target, "1.0.0", False) is False
+
+    def test_shipped_launcher_json_is_in_lock_step(self) -> None:
+        """The artifact-level pin: the committed tag equals the app version."""
+        sync = self._sync_module()
+        assert (
+            sync.update_launcher_json_app_version(LAUNCHER_JSON, __version__, True) is False
+        ), "launcher.json version fields drifted from the canonical version"
+
+
+class TestFailSoftIsNamed:
+    """Fail-soft paths must say WHY, or 'nothing found' and 'could not
+    look' read identically (the claimed-enforcement-without-enforcement
+    class; code-hygiene.md: never swallow an exception silently)."""
+
+    def test_unreadable_bundled_config_warns_and_defaults(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        missing = tmp_path / "gone.json"
+        monkeypatch.setattr(__main__, "_config_path", lambda: missing)
+        assert __main__._bundled_config_raw() == {}
+        err = capsys.readouterr().err
+        assert "gone.json" in err
+        assert "compose-era defaults" in err
+
+    def test_malformed_bundled_config_warns_and_defaults(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        bad = tmp_path / "launcher.json"
+        bad.write_text("{not json", encoding="utf-8")
+        monkeypatch.setattr(__main__, "_config_path", lambda: bad)
+        assert __main__._bundled_config_raw() == {}
+        assert "not valid JSON" in capsys.readouterr().err
+
+    def test_non_object_bundled_config_warns_and_defaults(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        bad = tmp_path / "launcher.json"
+        bad.write_text('["a", "list"]', encoding="utf-8")
+        monkeypatch.setattr(__main__, "_config_path", lambda: bad)
+        assert __main__._bundled_config_raw() == {}
+        assert "JSON object" in capsys.readouterr().err
+
+    def test_uncreatable_anchor_warns_and_falls_back_to_cwd(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        blocker = tmp_path / "blocker"
+        blocker.write_text("a file, not a dir", encoding="utf-8")
+        cfg = tmp_path / "launcher.json"
+        cfg.write_text(
+            json.dumps(
+                {"deployment_mode": "image", "config_dir": str(blocker / "sub")}
+            ),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(__main__, "_config_path", lambda: cfg)
+        workdir = tmp_path / "workdir"
+        workdir.mkdir()
+        monkeypatch.chdir(workdir)
+        assert __main__._image_mode_anchor() == workdir
+        err = capsys.readouterr().err
+        assert "cannot create" in err
+        assert str(workdir) in err
+
+    def test_broken_conflict_guard_warns_instead_of_vanishing(
+        self, monkeypatch, capsys
+    ) -> None:
+        class _Client:
+            pass
+
+        fake_docker = type(sys)("docker")
+        fake_docker.from_env = lambda timeout=30: _Client()
+        monkeypatch.setitem(sys.modules, "docker", fake_docker)
+
+        def boom(client):
+            raise RuntimeError("probe container failed")
+
+        monkeypatch.setattr(__main__.volume_migration, "describe_conflict", boom)
+        assert __main__._volume_conflict() is None
+        err = capsys.readouterr().err
+        assert "volume-conflict guard could not run" in err
+        assert "probe container failed" in err
+
+    def test_unwritable_app_dir_warns_and_uses_bundled_config(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        import os as _os
+        import stat as _stat
+
+        source = tmp_path / "launcher.json"
+        source.write_text(json.dumps({"app_name": "X"}), encoding="utf-8")
+        monkeypatch.setattr(__main__, "_config_path", lambda: source)
+        locked = tmp_path / "locked"
+        locked.mkdir()
+        locked.chmod(_stat.S_IRUSR | _stat.S_IXUSR)
+        if _os.access(locked, _os.W_OK):  # root ignores the mode bits
+            pytest.skip("running as root - the mode bits do not deny us")
+        try:
+            assert __main__._anchored_config_path(locked) == source
+            assert "could not write the anchored config" in capsys.readouterr().err
+        finally:
+            locked.chmod(_stat.S_IRWXU)

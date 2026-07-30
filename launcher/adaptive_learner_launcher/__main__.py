@@ -168,6 +168,64 @@ def _bootstrap_app_source() -> Path | int:
     return target
 
 
+def _bundled_config_raw() -> dict:
+    """The bundled ``launcher.json`` as a dict, or ``{}`` when unreadable.
+
+    Fail-soft on purpose: every caller has a safe default (compose-era
+    behaviour), and a genuinely broken config is reported loudly by the
+    package itself (#32). Soft never means silent - a config that cannot
+    be read changes which startup path runs, so the reason is named.
+    """
+    path = _config_path()
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        print(f"Warning: cannot read {path}: {exc} - using compose-era defaults.", file=sys.stderr)
+        return {}
+    except ValueError as exc:
+        print(
+            f"Warning: {path} is not valid JSON: {exc} - using compose-era defaults.",
+            file=sys.stderr,
+        )
+        return {}
+    if not isinstance(raw, dict):
+        print(
+            f"Warning: {path} does not hold a JSON object - using compose-era defaults.",
+            file=sys.stderr,
+        )
+        return {}
+    return raw
+
+
+def _image_mode_anchor() -> Path:
+    """A stable, writable base dir for a source-tree-free image-mode run.
+
+    Image mode needs no build context, so a standalone frozen run has no
+    app tree to chdir into - but the package still writes the anchored
+    config and ``.env`` relative to the CWD. A double-clicked binary's
+    CWD can be anywhere (including somewhere read-only), so the anchor
+    is the launcher's own config dir: user-owned, created anyway, and
+    the same place across runs, which keeps the stored port working.
+
+    An anchor that cannot be created falls back to the CWD - a
+    convenience must not kill the launcher (fail open, named), the
+    price is only that ``.env`` and the anchored config land beside
+    wherever the binary was started.
+    """
+    raw = _bundled_config_raw()
+    anchor = Path(str(raw.get("config_dir") or "~/.adaptive-learner")).expanduser()
+    try:
+        anchor.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        fallback = Path.cwd()
+        print(
+            f"Warning: cannot create {anchor}: {exc} - anchoring in {fallback} instead.",
+            file=sys.stderr,
+        )
+        return fallback
+    return anchor
+
+
 ANCHORED_CONFIG_NAME = ".adaptive-learner-launcher.json"
 
 
@@ -201,7 +259,12 @@ def _anchored_config_path(app_dir: Path) -> Path:
         target = app_dir / ANCHORED_CONFIG_NAME
         target.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
         return target
-    except (OSError, json.JSONDecodeError):
+    except (OSError, json.JSONDecodeError) as exc:
+        print(
+            f"Warning: could not write the anchored config into {app_dir}: {exc} - "
+            f"using the bundled config; the readiness guard reports the consequences.",
+            file=sys.stderr,
+        )
         return source
 
 
@@ -249,7 +312,13 @@ def _volume_conflict() -> list[str] | None:
         return None
     try:
         message = volume_migration.describe_conflict(client)
-    except Exception:  # noqa: BLE001 - never let the guard break the launcher
+    except Exception as exc:  # noqa: BLE001 - never let the guard break the launcher
+        # Fail open, but never silently: a guard that is OFF must say so,
+        # or "no conflict found" and "could not look" read identically.
+        print(
+            f"Warning: the volume-conflict guard could not run ({exc}) - continuing without it.",
+            file=sys.stderr,
+        )
         return None
     return message.splitlines() if message else None
 
@@ -283,6 +352,7 @@ def _deployment_readiness_problem(*, config_file: Path | None = None) -> list[st
         compose_file=raw.get("compose_file") or _COMPOSE_FILE,
         dockerfile=raw.get("dockerfile_file") or "backend/Dockerfile",
         build_context=raw.get("build_context") or ".",
+        image_archive=raw.get("image_archive") or "",
         elsewhere=[Path.cwd()],
     )
     if report.ok:
@@ -331,15 +401,19 @@ def main(argv: list[str] | None = None) -> int:
     else:
         # Standalone frozen run, no repo checkout anywhere. A CWD that
         # already carries the compose file (a user launching from inside
-        # their own clone) keeps priority; otherwise provision the tagged
-        # source tree and run from it (#2054) - the former
-        # chdir-to-bundle-root fallback only relocated the missing-compose
-        # failure into /tmp/_MEI*.
+        # their own clone) keeps priority. Image mode (#2110 Teil 4)
+        # needs no source tree at all - the download step exists only
+        # because dockerfile/compose need a build context - so it anchors
+        # in the launcher's config dir instead of provisioning ~200 MB it
+        # would never read. The other modes keep the #2054 bootstrap.
         if bundle is not None and not (Path.cwd() / _COMPOSE_FILE).is_file():
-            provisioned = _bootstrap_app_source()
-            if isinstance(provisioned, int):
-                return provisioned
-            os.chdir(provisioned)
+            if _bundled_config_raw().get("deployment_mode") == "image":
+                os.chdir(_image_mode_anchor())
+            else:
+                provisioned = _bootstrap_app_source()
+                if isinstance(provisioned, int):
+                    return provisioned
+                os.chdir(provisioned)
     _use_credential_free_docker_config(Path.cwd())
     if not any(arg == "--config" or arg.startswith("--config=") for arg in args):
         args = ["--config", str(_anchored_config_path(Path.cwd())), *args]

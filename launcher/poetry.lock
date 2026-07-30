@@ -165,14 +165,14 @@ websockets = ["websocket-client (>=1.3.0)"]
 
 [[package]]
 name = "docker-app-launcher"
-version = "0.21.1"
+version = "0.24.0"
 description = "Configurable desktop launcher for Docker-based applications"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "docker_app_launcher-0.21.1-py3-none-any.whl", hash = "sha256:93e44257991e1c075de958c0de1ae9f4cfa7d71b636093dcc37fc54027db3846"},
-    {file = "docker_app_launcher-0.21.1.tar.gz", hash = "sha256:eae052b58f5ae8d56202134cae23b8797a00f81d90b077d8ed5c99988554076d"},
+    {file = "docker_app_launcher-0.24.0-py3-none-any.whl", hash = "sha256:dfe177a182527bf70d56ceec89f354870b686bc77b32c137c07f3846ef8c1aaa"},
+    {file = "docker_app_launcher-0.24.0.tar.gz", hash = "sha256:e78b0aa7ae2d162c4102e4dc5994d783c234b6dcc3f4f446ae4fe93b420c9d61"},
 ]
 
 [package.dependencies]
@@ -835,4 +835,4 @@ tray = ["pillow", "pystray"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "3f1b7ece32cf91ab8b1543d85346bb958054c0f88a0e311544622bc4af521cb1"
+content-hash = "8c93b82cd6c57366bc122216831259e80627ab5f53fef947a6505ddc2d08b67d"

@@ -31,7 +31,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-KNOWN_MODES = ("compose", "dockerfile")
+KNOWN_MODES = ("compose", "dockerfile", "image")
 
 
 @dataclass
@@ -74,11 +74,19 @@ class ReadinessReport:
         return lines
 
 
-def _required(mode: str, *, compose_file: str, dockerfile: str, build_context: str) -> list[str]:
+def _required(
+    mode: str, *, compose_file: str, dockerfile: str, build_context: str, image_archive: str
+) -> list[str]:
     if mode == "dockerfile":
         return [dockerfile, build_context]
     if mode == "compose":
         return [compose_file]
+    if mode == "image":
+        # The image is pulled from the pinned reference; the only
+        # filesystem prerequisite is the OPTIONAL registry-free archive,
+        # which resolves against the same base as every other consumer
+        # path (upstream #78: the archive is loaded INTO the reference).
+        return [image_archive] if image_archive else []
     return []
 
 
@@ -89,15 +97,19 @@ def check(
     compose_file: str = "docker-compose.prod.yml",
     dockerfile: str = "backend/Dockerfile",
     build_context: str = ".",
+    image_archive: str = "",
     elsewhere: list[Path] | None = None,
 ) -> ReadinessReport:
     """Check the assets ``mode`` needs, relative to ``base``.
 
     Args:
-        mode: ``"compose"`` or ``"dockerfile"``. Anything else fails
-            closed - an unrecognised mode means the check does not know
-            what to look for, which is never the same as "nothing to
-            look for".
+        mode: ``"compose"``, ``"dockerfile"`` or ``"image"``. Anything
+            else fails closed - an unrecognised mode means the check does
+            not know what to look for, which is never the same as
+            "nothing to look for". Image mode without a configured
+            ``image_archive`` has no filesystem prerequisites (the image
+            is pulled from the pinned reference), so its report is ok
+            with an explicitly noted empty check list.
         base: the directory app-relative paths resolve against. For a
             frozen run this is the config file's directory, i.e. the
             bundle root - which is exactly the #2109 defect.
@@ -114,8 +126,18 @@ def check(
         )
         return report
 
+    if mode == "image" and not image_archive:
+        # Point 4 of the gate contract: an empty check list must be a
+        # STATED verdict, never mistakable for "forgot to look".
+        report.checked.append("(no filesystem prerequisites: the image is pulled from the pinned reference)")
+        return report
+
     for relative in _required(
-        mode, compose_file=compose_file, dockerfile=dockerfile, build_context=build_context
+        mode,
+        compose_file=compose_file,
+        dockerfile=dockerfile,
+        build_context=build_context,
+        image_archive=image_archive,
     ):
         report.checked.append(relative)
         candidate = base / relative
@@ -143,5 +165,6 @@ def check_config(config: Any, *, base: Path, elsewhere: list[Path] | None = None
         compose_file=getattr(config, "compose_file", "") or "docker-compose.prod.yml",
         dockerfile=getattr(config, "dockerfile_file", "") or "backend/Dockerfile",
         build_context=getattr(config, "build_context", "") or ".",
+        image_archive=getattr(config, "image_archive", "") or "",
         elsewhere=elsewhere,
     )
