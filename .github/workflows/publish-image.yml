@@ -3,15 +3,16 @@ name: Publish image (GHCR)
 # Publishes the single-container app image to GHCR (#2142, implements the
 # #2110 Option A decision: users pull a built image instead of building one).
 #
-# Triggered on `release: created`, the same hook launcher-{linux,macos,
-# windows}.yml use. That is deliberate: release.yml's own comment explains
-# why artifacts are NOT built inside the release driver - they would
-# duplicate and drift. The image is part of the release, not published
-# beside it.
+# Runs ON DEMAND only (workflow_dispatch). The release checklist triggers
+# the sharp run against the tag ref AFTER the tag's own CI is green and
+# BEFORE the draft release is made visible - so no visible version ever
+# points at a missing image, and making a draft visible re-runs nothing
+# (a re-build is not bit-identical: ~48k bytes drift between identical-
+# content builds - the verified artifact must BE the shipped one).
 #
 # workflow_dispatch defaults to a DRY RUN: it builds both architectures and
-# does not push, so the pipeline can be exercised without putting a public
-# image outside a real release.
+# does not push. The sharp run (dry_run=false) REQUIRES the green gate on
+# the commit it builds from.
 #
 # Why every step here exists:
 #   - multi-arch, because macOS users run an arm64 Docker Desktop and an
@@ -27,8 +28,13 @@ name: Publish image (GHCR)
 #     worse than a missing image.
 
 on:
-  release:
-    types: [published]  # NOT created: drafts never fire it, and publishing a draft fires only published - draft-first releases (v2.8.0 finding) need this type; it fires exactly once for both draft-publish and direct-publish
+  # NO release: trigger (v2.8.0 decision, Option 1): created never fires
+  # for drafts, published would re-run the chain on draft-publish and
+  # re-build a NON-bit-identical artifact (~48k bytes drift between
+  # identical-content builds) - verified one thing, shipped another.
+  # The chain runs ON DEMAND via workflow_dispatch; the release
+  # checklist carries the trigger. Foot-gun this documents: creating
+  # a release directly produces NO image and NO assets by itself.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -72,7 +78,9 @@ jobs:
       # only itself made each one see the other three as pending and
       # refuse - deterministically, on every release (#2149).
       - name: Refuse to publish from a commit that was not green
-        if: github.event_name == 'release'
+        # Mandatory on every SHARP run; the dry run stays gate-free so the
+        # pipeline can be exercised from any branch.
+        if: inputs.dry_run == false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

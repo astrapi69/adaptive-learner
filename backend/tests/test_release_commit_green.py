@@ -115,19 +115,23 @@ def test_every_release_driven_workflow_has_the_precondition() -> None:
     """
     workflows = sorted((REPO_ROOT / ".github" / "workflows").glob("*.yml"))
     assert workflows, "no workflows found - the scan proves nothing"
-    release_driven = [
+    gate_calling = [
         path
         for path in workflows
-        if "release:\n    types: [published]" in path.read_text(encoding="utf-8")
+        if "verify_release_commit_green.py" in path.read_text(encoding="utf-8")
     ]
-    print(f"examined {len(workflows)} workflow(s), {len(release_driven)} release-driven")
-    assert len(release_driven) >= 4, f"expected the four publishers, found {len(release_driven)}"
-    missing = [
+    print(f"examined {len(workflows)} workflow(s), {len(gate_calling)} gate-calling")
+    assert len(gate_calling) >= 4, f"expected the four publishers, found {len(gate_calling)}"
+    # Option 1 (v2.8.0): NO workflow may listen on release events again -
+    # created never fires for drafts, and published re-runs the chain on
+    # draft-publish against a non-bit-identical rebuild. The chain runs on
+    # demand; this pin keeps the double-run from being reintroduced.
+    listening = [
         path.name
-        for path in release_driven
-        if "verify_release_commit_green.py" not in path.read_text(encoding="utf-8")
+        for path in workflows
+        if "\n  release:\n" in path.read_text(encoding="utf-8")
     ]
-    assert not missing, f"publish without checking the commit was green: {missing}"
+    assert not listening, f"release-event trigger reintroduced: {listening}"
 
 
 def test_publishers_do_not_deadlock_each_other() -> None:
