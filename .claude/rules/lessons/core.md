@@ -71,7 +71,11 @@ analyzer or a baseline.
 
 Especially critical with parallel agent sessions: one session can undermine
 the rules another session is working under, and neither notices, because both
-read the same file and only one of them changed it.
+read the same file and only one of them changed it. The same ownership covers
+findings and lessons, not just files: a finding belongs to the lane that
+records it first, and the second references it instead of writing it up again -
+so before filing an issue for a finding, check the other lane's recent issues
+and open PRs, the same check you already do for files.
 
 ## Proposed mass scripts are inspected, not executed
 
