@@ -321,7 +321,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.8.0**, whose headline
+Active development. The current release is **v2.8.1** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198); the v2.8.0 headline
 is the **distribution switch**: the desktop launcher now **pulls a
 published, per-architecture verified image from GHCR** instead of
 building on the user's device (building from source stays for
