@@ -322,6 +322,27 @@ git push origin v0.X.0
 
 ## Step 8: Create the GitHub Release
 
+**Publish sequence (MANDATORY since v2.8.0 - Option 1, dispatch-only chain):**
+The four publisher workflows carry NO `release:` trigger any more (drafts
+never fire `created`; `published` would re-run the chain on draft-publish
+against a non-bit-identical rebuild - the verified artifact must BE the
+shipped one). Creating a release therefore produces NO image and NO
+binaries by itself - the checklist carries the trigger:
+
+1. Tag pushed, the tag commit's OWN main CI fully green (pending counts
+   as not green - the gate reads real check-runs since #2178).
+2. `gh release create vX.Y.Z --draft --notes-file changelog/releases/vX.Y.Z.md`
+   - invisible, fires nothing.
+3. Sharp chain: `gh workflow run publish-image.yml --ref vX.Y.Z -f dry_run=false -f version=X.Y.Z`
+   - the green gate runs INSIDE this dispatch; then the per-arch anonymous
+   pull, arm64 start, size gates, version agreement.
+4. Launcher binaries: take the artifacts of the GREEN main-push builds of
+   the tag commit (never rebuild - bit-drift), attach with `.sha256` files
+   via `gh release upload`.
+5. Only after every station is green: `gh release edit vX.Y.Z --draft=false`.
+   Record the publish run id in the checklist item below.
+
+
 Before invoking `gh release create`, build the per-release notes file by combining the static prerequisites template with the version-specific changelog:
 
 1. Open `.github/RELEASE_TEMPLATE.md`. Copy the "Before you install", "Download", and "Verifying downloads" sections into `changelog/releases/v0.X.0.md` if not already present.

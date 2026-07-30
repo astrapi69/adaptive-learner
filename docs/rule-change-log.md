@@ -16,3 +16,4 @@ declared").
 | 2026-07-28 | `c686abdc` | - | adds two rule sections (quality-checks.md "Condensation PRs are content-neutral or declared", vibe-coding.md cross-reference). Nothing is weakened; the new sections quote the incident wording, which the #2079 gate flags by design. |
 | 2026-07-28 | `19f7638c` | - | adds the gate test contract section to quality-checks.md and repoints the complexity-gate inventory entry at it. Nothing is weakened; the complexity gate becomes STRICTER. |
 | 2026-07-30 | `fa45a73a` | - | release checklist smoke item now demands the "N passed / M silenced" numbers (M matching the budget baseline) - the v2.6.1 tick was set while this suite never ran (its journal lists only dexie-smoke + manual-automation); the GHCR-publish item replaces "Docker image pushed (if active)" and demands th |
+| 2026-07-30 | `b04bc8c4` | - | release-workflow.md Step 8 replaced with the mandatory draft-first dispatch sequence; corpus ceiling 283083 -> 284295. |

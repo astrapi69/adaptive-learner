@@ -22,8 +22,13 @@ on:
     paths:
       - "launcher/**"
       - ".github/workflows/launcher-linux.yml"
-  release:
-    types: [published]  # NOT created: drafts never fire it, and publishing a draft fires only published - draft-first releases (v2.8.0 finding) need this type; it fires exactly once for both draft-publish and direct-publish
+  # NO release: trigger (v2.8.0 decision, Option 1): created never fires
+  # for drafts, published would re-run the chain on draft-publish and
+  # re-build a NON-bit-identical artifact (~48k bytes drift between
+  # identical-content builds) - verified one thing, shipped another.
+  # The chain runs ON DEMAND via workflow_dispatch; the release
+  # checklist carries the trigger. Foot-gun this documents: creating
+  # a release directly produces NO image and NO assets by itself.
   workflow_dispatch:
 
 permissions:
