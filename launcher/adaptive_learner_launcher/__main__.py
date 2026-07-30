@@ -173,13 +173,28 @@ def _bundled_config_raw() -> dict:
 
     Fail-soft on purpose: every caller has a safe default (compose-era
     behaviour), and a genuinely broken config is reported loudly by the
-    package itself (#32) - not by a helper that only peeks at one field.
+    package itself (#32). Soft never means silent - a config that cannot
+    be read changes which startup path runs, so the reason is named.
     """
+    path = _config_path()
     try:
-        raw = json.loads(_config_path().read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        print(f"Warning: cannot read {path}: {exc} - using compose-era defaults.", file=sys.stderr)
         return {}
-    return raw if isinstance(raw, dict) else {}
+    except ValueError as exc:
+        print(
+            f"Warning: {path} is not valid JSON: {exc} - using compose-era defaults.",
+            file=sys.stderr,
+        )
+        return {}
+    if not isinstance(raw, dict):
+        print(
+            f"Warning: {path} does not hold a JSON object - using compose-era defaults.",
+            file=sys.stderr,
+        )
+        return {}
+    return raw
 
 
 def _image_mode_anchor() -> Path:
@@ -191,10 +206,23 @@ def _image_mode_anchor() -> Path:
     CWD can be anywhere (including somewhere read-only), so the anchor
     is the launcher's own config dir: user-owned, created anyway, and
     the same place across runs, which keeps the stored port working.
+
+    An anchor that cannot be created falls back to the CWD - a
+    convenience must not kill the launcher (fail open, named), the
+    price is only that ``.env`` and the anchored config land beside
+    wherever the binary was started.
     """
     raw = _bundled_config_raw()
     anchor = Path(str(raw.get("config_dir") or "~/.adaptive-learner")).expanduser()
-    anchor.mkdir(parents=True, exist_ok=True)
+    try:
+        anchor.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        fallback = Path.cwd()
+        print(
+            f"Warning: cannot create {anchor}: {exc} - anchoring in {fallback} instead.",
+            file=sys.stderr,
+        )
+        return fallback
     return anchor
 
 
@@ -231,7 +259,12 @@ def _anchored_config_path(app_dir: Path) -> Path:
         target = app_dir / ANCHORED_CONFIG_NAME
         target.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
         return target
-    except (OSError, json.JSONDecodeError):
+    except (OSError, json.JSONDecodeError) as exc:
+        print(
+            f"Warning: could not write the anchored config into {app_dir}: {exc} - "
+            f"using the bundled config; the readiness guard reports the consequences.",
+            file=sys.stderr,
+        )
         return source
 
 
@@ -279,7 +312,13 @@ def _volume_conflict() -> list[str] | None:
         return None
     try:
         message = volume_migration.describe_conflict(client)
-    except Exception:  # noqa: BLE001 - never let the guard break the launcher
+    except Exception as exc:  # noqa: BLE001 - never let the guard break the launcher
+        # Fail open, but never silently: a guard that is OFF must say so,
+        # or "no conflict found" and "could not look" read identically.
+        print(
+            f"Warning: the volume-conflict guard could not run ({exc}) - continuing without it.",
+            file=sys.stderr,
+        )
         return None
     return message.splitlines() if message else None
 

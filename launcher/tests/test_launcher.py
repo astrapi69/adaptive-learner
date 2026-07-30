@@ -1251,3 +1251,97 @@ class TestSyncVersionsLauncherJson:
         assert (
             sync.update_launcher_json_app_version(LAUNCHER_JSON, __version__, True) is False
         ), "launcher.json version fields drifted from the canonical version"
+
+
+class TestFailSoftIsNamed:
+    """Fail-soft paths must say WHY, or 'nothing found' and 'could not
+    look' read identically (the claimed-enforcement-without-enforcement
+    class; code-hygiene.md: never swallow an exception silently)."""
+
+    def test_unreadable_bundled_config_warns_and_defaults(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        missing = tmp_path / "gone.json"
+        monkeypatch.setattr(__main__, "_config_path", lambda: missing)
+        assert __main__._bundled_config_raw() == {}
+        err = capsys.readouterr().err
+        assert "gone.json" in err
+        assert "compose-era defaults" in err
+
+    def test_malformed_bundled_config_warns_and_defaults(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        bad = tmp_path / "launcher.json"
+        bad.write_text("{not json", encoding="utf-8")
+        monkeypatch.setattr(__main__, "_config_path", lambda: bad)
+        assert __main__._bundled_config_raw() == {}
+        assert "not valid JSON" in capsys.readouterr().err
+
+    def test_non_object_bundled_config_warns_and_defaults(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        bad = tmp_path / "launcher.json"
+        bad.write_text('["a", "list"]', encoding="utf-8")
+        monkeypatch.setattr(__main__, "_config_path", lambda: bad)
+        assert __main__._bundled_config_raw() == {}
+        assert "JSON object" in capsys.readouterr().err
+
+    def test_uncreatable_anchor_warns_and_falls_back_to_cwd(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        blocker = tmp_path / "blocker"
+        blocker.write_text("a file, not a dir", encoding="utf-8")
+        cfg = tmp_path / "launcher.json"
+        cfg.write_text(
+            json.dumps(
+                {"deployment_mode": "image", "config_dir": str(blocker / "sub")}
+            ),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(__main__, "_config_path", lambda: cfg)
+        workdir = tmp_path / "workdir"
+        workdir.mkdir()
+        monkeypatch.chdir(workdir)
+        assert __main__._image_mode_anchor() == workdir
+        err = capsys.readouterr().err
+        assert "cannot create" in err
+        assert str(workdir) in err
+
+    def test_broken_conflict_guard_warns_instead_of_vanishing(
+        self, monkeypatch, capsys
+    ) -> None:
+        class _Client:
+            pass
+
+        fake_docker = type(sys)("docker")
+        fake_docker.from_env = lambda timeout=30: _Client()
+        monkeypatch.setitem(sys.modules, "docker", fake_docker)
+
+        def boom(client):
+            raise RuntimeError("probe container failed")
+
+        monkeypatch.setattr(__main__.volume_migration, "describe_conflict", boom)
+        assert __main__._volume_conflict() is None
+        err = capsys.readouterr().err
+        assert "volume-conflict guard could not run" in err
+        assert "probe container failed" in err
+
+    def test_unwritable_app_dir_warns_and_uses_bundled_config(
+        self, monkeypatch, tmp_path, capsys
+    ) -> None:
+        import os as _os
+        import stat as _stat
+
+        source = tmp_path / "launcher.json"
+        source.write_text(json.dumps({"app_name": "X"}), encoding="utf-8")
+        monkeypatch.setattr(__main__, "_config_path", lambda: source)
+        locked = tmp_path / "locked"
+        locked.mkdir()
+        locked.chmod(_stat.S_IRUSR | _stat.S_IXUSR)
+        if _os.access(locked, _os.W_OK):  # root ignores the mode bits
+            pytest.skip("running as root - the mode bits do not deny us")
+        try:
+            assert __main__._anchored_config_path(locked) == source
+            assert "could not write the anchored config" in capsys.readouterr().err
+        finally:
+            locked.chmod(_stat.S_IRWXU)
