@@ -86,6 +86,15 @@ export const contentApi = {
         `/users/${encodeURIComponent(userId)}/element-errors`,
         { method: "POST", body: { attempts } },
       ),
+    /** POST /api/users/{user_id}/element-errors/remap (#2161 one-off recovery) */
+    remap: (
+      userId: string,
+      remaps: readonly import("../storage/types").ElementKeyRemap[],
+    ) =>
+      apiCall<{ applied: number; skipped: number }>(
+        `/users/${encodeURIComponent(userId)}/element-errors/remap`,
+        { method: "POST", body: { remaps } },
+      ),
     /** GET /api/users/{user_id}/element-errors/review-queue */
     reviewQueue: (
       userId: string,

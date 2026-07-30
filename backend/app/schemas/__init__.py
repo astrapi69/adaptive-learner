@@ -1677,6 +1677,32 @@ class ElementAttemptsIn(BaseModel):
     )
 
 
+class ElementKeyRemapIn(BaseModel):
+    """One #2161 recovery re-key: rewrite an orphaned ``element_key`` from
+    ``old`` to ``new`` for a specific (set, lesson, exercise)."""
+
+    set_id: str
+    lesson_id: str
+    exercise_id: str
+    old: str
+    new: str
+
+
+class ElementKeyRemapsIn(BaseModel):
+    """Bulk body for the one-off ja/ko/zh recovery (#2161). One call carries
+    all remaps for a single set (the caller applies per set, atomically)."""
+
+    remaps: list[ElementKeyRemapIn] = Field(..., min_length=1, max_length=1000)
+
+
+class ElementKeyRemapResult(BaseModel):
+    """Outcome of a remap call: rows re-keyed (``applied``) vs left alone
+    because a target row already existed (``skipped`` -> no double-map)."""
+
+    applied: int
+    skipped: int
+
+
 class AttemptRecordOut(BaseModel):
     """#603 - one recorded attempt in the per-element history ring buffer."""
 
