@@ -2341,6 +2341,13 @@
       "delete_failed": "Tidak dapat menghapus pelajaran.",
       "delete_aria": "Hapus pelajaran {title}"
     },
+    "lesson_order": {
+      "move_up": "Pindahkan pelajaran {title} ke atas",
+      "move_down": "Pindahkan pelajaran {title} ke bawah",
+      "already_first": "{title} sudah menjadi pelajaran pertama",
+      "already_last": "{title} sudah menjadi pelajaran terakhir",
+      "moved": "{title} kini berada di posisi {position} dari {total}"
+    },
     "set_status": {
       "delete_progress_option": "Hapus juga kemajuan belajar saya dan kartu ulasan ({lessons} pelajaran, {cards} kartu)",
       "delete_progress_option_nocounts": "Hapus juga kemajuan belajar saya dan kartu ulasan",

@@ -2156,6 +2156,12 @@ content:
     deleted: "Lektion gelöscht."
     delete_failed: "Die Lektion konnte nicht gelöscht werden."
     delete_aria: "Lektion {title} löschen"
+  lesson_order:
+    move_up: "Lektion {title} nach oben verschieben"
+    move_down: "Lektion {title} nach unten verschieben"
+    already_first: "{title} ist bereits die erste Lektion"
+    already_last: "{title} ist bereits die letzte Lektion"
+    moved: "{title} ist jetzt an Position {position} von {total}"
   set_status:
     delete_progress_option: "Auch meinen Lernfortschritt und die Wiederholungskarten löschen ({lessons} Lektionen, {cards} Karten)"
     delete_progress_option_nocounts: "Auch meinen Lernfortschritt und die Wiederholungskarten löschen"

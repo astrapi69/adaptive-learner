@@ -2146,6 +2146,12 @@ content:
     deleted: "पाठ हटा दिया गया।"
     delete_failed: "पाठ हटाया नहीं जा सका।"
     delete_aria: "पाठ {title} हटाएँ"
+  lesson_order:
+    move_up: "पाठ {title} को ऊपर ले जाएँ"
+    move_down: "पाठ {title} को नीचे ले जाएँ"
+    already_first: "{title} पहले से ही पहला पाठ है"
+    already_last: "{title} पहले से ही अंतिम पाठ है"
+    moved: "{title} अब {total} में से {position} स्थान पर है"
   set_status:
     delete_progress_option: "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं ({lessons} पाठ, {cards} कार्ड)"
     delete_progress_option_nocounts: "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं"
