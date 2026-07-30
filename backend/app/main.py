@@ -93,7 +93,7 @@ if not CONFIG_PATH.exists() and CONFIG_EXAMPLE_PATH.exists():
     shutil.copy2(CONFIG_EXAMPLE_PATH, CONFIG_PATH)
     logger.info("Created config/app.yaml from app.yaml.example")
 
-DEBUG = os.getenv("ADAPTIVE_LEARNER_DEBUG", "true").lower() in ("true", "1", "yes")
+DEBUG = os.getenv("ADAPTIVE_LEARNER_DEBUG", "false").lower() in ("true", "1", "yes")
 
 
 manager = PluginManager(

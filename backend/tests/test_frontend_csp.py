@@ -97,3 +97,24 @@ def test_without_a_mounted_frontend_everything_stays_strict() -> None:
     client = TestClient(app)
     csp = client.get("/api/health").headers["content-security-policy"]
     assert "default-src 'none'" in csp
+
+
+class TestBareContainerDefaults:
+    """#2198: the image is a public artifact; safe defaults live in the
+    APP - wrappers may sharpen them, never repair them."""
+
+    def test_debug_defaults_off(self) -> None:
+        """DEBUG is a module-level constant read at import time, so the
+        authoritative artifact-level pin is the SOURCE default at both
+        read sites - the same string the bare container boots with."""
+        import re
+        from pathlib import Path
+
+        import app.main as main_module
+
+        source = Path(main_module.__file__).read_text(encoding="utf-8")
+        match = re.search(r'ADAPTIVE_LEARNER_DEBUG",\s*"(\w+)"', source)
+        assert match and match.group(1) == "false", "the bare artifact must not default to debug"
+        logsrc = (Path(main_module.__file__).parent / "logging_config.py").read_text(encoding="utf-8")
+        match2 = re.search(r'ADAPTIVE_LEARNER_DEBUG",\s*"(\w+)"', logsrc)
+        assert match2 and match2.group(1) == "false"
