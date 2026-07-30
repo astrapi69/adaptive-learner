@@ -168,6 +168,14 @@ export default function ReviewStep({
                     )}
                 </FormHint>
             )}
+            {editMode && (
+                <FormHint data-testid="create-lesson-copy-progress-note">
+                    {t(
+                        "create_lesson.copy_progress_note",
+                        "A copy starts without learning progress; the original keeps its progress and review cards.",
+                    )}
+                </FormHint>
+            )}
             <div className="form-actions">
                 <Button
                     type="button"

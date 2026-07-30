@@ -250,6 +250,12 @@ export default function ImportLessonModal({
                 "A saved lesson set already uses this identifier. Overwrite it, import a separate copy, or cancel?",
               )}
             </FormHint>
+            <FormHint data-testid="import-lesson-copy-progress-note">
+              {t(
+                "create_lesson.copy_progress_note",
+                "A copy starts without learning progress; the original keeps its progress and review cards.",
+              )}
+            </FormHint>
             <div className="form-actions">
               <Button
                 type="button"

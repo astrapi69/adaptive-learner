@@ -416,7 +416,11 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-
       schritt bleibt) + "Als Kopie speichern"; Fremd-Repo-Lektionen
-      zeigen KEIN Bearbeiten; Analyse-Lektionen fuehren zur Import-Seite
+      zeigen KEIN Bearbeiten; Analyse-Lektionen fuehren zur Import-Seite.
+      **#2201:** "Als Kopie speichern" (und die Import-Kollision "Als
+      Kopie importieren") zeigen den Hinweis, dass eine Kopie OHNE
+      Lernfortschritt startet, während das Original seinen Fortschritt
+      und seine Wiederholungskarten behält
 - [ ] **Einfache Lektion (ohne Extension) bleibt speicherbar (#1919):**
       eine Lektion per Auto-Generieren erstellen (nur die sechs CORE-Typen,
       keine Extension-Uebung), lokal speichern → ueber Bearbeiten erneut

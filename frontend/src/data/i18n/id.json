@@ -2865,6 +2865,7 @@
     "edit_title": "Edit pelajaran",
     "edit_load_error": "Tidak dapat memuat pelajaran ini untuk diedit.",
     "edit_note": "Anda mengedit pelajaran yang sudah ada. Menyimpan akan menimpanya; gunakan 'Simpan sebagai salinan' untuk menyimpan aslinya.",
+    "copy_progress_note": "Salinan dimulai tanpa progres belajar; aslinya mempertahankan progres dan kartu ulasannya.",
     "edit": {
       "lesson_picker_label": "Pelajaran dalam set ini ({n})",
       "switch_confirm_title": "Ganti pelajaran?",
