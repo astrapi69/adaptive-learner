@@ -252,7 +252,7 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.8.0**, dessen
+Aktive Entwicklung. Das aktuelle Release ist **v2.8.1** (Sicherheits-Patch auf v2.8.0 - CSP #2197, Debug-Default #2198); das v2.8.0-Kernstück ist dessen
 Kernstück der **Vertriebswechsel** ist: Der Desktop-Launcher **bezieht
 jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der
 GHCR** statt auf dem Gerät zu bauen (Selbstbauen aus dem Quellbaum
