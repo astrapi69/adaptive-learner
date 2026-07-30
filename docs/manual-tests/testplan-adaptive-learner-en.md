@@ -633,6 +633,29 @@ mode-agnostic.
 - [ ] Order: due reviews first, then started sets (each most-recently-touched
       first)
 
+### Update guard: no silent progress loss on a set update (#2128)
+
+Where: My Content, an already-LEARNED set (progress + review cards present) that
+has an update available. Test in BOTH storage modes. Background: an update that
+changes exercise/card identities (e.g. an answer fix) would orphan review cards.
+The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
+
+- [ ] Prep: learn a set (at least one lesson, make a few mistakes -> review
+      cards) for which a changed version with a CHANGED answer/card front exists.
+- [ ] Trigger a manual update (the set's "Update" button): a confirmation appears
+      with counts ("N review cards / N lessons would be reset"), NOT a silent
+      overwrite.
+- [ ] "Keep current version" -> nothing updates, progress stays, the set still
+      shows "Update available" (visible + re-decidable).
+- [ ] "Update anyway" -> the update applies.
+- [ ] A harmless update (only a new lesson/exercise added, no existing identity
+      changed) -> NO prompt, applies straight away.
+- [ ] Auto-sync (only with a connected user repo, 24h): an identity-changing
+      update is NOT silently applied in the background; the set stays on the
+      current version and shows "Update available" (no background dialog, no
+      data loss).
+- [ ] iOS standalone (PWA): same manual flow, the confirmation appears.
+
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)

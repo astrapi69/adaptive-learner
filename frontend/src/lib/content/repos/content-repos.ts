@@ -19,6 +19,7 @@
  */
 
 import { getStorage } from "../../../storage";
+import { assessSetUpdate } from "../update/assess-set-update";
 import { listRepoManifestSets, validateUserRepo } from "./content-repo-validate";
 import { resolveRepoToken } from "./repo-token";
 import {
@@ -362,8 +363,23 @@ export async function syncUserRepo(
   let lessonCount = 0;
   let done = 0;
   for (const manifestSet of manifestSets) {
-    await storage.contentLoader.downloadSet(source, manifestSet.id);
-    lessonCount += manifestSet.lessonCount;
+    // #2128 — a background sync must NEVER silently overwrite a set whose
+    // update would orphan the learner's progress/SRS. Hold such a set at its
+    // cached version (its ``update_available`` flag stays true, so it is
+    // visible + re-decidable via the manual "Update" button, which warns with
+    // counts). A harmless update (superset / no learner data) applies as
+    // before. A peek/read failure holds too — better a delayed update than a
+    // silent loss; the next cycle or a manual update retries.
+    let held: boolean;
+    try {
+      held = (await assessSetUpdate(source, manifestSet.id))?.breaking ?? false;
+    } catch {
+      held = true;
+    }
+    if (!held) {
+      await storage.contentLoader.downloadSet(source, manifestSet.id);
+      lessonCount += manifestSet.lessonCount;
+    }
     done += 1;
     report("lessons", done, manifestSets.length);
   }

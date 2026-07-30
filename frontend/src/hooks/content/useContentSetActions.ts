@@ -39,6 +39,8 @@ import {
   purgeSetFromLessonCache,
 } from "../../lib/content/cache/sw-lesson-cache";
 import { removeLessonFromSet } from "../../lib/content/lesson/delete/delete-lesson";
+import { assessSetUpdate } from "../../lib/content/update/assess-set-update";
+import type { UpdateImpact } from "../../lib/content/update/update-impact";
 import { removeFavorite } from "../../lib/favorites/favorites";
 import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
@@ -92,6 +94,12 @@ export function useContentSetActions({
     useState<LessonDeleteTarget | null>(null);
   const [deletingLesson, setDeletingLesson] = useState(false);
   const [deleteLessonPlan, setDeleteLessonPlan] = useState<DeletionPlan | null>(null);
+
+  // #2128 — a held breaking update awaiting the learner's decision.
+  const [updateGuard, setUpdateGuard] = useState<{
+    entry: ContentSetEntry;
+    impact: UpdateImpact;
+  } | null>(null);
 
   const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
 
@@ -478,7 +486,26 @@ export function useContentSetActions({
     }
   };
 
+  // #2128 — when a manual "Update" of a set the learner is studying would
+  // orphan progress/SRS, hold it behind a quantified confirmation instead of
+  // overwriting silently. First downloads (no progress) and harmless updates
+  // pass straight through; a peek failure does NOT trap a user-initiated
+  // update (auto-sync holds on failure, the deliberate manual path proceeds).
   const handleDownload = async (entry: ContentSetEntry) => {
+    let impact: UpdateImpact | null;
+    try {
+      impact = await assessSetUpdate(entry.source, entry.id);
+    } catch {
+      impact = null;
+    }
+    if (impact?.breaking) {
+      setUpdateGuard({ entry, impact });
+      return;
+    }
+    await applyDownload(entry);
+  };
+
+  const applyDownload = async (entry: ContentSetEntry) => {
     const key = setKey(entry);
     setPerSetState((prev) => ({ ...prev, [key]: "downloading" }));
     try {
@@ -507,7 +534,19 @@ export function useContentSetActions({
     }
   };
 
+  // #2128 — the learner confirmed a held update: apply it now.
+  const confirmUpdate = async () => {
+    const target = updateGuard;
+    setUpdateGuard(null);
+    if (target) await applyDownload(target.entry);
+  };
+  const dismissUpdateGuard = () => setUpdateGuard(null);
+
   return {
+    // #2128 — held breaking-update confirmation.
+    updateGuard,
+    confirmUpdate,
+    dismissUpdateGuard,
     deleteTarget,
     setDeleteTarget,
     deleting,
