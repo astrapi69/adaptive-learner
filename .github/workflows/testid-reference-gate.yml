@@ -38,6 +38,9 @@ on:
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   gate:
     name: Spec-referenced testids removed on watched surfaces carry a spec update
