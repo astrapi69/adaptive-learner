@@ -2022,6 +2022,11 @@ lesson:
     action_restart: "처음부터 다시"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  update_guard:
+    title: '업데이트하면 일부 복습 진행 상황이 초기화될 수 있습니다'
+    message: '"{title}"을(를) 업데이트하면 이미 학습 중인 콘텐츠가 변경됩니다. 저장된 진행 상황이 있는 복습 카드 약 {cards}개와 레슨 {lessons}개가 새 버전과 더 이상 일치하지 않아 초기화됩니다. 완료한 레슨은 유지되며 변경된 복습만 영향을 받습니다.'
+    confirm: '그래도 업데이트'
+    cancel: '현재 버전 유지'
   share:
     button: "공유"
     aria: "세트 '{title}' 공유"
