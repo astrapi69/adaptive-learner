@@ -673,6 +673,7 @@ sync-schema: ## Refresh the engine schema mirror, then regenerate the derived ar
 	@cd backend && poetry run python ../scripts/generate_lesson_schema.py
 	@cd backend && poetry run python ../scripts/generate_pydantic_models.py
 	@cd frontend && node scripts/sync-schema-mirror.mjs
+	@cd frontend && node scripts/generate-lesson-validator.mjs
 
 sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or structural Pydantic layer drift from the pinned engine (EXP-039 / D3b)
 	@python3 scripts/sync_schema_mirror_from_engine.py --check
@@ -977,6 +978,17 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Documentation drift gate (verify-docs-discipline) ==="
 	@$(MAKE) verify-docs-discipline
 	@echo ""
+	@echo "=== Ratchet gates (#2182: close the release-branch ratchet gap) ==="
+	@echo "The PR-CI ratchets never run against a release/hotfix branch's own"
+	@echo "commits (the back-merge to develop is a direct admin merge, not a PR)."
+	@echo "Run them here so release-finish cannot ship a tripped ratchet onto"
+	@echo "develop. Prevention only - the channel stays open until enforce_admins"
+	@echo "is on (the closure; see issue #2182)."
+	@$(MAKE) check-css-size
+	@$(MAKE) verify-rule-corpus-size
+	@$(MAKE) check-complexity-gate
+	@bash scripts/check-file-sizes.sh
+	@echo ""
 	@echo "=== Subsystem lock-step (sync-versions --check) ==="
 	@$(MAKE) sync-versions-check
 	@echo ""
@@ -1078,27 +1090,31 @@ endif
 	git merge --no-ff release/$(VERSION) -m "Release v$(VERSION)"
 	git tag -a v$(VERSION) -m "Release v$(VERSION)"
 	git push origin main --tags
-	@echo "=== Merge release/$(VERSION) back into develop (no-ff) ==="
-	git checkout develop
-	git pull origin develop
-	git merge --no-ff release/$(VERSION) -m "Merge release/$(VERSION) back into develop"
-	git push origin develop
-	@echo "=== Delete release/$(VERSION) ==="
-	git branch -d release/$(VERSION)
-# The release branch is cut locally and need not be pushed (#334 gitflow),
-# so a remote branch may never have existed. Deleting a non-existent remote
-# ref used to fail the whole target with exit 1 AFTER main was already
-# merged, tagged and pushed - an alarming exit code for a no-op cleanup
-# step, which is exactly the signal you do not want to learn to ignore
-# (#1903). Delete it only when it is actually there.
-	@if git ls-remote --exit-code --heads origin release/$(VERSION) >/dev/null 2>&1; then \
-		echo "remote branch exists - deleting"; \
-		git push origin --delete release/$(VERSION); \
-	else \
-		echo "no remote release/$(VERSION) (branch was local-only) - nothing to delete"; \
-	fi
+	@echo "=== Back-merge release/$(VERSION) -> develop via PR (#2182: no direct push) ==="
+# Variante 1 (decided in #2182): the develop back-merge no longer direct-pushes.
+# A direct push bypassed the required checks (enforce_admins=false), which is how
+# ratchet-tripping changes reached develop ungated (#2180). It now opens a PR so
+# the required checks - incl. the ratchet gates - evaluate the merge. release-finish
+# STOPS here for develop; merge the PR once green. If a ratchet blocks, raise its
+# baseline in release/$(VERSION) and push - that is the desired behaviour, not a fault.
+# (The release-test ratchet gates, #2190, catch the normal case before the tag, so a
+# blocked back-merge PR should be rare.)
+#
+# The release branch is now PUSHED (previously local-only, #334) so the PR can exist,
+# and is deleted only AFTER the PR merges. In release-finish.yml the PR must be opened
+# with a PAT (RELEASE_PAT) for its checks to fire; a GITHUB_TOKEN-opened PR does not
+# trigger the pull_request workflows (#1265). main is unchanged - it is still merged +
+# tagged + pushed above; only the develop back-merge is routed through a PR.
+	git push origin release/$(VERSION)
+	gh pr create --base develop --head release/$(VERSION) \
+		--title "Merge release/$(VERSION) back into develop" \
+		--body "Automated back-merge of v$(VERSION) into develop (#2182). Merges once the required checks pass; if a ratchet gate blocks, raise its baseline in this branch. Delete release/$(VERSION) after this merges." \
+		|| echo "gh pr create failed or the PR already exists - check: gh pr list --head release/$(VERSION) --base develop"
 	@echo ""
-	@echo "Tagged + merged. Next: make release-publish VERSION=$(VERSION)"
+	@echo "main is tagged + pushed. The develop back-merge is now a PR - merge it once"
+	@echo "green, THEN delete release/$(VERSION) (local: git branch -D release/$(VERSION);"
+	@echo "the remote branch auto-deletes on PR merge if the repo is configured to)."
+	@echo "Next: make release-publish VERSION=$(VERSION)"
 
 # --- Clean ---
 

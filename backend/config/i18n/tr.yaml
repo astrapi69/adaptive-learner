@@ -2618,6 +2618,7 @@ create_lesson:
   edit_title: "Dersi düzenle"
   edit_load_error: "Bu ders düzenlemek için yüklenemedi."
   edit_note: "Mevcut bir dersi düzenliyorsunuz. Kaydetmek üzerine yazar; orijinali korumak için 'Kopya olarak kaydet' seçeneğini kullanın."
+  copy_progress_note: "Bir kopya öğrenme ilerlemesi olmadan başlar; orijinal, ilerlemesini ve tekrar kartlarını korur."
   edit:
     lesson_picker_label: "Bu setteki ders ({n})"
     switch_confirm_title: "Ders değiştirilsin mi?"

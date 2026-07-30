@@ -24,12 +24,16 @@ make release-prepare VERSION=X.Y.Z     # checkout develop, create release/X.Y.Z
 # on release/X.Y.Z: bump backend/pyproject.toml, make sync-versions,
 # draft changelog/releases/vX.Y.Z.md, make release-test, commit
 
-make release-finish VERSION=X.Y.Z      # merge --no-ff to main + tag, merge back to develop, delete branch
+make release-finish VERSION=X.Y.Z      # merge --no-ff to main + tag; open a PR to back-merge into develop
 
 make release-publish VERSION=X.Y.Z     # GitHub Release from the changelog file
 ```
 
-The Step 1-11 detail below is the per-step substance (version bump, changelog, gates, GitHub release, post-release docs) — it now runs ON the `release/*` branch, and the tag lands on `main` via the `release-finish` merge instead of a direct push to `main`. Hotfixes are the only exception: branch `hotfix/vX.Y.Z` from `main`, fix, tag, merge back to `develop`.
+The Step 1-11 detail below is the per-step substance (version bump, changelog, gates, GitHub release, post-release docs) — it now runs ON the `release/*` branch, and the tag lands on `main` via the `release-finish` merge instead of a direct push to `main`. Hotfixes are the only exception: branch `hotfix/vX.Y.Z` from `main`, fix, tag, back-merge into `develop`.
+
+### The develop back-merge goes through a PR (#2182, decided: Variante 1)
+
+`make release-finish` no longer direct-pushes `develop`; it pushes `release/X.Y.Z` and opens a PR to `develop`, then STOPS for develop. Reason: a direct push bypassed the required checks (`enforce_admins=false`), which is how ratchet-tripping changes reached develop ungated (#2180). The back-merge PR runs the required checks like any other; **if a ratchet gate blocks it, that is desired — raise the ratchet's baseline in the release branch and push, do not read the block as a fault.** Merge the PR once green, THEN delete the release branch. The release-test ratchet gates (#2190) catch the normal case before the tag, so a blocked back-merge PR should be rare. Hotfixes back-merge the same way — via a PR to develop, never a direct push. The rejected alternative (a scripted `enforce_admins` off/on toggle) is an automated bypass, not an explained one, and is worse than the open channel because it adds false confidence — see `docs/development/release-ratchet-gap.md`. Closure requires the release manager to enable `enforce_admins` on develop; that decision and its price live in that doc.
 
 ## Ground rules
 
@@ -339,8 +343,16 @@ binaries by itself - the checklist carries the trigger:
 4. Launcher binaries: take the artifacts of the GREEN main-push builds of
    the tag commit (never rebuild - bit-drift), attach with `.sha256` files
    via `gh release upload`.
-5. Only after every station is green: `gh release edit vX.Y.Z --draft=false`.
-   Record the publish run id in the checklist item below.
+5. COMPLETENESS CHECKPOINT before going visible: the draft's asset list
+   MUST equal the expected set - 3 binaries + 3 `.sha256`, the per-arch
+   image archives + `.sha256` (the install docs describe the registry-free
+   path as AVAILABLE), and the digest recorded in the notes. Missing
+   anything: do not publish - a visible release must not point at
+   something absent (the image rule, applied to assets). If archives are
+   deliberately deferred, the docs must say "announced", not available.
+6. Only after every station is green AND the checkpoint passed:
+   `gh release edit vX.Y.Z --draft=false`. Record the publish run id in
+   the checklist item below.
 
 
 Before invoking `gh release create`, build the per-release notes file by combining the static prerequisites template with the version-specific changelog:

@@ -399,7 +399,10 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";
       foreign-repo lessons show NO Edit; analysis lessons route to the
-      import page
+      import page. **#2201:** "Save as a copy" (and the import-collision
+      "Import as copy") both show a note that a copy starts WITHOUT
+      learning progress, while the original keeps its progress and
+      review cards
 - [ ] **Reopen a plain (no-extension) lesson stays saveable (#1919):**
       create a lesson via Auto-generate (only the six CORE types, no
       extension exercise), Save locally → reopen via Edit → step to Review:

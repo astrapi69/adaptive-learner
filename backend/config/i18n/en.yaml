@@ -2628,6 +2628,7 @@ create_lesson:
   edit_title: "Edit lesson"
   edit_load_error: "Could not load this lesson for editing."
   edit_note: "Editing an existing lesson. Saving overwrites it; use 'Save as a copy' to keep the original."
+  copy_progress_note: "A copy starts without learning progress; the original keeps its progress and review cards."
   edit:
     lesson_picker_label: "Lesson in this set ({n})"
     switch_confirm_title: "Switch lesson?"

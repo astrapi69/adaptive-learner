@@ -156,6 +156,10 @@ describe("ImportLessonModal", () => {
       expect(screen.getByTestId("import-lesson-collision")).toBeInTheDocument(),
     );
     expect(saveUserSet).not.toHaveBeenCalled();
+    // #2201 - the copy choice states the learning-progress consequence.
+    expect(
+      screen.getByTestId("import-lesson-copy-progress-note"),
+    ).toHaveTextContent(/progress/i);
 
     // "Import as copy" saves under a fresh id + copy title.
     await act(async () => {

@@ -2622,6 +2622,7 @@ create_lesson:
   edit_title: "Lektion bearbeiten"
   edit_load_error: "Diese Lektion konnte nicht zum Bearbeiten geladen werden."
   edit_note: "Du bearbeitest eine vorhandene Lektion. Beim Speichern wird sie überschrieben; mit 'Als Kopie speichern' bleibt das Original erhalten."
+  copy_progress_note: "Eine Kopie startet ohne Lernfortschritt; das Original behält seinen Fortschritt und seine Wiederholungskarten."
   edit:
     lesson_picker_label: "Lektion in diesem Set ({n})"
     switch_confirm_title: "Lektion wechseln?"
