@@ -2018,6 +2018,23 @@ content:
     message: 'Actualizar «{title}» cambia contenido que ya estás aprendiendo. Unas {cards} tarjetas de repaso y {lessons} lecciones con progreso guardado ya no coinciden con la nueva versión y se restablecerían. Tus lecciones terminadas se mantienen; solo se ven afectados los repasos que cambiaron.'
     confirm: 'Actualizar de todos modos'
     cancel: 'Conservar la versión actual'
+  recovery:
+    title: 'Restaurar el progreso de repaso de las lecciones corregidas'
+    message: 'Corregimos algunas lecciones de japonés, coreano y chino (A1). Las tarjetas de repaso que ya creaste para los elementos modificados ya no coinciden, por lo que no se programan. Puedes volver a vincularlas con las lecciones corregidas o empezar un conjunto de nuevo. Solo estos conjuntos se ven afectados; los demás quedan intactos.'
+    backup_hint: 'Recomendado primero: exporta una copia de seguridad para poder deshacer esto si hace falta.'
+    backup_action: 'Exportar copia de seguridad'
+    backup_saved: 'Copia de seguridad guardada: {filename}'
+    set_cards: '{count} tarjetas de repaso afectadas'
+    restore: 'Volver a vincular las tarjetas'
+    restart: 'Empezar el conjunto de nuevo'
+    restart_confirm: '¿Empezar de nuevo? Se eliminarán el progreso guardado y las tarjetas de repaso de este conjunto.'
+    restart_confirm_yes: 'Sí, empezar de nuevo'
+    restart_cancel: 'Cancelar'
+    restore_result: 'Se volvieron a vincular {applied} tarjetas de repaso ({skipped} ya eran correctas).'
+    restore_unmapped: 'No se pudieron volver a vincular {unmapped} tarjetas porque la lección volvió a cambiar; se dejaron sin cambios.'
+    restart_result: 'Conjunto reiniciado. Puedes empezar desde el principio.'
+    working: 'Procesando…'
+    failed: 'Algo salió mal. No se cambió nada; inténtalo de nuevo.'
   share:
     button: "Compartir"
     aria: "Compartir el conjunto '{title}'"

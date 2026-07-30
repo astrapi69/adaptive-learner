@@ -2021,6 +2021,23 @@ content:
     message: 'Die Aktualisierung von „{title}“ ändert Inhalte, die du bereits lernst. Etwa {cards} Wiederholungskarten und {lessons} Lektionen mit gespeichertem Fortschritt passen nicht mehr zur neuen Version und würden zurückgesetzt. Deine abgeschlossenen Lektionen bleiben; betroffen sind nur die geänderten Wiederholungen.'
     confirm: 'Trotzdem aktualisieren'
     cancel: 'Aktuelle Version behalten'
+  recovery:
+    title: 'Wiederholungsfortschritt für korrigierte Lektionen wiederherstellen'
+    message: 'Wir haben einige Lektionen für Japanisch, Koreanisch und Chinesisch (A1) korrigiert. Wiederholungskarten, die du für die geänderten Inhalte angelegt hast, passen nicht mehr und werden nicht mehr eingeplant. Du kannst sie mit den korrigierten Lektionen neu verknüpfen oder ein Set neu beginnen. Nur diese Sets sind betroffen; deine anderen Sets bleiben unberührt.'
+    backup_hint: 'Zuerst empfohlen: Erstelle eine Sicherung, damit du dies bei Bedarf rückgängig machen kannst.'
+    backup_action: 'Sicherung erstellen'
+    backup_saved: 'Sicherung gespeichert: {filename}'
+    set_cards: '{count} betroffene Wiederholungskarten'
+    restore: 'Wiederholungskarten neu verknüpfen'
+    restart: 'Set neu beginnen'
+    restart_confirm: 'Neu beginnen? Gespeicherter Fortschritt und Wiederholungskarten für dieses Set werden entfernt.'
+    restart_confirm_yes: 'Ja, neu beginnen'
+    restart_cancel: 'Abbrechen'
+    restore_result: '{applied} Wiederholungskarten neu verknüpft ({skipped} waren bereits korrekt).'
+    restore_unmapped: '{unmapped} Karten konnten nicht neu verknüpft werden, weil sich die Lektion erneut geändert hat; sie bleiben unverändert.'
+    restart_result: 'Set zurückgesetzt. Du kannst von vorn beginnen.'
+    working: 'Wird ausgeführt…'
+    failed: 'Etwas ist schiefgelaufen. Es wurde nichts geändert; bitte versuche es erneut.'
   share:
     button: "Teilen"
     aria: "Set '{title}' teilen"

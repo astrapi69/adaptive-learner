@@ -2027,6 +2027,23 @@ content:
     message: 'Updating "{title}" changes content you are already learning. About {cards} review cards and {lessons} lessons with saved progress no longer match the new version and would be reset. Your finished lessons stay; only the changed review items are affected.'
     confirm: 'Update anyway'
     cancel: 'Keep current version'
+  recovery:
+    title: 'Restore review progress for corrected lessons'
+    message: 'We corrected some Japanese, Korean and Chinese (A1) lessons. Review cards you already created for the changed items no longer match, so they are not being scheduled. You can relink them to the corrected lessons, or start a set fresh. Only these sets are affected; your other sets are untouched.'
+    backup_hint: 'Recommended first: export a backup so you can undo this if needed.'
+    backup_action: 'Export backup'
+    backup_saved: 'Backup saved: {filename}'
+    set_cards: '{count} affected review cards'
+    restore: 'Relink review cards'
+    restart: 'Start set fresh'
+    restart_confirm: 'Start fresh? Saved progress and review cards for this set are removed.'
+    restart_confirm_yes: 'Yes, start fresh'
+    restart_cancel: 'Cancel'
+    restore_result: 'Relinked {applied} review cards ({skipped} were already correct).'
+    restore_unmapped: '{unmapped} cards could not be relinked because the lesson changed again; they were left unchanged.'
+    restart_result: 'Set reset. You can start it from the beginning.'
+    working: 'Working…'
+    failed: 'Something went wrong. Nothing was changed; please try again.'
   share:
     button: "Share"
     aria: "Share set '{title}'"
