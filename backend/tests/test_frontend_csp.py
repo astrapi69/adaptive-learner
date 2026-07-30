@@ -63,6 +63,9 @@ def test_spa_page_is_allowed_to_load_itself(spa_app) -> None:
     assert "default-src 'self'" in csp
     assert "manifest-src 'self'" in csp
     assert "worker-src 'self'" in csp
+    # The app's own browser-side calls, each verified in source (#2197):
+    assert "connect-src 'self' https://api.github.com https://raw.githubusercontent.com" in csp
+    assert "https://img.youtube.com" in csp
 
 
 def test_inline_scripts_are_hash_allowed_not_unsafe_inline(spa_app) -> None:

@@ -125,7 +125,14 @@ def spa_csp_for(index_html: str) -> str:
     snippet re-hashes itself on the next start instead of silently
     breaking - and ``script-src`` never needs ``unsafe-inline``.
     ``style-src`` keeps ``unsafe-inline`` for React/Recharts style
-    attributes; blob/data cover the PWA worker, audio and images.
+    attributes; blob/data cover the PWA worker, audio and images. The
+    named external hosts are the app's OWN browser-side calls, each
+    verified in source: the update check + repo browsing use
+    ``api.github.com`` (update_check, github-fetch), the recommended
+    repos / media catalogs / lesson media load from
+    ``raw.githubusercontent.com``, and YouTube resources render as
+    static thumbnails from ``img.youtube.com`` (deliberately NO iframe,
+    hence no frame-src).
     """
     hashes = " ".join(
         "'sha256-" + base64.b64encode(hashlib.sha256(m.group(1).encode()).digest()).decode() + "'"
@@ -136,10 +143,10 @@ def spa_csp_for(index_html: str) -> str:
         "default-src 'self'; "
         f"{script_src}; "
         "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data: blob:; "
+        "img-src 'self' data: blob: https://raw.githubusercontent.com https://img.youtube.com; "
         "font-src 'self' data:; "
-        "connect-src 'self'; "
-        "media-src 'self' blob: data:; "
+        "connect-src 'self' https://api.github.com https://raw.githubusercontent.com; "
+        "media-src 'self' blob: data: https://raw.githubusercontent.com; "
         "worker-src 'self' blob:; "
         "manifest-src 'self'; "
         "object-src 'none'; "
