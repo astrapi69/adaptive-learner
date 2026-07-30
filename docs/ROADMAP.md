@@ -368,7 +368,18 @@ above for the release each landed in.
 ## Blocked / Upstream Wait
 
 Items waiting on an external trigger (npm publish, upstream release,
-paid-API access). NOT P0 even when otherwise valuable.
+paid-API access, or a specific release tag). NOT P0 even when otherwise valuable.
+
+- **REC-JKZ — ja/ko/zh review-progress recovery (#2161, PR #2171, DRAFT).**
+  The recovery notice + both-mode `element_key` remap is implemented and the
+  draft PR is green, but it is a DATA MIGRATION and must NOT ride v2.7.0:
+  v2.7.0 carries the launcher install-path change, and a migration belongs on a
+  quiet baseline so the two changes cannot share a failure source.
+  **Trigger:** v2.7.0 is tagged + published. Then take PR #2171 out of draft and
+  merge it into `develop` for the next feature release; archive this entry. The
+  manual round-trip (BACKUP-AKZEPTANZTEST class) is still owed before merge — the
+  recovery section in `docs/manual-tests/testplan-adaptive-learner*.md` has the
+  "how to produce the state" steps. (Verified 2026-07-30.)
 
 - **DEP-TS7 — TypeScript 6 → 7 (native compiler).** `typescript@7.0.2`
   is published and `tsc --noEmit` passes on our code under TS 7, but the
