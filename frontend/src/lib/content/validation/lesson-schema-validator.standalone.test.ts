@@ -56,7 +56,6 @@ describe("no runtime schema compilation in the bundle sources", () => {
         };
         walk(SRC_ROOT);
         expect(scanned, "scanned nothing - the gate proves nothing").toBeGreaterThan(300);
-        // eslint-disable-next-line no-console
         console.log(`scanned ${scanned} source files for runtime schema compilation`);
         expect(offenders, "runtime ajv compilation is an unsafe-eval CSP break (#2205)").toEqual([]);
     });

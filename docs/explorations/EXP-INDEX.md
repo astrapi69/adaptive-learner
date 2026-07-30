@@ -65,6 +65,7 @@ archiviert und bleiben als historische Zeilen stehen)
 | 044 | CSS-Vereinheitlichung (Kaskaden-Reparatur + Komponenten-Migration) | Querschnitt | laufend | Sehr hoch | 016, #1467 |
 | 045 | Content-ID-Stabilität (Datenintegrität über Content-Updates) | Querschnitt | Analyse | Sehr hoch | 039, 042, 002/003, #2128 |
 | 046 | Bearbeiten fremder Inhalte + Autorenzuschreibung | Querschnitt | Analyse | P2/P3 | 023, 025, 026, 045, #2128/#2130 |
+| 047 | Vorlesefunktion für alle Aufgabentypen (Auftrag, noch nicht ausgeführt) | Feature | Auftrag | Mittel | 001, 006, #2053 |
 
 ## Umsetzungsstand (Stand v1.99.0)
 
