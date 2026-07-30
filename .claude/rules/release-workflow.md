@@ -404,7 +404,12 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
 - [ ] `make test` green
 - [ ] Frontend `tsc --noEmit` clean
 - [ ] `bun run test` (Vitest) green
-- [ ] `npx playwright test --project=smoke` green
+- [ ] `npx playwright test --project=smoke` RUN IN THIS SESSION, result recorded
+      as "N passed / M silenced" with M matching `e2e/.smoke-skip-baseline.json`
+      (#2170 budget gate). A tick without both numbers is the v2.6.1 false tick:
+      that release checked this box while the suite never ran (its journal lists
+      dexie-smoke + manual-automation, not this project) and specs had been
+      failing since May. Naming the numbers is what makes the box unfakeable.
 - [ ] `make test-dexie-smoke` green (MANDATORY since 2026-05-26: DEXIE-MODE-RELEASE-GATE-01 — walks every nav-reachable route against the GH-Pages-shape build with NO backend; any error toast or page crash blocks the release)
 - [ ] `ruff check` clean
 - [ ] `mypy app/` clean (MANDATORY since v0.26.x; not "if active")
@@ -416,7 +421,11 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
 - [ ] `make docker-build-smoke` successful (MANDATORY since #1990: builds the prod compose images - the launcher/install.sh path; also gated in CI on `release/**` via `docker-build-smoke.yml`)
 - [ ] Git tag created and pushed
 - [ ] GitHub release published
-- [ ] Docker image pushed (if active)
+- [ ] GHCR image published + verified by the `publish-image.yml` release run:
+      record the RUN ID; the run itself proves anonymous pull, arm64 start,
+      per-arch size gates, version agreement. "(if active)" is retired - the
+      publish chain exists since v2.7.0 and an unrecorded run id is the same
+      evidence-free tick the smoke box suffered.
 - [ ] MkDocs site deployed and verified
 - [ ] Chat journal release entry
 - [ ] ROADMAP done items marked

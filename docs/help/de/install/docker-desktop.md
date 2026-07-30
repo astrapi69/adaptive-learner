@@ -9,9 +9,9 @@ Docker Desktop.
 ## Was du brauchst
 
 - Etwa 800 MB Download für Docker Desktop selbst.
-- Etwa 2 GB Speicher für das Adaptive-Learner-Image beim ersten Start
-  (das passiert einmalig; spätere Starts sind schnell).
-- Ein paar Minuten für den ersten Build (5-10 Minuten sind normal).
+- Etwa 110-120 MB Download plus rund 500 MB Speicher für das
+  Adaptive-Learner-Image beim ersten Start (das passiert einmalig;
+  spätere Starts sind schnell und funktionieren offline).
 
 ## Installation
 
@@ -28,9 +28,10 @@ Docker Desktop.
 ## Den Launcher starten
 
 Sobald Docker Desktop läuft, starte den Adaptive-Learner-Launcher
-erneut. Er prüft zuerst Docker, lädt dann das Image herunter, baut und
+erneut. Er prüft zuerst Docker, lädt dann das Image herunter und
 startet die App und bietet zum Schluss einen Knopf
-"Im Browser öffnen" an.
+"Im Browser öffnen" an. Auf deinem Rechner wird nichts gebaut - der
+Launcher bezieht ein fertig gebautes, geprüftes Image.
 
 Falls Docker beim Start des Launchers noch nicht läuft, zeigt er einen
 Hinweis mit einem Knopf "Docker starten", damit du Docker hochfahren

@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.6.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.7.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-10293%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
@@ -252,20 +252,21 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.6.0**, ein
-Feature-Release, dessen Kernstück der **auf assistant-ui neu
-aufgebaute und umgestellte Sitzungs-Chat** ist (der Thread ist der
-Standard-Chat, das selbstgebaute SessionChat ist entfernt). Der
-Buch-Pfad von Create-Lesson wird zum echten Ingestion-Werkzeug:
-**Buchtext-Datei-Upload** (EPUB/TXT/MD/DOCX) mit Kapitel-Auswahl,
-**Mehrfachauswahl erkannter Abschnitte mit Ausschluss-Heuristik und
-Batch-Lektionsgenerierung**. Das Diktat-Authoring wird mit einem
-**Audio-Datei-Upload** komplett, Content-Sets lassen sich über das
-**Manifest-Feld `visibility` der Engine ausblenden**, der
-Desktop-Launcher nutzt **kontextbewusste Docker-Erkennung**
-(docker-app-launcher 0.14.1), und die CI wird gehärtet (Required
-Checks auf develop, Testid-Referenz-Gate, Visual-Baseline-Auto-Sync,
-Docker-Build-Smoke). Das vorige **v2.5.0** machte **Create-Lesson zu
+Aktive Entwicklung. Das aktuelle Release ist **v2.7.0**, dessen
+Kernstück der **Vertriebswechsel** ist: Der Desktop-Launcher **bezieht
+jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der
+GHCR** statt auf dem Gerät zu bauen (Selbstbauen aus dem Quellbaum
+bleibt erhalten), abgesichert durch einen **Volume-Migrations-Stopp**,
+der nie still zwischen zwei Datenbeständen wählt. Die App ergänzt
+**Bildbeschreibungs-Aufgaben** (`ext:al-image-description`), das
+**Löschen einzelner Lektionen** und einen **Set-Update-Wächter**, der
+verhindert, dass Content-Updates Lernfortschritt still verwaisen
+lassen (Dialog in 11 Sprachen). Das vorige **v2.6.x** baute den
+**Sitzungs-Chat auf assistant-ui** neu auf, machte den Buch-Pfad von
+Create-Lesson zum echten Ingestion-Werkzeug (**Buchdatei-Upload** mit
+Kapitel-Mehrfachauswahl und Batch-Generierung), komplettierte das
+Diktat-Authoring mit **Audio-Upload** und härtete die CI. Das vorige
+**v2.5.0** machte **Create-Lesson zu
 einem vollwertigen Aufgaben-Editor**: jeder Kern-Aufgabentyp ist
 bearbeitbar, Aufgaben lassen sich von Hand ergänzen,
 `multiple_choice` ist mit einer Single/Multi-Umschaltung

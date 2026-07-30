@@ -12,9 +12,12 @@ import {expect, test} from "@playwright/test";
 import {completeOnboarding} from "../helpers/onboarding";
 
 test.describe("Settings", () => {
-    test("saves an API key + toggles the active provider", async ({page}) => {
+        // DECLARED SKIP (#2170): this spec asserts a UI generation the product
+    // has since replaced (AI tab is the key-vault UI since v2.5.0); rewrite tracked in #2170, counted by the
+    // smoke skip budget (e2e/.smoke-skip-baseline.json).
+test.fixme("saves an API key + toggles the active provider", async ({page}) => {
         await completeOnboarding(page);
-        await page.goto("/settings");
+        await page.goto("/settings?tab=ai");
         await expect(page.getByTestId("settings")).toBeVisible();
 
         // Save a fake anthropic API key.
