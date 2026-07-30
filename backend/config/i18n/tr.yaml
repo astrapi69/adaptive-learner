@@ -2011,6 +2011,11 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  update_guard:
+    title: 'Güncelleme bazı tekrar ilerlemesini sıfırlayabilir'
+    message: '"{title}" güncellemesi, zaten öğrenmekte olduğun içeriği değiştirir. Kayıtlı ilerlemesi olan yaklaşık {cards} tekrar kartı ve {lessons} ders yeni sürümle artık eşleşmez ve sıfırlanır. Tamamladığın dersler kalır; yalnızca değişen tekrarlar etkilenir.'
+    confirm: 'Yine de güncelle'
+    cancel: 'Mevcut sürümü koru'
   share:
     button: "Paylaş"
     aria: "'{title}' setini paylaş"
