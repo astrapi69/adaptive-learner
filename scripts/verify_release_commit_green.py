@@ -122,7 +122,7 @@ def release_driven_job_names(repo_root: Path) -> tuple[list[str], str | None]:
     found_release_workflow = False
     for path in sorted(directory.glob("*.yml")):
         text = path.read_text(encoding="utf-8")
-        if "release:" not in text or "types: [created]" not in text:
+        if "release:" not in text or ("types: [created]" not in text and "types: [published]" not in text):
             continue
         found_release_workflow = True
         for line in text.splitlines():
