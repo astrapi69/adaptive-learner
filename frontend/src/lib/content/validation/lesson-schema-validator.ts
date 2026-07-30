@@ -21,10 +21,16 @@
  * permutation) stay in ``validateGeneratedLesson``.
  */
 
-import Ajv2020, { type ErrorObject, type ValidateFunction } from "ajv/dist/2020";
-import addFormats from "ajv-formats";
+import { type ErrorObject, type ValidateFunction } from "ajv/dist/2020";
 
-import lessonJsonSchema from "./lesson.schema.generated.json";
+// Build-time-compiled validator (#2205): `ajv.compile` at runtime generates
+// code via `new Function` - an `unsafe-eval` CSP violation that broke
+// /content under the fixed policy. The standalone module is generated from
+// the pinned schema mirror by scripts/generate-lesson-validator.mjs (wired
+// into `make sync-schema`); a re-pin without regeneration is caught by the
+// drift test, never silent.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import standaloneValidate from "./lesson-schema-validator.standalone.cjs";
 
 /** Result of a structural shape check. */
 export interface ShapeResult {
@@ -34,16 +40,7 @@ export interface ShapeResult {
   errors: string[];
 }
 
-/**
- * One compiled validator for the process. ``strict: false`` tolerates the
- * schema's non-standard annotation keywords (``x-schema-version``, ``$id``)
- * without turning them into compile errors; ``allErrors`` surfaces every
- * structural problem at once instead of stopping at the first.
- */
-const ajv = new Ajv2020({ allErrors: true, strict: false });
-addFormats(ajv);
-
-const validateFn: ValidateFunction = ajv.compile(lessonJsonSchema);
+const validateFn = standaloneValidate as unknown as ValidateFunction;
 
 /** Render one ajv error as ``<instancePath> <message>`` (root = "lesson"). */
 function formatError(error: ErrorObject): string {

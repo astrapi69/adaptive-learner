@@ -20,7 +20,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
     "check:circular": "node scripts/check-circular.mjs",
-    "stryker": "stryker run"
+    "stryker": "stryker run",
+    "generate:validator": "node scripts/generate-lesson-validator.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.27",

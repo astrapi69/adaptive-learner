@@ -673,6 +673,7 @@ sync-schema: ## Refresh the engine schema mirror, then regenerate the derived ar
 	@cd backend && poetry run python ../scripts/generate_lesson_schema.py
 	@cd backend && poetry run python ../scripts/generate_pydantic_models.py
 	@cd frontend && node scripts/sync-schema-mirror.mjs
+	@cd frontend && node scripts/generate-lesson-validator.mjs
 
 sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or structural Pydantic layer drift from the pinned engine (EXP-039 / D3b)
 	@python3 scripts/sync_schema_mirror_from_engine.py --check
