@@ -372,6 +372,10 @@ On a failed deploy: pull the error from the action logs and fix it, but the rele
 
 - `docs/journal/chat-journal-session-{today}.md`: release entry with version, date, main changes, deploy time
 - `ROADMAP.md`: mark every item included in the release as `[x]`
+- `ROADMAP.md` "Blocked / Upstream Wait": read it - does this tag now trigger a
+  held entry (e.g. a PR parked for the NEXT release)? If so, un-draft it, merge,
+  and archive the entry. The read step for a draft parked on a tag it cannot
+  point past.
 - `CLAUDE.md`: update on new endpoints or architectural changes
 - `.claude/rules/lessons-learned.md`: if anything noteworthy happened during the release (new pitfall, workflow improvement), document it
 
@@ -425,6 +429,7 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
 - [ ] MkDocs site deployed and verified
 - [ ] Chat journal release entry
 - [ ] ROADMAP done items marked
+- [ ] ROADMAP "Blocked / Upstream Wait" read: any entry triggered by this tag actioned (held PRs un-drafted + merged, entry archived)
 - [ ] CLAUDE.md updated (if needed)
 - [ ] Post-release commit pushed
 
