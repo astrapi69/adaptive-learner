@@ -155,6 +155,39 @@ Lektions-Umbenennungen verwaisen weiterhin still, festgehalten in
 die laufende Spur #2128 / #2130 / EXP-045. EXP-046 bestätigt sie und verweist
 dorthin, statt sie zu duplizieren.
 
+### 1.4 Sagt der Moment des Abzweigens, was mit dem Fortschritt passiert?
+
+**Teilweise.** Es gibt heute eine Aussage am Kopieren-Moment, aber sie benennt
+nur die Inhalts-Folge, nicht den Lernfortschritt. Geprüfte Menge (alle Wege in
+eine user-generierte Kopie bestehender Inhalte, grep-verifiziert, die einzigen
+`saveUserSet`-/Kopier-Einstiege sind `ImportLessonModal`, `CreateLesson`
+saveCopy/saveLocally und die `lesson-import`-Helfer):
+
+1. **CreateLesson Edit -> "Als Kopie speichern"** (`ReviewStep.tsx:164-169`,
+   saveCopy #1740, der primäre Fork-Moment). Aussage heute (`create_lesson.edit_note`):
+   "Editing an existing lesson. Saving overwrites it; use 'Save as a copy' to
+   keep the original." Sie benennt Überschreiben vs. Original-behalten,
+   **schweigt aber zum Lernfortschritt**.
+2. **ImportLessonModal Kollision -> "Import as copy"** (`ImportLessonModal.tsx:247-252`,
+   `content.import_lesson.collision_body`: "A saved lesson set already uses this
+   identifier. Overwrite it, import a separate copy, or cancel?"). Schweigt
+   ebenfalls zum Fortschritt.
+3. **Direktes "Kopie eines heruntergeladenen Katalog-Sets bearbeiten":**
+   existiert nicht (heruntergeladene Sets sind read-only, kein `onEdit`, Teil
+   1.1). Wird diese Affordance gebaut (Teil 6, Schritt 3), muss sie dieselbe
+   Aussage tragen.
+
+**Empfehlung (keine Abschreckung, eine Feststellung):** die bestehende Zeile
+`create_lesson.edit_note` um die Fortschritts-Folge ergänzen und die
+ImportLessonModal-Kollision spiegeln. Vorgeschlagener Zusatz (DE): "Eine Kopie
+startet ohne Lernfortschritt, das Original behält seinen Fortschritt und seine
+Wiederholungskarten." (EN entsprechend.) Alle 11 Kataloge (`backend/config/i18n/*.yaml`
++ `make sync-i18n`), echte Umlaute, kein Em-Dash, plus Testplan (DE+EN) und ein
+Test. Umgesetzt als **eigenständiger Concern in #2201** (eigener PR), nicht in
+diesem Doku-PR. **Diese Aussage ist wichtiger als die gesamte
+Zuschreibungsfrage (Teil 3), weil sie Datenerwartung betrifft und nicht
+Metadaten**, und entsprechend priorisiert (Teil 6, Schritt 1).
+
 ---
 
 ## Teil 2: Abzweigen oder Ändern
@@ -224,6 +257,14 @@ keyt, würde ein Fork, der dieselbe `set_id` behält und nur die `source`
 `LessonProgress` verwaist. Der heutige Fork-Pfad vergibt eine neue `set_id`,
 also beisst diese Kante nicht, ein künftiger Fork darf `set_id` aber nie
 wiederverwenden.
+
+**Festlegung zur Fortschritts-Semantik (im Dokument verankert):** Der frische
+Start der Kopie ist die **beabsichtigte** Semantik, kein Mangel. Eine spätere
+Mitnahme des Fortschritts wird hier **nicht** gebaut. Falls Mitnahme je gewollt
+ist, hängt sie an der Identitäts-Spur (EXP-045 Option C, Best-effort-Remap über
+einen ID-Wechsel) und gehört **dort** vermerkt, nicht hier. Was aus dieser
+Semantik hier folgt, ist ausschliesslich die **Aussage** am Kopieren-Moment
+(§1.4, #2201), damit die Nutzererwartung stimmt, nicht ein Datenpfad.
 
 ---
 
@@ -301,7 +342,7 @@ Der Entwurf muss den Share-Hinweis erweitern:
 - **Entfernen** per Ein-Klick ermöglichen ("Credits entfernen").
 
 **Vorgeschlagene Formulierung** (DE + EN, echte Umlaute, kein Em-Dash, finale
-Übersetzung in alle 8 Sprachen im Umsetzungs-PR):
+Übersetzung in alle 11 Kataloge im Umsetzungs-PR):
 
 - Eigener Name (bestehend, unverändert): "Dein Name wird in der Lektion und in
   der Pull Request angezeigt." / "Your name will be shown in the lesson and the
@@ -365,12 +406,13 @@ MVP-Blocker.
 
 | Prio | Schritt | Umfang | Bezug |
 |---|---|---|---|
-| 1 | **Non-Goals dokumentieren:** keine Edit-Sperre, Fork-statt-Mutation ist das gewollte Modell. Diese Exploration + ein Entscheidungseintrag. Verhindert Falschmeldungen. | XS (Doku) | Teil 4 |
-| 2 | **Auffindbarkeit:** klare "Als Kopie bearbeiten"-Aktion auf heruntergeladenen Sets (heute nur über Import/Save-as-copy erreichbar), beide Speichermodi. | S (Frontend) | AUTH-06, Teil 1.1 |
-| 3 | **Abstammung beim Fork festhalten:** `variation_of` (Feld existiert) beim Fork auf die Original-Lektions-ID setzen, Original-`contributed_by` als "basiert auf"-Credit mitführen, Badge "Eigene Bearbeitung" (EXP-026 UGC-03). Frontend-only. | S/M (Frontend) | EXP-026 #97, Teil 3.2 |
-| 4 | **Share-Hinweis erweitern:** mitgereisten Fremd-Credit anzeigen + "Credits entfernen"-Ein-Klick (ShareWizard Schritt 1 erweitern). i18n in 8 Sprachen. | S (Frontend + i18n) | Teil 3.4 |
-| 5 | **Schema-Bedarf anmelden:** Set-ebenes `contributed_by` + `derived_from` stromaufwärts bei `learn-content-engine`, gebündelt mit #2130. Danach Pin-Bump + `make sync-schema`. | M (cross-repo) | Teil 5 |
-| 6 | **Zurückgestellt:** verifizierter Autor (AUTH-09, braucht Backend), Fortschritts-Remap über Fork/ID-Wechsel (EXP-045 Option C / Identitäts-Spur). | - | AUTH-09, EXP-045 |
+| 1 | **Fortschritts-Aussage am Kopieren-Moment (Datenerwartung, vor der Zuschreibung):** `create_lesson.edit_note` um die Fortschritts-Feststellung ergänzen, ImportLessonModal-Kollision spiegeln. 11 Kataloge + `make sync-i18n` + Testplan (DE+EN) + Test. | S (Frontend + i18n) | #2201, §1.4 |
+| 2 | **Non-Goals dokumentieren:** keine Edit-Sperre, Fork-statt-Mutation ist das gewollte Modell. Diese Exploration + ein Entscheidungseintrag. Verhindert Falschmeldungen. | XS (Doku) | Teil 4 |
+| 3 | **Auffindbarkeit:** klare "Als Kopie bearbeiten"-Aktion auf heruntergeladenen Sets (heute nur über Import/Save-as-copy erreichbar), beide Speichermodi. Trägt die Fortschritts-Aussage aus Schritt 1. | S (Frontend) | AUTH-06, Teil 1.1 |
+| 4 | **Abstammung beim Fork festhalten:** `variation_of` (Feld existiert) beim Fork auf die Original-Lektions-ID setzen, Original-`contributed_by` als "basiert auf"-Credit mitführen, Badge "Eigene Bearbeitung" (EXP-026 UGC-03). Frontend-only. | S/M (Frontend) | EXP-026 #97, Teil 3.2 |
+| 5 | **Share-Hinweis erweitern:** mitgereisten Fremd-Credit anzeigen + "Credits entfernen"-Ein-Klick (ShareWizard Schritt 1 erweitern). i18n in 11 Katalogen. | S (Frontend + i18n) | Teil 3.4 |
+| 6 | **Schema-Bedarf anmelden:** Set-ebenes `contributed_by` + `derived_from` stromaufwärts bei `learn-content-engine`, gebündelt mit #2130. Danach Pin-Bump + `make sync-schema`. | M (cross-repo) | Teil 5 |
+| 7 | **Zurückgestellt:** verifizierter Autor (AUTH-09, braucht Backend), Fortschritts-Remap über Fork/ID-Wechsel (EXP-045 Option C / Identitäts-Spur). | - | AUTH-09, EXP-045 |
 
 ---
 
@@ -392,7 +434,7 @@ MVP-Blocker.
 **Annahmen (konservativ, im Umsetzungs-PR zu verifizieren):**
 
 - Die genaue i18n-Formulierung der zwei Hinweiszeilen ist ein Vorschlag, die
-  finale Fassung entscheidet der Autor beim Umsetzen (alle 8 Sprachen).
+  finale Fassung entscheidet der Autor beim Umsetzen (alle 11 Kataloge).
 - Die Beschränkung der Ableitungskette auf {Original, aktuell} + "und andere"
   ist ein Design-Vorschlag, kein zwingender Wert, revidierbar, falls die
   Umsetzung Gegenargumente liefert.
