@@ -107,7 +107,7 @@ export default function RecoverySetRow({
                     </span>
                     <button
                         type="button"
-                        className="rounded-md bg-danger px-3 py-1 font-medium text-danger-fg transition-colors hover:opacity-90 disabled:opacity-60"
+                        className="rounded-md bg-[var(--danger)] px-3 py-1 font-medium text-[var(--danger-fg)] transition-colors hover:opacity-90 disabled:opacity-60"
                         onClick={runRestart}
                         disabled={busy}
                         data-testid={`recovery-restart-confirm-${setId}`}
