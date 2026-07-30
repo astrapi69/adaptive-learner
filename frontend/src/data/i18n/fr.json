@@ -2182,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "La mise à jour peut réinitialiser une partie des révisions",
+      "message": "Mettre à jour « {title} » modifie du contenu que tu apprends déjà. Environ {cards} cartes de révision et {lessons} leçons avec une progression enregistrée ne correspondent plus à la nouvelle version et seraient réinitialisées. Tes leçons terminées restent; seules les révisions modifiées sont concernées.",
+      "confirm": "Mettre à jour quand même",
+      "cancel": "Garder la version actuelle"
+    },
     "share": {
       "button": "Partager",
       "aria": "Partager le set '{title}'",

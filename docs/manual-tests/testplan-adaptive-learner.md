@@ -687,6 +687,8 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       bisherigen Fassung und zeigt "Update verfuegbar" (kein Hintergrund-Dialog,
       kein Datenverlust).
 - [ ] iOS-Standalone (PWA): gleicher manueller Ablauf, Bestaetigung erscheint.
+- [ ] Sprache pruefen (#2160): der Bestaetigungstext erscheint in der App-Sprache
+      (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
 
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →

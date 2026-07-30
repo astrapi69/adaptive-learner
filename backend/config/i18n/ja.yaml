@@ -2011,6 +2011,11 @@ lesson:
     action_restart: "最初からやり直す"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  update_guard:
+    title: '更新すると一部の復習の進捗がリセットされる場合があります'
+    message: '「{title}」を更新すると、すでに学習中の内容が変わります。保存済みの進捗がある復習カード約{cards}件とレッスン{lessons}件が新しいバージョンと一致しなくなり、リセットされます。完了したレッスンは残り、変更された復習だけが影響を受けます。'
+    confirm: 'それでも更新する'
+    cancel: '現在のバージョンを保持'
   share:
     button: "共有"
     aria: "セット「{title}」を共有"

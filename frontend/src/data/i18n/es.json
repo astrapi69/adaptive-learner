@@ -2182,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "La actualización puede restablecer parte del repaso",
+      "message": "Actualizar «{title}» cambia contenido que ya estás aprendiendo. Unas {cards} tarjetas de repaso y {lessons} lecciones con progreso guardado ya no coinciden con la nueva versión y se restablecerían. Tus lecciones terminadas se mantienen; solo se ven afectados los repasos que cambiaron.",
+      "confirm": "Actualizar de todos modos",
+      "cancel": "Conservar la versión actual"
+    },
     "share": {
       "button": "Compartir",
       "aria": "Compartir el conjunto '{title}'",

@@ -2182,6 +2182,12 @@
     }
   },
   "content": {
+    "update_guard": {
+      "title": "Aktualisierung könnte einige Wiederholungen zurücksetzen",
+      "message": "Die Aktualisierung von „{title}“ ändert Inhalte, die du bereits lernst. Etwa {cards} Wiederholungskarten und {lessons} Lektionen mit gespeichertem Fortschritt passen nicht mehr zur neuen Version und würden zurückgesetzt. Deine abgeschlossenen Lektionen bleiben; betroffen sind nur die geänderten Wiederholungen.",
+      "confirm": "Trotzdem aktualisieren",
+      "cancel": "Aktuelle Version behalten"
+    },
     "share": {
       "button": "Teilen",
       "aria": "Set '{title}' teilen",
