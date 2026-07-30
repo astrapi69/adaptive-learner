@@ -2011,6 +2011,11 @@ lesson:
     action_restart: "Recomeçar"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  update_guard:
+    title: 'A atualização pode redefinir parte da revisão'
+    message: 'Atualizar «{title}» altera conteúdo que você já está aprendendo. Cerca de {cards} cartões de revisão e {lessons} lições com progresso salvo já não correspondem à nova versão e seriam redefinidos. Suas lições concluídas permanecem; apenas as revisões alteradas são afetadas.'
+    confirm: 'Atualizar mesmo assim'
+    cancel: 'Manter a versão atual'
   share:
     button: "Compartilhar"
     aria: "Compartilhar o conjunto '{title}'"
