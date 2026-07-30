@@ -372,11 +372,10 @@ On a failed deploy: pull the error from the action logs and fix it, but the rele
 
 - `docs/journal/chat-journal-session-{today}.md`: release entry with version, date, main changes, deploy time
 - `ROADMAP.md`: mark every item included in the release as `[x]`
-- `ROADMAP.md` "Blocked / Upstream Wait": read it and ask whether this
-  release's tag now triggers a held entry (e.g. a PR held for the release AFTER
-  this one). If so, action it - take the PR out of draft, merge it, and archive
-  the entry. This is the read step that closes the loop for a draft parked on a
-  tag it cannot itself point past.
+- `ROADMAP.md` "Blocked / Upstream Wait": read it - does this tag now trigger a
+  held entry (e.g. a PR parked for the NEXT release)? If so, un-draft it, merge,
+  and archive the entry. The read step for a draft parked on a tag it cannot
+  point past.
 - `CLAUDE.md`: update on new endpoints or architectural changes
 - `.claude/rules/lessons-learned.md`: if anything noteworthy happened during the release (new pitfall, workflow improvement), document it
 
