@@ -47,8 +47,9 @@ test.describe("Export flows", () => {
             topic: "Spanish B1",
         });
 
-        await page.getByTestId("nav-settings").click();
-        await page.waitForURL("**/settings");
+        // Settings is tab-grouped (#549); deep link straight to the tab
+        // that holds this section - the documented ?tab= contract.
+        await page.goto("/settings?tab=data");
         await expect(page.getByTestId("export-section")).toBeVisible();
 
         const body = await readDownload(page, "export-md-progress");
@@ -74,8 +75,9 @@ test.describe("Export flows", () => {
             .fill("E2E Test Curriculum");
         await page.getByTestId("curriculum-create").click();
 
-        await page.getByTestId("nav-settings").click();
-        await page.waitForURL("**/settings");
+        // Settings is tab-grouped (#549); deep link straight to the tab
+        // that holds this section - the documented ?tab= contract.
+        await page.goto("/settings?tab=data");
         await expect(page.getByTestId("export-section")).toBeVisible();
 
         // Pick the just-created curriculum.
