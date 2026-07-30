@@ -1,7 +1,9 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-07-09 (v2.1.0)
-**Anzahl EXPs:** 39
+**Stand:** 2026-07-30 (v2.8.0)
+**Anzahl EXPs:** 44 (Zeilen der Uebersichtstabelle; die Nummern 019 und 043
+existieren nicht, 001-017 sind in `docs/roadmap-archive/phase-1-complete.md`
+archiviert und bleiben als historische Zeilen stehen)
 
 > Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
 > [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
@@ -55,12 +57,14 @@
 | 035 | Vercel AI Elements Integration (AI-UI)      | Feature      | Zukunft | Niedrig | shadcn/ui, Session |
 | 036 | KI-Übungsgenerierung aus Theorie-Content    | Feature      | 2     | Hoch      | 013, 021, 033, 018 |
 | 037 | Navigation Restructuring (12 → 7 Einträge)  | Querschnitt  | 2     | Hoch      | 022, 034, 032/033  |
+| 038 | Passphrase-verschlüsselter Key-Export (.alk) | Feature     | angenommen | -    | 031                |
 | 039 | JSON-Schema als Single Source of Truth      | Querschnitt  | laufend | Hoch    | 002, 003, 004      |
 | 040 | Directory-Restrukturierung (God-Folders)    | Querschnitt  | abgeschlossen | Mittel | 024 (verwandt)  |
 | 041 | Aufgabentyp-Eignung + faire Bewertung       | Querschnitt  | Analyse | Mittel-Hoch | 002, 007, 013, 036 |
 | 042 | Content-Engine (kanonisches Format + Adapter) | Querschnitt | ausgeliefert (Boundary + Extraktion) | Mittel-Hoch | 039, 002, 003     |
 | 044 | CSS-Vereinheitlichung (Kaskaden-Reparatur + Komponenten-Migration) | Querschnitt | laufend | Sehr hoch | 016, #1467 |
 | 045 | Content-ID-Stabilität (Datenintegrität über Content-Updates) | Querschnitt | Analyse | Sehr hoch | 039, 042, 002/003, #2128 |
+| 046 | Bearbeiten fremder Inhalte + Autorenzuschreibung | Querschnitt | Analyse | P2/P3 | 023, 025, 026, 045, #2128/#2130 |
 
 ## Umsetzungsstand (Stand v1.99.0)
 
