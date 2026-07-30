@@ -1,12 +1,13 @@
 {
   "note": "Ceiling for the published image (#2132). Compressed bytes - what crosses the wire on a pull. MEASURED IN CI (ubuntu-latest, docker-build-smoke.yml), because that is the environment that gates. A local run can legitimately differ by base-image and apt-package drift - 125.6 MB in CI against 112.3 MB locally on the same commit - so never lower this to match a laptop. Lower it with --update-baseline from a CI measurement; raising it needs --allow-raise and belongs in a commit that says why.",
-  "compressed_bytes": 125602358,
+  "compressed_bytes": 125668464,
   "measured_in": "ci/ubuntu-latest",
   "_tightening": "Tightening stays MANUAL (#2140): the gate offers headroom above the jitter tolerance but never applies it. This ceiling is a CI measurement; a local run lowering it would pin the project to one machine's number (#2134).",
   "per_arch": {
-    "amd64": 125602358,
-    "arm64": 124716686
+    "amd64": 125668464,
+    "arm64": 124288511
   },
   "_per_arch_note": "Per-architecture ceilings (#2147) - two published architectures are two environments (#2136 point 5), so neither may borrow the other's number. amd64 carries the CI measurement from docker-build-smoke.yml. arm64 was seeded from image-size-measure.yml run 30532123506 (native ubuntu-24.04-arm, gzip -1, after the #2163 runs-on fix; the workflow reports and a human enters, per #2140).",
-  "_measurement_paths": "Seeding measures a locally built+loaded image; enforcement measures one pulled from a registry. Verified 2026-07-29 that both paths mean the same number: the same image measured locally and after a push/pull round-trip through a throwaway registry:2 differed by 14 bytes of 112325662 (0.000%) - three orders of magnitude inside the 2 MB rebuild-jitter tolerance. So a ceiling seeded from a measurement run is valid against the published artifact. Re-verify if the packaging changes (a different registry, a different image store, or zstd-compressed layers)."
+  "_measurement_paths": "Seeding measures a locally built+loaded image; enforcement measures one pulled from a registry. Verified 2026-07-29 that both paths mean the same number: the same image measured locally and after a push/pull round-trip through a throwaway registry:2 differed by 14 bytes of 112325662 (0.000%) - three orders of magnitude inside the 2 MB rebuild-jitter tolerance. So a ceiling seeded from a measurement run is valid against the published artifact. Re-verify if the packaging changes (a different registry, a different image store, or zstd-compressed layers).",
+  "_tolerance_note": "Tolerance is +/-200000 bytes around each ceiling: ~4.2x the measured rebuild jitter (47651 bytes between identical-content builds). Above ceiling+tolerance fails (growth); below ceiling-tolerance fails too (an unexpected shrink is a finding, #2135 both directions). Ceilings re-anchored to the v2.8.0 PUBLISHED per-arch measurements (run 30548288561) so the next growth is measured from what users actually pull."
 }
