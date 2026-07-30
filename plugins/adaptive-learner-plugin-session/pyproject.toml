@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-session"
-version = "2.8.1"
+version = "2.8.2"
 description = "Adaptive Learner: 7-step learning cycle, per-method system prompts, stagnation-based method switching."
 authors = ["Asterios Raptis"]
 license = "MIT"

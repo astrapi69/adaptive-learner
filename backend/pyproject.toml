@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive_learner"
-version = "2.8.1"
+version = "2.8.2"
 description = "Adaptive learning system based on the six-method learning model."
 authors = ["Asterios Raptis"]
 license = "MIT"
