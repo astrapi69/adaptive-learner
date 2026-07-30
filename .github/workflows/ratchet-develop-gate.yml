@@ -1,0 +1,43 @@
+name: Ratchet develop gate (detection)
+
+# DETECTION, NOT CLOSURE (#2182).
+#
+# The ratchet gates run on PRs, but never against a release/hotfix branch's own
+# commits: the back-merge into develop is a direct admin merge
+# (enforce_admins=false), not a PR, so no required check evaluates it. That is
+# how two ratchet-tripping changes reached develop ungated on 2026-07-30
+# (css-size #2180, version badges).
+#
+# This job re-runs the dependency-free ratchets on push to develop - the
+# back-merge target - so a tripped ratchet is reported AT THE PUSH, not
+# discovered by the next contributor's PR. It makes develop red AFTER develop is
+# red; it shortens discovery latency, it does NOT stop the bad state. The
+# closure is enforce_admins=true - a release-manager decision. Full reasoning:
+# docs/development/release-ratchet-gap.md.
+#
+# Scope: the three dependency-free ratchets (bash + Python stdlib), which cover
+# the incidents that actually happened. Complexity is intentionally omitted here
+# (it needs radon + eslint); it is covered by release-test (#2190) and its own
+# PR gate.
+
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+
+jobs:
+  ratchet-detection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: CSS size ratchet (.css-size-baseline)
+        run: bash scripts/check-css-size.sh
+      - name: File-size ratchet (.filesize-baseline)
+        run: bash scripts/check-file-sizes.sh
+      - name: Rule-corpus ratchet (.corpus-baseline.json)
+        run: python3 scripts/verify_rule_corpus_size.py
