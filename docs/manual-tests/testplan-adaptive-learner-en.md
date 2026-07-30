@@ -692,6 +692,46 @@ three sets are affected; all other sets are untouched.
 - [ ] Language check: notice and result texts appear in the app language (not
       English), sampled across several languages (de/ja/ko/el/hi).
 
+#### Producing the state (test precondition)
+
+The notice shows only when affected review cards are present in your own data.
+FIRST check whether the QA device already has such data:
+
+- [ ] Open the Dashboard. If the notice already shows, real affected data is
+      present -> test on real data, produce nothing. Then the product condition
+      applies: run "Export backup" (the button in the notice) FIRST.
+
+If no notice shows, produce the state. An orphaned entry can no longer be
+created through normal use (the corrected version already emits the new key), so
+this step needs developer tools (marked as such):
+
+- [ ] Take a backup (Settings -> Data -> Export backup) so the starting state is
+      restorable.
+- [ ] Learn Japanese A1, lesson "01-begruessungen", the matching exercise
+      (ex-match-begruessung) once and answer "こんにちは" wrong on purpose -> a
+      review card is created on the NEW key "こんにちは (konnichiwa)".
+- [ ] [Developer tools] Reset that card's key to the old form "こんにちは"
+      (makes it orphaned):
+      - Server mode (SQLite at
+        ~/.local/share/adaptive_learner/adaptive_learner.db), one row:
+        `UPDATE element_errors SET element_key='こんにちは'
+        WHERE set_id='ja-a1-from-de' AND lesson_id='01-begruessungen.json'
+        AND exercise_id='ex-match-begruessung'
+        AND element_key='こんにちは (konnichiwa)';`
+      - Dexie mode (browser DevTools -> Application -> IndexedDB ->
+        elementErrors): delete the new-key row and re-add it, replacing only the
+        key segment "こんにちは (konnichiwa)" with "こんにちは" in both the
+        `element_key` field and the `id` key (leave every other segment,
+        including direction, unchanged).
+- [ ] Reload the Dashboard -> the notice appears (1 affected card, Japanese A1).
+
+Way back (repeatable, no traces):
+
+- [ ] After the test, import the backup taken in step 1 (Settings -> Data ->
+      Import) -> exact starting state, no traces.
+- [ ] [Developer tools] Or reverse the UPDATE (server) / set the test row back to
+      the new key (Dexie).
+
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)

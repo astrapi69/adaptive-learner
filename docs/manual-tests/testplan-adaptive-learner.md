@@ -730,6 +730,49 @@ Sets bleiben unberuehrt.
 - [ ] Sprache pruefen: Hinweis- und Ergebnistexte erscheinen in der App-Sprache
       (nicht englisch), stichprobenartig in mehreren Sprachen (de/ja/ko/el/hi).
 
+#### Zustand herstellen (Voraussetzung fuer den Test)
+
+Der Hinweis erscheint nur, wenn betroffene Wiederholungskarten in den eigenen
+Daten liegen. ZUERST pruefen, ob das QA-Geraet solche Daten schon hat:
+
+- [ ] Dashboard oeffnen. Erscheint der Hinweis bereits, liegen ECHTE betroffene
+      Daten vor -> auf echten Daten testen, nichts herstellen. Dann gilt die
+      Produktbedingung: VORHER "Sicherung erstellen" (Knopf im Hinweis).
+
+Erscheint kein Hinweis, den Zustand herstellen. Ein verwaister Eintrag entsteht
+nicht mehr ueber die normale Bedienung (die korrigierte Fassung erzeugt bereits
+den neuen Key), daher braucht dieser Schritt Entwicklerwerkzeuge (so
+gekennzeichnet):
+
+- [ ] Sicherung ziehen (Settings -> Daten -> Sicherung erstellen), damit der
+      Ausgangszustand wiederherstellbar ist.
+- [ ] Japanisch A1, Lektion "01-begruessungen", die Zuordnungs-Uebung
+      (ex-match-begruessung) einmal lernen und bei "こんにちは" absichtlich falsch
+      antworten -> es entsteht eine Wiederholungskarte auf dem NEUEN Key
+      "こんにちは (konnichiwa)".
+- [ ] [Entwicklerwerkzeuge] Den Key dieser Karte auf die alte Form
+      "こんにちは" zuruecksetzen (macht sie verwaist):
+      - Server-Modus (SQLite unter
+        ~/.local/share/adaptive_learner/adaptive_learner.db), eine Zeile:
+        `UPDATE element_errors SET element_key='こんにちは'
+        WHERE set_id='ja-a1-from-de' AND lesson_id='01-begruessungen.json'
+        AND exercise_id='ex-match-begruessung'
+        AND element_key='こんにちは (konnichiwa)';`
+      - Dexie-Modus (Browser-DevTools -> Application -> IndexedDB ->
+        elementErrors): die neue Zeile loeschen und neu anlegen; im Feld
+        `element_key` und im Schluessel `id` jeweils nur das Key-Segment
+        "こんにちは (konnichiwa)" durch "こんにちは" ersetzen (alle anderen
+        Segmente inkl. direction unveraendert lassen).
+- [ ] Dashboard neu laden -> der Hinweis erscheint (1 betroffene Karte,
+      Japanisch A1).
+
+Weg zurueck (Test wiederholbar, keine Spuren):
+
+- [ ] Nach dem Test die in Schritt 1 gezogene Sicherung importieren
+      (Settings -> Daten -> Import) -> exakter Ausgangszustand, keine Spuren.
+- [ ] [Entwicklerwerkzeuge] Alternativ das UPDATE umkehren (Server) bzw. die
+      Testzeile wieder auf den neuen Key setzen (Dexie).
+
 ### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
       Aktualisieren → Set kommt NICHT zurueck (#1719)
