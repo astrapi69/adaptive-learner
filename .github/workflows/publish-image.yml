@@ -241,9 +241,14 @@ jobs:
         run: |
           set -euo pipefail
           image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
+          # RATE_LIMIT_ENABLED=0: the walk navigates ~24 route states in
+          # quick succession; the limiter (its own backend test suite pins
+          # it ON by default) would 429 the settings tabs and the station
+          # would measure the limiter, not the page.
           docker run -d --name verify-page -p 18712:8000 \
             -e ADAPTIVE_LEARNER_PORT=8000 -e ADAPTIVE_LEARNER_DATA_DIR=/app/data \
             -e ADAPTIVE_LEARNER_SERVE_FRONTEND=1 -e ADAPTIVE_LEARNER_FRONTEND_DIST=/app/static \
+            -e RATE_LIMIT_ENABLED=0 \
             "$image"
           for _ in $(seq 1 60); do sleep 2; curl -sf http://127.0.0.1:18712/api/health >/tmp/h.json && break; done
           cat /tmp/h.json
@@ -256,7 +261,13 @@ jobs:
           # class that already broke frontend/Dockerfile's npm ci once).
           cd e2e && npm install --no-audit --no-fund
           npx playwright install --with-deps chromium
-          node scripts/verify-container-page.mjs http://127.0.0.1:18712
+          # "<bytes> <name>" lines: the size column lets the script class
+          # sub-2500-byte tree-shaken micro-chunks; names-only would keep
+          # the stricter behaviour but fail on icon chunks.
+          docker exec verify-page sh -c 'ls -l /app/static/assets | awk "{print \$5, \$9}"' \
+            | grep '\.js$' > /tmp/chunks.txt
+          wc -l /tmp/chunks.txt
+          node scripts/verify-container-page.mjs http://127.0.0.1:18712 /tmp/chunks.txt
           docker rm -f verify-page >/dev/null
 
       - name: Record tag and digest
