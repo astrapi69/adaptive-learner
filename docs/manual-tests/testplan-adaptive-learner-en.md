@@ -111,6 +111,9 @@ lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
 - [ ] The order is saved IMMEDIATELY - there is no separate Save action.
       Reload the page (or collapse and re-expand the set): the changed order
       persists.
+- [ ] Drives the LEARNING sequence (#2212), not just the list: after a move,
+      opening the set starts on the new first lesson, and "next lesson"
+      navigation follows the chosen order - in both storage modes.
 - [ ] Existing sets: without an explicit move, the current order is shown
       unchanged (no silent resort).
 - [ ] Identity untouched: after several moves of a lesson that has learning

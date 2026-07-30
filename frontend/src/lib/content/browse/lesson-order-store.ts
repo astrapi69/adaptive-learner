@@ -54,6 +54,7 @@
  */
 
 import { mirrorUserData } from "../../../storage/dexie/dexie-user-data";
+import type { ContentLessonList } from "../../../storage/types";
 
 /** localStorage key; registered in ``MANAGED_USER_DATA_KEYS``. */
 const STORAGE_KEY = "adaptive-learner.lesson-order";
@@ -166,6 +167,30 @@ export function applyStoredLessonOrder(
     if (!known.has(filename)) ordered.push(filename);
   }
   return ordered;
+}
+
+/**
+ * Apply the stored display order to a ``listLessons`` result (#2212).
+ *
+ * Wired at the single ``IStorageService.contentLoader.listLessons`` seam in
+ * BOTH storage modes, so the user's chosen order drives every consumer of the
+ * sequence - opening a set, next-lesson auto-advance, export, the learning
+ * path - not just the "Manage lessons" list widget (#2172 stopped at the
+ * widget). Returns the SAME list object when the set was never reordered
+ * (``applyStoredLessonOrder`` hands back the same array reference), so existing
+ * sets keep their natural order and referential-stability is preserved.
+ */
+export function applyStoredLessonOrderToList(
+  list: ContentLessonList,
+  storage?: Storage,
+): ContentLessonList {
+  const ordered = applyStoredLessonOrder(
+    list.lessons,
+    list.source,
+    list.set_id,
+    storage,
+  );
+  return ordered === list.lessons ? list : { ...list, lessons: ordered };
 }
 
 /**

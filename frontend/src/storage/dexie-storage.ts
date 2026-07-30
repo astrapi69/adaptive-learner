@@ -80,6 +80,7 @@ import {
   listSetsDexie,
   saveUserSetDexie,
 } from "./content/content-loader-dexie";
+import { applyStoredLessonOrderToList } from "../lib/content/browse/lesson-order-store";
 import {
   getLessonProgressDexie,
   listLessonProgressDexie,
@@ -268,7 +269,10 @@ export const dexieStorage: IStorageService = {
     listSets: async () => listSetsDexie(await activeSourcesDexie()),
     downloadSet: async (source, setId, onProgress) =>
       downloadSetDexie(source, setId, await activeSourcesDexie(), onProgress),
-    listLessons: (source, setId) => listLessonsDexie(source, setId),
+    // #2212 — order by the user's chosen display order so open/next-lesson
+    // follow it, not just the "Manage lessons" list (no-op if never reordered).
+    listLessons: async (source, setId) =>
+      applyStoredLessonOrderToList(await listLessonsDexie(source, setId)),
     getLesson: (source, setId, filename) =>
       getLessonDexie(source, setId, filename),
     /** Phase 54 / v1.37.0 — read a cached asset blob from

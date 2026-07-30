@@ -117,6 +117,10 @@ Fall (Verschieben auf dem Telefon).
 - [ ] Reihenfolge ist SOFORT gespeichert - keine gesonderte Speichern-Aktion.
       Seite neu laden (oder Set zu- und wieder aufklappen): die geaenderte
       Reihenfolge bleibt.
+- [ ] Wirkt auf die LERNFOLGE (#2212), nicht nur die Liste: nach dem
+      Verschieben oeffnet das Set mit der neuen ersten Lektion, und die
+      Weiter-Navigation ("naechste Lektion") folgt der gewaehlten Reihenfolge -
+      in beiden Speichermodi.
 - [ ] Bestehende Sets: ohne eigenes Verschieben zeigt sich die bisherige
       Reihenfolge unveraendert (kein stilles Umsortieren).
 - [ ] Identitaet unberuehrt: nach mehreren Verschiebungen einer Lektion mit
