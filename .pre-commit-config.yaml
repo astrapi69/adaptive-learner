@@ -96,3 +96,11 @@ repos:
         pass_filenames: false
         files: ^backend/config/i18n/(de|el|hi)\.yaml$
         stages: [pre-commit]
+
+      - id: docs-hygiene
+        name: docs hygiene (umlaut-substitute ratchet + exploration-index orphans)
+        entry: python scripts/verify_docs_hygiene.py
+        language: python
+        pass_filenames: false
+        files: ^(docs/.*\.md|docs/\.docs-hygiene-baseline\.json|scripts/verify_docs_hygiene\.py)$
+        stages: [pre-commit]

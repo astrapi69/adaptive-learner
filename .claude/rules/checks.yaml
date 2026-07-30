@@ -182,3 +182,17 @@ checks:
       workflow_dispatch and release/** pushes always run (#1843).
     wired_in: .github/workflows/webkit-gate.yml
     probe: none
+
+  - id: docs-umlaut-ratchet
+    verifies: no NEW ASCII substitute-spelling (fuer/waehrend/...) enters German docs prose
+    rule: lessons/docs-i18n.md#german-content-uses-real-umlauts
+    status: active
+    wired_in: make verify-docs-hygiene; .pre-commit-config.yaml docs-hygiene
+    probe: make_target=verify-docs-hygiene
+
+  - id: exploration-index-orphan
+    verifies: every docs/explorations/EXP-*.md has a row in EXP-INDEX.md
+    rule: lessons/docs-i18n.md#doc-files-existence-is-not-discoverability
+    status: active
+    wired_in: make verify-docs-hygiene; .pre-commit-config.yaml docs-hygiene
+    probe: make_target=verify-docs-hygiene

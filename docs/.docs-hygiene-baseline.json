@@ -1,0 +1,5 @@
+{
+  "umlaut_count": 229,
+  "umlaut_files_scanned": 587,
+  "rationale": "Frozen ASCII substitute-spelling count across docs/**/*.md. Stems are evidence-based (real 2026-07-30 leaks), not a completeness list. Ratchet: the count may not rise; lower it here whenever it falls so the gain cannot be spent again. Pre-existing substitutions (e.g. the DE testplan) are grandfathered; full normalization is a separate task."
+}
