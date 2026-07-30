@@ -34,10 +34,10 @@ def test_reports_what_it_measured(tmp_path: Path) -> None:
     """Point 4: a run that measured nothing must not print the same green."""
     baseline = tmp_path / "b.json"
     baseline.write_text(json.dumps({"compressed_bytes": 999_000_000}), encoding="utf-8")
-    result = _run("--size-bytes", "1000", baseline=baseline)
+    result = _run("--size-bytes", "999000000", baseline=baseline)
     assert result.returncode == 0, result.stderr
     assert "measured" in result.stdout
-    assert "1000" in result.stdout or "0 MB" in result.stdout
+    assert "999000000" in result.stdout
 
 
 def test_red_when_the_image_grows_past_the_ceiling(tmp_path: Path) -> None:
@@ -51,9 +51,9 @@ def test_red_when_the_image_grows_past_the_ceiling(tmp_path: Path) -> None:
 
 def test_green_at_or_below_the_ceiling(tmp_path: Path) -> None:
     baseline = tmp_path / "b.json"
-    baseline.write_text(json.dumps({"compressed_bytes": 200}), encoding="utf-8")
-    assert _run("--size-bytes", "200", baseline=baseline).returncode == 0
-    assert _run("--size-bytes", "150", baseline=baseline).returncode == 0
+    baseline.write_text(json.dumps({"compressed_bytes": 100_000_000}), encoding="utf-8")
+    assert _run("--size-bytes", "100000000", baseline=baseline).returncode == 0
+    assert _run("--size-bytes", "99900000", baseline=baseline).returncode == 0
 
 
 def test_fails_closed_without_a_baseline(tmp_path: Path) -> None:
@@ -122,14 +122,16 @@ def test_a_real_regression_still_fails(tmp_path: Path) -> None:
     assert "over the ceiling" in result.stderr
 
 
-def test_headroom_beyond_the_tolerance_is_offered(tmp_path: Path) -> None:
-    """#2140: a real shrink must be offered, or the space is silently reusable."""
+def test_shrink_beyond_the_tolerance_is_a_finding(tmp_path: Path) -> None:
+    """#2135 both directions: a ceiling far above the artifact reports
+    nothing when the artifact loses content it should carry - red until a
+    human verifies the loss and lowers the ceiling (never automatic)."""
     baseline = tmp_path / "b.json"
     baseline.write_text(json.dumps({"compressed_bytes": 120_000_000}), encoding="utf-8")
     result = _run("--size-bytes", str(100_000_000), baseline=baseline)
-    assert result.returncode == 0, result.stderr
-    assert "ratchet opportunity" in result.stdout.lower()
-    assert "--update-baseline" in result.stdout
+    assert result.returncode == 1
+    assert "unexpected shrink" in result.stderr
+    assert "--update-baseline" in result.stderr
 
 
 def test_headroom_inside_the_jitter_tolerance_is_not_offered(tmp_path: Path) -> None:
@@ -149,7 +151,7 @@ def test_arch_selects_its_own_ceiling(tmp_path: Path) -> None:
     )
     over = _run("--size-bytes", str(125_000_000), "--arch", "amd64", baseline=baseline)
     assert over.returncode == 1, "amd64 ceiling was not applied"
-    under = _run("--size-bytes", str(125_000_000), "--arch", "arm64", baseline=baseline)
+    under = _run("--size-bytes", str(129_950_000), "--arch", "arm64", baseline=baseline)
     assert under.returncode == 0, under.stderr
 
 
@@ -167,7 +169,7 @@ def test_the_arch_is_named_in_the_output(tmp_path: Path) -> None:
     """Point 4 + point 5: say WHICH environment this reading belongs to."""
     baseline = tmp_path / "b.json"
     baseline.write_text(json.dumps({"per_arch": {"arm64": 130_000_000}}), encoding="utf-8")
-    result = _run("--size-bytes", "1000", "--arch", "arm64", baseline=baseline)
+    result = _run("--size-bytes", "129900000", "--arch", "arm64", baseline=baseline)
     assert result.returncode == 0, result.stderr
     assert "arm64" in result.stdout
 

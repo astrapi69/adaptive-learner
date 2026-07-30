@@ -35,7 +35,7 @@ def setup_logging() -> None:
     - DEBUG=true: human-readable format with DEBUG level
     - DEBUG=false: JSON format with INFO level
     """
-    debug = os.getenv("ADAPTIVE_LEARNER_DEBUG", "true").lower() in ("true", "1", "yes")
+    debug = os.getenv("ADAPTIVE_LEARNER_DEBUG", "false").lower() in ("true", "1", "yes")
 
     root = logging.getLogger()
     root.handlers.clear()
