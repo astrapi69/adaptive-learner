@@ -40,6 +40,16 @@ for (const vp of VIEWPORTS) {
         test.use({viewport: {width: vp.width, height: vp.height}});
 
         test("Landing renders without horizontal overflow", async ({page}) => {
+            // Landing needs an EMPTY install - identity recovery
+            // otherwise redirects "/" to the dashboard of whatever
+            // user an earlier spec (or viewport block) created
+            // (#2170). The shipped reset endpoint restores it.
+            const resp = await page.request.post("/api/reset", {
+                data: {confirmation: "RESET"},
+            });
+            if (!resp.ok()) {
+                throw new Error(`landing reset failed: ${resp.status()}`);
+            }
             await page.goto("/");
             await expect(page.getByTestId("landing")).toBeVisible();
             const overflow = await page.evaluate(() => {

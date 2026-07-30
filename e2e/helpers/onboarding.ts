@@ -44,6 +44,18 @@ export async function completeOnboarding(
 ): Promise<void> {
     const merged = {...DEFAULTS, ...args};
     await page.goto("/onboarding");
+    // #1085 migration welcome: on a fresh API-mode install the dialog
+    // overlays the form (z-10000) and intercepts every click. It is
+    // legitimate product behaviour, so the helper dismisses it the way
+    // a learner without online data would - "start fresh". Racy by
+    // nature (an async empty-install probe opens it), hence the short
+    // wait instead of a hard expect; the react-router 8 bump (#2041)
+    // shifted effect timing so the dialog now reliably wins the race
+    // it used to lose.
+    const migration = page.getByTestId("migration-start-fresh");
+    await migration.click({timeout: 3000}).catch(() => {
+        /* dialog not shown - not an empty install, or already dismissed */
+    });
     // Quick start (#92): only name + topic are required.
     await page.getByTestId("onboarding-name").fill(merged.name);
     await page.getByTestId("onboarding-topic").fill(merged.topic);
@@ -130,24 +142,32 @@ export async function seedTestApiKey(
                 "run completeOnboarding first.",
         );
     }
-    // PATCH /api/users/{uid}/settings carries the per-
-    // provider key fields. Sending one ``api_key_<provider>``
-    // string flips the matching ``has_<provider>_key`` to
-    // true on the GET response.
+    // The settings API is /api/settings/{uid} (the old
+    // /api/users/{uid}/settings shape this helper was written
+    // against 404s today, #2170). Keys go through the dedicated
+    // POST (the bare PATCH deliberately cannot touch them - they
+    // are Fernet-encrypted server-side); the active provider is a
+    // plain settings field.
     await page.evaluate(
         async ({uid, prov}) => {
-            const body: Record<string, string> = {
-                active_provider: prov,
-            };
-            body[`api_key_${prov}`] = "sk-e2e-test-dummy-key";
-            const resp = await fetch(`/api/users/${uid}/settings`, {
+            const keyResp = await fetch(`/api/settings/${uid}/api-key`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({provider: prov, key: "sk-e2e-test-dummy-key"}),
+            });
+            if (!keyResp.ok) {
+                throw new Error(
+                    `seedTestApiKey: POST api-key failed ${keyResp.status}`,
+                );
+            }
+            const patchResp = await fetch(`/api/settings/${uid}`, {
                 method: "PATCH",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(body),
+                body: JSON.stringify({active_provider: prov}),
             });
-            if (!resp.ok) {
+            if (!patchResp.ok) {
                 throw new Error(
-                    `seedTestApiKey: PATCH failed ${resp.status}`,
+                    `seedTestApiKey: PATCH failed ${patchResp.status}`,
                 );
             }
         },

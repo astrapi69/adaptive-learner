@@ -35,8 +35,9 @@ test.describe("Model picker", () => {
     }) => {
         await createTestUser(page, {name: "Model Picker E2E"});
 
-        await page.getByTestId("nav-settings").click();
-        await page.waitForURL("**/settings");
+        // Settings is tab-grouped (#549); deep link straight to the tab
+        // that holds this section - the documented ?tab= contract.
+        await page.goto("/settings?tab=ai");
 
         // The model-picker for the active provider (anthropic
         // by default) mounts on Settings.
@@ -62,8 +63,9 @@ test.describe("Model picker", () => {
     }) => {
         await createTestUser(page, {name: "Model Picker No-Key E2E"});
 
-        await page.getByTestId("nav-settings").click();
-        await page.waitForURL("**/settings");
+        // Settings is tab-grouped (#549); deep link straight to the tab
+        // that holds this section - the documented ?tab= contract.
+        await page.goto("/settings?tab=ai");
 
         await page.getByTestId("model-picker-toggle-anthropic").click();
         await expect(

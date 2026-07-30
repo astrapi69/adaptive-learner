@@ -10,6 +10,21 @@
 import {expect, test} from "@playwright/test";
 
 test.describe("Landing", () => {
+    // The landing page only renders on an EMPTY install: since the
+    // identity-recovery feature (97d72fac, 2026-05-23) "/" finds the
+    // most recent backend user and redirects to the dashboard. The
+    // suite shares one serial backend, so earlier specs' users made
+    // these tests impossible in sequence (#2170). The shipped Danger-
+    // Zone reset endpoint restores the empty install product-faithfully.
+    test.beforeEach(async ({page}) => {
+        const resp = await page.request.post("/api/reset", {
+            data: {confirmation: "RESET"},
+        });
+        if (!resp.ok()) {
+            throw new Error(`landing reset failed: ${resp.status()}`);
+        }
+    });
+
     test("renders the brand, language picker, and Start button", async ({page}) => {
         await page.goto("/");
         await expect(page.getByTestId("landing")).toBeVisible();
