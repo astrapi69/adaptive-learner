@@ -49,13 +49,14 @@ const lessons: FoldedUserLesson[] = [
 
 function renderFolded(extra: Partial<React.ComponentProps<typeof FoldedUserLessons>> = {}) {
     const onPlayLesson = vi.fn();
+    const onEdit = vi.fn();
     render(
         <FoldedUserLessons
             lessons={lessons}
             setsByKey={{"user-generated#mine": setEntry({})}}
             communitySharingEnabled
             onPlayLesson={onPlayLesson}
-            onEdit={vi.fn()}
+            onEdit={onEdit}
             onExportJson={vi.fn()}
             onExportSet={vi.fn()}
             onShare={vi.fn()}
@@ -63,7 +64,7 @@ function renderFolded(extra: Partial<React.ComponentProps<typeof FoldedUserLesso
             {...extra}
         />,
     );
-    return {onPlayLesson};
+    return {onPlayLesson, onEdit};
 }
 
 describe("FoldedUserLessons", () => {
@@ -108,6 +109,15 @@ describe("FoldedUserLessons", () => {
             setsByKey: {"user-generated#mine": setEntry({domain: "imported"})},
         });
         expect(screen.getByTestId("folded-lesson-l1-edit")).toBeInTheDocument();
+    });
+
+    it("edits the specific folded lesson, not the set's first (#2210)", () => {
+        const {onEdit} = renderFolded();
+        fireEvent.click(screen.getByTestId("folded-lesson-l2-edit"));
+        expect(onEdit).toHaveBeenCalledWith(
+            expect.objectContaining({id: "mine"}),
+            "l2.json",
+        );
     });
 
     it("skips a lesson whose owning set is missing from the lookup", () => {
