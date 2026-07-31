@@ -111,10 +111,50 @@ Zusätzlich: #2222 angelegt (GHCR :2.8.1-Löschung, Auslöser delete:packages-To
 - Regeln eingehalten: je PR ein Concern, TDD RED-first (wo Logik), Worktrees,
   keine Admin-Merges, Belege in jedem Close.
 
-## Abschluss
+## Abschluss Blöcke A bis C
 
 Beweislauf 3 des release-prepare-Gates (Lauf 30618928295, von develop mit
 2.8.2): **SUCCESS** — der erste grüne Lauf dieses Workflows seit v2.4.0
 (18.07.) und der erste überhaupt außerhalb eines Release-Schnitts. Die Kette
 #2035 (safe.directory) + #2241 (Skript fail-closed ohne docker) + #2244
 (Test-Umgebung) ist damit am echten Artefakt bewiesen, nicht nur lokal.
+
+## 8. Block D — Smoke-Suite vollständig wiederbelebt (Nachmittag)
+
+Freigabe: Helfer zuerst, dann Wiederherstellungs- und Sicherungs-Spec. Der
+gemeinsame Helfer (migration-welcome-Dismiss in helpers/onboarding.ts) war
+bereits durch die andere Spur gefixt (`fa45a73a`) — verifiziert, nicht
+doppelt gebaut. Alle Beweisläufe liefen live gegen echte Dev-Server
+(reuseExistingServer), jeweils auf frisch gewipetem, isoliertem Backend.
+
+- **backup-restore.spec** (PR #2247): Rewrite gegen den `.alb`-Vertrag —
+  Manifest vor den Daten lesbar, Tabellen-Shape, api_key_*-Leak-Verbot,
+  Re-Upload → Vergleichspanel → sauberes Confirm. Neuer Helfer
+  `e2e/helpers/alb.ts` liest das deflate-ZIP mit Nodes zlib (Runtime first,
+  keine neue Dependency). Der Spec erzwingt den Blob-Download-Fallback
+  (showSaveFilePicker entfernt — der native Dialog ist unscriptbar).
+  Live: 1 passed (7.7s). **Der Backup-Pfad hat damit erstmals seit
+  2026-05-23 wieder ein automatisches Signal**; der manuelle
+  BACKUP-AKZEPTANZTEST hängt nicht mehr allein an einer Sitzung.
+- **settings.spec** (PR #2249, + Closes #2248): Rewrite gegen die
+  Key-Vault-UI (v2.5.0+). Zwei echte UI-Timing-Eigenheiten als
+  Retry-als-Einheit abgebildet (Auto-Key-Test nach Save re-rendert das
+  Panel; sein busy-Guard verschluckt einen Provider-Wechsel still).
+  **Fund #2248, im selben PR gefixt**: der E2E-Backend las die ECHTE
+  secrets.yaml der Entwicklermaschine (ADAPTIVE_LEARNER_CONFIG_DIR war
+  nicht isoliert) — beobachtet, weil der Auto-Key-Test mit dem Fake einen
+  realen api.anthropic.com-Call machte (401); mit echten Keys wäre das ein
+  echter Provider-Call gewesen. Live: 1 passed (8.6s), nach Wipe 11.0s.
+- **learning-repo.spec, alle vier** (PR #2250, Closes #2177): nur der
+  Einstieg war veraltet — das Widget lebt im Dashboard-Activity-Tab;
+  gemeinsamer openActivityTab-Helfer, alle übrigen Assertions standen.
+  Live: 4 passed (25.2s).
+
+**Skip-Budget 6 → 0 über drei PRs, je im selben Commit gesenkt (der
+menschliche Akt, den das Gate verlangt): jeder Smoke-Spec der Suite ist
+wieder scharf; künftige Stilllegung ist ein neuer deklarierter Raise, nie
+Headroom.** #2177 und #2170s Follow-up-Auftrag sind damit abgeschlossen.
+
+Vermerkt ohne Auftrag (RM-Frage vom Vormittag): die Inventur "welche
+Prüfungen laufen nur innerhalb zusammengesetzter Abläufe und melden nie
+einzeln" liegt als Merkposten für die nächste CI-Verdrahtungs-Berührung.
