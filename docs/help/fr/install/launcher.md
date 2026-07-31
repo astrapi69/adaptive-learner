@@ -148,15 +148,26 @@ Pièges connus :
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. À la première ouverture, Gatekeeper bloque le binaire comme
-   provenant d'un "développeur non identifié". Deux façons de
-   contourner cela :
+2. À la première ouverture, **macOS bloque le programme**. Selon la
+   version de macOS, la boîte de dialogue ne propose que « Placer dans
+   la corbeille » et « Terminé », sans bouton pour ouvrir. Ce n'est ni
+   une erreur ni un défaut du programme : Adaptive Learner **n'est pas
+   certifié par Apple**, ce qui exige un compte développeur payant.
 
-    - Clic droit (ou Ctrl-clic) sur le binaire > **Ouvrir** > confirme
-      **Ouvrir** dans la boîte de dialogue. macOS le mémorise pour tous
-      les démarrages suivants.
-    - Ou : Réglages Système > **Confidentialité et sécurité** > descends
-      jusqu'à l'application bloquée et clique sur **Ouvrir quand même**.
+   Comment l'ouvrir malgré tout :
+
+    1. Ferme la boîte de dialogue avec **Terminé** (pas la corbeille).
+    2. Ouvre **Réglages Système > Confidentialité et sécurité** et
+       descends tout en bas.
+    3. L'avertissement indiquant que le programme a été bloqué s'y
+       trouve, avec le bouton **Ouvrir quand même**. Clique dessus et
+       confirme dans la boîte suivante.
+
+   Les démarrages suivants se font sans question.
+
+   Ici, la somme de contrôle de l'étape 1 est ta véritable sécurité :
+   le système ne peut pas te confirmer l'origine du fichier ; une somme
+   identique, si.
 
 ## Windows
 

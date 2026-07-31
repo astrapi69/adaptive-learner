@@ -146,14 +146,32 @@ Known pitfalls:
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. On first open, Gatekeeper blocks the binary as coming from an
-   "unidentified developer". Two ways around it:
+2. On first open, **macOS blocks the program**. Depending on your
+   macOS version the dialog offers only "Move to Trash" and "Done" -
+   no Open button. This is not an error and not a defect in the
+   program: Adaptive Learner is **not notarized by Apple**, which
+   requires a paid developer account.
 
-    - Right-click (or Ctrl-click) the binary > **Open** > confirm
-      **Open** in the dialog. macOS remembers this for all further
-      starts.
-    - Or: System Settings > **Privacy & Security** > scroll down to the
-      blocked app and click **Open Anyway**.
+   How to open it anyway:
+
+    1. Dismiss the dialog with **Done** (not Move to Trash).
+    2. Open **System Settings > Privacy & Security** and scroll down.
+    3. There you will find the note that the program was blocked, with
+       an **Open Anyway** button. Click it and confirm in the next
+       dialog.
+
+   Every later start opens without asking.
+
+   In this situation the checksum from step 1 is your real safeguard:
+   the system cannot confirm where the file came from - a matching
+   checksum can.
+
+
+> **Footnote for technical users.** `xattr -d com.apple.quarantine <file>`
+> also removes the block from the command line. It is deliberately NOT
+> the route above: teaching people to clear a malware warning with a
+> terminal command is exactly what an attacker asks of a victim. Use it
+> only if you understand what it does and have verified the checksum.
 
 ## Windows
 
