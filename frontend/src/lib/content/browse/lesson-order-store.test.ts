@@ -24,6 +24,7 @@ import {
   getLessonOrder,
   moveLessonOrder,
   readLessonOrders,
+  storeImportLessonOrder,
   storeLessonOrder,
 } from "./lesson-order-store";
 import type { ContentLessonList } from "../../../storage/types";
@@ -202,6 +203,84 @@ describe("lesson-order-store - corruption tolerance", () => {
       JSON.stringify({ [`${SRC}::${SET}`]: ["a.json", 5, null, "b.json"] }),
     );
     expect(getLessonOrder(SRC, SET)).toEqual(["a.json", "b.json"]);
+  });
+});
+
+describe("storeImportLessonOrder - source order prepopulation (#2173)", () => {
+  it("records the source order when nothing is stored yet", () => {
+    // A book import's lessons arrive in document order; the read overlay would
+    // otherwise sort them alphabetically (epilog before kapitel-1).
+    storeImportLessonOrder(SRC, SET, BOOK_ORDER);
+    expect(getLessonOrder(SRC, SET)).toEqual(BOOK_ORDER);
+  });
+
+  it("drives the read overlay so the listing follows the source order", () => {
+    storeImportLessonOrder(SRC, SET, BOOK_ORDER);
+    // listLessons returns filenames alphabetically sorted; the overlay fixes it.
+    const alphabetical = [...BOOK_ORDER].sort();
+    expect(applyStoredLessonOrder(alphabetical, SRC, SET)).toEqual(BOOK_ORDER);
+  });
+
+  it("is a no-op for an empty lesson list (nothing to order)", () => {
+    storeImportLessonOrder(SRC, SET, []);
+    expect(getLessonOrder(SRC, SET)).toBeNull();
+  });
+
+  it("a re-import (still import-origin, user never touched it) refreshes to the new source order", () => {
+    storeImportLessonOrder(SRC, SET, ["a.json", "b.json", "c.json"]);
+    // The book was re-imported with its chapters in a different order.
+    const reordered = ["c.json", "a.json", "b.json"];
+    storeImportLessonOrder(SRC, SET, reordered);
+    expect(getLessonOrder(SRC, SET)).toEqual(reordered);
+  });
+});
+
+describe("storeImportLessonOrder - the user's arrangement wins (#2173 Teil 3)", () => {
+  it("does NOT overwrite an order the user set via a move", () => {
+    // The user reordered the set by hand.
+    const userOrder = moveLessonOrder(SRC, SET, BOOK_ORDER, "kapitel-7.json", "up");
+    // A re-import / content update must not clobber that work.
+    storeImportLessonOrder(SRC, SET, BOOK_ORDER);
+    expect(getLessonOrder(SRC, SET)).toEqual(userOrder);
+  });
+
+  it("does NOT overwrite an explicitly stored user order", () => {
+    const userOrder = ["kapitel-7.json", "epilog.json", "kapitel-1.json"];
+    storeLessonOrder(SRC, SET, userOrder);
+    storeImportLessonOrder(SRC, SET, BOOK_ORDER);
+    expect(getLessonOrder(SRC, SET)).toEqual(userOrder);
+  });
+
+  it("treats a legacy bare-array order (pre-#2173, written by #2172 moves) as the user's - never overwrites it", () => {
+    // #2172 persisted a bare array; those entries only ever came from a user
+    // move, so an import must leave them alone.
+    const legacy = ["kapitel-3.json", "kapitel-1.json", "epilog.json"];
+    localStorage.setItem(KEY, JSON.stringify({ [`${SRC}::${SET}`]: legacy }));
+    storeImportLessonOrder(SRC, SET, BOOK_ORDER);
+    expect(getLessonOrder(SRC, SET)).toEqual(legacy);
+  });
+
+  it("Case 1: user moved + source adds new lessons -> new lessons land at the end, user order preserved", () => {
+    // User arranged the set.
+    const userOrder = moveLessonOrder(SRC, SET, BOOK_ORDER, "kapitel-5.json", "up");
+    // Re-import brings two NEW lessons; the import write is a no-op (user-origin).
+    const withNew = [...BOOK_ORDER, "kapitel-6.json", "anhang.json"];
+    storeImportLessonOrder(SRC, SET, withNew);
+    const displayed = applyStoredLessonOrder(withNew, SRC, SET);
+    // The user's arrangement is intact...
+    expect(displayed.slice(0, userOrder.length)).toEqual(userOrder);
+    // ...and the new lessons are appended at the end, visible, not interspersed.
+    expect(displayed.slice(userOrder.length)).toEqual(["kapitel-6.json", "anhang.json"]);
+  });
+
+  it("Case 2: user moved + source removes a lesson -> the remaining order is preserved", () => {
+    const userOrder = moveLessonOrder(SRC, SET, BOOK_ORDER, "kapitel-7.json", "up");
+    // Re-import without "epilog.json"; the import write is a no-op (user-origin).
+    const withoutEpilog = BOOK_ORDER.filter((f) => f !== "epilog.json");
+    storeImportLessonOrder(SRC, SET, withoutEpilog);
+    const displayed = applyStoredLessonOrder(withoutEpilog, SRC, SET);
+    // The dropped lesson is gone; every remaining lesson keeps the user's order.
+    expect(displayed).toEqual(userOrder.filter((f) => f !== "epilog.json"));
   });
 });
 

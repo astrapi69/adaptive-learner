@@ -134,6 +134,39 @@ Fall (Verschieben auf dem Telefon).
       Positions-Rueckmeldung funktionieren, Reihenfolge bleibt nach dem
       Schliessen und Wiederoeffnen.
 
+#### A6b. Importreihenfolge folgt der Quelle (#2173, gemerged)
+
+Nach einem Buch-/Text-Import stehen die Lektionen in Quell-/Kapitelreihenfolge,
+nicht alphabetisch nach Titel (frueher: Epilog vor Kapitel 1). Die Reihenfolge
+wird beim Import in denselben Overlay-Speicher wie das Verschieben (#2172)
+geschrieben; Dateinamen/Identitaeten bleiben unberuehrt. Der heikle Fall ist
+die Herkunft: eine eigene Verschiebung des Nutzers darf ein erneuter Import
+NICHT ueberschreiben.
+
+- [ ] Ein Buch mit Kapiteln importieren, deren Titel alphabetisch NICHT der
+      Kapitelfolge entsprechen (z. B. ein "Epilog" oder "Anhang"). Nach dem
+      Import zeigt "Lektionen verwalten" die Kapitel in Buchreihenfolge, nicht
+      alphabetisch.
+- [ ] Wirkt auf die LERNFOLGE, nicht nur die Liste: das Set oeffnet mit der
+      ersten Quell-Lektion, die Weiter-Navigation folgt der Quellreihenfolge -
+      in beiden Speichermodi (API + Dexie).
+- [ ] Identitaet unberuehrt: Lernfortschritt/Wiederholungskarten bleiben
+      zugeordnet (keine Umnummerierung der Dateinamen).
+- [ ] Nutzer gewinnt: eine Lektion von Hand verschieben, dann dasselbe Buch
+      erneut importieren (bzw. Inhalt aktualisieren). Die eigene Reihenfolge
+      bleibt erhalten, wird NICHT still zurueckgesetzt.
+- [ ] Neue Lektionen bei erneutem Import nach eigenem Verschieben landen am
+      Ende (sichtbar, nicht eingestreut); entfernte Lektionen verschwinden,
+      die uebrige gewaehlte Reihenfolge bleibt.
+- [ ] Bestehende (vor #2173 importierte) Sets werden nicht automatisch
+      umsortiert; der Nutzer zieht sie ueber "Lektionen verwalten" (#2172)
+      gerade.
+- [ ] Backup-Round-Trip: Export -> Speicher leeren -> Import bringt die
+      Reihenfolge zurueck.
+- [ ] iOS-Standalone (PWA vom Home-Bildschirm): frisch importiertes Buch in der
+      installierten PWA oeffnen - die Kapitel stehen in Buchreihenfolge, und
+      eine eigene Verschiebung ueberlebt ein Schliessen und Wiederoeffnen.
+
 #### A7. Bearbeiten je Lektion, nicht je Set (#2210)
 
 Bearbeiten gehört an die Lektion, nicht an das Set. Der Set-Knopf riet

@@ -125,6 +125,35 @@ lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
 - [ ] iOS standalone (PWA from the home screen): moving via touch and the
       position feedback work, and the order survives closing and reopening.
 
+#### A6b. Import order follows the source (#2173, merged)
+
+After a book/text import the lessons appear in source/chapter order, not
+alphabetically by title (previously an "Epilogue" landed before chapter 1).
+The order is written to the SAME overlay store the reorder feature (#2172)
+uses; filenames/identities stay untouched. The tricky part is provenance: a
+re-import must NOT overwrite an order the user set by hand.
+
+- [ ] Import a book whose chapter titles do NOT sort alphabetically into
+      chapter order (e.g. an "Epilogue" or "Appendix"). After the import,
+      "Manage lessons" shows the chapters in book order, not alphabetically.
+- [ ] Drives the LEARNING sequence, not just the list: the set opens on the
+      first source lesson and "next lesson" follows the source order - in both
+      storage modes (API + Dexie).
+- [ ] Identity untouched: learning progress / review cards stay attached (no
+      renumbering of filenames).
+- [ ] The user wins: move a lesson by hand, then re-import the same book (or
+      update content). The user's order is preserved, NOT silently reset.
+- [ ] After a re-import following a manual move, NEW lessons land at the end
+      (visible, not interspersed); REMOVED lessons disappear while the rest of
+      the chosen order is preserved.
+- [ ] Existing sets (imported before #2173) are not auto-resorted; the user
+      straightens them via "Manage lessons" (#2172).
+- [ ] Backup round-trip: Export -> wipe storage -> Import brings the order
+      back.
+- [ ] iOS standalone (PWA from the home screen): open a freshly imported book
+      in the installed PWA - the chapters are in book order, and a manual move
+      survives closing and reopening.
+
 #### A7. Edit belongs to the lesson, not the set (#2210)
 
 Edit belongs to the lesson, not the set. The set-level button used to guess

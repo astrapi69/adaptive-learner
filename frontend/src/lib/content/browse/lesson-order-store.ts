@@ -30,11 +30,24 @@
  * lesson display order is a per-device UI preference (like ``set-status-store``
  * #2053 and ``dismissed-sets`` #1709), not content, so it needs no schema.
  *
+ * ## Provenance: import order vs the user's order (#2173)
+ *
+ * Import and the user's reorder write to the SAME store, so the value carries
+ * WHO set it: an ``origin`` of ``"import"`` (prepopulated from the source order
+ * at ``saveUserSet`` time) or ``"user"`` (a manual move). A re-import may only
+ * replace an ``"import"`` order - {@link storeImportLessonOrder} is a no-op once
+ * the user has arranged the set, so a content update never silently overwrites
+ * the learner's work. A legacy #2172 value (a bare array, only ever written by
+ * a user move) is read as ``"user"`` - conservative, so no import can clobber
+ * an order that predates this field.
+ *
  * ## Semantics (deliberately self-healing)
  *
  * - Keys are ``source::set-id`` (matching ``set-status-store`` /
  *   ``dismissed-sets``). Same id from two sources is independent.
- * - The stored value is an ordered array of lesson FILENAMES.
+ * - The stored value is ``{ order, origin }`` - an ordered array of lesson
+ *   FILENAMES plus its provenance. A bare array (legacy #2172) reads as a
+ *   user-origin order.
  * - {@link applyStoredLessonOrder} is the read overlay: the current filenames
  *   are ordered by the stored list; a filename not in the stored list keeps
  *   its natural position at the end (a lesson added after the order was saved);
@@ -55,6 +68,7 @@
 
 import { mirrorUserData } from "../../../storage/dexie/dexie-user-data";
 import type { ContentLessonList } from "../../../storage/types";
+import { USER_GENERATED_SOURCE } from "../../../storage/types";
 
 /** localStorage key; registered in ``MANAGED_USER_DATA_KEYS``. */
 const STORAGE_KEY = "adaptive-learner.lesson-order";
@@ -62,8 +76,40 @@ const STORAGE_KEY = "adaptive-learner.lesson-order";
 /** Direction of a single-step move in "Lektionen verwalten". */
 export type MoveDirection = "up" | "down";
 
+/** Who set a stored order. Only an ``"import"`` order may be replaced by a
+ *  re-import; a ``"user"`` order is the learner's arrangement and wins. */
+type OrderOrigin = "import" | "user";
+
+/** The stored value per set: the ordered filenames plus their provenance. */
+interface StoredOrder {
+  order: string[];
+  origin: OrderOrigin;
+}
+
 function orderKey(source: string, setId: string): string {
   return `${source}::${setId}`;
+}
+
+function onlyStrings(values: readonly unknown[]): string[] {
+  return values.filter((item): item is string => typeof item === "string");
+}
+
+/**
+ * Normalize one persisted value into a {@link StoredOrder}, or ``null`` to drop
+ * it. Two accepted shapes: the current ``{ order, origin }`` object, and the
+ * legacy #2172 bare array (read as user-origin, since it could only have come
+ * from a manual move - an import must never overwrite it).
+ */
+function normalizeStored(value: unknown): StoredOrder | null {
+  if (Array.isArray(value)) {
+    return { order: onlyStrings(value), origin: "user" };
+  }
+  if (value && typeof value === "object" && Array.isArray((value as { order?: unknown }).order)) {
+    const record = value as { order: unknown[]; origin?: unknown };
+    const origin: OrderOrigin = record.origin === "import" ? "import" : "user";
+    return { order: onlyStrings(record.order), origin };
+  }
+  return null;
 }
 
 function resolveStorage(override?: Storage): Storage | null {
@@ -72,19 +118,18 @@ function resolveStorage(override?: Storage): Storage | null {
   return null;
 }
 
-function read(storage: Storage): Record<string, string[]> {
+function read(storage: Storage): Record<string, StoredOrder> {
   try {
     const raw = storage.getItem(STORAGE_KEY);
     if (!raw) return {};
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
-    const out: Record<string, string[]> = {};
+    const out: Record<string, StoredOrder> = {};
     for (const [key, val] of Object.entries(parsed as Record<string, unknown>)) {
-      if (!Array.isArray(val)) continue;
-      // Drop any non-string entries rather than the whole order, so one
-      // corrupt element can never blank a set's ordering.
-      const filenames = val.filter((item): item is string => typeof item === "string");
-      out[key] = filenames;
+      // Drop a corrupt entry rather than the whole map; a bad element inside a
+      // valid order is filtered (not blanked) by ``normalizeStored``.
+      const record = normalizeStored(val);
+      if (record) out[key] = record;
     }
     return out;
   } catch {
@@ -92,7 +137,7 @@ function read(storage: Storage): Record<string, string[]> {
   }
 }
 
-function write(storage: Storage, map: Record<string, string[]>, mirror: boolean): void {
+function write(storage: Storage, map: Record<string, StoredOrder>, mirror: boolean): void {
   try {
     const raw = JSON.stringify(map);
     storage.setItem(STORAGE_KEY, raw);
@@ -102,11 +147,27 @@ function write(storage: Storage, map: Record<string, string[]>, mirror: boolean)
   }
 }
 
+/** Persist one set's ``{ order, origin }`` record (idempotent, mirrored). */
+function storeOrderRecord(
+  source: string,
+  setId: string,
+  record: StoredOrder,
+  storage?: Storage,
+): void {
+  const store = resolveStorage(storage);
+  if (!store) return;
+  const map = read(store);
+  map[orderKey(source, setId)] = record;
+  write(store, map, storage === undefined);
+}
+
 /** The full ``source::set-id`` -> ordered-filenames map, tolerant of corruption. */
 export function readLessonOrders(storage?: Storage): Record<string, string[]> {
   const store = resolveStorage(storage);
   if (!store) return {};
-  return read(store);
+  const out: Record<string, string[]> = {};
+  for (const [key, record] of Object.entries(read(store))) out[key] = record.order;
+  return out;
 }
 
 /** The stored order for one set, or ``null`` when none is recorded. */
@@ -117,21 +178,62 @@ export function getLessonOrder(
 ): string[] | null {
   const store = resolveStorage(storage);
   if (!store) return null;
-  return read(store)[orderKey(source, setId)] ?? null;
+  return read(store)[orderKey(source, setId)]?.order ?? null;
 }
 
-/** Persist the full display order for one set (idempotent, mirrored). */
+/** Persist the full display order for one set as the USER's arrangement
+ *  (idempotent, mirrored). A user order wins over any later import. */
 export function storeLessonOrder(
   source: string,
   setId: string,
   filenames: readonly string[],
   storage?: Storage,
 ): void {
+  storeOrderRecord(source, setId, { order: [...filenames], origin: "user" }, storage);
+}
+
+/**
+ * Prepopulate a set's display order from its SOURCE order at import time
+ * (#2173), unless the user has already arranged it. The write is a no-op when
+ * the stored order is user-origin, so a re-import / content update never
+ * silently overwrites the learner's work; an existing import-origin order (the
+ * user never touched it) is refreshed to the new source order. An empty list
+ * is ignored (nothing to order).
+ */
+export function storeImportLessonOrder(
+  source: string,
+  setId: string,
+  filenames: readonly string[],
+  storage?: Storage,
+): void {
+  if (filenames.length === 0) return;
   const store = resolveStorage(storage);
   if (!store) return;
-  const map = read(store);
-  map[orderKey(source, setId)] = [...filenames];
-  write(store, map, storage === undefined);
+  const existing = read(store)[orderKey(source, setId)];
+  if (existing?.origin === "user") return;
+  storeOrderRecord(source, setId, { order: [...filenames], origin: "import" }, storage);
+}
+
+/**
+ * Record a freshly-saved user set's authoring/source order as the import-origin
+ * display order (#2173). The filename convention (``<lesson.id>.json``) mirrors
+ * ``saveUserSet``'s cache layout in both storage modes; wired at the single
+ * ``saveUserSet`` seam so every import path is covered without a second
+ * ordering mechanism. Respects an existing user arrangement (see
+ * {@link storeImportLessonOrder}).
+ */
+export function recordSavedSetOrder(
+  setId: string,
+  lessons: readonly { id: string }[] | undefined,
+  storage?: Storage,
+): void {
+  if (!Array.isArray(lessons)) return;
+  storeImportLessonOrder(
+    USER_GENERATED_SOURCE,
+    setId,
+    lessons.map((lesson) => `${lesson.id}.json`),
+    storage,
+  );
 }
 
 /**
@@ -151,7 +253,7 @@ export function applyStoredLessonOrder(
 ): string[] {
   const store = resolveStorage(storage);
   if (!store) return filenames;
-  const stored = read(store)[orderKey(source, setId)];
+  const stored = read(store)[orderKey(source, setId)]?.order;
   if (!stored || stored.length === 0) return filenames;
 
   const present = new Set(filenames);
