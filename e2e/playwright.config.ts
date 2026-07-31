@@ -44,6 +44,13 @@ export {E2E_FERNET_KEY};
 const BACKEND_ENV = [
     `ADAPTIVE_LEARNER_PORT=${BACKEND_PORT}`,
     `ADAPTIVE_LEARNER_DATA_DIR=${E2E_DATA_DIR}`,
+    // #2248: without this the key-resolution chain (env > secrets.yaml >
+    // DB) reads the DEVELOPER's real ~/.config/adaptive_learner/secrets.yaml
+    // - providers then show as externally configured on a machine with
+    // stored keys while CI (no file) sees none, and a spec could even run
+    // against real provider keys. Config isolation is part of data
+    // isolation.
+    `ADAPTIVE_LEARNER_CONFIG_DIR=${E2E_DATA_DIR}/config`,
     `ADAPTIVE_LEARNER_SECRET_KEY=${E2E_FERNET_KEY}`,
 ].join(" ");
 
