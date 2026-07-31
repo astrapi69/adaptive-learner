@@ -130,11 +130,13 @@ Errores frecuentes:
   necesita glibc 2.35 o más reciente (Ubuntu 22.04+, Debian 12+,
   Fedora 36+). En distribuciones más antiguas, ejecuta la app mediante
   `install.sh` o directamente con Docker Compose.
-- **La app no es accesible en el navegador**: la app se ejecuta solo de
-  forma local (`localhost`), por lo que no hace falta ninguna regla de
-  cortafuegos. Si el navegador no se abre automáticamente, abre
-  `http://localhost:8501` manualmente (o el puerto que se muestre en la
-  ventana del lanzador).
+- **La app no es accesible en el navegador**: si el navegador no se abre
+  automáticamente, abre `http://localhost:8501` manualmente (o el puerto
+  que se muestre en la ventana del lanzador). Ten en cuenta que la app se
+  publica en todas las interfaces de red, no solo en `localhost`, y no
+  tiene autenticación: manten ese puerto cerrado en el cortafuegos salvo
+  que quieras deliberadamente que otros dispositivos de tu red lleguen a
+  ella.
 
 ## macOS
 

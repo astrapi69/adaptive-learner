@@ -27,6 +27,12 @@ deinstallieren.
 | **Registryfrei (Archiv)** | Rechner ohne Registry-Zugang | Lade das Image-Archiv für deinen Prozessor von derselben Release-Seite wie den Launcher und lege es zu den Launcher-Daten - es wird in die hinterlegte Referenz GELADEN statt bezogen. Archiv und Launcher müssen aus dem **selben Release** stammen; eine andere Version führt zum harten Fehler mit Dateinamen. |
 | **Aus dem Quellbaum (Entwickler)** | Selbstbauer | Repository klonen, dann `install.sh` oder der Compose-Stack. Baut lokal; durch dieses Release unverändert. |
 
+Das **heruntergeladene Programm hat bewusst kein Tray-Symbol**: das
+Fenster zu schließen beendet dort immer den Launcher. Die App selbst
+läuft in Docker weiter und ist beim nächsten Start sofort wieder da.
+Nur die Installation aus dem Quellbaum kann das Tray-Symbol
+nachrüsten, dann minimiert das Schließen dorthin statt zu beenden.
+
 Der Port ist standardmäßig **8501** und im Launcher-Fenster änderbar;
 ist er belegt, weicht der Launcher auf einen freien Port aus. Wenn du
 den Browser-Speichermodus nutzt, ändert ein Portwechsel auch, wo deine
@@ -137,10 +143,13 @@ Bekannte Stolpersteine:
   und braucht glibc 2.35 oder neuer (Ubuntu 22.04+, Debian 12+,
   Fedora 36+). Auf älteren Distributionen stattdessen die App per
   `install.sh` oder Docker Compose direkt betreiben.
-- **App im Browser nicht erreichbar**: Die App läuft nur lokal
-  (`localhost`), eine Firewall-Freigabe ist dafür nicht nötig. Öffnet
-  der Browser nicht automatisch, rufe `http://localhost:8501` von Hand
-  auf (bzw. den im Launcher-Fenster angezeigten Port).
+- **App im Browser nicht erreichbar**: Öffnet der Browser nicht
+  automatisch, rufe `http://localhost:8501` von Hand auf (bzw. den im
+  Launcher-Fenster angezeigten Port). Beachte: Die App wird auf allen
+  Netzwerkschnittstellen veröffentlicht, nicht nur auf `localhost`, und
+  sie hat keine Authentifizierung - lass den Port in der Firewall
+  geschlossen, solange du nicht bewusst willst, dass andere Geräte im
+  Netzwerk sie erreichen.
 
 ## macOS
 

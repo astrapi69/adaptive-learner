@@ -133,11 +133,13 @@ Pièges connus :
   12+, Fedora 36+). Sur les distributions plus anciennes, exécute
   plutôt l'application via `install.sh` ou directement avec Docker
   Compose.
-- **Application inaccessible dans le navigateur** : l'application ne
-  tourne qu'en local (`localhost`), aucune règle de pare-feu n'est donc
-  nécessaire. Si le navigateur ne s'ouvre pas automatiquement, ouvre
-  `http://localhost:8501` manuellement (ou le port affiché dans la
-  fenêtre du lanceur).
+- **Application inaccessible dans le navigateur** : si le navigateur ne
+  s'ouvre pas automatiquement, ouvre `http://localhost:8501` manuellement
+  (ou le port affiché dans la fenêtre du lanceur). Attention :
+  l'application est publiée sur toutes les interfaces réseau, pas
+  seulement sur `localhost`, et elle n'a aucune authentification - garde
+  ce port fermé sur ton pare-feu sauf si tu veux délibérément que
+  d'autres appareils de ton réseau y accèdent.
 
 ## macOS
 
