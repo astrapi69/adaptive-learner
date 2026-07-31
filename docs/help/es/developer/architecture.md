@@ -103,8 +103,7 @@ plugins/adaptive-learner-plugin-<nombre>/
 - Las especificaciones de hooks viven en `backend/app/hookspecs.py`.
 - Dependencias del plugin como atributo de clase: `depends_on =
   ["session"]`.
-- Todos los plugins son gratuitos (MIT). La infraestructura de
-  licencias existe pero está inactiva (`LICENSING_ENABLED = False`).
+- Todos los plugins son gratuitos (MIT). No existe una capa de licencias.
 
 ## Hooks (8 especificaciones en `backend/app/hookspecs.py`)
 
