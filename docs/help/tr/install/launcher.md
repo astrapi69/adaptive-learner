@@ -58,6 +58,27 @@ adresinde yer alır:
 | macOS | `adaptive-learner-launcher-macos.zip` | `adaptive-learner-launcher-macos.zip.sha256` |
 | Windows | `adaptive-learner-launcher.exe` | `adaptive-learner-launcher.exe.sha256` |
 
+### Neyin doğrulandığı ve neyin doğrulanmadığı
+
+Bu programların her biri, derlenirken tam olarak hedeflendiği işletim
+sisteminde bir kez başlatılır. Böylece başladığı kanıtlanmıştır: Linux
+üzerinde, Windows üzerinde ve Apple Silicon'lu macOS üzerinde. Uygulama
+imajı her sürümde doğrulanır: anonim bir indirme (oturum açmadan) ve
+sağlık denetimiyle gerçek bir başlatma, iki işlemci türü (Intel/AMD ve
+ARM) için ayrı ayrı, o türdeki makinelerde. Henüz ölçülmemiş olan, çok
+eski Docker motorlarında (20.10 dönemi) kayıt defterinden indirmedir;
+motor zincirinin kendisi böyle bir motorda başka bir kayıt defterine
+karşı kanıtlanmıştır ve GitHub kayıt defterine karşı ölçüm upstream
+takip edilmektedir.
+
+Kanıtlanmamış olan, işletim sisteminin **indirilen** bir dosyaya nasıl
+tepki verdiğidir: programlar ücretli bir imza taşımaz, bu yüzden macOS
+ilk açılışta uyarır ("tanımlanamayan geliştirici") ve Windows
+SmartScreen bildirimini gösterir. Bu bir uyarıdır, kusur değildir; bir
+kereliğine nasıl onaylayacağın aşağıda [macOS](#macos) ve
+[Windows](#windows) bölümlerinde anlatılır. Önce sağlama toplamını
+doğrula: herhangi bir iletişim kutusundan daha güvenilir bir kanıttır.
+
 ## Linux
 
 1. Sağlama toplamını doğrula (her iki dosya da aynı klasörde):
