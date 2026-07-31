@@ -20,6 +20,20 @@ da her şeyi kaldırabilirsin.
 Port varsayılan olarak **8501**'dir ve başlatıcı penceresinden
 değiştirilebilir; port kullanımdaysa başlatıcı boş bir porta geçer.
 
+## Uygulamaya kimler erişebilir
+
+Uygulama varsayılan olarak **yalnızca bu bilgisayardan** erişilebilir
+(`127.0.0.1`). Bu bilinçli bir tercihtir: uygulamada oturum açma yoktur
+ve yapay zekâ sağlayıcı anahtarların onun içinde durur. Ağda görünür
+olsaydı, aynı ağdaki her cihaz - bir ofis yerel ağı, otel veya konferans
+kablosuz ağı - onu kolayca açıp kullanabilirdi.
+
+Uygulamaya başka bir cihazdan, örneğin kendi kablosuz ağındaki
+telefonundan erişmek hâlâ mümkün, ama artık bilinçli bir karar: `.env`
+dosyasında `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` ayarla. Bunu yalnızca
+güvendiğin bir ağda yap ve unutma ki o ağdaki herkes o andan itibaren
+seninle aynı erişime sahip olur.
+
 ## Ön koşul: Docker - başlatıcı bunu kendisi denetler
 
 Başlatıcı, çalışan bir Docker gerektirir, çünkü uygulamanın kendisi bir

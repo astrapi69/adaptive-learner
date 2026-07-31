@@ -32,6 +32,20 @@ ist er belegt, weicht der Launcher auf einen freien Port aus. Wenn du
 den Browser-Speichermodus nutzt, ändert ein Portwechsel auch, wo deine
 Daten liegen - lies vorher [Den Port ändern](changing-the-port.md).
 
+## Wer die App erreichen kann
+
+Die App ist standardmäßig **nur auf diesem Rechner** erreichbar
+(`127.0.0.1`). Das ist Absicht: sie kennt keine Anmeldung, und in ihr
+liegen deine KI-Anbieterschlüssel. Wäre sie im Netz sichtbar, könnte
+jedes Gerät im selben Netz - Büro-LAN, Hotel- oder Konferenz-WLAN - sie
+ohne Weiteres öffnen und benutzen.
+
+Willst du die App von einem anderen Gerät aus erreichen, etwa vom Handy
+im eigenen WLAN, ist das weiterhin möglich, aber eine bewusste
+Entscheidung: setze `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` in der
+`.env`. Tu das nur in einem Netz, dem du vertraust, und denk daran, dass
+jeder in diesem Netz dann denselben Zugang hat wie du.
+
 ## Voraussetzung: Docker - der Launcher prüft es selbst
 
 Der Launcher setzt ein laufendes Docker voraus, denn die App selbst

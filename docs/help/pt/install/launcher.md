@@ -19,6 +19,20 @@ parar a aplicação, mudar a porta ou desinstalar tudo.
 A porta é por predefinição **8501** e pode ser alterada na janela do
 launcher; se estiver ocupada, o launcher recorre a uma porta livre.
 
+## Quem consegue aceder à aplicação
+
+Por predefinição, a aplicação só está acessível **a partir deste
+computador** (`127.0.0.1`). É intencional: não tem autenticação e guarda
+as tuas chaves de fornecedores de IA. Visível na rede, qualquer
+dispositivo dessa mesma rede - uma LAN de escritório, o wi-fi de um
+hotel ou de uma conferência - poderia simplesmente abri-la e usá-la.
+
+Aceder a partir de outro dispositivo, por exemplo do telemóvel na tua
+própria rede, continua a ser possível, mas passa a ser uma decisão
+consciente: define `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` no ficheiro
+`.env`. Faz isso apenas numa rede em que confias e lembra-te de que
+todos os que lá estiverem passam a ter o mesmo acesso que tu.
+
 ## Pré-requisito: Docker - o launcher verifica-o sozinho
 
 O launcher requer um Docker em execução, porque a própria aplicação corre

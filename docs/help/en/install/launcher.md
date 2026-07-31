@@ -30,6 +30,20 @@ use browser storage mode, changing the port also changes where your
 data lives - see [Changing the port](changing-the-port.md) before you
 do it.
 
+## Who can reach the app
+
+By default the app is reachable **only from this computer**
+(`127.0.0.1`). That is deliberate: it has no login, and it holds your AI
+provider keys. Visible on the network, any device in the same network -
+an office LAN, a hotel or conference WLAN - could simply open and use
+it.
+
+Reaching the app from another device, say your phone on your own WLAN,
+is still possible but a deliberate choice: set
+`ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` in the `.env`. Only do that in a
+network you trust, and remember that everyone in it then has the same
+access you do.
+
 ## Prerequisite: Docker - the launcher checks it itself
 
 The launcher requires a running Docker, because the app itself runs in
