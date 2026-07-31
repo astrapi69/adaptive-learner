@@ -83,7 +83,11 @@ jobs:
           # How many nights it takes to cover the whole scope. Raise this
           # if a shard ever approaches the 120-min timeout; lower it (down
           # to 1) to cover more per night. See the header note + #1956.
-          SHARD_COUNT: "8"
+          # 8 was sized from the ~7h full-run estimate; real nightly runs
+          # hit the 120-min timeout every night Jul 25-31 with ~2800
+          # mutants/shard stalling at ~88% (#2223). 24 puts a shard at
+          # ~940 mutants, inside the budget at observed throughput.
+          SHARD_COUNT: "24"
         run: |
           set -euo pipefail
           if [ "$MUTATE_INPUT" = "ALL" ]; then
