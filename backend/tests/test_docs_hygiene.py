@@ -107,6 +107,38 @@ def test_umlaut_ratchet_fails_on_reduction_to_force_lock_in(tmp_path: Path) -> N
     assert "count fell" in r.stdout
 
 
+# --- auto-lower: an error-counter banks its improvement (#2230) --------------
+
+
+def test_auto_lower_banks_a_fall_and_passes(tmp_path: Path) -> None:
+    """A gain WITH banking goes through: --auto-lower writes the lower baseline
+    and passes, and the tree is then clean against the banked number."""
+    docs = _docs(tmp_path)
+    (docs / "note.md").write_text("now clean, no substitutes", encoding="utf-8")
+    baseline = tmp_path / "baseline.json"
+    _write_baseline(baseline, 5)  # frozen ceiling above the (zero) real count
+    r = _run(tmp_path, "--only", "umlaut", "--auto-lower", baseline=baseline)
+    assert r.returncode == 0, r.stdout
+    assert "auto-lowered baseline 5 -> 0" in r.stdout
+    # The gain is banked: the baseline followed the count down.
+    assert json.loads(baseline.read_text())["umlaut_count"] == 0
+    # Re-run (read-only) is green against the banked number.
+    assert _run(tmp_path, "--only", "umlaut", baseline=baseline).returncode == 0
+
+
+def test_auto_lower_never_raises_on_a_rise(tmp_path: Path) -> None:
+    """--auto-lower banks falls only; a RISE is a regression and still fails,
+    with the baseline left untouched (growth is never automatic)."""
+    docs = _docs(tmp_path)
+    (docs / "note.md").write_text("Die Loesung ist fuer alle.", encoding="utf-8")  # 1 'fuer'
+    baseline = tmp_path / "baseline.json"
+    _write_baseline(baseline, 0)
+    r = _run(tmp_path, "--only", "umlaut", "--auto-lower", baseline=baseline)
+    assert r.returncode != 0, r.stdout
+    assert "count rose" in r.stdout
+    assert json.loads(baseline.read_text())["umlaut_count"] == 0  # untouched
+
+
 def test_umlaut_ratchet_update_baseline_freezes_current(tmp_path: Path) -> None:
     docs = _docs(tmp_path)
     (docs / "note.md").write_text("fuer waehrend", encoding="utf-8")
