@@ -985,6 +985,31 @@ the app is fully closed and reopened.
 - [ ] On a NON-iOS device (Android/desktop) run the same flow: the
       restart hint must NOT appear there
 
+#### "What's new" release-notes modal stays closable (#2266)
+
+The desktop/API-mode update banner's "What's new" modal
+(`DesktopUpdateHost`) must never trap the user, however tall the release
+and installation notes are. Viewport height is most critical on a short
+window, so verify the iOS-standalone / phone-portrait shape explicitly.
+
+- [ ] In API/desktop mode with an update available, open the banner's
+      "What's new?" - the modal appears with a title, a scrollable body,
+      and an always-visible X in the header
+- [ ] Long release notes: the body scrolls; the header X and the footer
+      "Close" button stay reachable (the notes never push the actions off
+      screen)
+- [ ] Close it four ways, each works: the header X, the footer "Close"
+      button, the Escape key, and a click on the backdrop outside the card
+- [ ] A click INSIDE the card does NOT close it
+- [ ] Short viewport / iOS-standalone: shrink the window to a
+      phone-portrait height (or an installed iOS standalone window) - the X
+      stays fixed in the header while the notes scroll; the modal is still
+      closable with the X, Escape, and a backdrop tap. Repeat with the
+      on-screen keyboard raised
+- [ ] Keyboard/SR: focus moves into the modal on open, Tab stays inside
+      it, and focus returns to the "What's new?" button on close (no axe
+      regression)
+
 ### Android Chrome
 - [ ] "Install app" → maskable icon not clipped
 - [ ] PWA works, Dexie mode
