@@ -1,0 +1,62 @@
+# Red-runs rollup (#2225).
+#
+# WHY: PR gates are visible because they block a merge. Scheduled and
+# push-driven runs fail into the void until someone opens the Actions
+# tab: the 2026-07-31 audit found the Content Stats Drift nightly red
+# for six consecutive nights (its fifth multi-day streak since June,
+# #1531) and the mutation nightly killed at its own 120-min timeout
+# every night with conclusion "cancelled" (#2223) - a conclusion for
+# which GitHub sends NO failure notification at all. The #2077 check
+# inventory detects a silently disabled check, not a running one that
+# is red.
+#
+# WHAT: once a day, after the night shift, query every active
+# workflow's latest completed schedule/push run and fail if any is
+# red. Dispatch-only workflows (release drivers, publish-image, ...)
+# are deliberately excluded: a human dispatches them and watches the
+# result, and counting their last - often historical - red would leave
+# this rollup permanently red, which is as ineffective as never
+# reporting (the trap this rollup exists to close).
+#
+# WHAT THIS IS NOT: this is NOT a merge gate and does not block
+# anything. It replaces scanning the Actions tab with ONE place to
+# look - it does not make looking unnecessary. When this run is red,
+# open it: the log names every red workflow with its run URL. Each red
+# is then classified (real finding / broken tool / environment flake /
+# obsolete check) and acted on - never muted to get green.
+#
+# Gate contract (#2083): scripts/verify_workflow_health.py fails on
+# any red run, passes on an all-green set, fails CLOSED on API errors
+# or empty sets, and prints the measured set (repo, window, event
+# filter, per-workflow verdicts). Pinned by
+# backend/tests/test_verify_workflow_health.py.
+
+name: Red-runs rollup
+
+on:
+  schedule:
+    # 09:17 UTC - safely after the night shift (nightlies schedule
+    # 03:00-04:00 UTC but drift to ~06:30 under runner load; the
+    # mutation shard adds up to ~70 min on top).
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  rollup:
+    name: Latest schedule/push run per workflow is green
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Roll up red scheduled/push runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/verify_workflow_health.py
