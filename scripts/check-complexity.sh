@@ -38,6 +38,14 @@ RADON_JSON="$TMPDIR/radon.json"
 ESLINT_JSON="$TMPDIR/eslint.json"
 
 # --- radon resolution ----------------------------------------------------
+# Oracle pin (#2138, decided 2026-07-31): the complexity verdict depends on
+# the radon version, and a drifting oracle is dangerous in the silent
+# downward direction. The gate therefore measures with radon==$RADON_PIN or
+# not at all; a foreign version is refused, never silently used. (The
+# build-derived oracles - the Tailwind classname gates - stay deliberately
+# unpinned: there the build output IS the test subject.)
+RADON_PIN="6.0.1"
+export RADON_PIN
 RADON_VENV="${RADON_VENV:-$ROOT/.radon-venv}"
 RADON=()
 if command -v radon >/dev/null 2>&1; then
@@ -49,8 +57,22 @@ elif python3 -c "import radon" >/dev/null 2>&1; then
 else
     echo "Bootstrapping radon into $RADON_VENV ..."
     if python3 -m venv "$RADON_VENV" 2>/dev/null \
-        && "$RADON_VENV/bin/pip" install --quiet --upgrade pip radon 2>/dev/null; then
+        && "$RADON_VENV/bin/pip" install --quiet --upgrade pip "radon==$RADON_PIN" 2>/dev/null; then
         RADON=("$RADON_VENV/bin/radon")
+    fi
+fi
+
+# Enforce the pin on whatever was resolved (PATH, venv, import, bootstrap).
+if [ "${#RADON[@]}" -gt 0 ]; then
+    RADON_RESOLVED="$(("${RADON[@]}" --version 2>/dev/null || echo unavailable) | head -1)"
+    if [ "$RADON_RESOLVED" != "$RADON_PIN" ]; then
+        if [ "$MODE" = "gate" ] && [ "${COMPLEXITY_GATE_ALLOW_PARTIAL:-0}" != "1" ]; then
+            echo "ERROR: resolved radon '$RADON_RESOLVED' does not match the pinned radon==$RADON_PIN" >&2
+            echo "       - the gate cannot verify Python complexity with a foreign analyzer (#2138)." >&2
+            echo "       Fix: align the PATH radon, or rm -rf $RADON_VENV to re-bootstrap the pin." >&2
+            exit 1
+        fi
+        echo "radon '$RADON_RESOLVED' != pinned $RADON_PIN - this run's Python reading is off-pin." >&2
     fi
 fi
 

@@ -131,3 +131,30 @@ def test_complexity_gate_partial_run_stays_possible_but_declared(
         },
     )
     assert result.returncode == 0
+
+
+def test_complexity_gate_refuses_a_mismatched_radon_version(tree: Path, tmp_path: Path) -> None:
+    """Decision #2138: the gate measures with the pinned radon or not at all.
+
+    A version-dependent oracle drifts both ways; the dangerous direction is
+    the silent one downward. A radon that answers with a foreign version must
+    not produce the gate's reading - fail closed, name both versions.
+    """
+    shim = tmp_path / "shim3"
+    shim.mkdir()
+    (shim / "radon").write_text(
+        '#!/bin/sh\nif [ "$1" = "--version" ]; then echo 9.9.9; exit 0; fi\necho "{}"\n',
+        encoding="utf-8",
+    )
+    (shim / "radon").chmod(0o755)
+
+    result = _run(
+        tree,
+        "bash",
+        "scripts/check-complexity.sh",
+        "--gate",
+        env={"PATH": f"{shim}:{os.environ['PATH']}"},
+    )
+    assert result.returncode == 1
+    assert "9.9.9" in result.stderr
+    assert "pinned" in result.stderr.lower()
