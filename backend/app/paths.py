@@ -117,9 +117,8 @@ def get_cache_dir() -> Path:
        - Linux/macOS: ``~/.cache/adaptive_learner``
        - Windows: ``%LOCALAPPDATA%\\adaptive_learner\\Cache``
 
-    No current production code consumes this. Added now so the
-    resolver set is complete; future cache-able operations can
-    target a canonical location without touching this module.
+    Consumed by ``services/content_backup`` for the API-mode
+    content-loader snapshots (``get_cache_dir()/content-loader/``).
     """
     if env_dir := os.environ.get("ADAPTIVE_LEARNER_CACHE_DIR"):
         return Path(env_dir).expanduser().resolve()
