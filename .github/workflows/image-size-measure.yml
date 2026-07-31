@@ -26,6 +26,15 @@ on:
         options:
           - arm64
           - amd64
+      pull_image:
+        description: >-
+          Measure a PUBLISHED image instead of building one (e.g.
+          ghcr.io/astrapi69/adaptive-learner:2.8.2). Same artifact, this
+          runner's image store - the second reading that turns the #2134
+          store hypothesis into a proof.
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -58,9 +67,21 @@ jobs:
             exit 1
           fi
 
+      - name: Report the image store of this runner
+        # The store is part of the measurement (#2134): docker save emits
+        # already-compressed blobs under the containerd image store and raw
+        # layer tars under the classic graphdriver, so gzip -1 lands on
+        # different numbers for identical content. Printing it makes the
+        # reading attributable instead of mysterious.
+        run: |
+          docker info --format 'Storage Driver: {{.Driver}}' || true
+          docker info 2>/dev/null | grep -i "driver-type" || echo "driver-type: (none reported - classic graphdriver)"
+
       - uses: docker/setup-buildx-action@v4
+        if: inputs.pull_image == ''
 
       - name: Build this architecture only, into the local daemon
+        if: inputs.pull_image == ''
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -69,6 +90,14 @@ jobs:
           load: true
           push: false
           tags: adaptive-learner:measure
+
+      - name: Pull the published image instead of building it
+        if: inputs.pull_image != ''
+        run: |
+          set -euo pipefail
+          docker pull --platform "linux/${{ inputs.arch }}" "${{ inputs.pull_image }}"
+          docker tag "${{ inputs.pull_image }}" adaptive-learner:measure
+          echo "measuring the PUBLISHED ${{ inputs.pull_image }} (${{ inputs.arch }})"
 
       - name: Report the size, do not enter it
         run: |
