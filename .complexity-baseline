@@ -13,7 +13,15 @@
 # only shrink). File-level granularity matches .filesize-baseline.
 #
 # Punkt-5-Pruefung (#2135, 2026-07-29): das Urteil haengt an der
-# radon-Version, die NICHT gepinnt ist (aus PATH oder .radon-venv). Ein
-# Versionswechsel kann eine Funktion ueber die cc-20-Linie schieben, ohne dass
-# sich Code aendert. Das Gate druckt die aufgeloeste Version jetzt mit, damit
-# eine lokal/CI-Abweichung zuordenbar ist statt raetselhaft. GEPRUEFT.
+# radon-Version. Ein Versionswechsel kann eine Funktion ueber die cc-20-Linie
+# schieben, ohne dass sich Code aendert. Das Gate druckt die aufgeloeste
+# Version mit, damit eine lokal/CI-Abweichung zuordenbar ist. GEPRUEFT.
+#
+# Orakel-Pin (#2138, entschieden 2026-07-31): radon ist GEPINNT
+# (RADON_PIN in scripts/check-complexity.sh); der Gate-Modus verweigert eine
+# fremde radon-Version, statt mit ihr zu messen. Grund: ein driftendes Orakel
+# ist in der stillen Richtung nach unten gefaehrlich - die Latte sinkt, ohne
+# dass es jemand sieht. Die aus dem Bau abgeleiteten Orakel (Tailwind-
+# Classname-Gates) bleiben bewusst UNgepinnt: dort ist das Bauergebnis selbst
+# der Pruefgegenstand, ein Pin hielte die falsche Sache fest. Entscheidung
+# nicht erneut aufwerfen; Aenderung nur mit neuem Beschluss am Issue.

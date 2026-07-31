@@ -112,6 +112,14 @@ def write_baseline(path: str, worst: dict[str, int]) -> None:
         "# TypeScript eslint complexity > 20. New over-threshold functions block",
         "# immediately; existing offenders below are grandfathered (ratchet may",
         "# only shrink). File-level granularity matches .filesize-baseline.",
+        "#",
+        "# Oracle pin (#2138, decided 2026-07-31): the Python half of this verdict",
+        "# is produced by the pinned radon (RADON_PIN in scripts/check-complexity.sh);",
+        "# the gate refuses a foreign radon version instead of measuring with it,",
+        "# because a drifting oracle lowers the bar silently in the downward",
+        "# direction. The build-derived oracles (Tailwind classname gates) stay",
+        "# deliberately unpinned - there the build output is itself the test",
+        "# subject, and a pin would freeze the wrong thing.",
         "",
     ]
     body = [f"{path_} {worst[path_]}" for path_ in sorted(worst)]
@@ -129,6 +137,9 @@ def _radon_version() -> str:
     reported = os.environ.get("RADON_VERSION", "").strip()
     if not reported or reported == "unavailable":
         return "radon unavailable (see the gate's own fail-closed handling)"
+    pin = os.environ.get("RADON_PIN", "").strip()
+    if pin:
+        return f"radon {reported} (pinned: radon=={pin}, #2138)"
     return f"radon {reported} (unpinned - a version change can move a function across cc 20)"
 
 
