@@ -77,6 +77,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Mark the workspace safe for git (root vs uid-1001 checkout, #2035)
+        # This job runs as root (see the container comment above), but
+        # actions/checkout leaves the workspace owned by uid 1001. Without
+        # this, git refuses the repo ("detected dubious ownership") and every
+        # git subprocess inside make release-test dies with exit 129 - the
+        # v2.6.1 run failed exactly there
+        # (test_testid_reference_gate.py::test_run_clean_on_empty_diff).
+        # The sibling Playwright jobs are unaffected: they run as --user 1001.
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Install make + unzip (the Playwright noble image has neither)
         # The gate is driven by `make release-test`; the image ships no make and
         # we run as root here, so apt-get it. Browsers are baked in — no
