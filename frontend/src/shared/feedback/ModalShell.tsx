@@ -11,8 +11,9 @@
  * The caller supplies the title + body and owns the open/close state.
  *
  * Accessibility: ``role="dialog"`` + ``aria-modal``, Escape + backdrop close,
- * focus restored to the opener on close. The card stops click propagation so a
- * click inside never dismisses.
+ * and full focus management via {@link useDialogFocus} — focus moves into the
+ * dialog on open, Tab is trapped inside, and focus returns to the opener on
+ * close. The card stops click propagation so a click inside never dismisses.
  *
  * @example
  * <ModalShell open={open} title="AI content check" onClose={() => setOpen(false)}>
@@ -23,6 +24,8 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
+
+import { useDialogFocus } from "../../hooks/ui/useDialogFocus";
 
 export interface ModalShellProps {
   /** Whether the modal is mounted/visible. */
@@ -52,11 +55,14 @@ export default function ModalShell({
 }: ModalShellProps) {
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  // Escape closes; focus is restored to the opener on unmount.
+  // Initial focus into the dialog, Tab trap, and focus return on close.
+  useDialogFocus(cardRef, { open });
+
+  // Escape closes.
   useEffect(() => {
     if (!open) return;
-    const opener = document.activeElement as HTMLElement | null;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -66,7 +72,6 @@ export default function ModalShell({
     document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("keydown", onKey);
-      opener?.focus?.();
     };
   }, [open]);
 
@@ -79,6 +84,7 @@ export default function ModalShell({
       data-testid={testId}
     >
       <div
+        ref={cardRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={`${testId}-title`}

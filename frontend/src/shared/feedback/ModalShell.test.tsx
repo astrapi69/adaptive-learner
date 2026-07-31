@@ -6,6 +6,7 @@
 
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import ModalShell from "./ModalShell";
@@ -64,5 +65,55 @@ describe("ModalShell", () => {
     const card = screen.getByTestId("m-card");
     expect(card).toHaveAttribute("role", "dialog");
     expect(card).toHaveAttribute("aria-modal", "true");
+  });
+
+  // #2266 — focus management: moved into the dialog on open, trapped
+  // inside, and returned to the opener on close.
+  it("moves focus into the dialog on open", () => {
+    renderShell();
+    const card = screen.getByTestId("m-card");
+    expect(card.contains(document.activeElement)).toBe(true);
+  });
+
+  it("returns focus to the opener on close", () => {
+    const onClose = vi.fn();
+    function Harness() {
+      const [open, setOpen] = useState(true);
+      return (
+        <div>
+          <button data-testid="opener" onClick={() => setOpen(true)}>
+            open
+          </button>
+          <ModalShell
+            open={open}
+            title="t"
+            onClose={() => {
+              onClose();
+              setOpen(false);
+            }}
+            testId="m"
+          >
+            <p>body</p>
+          </ModalShell>
+        </div>
+      );
+    }
+    const opener = document.createElement("button");
+    document.body.appendChild(opener);
+    opener.focus();
+    render(<Harness />);
+    fireEvent.click(screen.getByTestId("m-x"));
+    expect(document.activeElement).toBe(opener);
+    opener.remove();
+  });
+
+  it("traps Tab inside the dialog", () => {
+    renderShell();
+    const card = screen.getByTestId("m-card");
+    const focusables = card.querySelectorAll("button");
+    const last = focusables[focusables.length - 1] as HTMLElement;
+    last.focus();
+    fireEvent.keyDown(card, { key: "Tab" });
+    expect(card.contains(document.activeElement)).toBe(true);
   });
 });

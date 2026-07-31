@@ -28,6 +28,7 @@ import {
 } from "../../lib/utils/updateChecker";
 import { isCheckDue, readUpdatePrefs, writeUpdatePrefs } from "../../lib/utils/updatePrefs";
 import ReleaseNotes, { RELEASE_NOTES_LIMIT } from "../about/ReleaseNotes";
+import ModalShell from "../../shared/feedback/ModalShell";
 
 export default function DesktopUpdateHost() {
   const { t } = useI18n();
@@ -130,48 +131,44 @@ export default function DesktopUpdateHost() {
       </div>
 
       {modalOpen && result.releaseNotes && (
-        <div className="modal-overlay" data-testid="desktop-update-modal">
-          <div
-            className="modal-card"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="desktop-update-modal-title"
-          >
-            <h2 id="desktop-update-modal-title" className="modal-title">
-              {t("update.banner.whats_new_title", "What's new in {version}").replace(
-                "{version}",
-                version,
-              )}
-            </h2>
-            <ReleaseNotes
-              notes={result.releaseNotes}
-              releaseUrl={result.releaseUrl}
-              t={t}
-              limit={RELEASE_NOTES_LIMIT * 8}
-            />
-            <div className="form-actions">
-              {result.releaseUrl && (
-                <a
-                  href={result.releaseUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-testid="desktop-update-modal-release"
-                  className="inline-flex min-h-[44px] items-center rounded-app bg-accent px-4 font-semibold text-accent-foreground hover:bg-accent-hover"
-                >
-                  {t("update.banner.release_page", "Release page")}
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                data-testid="desktop-update-modal-close"
-                className="inline-flex min-h-[44px] items-center rounded-app border border-border px-4 text-fg-primary hover:bg-bg-elevated"
+        <ModalShell
+          open
+          onClose={() => setModalOpen(false)}
+          title={t("update.banner.whats_new_title", "What's new in {version}").replace(
+            "{version}",
+            version,
+          )}
+          closeLabel={t("common.close", "Close")}
+          testId="desktop-update-modal"
+        >
+          <ReleaseNotes
+            notes={result.releaseNotes}
+            releaseUrl={result.releaseUrl}
+            t={t}
+            limit={RELEASE_NOTES_LIMIT * 8}
+          />
+          <div className="form-actions">
+            {result.releaseUrl && (
+              <a
+                href={result.releaseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="desktop-update-modal-release"
+                className="inline-flex min-h-[44px] items-center rounded-app bg-accent px-4 font-semibold text-accent-foreground hover:bg-accent-hover"
               >
-                {t("common.close", "Close")}
-              </button>
-            </div>
+                {t("update.banner.release_page", "Release page")}
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={() => setModalOpen(false)}
+              data-testid="desktop-update-modal-close"
+              className="inline-flex min-h-[44px] items-center rounded-app border border-border px-4 text-fg-primary hover:bg-bg-elevated"
+            >
+              {t("common.close", "Close")}
+            </button>
           </div>
-        </div>
+        </ModalShell>
       )}
     </>
   );
