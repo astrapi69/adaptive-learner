@@ -60,6 +60,16 @@ X button simply closes the launcher — no crash, and the window is never
 hidden with no way to bring it back. Run `python -m adaptive_learner_launcher
 --debug` and grep for `tray` to see which case applied.
 
+**The downloadable binary has no tray, on purpose.** The frozen artifact
+excludes pystray and Pillow: they cost megabytes that every learner
+downloads, and on GNOME a docked icon would additionally need a shell
+extension, so the promise would be conditional - worse than none. The
+dependency declaration was removed to match, so the configuration and the
+artifact say the same thing. In the binary the X therefore always closes
+the launcher (the app itself keeps running in Docker; start the launcher
+again to stop or check it). The tray remains available when running from
+source with the `tray` extra.
+
 ## Run from source
 
 ```bash
