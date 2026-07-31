@@ -71,6 +71,22 @@ def test_fails_closed_when_the_image_cannot_be_measured(tmp_path: Path) -> None:
     assert "could not measure" in result.stderr
 
 
+def test_fails_closed_when_docker_is_absent_entirely(tmp_path: Path) -> None:
+    """No docker binary at all (#2241: the release-prepare Playwright
+    container) must produce the SAME named fail-closed message, not a raw
+    FileNotFoundError traceback - the gate's behaviour has to mean the same
+    thing in every environment (gate contract point 5)."""
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps({"compressed_bytes": 100}), encoding="utf-8")
+    args = [sys.executable, str(SCRIPT), "--image", "adaptive-learner:x", "--baseline", str(baseline)]
+    result = subprocess.run(
+        args, capture_output=True, text=True, cwd=REPO_ROOT, env={"PATH": str(tmp_path)}
+    )
+    assert result.returncode == 1
+    assert "could not measure" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
 def test_shrinking_lowers_the_ceiling_only_on_request(tmp_path: Path) -> None:
     baseline = tmp_path / "b.json"
     baseline.write_text(json.dumps({"compressed_bytes": 500}), encoding="utf-8")
