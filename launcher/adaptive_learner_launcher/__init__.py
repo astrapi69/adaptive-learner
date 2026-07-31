@@ -5,4 +5,4 @@ monitors for shutdown, and stops the stack on exit. Ships as a single
 Windows .exe via PyInstaller. Keeps Docker-as-deployment intact.
 """
 
-__version__ = "2.8.2"
+__version__ = "2.9.0"

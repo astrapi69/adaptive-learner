@@ -114,10 +114,12 @@ Bilinen tuzaklar:
   (Ubuntu 22.04+, Debian 12+, Fedora 36+). Daha eski dağıtımlarda
   uygulamayı bunun yerine `install.sh` ya da doğrudan Docker Compose
   ile çalıştır.
-- **Uygulamaya tarayıcıdan erişilemiyor**: uygulama yalnızca yerel
-  olarak (`localhost`) çalışır, bu yüzden bir güvenlik duvarı kuralı
-  gerekmez. Tarayıcı otomatik olarak açılmazsa, `http://localhost:8501`
-  adresini elle aç (ya da başlatıcı penceresinde gösterilen portu).
+- **Uygulamaya tarayıcıdan erişilemiyor**: tarayıcı otomatik olarak
+  açılmazsa, `http://localhost:8501` adresini elle aç (ya da başlatıcı
+  penceresinde gösterilen portu). Dikkat: uygulama yalnızca `localhost`
+  üzerinde değil, tüm ağ arayüzlerinde yayımlanır ve kimlik doğrulaması
+  yoktur - ağdaki başka cihazların erişmesini bilerek istemiyorsan bu
+  portu güvenlik duvarında kapalı tut.
 
 ## macOS
 

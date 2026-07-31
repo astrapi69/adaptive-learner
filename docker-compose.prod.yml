@@ -28,13 +28,13 @@ services:
     # version below is maintained by `make sync-versions` (same derived-pin
     # class as every other version literal - do not edit it by hand);
     # ADAPTIVE_LEARNER_APP_VERSION in .env overrides it.
-    image: ${ADAPTIVE_LEARNER_IMAGE_NAME:-adaptive-learner}:${ADAPTIVE_LEARNER_APP_VERSION:-2.8.2}
+    image: ${ADAPTIVE_LEARNER_IMAGE_NAME:-adaptive-learner}:${ADAPTIVE_LEARNER_APP_VERSION:-2.9.0}
     build:
       context: .
       dockerfile: backend/Dockerfile
       labels:
         org.opencontainers.image.title: adaptive-learner
-        org.opencontainers.image.version: ${ADAPTIVE_LEARNER_APP_VERSION:-2.8.2}
+        org.opencontainers.image.version: ${ADAPTIVE_LEARNER_APP_VERSION:-2.9.0}
         org.opencontainers.image.source: https://github.com/astrapi69/adaptive-learner
     # One container, one port: the host-published port the user reaches in
     # the browser maps straight onto the backend port that serves BOTH the
