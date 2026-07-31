@@ -32,7 +32,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -801,6 +801,12 @@ verify-docs-hygiene: ## Docs hygiene: German-umlaut substitute ratchet + explora
 verify-docs-hygiene-raise: ## Lower the umlaut-substitute baseline after a genuine reduction
 	@python3 scripts/verify_docs_hygiene.py --update-baseline
 
+verify-doc-refs: ## Doc refs (#2254): make targets, repo paths and constants named in docs must exist
+	@python3 scripts/verify_doc_refs.py
+
+verify-doc-refs-bank: ## Bank a genuine reduction of broken doc references (error counter, never a raise)
+	@python3 scripts/verify_doc_refs.py --auto-lower
+
 verify-gate-rule-links: ## Gate <-> rule coupling (#2075): no gate without its rule section, no rule citing a dead gate
 	@python3 scripts/verify_gate_rule_links.py
 
@@ -810,6 +816,7 @@ verify-workflow-health: ## Red-runs rollup (#2225): latest schedule/push run per
 ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-based gates
 	@echo "== docs drift"          && $(MAKE) --no-print-directory verify-docs
 	@echo "== docs hygiene"        && $(MAKE) --no-print-directory verify-docs-hygiene
+	@echo "== doc references"     && $(MAKE) --no-print-directory verify-doc-refs
 	@echo "== gate <-> rule links" && $(MAKE) --no-print-directory verify-gate-rule-links
 	@echo "== check inventory"     && $(MAKE) --no-print-directory verify-check-inventory
 	@echo "== lessons inventory"   && $(MAKE) --no-print-directory verify-lessons-inventory
