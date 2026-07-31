@@ -196,3 +196,10 @@ checks:
     status: active
     wired_in: make verify-docs-hygiene; .pre-commit-config.yaml docs-hygiene
     probe: make_target=verify-docs-hygiene
+
+  - id: red-runs-rollup
+    verifies: the latest completed schedule/push run of every active workflow is green - scheduled reds surface daily instead of sitting unseen in the Actions tab
+    rule: "-"
+    status: active
+    wired_in: make verify-workflow-health; .github/workflows/red-runs-rollup.yml
+    probe: make_target=verify-workflow-health

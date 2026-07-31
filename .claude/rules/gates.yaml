@@ -77,6 +77,7 @@ gates:
 # Workflows that deliberately enforce no documented rule.
 no_rule:
   ratchet-develop-gate.yml: detection re-run of existing ratchets on push to develop (#2182); enforces no new rule section of its own
+  red-runs-rollup.yml: daily visibility aggregation of red schedule/push runs (#2225); enforces no rule of its own - each red it surfaces is classified against the existing rules
   cohesion-check.yml: file-size + dead-classname ratchets, tracked by their baselines
   mutation-frontend.yml: informational report behind ENABLE_NIGHTLY_MUTATION
   visual-regression.yml: produces baselines; the duty to carry them is visual-baseline-gate.yml
