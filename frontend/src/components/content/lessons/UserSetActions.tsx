@@ -31,6 +31,10 @@ export interface UserSetActionsProps {
   onExportSet: (entry: ContentSetEntry) => void;
   onShare: (entry: ContentSetEntry) => void;
   onDelete: (entry: ContentSetEntry) => void;
+  /** #2210 — render the set-level Edit button. Off for a multi-lesson set,
+   *  where it would guess which lesson; the per-lesson Edit in SetLessonList
+   *  is the entry there. Defaults on (single-lesson + folded surfaces). */
+  showEdit?: boolean;
 }
 
 export default function UserSetActions({
@@ -43,6 +47,7 @@ export default function UserSetActions({
   onExportSet,
   onShare,
   onDelete,
+  showEdit = true,
 }: UserSetActionsProps) {
   const { t } = useI18n();
   return (
@@ -51,19 +56,22 @@ export default function UserSetActions({
         <Play size={14} aria-hidden="true" />
         {t("content.my_lessons.play", "Play")}
       </Button>
-      {/* #1740 — every own lesson is editable (analysis routes back to
-          its import page; created/imported/adaptive open the pre-filled
-          Lesson Creator). Foreign-repo lessons never render this action
-          set, so the button is safe to show unconditionally. */}
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={() => onEdit(entry)}
-        data-testid={`${testIdPrefix}-edit`}
-      >
-        <Pencil size={14} aria-hidden="true" />
-        {t("content.my_lessons.edit", "Edit")}
-      </Button>
+      {/* #1740 / #2210 — every own lesson is editable (analysis routes back
+          to its import page; created/imported/adaptive open the pre-filled
+          Lesson Creator). Hidden for a multi-lesson set (``showEdit=false``),
+          where a set-level Edit would guess which lesson; the per-lesson Edit
+          in SetLessonList is the entry there. */}
+      {showEdit && (
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => onEdit(entry)}
+          data-testid={`${testIdPrefix}-edit`}
+        >
+          <Pencil size={14} aria-hidden="true" />
+          {t("content.my_lessons.edit", "Edit")}
+        </Button>
+      )}
       <Button
         type="button"
         variant="secondary"

@@ -2357,7 +2357,9 @@
       "action_delete": "レッスンを削除",
       "deleted": "レッスンを削除しました。",
       "delete_failed": "レッスンを削除できませんでした。",
-      "delete_aria": "レッスン{title}を削除"
+      "delete_aria": "レッスン{title}を削除",
+      "play_aria": "レッスン{title}を再生",
+      "edit_aria": "レッスン{title}を編集"
     },
     "lesson_order": {
       "move_up": "レッスン{title}を上に移動",

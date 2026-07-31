@@ -18,7 +18,7 @@
  */
 
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useNavigate, useParams} from "react-router";
+import {useNavigate, useParams, useSearchParams} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
@@ -154,9 +154,13 @@ export default function CreateLesson() {
     const {t, lang} = useI18n();
     const navigate = useNavigate();
     const params = useParams();
+    const [searchParams] = useSearchParams();
     // #1740 — /create-lesson/edit/:source/:setId opens the wizard
     // pre-filled to edit an existing own lesson.
     const editMode = Boolean(params.source && params.setId);
+    // #2210 — ?lesson={id}.json aims the wizard at one specific lesson of a
+    // multi-lesson set (the per-row Edit target); absent -> the first lesson.
+    const editLessonParam = searchParams.get("lesson");
     // #1967 — editing a cardless (theory/exercise) lesson, e.g. one authored
     // via the book-text path (#1743): the wizard skips the vocabulary-card step
     // and opens straight on the generated exercises. Set by the edit session
@@ -255,6 +259,7 @@ export default function CreateLesson() {
         editMode,
         source: params.source,
         setId: params.setId,
+        lessonParam: editLessonParam,
         t,
         draftSnapshotRef,
         setMeta,
