@@ -58,6 +58,28 @@ Los tres lanzadores se publican con cada versión en
 | macOS | `adaptive-learner-launcher-macos.zip` | `adaptive-learner-launcher-macos.zip.sha256` |
 | Windows | `adaptive-learner-launcher.exe` | `adaptive-learner-launcher.exe.sha256` |
 
+### Qué está verificado y qué no
+
+Cada uno de estos programas se inicia una vez durante su construcción,
+exactamente en el sistema operativo al que está destinado. Con ello queda
+comprobado que arranca: en Linux, en Windows y en macOS con Apple
+Silicon. La imagen de la aplicación se verifica en cada versión: una
+descarga anónima (sin inicio de sesión) y un arranque real con
+comprobación de salud, por separado para ambos tipos de procesador
+(Intel/AMD y ARM), en máquinas de ese tipo. Lo que aún no se ha medido
+es la descarga desde el registro en motores Docker muy antiguos (de la
+era 20.10); la propia cadena del motor está comprobada en un motor así
+contra otro registro, y la medición contra el registro de GitHub se
+sigue upstream.
+
+Lo que no está comprobado es cómo reacciona tu sistema operativo ante un
+archivo **descargado**: los programas no llevan una firma de pago, así
+que macOS avisa al abrirlos por primera vez ("desarrollador no
+identificado") y Windows muestra el aviso de SmartScreen. Es una
+advertencia, no un defecto; cómo confirmarla una sola vez está más abajo
+en [macOS](#macos) y [Windows](#windows). Verifica antes la suma de
+comprobación: es una prueba más fiable que cualquier diálogo.
+
 ## Linux
 
 1. Verifica la suma de comprobación (ambos archivos en la misma

@@ -56,6 +56,27 @@ Os três launchers são disponibilizados em cada release em
 | macOS | `adaptive-learner-launcher-macos.zip` | `adaptive-learner-launcher-macos.zip.sha256` |
 | Windows | `adaptive-learner-launcher.exe` | `adaptive-learner-launcher.exe.sha256` |
 
+### O que está verificado e o que não está
+
+Cada um destes programas é iniciado uma vez durante a sua construção,
+exatamente no sistema operativo a que se destina. Fica assim comprovado
+que arranca: em Linux, em Windows e em macOS com Apple Silicon. A imagem
+da aplicação é verificada em cada versão: uma transferência anónima
+(sem sessão) e um arranque real com verificação de saúde, separadamente
+para os dois tipos de processador (Intel/AMD e ARM), em máquinas desse
+tipo. O que ainda não foi medido é a transferência a partir do registo
+em motores Docker muito antigos (era 20.10); a própria cadeia do motor
+está comprovada num motor desses contra outro registo, e a medição
+contra o registo do GitHub é acompanhada upstream.
+
+O que não está comprovado é como o teu sistema operativo reage a um
+ficheiro **transferido**: os programas não trazem uma assinatura paga,
+por isso o macOS avisa na primeira abertura ("programador não
+identificado") e o Windows mostra o aviso SmartScreen. É um aviso, não
+um defeito; como confirmá-lo uma única vez está descrito abaixo em
+[macOS](#macos) e [Windows](#windows). Verifica antes a soma de
+verificação: é uma prova mais fiável do que qualquer diálogo.
+
 ## Linux
 
 1. Verifica o checksum (ambos os ficheiros na mesma pasta):
