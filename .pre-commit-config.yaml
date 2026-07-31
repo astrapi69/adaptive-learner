@@ -99,7 +99,10 @@ repos:
 
       - id: docs-hygiene
         name: docs hygiene (umlaut-substitute ratchet + exploration-index orphans)
-        entry: python scripts/verify_docs_hygiene.py
+        # --auto-lower banks a fall (improvement) into the baseline so the gain
+        # rides this commit; a rise still fails. Like ruff-format, the write
+        # makes pre-commit re-run so the lowered baseline is committed (#2230).
+        entry: python scripts/verify_docs_hygiene.py --auto-lower
         language: python
         pass_filenames: false
         files: ^(docs/.*\.md|docs/\.docs-hygiene-baseline\.json|scripts/verify_docs_hygiene\.py)$
