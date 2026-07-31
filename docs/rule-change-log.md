@@ -19,3 +19,4 @@ declared").
 | 2026-07-30 | `b04bc8c4` | - | release-workflow.md Step 8 replaced with the mandatory draft-first dispatch sequence; corpus ceiling 283083 -> 284295. |
 | 2026-07-30 | `a3c76763` | - | Step-8 sequence extended by the completeness checkpoint; corpus ceiling raised accordingly. |
 | 2026-07-30 | `b6c0eed5` | #2182 | extend the parallel-agent-sessions note (lessons/core.md) so lane ownership also covers findings and lessons - the second lane references the first lane's finding instead of re-filing it. Additive; no rule weakened or deleted. |
+| 2026-07-31 | `f0762cc` | #2235 | quality-checks.md "Gate test contract" point 5 gains one sentence establishing the three-way ratchet class distinction (error-counter auto-lowers, budget banks, drifting-oracle never auto-lowers). It supersedes the too-general notion that any ratchet follows improvements down; the corpus/budget bank |
