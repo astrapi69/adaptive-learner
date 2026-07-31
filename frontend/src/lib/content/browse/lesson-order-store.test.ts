@@ -20,11 +20,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   applyStoredLessonOrder,
+  applyStoredLessonOrderToList,
   getLessonOrder,
   moveLessonOrder,
   readLessonOrders,
   storeLessonOrder,
 } from "./lesson-order-store";
+import type { ContentLessonList } from "../../../storage/types";
 import {
   applyLocalStorageSnapshot,
   captureLocalStorageSnapshot,
@@ -222,5 +224,32 @@ describe("lesson-order-store - backup portability (Export -> wipe -> Import)", (
 
     applyLocalStorageSnapshot(snapshot);
     expect(getLessonOrder(SRC, SET)).toEqual(BOOK_ORDER);
+  });
+});
+
+describe("applyStoredLessonOrderToList (#2212) - the listLessons seam", () => {
+  const NATURAL: ContentLessonList = {
+    set_id: SET,
+    source: SRC,
+    version: "1.0.0",
+    lessons: ["epilog.json", "kapitel-1.json", "kapitel-2.json"],
+  };
+
+  it("orders the listing by the stored order, preserving the other fields", () => {
+    storeLessonOrder(SRC, SET, ["kapitel-1.json", "kapitel-2.json", "epilog.json"]);
+    const out = applyStoredLessonOrderToList(NATURAL);
+    expect(out.lessons).toEqual(["kapitel-1.json", "kapitel-2.json", "epilog.json"]);
+    expect(out.set_id).toBe(SET);
+    expect(out.source).toBe(SRC);
+    expect(out.version).toBe("1.0.0");
+  });
+
+  it("returns the SAME object when the set was never reordered (no silent resort)", () => {
+    expect(applyStoredLessonOrderToList(NATURAL)).toBe(NATURAL);
+  });
+
+  it("scopes by source::set-id (a stored order for another set does not leak)", () => {
+    storeLessonOrder("other", SET, ["kapitel-2.json", "epilog.json", "kapitel-1.json"]);
+    expect(applyStoredLessonOrderToList(NATURAL)).toBe(NATURAL);
   });
 });

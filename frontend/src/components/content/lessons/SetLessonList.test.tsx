@@ -69,16 +69,18 @@ function mockLessons() {
 async function renderExpanded() {
   const onPlayLesson = vi.fn();
   const onRequestDelete = vi.fn();
+  const onEditLesson = vi.fn();
   render(
     <SetLessonList
       entry={entry()}
       onPlayLesson={onPlayLesson}
       onRequestDelete={onRequestDelete}
+      onEditLesson={onEditLesson}
     />,
   );
   fireEvent.click(screen.getByTestId("set-lessons-toggle-mein-buch"));
   await waitFor(() => screen.getByTestId("set-lesson-mein-buch-epilog.json"));
-  return { onPlayLesson, onRequestDelete };
+  return { onPlayLesson, onRequestDelete, onEditLesson };
 }
 
 /** The visible order, read off the row testids. */
@@ -134,7 +136,12 @@ describe("SetLessonList - reorder", () => {
 
   it("persists the order across a remount (immediately, no save action)", async () => {
     const { unmount } = render(
-      <SetLessonList entry={entry()} onPlayLesson={vi.fn()} onRequestDelete={vi.fn()} />,
+      <SetLessonList
+        entry={entry()}
+        onPlayLesson={vi.fn()}
+        onEditLesson={vi.fn()}
+        onRequestDelete={vi.fn()}
+      />,
     );
     fireEvent.click(screen.getByTestId("set-lessons-toggle-mein-buch"));
     await waitFor(() => screen.getByTestId("set-lesson-mein-buch-epilog.json"));
@@ -145,6 +152,28 @@ describe("SetLessonList - reorder", () => {
     // Fresh mount reads the persisted order.
     await renderExpanded();
     expect(orderOf()).toEqual(["kapitel-1.json", "epilog.json", "kapitel-2.json"]);
+  });
+
+  it("edits the row's own lesson (#2210): carries this row's filename, never the first", async () => {
+    const { onEditLesson } = await renderExpanded();
+    // Edit the third lesson; the target must be that row's filename, not epilog.
+    fireEvent.click(screen.getByTestId("set-lesson-edit-mein-buch-kapitel-2.json"));
+    expect(onEditLesson).toHaveBeenCalledTimes(1);
+    expect(onEditLesson).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "mein-buch" }),
+      "kapitel-2.json",
+    );
+  });
+
+  it("edit target follows the row after a reorder (identity, not position)", async () => {
+    const { onEditLesson } = await renderExpanded();
+    fireEvent.click(screen.getByTestId("set-lesson-down-mein-buch-epilog.json"));
+    // Epilog is now second; editing it still carries its own filename.
+    fireEvent.click(screen.getByTestId("set-lesson-edit-mein-buch-epilog.json"));
+    expect(onEditLesson).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "mein-buch" }),
+      "epilog.json",
+    );
   });
 
   it("keeps identities intact: the delete target still carries the row's filename", async () => {

@@ -17,6 +17,7 @@ import type {Dispatch, RefObject, SetStateAction} from "react";
 import {
     buildEditPrefill,
     fetchEditLessonSet,
+    resolveEditLessonIndex,
 } from "../../../lib/content/lesson/edit/edit-session";
 import type {
     LessonCardDraft,
@@ -76,6 +77,9 @@ interface UseEditLessonSessionArgs extends WizardSetters {
     editMode: boolean;
     source?: string;
     setId?: string;
+    /** #2210 — which lesson to open on ({id}.json or bare id, from the
+     *  ``?lesson=`` route hint); defaults to the first when absent/unknown. */
+    lessonParam?: string | null;
     t: Translate;
     /** Live snapshot of the wizard draft, to detect unsaved edits on switch. */
     draftSnapshotRef: RefObject<string>;
@@ -103,6 +107,7 @@ export function useEditLessonSession({
     editMode,
     source: sourceParam,
     setId: setIdParam,
+    lessonParam,
     t,
     draftSnapshotRef,
     setMeta,
@@ -186,7 +191,10 @@ export function useEditLessonSession({
             try {
                 const {lessons, entry} = await fetchEditLessonSet(source, setId);
                 if (cancelled) return;
-                applyEditLesson(source, setId, lessons, 0, entry, true);
+                // #2210 — open the lesson named by ``?lesson=`` (the per-row
+                // Edit target), not always the first.
+                const index = resolveEditLessonIndex(lessons, lessonParam);
+                applyEditLesson(source, setId, lessons, index, entry, true);
                 setEditLoading(false);
             } catch (err) {
                 if (cancelled) return;

@@ -2357,7 +2357,9 @@
       "action_delete": "पाठ हटाएँ",
       "deleted": "पाठ हटा दिया गया।",
       "delete_failed": "पाठ हटाया नहीं जा सका।",
-      "delete_aria": "पाठ {title} हटाएँ"
+      "delete_aria": "पाठ {title} हटाएँ",
+      "play_aria": "पाठ {title} चलाएँ",
+      "edit_aria": "पाठ {title} संपादित करें"
     },
     "lesson_order": {
       "move_up": "पाठ {title} को ऊपर ले जाएँ",

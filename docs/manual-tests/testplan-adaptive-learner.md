@@ -117,6 +117,10 @@ Fall (Verschieben auf dem Telefon).
 - [ ] Reihenfolge ist SOFORT gespeichert - keine gesonderte Speichern-Aktion.
       Seite neu laden (oder Set zu- und wieder aufklappen): die geaenderte
       Reihenfolge bleibt.
+- [ ] Wirkt auf die LERNFOLGE (#2212), nicht nur die Liste: nach dem
+      Verschieben oeffnet das Set mit der neuen ersten Lektion, und die
+      Weiter-Navigation ("naechste Lektion") folgt der gewaehlten Reihenfolge -
+      in beiden Speichermodi.
 - [ ] Bestehende Sets: ohne eigenes Verschieben zeigt sich die bisherige
       Reihenfolge unveraendert (kein stilles Umsortieren).
 - [ ] Identitaet unberuehrt: nach mehreren Verschiebungen einer Lektion mit
@@ -129,6 +133,33 @@ Fall (Verschieben auf dem Telefon).
 - [ ] iOS-Standalone (PWA vom Home-Bildschirm): Verschieben per Touch und die
       Positions-Rueckmeldung funktionieren, Reihenfolge bleibt nach dem
       Schliessen und Wiederoeffnen.
+
+#### A7. Bearbeiten je Lektion, nicht je Set (#2210)
+
+Bearbeiten gehoert an die Lektion, nicht an das Set. Der Set-Knopf raete
+frueher, welche Lektion gemeint ist, und oeffnete immer die erste. Drei
+gleichartige Zeilen-Knoepfe (Abspielen/Bearbeiten/Loeschen) brauchen
+unterscheidbare, titelbezogene Bezeichnungen. iOS-Standalone ist der heiklere
+Fall (drei plus Auf/Ab je Zeile auf dem Telefon).
+
+- [ ] In "Meine Inhalte" ein mehrlektionales (Buch-)Set aufklappen ->
+      "Lektionen verwalten". Je Lektion sind jetzt Abspielen, Bearbeiten und
+      Loeschen sichtbar (zusaetzlich zu Auf/Ab).
+- [ ] Bei einem Set mit MEHREREN Lektionen gibt es KEINEN Bearbeiten-Knopf
+      mehr auf Set-Ebene (er wuerde nur raten).
+- [ ] Bei einem Set mit EINER Lektion bleibt der Bearbeiten-Knopf auf
+      Set-Ebene (eindeutig = diese eine Lektion).
+- [ ] Bearbeiten der ZWEITEN oder dritten Lektion oeffnet genau DIESE Lektion
+      im Editor (nicht die erste). Nach dem Verschieben trifft Bearbeiten
+      weiterhin die richtige Lektion (Identitaet, nicht Position).
+- [ ] Nur mit der Tastatur bedienbar: mit Tab zu Abspielen/Bearbeiten/Loeschen,
+      mit Leertaste/Enter ausloesen. Der Screenreader liest je Knopf eine
+      unterscheidbare Bezeichnung mit Lektionstitel ("Lektion X bearbeiten"),
+      keine drei gleich klingenden Knoepfe.
+- [ ] Beide Speichermodi (API + Dexie).
+- [ ] iOS-Standalone (PWA vom Home-Bildschirm): alle Zeilen-Knoepfe sind mit
+      dem Finger sicher und ohne Fehlgriff bedienbar; Bearbeiten oeffnet die
+      richtige Lektion.
 
 ### Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
 
