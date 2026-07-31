@@ -17,7 +17,7 @@
   "Dexie-mode is part of the contract: same-commit or not at all": "760fbea6f31bf2e5",
   "Diagnostic features must fail open": "55d227992b45a642",
   "Doc files: existence is not discoverability": "8bb5c419ff4085fe",
-  "Doc values: read from code, not from memory": "d5b6ee3ce6b4145d",
+  "Doc values: read from code, not from memory": "cb96a1d98be3893c",
   "Docs are specification, not a wish list": "ffac6d6b52042284",
   "End-user help is versionless; provenance belongs to the changelog": "0e83c38c74f67fc5",
   "Engine re-pin without `make sync-schema` is invisible until the release gate": "3b21b7970742be58",
