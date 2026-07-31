@@ -83,7 +83,17 @@ jobs:
           # How many nights it takes to cover the whole scope. Raise this
           # if a shard ever approaches the 120-min timeout; lower it (down
           # to 1) to cover more per night. See the header note + #1956.
-          SHARD_COUNT: "8"
+          # Sizing history (#2223): 8 (from the ~7h estimate) timed out
+          # nightly with ~2800 mutants/shard; 24 STILL timed out (run
+          # 30614546055: 1383 mutants - interleaving is uneven - and only
+          # 1311 tested in 1h54m). Sustained throughput is ~12 mutants/min
+          # because timed-out/surviving mutants dominate the tail; early-run
+          # rate is ~2x that and misleads. 48 -> ~470 avg / ~700 worst
+          # observed shape, ~40-60 min. If the 48-night sweep cadence is
+          # too slow, the honest levers are stryker concurrency (runner
+          # has 4 vCPU, config assumes 2) or a tighter per-mutant timeout,
+          # each measured on its own.
+          SHARD_COUNT: "48"
         run: |
           set -euo pipefail
           if [ "$MUTATE_INPUT" = "ALL" ]; then

@@ -111,6 +111,9 @@ lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
 - [ ] The order is saved IMMEDIATELY - there is no separate Save action.
       Reload the page (or collapse and re-expand the set): the changed order
       persists.
+- [ ] Drives the LEARNING sequence (#2212), not just the list: after a move,
+      opening the set starts on the new first lesson, and "next lesson"
+      navigation follows the chosen order - in both storage modes.
 - [ ] Existing sets: without an explicit move, the current order is shown
       unchanged (no silent resort).
 - [ ] Identity untouched: after several moves of a lesson that has learning
@@ -122,11 +125,34 @@ lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
 - [ ] iOS standalone (PWA from the home screen): moving via touch and the
       position feedback work, and the order survives closing and reopening.
 
+#### A7. Edit belongs to the lesson, not the set (#2210)
+
+Edit belongs to the lesson, not the set. The set-level button used to guess
+which lesson was meant and always opened the first. Three similar per-row
+buttons (Play/Edit/Delete) need distinct, title-bearing labels. iOS standalone
+is the trickier case (three plus Up/Down per row on a phone).
+
+- [ ] In "My Content" expand a multi-lesson (book) set -> "Manage lessons".
+      Each lesson now shows Play, Edit and Delete (in addition to Up/Down).
+- [ ] A set with SEVERAL lessons no longer has a set-level Edit button (it
+      would only guess).
+- [ ] A set with ONE lesson keeps the set-level Edit button (unambiguous =
+      that one lesson).
+- [ ] Editing the SECOND or third lesson opens exactly THAT lesson in the
+      editor (not the first). After a reorder, Edit still hits the correct
+      lesson (identity, not position).
+- [ ] Keyboard only: Tab to Play/Edit/Delete, trigger with Space/Enter. The
+      screen reader announces a distinct label per button with the lesson
+      title ("Edit lesson X"), not three identical-sounding buttons.
+- [ ] Both storage modes (API + Dexie).
+- [ ] iOS standalone (PWA from the home screen): every per-row button is
+      reliably tappable without mis-taps; Edit opens the correct lesson.
+
 ### Session B: Ubuntu (launcher binary, after the launcher session)
 
-Prerequisite: the launcher session is delivered (mode decision, pin to
->=0.21.0, new binaries with run IDs). Use only these binaries; all older ones
-are obsolete.
+Prerequisite: the v2.8.2 release binaries (the launcher runs in IMAGE mode
+since v2.8.0, #2167; engine pin docker-app-launcher ^0.25.1). Use only these
+binaries; all older ones are obsolete.
 
 - [ ] Daemon running + a test user WITHOUT the docker group (qatest):
       permission message + pkexec-fix offer, NOT "Start Docker". [since the
@@ -134,17 +160,17 @@ are obsolete.
 - [ ] Run the pkexec fix, real re-login: state switches to "Docker running".
 - [ ] Console visible, detection lines streaming, text wrap correct, window
       resizable.
-- [ ] Branding "Adaptive Learner", About: launcher 0.21.0, app 2.6.0 with a
-      source label.
+- [ ] Branding "Adaptive Learner", About: app 2.8.2 with a source label;
+      note the launcher version shown (actual value from the v2.8.2 binary).
 - [ ] Setup runs through to a reachable app frontend in the browser. Proof
-      goal per mode: in dockerfile mode a build and start WITHOUT Compose and
-      WITHOUT buildx on the Docker-20.10 device; in compose mode the full
-      readiness message with a working guide.
+      goal (image mode): an anonymous pull of
+      ghcr.io/astrapi69/adaptive-learner:2.8.2 and a start - NO build, no
+      buildx, no Compose; pull progress visible in the console.
 - [ ] Second start while the launcher is running: focuses the existing window
       (#31).
 - [ ] Stop, restart, uninstall: no errors, the console reports intelligibly.
-- [ ] Do NOT test a port change until the origin data-loss risk is resolved
-      (a separate task is in flight).
+- [ ] Port change: test via the three #2069 cases under "PRIO 2 -> Port
+      change: data carry-over" (the earlier caveat has been delivered).
 
 ### Recommended order
 

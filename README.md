@@ -1,6 +1,9 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.8.2-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.9.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
+[![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
+[![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
 [![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -192,7 +195,10 @@ Both scripts clone the tagged release into `~/adaptive-learner/`,
 generate an `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet at-rest
 encryption), build the Docker images, and start the stack at
 `http://localhost:8501` (single port, single container; FastAPI
-serves the static frontend and `/api/*` itself).
+serves the static frontend and `/api/*` itself). The port is
+published on every network interface, not only on `localhost`, and
+the app has no authentication - keep it closed at your firewall
+unless you deliberately want other devices to reach it.
 
 ```bash
 cd ~/adaptive-learner
@@ -287,6 +293,12 @@ E2E smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
+The badge above states a size, not a strength: it counts passing
+tests. How much the suite actually catches is probed by mutation
+testing (frontend logic layers, nightly interleaved shards via
+Stryker); its per-shard reports are CI artifacts, not a single rate,
+which is why no mutation-score badge exists (#2257).
+
 Verified 2026-07-24 (v2.6.0):
 
 | Suite | Count |
@@ -321,7 +333,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.8.2** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198, lesson-validator eval #2205; v2.8.1 was never published); the v2.8.0 headline
+Active development. The current release is **v2.9.0** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198, lesson-validator eval #2205; v2.8.1 was never published); the v2.8.0 headline
 is the **distribution switch**: the desktop launcher now **pulls a
 published, per-architecture verified image from GHCR** instead of
 building on the user's device (building from source stays for

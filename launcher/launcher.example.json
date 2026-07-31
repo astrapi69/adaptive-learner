@@ -1,0 +1,47 @@
+{
+  "_purpose": "Verified starting point for WRAPPER and LOCAL-TEST launcher configs (#2121). The SHIPPED config is launcher/launcher.json (image mode, version-pinned by make sync-versions); this example is a dockerfile-mode config for running a second, isolated instance from a repo checkout. The wiring keys below are pinned against the shipped config by backend/tests/test_launcher_example_config.py - if they drift, make test goes red.",
+  "_wiring_trap": "env_port_key MUST be ADAPTIVE_LEARNER_PUBLIC_PORT - the launcher default APP_PORT silently configures nothing (the 0.21.x field-session finding this file exists for).",
+  "_isolation_note": "container_name / compose_project / image_name / config_dir / volume carry a -local suffix so a test instance never collides with the real installation's containers or MOUNTS ITS DATA. The real install's volume is the PREFIXED adaptive-learner_adaptive-learner-data (#2154) - never point a test config at it. Since #2122 the compose path is isolatable too: set ADAPTIVE_LEARNER_CONTAINER_NAME / ADAPTIVE_LEARNER_IMAGE_NAME / COMPOSE_PROJECT_NAME to the same -local values in .env and docker-compose.prod.yml resolves a fully separate identity.",
+  "app_name": "Adaptive Learner (local test)",
+  "app_slug": "adaptive-learner",
+  "container_name": "adaptive-learner-local",
+  "image_name": "adaptive-learner-local",
+  "compose_project": "adaptive-learner-local",
+  "compose_file": "docker-compose.prod.yml",
+  "install_dir": ".",
+  "default_port": 8501,
+  "env_port_key": "ADAPTIVE_LEARNER_PUBLIC_PORT",
+  "internal_ports": {
+    "backend": 8000
+  },
+  "env_internal_port_keys": {
+    "backend": "ADAPTIVE_LEARNER_BACKEND_PORT"
+  },
+  "show_advanced_ports": true,
+  "health_check_path": "/api/health",
+  "health_check_key": "status",
+  "health_check_value": "ok",
+  "browser_path": "/",
+  "icon_path": "frontend/branding/adaptive-learner-mark.png",
+  "config_dir": "~/.adaptive-learner-local",
+  "locale": "auto",
+  "single_instance": false,
+  "log_level": "DEBUG",
+  "repo_url": "https://github.com/astrapi69/adaptive-learner",
+  "releases_url": "https://github.com/astrapi69/adaptive-learner/releases/latest",
+  "docs_url": "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md",
+  "update_check_enabled": false,
+  "deployment_mode": "dockerfile",
+  "container_port": 8000,
+  "container_volumes": {
+    "adaptive-learner-local-data": "/app/data"
+  },
+  "container_env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "ADAPTIVE_LEARNER_DEBUG": "false",
+    "ADAPTIVE_LEARNER_DATA_DIR": "/app/data",
+    "ADAPTIVE_LEARNER_PORT": "8000",
+    "ADAPTIVE_LEARNER_SERVE_FRONTEND": "1",
+    "ADAPTIVE_LEARNER_FRONTEND_DIST": "/app/static"
+  }
+}

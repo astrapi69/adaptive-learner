@@ -57,8 +57,14 @@ a = Analysis(
         "pandas",
         "matplotlib",
         "scipy",
-        # Optional tray extra. tray.py is import-safe without it, so the frozen
-        # binary simply runs without a system tray (tray works from source).
+        # Optional tray extra, deliberately NOT bundled: it costs megabytes
+        # every learner downloads, and on GNOME a docked icon would need a
+        # shell extension on top, so the promise would be conditional. The
+        # dependency declaration was removed to match (pyproject.toml) - one
+        # statement, not two that contradict each other. Complete, not just
+        # intended, since docker-app-launcher 0.25.2: with no tray the X
+        # CLOSES the launcher instead of minimizing it forever (#108). The
+        # tray remains available to source installs via the `tray` extra.
         "PIL",
         "pystray",
     ],
@@ -109,8 +115,8 @@ if sys.platform == "darwin":
         info_plist={
             "CFBundleName": "AdaptiveLearner Launcher",
             "CFBundleDisplayName": "AdaptiveLearner Launcher",
-            "CFBundleVersion": "2.8.2",
-            "CFBundleShortVersionString": "2.8.2",
+            "CFBundleVersion": "2.9.0",
+            "CFBundleShortVersionString": "2.9.0",
             "NSHighResolutionCapable": True,
             "NSRequiresAquaSystemAppearance": False,
         },

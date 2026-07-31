@@ -24,6 +24,13 @@
 # Tailwind-CSS (frontend/dist), also build- und Tailwind-versionsabhaengig -
 # deshalb laeuft dieses Gate in `make ci-full`, nicht in `make ci`. Eintraege
 # sind Namen, keine Zahlen; eine Toleranz ergibt hier keinen Sinn. GEPRUEFT.
+#
+# Orakel-Pin (#2138, entschieden 2026-07-31): dieses Orakel bleibt bewusst
+# UNgepinnt. Das gebaute Tailwind-CSS ist selbst der Pruefgegenstand - ein
+# Pin hielte die falsche Sache fest (er wuerde eine alte Toolchain als
+# "Wahrheit" einfrieren, waehrend die App laengst mit der neuen baut). Radon
+# im Complexity-Gate ist dagegen gepinnt (siehe .complexity-baseline).
+# Entscheidung nicht erneut aufwerfen; Aenderung nur mit neuem Beschluss.
 activity-trend
 adaptive-save-row
 adaptive-summary-improvement

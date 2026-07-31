@@ -101,8 +101,7 @@ plugins/adaptive-learner-plugin-<name>/
 - Το routes.py περιέχει μόνο FastAPI endpoints που αναθέτουν.
 - Οι hook specs βρίσκονται στο `backend/app/hookspecs.py`.
 - Εξαρτήσεις plugin ως class attribute: `depends_on = ["session"]`.
-- Όλα τα plugins είναι δωρεάν (MIT). Η υποδομή αδειοδότησης
-  υπάρχει αλλά είναι αδρανής (`LICENSING_ENABLED = False`).
+- Όλα τα plugins είναι δωρεάν (MIT). Δεν υπάρχει επίπεδο αδειοδότησης.
 
 ## Hooks (8 specs στο `backend/app/hookspecs.py`)
 

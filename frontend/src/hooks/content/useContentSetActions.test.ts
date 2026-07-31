@@ -202,6 +202,32 @@ describe("handleEditUserSet dispatch (#1740)", () => {
     );
   });
 
+  it("targets a specific lesson via ?lesson= when a filename is passed (#2210)", () => {
+    const { hook, navigate } = setupWithNavigate();
+    const target = entry({
+      source: "user-generated",
+      id: "created-my-book",
+      domain: "imported",
+    });
+    act(() => hook.result.current.handleEditUserSet(target, "kapitel-2.json"));
+    expect(navigate).toHaveBeenCalledWith(
+      "/create-lesson/edit/user-generated/created-my-book?lesson=kapitel-2.json",
+    );
+  });
+
+  it("url-encodes the lesson filename in the query", () => {
+    const { hook, navigate } = setupWithNavigate();
+    const target = entry({
+      source: "user-generated",
+      id: "created-my-book",
+      domain: "imported",
+    });
+    act(() => hook.result.current.handleEditUserSet(target, "kapitel 2.json"));
+    expect(navigate).toHaveBeenCalledWith(
+      "/create-lesson/edit/user-generated/created-my-book?lesson=kapitel%202.json",
+    );
+  });
+
   it("url-encodes the source and set id in the edit route", () => {
     const { hook, navigate } = setupWithNavigate();
     const target = entry({

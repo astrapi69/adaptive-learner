@@ -2170,6 +2170,8 @@ content:
     deleted: "Lección eliminada."
     delete_failed: "No se pudo eliminar la lección."
     delete_aria: "Eliminar la lección {title}"
+    play_aria: "Reproducir la lección {title}"
+    edit_aria: "Editar la lección {title}"
   lesson_order:
     move_up: "Mover la lección {title} hacia arriba"
     move_down: "Mover la lección {title} hacia abajo"

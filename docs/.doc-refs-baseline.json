@@ -1,0 +1,4 @@
+{
+  "broken_ref_count": 371,
+  "rationale": "Error-counter ratchet over nameable doc references (#2254): should be zero, a rise always fails, every fall is banked automatically (#2235 three-way distinction). Inherited legacy findings only."
+}

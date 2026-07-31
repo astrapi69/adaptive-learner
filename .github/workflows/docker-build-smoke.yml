@@ -85,5 +85,12 @@ jobs:
       # #2132: from publication onward (#2110) the image size is a user
       # cost, not an internal metric - every learner downloads it on first
       # install. Ratchet it right after the build, while the image is here.
+      # The image name is READ from the compose file (#2034 stamps it with
+      # the app version, so a hardcoded bare name would measure nothing -
+      # the size gate correctly fails closed on an unreadable image).
       - name: Verify the image has not grown
-        run: python3 scripts/verify_image_size.py --image adaptive-learner
+        run: |
+          set -euo pipefail
+          image="$(docker compose -f docker-compose.prod.yml config --format json | python3 -c "import json,sys;print(json.load(sys.stdin)['services']['app']['image'])")"
+          echo "Measuring $image"
+          python3 scripts/verify_image_size.py --image "$image"

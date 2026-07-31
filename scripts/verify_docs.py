@@ -138,10 +138,16 @@ def replace_group(text: str, pattern: str, value: str) -> tuple[str, int]:
 # Each entry: (relative path, regex with one version capture group,
 # human label, fixable).  "fixable" is False when the version is
 # embedded in dated/phase prose that --fix must not naively rewrite.
+#
+# The fixable display sites come from scripts/version_display_sites.py -
+# the SAME list sync_versions.py rewrites on a bump (#2179), so the
+# writer and this checker cannot know different sites.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from version_display_sites import VERSION_DISPLAY_SITES  # noqa: E402
+
 VERSION_TARGETS = [
-    ("README.md", r"badge/version-v(\d+\.\d+\.\d+)-blue", "README version badge", True),
-    ("README.md", r"current release is \*\*v(\d+\.\d+\.\d+)\*\*", "README status release", True),
-    ("README-de.md", r"badge/version-v(\d+\.\d+\.\d+)-blue", "README-de version badge", True),
+    (rel, pattern, label, True) for rel, pattern, label in VERSION_DISPLAY_SITES
+] + [
     # CLAUDE.md deliberately carries NO inline version since the #2071
     # condensation: it points at backend/pyproject.toml as the canonical
     # source, so there is nothing here to compare. The test-count line

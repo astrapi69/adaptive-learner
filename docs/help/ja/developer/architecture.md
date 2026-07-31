@@ -77,7 +77,7 @@ plugins/adaptive-learner-plugin-<name>/
 - routes.pyには委譲するFastAPIエンドポイントのみを含みます。
 - フックスペックは`backend/app/hookspecs.py`に記述します。
 - プラグインの依存関係はクラス属性として: `depends_on = ["session"]`。
-- すべてのプラグインは無料（MIT）。ライセンスインフラは存在しますが休止中（`LICENSING_ENABLED = False`）。
+- すべてのプラグインは無料（MIT）。ライセンス層は存在しません。
 
 ## フック（`backend/app/hookspecs.py`の8スペック）
 

@@ -14,11 +14,28 @@ name: adaptive-learner
 
 services:
   app:
-    container_name: adaptive-learner
-    image: adaptive-learner
+    # Identity fields are env-overridable with stable defaults (#2122):
+    # without env nothing changes for existing installs; a parallel local
+    # test instance sets ADAPTIVE_LEARNER_CONTAINER_NAME /
+    # ADAPTIVE_LEARNER_IMAGE_NAME / COMPOSE_PROJECT_NAME to "-local"
+    # values (see launcher/launcher.example.json) and shares NOTHING with
+    # the real installation - the named volume isolates itself via the
+    # compose project prefix (#2154).
+    container_name: ${ADAPTIVE_LEARNER_CONTAINER_NAME:-adaptive-learner}
+    # The locally built image carries the app version as its tag and as the
+    # OCI version label (#2034) - `docker inspect` and stale-image detection
+    # can then name the version instead of an anonymous :latest. The DEFAULT
+    # version below is maintained by `make sync-versions` (same derived-pin
+    # class as every other version literal - do not edit it by hand);
+    # ADAPTIVE_LEARNER_APP_VERSION in .env overrides it.
+    image: ${ADAPTIVE_LEARNER_IMAGE_NAME:-adaptive-learner}:${ADAPTIVE_LEARNER_APP_VERSION:-2.9.0}
     build:
       context: .
       dockerfile: backend/Dockerfile
+      labels:
+        org.opencontainers.image.title: adaptive-learner
+        org.opencontainers.image.version: ${ADAPTIVE_LEARNER_APP_VERSION:-2.9.0}
+        org.opencontainers.image.source: https://github.com/astrapi69/adaptive-learner
     # One container, one port: the host-published port the user reaches in
     # the browser maps straight onto the backend port that serves BOTH the
     # frontend statics and /api/*. ``ADAPTIVE_LEARNER_PUBLIC_PORT`` (default

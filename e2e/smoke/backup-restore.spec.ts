@@ -1,63 +1,64 @@
 /**
- * Phase 28D / v1.15.0 — Backup export + restore roundtrip.
+ * Backup export + restore roundtrip (#2177 rewrite of the Phase 28D spec).
  *
- * Verifies the v1.10.0 backup feature contract:
+ * The v1.15.0 spec asserted the pre-`.alb` UI generation (plain JSON
+ * download) and was silenced at the v2.7.0 release gate (#2170). This is
+ * the rewrite against the CURRENT contract:
  *
- *   - Settings > Backup > "Create Backup" downloads a JSON
- *     file. The file contains the expected top-level tables
- *     (users, learning_projects, etc.) and explicitly does
- *     NOT contain any API key fields (the user-settings rows
- *     omit ``api_key_*`` columns).
- *   - Re-uploading the same file via "Restore from Backup"
- *     surfaces the per-table comparison preview (number of
- *     records the restore will add / update / leave alone).
- *   - Confirming the restore lands cleanly (no error toast)
- *     and the comparison block clears.
+ *   - Settings > Data > "Create Backup" downloads an `.alb` container
+ *     (deflate ZIP: manifest.json + data.json, EXP-031). The manifest is
+ *     readable before the data; the payload carries the expected
+ *     top-level tables and the user_settings rows omit every
+ *     ``api_key_*`` column (the v0.4.0 no-key-leak contract).
+ *   - Re-uploading the same file through the hidden file input surfaces
+ *     the pre-restore comparison panel; confirming lands cleanly (the
+ *     panel unmounts, the restore summary appears, no error toast).
  *
- * Pure backend feature — no AI mocking required. The spec
- * creates data via the real onboarding flow, exports, then
- * re-imports the same payload.
+ * Until this spec went live again, the ONLY coverage of this path was
+ * the manual BACKUP-AKZEPTANZTEST (quality-checks.md) - it had no
+ * automated signal from 2026-05-23 to this rewrite.
  */
 
 import {expect, test} from "@playwright/test";
 
+import {readAlb} from "../helpers/alb";
 import {createTestUser} from "../helpers";
 
 test.describe("Backup export + restore", () => {
-        // DECLARED SKIP (#2170): this spec asserts a UI generation the product
-    // has since replaced (backup export/download flow changed); rewrite tracked in #2170, counted by the
-    // smoke skip budget (e2e/.smoke-skip-baseline.json).
-test.fixme("export downloads JSON, re-upload renders comparison + clean confirm", async ({
+    test("export downloads an .alb, re-upload renders comparison + clean confirm", async ({
         page,
     }) => {
-        // Step 1: create a user + project + complete the
-        // assessment so the backup has real rows to export.
+        // Step 0: force the blob-download path. Chromium exposes
+        // showSaveFilePicker (BACKUP-DIR-EXPORT-01), which opens a NATIVE
+        // OS save dialog Playwright cannot script; removing the API makes
+        // the app take its documented Firefox/Safari fallback, which
+        // emits the download event this spec captures.
+        await page.addInitScript(() => {
+            delete (window as {showSaveFilePicker?: unknown}).showSaveFilePicker;
+        });
+
+        // Step 1: real data via the real onboarding flow (the helper
+        // dismisses the #1085 migration-welcome overlay).
         await createTestUser(page, {name: "Backup E2E"});
 
-        // Step 2: navigate to Settings -> Backup section.
-        // Settings is tab-grouped (#549); deep link straight to the tab
-        // that holds this section - the documented ?tab= contract.
+        // Step 2: deep link straight to the Data tab (#549 ?tab= contract).
         await page.goto("/settings?tab=data");
         await expect(page.getByTestId("settings-backup")).toBeVisible();
 
-        // Step 3: click Create Backup and capture the downloaded
-        // file. Playwright's ``waitForEvent("download")`` captures
-        // the browser-initiated download.
+        // Step 3: Create Backup downloads one `.alb` file.
         const downloadPromise = page.waitForEvent("download");
         await page.getByTestId("backup-export").click();
         const download = await downloadPromise;
-        const path = await download.path();
-        const fs = await import("node:fs/promises");
-        const raw = await fs.readFile(path, "utf-8");
-        const payload = JSON.parse(raw);
+        expect(download.suggestedFilename()).toMatch(/\.alb$/);
+        const albPath = await download.path();
 
-        // Top-level envelope shape (v1.10.0 contract).
-        expect(typeof payload.format).toBe("string");
-        expect(typeof payload.user_id).toBe("string");
-        expect(payload.data).toBeTruthy();
-
-        // Expected tables in ``data`` — each must be an array
-        // (possibly empty).
+        // Step 4: container contract - manifest readable, payload shaped.
+        const {manifest, data: payload} = readAlb(albPath);
+        expect(manifest.format).toBe("adaptive-learner-backup");
+        expect(manifest.container).toBe("alb");
+        expect(typeof manifest.user_id).toBe("string");
+        expect(manifest.backup_type).toBe("full");
+        const tables = (payload as {data: Record<string, unknown>}).data;
         const expectedTables = [
             "users",
             "user_settings",
@@ -68,38 +69,34 @@ test.fixme("export downloads JSON, re-upload renders comparison + clean confirm"
             "lessons",
         ];
         for (const table of expectedTables) {
-            expect(Array.isArray(payload.data[table])).toBe(true);
+            expect(Array.isArray(tables[table]), `data.${table} is an array`).toBe(true);
         }
 
-        // API keys MUST NOT leak into the export. Every
-        // user_settings row must omit ``api_key_*`` fields
-        // (the v0.4.0 contract strips them entirely).
-        for (const row of payload.data.user_settings ?? []) {
-            for (const key of Object.keys(row as Record<string, unknown>)) {
-                expect(key.startsWith("api_key_")).toBe(false);
+        // API keys MUST NOT leak: every user_settings row omits api_key_*.
+        for (const row of (tables.user_settings as Record<string, unknown>[]) ?? []) {
+            for (const key of Object.keys(row)) {
+                expect(key.startsWith("api_key_"), `user_settings leaks ${key}`).toBe(false);
             }
         }
 
-        // Step 4: feed the downloaded file back through the
-        // restore picker via the hidden file input.
-        await page
-            .getByTestId("backup-file-input")
-            .setInputFiles(path);
+        // Step 5: feed the file back through the hidden input.
+        await page.getByTestId("backup-file-input").setInputFiles(albPath);
 
-        // Step 5: the comparison preview surfaces.
+        // Step 6: the pre-restore comparison panel surfaces.
         await expect(page.getByTestId("backup-comparison")).toBeVisible({
             timeout: 15_000,
         });
 
-        // Step 6: confirm the restore. Importing the same payload
-        // we just exported should produce a no-op restore (every
-        // record already exists; mutable rows match by
-        // updated_at; history rows are append-only).
+        // Step 7: confirm. Restoring the export we just made is a clean
+        // no-op restore; the panel unmounts, the summary appears, and no
+        // error toast fires.
         await page.getByTestId("backup-confirm").click();
-        // The comparison block unmounts once the restore finishes.
-        await expect(page.getByTestId("backup-comparison")).toHaveCount(
-            0,
-            {timeout: 15_000},
-        );
+        await expect(page.getByTestId("backup-comparison")).toHaveCount(0, {
+            timeout: 15_000,
+        });
+        await expect(page.getByTestId("backup-summary")).toBeVisible({
+            timeout: 15_000,
+        });
+        await expect(page.locator(".Toastify__toast--error")).toHaveCount(0);
     });
 });

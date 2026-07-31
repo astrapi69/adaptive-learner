@@ -96,3 +96,25 @@ repos:
         pass_filenames: false
         files: ^backend/config/i18n/(de|el|hi)\.yaml$
         stages: [pre-commit]
+
+      - id: docs-hygiene
+        name: docs hygiene (umlaut-substitute ratchet + exploration-index orphans)
+        # --auto-lower banks a fall (improvement) into the baseline so the gain
+        # rides this commit; a rise still fails. Like ruff-format, the write
+        # makes pre-commit re-run so the lowered baseline is committed (#2230).
+        entry: python scripts/verify_docs_hygiene.py --auto-lower
+        language: python
+        pass_filenames: false
+        files: ^(docs/.*\.md|docs/\.docs-hygiene-baseline\.json|scripts/verify_docs_hygiene\.py)$
+        stages: [pre-commit]
+
+      - id: doc-refs
+        name: doc references exist (make targets, repo paths, constants)
+        # --auto-lower banks a fall (an error counter, never a budget); a rise
+        # always fails. Same shape as docs-hygiene: the write makes pre-commit
+        # re-run so the lowered baseline rides this commit (#2254).
+        entry: python scripts/verify_doc_refs.py --auto-lower
+        language: python
+        pass_filenames: false
+        files: ^(docs/.*\.md|\.claude/rules/.*\.md|CLAUDE\.md|docs/\.doc-refs-baseline\.json|scripts/verify_doc_refs\.py|Makefile)$
+        stages: [pre-commit]

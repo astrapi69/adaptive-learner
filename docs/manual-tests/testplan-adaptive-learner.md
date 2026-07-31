@@ -117,6 +117,10 @@ Fall (Verschieben auf dem Telefon).
 - [ ] Reihenfolge ist SOFORT gespeichert - keine gesonderte Speichern-Aktion.
       Seite neu laden (oder Set zu- und wieder aufklappen): die geaenderte
       Reihenfolge bleibt.
+- [ ] Wirkt auf die LERNFOLGE (#2212), nicht nur die Liste: nach dem
+      Verschieben öffnet das Set mit der neuen ersten Lektion, und die
+      Weiter-Navigation ("nächste Lektion") folgt der gewählten Reihenfolge -
+      in beiden Speichermodi.
 - [ ] Bestehende Sets: ohne eigenes Verschieben zeigt sich die bisherige
       Reihenfolge unveraendert (kein stilles Umsortieren).
 - [ ] Identitaet unberuehrt: nach mehreren Verschiebungen einer Lektion mit
@@ -130,11 +134,38 @@ Fall (Verschieben auf dem Telefon).
       Positions-Rueckmeldung funktionieren, Reihenfolge bleibt nach dem
       Schliessen und Wiederoeffnen.
 
+#### A7. Bearbeiten je Lektion, nicht je Set (#2210)
+
+Bearbeiten gehört an die Lektion, nicht an das Set. Der Set-Knopf riet
+früher, welche Lektion gemeint ist, und öffnete immer die erste. Drei
+gleichartige Zeilen-Knöpfe (Abspielen/Bearbeiten/Löschen) brauchen
+unterscheidbare, titelbezogene Bezeichnungen. iOS-Standalone ist der heiklere
+Fall (drei plus Auf/Ab je Zeile auf dem Telefon).
+
+- [ ] In "Meine Inhalte" ein mehrlektionales (Buch-)Set aufklappen ->
+      "Lektionen verwalten". Je Lektion sind jetzt Abspielen, Bearbeiten und
+      Löschen sichtbar (zusätzlich zu Auf/Ab).
+- [ ] Bei einem Set mit MEHREREN Lektionen gibt es KEINEN Bearbeiten-Knopf
+      mehr auf Set-Ebene (er würde nur raten).
+- [ ] Bei einem Set mit EINER Lektion bleibt der Bearbeiten-Knopf auf
+      Set-Ebene (eindeutig = diese eine Lektion).
+- [ ] Bearbeiten der ZWEITEN oder dritten Lektion öffnet genau DIESE Lektion
+      im Editor (nicht die erste). Nach dem Verschieben trifft Bearbeiten
+      weiterhin die richtige Lektion (Identität, nicht Position).
+- [ ] Nur mit der Tastatur bedienbar: mit Tab zu Abspielen/Bearbeiten/Löschen,
+      mit Leertaste/Enter auslösen. Der Screenreader liest je Knopf eine
+      unterscheidbare Bezeichnung mit Lektionstitel ("Lektion X bearbeiten"),
+      keine drei gleich klingenden Knöpfe.
+- [ ] Beide Speichermodi (API + Dexie).
+- [ ] iOS-Standalone (PWA vom Home-Bildschirm): alle Zeilen-Knöpfe sind mit
+      dem Finger sicher und ohne Fehlgriff bedienbar; Bearbeiten öffnet die
+      richtige Lektion.
+
 ### Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
 
-Voraussetzung: die Launcher-Session ist geliefert (Modusentscheidung, Pin
-auf >=0.21.0, neue Binaries mit Run-IDs). Nur diese Binaries verwenden, alle
-aelteren sind obsolet.
+Voraussetzung: die v2.8.2-Release-Binaries (der Launcher ist seit v2.8.0 im
+IMAGE-Modus, #2167; Engine-Pin docker-app-launcher ^0.25.1). Nur diese
+Binaries verwenden, alle aelteren sind obsolet.
 
 - [ ] Daemon laeuft + Testnutzer OHNE docker-Gruppe (qatest):
       Permission-Meldung + pkexec-Fix-Angebot, NICHT "Docker starten". [seit
@@ -143,18 +174,18 @@ aelteren sind obsolet.
       laeuft".
 - [ ] Konsole sichtbar, Detection-Zeilen streamen, Text-Wrap korrekt, Fenster
       resizable.
-- [ ] Branding "Adaptive Learner", About: Launcher 0.21.0, App 2.6.0 mit
-      Quellen-Label.
+- [ ] Branding "Adaptive Learner", About: App 2.8.2 mit Quellen-Label; die
+      angezeigte Launcher-Version notieren (Ist-Wert aus dem v2.8.2-Binary).
 - [ ] Setup laeuft durch bis zum erreichbaren App-Frontend im Browser.
-      Beweisziel je nach Modus: im dockerfile-Modus Build und Start ohne
-      Compose und ohne buildx auf dem Docker-20.10-Geraet, im compose-Modus
-      vollstaendige Bereitschaftsmeldung mit funktionierender Anleitung.
+      Beweisziel (Image-Modus): anonymer Pull von
+      ghcr.io/astrapi69/adaptive-learner:2.8.2 und Start - KEIN Build, kein
+      buildx, kein Compose; Pull-Fortschritt sichtbar in der Konsole.
 - [ ] Zweitstart bei laufendem Launcher: fokussiert das bestehende Fenster
       (#31).
 - [ ] Stoppen, erneut starten, deinstallieren: keine Fehler, Konsole meldet
       nachvollziehbar.
-- [ ] Portwechsel NICHT testen, bis das Origin-Datenverlustrisiko geklaert ist
-      (eigener Auftrag laeuft).
+- [ ] Portwechsel: nach den drei #2069-Faellen unter "PRIO 2 -> Portwechsel:
+      Datenmitnahme" testen (der fruehere Vorbehalt ist geliefert).
 
 ### Reihenfolge-Empfehlung
 

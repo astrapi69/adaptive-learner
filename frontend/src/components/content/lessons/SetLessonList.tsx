@@ -2,11 +2,13 @@
  * Expandable per-lesson list of a multi-lesson user-generated set (#2064).
  *
  * The "My Lessons" section shows one row per set; a book-text import (#1949)
- * stores many lessons in one set. This disclosure lets the user open a set,
- * reorder its lessons (#2172), and delete an individual lesson (Play + move
- * Up/Down + Delete per lesson) - in the lesson LIST, never the edit wizard
- * (decision #4). Lessons load lazily on first expand and reload after a delete
- * (via the target's ``onDeleted`` callback).
+ * stores many lessons in one set. This disclosure lets the user open, reorder
+ * (#2172), EDIT (#2210), and delete an individual lesson (Play + move Up/Down
+ * + Edit + Delete per lesson). Each action carries the row's OWN lesson
+ * filename, so Edit opens exactly that lesson - it replaces the set-level Edit
+ * button, which could only guess the first lesson of a multi-lesson set.
+ * Lessons load lazily on first expand and reload after a delete (via the
+ * target's ``onDeleted`` callback).
  *
  * ## Reorder (#2172): display order, never identity
  *
@@ -28,6 +30,7 @@ import {
   ArrowUp,
   ChevronDown,
   ChevronRight,
+  Pencil,
   Play,
   Trash2,
 } from "lucide-react";
@@ -54,6 +57,9 @@ export interface SetLessonListProps {
   entry: ContentSetEntry;
   /** Open one lesson of the set (by its cache filename). */
   onPlayLesson: (entry: ContentSetEntry, filename: string) => void;
+  /** Edit one specific lesson of the set (#2210) - by its cache filename, so
+   *  the wizard opens THAT lesson, never the set's first. */
+  onEditLesson: (entry: ContentSetEntry, filename: string) => void;
   /** Ask the page to confirm+delete one lesson; ``onDeleted`` reloads this list. */
   onRequestDelete: (target: LessonDeleteTarget) => void;
 }
@@ -77,6 +83,7 @@ function orderRows(
 export default function SetLessonList({
   entry,
   onPlayLesson,
+  onEditLesson,
   onRequestDelete,
 }: SetLessonListProps) {
   const { t } = useI18n();
@@ -232,9 +239,25 @@ export default function SetLessonList({
                     size="sm"
                     onClick={() => onPlayLesson(entry, row.filename)}
                     data-testid={`set-lesson-play-${entry.id}-${row.filename}`}
-                    aria-label={t("content.my_lessons.play", "Play")}
+                    aria-label={t(
+                      "content.lesson_delete.play_aria",
+                      "Play lesson {title}",
+                    ).replace("{title}", row.title)}
                   >
                     <Play size={14} aria-hidden="true" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onEditLesson(entry, row.filename)}
+                    data-testid={`set-lesson-edit-${entry.id}-${row.filename}`}
+                    aria-label={t(
+                      "content.lesson_delete.edit_aria",
+                      "Edit lesson {title}",
+                    ).replace("{title}", row.title)}
+                  >
+                    <Pencil size={14} aria-hidden="true" />
                   </Button>
                   <Button
                     type="button"

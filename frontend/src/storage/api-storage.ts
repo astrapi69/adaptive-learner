@@ -11,6 +11,7 @@
 
 import { api, ApiError } from "../api/client";
 import { enqueueRequest } from "../lib/pwa/sync-queue";
+import { applyStoredLessonOrderToList } from "../lib/content/browse/lesson-order-store";
 import type {
   ApiKeyTestResult,
   GitHubVerifyKind,
@@ -347,8 +348,12 @@ export const apiStorage: IStorageService = {
     listSets: () => api.contentLoader.listSets(),
     downloadSet: (source, setId) =>
       api.contentLoader.downloadSet(source, setId),
-    listLessons: (source, setId) =>
-      api.contentLoader.listLessons(source, setId),
+    // #2212 — order by the user's chosen display order so open/next-lesson
+    // follow it, not just the "Manage lessons" list (no-op if never reordered).
+    listLessons: async (source, setId) =>
+      applyStoredLessonOrderToList(
+        await api.contentLoader.listLessons(source, setId),
+      ),
     getLesson: (source, setId, filename) =>
       api.contentLoader.getLesson(source, setId, filename),
     /** Phase 54 / v1.37.0 — fetch one cached asset.

@@ -58,6 +58,29 @@ Les trois lanceurs sont fournis à chaque version sur
 | macOS | `adaptive-learner-launcher-macos.zip` | `adaptive-learner-launcher-macos.zip.sha256` |
 | Windows | `adaptive-learner-launcher.exe` | `adaptive-learner-launcher.exe.sha256` |
 
+### Ce qui est vérifié, et ce qui ne l'est pas
+
+Chacun de ces programmes est démarré une fois lors de sa construction,
+précisément sur le système d'exploitation auquel il est destiné. Il est
+donc établi qu'il démarre : sous Linux, sous Windows et sous macOS sur
+Apple Silicon. L'image de l'application est vérifiée à chaque version :
+un téléchargement anonyme (sans connexion) et un démarrage réel avec
+contrôle de santé, séparément pour les deux types de processeur
+(Intel/AMD et ARM), sur des machines de ce type. Ce qui n'est pas encore
+mesuré, c'est le téléchargement depuis le registre sur de très anciens
+moteurs Docker (ère 20.10) ; la chaîne du moteur elle-même est prouvée
+sur un tel moteur contre un autre registre, et la mesure contre le
+registre GitHub est suivie upstream.
+
+Ce qui n'est pas établi, c'est la réaction de votre système
+d'exploitation face à un fichier **téléchargé** : les programmes ne
+portent pas de signature payante, macOS avertit donc à la première
+ouverture (« développeur non identifié ») et Windows affiche l'avis
+SmartScreen. C'est un avertissement, pas un défaut ; la confirmation
+unique est décrite plus bas sous [macOS](#macos) et
+[Windows](#windows). Vérifiez d'abord la somme de contrôle : c'est une
+preuve plus fiable que n'importe quelle boîte de dialogue.
+
 ## Linux
 
 1. Vérifie la somme de contrôle (les deux fichiers dans le même
@@ -95,11 +118,13 @@ Pièges connus :
   12+, Fedora 36+). Sur les distributions plus anciennes, exécute
   plutôt l'application via `install.sh` ou directement avec Docker
   Compose.
-- **Application inaccessible dans le navigateur** : l'application ne
-  tourne qu'en local (`localhost`), aucune règle de pare-feu n'est donc
-  nécessaire. Si le navigateur ne s'ouvre pas automatiquement, ouvre
-  `http://localhost:8501` manuellement (ou le port affiché dans la
-  fenêtre du lanceur).
+- **Application inaccessible dans le navigateur** : si le navigateur ne
+  s'ouvre pas automatiquement, ouvre `http://localhost:8501` manuellement
+  (ou le port affiché dans la fenêtre du lanceur). Attention :
+  l'application est publiée sur toutes les interfaces réseau, pas
+  seulement sur `localhost`, et elle n'a aucune authentification - garde
+  ce port fermé sur ton pare-feu sauf si tu veux délibérément que
+  d'autres appareils de ton réseau y accèdent.
 
 ## macOS
 
