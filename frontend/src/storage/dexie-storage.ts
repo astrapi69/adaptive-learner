@@ -80,7 +80,10 @@ import {
   listSetsDexie,
   saveUserSetDexie,
 } from "./content/content-loader-dexie";
-import { applyStoredLessonOrderToList } from "../lib/content/browse/lesson-order-store";
+import {
+  applyStoredLessonOrderToList,
+  recordSavedSetOrder,
+} from "../lib/content/browse/lesson-order-store";
 import {
   getLessonProgressDexie,
   listLessonProgressDexie,
@@ -285,7 +288,13 @@ export const dexieStorage: IStorageService = {
     /** Phase 59B / v1.42.0 — persist a user-generated set
      *  (My Lessons) into the same IndexedDB tables as
      *  downloaded sets. */
-    saveUserSet: (input) => saveUserSetDexie(input, new Date().toISOString()),
+    saveUserSet: async (input) => {
+      const entry = await saveUserSetDexie(input, new Date().toISOString());
+      // #2173 — seed the display-order overlay with the source/authoring order
+      // (the user's later reorder wins; this is a no-op then).
+      recordSavedSetOrder(input.set_id, input.lessons);
+      return entry;
+    },
     deleteSet: (source, setId) => deleteSetDexie(source, setId),
     /** #1351 — bulk delete in one transaction. Lifecycle status lives in
      *  the mode-agnostic ``lib/content/browse/set-status-store``, not on
