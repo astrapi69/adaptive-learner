@@ -1,0 +1,4 @@
+{
+  "broken_ref_count": 391,
+  "rationale": "Error-counter ratchet over nameable doc references (#2254): make targets, repo-relative paths and constants/env vars named in docs/ + .claude/rules/ + CLAUDE.md must exist. This is an ERROR COUNTER, not a budget - the target is zero, so a rise always FAILS (even under --auto-lower) and every fall is banked automatically by the --auto-lower path (the #2235 three-way distinction). The seeded 391 is INHERITED legacy from the first run, measured on develop at the gate's landing commit; it is headroom for nothing and may only shrink. Split at seeding: 1 make target, 386 repo paths, 4 constants."
+}

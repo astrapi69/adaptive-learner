@@ -190,6 +190,13 @@ checks:
     wired_in: make verify-docs-hygiene; .pre-commit-config.yaml docs-hygiene
     probe: make_target=verify-docs-hygiene
 
+  - id: doc-ref-existence
+    verifies: nameable references in docs (make targets, repo-relative paths, constants/env vars) name things that exist
+    rule: lessons/docs-i18n.md#doc-values-read-from-code-not-from-memory
+    status: active
+    wired_in: make verify-doc-refs; .pre-commit-config.yaml doc-refs
+    probe: make_target=verify-doc-refs
+
   - id: exploration-index-orphan
     verifies: every docs/explorations/EXP-*.md has a row in EXP-INDEX.md
     rule: lessons/docs-i18n.md#doc-files-existence-is-not-discoverability

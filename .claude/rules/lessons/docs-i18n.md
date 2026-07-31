@@ -24,7 +24,7 @@ If a value isn't easily findable in code, that is a signal to flag the question,
 
 Example: trash auto-delete default came from `backend/config/app.yaml.example` (`trash_auto_delete_days: 90`); the configurable range came from the `trash_days_*` keys in `backend/config/i18n/*.yaml`. Both are single sources of truth that the docs cite without duplicating.
 
-This file is not exempt from its own rule. The #1903 issue text claimed `backend/tests/test_plugin_lock_drift_hook.py` "pins the hook with 6 self-checks" — quoted from THIS file, never checked against the tree. The file had been removed by the skeleton strip (`76baa114`) long before. A rule file ages exactly like any other doc: when it names a path, a count, or a gate, verify the artifact still exists before repeating the claim downstream. `git log --all -- <path>` answers it in one command.
+This file is not exempt from its own rule. The #1903 issue text claimed `backend/tests/test_plugin_lock_drift_hook.py` "pins the hook with 6 self-checks" — quoted from THIS file, never checked against the tree. The file had been removed by the skeleton strip (`76baa114`) long before. A rule file ages exactly like any other doc: when it names a path, a count, or a gate, verify the artifact still exists before repeating the claim downstream. `git log --all -- <path>` answers it in one command. <!-- doc-ref-exempt: the dead path above IS this lesson's counter-example (#2254) -->
 
 ## End-user help is versionless; provenance belongs to the changelog
 
