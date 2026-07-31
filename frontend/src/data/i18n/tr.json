@@ -2357,7 +2357,9 @@
       "action_delete": "Dersi sil",
       "deleted": "Ders silindi.",
       "delete_failed": "Ders silinemedi.",
-      "delete_aria": "{title} dersini sil"
+      "delete_aria": "{title} dersini sil",
+      "play_aria": "{title} dersini oynat",
+      "edit_aria": "{title} dersini düzenle"
     },
     "lesson_order": {
       "move_up": "{title} dersini yukarı taşı",

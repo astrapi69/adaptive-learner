@@ -410,14 +410,18 @@ export function useContentSetActions({
   // (Phase 59C). Every other own set (created / imported / adaptive)
   // opens the pre-filled Lesson Creator, which overwrites the same set
   // on save (#1740).
-  const handleEditUserSet = (entry: ContentSetEntry) => {
+  const handleEditUserSet = (entry: ContentSetEntry, lessonFilename?: string) => {
     if (entry.domain === "analysis") {
       const convId = entry.id.replace(/^analysis-/, "");
       navigate(`/import/${encodeURIComponent(convId)}`);
       return;
     }
+    // #2210 — a per-row Edit aims the wizard at one specific lesson via
+    // ?lesson=; the set-level Edit (single-lesson sets) passes none and
+    // keeps the historical "first lesson" landing.
+    const base = `/create-lesson/edit/${encodeURIComponent(entry.source)}/${encodeURIComponent(entry.id)}`;
     navigate(
-      `/create-lesson/edit/${encodeURIComponent(entry.source)}/${encodeURIComponent(entry.id)}`,
+      lessonFilename ? `${base}?lesson=${encodeURIComponent(lessonFilename)}` : base,
     );
   };
 

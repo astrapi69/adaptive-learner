@@ -11,6 +11,7 @@ import {
     editSnapshot,
     lessonPickerLabel,
     mergeEditedLessonIntoSet,
+    resolveEditLessonIndex,
     withPreservedSetBook,
 } from "./edit-session";
 import type {
@@ -72,6 +73,25 @@ function baseInput(title: string): SaveUserSetInput {
         lessons: [lesson("l0", title)],
     };
 }
+
+describe("resolveEditLessonIndex (#2210)", () => {
+    const lessons = [lesson("epilog", "Epilog"), lesson("kapitel-1", "K1"), lesson("kapitel-2", "K2")];
+
+    it("targets the requested lesson by {id}.json filename, not the first", () => {
+        expect(resolveEditLessonIndex(lessons, "kapitel-2.json")).toBe(2);
+    });
+
+    it("accepts the bare id too (folded rows carry the id without .json)", () => {
+        expect(resolveEditLessonIndex(lessons, "kapitel-1")).toBe(1);
+    });
+
+    it("falls back to 0 for an absent, empty, or unknown lesson param (backward compatible)", () => {
+        expect(resolveEditLessonIndex(lessons)).toBe(0);
+        expect(resolveEditLessonIndex(lessons, "")).toBe(0);
+        expect(resolveEditLessonIndex(lessons, null)).toBe(0);
+        expect(resolveEditLessonIndex(lessons, "does-not-exist.json")).toBe(0);
+    });
+});
 
 describe("withPreservedSetBook (#1989)", () => {
     it("carries the entry's book block onto the input", () => {

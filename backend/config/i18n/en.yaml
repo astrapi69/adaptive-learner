@@ -2179,6 +2179,8 @@ content:
     deleted: "Lesson deleted."
     delete_failed: "Could not delete the lesson."
     delete_aria: "Delete lesson {title}"
+    play_aria: "Play lesson {title}"
+    edit_aria: "Edit lesson {title}"
   lesson_order:
     move_up: "Move lesson {title} up"
     move_down: "Move lesson {title} down"

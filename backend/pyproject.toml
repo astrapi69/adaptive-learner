@@ -50,7 +50,7 @@ pre-commit = "^4.5.1"
 pip-audit = "^2.10.0"
 pytest-randomly = "^4.1.0"
 pytest-testmon = "^2.2.0"
-datamodel-code-generator = ">=0.68.1,<0.71.0"
+datamodel-code-generator = ">=0.68.1,<0.72.0"
 
 [tool.ruff]
 line-length = 100
