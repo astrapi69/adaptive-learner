@@ -217,6 +217,12 @@ E2E-Smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
+Das Abzeichen oben nennt eine Größe, keine Stärke: Es zählt grüne
+Tests. Wie viel die Suite tatsächlich fängt, prüft das Mutationstesten
+(Frontend-Logikschichten, nächtliche verschränkte Shards via Stryker);
+dessen Berichte sind CI-Artefakte je Shard, keine einzelne Rate -
+darum trägt die Mutationsrate kein Abzeichen (#2257).
+
 Verifiziert am 2026-07-24 (v2.6.0):
 
 | Suite | Anzahl |

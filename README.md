@@ -287,6 +287,12 @@ E2E smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
+The badge above states a size, not a strength: it counts passing
+tests. How much the suite actually catches is probed by mutation
+testing (frontend logic layers, nightly interleaved shards via
+Stryker); its per-shard reports are CI artifacts, not a single rate,
+which is why no mutation-score badge exists (#2257).
+
 Verified 2026-07-24 (v2.6.0):
 
 | Suite | Count |
