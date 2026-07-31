@@ -102,8 +102,7 @@ plugins/adaptive-learner-plugin-<name>/
 - Hook spec'leri `backend/app/hookspecs.py`'de yaşar.
 - Eklenti bağımlılıkları sınıf özelliği olarak: `depends_on =
   ["session"]`.
-- Tüm eklentiler ücretsizdir (MIT). Lisanslama altyapısı
-  mevcuttur ancak etkin değildir (`LICENSING_ENABLED = False`).
+- Tüm eklentiler ücretsizdir (MIT). Lisanslama katmanı yoktur.
 
 ## Hook'lar (`backend/app/hookspecs.py`'deki 8 spec)
 
