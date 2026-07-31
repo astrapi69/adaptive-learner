@@ -390,6 +390,19 @@ paid-API access, or a specific release tag). NOT P0 even when otherwise valuable
   cascade). Tracked: issue #1507; supersedes the closed Dependabot bump
   #1503. (Verified 2026-07-09.)
 
+- **BADGE-CONTENT — Sets-/Sprachen-Abzeichen zählt nur geprüfte Sets.**
+  Maintainer-Entscheidung Option A (2026-07-31, #2259): das Abzeichen
+  kommt, zählt aber nur geprüfte Sets/Sprachen; der eigentliche Wert ist
+  das maschinenlesbare Merkmal geprüft-vs-ungeprüft. Vorprüfung ergab:
+  das Merkmal existiert nicht — Engine-Schema hat kein Review-Feld
+  (`visibility` ist Display-Hint, `additionalProperties: false` verbietet
+  App-Erfindungen), Content-Repo-Manifest trägt keine Marker.
+  **Trigger:** learn-content-engine#94 (Schema-Hoheit) liefert das Feld.
+  Dann in EINEM PR: `validate_bundled_content.py` erweitert den
+  CONTENT-STATS-Schreib/Prüfpfad um die Nur-geprüft-Zählung, Badge hängt
+  an demselben Mechanismus, Content-Repo flaggt die KI-Sets; der
+  Muttersprachler-Durchgang legt das Merkmal je Set um. Tracked: #2273.
+
 ---
 
 ## Open backlog
