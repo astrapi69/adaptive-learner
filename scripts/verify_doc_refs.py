@@ -25,7 +25,9 @@ WHAT IS JUDGED - exactly three classes, nothing else:
    (``@types/node``). Placeholder segments (``vX.Y.Z``, ``YYYY-MM-DD``,
    ``{name}``, ``<lang>``) are templates, not claims, and are skipped.
    Globs are satisfied by at least one match. Checked against
-   ``git ls-files`` (files or tracked-directory prefixes).
+   ``git ls-files`` (files or tracked-directory prefixes). A token that is
+   the LABEL of a link to an absolute url is skipped in every class: the
+   url names the repository that holds it (#2261).
 3. **Constants / environment variables**: inline backticks in
    SCREAMING_SNAKE with at least one underscore. Checked via
    ``git grep`` over the tracked tree EXCLUDING docs/ and .claude/ (a
@@ -61,6 +63,11 @@ DOC_PATHSPECS = ("docs", ".claude/rules", "CLAUDE.md")
 EXEMPT_MARKER = "doc-ref-exempt:"
 
 INLINE_CODE_RE = re.compile(r"`([^`]+)`")
+# A backtick that is the LABEL of a link to an ABSOLUTE url names a thing
+# in ANOTHER repository - the url says where it lives, so this repo cannot
+# be asked to contain it (#2261; every user-facing finding in the #2254
+# inherited set was one of these). A RELATIVE link still points inside.
+FOREIGN_LINK_LABEL_RE = re.compile(r"\[`([^`]+)`\]\(\s*[a-zA-Z][a-zA-Z0-9+.-]*://")
 FENCE_RE = re.compile(r"^\s*```\s*([A-Za-z0-9_-]*)")
 MAKE_INVOCATION_RE = re.compile(r"^make\s+([a-z][a-z0-9_-]+)((\s+[A-Za-z_]+=\S+)*)$")
 MAKEFILE_TARGET_DEF_RE = re.compile(r"^([A-Za-z][A-Za-z0-9_.-]*):(?!=)")
@@ -229,8 +236,12 @@ class RefChecker:
                                 f"`{m.group(1)}` which does not exist"
                             )
                 continue
+            foreign = {m.strip() for m in FOREIGN_LINK_LABEL_RE.findall(line)}
             for token in INLINE_CODE_RE.findall(line):
-                self._judge(rel, lineno, token.strip())
+                stripped = token.strip()
+                if stripped in foreign:
+                    continue
+                self._judge(rel, lineno, stripped)
 
 
 def main(argv: list[str] | None = None) -> int:
