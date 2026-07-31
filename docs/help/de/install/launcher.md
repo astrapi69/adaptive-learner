@@ -146,14 +146,34 @@ Bekannte Stolpersteine:
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. Beim ersten Öffnen blockiert Gatekeeper das Binary als "nicht
-   verifizierter Entwickler". Zwei Wege:
+2. Beim ersten Öffnen **blockiert macOS das Programm**. Der Dialog
+   bietet je nach macOS-Version nur "In den Papierkorb" und "Fertig" -
+   keinen Öffnen-Knopf. Das ist kein Fehler und kein Defekt des
+   Programms: Adaptive Learner ist **nicht bei Apple beglaubigt**, denn
+   das setzt ein kostenpflichtiges Entwicklerkonto voraus.
 
-    - Rechtsklick (bzw. Ctrl-Klick) auf das Binary > **Öffnen** > im
-      Dialog erneut **Öffnen**. Das merkt sich macOS für alle weiteren
-      Starts.
-    - Oder: Systemeinstellungen > **Datenschutz & Sicherheit** > unten
-      bei der blockierten App auf **Dennoch öffnen**.
+   So öffnest du es trotzdem:
+
+    1. Den Dialog mit **Fertig** schließen (nicht in den Papierkorb).
+    2. **Systemeinstellungen > Datenschutz & Sicherheit** öffnen und
+       nach unten scrollen.
+    3. Dort steht, dass das Programm blockiert wurde, mit dem Knopf
+       **Dennoch öffnen**. Darauf klicken und im nächsten Dialog
+       bestätigen.
+
+   Danach startet es bei jedem weiteren Mal ohne Nachfrage.
+
+   Die Prüfsumme aus Schritt 1 ist in diesem Fall deine eigentliche
+   Sicherheit: das System kann dir nicht bestätigen, woher die Datei
+   kommt - die übereinstimmende Prüfsumme kann es.
+
+
+> **Fußnote für technische Nutzer.** `xattr -d com.apple.quarantine <Datei>`
+> entfernt die Sperre auch über die Kommandozeile. Das ist bewusst NICHT
+> der Weg oben: Menschen beizubringen, eine Schadsoftware-Warnung per
+> Terminal-Befehl wegzuräumen, ist genau das, was ein Angreifer von
+> seinem Opfer verlangt. Nur nutzen, wenn du verstehst, was er tut, und
+> die Prüfsumme geprüft hast.
 
 ## Windows
 

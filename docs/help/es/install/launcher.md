@@ -133,15 +133,26 @@ Errores frecuentes:
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. En la primera apertura, Gatekeeper bloquea el binario por proceder de
-   un "desarrollador no identificado". Dos formas de evitarlo:
+2. Al abrirlo por primera vez, **macOS bloquea el programa**. Según la
+   versión de macOS, el diálogo solo ofrece "Mover a la papelera" y
+   "Listo", sin botón de abrir. No es un error ni un defecto del
+   programa: Adaptive Learner **no está certificado por Apple**, lo que
+   exige una cuenta de desarrollador de pago.
 
-    - Haz clic derecho (o Ctrl-clic) en el binario > **Abrir** >
-      confirma **Abrir** en el diálogo. macOS lo recuerda para todos los
-      inicios posteriores.
-    - O bien: Ajustes del Sistema > **Privacidad y seguridad** >
-      desplázate hasta la app bloqueada y haz clic en **Abrir de todos
-      modos**.
+   Cómo abrirlo de todos modos:
+
+    1. Cierra el diálogo con **Listo** (no lo muevas a la papelera).
+    2. Abre **Ajustes del Sistema > Privacidad y seguridad** y baja del
+       todo.
+    3. Allí aparece el aviso de que el programa fue bloqueado, con el
+       botón **Abrir igualmente**. Púlsalo y confirma en el siguiente
+       diálogo.
+
+   A partir de ahí se abrirá sin preguntar.
+
+   En este caso, la suma de comprobación del paso 1 es tu verdadera
+   garantía: el sistema no puede confirmarte de dónde viene el archivo;
+   una suma que coincide, sí.
 
 ## Windows
 
