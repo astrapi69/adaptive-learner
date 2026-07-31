@@ -101,6 +101,7 @@ export default function ImportActionsPanel() {
           onShare={(e) => void share.handleShare(e)}
           onDelete={actions.setDeleteTarget}
           onPlayLessonFile={(e, filename) => actions.openLessonFile(e.source, e.id, filename)}
+          onEditLessonFile={(e, filename) => actions.handleEditUserSet(e, filename)}
           onRequestDeleteLesson={actions.setDeleteLessonTarget}
           selectMode={combine.selectMode}
           selectedCount={combine.selectedCount}

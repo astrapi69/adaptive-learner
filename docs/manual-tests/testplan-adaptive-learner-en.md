@@ -122,6 +122,29 @@ lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
 - [ ] iOS standalone (PWA from the home screen): moving via touch and the
       position feedback work, and the order survives closing and reopening.
 
+#### A7. Edit belongs to the lesson, not the set (#2210)
+
+Edit belongs to the lesson, not the set. The set-level button used to guess
+which lesson was meant and always opened the first. Three similar per-row
+buttons (Play/Edit/Delete) need distinct, title-bearing labels. iOS standalone
+is the trickier case (three plus Up/Down per row on a phone).
+
+- [ ] In "My Content" expand a multi-lesson (book) set -> "Manage lessons".
+      Each lesson now shows Play, Edit and Delete (in addition to Up/Down).
+- [ ] A set with SEVERAL lessons no longer has a set-level Edit button (it
+      would only guess).
+- [ ] A set with ONE lesson keeps the set-level Edit button (unambiguous =
+      that one lesson).
+- [ ] Editing the SECOND or third lesson opens exactly THAT lesson in the
+      editor (not the first). After a reorder, Edit still hits the correct
+      lesson (identity, not position).
+- [ ] Keyboard only: Tab to Play/Edit/Delete, trigger with Space/Enter. The
+      screen reader announces a distinct label per button with the lesson
+      title ("Edit lesson X"), not three identical-sounding buttons.
+- [ ] Both storage modes (API + Dexie).
+- [ ] iOS standalone (PWA from the home screen): every per-row button is
+      reliably tappable without mis-taps; Edit opens the correct lesson.
+
 ### Session B: Ubuntu (launcher binary, after the launcher session)
 
 Prerequisite: the launcher session is delivered (mode decision, pin to

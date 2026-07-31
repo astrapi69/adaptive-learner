@@ -2179,6 +2179,8 @@ content:
     deleted: "Pelajaran dihapus."
     delete_failed: "Tidak dapat menghapus pelajaran."
     delete_aria: "Hapus pelajaran {title}"
+    play_aria: "Putar pelajaran {title}"
+    edit_aria: "Edit pelajaran {title}"
   lesson_order:
     move_up: "Pindahkan pelajaran {title} ke atas"
     move_down: "Pindahkan pelajaran {title} ke bawah"

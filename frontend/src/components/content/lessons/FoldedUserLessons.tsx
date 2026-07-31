@@ -27,7 +27,9 @@ export interface FoldedUserLessonsProps {
   communitySharingEnabled: boolean;
   /** Open one specific folded lesson (by its cached filename). */
   onPlayLesson: (lesson: FoldedUserLesson) => void;
-  onEdit: (entry: ContentSetEntry) => void;
+  /** Edit one specific folded lesson (#2210) - the row knows its lesson, so
+   *  Edit carries that filename instead of guessing the set's first. */
+  onEdit: (entry: ContentSetEntry, filename?: string) => void;
   onExportJson: (entry: ContentSetEntry) => void;
   onExportSet: (entry: ContentSetEntry) => void;
   onShare: (entry: ContentSetEntry) => void;
@@ -91,7 +93,7 @@ export default function FoldedUserLessons({
                 communitySharingEnabled={communitySharingEnabled}
                 testIdPrefix={`folded-lesson-${lesson.lessonId}`}
                 onPlay={() => onPlayLesson(lesson)}
-                onEdit={onEdit}
+                onEdit={(e) => onEdit(e, lesson.filename)}
                 onExportJson={onExportJson}
                 onExportSet={onExportSet}
                 onShare={onShare}

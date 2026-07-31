@@ -2357,7 +2357,9 @@
       "action_delete": "Lektion löschen",
       "deleted": "Lektion gelöscht.",
       "delete_failed": "Die Lektion konnte nicht gelöscht werden.",
-      "delete_aria": "Lektion {title} löschen"
+      "delete_aria": "Lektion {title} löschen",
+      "play_aria": "Lektion {title} abspielen",
+      "edit_aria": "Lektion {title} bearbeiten"
     },
     "lesson_order": {
       "move_up": "Lektion {title} nach oben verschieben",
