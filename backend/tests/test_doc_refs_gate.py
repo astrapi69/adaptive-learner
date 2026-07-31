@@ -322,6 +322,45 @@ def test_an_unbanked_fall_fails_readonly(tmp_path: Path) -> None:
     assert "fell" in r.stdout
 
 
+# --- 7. a foreign-repo link label is not a claim about this repo (#2261) ------
+
+
+def test_label_of_a_foreign_repo_link_is_not_judged(tmp_path: Path) -> None:
+    """`[`docs/X.md`](https://github.com/other/repo/blob/main/docs/X.md)` names
+    a file in ANOTHER repository - the URL says so. This repo cannot be asked
+    to contain it (the fifth look-alike class, found in the #2254 inherited
+    findings: every user-facing entry was one of these)."""
+    docs = _repo(tmp_path)
+    (docs / "guide.md").write_text(
+        "See [`docs/GETTING-STARTED.md`]"
+        "(https://github.com/astrapi69/adaptive-learner-content/blob/main/docs/GETTING-STARTED.md)\n"
+        "but `docs/really-missing.md` on its own is judged.\n",
+        encoding="utf-8",
+    )
+    _track(tmp_path)
+    _baseline(tmp_path, 0)
+    _track(tmp_path)
+    r = _run(tmp_path)
+    assert r.returncode != 0, r.stdout
+    assert "really-missing" in r.stdout
+    assert "GETTING-STARTED" not in r.stdout
+
+
+def test_a_relative_link_label_is_still_judged(tmp_path: Path) -> None:
+    """Only an ABSOLUTE url delegates the claim elsewhere; a relative link
+    still points inside this repo."""
+    docs = _repo(tmp_path)
+    (docs / "guide.md").write_text(
+        "See [`docs/gone.md`](gone.md) for details.\n", encoding="utf-8"
+    )
+    _track(tmp_path)
+    _baseline(tmp_path, 0)
+    _track(tmp_path)
+    r = _run(tmp_path)
+    assert r.returncode != 0
+    assert "gone.md" in r.stdout
+
+
 # --- 7. exemptions are single-line, named, never blanket ----------------------
 
 
