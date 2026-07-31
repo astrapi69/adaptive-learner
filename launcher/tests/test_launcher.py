@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -1103,9 +1104,20 @@ class TestComposeNameCoverage:
 
     def test_container_name_is_not_prefixed(self) -> None:
         """Compose does NOT prefix an explicit container_name - proof it is
-        the volumes that need the prefix, not everything."""
+        the volumes that need the prefix, not everything.
+
+        Since #2122 the compose value interpolates
+        (``${ADAPTIVE_LEARNER_CONTAINER_NAME:-<default>}``); the DEFAULT is
+        what an env-less install resolves, so it must equal the launcher's
+        container_name."""
         cfg = json.loads(LAUNCHER_JSON.read_text(encoding="utf-8"))
-        assert f"container_name: {cfg['container_name']}" in self._compose()
+        name = cfg["container_name"]
+        match = re.search(r"container_name:\s*(.+)", self._compose())
+        assert match is not None, "compose file lost its container_name line"
+        value = match.group(1).strip()
+        assert value in (name, f"${{ADAPTIVE_LEARNER_CONTAINER_NAME:-{name}}}"), (
+            f"compose container_name {value!r} does not resolve to {name!r} by default"
+        )
 
 
 class TestImageModeStandalone:
