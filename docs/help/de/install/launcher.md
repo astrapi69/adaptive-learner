@@ -129,10 +129,13 @@ Bekannte Stolpersteine:
   und braucht glibc 2.35 oder neuer (Ubuntu 22.04+, Debian 12+,
   Fedora 36+). Auf älteren Distributionen stattdessen die App per
   `install.sh` oder Docker Compose direkt betreiben.
-- **App im Browser nicht erreichbar**: Die App läuft nur lokal
-  (`localhost`), eine Firewall-Freigabe ist dafür nicht nötig. Öffnet
-  der Browser nicht automatisch, rufe `http://localhost:8501` von Hand
-  auf (bzw. den im Launcher-Fenster angezeigten Port).
+- **App im Browser nicht erreichbar**: Öffnet der Browser nicht
+  automatisch, rufe `http://localhost:8501` von Hand auf (bzw. den im
+  Launcher-Fenster angezeigten Port). Beachte: Die App wird auf allen
+  Netzwerkschnittstellen veröffentlicht, nicht nur auf `localhost`, und
+  sie hat keine Authentifizierung - lass den Port in der Firewall
+  geschlossen, solange du nicht bewusst willst, dass andere Geräte im
+  Netzwerk sie erreichen.
 
 ## macOS
 

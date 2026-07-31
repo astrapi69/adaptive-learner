@@ -195,7 +195,10 @@ Both scripts clone the tagged release into `~/adaptive-learner/`,
 generate an `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet at-rest
 encryption), build the Docker images, and start the stack at
 `http://localhost:8501` (single port, single container; FastAPI
-serves the static frontend and `/api/*` itself).
+serves the static frontend and `/api/*` itself). The port is
+published on every network interface, not only on `localhost`, and
+the app has no authentication - keep it closed at your firewall
+unless you deliberately want other devices to reach it.
 
 ```bash
 cd ~/adaptive-learner

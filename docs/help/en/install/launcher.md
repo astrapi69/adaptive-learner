@@ -124,10 +124,12 @@ Known pitfalls:
   needs glibc 2.35 or newer (Ubuntu 22.04+, Debian 12+, Fedora 36+).
   On older distributions run the app via `install.sh` or Docker
   Compose directly instead.
-- **App not reachable in the browser**: the app runs locally only
-  (`localhost`), so no firewall rule is needed. If the browser does
-  not open automatically, open `http://localhost:8501` manually (or
-  the port shown in the launcher window).
+- **App not reachable in the browser**: if the browser does not open
+  automatically, open `http://localhost:8501` manually (or the port
+  shown in the launcher window). Note that the app is published on
+  every network interface, not only on `localhost`, and it has no
+  authentication - keep that port closed at your firewall unless you
+  deliberately want other devices on your network to reach it.
 
 ## macOS
 

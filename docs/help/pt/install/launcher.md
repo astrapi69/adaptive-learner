@@ -111,11 +111,13 @@ Ciladas conhecidas:
   precisa de glibc 2.35 ou mais recente (Ubuntu 22.04+, Debian 12+,
   Fedora 36+). Em distribuições mais antigas, corre antes a aplicação
   através do `install.sh` ou diretamente com o Docker Compose.
-- **Aplicação inacessível no browser**: a aplicação corre apenas
-  localmente (`localhost`), por isso não é necessária nenhuma regra de
-  firewall. Se o browser não abrir automaticamente, abre
-  `http://localhost:8501` manualmente (ou a porta indicada na janela do
-  launcher).
+- **Aplicação inacessível no browser**: se o browser não abrir
+  automaticamente, abre `http://localhost:8501` manualmente (ou a porta
+  indicada na janela do launcher). Atenção: a aplicação é publicada em
+  todas as interfaces de rede, não apenas em `localhost`, e não tem
+  autenticação - mantém essa porta fechada na firewall a não ser que
+  queiras deliberadamente que outros dispositivos da tua rede lhe
+  acedam.
 
 ## macOS
 
