@@ -72,6 +72,42 @@ def test_fails_closed_when_the_image_cannot_be_measured(tmp_path: Path) -> None:
     assert "could not measure" in result.stderr
 
 
+def test_save_is_scoped_to_the_measured_architecture(tmp_path: Path) -> None:
+    """#2268: `docker save` without --platform exports EVERY architecture of a
+    pulled multi-arch image (223 MB vs 108 MB for the published 2.8.2 under the
+    containerd image store) - a doubled reading that looks like catastrophic
+    growth. When --arch is given, the export must be scoped to it."""
+    shim = tmp_path / "shim"
+    shim.mkdir()
+    log = tmp_path / "argv.log"
+    (shim / "docker").write_text(
+        "#!/bin/sh\n"
+        f'echo "$@" >> {log}\n'
+        'case "$1" in\n'
+        '  image) echo sha256:deadbeef ;;\n'
+        '  save) printf "payload" ;;\n'
+        'esac\n',
+        encoding="utf-8",
+    )
+    (shim / "docker").chmod(0o755)
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps({"per_arch": {"amd64": 100}}), encoding="utf-8")
+    subprocess.run(
+        [
+            sys.executable, str(SCRIPT),
+            "--image", "ghcr.io/x/y:1", "--arch", "amd64", "--baseline", str(baseline),
+        ],
+        capture_output=True, text=True, cwd=REPO_ROOT,
+        env={**os.environ, "PATH": str(shim)},
+    )
+    calls = log.read_text(encoding="utf-8")
+    save_line = [ln for ln in calls.splitlines() if ln.startswith("save")]
+    assert save_line, f"no docker save call recorded: {calls!r}"
+    assert "--platform linux/amd64" in save_line[0], (
+        f"save was not scoped to the measured arch: {save_line[0]!r}"
+    )
+
+
 def test_fails_closed_when_docker_is_absent_entirely(tmp_path: Path) -> None:
     """No docker binary at all (#2241: the release-prepare Playwright
     container) must produce the SAME named fail-closed message, not a raw
