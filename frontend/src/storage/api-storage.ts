@@ -11,7 +11,10 @@
 
 import { api, ApiError } from "../api/client";
 import { enqueueRequest } from "../lib/pwa/sync-queue";
-import { applyStoredLessonOrderToList } from "../lib/content/browse/lesson-order-store";
+import {
+  applyStoredLessonOrderToList,
+  recordSavedSetOrder,
+} from "../lib/content/browse/lesson-order-store";
 import type {
   ApiKeyTestResult,
   GitHubVerifyKind,
@@ -366,7 +369,13 @@ export const apiStorage: IStorageService = {
     /** Phase 59B / v1.42.0 — persist a user-generated set into
      *  the backend filesystem cache (same place as downloaded
      *  sets). */
-    saveUserSet: (input) => api.contentLoader.saveUserSet(input),
+    saveUserSet: async (input) => {
+      const entry = await api.contentLoader.saveUserSet(input);
+      // #2173 — seed the display-order overlay with the source/authoring order
+      // (the user's later reorder wins; this is a no-op then).
+      recordSavedSetOrder(input.set_id, input.lessons);
+      return entry;
+    },
     deleteSet: (source, setId) => api.contentLoader.deleteSet(source, setId),
     /** #1351 — no batch endpoint; delete sequentially. Set lifecycle
      *  status is a per-device UI decision persisted browser-side in
