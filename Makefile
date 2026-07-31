@@ -804,6 +804,9 @@ verify-docs-hygiene-raise: ## Lower the umlaut-substitute baseline after a genui
 verify-gate-rule-links: ## Gate <-> rule coupling (#2075): no gate without its rule section, no rule citing a dead gate
 	@python3 scripts/verify_gate_rule_links.py
 
+verify-workflow-health: ## Red-runs rollup (#2225): latest schedule/push run per workflow is green (queries the live GitHub API; not part of `make ci`)
+	@python3 scripts/verify_workflow_health.py
+
 ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-based gates
 	@echo "== docs drift"          && $(MAKE) --no-print-directory verify-docs
 	@echo "== docs hygiene"        && $(MAKE) --no-print-directory verify-docs-hygiene

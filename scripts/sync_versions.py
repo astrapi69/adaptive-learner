@@ -16,6 +16,10 @@ derived location:
 - Plugin ``__init__.py`` files that hold a ``__version__ = "..."``
   literal AND do not already use importlib.metadata or tomllib
   (skip files that already derive)
+- The human-readable version-display sites (README badges + "current
+  release" lines) listed in ``scripts/version_display_sites.py`` (#2179);
+  ``verify_docs.py`` checks the SAME list, so writer and checker cannot
+  drift apart.
 
 After updating those files, this script regenerates ``install.sh``
 via the existing ``scripts/generate_install_sh.sh``.
@@ -41,6 +45,50 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 CANONICAL = REPO / "backend" / "pyproject.toml"
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from version_display_sites import VERSION_DISPLAY_SITES  # noqa: E402
+
+
+def sync_version_display_sites(
+    canonical: str, dry_run: bool, root: Path = REPO
+) -> tuple[int, int, list[str]]:
+    """Rewrite the human-readable version-display sites (#2179).
+
+    Returns ``(sites_changed, sites_inspected, problems)``. A missing file
+    or a vanished pattern is a PROBLEM (fail closed at the caller), never a
+    silent skip - "0 found" must not read as "0 drift". The inspected count
+    is printed by the caller so the measured set is part of the output
+    (gate contract point 4).
+    """
+    changed = 0
+    inspected = 0
+    problems: list[str] = []
+    if not VERSION_DISPLAY_SITES:
+        return 0, 0, ["version_display_sites.py lists no sites (fail-closed)"]
+    for rel, pattern, label in VERSION_DISPLAY_SITES:
+        path = root / rel
+        if not path.exists():
+            problems.append(f"{label}: {rel} is missing")
+            continue
+        text = path.read_text(encoding="utf-8")
+        match = re.search(pattern, text)
+        if match is None:
+            problems.append(f"{label}: pattern not found in {rel} (site drifted?)")
+            continue
+        inspected += 1
+        if match.group(1) == canonical:
+            continue
+        changed += 1
+        print(f"  display: {rel}: {match.group(1)} -> {canonical} ({label})")
+        if not dry_run:
+            def _swap(m: re.Match) -> str:
+                start, end = m.span(1)
+                offset = m.start()
+                return m.group(0)[: start - offset] + canonical + m.group(0)[end - offset :]
+
+            path.write_text(re.sub(pattern, _swap, text), encoding="utf-8")
+    return changed, inspected, problems
 
 
 def read_canonical_version() -> str:
@@ -201,6 +249,41 @@ def update_launcher_json_app_version(
     return changed
 
 
+_COMPOSE_VERSION_DEFAULT = re.compile(r"(ADAPTIVE_LEARNER_APP_VERSION:-)(\d+\.\d+\.\d+)(\})")
+
+
+def update_compose_version_default(path: Path, new_version: str, dry_run: bool) -> bool:
+    """Update the app-version DEFAULT baked into docker-compose.prod.yml (#2034).
+
+    The compose stack tags its locally built image and stamps the
+    ``org.opencontainers.image.version`` label via
+    ``${ADAPTIVE_LEARNER_APP_VERSION:-<default>}`` - env-overridable, but
+    the default must track the canonical version. Fails closed when the
+    pattern vanished from the file: a compose without the stamp is drift,
+    not a skip.
+    """
+    display = path.relative_to(REPO) if path.is_relative_to(REPO) else path
+    content = path.read_text(encoding="utf-8")
+    matches = _COMPOSE_VERSION_DEFAULT.findall(content)
+    if not matches:
+        print(
+            f"ERROR: {display}: no ADAPTIVE_LEARNER_APP_VERSION default found - "
+            "the compose version stamp vanished (#2034)",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+    stale = sorted({found for _pre, found, _post in matches if found != new_version})
+    if not stale:
+        return False
+    print(f"  {display}: app-version default {', '.join(stale)} -> {new_version}")
+    if not dry_run:
+        path.write_text(
+            _COMPOSE_VERSION_DEFAULT.sub(rf"\g<1>{new_version}\g<3>", content),
+            encoding="utf-8",
+        )
+    return True
+
+
 _INSTALL_PLACEHOLDER = "@@ADAPTIVE_LEARNER_VERSION@@"
 
 # Generated installer artifacts. The template is the editable source;
@@ -321,6 +404,9 @@ def collect_targets() -> list[tuple[Path, str]]:
     targets.append(
         (REPO / "launcher" / "launcher.json", "launcher_json")
     )
+    targets.append(
+        (REPO / "docker-compose.prod.yml", "compose_version_default")
+    )
 
     for plugin_pyproject in sorted(
         (REPO / "plugins").glob("*/pyproject.toml")
@@ -338,6 +424,7 @@ HANDLERS = {
     "spec": update_spec_plist,
     "init_literal": update_init_version_literal,
     "launcher_json": update_launcher_json_app_version,
+    "compose_version_default": update_compose_version_default,
 }
 
 
@@ -368,6 +455,16 @@ def main() -> int:
                 drift += 1
         if regenerate_install_sh(dry_run=True):
             drift += 1
+        d_changed, d_inspected, d_problems = sync_version_display_sites(
+            canonical, dry_run=True
+        )
+        print(
+            f"Inspected {d_inspected} version-display site(s): "
+            f"{d_changed} drifted."
+        )
+        for problem in d_problems:
+            print(f"FAIL display-site: {problem}", file=sys.stderr)
+        drift += d_changed + len(d_problems)
         print()
         if drift > 0:
             print(f"DRIFT: {drift} file(s) out of sync with {canonical}.")
@@ -381,8 +478,20 @@ def main() -> int:
             changed_count += 1
     if regenerate_install_sh(args.dry_run):
         changed_count += 1
+    d_changed, d_inspected, d_problems = sync_version_display_sites(
+        canonical, dry_run=args.dry_run
+    )
+    print(
+        f"Inspected {d_inspected} version-display site(s): "
+        f"{d_changed} rewritten."
+    )
+    changed_count += d_changed
 
     print()
+    if d_problems:
+        for problem in d_problems:
+            print(f"FAIL display-site: {problem}", file=sys.stderr)
+        return 1
     if args.dry_run:
         print(
             f"DRY RUN: {changed_count} file(s) would be updated "
