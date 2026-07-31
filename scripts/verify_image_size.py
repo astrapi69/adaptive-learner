@@ -50,7 +50,7 @@ BASELINE_PATH = Path(".image-size-baseline.json")
 JITTER_TOLERANCE = 200_000
 
 
-def measure(image: str) -> int | None:
+def measure(image: str, arch: str | None = None) -> int | None:
     """Return the gzipped transfer size in bytes, or ``None`` if unmeasurable.
 
     Deliberately NOT ``docker image inspect .Size``: with the containerd
@@ -59,6 +59,13 @@ def measure(image: str) -> int | None:
     number depends on the reader's storage driver is not a gate. Streaming
     ``docker save`` through gzip gives the same answer everywhere, and it
     is the number the user actually waits for.
+
+    Scoped to ``arch`` when given (#2268): an unscoped ``docker save`` on a
+    PULLED multi-arch image exports every architecture in the index (223 MB
+    against 108 MB for the published 2.8.2 under the containerd image
+    store) - a doubled reading that reads as catastrophic growth. CI never
+    saw it because each publish job pulls one architecture on a native
+    runner; the trap only springs where a human re-measures by hand.
     """
     try:
         exists = subprocess.run(
@@ -76,7 +83,11 @@ def measure(image: str) -> int | None:
 
     # Stream through gzip without holding the archive in memory: count what
     # the compressor emits, dropping the bytes as they are counted.
-    save = subprocess.Popen(["docker", "save", image], stdout=subprocess.PIPE)
+    save_cmd = ["docker", "save"]
+    if arch:
+        save_cmd += ["--platform", f"linux/{arch}"]
+    save_cmd.append(image)
+    save = subprocess.Popen(save_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     assert save.stdout is not None
     compressed = 0
     sink = io.BytesIO()
@@ -89,6 +100,18 @@ def measure(image: str) -> int | None:
     compressed += sink.tell()
     save.wait()
     if save.returncode != 0:
+        stderr = (save.stderr.read().decode("utf-8", "replace") if save.stderr else "").strip()
+        if arch and "--platform" in stderr:
+            # Older docker without the flag: measure unscoped rather than
+            # not at all, but NAME it - an unscoped reading on a multi-arch
+            # image is inflated, and a silent one would be worse.
+            print(
+                f"WARNING: this docker does not support 'save --platform'; measuring "
+                f"{image} unscoped. On a multi-arch image the reading is inflated "
+                f"(#2268): {stderr}",
+                file=sys.stderr,
+            )
+            return measure(image)
         return None
     return compressed
 
@@ -170,7 +193,7 @@ def main() -> int:
     if args.size_bytes is not None:
         compressed = args.size_bytes
     else:
-        compressed = measure(args.image)
+        compressed = measure(args.image, args.arch)
         if compressed is None:
             print(
                 f"could not measure {args.image} - build it first "
