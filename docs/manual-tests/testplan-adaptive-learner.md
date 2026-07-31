@@ -163,9 +163,9 @@ Fall (drei plus Auf/Ab je Zeile auf dem Telefon).
 
 ### Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
 
-Voraussetzung: die Launcher-Session ist geliefert (Modusentscheidung, Pin
-auf >=0.21.0, neue Binaries mit Run-IDs). Nur diese Binaries verwenden, alle
-aelteren sind obsolet.
+Voraussetzung: die v2.8.2-Release-Binaries (der Launcher ist seit v2.8.0 im
+IMAGE-Modus, #2167; Engine-Pin docker-app-launcher ^0.25.1). Nur diese
+Binaries verwenden, alle aelteren sind obsolet.
 
 - [ ] Daemon laeuft + Testnutzer OHNE docker-Gruppe (qatest):
       Permission-Meldung + pkexec-Fix-Angebot, NICHT "Docker starten". [seit
@@ -174,18 +174,18 @@ aelteren sind obsolet.
       laeuft".
 - [ ] Konsole sichtbar, Detection-Zeilen streamen, Text-Wrap korrekt, Fenster
       resizable.
-- [ ] Branding "Adaptive Learner", About: Launcher 0.21.0, App 2.6.0 mit
-      Quellen-Label.
+- [ ] Branding "Adaptive Learner", About: App 2.8.2 mit Quellen-Label; die
+      angezeigte Launcher-Version notieren (Ist-Wert aus dem v2.8.2-Binary).
 - [ ] Setup laeuft durch bis zum erreichbaren App-Frontend im Browser.
-      Beweisziel je nach Modus: im dockerfile-Modus Build und Start ohne
-      Compose und ohne buildx auf dem Docker-20.10-Geraet, im compose-Modus
-      vollstaendige Bereitschaftsmeldung mit funktionierender Anleitung.
+      Beweisziel (Image-Modus): anonymer Pull von
+      ghcr.io/astrapi69/adaptive-learner:2.8.2 und Start - KEIN Build, kein
+      buildx, kein Compose; Pull-Fortschritt sichtbar in der Konsole.
 - [ ] Zweitstart bei laufendem Launcher: fokussiert das bestehende Fenster
       (#31).
 - [ ] Stoppen, erneut starten, deinstallieren: keine Fehler, Konsole meldet
       nachvollziehbar.
-- [ ] Portwechsel NICHT testen, bis das Origin-Datenverlustrisiko geklaert ist
-      (eigener Auftrag laeuft).
+- [ ] Portwechsel: nach den drei #2069-Faellen unter "PRIO 2 -> Portwechsel:
+      Datenmitnahme" testen (der fruehere Vorbehalt ist geliefert).
 
 ### Reihenfolge-Empfehlung
 
