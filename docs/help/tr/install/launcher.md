@@ -128,14 +128,24 @@ Bilinen tuzaklar:
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. İlk açılışta Gatekeeper, ikili dosyayı "kimliği doğrulanmamış
-   geliştirici"den geliyor diye engeller. Bunu aşmanın iki yolu:
+2. İlk açılışta **macOS programı engeller**. macOS sürümüne göre
+   iletişim kutusu yalnızca "Çöp Kutusuna Taşı" ve "Bitti" sunar, açma
+   düğmesi yoktur. Bu bir hata ya da programın kusuru değildir:
+   Adaptive Learner **Apple tarafından onaylanmamıştır**, çünkü bu
+   ücretli bir geliştirici hesabı gerektirir.
 
-    - İkili dosyaya sağ tıkla (ya da Ctrl-tıkla) > **Aç** > iletişim
-      kutusunda **Aç**'ı onayla. macOS bunu sonraki tüm başlatmalar
-      için hatırlar.
-    - Ya da: Sistem Ayarları > **Gizlilik ve Güvenlik** > aşağı kaydırıp
-      engellenen uygulamada **Yine de Aç**'a tıkla.
+   Yine de nasıl açarsın:
+
+    1. İletişim kutusunu **Bitti** ile kapat (çöp kutusuna taşıma).
+    2. **Sistem Ayarları > Gizlilik ve Güvenlik**'i aç ve aşağı kaydır.
+    3. Orada programın engellendiği bilgisi ve **Yine de Aç** düğmesi
+       görünür. Ona tıkla ve sonraki iletişim kutusunda onayla.
+
+   Sonraki açılışlar soru sormadan gerçekleşir.
+
+   Bu durumda 1. adımdaki sağlama toplamı asıl güvencendir: sistem sana
+   dosyanın nereden geldiğini doğrulayamaz, eşleşen bir sağlama toplamı
+   doğrulayabilir.
 
 ## Windows
 
