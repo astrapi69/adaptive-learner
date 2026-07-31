@@ -30,6 +30,10 @@
 # Punkt-5-Pruefung (#2135, 2026-07-29): gleiche Grundlage wie
 # .dead-classnames-baseline - gebautes Tailwind-CSS als Orakel, deshalb
 # `make ci-full`. Namen statt Zahlen. GEPRUEFT.
+#
+# Orakel-Pin (#2138, entschieden 2026-07-31): bewusst UNgepinnt - gleiche
+# Begruendung wie in .dead-classnames-baseline (das Bauergebnis ist selbst
+# der Pruefgegenstand). Entscheidung nicht erneut aufwerfen.
 activity-trend
 adaptive-save-row
 adaptive-summary-improvement
