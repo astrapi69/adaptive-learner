@@ -64,33 +64,42 @@ def _count_substitutes(docs_dir: Path) -> tuple[int, int, list[str]]:
     return total, files, findings
 
 
-def check_umlaut_ratchet(docs_dir: Path, baseline_path: Path, update: bool) -> int:
+def _write_umlaut_baseline(baseline_path: Path, total: int, files: int) -> None:
+    baseline_path.write_text(
+        json.dumps(
+            {
+                "umlaut_count": total,
+                "umlaut_files_scanned": files,
+                "rationale": (
+                    "Frozen ASCII substitute-spelling count across docs/**/*.md. "
+                    "Stems are evidence-based (real 2026-07-30 leaks), not a "
+                    "completeness list. This is an ERROR-COUNTER ratchet, not a "
+                    "budget: substitutes should be zero, so any rise is a "
+                    "regression and every fall is banked automatically (the "
+                    "--auto-lower path, run by the docs-hygiene pre-commit hook) "
+                    "so the gain cannot be spent again. Pre-existing substitutions "
+                    "(e.g. the DE testplan) are grandfathered; full normalization "
+                    "is a separate task."
+                ),
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def check_umlaut_ratchet(
+    docs_dir: Path, baseline_path: Path, *, update: bool, auto_lower: bool = False
+) -> int:
     total, files, findings = _count_substitutes(docs_dir)
     # Fail closed: a run over zero files is not a green result.
     if files == 0:
         print(f"FAIL umlaut-ratchet: scanned 0 files under {docs_dir} (fail-closed)")
         return 1
     if update:
-        baseline_path.write_text(
-            json.dumps(
-                {
-                    "umlaut_count": total,
-                    "umlaut_files_scanned": files,
-                    "rationale": (
-                        "Frozen ASCII substitute-spelling count across docs/**/*.md. "
-                        "Stems are evidence-based (real 2026-07-30 leaks), not a "
-                        "completeness list. Ratchet: the count may not rise; lower it "
-                        "here whenever it falls so the gain cannot be spent again. "
-                        "Pre-existing substitutions (e.g. the DE testplan) are "
-                        "grandfathered; full normalization is a separate task."
-                    ),
-                },
-                indent=2,
-                ensure_ascii=False,
-            )
-            + "\n",
-            encoding="utf-8",
-        )
+        _write_umlaut_baseline(baseline_path, total, files)
         print(f"umlaut-ratchet baseline set: {total} occurrences over {files} files")
         return 0
     # Fail closed: missing/unreadable baseline is an error, not a pass.
@@ -104,14 +113,30 @@ def check_umlaut_ratchet(docs_dir: Path, baseline_path: Path, update: bool) -> i
         f"(baseline {ceiling})"
     )
     if total > ceiling:
+        # A rise is a regression, never auto-anything - even under --auto-lower.
+        # Growth in an error-counter is only ever a deliberate, justified raise
+        # (make verify-docs-hygiene-raise), never automatic.
         print(f"FAIL umlaut-ratchet: count rose {ceiling} -> {total}. New ASCII substitutes:")
         for f in findings:
             print(f"  {f}")
         return 1
     if total < ceiling:
+        # A fall is an improvement of an error-counter (substitutes should be
+        # zero). Bank it so the headroom can never be spent again (#2230). The
+        # docs-hygiene pre-commit hook runs --auto-lower, so the lowered
+        # baseline rides the same commit; the read-only check still FAILS on an
+        # unbanked fall, which is what catches a stale baseline in CI.
+        if auto_lower:
+            _write_umlaut_baseline(baseline_path, total, files)
+            print(
+                f"umlaut-ratchet: auto-lowered baseline {ceiling} -> {total} "
+                "(improvement banked - commit the updated baseline)"
+            )
+            return 0
         print(
-            f"FAIL umlaut-ratchet: count fell {ceiling} -> {total} (a gain). Lock it in:\n"
-            f"  python3 scripts/verify_docs_hygiene.py --update-baseline"
+            f"FAIL umlaut-ratchet: count fell {ceiling} -> {total} without banking the gain.\n"
+            "  The docs-hygiene pre-commit hook banks it automatically; re-commit,\n"
+            "  or run: python3 scripts/verify_docs_hygiene.py --auto-lower"
         )
         return 1
     return 0
@@ -157,6 +182,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--baseline", type=Path, default=None, help="override the baseline JSON path")
     ap.add_argument("--only", choices=("umlaut", "index", "all"), default="all")
     ap.add_argument("--update-baseline", action="store_true", help="freeze the current count")
+    ap.add_argument(
+        "--auto-lower",
+        action="store_true",
+        help=(
+            "bank a fall automatically: an improvement below the baseline lowers "
+            "it and passes (a rise still fails). Used by the docs-hygiene "
+            "pre-commit hook so the gain rides the commit."
+        ),
+    )
     args = ap.parse_args(argv)
 
     docs = args.root / "docs"
@@ -167,7 +201,7 @@ def main(argv: list[str] | None = None) -> int:
 
     rc = 0
     if args.only in ("umlaut", "all"):
-        rc |= check_umlaut_ratchet(docs, baseline, update=False)
+        rc |= check_umlaut_ratchet(docs, baseline, update=False, auto_lower=args.auto_lower)
     if args.only in ("index", "all"):
         rc |= check_exploration_index(docs / "explorations", docs / "explorations" / "EXP-INDEX.md")
     return rc

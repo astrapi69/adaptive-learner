@@ -341,7 +341,14 @@ the ones that keep being missed:
    and worse code fits under a limit that is only apparently the same. So a
    gate on a drifting oracle never tightens its baseline automatically - that
    would freeze the drift as an improvement (radon in the complexity gate,
-   the built Tailwind CSS in the classname gates; pinning is #2138).
+   the built Tailwind CSS in the classname gates; pinning is #2138). Whether a
+   fall may be banked automatically is a three-way call on what the number IS:
+   an error-counter that should be zero (docs-hygiene's ASCII substitutes)
+   banks every fall automatically because headroom there is pure
+   regression-invitation (#2230); a budget where growth is sometimes legitimate
+   (the rule corpus, #2091) keeps a fall as headroom for the next real addition
+   and moves only by a deliberate act in either direction; a drifting-oracle
+   gate never auto-lowers at all, because a fall may be tool drift, not a gain.
 
 Precedents for point 5, all found by failures rather than by design (#2132):
 `docker image inspect .Size` reports 113 MB under the containerd image store
