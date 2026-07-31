@@ -14,6 +14,7 @@ states WHAT it measured, so an unmeasured run cannot read like a clean one.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -79,8 +80,15 @@ def test_fails_closed_when_docker_is_absent_entirely(tmp_path: Path) -> None:
     baseline = tmp_path / "b.json"
     baseline.write_text(json.dumps({"compressed_bytes": 100}), encoding="utf-8")
     args = [sys.executable, str(SCRIPT), "--image", "adaptive-learner:x", "--baseline", str(baseline)]
+    # Only PATH shrinks (docker becomes unfindable); everything else is
+    # preserved - a wholesale env={} replacement killed the interpreter
+    # itself in the release-gate container (no LD_LIBRARY_PATH, rc 127).
     result = subprocess.run(
-        args, capture_output=True, text=True, cwd=REPO_ROOT, env={"PATH": str(tmp_path)}
+        args,
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
+        env={**os.environ, "PATH": str(tmp_path)},
     )
     assert result.returncode == 1
     assert "could not measure" in result.stderr
