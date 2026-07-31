@@ -60,11 +60,17 @@ def measure(image: str) -> int | None:
     ``docker save`` through gzip gives the same answer everywhere, and it
     is the number the user actually waits for.
     """
-    exists = subprocess.run(
-        ["docker", "image", "inspect", image, "--format", "{{.Id}}"],
-        capture_output=True,
-        text=True,
-    )
+    try:
+        exists = subprocess.run(
+            ["docker", "image", "inspect", image, "--format", "{{.Id}}"],
+            capture_output=True,
+            text=True,
+        )
+    except FileNotFoundError:
+        # No docker binary at all (#2241: the release-prepare Playwright
+        # container). Same fail-closed path as a missing image - a raw
+        # traceback would make the gate behave differently per environment.
+        return None
     if exists.returncode != 0:
         return None
 
