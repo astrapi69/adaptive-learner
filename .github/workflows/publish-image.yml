@@ -35,6 +35,13 @@ on:
   # The chain runs ON DEMAND via workflow_dispatch; the release
   # checklist carries the trigger. Foot-gun this documents: creating
   # a release directly produces NO image and NO assets by itself.
+  #
+  # Since #2187 (Option 2, first half) a sharp re-run is IDEMPOTENT: if
+  # the tag is already published, the run skips build+push and only
+  # re-verifies the existing artifact (digest from the registry). That
+  # removes the re-build foot-gun from repeated dispatches; whether a
+  # `release: published` trigger should now be added on top is a
+  # release-manager decision tracked in #2187.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -63,7 +70,10 @@ jobs:
     outputs:
       version: ${{ steps.resolve.outputs.version }}
       image: ${{ steps.resolve.outputs.image }}
-      digest: ${{ steps.push.outputs.digest }}
+      # When the tag was already published, the digest comes from the
+      # registry (idempotent re-verify, #2187) instead of a fresh push.
+      digest: ${{ steps.push.outputs.digest || steps.state.outputs.digest }}
+      reused: ${{ steps.state.outputs.exists }}
       pushed: ${{ steps.resolve.outputs.pushed }}
     steps:
       - uses: actions/checkout@v7
@@ -116,11 +126,60 @@ jobs:
           echo "pushed=$pushed"   >> "$GITHUB_OUTPUT"
           echo "Publishing $image:$version (push=$pushed)"
 
+      - name: Is this tag already published? (idempotent re-run, #2187)
+        # A sharp re-run must not re-build: a rebuild is not bit-identical
+        # (~48k bytes drift between identical-content builds), so it would
+        # verify one artifact and ship another. If the tag already exists
+        # in the registry - checked ANONYMOUSLY, the way a user pulls -
+        # the build+push is skipped and the run only RE-VERIFIES the
+        # published artifact (anonymous pull, start, size gates, version
+        # agreement, page render), reading the digest from the registry.
+        #
+        # Outcome map (gate contract: fail closed on an unreadable basis):
+        #   200 -> exists: skip build, re-verify the published digest
+        #   404 -> not published yet: build and push
+        #   401/403 -> the package is not anonymously readable, i.e. from a
+        #     user's point of view NOT published: build, push, make public
+        #   anything else (5xx, network) -> FAIL; "could not check" must
+        #     never read as "not published"
+        id: state
+        if: steps.resolve.outputs.pushed == 'true'
+        run: |
+          set -euo pipefail
+          repo="${GITHUB_REPOSITORY,,}"
+          version="${{ steps.resolve.outputs.version }}"
+          token="$(curl -fsS "https://ghcr.io/token?scope=repository:${repo}:pull" \
+            | python3 -c "import json,sys;print(json.load(sys.stdin)['token'])")"
+          code="$(curl -s -o /dev/null -D /tmp/manifest-headers.txt -w '%{http_code}' \
+            -H "Authorization: Bearer $token" \
+            -H "Accept: application/vnd.oci.image.index.v1+json" \
+            -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json" \
+            "https://ghcr.io/v2/${repo}/manifests/${version}")"
+          case "$code" in
+            200)
+              digest="$(grep -i '^docker-content-digest:' /tmp/manifest-headers.txt | tr -d '\r' | awk '{print $2}')"
+              if [ -z "$digest" ]; then
+                echo "::error::tag ${version} exists but the registry returned no digest - refusing to guess"
+                exit 1
+              fi
+              echo "exists=true"     >> "$GITHUB_OUTPUT"
+              echo "digest=$digest"  >> "$GITHUB_OUTPUT"
+              echo "Tag ${version} is already published (${digest}) - skipping build, re-verifying." ;;
+            404|401|403)
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+              echo "Tag ${version} not anonymously pullable (HTTP $code) - building and pushing." ;;
+            *)
+              echo "::error::registry state check returned HTTP $code - failing closed (#2187)"
+              exit 1 ;;
+          esac
+
       - uses: docker/setup-qemu-action@v4
+        if: steps.state.outputs.exists != 'true'
       - uses: docker/setup-buildx-action@v4
+        if: steps.state.outputs.exists != 'true'
 
       - name: Log in to GHCR
-        if: steps.resolve.outputs.pushed == 'true'
+        if: steps.resolve.outputs.pushed == 'true' && steps.state.outputs.exists != 'true'
         uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
@@ -128,7 +187,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build (and push) multi-arch
+        # Skipped when the tag is already published (#2187): the run then
+        # only re-verifies the existing artifact. Dry runs always build
+        # (the state step does not run there, so `exists` is empty).
         id: push
+        if: steps.state.outputs.exists != 'true'
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -144,7 +207,7 @@ jobs:
       - name: Make the package public
         # A GHCR package is private on first publish. Left private, every
         # user's first pull is a 401 that looks like a broken release.
-        if: steps.resolve.outputs.pushed == 'true'
+        if: steps.resolve.outputs.pushed == 'true' && steps.state.outputs.exists != 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -281,6 +344,7 @@ jobs:
             echo "| tag | \`${{ needs.build-and-push.outputs.version }}\` |"
             echo "| digest | \`${{ needs.build-and-push.outputs.digest }}\` |"
             echo "| platforms | linux/amd64, linux/arm64 |"
+            echo "| mode | ${{ needs.build-and-push.outputs.reused == 'true' && 're-verified an already-published tag (build skipped, #2187)' || 'freshly built and pushed' }} |"
             echo ""
             echo "Anonymous pull AND a health check on native amd64 and arm64 runners,"
             echo "without credentials."
