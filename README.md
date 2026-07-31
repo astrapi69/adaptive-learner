@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.8.2-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.9.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -330,7 +330,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.8.2** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198, lesson-validator eval #2205; v2.8.1 was never published); the v2.8.0 headline
+Active development. The current release is **v2.9.0** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198, lesson-validator eval #2205; v2.8.1 was never published); the v2.8.0 headline
 is the **distribution switch**: the desktop launcher now **pulls a
 published, per-architecture verified image from GHCR** instead of
 building on the user's device (building from source stays for

@@ -24,6 +24,12 @@ stop the app, change the port, update, or uninstall everything.
 | **Registry-free (archive)** | Machines without registry access | Download the image archive for your processor from the same release page as the launcher, place it next to the launcher's data - it is loaded INTO the pinned reference instead of being pulled. Archive and launcher must come from the **same release**; a mismatched version fails hard with the file named. |
 | **From source (developers)** | Self-builders | Clone the repository, then `install.sh` or the compose stack. Builds locally; unchanged by this release. |
 
+The **downloaded program deliberately has no tray icon**: closing the
+window always quits the launcher there. The app itself keeps running in
+Docker and is right back on the next start. Only a source installation
+can add the tray icon, and then closing minimizes to it instead of
+quitting.
+
 The port defaults to **8501** and can be changed in the launcher
 window; if it is taken, the launcher falls back to a free port. If you
 use browser storage mode, changing the port also changes where your

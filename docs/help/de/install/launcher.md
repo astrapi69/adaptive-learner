@@ -27,6 +27,12 @@ deinstallieren.
 | **Registryfrei (Archiv)** | Rechner ohne Registry-Zugang | Lade das Image-Archiv für deinen Prozessor von derselben Release-Seite wie den Launcher und lege es zu den Launcher-Daten - es wird in die hinterlegte Referenz GELADEN statt bezogen. Archiv und Launcher müssen aus dem **selben Release** stammen; eine andere Version führt zum harten Fehler mit Dateinamen. |
 | **Aus dem Quellbaum (Entwickler)** | Selbstbauer | Repository klonen, dann `install.sh` oder der Compose-Stack. Baut lokal; durch dieses Release unverändert. |
 
+Das **heruntergeladene Programm hat bewusst kein Tray-Symbol**: das
+Fenster zu schließen beendet dort immer den Launcher. Die App selbst
+läuft in Docker weiter und ist beim nächsten Start sofort wieder da.
+Nur die Installation aus dem Quellbaum kann das Tray-Symbol
+nachrüsten, dann minimiert das Schließen dorthin statt zu beenden.
+
 Der Port ist standardmäßig **8501** und im Launcher-Fenster änderbar;
 ist er belegt, weicht der Launcher auf einen freien Port aus. Wenn du
 den Browser-Speichermodus nutzt, ändert ein Portwechsel auch, wo deine
