@@ -15,10 +15,20 @@ name: adaptive-learner
 services:
   app:
     container_name: adaptive-learner
-    image: adaptive-learner
+    # The locally built image carries the app version as its tag and as the
+    # OCI version label (#2034) - `docker inspect` and stale-image detection
+    # can then name the version instead of an anonymous :latest. The DEFAULT
+    # version below is maintained by `make sync-versions` (same derived-pin
+    # class as every other version literal - do not edit it by hand);
+    # ADAPTIVE_LEARNER_APP_VERSION in .env overrides it.
+    image: adaptive-learner:${ADAPTIVE_LEARNER_APP_VERSION:-2.8.2}
     build:
       context: .
       dockerfile: backend/Dockerfile
+      labels:
+        org.opencontainers.image.title: adaptive-learner
+        org.opencontainers.image.version: ${ADAPTIVE_LEARNER_APP_VERSION:-2.8.2}
+        org.opencontainers.image.source: https://github.com/astrapi69/adaptive-learner
     # One container, one port: the host-published port the user reaches in
     # the browser maps straight onto the backend port that serves BOTH the
     # frontend statics and /api/*. ``ADAPTIVE_LEARNER_PUBLIC_PORT`` (default

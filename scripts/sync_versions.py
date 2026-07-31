@@ -249,6 +249,41 @@ def update_launcher_json_app_version(
     return changed
 
 
+_COMPOSE_VERSION_DEFAULT = re.compile(r"(ADAPTIVE_LEARNER_APP_VERSION:-)(\d+\.\d+\.\d+)(\})")
+
+
+def update_compose_version_default(path: Path, new_version: str, dry_run: bool) -> bool:
+    """Update the app-version DEFAULT baked into docker-compose.prod.yml (#2034).
+
+    The compose stack tags its locally built image and stamps the
+    ``org.opencontainers.image.version`` label via
+    ``${ADAPTIVE_LEARNER_APP_VERSION:-<default>}`` - env-overridable, but
+    the default must track the canonical version. Fails closed when the
+    pattern vanished from the file: a compose without the stamp is drift,
+    not a skip.
+    """
+    display = path.relative_to(REPO) if path.is_relative_to(REPO) else path
+    content = path.read_text(encoding="utf-8")
+    matches = _COMPOSE_VERSION_DEFAULT.findall(content)
+    if not matches:
+        print(
+            f"ERROR: {display}: no ADAPTIVE_LEARNER_APP_VERSION default found - "
+            "the compose version stamp vanished (#2034)",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+    stale = sorted({found for _pre, found, _post in matches if found != new_version})
+    if not stale:
+        return False
+    print(f"  {display}: app-version default {', '.join(stale)} -> {new_version}")
+    if not dry_run:
+        path.write_text(
+            _COMPOSE_VERSION_DEFAULT.sub(rf"\g<1>{new_version}\g<3>", content),
+            encoding="utf-8",
+        )
+    return True
+
+
 _INSTALL_PLACEHOLDER = "@@ADAPTIVE_LEARNER_VERSION@@"
 
 # Generated installer artifacts. The template is the editable source;
@@ -369,6 +404,9 @@ def collect_targets() -> list[tuple[Path, str]]:
     targets.append(
         (REPO / "launcher" / "launcher.json", "launcher_json")
     )
+    targets.append(
+        (REPO / "docker-compose.prod.yml", "compose_version_default")
+    )
 
     for plugin_pyproject in sorted(
         (REPO / "plugins").glob("*/pyproject.toml")
@@ -386,6 +424,7 @@ HANDLERS = {
     "spec": update_spec_plist,
     "init_literal": update_init_version_literal,
     "launcher_json": update_launcher_json_app_version,
+    "compose_version_default": update_compose_version_default,
 }
 
 
