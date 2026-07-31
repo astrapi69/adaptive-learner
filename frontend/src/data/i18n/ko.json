@@ -2357,7 +2357,9 @@
       "action_delete": "레슨 삭제",
       "deleted": "레슨이 삭제되었습니다.",
       "delete_failed": "레슨을 삭제할 수 없습니다.",
-      "delete_aria": "레슨 {title} 삭제"
+      "delete_aria": "레슨 {title} 삭제",
+      "play_aria": "레슨 {title} 재생",
+      "edit_aria": "레슨 {title} 편집"
     },
     "lesson_order": {
       "move_up": "{title} 레슨을 위로 이동",

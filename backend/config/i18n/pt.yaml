@@ -2168,6 +2168,8 @@ content:
     deleted: "Lição excluída."
     delete_failed: "Não foi possível excluir a lição."
     delete_aria: "Excluir a lição {title}"
+    play_aria: "Reproduzir a lição {title}"
+    edit_aria: "Editar a lição {title}"
   lesson_order:
     move_up: "Mover a lição {title} para cima"
     move_down: "Mover a lição {title} para baixo"
