@@ -118,8 +118,8 @@ Fall (Verschieben auf dem Telefon).
       Seite neu laden (oder Set zu- und wieder aufklappen): die geaenderte
       Reihenfolge bleibt.
 - [ ] Wirkt auf die LERNFOLGE (#2212), nicht nur die Liste: nach dem
-      Verschieben oeffnet das Set mit der neuen ersten Lektion, und die
-      Weiter-Navigation ("naechste Lektion") folgt der gewaehlten Reihenfolge -
+      Verschieben öffnet das Set mit der neuen ersten Lektion, und die
+      Weiter-Navigation ("nächste Lektion") folgt der gewählten Reihenfolge -
       in beiden Speichermodi.
 - [ ] Bestehende Sets: ohne eigenes Verschieben zeigt sich die bisherige
       Reihenfolge unveraendert (kein stilles Umsortieren).
@@ -136,29 +136,29 @@ Fall (Verschieben auf dem Telefon).
 
 #### A7. Bearbeiten je Lektion, nicht je Set (#2210)
 
-Bearbeiten gehoert an die Lektion, nicht an das Set. Der Set-Knopf raete
-frueher, welche Lektion gemeint ist, und oeffnete immer die erste. Drei
-gleichartige Zeilen-Knoepfe (Abspielen/Bearbeiten/Loeschen) brauchen
+Bearbeiten gehört an die Lektion, nicht an das Set. Der Set-Knopf riet
+früher, welche Lektion gemeint ist, und öffnete immer die erste. Drei
+gleichartige Zeilen-Knöpfe (Abspielen/Bearbeiten/Löschen) brauchen
 unterscheidbare, titelbezogene Bezeichnungen. iOS-Standalone ist der heiklere
 Fall (drei plus Auf/Ab je Zeile auf dem Telefon).
 
 - [ ] In "Meine Inhalte" ein mehrlektionales (Buch-)Set aufklappen ->
       "Lektionen verwalten". Je Lektion sind jetzt Abspielen, Bearbeiten und
-      Loeschen sichtbar (zusaetzlich zu Auf/Ab).
+      Löschen sichtbar (zusätzlich zu Auf/Ab).
 - [ ] Bei einem Set mit MEHREREN Lektionen gibt es KEINEN Bearbeiten-Knopf
-      mehr auf Set-Ebene (er wuerde nur raten).
+      mehr auf Set-Ebene (er würde nur raten).
 - [ ] Bei einem Set mit EINER Lektion bleibt der Bearbeiten-Knopf auf
       Set-Ebene (eindeutig = diese eine Lektion).
-- [ ] Bearbeiten der ZWEITEN oder dritten Lektion oeffnet genau DIESE Lektion
+- [ ] Bearbeiten der ZWEITEN oder dritten Lektion öffnet genau DIESE Lektion
       im Editor (nicht die erste). Nach dem Verschieben trifft Bearbeiten
-      weiterhin die richtige Lektion (Identitaet, nicht Position).
-- [ ] Nur mit der Tastatur bedienbar: mit Tab zu Abspielen/Bearbeiten/Loeschen,
-      mit Leertaste/Enter ausloesen. Der Screenreader liest je Knopf eine
+      weiterhin die richtige Lektion (Identität, nicht Position).
+- [ ] Nur mit der Tastatur bedienbar: mit Tab zu Abspielen/Bearbeiten/Löschen,
+      mit Leertaste/Enter auslösen. Der Screenreader liest je Knopf eine
       unterscheidbare Bezeichnung mit Lektionstitel ("Lektion X bearbeiten"),
-      keine drei gleich klingenden Knoepfe.
+      keine drei gleich klingenden Knöpfe.
 - [ ] Beide Speichermodi (API + Dexie).
-- [ ] iOS-Standalone (PWA vom Home-Bildschirm): alle Zeilen-Knoepfe sind mit
-      dem Finger sicher und ohne Fehlgriff bedienbar; Bearbeiten oeffnet die
+- [ ] iOS-Standalone (PWA vom Home-Bildschirm): alle Zeilen-Knöpfe sind mit
+      dem Finger sicher und ohne Fehlgriff bedienbar; Bearbeiten öffnet die
       richtige Lektion.
 
 ### Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
