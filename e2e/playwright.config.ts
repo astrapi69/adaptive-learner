@@ -51,6 +51,13 @@ const BACKEND_ENV = [
     // against real provider keys. Config isolation is part of data
     // isolation.
     `ADAPTIVE_LEARNER_CONFIG_DIR=${E2E_DATA_DIR}/config`,
+    // #2263: the cache dir is the second channel of the #2248 class -
+    // get_cache_dir() falls back to the developer's real
+    // ~/.cache/adaptive_learner, where content_backup writes its
+    // content-loader snapshots. Pinned like data + config so a run leaves
+    // nothing outside the throwaway dir. backend/tests/test_e2e_path_isolation.py
+    // pins the CLASS: every ADAPTIVE_LEARNER_*_DIR resolver must appear here.
+    `ADAPTIVE_LEARNER_CACHE_DIR=${E2E_DATA_DIR}/cache`,
     `ADAPTIVE_LEARNER_SECRET_KEY=${E2E_FERNET_KEY}`,
 ].join(" ");
 
