@@ -58,3 +58,25 @@ Datum: 2026-07-31, Session ab ca. 09:15 Uhr
 - PRs: #2220, #2221, #2224, #2229, #2232 - alle gemergt
 - Klassifikationen: 3x echter Befund (Ratchet-Gewinn, README-Drift, prosemirror-Duplikat), 1x Werkzeugfehler (Mutation-Shard), 2x historisch/kein Handlungsbedarf (release-prepare, File-size watcher)
 - Tests: +8 (test_verify_workflow_health.py), volle Vitest-Suite 7993/7993 nach Dedupe
+
+## 8. Nachtrag: Mutation-Verifikation brauchte zwei Anläufe (12:00-14:00)
+
+- Befund: Der erste Verifikationslauf (30614546055, SHARD_COUNT=24, headSha korrekt der Merge-Commit) starb ebenfalls exakt an der 120-Minuten-Grenze: der Tages-Shard hatte 1383 Mutanten (Verschränkung verteilt ungleich), nach 1h54m erst 1311 getestet. Die 45-70-Minuten-Schätzung beruhte auf der Anfangsrate (~22 Mutanten/min); nachhaltig sind es eher ~7-12/min, weil Timeout- und Survivor-Mutanten das Ende dominieren.
+- Ergebnis: #2223 wiedereröffnet, PR #2246 (SHARD_COUNT 24 -> 48), gemergt 10:02 UTC. Zweiter Verifikationslauf 30622137904: SUCCESS nach 109m41s (Shard 20/48: 9 von 418 Dateien, 778 Mutanten, 214 survived, 4 timed out, Report-Artefakt 680 KB). Vorbehalt auf #2223 protokolliert: nur 10 Minuten Marge - ein dickerer Shard kann das Budget weiterhin sprengen.
+
+## 9. Concurrency-Messung: 2 vs 4 auf identischem Scope (14:00)
+
+- Frage des Maintainers: bringt Stryker-concurrency 4 (Runner hat 4 vCPU, Config nimmt 2) verifizierbaren Gewinn, ohne die Mutations-Urteile zu verfälschen?
+- Aufbau: identischer Scope (src/api/**/*.ts, 806 Mutanten), zwei Dispatches gleicher Wandzeit - develop (c=2, Lauf 30628731057) gegen Messbranch (c=4, Lauf 30628732645, Ein-Zeilen-Diff). Beide liefen in die 120-Minuten-Grenze; der Vergleich beim Cutoff ~1h53m trägt trotzdem.
+- Ergebnis: c=4 testete nur 4,5% mehr Mutanten (716 vs 685), erzeugte aber 64 Timeout-Urteile gegen NULL bei c=2 - Worker-Contention schiebt Grenzfall-Tests über timeoutMS, Survivors verschwinden fälschlich in "killed by timeout" (108 -> 85). Urteils-Drift bei null Nutzen: concurrency bleibt 2. Messbranch gelöscht, Ergebnis auf #2223. Ehrlicher Resthebel für die Wandzeit: Stryker --incremental (braucht Artefakt-Persistenz zwischen Nightlies), eigene Entscheidung.
+
+## 10. README-Abzeichen: Mutation (Teil 1+2) und die übrigen (Teil 3) (13:00-14:00)
+
+- CC-Prompt Mutationsabzeichen: Entscheidung KEIN Abzeichen - es existiert keine badge-fähige Einzelzahl (nur Frontend; je Nacht ein 1/48-Shard von etwa 2% des Scopes; Scores nachtweise nicht vergleichbar; Report = 14-Tage-Artefakt ohne Aggregation; bis heute hatte kein geplanter Lauf je abgeschlossen). Stattdessen klärender Satz unter ## Tests in beiden READMEs: das Tests-Abzeichen nennt eine Größe, keine Stärke. Issue #2257, PR #2258, gemergt 13:05 UTC.
+- Teil 3 (übrige Abzeichen): drei selbstaktualisierende aufgenommen - CI (develop) als passiver Wächter (develop war diese Woche zweimal unbemerkt rot), Nachtschicht (red-runs-rollup-Badge, dieselbe Sorge für die schedule/push-Fläche) und Image (shields github-release mit Label image, verlinkt auf das GHCR-Paket; Release-Tag = Image-Tag durch die Publish-Kette). Abgelehnt mit Begründung: Coverage (schwächere Aussage als die Mutationsrate, lädt zum Schönrechnen ein), Stil/Werkzeug (sagen nichts), Downloads (keine Information), Barrierefreiheit (Prüfwerkzeug deckt einen Bruchteil der Regeln). Vertagt zur Maintainer-Entscheidung: Inhaltszahlen und Sprachenzahl (beide würden unverifizierte KI-Sprachsets mitbewerben). Issue #2259, PR #2260, gemergt 13:10 UTC.
+
+## Statistik (Nachtrag)
+
+- Weitere Issues: #2223 (wiedereröffnet + erneut geschlossen), #2257 (geschlossen), #2259 (geschlossen)
+- Weitere PRs: #2240 (Journal), #2246, #2258, #2260 - alle gemergt
+- Messläufe: 30614546055 (cancelled, widerlegte SHARD_COUNT=24), 30622137904 (success, 109m41s), 30628731057 + 30628732645 (Concurrency-Vergleich, beide Timeout, Auswertung über Cutoff-Vergleich)
