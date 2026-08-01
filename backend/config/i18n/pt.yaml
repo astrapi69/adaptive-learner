@@ -3464,10 +3464,16 @@ discover:
     domain: "Área"
     trust: "Confiança"
     ai_checked: "Verificado por IA"
+    review: "Revisão"
   trust:
     official: "Oficialmente recomendado"
     verified: "Verificado"
     validated: "Validado"
+  review:
+    no_machine: "Sem conjuntos automáticos"
+    reviewed_only: "Apenas revisados"
+    generated_badge: "Gerado automaticamente"
+    reviewed_badge: "Revisado"
   sort:
     label: "Ordenar"
     relevance: "Relevância"

@@ -8,6 +8,7 @@ import {
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
+  hasReviewableSets,
   isSetDownloaded,
   matchesQuery,
   passesFilters,
@@ -86,17 +87,35 @@ describe("passesFilters", () => {
     expect(passesFilters(makeSet({ trust_level: 2 }), { ...EMPTY_FILTERS, trust: "2" })).toBe(true);
   });
 
-  it("ai-checked yes/no", () => {
-    expect(passesFilters(makeSet({ ai_validated: true }), { ...EMPTY_FILTERS, aiChecked: "yes" })).toBe(true);
-    expect(passesFilters(makeSet({ ai_validated: false }), { ...EMPTY_FILTERS, aiChecked: "yes" })).toBe(false);
-    expect(passesFilters(makeSet({ ai_validated: false }), { ...EMPTY_FILTERS, aiChecked: "no" })).toBe(true);
+  it("review status is an exact match; empty = all (EXP-048 #2321)", () => {
+    const authored = makeSet({ review_status: "authored" });
+    const generated = makeSet({ review_status: "generated" });
+    const reviewed = makeSet({ review_status: "reviewed" });
+    // "Ohne Maschinen-Sets" keeps only hand-written sets (generated + reviewed out).
+    expect(passesFilters(authored, { ...EMPTY_FILTERS, reviewStatus: "authored" })).toBe(true);
+    expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "authored" })).toBe(false);
+    expect(passesFilters(reviewed, { ...EMPTY_FILTERS, reviewStatus: "authored" })).toBe(false);
+    // "Nur durchgesehen" keeps only reviewed machine sets.
+    expect(passesFilters(reviewed, { ...EMPTY_FILTERS, reviewStatus: "reviewed" })).toBe(true);
+    expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "reviewed" })).toBe(false);
+    // Empty = every review standing.
+    expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "" })).toBe(true);
   });
 
   it("combines facets with AND", () => {
-    const set = makeSet({ level: "a1", domain: "language", trust_level: 3, ai_validated: true });
-    const f: DiscoverFilters = { ...EMPTY_FILTERS, level: "a1", domain: "language", trust: "2", aiChecked: "yes" };
+    const set = makeSet({ level: "a1", domain: "language", trust_level: 3, review_status: "reviewed" });
+    const f: DiscoverFilters = { ...EMPTY_FILTERS, level: "a1", domain: "language", trust: "2", reviewStatus: "reviewed" };
     expect(passesFilters(set, f)).toBe(true);
     expect(passesFilters({ ...set, level: "a2" }, f)).toBe(false);
+  });
+});
+
+describe("hasReviewableSets", () => {
+  it("true only when the catalogue carries a generated or reviewed set", () => {
+    expect(hasReviewableSets([makeSet({ review_status: "authored" })])).toBe(false);
+    expect(hasReviewableSets([makeSet({ review_status: "generated" })])).toBe(true);
+    expect(hasReviewableSets([makeSet({ review_status: "reviewed" })])).toBe(true);
+    expect(hasReviewableSets([])).toBe(false);
   });
 });
 

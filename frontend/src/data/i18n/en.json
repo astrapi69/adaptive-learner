@@ -3773,12 +3773,19 @@
       "level": "Level",
       "domain": "Domain",
       "trust": "Trust",
-      "ai_checked": "AI-checked"
+      "ai_checked": "AI-checked",
+      "review": "Review"
     },
     "trust": {
       "official": "Officially recommended",
       "verified": "Verified",
       "validated": "Validated"
+    },
+    "review": {
+      "no_machine": "No machine sets",
+      "reviewed_only": "Reviewed only",
+      "generated_badge": "Machine-made",
+      "reviewed_badge": "Reviewed"
     },
     "sort": {
       "label": "Sort",

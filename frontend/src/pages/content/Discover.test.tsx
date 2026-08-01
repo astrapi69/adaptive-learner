@@ -257,6 +257,52 @@ describe("Discover page", () => {
     expect(localStorage.getItem("adaptive-learner.discover_source_language")).toBe("en");
   });
 
+  // --- EXP-048 #2321: Durchsichtsstand reaches the end of the chain ---
+
+  it("surfaces review_status at the END of the chain: badge on a generated card + the Durchsicht facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "ja-a1", name: "Japanisch A1", target_language: "ja", review_status: "generated" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // The field survives loader → queryDiscoverSets → page → card and is READ
+    // by the UI (not merely present on props): the badge renders.
+    expect(screen.getByTestId("discover-card-ja-a1-review")).toHaveAttribute(
+      "data-review",
+      "generated",
+    );
+    // The Durchsicht facet is data-driven: it appears because the catalogue
+    // carries a machine-origin set.
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.getByTestId("discover-filters-reviewStatus")).toBeInTheDocument();
+  });
+
+  it("hides the Durchsicht facet when every set is authored (no dead options)", async () => {
+    // beforeEach seeds two authored sets.
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.queryByTestId("discover-filters-reviewStatus")).toBeNull();
+    // ...and there is no review badge on an authored card.
+    expect(screen.queryByTestId("discover-card-es-a1-review")).toBeNull();
+  });
+
+  it("filters to only reviewed machine sets via the Durchsicht facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "auth", name: "Handgeschrieben", target_language: "es", review_status: "authored" }),
+      makeSet({ id: "rev", name: "Durchgesehen", target_language: "ja", review_status: "reviewed" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-reviewStatus"), {
+      target: { value: "reviewed" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("Durchgesehen")).toBeInTheDocument();
+    expect(screen.queryByText("Handgeschrieben")).toBeNull();
+  });
+
   // --- #1251: info button replaces the permanent subtitle ---
 
   it("hides the subtitle behind an info button and reveals the Discover-specific text on click", async () => {

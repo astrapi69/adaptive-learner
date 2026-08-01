@@ -3466,10 +3466,16 @@ discover:
     domain: "Domaine"
     trust: "Confiance"
     ai_checked: "Vérifié par IA"
+    review: "Relecture"
   trust:
     official: "Officiellement recommandé"
     verified: "Vérifié"
     validated: "Validé"
+  review:
+    no_machine: "Sans sets automatiques"
+    reviewed_only: "Relus uniquement"
+    generated_badge: "Généré automatiquement"
+    reviewed_badge: "Relu"
   sort:
     label: "Trier"
     relevance: "Pertinence"

@@ -59,8 +59,13 @@ export interface DiscoverFilters {
   domain: string;
   /** Minimum trust level as a string ("1" | "2" | "3"); "" = any. */
   trust: string;
-  /** "yes" → AI-validated only, "no" → not validated, "" → any. */
-  aiChecked: string;
+  /** Review-standing facet (EXP-048 #2321). Exact match on the set's
+   *  ``review_status``: ``"authored"`` keeps only hand-written sets
+   *  ("Ohne Maschinen-Sets"), ``"reviewed"`` keeps only reviewed machine
+   *  sets ("Nur durchgesehen"), ``""`` = any. Replaces the retired
+   *  ``aiChecked`` facet (1 of 45 sets ``ai_validated`` — a facet that
+   *  filtered out 44 of 45 results or did nothing). */
+  reviewStatus: string;
 }
 
 /** A blank filter set (everything = all). */
@@ -70,7 +75,7 @@ export const EMPTY_FILTERS: DiscoverFilters = {
   level: "",
   domain: "",
   trust: "",
-  aiChecked: "",
+  reviewStatus: "",
 };
 
 /** Build the normalized haystack for one set (name + description + tags). */
@@ -95,8 +100,9 @@ export function passesFilters(set: SearchableSet, filters: DiscoverFilters): boo
     const min = Number(filters.trust);
     if (Number.isFinite(min) && set.trust_level < min) return false;
   }
-  if (filters.aiChecked === "yes" && !set.ai_validated) return false;
-  if (filters.aiChecked === "no" && set.ai_validated) return false;
+  if (filters.reviewStatus && set.review_status !== filters.reviewStatus) {
+    return false;
+  }
   return true;
 }
 
@@ -194,6 +200,18 @@ export function availableDomains(sets: SearchableSet[]): string[] {
   const domains = new Set<string>();
   for (const set of sets) if (set.domain) domains.add(set.domain);
   return [...domains].sort();
+}
+
+/** True when the loaded catalogue carries at least one machine-origin set
+ *  (``generated`` or ``reviewed``). Drives whether the "Durchsicht" facet is
+ *  shown at all (EXP-048 #2321): with an all-``authored`` catalogue the facet
+ *  would offer only dead options, so it stays hidden — data-driven, like the
+ *  domain list. ``authored`` (incl. the absent-field default) never counts. */
+export function hasReviewableSets(sets: SearchableSet[]): boolean {
+  return sets.some(
+    (set) =>
+      set.review_status === "generated" || set.review_status === "reviewed",
+  );
 }
 
 /** Stable identity key for a discovered set (source + id). */

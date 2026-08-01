@@ -3773,12 +3773,19 @@
       "level": "स्तर",
       "domain": "क्षेत्र",
       "trust": "विश्वास",
-      "ai_checked": "एआई-जाँचित"
+      "ai_checked": "एआई-जाँचित",
+      "review": "समीक्षा"
     },
     "trust": {
       "official": "आधिकारिक रूप से अनुशंसित",
       "verified": "सत्यापित",
       "validated": "मान्य"
+    },
+    "review": {
+      "no_machine": "मशीन सेट नहीं",
+      "reviewed_only": "केवल समीक्षित",
+      "generated_badge": "मशीन-निर्मित",
+      "reviewed_badge": "समीक्षित"
     },
     "sort": {
       "label": "क्रमबद्ध करें",

@@ -3773,12 +3773,19 @@
       "level": "レベル",
       "domain": "分野",
       "trust": "信頼度",
-      "ai_checked": "AIチェック済み"
+      "ai_checked": "AIチェック済み",
+      "review": "確認"
     },
     "trust": {
       "official": "公式推奨",
       "verified": "検証済み",
       "validated": "確認済み"
+    },
+    "review": {
+      "no_machine": "自動生成を除く",
+      "reviewed_only": "確認済みのみ",
+      "generated_badge": "自動生成",
+      "reviewed_badge": "確認済み"
     },
     "sort": {
       "label": "並べ替え",

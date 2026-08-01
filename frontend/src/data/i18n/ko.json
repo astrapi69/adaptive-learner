@@ -3773,12 +3773,19 @@
       "level": "수준",
       "domain": "분야",
       "trust": "신뢰도",
-      "ai_checked": "AI 검증됨"
+      "ai_checked": "AI 검증됨",
+      "review": "검토"
     },
     "trust": {
       "official": "공식 추천",
       "verified": "검증됨",
       "validated": "확인됨"
+    },
+    "review": {
+      "no_machine": "자동 생성 제외",
+      "reviewed_only": "검토된 것만",
+      "generated_badge": "자동 생성",
+      "reviewed_badge": "검토됨"
     },
     "sort": {
       "label": "정렬",

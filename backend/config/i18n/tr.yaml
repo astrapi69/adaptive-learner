@@ -3464,10 +3464,16 @@ discover:
     domain: "Alan"
     trust: "Güven"
     ai_checked: "Yapay zeka kontrollü"
+    review: "İnceleme"
   trust:
     official: "Resmi olarak önerilen"
     verified: "Doğrulanmış"
     validated: "Onaylanmış"
+  review:
+    no_machine: "Otomatik setler hariç"
+    reviewed_only: "Yalnızca incelenenler"
+    generated_badge: "Otomatik oluşturuldu"
+    reviewed_badge: "İncelendi"
   sort:
     label: "Sırala"
     relevance: "İlgililik"

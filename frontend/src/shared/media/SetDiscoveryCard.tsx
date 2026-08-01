@@ -19,7 +19,16 @@
  * />
  */
 
-import { Check, Download, Loader2, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
+import {
+  BadgeCheck,
+  Check,
+  Cpu,
+  Download,
+  Loader2,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,6 +48,10 @@ export interface DiscoverableSet {
   level: string;
   ai_validated: boolean;
   trust_level: number;
+  /** EXP-048 #2321 — review standing ("authored" | "generated" | "reviewed").
+   *  Drives the Durchsichtsstand badge. Absent ⇒ treated as ``"authored"``
+   *  (no badge), matching the loader's normalisation. */
+  review_status?: string;
 }
 
 export interface SetDiscoveryCardLabels {
@@ -62,6 +75,12 @@ export interface SetDiscoveryCardLabels {
   remove: string;
   /** Label above the per-lesson download progress bar. */
   progress: string;
+  /** EXP-048 #2321 — badge for a machine-generated, not-yet-reviewed set
+   *  ("Maschinell erstellt, noch nicht durchgesehen"). Neutral wording. */
+  reviewGenerated: string;
+  /** EXP-048 #2321 — badge for a machine-generated, reviewed set
+   *  ("Durchgesehen"). */
+  reviewReviewed: string;
 }
 
 export interface SetDiscoveryCardProps<T extends DiscoverableSet = DiscoverableSet> {
@@ -131,6 +150,12 @@ export default function SetDiscoveryCard<T extends DiscoverableSet>({
             {set.level.toUpperCase()}
           </Badge>
         ) : null}
+        <CardReviewBadge
+          status={set.review_status}
+          generatedLabel={labels.reviewGenerated}
+          reviewedLabel={labels.reviewReviewed}
+          testId={`${testId}-review`}
+        />
         <span className="text-xs text-muted-foreground" data-testid={`${testId}-lessons`}>
           {labels.lessons}
         </span>
@@ -202,6 +227,54 @@ export default function SetDiscoveryCard<T extends DiscoverableSet>({
       </div>
     </Card>
   );
+}
+
+/** Durchsichtsstand badge (EXP-048 #2321). ``generated`` gets a NEUTRAL badge
+ *  (secondary, no warning red) — the set stays visible, downloadable and
+ *  normally sorted; hiding it would be the wrong read of the same information
+ *  (#335). ``reviewed`` gets its own positive badge. ``authored`` (and an
+ *  absent status) renders nothing: absence of a machine origin is not a defect.
+ *  Extracted so the card's main render stays under the complexity gate. */
+function CardReviewBadge({
+  status,
+  generatedLabel,
+  reviewedLabel,
+  testId,
+}: {
+  status?: string;
+  generatedLabel: string;
+  reviewedLabel: string;
+  testId: string;
+}) {
+  if (status === "generated") {
+    return (
+      <Badge
+        variant="secondary"
+        className="shrink-0 gap-1"
+        data-testid={testId}
+        data-review="generated"
+        title={generatedLabel}
+      >
+        <Cpu className="size-3" aria-hidden="true" />
+        {generatedLabel}
+      </Badge>
+    );
+  }
+  if (status === "reviewed") {
+    return (
+      <Badge
+        variant="outline"
+        className="shrink-0 gap-1 text-success"
+        data-testid={testId}
+        data-review="reviewed"
+        title={reviewedLabel}
+      >
+        <BadgeCheck className="size-3" aria-hidden="true" />
+        {reviewedLabel}
+      </Badge>
+    );
+  }
+  return null;
 }
 
 /** "New" badge for a set added to the catalogue since the user last saw it

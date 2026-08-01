@@ -3773,12 +3773,19 @@
       "level": "Επίπεδο",
       "domain": "Τομέας",
       "trust": "Εμπιστοσύνη",
-      "ai_checked": "Ελεγμένο από ΤΝ"
+      "ai_checked": "Ελεγμένο από ΤΝ",
+      "review": "Έλεγχος"
     },
     "trust": {
       "official": "Επίσημα προτεινόμενο",
       "verified": "Επαληθευμένο",
       "validated": "Επικυρωμένο"
+    },
+    "review": {
+      "no_machine": "Χωρίς αυτόματα σύνολα",
+      "reviewed_only": "Μόνο ελεγμένα",
+      "generated_badge": "Αυτόματη δημιουργία",
+      "reviewed_badge": "Ελεγμένο"
     },
     "sort": {
       "label": "Ταξινόμηση",

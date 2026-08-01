@@ -3474,10 +3474,16 @@ discover:
     domain: "Bidang"
     trust: "Kepercayaan"
     ai_checked: "Diperiksa AI"
+    review: "Tinjauan"
   trust:
     official: "Direkomendasikan secara resmi"
     verified: "Terverifikasi"
     validated: "Tervalidasi"
+  review:
+    no_machine: "Tanpa set mesin"
+    reviewed_only: "Hanya yang ditinjau"
+    generated_badge: "Buatan mesin"
+    reviewed_badge: "Ditinjau"
   sort:
     label: "Urutkan"
     relevance: "Relevansi"

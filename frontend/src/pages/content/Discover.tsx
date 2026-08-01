@@ -28,6 +28,7 @@ import {
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
+  hasReviewableSets,
   isSetDownloaded,
   queryDiscoverSets,
   sourceLanguageCounts,
@@ -207,6 +208,11 @@ export default function Discover() {
     [allSets, t, lang],
   );
 
+  // The "Durchsicht" (review-standing) facet is data-driven: only shown while
+  // the loaded catalogue actually carries a machine-origin set (generated /
+  // reviewed), so the bar never grows a dead option (EXP-048 #2321).
+  const showReviewFacet = useMemo(() => hasReviewableSets(allSets), [allSets]);
+
   const filterDefs: FilterDef[] = useMemo(() => {
     const all = { value: "", label: t("discover.filter.all", "All") };
     const levels = availableLevels(allSets).map((level) => ({
@@ -217,6 +223,20 @@ export default function Discover() {
       value: domain,
       label: t(`discover.domain.${domain}`, domain),
     }));
+    const reviewFacet: FilterDef[] = showReviewFacet
+      ? [
+          {
+            id: "reviewStatus",
+            label: t("discover.filter.review", "Review"),
+            value: filters.reviewStatus,
+            options: [
+              all,
+              { value: "authored", label: t("discover.review.no_machine", "No machine sets") },
+              { value: "reviewed", label: t("discover.review.reviewed_only", "Reviewed only") },
+            ],
+          },
+        ]
+      : [];
     return [
       { id: "level", label: t("discover.filter.level", "Level"), value: filters.level, options: [all, ...levels] },
       { id: "domain", label: t("discover.filter.domain", "Domain"), value: filters.domain, options: [all, ...domains] },
@@ -231,16 +251,7 @@ export default function Discover() {
           { value: "1", label: t("discover.trust.validated", "Validated") },
         ],
       },
-      {
-        id: "aiChecked",
-        label: t("discover.filter.ai_checked", "AI-checked"),
-        value: filters.aiChecked,
-        options: [
-          all,
-          { value: "yes", label: t("common.yes", "Yes") },
-          { value: "no", label: t("common.no", "No") },
-        ],
-      },
+      ...reviewFacet,
       {
         id: "sort",
         label: t("discover.sort.label", "Sort"),
@@ -252,7 +263,7 @@ export default function Discover() {
         ],
       },
     ];
-  }, [allSets, filters, sort, t]);
+  }, [allSets, filters, sort, t, showReviewFacet]);
 
   function handleFilterChange(id: string, value: string) {
     if (id === "sort") {
@@ -321,6 +332,8 @@ export default function Discover() {
     trust: "",
     remove: t("discover.card.remove", "Remove"),
     progress: t("discover.card.progress", "Downloading lessons"),
+    reviewGenerated: t("discover.review.generated_badge", "Machine-made"),
+    reviewReviewed: t("discover.review.reviewed_badge", "Reviewed"),
   };
 
   const newBadgeLabel = t("discover.badge.new", "New");
@@ -467,6 +480,8 @@ export default function Discover() {
             lessons: (count) =>
               t("discover.card.lessons", "{n} lessons").replace("{n}", String(count)),
             newBadge: newBadgeLabel,
+            reviewGenerated: cardLabels.reviewGenerated,
+            reviewReviewed: cardLabels.reviewReviewed,
           }}
         />
       ) : (

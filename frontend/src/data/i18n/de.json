@@ -3773,12 +3773,19 @@
       "level": "Niveau",
       "domain": "Bereich",
       "trust": "Vertrauen",
-      "ai_checked": "KI-geprüft"
+      "ai_checked": "KI-geprüft",
+      "review": "Durchsicht"
     },
     "trust": {
       "official": "Offiziell empfohlen",
       "verified": "Verifiziert",
       "validated": "Validiert"
+    },
+    "review": {
+      "no_machine": "Ohne Maschinen-Sets",
+      "reviewed_only": "Nur durchgesehen",
+      "generated_badge": "Maschinell erstellt",
+      "reviewed_badge": "Durchgesehen"
     },
     "sort": {
       "label": "Sortierung",
