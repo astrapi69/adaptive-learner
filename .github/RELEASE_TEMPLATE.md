@@ -42,7 +42,16 @@ Get-Content .\adaptive-learner-launcher.exe.sha256
 
 The hashes must match.
 
-If your operating system warns about an unsigned binary, see the [AdaptiveLearner installation overview](https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/installation.md).
+**macOS blocks the binary on first open** and, depending on the macOS
+version, offers only "Move to Trash" and "Done" - no Open button. The
+program is not notarized by Apple (that needs a paid developer account).
+Dismiss with **Done**, then open **System Settings > Privacy & Security**,
+scroll down and click **Open Anyway**. Windows shows a SmartScreen notice
+with a "More info" > "Run anyway" path. Full walkthrough per platform:
+[installation overview](https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/installation.md).
+
+Verify the checksum first. When the system cannot tell you where a file
+came from, a matching checksum is the check you can still make yourself.
 
 ## What's new
 

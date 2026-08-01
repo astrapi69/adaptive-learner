@@ -21,6 +21,21 @@ désinstaller.
 Le port est **8501** par défaut et peut être changé dans la fenêtre du
 lanceur ; s'il est occupé, le lanceur se rabat sur un port libre.
 
+## Qui peut accéder à l'application
+
+Par défaut, l'application n'est accessible **que depuis cet ordinateur**
+(`127.0.0.1`). C'est voulu : elle n'a pas d'authentification et elle
+contient vos clés de fournisseurs d'IA. Visible sur le réseau, n'importe
+quel appareil du même réseau - un LAN d'entreprise, le wifi d'un hôtel
+ou d'une conférence - pourrait tout simplement l'ouvrir et l'utiliser.
+
+Y accéder depuis un autre appareil, par exemple votre téléphone sur
+votre propre wifi, reste possible mais devient un choix délibéré :
+définissez `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` dans le fichier
+`.env`. Ne le faites que sur un réseau de confiance, et gardez à
+l'esprit que toute personne s'y trouvant aura alors le même accès que
+vous.
+
 ## Prérequis : Docker - le lanceur le vérifie lui-même
 
 Le lanceur nécessite un Docker en cours d'exécution, car l'application
@@ -135,15 +150,26 @@ Pièges connus :
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. À la première ouverture, Gatekeeper bloque le binaire comme
-   provenant d'un "développeur non identifié". Deux façons de
-   contourner cela :
+2. À la première ouverture, **macOS bloque le programme**. Selon la
+   version de macOS, la boîte de dialogue ne propose que « Placer dans
+   la corbeille » et « Terminé », sans bouton pour ouvrir. Ce n'est ni
+   une erreur ni un défaut du programme : Adaptive Learner **n'est pas
+   certifié par Apple**, ce qui exige un compte développeur payant.
 
-    - Clic droit (ou Ctrl-clic) sur le binaire > **Ouvrir** > confirme
-      **Ouvrir** dans la boîte de dialogue. macOS le mémorise pour tous
-      les démarrages suivants.
-    - Ou : Réglages Système > **Confidentialité et sécurité** > descends
-      jusqu'à l'application bloquée et clique sur **Ouvrir quand même**.
+   Comment l'ouvrir malgré tout :
+
+    1. Ferme la boîte de dialogue avec **Terminé** (pas la corbeille).
+    2. Ouvre **Réglages Système > Confidentialité et sécurité** et
+       descends tout en bas.
+    3. L'avertissement indiquant que le programme a été bloqué s'y
+       trouve, avec le bouton **Ouvrir quand même**. Clique dessus et
+       confirme dans la boîte suivante.
+
+   Les démarrages suivants se font sans question.
+
+   Ici, la somme de contrôle de l'étape 1 est ta véritable sécurité :
+   le système ne peut pas te confirmer l'origine du fichier ; une somme
+   identique, si.
 
 ## Windows
 

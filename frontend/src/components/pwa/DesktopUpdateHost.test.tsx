@@ -3,7 +3,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { I18nProvider } from "../../hooks/ui/useI18n";
 import { resolveStorageMode } from "../../storage";
@@ -100,6 +100,57 @@ describe("DesktopUpdateHost", () => {
     whatsNew.click();
     await waitFor(() =>
       expect(screen.getByTestId("desktop-update-modal")).toBeInTheDocument(),
+    );
+  });
+
+  // #2266 — the release/installation-notes modal must stay closable no
+  // matter how tall the notes are: an always-visible X, Escape, backdrop
+  // click, and a body that scrolls instead of pushing the actions off-screen.
+  async function openWhatsNew() {
+    mockMode.mockReturnValue("api");
+    vi.spyOn(updateChecker, "checkForUpdate").mockResolvedValue(AVAILABLE);
+    await renderHost();
+    const whatsNew = await screen.findByTestId("desktop-update-banner-whatsnew");
+    whatsNew.click();
+    await waitFor(() =>
+      expect(screen.getByTestId("desktop-update-modal")).toBeInTheDocument(),
+    );
+  }
+
+  it("closes the What's new modal via the always-visible X", async () => {
+    await openWhatsNew();
+    fireEvent.click(screen.getByTestId("desktop-update-modal-x"));
+    await waitFor(() =>
+      expect(screen.queryByTestId("desktop-update-modal")).not.toBeInTheDocument(),
+    );
+  });
+
+  it("closes the What's new modal on Escape", async () => {
+    await openWhatsNew();
+    fireEvent.keyDown(document, { key: "Escape" });
+    await waitFor(() =>
+      expect(screen.queryByTestId("desktop-update-modal")).not.toBeInTheDocument(),
+    );
+  });
+
+  it("closes the What's new modal on a backdrop click", async () => {
+    await openWhatsNew();
+    fireEvent.click(screen.getByTestId("desktop-update-modal"));
+    await waitFor(() =>
+      expect(screen.queryByTestId("desktop-update-modal")).not.toBeInTheDocument(),
+    );
+  });
+
+  it("keeps a click inside the What's new card from closing it", async () => {
+    await openWhatsNew();
+    fireEvent.click(screen.getByTestId("desktop-update-modal-card"));
+    expect(screen.getByTestId("desktop-update-modal")).toBeInTheDocument();
+  });
+
+  it("scrolls the What's new body so long notes never hide the actions", async () => {
+    await openWhatsNew();
+    expect(screen.getByTestId("desktop-update-modal-body").className).toContain(
+      "overflow-y-auto",
     );
   });
 });

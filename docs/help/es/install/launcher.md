@@ -21,6 +21,20 @@ El puerto es **8501** de forma predeterminada y se puede cambiar en la
 ventana del lanzador; si está ocupado, el lanzador recurre a un puerto
 libre.
 
+## Quién puede acceder a la aplicación
+
+De forma predeterminada, la aplicación solo es accesible **desde este
+ordenador** (`127.0.0.1`). Es intencionado: no tiene inicio de sesión y
+guarda tus claves de proveedores de IA. Si estuviera visible en la red,
+cualquier dispositivo de esa misma red - una LAN de oficina, el wifi de
+un hotel o de un congreso - podría abrirla y usarla sin más.
+
+Acceder desde otro dispositivo, por ejemplo desde el móvil en tu propia
+wifi, sigue siendo posible, pero es una decisión consciente: define
+`ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` en el archivo `.env`. Hazlo solo
+en una red de confianza y ten presente que entonces todos los que estén
+en ella tendrán el mismo acceso que tú.
+
 ## Requisito previo: Docker - el lanzador lo comprueba por sí mismo
 
 El lanzador requiere un Docker en ejecución, porque la propia app se
@@ -133,15 +147,26 @@ Errores frecuentes:
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. En la primera apertura, Gatekeeper bloquea el binario por proceder de
-   un "desarrollador no identificado". Dos formas de evitarlo:
+2. Al abrirlo por primera vez, **macOS bloquea el programa**. Según la
+   versión de macOS, el diálogo solo ofrece "Mover a la papelera" y
+   "Listo", sin botón de abrir. No es un error ni un defecto del
+   programa: Adaptive Learner **no está certificado por Apple**, lo que
+   exige una cuenta de desarrollador de pago.
 
-    - Haz clic derecho (o Ctrl-clic) en el binario > **Abrir** >
-      confirma **Abrir** en el diálogo. macOS lo recuerda para todos los
-      inicios posteriores.
-    - O bien: Ajustes del Sistema > **Privacidad y seguridad** >
-      desplázate hasta la app bloqueada y haz clic en **Abrir de todos
-      modos**.
+   Cómo abrirlo de todos modos:
+
+    1. Cierra el diálogo con **Listo** (no lo muevas a la papelera).
+    2. Abre **Ajustes del Sistema > Privacidad y seguridad** y baja del
+       todo.
+    3. Allí aparece el aviso de que el programa fue bloqueado, con el
+       botón **Abrir igualmente**. Púlsalo y confirma en el siguiente
+       diálogo.
+
+   A partir de ahí se abrirá sin preguntar.
+
+   En este caso, la suma de comprobación del paso 1 es tu verdadera
+   garantía: el sistema no puede confirmarte de dónde viene el archivo;
+   una suma que coincide, sí.
 
 ## Windows
 

@@ -20,6 +20,20 @@ da her şeyi kaldırabilirsin.
 Port varsayılan olarak **8501**'dir ve başlatıcı penceresinden
 değiştirilebilir; port kullanımdaysa başlatıcı boş bir porta geçer.
 
+## Uygulamaya kimler erişebilir
+
+Uygulama varsayılan olarak **yalnızca bu bilgisayardan** erişilebilir
+(`127.0.0.1`). Bu bilinçli bir tercihtir: uygulamada oturum açma yoktur
+ve yapay zekâ sağlayıcı anahtarların onun içinde durur. Ağda görünür
+olsaydı, aynı ağdaki her cihaz - bir ofis yerel ağı, otel veya konferans
+kablosuz ağı - onu kolayca açıp kullanabilirdi.
+
+Uygulamaya başka bir cihazdan, örneğin kendi kablosuz ağındaki
+telefonundan erişmek hâlâ mümkün, ama artık bilinçli bir karar: `.env`
+dosyasında `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` ayarla. Bunu yalnızca
+güvendiğin bir ağda yap ve unutma ki o ağdaki herkes o andan itibaren
+seninle aynı erişime sahip olur.
+
 ## Ön koşul: Docker - başlatıcı bunu kendisi denetler
 
 Başlatıcı, çalışan bir Docker gerektirir, çünkü uygulamanın kendisi bir
@@ -130,14 +144,24 @@ Bilinen tuzaklar:
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. İlk açılışta Gatekeeper, ikili dosyayı "kimliği doğrulanmamış
-   geliştirici"den geliyor diye engeller. Bunu aşmanın iki yolu:
+2. İlk açılışta **macOS programı engeller**. macOS sürümüne göre
+   iletişim kutusu yalnızca "Çöp Kutusuna Taşı" ve "Bitti" sunar, açma
+   düğmesi yoktur. Bu bir hata ya da programın kusuru değildir:
+   Adaptive Learner **Apple tarafından onaylanmamıştır**, çünkü bu
+   ücretli bir geliştirici hesabı gerektirir.
 
-    - İkili dosyaya sağ tıkla (ya da Ctrl-tıkla) > **Aç** > iletişim
-      kutusunda **Aç**'ı onayla. macOS bunu sonraki tüm başlatmalar
-      için hatırlar.
-    - Ya da: Sistem Ayarları > **Gizlilik ve Güvenlik** > aşağı kaydırıp
-      engellenen uygulamada **Yine de Aç**'a tıkla.
+   Yine de nasıl açarsın:
+
+    1. İletişim kutusunu **Bitti** ile kapat (çöp kutusuna taşıma).
+    2. **Sistem Ayarları > Gizlilik ve Güvenlik**'i aç ve aşağı kaydır.
+    3. Orada programın engellendiği bilgisi ve **Yine de Aç** düğmesi
+       görünür. Ona tıkla ve sonraki iletişim kutusunda onayla.
+
+   Sonraki açılışlar soru sormadan gerçekleşir.
+
+   Bu durumda 1. adımdaki sağlama toplamı asıl güvencendir: sistem sana
+   dosyanın nereden geldiğini doğrulayamaz, eşleşen bir sağlama toplamı
+   doğrulayabilir.
 
 ## Windows
 

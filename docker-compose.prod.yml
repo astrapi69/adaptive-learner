@@ -28,13 +28,13 @@ services:
     # version below is maintained by `make sync-versions` (same derived-pin
     # class as every other version literal - do not edit it by hand);
     # ADAPTIVE_LEARNER_APP_VERSION in .env overrides it.
-    image: ${ADAPTIVE_LEARNER_IMAGE_NAME:-adaptive-learner}:${ADAPTIVE_LEARNER_APP_VERSION:-2.9.0}
+    image: ${ADAPTIVE_LEARNER_IMAGE_NAME:-adaptive-learner}:${ADAPTIVE_LEARNER_APP_VERSION:-2.10.0}
     build:
       context: .
       dockerfile: backend/Dockerfile
       labels:
         org.opencontainers.image.title: adaptive-learner
-        org.opencontainers.image.version: ${ADAPTIVE_LEARNER_APP_VERSION:-2.9.0}
+        org.opencontainers.image.version: ${ADAPTIVE_LEARNER_APP_VERSION:-2.10.0}
         org.opencontainers.image.source: https://github.com/astrapi69/adaptive-learner
     # One container, one port: the host-published port the user reaches in
     # the browser maps straight onto the backend port that serves BOTH the
@@ -43,8 +43,18 @@ services:
     # into .env by the launcher and can move on a conflict; the internal
     # port stays env-driven for experts running multiple Docker apps.
     command: sh -c 'uvicorn app.main:app --host 0.0.0.0 --port ${ADAPTIVE_LEARNER_BACKEND_PORT:-8000} --workers 2'
+    # SECURITY: bind to loopback by DEFAULT. An unqualified host port
+    # publishes on every interface (IPv4 and IPv6), which makes the app -
+    # with no authentication and the user's AI provider keys in it -
+    # reachable from any network the machine sits in: an office LAN, a
+    # hotel or conference WLAN. The launcher engine fixed the same
+    # exposure on its side in 0.26.0; this is the compose half.
+    #
+    # Reaching the app from another device is still possible, but it is
+    # now a DELIBERATE act: set ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0 in
+    # .env - and only where the network is one you control.
     ports:
-      - "${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}:${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}"
+      - "${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}:${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}"
     volumes:
       - adaptive-learner-data:/app/data
     environment:

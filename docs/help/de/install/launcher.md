@@ -38,6 +38,20 @@ ist er belegt, weicht der Launcher auf einen freien Port aus. Wenn du
 den Browser-Speichermodus nutzt, ändert ein Portwechsel auch, wo deine
 Daten liegen - lies vorher [Den Port ändern](changing-the-port.md).
 
+## Wer die App erreichen kann
+
+Die App ist standardmäßig **nur auf diesem Rechner** erreichbar
+(`127.0.0.1`). Das ist Absicht: sie kennt keine Anmeldung, und in ihr
+liegen deine KI-Anbieterschlüssel. Wäre sie im Netz sichtbar, könnte
+jedes Gerät im selben Netz - Büro-LAN, Hotel- oder Konferenz-WLAN - sie
+ohne Weiteres öffnen und benutzen.
+
+Willst du die App von einem anderen Gerät aus erreichen, etwa vom Handy
+im eigenen WLAN, ist das weiterhin möglich, aber eine bewusste
+Entscheidung: setze `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` in der
+`.env`. Tu das nur in einem Netz, dem du vertraust, und denk daran, dass
+jeder in diesem Netz dann denselben Zugang hat wie du.
+
 ## Voraussetzung: Docker - der Launcher prüft es selbst
 
 Der Launcher setzt ein laufendes Docker voraus, denn die App selbst
@@ -146,14 +160,34 @@ Bekannte Stolpersteine:
     unzip adaptive-learner-launcher-macos.zip
     ```
 
-2. Beim ersten Öffnen blockiert Gatekeeper das Binary als "nicht
-   verifizierter Entwickler". Zwei Wege:
+2. Beim ersten Öffnen **blockiert macOS das Programm**. Der Dialog
+   bietet je nach macOS-Version nur "In den Papierkorb" und "Fertig" -
+   keinen Öffnen-Knopf. Das ist kein Fehler und kein Defekt des
+   Programms: Adaptive Learner ist **nicht bei Apple beglaubigt**, denn
+   das setzt ein kostenpflichtiges Entwicklerkonto voraus.
 
-    - Rechtsklick (bzw. Ctrl-Klick) auf das Binary > **Öffnen** > im
-      Dialog erneut **Öffnen**. Das merkt sich macOS für alle weiteren
-      Starts.
-    - Oder: Systemeinstellungen > **Datenschutz & Sicherheit** > unten
-      bei der blockierten App auf **Dennoch öffnen**.
+   So öffnest du es trotzdem:
+
+    1. Den Dialog mit **Fertig** schließen (nicht in den Papierkorb).
+    2. **Systemeinstellungen > Datenschutz & Sicherheit** öffnen und
+       nach unten scrollen.
+    3. Dort steht, dass das Programm blockiert wurde, mit dem Knopf
+       **Dennoch öffnen**. Darauf klicken und im nächsten Dialog
+       bestätigen.
+
+   Danach startet es bei jedem weiteren Mal ohne Nachfrage.
+
+   Die Prüfsumme aus Schritt 1 ist in diesem Fall deine eigentliche
+   Sicherheit: das System kann dir nicht bestätigen, woher die Datei
+   kommt - die übereinstimmende Prüfsumme kann es.
+
+
+> **Fußnote für technische Nutzer.** `xattr -d com.apple.quarantine <Datei>`
+> entfernt die Sperre auch über die Kommandozeile. Das ist bewusst NICHT
+> der Weg oben: Menschen beizubringen, eine Schadsoftware-Warnung per
+> Terminal-Befehl wegzuräumen, ist genau das, was ein Angreifer von
+> seinem Opfer verlangt. Nur nutzen, wenn du verstehst, was er tut, und
+> die Prüfsumme geprüft hast.
 
 ## Windows
 

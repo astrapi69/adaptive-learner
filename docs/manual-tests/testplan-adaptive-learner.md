@@ -134,6 +134,39 @@ Fall (Verschieben auf dem Telefon).
       Positions-Rueckmeldung funktionieren, Reihenfolge bleibt nach dem
       Schliessen und Wiederoeffnen.
 
+#### A6b. Importreihenfolge folgt der Quelle (#2173, gemerged)
+
+Nach einem Buch-/Text-Import stehen die Lektionen in Quell-/Kapitelreihenfolge,
+nicht alphabetisch nach Titel (frueher: Epilog vor Kapitel 1). Die Reihenfolge
+wird beim Import in denselben Overlay-Speicher wie das Verschieben (#2172)
+geschrieben; Dateinamen/Identitaeten bleiben unberuehrt. Der heikle Fall ist
+die Herkunft: eine eigene Verschiebung des Nutzers darf ein erneuter Import
+NICHT ueberschreiben.
+
+- [ ] Ein Buch mit Kapiteln importieren, deren Titel alphabetisch NICHT der
+      Kapitelfolge entsprechen (z. B. ein "Epilog" oder "Anhang"). Nach dem
+      Import zeigt "Lektionen verwalten" die Kapitel in Buchreihenfolge, nicht
+      alphabetisch.
+- [ ] Wirkt auf die LERNFOLGE, nicht nur die Liste: das Set oeffnet mit der
+      ersten Quell-Lektion, die Weiter-Navigation folgt der Quellreihenfolge -
+      in beiden Speichermodi (API + Dexie).
+- [ ] Identitaet unberuehrt: Lernfortschritt/Wiederholungskarten bleiben
+      zugeordnet (keine Umnummerierung der Dateinamen).
+- [ ] Nutzer gewinnt: eine Lektion von Hand verschieben, dann dasselbe Buch
+      erneut importieren (bzw. Inhalt aktualisieren). Die eigene Reihenfolge
+      bleibt erhalten, wird NICHT still zurueckgesetzt.
+- [ ] Neue Lektionen bei erneutem Import nach eigenem Verschieben landen am
+      Ende (sichtbar, nicht eingestreut); entfernte Lektionen verschwinden,
+      die uebrige gewaehlte Reihenfolge bleibt.
+- [ ] Bestehende (vor #2173 importierte) Sets werden nicht automatisch
+      umsortiert; der Nutzer zieht sie ueber "Lektionen verwalten" (#2172)
+      gerade.
+- [ ] Backup-Round-Trip: Export -> Speicher leeren -> Import bringt die
+      Reihenfolge zurueck.
+- [ ] iOS-Standalone (PWA vom Home-Bildschirm): frisch importiertes Buch in der
+      installierten PWA oeffnen - die Kapitel stehen in Buchreihenfolge, und
+      eine eigene Verschiebung ueberlebt ein Schliessen und Wiederoeffnen.
+
 #### A7. Bearbeiten je Lektion, nicht je Set (#2210)
 
 Bearbeiten gehört an die Lektion, nicht an das Set. Der Set-Knopf riet
@@ -1015,6 +1048,33 @@ sondern erst nach vollstaendigem Schliessen und Neuoeffnen der App.
       Ueber ist der neue
 - [ ] Auf einem NICHT-iOS-Geraet (Android/Desktop) denselben Ablauf:
       der Neustart-Hinweis darf dort NICHT erscheinen
+
+#### "Was ist neu"-Hinweisfenster bleibt schließbar (#2266)
+
+Das "Was ist neu"-Fenster des Update-Banners im Desktop-/API-Modus
+(`DesktopUpdateHost`) darf die Nutzerin nie einsperren, egal wie hoch die
+Release- und Installationshinweise sind. Die Sichthöhe ist bei einem
+kurzen Fenster am kritischsten, deshalb die iOS-Standalone- bzw.
+Hochformat-Situation ausdrücklich prüfen.
+
+- [ ] Im API-/Desktop-Modus mit verfügbarem Update im Banner "Was ist
+      neu?" öffnen - das Fenster erscheint mit Titel, scrollbarem Inhalt
+      und einem stets sichtbaren X in der Kopfzeile
+- [ ] Lange Hinweise: der Inhalt scrollt; das X in der Kopfzeile und der
+      "Schließen"-Knopf in der Fußzeile bleiben erreichbar (die Hinweise
+      schieben die Aktionen nie aus dem Bild)
+- [ ] Auf vier Wegen schließen, jeder wirkt: das X in der Kopfzeile, der
+      "Schließen"-Knopf, die Escape-Taste und ein Klick auf den
+      Hintergrund außerhalb der Karte
+- [ ] Ein Klick INNERHALB der Karte schließt sie NICHT
+- [ ] Kurzes Fenster / iOS-Standalone: das Fenster auf Hochformat-Höhe
+      verkleinern (oder eine installierte iOS-Standalone-Ansicht) - das X
+      bleibt fest in der Kopfzeile, während die Hinweise scrollen; das
+      Fenster ist weiter über X, Escape und einen Hintergrund-Tipp
+      schließbar. Mit eingeblendeter Bildschirmtastatur wiederholen
+- [ ] Tastatur/Screenreader: der Fokus wandert beim Öffnen in das
+      Fenster, Tab bleibt darin, und der Fokus kehrt beim Schließen zum
+      "Was ist neu?"-Knopf zurück (keine Axe-Regression)
 
 ### Android Chrome
 - [ ] "App installieren" → Maskable Icon nicht abgeschnitten
