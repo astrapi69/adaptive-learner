@@ -21,16 +21,18 @@ from adaptive_learner_content_loader.models import (
 
 
 class TestSchemaVersion:
-    def test_current_is_1_8(self) -> None:
-        # #1830: aligned with the engine-canonical schema - the #1774
-        # engine 0.13.0 pin moved the engine to 1.8 (uploaded picture_choice
-        # images) while this app-side constant lagged at 1.7 (additive;
-        # major-match keeps every 1.x lesson loadable). Prior deliberate
-        # bumps: #1744 (1.6 -> 1.7), #1525 (1.5 -> 1.6, native multiple_choice).
-        assert CURRENT_SCHEMA_VERSION == "1.8"
+    def test_current_is_1_9(self) -> None:
+        # #2265: the engine 0.17.0 pin moved the engine to 1.9 (stable_id on
+        # Exercise + Card, attribution, review_status). Additive, so
+        # major-match keeps every 1.x lesson loadable. The constant is not
+        # cosmetic: the generator stamps it into the derived artefacts, and
+        # leaving it at 1.8 wrote a stale version over the mirrored
+        # quality-rules.json. Prior deliberate bumps: #1830 (1.7 -> 1.8),
+        # #1744 (1.6 -> 1.7), #1525 (1.5 -> 1.6, native multiple_choice).
+        assert CURRENT_SCHEMA_VERSION == "1.9"
 
     def test_every_1x_minor_is_supported(self) -> None:
-        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.0.0", "1.3.2"]:
+        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.0.0", "1.3.2"]:
             assert is_supported_schema_version(v), v
 
     def test_other_majors_rejected(self) -> None:

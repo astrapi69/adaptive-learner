@@ -1,8 +1,9 @@
 """Drift gate for the EXP-039 generated lesson-schema artefacts.
 
-The lesson JSON-Schema, the shared quality-rules, the generated frontend
-quality-rules module, and the human-readable reference doc are all DERIVED
-from the Pydantic models (``adaptive_learner_content_loader.schema``). This
+The EXTRACTED sub-schemas, the generated frontend quality-rules module, and
+the human-readable reference doc are all DERIVED from the mirror via
+``adaptive_learner_content_loader.schema_export``. The mirror-owned files are
+covered by the byte-parity gate instead (#2265, single writer per path). This
 test re-runs the generator in memory and asserts the committed files match —
 so a change to the models that is not followed by ``make sync-schema`` fails
 here (and in CI), exactly like ``sync-versions-check``.
@@ -35,8 +36,14 @@ def _load_generator():
 @pytest.mark.parametrize(
     "rel",
     [
-        "schema/lesson.schema.json",
-        "schema/quality-rules.json",
+        # NOT listed: schema/lesson.schema.json, content-manifest.schema.json
+        # and quality-rules.json. Those are MIRROR-owned since #2265 - the
+        # engine ships them, the mirror copies the bytes, and their gate is the
+        # byte-parity check (test_engine_schema_parity.py), not this drift
+        # test. A second writer here made the parity gate compare two
+        # producers instead of the mirror.
+        "schema/content-set.schema.json",
+        "schema/card.schema.json",
         "frontend/src/lib/content/validation/quality-rules.generated.ts",
         "docs/help/en/developer/lesson-format-reference.md",
         "docs/help/de/developer/lesson-format-reference.md",

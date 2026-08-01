@@ -2,7 +2,7 @@
 
 > **Generated** from the canonical `learn-content-engine` schema mirror (`schema/lesson.schema.json`, a byte mirror of the pinned engine release) via `make sync-schema` (EXP-039). The app's structural Pydantic layer is regenerated from that mirror; only the semantic validators are hand-written. Do not edit by hand; a format change starts in the engine, then the pin is bumped and the generator re-runs.
 
-Schema version: **1.8** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
+Schema version: **1.9** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
 
 Field descriptions below come verbatim from the model definitions.
 
@@ -50,6 +50,7 @@ The smallest learnable unit (Phase 43 / 2B-lesson).
 | `image` | `string | null` | no | - |
 | `media_type` | `"text" | "code" | "formula" | "diagram" | null` | no | - |
 | `notes` | `string | null` | no | - |
+| `stable_id` | `string | null` | no | - |
 | `tags` | `string[]` | no | maxItems=20 |
 | `token_roles` | `CardTokenRole[] | null` | no | - |
 
@@ -99,6 +100,7 @@ One exercise step. Type-tagged via ``type``.
 | `pairs` | `Pair[] | null` | no | - |
 | `prompt` | `string` | yes | minLen=1, maxLen=1000 |
 | `sentence` | `string | null` | no | - |
+| `stable_id` | `string | null` | no | - |
 | `tiles` | `string[] | null` | no | - |
 | `type` | `ExerciseType | ExtExerciseType` | yes | - |
 

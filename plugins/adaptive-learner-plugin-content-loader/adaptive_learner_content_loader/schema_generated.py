@@ -419,6 +419,12 @@ class Exercise(BaseModel):
     """
     Slug-safe id, unique within the lesson.
     """
+    stable_id: str | None = Field(
+        None, pattern='^[a-z0-9][a-z0-9_-]{7,63}$', title='Stable Id'
+    )
+    """
+    engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91).
+    """
     images: list[PictureImage] | None = Field(None, title='Images')
     """
     PICTURE_CHOICE: list of {src, label, is_correct?} options. Exactly one entry MUST include 'is_correct': 'true'. ``src`` is a relative path inside the set's ``assets/`` directory.
@@ -565,6 +571,12 @@ class Card(BaseModel):
     id: str = Field(..., max_length=120, min_length=1, title='Id')
     """
     Slug-safe id. Unique within the parent lesson. SRS reviews this id, not the surface term.
+    """
+    stable_id: str | None = Field(
+        None, pattern='^[a-z0-9][a-z0-9_-]{7,63}$', title='Stable Id'
+    )
+    """
+    engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91).
     """
     image: str | None = Field(None, title='Image')
     """
