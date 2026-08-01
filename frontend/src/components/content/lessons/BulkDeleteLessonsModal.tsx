@@ -8,14 +8,19 @@
  * the destructive action is larger here — RECOMMENDS a backup first without
  * forcing it (#2065). When the selection covers every lesson of the set, it
  * says so plainly: the whole set will be deleted. The opt-in learner-data
- * delete carries the aggregated review-card count. Presentational: the page
- * owns the target + the deleting flag + the confirm/cancel handlers.
+ * delete carries the aggregated review-card count.
+ *
+ * Built on {@link ModalShell} (scrollable body + always-visible X + Escape +
+ * backdrop close + focus trap, #2266), not the raw ``.modal-overlay`` pattern.
+ * Presentational: the page owns the target + the deleting flag + the
+ * confirm/cancel handlers.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import ModalShell from "../../../shared/feedback/ModalShell";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import DeleteProgressOption from "../browser/delete/DeleteProgressOption";
 import type { DeletionPlan } from "../../../lib/content/browse/orphan-cleanup";
@@ -44,52 +49,47 @@ export default function BulkDeleteLessonsModal({
   onConfirm,
 }: BulkDeleteLessonsModalProps) {
   const { t } = useI18n();
-  const confirmRef = useRef<HTMLButtonElement>(null);
   const [deleteProgress, setDeleteProgress] = useState(false);
 
+  // Reset the opt-in each time the dialog opens (the component stays mounted
+  // across open/close cycles, so useState alone would keep the last choice).
   useEffect(() => {
-    if (count === 0) return;
-    setDeleteProgress(false);
-    confirmRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCancel();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [count, onCancel]);
+    if (count > 0) setDeleteProgress(false);
+  }, [count]);
 
-  if (count === 0) return null;
   return (
-    <div className="modal-overlay" data-testid="bulk-delete-lessons-modal">
-      <div
-        className="modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="bulk-delete-lessons-title"
+    <ModalShell
+      open={count > 0}
+      onClose={onCancel}
+      testId="bulk-delete-lessons-modal"
+      widthClassName="max-w-md"
+      closeLabel={t("common.cancel", "Cancel")}
+      title={t("content.lesson_delete.bulk_title", "Delete {n} lessons?").replace(
+        "{n}",
+        String(count),
+      )}
+    >
+      <p>
+        {emptiesSet
+          ? t(
+              "content.lesson_delete.bulk_confirm_empties",
+              "These are all the lessons of the set, so the whole set will be deleted. This cannot be undone - a backup you made earlier still contains them.",
+            )
+          : t(
+              "content.lesson_delete.bulk_confirm_body",
+              "The selected lessons will be removed from the set. This cannot be undone - a backup you made earlier still contains them.",
+            )}
+      </p>
+      <p
+        className="mt-2 text-sm text-fg-secondary"
+        data-testid="bulk-delete-lessons-backup-hint"
       >
-        <h2 id="bulk-delete-lessons-title" className="modal-title">
-          {t("content.lesson_delete.bulk_title", "Delete {n} lessons?").replace(
-            "{n}",
-            String(count),
-          )}
-        </h2>
-        <p>
-          {emptiesSet
-            ? t(
-                "content.lesson_delete.bulk_confirm_empties",
-                "These are all the lessons of the set, so the whole set will be deleted. This cannot be undone - a backup you made earlier still contains them.",
-              )
-            : t(
-                "content.lesson_delete.bulk_confirm_body",
-                "The selected lessons will be removed from the set. This cannot be undone - a backup you made earlier still contains them.",
-              )}
-        </p>
-        <p className="text-sm text-fg-secondary" data-testid="bulk-delete-lessons-backup-hint">
-          {t(
-            "content.lesson_delete.bulk_backup_hint",
-            "Tip: export a backup first under Settings > Data if you might want these lessons back.",
-          )}
-        </p>
+        {t(
+          "content.lesson_delete.bulk_backup_hint",
+          "Tip: export a backup first under Settings > Data if you might want these lessons back.",
+        )}
+      </p>
+      <div className="mt-3">
         <DeleteProgressOption
           plan={plan}
           checked={deleteProgress}
@@ -101,30 +101,30 @@ export default function BulkDeleteLessonsModal({
           noCountsKey="content.lesson_delete.bulk_delete_progress_option_nocounts"
           noCountsFallback="Also delete my learning progress for these lessons"
         />
-        <div className="form-actions">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            disabled={deleting}
-            data-testid="bulk-delete-lessons-cancel"
-          >
-            {t("common.cancel", "Cancel")}
-          </Button>
-          <Button
-            ref={confirmRef}
-            type="button"
-            variant="destructive"
-            onClick={() => onConfirm(deleteProgress)}
-            disabled={deleting}
-            data-testid="bulk-delete-lessons-confirm"
-          >
-            {deleting
-              ? t("common.loading", "Loading…")
-              : t("content.lesson_delete.bulk_action_delete", "Delete lessons")}
-          </Button>
-        </div>
       </div>
-    </div>
+      <div className="form-actions mt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={deleting}
+          data-testid="bulk-delete-lessons-cancel"
+        >
+          {t("common.cancel", "Cancel")}
+        </Button>
+        <Button
+          type="button"
+          variant="destructive"
+          data-autofocus
+          onClick={() => onConfirm(deleteProgress)}
+          disabled={deleting}
+          data-testid="bulk-delete-lessons-confirm"
+        >
+          {deleting
+            ? t("common.loading", "Loading…")
+            : t("content.lesson_delete.bulk_action_delete", "Delete lessons")}
+        </Button>
+      </div>
+    </ModalShell>
   );
 }
