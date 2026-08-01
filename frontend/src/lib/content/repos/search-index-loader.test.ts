@@ -21,6 +21,7 @@ import {
 } from "./search-index-loader";
 import { resolveRepoToken } from "./repo-token";
 import { OFFICIAL_SOURCE } from "./source-identity";
+import OFFICIAL_INDEX from "../__fixtures__/search-index-official.json";
 
 function jsonRes(status: number, body: unknown): Response {
   return {
@@ -301,6 +302,7 @@ describe("fetchSearchIndex — stale-while-revalidate", () => {
         updated_at: null,
         repo_url: "jane/content",
         repo_name: "jane/content",
+        review_status: "authored",
       },
     ];
     const past = Date.now() - SEARCH_INDEX_TTL_MS - 1000;
@@ -467,5 +469,90 @@ describe("fetchSearchIndex — forceRefresh (#1337)", () => {
     const sets = await fetchAllIndices([{ url: "jane/content" }], { forceRefresh: true });
 
     expect(sets.map((s) => s.id)).toContain("fr-a1-from-el");
+  });
+});
+
+/**
+ * #2299 — the parser must not silently drop a field the index carries.
+ *
+ * These tests run against a REAL slice of the official ``search-index.json``
+ * (``__fixtures__/search-index-official.json``, two entries copied verbatim),
+ * not a hand-built object. The bug they pin is exactly the one a hand-built
+ * fixture cannot show: ``SAMPLE_INDEX`` above lists only the fields the parser
+ * already knew, so ``review_status`` could go missing for releases while every
+ * test stayed green.
+ *
+ * Imported as a JSON module (not ``readFileSync``) so the fixture is part of
+ * the module graph and the selective PR test run picks these tests up when it
+ * changes (#1620 / #1665).
+ */
+describe("parseSearchIndex against the real official index", () => {
+  const REAL_SOURCE = "astrapi69/adaptive-learner-content";
+
+  function parseReal(): SearchableSet[] {
+    return parseSearchIndex(OFFICIAL_INDEX, REAL_SOURCE, "Official Content");
+  }
+
+  it("carries review_status: a machine-generated set arrives as generated", () => {
+    const japanese = parseReal().find((set) => set.id === "ja-a1-from-de");
+    expect(japanese?.review_status).toBe("generated");
+  });
+
+  it("carries review_status: a hand-authored set arrives as authored", () => {
+    const english = parseReal().find((set) => set.id === "en-a1-from-de");
+    expect(english?.review_status).toBe("authored");
+  });
+
+  it("folds an absent review_status to authored (index from before the field existed)", () => {
+    const legacyEntry = { ...OFFICIAL_INDEX.sets[0] } as Record<string, unknown>;
+    delete legacyEntry.review_status;
+
+    const [set] = parseSearchIndex({ sets: [legacyEntry] }, REAL_SOURCE, "Official Content");
+
+    expect(set.review_status).toBe("authored");
+  });
+
+  it("folds an out-of-enum review_status to authored (engine-parity normalisation)", () => {
+    const oddEntry = { ...OFFICIAL_INDEX.sets[0], review_status: "pending" };
+
+    const [set] = parseSearchIndex({ sets: [oddEntry] }, REAL_SOURCE, "Official Content");
+
+    expect(set.review_status).toBe("authored");
+  });
+
+  it("carries EVERY field the real index entry declares (drop guard)", () => {
+    // What the index format publishes today (search-index schema 1.0, 16
+    // fields). A new field added upstream trips this length assertion first,
+    // so "we looked at 16 fields" can never read the same as "we looked at
+    // none" (gate contract, quality-checks.md point 4).
+    const declared = Object.keys(OFFICIAL_INDEX.sets[0]).sort();
+    expect(declared).toHaveLength(16);
+
+    const [set] = parseReal();
+    // Every declared index field maps onto a SearchableSet field. ``id`` is
+    // the identity, the rest are carried 1:1; nothing is intentionally
+    // dropped today.
+    const carried: Record<string, unknown> = {
+      ai_validated: set.ai_validated,
+      book: set.book,
+      card_count: set.card_count,
+      description: set.description,
+      domain: set.domain,
+      id: set.id,
+      lesson_count: set.lesson_count,
+      level: set.level,
+      name: set.name,
+      review_status: set.review_status,
+      source_language: set.source_language,
+      tags: set.tags,
+      target_language: set.target_language,
+      trust_level: set.trust_level,
+      updated_at: set.updated_at,
+      visibility: set.visibility,
+    };
+    expect(Object.keys(carried).sort()).toEqual(declared);
+    for (const [field, value] of Object.entries(carried)) {
+      expect(value, `index field "${field}" is dropped by normalizeSet`).toBeDefined();
+    }
   });
 });
