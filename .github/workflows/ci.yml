@@ -62,7 +62,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -160,7 +160,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -203,7 +203,7 @@ jobs:
   #         - adaptive-learner-plugin-<your-plugin-name>
   #   steps:
   #     - uses: actions/checkout@v7
-  #     - uses: actions/setup-python@v6
+  #     - uses: actions/setup-python@v7
   #       with:
   #         python-version: "3.12"
   #     - name: Cache Poetry virtualenv (${{ matrix.plugin }})
@@ -360,7 +360,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Install pre-commit
@@ -386,7 +386,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       # Reuse the same backend Poetry cache as the test job
@@ -438,7 +438,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       # verify_docs.py is stdlib-only; PyYAML is needed only for the
