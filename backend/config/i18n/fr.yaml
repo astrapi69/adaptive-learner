@@ -3503,6 +3503,11 @@ discover:
     no_sets: "Aucun contenu disponible pour l'instant."
     no_results: "Aucun résultat pour « {query} »."
     language_hint: "Rien dans cette langue pour le moment."
+    without_facet: "Sans {facet} : {n} ensembles"
+    reset_all: "Réinitialiser tous les filtres"
+    add_source: "Ajouter votre propre source"
+    or: "ou"
+    create_lesson: "créer une leçon"
   card:
     download: "Télécharger"
     downloading: "Téléchargement…"

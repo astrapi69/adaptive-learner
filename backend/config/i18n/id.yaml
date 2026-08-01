@@ -3511,6 +3511,11 @@ discover:
     no_sets: "Belum ada konten tersedia."
     no_results: "Tidak ada hasil untuk “{query}”."
     language_hint: "Belum ada apa pun dalam bahasa ini."
+    without_facet: "Tanpa {facet}: {n} set"
+    reset_all: "Setel ulang semua filter"
+    add_source: "Tambahkan sumber Anda sendiri"
+    or: "atau"
+    create_lesson: "buat pelajaran"
   card:
     download: "Unduh"
     downloading: "Mengunduh…"

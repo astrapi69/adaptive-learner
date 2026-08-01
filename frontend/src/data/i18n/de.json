@@ -3817,7 +3817,12 @@
     "empty": {
       "no_sets": "Noch keine Inhalte verfügbar.",
       "no_results": "Keine Ergebnisse für „{query}“.",
-      "language_hint": "In dieser Sprache gibt es noch nichts."
+      "language_hint": "In dieser Sprache gibt es noch nichts.",
+      "without_facet": "Ohne {facet}: {n} Sets",
+      "reset_all": "Alle Filter zurücksetzen",
+      "add_source": "Eigene Quelle hinzufügen",
+      "or": "oder",
+      "create_lesson": "eine Lektion anlegen"
     },
     "card": {
       "download": "Herunterladen",

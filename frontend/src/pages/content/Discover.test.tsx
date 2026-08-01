@@ -257,6 +257,60 @@ describe("Discover page", () => {
     expect(localStorage.getItem("adaptive-learner.discover_source_language")).toBe("en");
   });
 
+  // --- EXP-048 #2324: empty state with exits ---
+
+  it("offers a computed relaxation hint that clears just the blocking facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es-a1", name: "Spanisch A1", source_language: "de", target_language: "es", level: "a1" }),
+      makeSet({ id: "es-a2", name: "Spanisch A2", source_language: "de", target_language: "es", level: "a2" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    // Restrict to a target that has no set under de -> impossible via menu, so
+    // restrict level to a1 AND search a non-matching string instead.
+    fireEvent.change(screen.getByTestId("discover-filters-level"), { target: { value: "a1" } });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "zzznope" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
+      { timeout: 1000 },
+    );
+    // Clearing the query alone restores the one a1 set.
+    const hint = screen.getByTestId("discover-empty-hint-query");
+    expect(hint).toHaveTextContent("1");
+    fireEvent.click(hint);
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+  });
+
+  it("resets every added filter from the empty state, keeping the source language", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es", name: "Spanisch", source_language: "de", target_language: "es", level: "a1" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "zzznope" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
+      { timeout: 1000 },
+    );
+    fireEvent.click(screen.getByTestId("discover-empty-reset"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    // Source language stayed de (its own axis), so the de set is still shown.
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+  });
+
+  it("points to adding a source / creating a lesson when the library is empty", async () => {
+    fetchAllIndicesMock.mockResolvedValue([]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-empty-none")).toBeInTheDocument());
+    const pointer = screen.getByTestId("discover-empty-add-source");
+    expect(pointer.querySelector('a[href="/add-repo"]')).not.toBeNull();
+    expect(pointer.querySelector('a[href="/create-lesson"]')).not.toBeNull();
+  });
+
   // --- EXP-048 #2323: active filters as removable marks ---
 
   it("shows an active panel facet as a permanently-visible removable mark", async () => {

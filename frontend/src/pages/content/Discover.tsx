@@ -32,6 +32,7 @@ import {
   hasReviewableSets,
   isSetDownloaded,
   queryDiscoverSets,
+  relaxationHints,
   sourceLanguageCounts,
   targetLanguageCounts,
   type DiscoverFilters,
@@ -366,6 +367,52 @@ export default function Discover() {
     return chips;
   }, [filters, t]);
 
+  // Clear every ADDED filter (query, target, level, domain, trust, review) in
+  // one action, keeping the source language — the axis the learner reads in
+  // (EXP-048 #2324). The source has its own "All languages" escape (#1343).
+  const resetAllFilters = () => {
+    setRawQuery("");
+    setFilters(EMPTY_FILTERS);
+  };
+
+  const clearFacet = (facet: string) => {
+    if (facet === "query") {
+      setRawQuery("");
+      setFilters((prev) => ({ ...prev, query: "" }));
+      return;
+    }
+    setFilters((prev) => ({ ...prev, [facet]: "" }));
+  };
+
+  const facetLabel = (facet: string): string => {
+    switch (facet) {
+      case "query":
+        return t("discover.bar.search", "Search");
+      case "targetLanguage":
+        return t("discover.filter.target_language", "Target language");
+      case "level":
+        return t("discover.filter.level", "Level");
+      case "domain":
+        return t("discover.filter.domain", "Domain");
+      case "trust":
+        return t("discover.filter.trust", "Trust");
+      case "reviewStatus":
+        return t("discover.filter.review", "Review");
+      default:
+        return facet;
+    }
+  };
+
+  // Computed exits for a zero-result state: for each active facet, how many
+  // sets would remain if only it were cleared (EXP-048 #2324). Only when the
+  // list is actually empty.
+  const relaxHints = useMemo(
+    () => (results.length === 0 ? relaxationHints(allSets, activeFilters) : []),
+    [results.length, allSets, activeFilters],
+  );
+  const hasAddedFilter =
+    activeChips.length > 0 || filters.targetLanguage !== "";
+
   async function handleDownload(set: SearchableSet) {
     const key = discoverSetKey(set);
     setDownloadState((prev) => ({ ...prev, [key]: "downloading" }));
@@ -531,6 +578,8 @@ export default function Discover() {
             removeLabel={(label) =>
               t("discover.chips.remove", "Remove {f}").replace("{f}", label)
             }
+            onClearAll={hasAddedFilter ? resetAllFilters : undefined}
+            clearAllLabel={t("discover.empty.reset_all", "Reset all filters")}
             testId="discover-active-filters"
           />
         </div>
@@ -553,9 +602,22 @@ export default function Discover() {
       </div>
 
       {allSets.length === 0 ? (
-        <p className="text-muted-foreground" data-testid="discover-empty-none">
-          {t("discover.empty.no_sets", "No content available yet.")}
-        </p>
+        <div className="text-muted-foreground" data-testid="discover-empty-none">
+          <p>{t("discover.empty.no_sets", "No content available yet.")}</p>
+          {/* The library genuinely has nothing: this is its own statement, not
+              a filter problem — point at adding a source or writing a lesson
+              (EXP-048 #2324). */}
+          <p className="mt-2" data-testid="discover-empty-add-source">
+            <Link to="/add-repo" className="text-accent hover:underline">
+              {t("discover.empty.add_source", "Add your own source")}
+            </Link>{" "}
+            {t("discover.empty.or", "or")}{" "}
+            <Link to="/create-lesson" className="text-accent hover:underline">
+              {t("discover.empty.create_lesson", "create a lesson")}
+            </Link>
+            .
+          </p>
+        </div>
       ) : results.length === 0 ? (
         <div className="text-muted-foreground" data-testid="discover-empty-results">
           <p>
@@ -579,6 +641,39 @@ export default function Discover() {
                 data-testid="discover-show-all-languages"
               >
                 {t("discover.filter.all_languages", "All languages")}
+              </button>
+            </p>
+          )}
+          {/* Computed, per-facet exits: "Without {facet}: {n} sets" — the
+              source-language fallback generalised to every facet (#2324). */}
+          {relaxHints.length > 0 && (
+            <ul className="mt-2 flex flex-col gap-1" data-testid="discover-empty-hints">
+              {relaxHints.map((hint) => (
+                <li key={hint.facet}>
+                  <button
+                    type="button"
+                    className="text-accent hover:underline"
+                    onClick={() => clearFacet(hint.facet)}
+                    data-testid={`discover-empty-hint-${hint.facet}`}
+                  >
+                    {t("discover.empty.without_facet", "Without {facet}: {n} sets")
+                      .replace("{facet}", facetLabel(hint.facet))
+                      .replace("{n}", String(hint.count))}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {/* One action to clear every added restriction (#2324). */}
+          {hasAddedFilter && (
+            <p className="mt-2">
+              <button
+                type="button"
+                className="font-medium text-accent hover:underline"
+                onClick={resetAllFilters}
+                data-testid="discover-empty-reset"
+              >
+                {t("discover.empty.reset_all", "Reset all filters")}
               </button>
             </p>
           )}

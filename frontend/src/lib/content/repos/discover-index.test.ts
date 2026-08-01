@@ -14,6 +14,7 @@ import {
   matchesQuery,
   passesFilters,
   queryDiscoverSets,
+  relaxationHints,
   sortDiscoverSets,
   sourceLanguageCounts,
   targetLanguageCounts,
@@ -245,6 +246,53 @@ describe("available* option helpers", () => {
   });
   it("domains sorted", () => {
     expect(availableDomains(sets)).toEqual(["ai", "language"]);
+  });
+});
+
+describe("relaxationHints (EXP-048 #2324)", () => {
+  const sets = [
+    makeSet({ id: "es-a1", target_language: "es", level: "a1", domain: "language" }),
+    makeSet({ id: "es-a2", target_language: "es", level: "a2", domain: "language" }),
+    makeSet({ id: "fr-a1", target_language: "fr", level: "a1", domain: "language" }),
+  ];
+
+  it("offers each active facet whose removal yields results, most first", () => {
+    // Active target=ja (no match) + level=a1 -> zero results.
+    const filters: DiscoverFilters = { ...EMPTY_FILTERS, targetLanguage: "ja", level: "a1" };
+    expect(queryDiscoverSets(sets, filters, "relevance")).toHaveLength(0);
+    // Clearing target keeps the two a1 sets; clearing level keeps 0 (still ja).
+    expect(relaxationHints(sets, filters)).toEqual([{ facet: "targetLanguage", count: 2 }]);
+  });
+
+  it("sorts multiple viable relaxations by their yield (most first)", () => {
+    const twoWay = [
+      makeSet({ id: "es-1", target_language: "es", level: "a1" }),
+      makeSet({ id: "es-2", target_language: "es", level: "a1" }),
+      makeSet({ id: "fr-2", target_language: "fr", level: "a2" }),
+    ];
+    // target=es AND level=a2 -> 0 (es sets are a1, the a2 set is fr).
+    const filters: DiscoverFilters = { ...EMPTY_FILTERS, targetLanguage: "es", level: "a2" };
+    expect(queryDiscoverSets(twoWay, filters, "relevance")).toHaveLength(0);
+    // Clear level -> target es keeps 2; clear target -> level a2 keeps 1.
+    expect(relaxationHints(twoWay, filters)).toEqual([
+      { facet: "level", count: 2 },
+      { facet: "targetLanguage", count: 1 },
+    ]);
+  });
+
+  it("returns nothing when no single relaxation helps", () => {
+    const filters: DiscoverFilters = { ...EMPTY_FILTERS, targetLanguage: "ja", level: "b2" };
+    expect(relaxationHints(sets, filters)).toEqual([]);
+  });
+
+  it("does not offer the source language (it owns a dedicated escape)", () => {
+    const withSources = [
+      makeSet({ id: "de", source_language: "de", target_language: "es" }),
+      makeSet({ id: "en", source_language: "en", target_language: "es" }),
+    ];
+    // source=hi (no match) alone -> the source escape handles it, not a hint.
+    const filters: DiscoverFilters = { ...EMPTY_FILTERS, sourceLanguage: "hi" };
+    expect(relaxationHints(withSources, filters)).toEqual([]);
   });
 });
 

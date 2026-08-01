@@ -3501,6 +3501,11 @@ discover:
     no_sets: "まだ利用可能なコンテンツはありません。"
     no_results: "「{query}」の結果はありません。"
     language_hint: "この言語のコンテンツはまだありません。"
+    without_facet: "{facet}なし: {n} セット"
+    reset_all: "すべてのフィルターをリセット"
+    add_source: "独自のソースを追加"
+    or: "または"
+    create_lesson: "レッスンを作成"
   card:
     download: "ダウンロード"
     downloading: "ダウンロード中…"

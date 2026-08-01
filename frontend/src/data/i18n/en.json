@@ -3817,7 +3817,12 @@
     "empty": {
       "no_sets": "No content available yet.",
       "no_results": "No results for “{query}”.",
-      "language_hint": "Nothing in this language yet."
+      "language_hint": "Nothing in this language yet.",
+      "without_facet": "Without {facet}: {n} sets",
+      "reset_all": "Reset all filters",
+      "add_source": "Add your own source",
+      "or": "or",
+      "create_lesson": "create a lesson"
     },
     "card": {
       "download": "Download",

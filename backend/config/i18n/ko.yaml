@@ -3511,6 +3511,11 @@ discover:
     no_sets: "아직 사용 가능한 콘텐츠가 없습니다."
     no_results: "“{query}”에 대한 결과가 없습니다."
     language_hint: "이 언어로 된 콘텐츠가 아직 없습니다."
+    without_facet: "{facet} 제외: {n}개 세트"
+    reset_all: "모든 필터 재설정"
+    add_source: "내 소스 추가"
+    or: "또는"
+    create_lesson: "레슨 만들기"
   card:
     download: "다운로드"
     downloading: "다운로드 중…"

@@ -244,6 +244,49 @@ export function hasReviewableSets(sets: SearchableSet[]): boolean {
   );
 }
 
+/** One computed way out of a zero-result state: clearing ``facet`` alone would
+ *  leave ``count`` sets. */
+export interface RelaxationHint {
+  facet: string;
+  count: number;
+}
+
+/** Facets offered as a computed escape from a zero-result state. The source
+ *  language is deliberately excluded — it owns its own dedicated escape
+ *  ("All languages", #1343) and stays the axis the learner reads in. */
+const RELAXABLE_FACETS = [
+  "query",
+  "targetLanguage",
+  "level",
+  "domain",
+  "trust",
+  "reviewStatus",
+] as const;
+
+/**
+ * For each active relaxable facet, how many sets remain if ONLY that facet is
+ * cleared (every other restriction kept). Returns those with a non-empty
+ * result, most first — so a zero-result state can offer "Ohne {facet}: {n}
+ * Sets", the #1343 source-language fallback generalised to every facet
+ * (EXP-048 #2324). Never removes the source language.
+ */
+export function relaxationHints(
+  sets: SearchableSet[],
+  filters: DiscoverFilters,
+): RelaxationHint[] {
+  const hints: RelaxationHint[] = [];
+  for (const facet of RELAXABLE_FACETS) {
+    if (!filters[facet]) continue;
+    const count = queryDiscoverSets(
+      sets,
+      { ...filters, [facet]: "" },
+      "relevance",
+    ).length;
+    if (count > 0) hints.push({ facet, count });
+  }
+  return hints.sort((a, b) => b.count - a.count);
+}
+
 /** Stable identity key for a discovered set (source + id). */
 export function discoverSetKey(set: { repo_url: string; id: string }): string {
   return `${set.repo_url}::${set.id}`;

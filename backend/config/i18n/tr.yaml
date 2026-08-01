@@ -3501,6 +3501,11 @@ discover:
     no_sets: "Henüz içerik yok."
     no_results: "“{query}” için sonuç yok."
     language_hint: "Bu dilde henüz bir şey yok."
+    without_facet: "{facet} olmadan: {n} set"
+    reset_all: "Tüm filtreleri sıfırla"
+    add_source: "Kendi kaynağını ekle"
+    or: "veya"
+    create_lesson: "bir ders oluştur"
   card:
     download: "İndir"
     downloading: "İndiriliyor…"
