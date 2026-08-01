@@ -114,7 +114,7 @@ describe("exerciseElementKeys mirrors element-attempt.ts for shipped types", () 
         expect(
             exerciseElementKeys({
                 type: "matching",
-                pairs: [{left: "merci"}, {left: "bonjour"}],
+                pairs: [{left: "merci", right: "danke"}, {left: "bonjour", right: "hallo"}],
             }),
         ).toEqual(new Set(["merci", "bonjour"]));
     });
@@ -133,8 +133,8 @@ describe("exerciseElementKeys mirrors element-attempt.ts for shipped types", () 
             exerciseElementKeys({
                 type: "picture_choice",
                 images: [
-                    {label: "さようなら", is_correct: "true"},
-                    {label: "こんにちは", is_correct: undefined},
+                    {label: "さようなら", is_correct: "true", src: "a.png"},
+                    {label: "こんにちは", src: "b.png"},
                 ],
             }),
         ).toEqual(new Set(["さようなら"]));
@@ -147,10 +147,12 @@ describe("exerciseElementKeys mirrors element-attempt.ts for shipped types", () 
             }),
         ).toEqual(new Set(["stai", "bene"]));
     });
-    it("an UNHANDLED type yields an empty set (conservatively at-risk)", () => {
-        // graded_quiz etc. are not derived here -> empty -> any SRS row on it
-        // fails the resolve check -> flagged, never silently passed.
-        expect(exerciseElementKeys({type: "graded_quiz"})).toEqual(new Set());
+    it("an UNKNOWN type yields null (conservatively at-risk) (#2303)", () => {
+        // An undeclared extension has no rule, so the guard cannot decide:
+        // any SRS row on it fails the resolve check and is flagged, never
+        // silently passed. The ADOPTED types are covered since #2303 and no
+        // longer land here.
+        expect(exerciseElementKeys({type: "ext:acme-ordering"})).toBeNull();
     });
 });
 
@@ -163,7 +165,7 @@ describe("buildIncomingIdentities + computeUpdateImpact (end to end)", () => {
                     {
                         id: "ex-pic-1",
                         type: "picture_choice",
-                        images: [{label: "さようなら (sayounara)", is_correct: "true"}],
+                        images: [{label: "さようなら (sayounara)", is_correct: "true", src: "a.png"}],
                     },
                 ],
             },
@@ -177,13 +179,143 @@ describe("buildIncomingIdentities + computeUpdateImpact (end to end)", () => {
         expect(impact.lostCards).toHaveLength(1);
     });
 
-    it("an SRS row on an unhandled exercise type is conservatively flagged", () => {
+    it("an SRS row on an UNDECLARED extension type is conservatively flagged", () => {
         const incomingIds = buildIncomingIdentities([
-            {filename: "L1", exercises: [{id: "ex-q", type: "graded_quiz"}]},
+            {filename: "L1", exercises: [{id: "ex-q", type: "ext:acme-ordering"}]},
         ]);
         const impact = computeUpdateImpact(
             [],
             [{lesson_id: "L1", exercise_id: "ex-q", element_key: "whatever"}],
+            incomingIds,
+        );
+        expect(impact.breaking).toBe(true);
+    });
+});
+
+/**
+ * #2303 regression. Before the fix the guard derived keys for five of the
+ * thirteen shipped types; a learner with rows on any other type had EVERY
+ * update reported as breaking, so the auto-sync held the set forever and the
+ * manual dialog cried wolf on a no-op. Each case below applies an update whose
+ * content is UNCHANGED and asserts the guard stays quiet.
+ */
+describe("a harmless update is not breaking, for every shipped type (#2303)", () => {
+    const cases: [string, Record<string, unknown>, string][] = [
+        [
+            "ext:al-graded-quiz",
+            {
+                type: "ext:al-graded-quiz",
+                ext_payload: {
+                    questions: [
+                        {prompt: "Hauptstadt?", type: "free_text", accept: ["Berlin"], points: 1},
+                    ],
+                },
+            },
+            "Berlin",
+        ],
+        [
+            "ext:al-dictation",
+            {
+                type: "ext:al-dictation",
+                ext_payload: {audio: "assets/a.mp3", accept: ["Guten Morgen"]},
+            },
+            "Guten Morgen",
+        ],
+        [
+            "ext:al-image-description",
+            {
+                type: "ext:al-image-description",
+                ext_payload: {image: "assets/a.png", accept: ["Ein Hund laeuft."]},
+            },
+            "Ein Hund laeuft.",
+        ],
+        [
+            "ext:al-categorization",
+            {
+                type: "ext:al-categorization",
+                ext_payload: {categories: [{name: "Verb", items: ["laufen"]}]},
+            },
+            "laufen",
+        ],
+        [
+            "ext:al-error-correction",
+            {
+                type: "ext:al-error-correction",
+                ext_payload: {
+                    tokens: ["Ich", "gehe", "zu", "Hause"],
+                    error_index: 2,
+                    accept: ["nach"],
+                },
+            },
+            "nach",
+        ],
+        [
+            "ext:al-reading-comprehension",
+            {
+                type: "ext:al-reading-comprehension",
+                ext_payload: {
+                    passage: "Paul wohnt in Lyon.",
+                    questions: [
+                        {prompt: "Wo?", type: "free_text", accept: ["Lyon"]},
+                    ],
+                },
+            },
+            "Lyon",
+        ],
+        [
+            "multiple_choice",
+            {
+                type: "multiple_choice",
+                options: [
+                    {text: "un", correct: true},
+                    {text: "deux", correct: false},
+                ],
+            },
+            "un",
+        ],
+        [
+            "cloze multiselect",
+            {
+                type: "cloze",
+                cloze_mode: "multiselect",
+                sentence: "Welche sind Verben?",
+                accept: ["essen", "laufen"],
+            },
+            "essen, laufen",
+        ],
+    ];
+
+    for (const [name, exercise, key] of cases) {
+        it(`${name}: an unchanged update leaves the SRS row resolvable`, () => {
+            const incomingIds = buildIncomingIdentities([
+                {filename: "L1", exercises: [{id: "ex-1", ...exercise}]},
+            ]);
+            const impact = computeUpdateImpact(
+                [],
+                [{lesson_id: "L1", exercise_id: "ex-1", element_key: key}],
+                incomingIds,
+            );
+            expect(impact.lostCards).toEqual([]);
+            expect(impact.breaking).toBe(false);
+        });
+    }
+
+    it("still reports a REAL element change on a newly covered type", () => {
+        const incomingIds = buildIncomingIdentities([
+            {
+                filename: "L1",
+                exercises: [
+                    {
+                        id: "ex-1",
+                        type: "ext:al-dictation",
+                        ext_payload: {audio: "assets/a.mp3", accept: ["Guten Morgen!"]},
+                    },
+                ],
+            },
+        ]);
+        const impact = computeUpdateImpact(
+            [],
+            [{lesson_id: "L1", exercise_id: "ex-1", element_key: "Guten Morgen"}],
             incomingIds,
         );
         expect(impact.breaking).toBe(true);
