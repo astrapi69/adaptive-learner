@@ -244,6 +244,69 @@ export function planLessonDataDeletion(
   };
 }
 
+/**
+ * Plan the deletion of SEVERAL lessons' learner data in one operation (#2065
+ * multi-select delete).
+ *
+ * The bulk counterpart of {@link planLessonDataDeletion}: every selected lesson
+ * of ONE set is aggregated into a single {@link DeletionPlan} so the whole
+ * selection is removed in one atomic learner-data delete (no per-lesson loop of
+ * writes). Progress is attributed by the exact ``(source, set_id,
+ * lesson_filename)`` triple; cards by ``set_id`` + ``lesson_id`` (== filename).
+ * A non-selected sibling of the same set keeps its data — ``lessonCards`` names
+ * only the selected lessons that actually carry cards.
+ *
+ * @param source The set's content source (user-generated / bundled / owner/repo).
+ * @param setId The set the lessons belong to.
+ * @param lessonFilenames The selected lesson files (e.g. ``["01-intro.json", …]``).
+ * @param progress All of the user's ``lessonProgress`` rows.
+ * @param cards All of the user's ``elementErrors`` rows.
+ */
+export function planLessonsDataDeletion(
+  source: string,
+  setId: string,
+  lessonFilenames: readonly string[],
+  progress: readonly PlannableProgress[],
+  cards: readonly PlannableCard[],
+): DeletionPlan {
+  const targets = new Set(lessonFilenames);
+  const lessonProgress = progress.filter(
+    (row) =>
+      row.source === source &&
+      row.set_id === setId &&
+      row.lesson_filename !== undefined &&
+      targets.has(row.lesson_filename),
+  );
+  const selectedCards = cards.filter(
+    (card) => card.set_id === setId && targets.has(card.lesson_id ?? ""),
+  );
+  const distinct = new Set<string>();
+  for (const card of selectedCards) {
+    distinct.add(
+      `${card.set_id}#${card.lesson_id ?? ""}#${card.exercise_id ?? ""}#${
+        card.element_key ?? ""
+      }`,
+    );
+  }
+  // One ref per selected lesson that actually carries cards, in the selection's
+  // encounter order among the lessons' cards.
+  const lessonCards: LessonCardRef[] = [];
+  const seen = new Set<string>();
+  for (const card of selectedCards) {
+    const lessonId = card.lesson_id ?? "";
+    if (seen.has(lessonId)) continue;
+    seen.add(lessonId);
+    lessonCards.push({ set_id: setId, lesson_id: lessonId });
+  }
+  return {
+    lessonProgressIds: lessonProgress.map((row) => row.id),
+    orphanedSetIds: [],
+    lessonCards,
+    lessonCount: lessonProgress.length,
+    cardCount: distinct.size,
+  };
+}
+
 /** True when a plan would delete nothing (used to hide an empty cleanup UI). */
 export function isEmptyPlan(plan: DeletionPlan): boolean {
   return plan.lessonCount === 0 && plan.cardCount === 0;

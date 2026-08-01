@@ -31,6 +31,7 @@ import {
 import {
   isEmptyPlan,
   planLessonDataDeletion,
+  planLessonsDataDeletion,
   planSetDataDeletion,
   type DeletionPlan,
 } from "../../lib/content/browse/orphan-cleanup";
@@ -38,7 +39,10 @@ import {
   purgeLessonFromLessonCache,
   purgeSetFromLessonCache,
 } from "../../lib/content/cache/sw-lesson-cache";
-import { removeLessonFromSet } from "../../lib/content/lesson/delete/delete-lesson";
+import {
+  removeLessonFromSet,
+  removeLessonsFromSet,
+} from "../../lib/content/lesson/delete/delete-lesson";
 import { assessSetUpdate } from "../../lib/content/update/assess-set-update";
 import type { UpdateImpact } from "../../lib/content/update/update-impact";
 import { removeFavorite } from "../../lib/favorites/favorites";
@@ -68,6 +72,16 @@ export interface LessonDeleteTarget {
   onDeleted?: () => void;
 }
 
+/** What a bulk (multi-select) lesson delete targets (#2065): the set, the
+ *  selected lessons' cache filenames, and an optional refresh callback. The
+ *  whole selection is removed in one atomic re-save + one atomic learner-data
+ *  delete (no per-lesson loop of writes). */
+export interface BulkLessonDeleteTarget {
+  entry: ContentSetEntry;
+  filenames: string[];
+  onDeleted?: () => void;
+}
+
 /** Action view-model returned to the /content page. */
 export function useContentSetActions({
   navigate,
@@ -94,6 +108,13 @@ export function useContentSetActions({
     useState<LessonDeleteTarget | null>(null);
   const [deletingLesson, setDeletingLesson] = useState(false);
   const [deleteLessonPlan, setDeleteLessonPlan] = useState<DeletionPlan | null>(null);
+  // #2065 — bulk multi-select lesson delete-confirm target + in-flight flag +
+  // aggregated learner-data plan across the selected lessons.
+  const [bulkDeleteLessonsTarget, setBulkDeleteLessonsTargetState] =
+    useState<BulkLessonDeleteTarget | null>(null);
+  const [bulkDeletingLessons, setBulkDeletingLessons] = useState(false);
+  const [bulkDeleteLessonsPlan, setBulkDeleteLessonsPlan] =
+    useState<DeletionPlan | null>(null);
 
   // #2128 — a held breaking update awaiting the learner's decision.
   const [updateGuard, setUpdateGuard] = useState<{
@@ -187,6 +208,40 @@ export function useContentSetActions({
     setDeleteLessonTargetState(target);
     setDeleteLessonPlan(null);
     if (target) void computeLessonDeletionPlan(target).then(setDeleteLessonPlan);
+  };
+
+  /** Plan the aggregated learner-data deletion for SEVERAL lessons of one set
+   *  (#2065). One live read, one merged plan; null on failure so the dialog
+   *  shows the checkbox without a number. */
+  const computeLessonsDeletionPlan = async (
+    target: BulkLessonDeleteTarget,
+  ): Promise<DeletionPlan | null> => {
+    const userId = readLearnerState().userId;
+    if (!userId) return null;
+    try {
+      const storage = getStorage();
+      const [progress, cards] = await Promise.all([
+        storage.lessonProgress.list(userId),
+        storage.elementErrors.list(userId, { includeMastered: true }),
+      ]);
+      return planLessonsDataDeletion(
+        target.entry.source,
+        target.entry.id,
+        target.filenames,
+        progress,
+        cards,
+      );
+    } catch {
+      return null;
+    }
+  };
+
+  const setBulkDeleteLessonsTarget = (target: BulkLessonDeleteTarget | null) => {
+    setBulkDeleteLessonsTargetState(target);
+    setBulkDeleteLessonsPlan(null);
+    if (target && target.filenames.length > 0) {
+      void computeLessonsDeletionPlan(target).then(setBulkDeleteLessonsPlan);
+    }
   };
 
   /** Delete the planned learner data after the cache delete (#1819).
@@ -364,6 +419,78 @@ export function useContentSetActions({
       );
     } finally {
       setDeletingLesson(false);
+    }
+  };
+
+  // #2065 — confirm-delete SEVERAL lessons of a user-generated set in one
+  // atomic operation. All-or-nothing for the content: a single ``saveUserSet``
+  // re-save without the whole selection (or one ``deleteSet`` when the
+  // selection empties the set), so a failure leaves the set untouched — never a
+  // half-deleted state. Learner data is one aggregated, atomic
+  // ``deleteLearningData`` call, opt-in only. Orphaned favorites of every
+  // deleted lesson are purged unconditionally.
+  const handleConfirmBulkDeleteLessons = async (deleteProgress = false) => {
+    const target = bulkDeleteLessonsTarget;
+    if (!target || target.filenames.length === 0) return;
+    const { entry, filenames } = target;
+    setBulkDeletingLessons(true);
+    try {
+      const lessons = await fetchSetLessons(entry);
+      const removal = removeLessonsFromSet(entry, lessons, filenames);
+      if (removal.found.length === 0) {
+        // Every selected lesson is already gone (stale UI): treat as success
+        // and let the caller refresh.
+        notify.success(t("content.lesson_delete.deleted", "Lesson deleted."));
+        target.onDeleted?.();
+        setBulkDeleteLessonsTarget(null);
+        return;
+      }
+      if (removal.emptied) {
+        // The selection covered every lesson — remove the whole set (same purge
+        // as a set delete), leaving no empty husk behind.
+        await getStorage().contentLoader.deleteSet(entry.source, entry.id);
+        await purgeSetFromLessonCache(entry.source, entry.id);
+        dismissSet(entry.source, entry.id);
+        setSets((prev) =>
+          prev.filter((row) => !(row.source === entry.source && row.id === entry.id)),
+        );
+      } else {
+        // One atomic re-save without the whole selection (saveUserSet purges +
+        // rewrites the cache in one write; survivors keep their ids/order).
+        await getStorage().contentLoader.saveUserSet(removal.input!);
+        for (const filename of removal.found) {
+          await purgeLessonFromLessonCache(entry.source, entry.id, filename);
+        }
+        setSets((prev) =>
+          prev.map((row) =>
+            row.source === entry.source && row.id === entry.id
+              ? { ...row, lesson_count: removal.remaining }
+              : row,
+          ),
+        );
+      }
+      // Every deleted lesson's favorite bookmark is now an orphan — always
+      // remove it, regardless of the progress opt-in.
+      const userId = readLearnerState().userId;
+      if (userId) {
+        for (const filename of removal.found) removeFavorite(userId, entry.id, filename);
+      }
+      if (deleteProgress) await deletePlannedLearnerData(bulkDeleteLessonsPlan);
+      notify.success(
+        t("content.lesson_delete.bulk_deleted", "{n} lessons deleted.").replace(
+          "{n}",
+          String(removal.found.length),
+        ),
+      );
+      target.onDeleted?.();
+      setBulkDeleteLessonsTarget(null);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.lesson_delete.bulk_delete_failed", "Could not delete the lessons.")} ${detail}`,
+      );
+    } finally {
+      setBulkDeletingLessons(false);
     }
   };
 
@@ -573,6 +700,12 @@ export function useContentSetActions({
     deletingLesson,
     deleteLessonPlan,
     handleConfirmDeleteLesson,
+    // #2065 — bulk multi-select lesson delete.
+    bulkDeleteLessonsTarget,
+    setBulkDeleteLessonsTarget,
+    bulkDeletingLessons,
+    bulkDeleteLessonsPlan,
+    handleConfirmBulkDeleteLessons,
     openLessonFile,
     handleOpenLesson,
     handleEditUserSet,

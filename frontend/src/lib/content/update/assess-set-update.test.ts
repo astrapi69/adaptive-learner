@@ -60,7 +60,7 @@ describe("assessSetUpdate (#2128)", () => {
                 {
                     filename: "01.json",
                     exercises: [
-                        {id: "ex-pic-1", type: "picture_choice", images: [{label: "さようなら (sayounara)", is_correct: "true"}]},
+                        {id: "ex-pic-1", type: "picture_choice", images: [{label: "さようなら (sayounara)", is_correct: "true", src: "a.png"}]},
                     ],
                 },
             ]),
