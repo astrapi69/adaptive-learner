@@ -2186,7 +2186,12 @@
       "title": "Aktualisierung könnte einige Wiederholungen zurücksetzen",
       "message": "Die Aktualisierung von „{title}“ ändert Inhalte, die du bereits lernst. Etwa {cards} Wiederholungskarten und {lessons} Lektionen mit gespeichertem Fortschritt passen nicht mehr zur neuen Version und würden zurückgesetzt. Deine abgeschlossenen Lektionen bleiben; betroffen sind nur die geänderten Wiederholungen.",
       "confirm": "Trotzdem aktualisieren",
-      "cancel": "Aktuelle Version behalten"
+      "cancel": "Aktuelle Version behalten",
+      "carry_over_label": "Gelernten Fortschritt übernehmen",
+      "preview_more": "und {count} weitere",
+      "unmappable": "{count} lassen sich nicht sicher zuordnen und werden zurückgesetzt. Dort hat sich die Reihenfolge oder die Anzahl geändert, deshalb wird nicht geraten.",
+      "carried_over": "Fortschritt übernommen.",
+      "carry_over_failed": "Die Aktualisierung wurde angewendet, der Fortschritt konnte aber nicht übernommen werden."
     },
     "recovery": {
       "title": "Wiederholungsfortschritt für korrigierte Lektionen wiederherstellen",

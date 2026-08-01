@@ -740,6 +740,29 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
 - [ ] iOS standalone (PWA): same manual flow, the confirmation appears.
 - [ ] Language check (#2160): the confirmation text appears in the app language
       (not English), spot-checked across several languages (de/ja/ko/el/hi).
+- [ ] Carry-over proposal (#2308): the confirmation dialog additionally shows an
+      "old -> new" list of the review items that could be carried over, plus a
+      "Carry over what still matches" checkbox (on by default, BECAUSE the pairs
+      are visible right above it).
+- [ ] Confirm with the box ticked: after the update, error counts, streak and
+      mastery sit on the CORRECTED answer (the review does not restart from
+      zero). The toast names the count.
+- [ ] UNTICK the box and confirm: the update runs and NOTHING is carried over
+      (pre-#2308 behaviour). The checkbox is the decision, not decoration.
+- [ ] Cases that cannot be assigned: if an exercise had its ORDER changed or an
+      element inserted/removed, the dialog names those separately ("N cannot be
+      assigned with confidence and will be reset"). Verify NOTHING was carried
+      over for them - a wrong assignment is worse than a loss because it is
+      invisible.
+- [ ] Auto-sync (24h, connected user repo): NEITHER updates NOR carries anything
+      over. The mapping may only come into being in the manual dialog.
+- [ ] Confirm twice in a row (trigger the update again): no double carry-over, no
+      error (idempotent).
+- [ ] Backup beforehand: the backup hint is an offer, not a requirement - the
+      update can be confirmed without one.
+- [ ] iOS standalone (PWA): dialog including the pair list and the checkbox is
+      fully readable and operable (the list does not overflow the dialog, the
+      checkbox is tappable); carry-over works the same in Dexie mode.
 
 ### Recovery: review progress after the ja/ko/zh correction (#2161)
 

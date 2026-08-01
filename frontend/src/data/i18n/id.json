@@ -2186,7 +2186,12 @@
       "title": "Pembaruan dapat mengatur ulang sebagian progres ulasan",
       "message": "Memperbarui \"{title}\" mengubah materi yang sedang kamu pelajari. Sekitar {cards} kartu ulasan dan {lessons} pelajaran dengan progres tersimpan tidak lagi cocok dengan versi baru dan akan diatur ulang. Pelajaran yang sudah selesai tetap ada; hanya ulasan yang berubah yang terpengaruh.",
       "confirm": "Perbarui saja",
-      "cancel": "Pertahankan versi saat ini"
+      "cancel": "Pertahankan versi saat ini",
+      "carry_over_label": "Pertahankan kemajuan yang masih cocok",
+      "preview_more": "dan {count} lainnya",
+      "unmappable": "{count} tidak dapat dipetakan dengan pasti dan akan direset. Urutan atau jumlahnya berubah di sana, jadi tidak ada yang ditebak.",
+      "carried_over": "Kemajuan dipertahankan.",
+      "carry_over_failed": "Pembaruan diterapkan, tetapi kemajuan tidak dapat dipertahankan."
     },
     "recovery": {
       "title": "Pulihkan progres ulasan untuk pelajaran yang diperbaiki",

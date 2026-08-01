@@ -2021,6 +2021,11 @@ content:
     message: 'Die Aktualisierung von „{title}“ ändert Inhalte, die du bereits lernst. Etwa {cards} Wiederholungskarten und {lessons} Lektionen mit gespeichertem Fortschritt passen nicht mehr zur neuen Version und würden zurückgesetzt. Deine abgeschlossenen Lektionen bleiben; betroffen sind nur die geänderten Wiederholungen.'
     confirm: 'Trotzdem aktualisieren'
     cancel: 'Aktuelle Version behalten'
+    carry_over_label: 'Gelernten Fortschritt übernehmen'
+    preview_more: 'und {count} weitere'
+    unmappable: '{count} lassen sich nicht sicher zuordnen und werden zurückgesetzt. Dort hat sich die Reihenfolge oder die Anzahl geändert, deshalb wird nicht geraten.'
+    carried_over: 'Fortschritt übernommen.'
+    carry_over_failed: 'Die Aktualisierung wurde angewendet, der Fortschritt konnte aber nicht übernommen werden.'
   recovery:
     title: 'Wiederholungsfortschritt für korrigierte Lektionen wiederherstellen'
     message: 'Wir haben einige Lektionen für Japanisch, Koreanisch und Chinesisch (A1) korrigiert. Wiederholungskarten, die du für die geänderten Inhalte angelegt hast, passen nicht mehr und werden nicht mehr eingeplant. Du kannst sie mit den korrigierten Lektionen neu verknüpfen oder ein Set neu beginnen. Nur diese Sets sind betroffen; deine anderen Sets bleiben unberührt.'

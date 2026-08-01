@@ -46,6 +46,22 @@ export async function peekSetIdentities(
     setId: string,
     sources: ContentSetSource[] = DEFAULT_SOURCES,
 ): Promise<IncomingSetIdentities> {
+    return buildIncomingIdentities(await peekSetLessons(source, setId, sources));
+}
+
+/**
+ * The incoming lessons themselves, in authored ORDER (#2308).
+ *
+ * ``peekSetIdentities`` folds these into sets, which is all the guard needs to
+ * decide whether something is lost. Deriving a remap needs the ORDER too - the
+ * position of a key is what separates a correction from a reorder - so the
+ * planning path takes the lessons instead of the folded identities.
+ */
+export async function peekSetLessons(
+    source: string,
+    setId: string,
+    sources: ContentSetSource[] = DEFAULT_SOURCES,
+): Promise<PeekLesson[]> {
     const src = sources.find((s) => s.source === source) ?? {
         source,
         branch: "main",
@@ -93,5 +109,5 @@ export async function peekSetIdentities(
         lessons.push({ filename, exercises: lessonExercises(raw) });
     }
 
-    return buildIncomingIdentities(lessons);
+    return lessons;
 }
