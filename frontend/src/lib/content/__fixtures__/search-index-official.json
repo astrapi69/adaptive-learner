@@ -1,0 +1,50 @@
+{
+  "repo": "astrapi69/adaptive-learner-content",
+  "generated": "2026-08-01T08:12:09Z",
+  "schema_version": "1.0",
+  "sets": [
+    {
+      "id": "en-a1-from-de",
+      "name": "Englisch A1 — Anfänger",
+      "description": "Englisch lernen für Deutschsprachige. Grundwortschatz, Grammatik und Alltagssituationen — von der Begrüßung bis zum Simple Past, mit Fokus auf typische Fehler und falsche Freunde. Erklärungen auf Deutsch.",
+      "source_language": "de",
+      "target_language": "en",
+      "level": "a1",
+      "domain": "language",
+      "lesson_count": 15,
+      "card_count": 163,
+      "tags": [
+        "beginner",
+        "travel",
+        "everyday"
+      ],
+      "visibility": "visible",
+      "review_status": "authored",
+      "ai_validated": false,
+      "trust_level": 3,
+      "book": null,
+      "updated_at": "2026-07-31T15:50:16Z"
+    },
+    {
+      "id": "ja-a1-from-de",
+      "name": "Japanisch A1 (für Deutschsprachige)",
+      "description": "Zehn A1-Lektionen Japanisch, auf Deutsch erklärt — vom ersten Gruß bis zu den Höflichkeitsformen.",
+      "source_language": "de",
+      "target_language": "ja",
+      "level": "a1",
+      "domain": "language",
+      "lesson_count": 10,
+      "card_count": 122,
+      "tags": [
+        "beginner",
+        "everyday"
+      ],
+      "visibility": "visible",
+      "review_status": "generated",
+      "ai_validated": false,
+      "trust_level": 3,
+      "book": null,
+      "updated_at": "2026-07-31T16:11:50Z"
+    }
+  ]
+}

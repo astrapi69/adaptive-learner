@@ -74,6 +74,7 @@ function makeSet(over: Partial<SearchableSet>): SearchableSet {
     updated_at: null,
     repo_url: "owner/repo",
     repo_name: "owner/repo",
+    review_status: "authored",
     ...over,
   };
 }
