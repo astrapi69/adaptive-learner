@@ -55,6 +55,7 @@ const MODAL_REGISTRY: Record<string, ExitKind> = {
   "shared/media/ImageCropDialog.tsx": "shell-frame",
 
   // ModalShell consumers.
+  "components/content/lessons/BulkDeleteLessonsModal.tsx": "modalshell",
   "components/content/quality/AiValidationDialog.tsx": "modalshell",
   "components/content/quality/QualityCheckDialog.tsx": "modalshell",
   "components/content/share/ShareAsRepoButton.tsx": "modalshell",

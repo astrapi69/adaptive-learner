@@ -9,6 +9,7 @@ import {
   distinctCardCount,
   isEmptyPlan,
   planLessonDataDeletion,
+  planLessonsDataDeletion,
   planOrphanCleanup,
   planRepoDataDeletion,
   planSetDataDeletion,
@@ -207,5 +208,82 @@ describe("planLessonDataDeletion (#2064)", () => {
     );
     expect(isEmptyPlan(plan)).toBe(true);
     expect(plan.lessonCards).toEqual([]);
+  });
+});
+
+describe("planLessonsDataDeletion (bulk, #2065)", () => {
+  const lessonProgress = [
+    { id: "lp-1", source: "user-generated", set_id: "book42", lesson_filename: "01-intro.json" },
+    { id: "lp-2", source: "user-generated", set_id: "book42", lesson_filename: "02-body.json" },
+    { id: "lp-3", source: "user-generated", set_id: "book42", lesson_filename: "03-end.json" },
+    { id: "lp-4", source: "jane/repo", set_id: "book42", lesson_filename: "01-intro.json" },
+  ];
+  const lessonCards = [
+    { set_id: "book42", lesson_id: "01-intro.json", exercise_id: "e1", element_key: "a" },
+    { set_id: "book42", lesson_id: "01-intro.json", exercise_id: "e1", element_key: "a" }, // dir dup
+    { set_id: "book42", lesson_id: "02-body.json", exercise_id: "e1", element_key: "b" },
+    { set_id: "book42", lesson_id: "03-end.json", exercise_id: "e1", element_key: "c" },
+  ];
+
+  it("aggregates progress + one lessonCards ref per selected lesson (deduped counts)", () => {
+    const plan = planLessonsDataDeletion(
+      "user-generated",
+      "book42",
+      ["01-intro.json", "02-body.json"],
+      lessonProgress,
+      lessonCards,
+    );
+    expect(plan.lessonProgressIds.sort()).toEqual(["lp-1", "lp-2"]);
+    expect(plan.lessonCards).toEqual([
+      { set_id: "book42", lesson_id: "01-intro.json" },
+      { set_id: "book42", lesson_id: "02-body.json" },
+    ]);
+    expect(plan.lessonCount).toBe(2);
+    expect(plan.cardCount).toBe(2); // 01 (deduped) + 02
+    expect(plan.orphanedSetIds).toEqual([]);
+  });
+
+  it("leaves a NON-selected sibling of the same set untouched", () => {
+    const plan = planLessonsDataDeletion(
+      "user-generated",
+      "book42",
+      ["01-intro.json"],
+      lessonProgress,
+      lessonCards,
+    );
+    expect(plan.lessonProgressIds).not.toContain("lp-2");
+    expect(plan.lessonProgressIds).not.toContain("lp-3");
+    expect(plan.lessonCards).toEqual([{ set_id: "book42", lesson_id: "01-intro.json" }]);
+  });
+
+  it("never plans another source's row for the same set id + filename", () => {
+    const plan = planLessonsDataDeletion(
+      "user-generated",
+      "book42",
+      ["01-intro.json", "02-body.json"],
+      lessonProgress,
+      lessonCards,
+    );
+    expect(plan.lessonProgressIds).not.toContain("lp-4");
+  });
+
+  it("returns an empty plan for an empty selection", () => {
+    const plan = planLessonsDataDeletion("user-generated", "book42", [], lessonProgress, lessonCards);
+    expect(isEmptyPlan(plan)).toBe(true);
+    expect(plan.lessonCards).toEqual([]);
+  });
+
+  it("omits a lessonCards ref for a selected lesson that has no cards", () => {
+    const plan = planLessonsDataDeletion(
+      "user-generated",
+      "book42",
+      ["03-end.json", "99-missing.json"],
+      lessonProgress,
+      lessonCards,
+    );
+    // 03-end has one card; 99-missing has none and no progress.
+    expect(plan.lessonCards).toEqual([{ set_id: "book42", lesson_id: "03-end.json" }]);
+    expect(plan.lessonProgressIds).toEqual(["lp-3"]);
+    expect(plan.cardCount).toBe(1);
   });
 });

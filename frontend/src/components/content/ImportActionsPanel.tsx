@@ -28,6 +28,7 @@ import { useNavigate } from "react-router";
 
 import ContentActionButtons from "./browser/ContentActionButtons";
 import DeleteLessonFromSetModal from "./lessons/DeleteLessonFromSetModal";
+import BulkDeleteLessonsModal from "./lessons/BulkDeleteLessonsModal";
 import MyLessonsSection from "./lessons/MyLessonsSection";
 import ImportLessonModal from "./lessons/ImportLessonModal";
 import CombineLessonsDialog from "./lessons/CombineLessonsDialog";
@@ -103,6 +104,7 @@ export default function ImportActionsPanel() {
           onPlayLessonFile={(e, filename) => actions.openLessonFile(e.source, e.id, filename)}
           onEditLessonFile={(e, filename) => actions.handleEditUserSet(e, filename)}
           onRequestDeleteLesson={actions.setDeleteLessonTarget}
+          onRequestBulkDeleteLesson={actions.setBulkDeleteLessonsTarget}
           selectMode={combine.selectMode}
           selectedCount={combine.selectedCount}
           isSelected={combine.isSelected}
@@ -157,6 +159,26 @@ export default function ImportActionsPanel() {
         plan={actions.deleteLessonPlan}
         onCancel={() => actions.setDeleteLessonTarget(null)}
         onConfirm={(deleteProgress) => void actions.handleConfirmDeleteLesson(deleteProgress)}
+      />
+
+      {/* #2065 — destructive confirmation for removing several lessons of a
+          set at once. ``emptiesSet`` drives the "whole set will be deleted"
+          copy when the selection covers every lesson (the hook makes the
+          authoritative decision from the live lesson list). */}
+      <BulkDeleteLessonsModal
+        count={actions.bulkDeleteLessonsTarget?.filenames.length ?? 0}
+        emptiesSet={
+          actions.bulkDeleteLessonsTarget
+            ? actions.bulkDeleteLessonsTarget.filenames.length >=
+              (actions.bulkDeleteLessonsTarget.entry.lesson_count ?? 0)
+            : false
+        }
+        deleting={actions.bulkDeletingLessons}
+        plan={actions.bulkDeleteLessonsPlan}
+        onCancel={() => actions.setBulkDeleteLessonsTarget(null)}
+        onConfirm={(deleteProgress) =>
+          void actions.handleConfirmBulkDeleteLessons(deleteProgress)
+        }
       />
     </section>
   );

@@ -927,6 +927,44 @@ MEHREREN Lektionen (z. B. nach einem Buch-Import) → "Lektionen verwalten".
       Lektion loeschen → Backup importieren → die Lektion ist wieder da
       (korrekt: ein Backup ist eine Momentaufnahme, KEIN Bug)
 
+### Mehrere Lektionen auf einmal loeschen (#2065)
+
+Ort: Meine Inhalte (`/content?tab=my`) → Meine Lektionen → ein Set mit
+MEHREREN Lektionen → "Lektionen verwalten".
+
+- [ ] Vorbereitung: mehrlektioniges eigenes Set (z. B. Buch-Import);
+      bei 2-3 Lektionen Fortschritt + Wiederholungskarten erzeugen
+- [ ] "Lektionen auswaehlen" schaltet einen Auswahlmodus ein: je Zeile
+      erscheint ein Kontrollkaestchen, die Zeilenaktionen (Verschieben,
+      Abspielen, Bearbeiten, Loeschen) sind in diesem Modus ausgeblendet
+- [ ] "Alle auswaehlen" setzt alle Haekchen, nochmal geklickt hebt sie
+      auf; "N ausgewaehlt" zaehlt korrekt mit
+- [ ] "N loeschen" ist deaktiviert, solange nichts ausgewaehlt ist
+- [ ] Loeschen oeffnet EINEN Bestaetigungsdialog, der die ANZAHL benennt
+      und sagt, dass es NICHT rueckgaengig gemacht werden kann; der Dialog
+      empfiehlt sichtbar (ohne Zwang) vorher ein Backup
+- [ ] Haekchen "Auch meinen Lernfortschritt loeschen" zeigt die
+      AGGREGIERTE ECHTE Karten-Anzahl ueber alle ausgewaehlten Lektionen
+- [ ] Loeschen OHNE Haekchen: genau die ausgewaehlten Lektionen
+      verschwinden in EINEM Schritt, lesson_count sinkt entsprechend,
+      NICHT ausgewaehlte Geschwister-Lektionen bleiben unveraendert
+- [ ] Reihenfolge: die verbleibenden Lektionen behalten ihre Reihenfolge
+      (keine Umnummerierung), Deep-Links auf sie funktionieren weiter
+- [ ] Loeschen MIT Haekchen: Fortschritt + Wiederholungskarten NUR der
+      ausgewaehlten Lektionen sind weg, Geschwister-Fortschritt bleibt
+- [ ] ALLE Lektionen auswaehlen und loeschen: der Dialog sagt VORHER, dass
+      das GANZE Set geloescht wird; danach ist das Set aus Meine Inhalte weg
+- [ ] Dialog per Tastatur bedienbar: Loeschen-Button ist fokussiert,
+      Escape/Abbrechen schliesst; Kontrollkaestchen haben ein aria-label
+- [ ] BEIDE Modi pruefen: Desktop/Server (API) UND GitHub Pages (Dexie)
+- [ ] Backup-Zeitpunkt: VOR dem Loeschen ein Backup (.alb) erstellen →
+      mehrere Lektionen loeschen → Backup importieren → die Lektionen sind
+      wieder da (korrekt: ein Backup ist eine Momentaufnahme, KEIN Bug)
+- [ ] iOS-Standalone (zum Homescreen hinzugefuegte PWA, Dexie-Modus):
+      Auswahlmodus, Kontrollkaestchen und der Bestaetigungsdialog sind mit
+      dem Finger bedienbar; die Aktionsleiste bricht auf schmalem Display
+      sauber um (kein Ueberlauf)
+
 ### Content-Repo trennen vs. Fortschritt loeschen (#1651 / #1652)
 
 Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".

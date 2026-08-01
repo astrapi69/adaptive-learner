@@ -179,3 +179,38 @@ describe("deleteLearningDataDexie lessonCards (#2064 single-lesson delete)", () 
     expect(theirs).toBe(1);
   });
 });
+
+describe("deleteLearningDataDexie lessonCards (#2065 bulk multi-lesson delete)", () => {
+  it("deletes SEVERAL lessons' progress + cards in one atomic call, keeping a non-selected sibling", async () => {
+    const p1 = await seedProgress("user-generated", "book42", "01-intro.json");
+    const p2 = await seedProgress("user-generated", "book42", "02-body.json");
+    await seedProgress("user-generated", "book42", "03-keep.json");
+    await recordElementAttemptsDexie(USER, [
+      attempt({set_id: "book42", lesson_id: "01-intro.json", element_key: "a"}),
+      attempt({set_id: "book42", lesson_id: "02-body.json", element_key: "b"}),
+      attempt({set_id: "book42", lesson_id: "02-body.json", element_key: "c"}),
+      attempt({set_id: "book42", lesson_id: "03-keep.json", element_key: "d"}),
+    ]);
+
+    // One call carrying the whole selection (two lessons) — mirrors the
+    // aggregated plan the orchestrator builds.
+    const result = await deleteLearningDataDexie(USER, {
+      lessonProgressIds: [p1.id, p2.id],
+      setIds: [],
+      lessonCards: [
+        {set_id: "book42", lesson_id: "01-intro.json"},
+        {set_id: "book42", lesson_id: "02-body.json"},
+      ],
+    });
+
+    expect(result.lessonsDeleted).toBe(2);
+    expect(result.cardsDeleted).toBe(3); // 1 (01) + 2 (02)
+    const db = getDb();
+    // The non-selected sibling keeps BOTH its progress row and its card.
+    const progress = await db.lessonProgress.toArray();
+    expect(progress.map((r) => r.lesson_filename)).toEqual(["03-keep.json"]);
+    const cards = await db.elementErrors.toArray();
+    expect(cards.every((c) => c.lesson_id === "03-keep.json")).toBe(true);
+    expect(cards.length).toBe(1);
+  });
+});
