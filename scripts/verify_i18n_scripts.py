@@ -93,6 +93,9 @@ DE_SUBSTITUTE_WORDS = (
     "schluessel",
     "loeschen",
     "loesche",
+    # #2315: stand als "Hilfe oeffnen" live im Katalog, waehrend der
+    # Waechter de.yaml sauber meldete - die Liste kannte die Form nicht.
+    "oeffnen",
     "loesung",
     "loesungen",
     "koennen",

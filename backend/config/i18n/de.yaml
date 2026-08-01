@@ -1479,7 +1479,7 @@ ui:
       error: "Fehler"
   help:
     learn_more: "Mehr erfahren"
-    open_help: "Hilfe oeffnen"
+    open_help: "Hilfe öffnen"
     drawer_title: "Hilfe"
     related: "Verwandte Konzepte"
     search_placeholder: "Glossar durchsuchen..."

@@ -49,6 +49,15 @@ class TestStage1DeSubstitutions:
         }
         assert find_de_substitutions(flat) == []
 
+    def test_flags_oeffnen_the_2315_leak(self) -> None:
+        """Die Form, die live im Katalog stand: help.open_help war
+        "Hilfe oeffnen", und der Waechter meldete de.yaml sauber. Eine
+        kuratierte Liste waechst aus Evidenz - das hier ist die Evidenz."""
+        flat = {"ui.help.open_help": "Hilfe oeffnen"}
+        findings = find_de_substitutions(flat)
+        assert {f.key for f in findings} == {"ui.help.open_help"}
+        assert "oeffnen" in {w for f in findings for w in f.words}
+
     def test_legitimate_ae_oe_ue_sequences_do_not_fire(self) -> None:
         # ue/ae/oe inside ordinary German words is NOT substitute spelling.
         flat = {
