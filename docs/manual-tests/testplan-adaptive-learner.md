@@ -936,7 +936,7 @@ MEHREREN Lektionen → "Lektionen verwalten".
       bei 2-3 Lektionen Fortschritt + Wiederholungskarten erzeugen
 - [ ] "Lektionen auswaehlen" schaltet einen Auswahlmodus ein: je Zeile
       erscheint ein Kontrollkaestchen, die Zeilenaktionen (Verschieben,
-      Abspielen, Bearbeiten, Loeschen) sind waehrenddessen ausgeblendet
+      Abspielen, Bearbeiten, Loeschen) sind in diesem Modus ausgeblendet
 - [ ] "Alle auswaehlen" setzt alle Haekchen, nochmal geklickt hebt sie
       auf; "N ausgewaehlt" zaehlt korrekt mit
 - [ ] "N loeschen" ist deaktiviert, solange nichts ausgewaehlt ist
