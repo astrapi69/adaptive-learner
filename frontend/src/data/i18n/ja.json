@@ -1783,8 +1783,7 @@
     "page": {
       "title": "学習リポジトリ",
       "rendered_at": "生成日時",
-      "language": "言語",
-      "target_language": "学習言語"
+      "language": "言語"
     },
     "action": {
       "rerender": "再生成",
@@ -3770,6 +3769,7 @@
     "filter": {
       "all": "すべて",
       "language": "言語",
+      "target_language": "学習言語",
       "all_languages": "すべての言語",
       "all_target_languages": "すべての学習言語",
       "level": "レベル",

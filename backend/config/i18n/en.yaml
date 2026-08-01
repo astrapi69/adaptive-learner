@@ -1671,7 +1671,6 @@ repo:
     title: "Learning Repository"
     rendered_at: "Rendered at"
     language: "Language"
-    target_language: "Target language"
   action:
     rerender: "Re-render"
     download_zip: "Download ZIP"
@@ -3470,6 +3469,7 @@ discover:
   filter:
     all: "All"
     language: "Language"
+    target_language: "Target language"
     all_languages: "All languages"
     all_target_languages: "All target languages"
     level: "Level"

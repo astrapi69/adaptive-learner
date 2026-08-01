@@ -1783,8 +1783,7 @@
     "page": {
       "title": "Öğrenme deposu",
       "rendered_at": "Oluşturulma",
-      "language": "Dil",
-      "target_language": "Hedef dil"
+      "language": "Dil"
     },
     "action": {
       "rerender": "Yeniden oluştur",
@@ -3770,6 +3769,7 @@
     "filter": {
       "all": "Tümü",
       "language": "Dil",
+      "target_language": "Hedef dil",
       "all_languages": "Tüm diller",
       "all_target_languages": "Tüm hedef diller",
       "level": "Seviye",

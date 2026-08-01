@@ -1783,8 +1783,7 @@
     "page": {
       "title": "Repositório de aprendizagem",
       "rendered_at": "Gerado em",
-      "language": "Idioma",
-      "target_language": "Idioma-alvo"
+      "language": "Idioma"
     },
     "action": {
       "rerender": "Regenerar",
@@ -3770,6 +3769,7 @@
     "filter": {
       "all": "Todos",
       "language": "Idioma",
+      "target_language": "Idioma-alvo",
       "all_languages": "Todos os idiomas",
       "all_target_languages": "Todos os idiomas-alvo",
       "level": "Nível",

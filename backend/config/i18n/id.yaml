@@ -1671,7 +1671,6 @@ repo:
     title: "Repositori Pembelajaran"
     rendered_at: "Dirender pada"
     language: "Bahasa"
-    target_language: "Bahasa target"
   action:
     rerender: "Render ulang"
     download_zip: "Unduh ZIP"
@@ -3470,6 +3469,7 @@ discover:
   filter:
     all: "Semua"
     language: "Bahasa"
+    target_language: "Bahasa target"
     all_languages: "Semua bahasa"
     all_target_languages: "Semua bahasa target"
     level: "Tingkat"

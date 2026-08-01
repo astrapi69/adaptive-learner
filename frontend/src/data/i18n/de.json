@@ -1783,8 +1783,7 @@
     "page": {
       "title": "Lern-Repository",
       "rendered_at": "Generiert am",
-      "language": "Sprache",
-      "target_language": "Zielsprache"
+      "language": "Sprache"
     },
     "action": {
       "rerender": "Neu generieren",
@@ -3770,6 +3769,7 @@
     "filter": {
       "all": "Alle",
       "language": "Sprache",
+      "target_language": "Zielsprache",
       "all_languages": "Alle Sprachen",
       "all_target_languages": "Alle Zielsprachen",
       "level": "Niveau",

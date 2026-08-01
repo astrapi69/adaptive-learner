@@ -1783,8 +1783,7 @@
     "page": {
       "title": "Repositorio de aprendizaje",
       "rendered_at": "Generado el",
-      "language": "Idioma",
-      "target_language": "Idioma meta"
+      "language": "Idioma"
     },
     "action": {
       "rerender": "Regenerar",
@@ -3770,6 +3769,7 @@
     "filter": {
       "all": "Todos",
       "language": "Idioma",
+      "target_language": "Idioma meta",
       "all_languages": "Todos los idiomas",
       "all_target_languages": "Todos los idiomas meta",
       "level": "Nivel",

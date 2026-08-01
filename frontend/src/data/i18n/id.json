@@ -1783,8 +1783,7 @@
     "page": {
       "title": "Repositori Pembelajaran",
       "rendered_at": "Dirender pada",
-      "language": "Bahasa",
-      "target_language": "Bahasa target"
+      "language": "Bahasa"
     },
     "action": {
       "rerender": "Render ulang",
@@ -3770,6 +3769,7 @@
     "filter": {
       "all": "Semua",
       "language": "Bahasa",
+      "target_language": "Bahasa target",
       "all_languages": "Semua bahasa",
       "all_target_languages": "Semua bahasa target",
       "level": "Tingkat",

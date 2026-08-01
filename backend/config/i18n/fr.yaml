@@ -1662,7 +1662,6 @@ repo:
     title: "Dépôt d'apprentissage"
     rendered_at: "Généré le"
     language: "Langue"
-    target_language: "Langue cible"
   action:
     rerender: "Régénérer"
     download_zip: "Télécharger le ZIP"
@@ -3462,6 +3461,7 @@ discover:
   filter:
     all: "Tous"
     language: "Langue"
+    target_language: "Langue cible"
     all_languages: "Toutes les langues"
     all_target_languages: "Toutes les langues cibles"
     level: "Niveau"

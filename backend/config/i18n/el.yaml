@@ -1662,7 +1662,6 @@ repo:
     title: "Αποθετήριο μάθησης"
     rendered_at: "Δημιουργήθηκε στις"
     language: "Γλώσσα"
-    target_language: "Γλώσσα-στόχος"
   action:
     rerender: "Επανέκδοση"
     download_zip: "Λήψη ZIP"
@@ -3462,6 +3461,7 @@ discover:
   filter:
     all: "Όλα"
     language: "Γλώσσα"
+    target_language: "Γλώσσα-στόχος"
     all_languages: "Όλες οι γλώσσες"
     all_target_languages: "Όλες οι γλώσσες-στόχοι"
     level: "Επίπεδο"

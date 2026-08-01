@@ -1783,8 +1783,7 @@
     "page": {
       "title": "Learning Repository",
       "rendered_at": "Rendered at",
-      "language": "Language",
-      "target_language": "Target language"
+      "language": "Language"
     },
     "action": {
       "rerender": "Re-render",
@@ -3770,6 +3769,7 @@
     "filter": {
       "all": "All",
       "language": "Language",
+      "target_language": "Target language",
       "all_languages": "All languages",
       "all_target_languages": "All target languages",
       "level": "Level",

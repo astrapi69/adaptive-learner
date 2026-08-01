@@ -1783,8 +1783,7 @@
     "page": {
       "title": "Dépôt d'apprentissage",
       "rendered_at": "Généré le",
-      "language": "Langue",
-      "target_language": "Langue cible"
+      "language": "Langue"
     },
     "action": {
       "rerender": "Régénérer",
@@ -3770,6 +3769,7 @@
     "filter": {
       "all": "Tous",
       "language": "Langue",
+      "target_language": "Langue cible",
       "all_languages": "Toutes les langues",
       "all_target_languages": "Toutes les langues cibles",
       "level": "Niveau",

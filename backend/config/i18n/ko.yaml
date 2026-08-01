@@ -1671,7 +1671,6 @@ repo:
     title: "학습 저장소"
     rendered_at: "렌더링 시각"
     language: "언어"
-    target_language: "학습 언어"
   action:
     rerender: "다시 렌더링"
     download_zip: "ZIP 다운로드"
@@ -3470,6 +3469,7 @@ discover:
   filter:
     all: "전체"
     language: "언어"
+    target_language: "학습 언어"
     all_languages: "모든 언어"
     all_target_languages: "모든 학습 언어"
     level: "수준"
