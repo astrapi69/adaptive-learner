@@ -40,7 +40,12 @@ Zwei weitere Befunde, die den Entwurf mitbestimmen:
 - **Der Durchsichtsstand steht im Index, und die App wirft ihn weg.**
   `review_status` liegt in 45 von 45 Einträgen; `normalizeSet`
   ([search-index-loader.ts:142-180](../../frontend/src/lib/content/repos/search-index-loader.ts#L142-L180))
-  liest das Feld nicht, es fällt beim Parsen auf den Boden.
+  liest das Feld nicht, es fällt beim Parsen auf den Boden. Das ist ein
+  Datenpfad-Fehler, keine Oberflächenfrage, und deshalb ein eigener Vorgang
+  (#2299), der nicht auf diesen Entwurf wartet: die Kette hat zwei Stellen,
+  an denen eine gesetzte Kennzeichnung verschwinden kann - den
+  Indexgenerator (in der Engine-Spur bereits einmal aufgetreten) und diesen
+  Parser - und beide waren blind.
 
 ## Teil 1: Welche Merkmale tragen tatsächlich
 
@@ -55,11 +60,30 @@ Arbeitsverzeichnis der Sitzung und ist in fünf Zeilen reproduzierbar; die
 Zahlen unten sind Ausgabe, keine Schätzung.
 
 **Erhoben: 8 Quellen, 45 Sets, 551 Lektionen.** Der Auftrag nannte
-siebenundvierzig Sets über zehn Quellen; die Registry führt heute acht
-Einträge (offiziell plus sieben validierte, alle gepinnt), keine weiteren
-validierten. Woher die höhere Zahl stammt, ist nicht rekonstruierbar
-(möglich: eigene, nicht registrierte Repos eines Geräts oder ein älterer
-Stand). Der Entwurf steht auf den gemessenen Zahlen.
+siebenundvierzig Sets über zehn Quellen, und die Engine-Spur hat am selben Tag
+47 von 47 über alle Repositories gemeldet. Beide Zahlen sind gemessen, sie
+messen Verschiedenes, und der Unterschied ist aufgelöst (siehe unten): es
+fehlt nichts im Entdecken-Bereich.
+
+### Die zwei fehlenden Quellen: aufgelöst, kein Verlust
+
+Der Kontostand kennt neun Inhalte-Repositories plus die offizielle Quelle.
+Acht davon stehen in der Registry, zwei nicht:
+
+| Repository | Sets | in Registry | in Entdecken | warum |
+|---|---|---|---|---|
+| `adaptive-learner-content-test` | 1 (`graded-quiz-demo-from-de`) | nein | nein | Das Set steht auf `visibility: hidden`. Selbst bei Registrierung würde `normalizeSet` es beim Parsen verwerfen - genau der Mechanismus aus #1702 / #1707. |
+| `adaptive-learner-content-template` | 1 (`example-set`) | nein | nein | Gerüst-Vorlage, kein Lerninhalt. |
+
+45 plus diese zwei ergibt 47, acht plus diese zwei ergibt zehn. Die
+Engine-Spur zählt alle Repositories, die App liest die registrierten - die
+Differenz ist genau die beabsichtigte Auslassung, kein blinder Fleck.
+
+**Ein Nebenbefund fällt dabei an:** `example-set` steht auf `visibility:
+visible`. Für das Template folgenlos, solange es nicht registriert ist; wer
+aber ein eigenes Repository daraus erzeugt und registrieren lässt, bewirbt
+zuerst das Beispiel-Set. Angemeldet als
+astrapi69/adaptive-learner-content-template#42.
 
 ### Abdeckung je Merkmal
 
@@ -234,7 +258,8 @@ Abzeichen zu führen; die Filterleiste gewinnt einen Platz statt einen zu
 verlieren.
 
 **Kosten app-seitig:** ein Feld in `normalizeSet`, ein Feld in
-`SearchableSet`, ein Abzeichen in `SetDiscoveryCard` und
+`SearchableSet` (beides #2299, Vorbedingung), ein Abzeichen in
+`SetDiscoveryCard` und
 `DiscoverSetListView`, eine Facette, Schlüssel in 11 Katalogen. Kein
 Schema-Eingriff, kein Engine-Pin nötig: der Index wird von App-Code gelesen.
 (Der Pin 0.14.0 in `frontend/package.json` betrifft die Validierung
@@ -335,7 +360,8 @@ Katalogröße. Zwei Punkte:
 
 | Stufe | Inhalt | Aufwand |
 |---|---|---|
-| 1 | `review_status` durchreichen, Abzeichen, Facette (ersetzt "KI-geprüft") | klein, 1 PR |
+| 0 | **#2299: `review_status` kommt am Parser an** (Datenpfad, unabhängig von diesem Entwurf, Vorbedingung für Stufe 1) | klein, 1 PR |
+| 1 | Abzeichen + Facette für den Durchsichtsstand (ersetzt "KI-geprüft") | klein, 1 PR |
 | 1 | Zielsprache-Facette mit Zahlen | klein, 1 PR |
 | 1 | Aktive Facetten als entfernbare Marken, dauerhaft sichtbar | klein bis mittel |
 | 1 | Bereichs-Beschriftungen für die fehlenden 5 Bereiche, 11 Kataloge | klein |
@@ -386,9 +412,11 @@ angemeldet, wenn ein solches Set entsteht.
   Zustände, fehlend gleich `authored`. Grundlage: Release-Text und
   Live-Indizes, nicht der lokale Schema-Spiegel (der steht auf Engine 0.14.0
   und kennt das Feld noch nicht).
-- **Abweichung von der Auftragszahl:** Auftrag nannte 47 Sets über 10
-  Quellen, gemessen wurden 45 über 8. Konservativ mit den gemessenen Zahlen
-  gearbeitet, Methode oben dokumentiert.
+- **Abweichung von der Auftragszahl: aufgelöst.** Auftrag und Engine-Spur
+  nannten 47 Sets über 10 Quellen, hier gemessen 45 über 8. Der Unterschied
+  sind das Test- und das Template-Repository (Teil 1); im Entdecken-Bereich
+  fehlt nichts. Der Vergleich der beiden Listen war die Entscheidung, nicht
+  die Plausibilität.
 - **Annahme, sichtbar getroffen:** Maschinell erzeugte Sets bleiben in der
   Standardansicht sichtbar und gekennzeichnet, statt standardmäßig gefiltert
   zu werden. Begründung: #335 (nichts verstecken, was dem Nutzer gehört) und
