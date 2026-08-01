@@ -10,7 +10,10 @@ import { Layers } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import type { LessonDeleteTarget } from "../../../hooks/content/useContentSetActions";
+import type {
+  BulkLessonDeleteTarget,
+  LessonDeleteTarget,
+} from "../../../hooks/content/useContentSetActions";
 import type { ContentSetEntry } from "../../../storage/types";
 import GenerateSetExercisesButton from "../quality/GenerateSetExercisesButton";
 import SetLessonList from "./SetLessonList";
@@ -30,6 +33,8 @@ interface MyLessonsSectionProps {
   // #2210 — edit one specific lesson of a multi-lesson set (by filename).
   onEditLessonFile: (entry: ContentSetEntry, filename: string) => void;
   onRequestDeleteLesson: (target: LessonDeleteTarget) => void;
+  // #2065 — bulk multi-select lesson delete within a set.
+  onRequestBulkDeleteLesson: (target: BulkLessonDeleteTarget) => void;
   // #1741 — combine-into-a-set selection mode.
   selectMode: boolean;
   selectedCount: number;
@@ -51,6 +56,7 @@ export default function MyLessonsSection({
   onPlayLessonFile,
   onEditLessonFile,
   onRequestDeleteLesson,
+  onRequestBulkDeleteLesson,
   selectMode,
   selectedCount,
   isSelected,
@@ -181,6 +187,7 @@ export default function MyLessonsSection({
                   onPlayLesson={onPlayLessonFile}
                   onEditLesson={onEditLessonFile}
                   onRequestDelete={onRequestDeleteLesson}
+                  onRequestBulkDelete={onRequestBulkDeleteLesson}
                 />
               )}
             </li>

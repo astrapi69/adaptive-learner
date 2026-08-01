@@ -69,18 +69,20 @@ function mockLessons() {
 async function renderExpanded() {
   const onPlayLesson = vi.fn();
   const onRequestDelete = vi.fn();
+  const onRequestBulkDelete = vi.fn();
   const onEditLesson = vi.fn();
   render(
     <SetLessonList
       entry={entry()}
       onPlayLesson={onPlayLesson}
       onRequestDelete={onRequestDelete}
+      onRequestBulkDelete={onRequestBulkDelete}
       onEditLesson={onEditLesson}
     />,
   );
   fireEvent.click(screen.getByTestId("set-lessons-toggle-mein-buch"));
   await waitFor(() => screen.getByTestId("set-lesson-mein-buch-epilog.json"));
-  return { onPlayLesson, onRequestDelete, onEditLesson };
+  return { onPlayLesson, onRequestDelete, onRequestBulkDelete, onEditLesson };
 }
 
 /** The visible order, read off the row testids. */
@@ -141,6 +143,7 @@ describe("SetLessonList - reorder", () => {
         onPlayLesson={vi.fn()}
         onEditLesson={vi.fn()}
         onRequestDelete={vi.fn()}
+        onRequestBulkDelete={vi.fn()}
       />,
     );
     fireEvent.click(screen.getByTestId("set-lessons-toggle-mein-buch"));
@@ -184,5 +187,58 @@ describe("SetLessonList - reorder", () => {
     expect(onRequestDelete).toHaveBeenCalledWith(
       expect.objectContaining({ filename: "epilog.json", title: "Epilog" }),
     );
+  });
+});
+
+describe("SetLessonList - multi-select delete (#2065)", () => {
+  it("entering select mode replaces the per-row actions with checkboxes", async () => {
+    await renderExpanded();
+    // Default: row actions present, no checkboxes.
+    expect(screen.getByTestId("set-lesson-delete-mein-buch-epilog.json")).toBeInTheDocument();
+    expect(screen.queryByTestId("set-lesson-select-mein-buch-epilog.json")).toBeNull();
+
+    fireEvent.click(screen.getByTestId("set-lessons-select-toggle-mein-buch"));
+
+    // Now: checkboxes present, per-row Delete/Edit/Up/Down gone.
+    expect(screen.getByTestId("set-lesson-select-mein-buch-epilog.json")).toBeInTheDocument();
+    expect(screen.queryByTestId("set-lesson-delete-mein-buch-epilog.json")).toBeNull();
+    expect(screen.queryByTestId("set-lesson-up-mein-buch-kapitel-1.json")).toBeNull();
+  });
+
+  it("Select all checks every lesson; the delete button carries the count", async () => {
+    await renderExpanded();
+    fireEvent.click(screen.getByTestId("set-lessons-select-toggle-mein-buch"));
+    fireEvent.click(screen.getByTestId("set-lessons-select-all-mein-buch"));
+    expect(screen.getByTestId("set-lessons-bulk-bar-mein-buch")).toHaveTextContent("3 selected");
+    expect(screen.getByTestId("set-lessons-bulk-delete-mein-buch")).toHaveTextContent("Delete 3");
+  });
+
+  it("requests the bulk delete with exactly the checked filenames", async () => {
+    const { onRequestBulkDelete } = await renderExpanded();
+    fireEvent.click(screen.getByTestId("set-lessons-select-toggle-mein-buch"));
+    fireEvent.click(screen.getByTestId("set-lesson-select-mein-buch-epilog.json"));
+    fireEvent.click(screen.getByTestId("set-lesson-select-mein-buch-kapitel-2.json"));
+    fireEvent.click(screen.getByTestId("set-lessons-bulk-delete-mein-buch"));
+    expect(onRequestBulkDelete).toHaveBeenCalledTimes(1);
+    const target = onRequestBulkDelete.mock.calls[0][0];
+    expect(target.entry.id).toBe("mein-buch");
+    expect(target.filenames.sort()).toEqual(["epilog.json", "kapitel-2.json"]);
+  });
+
+  it("the delete button is disabled while nothing is selected", async () => {
+    await renderExpanded();
+    fireEvent.click(screen.getByTestId("set-lessons-select-toggle-mein-buch"));
+    expect(screen.getByTestId("set-lessons-bulk-delete-mein-buch")).toBeDisabled();
+    fireEvent.click(screen.getByTestId("set-lesson-select-mein-buch-epilog.json"));
+    expect(screen.getByTestId("set-lessons-bulk-delete-mein-buch")).not.toBeDisabled();
+  });
+
+  it("Cancel exits select mode and restores the per-row actions", async () => {
+    await renderExpanded();
+    fireEvent.click(screen.getByTestId("set-lessons-select-toggle-mein-buch"));
+    fireEvent.click(screen.getByTestId("set-lesson-select-mein-buch-epilog.json"));
+    fireEvent.click(screen.getByTestId("set-lessons-select-cancel-mein-buch"));
+    expect(screen.getByTestId("set-lesson-delete-mein-buch-epilog.json")).toBeInTheDocument();
+    expect(screen.queryByTestId("set-lessons-bulk-bar-mein-buch")).toBeNull();
   });
 });

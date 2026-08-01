@@ -27,7 +27,7 @@
 
 import { parseGitHubRepoUrl } from "./content-repos";
 import { buildFileRequest, fetchWithRetry } from "./github-fetch";
-import type { SetVisibility } from "../../../storage/types";
+import type { SetReviewStatus, SetVisibility } from "../../../storage/types";
 
 /** The conventional index filename at a content repo's root. */
 export const SEARCH_INDEX_FILE = "search-index.json";
@@ -76,6 +76,12 @@ export interface SearchableSet {
    *  dropped at parse time so they never enter the catalogue. Absent ⇒
    *  visible. */
   visibility?: SetVisibility;
+  /** #2299 — review standing advertised by the index entry (engine schema
+   *  1.9). ``"generated"`` is machine-generated with the review pending,
+   *  ``"reviewed"`` is machine-generated and reviewed, ``"authored"`` is
+   *  hand-written and needs none. Absent or out-of-enum ⇒ ``"authored"``,
+   *  matching the engine + index-generator normalisation. */
+  review_status: SetReviewStatus;
 }
 
 /** A content repo to load a search index from. */
@@ -130,6 +136,25 @@ function asStringArray(value: unknown): string[] {
   return value.filter((item): item is string => typeof item === "string");
 }
 
+/** The review-standing values the index may advertise (engine schema 1.9). */
+const REVIEW_STATUS_VALUES: readonly SetReviewStatus[] = [
+  "authored",
+  "generated",
+  "reviewed",
+];
+
+/**
+ * Normalise the index entry's ``review_status`` the way the engine and the
+ * index generator do: absent, non-string or out-of-enum all mean
+ * ``"authored"``. Both ends of the chain must read a missing field the same
+ * way, otherwise a set that says nothing means different things per layer.
+ */
+function asReviewStatus(value: unknown): SetReviewStatus {
+  return REVIEW_STATUS_VALUES.includes(value as SetReviewStatus)
+    ? (value as SetReviewStatus)
+    : "authored";
+}
+
 function asBook(value: unknown): SearchIndexBook | null {
   if (!value || typeof value !== "object") return null;
   const book = value as { title?: unknown; author?: unknown };
@@ -176,6 +201,7 @@ function normalizeSet(
     repo_url: repoSource,
     repo_name: repoName,
     visibility,
+    review_status: asReviewStatus(raw.review_status),
   };
 }
 

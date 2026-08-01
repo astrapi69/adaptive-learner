@@ -40,6 +40,21 @@ export type SetStatus = "active" | "deferred" | "completed";
  */
 export type SetVisibility = "visible" | "hidden";
 
+/**
+ * #2299 — review standing of a set, mirrored from the manifest set entry
+ * (engine ``review_status``, additive in learn-content-engine 0.16.0 /
+ * schema 1.9). Derived from ORIGIN, because origin is what makes a set
+ * review-worthy: ``authored`` is hand-written by a speaker or domain expert
+ * and needs no review, ``generated`` is machine-generated with the review
+ * still pending, ``reviewed`` is machine-generated and reviewed.
+ *
+ * Absent means ``authored`` — the same normalisation the engine and the
+ * index generator apply, so both ends of the chain read a missing field the
+ * same way. A two-valued field would have put hand-written sets in the same
+ * class as unreviewed machine output.
+ */
+export type SetReviewStatus = "authored" | "generated" | "reviewed";
+
 export interface ContentSetEntry {
   source: string;
   branch: string;
