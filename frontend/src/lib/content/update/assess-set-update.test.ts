@@ -7,7 +7,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import {assessSetUpdate} from "./assess-set-update";
-import {buildIncomingIdentities} from "./update-impact";
 
 const readLearnerState = vi.fn();
 const listProgress = vi.fn();
@@ -24,7 +23,7 @@ vi.mock("../../../storage", () => ({
     }),
 }));
 vi.mock("../../../storage/content/peek-set", () => ({
-    peekSetIdentities: (...args: unknown[]) => peek(...args),
+    peekSetLessons: (...args: unknown[]) => peek(...args),
 }));
 
 beforeEach(() => {
@@ -55,8 +54,7 @@ describe("assessSetUpdate (#2128)", () => {
         listErrors.mockResolvedValue([
             {set_id: "ja-a1", lesson_id: "01.json", exercise_id: "ex-pic-1", element_key: "さようなら"},
         ]);
-        peek.mockResolvedValue(
-            buildIncomingIdentities([
+        peek.mockResolvedValue(([
                 {
                     filename: "01.json",
                     exercises: [
@@ -66,16 +64,15 @@ describe("assessSetUpdate (#2128)", () => {
             ]),
         );
         const impact = await assessSetUpdate("owner/repo", "ja-a1");
-        expect(impact?.breaking).toBe(true);
-        expect(impact?.lostCards).toHaveLength(1);
+        expect(impact?.impact.breaking).toBe(true);
+        expect(impact?.impact.lostCards).toHaveLength(1);
     });
 
     it("does NOT flag a harmless (superset) update", async () => {
         listErrors.mockResolvedValue([
             {set_id: "ja-a1", lesson_id: "01.json", exercise_id: "ex-free-1", element_key: "arigato"},
         ]);
-        peek.mockResolvedValue(
-            buildIncomingIdentities([
+        peek.mockResolvedValue(([
                 {
                     filename: "01.json",
                     exercises: [{id: "ex-free-1", type: "free_text", accept: ["arigato", "arigatou"]}],
@@ -83,6 +80,6 @@ describe("assessSetUpdate (#2128)", () => {
             ]),
         );
         const impact = await assessSetUpdate("owner/repo", "ja-a1");
-        expect(impact?.breaking).toBe(false);
+        expect(impact?.impact.breaking).toBe(false);
     });
 });

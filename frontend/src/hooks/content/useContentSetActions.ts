@@ -43,7 +43,12 @@ import {
   removeLessonFromSet,
   removeLessonsFromSet,
 } from "../../lib/content/lesson/delete/delete-lesson";
-import { assessSetUpdate } from "../../lib/content/update/assess-set-update";
+import {
+  assessSetUpdate,
+  type SetUpdateAssessment,
+} from "../../lib/content/update/assess-set-update";
+import { planSetUpdate } from "../../lib/content/update/plan-set-update";
+import type { RemapPlan } from "../../lib/content/update/remap-plan";
 import type { UpdateImpact } from "../../lib/content/update/update-impact";
 import { removeFavorite } from "../../lib/favorites/favorites";
 import { readLearnerState } from "../../lib/learning/learnerState";
@@ -117,9 +122,13 @@ export function useContentSetActions({
     useState<DeletionPlan | null>(null);
 
   // #2128 — a held breaking update awaiting the learner's decision.
+  // #2308 — plus the PROPOSED re-keying derived from the same peek. The plan
+  // is an inference, so it is carried into the dialog and applied only on the
+  // learner's explicit confirmation, never here.
   const [updateGuard, setUpdateGuard] = useState<{
     entry: ContentSetEntry;
     impact: UpdateImpact;
+    plan: RemapPlan;
   } | null>(null);
 
   const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
@@ -623,14 +632,29 @@ export function useContentSetActions({
   // pass straight through; a peek failure does NOT trap a user-initiated
   // update (auto-sync holds on failure, the deliberate manual path proceeds).
   const handleDownload = async (entry: ContentSetEntry) => {
-    let impact: UpdateImpact | null;
+    let assessment: SetUpdateAssessment | null;
     try {
-      impact = await assessSetUpdate(entry.source, entry.id);
+      assessment = await assessSetUpdate(entry.source, entry.id);
     } catch {
-      impact = null;
+      assessment = null;
     }
-    if (impact?.breaking) {
-      setUpdateGuard({ entry, impact });
+    if (assessment?.impact.breaking) {
+      // #2308 — derive what COULD be carried over. Planning happens only on
+      // this manual path; the nightly sync never computes it, so an inference
+      // can never be applied while nobody is watching.
+      let plan: RemapPlan = { certain: [], uncertain: [] };
+      try {
+        plan = await planSetUpdate(
+          entry.source,
+          entry.id,
+          assessment.impact,
+          assessment.incomingLessons,
+        );
+      } catch {
+        // A failed plan is not a failed guard: the dialog still holds the
+        // update, it just cannot offer to carry anything over.
+      }
+      setUpdateGuard({ entry, impact: assessment.impact, plan });
       return;
     }
     await applyDownload(entry);
@@ -666,10 +690,35 @@ export function useContentSetActions({
   };
 
   // #2128 — the learner confirmed a held update: apply it now.
-  const confirmUpdate = async () => {
+  // #2308 — ``carryOver`` re-keys the rows the plan could assign with
+  // confidence. The content is downloaded FIRST: if the re-key then fails, the
+  // learner is left in exactly today's state (rows orphaned) rather than in a
+  // new one (rows pointing at keys no version has). The re-key itself is
+  // atomic and idempotent, so a retry is safe.
+  const confirmUpdate = async (carryOver = false) => {
     const target = updateGuard;
     setUpdateGuard(null);
-    if (target) await applyDownload(target.entry);
+    if (!target) return;
+    await applyDownload(target.entry);
+    if (!carryOver || target.plan.certain.length === 0) return;
+    const userId = readLearnerState().userId;
+    if (!userId) return;
+    try {
+      const { applied } = await getStorage().elementErrors.remapKeys(
+        userId,
+        target.plan.certain,
+      );
+      notify.success(
+        `${t("content.update_guard.carried_over", "Progress carried over.")} (${applied})`,
+      );
+    } catch {
+      notify.error(
+        t(
+          "content.update_guard.carry_over_failed",
+          "The update was applied, but the progress could not be carried over.",
+        ),
+      );
+    }
   };
   const dismissUpdateGuard = () => setUpdateGuard(null);
 

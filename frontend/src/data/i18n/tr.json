@@ -2186,7 +2186,12 @@
       "title": "Güncelleme bazı tekrar ilerlemesini sıfırlayabilir",
       "message": "\"{title}\" güncellemesi, zaten öğrenmekte olduğun içeriği değiştirir. Kayıtlı ilerlemesi olan yaklaşık {cards} tekrar kartı ve {lessons} ders yeni sürümle artık eşleşmez ve sıfırlanır. Tamamladığın dersler kalır; yalnızca değişen tekrarlar etkilenir.",
       "confirm": "Yine de güncelle",
-      "cancel": "Mevcut sürümü koru"
+      "cancel": "Mevcut sürümü koru",
+      "carry_over_label": "Hâlâ eşleşen ilerlemeyi koru",
+      "preview_more": "ve {count} tane daha",
+      "unmappable": "{count} tanesi güvenle eşleştirilemiyor ve sıfırlanacak. Orada sıra veya sayı değişti, bu yüzden tahmin yürütülmüyor.",
+      "carried_over": "İlerleme korundu.",
+      "carry_over_failed": "Güncelleme uygulandı, ancak ilerleme korunamadı."
     },
     "recovery": {
       "title": "Düzeltilen dersler için tekrar ilerlemesini geri yükle",

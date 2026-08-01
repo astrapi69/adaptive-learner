@@ -2186,7 +2186,12 @@
       "title": "La mise à jour peut réinitialiser une partie des révisions",
       "message": "Mettre à jour « {title} » modifie du contenu que tu apprends déjà. Environ {cards} cartes de révision et {lessons} leçons avec une progression enregistrée ne correspondent plus à la nouvelle version et seraient réinitialisées. Tes leçons terminées restent; seules les révisions modifiées sont concernées.",
       "confirm": "Mettre à jour quand même",
-      "cancel": "Garder la version actuelle"
+      "cancel": "Garder la version actuelle",
+      "carry_over_label": "Conserver la progression qui correspond encore",
+      "preview_more": "et {count} de plus",
+      "unmappable": "{count} ne peuvent pas être attribuées de façon sûre et seront réinitialisées. L'ordre ou le nombre y a changé, donc rien n'est deviné.",
+      "carried_over": "Progression conservée.",
+      "carry_over_failed": "La mise à jour a été appliquée, mais la progression n'a pas pu être conservée."
     },
     "recovery": {
       "title": "Restaurer la progression de révision des leçons corrigées",

@@ -372,7 +372,7 @@ export async function syncUserRepo(
     // silent loss; the next cycle or a manual update retries.
     let held: boolean;
     try {
-      held = (await assessSetUpdate(source, manifestSet.id))?.breaking ?? false;
+      held = (await assessSetUpdate(source, manifestSet.id))?.impact.breaking ?? false;
     } catch {
       held = true;
     }

@@ -2027,6 +2027,11 @@ content:
     message: 'Memperbarui "{title}" mengubah materi yang sedang kamu pelajari. Sekitar {cards} kartu ulasan dan {lessons} pelajaran dengan progres tersimpan tidak lagi cocok dengan versi baru dan akan diatur ulang. Pelajaran yang sudah selesai tetap ada; hanya ulasan yang berubah yang terpengaruh.'
     confirm: 'Perbarui saja'
     cancel: 'Pertahankan versi saat ini'
+    carry_over_label: 'Pertahankan kemajuan yang masih cocok'
+    preview_more: 'dan {count} lainnya'
+    unmappable: '{count} tidak dapat dipetakan dengan pasti dan akan direset. Urutan atau jumlahnya berubah di sana, jadi tidak ada yang ditebak.'
+    carried_over: 'Kemajuan dipertahankan.'
+    carry_over_failed: 'Pembaruan diterapkan, tetapi kemajuan tidak dapat dipertahankan.'
   recovery:
     title: 'Pulihkan progres ulasan untuk pelajaran yang diperbaiki'
     message: 'Kami memperbaiki beberapa pelajaran bahasa Jepang, Korea, dan Tionghoa (A1). Kartu ulasan yang sudah Anda buat untuk item yang berubah tidak lagi cocok sehingga tidak dijadwalkan. Anda dapat menautkannya kembali ke pelajaran yang diperbaiki atau memulai ulang satu set. Hanya set ini yang terpengaruh; set Anda yang lain tetap utuh.'

@@ -2027,6 +2027,11 @@ content:
     message: 'Updating "{title}" changes content you are already learning. About {cards} review cards and {lessons} lessons with saved progress no longer match the new version and would be reset. Your finished lessons stay; only the changed review items are affected.'
     confirm: 'Update anyway'
     cancel: 'Keep current version'
+    carry_over_label: 'Carry over what still matches'
+    preview_more: 'and {count} more'
+    unmappable: '{count} cannot be assigned with confidence and will be reset. Their order or number changed, so nothing is guessed.'
+    carried_over: 'Progress carried over.'
+    carry_over_failed: 'The update was applied, but the progress could not be carried over.'
   recovery:
     title: 'Restore review progress for corrected lessons'
     message: 'We corrected some Japanese, Korean and Chinese (A1) lessons. Review cards you already created for the changed items no longer match, so they are not being scheduled. You can relink them to the corrected lessons, or start a set fresh. Only these sets are affected; your other sets are untouched.'

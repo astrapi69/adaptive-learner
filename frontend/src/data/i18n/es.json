@@ -2186,7 +2186,12 @@
       "title": "La actualización puede restablecer parte del repaso",
       "message": "Actualizar «{title}» cambia contenido que ya estás aprendiendo. Unas {cards} tarjetas de repaso y {lessons} lecciones con progreso guardado ya no coinciden con la nueva versión y se restablecerían. Tus lecciones terminadas se mantienen; solo se ven afectados los repasos que cambiaron.",
       "confirm": "Actualizar de todos modos",
-      "cancel": "Conservar la versión actual"
+      "cancel": "Conservar la versión actual",
+      "carry_over_label": "Conservar el progreso que sigue coincidiendo",
+      "preview_more": "y {count} más",
+      "unmappable": "{count} no se pueden asignar con seguridad y se reiniciarán. Ahí cambió el orden o la cantidad, así que no se adivina nada.",
+      "carried_over": "Progreso conservado.",
+      "carry_over_failed": "La actualización se aplicó, pero no se pudo conservar el progreso."
     },
     "recovery": {
       "title": "Restaurar el progreso de repaso de las lecciones corregidas",

@@ -73,6 +73,7 @@ import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
 import { type StatusFilter } from "../../lib/content/browse/set-status-filter";
 import type { ContentSetEntry, SetStatus } from "../../storage/types";
+import UpdateGuardPlanPanel from "../../components/content/UpdateGuardPlanPanel";
 
 /** Community contribution target repo (manual maintainer review). */
 const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
@@ -122,6 +123,10 @@ export default function ContentPage() {
     setCollapsed((prev) => ({ ...prev, [nodeId]: !prev[nodeId] }));
   // "Other source languages" section is collapsed by default.
   const [otherExpanded, setOtherExpanded] = useState(false);
+  // #2308 — the learner's decision on the proposed re-keying. Defaults to on
+  // BECAUSE the pairs are listed right above it: an inference shown in full
+  // and accepted is a decision, an inference applied unseen is not.
+  const [carryOver, setCarryOver] = useState(true);
   // #1240 — grid (rich tree) ⇄ list (compact) view. Default grid;
   // persisted across navigation/reload.
   const [viewMode, setViewMode] = useContentViewMode();
@@ -460,9 +465,19 @@ export default function ContentPage() {
         }
         confirmLabel={t("content.update_guard.confirm", "Update anyway")}
         cancelLabel={t("content.update_guard.cancel", "Keep current version")}
-        onConfirm={() => void confirmUpdate()}
+        onConfirm={() => void confirmUpdate(carryOver)}
         onCancel={dismissUpdateGuard}
-      />
+      >
+        {/* #2308 — the proposed re-keying, shown as a proposal. The checkbox
+            is the decision; nothing is applied without confirming here. */}
+        {updateGuard ? (
+          <UpdateGuardPlanPanel
+            plan={updateGuard.plan}
+            carryOver={carryOver}
+            onCarryOverChange={setCarryOver}
+          />
+        ) : null}
+      </ConfirmDialog>
     </PageContainer>
   );
 }

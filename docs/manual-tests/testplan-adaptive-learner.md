@@ -786,6 +786,29 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       bisherigen Fassung und zeigt "Update verfuegbar" (kein Hintergrund-Dialog,
       kein Datenverlust).
 - [ ] iOS-Standalone (PWA): gleicher manueller Ablauf, Bestaetigung erscheint.
+- [ ] Übernahme-Vorschlag (#2308): Im Bestätigungsdialog erscheint zusätzlich
+      eine Liste "alt -> neu" der Wiederholungen, die übernommen werden könnten,
+      plus ein Haken "Gelernten Fortschritt übernehmen" (standardmäßig gesetzt,
+      WEIL die Paare darüber sichtbar sind).
+- [ ] Mit gesetztem Haken bestätigen: Nach dem Update sind Fehlerzähler, Serie
+      und Beherrschungs-Status an der KORRIGIERTEN Antwort vorhanden (die
+      Wiederholung startet nicht bei null). Toast nennt die Anzahl.
+- [ ] Haken ENTFERNEN und bestätigen: Update läuft, es wird NICHTS übernommen
+      (Verhalten wie vor #2308). Der Haken ist die Entscheidung, nicht Deko.
+- [ ] Nicht zuordenbare Fälle: Wurde in einer Uebung die REIHENFOLGE geändert
+      oder ein Element eingefügt/entfernt, nennt der Dialog diese getrennt
+      ("N lassen sich nicht sicher zuordnen und werden zurückgesetzt"). Prüfen,
+      dass für diese NICHTS übernommen wurde - eine falsche Zuordnung wäre
+      schlimmer als ein Verlust, weil sie unsichtbar ist.
+- [ ] Auto-Sync (24h, verbundenes Nutzer-Repo): Es wird WEDER aktualisiert NOCH
+      etwas übernommen. Die Zuordnung darf nur im manuellen Dialog entstehen.
+- [ ] Zweimal hintereinander bestätigen (Update erneut anstossen): keine
+      doppelte Übernahme, keine Fehlermeldung (idempotent).
+- [ ] Sicherung vorher: Der Hinweis auf eine Sicherung ist ein Angebot, kein
+      Zwang - das Update lässt sich auch ohne Sicherung bestätigen.
+- [ ] iOS-Standalone (PWA): Dialog samt Paar-Liste und Haken ist vollständig
+      lesbar und bedienbar (Liste läuft nicht aus dem Dialog, der Haken ist
+      antippbar), Übernahme funktioniert im Dexie-Modus genauso.
 - [ ] Sprache pruefen (#2160): der Bestaetigungstext erscheint in der App-Sprache
       (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
 

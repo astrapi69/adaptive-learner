@@ -2186,7 +2186,12 @@
       "title": "A atualização pode redefinir parte da revisão",
       "message": "Atualizar «{title}» altera conteúdo que você já está aprendendo. Cerca de {cards} cartões de revisão e {lessons} lições com progresso salvo já não correspondem à nova versão e seriam redefinidos. Suas lições concluídas permanecem; apenas as revisões alteradas são afetadas.",
       "confirm": "Atualizar mesmo assim",
-      "cancel": "Manter a versão atual"
+      "cancel": "Manter a versão atual",
+      "carry_over_label": "Manter o progresso que ainda corresponde",
+      "preview_more": "e mais {count}",
+      "unmappable": "{count} não podem ser atribuídas com segurança e serão reiniciadas. Ali a ordem ou a quantidade mudou, por isso nada é adivinhado.",
+      "carried_over": "Progresso mantido.",
+      "carry_over_failed": "A atualização foi aplicada, mas o progresso não pôde ser mantido."
     },
     "recovery": {
       "title": "Restaurar o progresso de revisão das lições corrigidas",
