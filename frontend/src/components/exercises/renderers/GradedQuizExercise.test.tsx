@@ -147,3 +147,71 @@ describe("GradedQuizExercise: reviewed (locked) reconstruction", () => {
         expect(screen.queryByTestId("graded-quiz-submit")).not.toBeInTheDocument();
     });
 });
+
+describe("GradedQuizExercise: answer-position shuffle (#2317)", () => {
+    const SHUFFLE_EXERCISE = {
+        id: "ex-gq-shuffle",
+        type: "ext:al-graded-quiz",
+        prompt: "Q",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            pass_threshold: 50,
+            questions: [
+                {
+                    prompt: "Pick A",
+                    type: "multiple_choice",
+                    options: [
+                        {text: "A", correct: true},
+                        {text: "B"},
+                        {text: "C"},
+                        {text: "D"},
+                    ],
+                    points: 1,
+                },
+            ],
+        },
+    } as unknown as ContentLessonExercise;
+
+    function correctOptionPosition(id: string): number {
+        const {unmount} = render(
+            <GradedQuizExercise
+                exercise={{...SHUFFLE_EXERCISE, id}}
+                onComplete={vi.fn()}
+            />,
+        );
+        const block = screen.getByTestId("graded-quiz-question-0");
+        const labels = Array.from(block.querySelectorAll("label"));
+        const pos = labels.findIndex((l) => l.textContent?.trim() === "A");
+        unmount();
+        return pos;
+    }
+
+    it("does not place the correct option at a fixed display position across exercises", () => {
+        const positions = new Set<number>();
+        for (let i = 0; i < 40; i++) {
+            positions.add(correctOptionPosition(`ex-gq-${i}`));
+        }
+        expect(positions.size).toBeGreaterThan(1);
+    });
+
+    it("grades by option text regardless of display order", () => {
+        const onComplete = vi.fn();
+        render(
+            <GradedQuizExercise
+                exercise={{...SHUFFLE_EXERCISE, id: "ex-gq-grade"}}
+                onComplete={onComplete}
+            />,
+        );
+        fireEvent.click(
+            within(screen.getByTestId("graded-quiz-question-0")).getByRole(
+                "checkbox",
+                {name: "A"},
+            ),
+        );
+        fireEvent.click(screen.getByTestId("graded-quiz-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 1}),
+        );
+    });
+});

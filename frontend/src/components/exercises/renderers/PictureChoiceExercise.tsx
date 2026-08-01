@@ -36,6 +36,7 @@ import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
+import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
 
 import {useAsset} from "../../../hooks/ui/useAsset";
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -269,6 +270,16 @@ function PictureChoiceExercise(
 ) {
     const {t} = useI18n();
     const choices = useMemo(() => _parseChoices(exercise.images), [exercise.images]);
+    // #2317: shuffle the DISPLAY order so the correct tile isn't positionally
+    // predictable (shipped content authors it first ~87% of the time). Each
+    // Choice keeps its authored ``index``, so scoring, the SRS element_key and
+    // the persisted ``raw_answer.selected`` stay content-based - the shuffle
+    // touches only what the user sees. Seeded by ``exercise.id`` so the order
+    // is deterministic and stable within a session (no jitter while reading).
+    const displayChoices = useMemo(
+        () => seededShuffle(choices, exercise.id),
+        [choices, exercise.id],
+    );
     const reviewedPicture =
         reviewed?.kind === "picture_choice" ? reviewed : null;
 
@@ -317,7 +328,7 @@ function PictureChoiceExercise(
     // overlay (``?``) for the full catalogue.
     const numberShortcuts = useMemo<ShortcutDefinition[]>(
         () =>
-            choices.slice(0, 9).map((choice, position) => ({
+            displayChoices.slice(0, 9).map((choice, position) => ({
                 id: `picture-choice-${choice.index}`,
                 key: String(position + 1),
                 context: "lesson",
@@ -327,7 +338,7 @@ function PictureChoiceExercise(
         // handleSelect closes over `submitted`; it early-returns after
         // submit, and the hook is also disabled below.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [choices],
+        [displayChoices],
     );
     useKeyboardShortcuts(numberShortcuts, {enabled: !submitted});
 
@@ -381,7 +392,7 @@ function PictureChoiceExercise(
                     "Image choices",
                 )}
             >
-                {choices.map((choice) => (
+                {displayChoices.map((choice) => (
                     <li key={choice.index}>
                         <PictureChoiceTile
                             choice={choice}

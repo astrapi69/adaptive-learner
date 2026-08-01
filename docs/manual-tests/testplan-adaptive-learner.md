@@ -332,6 +332,16 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verstaendlich)
 - [ ] Picture Choice: Kacheln GLEICHE Hoehe
+- [ ] Antwort-Reihenfolge gemischt (#2317): eine Bildauswahl (picture_choice)
+      mehrfach in verschiedenen Lektionen oeffnen - die richtige Kachel steht
+      NICHT immer an derselben Stelle (frueher durchgaengig die erste). Innerhalb
+      EINER Sitzung bleibt die Reihenfolge stabil (kein Springen beim erneuten
+      Ansehen derselben Uebung). Ein richtiger Fingertipp wird weiterhin als
+      richtig, ein falscher als falsch gewertet (Bewertung + Wiederholungs-
+      fortschritt inhaltsbasiert, nicht positionsbasiert). Gleiches fuer die
+      Optionen in ext:al-graded-quiz und ext:al-reading-comprehension.
+      iOS PWA/Standalone: dieselbe Pruefung auf dem zum Home-Bildschirm
+      hinzugefuegten Web-App-Icon durchfuehren.
 - [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
