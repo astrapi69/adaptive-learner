@@ -1783,7 +1783,8 @@
     "page": {
       "title": "Αποθετήριο μάθησης",
       "rendered_at": "Δημιουργήθηκε στις",
-      "language": "Γλώσσα"
+      "language": "Γλώσσα",
+      "target_language": "Γλώσσα-στόχος"
     },
     "action": {
       "rerender": "Επανέκδοση",
@@ -3770,6 +3771,7 @@
       "all": "Όλα",
       "language": "Γλώσσα",
       "all_languages": "Όλες οι γλώσσες",
+      "all_target_languages": "Όλες οι γλώσσες-στόχοι",
       "level": "Επίπεδο",
       "domain": "Τομέας",
       "trust": "Εμπιστοσύνη",

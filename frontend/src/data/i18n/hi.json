@@ -3769,7 +3769,9 @@
     "filter": {
       "all": "सभी",
       "language": "भाषा",
+      "target_language": "लक्ष्य भाषा",
       "all_languages": "सभी भाषाएँ",
+      "all_target_languages": "सभी लक्ष्य भाषाएँ",
       "level": "स्तर",
       "domain": "क्षेत्र",
       "trust": "विश्वास",

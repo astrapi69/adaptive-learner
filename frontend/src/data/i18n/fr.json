@@ -1783,7 +1783,8 @@
     "page": {
       "title": "Dépôt d'apprentissage",
       "rendered_at": "Généré le",
-      "language": "Langue"
+      "language": "Langue",
+      "target_language": "Langue cible"
     },
     "action": {
       "rerender": "Régénérer",
@@ -3770,6 +3771,7 @@
       "all": "Tous",
       "language": "Langue",
       "all_languages": "Toutes les langues",
+      "all_target_languages": "Toutes les langues cibles",
       "level": "Niveau",
       "domain": "Domaine",
       "trust": "Confiance",

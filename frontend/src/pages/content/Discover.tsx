@@ -25,6 +25,7 @@ import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,
   availableSourceLanguages,
+  availableTargetLanguages,
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
@@ -32,6 +33,7 @@ import {
   isSetDownloaded,
   queryDiscoverSets,
   sourceLanguageCounts,
+  targetLanguageCounts,
   type DiscoverFilters,
   type DiscoverSort,
 } from "../../lib/content/repos/discover-index";
@@ -212,6 +214,37 @@ export default function Discover() {
   // the loaded catalogue actually carries a machine-origin set (generated /
   // reviewed), so the bar never grows a dead option (EXP-048 #2321).
   const showReviewFacet = useMemo(() => hasReviewableSets(allSets), [allSets]);
+
+  // Target-language facet (#2322): the SECOND axis a language learner searches
+  // by. Its options are scoped to the active SOURCE language (a de learner is
+  // offered the targets that exist for de), so the count on each mark is honest
+  // for the current view, and sorted by that count (most material first).
+  const sourceScopedSets = useMemo(
+    () =>
+      allSets.filter(
+        (set) =>
+          !effectiveSourceLanguage ||
+          set.source_language === effectiveSourceLanguage,
+      ),
+    [allSets, effectiveSourceLanguage],
+  );
+  const targetLanguageOptions = useMemo(() => {
+    const counts = targetLanguageCounts(sourceScopedSets);
+    const codes = availableTargetLanguages(sourceScopedSets).sort(
+      (a, b) => (counts[b] ?? 0) - (counts[a] ?? 0) || a.localeCompare(b),
+    );
+    return [
+      {
+        value: "",
+        label: t("discover.filter.all_target_languages", "All target languages"),
+      },
+      ...codes.map((code) => ({
+        value: code,
+        label: `${languageDisplayName(code, lang)} (${counts[code] ?? 0})`,
+      })),
+    ];
+  }, [sourceScopedSets, t, lang]);
+  const showTargetFacet = targetLanguageOptions.length > 1;
 
   const filterDefs: FilterDef[] = useMemo(() => {
     const all = { value: "", label: t("discover.filter.all", "All") };
@@ -412,6 +445,20 @@ export default function Discover() {
           onChange={setLangChoice}
           testId="discover-language-filter"
         />
+        {/* #2322 — the target (learned) language is the second axis of a
+            language search, and just as always-visible as the source. Shown
+            once the current source offers more than one target. */}
+        {showTargetFacet && (
+          <FilterMenuButton
+            label={t("discover.filter.target_language", "Target language")}
+            options={targetLanguageOptions}
+            value={filters.targetLanguage}
+            onChange={(value) =>
+              setFilters((prev) => ({ ...prev, targetLanguage: value }))
+            }
+            testId="discover-target-filter"
+          />
+        )}
       </div>
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">

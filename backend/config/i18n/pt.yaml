@@ -1660,6 +1660,7 @@ repo:
     title: "Repositório de aprendizagem"
     rendered_at: "Gerado em"
     language: "Idioma"
+    target_language: "Idioma-alvo"
   action:
     rerender: "Regenerar"
     download_zip: "Baixar ZIP"
@@ -3460,6 +3461,7 @@ discover:
     all: "Todos"
     language: "Idioma"
     all_languages: "Todos os idiomas"
+    all_target_languages: "Todos os idiomas-alvo"
     level: "Nível"
     domain: "Área"
     trust: "Confiança"

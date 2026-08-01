@@ -1665,6 +1665,7 @@ repo:
     title: "Lern-Repository"
     rendered_at: "Generiert am"
     language: "Sprache"
+    target_language: "Zielsprache"
   action:
     rerender: "Neu generieren"
     download_zip: "ZIP herunterladen"
@@ -3464,6 +3465,7 @@ discover:
     all: "Alle"
     language: "Sprache"
     all_languages: "Alle Sprachen"
+    all_target_languages: "Alle Zielsprachen"
     level: "Niveau"
     domain: "Bereich"
     trust: "Vertrauen"

@@ -1660,6 +1660,7 @@ repo:
     title: "学習リポジトリ"
     rendered_at: "生成日時"
     language: "言語"
+    target_language: "学習言語"
   action:
     rerender: "再生成"
     download_zip: "ZIP をダウンロード"
@@ -3460,6 +3461,7 @@ discover:
     all: "すべて"
     language: "言語"
     all_languages: "すべての言語"
+    all_target_languages: "すべての学習言語"
     level: "レベル"
     domain: "分野"
     trust: "信頼度"

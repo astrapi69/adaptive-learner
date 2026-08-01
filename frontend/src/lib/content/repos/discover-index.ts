@@ -53,6 +53,11 @@ export interface DiscoverFilters {
   /** BCP-47 code matched against the set's SOURCE (instruction) language.
    *  The visible, locale-defaulted, persisted language facet (#1343). */
   sourceLanguage: string;
+  /** BCP-47 code matched against the set's TARGET (learned) language
+   *  (EXP-048 #2322). ``""`` = every target. With the source language this
+   *  is the pair a language learner searches by; ``target_language`` is in
+   *  45/45 index entries but was never filterable before. */
+  targetLanguage: string;
   /** CEFR level (a1..c2), exact match. */
   level: string;
   /** Content domain (language / ai / psychology / …), exact match. */
@@ -72,6 +77,7 @@ export interface DiscoverFilters {
 export const EMPTY_FILTERS: DiscoverFilters = {
   query: "",
   sourceLanguage: "",
+  targetLanguage: "",
   level: "",
   domain: "",
   trust: "",
@@ -92,6 +98,9 @@ export function matchesQuery(set: SearchableSet, normalizedQuery: string): boole
 /** True when the set passes every active (non-empty) facet of ``filters``. */
 export function passesFilters(set: SearchableSet, filters: DiscoverFilters): boolean {
   if (filters.sourceLanguage && set.source_language !== filters.sourceLanguage) {
+    return false;
+  }
+  if (filters.targetLanguage && set.target_language !== filters.targetLanguage) {
     return false;
   }
   if (filters.level && set.level !== filters.level) return false;
@@ -184,6 +193,27 @@ export function sourceLanguageCounts(
   for (const set of sets) {
     if (!set.source_language) continue;
     counts[set.source_language] = (counts[set.source_language] ?? 0) + 1;
+  }
+  return counts;
+}
+
+/** Distinct non-empty TARGET (learned) language codes present, sorted.
+ *  Drives the target-language facet (EXP-048 #2322). */
+export function availableTargetLanguages(sets: SearchableSet[]): string[] {
+  const codes = new Set<string>();
+  for (const set of sets) if (set.target_language) codes.add(set.target_language);
+  return [...codes].sort();
+}
+
+/** How many sets carry each TARGET language code (for "Español (3)" labels
+ *  and count-sorting the target facet). */
+export function targetLanguageCounts(
+  sets: SearchableSet[],
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const set of sets) {
+    if (!set.target_language) continue;
+    counts[set.target_language] = (counts[set.target_language] ?? 0) + 1;
   }
   return counts;
 }

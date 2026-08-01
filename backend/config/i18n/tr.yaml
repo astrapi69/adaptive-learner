@@ -1660,6 +1660,7 @@ repo:
     title: "Öğrenme deposu"
     rendered_at: "Oluşturulma"
     language: "Dil"
+    target_language: "Hedef dil"
   action:
     rerender: "Yeniden oluştur"
     download_zip: "ZIP indir"
@@ -3460,6 +3461,7 @@ discover:
     all: "Tümü"
     language: "Dil"
     all_languages: "Tüm diller"
+    all_target_languages: "Tüm hedef diller"
     level: "Seviye"
     domain: "Alan"
     trust: "Güven"

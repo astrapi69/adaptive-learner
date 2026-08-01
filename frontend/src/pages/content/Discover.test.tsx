@@ -257,6 +257,45 @@ describe("Discover page", () => {
     expect(localStorage.getItem("adaptive-learner.discover_source_language")).toBe("en");
   });
 
+  // --- EXP-048 #2322: target-language facet ---
+
+  it("filters by the always-visible target-language facet with counts", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "de-es", name: "Spanisch", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-fr", name: "Franzoesisch", source_language: "de", target_language: "fr" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    // The target facet is ALWAYS visible (never behind the collapsible panel).
+    expect(screen.getByTestId("discover-target-filter")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-filters")).toBeNull();
+    fireEvent.click(screen.getByTestId("discover-target-filter"));
+    fireEvent.click(screen.getByTestId("discover-target-filter-es"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+    expect(screen.queryByText("Franzoesisch")).toBeNull();
+  });
+
+  it("target options are scoped to the active source language and count-sorted", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "de-es1", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-es2", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-fr", source_language: "de", target_language: "fr" }),
+      makeSet({ id: "en-ja", source_language: "en", target_language: "ja" }),
+    ]);
+    renderDiscover(); // de source default
+    await waitFor(() => expect(screen.getByTestId("discover-target-filter")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-target-filter"));
+    // ja belongs to an en-source set only, so it is NOT offered under de.
+    expect(screen.queryByTestId("discover-target-filter-ja")).toBeNull();
+    // es (2) and fr (1) are offered; es outranks fr by count.
+    const es = screen.getByTestId("discover-target-filter-es");
+    const fr = screen.getByTestId("discover-target-filter-fr");
+    expect(es).toHaveTextContent("ES (2)");
+    expect(fr).toHaveTextContent("FR (1)");
+    expect(es.compareDocumentPosition(fr) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   // --- EXP-048 #2321: Durchsichtsstand reaches the end of the chain ---
 
   it("surfaces review_status at the END of the chain: badge on a generated card + the Durchsicht facet", async () => {

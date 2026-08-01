@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import {
   availableDomains,
   availableSourceLanguages,
+  availableTargetLanguages,
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
@@ -15,6 +16,7 @@ import {
   queryDiscoverSets,
   sortDiscoverSets,
   sourceLanguageCounts,
+  targetLanguageCounts,
   type DiscoverFilters,
 } from "./discover-index";
 import { normalizeSearchText } from "../browse/content-search";
@@ -71,6 +73,16 @@ describe("passesFilters", () => {
     expect(passesFilters(set, { ...EMPTY_FILTERS, sourceLanguage: "fr" })).toBe(false);
     // Empty = all languages.
     expect(passesFilters(set, { ...EMPTY_FILTERS, sourceLanguage: "" })).toBe(true);
+  });
+
+  it("targetLanguage matches the target (learned) language only (EXP-048 #2322)", () => {
+    const set = makeSet({ source_language: "de", target_language: "es" });
+    expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "es" })).toBe(true);
+    // The source language must NOT satisfy the target-language facet.
+    expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "de" })).toBe(false);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "fr" })).toBe(false);
+    // Empty = every target.
+    expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "" })).toBe(true);
   });
 
   it("level + domain are exact", () => {
@@ -208,6 +220,25 @@ describe("available* option helpers", () => {
       makeSet({ source_language: "" }),
     ];
     expect(sourceLanguageCounts(counted)).toEqual({ de: 2, el: 1 });
+  });
+  it("target languages: distinct TARGET codes only, sorted (source ignored)", () => {
+    expect(availableTargetLanguages(sets)).toEqual(["es"]);
+    const mixed = [
+      makeSet({ source_language: "de", target_language: "fr" }),
+      makeSet({ source_language: "en", target_language: "es" }),
+      makeSet({ source_language: "de", target_language: "es" }),
+      makeSet({ source_language: "de", target_language: "" }),
+    ];
+    expect(availableTargetLanguages(mixed)).toEqual(["es", "fr"]);
+  });
+  it("counts sets per target language", () => {
+    const counted = [
+      makeSet({ target_language: "es" }),
+      makeSet({ target_language: "es" }),
+      makeSet({ target_language: "fr" }),
+      makeSet({ target_language: "" }),
+    ];
+    expect(targetLanguageCounts(counted)).toEqual({ es: 2, fr: 1 });
   });
   it("levels sorted", () => {
     expect(availableLevels(sets)).toEqual(["a1", "b1"]);
