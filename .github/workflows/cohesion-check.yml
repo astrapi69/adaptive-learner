@@ -48,7 +48,7 @@ jobs:
       # install cache below replaces it. #1506: this job still used npm +
       # the deleted package-lock.json after the Bun migration and failed on
       # every PR at the setup-node cache step.
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
 
