@@ -11,6 +11,7 @@ import {
   isUserGeneratedSet,
   lessonFilename,
   removeLessonFromSet,
+  removeLessonsFromSet,
 } from "./delete-lesson";
 import type { ContentLesson, ContentSetEntry } from "../../../../storage/types";
 
@@ -86,6 +87,71 @@ describe("removeLessonFromSet", () => {
     expect(result.found).toBe(false);
     expect(result.input).toBeNull();
     expect(result.remaining).toBe(3);
+  });
+});
+
+describe("removeLessonsFromSet (bulk, #2065)", () => {
+  const lessons = [
+    lesson("01-intro"),
+    lesson("02-body"),
+    lesson("03-mid"),
+    lesson("04-end"),
+  ];
+
+  it("removes every selected lesson in one pass and preserves the order of the rest", () => {
+    const result = removeLessonsFromSet(entry(), lessons, [
+      "02-body.json",
+      "04-end.json",
+    ]);
+    expect(result.found).toEqual(["02-body.json", "04-end.json"]);
+    expect(result.emptied).toBe(false);
+    expect(result.remaining).toBe(2);
+    // 01, 03 keep their relative order (no renumber, no resort).
+    expect(result.input?.lessons.map((l) => l.id)).toEqual(["01-intro", "03-mid"]);
+    expect(result.input?.title).toBe("Mein Buch");
+    expect(result.input?.set_id).toBe("book42");
+  });
+
+  it("flags emptied + input=null when the selection removes ALL lessons", () => {
+    const result = removeLessonsFromSet(entry(), lessons, [
+      "01-intro.json",
+      "02-body.json",
+      "03-mid.json",
+      "04-end.json",
+    ]);
+    expect(result.emptied).toBe(true);
+    expect(result.remaining).toBe(0);
+    expect(result.input).toBeNull();
+    expect(result.found).toHaveLength(4);
+  });
+
+  it("reports only the filenames that actually matched (ignores unknown ones)", () => {
+    const result = removeLessonsFromSet(entry(), lessons, [
+      "02-body.json",
+      "99-ghost.json",
+    ]);
+    expect(result.found).toEqual(["02-body.json"]);
+    expect(result.remaining).toBe(3);
+    expect(result.input?.lessons.map((l) => l.id)).toEqual([
+      "01-intro",
+      "03-mid",
+      "04-end",
+    ]);
+  });
+
+  it("is a no-op (found empty, input null) when nothing matches", () => {
+    const result = removeLessonsFromSet(entry(), lessons, ["ghost.json"]);
+    expect(result.found).toEqual([]);
+    expect(result.input).toBeNull();
+    expect(result.emptied).toBe(false);
+    expect(result.remaining).toBe(4);
+  });
+
+  it("an empty selection removes nothing", () => {
+    const result = removeLessonsFromSet(entry(), lessons, []);
+    expect(result.found).toEqual([]);
+    expect(result.input).toBeNull();
+    expect(result.remaining).toBe(4);
   });
 });
 

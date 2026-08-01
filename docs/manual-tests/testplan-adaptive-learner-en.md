@@ -866,6 +866,43 @@ SEVERAL lessons (e.g. after a book import) → "Manage lessons".
       the lesson → import the backup → the lesson is back (correct: a
       backup is a snapshot, NOT a bug)
 
+### Delete several lessons at once (#2065)
+
+Location: My Content (`/content?tab=my`) → My Lessons → a set with
+SEVERAL lessons → "Manage lessons".
+
+- [ ] Prep: a multi-lesson own set (e.g. a book import); play 2-3 lessons
+      to create progress + review cards
+- [ ] "Select lessons" turns on a selection MODE: a checkbox appears on
+      each row and the per-row actions (move, play, edit, delete) are
+      hidden while it is active
+- [ ] "Select all" checks every lesson; clicking again clears them;
+      "N selected" counts correctly
+- [ ] "Delete N" is disabled while nothing is selected
+- [ ] Delete opens ONE confirm dialog that names the COUNT and says it
+      CANNOT be undone; the dialog visibly RECOMMENDS a backup first
+      (without forcing it)
+- [ ] The "Also delete my learning progress" checkbox shows the
+      AGGREGATED REAL review-card count across the selected lessons
+- [ ] Delete WITHOUT the checkbox: exactly the selected lessons disappear
+      in ONE step, lesson_count drops accordingly, NON-selected sibling
+      lessons are untouched
+- [ ] Order: the remaining lessons keep their order (no renumbering),
+      deep links to them still work
+- [ ] Delete WITH the checkbox: progress + review cards of ONLY the
+      selected lessons are gone, sibling progress remains
+- [ ] Select and delete ALL lessons: the dialog says BEFOREHAND that the
+      WHOLE set will be deleted; afterwards the set is gone from My Content
+- [ ] Keyboard-operable dialog: the Delete button is focused,
+      Escape/Cancel dismisses; the checkboxes carry an aria-label
+- [ ] Check BOTH modes: desktop/server (API) AND GitHub Pages (Dexie)
+- [ ] Backup time-point: make a backup (.alb) BEFORE deleting → delete
+      several lessons → import the backup → the lessons are back (correct:
+      a backup is a snapshot, NOT a bug)
+- [ ] iOS standalone (PWA added to the Home Screen, Dexie mode): the
+      selection mode, the checkboxes and the confirm dialog are usable by
+      touch; the action bar wraps cleanly on a narrow screen (no overflow)
+
 ### Disconnect content repo vs. delete progress (#1651 / #1652)
 
 Location: Settings → Data → content-repo list → "Remove".
