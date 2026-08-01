@@ -1,0 +1,100 @@
+# Projekt-Ergaenzung zur kuratierten Wortliste von manuscript-tools
+# (umlaut-words-extra, der dort vorgesehene Mechanismus fuer eigenes
+# Vokabular). Gelesen von scripts/fix_docs_umlauts.py und - nach dem
+# Gate-Tausch - von scripts/verify_docs_hygiene.py.
+#
+# Herkunft (#2311): Fixpunkt-Iteration ueber den docs-Baum mit
+# manuscript-tools 0.11.0. Jedes Wort hat in einem echten Trockenlauf
+# nachweislich eine halb korrigierte Zeile erzeugt - es stand in einer
+# Zeile, die der Fixer angefasst hat, und blieb als ASCII-Rest stehen.
+# Drei Runden bis zum Fixpunkt: 71 Treiber, dann 7 neue, dann keine.
+#
+# Aufnahmekriterien wie stromaufwaerts: jedes ae/oe/ue ist ein Umlaut,
+# die korrekte Form braucht kein ss, keine Eigennamen. Erweitern nur aus
+# Evidenz - nie zu einer Digraph-Suche verallgemeinern.
+#
+# Ein Wort pro Zeile, kleingeschrieben. Leerzeilen und # werden ignoriert.
+
+# --- allgemeines Deutsch (Kandidaten fuer einen zweiten Beitrag
+#     stromaufwaerts, siehe astrapi69/manuscript-tools#7) ---
+aehnliche
+aeltere
+aendert
+angehaengt
+ausfuehrbar
+ausfuehrliche
+ausgewaehlte
+ausloesen
+autoritaet
+befuellt
+begruendet
+beschraenkt
+bloecke
+buecher
+domaene
+domaenen
+eigenstaendige
+erfuellen
+erklaere
+faellig
+frueheren
+fuehre
+fuellt
+geaenderte
+geaenderten
+gedaempfte
+gestuetzte
+gewaehlte
+gueltige
+gueltigen
+haekchen
+hoehere
+identitaeten
+kompatibilitaet
+kuenftiger
+laeufen
+laeuft
+luecken
+menue
+oeffentliche
+primaer
+primaere
+raeumt
+rueckfrage
+ueberblick
+uebergaenge
+ueberlappung
+ueberlebt
+ueberschneidet
+ueberschreiben
+ueberschreibt
+uebrige
+unabhaengige
+unberuehrt
+ungeprueft
+unveraendert
+verfuegbarkeit
+vollstaendiger
+vorausgefuellt
+zugaenglich
+zugehoerige
+zukuenftige
+zurueckgesetzt
+zurueckgestellt
+
+# --- Projektvokabular (bleibt hier, gehoert nicht in die geteilte
+#     Liste - so sagt es auch das Modul-Docstring stromaufwaerts) ---
+beispielsaetzen
+bestaetigungsdialog
+datenintegritaet
+leseverstaendnis
+paritaet
+paritaets
+pruef
+qualitaets
+randfaelle
+rueckwaertswechsel
+uebungs
+uebungstyp
+uebungstypen
+zusatzpruefungen
