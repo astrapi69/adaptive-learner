@@ -3790,7 +3790,14 @@
       "language": "Idiomas",
       "ai": "IA",
       "psychology": "Psicología",
-      "programming": "Programación"
+      "programming": "Programación",
+      "knowledge": "Conocimiento",
+      "math": "Matemáticas",
+      "technology": "Tecnología",
+      "software": "Software",
+      "philosophy": "Filosofía",
+      "dog-training": "Adiestramiento canino",
+      "traffic-knowledge": "Educación vial"
     },
     "result": {
       "count": "{n} conjuntos"

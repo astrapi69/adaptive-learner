@@ -3790,7 +3790,14 @@
       "language": "Bahasa",
       "ai": "AI",
       "psychology": "Psikologi",
-      "programming": "Pemrograman"
+      "programming": "Pemrograman",
+      "knowledge": "Pengetahuan",
+      "math": "Matematika",
+      "technology": "Teknologi",
+      "software": "Perangkat lunak",
+      "philosophy": "Filsafat",
+      "dog-training": "Pelatihan anjing",
+      "traffic-knowledge": "Pengetahuan lalu lintas"
     },
     "result": {
       "count": "{n} set"

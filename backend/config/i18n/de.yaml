@@ -3482,6 +3482,13 @@ discover:
     ai: "KI"
     psychology: "Psychologie"
     programming: "Programmierung"
+    knowledge: "Wissen"
+    math: "Mathematik"
+    technology: "Technik"
+    software: "Software"
+    philosophy: "Philosophie"
+    dog-training: "Hundetraining"
+    traffic-knowledge: "Verkehrskunde"
   result:
     count: "{n} Sets"
   empty:

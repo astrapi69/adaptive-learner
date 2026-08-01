@@ -3790,7 +3790,14 @@
       "language": "Langues",
       "ai": "IA",
       "psychology": "Psychologie",
-      "programming": "Programmation"
+      "programming": "Programmation",
+      "knowledge": "Savoir",
+      "math": "Mathématiques",
+      "technology": "Technologie",
+      "software": "Logiciel",
+      "philosophy": "Philosophie",
+      "dog-training": "Éducation canine",
+      "traffic-knowledge": "Code de la route"
     },
     "result": {
       "count": "{n} ensembles"

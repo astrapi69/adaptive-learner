@@ -3478,6 +3478,13 @@ discover:
     ai: "IA"
     psychology: "Psicologia"
     programming: "Programação"
+    knowledge: "Conhecimento"
+    math: "Matemática"
+    technology: "Tecnologia"
+    software: "Software"
+    philosophy: "Filosofia"
+    dog-training: "Adestramento de cães"
+    traffic-knowledge: "Educação no trânsito"
   result:
     count: "{n} conjuntos"
   empty:

@@ -3478,6 +3478,13 @@ discover:
     ai: "AI"
     psychology: "心理学"
     programming: "プログラミング"
+    knowledge: "知識"
+    math: "数学"
+    technology: "テクノロジー"
+    software: "ソフトウェア"
+    philosophy: "哲学"
+    dog-training: "犬のトレーニング"
+    traffic-knowledge: "交通知識"
   result:
     count: "{n} セット"
   empty:

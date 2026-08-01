@@ -3790,7 +3790,14 @@
       "language": "Languages",
       "ai": "AI",
       "psychology": "Psychology",
-      "programming": "Programming"
+      "programming": "Programming",
+      "knowledge": "Knowledge",
+      "math": "Mathematics",
+      "technology": "Technology",
+      "software": "Software",
+      "philosophy": "Philosophy",
+      "dog-training": "Dog training",
+      "traffic-knowledge": "Traffic knowledge"
     },
     "result": {
       "count": "{n} sets"

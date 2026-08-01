@@ -3478,6 +3478,13 @@ discover:
     ai: "Yapay zeka"
     psychology: "Psikoloji"
     programming: "Programlama"
+    knowledge: "Bilgi"
+    math: "Matematik"
+    technology: "Teknoloji"
+    software: "Yazılım"
+    philosophy: "Felsefe"
+    dog-training: "Köpek eğitimi"
+    traffic-knowledge: "Trafik bilgisi"
   result:
     count: "{n} set"
   empty:

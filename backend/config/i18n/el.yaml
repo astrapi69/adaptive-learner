@@ -3480,6 +3480,13 @@ discover:
     ai: "ΤΝ"
     psychology: "Ψυχολογία"
     programming: "Προγραμματισμός"
+    knowledge: "Γνώση"
+    math: "Μαθηματικά"
+    technology: "Τεχνολογία"
+    software: "Λογισμικό"
+    philosophy: "Φιλοσοφία"
+    dog-training: "Εκπαίδευση σκύλων"
+    traffic-knowledge: "Κυκλοφοριακή αγωγή"
   result:
     count: "{n} σύνολα"
   empty:
