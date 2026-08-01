@@ -21,6 +21,21 @@ désinstaller.
 Le port est **8501** par défaut et peut être changé dans la fenêtre du
 lanceur ; s'il est occupé, le lanceur se rabat sur un port libre.
 
+## Qui peut accéder à l'application
+
+Par défaut, l'application n'est accessible **que depuis cet ordinateur**
+(`127.0.0.1`). C'est voulu : elle n'a pas d'authentification et elle
+contient vos clés de fournisseurs d'IA. Visible sur le réseau, n'importe
+quel appareil du même réseau - un LAN d'entreprise, le wifi d'un hôtel
+ou d'une conférence - pourrait tout simplement l'ouvrir et l'utiliser.
+
+Y accéder depuis un autre appareil, par exemple votre téléphone sur
+votre propre wifi, reste possible mais devient un choix délibéré :
+définissez `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` dans le fichier
+`.env`. Ne le faites que sur un réseau de confiance, et gardez à
+l'esprit que toute personne s'y trouvant aura alors le même accès que
+vous.
+
 ## Prérequis : Docker - le lanceur le vérifie lui-même
 
 Le lanceur nécessite un Docker en cours d'exécution, car l'application
