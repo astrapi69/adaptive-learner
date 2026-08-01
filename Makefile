@@ -801,6 +801,12 @@ verify-docs-hygiene: ## Docs hygiene: German-umlaut substitute ratchet + explora
 verify-docs-hygiene-raise: ## Lower the umlaut-substitute baseline after a genuine reduction
 	@python3 scripts/verify_docs_hygiene.py --update-baseline
 
+fix-docs-umlauts: ## Trockenlauf: welche ASCII-Ersatzschreibungen der Doku sind korrigierbar, ohne Zeilen zu mischen (#2311)
+	@cd backend && poetry run python ../scripts/fix_docs_umlauts.py
+
+fix-docs-umlauts-apply: ## Korrektur schreiben - nur wenn der Trockenlauf keine gemischte Zeile meldet (#2311)
+	@cd backend && poetry run python ../scripts/fix_docs_umlauts.py --apply
+
 verify-doc-refs: ## Doc refs (#2254): make targets, repo paths and constants named in docs must exist
 	@python3 scripts/verify_doc_refs.py
 

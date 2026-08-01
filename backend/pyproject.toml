@@ -51,6 +51,10 @@ pip-audit = "^2.10.0"
 pytest-randomly = "^4.1.0"
 pytest-testmon = "^2.2.0"
 datamodel-code-generator = ">=0.68.1,<0.72.0"
+# Exakt gepinnt, nicht "^": die kuratierte Wortliste ist das Orakel der
+# Doku-Hygiene (#2311). Eine schrumpfende Liste saehe sonst aus wie ein
+# Gewinn - siehe quality-checks.md, Fremdwerkzeug-Klasse.
+manuscript-tools = "0.11.0"
 
 [tool.ruff]
 line-length = 100
