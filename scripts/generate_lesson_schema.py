@@ -18,13 +18,15 @@ the mirror and regenerates.
 
 Outputs (all under ``<repo>/schema/``):
 
-* ``lesson.schema.json``       -- JSON Schema 2020-12 for a whole lesson
-* ``content-manifest.schema.json`` / ``content-set.schema.json`` -- the
-  set/manifest schemas (used by the content repo's CI)
+* ``content-set.schema.json``  -- the set schema (used by the content repo's CI)
 * ``card.schema.json`` / ``exercise.schema.json`` / ``lesson-step.schema.json``
-* ``quality-rules.json``       -- the shared quality minimums (content
-  repo + app read the same numbers; the engine ships this file, so the
-  numbers are READ from the mirror, not hard-coded here)
+
+The three MIRROR-owned files (``lesson.schema.json``,
+``content-manifest.schema.json``, ``quality-rules.json``) are NOT written
+here. The engine ships them and ``sync_schema_mirror_from_engine`` copies
+their bytes; a second writer would make the byte-parity gates compare two
+producers instead of the mirror (#2265). The quality numbers are still READ
+from the mirror for the frontend artefact.
 
 The JSON is emitted with ``sort_keys=True`` so re-generation is byte-stable;
 ``--check`` re-generates into memory and diffs against the committed files,
@@ -56,7 +58,6 @@ from adaptive_learner_content_loader.schema_export import (
     exercise_schema,
     lesson_schema,
     lesson_step_schema,
-    manifest_schema,
     set_schema,
 )
 
@@ -228,11 +229,15 @@ def build_frontend_quality_rules() -> str:
 
 def build_artefacts() -> dict[str, str]:
     """Return ``{repo-relative path: text}`` for every generated artefact."""
+    # NOT emitted here: lesson.schema.json, content-manifest.schema.json and
+    # quality-rules.json. Those are MIRROR-owned (see
+    # ``sync_schema_mirror_from_engine.MIRRORED``) - the engine ships them and
+    # the mirror copies its bytes. This generator used to re-emit them from its
+    # own serializer, which made the byte-parity gates compare two producers
+    # rather than the mirror; that only ever passed because the engine happened
+    # to serialize the same way up to 0.14.0 (#2265). Pinned by
+    # ``backend/tests/test_schema_single_writer.py``.
     schemas = {
-        "lesson.schema.json": _decorate(lesson_schema(), "lesson.schema.json"),
-        "content-manifest.schema.json": _decorate(
-            manifest_schema(), "content-manifest.schema.json"
-        ),
         "content-set.schema.json": _decorate(set_schema(), "content-set.schema.json"),
         "card.schema.json": _decorate(card_schema(), "card.schema.json"),
         "exercise.schema.json": _decorate(exercise_schema(), "exercise.schema.json"),
@@ -241,17 +246,6 @@ def build_artefacts() -> dict[str, str]:
     artefacts: dict[str, str] = {
         f"{SCHEMA_REL}/{name}": _json(schema) for name, schema in schemas.items()
     }
-    artefacts[f"{SCHEMA_REL}/quality-rules.json"] = _json(
-        {
-            "$schema-version": CURRENT_SCHEMA_VERSION,
-            "_comment": (
-                "GENERATED from scripts/generate_lesson_schema.py (EXP-039). "
-                "Do not edit. Shared quality minimums for the content quality "
-                "gate (app + content repo)."
-            ),
-            "rules": QUALITY_RULES,
-        }
-    )
     artefacts[FRONTEND_QUALITY_REL] = build_frontend_quality_rules()
     for lang, rel in DOC_REL.items():
         artefacts[rel] = build_doc(lang)

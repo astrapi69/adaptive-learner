@@ -97,6 +97,53 @@
       "title": "Assets",
       "type": "array"
     },
+    "attribution": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "author": {
+              "description": "Display name of the person this set's content is attributed to. Attribution, NOT authorization: without accounts or a server the name is unverifiable, and the field claims nothing more.",
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Author",
+              "type": "string"
+            },
+            "derived_from": {
+              "description": "Bounded derivation chain, OLDEST first. Whoever edits and re-shares a foreign set moves the previous author to the END of this list and sets themselves as author; when the list is full, the FIRST entry (the origin) stays and the oldest middle entry is dropped (editor/author rule; the schema enforces only the bound).",
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "author": {
+                    "maxLength": 120,
+                    "minLength": 1,
+                    "title": "Author",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "author"
+                ],
+                "type": "object"
+              },
+              "maxItems": 8,
+              "title": "Derived From",
+              "type": "array"
+            }
+          },
+          "required": [
+            "author"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "engine#90 - schema 1.9 (additive). Content attribution for the set: who wrote it, and the bounded chain it was derived through. PERSONAL DATA: the name travels with the set when it is shared; a consumer app must point that out before it becomes visible (the contributed_by opt-in pattern). Distinct from and never merged with: 'book' (source material), 'ai_validation' (review provenance in free-form metadata), repo-level 'metadata.author' (repo operator) and the lesson-level 'contributed_by' (per-lesson credit).",
+      "title": "Attribution"
+    },
     "book": {
       "anyOf": [
         {
@@ -193,6 +240,24 @@
       "description": "Phase 60 / v1.44.0 \u2014 repo-relative directory where the set's own ``manifest.yaml`` + ``lessons/`` + ``assets/`` live. Enables the source-language tree (e.g. ``sets/de/fr-a1`` for a French-for-German set while the id stays the flat slug ``fr-a1-from-de``). When omitted the loader falls back to the legacy ``sets/{id}`` convention. No leading/trailing slash, no ``..`` segments.",
       "title": "Path"
     },
+    "review_status": {
+      "anyOf": [
+        {
+          "enum": [
+            "authored",
+            "generated",
+            "reviewed"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "engine#94 - schema 1.9 (additive). Three-state review standing derived from ORIGIN, because origin is what makes a set review-worthy: 'authored' = hand-written by a speaker/domain expert, no review required; 'generated' = machine-generated (AI/book/analysis), native-speaker or expert review PENDING; 'reviewed' = machine-generated and reviewed. Absent means 'authored' (legacy hand-written content). Consumers derive 'advertisable as reviewed' as status != 'generated'. Distinct from 'visibility' (display hint, never a quality statement) and from 'ai_validation' (AI check provenance).",
+      "title": "Review Status"
+    },
     "source_language": {
       "default": "en",
       "description": "BCP-47 code of the language the learner ALREADY SPEAKS \u2014 the language the card ``back`` fields, notes and theory text are written in. A 'French A1 for German speakers' set has ``target_language: fr`` + ``source_language: de``. Defaults to ``en`` for pre-v1.2 content (the pilot sets were authored with English explanations).",
@@ -261,5 +326,5 @@
   ],
   "title": "ContentSet",
   "type": "object",
-  "x-schema-version": "1.8"
+  "x-schema-version": "1.9"
 }
