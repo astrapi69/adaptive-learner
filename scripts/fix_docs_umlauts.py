@@ -159,21 +159,48 @@ def is_journal(path: Path, root: Path) -> bool:
     return path.relative_to(root).as_posix().startswith(JOURNAL_PREFIX)
 
 
-def collect_real_german(files: list[Path]) -> set[str]:
-    """Alle Tokens mit echten Umlauten - der Anker gegen Fehlalarme.
+class GermanAnchor:
+    """Der Anker gegen Fehlalarme: kommt die umlautierte Form im Korpus vor?
 
     Ohne ihn meldet spanisch "prueba" oder franzoesisch "langue" einen
     Rest. Mit ihm zaehlt ein Token nur, wenn seine umlautierte Form
     anderswo im Korpus tatsaechlich als deutsches Wort vorkommt.
+
+    Der Vergleich ist ein STAMMTREFFER, kein exakter Tokentreffer
+    (#2313). Deutsche Flexion bricht den exakten Vergleich: "sekundaere"
+    wird zu "sekundäre", im Korpus steht aber "sekundären" - ein
+    Tokenvergleich findet nichts und der Rest entgeht der Erkennung. Da
+    der Anker an das Schreiben gekoppelt ist, wird aus einem zu engen
+    Anker eine Zusicherung ohne Deckung: 24 Zeilen wurden so als null
+    gemeldet.
+
+    Belegt ist eine Form deshalb, wenn sie Praefix eines Korpus-Tokens
+    ist ODER ein Korpus-Token ihr Praefix ist. Die Untergrenze von
+    ``MIN_RESIDUAL_LENGTH`` Zeichen haelt kurze Fragmente draussen, die
+    sonst auf alles passen wuerden.
     """
-    real: set[str] = set()
-    for path in files:
-        text = path.read_text(encoding="utf-8", errors="replace")
-        for match in TOKEN.finditer(text):
-            word = match.group(0).lower()
-            if UMLAUT_CHARS & set(word):
-                real.add(word)
-    return real
+
+    def __init__(self, files: list[Path]) -> None:
+        self.tokens: set[str] = set()
+        self.prefixes: set[str] = set()
+        for path in files:
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for match in TOKEN.finditer(text):
+                word = match.group(0).lower()
+                if UMLAUT_CHARS & set(word):
+                    self.tokens.add(word)
+        for token in self.tokens:
+            for cut in range(MIN_RESIDUAL_LENGTH, len(token)):
+                self.prefixes.add(token[:cut])
+
+    def attests(self, form: str) -> bool:
+        """Ist *form* im Korpus als echtes Deutsch belegt?"""
+        if form in self.tokens or form in self.prefixes:
+            return True
+        return any(form[:cut] in self.tokens for cut in range(MIN_RESIDUAL_LENGTH, len(form)))
+
+    def __len__(self) -> int:
+        return len(self.tokens)
 
 
 def strip_protected(line: str, checker) -> str:
@@ -183,7 +210,7 @@ def strip_protected(line: str, checker) -> str:
     return checker._BARE_URL.sub(" ", line)
 
 
-def find_residuals(line: str, known: frozenset[str], real: set[str], checker) -> list[str]:
+def find_residuals(line: str, known: frozenset[str], anchor: GermanAnchor, checker) -> list[str]:
     """Ersatzschreibungen, die der Lauf in dieser Zeile stehen laesst."""
     residuals = []
     for match in TOKEN.finditer(strip_protected(line, checker)):
@@ -192,7 +219,7 @@ def find_residuals(line: str, known: frozenset[str], real: set[str], checker) ->
             continue
         if not re.search(r"ae|oe|ue", word):
             continue
-        if checker.umlautify(word).lower() in real:
+        if anchor.attests(checker.umlautify(word).lower()):
             residuals.append(word)
     return residuals
 
@@ -204,7 +231,7 @@ def analyse(root: Path, *, apply: bool) -> Report:
     all_files = tracked_markdown(root)
     if not all_files:
         raise ToolingError(f"0 verfolgte Markdown-Dateien unter {root}/docs")
-    real = collect_real_german(all_files)
+    anchor = GermanAnchor(all_files)
     targets = [p for p in all_files if not is_journal(p, root)]
     if not targets:
         raise ToolingError(f"0 Zieldateien unter {root}/docs (Journale ausgenommen)")
@@ -237,11 +264,11 @@ def analyse(root: Path, *, apply: bool) -> Report:
             if in_fence:
                 continue
             if before == after:
-                for word in find_residuals(before, known, real, checker):
+                for word in find_residuals(before, known, anchor, checker):
                     report.stock[word] += 1
                 continue
             report.changed_lines += 1
-            residuals = find_residuals(after, known, real, checker)
+            residuals = find_residuals(after, known, anchor, checker)
             if not residuals:
                 continue
             entry = MixedLine(path=path, before=before, after=after, residuals=residuals)
