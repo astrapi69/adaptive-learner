@@ -3789,6 +3789,9 @@
       "generated_badge": "मशीन-निर्मित",
       "reviewed_badge": "समीक्षित"
     },
+    "chips": {
+      "remove": "हटाएँ: {f}"
+    },
     "sort": {
       "label": "क्रमबद्ध करें",
       "relevance": "प्रासंगिकता",

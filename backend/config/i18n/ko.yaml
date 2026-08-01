@@ -3486,6 +3486,8 @@ discover:
     reviewed_only: "검토된 것만"
     generated_badge: "자동 생성"
     reviewed_badge: "검토됨"
+  chips:
+    remove: "제거: {f}"
   sort:
     label: "정렬"
     relevance: "관련성"

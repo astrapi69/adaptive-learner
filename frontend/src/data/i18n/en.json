@@ -3789,6 +3789,9 @@
       "generated_badge": "Machine-made",
       "reviewed_badge": "Reviewed"
     },
+    "chips": {
+      "remove": "Remove: {f}"
+    },
     "sort": {
       "label": "Sort",
       "relevance": "Relevance",

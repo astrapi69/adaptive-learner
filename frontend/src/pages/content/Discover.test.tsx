@@ -257,6 +257,52 @@ describe("Discover page", () => {
     expect(localStorage.getItem("adaptive-learner.discover_source_language")).toBe("en");
   });
 
+  // --- EXP-048 #2323: active filters as removable marks ---
+
+  it("shows an active panel facet as a permanently-visible removable mark", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "py", name: "Python", source_language: "de", target_language: "de", domain: "programming", level: "b1" }),
+      makeSet({ id: "es", name: "Spanisch", source_language: "de", target_language: "es", domain: "language", level: "a1" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    // Restrict domain via the collapsible panel...
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-domain"), {
+      target: { value: "programming" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    // ...and it appears as a removable mark, visible without the panel — the
+    // fallback `t` returns the raw domain id here.
+    const mark = screen.getByTestId("discover-active-filters-domain");
+    expect(mark).toHaveTextContent("Domain: programming");
+    // Removing the mark clears just that restriction.
+    fireEvent.click(screen.getByTestId("discover-active-filters-remove-domain"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    expect(screen.queryByTestId("discover-active-filters-domain")).toBeNull();
+  });
+
+  it("marks an active search query and clears it via its mark", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "French" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+      { timeout: 1000 },
+    );
+    expect(screen.getByTestId("discover-active-filters-query")).toHaveTextContent("French");
+    fireEvent.click(screen.getByTestId("discover-active-filters-remove-query"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+  });
+
+  it("shows no active-filter marks when only the source-language default is set", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // The source-language default is its own always-visible control (#1699),
+    // not a mark; with nothing else set, the marks row is absent.
+    expect(screen.queryByTestId("discover-active-filters")).toBeNull();
+  });
+
   // --- EXP-048 #2322: target-language facet ---
 
   it("filters by the always-visible target-language facet with counts", async () => {

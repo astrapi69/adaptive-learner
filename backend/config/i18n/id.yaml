@@ -3486,6 +3486,8 @@ discover:
     reviewed_only: "Hanya yang ditinjau"
     generated_badge: "Buatan mesin"
     reviewed_badge: "Ditinjau"
+  chips:
+    remove: "Hapus: {f}"
   sort:
     label: "Urutkan"
     relevance: "Relevansi"

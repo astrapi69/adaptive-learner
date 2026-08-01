@@ -3478,6 +3478,8 @@ discover:
     reviewed_only: "Relus uniquement"
     generated_badge: "Généré automatiquement"
     reviewed_badge: "Relu"
+  chips:
+    remove: "Retirer : {f}"
   sort:
     label: "Trier"
     relevance: "Pertinence"

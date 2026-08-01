@@ -3789,6 +3789,9 @@
       "generated_badge": "Αυτόματη δημιουργία",
       "reviewed_badge": "Ελεγμένο"
     },
+    "chips": {
+      "remove": "Αφαίρεση: {f}"
+    },
     "sort": {
       "label": "Ταξινόμηση",
       "relevance": "Συνάφεια",

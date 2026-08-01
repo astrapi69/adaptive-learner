@@ -3476,6 +3476,8 @@ discover:
     reviewed_only: "Yalnızca incelenenler"
     generated_badge: "Otomatik oluşturuldu"
     reviewed_badge: "İncelendi"
+  chips:
+    remove: "Kaldır: {f}"
   sort:
     label: "Sırala"
     relevance: "İlgililik"

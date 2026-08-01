@@ -3478,6 +3478,8 @@ discover:
     reviewed_only: "Solo revisados"
     generated_badge: "Generado automáticamente"
     reviewed_badge: "Revisado"
+  chips:
+    remove: "Quitar: {f}"
   sort:
     label: "Ordenar"
     relevance: "Relevancia"

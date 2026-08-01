@@ -52,6 +52,9 @@ import PageContainer from "../../shared/layout/PageContainer";
 import { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchFilterBar from "../../shared/forms/SearchFilterBar";
 import FilterMenuButton from "../../shared/forms/FilterMenuButton";
+import ActiveFilterChips, {
+  type FilterChip,
+} from "../../shared/forms/ActiveFilterChips";
 import SetDiscoveryCard, {
   type SetDiscoveryCardLabels,
   type SetDiscoveryDownloadState,
@@ -306,6 +309,63 @@ export default function Discover() {
     setFilters((prev) => ({ ...prev, [id]: value }));
   }
 
+  // Every active restriction OTHER than the source language (which is its own
+  // always-visible control, #1699) as a removable mark (EXP-048 #2323), so a
+  // collapsed filter panel never hides what is filtering the list. The target
+  // language keeps its own always-visible facet, so it is not duplicated here.
+  const activeChips = useMemo<FilterChip[]>(() => {
+    const chips: FilterChip[] = [];
+    if (filters.query) {
+      chips.push({
+        id: "query",
+        label: `${t("discover.bar.search", "Search")}: ${filters.query}`,
+        onRemove: () => {
+          setRawQuery("");
+          setFilters((prev) => ({ ...prev, query: "" }));
+        },
+      });
+    }
+    if (filters.level) {
+      chips.push({
+        id: "level",
+        label: `${t("discover.filter.level", "Level")}: ${filters.level.toUpperCase()}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, level: "" })),
+      });
+    }
+    if (filters.domain) {
+      chips.push({
+        id: "domain",
+        label: `${t("discover.filter.domain", "Domain")}: ${t(`discover.domain.${filters.domain}`, filters.domain)}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, domain: "" })),
+      });
+    }
+    if (filters.trust) {
+      const trustText =
+        filters.trust === "3"
+          ? t("discover.trust.official", "Officially recommended")
+          : filters.trust === "2"
+            ? t("discover.trust.verified", "Verified")
+            : t("discover.trust.validated", "Validated");
+      chips.push({
+        id: "trust",
+        label: `${t("discover.filter.trust", "Trust")}: ${trustText}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, trust: "" })),
+      });
+    }
+    if (filters.reviewStatus) {
+      const reviewText =
+        filters.reviewStatus === "reviewed"
+          ? t("discover.review.reviewed_only", "Reviewed only")
+          : t("discover.review.no_machine", "No machine sets");
+      chips.push({
+        id: "reviewStatus",
+        label: `${t("discover.filter.review", "Review")}: ${reviewText}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, reviewStatus: "" })),
+      });
+    }
+    return chips;
+  }, [filters, t]);
+
   async function handleDownload(set: SearchableSet) {
     const key = discoverSetKey(set);
     setDownloadState((prev) => ({ ...prev, [key]: "downloading" }));
@@ -460,6 +520,21 @@ export default function Discover() {
           />
         )}
       </div>
+
+      {/* #2323 — every other active restriction as a removable mark, on one
+          horizontally-scrollable line (the phone's single visible filter
+          surface). Absent when nothing beyond the source default is set. */}
+      {activeChips.length > 0 && (
+        <div className="mb-4">
+          <ActiveFilterChips
+            chips={activeChips}
+            removeLabel={(label) =>
+              t("discover.chips.remove", "Remove {f}").replace("{f}", label)
+            }
+            testId="discover-active-filters"
+          />
+        </div>
+      )}
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground" data-testid="discover-count">

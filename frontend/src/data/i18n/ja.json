@@ -3789,6 +3789,9 @@
       "generated_badge": "自動生成",
       "reviewed_badge": "確認済み"
     },
+    "chips": {
+      "remove": "解除: {f}"
+    },
     "sort": {
       "label": "並べ替え",
       "relevance": "関連度",
