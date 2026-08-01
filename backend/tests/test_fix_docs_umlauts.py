@@ -307,3 +307,58 @@ def test_outside_any_repo_is_an_error_not_a_pass(tmp_path: Path) -> None:
     result = _run_from_cwd(outside)
     assert result.returncode == 2, result.stdout
     assert "Repo-Wurzel nicht bestimmbar" in result.stdout
+
+
+# --- Anker: Stammtreffer, nicht exakter Tokentreffer (#2313) ---------------
+
+
+def test_residual_is_found_when_the_corpus_has_only_an_inflected_form(
+    tmp_path: Path,
+) -> None:
+    """Der Fehler aus #2313: "sekundaere" wird zu "sekundäre", im Korpus
+    steht aber "sekundären". Ein exakter Tokenvergleich findet nichts,
+    der Rest entgeht der Erkennung - und weil der Nachweis an das
+    Schreiben gekoppelt ist, wird aus dem zu engen Anker eine Zusicherung
+    ohne Deckung."""
+    _tree(
+        tmp_path,
+        {
+            "docs/note.md": "Die Loesung ist keine sekundaere Karte.\n",
+            "docs/anchor.md": "Wir behandeln die sekundären Karten zuletzt.\n",
+        },
+    )
+    result = _run(tmp_path)
+    assert result.returncode == 1, result.stdout
+    assert "A) neu gemischt (blockierend):     1" in result.stdout
+    assert "sekundaere" in result.stdout
+
+
+def test_anchor_still_ignores_foreign_prose(tmp_path: Path) -> None:
+    """Die Erweiterung darf den Anker nicht aufweichen: spanische und
+    franzoesische Woerter haben keine deutsche Entsprechung im Korpus und
+    duerfen auch als Stamm nicht anschlagen."""
+    _tree(
+        tmp_path,
+        {
+            "docs/note.md": "Die Loesung ist fuer alle.\n",
+            "docs/es.md": "Si fuera visible, la prueba continue en la langue.\n",
+            "docs/anchor.md": "Der Job läuft und die Prüfung ist fällig.\n",
+        },
+    )
+    result = _run(tmp_path)
+    assert result.returncode == 0, result.stdout
+    assert "A) neu gemischt (blockierend):     0" in result.stdout
+
+
+def test_short_fragments_do_not_attest_everything(tmp_path: Path) -> None:
+    """Der Stammtreffer hat eine Untergrenze. Ohne sie wuerde ein kurzes
+    Umlaut-Token im Korpus jede beliebige Form belegen."""
+    _tree(
+        tmp_path,
+        {
+            "docs/note.md": "Die Loesung ist fuer alle.\n",
+            "docs/anchor.md": "Ein ü und ein är stehen hier allein.\n",
+        },
+    )
+    result = _run(tmp_path)
+    assert result.returncode == 0, result.stdout

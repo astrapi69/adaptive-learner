@@ -7,7 +7,9 @@
 # manuscript-tools 0.11.0. Jedes Wort hat in einem echten Trockenlauf
 # nachweislich eine halb korrigierte Zeile erzeugt - es stand in einer
 # Zeile, die der Fixer angefasst hat, und blieb als ASCII-Rest stehen.
-# Drei Runden bis zum Fixpunkt: 71 Treiber, dann 7 neue, dann keine.
+# Fixpunkt: 71 Treiber, dann 7, dann keine. Nach der Ankerkorrektur
+# (#2313 - der Anker verglich exakte Token und uebersah flektierte Formen)
+# kamen 22 weitere hinzu, die der zu enge Anker verdeckt hatte.
 #
 # Aufnahmekriterien wie stromaufwaerts: jedes ae/oe/ue ist ein Umlaut,
 # die korrekte Form braucht kein ss, keine Eigennamen. Erweitern nur aus
@@ -24,9 +26,11 @@ angehaengt
 ausfuehrbar
 ausfuehrliche
 ausgewaehlte
+ausgewaehlten
 ausloesen
 autoritaet
 befuellt
+begruende
 begruendet
 beschraenkt
 bloecke
@@ -36,19 +40,31 @@ domaenen
 eigenstaendige
 erfuellen
 erklaere
+erklaerenden
+faehiges
 faellig
+faelligen
+flaechendeckend
 frueheren
 fuehre
+fuehrende
+fuehrerschein
 fuellt
 geaenderte
 geaenderten
+geaenderter
 gedaempfte
+gefaehrlichste
+geloeschten
+geloeschtes
 gestuetzte
 gewaehlte
 gueltige
 gueltigen
 haekchen
+hoechster
 hoehere
+hoeherer
 identitaeten
 kompatibilitaet
 kuenftiger
@@ -56,14 +72,17 @@ laeufen
 laeuft
 luecken
 menue
+menues
 oeffentliche
 primaer
 primaere
 raeumt
 rueckfrage
+sekundaere
 ueberblick
 uebergaenge
 ueberlappung
+ueberleben
 ueberlebt
 ueberschneidet
 ueberschreiben
@@ -79,22 +98,27 @@ vorausgefuellt
 zugaenglich
 zugehoerige
 zukuenftige
+zulaessiges
 zurueckgesetzt
 zurueckgestellt
+zurueckgestellter
 
 # --- Projektvokabular (bleibt hier, gehoert nicht in die geteilte
 #     Liste - so sagt es auch das Modul-Docstring stromaufwaerts) ---
 beispielsaetzen
 bestaetigungsdialog
+bestaetigungstext
 datenintegritaet
 leseverstaendnis
 paritaet
 paritaets
 pruef
 qualitaets
+qualitaetsurteil
 randfaelle
 rueckwaertswechsel
 uebungs
+uebungsliste
 uebungstyp
 uebungstypen
 zusatzpruefungen
