@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Modo de prueba",
+      "description": "Las respuestas no se evalúan y no se guarda ningún progreso.",
+      "exit": "Salir del modo de prueba"
+    },
     "ask_ai": {
       "button": "Preguntar a la IA",
       "title": "Pregunta a la IA sobre esto",

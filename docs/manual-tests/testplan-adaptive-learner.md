@@ -351,6 +351,29 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       + ext-Typen). Badge liest in allen 6 Themes sauber (Token-basiert).
       Nur Transparenz - beeinflusst weder Reihenfolge noch Bewertung.
 
+### Testmodus (Vorschau-Build, #2319)
+
+Nur relevant, wenn der Build mit `VITE_TEST_MODE=true` gebaut wurde (Vorschau-
+Auslieferung). Im regulaeren Build ist der Modus nicht vorhanden.
+
+- [ ] Aktivieren per versteckter Geste: sechs schnelle Tipps auf die
+      Fortschrittsanzeige oben in einer laufenden Lektion. Danach erscheint das
+      Testmodus-Banner ("Antworten werden nicht bewertet, kein Fortschritt wird
+      gespeichert").
+- [ ] Nicht versehentlich ausloesbar: einzelne oder langsame Tipps auf die
+      Fortschrittsanzeige aktivieren den Modus NICHT.
+- [ ] Jede Antwort gilt als richtig: eine bewusst FALSCHE Wahl/Eingabe (Auswahl,
+      Freitext, Zuordnung) wird als richtig angezeigt, die Lektion laesst sich
+      komplett durchklicken, ohne die Inhalte zu kennen.
+- [ ] Kein Fortschritt: nach dem Durchklicken im Testmodus zeigt die Lektion
+      KEINEN Fortschritt, es entstehen keine Wiederholungskarten und keine
+      Fehlerzaehler (Dashboard/Wiederholung pruefen).
+- [ ] Beenden: "Testmodus beenden" im Banner schaltet zurueck; das Verlassen der
+      Lektion setzt den Modus zurueck (erneutes Betreten startet ohne Testmodus).
+- [ ] iOS PWA/Standalone: dieselbe Pruefung auf dem zum Home-Bildschirm
+      hinzugefuegten Web-App-Icon (Geste per Fingertipp, Banner sichtbar,
+      Durchklicken moeglich).
+
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
       hinter dem Panel, nicht mehr direkt sichtbar)

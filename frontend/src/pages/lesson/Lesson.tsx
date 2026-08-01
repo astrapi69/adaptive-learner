@@ -29,6 +29,9 @@ import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDial
 import LessonExitDialog from "../../components/lesson/dialogs/LessonExitDialog";
 import LessonTimedStatus from "../../components/lesson/chrome/LessonTimedStatus";
 import { LessonModeProvider } from "../../hooks/lesson/modes/useLessonMode";
+import { TestModeProvider } from "../../hooks/lesson/modes/useTestMode";
+import TestModeBanner from "../../components/lesson/testmode/TestModeBanner";
+import TestModeActivationZone from "../../components/lesson/testmode/TestModeActivationZone";
 import { useTimedLesson } from "../../hooks/lesson/modes/useTimedLesson";
 import {
   readDefaultLessonMode,
@@ -284,12 +287,16 @@ export default function LessonPage() {
   };
 
   return (
+    <TestModeProvider>
     <main
       id="main"
       className="lesson-page flex flex-col min-h-full"
       data-testid="lesson-page"
     >
       <LessonHeader lesson={lesson} setTitle={setTitle} />
+
+      {/* #2319 — visible while test mode is active (preview build only). */}
+      <TestModeBanner />
 
       {/* #1642 — the pause control moved into the footer; the exit dialog it
           opens is lifted here (portal, controlled by the lesson's exitOpen
@@ -342,12 +349,17 @@ export default function LessonPage() {
         className="sticky top-0 z-10 flex flex-wrap items-start gap-2 bg-bg-primary py-3"
         data-testid="lesson-progress-options-row"
       >
-        <LessonProgressBar
-          isSummary={isSummary}
-          currentStepIndex={currentStepIndex}
-          totalSteps={totalSteps}
-          className="my-0 min-w-[8rem] flex-1"
-        />
+        {/* #2319 — the progress bar doubles as the hidden test-mode
+            activation target (six quick taps; inert unless the build opted
+            in). display:contents keeps the bar's flex sizing. */}
+        <TestModeActivationZone>
+          <LessonProgressBar
+            isSummary={isSummary}
+            currentStepIndex={currentStepIndex}
+            totalSteps={totalSteps}
+            className="my-0 min-w-[8rem] flex-1"
+          />
+        </TestModeActivationZone>
 
         {/* #1625 — the lesson's mode/display SETTINGS (favorite, mode
             toggle, auto read-aloud) are bundled into one compact,
@@ -494,5 +506,6 @@ export default function LessonPage() {
         onReadStepAt={readTheoryStepAt}
       />
     </main>
+    </TestModeProvider>
   );
 }
