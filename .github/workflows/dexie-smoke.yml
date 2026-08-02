@@ -51,7 +51,7 @@ jobs:
 
       # The image ships Node 22; install 24 to match the repo's engines
       # (frontend + e2e both require >=24) so CI runs the same runtime as local.
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
 
