@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Test mode",
+      "description": "Answers are not graded and no progress is saved.",
+      "exit": "Exit test mode"
+    },
     "ask_ai": {
       "button": "Ask AI",
       "title": "Ask AI about this",

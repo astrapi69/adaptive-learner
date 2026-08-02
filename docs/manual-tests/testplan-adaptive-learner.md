@@ -332,6 +332,16 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verstaendlich)
 - [ ] Picture Choice: Kacheln GLEICHE Hoehe
+- [ ] Antwort-Reihenfolge gemischt (#2317): eine Bildauswahl (picture_choice)
+      mehrfach in verschiedenen Lektionen öffnen - die richtige Kachel steht
+      NICHT immer an derselben Stelle (früher durchgängig die erste). Innerhalb
+      EINER Sitzung bleibt die Reihenfolge stabil (kein Springen beim erneuten
+      Ansehen derselben Übung). Ein richtiger Fingertipp wird weiterhin als
+      richtig, ein falscher als falsch gewertet (Bewertung + Wiederholungs-
+      fortschritt inhaltsbasiert, nicht positionsbasiert). Gleiches gilt für die
+      Optionen in ext:al-graded-quiz und ext:al-reading-comprehension.
+      iOS PWA/Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm
+      hinzugefügten Web-App-Icon durchführen.
 - [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
@@ -340,6 +350,29 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       (Matching/Cloze/Free-Text/Word-Tiles/Picture-Choice/Multiple-Choice
       + ext-Typen). Badge liest in allen 6 Themes sauber (Token-basiert).
       Nur Transparenz - beeinflusst weder Reihenfolge noch Bewertung.
+
+### Testmodus (Vorschau-Build, #2319)
+
+Nur relevant, wenn der Build mit `VITE_TEST_MODE=true` gebaut wurde (Vorschau-
+Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
+
+- [ ] Aktivieren per versteckter Geste: sechs schnelle Tipps auf die
+      Fortschrittsanzeige oben in einer laufenden Lektion. Danach erscheint das
+      Testmodus-Banner ("Antworten werden nicht bewertet, kein Fortschritt wird
+      gespeichert").
+- [ ] Nicht versehentlich auslösbar: einzelne oder langsame Tipps auf die
+      Fortschrittsanzeige aktivieren den Modus NICHT.
+- [ ] Jede Antwort gilt als richtig: eine bewusst FALSCHE Wahl/Eingabe (Auswahl,
+      Freitext, Zuordnung) wird als richtig angezeigt, die Lektion lässt sich
+      komplett durchklicken, ohne die Inhalte zu kennen.
+- [ ] Kein Fortschritt: nach dem Durchklicken im Testmodus zeigt die Lektion
+      KEINEN Fortschritt, es entstehen keine Wiederholungskarten und keine
+      Fehlerzähler (Dashboard/Wiederholung prüfen).
+- [ ] Beenden: "Testmodus beenden" im Banner schaltet zurück; das Verlassen der
+      Lektion setzt den Modus zurück (erneutes Betreten startet ohne Testmodus).
+- [ ] iOS PWA/Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm
+      hinzugefügten Web-App-Icon (Geste per Fingertipp, Banner sichtbar,
+      Durchklicken möglich).
 
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
