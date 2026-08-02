@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Test modu",
+      "description": "Yanıtlar değerlendirilmez ve ilerleme kaydedilmez.",
+      "exit": "Test modundan çık"
+    },
     "ask_ai": {
       "button": "Yapay zekâya sor",
       "title": "Bunu yapay zekâya sor",

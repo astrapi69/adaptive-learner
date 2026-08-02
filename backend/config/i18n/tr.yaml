@@ -1693,6 +1693,10 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  test_mode:
+    title: "Test modu"
+    description: "Yanıtlar değerlendirilmez ve ilerleme kaydedilmez."
+    exit: "Test modundan çık"
   ask_ai:
     button: "Yapay zekâya sor"
     title: "Bunu yapay zekâya sor"

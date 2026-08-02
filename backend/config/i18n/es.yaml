@@ -1695,6 +1695,10 @@ repo:
     description: "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git."
     enable_git: "Activar persistencia git"
 lesson:
+  test_mode:
+    title: "Modo de prueba"
+    description: "Las respuestas no se evalúan y no se guarda ningún progreso."
+    exit: "Salir del modo de prueba"
   ask_ai:
     button: "Preguntar a la IA"
     title: "Pregunta a la IA sobre esto"

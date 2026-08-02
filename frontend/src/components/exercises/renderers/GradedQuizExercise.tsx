@@ -22,6 +22,7 @@ import {cn} from "@/lib/utils";
 import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
 import {deriveGradedQuizAttempts} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
+import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
 import {
     asGradedQuizPayload,
     canonicalAnswer,
@@ -86,7 +87,19 @@ function GradedQuizExercise(
     const {showAnswerToggle} = useLessonMode();
     const payload = useMemo(() => asGradedQuizPayload(exercise), [exercise]);
     const reviewedAnswer = reviewed?.kind === "al_graded_quiz" ? reviewed : null;
-    const questions = payload?.questions ?? [];
+    const questions = useMemo(() => payload?.questions ?? [], [payload]);
+
+    // #2317: shuffle each MC question's options for display so the correct
+    // option isn't positionally predictable. Grading is by option TEXT, so the
+    // display order is independent of correctness. Seeded per question by
+    // ``${exercise.id}#${index}`` - deterministic and stable within a session.
+    const displayOptions = useMemo(
+        () =>
+            questions.map((question, index) =>
+                seededShuffle(question.options ?? [], `${exercise.id}#${index}`),
+            ),
+        [questions, exercise.id],
+    );
 
     const [answers, setAnswers] = useState<string[][]>(() =>
         reviewedAnswer ? reviewedAnswer.answers.map((a) => [...a]) : questions.map(() => []),
@@ -175,6 +188,7 @@ function GradedQuizExercise(
                 <GradedQuizQuestion
                     key={questionIndex}
                     question={question}
+                    displayOptions={displayOptions[questionIndex] ?? []}
                     questionIndex={questionIndex}
                     answer={answers[questionIndex] ?? []}
                     submitted={submitted}
@@ -210,6 +224,7 @@ function GradedQuizExercise(
  *  post-check verdict on the block and the canonical solution when wrong. */
 function GradedQuizQuestion({
     question,
+    displayOptions,
     questionIndex,
     answer,
     submitted,
@@ -221,6 +236,9 @@ function GradedQuizQuestion({
     inputLabel,
 }: {
     question: GqQuestion;
+    /** #2317: the question's options in shuffled display order (grading is
+     *  by text, so this is a pure presentation reorder). */
+    displayOptions: GqQuestion["options"];
     questionIndex: number;
     answer: string[];
     submitted: boolean;
@@ -250,7 +268,7 @@ function GradedQuizQuestion({
 
             {question.type === "multiple_choice" ? (
                 <div className="flex flex-col gap-2">
-                    {(question.options ?? []).map((option, optionIndex) => (
+                    {(displayOptions ?? []).map((option, optionIndex) => (
                         <label
                             key={optionIndex}
                             className="inline-flex min-h-11 cursor-pointer items-center gap-3 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-base"

@@ -1704,6 +1704,10 @@ repo:
     description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
     enable_git: "Aktifkan persistensi git"
 lesson:
+  test_mode:
+    title: "Mode uji"
+    description: "Jawaban tidak dinilai dan tidak ada kemajuan yang disimpan."
+    exit: "Keluar dari mode uji"
   ask_ai:
     button: "Tanya AI"
     title: "Tanya AI tentang ini"

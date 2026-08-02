@@ -313,6 +313,14 @@ Requires domain knowledge. Not automatable.
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
 - [ ] Free Text: correction READABLE (token diff understandable)
 - [ ] Picture Choice: tiles SAME height
+- [ ] Answer order shuffled (#2317): open a picture_choice exercise across
+      several lessons - the correct tile is NOT always in the same slot
+      (previously always first). Within ONE session the order stays stable (no
+      jump when re-viewing the same exercise). A correct tap still scores
+      correct, a wrong one wrong (grading + review progress are content-based,
+      not position-based). Same for the options in ext:al-graded-quiz and
+      ext:al-reading-comprehension. iOS PWA/Standalone: repeat the check on the
+      web-app icon added to the Home Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
@@ -321,6 +329,27 @@ Requires domain knowledge. Not automatable.
       Word-Tiles/Picture-Choice/Multiple-Choice + ext types). Badge reads
       cleanly in all 6 themes (token-backed). Transparency only - it changes
       neither ordering nor scoring.
+
+### Test mode (preview build, #2319)
+
+Only relevant when the build was produced with `VITE_TEST_MODE=true` (the
+preview delivery). In the regular build the mode does not exist.
+
+- [ ] Activate via the hidden gesture: six quick taps on the progress bar at
+      the top of a running lesson. The test-mode banner then appears ("Answers
+      are not graded and no progress is saved").
+- [ ] Not accidentally triggerable: single or slow taps on the progress bar do
+      NOT activate the mode.
+- [ ] Every answer counts as correct: a deliberately WRONG choice/input (choice,
+      free text, matching) is shown as correct; the lesson can be clicked all
+      the way through without knowing the content.
+- [ ] No progress: after clicking through in test mode the lesson shows NO
+      progress, and no review cards or error counters were created (check the
+      dashboard / review).
+- [ ] Exit: "Exit test mode" in the banner switches it off; leaving the lesson
+      resets the mode (re-entering starts without test mode).
+- [ ] iOS PWA/Standalone: repeat the check on the web-app icon added to the Home
+      Screen (gesture by tap, banner visible, click-through works).
 
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628

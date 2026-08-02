@@ -22,6 +22,8 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "../../components/exercises/shell/exercise-control";
+import {useTestMode} from "../../hooks/lesson/modes/useTestMode";
+import {forceCorrect} from "../lesson/test-mode";
 
 /** The minimal post-check result a renderer displays. The full
  *  {@link ExerciseScored} (attempts + raw_answer) still flows to
@@ -87,10 +89,15 @@ export function useControlledExercise({
 }: UseControlledExerciseOptions): UseControlledExercise {
     const [submitted, setSubmitted] = useState(reviewedResult != null);
     const [result, setResult] = useState<ExerciseResult | null>(reviewedResult);
+    // #2319 test mode: any answer the learner gives is accepted as correct
+    // ("no evaluation"). The learner still has to provide SOME answer
+    // (isAnswerable stays the gate); the outcome is then coerced to correct so
+    // they can click through the lesson without knowing the content.
+    const {enabled: testMode} = useTestMode();
 
     const submit = () => {
         if (submitted || !isAnswerable) return;
-        const scored = score();
+        const scored = testMode ? forceCorrect(score()) : score();
         setResult({correct: scored.correct, total: scored.total});
         setSubmitted(true);
         onComplete(scored);

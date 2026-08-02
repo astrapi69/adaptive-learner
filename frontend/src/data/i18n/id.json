@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Mode uji",
+      "description": "Jawaban tidak dinilai dan tidak ada kemajuan yang disimpan.",
+      "exit": "Keluar dari mode uji"
+    },
     "ask_ai": {
       "button": "Tanya AI",
       "title": "Tanya AI tentang ini",

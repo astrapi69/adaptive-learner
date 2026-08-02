@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Testmodus",
+      "description": "Antworten werden nicht bewertet, kein Fortschritt wird gespeichert.",
+      "exit": "Testmodus beenden"
+    },
     "ask_ai": {
       "button": "KI fragen",
       "title": "KI zu diesem Block fragen",

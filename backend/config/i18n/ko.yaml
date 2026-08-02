@@ -1704,6 +1704,10 @@ repo:
     description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
     enable_git: "git 영속화 활성화"
 lesson:
+  test_mode:
+    title: "테스트 모드"
+    description: "답변은 채점되지 않으며 진행 상황이 저장되지 않습니다."
+    exit: "테스트 모드 종료"
   ask_ai:
     button: "AI에게 질문"
     title: "이 내용에 대해 AI에게 질문"

@@ -1693,6 +1693,10 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする"
 lesson:
+  test_mode:
+    title: "テストモード"
+    description: "回答は採点されず、進捗は保存されません。"
+    exit: "テストモードを終了"
   ask_ai:
     button: "AIに質問"
     title: "このブロックについてAIに質問"

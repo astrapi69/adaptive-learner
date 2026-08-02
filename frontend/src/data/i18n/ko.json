@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "테스트 모드",
+      "description": "답변은 채점되지 않으며 진행 상황이 저장되지 않습니다.",
+      "exit": "테스트 모드 종료"
+    },
     "ask_ai": {
       "button": "AI에게 질문",
       "title": "이 내용에 대해 AI에게 질문",

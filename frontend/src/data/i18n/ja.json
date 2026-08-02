@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "テストモード",
+      "description": "回答は採点されず、進捗は保存されません。",
+      "exit": "テストモードを終了"
+    },
     "ask_ai": {
       "button": "AIに質問",
       "title": "このブロックについてAIに質問",
