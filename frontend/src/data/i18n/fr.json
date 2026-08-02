@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Mode test",
+      "description": "Les réponses ne sont pas évaluées et aucune progression n'est enregistrée.",
+      "exit": "Quitter le mode test"
+    },
     "ask_ai": {
       "button": "Demander à l'IA",
       "title": "Interroger l'IA sur ce bloc",

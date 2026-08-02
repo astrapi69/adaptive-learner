@@ -263,7 +263,9 @@ describe("PictureChoiceExercise: text fallback on image error", () => {
         });
         // Subsequent calls (the other 3 tiles) use the default
         // stub (error: true) since mockReturnValueOnce only
-        // fires once. Only tile 0 should show the skeleton.
+        // fires once, so exactly one tile shows the skeleton.
+        // The display order is shuffled (#2317), so assert on the
+        // presence of a single skeleton rather than a fixed index.
         render(
             <PictureChoiceExercise
                 exercise={EXERCISE}
@@ -273,8 +275,10 @@ describe("PictureChoiceExercise: text fallback on image error", () => {
             />,
         );
         expect(
-            screen.getByTestId("picture-tile-skeleton-0"),
-        ).toBeInTheDocument();
+            screen
+                .getByTestId("picture-grid")
+                .querySelectorAll("[data-testid^='picture-tile-skeleton-']"),
+        ).toHaveLength(1);
     });
 
     it("renders the resolved asset URL as the <img> src", () => {
@@ -301,6 +305,95 @@ describe("PictureChoiceExercise: text fallback on image error", () => {
             loading: false,
             error: true,
         });
+    });
+});
+
+describe("PictureChoiceExercise: answer-position shuffle (#2317)", () => {
+    /** Display order of the tiles, as the original content indices they carry
+     *  in their stable ``picture-choice-{index}`` testid. */
+    function tileOrderIndices(): number[] {
+        const grid = screen.getByTestId("picture-grid");
+        return Array.from(
+            grid.querySelectorAll("[data-testid^='picture-choice-']"),
+        ).map((tile) =>
+            Number(
+                tile
+                    .getAttribute("data-testid")!
+                    .replace("picture-choice-", ""),
+            ),
+        );
+    }
+
+    function displayPositionOfCorrect(exerciseId: string): number {
+        const {unmount} = render(
+            <PictureChoiceExercise
+                exercise={{...EXERCISE, id: exerciseId}}
+                onComplete={vi.fn()}
+            />,
+        );
+        const grid = screen.getByTestId("picture-grid");
+        const tiles = Array.from(
+            grid.querySelectorAll("[data-testid^='picture-choice-']"),
+        );
+        const pos = tiles.findIndex(
+            (tile) => tile.getAttribute("data-correct") === "true",
+        );
+        unmount();
+        return pos;
+    }
+
+    it("does not place the correct tile at the same display position across many exercises", () => {
+        // The correct image is authored FIRST in EXERCISE (this mirrors the
+        // shipped content: 87% of picture_choice sets author the correct tile
+        // first). Without a display shuffle the correct tile is ALWAYS at
+        // display position 0, so the learner can game the exercise by position.
+        const positions = new Set<number>();
+        for (let i = 0; i < 40; i++) {
+            positions.add(displayPositionOfCorrect(`ex-shuffle-${i}`));
+        }
+        expect(positions.size).toBeGreaterThan(1);
+    });
+
+    it("keeps the option order stable within a session (no jitter on re-render)", () => {
+        render(
+            <PictureChoiceExercise
+                exercise={{...EXERCISE, id: "ex-stable"}}
+                onComplete={vi.fn()}
+            />,
+        );
+        const before = tileOrderIndices();
+        // Selecting a tile triggers a re-render; the order must not change
+        // while the user is reading.
+        fireEvent.click(screen.getByTestId("picture-choice-0"));
+        const after = tileOrderIndices();
+        expect(after).toEqual(before);
+    });
+
+    it("grades by content, not display position, after shuffling", () => {
+        const onComplete = vi.fn();
+        render(
+            <PictureChoiceExercise
+                exercise={{...EXERCISE, id: "ex-grade"}}
+                setId="set-1"
+                lessonId="lesson-1"
+                onComplete={onComplete}
+            />,
+        );
+        // Click whichever tile is marked correct, wherever the shuffle put it.
+        const grid = screen.getByTestId("picture-grid");
+        const correctTile = grid.querySelector<HTMLElement>(
+            "[data-correct='true']",
+        )!;
+        fireEvent.click(correctTile);
+        fireEvent.click(screen.getByTestId("picture-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 1}),
+        );
+        const attempt = onComplete.mock.calls[0][0].attempts[0];
+        expect(attempt.correct).toBe(true);
+        // The SRS element_key is the correct image's label - content, not
+        // position - so shuffling the display leaves progress untouched.
+        expect(attempt.element_key).toBe("Cat");
     });
 });
 
