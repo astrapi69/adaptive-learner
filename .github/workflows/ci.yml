@@ -241,7 +241,7 @@ jobs:
       # Node 24 stays the RUNTIME (Vite build, Vitest, tsc); Bun is only the
       # package manager + script runner (#1492 Phase 1). No npm cache on
       # setup-node — the bun install cache below replaces it.
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
 
