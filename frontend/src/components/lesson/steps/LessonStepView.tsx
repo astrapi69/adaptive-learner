@@ -26,6 +26,7 @@ import type {
 import type { ReadAloudController } from "../../../hooks/lesson/audio/useReadAloud";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { useLessonMode } from "../../../hooks/lesson/modes/useLessonMode";
+import { useTestMode } from "../../../hooks/lesson/modes/useTestMode";
 import { stampHintUsage, wasHintUsed } from "../../../lib/hints/hint-usage";
 import { stampExamAttempts } from "../../../lib/srs/exam-attempt";
 import { formatUserAnswer } from "../../../lib/lesson/result-export";
@@ -97,12 +98,18 @@ export default function LessonStepView({
   // #1040 — ``mode`` also flags exam-mode attempts so the SRS layer
   // lengthens the review interval for a correct answer under pressure.
   const { showTheoryRecap, mode } = useLessonMode();
+  // #2319 test mode: a device walk-through must not pollute the very data it
+  // is meant to verify, so NO progress and NO SRS/error rows are written.
+  const { enabled: testMode } = useTestMode();
 
   const handleComplete = async (scored: ExerciseScored) => {
     if (!step.exercise) return;
     // Flip to the "Weiter" phase the moment the answer is graded
     // (Problem 1).
     onChecked();
+    // Test mode writes nothing: no per-step progress, no review cards, no
+    // error counters. The step still advances (onChecked above).
+    if (testMode) return;
     // Persist the user's text-form answer. free_text + word_tiles carry
     // a coherent text answer in the attempt; matching + picture_choice
     // store only a structured raw_answer, so #167 bug 1 reconstructs a
