@@ -756,6 +756,38 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Per-Set Share-Link oeffnet direkt die Set-Detailseite (#1572)
 - [ ] Registrierten Content-Repo hinzufuegen (register-a-repo #1511)
 
+### Discover Stufe 1: Facetten, Marken, Leerzustand (EXP-048, #2320-#2324)
+
+Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi pruefen
+(API + Dexie); die Facetten lesen den Suchindex und sind modus-unabhaengig.
+
+- [ ] Zielsprache-Facette neben der Quellsprache sichtbar; Marken tragen ihre
+      Trefferzahl, nur belegte Ziele der aktiven Quellsprache, nach Menge
+      sortiert; Auswahl filtert die Liste (#2322)
+- [ ] Durchsichtsstand: maschinell erzeugte Sets (z. B. ja-a1-from-de,
+      ko-a1-from-de, zh-a1-from-de) tragen ein neutrales Abzeichen
+      ("Maschinell erstellt"), handgeschriebene Sets KEIN Abzeichen; die
+      Facette "Durchsicht" erscheint nur, wenn solche Sets im Katalog sind
+      (#2321)
+- [ ] "KI-geprueft"-Facette ist verschwunden; das KI-Abzeichen am Eintrag
+      bleibt (#2321)
+- [ ] Aktive Einschraenkungen (Niveau, Bereich, Vertrauen, Durchsicht, Suche)
+      stehen als entfernbare Marken ueber der Liste; ein Klick auf das X einer
+      Marke loest genau diese Einschraenkung (#2323)
+- [ ] Bereichs-Namen sind uebersetzt (Hundetraining, Technik, Software,
+      Philosophie, Verkehrskunde statt roher Bezeichner) (#2320)
+- [ ] Leerzustand: bei null Treffern erscheinen berechnete Auswege
+      ("Ohne <Facette>: N Sets") und "Alle Filter zuruecksetzen"; ein Klick
+      stellt Treffer wieder her; die Quellsprache bleibt erhalten (#2324)
+- [ ] Leere Bibliothek (kein Set): Hinweis auf "Eigene Quelle hinzufuegen"
+      (/add-repo) bzw. "eine Lektion anlegen" (/create-lesson) (#2324)
+- [ ] Telefon (schmale Breite): die Markenzeile bleibt EINE waagerecht
+      scrollbare Zeile, bricht nicht um und frisst nicht die halbe Hoehe
+- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefuegt, Dexie-Modus):**
+      gleicher Ablauf auf dem iPhone-PWA - die Facetten-Menues oeffnen ueber
+      der Liste (Portal/Fixed, #1349), die Markenzeile scrollt waagerecht, und
+      die Leerzustand-Auswege sind tippbar (>=44px Touch-Ziel)
+
 ### Set-Status bleibt erhalten (aktiv/zurueckgestellt/abgeschlossen, beide Modi)
 
 Ort: Meine Inhalte (`/content?tab=my`) → Set-Aktionen-Menue (Drei-Punkte)

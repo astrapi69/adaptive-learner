@@ -31,6 +31,12 @@ export interface DiscoverListLabels {
   lessons: (count: number) => string;
   /** "New" badge label, rendered when a set is new since last seen. */
   newBadge: string;
+  /** EXP-048 #2321 — badge label for a machine-generated, not-yet-reviewed
+   *  set ("Maschinell erstellt"). */
+  reviewGenerated: string;
+  /** EXP-048 #2321 — badge label for a machine-generated, reviewed set
+   *  ("Durchgesehen"). */
+  reviewReviewed: string;
 }
 
 interface DiscoverSetListViewProps {
@@ -55,6 +61,37 @@ function langPair(set: SearchableSet): string | null {
   const target = (set.target_language ?? "").toLowerCase();
   if (source && target) return `${source}→${target}`;
   return target || source || null;
+}
+
+/** Durchsichtsstand pill for one row (EXP-048 #2321): neutral for a
+ *  ``generated`` set, positive for ``reviewed``, nothing for ``authored``.
+ *  ``shrink-0`` so it never squeezes the truncating title (#1380). */
+function RowReviewBadge({ set, labels }: { set: SearchableSet; labels: DiscoverListLabels }) {
+  if (set.review_status === "generated") {
+    return (
+      <span
+        className="shrink-0 rounded-full border border-border px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+        data-testid={`discover-list-${set.id}-review`}
+        data-review="generated"
+        title={labels.reviewGenerated}
+      >
+        {labels.reviewGenerated}
+      </span>
+    );
+  }
+  if (set.review_status === "reviewed") {
+    return (
+      <span
+        className="shrink-0 rounded-full border border-success/40 px-1.5 py-0.5 text-[10px] font-medium text-success"
+        data-testid={`discover-list-${set.id}-review`}
+        data-review="reviewed"
+        title={labels.reviewReviewed}
+      >
+        {labels.reviewReviewed}
+      </span>
+    );
+  }
+  return null;
 }
 
 function DiscoverSetListRow({
@@ -105,6 +142,7 @@ function DiscoverSetListRow({
           {pair}
         </span>
       )}
+      <RowReviewBadge set={set} labels={labels} />
       <span className="hidden shrink-0 text-xs text-muted-foreground md:inline">
         {labels.lessons(set.lesson_count)}
       </span>

@@ -3774,16 +3774,28 @@
     "filter": {
       "all": "All",
       "language": "Language",
+      "target_language": "Target language",
       "all_languages": "All languages",
+      "all_target_languages": "All target languages",
       "level": "Level",
       "domain": "Domain",
       "trust": "Trust",
-      "ai_checked": "AI-checked"
+      "ai_checked": "AI-checked",
+      "review": "Review"
     },
     "trust": {
       "official": "Officially recommended",
       "verified": "Verified",
       "validated": "Validated"
+    },
+    "review": {
+      "no_machine": "No machine sets",
+      "reviewed_only": "Reviewed only",
+      "generated_badge": "Machine-made",
+      "reviewed_badge": "Reviewed"
+    },
+    "chips": {
+      "remove": "Remove: {f}"
     },
     "sort": {
       "label": "Sort",
@@ -3795,7 +3807,14 @@
       "language": "Languages",
       "ai": "AI",
       "psychology": "Psychology",
-      "programming": "Programming"
+      "programming": "Programming",
+      "knowledge": "Knowledge",
+      "math": "Mathematics",
+      "technology": "Technology",
+      "software": "Software",
+      "philosophy": "Philosophy",
+      "dog-training": "Dog training",
+      "traffic-knowledge": "Traffic knowledge"
     },
     "result": {
       "count": "{n} sets"
@@ -3803,7 +3822,12 @@
     "empty": {
       "no_sets": "No content available yet.",
       "no_results": "No results for “{query}”.",
-      "language_hint": "Nothing in this language yet."
+      "language_hint": "Nothing in this language yet.",
+      "without_facet": "Without {facet}: {n} sets",
+      "reset_all": "Reset all filters",
+      "add_source": "Add your own source",
+      "or": "or",
+      "create_lesson": "create a lesson"
     },
     "card": {
       "download": "Download",

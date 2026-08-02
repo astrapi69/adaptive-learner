@@ -3463,15 +3463,25 @@ discover:
   filter:
     all: "すべて"
     language: "言語"
+    target_language: "学習言語"
     all_languages: "すべての言語"
+    all_target_languages: "すべての学習言語"
     level: "レベル"
     domain: "分野"
     trust: "信頼度"
     ai_checked: "AIチェック済み"
+    review: "確認"
   trust:
     official: "公式推奨"
     verified: "検証済み"
     validated: "確認済み"
+  review:
+    no_machine: "自動生成を除く"
+    reviewed_only: "確認済みのみ"
+    generated_badge: "自動生成"
+    reviewed_badge: "確認済み"
+  chips:
+    remove: "解除: {f}"
   sort:
     label: "並べ替え"
     relevance: "関連度"
@@ -3482,12 +3492,24 @@ discover:
     ai: "AI"
     psychology: "心理学"
     programming: "プログラミング"
+    knowledge: "知識"
+    math: "数学"
+    technology: "テクノロジー"
+    software: "ソフトウェア"
+    philosophy: "哲学"
+    dog-training: "犬のトレーニング"
+    traffic-knowledge: "交通知識"
   result:
     count: "{n} セット"
   empty:
     no_sets: "まだ利用可能なコンテンツはありません。"
     no_results: "「{query}」の結果はありません。"
     language_hint: "この言語のコンテンツはまだありません。"
+    without_facet: "{facet}なし: {n} セット"
+    reset_all: "すべてのフィルターをリセット"
+    add_source: "独自のソースを追加"
+    or: "または"
+    create_lesson: "レッスンを作成"
   card:
     download: "ダウンロード"
     downloading: "ダウンロード中…"

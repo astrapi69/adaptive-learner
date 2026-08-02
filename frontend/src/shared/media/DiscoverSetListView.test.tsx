@@ -44,6 +44,8 @@ const LABELS: DiscoverListLabels = {
   remove: "Remove",
   lessons: (n) => `${n} lessons`,
   newBadge: "New",
+  reviewGenerated: "Maschinell erstellt",
+  reviewReviewed: "Durchgesehen",
 };
 
 function renderList(
@@ -140,6 +142,21 @@ describe("DiscoverSetListView", () => {
     expect(badge).toBeInTheDocument();
     expect(badge).toHaveTextContent("New");
     expect(screen.queryByTestId("discover-list-es-a1-new")).toBeNull();
+  });
+
+  it("shows the review badge for generated/reviewed rows, none for authored (EXP-048 #2321)", () => {
+    renderList([
+      makeSet({ id: "gen", review_status: "generated" }),
+      makeSet({ id: "rev", review_status: "reviewed" }),
+      makeSet({ id: "auth", review_status: "authored" }),
+    ]);
+    expect(screen.getByTestId("discover-list-gen-review")).toHaveTextContent(
+      "Maschinell erstellt",
+    );
+    expect(screen.getByTestId("discover-list-rev-review")).toHaveTextContent(
+      "Durchgesehen",
+    );
+    expect(screen.queryByTestId("discover-list-auth-review")).toBeNull();
   });
 
   it("keeps a long title truncating instead of overflowing the row (#1380)", () => {

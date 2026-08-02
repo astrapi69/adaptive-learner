@@ -25,12 +25,16 @@ import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,
   availableSourceLanguages,
+  availableTargetLanguages,
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
+  hasReviewableSets,
   isSetDownloaded,
   queryDiscoverSets,
+  relaxationHints,
   sourceLanguageCounts,
+  targetLanguageCounts,
   type DiscoverFilters,
   type DiscoverSort,
 } from "../../lib/content/repos/discover-index";
@@ -49,6 +53,9 @@ import PageContainer from "../../shared/layout/PageContainer";
 import { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchFilterBar from "../../shared/forms/SearchFilterBar";
 import FilterMenuButton from "../../shared/forms/FilterMenuButton";
+import ActiveFilterChips, {
+  type FilterChip,
+} from "../../shared/forms/ActiveFilterChips";
 import SetDiscoveryCard, {
   type SetDiscoveryCardLabels,
   type SetDiscoveryDownloadState,
@@ -207,6 +214,42 @@ export default function Discover() {
     [allSets, t, lang],
   );
 
+  // The "Durchsicht" (review-standing) facet is data-driven: only shown while
+  // the loaded catalogue actually carries a machine-origin set (generated /
+  // reviewed), so the bar never grows a dead option (EXP-048 #2321).
+  const showReviewFacet = useMemo(() => hasReviewableSets(allSets), [allSets]);
+
+  // Target-language facet (#2322): the SECOND axis a language learner searches
+  // by. Its options are scoped to the active SOURCE language (a de learner is
+  // offered the targets that exist for de), so the count on each mark is honest
+  // for the current view, and sorted by that count (most material first).
+  const sourceScopedSets = useMemo(
+    () =>
+      allSets.filter(
+        (set) =>
+          !effectiveSourceLanguage ||
+          set.source_language === effectiveSourceLanguage,
+      ),
+    [allSets, effectiveSourceLanguage],
+  );
+  const targetLanguageOptions = useMemo(() => {
+    const counts = targetLanguageCounts(sourceScopedSets);
+    const codes = availableTargetLanguages(sourceScopedSets).sort(
+      (a, b) => (counts[b] ?? 0) - (counts[a] ?? 0) || a.localeCompare(b),
+    );
+    return [
+      {
+        value: "",
+        label: t("discover.filter.all_target_languages", "All target languages"),
+      },
+      ...codes.map((code) => ({
+        value: code,
+        label: `${languageDisplayName(code, lang)} (${counts[code] ?? 0})`,
+      })),
+    ];
+  }, [sourceScopedSets, t, lang]);
+  const showTargetFacet = targetLanguageOptions.length > 1;
+
   const filterDefs: FilterDef[] = useMemo(() => {
     const all = { value: "", label: t("discover.filter.all", "All") };
     const levels = availableLevels(allSets).map((level) => ({
@@ -217,6 +260,20 @@ export default function Discover() {
       value: domain,
       label: t(`discover.domain.${domain}`, domain),
     }));
+    const reviewFacet: FilterDef[] = showReviewFacet
+      ? [
+          {
+            id: "reviewStatus",
+            label: t("discover.filter.review", "Review"),
+            value: filters.reviewStatus,
+            options: [
+              all,
+              { value: "authored", label: t("discover.review.no_machine", "No machine sets") },
+              { value: "reviewed", label: t("discover.review.reviewed_only", "Reviewed only") },
+            ],
+          },
+        ]
+      : [];
     return [
       { id: "level", label: t("discover.filter.level", "Level"), value: filters.level, options: [all, ...levels] },
       { id: "domain", label: t("discover.filter.domain", "Domain"), value: filters.domain, options: [all, ...domains] },
@@ -231,16 +288,7 @@ export default function Discover() {
           { value: "1", label: t("discover.trust.validated", "Validated") },
         ],
       },
-      {
-        id: "aiChecked",
-        label: t("discover.filter.ai_checked", "AI-checked"),
-        value: filters.aiChecked,
-        options: [
-          all,
-          { value: "yes", label: t("common.yes", "Yes") },
-          { value: "no", label: t("common.no", "No") },
-        ],
-      },
+      ...reviewFacet,
       {
         id: "sort",
         label: t("discover.sort.label", "Sort"),
@@ -252,7 +300,7 @@ export default function Discover() {
         ],
       },
     ];
-  }, [allSets, filters, sort, t]);
+  }, [allSets, filters, sort, t, showReviewFacet]);
 
   function handleFilterChange(id: string, value: string) {
     if (id === "sort") {
@@ -261,6 +309,109 @@ export default function Discover() {
     }
     setFilters((prev) => ({ ...prev, [id]: value }));
   }
+
+  // Every active restriction OTHER than the source language (which is its own
+  // always-visible control, #1699) as a removable mark (EXP-048 #2323), so a
+  // collapsed filter panel never hides what is filtering the list. The target
+  // language keeps its own always-visible facet, so it is not duplicated here.
+  const activeChips = useMemo<FilterChip[]>(() => {
+    const chips: FilterChip[] = [];
+    if (filters.query) {
+      chips.push({
+        id: "query",
+        label: `${t("discover.bar.search", "Search")}: ${filters.query}`,
+        onRemove: () => {
+          setRawQuery("");
+          setFilters((prev) => ({ ...prev, query: "" }));
+        },
+      });
+    }
+    if (filters.level) {
+      chips.push({
+        id: "level",
+        label: `${t("discover.filter.level", "Level")}: ${filters.level.toUpperCase()}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, level: "" })),
+      });
+    }
+    if (filters.domain) {
+      chips.push({
+        id: "domain",
+        label: `${t("discover.filter.domain", "Domain")}: ${t(`discover.domain.${filters.domain}`, filters.domain)}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, domain: "" })),
+      });
+    }
+    if (filters.trust) {
+      const trustText =
+        filters.trust === "3"
+          ? t("discover.trust.official", "Officially recommended")
+          : filters.trust === "2"
+            ? t("discover.trust.verified", "Verified")
+            : t("discover.trust.validated", "Validated");
+      chips.push({
+        id: "trust",
+        label: `${t("discover.filter.trust", "Trust")}: ${trustText}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, trust: "" })),
+      });
+    }
+    if (filters.reviewStatus) {
+      const reviewText =
+        filters.reviewStatus === "reviewed"
+          ? t("discover.review.reviewed_only", "Reviewed only")
+          : t("discover.review.no_machine", "No machine sets");
+      chips.push({
+        id: "reviewStatus",
+        label: `${t("discover.filter.review", "Review")}: ${reviewText}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, reviewStatus: "" })),
+      });
+    }
+    return chips;
+  }, [filters, t]);
+
+  // Clear every ADDED filter (query, target, level, domain, trust, review) in
+  // one action, keeping the source language — the axis the learner reads in
+  // (EXP-048 #2324). The source has its own "All languages" escape (#1343).
+  const resetAllFilters = () => {
+    setRawQuery("");
+    setFilters(EMPTY_FILTERS);
+  };
+
+  const clearFacet = (facet: string) => {
+    if (facet === "query") {
+      setRawQuery("");
+      setFilters((prev) => ({ ...prev, query: "" }));
+      return;
+    }
+    setFilters((prev) => ({ ...prev, [facet]: "" }));
+  };
+
+  const facetLabel = (facet: string): string => {
+    switch (facet) {
+      case "query":
+        return t("discover.bar.search", "Search");
+      case "targetLanguage":
+        return t("discover.filter.target_language", "Target language");
+      case "level":
+        return t("discover.filter.level", "Level");
+      case "domain":
+        return t("discover.filter.domain", "Domain");
+      case "trust":
+        return t("discover.filter.trust", "Trust");
+      case "reviewStatus":
+        return t("discover.filter.review", "Review");
+      default:
+        return facet;
+    }
+  };
+
+  // Computed exits for a zero-result state: for each active facet, how many
+  // sets would remain if only it were cleared (EXP-048 #2324). Only when the
+  // list is actually empty.
+  const relaxHints = useMemo(
+    () => (results.length === 0 ? relaxationHints(allSets, activeFilters) : []),
+    [results.length, allSets, activeFilters],
+  );
+  const hasAddedFilter =
+    activeChips.length > 0 || filters.targetLanguage !== "";
 
   async function handleDownload(set: SearchableSet) {
     const key = discoverSetKey(set);
@@ -321,6 +472,8 @@ export default function Discover() {
     trust: "",
     remove: t("discover.card.remove", "Remove"),
     progress: t("discover.card.progress", "Downloading lessons"),
+    reviewGenerated: t("discover.review.generated_badge", "Machine-made"),
+    reviewReviewed: t("discover.review.reviewed_badge", "Reviewed"),
   };
 
   const newBadgeLabel = t("discover.badge.new", "New");
@@ -399,7 +552,38 @@ export default function Discover() {
           onChange={setLangChoice}
           testId="discover-language-filter"
         />
+        {/* #2322 — the target (learned) language is the second axis of a
+            language search, and just as always-visible as the source. Shown
+            once the current source offers more than one target. */}
+        {showTargetFacet && (
+          <FilterMenuButton
+            label={t("discover.filter.target_language", "Target language")}
+            options={targetLanguageOptions}
+            value={filters.targetLanguage}
+            onChange={(value) =>
+              setFilters((prev) => ({ ...prev, targetLanguage: value }))
+            }
+            testId="discover-target-filter"
+          />
+        )}
       </div>
+
+      {/* #2323 — every other active restriction as a removable mark, on one
+          horizontally-scrollable line (the phone's single visible filter
+          surface). Absent when nothing beyond the source default is set. */}
+      {activeChips.length > 0 && (
+        <div className="mb-4">
+          <ActiveFilterChips
+            chips={activeChips}
+            removeLabel={(label) =>
+              t("discover.chips.remove", "Remove {f}").replace("{f}", label)
+            }
+            onClearAll={hasAddedFilter ? resetAllFilters : undefined}
+            clearAllLabel={t("discover.empty.reset_all", "Reset all filters")}
+            testId="discover-active-filters"
+          />
+        </div>
+      )}
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground" data-testid="discover-count">
@@ -418,9 +602,22 @@ export default function Discover() {
       </div>
 
       {allSets.length === 0 ? (
-        <p className="text-muted-foreground" data-testid="discover-empty-none">
-          {t("discover.empty.no_sets", "No content available yet.")}
-        </p>
+        <div className="text-muted-foreground" data-testid="discover-empty-none">
+          <p>{t("discover.empty.no_sets", "No content available yet.")}</p>
+          {/* The library genuinely has nothing: this is its own statement, not
+              a filter problem — point at adding a source or writing a lesson
+              (EXP-048 #2324). */}
+          <p className="mt-2" data-testid="discover-empty-add-source">
+            <Link to="/add-repo" className="text-accent hover:underline">
+              {t("discover.empty.add_source", "Add your own source")}
+            </Link>{" "}
+            {t("discover.empty.or", "or")}{" "}
+            <Link to="/create-lesson" className="text-accent hover:underline">
+              {t("discover.empty.create_lesson", "create a lesson")}
+            </Link>
+            .
+          </p>
+        </div>
       ) : results.length === 0 ? (
         <div className="text-muted-foreground" data-testid="discover-empty-results">
           <p>
@@ -447,6 +644,39 @@ export default function Discover() {
               </button>
             </p>
           )}
+          {/* Computed, per-facet exits: "Without {facet}: {n} sets" — the
+              source-language fallback generalised to every facet (#2324). */}
+          {relaxHints.length > 0 && (
+            <ul className="mt-2 flex flex-col gap-1" data-testid="discover-empty-hints">
+              {relaxHints.map((hint) => (
+                <li key={hint.facet}>
+                  <button
+                    type="button"
+                    className="text-accent hover:underline"
+                    onClick={() => clearFacet(hint.facet)}
+                    data-testid={`discover-empty-hint-${hint.facet}`}
+                  >
+                    {t("discover.empty.without_facet", "Without {facet}: {n} sets")
+                      .replace("{facet}", facetLabel(hint.facet))
+                      .replace("{n}", String(hint.count))}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {/* One action to clear every added restriction (#2324). */}
+          {hasAddedFilter && (
+            <p className="mt-2">
+              <button
+                type="button"
+                className="font-medium text-accent hover:underline"
+                onClick={resetAllFilters}
+                data-testid="discover-empty-reset"
+              >
+                {t("discover.empty.reset_all", "Reset all filters")}
+              </button>
+            </p>
+          )}
         </div>
       ) : viewMode === "list" ? (
         <DiscoverSetListView
@@ -467,6 +697,8 @@ export default function Discover() {
             lessons: (count) =>
               t("discover.card.lessons", "{n} lessons").replace("{n}", String(count)),
             newBadge: newBadgeLabel,
+            reviewGenerated: cardLabels.reviewGenerated,
+            reviewReviewed: cardLabels.reviewReviewed,
           }}
         />
       ) : (

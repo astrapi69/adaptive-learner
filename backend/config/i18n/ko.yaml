@@ -3473,15 +3473,25 @@ discover:
   filter:
     all: "전체"
     language: "언어"
+    target_language: "학습 언어"
     all_languages: "모든 언어"
+    all_target_languages: "모든 학습 언어"
     level: "수준"
     domain: "분야"
     trust: "신뢰도"
     ai_checked: "AI 검증됨"
+    review: "검토"
   trust:
     official: "공식 추천"
     verified: "검증됨"
     validated: "확인됨"
+  review:
+    no_machine: "자동 생성 제외"
+    reviewed_only: "검토된 것만"
+    generated_badge: "자동 생성"
+    reviewed_badge: "검토됨"
+  chips:
+    remove: "제거: {f}"
   sort:
     label: "정렬"
     relevance: "관련성"
@@ -3492,12 +3502,24 @@ discover:
     ai: "AI"
     psychology: "심리학"
     programming: "프로그래밍"
+    knowledge: "지식"
+    math: "수학"
+    technology: "기술"
+    software: "소프트웨어"
+    philosophy: "철학"
+    dog-training: "강아지 훈련"
+    traffic-knowledge: "교통 상식"
   result:
     count: "{n}개 세트"
   empty:
     no_sets: "아직 사용 가능한 콘텐츠가 없습니다."
     no_results: "“{query}”에 대한 결과가 없습니다."
     language_hint: "이 언어로 된 콘텐츠가 아직 없습니다."
+    without_facet: "{facet} 제외: {n}개 세트"
+    reset_all: "모든 필터 재설정"
+    add_source: "내 소스 추가"
+    or: "또는"
+    create_lesson: "레슨 만들기"
   card:
     download: "다운로드"
     downloading: "다운로드 중…"

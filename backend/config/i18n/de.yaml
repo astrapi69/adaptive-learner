@@ -3467,15 +3467,25 @@ discover:
   filter:
     all: "Alle"
     language: "Sprache"
+    target_language: "Zielsprache"
     all_languages: "Alle Sprachen"
+    all_target_languages: "Alle Zielsprachen"
     level: "Niveau"
     domain: "Bereich"
     trust: "Vertrauen"
     ai_checked: "KI-geprüft"
+    review: "Durchsicht"
   trust:
     official: "Offiziell empfohlen"
     verified: "Verifiziert"
     validated: "Validiert"
+  review:
+    no_machine: "Ohne Maschinen-Sets"
+    reviewed_only: "Nur durchgesehen"
+    generated_badge: "Maschinell erstellt"
+    reviewed_badge: "Durchgesehen"
+  chips:
+    remove: "Entfernen: {f}"
   sort:
     label: "Sortierung"
     relevance: "Relevanz"
@@ -3486,12 +3496,24 @@ discover:
     ai: "KI"
     psychology: "Psychologie"
     programming: "Programmierung"
+    knowledge: "Wissen"
+    math: "Mathematik"
+    technology: "Technik"
+    software: "Software"
+    philosophy: "Philosophie"
+    dog-training: "Hundetraining"
+    traffic-knowledge: "Verkehrskunde"
   result:
     count: "{n} Sets"
   empty:
     no_sets: "Noch keine Inhalte verfügbar."
     no_results: "Keine Ergebnisse für „{query}“."
     language_hint: "In dieser Sprache gibt es noch nichts."
+    without_facet: "Ohne {facet}: {n} Sets"
+    reset_all: "Alle Filter zurücksetzen"
+    add_source: "Eigene Quelle hinzufügen"
+    or: "oder"
+    create_lesson: "eine Lektion anlegen"
   card:
     download: "Herunterladen"
     downloading: "Wird geladen…"

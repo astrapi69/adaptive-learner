@@ -3465,15 +3465,25 @@ discover:
   filter:
     all: "Todos"
     language: "Idioma"
+    target_language: "Idioma meta"
     all_languages: "Todos los idiomas"
+    all_target_languages: "Todos los idiomas meta"
     level: "Nivel"
     domain: "Área"
     trust: "Confianza"
     ai_checked: "Verificado por IA"
+    review: "Revisión"
   trust:
     official: "Recomendado oficialmente"
     verified: "Verificado"
     validated: "Validado"
+  review:
+    no_machine: "Sin sets automáticos"
+    reviewed_only: "Solo revisados"
+    generated_badge: "Generado automáticamente"
+    reviewed_badge: "Revisado"
+  chips:
+    remove: "Quitar: {f}"
   sort:
     label: "Ordenar"
     relevance: "Relevancia"
@@ -3484,12 +3494,24 @@ discover:
     ai: "IA"
     psychology: "Psicología"
     programming: "Programación"
+    knowledge: "Conocimiento"
+    math: "Matemáticas"
+    technology: "Tecnología"
+    software: "Software"
+    philosophy: "Filosofía"
+    dog-training: "Adiestramiento canino"
+    traffic-knowledge: "Educación vial"
   result:
     count: "{n} conjuntos"
   empty:
     no_sets: "Aún no hay contenido disponible."
     no_results: "Sin resultados para «{query}»."
     language_hint: "Todavía no hay nada en este idioma."
+    without_facet: "Sin {facet}: {n} conjuntos"
+    reset_all: "Restablecer todos los filtros"
+    add_source: "Añade tu propia fuente"
+    or: "o"
+    create_lesson: "crea una lección"
   card:
     download: "Descargar"
     downloading: "Descargando…"

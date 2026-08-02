@@ -3774,16 +3774,28 @@
     "filter": {
       "all": "Tümü",
       "language": "Dil",
+      "target_language": "Hedef dil",
       "all_languages": "Tüm diller",
+      "all_target_languages": "Tüm hedef diller",
       "level": "Seviye",
       "domain": "Alan",
       "trust": "Güven",
-      "ai_checked": "Yapay zeka kontrollü"
+      "ai_checked": "Yapay zeka kontrollü",
+      "review": "İnceleme"
     },
     "trust": {
       "official": "Resmi olarak önerilen",
       "verified": "Doğrulanmış",
       "validated": "Onaylanmış"
+    },
+    "review": {
+      "no_machine": "Otomatik setler hariç",
+      "reviewed_only": "Yalnızca incelenenler",
+      "generated_badge": "Otomatik oluşturuldu",
+      "reviewed_badge": "İncelendi"
+    },
+    "chips": {
+      "remove": "Kaldır: {f}"
     },
     "sort": {
       "label": "Sırala",
@@ -3795,7 +3807,14 @@
       "language": "Diller",
       "ai": "Yapay zeka",
       "psychology": "Psikoloji",
-      "programming": "Programlama"
+      "programming": "Programlama",
+      "knowledge": "Bilgi",
+      "math": "Matematik",
+      "technology": "Teknoloji",
+      "software": "Yazılım",
+      "philosophy": "Felsefe",
+      "dog-training": "Köpek eğitimi",
+      "traffic-knowledge": "Trafik bilgisi"
     },
     "result": {
       "count": "{n} set"
@@ -3803,7 +3822,12 @@
     "empty": {
       "no_sets": "Henüz içerik yok.",
       "no_results": "“{query}” için sonuç yok.",
-      "language_hint": "Bu dilde henüz bir şey yok."
+      "language_hint": "Bu dilde henüz bir şey yok.",
+      "without_facet": "{facet} olmadan: {n} set",
+      "reset_all": "Tüm filtreleri sıfırla",
+      "add_source": "Kendi kaynağını ekle",
+      "or": "veya",
+      "create_lesson": "bir ders oluştur"
     },
     "card": {
       "download": "İndir",

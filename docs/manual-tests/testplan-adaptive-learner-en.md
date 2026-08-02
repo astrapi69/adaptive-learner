@@ -708,6 +708,36 @@ each card row (`CardImageField`).
 - [ ] Per-set share link opens the set detail page directly (#1572)
 - [ ] Add a registered content repo (register-a-repo #1511)
 
+### Discover Stage 1: facets, marks, empty state (EXP-048, #2320-#2324)
+
+Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
+(API + Dexie); the facets read the search index and are mode-independent.
+
+- [ ] Target-language facet visible next to the source language; marks carry
+      their set count, only targets present for the active source language,
+      sorted by count; selecting one filters the list (#2322)
+- [ ] Review standing: machine-generated sets (e.g. ja-a1-from-de,
+      ko-a1-from-de, zh-a1-from-de) carry a neutral badge ("Machine-made"),
+      hand-written sets carry NO badge; the "Review" facet appears only when
+      such sets are in the catalogue (#2321)
+- [ ] The "AI-checked" facet is gone; the AI badge on the entry stays (#2321)
+- [ ] Active restrictions (level, domain, trust, review, search) appear as
+      removable marks above the list; clicking a mark's X clears exactly that
+      restriction (#2323)
+- [ ] Domain names are translated (Dog training, Technology, Software,
+      Philosophy, Traffic knowledge instead of raw identifiers) (#2320)
+- [ ] Empty state: at zero results, computed exits appear ("Without <facet>:
+      N sets") plus "Reset all filters"; a click restores results; the source
+      language stays (#2324)
+- [ ] Empty library (no set): a pointer to "Add your own source" (/add-repo)
+      or "create a lesson" (/create-lesson) (#2324)
+- [ ] Phone (narrow width): the marks row stays ONE horizontally-scrollable
+      line, never wraps, and does not eat half the height
+- [ ] **iOS standalone (added to home screen, Dexie mode):** same flow on the
+      iPhone PWA - the facet menus open above the list (portal/fixed, #1349),
+      the marks row scrolls horizontally, and the empty-state exits are
+      tappable (>=44px touch target)
+
 ### Set status persists (active/deferred/completed, both modes)
 
 Where: My Content (`/content?tab=my`) → the set actions menu (three dots)

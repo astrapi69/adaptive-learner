@@ -53,24 +53,35 @@ export interface DiscoverFilters {
   /** BCP-47 code matched against the set's SOURCE (instruction) language.
    *  The visible, locale-defaulted, persisted language facet (#1343). */
   sourceLanguage: string;
+  /** BCP-47 code matched against the set's TARGET (learned) language
+   *  (EXP-048 #2322). ``""`` = every target. With the source language this
+   *  is the pair a language learner searches by; ``target_language`` is in
+   *  45/45 index entries but was never filterable before. */
+  targetLanguage: string;
   /** CEFR level (a1..c2), exact match. */
   level: string;
   /** Content domain (language / ai / psychology / …), exact match. */
   domain: string;
   /** Minimum trust level as a string ("1" | "2" | "3"); "" = any. */
   trust: string;
-  /** "yes" → AI-validated only, "no" → not validated, "" → any. */
-  aiChecked: string;
+  /** Review-standing facet (EXP-048 #2321). Exact match on the set's
+   *  ``review_status``: ``"authored"`` keeps only hand-written sets
+   *  ("Ohne Maschinen-Sets"), ``"reviewed"`` keeps only reviewed machine
+   *  sets ("Nur durchgesehen"), ``""`` = any. Replaces the retired
+   *  ``aiChecked`` facet (1 of 45 sets ``ai_validated`` — a facet that
+   *  filtered out 44 of 45 results or did nothing). */
+  reviewStatus: string;
 }
 
 /** A blank filter set (everything = all). */
 export const EMPTY_FILTERS: DiscoverFilters = {
   query: "",
   sourceLanguage: "",
+  targetLanguage: "",
   level: "",
   domain: "",
   trust: "",
-  aiChecked: "",
+  reviewStatus: "",
 };
 
 /** Build the normalized haystack for one set (name + description + tags). */
@@ -89,14 +100,18 @@ export function passesFilters(set: SearchableSet, filters: DiscoverFilters): boo
   if (filters.sourceLanguage && set.source_language !== filters.sourceLanguage) {
     return false;
   }
+  if (filters.targetLanguage && set.target_language !== filters.targetLanguage) {
+    return false;
+  }
   if (filters.level && set.level !== filters.level) return false;
   if (filters.domain && set.domain !== filters.domain) return false;
   if (filters.trust) {
     const min = Number(filters.trust);
     if (Number.isFinite(min) && set.trust_level < min) return false;
   }
-  if (filters.aiChecked === "yes" && !set.ai_validated) return false;
-  if (filters.aiChecked === "no" && set.ai_validated) return false;
+  if (filters.reviewStatus && set.review_status !== filters.reviewStatus) {
+    return false;
+  }
   return true;
 }
 
@@ -182,6 +197,27 @@ export function sourceLanguageCounts(
   return counts;
 }
 
+/** Distinct non-empty TARGET (learned) language codes present, sorted.
+ *  Drives the target-language facet (EXP-048 #2322). */
+export function availableTargetLanguages(sets: SearchableSet[]): string[] {
+  const codes = new Set<string>();
+  for (const set of sets) if (set.target_language) codes.add(set.target_language);
+  return [...codes].sort();
+}
+
+/** How many sets carry each TARGET language code (for "Español (3)" labels
+ *  and count-sorting the target facet). */
+export function targetLanguageCounts(
+  sets: SearchableSet[],
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const set of sets) {
+    if (!set.target_language) continue;
+    counts[set.target_language] = (counts[set.target_language] ?? 0) + 1;
+  }
+  return counts;
+}
+
 /** Distinct CEFR levels present, sorted (a1, a2, b1, …). */
 export function availableLevels(sets: SearchableSet[]): string[] {
   const levels = new Set<string>();
@@ -194,6 +230,61 @@ export function availableDomains(sets: SearchableSet[]): string[] {
   const domains = new Set<string>();
   for (const set of sets) if (set.domain) domains.add(set.domain);
   return [...domains].sort();
+}
+
+/** True when the loaded catalogue carries at least one machine-origin set
+ *  (``generated`` or ``reviewed``). Drives whether the "Durchsicht" facet is
+ *  shown at all (EXP-048 #2321): with an all-``authored`` catalogue the facet
+ *  would offer only dead options, so it stays hidden — data-driven, like the
+ *  domain list. ``authored`` (incl. the absent-field default) never counts. */
+export function hasReviewableSets(sets: SearchableSet[]): boolean {
+  return sets.some(
+    (set) =>
+      set.review_status === "generated" || set.review_status === "reviewed",
+  );
+}
+
+/** One computed way out of a zero-result state: clearing ``facet`` alone would
+ *  leave ``count`` sets. */
+export interface RelaxationHint {
+  facet: string;
+  count: number;
+}
+
+/** Facets offered as a computed escape from a zero-result state. The source
+ *  language is deliberately excluded — it owns its own dedicated escape
+ *  ("All languages", #1343) and stays the axis the learner reads in. */
+const RELAXABLE_FACETS = [
+  "query",
+  "targetLanguage",
+  "level",
+  "domain",
+  "trust",
+  "reviewStatus",
+] as const;
+
+/**
+ * For each active relaxable facet, how many sets remain if ONLY that facet is
+ * cleared (every other restriction kept). Returns those with a non-empty
+ * result, most first — so a zero-result state can offer "Ohne {facet}: {n}
+ * Sets", the #1343 source-language fallback generalised to every facet
+ * (EXP-048 #2324). Never removes the source language.
+ */
+export function relaxationHints(
+  sets: SearchableSet[],
+  filters: DiscoverFilters,
+): RelaxationHint[] {
+  const hints: RelaxationHint[] = [];
+  for (const facet of RELAXABLE_FACETS) {
+    if (!filters[facet]) continue;
+    const count = queryDiscoverSets(
+      sets,
+      { ...filters, [facet]: "" },
+      "relevance",
+    ).length;
+    if (count > 0) hints.push({ facet, count });
+  }
+  return hints.sort((a, b) => b.count - a.count);
 }
 
 /** Stable identity key for a discovered set (source + id). */

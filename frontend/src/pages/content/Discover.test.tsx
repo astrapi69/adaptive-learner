@@ -257,6 +257,191 @@ describe("Discover page", () => {
     expect(localStorage.getItem("adaptive-learner.discover_source_language")).toBe("en");
   });
 
+  // --- EXP-048 #2324: empty state with exits ---
+
+  it("offers a computed relaxation hint that clears just the blocking facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es-a1", name: "Spanisch A1", source_language: "de", target_language: "es", level: "a1" }),
+      makeSet({ id: "es-a2", name: "Spanisch A2", source_language: "de", target_language: "es", level: "a2" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    // Restrict to a target that has no set under de -> impossible via menu, so
+    // restrict level to a1 AND search a non-matching string instead.
+    fireEvent.change(screen.getByTestId("discover-filters-level"), { target: { value: "a1" } });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "zzznope" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
+      { timeout: 1000 },
+    );
+    // Clearing the query alone restores the one a1 set.
+    const hint = screen.getByTestId("discover-empty-hint-query");
+    expect(hint).toHaveTextContent("1");
+    fireEvent.click(hint);
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+  });
+
+  it("resets every added filter from the empty state, keeping the source language", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es", name: "Spanisch", source_language: "de", target_language: "es", level: "a1" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "zzznope" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
+      { timeout: 1000 },
+    );
+    fireEvent.click(screen.getByTestId("discover-empty-reset"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    // Source language stayed de (its own axis), so the de set is still shown.
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+  });
+
+  it("points to adding a source / creating a lesson when the library is empty", async () => {
+    fetchAllIndicesMock.mockResolvedValue([]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-empty-none")).toBeInTheDocument());
+    const pointer = screen.getByTestId("discover-empty-add-source");
+    expect(pointer.querySelector('a[href="/add-repo"]')).not.toBeNull();
+    expect(pointer.querySelector('a[href="/create-lesson"]')).not.toBeNull();
+  });
+
+  // --- EXP-048 #2323: active filters as removable marks ---
+
+  it("shows an active panel facet as a permanently-visible removable mark", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "py", name: "Python", source_language: "de", target_language: "de", domain: "programming", level: "b1" }),
+      makeSet({ id: "es", name: "Spanisch", source_language: "de", target_language: "es", domain: "language", level: "a1" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    // Restrict domain via the collapsible panel...
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-domain"), {
+      target: { value: "programming" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    // ...and it appears as a removable mark, visible without the panel — the
+    // fallback `t` returns the raw domain id here.
+    const mark = screen.getByTestId("discover-active-filters-domain");
+    expect(mark).toHaveTextContent("Domain: programming");
+    // Removing the mark clears just that restriction.
+    fireEvent.click(screen.getByTestId("discover-active-filters-remove-domain"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    expect(screen.queryByTestId("discover-active-filters-domain")).toBeNull();
+  });
+
+  it("marks an active search query and clears it via its mark", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "French" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+      { timeout: 1000 },
+    );
+    expect(screen.getByTestId("discover-active-filters-query")).toHaveTextContent("French");
+    fireEvent.click(screen.getByTestId("discover-active-filters-remove-query"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+  });
+
+  it("shows no active-filter marks when only the source-language default is set", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // The source-language default is its own always-visible control (#1699),
+    // not a mark; with nothing else set, the marks row is absent.
+    expect(screen.queryByTestId("discover-active-filters")).toBeNull();
+  });
+
+  // --- EXP-048 #2322: target-language facet ---
+
+  it("filters by the always-visible target-language facet with counts", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "de-es", name: "Spanisch", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-fr", name: "Franzoesisch", source_language: "de", target_language: "fr" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    // The target facet is ALWAYS visible (never behind the collapsible panel).
+    expect(screen.getByTestId("discover-target-filter")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-filters")).toBeNull();
+    fireEvent.click(screen.getByTestId("discover-target-filter"));
+    fireEvent.click(screen.getByTestId("discover-target-filter-es"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+    expect(screen.queryByText("Franzoesisch")).toBeNull();
+  });
+
+  it("target options are scoped to the active source language and count-sorted", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "de-es1", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-es2", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-fr", source_language: "de", target_language: "fr" }),
+      makeSet({ id: "en-ja", source_language: "en", target_language: "ja" }),
+    ]);
+    renderDiscover(); // de source default
+    await waitFor(() => expect(screen.getByTestId("discover-target-filter")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-target-filter"));
+    // ja belongs to an en-source set only, so it is NOT offered under de.
+    expect(screen.queryByTestId("discover-target-filter-ja")).toBeNull();
+    // es (2) and fr (1) are offered; es outranks fr by count.
+    const es = screen.getByTestId("discover-target-filter-es");
+    const fr = screen.getByTestId("discover-target-filter-fr");
+    expect(es).toHaveTextContent("ES (2)");
+    expect(fr).toHaveTextContent("FR (1)");
+    expect(es.compareDocumentPosition(fr) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  // --- EXP-048 #2321: Durchsichtsstand reaches the end of the chain ---
+
+  it("surfaces review_status at the END of the chain: badge on a generated card + the Durchsicht facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "ja-a1", name: "Japanisch A1", target_language: "ja", review_status: "generated" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // The field survives loader → queryDiscoverSets → page → card and is READ
+    // by the UI (not merely present on props): the badge renders.
+    expect(screen.getByTestId("discover-card-ja-a1-review")).toHaveAttribute(
+      "data-review",
+      "generated",
+    );
+    // The Durchsicht facet is data-driven: it appears because the catalogue
+    // carries a machine-origin set.
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.getByTestId("discover-filters-reviewStatus")).toBeInTheDocument();
+  });
+
+  it("hides the Durchsicht facet when every set is authored (no dead options)", async () => {
+    // beforeEach seeds two authored sets.
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.queryByTestId("discover-filters-reviewStatus")).toBeNull();
+    // ...and there is no review badge on an authored card.
+    expect(screen.queryByTestId("discover-card-es-a1-review")).toBeNull();
+  });
+
+  it("filters to only reviewed machine sets via the Durchsicht facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "auth", name: "Handgeschrieben", target_language: "es", review_status: "authored" }),
+      makeSet({ id: "rev", name: "Durchgesehen", target_language: "ja", review_status: "reviewed" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-reviewStatus"), {
+      target: { value: "reviewed" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("Durchgesehen")).toBeInTheDocument();
+    expect(screen.queryByText("Handgeschrieben")).toBeNull();
+  });
+
   // --- #1251: info button replaces the permanent subtitle ---
 
   it("hides the subtitle behind an info button and reveals the Discover-specific text on click", async () => {

@@ -3465,15 +3465,25 @@ discover:
   filter:
     all: "Όλα"
     language: "Γλώσσα"
+    target_language: "Γλώσσα-στόχος"
     all_languages: "Όλες οι γλώσσες"
+    all_target_languages: "Όλες οι γλώσσες-στόχοι"
     level: "Επίπεδο"
     domain: "Τομέας"
     trust: "Εμπιστοσύνη"
     ai_checked: "Ελεγμένο από ΤΝ"
+    review: "Έλεγχος"
   trust:
     official: "Επίσημα προτεινόμενο"
     verified: "Επαληθευμένο"
     validated: "Επικυρωμένο"
+  review:
+    no_machine: "Χωρίς αυτόματα σύνολα"
+    reviewed_only: "Μόνο ελεγμένα"
+    generated_badge: "Αυτόματη δημιουργία"
+    reviewed_badge: "Ελεγμένο"
+  chips:
+    remove: "Αφαίρεση: {f}"
   sort:
     label: "Ταξινόμηση"
     relevance: "Συνάφεια"
@@ -3484,12 +3494,24 @@ discover:
     ai: "ΤΝ"
     psychology: "Ψυχολογία"
     programming: "Προγραμματισμός"
+    knowledge: "Γνώση"
+    math: "Μαθηματικά"
+    technology: "Τεχνολογία"
+    software: "Λογισμικό"
+    philosophy: "Φιλοσοφία"
+    dog-training: "Εκπαίδευση σκύλων"
+    traffic-knowledge: "Κυκλοφοριακή αγωγή"
   result:
     count: "{n} σύνολα"
   empty:
     no_sets: "Δεν υπάρχει ακόμη διαθέσιμο περιεχόμενο."
     no_results: "Κανένα αποτέλεσμα για «{query}»."
     language_hint: "Δεν υπάρχει ακόμη τίποτα σε αυτή τη γλώσσα."
+    without_facet: "Χωρίς {facet}: {n} σύνολα"
+    reset_all: "Επαναφορά όλων των φίλτρων"
+    add_source: "Προσθέστε δική σας πηγή"
+    or: "ή"
+    create_lesson: "δημιουργήστε ένα μάθημα"
   card:
     download: "Λήψη"
     downloading: "Γίνεται λήψη…"

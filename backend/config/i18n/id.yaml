@@ -3473,15 +3473,25 @@ discover:
   filter:
     all: "Semua"
     language: "Bahasa"
+    target_language: "Bahasa target"
     all_languages: "Semua bahasa"
+    all_target_languages: "Semua bahasa target"
     level: "Tingkat"
     domain: "Bidang"
     trust: "Kepercayaan"
     ai_checked: "Diperiksa AI"
+    review: "Tinjauan"
   trust:
     official: "Direkomendasikan secara resmi"
     verified: "Terverifikasi"
     validated: "Tervalidasi"
+  review:
+    no_machine: "Tanpa set mesin"
+    reviewed_only: "Hanya yang ditinjau"
+    generated_badge: "Buatan mesin"
+    reviewed_badge: "Ditinjau"
+  chips:
+    remove: "Hapus: {f}"
   sort:
     label: "Urutkan"
     relevance: "Relevansi"
@@ -3492,12 +3502,24 @@ discover:
     ai: "AI"
     psychology: "Psikologi"
     programming: "Pemrograman"
+    knowledge: "Pengetahuan"
+    math: "Matematika"
+    technology: "Teknologi"
+    software: "Perangkat lunak"
+    philosophy: "Filsafat"
+    dog-training: "Pelatihan anjing"
+    traffic-knowledge: "Pengetahuan lalu lintas"
   result:
     count: "{n} set"
   empty:
     no_sets: "Belum ada konten tersedia."
     no_results: "Tidak ada hasil untuk “{query}”."
     language_hint: "Belum ada apa pun dalam bahasa ini."
+    without_facet: "Tanpa {facet}: {n} set"
+    reset_all: "Setel ulang semua filter"
+    add_source: "Tambahkan sumber Anda sendiri"
+    or: "atau"
+    create_lesson: "buat pelajaran"
   card:
     download: "Unduh"
     downloading: "Mengunduh…"
