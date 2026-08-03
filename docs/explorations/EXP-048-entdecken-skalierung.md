@@ -355,6 +355,13 @@ Katalogröße. Zwei Punkte:
   der Katalog über etwa 200 Sets liegt oder eine einzelne Quelle mehr als 50
   Sets liefert (heute: 28 aus der größten Quelle). Vorher ist die Bibliothek
   in einer Bildschirmhöhe überblickbar.
+  **Schwelle bewusst überschritten (#2336):** Auf ausdrückliche
+  Nutzer-Entscheidung wurde die Tippfehlertoleranz samt Rangfolge (exakte
+  Treffer über reinen Tippfehler-Treffern) trotz der noch nicht erreichten
+  200-Sets-Schwelle gebaut. Umgesetzt app-seitig ohne neue Abhängigkeit
+  (begrenztes Levenshtein, ein Edit je Suchwort ab 4 Zeichen); der Vermerk
+  steht hier, im Commit, in der PR und im Issue, damit die Abweichung nicht
+  still ist.
 
 ## Teil 5: Zuschnitt
 
@@ -371,7 +378,7 @@ Katalogröße. Zwei Punkte:
 | 2 | Sprachnamen der UI-Sprache im Suchtext | klein |
 | 3 | Schubweises Rendern mit "Weitere anzeigen" | klein |
 | 3 | Sprachpaar-Matrix als alternativer Einstieg | mittel, erst ab etwa 30 belegten Paaren (heute 14) |
-| 3 | Rangfolge und Tippfehlertoleranz | mittel, erst ab etwa 200 Sets |
+| 3 | Rangfolge und Tippfehlertoleranz | mittel, laut Entwurf erst ab etwa 200 Sets — Schwelle bewusst überschritten, gebaut in #2336 |
 
 **Kleinster erster Wurf mit spürbarer Wirkung:** die vier ersten Zeilen der
 Stufe 1. Sie brauchen keinen Indexwechsel, keinen Engine-Pin und keine

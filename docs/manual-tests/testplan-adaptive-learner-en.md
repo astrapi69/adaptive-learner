@@ -779,6 +779,25 @@ BOTH storage modes; the logic is mode-independent.
       tappable (>=44px), and the back-path (gesture / navigation) survives the
       extra batch
 
+### Discover Stage 3: typo tolerance + ranking in search (EXP-048, #2336)
+
+Where: Discover (`/content?tab=discover`), search box. Threshold deliberately
+overridden: the exploration scheduled this only from ~200 sets (currently ~46);
+it is built now on an explicit user decision. Testable in BOTH storage modes;
+the logic is mode-independent.
+
+- [ ] A search word with ONE typo (e.g. "spanissch" for "Spanisch") finds the
+      same sets as the correct spelling
+- [ ] Two or more typos in the same word do NOT find the set (tolerance stays
+      tight)
+- [ ] Very short search words (under 4 characters) stay exact; a 3-character
+      typo finds nothing wrong
+- [ ] A multi-word search still requires EVERY word to match; an unrelated
+      second word excludes the set
+- [ ] Exact matches rank above typo-only matches when sorting by "Relevance"
+- [ ] **iOS standalone (added to home screen, Dexie mode):** typo search works
+      offline exactly as in server mode
+
 ### Set status persists (active/deferred/completed, both modes)
 
 Where: My Content (`/content?tab=my`) → the set actions menu (three dots)
