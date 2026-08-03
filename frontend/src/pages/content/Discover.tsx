@@ -39,8 +39,8 @@ import {
   type DiscoverFilters,
   type DiscoverSort,
 } from "../../lib/content/repos/discover-index";
-import { useDiscoverSourceLanguage } from "../../hooks/content/useDiscoverSourceLanguage";
-import { useDiscoverEntry } from "../../hooks/content/useDiscoverEntry";
+import { useDiscoverSourceLanguage } from "../../hooks/content/discover/useDiscoverSourceLanguage";
+import { useDiscoverEntry } from "../../hooks/content/discover/useDiscoverEntry";
 import { isKnowledgeDomain } from "../../lib/exercises/knowledge-domain";
 import { collectDiscoveryRepos } from "../../lib/content/repos/discover-repos";
 import {

@@ -16,7 +16,7 @@ import {
   DISCOVER_ENTRY_KEY,
   readDiscoverEntry,
   writeDiscoverEntry,
-} from "../../lib/content/repos/discoverEntryPref";
+} from "../../../lib/content/repos/discoverEntryPref";
 
 /**
  * @returns A ``[choice, setChoice]`` tuple. ``choice`` is the explicit stored

@@ -15,7 +15,7 @@ import {
   DISCOVER_SOURCE_LANGUAGE_KEY,
   readDiscoverSourceLanguage,
   writeDiscoverSourceLanguage,
-} from "../../lib/content/repos/discoverLanguagePref";
+} from "../../../lib/content/repos/discoverLanguagePref";
 
 /**
  * @returns A ``[choice, setChoice]`` tuple. ``choice`` is the explicit
