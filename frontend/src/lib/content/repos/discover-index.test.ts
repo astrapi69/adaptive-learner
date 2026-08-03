@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   availableDomains,
+  availableLanguagePairs,
   availableSources,
   availableSourceLanguages,
   availableTargetLanguages,
@@ -226,6 +227,32 @@ describe("hasReviewableSets", () => {
     expect(hasReviewableSets([makeSet({ review_status: "generated" })])).toBe(true);
     expect(hasReviewableSets([makeSet({ review_status: "reviewed" })])).toBe(true);
     expect(hasReviewableSets([])).toBe(false);
+  });
+});
+
+describe("availableLanguagePairs (EXP-048 #2337, Schwelle bewusst überschritten)", () => {
+  it("lists distinct source→target language pairs (source != target), most first", () => {
+    const sets = [
+      makeSet({ id: "1", source_language: "de", target_language: "es" }),
+      makeSet({ id: "2", source_language: "de", target_language: "es" }),
+      makeSet({ id: "3", source_language: "de", target_language: "fr" }),
+      makeSet({ id: "4", source_language: "en", target_language: "es" }),
+      // Excluded: source == target (a knowledge set, not a language pair).
+      makeSet({ id: "5", source_language: "de", target_language: "de" }),
+      // Excluded: no target language.
+      makeSet({ id: "6", source_language: "de", target_language: "" }),
+    ];
+    expect(availableLanguagePairs(sets)).toEqual([
+      { source: "de", target: "es", count: 2 },
+      { source: "de", target: "fr", count: 1 },
+      { source: "en", target: "es", count: 1 },
+    ]);
+  });
+
+  it("returns an empty list when no cross-language pairs exist", () => {
+    expect(
+      availableLanguagePairs([makeSet({ source_language: "de", target_language: "de" })]),
+    ).toEqual([]);
   });
 });
 

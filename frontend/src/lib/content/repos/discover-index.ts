@@ -358,6 +358,39 @@ export function availableSources(sets: SearchableSet[]): DiscoverSource[] {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+/** One source→target LANGUAGE pair present in the catalogue, with its count. */
+export interface DiscoverLanguagePair {
+  /** BCP-47 instruction (source) language code. */
+  source: string;
+  /** BCP-47 learned (target) language code. */
+  target: string;
+  count: number;
+}
+
+/** Distinct source→target LANGUAGE pairs (both present and source != target)
+ *  with their set counts, most-populated first, ties broken by source then
+ *  target code (EXP-048 #2337). Drives the language-pair matrix — an alternative
+ *  entry that sets BOTH language axes at once, so a learner can jump straight to
+ *  "German → Spanish" instead of picking the two facets separately. Same-language
+ *  pairs (knowledge sets) are excluded: they are not a language-learning pair. */
+export function availableLanguagePairs(sets: SearchableSet[]): DiscoverLanguagePair[] {
+  const byKey = new Map<string, DiscoverLanguagePair>();
+  for (const set of sets) {
+    const source = set.source_language;
+    const target = set.target_language;
+    if (!source || !target || source === target) continue;
+    const existing = byKey.get(`${source}->${target}`);
+    if (existing) existing.count += 1;
+    else byKey.set(`${source}->${target}`, { source, target, count: 1 });
+  }
+  return [...byKey.values()].sort(
+    (a, b) =>
+      b.count - a.count ||
+      a.source.localeCompare(b.source) ||
+      a.target.localeCompare(b.target),
+  );
+}
+
 /** True when the loaded catalogue carries at least one machine-origin set
  *  (``generated`` or ``reviewed``). Drives whether the "Durchsicht" facet is
  *  shown at all (EXP-048 #2321): with an all-``authored`` catalogue the facet

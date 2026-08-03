@@ -3465,6 +3465,9 @@ discover:
     language: "Dil öğrenmek"
     knowledge: "Bir konu"
     all: "Her şey"
+  pairs:
+    heading: "Dil çiftleri"
+    select: "{p} seçin"
   filter:
     all: "Tümü"
     language: "Dil"

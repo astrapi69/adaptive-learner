@@ -855,6 +855,28 @@ modusunabhängig.
 - [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):** die
       Tippfehler-Suche funktioniert ohne Netz genauso wie im Server-Modus
 
+### Discover Stufe 3: Sprachpaar-Matrix als alternativer Einstieg (EXP-048, #2337)
+
+Ort: Entdecken (`/content?tab=discover`), Bereich "Sprachpaare" über der
+Trefferliste. Schwelle bewusst überschritten: laut Exploration erst ab etwa 30
+belegten Paaren vorgesehen (aktuell 14) und auf ausdrückliche
+Nutzer-Entscheidung schon jetzt gebaut. Sichtbar im Einstieg "Sprache lernen"
+und "Alles", sobald mehr als ein Sprachpaar belegt ist. In BEIDEN
+Speichermodi prüfbar; die Logik ist modusunabhängig.
+
+- [ ] Über der Liste erscheinen die belegten Sprachpaare als Knöpfe, z. B.
+      "Deutsch → Spanisch (3)", das meistbelegte zuerst
+- [ ] Ein Tippen auf ein Paar setzt Quell- UND Zielsprache zugleich und
+      schaltet auf den Einstieg "Sprache lernen"; die Liste zeigt danach nur
+      noch die Sets dieses Paars
+- [ ] Das gewählte Paar ist hervorgehoben (aktiv markiert)
+- [ ] Ein Paar in einer ANDEREN Erklärsprache (z. B. "Englisch → Spanisch")
+      springt auch dorthin; die Quellsprache bleibt danach frei änderbar
+- [ ] Im Einstieg "Fachgebiet" erscheint die Sprachpaar-Matrix nicht
+- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):** die
+      Paar-Knöpfe sind tippbar (>=44px) und funktionieren ohne Netz genauso
+      wie im Server-Modus
+
 ### Set-Status bleibt erhalten (aktiv/zurueckgestellt/abgeschlossen, beide Modi)
 
 Ort: Meine Inhalte (`/content?tab=my`) → Set-Aktionen-Menue (Drei-Punkte)

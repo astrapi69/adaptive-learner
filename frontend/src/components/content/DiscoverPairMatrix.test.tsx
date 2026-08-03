@@ -1,0 +1,101 @@
+/** Tests for the connected language-pair matrix wrapper (EXP-048 #2337). */
+
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+
+import DiscoverPairMatrix from "./DiscoverPairMatrix";
+import type { SearchableSet } from "../../lib/content/repos/search-index-loader";
+
+vi.mock("../../hooks/ui/useI18n", () => ({
+  useI18n: () => ({ t: (_k: string, fallback: string) => fallback, lang: "de" }),
+}));
+vi.mock("../../lib/content/language/language-names", () => ({
+  languageDisplayName: (code: string) => code.toUpperCase(),
+}));
+
+function makeSet(over: Partial<SearchableSet>): SearchableSet {
+  return {
+    id: "id",
+    name: "Name",
+    description: "",
+    source_language: "de",
+    target_language: "es",
+    level: "a1",
+    domain: "language",
+    lesson_count: 10,
+    card_count: 100,
+    tags: [],
+    ai_validated: false,
+    trust_level: 0,
+    book: null,
+    updated_at: null,
+    repo_url: "owner/repo",
+    repo_name: "owner/repo",
+    review_status: "authored",
+    ...over,
+  };
+}
+
+const SETS = [
+  makeSet({ id: "1", source_language: "de", target_language: "es" }),
+  makeSet({ id: "2", source_language: "de", target_language: "fr" }),
+];
+
+describe("DiscoverPairMatrix", () => {
+  it("renders the populated pairs with formatted labels in the language entry", () => {
+    render(
+      <DiscoverPairMatrix
+        sets={SETS}
+        entry="language"
+        activeSource="de"
+        activeTarget=""
+        onSelect={() => {}}
+      />,
+    );
+    expect(screen.getByTestId("discover-pair-matrix-de-es")).toHaveTextContent(
+      "DE → ES (1)",
+    );
+    expect(screen.getByTestId("discover-pair-matrix-de-fr")).toBeInTheDocument();
+  });
+
+  it("passes the clicked pair to onSelect", () => {
+    const onSelect = vi.fn();
+    render(
+      <DiscoverPairMatrix
+        sets={SETS}
+        entry="language"
+        activeSource="de"
+        activeTarget=""
+        onSelect={onSelect}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("discover-pair-matrix-de-es"));
+    expect(onSelect).toHaveBeenCalledWith({ source: "de", target: "es", count: 1 });
+  });
+
+  it("renders nothing in the knowledge entry", () => {
+    const { container } = render(
+      <DiscoverPairMatrix
+        sets={SETS}
+        entry="knowledge"
+        activeSource="de"
+        activeTarget=""
+        onSelect={() => {}}
+      />,
+    );
+    expect(container.querySelector('[data-testid="discover-pair-matrix"]')).toBeNull();
+  });
+
+  it("renders nothing when only a single pair is populated", () => {
+    const { container } = render(
+      <DiscoverPairMatrix
+        sets={[makeSet({ source_language: "de", target_language: "es" })]}
+        entry="language"
+        activeSource="de"
+        activeTarget=""
+        onSelect={() => {}}
+      />,
+    );
+    expect(container.querySelector('[data-testid="discover-pair-matrix"]')).toBeNull();
+  });
+});

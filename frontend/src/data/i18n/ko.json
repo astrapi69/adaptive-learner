@@ -3777,6 +3777,10 @@
       "knowledge": "분야",
       "all": "전체"
     },
+    "pairs": {
+      "heading": "언어 쌍",
+      "select": "{p} 선택"
+    },
     "filter": {
       "all": "전체",
       "language": "언어",

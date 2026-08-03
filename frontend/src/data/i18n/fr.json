@@ -3777,6 +3777,10 @@
       "knowledge": "Une matière",
       "all": "Tout"
     },
+    "pairs": {
+      "heading": "Paires de langues",
+      "select": "Choisir {p}"
+    },
     "filter": {
       "all": "Tous",
       "language": "Langue",

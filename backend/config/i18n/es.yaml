@@ -3467,6 +3467,9 @@ discover:
     language: "Aprender un idioma"
     knowledge: "Una materia"
     all: "Todo"
+  pairs:
+    heading: "Pares de idiomas"
+    select: "Elegir {p}"
   filter:
     all: "Todos"
     language: "Idioma"

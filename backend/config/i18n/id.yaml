@@ -3475,6 +3475,9 @@ discover:
     language: "Belajar bahasa"
     knowledge: "Suatu bidang"
     all: "Semua"
+  pairs:
+    heading: "Pasangan bahasa"
+    select: "Pilih {p}"
   filter:
     all: "Semua"
     language: "Bahasa"

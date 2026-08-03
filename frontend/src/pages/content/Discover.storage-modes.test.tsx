@@ -146,5 +146,28 @@ describe.each(["api", "dexie"] as const)(
       await waitFor(() => expect(screen.getByText("Psychologie")).toBeInTheDocument());
       expect(screen.queryByText("Spanisch A1")).toBeNull();
     });
+
+    it("offers the language-pair matrix and presets both axes on selection, in this mode (EXP-048 #2337)", async () => {
+      renderDiscover();
+      await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+      // Two populated pairs (de→ja, de→es) => the matrix is shown; no pair is
+      // active until one is chosen.
+      expect(screen.getByTestId("discover-pair-matrix")).toBeInTheDocument();
+      expect(screen.getByTestId("discover-pair-matrix-de-es")).toHaveAttribute(
+        "aria-pressed",
+        "false",
+      );
+      // Selecting de→es presets both language axes at once: only Spanisch A1 stays.
+      fireEvent.click(screen.getByTestId("discover-pair-matrix-de-es"));
+      await waitFor(() =>
+        expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+      );
+      expect(screen.getByText("Spanisch A1")).toBeInTheDocument();
+      expect(screen.queryByText("Japanisch A1")).toBeNull();
+      expect(screen.getByTestId("discover-pair-matrix-de-es")).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+    });
   },
 );

@@ -3467,6 +3467,9 @@ discover:
     language: "Μάθω γλώσσα"
     knowledge: "Γνωστικό αντικείμενο"
     all: "Όλα"
+  pairs:
+    heading: "Ζεύγη γλωσσών"
+    select: "Επιλογή {p}"
   filter:
     all: "Όλα"
     language: "Γλώσσα"
