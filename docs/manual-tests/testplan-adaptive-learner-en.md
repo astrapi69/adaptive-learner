@@ -764,6 +764,21 @@ Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
       the preset stays remembered after quitting the PWA, and the
       language-name search works
 
+### Discover Stage 3: batched rendering (EXP-048, #2333)
+
+Where: Discover (`/content?tab=discover`). To get past 24 results, set the
+entry to "Everything" and the source language to "All languages". Testable in
+BOTH storage modes; the logic is mode-independent.
+
+- [ ] With more than 24 results, only 24 render first; "Show more" loads the
+      next batch; the count above the list stays the full number (#2333)
+- [ ] No infinite scroll; the button disappears after the last batch
+- [ ] A filter, search or sort change starts over from the first batch
+- [ ] Applies to both the card grid and the list view
+- [ ] **iOS standalone (added to home screen, Dexie mode):** "Show more" is
+      tappable (>=44px), and the back-path (gesture / navigation) survives the
+      extra batch
+
 ### Set status persists (active/deferred/completed, both modes)
 
 Where: My Content (`/content?tab=my`) → the set actions menu (three dots)
