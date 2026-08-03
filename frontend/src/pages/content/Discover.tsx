@@ -39,8 +39,8 @@ import {
   type DiscoverFilters,
   type DiscoverSort,
 } from "../../lib/content/repos/discover-index";
-import { useDiscoverSourceLanguage } from "../../hooks/content/useDiscoverSourceLanguage";
-import { useDiscoverEntry } from "../../hooks/content/useDiscoverEntry";
+import { useDiscoverSourceLanguage } from "../../hooks/content/discover/useDiscoverSourceLanguage";
+import { useDiscoverEntry } from "../../hooks/content/discover/useDiscoverEntry";
 import { isKnowledgeDomain } from "../../lib/exercises/knowledge-domain";
 import { collectDiscoveryRepos } from "../../lib/content/repos/discover-repos";
 import {
@@ -56,6 +56,7 @@ import PageContainer from "../../shared/layout/PageContainer";
 import { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchFilterBar from "../../shared/forms/SearchFilterBar";
 import FilterMenuButton from "../../shared/forms/FilterMenuButton";
+import { Button } from "@/components/ui/button";
 import ActiveFilterChips, {
   type FilterChip,
 } from "../../shared/forms/ActiveFilterChips";
@@ -71,6 +72,11 @@ import { notify } from "../../utils/notify";
 
 /** Debounce delay (ms) between a keystroke and the search re-running. */
 const SEARCH_DEBOUNCE_MS = 300;
+
+/** Render results in batches of this size, extended by "Show more" (EXP-048
+ *  #2333) — never all at once, never infinite-scroll. The count above the list
+ *  stays the FULL result count (the honest figure). */
+const RESULT_BATCH_SIZE = 24;
 
 /** Format the "DE → ES" language badge from a set's pair. */
 function languageBadge(set: SearchableSet): string {
@@ -203,6 +209,19 @@ export default function Discover() {
     () => queryDiscoverSets(allSets, activeFilters, sort, resolveLanguageName),
     [allSets, activeFilters, sort, resolveLanguageName],
   );
+
+  // #2333 — schubweises Rendern. Render the first batch and extend on demand;
+  // a filter/query/sort change starts over from the first batch (a background
+  // catalogue refresh does NOT, so it never yanks the reader back up).
+  const [visibleCount, setVisibleCount] = useState(RESULT_BATCH_SIZE);
+  useEffect(() => {
+    setVisibleCount(RESULT_BATCH_SIZE);
+  }, [activeFilters, sort]);
+  const visibleResults = useMemo(
+    () => results.slice(0, visibleCount),
+    [results, visibleCount],
+  );
+  const hasMore = results.length > visibleResults.length;
 
   // #772 — once the learner has downloaded a set this session, point them
   // back to the Content Browser ("Meine Inhalte"), where it now lives.
@@ -808,7 +827,7 @@ export default function Discover() {
         </div>
       ) : viewMode === "list" ? (
         <DiscoverSetListView
-          sets={results}
+          sets={visibleResults}
           keyFor={discoverSetKey}
           isDownloaded={(set) => downloadedKeys.has(discoverSetKey(set))}
           stateFor={(set) => downloadState[discoverSetKey(set)] ?? "idle"}
@@ -831,7 +850,7 @@ export default function Discover() {
         />
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="discover-results">
-          {results.map((set) => {
+          {visibleResults.map((set) => {
             const key = discoverSetKey(set);
             return (
               <li key={key}>
@@ -863,6 +882,22 @@ export default function Discover() {
             );
           })}
         </ul>
+      )}
+
+      {/* #2333 — extend the list one batch at a time; the count above the list
+          stays the full number. No infinite scroll (keeps the back-path and the
+          honest result size), no hard cap. */}
+      {hasMore && (
+        <div className="mt-4 flex justify-center">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setVisibleCount((count) => count + RESULT_BATCH_SIZE)}
+            data-testid="discover-show-more"
+          >
+            {t("discover.result.show_more", "Show more")}
+          </Button>
+        </div>
       )}
     </PageContainer>
   );

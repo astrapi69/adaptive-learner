@@ -817,6 +817,23 @@ Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi prüfen
       Liste (Portal/Fixed, #1349), die Vorbelegung bleibt nach dem Beenden der
       PWA gemerkt, und die Suche nach Sprachnamen funktioniert
 
+### Discover Stufe 3: schubweises Rendern (EXP-048, #2333)
+
+Ort: Entdecken (`/content?tab=discover`). Um über 24 Treffer zu kommen, den
+Einstieg auf "Alles" und die Quellsprache auf "Alle Sprachen" stellen. In
+BEIDEN Speichermodi prüfbar; die Logik ist modusunabhängig.
+
+- [ ] Bei mehr als 24 Treffern werden zunächst 24 gezeigt; "Weitere anzeigen"
+      lädt den nächsten Schub; die Trefferzahl über der Liste bleibt die volle
+      Zahl (#2333)
+- [ ] Kein Endlos-Scrollen; nach dem letzten Schub verschwindet der Knopf
+- [ ] Eine Filter-, Such- oder Sortieränderung setzt auf den ersten Schub
+      zurück
+- [ ] Gilt in Karten- und Listenansicht
+- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):**
+      "Weitere anzeigen" ist tippbar (>=44px), und der Zurück-Weg (Geste /
+      Navigation) bleibt nach dem Nachladen erhalten
+
 ### Set-Status bleibt erhalten (aktiv/zurueckgestellt/abgeschlossen, beide Modi)
 
 Ort: Meine Inhalte (`/content?tab=my`) → Set-Aktionen-Menue (Drei-Punkte)

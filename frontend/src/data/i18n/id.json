@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "Pengetahuan lalu lintas"
     },
     "result": {
-      "count": "{n} set"
+      "count": "{n} set",
+      "show_more": "Tampilkan lainnya"
     },
     "empty": {
       "no_sets": "Belum ada konten tersedia.",

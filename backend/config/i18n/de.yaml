@@ -3511,6 +3511,7 @@ discover:
     traffic-knowledge: "Verkehrskunde"
   result:
     count: "{n} Sets"
+    show_more: "Weitere anzeigen"
   empty:
     no_sets: "Noch keine Inhalte verfügbar."
     no_results: "Keine Ergebnisse für „{query}“."

@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "Traffic knowledge"
     },
     "result": {
-      "count": "{n} sets"
+      "count": "{n} sets",
+      "show_more": "Show more"
     },
     "empty": {
       "no_sets": "No content available yet.",

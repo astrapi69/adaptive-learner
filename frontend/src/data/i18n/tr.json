@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "Trafik bilgisi"
     },
     "result": {
-      "count": "{n} set"
+      "count": "{n} set",
+      "show_more": "Daha fazla göster"
     },
     "empty": {
       "no_sets": "Henüz içerik yok.",

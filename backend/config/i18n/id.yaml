@@ -3517,6 +3517,7 @@ discover:
     traffic-knowledge: "Pengetahuan lalu lintas"
   result:
     count: "{n} set"
+    show_more: "Tampilkan lainnya"
   empty:
     no_sets: "Belum ada konten tersedia."
     no_results: "Tidak ada hasil untuk “{query}”."

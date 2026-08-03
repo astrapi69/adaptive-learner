@@ -315,6 +315,44 @@ describe("Discover page", () => {
     expect(pointer.querySelector('a[href="/create-lesson"]')).not.toBeNull();
   });
 
+  // --- EXP-048 #2333: batched rendering ---
+
+  it("renders results in batches of 24, extended by Show more, count stays full", async () => {
+    const many = Array.from({ length: 30 }, (_, i) =>
+      makeSet({ id: `s-${i}`, name: `Set ${i}`, target_language: "es" }),
+    );
+    fetchAllIndicesMock.mockResolvedValue(many);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("30 sets"));
+    // Only the first batch renders; the count above the list stays the full 30.
+    expect(screen.getByTestId("discover-results").children).toHaveLength(24);
+    fireEvent.click(screen.getByTestId("discover-show-more"));
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-results").children).toHaveLength(30),
+    );
+    // No hard cap, no repeat button once everything is shown.
+    expect(screen.queryByTestId("discover-show-more")).toBeNull();
+  });
+
+  it("resets to the first batch when the filter changes", async () => {
+    const many = Array.from({ length: 30 }, (_, i) =>
+      makeSet({ id: `s-${i}`, name: `Set ${i}`, target_language: i < 20 ? "es" : "fr" }),
+    );
+    fetchAllIndicesMock.mockResolvedValue(many);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("30 sets"));
+    fireEvent.click(screen.getByTestId("discover-show-more"));
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-results").children).toHaveLength(30),
+    );
+    // Narrowing to the 20 es sets starts over from one batch (all 20 fit, no more).
+    fireEvent.click(screen.getByTestId("discover-target-filter"));
+    fireEvent.click(screen.getByTestId("discover-target-filter-es"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("20 sets"));
+    expect(screen.getByTestId("discover-results").children).toHaveLength(20);
+    expect(screen.queryByTestId("discover-show-more")).toBeNull();
+  });
+
   // --- EXP-048 #2331: two entry points ---
 
   function seedLanguageAndKnowledge() {

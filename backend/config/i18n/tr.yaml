@@ -3507,6 +3507,7 @@ discover:
     traffic-knowledge: "Trafik bilgisi"
   result:
     count: "{n} set"
+    show_more: "Daha fazla göster"
   empty:
     no_sets: "Henüz içerik yok."
     no_results: "“{query}” için sonuç yok."

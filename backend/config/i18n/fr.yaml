@@ -3509,6 +3509,7 @@ discover:
     traffic-knowledge: "Code de la route"
   result:
     count: "{n} ensembles"
+    show_more: "Afficher plus"
   empty:
     no_sets: "Aucun contenu disponible pour l'instant."
     no_results: "Aucun résultat pour « {query} »."
