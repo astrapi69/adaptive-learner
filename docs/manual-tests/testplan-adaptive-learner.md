@@ -758,8 +758,8 @@ jeder Karten-Zeile (`CardImageField`).
 
 ### Discover Stufe 1: Facetten, Marken, Leerzustand (EXP-048, #2320-#2324)
 
-Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi pruefen
-(API + Dexie); die Facetten lesen den Suchindex und sind modus-unabhaengig.
+Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi prüfen
+(API + Dexie); die Facetten lesen den Suchindex und sind modusunabhängig.
 
 - [ ] Zielsprache-Facette neben der Quellsprache sichtbar; Marken tragen ihre
       Trefferzahl, nur belegte Ziele der aktiven Quellsprache, nach Menge
@@ -769,22 +769,22 @@ Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi pruefen
       ("Maschinell erstellt"), handgeschriebene Sets KEIN Abzeichen; die
       Facette "Durchsicht" erscheint nur, wenn solche Sets im Katalog sind
       (#2321)
-- [ ] "KI-geprueft"-Facette ist verschwunden; das KI-Abzeichen am Eintrag
+- [ ] "KI-geprüft"-Facette ist verschwunden; das KI-Abzeichen am Eintrag
       bleibt (#2321)
-- [ ] Aktive Einschraenkungen (Niveau, Bereich, Vertrauen, Durchsicht, Suche)
-      stehen als entfernbare Marken ueber der Liste; ein Klick auf das X einer
-      Marke loest genau diese Einschraenkung (#2323)
-- [ ] Bereichs-Namen sind uebersetzt (Hundetraining, Technik, Software,
+- [ ] Aktive Einschränkungen (Niveau, Bereich, Vertrauen, Durchsicht, Suche)
+      stehen als entfernbare Marken über der Liste; ein Klick auf das X einer
+      Marke löst genau diese Einschränkung (#2323)
+- [ ] Bereichs-Namen sind übersetzt (Hundetraining, Technik, Software,
       Philosophie, Verkehrskunde statt roher Bezeichner) (#2320)
 - [ ] Leerzustand: bei null Treffern erscheinen berechnete Auswege
-      ("Ohne <Facette>: N Sets") und "Alle Filter zuruecksetzen"; ein Klick
+      ("Ohne <Facette>: N Sets") und "Alle Filter zurücksetzen"; ein Klick
       stellt Treffer wieder her; die Quellsprache bleibt erhalten (#2324)
-- [ ] Leere Bibliothek (kein Set): Hinweis auf "Eigene Quelle hinzufuegen"
+- [ ] Leere Bibliothek (kein Set): Hinweis auf "Eigene Quelle hinzufügen"
       (/add-repo) bzw. "eine Lektion anlegen" (/create-lesson) (#2324)
 - [ ] Telefon (schmale Breite): die Markenzeile bleibt EINE waagerecht
-      scrollbare Zeile, bricht nicht um und frisst nicht die halbe Hoehe
-- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefuegt, Dexie-Modus):**
-      gleicher Ablauf auf dem iPhone-PWA - die Facetten-Menues oeffnen ueber
+      scrollbare Zeile, bricht nicht um und frisst nicht die halbe Höhe
+- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):**
+      gleicher Ablauf auf dem iPhone-PWA - die Facetten-Menüs öffnen über
       der Liste (Portal/Fixed, #1349), die Markenzeile scrollt waagerecht, und
       die Leerzustand-Auswege sind tippbar (>=44px Touch-Ziel)
 
