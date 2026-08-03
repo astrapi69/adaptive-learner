@@ -126,17 +126,23 @@ export function matchesQuery(
   return setHaystack(set, languageNames).includes(normalizedQuery);
 }
 
+/** True when the set matches the entry-point preset (EXP-048 #2331): empty =
+ *  any, ``"language"`` = a language pair, ``"knowledge"`` = the inverse. Split
+ *  out of {@link passesFilters} so that function stays under the complexity
+ *  gate. */
+function passesEntry(set: SearchableSet, entry: string): boolean {
+  if (!entry) return true;
+  const knowledge = isKnowledgeDomain(
+    set.domain,
+    set.source_language,
+    set.target_language,
+  );
+  return entry === "knowledge" ? knowledge : !knowledge;
+}
+
 /** True when the set passes every active (non-empty) facet of ``filters``. */
 export function passesFilters(set: SearchableSet, filters: DiscoverFilters): boolean {
-  if (filters.entry) {
-    const knowledge = isKnowledgeDomain(
-      set.domain,
-      set.source_language,
-      set.target_language,
-    );
-    if (filters.entry === "language" && knowledge) return false;
-    if (filters.entry === "knowledge" && !knowledge) return false;
-  }
+  if (!passesEntry(set, filters.entry)) return false;
   if (filters.sourceLanguage && set.source_language !== filters.sourceLanguage) {
     return false;
   }
