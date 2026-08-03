@@ -346,7 +346,18 @@ export default function Discover() {
   // pair is populated (a single pair is no choice). Schwelle bewusst
   // überschritten: gebaut unter der ~200-Sets-Schwelle auf Nutzer-Entscheidung.
   const languagePairs = useMemo(() => availableLanguagePairs(allSets), [allSets]);
-  const showPairMatrix = effectiveEntry !== "knowledge" && languagePairs.length > 1;
+  // The pairs the matrix actually offers: none in the knowledge entry, and only
+  // when more than one pair is populated (a single pair is no choice). Computed
+  // here (not as an inline JSX guard) so the branch lives in this memo, not in
+  // the component body — the component always renders the matrix, which returns
+  // null for an empty list.
+  const matrixPairs = useMemo<DiscoverLanguagePair[]>(
+    () =>
+      effectiveEntry !== "knowledge" && languagePairs.length > 1
+        ? languagePairs
+        : [],
+    [effectiveEntry, languagePairs],
+  );
 
   // Selecting a pair presets the language entry + both language axes at once.
   // Clearing the hidden domain restriction mirrors handleEntryChange, so a
@@ -738,28 +749,27 @@ export default function Discover() {
 
       {/* #2337 — the language-pair matrix: an alternative entry that presets
           the whole "German → Spanish" pair in one tap, including pairs in other
-          instruction languages. Shown in the language / "Alles" entry. */}
-      {showPairMatrix && (
-        <LanguagePairMatrix
-          pairs={languagePairs}
-          heading={t("discover.pairs.heading", "Language pairs")}
-          formatLabel={(pair) =>
-            `${languageDisplayName(pair.source, lang)} → ${languageDisplayName(
-              pair.target,
-              lang,
-            )} (${pair.count})`
-          }
-          selectLabel={(label) =>
-            t("discover.pairs.select", "Choose {p}").replace("{p}", label)
-          }
-          onSelect={handlePairSelect}
-          activePair={{
-            source: effectiveSourceLanguage,
-            target: filters.targetLanguage,
-          }}
-          testId="discover-pair-matrix"
-        />
-      )}
+          instruction languages. Always rendered; it shows nothing when
+          ``matrixPairs`` is empty (knowledge entry, or a single pair). */}
+      <LanguagePairMatrix
+        pairs={matrixPairs}
+        heading={t("discover.pairs.heading", "Language pairs")}
+        formatLabel={(pair) =>
+          `${languageDisplayName(pair.source, lang)} → ${languageDisplayName(
+            pair.target,
+            lang,
+          )} (${pair.count})`
+        }
+        selectLabel={(label) =>
+          t("discover.pairs.select", "Choose {p}").replace("{p}", label)
+        }
+        onSelect={handlePairSelect}
+        activePair={{
+          source: effectiveSourceLanguage,
+          target: filters.targetLanguage,
+        }}
+        testId="discover-pair-matrix"
+      />
 
       {/* #2323 — every other active restriction as a removable mark, on one
           horizontally-scrollable line (the phone's single visible filter
