@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "교통 상식"
     },
     "result": {
-      "count": "{n}개 세트"
+      "count": "{n}개 세트",
+      "show_more": "더 보기"
     },
     "empty": {
       "no_sets": "아직 사용 가능한 콘텐츠가 없습니다.",

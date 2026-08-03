@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "यातायात ज्ञान"
     },
     "result": {
-      "count": "{n} सेट"
+      "count": "{n} सेट",
+      "show_more": "और दिखाएँ"
     },
     "empty": {
       "no_sets": "अभी कोई सामग्री उपलब्ध नहीं है।",

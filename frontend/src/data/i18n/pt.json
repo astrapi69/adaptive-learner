@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "Educação no trânsito"
     },
     "result": {
-      "count": "{n} conjuntos"
+      "count": "{n} conjuntos",
+      "show_more": "Mostrar mais"
     },
     "empty": {
       "no_sets": "Ainda não há conteúdo disponível.",

@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "Verkehrskunde"
     },
     "result": {
-      "count": "{n} Sets"
+      "count": "{n} Sets",
+      "show_more": "Weitere anzeigen"
     },
     "empty": {
       "no_sets": "Noch keine Inhalte verfügbar.",

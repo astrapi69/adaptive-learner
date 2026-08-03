@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "Educación vial"
     },
     "result": {
-      "count": "{n} conjuntos"
+      "count": "{n} conjuntos",
+      "show_more": "Mostrar más"
     },
     "empty": {
       "no_sets": "Aún no hay contenido disponible.",

@@ -3824,7 +3824,8 @@
       "traffic-knowledge": "交通知識"
     },
     "result": {
-      "count": "{n} セット"
+      "count": "{n} セット",
+      "show_more": "もっと見る"
     },
     "empty": {
       "no_sets": "まだ利用可能なコンテンツはありません。",

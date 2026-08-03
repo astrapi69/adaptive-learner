@@ -3493,6 +3493,7 @@ discover:
     traffic-knowledge: "यातायात ज्ञान"
   result:
     count: "{n} सेट"
+    show_more: "और दिखाएँ"
   empty:
     no_sets: "अभी कोई सामग्री उपलब्ध नहीं है।"
     no_results: "“{query}” के लिए कोई परिणाम नहीं।"
