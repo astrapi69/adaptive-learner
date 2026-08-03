@@ -22,6 +22,7 @@ const LAUNCH = EXECUTABLE ? { executablePath: EXECUTABLE } : undefined;
  */
 export default defineConfig({
   testDir: "./hit-test",
+  testMatch: /hit-test-offset\.spec\.ts$/,
   fullyParallel: true,
   workers: process.env.CI ? 2 : undefined,
   retries: 0,

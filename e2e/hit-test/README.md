@@ -20,12 +20,25 @@ share the layout coordinate space, so they only disagree when a transform /
 compositing layer offsets the hit-test grid from the CSSOM box — exactly the
 class a **desktop-Chrome** repro would be.
 
+## Two layers
+
+| Layer | File | Server | Command |
+|---|---|---|---|
+| **Isolation** — the app shell + aggravators as toggles | `hit-test-offset.spec.ts` + `fixtures/shell.html` | none (`file://`) | `make test-hit-test` |
+| **App-level** — real routes on the Dexie preview build | `hit-test-app.spec.ts` + `measure.ts` | `vite preview`, no backend | `make test-hit-test-app` |
+
+Both use the same measurement (`elementFromPoint` at an element's rendered
+centre must resolve back into that element); the app layer is non-destructive
+(no clicks) so it sweeps every visible interactive element on a route.
+
 ## Run
 
 ```bash
-make test-hit-test                 # from the repo root
+make test-hit-test                 # isolation bench (fast, no build)
+make test-hit-test-app             # real app (builds dist in Dexie mode first)
 # or, from e2e/:
 npm run test:hittest
+npm run test:hittest-app
 ```
 
 In the managed container the pre-installed Chromium may differ from the pinned
@@ -51,21 +64,33 @@ Two projects run every scenario: desktop `chromium` and touch-emulated
 
 ## Current finding (2026-08-03)
 
-On this isolated fixture, **all scenarios pass (Δrows=0)** in both desktop and
-mobile-emulated headless Chromium. So — headlessly — the app shell
-(`overflow:hidden` + `100dvh` + inner scroller), the header transform, an
-ancestor transform, the sticky footer, the zoom viewport meta, and pre-scroll
-do **not**, by themselves, desync the CSSOM box from the hit-test grid. The app
-also applies no container-level CSS `zoom`/`transform: scale`. This narrows the
-cause: the reproduction needs either the **real app DOM/CSS** or a **real
-device** (the on-screen-keyboard / address-bar visual-viewport offset, which the
-`?vvdiag=1` probe measures on hardware — see #1569).
+**Isolation:** all scenarios pass (Δrows=0) in both desktop and mobile-emulated
+headless Chromium. So — headlessly — the app shell (`overflow:hidden` +
+`100dvh` + inner scroller), the header transform, an ancestor transform, the
+sticky footer, the zoom viewport meta, and pre-scroll do **not**, by
+themselves, desync the CSSOM box from the hit-test grid. The app also applies no
+container-level CSS `zoom`/`transform: scale`.
 
-## Next extension (planned)
+**App-level:** all Settings interactive elements measure clean (0 desync of
+44/93/69 on desktop, 31/80/56 on mobile-emulated). So the desync does **not**
+reproduce against the real Settings surface in headless Chromium either — on
+desktop OR touch-emulated (Pixel 7).
 
-An **app-level** spec that runs the same `elementFromPoint`-vs-`rect`
-measurement against real routes (a Settings checkbox, a lesson field/MC tile) on
-the **Dexie-mode preview build** (`VITE_STORAGE_MODE=dexie`, no backend — the
-GH-Pages shape the bug is reported on). That is where the real app's CSS can
-reproduce what the isolation fixture does not. Reuse the same assertion; add the
-routes as scenarios.
+**Conclusion:** the render-vs-hit-test desync is not reproducible in headless
+Chromium — not in isolation, not on the real app. The reproduction needs either
+a **real touch device** (the on-screen-keyboard / address-bar visual-viewport
+composited offset, which headless emulation does not replicate — measure it with
+the `?vvdiag=1` probe on hardware, see #1569), or a **specific interaction the
+sweep does not yet trigger**. This suite is now the bench + regression net for
+when that state is identified.
+
+## Next steps to chase the repro
+
+- **Add a keyboard-open interaction**: in `hit-test-app.spec.ts`, focus a text
+  field first (opening the on-screen keyboard on a real device / emulation that
+  supports it), THEN measure the elements around it — the reported trigger.
+- **Add a lesson route** (needs content setup via the `helpers/onboarding` +
+  content fixtures the other Dexie specs use) to cover the MC/SC tiles and the
+  `tiefe`-style input from the original report.
+- **Add a WebKit project** once the class is understood (`browserName: "webkit"`)
+  — the closest engine to mobile Safari available headlessly.

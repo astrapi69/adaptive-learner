@@ -548,6 +548,13 @@ test-e2e-ui: ## Run e2e tests with Playwright UI
 test-hit-test: ## Hit-test offset harness (#1569): self-contained, no server. See e2e/hit-test/README.md
 	cd e2e && npx playwright test --config=playwright.hittest.config.ts
 
+test-hit-test-app: ## App-level hit-test harness (#1569): real routes on the Dexie preview build (no backend)
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
+	@echo ""
+	@echo "=== Running app-level hit-test harness ==="
+	cd e2e && npx playwright test --config=playwright.hittest-app.config.ts
+
 # Critical-flow smoke (#1177): the ``smoke`` Playwright project
 # (e2e/smoke/, defined in e2e/playwright.config.ts) covering the core
 # user journeys. It uses the default config's webServer, which
