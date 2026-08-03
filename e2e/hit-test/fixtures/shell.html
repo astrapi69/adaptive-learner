@@ -1,0 +1,154 @@
+<!doctype html>
+<!--
+  Isolation fixture for the tap/click hit-test offset (#1569).
+
+  Reproduces the app shell (01-base.css) and its named aggravators as
+  independent, URL-toggleable factors, so a Playwright spec can measure the
+  hit-test offset for each combination and pin WHICH factor desyncs the
+  visible position of a target from the coordinate the browser hit-tests.
+
+  Query toggles (all default off):
+    shell=1            html,body{overflow:hidden}+100dvh, #root the sole scroller
+    headerTransform=1  the sticky header carries a transform (auto-hide header)
+    ancestorTransform=1 a transform on an ancestor of the targets (new containing
+                        block / compositing layer — the prime hit-test-offset suspect)
+    sticky=1           a position:sticky footer (lesson footer)
+    zoomMeta=1         the app's maximum-scale/interactive-widget viewport meta
+    scroll=N           pre-scroll the active scroller by N px before measuring
+    n=N                number of targets (default 30)
+
+  Each target is a 44px button with data-testid="target-<i>" that records the
+  index it received a click at into window.__lastHit. A test aims at one
+  target's rendered centre and checks the browser activated THAT target.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>hit-test shell fixture (#1569)</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      /* --- app shell (01-base.css), applied only with ?shell=1 --- */
+      html.shell,
+      html.shell body,
+      html.shell #root {
+        height: 100%;
+        height: 100dvh;
+      }
+      html.shell,
+      html.shell body {
+        overflow: hidden;
+        max-width: 100vw;
+      }
+      html.shell #root {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      /* natural document flow (no shell): #root just grows */
+      #root {
+        min-height: 100%;
+      }
+      header.hdr {
+        position: sticky;
+        top: 0;
+        height: 48px;
+        background: #dfe6ee;
+        display: flex;
+        align-items: center;
+        padding-left: 12px;
+      }
+      /* auto-hide header aggravator: a transform on the sticky header */
+      header.hdr.transformed {
+        transform: translateY(0);
+        will-change: transform;
+      }
+      /* ancestor-transform aggravator: a new containing block over the targets */
+      .xform {
+        transform: translateZ(0);
+        will-change: transform;
+      }
+      main {
+        display: flex;
+        flex-direction: column;
+      }
+      .target {
+        display: block;
+        width: 100%;
+        height: 44px;
+        border: 1px solid #9aa7b4;
+        background: #f4f7fa;
+        font: 14px/44px system-ui, sans-serif;
+        text-align: left;
+        padding-left: 12px;
+      }
+      footer.ft {
+        height: 56px;
+        background: #d7dee6;
+        display: flex;
+        align-items: center;
+        padding-left: 12px;
+      }
+      footer.ft.sticky {
+        position: sticky;
+        bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <header class="hdr" id="hdr">header</header>
+      <div id="wrap">
+        <main id="main"></main>
+      </div>
+      <footer class="ft" id="ft">footer</footer>
+    </div>
+    <script>
+      const p = new URLSearchParams(location.search);
+      const on = (k) => p.get(k) === "1";
+
+      if (on("shell")) document.documentElement.classList.add("shell");
+      if (on("headerTransform"))
+        document.getElementById("hdr").classList.add("transformed");
+      if (on("ancestorTransform"))
+        document.getElementById("wrap").classList.add("xform");
+      if (on("sticky")) document.getElementById("ft").classList.add("sticky");
+
+      const meta = document.createElement("meta");
+      meta.name = "viewport";
+      meta.content = on("zoomMeta")
+        ? "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content"
+        : "width=device-width, initial-scale=1.0";
+      document.head.appendChild(meta);
+
+      const n = Number(p.get("n") || 30);
+      const main = document.getElementById("main");
+      window.__lastHit = null;
+      for (let i = 0; i < n; i++) {
+        const b = document.createElement("button");
+        b.className = "target";
+        b.dataset.testid = "target-" + i;
+        b.textContent = "Target " + i;
+        b.addEventListener("click", () => {
+          window.__lastHit = i;
+        });
+        main.appendChild(b);
+      }
+
+      const scroll = Number(p.get("scroll") || 0);
+      if (scroll > 0) {
+        const scroller = document.documentElement.classList.contains("shell")
+          ? document.getElementById("root")
+          : document.scrollingElement || document.documentElement;
+        // Two frames so layout has settled before we scroll + measure.
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            scroller.scrollTop = scroll;
+          }),
+        );
+      }
+    </script>
+  </body>
+</html>

@@ -545,6 +545,9 @@ test-e2e: ## Run Playwright e2e tests (starts servers automatically)
 test-e2e-ui: ## Run e2e tests with Playwright UI
 	cd e2e && npx playwright test --ui
 
+test-hit-test: ## Hit-test offset harness (#1569): self-contained, no server. See e2e/hit-test/README.md
+	cd e2e && npx playwright test --config=playwright.hittest.config.ts
+
 # Critical-flow smoke (#1177): the ``smoke`` Playwright project
 # (e2e/smoke/, defined in e2e/playwright.config.ts) covering the core
 # user journeys. It uses the default config's webServer, which
