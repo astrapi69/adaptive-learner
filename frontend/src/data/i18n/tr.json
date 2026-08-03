@@ -3780,6 +3780,7 @@
       "level": "Seviye",
       "domain": "Alan",
       "trust": "Güven",
+      "source": "Kaynak",
       "ai_checked": "Yapay zeka kontrollü",
       "review": "İnceleme"
     },

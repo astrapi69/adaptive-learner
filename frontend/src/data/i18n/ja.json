@@ -3780,6 +3780,7 @@
       "level": "レベル",
       "domain": "分野",
       "trust": "信頼度",
+      "source": "ソース",
       "ai_checked": "AIチェック済み",
       "review": "確認"
     },

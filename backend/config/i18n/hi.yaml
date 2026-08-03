@@ -3455,6 +3455,7 @@ discover:
     level: "स्तर"
     domain: "क्षेत्र"
     trust: "विश्वास"
+    source: "स्रोत"
     ai_checked: "एआई-जाँचित"
     review: "समीक्षा"
   trust:

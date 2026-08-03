@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   availableDomains,
+  availableSources,
   availableSourceLanguages,
   availableTargetLanguages,
   availableLevels,
@@ -97,6 +98,13 @@ describe("passesFilters", () => {
     expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "fr" })).toBe(false);
     // Empty = every target.
     expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "" })).toBe(true);
+  });
+
+  it("source matches the set's repo_url exactly (EXP-048 #2330)", () => {
+    const set = makeSet({ repo_url: "owner/repo" });
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "owner/repo" })).toBe(true);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "other/repo" })).toBe(false);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "" })).toBe(true);
   });
 
   it("level + domain are exact", () => {
@@ -259,6 +267,17 @@ describe("available* option helpers", () => {
   });
   it("domains sorted", () => {
     expect(availableDomains(sets)).toEqual(["ai", "language"]);
+  });
+  it("sources: distinct repo_url with name + count, sorted by name (#2330)", () => {
+    const withSources = [
+      makeSet({ repo_url: "o/a", repo_name: "Beta" }),
+      makeSet({ repo_url: "o/a", repo_name: "Beta" }),
+      makeSet({ repo_url: "o/b", repo_name: "Alpha" }),
+    ];
+    expect(availableSources(withSources)).toEqual([
+      { url: "o/b", name: "Alpha", count: 1 },
+      { url: "o/a", name: "Beta", count: 2 },
+    ]);
   });
 });
 

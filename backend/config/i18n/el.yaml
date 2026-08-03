@@ -3471,6 +3471,7 @@ discover:
     level: "Επίπεδο"
     domain: "Τομέας"
     trust: "Εμπιστοσύνη"
+    source: "Πηγή"
     ai_checked: "Ελεγμένο από ΤΝ"
     review: "Έλεγχος"
   trust:

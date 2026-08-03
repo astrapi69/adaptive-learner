@@ -24,6 +24,7 @@ import { dismissSet, undismissSet } from "../../lib/content/browse/dismissed-set
 import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,
+  availableSources,
   availableSourceLanguages,
   availableTargetLanguages,
   availableLevels,
@@ -258,6 +259,16 @@ export default function Discover() {
   }, [sourceScopedSets, t, lang]);
   const showTargetFacet = targetLanguageOptions.length > 1;
 
+  // Source (repo) facet (#2330): Discover searches every validated + own repo
+  // regardless of the Settings source management; this facet makes that
+  // transparent. Data-driven; shown once more than one source is present.
+  const sources = useMemo(() => availableSources(allSets), [allSets]);
+  const sourceNameByUrl = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const source of sources) map[source.url] = source.name;
+    return map;
+  }, [sources]);
+
   const filterDefs: FilterDef[] = useMemo(() => {
     const all = { value: "", label: t("discover.filter.all", "All") };
     const levels = availableLevels(allSets).map((level) => ({
@@ -268,6 +279,23 @@ export default function Discover() {
       value: domain,
       label: t(`discover.domain.${domain}`, domain),
     }));
+    const sourceFacet: FilterDef[] =
+      sources.length > 1
+        ? [
+            {
+              id: "source",
+              label: t("discover.filter.source", "Source"),
+              value: filters.source,
+              options: [
+                all,
+                ...sources.map((source) => ({
+                  value: source.url,
+                  label: `${source.name} (${source.count})`,
+                })),
+              ],
+            },
+          ]
+        : [];
     const reviewFacet: FilterDef[] = showReviewFacet
       ? [
           {
@@ -297,6 +325,7 @@ export default function Discover() {
         ],
       },
       ...reviewFacet,
+      ...sourceFacet,
       {
         id: "sort",
         label: t("discover.sort.label", "Sort"),
@@ -308,7 +337,7 @@ export default function Discover() {
         ],
       },
     ];
-  }, [allSets, filters, sort, t, showReviewFacet]);
+  }, [allSets, filters, sort, t, showReviewFacet, sources]);
 
   function handleFilterChange(id: string, value: string) {
     if (id === "sort") {
@@ -372,8 +401,15 @@ export default function Discover() {
         onRemove: () => setFilters((prev) => ({ ...prev, reviewStatus: "" })),
       });
     }
+    if (filters.source) {
+      chips.push({
+        id: "source",
+        label: `${t("discover.filter.source", "Source")}: ${sourceNameByUrl[filters.source] ?? filters.source}`,
+        onRemove: () => setFilters((prev) => ({ ...prev, source: "" })),
+      });
+    }
     return chips;
-  }, [filters, t]);
+  }, [filters, t, sourceNameByUrl]);
 
   // Clear every ADDED filter (query, target, level, domain, trust, review) in
   // one action, keeping the source language — the axis the learner reads in
@@ -406,6 +442,8 @@ export default function Discover() {
         return t("discover.filter.trust", "Trust");
       case "reviewStatus":
         return t("discover.filter.review", "Review");
+      case "source":
+        return t("discover.filter.source", "Source");
       default:
         return facet;
     }

@@ -311,6 +311,32 @@ describe("Discover page", () => {
     expect(pointer.querySelector('a[href="/create-lesson"]')).not.toBeNull();
   });
 
+  // --- EXP-048 #2330: source (repo) facet ---
+
+  it("filters by the source facet, shown when more than one source is present", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "a", name: "SetA", target_language: "de", domain: "psychology", repo_url: "owner/repo", repo_name: "Official" }),
+      makeSet({ id: "b", name: "SetB", target_language: "de", domain: "psychology", repo_url: "other/repo", repo_name: "Community" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-source"), {
+      target: { value: "owner/repo" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("SetA")).toBeInTheDocument();
+    expect(screen.queryByText("SetB")).toBeNull();
+  });
+
+  it("hides the source facet when only one source is present", async () => {
+    // beforeEach seeds two sets, both from owner/repo.
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.queryByTestId("discover-filters-source")).toBeNull();
+  });
+
   // --- EXP-048 #2329: search by UI-language name ---
 
   it("finds a set by its target-language name typed in the UI language", async () => {

@@ -71,6 +71,11 @@ export interface DiscoverFilters {
    *  ``aiChecked`` facet (1 of 45 sets ``ai_validated`` — a facet that
    *  filtered out 44 of 45 results or did nothing). */
   reviewStatus: string;
+  /** Source (repo) facet (EXP-048 #2330): exact match on ``repo_url``, so the
+   *  learner can see and restrict WHICH source results come from. ``""`` =
+   *  every source. Discover searches all validated + own repos regardless of
+   *  the Settings source management; this facet makes that transparent. */
+  source: string;
 }
 
 /** A blank filter set (everything = all). */
@@ -82,6 +87,7 @@ export const EMPTY_FILTERS: DiscoverFilters = {
   domain: "",
   trust: "",
   reviewStatus: "",
+  source: "",
 };
 
 /** Resolve a BCP-47 code to a display name in the active UI language, so the
@@ -129,6 +135,7 @@ export function passesFilters(set: SearchableSet, filters: DiscoverFilters): boo
   if (filters.reviewStatus && set.review_status !== filters.reviewStatus) {
     return false;
   }
+  if (filters.source && set.repo_url !== filters.source) return false;
   return true;
 }
 
@@ -251,6 +258,30 @@ export function availableDomains(sets: SearchableSet[]): string[] {
   return [...domains].sort();
 }
 
+/** One source (repo) present in the catalogue, with its display name + count. */
+export interface DiscoverSource {
+  /** ``owner/repo`` identity (the filter value). */
+  url: string;
+  /** Curated repo title, else ``owner/repo``. */
+  name: string;
+  count: number;
+}
+
+/** Distinct sources present, each with its display name + set count, sorted by
+ *  name (EXP-048 #2330). Drives the "Quelle" facet. */
+export function availableSources(sets: SearchableSet[]): DiscoverSource[] {
+  const byUrl = new Map<string, { name: string; count: number }>();
+  for (const set of sets) {
+    if (!set.repo_url) continue;
+    const existing = byUrl.get(set.repo_url);
+    if (existing) existing.count += 1;
+    else byUrl.set(set.repo_url, { name: set.repo_name || set.repo_url, count: 1 });
+  }
+  return [...byUrl.entries()]
+    .map(([url, v]) => ({ url, name: v.name, count: v.count }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 /** True when the loaded catalogue carries at least one machine-origin set
  *  (``generated`` or ``reviewed``). Drives whether the "Durchsicht" facet is
  *  shown at all (EXP-048 #2321): with an all-``authored`` catalogue the facet
@@ -280,6 +311,7 @@ const RELAXABLE_FACETS = [
   "domain",
   "trust",
   "reviewStatus",
+  "source",
 ] as const;
 
 /**

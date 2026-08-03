@@ -3780,6 +3780,7 @@
       "level": "Niveau",
       "domain": "Bereich",
       "trust": "Vertrauen",
+      "source": "Quelle",
       "ai_checked": "KI-geprüft",
       "review": "Durchsicht"
     },

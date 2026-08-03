@@ -3479,6 +3479,7 @@ discover:
     level: "Level"
     domain: "Domain"
     trust: "Trust"
+    source: "Source"
     ai_checked: "AI-checked"
     review: "Review"
   trust:

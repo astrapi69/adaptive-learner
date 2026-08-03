@@ -3471,6 +3471,7 @@ discover:
     level: "Nivel"
     domain: "Área"
     trust: "Confianza"
+    source: "Fuente"
     ai_checked: "Verificado por IA"
     review: "Revisión"
   trust:

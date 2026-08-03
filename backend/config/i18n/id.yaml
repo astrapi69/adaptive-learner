@@ -3479,6 +3479,7 @@ discover:
     level: "Tingkat"
     domain: "Bidang"
     trust: "Kepercayaan"
+    source: "Sumber"
     ai_checked: "Diperiksa AI"
     review: "Tinjauan"
   trust:
