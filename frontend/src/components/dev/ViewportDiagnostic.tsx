@@ -110,6 +110,11 @@ export default function ViewportDiagnostic() {
         atWinScrollY: Math.round(window.scrollY),
         atVvOffsetTop: vv ? Math.round(vv.offsetTop) : 0,
       };
+      // Also log each tap so a remote-debugging console (Android chrome://inspect,
+      // Safari Web Inspector) captures a copyable history — a small overlay on a
+      // phone is hard to transcribe. Guarded by `enabled`, so silent otherwise.
+      // eslint-disable-next-line no-console
+      console.log("[vvdiag]", JSON.stringify(tap));
       refresh();
     };
 
