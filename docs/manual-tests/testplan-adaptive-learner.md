@@ -834,6 +834,27 @@ BEIDEN Speichermodi prüfbar; die Logik ist modusunabhängig.
       "Weitere anzeigen" ist tippbar (>=44px), und der Zurück-Weg (Geste /
       Navigation) bleibt nach dem Nachladen erhalten
 
+### Discover Stufe 3: Tippfehler-Toleranz + Rangfolge in der Suche (EXP-048, #2336)
+
+Ort: Entdecken (`/content?tab=discover`), Suchfeld. Schwelle bewusst
+überschritten: das Merkmal war laut Exploration erst ab etwa 200 Sets
+vorgesehen (aktuell rund 46) und wird auf ausdrückliche Nutzer-Entscheidung
+schon jetzt gebaut. In BEIDEN Speichermodi prüfbar; die Logik ist
+modusunabhängig.
+
+- [ ] Ein Suchwort mit EINEM Tippfehler (z. B. "spanissch" statt "Spanisch")
+      findet dieselben Sets wie die korrekte Schreibweise
+- [ ] Zwei oder mehr Tippfehler im selben Wort finden das Set NICHT (die
+      Toleranz bleibt eng)
+- [ ] Sehr kurze Suchwörter (unter 4 Zeichen) bleiben exakt; ein 3-Zeichen-
+      Tippfehler findet nichts Falsches
+- [ ] Bei einer Mehrwort-Suche muss weiterhin JEDES Wort passen; ein
+      unpassendes zweites Wort schließt das Set aus
+- [ ] Exakte Treffer stehen über reinen Tippfehler-Treffern, wenn nach
+      "Relevanz" sortiert wird
+- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):** die
+      Tippfehler-Suche funktioniert ohne Netz genauso wie im Server-Modus
+
 ### Set-Status bleibt erhalten (aktiv/zurueckgestellt/abgeschlossen, beide Modi)
 
 Ort: Meine Inhalte (`/content?tab=my`) → Set-Aktionen-Menue (Drei-Punkte)

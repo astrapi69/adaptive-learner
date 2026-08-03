@@ -115,15 +115,68 @@ function setHaystack(set: SearchableSet, languageNames?: LanguageNameResolver): 
   return normalizeSearchText(parts.join(" "));
 }
 
+/** Shortest query token length that is eligible for typo tolerance. Below this
+ *  a single edit is a large fraction of the word ("cat"/"car"), so short tokens
+ *  stay exact-only. */
+const FUZZY_MIN_TOKEN_LENGTH = 4;
+
+/** Levenshtein edit distance between ``a`` and ``b``, capped at ``max``: as soon
+ *  as the best achievable distance provably exceeds ``max`` it returns
+ *  ``max + 1``, so the DP stays cheap for the "within 1 edit?" question typo
+ *  tolerance asks (EXP-048 #2336). Library-First (Phase 4): a ~20-line
+ *  single-concern helper, no dependency for one bounded metric. */
+function boundedLevenshtein(a: string, b: string, max: number): number {
+  if (a === b) return 0;
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const curr = [i];
+    let rowMin = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      const d = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+      curr.push(d);
+      if (d < rowMin) rowMin = d;
+    }
+    if (rowMin > max) return max + 1;
+    prev = curr;
+  }
+  return prev[b.length];
+}
+
+/** True when a single query token matches a single haystack token: an exact
+ *  substring, or — for long-enough tokens — within one edit (EXP-048 #2336). */
+function tokenMatches(haystackToken: string, queryToken: string): boolean {
+  if (haystackToken.includes(queryToken)) return true;
+  if (queryToken.length < FUZZY_MIN_TOKEN_LENGTH) return false;
+  return boundedLevenshtein(haystackToken, queryToken, 1) <= 1;
+}
+
+/** True when every whitespace-separated token of ``normalizedQuery`` matches
+ *  some token of ``haystack`` (typo-tolerant per {@link tokenMatches}). Keeps
+ *  the all-tokens-must-match precision of the exact path — a two-word query
+ *  with one unrelated word still misses. */
+function fuzzyMatches(haystack: string, normalizedQuery: string): boolean {
+  const haystackTokens = haystack.split(/\s+/).filter(Boolean);
+  const queryTokens = normalizedQuery.split(/\s+/).filter(Boolean);
+  return queryTokens.every((qt) => haystackTokens.some((ht) => tokenMatches(ht, qt)));
+}
+
 /** True when the set matches the normalized free-text query (empty = match).
- *  Pass ``languageNames`` to also search the pair's UI-language names. */
+ *  Pass ``languageNames`` to also search the pair's UI-language names.
+ *
+ *  Two-stage (EXP-048 #2336): the exact normalized substring is the fast path
+ *  and never regresses; only when it misses does bounded per-token typo
+ *  tolerance run, so "spanissch" still finds "Spanisch". */
 export function matchesQuery(
   set: SearchableSet,
   normalizedQuery: string,
   languageNames?: LanguageNameResolver,
 ): boolean {
   if (!normalizedQuery) return true;
-  return setHaystack(set, languageNames).includes(normalizedQuery);
+  const haystack = setHaystack(set, languageNames);
+  if (haystack.includes(normalizedQuery)) return true;
+  return fuzzyMatches(haystack, normalizedQuery);
 }
 
 /** True when the set matches the entry-point preset (EXP-048 #2331): empty =

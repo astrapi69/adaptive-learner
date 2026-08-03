@@ -70,12 +70,62 @@ describe("matchesQuery", () => {
     const set = makeSet({ name: "Spanisch A1", source_language: "de", target_language: "es" });
     const names = (code: string): string =>
       ({ de: "German", es: "Spanish" })[code] ?? code;
-    // Without the resolver, an English query for the target language misses
-    // ("spanisch" does not contain "spanish").
-    expect(matchesQuery(set, normalizeSearchText("spanish"))).toBe(false);
+    // Without the resolver, the English SOURCE-language name "German" is not in
+    // the haystack (the set's visible text is the German "Spanisch A1"). A
+    // non-typo query is used on purpose: "spanish" ≈ "spanisch" now fuzzy-matches
+    // (EXP-048 #2336), so it no longer proves the resolver added the name.
+    expect(matchesQuery(set, normalizeSearchText("german"))).toBe(false);
     // With it, the UI-language names of BOTH sides become searchable.
     expect(matchesQuery(set, normalizeSearchText("spanish"), names)).toBe(true);
     expect(matchesQuery(set, normalizeSearchText("german"), names)).toBe(true);
+  });
+});
+
+describe("matchesQuery — typo tolerance (EXP-048 #2336, Schwelle bewusst überschritten)", () => {
+  it("matches a query token with one typo via bounded edit distance", () => {
+    const set = makeSet({ name: "Spanisch A1" });
+    // "spanissch" -> "spanisch" is a single insertion (edit distance 1).
+    expect(matchesQuery(set, normalizeSearchText("spanissch"))).toBe(true);
+  });
+
+  it("does not match a query token with two or more typos", () => {
+    const set = makeSet({ name: "Spanisch A1" });
+    // "spanissssch" -> "spanisch" needs > 1 edit.
+    expect(matchesQuery(set, normalizeSearchText("spanissssch"))).toBe(false);
+  });
+
+  it("requires an exact (substring) match for short query tokens (< 4 chars)", () => {
+    const set = makeSet({ name: "Ruby", description: "", tags: [] });
+    // "rob" is a 3-char typo of "rub"/"ruby": too short for fuzzy, must miss.
+    expect(matchesQuery(set, normalizeSearchText("rob"))).toBe(false);
+  });
+
+  it("still requires EVERY query token to match (precision kept)", () => {
+    const set = makeSet({ name: "Spanisch A1", description: "", tags: [] });
+    // First token fuzzy-matches, second is unrelated: no overall match.
+    expect(matchesQuery(set, normalizeSearchText("spanissch python"))).toBe(false);
+  });
+
+  it("fuzzy-matches against the resolved UI-language names too (EXP-048 #2329 + #2336)", () => {
+    const set = makeSet({ name: "Spanisch A1", source_language: "de", target_language: "es" });
+    const names = (code: string): string =>
+      ({ de: "German", es: "Spanish" })[code] ?? code;
+    // "spanicsh" -> "spanish" (delete one char, distance 1) via the resolved name.
+    expect(matchesQuery(set, normalizeSearchText("spanicsh"), names)).toBe(true);
+  });
+});
+
+describe("queryDiscoverSets — typo ranking (EXP-048 #2336, Schwelle bewusst überschritten)", () => {
+  it("ranks exact query matches above typo-only matches under relevance", () => {
+    const exact = makeSet({ id: "exact", name: "Spanisch Grundkurs" });
+    // "Spanissch" only fuzzy-matches "spanisch" — no exact substring.
+    const fuzzy = makeSet({ id: "fuzzy", name: "Spanissch Aufbau" });
+    const sorted = queryDiscoverSets(
+      [fuzzy, exact],
+      { ...EMPTY_FILTERS, query: "spanisch" },
+      "relevance",
+    );
+    expect(sorted.map((s) => s.id)).toEqual(["exact", "fuzzy"]);
   });
 });
 
