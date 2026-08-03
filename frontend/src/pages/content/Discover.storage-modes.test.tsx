@@ -129,5 +129,22 @@ describe.each(["api", "dexie"] as const)(
       const other = mode === "api" ? "dexie" : "api";
       expect(backings[other].downloadSet).not.toHaveBeenCalled();
     });
+
+    it("applies the entry preset (language vs knowledge) identically in this mode", async () => {
+      fetchAllIndicesMock.mockResolvedValue([
+        makeSet({ id: "es-a1", name: "Spanisch A1", target_language: "es", domain: "language" }),
+        makeSet({ id: "psy", name: "Psychologie", source_language: "de", target_language: "de", domain: "psychology" }),
+      ]);
+      renderDiscover();
+      // Default entry "language" shows only the language pair, in both modes.
+      await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+      expect(screen.getByText("Spanisch A1")).toBeInTheDocument();
+      expect(screen.queryByText("Psychologie")).toBeNull();
+      // Switching to the knowledge entry shows the knowledge set instead.
+      fireEvent.click(screen.getByTestId("discover-entry-filter"));
+      fireEvent.click(screen.getByTestId("discover-entry-filter-knowledge"));
+      await waitFor(() => expect(screen.getByText("Psychologie")).toBeInTheDocument());
+      expect(screen.queryByText("Spanisch A1")).toBeNull();
+    });
   },
 );

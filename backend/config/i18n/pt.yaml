@@ -3460,6 +3460,11 @@ discover:
   bar:
     search: "Pesquisar"
     filter: "Filtrar"
+  entry:
+    label: "Quero"
+    language: "Aprender um idioma"
+    knowledge: "Uma matéria"
+    all: "Tudo"
   filter:
     all: "Todos"
     language: "Idioma"
@@ -3469,6 +3474,7 @@ discover:
     level: "Nível"
     domain: "Área"
     trust: "Confiança"
+    source: "Fonte"
     ai_checked: "Verificado por IA"
     review: "Revisão"
   trust:

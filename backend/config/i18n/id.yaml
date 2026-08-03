@@ -3470,6 +3470,11 @@ discover:
   bar:
     search: "Cari"
     filter: "Filter"
+  entry:
+    label: "Saya ingin"
+    language: "Belajar bahasa"
+    knowledge: "Suatu bidang"
+    all: "Semua"
   filter:
     all: "Semua"
     language: "Bahasa"
@@ -3479,6 +3484,7 @@ discover:
     level: "Tingkat"
     domain: "Bidang"
     trust: "Kepercayaan"
+    source: "Sumber"
     ai_checked: "Diperiksa AI"
     review: "Tinjauan"
   trust:

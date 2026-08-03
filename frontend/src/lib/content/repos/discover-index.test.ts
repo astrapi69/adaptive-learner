@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   availableDomains,
+  availableSources,
   availableSourceLanguages,
   availableTargetLanguages,
   availableLevels,
@@ -63,6 +64,19 @@ describe("matchesQuery", () => {
   it("an empty query matches everything", () => {
     expect(matchesQuery(makeSet({}), "")).toBe(true);
   });
+
+  it("includes the UI-language names of the pair in the haystack (EXP-048 #2329)", () => {
+    // A German-authored Spanish set: the visible name is "Spanisch A1".
+    const set = makeSet({ name: "Spanisch A1", source_language: "de", target_language: "es" });
+    const names = (code: string): string =>
+      ({ de: "German", es: "Spanish" })[code] ?? code;
+    // Without the resolver, an English query for the target language misses
+    // ("spanisch" does not contain "spanish").
+    expect(matchesQuery(set, normalizeSearchText("spanish"))).toBe(false);
+    // With it, the UI-language names of BOTH sides become searchable.
+    expect(matchesQuery(set, normalizeSearchText("spanish"), names)).toBe(true);
+    expect(matchesQuery(set, normalizeSearchText("german"), names)).toBe(true);
+  });
 });
 
 describe("passesFilters", () => {
@@ -84,6 +98,13 @@ describe("passesFilters", () => {
     expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "fr" })).toBe(false);
     // Empty = every target.
     expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "" })).toBe(true);
+  });
+
+  it("source matches the set's repo_url exactly (EXP-048 #2330)", () => {
+    const set = makeSet({ repo_url: "owner/repo" });
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "owner/repo" })).toBe(true);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "other/repo" })).toBe(false);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "" })).toBe(true);
   });
 
   it("level + domain are exact", () => {
@@ -113,6 +134,32 @@ describe("passesFilters", () => {
     expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "reviewed" })).toBe(false);
     // Empty = every review standing.
     expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "" })).toBe(true);
+  });
+
+  it("entry 'language' keeps language sets, 'knowledge' the inverse, '' both (#2331)", () => {
+    const lang = makeSet({ id: "es", domain: "language", source_language: "de", target_language: "es" });
+    const knowSameLang = makeSet({ id: "psy", domain: "psychology", source_language: "de", target_language: "de" });
+    const knowDomainPair = makeSet({ id: "prog", domain: "programming", source_language: "de", target_language: "es" });
+    // "Sprache lernen": only the clean language pair.
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "language" })).toBe(true);
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    expect(passesFilters(knowDomainPair, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    // "Fachgebiet": the inverse (non-language domain OR same-language pair).
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
+    expect(passesFilters(knowDomainPair, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(false);
+    // "Alles": no entry filter.
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "" })).toBe(true);
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "" })).toBe(true);
+  });
+
+  it("surfaces a Mischfall: a language-domain set with source==target is not a clean language set (#2331)", () => {
+    // The convention (domain=="language" <=> source!=target) is pinned by the
+    // entry filter: a broken "language" set (source==target) is caught by the
+    // knowledge rule, so it cannot hide silently in the language entry.
+    const mischfall = makeSet({ domain: "language", source_language: "de", target_language: "de" });
+    expect(passesFilters(mischfall, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    expect(passesFilters(mischfall, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
   });
 
   it("combines facets with AND", () => {
@@ -246,6 +293,17 @@ describe("available* option helpers", () => {
   });
   it("domains sorted", () => {
     expect(availableDomains(sets)).toEqual(["ai", "language"]);
+  });
+  it("sources: distinct repo_url with name + count, sorted by name (#2330)", () => {
+    const withSources = [
+      makeSet({ repo_url: "o/a", repo_name: "Beta" }),
+      makeSet({ repo_url: "o/a", repo_name: "Beta" }),
+      makeSet({ repo_url: "o/b", repo_name: "Alpha" }),
+    ];
+    expect(availableSources(withSources)).toEqual([
+      { url: "o/b", name: "Alpha", count: 1 },
+      { url: "o/a", name: "Beta", count: 2 },
+    ]);
   });
 });
 

@@ -3446,6 +3446,11 @@ discover:
   bar:
     search: "खोजें"
     filter: "फ़िल्टर करें"
+  entry:
+    label: "उद्देश्य"
+    language: "भाषा सीखना"
+    knowledge: "विषय"
+    all: "सब कुछ"
   filter:
     all: "सभी"
     language: "भाषा"
@@ -3455,6 +3460,7 @@ discover:
     level: "स्तर"
     domain: "क्षेत्र"
     trust: "विश्वास"
+    source: "स्रोत"
     ai_checked: "एआई-जाँचित"
     review: "समीक्षा"
   trust:

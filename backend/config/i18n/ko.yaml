@@ -3470,6 +3470,11 @@ discover:
   bar:
     search: "검색"
     filter: "필터"
+  entry:
+    label: "목적"
+    language: "언어 배우기"
+    knowledge: "분야"
+    all: "전체"
   filter:
     all: "전체"
     language: "언어"
@@ -3479,6 +3484,7 @@ discover:
     level: "수준"
     domain: "분야"
     trust: "신뢰도"
+    source: "출처"
     ai_checked: "AI 검증됨"
     review: "검토"
   trust:
