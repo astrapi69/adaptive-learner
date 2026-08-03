@@ -3777,6 +3777,10 @@
       "knowledge": "विषय",
       "all": "सब कुछ"
     },
+    "pairs": {
+      "heading": "भाषा युग्म",
+      "select": "{p} चुनें"
+    },
     "filter": {
       "all": "सभी",
       "language": "भाषा",

@@ -3465,6 +3465,9 @@ discover:
     language: "言語を学ぶ"
     knowledge: "分野"
     all: "すべて"
+  pairs:
+    heading: "言語ペア"
+    select: "{p} を選択"
   filter:
     all: "すべて"
     language: "言語"

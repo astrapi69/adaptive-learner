@@ -3777,6 +3777,10 @@
       "knowledge": "Fachgebiet",
       "all": "Alles"
     },
+    "pairs": {
+      "heading": "Sprachpaare",
+      "select": "{p} auswählen"
+    },
     "filter": {
       "all": "Alle",
       "language": "Sprache",

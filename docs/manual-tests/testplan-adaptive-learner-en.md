@@ -798,6 +798,27 @@ the logic is mode-independent.
 - [ ] **iOS standalone (added to home screen, Dexie mode):** typo search works
       offline exactly as in server mode
 
+### Discover Stage 3: language-pair matrix as an alternative entry (EXP-048, #2337)
+
+Where: Discover (`/content?tab=discover`), the "Language pairs" area above the
+result list. Threshold deliberately overridden: the exploration scheduled this
+only from ~30 populated pairs (currently 14); built now on an explicit user
+decision. Shown in the "Learn a language" and "Everything" entries once more
+than one pair is populated. Testable in BOTH storage modes; the logic is
+mode-independent.
+
+- [ ] The populated language pairs appear above the list as buttons, e.g.
+      "German → Spanish (3)", most-populated first
+- [ ] Tapping a pair presets BOTH the source and target language at once and
+      switches to the "Learn a language" entry; the list then shows only that
+      pair's sets
+- [ ] The chosen pair is highlighted (marked active)
+- [ ] A pair in a DIFFERENT instruction language (e.g. "English → Spanish")
+      jumps there too; the source language stays freely changeable afterwards
+- [ ] The pair matrix is not shown in the "Subject" entry
+- [ ] **iOS standalone (added to home screen, Dexie mode):** the pair buttons
+      are tappable (>=44px) and work offline exactly as in server mode
+
 ### Set status persists (active/deferred/completed, both modes)
 
 Where: My Content (`/content?tab=my`) → the set actions menu (three dots)

@@ -3475,6 +3475,9 @@ discover:
     language: "Learn a language"
     knowledge: "A subject"
     all: "Everything"
+  pairs:
+    heading: "Language pairs"
+    select: "Choose {p}"
   filter:
     all: "All"
     language: "Language"

@@ -377,7 +377,7 @@ Katalogröße. Zwei Punkte:
 | 2 | Quellen-Facette | klein |
 | 2 | Sprachnamen der UI-Sprache im Suchtext | klein |
 | 3 | Schubweises Rendern mit "Weitere anzeigen" | klein |
-| 3 | Sprachpaar-Matrix als alternativer Einstieg | mittel, erst ab etwa 30 belegten Paaren (heute 14) |
+| 3 | Sprachpaar-Matrix als alternativer Einstieg | mittel, laut Entwurf erst ab etwa 30 belegten Paaren (heute 14) — Schwelle bewusst überschritten, gebaut in #2337 |
 | 3 | Rangfolge und Tippfehlertoleranz | mittel, laut Entwurf erst ab etwa 200 Sets — Schwelle bewusst überschritten, gebaut in #2336 |
 
 **Kleinster erster Wurf mit spürbarer Wirkung:** die vier ersten Zeilen der
