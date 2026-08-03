@@ -40,6 +40,8 @@ import {
   type DiscoverSort,
 } from "../../lib/content/repos/discover-index";
 import { useDiscoverSourceLanguage } from "../../hooks/content/useDiscoverSourceLanguage";
+import { useDiscoverEntry } from "../../hooks/content/useDiscoverEntry";
+import { isKnowledgeDomain } from "../../lib/exercises/knowledge-domain";
 import { collectDiscoveryRepos } from "../../lib/content/repos/discover-repos";
 import {
   fetchAllIndices,
@@ -93,6 +95,9 @@ export default function Discover() {
   // (and moves when the learner switches UI language). An explicit choice
   // ("" = all languages) always wins over the locale default.
   const [langChoice, setLangChoice] = useDiscoverSourceLanguage();
+  // #2331 — entry-point preset (Sprache lernen / Fachgebiet / Alles). Explicit
+  // choice persists; unset defaults to "language" (the vorbelegter Einstieg).
+  const [entryChoice, setEntryChoice] = useDiscoverEntry();
   const [downloadState, setDownloadState] = useState<
     Record<string, SetDiscoveryDownloadState>
   >({});
@@ -175,9 +180,15 @@ export default function Discover() {
   const effectiveSourceLanguage =
     langChoice ?? localeDefaultLanguage;
 
+  const effectiveEntry = entryChoice ?? "language";
+
   const activeFilters = useMemo<DiscoverFilters>(
-    () => ({ ...filters, sourceLanguage: effectiveSourceLanguage }),
-    [filters, effectiveSourceLanguage],
+    () => ({
+      ...filters,
+      sourceLanguage: effectiveSourceLanguage,
+      entry: effectiveEntry,
+    }),
+    [filters, effectiveSourceLanguage, effectiveEntry],
   );
 
   // #2329 — resolve a BCP-47 code to its name in the active UI language, so a
@@ -257,7 +268,54 @@ export default function Discover() {
       })),
     ];
   }, [sourceScopedSets, t, lang]);
-  const showTargetFacet = targetLanguageOptions.length > 1;
+  // Target + level only carry meaning in the "language" task; the domain facet
+  // only in the "knowledge" task (EXP-048 #2331). In the "Alles" entry all show.
+  const showTargetFacet =
+    effectiveEntry !== "knowledge" && targetLanguageOptions.length > 1;
+
+  // Entry-point control (#2331): three presets over the SAME list, each with
+  // its count in the current source language, so an empty entry shows its zero
+  // instead of leading into nothing.
+  const entryCounts = useMemo(() => {
+    let language = 0;
+    let knowledge = 0;
+    for (const set of sourceScopedSets) {
+      if (isKnowledgeDomain(set.domain, set.source_language, set.target_language)) {
+        knowledge += 1;
+      } else {
+        language += 1;
+      }
+    }
+    return { language, knowledge, all: sourceScopedSets.length };
+  }, [sourceScopedSets]);
+  const entryOptions = useMemo(
+    () => [
+      {
+        value: "language",
+        label: `${t("discover.entry.language", "Learn a language")} (${entryCounts.language})`,
+      },
+      {
+        value: "knowledge",
+        label: `${t("discover.entry.knowledge", "Subject")} (${entryCounts.knowledge})`,
+      },
+      {
+        value: "",
+        label: `${t("discover.entry.all", "Everything")} (${entryCounts.all})`,
+      },
+    ],
+    [entryCounts, t],
+  );
+
+  // Switching the entry clears the facets the new entry hides, so a stale
+  // hidden restriction can never silently zero the list.
+  function handleEntryChange(value: string) {
+    setEntryChoice(value);
+    if (value === "language") {
+      setFilters((prev) => ({ ...prev, domain: "" }));
+    } else if (value === "knowledge") {
+      setFilters((prev) => ({ ...prev, level: "", targetLanguage: "" }));
+    }
+  }
 
   // Source (repo) facet (#2330): Discover searches every validated + own repo
   // regardless of the Settings source management; this facet makes that
@@ -310,9 +368,20 @@ export default function Discover() {
           },
         ]
       : [];
+    // Niveau only in the language task (Freitext / absent for knowledge sets),
+    // Bereich only in the knowledge task (all one value under "language") -
+    // EXP-048 #2331. In "Alles" both show.
+    const levelFacet: FilterDef[] =
+      effectiveEntry !== "knowledge"
+        ? [{ id: "level", label: t("discover.filter.level", "Level"), value: filters.level, options: [all, ...levels] }]
+        : [];
+    const domainFacet: FilterDef[] =
+      effectiveEntry !== "language"
+        ? [{ id: "domain", label: t("discover.filter.domain", "Domain"), value: filters.domain, options: [all, ...domains] }]
+        : [];
     return [
-      { id: "level", label: t("discover.filter.level", "Level"), value: filters.level, options: [all, ...levels] },
-      { id: "domain", label: t("discover.filter.domain", "Domain"), value: filters.domain, options: [all, ...domains] },
+      ...levelFacet,
+      ...domainFacet,
       {
         id: "trust",
         label: t("discover.filter.trust", "Trust"),
@@ -337,7 +406,7 @@ export default function Discover() {
         ],
       },
     ];
-  }, [allSets, filters, sort, t, showReviewFacet, sources]);
+  }, [allSets, filters, sort, t, showReviewFacet, sources, effectiveEntry]);
 
   function handleFilterChange(id: string, value: string) {
     if (id === "sort") {
@@ -594,6 +663,16 @@ export default function Discover() {
         className="mb-4 flex flex-wrap items-center gap-2"
         data-testid="discover-language-filter-row"
       >
+        {/* #2331 — the entry point (Sprache lernen / Fachgebiet / Alles) is the
+            primary axis and the first always-visible control: it presets WHICH
+            second axis (target+level vs. domain) the learner refines by. */}
+        <FilterMenuButton
+          label={t("discover.entry.label", "I want to")}
+          options={entryOptions}
+          value={effectiveEntry}
+          onChange={handleEntryChange}
+          testId="discover-entry-filter"
+        />
         <FilterMenuButton
           label={t("discover.filter.language", "Language")}
           options={languageOptions}

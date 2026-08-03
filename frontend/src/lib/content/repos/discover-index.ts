@@ -14,6 +14,7 @@
 
 import { isOfficialSource } from "./content-repos";
 import { normalizeSearchText } from "../browse/content-search";
+import { isKnowledgeDomain } from "../../exercises/knowledge-domain";
 import type { SearchableSet } from "./search-index-loader";
 
 /** Minimal shape of a locally-cached set, for download-state matching. */
@@ -48,6 +49,12 @@ export type DiscoverSort = "relevance" | "newest" | "lessons";
 
 /** Filter state. Empty string = "all" for every facet. */
 export interface DiscoverFilters {
+  /** Entry point / task preset (EXP-048 #2331): ``"language"`` shows language
+   *  sets (a source→target pair), ``"knowledge"`` shows knowledge sets
+   *  (non-language domain OR same-language pair), ``""`` shows everything. A
+   *  Vorbelegung over ONE list, not a partition — the discriminator is
+   *  ``isKnowledgeDomain``, so no schema field is needed. */
+  entry: string;
   /** Free-text query (matched against name + description + tags). */
   query: string;
   /** BCP-47 code matched against the set's SOURCE (instruction) language.
@@ -80,6 +87,7 @@ export interface DiscoverFilters {
 
 /** A blank filter set (everything = all). */
 export const EMPTY_FILTERS: DiscoverFilters = {
+  entry: "",
   query: "",
   sourceLanguage: "",
   targetLanguage: "",
@@ -120,6 +128,15 @@ export function matchesQuery(
 
 /** True when the set passes every active (non-empty) facet of ``filters``. */
 export function passesFilters(set: SearchableSet, filters: DiscoverFilters): boolean {
+  if (filters.entry) {
+    const knowledge = isKnowledgeDomain(
+      set.domain,
+      set.source_language,
+      set.target_language,
+    );
+    if (filters.entry === "language" && knowledge) return false;
+    if (filters.entry === "knowledge" && !knowledge) return false;
+  }
   if (filters.sourceLanguage && set.source_language !== filters.sourceLanguage) {
     return false;
   }

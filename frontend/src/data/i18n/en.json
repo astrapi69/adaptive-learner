@@ -3771,6 +3771,12 @@
       "search": "Search",
       "filter": "Filter"
     },
+    "entry": {
+      "label": "I want to",
+      "language": "Learn a language",
+      "knowledge": "A subject",
+      "all": "Everything"
+    },
     "filter": {
       "all": "All",
       "language": "Language",

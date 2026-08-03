@@ -3460,6 +3460,11 @@ discover:
   bar:
     search: "Pesquisar"
     filter: "Filtrar"
+  entry:
+    label: "Quero"
+    language: "Aprender um idioma"
+    knowledge: "Uma matéria"
+    all: "Tudo"
   filter:
     all: "Todos"
     language: "Idioma"

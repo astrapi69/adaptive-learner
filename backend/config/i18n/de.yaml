@@ -3464,6 +3464,11 @@ discover:
   bar:
     search: "Suchen"
     filter: "Filtern"
+  entry:
+    label: "Ich möchte"
+    language: "Sprache lernen"
+    knowledge: "Fachgebiet"
+    all: "Alles"
   filter:
     all: "Alle"
     language: "Sprache"

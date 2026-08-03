@@ -3462,6 +3462,11 @@ discover:
   bar:
     search: "Αναζήτηση"
     filter: "Φιλτράρισμα"
+  entry:
+    label: "Θέλω να"
+    language: "Μάθω γλώσσα"
+    knowledge: "Γνωστικό αντικείμενο"
+    all: "Όλα"
   filter:
     all: "Όλα"
     language: "Γλώσσα"

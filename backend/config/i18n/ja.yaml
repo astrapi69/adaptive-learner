@@ -3460,6 +3460,11 @@ discover:
   bar:
     search: "検索"
     filter: "フィルター"
+  entry:
+    label: "目的"
+    language: "言語を学ぶ"
+    knowledge: "分野"
+    all: "すべて"
   filter:
     all: "すべて"
     language: "言語"

@@ -3771,6 +3771,12 @@
       "search": "Ara",
       "filter": "Filtrele"
     },
+    "entry": {
+      "label": "Amacım",
+      "language": "Dil öğrenmek",
+      "knowledge": "Bir konu",
+      "all": "Her şey"
+    },
     "filter": {
       "all": "Tümü",
       "language": "Dil",

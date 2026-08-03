@@ -3470,6 +3470,11 @@ discover:
   bar:
     search: "검색"
     filter: "필터"
+  entry:
+    label: "목적"
+    language: "언어 배우기"
+    knowledge: "분야"
+    all: "전체"
   filter:
     all: "전체"
     language: "언어"

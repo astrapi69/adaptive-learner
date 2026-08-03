@@ -88,6 +88,10 @@ beforeEach(() => {
   // tests assert the card GRID, so pin grid; the list view + default are
   // covered by the dedicated tests below.
   localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+  // #2331 — the entry preset defaults to "language" (hides knowledge sets).
+  // The pre-#2331 tests assert on the full population, so pin the "Alles" entry
+  // here; the entry preset itself is covered by its own tests below.
+  localStorage.setItem("adaptive-learner.discover_entry", "");
   fetchAllIndicesMock.mockResolvedValue([
     makeSet({ id: "es-a1", name: "Spanish A1", target_language: "es" }),
     makeSet({ id: "fr-a1", name: "French A1", target_language: "fr", lesson_count: 10 }),
@@ -309,6 +313,57 @@ describe("Discover page", () => {
     const pointer = screen.getByTestId("discover-empty-add-source");
     expect(pointer.querySelector('a[href="/add-repo"]')).not.toBeNull();
     expect(pointer.querySelector('a[href="/create-lesson"]')).not.toBeNull();
+  });
+
+  // --- EXP-048 #2331: two entry points ---
+
+  function seedLanguageAndKnowledge() {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es", name: "Spanisch", source_language: "de", target_language: "es", domain: "language", level: "a1" }),
+      makeSet({ id: "psy", name: "Psychologie", source_language: "de", target_language: "de", domain: "psychology" }),
+    ]);
+  }
+
+  it("defaults to the language entry: language sets, level facet shown, domain hidden", async () => {
+    localStorage.removeItem("adaptive-learner.discover_entry"); // the real default
+    seedLanguageAndKnowledge();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+    expect(screen.queryByText("Psychologie")).toBeNull();
+    expect(screen.getByTestId("discover-entry-filter")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.getByTestId("discover-filters-level")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-filters-domain")).toBeNull();
+  });
+
+  it("switches to the knowledge entry: knowledge sets, domain facet, no level/target, persisted", async () => {
+    localStorage.removeItem("adaptive-learner.discover_entry");
+    seedLanguageAndKnowledge();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-entry-filter"));
+    fireEvent.click(screen.getByTestId("discover-entry-filter-knowledge"));
+    await waitFor(() => expect(screen.getByText("Psychologie")).toBeInTheDocument());
+    expect(screen.queryByText("Spanisch")).toBeNull();
+    expect(localStorage.getItem("adaptive-learner.discover_entry")).toBe("knowledge");
+    // The target facet is meaningless for knowledge sets, so it is hidden.
+    expect(screen.queryByTestId("discover-target-filter")).toBeNull();
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.getByTestId("discover-filters-domain")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-filters-level")).toBeNull();
+  });
+
+  it("the Alles entry shows both populations", async () => {
+    localStorage.removeItem("adaptive-learner.discover_entry");
+    seedLanguageAndKnowledge();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-entry-filter"));
+    fireEvent.click(screen.getByTestId("discover-entry-filter-"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+    expect(screen.getByText("Psychologie")).toBeInTheDocument();
   });
 
   // --- EXP-048 #2330: source (repo) facet ---

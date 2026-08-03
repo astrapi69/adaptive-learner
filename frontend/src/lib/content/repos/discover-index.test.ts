@@ -136,6 +136,32 @@ describe("passesFilters", () => {
     expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "" })).toBe(true);
   });
 
+  it("entry 'language' keeps language sets, 'knowledge' the inverse, '' both (#2331)", () => {
+    const lang = makeSet({ id: "es", domain: "language", source_language: "de", target_language: "es" });
+    const knowSameLang = makeSet({ id: "psy", domain: "psychology", source_language: "de", target_language: "de" });
+    const knowDomainPair = makeSet({ id: "prog", domain: "programming", source_language: "de", target_language: "es" });
+    // "Sprache lernen": only the clean language pair.
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "language" })).toBe(true);
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    expect(passesFilters(knowDomainPair, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    // "Fachgebiet": the inverse (non-language domain OR same-language pair).
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
+    expect(passesFilters(knowDomainPair, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(false);
+    // "Alles": no entry filter.
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "" })).toBe(true);
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "" })).toBe(true);
+  });
+
+  it("surfaces a Mischfall: a language-domain set with source==target is not a clean language set (#2331)", () => {
+    // The convention (domain=="language" <=> source!=target) is pinned by the
+    // entry filter: a broken "language" set (source==target) is caught by the
+    // knowledge rule, so it cannot hide silently in the language entry.
+    const mischfall = makeSet({ domain: "language", source_language: "de", target_language: "de" });
+    expect(passesFilters(mischfall, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    expect(passesFilters(mischfall, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
+  });
+
   it("combines facets with AND", () => {
     const set = makeSet({ level: "a1", domain: "language", trust_level: 3, review_status: "reviewed" });
     const f: DiscoverFilters = { ...EMPTY_FILTERS, level: "a1", domain: "language", trust: "2", reviewStatus: "reviewed" };

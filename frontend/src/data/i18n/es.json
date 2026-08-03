@@ -3771,6 +3771,12 @@
       "search": "Buscar",
       "filter": "Filtrar"
     },
+    "entry": {
+      "label": "Quiero",
+      "language": "Aprender un idioma",
+      "knowledge": "Una materia",
+      "all": "Todo"
+    },
     "filter": {
       "all": "Todos",
       "language": "Idioma",
