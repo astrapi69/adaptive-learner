@@ -738,6 +738,32 @@ Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
       the marks row scrolls horizontally, and the empty-state exits are
       tappable (>=44px touch target)
 
+### Discover Stage 2: entry points, source facet, language-name search (EXP-048, #2329-#2331)
+
+Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
+(API + Dexie); the facets read the search index and are mode-independent.
+
+- [ ] Entry control ("I want to") as the first permanently-visible mark; three
+      presets with counts: Learn a language / A subject / Everything (#2331)
+- [ ] "Learn a language" preset (the default on first visit): language sets
+      only; target-language + level facets visible, domain facet hidden (#2331)
+- [ ] Switching to "A subject": knowledge sets only; domain facet visible,
+      level + target facets hidden; the choice persists across a reload (#2331)
+- [ ] "Everything" shows both populations; switching entries clears the
+      restrictions the new entry hides, so the list never silently drops to
+      zero (#2331)
+- [ ] Source facet: appears once more than one source is present; selecting one
+      restricts to that source, with a per-source count (#2330)
+- [ ] Language-name search: switch the UI to English and type "Spanish" - the
+      German-authored Spanish sets are found (the pair's UI-language names are
+      searchable) (#2329)
+- [ ] Phone (narrow width): the entry mark joins the ONE horizontally-
+      scrollable marks row and does not wrap
+- [ ] **iOS standalone (added to home screen, Dexie mode):** same flow on the
+      iPhone PWA - the entry menu opens above the list (portal/fixed, #1349),
+      the preset stays remembered after quitting the PWA, and the
+      language-name search works
+
 ### Set status persists (active/deferred/completed, both modes)
 
 Where: My Content (`/content?tab=my`) → the set actions menu (three dots)

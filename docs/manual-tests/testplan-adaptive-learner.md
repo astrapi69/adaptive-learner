@@ -788,6 +788,35 @@ Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi prüfen
       der Liste (Portal/Fixed, #1349), die Markenzeile scrollt waagerecht, und
       die Leerzustand-Auswege sind tippbar (>=44px Touch-Ziel)
 
+### Discover Stufe 2: Einstiege, Quellen-Facette, Sprachnamen-Suche (EXP-048, #2329-#2331)
+
+Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi prüfen
+(API + Dexie); die Facetten lesen den Suchindex und sind modusunabhängig.
+
+- [ ] Einstieg-Steuerung ("Ich möchte") als erste dauerhaft sichtbare Marke;
+      drei Vorbelegungen mit Trefferzahl: Sprache lernen / Fachgebiet / Alles
+      (#2331)
+- [ ] Vorbelegung "Sprache lernen" (Standard beim ersten Besuch): nur
+      Sprachsets; Zielsprache- und Niveau-Facette sichtbar, Bereichs-Facette
+      ausgeblendet (#2331)
+- [ ] Umschalten auf "Fachgebiet": nur Wissenssets; Bereichs-Facette sichtbar,
+      Niveau- und Zielsprache-Facette ausgeblendet; die Wahl bleibt nach einem
+      Reload gemerkt (#2331)
+- [ ] "Alles" zeigt beide Populationen; Umschalten löscht die vom neuen
+      Einstieg ausgeblendeten Einschränkungen, sodass die Liste nicht still
+      auf null fällt (#2331)
+- [ ] Quellen-Facette: erscheint, sobald mehr als eine Quelle vorhanden ist;
+      Auswahl schränkt auf diese Quelle ein, mit Trefferzahl je Quelle (#2330)
+- [ ] Sprachnamen-Suche: die Oberfläche auf Englisch stellen und "Spanish"
+      eingeben findet die deutschsprachigen Spanisch-Sets (Sprachnamen der
+      UI-Sprache sind durchsuchbar) (#2329)
+- [ ] Telefon (schmale Breite): die Einstieg-Marke reiht sich in die EINE
+      waagerecht scrollbare Markenzeile ein, bricht nicht um
+- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):**
+      gleicher Ablauf auf dem iPhone-PWA - das Einstieg-Menü öffnet über der
+      Liste (Portal/Fixed, #1349), die Vorbelegung bleibt nach dem Beenden der
+      PWA gemerkt, und die Suche nach Sprachnamen funktioniert
+
 ### Set-Status bleibt erhalten (aktiv/zurueckgestellt/abgeschlossen, beide Modi)
 
 Ort: Meine Inhalte (`/content?tab=my`) → Set-Aktionen-Menue (Drei-Punkte)
