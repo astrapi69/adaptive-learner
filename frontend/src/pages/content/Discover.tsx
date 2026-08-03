@@ -24,7 +24,6 @@ import { dismissSet, undismissSet } from "../../lib/content/browse/dismissed-set
 import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,
-  availableLanguagePairs,
   availableSources,
   availableSourceLanguages,
   availableTargetLanguages,
@@ -67,7 +66,7 @@ import SetDiscoveryCard, {
   type SetDiscoveryDownloadState,
 } from "../../shared/media/SetDiscoveryCard";
 import DiscoverSetListView from "../../shared/media/DiscoverSetListView";
-import LanguagePairMatrix from "../../components/content/LanguagePairMatrix";
+import DiscoverPairMatrix from "../../components/content/DiscoverPairMatrix";
 import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
 import { useContentViewMode } from "../../hooks/content/useContentViewMode";
 import { getStorage } from "../../storage";
@@ -345,20 +344,6 @@ export default function Discover() {
   // the jump it offers. Shown in the language / "Alles" entry once more than one
   // pair is populated (a single pair is no choice). Schwelle bewusst
   // überschritten: gebaut unter der ~200-Sets-Schwelle auf Nutzer-Entscheidung.
-  const languagePairs = useMemo(() => availableLanguagePairs(allSets), [allSets]);
-  // The pairs the matrix actually offers: none in the knowledge entry, and only
-  // when more than one pair is populated (a single pair is no choice). Computed
-  // here (not as an inline JSX guard) so the branch lives in this memo, not in
-  // the component body — the component always renders the matrix, which returns
-  // null for an empty list.
-  const matrixPairs = useMemo<DiscoverLanguagePair[]>(
-    () =>
-      effectiveEntry !== "knowledge" && languagePairs.length > 1
-        ? languagePairs
-        : [],
-    [effectiveEntry, languagePairs],
-  );
-
   // Selecting a pair presets the language entry + both language axes at once.
   // Clearing the hidden domain restriction mirrors handleEntryChange, so a
   // stale knowledge-domain filter can never silently zero the jumped-to list.
@@ -749,26 +734,14 @@ export default function Discover() {
 
       {/* #2337 — the language-pair matrix: an alternative entry that presets
           the whole "German → Spanish" pair in one tap, including pairs in other
-          instruction languages. Always rendered; it shows nothing when
-          ``matrixPairs`` is empty (knowledge entry, or a single pair). */}
-      <LanguagePairMatrix
-        pairs={matrixPairs}
-        heading={t("discover.pairs.heading", "Language pairs")}
-        formatLabel={(pair) =>
-          `${languageDisplayName(pair.source, lang)} → ${languageDisplayName(
-            pair.target,
-            lang,
-          )} (${pair.count})`
-        }
-        selectLabel={(label) =>
-          t("discover.pairs.select", "Choose {p}").replace("{p}", label)
-        }
+          instruction languages. The connected wrapper derives + formats the
+          pairs and hides itself in the knowledge entry / single-pair case. */}
+      <DiscoverPairMatrix
+        sets={allSets}
+        entry={effectiveEntry}
+        activeSource={effectiveSourceLanguage}
+        activeTarget={filters.targetLanguage}
         onSelect={handlePairSelect}
-        activePair={{
-          source: effectiveSourceLanguage,
-          target: filters.targetLanguage,
-        }}
-        testId="discover-pair-matrix"
       />
 
       {/* #2323 — every other active restriction as a removable mark, on one
