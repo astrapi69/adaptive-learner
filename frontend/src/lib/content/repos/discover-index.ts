@@ -84,15 +84,32 @@ export const EMPTY_FILTERS: DiscoverFilters = {
   reviewStatus: "",
 };
 
-/** Build the normalized haystack for one set (name + description + tags). */
-function setHaystack(set: SearchableSet): string {
-  return normalizeSearchText([set.name, set.description, ...set.tags].join(" "));
+/** Resolve a BCP-47 code to a display name in the active UI language, so the
+ *  language names are searchable in the UI language (EXP-048 #2329). */
+export type LanguageNameResolver = (code: string) => string;
+
+/** Build the normalized haystack for one set: name + description + tags, plus
+ *  the UI-language names of the source + target language when a resolver is
+ *  given (EXP-048 #2329) — so an English-UI learner typing "Spanish" finds a
+ *  German-authored "Spanisch A1" set whose visible name is in German. */
+function setHaystack(set: SearchableSet, languageNames?: LanguageNameResolver): string {
+  const parts = [set.name, set.description, ...set.tags];
+  if (languageNames) {
+    if (set.source_language) parts.push(languageNames(set.source_language));
+    if (set.target_language) parts.push(languageNames(set.target_language));
+  }
+  return normalizeSearchText(parts.join(" "));
 }
 
-/** True when the set matches the normalized free-text query (empty = match). */
-export function matchesQuery(set: SearchableSet, normalizedQuery: string): boolean {
+/** True when the set matches the normalized free-text query (empty = match).
+ *  Pass ``languageNames`` to also search the pair's UI-language names. */
+export function matchesQuery(
+  set: SearchableSet,
+  normalizedQuery: string,
+  languageNames?: LanguageNameResolver,
+): boolean {
   if (!normalizedQuery) return true;
-  return setHaystack(set).includes(normalizedQuery);
+  return setHaystack(set, languageNames).includes(normalizedQuery);
 }
 
 /** True when the set passes every active (non-empty) facet of ``filters``. */
@@ -157,11 +174,13 @@ export function sortDiscoverSets(
   }
 }
 
-/** Filter + sort in one pass. Returns a new array. */
+/** Filter + sort in one pass. Returns a new array. ``languageNames`` (optional)
+ *  makes the pair's UI-language names searchable (EXP-048 #2329). */
 export function queryDiscoverSets(
   sets: SearchableSet[],
   filters: DiscoverFilters,
   sort: DiscoverSort,
+  languageNames?: LanguageNameResolver,
 ): SearchableSet[] {
   const nq = normalizeSearchText(filters.query);
   const filtered = sets.filter(
@@ -171,7 +190,7 @@ export function queryDiscoverSets(
       // so this guards any ``SearchableSet`` reaching the query by another path
       // (a stale/injected cache entry). Absent ⇒ visible.
       set.visibility !== "hidden" &&
-      matchesQuery(set, nq) &&
+      matchesQuery(set, nq, languageNames) &&
       passesFilters(set, filters),
   );
   return sortDiscoverSets(filtered, sort, filters.query);
@@ -273,6 +292,7 @@ const RELAXABLE_FACETS = [
 export function relaxationHints(
   sets: SearchableSet[],
   filters: DiscoverFilters,
+  languageNames?: LanguageNameResolver,
 ): RelaxationHint[] {
   const hints: RelaxationHint[] = [];
   for (const facet of RELAXABLE_FACETS) {
@@ -281,6 +301,7 @@ export function relaxationHints(
       sets,
       { ...filters, [facet]: "" },
       "relevance",
+      languageNames,
     ).length;
     if (count > 0) hints.push({ facet, count });
   }

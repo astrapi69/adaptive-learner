@@ -179,9 +179,17 @@ export default function Discover() {
     [filters, effectiveSourceLanguage],
   );
 
+  // #2329 — resolve a BCP-47 code to its name in the active UI language, so a
+  // learner can search "Spanish"/"Spanisch" and find a set whose visible name
+  // is written in the other language.
+  const resolveLanguageName = useMemo(
+    () => (code: string) => languageDisplayName(code, lang),
+    [lang],
+  );
+
   const results = useMemo(
-    () => queryDiscoverSets(allSets, activeFilters, sort),
-    [allSets, activeFilters, sort],
+    () => queryDiscoverSets(allSets, activeFilters, sort, resolveLanguageName),
+    [allSets, activeFilters, sort, resolveLanguageName],
   );
 
   // #772 — once the learner has downloaded a set this session, point them
@@ -407,8 +415,11 @@ export default function Discover() {
   // sets would remain if only it were cleared (EXP-048 #2324). Only when the
   // list is actually empty.
   const relaxHints = useMemo(
-    () => (results.length === 0 ? relaxationHints(allSets, activeFilters) : []),
-    [results.length, allSets, activeFilters],
+    () =>
+      results.length === 0
+        ? relaxationHints(allSets, activeFilters, resolveLanguageName)
+        : [],
+    [results.length, allSets, activeFilters, resolveLanguageName],
   );
   const hasAddedFilter =
     activeChips.length > 0 || filters.targetLanguage !== "";

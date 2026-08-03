@@ -311,6 +311,26 @@ describe("Discover page", () => {
     expect(pointer.querySelector('a[href="/create-lesson"]')).not.toBeNull();
   });
 
+  // --- EXP-048 #2329: search by UI-language name ---
+
+  it("finds a set by its target-language name typed in the UI language", async () => {
+    // languageDisplayName is mocked to uppercase the code, so target "es"
+    // becomes the searchable token "ES".
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "x", name: "Foobar", source_language: "de", target_language: "es" }),
+      makeSet({ id: "y", name: "Bazqux", source_language: "de", target_language: "fr" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "es" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+      { timeout: 1000 },
+    );
+    expect(screen.getByText("Foobar")).toBeInTheDocument();
+    expect(screen.queryByText("Bazqux")).toBeNull();
+  });
+
   // --- EXP-048 #2323: active filters as removable marks ---
 
   it("shows an active panel facet as a permanently-visible removable mark", async () => {

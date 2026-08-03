@@ -63,6 +63,19 @@ describe("matchesQuery", () => {
   it("an empty query matches everything", () => {
     expect(matchesQuery(makeSet({}), "")).toBe(true);
   });
+
+  it("includes the UI-language names of the pair in the haystack (EXP-048 #2329)", () => {
+    // A German-authored Spanish set: the visible name is "Spanisch A1".
+    const set = makeSet({ name: "Spanisch A1", source_language: "de", target_language: "es" });
+    const names = (code: string): string =>
+      ({ de: "German", es: "Spanish" })[code] ?? code;
+    // Without the resolver, an English query for the target language misses
+    // ("spanisch" does not contain "spanish").
+    expect(matchesQuery(set, normalizeSearchText("spanish"))).toBe(false);
+    // With it, the UI-language names of BOTH sides become searchable.
+    expect(matchesQuery(set, normalizeSearchText("spanish"), names)).toBe(true);
+    expect(matchesQuery(set, normalizeSearchText("german"), names)).toBe(true);
+  });
 });
 
 describe("passesFilters", () => {
