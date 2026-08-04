@@ -13,9 +13,14 @@
  * ``ALLOWED_EXERCISE_TYPES`` list below is checked at compile time against
  * the generated ``ExerciseType`` (``schema/lesson.schema.json`` ->
  * ``lesson-schema.generated.ts``, EXP-039 Direction A), so a new schema type
- * fails this file until the prompt is updated. There is deliberately no
- * ``multiple_choice`` (it is not a schema type; MC is expressed via a
- * ``cloze`` in select mode). See EXP-036 §4.3 + EXP-039.
+ * fails this file until the prompt is updated. ``multiple_choice`` (#2353,
+ * a native schema type since engine 1.6 / #1525) IS generated: the RULES,
+ * TYPE FIELDS and example below all cover it, so the constant and the prompt
+ * text stay in sync (the #2353 fix for the half-integrated state where the
+ * constant listed the type but nothing produced it). See EXP-036 §4.3 +
+ * EXP-039. Its multi-select case (``multiple: true``, "select all that
+ * apply") has no cloze-select equivalent, so it is a genuine sixth type,
+ * not a restatement of cloze.
  *
  * EXP-041 (Refs #1222): the prompt couples exercise type to learning goal
  * ("suitability beats variety") so the model stops choosing an exact-match
@@ -49,9 +54,18 @@ export interface ExercisePromptOptions {
   /** AIX-05 — questions from the previous generation the model must NOT
    *  repeat (so a regeneration is genuinely fresh). */
   avoidQuestions?: string[];
+  /** #2356 — whether image assets are available for this generation. When
+   *  ``false`` (e.g. the Markdown book-text path), ``picture_choice`` is NOT
+   *  offered: the model cannot supply image ``src`` values, so an AI
+   *  picture_choice card is always dropped downstream. Defaults to ``true``
+   *  (unchanged behaviour for the card-based paths). */
+  hasAssets?: boolean;
 }
 
-/** The five exercise types the schema accepts. NO ``multiple_choice``. */
+/** The six core exercise types the schema accepts and this generator can
+ *  produce. Kept in lock-step with the schema ``ExerciseType`` by the
+ *  compile-time guard below, and with the prompt text + parser by the
+ *  guard tests (#2353). */
 export const ALLOWED_EXERCISE_TYPES = [
   "matching",
   "picture_choice",
@@ -136,6 +150,12 @@ export function buildExerciseGenerationPrompt(
   const context = theoryContext(steps);
   const language = options.language ?? detectLanguageHint(context);
   const want = recommendedCardCount(steps.length, maxCards);
+  // #2356 — asset-dependent type set: without images, picture_choice cannot be
+  // filled (the model supplies no image src), so it is not offered at all.
+  const hasAssets = options.hasAssets ?? true;
+  const coreTypesLine = hasAssets
+    ? "- Core types: matching, picture_choice, free_text, word_tiles, cloze,"
+    : "- Core types: matching, free_text, word_tiles, cloze,";
 
   return [
     "You are an instructional designer. Read the THEORY below.",
@@ -149,8 +169,12 @@ export function buildExerciseGenerationPrompt(
     "- Produce at least 3 DIFFERENT exercise types across the set - but only",
     "  types that suit each concept (suitability beats variety; see TYPE",
     "  SELECTION below).",
-    "- Allowed types ONLY: matching, picture_choice, free_text, word_tiles,",
-    "  cloze. There is no multiple_choice type.",
+    coreTypesLine,
+    "  multiple_choice. These should make up the bulk of the set.",
+    "- You MAY also use the richer TEXT extension types (see EXTENSION TYPES",
+    "  below) when a concept genuinely fits one: ext:al-reading-comprehension,",
+    "  ext:al-graded-quiz, ext:al-categorization, ext:al-error-correction. Use",
+    "  no other type name.",
     "- No trivial questions, no verbatim quotes as the answer, and every",
     "  distractor must be plausible but unambiguously wrong.",
     "- A cloze sentence marks its single blank with ___ and has exactly one",
@@ -164,20 +188,53 @@ export function buildExerciseGenerationPrompt(
     "  (sentence-building / translation drills). NEVER for free definitions or",
     "  explanations of abstract concepts: those have many correct wordings, so",
     "  the exact-match check would mark a correct learner answer as wrong.",
-    "- A definition or fact with ONE correct answer -> cloze (blank the key",
-    "  term) or picture_choice (recognise the concept). Do NOT model it as",
-    "  word_tiles.",
+    hasAssets
+      ? "- A definition or fact with ONE correct answer -> cloze (blank the key\n  term) or picture_choice (recognise the concept). Do NOT model it as\n  word_tiles."
+      : "- A definition or fact with ONE correct answer -> cloze (blank the key\n  term) or multiple_choice. Do NOT model it as word_tiles.",
     "- A free explanation, an 'in your own words' task, or a transfer/",
     "  comparison -> do NOT create an exact-match type (no word_tiles, no",
-    "  free_text expecting a full free-form text). Model such goals as cloze",
-    "  or picture_choice instead.",
+    hasAssets
+      ? "  free_text expecting a full free-form text). Model such goals as cloze\n  or picture_choice instead."
+      : "  free_text expecting a full free-form text). Model such goals as cloze\n  or multiple_choice instead.",
+    "- A question with 2+ discrete answer options -> multiple_choice. Use",
+    "  multiple: false when exactly ONE option is correct; use multiple: true",
+    "  for 'select all that apply' (2+ correct options, graded by exact set).",
+    "  Prefer multiple_choice over cloze when the options are self-contained",
+    "  choices rather than a word missing from a sentence.",
+    "- A passage the learner must READ and then answer several questions about",
+    "  -> ext:al-reading-comprehension (ONE per lesson at most).",
+    "- Terms/examples that group into named categories -> ext:al-categorization.",
+    "- A single sentence with ONE wrong word to spot and fix ->",
+    "  ext:al-error-correction.",
+    "- A short scored summary of the lesson's key facts -> ext:al-graded-quiz",
+    "  (at most ONE, as an end-of-lesson summary; never one per small point).",
     "",
     "TYPE FIELDS",
-    "- matching:       question, pairs[] (>= 3 of {left, right})",
-    "- cloze:          question (contains ___), answer, distractors[]",
-    "- free_text:      question, accepts[] (>= 1 acceptable answer), distractors[] (optional)",
-    "- word_tiles:     question, answer (a short sentence/sequence, space-separated)",
-    "- picture_choice: question, options[] (>= 3 of {label, is_correct})",
+    "- matching:        question, pairs[] (>= 3 of {left, right})",
+    "- cloze:           question (contains ___), answer, distractors[]",
+    "- free_text:       question, accepts[] (>= 1 acceptable answer), distractors[] (optional)",
+    "- word_tiles:      question, answer (a short sentence/sequence, space-separated)",
+    ...(hasAssets
+      ? ["- picture_choice:  question, options[] (>= 3 of {label, is_correct})"]
+      : []),
+    "- multiple_choice: question, options[] (>= 2 of {text, is_correct}, unique",
+    "                   texts, >= 1 correct), multiple (bool: false = one correct,",
+    "                   true = select all correct)",
+    "",
+    "EXTENSION TYPES (optional, text-only; use sparingly - see the caps above)",
+    "- ext:al-reading-comprehension: question, passage (the text to read),",
+    "                   questions[] of {prompt, type ('multiple_choice' with",
+    "                   options[] of {text, correct} >= 2 incl. >= 1 correct, OR",
+    "                   'free_text' with accept[] >= 1)}",
+    "- ext:al-graded-quiz: question, questions[] like reading-comprehension but",
+    "                   each also carries points (> 0); optional pass_threshold",
+    "                   (0-100). At most ONE, an end-of-lesson summary.",
+    "- ext:al-categorization: question, categories[] (>= 2 of {name, items[] >= 1});",
+    "                   every item belongs to exactly one category, names unique",
+    "- ext:al-error-correction: question, tokens[] (the sentence, one word per",
+    "                   entry, >= 2), error_index (0-based index of the wrong",
+    "                   token), accept[] (>= 1 correction, none equal to the wrong",
+    "                   token)",
     "",
     "OUTPUT",
     "Reply with JSON ONLY (no prose outside the JSON), shaped exactly:",
@@ -227,6 +284,16 @@ function exampleJson(): string {
           question: "Explain what idempotence means here.",
           accepts: ["running it again changes nothing", "same result every run"],
           distractors: ["it runs faster each time"],
+        },
+        {
+          type: "multiple_choice",
+          question: "Which of these are Ansible modules?",
+          options: [
+            { text: "copy", is_correct: true },
+            { text: "service", is_correct: true },
+            { text: "banana", is_correct: false },
+          ],
+          multiple: true,
         },
       ],
     },

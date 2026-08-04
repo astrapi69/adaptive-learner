@@ -22,7 +22,8 @@
  */
 
 import type { ContentLessonExercise } from "../../../storage/types";
-import type { ValidCard } from "./exercise-generation-parser";
+import type { GeneratedCard } from "./exercise-generation-parser";
+import { isExtensionCard } from "./extension-cards";
 
 /** Options for {@link cardsToExercises}. */
 export interface CardsToExercisesOptions {
@@ -47,9 +48,20 @@ const DEFAULT_CLOZE_PROMPT = "Fill in the missing word.";
 /** Map one validated AI card to a renderable exercise, or ``null`` when
  *  it cannot become one. */
 function mapCard(
-  card: ValidCard,
+  card: GeneratedCard,
   clozePrompt: string,
 ): Omit<ContentLessonExercise, "id"> | null {
+  // #2355 — a text extension card carries its whole payload under
+  // ``ext_payload``; the schema's ext exercise is just type + prompt + payload.
+  if (isExtensionCard(card)) {
+    return {
+      type: card.type,
+      prompt: card.question,
+      card_ids: [],
+      distractors: [],
+      ext_payload: card.ext_payload,
+    } as Omit<ContentLessonExercise, "id">;
+  }
   switch (card.type) {
     case "matching":
       return {
@@ -94,6 +106,20 @@ function mapCard(
         distractors: card.distractors,
       };
     }
+    case "multiple_choice":
+      // #2353 — MC is text-only (no assets), so it maps directly. The
+      // model-facing ``is_correct`` becomes the schema's ``correct`` flag.
+      return {
+        type: "multiple_choice",
+        prompt: card.question,
+        card_ids: [],
+        options: card.options.map((option) => ({
+          text: option.text,
+          correct: option.is_correct,
+        })),
+        multiple: card.multiple,
+        distractors: [],
+      };
     case "picture_choice":
       // The AI gives labels but no image sources; the renderer needs
       // images. Drop it rather than emit an unrenderable exercise.
@@ -111,7 +137,7 @@ function mapCard(
  * @returns The exercises that survived the quality gate, plus a skip count.
  */
 export function cardsToExercises(
-  cards: ValidCard[],
+  cards: GeneratedCard[],
   options: CardsToExercisesOptions = {},
 ): CardsToExercisesResult {
   const clozePrompt = options.clozePrompt?.trim() || DEFAULT_CLOZE_PROMPT;
@@ -127,10 +153,11 @@ export function cardsToExercises(
   }
   const exercises = mapped.map((exercise, index) => ({
     ...exercise,
-    // Slug-safe id (lesson schema requires ``[a-z0-9-]``); the type's
-    // underscore becomes a hyphen, and the ``ai-`` prefix keeps these
-    // distinct from the deterministic generator's ``ex-`` ids.
-    id: `ai-ex-${index + 1}-${exercise.type.replace(/_/g, "-")}`,
+    // Slug-safe id (lesson schema requires ``[a-z0-9-]``); any non-alphanumeric
+    // run (``_`` in core types, ``:`` in ``ext:al-*`` types) becomes a hyphen,
+    // and the ``ai-`` prefix keeps these distinct from the deterministic
+    // generator's ``ex-`` ids.
+    id: `ai-ex-${index + 1}-${exercise.type.replace(/[^a-z0-9]+/gi, "-")}`,
   }));
   return { exercises, skipped };
 }

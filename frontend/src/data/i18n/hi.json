@@ -2463,7 +2463,8 @@
       "type_cloze": "रिक्त स्थान भरें",
       "type_free_text": "मुक्त पाठ",
       "type_word_tiles": "शब्द टाइलें",
-      "type_picture_choice": "चित्र चयन"
+      "type_picture_choice": "चित्र चयन",
+      "type_multiple_choice": "बहुविकल्पीय"
     },
     "save_lesson": {
       "button": "ऑफ़लाइन पाठ के रूप में सहेजें",

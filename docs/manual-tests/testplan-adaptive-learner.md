@@ -509,6 +509,39 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Speichern → ein Set mit N Lektionen; schlaegt eine Einzel-Generierung
       fehl, laufen die uebrigen weiter, Zusammenfassung nennt "X von N" +
       die fehlgeschlagenen Abschnitte; ohne AI-Key → Key-Hinweis, kein Batch
+- [ ] **KI-Uebungsgenerierung erzeugt Multiple-Choice (#2353):** eine
+      Wissenslektion aus Text/Buchtext mit AI-Key generieren, deren Theorie
+      klare Faktenfragen mit mehreren Antwortoptionen enthaelt (z. B. "Welche
+      dieser Module gehoeren zu X?") → in der Vorschau "Generierte Uebungen"
+      erscheint mindestens gelegentlich ein Chip **"Multiple-Choice"** neben
+      Matching/Cloze/Freitext/Wort-Kacheln; die gespeicherte Lektion spielt die
+      MC-Uebung ab (Einzelauswahl-Radio bzw. "Alle zutreffenden waehlen"-
+      Checkboxen), Feedback + SRS funktionieren wie bei den anderen Typen.
+      Regression: die anderen fuenf Typen entstehen weiterhin
+- [ ] **KI-Uebungsgenerierung erzeugt Text-Extensions (#2355):** eine
+      Buchtext-Lektion mit AI-Key aus einem Sachtext generieren, dessen
+      Theorie sich strukturell für Extensions eignet (ein längerer
+      Textabschnitt mit mehreren Rueckfragen, Begriffe die sich in Kategorien
+      einsortieren lassen, eine Aussage mit einem falschen Wort) → in der
+      Vorschau "Generierte Uebungen" erscheinen gelegentlich Chips
+      **"Leseverstaendnis" / "Kategorisierung" / "Fehlerkorrektur" /
+      "Benotetes Quiz"**; nach dem Speichern LAEDT die Lektion ohne
+      "nicht unterstuetzte Extension"-Fehler (die Lektion deklariert
+      `requires_extensions`) und die Extension-Uebungen spielen sich im
+      Lektions-Runner korrekt ab (Passage + Unterfragen, Zuordnung,
+      Token-Korrektur, benotetes Quiz mit Bestehensschwelle). WICHTIG:
+      hoechstens EIN Leseverstaendnis und EIN benotetes Quiz pro Lektion;
+      die Kern-Typen dominieren weiterhin. Regression: eine reine
+      Kern-Typen-Lektion deklariert KEINE requires_extensions
+- [ ] **Buchpfad bietet keine Bildauswahl mehr an + Set-Typenvielfalt
+      (#2356):** ein Mehrfach-Abschnitts-Buchupload (mehrere Lektionen)
+      generieren → KEINE der generierten Lektionen enthaelt eine
+      **Bildauswahl**-Uebung (im Buchpfad gibt es kein Bildmaterial, der Typ
+      wird gar nicht mehr angeboten statt spaeter verworfen); UEBER die
+      Lektionen des Sets hinweg entstehen mehr als vier verschiedene
+      Aufgabentypen (nicht nur cloze/matching/free_text/word_tiles). Regression:
+      der Einzel-Buchpfad und die Set-Uebungsgenerierung erzeugen weiterhin
+      gueltige Lektionen
 - [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-

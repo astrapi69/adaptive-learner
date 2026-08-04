@@ -479,6 +479,36 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       the title list; Save → one set with N lessons; if a single
       generation fails, the others continue and the summary reports "X of
       N" + the failed sections; with no AI key → key hint, no batch
+- [ ] **AI exercise generation produces multiple_choice (#2353):** generate a
+      knowledge lesson from text/book text (with an AI key) whose theory has
+      clear factual questions with several answer options (e.g. "Which of these
+      modules belong to X?") → the "Generated exercises" preview shows, at least
+      occasionally, a **"Multiple choice"** chip alongside
+      matching/cloze/free-text/word-tiles; the saved lesson plays the MC
+      exercise (single-choice radios, or "select all that apply" checkboxes),
+      feedback + SRS work like the other types. Regression: the other five types
+      still get generated
+- [ ] **AI exercise generation produces text extensions (#2355):** generate a
+      book-text lesson (with an AI key) from non-fiction whose theory suits
+      extensions structurally (a longer passage with several follow-up
+      questions, terms that group into categories, a statement with one wrong
+      word) → the "Generated exercises" preview shows, occasionally, chips for
+      **"Reading comprehension" / "Categorization" / "Error correction" /
+      "Graded quiz"**; after saving, the lesson LOADS with no "unsupported
+      extension" error (it declares `requires_extensions`) and the extension
+      exercises play correctly in the lesson runner (passage + sub-questions,
+      bucket sort, token fix, scored quiz with a pass threshold). IMPORTANT: at
+      most ONE reading-comprehension and ONE graded quiz per lesson; the core
+      types still dominate. Regression: a core-only lesson declares NO
+      requires_extensions
+- [ ] **Book path no longer offers picture-choice + set type variety (#2356):**
+      generate a multi-section book upload (several lessons) → NONE of the
+      generated lessons contains a **picture-choice** exercise (the book path
+      has no images, so the type is not offered at all instead of being
+      dropped later); ACROSS the lessons of the set, more than four distinct
+      exercise types appear (not just cloze/matching/free-text/word-tiles).
+      Regression: the single book path and the set exercise-generation still
+      produce valid lessons
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";

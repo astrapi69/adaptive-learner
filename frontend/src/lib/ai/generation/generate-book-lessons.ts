@@ -20,6 +20,7 @@
 import {generateExercises as defaultGenerate} from "./generate-exercises";
 import {generateTheoryFromText as defaultGenerateTheory} from "./generate-theory-from-text";
 import {cardsToExercises} from "./cards-to-exercises";
+import {setTypeCoverage, type SetTypeCoverage} from "./set-type-coverage";
 import type {AiProvider} from "./generate-exercises";
 import type {TheoryStep} from "./exercise-generation-prompt";
 import type {ContentLessonExercise} from "../../../storage/types";
@@ -60,6 +61,10 @@ export interface BatchFailure {
 export interface BatchResult {
     lessons: GeneratedBookLesson[];
     failures: BatchFailure[];
+    /** #2356 — distinct exercise types across the WHOLE set (not per lesson),
+     *  and whether the set clears the variety target. Answers "does this
+     *  23-lesson set carry more than four types?". */
+    typeCoverage: SetTypeCoverage;
 }
 
 /** Why a single-chunk generation could not produce a lesson. */
@@ -91,6 +96,10 @@ export interface BookGenerationOptions {
     clozePrompt: string;
     /** Optional per-section hard char cap (oversized -> failure, no AI call). */
     maxSectionChars?: number;
+    /** #2356 — whether image assets are available. The book-text path is
+     *  Markdown-only, so it defaults to ``false`` and ``picture_choice`` is not
+     *  offered (the model cannot supply image sources). */
+    hasAssets?: boolean;
 }
 
 /**
@@ -121,6 +130,8 @@ export async function generateBookLessonContent(
     }
     const generated = await generate(theory.steps, provider, {
         language: options.language,
+        // Book text is Markdown-only: no images, so picture_choice is not offered.
+        hasAssets: options.hasAssets ?? false,
     });
     const {exercises} = cardsToExercises(generated.cards, {
         clozePrompt: options.clozePrompt,
@@ -192,5 +203,7 @@ export async function generateBookLessonsBatch(
         }
     }
 
-    return {lessons, failures};
+    // #2356 — measure type variety across the WHOLE set, not per lesson.
+    const typeCoverage = setTypeCoverage(lessons.map((lesson) => lesson.exercises));
+    return {lessons, failures, typeCoverage};
 }

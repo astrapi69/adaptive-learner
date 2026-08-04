@@ -2269,6 +2269,7 @@ content:
     type_free_text: "Ελεύθερο κείμενο"
     type_word_tiles: "Πλακίδια λέξεων"
     type_picture_choice: "Επιλογή εικόνας"
+    type_multiple_choice: "Πολλαπλή επιλογή"
   save_lesson:
     button: "Αποθήκευση ως μάθημα εκτός σύνδεσης"
     modal_title: "Αποθήκευση ως μάθημα εκτός σύνδεσης"

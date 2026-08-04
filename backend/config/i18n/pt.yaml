@@ -2267,6 +2267,7 @@ content:
     type_free_text: "Texto livre"
     type_word_tiles: "Peças de palavras"
     type_picture_choice: "Escolha de imagem"
+    type_multiple_choice: "Múltipla escolha"
   save_lesson:
     button: "Salvar como lição offline"
     modal_title: "Salvar como lição offline"
