@@ -13,7 +13,7 @@
   "env_internal_port_keys": {
     "backend": "ADAPTIVE_LEARNER_BACKEND_PORT"
   },
-  "show_advanced_ports": true,
+  "show_advanced_ports": false,
   "health_check_path": "/api/health",
   "health_check_key": "status",
   "health_check_value": "ok",

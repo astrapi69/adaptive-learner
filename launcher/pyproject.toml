@@ -30,7 +30,7 @@ pillow = {version = "^12.2.0", optional = true}
 # above. Requires >= 0.25.2: from that version the X CLOSES the launcher
 # when no tray can dock (before it minimized forever and only the task
 # manager could end it - docker-app-launcher#108).
-docker-app-launcher = "^0.26.0"
+docker-app-launcher = "^0.28.0"
 
 [tool.poetry.extras]
 tray = ["pystray", "pillow"]
