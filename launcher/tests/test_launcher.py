@@ -101,6 +101,27 @@ class TestConfigLoads:
         assert cfg.effective_deployment_mode == "image"
         assert cfg.show_advanced_ports is False
 
+    def test_no_shipped_config_offers_the_panel_outside_compose_mode(self) -> None:
+        # The rule, over EVERY config this repo ships - not just the live one.
+        # launcher.example.json is what someone copies to start from, and it
+        # carried `dockerfile` mode together with the panel switched on: the
+        # exact pairing upstream says cannot work. A template that teaches the
+        # wrong combination is worse than a wrong value in one file.
+        configs = sorted(Path(LAUNCHER_JSON).parent.glob("launcher*.json"))
+
+        # Report WHAT was scanned. An empty glob and a clean sweep both print
+        # "no failures" otherwise, and only one of them means anything.
+        assert len(configs) == 2, f"expected 2 shipped configs, found {configs}"
+
+        for path in configs:
+            cfg = LauncherConfig.from_json(str(path))
+            if cfg.effective_deployment_mode == "compose":
+                continue  # there the internal port really is tunable
+            assert cfg.show_advanced_ports is False, (
+                f"{path.name} offers the internal-port panel in "
+                f"{cfg.effective_deployment_mode} mode, where it cannot take effect"
+            )
+
     def test_legacy_names_drive_cleanup(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
         # bibliogon is a SEPARATE project, not an Adaptive Learner legacy name
