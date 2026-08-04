@@ -118,6 +118,21 @@ describe("buildExerciseGenerationPrompt", () => {
     expect(prompt).toMatch(/select all that apply|multiple: true|all correct/i);
   });
 
+  it("offers picture_choice by default (assets available)", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toContain("picture_choice");
+    expect(prompt).toMatch(/^- picture_choice:/m);
+  });
+
+  it("drops picture_choice from every section when hasAssets is false (#2356)", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, { hasAssets: false });
+    expect(prompt).not.toContain("picture_choice");
+    // The remaining core types are still offered.
+    for (const type of ["matching", "free_text", "word_tiles", "cloze", "multiple_choice"]) {
+      expect(prompt).toContain(type);
+    }
+  });
+
   it("derives the language from the theory (German here) and states it", () => {
     const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
     expect(prompt).toContain("(de)");

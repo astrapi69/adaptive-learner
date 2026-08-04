@@ -106,6 +106,7 @@ export async function generateExercises(
     maxCards: options.maxCards,
     feedback: options.feedback,
     avoidQuestions: options.avoidQuestions,
+    hasAssets: options.hasAssets,
   });
   const raw = await provider.complete(prompt, {
     signal: options.signal,

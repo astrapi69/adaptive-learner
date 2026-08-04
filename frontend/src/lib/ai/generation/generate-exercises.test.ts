@@ -88,6 +88,20 @@ describe("generateExercises", () => {
   });
 });
 
+describe("generateExercises — asset gate (#2356)", () => {
+  it("forwards hasAssets:false into the prompt so picture_choice is not offered", async () => {
+    const m = mockProvider(GOOD_REPLY);
+    await generateExercises(STEPS, m.provider, { hasAssets: false });
+    expect(m.lastPrompt()).not.toContain("picture_choice");
+  });
+
+  it("offers picture_choice when hasAssets is not set (default)", async () => {
+    const m = mockProvider(GOOD_REPLY);
+    await generateExercises(STEPS, m.provider);
+    expect(m.lastPrompt()).toContain("picture_choice");
+  });
+});
+
 describe("generateExercises — text extensions (#2355)", () => {
   const REPLY_WITH_EXTENSIONS = JSON.stringify({
     cards: [

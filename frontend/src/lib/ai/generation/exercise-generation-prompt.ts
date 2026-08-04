@@ -54,6 +54,12 @@ export interface ExercisePromptOptions {
   /** AIX-05 — questions from the previous generation the model must NOT
    *  repeat (so a regeneration is genuinely fresh). */
   avoidQuestions?: string[];
+  /** #2356 — whether image assets are available for this generation. When
+   *  ``false`` (e.g. the Markdown book-text path), ``picture_choice`` is NOT
+   *  offered: the model cannot supply image ``src`` values, so an AI
+   *  picture_choice card is always dropped downstream. Defaults to ``true``
+   *  (unchanged behaviour for the card-based paths). */
+  hasAssets?: boolean;
 }
 
 /** The six core exercise types the schema accepts and this generator can
@@ -144,6 +150,12 @@ export function buildExerciseGenerationPrompt(
   const context = theoryContext(steps);
   const language = options.language ?? detectLanguageHint(context);
   const want = recommendedCardCount(steps.length, maxCards);
+  // #2356 — asset-dependent type set: without images, picture_choice cannot be
+  // filled (the model supplies no image src), so it is not offered at all.
+  const hasAssets = options.hasAssets ?? true;
+  const coreTypesLine = hasAssets
+    ? "- Core types: matching, picture_choice, free_text, word_tiles, cloze,"
+    : "- Core types: matching, free_text, word_tiles, cloze,";
 
   return [
     "You are an instructional designer. Read the THEORY below.",
@@ -157,7 +169,7 @@ export function buildExerciseGenerationPrompt(
     "- Produce at least 3 DIFFERENT exercise types across the set - but only",
     "  types that suit each concept (suitability beats variety; see TYPE",
     "  SELECTION below).",
-    "- Core types: matching, picture_choice, free_text, word_tiles, cloze,",
+    coreTypesLine,
     "  multiple_choice. These should make up the bulk of the set.",
     "- You MAY also use the richer TEXT extension types (see EXTENSION TYPES",
     "  below) when a concept genuinely fits one: ext:al-reading-comprehension,",
@@ -176,13 +188,14 @@ export function buildExerciseGenerationPrompt(
     "  (sentence-building / translation drills). NEVER for free definitions or",
     "  explanations of abstract concepts: those have many correct wordings, so",
     "  the exact-match check would mark a correct learner answer as wrong.",
-    "- A definition or fact with ONE correct answer -> cloze (blank the key",
-    "  term) or picture_choice (recognise the concept). Do NOT model it as",
-    "  word_tiles.",
+    hasAssets
+      ? "- A definition or fact with ONE correct answer -> cloze (blank the key\n  term) or picture_choice (recognise the concept). Do NOT model it as\n  word_tiles."
+      : "- A definition or fact with ONE correct answer -> cloze (blank the key\n  term) or multiple_choice. Do NOT model it as word_tiles.",
     "- A free explanation, an 'in your own words' task, or a transfer/",
     "  comparison -> do NOT create an exact-match type (no word_tiles, no",
-    "  free_text expecting a full free-form text). Model such goals as cloze",
-    "  or picture_choice instead.",
+    hasAssets
+      ? "  free_text expecting a full free-form text). Model such goals as cloze\n  or picture_choice instead."
+      : "  free_text expecting a full free-form text). Model such goals as cloze\n  or multiple_choice instead.",
     "- A question with 2+ discrete answer options -> multiple_choice. Use",
     "  multiple: false when exactly ONE option is correct; use multiple: true",
     "  for 'select all that apply' (2+ correct options, graded by exact set).",
@@ -201,7 +214,9 @@ export function buildExerciseGenerationPrompt(
     "- cloze:           question (contains ___), answer, distractors[]",
     "- free_text:       question, accepts[] (>= 1 acceptable answer), distractors[] (optional)",
     "- word_tiles:      question, answer (a short sentence/sequence, space-separated)",
-    "- picture_choice:  question, options[] (>= 3 of {label, is_correct})",
+    ...(hasAssets
+      ? ["- picture_choice:  question, options[] (>= 3 of {label, is_correct})"]
+      : []),
     "- multiple_choice: question, options[] (>= 2 of {text, is_correct}, unique",
     "                   texts, >= 1 correct), multiple (bool: false = one correct,",
     "                   true = select all correct)",

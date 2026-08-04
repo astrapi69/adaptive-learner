@@ -501,6 +501,14 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       most ONE reading-comprehension and ONE graded quiz per lesson; the core
       types still dominate. Regression: a core-only lesson declares NO
       requires_extensions
+- [ ] **Book path no longer offers picture-choice + set type variety (#2356):**
+      generate a multi-section book upload (several lessons) → NONE of the
+      generated lessons contains a **picture-choice** exercise (the book path
+      has no images, so the type is not offered at all instead of being
+      dropped later); ACROSS the lessons of the set, more than four distinct
+      exercise types appear (not just cloze/matching/free-text/word-tiles).
+      Regression: the single book path and the set exercise-generation still
+      produce valid lessons
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";

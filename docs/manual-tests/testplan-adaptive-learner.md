@@ -533,6 +533,15 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       hoechstens EIN Leseverstaendnis und EIN benotetes Quiz pro Lektion;
       die Kern-Typen dominieren weiterhin. Regression: eine reine
       Kern-Typen-Lektion deklariert KEINE requires_extensions
+- [ ] **Buchpfad bietet keine Bildauswahl mehr an + Set-Typenvielfalt
+      (#2356):** ein Mehrfach-Abschnitts-Buchupload (mehrere Lektionen)
+      generieren → KEINE der generierten Lektionen enthaelt eine
+      **Bildauswahl**-Uebung (im Buchpfad gibt es kein Bildmaterial, der Typ
+      wird gar nicht mehr angeboten statt spaeter verworfen); UEBER die
+      Lektionen des Sets hinweg entstehen mehr als vier verschiedene
+      Aufgabentypen (nicht nur cloze/matching/free_text/word_tiles). Regression:
+      der Einzel-Buchpfad und die Set-Uebungsgenerierung erzeugen weiterhin
+      gueltige Lektionen
 - [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-
