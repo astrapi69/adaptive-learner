@@ -49,6 +49,16 @@ export async function checkHitTest(
       const hit = document.elementFromPoint(cx, cy);
       if (!hit) return null;
       const ok = el === hit || el.contains(hit) || hit.contains(el);
+      // Occlusion, not desync: if the resolved element (or an ancestor) is a
+      // fixed/sticky overlay, it is covering the content target FROM ON TOP (the
+      // global nav, a sticky header/footer) — a legitimate rendering fact, not
+      // the vertical tap-offset the bug is about. Skip such points.
+      if (!ok) {
+        for (let node: Element | null = hit; node; node = node.parentElement) {
+          const pos = getComputedStyle(node).position;
+          if (pos === "fixed" || pos === "sticky") return null;
+        }
+      }
       return {
         label,
         cx: Math.round(cx),

@@ -54,6 +54,11 @@ const SCENARIOS: Scenario[] = [
   { name: "shell + all aggravators + zoom meta", query: "shell=1&headerTransform=1&ancestorTransform=1&sticky=1&zoomMeta=1&n=30", viewport: { width: 390, height: 844 }, target: 12 },
   { name: "shell + pre-scroll 200px", query: "shell=1&scroll=200&n=40", viewport: { width: 390, height: 844 }, target: 14 },
   { name: "shell + ancestor transform + pre-scroll 200px", query: "shell=1&ancestorTransform=1&scroll=200&n=40", viewport: { width: 390, height: 844 }, target: 14 },
+  // Same shell across other viewport sizes — a small phone, a tablet, and a
+  // desktop width — so a size-dependent desync would surface too.
+  { name: "shell — small phone (320x568)", query: "shell=1&n=30", viewport: { width: 320, height: 568 }, target: 8 },
+  { name: "shell — tablet (768x1024)", query: "shell=1&headerTransform=1&sticky=1&n=40", viewport: { width: 768, height: 1024 }, target: 18 },
+  { name: "shell — desktop (1280x800)", query: "shell=1&ancestorTransform=1&n=40", viewport: { width: 1280, height: 800 }, target: 12 },
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
