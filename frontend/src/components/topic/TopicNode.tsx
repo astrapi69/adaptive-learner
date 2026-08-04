@@ -1,14 +1,14 @@
+import type {TreeNode} from "@astrapi69/tree-kit";
 import {useState} from "react";
 
 import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useSwipe} from "../../hooks/ui/useSwipe";
-import type {TypedTreeNode} from "../../lib/tree";
 import {readGesturePref} from "../../lib/settings/gesturePref";
 import type {LearningTopic} from "../../types";
 
 interface TopicNodeProps {
-    node: TypedTreeNode<LearningTopic, string>;
+    node: TreeNode<LearningTopic, string>;
     onAddSubtopic: (parentId: string) => void;
     onRename: (topicId: string, currentTitle: string) => void;
     onDelete: (topicId: string) => void;
@@ -31,7 +31,7 @@ export default function TopicNode({
     const [expanded, setExpanded] = useState(true);
     const [actionsRevealed, setActionsRevealed] = useState(false);
     const value = node.value;
-    const children = node.children();
+    const children = node.children;
     const hasChildren = children.length > 0;
 
     // v1.10.0 / Phase 23D — iOS-style swipe-to-reveal on touch.

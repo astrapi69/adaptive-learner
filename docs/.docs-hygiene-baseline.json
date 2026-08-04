@@ -1,5 +1,5 @@
 {
-  "umlaut_count": 226,
-  "umlaut_files_scanned": 589,
-  "rationale": "Frozen ASCII substitute-spelling count across docs/**/*.md. Stems are evidence-based (real 2026-07-30 leaks), not a completeness list. This is an ERROR-COUNTER ratchet, not a budget: substitutes should be zero, so any rise is a regression and every fall is banked automatically (the --auto-lower path, run by the docs-hygiene pre-commit hook) so the gain cannot be spent again. Pre-existing substitutions (e.g. the DE testplan) are grandfathered; full normalization is a separate task."
+  "umlaut_count": 224,
+  "umlaut_files_scanned": 594,
+  "rationale": "Frozen ASCII substitute-spelling count across the git-tracked docs/**/*.md (index enumeration, #2217 - gitignored local artifacts must not move the number). Stems are evidence-based (real 2026-07-30 leaks), not a completeness list. This is an ERROR-COUNTER ratchet, not a budget: substitutes should be zero, so any rise is a regression and every fall is banked automatically (the --auto-lower path, run by the docs-hygiene pre-commit hook) so the gain cannot be spent again. Pre-existing substitutions (e.g. the DE testplan) are grandfathered; full normalization is a separate task."
 }

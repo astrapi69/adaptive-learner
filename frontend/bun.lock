@@ -12,6 +12,7 @@
         "@astrapi69/feature-strategy-react": "^0.1.2",
         "@astrapi69/pwa-update": "0.2.0",
         "@astrapi69/pwa-update-react": "0.2.0",
+        "@astrapi69/tree-kit": "^0.1.0",
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/sortable": "^10.0.0",
         "@dnd-kit/utilities": "^3.2.2",
@@ -72,7 +73,6 @@
         "remark-gfm": "^4.0.1",
         "sql.js": "1.14.1",
         "tailwind-merge": "^3.6.0",
-        "tree-model": "^1.0.7",
         "yaml": "^2.9.0",
       },
       "devDependencies": {
@@ -147,6 +147,8 @@
     "@astrapi69/pwa-update": ["@astrapi69/pwa-update@0.2.0", "", {}, "sha512-NodlFdLFJfb2MWHzgnGJs3zPKzev4KKmDD/qBm/tC7A3XsbSUd8p3/oV2ZpwwIotLQIpXB4JbPs+omYwmAzpgA=="],
 
     "@astrapi69/pwa-update-react": ["@astrapi69/pwa-update-react@0.2.0", "", { "dependencies": { "@astrapi69/pwa-update": "^0.2.0" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-Gkmvy/yDwoE/VkNxNQ8NHaDOgYdWd5TMhIHOMBimHNQ+I1+wSfogULbm00ruTDxEDh8oAPUvoUa8Bw+jsMS6Jw=="],
+
+    "@astrapi69/tree-kit": ["@astrapi69/tree-kit@0.1.0", "", {}, "sha512-ePSH3t2jTwGs24IRH6/c7lNx7ekizdMbN8GFqc/p8yCG+WPM+3JNc3IsmpTWA2Q+0vvmAmNsYg+aWazuHukJfg=="],
 
     "@astrapi69/vite-plugin-build-version": ["@astrapi69/vite-plugin-build-version@0.1.0", "", { "peerDependencies": { "vite": "^5 || ^6 || ^7 || ^8" } }, "sha512-jeNsjBMe28JAbVEfo30fFOTPa0ybhdQN/+qsUP7SvegfgmhL3BPJZBxF+NcyDL6aCdu1DZJizkgIuxbxHz/lyw=="],
 
@@ -1364,8 +1366,6 @@
 
     "fill-range": ["fill-range@7.1.1", "", { "dependencies": { "to-regex-range": "^5.0.1" } }, "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg=="],
 
-    "find-insert-index": ["find-insert-index@0.0.1", "", {}, "sha512-eIqFuQzY7XwpAJ3sHWKFNGLx1nm3w/IhmFASETcx5sUuCaOUd3xDqRK/376SzXMVVJQaJUCPlS7L841T0xpFjQ=="],
-
     "find-up": ["find-up@5.0.0", "", { "dependencies": { "locate-path": "^6.0.0", "path-exists": "^4.0.0" } }, "sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng=="],
 
     "flat-cache": ["flat-cache@4.0.1", "", { "dependencies": { "flatted": "^3.2.9", "keyv": "^4.5.4" } }, "sha512-f7ccFPK3SXFHpx15UIGyRJ/FJQctuKZ0zVuN3frBo4HnK3cay9VEW0R6yPYFHC0AgqhukPzKjq22t5DmAyqGyw=="],
@@ -1745,8 +1745,6 @@
     "meow": ["meow@14.1.0", "", {}, "sha512-EDYo6VlmtnumlcBCbh1gLJ//9jvM/ndXHfVXIFrZVr6fGcwTUyCTFNTLCKuY3ffbK8L/+3Mzqnd58RojiZqHVw=="],
 
     "merge2": ["merge2@1.4.1", "", {}, "sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg=="],
-
-    "mergesort": ["mergesort@0.0.1", "", {}, "sha512-WKghTBzqAvTt9rG5TWS78Dmk2kCCL9VkkX8Zi9kKfJ4iqYpvcGGpeYtkhPHa9NZAPLivZiZsdO/LBG3ENayDmQ=="],
 
     "micromark": ["micromark@4.0.2", "", { "dependencies": { "@types/debug": "^4.0.0", "debug": "^4.0.0", "decode-named-character-reference": "^1.0.0", "devlop": "^1.0.0", "micromark-core-commonmark": "^2.0.0", "micromark-factory-space": "^2.0.0", "micromark-util-character": "^2.0.0", "micromark-util-chunked": "^2.0.0", "micromark-util-combine-extensions": "^2.0.0", "micromark-util-decode-numeric-character-reference": "^2.0.0", "micromark-util-encode": "^2.0.0", "micromark-util-normalize-identifier": "^2.0.0", "micromark-util-resolve-all": "^2.0.0", "micromark-util-sanitize-uri": "^2.0.0", "micromark-util-subtokenize": "^2.0.0", "micromark-util-symbol": "^2.0.0", "micromark-util-types": "^2.0.0" } }, "sha512-zpe98Q6kvavpCr1NPVSCMebCKfD7CA2NqZ+rykeNhONIJBpc1tFKt9hucLGwha3jNTNI8lHpctWJWoimVF4PfA=="],
 
@@ -2203,8 +2201,6 @@
     "tr46": ["tr46@1.0.1", "", { "dependencies": { "punycode": "^2.1.0" } }, "sha512-dTpowEjclQ7Kgx5SdBkqRzVhERQXov8/l9Ft9dVM9fmg0W0KQSVaXX9T4i6twCPNtYiZM53lpSSUAwJbFPOHxA=="],
 
     "tree-kill": ["tree-kill@1.2.2", "", { "bin": "cli.js" }, "sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A=="],
-
-    "tree-model": ["tree-model@1.0.7", "", { "dependencies": { "find-insert-index": "0.0.1", "mergesort": "0.0.1" } }, "sha512-oP4LUbCVtD2gcjcRaeI4L5hY60tHzB+AK/bthIJ2Pq1EUUOio5/xFzPWnGoBZlhtqpqbOkhFDzKIwKLOn0kccQ=="],
 
     "trim-lines": ["trim-lines@3.0.1", "", {}, "sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg=="],
 

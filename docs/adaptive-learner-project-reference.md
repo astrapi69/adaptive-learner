@@ -255,13 +255,22 @@ astrapi69/bibliogon                    # Upstream (Buch-Autoren-Plattform)
 
 ### 5.2 Tree-Adapter Integration
 
-Waehrend der Domain-Migration wird ein TypeScript Tree-Adapter eingebaut fuer hierarchische Lernstrukturen:
+Hierarchische Lernstrukturen laufen über einen TypeScript Tree-Adapter. Er lag
+zunächst als eigener Ordner im Frontend und ist seit #2341 ein eigenes Paket:
 
-- Basis: `tree-model` npm-Paket (~500 LOC, MIT, stabil)
-- Adapter: `TypedTreeNode<V, K>` (~300-400 LOC)
-- Features: Typed IDs, displayValue, leaf-Detection, Flat-zu-Tree-Konvertierung, Visitor-Pattern (callback-basiert)
-- Location: `frontend/src/lib/tree/`
-- Quelle: Java-Libs tree-api + gen-tree von astrapi69 (Hybrid-Port, nur was die App braucht)
+- Paket: `@astrapi69/tree-kit` (MIT, keine Laufzeit-Abhängigkeiten)
+- Typen: `TreeNode<V, K>` als reine, zyklenfreie Daten; `TreeCursor<V, K>` als
+  flüchtiger Navigationszeiger, der den Elternbezug trägt
+- Features: Typed IDs, Flat-zu-Tree-Konvertierung in O(n), generator-basierte
+  Traversierung (`pre` / `post` / `breadth`) statt Visitor-Callback
+- Quelle: Java-Libs tree-api + gen-tree von astrapi69 (Hybrid-Port, nur was die
+  App braucht), neu entworfen statt eins-zu-eins übersetzt
+
+Der Elternbezug sitzt bewusst am Cursor und nicht am Knoten: ein Elternzeiger am
+Knoten macht den Objektgraphen zyklisch, womit `JSON.stringify` und
+`structuredClone` brechen. Der abgelöste Adapter hing an `tree-model`
+(letzte Veröffentlichung 2018) und allokierte bei jedem Zugriff einen neuen
+Wrapper, sodass `a.parent() === b.parent()` für Geschwister `false` war.
 
 Anwendungen im Adaptive Learner:
 - Thema > Unterthema > Konzept > Lerneinheit (Curriculum-Baum)
