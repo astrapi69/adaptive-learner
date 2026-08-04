@@ -5,8 +5,8 @@
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
-    "test:hittest": "playwright test --config=playwright.hittest.config.ts",
-    "test:hittest-app": "playwright test --config=playwright.hittest-app.config.ts"
+    "test:hit-test": "playwright test --config=playwright.hit-test.config.ts",
+    "test:hit-test-app": "playwright test --config=playwright.hit-test-app.config.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
