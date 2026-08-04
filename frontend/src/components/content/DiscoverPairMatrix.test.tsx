@@ -11,6 +11,9 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 }));
 vi.mock("../../lib/content/language/language-names", () => ({
   languageDisplayName: (code: string) => code.toUpperCase(),
+  // Flag-free in the component test (the flag mapping is unit-tested in
+  // language-names.test.ts); keeps the label assertions deterministic.
+  flaggedName: (code: string) => code.toUpperCase(),
 }));
 
 function makeSet(over: Partial<SearchableSet>): SearchableSet {

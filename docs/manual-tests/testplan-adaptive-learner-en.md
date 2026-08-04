@@ -852,6 +852,12 @@ mode-independent.
       "Spanish" target) jumps there too; the source language stays freely
       changeable afterwards (#2337)
 - [ ] The pair selection is not shown in the "Subject" entry (#2337)
+- [ ] Flag icons: each language name is prefixed with a flag emoji - in the
+      pair selection's group headings and target buttons AND in the
+      source/target language menus; the language name stays next to it, so on
+      platforms without flag emoji (e.g. Windows) the name is still readable
+      (#2359). Note: a language is not a country; the mapping is a deliberate
+      convention (English -> UK, Portuguese -> Portugal)
 - [ ] Keyboard: the button is reachable via Tab and toggles open/closed with
       Enter/Space; when expanded, the target buttons are reachable via Tab (#2359)
 - [ ] Phone (narrow width): collapsed the selection costs ONE line; expanded the

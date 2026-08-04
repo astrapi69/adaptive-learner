@@ -913,6 +913,12 @@ Speichermodi prüfbar; die Logik ist modusunabhängig.
       Ziel "Spanisch") springt auch dorthin; die Quellsprache bleibt danach
       frei änderbar (#2337)
 - [ ] Im Einstieg "Fachgebiet" erscheint die Sprachpaar-Auswahl nicht (#2337)
+- [ ] Fahnen-Icons: vor jedem Sprachnamen steht ein Flaggen-Emoji - in den
+      Gruppen-Überschriften und Ziel-Knöpfen der Paar-Auswahl UND in den
+      Quell-/Zielsprache-Menüs; der Sprachname bleibt daneben stehen, sodass
+      auf Plattformen ohne Flaggen-Emoji (z. B. Windows) weiter der Name lesbar
+      ist (#2359). Hinweis: eine Sprache ist kein Land, die Zuordnung ist eine
+      bewusste Konvention (Englisch -> UK, Portugiesisch -> Portugal)
 - [ ] Tastatur: der Knopf ist mit Tab erreichbar und mit Enter/Leertaste auf-
       und zuklappbar; im aufgeklappten Zustand sind die Ziel-Knöpfe per Tab
       erreichbar (#2359)

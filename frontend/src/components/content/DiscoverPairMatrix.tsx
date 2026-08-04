@@ -22,7 +22,10 @@
 import { useMemo } from "react";
 
 import { useI18n } from "../../hooks/ui/useI18n";
-import { languageDisplayName } from "../../lib/content/language/language-names";
+import {
+  flaggedName,
+  languageDisplayName,
+} from "../../lib/content/language/language-names";
 import {
   availableLanguagePairs,
   type DiscoverLanguagePair,
@@ -66,7 +69,7 @@ export default function DiscoverPairMatrix({
       (pair) => pair.source === activeSource && pair.target === activeTarget,
     );
     return present
-      ? `${languageDisplayName(activeSource, lang)} → ${languageDisplayName(activeTarget, lang)}`
+      ? `${flaggedName(activeSource, lang)} → ${flaggedName(activeTarget, lang)}`
       : null;
   }, [matrixPairs, activeSource, activeTarget, lang]);
   const triggerLabel = `${t("discover.pairs.choose", "Choose a language pair")} (${matrixPairs.length})`;
@@ -76,9 +79,11 @@ export default function DiscoverPairMatrix({
       triggerLabel={triggerLabel}
       activeSummary={activeSummary}
       heading={t("discover.pairs.heading", "Language pairs")}
-      groupLabel={(source) => languageDisplayName(source, lang)}
-      pairLabel={(pair) => `${languageDisplayName(pair.target, lang)} (${pair.count})`}
+      groupLabel={(source) => flaggedName(source, lang)}
+      pairLabel={(pair) => `${flaggedName(pair.target, lang)} (${pair.count})`}
       selectLabel={(pair) =>
+        // Names only (no flag) so a screen reader speaks the pair cleanly,
+        // not "flag: Germany, flag: Spain".
         t("discover.pairs.select", "Choose {p}").replace(
           "{p}",
           `${languageDisplayName(pair.source, lang)} → ${languageDisplayName(pair.target, lang)}`,
