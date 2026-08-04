@@ -15,7 +15,7 @@ pydantic = {version = "^2.13.0", extras = ["email"]}
 platformdirs = "^4.2.0"
 pluginforge = "^0.10.0"
 alembic = "^1.18.4"
-cryptography = ">=48,<50"
+cryptography = ">=50,<51"
 ruamel-yaml = "^0.19.0"
 pyyaml = "^6.0"
 
