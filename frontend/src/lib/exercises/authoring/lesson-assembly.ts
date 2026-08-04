@@ -67,9 +67,20 @@ export function appendExercisesToLesson(
     exercises: ContentLessonExercise[],
 ): ContentLesson {
     if (exercises.length === 0) return lesson;
+    // #2355 — appended exercises may be ``ext:al-*`` text extensions; union the
+    // lesson's existing declaration with the ones the new exercises need, or
+    // the load guard refuses the merged lesson.
+    const declared = [
+        ...(lesson.requires_extensions ?? []),
+        ...requiredExtensionsFor(exercises),
+    ];
+    const requiredExtensions = [...new Set(declared)];
     const merged: ContentLesson = {
         ...lesson,
         steps: [...lesson.steps, ...exercises.map(exerciseStep)],
+        ...(requiredExtensions.length > 0
+            ? {requires_extensions: requiredExtensions}
+            : {}),
     };
     validateGeneratedLesson(merged);
     return merged;

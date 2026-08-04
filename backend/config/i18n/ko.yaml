@@ -2278,6 +2278,7 @@ content:
     type_free_text: "자유 입력"
     type_word_tiles: "단어 타일"
     type_picture_choice: "그림 선택"
+    type_multiple_choice: "객관식"
   save_lesson:
     button: "오프라인 레슨으로 저장"
     modal_title: "오프라인 레슨으로 저장"

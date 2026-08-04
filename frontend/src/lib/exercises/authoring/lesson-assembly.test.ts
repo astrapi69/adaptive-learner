@@ -10,7 +10,12 @@ import {
     DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
 } from "./extension-edit";
-import {buildExtensionLesson, requiredExtensionsFor} from "./lesson-assembly";
+import {
+    appendExercisesToLesson,
+    buildExtensionLesson,
+    requiredExtensionsFor,
+} from "./lesson-assembly";
+import {validateLessonShape} from "../../content/validation/lesson-schema-validator";
 import {
     buildExtensionUserSetInput,
     extensionSetId,
@@ -131,5 +136,37 @@ describe("buildExtensionLesson", () => {
         expect(set.lessons[0].requires_extensions).toContain(
             "ext:al-categorization@1",
         );
+    });
+});
+
+describe("appendExercisesToLesson — merges requires_extensions (#2355)", () => {
+    const baseLesson = buildExtensionLesson({meta: META, exercises: [CAT]});
+
+    it("adds the declaration when an appended exercise is an extension", () => {
+        // Start from a core-only lesson (requires_extensions is []).
+        const coreLesson = buildExtensionLesson({meta: META, exercises: [CORE_MATCHING]});
+        expect(coreLesson.requires_extensions).toEqual([]);
+        const merged = appendExercisesToLesson(coreLesson, [EC]);
+        expect(merged.requires_extensions).toContain("ext:al-error-correction@1");
+        expect(validateLessonShape(merged).ok).toBe(true);
+    });
+
+    it("unions the existing declaration with the appended exercises' extensions", () => {
+        const merged = appendExercisesToLesson(baseLesson, [EC]);
+        expect(merged.requires_extensions).toEqual(
+            expect.arrayContaining([
+                "ext:al-categorization@1",
+                "ext:al-error-correction@1",
+            ]),
+        );
+        expect(validateLessonShape(merged).ok).toBe(true);
+    });
+
+    it("does not duplicate an already-declared extension", () => {
+        const merged = appendExercisesToLesson(baseLesson, [CAT]);
+        const cat = (merged.requires_extensions ?? []).filter(
+            (e) => e === "ext:al-categorization@1",
+        );
+        expect(cat).toHaveLength(1);
     });
 });

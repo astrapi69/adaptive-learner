@@ -22,6 +22,7 @@
 import {slugify, validateGeneratedLesson} from "../analysis/analysis-to-lesson";
 import {contentDomainToStamp} from "../content-domains";
 import {findRelatedTheoryIndex} from "../../lesson/theory-link";
+import {requiredExtensionsFor} from "../../exercises/authoring/lesson-assembly";
 import type {LessonMeta} from "./lesson-draft";
 import type {TheoryStep} from "../../ai/generation/exercise-generation-prompt";
 import type {GeneratedBookLesson} from "../../ai/generation/generate-book-lessons";
@@ -105,6 +106,10 @@ function assembleBookLesson(
     // #1716 — carry the chosen NON-language content domain onto the built
     // lesson (a book-text lesson is knowledge content when so authored).
     const contentDomain = contentDomainToStamp(meta.domain);
+    // #2355 — a generated exercise may be an ``ext:al-*`` text extension; the
+    // lesson MUST declare it in ``requires_extensions`` or the load guard
+    // refuses it. Core-only lessons get an empty list (harmless).
+    const requiredExtensions = requiredExtensionsFor(exercises);
     const lesson: ContentLesson = {
         id: uniqueLessonId(resolvedTitle, usedIds),
         title: resolvedTitle,
@@ -114,6 +119,7 @@ function assembleBookLesson(
         estimated_minutes: estimateMinutes(theorySteps.length, exercises.length),
         cards,
         steps,
+        ...(requiredExtensions.length > 0 ? {requires_extensions: requiredExtensions} : {}),
         ...(contentDomain ? {domain: contentDomain} : {}),
         contributed_by: meta.author.trim() || null,
         contributed_at: meta.author.trim() ? new Date().toISOString() : null,

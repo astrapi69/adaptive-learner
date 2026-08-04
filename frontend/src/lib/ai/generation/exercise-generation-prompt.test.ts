@@ -34,12 +34,30 @@ describe("buildExerciseGenerationPrompt", () => {
     expect(prompt).toContain("Module");
   });
 
-  it("lists exactly the five allowed types and forbids multiple_choice", () => {
-    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+  it("names every allowed core type in the RULES 'Core types' line", () => {
+    const lines = buildExerciseGenerationPrompt(ANSIBLE_STEPS).split("\n");
+    const idx = lines.findIndex((line) => /Core types:/i.test(line));
+    expect(idx, "prompt must carry a 'Core types:' rule").toBeGreaterThanOrEqual(0);
+    // The joined core-types sentence may wrap across the next line; take both
+    // so a trailing type on the continuation line still counts.
+    const coreText = `${lines[idx]}\n${lines[idx + 1] ?? ""}`;
     for (const type of ALLOWED_EXERCISE_TYPES) {
-      expect(prompt).toContain(type);
+      expect(coreText, `core-types line must list ${type}`).toContain(type);
     }
-    expect(prompt).toMatch(/no multiple_choice/i);
+  });
+
+  it("carries a TYPE FIELDS entry for every allowed type (no half-integrated type)", () => {
+    const lines = buildExerciseGenerationPrompt(ANSIBLE_STEPS).split("\n");
+    for (const type of ALLOWED_EXERCISE_TYPES) {
+      // Each type has its own "- <type>:" field spec line.
+      const hasFieldLine = lines.some((line) => line.startsWith(`- ${type}:`));
+      expect(hasFieldLine, `TYPE FIELDS must document ${type}`).toBe(true);
+    }
+  });
+
+  it("does not carry a leftover 'no multiple_choice' contradiction", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).not.toMatch(/no multiple_choice/i);
   });
 
   it("requests a JSON cards[] output with a worked example", () => {
@@ -92,6 +110,27 @@ describe("buildExerciseGenerationPrompt", () => {
     const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
     expect(prompt).toMatch(/at least 3 DIFFERENT exercise types/i);
     expect(prompt).toMatch(/suitability beats variety/i);
+  });
+
+  it("guides multiple_choice usage incl. the multiple (select-all) flag", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toMatch(/multiple_choice/);
+    expect(prompt).toMatch(/select all that apply|multiple: true|all correct/i);
+  });
+
+  it("offers picture_choice by default (assets available)", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toContain("picture_choice");
+    expect(prompt).toMatch(/^- picture_choice:/m);
+  });
+
+  it("drops picture_choice from every section when hasAssets is false (#2356)", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, { hasAssets: false });
+    expect(prompt).not.toContain("picture_choice");
+    // The remaining core types are still offered.
+    for (const type of ["matching", "free_text", "word_tiles", "cloze", "multiple_choice"]) {
+      expect(prompt).toContain(type);
+    }
   });
 
   it("derives the language from the theory (German here) and states it", () => {

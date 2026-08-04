@@ -8,6 +8,7 @@ import {
     normalizeBook,
     type BookLessonInput,
 } from "./book-to-lesson";
+import {validateLessonShape} from "../validation/lesson-schema-validator";
 import type {LessonMeta} from "./lesson-draft";
 import type {ContentLessonExercise} from "../../../storage/types";
 import type {TheoryStep} from "../../ai/generation/exercise-generation-prompt";
@@ -215,5 +216,44 @@ describe("buildBookLessonsUserSetInput (batch, #1949)", () => {
         const book = normalizeBook({title: "KI fuer Einsteiger"});
         const input = buildBookLessonsUserSetInput(META, lessons, book);
         expect(input.book?.title).toBe("KI fuer Einsteiger");
+    });
+});
+
+/** An AI-generated text-extension exercise (#2355): a categorization drill,
+ *  the shape `cardsToExercises` emits for an `ext:al-categorization` card. */
+const CATEGORIZATION_EXERCISE: ContentLessonExercise = {
+    id: "ai-ex-3-ext-al-categorization",
+    type: "ext:al-categorization",
+    prompt: "Ordne die Begriffe den Kategorien zu.",
+    card_ids: [],
+    distractors: [],
+    ext_payload: {
+        categories: [
+            {name: "Reize", items: ["neutraler Reiz", "unbedingter Reiz"]},
+            {name: "Reaktionen", items: ["bedingte Reaktion"]},
+        ],
+    },
+} as ContentLessonExercise;
+
+describe("buildBookLesson — extension declaration + load guard (#2355)", () => {
+    it("declares requires_extensions for a generated ext exercise AND passes the load guard", () => {
+        const lesson = buildBookLesson({
+            meta: META,
+            theorySteps: THEORY,
+            exercises: [REIZ_EXERCISE, CATEGORIZATION_EXERCISE],
+        });
+        expect(lesson.requires_extensions).toContain("ext:al-categorization@1");
+        // The critical assertion: the full load guard (schema + declaration
+        // consistency) accepts the generated lesson. A generated ext exercise
+        // WITHOUT the declaration would be refused here (undeclaredExtensionErrors).
+        const shape = validateLessonShape(lesson);
+        expect(shape.errors).toEqual([]);
+        expect(shape.ok).toBe(true);
+    });
+
+    it("does NOT declare requires_extensions for a core-only lesson", () => {
+        const lesson = buildBookLesson(INPUT);
+        expect(lesson.requires_extensions ?? []).toEqual([]);
+        expect(validateLessonShape(lesson).ok).toBe(true);
     });
 });

@@ -2269,6 +2269,7 @@ content:
     type_free_text: "Texte libre"
     type_word_tiles: "Tuiles de mots"
     type_picture_choice: "Choix d'image"
+    type_multiple_choice: "Choix multiple"
   save_lesson:
     button: "Enregistrer comme leçon hors ligne"
     modal_title: "Enregistrer comme leçon hors ligne"

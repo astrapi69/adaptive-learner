@@ -19,8 +19,23 @@ interface GeneratedExercisesPreviewProps {
   t: Translate;
 }
 
+/** English fallback labels for the generated text extension types (#2355),
+ *  keyed by the ``ext:al-<name>`` type. */
+const EXTENSION_FALLBACK: Record<string, string> = {
+  "ext:al-reading-comprehension": "Reading comprehension",
+  "ext:al-graded-quiz": "Graded quiz",
+  "ext:al-categorization": "Categorization",
+  "ext:al-error-correction": "Error correction",
+};
+
 /** Human label for an exercise type (localized, with English fallback). */
 function typeLabel(type: ContentLessonExercise["type"], t: Translate): string {
+  // #2355 — text extension types reuse the extension-wizard labels
+  // (create_lesson.extensions.type.<name>), so no new i18n keys are needed.
+  if (type.startsWith("ext:al-")) {
+    const name = type.slice("ext:al-".length);
+    return t(`create_lesson.extensions.type.${name}`, EXTENSION_FALLBACK[type] ?? type);
+  }
   switch (type) {
     case "matching":
       return t("content.ai_exercises.type_matching", "Matching");
@@ -32,6 +47,8 @@ function typeLabel(type: ContentLessonExercise["type"], t: Translate): string {
       return t("content.ai_exercises.type_word_tiles", "Word tiles");
     case "picture_choice":
       return t("content.ai_exercises.type_picture_choice", "Picture choice");
+    case "multiple_choice":
+      return t("content.ai_exercises.type_multiple_choice", "Multiple choice");
     default:
       return type;
   }

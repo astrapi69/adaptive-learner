@@ -22,7 +22,9 @@
 
 import type { ExerciseCard } from "./exercise-quality-gate";
 
-/** The five schema exercise types. */
+/** The core schema exercise types this generator produces (six since #2353
+ *  added ``multiple_choice``). Derived from the parser's card union, so a new
+ *  card type surfaces here as a compile error. */
 export type ExerciseType = ExerciseCard["type"];
 
 /** Distribution + balancing configuration. */
@@ -38,10 +40,11 @@ export interface DistributionConfig {
 
 export const DEFAULT_DISTRIBUTION: DistributionConfig = {
   targetDistribution: {
-    matching: 25,
-    cloze: 25,
-    free_text: 25,
+    matching: 20,
+    cloze: 20,
+    free_text: 20,
     word_tiles: 15,
+    multiple_choice: 15,
     picture_choice: 10,
   },
   minTypes: 3,

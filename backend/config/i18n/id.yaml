@@ -2278,6 +2278,7 @@ content:
     type_free_text: "Teks bebas"
     type_word_tiles: "Ubin kata"
     type_picture_choice: "Pilihan gambar"
+    type_multiple_choice: "Pilihan ganda"
   save_lesson:
     button: "Simpan sebagai Pelajaran Luring"
     modal_title: "Simpan sebagai pelajaran luring"
