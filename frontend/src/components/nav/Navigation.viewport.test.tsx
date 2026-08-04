@@ -31,10 +31,40 @@ function renderAt(path: string) {
 
 /** Routes currently rendered as nav links, read from the live DOM. */
 function renderedRoutes(): string[] {
-    return [...document.querySelectorAll("[data-testid='nav-links'] a")]
-        .map((anchor) => anchor.getAttribute("href") ?? "")
-        .sort();
+    return renderedRoutesInOrder().sort();
 }
+
+/** Routes as rendered, in DOM order (used to pin the nav SEQUENCE). */
+function renderedRoutesInOrder(): string[] {
+    return [...document.querySelectorAll("[data-testid='nav-links'] a")].map(
+        (anchor) => anchor.getAttribute("href") ?? "",
+    );
+}
+
+/**
+ * #2343 — the route set the nav MUST expose, written literally (NOT derived
+ * from NAV_TARGETS). Comparing the rendered DOM against this instead of
+ * against NAV_TARGETS.map(...) breaks the self-reference: an empty or wrong
+ * model now fails here instead of matching an equally-empty ``expected``.
+ */
+const EXPECTED_ROUTES_SORTED = [
+    "/content",
+    "/dashboard",
+    "/learning-path",
+    "/progress",
+    "/session",
+    "/settings",
+];
+
+/** The same routes in render order (group order LEARN, CONTENT, PROGRESS, then Settings). */
+const EXPECTED_ROUTES_IN_ORDER = [
+    "/dashboard",
+    "/learning-path",
+    "/session",
+    "/content",
+    "/progress",
+    "/settings",
+];
 
 let media: MatchMediaStub;
 
@@ -124,12 +154,57 @@ describe("#1390 parity: top bar and drawer lead to the same route set", () => {
         const drawerRoutes = renderedRoutes();
         const drawerHasHelp = screen.queryByTestId(HELP_TARGET.testId) !== null;
 
-        const expected = NAV_TARGETS.map((target) => target.to).sort();
-        expect(inlineRoutes).toEqual(expected);
-        expect(drawerRoutes).toEqual(expected);
+        // #2343 non-vacuity guard: both variants must render a NON-EMPTY set,
+        // and it must equal the LITERAL expected routes — not merely equal each
+        // other (which an empty model satisfies too).
+        expect(inlineRoutes.length).toBeGreaterThan(0);
+        expect(drawerRoutes.length).toBeGreaterThan(0);
+        expect(inlineRoutes).toEqual(EXPECTED_ROUTES_SORTED);
+        expect(drawerRoutes).toEqual(EXPECTED_ROUTES_SORTED);
+        // The model itself agrees with the literal (so the guard above cannot be
+        // satisfied by a renderer that silently drops or invents routes).
+        expect(NAV_TARGETS.map((target) => target.to).sort()).toEqual(EXPECTED_ROUTES_SORTED);
         // Help is an action (no route) — present in BOTH variants.
         expect(inlineHasHelp).toBe(true);
         expect(drawerHasHelp).toBe(true);
+    });
+
+    it("desktop renders the exact literal target set + Help (mirrors mobile pin)", () => {
+        // Navigation.test.tsx pins the literal testid list on MOBILE only
+        // (stubMatchMedia(true) at module level). #2343: desktop was uncovered,
+        // so an empty/wrong model read green on the desktop top bar. Pin it here.
+        media = stubMatchMedia(false); // desktop
+        renderAt("/dashboard");
+        for (const id of [
+            "nav-dashboard",
+            "nav-learning-path",
+            "nav-session",
+            "nav-content",
+            "nav-progress",
+            "nav-settings",
+            "nav-help",
+        ]) {
+            expect(screen.getByTestId(id)).toBeInTheDocument();
+        }
+        // Removed from the bar — must NOT reappear at desktop width.
+        for (const id of [
+            "nav-curriculum",
+            "nav-statistics",
+            "nav-import",
+            "nav-anki",
+            "nav-discover",
+            "nav-contribute",
+        ]) {
+            expect(screen.queryByTestId(id)).not.toBeInTheDocument();
+        }
+    });
+
+    it("desktop inline links render in the declared group order (#2343)", () => {
+        // renderedRoutes() sorts, so sequence was pinned by nothing. Pin the
+        // DOM order against the literal render order.
+        media = stubMatchMedia(false); // desktop
+        renderAt("/dashboard");
+        expect(renderedRoutesInOrder()).toEqual(EXPECTED_ROUTES_IN_ORDER);
     });
 });
 
