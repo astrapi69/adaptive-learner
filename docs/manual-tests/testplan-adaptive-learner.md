@@ -520,7 +520,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Regression: die anderen fuenf Typen entstehen weiterhin
 - [ ] **KI-Uebungsgenerierung erzeugt Text-Extensions (#2355):** eine
       Buchtext-Lektion mit AI-Key aus einem Sachtext generieren, dessen
-      Theorie sich strukturell fuer Extensions eignet (ein laengerer
+      Theorie sich strukturell für Extensions eignet (ein längerer
       Textabschnitt mit mehreren Rueckfragen, Begriffe die sich in Kategorien
       einsortieren lassen, eine Aussage mit einem falschen Wort) → in der
       Vorschau "Generierte Uebungen" erscheinen gelegentlich Chips
