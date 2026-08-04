@@ -18,7 +18,7 @@ const LAUNCH = EXECUTABLE ? { executablePath: EXECUTABLE } : undefined;
  * (the surface where the offset is reported), so the same scenarios run under
  * both. Add a WebKit project once the class is understood if needed.
  *
- * Run: ``npm run test:hittest`` (from e2e/) or ``make test-hit-test``.
+ * Run: ``npm run test:hit-test`` (from e2e/) or ``make test-hit-test``.
  */
 export default defineConfig({
   testDir: "./hit-test",

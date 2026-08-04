@@ -37,8 +37,8 @@ centre must resolve back into that element); the app layer is non-destructive
 make test-hit-test                 # isolation bench (fast, no build)
 make test-hit-test-app             # real app (builds dist in Dexie mode first)
 # or, from e2e/:
-npm run test:hittest
-npm run test:hittest-app
+npm run test:hit-test
+npm run test:hit-test-app
 ```
 
 In the managed container the pre-installed Chromium may differ from the pinned
@@ -46,7 +46,7 @@ Playwright build; point at it explicitly:
 
 ```bash
 PW_CHROMIUM_EXECUTABLE=/opt/pw-browsers/chromium-*/chrome-linux/chrome \
-  npx playwright test --config=playwright.hittest.config.ts
+  npx playwright test --config=playwright.hit-test.config.ts
 ```
 
 Two projects run every scenario: desktop `chromium` and touch-emulated
