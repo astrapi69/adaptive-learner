@@ -55,4 +55,39 @@ describe("useViewportFixExperiment", () => {
     expect(document.querySelector('style[data-vvfix="nolock"]')).toBeNull();
     expect(document.documentElement.dataset.vvfix).toBeUndefined();
   });
+
+  // Pin each candidate's exact effect, so whichever one wins on-device is
+  // regression-covered before it becomes the permanent default.
+  it("novhd swaps the shell height to 100vh", () => {
+    window.history.replaceState({}, "", "/?vvfix=novhd");
+    renderHook(() => useViewportFixExperiment());
+    const css = document.querySelector('style[data-vvfix="novhd"]')?.textContent ?? "";
+    expect(css).toContain("height: 100vh");
+    expect(css).not.toContain("100dvh");
+  });
+
+  it("nolock drops the overflow lock and lets the document scroll", () => {
+    window.history.replaceState({}, "", "/?vvfix=nolock");
+    renderHook(() => useViewportFixExperiment());
+    const css = document.querySelector('style[data-vvfix="nolock"]')?.textContent ?? "";
+    expect(css).toContain("overflow: auto");
+    expect(css).toContain("height: auto");
+  });
+
+  it("vpheight scopes its height override to the keyboard-open state", () => {
+    window.history.replaceState({}, "", "/?vvfix=vpheight");
+    renderHook(() => useViewportFixExperiment());
+    const css = document.querySelector('style[data-vvfix="vpheight"]')?.textContent ?? "";
+    // The override applies only under [data-vvkbd="open"] and uses the vv-height var.
+    expect(css).toContain('data-vvkbd="open"');
+    expect(css).toContain("var(--vv-height)");
+  });
+
+  it("hardreset injects no CSS (it is a pure scroll-reset candidate)", () => {
+    window.history.replaceState({}, "", "/?vvfix=hardreset");
+    renderHook(() => useViewportFixExperiment());
+    const style = document.querySelector('style[data-vvfix="hardreset"]');
+    expect(style).not.toBeNull();
+    expect(style?.textContent).toBe("");
+  });
 });
