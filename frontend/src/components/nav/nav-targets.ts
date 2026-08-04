@@ -2,11 +2,18 @@
  * Shared primary-navigation target model (#1390).
  *
  * ONE typed list of primary destinations (route, label key, icon, group)
- * drives EVERY renderer of the primary navigation — the desktop top bar and
- * the mobile hamburger drawer ({@link ../nav/Navigation}) — so the surfaces
- * can never drift (same pattern as ``lib/settings/sidebar-model.ts`` for the
- * Settings section nav). A parity test derives both nav variants from this
- * constant and breaks on divergence.
+ * drives the single primary-navigation renderer ({@link ../nav/Navigation}).
+ * That one links container renders in two PRESENTATIONS — the desktop inline
+ * top bar and the mobile hamburger drawer — switched by a single boolean and
+ * exposed as ``data-variant``; CSS drives the layout, both presentations emit
+ * the same anchors from this list, so the desktop and mobile route sets can
+ * never drift. (Unlike ``lib/settings/sidebar-model.ts``, which feeds two
+ * genuinely separate renderers, here there is one renderer with two looks.)
+ *
+ * ``Navigation.viewport.test.tsx`` pins that both presentations expose the
+ * same route set; ``nav-targets.test.ts`` pins this model's own shape against
+ * a literal table (count, order, groups, labels, uniqueness) so an empty or
+ * wrong model fails loudly instead of reading green (#2343).
  *
  * History of the entry set: EXP-037 (#850) reduced the bar to grouped-order
  * entries; #856 merged "My content" + "Discover" into one Content entry;

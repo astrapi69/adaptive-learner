@@ -141,7 +141,10 @@ export default function ViewportDiagnostic() {
     >
       <div>
         winY={snap.winScrollY} vvTop={snap.vvOffsetTop} scale={snap.vvScale} kbd=
-        {snap.keyboardShrink} (vvH={snap.vvHeight}/innerH={snap.innerHeight})
+        {snap.keyboardShrink} (vvH={snap.vvHeight}/innerH={snap.innerHeight}) fix=
+        {typeof document !== "undefined"
+          ? (document.documentElement.dataset.vvfix ?? "off")
+          : "off"}
       </div>
       <div data-testid="viewport-diagnostic-tap">
         {t
