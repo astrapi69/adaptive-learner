@@ -3780,7 +3780,8 @@
     },
     "pairs": {
       "heading": "Language pairs",
-      "select": "Choose {p}"
+      "select": "Choose {p}",
+      "choose": "Choose a language pair"
     },
     "filter": {
       "all": "All",

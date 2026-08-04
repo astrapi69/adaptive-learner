@@ -3780,7 +3780,8 @@
     },
     "pairs": {
       "heading": "Dil çiftleri",
-      "select": "{p} seçin"
+      "select": "{p} seçin",
+      "choose": "Bir dil çifti seçin"
     },
     "filter": {
       "all": "Tümü",

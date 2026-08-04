@@ -3473,6 +3473,7 @@ discover:
   pairs:
     heading: "Sprachpaare"
     select: "{p} auswählen"
+    choose: "Sprachpaar wählen"
   filter:
     all: "Alle"
     language: "Sprache"
