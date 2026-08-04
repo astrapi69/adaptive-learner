@@ -25,10 +25,13 @@ const ROUTES = [
   { name: "Settings · Data", path: "/settings?tab=data", ready: "settings-panel-data" },
   { name: "Dashboard", path: "/dashboard", ready: "dashboard" },
   { name: "Content Hub", path: "/content", ready: "content-hub" },
+  { name: "Create Lesson", path: "/create-lesson", ready: "create-lesson-page" },
 ];
 
-// Elements a user taps. Scrolled to viewport centre before measuring, so a
-// sticky header/footer does not create a false occlusion.
+// Elements a user taps. Each is scrolled to viewport centre before measuring;
+// occlusion by a fixed/sticky overlay (the global nav, a sticky header/footer
+// covering a content target from on top) is filtered inside `checkHitTest`, so
+// this stays a simple whole-page sweep.
 const INTERACTIVE =
   'button:visible, [role="switch"]:visible, [role="checkbox"]:visible, ' +
   'input:visible, select:visible, a[href]:visible';
@@ -91,11 +94,9 @@ test.describe("app-level hit-test offset (#1569)", () => {
     }
     await input.scrollIntoViewIfNeeded();
     await input.focus();
-    // Re-measure every visible interactive element while the input holds focus.
-    const els = page.locator(
-      'button:visible, input:visible, select:visible, [role="switch"]:visible, ' +
-        '[role="checkbox"]:visible, a[href]:visible',
-    );
+    // Re-measure every visible interactive element (page content) while the
+    // input holds focus.
+    const els = page.locator(INTERACTIVE);
     const count = await els.count();
     const failures: HitCheck[] = [];
     let measured = 0;
