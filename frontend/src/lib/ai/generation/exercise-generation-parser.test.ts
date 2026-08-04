@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   extractCardsArray,
   parseGeneratedExercises,
-  type ValidCard,
 } from "./exercise-generation-parser";
 import { ALLOWED_EXERCISE_TYPES } from "./exercise-generation-prompt";
 
@@ -195,6 +194,56 @@ describe("parseGeneratedExercises — multiple_choice (#2353)", () => {
   });
 });
 
+describe("parseGeneratedExercises — text extensions (#2355)", () => {
+  it("parses an ext:al-categorization card into an ExtensionCard with ext_payload", () => {
+    const raw = JSON.stringify({
+      cards: [
+        {
+          type: "ext:al-categorization",
+          question: "Sort the terms.",
+          categories: [
+            { name: "Modules", items: ["copy", "service"] },
+            { name: "Concepts", items: ["idempotence"] },
+          ],
+        },
+      ],
+    });
+    const result = parseGeneratedExercises(raw);
+    expect(result.cards).toHaveLength(1);
+    const card = result.cards[0];
+    expect(card.type).toBe("ext:al-categorization");
+    expect("ext_payload" in card && card.ext_payload).toBeTruthy();
+  });
+
+  it("parses ext:al-error-correction, keeping tokens/error_index/accept", () => {
+    const raw = JSON.stringify({
+      cards: [
+        {
+          type: "ext:al-error-correction",
+          question: "Fix the wrong word.",
+          tokens: ["Ansible", "needs", "an", "agent"],
+          error_index: 2,
+          accept: ["no"],
+        },
+      ],
+    });
+    const card = parseGeneratedExercises(raw).cards[0];
+    expect(card.type).toBe("ext:al-error-correction");
+    const payload = "ext_payload" in card ? card.ext_payload : {};
+    expect((payload as { tokens: string[] }).tokens).toHaveLength(4);
+    expect((payload as { error_index: number }).error_index).toBe(2);
+  });
+
+  it("does NOT parse the media extensions (out of scope)", () => {
+    const raw = JSON.stringify({
+      cards: [{ type: "ext:al-dictation", question: "?", audio: "", accept: [] }],
+    });
+    const result = parseGeneratedExercises(raw);
+    expect(result.cards).toHaveLength(0);
+    expect(result.errors.join(" ")).toMatch(/unknown exercise type: ext:al-dictation/);
+  });
+});
+
 describe("parseGeneratedExercises — branch coverage guard (#2353)", () => {
   /** A minimal valid card for each allowed type, so the guard proves the
    *  parser has a working branch for every entry in ALLOWED_EXERCISE_TYPES. */
@@ -367,7 +416,7 @@ describe("extractCardsArray", () => {
 describe("ValidCard typing", () => {
   it("narrows by discriminant", () => {
     const { cards } = parseGeneratedExercises(ALL_TYPES);
-    const cloze = cards.find((c: ValidCard) => c.type === "cloze");
+    const cloze = cards.find((c) => c.type === "cloze");
     expect(cloze && cloze.type === "cloze" && cloze.answer).toBe("all");
   });
 });

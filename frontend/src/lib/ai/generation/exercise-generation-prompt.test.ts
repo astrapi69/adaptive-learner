@@ -34,19 +34,15 @@ describe("buildExerciseGenerationPrompt", () => {
     expect(prompt).toContain("Module");
   });
 
-  it("names every allowed type in the RULES 'Allowed types' line", () => {
-    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
-    const allowedLine = prompt
-      .split("\n")
-      .find((line) => /Allowed types ONLY/i.test(line));
-    expect(allowedLine, "prompt must carry an 'Allowed types ONLY' rule").toBeDefined();
-    // The joined allowed-types sentence may wrap across the next line; take
-    // both so a trailing type on the continuation line still counts.
-    const lines = prompt.split("\n");
-    const idx = lines.findIndex((line) => /Allowed types ONLY/i.test(line));
-    const allowedText = `${lines[idx]}\n${lines[idx + 1] ?? ""}`;
+  it("names every allowed core type in the RULES 'Core types' line", () => {
+    const lines = buildExerciseGenerationPrompt(ANSIBLE_STEPS).split("\n");
+    const idx = lines.findIndex((line) => /Core types:/i.test(line));
+    expect(idx, "prompt must carry a 'Core types:' rule").toBeGreaterThanOrEqual(0);
+    // The joined core-types sentence may wrap across the next line; take both
+    // so a trailing type on the continuation line still counts.
+    const coreText = `${lines[idx]}\n${lines[idx + 1] ?? ""}`;
     for (const type of ALLOWED_EXERCISE_TYPES) {
-      expect(allowedText, `allowed-types line must list ${type}`).toContain(type);
+      expect(coreText, `core-types line must list ${type}`).toContain(type);
     }
   });
 

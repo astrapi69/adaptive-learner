@@ -22,6 +22,12 @@ import {
   ALLOWED_EXERCISE_TYPES,
   type GeneratedExerciseType,
 } from "./exercise-generation-prompt";
+import { asBool, cleanString, cleanStringArray } from "./card-fields";
+import {
+  buildExtensionCard,
+  isTextExtensionType,
+  type ExtensionCard,
+} from "./extension-cards";
 
 /** One {left, right} pair of a matching card. */
 export interface MatchingPair {
@@ -82,7 +88,7 @@ export interface MultipleChoiceCard extends BaseCard {
   multiple: boolean;
 }
 
-/** A validated, schema-shaped generated exercise card. */
+/** A validated, schema-shaped generated CORE exercise card. */
 export type ValidCard =
   | MatchingCard
   | ClozeCard
@@ -91,10 +97,15 @@ export type ValidCard =
   | PictureChoiceCard
   | MultipleChoiceCard;
 
+/** Any generated card: a core {@link ValidCard} or a text {@link ExtensionCard}
+ *  (#2355). The core distribution only ever sees {@link ValidCard}; the
+ *  extension budget handles {@link ExtensionCard}. */
+export type GeneratedCard = ValidCard | ExtensionCard;
+
 /** Result of parsing a raw AI exercise-generation reply. */
 export interface ExerciseGenerationParseResult {
   /** The cards that passed type validation, de-duplicated. */
-  cards: ValidCard[];
+  cards: GeneratedCard[];
   /** How many candidate cards were dropped (invalid + duplicate). */
   skipped: number;
   /** Human-readable reasons, one per dropped/notable candidate. */
@@ -104,26 +115,6 @@ export interface ExerciseGenerationParseResult {
 const MIN_MATCHING_PAIRS = 3;
 const MIN_CHOICE_OPTIONS = 3;
 const MIN_MC_OPTIONS = 2;
-
-/** A non-empty trimmed string, or null. */
-function cleanString(value: unknown): string | null {
-  if (typeof value !== "string") return null;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : null;
-}
-
-/** Array of non-empty strings (drops empties), or [] when not an array. */
-function cleanStringArray(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value
-    .map(cleanString)
-    .filter((entry): entry is string => entry !== null);
-}
-
-/** Coerce a truthy/"true" value to a boolean (the model is loose here). */
-function asBool(value: unknown): boolean {
-  return value === true || value === "true" || value === 1 || value === "1";
-}
 
 function validateMatching(raw: Record<string, unknown>, question: string): MatchingCard | string {
   const rawPairs = Array.isArray(raw.pairs) ? raw.pairs : [];
@@ -220,20 +211,26 @@ function validateMultipleChoice(
   return { type: "multiple_choice", question, options, multiple };
 }
 
-/** Validate one raw card object into a {@link ValidCard} or an error
+/** Validate one raw card object into a {@link GeneratedCard} or an error
  *  string explaining why it was dropped. */
-function validateCard(raw: unknown): ValidCard | string {
+function validateCard(raw: unknown): GeneratedCard | string {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     return "card is not an object";
   }
   const bag = raw as Record<string, unknown>;
   const type = cleanString(bag.type);
   if (!type) return "card has no type";
+  const question = cleanString(bag.question);
+  if (!question) return `${type}: missing question`;
+
+  // #2355 — text extension types (``ext:al-*``) are shaped into ``ext_payload``
+  // here; the quality gate validates the payload via the shipped *PayloadErrors.
+  if (isTextExtensionType(type)) {
+    return buildExtensionCard(bag, type, question);
+  }
   if (!ALLOWED_EXERCISE_TYPES.includes(type as GeneratedExerciseType)) {
     return `unknown exercise type: ${type}`;
   }
-  const question = cleanString(bag.question);
-  if (!question) return `${type}: missing question`;
 
   switch (type as GeneratedExerciseType) {
     case "matching":
@@ -254,7 +251,7 @@ function validateCard(raw: unknown): ValidCard | string {
 }
 
 /** Stable signature for duplicate detection (type + question + payload). */
-function cardSignature(card: ValidCard): string {
+function cardSignature(card: GeneratedCard): string {
   return JSON.stringify(card).toLowerCase();
 }
 
@@ -349,7 +346,7 @@ export function parseGeneratedExercises(raw: string): ExerciseGenerationParseRes
     return { cards: [], skipped: 0, errors: ["no JSON cards array found in AI response"] };
   }
 
-  const cards: ValidCard[] = [];
+  const cards: GeneratedCard[] = [];
   const seen = new Set<string>();
   let skipped = 0;
 

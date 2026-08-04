@@ -518,6 +518,21 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       MC-Uebung ab (Einzelauswahl-Radio bzw. "Alle zutreffenden waehlen"-
       Checkboxen), Feedback + SRS funktionieren wie bei den anderen Typen.
       Regression: die anderen fuenf Typen entstehen weiterhin
+- [ ] **KI-Uebungsgenerierung erzeugt Text-Extensions (#2355):** eine
+      Buchtext-Lektion mit AI-Key aus einem Sachtext generieren, dessen
+      Theorie sich strukturell fuer Extensions eignet (ein laengerer
+      Textabschnitt mit mehreren Rueckfragen, Begriffe die sich in Kategorien
+      einsortieren lassen, eine Aussage mit einem falschen Wort) → in der
+      Vorschau "Generierte Uebungen" erscheinen gelegentlich Chips
+      **"Leseverstaendnis" / "Kategorisierung" / "Fehlerkorrektur" /
+      "Benotetes Quiz"**; nach dem Speichern LAEDT die Lektion ohne
+      "nicht unterstuetzte Extension"-Fehler (die Lektion deklariert
+      `requires_extensions`) und die Extension-Uebungen spielen sich im
+      Lektions-Runner korrekt ab (Passage + Unterfragen, Zuordnung,
+      Token-Korrektur, benotetes Quiz mit Bestehensschwelle). WICHTIG:
+      hoechstens EIN Leseverstaendnis und EIN benotetes Quiz pro Lektion;
+      die Kern-Typen dominieren weiterhin. Regression: eine reine
+      Kern-Typen-Lektion deklariert KEINE requires_extensions
 - [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-

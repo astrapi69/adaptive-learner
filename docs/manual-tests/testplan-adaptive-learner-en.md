@@ -488,6 +488,19 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       exercise (single-choice radios, or "select all that apply" checkboxes),
       feedback + SRS work like the other types. Regression: the other five types
       still get generated
+- [ ] **AI exercise generation produces text extensions (#2355):** generate a
+      book-text lesson (with an AI key) from non-fiction whose theory suits
+      extensions structurally (a longer passage with several follow-up
+      questions, terms that group into categories, a statement with one wrong
+      word) → the "Generated exercises" preview shows, occasionally, chips for
+      **"Reading comprehension" / "Categorization" / "Error correction" /
+      "Graded quiz"**; after saving, the lesson LOADS with no "unsupported
+      extension" error (it declares `requires_extensions`) and the extension
+      exercises play correctly in the lesson runner (passage + sub-questions,
+      bucket sort, token fix, scored quiz with a pass threshold). IMPORTANT: at
+      most ONE reading-comprehension and ONE graded quiz per lesson; the core
+      types still dominate. Regression: a core-only lesson declares NO
+      requires_extensions
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";

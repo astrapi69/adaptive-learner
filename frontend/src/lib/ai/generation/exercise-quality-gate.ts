@@ -27,9 +27,12 @@
  * Library-grade: pure functions, no app-state / network imports.
  */
 
-import type { ValidCard } from "./exercise-generation-parser";
+import type { GeneratedCard, ValidCard } from "./exercise-generation-parser";
+import { extensionPayloadErrors, isExtensionCard } from "./extension-cards";
 
-/** A parsed, structurally-valid AI card (AIX-01 output). */
+/** A parsed, structurally-valid CORE AI card (AIX-01 output). The core
+ *  distribution keys off this union, so it stays CORE-only; extension cards
+ *  travel as {@link GeneratedCard}. */
 export type ExerciseCard = ValidCard;
 
 /** Machine-readable warning code (the UI may localize by code). */
@@ -52,9 +55,9 @@ export interface QualityWarning {
 /** Outcome of the quality gate. */
 export interface QualityResult {
   /** Cards that passed (input order preserved). */
-  passed: ExerciseCard[];
+  passed: GeneratedCard[];
   /** Cards dropped for a hard quality reason. */
-  rejected: ExerciseCard[];
+  rejected: GeneratedCard[];
   /** Soft issues on the passed set. */
   warnings: QualityWarning[];
 }
@@ -235,15 +238,30 @@ function cardWarnings(card: ExerciseCard, index: number): QualityWarning[] {
  * @returns The passed cards (order preserved), the rejected cards, and
  *          a list of non-fatal warnings.
  */
-export function validateExerciseQuality(cards: ExerciseCard[]): QualityResult {
-  const passed: ExerciseCard[] = [];
-  const rejected: ExerciseCard[] = [];
+export function validateExerciseQuality(cards: GeneratedCard[]): QualityResult {
+  const passed: GeneratedCard[] = [];
+  const rejected: GeneratedCard[] = [];
   const warnings: QualityWarning[] = [];
   const seenQuestions = new Set<string>();
   const seenAnswers = new Set<string>();
 
   for (const card of cards) {
     const question = norm(card.question);
+    // #2355 — extension cards are validated by their shipped payload validator
+    // (deduped by prompt only; they carry no core answer set).
+    if (isExtensionCard(card)) {
+      if (question && seenQuestions.has(question)) {
+        rejected.push(card);
+        continue;
+      }
+      if (extensionPayloadErrors(card).length > 0) {
+        rejected.push(card);
+        continue;
+      }
+      if (question) seenQuestions.add(question);
+      passed.push(card);
+      continue;
+    }
     const answerKey = answerSignature(card);
     if (
       (question && seenQuestions.has(question)) ||
@@ -262,8 +280,11 @@ export function validateExerciseQuality(cards: ExerciseCard[]): QualityResult {
     passed.push(card);
   }
 
-  // Per-card warnings on the passed set.
-  passed.forEach((card, index) => warnings.push(...cardWarnings(card, index)));
+  // Per-card warnings on the passed CORE set (extension cards carry no
+  // distractor/answer shape the core warnings inspect).
+  passed.forEach((card, index) => {
+    if (!isExtensionCard(card)) warnings.push(...cardWarnings(card, index));
+  });
 
   // Type-balance warnings.
   const distinctTypes = new Set(passed.map((card) => card.type));

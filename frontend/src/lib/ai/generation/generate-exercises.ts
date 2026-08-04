@@ -24,13 +24,15 @@ import {
 import {
   parseGeneratedExercises,
   type ExerciseGenerationParseResult,
+  type GeneratedCard,
+  type ValidCard,
 } from "./exercise-generation-parser";
 import {
   validateExerciseQuality,
-  type ExerciseCard,
   type QualityWarning,
 } from "./exercise-quality-gate";
 import { balanceExercises } from "./exercise-distribution";
+import { capExtensionCards, isExtensionCard } from "./extension-cards";
 
 /** Options accepted when an {@link AiProvider} runs a completion. */
 export interface AiCompleteOptions {
@@ -66,7 +68,7 @@ const GENERATION_MAX_TOKENS = 2000;
  */
 export interface ExerciseGenerationResult extends ExerciseGenerationParseResult {
   /** AIX-03 — cards dropped by the content quality gate. */
-  rejected: ExerciseCard[];
+  rejected: GeneratedCard[];
   /** AIX-03 — non-fatal quality warnings on the passed set. */
   warnings: QualityWarning[];
 }
@@ -112,8 +114,12 @@ export async function generateExercises(
   // AI -> Parser (AIX-01) -> Quality Gate (AIX-03) -> Distribution (AIX-04) -> Result.
   const parsed = parseGeneratedExercises(raw);
   const gate = validateExerciseQuality(parsed.cards);
+  // #2355 — core cards ride the percentage distribution; extension cards get
+  // their own budget and are appended after the balanced core set.
+  const coreCards = gate.passed.filter((card): card is ValidCard => !isExtensionCard(card));
+  const extCards = capExtensionCards(gate.passed.filter(isExtensionCard)).cards;
   return {
-    cards: balanceExercises(gate.passed),
+    cards: [...balanceExercises(coreCards), ...extCards],
     skipped: parsed.skipped,
     errors: parsed.errors,
     rejected: gate.rejected,

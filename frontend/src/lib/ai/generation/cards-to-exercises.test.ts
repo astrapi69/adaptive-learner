@@ -125,6 +125,34 @@ describe("cardsToExercises", () => {
     ]);
   });
 
+  it("maps a text-extension card to an ext exercise with a slug-safe id (#2355)", () => {
+    const cards: ValidCard[] = [];
+    const { exercises, skipped } = cardsToExercises([
+      ...cards,
+      {
+        type: "ext:al-categorization",
+        question: "Sort the terms.",
+        ext_payload: {
+          categories: [
+            { name: "A", items: ["x"] },
+            { name: "B", items: ["y"] },
+          ],
+        },
+      } as unknown as ValidCard,
+    ]);
+    expect(skipped).toBe(0);
+    expect(exercises[0]).toMatchObject({
+      id: "ai-ex-1-ext-al-categorization",
+      type: "ext:al-categorization",
+      prompt: "Sort the terms.",
+      card_ids: [],
+      distractors: [],
+    });
+    expect(exercises[0].ext_payload).toBeTruthy();
+    // The id is slug-safe (no colons) so the lesson schema accepts it.
+    expect(exercises[0].id).toMatch(/^[a-z0-9-]+$/);
+  });
+
   it("drops a picture_choice card (no image sources)", () => {
     const cards: ValidCard[] = [
       {
