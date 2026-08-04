@@ -509,6 +509,15 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Speichern → ein Set mit N Lektionen; schlaegt eine Einzel-Generierung
       fehl, laufen die uebrigen weiter, Zusammenfassung nennt "X von N" +
       die fehlgeschlagenen Abschnitte; ohne AI-Key → Key-Hinweis, kein Batch
+- [ ] **KI-Uebungsgenerierung erzeugt Multiple-Choice (#2353):** eine
+      Wissenslektion aus Text/Buchtext mit AI-Key generieren, deren Theorie
+      klare Faktenfragen mit mehreren Antwortoptionen enthaelt (z. B. "Welche
+      dieser Module gehoeren zu X?") → in der Vorschau "Generierte Uebungen"
+      erscheint mindestens gelegentlich ein Chip **"Multiple-Choice"** neben
+      Matching/Cloze/Freitext/Wort-Kacheln; die gespeicherte Lektion spielt die
+      MC-Uebung ab (Einzelauswahl-Radio bzw. "Alle zutreffenden waehlen"-
+      Checkboxen), Feedback + SRS funktionieren wie bei den anderen Typen.
+      Regression: die anderen fuenf Typen entstehen weiterhin
 - [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
       Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
       zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-

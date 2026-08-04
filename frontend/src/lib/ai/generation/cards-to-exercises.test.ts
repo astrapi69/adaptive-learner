@@ -95,6 +95,36 @@ describe("cardsToExercises", () => {
     expect(exercises[0]).toMatchObject({ type: "word_tiles", tiles: ["the", "cat", "sat"] });
   });
 
+  it("maps a multiple_choice card to a renderable MC exercise (#2353)", () => {
+    const cards: ValidCard[] = [
+      {
+        type: "multiple_choice",
+        question: "Which of these are Ansible modules?",
+        options: [
+          { text: "copy", is_correct: true },
+          { text: "service", is_correct: true },
+          { text: "banana", is_correct: false },
+        ],
+        multiple: true,
+      },
+    ];
+    const { exercises, skipped } = cardsToExercises(cards);
+    expect(skipped).toBe(0);
+    expect(exercises[0]).toMatchObject({
+      id: "ai-ex-1-multiple-choice",
+      type: "multiple_choice",
+      prompt: "Which of these are Ansible modules?",
+      multiple: true,
+      card_ids: [],
+      distractors: [],
+    });
+    expect(exercises[0].options).toEqual([
+      { text: "copy", correct: true },
+      { text: "service", correct: true },
+      { text: "banana", correct: false },
+    ]);
+  });
+
   it("drops a picture_choice card (no image sources)", () => {
     const cards: ValidCard[] = [
       {

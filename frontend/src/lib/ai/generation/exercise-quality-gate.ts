@@ -79,6 +79,8 @@ function answersOf(card: ExerciseCard): string[] {
       return card.pairs.map((pair) => pair.right);
     case "picture_choice":
       return card.options.filter((option) => option.is_correct).map((o) => o.label);
+    case "multiple_choice":
+      return card.options.filter((option) => option.is_correct).map((o) => o.text);
     default:
       return [];
   }
@@ -92,6 +94,8 @@ function distractorsOf(card: ExerciseCard): string[] {
       return card.distractors;
     case "picture_choice":
       return card.options.filter((option) => !option.is_correct).map((o) => o.label);
+    case "multiple_choice":
+      return card.options.filter((option) => !option.is_correct).map((o) => o.text);
     default:
       return [];
   }

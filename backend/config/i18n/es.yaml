@@ -2269,6 +2269,7 @@ content:
     type_free_text: "Texto libre"
     type_word_tiles: "Fichas de palabras"
     type_picture_choice: "Elección de imagen"
+    type_multiple_choice: "Opción múltiple"
   save_lesson:
     button: "Guardar como lección sin conexión"
     modal_title: "Guardar como lección sin conexión"

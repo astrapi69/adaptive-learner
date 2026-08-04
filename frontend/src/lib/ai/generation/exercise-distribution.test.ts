@@ -4,9 +4,14 @@
 
 import { describe, expect, it } from "vitest";
 
-import { balanceExercises, distributionGaps } from "./exercise-distribution";
+import {
+  balanceExercises,
+  distributionGaps,
+  DEFAULT_DISTRIBUTION,
+} from "./exercise-distribution";
 import type { ExerciseCard } from "./exercise-quality-gate";
 import type { ExerciseType } from "./exercise-distribution";
+import { ALLOWED_EXERCISE_TYPES } from "./exercise-generation-prompt";
 
 function card(type: ExerciseType, n: number): ExerciseCard {
   switch (type) {
@@ -36,6 +41,16 @@ function card(type: ExerciseType, n: number): ExerciseCard {
           { label: "y", is_correct: false },
         ],
       };
+    case "multiple_choice":
+      return {
+        type,
+        question: `mc${n}`,
+        options: [
+          { text: `ans${n}`, is_correct: true },
+          { text: `x${n}`, is_correct: false },
+        ],
+        multiple: false,
+      };
   }
 }
 
@@ -51,6 +66,21 @@ function noTripleRun(cards: ExerciseCard[]): boolean {
   }
   return true;
 }
+
+describe("DEFAULT_DISTRIBUTION — allowed-types guard (#2353)", () => {
+  it("has a target share for exactly the allowed generation types", () => {
+    const keys = Object.keys(DEFAULT_DISTRIBUTION.targetDistribution).sort();
+    expect(keys).toEqual([...ALLOWED_EXERCISE_TYPES].sort());
+  });
+
+  it("sums the target shares to 100", () => {
+    const sum = Object.values(DEFAULT_DISTRIBUTION.targetDistribution).reduce(
+      (a, b) => a + b,
+      0,
+    );
+    expect(sum).toBe(100);
+  });
+});
 
 describe("balanceExercises", () => {
   it("returns empty for an empty list (no crash)", () => {

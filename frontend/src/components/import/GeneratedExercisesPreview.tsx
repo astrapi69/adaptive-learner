@@ -32,6 +32,8 @@ function typeLabel(type: ContentLessonExercise["type"], t: Translate): string {
       return t("content.ai_exercises.type_word_tiles", "Word tiles");
     case "picture_choice":
       return t("content.ai_exercises.type_picture_choice", "Picture choice");
+    case "multiple_choice":
+      return t("content.ai_exercises.type_multiple_choice", "Multiple choice");
     default:
       return type;
   }

@@ -2463,7 +2463,8 @@
       "type_cloze": "Boşluk doldurma",
       "type_free_text": "Serbest metin",
       "type_word_tiles": "Kelime kartları",
-      "type_picture_choice": "Resim seçimi"
+      "type_picture_choice": "Resim seçimi",
+      "type_multiple_choice": "Çoktan seçmeli"
     },
     "save_lesson": {
       "button": "Çevrimdışı ders olarak kaydet",

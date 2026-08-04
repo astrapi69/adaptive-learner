@@ -2267,6 +2267,7 @@ content:
     type_free_text: "自由記述"
     type_word_tiles: "ワードタイル"
     type_picture_choice: "画像選択"
+    type_multiple_choice: "多肢選択"
   save_lesson:
     button: "オフラインレッスンとして保存"
     modal_title: "オフラインレッスンとして保存"

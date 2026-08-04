@@ -2278,6 +2278,7 @@ content:
     type_free_text: "Free text"
     type_word_tiles: "Word tiles"
     type_picture_choice: "Picture choice"
+    type_multiple_choice: "Multiple choice"
   save_lesson:
     button: "Save as Offline Lesson"
     modal_title: "Save as offline lesson"

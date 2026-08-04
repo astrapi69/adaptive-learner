@@ -2272,6 +2272,7 @@ content:
     type_free_text: "Freitext"
     type_word_tiles: "Wortkacheln"
     type_picture_choice: "Bildauswahl"
+    type_multiple_choice: "Multiple-Choice"
   save_lesson:
     button: "Als Offline-Lektion speichern"
     modal_title: "Als Offline-Lektion speichern"

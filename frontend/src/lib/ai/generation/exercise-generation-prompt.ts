@@ -13,9 +13,14 @@
  * ``ALLOWED_EXERCISE_TYPES`` list below is checked at compile time against
  * the generated ``ExerciseType`` (``schema/lesson.schema.json`` ->
  * ``lesson-schema.generated.ts``, EXP-039 Direction A), so a new schema type
- * fails this file until the prompt is updated. There is deliberately no
- * ``multiple_choice`` (it is not a schema type; MC is expressed via a
- * ``cloze`` in select mode). See EXP-036 §4.3 + EXP-039.
+ * fails this file until the prompt is updated. ``multiple_choice`` (#2353,
+ * a native schema type since engine 1.6 / #1525) IS generated: the RULES,
+ * TYPE FIELDS and example below all cover it, so the constant and the prompt
+ * text stay in sync (the #2353 fix for the half-integrated state where the
+ * constant listed the type but nothing produced it). See EXP-036 §4.3 +
+ * EXP-039. Its multi-select case (``multiple: true``, "select all that
+ * apply") has no cloze-select equivalent, so it is a genuine sixth type,
+ * not a restatement of cloze.
  *
  * EXP-041 (Refs #1222): the prompt couples exercise type to learning goal
  * ("suitability beats variety") so the model stops choosing an exact-match
@@ -51,7 +56,10 @@ export interface ExercisePromptOptions {
   avoidQuestions?: string[];
 }
 
-/** The five exercise types the schema accepts. NO ``multiple_choice``. */
+/** The six core exercise types the schema accepts and this generator can
+ *  produce. Kept in lock-step with the schema ``ExerciseType`` by the
+ *  compile-time guard below, and with the prompt text + parser by the
+ *  guard tests (#2353). */
 export const ALLOWED_EXERCISE_TYPES = [
   "matching",
   "picture_choice",
@@ -150,7 +158,7 @@ export function buildExerciseGenerationPrompt(
     "  types that suit each concept (suitability beats variety; see TYPE",
     "  SELECTION below).",
     "- Allowed types ONLY: matching, picture_choice, free_text, word_tiles,",
-    "  cloze. There is no multiple_choice type.",
+    "  cloze, multiple_choice. Use no other type name.",
     "- No trivial questions, no verbatim quotes as the answer, and every",
     "  distractor must be plausible but unambiguously wrong.",
     "- A cloze sentence marks its single blank with ___ and has exactly one",
@@ -171,13 +179,21 @@ export function buildExerciseGenerationPrompt(
     "  comparison -> do NOT create an exact-match type (no word_tiles, no",
     "  free_text expecting a full free-form text). Model such goals as cloze",
     "  or picture_choice instead.",
+    "- A question with 2+ discrete answer options -> multiple_choice. Use",
+    "  multiple: false when exactly ONE option is correct; use multiple: true",
+    "  for 'select all that apply' (2+ correct options, graded by exact set).",
+    "  Prefer multiple_choice over cloze when the options are self-contained",
+    "  choices rather than a word missing from a sentence.",
     "",
     "TYPE FIELDS",
-    "- matching:       question, pairs[] (>= 3 of {left, right})",
-    "- cloze:          question (contains ___), answer, distractors[]",
-    "- free_text:      question, accepts[] (>= 1 acceptable answer), distractors[] (optional)",
-    "- word_tiles:     question, answer (a short sentence/sequence, space-separated)",
-    "- picture_choice: question, options[] (>= 3 of {label, is_correct})",
+    "- matching:        question, pairs[] (>= 3 of {left, right})",
+    "- cloze:           question (contains ___), answer, distractors[]",
+    "- free_text:       question, accepts[] (>= 1 acceptable answer), distractors[] (optional)",
+    "- word_tiles:      question, answer (a short sentence/sequence, space-separated)",
+    "- picture_choice:  question, options[] (>= 3 of {label, is_correct})",
+    "- multiple_choice: question, options[] (>= 2 of {text, is_correct}, unique",
+    "                   texts, >= 1 correct), multiple (bool: false = one correct,",
+    "                   true = select all correct)",
     "",
     "OUTPUT",
     "Reply with JSON ONLY (no prose outside the JSON), shaped exactly:",
@@ -227,6 +243,16 @@ function exampleJson(): string {
           question: "Explain what idempotence means here.",
           accepts: ["running it again changes nothing", "same result every run"],
           distractors: ["it runs faster each time"],
+        },
+        {
+          type: "multiple_choice",
+          question: "Which of these are Ansible modules?",
+          options: [
+            { text: "copy", is_correct: true },
+            { text: "service", is_correct: true },
+            { text: "banana", is_correct: false },
+          ],
+          multiple: true,
         },
       ],
     },

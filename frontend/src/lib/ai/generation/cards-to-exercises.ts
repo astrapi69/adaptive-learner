@@ -94,6 +94,20 @@ function mapCard(
         distractors: card.distractors,
       };
     }
+    case "multiple_choice":
+      // #2353 — MC is text-only (no assets), so it maps directly. The
+      // model-facing ``is_correct`` becomes the schema's ``correct`` flag.
+      return {
+        type: "multiple_choice",
+        prompt: card.question,
+        card_ids: [],
+        options: card.options.map((option) => ({
+          text: option.text,
+          correct: option.is_correct,
+        })),
+        multiple: card.multiple,
+        distractors: [],
+      };
     case "picture_choice":
       // The AI gives labels but no image sources; the renderer needs
       // images. Drop it rather than emit an unrenderable exercise.

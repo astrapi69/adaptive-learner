@@ -479,6 +479,15 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       the title list; Save → one set with N lessons; if a single
       generation fails, the others continue and the summary reports "X of
       N" + the failed sections; with no AI key → key hint, no batch
+- [ ] **AI exercise generation produces multiple_choice (#2353):** generate a
+      knowledge lesson from text/book text (with an AI key) whose theory has
+      clear factual questions with several answer options (e.g. "Which of these
+      modules belong to X?") → the "Generated exercises" preview shows, at least
+      occasionally, a **"Multiple choice"** chip alongside
+      matching/cloze/free-text/word-tiles; the saved lesson plays the MC
+      exercise (single-choice radios, or "select all that apply" checkboxes),
+      feedback + SRS work like the other types. Regression: the other five types
+      still get generated
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";

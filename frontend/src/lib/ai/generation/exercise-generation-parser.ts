@@ -35,6 +35,14 @@ export interface ChoiceOption {
   is_correct: boolean;
 }
 
+/** One option of a multiple-choice card (text label + correctness flag).
+ *  The schema stores it as ``{text, correct}``; the model-facing card mirrors
+ *  picture_choice's ``is_correct`` and is mapped in ``cards-to-exercises``. */
+export interface McOption {
+  text: string;
+  is_correct: boolean;
+}
+
 interface BaseCard {
   question: string;
 }
@@ -66,13 +74,22 @@ export interface PictureChoiceCard extends BaseCard {
   options: ChoiceOption[];
 }
 
+export interface MultipleChoiceCard extends BaseCard {
+  type: "multiple_choice";
+  options: McOption[];
+  /** false = single-choice (exactly one correct); true = select-all (>= 1
+   *  correct, graded by exact set). */
+  multiple: boolean;
+}
+
 /** A validated, schema-shaped generated exercise card. */
 export type ValidCard =
   | MatchingCard
   | ClozeCard
   | FreeTextCard
   | WordTilesCard
-  | PictureChoiceCard;
+  | PictureChoiceCard
+  | MultipleChoiceCard;
 
 /** Result of parsing a raw AI exercise-generation reply. */
 export interface ExerciseGenerationParseResult {
@@ -86,6 +103,7 @@ export interface ExerciseGenerationParseResult {
 
 const MIN_MATCHING_PAIRS = 3;
 const MIN_CHOICE_OPTIONS = 3;
+const MIN_MC_OPTIONS = 2;
 
 /** A non-empty trimmed string, or null. */
 function cleanString(value: unknown): string | null {
@@ -167,6 +185,41 @@ function validatePictureChoice(
   return { type: "picture_choice", question, options };
 }
 
+function validateMultipleChoice(
+  raw: Record<string, unknown>,
+  question: string,
+): MultipleChoiceCard | string {
+  const rawOptions = Array.isArray(raw.options) ? raw.options : [];
+  const options: McOption[] = [];
+  for (const entry of rawOptions) {
+    if (!entry || typeof entry !== "object") continue;
+    const bag = entry as Record<string, unknown>;
+    // Accept ``text`` (schema/MC) or ``label`` (a lenient alias the model
+    // sometimes reuses from picture_choice) so a good card is not lost.
+    const text = cleanString(bag.text) ?? cleanString(bag.label);
+    if (text) options.push({ text, is_correct: asBool(bag.is_correct) });
+  }
+  if (options.length < MIN_MC_OPTIONS) {
+    return `multiple_choice: needs >= ${MIN_MC_OPTIONS} options, got ${options.length}`;
+  }
+  const texts = options.map((option) => option.text.toLowerCase());
+  if (new Set(texts).size !== texts.length) {
+    return "multiple_choice: option texts must be unique";
+  }
+  const correctCount = options.filter((option) => option.is_correct).length;
+  if (correctCount < 1) {
+    return "multiple_choice: no option marked correct";
+  }
+  // ``multiple`` is the model's stated intent; when absent, infer it from the
+  // correct-count so a select-all card without the flag is still salvaged.
+  const multiple =
+    raw.multiple !== undefined ? asBool(raw.multiple) : correctCount > 1;
+  if (!multiple && correctCount !== 1) {
+    return "multiple_choice: single-choice needs exactly one correct option";
+  }
+  return { type: "multiple_choice", question, options, multiple };
+}
+
 /** Validate one raw card object into a {@link ValidCard} or an error
  *  string explaining why it was dropped. */
 function validateCard(raw: unknown): ValidCard | string {
@@ -193,6 +246,8 @@ function validateCard(raw: unknown): ValidCard | string {
       return validateWordTiles(bag, question);
     case "picture_choice":
       return validatePictureChoice(bag, question);
+    case "multiple_choice":
+      return validateMultipleChoice(bag, question);
     default:
       return `unknown exercise type: ${type}`;
   }

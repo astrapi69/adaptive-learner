@@ -34,12 +34,34 @@ describe("buildExerciseGenerationPrompt", () => {
     expect(prompt).toContain("Module");
   });
 
-  it("lists exactly the five allowed types and forbids multiple_choice", () => {
+  it("names every allowed type in the RULES 'Allowed types' line", () => {
     const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    const allowedLine = prompt
+      .split("\n")
+      .find((line) => /Allowed types ONLY/i.test(line));
+    expect(allowedLine, "prompt must carry an 'Allowed types ONLY' rule").toBeDefined();
+    // The joined allowed-types sentence may wrap across the next line; take
+    // both so a trailing type on the continuation line still counts.
+    const lines = prompt.split("\n");
+    const idx = lines.findIndex((line) => /Allowed types ONLY/i.test(line));
+    const allowedText = `${lines[idx]}\n${lines[idx + 1] ?? ""}`;
     for (const type of ALLOWED_EXERCISE_TYPES) {
-      expect(prompt).toContain(type);
+      expect(allowedText, `allowed-types line must list ${type}`).toContain(type);
     }
-    expect(prompt).toMatch(/no multiple_choice/i);
+  });
+
+  it("carries a TYPE FIELDS entry for every allowed type (no half-integrated type)", () => {
+    const lines = buildExerciseGenerationPrompt(ANSIBLE_STEPS).split("\n");
+    for (const type of ALLOWED_EXERCISE_TYPES) {
+      // Each type has its own "- <type>:" field spec line.
+      const hasFieldLine = lines.some((line) => line.startsWith(`- ${type}:`));
+      expect(hasFieldLine, `TYPE FIELDS must document ${type}`).toBe(true);
+    }
+  });
+
+  it("does not carry a leftover 'no multiple_choice' contradiction", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).not.toMatch(/no multiple_choice/i);
   });
 
   it("requests a JSON cards[] output with a worked example", () => {
@@ -92,6 +114,12 @@ describe("buildExerciseGenerationPrompt", () => {
     const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
     expect(prompt).toMatch(/at least 3 DIFFERENT exercise types/i);
     expect(prompt).toMatch(/suitability beats variety/i);
+  });
+
+  it("guides multiple_choice usage incl. the multiple (select-all) flag", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toMatch(/multiple_choice/);
+    expect(prompt).toMatch(/select all that apply|multiple: true|all correct/i);
   });
 
   it("derives the language from the theory (German here) and states it", () => {
