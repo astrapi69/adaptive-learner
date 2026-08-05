@@ -58,15 +58,18 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml` incluye:
+`docker-compose.prod.yml` incluye **un único servicio, `app`**
+(un solo contenedor desde #2058 - no hay nginx ni contenedor de
+frontend separado):
 
-- **backend** (FastAPI en una imagen Python 3.12), exponiendo el
-  puerto 7880.
-- **sidecar nginx** que sirve el frontend compilado
-  (`frontend/dist/`) y envía las solicitudes de `/api/*` al
-  backend.
-- **Un volumen SQLite** que sobrevive a los reinicios del
-  contenedor.
+- **FastAPI (imagen Python 3.12)** sirve TANTO los statics del
+  frontend compilado COMO `/api/*`, en el puerto interno
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`.
+- Puerto publicado en el host:
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}` -
+  loopback por defecto.
+- **Un volumen con nombre `adaptive-learner-data`** en `/app/data`
+  que sobrevive a las reconstrucciones del contenedor.
 
 `install.sh` e `install.ps1` son los instaladores de curl-pipe
 para usuarios finales - descargan un tarball de versión etiquetada,
@@ -80,7 +83,7 @@ No edites los archivos generados directamente.
 
 ## Configuración para producción
 
-Tres cosas importan para prod:
+Cuatro cosas importan para prod:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: debe ser una clave Fernet
    estable. Genérala una vez, guárdala en un lugar seguro
@@ -108,9 +111,9 @@ configuración en lugar de varias variables de entorno.
 
 ## Lanzador de escritorio
 
-Los binarios PyInstaller en `launcher/` inician un FastAPI local
-en `http://localhost:7880`, luego abren el navegador por defecto
-del usuario. En el primer inicio, el lanzador también crea
+Los binarios PyInstaller en `launcher/` ejecutan la app como
+contenedor Docker (por defecto `http://localhost:8501`) y luego
+abren el navegador por defecto del usuario. En el primer inicio, el lanzador también crea
 `~/.config/adaptive-learner/secrets.yaml` como plantilla
 comentada + `chmod 0600` en POSIX para que el usuario pueda poner
 sus claves API sin tocar la interfaz de Ajustes.
