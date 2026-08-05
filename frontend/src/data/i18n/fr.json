@@ -2258,7 +2258,10 @@
       "submit": "Exporter",
       "working": "Exportation…",
       "done": "Ton ensemble a été poussé vers le dépôt.",
-      "failed": "Échec de l'export."
+      "failed": "Échec de l'export.",
+      "quality_issues": "Le contrôle qualité a trouvé des problèmes. Les portes qualité du dépôt de contenu les rejetteraient :",
+      "export_anyway": "Exporter quand même",
+      "renamed_note": "Les fichiers de leçons ont été renommés avec des préfixes d'ordre (NN-) pour que l'ordre d'affichage corresponde à l'ordre des leçons."
     },
     "anki_export": {
       "button": "Export Anki"
@@ -2583,6 +2586,7 @@
       "back_language_mismatch": "Leçon '{lesson}' : le verso de la carte '{card}' ne ressemble pas à {source}.",
       "free_text_too_few_accepts": "Leçon '{lesson}' : l'exercice de texte libre '{exercise}' nécessite au moins {min} réponses acceptées.",
       "matching_too_few_pairs": "Leçon '{lesson}' : l'exercice d'association '{exercise}' nécessite au moins {min} paires.",
+      "matching_duplicate_left": "Leçon '{lesson}' : l'exercice d'association '{exercise}' répète la valeur de gauche '{value}' - insoluble pour l'apprenant.",
       "missing_distractors": "Leçon '{lesson}' : l'exercice '{exercise}' nécessite des distracteurs (mauvaises options).",
       "non_cefr_level": "Le niveau '{level}' n'est pas une échelle CECR (A1-C2).",
       "level_too_complex": "Leçon '{lesson}' : le texte fait en moyenne {avg} mots par côté, élevé pour le niveau {level} (environ {cap} attendus).",

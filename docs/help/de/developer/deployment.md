@@ -105,7 +105,8 @@ Das Image läuft als **Nicht-Root-Nutzer**
 (`adaptive_learner`, angelegt in `backend/Dockerfile`).
 
 `install.sh` und `install.ps1` sind die curl-pipe-Installer
-für Endnutzer - sie holen ein Tag-Release-Tarball, setzen
+für Endnutzer - sie klonen das getaggte Release (Tarball-Download
+als Fallback ohne git), setzen
 `ADAPTIVE_LEARNER_SECRET_KEY` und machen `docker compose up`.
 `start.sh` ist der entsprechende lokale Einstiegspunkt: prüft
 Docker, generiert beim ersten Lauf einen zufälligen Secret in
@@ -146,32 +147,40 @@ Vier Dinge sind in Produktion wichtig:
 ## Desktop-Launcher (Cross-OS, Docker-basiert)
 
 `launcher/` ist ein PyInstaller-basierter One-Binary-Desktop-
-Launcher. Er ist **kein** eingebetteter Server - er orchestriert
-unter der Haube Docker Compose. Der Ablauf
-(`adaptive_learner_launcher/__main__.py`) ist bewusst linear:
+Launcher. Er ist **kein** eingebetteter Server - er ist ein
+dünner Wrapper um die veröffentlichte
+`docker-app-launcher`-Engine, konfiguriert über
+`launcher/launcher.json`. Die ausgelieferte Konfiguration läuft
+im **Image-Modus** (`deployment_mode: "image"`): der Launcher
+zieht das fertig gebaute, verifizierte Release-Image
+(`ghcr.io/astrapi69/adaptive-learner:<version>`, auf die
+eingebettete App-Version gepinnt) und startet es als
+Docker-Container - lokal wird nichts gebaut, kein Quelltext
+heruntergeladen und nichts ausgepackt. Der Ablauf ist bewusst
+linear:
 
 1. Prüfen, ob Docker installiert ist und läuft (sonst leiten
    klare Fehlerdialoge den Nutzer zum Installieren/Starten von
    Docker an).
-2. Die App-Installation auflösen: bei einer Neuinstallation das
-   passende Tag-Release-ZIP von GitHub herunterladen und auspacken
-   (`installer.py`, nur Stdlib - keine git-Abhängigkeit), dann
-   `.env` aus `.env.example` mit einem zufälligen Secret
-   generieren.
-3. Den Prod-Stack per `docker compose up` hochfahren.
+2. Das gepinnte Release-Image von GHCR ziehen, wenn es noch
+   nicht vorhanden ist.
+3. Den Container mit dem benannten Volume
+   `adaptive-learner-data` unter `/app/data` starten, sodass
+   die Daten Updates überleben.
 4. Auf den Backend-Health-Check warten, dann den Standard-Browser
    des Nutzers auf dem veröffentlichten Port öffnen.
-5. Beim nutzer-gesteuerten Stopp `docker compose down`.
+5. Beim nutzer-gesteuerten Stopp den Container stoppen.
 
 Der Launcher trägt die Ziel-Version in sich (`__version__`-Literal
 + `_build_info.py`, das die Spec-Datei zur Build-Zeit schreibt;
-Source-of-Truth ist `backend/pyproject.toml`). Er führt außerdem
-einen **Hintergrund-Update-Check** gegen die GitHub-Releases-API
-aus (`update_check.py`, seit v1.90.0): er fragt
-`/repos/.../releases/latest` ab und benachrichtigt den Nutzer nur,
-wenn ein echt neueres Release existiert. Der Check scheitert bei
-jedem Fehler still (kein Netz, GitHub down, Rate-Limit, kaputte
-Antwort), sodass er den Launcher nie blockiert oder unterbricht.
+Source-of-Truth ist `backend/pyproject.toml`). Die Engine führt
+außerdem einen **Hintergrund-Update-Check** gegen die
+GitHub-Releases-API aus (aktiviert über `update_check_enabled` in
+`launcher.json`): sie fragt `/repos/.../releases/latest` ab und
+benachrichtigt den Nutzer nur, wenn ein echt neueres Release
+existiert. Der Check scheitert bei jedem Fehler still (kein Netz,
+GitHub down, Rate-Limit, kaputte Antwort), sodass er den Launcher
+nie blockiert oder unterbricht.
 
 GitHub Actions baut drei Binaries pro Release:
 
