@@ -2907,6 +2907,8 @@ create_lesson:
     check_enoughTypes: "Setidaknya 2 jenis latihan"
     check_schemaValid: "Struktur pelajaran valid"
     structure_error: "Detail teknis"
+    structure_internal_error: "Terjadi kesalahan internal saat memeriksa pelajaran ini. Ini masalah pada aplikasi, bukan pada pelajaran Anda. Muat ulang halaman dan coba lagi; jika terus terjadi, laporkan masalahnya di bawah."
+    structure_report: "Laporkan masalah ini"
   save:
     saved: "Pelajaran disimpan!"
     failed: "Tidak dapat menyimpan pelajaran."

@@ -2897,6 +2897,8 @@ create_lesson:
     check_enoughTypes: "En az 2 alıştırma türü"
     check_schemaValid: "Geçerli ders yapısı"
     structure_error: "Teknik ayrıntı"
+    structure_internal_error: "Bu ders denetlenirken bir iç hata oluştu. Bu, dersinizle değil uygulamayla ilgili bir sorundur. Lütfen sayfayı yeniden yükleyip tekrar deneyin; sorun devam ederse aşağıdan bildirin."
+    structure_report: "Sorunu bildir"
   save:
     saved: "Ders kaydedildi!"
     failed: "Ders kaydedilemedi."

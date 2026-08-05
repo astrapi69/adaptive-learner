@@ -112,11 +112,13 @@ Pydanticバリデーションエラーは構造化されたリストを返しま
 
 ## OpenAPI / Swagger
 
-FastAPIはPydanticスキーマからOpenAPI 3.1スペックを自動生成します。開発モードでは:
+FastAPIはPydanticスキーマからOpenAPI 3.1スペックを自動生成します。
 
-- **Swagger UI**: `http://localhost:18001/api/docs`
-- **Redoc**: `http://localhost:18001/api/redoc`
-- **生のOpenAPI JSON**: `http://localhost:18001/api/openapi.json`
+- **生のOpenAPI JSON**: `http://localhost:18001/openapi.json` -
+  すべてのモードで意図的に提供されます。機械可読なスペックは
+  クライアント生成などのための統合インターフェースです。
+- **Swagger UI**: `http://localhost:18001/api/docs`（デバッグモードのみ）
+- **Redoc**: `http://localhost:18001/api/redoc`（デバッグモードのみ）
 
 これらはすべてのエンドポイントの正確なシェイプの権威あるリファレンスです。ここのMarkdownページは読みやすさのためのキュレーションされたサブセットです。
 

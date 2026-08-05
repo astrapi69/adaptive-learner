@@ -133,6 +133,17 @@ jobs:
             poetry run pytest tests/ -q
           fi
 
+      # #2281: the committed schema/openapi.json must match the spec the
+      # booted app serves (13/13 plugins asserted before comparing; fails
+      # closed). Runs as an explicit step, not only via the pytest suite,
+      # so PR testmon deselection can never skip it — the subprocess-based
+      # gate tests are exactly the selection-mechanics blind spot class
+      # (#1620/#1665).
+      - name: OpenAPI snapshot drift gate (#2281)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        working-directory: backend
+        run: poetry run python ../scripts/sync_openapi.py --check
+
   # Plugin tests (#434 Goal A): run every plugin's own suite in CI via
   # `make test-plugins`, which executes each `plugins/*/tests/` through the
   # BACKEND venv (PLUGIN_PYTHON). The backend `poetry install` path-installs
