@@ -9,6 +9,7 @@ import {buildVersion} from "@astrapi69/vite-plugin-build-version";
 
 import pkg from "./package.json" with {type: "json"};
 import {buildPwaManifest} from "./src/pwa/pwa-manifest";
+import {robotsPolicyPlugin} from "./src/build/robots-policy";
 
 /**
  * Base path for the public deployment. GH Pages serves the
@@ -53,6 +54,12 @@ export default defineConfig({
         },
     },
     plugins: [
+        // #2404 — staging deliveries must not be indexable. The preview
+        // workflow sets VITE_ROBOTS_POLICY=noindex; the plugin then rewrites
+        // every delivered HTML document (SPA shell + static public/ pages)
+        // to a noindex robots meta and emits a disallow-all robots.txt.
+        // Production builds leave the variable unset and are untouched.
+        robotsPolicyPlugin(process.env.VITE_ROBOTS_POLICY),
         // #1873 — emits ``version.json`` into the build root AND defines
         // __APP_VERSION__ / __BUILD_HASH__ / __BUILD_DATE__ (single source of
         // truth: package.json). The running app compares the literals against

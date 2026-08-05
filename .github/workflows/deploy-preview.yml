@@ -52,6 +52,11 @@ env:
   # exactly like the production GH-Pages deployment.
   VITE_STORAGE_MODE: "dexie"
   VITE_API_BASE: ""
+  # #2404 — the preview is a STAGING copy and must not be indexable.
+  # The robots-policy Vite plugin (frontend/src/build/robots-policy.ts)
+  # rewrites every delivered HTML document to a noindex robots meta and
+  # emits a disallow-all robots.txt. Production deploys leave this unset.
+  VITE_ROBOTS_POLICY: "noindex"
 
 # No special permissions: this workflow does not touch GitHub Pages
 # on THIS repo. It pushes to the external content-test repo using the
