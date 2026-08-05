@@ -1,6 +1,6 @@
 /** Tests for the opt-in iOS tap-offset probe (#1569). */
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import ViewportDiagnostic from "./ViewportDiagnostic";
@@ -20,14 +20,14 @@ describe("ViewportDiagnostic", () => {
     expect(screen.queryByTestId("viewport-diagnostic")).toBeNull();
   });
 
-  it("renders the readout when enabled via localStorage flag", () => {
+  it("renders the readout + copy control when enabled via localStorage flag", () => {
     localStorage.setItem("adaptive-learner.vv_diag", "1");
     render(<ViewportDiagnostic />);
     expect(screen.getByTestId("viewport-diagnostic")).toBeInTheDocument();
-    // Before any tap, the tap line waits.
-    expect(screen.getByTestId("viewport-diagnostic-tap")).toHaveTextContent(
-      /waiting for a tap/i,
-    );
+    expect(screen.getByTestId("viewport-diagnostic-values")).toHaveTextContent(/winY=/);
+    expect(screen.getByTestId("viewport-diagnostic-copy")).toHaveTextContent(/kopieren/i);
+    // Before any tap, the tap line prompts.
+    expect(screen.getByTestId("viewport-diagnostic-tap")).toHaveTextContent(/tippe irgendwo/i);
   });
 
   it("?vvdiag=1 enables it and persists the flag; ?vvdiag=0 clears it", () => {
@@ -58,7 +58,34 @@ describe("ViewportDiagnostic", () => {
     const line = screen.getByTestId("viewport-diagnostic-tap");
     expect(line).toHaveTextContent("button[target-btn]");
     // The readout reports the finger Y and a ΔY (rendered-top minus finger Y).
-    expect(line).toHaveTextContent("tap y=300");
+    expect(line).toHaveTextContent("y=300");
     expect(line).toHaveTextContent(/ΔY=/);
+    // The report block carries the same tap for copy/paste.
+    const report = screen.getByTestId("viewport-diagnostic-report") as HTMLTextAreaElement;
+    expect(report.value).toContain("button[target-btn]");
+  });
+
+  it("a tap on the panel itself is not recorded (never pollutes the measurement)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.pointerDown(screen.getByTestId("viewport-diagnostic-copy"), {
+      clientX: 5,
+      clientY: 5,
+    });
+    expect(screen.getByTestId("viewport-diagnostic-tap")).toHaveTextContent(
+      /tippe irgendwo/i,
+    );
+  });
+
+  it("the Copy button shows feedback when pressed", async () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-copy"));
+    // The feedback flips after the clipboard promise settles (a microtask).
+    await waitFor(() =>
+      expect(screen.getByTestId("viewport-diagnostic-copy")).toHaveTextContent(
+        /kopiert/i,
+      ),
+    );
   });
 });
