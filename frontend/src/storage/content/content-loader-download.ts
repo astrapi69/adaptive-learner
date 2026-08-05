@@ -30,6 +30,7 @@ import {
   tokenForSource,
 } from "./content-loader-sources";
 import { latestCachedRow } from "./content-loader-listing";
+import { storeImportLessonOrder } from "../../lib/content/browse/lesson-order-store";
 
 export async function downloadSetDexie(
   source: string,
@@ -217,6 +218,15 @@ export async function downloadSetDexie(
       await db.contentSets.delete(staleRow.id);
     }
   });
+
+  // #2367 — second half of #2173: the download seam seeds the same
+  // lesson-order overlay the import seam seeds, from the manifest's
+  // declared order (the list fetched above). Same origin rule, reusing
+  // "import": a re-download may refresh a source-given order, a
+  // user-arranged order always wins (storeImportLessonOrder is a no-op
+  // then). Without this, downloaded sets fall back to lexicographic
+  // filename order, which breaks mixed 2-/3-digit prefixes.
+  storeImportLessonOrder(source, setId, lessonFilenames);
 
   return asContentSetEntry(src, target, target.version, downloadedAt);
 }

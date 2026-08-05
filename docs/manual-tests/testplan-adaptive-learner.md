@@ -167,6 +167,26 @@ NICHT ueberschreiben.
       installierten PWA oeffnen - die Kapitel stehen in Buchreihenfolge, und
       eine eigene Verschiebung ueberlebt ein Schliessen und Wiederoeffnen.
 
+#### A6c. Downloadreihenfolge folgt dem Manifest (#2367)
+
+Heruntergeladene Sets (Registry/Quellen-Browser) zeigen die Lektionen in der
+im Set-Manifest deklarierten Reihenfolge (metadata.lessons), nicht mehr
+alphabetisch nach Dateinamen. Der heikle Fall sind gemischte zwei- und
+dreistellige Präfixe: alphabetisch sortiert 100- zwischen 10- und 11-. Gilt
+an beiden Nähten: Dexie-Download (Overlay-Seed wie beim Import, #2173) und
+API-Modus (Backend-Listung folgt dem Manifest).
+
+- [ ] Ein Set mit gemischten Präfixen herunterladen (z. B.
+      alc-psychology psych-intro, 01- bis 112-). "Lektionen verwalten" zeigt
+      die Lektionen in Manifestreihenfolge: 99- vor 100-.
+- [ ] Wirkt auf die LERNFOLGE: das Set öffnet mit der ersten Lektion laut
+      Manifest, "nächste Lektion" folgt der Manifestfolge - in beiden
+      Speichermodi (API + Dexie).
+- [ ] Nutzer gewinnt: eine Lektion von Hand verschieben, dann das Set erneut
+      herunterladen / aktualisieren. Die eigene Reihenfolge bleibt.
+- [ ] Sets ohne metadata.lessons im Manifest verhalten sich unverändert
+      (alphabetische Reihenfolge, kein stilles Umsortieren).
+
 #### A7. Bearbeiten je Lektion, nicht je Set (#2210)
 
 Bearbeiten gehört an die Lektion, nicht an das Set. Der Set-Knopf riet

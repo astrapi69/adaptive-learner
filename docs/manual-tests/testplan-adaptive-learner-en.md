@@ -154,6 +154,26 @@ re-import must NOT overwrite an order the user set by hand.
       in the installed PWA - the chapters are in book order, and a manual move
       survives closing and reopening.
 
+#### A6c. Download order follows the manifest (#2367)
+
+Downloaded sets (registry / source browser) show their lessons in the order
+the set manifest declares (metadata.lessons), no longer alphabetically by
+filename. The tricky case is mixed two- and three-digit prefixes:
+alphabetically, 100- sorts between 10- and 11-. Applies at both seams: the
+Dexie download (overlay seed like the import, #2173) and API mode (the
+backend listing follows the manifest).
+
+- [ ] Download a set with mixed prefixes (e.g. alc-psychology psych-intro,
+      01- through 112-). "Manage lessons" shows the lessons in manifest
+      order: 99- before 100-.
+- [ ] Drives the LEARNING sequence: the set opens on the first lesson per the
+      manifest and "next lesson" follows the manifest order - in both storage
+      modes (API + Dexie).
+- [ ] The user wins: move a lesson by hand, then re-download / update the
+      set. The user's order is preserved.
+- [ ] Sets without metadata.lessons in the manifest behave unchanged
+      (alphabetical order, no silent resorting).
+
 #### A7. Edit belongs to the lesson, not the set (#2210)
 
 Edit belongs to the lesson, not the set. The set-level button used to guess
