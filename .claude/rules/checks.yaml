@@ -46,6 +46,13 @@ checks:
     wired_in: backend/tests/test_verify_docs_fail_closed.py; make test
     probe: script_exists=backend/tests/test_verify_docs_fail_closed.py
 
+  - id: openapi-snapshot
+    verifies: the committed schema/openapi.json matches the spec the booted app serves, with the full 13/13 plugin set asserted before comparing (#2281)
+    rule: "-"
+    status: active
+    wired_in: make sync-openapi-check; .github/workflows/ci.yml; backend/tests/test_openapi_snapshot_gate.py
+    probe: make_target=sync-openapi-check
+
   - id: gate-rule-links
     verifies: no gate without its rule section, no rule citing a dead gate, no unclassified workflow
     rule: quality-checks.md#gate-and-rule-stay-coupled-2075
