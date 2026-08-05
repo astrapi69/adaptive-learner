@@ -79,23 +79,28 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml` ships:
+`docker-compose.prod.yml` ships **one service, `app`** (single
+container since #2058 - there is no nginx and no separate
+frontend container):
 
-- **backend** (FastAPI in a Python 3.12-slim image) running on a
-  fixed internal port **8000** with `--workers 2`. The port is an
-  implementation detail decoupled from the host-published port.
-- **frontend** (nginx) that serves the built frontend and
-  reverse-proxies `/api/*` to the backend over the compose
-  network. nginx listens on container port 80, published to the
-  host on **`${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}`** - this is
-  the port the user reaches in the browser.
+- **FastAPI (Python 3.12-slim image)** serves BOTH the built
+  frontend statics (SPA fallback, 50M body limit and gzip live as
+  middleware - the retired nginx service's feature set) and
+  `/api/*`, with `--workers 2` on the internal port
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`. The internal port is
+  an implementation detail decoupled from the host-published one.
+- The host-published port is
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}`,
+  mapped straight onto the backend port - this is the address the
+  user reaches in the browser. Loopback by default; see
+  `ADAPTIVE_LEARNER_BIND_ADDRESS` below before exposing it.
 - **A named `adaptive-learner-data` volume** mounted at
   `/app/data` (set via `ADAPTIVE_LEARNER_DATA_DIR`) that survives
   container rebuilds. The DB lives at
   `$DATA_DIR/adaptive_learner.db` and uploads at
   `$DATA_DIR/uploads/`.
 
-The backend image runs as a **non-root user** (`adaptive_learner`,
+The image runs as a **non-root user** (`adaptive_learner`,
 created in `backend/Dockerfile`).
 
 `install.sh` and `install.ps1` are the curl-pipe installers
@@ -112,7 +117,7 @@ Don't edit the generated files directly.
 
 ## Configuration for production
 
-Three things matter for prod:
+Four things matter for prod:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: must be a stable Fernet
    key. Generate once, store it somewhere safe (HashiCorp

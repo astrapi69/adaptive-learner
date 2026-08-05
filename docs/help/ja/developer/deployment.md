@@ -47,11 +47,18 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml`には以下が含まれます。
+`docker-compose.prod.yml`は**単一のサービス`app`**を含みます（#2058
+以降は1コンテナ構成 - nginxも独立したフロントエンドコンテナも
+ありません）。
 
-- **backend**（Python 3.12イメージのFastAPI）、ポート7880を公開。
-- **nginx**サイドカーがビルドされたフロントエンド（`frontend/dist/`）を配信し、`/api/*`をバックエンドにプロキシします。
-- コンテナの再起動を越えて生き残る**SQLiteボリューム**。
+- **FastAPI（Python 3.12イメージ）**がビルド済みフロントエンドの
+  staticsと`/api/*`の両方を、内部ポート
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`で提供します。
+- ホストに公開されるのは
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}`
+  です - 既定はloopbackです。
+- コンテナの再ビルドを越えて生き残る**名前付きボリューム
+  `adaptive-learner-data`**（`/app/data`）。
 
 `install.sh`と`install.ps1`はエンドユーザー向けのcurl-pipeインストーラーです - タグ付きリリースのtarballをプルし、`ADAPTIVE_LEARNER_SECRET_KEY`を設定し、`docker compose up`を実行します。
 
@@ -59,7 +66,7 @@ make prod-down   # docker compose down
 
 ## 本番環境の設定
 
-本番環境で重要な3つのこと:
+本番環境で重要な4つのこと:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: 安定したFernetキーでなければなりません。一度生成して安全な場所に保管します（HashiCorp Vault、AWS Secrets Manager、シールされた`.env`）。これを失うと、暗号化されたすべてのAPIキーが読めなくなります。未設定の場合、アプリは起動時にハードフェイルします（サイレントデフォルトなし）。
 2. **`ADAPTIVE_LEARNER_CORS_ORIGINS`**: 許可されたオリジンのカンマ区切りリスト。デフォルトは寛容です; 本番環境では絞り込んでください。
@@ -70,7 +77,7 @@ make prod-down   # docker compose down
 
 ## デスクトップランチャー
 
-`launcher/`以下のPyInstallerバイナリは`http://localhost:7880`でローカルのFastAPIを起動し、ユーザーのデフォルトブラウザを開きます。最初の起動時に、ランチャーはコメント付きテンプレートとして`~/.config/adaptive-learner/secrets.yaml`を作成し、POSIXで`chmod 0600`を適用するため、ユーザーはSettings UIに触れることなくAPIキーをそこに追加できます。
+`launcher/`以下のPyInstallerバイナリはアプリをDockerコンテナとして起動し（既定は`http://localhost:8501`）、ユーザーのデフォルトブラウザを開きます。最初の起動時に、ランチャーはコメント付きテンプレートとして`~/.config/adaptive-learner/secrets.yaml`を作成し、POSIXで`chmod 0600`を適用するため、ユーザーはSettings UIに触れることなくAPIキーをそこに追加できます。
 
 完全な3層設定チェーン（プロジェクトYAML < ユーザーオーバーレイ < env変数）は`docs/configuration.md`に記載されています。
 
