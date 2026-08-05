@@ -1811,15 +1811,14 @@ lesson:
       result: "Score: {correct} / {total}"
       instructions: "Select an item on the left, then its matching translation on the right."
       left_label: "Term"
+      column_a: "Column A"
+      column_b: "Column B"
       right_label: "Translation"
       empty: "This matching exercise has no pairs."
       left_label_productive: Meaning
       right_label_productive: Term
-      left_label_knowledge: "Term"
       correct_hint: "Correct answer: {label}"
       your_answer: "Your answer: {label}"
-      right_label_knowledge: "Definition"
-      instruction_knowledge: "Match each term with its definition."
       instructions_knowledge: "Select an item on the left, then its match on the right."
       selected_sr: "Selected: {label}"
       resolve: "Solve"

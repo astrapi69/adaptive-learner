@@ -1800,15 +1800,14 @@ lesson:
       result: "スコア: {correct} / {total}"
       instructions: "左の項目を選び、次に右で対応する訳を選びます。"
       left_label: "用語"
+      column_a: "列A"
+      column_b: "列B"
       right_label: "訳"
       empty: "このマッチング演習にはペアがありません。"
       left_label_productive: 意味
       right_label_productive: 用語
-      left_label_knowledge: "用語"
       correct_hint: "正解は {label}"
       your_answer: "あなたの回答: {label}"
-      right_label_knowledge: "定義"
-      instruction_knowledge: "各用語を定義と一致させてください。"
       instructions_knowledge: "左の項目を選んでから、右の対応する項目を選んでください。"
       selected_sr: "選択中: {label}"
       resolve: "解答を表示"

@@ -176,23 +176,26 @@ export function computeMatchingLabels(
     const sourceName = _languageName(sourceLanguage, uiLang);
     const leftLangName = productive ? sourceName : targetName;
     const rightLangName = productive ? targetName : sourceName;
+    // #2392 — a knowledge set is not "term/definition" (e.g. senses->organs),
+    // and the app cannot know the real column names (content carries no header
+    // field). Printing a generic "Term/Definition" subtitle + labels is wrong
+    // for most such sets, so drop them: the columns stay distinguishable by
+    // their A/B badge and by their content. The neutral column names survive
+    // only as accessible list names (aria-label), never as visible chrome.
     const leftLabel = isKnowledge
-        ? t("lesson.exercise.matching.left_label_knowledge", "Term")
+        ? t("lesson.exercise.matching.column_a", "Column A")
         : (leftLangName ??
           (productive
               ? t("lesson.exercise.matching.left_label_productive", "Meaning")
               : t("lesson.exercise.matching.left_label", "Term")));
     const rightLabel = isKnowledge
-        ? t("lesson.exercise.matching.right_label_knowledge", "Definition")
+        ? t("lesson.exercise.matching.column_b", "Column B")
         : (rightLangName ??
           (productive
               ? t("lesson.exercise.matching.right_label_productive", "Term")
               : t("lesson.exercise.matching.right_label", "Translation")));
     const instruction = isKnowledge
-        ? t(
-              "lesson.exercise.matching.instruction_knowledge",
-              "Match each term with its definition.",
-          )
+        ? ""
         : t(
               instructionKey("matching", direction),
               productive
@@ -667,6 +670,50 @@ export function MatchingResultFooter({
     );
 }
 
+/** One column header: the A / B letter cue plus the column label. For a
+ *  knowledge set the visible label is dropped (#2392) — the badge + the
+ *  tiles' own content carry the distinction — while ``label`` stays as the
+ *  list's accessible name on the caller's ``<ul aria-label>``. Extracted so
+ *  the two near-identical headers live in one place and the main renderer
+ *  keeps its complexity budget. */
+export function MatchingColumnHeader({
+    side,
+    label,
+    showLabel,
+    testId,
+}: {
+    side: "a" | "b";
+    label: string;
+    showLabel: boolean;
+    testId: string;
+}) {
+    // Resolve the side-specific bits OUTSIDE the className expression so the
+    // dead-classnames scanner never reads the ``"a"``/``"b"`` comparison
+    // literals as class names (#1465 false-positive otherwise).
+    const isA = side === "a";
+    const letter = isA ? "A" : "B";
+    const badgeColor = isA
+        ? "bg-[var(--matching-side-a-bg)] text-[var(--matching-side-a-fg)]"
+        : "bg-[var(--matching-side-b-bg)] text-[var(--matching-side-b-fg)]";
+    return (
+        <div
+            className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
+            data-testid={testId}
+        >
+            <span
+                aria-hidden="true"
+                className={cn(
+                    "inline-flex h-4 w-4 items-center justify-center rounded-[3px] text-[0.625rem] font-bold ring-1 ring-[var(--border-strong)]",
+                    badgeColor,
+                )}
+            >
+                {letter}
+            </span>
+            {showLabel && label}
+        </div>
+    );
+}
+
 /** Prompt + instruction + running counter + sr-only selection status +
  *  the first-pair flow hint, above the two tile columns. */
 export function MatchingPrompt({
@@ -712,12 +759,14 @@ export function MatchingPrompt({
                 )}
             </div>
 
-            <p
-                className="exercise-direction-instruction"
-                data-testid="direction-instruction-matching"
-            >
-                {instruction}
-            </p>
+            {instruction && (
+                <p
+                    className="exercise-direction-instruction"
+                    data-testid="direction-instruction-matching"
+                >
+                    {instruction}
+                </p>
+            )}
 
             <p
                 className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"

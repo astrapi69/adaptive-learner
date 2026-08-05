@@ -459,7 +459,7 @@ describe("MatchingExercise: side distinction (#108)", () => {
 });
 
 describe("MatchingExercise: knowledge-domain wording (#149)", () => {
-    it("uses Term / Definition + a non-translation instruction for a non-language domain", () => {
+    it("omits the term/definition subtitle + column labels for a knowledge domain (#2392)", () => {
         render(
             <MatchingExercise
                 exercise={EXERCISE}
@@ -469,18 +469,33 @@ describe("MatchingExercise: knowledge-domain wording (#149)", () => {
                 sourceLanguage="de"
             />,
         );
+        // The generic "Term/Definition" wording is wrong for e.g.
+        // senses->organs; it is dropped, not merely re-worded.
         expect(
             screen.getByTestId("matching-left-header"),
-        ).toHaveTextContent("Term");
+        ).not.toHaveTextContent("Term");
         expect(
             screen.getByTestId("matching-right-header"),
-        ).toHaveTextContent("Definition");
+        ).not.toHaveTextContent("Definition");
+        // The wrong subtitle is gone entirely.
         expect(
-            screen.getByTestId("matching-instructions").textContent,
-        ).not.toMatch(/translation/i);
+            screen.queryByTestId("direction-instruction-matching"),
+        ).not.toBeInTheDocument();
+        // The A / B letter cues stay so the columns remain distinguishable,
+        // and the lists keep a neutral accessible name.
+        expect(screen.getByTestId("matching-left-header")).toHaveTextContent(
+            "A",
+        );
+        expect(screen.getByTestId("matching-right-header")).toHaveTextContent(
+            "B",
+        );
+        expect(screen.getByTestId("matching-left")).toHaveAttribute(
+            "aria-label",
+            "Column A",
+        );
     });
 
-    it("treats source==target as knowledge even without an explicit domain", () => {
+    it("treats source==target as knowledge and drops the definition label (#2392)", () => {
         render(
             <MatchingExercise
                 exercise={EXERCISE}
@@ -491,7 +506,10 @@ describe("MatchingExercise: knowledge-domain wording (#149)", () => {
         );
         expect(
             screen.getByTestId("matching-right-header"),
-        ).toHaveTextContent("Definition");
+        ).not.toHaveTextContent("Definition");
+        expect(
+            screen.queryByTestId("direction-instruction-matching"),
+        ).not.toBeInTheDocument();
     });
 
     it("keeps the translation wording for a real language pair", () => {
@@ -509,6 +527,14 @@ describe("MatchingExercise: knowledge-domain wording (#149)", () => {
         expect(
             screen.getByTestId("matching-right-header").textContent,
         ).not.toContain("Definition");
+    });
+
+    it("keeps the direction subtitle for a language exercise (regression, #2392)", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        // The omission is knowledge-only; the language path keeps its subtitle.
+        expect(
+            screen.getByTestId("direction-instruction-matching"),
+        ).toBeInTheDocument();
     });
 });
 

@@ -387,6 +387,15 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       erscheinen). Tipps erscheinen weiterhin erst auf Anforderung (nicht von
       Anfang an) und kosten XP. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
       Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
+- [ ] Zuordnung: kein falscher Untertitel/Spaltentitel bei Wissens-Sets (#2392):
+      eine Zuordnungsübung eines WISSENS-Sets öffnen (nicht-sprachliche Domäne
+      oder Quell- = Zielsprache, z. B. Sinne zu Organen). Es erscheint KEIN
+      Untertitel „Ordne jeden Begriff seiner Definition zu"; die Spalten tragen
+      KEINE Beschriftung „Begriff"/„Definition" mehr, nur noch die Badges „A"/
+      „B" und ihren Inhalt. Bei einer echten SPRACH-Übung bleibt alles wie zuvor
+      (Sprachnamen bzw. Term/Übersetzung + Richtungshinweis sichtbar). iOS PWA/
+      Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
+      Web-App-Icon durchführen.
 - [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
