@@ -11,7 +11,7 @@ v0.7.0'dan itibaren olan ilk 14 model aşağıda ayrıntılı olarak
 belgelenmiştir; o tarihten bu yana eklenen 11 tanesi (Aşama 12+
 içe aktarmalar, Aşama 22 konular/etiketler, Aşama 29-30 oyunlaştırma
 + anki, Aşama 32 notebooklm) en altta ad + tablo olarak listelenmiştir.
-Her modelin tam alanı için `/api/openapi.json` adresindeki OpenAPI
+Her modelin tam alanı için `/openapi.json` adresindeki OpenAPI
 spesifikasyonuna bakın.
 
 ## User

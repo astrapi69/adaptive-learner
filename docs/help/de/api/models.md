@@ -10,7 +10,7 @@ dokumentiert; die 11 seitdem hinzugekommenen (Phase 12+
 Imports, Phase 22 Subjects / Tags, Phase 29–30 Gamification
 + Anki, Phase 32 NotebookLM) werden am Ende nach Name +
 Tabelle gelistet. Die OpenAPI-Spec unter
-`/api/openapi.json` ist die kanonische Referenz für jedes
+`/openapi.json` ist die kanonische Referenz für jedes
 Feld jedes Models.
 
 ## User
