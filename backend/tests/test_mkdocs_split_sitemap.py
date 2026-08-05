@@ -113,3 +113,25 @@ def test_hook_writes_files_and_reports_the_measured_set(
 def test_hook_fails_closed_when_the_root_sitemap_is_missing(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError, match="fail closed"):
         split_module.on_post_build({"site_dir": str(tmp_path)})
+
+
+def test_x_default_completes_every_entry_and_is_idempotent() -> None:
+    """#2406: the sitemap is the delivery's effective hreflang channel;
+    every entry's cluster gains an x-default pointing at the default-
+    language page - applying twice adds nothing."""
+    sitemap = _sitemap(BASE, f"{BASE}en/")
+    once = split_module.add_x_default(sitemap)
+    assert once.count('hreflang="x-default"') == 2
+    assert f'hreflang="x-default" href="{BASE}"' in once
+    assert split_module.add_x_default(once) == once
+
+
+def test_hook_writes_x_default_into_root_and_split_sitemaps(tmp_path: Path) -> None:
+    site = tmp_path / "site"
+    site.mkdir()
+    (site / "sitemap.xml").write_text(_sitemap(BASE, f"{BASE}en/"), encoding="utf-8")
+    split_module.on_post_build({"site_dir": str(site)})
+    root = (site / "sitemap.xml").read_text(encoding="utf-8")
+    en = (site / "en" / "sitemap.xml").read_text(encoding="utf-8")
+    assert root.count('hreflang="x-default"') == 2
+    assert en.count('hreflang="x-default"') == 1
