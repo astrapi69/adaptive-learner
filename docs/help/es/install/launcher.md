@@ -132,11 +132,10 @@ Errores frecuentes:
   `install.sh` o directamente con Docker Compose.
 - **La app no es accesible en el navegador**: si el navegador no se abre
   automáticamente, abre `http://localhost:8501` manualmente (o el puerto
-  que se muestre en la ventana del lanzador). Ten en cuenta que la app se
-  publica en todas las interfaces de red, no solo en `localhost`, y no
-  tiene autenticación: manten ese puerto cerrado en el cortafuegos salvo
-  que quieras deliberadamente que otros dispositivos de tu red lleguen a
-  ella.
+  que se muestre en la ventana del lanzador). Por defecto la app escucha
+  solo en `127.0.0.1`, así que solo es accesible desde este equipo;
+  otros dispositivos solo llegan a ella si activas deliberadamente el
+  acceso por red - ver "Quién puede acceder a la aplicación" más arriba.
 
 ## macOS
 

@@ -35,6 +35,11 @@ Başlatıcıyı çalıştırdığında Docker henüz çalışmıyorsa, başlatı
 çıkmadan Docker'ı açabilmen için bir "Docker'ı başlat" düğmesi
 bulunan bir uyarı gösterir.
 
+Çalışan uygulamaya varsayılan olarak yalnızca bu bilgisayardan
+erişilebilir (`127.0.0.1`). Oturum açma yoktur; uygulamayı başka
+cihazlara açmak bilinçli bir adımdır - bkz.
+[Masaüstü başlatıcısını çalıştır](launcher.md).
+
 ## Docker'ı kurmak güvenli mi?
 
 Evet. Docker Desktop, iyi bilinen bir şirket olan Docker, Inc.

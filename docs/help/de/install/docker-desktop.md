@@ -37,6 +37,11 @@ Falls Docker beim Start des Launchers noch nicht läuft, zeigt er einen
 Hinweis mit einem Knopf "Docker starten", damit du Docker hochfahren
 kannst, ohne den Launcher zu verlassen.
 
+Die laufende App ist standardmäßig nur von diesem Rechner aus
+erreichbar (`127.0.0.1`). Sie hat keine Anmeldung; sie für andere
+Geräte freizugeben ist ein bewusster Schritt - siehe
+[Desktop-Launcher starten](launcher.md).
+
 ## Ist Docker sicher zu installieren?
 
 Ja. Docker Desktop stammt von Docker, Inc., einem bekannten

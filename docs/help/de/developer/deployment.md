@@ -131,6 +131,12 @@ Drei Dinge sind in Produktion wichtig:
 3. **`ADAPTIVE_LEARNER_DEBUG`**: in Produktion ungesetzt /
    false lassen. Debug-Modus legt Stacktraces in Fehler-
    Antworten offen.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: Standard `127.0.0.1`,
+   der veröffentlichte Port ist damit nur vom Host selbst
+   erreichbar. Die App hat keine Authentifizierung - `0.0.0.0`
+   nur bewusst binden, und nur in einem vertrauenswürdigen Netz
+   oder hinter einer eigenen Auth-Schicht (Reverse Proxy mit
+   Basic Auth, VPN).
 
 ## Desktop-Launcher (Cross-OS, Docker-basiert)
 
