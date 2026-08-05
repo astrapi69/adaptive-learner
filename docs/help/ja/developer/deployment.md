@@ -64,6 +64,7 @@ make prod-down   # docker compose down
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: 安定したFernetキーでなければなりません。一度生成して安全な場所に保管します（HashiCorp Vault、AWS Secrets Manager、シールされた`.env`）。これを失うと、暗号化されたすべてのAPIキーが読めなくなります。未設定の場合、アプリは起動時にハードフェイルします（サイレントデフォルトなし）。
 2. **`ADAPTIVE_LEARNER_CORS_ORIGINS`**: 許可されたオリジンのカンマ区切りリスト。デフォルトは寛容です; 本番環境では絞り込んでください。
 3. **`ADAPTIVE_LEARNER_DEBUG`**: 本番環境では未設定 / falseのままにしてください。デバッグモードはエラーレスポンスにスタックトレースを公開します。
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: 既定は `127.0.0.1` で、公開ポートにはホスト自身からしか到達できません。アプリには認証がないため、`0.0.0.0` へのバインドは意図的な場合のみ、かつ信頼できるネットワーク内か独自の認証レイヤー（basic auth 付きリバースプロキシ、VPN）の背後でのみ行ってください。
 
 コンテナの場合、env変数が慣用的な注入チャネルです。`~/.config/adaptive_learner/secrets.yaml`オーバーレイはデスクトップ / ランチャー用です; 複数のenv変数よりも1つの設定ファイルを好む場合は、コンテナにバインドマウントすることもできます。
 

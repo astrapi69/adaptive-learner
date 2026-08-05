@@ -91,6 +91,11 @@ make prod-down   # docker compose down
 3. **`ADAPTIVE_LEARNER_DEBUG`**: άφησε χωρίς ορισμό / false στην
    παραγωγή. Η λειτουργία debug εκθέτει stack traces στις
    αποκρίσεις σφαλμάτων.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: προεπιλογή `127.0.0.1`,
+   ώστε η δημοσιευμένη θύρα να είναι προσβάσιμη μόνο από τον ίδιο
+   τον host. Η εφαρμογή δεν έχει πιστοποίηση - δέσε `0.0.0.0` μόνο
+   συνειδητά, και μόνο σε αξιόπιστο δίκτυο ή πίσω από δικό σου
+   στρώμα auth (reverse proxy με basic auth, VPN).
 
 Για containers, οι μεταβλητές περιβάλλοντος είναι το ιδιωματικό
 κανάλι έγχυσης. Η επικάλυψη `~/.config/adaptive_learner/secrets.yaml`
