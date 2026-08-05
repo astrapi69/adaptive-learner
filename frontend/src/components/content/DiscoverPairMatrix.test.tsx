@@ -11,6 +11,9 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 }));
 vi.mock("../../lib/content/language/language-names", () => ({
   languageDisplayName: (code: string) => code.toUpperCase(),
+  // Flag-free in the component test (the flag mapping is unit-tested in
+  // language-names.test.ts); keeps the label assertions deterministic.
+  flaggedName: (code: string) => code.toUpperCase(),
 }));
 
 function makeSet(over: Partial<SearchableSet>): SearchableSet {
@@ -52,8 +55,15 @@ describe("DiscoverPairMatrix", () => {
         onSelect={() => {}}
       />,
     );
+    // Collapsed by default (#2359): expand, then the source group + target
+    // buttons appear. The source is the group heading, so the button is
+    // target-only.
+    fireEvent.click(screen.getByTestId("discover-pair-matrix-trigger"));
+    expect(screen.getByTestId("discover-pair-matrix-group-de")).toHaveTextContent(
+      "DE",
+    );
     expect(screen.getByTestId("discover-pair-matrix-de-es")).toHaveTextContent(
-      "DE → ES (1)",
+      "ES (1)",
     );
     expect(screen.getByTestId("discover-pair-matrix-de-fr")).toBeInTheDocument();
   });
@@ -69,8 +79,40 @@ describe("DiscoverPairMatrix", () => {
         onSelect={onSelect}
       />,
     );
+    fireEvent.click(screen.getByTestId("discover-pair-matrix-trigger"));
     fireEvent.click(screen.getByTestId("discover-pair-matrix-de-es"));
     expect(onSelect).toHaveBeenCalledWith({ source: "de", target: "es", count: 1 });
+  });
+
+  it("summarizes the active pair on the collapsed trigger when it is present", () => {
+    render(
+      <DiscoverPairMatrix
+        sets={SETS}
+        entry="language"
+        activeSource="de"
+        activeTarget="es"
+        onSelect={() => {}}
+      />,
+    );
+    expect(screen.getByTestId("discover-pair-matrix-trigger")).toHaveTextContent(
+      "DE → ES",
+    );
+  });
+
+  it("keeps the trigger neutral when the active target is not a populated pair", () => {
+    render(
+      <DiscoverPairMatrix
+        sets={SETS}
+        entry="language"
+        activeSource="de"
+        activeTarget=""
+        onSelect={() => {}}
+      />,
+    );
+    // "de + all targets" is not a pair; the trigger shows the neutral chooser.
+    expect(screen.getByTestId("discover-pair-matrix-trigger")).toHaveTextContent(
+      "Choose a language pair (2)",
+    );
   });
 
   it("renders nothing in the knowledge entry", () => {

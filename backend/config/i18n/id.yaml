@@ -3479,6 +3479,7 @@ discover:
   pairs:
     heading: "Pasangan bahasa"
     select: "Pilih {p}"
+    choose: "Pilih pasangan bahasa"
   filter:
     all: "Semua"
     language: "Bahasa"
