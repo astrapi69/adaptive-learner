@@ -15763,17 +15763,6 @@
     "target_hash": "ee0f420fdbef",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "lesson.exercise.matching.instruction_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "bf66b4fa79f3",
-    "target_hash": "9d211d7db1ed",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "lesson.exercise.matching.instructions": {
     "verdict": "ok",
     "severity": "low",
@@ -15797,17 +15786,6 @@
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "lesson.exercise.matching.left_label": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "29c820dfc81c",
-    "target_hash": "21c67d6f42dc",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "lesson.exercise.matching.left_label_knowledge": {
     "verdict": "ok",
     "severity": "low",
     "note": "",
@@ -15893,17 +15871,6 @@
     "tier1_verdict": "ok",
     "de_hash": "08145060a96d",
     "target_hash": "f5df36954b59",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "lesson.exercise.matching.right_label_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "9813fafb098c",
-    "target_hash": "25af8968f7a4",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "lesson.exercise.matching.right_label_productive": {

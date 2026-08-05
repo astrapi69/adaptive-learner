@@ -176,23 +176,26 @@ export function computeMatchingLabels(
     const sourceName = _languageName(sourceLanguage, uiLang);
     const leftLangName = productive ? sourceName : targetName;
     const rightLangName = productive ? targetName : sourceName;
+    // #2392 — a knowledge set is not "term/definition" (e.g. senses->organs),
+    // and the app cannot know the real column names (content carries no header
+    // field). Printing a generic "Term/Definition" subtitle + labels is wrong
+    // for most such sets, so drop them: the columns stay distinguishable by
+    // their A/B badge and by their content. The neutral column names survive
+    // only as accessible list names (aria-label), never as visible chrome.
     const leftLabel = isKnowledge
-        ? t("lesson.exercise.matching.left_label_knowledge", "Term")
+        ? t("lesson.exercise.matching.column_a", "Column A")
         : (leftLangName ??
           (productive
               ? t("lesson.exercise.matching.left_label_productive", "Meaning")
               : t("lesson.exercise.matching.left_label", "Term")));
     const rightLabel = isKnowledge
-        ? t("lesson.exercise.matching.right_label_knowledge", "Definition")
+        ? t("lesson.exercise.matching.column_b", "Column B")
         : (rightLangName ??
           (productive
               ? t("lesson.exercise.matching.right_label_productive", "Term")
               : t("lesson.exercise.matching.right_label", "Translation")));
     const instruction = isKnowledge
-        ? t(
-              "lesson.exercise.matching.instruction_knowledge",
-              "Match each term with its definition.",
-          )
+        ? ""
         : t(
               instructionKey("matching", direction),
               productive
@@ -712,12 +715,14 @@ export function MatchingPrompt({
                 )}
             </div>
 
-            <p
-                className="exercise-direction-instruction"
-                data-testid="direction-instruction-matching"
-            >
-                {instruction}
-            </p>
+            {instruction && (
+                <p
+                    className="exercise-direction-instruction"
+                    data-testid="direction-instruction-matching"
+                >
+                    {instruction}
+                </p>
+            )}
 
             <p
                 className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"

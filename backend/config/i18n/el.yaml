@@ -1802,15 +1802,14 @@ lesson:
       result: "Βαθμολογία: {correct} / {total}"
       instructions: "Επίλεξε ένα στοιχείο αριστερά και μετά τη μετάφρασή του δεξιά."
       left_label: "Όρος"
+      column_a: "Στήλη A"
+      column_b: "Στήλη B"
       right_label: "Μετάφραση"
       empty: "Αυτή η άσκηση δεν περιέχει ζεύγη."
       left_label_productive: Σημασία
       right_label_productive: Όρος
-      left_label_knowledge: "Όρος"
       correct_hint: "Σωστή απάντηση: {label}"
       your_answer: "Η απάντησή σου: {label}"
-      right_label_knowledge: "Ορισμός"
-      instruction_knowledge: "Αντιστοίχισε κάθε όρο με τον ορισμό του."
       instructions_knowledge: "Επίλεξε ένα στοιχείο αριστερά και μετά το ταίρι του δεξιά."
       selected_sr: "Επιλέχθηκε: {label}"
       resolve: "Επίλυση"

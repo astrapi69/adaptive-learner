@@ -566,7 +566,7 @@ function MatchingExercise(
                         >
                             A
                         </span>
-                        {leftLabel}
+                        {!isKnowledge && leftLabel}
                     </div>
                     <ul
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
@@ -601,7 +601,7 @@ function MatchingExercise(
                         >
                             B
                         </span>
-                        {rightLabel}
+                        {!isKnowledge && rightLabel}
                     </div>
                     <ul
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"

@@ -364,6 +364,14 @@ Requires domain knowledge. Not automatable.
       complete pair ("'X' goes with 'Y'" must no longer appear). Hints still
       appear only on demand (not from the start) and cost XP. iOS PWA/Standalone:
       repeat the check on the web-app icon added to the Home Screen.
+- [ ] Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
+      a matching exercise from a KNOWLEDGE set (non-language domain, or source ==
+      target, e.g. senses to organs). NO subtitle "Match each term with its
+      definition" appears; the columns carry NO "Term"/"Definition" label, only
+      the "A"/"B" badges and their content. A real LANGUAGE exercise is unchanged
+      (language names or Term/Translation + the direction hint stay visible). iOS
+      PWA/Standalone: repeat the check on the web-app icon added to the Home
+      Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
