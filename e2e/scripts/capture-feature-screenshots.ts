@@ -392,6 +392,24 @@ async function gotoBookUploadPicker(page: Page): Promise<boolean> {
 }
 
 const FEATURES: FeatureShot[] = [
+    // --- Static landing page (#2409) -------------------------------------
+    // Not an app view: real static HTML delivered next to the SPA under
+    // /start/. It follows prefers-color-scheme instead of the app theme,
+    // so the pinned app theme does not affect it.
+    {
+        path: "landing-page/de",
+        setup: async (p) => {
+            await p.goto("/start/");
+            return true;
+        },
+    },
+    {
+        path: "landing-page/en",
+        setup: async (p) => {
+            await p.goto("/start/en/");
+            return true;
+        },
+    },
     // --- Tabbed hubs -----------------------------------------------------
     {path: "dashboard-tabs/uebersicht", setup: (p) => gotoDashboardTab(p, "overview")},
     {path: "dashboard-tabs/aktivitaet", setup: (p) => gotoDashboardTab(p, "activity")},
