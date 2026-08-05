@@ -643,6 +643,12 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       VALID (no "source != target" gate)
 - [ ] **Structure-check reason (#1724):** a failing "Valid lesson
       structure" check names a concrete reason, not just a ✗
+- [ ] **Internal structure error (#2384):** when the "Valid lesson
+      structure" check fails with an INTERNAL error (e.g.
+      `(0 , T.default) is not a function`), the message explains it is a
+      problem in the app, NOT the lesson, gives a reload/retry path and a
+      "Report this problem" link — instead of framing the technical string
+      as invalid user content
 - [ ] **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
 - [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →

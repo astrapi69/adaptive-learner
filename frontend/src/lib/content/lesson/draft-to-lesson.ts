@@ -322,8 +322,23 @@ export interface DraftValidationChecks {
     /** The structural validator's reason when ``schemaValid`` is false
      *  (#1722 — e.g. ``/cards/0/back must NOT have fewer than 1
      *  characters``); ``null`` when the structure is valid. Detail for
-     *  the checklist + console, NOT part of the boolean aggregate. */
+     *  the checklist + console, NOT part of the boolean aggregate.
+     *  For a genuine validation failure this is the concrete, actionable
+     *  reason with the internal ``generated lesson invalid:`` prefix
+     *  stripped; for an internal error (see ``schemaErrorIsInternal``)
+     *  it is the raw error message, kept only as diagnostic text. */
     schemaError: string | null;
+    /** #2384 — true when ``schemaValid`` is false because the validator
+     *  threw an UNEXPECTED error (an app bug: a broken bundle import, a
+     *  ``TypeError`` such as ``(0 , T.default) is not a function``, …),
+     *  NOT a content/schema violation the author can fix by editing the
+     *  lesson. Intentional validation failures are thrown as
+     *  ``generated lesson invalid: <reason>`` by ``validateGeneratedLesson``;
+     *  anything without that prefix is classed internal so the UI can say
+     *  "this is our bug, please report it" instead of framing the raw
+     *  technical string as an invalid lesson structure the user must
+     *  correct. ``false`` whenever the structure is valid. */
+    schemaErrorIsInternal: boolean;
 }
 
 /** The boolean check keys {@link allChecksPass} aggregates (everything
@@ -336,6 +351,13 @@ const BOOLEAN_CHECK_KEYS = [
     "enoughTypes",
     "schemaValid",
 ] as const;
+
+/** The prefix ``validateGeneratedLesson`` puts on every INTENTIONAL
+ *  validation failure (#2384). ``checkDraft`` uses it to tell an actionable
+ *  content error apart from an unexpected internal error. Keep in lock-step
+ *  with the ``generated lesson invalid:`` prefix in
+ *  ``analysis-to-lesson.ts``. */
+const VALIDATION_ERROR_PREFIX = "generated lesson invalid: ";
 
 export const MIN_CARDS_FOR_SAVE = 4;
 export const MIN_EXERCISES_FOR_SAVE = 5;
@@ -352,12 +374,23 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     const types = new Set(exercises.map((e) => e.type));
     let schemaValid: boolean;
     let schemaError: string | null = null;
+    let schemaErrorIsInternal = false;
     try {
         buildLessonFromDraft(input);
         schemaValid = true;
     } catch (err) {
         schemaValid = false;
-        schemaError = err instanceof Error ? err.message : String(err);
+        const message = err instanceof Error ? err.message : String(err);
+        // #2384 — a genuine content/schema violation is thrown as
+        // ``generated lesson invalid: <reason>`` by validateGeneratedLesson;
+        // anything else (a broken bundle import, an unexpected TypeError like
+        // ``(0 , T.default) is not a function``) is an app bug the author
+        // cannot fix by editing the lesson. Classify so the checklist can
+        // show the right message: the actionable reason vs. "please report".
+        schemaErrorIsInternal = !message.startsWith(VALIDATION_ERROR_PREFIX);
+        schemaError = schemaErrorIsInternal
+            ? message
+            : message.slice(VALIDATION_ERROR_PREFIX.length);
         // #1722 — a bare ✗ is not actionable; keep the precise validator
         // reason available in the dev console alongside the checklist.
         // The pristine empty draft fails the schema by construction and is
@@ -367,7 +400,10 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
             cards.length === 0 &&
             exercises.length === 0;
         if (!pristine) {
-            console.error("create-lesson: draft structure invalid:", schemaError);
+            const label = schemaErrorIsInternal
+                ? "create-lesson: draft check failed with an internal error:"
+                : "create-lesson: draft structure invalid:";
+            console.error(label, schemaError);
         }
     }
     return {
@@ -386,6 +422,7 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
         enoughTypes: types.size >= MIN_TYPES_FOR_SAVE,
         schemaValid,
         schemaError,
+        schemaErrorIsInternal,
     };
 }
 
