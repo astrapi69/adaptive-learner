@@ -174,3 +174,40 @@
   (gleiche Defektklasse), Rest-Staleness als #2387 abgetrennt statt
   still mitzunehmen.
 - Keine STOP-Blocker; keine geparkten Fragen in Artefakten.
+
+---
+
+# Nachtrag (Nachmittag): EXP-049-Umsetzung, Landeseite, zwei Live-Funde
+
+## 13. EXP-049 zusammengeführt + Entscheidungen (14:30)
+- Original prompt: Zwei unabhängig erarbeitete Auffindbarkeits-Explorationen zusammenführen, Architekten-Entscheidungen eintragen.
+- Result: App-Fassung EXP-049 ist Träger (PR #2407); Engine-Fassung verweist (engine PR #126). Entscheidungen eingetragen: Lektionsseiten nur Theoriestufen; ungeprüfte Sets draussen (hängt an #2299); Zahlen ohne Gate raus, mit Gate rein. Erster Wurf als vier Vorgänge #2403-#2406. Nebenkorrektur: "Doku ist DE/EN" war falsch (acht Sprachverzeichnisse).
+- Commits: 418394e2 (#2407), f4b264e (engine #126)
+
+## 14. Landeseite (15:30)
+- Result: Statische Seite /start/ (DE) + /start/en/ (EN) im Pages-Artefakt neben der App (PR #2411, Issue #2409). Kern wörtlich: "Eine App, die sich dir anpasst, nicht umgekehrt. Du kannst dein Lernmaterial selbst erstellen, mit KI." Keine Zahlen; Ortsentscheidung begründet (Wurzeltausch bräche PWA/Lesezeichen/SW); noscript-Verweis an der Wurzel; Sitemap +2 echte Seiten; Smoke-Spec; Testplan PRIO 9 DE+EN; 4 Katalog-Screenshots.
+- Commit: b26d9cb0 (#2411)
+
+## 15. Vorschau-noindex (16:00)
+- Result: PR #2413 (Issue #2404): VITE_ROBOTS_POLICY=noindex im Preview-Workflow + Vite-Plugin (src/deploy/robots-policy.ts) schreibt JEDES ausgelieferte HTML auf noindex um + robots.txt Disallow-all; Produktion byte-identisch. 7 TDD-Tests; am Artefakt in beide Richtungen bewiesen. Zwei gefangene Fallen: Rollup-this in Hooks (fail-open vermieden), globale Regex-lastIndex. Nebenfund: repo-weites build/-gitignore verschluckte src/build/ still - Modul nach src/deploy/, am Commit-Stat gefangen.
+- Commits: c58c953d + a86194bc + 851a7237 (#2413)
+
+## 16. Live-Fund 1: Draft-Check tot im gebauten Stand (16:20)
+- Original prompt: Maintainer-Konsole der Vorschau: "(0 , T.default) is not a function" beim Bearbeiten einer Aufgabe; Paket-Hypothese prüfen, nicht übernehmen.
+- Result: Hypothese verifiziert-und-verworfen (tree-kit-Dist ist sauberes ESM). Wahre Ursache: Validator-Generator hoistete Ajvs require('ucs2length').default zu nacktem Default-Import - Vite-Dev-Interop liefert die Funktion, Node-ESM/Rolldown das exports-Objekt (#1620/#2027-Klasse). Nativ reproduziert; Generator interop-fest (Namespace-Import + Funktionsauswahl, laut scheiternd); Test lädt Generat durch echtes node; Artefakt-Probe 0 Fehler. Auslöser: Engine-0.17-Re-Pin zog ajv 8.20. #2385 hatte nur die Meldung verschönert.
+- Commit: 10232507 (Issue #2415, PR #2416)
+
+## 17. EXP-049 Erste-Wurf-Serie (17:00-18:30)
+- #2417 (Live-Fund 2, Maintainer-Konsole): Materials Sprachwechsler lädt je Alternate <lang>/sitemap.xml - 404. MkDocs-Hook scripts/mkdocs_split_sitemap.py splittet die Wurzel-Sitemap je Sprache (fail-closed, 6 Pins, realer Build: 7x60). Commit 1f3ff5c1 (PR #2418).
+- #2403: Vier Set-Zahlen im ausgelieferten Text (Meta/JSON-LD/og/twitter/Hilfe) entfernt, Prinzip statt Zahl; Vitest-Pin als Gate. Ehrlichkeits-Korrektur im PR: docs-Gate war beim Commit rot durch Worktree-venv, nicht Inhalt. Commit 03abdc89 (PR #2419).
+- #2405: robots.txt nennt jetzt auch die Doku-Sitemap (480 Adressen); tote /content-Zeile raus; Pin: Sitemap-locs == reale Seiten. Commit 591f25b5 (PR #2420).
+- #2406: Verifikation zuerst - hreflang existierte (Sitemap absolut = wirksamer Kanal, Head relativ = unwirksam); Rest war x-default: Hook ergänzt es je Eintrag seitenspezifisch, idempotent (480/60 im realen Build). Commit e486fc36 (PR #2421).
+
+## 18. #2398: Ratchet-Test misst Verhalten statt Repo-Zustand (19:00)
+- Result: Der No-Headroom-Pin kopierte den realen Baum und war nur direkt nach einem Banking-Commit grün - jeder legitime ungebankte Shrink (#2091 erlaubt ihn) machte develop für alle Branches rot (heute zweimal; #2395/#2396 bankten das Symptom). Fixture wird jetzt erst auf die Linie normalisiert, dann greift die Verhaltens-Assertion. Beweis beide Richtungen. Damit ist die Vormittags-Reibung strukturell weg, Banken bleibt bewusste Handlung.
+- Commit: 372886a9 (PR #2422)
+
+## Nachtrag-Statistik
+- 10 weitere PRs gemergt: #2407, #2411, #2413, #2416, #2418, #2419, #2420, #2421, #2422, engine#126; Journal-PR #2402 vormittags.
+- 8 weitere Issues geschlossen: #2400-Folge #2403/#2404/#2405/#2406, #2409, #2415, #2417, #2398. Neue Issues: #2409, #2415, #2417 (alle noch am selben Tag geschlossen).
+- Bug-Queue am Tagesende: 3 (Untersuchung #2043, Engine-blockiert #2128, Gerätetipp #1569 - vvdiag-Probe wartet auf iPhone-Werte).
