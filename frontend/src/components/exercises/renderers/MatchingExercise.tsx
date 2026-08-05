@@ -40,6 +40,7 @@ import {
     type MatchingResolveEffect,
 } from "../../../lib/learning/matchingResolvePref";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
+import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,
@@ -132,20 +133,6 @@ function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
 
 
 
-/** Deterministic Fisher-Yates shuffle keyed by the
- *  exercise id so a reload reshuffles consistently within
- *  the same session but every fresh visit gets a new order. */
-function _shuffle<T>(items: readonly T[], seed: string): T[] {
-    const out = [...items];
-    let acc = 0;
-    for (const ch of seed) acc = (acc * 31 + ch.charCodeAt(0)) | 0;
-    for (let i = out.length - 1; i > 0; i--) {
-        acc = (acc * 1103515245 + 12345) & 0x7fffffff;
-        const j = acc % (i + 1);
-        [out[i], out[j]] = [out[j], out[i]];
-    }
-    return out;
-}
 
 /** Post-check toggle row: on a fully-correct match the #1218 success-merge
  *  (badge + "Continue"); otherwise the My-answers / Solve view toggle.
@@ -233,7 +220,7 @@ function MatchingExercise(
         });
 
     // Stable seed per-mount so reshuffling on every render
-    // doesn't move the right column under the user.
+    // doesn't move the columns under the user.
     const [shuffleSeed] = useState(
         () => `${exercise.id}#${Date.now() & 0xffff}`,
     );
@@ -247,12 +234,21 @@ function MatchingExercise(
         [pairs, productive],
     );
 
+    /** #2371 — both columns shuffle independently (distinct seed
+     *  suffixes) so neither side's authored order survives into the
+     *  display. ``leftTiles`` itself stays authored: index lookups
+     *  (prompt label, resolution view) rely on position == pair index. */
+    const displayLeftTiles: LeftTile[] = useMemo(
+        () => seededShuffle(leftTiles, `${shuffleSeed}#left`),
+        [leftTiles, shuffleSeed],
+    );
+
     const rightTiles: RightTile[] = useMemo(() => {
         const indexed = pairs.map((p, i) => ({
             originalIndex: i,
             label: productive ? p.left : p.right,
         }));
-        return _shuffle(indexed, shuffleSeed);
+        return seededShuffle(indexed, `${shuffleSeed}#right`);
     }, [pairs, shuffleSeed, productive]);
 
     /** Currently-selected left index (waiting for a right
@@ -577,7 +573,7 @@ function MatchingExercise(
                         data-testid="matching-left"
                         aria-label={leftLabel}
                     >
-                        {leftTiles.map((tile) => (
+                        {displayLeftTiles.map((tile) => (
                             <MatchingLeftTile
                                 key={tile.index}
                                 tile={tile}
