@@ -3479,6 +3479,7 @@ discover:
   pairs:
     heading: "언어 쌍"
     select: "{p} 선택"
+    choose: "언어 쌍 선택"
   filter:
     all: "전체"
     language: "언어"

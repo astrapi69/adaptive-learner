@@ -888,7 +888,7 @@ modusunabhängig.
 - [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):** die
       Tippfehler-Suche funktioniert ohne Netz genauso wie im Server-Modus
 
-### Discover Stufe 3: Sprachpaar-Matrix als alternativer Einstieg (EXP-048, #2337)
+### Discover Stufe 3: Sprachpaar-Auswahl (alternativer Einstieg, aufklappbar) (EXP-048, #2337, #2359)
 
 Ort: Entdecken (`/content?tab=discover`), Bereich "Sprachpaare" über der
 Trefferliste. Schwelle bewusst überschritten: laut Exploration erst ab etwa 30
@@ -897,18 +897,38 @@ Nutzer-Entscheidung schon jetzt gebaut. Sichtbar im Einstieg "Sprache lernen"
 und "Alles", sobald mehr als ein Sprachpaar belegt ist. In BEIDEN
 Speichermodi prüfbar; die Logik ist modusunabhängig.
 
-- [ ] Über der Liste erscheinen die belegten Sprachpaare als Knöpfe, z. B.
-      "Deutsch → Spanisch (3)", das meistbelegte zuerst
-- [ ] Ein Tippen auf ein Paar setzt Quell- UND Zielsprache zugleich und
+- [ ] Über der Liste steht EIN aufklappbarer Knopf, standardmäßig ZU; ohne
+      Auswahl trägt er "Sprachpaar wählen (N)" mit der Paarzahl (#2359)
+- [ ] Aufklappen (Klick/Tippen auf den Knopf) zeigt die belegten Paare, nach
+      QUELLSPRACHE gruppiert (Überschrift je Quellsprache, darunter die Ziele
+      mit Trefferzahl, das meistbelegte zuerst); erneutes Tippen klappt zu
+      (#2359)
+- [ ] Ein Tippen auf ein Ziel setzt Quell- UND Zielsprache zugleich und
       schaltet auf den Einstieg "Sprache lernen"; die Liste zeigt danach nur
-      noch die Sets dieses Paars
-- [ ] Das gewählte Paar ist hervorgehoben (aktiv markiert)
-- [ ] Ein Paar in einer ANDEREN Erklärsprache (z. B. "Englisch → Spanisch")
-      springt auch dorthin; die Quellsprache bleibt danach frei änderbar
-- [ ] Im Einstieg "Fachgebiet" erscheint die Sprachpaar-Matrix nicht
-- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):** die
-      Paar-Knöpfe sind tippbar (>=44px) und funktionieren ohne Netz genauso
-      wie im Server-Modus
+      noch die Sets dieses Paars (#2337)
+- [ ] Nach der Wahl fasst der eingeklappte Knopf sie zusammen, z. B.
+      "Deutsch → Spanisch"; das gewählte Ziel ist im aufgeklappten Zustand
+      hervorgehoben (aktiv markiert) (#2359)
+- [ ] Ein Paar in einer ANDEREN Erklärsprache (z. B. Gruppe "Englisch",
+      Ziel "Spanisch") springt auch dorthin; die Quellsprache bleibt danach
+      frei änderbar (#2337)
+- [ ] Im Einstieg "Fachgebiet" erscheint die Sprachpaar-Auswahl nicht (#2337)
+- [ ] Fahnen-Icons: vor jedem Sprachnamen steht ein Flaggen-Emoji - in den
+      Gruppen-Überschriften und Ziel-Knöpfen der Paar-Auswahl UND in den
+      Quell-/Zielsprache-Menüs; der Sprachname bleibt daneben stehen, sodass
+      auf Plattformen ohne Flaggen-Emoji (z. B. Windows) weiter der Name lesbar
+      ist (#2359). Hinweis: eine Sprache ist kein Land, die Zuordnung ist eine
+      bewusste Konvention (Englisch -> UK, Portugiesisch -> Portugal)
+- [ ] Tastatur: der Knopf ist mit Tab erreichbar und mit Enter/Leertaste auf-
+      und zuklappbar; im aufgeklappten Zustand sind die Ziel-Knöpfe per Tab
+      erreichbar (#2359)
+- [ ] Telefon (schmale Breite): eingeklappt kostet die Auswahl EINE Zeile;
+      aufgeklappt bleibt der Inhalt scrollbar und frisst nicht die halbe Höhe
+      (#2359)
+- [ ] **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):** der
+      Aufklapp-Knopf und die Ziel-Knöpfe sind tippbar (>=44px), das Auf- und
+      Zuklappen funktioniert, und die Auswahl wirkt ohne Netz genauso wie im
+      Server-Modus (#2359)
 
 ### Set-Status bleibt erhalten (aktiv/zurueckgestellt/abgeschlossen, beide Modi)
 

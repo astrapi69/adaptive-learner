@@ -3471,6 +3471,7 @@ discover:
   pairs:
     heading: "Pares de idiomas"
     select: "Elegir {p}"
+    choose: "Elegir un par de idiomas"
   filter:
     all: "Todos"
     language: "Idioma"

@@ -3780,7 +3780,8 @@
     },
     "pairs": {
       "heading": "言語ペア",
-      "select": "{p} を選択"
+      "select": "{p} を選択",
+      "choose": "言語ペアを選択"
     },
     "filter": {
       "all": "すべて",

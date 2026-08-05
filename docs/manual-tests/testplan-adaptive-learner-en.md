@@ -828,7 +828,7 @@ the logic is mode-independent.
 - [ ] **iOS standalone (added to home screen, Dexie mode):** typo search works
       offline exactly as in server mode
 
-### Discover Stage 3: language-pair matrix as an alternative entry (EXP-048, #2337)
+### Discover Stage 3: language-pair selection (alternative entry, collapsible) (EXP-048, #2337, #2359)
 
 Where: Discover (`/content?tab=discover`), the "Language pairs" area above the
 result list. Threshold deliberately overridden: the exploration scheduled this
@@ -837,17 +837,34 @@ decision. Shown in the "Learn a language" and "Everything" entries once more
 than one pair is populated. Testable in BOTH storage modes; the logic is
 mode-independent.
 
-- [ ] The populated language pairs appear above the list as buttons, e.g.
-      "German → Spanish (3)", most-populated first
-- [ ] Tapping a pair presets BOTH the source and target language at once and
+- [ ] Above the list sits ONE collapsible button, collapsed by default; with no
+      selection it reads "Choose a language pair (N)" with the pair count (#2359)
+- [ ] Expanding (click/tap the button) shows the populated pairs grouped by
+      SOURCE language (one heading per source, its targets with counts below,
+      most-populated first); tapping again collapses it (#2359)
+- [ ] Tapping a target presets BOTH the source and target language at once and
       switches to the "Learn a language" entry; the list then shows only that
-      pair's sets
-- [ ] The chosen pair is highlighted (marked active)
-- [ ] A pair in a DIFFERENT instruction language (e.g. "English → Spanish")
-      jumps there too; the source language stays freely changeable afterwards
-- [ ] The pair matrix is not shown in the "Subject" entry
-- [ ] **iOS standalone (added to home screen, Dexie mode):** the pair buttons
-      are tappable (>=44px) and work offline exactly as in server mode
+      pair's sets (#2337)
+- [ ] After the choice the collapsed button summarizes it, e.g.
+      "German → Spanish"; the chosen target is highlighted (marked active) when
+      expanded (#2359)
+- [ ] A pair in a DIFFERENT instruction language (e.g. the "English" group,
+      "Spanish" target) jumps there too; the source language stays freely
+      changeable afterwards (#2337)
+- [ ] The pair selection is not shown in the "Subject" entry (#2337)
+- [ ] Flag icons: each language name is prefixed with a flag emoji - in the
+      pair selection's group headings and target buttons AND in the
+      source/target language menus; the language name stays next to it, so on
+      platforms without flag emoji (e.g. Windows) the name is still readable
+      (#2359). Note: a language is not a country; the mapping is a deliberate
+      convention (English -> UK, Portuguese -> Portugal)
+- [ ] Keyboard: the button is reachable via Tab and toggles open/closed with
+      Enter/Space; when expanded, the target buttons are reachable via Tab (#2359)
+- [ ] Phone (narrow width): collapsed the selection costs ONE line; expanded the
+      content stays scrollable and does not eat half the screen height (#2359)
+- [ ] **iOS standalone (added to home screen, Dexie mode):** the disclosure
+      button and the target buttons are tappable (>=44px), toggling works, and
+      the selection acts offline exactly as in server mode (#2359)
 
 ### Set status persists (active/deferred/completed, both modes)
 
