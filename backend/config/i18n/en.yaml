@@ -2091,6 +2091,9 @@ content:
     working: "Exporting…"
     done: "Your set was pushed to the repository."
     failed: "Export failed."
+    quality_issues: "The quality check found issues. Content-repo gates would reject these:"
+    export_anyway: "Export anyway"
+    renamed_note: "Lesson files were renamed with ordering prefixes (NN-) so the display order matches the lesson order."
   anki_export:
     button: "Anki export"
   discover_more: "Find more content"
@@ -2387,6 +2390,7 @@ content:
     back_language_mismatch: "Lesson '{lesson}': card '{card}' back does not look like {source}."
     free_text_too_few_accepts: "Lesson '{lesson}': free-text exercise '{exercise}' needs at least {min} accepted answers."
     matching_too_few_pairs: "Lesson '{lesson}': matching exercise '{exercise}' needs at least {min} pairs."
+    matching_duplicate_left: "Lesson '{lesson}': matching exercise '{exercise}' repeats the left value '{value}' - unsolvable for the learner."
     missing_distractors: "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options)."
     non_cefr_level: Level '{level}' is not a CEFR band (A1-C2).
     level_too_complex: "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected)."

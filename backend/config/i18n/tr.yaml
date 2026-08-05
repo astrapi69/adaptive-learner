@@ -2080,6 +2080,9 @@ content:
     working: "Dışa aktarılıyor…"
     done: "Setiniz depoya gönderildi."
     failed: "Dışa aktarma başarısız."
+    quality_issues: "Kalite denetimi sorunlar buldu. İçerik deposu kapıları bunları reddederdi:"
+    export_anyway: "Yine de dışa aktar"
+    renamed_note: "Görüntüleme sırası ders sırasıyla eşleşsin diye ders dosyaları sıralama önekleriyle (NN-) yeniden adlandırıldı."
   anki_export:
     button: "Anki dışa aktarma"
   discover_more: "Daha fazla içerik bul"
@@ -2376,6 +2379,7 @@ content:
     back_language_mismatch: "'{lesson}' dersi: '{card}' kartının arka yüzü {source} gibi görünmüyor."
     free_text_too_few_accepts: "'{lesson}' dersi: serbest metin alıştırması '{exercise}' en az {min} kabul edilen yanıt gerektirir."
     matching_too_few_pairs: "'{lesson}' dersi: eşleştirme alıştırması '{exercise}' en az {min} çift gerektirir."
+    matching_duplicate_left: "'{lesson}' dersi: '{exercise}' eşleştirme alıştırması sol değeri '{value}' tekrarlıyor - öğrenci için çözülemez."
     missing_distractors: "'{lesson}' dersi: '{exercise}' alıştırması çeldirici (yanlış seçenek) gerektirir."
     non_cefr_level: "'{level}' seviyesi bir CEFR bandı değil (A1-C2)."
     level_too_complex: "'{lesson}' dersi: metin sayfa başına ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir)."
