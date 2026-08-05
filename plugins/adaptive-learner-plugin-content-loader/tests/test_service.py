@@ -686,3 +686,78 @@ class TestLessonRead:
     ) -> None:
         service = ContentLoaderService(cache_root=tmp_path)
         assert service.list_cached_lesson_filenames(SOURCE, SET_ID) == []
+
+    def test_list_cached_lesson_filenames_follows_manifest_order(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """#2367: ``metadata.lessons`` in the cached set manifest is the
+        display order. Lexicographic sorting breaks mixed 2-digit/3-digit
+        prefixes (``100-`` sorts between ``10-`` and ``11-``); the manifest
+        order is authoritative, undeclared leftovers append sorted."""
+        from adaptive_learner_content_loader.cache import store_set
+
+        manifest_yaml = textwrap.dedent(
+            """
+            schema_version: '1.0'
+            name: Psych Intro
+            metadata:
+              lessons:
+                - 10-a.json
+                - 99-y.json
+                - 100-z.json
+            sets:
+              - id: language-fr-a1
+                title: French A1
+                language: fr
+                level: A1
+                version: '1.0.0'
+                lesson_count: 3
+                domain: language
+            """
+        ).strip()
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            "1.0.0",
+            manifest_yaml=manifest_yaml,
+            lessons={
+                "100-z.json": _make_lesson("100", "Z"),
+                "10-a.json": _make_lesson("10", "A"),
+                "99-y.json": _make_lesson("99", "Y"),
+                "zz-extra.json": _make_lesson("zz", "E"),
+            },
+        )
+        service = ContentLoaderService(cache_root=tmp_path)
+        assert service.list_cached_lesson_filenames(SOURCE, SET_ID) == [
+            "10-a.json",
+            "99-y.json",
+            "100-z.json",
+            "zz-extra.json",
+        ]
+
+    def test_list_cached_lesson_filenames_sorted_without_declared_order(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """A manifest without ``metadata.lessons`` keeps the sorted
+        fallback - no behaviour change for existing sets."""
+        from adaptive_learner_content_loader.cache import store_set
+
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            "1.0.0",
+            manifest_yaml=REPO_MANIFEST,
+            lessons={
+                "02-b.json": _make_lesson("02", "B"),
+                "01-a.json": _make_lesson("01", "A"),
+            },
+        )
+        service = ContentLoaderService(cache_root=tmp_path)
+        assert service.list_cached_lesson_filenames(SOURCE, SET_ID) == [
+            "01-a.json",
+            "02-b.json",
+        ]
