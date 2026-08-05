@@ -25,9 +25,9 @@ wird lokal zwischengespeichert (im Dateisystem bei Backend-
 Betrieb, in IndexedDB im reinen Browser-Modus), sodass du
 nach dem ersten Download offline lernen kannst.
 
-Die gebündelte Bibliothek ist auf **26 Content-Sets - 424
-Lektionen / 5405 Karten** über 10 Content-Sprachen und 5
-Domänen gewachsen. Jedes Release bringt neue hinzu - siehe
+Die gebündelte Bibliothek wächst über mehrere Content-Sprachen
+und Domänen; den aktuellen Bestand zeigt der Set-Browser.
+Jedes Release bringt neue Sets hinzu - siehe
 das
 [Set-Repo](https://github.com/astrapi69/adaptive-learner-content)
 für den aktuellen Katalog.
