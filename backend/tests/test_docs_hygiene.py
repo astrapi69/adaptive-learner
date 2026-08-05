@@ -172,6 +172,62 @@ def test_umlaut_ratchet_update_baseline_freezes_current(tmp_path: Path) -> None:
     assert _run(tmp_path, "--only", "umlaut", baseline=baseline).returncode == 0
 
 
+# --- #2289: locale scoping (German-substitute stems collide with es/pt/fr) ---
+
+
+def _help(root: Path, locale: str) -> Path:
+    d = _docs(root) / "help" / locale
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def test_ignores_non_german_help_locale_false_positives(tmp_path: Path) -> None:
+    """Spanish 'fuera'/'fuerza'/'esfuerzo' contain the stem 'fuer' but are
+    correct Spanish - they must NOT trip the German-substitute ratchet
+    (#2289). A German help page keeps the scan non-empty."""
+    (_help(tmp_path, "es") / "guide.md").write_text(
+        "La sesion fuera de tema, con mas fuerza y esfuerzo.", encoding="utf-8"
+    )
+    (_help(tmp_path, "de") / "guide.md").write_text(
+        "Alles korrekt, keine Ersatzschreibung hier.", encoding="utf-8"
+    )
+    _track(tmp_path)
+    baseline = tmp_path / "baseline.json"
+    _write_baseline(baseline, 0)
+    r = _run(tmp_path, "--only", "umlaut", baseline=baseline)
+    assert r.returncode == 0, r.stdout  # the 3 Spanish 'fuer' substrings are out of scope
+    # The de page is in scope, the es page is not.
+    assert "scanned 1 tracked file" in r.stdout, r.stdout
+
+
+def test_counts_substitutes_in_german_help_de(tmp_path: Path) -> None:
+    """docs/help/de IS German prose - real substitutes there still fail."""
+    (_help(tmp_path, "de") / "guide.md").write_text(
+        "Das ist fuer dich waehrend der Sitzung.", encoding="utf-8"
+    )
+    _track(tmp_path)
+    baseline = tmp_path / "baseline.json"
+    _write_baseline(baseline, 0)
+    r = _run(tmp_path, "--only", "umlaut", baseline=baseline)
+    assert r.returncode != 0, r.stdout
+    assert "count rose" in r.stdout
+    assert "fuer" in r.stdout
+
+
+def test_counts_substitutes_in_non_help_german_docs(tmp_path: Path) -> None:
+    """explorations/journal/manual-tests are German-adjacent prose and stay in
+    scope - the inflected leaks (aenderungen, uebersichtstabelle) live there."""
+    exp = _docs(tmp_path) / "explorations"
+    exp.mkdir(parents=True, exist_ok=True)
+    (exp / "note.md").write_text("Uebersicht der Aenderungen.", encoding="utf-8")
+    _track(tmp_path)
+    baseline = tmp_path / "baseline.json"
+    _write_baseline(baseline, 0)
+    r = _run(tmp_path, "--only", "umlaut", baseline=baseline)
+    assert r.returncode != 0, r.stdout
+    assert "count rose" in r.stdout
+
+
 # --- exploration-index orphan check ------------------------------------------
 
 

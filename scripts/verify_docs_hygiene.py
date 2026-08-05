@@ -3,12 +3,25 @@
 
 Two checks over the documentation tree:
 
-1. Umlaut ratchet - counts ASCII substitute-spellings across the docs prose
-   (``docs/**/*.md``). The denylist is EVIDENCE-BASED: each stem is a form
-   that actually leaked in a real incident (2026-07-30), never a bare digraph
-   scan, so legitimate digraph words (Quelle, neue, aktuell) can never fire.
-   The count is ratcheted against a frozen baseline: it may not rise; when it
-   falls, lower the baseline (``--update-baseline``) so the gain is locked in.
+1. Umlaut ratchet - counts ASCII substitute-spellings across the GERMAN-prose
+   docs (``docs/**/*.md`` EXCEPT the non-German help locale trees, see below).
+   The denylist is EVIDENCE-BASED: each stem is a form that actually leaked in
+   a real incident (2026-07-30), never a bare digraph scan, so legitimate
+   digraph words (Quelle, neue, aktuell) can never fire. The count is ratcheted
+   against a frozen baseline: it may not rise; when it falls, lower the baseline
+   (``--update-baseline``) so the gain is locked in.
+
+   Locale scoping (#2289): the German stems are legitimate SUBSTRINGS of words
+   in other natural languages - Spanish/Portuguese ``fuera``/``fuerte``/
+   ``esfuerzo`` all contain ``fuer`` - so scanning the non-German help locales
+   produced false positives on correct foreign prose. The German-substitute
+   stems are inflected/compound forms (``aenderungen``, ``uebersichtstabelle``),
+   so a word-boundary match would MISS the real leaks; the fix is to scope the
+   scan to German prose instead. Only ``docs/help/de`` among the ``docs/help/*``
+   locale trees is scanned; every other docs surface (explorations, journal,
+   manual-tests, dev docs, ...) is German or German-adjacent prose where the
+   stems are meaningful and free of foreign-language collisions. The denylist is
+   NOT loosened - the SCOPE was wrong, not the stems.
 
 2. Exploration-index orphan - every ``docs/explorations/EXP-*.md`` must have a
    row in ``EXP-INDEX.md``. File -> row direction ONLY; the hand-maintained
@@ -75,12 +88,34 @@ def _tracked_markdown(root: Path, subdir: str) -> list[Path]:
     return [p for p in paths if p.exists()]
 
 
+def _is_german_prose(md: Path, root: Path) -> bool:
+    """True unless ``md`` is a non-German help-locale page (#2289).
+
+    Under ``docs/help/<locale>/`` only ``de`` is German prose; the other
+    locales are natural-language content in other languages where the German
+    substitute stems (``fuer`` in Spanish ``fuera``, ...) are legitimate
+    substrings. Every non-``docs/help`` surface is German or German-adjacent
+    prose and stays in scope.
+    """
+    parts = md.relative_to(root).parts
+    if len(parts) >= 3 and parts[0] == "docs" and parts[1] == "help":
+        return parts[2] == "de"
+    return True
+
+
 def _count_substitutes(root: Path) -> tuple[int, int, list[str]]:
-    """Return (total_occurrences, files_scanned, findings) over tracked docs."""
+    """Return (total_occurrences, files_scanned, findings) over German-prose docs.
+
+    Non-German help-locale pages are excluded (#2289): the stems collide with
+    legitimate Spanish/Portuguese/French words. ``files`` counts only the
+    scanned (in-scope) files, so the reported set matches what was measured.
+    """
     total = 0
     files = 0
     findings: list[str] = []
     for md in sorted(_tracked_markdown(root, "docs")):
+        if not _is_german_prose(md, root):
+            continue
         files += 1
         text = md.read_text(encoding="utf-8", errors="replace").lower()
         for stem in SUBSTITUTE_STEMS:
@@ -99,8 +134,11 @@ def _write_umlaut_baseline(baseline_path: Path, total: int, files: int) -> None:
                 "umlaut_files_scanned": files,
                 "rationale": (
                     "Frozen ASCII substitute-spelling count across the git-tracked "
-                    "docs/**/*.md (index enumeration, #2217 - gitignored local "
-                    "artifacts must not move the number). "
+                    "GERMAN-prose docs/**/*.md - the non-German help locale trees "
+                    "(docs/help/<locale> except de) are excluded (#2289: their "
+                    "Spanish/Portuguese words fuera/fuerte contain the stem fuer). "
+                    "Index enumeration (#2217 - gitignored local artifacts must "
+                    "not move the number). "
                     "Stems are evidence-based (real 2026-07-30 leaks), not a "
                     "completeness list. This is an ERROR-COUNTER ratchet, not a "
                     "budget: substitutes should be zero, so any rise is a "
