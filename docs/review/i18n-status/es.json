@@ -15596,17 +15596,6 @@
     "target_hash": "168875aa1808",
     "checked_at": "fr+es full run"
   },
-  "lesson.exercise.matching.instruction_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "Correct and idiomatic translation.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "bf66b4fa79f3",
-    "target_hash": "535d8aaa981d",
-    "checked_at": "fr+es full run"
-  },
   "lesson.exercise.matching.instructions": {
     "verdict": "ok",
     "severity": "low",
@@ -15630,17 +15619,6 @@
     "checked_at": "fr+es full run"
   },
   "lesson.exercise.matching.left_label": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "Correct translation.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "29c820dfc81c",
-    "target_hash": "04a29bd301ff",
-    "checked_at": "fr+es full run"
-  },
-  "lesson.exercise.matching.left_label_knowledge": {
     "verdict": "ok",
     "severity": "low",
     "note": "Correct translation.",
@@ -15726,17 +15704,6 @@
     "tier1_verdict": "ok",
     "de_hash": "08145060a96d",
     "target_hash": "f36e5b259bc9",
-    "checked_at": "fr+es full run"
-  },
-  "lesson.exercise.matching.right_label_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "Correct translation with proper diacritic.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "9813fafb098c",
-    "target_hash": "426d437719d6",
     "checked_at": "fr+es full run"
   },
   "lesson.exercise.matching.right_label_productive": {

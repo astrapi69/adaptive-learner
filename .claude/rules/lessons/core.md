@@ -31,6 +31,31 @@ by a human, and to your own previous step - a hook, a merge or a push can
 undo it silently. Related: "Push ist nicht gelandet" and the stacked-PR rule
 that a change counts as landed only when proven on the integration branch.
 
+### After a merge: is the issue closed, AND did the change land? (#2410)
+
+A merged PR proves a merge happened, not that the work arrived. Check both
+after every merge; when either fails, REPORT it - the mismatch is the
+finding, not something to quietly patch.
+
+- **Issue closed?** If not: a missing/misspelled closing keyword, or an
+  issue in another repo where auto-close never fires. The harmless
+  direction - tracker noise.
+- **Expected files on the target branch?** Verify on branch CONTENT
+  (`git log origin/develop -- <path>`, read the diff), not the merge
+  message - the message says a merge happened, not what it carried. The
+  dangerous direction: a squash freezes the branch at merge time, so any
+  push AFTER the merge is lost with nothing turning red - the issue
+  auto-closes, the content is absent, and from outside it reads as success.
+- **Closing keyword on the RIGHT number?** An existing foreign number is
+  worse than a missing one: the merge closes someone else's open finding.
+
+Precedents, one week in 2026-08: a squash took only the first of three
+commits, stranding a classifier, translations and a gate on the source
+branch while the PR looked complete; another stranded a push made 90s after
+the merge; a guessed closing number belonged to another lane and would have
+closed a foreign finding; twice an issue was reported done while still open.
+No gate - a hand-check after the merge, not machinery.
+
 ## Claimed enforcement without enforcement
 
 Three different mechanisms produce one identical state - the system says a

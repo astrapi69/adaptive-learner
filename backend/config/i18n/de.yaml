@@ -1805,15 +1805,14 @@ lesson:
       result: "Punktzahl: {correct} / {total}"
       instructions: "Wähle links ein Element, dann rechts die passende Übersetzung."
       left_label: "Begriff"
+      column_a: "Spalte A"
+      column_b: "Spalte B"
       right_label: "Übersetzung"
       empty: "Diese Zuordnungs-Übung hat keine Paare."
       left_label_productive: Bedeutung
       right_label_productive: Begriff
-      left_label_knowledge: "Begriff"
       correct_hint: "Richtige Antwort: {label}"
       your_answer: "Deine Antwort: {label}"
-      right_label_knowledge: "Definition"
-      instruction_knowledge: "Ordne jeden Begriff seiner Definition zu."
       instructions_knowledge: "Wähle links ein Element, dann rechts die passende Zuordnung."
       selected_sr: "Ausgewählt: {label}"
       resolve: "Auflösen"
