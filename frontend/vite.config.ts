@@ -9,7 +9,7 @@ import {buildVersion} from "@astrapi69/vite-plugin-build-version";
 
 import pkg from "./package.json" with {type: "json"};
 import {buildPwaManifest} from "./src/pwa/pwa-manifest";
-import {robotsPolicyPlugin} from "./src/build/robots-policy";
+import {robotsPolicyPlugin} from "./src/deploy/robots-policy";
 
 /**
  * Base path for the public deployment. GH Pages serves the

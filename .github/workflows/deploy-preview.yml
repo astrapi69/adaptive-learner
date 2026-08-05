@@ -53,7 +53,7 @@ env:
   VITE_STORAGE_MODE: "dexie"
   VITE_API_BASE: ""
   # #2404 — the preview is a STAGING copy and must not be indexable.
-  # The robots-policy Vite plugin (frontend/src/build/robots-policy.ts)
+  # The robots-policy Vite plugin (frontend/src/deploy/robots-policy.ts)
   # rewrites every delivered HTML document to a noindex robots meta and
   # emits a disallow-all robots.txt. Production deploys leave this unset.
   VITE_ROBOTS_POLICY: "noindex"
