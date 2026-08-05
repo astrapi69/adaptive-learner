@@ -105,6 +105,43 @@ describe("buildExtensionCard — graded-quiz", () => {
     expect(extensionPayloadErrors(card)).toEqual([]);
   });
 
+  it("normalizes an omitted pass_threshold to a real passing bar (#2364)", () => {
+    const card = buildExtensionCard(
+      {
+        questions: [
+          { prompt: "Q?", type: "free_text", accept: ["a"], points: 1 },
+        ],
+      },
+      GRADED_QUIZ_EXT_TYPE,
+      "Quiz",
+    ) as ExtensionCard;
+    expect((card.ext_payload as { pass_threshold?: number }).pass_threshold).toBe(60);
+  });
+
+  it("normalizes a trivially-passable pass_threshold of 0 to a real bar (#2364)", () => {
+    const card = buildExtensionCard(
+      {
+        pass_threshold: 0,
+        questions: [{ prompt: "Q?", type: "free_text", accept: ["a"], points: 1 }],
+      },
+      GRADED_QUIZ_EXT_TYPE,
+      "Quiz",
+    ) as ExtensionCard;
+    expect((card.ext_payload as { pass_threshold?: number }).pass_threshold).toBe(60);
+  });
+
+  it("keeps a valid positive pass_threshold as authored (#2364)", () => {
+    const card = buildExtensionCard(
+      {
+        pass_threshold: 75,
+        questions: [{ prompt: "Q?", type: "free_text", accept: ["a"], points: 1 }],
+      },
+      GRADED_QUIZ_EXT_TYPE,
+      "Quiz",
+    ) as ExtensionCard;
+    expect((card.ext_payload as { pass_threshold?: number }).pass_threshold).toBe(75);
+  });
+
   it("defaults missing points to 1 so the quiz still validates", () => {
     const card = buildExtensionCard(
       {
