@@ -1,35 +1,34 @@
 /**
- * ViewportDiagnostic (#1569) — an opt-in, on-device probe for the iOS tap-offset.
+ * ViewportDiagnostic (#1569) — an opt-in, on-device probe for the tap-offset.
  *
- * The tap-offset bug (a touch/caret landing ~1-2 lines below its visible target)
- * does NOT reproduce in Chromium/headless, so it can only be measured on real
- * iOS hardware. This overlay surfaces, live on the device, the two things the
+ * The tap-offset bug (a touch landing ~1-2 lines below its visible target) only
+ * appears on a real device with a real on-screen keyboard, so it can only be
+ * measured by hand. This overlay surfaces, live on the phone, the two things the
  * fix decision hinges on:
  *
  *   1. WHERE the phantom offset lives — ``window.scrollY`` (which
  *      {@link useVisualViewportRealign} can reset) vs ``visualViewport.offsetTop``
  *      (which it cannot) — plus ``scale`` (pinch-zoom) and the keyboard shrink.
  *   2. HOW BIG the hit-test desync is, per tap: on every ``pointerdown`` it
- *      records the element that ACTUALLY received the event and the vertical
- *      gap between the finger's Y and that element's rendered top
- *      (``deltaY``). A large positive ``deltaY`` with the finger over empty
- *      space is the bug, quantified; correlating it with ``winScrollY`` vs
- *      ``vvOffsetTop`` tells us which lever is the real fix.
+ *      records the element that actually received the event and ``ΔY`` (its
+ *      rendered top minus the finger's Y).
  *
- * Strictly opt-in and inert for normal users: it renders only when enabled via
- * ``?vvdiag=1`` (persisted, cleared with ``?vvdiag=0``) or the
- * ``adaptive-learner.vv_diag`` flag. The overlay is ``pointer-events: none`` so
- * it can never alter the hit-testing it measures. Diagnostic, so it fails open:
- * a missing ``visualViewport`` degrades to a no-op, never a crash.
+ * Made phone-friendly (#1569 follow-up): a readable card, a running tap HISTORY,
+ * and a **Copy** button that puts the whole report on the clipboard so the values
+ * can be pasted straight back — no Mac / Web-Inspector needed. A selectable text
+ * block is the fallback if the clipboard API is blocked. Taps ON the panel are
+ * ignored, so copying never pollutes the measurement.
  *
- * @example
- * // Enable on the device: open the site with ?vvdiag=1 appended to the URL.
- * // App() renders <ViewportDiagnostic /> unconditionally; it self-gates.
+ * Strictly opt-in and inert for normal users: renders only with ``?vvdiag=1``
+ * (persisted; ``?vvdiag=0`` clears) or the ``adaptive-learner.vv_diag`` flag.
+ * Fails open — a missing ``visualViewport`` degrades to a no-op.
  */
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const FLAG_KEY = "adaptive-learner.vv_diag";
+const PANEL_TESTID = "viewport-diagnostic";
+const MAX_TAPS = 8;
 
 /** Whether the probe is enabled (URL param wins and persists; else the flag). */
 export function viewportDiagnosticEnabled(): boolean {
@@ -51,7 +50,6 @@ export function viewportDiagnosticEnabled(): boolean {
 }
 
 interface TapInfo {
-  x: number;
   y: number;
   tag: string;
   testid: string;
@@ -68,10 +66,9 @@ interface Snapshot {
   vvHeight: number;
   innerHeight: number;
   keyboardShrink: number;
-  tap: TapInfo | null;
 }
 
-function readSnapshot(prevTap: TapInfo | null): Snapshot {
+function readSnapshot(): Snapshot {
   const vv = window.visualViewport;
   const innerHeight = window.innerHeight;
   const vvHeight = vv ? vv.height : innerHeight;
@@ -82,26 +79,55 @@ function readSnapshot(prevTap: TapInfo | null): Snapshot {
     vvHeight: Math.round(vvHeight),
     innerHeight: Math.round(innerHeight),
     keyboardShrink: Math.round(innerHeight - vvHeight),
-    tap: prevTap,
   };
+}
+
+function activeFix(): string {
+  if (typeof document === "undefined") return "off";
+  return document.documentElement.dataset.vvfix ?? "off";
+}
+
+function tapLine(t: TapInfo): string {
+  return `y=${t.y} ${t.tag}[${t.testid}] top=${t.rectTop} ΔY=${t.deltaY} @winY=${t.atWinScrollY} @vvTop=${t.atVvOffsetTop}`;
+}
+
+/** The plain-text report the Copy button (and the selectable block) share. */
+function buildReport(snap: Snapshot, taps: TapInfo[]): string {
+  const head =
+    `[vvdiag] fix=${activeFix()} winY=${snap.winScrollY} vvTop=${snap.vvOffsetTop} ` +
+    `scale=${snap.vvScale} kbd=${snap.keyboardShrink} vvH=${snap.vvHeight} innerH=${snap.innerHeight}`;
+  const body = taps.length
+    ? taps.map((t, i) => `${i + 1}. ${tapLine(t)}`).join("\n")
+    : "(no taps yet)";
+  return `${head}\ntaps (newest first):\n${body}`;
 }
 
 export default function ViewportDiagnostic() {
   const [enabled] = useState(viewportDiagnosticEnabled);
   const [snap, setSnap] = useState<Snapshot | null>(null);
+  const [taps, setTaps] = useState<TapInfo[]>([]);
+  const [copied, setCopied] = useState(false);
+  // Latest values kept in refs so the Copy handler reads them without re-binding.
+  const snapRef = useRef<Snapshot | null>(null);
+  const tapsRef = useRef<TapInfo[]>([]);
 
   useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
-    let tap: TapInfo | null = null;
-    const refresh = () => setSnap(readSnapshot(tap));
+    const refresh = () => {
+      const s = readSnapshot();
+      snapRef.current = s;
+      setSnap(s);
+    };
 
     const onPointerDown = (e: PointerEvent) => {
       const el = e.target as Element | null;
+      // Ignore taps ON the diagnostic panel (the Copy button, the text block) so
+      // they never pollute the measured history.
+      if (el?.closest?.(`[data-testid="${PANEL_TESTID}"]`)) return;
       const rect = el?.getBoundingClientRect();
       const rectTop = rect ? Math.round(rect.top) : 0;
       const vv = window.visualViewport;
-      tap = {
-        x: Math.round(e.clientX),
+      const tap: TapInfo = {
         y: Math.round(e.clientY),
         tag: el ? el.tagName.toLowerCase() : "?",
         testid: (el?.getAttribute?.("data-testid") ?? "") || "-",
@@ -110,11 +136,11 @@ export default function ViewportDiagnostic() {
         atWinScrollY: Math.round(window.scrollY),
         atVvOffsetTop: vv ? Math.round(vv.offsetTop) : 0,
       };
-      // Also log each tap so a remote-debugging console (Android chrome://inspect,
-      // Safari Web Inspector) captures a copyable history — a small overlay on a
-      // phone is hard to transcribe. Guarded by `enabled`, so silent otherwise.
       // eslint-disable-next-line no-console
       console.log("[vvdiag]", JSON.stringify(tap));
+      const next = [tap, ...tapsRef.current].slice(0, MAX_TAPS);
+      tapsRef.current = next;
+      setTaps(next);
       refresh();
     };
 
@@ -132,25 +158,60 @@ export default function ViewportDiagnostic() {
     };
   }, [enabled]);
 
+  const handleCopy = useCallback(() => {
+    const report = buildReport(
+      snapRef.current ?? readSnapshot(),
+      tapsRef.current,
+    );
+    const done = () => {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    };
+    try {
+      void navigator.clipboard?.writeText(report).then(done, done);
+    } catch {
+      done();
+    }
+  }, []);
+
   if (!enabled || !snap) return null;
-  const t = snap.tap;
+  const report = buildReport(snap, taps);
   return (
     <div
-      className="pointer-events-none fixed inset-x-0 top-0 z-[9999] select-none border-b border-border bg-card/95 px-2 py-1 font-mono text-[11px] leading-tight text-fg-primary"
-      data-testid="viewport-diagnostic"
+      className="fixed inset-x-0 top-0 z-[9999] border-b border-border bg-card/95 px-2 py-1.5 font-mono text-[12px] leading-snug text-fg-primary"
+      data-testid={PANEL_TESTID}
+      style={{ pointerEvents: "none" }}
     >
-      <div>
-        winY={snap.winScrollY} vvTop={snap.vvOffsetTop} scale={snap.vvScale} kbd=
-        {snap.keyboardShrink} (vvH={snap.vvHeight}/innerH={snap.innerHeight}) fix=
-        {typeof document !== "undefined"
-          ? (document.documentElement.dataset.vvfix ?? "off")
-          : "off"}
+      <div className="font-semibold" data-testid="viewport-diagnostic-values">
+        fix={activeFix()} winY={snap.winScrollY} vvTop={snap.vvOffsetTop} scale=
+        {snap.vvScale} kbd={snap.keyboardShrink}
       </div>
       <div data-testid="viewport-diagnostic-tap">
-        {t
-          ? `tap y=${t.y} → ${t.tag}[${t.testid}] top=${t.rectTop} ΔY=${t.deltaY} @winY=${t.atWinScrollY} @vvTop=${t.atVvOffsetTop}`
-          : "tap: (waiting for a tap…)"}
+        {taps[0]
+          ? `letzter Tipp: ${tapLine(taps[0])}`
+          : "letzter Tipp: (tippe irgendwo)"}
       </div>
+      <div className="mt-1 flex items-center gap-2" style={{ pointerEvents: "auto" }}>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="min-h-9 rounded-app border border-accent bg-accent px-3 text-[13px] font-semibold text-accent-foreground"
+          data-testid="viewport-diagnostic-copy"
+        >
+          {copied ? "Kopiert!" : "Werte kopieren"}
+        </button>
+        <span className="text-fg-muted">{taps.length} Tipps</span>
+      </div>
+      {/* Fallback if the clipboard API is blocked: a selectable block to
+          long-press-copy or screenshot. */}
+      <textarea
+        readOnly
+        value={report}
+        onFocus={(e) => e.currentTarget.select()}
+        className="mt-1 h-16 w-full resize-none rounded-app border border-border bg-[var(--bg-elevated)] p-1 text-[11px] text-fg-primary"
+        style={{ pointerEvents: "auto" }}
+        data-testid="viewport-diagnostic-report"
+      />
     </div>
   );
 }
