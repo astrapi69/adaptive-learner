@@ -29,8 +29,8 @@ anzeigt, serviert das iPhone noch die alte gecachte Version. Dann:
    In-App-Update-Hinweis erscheint (falls vorhanden) - annehmen.
 3. Danach mit `?vvdiag=1` (siehe unten) neu laden.
 
-Kontrolle: Oben muss eine dünne Leiste mit `winY=… vvTop=… scale=…` erscheinen.
-Erst dann ist der neue Build aktiv.
+Kontrolle: Oben muss eine Karte mit `winY=… vvTop=… scale=…` und einem Knopf
+**„Werte kopieren"** erscheinen. Erst dann ist der neue Build aktiv.
 
 ## Schritt 1: Die Messsonde einschalten
 
@@ -40,7 +40,9 @@ Erst dann ist der neue Build aktiv.
 https://astrapi69.github.io/adaptive-learner-content-test/?vvdiag=1
 ```
 
-Oben erscheint eine Leiste mit zwei Zeilen. Bedeutung:
+Oben erscheint eine Karte mit den Messwerten, dem letzten Tipp, einem Knopf
+**„Werte kopieren"** und einem auswählbaren Textfeld (dem vollständigen Bericht).
+Bedeutung der Felder:
 
 | Feld | Bedeutung |
 |------|-----------|
@@ -49,7 +51,11 @@ Oben erscheint eine Leiste mit zwei Zeilen. Bedeutung:
 | `scale` | Zoomstufe (1 = kein Pinch-Zoom) |
 | `kbd` | wie stark die Tastatur den sichtbaren Bereich verkleinert (px) |
 | `fix` | welcher Fix-Kandidat gerade aktiv ist (`off` = keiner) |
-| `tap …` | beim letzten Tipp: das getroffene Element und **`ΔY`** |
+| `letzter Tipp …` | beim letzten Tipp: das getroffene Element und **`ΔY`** |
+
+Die Karte sammelt automatisch die letzten 8 Tipps (im Textfeld unten, neueste
+zuerst). Tipps auf die Karte selbst (den Kopier-Knopf, das Textfeld) zählen
+nicht mit, verfälschen die Messung also nicht.
 
 **`ΔY` ist die Kennzahl.** Es ist der Abstand zwischen deiner Fingerspitze und
 der Oberkante des tatsächlich getroffenen Elements. `ΔY ≈ 0` heißt: der Tipp
@@ -69,6 +75,12 @@ daneben-Tipps (welche Seite, welches Element, `ΔY`, und ob `winY` oder `vvTop`
 gerade der von 0 verschiedene Wert ist).
 
 ## Schritt 3: Die Fix-Kandidaten durchprobieren
+
+Am aussagekräftigsten sind FÜNF kurze Durchgänge: **zuerst einer ohne `vvfix`**
+(Baseline, `fix=off` - der zeigt den Versatz), dann **je einer pro Kandidat**.
+So liefert der Test die Antwort gleich mit, statt nur die Messung - du siehst
+direkt, bei welchem Kandidaten `ΔY` verschwindet. Nach jedem Durchgang „Werte
+kopieren" und mir einfügen.
 
 Jetzt hängst du zusätzlich `&vvfix=<name>` an die URL und wiederholst Schritt 2.
 Probiere alle vier nacheinander und beobachte, bei welchem `ΔY` auf ~0 fällt und
@@ -91,23 +103,28 @@ Schalter aktiv ist. Was jeder Kandidat versucht:
 | `nolock` | `overflow:hidden` von `body` entfernen, natürliches Dokument-Scrollen |
 | `hardreset` | Scroll bei jeder Viewport-Änderung hart auf 0 zurücksetzen |
 
-## Schritt 4: Ergebnis zurückmelden
+## Schritt 4: Ergebnis zurückmelden (ein Tipp)
 
-Melde bitte:
+Nach ein paar daneben-Tipps: **„Werte kopieren"** in der Karte drücken (der
+Knopf zeigt kurz „Kopiert!") und den Text hier einfügen. Der Bericht enthält
+die Viewport-Werte und den Tipp-Verlauf - genau das, was ich brauche.
+
+Falls das Kopieren blockiert ist: das Textfeld unten in der Karte lange drücken,
+„Alles auswählen" → „Kopieren", oder einfach einen Screenshot schicken.
+
+Zusätzlich hilfreich (aber optional):
 
 1. **Welcher `vvfix` den Versatz beseitigt** (`ΔY ≈ 0`, Tipps landen richtig).
    Falls mehrere helfen, welcher am saubersten (ohne Nebenwirkung wie „Bild
    springt/vergrößert sich beim Tastatur-Öffnen").
-2. Optional die notierten Roh-Werte aus Schritt 2 (`ΔY` und `winY` vs. `vvTop`) -
-   damit lässt sich die Ursache zusätzlich absichern.
 
 Aus dem Gewinner baue ich den dauerhaften Fix (ohne Parameter, für alle Nutzer)
 und schließe #1569 ab.
 
 ## Optional: kopierbare Konsole (Mac + Safari)
 
-Das Overlay ist auf dem iPhone direkt lesbar - ein Screenshot reicht. Wer eine
-kopierbare Historie will, nutzt den Safari-Web-Inspector:
+Der „Werte kopieren"-Knopf macht das für die meisten Fälle überflüssig. Wer
+trotzdem die volle Konsolen-Historie will, nutzt den Safari-Web-Inspector:
 
 1. Am iPhone: Einstellungen → Safari → Erweitert → **Web-Inspector** aktivieren.
 2. iPhone per Kabel an den Mac, Safari am Mac öffnen.
