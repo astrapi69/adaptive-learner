@@ -19,6 +19,16 @@ human dispatches them and sees the result, and counting their last -
 often historical - red would leave this rollup permanently red, which
 is as ineffective as never reporting.
 
+This rollup EXCLUDES ITSELF from the counted set. It runs on `schedule`,
+so it is an active workflow with its own scheduled runs; once it goes red
+because another workflow was red, the next day it would count its own
+prior red run and stay red forever - independent of any real finding, the
+guard failing at the exact class it exists to prevent. The exclusion is
+derived from the run's own identity (`GITHUB_RUN_ID` -> `workflow_id`),
+not a name/path match (which breaks silently on a rename), and it is named
+in the measured set so a silent exception is never mistaken for an
+overlooked workflow.
+
 Honest framing: this replaces scanning the Actions tab with ONE place
 to look. It does not make looking unnecessary, and it is NOT a merge
 gate.
@@ -104,6 +114,30 @@ def resolve_repo(cli_repo: str | None) -> str:
     raise RuntimeError("could not resolve the repository (pass --repo owner/name)")
 
 
+def resolve_self_workflow_id(repo: str) -> int | None:
+    """The ``workflow_id`` of the run this script is executing in.
+
+    Derived from ``GITHUB_RUN_ID`` (the run's own identity), NOT from the
+    workflow's name or file path, so the self-exclusion in ``main`` survives a
+    rename of either - a name/path string match would break silently on a
+    rename. Returns ``None`` when there is no run to resolve (local / manual
+    invocation) or the lookup fails; the caller then counts every workflow and
+    SAYS so. That is the safe direction: including this workflow can only make
+    the rollup redder (re-exposing the self-count), never hide another
+    workflow's red.
+    """
+    run_id = os.environ.get("GITHUB_RUN_ID")
+    if not run_id:
+        return None
+    try:
+        payload = gh_api(f"repos/{repo}/actions/runs/{run_id}")
+    except RuntimeError:
+        return None
+    if isinstance(payload, dict) and isinstance(payload.get("workflow_id"), int):
+        return payload["workflow_id"]
+    return None
+
+
 def list_active_workflows(repo: str) -> list[dict]:
     """All active, file-backed workflows (drops dynamic/ dependabot entries)."""
     payload = gh_api(f"repos/{repo}/actions/workflows?per_page=100")
@@ -167,8 +201,11 @@ def main() -> int:
             print("FAIL red-runs-rollup: zero active workflows returned - "
                   "an empty set is not a clean one.")
             return 1
+        self_workflow_id = resolve_self_workflow_id(repo)
+        counted_workflows = [w for w in workflows if w.get("id") != self_workflow_id]
+        excluded_self = [w for w in workflows if w.get("id") == self_workflow_id]
         cutoff = datetime.now(UTC) - timedelta(days=args.max_age_days)
-        verdicts = [latest_counted_run(repo, w, cutoff) for w in workflows]
+        verdicts = [latest_counted_run(repo, w, cutoff) for w in counted_workflows]
     except RuntimeError as exc:
         print(f"FAIL red-runs-rollup (fail closed): {exc}")
         return 1
@@ -181,6 +218,16 @@ def main() -> int:
         f"red-runs-rollup: repo={repo} window={args.max_age_days}d "
         f"events={sorted(COUNTED_EVENTS)}"
     )
+    if excluded_self:
+        print(f"  self {excluded_self[0]['path']} excluded (own run's workflow "
+              f"id={self_workflow_id}) - a rollup that counts its own prior red "
+              f"stays red forever")
+    elif self_workflow_id is not None:
+        print(f"  self workflow id={self_workflow_id} excluded (not in the "
+              f"active-workflow list)")
+    else:
+        print("  note: self-workflow exclusion unavailable (no GITHUB_RUN_ID or "
+              "run lookup failed); counting every workflow including this one")
     for v in sorted(counted, key=lambda x: (not x.is_red, x.path)):
         marker = "RED " if v.is_red else "ok  "
         print(f"  {marker} {v.conclusion:<16} {v.event:<8} {v.created_at}  "
@@ -188,7 +235,8 @@ def main() -> int:
     for v in sorted(quiet, key=lambda x: x.path):
         print(f"  --   no schedule/push run in window       {v.path}")
     print(
-        f"checked {len(workflows)} active workflows: {len(counted)} with a "
+        f"checked {len(workflows)} active workflows "
+        f"({len(excluded_self)} self excluded): {len(counted)} with a "
         f"schedule/push run in the last {args.max_age_days} days, "
         f"{len(reds)} red, {len(quiet)} without a counted run."
     )
