@@ -91,7 +91,9 @@ export function robotsPolicyPlugin(policy: string | undefined): RobotsPolicyPlug
                 writeFileSync(file, rewriteRobotsMeta(readFileSync(file, "utf-8")), "utf-8");
             }
             writeFileSync(join(outDir, "robots.txt"), NOINDEX_ROBOTS_TXT, "utf-8");
-            console.log(
+            // console.warn, not log: the ESLint no-console rule allows only
+            // warn/error, and a delivery-changing rewrite deserves loudness.
+            console.warn(
                 `[robots-policy] noindex applied to ${htmlFiles.length} HTML file(s) + robots.txt disallow-all`,
             );
         },
