@@ -8,6 +8,8 @@
 import {describe, expect, it} from "vitest";
 import {parse as parseYaml} from "yaml";
 
+import officialSearchIndex from "./__fixtures__/search-index-official.json";
+
 import {
     buildManifestYaml,
     buildReadme,
@@ -79,6 +81,31 @@ describe("buildSearchIndexJson", () => {
         expect(sets[0].id).toBe("de-b2");
         expect(sets[0].lesson_count).toBe(2);
         expect(sets[0].card_count).toBe(22);
+    });
+
+    // #2300 - the exported index must carry the format's REQUIRED root fields
+    // (schema/search-index.schema.json: required [repo, schema_version, sets]),
+    // or the registry validator rejects an app-exported repo.
+    it("writes the required root fields repo + schema_version + sets", () => {
+        const data = JSON.parse(buildSearchIndexJson(INPUT));
+        expect(data.repo).toBe("teacher/de-b2");
+        expect(data.schema_version).toBe("1.0");
+        expect(Array.isArray(data.sets)).toBe(true);
+        expect(data.sets.length).toBeGreaterThan(0);
+        // ``generated`` (canonical name, NOT ``generated_at``) is an ISO stamp.
+        expect(typeof data.generated).toBe("string");
+        expect(Number.isNaN(Date.parse(data.generated))).toBe(false);
+        expect(data).not.toHaveProperty("generated_at");
+    });
+
+    // Pin the root shape against the REAL canonical index (the mirrored
+    // official fixture), so the app's second implementation of the format
+    // cannot drift from the generator's again (#2300, same class as #2299).
+    it("root keys match the canonical search-index format", () => {
+        const exported = JSON.parse(buildSearchIndexJson(INPUT));
+        expect(new Set(Object.keys(exported))).toEqual(
+            new Set(Object.keys(officialSearchIndex)),
+        );
     });
 });
 
