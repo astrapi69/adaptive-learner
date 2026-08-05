@@ -29,6 +29,13 @@ not a name/path match (which breaks silently on a rename), and it is named
 in the measured set so a silent exception is never mistaken for an
 overlooked workflow.
 
+Each red run is self-attributing (#2430): the rollup prints the head
+SHA the nightly measured and the commits since that workflow's OWN last
+green run - the candidate causes - so correlating a red with the change
+that caused it no longer depends on remembering yesterday's merges. That
+enrichment is layered on an already-red verdict and fails open (a printed
+note), never flipping the red/green verdict or the exit code.
+
 Honest framing: this replaces scanning the Actions tab with ONE place
 to look. It does not make looking unnecessary, and it is NOT a merge
 gate.
@@ -65,6 +72,8 @@ class WorkflowVerdict:
     event: str | None
     created_at: str | None
     url: str | None
+    workflow_id: int | None = None
+    head_sha: str | None = None
 
     @property
     def is_red(self) -> bool:
@@ -172,6 +181,8 @@ def latest_counted_run(repo: str, workflow: dict, cutoff: datetime) -> WorkflowV
             event=run["event"],
             created_at=run["created_at"],
             url=run.get("html_url"),
+            workflow_id=workflow["id"],
+            head_sha=run.get("head_sha"),
         )
     return WorkflowVerdict(
         name=workflow["name"],
@@ -180,7 +191,92 @@ def latest_counted_run(repo: str, workflow: dict, cutoff: datetime) -> WorkflowV
         event=None,
         created_at=None,
         url=None,
+        workflow_id=workflow["id"],
+        head_sha=None,
     )
+
+
+def last_green_run(repo: str, workflow_id: int) -> tuple[str, str] | None:
+    """``(head_sha, created_at)`` of a workflow's most recent successful run.
+
+    Queries the ``status=success`` conclusion filter, newest first, so the
+    range printed for a red run is measured against that workflow's OWN last
+    green - the candidate-cause window, not develop's tip. Returns ``None``
+    when the workflow has never gone green (the whole history is then the
+    candidate set). Raises ``RuntimeError`` on an API/parse failure so the
+    caller can degrade the enrichment without touching the red verdict.
+    """
+    payload = gh_api(
+        f"repos/{repo}/actions/workflows/{workflow_id}/runs"
+        "?status=success&per_page=1"
+    )
+    if not isinstance(payload, dict) or "workflow_runs" not in payload:
+        raise RuntimeError(f"unexpected success-runs payload for workflow {workflow_id}")
+    runs = payload["workflow_runs"]
+    if not runs:
+        return None
+    run = runs[0]
+    head_sha = run.get("head_sha")
+    if not head_sha:
+        raise RuntimeError(f"success run for workflow {workflow_id} carried no head_sha")
+    return str(head_sha), str(run.get("created_at") or "unknown")
+
+
+def commits_since(repo: str, base_sha: str, head_sha: str) -> list[tuple[str, str]]:
+    """First-line summaries of the commits in ``base_sha..head_sha``.
+
+    Uses the compare API (``base...head``) instead of a local ``git log`` so
+    the enrichment does not depend on the rollup's checkout depth - the CI
+    job runs it against the live API with no full clone. Raises
+    ``RuntimeError`` on an API/parse failure; the caller degrades gracefully.
+    """
+    payload = gh_api(f"repos/{repo}/compare/{base_sha}...{head_sha}")
+    if not isinstance(payload, dict) or "commits" not in payload:
+        raise RuntimeError(f"unexpected compare payload for {base_sha}...{head_sha}")
+    commits: list[tuple[str, str]] = []
+    for commit in payload["commits"]:
+        sha = str(commit.get("sha", ""))[:7]
+        message = str((commit.get("commit") or {}).get("message") or "")
+        summary = message.splitlines()[0] if message else ""
+        commits.append((sha, summary))
+    return commits
+
+
+def attribution_lines(repo: str, verdict: WorkflowVerdict) -> list[str]:
+    """Self-attribution block for one red verdict (#2430).
+
+    Names the head SHA the nightly measured and the commits since that
+    workflow's own last green run - the candidate causes - so a red is
+    actionable from the rollup alone, without opening the Actions tab and
+    reconstructing the day. This is enrichment on an ALREADY-red verdict:
+    every failure path degrades to a printed note and NEVER changes the
+    red/green verdict or the exit code (a diagnostic that fails open, layered
+    on a gate that has already failed closed).
+    """
+    lines = [f"  attribution {verdict.path}:"]
+    lines.append(f"    measured head_sha={verdict.head_sha or 'unknown'}")
+    if verdict.workflow_id is None or not verdict.head_sha:
+        lines.append("    attribution unavailable: run carried no workflow id or head sha")
+        return lines
+    try:
+        green = last_green_run(repo, verdict.workflow_id)
+    except RuntimeError as exc:
+        lines.append(f"    attribution unavailable: last-green lookup failed ({exc})")
+        return lines
+    if green is None:
+        lines.append("    no prior successful run - the full history is the candidate set")
+        return lines
+    base_sha, base_created = green
+    lines.append(f"    last green run: {base_created} sha={base_sha}")
+    try:
+        commits = commits_since(repo, base_sha, verdict.head_sha)
+    except RuntimeError as exc:
+        lines.append(f"    commit range unavailable: compare failed ({exc})")
+        return lines
+    lines.append(f"    commits since last green ({len(commits)}):")
+    for sha, summary in commits:
+        lines.append(f"      {sha} {summary}".rstrip())
+    return lines
 
 
 def main() -> int:
@@ -246,6 +342,9 @@ def main() -> int:
               "the window - the night shift did not run at all (fail closed).")
         return 1
     if reds:
+        for verdict in sorted(reds, key=lambda x: x.path):
+            for line in attribution_lines(repo, verdict):
+                print(line)
         print("FAIL red-runs-rollup: red scheduled/push runs found. Each one "
               "is either a real finding, a broken tool, an environment flake, "
               "or an obsolete check - classify and act, do not mute.")
