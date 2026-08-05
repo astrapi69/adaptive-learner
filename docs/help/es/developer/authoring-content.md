@@ -164,14 +164,13 @@ manifiestos de los conjuntos; un PR al repo oficial lo regenera.
 ## Formato del manifiesto
 
 El esquema de campos del manifiesto (el `manifest.yaml` raíz que
-enumera los conjuntos del repo, y cada campo obligatorio y opcional:
-`schema_version`, `name`, y por conjunto `id`, `title`,
-`title_native`, `target_language`, `source_language`, `level`,
-`version`, `lesson_count`, `path`, `domain`, `tags`, `book`,
-`visibility`) vive en la referencia del engine:
+enumera los conjuntos del repo, con cada campo obligatorio y
+opcional) vive en la referencia del engine:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
-El esquema estricto del engine (los campos desconocidos se rechazan)
-lo valida, así que la lista de campos anterior no puede derivar.
+La lista de campos no se repite aquí a propósito: el esquema estricto
+del engine (los campos desconocidos se rechazan) valida cada
+manifiesto, y la referencia del engine es su única descripción
+autoritativa.
 Redacta los campos del par de idiomas (`target_language` /
 `source_language`) como se describe en
 [Pares de idiomas](#pares-de-idiomas-v1440); el alias `language`

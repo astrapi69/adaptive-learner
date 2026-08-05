@@ -20,19 +20,33 @@ korrekt/falsch-Ergebnis pro Element) - das ist die Grenze, die die
    Abgrenzung zu bestehenden Typen in der passenden Exploration festhalten
    (`docs/explorations/EXP-041-*` für Aufgabentyp-Eignung, oder eine neue EXP).
    Kein Typ ohne dokumentierten Grund.
-2. **Pydantic-Modell + Enum.** Den Wert zum `ExerciseType`-Enum und die
-   typspezifischen Felder + `model_validator` (mit `model_config =
-   ConfigDict(extra="forbid")`) in
+2. **Das Format in der Engine erweitern.** Das kanonische Zuhause des
+   Lektionsformats ist das Paket
+   [learn-content-engine](https://github.com/astrapi69/learn-content-engine):
+   den Typ dort ins Schema, in die handgeschriebene semantische Schicht
+   (`validate.ts`) und in die
+   [Format-Referenz](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+   aufnehmen, dann die Engine releasen. Eine Formatänderung **beginnt in der
+   Engine** - das `schema/*.json` der App ist ein Byte-Spiegel des gepinnten
+   Release mit genau einem Schreiber
+   (`scripts/sync_schema_mirror_from_engine.py`, #2265).
+3. **Pin bumpen, Sync laufen lassen.** Den `learn-content-engine`-Pin in
+   `frontend/package.json` erhöhen, dann `make sync-schema` im **selben PR**:
+   es frischt den Spiegel `schema/*.json` aus dem installierten Paket auf und
+   regeneriert jedes abgeleitete Artefakt - die strukturelle Pydantic-Schicht
+   (`plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema_generated.py`
+   via `scripts/generate_pydantic_models.py`), die TS-Lektionstypen
+   (`frontend/src/storage/types/content/lesson-schema.generated.ts`) und die
+   Format-Referenz-Doku. Ein gespiegeltes oder generiertes Artefakt **nie von
+   Hand editieren**; das Drift-Gate `make sync-schema-check` schlägt sonst
+   fehl.
+4. **Semantische Schicht + Schema-Version.** Die App-seitigen Feld-
+   übergreifenden Regeln als dünne Subklasse in
    `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`
-   ergänzen. Das Schema (App) ist die aktuelle Quelle der Wahrheit (EXP-039).
-3. **Generierung laufen lassen.** `make sync-schema` regeneriert `schema/*.json`
-   und die TS-Lektionstypen
-   (`frontend/src/storage/types/content/lesson-schema.generated.ts`) + die
-   Format-Referenz-Doku. Ein generiertes Artefakt **nie von Hand editieren**;
-   das Drift-Gate `make sync-schema-check` schlägt sonst fehl.
-4. **Schema-Version bumpen.** `CURRENT_SCHEMA_VERSION` in `models.py` um einen
-   **Minor**-Schritt (additiv) erhöhen; alter Content bleibt gültig
-   (Major-Version-Match).
+   ergänzen (die strukturellen Felder sind generiert; nur die Semantik ist
+   handgeschrieben) und `CURRENT_SCHEMA_VERSION` in `models.py` an der
+   Schema-Version des gepinnten Engine-Release halten (**Minor** = additiv;
+   alter Content bleibt über den Major-Version-Match gültig).
 5. **Renderer registrieren.** Den Branch + den Typ zu
    `SUPPORTED_EXERCISE_TYPES` in
    `frontend/src/components/exercises/shell/ExerciseDispatcher.tsx` ergänzen.
@@ -45,10 +59,10 @@ korrekt/falsch-Ergebnis pro Element) - das ist die Grenze, die die
    Versuch bereits über `getStorage().elementErrors.recordBulk` auf - diesen
    wiederverwenden, keinen zweiten Aufzeichnungspfad bauen.
 7. **Content-Repo-Validierung.** Den Client-Validator
-   (`frontend/src/lib/content/validation/content-validator.ts`) erweitern und,
-   falls der Typ die Qualitätsminima berührt, die geteilten `QUALITY_RULES` in
-   `scripts/generate_lesson_schema.py` (von learn-content-engine
-   übernommen; die Content-Repos spiegeln die Engine, auf deren Release gepinnt).
+   (`frontend/src/lib/content/validation/content-validator.ts`) erweitern.
+   Die Qualitätsminima leben in der `quality-rules.json` der Engine
+   (gespiegelt nach `schema/quality-rules.json`); berührt der Typ sie, werden
+   sie in der Engine erweitert, nicht in der App.
 8. **Authoring-Doku.** Den Typ in die
    [Katalog-Tabelle](authoring-content.md#aufgabentyp-katalog-status) und einen
    `### <typ>`-Referenzblock mit JSON-Beispiel aufnehmen (EN + DE).
@@ -56,14 +70,15 @@ korrekt/falsch-Ergebnis pro Element) - das ist die Grenze, die die
    ab (fehlendes Pflichtfeld / Extra-Key); der Renderer rendert + bewertet
    korrekt/falsch; der SRS-Versuch wird aufgezeichnet; mobile Visual-Baseline
    ergänzen, falls die Optik des Controls neu ist.
-10. **Folge-Arbeit (nicht diese PR).** Die Bibliothek `learn-content-engine`
-    zieht das erweiterte Schema bei ihrer Migration nach; vermerken, nicht
-    darauf warten.
+10. **Folge-Arbeit (nicht diese PR).** Die Content-Repos
+    (`adaptive-learner-content`) übernehmen den neuen Typ, wenn sie ihr
+    Engine-Release neu pinnen; vermerken, nicht darauf warten.
 
 ## Warum das klein bleibt
 
-Weil das Schema generiert wird (Schritt 3) und der Dispatcher-Paritätstest
-Registry-gleich-Enum erzwingt (Schritt 5), ist ein neuer Typ eine additive
-Änderung mit fester Form: Modell → generieren → Renderer → Bewertung → Doku →
-Tests. Kein parallel handgepflegter Spiegel kann driften, und kein Typ kann
-ohne Renderer ausgeliefert werden.
+Weil das Format aus dem gepinnten Engine-Release gespiegelt wird und jedes
+App-Artefakt aus diesem Spiegel abgeleitet ist (Schritt 3) und der
+Dispatcher-Paritätstest Registry-gleich-Enum erzwingt (Schritt 5), ist ein
+neuer Typ eine additive Änderung mit fester Form: Engine → Pin → generieren →
+Renderer → Bewertung → Doku → Tests. Keine parallel handgepflegte Kopie kann
+driften, und kein Typ kann ohne Renderer ausgeliefert werden.

@@ -157,14 +157,12 @@ manifest των συνόλων· ένα PR στο επίσημο repo το αν�
 ## Μορφή Manifest
 
 Το σχήμα πεδίων manifest (το root `manifest.yaml` που παραθέτει τα
-σύνολα του repo, και κάθε υποχρεωτικό και προαιρετικό πεδίο:
-`schema_version`, `name`, και ανά σύνολο `id`, `title`, `title_native`,
-`target_language`, `source_language`, `level`, `version`,
-`lesson_count`, `path`, `domain`, `tags`, `book`, `visibility`)
-βρίσκεται στην αναφορά του engine:
+σύνολα του repo, με κάθε υποχρεωτικό και προαιρετικό πεδίο) βρίσκεται
+στην αναφορά του engine:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
-Το αυστηρό σχήμα του engine (άγνωστα πεδία απορρίπτονται) το επικυρώνει,
-οπότε η παραπάνω λίστα πεδίων δεν μπορεί να αποκλίνει. Σύνταξε τα πεδία
+Η λίστα πεδίων σκόπιμα δεν επαναλαμβάνεται εδώ: το αυστηρό σχήμα του
+engine (άγνωστα πεδία απορρίπτονται) επικυρώνει κάθε manifest, και η
+αναφορά του engine είναι η μοναδική έγκυρη περιγραφή της. Σύνταξε τα πεδία
 του ζεύγους γλωσσών (`target_language` / `source_language`) όπως
 περιγράφεται στην ενότητα «Ζεύγη γλωσσών»· το προ-v1.2 alias `language`
 φορτώνει ακόμη, αλλά αποθαρρύνεται για νέα σύνολα.
