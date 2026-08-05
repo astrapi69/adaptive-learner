@@ -58,12 +58,18 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-Το `docker-compose.prod.yml` περιλαμβάνει:
+Το `docker-compose.prod.yml` περιλαμβάνει **έναν μόνο service,
+`app`** (ένα container από το #2058 - δεν υπάρχει nginx ούτε
+ξεχωριστό frontend container):
 
-- **backend** (FastAPI σε image Python 3.12), εκθέτει θύρα 7880.
-- **nginx** sidecar που σερβίρει το χτισμένο frontend
-  (`frontend/dist/`) και δρομολογεί `/api/*` στο backend.
-- **Ένα SQLite volume** που επιβιώνει από επανεκκινήσεις container.
+- **FastAPI (image Python 3.12)** σερβίρει ΚΑΙ τα χτισμένα
+  frontend statics ΚΑΙ το `/api/*`, στην εσωτερική θύρα
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`.
+- Δημοσιευμένη θύρα στον host:
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}` -
+  loopback από προεπιλογή.
+- **Ένα επώνυμο volume `adaptive-learner-data`** στο `/app/data`
+  που επιβιώνει από rebuilds του container.
 
 Τα `install.sh` και `install.ps1` είναι οι curl-pipe installers
 για τελικούς χρήστες - κατεβάζουν tagged release tarball,
@@ -77,7 +83,7 @@ make prod-down   # docker compose down
 
 ## Διαμόρφωση για παραγωγή
 
-Τρία πράγματα έχουν σημασία για την παραγωγή:
+Τέσσερα πράγματα έχουν σημασία για την παραγωγή:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: πρέπει να είναι σταθερό κλειδί
    Fernet. Παράγαγέ το μία φορά, αποθήκευσέ το ασφαλώς (HashiCorp
@@ -105,9 +111,9 @@ make prod-down   # docker compose down
 
 ## Desktop launcher
 
-Τα binaries PyInstaller στο `launcher/` εκκινούν τοπικό FastAPI
-στο `http://localhost:7880`, στη συνέχεια ανοίγουν τον προεπιλεγμένο
-browser του χρήστη. Κατά την πρώτη εκκίνηση ο launcher δημιουργεί
+Τα binaries PyInstaller στο `launcher/` τρέχουν την εφαρμογή ως
+Docker container (προεπιλογή `http://localhost:8501`) και μετά
+ανοίγουν τον προεπιλεγμένο browser του χρήστη. Κατά την πρώτη εκκίνηση ο launcher δημιουργεί
 επίσης `~/.config/adaptive-learner/secrets.yaml` ως σχολιασμένο
 πρότυπο + `chmod 0600` σε POSIX ώστε ο χρήστης να μπορεί να
 τοποθετήσει τα API keys του χωρίς να αγγίξει το UI Ρυθμίσεων.

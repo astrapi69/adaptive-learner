@@ -61,13 +61,18 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml` inclui:
+`docker-compose.prod.yml` inclui **um único serviço, `app`**
+(um só contentor desde #2058 - não há nginx nem contentor de
+frontend separado):
 
-- **backend** (FastAPI numa imagem Python 3.12), expondo a porta
-  7880.
-- **nginx** sidecar que serve o frontend compilado
-  (`frontend/dist/`) e proxifica `/api/*` para o backend.
-- **Um volume SQLite** que sobrevive a reinícios do contentor.
+- **FastAPI (imagem Python 3.12)** serve TANTO os statics do
+  frontend compilado COMO `/api/*`, na porta interna
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`.
+- Porta publicada no host:
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}` -
+  loopback por omissão.
+- **Um volume com nome `adaptive-learner-data`** em `/app/data`
+  que sobrevive a reconstruções do contentor.
 
 `install.sh` e `install.ps1` são os instaladores curl-pipe para
 utilizadores finais - descarregam um arquivo de lançamento com
@@ -81,7 +86,7 @@ edite os ficheiros gerados diretamente.
 
 ## Configuração para produção
 
-Três coisas importam para produção:
+Quatro coisas importam para produção:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: deve ser uma chave Fernet
    estável. Gere uma vez, guarde-a num local seguro (HashiCorp
@@ -109,9 +114,9 @@ variáveis de ambiente.
 
 ## Launcher de desktop
 
-Os binários PyInstaller em `launcher/` iniciam um FastAPI local em
-`http://localhost:7880`, depois abrem o navegador padrão do
-utilizador. Na primeira inicialização, o launcher também cria
+Os binários PyInstaller em `launcher/` executam a aplicação como
+contentor Docker (por omissão `http://localhost:8501`) e depois
+abrem o navegador padrão do utilizador. Na primeira inicialização, o launcher também cria
 `~/.config/adaptive-learner/secrets.yaml` como modelo comentado +
 `chmod 0600` no POSIX para que o utilizador possa colocar as suas
 chaves de API lá sem nunca tocar na interface de Definições.
