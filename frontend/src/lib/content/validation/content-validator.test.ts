@@ -205,6 +205,35 @@ describe("validateSetForSharing", () => {
     expect(codes(META, [l])).toContain("matching_too_few_pairs");
   });
 
+  // #2376 class 4 - a repeated left value is objectively unsolvable for the
+  // learner and hard-fails the engine gate (E-MATCH-DUP-LEFT,
+  // learn-content-engine#54). The app-side check must catch it BEFORE export.
+  it("flags matching exercises with duplicate left values", () => {
+    const l = goodLesson();
+    const m = l.steps.find((s) => s.exercise?.type === "matching")!;
+    m.exercise!.pairs = [
+      { left: "Keimbahn-Editierung", right: "a" },
+      { left: "Keimbahn-Editierung", right: "b" },
+      { left: "Salut", right: "Hallo" },
+    ];
+    const result = validateSetForSharing(META, [l]);
+    const dup = result.issues.find(
+      (i) => i.code === "matching_duplicate_left",
+    );
+    expect(dup).toBeDefined();
+    expect(dup!.params).toMatchObject({
+      lesson: "01-begruessung",
+      exercise: "e1",
+      value: "Keimbahn-Editierung",
+    });
+  });
+
+  it("does not flag matching exercises with distinct left values", () => {
+    expect(codes(META, [goodLesson()])).not.toContain(
+      "matching_duplicate_left",
+    );
+  });
+
   it("flags empty card front/back", () => {
     const l = goodLesson();
     l.cards[0].back = "";

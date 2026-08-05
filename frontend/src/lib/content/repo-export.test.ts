@@ -15,7 +15,9 @@ import {
     buildReadme,
     buildRepoExportFiles,
     buildSearchIndexJson,
+    exportDomain,
     lessonFilename,
+    planLessonFilenames,
     type RepoExportInput,
 } from "./repo-export";
 import {parseSearchIndex} from "./repos/search-index-loader";
@@ -131,6 +133,105 @@ describe("lessonFilename", () => {
         expect(lessonFilename(lesson("Hello World!", 1), "", 2)).toBe(
             "03-hello-world.json",
         );
+    });
+});
+
+// #2376 class 2 - the app-internal origin value ``imported`` (and any other
+// unknown value) must never reach an exported repo: the Discover filter
+// would receive a domain that does not exist.
+describe("exportDomain", () => {
+    it("keeps a known non-language content domain", () => {
+        expect(
+            exportDomain({...SET, domain: "psychology"} as ContentSetEntry),
+        ).toBe("psychology");
+    });
+
+    it("keeps the default language domain", () => {
+        expect(exportDomain(SET)).toBe("language");
+    });
+
+    it("maps the internal 'imported' value to language for a language pair", () => {
+        expect(
+            exportDomain({...SET, domain: "imported"} as ContentSetEntry),
+        ).toBe("language");
+    });
+
+    it("maps an unknown domain to knowledge when source == target (a book)", () => {
+        expect(
+            exportDomain({
+                ...SET,
+                domain: "imported",
+                source_language: "de",
+                target_language: "de",
+            } as ContentSetEntry),
+        ).toBe("knowledge");
+    });
+
+    it("is used by the manifest, index and README builders", () => {
+        const importedSet = {...SET, domain: "imported"} as ContentSetEntry;
+        const input = {...INPUT, set: importedSet};
+        expect(parseYaml(buildManifestYaml(importedSet, 2)).domain).toBe(
+            "language",
+        );
+        expect(JSON.parse(buildSearchIndexJson(input)).sets[0].domain).toBe(
+            "language",
+        );
+        expect(buildReadme(input)).toContain("Domain: language");
+    });
+});
+
+// #2376 class 1 - lesson filenames must sort lexicographically into the
+// source order (the display order IS the lexicographic id sort,
+// learn-content-engine#106). ``kapitel-1..kapitel-14 + epilog`` exported
+// verbatim displays as ``epilog, kapitel-1, kapitel-10..``.
+describe("planLessonFilenames", () => {
+    const named = (names: string[]) =>
+        names.map((n, i) => ({
+            filename: n,
+            lesson: lesson(`L${i + 1}`, 1),
+        }));
+
+    it("keeps filenames whose sort order already matches the source order", () => {
+        const plan = planLessonFilenames(
+            named(["01-intro.json", "02-basics.json"]),
+        );
+        expect(plan.reordered).toBe(false);
+        expect(plan.filenames).toEqual(["01-intro.json", "02-basics.json"]);
+    });
+
+    it("prefixes every lesson when the existing names sort out of order", () => {
+        const names = [
+            ...Array.from({length: 14}, (_, i) => `kapitel-${i + 1}.json`),
+            "epilog.json",
+        ];
+        const plan = planLessonFilenames(named(names));
+        expect(plan.reordered).toBe(true);
+        expect(plan.filenames[0]).toBe("01-kapitel-1.json");
+        expect(plan.filenames[9]).toBe("10-kapitel-10.json");
+        expect(plan.filenames[14]).toBe("15-epilog.json");
+        // The renamed list itself sorts back into the source order.
+        expect([...plan.filenames].sort()).toEqual(plan.filenames);
+    });
+
+    it("replaces a stale numeric prefix instead of double-prefixing", () => {
+        const plan = planLessonFilenames(
+            named(["03-foo.json", "01-bar.json"]),
+        );
+        expect(plan.reordered).toBe(true);
+        expect(plan.filenames).toEqual(["01-foo.json", "02-bar.json"]);
+    });
+
+    it("feeds buildRepoExportFiles so the archive carries ordered names", () => {
+        const input: RepoExportInput = {
+            ...INPUT,
+            lessons: [
+                {filename: "kapitel-2.json", lesson: lesson("K2", 1)},
+                {filename: "kapitel-10.json", lesson: lesson("K10", 1)},
+            ],
+        };
+        const paths = buildRepoExportFiles(input).map((f) => f.path);
+        expect(paths).toContain("lessons/01-kapitel-2.json");
+        expect(paths).toContain("lessons/02-kapitel-10.json");
     });
 });
 

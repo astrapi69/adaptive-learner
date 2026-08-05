@@ -391,6 +391,25 @@ function checkLessonExercises(
             min: QUALITY.minMatchingPairs,
           },
         });
+      // #2376 class 4 - a repeated left value is objectively unsolvable
+      // for the learner (which right answer belongs to which copy?) and
+      // hard-fails the engine gate (E-MATCH-DUP-LEFT,
+      // learn-content-engine#54). Mirror it here so the author learns
+      // about it BEFORE an export or share, not from a foreign repo gate.
+      const seenLeft = new Set<string>();
+      const flaggedLeft = new Set<string>();
+      for (const pair of ex.pairs ?? []) {
+        const left = (pair.left ?? "").trim();
+        if (!left) continue;
+        if (seenLeft.has(left) && !flaggedLeft.has(left)) {
+          flaggedLeft.add(left);
+          issues.push({
+            code: "matching_duplicate_left",
+            params: { lesson: id, exercise: ex.id, value: left },
+          });
+        }
+        seenLeft.add(left);
+      }
     }
     if (ex.type === "picture_choice") {
       if (ex.distractors.length === 0)

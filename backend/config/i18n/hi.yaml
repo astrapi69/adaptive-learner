@@ -2075,6 +2075,9 @@ content:
     working: "निर्यात हो रहा…"
     done: "आपका सेट रिपॉज़िटरी में पुश हो गया।"
     failed: "निर्यात विफल।"
+    quality_issues: "गुणवत्ता जांच में समस्याएं मिलीं। कंटेंट-रिपॉजिटरी गेट इन्हें अस्वीकार कर देंगे:"
+    export_anyway: "फिर भी निर्यात करें"
+    renamed_note: "पाठ फ़ाइलों का नाम क्रम उपसर्गों (NN-) के साथ बदला गया ताकि प्रदर्शन क्रम पाठ क्रम से मेल खाए।"
   anki_export:
     button: "Anki निर्यात"
   discover_more: "और सामग्री खोजें"
@@ -2371,6 +2374,7 @@ content:
     back_language_mismatch: 'पाठ ''{lesson}'': कार्ड ''{card}'' का पिछला भाग {source} जैसा नहीं लगता।'
     free_text_too_few_accepts: 'पाठ ''{lesson}'': मुक्त-पाठ अभ्यास ''{exercise}'' को कम से कम {min} स्वीकृत उत्तर चाहिए।'
     matching_too_few_pairs: 'पाठ ''{lesson}'': मिलान अभ्यास ''{exercise}'' को कम से कम {min} जोड़े चाहिए।'
+    matching_duplicate_left: "पाठ '{lesson}': मिलान अभ्यास '{exercise}' में बायां मान '{value}' दोहराया गया है - शिक्षार्थी के लिए हल करना असंभव।"
     missing_distractors: 'पाठ ''{lesson}'': अभ्यास ''{exercise}'' को विकर्षक (गलत विकल्प) चाहिए।'
     non_cefr_level: स्तर '{level}' एक CEFR बैंड (A1-C2) नहीं है।
     level_too_complex: 'पाठ ''{lesson}'': पाठ्य प्रति पक्ष औसतन {avg} शब्द है, जो स्तर {level} के लिए अधिक है (लगभग {cap} अपेक्षित)।'
