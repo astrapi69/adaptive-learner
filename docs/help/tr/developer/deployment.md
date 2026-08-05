@@ -93,6 +93,12 @@ yeniden oluşturulur. Oluşturulan dosyaları doğrudan düzenlemeyin.
 3. **`ADAPTIVE_LEARNER_DEBUG`**: üretimde ayarlanmamış / false
    bırakın. Debug modu, hata yanıtlarında yığın izlerini açığa
    çıkarır.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: varsayılan `127.0.0.1`,
+   yani yayımlanan porta yalnızca host'un kendisinden erişilebilir.
+   Uygulamada kimlik doğrulaması yoktur - `0.0.0.0` bağlamayı
+   yalnızca bilinçli olarak, güvenilir bir ağda ya da kendi kimlik
+   doğrulama katmanının (basic auth'lu reverse proxy, VPN) arkasında
+   yapın.
 
 Konteynerler için env değişkenleri deyimsel enjeksiyon kanalıdır.
 `~/.config/adaptive_learner/secrets.yaml` katmanı, masaüstü /

@@ -34,6 +34,11 @@ If Docker is not yet running when you start the launcher, it shows a
 notice with a "Start Docker" button so you can bring it up without
 leaving the launcher.
 
+Once running, the app is reachable only from this computer
+(`127.0.0.1`) by default. It has no login, so making it reachable
+from other devices is a deliberate step - see
+[Start the desktop launcher](launcher.md) for how and when to do that.
+
 ## Is Docker safe to install?
 
 Yes. Docker Desktop is made by Docker, Inc., a well-known company,

@@ -140,10 +140,10 @@ Known pitfalls:
   Compose directly instead.
 - **App not reachable in the browser**: if the browser does not open
   automatically, open `http://localhost:8501` manually (or the port
-  shown in the launcher window). Note that the app is published on
-  every network interface, not only on `localhost`, and it has no
-  authentication - keep that port closed at your firewall unless you
-  deliberately want other devices on your network to reach it.
+  shown in the launcher window). By default the app listens only on
+  `127.0.0.1`, so it is reachable only from this computer; other
+  devices reach it only after you deliberately enable network access -
+  see "Who can reach the app" above.
 
 ## macOS
 

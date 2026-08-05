@@ -37,6 +37,11 @@ Si Docker aún no está en ejecución cuando inicias el lanzador, este
 muestra un aviso con un botón "Iniciar Docker" para que puedas
 arrancarlo sin salir del lanzador.
 
+La app en ejecución solo es accesible por defecto desde este equipo
+(`127.0.0.1`). No tiene inicio de sesión; abrirla a otros dispositivos
+es un paso deliberado - ver
+[Iniciar el lanzador de escritorio](launcher.md).
+
 ## ¿Es seguro instalar Docker?
 
 Sí. Docker Desktop está desarrollado por Docker, Inc., una empresa muy

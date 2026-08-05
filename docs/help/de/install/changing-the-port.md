@@ -53,3 +53,13 @@ Am sichersten ist es, **vor dem Portwechsel ein Backup zu exportieren**,
 damit du es auf der neuen Adresse wiederherstellen kannst, falls etwas
 fehlt. Ein regelmäßiges Backup ist ohnehin eine gute Absicherung - damit
 kannst du dein Lernen auch zwischen Geräten mitnehmen.
+
+## Ein Portwechsel öffnet die App nicht fürs Netzwerk
+
+Egal welchen Port du wählst: Die App lauscht weiterhin nur auf
+`127.0.0.1` - erreichbar von diesem Rechner, nicht von anderen Geräten.
+Sie hat keine Anmeldung; sie vom Handy oder einem anderen Rechner aus
+zu erreichen ist ein eigener, bewusster Schritt
+(`ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0`) und nur in einem Netz
+sinnvoll, dem du vertraust - siehe
+[Desktop-Launcher starten](launcher.md) ("Wer die App erreichen kann").
