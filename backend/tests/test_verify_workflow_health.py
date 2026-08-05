@@ -35,6 +35,7 @@ if [ "${GH_STUB_FAIL:-}" = "1" ]; then
 fi
 endpoint="$2"
 case "$endpoint" in
+  *"/actions/runs/"*) cat "$GH_STUB_DIR/run.json" ;;
   *"/actions/workflows?"*) cat "$GH_STUB_DIR/workflows.json" ;;
   *"/actions/workflows/"*)
     wf_id=$(printf '%s' "$endpoint" | sed -E 's|.*/workflows/([0-9]+)/runs.*|\\1|')
@@ -68,7 +69,8 @@ def _run(event: str, conclusion: str, hours_ago: int = 5) -> dict:
 
 
 def _invoke(tmp_path: Path, workflows: list[dict], runs: dict[int, list[dict]],
-            gh_fail: bool = False) -> subprocess.CompletedProcess:
+            gh_fail: bool = False, self_run_id: int | None = None,
+            self_workflow_id: int | None = None) -> subprocess.CompletedProcess:
     stub_dir = tmp_path / "stub"
     stub_dir.mkdir(exist_ok=True)
     (stub_dir / "workflows.json").write_text(json.dumps({"workflows": workflows}))
@@ -76,6 +78,8 @@ def _invoke(tmp_path: Path, workflows: list[dict], runs: dict[int, list[dict]],
         (stub_dir / f"runs_{wf_id}.json").write_text(
             json.dumps({"workflow_runs": wf_runs})
         )
+    # The self-run lookup (GITHUB_RUN_ID -> workflow_id) resolves to this.
+    (stub_dir / "run.json").write_text(json.dumps({"workflow_id": self_workflow_id}))
     gh_path = stub_dir / "gh"
     gh_path.write_text(GH_STUB)
     gh_path.chmod(gh_path.stat().st_mode | stat.S_IEXEC)
@@ -83,6 +87,11 @@ def _invoke(tmp_path: Path, workflows: list[dict], runs: dict[int, list[dict]],
     env["PATH"] = f"{stub_dir}:{env['PATH']}"
     env["GH_STUB_DIR"] = str(stub_dir)
     env["GITHUB_REPOSITORY"] = "stub/repo"
+    # Deterministic: never inherit the CI job's own GITHUB_RUN_ID; the test
+    # sets it explicitly only when it wants the self-exclusion path.
+    env.pop("GITHUB_RUN_ID", None)
+    if self_run_id is not None:
+        env["GITHUB_RUN_ID"] = str(self_run_id)
     if gh_fail:
         env["GH_STUB_FAIL"] = "1"
     return subprocess.run(
@@ -184,5 +193,82 @@ def test_rollup_reports_the_measured_set(tmp_path: Path) -> None:
     )
     assert result.returncode == 0
     assert "checked 2 active workflows" in result.stdout
+    assert "(0 self excluded)" in result.stdout
     assert "window=10d" in result.stdout
     assert "events=['push', 'schedule']" in result.stdout
+
+
+def test_rollup_excludes_its_own_workflow_so_a_self_only_red_is_green(
+    tmp_path: Path,
+) -> None:
+    """Green when the ONLY red run is the rollup's own prior scheduled run.
+
+    The self-sustaining loop (#2428): once red, the rollup counts its own
+    prior red the next day and never recovers. Excluding self - derived
+    from GITHUB_RUN_ID -> workflow_id - breaks it. Direction 1 of the
+    contract: green when only itself was red.
+    """
+    result = _invoke(
+        tmp_path,
+        [
+            _workflow(42, "Red-runs rollup", "red-runs-rollup.yml"),
+            _workflow(1, "Nightly", "nightly.yml"),
+        ],
+        {
+            42: [_run("schedule", "failure")],  # the rollup's own prior red
+            1: [_run("schedule", "success")],
+        },
+        self_run_id=9001,
+        self_workflow_id=42,
+    )
+    assert result.returncode == 0, result.stdout
+    assert "OK red-runs-rollup" in result.stdout
+    assert "self .github/workflows/red-runs-rollup.yml excluded" in result.stdout
+    assert "(1 self excluded)" in result.stdout
+    # self is excluded from the counted set, never listed as a counted red.
+    assert result.stdout.count("RED ") == 0
+
+
+def test_rollup_still_red_when_another_workflow_is_red_despite_self_excluded(
+    tmp_path: Path,
+) -> None:
+    """Red when ANOTHER workflow is red, even though self is red too.
+
+    Direction 2 of the contract: self-exclusion must not mask a real
+    finding. Exactly one counted red row (the other workflow); the rollup
+    fails.
+    """
+    result = _invoke(
+        tmp_path,
+        [
+            _workflow(42, "Red-runs rollup", "red-runs-rollup.yml"),
+            _workflow(1, "Nightly", "nightly.yml"),
+        ],
+        {
+            42: [_run("schedule", "failure")],
+            1: [_run("schedule", "failure")],  # a real other-workflow red
+        },
+        self_run_id=9001,
+        self_workflow_id=42,
+    )
+    assert result.returncode == 1
+    assert "nightly.yml" in result.stdout
+    # the other workflow is the ONLY counted red; self is not double-counted.
+    assert result.stdout.count("RED ") == 1
+    assert "self .github/workflows/red-runs-rollup.yml excluded" in result.stdout
+
+
+def test_rollup_says_when_self_exclusion_is_unavailable(tmp_path: Path) -> None:
+    """No GITHUB_RUN_ID -> exclusion unavailable, said out loud, counts all.
+
+    Fail-open on the self-lookup can only over-report (re-expose the
+    self-count), never hide another red - so it is announced, not silent.
+    """
+    result = _invoke(
+        tmp_path,
+        [_workflow(1, "Nightly", "nightly.yml")],
+        {1: [_run("schedule", "success")]},
+        # no self_run_id -> GITHUB_RUN_ID stays unset
+    )
+    assert result.returncode == 0, result.stdout
+    assert "self-workflow exclusion unavailable" in result.stdout
