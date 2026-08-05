@@ -667,6 +667,13 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Gate)
 - [ ] **Struktur-Check-Grund (#1724):** fehlgeschlagener "Gueltige
       Lektionsstruktur"-Check nennt einen konkreten Grund, nicht nur ✗
+- [ ] **Interner Struktur-Fehler (#2384):** schlaegt der "Gueltige
+      Lektionsstruktur"-Check mit einem INTERNEN Fehler fehl (z. B.
+      `(0 , T.default) is not a function`), erklaert die Meldung, dass es
+      ein Problem der App und NICHT der Lektion ist, nennt einen
+      Neuladen/Erneut-versuchen-Weg und bietet einen "Problem melden"-Link
+      — statt den technischen String als ungueltige Nutzer-Struktur zu
+      praesentieren
 - [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare
       Titel (auch offline) + einen gedrueckten/ausgewaehlten Zustand
 - [ ] **Erweiterte Uebungstypen / Extension-Wizard (#1852, #1887):** Schritt 1

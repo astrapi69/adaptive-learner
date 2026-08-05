@@ -3158,7 +3158,9 @@
       "check_enoughExercises": "At least 5 exercises",
       "check_enoughTypes": "At least 2 exercise types",
       "check_schemaValid": "Valid lesson structure",
-      "structure_error": "Technical detail"
+      "structure_error": "Technical detail",
+      "structure_internal_error": "An internal error occurred while checking this lesson. This is a problem in the app, not in your lesson. Please reload the page and try again; if it keeps happening, report the problem below.",
+      "structure_report": "Report this problem"
     },
     "save": {
       "saved": "Lesson saved!",

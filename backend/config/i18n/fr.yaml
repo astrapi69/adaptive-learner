@@ -2899,6 +2899,8 @@ create_lesson:
     check_enoughTypes: "Au moins 2 types d'exercices"
     check_schemaValid: "Structure de leçon valide"
     structure_error: "Détail technique"
+    structure_internal_error: "Une erreur interne s'est produite lors de la vérification de cette leçon. Le problème vient de l'application, pas de votre leçon. Rechargez la page et réessayez ; si cela persiste, signalez le problème ci-dessous."
+    structure_report: "Signaler le problème"
   save:
     saved: "Leçon enregistrée !"
     failed: "Impossible d'enregistrer la leçon."
