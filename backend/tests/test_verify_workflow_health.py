@@ -35,8 +35,12 @@ if [ "${GH_STUB_FAIL:-}" = "1" ]; then
 fi
 endpoint="$2"
 case "$endpoint" in
+  *"/compare/"*) cat "$GH_STUB_DIR/compare.json" ;;
   *"/actions/runs/"*) cat "$GH_STUB_DIR/run.json" ;;
   *"/actions/workflows?"*) cat "$GH_STUB_DIR/workflows.json" ;;
+  *"status=success"*)
+    wf_id=$(printf '%s' "$endpoint" | sed -E 's|.*/workflows/([0-9]+)/runs.*|\\1|')
+    cat "$GH_STUB_DIR/success_${wf_id}.json" ;;
   *"/actions/workflows/"*)
     wf_id=$(printf '%s' "$endpoint" | sed -E 's|.*/workflows/([0-9]+)/runs.*|\\1|')
     cat "$GH_STUB_DIR/runs_${wf_id}.json" ;;
@@ -59,24 +63,41 @@ def _workflow(wf_id: int, name: str, filename: str) -> dict:
     }
 
 
-def _run(event: str, conclusion: str, hours_ago: int = 5) -> dict:
-    return {
+def _run(event: str, conclusion: str, hours_ago: int = 5,
+         head_sha: str | None = None) -> dict:
+    run = {
         "event": event,
         "conclusion": conclusion,
         "created_at": _recent(hours_ago),
         "html_url": f"https://example.test/run/{event}/{conclusion}",
     }
+    if head_sha is not None:
+        run["head_sha"] = head_sha
+    return run
 
 
 def _invoke(tmp_path: Path, workflows: list[dict], runs: dict[int, list[dict]],
             gh_fail: bool = False, self_run_id: int | None = None,
-            self_workflow_id: int | None = None) -> subprocess.CompletedProcess:
+            self_workflow_id: int | None = None,
+            success_runs: dict[int, list[dict]] | None = None,
+            compare_commits: list[dict] | None = None,
+            ) -> subprocess.CompletedProcess:
     stub_dir = tmp_path / "stub"
     stub_dir.mkdir(exist_ok=True)
     (stub_dir / "workflows.json").write_text(json.dumps({"workflows": workflows}))
     for wf_id, wf_runs in runs.items():
         (stub_dir / f"runs_{wf_id}.json").write_text(
             json.dumps({"workflow_runs": wf_runs})
+        )
+    # Per-workflow last-green lookup (#2430 attribution): status=success query.
+    for wf_id, wf_runs in (success_runs or {}).items():
+        (stub_dir / f"success_{wf_id}.json").write_text(
+            json.dumps({"workflow_runs": wf_runs})
+        )
+    # Compare API response feeding "commits since last green".
+    if compare_commits is not None:
+        (stub_dir / "compare.json").write_text(
+            json.dumps({"commits": compare_commits})
         )
     # The self-run lookup (GITHUB_RUN_ID -> workflow_id) resolves to this.
     (stub_dir / "run.json").write_text(json.dumps({"workflow_id": self_workflow_id}))
@@ -272,3 +293,53 @@ def test_rollup_says_when_self_exclusion_is_unavailable(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, result.stdout
     assert "self-workflow exclusion unavailable" in result.stdout
+
+
+def test_red_run_attribution_lists_commits_since_last_green(tmp_path: Path) -> None:
+    """A red run names its head SHA and the commits since its last green (#2430).
+
+    The whole point of the enrichment: correlate a red with the change that
+    caused it from the rollup alone, without opening the Actions tab.
+    """
+    result = _invoke(
+        tmp_path,
+        [_workflow(1, "Nightly", "nightly.yml")],
+        {1: [_run("schedule", "failure", head_sha="headsha1234567")]},
+        success_runs={
+            1: [
+                {
+                    "head_sha": "greensha7654321",
+                    "created_at": _recent(48),
+                }
+            ]
+        },
+        compare_commits=[
+            {"sha": "aaaaaaa1119999", "commit": {"message": "feat: mobile preamble\n\nbody"}},
+            {"sha": "bbbbbbb2228888", "commit": {"message": "fix: drop subtitle"}},
+        ],
+    )
+    assert result.returncode == 1, result.stdout
+    assert "attribution .github/workflows/nightly.yml:" in result.stdout
+    assert "measured head_sha=headsha1234567" in result.stdout
+    assert "last green run:" in result.stdout
+    assert "greensha7654321" in result.stdout
+    assert "commits since last green (2):" in result.stdout
+    assert "aaaaaaa feat: mobile preamble" in result.stdout
+    assert "bbbbbbb fix: drop subtitle" in result.stdout
+
+
+def test_red_run_attribution_degrades_when_no_prior_green(tmp_path: Path) -> None:
+    """Attribution never flips the verdict: a missing green run just degrades.
+
+    Enrichment layered on an already-red verdict fails open (a printed note),
+    it does not change the red/green outcome or the exit code.
+    """
+    result = _invoke(
+        tmp_path,
+        [_workflow(1, "Nightly", "nightly.yml")],
+        {1: [_run("schedule", "failure", head_sha="headsha1234567")]},
+        success_runs={1: []},  # workflow has never gone green
+    )
+    assert result.returncode == 1, result.stdout
+    assert "measured head_sha=headsha1234567" in result.stdout
+    assert "no prior successful run" in result.stdout
