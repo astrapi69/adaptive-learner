@@ -211,3 +211,37 @@
 - 10 weitere PRs gemergt: #2407, #2411, #2413, #2416, #2418, #2419, #2420, #2421, #2422, engine#126; Journal-PR #2402 vormittags.
 - 8 weitere Issues geschlossen: #2400-Folge #2403/#2404/#2405/#2406, #2409, #2415, #2417, #2398. Neue Issues: #2409, #2415, #2417 (alle noch am selben Tag geschlossen).
 - Bug-Queue am Tagesende: 3 (Untersuchung #2043, Engine-blockiert #2128, Gerätetipp #1569 - vvdiag-Probe wartet auf iPhone-Werte).
+
+## Abendsession: restliche Queue abgearbeitet (ab ~17:15)
+
+- Original prompt: "alle gh-issues schritt für schritt abarbeiten"
+- Goal: Die 22 offenen Issues triagieren und alles Aktionierbare liefern.
+
+### 19. #2387: Deployment-Doku aller 7 Locales auf Image-Modus-Wahrheit (17:15)
+- Result: el/es/ja/pt/tr trugen die drei gemeldeten Klassen (Modus-Tabelle "FastAPI lokal", v1.20.0-Literal, Tarball-Download-Ablauf). Prämissen-Korrektur gegen den Code (launcher.json deployment_mode "image", docker_app_launcher-Wrapper): auch en/de beschrieben noch den ZIP-Download-Flow und zitierten zwei nicht mehr existierende Dateien (installer.py, update_check.py). Alle 7 Seiten auf den GHCR-Image-Pull gebracht; install.sh-Satz präzisiert (git clone bevorzugt, Tarball nur Fallback).
+- Commit: 999e79e3 (PR #2424, gemergt; Issue zu)
+
+### 20. #2376: Buch-Export prüft sich selbst gegen die Repo-Gates (17:25)
+- Result: Fünf Mängelklassen, alle am Export-Saum geschlossen: planLessonFilenames vergibt NN-Präfixe nur, wenn die vorhandenen Namen die Quellreihenfolge lexikografisch nicht reproduzieren (kein Doppel-Präfix, Erfolgs-Screen meldet Umbenennung); exportDomain hält interne Herkunftswerte ("imported") aus manifest/search-index/README heraus (unbekannt + source==target -> knowledge, sonst language); der Client-Validator spiegelt E-MATCH-DUP-LEFT als matching_duplicate_left; ShareAsRepoButton validiert VOR dem Archivbau - erste Findings blocken, expliziter zweiter Klick "Trotzdem exportieren". 15 neue Tests (RED zuerst), i18n-Keys in allen 11 Katalogen, Testplan DE+EN ergänzt.
+- Commit: 9a196cfa (PR #2425, gemergt; Issue zu)
+
+### 21. #2283: Real-Browser-Zelle für die Dexie-RMW-Pins (17:35)
+- Result: Die fake-indexeddb-Annahme der drei Concurrency-Pins ist jetzt Messung: Probe-Hooks (storage/e2e/concurrency-hooks.ts, dynamischer Import nur bei ?e2e-hooks=1) + e2e-Spec feuern persistXP/upsertLessonProgress/recordElementAttempts nebenläufig in echtem Chromium gegen echte IndexedDB - alle drei Mechanismen halten (20 XP, beide step_results, 1 Zeile streak 2). Fail-closed (Assertions verlangen den geschriebenen Wert), Messumfang annotiert. God-Folder-Gate schlug an (storage/dexie 16 Dateien) - Modul in eigenes Concern-Verzeichnis storage/e2e/ verschoben, auf dem neu gebauten Artefakt re-verifiziert.
+- Commits: 1723f1ac + 6af435e8 (PR #2426, gemergt; Issue zu)
+
+### 22. #2043: Content-Beschaffbarkeits-Probe statt 34 vager Reds (18:00)
+- Result: Messung zuerst (dritter Anlauf, zwei widerlegte Hypothesen im Issue): auch auf dieser Maschine reproduzieren die 34 Fehler NICHT - bundle-loser Dexie-Build (dist/content fehlt, CI-Zustand) läuft die Content-Specs grün. Also kein geratener Diskriminator: Playwright-Setup-Projekt misst die Beschaffbarkeit browserseitig über BEIDE DEFAULT_SOURCES-Kanäle; dexie-smoke hängt per dependencies daran. RED bewiesen (CONTENT_PROBE_SIMULATE_UNOBTAINABLE=1 als Dauerselbsttest: eine benannte Meldung + "did not run"), CI-Invariante auf dem realen Artefakt bewiesen (Vollsuite 135 passed, 9.2m). Doku-Abschnitt lokale e2e-Voraussetzungen.
+- Commit: 274459d6 (PR #2427, gemergt; Issue zu)
+
+### 23. #2301: element_key-Stabilität gemessen (Delegation, 18:10)
+- Result: Messung über die volle First-Parent-Historie von adaptive-learner-content (191 Commits): 173 verschwundene element_keys in 62 fortbestehenden Übungen aus nur 3 Commits; 148+24=172 reproduziert exakt die #2161-Schadenszahl. Raten: matching 5,7 %, picture_choice 8,9 %, übrige Typen 0 % (strukturell gleich exponiert, nur kein Korrekturlauf). Positionsanalyse für die Wegewahl: Ordinal (Weg B) hätte 172/177 still richtig, 3 still falsch, 2 verschoben - alle 5 nur mit ZWEISEITIGEM Textzeugen erkennbar. Weg-C-Bausteine (elementKeysOf, remap beidseitig) liegen ausgeliefert vor, es fehlt die Zuordnungsherleitung aus der Wächter-Vorschau. Bericht als Issue-Kommentar; Entscheidung bewusst beim RM belassen.
+- Kein Commit (reine Untersuchung; Issue offen als Entscheidungsvorlage)
+
+### Rest-Queue am Abend (Triage-Ergebnis, kein Handlungsbedarf in dieser Spur)
+- Upstream-/paketblockiert: #2128, #2130, #2273, #2335 (learn-content-engine), #2125 (Fehlerhistorie + ID-Stabilität), #1507 (typescript-eslint).
+- Entscheidung/RM: #2187 (release:published-Trigger u. a.), #2222 (Token mit delete:packages), #2188 (entschieden, Implementierung im #2130-Paket), #2189 (Exploration), #2182 (Pre-flight Check 1 + enforce_admins), #2306 (Bestandsaufnahme liegt vor, Konsolidierung offen), #2311 (erst manuscript-tools-Wortliste stromaufwärts).
+- Gerät/Mensch/Großvorhaben: #1569 (vvdiag wartet auf iPhone-Werte), #1728, #1087, #1485.
+
+## Abend-Statistik
+- 4 PRs gemergt (#2424-#2427), 4 Issues geschlossen (#2387, #2376, #2283, #2043), 1 Messbericht geliefert (#2301).
+- Offene PRs am Abend: nur #2429 (parallele Spur, andere Session).
