@@ -396,6 +396,19 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       (Sprachnamen bzw. Term/Übersetzung + Richtungshinweis sichtbar). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
+- [ ] Zuordnung: Vorspann frisst den Bildschirm nicht mehr (#2391): eine
+      Zuordnungsübung auf einem KLEINEN Gerät (iPhone) öffnen. Über der ersten
+      Spalte steht nur noch: Aufgabenstellung, (bei Sprach-Sets) der
+      Richtungshinweis und ein einzeiliger Knopf „Wie funktioniert das?".
+      Die Bedienanleitung („Waehle links …") und der „A → B"-Hinweis liegen
+      HINTER diesem Knopf (Klappe zu beim Öffnen; antippen klappt sie auf/zu).
+      Der Fortschrittszähler („2 / 5 zugeordnet") steht NICHT mehr oben, sondern
+      unten NEBEN dem „Antworten prüfen"-Knopf; nach dem Prüfen ersetzt ihn die
+      Punktzahl. Die zweite Spalte ist ohne langes Scrollen erreichbar.
+      Barrierefreiheit: der Knopf ist per Tastatur bedienbar und der Inhalt für
+      Screenreader auch zugeklappt erreichbar (natives <details>). iOS PWA/
+      Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
+      Web-App-Icon durchführen.
 - [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.

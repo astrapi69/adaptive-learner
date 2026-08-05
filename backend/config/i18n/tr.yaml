@@ -1797,6 +1797,7 @@ lesson:
       submit: "Cevapları kontrol et"
       retry: "Tekrar dene"
       counter: "{total} eşleşmeden {matched}"
+      help_toggle: "Nasıl çalışır"
       result: "Puan: {correct} / {total}"
       instructions: "Soldan bir öğe seç, ardından sağdan eşleşen çevirisini seç."
       left_label: "Terim"

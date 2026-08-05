@@ -1802,6 +1802,7 @@ lesson:
       submit: "Antworten prüfen"
       retry: "Erneut versuchen"
       counter: "{matched} / {total} zugeordnet"
+      help_toggle: "Wie funktioniert das?"
       result: "Punktzahl: {correct} / {total}"
       instructions: "Wähle links ein Element, dann rechts die passende Übersetzung."
       left_label: "Begriff"
