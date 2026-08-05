@@ -37,6 +37,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
        sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
+       sync-openapi sync-openapi-check \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -691,6 +692,12 @@ sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or
 	@cd backend && poetry run python ../scripts/generate_pydantic_models.py --check
 	@cd frontend && node scripts/sync-schema-mirror.mjs --check
 
+sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json from the booted app (#2281; single writer)
+	@cd backend && poetry run python ../scripts/sync_openapi.py
+
+sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts 13/13 plugins)
+	@cd backend && poetry run python ../scripts/sync_openapi.py --check
+
 engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)
 	@python3 scripts/check_engine_schema_parity.py
 
@@ -842,6 +849,7 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 	@echo "== testid references"   && $(MAKE) --no-print-directory check-testid-refs
 	@echo "== docker context"      && $(MAKE) --no-print-directory verify-docker-context
 	@echo "== file sizes"          && $(MAKE) --no-print-directory check-file-sizes
+	@echo "== openapi snapshot"    && $(MAKE) --no-print-directory sync-openapi-check
 	@echo ""
 	@echo "All build-free gates passed. Two gates need a frontend build and"
 	@echo "installed deps, so they are NOT in this target: 'make check-dead-classnames'"
