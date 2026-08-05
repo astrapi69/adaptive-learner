@@ -23,6 +23,11 @@ import {
   mimeTypeForAssetPath,
 } from "./content-loader-dexie";
 import { _resetDbForTests, getDb } from "../dexie/db";
+import {
+  applyStoredLessonOrder,
+  getLessonOrder,
+  storeLessonOrder,
+} from "../../lib/content/browse/lesson-order-store";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
 const BRANCH = "main";
@@ -703,5 +708,82 @@ sets:
     expect(entry.cached_version).toBe("1.0.0");
     const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
     expect(blob).toBeNull();
+  });
+});
+
+describe("Dexie content-loader: downloadSet seeds the lesson-order overlay (#2367)", () => {
+  const MULTI_REPO_MANIFEST = `
+schema_version: '1.0'
+name: Psych Intro
+sets:
+  - id: psych-intro
+    title: Psych Intro
+    language: de
+    level: A1
+    version: '1.0.0'
+    lesson_count: 3
+    domain: psychology
+`.trim();
+
+  const MULTI_SET_MANIFEST = `
+schema_version: '1.0'
+name: Psych Intro
+sets:
+  - id: psych-intro
+    title: Psych Intro
+    language: de
+    level: A1
+    version: '1.0.0'
+    lesson_count: 3
+metadata:
+  lessons:
+    - 10-a.json
+    - 99-y.json
+    - 100-z.json
+`.trim();
+
+  const MULTI_ROUTES = {
+    [`/${SOURCE}/${BRANCH}/manifest.yaml`]: MULTI_REPO_MANIFEST,
+    [`/sets/psych-intro/manifest.yaml`]: MULTI_SET_MANIFEST,
+    [`/sets/psych-intro/lessons/10-a.json`]: LESSON_JSON,
+    [`/sets/psych-intro/lessons/99-y.json`]: LESSON_JSON,
+    [`/sets/psych-intro/lessons/100-z.json`]: LESSON_JSON,
+  };
+
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("records the manifest order as import-origin so display follows it", async () => {
+    installFetchMock(MULTI_ROUTES);
+    await downloadSetDexie(SOURCE, "psych-intro", [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(getLessonOrder(SOURCE, "psych-intro")).toEqual([
+      "10-a.json",
+      "99-y.json",
+      "100-z.json",
+    ]);
+    const lexicographic = ["10-a.json", "100-z.json", "99-y.json"];
+    expect(
+      applyStoredLessonOrder(lexicographic, SOURCE, "psych-intro"),
+    ).toEqual(["10-a.json", "99-y.json", "100-z.json"]);
+  });
+
+  it("never overwrites a user-arranged order on re-download", async () => {
+    storeLessonOrder(SOURCE, "psych-intro", [
+      "99-y.json",
+      "10-a.json",
+      "100-z.json",
+    ]);
+    installFetchMock(MULTI_ROUTES);
+    await downloadSetDexie(SOURCE, "psych-intro", [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(getLessonOrder(SOURCE, "psych-intro")).toEqual([
+      "99-y.json",
+      "10-a.json",
+      "100-z.json",
+    ]);
   });
 });
