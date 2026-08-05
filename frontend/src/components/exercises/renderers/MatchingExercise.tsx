@@ -57,6 +57,7 @@ import {
     computeRightTileState,
     MatchingLeftTile,
     MatchingRightTile,
+    MatchingColumnHeader,
     MatchingPrompt,
     MatchingResultFooter,
     MatchingViewToggle,
@@ -556,18 +557,12 @@ function MatchingExercise(
             {view === "user-answers" && (
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
-                    <div
-                        className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
-                        data-testid="matching-left-header"
-                    >
-                        <span
-                            aria-hidden="true"
-                            className="inline-flex h-4 w-4 items-center justify-center rounded-[3px] bg-[var(--matching-side-a-bg)] text-[0.625rem] font-bold text-[var(--matching-side-a-fg)] ring-1 ring-[var(--border-strong)]"
-                        >
-                            A
-                        </span>
-                        {!isKnowledge && leftLabel}
-                    </div>
+                    <MatchingColumnHeader
+                        side="a"
+                        label={leftLabel}
+                        showLabel={!isKnowledge}
+                        testId="matching-left-header"
+                    />
                     <ul
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-left"
@@ -591,18 +586,12 @@ function MatchingExercise(
                     </ul>
                 </div>
                 <div className="flex min-w-0 flex-col gap-2">
-                    <div
-                        className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
-                        data-testid="matching-right-header"
-                    >
-                        <span
-                            aria-hidden="true"
-                            className="inline-flex h-4 w-4 items-center justify-center rounded-[3px] bg-[var(--matching-side-b-bg)] text-[0.625rem] font-bold text-[var(--matching-side-b-fg)] ring-1 ring-[var(--border-strong)]"
-                        >
-                            B
-                        </span>
-                        {!isKnowledge && rightLabel}
-                    </div>
+                    <MatchingColumnHeader
+                        side="b"
+                        label={rightLabel}
+                        showLabel={!isKnowledge}
+                        testId="matching-right-header"
+                    />
                     <ul
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-right"

@@ -670,6 +670,44 @@ export function MatchingResultFooter({
     );
 }
 
+/** One column header: the A / B letter cue plus the column label. For a
+ *  knowledge set the visible label is dropped (#2392) — the badge + the
+ *  tiles' own content carry the distinction — while ``label`` stays as the
+ *  list's accessible name on the caller's ``<ul aria-label>``. Extracted so
+ *  the two near-identical headers live in one place and the main renderer
+ *  keeps its complexity budget. */
+export function MatchingColumnHeader({
+    side,
+    label,
+    showLabel,
+    testId,
+}: {
+    side: "a" | "b";
+    label: string;
+    showLabel: boolean;
+    testId: string;
+}) {
+    return (
+        <div
+            className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
+            data-testid={testId}
+        >
+            <span
+                aria-hidden="true"
+                className={cn(
+                    "inline-flex h-4 w-4 items-center justify-center rounded-[3px] text-[0.625rem] font-bold ring-1 ring-[var(--border-strong)]",
+                    side === "a"
+                        ? "bg-[var(--matching-side-a-bg)] text-[var(--matching-side-a-fg)]"
+                        : "bg-[var(--matching-side-b-bg)] text-[var(--matching-side-b-fg)]",
+                )}
+            >
+                {side === "a" ? "A" : "B"}
+            </span>
+            {showLabel && label}
+        </div>
+    );
+}
+
 /** Prompt + instruction + running counter + sr-only selection status +
  *  the first-pair flow hint, above the two tile columns. */
 export function MatchingPrompt({
