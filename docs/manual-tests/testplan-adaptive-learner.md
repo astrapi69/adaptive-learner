@@ -1415,6 +1415,26 @@ Hochformat-Situation ausdrücklich prüfen.
 
 ---
 
+## PRIO 9: LANDESEITE (statisch, #2409)
+
+Die Landeseite unter `/start/` (DE) und `/start/en/` (EN) ist echtes
+statisches HTML im Pages-Artefakt - kein React, kein Nachladen. Sie traegt
+bewusst keine Zahlen, die veralten koennten.
+
+- [ ] `astrapi69.github.io/adaptive-learner/start/` laedt; Kernsatz "Eine
+      App, die sich dir anpasst, nicht umgekehrt." als Ueberschrift sichtbar.
+- [ ] "App im Browser oeffnen" fuehrt zur App; "Launcher herunterladen"
+      fuehrt zur Release-Seite.
+- [ ] Sprachwechsel: "English" oben rechts fuehrt auf `/start/en/`, dort
+      fuehrt "Deutsch" zurueck.
+- [ ] Verweise unten (Dokumentation, Repository, Lerninhalte) funktionieren.
+- [ ] Dunkles System-Theme: Seite folgt (prefers-color-scheme), Text lesbar.
+- [ ] Mobil (schmales Fenster): einspaltig, kein horizontales Scrollen.
+- [ ] Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
+      Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
+
+---
+
 # TEIL B: AUTOMATISIERTE TESTS (Referenz)
 
 Diese Tests laufen in CI oder via `make test`.
