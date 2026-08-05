@@ -160,6 +160,11 @@ describe("draft-to-lesson", () => {
         // The precise ajv reason is carried, not discarded.
         expect(checks.schemaError).toBeTruthy();
         expect(checks.schemaError).toContain("/cards/0");
+        // #2384 — a real content violation is NOT an internal error, and the
+        // internal ``generated lesson invalid:`` prefix is stripped so the
+        // detail reads as the plain, actionable reason.
+        expect(checks.schemaErrorIsInternal).toBe(false);
+        expect(checks.schemaError).not.toContain("generated lesson invalid:");
     });
 
     it("checkDraft surfaces the validator message for an over-long card side (#1722)", () => {
@@ -174,6 +179,8 @@ describe("draft-to-lesson", () => {
         const checks = checkDraft(input());
         expect(checks.schemaValid).toBe(true);
         expect(checks.schemaError).toBeNull();
+        // #2384 — a valid draft is never flagged as an internal error.
+        expect(checks.schemaErrorIsInternal).toBe(false);
         // The extra detail field must not break the boolean aggregate.
         expect(allChecksPass(checks)).toBe(true);
     });

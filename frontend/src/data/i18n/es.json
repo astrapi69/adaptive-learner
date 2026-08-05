@@ -3158,7 +3158,9 @@
       "check_enoughExercises": "Al menos 5 ejercicios",
       "check_enoughTypes": "Al menos 2 tipos de ejercicio",
       "check_schemaValid": "Estructura de lección válida",
-      "structure_error": "Detalle técnico"
+      "structure_error": "Detalle técnico",
+      "structure_internal_error": "Se produjo un error interno al comprobar esta lección. Es un problema de la aplicación, no de tu lección. Vuelve a cargar la página e inténtalo de nuevo; si sigue ocurriendo, informa del problema abajo.",
+      "structure_report": "Informar del problema"
     },
     "save": {
       "saved": "¡Lección guardada!",
