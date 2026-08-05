@@ -17,8 +17,7 @@ export type HintKind =
     | {kind: "length"; n: number}
     | {kind: "first_letters"; prefix: string; n: number}
     | {kind: "not"; label: string}
-    | {kind: "item"; label: string}
-    | {kind: "reveal_pair"; left: string; right: string};
+    | {kind: "item"; label: string};
 
 export interface ExerciseHint {
     /** 1 = light, 2 = stronger. */
@@ -75,17 +74,25 @@ function pictureChoiceHints(exercise: ContentLessonExercise): ExerciseHint[] {
     return hints;
 }
 
-/** Matching hints: name the first item, then reveal its pair. */
+/** Matching hints: name which item to tackle first, then scaffold its
+ *  partner with the first letter + length — never the whole pairing. A
+ *  full-pair reveal ("X goes with Y") hands over one of N matches before
+ *  the learner thinks, so the SRS counts a match they could not make; this
+ *  keeps matching at the same scaffold level as every other type. */
 function matchingHints(exercise: ContentLessonExercise): ExerciseHint[] {
     const pair = exercise.pairs?.[0];
     if (!pair || !pair.left || !pair.right) return [];
-    return [
+    const partner = chars(pair.right.trim());
+    const hints: ExerciseHint[] = [
         {level: 1, data: {kind: "item", label: pair.left}},
-        {
-            level: 2,
-            data: {kind: "reveal_pair", left: pair.left, right: pair.right},
-        },
     ];
+    if (partner.length > 0) {
+        hints.push({
+            level: 2,
+            data: {kind: "first_letters", prefix: partner[0], n: partner.length},
+        });
+    }
+    return hints;
 }
 
 /** Word-tiles hints: the first tile, then the first two. */
@@ -159,9 +166,5 @@ export function formatHint(hint: ExerciseHint, t: HintTranslate): string {
                 "{label}",
                 d.label,
             );
-        case "reveal_pair":
-            return t("hints.reveal_pair", "“{left}” goes with “{right}”")
-                .replace("{left}", d.left)
-                .replace("{right}", d.right);
     }
 }

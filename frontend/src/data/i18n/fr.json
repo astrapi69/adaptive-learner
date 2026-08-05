@@ -3623,8 +3623,7 @@
     "length": "La réponse compte {n} lettres",
     "first_letters": "Commence par « {prefix} » ({n} lettres)",
     "not": "Ce n'est pas « {label} »",
-    "item": "Commence par « {label} »",
-    "reveal_pair": "« {left} » va avec « {right} »"
+    "item": "Commence par « {label} »"
   },
   "favorites": {
     "card_title": "Tes favoris",

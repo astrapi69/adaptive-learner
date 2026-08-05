@@ -3340,7 +3340,6 @@ hints:
   first_letters: "Beginnt mit „{prefix}“ ({n} Buchstaben)"
   not: "Es ist nicht „{label}“"
   item: "Beginne mit „{label}“"
-  reveal_pair: "„{left}“ gehört zu „{right}“"
 
 favorites:
   card_title: "Deine Favoriten"
