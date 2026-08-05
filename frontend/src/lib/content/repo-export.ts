@@ -42,6 +42,15 @@ export interface RepoExportInput {
  *  the major, so a 1.x set imports cleanly). */
 const EXPORT_SCHEMA_VERSION = "1.4";
 
+/**
+ * ``schema_version`` for the root ``search-index.json`` (#2300). This is the
+ * INDEX format version, independent of the manifest/lesson schema version
+ * above: the canonical generator (``generate_search_index.py`` in the content
+ * repo) emits ``"1.0"`` — pinned by the ``__fixtures__/search-index-official.json``
+ * round-trip test so a re-mirror that bumps it fails loudly here.
+ */
+const SEARCH_INDEX_SCHEMA_VERSION = "1.0";
+
 /** Total card count across the lessons (for the search index + README). */
 function totalCards(lessons: readonly RepoExportLesson[]): number {
     return lessons.reduce((sum, l) => sum + (l.lesson.cards?.length ?? 0), 0);
@@ -71,11 +80,30 @@ export function buildManifestYaml(
     return stringifyYaml(manifest);
 }
 
-/** Build the repo-root ``search-index.json`` (one entry for this set). */
+/** Build the repo-root ``search-index.json`` (one entry for this set).
+ *
+ * Matches the canonical index format (``schema/search-index.schema.json`` in
+ * the content repo, whose root ``required`` is ``[repo, schema_version,
+ * sets]``): #2300 - the earlier export omitted ``repo`` + ``schema_version``,
+ * so ``scripts/validate_registered_repo.py`` rejected an app-exported repo on
+ * two missing required fields (and ``RegistrySubmitSection`` read no
+ * ``index_schema_version``), through no fault of the author.
+ *
+ * Per-set enrichment fields the canonical generator also emits -
+ * ``visibility``, ``review_status``, ``ai_validated``, ``trust_level``,
+ * ``updated_at`` - are deliberately NOT written here: the read side
+ * ({@link ./repos/search-index-loader} ``parseSearchIndex``) normalises their
+ * absence (visible / authored / registry-floored trust / null), and the app
+ * cannot honestly self-assign them - ``trust_level`` is the registry's to
+ * grant, ``review_status`` / ``ai_validated`` are author-workflow signals the
+ * export does not know. They are omitted, not forgotten.
+ */
 export function buildSearchIndexJson(input: RepoExportInput): string {
-    const {set, lessons} = input;
+    const {set, lessons, ownerRepo} = input;
     const index = {
-        generated_at: new Date().toISOString(),
+        repo: ownerRepo,
+        generated: new Date().toISOString(),
+        schema_version: SEARCH_INDEX_SCHEMA_VERSION,
         sets: [
             {
                 id: set.id,
