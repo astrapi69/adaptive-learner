@@ -136,11 +136,14 @@ complète des méthodes avec exemples de requête / réponse.
 ## OpenAPI / Swagger
 
 FastAPI génère automatiquement une spec OpenAPI 3.1 à partir des
-schémas Pydantic. En mode dev :
+schémas Pydantic.
 
-- **Swagger UI** : `http://localhost:18001/api/docs`
-- **Redoc** : `http://localhost:18001/api/redoc`
-- **OpenAPI JSON brut** : `http://localhost:18001/api/openapi.json`
+- **OpenAPI JSON brut** : `http://localhost:18001/openapi.json` -
+  servi dans tous les modes, délibérément : la spec lisible par
+  machine est l'interface d'intégration, p. ex. pour les
+  générateurs de clients.
+- **Swagger UI** : `http://localhost:18001/api/docs` (mode debug uniquement)
+- **Redoc** : `http://localhost:18001/api/redoc` (mode debug uniquement)
 
 Ce sont les références faisant autorité pour la forme exacte de
 chaque endpoint. Les pages Markdown ici sont un sous-ensemble

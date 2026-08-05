@@ -136,11 +136,13 @@ list with request / response examples.
 ## OpenAPI / Swagger
 
 FastAPI auto-generates an OpenAPI 3.1 spec from the Pydantic
-schemas. In dev mode:
+schemas.
 
-- **Swagger UI**: `http://localhost:18001/api/docs`
-- **Redoc**: `http://localhost:18001/api/redoc`
-- **Raw OpenAPI JSON**: `http://localhost:18001/api/openapi.json`
+- **Raw OpenAPI JSON**: `http://localhost:18001/openapi.json` -
+  served in every mode, deliberately: the machine-readable spec is
+  the integration interface, e.g. for client generators.
+- **Swagger UI**: `http://localhost:18001/api/docs` (debug mode only)
+- **Redoc**: `http://localhost:18001/api/redoc` (debug mode only)
 
 These are the authoritative reference for every endpoint's
 exact shape. The Markdown pages here are a curated subset for

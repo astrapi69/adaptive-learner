@@ -147,6 +147,12 @@ app = FastAPI(
     version=__version__,
     lifespan=lifespan,
     openapi_tags=OPENAPI_TAGS,
+    # /openapi.json stays PUBLIC in every mode - decided in #2279: the app
+    # has no per-request auth, so gating the spec would be security theatre,
+    # while the machine-readable description is an integration interface
+    # (client generators). The interactive viewers below are a heavier
+    # optional convenience and stay DEBUG-only (#2198). Pinned by
+    # tests/test_openapi_docs.py::test_spec_public_while_viewers_debug_gated.
     docs_url="/api/docs" if DEBUG else None,
     redoc_url="/api/redoc" if DEBUG else None,
 )
