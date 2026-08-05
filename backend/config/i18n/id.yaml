@@ -3346,7 +3346,6 @@ hints:
   first_letters: "Diawali dengan “{prefix}” ({n} huruf)"
   not: "Bukan “{label}”"
   item: "Mulai dengan “{label}”"
-  reveal_pair: "“{left}” berpasangan dengan “{right}”"
 
 favorites:
   card_title: "Favoritmu"

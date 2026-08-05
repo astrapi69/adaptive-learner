@@ -3338,7 +3338,6 @@ hints:
   first_letters: "Empieza por «{prefix}» ({n} letras)"
   not: "No es «{label}»"
   item: "Empieza con «{label}»"
-  reveal_pair: "«{left}» va con «{right}»"
 
 favorites:
   card_title: "Tus favoritos"

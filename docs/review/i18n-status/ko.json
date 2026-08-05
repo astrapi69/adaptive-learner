@@ -12367,19 +12367,6 @@
     "target_hash": "e545d28bf085",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "hints.reveal_pair": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "needs_recheck",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "ok",
-    "de_hash": "fd54c5a3b18c",
-    "target_hash": "15caadebeed7",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "import.analysis_cancel": {
     "verdict": "ok",
     "severity": "low",

@@ -12283,17 +12283,6 @@
     "target_hash": "dd81ad61ef7a",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "hints.reveal_pair": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "fd54c5a3b18c",
-    "target_hash": "d2d0f19b9716",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "import.analysis_cancel": {
     "verdict": "ok",
     "severity": "low",

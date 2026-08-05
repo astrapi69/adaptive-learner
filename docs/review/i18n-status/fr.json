@@ -12043,17 +12043,6 @@
     "target_hash": "284f66e26d66",
     "checked_at": "fr+es full run"
   },
-  "hints.reveal_pair": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "fd54c5a3b18c",
-    "target_hash": "a13f3d264c22",
-    "checked_at": "fr+es full run"
-  },
   "import.analysis_cancel": {
     "verdict": "ok",
     "severity": "low",
