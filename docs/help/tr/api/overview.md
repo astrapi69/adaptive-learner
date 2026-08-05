@@ -136,11 +136,14 @@ Tam yöntem listesi için istek / yanıt örnekleriyle birlikte
 ## OpenAPI / Swagger
 
 FastAPI, Pydantic şemalarından otomatik olarak bir OpenAPI 3.1
-spesifikasyonu oluşturur. Geliştirme modunda:
+spesifikasyonu oluşturur.
 
-- **Swagger UI**: `http://localhost:18001/api/docs`
-- **Redoc**: `http://localhost:18001/api/redoc`
-- **Ham OpenAPI JSON**: `http://localhost:18001/api/openapi.json`
+- **Ham OpenAPI JSON**: `http://localhost:18001/openapi.json` -
+  her modda, bilinçli olarak sunulur: makine tarafından okunabilir
+  spesifikasyon, örneğin istemci üreteçleri için entegrasyon
+  arayüzüdür.
+- **Swagger UI**: `http://localhost:18001/api/docs` (yalnızca debug modu)
+- **Redoc**: `http://localhost:18001/api/redoc` (yalnızca debug modu)
 
 Bunlar, her uç noktanın tam şekli için yetkili referanstır.
 Buradaki Markdown sayfaları okunabilirlik için seçilmiş bir

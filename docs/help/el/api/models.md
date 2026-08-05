@@ -10,7 +10,7 @@
 παρακάτω· τα 11 που προστέθηκαν έκτοτε (Phase 12+ imports,
 Phase 22 subjects/tags, Phase 29-30 gamification + anki,
 Phase 32 notebooklm) αναφέρονται στο τέλος με ονομασία + πίνακα.
-Βλ. το OpenAPI spec στο `/api/openapi.json` για κάθε πεδίο
+Βλ. το OpenAPI spec στο `/openapi.json` για κάθε πεδίο
 κάθε μοντέλου.
 
 ## User

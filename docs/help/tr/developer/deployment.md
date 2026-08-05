@@ -60,14 +60,18 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml` şunları gönderir:
+`docker-compose.prod.yml` **tek bir servis, `app`** içerir (#2058
+sonrası tek konteyner - nginx yok, ayrı bir frontend konteyneri
+yok):
 
-- **backend** (Python 3.12 görüntüsünde FastAPI), 7880 portunu
-  açığa çıkarır.
-- **nginx** yardımcı, derlenmiş frontend'i (`frontend/dist/`)
-  sunar ve `/api/*`'yi arka uca proxy yapar.
-- **Konteyner yeniden başlatmalarında hayatta kalan bir SQLite
-  birimi**.
+- **FastAPI (Python 3.12 görüntüsü)**, derlenmiş frontend
+  statics'lerini VE `/api/*`'yi birlikte, iç port
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}` üzerinde sunar.
+- Host'ta yayımlanan port:
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}` -
+  varsayılan loopback.
+- **Konteyner yeniden kurulumlarında hayatta kalan adlandırılmış
+  `adaptive-learner-data` birimi** (`/app/data`).
 
 `install.sh` ve `install.ps1`, son kullanıcılar için curl-pipe
 yükleyicileridir - etiketli bir sürüm tarbalını çeker, ayarlar
@@ -79,7 +83,7 @@ yeniden oluşturulur. Oluşturulan dosyaları doğrudan düzenlemeyin.
 
 ## Üretim için yapılandırma
 
-Üretim için üç şey önemlidir:
+Üretim için dört şey önemlidir:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: sabit bir Fernet anahtarı
    olmalıdır. Bir kez oluşturun, güvenli bir yerde saklayın
@@ -108,9 +112,9 @@ bir konteynere bağlayabilirsiniz.
 
 ## Masaüstü başlatıcısı
 
-`launcher/` altındaki PyInstaller ikilileri, `http://localhost:7880`
-adresinde yerel bir FastAPI önyükler, ardından kullanıcının varsayılan
-tarayıcısını açar. İlk başlatmada başlatıcı ayrıca POSIX'te
+`launcher/` altındaki PyInstaller ikilileri, uygulamayı Docker
+konteyneri olarak çalıştırır (varsayılan `http://localhost:8501`),
+ardından kullanıcının varsayılan tarayıcısını açar. İlk başlatmada başlatıcı ayrıca POSIX'te
 `~/.config/adaptive-learner/secrets.yaml`'ı yorumlanmış şablon
 olarak + `chmod 0600` olarak oluşturur, böylece kullanıcı API
 anahtarlarını Ayarlar UI'ına dokunmadan oraya ekleyebilir.
