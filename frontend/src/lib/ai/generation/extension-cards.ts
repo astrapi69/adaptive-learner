@@ -120,6 +120,11 @@ function buildSubQuestion(raw: unknown, withPoints: boolean): RcQuestion | GqQue
   return gq;
 }
 
+/** Passing bar applied to a generated graded quiz when the model omits it or
+ *  gives a trivially-passable (<= 0) value (#2364). Matches the extension
+ *  wizard's blank default so authored and generated quizzes agree. */
+const DEFAULT_GRADED_QUIZ_PASS_THRESHOLD = 60;
+
 /** Per-extension-type ``ext_payload`` builder from the model's raw card. */
 const EXT_PAYLOAD_BUILDERS: Record<
   TextExtensionType,
@@ -131,15 +136,18 @@ const EXT_PAYLOAD_BUILDERS: Record<
       buildSubQuestion(q, false),
     ),
   }),
-  [GRADED_QUIZ_EXT_TYPE]: (raw) => {
-    const payload: Record<string, unknown> = {
-      questions: (Array.isArray(raw.questions) ? raw.questions : []).map((q) =>
-        buildSubQuestion(q, true),
-      ),
-    };
-    if (typeof raw.pass_threshold === "number") payload.pass_threshold = raw.pass_threshold;
-    return payload;
-  },
+  [GRADED_QUIZ_EXT_TYPE]: (raw) => ({
+    // #2364 — a quiz everyone passes is not a test. An omitted or <= 0
+    // pass_threshold is schema-valid but always-pass, so normalize it to a
+    // real passing bar (the wizard's default). Deterministic; no prompt hint.
+    pass_threshold:
+      typeof raw.pass_threshold === "number" && raw.pass_threshold > 0
+        ? raw.pass_threshold
+        : DEFAULT_GRADED_QUIZ_PASS_THRESHOLD,
+    questions: (Array.isArray(raw.questions) ? raw.questions : []).map((q) =>
+      buildSubQuestion(q, true),
+    ),
+  }),
   [CATEGORIZATION_EXT_TYPE]: (raw) => ({
     categories: (Array.isArray(raw.categories) ? raw.categories : [])
       .map((entry) => {

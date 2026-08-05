@@ -321,6 +321,13 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Chinesisch A1: Pinyin korrekt? Zeichen stimmt?
 - [ ] Italienisch A1: Stichprobe Grammatik/Vokabeln
 - [ ] Portugiesisch-BR A1: Stichprobe
+- [ ] KI-generierte Fehlerkorrektur (#2355/#2364): bei einer generierten
+      `ext:al-error-correction`-Aufgabe prüfen, ob der markierte Token wirklich
+      der falsche ist und die akzeptierte Korrektur ihn sinnvoll ersetzt.
+      Schemakonform ist nicht gleich sinnvoll: ein bereits richtiger markierter
+      Token ist gültig, aber keine echte Aufgabe, und keine Automatik kann das
+      erkennen (nur diese Stichprobe). Sinngemäß gilt dasselbe fürs benotete
+      Quiz und das Leseverständnis - lösbar, eindeutig, Bewertung wie erwartet
 
 ---
 
