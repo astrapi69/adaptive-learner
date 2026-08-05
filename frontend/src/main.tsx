@@ -59,6 +59,17 @@ if (import.meta.env.DEV) {
     });
 }
 
+/**
+ * #2283 — real-browser concurrency probe. The Playwright cell
+ * ``e2e/dexie/dexie-concurrency.spec.ts`` navigates with
+ * ``?e2e-hooks=1`` to fire the storage layer's read-modify-write
+ * paths concurrently against real IndexedDB. A normal visit never
+ * carries the flag, so the dynamic chunk is never fetched.
+ */
+if (new URLSearchParams(window.location.search).has("e2e-hooks")) {
+    void import("./storage/dexie/e2e-concurrency-hooks");
+}
+
 // S3 (PWA hardening) — replay any lesson-progress upserts that were
 // queued while offline, on reconnect + once at startup if online.
 initSyncQueueReplay();
