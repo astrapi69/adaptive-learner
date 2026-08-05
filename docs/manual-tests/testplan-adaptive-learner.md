@@ -349,6 +349,16 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Optionen in ext:al-graded-quiz und ext:al-reading-comprehension.
       iOS PWA/Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm
       hinzugefügten Web-App-Icon durchführen.
+- [ ] Zuordnung + Wort-Kacheln gemischt (#2371, #2372): eine Zuordnungsübung
+      mehrfach öffnen (verschiedene Übungen/Besuche) - das erste Element links
+      gehört NICHT durchgängig zum letzten rechts (früher praktisch immer
+      umgekehrte Reihenfolge); beide Spalten erscheinen unabhängig gemischt.
+      Bei Wort-Kacheln steht das erste Lösungswort NICHT durchgängig hinten in
+      der Kachelleiste. Innerhalb EINER Übungsansicht bleibt die Reihenfolge
+      stabil. Richtige Paare/Sätze werden weiterhin richtig gewertet (Bewertung
+      inhaltsbasiert, nicht positionsbasiert). iOS PWA/Standalone: dieselbe
+      Prüfung auf dem zum Home-Bildschirm hinzugefügten Web-App-Icon
+      durchführen.
 - [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.

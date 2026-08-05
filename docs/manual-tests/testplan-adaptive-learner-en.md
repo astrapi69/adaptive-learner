@@ -328,6 +328,15 @@ Requires domain knowledge. Not automatable.
       not position-based). Same for the options in ext:al-graded-quiz and
       ext:al-reading-comprehension. iOS PWA/Standalone: repeat the check on the
       web-app icon added to the Home Screen.
+- [ ] Matching + word tiles shuffled (#2371, #2372): open a matching exercise
+      several times (different exercises/visits) - the first left entry does
+      NOT consistently pair with the last right one (previously a near-constant
+      reversed order); both columns are shuffled independently. In word tiles
+      the first solution word is NOT consistently at the end of the tile bar.
+      Within ONE exercise view the order stays stable. Correct pairs/sentences
+      still score correct (grading is content-based, not position-based).
+      iOS PWA/Standalone: repeat the check on the web-app icon added to the
+      Home Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
