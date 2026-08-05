@@ -62,8 +62,20 @@ let moduleCode = rawModuleCode.replace(
     /const (\w+) = require\("([^"]+)"\)(\.default)?;/g,
     (_match, name, mod, isDefault) => {
         const spec = mod.includes("/") && !/\.[cm]?js$/.test(mod) ? `${mod}.js` : mod;
+        // #2415 — a plain default import of these CJS runtime helpers is
+        // interop-DEPENDENT: Vite's dev interop resolves it to
+        // ``exports.default`` (the function), but Node ESM and the Rolldown
+        // production bundle resolve it to the ``module.exports`` OBJECT, so
+        // the built app threw ``(0 , T.default) is not a function`` on every
+        // draft check. Hoist to a namespace import and pick the function
+        // across BOTH interop shapes; fail loudly if neither matches.
         hoistedImports.push(
-            isDefault ? `import ${name} from "${spec}";` : `import * as ${name} from "${spec}";`,
+            isDefault
+                ? `import * as ${name}$ns from "${spec}";\n` +
+                  `const ${name} = [${name}$ns.default?.default, ${name}$ns.default, ${name}$ns]` +
+                  `.find((candidate) => typeof candidate === "function") ?? ` +
+                  `(() => { throw new TypeError("${spec}: no callable default export (interop drift, #2415)"); })();`
+                : `import * as ${name} from "${spec}";`,
         );
         return "";
     },
