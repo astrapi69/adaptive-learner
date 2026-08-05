@@ -31,6 +31,9 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 
 vi.mock("../../lib/content/language/language-names", () => ({
   languageDisplayName: (code: string) => code.toUpperCase(),
+  // Flag-free in the page test (the flag mapping is unit-tested in
+  // language-names.test.ts); keeps the facet-label assertions deterministic.
+  flaggedName: (code: string) => code.toUpperCase(),
 }));
 
 vi.mock("../../lib/content/repos/discover-repos", () => ({

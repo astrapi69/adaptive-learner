@@ -21,7 +21,10 @@ import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { isOfficialSource } from "../../lib/content/repos/content-repos";
 import { dismissSet, undismissSet } from "../../lib/content/browse/dismissed-sets";
-import { languageDisplayName } from "../../lib/content/language/language-names";
+import {
+  flaggedName,
+  languageDisplayName,
+} from "../../lib/content/language/language-names";
 import {
   availableDomains,
   availableSources,
@@ -248,7 +251,7 @@ export default function Discover() {
         },
         ...availableSourceLanguages(allSets).map((code) => ({
           value: code,
-          label: `${languageDisplayName(code, lang)} (${counts[code] ?? 0})`,
+          label: `${flaggedName(code, lang)} (${counts[code] ?? 0})`,
         })),
       ];
     },
@@ -285,7 +288,7 @@ export default function Discover() {
       },
       ...codes.map((code) => ({
         value: code,
-        label: `${languageDisplayName(code, lang)} (${counts[code] ?? 0})`,
+        label: `${flaggedName(code, lang)} (${counts[code] ?? 0})`,
       })),
     ];
   }, [sourceScopedSets, t, lang]);

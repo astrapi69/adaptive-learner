@@ -42,6 +42,9 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 }));
 vi.mock("../../lib/content/language/language-names", () => ({
   languageDisplayName: (code: string) => code.toUpperCase(),
+  // Flag-free in this test (the flag mapping is unit-tested in
+  // language-names.test.ts); keeps the label assertions deterministic.
+  flaggedName: (code: string) => code.toUpperCase(),
 }));
 vi.mock("../../lib/content/repos/discover-repos", () => ({
   collectDiscoveryRepos: vi.fn(async () => [{ url: "owner/repo", branch: "main" }]),
@@ -151,8 +154,10 @@ describe.each(["api", "dexie"] as const)(
       renderDiscover();
       await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
       // Two populated pairs (de→ja, de→es) => the matrix is shown; no pair is
-      // active until one is chosen.
+      // active until one is chosen. Collapsed by default (#2359): expand it
+      // first, then the target buttons are in the DOM.
       expect(screen.getByTestId("discover-pair-matrix")).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("discover-pair-matrix-trigger"));
       expect(screen.getByTestId("discover-pair-matrix-de-es")).toHaveAttribute(
         "aria-pressed",
         "false",

@@ -3780,7 +3780,8 @@
     },
     "pairs": {
       "heading": "Paires de langues",
-      "select": "Choisir {p}"
+      "select": "Choisir {p}",
+      "choose": "Choisir une paire de langues"
     },
     "filter": {
       "all": "Tous",
