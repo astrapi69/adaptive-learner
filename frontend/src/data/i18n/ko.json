@@ -2258,7 +2258,10 @@
       "submit": "내보내기",
       "working": "내보내는 중…",
       "done": "세트를 저장소에 푸시했습니다.",
-      "failed": "내보내기 실패."
+      "failed": "내보내기 실패.",
+      "quality_issues": "품질 검사에서 문제가 발견되었습니다. 콘텐츠 저장소 게이트가 이를 거부합니다:",
+      "export_anyway": "그래도 내보내기",
+      "renamed_note": "표시 순서가 레슨 순서와 일치하도록 레슨 파일 이름에 정렬 접두사(NN-)가 추가되었습니다."
     },
     "anki_export": {
       "button": "Anki 내보내기"
@@ -2583,6 +2586,7 @@
       "back_language_mismatch": "레슨 '{lesson}': 카드 '{card}'의 뒷면이 {source}처럼 보이지 않습니다.",
       "free_text_too_few_accepts": "레슨 '{lesson}': 자유 입력 연습 '{exercise}'에 허용된 답이 최소 {min}개 필요합니다.",
       "matching_too_few_pairs": "레슨 '{lesson}': 연결 연습 '{exercise}'에 짝이 최소 {min}개 필요합니다.",
+      "matching_duplicate_left": "레슨 '{lesson}': 매칭 연습 '{exercise}'에서 왼쪽 값 '{value}'이(가) 중복됩니다. 학습자가 풀 수 없습니다.",
       "missing_distractors": "레슨 '{lesson}': 연습 '{exercise}'에 오답 보기(틀린 선택지)가 필요합니다.",
       "non_cefr_level": "레벨 '{level}'은(는) CEFR 등급(A1-C2)이 아닙니다.",
       "level_too_complex": "레슨 '{lesson}': 텍스트가 한쪽당 평균 {avg}단어로, 레벨 {level}에 비해 높습니다 (약 {cap}개 예상).",

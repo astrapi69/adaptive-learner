@@ -2,13 +2,13 @@
 
 # デプロイメント
 
-v1.20.0では4つのデプロイメントモードが利用できます。
+4つのデプロイメントモードが利用できます。
 
 | モード | 場所 | バックエンド | AI呼び出し | キーソース |
 |---|---|---|---|---|
 | ローカル開発 | `make dev` | FastAPIが:18001で稼働 | サーバーサイド | env / secrets.yaml / DB |
 | GitHub Pages | `astrapi69.github.io/adaptive-learner/` | なし（Dexie） | ブラウザ直接 | DB（IndexedDB） |
-| デスクトップランチャー | PyInstallerバイナリ | FastAPIをローカルで起動 | サーバーサイド | secrets.yaml（自動作成）/ Settings UI |
+| デスクトップランチャー | PyInstallerバイナリ（Dockerベース） | Dockerコンテナ内のFastAPI | サーバーサイド | `.env`（自動生成）/ Settings UI |
 | Docker | Docker Composeセルフホスト | コンテナ内FastAPI | サーバーサイド | env / Settings UI |
 
 ## ローカル開発
@@ -77,7 +77,7 @@ make prod-down   # docker compose down
 
 ## デスクトップランチャー
 
-`launcher/`以下のPyInstallerバイナリはアプリをDockerコンテナとして起動し（既定は`http://localhost:8501`）、ユーザーのデフォルトブラウザを開きます。最初の起動時に、ランチャーはコメント付きテンプレートとして`~/.config/adaptive-learner/secrets.yaml`を作成し、POSIXで`chmod 0600`を適用するため、ユーザーはSettings UIに触れることなくAPIキーをそこに追加できます。
+`launcher/`はPyInstallerベースの1バイナリのデスクトップランチャーです。組み込みサーバーではなく、公開されている`docker-app-launcher`エンジンの薄いラッパーで、`launcher/launcher.json`で設定されます。配布される設定は**イメージモード**（`deployment_mode: "image"`）で動作します。ランチャーはビルド済みで検証済みのリリースイメージ（`ghcr.io/astrapi69/adaptive-learner:<バージョン>`、埋め込まれたアプリバージョンに固定）をプルし、Dockerコンテナとして起動し（既定は`http://localhost:8501`）、データボリューム`adaptive-learner-data`を`/app/data`にマウントしてから、ユーザーのデフォルトブラウザを開きます。ローカルでは何もビルドされず、ソースのダウンロードも展開も行われません。
 
 完全な3層設定チェーン（プロジェクトYAML < ユーザーオーバーレイ < env変数）は`docs/configuration.md`に記載されています。
 
@@ -89,7 +89,7 @@ make prod-down   # docker compose down
 - `launcher-macos.yml` → `adaptive-learner-launcher-macos`
 - `launcher-windows.yml` → `adaptive-learner-launcher.exe`
 
-各ランチャーはバージョン（`__version__`リテラル + スペックファイルによってビルド時に書き込まれる`_build_info.py`）を埋め込み、一致するタグ付きリリースのtarballをフェッチして展開し、バックエンドを起動し、ユーザーのブラウザでフロントエンドを開きます。
+各ランチャーはバージョン（`__version__`リテラル + スペックファイルによってビルド時に書き込まれる`_build_info.py`）を埋め込みます。エンジンはさらにGitHub Releases APIに対するバックグラウンドの更新チェックを実行します（`launcher.json`の`update_check_enabled`で有効化）。エラー時は静かに失敗し、ランチャーを決してブロックしません。
 
 ランチャーは意図的に主要な配布チャネルではありません（Dockerがそれです）。「ダブルクリックでインストール」という体験を望むユーザーのために存在しています。
 
