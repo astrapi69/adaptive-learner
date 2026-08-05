@@ -37,6 +37,11 @@ Si Docker n'est pas encore en cours d'exécution quand tu démarres le
 lanceur, celui-ci affiche un message avec un bouton "Démarrer Docker"
 pour que tu puisses le lancer sans quitter le lanceur.
 
+Par défaut, l'application en cours d'exécution n'est accessible que
+depuis cet ordinateur (`127.0.0.1`). Elle n'a pas de connexion ;
+l'ouvrir à d'autres appareils est un choix délibéré - voir
+[Démarrer le lanceur de bureau](launcher.md).
+
 ## Docker est-il sûr à installer ?
 
 Oui. Docker Desktop est développé par Docker, Inc., une entreprise

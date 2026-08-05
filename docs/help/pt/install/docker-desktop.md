@@ -35,6 +35,11 @@ Se o Docker ainda não estiver a correr quando inicias o launcher, ele
 mostra um aviso com um botão "Iniciar o Docker" para que possas
 arrancá-lo sem sair do launcher.
 
+Por omissão, a aplicação em execução só é acessível a partir deste
+computador (`127.0.0.1`). Não tem início de sessão; abri-la a outros
+dispositivos é um passo deliberado - ver
+[Iniciar o launcher de desktop](launcher.md).
+
 ## É seguro instalar o Docker?
 
 Sim. O Docker Desktop é feito pela Docker, Inc., uma empresa bem

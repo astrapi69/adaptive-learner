@@ -86,6 +86,7 @@ navigateur système par défaut.
 | `ADAPTIVE_LEARNER_DATA_DIR` | `~/.local/share/adaptive_learner/` | Répertoire des données |
 | `ADAPTIVE_LEARNER_CONFIG_DIR` | `~/.config/adaptive_learner/` | Répertoire de config |
 | `ADAPTIVE_LEARNER_DEBUG` | `false` | Active les endpoints de debug et les traces |
+| `ADAPTIVE_LEARNER_BIND_ADDRESS` | `127.0.0.1` | Adresse de liaison du port publié ; l'application n'a aucune authentification - ne lie `0.0.0.0` que délibérément, dans un réseau de confiance ou derrière ta propre couche d'auth (reverse proxy avec basic auth, VPN) |
 | `ADAPTIVE_LEARNER_CORS_ORIGINS` | `http://localhost:15174` | Origines CORS autorisées |
 | `ANTHROPIC_API_KEY` | aucun | Clé API Anthropic |
 | `OPENAI_API_KEY` | aucun | Clé API OpenAI |

@@ -47,3 +47,12 @@ The safest habit is to **export a backup before you change the port**,
 so you can restore it on the new address if anything is missing. A
 regular backup is good insurance in general - it also lets you move your
 learning between devices.
+
+## Changing the port does not open the app to the network
+
+Whatever port you pick, the app keeps listening only on `127.0.0.1` -
+reachable from this computer, not from other devices. It has no login,
+so reaching it from your phone or another machine is a separate,
+deliberate step (`ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0`), and only
+sensible in a network you trust - see
+[Start the desktop launcher](launcher.md) ("Who can reach the app").
