@@ -110,3 +110,39 @@ and are captured manually into the matching folder — see the features README.
 - The existing **theme-regression** suite under `e2e/visual/`
   (`theme-regression.spec.ts` + `critical-surfaces.spec.ts`) stays
   independent — it is organised by theme/surface, this catalog by feature.
+
+## Device-only limits (named, not gaps)
+
+Some behaviour is observable only on a real device: no mock, headless
+browser or fake API reproduces it, and a test claiming to cover it would
+assert something it cannot see. These are the named limits - each entry
+says what the automated cells prove, what they cannot, and what covers
+the rest. The model to follow is the header comment of
+[`e2e/dexie/lesson-tts.spec.ts`](../../e2e/dexie/lesson-tts.spec.ts): state
+what the test proves, what it cannot prove, and where the remaining proof
+comes from.
+
+The list is open. Adding an entry is normal; deleting one means proving
+the behaviour became observable - not writing a test that looks at it.
+
+1. **Storage eviction under pressure + standalone (home-screen) mode on a
+   phone.** iOS/Android evict IndexedDB for installed web apps under
+   storage pressure. Not reproducible in `fake-indexeddb` (unit) nor in
+   headless Chromium (e2e). The revived
+   `e2e/smoke/backup-restore.spec.ts` covers the `.alb` logic path; the
+   manual BACKUP-AKZEPTANZTEST round-trip
+   ([`quality-checks.md`](../../.claude/rules/quality-checks.md)) covers
+   exactly this device-specific remainder.
+2. **iOS Safari cuts a single speech utterance after ~15s** (#1928). The
+   chunking mechanism is pinned in Chromium
+   (`e2e/dexie/lesson-tts.spec.ts`); the cutoff itself stays a manual
+   device check - the spec's header says so explicitly.
+3. **Real speech-synthesis engines and voices.** Headless browsers ship
+   no voices, so both the unit tests and the e2e spec inject a fake
+   `speechSynthesis`. Every claim about real engine behaviour (voice
+   availability, per-language quality, engine pauses) rests on the
+   device check.
+4. **iOS viewport zoom behaviour** (#1569; `user-scalable=no` is
+   deliberate, stance revised in #1610).
+   `frontend/src/styles/ios-zoom-guard.test.ts` pins the markup; the
+   behaviour itself is only observable on the device.
