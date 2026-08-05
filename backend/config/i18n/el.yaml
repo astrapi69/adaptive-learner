@@ -3336,7 +3336,6 @@ hints:
   first_letters: "Αρχίζει με «{prefix}» ({n} γράμματα)"
   not: "Δεν είναι «{label}»"
   item: "Ξεκίνα με «{label}»"
-  reveal_pair: "«{left}» πάει με «{right}»"
 
 favorites:
   card_title: "Τα αγαπημένα σου"

@@ -12344,17 +12344,6 @@
     "target_hash": "fb0a39eba07f",
     "checked_at": "pt full run"
   },
-  "hints.reveal_pair": {
-    "verdict": "minor",
-    "severity": "low",
-    "note": "'combina com' (matches/goes with) is a reasonable render of 'gehört zu' (belongs with), but 'pertence a' is closer to the source meaning.",
-    "suggestion": "«{left}» pertence a «{right}»",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "minor",
-    "de_hash": "fd54c5a3b18c",
-    "target_hash": "16cf34e315b1",
-    "checked_at": "pt full run"
-  },
   "import.analysis_cancel": {
     "verdict": "ok",
     "severity": "low",

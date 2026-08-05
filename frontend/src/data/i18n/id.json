@@ -3621,8 +3621,7 @@
     "length": "Jawabannya memiliki {n} huruf",
     "first_letters": "Diawali dengan “{prefix}” ({n} huruf)",
     "not": "Bukan “{label}”",
-    "item": "Mulai dengan “{label}”",
-    "reveal_pair": "“{left}” berpasangan dengan “{right}”"
+    "item": "Mulai dengan “{label}”"
   },
   "favorites": {
     "card_title": "Favoritmu",

@@ -3334,7 +3334,6 @@ hints:
   first_letters: "「{prefix}」で始まります（{n}文字）"
   not: "「{label}」ではありません"
   item: "「{label}」から始めましょう"
-  reveal_pair: "「{left}」は「{right}」と対応します"
 
 favorites:
   card_title: "お気に入り"

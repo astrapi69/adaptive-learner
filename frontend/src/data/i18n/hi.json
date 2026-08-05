@@ -3621,8 +3621,7 @@
     "length": "उत्तर में {n} अक्षर हैं",
     "first_letters": "“{prefix}” से शुरू होता है ({n} अक्षर)",
     "not": "यह “{label}” नहीं है",
-    "item": "“{label}” से शुरू करें",
-    "reveal_pair": "“{left}” का मेल “{right}” से है"
+    "item": "“{label}” से शुरू करें"
   },
   "favorites": {
     "card_title": "आपके पसंदीदा",

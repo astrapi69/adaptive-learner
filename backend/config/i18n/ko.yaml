@@ -3344,7 +3344,6 @@ hints:
   first_letters: "“{prefix}”로 시작합니다 ({n}글자)"
   not: "“{label}”이(가) 아닙니다"
   item: "“{label}”로 시작하세요"
-  reveal_pair: "“{left}”은(는) “{right}”와(과) 짝입니다"
 
 favorites:
   card_title: "내 즐겨찾기"

@@ -3621,8 +3621,7 @@
     "length": "La respuesta tiene {n} letras",
     "first_letters": "Empieza por «{prefix}» ({n} letras)",
     "not": "No es «{label}»",
-    "item": "Empieza con «{label}»",
-    "reveal_pair": "«{left}» va con «{right}»"
+    "item": "Empieza con «{label}»"
   },
   "favorites": {
     "card_title": "Tus favoritos",

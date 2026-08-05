@@ -3334,7 +3334,6 @@ hints:
   first_letters: "“{prefix}” ile başlıyor ({n} harf)"
   not: "“{label}” değil"
   item: "“{label}” ile başla"
-  reveal_pair: "“{left}” → “{right}”"
 
 favorites:
   card_title: "Favorilerin"
