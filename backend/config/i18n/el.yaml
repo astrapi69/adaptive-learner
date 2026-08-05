@@ -1799,6 +1799,7 @@ lesson:
       submit: "Έλεγχος απαντήσεων"
       retry: "Δοκίμασε ξανά"
       counter: "{matched} / {total} αντιστοιχήθηκαν"
+      help_toggle: "Πώς λειτουργεί"
       result: "Βαθμολογία: {correct} / {total}"
       instructions: "Επίλεξε ένα στοιχείο αριστερά και μετά τη μετάφρασή του δεξιά."
       left_label: "Όρος"

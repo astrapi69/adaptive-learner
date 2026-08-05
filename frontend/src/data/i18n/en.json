@@ -1947,6 +1947,7 @@
         "submit": "Check answers",
         "retry": "Try again",
         "counter": "{matched} / {total} paired",
+        "help_toggle": "How it works",
         "result": "Score: {correct} / {total}",
         "instructions": "Select an item on the left, then its matching translation on the right.",
         "left_label": "Term",

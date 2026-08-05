@@ -172,6 +172,41 @@ describe("MatchingExercise: pair lifecycle", () => {
     });
 });
 
+describe("MatchingExercise: mobile space (#2391)", () => {
+    it("collapses the how-to + flow hint behind a closed disclosure", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        const help = screen.getByTestId("matching-help");
+        // Native <details>, closed by default -> the how-to does not eat the
+        // space above the first tile until the learner asks for it.
+        expect(help.tagName).toBe("DETAILS");
+        expect(help).not.toHaveAttribute("open");
+        expect(screen.getByTestId("matching-help-toggle")).toBeInTheDocument();
+        // The operating manual + flow hint live INSIDE the disclosure.
+        expect(help).toContainElement(screen.getByTestId("matching-instructions"));
+        expect(help).toContainElement(screen.getByTestId("matching-flow-hint"));
+    });
+
+    it("moves the running counter to the footer next to Check, pre-submit only", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        // The counter is NOT in the top preamble disclosure.
+        expect(screen.getByTestId("matching-help")).not.toContainElement(
+            screen.getByTestId("matching-counter"),
+        );
+        // It sits in the same row as the Check button.
+        const check = screen.getByTestId("matching-submit");
+        const footerRow = check.closest("div");
+        expect(footerRow).toContainElement(screen.getByTestId("matching-counter"));
+        // Once submitted the score replaces the counter (no duplicate progress).
+        for (let i = 0; i < 3; i++) {
+            fireEvent.click(screen.getByTestId(`matching-left-${i}`));
+            fireEvent.click(screen.getByTestId(`matching-right-${i}`));
+        }
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(screen.queryByTestId("matching-counter")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-result")).toBeInTheDocument();
+    });
+});
+
 describe("MatchingExercise: scoring + completion", () => {
     it("reports {correct, total} on submit with all correct", () => {
         const onComplete = vi.fn();

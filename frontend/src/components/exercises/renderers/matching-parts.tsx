@@ -7,7 +7,7 @@
  * back from MatchingExercise, so there is no cycle.
  */
 
-import {ArrowRight, Check, Sparkles, X} from "lucide-react";
+import {ArrowRight, Check, HelpCircle, Sparkles, X} from "lucide-react";
 import type {CSSProperties} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -619,6 +619,8 @@ export function MatchingResultFooter({
     canCheck,
     onCheck,
     onRetry,
+    matchedCount,
+    totalPairs,
 }: {
     submitted: boolean;
     result: {correct: number; total: number} | null;
@@ -626,6 +628,11 @@ export function MatchingResultFooter({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
+    /** #2391 — the running pair count, shown pre-check right next to the
+     *  Check button: that is where attention is when the learner believes
+     *  they are done, and it explains a disabled Check ("3 / 5 paired"). */
+    matchedCount: number;
+    totalPairs: number;
 }) {
     const {t} = useI18n();
     const allCorrect =
@@ -634,6 +641,20 @@ export function MatchingResultFooter({
     const total = result?.total ?? 0;
     return (
         <div className="flex flex-wrap items-center gap-3">
+            {!submitted && (
+                <p
+                    className="m-0 text-[0.8125rem] font-medium text-[var(--fg-muted)]"
+                    aria-live="polite"
+                    data-testid="matching-counter"
+                >
+                    {t(
+                        "lesson.exercise.matching.counter",
+                        "{matched} / {total} paired",
+                    )
+                        .replace("{matched}", String(matchedCount))
+                        .replace("{total}", String(totalPairs))}
+                </p>
+            )}
             {submitted && (
                 <>
                     <p
@@ -722,7 +743,6 @@ export function MatchingPrompt({
     codeMode,
     instruction,
     matchedCount,
-    totalPairs,
     selectedLeft,
     leftTiles,
     isKnowledge,
@@ -735,7 +755,6 @@ export function MatchingPrompt({
     codeMode: boolean;
     instruction: string;
     matchedCount: number;
-    totalPairs: number;
     selectedLeft: number | null;
     leftTiles: LeftTile[];
     isKnowledge: boolean;
@@ -768,16 +787,6 @@ export function MatchingPrompt({
                 </p>
             )}
 
-            <p
-                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
-                aria-live="polite"
-                data-testid="matching-counter"
-            >
-                {t("lesson.exercise.matching.counter", "{matched} / {total} paired")
-                    .replace("{matched}", String(matchedCount))
-                    .replace("{total}", String(totalPairs))}
-            </p>
-
             {/* UX bugfix — announce the current selection to screen
                 readers (the visual highlight is not conveyed otherwise). */}
             <span
@@ -793,38 +802,54 @@ export function MatchingPrompt({
                     : ""}
             </span>
 
-            <p
-                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
-                data-testid="matching-instructions"
-            >
-                {isKnowledge
-                    ? t(
-                          "lesson.exercise.matching.instructions_knowledge",
-                          "Select an item on the left, then its match on the right.",
-                      )
-                    : t(
-                          "lesson.exercise.matching.instructions",
-                          "Select an item on the left, then its matching translation on the right.",
-                      )}
-            </p>
-
-            {/* First-pair flow hint: disappears once the learner has
-                made their first pair (they understand the mechanic). */}
-            {matchedCount === 0 && !submitted && (
-                <p
-                    className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
-                    data-testid="matching-flow-hint"
+            {/* #2391 — on a phone the how-to text + the first-pair hint ate
+                the space above the first tile. Collapse them behind a native
+                <details> (a11y for free: keyboard + screen-reader can expand,
+                and the content stays in the DOM when closed). The running
+                counter moved to the footer, next to Check. */}
+            <details className="m-0" data-testid="matching-help">
+                <summary
+                    className="inline-flex cursor-pointer list-none items-center gap-1.5 self-start rounded-sm text-[0.8125rem] font-medium text-[var(--fg-secondary)] hover:text-[var(--accent-text)] [&::-webkit-details-marker]:hidden"
+                    data-testid="matching-help-toggle"
                 >
-                    <span>{leftLabel}</span>
-                    <span
-                        className="font-bold text-[var(--accent-text)]"
-                        aria-hidden="true"
+                    <HelpCircle size={14} aria-hidden="true" />
+                    {t("lesson.exercise.matching.help_toggle", "How it works")}
+                </summary>
+                <div className="mt-1.5 flex flex-col gap-1.5">
+                    <p
+                        className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
+                        data-testid="matching-instructions"
                     >
-                        &rarr;
-                    </span>
-                    <span>{rightLabel}</span>
-                </p>
-            )}
+                        {isKnowledge
+                            ? t(
+                                  "lesson.exercise.matching.instructions_knowledge",
+                                  "Select an item on the left, then its match on the right.",
+                              )
+                            : t(
+                                  "lesson.exercise.matching.instructions",
+                                  "Select an item on the left, then its matching translation on the right.",
+                              )}
+                    </p>
+
+                    {/* First-pair flow hint: disappears once the learner has
+                        made their first pair (they understand the mechanic). */}
+                    {matchedCount === 0 && !submitted && (
+                        <p
+                            className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
+                            data-testid="matching-flow-hint"
+                        >
+                            <span>{leftLabel}</span>
+                            <span
+                                className="font-bold text-[var(--accent-text)]"
+                                aria-hidden="true"
+                            >
+                                &rarr;
+                            </span>
+                            <span>{rightLabel}</span>
+                        </p>
+                    )}
+                </div>
+            </details>
         </>
     );
 }

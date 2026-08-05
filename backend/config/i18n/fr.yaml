@@ -1799,6 +1799,7 @@ lesson:
       submit: "Vérifier les réponses"
       retry: "Réessayer"
       counter: "{matched} / {total} appariés"
+      help_toggle: "Comment ça marche"
       result: "Score : {correct} / {total}"
       instructions: "Sélectionne un élément à gauche, puis sa traduction à droite."
       left_label: "Terme"
