@@ -128,11 +128,13 @@ Methodenliste mit Request/Response-Beispielen.
 ## OpenAPI / Swagger
 
 FastAPI generiert automatisch eine OpenAPI-3.1-Spec aus den
-Pydantic-Schemas. Im Dev-Modus:
+Pydantic-Schemas.
 
-- **Swagger-UI**: `http://localhost:18001/api/docs`
-- **Redoc**: `http://localhost:18001/api/redoc`
-- **Rohes OpenAPI-JSON**: `http://localhost:18001/api/openapi.json`
+- **Rohes OpenAPI-JSON**: `http://localhost:18001/openapi.json` -
+  in jedem Modus ausgeliefert, bewusst: die maschinenlesbare Spec
+  ist die Integrationsschnittstelle, etwa für Client-Generatoren.
+- **Swagger-UI**: `http://localhost:18001/api/docs` (nur Debug-Modus)
+- **Redoc**: `http://localhost:18001/api/redoc` (nur Debug-Modus)
 
 Diese sind die autoritative Referenz für jede exakte
 Endpoint-Form. Die Markdown-Seiten hier sind eine kuratierte

@@ -10,7 +10,7 @@ Los 14 modelos originales de v0.7.0 se documentan en detalle a
 continuación; los 11 añadidos desde entonces (imports de la Fase 12+,
 materias/etiquetas de la Fase 22, gamificación + anki de las Fases
 29-30, notebooklm de la Fase 32) se listan al final por nombre +
-tabla. Consulta la especificación OpenAPI en `/api/openapi.json` para
+tabla. Consulta la especificación OpenAPI en `/openapi.json` para
 todos los campos de cada modelo.
 
 ## User
