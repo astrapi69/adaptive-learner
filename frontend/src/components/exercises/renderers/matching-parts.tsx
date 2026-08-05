@@ -687,6 +687,14 @@ export function MatchingColumnHeader({
     showLabel: boolean;
     testId: string;
 }) {
+    // Resolve the side-specific bits OUTSIDE the className expression so the
+    // dead-classnames scanner never reads the ``"a"``/``"b"`` comparison
+    // literals as class names (#1465 false-positive otherwise).
+    const isA = side === "a";
+    const letter = isA ? "A" : "B";
+    const badgeColor = isA
+        ? "bg-[var(--matching-side-a-bg)] text-[var(--matching-side-a-fg)]"
+        : "bg-[var(--matching-side-b-bg)] text-[var(--matching-side-b-fg)]";
     return (
         <div
             className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
@@ -696,12 +704,10 @@ export function MatchingColumnHeader({
                 aria-hidden="true"
                 className={cn(
                     "inline-flex h-4 w-4 items-center justify-center rounded-[3px] text-[0.625rem] font-bold ring-1 ring-[var(--border-strong)]",
-                    side === "a"
-                        ? "bg-[var(--matching-side-a-bg)] text-[var(--matching-side-a-fg)]"
-                        : "bg-[var(--matching-side-b-bg)] text-[var(--matching-side-b-fg)]",
+                    badgeColor,
                 )}
             >
-                {side === "a" ? "A" : "B"}
+                {letter}
             </span>
             {showLabel && label}
         </div>
