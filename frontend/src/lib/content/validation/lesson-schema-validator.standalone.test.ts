@@ -23,7 +23,7 @@ describe("standalone validator pin-coupling", () => {
         const schema = readFileSync(join(HERE, "lesson.schema.generated.json"), "utf-8");
         const hash = createHash("sha256").update(schema).digest("hex");
         const generated = readFileSync(
-            join(HERE, "lesson-schema-validator.standalone.cjs"),
+            join(HERE, "lesson-schema-validator.standalone.mjs"),
             "utf-8",
         );
         const match = generated.match(/schema-source-sha256: ([0-9a-f]{64})/);

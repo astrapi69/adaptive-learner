@@ -29,7 +29,7 @@ import { type ErrorObject, type ValidateFunction } from "ajv/dist/2020";
 // the pinned schema mirror by scripts/generate-lesson-validator.mjs (wired
 // into `make sync-schema`); a re-pin without regeneration is caught by the
 // drift test, never silent.
-import standaloneValidate from "./lesson-schema-validator.standalone.cjs";
+import standaloneValidate from "./lesson-schema-validator.standalone.mjs";
 
 /** Result of a structural shape check. */
 export interface ShapeResult {
