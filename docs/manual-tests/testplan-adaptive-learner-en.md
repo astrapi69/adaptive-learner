@@ -302,6 +302,13 @@ Requires domain knowledge. Not automatable.
 - [ ] Chinese A1: pinyin correct? characters right?
 - [ ] Italian A1: spot check grammar/vocabulary
 - [ ] Portuguese-BR A1: spot check
+- [ ] AI-generated error correction (#2355/#2364): for a generated
+      `ext:al-error-correction` exercise, check that the marked token is really
+      the wrong one and the accepted correction actually fixes it.
+      Schema-conformant is not the same as meaningful: an already-correct marked
+      token is valid but not a real exercise, and no automation can detect it
+      (this spot check only). The same idea applies to the graded quiz and
+      reading comprehension - solvable, unambiguous, grading as expected
 
 ---
 
