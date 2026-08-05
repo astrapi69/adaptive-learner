@@ -1947,6 +1947,7 @@
         "submit": "답 확인",
         "retry": "다시 시도",
         "counter": "{total}개 중 {matched}개 연결됨",
+        "help_toggle": "사용 방법",
         "result": "점수: {correct} / {total}",
         "instructions": "왼쪽에서 항목을 선택한 다음, 오른쪽에서 일치하는 번역을 선택하세요.",
         "left_label": "단어",

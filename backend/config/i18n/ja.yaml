@@ -1797,6 +1797,7 @@ lesson:
       submit: "答えを確認"
       retry: "もう一度"
       counter: "{matched} / {total} 組ペア完了"
+      help_toggle: "使い方"
       result: "スコア: {correct} / {total}"
       instructions: "左の項目を選び、次に右で対応する訳を選びます。"
       left_label: "用語"

@@ -1947,6 +1947,7 @@
         "submit": "Verificar respostas",
         "retry": "Tentar de novo",
         "counter": "{matched} / {total} emparelhados",
+        "help_toggle": "Como funciona",
         "result": "Pontuação: {correct} / {total}",
         "instructions": "Selecione um item à esquerda e depois a tradução correspondente à direita.",
         "left_label": "Termo",
