@@ -130,10 +130,10 @@ Bilinen tuzaklar:
   ile çalıştır.
 - **Uygulamaya tarayıcıdan erişilemiyor**: tarayıcı otomatik olarak
   açılmazsa, `http://localhost:8501` adresini elle aç (ya da başlatıcı
-  penceresinde gösterilen portu). Dikkat: uygulama yalnızca `localhost`
-  üzerinde değil, tüm ağ arayüzlerinde yayımlanır ve kimlik doğrulaması
-  yoktur - ağdaki başka cihazların erişmesini bilerek istemiyorsan bu
-  portu güvenlik duvarında kapalı tut.
+  penceresinde gösterilen portu). Varsayılan olarak uygulama yalnızca
+  `127.0.0.1` üzerinde dinler, yani yalnızca bu bilgisayardan erişilebilir;
+  başka cihazlar ancak ağ erişimini bilerek açarsan ulaşabilir - yukarıdaki
+  "Uygulamaya kimler erişebilir" bölümüne bak.
 
 ## macOS
 

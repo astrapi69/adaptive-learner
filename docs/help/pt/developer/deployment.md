@@ -95,6 +95,11 @@ Três coisas importam para produção:
 3. **`ADAPTIVE_LEARNER_DEBUG`**: deixe indefinido / false em
    produção. O modo de depuração expõe stack traces nas respostas
    de erro.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: por omissão `127.0.0.1`,
+   pelo que a porta publicada só é acessível a partir do próprio
+   host. A aplicação não tem autenticação - só vincule `0.0.0.0`
+   deliberadamente, e apenas numa rede de confiança ou atrás da
+   sua própria camada de auth (reverse proxy com basic auth, VPN).
 
 Para contentores, as variáveis de ambiente são o canal de injeção
 idiomático. A sobreposição `~/.config/adaptive_learner/secrets.yaml`

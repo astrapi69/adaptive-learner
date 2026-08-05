@@ -94,6 +94,11 @@ Tres cosas importan para prod:
 3. **`ADAPTIVE_LEARNER_DEBUG`**: déjalo sin configurar / false en
    producción. El modo de depuración expone trazas de pila en las
    respuestas de error.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: por defecto `127.0.0.1`,
+   así que el puerto publicado solo es accesible desde el propio
+   host. La app no tiene autenticación - vincula `0.0.0.0` solo
+   deliberadamente, y solo en una red de confianza o detrás de tu
+   propia capa de auth (reverse proxy con basic auth, VPN).
 
 Para contenedores, las variables de entorno son el canal de
 inyección idiomático. La capa de `~/.config/adaptive_learner/secrets.yaml`
