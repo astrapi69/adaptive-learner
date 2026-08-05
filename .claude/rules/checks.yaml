@@ -198,7 +198,7 @@ checks:
     probe: none
 
   - id: docs-umlaut-ratchet
-    verifies: no NEW ASCII substitute-spelling (fuer/waehrend/...) enters German docs prose
+    verifies: no NEW ASCII substitute-spelling (fuer/waehrend/...) enters docs prose - manuscript-tools whole-word ascii-umlauts rule (#2311), docs/**/*.md excl docs/journal/**, foreign-tool oracle (no auto-lower)
     rule: lessons/docs-i18n.md#german-content-uses-real-umlauts
     status: active
     wired_in: make verify-docs-hygiene; .pre-commit-config.yaml docs-hygiene

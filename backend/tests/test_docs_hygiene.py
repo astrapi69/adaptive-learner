@@ -126,38 +126,24 @@ def test_umlaut_ratchet_fails_on_reduction_to_force_lock_in(tmp_path: Path) -> N
     assert "count fell" in r.stdout
 
 
-# --- auto-lower: an error-counter banks its improvement (#2230) --------------
+# --- foreign-tool oracle: a fall is banked deliberately, never auto (#2311) --
 
 
-def test_auto_lower_banks_a_fall_and_passes(tmp_path: Path) -> None:
-    """A gain WITH banking goes through: --auto-lower writes the lower baseline
-    and passes, and the tree is then clean against the banked number."""
+def test_no_auto_lower_flag_a_fall_still_fails(tmp_path: Path) -> None:
+    """The wordlist is a foreign-tool oracle, so the gate NEVER auto-lowers
+    (#2311): a fall below the baseline fails, pointing at the deliberate
+    make verify-docs-hygiene-raise. A fall could be a real reduction OR the
+    list shrinking under a version bump - the count alone cannot tell."""
     docs = _docs(tmp_path)
     (docs / "note.md").write_text("now clean, no substitutes", encoding="utf-8")
     _track(tmp_path)
     baseline = tmp_path / "baseline.json"
     _write_baseline(baseline, 5)  # frozen ceiling above the (zero) real count
     r = _run(tmp_path, "--only", "umlaut", "--auto-lower", baseline=baseline)
-    assert r.returncode == 0, r.stdout
-    assert "auto-lowered baseline 5 -> 0" in r.stdout
-    # The gain is banked: the baseline followed the count down.
-    assert json.loads(baseline.read_text())["umlaut_count"] == 0
-    # Re-run (read-only) is green against the banked number.
-    assert _run(tmp_path, "--only", "umlaut", baseline=baseline).returncode == 0
-
-
-def test_auto_lower_never_raises_on_a_rise(tmp_path: Path) -> None:
-    """--auto-lower banks falls only; a RISE is a regression and still fails,
-    with the baseline left untouched (growth is never automatic)."""
-    docs = _docs(tmp_path)
-    (docs / "note.md").write_text("Die Loesung ist fuer alle.", encoding="utf-8")  # 1 'fuer'
-    _track(tmp_path)
-    baseline = tmp_path / "baseline.json"
-    _write_baseline(baseline, 0)
-    r = _run(tmp_path, "--only", "umlaut", "--auto-lower", baseline=baseline)
+    # --auto-lower is gone: argparse rejects the removed flag rather than
+    # silently banking the fall.
     assert r.returncode != 0, r.stdout
-    assert "count rose" in r.stdout
-    assert json.loads(baseline.read_text())["umlaut_count"] == 0  # untouched
+    assert "verify-docs-hygiene-raise" in r.stdout or "auto-lower" in r.stderr
 
 
 def test_umlaut_ratchet_update_baseline_freezes_current(tmp_path: Path) -> None:
@@ -167,9 +153,42 @@ def test_umlaut_ratchet_update_baseline_freezes_current(tmp_path: Path) -> None:
     baseline = tmp_path / "baseline.json"
     r = _run(tmp_path, "--update-baseline", baseline=baseline)
     assert r.returncode == 0
+    # word-level count: two flagged words on one line
     assert json.loads(baseline.read_text())["umlaut_count"] == 2
     # re-run is now green against the frozen number
     assert _run(tmp_path, "--only", "umlaut", baseline=baseline).returncode == 0
+
+
+def test_reports_manuscript_tools_version(tmp_path: Path) -> None:
+    """Condition 2 (#2311): the pinned oracle version is printed with the file
+    count, so the number is anchored to a known wordlist."""
+    docs = _docs(tmp_path)
+    (docs / "n.md").write_text("clean prose", encoding="utf-8")
+    _track(tmp_path)
+    baseline = tmp_path / "baseline.json"
+    _write_baseline(baseline, 0)
+    r = _run(tmp_path, "--only", "umlaut", baseline=baseline)
+    assert r.returncode == 0, r.stdout
+    assert "manuscript-tools" in r.stdout, r.stdout
+    assert "words]" in r.stdout, r.stdout
+
+
+def test_excludes_journal_pages(tmp_path: Path) -> None:
+    """docs/journal/** is out of scope (#2311): substitutes there do not count
+    and the journal file is not even in the scanned set."""
+    docs = _docs(tmp_path)
+    journal = docs / "journal"
+    journal.mkdir(parents=True, exist_ok=True)
+    (journal / "session.md").write_text(
+        "Uebersicht der Aenderungen fuer waehrend.", encoding="utf-8"
+    )
+    (docs / "real.md").write_text("clean prose", encoding="utf-8")
+    _track(tmp_path)
+    baseline = tmp_path / "baseline.json"
+    _write_baseline(baseline, 0)
+    r = _run(tmp_path, "--only", "umlaut", baseline=baseline)
+    assert r.returncode == 0, r.stdout  # journal hits are excluded
+    assert "scanned 1 tracked file" in r.stdout, r.stdout  # only real.md in scope
 
 
 # --- #2289: locale scoping (German-substitute stems collide with es/pt/fr) ---
@@ -181,10 +200,12 @@ def _help(root: Path, locale: str) -> Path:
     return d
 
 
-def test_ignores_non_german_help_locale_false_positives(tmp_path: Path) -> None:
-    """Spanish 'fuera'/'fuerza'/'esfuerzo' contain the stem 'fuer' but are
-    correct Spanish - they must NOT trip the German-substitute ratchet
-    (#2289). A German help page keeps the scan non-empty."""
+def test_whole_word_ignores_foreign_language_substrings(tmp_path: Path) -> None:
+    """Spanish 'fuera'/'fuerza'/'esfuerzo' CONTAIN the stem 'fuer' but are not
+    whole words on the curated list, so manuscript-tools' whole-word rule does
+    not flag them (#2289 fixed at the root, #2311). The es page is now IN scope
+    (locale scoping is gone) and still contributes zero - both pages scanned,
+    count stays at the baseline."""
     (_help(tmp_path, "es") / "guide.md").write_text(
         "La sesion fuera de tema, con mas fuerza y esfuerzo.", encoding="utf-8"
     )
@@ -195,9 +216,9 @@ def test_ignores_non_german_help_locale_false_positives(tmp_path: Path) -> None:
     baseline = tmp_path / "baseline.json"
     _write_baseline(baseline, 0)
     r = _run(tmp_path, "--only", "umlaut", baseline=baseline)
-    assert r.returncode == 0, r.stdout  # the 3 Spanish 'fuer' substrings are out of scope
-    # The de page is in scope, the es page is not.
-    assert "scanned 1 tracked file" in r.stdout, r.stdout
+    assert r.returncode == 0, r.stdout  # whole-word: no Spanish false positive
+    # Both help pages are in scope now (no German-prose scoping).
+    assert "scanned 2 tracked files" in r.stdout, r.stdout
 
 
 def test_counts_substitutes_in_german_help_de(tmp_path: Path) -> None:

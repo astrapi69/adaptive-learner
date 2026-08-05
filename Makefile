@@ -812,11 +812,11 @@ verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-
 verify-docs: ## Verify documentation for drift (version/counts/features/help/i18n/themes; stdlib only)
 	@python3 scripts/verify_docs.py
 
-verify-docs-hygiene: ## Docs hygiene: German-umlaut substitute ratchet + exploration-index orphans (stdlib only)
-	@python3 scripts/verify_docs_hygiene.py
+verify-docs-hygiene: ## Docs hygiene: German-umlaut substitute ratchet (manuscript-tools) + exploration-index orphans
+	@cd backend && poetry run python ../scripts/verify_docs_hygiene.py
 
-verify-docs-hygiene-raise: ## Lower the umlaut-substitute baseline after a genuine reduction
-	@python3 scripts/verify_docs_hygiene.py --update-baseline
+verify-docs-hygiene-raise: ## Re-freeze the umlaut-substitute baseline after a genuine reduction (deliberate, #2311)
+	@cd backend && poetry run python ../scripts/verify_docs_hygiene.py --update-baseline
 
 fix-docs-umlauts: ## Trockenlauf: welche ASCII-Ersatzschreibungen der Doku sind korrigierbar, ohne Zeilen zu mischen (#2311)
 	@cd backend && poetry run python ../scripts/fix_docs_umlauts.py
