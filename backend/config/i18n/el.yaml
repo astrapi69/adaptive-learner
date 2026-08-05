@@ -3471,6 +3471,7 @@ discover:
   pairs:
     heading: "Ζεύγη γλωσσών"
     select: "Επιλογή {p}"
+    choose: "Επιλογή ζεύγους γλωσσών"
   filter:
     all: "Όλα"
     language: "Γλώσσα"

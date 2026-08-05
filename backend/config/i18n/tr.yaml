@@ -3469,6 +3469,7 @@ discover:
   pairs:
     heading: "Dil çiftleri"
     select: "{p} seçin"
+    choose: "Bir dil çifti seçin"
   filter:
     all: "Tümü"
     language: "Dil"

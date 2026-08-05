@@ -3469,6 +3469,7 @@ discover:
   pairs:
     heading: "Pares de idiomas"
     select: "Escolher {p}"
+    choose: "Escolher um par de idiomas"
   filter:
     all: "Todos"
     language: "Idioma"
