@@ -357,6 +357,13 @@ Requires domain knowledge. Not automatable.
       still score correct (grading is content-based, not position-based).
       iOS PWA/Standalone: repeat the check on the web-app icon added to the
       Home Screen.
+- [ ] Matching: hint does NOT reveal the solution (#2390): open a matching
+      exercise, tap "Show a hint" (up to twice). The first hint names only one
+      item ("Start with '...'"), the second gives only the FIRST LETTER + length
+      of the partner ("It starts with '...' (N letters)"). NO hint names a
+      complete pair ("'X' goes with 'Y'" must no longer appear). Hints still
+      appear only on demand (not from the start) and cost XP. iOS PWA/Standalone:
+      repeat the check on the web-app icon added to the Home Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT

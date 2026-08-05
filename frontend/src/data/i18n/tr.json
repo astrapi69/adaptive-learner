@@ -3623,8 +3623,7 @@
     "length": "Cevap {n} harften oluşuyor",
     "first_letters": "“{prefix}” ile başlıyor ({n} harf)",
     "not": "“{label}” değil",
-    "item": "“{label}” ile başla",
-    "reveal_pair": "“{left}” → “{right}”"
+    "item": "“{label}” ile başla"
   },
   "favorites": {
     "card_title": "Favorilerin",

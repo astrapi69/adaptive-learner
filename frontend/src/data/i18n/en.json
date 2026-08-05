@@ -3623,8 +3623,7 @@
     "length": "The answer has {n} letters",
     "first_letters": "It starts with “{prefix}” ({n} letters)",
     "not": "It's not “{label}”",
-    "item": "Start with “{label}”",
-    "reveal_pair": "“{left}” goes with “{right}”"
+    "item": "Start with “{label}”"
   },
   "favorites": {
     "card_title": "Your favorites",
