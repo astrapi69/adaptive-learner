@@ -14,6 +14,21 @@ ausgeliefert), EXP-034 / #736 (Suchindex), EXP-048 / #2297 (In-App-Entdecken),
 > der Architektur, kein Versäumnis. Der Ertrag liegt in dem, was tatsächlich
 > öffentlich ausgeliefert wird, und das ist zuerst zu erheben.
 
+> **Zusammengeführt (2026-08-05):** Dieselbe Exploration wurde unabhängig
+> doppelt erarbeitet - hier und im Engine-Repository
+> (`learn-content-engine/docs/proposals/discoverability.md`, engine#124,
+> PR engine#125). Der Fehler lag in der Auftragsvergabe, nicht bei den
+> Spuren; beide kommen zum selben Kernbefund (die Landeseite liefert keinen
+> indizierbaren Text, ohne serverseitiges Rendern hilft daran keine
+> Optimierung). Diese Fassung ist der Träger. Aus der Engine-Fassung
+> übernommen: die gemessene Flächentabelle mit Zeichenzahlen, der Befund zur
+> Engine-Pages-Seite und die Erzeugungs-Aufstellung ohne Schema-Änderung.
+> Zwei Befunde führt NUR diese Fassung, als eigenständige Befunde: die vier
+> Set-Zahlen im ausgelieferten Text (#2403, darunter die Meta-Beschreibung -
+> die sichtbarste falsche Zahl im Bestand) und die indizierbare Vorschau
+> (#2404, eine Staging-Kopie in Suchergebnissen ist ein Fehler). Die
+> Engine-Fassung bleibt bestehen und verweist hierher.
+
 ---
 
 ## 0. Kernbefund vorweg
@@ -39,8 +54,8 @@ Zwei Befunde bestimmen den Rest des Dokuments:
   (Prerender/SSR). Damit ist genau **eine** Seite indizierbar (die Landeseite),
   und der eigentliche Ertrag, die Lerninhalte, ist unsichtbar.
 - **Die Doku ist bereits der Idealfall** und braucht am wenigsten: echtes
-  statisches HTML in DE und EN, das mit dem gleichen Auslieferungslauf unter
-  `/docs/` mitgeht.
+  statisches HTML in acht Sprachen, das mit dem gleichen Auslieferungslauf
+  unter `/docs/` mitgeht.
 
 **Gemessene Ausgangslinie (2026-08-05):** Weder eine Suche nach Produktname und
 Beschreibung noch eine `site:`-Abfrage auf `astrapi69.github.io` förderte die
@@ -82,13 +97,17 @@ eine zweite öffentliche Kopie der App.
   Moderne Crawler rendern JavaScript, aber es gibt keine verlinkbaren
   Inhaltsseiten und keine Vorab-Erzeugung, also entsteht aus dem Rendern keine
   zweite indizierbare Seite. **Ergebnis: eine Landeseite, kein Inhalt.**
-- **Doku:** Fertiges HTML je Seite, DE und EN, MkDocs Material. **Vollständig
-  indizierbar.**
-- **Vorschau:** Dieselbe `index.html` wie Produktion, inklusive
+- **Doku:** Fertiges HTML je Seite in acht Sprachen (en, de, el, es, fr, ja,
+  pt, tr - die Engine-Fassung hat die Verzeichnisse gezählt, je ~60 Seiten;
+  die ursprüngliche Fassung hier sprach fälschlich von "DE und EN"), MkDocs
+  Material. **Vollständig indizierbar.**
+- **Vorschau (eigenständiger Befund dieser Fassung, #2404):** Dieselbe
+  `index.html` wie Produktion, inklusive
   `<meta name="robots" content="index, follow">` und Canonical auf die
   Produktions-Adresse. Der Canonical hilft gegen Doppelindizierung, aber die
   Staging-Seite trägt keine eigene Robots-Sperre und sollte gar nicht in den
-  Index.
+  Index. Eine Staging-Kopie in Suchergebnissen ist ein Fehler, kein
+  Schönheitsfehler.
 - **Haupt-Repository:** README wird von GitHub als HTML gerendert und ist
   crawlbar (das ist heute die faktische Landeseite für die Zielgruppe
   "Mitwirkende", siehe Teil 2).
@@ -96,6 +115,34 @@ eine zweite öffentliche Kopie der App.
   liefert Rohdateien mit `X-Robots-Tag: noindex` aus; sie sind keine lesbaren
   Seiten und tauchen nicht als Treffer auf. Der Inhalt ist öffentlich
   *abrufbar*, aber nicht *auffindbar*.
+
+### Gemessene Zeichenzahlen je Fläche (aus der Engine-Fassung, live 2026-08-05)
+
+Gemessen gegen die live veröffentlichten Adressen, nicht gegen Konfiguration:
+sichtbarer `<body>`-Text nach Abzug von Skripten, Styles und Kommentaren.
+
+| Adresse | HTTP | Text für den Crawler | Meta-Beschr. | OG | Sitemap | robots |
+|---|---|---|---|---|---|---|
+| `astrapi69.github.io/adaptive-learner/` | 200 | **0 Zeichen** | ja (veraltet, #2403) | 11 Tags | ja, 2 Adressen | ja, `Allow: /` |
+| `.../adaptive-learner/content` | 301 auf dieselbe Hülle | 0 | geerbt | geerbt | in der Sitemap gelistet | - |
+| `.../adaptive-learner/docs/` | 200 | **5155 Zeichen** | - | - | **ja, 480 Adressen** | - |
+| `astrapi69.github.io/learn-content-engine/` | 200 | 570 Zeichen | **nein** | **nein** | **nein** | **nein** |
+| `.../learn-content-engine/api/` | 200 | 9989 Zeichen | ja | - | nein | nein |
+| `astrapi69.github.io/adaptive-learner-content/` | **404** | - | - | - | - | - |
+| `raw.githubusercontent.com/.../search-index.json` | 200 | (JSON, keine Seite) | - | - | - | - |
+
+Die Null in der ersten Zeile ist der Kernbefund als Zahl: die eine
+indizierbare Seite liefert keinen einzigen sichtbaren Textbuchstaben aus.
+Die 480-Adressen-Sitemap der Doku ist die einzige in Masse crawlbare Fläche.
+
+**Engine-Pages-Seite (Zuständigkeit: Engine-Repository).** Die Landeseite
+des Engine-Repositories trägt weder Meta-Beschreibung noch Open-Graph-Block
+noch robots.txt. Sie ist der Einstiegspunkt der Schema-`$id`-Adressen, wird
+also von Maschinen und gelegentlich Menschen besucht; wenige Zeilen HTML
+schließen die Metadaten-Hälfte. Eine Sitemap wäre dort dagegen NICHT
+sinnvoll: zwei Seiten plus ein Verzeichnis von JSON-Artefakten, die ein
+Crawler ohnehin in einem Sprung findet. Beides wird in der Engine-Fassung
+als dortiger Schritt geführt und hier nur eingeordnet.
 
 ### Was es an SEO-Infrastruktur schon gibt (#1104, geschlossen)
 
@@ -128,13 +175,20 @@ Der Auftrag nennt "achtundzwanzig Sets" - das ist die **gebündelte** Zahl (die
 offizielle Quelle, `trust_level 3`), und sie ist korrekt. Die 45 sind der
 gesamte Entdecken-Katalog inklusive Community-Quellen.
 
-**Drift-Befund:** Die SEO-Metadaten behaupten eine dritte Zahl. `index.html`
+**Drift-Befund (eigenständiger Befund dieser Fassung, #2403):** Die
+SEO-Metadaten behaupten eine dritte Zahl. `index.html`
 sagt an zwei Stellen "26 Content-Sets in 10 Sprachen" (Meta-Beschreibung und
 JSON-LD), die Hilfe-Seiten sagen "26 Content-Sets - 424 Lektionen", die README
 sagt 28. Vier Zahlen in vier Dateien, alle in öffentlich ausgeliefertem Text.
 Das ist genau der Fall, den die Regel "Doc values: read from code, not from
 memory" verbietet: eine fest verdrahtete Zahl, die driftet. Die SEO-Beschreibung
-ist die sichtbarste davon, weil sie als Suchtreffer-Ausriss erscheint.
+ist die sichtbarste davon, weil sie als Suchtreffer-Ausriss erscheint. Gemessen
+(Engine-Fassung): 28 Sets, 9 Ziel- aus 4 Quellsprachen - der Claim "26 Sets in
+10 Sprachen" ist doppelt falsch. **Entschieden (Architekt):** Zahlen aus Text
+ohne Gate heraushalten, mit Gate hinein - die Meta-Beschreibung liegt im
+Repository und ist messbar, also greift hier die Gate-Hälfte: entweder die
+Zahl entfernen oder sie an eine Prüfung gegen den gebauten Bestand hängen
+(#2403).
 
 ### Der Durchsichtsstand (für Teil 3 wichtig)
 
@@ -193,11 +247,11 @@ Sie suchen nach einer Technik oder einem Problem ("PluginForge Hook", "Dexie
 Storage Modus") und landen in der Doku oder im Repository. **Zielseite:** die
 Doku unter `/docs/` und die README.
 
-**Was fehlt:** am wenigsten. Die Doku ist echtes statisches HTML in DE und EN,
-bereits indizierbar. Zwei kleine Lücken: die Doku-Sitemap ist nicht von der
-Wurzel-`robots.txt` verlinkt, und es fehlt eine Sprachauszeichnung (hreflang),
-damit ein deutscher Sucher die DE-Seite und ein englischer die EN-Seite bekommt
-statt der jeweils falschen.
+**Was fehlt:** am wenigsten. Die Doku ist echtes statisches HTML in acht
+Sprachen, bereits indizierbar. Zwei kleine Lücken: die Doku-Sitemap ist nicht
+von der Wurzel-`robots.txt` verlinkt (#2405), und es fehlt eine
+Sprachauszeichnung (hreflang, #2406), damit ein deutscher Sucher die DE-Seite
+und ein englischer die EN-Seite bekommt statt der jeweils falschen.
 
 **Konsequenz:** Geringster Aufwand, schon fast erreicht. Die Arbeit hier ist
 Feinschliff, kein Fundament.
@@ -234,20 +288,35 @@ Zwei Wege, die sich in genau der Produktfrage unterscheiden:
   Bereich, Lektionszahl, plus ein Verweis "in der App öffnen". Das ist
   **produktneutral**: es bewirbt den Inhalt, gibt ihn aber nicht preis. Wer die
   Seite liest, weiß, dass es das Set gibt, und muss die App öffnen, um es zu
-  lernen.
+  lernen. **Aufstellung aus der Engine-Fassung, was dafür schon da ist:** jedes
+  Content-Repository veröffentlicht bereits eine `search-index.json` mit
+  Set-Id, Titel, Beschreibung, Sprachen, Niveau, Bereich, Zählern,
+  `visibility` und `review_status`; die Registry (`recommended-repos.json`)
+  enumeriert die Repositories. Ein Generator über die Registry erzeugt damit
+  die komplette Set-Ebene - **keine neuen Daten, keine Schema-Änderung, keine
+  Arbeit in den Inhalts-Repositories** (die Engine-Fassung führt unter
+  "Registered needs" für die Content-Repos ausdrücklich: keine).
 - **Aus den Lektionsdateien: vollständige Seiten (Lektions-Ebene).** Das
   bedeutet, die Lerninhalte öffentlich lesbar zu machen. **Die Produktfrage,
   ausdrücklich benannt:** Wer die Lektion als Seite liest, braucht die App nicht
   mehr für den Inhalt, nur noch für das Üben (Fehlerwiederholung, Spaced
   Repetition, die sieben Modi). Das kann gewollt sein (Reichweite, Vertrauen,
   "erst lesen, dann üben") oder unerwünscht (der Inhalt ist das, was die Leute
-  zurückbringt). Beide Seiten stehen hier, entschieden wird nicht in diesem
-  Dokument.
+  zurückbringt). Beide Seiten standen hier zunächst offen.
 
-Empfehlung als Vorschlag, nicht als Entscheidung: Set-Übersichtsseiten zuerst.
-Sie lösen die Auffindbarkeit für Zielgruppe 2 zum großen Teil (der Sucher
-findet, dass es "Japanisch A1" gibt und wo), ohne die Produktfrage
-vorwegzunehmen. Die Lektions-Ebene bleibt eine spätere, bewusste Entscheidung.
+**Entschieden (Architekt, 2026-08-05): die Mittelposition.** Veröffentlicht
+werden nur die **Theoriestufen**, nicht die Antworten. Aus der Engine-Fassung
+übernommen, wie das ableitbar ist: `type: "theory"`-Stufen tragen die Prosa;
+`accept`, `pairs` und `blanks` tragen die Antworten und bleiben
+unveröffentlicht. Das erhält den Grund, warum jemand die App braucht (die
+Übungsschleife samt Fehlerwiederholung), und gibt trotzdem etwas
+Auffindbares - ableitbar aus dem Schema, ohne Arbeit in den
+Inhalts-Repositories.
+
+Reihenfolge unverändert: Set-Übersichtsseiten zuerst. Sie lösen die
+Auffindbarkeit für Zielgruppe 2 zum großen Teil (der Sucher findet, dass es
+"Japanisch A1" gibt und wo); die Theoriestufen-Ebene folgt als eigener
+Vorgang danach.
 
 ### Umgang mit den ungeprüften Sets
 
@@ -256,20 +325,21 @@ Drei Sets sind `generated` und nicht durchgesehen (`ja/ko/zh-a1-from-de`). Sie
 (EXP-048, Teil 3), wäre widersprüchlich: der Suchtreffer würde etwas bewerben,
 das die App selbst mit einem Vorbehalt zeigt.
 
-Optionen, keine davon hier entschieden:
+**Entschieden (Architekt, 2026-08-05): Ausnehmen.** Ungeprüfte Sets erhalten
+keine öffentliche Seite, bis `review_status` auf `reviewed` steht. Begründung:
+ein Suchergebnis trägt kein Abzeichen - öffentliche Auffindbarkeit wäre ein
+Widerspruch zur Kennzeichnung in der Anwendung. Der Filter existiert bereits
+im Index (`review_status`, und dieselbe Regel deckt `visibility: hidden` für
+Demo- und Beispiel-Sets). Der benannte Preis bleibt benannt: gerade zu
+Japanisch, Koreanisch und Chinesisch gibt es heute nur diese Sets (EXP-048),
+deren Auffindbarkeit entfällt damit vorerst. Die verworfene Alternative
+(kennzeichnen + `noindex`) bleibt dokumentiert, ist aber nicht der Weg.
 
-1. **Ausnehmen.** Die drei Sets erhalten keine öffentliche Seite, bis
-   `review_status` auf `reviewed` steht. Sauber, aber gerade zu Japanisch,
-   Koreanisch und Chinesisch gibt es heute nur diese Sets (EXP-048), also
-   verschwindet damit die gesamte Auffindbarkeit dieser drei Sprachen.
-2. **Kennzeichnen.** Die öffentliche Seite trägt denselben neutralen Hinweis wie
-   die App ("maschinell erstellt, noch nicht durchgesehen") und wird zusätzlich
-   `noindex` gesetzt, damit sie abrufbar, aber nicht als Treffer beworben ist.
-
-Beide Optionen setzen voraus, dass der Durchsichtsstand überhaupt am erzeugenden
-Code ankommt. Das ist **#2299** (`review_status` fällt heute beim Parsen auf den
-Boden) und damit eine **Vorbedingung**, dieselbe, die EXP-048 als Stufe 0 führt.
-Ohne #2299 kann eine öffentliche Seite den Zustand nicht einmal lesen.
+Die Entscheidung setzt voraus, dass der Durchsichtsstand überhaupt am
+erzeugenden Code ankommt. Das ist **#2299** (`review_status` fällt heute beim
+Parsen auf den Boden) und damit eine **Vorbedingung**, dieselbe, die EXP-048
+als Stufe 0 führt. Ohne #2299 kann eine öffentliche Seite den Zustand nicht
+einmal lesen - die Entscheidung hängt an diesem Vorgang.
 
 ### Wo entstehen die Seiten (angemeldeter Bedarf, keine Entscheidung)
 
@@ -312,8 +382,8 @@ Erst wenn Teil 1 bis 3 stehen, sind diese sinnvoll. Was heute fehlt oder klemmt:
 - **Strukturierte Daten.** Heute `WebApplication` (passend für die App). Für
   Set-Übersichtsseiten gibt es passendere schema.org-Typen (`Course`,
   `LearningResource`); das lohnt erst, wenn diese Seiten existieren.
-- **Sprachauszeichnung (hreflang).** Die Inhalte sind mehrsprachig, die Doku ist
-  DE/EN. Ohne hreflang bekommt ein englischer Sucher unter Umständen die
+- **Sprachauszeichnung (hreflang, #2406).** Die Inhalte sind mehrsprachig, die
+  Doku ist achtsprachig. Ohne hreflang bekommt ein englischer Sucher unter Umständen die
   deutsche Seite. Die App-Landeseite trägt `og:locale` + Alternate, aber keinen
   `hreflang`-Verweis (es gibt auch nur eine Adresse). Für die Doku und spätere
   Set-Seiten ist hreflang die richtige Auszeichnung.
@@ -327,21 +397,22 @@ nach Wirkung je Aufwand.
 
 | # | Schritt | Zielgruppe | Aufwand | Wirkung |
 |---|---|---|---|---|
-| 1 | Feste Set-Zahl aus den SEO-Metadaten (`index.html` Meta + JSON-LD) und den Hilfe-Seiten entfernen oder aus dem Build ableiten (26 vs. 28 vs. 45 auflösen) | alle | klein | hoch (Vertrauen; verhindert falschen Ausriss) |
-| 2 | Vorschau-Auslieferung auf `noindex` setzen (eigene `robots.txt`/Meta im Preview-Build) | - | klein | mittel (hält Staging aus dem Index) |
-| 3 | Wurzel-`robots.txt` um die Doku-Sitemap ergänzen; App-Sitemap um die tote `/content`-Zeile bereinigen | 2, 3 | klein | mittel |
-| 4 | hreflang für die Doku (DE/EN) | 3 | klein bis mittel | mittel |
+| 1 | Feste Set-Zahl aus den SEO-Metadaten (`index.html` Meta + JSON-LD) und den Hilfe-Seiten lösen: entfernen oder an eine Prüfung hängen (**#2403**) | alle | klein | hoch (Vertrauen; verhindert falschen Ausriss) |
+| 2 | Vorschau-Auslieferung auf `noindex` setzen (eigene `robots.txt`/Meta im Preview-Build, **#2404**) | - | klein | mittel (hält Staging aus dem Index) |
+| 3 | Wurzel-`robots.txt` um die Doku-Sitemap ergänzen; App-Sitemap um die tote `/content`-Zeile bereinigen (**#2405**) | 2, 3 | klein | mittel |
+| 4 | hreflang für die Doku, acht Sprachen (**#2406**) | 3 | klein bis mittel | mittel |
 | 5 | Echte Landeseite mit crawlbarem Prosatext (prerender nur dieser einen Seite) | 1 | mittel | hoch (die einzige indizierbare Seite bekommt Inhalt) |
-| 6 | Set-Übersichtsseiten aus `search-index.json`, in der App-Auslieferung erzeugt, mit `noindex`/Kennzeichnung für `generated` (setzt #2299 voraus) | 2 | mittel | hoch (löst Zielgruppe 2 produktneutral) |
+| 6 | Set-Übersichtsseiten aus `search-index.json`, in der App-Auslieferung erzeugt, OHNE die ungeprüften Sets (Entscheidung Teil 3; setzt #2299 voraus) | 2 | mittel | hoch (löst Zielgruppe 2 produktneutral) |
 | 7 | Erzeugte Sitemap über die neuen Set-Seiten, plus `Course`/`LearningResource`-JSON-LD je Set-Seite | 2 | klein bis mittel | mittel (sobald 5/6 stehen) |
-| 8 | Lektions-Ebene: vollständige öffentliche Lektionsseiten | 2 | groß | hoch, aber Produktentscheidung (Teil 3) |
+| 8 | Theoriestufen-Seiten je Lektion (entschiedene Mittelposition, Teil 3: Prosa ja, Antworten nein) | 2 | groß | hoch |
 
-**Kleinster erster Wurf mit spürbarer Wirkung:** die Schritte 1 bis 4. Sie
-brauchen keine neue Seite, keine Produktentscheidung und keinen Eingriff in
-fremde Repositories; sie räumen die vorhandene Drift auf, halten Staging aus dem
-Index und richten die schon indizierbare Doku sauber aus. Schritt 5 und 6 sind
-der eigentliche Hebel und je ein eigener Vorgang; Schritt 8 wartet auf die
-Produktentscheidung.
+**Kleinster erster Wurf mit spürbarer Wirkung:** die Schritte 1 bis 4, als
+eigene Vorgänge angelegt (2026-08-05): **#2403, #2404, #2405, #2406** - drei
+davon in Minuten erledigt, einer (#2404) ein echter Fehler. Sie brauchen keine
+neue Seite und keinen Eingriff in fremde Repositories; sie räumen die
+vorhandene Drift auf, halten Staging aus dem Index und richten die schon
+indizierbare Doku sauber aus. Schritt 5 und 6 sind der eigentliche Hebel und
+je ein eigener Vorgang; Schritt 8 folgt der eingetragenen Mittelposition.
 
 ---
 
@@ -361,10 +432,10 @@ Produktentscheidung.
   keine Inhaltsseite. Nur die Landeseite (Schritt 5) und die Set-Seiten (Schritt
   6) müssen crawlbar sein; den App-Rumpf vorab zu erzeugen ist teuer und ohne
   Gegenwert.
-- **Lektionsseiten vor der Produktentscheidung bauen.** Öffentliche
-  Lektionsinhalte zu erzeugen heißt, den Inhalt herzugeben. Das ist eine
-  Produktfrage (Teil 3), keine SEO-Aufgabe, und wird nicht durch Umsetzung
-  vorweggenommen.
+- **Vollständige Lektionsseiten samt Antworten bauen.** Die Produktfrage ist
+  entschieden (Teil 3, Mittelposition): Theoriestufen ja, Antworten nein.
+  Eine Umsetzung, die `accept`/`pairs`/`blanks` mit veröffentlicht, stünde
+  gegen die Entscheidung, nicht nur gegen eine Empfehlung.
 - **In fremde Repositories oder ins Schema eingreifen.** Die Content-Repos sind
   für dieses Repository fremd; die Erzeugung von Set-Seiten dort und jede
   Feldergänzung sind angemeldeter Bedarf (Teil 3, Teil 4), keine Entscheidung.
@@ -393,16 +464,17 @@ Produktentscheidung.
   indiziert". Eine belastbare Ausgangslinie braucht Zugriff auf die Search
   Console des Eigentümers und ist hier nicht herstellbar - für die nächste
   Sitzung mit diesem Zugriff vermerkt.
-- **Annahme, sichtbar getroffen:** Die drei `generated`-Sets werden öffentlich
-  behandelt wie in der App (sichtbar mit Kennzeichnung, nicht versteckt), aber
-  bis zur Durchsicht `noindex`. Begründung: #335 (nichts verstecken, was der
-  Nutzer sehen darf) plus die Widerspruchsvermeidung aus Teil 3. Alternative
-  (ganz ausnehmen) ist benannt.
+- **Ursprüngliche Annahme, durch Entscheidung überholt:** Die frühere Annahme
+  (sichtbar mit Kennzeichnung plus `noindex`) ist durch die
+  Architekten-Entscheidung ersetzt: ungeprüfte Sets bleiben ganz draußen, bis
+  `review_status` auf `reviewed` steht (Teil 3). #335 gilt weiter für die
+  App-Oberfläche; ein Suchtreffer kann die dort gezeigte Kennzeichnung aber
+  nicht transportieren, deshalb ist Ausnehmen dort kein Verstecken.
 - **Vorbedingung, übernommen:** Set-Seiten mit Durchsichtsstand setzen #2299
   voraus (`review_status` kommt am Parser an), dieselbe Stufe 0 wie in EXP-048.
-- **Geparkt:** Soll die Lektions-Ebene öffentlich lesbar sein? Das ist die
-  Produktfrage aus Teil 3 und wird ausdrücklich nicht in diesem Dokument
-  entschieden.
+- **Entschieden (2026-08-05):** Die Lektions-Ebene wird als Mittelposition
+  öffentlich: nur die Theoriestufen, keine Antworten (Teil 3). Die frühere
+  Parkung ist damit aufgelöst.
 - **Geparkt:** Wo genau entstehen künftige Set-Seiten (App-Auslieferung vs.
   Content-Repo)? Berührt fremde Repo-Hoheit; als Bedarf angemeldet, nicht
   entschieden.
@@ -416,6 +488,6 @@ der eine Sitemap nichts ändert. Die billige und sofort fällige Arbeit ist
 Aufräumen (Schritte 1 bis 4): die driftende Set-Zahl aus dem öffentlichen Text
 nehmen, die Staging-Kopie sperren, die schon indizierbare Doku sauber ausrichten.
 Der eigentliche Hebel für den Architekten-Auftrag - dass die Lerninhalte
-gefunden werden - ist die Set-Übersichtsseite (Schritt 6), und sie lässt sich
-produktneutral bauen, solange die Lektions-Ebene (Schritt 8, die Produktfrage)
-bewusst offen bleibt.
+gefunden werden - ist die Set-Übersichtsseite (Schritt 6); die Lektions-Ebene
+folgt danach in der entschiedenen Mittelposition (Schritt 8: Theoriestufen ja,
+Antworten nein).
