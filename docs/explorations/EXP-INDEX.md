@@ -67,7 +67,7 @@ archiviert und bleiben als historische Zeilen stehen)
 | 046 | Bearbeiten fremder Inhalte + Autorenzuschreibung | Querschnitt | Analyse | P2/P3 | 023, 025, 026, 045, #2128/#2130 |
 | 047 | Vorlesefunktion für alle Aufgabentypen (Auftrag, noch nicht ausgeführt) | Feature | Auftrag | Mittel | 001, 006, #2053 |
 | 048 | Entdecken bei wachsender Bibliothek (Sprachkombination vs. Fachgebiet, Durchsichtsstand) | Feature | Analyse | P2 | 034/#736, #1343/#1699, 023, #2297 |
-| 049 | Auffindbarkeit der öffentlichen Flächen (SEO, drei Zielgruppen, Lerninhalte) | Querschnitt | Analyse | P3 | #1104, 034, 048/#2297, #2299, #2400 |
+| 049 | Auffindbarkeit der öffentlichen Flächen (SEO, drei Zielgruppen, Lerninhalte; mit Engine-Fassung zusammengeführt, Entscheidungen eingetragen) | Querschnitt | Analyse + Entscheidung | P3 | #1104, 034, 048/#2297, #2299, #2400, #2403-#2406 |
 
 ## Umsetzungsstand (Stand v1.99.0)
 
