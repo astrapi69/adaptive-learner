@@ -137,11 +137,13 @@ deployments πρέπει να αφήνουν τη λειτουργία αποσ�
 ## OpenAPI / Swagger
 
 Το FastAPI δημιουργεί αυτόματα ένα spec OpenAPI 3.1 από τα schemas
-Pydantic. Σε λειτουργία ανάπτυξης:
+Pydantic.
 
-- **Swagger UI**: `http://localhost:18001/api/docs`
-- **Redoc**: `http://localhost:18001/api/redoc`
-- **Raw OpenAPI JSON**: `http://localhost:18001/api/openapi.json`
+- **Raw OpenAPI JSON**: `http://localhost:18001/openapi.json` -
+  σερβίρεται σε κάθε λειτουργία, σκόπιμα: το μηχαναγνώσιμο spec
+  είναι η διεπαφή ενσωμάτωσης, π.χ. για client generators.
+- **Swagger UI**: `http://localhost:18001/api/docs` (μόνο σε debug)
+- **Redoc**: `http://localhost:18001/api/redoc` (μόνο σε debug)
 
 Αυτές είναι η αυθεντική αναφορά για τον ακριβή σχηματισμό κάθε
 endpoint. Οι σελίδες Markdown εδώ είναι ένα επιμελημένο υποσύνολο για

@@ -4,7 +4,7 @@
 
 `backend/app/models/__init__.py`内の**25個のSQLAlchemyモデル**と、それらのワイヤーシェイプのPydanticスキーマ。同期サーフェスには28個のテーブルが含まれます（25モデル + 3つの関連テーブル: `project_subjects`、`project_tags`、`user_badges`）。
 
-v0.7.0の元の14モデルは以下で詳しく説明します。それ以降に追加された11モデル（Phase 12+のインポート、Phase 22のサブジェクト/タグ、Phase 29-30のゲーミフィケーション + anki、Phase 32のnotebooklm）は下部に名前 + テーブルで一覧表示されています。すべてのモデルのすべてのフィールドについては`/api/openapi.json`のOpenAPIスペックを参照してください。
+v0.7.0の元の14モデルは以下で詳しく説明します。それ以降に追加された11モデル（Phase 12+のインポート、Phase 22のサブジェクト/タグ、Phase 29-30のゲーミフィケーション + anki、Phase 32のnotebooklm）は下部に名前 + テーブルで一覧表示されています。すべてのモデルのすべてのフィールドについては`/openapi.json`のOpenAPIスペックを参照してください。
 
 ## User
 

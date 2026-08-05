@@ -10,7 +10,7 @@ Les 14 modèles d'origine issus de v0.7.0 sont documentés en
 détail ci-dessous ; les 11 ajoutés depuis (imports Phase 12,
 sujets/tags Phase 22, gamification + anki Phases 29-30,
 notebooklm Phase 32) sont listés à la fin par nom + table. Voir
-la spec OpenAPI sur `/api/openapi.json` pour chaque champ de
+la spec OpenAPI sur `/openapi.json` pour chaque champ de
 chaque modèle.
 
 ## User
