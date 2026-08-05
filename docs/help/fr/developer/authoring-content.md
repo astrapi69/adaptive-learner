@@ -165,15 +165,13 @@ d'ensemble ; une PR vers le dépôt officiel le régénère.
 ## Format du manifeste
 
 Le schéma des champs du manifeste (le `manifest.yaml` racine qui
-liste les ensembles du dépôt, et chaque champ obligatoire et
-optionnel : `schema_version`, `name`, et par ensemble `id`, `title`,
-`title_native`, `target_language`, `source_language`, `level`,
-`version`, `lesson_count`, `path`, `domain`, `tags`, `book`,
-`visibility`) vit dans la référence de l'engine :
+liste les ensembles du dépôt, avec chaque champ obligatoire et
+optionnel) vit dans la référence de l'engine :
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
-Le schéma strict de l'engine (les champs inconnus sont rejetés) le
-valide, de sorte que la liste de champs ci-dessus ne peut pas
-dériver. Rédige les champs de paire de langues
+La liste des champs n'est volontairement pas répétée ici : le schéma
+strict de l'engine (les champs inconnus sont rejetés) valide chaque
+manifeste, et la référence de l'engine en est la seule description
+faisant autorité. Rédige les champs de paire de langues
 (`target_language` / `source_language`) comme décrit sous
 [Paires de langues](#paires-de-langues-v1440) ; l'alias `language`
 d'avant la v1.2 se charge encore mais est déconseillé pour les

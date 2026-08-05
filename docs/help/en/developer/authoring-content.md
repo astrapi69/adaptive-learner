@@ -148,13 +148,12 @@ PR to the official repo regenerates it.
 ## Manifest format
 
 The manifest field schema (the root `manifest.yaml` that lists the
-repo's sets, and every required and optional field: `schema_version`,
-`name`, and per set `id`, `title`, `title_native`, `target_language`,
-`source_language`, `level`, `version`, `lesson_count`, `path`,
-`domain`, `tags`, `book`, `visibility`) lives in the engine reference:
+repo's sets, with every required and optional field) lives in the
+engine reference:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
-The engine's strict schema (unknown fields are rejected) validates it,
-so the field list above cannot drift. Author the language-pair fields
+The field list is deliberately not repeated here: the engine's strict
+schema (unknown fields are rejected) validates every manifest, and the
+engine reference is its single authoritative description. Author the language-pair fields
 (`target_language` / `source_language`) as described under
 [Language pairs](#language-pairs-v1440); the pre-v1.2 `language` alias
 still loads but is discouraged for new sets.
