@@ -16085,17 +16085,6 @@
     "target_hash": "24463accc276",
     "checked_at": "hi full run"
   },
-  "lesson.exercise.matching.instruction_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "Accurate and idiomatic; 'मिलाएँ' is correctly written with chandrabindu.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "bf66b4fa79f3",
-    "target_hash": "3aeecc455ee3",
-    "checked_at": "hi full run"
-  },
   "lesson.exercise.matching.instructions": {
     "verdict": "minor",
     "severity": "low",
@@ -16122,17 +16111,6 @@
     "verdict": "ok",
     "severity": "low",
     "note": "'शब्द' is an acceptable rendering of 'Begriff' (term/word).",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "29c820dfc81c",
-    "target_hash": "6b53f2577281",
-    "checked_at": "hi full run"
-  },
-  "lesson.exercise.matching.left_label_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "Consistent with left_label.",
     "suggestion": "",
     "tier1_model": "claude-sonnet-4-6",
     "tier1_verdict": "ok",
@@ -16215,17 +16193,6 @@
     "tier1_verdict": "ok",
     "de_hash": "08145060a96d",
     "target_hash": "414094668109",
-    "checked_at": "hi full run"
-  },
-  "lesson.exercise.matching.right_label_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "'परिभाषा' correctly renders 'Definition'.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "9813fafb098c",
-    "target_hash": "366830025145",
     "checked_at": "hi full run"
   },
   "lesson.exercise.matching.right_label_productive": {

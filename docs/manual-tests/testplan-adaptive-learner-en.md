@@ -364,6 +364,14 @@ Requires domain knowledge. Not automatable.
       complete pair ("'X' goes with 'Y'" must no longer appear). Hints still
       appear only on demand (not from the start) and cost XP. iOS PWA/Standalone:
       repeat the check on the web-app icon added to the Home Screen.
+- [ ] Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
+      a matching exercise from a KNOWLEDGE set (non-language domain, or source ==
+      target, e.g. senses to organs). NO subtitle "Match each term with its
+      definition" appears; the columns carry NO "Term"/"Definition" label, only
+      the "A"/"B" badges and their content. A real LANGUAGE exercise is unchanged
+      (language names or Term/Translation + the direction hint stay visible). iOS
+      PWA/Standalone: repeat the check on the web-app icon added to the Home
+      Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
@@ -1322,6 +1330,28 @@ window, so verify the iOS-standalone / phone-portrait shape explicitly.
 - [ ] Backup import: no HTTP 413
 - [ ] Play a lesson: no workbox errors in the console
 - [ ] Change the port → app reachable on the new port
+
+---
+
+## PRIO 9: LANDING PAGE (static, #2409)
+
+The landing page at `/start/` (DE) and `/start/en/` (EN) is real static
+HTML in the Pages artifact - no React, no client-side loading. It carries
+no numbers that could go stale, on purpose.
+
+- [ ] `astrapi69.github.io/adaptive-learner/start/en/` loads; the core
+      sentence "An app that adapts to you, not the other way around."
+      is visible as the heading.
+- [ ] "Open the app in your browser" leads into the app; "Download the
+      launcher" leads to the release page.
+- [ ] Language switch: "Deutsch" (top right on the EN page) leads to
+      `/start/`, and "English" there leads back.
+- [ ] The bottom links (Documentation, Repository, Learning content) work.
+- [ ] Dark system theme: the page follows (prefers-color-scheme), text
+      stays readable.
+- [ ] Mobile (narrow window): single column, no horizontal scrolling.
+- [ ] Share preview (e.g. in a messenger): title, description and image
+      appear (the landing page's Open Graph data, not the app's).
 
 ---
 

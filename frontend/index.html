@@ -144,6 +144,17 @@
     </script>
 </head>
 <body>
+<!-- Static, crawlable pointer to the landing page (#2409). Visible only
+     without JavaScript; the app renders into #root and never touches it. -->
+<noscript>
+  <p>
+    Adaptive Learner ist eine kostenlose, quelloffene Lern-App, die sich dir
+    anpasst - du erstellst dein Lernmaterial selbst, mit KI. Diese Anwendung
+    braucht JavaScript. Was das Produkt ist, steht auf der
+    <a href="start/">Landeseite (Deutsch)</a> /
+    <a href="start/en/">landing page (English)</a>.
+  </p>
+</noscript>
 <div id="root"></div>
 <script type="module" src="/src/main.tsx"></script>
 </body>
