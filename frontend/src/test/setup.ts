@@ -39,6 +39,12 @@ if (typeof globalThis.ResizeObserver === "undefined") {
 // Select never renders its options. This is a synchronous-dispatch test
 // artifact only; a real browser never exhibits it.
 //
+// Counter-proof for that claim (#2284): e2e/dexie/import-language-pipeline
+// .spec.ts opens a Radix Select in real Chromium and clicks a
+// portal-rendered option - it would die with the same RangeError if a
+// real browser had the recursion. That spec carries this duty on purpose;
+// if its Select interaction is removed, this patch loses its only proof.
+//
 // Fix: within ONE synchronous focus cascade, ignore a repeat .focus() on an
 // element already visited in that cascade -- exactly the pathological
 // A -> B -> A ping-pong. Linear focus moves inside a handler (A -> B -> C,
