@@ -17,6 +17,16 @@ Severity model (matches the Bibliogon precedent):
   WARN  Real signal, but heuristic or count-based -- a wrong FAIL
         here would block a correct state. Advisory only. Exit code 0.
 
+A missing BASIS is a FAIL, never a WARN (#2287). If a check's input is
+absent -- no theme files, no mkdocs.yml, no en.json, an unparseable
+catalog -- the check could not RUN, and "I could not check" must never
+print as "nothing is wrong" (quality-checks.md "Gate test contract",
+point 3). The distinction is whether the check RAN, not how severe its
+finding would have been: a heuristic's FINDINGS stay WARN, but the
+heuristic failing to run is a FAIL. Every set-scanning check also emits a
+report.note with the size of the set it examined, so "0 findings" and "0
+inputs examined" cannot print the same green (gate contract, point 4).
+
 Exit codes:
   0  clean (no FAIL findings; WARN findings may be present)
   1  drift found (at least one FAIL finding)
@@ -143,11 +153,13 @@ def replace_group(text: str, pattern: str, value: str) -> tuple[str, int]:
 # the SAME list sync_versions.py rewrites on a bump (#2179), so the
 # writer and this checker cannot know different sites.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+# The i18n coverage check lives in its own module (#2287/#2362) so this
+# verifier stays under the cohesion file-size gate; re-exported here so the
+# CHECKS registry and the tests keep importing it from ``verify_docs``.
+from verify_docs_i18n import check_i18n  # noqa: E402,F401
 from version_display_sites import VERSION_DISPLAY_SITES  # noqa: E402
 
-VERSION_TARGETS = [
-    (rel, pattern, label, True) for rel, pattern, label in VERSION_DISPLAY_SITES
-] + [
+VERSION_TARGETS = [(rel, pattern, label, True) for rel, pattern, label in VERSION_DISPLAY_SITES] + [
     # CLAUDE.md deliberately carries NO inline version since the #2071
     # condensation: it points at backend/pyproject.toml as the canonical
     # source, so there is nothing here to compare. The test-count line
@@ -540,11 +552,19 @@ def check_stale_dates(report: Report) -> None:
 THEME_VAR_RE = re.compile(r"^\s*(--[a-z0-9-]+)\s*:", re.MULTILINE)
 
 
-def check_themes(report: Report) -> None:
-    theme_dir = REPO / "frontend" / "src" / "styles" / "themes"
+def check_themes(report: Report, theme_dir: Path | None = None) -> None:
+    theme_dir = (
+        theme_dir if theme_dir is not None else REPO / "frontend" / "src" / "styles" / "themes"
+    )
     files = sorted(theme_dir.glob("theme-*.css"))
     if not files:
-        report.warn("themes", f"no theme-*.css files under {theme_dir}")
+        # Fail closed (#2287): no theme files means the parity check could not
+        # run at all -- "I could not check" is not "nothing is wrong".
+        report.fail(
+            "themes",
+            f"no theme-*.css files under {theme_dir} - cannot verify token parity "
+            "(basis missing; a missing input is a FAIL, not a clean pass)",
+        )
         return
 
     per_theme: dict[str, set[str]] = {}
@@ -555,6 +575,9 @@ def check_themes(report: Report) -> None:
     # missing a token another theme defines is a hole that renders a
     # legacy/fallback colour. Mirrors styles/themes/themes.test.ts.
     expected = set().union(*per_theme.values())
+    # Report the measured set (#2287): "0 holes" and "0 themes examined"
+    # must not print the same green.
+    report.note(f"themes: checked {len(files)} theme files against a {len(expected)}-token union")
     for name, tokens in per_theme.items():
         missing = expected - tokens
         if missing:
@@ -583,8 +606,12 @@ def check_help_index_versions(report: Report, help_dir: Path | None = None) -> N
     root = help_dir if help_dir is not None else REPO / "docs" / "help"
     index_pages = sorted(root.glob("*/index.md"))
     if not index_pages:
-        report.warn("help-index-versions", f"no index pages found under {root}")
+        report.fail(
+            "help-index-versions",
+            f"no index pages found under {root} - cannot verify (basis missing; #2287)",
+        )
         return
+    report.note(f"help-index-versions: scanned {len(index_pages)} index pages")
     for page in index_pages:
         for line_number, line in enumerate(read(page).splitlines(), start=1):
             for match in HELP_INDEX_VERSION_RE.finditer(line):
@@ -632,14 +659,19 @@ def check_help_prose_versions(report: Report, help_dir: Path | None = None) -> N
     root = help_dir if help_dir is not None else REPO / "docs" / "help"
     pages = sorted(root.glob("*/**/*.md"))
     if not pages:
-        report.warn("help-prose-versions", f"no help pages found under {root}")
+        report.fail(
+            "help-prose-versions",
+            f"no help pages found under {root} - cannot verify (basis missing; #2287)",
+        )
         return
+    scanned = 0
     for page in pages:
         rel_parts = page.relative_to(root).parts  # (locale, ...segments, file)
         if page.name in HELP_PROSE_EXEMPT_FILES:
             continue
         if HELP_PROSE_EXEMPT_DIRS.intersection(rel_parts[1:-1]):
             continue
+        scanned += 1
         rel = page.relative_to(root).as_posix()
         for line_number, line in enumerate(read(page).splitlines(), start=1):
             if VERSION_EXEMPT_RE.search(line):
@@ -652,6 +684,9 @@ def check_help_prose_versions(report: Report, help_dir: Path | None = None) -> N
                     "behaviour; release provenance belongs to the changelog, "
                     "#1767)",
                 )
+    report.note(
+        f"help-prose-versions: scanned {scanned} prose pages (excl. developer/api/changelog/index)"
+    )
 
 
 # mkdocs.yml's docs_dir is docs/help; the nav references the German
@@ -661,19 +696,28 @@ def check_help_prose_versions(report: Report, help_dir: Path | None = None) -> N
 NAV_REF_RE = re.compile(r"(de/[\w./-]+\.md)")
 
 
-def check_mkdocs(report: Report) -> None:
-    mkdocs = REPO / "mkdocs.yml"
-    help_dir = REPO / "docs" / "help"
+def check_mkdocs(
+    report: Report, mkdocs_path: Path | None = None, help_dir: Path | None = None
+) -> None:
+    mkdocs = mkdocs_path if mkdocs_path is not None else REPO / "mkdocs.yml"
+    help_dir = help_dir if help_dir is not None else REPO / "docs" / "help"
     if not mkdocs.exists():
-        report.warn("mkdocs", "mkdocs.yml not found")
+        report.fail(
+            "mkdocs",
+            f"{mkdocs} not found - cannot verify nav orphans/dead links (basis missing; #2287)",
+        )
         return
     de_dir = help_dir / "de"
     if not de_dir.exists():
-        report.warn("mkdocs", "docs/help/de not found")
+        report.fail(
+            "mkdocs",
+            f"{de_dir} not found - cannot verify nav (basis missing; #2287)",
+        )
         return
 
     referenced = set(NAV_REF_RE.findall(read(mkdocs)))
     actual = {f"de/{p.relative_to(de_dir).as_posix()}" for p in de_dir.rglob("*.md")}
+    report.note(f"mkdocs: {len(actual)} de help pages vs {len(referenced)} nav references")
 
     # Orphans: help pages on disk that no nav entry points to. They are
     # silently unreachable from the side nav (mkdocs --strict logs this
@@ -708,19 +752,26 @@ ROUTE_RE = re.compile(r'path="([^"]+)"')
 _ROUTE_NO_HELP = {"/", "*"}
 
 
-def _help_slugs(lang: str) -> set[str]:
-    base = REPO / "docs" / "help" / lang
+def _help_slugs(lang: str, help_root: Path | None = None) -> set[str]:
+    base = (help_root if help_root is not None else REPO / "docs" / "help") / lang
     if not base.exists():
         return set()
     return {p.relative_to(base).with_suffix("").as_posix() for p in base.rglob("*.md")}
 
 
-def check_help_coverage(report: Report) -> None:
-    en = _help_slugs("en")
-    de = _help_slugs("de")
+def check_help_coverage(
+    report: Report, help_root: Path | None = None, app_path: Path | None = None
+) -> None:
+    en = _help_slugs("en", help_root)
+    de = _help_slugs("de", help_root)
     if not en and not de:
-        report.warn("help-coverage", "no help pages found under docs/help/{en,de}")
+        report.fail(
+            "help-coverage",
+            "no help pages found under docs/help/{en,de} - cannot verify parity "
+            "(basis missing; #2287)",
+        )
         return
+    report.note(f"help-coverage: {len(en)} en help pages, {len(de)} de help pages")
 
     # i18n parity: every help page must exist in both languages.
     only_en = sorted(en - de)
@@ -738,9 +789,16 @@ def check_help_coverage(report: Report) -> None:
 
     # Route coverage (heuristic): every navigable route should be
     # describable from some help page. Many routes legitimately have
-    # none, so this is a single advisory line, not a per-route FAIL.
-    app = REPO / "frontend" / "src" / "App.tsx"
+    # none, so the FINDINGS stay advisory (WARN) - but if the heuristic
+    # cannot RUN because its input is gone, that is a FAIL, not silence
+    # (#2287: the distinction is whether the check ran, not how severe
+    # its finding is).
+    app = app_path if app_path is not None else REPO / "frontend" / "src" / "App.tsx"
     if not app.exists():
+        report.fail(
+            "help-coverage",
+            f"{app} not found - cannot run route-coverage heuristic (basis missing; #2287)",
+        )
         return
     slug_blob = " ".join(en | de)
     uncovered: list[str] = []
@@ -760,90 +818,6 @@ def check_help_coverage(report: Report) -> None:
             "routes with no obvious help page (heuristic; some may not need one): "
             + ", ".join(sorted(set(uncovered))),
         )
-
-
-# ---------------------------------------------------------------------------
-# Check: i18n coverage  (WARN)
-# ---------------------------------------------------------------------------
-
-
-def _flatten_keys(obj, prefix: str = "") -> set[str]:
-    keys: set[str] = set()
-    if isinstance(obj, dict):
-        for key, value in obj.items():
-            path = f"{prefix}.{key}" if prefix else key
-            if isinstance(value, dict):
-                keys |= _flatten_keys(value, path)
-            else:
-                keys.add(path)
-    return keys
-
-
-def check_i18n(report: Report, fix: bool) -> None:
-    import json
-
-    i18n_dir = REPO / "frontend" / "src" / "data" / "i18n"
-    en_path = i18n_dir / "en.json"
-    if not en_path.exists():
-        report.warn("i18n", f"baseline catalog {en_path} not found")
-        return
-
-    if fix:
-        _run_sync_i18n(report)
-
-    en_keys = _flatten_keys(json.loads(read(en_path)))
-    if not en_keys:
-        report.warn("i18n", "en.json has no keys")
-        return
-
-    for path in sorted(i18n_dir.glob("*.json")):
-        if path.name == "en.json":
-            continue
-        try:
-            keys = _flatten_keys(json.loads(read(path)))
-        except (ValueError, OSError) as exc:
-            report.warn("i18n", f"{path.name}: could not parse ({exc})")
-            continue
-        missing = en_keys - keys
-        if missing and len(missing) / len(en_keys) > 0.05:
-            shown = sorted(missing)[:6]
-            report.warn(
-                "i18n",
-                f"{path.name}: {len(missing)}/{len(en_keys)} keys missing vs en "
-                f"({len(missing) / len(en_keys):.0%}): {', '.join(shown)} ...",
-            )
-    report.note(
-        "i18n: backend-YAML <-> frontend-JSON sync drift is gated separately by frontend i18n-sync.test.ts (make test)"
-    )
-
-
-def _run_sync_i18n(report: Report) -> None:
-    import subprocess
-
-    script = REPO / "scripts" / "sync_i18n_to_frontend.py"
-    if not script.exists():
-        return
-    try:
-        result = subprocess.run(
-            ["python3", str(script)],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
-        if result.returncode == 0:
-            report.warn(
-                "i18n",
-                "ran sync_i18n_to_frontend.py to refresh frontend JSON from backend YAML (auto-fixed)",
-                fixed=True,
-            )
-        else:
-            report.warn(
-                "i18n",
-                f"sync_i18n_to_frontend.py exited {result.returncode}: {result.stderr.strip()[:200]}",
-            )
-    except (OSError, subprocess.SubprocessError) as exc:
-        report.warn("i18n", f"could not run sync_i18n_to_frontend.py: {exc}")
 
 
 # ---------------------------------------------------------------------------

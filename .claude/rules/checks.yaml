@@ -39,6 +39,13 @@ checks:
     wired_in: scripts/verify_docs.py check_test_counts
     probe: no_warn=could not parse the
 
+  - id: docs-basis-fail-closed
+    verifies: verify_docs.py FAILs (not WARNs) on a missing basis - no theme files, no mkdocs.yml, no en.json, an unparseable catalog - so "could not check" never prints as a green pass (#2287)
+    rule: quality-checks.md#gate-test-contract-five-tests-and-fail-closed-2083
+    status: active
+    wired_in: backend/tests/test_verify_docs_fail_closed.py; make test
+    probe: script_exists=backend/tests/test_verify_docs_fail_closed.py
+
   - id: gate-rule-links
     verifies: no gate without its rule section, no rule citing a dead gate, no unclassified workflow
     rule: quality-checks.md#gate-and-rule-stay-coupled-2075
