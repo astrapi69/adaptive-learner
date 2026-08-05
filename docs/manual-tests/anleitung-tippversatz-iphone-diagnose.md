@@ -76,6 +76,12 @@ gerade der von 0 verschiedene Wert ist).
 
 ## Schritt 3: Die Fix-Kandidaten durchprobieren
 
+Am aussagekräftigsten sind FÜNF kurze Durchgänge: **zuerst einer ohne `vvfix`**
+(Baseline, `fix=off` - der zeigt den Versatz), dann **je einer pro Kandidat**.
+So liefert der Test die Antwort gleich mit, statt nur die Messung - du siehst
+direkt, bei welchem Kandidaten `ΔY` verschwindet. Nach jedem Durchgang „Werte
+kopieren" und mir einfügen.
+
 Jetzt hängst du zusätzlich `&vvfix=<name>` an die URL und wiederholst Schritt 2.
 Probiere alle vier nacheinander und beobachte, bei welchem `ΔY` auf ~0 fällt und
 die Tipps wieder richtig landen:
