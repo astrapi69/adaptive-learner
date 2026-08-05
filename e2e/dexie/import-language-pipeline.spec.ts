@@ -209,6 +209,11 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
     // 3. Force BOTH languages to German (source == target == de) — domain
     // content. The pickers are shadcn (Radix) Selects: click the trigger,
     // then the "German (de)" option in the portal-rendered list.
+    // This interaction doubles as the real-browser counter-proof for the
+    // global focus patch in frontend/src/test/setup.ts (#1345/#2284): a
+    // real Chromium opening a Radix Select without the RangeError is what
+    // proves the recursion is a happy-dom artifact. Keep a portal Select
+    // interaction alive here (or move the note) before refactoring it away.
     await page.getByTestId("import-source-language").click();
     await page.getByRole("option", { name: "German (de)" }).click();
     await page.getByTestId("import-target-language").click();
