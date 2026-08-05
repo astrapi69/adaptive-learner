@@ -14,7 +14,7 @@
  * probe writes only under its own ``u-e2e-*`` user ids.
  */
 
-import {getDb, nowIso} from "./db";
+import {getDb, nowIso} from "../dexie/db";
 import {getXPState, persistXP} from "../gamification/gamification";
 import {
     getLessonProgressDexie,

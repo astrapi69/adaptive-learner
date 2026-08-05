@@ -67,7 +67,7 @@ if (import.meta.env.DEV) {
  * carries the flag, so the dynamic chunk is never fetched.
  */
 if (new URLSearchParams(window.location.search).has("e2e-hooks")) {
-    void import("./storage/dexie/e2e-concurrency-hooks");
+    void import("./storage/e2e/concurrency-hooks");
 }
 
 // S3 (PWA hardening) — replay any lesson-progress upserts that were

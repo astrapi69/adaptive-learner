@@ -6,7 +6,7 @@
  * read-modify-write discipline against ``fake-indexeddb`` and assume the
  * fake reproduces a real browser's IndexedDB transaction serialization.
  * This cell fires the SAME storage-layer calls concurrently inside real
- * Chromium (via the ``?e2e-hooks=1`` probe, ``e2e-concurrency-hooks.ts``)
+ * Chromium (via the ``?e2e-hooks=1`` probe, ``storage/e2e/concurrency-hooks.ts``)
  * so that assumption is a measurement, not a comment.
  *
  * Gate contract (quality-checks.md): the test reports how many concurrent
