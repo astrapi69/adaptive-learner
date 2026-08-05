@@ -158,6 +158,9 @@ jobs:
         id: push
         env:
           BRANCH: ${{ steps.head.outputs.branch }}
+          # Fallback credential when the checkout's PAT push is denied (#2435):
+          # the job-``permissions: contents: write``-scoped GITHUB_TOKEN.
+          FALLBACK_TOKEN: ${{ github.token }}
         run: |
           if git diff --quiet -- e2e/visual/screenshots; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -170,7 +173,23 @@ jobs:
           git commit \
             -m "chore(visual): refresh baselines (#1662)" \
             -m "CI-rendered visual baselines, auto-synced by visual-baseline-sync. Review every changed PNG before merge (#1532)."
-          git push origin "HEAD:$BRANCH"
+          # Prefer the checkout credential: when VISUAL_BASELINE_TOKEN is a valid
+          # PAT the pushed commit re-triggers the Visual baseline gate. When that
+          # push is DENIED - a rotated / expired / insufficient-scope PAT (#2435)
+          # - fall back to the GITHUB_TOKEN so the baselines still land. A
+          # GITHUB_TOKEN push does NOT re-trigger the gate, so pushed_via drives
+          # the PR comment to say "re-run the gate once".
+          if git push origin "HEAD:$BRANCH"; then
+            if [ "$HAS_PAT" = "true" ]; then
+              echo "pushed_via=pat" >> "$GITHUB_OUTPUT"
+            else
+              echo "pushed_via=github_token" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "::warning::checkout-credential push denied (#2435: PAT rotated/expired/underscoped); falling back to GITHUB_TOKEN"
+            git push "https://x-access-token:${FALLBACK_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:$BRANCH"
+            echo "pushed_via=github_token" >> "$GITHUB_OUTPUT"
+          fi
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "::notice::Pushed refreshed baselines to $BRANCH. Review the changed PNGs image by image (#1532) - NOT auto-merged."
 
@@ -197,13 +216,14 @@ jobs:
           # the label step above (#2014).
           GH_TOKEN: ${{ github.token }}
           CHANGED: ${{ steps.push.outputs.changed }}
+          PUSHED_VIA: ${{ steps.push.outputs.pushed_via }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           REPO: ${{ github.repository }}
         run: |
           if [ "$CHANGED" = "true" ]; then
             body=$'Refreshed the CI-rendered visual baselines and pushed them to this branch as `chore(visual): refresh baselines` (#1662).\n\n**Review every changed PNG image by image before merge** — auto-sync never means blind accept (#1532).'
-            if [ "$HAS_PAT" != "true" ]; then
-              body="$body"$'\n\n_Pushed with the default `GITHUB_TOKEN`, so the **Visual baseline gate** check does not re-trigger automatically. Re-run that check once (or toggle any label) and it passes now that the baselines are present. Configuring a `VISUAL_BASELINE_TOKEN` PAT removes this last step._'
+            if [ "$PUSHED_VIA" != "pat" ]; then
+              body="$body"$'\n\n_Pushed with the default `GITHUB_TOKEN`, so the **Visual baseline gate** check does not re-trigger automatically. Re-run that check once (or toggle any label) and it passes now that the baselines are present. Configuring a working `VISUAL_BASELINE_TOKEN` PAT removes this last step._'
             fi
           elif [ "$CHANGED" = "false" ]; then
             body=$'`visual-baseline-sync` ran, but the CI-rendered baselines already matched — nothing to push (#1662). If the gate is still red, the visual-critical change may be genuinely 0-diff (consider the `visual-baselines-unaffected` label).'
