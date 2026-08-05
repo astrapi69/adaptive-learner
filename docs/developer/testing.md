@@ -23,6 +23,25 @@ make check-types     # mypy + tsc --noEmit
 | Visual regression | `e2e/playwright.visual.config.ts` | `make test-visual` |
 | **Per-feature screenshots** | `e2e/playwright.features.config.ts` | `make verify-screenshots` |
 
+### Local prerequisites for the Dexie-mode gate (#2043)
+
+The dexie-smoke specs obtain lesson content at runtime through
+`DEFAULT_SOURCES` (`content-loader-sources.ts`): the bundled tree under
+`dist/content/` first, then the upstream repo via
+`raw.githubusercontent.com`. At least ONE channel must deliver:
+
+- **Bundled**: check out `adaptive-learner-content` next to this repo (or
+  set `ADAPTIVE_LEARNER_CONTENT_DIR`) before building; the build prints a
+  `[copy-bundled-content] SKIP` line when it found none. A bundle-less
+  build is fine as long as the browser can reach GitHub.
+- **Runtime**: browser network access to `raw.githubusercontent.com`.
+
+When neither channel delivers, the `content-probe` setup project fails
+once with per-channel diagnostics and the dexie-smoke project is skipped
+(`did not run`) - instead of ~34 specs failing with vague locator
+timeouts. Reproduce that failure state on demand with
+`CONTENT_PROBE_SIMULATE_UNOBTAINABLE=1`.
+
 ## Visual regression vs per-feature screenshots
 
 Two complementary screenshot surfaces, both run against the **dexie preview

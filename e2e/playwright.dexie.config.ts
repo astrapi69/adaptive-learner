@@ -79,8 +79,21 @@ export default defineConfig({
     ],
     projects: [
         {
+            // #2043 - content-obtainability probe. Fails once, loudly,
+            // with channel diagnostics when NO DEFAULT_SOURCES channel
+            // delivers a manifest; the dependent project is then skipped
+            // instead of failing ~34 specs with vague locator timeouts.
+            // When content IS obtainable (CI, normal dev) the probe
+            // passes and the suite runs exactly as before.
+            name: "content-probe",
+            testDir: "./dexie-setup",
+            testMatch: /content-probe\.setup\.ts/,
+            use: {browserName: "chromium"},
+        },
+        {
             name: "dexie-smoke",
             testDir: "./dexie",
+            dependencies: ["content-probe"],
             use: {browserName: "chromium"},
         },
     ],
