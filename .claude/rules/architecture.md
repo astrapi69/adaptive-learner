@@ -52,9 +52,9 @@ plugins/adaptive-learner-plugin-{name}/
 - routes.py contains only FastAPI endpoints that delegate to service functions.
 - Hook specs live in backend/app/hookspecs.py. Define new hooks there, with api_version. 10 hooks shipped; see CLAUDE.md plugin table for the catalogue.
 - Pydantic v2 for all request/response schemas.
-- SQLAlchemy 2.0 mapped models in backend/app/models/__init__.py (single-file domain model, currently 28 entities).
+- SQLAlchemy 2.0 mapped models in backend/app/models/__init__.py (single-file domain model).
 - Configuration via YAML (backend/config/plugins/{name}.yaml), NOT hardcoded.
-- Extend i18n strings in backend/config/i18n/{lang}.yaml (8 languages: DE, EN, ES, FR, EL, PT, TR, JA, all fully translated).
+- Extend i18n strings in every backend/config/i18n/{lang}.yaml catalog.
 - Plugin dependencies as a class attribute: `depends_on = ["session"]`.
 - All plugins are free (MIT). There is no licensing infrastructure any more (see below).
 

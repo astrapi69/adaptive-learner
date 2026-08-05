@@ -375,8 +375,7 @@ fail-open inside tooling built to prevent fail-open.
 
 Every `.claude/rules/**/*.md` file and `CLAUDE.md` is injected into every
 prompt of every session. The corpus is not a library you consult; it is a
-cost paid on every turn, by every agent, forever. At the time of writing it
-is around 284k characters - roughly 71k tokens per prompt.
+cost paid on every turn, by every agent, forever.
 
 `make verify-rule-corpus-size` ratchets it: the measured total may shrink,
 and the ceiling then follows it down (`make verify-rule-corpus-size` with

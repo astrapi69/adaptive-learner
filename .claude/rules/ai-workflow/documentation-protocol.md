@@ -201,11 +201,11 @@ Numbers that change with every feature or test session live in ONE canonical loc
 | Supported i18n languages | backend/config/i18n/ (the directory listing) | "See config/i18n/ for supported languages." |
 | Plugin catalog | CLAUDE.md plugin table | Reference CLAUDE.md or config/plugins/. |
 
-Never duplicate these numbers in CLAUDE.md, README.md, ROADMAP.md, CONCEPT.md, rule files, or release notes. Historical documents (CHANGELOG, chat journals) are exempt because they record what was true at a point in time.
+Never duplicate these numbers in CLAUDE.md, README.md, ROADMAP.md, CONCEPT.md, rule files, or release notes. Historical documents (CHANGELOG, chat journals, dated lesson origins) are exempt because they record what was true at a point in time.
 
 **Rationale:** duplicated numbers drift out of sync within one session. A single source is always correct because there is only one place to update.
 
-**When writing documentation:** if you need to mention a count, write the principle or the reference, not the number. Example: "AdaptiveLearner supports multiple languages (see config/i18n/)" instead of "AdaptiveLearner supports 8 languages".
+**When writing documentation or rules (#2286):** norms do not age; state assertions ALWAYS do. Mention the principle or the reference, not the number - state lives where it is measured, the text carries the pointer. A stale count inside an instruction reads as the specification. Example: "supports multiple languages (see config/i18n/)" instead of "supports 8 languages".
 
 ## Numeric claims verification
 
