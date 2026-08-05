@@ -126,6 +126,11 @@ Three things matter for prod:
    for prod.
 3. **`ADAPTIVE_LEARNER_DEBUG`**: leave unset / false in prod.
    Debug mode exposes stack traces in error responses.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: default `127.0.0.1`, so
+   the published port is reachable only from the host itself. The
+   app has no authentication - bind `0.0.0.0` only deliberately,
+   and only in a trusted network or behind your own auth layer
+   (reverse proxy with basic auth, VPN).
 
 For containers, env vars are the idiomatic injection channel.
 The `~/.config/adaptive_learner/secrets.yaml` overlay is
