@@ -2082,6 +2082,9 @@ content:
     working: "Exportando…"
     done: "Tu conjunto se subió al repositorio."
     failed: "Error al exportar."
+    quality_issues: "La comprobación de calidad encontró problemas. Las puertas de calidad del repositorio de contenido los rechazarían:"
+    export_anyway: "Exportar de todos modos"
+    renamed_note: "Los archivos de lecciones se renombraron con prefijos de orden (NN-) para que el orden de visualización coincida con el orden de las lecciones."
   anki_export:
     button: "Exportar a Anki"
   discover_more: "Descubrir más contenido"
@@ -2378,6 +2381,7 @@ content:
     back_language_mismatch: "Lección '{lesson}': el reverso de la tarjeta '{card}' no parece estar en {source}."
     free_text_too_few_accepts: "Lección '{lesson}': el ejercicio de texto libre '{exercise}' necesita al menos {min} respuestas aceptadas."
     matching_too_few_pairs: "Lección '{lesson}': el ejercicio de emparejar '{exercise}' necesita al menos {min} pares."
+    matching_duplicate_left: "Lección '{lesson}': el ejercicio de emparejamiento '{exercise}' repite el valor izquierdo '{value}' - irresoluble para el estudiante."
     missing_distractors: "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas)."
     non_cefr_level: El nivel '{level}' no es una banda CEFR (A1-C2).
     level_too_complex: "Lección '{lesson}': el texto promedia {avg} palabras por lado, alto para el nivel {level} (se esperan unas {cap})."

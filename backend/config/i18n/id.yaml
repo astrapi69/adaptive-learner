@@ -2091,6 +2091,9 @@ content:
     working: "Mengekspor…"
     done: "Set Anda telah didorong ke repositori."
     failed: "Ekspor gagal."
+    quality_issues: "Pemeriksaan kualitas menemukan masalah. Gerbang kualitas repositori konten akan menolaknya:"
+    export_anyway: "Tetap ekspor"
+    renamed_note: "File pelajaran diganti namanya dengan awalan urutan (NN-) agar urutan tampilan sesuai dengan urutan pelajaran."
   anki_export:
     button: "Ekspor Anki"
   discover_more: "Temukan konten lainnya"
@@ -2387,6 +2390,7 @@ content:
     back_language_mismatch: "Pelajaran '{lesson}': sisi belakang kartu '{card}' tidak tampak seperti {source}."
     free_text_too_few_accepts: "Pelajaran '{lesson}': latihan teks bebas '{exercise}' memerlukan setidaknya {min} jawaban yang diterima."
     matching_too_few_pairs: "Pelajaran '{lesson}': latihan pencocokan '{exercise}' memerlukan setidaknya {min} pasangan."
+    matching_duplicate_left: "Pelajaran '{lesson}': latihan mencocokkan '{exercise}' mengulang nilai kiri '{value}' - tidak dapat diselesaikan oleh pelajar."
     missing_distractors: "Pelajaran '{lesson}': latihan '{exercise}' memerlukan pengecoh (pilihan salah)."
     non_cefr_level: Tingkat '{level}' bukan jenjang CEFR (A1-C2).
     level_too_complex: "Pelajaran '{lesson}': teks rata-rata {avg} kata per halaman, tinggi untuk tingkat {level} (sekitar {cap} diharapkan)."

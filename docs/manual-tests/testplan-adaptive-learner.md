@@ -862,6 +862,14 @@ jeder Karten-Zeile (`CardImageField`).
       Discover/Meine Inhalte (#1702/#1706)
 - [ ] Per-Set Share-Link oeffnet direkt die Set-Detailseite (#1572)
 - [ ] Registrierten Content-Repo hinzufuegen (register-a-repo #1511)
+- [ ] "Als Repository teilen" (#2376): ein Set mit Qualitätsmängeln
+      (z. B. Zuordnungsübung mit doppeltem linkem Wert) wird beim ersten
+      Klick NICHT gepusht - die Mängelliste erscheint, der Button wechselt
+      auf "Trotzdem exportieren"; erst der zweite Klick exportiert
+- [ ] "Als Repository teilen" (#2376): bei Lektionsdateien, deren Namen
+      nicht in Quellreihenfolge sortieren (kapitel-1..kapitel-10), meldet
+      der Erfolgs-Screen die Umbenennung mit NN-Präfixen; das exportierte
+      Repo listet die Lektionen in Quellreihenfolge
 
 ### Discover Stufe 1: Facetten, Marken, Leerzustand (EXP-048, #2320-#2324)
 

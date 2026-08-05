@@ -2080,6 +2080,9 @@ content:
     working: "エクスポート中…"
     done: "セットをリポジトリにプッシュしました。"
     failed: "エクスポートに失敗しました。"
+    quality_issues: "品質チェックで問題が見つかりました。コンテンツリポジトリのゲートはこれらを拒否します："
+    export_anyway: "それでもエクスポート"
+    renamed_note: "表示順がレッスン順と一致するよう、レッスンファイルは順序プレフィックス（NN-）付きにリネームされました。"
   anki_export:
     button: "Anki エクスポート"
   discover_more: "もっとコンテンツを見つける"
@@ -2376,6 +2379,7 @@ content:
     back_language_mismatch: "レッスン '{lesson}': カード '{card}' の裏面が {source} に見えません。"
     free_text_too_few_accepts: "レッスン '{lesson}': 自由記述演習 '{exercise}' には最低 {min} 個の正解が必要です。"
     matching_too_few_pairs: "レッスン '{lesson}': マッチング演習 '{exercise}' には最低 {min} 組必要です。"
+    matching_duplicate_left: "レッスン'{lesson}'：マッチング練習'{exercise}'で左側の値'{value}'が重複しています。学習者には解けません。"
     missing_distractors: "レッスン '{lesson}': 演習 '{exercise}' には誤答選択肢が必要です。"
     non_cefr_level: レベル '{level}' は CEFR の区分（A1〜C2）ではありません。
     level_too_complex: "レッスン '{lesson}': 片面あたり平均 {avg} 語で、レベル {level} には多めです（目安は約 {cap} 語）。"
