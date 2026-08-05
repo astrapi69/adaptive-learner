@@ -40,6 +40,7 @@ function checks(over: Partial<DraftValidationChecks> = {}): DraftValidationCheck
         enoughTypes: true,
         schemaValid: true,
         schemaError: null,
+        schemaErrorIsInternal: false,
         ...over,
     };
 }
@@ -85,6 +86,51 @@ describe("ReviewStep language-pair check (#1929)", () => {
         renderStep();
         const checklist = screen.getByTestId("create-lesson-checklist");
         expect(checklist.querySelectorAll("li")).toHaveLength(6);
+    });
+});
+
+describe("ReviewStep structure-error message (#2384)", () => {
+    it("shows the concrete reason for a genuine validation failure", () => {
+        renderStep({
+            schemaValid: false,
+            schemaError: "/cards/0/back must NOT have fewer than 1 characters",
+            schemaErrorIsInternal: false,
+        });
+        const detail = screen.getByTestId("check-schemaValid-detail");
+        expect(detail).toHaveTextContent("/cards/0/back");
+        // No "app bug / report" block for a real content problem.
+        expect(screen.queryByTestId("check-schemaValid-internal")).toBeNull();
+        expect(screen.queryByTestId("check-schemaValid-report")).toBeNull();
+    });
+
+    it("explains an internal error as an app bug, not bad user content", () => {
+        renderStep({
+            schemaValid: false,
+            schemaError: "(0 , T.default) is not a function",
+            schemaErrorIsInternal: true,
+        });
+        const block = screen.getByTestId("check-schemaValid-internal");
+        // The message states it is the app's problem and how to proceed.
+        expect(block).toHaveTextContent(/not in your lesson/i);
+        expect(block).toHaveTextContent(/reload/i);
+        // The raw technical string is kept as diagnostic, not as the headline.
+        expect(block).toHaveTextContent("(0 , T.default) is not a function");
+        // The plain content-detail variant is NOT used for an internal error.
+        expect(screen.queryByTestId("check-schemaValid-detail")).toBeNull();
+    });
+
+    it("offers a report link carrying the technical detail", () => {
+        renderStep({
+            schemaValid: false,
+            schemaError: "(0 , T.default) is not a function",
+            schemaErrorIsInternal: true,
+        });
+        const link = screen.getByTestId("check-schemaValid-report");
+        const href = link.getAttribute("href") ?? "";
+        expect(href).toContain("github.com/astrapi69/adaptive-learner/issues/new");
+        expect(decodeURIComponent(href)).toContain(
+            "(0 , T.default) is not a function",
+        );
     });
 });
 
