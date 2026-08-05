@@ -84,7 +84,7 @@ Lernplattform mit:
   Notes in [`changelog/releases/`](../changelog/releases/).
 
 Die laufende, maschinen-lesbare Referenz für jede dieser
-Zahlen ist die OpenAPI-Spec unter `/api/openapi.json` plus
+Zahlen ist die OpenAPI-Spec unter `/openapi.json` plus
 [CLAUDE.md](../CLAUDE.md) für die High-Level-Übersicht.
 
 ---
