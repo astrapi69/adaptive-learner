@@ -2,13 +2,13 @@
 
 # Dağıtım
 
-v1.20.0'da dört dağıtım modu gönderilir:
+Dört dağıtım modu gönderilir:
 
 | Mod | Nerede | Arka uç | AI çağrıları | Anahtar kaynağı |
 |---|---|---|---|---|
 | Yerel geliştirme | `make dev` | :18001'de FastAPI | Sunucu tarafı | env / secrets.yaml / DB |
 | GitHub Pages | `astrapi69.github.io/adaptive-learner/` | Hiçbiri (Dexie) | Tarayıcı doğrudan | DB (IndexedDB) |
-| Masaüstü başlatıcısı | PyInstaller ikili | FastAPI yerel olarak önyüklenmiş | Sunucu tarafı | secrets.yaml (otomatik oluşturulur) / Ayarlar UI |
+| Masaüstü başlatıcısı | PyInstaller ikili (Docker tabanlı) | Docker konteynerinde FastAPI | Sunucu tarafı | `.env` (otomatik oluşturulur) / Ayarlar UI |
 | Docker | Docker Compose kendi kendine barındırma | Konteynerdeki FastAPI | Sunucu tarafı | env / Ayarlar UI |
 
 ## Yerel geliştirme
@@ -112,12 +112,18 @@ bir konteynere bağlayabilirsiniz.
 
 ## Masaüstü başlatıcısı
 
-`launcher/` altındaki PyInstaller ikilileri, uygulamayı Docker
-konteyneri olarak çalıştırır (varsayılan `http://localhost:8501`),
-ardından kullanıcının varsayılan tarayıcısını açar. İlk başlatmada başlatıcı ayrıca POSIX'te
-`~/.config/adaptive-learner/secrets.yaml`'ı yorumlanmış şablon
-olarak + `chmod 0600` olarak oluşturur, böylece kullanıcı API
-anahtarlarını Ayarlar UI'ına dokunmadan oraya ekleyebilir.
+`launcher/`, PyInstaller tabanlı tek ikili bir masaüstü
+başlatıcısıdır. Gömülü bir sunucu değildir - yayımlanmış
+`docker-app-launcher` motoru etrafında ince bir sarmalayıcıdır ve
+`launcher/launcher.json` ile yapılandırılır. Gönderilen
+yapılandırma **image modunda** (`deployment_mode: "image"`)
+çalışır: başlatıcı, hazır derlenmiş ve doğrulanmış sürüm
+imajını (`ghcr.io/astrapi69/adaptive-learner:<sürüm>`, gömülü
+uygulama sürümüne sabitlenmiş) çeker ve Docker konteyneri olarak
+başlatır (varsayılan `http://localhost:8501`), veri birimi
+`adaptive-learner-data` `/app/data`'ya bağlanır; ardından
+kullanıcının varsayılan tarayıcısını açar. Yerelde hiçbir şey
+derlenmez, kaynak kod indirilmez ve hiçbir şey çıkarılmaz.
 
 Tam üç katmanlı yapılandırma zinciri (proje YAML < kullanıcı
 katmanı < env değişkenleri) `docs/configuration.md`'de
@@ -133,9 +139,11 @@ GitHub Actions, sürüm başına üç ikili derler:
 - `launcher-windows.yml` → `adaptive-learner-launcher.exe`
 
 Her başlatıcı, sürümü gömer (`__version__` değişmezi + spec
-dosyası tarafından derleme zamanında yazılan `_build_info.py`)
-ve eşleşen etiketli sürüm tarbalını getirir + çıkarır + arka
-ucu önyükler + kullanıcının tarayıcısında frontend'i açar.
+dosyası tarafından derleme zamanında yazılan `_build_info.py`).
+Motor ayrıca GitHub Releases API'sine karşı arka planda bir
+güncelleme denetimi yürütür (`launcher.json` içindeki
+`update_check_enabled` ile etkinleştirilir); herhangi bir hatada
+sessizce başarısız olur ve başlatıcıyı asla engellemez.
 
 ## CI/CD mimarisi
 
