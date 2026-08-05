@@ -15,8 +15,30 @@ import type {ContentLessonExercise} from "../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
 
+const ISSUES_URL = "https://github.com/astrapi69/adaptive-learner/issues/new";
+
+/** Build a prefilled bug-report URL for an INTERNAL validator error (#2384).
+ *  The raw technical detail rides along so the maintainer gets the concrete
+ *  message the user could not act on. */
+function structureErrorIssueUrl(detail: string): string {
+    const title = encodeURIComponent(`[Bug] Lesson Creator: ${detail}`);
+    const body = encodeURIComponent(
+        "While checking a lesson in the Lesson Creator, an internal error " +
+            "occurred:\n\n```\n" +
+            detail +
+            "\n```\n",
+    );
+    return `${ISSUES_URL}?title=${title}&body=${body}&labels=bug`;
+}
+
 const CHECK_ROWS: Array<
-    [Exclude<keyof DraftValidationChecks, "schemaError">, string]
+    [
+        Exclude<
+            keyof DraftValidationChecks,
+            "schemaError" | "schemaErrorIsInternal"
+        >,
+        string,
+    ]
 > = [
     ["hasTitle", "Has a title"],
     // #1929 — the "language pair is valid" row is rendered again. It now
@@ -123,13 +145,17 @@ export default function ReviewStep({
             >
                 {rows.map(([key, fallback]) => {
                     const pass = draftChecks[key];
-                    // #1722 — a bare ✗ on the structure check is not
-                    // actionable; show the validator's concrete reason
-                    // (e.g. which card/field violates which rule).
-                    const detail =
-                        key === "schemaValid" && !pass
-                            ? draftChecks.schemaError
-                            : null;
+                    // #1722 / #2384 — a bare ✗ on the structure check is not
+                    // actionable. A genuine content violation shows the
+                    // validator's concrete reason (which card/field breaks
+                    // which rule). An INTERNAL error (an app bug the author
+                    // cannot fix by editing the lesson) instead gets a "this
+                    // is our bug, please report it" message so the raw
+                    // technical string is never framed as bad user content.
+                    const showStructureError =
+                        key === "schemaValid" &&
+                        !pass &&
+                        Boolean(draftChecks.schemaError);
                     return (
                         <li
                             key={key}
@@ -144,18 +170,52 @@ export default function ReviewStep({
                         >
                             {pass ? "✓" : "✗"}{" "}
                             {t(`create_lesson.review.check_${key}`, fallback)}
-                            {detail && (
-                                <div
-                                    className="text-sm text-muted-foreground"
-                                    data-testid="check-schemaValid-detail"
-                                >
-                                    {t(
-                                        "create_lesson.review.structure_error",
-                                        "Details",
-                                    )}
-                                    : <code>{detail}</code>
-                                </div>
-                            )}
+                            {showStructureError &&
+                                (draftChecks.schemaErrorIsInternal ? (
+                                    <div
+                                        className="flex flex-col gap-1 text-sm text-muted-foreground"
+                                        data-testid="check-schemaValid-internal"
+                                    >
+                                        <span>
+                                            {t(
+                                                "create_lesson.review.structure_internal_error",
+                                                "An internal error occurred while checking this lesson. This is a problem in the app, not in your lesson. Please reload the page and try again; if it keeps happening, report the problem below.",
+                                            )}
+                                        </span>
+                                        <span>
+                                            {t(
+                                                "create_lesson.review.structure_error",
+                                                "Technical detail",
+                                            )}
+                                            : <code>{draftChecks.schemaError}</code>
+                                        </span>
+                                        <a
+                                            href={structureErrorIssueUrl(
+                                                draftChecks.schemaError ?? "",
+                                            )}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="underline"
+                                            data-testid="check-schemaValid-report"
+                                        >
+                                            {t(
+                                                "create_lesson.review.structure_report",
+                                                "Report this problem",
+                                            )}
+                                        </a>
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="text-sm text-muted-foreground"
+                                        data-testid="check-schemaValid-detail"
+                                    >
+                                        {t(
+                                            "create_lesson.review.structure_error",
+                                            "Technical detail",
+                                        )}
+                                        : <code>{draftChecks.schemaError}</code>
+                                    </div>
+                                ))}
                         </li>
                     );
                 })}

@@ -2901,6 +2901,8 @@ create_lesson:
     check_enoughTypes: "Mindestens 2 Übungstypen"
     check_schemaValid: "Gültige Lektionsstruktur"
     structure_error: "Technisches Detail"
+    structure_internal_error: "Beim Prüfen dieser Lektion ist ein interner Fehler aufgetreten. Das ist ein Problem der App, nicht deiner Lektion. Bitte lade die Seite neu und versuche es erneut; wenn es weiterhin auftritt, melde das Problem unten."
+    structure_report: "Problem melden"
   save:
     saved: "Lektion gespeichert!"
     failed: "Lektion konnte nicht gespeichert werden."
@@ -3338,7 +3340,6 @@ hints:
   first_letters: "Beginnt mit „{prefix}“ ({n} Buchstaben)"
   not: "Es ist nicht „{label}“"
   item: "Beginne mit „{label}“"
-  reveal_pair: "„{left}“ gehört zu „{right}“"
 
 favorites:
   card_title: "Deine Favoriten"

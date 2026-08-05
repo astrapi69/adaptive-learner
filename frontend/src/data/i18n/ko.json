@@ -3158,7 +3158,9 @@
       "check_enoughExercises": "연습 5개 이상",
       "check_enoughTypes": "연습 유형 2개 이상",
       "check_schemaValid": "유효한 레슨 구조",
-      "structure_error": "기술적 세부 정보"
+      "structure_error": "기술적 세부 정보",
+      "structure_internal_error": "이 레슨을 확인하는 중 내부 오류가 발생했습니다. 이는 레슨이 아니라 앱의 문제입니다. 페이지를 새로고침한 후 다시 시도하세요. 계속 발생하면 아래에서 문제를 신고해 주세요.",
+      "structure_report": "문제 신고"
     },
     "save": {
       "saved": "레슨이 저장되었습니다!",
@@ -3621,8 +3623,7 @@
     "length": "답은 {n}글자입니다",
     "first_letters": "“{prefix}”로 시작합니다 ({n}글자)",
     "not": "“{label}”이(가) 아닙니다",
-    "item": "“{label}”로 시작하세요",
-    "reveal_pair": "“{left}”은(는) “{right}”와(과) 짝입니다"
+    "item": "“{label}”로 시작하세요"
   },
   "favorites": {
     "card_title": "내 즐겨찾기",

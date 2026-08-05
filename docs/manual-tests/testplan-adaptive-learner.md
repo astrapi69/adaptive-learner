@@ -359,6 +359,14 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       inhaltsbasiert, nicht positionsbasiert). iOS PWA/Standalone: dieselbe
       Prüfung auf dem zum Home-Bildschirm hinzugefügten Web-App-Icon
       durchführen.
+- [ ] Zuordnung: Tipp verrät die Lösung NICHT (#2390): eine Zuordnungsübung
+      öffnen, "Tipp anzeigen" (bis zu zweimal) antippen. Der erste Tipp nennt
+      nur ein Element ("Beginne mit „…""), der zweite nur den ANFANGSBUCHSTABEN
+      + die Länge des Partners ("Beginnt mit „…" (N Buchstaben)"). KEIN Tipp
+      nennt ein vollständiges Paar ("„X" gehört zu „Y"" darf nicht mehr
+      erscheinen). Tipps erscheinen weiterhin erst auf Anforderung (nicht von
+      Anfang an) und kosten XP. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
+      Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
 - [ ] Schwierigkeits-Indikator (#1693): eine Uebung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt ueber der Uebung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
@@ -667,6 +675,13 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Gate)
 - [ ] **Struktur-Check-Grund (#1724):** fehlgeschlagener "Gueltige
       Lektionsstruktur"-Check nennt einen konkreten Grund, nicht nur ✗
+- [ ] **Interner Struktur-Fehler (#2384):** schlaegt der "Gueltige
+      Lektionsstruktur"-Check mit einem INTERNEN Fehler fehl (z. B.
+      `(0 , T.default) is not a function`), erklaert die Meldung, dass es
+      ein Problem der App und NICHT der Lektion ist, nennt einen
+      Neuladen/Erneut-versuchen-Weg und bietet einen "Problem melden"-Link
+      — statt den technischen String als ungueltige Nutzer-Struktur zu
+      praesentieren
 - [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare
       Titel (auch offline) + einen gedrueckten/ausgewaehlten Zustand
 - [ ] **Erweiterte Uebungstypen / Extension-Wizard (#1852, #1887):** Schritt 1
