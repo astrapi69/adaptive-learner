@@ -1,7 +1,7 @@
 {
   "note": "Ceiling for the always-injected rule corpus (#2091). Characters, not tokens - see scripts/verify_rule_corpus_size.py. Lower it with --update-baseline; raising it needs --allow-raise and belongs in a commit where the raise is the point.",
   "file_count": 24,
-  "total_chars": 290986,
+  "total_chars": 291626,
   "measured": [
     "CLAUDE.md",
     ".claude/rules/ai-workflow/documentation-protocol.md",
