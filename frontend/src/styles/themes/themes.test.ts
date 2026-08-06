@@ -42,7 +42,10 @@ describe("Phase 58D — theme system", () => {
     it("the reference (light) theme defines the full canonical set", () => {
         // Sanity floor: backgrounds(5) + text(4) + borders(3) +
         // interactive(4) + accent(6, incl. accent-text #96) + status(8) +
-        // exercise(4) + star(1) + charts(6) + shadows(3) = 44.
+        // exercise(3) + matching-side(4) + star(1) + charts(6) +
+        // shadows(3) = 47. The dead --exercise-matched / --matching-paired-*
+        // trio was removed (0 consumers repo-wide, see
+        // dead-tokens-removed.test.ts).
         expect(reference.size).toBeGreaterThanOrEqual(43);
         for (const required of [
             "bg-primary",
@@ -60,7 +63,6 @@ describe("Phase 58D — theme system", () => {
             "info",
             "info-bg",
             "exercise-correct",
-            "exercise-matched",
             "star",
             "chart-1",
             "chart-6",

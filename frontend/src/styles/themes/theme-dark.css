@@ -53,13 +53,10 @@
   --exercise-correct: #4ade80;
   --exercise-wrong: #f87171;
   --exercise-selected: #818cf8;
-  --exercise-matched: #2dd4bf;
   --matching-side-a-bg: color-mix(in srgb, var(--info) 16%, var(--bg-surface));
   --matching-side-a-fg: var(--fg-primary);
   --matching-side-b-bg: color-mix(in srgb, var(--success) 16%, var(--bg-surface));
   --matching-side-b-fg: var(--fg-primary);
-  --matching-paired-bg: color-mix(in srgb, var(--exercise-matched) 22%, var(--bg-surface));
-  --matching-paired-fg: var(--fg-primary);
 
   /* Achievement gold */
   --star: #fbbf24;
