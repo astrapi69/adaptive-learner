@@ -322,3 +322,20 @@ def test_umlaut_ratchet_fails_closed_outside_a_git_repo(tmp_path: Path) -> None:
     r = _run(tmp_path, "--only", "umlaut", baseline=baseline)
     assert r.returncode != 0
     assert "fail-closed" in r.stdout
+
+
+def test_umlaut_ratchet_excludes_review_witness_docs(tmp_path: Path) -> None:
+    """docs/review/** sind eingefrorene Wortlaut-Zeugen (i18n-Katalog-Exporte,
+    #2311): jede Zeile zitiert einen Katalogwert, um ueber dessen Schreibweise
+    eine Aussage zu machen. Sie zaehlen nicht in den Ratchet - derselbe Grund
+    wie der Journal-Ausschluss."""
+    docs = _docs(tmp_path)
+    review = docs / "review" / "i18n-v1"
+    review.mkdir(parents=True)
+    (review / "de.md").write_text("- **de**: Hilfe oeffnen fuer alle", encoding="utf-8")
+    (docs / "note.md").write_text("Echte Prosa fuer alle.", encoding="utf-8")
+    _track(tmp_path)
+    baseline = tmp_path / "baseline.json"
+    _write_baseline(baseline, 1)  # nur das "fuer" aus note.md
+    r = _run(tmp_path, "--only", "umlaut", baseline=baseline)
+    assert r.returncode == 0, r.stdout

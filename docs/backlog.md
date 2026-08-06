@@ -97,7 +97,7 @@ tiebreaker.
 
 > **Audit-getriebene Priorisierung** (aus
 > [journal/exploration-status-audit.md](journal/exploration-status-audit.md),
-> 2026-06-17). Jetzt / Naechste Phase / Deferred fuehren die Task-IDs; die
+> 2026-06-17). Jetzt / Nächste Phase / Deferred führen die Task-IDs; die
 > ausfuehrlichen Beschreibungen stehen in den jeweiligen
 > Explorations-Dokumenten + in den P3-P5-Detailabschnitten unten. Kuratierte
 > Sicht: [ROADMAP.md](ROADMAP.md).
@@ -114,7 +114,7 @@ tiebreaker.
   (#674/#676/#686/#687/#690/#691).
 - **EXP-031 — .alb ZIP-Backup**: BAK-01..BAK-06.
 - **EXP-032 — deterministische Content-Validierung**: CQV-01..CQV-03
-  (CQV-04/05 spaeter).
+  (CQV-04/05 später).
 - **#696 — Library-First F-1**: PyYAML als expliziten Backend-Runtime-Dep
   deklarieren (kleiner Hygiene-Fix).
 - **Bug #622** — A11y link-name Lesson-Viewer (offen, P3/a11y).
@@ -123,7 +123,7 @@ tiebreaker.
   Complexity-Gate FreeText/WordTiles (v1.85.0); **Bug #675** Review-Badge-
   Abstieg nach Session (Closes #673, v1.86.0).
 
-## Naechste Phase
+## Nächste Phase
 
 - **EXP-025 — Content-Repo-Oekosystem**: AUTH-03..AUTH-09 (AUTH-01/02
   ausgeliefert #529/#531; Teil braucht geteiltes Backend → Deferred).
@@ -132,15 +132,15 @@ tiebreaker.
   I18N-10 (Exercise-RTL-Audit), I18N-12 (Arabisch-Content).
 - **EXP-022 — Lernpfad-Ausbau**: UC2 (Content-Browser als Graph), UC4
   (Beziehungs-Editor).
-- **EXP-021 — Lektions-Creator-Ausbau**: manueller Uebungs-Editor,
+- **EXP-021 — Lektions-Creator-Ausbau**: manueller Übungs-Editor,
   CSV-Datei-Upload, Token-Rollen-UI.
 - **EXP-024 — Schichtentrennung**: Phase 2 (Plugin-Service-Module), Phase 3
   (Frontend-U1).
 - **Library-First-Follow-ups** (aus dem Library-First-Audit): #697
-  react-easy-crop fuer `ImageCropDialog` spiken, #698 `jsonrepair` fuer den
-  LLM-Prosa-JSON-Extraktor evaluieren (TS + Python gepaart), #699 `zod` fuer
+  react-easy-crop für `ImageCropDialog` spiken, #698 `jsonrepair` für den
+  LLM-Prosa-JSON-Extraktor evaluieren (TS + Python gepaart), #699 `zod` für
   die content-validator-Schema-Schicht (vorlaeufig lean BEHALTEN), #700
-  `react-activity-calendar` fuer die `ActivityHeatmap` (vorlaeufig lean
+  `react-activity-calendar` für die `ActivityHeatmap` (vorlaeufig lean
   BEHALTEN).
 
 ## Deferred (Phase 2 / community-finanziert)

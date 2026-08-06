@@ -101,6 +101,19 @@ def _is_journal(md: Path, root: Path) -> bool:
     return len(parts) >= 2 and parts[0] == "docs" and parts[1] == "journal"
 
 
+def _is_review(md: Path, root: Path) -> bool:
+    """True for ``docs/review/**`` pages, which are excluded (#2311).
+
+    Review exports are frozen VERBATIM WITNESSES (i18n catalog wordings at a
+    pinned commit): every line quotes a catalog value in order to make a
+    statement about its spelling. Counting them turns witnesses into
+    violations; rewriting them makes the document claim a catalog state that
+    never existed - the same class as the journal exclusion.
+    """
+    parts = md.relative_to(root).parts
+    return len(parts) >= 2 and parts[0] == "docs" and parts[1] == "review"
+
+
 def _violation_word_count(message: str) -> int:
     """Number of flagged words in one ``ascii-umlauts`` violation message.
 
@@ -128,7 +141,7 @@ def _count_substitutes(root: Path) -> tuple[int, int, list[str]]:
     files = 0
     findings: list[str] = []
     for md in sorted(_tracked_markdown(root, "docs")):
-        if _is_journal(md, root):
+        if _is_journal(md, root) or _is_review(md, root):
             continue
         files += 1
         report = check_file(md, [_UMLAUT_RULE])
@@ -149,8 +162,13 @@ def _write_umlaut_baseline(baseline_path: Path, total: int, files: int) -> None:
                     "Frozen German ASCII substitute-spelling count across the "
                     "git-tracked docs/**/*.md prose, EXCLUDING docs/journal/** "
                     "(#2311: journals are dated records; rewriting them makes "
-                    "reconstructions from them, so the number does not fall to "
-                    "zero and that is honest). Detection is manuscript-tools' "
+                    "reconstructions from them) and docs/review/** (#2311 "
+                    "blocker finding: frozen verbatim witnesses of i18n catalog "
+                    "wordings - counting them turns witnesses into violations). "
+                    "The number does not fall to zero and that is honest: the "
+                    "remainder is C-stock the curated list does not know, "
+                    "generated artefacts (fix belongs in the generator) and "
+                    "all-caps grep keys. Detection is manuscript-tools' "
                     f"whole-word ascii-umlauts rule, pinned at {version} "
                     "(condition: pin exactly, not >=). Whole-word matching fixes "
                     "#2289 at the root - Spanish fuera / Portuguese esfuerzo can "

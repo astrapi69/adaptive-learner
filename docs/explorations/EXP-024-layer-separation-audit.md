@@ -247,7 +247,7 @@ tracking (2), anki (1), missions (1).
   (1181 passed, 1 skipped) grün.
 - **Phase 0 + Pilot `imports` erledigt:**
   - `app/repositories/{__init__,base}.py` — `Repository`-Basis (HTTP-freie
-    Daten-Schicht-Vertraege).
+    Daten-Schicht-Verträge).
   - `app/repositories/imports_repo.py` — `ImportsRepository` (ABC) +
     `SqlAlchemyImportsRepository` (alle Persistenz-Primitive des imports-
     Aggregats).
@@ -255,18 +255,18 @@ tracking (2), anki (1), missions (1).
     die FastAPI + konkrete Impl kennt).
   - `imports`-Service migriert: `db: Session` -> `repo: ImportsRepository`;
     kein `Session`/`query`/`selectinload`/`db.add`/`db.commit` mehr im
-    Service. Domain-Fehler bleiben im Service; Repo gibt `None` zurueck.
+    Service. Domain-Fehler bleiben im Service; Repo gibt `None` zurück.
   - `imports`-Router auf `Depends(get_imports_repo)` umgestellt; der
-    `db.get(User, ...)`-Guard in `analyze_import` laeuft jetzt ueber
+    `db.get(User, ...)`-Guard in `analyze_import` läuft jetzt über
     `repo.get_user`.
   - ruff + mypy sauber; 34 imports-Router-Tests grün.
 - **users migriert:** `UsersRepository` + `UniqueViolationError`-Foundation
-  (Repo uebersetzt SQLAlchemy-`IntegrityError` in ein backend-neutrales
+  (Repo übersetzt SQLAlchemy-`IntegrityError` in ein backend-neutrales
   Signal; Service mappt es auf `ConflictError`). identity.yaml-Seiteneffekt
   bleibt im Service. Backend-Suite 1181 passed.
 - **projects migriert:** `ProjectsRepository`; identity.yaml-Seiteneffekte
   (`active`-Flip / Erstanlage) bleiben im Service. Backend-Suite 1181 passed.
-- **curriculum migriert:** `CurriculumRepository` ueber alle drei Aggregate
+- **curriculum migriert:** `CurriculumRepository` über alle drei Aggregate
   (Curriculum / LearningTopic / Lesson). Tree-Integritaet (Cross-Curriculum-
   Parenting, Zyklus-Check `_would_create_cycle`) bleibt im Service und liest
   via `repo.get_topic_by_id`. Auch der imports-Router-Handler
@@ -324,16 +324,16 @@ tracking (2), anki (1), missions (1).
   Konstruktion bleiben im Service. Test-Wrap an 21 build_*-Call-Sites (das
   Seeding via `db_session` bleibt direkt).
 - **Lesson-Cluster migriert (als Einheit):** drei neue Repos
-  (`ElementErrorsRepository` mit explizitem `flush()`/`commit()` fuer die
+  (`ElementErrorsRepository` mit explizitem `flush()`/`commit()` für die
   Bulk-Upsert-Transaktionsgrenze; `LessonProgressRepository`;
   `LessonSessionUnificationRepository`). `element_srs` braucht **kein** eigenes
   Repo — es reicht den `ElementErrorsRepository` an `element_errors.list_for_user`
   weiter. Die Transition-Matrix (element_errors), die Lifecycle-/Score-Logik
   (lesson_progress) und der `on_session_complete`-Hook-Fire (unification)
   bleiben im Service. `lesson_progress.upsert_progress` bekommt **zwei** Repos
-  injiziert (progress + unification) und ruft die Completion-Unification ueber
+  injiziert (progress + unification) und ruft die Completion-Unification über
   das unification-Repo. Test-Rewrites in 3 Dateien (element_errors/element_srs:
-  `db`->`repo`-Wrap; unification: Inline-Wrap, da nicht alle `db`-Bloecke
+  `db`->`repo`-Wrap; unification: Inline-Wrap, da nicht alle `db`-Blöcke
   Service-Calls sind). ruff + mypy sauber.
 
 ---

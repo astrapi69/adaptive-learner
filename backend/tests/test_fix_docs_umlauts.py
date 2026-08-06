@@ -362,3 +362,66 @@ def test_short_fragments_do_not_attest_everything(tmp_path: Path) -> None:
     )
     result = _run(tmp_path)
     assert result.returncode == 0, result.stdout
+
+
+# --- #2311 Anwendungslauf: die drei Ausnahmen -------------------------------
+
+
+def test_review_witness_docs_stay_untouched(tmp_path: Path) -> None:
+    """docs/review/** sind eingefrorene Wortlaut-Zeugen (Katalog-Exporte).
+    Ein korrigierter Wert liesse das Dokument einen Katalogstand behaupten,
+    den es nie gab - derselbe Grund wie beim Journal-Ausschluss."""
+    witness = "- **de**: Hilfe oeffnen fuer alle\n"
+    _tree(
+        tmp_path,
+        {
+            "docs/review/i18n-v1/de.md": witness,
+            "docs/note.md": "Das gilt fuer alle.\n",
+            "docs/anchor.md": ANCHOR,
+        },
+    )
+    result = _run(tmp_path, "--apply")
+    assert result.returncode == 0, result.stdout
+    assert (tmp_path / "docs/review/i18n-v1/de.md").read_text(encoding="utf-8") == witness
+    assert "für" in (tmp_path / "docs/note.md").read_text(encoding="utf-8")
+
+
+def test_generated_artefacts_stay_untouched(tmp_path: Path) -> None:
+    """Generierte Doku (Kopfzeilen-Marker) wird ausgelassen: eine Korrektur
+    macht den Byte-Gleichheits-Pin rot und wird beim naechsten Generatorlauf
+    verworfen. Die Korrektur gehoert in den Generator."""
+    de = "# Referenz\n\n> **Generiert** via make sync-schema. Nicht von Hand editieren.\n\nGilt fuer alle.\n"
+    en = "# Reference\n\n> **Generated** via make sync-schema. Do not edit by hand.\n\nGilt fuer alle.\n"
+    _tree(
+        tmp_path,
+        {
+            "docs/help/de/ref.md": de,
+            "docs/help/en/ref.md": en,
+            "docs/note.md": "Das gilt fuer alle.\n",
+            "docs/anchor.md": ANCHOR,
+        },
+    )
+    result = _run(tmp_path, "--apply")
+    assert result.returncode == 0, result.stdout
+    assert (tmp_path / "docs/help/de/ref.md").read_text(encoding="utf-8") == de
+    assert (tmp_path / "docs/help/en/ref.md").read_text(encoding="utf-8") == en
+    assert "für" in (tmp_path / "docs/note.md").read_text(encoding="utf-8")
+
+
+def test_uppercase_identifier_is_neither_rewritten_nor_blocking(tmp_path: Path) -> None:
+    """Versalien-Bezeichner sind Grep-Schluessel, kein Fliesstext: eine
+    Doku-seitige Korrektur spaltet die Schreibweise vom Code ab. Der Lauf
+    laesst sie stehen, und sie blockieren den Nachweis nicht als Rest."""
+    _tree(
+        tmp_path,
+        {
+            "docs/policy.md": "Der Schluessel FUNKTION-NICHT-VERFUEGBAR gilt fuer alle.\n",
+            "docs/anchor.md": ANCHOR + "Die Funktion ist verfügbar und der Schlüssel passt.\n",
+        },
+        extras="uebungstypen\nschluessel",
+    )
+    result = _run(tmp_path, "--apply")
+    assert result.returncode == 0, result.stdout
+    rewritten = (tmp_path / "docs/policy.md").read_text(encoding="utf-8")
+    assert "FUNKTION-NICHT-VERFUEGBAR" in rewritten
+    assert "Schlüssel" in rewritten and "für" in rewritten

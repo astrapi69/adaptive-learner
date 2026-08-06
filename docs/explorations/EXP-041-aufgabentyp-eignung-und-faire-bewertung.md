@@ -2,15 +2,15 @@
 
 **Kategorie:** Didaktik / Übungs-Architektur / Content-Generierung
 **Phase:** Analyse + Empfehlung
-**Prioritaet:** Mittel-Hoch (Frust-Fall, Launch-relevant)
-**Abhaengig von:** EXP-002 (Content-Repository), EXP-007 (Übungen + SRS), EXP-013 (adaptive Generierung), EXP-036 (AI Exercise Generation Pipeline)
+**Priorität:** Mittel-Hoch (Frust-Fall, Launch-relevant)
+**Abhängig von:** EXP-002 (Content-Repository), EXP-007 (Übungen + SRS), EXP-013 (adaptive Generierung), EXP-036 (AI Exercise Generation Pipeline)
 **Issue:** astrapi69/adaptive-learner#1222
 **Status:** Analyse abgeschlossen, Empfehlung steht. Umsetzung gestaffelt: Content-Generierungs-Regel sofort, Content-Sichtung kurzfristig, Self-Assessment als eigene Folge-EXP mittelfristig.
 
 > Dieses Dokument ist **Analyse + Empfehlung**, kein Implementierungsauftrag.
 > Es klaert, welcher Aufgabentyp zu welchem Lernziel passt und wie freie
 > Eingaben fair bewertet werden. Konkreter Code-Schritt mit hoechstem
-> Nutzen/Aufwand-Verhaeltnis ist eine Content-Generierungs-Regel; ein neuer
+> Nutzen/Aufwand-Verhältnis ist eine Content-Generierungs-Regel; ein neuer
 > Self-Assessment-Aufgabentyp ist eine bewusste Roadmap-Entscheidung, kein
 > Quick-Fix.
 

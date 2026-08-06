@@ -268,7 +268,7 @@ These are recurring patterns the next session needs to honour.
 ### Real umlauts in German
 
 - `backend/config/i18n/de.yaml` MUST use real ä ö ü ß. ASCII
-  folding ("Schluessel") is banned. Same for any
+  folding ("Schlüssel") is banned. Same for any
   `docs/help/de/**` edit.
 - Code identifiers + filenames stay ASCII.
 
