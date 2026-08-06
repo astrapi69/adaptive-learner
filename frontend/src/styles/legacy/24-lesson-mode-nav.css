@@ -225,27 +225,6 @@
     width: 100%;
   }
 
-  .onboarding-skip-top {
-    width: 100%;
-    min-height: 44px;
-  }
-
-  /* ----- Settings: model-override + API-key rows stack -------- */
-  .api-key-row-input,
-  .model-override-row-input {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-2);
-  }
-  .api-key-row-input input,
-  .model-override-row-input input {
-    width: 100%;
-  }
-  .api-key-row-input .btn,
-  .model-override-row-input .btn {
-    width: 100%;
-  }
-
   /* ----- Landing: title shrinks slightly, CTA full-width ------ */
   .landing-page {
     padding: var(--space-4) var(--space-4);

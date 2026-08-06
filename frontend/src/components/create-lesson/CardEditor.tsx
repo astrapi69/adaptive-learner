@@ -330,7 +330,7 @@ export default function CardEditor({
                                             "card-csv-row grid grid-cols-3 items-center gap-2 rounded-md border border-border bg-bg-elevated px-2 py-1 text-sm" +
                                             (r.valid
                                                 ? ""
-                                                : " is-invalid border-[var(--error)]")
+                                                : " border-[var(--error)]")
                                         }
                                         data-testid={`card-csv-row-${i}`}
                                         data-valid={r.valid ? "true" : "false"}

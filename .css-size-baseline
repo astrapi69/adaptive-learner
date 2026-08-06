@@ -212,4 +212,17 @@
 # klassen-gestylte Anker wieder gewinnen. Legitime Fundament-Erweiterung
 # (Base-Reset-Ebene), aber der a11y-Fix hob die Baseline nicht mit an, so
 # dass develop rot blieb. Hier nachgetragen; nicht aus dieser Recovery-PR.
-7648
+# 2026-08-06: 7648 -> 7335 (Dead-CSS-Tranche #2476, Karte aus #2452,
+# Refs #1485): -313 Zeilen bestaetigt toter Legacy-Regeln, Rueckstand der
+# Tailwind-Migration der AI-Key-Settings-UI (nach 2026-07-08).
+# 26-auto-loop.css (36) + 40-api-key-validation.css (66) komplett samt
+# @import-Zeilen; 10-settings.css Block api-key/configured-provider
+# (-163); Einzelregeln .metric-grid (06, .metric-grid-5 bleibt LIVE),
+# .onboarding-skip-top (04 + 24), .api-key-row-input/
+# .model-override-row-input mobile (24), .chat-message-cursor (08).
+# Jeder Selektor per grep gegen frontend/src verifiziert (inkl.
+# Template-Literal-Staemme + testids); Grep-Pin in
+# dead-selectors-removed.test.ts. NICHT entfernt (Karten-Korrektur):
+# nav-mode-badge-content/-ai-augmented sind LIVE via
+# `nav-mode-badge-${mode}` (NavIndicators.tsx:25).
+7335
