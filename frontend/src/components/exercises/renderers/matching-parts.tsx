@@ -8,7 +8,7 @@
  */
 
 import {ArrowRight, Check, HelpCircle, Sparkles, X} from "lucide-react";
-import type {CSSProperties} from "react";
+import type {CSSProperties, ReactNode} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {cn} from "@/lib/utils";
@@ -733,6 +733,7 @@ export function MatchingPrompt({
     submitted,
     leftLabel,
     rightLabel,
+    theoryLink,
 }: {
     prompt: string | undefined;
     ttsLang: string | null;
@@ -746,69 +747,34 @@ export function MatchingPrompt({
     submitted: boolean;
     leftLabel: string;
     rightLabel: string;
+    /** #2453 — the chrome's conditional "Re-read theory" link, passed down
+     *  so it shares the top button row with the how-to disclosure. Null when
+     *  no theory chapter precedes this step. */
+    theoryLink?: ReactNode;
 }) {
     const {t} = useI18n();
     return (
         <>
-            <div className="exercise-prompt-row">
-                <p className="m-0 flex-auto font-medium" data-testid="matching-prompt">
-                    <InlineMarkdown>{prompt ?? ""}</InlineMarkdown>
-                </p>
-                {/* #2445 — the running pair count sits at the top by the prompt
-                    (the "heading"), where attention is while the learner is
-                    pairing. Gone once submitted (the footer shows the score).
-                    aria-live keeps the running count announced to screen
-                    readers. */}
-                {!submitted && (
-                    <p
-                        className="m-0 mt-0.5 shrink-0 whitespace-nowrap text-[0.8125rem] font-medium text-[var(--fg-muted)]"
-                        aria-live="polite"
-                        data-testid="matching-counter"
-                    >
-                        {t(
-                            "lesson.exercise.matching.counter",
-                            "{matched} / {total} paired",
-                        )
-                            .replace("{matched}", String(matchedCount))
-                            .replace("{total}", String(totalPairs))}
-                    </p>
-                )}
-                {ttsLang && !codeMode && (
-                    <ReadAloudButton
-                        text={prompt ?? ""}
-                        lang={ttsLang}
-                        testId="matching-prompt"
-                    />
-                )}
-            </div>
-
-            {/* #2444 — the how-to disclosure shares the instruction's row so
-                it no longer eats a dedicated line above the first tile.
-                Collapsed: instruction on the left, "How it works" toggle on the
-                right. Open: the disclosure takes the full width and wraps to its
-                own line below (flex-wrap + [&[open]]:w-full). It stays in the
-                matching renderer because its content needs matching state
-                (isKnowledge, matchedCount, labels); the generic "Re-read theory"
-                chrome row is conditional and state-blind, so it cannot host it.
-                On a knowledge set the instruction is empty and the toggle sits
-                alone in the row. */}
+            {/* #2453 — the how-to disclosure and the (optional) "Re-read
+                theory" chrome link share one button row directly under the
+                title. The link is computed by LessonStepView and passed down
+                as theoryLink; it sits to the left, the disclosure to its
+                right. Without a preceding theory chapter theoryLink is null
+                and the disclosure sits alone in the same row (consistent
+                position). The disclosure stays in this renderer because its
+                body needs matching state (isKnowledge, matchedCount, labels).
+                Open: it takes the full width and wraps to its own line below
+                (flex-wrap + [&[open]]:w-full). */}
             <div
-                className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
-                data-testid="matching-meta-row"
+                className="flex flex-wrap items-center gap-x-3 gap-y-1"
+                data-testid="matching-top-actions"
             >
-                {instruction && (
-                    <p
-                        className="exercise-direction-instruction m-0! flex-auto"
-                        data-testid="direction-instruction-matching"
-                    >
-                        {instruction}
-                    </p>
-                )}
-
-                {/* #2391 — on a phone the how-to text + the first-pair hint ate
-                    the space above the first tile. Collapse them behind a native
-                    <details> (a11y for free: keyboard + screen-reader can
-                    expand, and the content stays in the DOM when closed). */}
+                {theoryLink}
+                {/* #2391 — on a phone the how-to text + the first-pair hint
+                    ate the space above the first tile. Collapse them behind a
+                    native <details> (a11y for free: keyboard + screen-reader
+                    can expand, and the content stays in the DOM when
+                    closed). */}
                 <details
                     className="m-0 [&[open]]:w-full"
                     data-testid="matching-help"
@@ -857,6 +823,56 @@ export function MatchingPrompt({
                     </div>
                 </details>
             </div>
+
+            <div className="exercise-prompt-row">
+                <p className="m-0 flex-auto font-medium" data-testid="matching-prompt">
+                    <InlineMarkdown>{prompt ?? ""}</InlineMarkdown>
+                </p>
+                {/* #2445 — the running pair count sits at the top by the prompt
+                    (the "heading"), where attention is while the learner is
+                    pairing. Gone once submitted (the footer shows the score).
+                    aria-live keeps the running count announced to screen
+                    readers. */}
+                {!submitted && (
+                    <p
+                        className="m-0 mt-0.5 shrink-0 whitespace-nowrap text-[0.8125rem] font-medium text-[var(--fg-muted)]"
+                        aria-live="polite"
+                        data-testid="matching-counter"
+                    >
+                        {t(
+                            "lesson.exercise.matching.counter",
+                            "{matched} / {total} paired",
+                        )
+                            .replace("{matched}", String(matchedCount))
+                            .replace("{total}", String(totalPairs))}
+                    </p>
+                )}
+                {ttsLang && !codeMode && (
+                    <ReadAloudButton
+                        text={prompt ?? ""}
+                        lang={ttsLang}
+                        testId="matching-prompt"
+                    />
+                )}
+            </div>
+
+            {/* #2453 — the instruction keeps its own row below the prompt;
+                the how-to disclosure moved up to the top button row. On a
+                knowledge set the instruction is empty, so the row is omitted
+                entirely rather than rendering an empty line. */}
+            {instruction && (
+                <div
+                    className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
+                    data-testid="matching-meta-row"
+                >
+                    <p
+                        className="exercise-direction-instruction m-0! flex-auto"
+                        data-testid="direction-instruction-matching"
+                    >
+                        {instruction}
+                    </p>
+                </div>
+            )}
 
             {/* UX bugfix — announce the current selection to screen
                 readers (the visual highlight is not conveyed otherwise). */}

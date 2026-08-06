@@ -395,12 +395,14 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       (Sprachnamen bzw. Term/Übersetzung + Richtungshinweis sichtbar). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
-- [ ] Zuordnung: Vorspann frisst den Bildschirm nicht mehr (#2391/#2444): eine
+- [ ] Zuordnung: Vorspann frisst den Bildschirm nicht mehr (#2391/#2444/#2453): eine
       Zuordnungsübung auf einem KLEINEN Gerät (iPhone) öffnen. Der Knopf „Wie
-      funktioniert das?" sitzt auf DERSELBEN Zeile wie der Richtungshinweis
-      (rechts davon), NICHT mehr auf einer eigenen Zeile darunter (#2444). Bei
-      einem Wissens-Set (kein Richtungshinweis) sitzt der Knopf allein in der
-      Zeile. Auf 375px passt er ohne hässlichen Umbruch neben den Hinweis.
+      funktioniert das?" sitzt OBEN in der Knopfzeile unter dem Titel, direkt
+      neben „Theorie nochmal lesen" (#2453) — sofern diesem Schritt eine Theorie
+      vorangeht. Ohne vorangehende Theorie fehlt „Theorie nochmal lesen", und
+      „Wie funktioniert das?" steht allein in derselben Zeile (gleiche Position).
+      Er sitzt NICHT mehr auf der Anweisungszeile („Paare verbinden …", #2453
+      korrigiert #2444). Auf 375px passt er ohne hässlichen Umbruch.
       Die Bedienanleitung („Waehle links …") und der „A → B"-Hinweis liegen
       HINTER diesem Knopf (zugeklappt beim Öffnen; antippen klappt auf/zu); beim
       Aufklappen bricht der Inhalt sauber auf die nächste Zeile in voller Breite
