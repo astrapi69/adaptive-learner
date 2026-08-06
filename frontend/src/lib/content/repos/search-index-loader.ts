@@ -206,6 +206,18 @@ function normalizeSet(
 }
 
 /**
+ * The root ``schema_version`` of a ``search-index.json`` payload, or
+ * ``undefined`` when absent/malformed (#2306 point 4: every read of the
+ * index format lives in THIS module, so a format change has one place to
+ * land - ``RegistrySubmitSection`` consumed the raw JSON directly before).
+ */
+export function indexSchemaVersion(data: unknown): string | undefined {
+  const version = (data as { schema_version?: unknown } | null | undefined)
+    ?.schema_version;
+  return typeof version === "string" ? version : undefined;
+}
+
+/**
  * Parse a ``search-index.json`` payload into validated {@link SearchableSet}s.
  * Pure + never throws: a non-array ``sets`` field resolves to ``[]`` and any
  * entry without a string ``id`` is dropped. ``trustFloor`` (default 0) is the
