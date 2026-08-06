@@ -404,9 +404,11 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Die Bedienanleitung („Waehle links …") und der „A → B"-Hinweis liegen
       HINTER diesem Knopf (zugeklappt beim Öffnen; antippen klappt auf/zu); beim
       Aufklappen bricht der Inhalt sauber auf die nächste Zeile in voller Breite
-      um. Der Fortschrittszähler („2 / 5 zugeordnet") steht unten NEBEN dem
-      „Antworten prüfen"-Knopf; nach dem Prüfen ersetzt ihn die Punktzahl. Die
-      zweite Spalte ist ohne langes Scrollen erreichbar.
+      um. Der Fortschrittszähler („2 / 5 zugeordnet") steht OBEN bei der
+      Aufgabenstellung (nicht mehr unten neben „Antworten prüfen"), damit er
+      während des Zuordnens sichtbar ist; nach dem Prüfen verschwindet er und die
+      Punktzahl erscheint unten (#2445). Die zweite Spalte ist ohne langes
+      Scrollen erreichbar.
       Barrierefreiheit: der Knopf ist per Tastatur bedienbar und der Inhalt für
       Screenreader auch zugeklappt erreichbar (natives <details>). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten

@@ -619,8 +619,6 @@ export function MatchingResultFooter({
     canCheck,
     onCheck,
     onRetry,
-    matchedCount,
-    totalPairs,
 }: {
     submitted: boolean;
     result: {correct: number; total: number} | null;
@@ -628,11 +626,6 @@ export function MatchingResultFooter({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
-    /** #2391 — the running pair count, shown pre-check right next to the
-     *  Check button: that is where attention is when the learner believes
-     *  they are done, and it explains a disabled Check ("3 / 5 paired"). */
-    matchedCount: number;
-    totalPairs: number;
 }) {
     const {t} = useI18n();
     const allCorrect =
@@ -641,20 +634,10 @@ export function MatchingResultFooter({
     const total = result?.total ?? 0;
     return (
         <div className="flex flex-wrap items-center gap-3">
-            {!submitted && (
-                <p
-                    className="m-0 text-[0.8125rem] font-medium text-[var(--fg-muted)]"
-                    aria-live="polite"
-                    data-testid="matching-counter"
-                >
-                    {t(
-                        "lesson.exercise.matching.counter",
-                        "{matched} / {total} paired",
-                    )
-                        .replace("{matched}", String(matchedCount))
-                        .replace("{total}", String(totalPairs))}
-                </p>
-            )}
+            {/* #2445 — the running pair count moved OUT of the footer up to the
+                prompt row (MatchingPrompt): during solving the learner's
+                attention is at the top, not at the bottom next to Check. The
+                footer now carries only the post-check score. */}
             {submitted && (
                 <>
                     <p
@@ -743,6 +726,7 @@ export function MatchingPrompt({
     codeMode,
     instruction,
     matchedCount,
+    totalPairs,
     selectedLeft,
     leftTiles,
     isKnowledge,
@@ -755,6 +739,7 @@ export function MatchingPrompt({
     codeMode: boolean;
     instruction: string;
     matchedCount: number;
+    totalPairs: number;
     selectedLeft: number | null;
     leftTiles: LeftTile[];
     isKnowledge: boolean;
@@ -769,6 +754,25 @@ export function MatchingPrompt({
                 <p className="m-0 flex-auto font-medium" data-testid="matching-prompt">
                     <InlineMarkdown>{prompt ?? ""}</InlineMarkdown>
                 </p>
+                {/* #2445 — the running pair count sits at the top by the prompt
+                    (the "heading"), where attention is while the learner is
+                    pairing. Gone once submitted (the footer shows the score).
+                    aria-live keeps the running count announced to screen
+                    readers. */}
+                {!submitted && (
+                    <p
+                        className="m-0 mt-0.5 shrink-0 whitespace-nowrap text-[0.8125rem] font-medium text-[var(--fg-muted)]"
+                        aria-live="polite"
+                        data-testid="matching-counter"
+                    >
+                        {t(
+                            "lesson.exercise.matching.counter",
+                            "{matched} / {total} paired",
+                        )
+                            .replace("{matched}", String(matchedCount))
+                            .replace("{total}", String(totalPairs))}
+                    </p>
+                )}
                 {ttsLang && !codeMode && (
                     <ReadAloudButton
                         text={prompt ?? ""}

@@ -527,6 +527,7 @@ function MatchingExercise(
                 codeMode={codeMode}
                 instruction={instruction}
                 matchedCount={matches.size}
+                totalPairs={pairs.length}
                 selectedLeft={selectedLeft}
                 leftTiles={leftTiles}
                 isKnowledge={isKnowledge}
@@ -636,8 +637,6 @@ function MatchingExercise(
                 canCheck={allPaired}
                 onCheck={submit}
                 onRetry={reset}
-                matchedCount={matches.size}
-                totalPairs={pairs.length}
             />
         </section>
     );

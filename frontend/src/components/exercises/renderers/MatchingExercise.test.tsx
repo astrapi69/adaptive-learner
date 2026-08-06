@@ -206,16 +206,19 @@ describe("MatchingExercise: mobile space (#2391)", () => {
         expect(metaRow).toContainElement(screen.getByTestId("matching-help"));
     });
 
-    it("moves the running counter to the footer next to Check, pre-submit only", () => {
+    it("#2445 shows the running counter at the top, not in the footer", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        // The counter is NOT in the top preamble disclosure.
-        expect(screen.getByTestId("matching-help")).not.toContainElement(
-            screen.getByTestId("matching-counter"),
-        );
-        // It sits in the same row as the Check button.
+        const counter = screen.getByTestId("matching-counter");
+        // Not in the footer row with the Check button — attention during
+        // solving is at the top, not at the bottom next to Check.
         const check = screen.getByTestId("matching-submit");
-        const footerRow = check.closest("div");
-        expect(footerRow).toContainElement(screen.getByTestId("matching-counter"));
+        expect(check.closest("div")).not.toContainElement(counter);
+        // It sits at the top, before the tile columns in DOM order.
+        const left = screen.getByTestId("matching-left");
+        expect(
+            counter.compareDocumentPosition(left) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
         // Once submitted the score replaces the counter (no duplicate progress).
         for (let i = 0; i < 3; i++) {
             fireEvent.click(screen.getByTestId(`matching-left-${i}`));

@@ -380,9 +380,10 @@ Requires domain knowledge. Not automatable.
       wrap. The operating manual ("Select an item on the left …") and the "A → B"
       hint live BEHIND that button (collapsed on open; tap to expand/collapse);
       on expand the content wraps cleanly onto the next line at full width. The
-      progress counter ("2 / 5 paired") is at the bottom NEXT TO the "Check
-      answers" button; after checking the score replaces it. The second column is
-      reachable without long scrolling. A11y: the button is keyboard-operable and
+      progress counter ("2 / 5 paired") is at the TOP by the prompt (no longer at
+      the bottom next to "Check answers"), so it stays visible while pairing;
+      after checking it disappears and the score shows in the footer (#2445). The
+      second column is reachable without long scrolling. A11y: the button is keyboard-operable and
       the content stays reachable for screen readers even when collapsed (native
       <details>). iOS PWA/Standalone: repeat the check on the web-app icon added
       to the Home Screen.
