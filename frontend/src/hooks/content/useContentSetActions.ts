@@ -52,6 +52,7 @@ import type { RemapPlan } from "../../lib/content/update/remap-plan";
 import type { UpdateImpact } from "../../lib/content/update/update-impact";
 import { removeFavorite } from "../../lib/favorites/favorites";
 import { readLearnerState } from "../../lib/learning/learnerState";
+import { migrateSetExerciseIds } from "../../lib/content/update/stable-id-migration";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
 import { useI18n } from "../ui/useI18n";
@@ -665,6 +666,14 @@ export function useContentSetActions({
     setPerSetState((prev) => ({ ...prev, [key]: "downloading" }));
     try {
       const updated = await getStorage().contentLoader.downloadSet(entry.source, entry.id);
+      // #2130 — re-key this set's rows onto stable_id now that the freshly
+      // downloaded lessons carry the mapping. Idempotent; best-effort — a
+      // failure leaves the rows on their current key and the next
+      // download/sync retries.
+      const learnerId = readLearnerState().userId;
+      if (learnerId) {
+        void migrateSetExerciseIds(learnerId, entry.source, entry.id).catch(() => undefined);
+      }
       // #1709 — an explicit re-download revives a previously deleted set;
       // clear the stale dismissal record (the cached state wins anyway, this
       // just keeps the store tidy).

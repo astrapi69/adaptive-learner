@@ -44,6 +44,7 @@ import type {
 } from "../../storage/types";
 
 import type {ConcreteDirection} from "../exercises/direction";
+import {matchesExerciseIdentity} from "../srs/exercise-identity";
 import type {ExerciseCandidate} from "./exercise-pool";
 import type {ErrorAnalysis, PrioritizedElement} from "./types";
 
@@ -241,7 +242,7 @@ function _sourceExerciseType(
         if (
             !cand.is_generated &&
             cand.source_lesson_id === sourceError.lesson_id &&
-            cand.exercise.id === sourceError.exercise_id
+            matchesExerciseIdentity(cand.exercise, sourceError.exercise_id)
         ) {
             return cand.exercise_type;
         }
@@ -272,7 +273,7 @@ function _filterReplays(
         (c) =>
             c.is_generated ||
             c.source_lesson_id !== sourceError.lesson_id ||
-            c.exercise.id !== sourceError.exercise_id,
+            !matchesExerciseIdentity(c.exercise, sourceError.exercise_id),
     );
 }
 

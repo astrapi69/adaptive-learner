@@ -1703,6 +1703,24 @@ class ElementKeyRemapResult(BaseModel):
     skipped: int
 
 
+class ExerciseIdRemapIn(BaseModel):
+    """One #2130 stable_id key-switch remap: rewrite ``exercise_id`` from
+    ``old`` (the authored slug the rows were recorded under) to ``new`` (the
+    exercise's ``stable_id``) for a specific (set, lesson)."""
+
+    set_id: str
+    lesson_id: str
+    old: str
+    new: str
+
+
+class ExerciseIdRemapsIn(BaseModel):
+    """Bulk body for the #2130 key switch. One call carries all remaps for a
+    single set (the caller applies per set, atomically)."""
+
+    remaps: list[ExerciseIdRemapIn] = Field(..., min_length=1, max_length=1000)
+
+
 class AttemptRecordOut(BaseModel):
     """#603 - one recorded attempt in the per-element history ring buffer."""
 

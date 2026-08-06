@@ -19,10 +19,15 @@ import {elementKeysOf, type KeyBearingExercise} from "../../srs/element-keys";
 
 /**
  * A lesson exercise as the peek sees it: raw parsed JSON, not a constructed
- * ``ContentLessonExercise``. Only ``id`` is read here; every answer-bearing
- * field is read by the shared key rule (see {@link elementKeysOf}).
+ * ``ContentLessonExercise``. Only the id fields are read here; every
+ * answer-bearing field is read by the shared key rule (see
+ * {@link elementKeysOf}).
  */
-export type PeekExercise = KeyBearingExercise & {id?: string};
+export type PeekExercise = KeyBearingExercise & {
+    id?: string;
+    /** ``null`` admitted because the engine's generated type allows it. */
+    stable_id?: string | null;
+};
 
 /** A lesson as the peek sees it: its filename + its exercises. */
 export interface PeekLesson {
@@ -60,7 +65,12 @@ export function buildIncomingIdentities(
         lessonSet.add(lesson.filename);
         const byEx = new Map<string, Set<string> | null>();
         for (const ex of lesson.exercises) {
-            if (ex.id) byEx.set(ex.id, exerciseElementKeys(ex));
+            // #2130: an exercise is reachable under BOTH of its ids — the
+            // authored slug (pre-switch rows) and the stable_id (post-switch
+            // rows). Both entries share one key set.
+            const keys = ex.id || ex.stable_id ? exerciseElementKeys(ex) : null;
+            if (ex.id) byEx.set(ex.id, keys);
+            if (ex.stable_id) byEx.set(ex.stable_id, keys);
         }
         byLesson.set(lesson.filename, byEx);
     }

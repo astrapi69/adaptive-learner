@@ -87,6 +87,23 @@ class ElementErrorsRepository(Repository):
         ``(applied, skipped)``.
         """
 
+    @abstractmethod
+    def remap_exercise_ids(
+        self,
+        user_id: str,
+        remaps: list[tuple[str, str, str, str]],
+    ) -> tuple[int, int]:
+        """#2130 stable_id key switch: rewrite ``exercise_id`` from ``old`` to
+        ``new`` for EVERY row of the exercise (all element_keys, both drill
+        directions).
+
+        Each ``remap`` is ``(set_id, lesson_id, old, new)``. A row is SKIPPED
+        when a target row (same element_key + direction under ``new``) already
+        exists, so no two rows collapse onto one identity and a second run is
+        a no-op (idempotent). Does not commit — the caller owns the
+        transaction boundary. Returns ``(applied, skipped)``.
+        """
+
 
 class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
     """SQLAlchemy-backed :class:`ElementErrorsRepository`."""
@@ -221,6 +238,46 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
                     skipped += 1
                     continue
                 row.element_key = new_key
+                applied += 1
+        return applied, skipped
+
+    def remap_exercise_ids(
+        self,
+        user_id: str,
+        remaps: list[tuple[str, str, str, str]],
+    ) -> tuple[int, int]:
+        """See the abstract contract. In-place ``exercise_id`` rewrite (the
+        row ``id`` is a stable uuid, so the identity survives); the UNIQUE
+        (user, set, lesson, exercise, element_key, direction) constraint is
+        respected because a pre-existing target is skipped, never
+        overwritten."""
+        applied = skipped = 0
+        for set_id, lesson_id, old_id, new_id in remaps:
+            rows = list(
+                self._db.execute(
+                    select(ElementError).where(
+                        ElementError.user_id == user_id,
+                        ElementError.set_id == set_id,
+                        ElementError.lesson_id == lesson_id,
+                        ElementError.exercise_id == old_id,
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            for row in rows:
+                target = self.find(
+                    user_id=user_id,
+                    set_id=set_id,
+                    lesson_id=lesson_id,
+                    exercise_id=new_id,
+                    element_key=row.element_key,
+                    direction=row.direction,
+                )
+                if target is not None:
+                    skipped += 1
+                    continue
+                row.exercise_id = new_id
                 applied += 1
         return applied, skipped
 

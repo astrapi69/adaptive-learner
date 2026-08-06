@@ -49,6 +49,7 @@
  */
 
 import {generateClozeFromError} from "../exercises/grading/cloze-generator";
+import {matchesExerciseIdentity} from "../srs/exercise-identity";
 import type {
     ContentLesson,
     ContentLessonCard,
@@ -151,7 +152,9 @@ function _findExercise(
 ): ContentLessonExercise | null {
     if (!lesson) return null;
     for (const step of lesson.steps) {
-        if (step.exercise && step.exercise.id === exerciseId) {
+        // #2130: a row may be keyed by the authored slug (pre-switch) or
+        // the stable_id (post-switch); the exercise answers to either.
+        if (step.exercise && matchesExerciseIdentity(step.exercise, exerciseId)) {
             return step.exercise;
         }
     }

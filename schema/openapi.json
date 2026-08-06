@@ -1458,6 +1458,54 @@
         "title": "Exercise",
         "type": "object"
       },
+      "ExerciseIdRemapIn": {
+        "description": "One #2130 stable_id key-switch remap: rewrite ``exercise_id`` from\n``old`` (the authored slug the rows were recorded under) to ``new`` (the\nexercise's ``stable_id``) for a specific (set, lesson).",
+        "properties": {
+          "lesson_id": {
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "new": {
+            "title": "New",
+            "type": "string"
+          },
+          "old": {
+            "title": "Old",
+            "type": "string"
+          },
+          "set_id": {
+            "title": "Set Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "set_id",
+          "lesson_id",
+          "old",
+          "new"
+        ],
+        "title": "ExerciseIdRemapIn",
+        "type": "object"
+      },
+      "ExerciseIdRemapsIn": {
+        "description": "Bulk body for the #2130 key switch. One call carries all remaps for a\nsingle set (the caller applies per set, atomically).",
+        "properties": {
+          "remaps": {
+            "items": {
+              "$ref": "#/components/schemas/ExerciseIdRemapIn"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "title": "Remaps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "remaps"
+        ],
+        "title": "ExerciseIdRemapsIn",
+        "type": "object"
+      },
       "ExerciseType": {
         "description": "Closed enum of exercise types the loader knows about.\n\nEXP-001 + EXP-006: the four base types ship in Phase 43-45.\nPhase 52D / v1.35.0 added CLOZE (fill-in-the-blank with\n``___`` markers) — see the schema_version bump in\n``models.py``. Adding a sixth type (ordering, drag-image-\npair, etc.) requires a minor schema_version bump and a new\nenum value plus its renderer.",
         "enum": [
@@ -13748,6 +13796,59 @@
           }
         },
         "summary": "Remap element keys",
+        "tags": [
+          "Progress"
+        ]
+      }
+    },
+    "/api/users/{user_id}/element-errors/remap-exercise-ids": {
+      "post": {
+        "description": "#2130 stable_id key switch: rewrite ``exercise_id`` old -> new for\nevery row of the exercise (all element_keys + both drill directions).\nIdempotent + no double-map (a target row that already exists is skipped);\nall remaps in the call land atomically. The client derives the mapping\nlocally from the lesson files (authored id -> ``stable_id``, both present\nin the same file) and sends one set's remaps per call.",
+        "operationId": "remap_exercise_ids_api_users__user_id__element_errors_remap_exercise_ids_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExerciseIdRemapsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementKeyRemapResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remap exercise ids",
         "tags": [
           "Progress"
         ]

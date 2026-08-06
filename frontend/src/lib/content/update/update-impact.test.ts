@@ -321,3 +321,48 @@ describe("a harmless update is not breaking, for every shipped type (#2303)", ()
         expect(impact.breaking).toBe(true);
     });
 });
+
+// --- #2130 stable_id key switch --------------------------------------------
+
+describe("buildIncomingIdentities with stable_id (#2130)", () => {
+    const lesson = {
+        filename: "01-greetings.json",
+        exercises: [
+            {
+                id: "ex-match-1",
+                stable_id: "greetings-match-x7",
+                type: "matching",
+                pairs: [{left: "merci", right: "danke"}],
+            },
+        ],
+    };
+
+    it("a row keyed by stable_id resolves (post-switch rows)", () => {
+        const impact = computeUpdateImpact(
+            [],
+            [srs({exercise_id: "greetings-match-x7", element_key: "merci"})],
+            buildIncomingIdentities([lesson]),
+        );
+        expect(impact.breaking).toBe(false);
+        expect(impact.lostCards).toEqual([]);
+    });
+
+    it("a row keyed by the authored id STILL resolves (pre-switch rows)", () => {
+        const impact = computeUpdateImpact(
+            [],
+            [srs({exercise_id: "ex-match-1", element_key: "merci"})],
+            buildIncomingIdentities([lesson]),
+        );
+        expect(impact.breaking).toBe(false);
+        expect(impact.lostCards).toEqual([]);
+    });
+
+    it("an unknown identity is still lost", () => {
+        const impact = computeUpdateImpact(
+            [],
+            [srs({exercise_id: "ex-gone", element_key: "merci"})],
+            buildIncomingIdentities([lesson]),
+        );
+        expect(impact.breaking).toBe(true);
+    });
+});

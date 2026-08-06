@@ -131,6 +131,16 @@ export interface ElementKeyRemap {
   new: string;
 }
 
+/** One #2130 stable_id key-switch remap: rewrite ``exercise_id`` from ``old``
+ *  (the authored slug the rows were recorded under) to ``new`` (the
+ *  exercise's ``stable_id``) for a specific (set, lesson). */
+export interface ExerciseIdRemap {
+  set_id: string;
+  lesson_id: string;
+  old: string;
+  new: string;
+}
+
 export interface IElementErrorsNamespace {
   list(
     userId: string,
@@ -145,6 +155,15 @@ export interface IElementErrorsNamespace {
   remapKeys(
     userId: string,
     remaps: readonly ElementKeyRemap[],
+  ): Promise<{ applied: number; skipped: number }>;
+  /** #2130 stable_id key switch: rewrite ``exercise_id`` old -> new for every
+   *  row of the exercise (all element_keys + both directions). Idempotent and
+   *  no double-map (a target row that already exists is skipped). One call is
+   *  atomic (all-or-nothing); the caller passes ONE set's remaps per call.
+   *  Returns the counts. Works in both storage modes. */
+  remapExerciseIds(
+    userId: string,
+    remaps: readonly ExerciseIdRemap[],
   ): Promise<{ applied: number; skipped: number }>;
   /** Projected review queue: active (non-mastered) elements with
    *  computed suggested_review_at + overdue flag, sorted by urgency
