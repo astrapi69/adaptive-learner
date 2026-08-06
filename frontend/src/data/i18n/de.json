@@ -2196,7 +2196,8 @@
       "preview_more": "und {count} weitere",
       "unmappable": "{count} lassen sich nicht sicher zuordnen und werden zurückgesetzt. Dort hat sich die Reihenfolge oder die Anzahl geändert, deshalb wird nicht geraten.",
       "carried_over": "Fortschritt übernommen.",
-      "carry_over_failed": "Die Aktualisierung wurde angewendet, der Fortschritt konnte aber nicht übernommen werden."
+      "carry_over_failed": "Die Aktualisierung wurde angewendet, der Fortschritt konnte aber nicht übernommen werden.",
+      "retired_archived": "{count} Übungen wurden vom Autor ausgemustert; der zugehörige Lernfortschritt ist archiviert."
     },
     "recovery": {
       "title": "Wiederholungsfortschritt für korrigierte Lektionen wiederherstellen",

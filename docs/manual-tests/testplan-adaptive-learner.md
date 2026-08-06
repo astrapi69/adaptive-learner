@@ -1107,6 +1107,28 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
 - [ ] Sprache pruefen (#2160): der Bestaetigungstext erscheint in der App-Sprache
       (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
 
+### Ausmusterung: archivierter Fortschritt bei retired_ids (#2188)
+
+Ort: Inhalte-Seite, Set mit Lernfortschritt, dessen Update im Set-Manifest
+`retired_ids` deklariert (Autor hat Übungen bewusst ausgemustert). In BEIDEN
+Speichermodi prüfen. Hintergrund: eine erklärte Ausmusterung ist kein
+Versehen - der zugehörige Fortschritt wird ARCHIVIERT (nicht gelöscht, nicht
+verwaist), verlässt Wiederholungsplanung und Fälligkeitszahlen, und der
+Nutzer erfährt es einmal, mit Zahl.
+
+- [ ] Update eines Sets mit deklarierten Ausmusterungen anwenden (manuell oder
+      Sync): Es erscheint EIN Hinweis-Toast mit der Anzahl ("N Übungen wurden
+      vom Autor ausgemustert; der zugehörige Lernfortschritt ist archiviert.").
+- [ ] Nur-Ausmusterungs-Update (keine sonstigen Identitäts-Änderungen):
+      KEIN Warndialog (#2128) - die Ausmusterung ist erklärt, nicht brechend;
+      das Update läuft durch, nur der Hinweis-Toast erscheint.
+- [ ] Nach dem Update: die ausgemusterten Elemente erscheinen NICHT mehr in der
+      Wiederholungs-Warteschlange und zählen NICHT mehr in die "N fällig"-Zahl.
+- [ ] Update erneut anstoßen: kein zweiter Toast, keine Doppel-Archivierung
+      (idempotent; Zahl wäre 0, kein Hinweis).
+- [ ] Sprache prüfen: der Hinweis erscheint in der App-Sprache (de/ja/ko
+      stichprobenartig).
+
 ### Wiederherstellung: Wiederholungsfortschritt nach ja/ko/zh-Korrektur (#2161)
 
 Ort: Dashboard (Uebersicht). Hintergrund: die drei A1-Sets Japanisch, Koreanisch

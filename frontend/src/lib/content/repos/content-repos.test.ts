@@ -190,7 +190,7 @@ describe("syncUserRepo(source)", () => {
     downloadSet.mockResolvedValue({});
 
     const res = await syncUserRepo("jane/a");
-    expect(res).toEqual({ setCount: 2, lessonCount: 12, trust: 1 });
+    expect(res).toEqual({ setCount: 2, lessonCount: 12, trust: 1, retiredArchived: 0 });
     expect(listRepoManifestSets).toHaveBeenCalledWith(
       { owner: "jane", repo: "a", branch: "main" },
       "",

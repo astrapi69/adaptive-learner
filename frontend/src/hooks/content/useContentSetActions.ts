@@ -130,6 +130,9 @@ export function useContentSetActions({
     entry: ContentSetEntry;
     impact: UpdateImpact;
     plan: RemapPlan;
+    /** #2188 — declared retirements of the held incoming version; archived
+     *  on confirm, after the download. */
+    retiredIds: readonly string[];
   } | null>(null);
 
   const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
@@ -655,13 +658,47 @@ export function useContentSetActions({
         // A failed plan is not a failed guard: the dialog still holds the
         // update, it just cannot offer to carry anything over.
       }
-      setUpdateGuard({ entry, impact: assessment.impact, plan });
+      setUpdateGuard({
+        entry,
+        impact: assessment.impact,
+        plan,
+        retiredIds: assessment.retiredIds,
+      });
       return;
     }
-    await applyDownload(entry);
+    await applyDownload(entry, assessment?.retiredIds ?? []);
   };
 
-  const applyDownload = async (entry: ContentSetEntry) => {
+  // #2188 — after a successful download whose incoming manifest declared
+  // retirements, archive the matching learner rows (history kept, out of
+  // scheduling) and tell the learner ONCE, with the count.
+  const archiveRetiredAfterDownload = async (
+    entry: ContentSetEntry,
+    retiredIds: readonly string[],
+  ) => {
+    if (retiredIds.length === 0) return;
+    const userId = readLearnerState().userId;
+    if (!userId) return;
+    try {
+      const { archived } = await getStorage().elementErrors.archiveRetired(
+        userId,
+        entry.id,
+        retiredIds,
+      );
+      if (archived > 0) {
+        notify.info(
+          t(
+            "content.update_guard.retired_archived",
+            "{count} exercises were retired by the author; the related progress is archived.",
+          ).replace("{count}", String(archived)),
+        );
+      }
+    } catch {
+      // Archival is repeatable; the next download/sync retries.
+    }
+  };
+
+  const applyDownload = async (entry: ContentSetEntry, retiredIds: readonly string[] = []) => {
     const key = setKey(entry);
     setPerSetState((prev) => ({ ...prev, [key]: "downloading" }));
     try {
@@ -672,8 +709,12 @@ export function useContentSetActions({
       // download/sync retries.
       const learnerId = readLearnerState().userId;
       if (learnerId) {
-        void migrateSetExerciseIds(learnerId, entry.source, entry.id).catch(() => undefined);
+        // #2130 migration first, so archival (#2188) meets stable-keyed rows.
+        await migrateSetExerciseIds(learnerId, entry.source, entry.id).catch(
+          () => undefined,
+        );
       }
+      await archiveRetiredAfterDownload(entry, retiredIds);
       // #1709 — an explicit re-download revives a previously deleted set;
       // clear the stale dismissal record (the cached state wins anyway, this
       // just keeps the store tidy).
@@ -708,7 +749,7 @@ export function useContentSetActions({
     const target = updateGuard;
     setUpdateGuard(null);
     if (!target) return;
-    await applyDownload(target.entry);
+    await applyDownload(target.entry, target.retiredIds);
     if (!carryOver || target.plan.certain.length === 0) return;
     const userId = readLearnerState().userId;
     if (!userId) return;

@@ -247,6 +247,7 @@ def list_for_user(
     *,
     set_id: str | None = None,
     include_mastered: bool = True,
+    include_retired: bool = False,
 ) -> list[ElementError]:
     """Read all element-error rows for a user.
 
@@ -254,8 +255,31 @@ def list_for_user(
     the data source for the review-queue computation
     (commit C11; that path passes ``include_mastered=False``
     since mastered elements are excluded from review).
+    Archived rows (#2188 retirement) are excluded unless
+    ``include_retired`` is ``True``.
     """
-    return repo.list_for_user(user_id, set_id=set_id, include_mastered=include_mastered)
+    return repo.list_for_user(
+        user_id,
+        set_id=set_id,
+        include_mastered=include_mastered,
+        include_retired=include_retired,
+    )
+
+
+def archive_retired(
+    repo: ElementErrorsRepository,
+    user_id: str,
+    set_id: str,
+    retired_ids: list[str],
+) -> int:
+    """#2188: archive the user's rows for the identities an author retired
+    via the set manifest's ``retired_ids``. Idempotent (already-archived rows
+    are untouched); one call is one transaction. Returns the count."""
+    if not retired_ids:
+        return 0
+    archived = repo.archive_retired(user_id, set_id, retired_ids)
+    repo.commit()
+    return archived
 
 
 def is_fully_mastered(rows: Iterable[ElementError]) -> bool:

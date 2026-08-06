@@ -2036,6 +2036,7 @@ content:
     unmappable: '{count} cannot be assigned with confidence and will be reset. Their order or number changed, so nothing is guessed.'
     carried_over: 'Progress carried over.'
     carry_over_failed: 'The update was applied, but the progress could not be carried over.'
+    retired_archived: '{count} exercises were retired by the author; the related progress is archived.'
   recovery:
     title: 'Restore review progress for corrected lessons'
     message: 'We corrected some Japanese, Korean and Chinese (A1) lessons. Review cards you already created for the changed items no longer match, so they are not being scheduled. You can relink them to the corrected lessons, or start a set fresh. Only these sets are affected; your other sets are untouched.'

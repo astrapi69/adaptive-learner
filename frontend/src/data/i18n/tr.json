@@ -2196,7 +2196,8 @@
       "preview_more": "ve {count} tane daha",
       "unmappable": "{count} tanesi güvenle eşleştirilemiyor ve sıfırlanacak. Orada sıra veya sayı değişti, bu yüzden tahmin yürütülmüyor.",
       "carried_over": "İlerleme korundu.",
-      "carry_over_failed": "Güncelleme uygulandı, ancak ilerleme korunamadı."
+      "carry_over_failed": "Güncelleme uygulandı, ancak ilerleme korunamadı.",
+      "retired_archived": "{count} alıştırma yazar tarafından emekliye ayrıldı; ilgili ilerleme arşivlendi."
     },
     "recovery": {
       "title": "Düzeltilen dersler için tekrar ilerlemesini geri yükle",

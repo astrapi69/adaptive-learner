@@ -391,6 +391,44 @@
         "title": "ApiKeyTestOut",
         "type": "object"
       },
+      "ArchiveRetiredIn": {
+        "description": "#2188: archive the learner's rows for the identities the author\nretired via the set manifest's ``retired_ids`` list.",
+        "properties": {
+          "retired_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "title": "Retired Ids",
+            "type": "array"
+          },
+          "set_id": {
+            "title": "Set Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "set_id",
+          "retired_ids"
+        ],
+        "title": "ArchiveRetiredIn",
+        "type": "object"
+      },
+      "ArchiveRetiredResult": {
+        "description": "Outcome of an archive-retired call: rows newly archived. Already-\narchived rows are not counted (idempotent).",
+        "properties": {
+          "archived": {
+            "title": "Archived",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "archived"
+        ],
+        "title": "ArchiveRetiredResult",
+        "type": "object"
+      },
       "AttemptRecordOut": {
         "description": "#603 - one recorded attempt in the per-element history ring buffer.",
         "properties": {
@@ -1100,6 +1138,18 @@
               }
             ],
             "title": "Mastered At"
+          },
+          "retired_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retired At"
           },
           "set_id": {
             "title": "Set Id",
@@ -13659,6 +13709,18 @@
               "title": "Include Mastered",
               "type": "boolean"
             }
+          },
+          {
+            "description": "Set to true to include archived rows (#2188 author-retired identities). Excluded by default so archived progress leaves scheduling + due counts.",
+            "in": "query",
+            "name": "include_retired",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Set to true to include archived rows (#2188 author-retired identities). Excluded by default so archived progress leaves scheduling + due counts.",
+              "title": "Include Retired",
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -13743,6 +13805,59 @@
           }
         },
         "summary": "Record element attempts",
+        "tags": [
+          "Progress"
+        ]
+      }
+    },
+    "/api/users/{user_id}/element-errors/archive-retired": {
+      "post": {
+        "description": "#2188: archive the learner's rows for identities the author retired\nvia the set manifest's ``retired_ids``. Archived rows keep their history\nbut leave review scheduling + due counts. Idempotent (already-archived\nrows are not re-counted); one call is one transaction.",
+        "operationId": "archive_retired_api_users__user_id__element_errors_archive_retired_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArchiveRetiredIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchiveRetiredResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Archive retired",
         "tags": [
           "Progress"
         ]

@@ -81,6 +81,9 @@ export interface ElementError {
   attempt_count?: number;
   /** #603 Smart Review Queue — the last 10 attempts (ring buffer). */
   attempt_history?: AttemptRecord[];
+  /** #2188 — author-declared retirement: set = archived (out of scheduling
+   *  + due counts, history kept). Null/absent = active. */
+  retired_at?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -144,7 +147,7 @@ export interface ExerciseIdRemap {
 export interface IElementErrorsNamespace {
   list(
     userId: string,
-    opts?: { setId?: string; includeMastered?: boolean },
+    opts?: { setId?: string; includeMastered?: boolean; includeRetired?: boolean },
   ): Promise<ElementError[]>;
   recordBulk(userId: string, attempts: readonly ElementAttempt[]): Promise<ElementError[]>;
   /** #2161 one-off recovery: rewrite orphaned element_key old -> new for the
@@ -165,6 +168,15 @@ export interface IElementErrorsNamespace {
     userId: string,
     remaps: readonly ExerciseIdRemap[],
   ): Promise<{ applied: number; skipped: number }>;
+  /** #2188 — archive the learner's rows for identities the author retired
+   *  via the set manifest's ``retired_ids``. Idempotent; archived rows keep
+   *  their history but leave the default list + review queue. Works in both
+   *  storage modes. Returns the count of rows newly archived. */
+  archiveRetired(
+    userId: string,
+    setId: string,
+    retiredIds: readonly string[],
+  ): Promise<{ archived: number }>;
   /** Projected review queue: active (non-mastered) elements with
    *  computed suggested_review_at + overdue flag, sorted by urgency
    *  (overdue → weakness tier → error frequency → oldest error first,

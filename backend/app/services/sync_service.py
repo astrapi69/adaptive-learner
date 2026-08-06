@@ -634,6 +634,16 @@ TABLES: dict[str, TableSpec] = {
             "last_attempt_at",
             "mastered",
             "mastered_at",
+            # #2456 - these five existed on the model (migrations 0030/0031/
+            # 0034) but were never added here, so hint economy, exam boost
+            # and the attempt history silently dropped out of sync + backup.
+            "hint_used",
+            "hint_used_count",
+            "last_attempt_exam",
+            "attempt_count",
+            "attempt_history",
+            # #2188 - author-declared retirement (archived rows ride along).
+            "retired_at",
             "created_at",
             "updated_at",
         ),

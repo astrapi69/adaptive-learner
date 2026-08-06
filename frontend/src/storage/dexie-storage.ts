@@ -91,6 +91,7 @@ import {
 } from "./lessons/lesson-progress-dexie";
 import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
 import {
+  archiveRetiredDexie,
   computeReviewQueueDexie,
   listElementErrorsDexie,
   recordElementAttemptsDexie,
@@ -250,6 +251,8 @@ export const dexieStorage: IStorageService = {
     reviewQueue: (userId, opts) => computeReviewQueueDexie(userId, opts),
     remapKeys: (userId, remaps) => remapElementKeysDexie(userId, remaps),
     remapExerciseIds: (userId, remaps) => remapExerciseIdsDexie(userId, remaps),
+    archiveRetired: (userId, setId, retiredIds) =>
+      archiveRetiredDexie(userId, setId, retiredIds),
   },
 
   // --- Learner-data maintenance (#1445) --------------------------------

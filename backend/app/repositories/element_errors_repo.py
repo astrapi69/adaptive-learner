@@ -11,6 +11,7 @@ the batch atomically).
 from __future__ import annotations
 
 from abc import abstractmethod
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -53,9 +54,26 @@ class ElementErrorsRepository(Repository):
 
     @abstractmethod
     def list_for_user(
-        self, user_id: str, *, set_id: str | None = None, include_mastered: bool = True
+        self,
+        user_id: str,
+        *,
+        set_id: str | None = None,
+        include_mastered: bool = True,
+        include_retired: bool = False,
     ) -> list[ElementError]:
-        """Return the user's rows, newest-updated first."""
+        """Return the user's rows, newest-updated first.
+
+        Archived rows (#2188 ``retired_at`` set) are excluded by default so
+        they leave review scheduling and due counts everywhere; pass
+        ``include_retired=True`` for archive views.
+        """
+
+    @abstractmethod
+    def archive_retired(self, user_id: str, set_id: str, retired_ids: list[str]) -> int:
+        """#2188: stamp ``retired_at`` on the user's active rows of ``set_id``
+        whose ``exercise_id`` is in ``retired_ids``. Already-archived rows are
+        left untouched (idempotent). Does not commit — the caller owns the
+        transaction boundary. Returns the number of rows archived."""
 
     @abstractmethod
     def delete_by_set_ids(self, user_id: str, set_ids: list[str]) -> int:
@@ -155,20 +173,50 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
         self._db.commit()
 
     def list_for_user(
-        self, user_id: str, *, set_id: str | None = None, include_mastered: bool = True
+        self,
+        user_id: str,
+        *,
+        set_id: str | None = None,
+        include_mastered: bool = True,
+        include_retired: bool = False,
     ) -> list[ElementError]:
         """Return the user's rows newest-updated first.
 
-        Optionally narrow to a single ``set_id`` and exclude mastered rows
-        when ``include_mastered`` is ``False``.
+        Optionally narrow to a single ``set_id``, exclude mastered rows when
+        ``include_mastered`` is ``False``, and include archived (#2188
+        retired) rows when ``include_retired`` is ``True``.
         """
         stmt = select(ElementError).where(ElementError.user_id == user_id)
         if set_id is not None:
             stmt = stmt.where(ElementError.set_id == set_id)
         if not include_mastered:
             stmt = stmt.where(ElementError.mastered.is_(False))
+        if not include_retired:
+            stmt = stmt.where(ElementError.retired_at.is_(None))
         stmt = stmt.order_by(ElementError.updated_at.desc())
         return list(self._db.execute(stmt).scalars().all())
+
+    def archive_retired(self, user_id: str, set_id: str, retired_ids: list[str]) -> int:
+        """See the abstract contract. In-place ``retired_at`` stamp on the
+        active rows of the retired identities; a second run finds none."""
+        if not retired_ids:
+            return 0
+        rows = list(
+            self._db.execute(
+                select(ElementError).where(
+                    ElementError.user_id == user_id,
+                    ElementError.set_id == set_id,
+                    ElementError.exercise_id.in_(retired_ids),
+                    ElementError.retired_at.is_(None),
+                )
+            )
+            .scalars()
+            .all()
+        )
+        now = datetime.now(UTC)
+        for row in rows:
+            row.retired_at = now
+        return len(rows)
 
     def delete_by_set_ids(self, user_id: str, set_ids: list[str]) -> int:
         """Delete the user's rows for the given set ids; return the count (#1821)."""

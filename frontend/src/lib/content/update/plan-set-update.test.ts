@@ -48,6 +48,7 @@ const incoming: PeekLesson[] = [
 const impact: UpdateImpact = {
     lostLessons: [],
     lostCards: [{lesson_id: "01.json", exercise_id: "ex-1", element_key: "Merci"}],
+    retiredCards: [],
     breaking: true,
 };
 
@@ -82,7 +83,7 @@ describe.each(["API mode", "Dexie mode"])("planSetUpdate (%s)", () => {
         const plan = await planSetUpdate(
             "owner/repo",
             "fr-a1",
-            {lostLessons: [], lostCards: [], breaking: false},
+            {lostLessons: [], lostCards: [], retiredCards: [], breaking: false},
             incoming,
         );
         expect(plan).toEqual({certain: [], uncertain: []});

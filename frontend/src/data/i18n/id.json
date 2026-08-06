@@ -2196,7 +2196,8 @@
       "preview_more": "dan {count} lainnya",
       "unmappable": "{count} tidak dapat dipetakan dengan pasti dan akan direset. Urutan atau jumlahnya berubah di sana, jadi tidak ada yang ditebak.",
       "carried_over": "Kemajuan dipertahankan.",
-      "carry_over_failed": "Pembaruan diterapkan, tetapi kemajuan tidak dapat dipertahankan."
+      "carry_over_failed": "Pembaruan diterapkan, tetapi kemajuan tidak dapat dipertahankan.",
+      "retired_archived": "{count} latihan telah dipensiunkan oleh penulis; kemajuan terkait diarsipkan."
     },
     "recovery": {
       "title": "Pulihkan progres ulasan untuk pelajaran yang diperbaiki",

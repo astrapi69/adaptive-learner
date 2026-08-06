@@ -24,6 +24,11 @@ vi.mock("../../../storage", () => ({
 }));
 vi.mock("../../../storage/content/peek-set", () => ({
     peekSetLessons: (...args: unknown[]) => peek(...args),
+    // #2188 - the orchestrator reads lessons + retired_ids in one peek.
+    peekSetUpdate: async (...args: unknown[]) => ({
+        lessons: await peek(...args),
+        retiredIds: [],
+    }),
 }));
 
 beforeEach(() => {
