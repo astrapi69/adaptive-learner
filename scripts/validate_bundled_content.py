@@ -43,9 +43,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[1]
 # ``VALIDATE_BUNDLED_CONTENT_README`` overrides the README path; used by
 # the regression test to point at a temp file. Defaults to the app README.
-README_PATH = Path(
-    os.environ.get("VALIDATE_BUNDLED_CONTENT_README", str(REPO_ROOT / "README.md"))
-)
+README_PATH = Path(os.environ.get("VALIDATE_BUNDLED_CONTENT_README", str(REPO_ROOT / "README.md")))
 
 MARKER_START = "<!-- CONTENT-STATS:START -->"
 MARKER_END = "<!-- CONTENT-STATS:END -->"
@@ -59,13 +57,37 @@ def resolve_content_dir() -> Path | None:
     """Resolve the content-repo checkout, or ``None`` when absent."""
     env = os.environ.get("ADAPTIVE_LEARNER_CONTENT_DIR")
     candidate = (
-        Path(env).resolve()
-        if env
-        else (REPO_ROOT.parent / "adaptive-learner-content").resolve()
+        Path(env).resolve() if env else (REPO_ROOT.parent / "adaptive-learner-content").resolve()
     )
     if not candidate.is_dir() or not (candidate / "manifest.yaml").is_file():
         return None
     return candidate
+
+
+def set_review_status(entry: dict, set_dir: Path) -> str:
+    """The set's ``review_status`` (#2273).
+
+    Primary source is the ROOT manifest's set entry (where the content
+    repo stamps it); fallback is the per-set manifest's own ``sets[0]``
+    entry (the nested shape the per-set files carry). Absent, empty or
+    unreadable normalizes to ``"authored"`` - advertisable - mirroring
+    the content repos' index-generator normalization. Only
+    ``"generated"`` marks a set as not yet advertisable (AI-generated,
+    pending native-speaker review).
+    """
+    value = entry.get("review_status")
+    if isinstance(value, str) and value:
+        return value
+    try:
+        parsed = yaml.safe_load((set_dir / "manifest.yaml").read_text("utf-8"))
+    except (OSError, yaml.YAMLError):
+        return "authored"
+    nested = (parsed or {}).get("sets")
+    if isinstance(nested, list) and nested and isinstance(nested[0], dict):
+        value = nested[0].get("review_status")
+        if isinstance(value, str) and value:
+            return value
+    return "authored"
 
 
 def count_lessons(set_dir: Path) -> int:
@@ -75,9 +97,7 @@ def count_lessons(set_dir: Path) -> int:
     if not lessons_dir.is_dir():
         return 0
     return sum(
-        1
-        for f in lessons_dir.glob("*.json")
-        if not f.name.startswith(("manifest", "_meta"))
+        1 for f in lessons_dir.glob("*.json") if not f.name.startswith(("manifest", "_meta"))
     )
 
 
@@ -117,6 +137,7 @@ def collect_stats(content_dir: Path) -> tuple[dict, list[str]]:
                 "level": entry.get("level", "-"),
                 "domain": entry.get("domain", "language"),
                 "lessons": actual,
+                "status": set_review_status(entry, set_dir),
             }
         )
 
@@ -131,33 +152,66 @@ def collect_stats(content_dir: Path) -> tuple[dict, list[str]]:
                 errors.append(f"orphan set dir not in root manifest: {rel}")
 
     domains = sorted({r["domain"] for r in rows})
+    # #2273 - the badge advertises ONLY reviewed content: everything
+    # whose review_status is not "generated" (authored = advertisable,
+    # absent normalizes to authored in set_review_status).
+    reviewed = [r for r in rows if r["status"] != "generated"]
     stats = {
         "total_lessons": total_lessons,
         "total_sets": len(rows),
         "domains": domains,
         "rows": rows,
+        "reviewed_sets": len(reviewed),
+        "reviewed_pairs": len({f"{r['source']}-{r['target']}" for r in reviewed}),
+        "generated_sets": len(rows) - len(reviewed),
     }
     return stats, errors
 
 
+def _plural(count: int, word: str) -> str:
+    """``1 set`` / ``2 sets`` - shared by the badge and the note."""
+    return f"{count} {word}{'' if count == 1 else 's'}"
+
+
 def render_block(stats: dict) -> str:
-    """Render the markdown between the CONTENT-STATS markers."""
+    """Render the markdown between the CONTENT-STATS markers.
+
+    The content badge (#2273, decision #2259 Teil 3 Option A) counts
+    ONLY advertisable sets/language pairs (``review_status !=
+    "generated"``); AI-generated sets stay listed in the table with
+    their raw status and are named in the exclusion note, so the badge
+    never advertises unreviewed content as reviewed.
+    """
     domains = ", ".join(stats["domains"]) or "language"
+    badge_message = (
+        f"{_plural(stats['reviewed_sets'], 'set')}"
+        "%2C%20"
+        f"{_plural(stats['reviewed_pairs'], 'language pair')}"
+    ).replace(" ", "%20")
     lines = [
         MARKER_START,
+        "[![Content](https://img.shields.io/badge/content-"
+        f"{badge_message}-brightgreen)](#bundled-content)",
+        "",
         f"**{stats['total_lessons']} lessons · {stats['total_sets']} sets · "
         f"{len(stats['domains'])} domain(s)** ({domains}) — bundled offline "
         "into the GitHub Pages build from "
         "[astrapi69/adaptive-learner-content]"
         "(https://github.com/astrapi69/adaptive-learner-content).",
         "",
-        "| Set | Source | Target | Level | Lessons |",
-        "|-----|--------|--------|-------|--------:|",
+        "| Set | Source | Target | Level | Lessons | Review |",
+        "|-----|--------|--------|-------|--------:|--------|",
     ]
     for row in stats["rows"]:
         lines.append(
             f"| {row['title']} | {row['source']} | {row['target']} | "
-            f"{row['level']} | {row['lessons']} |"
+            f"{row['level']} | {row['lessons']} | {row['status']} |"
+        )
+    if stats["generated_sets"] > 0:
+        lines.append("")
+        lines.append(
+            f"_{_plural(stats['generated_sets'], 'AI-generated set')} "
+            "excluded from the badge pending native-speaker review._"
         )
     lines.append(MARKER_END)
     return "\n".join(lines)
