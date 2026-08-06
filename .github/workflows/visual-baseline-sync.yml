@@ -158,6 +158,8 @@ jobs:
         id: push
         env:
           BRANCH: ${{ steps.head.outputs.branch }}
+          FALLBACK_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
         run: |
           if git diff --quiet -- e2e/visual/screenshots; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -170,7 +172,22 @@ jobs:
           git commit \
             -m "chore(visual): refresh baselines (#1662)" \
             -m "CI-rendered visual baselines, auto-synced by visual-baseline-sync. Review every changed PNG before merge (#1532)."
-          git push origin "HEAD:$BRANCH"
+          # Prefer the PAT push - it re-triggers the Visual baseline gate. If the
+          # PAT lacks contents:write or is otherwise rejected (#2435), fall back
+          # to the default GITHUB_TOKEN (the job declares contents:write) so the
+          # baselines still land; the gate then needs a one-time manual re-run,
+          # which the PR comment below already spells out. The `-c ...extraheader=`
+          # clears the PAT auth header actions/checkout persisted, so the fallback
+          # actually uses the GITHUB_TOKEN in the URL instead of re-sending the PAT.
+          if git push origin "HEAD:$BRANCH"; then
+            echo "pushed_with=pat" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::PAT push rejected - retrying with the default GITHUB_TOKEN (#2435); the Visual baseline gate will need a one-time manual re-run."
+            git -c http.https://github.com/.extraheader= push \
+              "https://x-access-token:${FALLBACK_TOKEN}@github.com/${REPO}.git" \
+              "HEAD:$BRANCH"
+            echo "pushed_with=github_token" >> "$GITHUB_OUTPUT"
+          fi
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "::notice::Pushed refreshed baselines to $BRANCH. Review the changed PNGs image by image (#1532) - NOT auto-merged."
 
@@ -197,12 +214,13 @@ jobs:
           # the label step above (#2014).
           GH_TOKEN: ${{ github.token }}
           CHANGED: ${{ steps.push.outputs.changed }}
+          PUSHED_WITH: ${{ steps.push.outputs.pushed_with }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           REPO: ${{ github.repository }}
         run: |
           if [ "$CHANGED" = "true" ]; then
             body=$'Refreshed the CI-rendered visual baselines and pushed them to this branch as `chore(visual): refresh baselines` (#1662).\n\n**Review every changed PNG image by image before merge** — auto-sync never means blind accept (#1532).'
-            if [ "$HAS_PAT" != "true" ]; then
+            if [ "$PUSHED_WITH" != "pat" ]; then
               body="$body"$'\n\n_Pushed with the default `GITHUB_TOKEN`, so the **Visual baseline gate** check does not re-trigger automatically. Re-run that check once (or toggle any label) and it passes now that the baselines are present. Configuring a `VISUAL_BASELINE_TOKEN` PAT removes this last step._'
             fi
           elif [ "$CHANGED" = "false" ]; then
