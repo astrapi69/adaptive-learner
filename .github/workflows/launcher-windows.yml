@@ -2,10 +2,14 @@ name: Launcher (Windows)
 
 # Builds the Windows launcher .exe and publishes a SHA256 checksum next
 # to it. Runs on:
-#   - push to main when launcher/ changes (smoke build, uploads an
-#     artifact to the workflow run for download + manual verification)
-#   - release tag v*.*.* (attaches the .exe + checksum to the GitHub
-#     release as release assets)
+#   - push to develop/main when launcher/ changes (smoke build, uploads
+#     an artifact to the workflow run for download + manual verification)
+#   - pull_request touching launcher/ (same smoke build)
+#   - workflow_dispatch (on-demand smoke build)
+# Release assets are NOT attached here: the release manager takes the
+# artifacts of the GREEN main-push build of the tag commit and attaches
+# them via `gh release upload` (release-workflow.md Step 8), never a
+# rebuild (bit-drift between identical-content builds).
 
 on:
   push:
@@ -28,7 +32,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  # Read-only is sufficient: the only step that wrote to releases
+  # (action-gh-release attach) was removed with the dead release-event
+  # gates (#2472); the smoke build only checks out and uploads a workflow
+  # artifact. Release assets are attached out-of-band by the RM.
+  contents: read
 
 # Defensive opt-in: any JavaScript-runtime action still declaring
 # Node 20 (third-party or stragglers) is coerced to Node 24. After
@@ -53,24 +61,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # #2145 / #2149: `release: created` fires whether or not this commit's checks
-      # ran, let alone passed. Inferring "CI was green" from the existence of
-      # a release is a conclusion, not a check - and publishing is the least
-      # reversible thing this project does. Pending, unknown or empty counts
-      # as not green; the step names how many checks it considered.
-      # The WHOLE release-driven run is excluded, derived from the
-      # workflows: all four publishers fire on this event, so excluding
-      # only itself made each one see the other three as pending and
-      # refuse - deterministically, on every release (#2149).
-      - name: Refuse to publish from a commit that was not green
-        if: github.event_name == 'release'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python3 scripts/verify_release_commit_green.py \
-            --sha "${{ github.sha }}" --exclude-release-jobs
-
-
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -78,22 +68,6 @@ jobs:
 
       - name: Install Poetry
         run: pip install poetry
-
-      - name: Verify version lock-step (release event only)
-        # On release-triggered builds, fail fast if any subsystem is
-        # out of sync with backend/pyproject.toml. Same gate as
-        # release-gate.yml; duplicated here so artifact attachment
-        # cannot proceed past a failed gate. Runs AFTER
-        # actions/setup-python so python3 is 3.12+ (sync_versions.py
-        # uses tomllib, stdlib in 3.11+).
-        if: github.event_name == 'release'
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        run: |
-          chmod +x scripts/verify_version_pins.sh scripts/sync_versions.py
-          VERSION="${GITHUB_REF_NAME#v}"
-          ./scripts/verify_version_pins.sh "$VERSION"
-          python3 scripts/sync_versions.py --check
 
       # #2117: the backend job caches its Poetry virtualenv (ci.yml); this one
       # never did, so every run rebuilds pycairo/pygobject from source over
@@ -217,8 +191,7 @@ jobs:
           "$hash  adaptive-learner-launcher.exe" | Out-File -Encoding utf8 -NoNewline dist\adaptive-learner-launcher.exe.sha256
           Write-Host "SHA256: $hash"
 
-      - name: Upload smoke artifact (push / PR / dispatch)
-        if: github.event_name != 'release'
+      - name: Upload smoke artifact
         uses: actions/upload-artifact@v7
         with:
           name: adaptive-learner-launcher-windows
@@ -227,12 +200,3 @@ jobs:
             launcher/dist/adaptive-learner-launcher.exe.sha256
           if-no-files-found: error
           retention-days: 14
-
-      - name: Attach to release (tag push)
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v3
-        with:
-          files: |
-            launcher/dist/adaptive-learner-launcher.exe
-            launcher/dist/adaptive-learner-launcher.exe.sha256
-          fail_on_unmatched_files: true
