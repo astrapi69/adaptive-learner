@@ -51,7 +51,11 @@ import {
   registryEntryJson,
 } from "../../../lib/content/repos/registry-submission";
 import type { RegistryEntry } from "../../../lib/content/repos/registry-types";
-import { SEARCH_INDEX_FILE } from "../../../lib/content/repos/search-index-loader";
+import {
+  SEARCH_INDEX_FILE,
+  indexSchemaVersion,
+  parseSearchIndex,
+} from "../../../lib/content/repos/search-index-loader";
 import { notify } from "../../../utils/notify";
 
 /**
@@ -102,7 +106,9 @@ interface Prepared {
   reason?: string;
 }
 
-/** Derive ``languages`` + ``index_schema_version`` from the repo's index. */
+/** Derive ``languages`` + ``index_schema_version`` from the repo's index.
+ *  Reads the format through the canonical loader (#2306 point 4) instead of
+ *  hand-parsing the JSON a second time. */
 async function readIndexMeta(
   source: string,
   ref: string,
@@ -110,25 +116,10 @@ async function readIndexMeta(
 ): Promise<{ languages: string[]; schemaVersion?: string }> {
   try {
     const raw = await fetchGitHubFileText(source, ref, SEARCH_INDEX_FILE, token);
-    const data = JSON.parse(raw) as {
-      schema_version?: unknown;
-      sets?: unknown;
-    };
-    const sets = Array.isArray(data.sets)
-      ? (data.sets as Array<{
-          source_language?: unknown;
-          target_language?: unknown;
-        }>).map((s) => ({
-          source_language:
-            typeof s.source_language === "string" ? s.source_language : "",
-          target_language:
-            typeof s.target_language === "string" ? s.target_language : "",
-        }))
-      : [];
+    const data: unknown = JSON.parse(raw);
     return {
-      languages: languagePairs(sets),
-      schemaVersion:
-        typeof data.schema_version === "string" ? data.schema_version : undefined,
+      languages: languagePairs(parseSearchIndex(data, source, source)),
+      schemaVersion: indexSchemaVersion(data),
     };
   } catch {
     // No index / unreachable — the CI validates the index regardless; leave

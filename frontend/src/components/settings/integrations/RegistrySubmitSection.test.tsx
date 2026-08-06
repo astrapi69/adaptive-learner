@@ -67,10 +67,23 @@ beforeEach(() => {
   githubGetStatus.mockResolvedValue({ configured: true, source: "browser" });
   fetchLatestCommitSha.mockResolvedValue(COMMIT);
   validateUserRepo.mockResolvedValue({ ok: true, setCount: 1, lessonCount: 5 });
+  // Schema-valid set entry (#2306): readIndexMeta reads through the
+  // canonical loader now, which drops entries without an ``id`` - the
+  // earlier bare language-pair object was a hand-built minimal shape no
+  // real index ever publishes (required: id/name/languages/level/domain).
   fetchGitHubFileText.mockResolvedValue(
     JSON.stringify({
       schema_version: "1.0",
-      sets: [{ source_language: "de", target_language: "fr" }],
+      sets: [
+        {
+          id: "fr-a1",
+          name: "Französisch A1",
+          source_language: "de",
+          target_language: "fr",
+          level: "A1",
+          domain: "language",
+        },
+      ],
     }),
   );
   createRegistryPr.mockResolvedValue({

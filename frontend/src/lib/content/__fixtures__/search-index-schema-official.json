@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/astrapi69/adaptive-learner-content/schema/search-index.schema.json",
+  "title": "SearchIndex",
+  "description": "The per-repo discovery feed (search-index.json) that the app's cross-repo search federates over. Every registered content repo must publish an index matching this shape at its pinned commit. Extra fields are tolerated for forward-compatibility; the required fields are the federation contract.",
+  "type": "object",
+  "required": ["repo", "schema_version", "sets"],
+  "properties": {
+    "repo": {
+      "type": "string",
+      "description": "owner/name slug of the publishing repo.",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "generated": { "type": "string" },
+    "schema_version": { "type": "string", "minLength": 1 },
+    "sets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/SetEntry" }
+    },
+    "total_lessons": { "type": "integer", "minimum": 0 },
+    "total_cards": { "type": "integer", "minimum": 0 }
+  },
+  "$defs": {
+    "SetEntry": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "source_language",
+        "target_language",
+        "level",
+        "domain"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "source_language": { "type": "string", "minLength": 1 },
+        "target_language": { "type": "string", "minLength": 1 },
+        "level": { "type": "string", "minLength": 1 },
+        "domain": { "type": "string", "minLength": 1 },
+        "lesson_count": { "type": "integer", "minimum": 0 },
+        "card_count": { "type": "integer", "minimum": 0 },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["visible", "hidden"],
+          "description": "Consumer-display hint from the manifest set entry (engine schema 1.8). \"hidden\" asks a consumer app not to surface the set to learners; the generator emits a concrete value on every entry (absent or unknown manifest values normalize to \"visible\"). Optional here so older published indexes stay valid."
+        },
+        "ai_validated": { "type": "boolean" },
+        "trust_level": { "type": "integer" },
+        "book": {},
+        "updated_at": { "type": "string" }
+      }
+    }
+  }
+}
