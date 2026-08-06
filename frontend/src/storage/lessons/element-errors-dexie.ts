@@ -21,6 +21,7 @@ import type {
     ElementAttempt,
     ElementError,
     ElementKeyRemap,
+    ExerciseIdRemap,
     ReviewQueueItem,
 } from "../types";
 
@@ -269,6 +270,53 @@ export async function remapElementKeysDexie(
                 }
                 await db.elementErrors.put({...oldRow, id: newId, element_key: remap.new});
                 await db.elementErrors.delete(oldId);
+                applied += 1;
+            }
+        }
+    });
+    return {applied, skipped};
+}
+
+/**
+ * #2130 stable_id key switch: rewrite ``exercise_id`` old -> new for EVERY
+ * row of the exercise (all element_keys + both drill directions) in one
+ * ``rw`` transaction (all-or-nothing). A row is SKIPPED (never overwritten)
+ * when a row already exists under the new exercise id with the same
+ * element_key + direction, so no two histories collapse (no double-map) and
+ * a re-run is a no-op (idempotent). Returns the counts.
+ */
+export async function remapExerciseIdsDexie(
+    userId: string,
+    remaps: readonly ExerciseIdRemap[],
+): Promise<{applied: number; skipped: number}> {
+    if (remaps.length === 0) return {applied: 0, skipped: 0};
+    const db = getDb();
+    let applied = 0;
+    let skipped = 0;
+    await db.transaction("rw", db.elementErrors, async () => {
+        for (const remap of remaps) {
+            const rows = await db.elementErrors
+                .where("[user_id+set_id]")
+                .equals([userId, remap.set_id])
+                .toArray();
+            const affected = rows.filter(
+                (row) =>
+                    row.lesson_id === remap.lesson_id &&
+                    row.exercise_id === remap.old,
+            );
+            for (const row of affected) {
+                const direction = row.direction ?? "target_to_source";
+                const newId = [
+                    userId, remap.set_id, remap.lesson_id, remap.new, row.element_key, direction,
+                ].join("#");
+                if (row.id === newId) continue; // no-op mapping, nothing to do
+                const existingNew = await db.elementErrors.get(newId);
+                if (existingNew) {
+                    skipped += 1; // target already present -> never collapse
+                    continue;
+                }
+                await db.elementErrors.put({...row, id: newId, exercise_id: remap.new});
+                await db.elementErrors.delete(row.id);
                 applied += 1;
             }
         }

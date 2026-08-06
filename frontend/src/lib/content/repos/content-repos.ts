@@ -19,7 +19,9 @@
  */
 
 import { getStorage } from "../../../storage";
+import { readLearnerState } from "../../learning/learnerState";
 import { assessSetUpdate } from "../update/assess-set-update";
+import { migrateSetExerciseIds } from "../update/stable-id-migration";
 import { listRepoManifestSets, validateUserRepo } from "./content-repo-validate";
 import { resolveRepoToken } from "./repo-token";
 import {
@@ -370,6 +372,17 @@ export async function syncUserRepo(
     // counts). A harmless update (superset / no learner data) applies as
     // before. A peek/read failure holds too — better a delayed update than a
     // silent loss; the next cycle or a manual update retries.
+    // #2130 — re-key this set's rows onto stable_id BEFORE assessing, so the
+    // assessment (and any later slug rename) meets version-stable keys.
+    // Idempotent; a failure only means the guard stays conservative.
+    const userId = readLearnerState().userId;
+    if (userId) {
+      try {
+        await migrateSetExerciseIds(userId, source, manifestSet.id);
+      } catch {
+        // Rows keep their current key; the next cycle retries.
+      }
+    }
     let held: boolean;
     try {
       held = (await assessSetUpdate(source, manifestSet.id))?.impact.breaking ?? false;

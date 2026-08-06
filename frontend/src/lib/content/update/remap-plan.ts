@@ -30,6 +30,7 @@
  */
 
 import {elementKeysOf} from "../../srs/element-keys";
+import {matchesExerciseIdentity} from "../../srs/exercise-identity";
 import type {ElementKeyRemap} from "../../../storage/types";
 import type {PeekExercise, PeekLesson, SrsIdentity} from "./update-impact";
 
@@ -83,7 +84,11 @@ function findExercise(
     if (!lesson) return {lessonFound: false, exercise: undefined};
     return {
         lessonFound: true,
-        exercise: lesson.exercises.find((ex) => ex.id === exerciseId),
+        // #2130: a row may be keyed by the authored slug (pre-switch) or the
+        // stable_id (post-switch); the exercise answers to either.
+        exercise: lesson.exercises.find((ex) =>
+            matchesExerciseIdentity(ex, exerciseId),
+        ),
     };
 }
 

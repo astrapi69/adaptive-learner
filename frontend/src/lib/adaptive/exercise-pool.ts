@@ -44,6 +44,7 @@ import type {
     ElementError,
 } from "../../storage/types";
 
+import {matchesExerciseIdentity} from "../srs/exercise-identity";
 import type {PrioritizedElement} from "./types";
 
 export type DifficultyEstimate = 1 | 2 | 3 | 4 | 5;
@@ -205,7 +206,8 @@ function _generatedCandidate(
     if (!lesson) return null;
     let sourceExercise: ContentLessonExercise | null = null;
     for (const step of lesson.steps) {
-        if (step.exercise && step.exercise.id === error.exercise_id) {
+        // #2130: rows resolve under either the authored slug or stable_id.
+        if (step.exercise && matchesExerciseIdentity(step.exercise, error.exercise_id)) {
             sourceExercise = step.exercise;
             break;
         }

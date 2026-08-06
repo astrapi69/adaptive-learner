@@ -225,6 +225,22 @@ def remap_element_keys(
     return (applied, skipped)
 
 
+def remap_exercise_ids(
+    repo: ElementErrorsRepository,
+    user_id: str,
+    remaps: list[tuple[str, str, str, str]],
+) -> tuple[int, int]:
+    """Apply the #2130 stable_id key-switch remaps in a single transaction:
+    every row of each ``(set_id, lesson_id, old)`` exercise moves to ``new``,
+    all-or-nothing per call (the caller passes one set's remaps per call).
+    Returns ``(applied, skipped)``."""
+    if not remaps:
+        return (0, 0)
+    applied, skipped = repo.remap_exercise_ids(user_id, remaps)
+    repo.commit()
+    return (applied, skipped)
+
+
 def list_for_user(
     repo: ElementErrorsRepository,
     user_id: str,

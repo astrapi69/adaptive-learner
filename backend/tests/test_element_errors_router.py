@@ -28,7 +28,8 @@ def client() -> Iterator[TestClient]:
 @pytest.fixture()
 def user_id(client: TestClient) -> str:
     r = client.post(
-        "/api/users", json={"name": "ElementHTTP", "language": "en"},
+        "/api/users",
+        json={"name": "ElementHTTP", "language": "en"},
     )
     assert r.status_code in (200, 201), r.text
     return r.json()["id"]
@@ -80,7 +81,8 @@ def test_post_unknown_user_returns_404(client: TestClient) -> None:
 
 
 def test_list_empty_for_fresh_user(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     r = client.get(f"/api/users/{user_id}/element-errors")
     assert r.status_code == 200
@@ -91,7 +93,8 @@ def test_list_empty_for_fresh_user(
 
 
 def test_post_records_one_attempt_returns_row(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     r = client.post(
         f"/api/users/{user_id}/element-errors",
@@ -113,24 +116,21 @@ def test_post_records_one_attempt_returns_row(
 
 
 def test_post_bulk_preserves_order(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     keys = ["alpha", "beta", "gamma"]
     r = client.post(
         f"/api/users/{user_id}/element-errors",
-        json={
-            "attempts": [
-                _attempt_payload(element_key=k, correct=False)
-                for k in keys
-            ]
-        },
+        json={"attempts": [_attempt_payload(element_key=k, correct=False) for k in keys]},
     )
     assert r.status_code == 200, r.text
     assert [row["element_key"] for row in r.json()] == keys
 
 
 def test_post_compounds_state_across_calls(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     """3 separate POSTs with correct=True on the same element
     flip mastered — pins the route layer commits each call
@@ -152,7 +152,8 @@ def test_post_compounds_state_across_calls(
 
 
 def test_list_filters_by_set_id(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     client.post(
         f"/api/users/{user_id}/element-errors",
@@ -174,7 +175,8 @@ def test_list_filters_by_set_id(
 
 
 def test_list_include_mastered_false_excludes_mastered(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     # Master one element.
     for _ in range(3):
@@ -205,7 +207,8 @@ def test_list_include_mastered_false_excludes_mastered(
 
 
 def test_post_rejects_empty_attempts_list(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     r = client.post(
         f"/api/users/{user_id}/element-errors",
@@ -215,23 +218,22 @@ def test_post_rejects_empty_attempts_list(
 
 
 def test_post_rejects_oversize_bulk(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     """C4 schema caps the bulk body at 100 attempts."""
     r = client.post(
         f"/api/users/{user_id}/element-errors",
         json={
-            "attempts": [
-                _attempt_payload(element_key=f"k-{i}", correct=False)
-                for i in range(101)
-            ]
+            "attempts": [_attempt_payload(element_key=f"k-{i}", correct=False) for i in range(101)]
         },
     )
     assert r.status_code == 422
 
 
 def test_post_rejects_missing_required_field(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     bad = {
         "set_id": "x",
@@ -262,7 +264,8 @@ def test_review_queue_unknown_user_returns_404(client: TestClient) -> None:
 
 
 def test_review_queue_empty_for_fresh_user(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     r = client.get(
         f"/api/users/{user_id}/element-errors/review-queue",
@@ -272,7 +275,8 @@ def test_review_queue_empty_for_fresh_user(
 
 
 def test_review_queue_returns_active_elements_with_scheduling(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     client.post(
         f"/api/users/{user_id}/element-errors",
@@ -292,7 +296,8 @@ def test_review_queue_returns_active_elements_with_scheduling(
 
 
 def test_review_queue_excludes_mastered_elements(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     # Master one element + leave another active.
     for _ in range(3):
@@ -317,7 +322,8 @@ def test_review_queue_excludes_mastered_elements(
 
 
 def test_review_queue_filters_by_set_id(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     client.post(
         f"/api/users/{user_id}/element-errors",
@@ -343,16 +349,20 @@ def test_review_queue_filters_by_set_id(
 def _record(client: TestClient, user_id: str, *, element_key: str) -> None:
     r = client.post(
         f"/api/users/{user_id}/element-errors",
-        json={"attempts": [{
-            "set_id": "ja-a1-from-de",
-            "lesson_id": "01-begruessungen.json",
-            "exercise_id": "ex-match-begruessung",
-            "element_key": element_key,
-            "element_type": "vocabulary",
-            "user_answer": "x",
-            "correct_answer": element_key,
-            "correct": False,
-        }]},
+        json={
+            "attempts": [
+                {
+                    "set_id": "ja-a1-from-de",
+                    "lesson_id": "01-begruessungen.json",
+                    "exercise_id": "ex-match-begruessung",
+                    "element_key": element_key,
+                    "element_type": "vocabulary",
+                    "user_answer": "x",
+                    "correct_answer": element_key,
+                    "correct": False,
+                }
+            ]
+        },
     )
     assert r.status_code in (200, 201), r.text
 
@@ -385,10 +395,12 @@ def test_remap_rewrites_orphaned_key(client: TestClient, user_id: str) -> None:
 def test_remap_is_idempotent(client: TestClient, user_id: str) -> None:
     _record(client, user_id, element_key="こんにちは")
     first = client.post(
-        f"/api/users/{user_id}/element-errors/remap", json={"remaps": [_REMAP]},
+        f"/api/users/{user_id}/element-errors/remap",
+        json={"remaps": [_REMAP]},
     ).json()
     second = client.post(
-        f"/api/users/{user_id}/element-errors/remap", json={"remaps": [_REMAP]},
+        f"/api/users/{user_id}/element-errors/remap",
+        json={"remaps": [_REMAP]},
     ).json()
     assert first == {"applied": 1, "skipped": 0}
     # Second run: the old-key row is gone -> nothing to apply, same state.
@@ -397,13 +409,15 @@ def test_remap_is_idempotent(client: TestClient, user_id: str) -> None:
 
 
 def test_remap_skips_when_target_exists_no_double_map(
-    client: TestClient, user_id: str,
+    client: TestClient,
+    user_id: str,
 ) -> None:
     # The learner has progress on BOTH the old and the (already) new key.
     _record(client, user_id, element_key="こんにちは")
     _record(client, user_id, element_key="こんにちは (konnichiwa)")
     r = client.post(
-        f"/api/users/{user_id}/element-errors/remap", json={"remaps": [_REMAP]},
+        f"/api/users/{user_id}/element-errors/remap",
+        json={"remaps": [_REMAP]},
     ).json()
     # The old row is left alone (no collapse onto the existing new row).
     assert r == {"applied": 0, "skipped": 1}
@@ -411,7 +425,9 @@ def test_remap_skips_when_target_exists_no_double_map(
 
 
 def test_remap_is_atomic_on_mid_batch_failure(
-    client: TestClient, user_id: str, monkeypatch: pytest.MonkeyPatch,
+    client: TestClient,
+    user_id: str,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # Force a failure AFTER the first remap has mutated its row: nothing must
     # persist (all-or-nothing per call).
@@ -429,18 +445,162 @@ def test_remap_is_atomic_on_mid_batch_failure(
         return real_find(self, **kw)
 
     monkeypatch.setattr(
-        repo_mod.SqlAlchemyElementErrorsRepository, "find", boom,
+        repo_mod.SqlAlchemyElementErrorsRepository,
+        "find",
+        boom,
     )
     # TestClient re-raises unhandled server exceptions; the point is that the
     # request dies mid-batch AFTER the first row was mutated in-memory.
     with pytest.raises(RuntimeError, match="forced mid-batch failure"):
         client.post(
             f"/api/users/{user_id}/element-errors/remap",
-            json={"remaps": [
-                _REMAP,
-                {**_REMAP, "old": "さようなら", "new": "さようなら (sayounara)"},
-            ]},
+            json={
+                "remaps": [
+                    _REMAP,
+                    {**_REMAP, "old": "さようなら", "new": "さようなら (sayounara)"},
+                ]
+            },
         )
     monkeypatch.undo()
     # No commit happened -> both rows keep their ORIGINAL keys (all-or-nothing).
     assert _keys(client, user_id) == ["こんにちは", "さようなら"]
+
+
+# --- #2130 stable_id key switch: exercise-id remap ---------------------------
+
+
+def _record_ex(
+    client: TestClient,
+    user_id: str,
+    *,
+    exercise_id: str,
+    element_key: str,
+    direction: str = "target_to_source",
+) -> None:
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                {
+                    "set_id": "ja-a1-from-de",
+                    "lesson_id": "01-begruessungen.json",
+                    "exercise_id": exercise_id,
+                    "element_key": element_key,
+                    "direction": direction,
+                    "element_type": "vocabulary",
+                    "user_answer": "x",
+                    "correct_answer": element_key,
+                    "correct": False,
+                }
+            ]
+        },
+    )
+    assert r.status_code in (200, 201), r.text
+
+
+def _exercise_ids(client: TestClient, user_id: str) -> list[str]:
+    r = client.get(f"/api/users/{user_id}/element-errors")
+    return sorted(row["exercise_id"] for row in r.json())
+
+
+_EX_REMAP = {
+    "set_id": "ja-a1-from-de",
+    "lesson_id": "01-begruessungen.json",
+    "old": "ex-match-begruessung",
+    "new": "greetings-match-x7",
+}
+
+
+def test_remap_exercise_ids_moves_every_row_of_the_exercise(
+    client: TestClient,
+    user_id: str,
+) -> None:
+    # Two element_keys + one row in the OTHER drill direction: all three rows
+    # belong to the same exercise identity and must move together.
+    _record_ex(client, user_id, exercise_id="ex-match-begruessung", element_key="こんにちは")
+    _record_ex(client, user_id, exercise_id="ex-match-begruessung", element_key="さようなら")
+    _record_ex(
+        client,
+        user_id,
+        exercise_id="ex-match-begruessung",
+        element_key="こんにちは",
+        direction="source_to_target",
+    )
+    r = client.post(
+        f"/api/users/{user_id}/element-errors/remap-exercise-ids",
+        json={"remaps": [_EX_REMAP]},
+    )
+    assert r.status_code == 200, r.text
+    assert r.json() == {"applied": 3, "skipped": 0}
+    assert _exercise_ids(client, user_id) == ["greetings-match-x7"] * 3
+    # element_keys survive untouched.
+    assert _keys(client, user_id) == ["こんにちは", "こんにちは", "さようなら"]
+
+
+def test_remap_exercise_ids_is_idempotent(client: TestClient, user_id: str) -> None:
+    _record_ex(client, user_id, exercise_id="ex-match-begruessung", element_key="こんにちは")
+    first = client.post(
+        f"/api/users/{user_id}/element-errors/remap-exercise-ids",
+        json={"remaps": [_EX_REMAP]},
+    ).json()
+    second = client.post(
+        f"/api/users/{user_id}/element-errors/remap-exercise-ids",
+        json={"remaps": [_EX_REMAP]},
+    ).json()
+    assert first == {"applied": 1, "skipped": 0}
+    assert second == {"applied": 0, "skipped": 0}
+    assert _exercise_ids(client, user_id) == ["greetings-match-x7"]
+
+
+def test_remap_exercise_ids_skips_when_target_row_exists(
+    client: TestClient,
+    user_id: str,
+) -> None:
+    # A row already keyed by the NEW exercise id (same element_key + direction)
+    # must never be collapsed onto.
+    _record_ex(client, user_id, exercise_id="ex-match-begruessung", element_key="こんにちは")
+    _record_ex(client, user_id, exercise_id="greetings-match-x7", element_key="こんにちは")
+    r = client.post(
+        f"/api/users/{user_id}/element-errors/remap-exercise-ids",
+        json={"remaps": [_EX_REMAP]},
+    ).json()
+    assert r == {"applied": 0, "skipped": 1}
+    assert _exercise_ids(client, user_id) == [
+        "ex-match-begruessung",
+        "greetings-match-x7",
+    ]
+
+
+def test_remap_exercise_ids_scopes_to_lesson_and_set(
+    client: TestClient,
+    user_id: str,
+) -> None:
+    # Same exercise id string in ANOTHER lesson stays untouched.
+    _record_ex(client, user_id, exercise_id="ex-match-begruessung", element_key="こんにちは")
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                {
+                    "set_id": "ja-a1-from-de",
+                    "lesson_id": "02-zahlen.json",
+                    "exercise_id": "ex-match-begruessung",
+                    "element_key": "いち",
+                    "element_type": "vocabulary",
+                    "user_answer": "x",
+                    "correct_answer": "いち",
+                    "correct": False,
+                }
+            ]
+        },
+    )
+    assert r.status_code in (200, 201)
+    res = client.post(
+        f"/api/users/{user_id}/element-errors/remap-exercise-ids",
+        json={"remaps": [_EX_REMAP]},
+    ).json()
+    assert res == {"applied": 1, "skipped": 0}
+    assert _exercise_ids(client, user_id) == [
+        "ex-match-begruessung",
+        "greetings-match-x7",
+    ]

@@ -204,3 +204,42 @@ describe("planElementKeyRemaps: shape guarantees", () => {
         });
     });
 });
+
+// --- #2130 stable_id key switch --------------------------------------------
+
+describe("planElementKeyRemaps with stable_id-keyed rows (#2130)", () => {
+    it("finds the exercise via stable_id and proposes the corrected key", () => {
+        const cached = [{
+            filename: "01.json",
+            exercises: [{
+                id: "ex-match-1",
+                stable_id: "greetings-match-x7",
+                type: "matching",
+                pairs: [{left: "こんにちわ", right: "hallo"}],
+            }],
+        }];
+        const incoming = [{
+            filename: "01.json",
+            exercises: [{
+                id: "ex-match-1-renamed",
+                stable_id: "greetings-match-x7",
+                type: "matching",
+                pairs: [{left: "こんにちは", right: "hallo"}],
+            }],
+        }];
+        const plan = planElementKeyRemaps(
+            [{lesson_id: "01.json", exercise_id: "greetings-match-x7", element_key: "こんにちわ"}],
+            cached,
+            incoming,
+            "ja-a1",
+        );
+        expect(plan.uncertain).toEqual([]);
+        expect(plan.certain).toEqual([{
+            set_id: "ja-a1",
+            lesson_id: "01.json",
+            exercise_id: "greetings-match-x7",
+            old: "こんにちわ",
+            new: "こんにちは",
+        }]);
+    });
+});

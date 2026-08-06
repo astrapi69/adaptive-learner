@@ -95,6 +95,16 @@ export const contentApi = {
         `/users/${encodeURIComponent(userId)}/element-errors/remap`,
         { method: "POST", body: { remaps } },
       ),
+    /** POST /api/users/{user_id}/element-errors/remap-exercise-ids
+     *  (#2130 stable_id key switch) */
+    remapExerciseIds: (
+      userId: string,
+      remaps: readonly import("../storage/types").ExerciseIdRemap[],
+    ) =>
+      apiCall<{ applied: number; skipped: number }>(
+        `/users/${encodeURIComponent(userId)}/element-errors/remap-exercise-ids`,
+        { method: "POST", body: { remaps } },
+      ),
     /** GET /api/users/{user_id}/element-errors/review-queue */
     reviewQueue: (
       userId: string,

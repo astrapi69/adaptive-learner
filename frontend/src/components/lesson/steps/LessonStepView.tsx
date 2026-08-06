@@ -28,6 +28,7 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 import { useLessonMode } from "../../../hooks/lesson/modes/useLessonMode";
 import { useTestMode } from "../../../hooks/lesson/modes/useTestMode";
 import { stampHintUsage, wasHintUsed } from "../../../lib/hints/hint-usage";
+import { exerciseIdentityOf } from "../../../lib/srs/exercise-identity";
 import { stampExamAttempts } from "../../../lib/srs/exam-attempt";
 import { formatUserAnswer } from "../../../lib/lesson/result-export";
 import { rewriteAnchors } from "../../../lib/lesson/lesson-anchors";
@@ -123,8 +124,9 @@ export default function LessonStepView({
         : formatUserAnswer(step.exercise, scored.raw_answer ?? null);
     // #594 Hint Economy — whether the learner revealed a hint on this
     // exercise (the ExerciseHint reveal marked it). Persisted on the
-    // step result so the summary can count it.
-    const hintUsed = wasHintUsed(step.exercise.id);
+    // step result so the summary can count it. Same identity the reveal
+    // marked (#2130: stable_id ?? id).
+    const hintUsed = wasHintUsed(exerciseIdentityOf(step.exercise) ?? step.exercise.id);
     await recordStepResult({
       step_id: step.id,
       correct: scored.correct,

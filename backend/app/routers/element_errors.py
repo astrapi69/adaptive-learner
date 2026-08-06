@@ -26,6 +26,7 @@ from app.schemas import (
     ElementErrorOut,
     ElementKeyRemapResult,
     ElementKeyRemapsIn,
+    ExerciseIdRemapsIn,
     ReviewQueueItemOut,
 )
 from app.services import element_errors as element_errors_service
@@ -157,5 +158,29 @@ def remap_element_keys(
         repo,
         user_id,
         [(r.set_id, r.lesson_id, r.exercise_id, r.old, r.new) for r in payload.remaps],
+    )
+    return ElementKeyRemapResult(applied=applied, skipped=skipped)
+
+
+@router.post(
+    "/{user_id}/element-errors/remap-exercise-ids",
+    response_model=ElementKeyRemapResult,
+)
+def remap_exercise_ids(
+    user_id: str,
+    payload: ExerciseIdRemapsIn,
+    repo: ElementErrorsRepository = Depends(get_element_errors_repo),
+) -> ElementKeyRemapResult:
+    """#2130 stable_id key switch: rewrite ``exercise_id`` old -> new for
+    every row of the exercise (all element_keys + both drill directions).
+    Idempotent + no double-map (a target row that already exists is skipped);
+    all remaps in the call land atomically. The client derives the mapping
+    locally from the lesson files (authored id -> ``stable_id``, both present
+    in the same file) and sends one set's remaps per call."""
+    _require_user(repo, user_id)
+    applied, skipped = element_errors_service.remap_exercise_ids(
+        repo,
+        user_id,
+        [(r.set_id, r.lesson_id, r.old, r.new) for r in payload.remaps],
     )
     return ElementKeyRemapResult(applied=applied, skipped=skipped)
