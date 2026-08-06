@@ -81,38 +81,42 @@ summarizes). In short:
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
+[![Content](https://img.shields.io/badge/content-25%20sets%2C%2012%20language%20pairs-brightgreen)](#bundled-content)
+
 **325 lessons · 28 sets · 2 domain(s)** (language, software) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
-| Set | Source | Target | Level | Lessons |
-|-----|--------|--------|-------|--------:|
-| Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 |
-| Englisch A2 — Grundlagen | de | en | A2 | 15 |
-| Englisch B1 — Mittelstufe | de | en | B1 | 15 |
-| Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 |
-| Spanisch A2 — Grundlagen | de | es | A2 | 15 |
-| Spanisch B1 — Mittelstufe | de | es | B1 | 15 |
-| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 |
-| Französisch A2 — Grundlagen | de | fr | A2 | 15 |
-| Französisch B1 — Mittelstufe | de | fr | B1 | 15 |
-| Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 |
-| Japanisch Schrift: Hiragana (Vorstufe) | de | ja | A0 | 10 |
-| Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 |
-| Koreanisch A1 (für Deutschsprachige) | de | ko | A1 | 10 |
-| Portugiesisch (Brasilianisch) A1 (für Deutschsprachige) | de | pt | A1 | 10 |
-| Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 |
-| German A1 (for English speakers) | en | de | A1 | 5 |
-| German A2 (for English speakers) | en | de | A2 | 5 |
-| Spanish A1 (for English speakers) | en | es | A1 | 15 |
-| Spanish A2 — Elementary | en | es | A2 | 15 |
-| Spanish B1 — Intermediate | en | es | B1 | 15 |
-| Spanish B2 (for English speakers) | en | es | B2 | 5 |
-| French A1 (for English speakers) | en | fr | A1 | 15 |
-| French A2 — Elementary | en | fr | A2 | 15 |
-| French B1 (for English speakers) | en | fr | B1 | 5 |
-| Γαλλικά A1 (για ελληνόφωνους) | el | fr | A1 | 8 |
-| अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 |
-| अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 |
-| Adaptive Learner — App-Tutorial | de | de | Einsteiger | 12 |
+| Set | Source | Target | Level | Lessons | Review |
+|-----|--------|--------|-------|--------:|--------|
+| Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 | authored |
+| Englisch A2 — Grundlagen | de | en | A2 | 15 | authored |
+| Englisch B1 — Mittelstufe | de | en | B1 | 15 | authored |
+| Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 | authored |
+| Spanisch A2 — Grundlagen | de | es | A2 | 15 | authored |
+| Spanisch B1 — Mittelstufe | de | es | B1 | 15 | authored |
+| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 | authored |
+| Französisch A2 — Grundlagen | de | fr | A2 | 15 | authored |
+| Französisch B1 — Mittelstufe | de | fr | B1 | 15 | authored |
+| Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 | authored |
+| Japanisch Schrift: Hiragana (Vorstufe) | de | ja | A0 | 10 | authored |
+| Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 | generated |
+| Koreanisch A1 (für Deutschsprachige) | de | ko | A1 | 10 | generated |
+| Portugiesisch (Brasilianisch) A1 (für Deutschsprachige) | de | pt | A1 | 10 | authored |
+| Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 | generated |
+| German A1 (for English speakers) | en | de | A1 | 5 | authored |
+| German A2 (for English speakers) | en | de | A2 | 5 | authored |
+| Spanish A1 (for English speakers) | en | es | A1 | 15 | authored |
+| Spanish A2 — Elementary | en | es | A2 | 15 | authored |
+| Spanish B1 — Intermediate | en | es | B1 | 15 | authored |
+| Spanish B2 (for English speakers) | en | es | B2 | 5 | authored |
+| French A1 (for English speakers) | en | fr | A1 | 15 | authored |
+| French A2 — Elementary | en | fr | A2 | 15 | authored |
+| French B1 (for English speakers) | en | fr | B1 | 5 | authored |
+| Γαλλικά A1 (για ελληνόφωνους) | el | fr | A1 | 8 | authored |
+| अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 | authored |
+| अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 | authored |
+| Adaptive Learner — App-Tutorial | de | de | Einsteiger | 12 | authored |
+
+_3 AI-generated sets excluded from the badge pending native-speaker review._
 <!-- CONTENT-STATS:END -->
 
 ### Content repos
