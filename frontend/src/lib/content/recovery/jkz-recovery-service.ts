@@ -18,6 +18,7 @@ import {exerciseElementKeys} from "../update/update-impact";
 import {
     detectRecoverable,
     partitionByCurrentContent,
+    type AuthoredIdAlias,
     type CurrentKeyLookup,
     type IncidentMapping,
     type Remap,
@@ -49,14 +50,23 @@ async function safe<T>(fn: () => Promise<T>): Promise<T | null> {
     }
 }
 
-/** Read the current cached element_keys for every (set, lesson, exercise) the
- *  remaps reference. Official-source sets only (ja/ko/zh are official). */
-async function buildCurrentKeyLookup(
-    remaps: readonly Remap[],
-): Promise<CurrentKeyLookup> {
+/** The cached-content view the recovery needs: element_keys per exercise
+ *  (reachable under BOTH of its ids, #2467) plus the authored-id -> stable_id
+ *  alias the #2130 migration introduced. */
+interface ContentIndex {
+    lookup: CurrentKeyLookup;
+    aliasOf: AuthoredIdAlias;
+}
+
+/** Read the current cached content for every (set, lesson) the incident
+ *  table references. Official-source sets only (ja/ko/zh are official). */
+async function buildContentIndex(
+    mappings: readonly (IncidentMapping | Remap)[],
+): Promise<ContentIndex> {
     const storage = getStorage();
     const cache = new Map<string, ReadonlySet<string>>();
-    const lessons = new Set(remaps.map((r) => `${r.set_id}\u0000${r.lesson_id}`));
+    const aliases = new Map<string, string>();
+    const lessons = new Set(mappings.map((r) => `${r.set_id}\u0000${r.lesson_id}`));
     for (const composite of lessons) {
         const [setId, lessonId] = composite.split("\u0000");
         const lesson = await safe(() =>
@@ -71,11 +81,25 @@ async function buildCurrentKeyLookup(
             // cache - the lookup then reports "not found" and the mapping is
             // counted unmappable (reported, never written) instead of guessed.
             const keys = exerciseElementKeys(ex);
-            if (keys) cache.set(`${setId}\u0000${lessonId}\u0000${ex.id}`, keys);
+            if (keys) {
+                // #2467: reachable under both ids - a row may be keyed by the
+                // authored slug (pre-#2130) or the stable_id (post-migration).
+                cache.set(`${setId}\u0000${lessonId}\u0000${ex.id}`, keys);
+                if (ex.stable_id) {
+                    cache.set(`${setId}\u0000${lessonId}\u0000${ex.stable_id}`, keys);
+                }
+            }
+            if (ex.stable_id && ex.stable_id !== ex.id) {
+                aliases.set(`${setId}\u0000${lessonId}\u0000${ex.id}`, ex.stable_id);
+            }
         }
     }
-    return (setId, lessonId, exerciseId) =>
-        cache.get(`${setId}\u0000${lessonId}\u0000${exerciseId}`);
+    return {
+        lookup: (setId, lessonId, exerciseId) =>
+            cache.get(`${setId}\u0000${lessonId}\u0000${exerciseId}`),
+        aliasOf: (setId, lessonId, exerciseId) =>
+            aliases.get(`${setId}\u0000${lessonId}\u0000${exerciseId}`),
+    };
 }
 
 /**
@@ -91,12 +115,18 @@ export async function assessJkzRecovery(): Promise<RecoveryAssessment | null> {
         getStorage().elementErrors.list(userId, {includeMastered: true}),
     );
     if (!rows) return null;
-    const detected = detectRecoverable(rows, MAPPINGS);
+    // Cheap guard before any content read: only learners with rows in the
+    // incident sets can be affected at all.
+    if (!rows.some((row) => RECOVERY_SET_IDS.includes(row.set_id))) return null;
+    // #2467: the index must exist BEFORE detection - a row the #2130
+    // migration re-keyed to stable_id only matches the (authored-id) incident
+    // table through the alias derived from the cached lessons.
+    const index = await buildContentIndex(MAPPINGS);
+    const detected = detectRecoverable(rows, MAPPINGS, index.aliasOf);
     if (detected.count === 0) return null;
-    const lookup = await buildCurrentKeyLookup(detected.remaps);
     const {applicable, unmappable} = partitionByCurrentContent(
         detected.remaps,
-        lookup,
+        index.lookup,
     );
     if (applicable.length === 0 && unmappable.length === 0) return null;
     const remapsBySet: Record<string, Remap[]> = {};
