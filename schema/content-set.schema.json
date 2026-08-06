@@ -185,7 +185,7 @@
     },
     "domain": {
       "default": "language",
-      "description": "Free-form domain tag ('language', 'math', 'programming', ...). Reserved for the EXP-005 domain-plugin interface; the loader treats it as opaque metadata.",
+      "description": "Domain tag under the known-values-plus-other contract (engine#127): the canonical grouping vocabulary is KNOWN_CONTENT_DOMAINS (exported by the engine; 'language', 'knowledge', 'programming', 'software', 'psychology', 'math', 'ai', 'technology', 'philosophy', 'dog-training', 'traffic-knowledge'). Any other value stays VALID but draws the W-DOMAIN-UNKNOWN author lint, because consumers cannot group it with existing subjects. Reserved for the EXP-005 domain-plugin interface; the loader treats it as opaque metadata.",
       "maxLength": 60,
       "minLength": 1,
       "title": "Domain",
@@ -220,7 +220,7 @@
       "type": "integer"
     },
     "level": {
-      "description": "Difficulty / proficiency marker. CEFR (A1..C2) for languages, free-form for other domains.",
+      "description": "Difficulty / proficiency marker. CEFR (A1..C2, case-insensitive) for language sets; non-language sets declare a CEFR band or the explicit no-level sentinel 'none' (engine#127). Other values stay VALID but draw the W-LEVEL-UNKNOWN author lint, so a consumer's level facet does not offer free-text junk as a category.",
       "maxLength": 20,
       "minLength": 1,
       "title": "Level",
