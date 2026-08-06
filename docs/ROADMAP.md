@@ -4,7 +4,7 @@ Current state: **v2.6.1 (released 2026-07-24 - patch release on top of v2.6.0: t
 
 > **Priorisierung** (abgeleitet aus dem Exploration-Status-Audit,
 > [docs/journal/exploration-status-audit.md](journal/exploration-status-audit.md),
-> 2026-06-17): Aktueller Fokus → Naechste Phase → Zukunft. Die granulare
+> 2026-06-17): Aktueller Fokus → Nächste Phase → Zukunft. Die granulare
 > Task-Liste (mit IDs) steht in [backlog.md](backlog.md); Abgeschlossenes
 > in der Phase-History-Tabelle weiter unten + unter "Abgeschlossen".
 
@@ -16,19 +16,19 @@ Current state: **v2.6.1 (released 2026-07-24 - patch release on top of v2.6.0: t
 > cc 22 (Complexity-Gate). Erst entschaerfen (Datei splitten / Funktion
 > dekomponieren), dann v1.86.0 taggen. Kein Feature-Blocker, ein Gate-Blocker.
 
-- **EXP-033 — KI-gestuetzte Content-Validierung** (PARTIAL, Rest fuer
-  v1.86.0+). Ausgeliefert: set-weite Batch-Pruefung + Report-UI + Kosten-
-  Bestaetigung (AIV-01..05) und Content-Hash + Signatur + "AI-Checked"-Badge
+- **EXP-033 — KI-gestützte Content-Validierung** (PARTIAL, Rest für
+  v1.86.0+). Ausgeliefert: set-weite Batch-Prüfung + Report-UI + Kosten-
+  Bestätigung (AIV-01..05) und Content-Hash + Signatur + "AI-Checked"-Badge
   (AIV-08..11), #674/#676/#686/#687/#690/#691. **Offen: AIV-06**
   (CI-Action `ai_review.py` im Content-Repo), **AIV-07** (Auto-Fix, nur
-  User-Content), **AIV-12** (Signatur bei Content-Aenderung invalidieren).
+  User-Content), **AIV-12** (Signatur bei Content-Änderung invalidieren).
   Siehe [EXP-033](explorations/EXP-033-ai-content-validation.md).
 - **EXP-031 — ZIP-Backup-Format (.alb)**. Container + Manifest, Magic-Byte-
   Erkennung, Legacy-JSON-Fallback; Tasks BAK-01..06. Siehe
   [EXP-031](explorations/EXP-031-zip-backup-format.md).
 - **EXP-032 — Deterministische Content-Validierung**. Encoding/Antwortlaengen,
   Sprachpaar-Konsistenz, Akzent-/Artikel-Woerterbuecher; Tasks CQV-01..03
-  (CQV-04/05 spaeter). Siehe
+  (CQV-04/05 später). Siehe
   [EXP-032](explorations/EXP-032-content-quality-validation.md).
 - **#696 — Library-First-Follow-up F-1**: PyYAML als expliziten Backend-
   Runtime-Dependency deklarieren (kleiner Hygiene-Fix).
@@ -38,7 +38,7 @@ Current state: **v2.6.1 (released 2026-07-24 - patch release on top of v2.6.0: t
   in **#675** behoben (Closes #673), released mit v1.86.0. Beide siehe
   "Abgeschlossen".)
 
-## Naechste Phase
+## Nächste Phase
 
 - **EXP-025 — Content-Repo-Oekosystem** (AUTH-03..09): Cross-Repo-Author-
   Publishing, `companion_repo`-Querverweis, Versions-/Update-Handling,
@@ -48,28 +48,28 @@ Current state: **v2.6.1 (released 2026-07-24 - patch release on top of v2.6.0: t
 - **EXP-024 — Curriculum Builder / Schichtentrennung Phase 2/3**: Plugin-
   Service-Module auf Repository-Pattern (Phase 2), Frontend-U1 (Phase 3).
   Phase 1 ausgeliefert.
-- **EXP-021 / EXP-022 — Content-Authoring-Ausbau**: manueller Einzel-Uebungs-
+- **EXP-021 / EXP-022 — Content-Authoring-Ausbau**: manueller Einzel-Übungs-
   Editor + CSV-Datei-Upload + Token-Rollen-UI (EXP-021 Folge-Ausbau);
   Content-Browser-Baum als Graph (UC2) + Beziehungs-Editor (UC4) (EXP-022).
 - **EXP-027 — Weitere Sprachen** (I18N-06..12): Indonesisch-/Italienisch-UI,
   formale Uebersetzungs-QA, Content-Sprachpaar-Expansion, Exercise-RTL-Audit.
 - **Library-First-Follow-ups** (#697–#700, aus dem Library-First-Audit):
-  react-easy-crop fuer `ImageCropDialog` spiken (#697), `jsonrepair` fuer den
-  LLM-Prosa-JSON-Extraktor evaluieren (#698, TS + Python gepaart), `zod` fuer
+  react-easy-crop für `ImageCropDialog` spiken (#697), `jsonrepair` für den
+  LLM-Prosa-JSON-Extraktor evaluieren (#698, TS + Python gepaart), `zod` für
   die content-validator-Schema-Schicht evaluieren (#699, vorlaeufig lean
-  BEHALTEN), `react-activity-calendar` fuer die `ActivityHeatmap` evaluieren
+  BEHALTEN), `react-activity-calendar` für die `ActivityHeatmap` evaluieren
   (#700, vorlaeufig lean BEHALTEN).
 
 ## Zukunft (Phase 2, community-finanziert)
 
 - **EXP-030 — Multi-User** (MU-01..05, MU-10, MU-20): lokale Profile →
-  Geraete-Kopplung → Cloud-Konten, gestuft.
+  Geräte-Kopplung → Cloud-Konten, gestuft.
 - **EXP-023 — Server-Features (Phase C)**: Community-Sterne-Aggregation,
   Trust 2 (community-verified), zentraler Index, Coach-Aggregation,
   Einmal-Invite-Tokens.
 - **EXP-027 — RTL-Infrastruktur** (I18N-01 RTL, I18N-04/12 Arabisch,
   I18N-05 Koreanisch/Hangul, I18N-10 Exercise-RTL-Audit): hoher Aufwand.
-- **EXP-004 / 009 / 011 / 012 / 015** (laenger zurueckgestellt): GitHub-Org,
+- **EXP-004 / 009 / 011 / 012 / 015** (länger zurückgestellt): GitHub-Org,
   soziale Features, Ranglisten/Turniere, Kinder-Variante.
 - **SaaS-Tier (BL-14..17)** + **BL-19** (soziale Features): PostgreSQL, JWT,
   Multi-User, Stripe — bis das Single-User-Modell an eine Grenze stoesst.
@@ -160,12 +160,12 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 ## Abgeschlossen
 
 Auf EXP-Ebene erledigt (Release-Detail in der Phase-History-Tabelle oben +
-[changelog/releases/](../changelog/releases/); vollstaendiger Task-Audit:
+[changelog/releases/](../changelog/releases/); vollständiger Task-Audit:
 [journal/exploration-status-audit.md](journal/exploration-status-audit.md)):
 
 - **EXP-001 / 002 / 003** — Matching + Picture-Choice / Content-Repository /
   Lektionsformat (Phase 1, ab v1.27.0).
-- **EXP-005** — Offline-Modus + Domaenen (v1.27.0+).
+- **EXP-005** — Offline-Modus + Domänen (v1.27.0+).
 - **EXP-006** — Freitext + Word Tiles (v1.29.0).
 - **EXP-007** — Fehlergranulare Wiederholung + Cloze (v1.30.0/v1.35.0).
 - **EXP-008** — Lob + Celebration (v1.38.0).
@@ -178,7 +178,7 @@ Auf EXP-Ebene erledigt (Release-Detail in der Phase-History-Tabelle oben +
 - **EXP-029** — Medien-Integration mit Gegenseitigkeits-Prinzip, MED-01..07
   (#678/#680/#684/#685/#688, v1.86.0); MED-10 Partner-Onboarding-Doku offen.
 
-Teilweise erledigt (Rest in Aktueller Fokus / Naechste Phase): **EXP-013**
+Teilweise erledigt (Rest in Aktueller Fokus / Nächste Phase): **EXP-013**
 (regelbasiert; Stufe 3 KI offen), **EXP-021** (MVP; Folge-Ausbau offen),
 **EXP-022** (UC1; UC2/UC4 offen), **EXP-023** (A/B/C-slice; Phase-C-Rest
 offen), **EXP-024** (Phase 1; Phase 2/3 offen), **EXP-025** (AUTH-01/02;
@@ -186,7 +186,7 @@ AUTH-03..09 offen), **EXP-027** (Hindi-UI + Picker-Skalierung + Hindi-Content;
 weitere Sprachen + RTL offen), **EXP-033** (AIV-01..05 + AIV-08..11
 ausgeliefert; AIV-06/07/12 offen).
 
-Kuerzlich geschlossene Bugs: **#656** (Complexity-Gate FreeText/WordTiles
+Kürzlich geschlossene Bugs: **#656** (Complexity-Gate FreeText/WordTiles
 baselined, v1.85.0); **#675** (Review-Badge stieg nach einer Session nicht ab
 — behoben, Closes #673, v1.86.0).
 
@@ -194,10 +194,10 @@ baselined, v1.85.0); **#675** (Review-Badge stieg nach einer Session nicht ab
 
 ## Detail: abgeschlossene Kampagnen & granulare offene Posten
 
-> Die kuratierte Priorisierung steht oben (Aktueller Fokus / Naechste Phase /
+> Die kuratierte Priorisierung steht oben (Aktueller Fokus / Nächste Phase /
 > Zukunft). Dieser Abschnitt bewahrt die ausfuehrlichen Beschreibungen der
 > abgeschlossenen Kampagnen und der granularen offenen Posten (Task-IDs
-> unveraendert; daily-planning-Sicht in [backlog.md](backlog.md)).
+> unverändert; daily-planning-Sicht in [backlog.md](backlog.md)).
 
 ### Completed campaigns (v1.77.0 – v1.79.0)
 

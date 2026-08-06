@@ -31,9 +31,26 @@ Ein Resttoken zaehlt nur, wenn seine umlautierte Form im Korpus als
 echtes Deutsch vorkommt. Ohne diesen Anker meldet jede spanische Zeile
 einen Rest.
 
-Journale (``docs/journal/**``) sind ausgenommen: datierte Aufzeichnungen
-dessen, was war: ein nachtraeglicher Umbau macht Rekonstruktionen
-daraus. Sie liefern aber Anker-Evidenz, denn dort steht echtes Deutsch.
+Drei Klassen sind ausgenommen (#2311, Blocker-Befunde vor dem
+Anwendungslauf):
+
+- ``docs/journal/**``: datierte Aufzeichnungen dessen, was war - ein
+  nachtraeglicher Umbau macht Rekonstruktionen daraus. Sie liefern aber
+  Anker-Evidenz, denn dort steht echtes Deutsch.
+- ``docs/review/**``: eingefrorene Wortlaut-Zeugen (i18n-Katalog-Exporte).
+  Jede Zeile zitiert einen Katalogwert, um ueber dessen SCHREIBWEISE eine
+  Aussage zu machen; ein korrigierter Wert liesse das Dokument einen
+  Katalogstand behaupten, den es nie gab.
+- Generierte Artefakte (Kopfzeilen-Marker "Nicht von Hand editieren" /
+  "Do not edit by hand"): eine Doku-seitige Korrektur macht den
+  Byte-Gleichheits-Pin (test_lesson_schema_drift.py) rot und wird beim
+  naechsten Generatorlauf verworfen - die Korrektur gehoert in den
+  Generator.
+
+Versalien-Bezeichner (Grep-Schluessel wie ``FUNKTION-NICHT-VERFUEGBAR``)
+werden weder umgeschrieben noch als Rest gezaehlt: sie stehen identisch im
+Quelltext, eine nur-Doku-Korrektur spaltet die Schreibweise und ein grep
+findet danach nur noch die Haelfte.
 
 Faellt geschlossen: fehlende Wortliste, leere Dateimenge, unlesbarer
 Git-Index und fehlendes manuscript-tools sind Fehler, nie ein gruener
@@ -53,8 +70,14 @@ from pathlib import Path
 TOKEN = re.compile(r"[A-Za-zÄÖÜäöüß]+")
 UMLAUT_CHARS = frozenset("äöüÄÖÜ")
 JOURNAL_PREFIX = "docs/journal/"
+REVIEW_PREFIX = "docs/review/"
 EXTRA_WORDS_FILE = "docs/.docs-hygiene-extra-words.txt"
 MIN_RESIDUAL_LENGTH = 5
+# Kopfzeilen-Marker generierter Doku; im Kopfbereich (erste Zeilen) gesucht.
+GENERATED_MARKER = re.compile(r"(?i)nicht von hand editieren|do not edit by hand")
+GENERATED_HEAD_LINES = 6
+# Versalien-Bezeichner mit Ersatz-Digraph (Grep-Schluessel, kein Fliesstext).
+UPPER_ID = re.compile(r"\b[A-Z][A-Z-]{3,}\b")
 
 
 class ToolingError(RuntimeError):
@@ -80,6 +103,7 @@ class Report:
     extra_words: int
     files_scanned: int
     files_total: int
+    files_generated: int = 0
     replacements: int = 0
     changed_lines: int = 0
     newly_mixed: list[MixedLine] = field(default_factory=list)
@@ -159,6 +183,42 @@ def is_journal(path: Path, root: Path) -> bool:
     return path.relative_to(root).as_posix().startswith(JOURNAL_PREFIX)
 
 
+def is_review(path: Path, root: Path) -> bool:
+    """``docs/review/**``: eingefrorene Wortlaut-Zeugen, nie umschreiben."""
+    return path.relative_to(root).as_posix().startswith(REVIEW_PREFIX)
+
+
+def is_generated(text: str) -> bool:
+    """Traegt der Kopfbereich den Generiert-Marker?"""
+    head = "\n".join(text.splitlines()[:GENERATED_HEAD_LINES])
+    return bool(GENERATED_MARKER.search(head))
+
+
+def mask_upper_identifiers(text: str) -> tuple[str, dict[str, str]]:
+    """Versalien-Bezeichner mit Ersatz-Digraph vor dem Umschreiber verstecken.
+
+    Platzhalter aus Private-Use-Zeichen: kein Wortzeichen, also fuer den
+    Umschreiber, den Zeilenvergleich und die Rest-Suche unsichtbar.
+    """
+    masked: dict[str, str] = {}
+
+    def _repl(match: re.Match[str]) -> str:
+        token = match.group(0)
+        if not re.search(r"AE|OE|UE", token):
+            return token
+        key = f"{len(masked)}"
+        masked[key] = token
+        return key
+
+    return UPPER_ID.sub(_repl, text), masked
+
+
+def unmask_upper_identifiers(text: str, masked: dict[str, str]) -> str:
+    for key, token in masked.items():
+        text = text.replace(key, token)
+    return text
+
+
 class GermanAnchor:
     """Der Anker gegen Fehlalarme: kommt die umlautierte Form im Korpus vor?
 
@@ -214,6 +274,9 @@ def find_residuals(line: str, known: frozenset[str], anchor: GermanAnchor, check
     """Ersatzschreibungen, die der Lauf in dieser Zeile stehen laesst."""
     residuals = []
     for match in TOKEN.finditer(strip_protected(line, checker)):
+        # Versalien-Bezeichner sind Grep-Schluessel, kein Fliesstext (#2311).
+        if match.group(0).isupper() and len(match.group(0)) >= 4:
+            continue
         word = match.group(0).lower()
         if word in known or len(word) < MIN_RESIDUAL_LENGTH:
             continue
@@ -232,9 +295,22 @@ def analyse(root: Path, *, apply: bool) -> Report:
     if not all_files:
         raise ToolingError(f"0 verfolgte Markdown-Dateien unter {root}/docs")
     anchor = GermanAnchor(all_files)
-    targets = [p for p in all_files if not is_journal(p, root)]
+    candidates = [
+        p for p in all_files if not is_journal(p, root) and not is_review(p, root)
+    ]
+    if not candidates:
+        raise ToolingError(
+            f"0 Zieldateien unter {root}/docs (Journale/Review ausgenommen)"
+        )
+    texts: dict[Path, str] = {
+        p: p.read_text(encoding="utf-8", errors="replace") for p in candidates
+    }
+    generated = [p for p in candidates if is_generated(texts[p])]
+    targets = [p for p in candidates if p not in set(generated)]
     if not targets:
-        raise ToolingError(f"0 Zieldateien unter {root}/docs (Journale ausgenommen)")
+        raise ToolingError(
+            f"0 Zieldateien unter {root}/docs (Journale/Review/Generiert ausgenommen)"
+        )
 
     known = frozenset(base_words) | frozenset(extras)
     report = Report(
@@ -243,12 +319,17 @@ def analyse(root: Path, *, apply: bool) -> Report:
         extra_words=len(extras),
         files_scanned=len(targets),
         files_total=len(all_files),
+        files_generated=len(generated),
     )
     rewritten_by_path: dict[Path, str] = {}
 
     for path in targets:
-        original = path.read_text(encoding="utf-8", errors="replace")
-        rewritten, replacements = umlauts.replace_ascii_umlauts(original, tuple(extras))
+        original = texts[path]
+        masked_original, upper_ids = mask_upper_identifiers(original)
+        rewritten_masked, replacements = umlauts.replace_ascii_umlauts(
+            masked_original, tuple(extras)
+        )
+        rewritten = unmask_upper_identifiers(rewritten_masked, upper_ids)
         report.replacements += replacements
         if replacements:
             rewritten_by_path[path] = rewritten
@@ -290,7 +371,7 @@ def print_report(report: Report, *, apply: bool, samples: int) -> None:
     )
     print(
         f"Dateien: {report.files_scanned} von {report.files_total} verfolgten "
-        "(docs/journal ausgenommen)"
+        f"(journal/review ausgenommen, {report.files_generated} generierte uebersprungen)"
     )
     print(f"Ersetzungen: {report.replacements} | geaenderte Zeilen: {report.changed_lines}")
     print(f"A) neu gemischt (blockierend):     {len(report.newly_mixed)}")

@@ -42,7 +42,7 @@ fixes in Phase 35B–35I.
 - **docs/adaptive-learner-project-reference.md (20K)** opens
   with "Aktueller Tag: v0.0.0-template (Skeleton aus Bibliogon
   v0.33.0)" + "Phase 1: Domain-Migration + MVP", "Phase 2:
-  Multi-Provider + vollstaendige i18n". The whole document
+  Multi-Provider + vollständige i18n". The whole document
   is the original planning artefact from v0.0.0; it never got
   the "shipped" rewrite. Heavily mis-describes the actual
   architecture (no gamification / voice / Anki / NotebookLM

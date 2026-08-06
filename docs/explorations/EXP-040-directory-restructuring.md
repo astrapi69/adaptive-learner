@@ -2,8 +2,8 @@
 
 **Kategorie:** Querschnitt (Code-Organisation, Wartbarkeit, Tech-Debt)
 **Phase:** abgeschlossen (laufender Erosionsschutz via CI-Gate)
-**Prioritaet:** Mittel (Hygiene, kein User-sichtbarer Effekt)
-**Abhaengig von:** EXP-024 (Schichtentrennung) als verwandte Struktur-Disziplin; ansonsten keine
+**Priorität:** Mittel (Hygiene, kein User-sichtbarer Effekt)
+**Abhängig von:** EXP-024 (Schichtentrennung) als verwandte Struktur-Disziplin; ansonsten keine
 **Issue:** astrapi69/adaptive-learner#809 (Umbrella) — Slices #1203/#1206 (Slice A), #1207/#1210 (Slice B); verwandt #917/#1190 (lib/ai), #868/#874-#879 (v1.92.0-Batch)
 **Status:** Umgesetzt und abgeschlossen. Alle god-folders unter `frontend/src/` sind
 nach Concern in Subfolder gruppiert; `.dirsize-baseline` ist **leer**; der

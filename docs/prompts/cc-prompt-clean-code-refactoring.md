@@ -3,14 +3,14 @@
 Basiert auf dem Clean Code Audit (docs/audits/CLEAN-CODE-AUDIT.md, 7.5/10).
 Geschaetzte technische Schuld: 65-80h. Phasenweise abarbeiten.
 
-Fuer JEDEN Block: GitHub Issue ZUERST erstellen. Closes #XX im Commit.
+Für JEDEN Block: GitHub Issue ZUERST erstellen. Closes #XX im Commit.
 Status nach jedem Block melden.
 
 ---
 
 ## REIHENFOLGE NACH HEBEL
 
-Hoechster Hebel zuerst (meiste Duplikation weg, meiste Wartbarkeit gewonnen):
+Höchster Hebel zuerst (meiste Duplikation weg, meiste Wartbarkeit gewonnen):
 
 1. Exercise-Renderer Lifecycle-Hook (6-8h)
 2. _row_belongs_to_user Deduplikation (2h, sicherheitsrelevant)
@@ -36,14 +36,14 @@ duplizieren den KOMPLETTEN Controlled-/Submit-/Review-Lifecycle:
 - handleSubmit mit score-Berechnung
 - handleReset
 - useImperativeHandle(ref, () => ({ submit }))
-- useEffect fuer onInteraction
-- Footer JSX (Pruefen/Weiter/Wiederholen Buttons)
+- useEffect für onInteraction
+- Footer JSX (Prüfen/Weiter/Wiederholen Buttons)
 
 ~80-120 redundante Zeilen PRO Renderer. 5 Renderer = ~500 Zeilen Duplikation.
 Die geteilte Infrastruktur (exercise-control.ts) existiert bereits, nur
 der Hook fehlt.
 
-### Loesung
+### Lösung
 
 Erstelle `frontend/src/lib/exercises/useControlledExercise.ts`:
 
@@ -89,11 +89,11 @@ export function ExerciseFooter(props: {
 
 ### Migration pro Renderer
 
-Fuer JEDEN der 5 Renderer:
+Für JEDEN der 5 Renderer:
 1. Den duplizierten Lifecycle-Code durch useControlledExercise ersetzen
 2. Die Footer-JSX durch ExerciseFooter ersetzen
 3. Nur die score()-Funktion bleibt renderer-spezifisch
-4. Tests muessen GRUEN bleiben nach jedem Renderer
+4. Tests müssen GRUEN bleiben nach jedem Renderer
 
 ### Commit-Strategie
 
@@ -117,13 +117,13 @@ GitHub Issue: "Deduplicate _row_belongs_to_user (security-relevant)"
 ### Problem
 
 Zwei divergierende Kopien eines User-Scoping-Checks:
-- `backup_service.py:647` — prueft `value is not None and value == user_id`
-- `sync_service.py:767` — prueft `value == user_id` (kein None-Check)
+- `backup_service.py:647` — prüft `value is not None and value == user_id`
+- `sync_service.py:767` — prüft `value == user_id` (kein None-Check)
 
-Sicherheitsrelevant: ein Auseinanderdriften kann Daten ueber
+Sicherheitsrelevant: ein Auseinanderdriften kann Daten über
 User-Grenzen sichtbar/wiederherstellbar machen.
 
-### Loesung
+### Lösung
 
 Eine kanonische Funktion in `sync_service.py` (Eigentuemer von TABLES/TableSpec):
 
@@ -164,7 +164,7 @@ GitHub Issue: "Decompose session/routes.py God-handler (1988 lines)"
 `_finalize_stream_exchange` (~165 Z.) re-implementiert die zweite Haelfte
 von `append_message`. Die beiden Pfade driften.
 
-### Loesung
+### Lösung
 
 Extrahiere `plugins/.../session/session_runner.py`:
 
@@ -201,7 +201,7 @@ async def append_message(session_id, body, db=Depends(get_db), ...):
 6. `assemble_exchange` extrahieren
 7. Handler umstellen
 8. `_finalize_stream_exchange` auf dieselben Funktionen umstellen
-9. Tote innere Closures loeschen
+9. Tote innere Closures löschen
 
 tsc/ruff/mypy/pytest nach jedem Schritt.
 
@@ -223,7 +223,7 @@ Extrahiere:
 
 ### Content.tsx
 
-38 Hooks ueber 6 Concerns: Set-Listing/Download, Delete-Dialog,
+38 Hooks über 6 Concerns: Set-Listing/Download, Delete-Dialog,
 Share-Wizard-Flow, AI-Validation, Book-Recommendations, Search/Index.
 
 Extrahiere:
@@ -247,7 +247,7 @@ Ein 2461-Zeilen-Objekt-Literal. Verbleibende Inline-Namespaces
 (session, imports, gamification, Assessment-Badge-Block) tragen
 echte Logik.
 
-### Loesung
+### Lösung
 
 Das Muster existiert bereits: `session-flow.ts` ist ein extrahiertes
 Modul. Die verbleibenden Inline-Namespaces analog extrahieren:
@@ -273,7 +273,7 @@ GitHub Issue: "Consolidate _build_ai_caller triplication"
 
 `default_models` Dict ist eine 4. Kopie von `DEFAULT_MODELS`.
 
-### Loesung
+### Lösung
 
 Ein geteiltes `build_ai_caller(db, user_id, *, max_tokens=None)`
 in `app.services` oder Plugin-Shared. `DEFAULT_MODELS` als
@@ -290,9 +290,9 @@ GitHub Issue: "Add logging to 7 silently swallowed plugin exceptions"
 7 `except Exception: pass` oder `except Exception: return fallback`
 in Plugins OHNE Logger. Fehler verschwinden komplett.
 
-### Loesung
+### Lösung
 
-Fuer jedes Modul: Logger anlegen, `logger.warning(..., exc_info=True)`
+Für jedes Modul: Logger anlegen, `logger.warning(..., exc_info=True)`
 vor dem Fallback. Verhalten bleibt gleich (graceful degradation),
 nur die Sichtbarkeit wird hergestellt.
 
@@ -300,7 +300,7 @@ Betroffene Module (aus dem Audit):
 - `step_evaluator.py:358, 396` (kein Logger im Modul)
 - `topic_transition.py:272, 309` (kein Logger im Modul)
 - `missions/service.py:246` (XP-Award-Fehler verschwindet)
-- Pruefe ob weitere dazugekommen sind seit dem Audit
+- Prüfe ob weitere dazugekommen sind seit dem Audit
 
 Commit: `fix: add logging to silently swallowed plugin exceptions`
 
@@ -312,7 +312,7 @@ GitHub Issue: "Add missing docstrings (352 of 753 public symbols)"
 
 ### Prio-Reihenfolge
 
-1. **Abstrakte Repo-Methoden** (Datenschicht-Contract, hoechste Prio)
+1. **Abstrakte Repo-Methoden** (Datenschicht-Contract, höchste Prio)
 2. **Schema-Klassen** (94 Klassen, API-Vertrag)
 3. **Route-Handler** (OpenAPI deckt teilweise ab, niedrigere Prio)
 4. **Frontend exportierte Funktionen** (TSDoc)
@@ -321,8 +321,8 @@ GitHub Issue: "Add missing docstrings (352 of 753 public symbols)"
 
 - Google Style Docstrings (Python)
 - TSDoc (TypeScript)
-- Einzeiler reichen fuer offensichtliche Methoden
-- Mehrzeiler fuer komplexe Logik, Parameter-Erklaerungen, Exceptions
+- Einzeiler reichen für offensichtliche Methoden
+- Mehrzeiler für komplexe Logik, Parameter-Erklärungen, Exceptions
 - NICHT generisch ("This function does X"). Beschreibe WAS und WARUM.
 
 ### Phasenweise Commits
@@ -351,7 +351,7 @@ Aus dem Audit:
 - 17 waitForTimeout in e2e → explizite Waits
 
 Alles opportunistisch, nicht als eigener Sprint.
-Beim naechsten Mal wenn man die Datei anfasst: mitfixen.
+Beim nächsten Mal wenn man die Datei anfasst: mitfixen.
 
 ---
 
@@ -359,8 +359,8 @@ Beim naechsten Mal wenn man die Datei anfasst: mitfixen.
 
 - Ein Block, ein Issue, ein PR
 - tsc + Vitest + ruff + mypy nach JEDEM Commit
-- Keine funktionalen Aenderungen (ausser Block 2 + 7)
-- Tests duerfen NICHT rot werden
+- Keine funktionalen Änderungen (ausser Block 2 + 7)
+- Tests dürfen NICHT rot werden
 - Wenn ein Refactoring einen Test bricht: Test anpassen,
   nicht den Refactoring zurueckrollen
 - axe + Visual Regression nach groesseren UI-Refactorings (Block 1, 4)
@@ -370,7 +370,7 @@ Beim naechsten Mal wenn man die Datei anfasst: mitfixen.
 ## NICHT JETZT
 
 - Kein Rewrite von Grund auf
-- Keine Architektur-Aenderungen (Repository Pattern ist fertig)
+- Keine Architektur-Änderungen (Repository Pattern ist fertig)
 - Kein Framework-Wechsel
 - Keine Performance-Optimierung (kommt nach Refactoring)
 - models/__init__.py und schemas/__init__.py NICHT aufspalten

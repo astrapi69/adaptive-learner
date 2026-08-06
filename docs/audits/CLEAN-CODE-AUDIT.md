@@ -4,9 +4,9 @@ Datum: 2026-06-10
 Commit: `810c0edac59e93aa1c29d0573856ff465fef845c`
 Scope: `backend/app/` + `plugins/adaptive-learner-plugin-*/` + `frontend/src/` + `e2e/`
 
-Methodik: aggregierte Metriken per `grep`/`wc` ueber den gesamten Scope, danach
+Methodik: aggregierte Metriken per `grep`/`wc` über den gesamten Scope, danach
 vier fokussierte Tiefen-Analysen (Backend-Core, Plugins, Frontend-Storage/Lib,
-Frontend-UI), jede mit Datei-Lektuere zur Bestaetigung jeder Einzelfeststellung.
+Frontend-UI), jede mit Datei-Lektuere zur Bestätigung jeder Einzelfeststellung.
 Generierte Dateien, Tests-Interna, Mock-Daten, `node_modules`, `__pycache__`,
 i18n-JSON ausgenommen.
 
@@ -16,8 +16,8 @@ i18n-JSON ausgenommen.
 
 **Gesamtbewertung: 7.5 / 10.**
 
-Eine ungewoehnlich disziplinierte Codebasis. Die in `.claude/rules/` kodifizierten
-Architekturregeln werden flaechendeckend eingehalten — und zwar nicht nur formal,
+Eine ungewöhnlich disziplinierte Codebasis. Die in `.claude/rules/` kodifizierten
+Architekturregeln werden flächendeckend eingehalten — und zwar nicht nur formal,
 sondern mit dokumentierten Ausnahmen an genau den Stellen, wo die Regel nicht
 greift. Die technische Schuld ist konzentriert, nicht diffus: ein knappes Dutzend
 God-Files und ein wiederholtes Muster (die 5 Exercise-Renderer) tragen den
@@ -25,7 +25,7 @@ Grossteil der Wartbarkeitslast. Es gibt **keine P0-Datenintegritaets- oder
 Sicherheitsbefunde** und **null echte Regelverletzungen** bei den beiden
 heikelsten Regeln (`HTTPException` aus Services, `api.*` direkt aus Komponenten).
 
-**Top 3 Staerken**
+**Top 3 Stärken**
 
 1. **Fehlerbehandlungs-Architektur konsequent umgesetzt.** Null `HTTPException`
    aus Service-Bodies, null bare `except:`, null direkte `api.*`/`fetch()`-Aufrufe
@@ -33,14 +33,14 @@ heikelsten Regeln (`HTTPException` aus Services, `api.*` direkt aus Komponenten)
    `ExternalServiceError` gewrappt.
 2. **Repository-Pattern (EXP-024) und Dual-Storage-Contract sind vorbildlich.**
    `repositories/` ist HTTP-frei, `deps.py` ist ein sauberer Composition Root, jede
-   Request-Service-Schicht haengt an Abstraktionen. Beide Storage-Impls erfuellen
+   Request-Service-Schicht hängt an Abstraktionen. Beide Storage-Impls erfüllen
    dasselbe `IStorageService`; `dexie-storage.ts` delegiert an ~20 Fokusmodule.
 3. **Design-Tokens praktisch lueckenlos durchgesetzt.** Null Fixed-Palette-
-   Tailwind-Klassen ueber 156 .tsx-Dateien; genau **1** echtes Farb-Literal
+   Tailwind-Klassen über 156 .tsx-Dateien; genau **1** echtes Farb-Literal
    ausserhalb der legitim befreiten Dateien (generierte SVGs, PDF-Renderer,
    Theme-Registry, Chart-Util).
 
-**Top 3 Schwaechen**
+**Top 3 Schwächen**
 
 1. **God-Files mit vermischten Concerns.** `session/routes.py` (1988 Z., Business-
    Logik in Route-Handlern), `Lesson.tsx` (1905 Z., 38 Hooks), `Content.tsx`
@@ -71,9 +71,9 @@ heikelsten Regeln (`HTTPException` aus Services, `api.*` direkt aus Komponenten)
 
 | Datei | Zeile | Problem | Empfehlung |
 |-------|-------|---------|------------|
-| `backend/app/main.py` | 228-232 | `_load_app_config()` schluckt jeden Fehler beim `app.yaml`-Lesen (`except Exception: project = {}`) **ohne Logging** — einziger stummer Swallow im Backend; eine korrupte Config laesst die App mit allen Defaults starten, unsichtbar. Verletzt "no except without logger.error". | `except (OSError, yaml.YAMLError) as exc:` und `logger.warning("app.yaml unreadable, using defaults: %s", exc)` vor dem Fallback. |
+| `backend/app/main.py` | 228-232 | `_load_app_config()` schluckt jeden Fehler beim `app.yaml`-Lesen (`except Exception: project = {}`) **ohne Logging** — einziger stummer Swallow im Backend; eine korrupte Config lässt die App mit allen Defaults starten, unsichtbar. Verletzt "no except without logger.error". | `except (OSError, yaml.YAMLError) as exc:` und `logger.warning("app.yaml unreadable, using defaults: %s", exc)` vor dem Fallback. |
 
-> Es gibt keine P0-Befunde fuer Datenintegritaet, Sicherheit oder
+> Es gibt keine P0-Befunde für Datenintegrität, Sicherheit oder
 > Dexie-Contract-Bruch. Der einzelne P0 ist ein Beobachtbarkeitsloch, kein
 > Korrektheitsfehler.
 
@@ -83,7 +83,7 @@ heikelsten Regeln (`HTTPException` aus Services, `api.*` direkt aus Komponenten)
 
 | Datei | Zeile | Problem | Empfehlung |
 |-------|-------|---------|------------|
-| `plugins/.../session/routes.py` | 619-1029 | `append_message` ist ein ~410-Zeilen-God-Handler ueber 3 Abstraktionsebenen mit 3 inneren Closures (`_build_response` 667, `_run_both` 830): Session-Guard, Persist, Provider/Key-Resolution, AI-Call, Step-Eval (sync + `asyncio.gather`), Auto-Loop, Cycle-Reset, Response-Bau. Business-Logik im Route-Modul. | `session_runner.py`-Service extrahieren: `run_message_exchange(ctx)` orchestriert `persist_user_message`/`resolve_ai_context`/`run_step_evaluation`/`run_auto_loop`. Handler schrumpft auf ~15 Zeilen. |
+| `plugins/.../session/routes.py` | 619-1029 | `append_message` ist ein ~410-Zeilen-God-Handler über 3 Abstraktionsebenen mit 3 inneren Closures (`_build_response` 667, `_run_both` 830): Session-Guard, Persist, Provider/Key-Resolution, AI-Call, Step-Eval (sync + `asyncio.gather`), Auto-Loop, Cycle-Reset, Response-Bau. Business-Logik im Route-Modul. | `session_runner.py`-Service extrahieren: `run_message_exchange(ctx)` orchestriert `persist_user_message`/`resolve_ai_context`/`run_step_evaluation`/`run_auto_loop`. Handler schrumpft auf ~15 Zeilen. |
 | `plugins/.../session/routes.py` | 1336 | `_finalize_stream_exchange` (~165 Z.) **re-implementiert** die zweite Haelfte von `append_message` (870-1019). Der Docstring gibt es selbst zu ("Mirrors the second half..."). Die beiden Pfade driften. | Die oben extrahierten `run_step_evaluation`/`run_auto_loop` werden die einzige Quelle, die sync- und Stream-Handler aufrufen. Entfernt ~130 Zeilen. |
 | `plugins/.../{anki,notebooklm,session}/routes.py` | 76 / 59 / 1832 | `_build_ai_caller` dreifach nahezu verbatim (Provider+Key+Model-Resolution); das `default_models`-Dict ist eine 4. Kopie von `session/ai_orchestration.py:DEFAULT_MODELS`. Business-Logik in Route-Modulen. | Ein geteiltes `build_ai_caller(db, user_id, *, max_tokens=None)` in `app.services` (oder Plugin-Shared). `default_models` → ein Import von `DEFAULT_MODELS`. |
 | `plugins/.../session/step_evaluator.py` | 358, 396 | `except Exception: return _deterministic_fallback(...)` — Modul hat **keinen** Logger. Ein kaputter AI-Provider ist unsichtbar. | Modul-`logger` + `logger.warning(..., exc_info=True)` vor dem Fallback. Verhalten korrekt, nur das Log fehlt. |
@@ -91,11 +91,11 @@ heikelsten Regeln (`HTTPException` aus Services, `api.*` direkt aus Komponenten)
 | `plugins/.../missions/service.py` | 246 | `except Exception: pass` (Kommentar "XP is supplementary"), Modul ohne Logger — XP-Award-Fehler verschwinden komplett. | Logger + `logger.warning(exc_info=True)`. |
 | `backend/app/services/lesson_progress.py` | 115 | `upsert_progress()` 183 Zeilen / **14 Parameter**, 5 sich gegenseitig ausschliessende Lifecycle-Transitions (complete/pause/abandon/resume/restart) inline + JSON-Serialisierung + Step-Merge in einem. | Branches in `_apply_completion`/`_apply_pause`/... extrahieren, Step-Merge in `_merge_step_result`. Statt 14 kwargs eine `LessonProgressMutation`-Dataclass. |
 | `backend/app/services/backup_service.py` | 514, 732 | `_restore_table()` (130 Z.) und `restore_backup()` (120 Z.) — die zwei groessten Datenintegritaets-Funktionen, hoechstes Wartungsrisiko (Backup-Restore hatte 5 "fixed"-Releases). | Coerce→FK-Check→Unique-Match→Upsert-Pipeline in benannte Schritte; per-Table-Loop-Body und Summary-Aggregation aus `restore_backup` herausziehen. |
-| `backend/app/services/sync_service.py` `+` `backup_service.py` | 767 / 647 | **`_row_belongs_to_user` dupliziert mit Divergenz** — sicherheitsrelevanter User-Scoping-Check; Backup-Variante prueft zusaetzlich `row.user_id is not None`, Sync nicht; verschiedene Spec-Lookups. Kann driften. | Eine kanonische `row_belongs_to_user(...)` in `sync_service` (besitzt `TABLES`/`TableSpec`); `backup_service` importiert sie. `backup_service._spec()` (Einzeiler-Indirektion) entfernen. |
+| `backend/app/services/sync_service.py` `+` `backup_service.py` | 767 / 647 | **`_row_belongs_to_user` dupliziert mit Divergenz** — sicherheitsrelevanter User-Scoping-Check; Backup-Variante prüft zusätzlich `row.user_id is not None`, Sync nicht; verschiedene Spec-Lookups. Kann driften. | Eine kanonische `row_belongs_to_user(...)` in `sync_service` (besitzt `TABLES`/`TableSpec`); `backup_service` importiert sie. `backup_service._spec()` (Einzeiler-Indirektion) entfernen. |
 | `backend/app/{services/settings.py, services/lesson_session_unification.py, routers/content.py, routers/imports.py, routers/plugin_settings.py}` | 222 / 156 / 98 / 188 / 123,160 | 6 Lazy-Imports aus `app.main` (privates `_get_user_override_path`/`_load_override_file`, Plugin-`manager`) zur Zirkular-Import-Vermeidung. Services haengen an `main`. | `PluginManager`-Instanz in `app/plugin_manager.py` (oder via `deps.py`); Override-Helfer in `config_overlay.py`. Entfernt alle 6 Workarounds. |
-| `frontend/src/components/exercises/*` | — | **Die 5 Renderer duplizieren den kompletten Lifecycle** (`handleSubmit`/`handleReset`/`useImperativeHandle`/`onInteraction`-Effect/`reviewed`-Narrowing/Footer-JSX) — nur die `derive*Attempt`-Funktion variiert. ~80-120 redundante Zeilen je Renderer. | `useControlledExercise<TAnswer>()`-Hook (besitzt `submitted`/`result`/Imperative-Handle/`onInteraction`/Reset, nimmt `score(answer)`-Callback) + `<ExerciseFooter>`-Komponente. `exercise-control.ts` hat die Typen schon — der Hook ist das fehlende Stueck. **Hoechster Hebel im Frontend.** |
+| `frontend/src/components/exercises/*` | — | **Die 5 Renderer duplizieren den kompletten Lifecycle** (`handleSubmit`/`handleReset`/`useImperativeHandle`/`onInteraction`-Effect/`reviewed`-Narrowing/Footer-JSX) — nur die `derive*Attempt`-Funktion variiert. ~80-120 redundante Zeilen je Renderer. | `useControlledExercise<TAnswer>()`-Hook (besitzt `submitted`/`result`/Imperative-Handle/`onInteraction`/Reset, nimmt `score(answer)`-Callback) + `<ExerciseFooter>`-Komponente. `exercise-control.ts` hat die Typen schon — der Hook ist das fehlende Stück. **Höchster Hebel im Frontend.** |
 | `frontend/src/pages/Lesson.tsx` | 133-1180 | God-Komponente: `LessonPage` ~1047 Zeilen, 38 Hooks; mischt Pause/Resume/Abandon, Enter-Key-Zweiphasen-Shortcut, Step-Navigation, Autosave, Theory-Backlinks, Result-Export. | `useLessonFlowControl`, `useLessonNavigation` extrahieren; Result-Export-Builder nach `lib/lesson/`. |
-| `frontend/src/pages/Content.tsx` | 129-1874 | God-Komponente: 38 Hooks ueber 6 Concerns — Set-Listing/Download, Delete-Dialog, **Share-Wizard-Flow**, **AI-Validation**, Book-Recommendations, **Search/Index**. | Share-Validation-State in `ShareWizard` (oder `useShareValidation`) heben; `useContentSearch` extrahieren — ~12 der 38 State-Hooks. |
+| `frontend/src/pages/Content.tsx` | 129-1874 | God-Komponente: 38 Hooks über 6 Concerns — Set-Listing/Download, Delete-Dialog, **Share-Wizard-Flow**, **AI-Validation**, Book-Recommendations, **Search/Index**. | Share-Validation-State in `ShareWizard` (oder `useShareValidation`) heben; `useContentSearch` extrahieren — ~12 der 38 State-Hooks. |
 | `frontend/src/storage/dexie-storage.ts` | 443 | Ein 2461-Zeilen-Objekt-Literal; verbleibende Inline-Namespaces (`session`, `imports` @2191, `gamification`, Assessment-Badge-Block @2066) tragen echte Logik. | Inline-Namespaces in Geschwistermodule extrahieren (Muster `session-flow.ts` existiert). Ziel < 800 Z. |
 | `frontend/src/storage/types.ts` | 1 | `IStorageService` als 1491-Zeilen-Einzel-Interface mit ~30 Namespaces. | Pro-Namespace-Interface-Dateien + Barrel `types/index.ts`. Type-only, risikoarm. |
 
@@ -108,13 +108,13 @@ heikelsten Regeln (`HTTPException` aus Services, `api.*` direkt aus Komponenten)
 | `backend/app/main.py` | 424 | `lifespan()` (87 Z.) mischt Migration, 3 Seed-Schritte, Plugin-Discovery, OpenAPI-Backfill. | `_migrate_api_keys_safe()`/`_seed_subjects_safe()`/`_seed_badges_safe()` extrahieren, `lifespan` als Schrittliste. |
 | `backend/app/services/sync_service.py` | 789 | `push_records()` (90 Z.) verzweigt append-only/mutable/conflict in einem. | `_push_append_only_row`/`_push_mutable_row` extrahieren. |
 | `backend/app/repositories/*_repo.py`, `routers/*.py`, `schemas/__init__.py` | — | **~352 von 753 public Symbolen ohne Docstring** (abstrakte Repo-Methoden = Datenschicht-Contract; 94 Schema-Klassen; Route-Handler). | Mindestens abstrakte Repo-Methoden + Schema-Klassen mit Einzeiler-Docstrings versehen (Google-Style). |
-| `backend/app/services/lesson_progress.py` | 207, 221 | Inline-Kommentare `# BUG P1 / Problem 2`, `# BUG #41` — Commit-Message-Residue, gehoeren nicht inline (DOC-DOCSTRINGS-NOT-INLINE). | In Docstring verlagern oder loeschen (git haelt die Historie). |
+| `backend/app/services/lesson_progress.py` | 207, 221 | Inline-Kommentare `# BUG P1 / Problem 2`, `# BUG #41` — Commit-Message-Residue, gehören nicht inline (DOC-DOCSTRINGS-NOT-INLINE). | In Docstring verlagern oder löschen (git hält die Historie). |
 | `backend/app/{secrets_service,reset_service,identity_service,routers/*}` | versch. | ~23 generische Lokalnamen (`data = yaml.safe_load(...)`, `result`, `obj`). Regel verbietet `data`/`result`/`obj`/`temp`. | `raw_secrets`/`parsed_identity`/`push_result`/`json_object` etc. (opportunistisch beim Anfassen). |
 | `frontend/src/lib/voice/voicePref.ts` | 93-116 | 8 bare `catch {}` auf `localStorage.setItem` ohne Kommentar. Pragmatisch ok (Prefs unkritisch), aber Regelbruch. | Ein `/* localStorage best-effort (private mode/quota) */`-Kommentar oder `safeSet`-Helfer, der es einmal dokumentiert. |
 | `frontend/src/lib/{learning-path/personal-path,backup-diff,adaptive/lesson-generator}.ts` | — | TSDoc fehlt auf einigen Exports (Return-Types vorhanden dank strict). | Einzeiler-TSDoc je public Funktion. |
 | `frontend/src/storage/session-flow.ts` `+` `chat_import/analysis.ts` | 281 / 175 | `sendMessage` ~158 Z. (innere `buildResponse`-Closure), `buildSystemPrompt` ~100 Z. | `buildResponse` auf Modulebene heben (Context-Objekt-Param); Prompt-Kontextblock + Per-Sprache-Fallback in benannte Helfer. |
-| `frontend/src/components/about/DonationSection.tsx` | 105 | Hartes `rgba(255,255,255,0.2)` Inline-Style auf "preferred"-Badge (nicht auf der Befreiungsliste); insgesamt 7 Inline-`style`-Bloecke. | Ueber Token routen (z. B. `--badge-tint`); Tailwind/CSS-Module-Pass. |
-| `frontend/src/pages/Onboarding.tsx` `+` `components/BackupSection.tsx` | 285 / 443 | `console.log` (BACKUP-AKZEPTANZTEST-Evidenz, gewollt) — verstoesst formal gegen no-console.log. | `// eslint-disable-next-line no-console` ergaenzen (Muster wie `DangerZoneSection.tsx:119`). |
+| `frontend/src/components/about/DonationSection.tsx` | 105 | Hartes `rgba(255,255,255,0.2)` Inline-Style auf "preferred"-Badge (nicht auf der Befreiungsliste); insgesamt 7 Inline-`style`-Blöcke. | Über Token routen (z. B. `--badge-tint`); Tailwind/CSS-Module-Pass. |
+| `frontend/src/pages/Onboarding.tsx` `+` `components/BackupSection.tsx` | 285 / 443 | `console.log` (BACKUP-AKZEPTANZTEST-Evidenz, gewollt) — verstoesst formal gegen no-console.log. | `// eslint-disable-next-line no-console` ergänzen (Muster wie `DangerZoneSection.tsx:119`). |
 | `e2e/**/*.spec.ts` | — | **17× `page.waitForTimeout(...)`** — Flaky-Test-Anti-Pattern (feste Wartezeiten statt Bedingungen). | Durch `expect(locator).toBeVisible()`/`waitForResponse`/`toHaveURL` ersetzen. (Positiv: **0** CSS-Selektoren — testid-only wie verlangt.) |
 
 ---
@@ -158,8 +158,8 @@ heikelsten Regeln (`HTTPException` aus Services, `api.*` direkt aus Komponenten)
 
 ### Beispiel 1 — `_row_belongs_to_user` (P1, sicherheitsrelevant)
 
-Zwei divergierende Kopien eines User-Scoping-Checks ueber 2 Services. Das ist die
-gefaehrlichste Duplikation im Backend: ein Auseinanderdriften kann Daten ueber
+Zwei divergierende Kopien eines User-Scoping-Checks über 2 Services. Das ist die
+gefährlichste Duplikation im Backend: ein Auseinanderdriften kann Daten über
 User-Grenzen hinweg sichtbar/wiederherstellbar machen.
 
 **Vorher** — `backup_service.py:647`:
@@ -200,9 +200,9 @@ from app.services.sync_service import row_belongs_to_user  # bereits TableSpec/T
 # _spec() und die lokale Kopie entfallen.
 ```
 Die strengere `value is not None`-Semantik wird zur einzigen Wahrheit — fail-safe
-fuer beide Pfade.
+für beide Pfade.
 
-### Beispiel 2 — Exercise-Renderer-Lifecycle (P1, hoechster Hebel)
+### Beispiel 2 — Exercise-Renderer-Lifecycle (P1, höchster Hebel)
 
 **Vorher** — identisch in allen 5 Renderern (hier `FreeTextExercise.tsx`):
 ```tsx
@@ -260,7 +260,7 @@ async def append_message(session_id, body, db=Depends(get_db), ...):
     # ... auto-loop / topic-transition / cycle_topics JSON mutation ...
     return _SessionMessageExchangeOut(...)
 ```
-**Nachher** — `session/session_runner.py` als Service, Handler duenn:
+**Nachher** — `session/session_runner.py` als Service, Handler dünn:
 ```python
 @router.post("/{session_id}/message")
 async def append_message(session_id, body, db=Depends(get_db), ...):
@@ -287,10 +287,10 @@ Stream-Pfads entfaellt.
 Was als Vorbild dient und **nicht** angefasst werden sollte:
 
 - **Fehlerbehandlung ist Lehrbuch.** Jeder breite `except Exception` (ausser dem
-  einen P0) traegt `# noqa: BLE001` + WHY + `logger.exception`/`logger.warning`.
+  einen P0) trägt `# noqa: BLE001` + WHY + `logger.exception`/`logger.warning`.
   AI-Provider-Plugins (anthropic/openai/gemini) wrappen jeden SDK-Call in typisiertes
   `ExternalServiceError(service, str(exc)) from exc`, sync und Stream. Router sind
-  echt duenn und fangen nur enge `ValueError`→`ValidationError`-Konvertierungen.
+  echt dünn und fangen nur enge `ValueError`→`ValidationError`-Konvertierungen.
 - **Repository-Pattern exemplarisch.** `repositories/base.py` dokumentiert den
   Contract sauber, das Paket ist HTTP-frei, `deps.py` ist der einzige Ort, der
   FastAPI **und** konkrete Impls kennt. `RepositoryError`/`UniqueViolationError`
@@ -298,17 +298,17 @@ Was als Vorbild dient und **nicht** angefasst werden sollte:
   dokumentierten Session-Ausnahmen (`_scoped_query`, `subjects_seed`,
   `routers/sync.py` etc.) sind genau wie spezifiziert; **kein** undokumentiertes
   Session-Leck.
-- **Dual-Storage-Contract gewahrt.** Beide Impls erfuellen `IStorageService`;
+- **Dual-Storage-Contract gewahrt.** Beide Impls erfüllen `IStorageService`;
   `apiStorage` ist eine dokumentierte 1:1-Delegation, `dexie-storage.ts` delegiert an
-  ~20 Fokusmodule. Die einzige TS↔TS-Ueberlappung waeren TS↔**Python**-Paritaets-
+  ~20 Fokusmodule. Die einzige TS↔TS-Überlappung wären TS↔**Python**-Paritäts-
   Ports (Gamification-XP, `dedupeContentEntries`, `backup.ts`) — alle bewusst und in
   CLAUDE.md dokumentiert; **keine** versehentliche Single-Mode-Duplikation gefunden.
-- **Diagnostik faellt offen aus** (`routers/system.py` Git-Hash/Version/Build-Date)
+- **Diagnostik fällt offen aus** (`routers/system.py` Git-Hash/Version/Build-Date)
   mit engen Exception-Tupeln und dokumentierten `None`-Fallbacks — matcht die
   "Diagnostic features must fail open"-Regel.
 - **High-Param-Funktionen sind keyword-only** (`*`) und voll dokumentiert — die
   Parameterzahl ist strukturell abgemildert.
-- **Design-Tokens flaechendeckend** durchgesetzt; **0** Fixed-Palette-Tailwind ueber
+- **Design-Tokens flächendeckend** durchgesetzt; **0** Fixed-Palette-Tailwind über
   156 .tsx; shadcn-`Button` erzwingt `min-h-11` per Konstruktion (44px-Targets
   weitgehend by-design erfuellt).
 - **e2e nutzt ausschliesslich testid-Selektoren** (0 CSS-Selektoren) wie von der
@@ -325,10 +325,10 @@ Was als Vorbild dient und **nicht** angefasst werden sollte:
 - `models/__init__.py` und `schemas/__init__.py` werden **nicht** als SRP-Verletzung
   gewertet (dokumentierte Single-File-Domain-Model-Konvention).
 - `dict[str, Any]` in `backup_service`/`sync_service` ist die gerechtfertigte Form
-  fuer beliebige serialisierte Tabellenzeilen (JSON-Grenze), kein un-kommentierter
+  für beliebige serialisierte Tabellenzeilen (JSON-Grenze), kein un-kommentierter
   `Any`-Verstoss.
 - Browser-direkte `fetch()`-Aufrufe (AI-Provider, GitHub-Raw, SSE, Sync-Transport)
-  sind legitim — die "fetch nur ueber client.ts"-Regel zielt auf API-Mode-Backend-
-  Calls, fuer die es im Dexie-Mode keinen Backend-Pfad gibt.
-- Route-Handler- und abstrakte-Repo-Docstring-Luecken sind echte Regelverstoesse,
+  sind legitim — die "fetch nur über client.ts"-Regel zielt auf API-Mode-Backend-
+  Calls, für die es im Dexie-Mode keinen Backend-Pfad gibt.
+- Route-Handler- und abstrakte-Repo-Docstring-Lücken sind echte Regelverstoesse,
   aber niedrigster Severity (P2), da OpenAPI/Contract sie teilweise abdecken.
