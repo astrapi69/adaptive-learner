@@ -195,15 +195,40 @@ describe("MatchingExercise: mobile space (#2391)", () => {
         expect(help).toContainElement(screen.getByTestId("matching-flow-hint"));
     });
 
-    it("#2444 puts the how-to toggle on the instruction row, not its own line", () => {
+    it("#2453 puts the how-to toggle in the top row next to the theory link", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                theoryLink={
+                    <button data-testid="stub-theory-link">Re-read theory</button>
+                }
+            />,
+        );
+        // The chrome's conditional "Re-read theory" link is passed down and
+        // shares one button row under the title with the how-to toggle.
+        const topRow = screen.getByTestId("matching-top-actions");
+        expect(topRow).toContainElement(screen.getByTestId("stub-theory-link"));
+        expect(topRow).toContainElement(screen.getByTestId("matching-help-toggle"));
+    });
+
+    it("#2453 keeps the how-to toggle in the top row without a theory link", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        // The disclosure shares the instruction's meta row so it no longer
-        // eats a dedicated line above the first tile.
+        // Without a preceding theory chapter no link is passed; the toggle
+        // still sits in the same top row (consistent position).
+        const topRow = screen.getByTestId("matching-top-actions");
+        expect(topRow).toContainElement(screen.getByTestId("matching-help-toggle"));
+        expect(screen.queryByTestId("stub-theory-link")).toBeNull();
+    });
+
+    it("#2453 no longer nests the how-to disclosure in the instruction row", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        // The instruction row keeps the direction text but not the disclosure.
         const metaRow = screen.getByTestId("matching-meta-row");
         expect(metaRow).toContainElement(
             screen.getByTestId("direction-instruction-matching"),
         );
-        expect(metaRow).toContainElement(screen.getByTestId("matching-help"));
+        expect(metaRow).not.toContainElement(screen.getByTestId("matching-help"));
     });
 
     it("#2445 shows the running counter at the top, not in the footer", () => {

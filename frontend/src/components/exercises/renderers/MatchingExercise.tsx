@@ -25,7 +25,7 @@
  */
 
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import type {Ref} from "react";
+import type {ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
@@ -97,6 +97,12 @@ export interface MatchingExerciseProps extends ControlledExerciseProps {
      *  column labels, no language names, a "match each term to its
      *  definition" instruction. Optional; absent = language behaviour. */
     domain?: string | null;
+    /** #2453 — the chrome's conditional "Re-read theory" link (computed by
+     *  LessonStepView). Forwarded to MatchingPrompt so it shares the top
+     *  button row with the how-to disclosure instead of sitting on its own
+     *  line above the exercise. Null/absent when no theory chapter precedes
+     *  this step (or in Review / AdaptiveLesson, which omit it). */
+    theoryLink?: ReactNode;
 }
 
 
@@ -195,6 +201,7 @@ function MatchingExercise(
         codeMode = false,
         onAdvance,
         advanceLabel,
+        theoryLink,
     }: MatchingExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -534,6 +541,7 @@ function MatchingExercise(
                 submitted={submitted}
                 leftLabel={leftLabel}
                 rightLabel={rightLabel}
+                theoryLink={theoryLink}
             />
 
             {/* #2443 — no hint affordance for matching. Both columns are
