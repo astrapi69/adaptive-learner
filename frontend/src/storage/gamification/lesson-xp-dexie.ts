@@ -35,11 +35,49 @@ import {
 } from "../../lib/gamification/lesson-xp";
 import type {XPAward} from "../../lib/gamification/lesson-xp";
 import {currentStreakDays} from "../../lib/gamification/streak";
+import {deriveCorrectionAdjustedScore} from "../../lib/lesson/correction-adjusted-score";
 import {configForMode} from "../../lib/learning/lessonModeConfig";
 import type {LessonMode} from "../../lib/learning/lessonModePref";
 import {nowIso} from "../dexie/db";
+import {listElementErrorsDexie} from "../lessons/element-errors-dexie";
 import {persistXP, userActivityDates} from "./gamification";
 import type {LessonProgress, XPAwardResult} from "../types";
+
+/**
+ * #2479 — the stars the XP award is scored on. For practice (and every
+ * non-exam mode) this is the CORRECTION-ADJUSTED final: elements fixed in the
+ * correction round count, so the credited XP matches the stars + bar the
+ * summary shows on the same screen. Exam mode is exempt (an exam result is
+ * first-pass by design), so it scores on the frozen ``score_correct``.
+ *
+ * The correction count is read from the lesson's live ``ElementError`` rows —
+ * the same source the summary's ``deriveCorrectionAdjustedScore`` uses — so
+ * display and award never diverge. Conservative on a read failure: falls back
+ * to the frozen first-pass stars.
+ */
+async function starsForAward(
+    userId: string,
+    progress: LessonProgress,
+    mode: LessonMode,
+): Promise<number> {
+    const immediate = computeStars(
+        progress.score_correct,
+        progress.score_total,
+    );
+    if (mode === "exam") return immediate;
+    try {
+        const rows = await listElementErrorsDexie(userId, {
+            setId: progress.set_id,
+        });
+        const sessionErrors = rows.filter(
+            (row) => row.lesson_id === progress.lesson_filename,
+        );
+        const adjusted = deriveCorrectionAdjustedScore(progress, sessionErrors);
+        return computeStars(adjusted.finalCorrect, adjusted.total);
+    } catch {
+        return immediate;
+    }
+}
 
 /**
  * Award lesson-XP for a just-completed LessonProgress row.
@@ -67,12 +105,15 @@ export async function awardLessonXpDexie(
     // Python's _is_first_attempt_from_step_results consumes)
     // sees the same input shape.
     const firstAttempt = isFirstAttempt(JSON.stringify(progress.step_results));
-    const stars = computeStars(progress.score_correct, progress.score_total);
     // #1007 Phase 2 — apply the lesson mode's reward weight (exam = 1.5×).
     // configForMode falls back to practice (1.0×) for an unknown/missing mode.
-    const xpMultiplier = configForMode(
-        (progress.lesson_mode ?? "practice") as LessonMode,
-    ).xpMultiplier;
+    const mode = (progress.lesson_mode ?? "practice") as LessonMode;
+    // #2479 — score on the correction-adjusted stars so the credited XP
+    // matches what the summary shows after the correction round. The
+    // first-attempt bonus below still reads the frozen step_results, so a
+    // corrected (not first-try) run never earns the no-mistakes bonus.
+    const stars = await starsForAward(userId, progress, mode);
+    const xpMultiplier = configForMode(mode).xpMultiplier;
     const award: XPAward = calculateLessonSessionXp({
         stars,
         first_attempt: firstAttempt,

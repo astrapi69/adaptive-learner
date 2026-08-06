@@ -17,10 +17,23 @@ from adaptive_learner_gamification.xp_service import (
     calculate_session_xp,
     compute_level,
     compute_stars,
+    count_corrected_elements,
     current_streak_days,
     lesson_xp_multiplier_for_mode,
     level_threshold,
 )
+
+
+class _Row:
+    """Minimal ElementError stand-in for count_corrected_elements (#2479)."""
+
+    def __init__(
+        self, error_count: int, correct_streak: int, mastered: bool = False
+    ) -> None:
+        self.error_count = error_count
+        self.correct_streak = correct_streak
+        self.mastered = mastered
+
 
 # --- Level curve -----------------------------------------------------------
 
@@ -358,3 +371,40 @@ def test_lesson_xp_breakdown_records_streak_pct() -> None:
     # 30 + 20 = 50; +100% (4 * 25) = 100
     assert award.xp_earned == 100
     assert award.breakdown["streak_multiplier_pct"] == 100
+
+
+# --- Correction-adjusted score (#2479) -------------------------------------
+
+
+def test_count_corrected_counts_erred_and_now_resolved() -> None:
+    rows = [_Row(error_count=1, correct_streak=1)]
+    assert count_corrected_elements(rows, 4) == 1
+
+
+def test_count_corrected_counts_mastered() -> None:
+    rows = [_Row(error_count=2, correct_streak=3, mastered=True)]
+    assert count_corrected_elements(rows, 4) == 1
+
+
+def test_count_corrected_skips_still_wrong() -> None:
+    rows = [_Row(error_count=1, correct_streak=0)]
+    assert count_corrected_elements(rows, 4) == 0
+
+
+def test_count_corrected_skips_first_try_correct() -> None:
+    rows = [_Row(error_count=0, correct_streak=1)]
+    assert count_corrected_elements(rows, 4) == 0
+
+
+def test_count_corrected_caps_at_wrong_in_run() -> None:
+    rows = [_Row(error_count=1, correct_streak=1) for _ in range(5)]
+    assert count_corrected_elements(rows, 2) == 2
+
+
+def test_count_corrected_zero_wrong_in_run_is_zero() -> None:
+    rows = [_Row(error_count=1, correct_streak=1)]
+    assert count_corrected_elements(rows, 0) == 0
+
+
+def test_count_corrected_empty_rows_is_zero() -> None:
+    assert count_corrected_elements([], 4) == 0

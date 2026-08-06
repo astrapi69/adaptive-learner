@@ -49,6 +49,8 @@ from datetime import UTC, date, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
@@ -259,6 +261,71 @@ def compute_stars(correct: int, total: int) -> int:
     if pct >= _STAR_BAND_1:
         return 1
     return 0
+
+
+def count_corrected_elements(rows: Iterable[Any], wrong_in_run: int) -> int:
+    """#2479 — previously-wrong elements now resolved, bounded by the run's
+    wrong-element count.
+
+    Twin of the frontend ``countCorrectedElements`` (``lib/lesson/
+    correction-adjusted-score.ts``). A "corrected" element erred at least
+    once (``error_count > 0``) and its latest state is resolved (``mastered``
+    or ``correct_streak > 0``). A never-erred (first-try correct) element is
+    excluded; a still-wrong element is excluded. The result never exceeds
+    ``wrong_in_run`` so the final correct count can never pass the total.
+    """
+    cap = max(0, wrong_in_run)
+    if cap == 0:
+        return 0
+    resolved = 0
+    for row in rows:
+        if (getattr(row, "error_count", 0) or 0) > 0 and (
+            getattr(row, "mastered", False)
+            or (getattr(row, "correct_streak", 0) or 0) > 0
+        ):
+            resolved += 1
+    return min(resolved, cap)
+
+
+def _corrected_adjusted_stars(
+    db: Session,
+    *,
+    lesson_progress_id: str | None,
+    score_correct: int,
+    score_total: int,
+    mode: str | None,
+) -> int:
+    """#2479 — the stars the lesson XP award scores on.
+
+    For every non-exam mode this folds the correction round into the star
+    count (elements fixed after the first pass count), so the credited XP
+    matches the correction-adjusted stars + bar the summary shows. Exam mode
+    is exempt — an exam result is first-pass by design — and so is a missing
+    lesson-progress id. Mirrors the frontend ``deriveCorrectionAdjustedScore``
+    against the same live ``ElementError`` rows. Conservative: any lookup miss
+    falls back to the frozen first-pass stars.
+    """
+    immediate = compute_stars(score_correct, score_total)
+    if mode == "exam" or not lesson_progress_id:
+        return immediate
+    from app.models import ElementError, LessonProgress
+
+    row = db.get(LessonProgress, lesson_progress_id)
+    if row is None:
+        return immediate
+    rows = (
+        db.query(ElementError)
+        .filter(
+            ElementError.user_id == row.user_id,
+            ElementError.set_id == row.set_id,
+            ElementError.lesson_id == row.lesson_filename,
+        )
+        .all()
+    )
+    wrong_in_run = max(0, score_total - score_correct)
+    corrected = count_corrected_elements(rows, wrong_in_run)
+    final_correct = min(score_total, score_correct + corrected)
+    return compute_stars(final_correct, score_total)
 
 
 def calculate_lesson_session_xp(
@@ -546,13 +613,24 @@ def award_xp_for_lesson_session(
 
     score_correct = int(session.get("score_correct", 0) or 0)
     score_total = int(session.get("score_total", 0) or 0)
-    stars = compute_stars(score_correct, score_total)
-    first_attempt = _is_first_attempt(db, session.get("lesson_progress_id"))
+    lesson_progress_id = session.get("lesson_progress_id")
+    first_attempt = _is_first_attempt(db, lesson_progress_id)
 
     activity = _activity_dates_for_user(db, user_id)
     streak = current_streak_days(activity)
 
-    mode = _lesson_mode_for_progress(db, session.get("lesson_progress_id"))
+    mode = _lesson_mode_for_progress(db, lesson_progress_id)
+    # #2479 — score on the correction-adjusted stars so the credited XP
+    # matches the summary's post-correction stars + bar. The first-attempt
+    # bonus above still reads the frozen step_results, so a corrected (not
+    # first-try) run never earns the no-mistakes bonus.
+    stars = _corrected_adjusted_stars(
+        db,
+        lesson_progress_id=lesson_progress_id,
+        score_correct=score_correct,
+        score_total=score_total,
+        mode=mode,
+    )
     award = calculate_lesson_session_xp(
         stars=stars,
         first_attempt=first_attempt,
