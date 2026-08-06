@@ -5,7 +5,7 @@
 existieren nicht, 001-017 sind in `docs/roadmap-archive/phase-1-complete.md`
 archiviert und bleiben als historische Zeilen stehen)
 
-> Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
+> Vollständiger Umsetzungs-Audit (Task-für-Task, gegen Code verifiziert):
 > [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
 > (Stand 2026-06-17).
 

@@ -1,16 +1,16 @@
 # EXP-035: Vercel AI Elements Integration
 
 > **Status:** Exploration (Vorschlag). Empfehlung: Option A (schrittweise),
-> mit den unten in "Audit-Ergebnisse" revidierten Prioritaeten.
-> **Kategorie:** Feature / Querschnitt (AI-UI). **Abhaengig von:** shadcn/ui
+> mit den unten in "Audit-Ergebnisse" revidierten Prioritäten.
+> **Kategorie:** Feature / Querschnitt (AI-UI). **Abhängig von:** shadcn/ui
 > (vorhanden), Session-Plugin (vorhanden).
 
 ## Idee
 
 Die bestehende AI-Session UI (Chat, Feedback, Prompt-Eingabe) ist komplett custom gebaut.
 Vercel AI Elements (https://github.com/vercel/ai-elements) bietet eine battle-tested
-Komponentenbibliothek fuer AI-native UIs, basierend auf shadcn/ui. Da wir shadcn/ui
-und Tailwind CSS Variables bereits nutzen, ist die Integration mit minimalem Friction moeglich.
+Komponentenbibliothek für AI-native UIs, basierend auf shadcn/ui. Da wir shadcn/ui
+und Tailwind CSS Variables bereits nutzen, ist die Integration mit minimalem Friction möglich.
 
 Ziel: Custom AI-UI-Code durch AI Elements ersetzen (Library-First, Tier 3 statt Tier 4)
 und gleichzeitig die AI-Lernerfahrung verbessern.
@@ -21,7 +21,7 @@ und gleichzeitig die AI-Lernerfahrung verbessern.
 - Chat-artiger Lernmodus mit AI-Provider (Anthropic/OpenAI/Gemini)
 - Prompt-Templates (42-Zellen-Matrix: 6 Methoden x 7 Steps)
 - Dual-Prompt-Architektur (Lern-Antwort + Step-Evaluation)
-- Browser-Direct AI Calls (kein Backend-Proxy noetig)
+- Browser-Direct AI Calls (kein Backend-Proxy nötig)
 
 ### AI Content Validation (EXP-033)
 - KI-basierte Kartenpruefung
@@ -59,36 +59,36 @@ Phase 2: Session-Chat auf AI Elements umstellen
 - Bestehende Prompt-Template-Logik bleibt (Backend-Logik, nicht UI)
 
 Phase 3: Erweiterte Features (nur mit AI Elements sinnvoll)
-- Streaming-Anzeige (Token fuer Token)
+- Streaming-Anzeige (Token für Token)
 - AI Reasoning sichtbar machen
 - Message-Editing (Frage umformulieren)
 - File-Attachments (Bild/PDF als Kontext)
 
 ### Option B: Big-Bang Migration
 
-Alles auf einmal umstellen. Hoehere Qualitaet am Ende,
-aber grosser PR, laenger nicht mergebar, Regressionsrisiko.
+Alles auf einmal umstellen. Höhere Qualität am Ende,
+aber grosser PR, länger nicht mergebar, Regressionsrisiko.
 
-### Option C: Nur fuer neue Features
+### Option C: Nur für neue Features
 
-AI Elements nur fuer neue Features nutzen, bestehende UI
+AI Elements nur für neue Features nutzen, bestehende UI
 nicht anfassen. Niedrigstes Risiko, aber Inkonsistenz
 zwischen alter und neuer AI-UI.
 
 ### Empfehlung: Option A
 
 Schrittweise, rueckwaertskompatibel, sofortiger Mehrwert
-ab Phase 1. Jede Phase ist unabhaengig mergebar.
+ab Phase 1. Jede Phase ist unabhängig mergebar.
 
 ## Technische Herausforderungen
 
-### TH-1: shadcn/ui Kompatibilitaet
-AI Elements setzt shadcn/ui voraus. Pruefung noetig:
+### TH-1: shadcn/ui Kompatibilität
+AI Elements setzt shadcn/ui voraus. Prüfung nötig:
 - Welche shadcn/ui Version nutzen wir?
 - Stimmen die CSS Variable-Namen ueberein?
 - Konflikte mit unserem Design-Token-System?
 
-### TH-2: Vercel AI SDK Abhaengigkeit
+### TH-2: Vercel AI SDK Abhängigkeit
 AI Elements nutzt `@ai-sdk/react` (useChat Hook).
 Wir haben eigene AI-Call-Logik (Browser-Direct, Multi-Provider).
 Optionen:
@@ -98,14 +98,14 @@ Optionen:
 
 ### TH-3: i18n
 AI Elements ist Englisch. Unsere App hat 11 UI-Sprachen.
-- Labels/Aria-Texte muessen lokalisierbar sein
-- Pruefen ob AI Elements Props fuer Custom-Labels bietet
+- Labels/Aria-Texte müssen lokalisierbar sein
+- Prüfen ob AI Elements Props für Custom-Labels bietet
 - Falls nicht: Components forken oder wrappen
 
 ### TH-4: Multi-Theme
 Wir haben 9+ Themes. AI Elements nutzt shadcn/ui CSS Variables.
-- Muessen unsere Theme-Tokens auf shadcn/ui Naming gemappt werden?
-- Oder ueberschreibt AI Elements eigene Tokens?
+- Müssen unsere Theme-Tokens auf shadcn/ui Naming gemappt werden?
+- Oder überschreibt AI Elements eigene Tokens?
 
 ### TH-5: Bundle-Groesse
 AI Elements wird als Source installiert (shadcn-Stil, kein NPM-Paket).
@@ -116,7 +116,7 @@ AI Elements wird als Source installiert (shadcn-Stil, kein NPM-Paket).
 ### TH-6: Browser-Direct AI Calls
 Vercel AI SDK erwartet typischerweise einen Server-Endpoint.
 Unser Dexie-Modus macht Browser-Direct Calls.
-- Adapter noetig der Browser-Direct als "Server" simuliert
+- Adapter nötig der Browser-Direct als "Server" simuliert
 - Oder: AI Elements nur als UI-Layer, eigene Call-Logik behalten
 
 ## Roadmap-Tasks
@@ -125,14 +125,14 @@ Unser Dexie-Modus macht Browser-Direct Calls.
 - AIE-01: shadcn/ui Kompatibilitaets-Audit (TH-1, TH-4)
 - AIE-02: AI Elements installieren (nur benoetigte Komponenten)
 - AIE-03: CodeBlock in IT/Programmierung Lektionen einsetzen
-- AIE-04: Reasoning-Anzeige fuer AI Content Validation (EXP-033)
+- AIE-04: Reasoning-Anzeige für AI Content Validation (EXP-033)
 
 ### Phase 2: Session-Chat Migration
-- AIE-05: Adapter fuer Browser-Direct AI Calls (TH-6)
+- AIE-05: Adapter für Browser-Direct AI Calls (TH-6)
 - AIE-06: Conversation + Message ersetzen Custom-Renderer
 - AIE-07: PromptInput ersetzen Custom-Eingabefeld
-- AIE-08: MessageAction fuer Feedback-Buttons
-- AIE-09: i18n-Wrapper fuer AI Elements Labels (TH-3)
+- AIE-08: MessageAction für Feedback-Buttons
+- AIE-09: i18n-Wrapper für AI Elements Labels (TH-3)
 
 ### Phase 3: Neue Capabilities
 - AIE-10: Streaming-Anzeige (Token-by-Token)
@@ -146,13 +146,13 @@ Unser Dexie-Modus macht Browser-Direct Calls.
    Ist sie kompatibel mit AI Elements?
 
 2. Nutzt die AI-Session bereits Streaming, oder sind es
-   vollstaendige Antworten? (bestimmt Prio von AIE-10)
+   vollständige Antworten? (bestimmt Prio von AIE-10)
 
 3. Soll der Vercel AI SDK (`ai` Package) als Dependency
    aufgenommen werden, oder nur die UI-Komponenten?
 
 4. Gibt es einen bestehenden AI-Chat-View den wir
-   als Referenz fuer die Migration nehmen koennen?
+   als Referenz für die Migration nehmen können?
 
 5. Ist die 42-Zellen-Matrix (Prompt-Templates) rein
    Backend/Logik oder hat sie UI-Implikationen?
@@ -167,7 +167,7 @@ Unser Dexie-Modus macht Browser-Direct Calls.
 | Risiko | Niedrig bei Option A (schrittweise) |
 | Mehrwert | Hoch (Streaming, Reasoning, A11y, Maintenance) |
 | Bundle Impact | Gering (Source-Install, Tree-Shakeable) |
-| Kompatibilitaet | Zu pruefen (TH-1, TH-4, TH-6) |
+| Kompatibilität | Zu prüfen (TH-1, TH-4, TH-6) |
 
 ---
 
@@ -178,7 +178,7 @@ Code (Stand v1.88.0 / `develop`) beantwortet. Quelle jeweils in Klammern.
 
 ### Antworten auf die offenen Fragen
 
-**F1 — shadcn/ui-Version + Kompatibilitaet (TH-1):**
+**F1 — shadcn/ui-Version + Kompatibilität (TH-1):**
 **Kompatibel.** `frontend/components.json`: `style: "new-york"`,
 `cssVariables: true`, `baseColor: "neutral"`, `iconLibrary: "lucide"`,
 `css: "src/styles/tailwind.css"`, Aliase `@/components`, `@/components/ui`,
@@ -192,53 +192,53 @@ bzw. `shadcn add`) sollte ohne Anpassung greifen.
 **Ja, schon implementiert.** Der Custom-Renderer
 `frontend/src/components/SessionChat.tsx` hat seit v1.6.0 einen
 `streaming`-State, SSE-Deltas und einen Trailing-Cursor (`▍`), und rendert
-Markdown waehrend des Streams. Backend: der `ai_complete_stream`-Hook +
+Markdown während des Streams. Backend: der `ai_complete_stream`-Hook +
 `/message/stream` existieren und sind in **allen drei** Provider-Plugins
 (anthropic/openai/gemini) implementiert. **Folge:** AIE-10 ("Streaming
-Token-by-Token") ist **kein neues Feature** — es waere nur eine
-Re-Implementierung auf AI-Elements-Basis. Prioritaet runter.
+Token-by-Token") ist **kein neues Feature** — es wäre nur eine
+Re-Implementierung auf AI-Elements-Basis. Priorität runter.
 
 **F3 — Vercel AI SDK als Dependency?**
 Aktuell **nicht installiert** (kein `ai`, kein `@ai-sdk/react` in
 `package.json`). **Empfehlung: NICHT aufnehmen.** AI Elements als reinen
 **UI-Layer** verwenden (Komponenten ohne `useChat`), gespeist aus unserer
-bestehenden Call-Logik. Das umgeht TH-2 und TH-6 vollstaendig und erhaelt
+bestehenden Call-Logik. Das umgeht TH-2 und TH-6 vollständig und erhält
 Multi-Provider + Browser-Direct + die Dual-Prompt-Architektur. Ein
-`ai-sdk`-Transport-Adapter waere machbar, dupliziert aber unsere
-funktionierende Aufruf-Schicht — nur sinnvoll, falls spaeter AI-SDK-only
+`ai-sdk`-Transport-Adapter wäre machbar, dupliziert aber unsere
+funktionierende Aufruf-Schicht — nur sinnvoll, falls später AI-SDK-only
 Features (Tool-Calls, generative UI) konkret gebraucht werden.
 
 **F4 — Bestehender AI-Chat-View als Referenz?**
 Ja: `frontend/src/pages/Session.tsx` (Seite, ~629 Zeilen) +
 `frontend/src/components/SessionChat.tsx` (Custom-Renderer mit
-Streaming/Markdown/Bubbles). Das sind die Migrationsziele fuer AIE-06/07.
+Streaming/Markdown/Bubbles). Das sind die Migrationsziele für AIE-06/07.
 
 **F5 — 42-Zellen-Matrix Backend oder UI?**
 **Rein Backend/Logik, null UI-Implikationen.** Sie lebt im Session-Plugin
 (`plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py`:
-`METHODS`, `MIN_STEP`/`MAX_STEP`, `build_analysis_context`; konsumiert ueber
+`METHODS`, `MIN_STEP`/`MAX_STEP`, `build_analysis_context`; konsumiert über
 den `create_session_prompt`-Hook). Die Chat-UI-Migration ist davon
-unabhaengig — die Templates bleiben unangetastet.
+unabhängig — die Templates bleiben unangetastet.
 
 ### Revidierte TH-Bewertung
 
-- **TH-1 (shadcn-Kompat): geloest** — Standard-Setup, passt.
-- **TH-4 (Multi-Theme): weitgehend geloest.** Die `@theme inline`-Bruecke in
+- **TH-1 (shadcn-Kompat): gelöst** — Standard-Setup, passt.
+- **TH-4 (Multi-Theme): weitgehend gelöst.** Die `@theme inline`-Brücke in
   `frontend/src/styles/tailwind.css` definiert bereits alle shadcn-Tokens,
   die AI Elements liest: `--color-background/foreground/muted/
   muted-foreground/border/primary/primary-foreground/secondary/accent/ring/
   card/popover/input/destructive`. Diese mappen auf unsere per-Theme-Tokens
   (`--accent`, `--bg-*`, `--fg-*` …), d.h. AI Elements **themed automatisch
-  ueber alle 12 Themes**. **Caveat:** shadcn-`accent` ist semantisch eine
-  *gedaempfte Hover-Flaeche*, in unserer Bruecke aber bewusst auf die
+  über alle 12 Themes**. **Caveat:** shadcn-`accent` ist semantisch eine
+  *gedämpfte Hover-Fläche*, in unserer Brücke aber bewusst auf die
   **Marken**-Akzentfarbe gelegt (`--color-accent: var(--accent)`). AI-Elements-
-  Hover-Flaechen wuerden dadurch markenfarbig getoent. Beim Einbau visuell
-  pruefen; ggf. `--color-accent` auf einen Surface-Token remappen
+  Hover-Flächen würden dadurch markenfarbig getoent. Beim Einbau visuell
+  prüfen; ggf. `--color-accent` auf einen Surface-Token remappen
   (Design-Token-Regel beachten — kein Hardcode).
 - **TH-2 / TH-6 (AI SDK / Browser-Direct): umgehbar** — siehe F3
   (Pure-UI-Layer, keine SDK-Dependency, kein Server-Transport-Adapter).
 - **TH-3 (i18n): offen, real.** AI Elements liefert englische Default-Labels/
-  Aria-Texte. Vor dem Einbau pruefen, welche Komponenten Label-Props bieten;
+  Aria-Texte. Vor dem Einbau prüfen, welche Komponenten Label-Props bieten;
   wo nicht, ein duenner Wrapper mit `useI18n()` (Pattern wie `shared/`-
   Komponenten: Labels als Props mit EN-Defaults, App injiziert die 11
   Sprachen). Da AI Elements als **Source** installiert wird, ist Patchen/
@@ -249,19 +249,19 @@ unabhaengig — die Templates bleiben unangetastet.
   kuratierten** `highlight.js` (`frontend/src/components/content/CodeBlock.tsx`
   + `lib/content/hljs`). Zwei Highlighter = Bundle-Doppelung. Siehe AIE-03.
 
-### Revidierte Task-Prioritaeten (Konsequenz des Audits)
+### Revidierte Task-Prioritäten (Konsequenz des Audits)
 
-- **AIE-04 (Reasoning-Anzeige): hoechster Phase-1-Wert** — echt neu (heute
+- **AIE-04 (Reasoning-Anzeige): höchster Phase-1-Wert** — echt neu (heute
   gibt es keine Reasoning-UI), passt zu EXP-033. Hier zuerst.
 - **AIE-01 (Kompat-Audit): groesstenteils mit diesem Dokument erledigt** —
   bleibt als formaler Check beim Install (`shadcn add` Smoke + 12-Theme-
   Sichtpruefung + axe).
-- **AIE-03 (CodeBlock): herabstufen / kritisch pruefen.** Wir haben bereits
+- **AIE-03 (CodeBlock): herabstufen / kritisch prüfen.** Wir haben bereits
   einen guten lazy CodeBlock (Copy + Language-Label + Output + kuratiertes
-  hljs). AI-Elements-CodeBlock zu uebernehmen riskiert Bundle-Doppelung
-  (zweiter Highlighter) fuer marginalen Mehrwert. Empfehlung: bestehenden
+  hljs). AI-Elements-CodeBlock zu übernehmen riskiert Bundle-Doppelung
+  (zweiter Highlighter) für marginalen Mehrwert. Empfehlung: bestehenden
   CodeBlock behalten; AI-Elements-CodeBlock allenfalls *innerhalb* der
-  Chat-Oberflaeche, falls dort gebraucht — nicht den Lektions-CodeBlock
+  Chat-Oberfläche, falls dort gebraucht — nicht den Lektions-CodeBlock
   ersetzen.
 - **AIE-10 (Streaming): herabstufen** — existiert bereits (F2). Nur als
   Refinement im Zuge von AIE-06 relevant, kein eigenstaendiges Feature.
@@ -270,10 +270,10 @@ unabhaengig — die Templates bleiben unangetastet.
 
 ### Empfehlung (revidiert)
 
-Option A bleibt richtig, aber **Phase 1 fuehrt mit AIE-04 (Reasoning)** und
+Option A bleibt richtig, aber **Phase 1 führt mit AIE-04 (Reasoning)** und
 nutzt AI Elements durchgehend als **Pure-UI-Layer ohne Vercel AI SDK**.
 AIE-03 (CodeBlock-Ersatz) und AIE-10 (Streaming) sind durch bereits
-vorhandene, gute Loesungen entwertet und werden zurueckgestellt. Damit ist
+vorhandene, gute Lösungen entwertet und werden zurückgestellt. Damit ist
 der erste mergebare Schritt klein, netto-additiv und risikoarm.
 
 ## Fragen / Annahmen (Audit)
@@ -284,7 +284,7 @@ der erste mergebare Schritt klein, netto-additiv und risikoarm.
   Notiz in `components/ui/button.tsx`), werden die benoetigten Komponenten
   analog hand-portiert.
 - **Offen (Produktentscheidung, nicht aus Code ableitbar):** Ob Phase 2/3
-  ueberhaupt gewuenscht ist (Custom-SessionChat funktioniert inkl.
+  überhaupt gewünscht ist (Custom-SessionChat funktioniert inkl.
   Streaming), oder ob nur Phase 1 (AIE-04 Reasoning) umgesetzt wird. Diese
   Exploration empfiehlt, mit AIE-04 zu starten und nach dem ersten
   mergebaren Schritt neu zu entscheiden.

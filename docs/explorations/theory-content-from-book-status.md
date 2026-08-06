@@ -1,4 +1,4 @@
-# Theorie-Content aus Lehrbuch fuer Lektionen: Stand der Dinge
+# Theorie-Content aus Lehrbuch für Lektionen: Stand der Dinge
 
 **Stand:** 2026-07-16
 **Typ:** Status- und Verifikations-Dokument (kein neues EXP, keine
@@ -6,10 +6,10 @@ Design-Entscheidung)
 **Verwandt:** EXP-021 (Lektions-Creator), EXP-025 (Author-provided Lesson
 Sets / Buch-Begleiter), EXP-036 (KI-Uebungsgenerierung aus Theorie-Content)
 
-> Dieses Dokument loest die frueheren, ehrlich-unsicheren
+> Dieses Dokument löst die früheren, ehrlich-unsicheren
 > Zusammenstellungen ("vermutlich nie fertig verfolgt") gegen den echten
 > Code-Stand auf. Zwei Punkte, die als lose Faeden galten, sind in
-> Wirklichkeit fertige, schema-gestuetzte Features. Die Luecken-Analyse
+> Wirklichkeit fertige, schema-gestützte Features. Die Lücken-Analyse
 > wird dadurch **kleiner und praeziser**: nicht "Feature fehlt", sondern
 > "Feature existiert, nur der Eingabepfad vom Wizard dorthin fehlt".
 
@@ -20,27 +20,27 @@ Sets / Buch-Begleiter), EXP-036 (KI-Uebungsgenerierung aus Theorie-Content)
 ### 1.1 Lektionsstruktur
 
 Jede Lektion (`ContentLesson`) hat `steps[]`, gemischt aus Theorie-Schritten
-(Markdown-`body`) und Uebungs-Schritten. Das ist die Grundstruktur, in die
-Theorie-Content hineinfliesst - unabhaengig davon, woher er stammt.
+(Markdown-`body`) und Übungs-Schritten. Das ist die Grundstruktur, in die
+Theorie-Content hineinfliesst - unabhängig davon, woher er stammt.
 
 ### 1.2 `theory_ref` - FERTIG, nicht offen (#709)
 
-Der frueher als "loser Faden" eingeordnete Punkt ist implementiert:
+Der früher als "loser Faden" eingeordnete Punkt ist implementiert:
 
-- **Schema-Feld** auf Uebungs-Steps: `theory_ref` (String, `maxLength 200`,
+- **Schema-Feld** auf Übungs-Steps: `theory_ref` (String, `maxLength 200`,
   optional) - `schema/lesson-step.schema.json`, generiert nach TS und Python.
 - **Aufloesungslogik** in `frontend/src/lib/lesson/theory-link.ts`:
   `findTheoryIndexByRef` matcht die Annotation exakt gegen einen
   Theorie-Step - zuerst per **id**, dann per **title**. Fallback-Kette:
   explizites `theory_ref` (#709) -> Text-Overlap-Heuristik (#634) ->
-  naechster vorangehender Theorie-Step. Die Autoren-Annotation gewinnt
+  nächster vorangehender Theorie-Step. Die Autoren-Annotation gewinnt
   immer.
 
 **Wichtige Abgrenzung (leicht misszuverstehen):** `theory_ref` verlinkt
-**innerhalb** einer Lektion (Uebung -> Theorie-Step). Es ist **kein** Verweis
+**innerhalb** einer Lektion (Übung -> Theorie-Step). Es ist **kein** Verweis
 auf eine externe Quelle (Buchtitel/Kapitel/Seite). Wer einen externen
 Buchverweis sucht, findet ihn hier nicht - dafuer ist der `book`-Block
-(1.3) zustaendig.
+(1.3) zuständig.
 
 ### 1.3 Buch-Metadaten-Block `book` - FERTIG (#769)
 
@@ -53,15 +53,15 @@ Buchverweis sucht, findet ihn hier nicht - dafuer ist der `book`-Block
 
 Das ist exakt der Block, den die manuell gebauten Buch-Sets nutzen (siehe
 Abschnitt 2). Er existiert im Schema - was fehlt, ist ein **Eingabefeld im
-Wizard**, das ihn befuellt.
+Wizard**, das ihn befüllt.
 
 ### 1.4 Analyse-zu-Lektion / KI-Uebungsgenerierung - vorhanden
 
 - `frontend/src/lib/content/analysis/analysis-to-lesson.ts` erzeugt
-  deterministisch eine spielbare Lektion (Theorie + Uebungen) aus einer
+  deterministisch eine spielbare Lektion (Theorie + Übungen) aus einer
   Chat-Analyse.
 - Ergaenzend die KI-Uebungsgenerierung aus reiner Prosa-Theorie
-  (generate -> quality-gate -> balance -> feedback, "Uebungen generieren"
+  (generate -> quality-gate -> balance -> feedback, "Übungen generieren"
   auf theorie-only Lektionen, braucht API-Key), umbrella EXP-036.
 
 Das ist der **strukturell naechstliegende** existierende Flow zu einem
@@ -73,28 +73,28 @@ Das ist der **strukturell naechstliegende** existierende Flow zu einem
 ## 2. Bewaehrter manueller Prozess (kein Nutzer-Feature)
 
 Zwei komplette Wissens-Sets wurden aus eigenen Buechern gebaut - **nicht**
-ueber den Wizard, sondern als direkter Agenten-Auftrag gegen das
+über den Wizard, sondern als direkter Agenten-Auftrag gegen das
 Content-Repo:
 
-- **"KI fuer Einsteiger"** (ASIN B0F43H6T2M, 10 Kapitel) -> 12 Lektionen.
-- **"Die Waehrung des Geistes"** -> 11 Lektionen (ueber mehrere
+- **"KI für Einsteiger"** (ASIN B0F43H6T2M, 10 Kapitel) -> 12 Lektionen.
+- **"Die Währung des Geistes"** -> 11 Lektionen (über mehrere
   Korrekturrunden).
 
 Gemeinsames Muster:
 
 - Pro Lektion 2-3 Theorie-Steps - **nicht** der Buchtext direkt kopiert,
   sondern das Wissen in eigenen Worten als Lerninhalt aufbereitet
-  (redaktionelle Vorgabe: Urheberrecht + Qualitaet).
-- 8-10 gemischte Uebungen pro Lektion.
+  (redaktionelle Vorgabe: Urheberrecht + Qualität).
+- 8-10 gemischte Übungen pro Lektion.
 - `source_language: de, target_language: de` (Wissens-Lektion, kein
   Sprachpaar).
 - Set-Manifest mit `book:`-Block (= 1.3), der auf das Amazon-Listing
   verweist.
 
-**Kern:** Der Prozess (Buch -> Struktur lesen -> Theorie + Uebungen pro
+**Kern:** Der Prozess (Buch -> Struktur lesen -> Theorie + Übungen pro
 Kapitel von Hand schreiben -> Content-Repo) existiert nur als manueller
 Agenten-Auftrag. Ein normaler Nutzer ohne Zugriff auf einen Coding-Agenten
-kann ihn nicht ausfuehren.
+kann ihn nicht ausführen.
 
 ---
 
@@ -107,11 +107,11 @@ Datei: `frontend/src/pages/lesson/CreateLesson.tsx`, Bausteine unter
   `blank`, `vocabulary`, `grammar`, `conversation`. Alle sprachlern-lastig;
   **keine** Wissens-/Buch-/Theorie-Vorlage.
 - **4 Schritte:** Metadaten (`MetadataStep`) -> Karten-Editor (`CardEditor`)
-  -> Uebungs-Generator (`ExerciseGenerator`) -> Speichern/Teilen
+  -> Übungs-Generator (`ExerciseGenerator`) -> Speichern/Teilen
   (`ReviewStep`).
 - **Einziger Import:** `importCards` (CSV mit `front`/`back`/`notes`).
   **Kein** Schritt "Theorie-Text eingeben/importieren".
-- **Kein** Eingabefeld fuer den `book`-Block aus 1.3.
+- **Kein** Eingabefeld für den `book`-Block aus 1.3.
 
 ---
 
@@ -120,20 +120,20 @@ Datei: `frontend/src/pages/lesson/CreateLesson.tsx`, Bausteine unter
 Weil `theory_ref` (#709) und `book` (#769) bereits im Schema/Code stehen,
 schrumpft die Luecke auf **zwei konkrete Bausteine** - nicht "alles neu":
 
-1. **Ein Eingabepfad im Wizard fuer strukturierten Buch-/Textinput**, der
+1. **Ein Eingabepfad im Wizard für strukturierten Buch-/Textinput**, der
    mit KI-Umformulierung Theorie-Steps erzeugt - analog
    `analysis-to-lesson`, aber Quelle = Buchkapitel statt Chat.
 2. **Ein Buch-Metadaten-Feld im Wizard**, das in den bereits existierenden
    `sets[].book`-Block schreibt.
 
-`theory_ref` und der `book`-Block muessen **nicht** gebaut werden - sie
-warten nur darauf, vom Wizard befuellt zu werden.
+`theory_ref` und der `book`-Block müssen **nicht** gebaut werden - sie
+warten nur darauf, vom Wizard befüllt zu werden.
 
 ---
 
 ## 5. Offene Fragen - ENTSCHIEDEN (2026-07-16), Feature-Auftrag #1743
 
-Die frueher offenen Fragen sind entschieden; daraus entstand der
+Die früher offenen Fragen sind entschieden; daraus entstand der
 scope-geklaerte Feature-Auftrag
 [#1743](https://github.com/astrapi69/adaptive-learner/issues/1743).
 Entscheidungen (Prinzip durchgaengig: **einfachere Variante zuerst**):
@@ -145,7 +145,7 @@ Entscheidungen (Prinzip durchgaengig: **einfachere Variante zuerst**):
    **keine** automatische Grenzenerkennung (Segmentierung ist eine
    redaktionelle Entscheidung, wie der manuelle Prozess zeigte).
 3. **Umformulierungs-Pflicht:** bleibt Design-Leitplanke, keine Wahl - die
-   KI muss umformulieren, nicht textnah zerlegen (Urheberrecht + Qualitaet).
+   KI muss umformulieren, nicht textnah zerlegen (Urheberrecht + Qualität).
 4. **Buch-Metadaten im Wizard:** ja, im **selben** Auftrag (schreibt
    `sets[].book`, #769) - sonst halbes Feature.
 
@@ -157,33 +157,33 @@ Die urspruenglichen Frageformulierungen bleiben unten als Herleitung stehen.
    Lektionsgrenzen (wie es der Agent manuell entschied) - oder fuegt der
    Nutzer selbst in Haeppchen ein?
 3. **Umformulierungs-Pflicht:** Die manuelle Vorgabe "nicht kopieren,
-   sondern in eigenen Worten" muss eine automatisierte Loesung **ebenfalls**
+   sondern in eigenen Worten" muss eine automatisierte Lösung **ebenfalls**
    erzwingen (KI-Umformulierung), nicht bloss strukturell zerlegen - sonst
    entstehen textnahe, urheberrechtlich heikle Lektionen. (Praktisch eher
    Design-Leitplanke als offene Wahl, aber explizit festzuhalten.)
 4. **Buch-Metadaten im Wizard:** Bekommt der Wizard ein `book`-Eingabefeld
    (Titel/Autor/ASIN/URL) analog zum Manifest, damit ein selbst erstelltes
-   Set denselben Buchverweis traegt wie die offiziellen Sets? (Schema
-   traegt es bereits - reine UI-/Flow-Frage.)
+   Set denselben Buchverweis trägt wie die offiziellen Sets? (Schema
+   trägt es bereits - reine UI-/Flow-Frage.)
 
 ---
 
 ## 6. Fazit
 
 Es gibt **kein** fertiges, ungenutztes "Theorie aus Lehrbuch"-Feature, das
-nur freigeschaltet werden muesste. Es gibt:
+nur freigeschaltet werden müsste. Es gibt:
 
-- einen **bewaehrten manuellen Prozess** (zweimal erfolgreich fuer eigene
-  Buecher),
+- einen **bewaehrten manuellen Prozess** (zweimal erfolgreich für eigene
+  Bücher),
 - einen strukturell aehnlichen **App-Flow** (KI-Chat-Import /
   `analysis-to-lesson`),
 - und **zwei bereits fertige Schema-Bausteine** (`theory_ref` #709,
   `book` #769), die auf einen Wizard-Eingabepfad warten.
 
-Ein Wizard-Feature "Theorie aus Lehrbuch" waere eine **Neuentwicklung des
+Ein Wizard-Feature "Theorie aus Lehrbuch" wäre eine **Neuentwicklung des
 Eingabepfads**, die sich am Chat-Import orientiert, aber buch-spezifisch
 angepasst ist (Kapitel-Struktur, Umformulierungs-Pflicht, `book`-Metadaten).
-Umfang: kleiner als urspruenglich eingeschaetzt, weil die Ziel-Datenstruktur
+Umfang: kleiner als ursprünglich eingeschaetzt, weil die Ziel-Datenstruktur
 schon steht.
 
 ---

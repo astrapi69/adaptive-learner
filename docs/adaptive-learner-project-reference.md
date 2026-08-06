@@ -108,7 +108,7 @@ Zahlen ist die OpenAPI-Spec unter `/openapi.json` plus
 
 ## 1. Was ist Adaptive Learner?
 
-Adaptives Lernsystem basierend auf der Artikelserie "Von Theorie zur Praxis" von Asterios Raptis (Medium). Erkennt den Lerntyp des Nutzers, fuehrt KI-gestuetzte Lernsessions durch und wechselt automatisch zwischen 6 Methoden.
+Adaptives Lernsystem basierend auf der Artikelserie "Von Theorie zur Praxis" von Asterios Raptis (Medium). Erkennt den Lerntyp des Nutzers, führt KI-gestützte Lernsessions durch und wechselt automatisch zwischen 6 Methoden.
 
 Kernthese: Die beste Lernmethode ist keine feste Methode, sondern die Faehigkeit, zwischen Methoden zu wechseln.
 
@@ -121,13 +121,13 @@ Langfristiges Ziel: Kommerzielles SaaS-Produkt. Core Open Source (MIT), Premium-
 Das Repo wurde aus der Bibliogon-Codebase (v0.33.0) extrahiert. In einer 32-Commit-Session wurde:
 
 - 11 Bibliogon-Plugins entfernt + gekoppelter Backend-Code gestripped
-- Mass-Rename bibliogon -> adaptive_learner ueber 373 Dateien
+- Mass-Rename bibliogon -> adaptive_learner über 373 Dateien
 - Domain-Models als EXAMPLE-DOMAIN markiert (Article, Book, Chapter, Comment, Author)
 - 256 Test-Dateien mit TEMPLATE-Headern versehen
 - CI Workflows, Makefile, Install-Scripts, i18n angepasst
 - Launcher (PyInstaller, cross-OS) erhalten und umbenannt
 
-Ergebnis: 1278 Backend-Tests gruen, 1104 Frontend-Tests gruen, null Bibliogon-Reste im Code.
+Ergebnis: 1278 Backend-Tests grün, 1104 Frontend-Tests grün, null Bibliogon-Reste im Code.
 
 ---
 
@@ -135,12 +135,12 @@ Ergebnis: 1278 Backend-Tests gruen, 1104 Frontend-Tests gruen, null Bibliogon-Re
 
 ### 3.1 Sechs Lernmethoden
 
-| Key | Methode | Farbe | Staerke |
+| Key | Methode | Farbe | Stärke |
 |-----|---------|-------|---------|
 | `deductive` | Deduktiv | #3B82F6 (Blau) | Strukturierte Regelsysteme |
 | `inductive` | Induktiv | #8B5CF6 (Violett) | Intuition wichtiger als Praezision |
 | `error_based` | Fehlerzentriert | #EF4444 (Rot) | Themen mit Teilwissen |
-| `dialogic` | Dialogisch | #10B981 (Gruen) | Hoher Stress, Motivationsaufbau |
+| `dialogic` | Dialogisch | #10B981 (Grün) | Hoher Stress, Motivationsaufbau |
 | `contextual` | Kontextuell | #F59E0B (Amber) | Transfer in reale Anwendungen |
 | `ai_adaptive` | KI-adaptiv | #6366F1 (Indigo) | Nutzer weiss nicht was passt |
 
@@ -149,16 +149,16 @@ Ergebnis: 1278 Backend-Tests gruen, 1104 Frontend-Tests gruen, null Bibliogon-Re
 1. **Input** (`input`) - Information, Beispiel, Aufgabe
 2. **Versuch** (`attempt`) - Anwendung ohne Sicherheitsnetz
 3. **Fehler** (`error`) - Abweichung zwischen Erwartung und Ergebnis
-4. **Feedback** (`feedback`) - Korrektur mit Erklaerung
-5. **Anpassung** (`adapt`) - Methode/Tempo/Fokus aendern
+4. **Feedback** (`feedback`) - Korrektur mit Erklärung
+5. **Anpassung** (`adapt`) - Methode/Tempo/Fokus ändern
 6. **Wiederholung** (`repeat`) - Erneuter Versuch
 7. **Integration** (`integrate`) - Wissen bleibt durch Erfahrung
 
-### 3.3 Git-Prinzip fuer Lernfortschritt
+### 3.3 Git-Prinzip für Lernfortschritt
 
 - "Commits" = abgeschlossene Sessions mit Metadaten
-- "Diffs" = Performance-Veraenderung zwischen Sessions
-- Fehlermuster-Erkennung ueber Zeit
+- "Diffs" = Performance-Veränderung zwischen Sessions
+- Fehlermuster-Erkennung über Zeit
 
 ### 3.4 Drei Werkzeug-Bausteine
 
@@ -232,7 +232,7 @@ astrapi69/bibliogon                    # Upstream (Buch-Autoren-Plattform)
 
 ---
 
-## 5. Domain-Migration (naechster Schritt)
+## 5. Domain-Migration (nächster Schritt)
 
 ### 5.1 Model-Mapping
 
@@ -248,7 +248,7 @@ astrapi69/bibliogon                    # Upstream (Buch-Autoren-Plattform)
 | - | LearningProfile | 6-Methoden-Gewichtung (0.0-1.0) |
 | - | LearningSession | Aktive Lernsession |
 | - | SessionMessage | Chat-Nachricht in Session |
-| - | SessionRating | Bewertung (Verstaendnis, Stress, Fit) |
+| - | SessionRating | Bewertung (Verständnis, Stress, Fit) |
 | - | ProgressCommit | Fortschritts-Snapshot |
 | - | MethodSwitch | Methodenwechsel-Dokumentation |
 | - | UserSettings | Provider-Auswahl, API-Keys |
@@ -398,7 +398,7 @@ class AdaptiveLearnerHookSpec:
 ## 10. Sicherheit
 
 - API-Keys: Fernet-verschluesselt in DB
-- Schluessel aus Umgebungsvariable `ADAPTIVE_LEARNER_SECRET_KEY`
+- Schlüssel aus Umgebungsvariable `ADAPTIVE_LEARNER_SECRET_KEY`
 - Kein Klartext-Key ans Frontend
 - CORS konfigurierbar via app.yaml
 - Test-Isolation: `.adaptive-learner-production` Marker-Tripwire
@@ -417,19 +417,19 @@ Jede Methode hat ein Prompt-Template. Dynamisch zusammengebaut aus:
 
 | Methode | Prompt-Kern |
 |---------|------------|
-| deductive | "Erklaere Regel zuerst, dann Uebungen" |
+| deductive | "Erkläre Regel zuerst, dann Übungen" |
 | inductive | "Gib Beispiele, Nutzer leitet Regel ab" |
-| error_based | "Provoziere typische Fehler, erklaere warum" |
-| dialogic | "Fuehre Gespraech, korrigiere sofort, Stress niedrig" |
+| error_based | "Provoziere typische Fehler, erkläre warum" |
+| dialogic | "Führe Gespräch, korrigiere sofort, Stress niedrig" |
 | contextual | "Simuliere Alltagssituation zum Thema" |
-| ai_adaptive | "Waehle passende Methode, begruende" |
+| ai_adaptive | "Wähle passende Methode, begründe" |
 
 ---
 
 ## 12. Methoden-Wechsel-Logik
 
-- Verstaendnis stagniert ueber 3 Sessions UND Stress > 3.0 -> Wechsel empfehlen
-- Empfohlene Methode: Naechstbeste aus Profil, die laenger nicht genutzt wurde
+- Verständnis stagniert über 3 Sessions UND Stress > 3.0 -> Wechsel empfehlen
+- Empfohlene Methode: Naechstbeste aus Profil, die länger nicht genutzt wurde
 - Nutzer entscheidet (Empfehlung, kein Zwang)
 - Wechsel-Grund dokumentiert in MethodSwitch.reason
 
@@ -437,31 +437,31 @@ Jede Methode hat ein Prompt-Template. Dynamisch zusammengebaut aus:
 
 ## 12a. Mobile / PWA-Architektur (Phase 9 / v0.6.0)
 
-Lernen ist von Natur aus mobil. v0.6.0 macht den Primaer-Use-Case
-dort zugaenglich, wo Lernende tatsaechlich lernen: auf dem
+Lernen ist von Natur aus mobil. v0.6.0 macht den Primär-Use-Case
+dort zugänglich, wo Lernende tatsächlich lernen: auf dem
 Smartphone. **Polish, kein Mobile-First-Rewrite** — die
-Desktop-Styles bleiben unveraendert; mobile Breakpoint-Regeln
-werden hinzugefuegt.
+Desktop-Styles bleiben unverändert; mobile Breakpoint-Regeln
+werden hinzugefügt.
 
 ### Architektur-Entscheidungen (Q1-Q6 aus Phase 9)
 
 | # | Frage | Entscheidung | Warum |
 |---|---|---|---|
 | Q1 | CSS-Strategie | Polish, nicht Rewrite | Bestehende Desktop-Styles funktionieren; Risiko-arme Erweiterung statt full-CSS-Refactor. Mobile-first-Rewrite bleibt eine separate Aufgabe. |
-| Q2 | Navigation auf Mobile | Hamburger-Drawer ueber Top-Bar | Spec sprach von "Sidebar auf Desktop, Hamburger auf Mobile". Bestehende Top-Bar funktioniert; "Sidebar" war lose Wortwahl. Hamburger + Drawer am Top-Bar-Standort. |
-| Q3 | Touch-Targets (44x44) | Nur unter 768px | Apple/Google-Guideline gilt fuer Touch. Desktop-Buttons werden nicht aufgeblaeht. |
-| Q4 | RatingDialog (Slider vs Buttons) | Universal: 1-5 Buttons | Slider fuer eine 5-stufige Skala ist auf jedem Geraet unpraezise UX. Einheitlicher Code-Pfad gewinnt. |
-| Q5 | Swipe-Gesten (Assessment) | Verschoben auf v0.7.x | Buttons funktionieren fuer prev/next. Gesten-Pass mit a11y-Implikationen (Tastatur, reduced-motion, Screen-Reader) lohnt eigene Phase. |
-| Q6 | Lighthouse + Geraete-Tests | Manuell beim Smoke-Tester | Lighthouse aus dieser Umgebung nicht ausfuehrbar. Playwright-Viewport-Pins decken den automatisierbaren Teil. |
+| Q2 | Navigation auf Mobile | Hamburger-Drawer über Top-Bar | Spec sprach von "Sidebar auf Desktop, Hamburger auf Mobile". Bestehende Top-Bar funktioniert; "Sidebar" war lose Wortwahl. Hamburger + Drawer am Top-Bar-Standort. |
+| Q3 | Touch-Targets (44x44) | Nur unter 768px | Apple/Google-Guideline gilt für Touch. Desktop-Buttons werden nicht aufgeblaeht. |
+| Q4 | RatingDialog (Slider vs Buttons) | Universal: 1-5 Buttons | Slider für eine 5-stufige Skala ist auf jedem Gerät unpraezise UX. Einheitlicher Code-Pfad gewinnt. |
+| Q5 | Swipe-Gesten (Assessment) | Verschoben auf v0.7.x | Buttons funktionieren für prev/next. Gesten-Pass mit a11y-Implikationen (Tastatur, reduced-motion, Screen-Reader) lohnt eigene Phase. |
+| Q6 | Lighthouse + Geräte-Tests | Manuell beim Smoke-Tester | Lighthouse aus dieser Umgebung nicht ausführbar. Playwright-Viewport-Pins decken den automatisierbaren Teil. |
 
 ### Komponenten + Hooks
 
 - **`InstallPrompt`** (`frontend/src/components/InstallPrompt.tsx`) —
-  faengt `beforeinstallprompt`-Event, rendert eigenen
+  fängt `beforeinstallprompt`-Event, rendert eigenen
   dismissable Banner, persistiert Dismissal in
   `localStorage[adaptive-learner.install_dismissed]`.
 - **`useOnlineStatus`** (`frontend/src/hooks/useOnlineStatus.ts`) —
-  reaktiver Online/Offline-Hook ueber `navigator.onLine` +
+  reaktiver Online/Offline-Hook über `navigator.onLine` +
   `online`/`offline`-Events.
 - **`Navigation.nav-online-indicator`** — `role="status"` mit
   Dot + Label, Label versteckt unter 768px.
@@ -471,13 +471,13 @@ werden hinzugefuegt.
 Wiring in `frontend/vite.config.ts` unter `VitePWA(...)`:
 
 - **Statische Assets** (JS, CSS, Fonts, Icons, HTML): Precache
-  ueber `globPatterns`.
+  über `globPatterns`.
 - **GET `/api/`**: NetworkFirst mit 4s-Timeout, 24h-LRU,
   60-Eintrag-Cap. Rueckkehrende Nutzer sehen Dashboard /
   Progress / Commits offline.
 - **Mutating `/api/`** (POST/PATCH/DELETE): NetworkOnly. Niemals
   Write-Responses cachen.
-- **`navigateFallback: "/index.html"`** fuer SPA-Routing.
+- **`navigateFallback: "/index.html"`** für SPA-Routing.
 - **`navigateFallbackDenylist: [/^\/api\//]`** verhindert, dass
   die SPA-Shell echte Backend-Fehler maskiert.
 - **`offline.html`** als precache-eintrag — statisches
@@ -489,10 +489,10 @@ Wiring in `frontend/vite.config.ts` unter `VitePWA(...)`:
 - `name: "Adaptive Learner"` / `short_name: "Adaptive"` (≤12
   Zeichen pro Android-Empfehlung).
 - Icons 192/512 als SVG (`purpose: "any"`) + PNG
-  (`purpose: "any maskable"` fuer Android-Cropping).
+  (`purpose: "any maskable"` für Android-Cropping).
 - `theme_color: "#6366f1"` (entspricht `--accent` CSS-Variable).
 - `categories: ["education", "productivity"]` + `lang: "en"`
-  fuer Store-Listings.
+  für Store-Listings.
 
 ### Offline-Verhalten
 
@@ -505,12 +505,12 @@ Wiring in `frontend/vite.config.ts` unter `VitePWA(...)`:
 
 ### Test-Abdeckung
 
-- `e2e/smoke/mobile-viewports.spec.ts` parametrisiert ueber 4
+- `e2e/smoke/mobile-viewports.spec.ts` parametrisiert über 4
   Viewports (iPhone SE 375, iPhone 14 390, Pixel 7 412,
   iPad 768) mit je 4 Checks: kein horizontaler Overflow,
   Hamburger sichtbar, Dashboard kein Overflow, Online-Indikator
   sichtbar. 16 neue E2E-Cases.
-- Vitest-Tests fuer `InstallPrompt`, `useOnlineStatus`,
+- Vitest-Tests für `InstallPrompt`, `useOnlineStatus`,
   `Navigation`-Hamburger + Indikator, `RatingDialog`-Buttons,
   `Session`-Offline-Guard.
 
@@ -531,7 +531,7 @@ Wiring in `frontend/vite.config.ts` unter `VitePWA(...)`:
 - Frontend: Onboarding, Assessment, Dashboard, Session, Settings
 - i18n: DE + EN
 
-### Phase 2: Multi-Provider + vollstaendige i18n
+### Phase 2: Multi-Provider + vollständige i18n
 
 - Plugin: ai-openai, ai-gemini
 - Provider-Auswahl im Frontend
@@ -555,7 +555,7 @@ Wiring in `frontend/vite.config.ts` unter `VitePWA(...)`:
 
 ## 14. Template-Projekt
 
-Nach dem Cleanup wurde v0.0.0-template getaggt. Dieses Template dient als Basis fuer zukuenftige PluginForge-basierte Apps:
+Nach dem Cleanup wurde v0.0.0-template getaggt. Dieses Template dient als Basis für zukünftige PluginForge-basierte Apps:
 
 ```bash
 # Neues Projekt aus Template
@@ -589,7 +589,7 @@ Beschreibung: "Full-stack application template built on PluginForge. FastAPI + R
 | Sprachen | 5: DE, EN, ES, FR, EL |
 | Naming | Direct: adaptive_learner / AdaptiveLearner / ADAPTIVE_LEARNER |
 | UI-Name | "Adaptive Learner" (mit Space) |
-| Bibliogon-Docs | Historische loeschen, infrastrukturelle adaptieren |
+| Bibliogon-Docs | Historische löschen, infrastrukturelle adaptieren |
 | Book Model Strip (C1) | Deferred (T-01), erledigt sich bei Domain-Migration |
 | Plugin-gekoppelte Routes | Option A: Sauber rausschneiden, keine Stubs |
 | Template-Tag | v0.0.0-template |
@@ -597,7 +597,7 @@ Beschreibung: "Full-stack application template built on PluginForge. FastAPI + R
 
 ---
 
-## 17. CC-Prompt fuer naechste Session (Domain-Migration)
+## 17. CC-Prompt für nächste Session (Domain-Migration)
 
 ```
 Read CLAUDE.md and .claude/rules/. This is the adaptive-learner project,
