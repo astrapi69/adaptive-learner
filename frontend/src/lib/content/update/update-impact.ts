@@ -19,10 +19,15 @@ import {elementKeysOf, type KeyBearingExercise} from "../../srs/element-keys";
 
 /**
  * A lesson exercise as the peek sees it: raw parsed JSON, not a constructed
- * ``ContentLessonExercise``. Only ``id`` is read here; every answer-bearing
- * field is read by the shared key rule (see {@link elementKeysOf}).
+ * ``ContentLessonExercise``. Only the id fields are read here; every
+ * answer-bearing field is read by the shared key rule (see
+ * {@link elementKeysOf}).
  */
-export type PeekExercise = KeyBearingExercise & {id?: string};
+export type PeekExercise = KeyBearingExercise & {
+    id?: string;
+    /** ``null`` admitted because the engine's generated type allows it. */
+    stable_id?: string | null;
+};
 
 /** A lesson as the peek sees it: its filename + its exercises. */
 export interface PeekLesson {
@@ -60,7 +65,12 @@ export function buildIncomingIdentities(
         lessonSet.add(lesson.filename);
         const byEx = new Map<string, Set<string> | null>();
         for (const ex of lesson.exercises) {
-            if (ex.id) byEx.set(ex.id, exerciseElementKeys(ex));
+            // #2130: an exercise is reachable under BOTH of its ids — the
+            // authored slug (pre-switch rows) and the stable_id (post-switch
+            // rows). Both entries share one key set.
+            const keys = ex.id || ex.stable_id ? exerciseElementKeys(ex) : null;
+            if (ex.id) byEx.set(ex.id, keys);
+            if (ex.stable_id) byEx.set(ex.stable_id, keys);
         }
         byLesson.set(lesson.filename, byEx);
     }
@@ -94,6 +104,11 @@ export interface UpdateImpact {
     lostLessons: string[];
     /** SRS identities the incoming version no longer resolves. */
     lostCards: SrsIdentity[];
+    /** #2188 — identities the author DECLARED retired (manifest
+     *  ``retired_ids``). A declared retirement is not an accident: these
+     *  rows are archived on apply (history kept, out of scheduling), so
+     *  they never make the update breaking. */
+    retiredCards: SrsIdentity[];
     /** True when applying the update would orphan any progress-bearing identity. */
     breaking: boolean;
 }
@@ -103,25 +118,36 @@ export interface UpdateImpact {
  * progress + SRS identities. ``breaking`` is true iff at least one identity
  * the learner has would no longer resolve — that is exactly when the update
  * must be held for a decision instead of auto-applied. A superset update
- * (added lessons / exercises / accept-variants) is never breaking.
+ * (added lessons / exercises / accept-variants) is never breaking, and
+ * neither is an author-declared retirement (``retiredIds``, #2188) — those
+ * rows are archived on apply instead of orphaned.
  */
 export function computeUpdateImpact(
     progressLessonFilenames: readonly string[],
     srsIdentities: readonly SrsIdentity[],
     incoming: IncomingSetIdentities,
+    retiredIds: readonly string[] = [],
 ): UpdateImpact {
+    const retired = new Set(retiredIds);
     const lostLessons = [...new Set(progressLessonFilenames)].filter(
         (filename) => !incoming.lessons.has(filename),
     );
-    const lostCards = srsIdentities.filter((identity) => {
+    const unresolved = srsIdentities.filter((identity) => {
         const keys = incoming.byLesson.get(identity.lesson_id)?.get(
             identity.exercise_id,
         );
         return !keys || !keys.has(identity.element_key);
     });
+    const retiredCards = unresolved.filter((identity) =>
+        retired.has(identity.exercise_id),
+    );
+    const lostCards = unresolved.filter(
+        (identity) => !retired.has(identity.exercise_id),
+    );
     return {
         lostLessons,
         lostCards,
+        retiredCards,
         breaking: lostLessons.length > 0 || lostCards.length > 0,
     };
 }

@@ -25,11 +25,10 @@
  */
 
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import type {Ref} from "react";
+import type {ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
-import ExerciseHint from "../feedback/ExerciseHint";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../../lib/srs/element-attempt";
@@ -98,6 +97,12 @@ export interface MatchingExerciseProps extends ControlledExerciseProps {
      *  column labels, no language names, a "match each term to its
      *  definition" instruction. Optional; absent = language behaviour. */
     domain?: string | null;
+    /** #2453 — the chrome's conditional "Re-read theory" link (computed by
+     *  LessonStepView). Forwarded to MatchingPrompt so it shares the top
+     *  button row with the how-to disclosure instead of sitting on its own
+     *  line above the exercise. Null/absent when no theory chapter precedes
+     *  this step (or in Review / AdaptiveLesson, which omit it). */
+    theoryLink?: ReactNode;
 }
 
 
@@ -196,6 +201,7 @@ function MatchingExercise(
         codeMode = false,
         onAdvance,
         advanceLabel,
+        theoryLink,
     }: MatchingExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -528,19 +534,19 @@ function MatchingExercise(
                 codeMode={codeMode}
                 instruction={instruction}
                 matchedCount={matches.size}
+                totalPairs={pairs.length}
                 selectedLeft={selectedLeft}
                 leftTiles={leftTiles}
                 isKnowledge={isKnowledge}
                 submitted={submitted}
                 leftLabel={leftLabel}
                 rightLabel={rightLabel}
+                theoryLink={theoryLink}
             />
 
-            <ExerciseHint
-                exercise={exercise}
-                submitted={submitted}
-                testId="matching-hint-button"
-            />
+            {/* #2443 — no hint affordance for matching. Both columns are
+                fully visible, so a generated hint (first letter of an
+                already-readable word) adds nothing yet charged XP. */}
 
             <MatchingPostCheckToggle
                 submitted={submitted}
@@ -639,8 +645,6 @@ function MatchingExercise(
                 canCheck={allPaired}
                 onCheck={submit}
                 onRetry={reset}
-                matchedCount={matches.size}
-                totalPairs={pairs.length}
             />
         </section>
     );

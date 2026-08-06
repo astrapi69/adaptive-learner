@@ -19,7 +19,9 @@
  */
 
 import { getStorage } from "../../../storage";
+import { readLearnerState } from "../../learning/learnerState";
 import { assessSetUpdate } from "../update/assess-set-update";
+import { migrateSetExerciseIds } from "../update/stable-id-migration";
 import { listRepoManifestSets, validateUserRepo } from "./content-repo-validate";
 import { resolveRepoToken } from "./repo-token";
 import {
@@ -286,6 +288,10 @@ export interface SyncResult {
   lessonCount: number;
   /** Trust level after the sync's automatic re-validation. */
   trust: TrustLevel;
+  /** #2188 — learner rows archived because their identity was author-retired
+   *  (manifest ``retired_ids``) in an update this sync applied. The caller
+   *  surfaces the one-time notice with this count. */
+  retiredArchived: number;
 }
 
 /** Phase of a {@link syncUserRepo} run, for a progress indicator (#645). */
@@ -361,6 +367,7 @@ export async function syncUserRepo(
   );
   report("sets", 0, manifestSets.length);
   let lessonCount = 0;
+  let retiredArchived = 0;
   let done = 0;
   for (const manifestSet of manifestSets) {
     // #2128 — a background sync must NEVER silently overwrite a set whose
@@ -370,15 +377,43 @@ export async function syncUserRepo(
     // counts). A harmless update (superset / no learner data) applies as
     // before. A peek/read failure holds too — better a delayed update than a
     // silent loss; the next cycle or a manual update retries.
+    // #2130 — re-key this set's rows onto stable_id BEFORE assessing, so the
+    // assessment (and any later slug rename) meets version-stable keys.
+    // Idempotent; a failure only means the guard stays conservative.
+    const userId = readLearnerState().userId;
+    if (userId) {
+      try {
+        await migrateSetExerciseIds(userId, source, manifestSet.id);
+      } catch {
+        // Rows keep their current key; the next cycle retries.
+      }
+    }
     let held: boolean;
+    let assessment: Awaited<ReturnType<typeof assessSetUpdate>> = null;
     try {
-      held = (await assessSetUpdate(source, manifestSet.id))?.impact.breaking ?? false;
+      assessment = await assessSetUpdate(source, manifestSet.id);
+      held = assessment?.impact.breaking ?? false;
     } catch {
       held = true;
     }
     if (!held) {
       await storage.contentLoader.downloadSet(source, manifestSet.id);
       lessonCount += manifestSet.lessonCount;
+      // #2188 — the applied version declared retirements: archive the
+      // matching learner rows (history kept, out of scheduling). The count
+      // rides the SyncResult so the caller can surface the one-time notice.
+      if (userId && assessment && assessment.retiredIds.length > 0) {
+        try {
+          const { archived } = await storage.elementErrors.archiveRetired(
+            userId,
+            manifestSet.id,
+            assessment.retiredIds,
+          );
+          retiredArchived += archived;
+        } catch {
+          // Archival is repeatable; the next sync retries.
+        }
+      }
     }
     done += 1;
     report("lessons", done, manifestSets.length);
@@ -407,5 +442,5 @@ export async function syncUserRepo(
     trust,
   };
   await writeUserRepos(repos);
-  return { setCount: manifestSets.length, lessonCount, trust };
+  return { setCount: manifestSets.length, lessonCount, trust, retiredArchived };
 }

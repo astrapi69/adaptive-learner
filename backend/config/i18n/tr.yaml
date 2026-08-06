@@ -2025,6 +2025,7 @@ content:
     unmappable: '{count} tanesi güvenle eşleştirilemiyor ve sıfırlanacak. Orada sıra veya sayı değişti, bu yüzden tahmin yürütülmüyor.'
     carried_over: 'İlerleme korundu.'
     carry_over_failed: 'Güncelleme uygulandı, ancak ilerleme korunamadı.'
+    retired_archived: '{count} alıştırma yazar tarafından emekliye ayrıldı; ilgili ilerleme arşivlendi.'
   recovery:
     title: 'Düzeltilen dersler için tekrar ilerlemesini geri yükle'
     message: 'Bazı Japonca, Korece ve Çince (A1) derslerini düzelttik. Değişen ögeler için oluşturduğunuz tekrar kartları artık eşleşmiyor ve bu yüzden planlanmıyor. Bunları düzeltilmiş derslerle yeniden bağlayabilir ya da bir seti baştan başlatabilirsiniz. Yalnızca bu setler etkilenir; diğer setleriniz olduğu gibi kalır.'

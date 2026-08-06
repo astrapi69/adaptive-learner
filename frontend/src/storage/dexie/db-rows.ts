@@ -568,6 +568,10 @@ export interface ElementErrorRow {
     /** #603 Smart Review Queue — the last 10 attempts (ring buffer).
      *  Stored inline (non-indexed) so no Dexie version bump is needed. */
     attempt_history?: AttemptRecord[];
+    /** #2188 — author-declared retirement: set = archived (out of
+     *  scheduling + due counts, history kept). Absent/null = active.
+     *  Stored inline (non-indexed) so no Dexie version bump is needed. */
+    retired_at?: string | null;
     created_at: string;
     updated_at: string;
 }

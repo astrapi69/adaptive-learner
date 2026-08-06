@@ -15,7 +15,7 @@
  */
 
 import { getStorage } from "../../../storage";
-import { peekSetLessons } from "../../../storage/content/peek-set";
+import { peekSetUpdate } from "../../../storage/content/peek-set";
 import { readLearnerState } from "../../learning/learnerState";
 import {
     buildIncomingIdentities,
@@ -35,6 +35,9 @@ import {
 export interface SetUpdateAssessment {
     impact: UpdateImpact;
     incomingLessons: PeekLesson[];
+    /** #2188 — the incoming manifest's declared retirements, so the apply
+     *  path can archive the matching rows without a second peek. */
+    retiredIds: string[];
 }
 
 export async function assessSetUpdate(
@@ -56,7 +59,7 @@ export async function assessSetUpdate(
     // No learner data in this set → nothing to orphan → safe to apply.
     if (setProgress.length === 0 && setSrs.length === 0) return null;
 
-    const incomingLessons = await peekSetLessons(source, setId);
+    const {lessons: incomingLessons, retiredIds} = await peekSetUpdate(source, setId);
     const impact = computeUpdateImpact(
         setProgress.map((row) => row.lesson_filename),
         setSrs.map((row) => ({
@@ -65,6 +68,7 @@ export async function assessSetUpdate(
             element_key: row.element_key,
         })),
         buildIncomingIdentities(incomingLessons),
+        retiredIds,
     );
-    return {impact, incomingLessons};
+    return {impact, incomingLessons, retiredIds};
 }

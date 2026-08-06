@@ -35,6 +35,7 @@ import {canonicalDictationAnswer} from "../exercises/payload/dictation";
 import {canonicalImageDescriptionAnswer} from "../exercises/payload/image-description";
 import {resolveConcreteDirection} from "../exercises/direction";
 import {elementKeysOf} from "./element-keys";
+import {exerciseIdentityOf} from "./exercise-identity";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
 export interface AttemptContext {
@@ -51,11 +52,16 @@ function _baseAttempt(
     return {
         set_id: ctx.setId,
         lesson_id: ctx.lessonId,
-        exercise_id: exercise.id,
+        // #2130: rows are keyed by the version-stable identity (stable_id
+        // when the content ships one, authored id otherwise).
+        exercise_id: exerciseIdentityOf(exercise) ?? "",
         // EXP-018 / Phase 62: stamp the exercise's concrete drill
         // direction on every attempt so the SRS layer tracks
         // receptive vs productive mastery independently. Resolved
-        // centrally here so all five exercise types agree.
+        // centrally here so all five exercise types agree. The seed stays
+        // the AUTHORED id: switching it to stable_id would re-resolve every
+        // "random"-direction exercise and strand its rows on the other
+        // direction key (#2130).
         direction: resolveConcreteDirection(exercise.direction, exercise.id),
     };
 }

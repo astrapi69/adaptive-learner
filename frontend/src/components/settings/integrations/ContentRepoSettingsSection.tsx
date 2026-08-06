@@ -307,10 +307,20 @@ export default function ContentRepoSettingsSection() {
         return next;
       });
       try {
-        const { setCount, lessonCount, trust } = await syncUserRepo(
+        const { setCount, lessonCount, trust, retiredArchived } = await syncUserRepo(
           source,
           reportProgress,
         );
+        // #2188 — an applied update declared retirements: one notice, with
+        // the count, even on a quiet sync-all run.
+        if (retiredArchived > 0) {
+          notify.info(
+            t(
+              "content.update_guard.retired_archived",
+              "{count} exercises were retired by the author; the related progress is archived.",
+            ).replace("{count}", String(retiredArchived)),
+          );
+        }
         if (trust === 0) {
           notify.error(
             t(

@@ -56,6 +56,7 @@ import type {
     ElementError,
 } from "../../storage/types";
 
+import {matchesExerciseIdentity} from "../srs/exercise-identity";
 import type {ErrorCluster, PrioritizedElement} from "./types";
 
 export type ErrorTag =
@@ -127,7 +128,8 @@ function _isWordOrderError(
 ): boolean {
     if (!sourceLesson) return false;
     for (const step of sourceLesson.steps) {
-        if (step.exercise && step.exercise.id === error.exercise_id) {
+        // #2130: rows resolve under either the authored slug or stable_id.
+        if (step.exercise && matchesExerciseIdentity(step.exercise, error.exercise_id)) {
             return step.exercise.type === "word_tiles";
         }
     }
@@ -176,7 +178,7 @@ function _findSourceCard(
     if (!lesson) return null;
     let sourceExerciseCardIds: string[] | null = null;
     for (const step of lesson.steps) {
-        if (step.exercise && step.exercise.id === error.exercise_id) {
+        if (step.exercise && matchesExerciseIdentity(step.exercise, error.exercise_id)) {
             // card_ids is optional at runtime (card-less types omit it, #1636);
             // a card-less source exercise has no cards to inspect -> null below.
             sourceExerciseCardIds = step.exercise.card_ids ?? null;

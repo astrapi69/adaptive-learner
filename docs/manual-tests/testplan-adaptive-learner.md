@@ -379,13 +379,12 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       inhaltsbasiert, nicht positionsbasiert). iOS PWA/Standalone: dieselbe
       Prüfung auf dem zum Home-Bildschirm hinzugefügten Web-App-Icon
       durchführen.
-- [ ] Zuordnung: Tipp verrät die Lösung NICHT (#2390): eine Zuordnungsübung
-      öffnen, "Tipp anzeigen" (bis zu zweimal) antippen. Der erste Tipp nennt
-      nur ein Element ("Beginne mit „…""), der zweite nur den ANFANGSBUCHSTABEN
-      + die Länge des Partners ("Beginnt mit „…" (N Buchstaben)"). KEIN Tipp
-      nennt ein vollständiges Paar ("„X" gehört zu „Y"" darf nicht mehr
-      erscheinen). Tipps erscheinen weiterhin erst auf Anforderung (nicht von
-      Anfang an) und kosten XP. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
+- [ ] Zuordnung: KEIN Tipp-Knopf (#2443, ersetzt #2390): eine Zuordnungsübung
+      öffnen. Über den Spalten erscheint KEIN "Tipp anzeigen"-Knopf, und es wird
+      dafür KEIN XP abgezogen. Grund: bei Zuordnung stehen alle Wörter beider
+      Spalten vollständig auf dem Bildschirm, ein Anfangsbuchstaben-Hinweis
+      verrät nichts. Bei Freitext/Cloze/Wort-Kacheln bleibt der Tipp-Knopf wie
+      bisher erhalten. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
       Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
 - [ ] Zuordnung: kein falscher Untertitel/Spaltentitel bei Wissens-Sets (#2392):
       eine Zuordnungsübung eines WISSENS-Sets öffnen (nicht-sprachliche Domäne
@@ -396,15 +395,22 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       (Sprachnamen bzw. Term/Übersetzung + Richtungshinweis sichtbar). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
-- [ ] Zuordnung: Vorspann frisst den Bildschirm nicht mehr (#2391): eine
-      Zuordnungsübung auf einem KLEINEN Gerät (iPhone) öffnen. Über der ersten
-      Spalte steht nur noch: Aufgabenstellung, (bei Sprach-Sets) der
-      Richtungshinweis und ein einzeiliger Knopf „Wie funktioniert das?".
+- [ ] Zuordnung: Vorspann frisst den Bildschirm nicht mehr (#2391/#2444/#2453): eine
+      Zuordnungsübung auf einem KLEINEN Gerät (iPhone) öffnen. Der Knopf „Wie
+      funktioniert das?" sitzt OBEN in der Knopfzeile unter dem Titel, direkt
+      neben „Theorie nochmal lesen" (#2453) — sofern diesem Schritt eine Theorie
+      vorangeht. Ohne vorangehende Theorie fehlt „Theorie nochmal lesen", und
+      „Wie funktioniert das?" steht allein in derselben Zeile (gleiche Position).
+      Er sitzt NICHT mehr auf der Anweisungszeile („Paare verbinden …", #2453
+      korrigiert #2444). Auf 375px passt er ohne hässlichen Umbruch.
       Die Bedienanleitung („Waehle links …") und der „A → B"-Hinweis liegen
-      HINTER diesem Knopf (Klappe zu beim Öffnen; antippen klappt sie auf/zu).
-      Der Fortschrittszähler („2 / 5 zugeordnet") steht NICHT mehr oben, sondern
-      unten NEBEN dem „Antworten prüfen"-Knopf; nach dem Prüfen ersetzt ihn die
-      Punktzahl. Die zweite Spalte ist ohne langes Scrollen erreichbar.
+      HINTER diesem Knopf (zugeklappt beim Öffnen; antippen klappt auf/zu); beim
+      Aufklappen bricht der Inhalt sauber auf die nächste Zeile in voller Breite
+      um. Der Fortschrittszähler („2 / 5 zugeordnet") steht OBEN bei der
+      Aufgabenstellung (nicht mehr unten neben „Antworten prüfen"), damit er
+      während des Zuordnens sichtbar ist; nach dem Prüfen verschwindet er und die
+      Punktzahl erscheint unten (#2445). Die zweite Spalte ist ohne langes
+      Scrollen erreichbar.
       Barrierefreiheit: der Knopf ist per Tastatur bedienbar und der Inhalt für
       Screenreader auch zugeklappt erreichbar (natives <details>). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
@@ -1100,6 +1106,28 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       antippbar), Übernahme funktioniert im Dexie-Modus genauso.
 - [ ] Sprache pruefen (#2160): der Bestaetigungstext erscheint in der App-Sprache
       (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
+
+### Ausmusterung: archivierter Fortschritt bei retired_ids (#2188)
+
+Ort: Inhalte-Seite, Set mit Lernfortschritt, dessen Update im Set-Manifest
+`retired_ids` deklariert (Autor hat Übungen bewusst ausgemustert). In BEIDEN
+Speichermodi prüfen. Hintergrund: eine erklärte Ausmusterung ist kein
+Versehen - der zugehörige Fortschritt wird ARCHIVIERT (nicht gelöscht, nicht
+verwaist), verlässt Wiederholungsplanung und Fälligkeitszahlen, und der
+Nutzer erfährt es einmal, mit Zahl.
+
+- [ ] Update eines Sets mit deklarierten Ausmusterungen anwenden (manuell oder
+      Sync): Es erscheint EIN Hinweis-Toast mit der Anzahl ("N Übungen wurden
+      vom Autor ausgemustert; der zugehörige Lernfortschritt ist archiviert.").
+- [ ] Nur-Ausmusterungs-Update (keine sonstigen Identitäts-Änderungen):
+      KEIN Warndialog (#2128) - die Ausmusterung ist erklärt, nicht brechend;
+      das Update läuft durch, nur der Hinweis-Toast erscheint.
+- [ ] Nach dem Update: die ausgemusterten Elemente erscheinen NICHT mehr in der
+      Wiederholungs-Warteschlange und zählen NICHT mehr in die "N fällig"-Zahl.
+- [ ] Update erneut anstoßen: kein zweiter Toast, keine Doppel-Archivierung
+      (idempotent; Zahl wäre 0, kein Hinweis).
+- [ ] Sprache prüfen: der Hinweis erscheint in der App-Sprache (de/ja/ko
+      stichprobenartig).
 
 ### Wiederherstellung: Wiederholungsfortschritt nach ja/ko/zh-Korrektur (#2161)
 

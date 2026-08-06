@@ -58,6 +58,7 @@ const breakingImpact: UpdateImpact = {
     lostCards: [
         {lesson_id: "01.json", exercise_id: "ex-pic-1", element_key: "さようなら"},
     ],
+    retiredCards: [],
     breaking: true,
 };
 /** #2308 — the assessment now carries the peeked lessons so the dialog can

@@ -616,3 +616,36 @@ describe("deriveGradedQuizAttempts", () => {
         expect(deriveGradedQuizAttempts(broken, ctx, [])).toEqual([]);
     });
 });
+
+// --- #2130 stable_id key switch --------------------------------------------
+
+describe("exercise identity on attempts (#2130)", () => {
+    const base: ContentLessonExercise = {
+        id: "ex-match",
+        type: "matching",
+        prompt: "Match",
+        card_ids: [],
+        pairs: [{left: "Bonjour", right: "Hello"}],
+        distractors: [],
+    };
+    const matches = new Map<number, number>([[0, 0]]);
+
+    it("stamps stable_id as exercise_id when the lesson carries one", () => {
+        const exercise = {...base, stable_id: "greetings-match-x7"};
+        const attempts = deriveMatchingAttempts(exercise, CTX, matches);
+        expect(attempts.every((a) => a.exercise_id === "greetings-match-x7")).toBe(true);
+    });
+
+    it("falls back to the authored id when stable_id is absent", () => {
+        const attempts = deriveMatchingAttempts(base, CTX, matches);
+        expect(attempts.every((a) => a.exercise_id === "ex-match")).toBe(true);
+    });
+
+    it("keeps the direction seed on the authored id (a stable_id must not flip a random direction)", () => {
+        const random: ContentLessonExercise = {...base, direction: "random"};
+        const withStable = {...random, stable_id: "greetings-match-x7"};
+        const a = deriveMatchingAttempts(random, CTX, matches)[0];
+        const b = deriveMatchingAttempts(withStable, CTX, matches)[0];
+        expect(b.direction).toBe(a.direction);
+    });
+});

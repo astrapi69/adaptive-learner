@@ -13,7 +13,7 @@ import {describe, expect, it} from "vitest";
 
 const JSON_DIR = join(__dirname);
 const NON_EN = ["de", "el", "es", "fr", "hi", "id", "ja", "ko", "pt", "tr"];
-const KEYS = ["title", "message", "confirm", "cancel"] as const;
+const KEYS = ["title", "message", "confirm", "cancel", "retired_archived"] as const;
 
 function guard(lang: string): Record<string, string> {
     const cat = JSON.parse(

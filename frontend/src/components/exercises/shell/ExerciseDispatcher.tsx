@@ -15,7 +15,7 @@
  */
 
 import {forwardRef} from "react";
-import type {ReactElement, Ref} from "react";
+import type {ReactElement, ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import type {
@@ -142,6 +142,12 @@ export interface ExerciseDispatcherProps extends ControlledExerciseProps {
      *  whitespace-tolerant matching). Optional; review / adaptive
      *  sessions may pass an empty list and get the plain-text path. */
     cards?: ContentLessonCard[];
+    /** #2453 — the chrome's conditional "Re-read theory" link. Forwarded to
+     *  MatchingExercise so the matching renderer places it in its top button
+     *  row next to the how-to disclosure; for matching steps LessonStepView
+     *  suppresses its own copy and passes it here instead. Optional; only the
+     *  matching renderer reads it. */
+    theoryLink?: ReactNode;
     onComplete: (result: ExerciseScored) => Promise<void>;
 }
 
@@ -225,6 +231,7 @@ function ExerciseDispatcher(
         reviewed = null,
         onAdvance,
         advanceLabel,
+        theoryLink,
     }: ExerciseDispatcherProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -284,6 +291,7 @@ function ExerciseDispatcher(
                     targetLanguage={targetLanguage}
                     sourceLanguage={sourceLanguage}
                     domain={domain}
+                    theoryLink={theoryLink}
                     {...shared}
                 />
             </>

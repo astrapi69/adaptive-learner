@@ -20,8 +20,9 @@ import {planElementKeyRemaps, type RemapPlan} from "./remap-plan";
 import type {PeekExercise, PeekLesson, UpdateImpact} from "./update-impact";
 
 /** Pull the exercises out of a cached lesson, mirroring the peek's shape so
- *  both sides of the comparison are read the same way. */
-function cachedLessonToPeek(filename: string, lesson: ContentLesson): PeekLesson {
+ *  both sides of the comparison are read the same way. Shared with the
+ *  #2130 stable-id migration, which reads cached lessons the same way. */
+export function cachedLessonToPeek(filename: string, lesson: ContentLesson): PeekLesson {
     const exercises: PeekExercise[] = [];
     for (const step of lesson.steps ?? []) {
         const exercise = step.exercise;
