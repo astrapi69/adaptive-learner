@@ -31,3 +31,17 @@
 ## Statistik Runde 2
 - 2 PRs gemergt (#2440, #2441), 2 Issues geschlossen (#2306, #2273), 1 Upstream-Issue eingereicht (engine#127), 2 Analyse-/Statuskommentare (#2182, #2311).
 - Prämissen-Korrekturen: 3 (content#175 schon umgesetzt; review_status-Ebene; engine-Anmeldung fehlte).
+
+## 6. #2335 Ende-zu-Ende: engine#127 implementiert, released, konsumiert (11:00-11:40)
+- Original prompt: "machen wir weiter mit: #2335"
+- Goal: Die upstream angemeldete Schema-Erweiterung (Domain-Vokabular + Level-Sentinel) durch die ganze Kette treiben: Engine-Implementierung, Release, App-Konsum.
+- Result:
+  - **Engine** (learn-content-engine): content-domains.ts (KNOWN_CONTENT_DOMAINS, CEFR_LEVELS, LEVEL_NONE "none", zwei Prädikate) + Author-Lints W-DOMAIN-UNKNOWN / W-LEVEL-UNKNOWN in validateManifest (Warnung, blockiert nie - additiv wie review_status/#94). Schema-Beschreibungen dokumentieren den Kontrakt, Baseline-Spiegel im selben Commit, README-Surface-Zeilen (vom readme-exports-Gate erzwungen). RED-first, 773/773, release-check grün. PR #128 gemergt, engine#127 zu.
+  - **Release 0.20.0**: Release-PR #129 inkl. Changelog-Bereinigung (zwei per Tag-Containment als released nachgewiesene "Unreleased"-Sektionen nach [0.19.2] umgeheftet). Tag v0.20.0 auf dem verifizierten Merge-SHA, make publish, npm-Gegenprobe: 0.20.0 live.
+  - **App** (PR #2446, gemergt, #2335 zu): Re-Pin 0.17.0->0.20.0 + make sync-schema im selben PR (Regel lessons/ci-gates.md), Pin-Zwilling engine-version.txt; content-domains.ts leitet das Vokabular aus dem Engine-Export ab (eine Liste, eine Quelle), Engine-Barrel re-exportiert mit ENGINE_-Präfix (App-LEVEL_NONE "__none__" = Radix-UI-Sentinel, dokumentiert getrennt vom Engine-Content-Sentinel "none").
+  - **Zwei Schema-1.11-Folgefunde**: (a) Unicode-SlugId weist schlechte Ids jetzt auf Ajv-Ebene ab, drei Assertions akzeptieren beide Meldungskanäle; (b) Generator-Bug: der De-Reify-Pass von generate_pydantic_models.py scheiterte an Klammern IM Pattern-Wert (SlugId blieb RootModel, id.split() crashte) - Args-Matcher jetzt quote-bewusst. Ehrlich vermerkt: der erste make-test-Lauf maskierte das Rot hinter einer tail-Pipe (exit der Pipe = tail); korrigierter Lauf exit 0, Vitest 8348. Drittfund in CI: OpenAPI-Snapshot-Drift (#2281-Gate) durch das neue Pattern in der Spec - make sync-openapi, eigener Commit.
+- Commits: engine a56d9ba (PR #128) + a6ba4a9 (PR #129) + Tag v0.20.0; App 7406f74f + 877a92bf (PR #2446)
+
+## Statistik-Nachtrag
+- Kette: 2 Engine-PRs + 1 Engine-Release (npm) + 1 App-PR; Issues zu: engine#127, #2335.
+- Offene Issues danach: 11. Lehre für die Pipe-Maske: Exit-Codes nie durch tail verdecken - Gate-Lauf in Datei, Exit separat drucken.

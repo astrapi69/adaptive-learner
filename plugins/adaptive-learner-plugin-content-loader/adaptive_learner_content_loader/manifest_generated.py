@@ -143,7 +143,7 @@ class ContentSet(BaseModel):
     """
     domain: str = Field('language', max_length=60, min_length=1, title='Domain')
     """
-    Free-form domain tag ('language', 'math', 'programming', ...). Reserved for the EXP-005 domain-plugin interface; the loader treats it as opaque metadata.
+    Domain tag under the known-values-plus-other contract (engine#127): the canonical grouping vocabulary is KNOWN_CONTENT_DOMAINS (exported by the engine; 'language', 'knowledge', 'programming', 'software', 'psychology', 'math', 'ai', 'technology', 'philosophy', 'dog-training', 'traffic-knowledge'). Any other value stays VALID but draws the W-DOMAIN-UNKNOWN author lint, because consumers cannot group it with existing subjects. Reserved for the EXP-005 domain-plugin interface; the loader treats it as opaque metadata.
     """
     domain_label: str | None = Field(None, max_length=120, title='Domain Label')
     """
@@ -159,7 +159,7 @@ class ContentSet(BaseModel):
     """
     level: str = Field(..., max_length=20, min_length=1, title='Level')
     """
-    Difficulty / proficiency marker. CEFR (A1..C2) for languages, free-form for other domains.
+    Difficulty / proficiency marker. CEFR (A1..C2, case-insensitive) for language sets; non-language sets declare a CEFR band or the explicit no-level sentinel 'none' (engine#127). Other values stay VALID but draw the W-LEVEL-UNKNOWN author lint, so a consumer's level facet does not offer free-text junk as a category.
     """
     path: str | None = Field(None, max_length=300, title='Path')
     """
@@ -231,7 +231,7 @@ class ContentManifest(BaseModel):
     """
     metadata: dict[str, Any] = Field({}, title='Metadata')
     """
-    Free-form repo-level metadata (license, author, homepage URL, contact). The loader does not interpret these fields — they surface as-is in the Set Browser's 'About this source' panel.
+    Free-form metadata (license, author, homepage URL, contact), surfaced as-is in the Set Browser's 'About this source' panel. One key IS interpreted: on a SET-level manifest, ``metadata.lessons`` (a list of lesson filenames) steers which files the reference consumer downloads. It does NOT control display order - consumers sort lesson ids lexicographically (engine#106).
     """
     name: str = Field(..., max_length=200, min_length=1, title='Name')
     """
