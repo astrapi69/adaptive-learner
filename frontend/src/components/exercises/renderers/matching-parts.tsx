@@ -619,8 +619,6 @@ export function MatchingResultFooter({
     canCheck,
     onCheck,
     onRetry,
-    matchedCount,
-    totalPairs,
 }: {
     submitted: boolean;
     result: {correct: number; total: number} | null;
@@ -628,11 +626,6 @@ export function MatchingResultFooter({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
-    /** #2391 — the running pair count, shown pre-check right next to the
-     *  Check button: that is where attention is when the learner believes
-     *  they are done, and it explains a disabled Check ("3 / 5 paired"). */
-    matchedCount: number;
-    totalPairs: number;
 }) {
     const {t} = useI18n();
     const allCorrect =
@@ -641,20 +634,10 @@ export function MatchingResultFooter({
     const total = result?.total ?? 0;
     return (
         <div className="flex flex-wrap items-center gap-3">
-            {!submitted && (
-                <p
-                    className="m-0 text-[0.8125rem] font-medium text-[var(--fg-muted)]"
-                    aria-live="polite"
-                    data-testid="matching-counter"
-                >
-                    {t(
-                        "lesson.exercise.matching.counter",
-                        "{matched} / {total} paired",
-                    )
-                        .replace("{matched}", String(matchedCount))
-                        .replace("{total}", String(totalPairs))}
-                </p>
-            )}
+            {/* #2445 — the running pair count moved OUT of the footer up to the
+                prompt row (MatchingPrompt): during solving the learner's
+                attention is at the top, not at the bottom next to Check. The
+                footer now carries only the post-check score. */}
             {submitted && (
                 <>
                     <p
@@ -743,6 +726,7 @@ export function MatchingPrompt({
     codeMode,
     instruction,
     matchedCount,
+    totalPairs,
     selectedLeft,
     leftTiles,
     isKnowledge,
@@ -755,6 +739,7 @@ export function MatchingPrompt({
     codeMode: boolean;
     instruction: string;
     matchedCount: number;
+    totalPairs: number;
     selectedLeft: number | null;
     leftTiles: LeftTile[];
     isKnowledge: boolean;
@@ -769,6 +754,25 @@ export function MatchingPrompt({
                 <p className="m-0 flex-auto font-medium" data-testid="matching-prompt">
                     <InlineMarkdown>{prompt ?? ""}</InlineMarkdown>
                 </p>
+                {/* #2445 — the running pair count sits at the top by the prompt
+                    (the "heading"), where attention is while the learner is
+                    pairing. Gone once submitted (the footer shows the score).
+                    aria-live keeps the running count announced to screen
+                    readers. */}
+                {!submitted && (
+                    <p
+                        className="m-0 mt-0.5 shrink-0 whitespace-nowrap text-[0.8125rem] font-medium text-[var(--fg-muted)]"
+                        aria-live="polite"
+                        data-testid="matching-counter"
+                    >
+                        {t(
+                            "lesson.exercise.matching.counter",
+                            "{matched} / {total} paired",
+                        )
+                            .replace("{matched}", String(matchedCount))
+                            .replace("{total}", String(totalPairs))}
+                    </p>
+                )}
                 {ttsLang && !codeMode && (
                     <ReadAloudButton
                         text={prompt ?? ""}
@@ -778,14 +782,81 @@ export function MatchingPrompt({
                 )}
             </div>
 
-            {instruction && (
-                <p
-                    className="exercise-direction-instruction"
-                    data-testid="direction-instruction-matching"
+            {/* #2444 — the how-to disclosure shares the instruction's row so
+                it no longer eats a dedicated line above the first tile.
+                Collapsed: instruction on the left, "How it works" toggle on the
+                right. Open: the disclosure takes the full width and wraps to its
+                own line below (flex-wrap + [&[open]]:w-full). It stays in the
+                matching renderer because its content needs matching state
+                (isKnowledge, matchedCount, labels); the generic "Re-read theory"
+                chrome row is conditional and state-blind, so it cannot host it.
+                On a knowledge set the instruction is empty and the toggle sits
+                alone in the row. */}
+            <div
+                className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
+                data-testid="matching-meta-row"
+            >
+                {instruction && (
+                    <p
+                        className="exercise-direction-instruction m-0! flex-auto"
+                        data-testid="direction-instruction-matching"
+                    >
+                        {instruction}
+                    </p>
+                )}
+
+                {/* #2391 — on a phone the how-to text + the first-pair hint ate
+                    the space above the first tile. Collapse them behind a native
+                    <details> (a11y for free: keyboard + screen-reader can
+                    expand, and the content stays in the DOM when closed). */}
+                <details
+                    className="m-0 [&[open]]:w-full"
+                    data-testid="matching-help"
                 >
-                    {instruction}
-                </p>
-            )}
+                    <summary
+                        className="inline-flex cursor-pointer list-none items-center gap-1.5 self-start rounded-sm text-[0.8125rem] font-medium text-[var(--fg-secondary)] hover:text-[var(--accent-text)] [&::-webkit-details-marker]:hidden"
+                        data-testid="matching-help-toggle"
+                    >
+                        <HelpCircle size={14} aria-hidden="true" />
+                        {t("lesson.exercise.matching.help_toggle", "How it works")}
+                    </summary>
+                    <div className="mt-1.5 flex flex-col gap-1.5">
+                        <p
+                            className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
+                            data-testid="matching-instructions"
+                        >
+                            {isKnowledge
+                                ? t(
+                                      "lesson.exercise.matching.instructions_knowledge",
+                                      "Select an item on the left, then its match on the right.",
+                                  )
+                                : t(
+                                      "lesson.exercise.matching.instructions",
+                                      "Select an item on the left, then its matching translation on the right.",
+                                  )}
+                        </p>
+
+                        {/* First-pair flow hint: disappears once the learner
+                            has made their first pair (they understand the
+                            mechanic). */}
+                        {matchedCount === 0 && !submitted && (
+                            <p
+                                className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
+                                data-testid="matching-flow-hint"
+                            >
+                                <span>{leftLabel}</span>
+                                <span
+                                    className="font-bold text-[var(--accent-text)]"
+                                    aria-hidden="true"
+                                >
+                                    &rarr;
+                                </span>
+                                <span>{rightLabel}</span>
+                            </p>
+                        )}
+                    </div>
+                </details>
+            </div>
 
             {/* UX bugfix — announce the current selection to screen
                 readers (the visual highlight is not conveyed otherwise). */}
@@ -801,55 +872,6 @@ export function MatchingPrompt({
                       ).replace("{label}", leftTiles[selectedLeft]?.label ?? "")
                     : ""}
             </span>
-
-            {/* #2391 — on a phone the how-to text + the first-pair hint ate
-                the space above the first tile. Collapse them behind a native
-                <details> (a11y for free: keyboard + screen-reader can expand,
-                and the content stays in the DOM when closed). The running
-                counter moved to the footer, next to Check. */}
-            <details className="m-0" data-testid="matching-help">
-                <summary
-                    className="inline-flex cursor-pointer list-none items-center gap-1.5 self-start rounded-sm text-[0.8125rem] font-medium text-[var(--fg-secondary)] hover:text-[var(--accent-text)] [&::-webkit-details-marker]:hidden"
-                    data-testid="matching-help-toggle"
-                >
-                    <HelpCircle size={14} aria-hidden="true" />
-                    {t("lesson.exercise.matching.help_toggle", "How it works")}
-                </summary>
-                <div className="mt-1.5 flex flex-col gap-1.5">
-                    <p
-                        className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
-                        data-testid="matching-instructions"
-                    >
-                        {isKnowledge
-                            ? t(
-                                  "lesson.exercise.matching.instructions_knowledge",
-                                  "Select an item on the left, then its match on the right.",
-                              )
-                            : t(
-                                  "lesson.exercise.matching.instructions",
-                                  "Select an item on the left, then its matching translation on the right.",
-                              )}
-                    </p>
-
-                    {/* First-pair flow hint: disappears once the learner has
-                        made their first pair (they understand the mechanic). */}
-                    {matchedCount === 0 && !submitted && (
-                        <p
-                            className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
-                            data-testid="matching-flow-hint"
-                        >
-                            <span>{leftLabel}</span>
-                            <span
-                                className="font-bold text-[var(--accent-text)]"
-                                aria-hidden="true"
-                            >
-                                &rarr;
-                            </span>
-                            <span>{rightLabel}</span>
-                        </p>
-                    )}
-                </div>
-            </details>
         </>
     );
 }

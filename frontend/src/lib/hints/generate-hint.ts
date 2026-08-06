@@ -74,27 +74,6 @@ function pictureChoiceHints(exercise: ContentLessonExercise): ExerciseHint[] {
     return hints;
 }
 
-/** Matching hints: name which item to tackle first, then scaffold its
- *  partner with the first letter + length — never the whole pairing. A
- *  full-pair reveal ("X goes with Y") hands over one of N matches before
- *  the learner thinks, so the SRS counts a match they could not make; this
- *  keeps matching at the same scaffold level as every other type. */
-function matchingHints(exercise: ContentLessonExercise): ExerciseHint[] {
-    const pair = exercise.pairs?.[0];
-    if (!pair || !pair.left || !pair.right) return [];
-    const partner = chars(pair.right.trim());
-    const hints: ExerciseHint[] = [
-        {level: 1, data: {kind: "item", label: pair.left}},
-    ];
-    if (partner.length > 0) {
-        hints.push({
-            level: 2,
-            data: {kind: "first_letters", prefix: partner[0], n: partner.length},
-        });
-    }
-    return hints;
-}
-
 /** Word-tiles hints: the first tile, then the first two. */
 function wordTilesHints(exercise: ContentLessonExercise): ExerciseHint[] {
     const tiles = (exercise.tiles ?? []).filter((tt) => tt.trim() !== "");
@@ -130,7 +109,12 @@ export function generateHints(
         case "picture_choice":
             return pictureChoiceHints(exercise);
         case "matching":
-            return matchingHints(exercise);
+            // #2443 — no hint for matching. Both columns are fully visible,
+            // so a first-letter hint reveals a letter of an already-readable
+            // word and "start with X" only names a visible item. Neither adds
+            // information, so charging XP for it was a pure loss. The button
+            // hides on an empty hint list. (Follow-up to #2390.)
+            return [];
         case "word_tiles":
             return wordTilesHints(exercise);
         default:

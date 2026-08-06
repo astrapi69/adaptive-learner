@@ -357,13 +357,13 @@ Requires domain knowledge. Not automatable.
       still score correct (grading is content-based, not position-based).
       iOS PWA/Standalone: repeat the check on the web-app icon added to the
       Home Screen.
-- [ ] Matching: hint does NOT reveal the solution (#2390): open a matching
-      exercise, tap "Show a hint" (up to twice). The first hint names only one
-      item ("Start with '...'"), the second gives only the FIRST LETTER + length
-      of the partner ("It starts with '...' (N letters)"). NO hint names a
-      complete pair ("'X' goes with 'Y'" must no longer appear). Hints still
-      appear only on demand (not from the start) and cost XP. iOS PWA/Standalone:
-      repeat the check on the web-app icon added to the Home Screen.
+- [ ] Matching: NO hint button (#2443, replaces #2390): open a matching
+      exercise. There is NO "Show a hint" button above the columns, and no XP is
+      deducted for one. Reason: in a matching exercise every word of both columns
+      is already fully on screen, so a first-letter hint reveals nothing. For
+      free-text/cloze/word-tiles the hint button stays as before. iOS
+      PWA/Standalone: repeat the check on the web-app icon added to the Home
+      Screen.
 - [ ] Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
       a matching exercise from a KNOWLEDGE set (non-language domain, or source ==
       target, e.g. senses to organs). NO subtitle "Match each term with its
@@ -372,18 +372,21 @@ Requires domain knowledge. Not automatable.
       (language names or Term/Translation + the direction hint stay visible). iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
-- [ ] Matching: the preamble no longer eats the screen (#2391): open a matching
-      exercise on a SMALL device (iPhone). Above the first column there is now
-      only: the prompt, (for language sets) the direction hint, and a one-line
-      "How it works" button. The operating manual ("Select an item on the left
-      …") and the "A → B" hint live BEHIND that button (collapsed on open; tap to
-      expand/collapse). The progress counter ("2 / 5 paired") is NOT at the top
-      anymore but at the bottom NEXT TO the "Check answers" button; after checking
-      the score replaces it. The second column is reachable without long
-      scrolling. A11y: the button is keyboard-operable and the content stays
-      reachable for screen readers even when collapsed (native <details>). iOS
-      PWA/Standalone: repeat the check on the web-app icon added to the Home
-      Screen.
+- [ ] Matching: the preamble no longer eats the screen (#2391/#2444): open a
+      matching exercise on a SMALL device (iPhone). The "How it works" button
+      sits on the SAME row as the direction hint (to its right), NOT on its own
+      line below it (#2444). On a knowledge set (no direction hint) the button
+      sits alone in the row. At 375px it fits next to the hint without an ugly
+      wrap. The operating manual ("Select an item on the left …") and the "A → B"
+      hint live BEHIND that button (collapsed on open; tap to expand/collapse);
+      on expand the content wraps cleanly onto the next line at full width. The
+      progress counter ("2 / 5 paired") is at the TOP by the prompt (no longer at
+      the bottom next to "Check answers"), so it stays visible while pairing;
+      after checking it disappears and the score shows in the footer (#2445). The
+      second column is reachable without long scrolling. A11y: the button is keyboard-operable and
+      the content stays reachable for screen readers even when collapsed (native
+      <details>). iOS PWA/Standalone: repeat the check on the web-app icon added
+      to the Home Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
