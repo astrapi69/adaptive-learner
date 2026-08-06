@@ -357,13 +357,13 @@ Requires domain knowledge. Not automatable.
       still score correct (grading is content-based, not position-based).
       iOS PWA/Standalone: repeat the check on the web-app icon added to the
       Home Screen.
-- [ ] Matching: hint does NOT reveal the solution (#2390): open a matching
-      exercise, tap "Show a hint" (up to twice). The first hint names only one
-      item ("Start with '...'"), the second gives only the FIRST LETTER + length
-      of the partner ("It starts with '...' (N letters)"). NO hint names a
-      complete pair ("'X' goes with 'Y'" must no longer appear). Hints still
-      appear only on demand (not from the start) and cost XP. iOS PWA/Standalone:
-      repeat the check on the web-app icon added to the Home Screen.
+- [ ] Matching: NO hint button (#2443, replaces #2390): open a matching
+      exercise. There is NO "Show a hint" button above the columns, and no XP is
+      deducted for one. Reason: in a matching exercise every word of both columns
+      is already fully on screen, so a first-letter hint reveals nothing. For
+      free-text/cloze/word-tiles the hint button stays as before. iOS
+      PWA/Standalone: repeat the check on the web-app icon added to the Home
+      Screen.
 - [ ] Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
       a matching exercise from a KNOWLEDGE set (non-language domain, or source ==
       target, e.g. senses to organs). NO subtitle "Match each term with its

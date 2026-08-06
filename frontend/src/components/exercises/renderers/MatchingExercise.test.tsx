@@ -79,6 +79,15 @@ describe("MatchingExercise: pair lifecycle", () => {
         expect(screen.getByTestId("matching-right")).toBeInTheDocument();
     });
 
+    it("#2443 renders no hint button (every option is already visible)", () => {
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        expect(
+            screen.queryByTestId("matching-hint-button"),
+        ).not.toBeInTheDocument();
+    });
+
     it("#692 takes no unwanted text-input focus (no field to auto-focus)", () => {
         render(
             <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,

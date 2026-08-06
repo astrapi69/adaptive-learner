@@ -53,37 +53,30 @@ describe("generateHints", () => {
         });
     });
 
-    it("matching: names an item then its match's first letter, never the full pair", () => {
-        const hints = generateHints(
-            ex({type: "matching", pairs: [{left: "hello", right: "hola"}]}),
-        );
-        // Level 1 points at which item to tackle (already on screen, not a
-        // solution). Level 2 scaffolds the partner with its first letter +
-        // length — the same shape every other exercise type uses — instead
-        // of handing over the whole pairing.
-        expect(hints[0]).toEqual({level: 1, data: {kind: "item", label: "hello"}});
-        expect(hints[1]).toEqual({
-            level: 2,
-            data: {kind: "first_letters", prefix: "h", n: 4},
-        });
-    });
-
-    it("matching: no generated hint spells out a complete pair (reveal regression)", () => {
-        const pairs = [
-            {left: "Auge", right: "sehen"},
-            {left: "Ohr", right: "hören"},
-            {left: "Nase", right: "riechen"},
-        ];
-        const t = (_k: string, fallback?: string) => fallback ?? _k;
-        const text = generateHints(ex({type: "matching", pairs}))
-            .map((h) => formatHint(h, t))
-            .join(" | ");
-        // A hint may name ONE side (the item to start with) but must never
-        // contain a left value AND its own right value together — that is the
-        // answer, not a hint.
-        for (const p of pairs) {
-            expect(text.includes(p.left) && text.includes(p.right)).toBe(false);
-        }
+    it("matching: no hint at all (#2443 — every option is already on screen)", () => {
+        // In a matching exercise both columns are fully visible. A
+        // first-letter hint reveals a letter of a word the learner can
+        // already read in full, and "start with X" only names a visible
+        // item — neither adds information. So matching produces no hint,
+        // the button never renders, and the learner is never charged XP
+        // for something useless. (Follow-up to #2390, which had reduced
+        // the give-away full-pair hint to this now-useless first letter.)
+        expect(
+            generateHints(
+                ex({type: "matching", pairs: [{left: "hello", right: "hola"}]}),
+            ),
+        ).toEqual([]);
+        expect(
+            generateHints(
+                ex({
+                    type: "matching",
+                    pairs: [
+                        {left: "Auge", right: "sehen"},
+                        {left: "Ohr", right: "hören"},
+                    ],
+                }),
+            ),
+        ).toEqual([]);
     });
 
     it("word_tiles: first word then first two words", () => {

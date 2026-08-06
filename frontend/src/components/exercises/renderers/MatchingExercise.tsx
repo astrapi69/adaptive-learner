@@ -29,7 +29,6 @@ import type {Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
-import ExerciseHint from "../feedback/ExerciseHint";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../../lib/srs/element-attempt";
@@ -536,11 +535,9 @@ function MatchingExercise(
                 rightLabel={rightLabel}
             />
 
-            <ExerciseHint
-                exercise={exercise}
-                submitted={submitted}
-                testId="matching-hint-button"
-            />
+            {/* #2443 — no hint affordance for matching. Both columns are
+                fully visible, so a generated hint (first letter of an
+                already-readable word) adds nothing yet charged XP. */}
 
             <MatchingPostCheckToggle
                 submitted={submitted}

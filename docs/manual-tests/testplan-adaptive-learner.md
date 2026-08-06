@@ -379,13 +379,12 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       inhaltsbasiert, nicht positionsbasiert). iOS PWA/Standalone: dieselbe
       Prüfung auf dem zum Home-Bildschirm hinzugefügten Web-App-Icon
       durchführen.
-- [ ] Zuordnung: Tipp verrät die Lösung NICHT (#2390): eine Zuordnungsübung
-      öffnen, "Tipp anzeigen" (bis zu zweimal) antippen. Der erste Tipp nennt
-      nur ein Element ("Beginne mit „…""), der zweite nur den ANFANGSBUCHSTABEN
-      + die Länge des Partners ("Beginnt mit „…" (N Buchstaben)"). KEIN Tipp
-      nennt ein vollständiges Paar ("„X" gehört zu „Y"" darf nicht mehr
-      erscheinen). Tipps erscheinen weiterhin erst auf Anforderung (nicht von
-      Anfang an) und kosten XP. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
+- [ ] Zuordnung: KEIN Tipp-Knopf (#2443, ersetzt #2390): eine Zuordnungsübung
+      öffnen. Über den Spalten erscheint KEIN "Tipp anzeigen"-Knopf, und es wird
+      dafür KEIN XP abgezogen. Grund: bei Zuordnung stehen alle Wörter beider
+      Spalten vollständig auf dem Bildschirm, ein Anfangsbuchstaben-Hinweis
+      verrät nichts. Bei Freitext/Cloze/Wort-Kacheln bleibt der Tipp-Knopf wie
+      bisher erhalten. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
       Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
 - [ ] Zuordnung: kein falscher Untertitel/Spaltentitel bei Wissens-Sets (#2392):
       eine Zuordnungsübung eines WISSENS-Sets öffnen (nicht-sprachliche Domäne
