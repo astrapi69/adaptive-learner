@@ -2,9 +2,9 @@
 
 > **Generiert** aus dem kanonischen `learn-content-engine`-Schemaspiegel (`schema/lesson.schema.json`, ein Byte-Spiegel des gepinnten Engine-Release) via `make sync-schema` (EXP-039). Die strukturelle Pydantic-Schicht der App wird aus diesem Spiegel regeneriert; nur die semantischen Validatoren sind handgeschrieben. Nicht von Hand editieren; eine Formatänderung beginnt in der Engine, dann wird der Pin erhöht und der Generator läuft erneut.
 
-Schema-Version: **1.9** (JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter `schema/lesson.schema.json`; referenziere es aus einer Lektions-`.json` via `"$schema"` fuer IDE-Autocomplete + Validierung.
+Schema-Version: **1.9** (JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter `schema/lesson.schema.json`; referenziere es aus einer Lektions-`.json` via `"$schema"` für IDE-Autocomplete + Validierung.
 
-Die Feldbeschreibungen stammen woertlich aus den Modelldefinitionen (englisch).
+Die Feldbeschreibungen stammen wörtlich aus den Modelldefinitionen (englisch).
 
 
 ## Modelle
