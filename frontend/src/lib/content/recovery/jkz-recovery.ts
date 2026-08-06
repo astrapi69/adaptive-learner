@@ -52,6 +52,17 @@ export type CurrentKeyLookup = (
     exercise_id: string,
 ) => ReadonlySet<string> | undefined;
 
+/** Map an AUTHORED exercise id (as frozen in the incident table) to the
+ *  exercise's current ``stable_id`` in the cached content, when it has one
+ *  (#2467). The #2130 migration re-keys learner rows to ``stable_id``, so a
+ *  row and the table may name the same exercise under two ids; both ids sit
+ *  in the same cached lesson file, which is where this alias comes from. */
+export type AuthoredIdAlias = (
+    set_id: string,
+    lesson_id: string,
+    exercise_id: string,
+) => string | undefined;
+
 /**
  * Split remaps by whether the ``newKey`` still exists in the learner's CURRENT
  * cached content (condition 3: verify targets, don't assume). If a set was
@@ -87,10 +98,17 @@ function tuple(set_id: string, lesson_id: string, exercise_id: string, key: stri
 export function detectRecoverable(
     rows: readonly SrsKeyRow[],
     mappings: readonly IncidentMapping[],
+    aliasOf?: AuthoredIdAlias,
 ): RecoveryPlan {
     const byOld = new Map<string, IncidentMapping>();
     for (const m of mappings) {
         byOld.set(tuple(m.set_id, m.lesson_id, m.exercise_id, m.old), m);
+        // #2467: a row the #2130 migration re-keyed to stable_id names the
+        // same exercise under its stable id; the table stays authored.
+        const alias = aliasOf?.(m.set_id, m.lesson_id, m.exercise_id);
+        if (alias && alias !== m.exercise_id) {
+            byOld.set(tuple(m.set_id, m.lesson_id, alias, m.old), m);
+        }
     }
     const remaps: Remap[] = [];
     const sets = new Set<string>();

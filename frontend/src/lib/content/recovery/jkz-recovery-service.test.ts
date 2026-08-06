@@ -112,3 +112,40 @@ describe("restoreRecoverySet / restartRecoverySet (#2161)", () => {
         });
     });
 });
+
+// --- #2467: Zeilen nach dem #2130-stable_id-Schluesselwechsel ---------------
+
+describe("stable_id-keyed rows (#2467)", () => {
+    const STABLE = "greetings-match-x7";
+    const stableRow = {...orphanRow, exercise_id: STABLE};
+    const lessonWithStable = (key: string) => ({
+        steps: [
+            {exercise: {id: EX, stable_id: STABLE, type: "matching", pairs: [{left: key}]}},
+        ],
+    });
+
+    it("detects a row the #2130 migration re-keyed to stable_id", async () => {
+        listErrors.mockResolvedValue([stableRow]);
+        getLesson.mockResolvedValue(lessonWithStable(NEW));
+        const a = await assessJkzRecovery();
+        expect(a?.applicableCount).toBe(1);
+        expect(a?.affectedSets).toEqual([SET]);
+    });
+
+    it("restore carries the ROW's exercise_id (stable), not the table's authored id", async () => {
+        listErrors.mockResolvedValue([stableRow]);
+        getLesson.mockResolvedValue(lessonWithStable(NEW));
+        const outcome = await restoreRecoverySet(SET);
+        expect(remapKeys).toHaveBeenCalledWith("u1", [
+            {set_id: SET, lesson_id: LESSON, exercise_id: STABLE, old: OLD, new: NEW},
+        ]);
+        expect(outcome.applied).toBe(1);
+    });
+
+    it("an authored-keyed row (not yet migrated) still resolves", async () => {
+        listErrors.mockResolvedValue([orphanRow]);
+        getLesson.mockResolvedValue(lessonWithStable(NEW));
+        const a = await assessJkzRecovery();
+        expect(a?.applicableCount).toBe(1);
+    });
+});
