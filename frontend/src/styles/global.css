@@ -24,7 +24,6 @@
 @import "./legacy/23-mobile-polish.css";
 @import "./legacy/24-lesson-mode-nav.css";
 @import "./legacy/25-export-section.css";
-@import "./legacy/26-auto-loop.css";
 @import "./legacy/27-multi-cycle-summary.css";
 @import "./legacy/28-model-picker.css";
 @import "./legacy/29-backup-compare.css";
@@ -38,6 +37,5 @@
 @import "./legacy/37-pronunciation.css";
 @import "./legacy/38-notebooklm.css";
 @import "./legacy/39-motion-catchall.css";
-@import "./legacy/40-api-key-validation.css";
 @import "./legacy/41-analysis-loading.css";
 @import "./legacy/42-learning-path.css";

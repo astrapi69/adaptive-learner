@@ -329,14 +329,6 @@
   font-weight: 600;
 }
 
-/* Streaming cursor needs vertical alignment when inline next to a
-   <p> end (Markdown wraps trailing text in <p>). */
-.chat-message-content-markdown > .chat-message-cursor {
-  display: inline-block;
-  margin-left: 2px;
-  vertical-align: baseline;
-}
-
 .chat-input-row {
   display: flex;
   gap: var(--space-3);
