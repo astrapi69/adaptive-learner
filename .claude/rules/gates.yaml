@@ -31,12 +31,12 @@ gates:
 
   - workflow: testid-reference-gate.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
-    body_sha: e6920e09d284021a
+    body_sha: 63d68207e79c4e2e
     note: spec-referenced testids may not be removed without touching the spec (escape label testid-refs-unaffected)
 
   - workflow: docker-build-smoke.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
-    body_sha: e6920e09d284021a
+    body_sha: 63d68207e79c4e2e
     note: builds the prod compose path no other gate builds (the #1771 no-cadence class)
 
   - workflow: complexity-check.yml
