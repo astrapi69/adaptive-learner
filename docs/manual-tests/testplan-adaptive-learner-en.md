@@ -372,12 +372,14 @@ Requires domain knowledge. Not automatable.
       (language names or Term/Translation + the direction hint stay visible). iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
-- [ ] Matching: the preamble no longer eats the screen (#2391/#2444): open a
+- [ ] Matching: the preamble no longer eats the screen (#2391/#2444/#2453): open a
       matching exercise on a SMALL device (iPhone). The "How it works" button
-      sits on the SAME row as the direction hint (to its right), NOT on its own
-      line below it (#2444). On a knowledge set (no direction hint) the button
-      sits alone in the row. At 375px it fits next to the hint without an ugly
-      wrap. The operating manual ("Select an item on the left …") and the "A → B"
+      sits at the TOP in the button row under the title, right next to "Re-read
+      theory" (#2453) — when a theory chapter precedes this step. Without a
+      preceding theory "Re-read theory" is absent and "How it works" sits alone
+      in the same row (consistent position). It is NO LONGER on the instruction
+      row ("Connect the pairs …", #2453 corrects #2444). At 375px it fits without
+      an ugly wrap. The operating manual ("Select an item on the left …") and the "A → B"
       hint live BEHIND that button (collapsed on open; tap to expand/collapse);
       on expand the content wraps cleanly onto the next line at full width. The
       progress counter ("2 / 5 paired") is at the TOP by the prompt (no longer at
