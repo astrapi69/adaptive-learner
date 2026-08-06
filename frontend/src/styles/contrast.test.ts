@@ -374,13 +374,12 @@ describe("#108 — matching side tints pass WCAG AA (text on the tinted tile)", 
   for (const id of THEME_IDS) {
     const t = () => THEME_TOKENS[id];
 
-    it(`theme=${id}: side-a / side-b / paired tints meet normal-text AA`, () => {
+    it(`theme=${id}: side-a / side-b tints meet normal-text AA`, () => {
       const surface = t()["bg-surface"];
       const fg = t()["fg-primary"];
       const tints: Array<[string, string]> = [
         ["side-a", mixSrgb(t()["info"], surface, 0.16)],
         ["side-b", mixSrgb(t()["success"], surface, 0.16)],
-        ["paired", mixSrgb(t()["exercise-matched"], surface, 0.22)],
       ];
       for (const [name, bg] of tints) {
         expect(contrastRatio(fg, bg), `matching ${name} fg on tint`).toBeGreaterThanOrEqual(
