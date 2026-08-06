@@ -77,6 +77,7 @@ function rowToWire(row: ElementErrorRow): ElementError {
         last_attempt_exam: row.last_attempt_exam ?? false,
         attempt_count: row.attempt_count ?? 0,
         attempt_history: row.attempt_history ?? [],
+        retired_at: row.retired_at ?? null,
         created_at: row.created_at,
         updated_at: row.updated_at,
     };
@@ -329,6 +330,9 @@ export interface ListElementErrorsOpts {
     /** Default true — pass false to exclude mastered elements
      *  (the C11 review-queue path). */
     includeMastered?: boolean;
+    /** #2188 — default false: archived (author-retired) rows leave every
+     *  default read. Pass true for archive views. */
+    includeRetired?: boolean;
 }
 
 export async function listElementErrorsDexie(
@@ -351,8 +355,42 @@ export async function listElementErrorsDexie(
     if (opts.includeMastered === false) {
         rows = rows.filter((r) => !r.mastered);
     }
+    if (opts.includeRetired !== true) {
+        rows = rows.filter((r) => !r.retired_at);
+    }
     rows.sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1));
     return rows.map(rowToWire);
+}
+
+/**
+ * #2188 — archive the learner's rows for identities the author retired via
+ * the set manifest's ``retired_ids``. Stamps ``retired_at`` in ONE ``rw``
+ * transaction; already-archived rows are untouched (idempotent). Archived
+ * rows keep their history but leave the default list + the review queue.
+ * Returns the count of rows newly archived.
+ */
+export async function archiveRetiredDexie(
+    userId: string,
+    setId: string,
+    retiredIds: readonly string[],
+): Promise<{archived: number}> {
+    if (retiredIds.length === 0) return {archived: 0};
+    const db = getDb();
+    const retired = new Set(retiredIds);
+    let archived = 0;
+    await db.transaction("rw", db.elementErrors, async () => {
+        const rows = await db.elementErrors
+            .where("[user_id+set_id]")
+            .equals([userId, setId])
+            .toArray();
+        const nowIso = new Date().toISOString();
+        for (const row of rows) {
+            if (!retired.has(row.exercise_id) || row.retired_at) continue;
+            await db.elementErrors.put({...row, retired_at: nowIso});
+            archived += 1;
+        }
+    });
+    return {archived};
 }
 
 // --- Phase 46C / C12: SRS review-queue computation ---------------------
@@ -452,7 +490,8 @@ export async function computeReviewQueueDexie(
             .equals(userId)
             .toArray();
     }
-    rows = rows.filter((r) => !r.mastered);
+    // #2188 — archived (author-retired) rows never schedule.
+    rows = rows.filter((r) => !r.mastered && !r.retired_at);
     const items = rows.map((r) => _projectReviewItem(r, nowIso));
     // Sort (mirrors the backend ``element_srs._sort_key``, #603):
     // overdue first → weakness tier (wrong > almost-right > correct) →

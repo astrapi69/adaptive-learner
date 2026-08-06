@@ -2196,7 +2196,8 @@
       "preview_more": "외 {count}개",
       "unmappable": "{count}개는 확실하게 연결할 수 없어 초기화됩니다. 순서나 개수가 바뀌었으므로 추측하지 않습니다.",
       "carried_over": "학습 기록을 이어갔습니다.",
-      "carry_over_failed": "업데이트는 적용되었지만 학습 기록을 이어가지 못했습니다."
+      "carry_over_failed": "업데이트는 적용되었지만 학습 기록을 이어가지 못했습니다.",
+      "retired_archived": "{count}개의 연습 문제가 작성자에 의해 퇴역되었습니다. 관련 학습 진행은 보관되었습니다."
     },
     "recovery": {
       "title": "수정된 레슨의 복습 진행 상황 복원",

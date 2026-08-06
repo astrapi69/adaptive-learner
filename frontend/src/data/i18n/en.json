@@ -2196,7 +2196,8 @@
       "preview_more": "and {count} more",
       "unmappable": "{count} cannot be assigned with confidence and will be reset. Their order or number changed, so nothing is guessed.",
       "carried_over": "Progress carried over.",
-      "carry_over_failed": "The update was applied, but the progress could not be carried over."
+      "carry_over_failed": "The update was applied, but the progress could not be carried over.",
+      "retired_archived": "{count} exercises were retired by the author; the related progress is archived."
     },
     "recovery": {
       "title": "Restore review progress for corrected lessons",

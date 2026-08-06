@@ -2036,6 +2036,7 @@ content:
     unmappable: '{count} tidak dapat dipetakan dengan pasti dan akan direset. Urutan atau jumlahnya berubah di sana, jadi tidak ada yang ditebak.'
     carried_over: 'Kemajuan dipertahankan.'
     carry_over_failed: 'Pembaruan diterapkan, tetapi kemajuan tidak dapat dipertahankan.'
+    retired_archived: '{count} latihan telah dipensiunkan oleh penulis; kemajuan terkait diarsipkan.'
   recovery:
     title: 'Pulihkan progres ulasan untuk pelajaran yang diperbaiki'
     message: 'Kami memperbaiki beberapa pelajaran bahasa Jepang, Korea, dan Tionghoa (A1). Kartu ulasan yang sudah Anda buat untuk item yang berubah tidak lagi cocok sehingga tidak dijadwalkan. Anda dapat menautkannya kembali ke pelajaran yang diperbaiki atau memulai ulang satu set. Hanya set ini yang terpengaruh; set Anda yang lain tetap utuh.'

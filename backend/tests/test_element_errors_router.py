@@ -604,3 +604,79 @@ def test_remap_exercise_ids_scopes_to_lesson_and_set(
         "ex-match-begruessung",
         "greetings-match-x7",
     ]
+
+
+# --- #2188 retired_ids archival ----------------------------------------------
+
+
+def _archive(client: TestClient, user_id: str, retired_ids: list[str]) -> dict:
+    r = client.post(
+        f"/api/users/{user_id}/element-errors/archive-retired",
+        json={"set_id": "ja-a1-from-de", "retired_ids": retired_ids},
+    )
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def test_archive_retired_marks_every_row_of_the_exercise(
+    client: TestClient,
+    user_id: str,
+) -> None:
+    _record_ex(client, user_id, exercise_id="greetings-match-x7", element_key="こんにちは")
+    _record_ex(client, user_id, exercise_id="greetings-match-x7", element_key="さようなら")
+    _record_ex(client, user_id, exercise_id="numbers-pic-b2", element_key="いち")
+    assert _archive(client, user_id, ["greetings-match-x7"]) == {"archived": 2}
+    # Archived rows leave the default list (review scheduling + due counts).
+    r = client.get(f"/api/users/{user_id}/element-errors")
+    assert sorted(row["exercise_id"] for row in r.json()) == ["numbers-pic-b2"]
+    # ... but stay readable for the archive view.
+    r = client.get(
+        f"/api/users/{user_id}/element-errors",
+        params={"include_retired": "true"},
+    )
+    rows = r.json()
+    assert len(rows) == 3
+    retired = [row for row in rows if row["exercise_id"] == "greetings-match-x7"]
+    assert all(row["retired_at"] is not None for row in retired)
+
+
+def test_archive_retired_is_idempotent(client: TestClient, user_id: str) -> None:
+    _record_ex(client, user_id, exercise_id="greetings-match-x7", element_key="こんにちは")
+    assert _archive(client, user_id, ["greetings-match-x7"]) == {"archived": 1}
+    assert _archive(client, user_id, ["greetings-match-x7"]) == {"archived": 0}
+
+
+def test_archive_retired_scopes_to_set(client: TestClient, user_id: str) -> None:
+    _record_ex(client, user_id, exercise_id="greetings-match-x7", element_key="こんにちは")
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                {
+                    "set_id": "OTHER-set",
+                    "lesson_id": "01.json",
+                    "exercise_id": "greetings-match-x7",
+                    "element_key": "hallo",
+                    "element_type": "vocabulary",
+                    "user_answer": "x",
+                    "correct_answer": "hallo",
+                    "correct": False,
+                }
+            ]
+        },
+    )
+    assert r.status_code in (200, 201)
+    assert _archive(client, user_id, ["greetings-match-x7"]) == {"archived": 1}
+    r = client.get(f"/api/users/{user_id}/element-errors")
+    remaining = [(row["set_id"], row["exercise_id"]) for row in r.json()]
+    assert remaining == [("OTHER-set", "greetings-match-x7")]
+
+
+def test_archived_rows_leave_the_review_queue(
+    client: TestClient,
+    user_id: str,
+) -> None:
+    _record_ex(client, user_id, exercise_id="greetings-match-x7", element_key="こんにちは")
+    _archive(client, user_id, ["greetings-match-x7"])
+    r = client.get(f"/api/users/{user_id}/element-errors/review-queue")
+    assert r.json() == []

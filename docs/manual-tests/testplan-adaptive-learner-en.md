@@ -1033,6 +1033,28 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
       fully readable and operable (the list does not overflow the dialog, the
       checkbox is tappable); carry-over works the same in Dexie mode.
 
+### Retirement: archived progress on retired_ids (#2188)
+
+Location: Content page, a set with learner progress whose update declares
+`retired_ids` in the set manifest (the author deliberately retired
+exercises). Check in BOTH storage modes. Background: a declared retirement is
+not an accident - the related progress is ARCHIVED (not deleted, not
+orphaned), leaves review scheduling and due counts, and the learner is told
+once, with the count.
+
+- [ ] Apply an update of a set with declared retirements (manually or via
+      sync): ONE notice toast appears with the count ("N exercises were
+      retired by the author; the related progress is archived.").
+- [ ] Retirement-only update (no other identity changes): NO warning dialog
+      (#2128) - a declared retirement is not breaking; the update applies,
+      only the notice toast appears.
+- [ ] After the update: the retired elements no longer appear in the review
+      queue and no longer count into the "N due" number.
+- [ ] Trigger the update again: no second toast, no double archival
+      (idempotent; the count would be 0, so no notice).
+- [ ] Language check: the notice appears in the app language (spot-check
+      de/ja/ko).
+
 ### Recovery: review progress after the ja/ko/zh correction (#2161)
 
 Location: Dashboard (Overview). Background: the three A1 sets Japanese, Korean

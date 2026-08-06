@@ -2196,7 +2196,8 @@
       "preview_more": "e mais {count}",
       "unmappable": "{count} não podem ser atribuídas com segurança e serão reiniciadas. Ali a ordem ou a quantidade mudou, por isso nada é adivinhado.",
       "carried_over": "Progresso mantido.",
-      "carry_over_failed": "A atualização foi aplicada, mas o progresso não pôde ser mantido."
+      "carry_over_failed": "A atualização foi aplicada, mas o progresso não pôde ser mantido.",
+      "retired_archived": "{count} exercícios foram descontinuados pelo autor; o progresso correspondente está arquivado."
     },
     "recovery": {
       "title": "Restaurar o progresso de revisão das lições corrigidas",

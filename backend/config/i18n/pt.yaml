@@ -2025,6 +2025,7 @@ content:
     unmappable: '{count} não podem ser atribuídas com segurança e serão reiniciadas. Ali a ordem ou a quantidade mudou, por isso nada é adivinhado.'
     carried_over: 'Progresso mantido.'
     carry_over_failed: 'A atualização foi aplicada, mas o progresso não pôde ser mantido.'
+    retired_archived: '{count} exercícios foram descontinuados pelo autor; o progresso correspondente está arquivado.'
   recovery:
     title: 'Restaurar o progresso de revisão das lições corrigidas'
     message: 'Corrigimos algumas lições de japonês, coreano e chinês (A1). Os cartões de revisão que você já criou para os itens alterados não correspondem mais e, por isso, não são agendados. Você pode revinculá-los às lições corrigidas ou recomeçar um conjunto. Apenas esses conjuntos são afetados; os demais permanecem intactos.'

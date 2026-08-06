@@ -366,3 +366,46 @@ describe("buildIncomingIdentities with stable_id (#2130)", () => {
         expect(impact.breaking).toBe(true);
     });
 });
+
+// --- #2188 retired_ids classification ----------------------------------------
+
+describe("computeUpdateImpact with retired_ids (#2188)", () => {
+    it("a retired identity is archived-class, not breaking", () => {
+        const impact = computeUpdateImpact(
+            [],
+            [srs({exercise_id: "greetings-match-x7", element_key: "merci"})],
+            incoming({"01-greetings.json": {}}),
+            ["greetings-match-x7"],
+        );
+        expect(impact.breaking).toBe(false);
+        expect(impact.lostCards).toEqual([]);
+        expect(impact.retiredCards).toEqual([
+            {lesson_id: "01-greetings.json", exercise_id: "greetings-match-x7", element_key: "merci"},
+        ]);
+    });
+
+    it("a non-retired lost identity still breaks (mixed update)", () => {
+        const impact = computeUpdateImpact(
+            [],
+            [
+                srs({exercise_id: "greetings-match-x7", element_key: "merci"}),
+                srs({exercise_id: "ex-gone", element_key: "bonjour"}),
+            ],
+            incoming({"01-greetings.json": {}}),
+            ["greetings-match-x7"],
+        );
+        expect(impact.breaking).toBe(true);
+        expect(impact.lostCards.map((c) => c.exercise_id)).toEqual(["ex-gone"]);
+        expect(impact.retiredCards.map((c) => c.exercise_id)).toEqual(["greetings-match-x7"]);
+    });
+
+    it("without retired_ids nothing is classified retired", () => {
+        const impact = computeUpdateImpact(
+            [],
+            [srs({exercise_id: "ex-gone", element_key: "merci"})],
+            incoming({"01-greetings.json": {}}),
+        );
+        expect(impact.retiredCards).toEqual([]);
+        expect(impact.breaking).toBe(true);
+    });
+});

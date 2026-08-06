@@ -309,6 +309,8 @@ export const apiStorage: IStorageService = {
     remapKeys: (userId, remaps) => api.elementErrors.remap(userId, remaps),
     remapExerciseIds: (userId, remaps) =>
       api.elementErrors.remapExerciseIds(userId, remaps),
+    archiveRetired: (userId, setId, retiredIds) =>
+      api.elementErrors.archiveRetired(userId, setId, retiredIds),
   },
 
   // --- Learner-data maintenance (#1445 / #1821) ------------------------

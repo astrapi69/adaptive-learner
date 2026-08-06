@@ -2196,7 +2196,8 @@
       "preview_more": "et {count} de plus",
       "unmappable": "{count} ne peuvent pas être attribuées de façon sûre et seront réinitialisées. L'ordre ou le nombre y a changé, donc rien n'est deviné.",
       "carried_over": "Progression conservée.",
-      "carry_over_failed": "La mise à jour a été appliquée, mais la progression n'a pas pu être conservée."
+      "carry_over_failed": "La mise à jour a été appliquée, mais la progression n'a pas pu être conservée.",
+      "retired_archived": "{count} exercices ont été retirés par l'auteur ; la progression associée est archivée."
     },
     "recovery": {
       "title": "Restaurer la progression de révision des leçons corrigées",

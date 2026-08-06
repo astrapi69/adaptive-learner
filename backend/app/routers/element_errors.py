@@ -22,6 +22,8 @@ from app.deps import get_element_errors_repo
 from app.exceptions import NotFoundError
 from app.repositories.element_errors_repo import ElementErrorsRepository
 from app.schemas import (
+    ArchiveRetiredIn,
+    ArchiveRetiredResult,
     ElementAttemptsIn,
     ElementErrorOut,
     ElementKeyRemapResult,
@@ -59,6 +61,14 @@ def list_element_errors(
             "(mastered elements are excluded from review)."
         ),
     ),
+    include_retired: bool = Query(
+        default=False,
+        description=(
+            "Set to true to include archived rows (#2188 author-retired "
+            "identities). Excluded by default so archived progress leaves "
+            "scheduling + due counts."
+        ),
+    ),
     repo: ElementErrorsRepository = Depends(get_element_errors_repo),
 ) -> list[ElementErrorOut]:
     """List the user's element-error rows, optionally filtered by set and mastery state."""
@@ -68,6 +78,7 @@ def list_element_errors(
         user_id,
         set_id=set_id,
         include_mastered=include_mastered,
+        include_retired=include_retired,
     )
     return [ElementErrorOut.model_validate(row) for row in rows]
 
@@ -184,3 +195,23 @@ def remap_exercise_ids(
         [(r.set_id, r.lesson_id, r.old, r.new) for r in payload.remaps],
     )
     return ElementKeyRemapResult(applied=applied, skipped=skipped)
+
+
+@router.post(
+    "/{user_id}/element-errors/archive-retired",
+    response_model=ArchiveRetiredResult,
+)
+def archive_retired(
+    user_id: str,
+    payload: ArchiveRetiredIn,
+    repo: ElementErrorsRepository = Depends(get_element_errors_repo),
+) -> ArchiveRetiredResult:
+    """#2188: archive the learner's rows for identities the author retired
+    via the set manifest's ``retired_ids``. Archived rows keep their history
+    but leave review scheduling + due counts. Idempotent (already-archived
+    rows are not re-counted); one call is one transaction."""
+    _require_user(repo, user_id)
+    archived = element_errors_service.archive_retired(
+        repo, user_id, payload.set_id, payload.retired_ids
+    )
+    return ArchiveRetiredResult(archived=archived)

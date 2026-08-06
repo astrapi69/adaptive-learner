@@ -2027,6 +2027,7 @@ content:
     unmappable: '{count} no se pueden asignar con seguridad y se reiniciarán. Ahí cambió el orden o la cantidad, así que no se adivina nada.'
     carried_over: 'Progreso conservado.'
     carry_over_failed: 'La actualización se aplicó, pero no se pudo conservar el progreso.'
+    retired_archived: '{count} ejercicios fueron retirados por el autor; el progreso correspondiente está archivado.'
   recovery:
     title: 'Restaurar el progreso de repaso de las lecciones corregidas'
     message: 'Corregimos algunas lecciones de japonés, coreano y chino (A1). Las tarjetas de repaso que ya creaste para los elementos modificados ya no coinciden, por lo que no se programan. Puedes volver a vincularlas con las lecciones corregidas o empezar un conjunto de nuevo. Solo estos conjuntos se ven afectados; los demás quedan intactos.'
