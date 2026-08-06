@@ -197,8 +197,8 @@ def build_doc(lang: str) -> str:
             f"Schema-Version: **{CURRENT_SCHEMA_VERSION}** "
             "(JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter "
             "`schema/lesson.schema.json`; referenziere es aus einer Lektions-"
-            '`.json` via `"$schema"` fuer IDE-Autocomplete + Validierung.\n\n'
-            "Die Feldbeschreibungen stammen woertlich aus den Modelldefinitionen "
+            '`.json` via `"$schema"` für IDE-Autocomplete + Validierung.\n\n'
+            "Die Feldbeschreibungen stammen wörtlich aus den Modelldefinitionen "
             "(englisch).\n"
         ),
     }[lang]
