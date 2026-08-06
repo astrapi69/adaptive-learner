@@ -372,18 +372,20 @@ Requires domain knowledge. Not automatable.
       (language names or Term/Translation + the direction hint stay visible). iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
-- [ ] Matching: the preamble no longer eats the screen (#2391): open a matching
-      exercise on a SMALL device (iPhone). Above the first column there is now
-      only: the prompt, (for language sets) the direction hint, and a one-line
-      "How it works" button. The operating manual ("Select an item on the left
-      …") and the "A → B" hint live BEHIND that button (collapsed on open; tap to
-      expand/collapse). The progress counter ("2 / 5 paired") is NOT at the top
-      anymore but at the bottom NEXT TO the "Check answers" button; after checking
-      the score replaces it. The second column is reachable without long
-      scrolling. A11y: the button is keyboard-operable and the content stays
-      reachable for screen readers even when collapsed (native <details>). iOS
-      PWA/Standalone: repeat the check on the web-app icon added to the Home
-      Screen.
+- [ ] Matching: the preamble no longer eats the screen (#2391/#2444): open a
+      matching exercise on a SMALL device (iPhone). The "How it works" button
+      sits on the SAME row as the direction hint (to its right), NOT on its own
+      line below it (#2444). On a knowledge set (no direction hint) the button
+      sits alone in the row. At 375px it fits next to the hint without an ugly
+      wrap. The operating manual ("Select an item on the left …") and the "A → B"
+      hint live BEHIND that button (collapsed on open; tap to expand/collapse);
+      on expand the content wraps cleanly onto the next line at full width. The
+      progress counter ("2 / 5 paired") is at the bottom NEXT TO the "Check
+      answers" button; after checking the score replaces it. The second column is
+      reachable without long scrolling. A11y: the button is keyboard-operable and
+      the content stays reachable for screen readers even when collapsed (native
+      <details>). iOS PWA/Standalone: repeat the check on the web-app icon added
+      to the Home Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT

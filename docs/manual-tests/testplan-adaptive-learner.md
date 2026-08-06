@@ -395,15 +395,18 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       (Sprachnamen bzw. Term/Übersetzung + Richtungshinweis sichtbar). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
-- [ ] Zuordnung: Vorspann frisst den Bildschirm nicht mehr (#2391): eine
-      Zuordnungsübung auf einem KLEINEN Gerät (iPhone) öffnen. Über der ersten
-      Spalte steht nur noch: Aufgabenstellung, (bei Sprach-Sets) der
-      Richtungshinweis und ein einzeiliger Knopf „Wie funktioniert das?".
+- [ ] Zuordnung: Vorspann frisst den Bildschirm nicht mehr (#2391/#2444): eine
+      Zuordnungsübung auf einem KLEINEN Gerät (iPhone) öffnen. Der Knopf „Wie
+      funktioniert das?" sitzt auf DERSELBEN Zeile wie der Richtungshinweis
+      (rechts davon), NICHT mehr auf einer eigenen Zeile darunter (#2444). Bei
+      einem Wissens-Set (kein Richtungshinweis) sitzt der Knopf allein in der
+      Zeile. Auf 375px passt er ohne hässlichen Umbruch neben den Hinweis.
       Die Bedienanleitung („Waehle links …") und der „A → B"-Hinweis liegen
-      HINTER diesem Knopf (Klappe zu beim Öffnen; antippen klappt sie auf/zu).
-      Der Fortschrittszähler („2 / 5 zugeordnet") steht NICHT mehr oben, sondern
-      unten NEBEN dem „Antworten prüfen"-Knopf; nach dem Prüfen ersetzt ihn die
-      Punktzahl. Die zweite Spalte ist ohne langes Scrollen erreichbar.
+      HINTER diesem Knopf (zugeklappt beim Öffnen; antippen klappt auf/zu); beim
+      Aufklappen bricht der Inhalt sauber auf die nächste Zeile in voller Breite
+      um. Der Fortschrittszähler („2 / 5 zugeordnet") steht unten NEBEN dem
+      „Antworten prüfen"-Knopf; nach dem Prüfen ersetzt ihn die Punktzahl. Die
+      zweite Spalte ist ohne langes Scrollen erreichbar.
       Barrierefreiheit: der Knopf ist per Tastatur bedienbar und der Inhalt für
       Screenreader auch zugeklappt erreichbar (natives <details>). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten

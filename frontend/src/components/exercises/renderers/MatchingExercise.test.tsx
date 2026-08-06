@@ -195,6 +195,17 @@ describe("MatchingExercise: mobile space (#2391)", () => {
         expect(help).toContainElement(screen.getByTestId("matching-flow-hint"));
     });
 
+    it("#2444 puts the how-to toggle on the instruction row, not its own line", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        // The disclosure shares the instruction's meta row so it no longer
+        // eats a dedicated line above the first tile.
+        const metaRow = screen.getByTestId("matching-meta-row");
+        expect(metaRow).toContainElement(
+            screen.getByTestId("direction-instruction-matching"),
+        );
+        expect(metaRow).toContainElement(screen.getByTestId("matching-help"));
+    });
+
     it("moves the running counter to the footer next to Check, pre-submit only", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         // The counter is NOT in the top preamble disclosure.
