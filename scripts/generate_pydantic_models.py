@@ -153,11 +153,17 @@ def _fix_nullable_lists(source: str) -> str:
 
 
 _STR_WRAPPER_CLASS = re.compile(
+    # The args matcher must be QUOTE-AWARE: a pattern constraint may carry
+    # parentheses inside its quoted value (schema 1.11's SlugId:
+    # '^[\p{Ll}\p{Nd}]+(-[\p{Ll}\p{Nd}]+)*$'). A bare [^)]*? stops at the
+    # first ')' inside the quotes, the class regex then never matches, and
+    # the wrapper silently survives as a RootModel - which is exactly the
+    # broken-str-access state this pass exists to prevent (#2335 re-pin).
     r"class (?P<name>\w+)\(RootModel\[str\]\):\n"
     r"    model_config = ConfigDict\(\n"
     r"        frozen=True,\n"
     r"    \)\n"
-    r"    root: str = Field\(\n?\s*(?P<args>[^)]*?)\n?\s*\)\n"
+    r"    root: str = Field\(\n?\s*(?P<args>(?:'[^']*'|[^)])*?)\n?\s*\)\n"
     r'(?P<doc>    """\n(?:    .*\n)*?    """\n)?',
 )
 

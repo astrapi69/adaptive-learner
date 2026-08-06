@@ -9,7 +9,14 @@
  * distinction instead of inventing two. ``shareWizardHelpers`` re-exports
  * ``KNOWN_CONTENT_DOMAINS`` + ``LEVEL_NONE`` from here for its existing
  * consumers.
+ *
+ * Since engine 0.20.0 (engine#127 / #2335) the vocabulary itself comes
+ * from the engine's ``KNOWN_CONTENT_DOMAINS`` — one list, one source; the
+ * app no longer maintains its own copy. This module derives the
+ * app-facing shapes (the NON-language Set, the picker options) from it.
  */
+
+import { ENGINE_KNOWN_CONTENT_DOMAINS } from "./engine";
 
 /** The implicit domain for a language pair — carries no ``domain`` field on
  *  the built lesson (it is the schema default). */
@@ -17,21 +24,12 @@ export const DEFAULT_DOMAIN = "language";
 
 /** Content domains the validator recognises as NON-language — source ==
  *  target is allowed for these (mirrors the content repo's
- *  ``validate_content.py`` domain relaxation). Covers every non-language
- *  domain present in the official + registered content repos plus the
- *  reserved ``math``. Insertion order drives {@link DOMAIN_OPTIONS}. */
-export const KNOWN_CONTENT_DOMAINS: ReadonlySet<string> = new Set([
-  "knowledge",
-  "programming",
-  "psychology",
-  "math",
-  "ai",
-  "technology",
-  "software",
-  "philosophy",
-  "dog-training",
-  "traffic-knowledge",
-]);
+ *  ``validate_content.py`` domain relaxation). Derived from the engine's
+ *  canonical vocabulary (engine#127) minus the language default.
+ *  Insertion order drives {@link DOMAIN_OPTIONS}. */
+export const KNOWN_CONTENT_DOMAINS: ReadonlySet<string> = new Set(
+  ENGINE_KNOWN_CONTENT_DOMAINS.filter((domain) => domain !== DEFAULT_DOMAIN),
+);
 
 /** The domain choices an authoring picker offers: the default language
  *  domain first, then the known non-language domains. */
