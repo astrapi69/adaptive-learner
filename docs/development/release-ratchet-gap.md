@@ -1,6 +1,24 @@
 # The release/hotfix back-merge ratchet gap (#2182)
 
-Status: investigation + decision template. 2026-07-30.
+Status: CLOSED 2026-08-06. `enforce_admins` enabled on develop; the back-merge
+is PR-routed (#2199). Investigation + decision record below, kept as history.
+
+## Closure record (2026-08-06)
+
+The switch was flipped after both pre-flight checks cleared (see the pre-flight
+section below; live contexts read 2026-08-06 08:14, none path-filtered):
+
+```
+POST /repos/astrapi69/adaptive-learner/branches/develop/protection/enforce_admins
+-> {"enabled": true}
+GET  .../branches/develop/protection
+-> enforce_admins: true, strict: true
+```
+
+Full closure set: #2190 (ratchet gates in `release-test`), #2193 (develop-push
+detection gate), #2199 (PR-routed back-merge), and this toggle. The next real
+release validates the path end-to-end; if the back-merge PR blocks on a
+ratchet, raise the baseline in the release branch - that is the design working.
 
 This document exists because develop went red on a ratchet gate **twice in one
 day** without anyone doing anything wrong, and the cause is structural. It
@@ -52,7 +70,7 @@ it came through the release/hotfix flow.
 | `develop` protected | yes | GitHub API `list_branches` -> `"protected": true` (2026-07-30) |
 | `main` protected | yes | same |
 | `strict` (require up-to-date branch) | **true** on develop | #1729 (2026-07-16), `lessons/ci-gates.md` |
-| `enforce_admins` (include administrators) | **false** on develop | `docs/journal/handover-2026-07-15-css-split-kickoff.md`: `LIVE: ... enforce_admins=false`; `lessons/ci-gates.md` |
+| `enforce_admins` (include administrators) | **false** at investigation time; **true** since 2026-08-06 (closure record above) | `docs/journal/handover-2026-07-15-css-split-kickoff.md`: `LIVE: ... enforce_admins=false`; `lessons/ci-gates.md` |
 | Merge Queue | unavailable (Org-only; 422 on this user-owned repo) | #1729 |
 | Required check contexts | at least `Visual-critical changes carry baselines`; full live list not confirmable here | handover doc; see below |
 

@@ -42,7 +42,7 @@ finding; and **verify you are actually ON main before merging the release
 branch into it** - `git checkout main` fails when another worktree holds
 it, the subsequent merge then reports "Already up to date" from the
 release branch itself, and the tag lands on the branch head instead of a
-main merge commit. The release-test ratchet gates (#2190) catch the normal case before the tag, so a blocked back-merge PR should be rare. Hotfixes back-merge the same way — via a PR to develop, never a direct push. The rejected alternative (a scripted `enforce_admins` off/on toggle) is an automated bypass, not an explained one, and is worse than the open channel because it adds false confidence — see `docs/development/release-ratchet-gap.md`. Closure requires the release manager to enable `enforce_admins` on develop; that decision and its price live in that doc.
+main merge commit. The release-test ratchet gates (#2190) catch the normal case before the tag, so a blocked back-merge PR should be rare. Hotfixes back-merge the same way — via a PR to develop, never a direct push. The rejected alternative (a scripted `enforce_admins` off/on toggle) is an automated bypass, not an explained one — see `docs/development/release-ratchet-gap.md`. Closed 2026-08-06 (#2182): `enforce_admins` is ON for develop, so the required checks bind admins too; turning it off is a deliberate, visible act, never part of the release script.
 
 ## Ground rules
 
