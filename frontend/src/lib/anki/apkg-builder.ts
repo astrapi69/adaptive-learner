@@ -204,7 +204,7 @@ export async function buildApkg(
             const isBasic = card.type === "basic";
             const modelId = isBasic ? BASIC_MODEL_ID : CLOZE_MODEL_ID;
             // Anki field separator is U+001F (Unit Separator).
-            const flds = `${card.front}${card.back}`;
+            const flds = `${card.front}\u001f${card.back}`;
             const sfld = card.front; // sort field = first field
             const csum = fieldChecksum(card.front);
 
