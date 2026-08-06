@@ -69,6 +69,42 @@ interface LessonStepViewProps {
   advanceLabel: string;
 }
 
+/** #140 / #2453 — the "Re-read theory" link shown on an exercise step when a
+ *  theory chapter precedes it and the recap aid is on. Self-hiding: returns
+ *  null when it should not show, so the caller renders it unconditionally
+ *  without carrying the visibility branches itself. The matching renderer
+ *  receives this element (theoryLink prop) and places it in its top button
+ *  row; every other renderer gets it from the chrome. */
+function ExerciseTheoryReadLink({
+  stepType,
+  precedingTheoryIndex,
+  showTheoryRecap,
+  onReadTheory,
+}: {
+  stepType: string;
+  precedingTheoryIndex: number | null;
+  showTheoryRecap: boolean;
+  onReadTheory: () => void;
+}) {
+  const { t } = useI18n();
+  if (stepType === "theory" || precedingTheoryIndex === null || !showTheoryRecap) {
+    return null;
+  }
+  return (
+    <Button
+      type="button"
+      variant="link"
+      size="sm"
+      className="h-auto min-h-11 gap-1.5 px-0 text-[var(--fg-secondary)] hover:text-[var(--accent-text)]"
+      onClick={onReadTheory}
+      data-testid="exercise-theory-link"
+    >
+      <BookOpen size={14} aria-hidden="true" />
+      {t("lesson.exercise.reread_theory", "Re-read theory")}
+    </Button>
+  );
+}
+
 /** The active lesson step: theory, reviewed-fallback, or exercise. */
 export default function LessonStepView({
   step,
@@ -154,27 +190,18 @@ export default function LessonStepView({
     }
   };
 
-  // #140 — the "Re-read theory" link, shown on an exercise step when a theory
-  // chapter precedes it and the recap aid is on. Computed once here. #2453 —
-  // for a matching step it is NOT rendered in the chrome but handed to the
-  // matching renderer (theoryLink prop) so it shares the top button row with
-  // the "How it works" disclosure; every other renderer keeps the chrome copy.
-  const theoryLink =
-    step.type !== "theory" &&
-    precedingTheoryIndex !== null &&
-    showTheoryRecap ? (
-      <Button
-        type="button"
-        variant="link"
-        size="sm"
-        className="h-auto min-h-11 gap-1.5 px-0 text-[var(--fg-secondary)] hover:text-[var(--accent-text)]"
-        onClick={openTheoryFromExercise}
-        data-testid="exercise-theory-link"
-      >
-        <BookOpen size={14} aria-hidden="true" />
-        {t("lesson.exercise.reread_theory", "Re-read theory")}
-      </Button>
-    ) : null;
+  // #140 / #2453 — the self-hiding "Re-read theory" link (visibility lives in
+  // ExerciseTheoryReadLink). For a matching step it is handed to the matching
+  // renderer (theoryLink prop) so it shares the top button row with the "How
+  // it works" disclosure; every other renderer keeps the chrome copy below.
+  const theoryLink = (
+    <ExerciseTheoryReadLink
+      stepType={step.type}
+      precedingTheoryIndex={precedingTheoryIndex}
+      showTheoryRecap={showTheoryRecap}
+      onReadTheory={openTheoryFromExercise}
+    />
+  );
   const exerciseIsMatching = step.exercise?.type === "matching";
 
   return (
@@ -187,10 +214,10 @@ export default function LessonStepView({
       {step.title && <h2>{step.title}</h2>}
       {/* #140 — the re-read-theory link, subtle so it doesn't distract from
           practising. #2453 — matching relocates it into its own top button
-          row, so the chrome omits its copy for matching steps. */}
-      {theoryLink && !exerciseIsMatching && (
-        <div className="mb-2">{theoryLink}</div>
-      )}
+          row, so the chrome omits its copy for matching steps. The link is
+          self-hiding, so it renders directly (no wrapper that could leave an
+          empty margin when there is no preceding theory). */}
+      {!exerciseIsMatching && <div className="mb-2 empty:hidden">{theoryLink}</div>}
       {step.type === "theory" ? (
         <>
           {theoryReturnIndex !== null && (
