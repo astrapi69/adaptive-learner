@@ -196,11 +196,9 @@
           "title": "Hint"
         },
         "id": {
+          "$ref": "#/$defs/SlugId",
           "description": "Slug-safe id, unique within the lesson.",
-          "maxLength": 120,
-          "minLength": 1,
-          "title": "Id",
-          "type": "string"
+          "title": "Id"
         },
         "images": {
           "anyOf": [
@@ -289,7 +287,7 @@
             }
           ],
           "default": null,
-          "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91).",
+          "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-].",
           "title": "Stable Id"
         },
         "tiles": {
@@ -492,6 +490,14 @@
       "title": "PictureImage",
       "type": "object"
     },
+    "SlugId": {
+      "description": "Slug id: lowercase Unicode letters and digits in hyphen-separated runs (no leading/trailing/double hyphen, no underscore, no uppercase, no whitespace). Exactly the rule the reference consumer (adaptive-learner) enforces on import - an id that fails it is silently skipped there, so the engine rejects it up front (engine#105).",
+      "maxLength": 120,
+      "minLength": 1,
+      "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+      "title": "SlugId",
+      "type": "string"
+    },
     "StepType": {
       "description": "Closed enum for top-level step kinds.\n\nTHEORY = Markdown content step. EXERCISE = one of the\nExerciseType variants. The viewer (Phase 44) branches\non this; no other step kinds are valid in v1.0.",
       "enum": [
@@ -578,11 +584,9 @@
       "description": "EXERCISE: the exercise payload."
     },
     "id": {
+      "$ref": "#/$defs/SlugId",
       "description": "Slug-safe id, unique within the lesson.",
-      "maxLength": 120,
-      "minLength": 1,
-      "title": "Id",
-      "type": "string"
+      "title": "Id"
     },
     "review_lesson_id": {
       "anyOf": [

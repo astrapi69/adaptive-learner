@@ -616,6 +616,7 @@
           "id": {
             "maxLength": 120,
             "minLength": 1,
+            "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
             "title": "Id",
             "type": "string"
           },
@@ -668,6 +669,9 @@
           "tags": {
             "default": [],
             "items": {
+              "maxLength": 120,
+              "minLength": 1,
+              "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
               "type": "string"
             },
             "maxItems": 20,
@@ -1337,6 +1341,7 @@
           "id": {
             "maxLength": 120,
             "minLength": 1,
+            "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
             "title": "Id",
             "type": "string"
           },
@@ -2975,6 +2980,7 @@
           "id": {
             "maxLength": 120,
             "minLength": 1,
+            "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
             "title": "Id",
             "type": "string"
           },
@@ -3617,6 +3623,7 @@
           "id": {
             "maxLength": 120,
             "minLength": 1,
+            "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
             "title": "Id",
             "type": "string"
           },

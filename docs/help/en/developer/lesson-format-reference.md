@@ -21,7 +21,7 @@ One lesson in a content set (Phase 43 / 2B-lesson).
 | `description` | `string | null` | no | - |
 | `domain` | `string | null` | no | - |
 | `estimated_minutes` | `number` | no | min=1, max=240 |
-| `id` | `string` | yes | minLen=1, maxLen=120 |
+| `id` | `SlugId` | yes | - |
 | `requires_extensions` | `string[]` | no | - |
 | `resources` | `LessonResource[] | null` | no | - |
 | `source_language` | `string | null` | no | - |
@@ -46,12 +46,12 @@ The smallest learnable unit (Phase 43 / 2B-lesson).
 | `expected_output` | `string | null` | no | - |
 | `front` | `string` | yes | minLen=1, maxLen=500 |
 | `hint` | `string | null` | no | - |
-| `id` | `string` | yes | minLen=1, maxLen=120 |
+| `id` | `SlugId` | yes | - |
 | `image` | `string | null` | no | - |
 | `media_type` | `"text" | "code" | "formula" | "diagram" | null` | no | - |
 | `notes` | `string | null` | no | - |
 | `stable_id` | `string | null` | no | - |
-| `tags` | `string[]` | no | maxItems=20 |
+| `tags` | `SlugId[]` | no | maxItems=20 |
 | `token_roles` | `CardTokenRole[] | null` | no | - |
 
 
@@ -93,7 +93,7 @@ One exercise step. Type-tagged via ``type``.
 | `ext_payload` | `object` | no | - |
 | `from_cards` | `boolean` | no | - |
 | `hint` | `string | null` | no | - |
-| `id` | `string` | yes | minLen=1, maxLen=120 |
+| `id` | `SlugId` | yes | - |
 | `images` | `PictureImage[] | null` | no | - |
 | `multiple` | `boolean` | no | - |
 | `options` | `MultipleChoiceOption[] | null` | no | - |
@@ -150,7 +150,7 @@ One step in the lesson sequence.
 | `example_url` | `string | null` | no | - |
 | `examples` | `InlineExample[] | null` | no | - |
 | `exercise` | `Exercise | null` | no | - |
-| `id` | `string` | yes | minLen=1, maxLen=120 |
+| `id` | `SlugId` | yes | - |
 | `review_lesson_id` | `string | null` | no | - |
 | `theory_ref` | `string | null` | no | - |
 | `title` | `string | null` | no | - |

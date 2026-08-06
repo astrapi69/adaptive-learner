@@ -104,10 +104,8 @@
         },
         "id": {
           "description": "Slug-safe id. Unique within the parent lesson. SRS reviews this id, not the surface term.",
-          "maxLength": 120,
-          "minLength": 1,
           "title": "Id",
-          "type": "string"
+          "$ref": "#/$defs/SlugId"
         },
         "stable_id": {
           "anyOf": [
@@ -121,7 +119,7 @@
           ],
           "default": null,
           "title": "Stable Id",
-          "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91)."
+          "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-]."
         },
         "image": {
           "anyOf": [
@@ -171,9 +169,9 @@
         },
         "tags": {
           "default": [],
-          "description": "Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').",
+          "description": "Tags for SRS filtering ('greeting', 'verb-present', 'irregular'). Each tag must match $defs/SlugId - the reference consumer checks tags with the same regex it applies to ids and skips lessons whose tags fail (engine#108, hard since schema 1.11 after the published corpus was cleaned).",
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/SlugId"
           },
           "maxItems": 20,
           "title": "Tags",
@@ -425,10 +423,8 @@
         },
         "id": {
           "description": "Slug-safe id, unique within the lesson.",
-          "maxLength": 120,
-          "minLength": 1,
           "title": "Id",
-          "type": "string"
+          "$ref": "#/$defs/SlugId"
         },
         "stable_id": {
           "anyOf": [
@@ -442,7 +438,7 @@
           ],
           "default": null,
           "title": "Stable Id",
-          "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91)."
+          "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-]."
         },
         "images": {
           "anyOf": [
@@ -836,10 +832,8 @@
         },
         "id": {
           "description": "Slug-safe id, unique within the lesson.",
-          "maxLength": 120,
-          "minLength": 1,
           "title": "Id",
-          "type": "string"
+          "$ref": "#/$defs/SlugId"
         },
         "review_lesson_id": {
           "anyOf": [
@@ -994,6 +988,14 @@
       "title": "PictureImage",
       "type": "object"
     },
+    "SlugId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+      "title": "SlugId",
+      "description": "Slug id: lowercase Unicode letters and digits in hyphen-separated runs (no leading/trailing/double hyphen, no underscore, no uppercase, no whitespace). Exactly the rule the reference consumer (adaptive-learner) enforces on import - an id that fails it is silently skipped there, so the engine rejects it up front (engine#105)."
+    },
     "StepType": {
       "description": "Closed enum for top-level step kinds.\n\nTHEORY = Markdown content step. EXERCISE = one of the\nExerciseType variants. The viewer (Phase 44) branches\non this; no other step kinds are valid in v1.0.",
       "enum": [
@@ -1096,11 +1098,9 @@
       "type": "integer"
     },
     "id": {
-      "description": "Slug-safe id, unique within the parent set. Convention: ``NN-slug`` (e.g. ``01-greetings``) for deterministic ordering, though the loader does not enforce ordering — it reads the set's manifest for the lesson sequence.",
-      "maxLength": 120,
-      "minLength": 1,
+      "description": "Slug id (see $defs/SlugId), unique within the parent set. The display order of a set's lessons is the LEXICOGRAPHIC sort of these ids: consumers sort the stored ``lessons/<id>.json`` filenames (the set manifest's ``metadata.lessons`` list only steers download discovery, never display order). The ``NN-slug`` prefix (e.g. ``01-greetings``) is therefore the ordering mechanism, not cosmetics - zero-pad it to one fixed width per set, or ``10-`` sorts before ``2-`` (engine#106).",
       "title": "Id",
-      "type": "string"
+      "$ref": "#/$defs/SlugId"
     },
     "requires_extensions": {
       "description": "Extensions this lesson needs, each ``ext:<vendor>-<name>@<major>`` (e.g. ``ext:acme-ordering@1``). A consumer that has not registered a declared extension refuses the lesson loudly (E-EXT-UNSUPPORTED) rather than mis-rendering. Absent / empty on core lessons; additive, so pre-1.7 content validates unchanged.",
@@ -1205,5 +1205,5 @@
   ],
   "title": "Lesson",
   "type": "object",
-  "x-schema-version": "1.9"
+  "x-schema-version": "1.11"
 }

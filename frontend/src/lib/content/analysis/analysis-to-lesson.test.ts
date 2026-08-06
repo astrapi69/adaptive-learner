@@ -203,7 +203,7 @@ describe("validateGeneratedLesson", () => {
         cards: [],
         steps: [{ id: "theory-overview", type: "theory", body: "hi" }],
       }),
-    ).toThrow(/slug-safe/);
+    ).toThrow(/slug-safe|must match pattern/);
   });
 
   it("rejects a theory step without a body", () => {

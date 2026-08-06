@@ -94,6 +94,19 @@ export function asContentSetBook(
 
 export { resolveLanguagePair, setBasePath };
 
+// engine#127 - the controlled domain/level vocabulary. The ENGINE_ prefix
+// keeps them distinct from the app-facing shapes in
+// ``lib/content/content-domains.ts`` (that module derives its Set + UI
+// sentinel from these; note the app's LEVEL_NONE "__none__" is a Radix UI
+// sentinel, NOT the engine's content-level sentinel "none").
+export {
+  CEFR_LEVELS as ENGINE_CEFR_LEVELS,
+  KNOWN_CONTENT_DOMAINS as ENGINE_KNOWN_CONTENT_DOMAINS,
+  LEVEL_NONE as ENGINE_LEVEL_NONE,
+  isKnownContentDomain as engineIsKnownContentDomain,
+  isKnownLevel as engineIsKnownLevel,
+} from "learn-content-engine";
+
 /** Project a raw parsed manifest set into a canonical
  *  {@link ContentSetEntry}. */
 export function asContentSetEntry(
