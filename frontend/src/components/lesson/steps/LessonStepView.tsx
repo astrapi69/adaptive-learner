@@ -96,7 +96,7 @@ function ExerciseTheoryReadLink({
       type="button"
       variant="link"
       size="sm"
-      className="h-auto min-h-11 gap-1.5 px-0 text-[var(--fg-secondary)] hover:text-[var(--accent-text)]"
+      className="h-auto min-h-11 gap-1.5 px-3 py-1.5 text-[var(--fg-secondary)] hover:text-[var(--accent-text)]"
       onClick={onReadTheory}
       data-testid="exercise-theory-link"
     >

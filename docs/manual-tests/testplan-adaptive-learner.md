@@ -357,6 +357,12 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Matching: Paare GLEICHE Höhe (kein visueller Versatz)
 - [ ] Matching: "Aufloesen" Animation sieht gut aus (4 Effekte testen)
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
+- [ ] Word Tiles: bei RICHTIGER Lösung bleibt der gebaute Satz sichtbar (#2494):
+      einen Satz korrekt zusammensetzen und prüfen. Der zusammengesetzte Satz
+      wird danach weiterhin (grün) angezeigt und verschwindet NICHT; darunter
+      erscheinen die Erfolgsmeldung ("Richtig!") und der Weiter-Knopf. iOS PWA/
+      Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
+      Web-App-Icon durchführen.
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verständlich)
 - [ ] Picture Choice: Kacheln GLEICHE Höhe
 - [ ] Antwort-Reihenfolge gemischt (#2317): eine Bildauswahl (picture_choice)
