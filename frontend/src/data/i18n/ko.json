@@ -2870,6 +2870,15 @@
       "theory_failed": "AI가 사용 가능한 이론을 반환하지 않았습니다. 다시 시도하세요.",
       "exercises_failed": "사용 가능한 연습문제가 생성되지 않았습니다. 다시 시도하세요.",
       "generate_failed": "레슨을 생성할 수 없습니다. 다시 시도하세요.",
+      "gen_missing_intro": "선택한 이 유형은 텍스트에서 생성되지 않았습니다:",
+      "types": {
+        "heading": "문제 유형",
+        "group_standard": "표준 유형",
+        "group_extension": "확장 유형",
+        "group_unavailable": "텍스트로 생성 불가",
+        "unavailable_reason": "이미지와 오디오는 텍스트로 생성할 수 없습니다. 이러한 유형은 나중에 편집기에서 추가할 수 있습니다.",
+        "floor_hint": "최소한 하나의 문제 유형은 선택된 상태로 유지해야 합니다."
+      },
       "generate_to_advance": "계속하려면 텍스트에서 레슨을 생성하세요.",
       "review_theory": "이론 단계 {n}개",
       "review_exercises": "연습문제 {n}개",

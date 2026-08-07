@@ -2870,6 +2870,15 @@
       "theory_failed": "AI tidak menghasilkan teori yang dapat digunakan. Silakan coba lagi.",
       "exercises_failed": "Tidak ada latihan yang dapat digunakan. Silakan coba lagi.",
       "generate_failed": "Tidak dapat membuat pelajaran. Silakan coba lagi.",
+      "gen_missing_intro": "Tipe terpilih ini tidak muncul dari teks:",
+      "types": {
+        "heading": "Jenis latihan",
+        "group_standard": "Tipe standar",
+        "group_extension": "Tipe ekstensi",
+        "group_unavailable": "Tidak dapat dibuat dari teks",
+        "unavailable_reason": "Gambar dan audio tidak dapat dibuat dari teks. Kamu dapat menambahkan tipe ini nanti di editor.",
+        "floor_hint": "Setidaknya satu jenis latihan harus tetap dipilih."
+      },
       "generate_to_advance": "Buat pelajaran dari teks Anda untuk melanjutkan.",
       "review_theory": "{n} langkah teori",
       "review_exercises": "{n} latihan",

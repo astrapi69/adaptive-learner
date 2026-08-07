@@ -2870,6 +2870,15 @@
       "theory_failed": "A IA não retornou teoria utilizável. Tente novamente.",
       "exercises_failed": "Nenhum exercício utilizável foi gerado. Tente novamente.",
       "generate_failed": "Não foi possível gerar a lição. Tente novamente.",
+      "gen_missing_intro": "Estes tipos selecionados não surgiram do texto:",
+      "types": {
+        "heading": "Tipos de exercício",
+        "group_standard": "Tipos padrão",
+        "group_extension": "Tipos de extensão",
+        "group_unavailable": "Não gerável a partir de texto",
+        "unavailable_reason": "Imagens e áudio não podem ser gerados a partir de texto. Você pode adicionar esses tipos depois no editor.",
+        "floor_hint": "Pelo menos um tipo de exercício deve permanecer selecionado."
+      },
       "generate_to_advance": "Gere a lição a partir do seu texto para continuar.",
       "review_theory": "{n} passo(s) de teoria",
       "review_exercises": "{n} exercício(s)",

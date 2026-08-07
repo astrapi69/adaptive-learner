@@ -60,6 +60,12 @@ export interface ExercisePromptOptions {
    *  picture_choice card is always dropped downstream. Defaults to ``true``
    *  (unchanged behaviour for the card-based paths). */
   hasAssets?: boolean;
+  /** #2510 — the exercise types the user selected for this generation (core
+   *  ``matching`` etc. + text-extension ``ext:al-*``). When present, the prompt
+   *  offers ONLY these types (hard allow-list); when absent, today's full mix
+   *  is requested. Asset-bound types the caller cannot fulfil (picture_choice
+   *  without assets) are already filtered by ``hasAssets``. */
+  types?: readonly string[];
 }
 
 /** The six core exercise types the schema accepts and this generator can
@@ -88,6 +94,48 @@ type _ExerciseTypesInSyncWithSchema = [
 ];
 const _exerciseTypesInSync: _ExerciseTypesInSyncWithSchema = [true, true];
 void _exerciseTypesInSync;
+
+const READING_COMPREHENSION = "ext:al-reading-comprehension";
+const GRADED_QUIZ = "ext:al-graded-quiz";
+const CATEGORIZATION = "ext:al-categorization";
+const ERROR_CORRECTION = "ext:al-error-correction";
+
+/** The four text-only extension types this generator can request (#2355). The
+ *  media extensions (dictation, image-description) need assets and are out of
+ *  scope here (see extension-cards.ts). Kept local so the prompt stays
+ *  library-grade; the parser's own TEXT_EXTENSION_TYPES is the runtime gate. */
+export const TEXT_EXTENSION_TYPES: readonly string[] = [
+  READING_COMPREHENSION,
+  GRADED_QUIZ,
+  CATEGORIZATION,
+  ERROR_CORRECTION,
+];
+
+/** Per-ext-type EXTENSION TYPES shape lines (#2510), so a deselected ext type's
+ *  field spec is omitted from the prompt rather than listed but forbidden. */
+const EXT_SHAPE_LINES: Record<string, string[]> = {
+  [READING_COMPREHENSION]: [
+    "- ext:al-reading-comprehension: question, passage (the text to read),",
+    "                   questions[] of {prompt, type ('multiple_choice' with",
+    "                   options[] of {text, correct} >= 2 incl. >= 1 correct, OR",
+    "                   'free_text' with accept[] >= 1)}",
+  ],
+  [GRADED_QUIZ]: [
+    "- ext:al-graded-quiz: question, questions[] like reading-comprehension but",
+    "                   each also carries points (> 0); optional pass_threshold",
+    "                   (0-100). At most ONE, an end-of-lesson summary.",
+  ],
+  [CATEGORIZATION]: [
+    "- ext:al-categorization: question, categories[] (>= 2 of {name, items[] >= 1});",
+    "                   every item belongs to exactly one category, names unique",
+  ],
+  [ERROR_CORRECTION]: [
+    "- ext:al-error-correction: question, tokens[] (the sentence, one word per",
+    "                   entry, >= 2), error_index (0-based index of the wrong",
+    "                   token), accept[] (>= 1 correction, none equal to the wrong",
+    "                   token)",
+  ],
+};
 
 const DEFAULT_MAX_CARDS = 8;
 
@@ -153,9 +201,84 @@ export function buildExerciseGenerationPrompt(
   // #2356 — asset-dependent type set: without images, picture_choice cannot be
   // filled (the model supplies no image src), so it is not offered at all.
   const hasAssets = options.hasAssets ?? true;
-  const coreTypesLine = hasAssets
-    ? "- Core types: matching, picture_choice, free_text, word_tiles, cloze,"
-    : "- Core types: matching, free_text, word_tiles, cloze,";
+
+  // #2510 — the user's type selection restricts the offered types to a hard
+  // allow-list. Absent -> today's full mix. Asset-bound picture_choice is
+  // already removed by hasAssets above, so it never appears here.
+  const selected =
+    options.types && options.types.length > 0 ? new Set(options.types) : null;
+  const baseCore = hasAssets
+    ? ["matching", "picture_choice", "free_text", "word_tiles", "cloze", "multiple_choice"]
+    : ["matching", "free_text", "word_tiles", "cloze", "multiple_choice"];
+  const allowedCore = selected ? baseCore.filter((t) => selected.has(t)) : baseCore;
+  const allowedExt = selected
+    ? TEXT_EXTENSION_TYPES.filter((t) => selected.has(t))
+    : [...TEXT_EXTENSION_TYPES];
+  const allowedAll = [...allowedCore, ...allowedExt];
+
+  const coreLines =
+    allowedCore.length > 0
+      ? [
+          `- Core types: ${allowedCore.join(", ")}.`,
+          "  These should make up the bulk of the set.",
+        ]
+      : [];
+  const extIntroLines =
+    allowedExt.length > 0
+      ? [
+          "- You MAY also use the richer TEXT extension types (see EXTENSION TYPES",
+          `  below) when a concept genuinely fits one: ${allowedExt.join(", ")}. Use`,
+          "  no other type name.",
+        ]
+      : [];
+  const selectionLine = selected
+    ? [`- Use ONLY these exercise types, no others: ${allowedAll.join(", ")}.`]
+    : [];
+  const varietyLines =
+    !selected || allowedAll.length >= 3
+      ? [
+          "- Produce at least 3 DIFFERENT exercise types across the set - but only",
+          "  types that suit each concept (suitability beats variety; see TYPE",
+          "  SELECTION below).",
+        ]
+      : [
+          "- Use the allowed exercise types; repeat a fitting type rather than",
+          "  forcing an unfitting one (suitability beats variety; see TYPE",
+          "  SELECTION below).",
+        ];
+  // TYPE SELECTION extension-routing hints, one block per selectable ext type,
+  // emitted only for selected types so a deselected type is never suggested.
+  const extRouting = [
+    ...(allowedExt.includes(READING_COMPREHENSION)
+      ? [
+          "- A passage the learner must READ and then answer several questions about",
+          "  -> ext:al-reading-comprehension (ONE per lesson at most).",
+        ]
+      : []),
+    ...(allowedExt.includes(CATEGORIZATION)
+      ? ["- Terms/examples that group into named categories -> ext:al-categorization."]
+      : []),
+    ...(allowedExt.includes(ERROR_CORRECTION)
+      ? [
+          "- A single sentence with ONE wrong word to spot and fix ->",
+          "  ext:al-error-correction.",
+        ]
+      : []),
+    ...(allowedExt.includes(GRADED_QUIZ)
+      ? [
+          "- A short scored summary of the lesson's key facts -> ext:al-graded-quiz",
+          "  (at most ONE, as an end-of-lesson summary; never one per small point).",
+        ]
+      : []),
+  ];
+  const extBlock =
+    allowedExt.length > 0
+      ? [
+          "",
+          "EXTENSION TYPES (optional, text-only; use sparingly - see the caps above)",
+          ...allowedExt.flatMap((t) => EXT_SHAPE_LINES[t]),
+        ]
+      : [];
 
   return [
     "You are an instructional designer. Read the THEORY below.",
@@ -166,15 +289,10 @@ export function buildExerciseGenerationPrompt(
     `- Write every exercise in the same language as the theory (${language}).`,
     "- Use ONLY content that appears in the theory. Invent nothing; do not",
     "  add facts, terms, or modules the text does not mention.",
-    "- Produce at least 3 DIFFERENT exercise types across the set - but only",
-    "  types that suit each concept (suitability beats variety; see TYPE",
-    "  SELECTION below).",
-    coreTypesLine,
-    "  multiple_choice. These should make up the bulk of the set.",
-    "- You MAY also use the richer TEXT extension types (see EXTENSION TYPES",
-    "  below) when a concept genuinely fits one: ext:al-reading-comprehension,",
-    "  ext:al-graded-quiz, ext:al-categorization, ext:al-error-correction. Use",
-    "  no other type name.",
+    ...selectionLine,
+    ...varietyLines,
+    ...coreLines,
+    ...extIntroLines,
     "- No trivial questions, no verbatim quotes as the answer, and every",
     "  distractor must be plausible but unambiguously wrong.",
     "- A cloze sentence marks its single blank with ___ and has exactly one",
@@ -201,13 +319,7 @@ export function buildExerciseGenerationPrompt(
     "  for 'select all that apply' (2+ correct options, graded by exact set).",
     "  Prefer multiple_choice over cloze when the options are self-contained",
     "  choices rather than a word missing from a sentence.",
-    "- A passage the learner must READ and then answer several questions about",
-    "  -> ext:al-reading-comprehension (ONE per lesson at most).",
-    "- Terms/examples that group into named categories -> ext:al-categorization.",
-    "- A single sentence with ONE wrong word to spot and fix ->",
-    "  ext:al-error-correction.",
-    "- A short scored summary of the lesson's key facts -> ext:al-graded-quiz",
-    "  (at most ONE, as an end-of-lesson summary; never one per small point).",
+    ...extRouting,
     "",
     "TYPE FIELDS",
     "- matching:        question, pairs[] (>= 3 of {left, right})",
@@ -220,21 +332,7 @@ export function buildExerciseGenerationPrompt(
     "- multiple_choice: question, options[] (>= 2 of {text, is_correct}, unique",
     "                   texts, >= 1 correct), multiple (bool: false = one correct,",
     "                   true = select all correct)",
-    "",
-    "EXTENSION TYPES (optional, text-only; use sparingly - see the caps above)",
-    "- ext:al-reading-comprehension: question, passage (the text to read),",
-    "                   questions[] of {prompt, type ('multiple_choice' with",
-    "                   options[] of {text, correct} >= 2 incl. >= 1 correct, OR",
-    "                   'free_text' with accept[] >= 1)}",
-    "- ext:al-graded-quiz: question, questions[] like reading-comprehension but",
-    "                   each also carries points (> 0); optional pass_threshold",
-    "                   (0-100). At most ONE, an end-of-lesson summary.",
-    "- ext:al-categorization: question, categories[] (>= 2 of {name, items[] >= 1});",
-    "                   every item belongs to exactly one category, names unique",
-    "- ext:al-error-correction: question, tokens[] (the sentence, one word per",
-    "                   entry, >= 2), error_index (0-based index of the wrong",
-    "                   token), accept[] (>= 1 correction, none equal to the wrong",
-    "                   token)",
+    ...extBlock,
     "",
     "OUTPUT",
     "Reply with JSON ONLY (no prose outside the JSON), shaped exactly:",

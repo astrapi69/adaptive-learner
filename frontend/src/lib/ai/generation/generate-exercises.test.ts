@@ -143,3 +143,64 @@ describe("generateExercises — text extensions (#2355)", () => {
     expect(types).toContain("cloze");
   });
 });
+
+describe("generateExercises — user type selection (#2510)", () => {
+  it("threads the selected types into the prompt", async () => {
+    const m = mockProvider(GOOD_REPLY);
+    await generateExercises(STEPS, m.provider, { types: ["cloze"] });
+    expect(m.lastPrompt()).toMatch(/Use ONLY these exercise types/i);
+    expect(m.lastPrompt()).toContain("cloze");
+  });
+
+  it("drops any parsed card whose type the user did not select", async () => {
+    // The model ignores the allow-list and returns a matching card anyway; the
+    // orchestrator must still not surface it when only cloze was selected.
+    const m = mockProvider(GOOD_REPLY);
+    const result = await generateExercises(STEPS, m.provider, { types: ["cloze"] });
+    const types = result.cards.map((c) => c.type);
+    expect(types).toContain("cloze");
+    expect(types).not.toContain("matching");
+    expect(types).not.toContain("free_text");
+  });
+
+  it("drops a non-selected extension card, keeps a selected one", async () => {
+    const reply = JSON.stringify({
+      cards: [
+        { type: "cloze", question: "hosts: ___", answer: "all", distractors: ["one"] },
+        {
+          type: "ext:al-categorization",
+          question: "Sort the terms.",
+          categories: [
+            { name: "Modules", items: ["copy", "service"] },
+            { name: "Concepts", items: ["idempotence"] },
+          ],
+        },
+        {
+          type: "ext:al-reading-comprehension",
+          question: "Read and answer.",
+          passage: "Ansible is agentless and runs tasks over SSH.",
+          questions: [
+            { prompt: "How does it connect?", type: "free_text", accept: ["over SSH"] },
+          ],
+        },
+      ],
+    });
+    const m = mockProvider(reply);
+    const result = await generateExercises(STEPS, m.provider, {
+      types: ["cloze", "ext:al-categorization"],
+    });
+    const types = result.cards.map((c) => c.type);
+    expect(types).toContain("ext:al-categorization");
+    expect(types).not.toContain("ext:al-reading-comprehension");
+  });
+
+  it("keeps today's full mix when no selection is given", async () => {
+    const m = mockProvider(GOOD_REPLY);
+    const result = await generateExercises(STEPS, m.provider);
+    expect(result.cards.map((c) => c.type)).toEqual([
+      "matching",
+      "cloze",
+      "free_text",
+    ]);
+  });
+});

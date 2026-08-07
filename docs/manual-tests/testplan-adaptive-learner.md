@@ -587,6 +587,25 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       formuliert Theorie in eigenen Worten + erzeugt Übungen; OHNE
       KI-Key: freundlicher Hinweis, kein Crash; "Weiter" erst nach
       erfolgreicher Generierung
+- [ ] **Aufgabentyp-Auswahl im Assistenten (#2510):** Im Buchtext-Schritt
+      steht über "Theorie + Übungen generieren" eine Auswahl "Aufgabentypen"
+      mit drei Gruppen: **Standardtypen** (Zuordnung, Freitext, Lückentext,
+      Wort-Kacheln, Multiple Choice) sind vorausgewählt; **Erweiterungstypen**
+      (Kategorisierung, Fehlerkorrektur, Leseverständnis, Benotetes Quiz) sind
+      hinzuwählbar; **"Aus Text nicht erzeugbar"** (Bildauswahl, Bildbeschreibung,
+      Diktat) sind ausgegraut/deaktiviert mit einem Satz Begründung ("Aus einem
+      Text lassen sich keine Bilder oder Audio erzeugen … im Editor nachträglich
+      ergänzbar"). Wer nichts ändert, bekommt das heutige Verhalten. Alles außer
+      einem Typ abwählen → der letzte bleibt gewählt und der Hinweis "Mindestens
+      ein Aufgabentyp muss gewählt bleiben." erscheint (nicht still). Ein
+      hinzugewählter Typ ist beim nächsten Durchlauf noch gewählt (gemerkt).
+      Generieren → nur die gewählten Typen entstehen; ein gewählter Typ, der
+      aus dem Text nicht entstand, wird namentlich unter "Diese gewählten Typen
+      sind aus dem Text nicht entstanden:" gelistet (nicht still weniger).
+      **iOS-Standalone (PWA, Dexie-Modus):** die Auswahl kostet wenig Höhe (drei
+      kompakte, umbrechende Gruppen), ist antippbar, und die gemerkte Auswahl
+      übersteht einen Reload. **Barrierefrei:** die ausgegrauten Felder tragen
+      eine Beschriftung + `aria-describedby` auf die Begründung.
 - [ ] **Titel-Pflichtfeld im Buchtext-Pfad (#1946):** Schritt 1 OHNE
       Titel → Karte "Wissenslektion aus Text" klicken → bleibt auf
       Schritt 1 mit dem freundlichen Hinweis "Ein Titel ist

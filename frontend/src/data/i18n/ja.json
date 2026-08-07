@@ -2870,6 +2870,15 @@
       "theory_failed": "AIは使用可能な理論を返しませんでした。もう一度お試しください。",
       "exercises_failed": "使用可能な演習が生成されませんでした。もう一度お試しください。",
       "generate_failed": "レッスンを生成できませんでした。もう一度お試しください。",
+      "gen_missing_intro": "選択したこれらのタイプはテキストから生成されませんでした:",
+      "types": {
+        "heading": "問題タイプ",
+        "group_standard": "標準タイプ",
+        "group_extension": "拡張タイプ",
+        "group_unavailable": "テキストからは生成不可",
+        "unavailable_reason": "テキストから画像や音声は生成できません。これらのタイプはエディターで後から追加できます。",
+        "floor_hint": "少なくとも1つの問題タイプを選択したままにする必要があります。"
+      },
       "generate_to_advance": "続行するにはテキストからレッスンを生成してください。",
       "review_theory": "理論ステップ{n}件",
       "review_exercises": "演習{n}件",

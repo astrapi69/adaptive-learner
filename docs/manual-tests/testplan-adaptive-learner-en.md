@@ -550,6 +550,24 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       rephrases theory in its own words + generates exercises; WITHOUT
       an AI key: friendly notice, no crash; "Next" only after a
       successful generation
+- [ ] **Exercise-type selection in the assistant (#2510):** In the book-text
+      step, above "Generate theory + exercises" there is an "Exercise types"
+      selector with three groups: **Standard types** (Matching, Free text,
+      Cloze, Word tiles, Multiple choice) are pre-selected; **Extension types**
+      (Categorization, Error correction, Reading comprehension, Graded quiz) are
+      opt-in; **"Not generatable from text"** (Picture choice, Image description,
+      Dictation) are greyed out/disabled with a one-line reason ("Images and
+      audio cannot be generated from text … add later in the editor"). Doing
+      nothing yields today's behaviour. Deselect all but one → the last one stays
+      selected and the "At least one exercise type must stay selected." hint
+      appears (not silent). An opted-in type is still selected on the next run
+      (remembered). Generate → only the selected types come out; a selected type
+      the text did not yield is listed by name under "These selected types did
+      not come out of the text:" (not silently fewer). **iOS standalone (PWA,
+      Dexie mode):** the selector costs little height (three compact, wrapping
+      groups), is tappable, and the remembered selection survives a reload.
+      **Accessible:** the greyed fields carry a label + `aria-describedby` to the
+      reason.
 - [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
       a title → click the "Knowledge lesson from text" card → stays on
       step 1 with the friendly "A title is required." message (NOT the
