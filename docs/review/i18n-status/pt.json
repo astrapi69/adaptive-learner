@@ -12344,17 +12344,6 @@
     "target_hash": "fb0a39eba07f",
     "checked_at": "pt full run"
   },
-  "hints.reveal_pair": {
-    "verdict": "minor",
-    "severity": "low",
-    "note": "'combina com' (matches/goes with) is a reasonable render of 'gehört zu' (belongs with), but 'pertence a' is closer to the source meaning.",
-    "suggestion": "«{left}» pertence a «{right}»",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "minor",
-    "de_hash": "fd54c5a3b18c",
-    "target_hash": "16cf34e315b1",
-    "checked_at": "pt full run"
-  },
   "import.analysis_cancel": {
     "verdict": "ok",
     "severity": "low",
@@ -15834,17 +15823,6 @@
     "target_hash": "35e63c809c97",
     "checked_at": "pt full run"
   },
-  "lesson.exercise.matching.instruction_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "Accurate and idiomatic translation.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "bf66b4fa79f3",
-    "target_hash": "afe1dd8489df",
-    "checked_at": "pt full run"
-  },
   "lesson.exercise.matching.instructions": {
     "verdict": "ok",
     "severity": "low",
@@ -15871,17 +15849,6 @@
     "verdict": "ok",
     "severity": "low",
     "note": "'Termo' is the correct translation of 'Begriff'.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "29c820dfc81c",
-    "target_hash": "621d3f938980",
-    "checked_at": "pt full run"
-  },
-  "lesson.exercise.matching.left_label_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "'Termo' correctly translates 'Begriff'.",
     "suggestion": "",
     "tier1_model": "claude-sonnet-4-6",
     "tier1_verdict": "ok",
@@ -15964,17 +15931,6 @@
     "tier1_verdict": "ok",
     "de_hash": "08145060a96d",
     "target_hash": "31049c42a96d",
-    "checked_at": "pt full run"
-  },
-  "lesson.exercise.matching.right_label_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "'Definição' correctly translates 'Definition'.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "9813fafb098c",
-    "target_hash": "a3880fb1728a",
     "checked_at": "pt full run"
   },
   "lesson.exercise.matching.right_label_productive": {

@@ -17,8 +17,7 @@ export type HintKind =
     | {kind: "length"; n: number}
     | {kind: "first_letters"; prefix: string; n: number}
     | {kind: "not"; label: string}
-    | {kind: "item"; label: string}
-    | {kind: "reveal_pair"; left: string; right: string};
+    | {kind: "item"; label: string};
 
 export interface ExerciseHint {
     /** 1 = light, 2 = stronger. */
@@ -75,19 +74,6 @@ function pictureChoiceHints(exercise: ContentLessonExercise): ExerciseHint[] {
     return hints;
 }
 
-/** Matching hints: name the first item, then reveal its pair. */
-function matchingHints(exercise: ContentLessonExercise): ExerciseHint[] {
-    const pair = exercise.pairs?.[0];
-    if (!pair || !pair.left || !pair.right) return [];
-    return [
-        {level: 1, data: {kind: "item", label: pair.left}},
-        {
-            level: 2,
-            data: {kind: "reveal_pair", left: pair.left, right: pair.right},
-        },
-    ];
-}
-
 /** Word-tiles hints: the first tile, then the first two. */
 function wordTilesHints(exercise: ContentLessonExercise): ExerciseHint[] {
     const tiles = (exercise.tiles ?? []).filter((tt) => tt.trim() !== "");
@@ -123,7 +109,12 @@ export function generateHints(
         case "picture_choice":
             return pictureChoiceHints(exercise);
         case "matching":
-            return matchingHints(exercise);
+            // #2443 — no hint for matching. Both columns are fully visible,
+            // so a first-letter hint reveals a letter of an already-readable
+            // word and "start with X" only names a visible item. Neither adds
+            // information, so charging XP for it was a pure loss. The button
+            // hides on an empty hint list. (Follow-up to #2390.)
+            return [];
         case "word_tiles":
             return wordTilesHints(exercise);
         default:
@@ -159,9 +150,5 @@ export function formatHint(hint: ExerciseHint, t: HintTranslate): string {
                 "{label}",
                 d.label,
             );
-        case "reveal_pair":
-            return t("hints.reveal_pair", "“{left}” goes with “{right}”")
-                .replace("{left}", d.left)
-                .replace("{right}", d.right);
     }
 }

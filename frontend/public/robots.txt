@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://astrapi69.github.io/adaptive-learner/sitemap.xml
+Sitemap: https://astrapi69.github.io/adaptive-learner/docs/sitemap.xml

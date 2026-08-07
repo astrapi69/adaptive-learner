@@ -195,6 +195,44 @@ def test_lesson_cards_delete_only_the_target_lesson(client: TestClient, user_id:
     assert {row["lesson_id"] for row in remaining_errors} == {"02-body.json"}
 
 
+def test_bulk_lesson_cards_delete_several_lessons_atomically(
+    client: TestClient, user_id: str
+) -> None:
+    """#2065 — a bulk delete removes SEVERAL lessons' cards in one atomic call,
+    keeping a non-selected sibling of the same set."""
+    drop_1 = _upsert_progress(client, user_id, set_id="book42", filename="01-intro.json")
+    drop_2 = _upsert_progress(client, user_id, set_id="book42", filename="02-body.json")
+    _upsert_progress(client, user_id, set_id="book42", filename="03-keep.json")
+    _upsert_attempt_lesson(
+        client, user_id, set_id="book42", lesson_id="01-intro.json", element_key="a"
+    )
+    _upsert_attempt_lesson(
+        client, user_id, set_id="book42", lesson_id="02-body.json", element_key="b"
+    )
+    _upsert_attempt_lesson(
+        client, user_id, set_id="book42", lesson_id="03-keep.json", element_key="c"
+    )
+
+    response = client.post(
+        DELETE_PATH.format(user_id=user_id),
+        json={
+            "lesson_progress_ids": [drop_1, drop_2],
+            "set_ids": [],
+            "lesson_cards": [
+                {"set_id": "book42", "lesson_id": "01-intro.json"},
+                {"set_id": "book42", "lesson_id": "02-body.json"},
+            ],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json() == {"lessons_deleted": 2, "cards_deleted": 2}
+
+    remaining_progress = _list_progress(client, user_id)
+    assert [row["lesson_filename"] for row in remaining_progress] == ["03-keep.json"]
+    remaining_errors = _list_errors(client, user_id)
+    assert {row["lesson_id"] for row in remaining_errors} == {"03-keep.json"}
+
+
 def test_unknown_user_returns_404(client: TestClient) -> None:
     response = client.post(
         DELETE_PATH.format(user_id="no-such-user"),

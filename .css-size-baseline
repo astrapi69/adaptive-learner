@@ -212,4 +212,41 @@
 # klassen-gestylte Anker wieder gewinnen. Legitime Fundament-Erweiterung
 # (Base-Reset-Ebene), aber der a11y-Fix hob die Baseline nicht mit an, so
 # dass develop rot blieb. Hier nachgetragen; nicht aus dieser Recovery-PR.
-7648
+# 2026-08-06: 7648 -> 7335 (Dead-CSS-Tranche #2476, Karte aus #2452,
+# Refs #1485): -313 Zeilen bestaetigt toter Legacy-Regeln, Rueckstand der
+# Tailwind-Migration der AI-Key-Settings-UI (nach 2026-07-08).
+# 26-auto-loop.css (36) + 40-api-key-validation.css (66) komplett samt
+# @import-Zeilen; 10-settings.css Block api-key/configured-provider
+# (-163); Einzelregeln .metric-grid (06, .metric-grid-5 bleibt LIVE),
+# .onboarding-skip-top (04 + 24), .api-key-row-input/
+# .model-override-row-input mobile (24), .chat-message-cursor (08).
+# Jeder Selektor per grep gegen frontend/src verifiziert (inkl.
+# Template-Literal-Staemme + testids); Grep-Pin in
+# dead-selectors-removed.test.ts. NICHT entfernt (Karten-Korrektur):
+# nav-mode-badge-content/-ai-augmented sind LIVE via
+# `nav-mode-badge-${mode}` (NavIndicators.tsx:25).
+# 2026-08-07: 7335 -> 7581 (Wiederherstellung #2484): +246 Zeilen. Die
+# #2476-Tranche entfernte die api-key-/configured-provider-/
+# model-override-Regeln FAELSCHLICH - ihre Konsumenten liegen nicht in
+# frontend/src, sondern im externen Paket @astrapi69/ai-key-vault-react
+# (dist emittiert die Klassennamen); die KI-Settings renderten unstyled
+# auf den Deployments. Zurueck: 40-api-key-validation.css komplett samt
+# @import (67), der 10-settings-Block (163, byte-identisch zum
+# Vor-Tranche-Stand), die mobilen api-key-row-input/
+# model-override-row-input-Regeln in 24 (16). Wirklich tot bleiben
+# chat-transition-*, .metric-grid, .onboarding-skip-top,
+# .chat-message-cursor (gegen node_modules/@astrapi69/*/dist
+# nachverifiziert, 0 Treffer). Ein src-Grep allein ist kein
+# Tot-Urteil - Laufzeitpakete emittieren Klassennamen.
+# 2026-08-07: 7581 -> 7645 (#2479 Korrektur-zaehlender Zusammenfassungs-
+# Balken, Merge-Rebase der +64 auf die #2484-Wiederherstellung): +64 Zeilen
+# in 12-navigation.css - der zweigeteilte Punktzahl-Balken erweitert die
+# bestehende Score-Bar-Primitive um einen zweiten ("nach Korrektur")
+# Abschnitt: ein solider + ein schraffierter Fill (repeating-linear-gradient
+# ueber color-mix, damit die Segmente auch ohne Farbe unterscheidbar sind -
+# Barrierefreiheit) plus die zweizeilige Legende mit Swatches. Legitime
+# Fundament-Erweiterung einer bereits ungelayerten Legacy-Regel (kein
+# Tailwind-Utility-Aequivalent fuer den Hatch-Verlauf); neue Farben laufen
+# ueber die vorhandenen Tokens --accent / --exercise-correct / --surface.
+# Kein neues global.css.
+7645

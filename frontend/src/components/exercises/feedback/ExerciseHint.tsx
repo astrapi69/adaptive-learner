@@ -23,6 +23,7 @@ import { useLessonMode } from "../../../hooks/lesson/modes/useLessonMode";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { emitXpSpent } from "../../../lib/gamification/xp-spent-event";
 import { markHintUsed } from "../../../lib/hints/hint-usage";
+import { exerciseIdentityOf } from "../../../lib/srs/exercise-identity";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import { getStorage } from "../../../storage";
 import type { ContentLessonExercise } from "../../../storage/types";
@@ -68,8 +69,9 @@ export default function ExerciseHint({
 
     const handleReveal = () => {
         // Record usage for this exercise so the lesson's recordBulk +
-        // step-result can mark the SRS row + count the hint (#594).
-        markHintUsed(exercise.id);
+        // step-result can mark the SRS row + count the hint (#594). Keyed by
+        // the same identity the attempts carry (#2130: stable_id ?? id).
+        markHintUsed(exerciseIdentityOf(exercise) ?? exercise.id);
         if (xpCost <= 0) return;
         const userId = readLearnerState().userId;
         if (!userId) return;

@@ -20,6 +20,16 @@ On the first message of a session:
 3. Run `make test` (establish a green baseline).
 4. Only then start on the task.
 
+Fresh-worktree precondition: environments bind to the checkout PATH, so a
+new `git worktree add` has none. BEFORE the first commit run
+`cd backend && poetry env use python3.12 && poetry install --sync` (the env
+pin MUST precede the install - the Makefile pins py3.12, an unpinned install
+lands in the wrong venv) and `cd frontend && bun install`; docs changes also
+need `cd docs && poetry install`. Without this, pre-commit hooks roll the
+commit back while printing "Passed", and `make test` fails on missing
+imports (recurred 5x on 2026-08-05/06). Never mask exit codes with `| tail`;
+after every commit verify HEAD moved (`git log -1`).
+
 ## Interpreting "continue" / "next item"
 
 When the user says "continue", "next item", "go on" or similar:
@@ -37,7 +47,7 @@ When the user says "continue", "next item", "go on" or similar:
 5. Frontend (extend API client, then UI).
 6. Write unit and integration tests (pytest, Vitest).
 7. Playwright smoke tests for UI features: for every new UI feature write at least one spec under `e2e/smoke/`. Must cover: happy path, relevant viewport sizes (600/800/1080 for layout-critical features), data-testid selectors (no brittle CSS selectors). Claude Code WRITES the specs, Aster RUNS them. No feature counts as done without a smoke test.
-8. Add i18n strings in all 8 languages (DE, EN, ES, FR, EL, PT, TR, JA).
+8. Add i18n strings in EVERY catalog under backend/config/i18n/.
 9. Conventional commit.
 10. Push the branch and open a PR against `develop` (PR-PFLICHT) — always, not only when asked.
 

@@ -62,7 +62,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -133,6 +133,17 @@ jobs:
             poetry run pytest tests/ -q
           fi
 
+      # #2281: the committed schema/openapi.json must match the spec the
+      # booted app serves (13/13 plugins asserted before comparing; fails
+      # closed). Runs as an explicit step, not only via the pytest suite,
+      # so PR testmon deselection can never skip it — the subprocess-based
+      # gate tests are exactly the selection-mechanics blind spot class
+      # (#1620/#1665).
+      - name: OpenAPI snapshot drift gate (#2281)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        working-directory: backend
+        run: poetry run python ../scripts/sync_openapi.py --check
+
   # Plugin tests (#434 Goal A): run every plugin's own suite in CI via
   # `make test-plugins`, which executes each `plugins/*/tests/` through the
   # BACKEND venv (PLUGIN_PYTHON). The backend `poetry install` path-installs
@@ -160,7 +171,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -203,7 +214,7 @@ jobs:
   #         - adaptive-learner-plugin-<your-plugin-name>
   #   steps:
   #     - uses: actions/checkout@v7
-  #     - uses: actions/setup-python@v6
+  #     - uses: actions/setup-python@v7
   #       with:
   #         python-version: "3.12"
   #     - name: Cache Poetry virtualenv (${{ matrix.plugin }})
@@ -241,7 +252,7 @@ jobs:
       # Node 24 stays the RUNTIME (Vite build, Vitest, tsc); Bun is only the
       # package manager + script runner (#1492 Phase 1). No npm cache on
       # setup-node — the bun install cache below replaces it.
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
 
@@ -360,7 +371,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Install pre-commit
@@ -386,7 +397,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       # Reuse the same backend Poetry cache as the test job
@@ -438,7 +449,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       # verify_docs.py is stdlib-only; PyYAML is needed only for the

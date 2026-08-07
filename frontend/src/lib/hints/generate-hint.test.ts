@@ -53,15 +53,30 @@ describe("generateHints", () => {
         });
     });
 
-    it("matching: an item then a revealed pair", () => {
-        const hints = generateHints(
-            ex({type: "matching", pairs: [{left: "hello", right: "hola"}]}),
-        );
-        expect(hints[0]).toEqual({level: 1, data: {kind: "item", label: "hello"}});
-        expect(hints[1]).toEqual({
-            level: 2,
-            data: {kind: "reveal_pair", left: "hello", right: "hola"},
-        });
+    it("matching: no hint at all (#2443 — every option is already on screen)", () => {
+        // In a matching exercise both columns are fully visible. A
+        // first-letter hint reveals a letter of a word the learner can
+        // already read in full, and "start with X" only names a visible
+        // item — neither adds information. So matching produces no hint,
+        // the button never renders, and the learner is never charged XP
+        // for something useless. (Follow-up to #2390, which had reduced
+        // the give-away full-pair hint to this now-useless first letter.)
+        expect(
+            generateHints(
+                ex({type: "matching", pairs: [{left: "hello", right: "hola"}]}),
+            ),
+        ).toEqual([]);
+        expect(
+            generateHints(
+                ex({
+                    type: "matching",
+                    pairs: [
+                        {left: "Auge", right: "sehen"},
+                        {left: "Ohr", right: "hören"},
+                    ],
+                }),
+            ),
+        ).toEqual([]);
     });
 
     it("word_tiles: first word then first two words", () => {
@@ -96,10 +111,7 @@ describe("formatHint", () => {
             formatHint({level: 1, data: {kind: "not", label: "dog"}}, t),
         ).toContain("dog");
         expect(
-            formatHint(
-                {level: 2, data: {kind: "reveal_pair", left: "a", right: "b"}},
-                t,
-            ),
-        ).toContain("b");
+            formatHint({level: 1, data: {kind: "item", label: "hola"}}, t),
+        ).toContain("hola");
     });
 });

@@ -37,6 +37,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
        sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
+       sync-openapi sync-openapi-check \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -545,6 +546,16 @@ test-e2e: ## Run Playwright e2e tests (starts servers automatically)
 test-e2e-ui: ## Run e2e tests with Playwright UI
 	cd e2e && npx playwright test --ui
 
+test-hit-test: ## Hit-test offset harness (#1569): self-contained, no server. See e2e/hit-test/README.md
+	cd e2e && npx playwright test --config=playwright.hit-test.config.ts
+
+test-hit-test-app: ## App-level hit-test harness (#1569): real routes on the Dexie preview build (no backend)
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
+	@echo ""
+	@echo "=== Running app-level hit-test harness ==="
+	cd e2e && npx playwright test --config=playwright.hit-test-app.config.ts
+
 # Critical-flow smoke (#1177): the ``smoke`` Playwright project
 # (e2e/smoke/, defined in e2e/playwright.config.ts) covering the core
 # user journeys. It uses the default config's webServer, which
@@ -681,6 +692,12 @@ sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or
 	@cd backend && poetry run python ../scripts/generate_pydantic_models.py --check
 	@cd frontend && node scripts/sync-schema-mirror.mjs --check
 
+sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json from the booted app (#2281; single writer)
+	@cd backend && poetry run python ../scripts/sync_openapi.py
+
+sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts 13/13 plugins)
+	@cd backend && poetry run python ../scripts/sync_openapi.py --check
+
 engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)
 	@python3 scripts/check_engine_schema_parity.py
 
@@ -795,11 +812,17 @@ verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-
 verify-docs: ## Verify documentation for drift (version/counts/features/help/i18n/themes; stdlib only)
 	@python3 scripts/verify_docs.py
 
-verify-docs-hygiene: ## Docs hygiene: German-umlaut substitute ratchet + exploration-index orphans (stdlib only)
-	@python3 scripts/verify_docs_hygiene.py
+verify-docs-hygiene: ## Docs hygiene: German-umlaut substitute ratchet (manuscript-tools) + exploration-index orphans
+	@cd backend && poetry run python ../scripts/verify_docs_hygiene.py
 
-verify-docs-hygiene-raise: ## Lower the umlaut-substitute baseline after a genuine reduction
-	@python3 scripts/verify_docs_hygiene.py --update-baseline
+verify-docs-hygiene-raise: ## Re-freeze the umlaut-substitute baseline after a genuine reduction (deliberate, #2311)
+	@cd backend && poetry run python ../scripts/verify_docs_hygiene.py --update-baseline
+
+fix-docs-umlauts: ## Trockenlauf: welche ASCII-Ersatzschreibungen der Doku sind korrigierbar, ohne Zeilen zu mischen (#2311)
+	@cd backend && poetry run python ../scripts/fix_docs_umlauts.py
+
+fix-docs-umlauts-apply: ## Korrektur schreiben - nur wenn der Trockenlauf keine gemischte Zeile meldet (#2311)
+	@cd backend && poetry run python ../scripts/fix_docs_umlauts.py --apply
 
 verify-doc-refs: ## Doc refs (#2254): make targets, repo paths and constants named in docs must exist
 	@python3 scripts/verify_doc_refs.py
@@ -826,6 +849,7 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 	@echo "== testid references"   && $(MAKE) --no-print-directory check-testid-refs
 	@echo "== docker context"      && $(MAKE) --no-print-directory verify-docker-context
 	@echo "== file sizes"          && $(MAKE) --no-print-directory check-file-sizes
+	@echo "== openapi snapshot"    && $(MAKE) --no-print-directory sync-openapi-check
 	@echo ""
 	@echo "All build-free gates passed. Two gates need a frontend build and"
 	@echo "installed deps, so they are NOT in this target: 'make check-dead-classnames'"

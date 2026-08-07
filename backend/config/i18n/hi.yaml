@@ -1689,6 +1689,10 @@ repo:
     description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
     enable_git: git दृढ़ता सक्षम करें
 lesson:
+  test_mode:
+    title: "परीक्षण मोड"
+    description: "उत्तरों का मूल्यांकन नहीं किया जाता और कोई प्रगति सहेजी नहीं जाती।"
+    exit: "परीक्षण मोड से बाहर निकलें"
   ask_ai:
     button: "AI से पूछें"
     title: "इस भाग के बारे में AI से पूछें"
@@ -1789,18 +1793,18 @@ lesson:
       submit: उत्तर जाँचें
       retry: फिर से कोशिश करें
       counter: '{matched} / {total} मिलान किए गए'
+      help_toggle: "यह कैसे काम करता है"
       result: 'स्कोर: {correct} / {total}'
       instructions: बाईं ओर एक आइटम चुनें, फिर दाईं ओर उसका मिलता-जुलता अनुवाद चुनें।
       left_label: शब्द
+      column_a: "स्तंभ A"
+      column_b: "स्तंभ B"
       right_label: अनुवाद
       empty: इस मिलान अभ्यास में कोई जोड़े नहीं हैं।
       left_label_productive: अर्थ
       right_label_productive: शब्द
-      left_label_knowledge: शब्द
       correct_hint: 'सही उत्तर: {label}'
       your_answer: 'आपका उत्तर: {label}'
-      right_label_knowledge: परिभाषा
-      instruction_knowledge: प्रत्येक शब्द को उसकी परिभाषा से मिलाएँ।
       instructions_knowledge: बाईं ओर एक आइटम चुनें, फिर दाईं ओर उसका मिलान चुनें।
       selected_sr: 'चयनित: {label}'
       resolve: "हल दिखाएँ"
@@ -1901,6 +1905,9 @@ lesson:
     aria_label: पाठ सारांश
     score: स्कोर
     score_bar_aria: 'स्कोर: {pct} प्रतिशत'
+    score_bar_aria_corrected: 'स्कोर: {pct} प्रतिशत, जिनमें से {corrected} सुधार के बाद सही'
+    score_legend_immediate: '{n} पहली बार में'
+    score_legend_corrected: '{n} सुधार के बाद'
     stars_aria: '3 में से {n} तारे'
     time: समय
     minutes: '{n} मिनट'
@@ -2011,6 +2018,12 @@ content:
     message: '"{title}" को अपडेट करने से वह सामग्री बदल जाती है जिसे आप पहले से सीख रहे हैं। सहेजी गई प्रगति वाले लगभग {cards} दोहराव कार्ड और {lessons} पाठ नए संस्करण से मेल नहीं खाते और रीसेट हो जाएंगे। आपके पूरे किए गए पाठ बने रहेंगे, केवल बदले गए दोहराव प्रभावित होते हैं।'
     confirm: 'फिर भी अपडेट करें'
     cancel: 'मौजूदा संस्करण रखें'
+    carry_over_label: 'जो अब भी मेल खाता है उसकी प्रगति बनाए रखें'
+    preview_more: 'और {count} अन्य'
+    unmappable: '{count} को निश्चित रूप से जोड़ा नहीं जा सकता और वे रीसेट हो जाएंगे। वहाँ क्रम या संख्या बदली है, इसलिए कोई अनुमान नहीं लगाया जाता।'
+    carried_over: 'प्रगति बनाए रखी गई।'
+    carry_over_failed: 'अपडेट लागू हो गया, लेकिन प्रगति बनाए नहीं रखी जा सकी।'
+    retired_archived: '{count} अभ्यास लेखक द्वारा हटा दिए गए; संबंधित प्रगति संग्रहीत है।'
   recovery:
     title: 'सुधारे गए पाठों के लिए दोहराव प्रगति पुनर्स्थापित करें'
     message: 'हमने जापानी, कोरियाई और चीनी (A1) के कुछ पाठ सुधारे हैं। बदले गए तत्वों के लिए आपके द्वारा पहले बनाए गए दोहराव कार्ड अब मेल नहीं खाते, इसलिए उन्हें शेड्यूल नहीं किया जा रहा। आप उन्हें सुधारे गए पाठों से फिर से जोड़ सकते हैं या किसी सेट को नए सिरे से शुरू कर सकते हैं। केवल ये सेट प्रभावित हैं; आपके अन्य सेट अछूते रहते हैं।'
@@ -2066,6 +2079,9 @@ content:
     working: "निर्यात हो रहा…"
     done: "आपका सेट रिपॉज़िटरी में पुश हो गया।"
     failed: "निर्यात विफल।"
+    quality_issues: "गुणवत्ता जांच में समस्याएं मिलीं। कंटेंट-रिपॉजिटरी गेट इन्हें अस्वीकार कर देंगे:"
+    export_anyway: "फिर भी निर्यात करें"
+    renamed_note: "पाठ फ़ाइलों का नाम क्रम उपसर्गों (NN-) के साथ बदला गया ताकि प्रदर्शन क्रम पाठ क्रम से मेल खाए।"
   anki_export:
     button: "Anki निर्यात"
   discover_more: "और सामग्री खोजें"
@@ -2165,6 +2181,23 @@ content:
     delete_aria: "पाठ {title} हटाएँ"
     play_aria: "पाठ {title} चलाएँ"
     edit_aria: "पाठ {title} संपादित करें"
+    bulk_select: "पाठ चुनें"
+    bulk_select_all: "सभी चुनें"
+    bulk_clear: "चयन हटाएँ"
+    bulk_cancel: "रद्द करें"
+    bulk_selected: "{n} चयनित"
+    bulk_bar_aria: "पाठों के लिए सामूहिक कार्रवाइयाँ"
+    bulk_select_aria: "पाठ {title} चुनें"
+    bulk_action_delete_n: "{n} हटाएँ"
+    bulk_title: "{n} पाठ हटाएँ?"
+    bulk_confirm_body: "चयनित पाठ सेट से हटा दिए जाएँगे। इसे पूर्ववत नहीं किया जा सकता - पहले बनाया गया बैकअप अब भी उन्हें रखता है।"
+    bulk_confirm_empties: "ये सेट के सभी पाठ हैं, इसलिए पूरा सेट हटा दिया जाएगा। इसे पूर्ववत नहीं किया जा सकता - पहले बनाया गया बैकअप अब भी उन्हें रखता है।"
+    bulk_backup_hint: "सुझाव: यदि आप इन पाठों को वापस चाहते हों तो पहले सेटिंग्स > डेटा में एक बैकअप निर्यात करें।"
+    bulk_delete_progress_option: "इन पाठों के लिए मेरी सीखने की प्रगति भी हटाएँ ({cards} समीक्षा कार्ड)"
+    bulk_delete_progress_option_nocounts: "इन पाठों के लिए मेरी सीखने की प्रगति भी हटाएँ"
+    bulk_action_delete: "पाठ हटाएँ"
+    bulk_deleted: "{n} पाठ हटाए गए।"
+    bulk_delete_failed: "पाठ हटाए नहीं जा सके।"
   lesson_order:
     move_up: "पाठ {title} को ऊपर ले जाएँ"
     move_down: "पाठ {title} को नीचे ले जाएँ"
@@ -2236,6 +2269,7 @@ content:
     type_free_text: "मुक्त पाठ"
     type_word_tiles: "शब्द टाइलें"
     type_picture_choice: "चित्र चयन"
+    type_multiple_choice: "बहुविकल्पीय"
   save_lesson:
     button: ऑफ़लाइन पाठ के रूप में सहेजें
     modal_title: ऑफ़लाइन पाठ के रूप में सहेजें
@@ -2344,6 +2378,7 @@ content:
     back_language_mismatch: 'पाठ ''{lesson}'': कार्ड ''{card}'' का पिछला भाग {source} जैसा नहीं लगता।'
     free_text_too_few_accepts: 'पाठ ''{lesson}'': मुक्त-पाठ अभ्यास ''{exercise}'' को कम से कम {min} स्वीकृत उत्तर चाहिए।'
     matching_too_few_pairs: 'पाठ ''{lesson}'': मिलान अभ्यास ''{exercise}'' को कम से कम {min} जोड़े चाहिए।'
+    matching_duplicate_left: "पाठ '{lesson}': मिलान अभ्यास '{exercise}' में बायां मान '{value}' दोहराया गया है - शिक्षार्थी के लिए हल करना असंभव।"
     missing_distractors: 'पाठ ''{lesson}'': अभ्यास ''{exercise}'' को विकर्षक (गलत विकल्प) चाहिए।'
     non_cefr_level: स्तर '{level}' एक CEFR बैंड (A1-C2) नहीं है।
     level_too_complex: 'पाठ ''{lesson}'': पाठ्य प्रति पक्ष औसतन {avg} शब्द है, जो स्तर {level} के लिए अधिक है (लगभग {cap} अपेक्षित)।'
@@ -2863,6 +2898,8 @@ create_lesson:
     check_enoughTypes: कम से कम 2 अभ्यास प्रकार
     check_schemaValid: मान्य पाठ संरचना
     structure_error: "तकनीकी विवरण"
+    structure_internal_error: "इस पाठ की जाँच करते समय एक आंतरिक त्रुटि हुई। यह आपके पाठ की नहीं, ऐप की समस्या है। कृपया पृष्ठ पुनः लोड करें और फिर से प्रयास करें; यदि यह बार-बार होता रहे, तो नीचे समस्या की रिपोर्ट करें।"
+    structure_report: "समस्या की रिपोर्ट करें"
   save:
     saved: पाठ सहेजा गया!
     failed: पाठ सहेजा नहीं जा सका।
@@ -3293,7 +3330,6 @@ hints:
   first_letters: "“{prefix}” से शुरू होता है ({n} अक्षर)"
   not: "यह “{label}” नहीं है"
   item: "“{label}” से शुरू करें"
-  reveal_pair: "“{left}” का मेल “{right}” से है"
 
 favorites:
   card_title: "आपके पसंदीदा"
@@ -3420,18 +3456,38 @@ discover:
   bar:
     search: "खोजें"
     filter: "फ़िल्टर करें"
+  entry:
+    label: "उद्देश्य"
+    language: "भाषा सीखना"
+    knowledge: "विषय"
+    all: "सब कुछ"
+  pairs:
+    heading: "भाषा युग्म"
+    select: "{p} चुनें"
+    choose: "भाषा युग्म चुनें"
   filter:
     all: "सभी"
     language: "भाषा"
+    target_language: "लक्ष्य भाषा"
     all_languages: "सभी भाषाएँ"
+    all_target_languages: "सभी लक्ष्य भाषाएँ"
     level: "स्तर"
     domain: "क्षेत्र"
     trust: "विश्वास"
+    source: "स्रोत"
     ai_checked: "एआई-जाँचित"
+    review: "समीक्षा"
   trust:
     official: "आधिकारिक रूप से अनुशंसित"
     verified: "सत्यापित"
     validated: "मान्य"
+  review:
+    no_machine: "मशीन सेट नहीं"
+    reviewed_only: "केवल समीक्षित"
+    generated_badge: "मशीन-निर्मित"
+    reviewed_badge: "समीक्षित"
+  chips:
+    remove: "हटाएँ: {f}"
   sort:
     label: "क्रमबद्ध करें"
     relevance: "प्रासंगिकता"
@@ -3442,12 +3498,25 @@ discover:
     ai: "एआई"
     psychology: "मनोविज्ञान"
     programming: "प्रोग्रामिंग"
+    knowledge: "ज्ञान"
+    math: "गणित"
+    technology: "प्रौद्योगिकी"
+    software: "सॉफ़्टवेयर"
+    philosophy: "दर्शनशास्त्र"
+    dog-training: "कुत्ता प्रशिक्षण"
+    traffic-knowledge: "यातायात ज्ञान"
   result:
     count: "{n} सेट"
+    show_more: "और दिखाएँ"
   empty:
     no_sets: "अभी कोई सामग्री उपलब्ध नहीं है।"
     no_results: "“{query}” के लिए कोई परिणाम नहीं।"
     language_hint: "इस भाषा में अभी कुछ नहीं है।"
+    without_facet: "{facet} के बिना: {n} सेट"
+    reset_all: "सभी फ़िल्टर रीसेट करें"
+    add_source: "अपना स्रोत जोड़ें"
+    or: "या"
+    create_lesson: "एक पाठ बनाएँ"
   card:
     download: "डाउनलोड करें"
     downloading: "डाउनलोड हो रहा है…"

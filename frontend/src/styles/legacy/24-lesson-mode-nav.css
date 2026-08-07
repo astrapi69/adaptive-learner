@@ -225,11 +225,6 @@
     width: 100%;
   }
 
-  .onboarding-skip-top {
-    width: 100%;
-    min-height: 44px;
-  }
-
   /* ----- Settings: model-override + API-key rows stack -------- */
   .api-key-row-input,
   .model-override-row-input {

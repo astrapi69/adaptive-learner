@@ -18,6 +18,17 @@
 # this rollup permanently red, which is as ineffective as never
 # reporting (the trap this rollup exists to close).
 #
+# TWO MODES, split on the triggering event (#2447). A SCHEDULED run is
+# the WATCHER above: it reads the last schedule/push run per workflow and
+# judges, triggering nothing; a manual dispatch NEVER counts as evidence
+# here. A MANUAL DISPATCH is the TOOL: it actually triggers the affected
+# workflows (default: the ones the watcher last had red), waits, and
+# reports the state NOW - measured, not looked up - because a dispatch is
+# explicitly asking about now. A tool result never feeds the watcher (it
+# triggers via workflow_dispatch, which the watcher never counts). The
+# tool needs `actions: write` to dispatch; the optional `trigger` input
+# narrows or widens its scope.
+#
 # WHAT THIS IS NOT: this is NOT a merge gate and does not block
 # anything. It replaces scanning the Actions tab with ONE place to
 # look - it does not make looking unnecessary. When this run is red,
@@ -40,9 +51,21 @@ on:
     # mutation shard adds up to ~70 min on top).
     - cron: "17 9 * * *"
   workflow_dispatch:
+    inputs:
+      trigger:
+        description: >-
+          Tool mode (manual dispatch only): which workflows to re-run and
+          measure NOW. Blank = the workflows the watcher last had red;
+          'all' = every workflow with a counted run; or a comma list of
+          workflow filenames. Ignored by the scheduled watcher run.
+        required: false
+        type: string
 
+# Tool mode dispatches the affected workflows, so it needs actions: write
+# (write implies the read the watcher uses). The scheduled watcher run does
+# not use the write scope - it only reads.
 permissions:
-  actions: read
+  actions: write
   contents: read
 
 env:
@@ -52,11 +75,22 @@ jobs:
   rollup:
     name: Latest schedule/push run per workflow is green
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # The watcher finishes in under a minute; the tool waits for the runs it
+    # triggers (the visual diff alone is ~18 min), so the ceiling is sized for
+    # the tool path, not the watcher.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
 
-      - name: Roll up red scheduled/push runs
+      - name: Roll up red runs (watcher) or re-measure now (tool)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 scripts/verify_workflow_health.py
+          # Event-derived, passed via env (never interpolated into the script
+          # body) so a crafted scope value cannot inject shell.
+          ROLLUP_TRIGGER: ${{ github.event.inputs.trigger }}
+        run: |
+          args=()
+          if [ -n "${ROLLUP_TRIGGER:-}" ]; then
+            args+=(--trigger "$ROLLUP_TRIGGER")
+          fi
+          python3 scripts/verify_workflow_health.py "${args[@]}"

@@ -154,6 +154,26 @@ re-import must NOT overwrite an order the user set by hand.
       in the installed PWA - the chapters are in book order, and a manual move
       survives closing and reopening.
 
+#### A6c. Download order follows the manifest (#2367)
+
+Downloaded sets (registry / source browser) show their lessons in the order
+the set manifest declares (metadata.lessons), no longer alphabetically by
+filename. The tricky case is mixed two- and three-digit prefixes:
+alphabetically, 100- sorts between 10- and 11-. Applies at both seams: the
+Dexie download (overlay seed like the import, #2173) and API mode (the
+backend listing follows the manifest).
+
+- [ ] Download a set with mixed prefixes (e.g. alc-psychology psych-intro,
+      01- through 112-). "Manage lessons" shows the lessons in manifest
+      order: 99- before 100-.
+- [ ] Drives the LEARNING sequence: the set opens on the first lesson per the
+      manifest and "next lesson" follows the manifest order - in both storage
+      modes (API + Dexie).
+- [ ] The user wins: move a lesson by hand, then re-download / update the
+      set. The user's order is preserved.
+- [ ] Sets without metadata.lessons in the manifest behave unchanged
+      (alphabetical order, no silent resorting).
+
 #### A7. Edit belongs to the lesson, not the set (#2210)
 
 Edit belongs to the lesson, not the set. The set-level button used to guess
@@ -302,6 +322,13 @@ Requires domain knowledge. Not automatable.
 - [ ] Chinese A1: pinyin correct? characters right?
 - [ ] Italian A1: spot check grammar/vocabulary
 - [ ] Portuguese-BR A1: spot check
+- [ ] AI-generated error correction (#2355/#2364): for a generated
+      `ext:al-error-correction` exercise, check that the marked token is really
+      the wrong one and the accepted correction actually fixes it.
+      Schema-conformant is not the same as meaningful: an already-correct marked
+      token is valid but not a real exercise, and no automation can detect it
+      (this spot check only). The same idea applies to the graded quiz and
+      reading comprehension - solvable, unambiguous, grading as expected
 
 ---
 
@@ -313,6 +340,55 @@ Requires domain knowledge. Not automatable.
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
 - [ ] Free Text: correction READABLE (token diff understandable)
 - [ ] Picture Choice: tiles SAME height
+- [ ] Answer order shuffled (#2317): open a picture_choice exercise across
+      several lessons - the correct tile is NOT always in the same slot
+      (previously always first). Within ONE session the order stays stable (no
+      jump when re-viewing the same exercise). A correct tap still scores
+      correct, a wrong one wrong (grading + review progress are content-based,
+      not position-based). Same for the options in ext:al-graded-quiz and
+      ext:al-reading-comprehension. iOS PWA/Standalone: repeat the check on the
+      web-app icon added to the Home Screen.
+- [ ] Matching + word tiles shuffled (#2371, #2372): open a matching exercise
+      several times (different exercises/visits) - the first left entry does
+      NOT consistently pair with the last right one (previously a near-constant
+      reversed order); both columns are shuffled independently. In word tiles
+      the first solution word is NOT consistently at the end of the tile bar.
+      Within ONE exercise view the order stays stable. Correct pairs/sentences
+      still score correct (grading is content-based, not position-based).
+      iOS PWA/Standalone: repeat the check on the web-app icon added to the
+      Home Screen.
+- [ ] Matching: NO hint button (#2443, replaces #2390): open a matching
+      exercise. There is NO "Show a hint" button above the columns, and no XP is
+      deducted for one. Reason: in a matching exercise every word of both columns
+      is already fully on screen, so a first-letter hint reveals nothing. For
+      free-text/cloze/word-tiles the hint button stays as before. iOS
+      PWA/Standalone: repeat the check on the web-app icon added to the Home
+      Screen.
+- [ ] Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
+      a matching exercise from a KNOWLEDGE set (non-language domain, or source ==
+      target, e.g. senses to organs). NO subtitle "Match each term with its
+      definition" appears; the columns carry NO "Term"/"Definition" label, only
+      the "A"/"B" badges and their content. A real LANGUAGE exercise is unchanged
+      (language names or Term/Translation + the direction hint stay visible). iOS
+      PWA/Standalone: repeat the check on the web-app icon added to the Home
+      Screen.
+- [ ] Matching: the preamble no longer eats the screen (#2391/#2444/#2453): open a
+      matching exercise on a SMALL device (iPhone). The "How it works" button
+      sits at the TOP in the button row under the title, right next to "Re-read
+      theory" (#2453) — when a theory chapter precedes this step. Without a
+      preceding theory "Re-read theory" is absent and "How it works" sits alone
+      in the same row (consistent position). It is NO LONGER on the instruction
+      row ("Connect the pairs …", #2453 corrects #2444). At 375px it fits without
+      an ugly wrap. The operating manual ("Select an item on the left …") and the "A → B"
+      hint live BEHIND that button (collapsed on open; tap to expand/collapse);
+      on expand the content wraps cleanly onto the next line at full width. The
+      progress counter ("2 / 5 paired") is at the TOP by the prompt (no longer at
+      the bottom next to "Check answers"), so it stays visible while pairing;
+      after checking it disappears and the score shows in the footer (#2445). The
+      second column is reachable without long scrolling. A11y: the button is keyboard-operable and
+      the content stays reachable for screen readers even when collapsed (native
+      <details>). iOS PWA/Standalone: repeat the check on the web-app icon added
+      to the Home Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
@@ -321,6 +397,27 @@ Requires domain knowledge. Not automatable.
       Word-Tiles/Picture-Choice/Multiple-Choice + ext types). Badge reads
       cleanly in all 6 themes (token-backed). Transparency only - it changes
       neither ordering nor scoring.
+
+### Test mode (preview build, #2319)
+
+Only relevant when the build was produced with `VITE_TEST_MODE=true` (the
+preview delivery). In the regular build the mode does not exist.
+
+- [ ] Activate via the hidden gesture: six quick taps on the progress bar at
+      the top of a running lesson. The test-mode banner then appears ("Answers
+      are not graded and no progress is saved").
+- [ ] Not accidentally triggerable: single or slow taps on the progress bar do
+      NOT activate the mode.
+- [ ] Every answer counts as correct: a deliberately WRONG choice/input (choice,
+      free text, matching) is shown as correct; the lesson can be clicked all
+      the way through without knowing the content.
+- [ ] No progress: after clicking through in test mode the lesson shows NO
+      progress, and no review cards or error counters were created (check the
+      dashboard / review).
+- [ ] Exit: "Exit test mode" in the banner switches it off; leaving the lesson
+      resets the mode (re-entering starts without test mode).
+- [ ] iOS PWA/Standalone: repeat the check on the web-app icon added to the Home
+      Screen (gesture by tap, banner visible, click-through works).
 
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628
@@ -356,6 +453,25 @@ Requires domain knowledge. Not automatable.
       "Only show errors" (default) -> only the wrong ones again
 - [ ] Regression, other types: free-text/cloze in "Retry errors" still show
       only the wrong elements
+
+### Summary counts corrections (#2479)
+- [ ] Play a lesson with several wrong answers, then fix them in the
+      end-of-lesson correction round. The score bar shows two segments: what
+      was right on the first try (solid fill) and what was fixed after
+      correcting (hatched), with a legend "N on the first try" / "N after
+      correcting".
+- [ ] Stars, message and the "+N XP" follow the final state: fixing every
+      mistake earns full stars and "Perfect score!", not "1 of 3 stars" /
+      "Good start". The credited XP matches the number shown.
+- [ ] Without a correction round the bar stays a single solid segment (no empty
+      second segment, no legend); stars + message unchanged.
+- [ ] Exam mode: the result does NOT follow the correction - an exam result is
+      the first pass (single-segment bar, stars + XP unchanged).
+- [ ] Accessibility: the two bar segments are distinguishable without colour
+      (hatch + legend) - check in BOTH light and dark themes.
+- [ ] iOS PWA/Standalone: same check on the icon added to the home screen
+      (the report came from there). Bar, stars, message and XP show the final
+      state after correction.
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
@@ -450,6 +566,36 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       the title list; Save → one set with N lessons; if a single
       generation fails, the others continue and the summary reports "X of
       N" + the failed sections; with no AI key → key hint, no batch
+- [ ] **AI exercise generation produces multiple_choice (#2353):** generate a
+      knowledge lesson from text/book text (with an AI key) whose theory has
+      clear factual questions with several answer options (e.g. "Which of these
+      modules belong to X?") → the "Generated exercises" preview shows, at least
+      occasionally, a **"Multiple choice"** chip alongside
+      matching/cloze/free-text/word-tiles; the saved lesson plays the MC
+      exercise (single-choice radios, or "select all that apply" checkboxes),
+      feedback + SRS work like the other types. Regression: the other five types
+      still get generated
+- [ ] **AI exercise generation produces text extensions (#2355):** generate a
+      book-text lesson (with an AI key) from non-fiction whose theory suits
+      extensions structurally (a longer passage with several follow-up
+      questions, terms that group into categories, a statement with one wrong
+      word) → the "Generated exercises" preview shows, occasionally, chips for
+      **"Reading comprehension" / "Categorization" / "Error correction" /
+      "Graded quiz"**; after saving, the lesson LOADS with no "unsupported
+      extension" error (it declares `requires_extensions`) and the extension
+      exercises play correctly in the lesson runner (passage + sub-questions,
+      bucket sort, token fix, scored quiz with a pass threshold). IMPORTANT: at
+      most ONE reading-comprehension and ONE graded quiz per lesson; the core
+      types still dominate. Regression: a core-only lesson declares NO
+      requires_extensions
+- [ ] **Book path no longer offers picture-choice + set type variety (#2356):**
+      generate a multi-section book upload (several lessons) → NONE of the
+      generated lessons contains a **picture-choice** exercise (the book path
+      has no images, so the type is not offered at all instead of being
+      dropped later); ACROSS the lessons of the set, more than four distinct
+      exercise types appear (not just cloze/matching/free-text/word-tiles).
+      Regression: the single book path and the set exercise-generation still
+      produce valid lessons
 - [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";
@@ -548,6 +694,12 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       VALID (no "source != target" gate)
 - [ ] **Structure-check reason (#1724):** a failing "Valid lesson
       structure" check names a concrete reason, not just a ✗
+- [ ] **Internal structure error (#2384):** when the "Valid lesson
+      structure" check fails with an INTERNAL error (e.g.
+      `(0 , T.default) is not a function`), the message explains it is a
+      problem in the app, NOT the lesson, gives a reload/retry path and a
+      "Report this problem" link — instead of framing the technical string
+      as invalid user content
 - [ ] **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
 - [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
@@ -678,6 +830,142 @@ each card row (`CardImageField`).
       Discover/My Content (#1702/#1706)
 - [ ] Per-set share link opens the set detail page directly (#1572)
 - [ ] Add a registered content repo (register-a-repo #1511)
+- [ ] "Share as repository" (#2376): a set with quality issues (e.g. a
+      matching exercise with a duplicate left value) is NOT pushed on the
+      first click - the issue list appears and the button flips to
+      "Export anyway"; only the second click exports
+- [ ] "Share as repository" (#2376): when lesson filenames do not sort
+      into the source order (kapitel-1..kapitel-10), the success screen
+      reports the NN-prefix renaming; the exported repo lists the
+      lessons in source order
+
+### Discover Stage 1: facets, marks, empty state (EXP-048, #2320-#2324)
+
+Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
+(API + Dexie); the facets read the search index and are mode-independent.
+
+- [ ] Target-language facet visible next to the source language; marks carry
+      their set count, only targets present for the active source language,
+      sorted by count; selecting one filters the list (#2322)
+- [ ] Review standing: machine-generated sets (e.g. ja-a1-from-de,
+      ko-a1-from-de, zh-a1-from-de) carry a neutral badge ("Machine-made"),
+      hand-written sets carry NO badge; the "Review" facet appears only when
+      such sets are in the catalogue (#2321)
+- [ ] The "AI-checked" facet is gone; the AI badge on the entry stays (#2321)
+- [ ] Active restrictions (level, domain, trust, review, search) appear as
+      removable marks above the list; clicking a mark's X clears exactly that
+      restriction (#2323)
+- [ ] Domain names are translated (Dog training, Technology, Software,
+      Philosophy, Traffic knowledge instead of raw identifiers) (#2320)
+- [ ] Empty state: at zero results, computed exits appear ("Without <facet>:
+      N sets") plus "Reset all filters"; a click restores results; the source
+      language stays (#2324)
+- [ ] Empty library (no set): a pointer to "Add your own source" (/add-repo)
+      or "create a lesson" (/create-lesson) (#2324)
+- [ ] Phone (narrow width): the marks row stays ONE horizontally-scrollable
+      line, never wraps, and does not eat half the height
+- [ ] **iOS standalone (added to home screen, Dexie mode):** same flow on the
+      iPhone PWA - the facet menus open above the list (portal/fixed, #1349),
+      the marks row scrolls horizontally, and the empty-state exits are
+      tappable (>=44px touch target)
+
+### Discover Stage 2: entry points, source facet, language-name search (EXP-048, #2329-#2331)
+
+Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
+(API + Dexie); the facets read the search index and are mode-independent.
+
+- [ ] Entry control ("I want to") as the first permanently-visible mark; three
+      presets with counts: Learn a language / A subject / Everything (#2331)
+- [ ] "Learn a language" preset (the default on first visit): language sets
+      only; target-language + level facets visible, domain facet hidden (#2331)
+- [ ] Switching to "A subject": knowledge sets only; domain facet visible,
+      level + target facets hidden; the choice persists across a reload (#2331)
+- [ ] "Everything" shows both populations; switching entries clears the
+      restrictions the new entry hides, so the list never silently drops to
+      zero (#2331)
+- [ ] Source facet: appears once more than one source is present; selecting one
+      restricts to that source, with a per-source count (#2330)
+- [ ] Language-name search: switch the UI to English and type "Spanish" - the
+      German-authored Spanish sets are found (the pair's UI-language names are
+      searchable) (#2329)
+- [ ] Phone (narrow width): the entry mark joins the ONE horizontally-
+      scrollable marks row and does not wrap
+- [ ] **iOS standalone (added to home screen, Dexie mode):** same flow on the
+      iPhone PWA - the entry menu opens above the list (portal/fixed, #1349),
+      the preset stays remembered after quitting the PWA, and the
+      language-name search works
+
+### Discover Stage 3: batched rendering (EXP-048, #2333)
+
+Where: Discover (`/content?tab=discover`). To get past 24 results, set the
+entry to "Everything" and the source language to "All languages". Testable in
+BOTH storage modes; the logic is mode-independent.
+
+- [ ] With more than 24 results, only 24 render first; "Show more" loads the
+      next batch; the count above the list stays the full number (#2333)
+- [ ] No infinite scroll; the button disappears after the last batch
+- [ ] A filter, search or sort change starts over from the first batch
+- [ ] Applies to both the card grid and the list view
+- [ ] **iOS standalone (added to home screen, Dexie mode):** "Show more" is
+      tappable (>=44px), and the back-path (gesture / navigation) survives the
+      extra batch
+
+### Discover Stage 3: typo tolerance + ranking in search (EXP-048, #2336)
+
+Where: Discover (`/content?tab=discover`), search box. Threshold deliberately
+overridden: the exploration scheduled this only from ~200 sets (currently ~46);
+it is built now on an explicit user decision. Testable in BOTH storage modes;
+the logic is mode-independent.
+
+- [ ] A search word with ONE typo (e.g. "spanissch" for "Spanisch") finds the
+      same sets as the correct spelling
+- [ ] Two or more typos in the same word do NOT find the set (tolerance stays
+      tight)
+- [ ] Very short search words (under 4 characters) stay exact; a 3-character
+      typo finds nothing wrong
+- [ ] A multi-word search still requires EVERY word to match; an unrelated
+      second word excludes the set
+- [ ] Exact matches rank above typo-only matches when sorting by "Relevance"
+- [ ] **iOS standalone (added to home screen, Dexie mode):** typo search works
+      offline exactly as in server mode
+
+### Discover Stage 3: language-pair selection (alternative entry, collapsible) (EXP-048, #2337, #2359)
+
+Where: Discover (`/content?tab=discover`), the "Language pairs" area above the
+result list. Threshold deliberately overridden: the exploration scheduled this
+only from ~30 populated pairs (currently 14); built now on an explicit user
+decision. Shown in the "Learn a language" and "Everything" entries once more
+than one pair is populated. Testable in BOTH storage modes; the logic is
+mode-independent.
+
+- [ ] Above the list sits ONE collapsible button, collapsed by default; with no
+      selection it reads "Choose a language pair (N)" with the pair count (#2359)
+- [ ] Expanding (click/tap the button) shows the populated pairs grouped by
+      SOURCE language (one heading per source, its targets with counts below,
+      most-populated first); tapping again collapses it (#2359)
+- [ ] Tapping a target presets BOTH the source and target language at once and
+      switches to the "Learn a language" entry; the list then shows only that
+      pair's sets (#2337)
+- [ ] After the choice the collapsed button summarizes it, e.g.
+      "German → Spanish"; the chosen target is highlighted (marked active) when
+      expanded (#2359)
+- [ ] A pair in a DIFFERENT instruction language (e.g. the "English" group,
+      "Spanish" target) jumps there too; the source language stays freely
+      changeable afterwards (#2337)
+- [ ] The pair selection is not shown in the "Subject" entry (#2337)
+- [ ] Flag icons: each language name is prefixed with a flag emoji - in the
+      pair selection's group headings and target buttons AND in the
+      source/target language menus; the language name stays next to it, so on
+      platforms without flag emoji (e.g. Windows) the name is still readable
+      (#2359). Note: a language is not a country; the mapping is a deliberate
+      convention (English -> UK, Portuguese -> Portugal)
+- [ ] Keyboard: the button is reachable via Tab and toggles open/closed with
+      Enter/Space; when expanded, the target buttons are reachable via Tab (#2359)
+- [ ] Phone (narrow width): collapsed the selection costs ONE line; expanded the
+      content stays scrollable and does not eat half the screen height (#2359)
+- [ ] **iOS standalone (added to home screen, Dexie mode):** the disclosure
+      button and the target buttons are tappable (>=44px), toggling works, and
+      the selection acts offline exactly as in server mode (#2359)
 
 ### Set status persists (active/deferred/completed, both modes)
 
@@ -740,6 +1028,51 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
 - [ ] iOS standalone (PWA): same manual flow, the confirmation appears.
 - [ ] Language check (#2160): the confirmation text appears in the app language
       (not English), spot-checked across several languages (de/ja/ko/el/hi).
+- [ ] Carry-over proposal (#2308): the confirmation dialog additionally shows an
+      "old -> new" list of the review items that could be carried over, plus a
+      "Carry over what still matches" checkbox (on by default, BECAUSE the pairs
+      are visible right above it).
+- [ ] Confirm with the box ticked: after the update, error counts, streak and
+      mastery sit on the CORRECTED answer (the review does not restart from
+      zero). The toast names the count.
+- [ ] UNTICK the box and confirm: the update runs and NOTHING is carried over
+      (pre-#2308 behaviour). The checkbox is the decision, not decoration.
+- [ ] Cases that cannot be assigned: if an exercise had its ORDER changed or an
+      element inserted/removed, the dialog names those separately ("N cannot be
+      assigned with confidence and will be reset"). Verify NOTHING was carried
+      over for them - a wrong assignment is worse than a loss because it is
+      invisible.
+- [ ] Auto-sync (24h, connected user repo): NEITHER updates NOR carries anything
+      over. The mapping may only come into being in the manual dialog.
+- [ ] Confirm twice in a row (trigger the update again): no double carry-over, no
+      error (idempotent).
+- [ ] Backup beforehand: the backup hint is an offer, not a requirement - the
+      update can be confirmed without one.
+- [ ] iOS standalone (PWA): dialog including the pair list and the checkbox is
+      fully readable and operable (the list does not overflow the dialog, the
+      checkbox is tappable); carry-over works the same in Dexie mode.
+
+### Retirement: archived progress on retired_ids (#2188)
+
+Location: Content page, a set with learner progress whose update declares
+`retired_ids` in the set manifest (the author deliberately retired
+exercises). Check in BOTH storage modes. Background: a declared retirement is
+not an accident - the related progress is ARCHIVED (not deleted, not
+orphaned), leaves review scheduling and due counts, and the learner is told
+once, with the count.
+
+- [ ] Apply an update of a set with declared retirements (manually or via
+      sync): ONE notice toast appears with the count ("N exercises were
+      retired by the author; the related progress is archived.").
+- [ ] Retirement-only update (no other identity changes): NO warning dialog
+      (#2128) - a declared retirement is not breaking; the update applies,
+      only the notice toast appears.
+- [ ] After the update: the retired elements no longer appear in the review
+      queue and no longer count into the "N due" number.
+- [ ] Trigger the update again: no second toast, no double archival
+      (idempotent; the count would be 0, so no notice).
+- [ ] Language check: the notice appears in the app language (spot-check
+      de/ja/ko).
 
 ### Recovery: review progress after the ja/ko/zh correction (#2161)
 
@@ -865,6 +1198,43 @@ SEVERAL lessons (e.g. after a book import) → "Manage lessons".
 - [ ] Backup time-point: make a backup (.alb) BEFORE deleting → delete
       the lesson → import the backup → the lesson is back (correct: a
       backup is a snapshot, NOT a bug)
+
+### Delete several lessons at once (#2065)
+
+Location: My Content (`/content?tab=my`) → My Lessons → a set with
+SEVERAL lessons → "Manage lessons".
+
+- [ ] Prep: a multi-lesson own set (e.g. a book import); play 2-3 lessons
+      to create progress + review cards
+- [ ] "Select lessons" turns on a selection MODE: a checkbox appears on
+      each row and the per-row actions (move, play, edit, delete) are
+      hidden while it is active
+- [ ] "Select all" checks every lesson; clicking again clears them;
+      "N selected" counts correctly
+- [ ] "Delete N" is disabled while nothing is selected
+- [ ] Delete opens ONE confirm dialog that names the COUNT and says it
+      CANNOT be undone; the dialog visibly RECOMMENDS a backup first
+      (without forcing it)
+- [ ] The "Also delete my learning progress" checkbox shows the
+      AGGREGATED REAL review-card count across the selected lessons
+- [ ] Delete WITHOUT the checkbox: exactly the selected lessons disappear
+      in ONE step, lesson_count drops accordingly, NON-selected sibling
+      lessons are untouched
+- [ ] Order: the remaining lessons keep their order (no renumbering),
+      deep links to them still work
+- [ ] Delete WITH the checkbox: progress + review cards of ONLY the
+      selected lessons are gone, sibling progress remains
+- [ ] Select and delete ALL lessons: the dialog says BEFOREHAND that the
+      WHOLE set will be deleted; afterwards the set is gone from My Content
+- [ ] Keyboard-operable dialog: the Delete button is focused,
+      Escape/Cancel dismisses; the checkboxes carry an aria-label
+- [ ] Check BOTH modes: desktop/server (API) AND GitHub Pages (Dexie)
+- [ ] Backup time-point: make a backup (.alb) BEFORE deleting → delete
+      several lessons → import the backup → the lessons are back (correct:
+      a backup is a snapshot, NOT a bug)
+- [ ] iOS standalone (PWA added to the Home Screen, Dexie mode): the
+      selection mode, the checkboxes and the confirm dialog are usable by
+      touch; the action bar wraps cleanly on a narrow screen (no overflow)
 
 ### Disconnect content repo vs. delete progress (#1651 / #1652)
 
@@ -1026,6 +1396,28 @@ window, so verify the iOS-standalone / phone-portrait shape explicitly.
 - [ ] Backup import: no HTTP 413
 - [ ] Play a lesson: no workbox errors in the console
 - [ ] Change the port → app reachable on the new port
+
+---
+
+## PRIO 9: LANDING PAGE (static, #2409)
+
+The landing page at `/start/` (DE) and `/start/en/` (EN) is real static
+HTML in the Pages artifact - no React, no client-side loading. It carries
+no numbers that could go stale, on purpose.
+
+- [ ] `astrapi69.github.io/adaptive-learner/start/en/` loads; the core
+      sentence "An app that adapts to you, not the other way around."
+      is visible as the heading.
+- [ ] "Open the app in your browser" leads into the app; "Download the
+      launcher" leads to the release page.
+- [ ] Language switch: "Deutsch" (top right on the EN page) leads to
+      `/start/`, and "English" there leads back.
+- [ ] The bottom links (Documentation, Repository, Learning content) work.
+- [ ] Dark system theme: the page follows (prefers-color-scheme), text
+      stays readable.
+- [ ] Mobile (narrow window): single column, no horizontal scrolling.
+- [ ] Share preview (e.g. in a messenger): title, description and image
+      appear (the landing page's Open Graph data, not the app's).
 
 ---
 

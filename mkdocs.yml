@@ -37,6 +37,13 @@ theme:
   icon:
     repo: fontawesome/brands/github
 edit_uri: edit/main/docs/help/
+# #2417 - Material's language selector requests <lang>/sitemap.xml per
+# alternate to map the current page onto its sister page; the i18n build
+# emits only the root sitemap. The hook splits it per language after
+# every build (local + CI), failing the build closed when the root
+# sitemap is missing or shapeless.
+hooks:
+  - scripts/mkdocs_split_sitemap.py
 plugins:
   - search
   - i18n:

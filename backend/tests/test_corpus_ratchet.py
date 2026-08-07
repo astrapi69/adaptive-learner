@@ -128,7 +128,16 @@ def test_headroom_is_offered_as_a_ratchet_opportunity(tree: Path) -> None:
 
 
 def test_no_opportunity_line_when_there_is_no_headroom(tree: Path) -> None:
-    """It may not nag on a corpus that is exactly on the line."""
+    """It may not nag on a corpus that is exactly on the line.
+
+    #2398: this test used to assert on the COPIED repo state, which is
+    on the line only right after a banking commit - any legitimate
+    unbanked shrink (allowed by #2091: a fall may stay as headroom for
+    the next real addition) turned develop's full backend run red for
+    every branch. Normalise the fixture onto the line first, then
+    assert the behaviour: exactly-on-the-line means no nagging.
+    """
+    assert _run(tree, "--update-baseline").returncode == 0
     result = _run(tree)
     assert result.returncode == 0
     assert "ratchet opportunity" not in result.stdout.lower()

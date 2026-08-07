@@ -36,12 +36,19 @@ on:
   # checklist carries the trigger. Foot-gun this documents: creating
   # a release directly produces NO image and NO assets by itself.
   #
-  # Since #2187 (Option 2, first half) a sharp re-run is IDEMPOTENT: if
-  # the tag is already published, the run skips build+push and only
-  # re-verifies the existing artifact (digest from the registry). That
-  # removes the re-build foot-gun from repeated dispatches; whether a
-  # `release: published` trigger should now be added on top is a
-  # release-manager decision tracked in #2187.
+  # Since #2187 (Option 2) a sharp re-run is IDEMPOTENT: if the tag is
+  # already published, the run skips build+push and only re-verifies the
+  # existing artifact - and the registry digest must match the one the
+  # first run recorded as the `image-digest.txt` release asset, so a
+  # moved-but-working tag is caught and a missing record fails closed
+  # (except below the DIGEST_RECORD_SINCE cutoff, see env).
+  #
+  # Decided 2026-08-06 (#2187): a `release: published` trigger is
+  # deliberately NOT added on top. The draft release is a completeness
+  # buffer - it caught four missing assets before anything went visible -
+  # and the explicit checklist dispatch is a step that has twice caught
+  # something at exactly this point. An automatism that publishes an
+  # unfinished draft would cost more than a forgotten checklist step.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -55,12 +62,26 @@ on:
         type: string
 
 permissions:
-  contents: read
+  # contents: write (NOT read) is real: the sharp run ATTACHES the pushed
+  # digest as the `image-digest.txt` release asset and READS it back on an
+  # idempotent re-verify (#2187). A comment claiming `read` would advertise
+  # the workflow as narrower than it is - the token genuinely can write to
+  # releases here.
+  contents: write
   packages: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   REGISTRY: ghcr.io
+  # The first release whose publish run records `image-digest.txt`. On an
+  # idempotent re-verify a MISSING asset fails closed AT OR ABOVE this
+  # version, and is tolerated BELOW it - tags published before the
+  # recording mechanism existed have no asset and nobody could have made
+  # one. This is a deliberate cutoff, not an open-ended "missing is fine":
+  # every currently-published tag (<= 2.10.0) predates it, the next release
+  # (> 2.10.0) is the first that must carry the asset. Bump only if the
+  # recording mechanism is ever re-cut. (#2187)
+  DIGEST_RECORD_SINCE: "2.10.1"
 
 jobs:
   build-and-push:
@@ -173,6 +194,45 @@ jobs:
               exit 1 ;;
           esac
 
+      - name: The published digest must match the recorded one (#2187)
+        # Only on the re-verify path (the tag already exists). Compares the
+        # digest the registry serves NOW against the one the first publish
+        # run recorded as `image-digest.txt` on the release: a match proves
+        # the tag was not moved after publish; a mismatch means it was.
+        #
+        # A MISSING record fails CLOSED - a missing digest must never be
+        # indistinguishable from a matching one (gate contract point 5).
+        # The sole exception is the explicit DIGEST_RECORD_SINCE cutoff:
+        # tags published before the recording mechanism existed have no
+        # asset through nobody's fault, so below the cutoff an absent
+        # record is expected and tolerated (logged, not passed silently).
+        id: digest-match
+        if: steps.state.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          version="${{ steps.resolve.outputs.version }}"
+          registry_digest="${{ steps.state.outputs.digest }}"
+          since="${DIGEST_RECORD_SINCE}"
+          if gh release download "v${version}" --pattern image-digest.txt --output recorded-digest.txt 2>/dev/null; then
+            recorded_digest="$(tr -d '[:space:]' < recorded-digest.txt)"
+            if [ -z "$recorded_digest" ]; then
+              echo "::error::recorded image-digest.txt on release v${version} is empty - failing closed (#2187)"
+              exit 1
+            fi
+            if [ "$recorded_digest" != "$registry_digest" ]; then
+              echo "::error::registry digest $registry_digest != recorded $recorded_digest - the tag was moved after publish (#2187)"
+              exit 1
+            fi
+            echo "Registry digest matches the recorded digest ($registry_digest)."
+          elif python3 -c "import sys; p=lambda v: tuple(int(x) for x in v.split('.')[:3]); sys.exit(0 if p('$version') >= p('$since') else 1)"; then
+            echo "::error::release v${version} is at or above the digest cutoff ${since} but has no image-digest.txt - failing closed (#2187)"
+            exit 1
+          else
+            echo "::warning::release v${version} predates the digest cutoff ${since} - no recorded digest expected, skipping the match (#2187)"
+          fi
+
       - uses: docker/setup-qemu-action@v4
         if: steps.state.outputs.exists != 'true'
       - uses: docker/setup-buildx-action@v4
@@ -216,6 +276,29 @@ jobs:
           gh api -X PATCH "user/packages/container/${pkg}" -f visibility=public \
             || gh api -X PATCH "orgs/${GITHUB_REPOSITORY%%/*}/packages/container/${pkg}" -f visibility=public \
             || echo "::warning::could not set visibility via API - set it once in the package settings"
+
+      - name: Record the pushed digest on the release (#2187)
+        # Only on a FRESH push. Writes the manifest-list digest as
+        # `image-digest.txt` on the release for this tag, so a later
+        # idempotent re-verify (above) can prove the served digest still
+        # matches what was published. --clobber makes re-pushing the same
+        # tag idempotent. Fails loudly on an empty digest or a missing
+        # release: a silently-unrecorded digest would make the NEXT
+        # re-verify fail closed on a tag that is actually fine.
+        if: steps.resolve.outputs.pushed == 'true' && steps.state.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          digest="${{ steps.push.outputs.digest }}"
+          version="${{ steps.resolve.outputs.version }}"
+          if [ -z "$digest" ]; then
+            echo "::error::the push step produced no digest - refusing to record an empty one (#2187)"
+            exit 1
+          fi
+          printf '%s\n' "$digest" > image-digest.txt
+          gh release upload "v${version}" image-digest.txt --clobber
+          echo "Recorded $digest as image-digest.txt on release v${version}."
 
   verify-anonymous-pull:
     # One job per architecture, each on a NATIVE runner. The first version of
@@ -289,7 +372,7 @@ jobs:
           image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
           python3 scripts/verify_image_size.py --image "$image" --arch "${{ matrix.arch }}"
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
 

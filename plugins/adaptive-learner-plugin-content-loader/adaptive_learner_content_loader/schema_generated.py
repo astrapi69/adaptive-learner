@@ -285,6 +285,12 @@ class PictureImage(BaseModel):
     """
 
 
+SlugId = Annotated[str, StringConstraints(max_length=120, min_length=1, pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$')]
+"""
+    Slug id: lowercase Unicode letters and digits in hyphen-separated runs (no leading/trailing/double hyphen, no underscore, no uppercase, no whitespace). Exactly the rule the reference consumer (adaptive-learner) enforces on import - an id that fails it is silently skipped there, so the engine rejects it up front (engine#105).
+"""
+
+
 class StepType(str, Enum):
     """
     Closed enum for top-level step kinds.
@@ -415,9 +421,21 @@ class Exercise(BaseModel):
     """
     Optional Markdown hint shown on demand. The viewer renders this behind a 'Need a hint?' button.
     """
-    id: str = Field(..., max_length=120, min_length=1, title='Id')
+    id: str = Field(
+        ...,
+        max_length=120,
+        min_length=1,
+        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
+        title='Id',
+    )
     """
     Slug-safe id, unique within the lesson.
+    """
+    stable_id: str | None = Field(
+        None, pattern='^[a-z0-9][a-z0-9_-]{7,63}$', title='Stable Id'
+    )
+    """
+    engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-].
     """
     images: list[PictureImage] | None = Field(None, title='Images')
     """
@@ -487,7 +505,13 @@ class LessonStep(BaseModel):
     """
     EXERCISE: the exercise payload.
     """
-    id: str = Field(..., max_length=120, min_length=1, title='Id')
+    id: str = Field(
+        ...,
+        max_length=120,
+        min_length=1,
+        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
+        title='Id',
+    )
     """
     Slug-safe id, unique within the lesson.
     """
@@ -562,9 +586,21 @@ class Card(BaseModel):
     """
     Progressive hint, revealed on request during an exercise.
     """
-    id: str = Field(..., max_length=120, min_length=1, title='Id')
+    id: str = Field(
+        ...,
+        max_length=120,
+        min_length=1,
+        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
+        title='Id',
+    )
     """
     Slug-safe id. Unique within the parent lesson. SRS reviews this id, not the surface term.
+    """
+    stable_id: str | None = Field(
+        None, pattern='^[a-z0-9][a-z0-9_-]{7,63}$', title='Stable Id'
+    )
+    """
+    engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-].
     """
     image: str | None = Field(None, title='Image')
     """
@@ -578,9 +614,9 @@ class Card(BaseModel):
     """
     Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings — anything that helps long-term retention.
     """
-    tags: list[str] = Field([], max_length=20, title='Tags')
+    tags: list[SlugId] = Field([], max_length=20, title='Tags', validate_default=True)
     """
-    Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').
+    Tags for SRS filtering ('greeting', 'verb-present', 'irregular'). Each tag must match $defs/SlugId - the reference consumer checks tags with the same regex it applies to ids and skips lessons whose tags fail (engine#108, hard since schema 1.11 after the published corpus was cleaned).
     """
     token_roles: list[CardTokenRole] | None = Field(None, max_length=10, title='Token Roles')
     """
@@ -631,9 +667,15 @@ class Lesson(BaseModel):
     """
     Rough wall-clock estimate. Surfaced in the Set Browser so the user can pick a lesson that fits the time they have.
     """
-    id: str = Field(..., max_length=120, min_length=1, title='Id')
+    id: str = Field(
+        ...,
+        max_length=120,
+        min_length=1,
+        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
+        title='Id',
+    )
     """
-    Slug-safe id, unique within the parent set. Convention: ``NN-slug`` (e.g. ``01-greetings``) for deterministic ordering, though the loader does not enforce ordering — it reads the set's manifest for the lesson sequence.
+    Slug id (see $defs/SlugId), unique within the parent set. The display order of a set's lessons is the LEXICOGRAPHIC sort of these ids: consumers sort the stored ``lessons/<id>.json`` filenames (the set manifest's ``metadata.lessons`` list only steers download discovery, never display order). The ``NN-slug`` prefix (e.g. ``01-greetings``) is therefore the ordering mechanism, not cosmetics - zero-pad it to one fixed width per set, or ``10-`` sorts before ``2-`` (engine#106).
     """
     requires_extensions: list[RequiresExtension] | None = Field(
         None, title='Requires Extensions'

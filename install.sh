@@ -12,7 +12,7 @@ set -e
 #    chmod +x install.sh && ./install.sh
 # ============================================================
 
-VERSION="${ADAPTIVE_LEARNER_VERSION:-v2.10.0}"
+VERSION="${ADAPTIVE_LEARNER_VERSION:-v2.11.0}"
 REPO="astrapi69/adaptive-learner"
 INSTALL_DIR="${ADAPTIVE_LEARNER_DIR:-$HOME/adaptive-learner}"
 
@@ -148,6 +148,11 @@ echo -e "${GREEN}  AdaptiveLearner is running!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "  Open: ${BLUE}http://localhost:${PORT}${NC}"
+echo ""
+echo -e "  ${YELLOW}Note:${NC} the app listens on 127.0.0.1 only and has no login."
+echo -e "  To reach it from other devices, deliberately set"
+echo -e "  ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0 in ${INSTALL_DIR}/.env"
+echo -e "  - only in a network you trust, or behind your own auth layer."
 echo ""
 echo -e "  Installed in: ${INSTALL_DIR}"
 echo ""

@@ -31,6 +31,9 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 
 vi.mock("../../lib/content/language/language-names", () => ({
   languageDisplayName: (code: string) => code.toUpperCase(),
+  // Flag-free in the page test (the flag mapping is unit-tested in
+  // language-names.test.ts); keeps the facet-label assertions deterministic.
+  flaggedName: (code: string) => code.toUpperCase(),
 }));
 
 vi.mock("../../lib/content/repos/discover-repos", () => ({
@@ -74,6 +77,7 @@ function makeSet(over: Partial<SearchableSet>): SearchableSet {
     updated_at: null,
     repo_url: "owner/repo",
     repo_name: "owner/repo",
+    review_status: "authored",
     ...over,
   };
 }
@@ -87,6 +91,10 @@ beforeEach(() => {
   // tests assert the card GRID, so pin grid; the list view + default are
   // covered by the dedicated tests below.
   localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+  // #2331 — the entry preset defaults to "language" (hides knowledge sets).
+  // The pre-#2331 tests assert on the full population, so pin the "Alles" entry
+  // here; the entry preset itself is covered by its own tests below.
+  localStorage.setItem("adaptive-learner.discover_entry", "");
   fetchAllIndicesMock.mockResolvedValue([
     makeSet({ id: "es-a1", name: "Spanish A1", target_language: "es" }),
     makeSet({ id: "fr-a1", name: "French A1", target_language: "fr", lesson_count: 10 }),
@@ -254,6 +262,326 @@ describe("Discover page", () => {
     expect(screen.getByText("French A1")).toBeInTheDocument();
     expect(screen.queryByText("Spanish A1")).toBeNull();
     expect(localStorage.getItem("adaptive-learner.discover_source_language")).toBe("en");
+  });
+
+  // --- EXP-048 #2324: empty state with exits ---
+
+  it("offers a computed relaxation hint that clears just the blocking facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es-a1", name: "Spanisch A1", source_language: "de", target_language: "es", level: "a1" }),
+      makeSet({ id: "es-a2", name: "Spanisch A2", source_language: "de", target_language: "es", level: "a2" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    // Restrict to a target that has no set under de -> impossible via menu, so
+    // restrict level to a1 AND search a non-matching string instead.
+    fireEvent.change(screen.getByTestId("discover-filters-level"), { target: { value: "a1" } });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "zzznope" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
+      { timeout: 1000 },
+    );
+    // Clearing the query alone restores the one a1 set.
+    const hint = screen.getByTestId("discover-empty-hint-query");
+    expect(hint).toHaveTextContent("1");
+    fireEvent.click(hint);
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+  });
+
+  it("resets every added filter from the empty state, keeping the source language", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es", name: "Spanisch", source_language: "de", target_language: "es", level: "a1" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "zzznope" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
+      { timeout: 1000 },
+    );
+    fireEvent.click(screen.getByTestId("discover-empty-reset"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    // Source language stayed de (its own axis), so the de set is still shown.
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+  });
+
+  it("points to adding a source / creating a lesson when the library is empty", async () => {
+    fetchAllIndicesMock.mockResolvedValue([]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-empty-none")).toBeInTheDocument());
+    const pointer = screen.getByTestId("discover-empty-add-source");
+    expect(pointer.querySelector('a[href="/add-repo"]')).not.toBeNull();
+    expect(pointer.querySelector('a[href="/create-lesson"]')).not.toBeNull();
+  });
+
+  // --- EXP-048 #2333: batched rendering ---
+
+  it("renders results in batches of 24, extended by Show more, count stays full", async () => {
+    const many = Array.from({ length: 30 }, (_, i) =>
+      makeSet({ id: `s-${i}`, name: `Set ${i}`, target_language: "es" }),
+    );
+    fetchAllIndicesMock.mockResolvedValue(many);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("30 sets"));
+    // Only the first batch renders; the count above the list stays the full 30.
+    expect(screen.getByTestId("discover-results").children).toHaveLength(24);
+    fireEvent.click(screen.getByTestId("discover-show-more"));
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-results").children).toHaveLength(30),
+    );
+    // No hard cap, no repeat button once everything is shown.
+    expect(screen.queryByTestId("discover-show-more")).toBeNull();
+  });
+
+  it("resets to the first batch when the filter changes", async () => {
+    const many = Array.from({ length: 30 }, (_, i) =>
+      makeSet({ id: `s-${i}`, name: `Set ${i}`, target_language: i < 20 ? "es" : "fr" }),
+    );
+    fetchAllIndicesMock.mockResolvedValue(many);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("30 sets"));
+    fireEvent.click(screen.getByTestId("discover-show-more"));
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-results").children).toHaveLength(30),
+    );
+    // Narrowing to the 20 es sets starts over from one batch (all 20 fit, no more).
+    fireEvent.click(screen.getByTestId("discover-target-filter"));
+    fireEvent.click(screen.getByTestId("discover-target-filter-es"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("20 sets"));
+    expect(screen.getByTestId("discover-results").children).toHaveLength(20);
+    expect(screen.queryByTestId("discover-show-more")).toBeNull();
+  });
+
+  // --- EXP-048 #2331: two entry points ---
+
+  function seedLanguageAndKnowledge() {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es", name: "Spanisch", source_language: "de", target_language: "es", domain: "language", level: "a1" }),
+      makeSet({ id: "psy", name: "Psychologie", source_language: "de", target_language: "de", domain: "psychology" }),
+    ]);
+  }
+
+  it("defaults to the language entry: language sets, level facet shown, domain hidden", async () => {
+    localStorage.removeItem("adaptive-learner.discover_entry"); // the real default
+    seedLanguageAndKnowledge();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+    expect(screen.queryByText("Psychologie")).toBeNull();
+    expect(screen.getByTestId("discover-entry-filter")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.getByTestId("discover-filters-level")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-filters-domain")).toBeNull();
+  });
+
+  it("switches to the knowledge entry: knowledge sets, domain facet, no level/target, persisted", async () => {
+    localStorage.removeItem("adaptive-learner.discover_entry");
+    seedLanguageAndKnowledge();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-entry-filter"));
+    fireEvent.click(screen.getByTestId("discover-entry-filter-knowledge"));
+    await waitFor(() => expect(screen.getByText("Psychologie")).toBeInTheDocument());
+    expect(screen.queryByText("Spanisch")).toBeNull();
+    expect(localStorage.getItem("adaptive-learner.discover_entry")).toBe("knowledge");
+    // The target facet is meaningless for knowledge sets, so it is hidden.
+    expect(screen.queryByTestId("discover-target-filter")).toBeNull();
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.getByTestId("discover-filters-domain")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-filters-level")).toBeNull();
+  });
+
+  it("the Alles entry shows both populations", async () => {
+    localStorage.removeItem("adaptive-learner.discover_entry");
+    seedLanguageAndKnowledge();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    fireEvent.click(screen.getByTestId("discover-entry-filter"));
+    fireEvent.click(screen.getByTestId("discover-entry-filter-"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+    expect(screen.getByText("Psychologie")).toBeInTheDocument();
+  });
+
+  // --- EXP-048 #2330: source (repo) facet ---
+
+  it("filters by the source facet, shown when more than one source is present", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "a", name: "SetA", target_language: "de", domain: "psychology", repo_url: "owner/repo", repo_name: "Official" }),
+      makeSet({ id: "b", name: "SetB", target_language: "de", domain: "psychology", repo_url: "other/repo", repo_name: "Community" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-source"), {
+      target: { value: "owner/repo" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("SetA")).toBeInTheDocument();
+    expect(screen.queryByText("SetB")).toBeNull();
+  });
+
+  it("hides the source facet when only one source is present", async () => {
+    // beforeEach seeds two sets, both from owner/repo.
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.queryByTestId("discover-filters-source")).toBeNull();
+  });
+
+  // --- EXP-048 #2329: search by UI-language name ---
+
+  it("finds a set by its target-language name typed in the UI language", async () => {
+    // languageDisplayName is mocked to uppercase the code, so target "es"
+    // becomes the searchable token "ES".
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "x", name: "Foobar", source_language: "de", target_language: "es" }),
+      makeSet({ id: "y", name: "Bazqux", source_language: "de", target_language: "fr" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "es" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+      { timeout: 1000 },
+    );
+    expect(screen.getByText("Foobar")).toBeInTheDocument();
+    expect(screen.queryByText("Bazqux")).toBeNull();
+  });
+
+  // --- EXP-048 #2323: active filters as removable marks ---
+
+  it("shows an active panel facet as a permanently-visible removable mark", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "py", name: "Python", source_language: "de", target_language: "de", domain: "programming", level: "b1" }),
+      makeSet({ id: "es", name: "Spanisch", source_language: "de", target_language: "es", domain: "language", level: "a1" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    // Restrict domain via the collapsible panel...
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-domain"), {
+      target: { value: "programming" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    // ...and it appears as a removable mark, visible without the panel — the
+    // fallback `t` returns the raw domain id here.
+    const mark = screen.getByTestId("discover-active-filters-domain");
+    expect(mark).toHaveTextContent("Domain: programming");
+    // Removing the mark clears just that restriction.
+    fireEvent.click(screen.getByTestId("discover-active-filters-remove-domain"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    expect(screen.queryByTestId("discover-active-filters-domain")).toBeNull();
+  });
+
+  it("marks an active search query and clears it via its mark", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "French" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+      { timeout: 1000 },
+    );
+    expect(screen.getByTestId("discover-active-filters-query")).toHaveTextContent("French");
+    fireEvent.click(screen.getByTestId("discover-active-filters-remove-query"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+  });
+
+  it("shows no active-filter marks when only the source-language default is set", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // The source-language default is its own always-visible control (#1699),
+    // not a mark; with nothing else set, the marks row is absent.
+    expect(screen.queryByTestId("discover-active-filters")).toBeNull();
+  });
+
+  // --- EXP-048 #2322: target-language facet ---
+
+  it("filters by the always-visible target-language facet with counts", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "de-es", name: "Spanisch", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-fr", name: "Franzoesisch", source_language: "de", target_language: "fr" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    // The target facet is ALWAYS visible (never behind the collapsible panel).
+    expect(screen.getByTestId("discover-target-filter")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-filters")).toBeNull();
+    fireEvent.click(screen.getByTestId("discover-target-filter"));
+    fireEvent.click(screen.getByTestId("discover-target-filter-es"));
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("Spanisch")).toBeInTheDocument();
+    expect(screen.queryByText("Franzoesisch")).toBeNull();
+  });
+
+  it("target options are scoped to the active source language and count-sorted", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "de-es1", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-es2", source_language: "de", target_language: "es" }),
+      makeSet({ id: "de-fr", source_language: "de", target_language: "fr" }),
+      makeSet({ id: "en-ja", source_language: "en", target_language: "ja" }),
+    ]);
+    renderDiscover(); // de source default
+    await waitFor(() => expect(screen.getByTestId("discover-target-filter")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-target-filter"));
+    // ja belongs to an en-source set only, so it is NOT offered under de.
+    expect(screen.queryByTestId("discover-target-filter-ja")).toBeNull();
+    // es (2) and fr (1) are offered; es outranks fr by count.
+    const es = screen.getByTestId("discover-target-filter-es");
+    const fr = screen.getByTestId("discover-target-filter-fr");
+    expect(es).toHaveTextContent("ES (2)");
+    expect(fr).toHaveTextContent("FR (1)");
+    expect(es.compareDocumentPosition(fr) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  // --- EXP-048 #2321: Durchsichtsstand reaches the end of the chain ---
+
+  it("surfaces review_status at the END of the chain: badge on a generated card + the Durchsicht facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "ja-a1", name: "Japanisch A1", target_language: "ja", review_status: "generated" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // The field survives loader → queryDiscoverSets → page → card and is READ
+    // by the UI (not merely present on props): the badge renders.
+    expect(screen.getByTestId("discover-card-ja-a1-review")).toHaveAttribute(
+      "data-review",
+      "generated",
+    );
+    // The Durchsicht facet is data-driven: it appears because the catalogue
+    // carries a machine-origin set.
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.getByTestId("discover-filters-reviewStatus")).toBeInTheDocument();
+  });
+
+  it("hides the Durchsicht facet when every set is authored (no dead options)", async () => {
+    // beforeEach seeds two authored sets.
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    expect(screen.queryByTestId("discover-filters-reviewStatus")).toBeNull();
+    // ...and there is no review badge on an authored card.
+    expect(screen.queryByTestId("discover-card-es-a1-review")).toBeNull();
+  });
+
+  it("filters to only reviewed machine sets via the Durchsicht facet", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "auth", name: "Handgeschrieben", target_language: "es", review_status: "authored" }),
+      makeSet({ id: "rev", name: "Durchgesehen", target_language: "ja", review_status: "reviewed" }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-reviewStatus"), {
+      target: { value: "reviewed" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("Durchgesehen")).toBeInTheDocument();
+    expect(screen.queryByText("Handgeschrieben")).toBeNull();
   });
 
   // --- #1251: info button replaces the permanent subtitle ---

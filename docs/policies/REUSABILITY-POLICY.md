@@ -1,17 +1,17 @@
 # Wiederverwendbarkeits-Richtlinie (Adaptive Learner)
 
 > Maximale Wiederverwendbarkeit von Frontend- und Backend-Modulen
-> ueber Projektgrenzen hinweg, ohne die bestehende Projektstruktur
+> über Projektgrenzen hinweg, ohne die bestehende Projektstruktur
 > aufzubrechen.
 
 ---
 
 ## 1. Prinzipien
 
-### 1.1 Dependency Injection ueber Props und Seams
+### 1.1 Dependency Injection über Props und Seams
 
 Alle externen Abhaengigkeiten (Storage, API, Navigation, i18n)
-werden ueber Props, Hooks oder explizite Seams injiziert.
+werden über Props, Hooks oder explizite Seams injiziert.
 
 **Erlaubt:**
 ```tsx
@@ -37,8 +37,8 @@ Repository-Injection. Keine neuen Bypass-Pfade.
 ### 1.2 Keine Seiteneffekte beim Import
 
 Das Importieren eines Moduls darf keine Netzwerkrequests,
-DOM-Manipulationen, Timer oder globale State-Aenderungen ausloesen.
-Seiteneffekte gehoeren in explizite Init-Funktionen oder Hooks.
+DOM-Manipulationen, Timer oder globale State-Änderungen auslösen.
+Seiteneffekte gehören in explizite Init-Funktionen oder Hooks.
 
 ### 1.3 Explizite Abhaengigkeiten
 
@@ -46,14 +46,14 @@ Jedes Modul deklariert seine Abhaengigkeiten sichtbar (Imports,
 Props-Interface, Hook-Parameter). Keine implizite Nutzung von
 Bibliotheken die nur im Host-Projekt installiert sind.
 
-### 1.4 Barrel Exports fuer Modul-Grenzen
+### 1.4 Barrel Exports für Modul-Grenzen
 
 Wenn ein Verzeichnis eine logische Einheit bildet, exportiert
-eine `index.ts` bzw. `__init__.py` die oeffentliche API.
-Interne Dateien duerfen nicht direkt von aussen importiert werden.
+eine `index.ts` bzw. `__init__.py` die öffentliche API.
+Interne Dateien dürfen nicht direkt von aussen importiert werden.
 
 Bereits umgesetzt: `storage/types/index.ts` (17 Module + Barrel).
-Gleiches Pattern fuer neue extrahierte Module anwenden.
+Gleiches Pattern für neue extrahierte Module anwenden.
 
 ### 1.5 Generische Benennung und Schnitt
 
@@ -79,7 +79,7 @@ oder Google-Style Docstring (Backend) mit mindestens:
 
 Vor jeder neuen Utility/Komponente die Hierarchie **von oben nach
 unten** durchgehen und bei der ersten Stufe stoppen, die das Problem
-loest. Vollstaendige Fassung: `docs/policies/VIBE-CODING-POLICY.md` §7.
+löst. Vollständige Fassung: `docs/policies/VIBE-CODING-POLICY.md` §7.
 
 **Stufe 1 -- Sprache/Runtime zuerst (native APIs).** Keine
 Bundle-Kosten, keine Wartung.
@@ -98,15 +98,15 @@ Bundle-Kosten, keine Wartung.
 **Stufe 3 -- Library (npm/PyPI, nur wenn 1+2 nicht reichen).** Eine
 bereits vorhandene Dependency (`react-markdown`, `dexie`, `recharts`,
 `yaml`, `lucide-react`, `tailwind`, ...) immer einer neuen vorziehen.
-Eine *neue* Dependency muss erfuellen: > 1000 weekly downloads,
+Eine *neue* Dependency muss erfüllen: > 1000 weekly downloads,
 letztes Release < 6 Monate, < 100 kB wenn sie etwas ersetzt das wir
-in < 50 LOC selbst schreiben koennten, keine CVEs.
+in < 50 LOC selbst schreiben könnten, keine CVEs.
 
 **Stufe 4 -- Selbst schreiben (nur wenn 1-3 nicht passen).**
-Gerechtfertigt wenn keine Library passt ODER die Abhaengigkeit
-unverhaeltnismaessig waere (> 100 kB fuer < 50 LOC, unmaintained,
+Gerechtfertigt wenn keine Library passt ODER die Abhängigkeit
+unverhaeltnismaessig wäre (> 100 kB für < 50 LOC, unmaintained,
 provider-eng, oder kann einen harten Vertrag nicht halten:
-Cross-Language-Paritaet, invertierbarer Round-Trip, token-backed
+Cross-Language-Parität, invertierbarer Round-Trip, token-backed
 Theming). Dann **Library-Grade**:
 - keine app-spezifischen Imports (kein `getStorage()`, kein `api.*`,
   kein app-globaler State) -- nur Props/Seams;
@@ -119,7 +119,7 @@ Theming). Dann **Library-Grade**:
 Dies ist ein Vorwaerts-Gate, kein Auftrag, funktionierenden Code
 auszureissen. Die retroaktive Bestandsaufnahme steht in
 `docs/audits/2026-06-17-library-first-audit.md` (Ergebnis: die
-meisten Ersetzungen wuerden das Bundle vergroessern; mehrere
+meisten Ersetzungen würden das Bundle vergroessern; mehrere
 vermeintliche Eigenentwicklungen sind bereits auf Stufe 1, z.B.
 `content-hash.ts` nutzt `crypto.subtle`).
 
@@ -133,7 +133,7 @@ Die aktuelle Struktur (`pages/`, `components/`, `hooks/`, `storage/`,
 `lib/`) bleibt. KEINE Migration zu `src/modules/<feature>/`.
 
 Wiederverwendbare Teile werden in bestehende Verzeichnisse einsortiert.
-Das real etablierte Verzeichnis fuer generische, app-unabhaengige Teile
+Das real etablierte Verzeichnis für generische, app-unabhängige Teile
 ist `frontend/src/shared/`. Aktuell ausgelieferte Primitives (Stand
 v1.79.0):
 
@@ -144,7 +144,7 @@ v1.79.0):
 | `LessonStepNav` | #476 | Schritt-Navigation (Prev/Next/Index) |
 | `XpBadge` | #510 | generisches XP-/Punkte-Badge |
 | `IconBadge` | #522 | Icon-+-Label-Badge (a11y, token-backed) |
-| `MenuToggleButton` | — | generischer Toggle-Button fuer Menues |
+| `MenuToggleButton` | — | generischer Toggle-Button für Menüs |
 
 Alle sind props-getrieben, ohne app-spezifische Imports, mit TSDoc +
 Verwendungsbeispiel + Unit-Test (Reusability-Policy). Weitere generische
@@ -155,11 +155,11 @@ Teile landen ebenfalls hier:
 | Generische UI-Komponenten | `frontend/src/shared/` | MatchingTile, ExerciseTimer |
 | Generische Hooks | `frontend/src/shared/` | useDebounce, useTimer |
 | Generische Utilities | `frontend/src/lib/` | eventLogger, formatDuration |
-| Exercise-Logik (`lib/exercises/`) | `authoring/` (generateExercises, validateExerciseEdit, createIdFactory), `grading/` (tokenDiff, isWordTilesCorrect, isMultipleChoiceCorrect, seededShuffle, generateClozeFromError), `payload/` (categorizationPayloadErrors, …PayloadErrors je Extension-Typ) | Authoring hat den Barrel `lib/exercises` als oeffentliche API; `grading/` + `payload/` werden von den Renderern ueber direkte Pfade importiert (kein Barrel-Re-Export wegen `canonicalAnswer`-Namenskollision zwischen `reading-comprehension` und `graded-quiz`). |
+| Exercise-Logik (`lib/exercises/`) | `authoring/` (generateExercises, validateExerciseEdit, createIdFactory), `grading/` (tokenDiff, isWordTilesCorrect, isMultipleChoiceCorrect, seededShuffle, generateClozeFromError), `payload/` (categorizationPayloadErrors, …PayloadErrors je Extension-Typ) | Authoring hat den Barrel `lib/exercises` als öffentliche API; `grading/` + `payload/` werden von den Renderern über direkte Pfade importiert (kein Barrel-Re-Export wegen `canonicalAnswer`-Namenskollision zwischen `reading-comprehension` und `graded-quiz`). |
 | Exercise-Widgets | `frontend/src/components/exercises/` | MatchingExercise, ClozeExercise |
 | Feature-spezifisch | `frontend/src/components/<feature>/` | BackupCompare, ShareWizard |
 
-`frontend/src/shared/` enthaelt ausschliesslich Komponenten/Hooks
+`frontend/src/shared/` enthält ausschliesslich Komponenten/Hooks
 die KEINE app-spezifischen Imports haben.
 
 ### 2.2 Backend: Plugin-Struktur ist das Modul-Pattern
@@ -186,7 +186,7 @@ Backend-Module sollen das Repository-Pattern von Anfang an anstreben.
 
 ### 2.3 Styling: Design Tokens
 
-Styling ueber Design Tokens (CSS Custom Properties).
+Styling über Design Tokens (CSS Custom Properties).
 Wiederverwendbare Komponenten nutzen token-backed
 Tailwind-Utilities (`bg-accent` -> `var(--accent)`) oder
 `var(--token, fallback)` direkt. Keine fixed-palette
@@ -205,27 +205,27 @@ Verzicht auf Tailwind.
 }
 ```
 
-### 2.4 Globaler State: Context fuer Infrastruktur erlaubt
+### 2.4 Globaler State: Context für Infrastruktur erlaubt
 
 i18n-Context und Theme-Context sind Infrastruktur-Concerns
 die projektuebergreifend gelten. Wiederverwendbare Komponenten
-duerfen `useTranslation()` und Theme-Tokens nutzen.
+dürfen `useTranslation()` und Theme-Tokens nutzen.
 
 NICHT erlaubt: app-spezifischer globaler State (User-Session,
-Lesson-Progress, Feature-Flags) als direkte Abhaengigkeit
-in wiederverwendbaren Komponenten. Diese gehen ueber Props.
+Lesson-Progress, Feature-Flags) als direkte Abhängigkeit
+in wiederverwendbaren Komponenten. Diese gehen über Props.
 
 ---
 
-## 3. Pruefkriterien (fuer Code-Review und Audits)
+## 3. Pruefkriterien (für Code-Review und Audits)
 
-Bei jeder Extraktion oder neuen Komponente pruefen:
+Bei jeder Extraktion oder neuen Komponente prüfen:
 
 1. **Import-Check:** Hat die Komponente Imports aus `pages/`,
    `storage/` (ausser Typen), oder app-spezifischen Hooks?
-   Wenn ja: nicht wiederverwendbar, gehoert nicht in `shared/`.
+   Wenn ja: nicht wiederverwendbar, gehört nicht in `shared/`.
 
-2. **Props-Check:** Kommen alle Daten und Callbacks ueber Props
+2. **Props-Check:** Kommen alle Daten und Callbacks über Props
    oder injizierte Seams? Oder greift die Komponente direkt
    auf app-internen State zu?
 
@@ -237,10 +237,10 @@ Bei jeder Extraktion oder neuen Komponente pruefen:
    Tailwind-Utilities bzw. CSS Variables mit Fallbacks? Oder
    fixed-palette Klassen / hardcodierte Werte / globale Klassen?
 
-5. **Seiteneffekt-Check:** Loest der Import der Komponente
+5. **Seiteneffekt-Check:** Löst der Import der Komponente
    Netzwerk-Calls, Timer oder DOM-Manipulationen aus?
 
-6. **Naming-Check:** Ist der Name generisch genug fuer
+6. **Naming-Check:** Ist der Name generisch genug für
    Wiederverwendung in anderen Projekten?
 
 7. **Doku-Check:** Hat die Komponente TSDoc/Docstring mit
@@ -248,21 +248,21 @@ Bei jeder Extraktion oder neuen Komponente pruefen:
 
 8. **Hierarchie-Check:** Wurde die Implementierungs-Hierarchie
    (Sprache -> Framework -> Library -> Selbst, §1.7) top-down
-   durchgegangen? Ist die gewaehlte Stufe + Grund im PR begruendet?
+   durchgegangen? Ist die gewählte Stufe + Grund im PR begründet?
 
 ---
 
-## 4. Kompatibilitaet mit bestehenden Regeln
+## 4. Kompatibilität mit bestehenden Regeln
 
-Diese Richtlinie ergaenzt und widerspricht nicht:
+Diese Richtlinie ergänzt und widerspricht nicht:
 
-| Bestehende Regel | Verhaeltnis |
+| Bestehende Regel | Verhältnis |
 |------------------|-------------|
-| DESIGN-TOKEN-ARCHITECTURE | Bestaetigt (token-backed Tailwind + CSS Variables) |
-| Vibe-Coding-Policy | Bestaetigt (Schichtarchitektur, DI) |
+| DESIGN-TOKEN-ARCHITECTURE | Bestätigt (token-backed Tailwind + CSS Variables) |
+| Vibe-Coding-Policy | Bestätigt (Schichtarchitektur, DI) |
 | FUNKTION-NICHT-VERFUEGBAR | Kompatibel (Props-driven Features) |
 | SYNC-UI-GATE | Kompatibel (Seam-basiert) |
 | Kohaesions-Watcher | Kompatibel (Barrel = saubere Module) |
 | 44px Touch Targets | Kompatibel (Komponenten-intern) |
-| IStorageService Seam | Bestaetigt (DI, kein direkter Zugriff) |
-| Vibe-Coding-Policy §7 (Implementierungs-Hierarchie) | Bestaetigt (4-Stufen-Hierarchie + Library-Grade hier konkretisiert) |
+| IStorageService Seam | Bestätigt (DI, kein direkter Zugriff) |
+| Vibe-Coding-Policy §7 (Implementierungs-Hierarchie) | Bestätigt (4-Stufen-Hierarchie + Library-Grade hier konkretisiert) |

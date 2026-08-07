@@ -2,7 +2,7 @@
   "$defs": {
     "Card": {
       "additionalProperties": false,
-      "description": "The smallest learnable unit (Phase 43 / 2B-lesson).\n\nA card carries a single term / concept / fact in a single\ndirection. SRS (Phase 46) tracks one card at a time;\nindividual exercises reference cards by id so a single\n'Bonjour = Hello' card can drive a matching exercise, a\nfree-text drill, and a summary review without\nduplication.\n\nConvention: ``card.id`` is unique within the lesson, not\nglobally. Cross-lesson card sharing happens via a\nseparate ``shared/`` directory inside the set (P-111\nterritory \u2014 not yet implemented).",
+      "description": "The smallest learnable unit (Phase 43 / 2B-lesson).\n\nA card carries a single term / concept / fact in a single\ndirection. SRS (Phase 46) tracks one card at a time;\nindividual exercises reference cards by id so a single\n'Bonjour = Hello' card can drive a matching exercise, a\nfree-text drill, and a summary review without\nduplication.\n\nConvention: ``card.id`` is unique within the lesson, not\nglobally. Cross-lesson card sharing happens via a\nseparate ``shared/`` directory inside the set (P-111\nterritory — not yet implemented).",
       "properties": {
         "audio": {
           "anyOf": [
@@ -104,10 +104,22 @@
         },
         "id": {
           "description": "Slug-safe id. Unique within the parent lesson. SRS reviews this id, not the surface term.",
-          "maxLength": 120,
-          "minLength": 1,
           "title": "Id",
-          "type": "string"
+          "$ref": "#/$defs/SlugId"
+        },
+        "stable_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_-]{7,63}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stable Id",
+          "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-]."
         },
         "image": {
           "anyOf": [
@@ -152,14 +164,14 @@
             }
           ],
           "default": null,
-          "description": "Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings \u2014 anything that helps long-term retention.",
+          "description": "Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings — anything that helps long-term retention.",
           "title": "Notes"
         },
         "tags": {
           "default": [],
-          "description": "Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').",
+          "description": "Tags for SRS filtering ('greeting', 'verb-present', 'irregular'). Each tag must match $defs/SlugId - the reference consumer checks tags with the same regex it applies to ids and skips lessons whose tags fail (engine#108, hard since schema 1.11 after the published corpus was cleaned).",
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/SlugId"
           },
           "maxItems": 20,
           "title": "Tags",
@@ -193,7 +205,7 @@
     },
     "CardTokenRole": {
       "additionalProperties": false,
-      "description": "One ``token \u2192 role`` annotation on a card.\n\nPhase 52I / v1.35.0 / P-130. The cloze generator looks up\nits target blank by matching ``token`` against the\n``ElementError.element_key`` \u2014 when a role is present, the\ngenerator can pick a same-role distractor pool instead of\na position-based heuristic.\n\nThe ``token`` is a verbatim slice of the card's ``front``;\nno whitespace normalisation, so authors can annotate even\nsub-word morphemes (an accent-bearing letter, an article\ncontraction) if a future generator needs it.",
+      "description": "One ``token → role`` annotation on a card.\n\nPhase 52I / v1.35.0 / P-130. The cloze generator looks up\nits target blank by matching ``token`` against the\n``ElementError.element_key`` — when a role is present, the\ngenerator can pick a same-role distractor pool instead of\na position-based heuristic.\n\nThe ``token`` is a verbatim slice of the card's ``front``;\nno whitespace normalisation, so authors can annotate even\nsub-word morphemes (an accent-bearing letter, an article\ncontraction) if a future generator needs it.",
       "properties": {
         "role": {
           "$ref": "#/$defs/TokenRole",
@@ -216,7 +228,7 @@
     },
     "ClozeBlank": {
       "additionalProperties": false,
-      "description": "One blank inside a cloze exercise's ``sentence`` (Phase 52D /\nv1.35.0 / P-127).\n\nMarker-based convention: the sentence carries visible ``___``\ntokens; ``blanks[i]`` provides the metadata for the i-th\nmarker (left-to-right). The validator enforces\n``sentence.count(\"___\") == len(blanks)`` so the i\u2194i mapping\nis unambiguous at render time.\n\n``accept`` carries the per-blank canonical + acceptable\nvariants \u2014 the renderer reuses FreeText's ``isFreeTextCorrect``\nmatcher (NFC-normalised + Levenshtein <= 1) so authors only\nneed to enumerate semantic variants (gendered article,\ncapitalisation, et cetera), not typos.",
+      "description": "One blank inside a cloze exercise's ``sentence`` (Phase 52D /\nv1.35.0 / P-127).\n\nMarker-based convention: the sentence carries visible ``___``\ntokens; ``blanks[i]`` provides the metadata for the i-th\nmarker (left-to-right). The validator enforces\n``sentence.count(\"___\") == len(blanks)`` so the i↔i mapping\nis unambiguous at render time.\n\n``accept`` carries the per-blank canonical + acceptable\nvariants — the renderer reuses FreeText's ``isFreeTextCorrect``\nmatcher (NFC-normalised + Levenshtein <= 1) so authors only\nneed to enumerate semantic variants (gendered article,\ncapitalisation, et cetera), not typos.",
       "properties": {
         "accept": {
           "description": "Accepted answers for this blank. First entry is the canonical (shown after a wrong attempt). Same shape as FREE_TEXT.accept.",
@@ -411,10 +423,22 @@
         },
         "id": {
           "description": "Slug-safe id, unique within the lesson.",
-          "maxLength": 120,
-          "minLength": 1,
           "title": "Id",
-          "type": "string"
+          "$ref": "#/$defs/SlugId"
+        },
+        "stable_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_-]{7,63}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stable Id",
+          "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-]."
         },
         "images": {
           "anyOf": [
@@ -529,7 +553,7 @@
       "type": "object"
     },
     "ExerciseType": {
-      "description": "Closed enum of exercise types the loader knows about.\n\nEXP-001 + EXP-006: the four base types ship in Phase 43-45.\nPhase 52D / v1.35.0 added CLOZE (fill-in-the-blank with\n``___`` markers) \u2014 see the schema_version bump in\n``models.py``. Adding a sixth type (ordering, drag-image-\npair, etc.) requires a minor schema_version bump and a new\nenum value plus its renderer.",
+      "description": "Closed enum of exercise types the loader knows about.\n\nEXP-001 + EXP-006: the four base types ship in Phase 43-45.\nPhase 52D / v1.35.0 added CLOZE (fill-in-the-blank with\n``___`` markers) — see the schema_version bump in\n``models.py``. Adding a sixth type (ordering, drag-image-\npair, etc.) requires a minor schema_version bump and a new\nenum value plus its renderer.",
       "enum": [
         "matching",
         "picture_choice",
@@ -549,7 +573,7 @@
     },
     "InlineExample": {
       "additionalProperties": false,
-      "description": "One inline worked example on a theory step or exercise (schema v1.5).\n\nAn inline example carries REAL content the learner reads in place \u2014\na sample sentence (language lessons) or a code snippet with syntax\nhighlighting (programming lessons). This is DISTINCT from\n``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an\nexternal illustration: ``example_url`` is the LINK variant,\n``examples`` is the INLINE-CONTENT variant. The two are complementary\nand may coexist on the same theory step.\n\nWhen ``language`` is set, ``content`` is treated as source code in\nthat language and rendered as a syntax-highlighted block (the same\n``CodeBlock`` the theory Markdown + code cards use); when it is\nabsent, ``content`` is plain text. Additive + optional, so content\nwithout ``examples`` validates unchanged.",
+      "description": "One inline worked example on a theory step or exercise (schema v1.5).\n\nAn inline example carries REAL content the learner reads in place —\na sample sentence (language lessons) or a code snippet with syntax\nhighlighting (programming lessons). This is DISTINCT from\n``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an\nexternal illustration: ``example_url`` is the LINK variant,\n``examples`` is the INLINE-CONTENT variant. The two are complementary\nand may coexist on the same theory step.\n\nWhen ``language`` is set, ``content`` is treated as source code in\nthat language and rendered as a syntax-highlighted block (the same\n``CodeBlock`` the theory Markdown + code cards use); when it is\nabsent, ``content`` is plain text. Additive + optional, so content\nwithout ``examples`` validates unchanged.",
       "properties": {
         "content": {
           "description": "The example's content. Plain text (e.g. a sample sentence) when ``language`` is absent; source code in ``language`` when it is set.",
@@ -595,7 +619,7 @@
     },
     "LessonResource": {
       "additionalProperties": false,
-      "description": "One lesson-level supplementary-media entry (EXP-029 / MED-05).\n\nMirrors a ``media.yaml`` resource minus ``domain`` (inherited\nfrom the parent set). Surfaced in the \"Vertiefe das Thema\"\nsection after the lesson summary. Optional + additive, so\npre-EXP-029 lessons load unchanged. Added to the authoritative\nschema (EXP-039) so the JSON-Schema / generated TS types cover\nit \u2014 previously this shape lived only in the frontend\n``ContentLessonResource`` interface, and a lesson carrying\n``resources`` was rejected by ``extra=\"forbid\"`` here.",
+      "description": "One lesson-level supplementary-media entry (EXP-029 / MED-05).\n\nMirrors a ``media.yaml`` resource minus ``domain`` (inherited\nfrom the parent set). Surfaced in the \"Vertiefe das Thema\"\nsection after the lesson summary. Optional + additive, so\npre-EXP-029 lessons load unchanged. Added to the authoritative\nschema (EXP-039) so the JSON-Schema / generated TS types cover\nit — previously this shape lived only in the frontend\n``ContentLessonResource`` interface, and a lesson carrying\n``resources`` was rejected by ``extra=\"forbid\"`` here.",
       "properties": {
         "author": {
           "anyOf": [
@@ -791,7 +815,7 @@
             }
           ],
           "default": null,
-          "description": "THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet \u2014 see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.",
+          "description": "THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet — see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.",
           "title": "Examples"
         },
         "exercise": {
@@ -808,10 +832,8 @@
         },
         "id": {
           "description": "Slug-safe id, unique within the lesson.",
-          "maxLength": 120,
-          "minLength": 1,
           "title": "Id",
-          "type": "string"
+          "$ref": "#/$defs/SlugId"
         },
         "review_lesson_id": {
           "anyOf": [
@@ -893,7 +915,7 @@
     },
     "Pair": {
       "additionalProperties": false,
-      "description": "One left\u2194right pair in a MATCHING exercise.\n\nEXP-039: modeled explicitly (was an inline ``dict[str, str]``)\nso the generated JSON-Schema / TS types carry the structured\n``{left, right}`` shape instead of a loose string map. The\n``extra=\"forbid\"`` config + the two required fields replace the\nformer per-pair key check in ``_validate_matching_fields``;\nvalidation semantics are unchanged (a pair must have exactly\n``left`` and ``right``).",
+      "description": "One left↔right pair in a MATCHING exercise.\n\nEXP-039: modeled explicitly (was an inline ``dict[str, str]``)\nso the generated JSON-Schema / TS types carry the structured\n``{left, right}`` shape instead of a loose string map. The\n``extra=\"forbid\"`` config + the two required fields replace the\nformer per-pair key check in ``_validate_matching_fields``;\nvalidation semantics are unchanged (a pair must have exactly\n``left`` and ``right``).",
       "properties": {
         "left": {
           "description": "The left-column item. The renderer shuffles before display.",
@@ -966,6 +988,14 @@
       "title": "PictureImage",
       "type": "object"
     },
+    "SlugId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+      "title": "SlugId",
+      "description": "Slug id: lowercase Unicode letters and digits in hyphen-separated runs (no leading/trailing/double hyphen, no underscore, no uppercase, no whitespace). Exactly the rule the reference consumer (adaptive-learner) enforces on import - an id that fails it is silently skipped there, so the engine rejects it up front (engine#105)."
+    },
     "StepType": {
       "description": "Closed enum for top-level step kinds.\n\nTHEORY = Markdown content step. EXERCISE = one of the\nExerciseType variants. The viewer (Phase 44) branches\non this; no other step kinds are valid in v1.0.",
       "enum": [
@@ -976,7 +1006,7 @@
       "type": "string"
     },
     "TokenRole": {
-      "description": "Closed enum of grammatical roles a card token can carry.\n\nPhase 52I / v1.35.0 / P-130. Annotates individual tokens\ninside a card's ``front`` so the v1.35.0+ cloze generator\ncan pick a semantically-meaningful blank instead of a\nposition-based one. Optional field on Card \u2014 old content\nwithout token_roles still validates and the generator\nfalls back to a positional heuristic.\n\nClosed enum to keep author input disciplined. Adding a\nrole (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)\nis a minor schema_version bump \u2014 extending an open enum\nsilently would let typos masquerade as valid roles and\nthe generator would skip them without warning.",
+      "description": "Closed enum of grammatical roles a card token can carry.\n\nPhase 52I / v1.35.0 / P-130. Annotates individual tokens\ninside a card's ``front`` so the v1.35.0+ cloze generator\ncan pick a semantically-meaningful blank instead of a\nposition-based one. Optional field on Card — old content\nwithout token_roles still validates and the generator\nfalls back to a positional heuristic.\n\nClosed enum to keep author input disciplined. Adding a\nrole (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)\nis a minor schema_version bump — extending an open enum\nsilently would let typos masquerade as valid roles and\nthe generator would skip them without warning.",
       "enum": [
         "article",
         "verb",
@@ -993,7 +1023,7 @@
   "$id": "https://astrapi69.github.io/learn-content-engine/schema/lesson.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "One lesson in a content set (Phase 43 / 2B-lesson).\n\nA lesson is the unit a user works through end-to-end \u2014\ntypically 5-15 minutes of content. The viewer (Phase 44)\nwalks the steps in order; SRS (Phase 46) tracks the\ncards referenced by each exercise.\n\nReferential integrity: every ``card_id`` referenced by\nany exercise step MUST exist in the lesson's ``cards``\nlist. Enforced by the model validator so the viewer can\ntrust the references later.",
+  "description": "One lesson in a content set (Phase 43 / 2B-lesson).\n\nA lesson is the unit a user works through end-to-end —\ntypically 5-15 minutes of content. The viewer (Phase 44)\nwalks the steps in order; SRS (Phase 46) tracks the\ncards referenced by each exercise.\n\nReferential integrity: every ``card_id`` referenced by\nany exercise step MUST exist in the lesson's ``cards``\nlist. Enforced by the model validator so the viewer can\ntrust the references later.",
   "properties": {
     "cards": {
       "default": [],
@@ -1068,11 +1098,9 @@
       "type": "integer"
     },
     "id": {
-      "description": "Slug-safe id, unique within the parent set. Convention: ``NN-slug`` (e.g. ``01-greetings``) for deterministic ordering, though the loader does not enforce ordering \u2014 it reads the set's manifest for the lesson sequence.",
-      "maxLength": 120,
-      "minLength": 1,
+      "description": "Slug id (see $defs/SlugId), unique within the parent set. The display order of a set's lessons is the LEXICOGRAPHIC sort of these ids: consumers sort the stored ``lessons/<id>.json`` filenames (the set manifest's ``metadata.lessons`` list only steers download discovery, never display order). The ``NN-slug`` prefix (e.g. ``01-greetings``) is therefore the ordering mechanism, not cosmetics - zero-pad it to one fixed width per set, or ``10-`` sorts before ``2-`` (engine#106).",
       "title": "Id",
-      "type": "string"
+      "$ref": "#/$defs/SlugId"
     },
     "requires_extensions": {
       "description": "Extensions this lesson needs, each ``ext:<vendor>-<name>@<major>`` (e.g. ``ext:acme-ordering@1``). A consumer that has not registered a declared extension refuses the lesson loudly (E-EXT-UNSUPPORTED) rather than mis-rendering. Absent / empty on core lessons; additive, so pre-1.7 content validates unchanged.",
@@ -1131,7 +1159,7 @@
         }
       ],
       "default": null,
-      "description": "Optional BCP-47 code of the language taught (Phase 60 / v1.44.0). Mirrors the parent set's ``target_language``; lets an exported standalone lesson carry its own pair. Absent on pre-v1.2 lessons \u2014 the parent set is authoritative.",
+      "description": "Optional BCP-47 code of the language taught (Phase 60 / v1.44.0). Mirrors the parent set's ``target_language``; lets an exported standalone lesson carry its own pair. Absent on pre-v1.2 lessons — the parent set is authoritative.",
       "title": "Target Language"
     },
     "title": {
@@ -1177,5 +1205,5 @@
   ],
   "title": "Lesson",
   "type": "object",
-  "x-schema-version": "1.8"
+  "x-schema-version": "1.11"
 }

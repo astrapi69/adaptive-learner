@@ -68,11 +68,17 @@ export const contentApi = {
 
   elementErrors: {
     /** GET /api/users/{user_id}/element-errors */
-    list: (userId: string, opts: { setId?: string; includeMastered?: boolean } = {}) => {
+    list: (
+      userId: string,
+      opts: { setId?: string; includeMastered?: boolean; includeRetired?: boolean } = {},
+    ) => {
       const params = new URLSearchParams();
       if (opts.setId !== undefined) params.set("set_id", opts.setId);
       if (opts.includeMastered === false) {
         params.set("include_mastered", "false");
+      }
+      if (opts.includeRetired === true) {
+        params.set("include_retired", "true");
       }
       const qs = params.toString();
       const path = qs
@@ -94,6 +100,23 @@ export const contentApi = {
       apiCall<{ applied: number; skipped: number }>(
         `/users/${encodeURIComponent(userId)}/element-errors/remap`,
         { method: "POST", body: { remaps } },
+      ),
+    /** POST /api/users/{user_id}/element-errors/remap-exercise-ids
+     *  (#2130 stable_id key switch) */
+    remapExerciseIds: (
+      userId: string,
+      remaps: readonly import("../storage/types").ExerciseIdRemap[],
+    ) =>
+      apiCall<{ applied: number; skipped: number }>(
+        `/users/${encodeURIComponent(userId)}/element-errors/remap-exercise-ids`,
+        { method: "POST", body: { remaps } },
+      ),
+    /** POST /api/users/{user_id}/element-errors/archive-retired
+     *  (#2188 retired_ids archival) */
+    archiveRetired: (userId: string, setId: string, retiredIds: readonly string[]) =>
+      apiCall<{ archived: number }>(
+        `/users/${encodeURIComponent(userId)}/element-errors/archive-retired`,
+        { method: "POST", body: { set_id: setId, retired_ids: retiredIds } },
       ),
     /** GET /api/users/{user_id}/element-errors/review-queue */
     reviewQueue: (

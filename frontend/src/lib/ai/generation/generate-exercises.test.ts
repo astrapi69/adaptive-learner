@@ -87,3 +87,59 @@ describe("generateExercises", () => {
     expect(m.lastOpts()?.signal).toBe(controller.signal);
   });
 });
+
+describe("generateExercises — asset gate (#2356)", () => {
+  it("forwards hasAssets:false into the prompt so picture_choice is not offered", async () => {
+    const m = mockProvider(GOOD_REPLY);
+    await generateExercises(STEPS, m.provider, { hasAssets: false });
+    expect(m.lastPrompt()).not.toContain("picture_choice");
+  });
+
+  it("offers picture_choice when hasAssets is not set (default)", async () => {
+    const m = mockProvider(GOOD_REPLY);
+    await generateExercises(STEPS, m.provider);
+    expect(m.lastPrompt()).toContain("picture_choice");
+  });
+});
+
+describe("generateExercises — text extensions (#2355)", () => {
+  const REPLY_WITH_EXTENSIONS = JSON.stringify({
+    cards: [
+      { type: "cloze", question: "hosts: ___", answer: "all", distractors: ["one"] },
+      {
+        type: "ext:al-categorization",
+        question: "Sort the terms.",
+        categories: [
+          { name: "Modules", items: ["copy", "service"] },
+          { name: "Concepts", items: ["idempotence"] },
+        ],
+      },
+      {
+        type: "ext:al-reading-comprehension",
+        question: "Read and answer.",
+        passage: "Ansible is agentless and runs tasks over SSH.",
+        questions: [
+          { prompt: "How does it connect?", type: "free_text", accept: ["over SSH"] },
+        ],
+      },
+      {
+        type: "ext:al-reading-comprehension",
+        question: "A second passage — should be dropped by the budget.",
+        passage: "Another passage that is long enough to read.",
+        questions: [
+          { prompt: "Q?", type: "free_text", accept: ["a"] },
+        ],
+      },
+    ],
+  });
+
+  it("passes extension cards through the pipeline and applies the budget cap", async () => {
+    const m = mockProvider(REPLY_WITH_EXTENSIONS);
+    const result = await generateExercises(STEPS, m.provider);
+    const types = result.cards.map((c) => c.type);
+    expect(types).toContain("ext:al-categorization");
+    // Budget: at most one reading-comprehension survives.
+    expect(types.filter((t) => t === "ext:al-reading-comprehension")).toHaveLength(1);
+    expect(types).toContain("cloze");
+  });
+});

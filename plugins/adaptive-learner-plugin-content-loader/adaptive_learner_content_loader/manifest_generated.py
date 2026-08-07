@@ -21,6 +21,45 @@ class Visibility(str, Enum):
     HIDDEN = 'hidden'
 
 
+class DerivedFromItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    author: str = Field(..., max_length=120, min_length=1, title='Author')
+
+
+class Attribution(BaseModel):
+    """
+    engine#90 - schema 1.9 (additive). Content attribution for the set: who wrote it, and the bounded chain it was derived through. PERSONAL DATA: the name travels with the set when it is shared; a consumer app must point that out before it becomes visible (the contributed_by opt-in pattern). Distinct from and never merged with: 'book' (source material), 'ai_validation' (review provenance in free-form metadata), repo-level 'metadata.author' (repo operator) and the lesson-level 'contributed_by' (per-lesson credit).
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    author: str = Field(..., max_length=120, min_length=1, title='Author')
+    """
+    Display name of the person this set's content is attributed to. Attribution, NOT authorization: without accounts or a server the name is unverifiable, and the field claims nothing more.
+    """
+    derived_from: list[DerivedFromItem] | None = Field(
+        None, max_length=8, title='Derived From'
+    )
+    """
+    Bounded derivation chain, OLDEST first. Whoever edits and re-shares a foreign set moves the previous author to the END of this list and sets themselves as author; when the list is full, the FIRST entry (the origin) stays and the oldest middle entry is dropped (editor/author rule; the schema enforces only the bound).
+    """
+
+
+class ReviewStatus(str, Enum):
+    """
+    engine#94 - schema 1.9 (additive). Three-state review standing derived from ORIGIN, because origin is what makes a set review-worthy: 'authored' = hand-written by a speaker/domain expert, no review required; 'generated' = machine-generated (AI/book/analysis), native-speaker or expert review PENDING; 'reviewed' = machine-generated and reviewed. Absent means 'authored' (legacy hand-written content). Consumers derive 'advertisable as reviewed' as status != 'generated'. Distinct from 'visibility' (display hint, never a quality statement) and from 'ai_validation' (AI check provenance).
+    """
+
+    AUTHORED = 'authored'
+    GENERATED = 'generated'
+    REVIEWED = 'reviewed'
+
+
 class ContentSetAsset(BaseModel):
     """
     One bundled binary asset (image, audio) declared in the
@@ -104,7 +143,7 @@ class ContentSet(BaseModel):
     """
     domain: str = Field('language', max_length=60, min_length=1, title='Domain')
     """
-    Free-form domain tag ('language', 'math', 'programming', ...). Reserved for the EXP-005 domain-plugin interface; the loader treats it as opaque metadata.
+    Domain tag under the known-values-plus-other contract (engine#127): the canonical grouping vocabulary is KNOWN_CONTENT_DOMAINS (exported by the engine; 'language', 'knowledge', 'programming', 'software', 'psychology', 'math', 'ai', 'technology', 'philosophy', 'dog-training', 'traffic-knowledge'). Any other value stays VALID but draws the W-DOMAIN-UNKNOWN author lint, because consumers cannot group it with existing subjects. Reserved for the EXP-005 domain-plugin interface; the loader treats it as opaque metadata.
     """
     domain_label: str | None = Field(None, max_length=120, title='Domain Label')
     """
@@ -120,7 +159,7 @@ class ContentSet(BaseModel):
     """
     level: str = Field(..., max_length=20, min_length=1, title='Level')
     """
-    Difficulty / proficiency marker. CEFR (A1..C2) for languages, free-form for other domains.
+    Difficulty / proficiency marker. CEFR (A1..C2, case-insensitive) for language sets; non-language sets declare a CEFR band or the explicit no-level sentinel 'none' (engine#127). Other values stay VALID but draw the W-LEVEL-UNKNOWN author lint, so a consumer's level facet does not offer free-text junk as a category.
     """
     path: str | None = Field(None, max_length=300, title='Path')
     """
@@ -154,6 +193,14 @@ class ContentSet(BaseModel):
     """
     #83 - consumer-display hint. ``hidden`` asks a consumer app NOT to surface the set to learners (e.g. a conformance/reference fixture that must stay on disk for engine validation but is not learner content). Additive and optional; absent means ``visible``. DISPLAY hint only: the engine and ``scripts/conformance-real.mjs`` still validate hidden sets and never exclude them from engine validation; only consumer apps filter on it.
     """
+    attribution: Attribution | None = Field(None, title='Attribution')
+    """
+    engine#90 - schema 1.9 (additive). Content attribution for the set: who wrote it, and the bounded chain it was derived through. PERSONAL DATA: the name travels with the set when it is shared; a consumer app must point that out before it becomes visible (the contributed_by opt-in pattern). Distinct from and never merged with: 'book' (source material), 'ai_validation' (review provenance in free-form metadata), repo-level 'metadata.author' (repo operator) and the lesson-level 'contributed_by' (per-lesson credit).
+    """
+    review_status: ReviewStatus | None = Field(None, title='Review Status')
+    """
+    engine#94 - schema 1.9 (additive). Three-state review standing derived from ORIGIN, because origin is what makes a set review-worthy: 'authored' = hand-written by a speaker/domain expert, no review required; 'generated' = machine-generated (AI/book/analysis), native-speaker or expert review PENDING; 'reviewed' = machine-generated and reviewed. Absent means 'authored' (legacy hand-written content). Consumers derive 'advertisable as reviewed' as status != 'generated'. Distinct from 'visibility' (display hint, never a quality statement) and from 'ai_validation' (AI check provenance).
+    """
 
 
 class ContentManifest(BaseModel):
@@ -184,7 +231,7 @@ class ContentManifest(BaseModel):
     """
     metadata: dict[str, Any] = Field({}, title='Metadata')
     """
-    Free-form repo-level metadata (license, author, homepage URL, contact). The loader does not interpret these fields — they surface as-is in the Set Browser's 'About this source' panel.
+    Free-form metadata (license, author, homepage URL, contact), surfaced as-is in the Set Browser's 'About this source' panel. One key IS interpreted: on a SET-level manifest, ``metadata.lessons`` (a list of lesson filenames) steers which files the reference consumer downloads. It does NOT control display order - consumers sort lesson ids lexicographically (engine#106).
     """
     name: str = Field(..., max_length=200, min_length=1, title='Name')
     """

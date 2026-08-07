@@ -67,3 +67,45 @@ describe("EXP-044 Tranche 1 dead selectors stay removed (#1485)", () => {
         },
     );
 });
+
+/**
+ * Selectors deleted in the #2476 dead-CSS tranche (map from the #2452
+ * audit). The tranche originally also removed every `api-key-*` /
+ * `configured-provider-*` / `model-override-row-input` rule — WRONGLY:
+ * their consumers are not in frontend/src but in the EXTERNAL package
+ * `@astrapi69/ai-key-vault-react`, whose dist emits those classNames
+ * (#2484 restored them; the AI-key settings rendered unstyled on the
+ * deployments). A src-only grep is NOT a sufficient dead-verdict —
+ * runtime packages emit classNames too. Only selectors re-verified
+ * against every `node_modules/@astrapi69/<pkg>/dist` bundle as well
+ * stay pinned here.
+ * Deliberately NOT pinned: generic state classes (`is-ok`, `is-set`,
+ * ...) — a future component may legitimately mint them.
+ */
+const REMOVED_SELECTORS_DEAD_CSS_TRANCHE = [
+    "chat-transition-badge",
+    "chat-transition-card",
+    "chat-transition-header",
+    "chat-transition-next",
+    "chat-transition-summary",
+    "metric-grid",
+    "onboarding-skip-top",
+    "chat-message-cursor",
+] as const;
+
+describe("dead-CSS tranche selectors stay removed (#2476, refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_DEAD_CSS_TRANCHE)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was deleted as dead CSS in the #2476 ` +
+                    "tranche and must not reappear. If it is genuinely used " +
+                    "again, remove it from REMOVED_SELECTORS_DEAD_CSS_TRANCHE " +
+                    "and confirm the class is rendered in markup.",
+            ).toBe(false);
+        },
+    );
+});

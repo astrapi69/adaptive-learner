@@ -127,11 +127,10 @@ Ciladas conhecidas:
   através do `install.sh` ou diretamente com o Docker Compose.
 - **Aplicação inacessível no browser**: se o browser não abrir
   automaticamente, abre `http://localhost:8501` manualmente (ou a porta
-  indicada na janela do launcher). Atenção: a aplicação é publicada em
-  todas as interfaces de rede, não apenas em `localhost`, e não tem
-  autenticação - mantém essa porta fechada na firewall a não ser que
-  queiras deliberadamente que outros dispositivos da tua rede lhe
-  acedam.
+  indicada na janela do launcher). Por omissão a aplicação escuta apenas
+  em `127.0.0.1`, pelo que só é acessível a partir deste computador;
+  outros dispositivos só lhe acedem se ativares deliberadamente o acesso
+  pela rede - ver "Quem consegue aceder à aplicação" acima.
 
 ## macOS
 

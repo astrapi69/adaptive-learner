@@ -25,11 +25,10 @@
  */
 
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import type {Ref} from "react";
+import type {ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
-import ExerciseHint from "../feedback/ExerciseHint";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../../lib/srs/element-attempt";
@@ -40,6 +39,7 @@ import {
     type MatchingResolveEffect,
 } from "../../../lib/learning/matchingResolvePref";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
+import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,
@@ -56,6 +56,7 @@ import {
     computeRightTileState,
     MatchingLeftTile,
     MatchingRightTile,
+    MatchingColumnHeader,
     MatchingPrompt,
     MatchingResultFooter,
     MatchingViewToggle,
@@ -96,6 +97,12 @@ export interface MatchingExerciseProps extends ControlledExerciseProps {
      *  column labels, no language names, a "match each term to its
      *  definition" instruction. Optional; absent = language behaviour. */
     domain?: string | null;
+    /** #2453 — the chrome's conditional "Re-read theory" link (computed by
+     *  LessonStepView). Forwarded to MatchingPrompt so it shares the top
+     *  button row with the how-to disclosure instead of sitting on its own
+     *  line above the exercise. Null/absent when no theory chapter precedes
+     *  this step (or in Review / AdaptiveLesson, which omit it). */
+    theoryLink?: ReactNode;
 }
 
 
@@ -132,20 +139,6 @@ function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
 
 
 
-/** Deterministic Fisher-Yates shuffle keyed by the
- *  exercise id so a reload reshuffles consistently within
- *  the same session but every fresh visit gets a new order. */
-function _shuffle<T>(items: readonly T[], seed: string): T[] {
-    const out = [...items];
-    let acc = 0;
-    for (const ch of seed) acc = (acc * 31 + ch.charCodeAt(0)) | 0;
-    for (let i = out.length - 1; i > 0; i--) {
-        acc = (acc * 1103515245 + 12345) & 0x7fffffff;
-        const j = acc % (i + 1);
-        [out[i], out[j]] = [out[j], out[i]];
-    }
-    return out;
-}
 
 /** Post-check toggle row: on a fully-correct match the #1218 success-merge
  *  (badge + "Continue"); otherwise the My-answers / Solve view toggle.
@@ -208,6 +201,7 @@ function MatchingExercise(
         codeMode = false,
         onAdvance,
         advanceLabel,
+        theoryLink,
     }: MatchingExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -233,7 +227,7 @@ function MatchingExercise(
         });
 
     // Stable seed per-mount so reshuffling on every render
-    // doesn't move the right column under the user.
+    // doesn't move the columns under the user.
     const [shuffleSeed] = useState(
         () => `${exercise.id}#${Date.now() & 0xffff}`,
     );
@@ -247,12 +241,21 @@ function MatchingExercise(
         [pairs, productive],
     );
 
+    /** #2371 — both columns shuffle independently (distinct seed
+     *  suffixes) so neither side's authored order survives into the
+     *  display. ``leftTiles`` itself stays authored: index lookups
+     *  (prompt label, resolution view) rely on position == pair index. */
+    const displayLeftTiles: LeftTile[] = useMemo(
+        () => seededShuffle(leftTiles, `${shuffleSeed}#left`),
+        [leftTiles, shuffleSeed],
+    );
+
     const rightTiles: RightTile[] = useMemo(() => {
         const indexed = pairs.map((p, i) => ({
             originalIndex: i,
             label: productive ? p.left : p.right,
         }));
-        return _shuffle(indexed, shuffleSeed);
+        return seededShuffle(indexed, `${shuffleSeed}#right`);
     }, [pairs, shuffleSeed, productive]);
 
     /** Currently-selected left index (waiting for a right
@@ -538,13 +541,12 @@ function MatchingExercise(
                 submitted={submitted}
                 leftLabel={leftLabel}
                 rightLabel={rightLabel}
+                theoryLink={theoryLink}
             />
 
-            <ExerciseHint
-                exercise={exercise}
-                submitted={submitted}
-                testId="matching-hint-button"
-            />
+            {/* #2443 — no hint affordance for matching. Both columns are
+                fully visible, so a generated hint (first letter of an
+                already-readable word) adds nothing yet charged XP. */}
 
             <MatchingPostCheckToggle
                 submitted={submitted}
@@ -560,24 +562,18 @@ function MatchingExercise(
             {view === "user-answers" && (
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
-                    <div
-                        className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
-                        data-testid="matching-left-header"
-                    >
-                        <span
-                            aria-hidden="true"
-                            className="inline-flex h-4 w-4 items-center justify-center rounded-[3px] bg-[var(--matching-side-a-bg)] text-[0.625rem] font-bold text-[var(--matching-side-a-fg)] ring-1 ring-[var(--border-strong)]"
-                        >
-                            A
-                        </span>
-                        {leftLabel}
-                    </div>
+                    <MatchingColumnHeader
+                        side="a"
+                        label={leftLabel}
+                        showLabel={!isKnowledge}
+                        testId="matching-left-header"
+                    />
                     <ul
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-left"
                         aria-label={leftLabel}
                     >
-                        {leftTiles.map((tile) => (
+                        {displayLeftTiles.map((tile) => (
                             <MatchingLeftTile
                                 key={tile.index}
                                 tile={tile}
@@ -595,18 +591,12 @@ function MatchingExercise(
                     </ul>
                 </div>
                 <div className="flex min-w-0 flex-col gap-2">
-                    <div
-                        className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
-                        data-testid="matching-right-header"
-                    >
-                        <span
-                            aria-hidden="true"
-                            className="inline-flex h-4 w-4 items-center justify-center rounded-[3px] bg-[var(--matching-side-b-bg)] text-[0.625rem] font-bold text-[var(--matching-side-b-fg)] ring-1 ring-[var(--border-strong)]"
-                        >
-                            B
-                        </span>
-                        {rightLabel}
-                    </div>
+                    <MatchingColumnHeader
+                        side="b"
+                        label={rightLabel}
+                        showLabel={!isKnowledge}
+                        testId="matching-right-header"
+                    />
                     <ul
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-right"

@@ -1,5 +1,6 @@
+import {buildTreeFromFlat} from "@astrapi69/tree-kit";
+
 import TopicNode from "./TopicNode";
-import {buildTreeFromFlat} from "../../lib/tree";
 import type {LearningTopic} from "../../types";
 
 interface TopicTreeProps {

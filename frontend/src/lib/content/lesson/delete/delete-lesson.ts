@@ -93,3 +93,58 @@ export function removeLessonFromSet(
     remaining: remaining.length,
   };
 }
+
+/** The outcome of removing SEVERAL lessons from a set in one operation (#2065). */
+export interface LessonsRemoval {
+  /** The requested filenames that actually matched a lesson (a subset). Empty
+   *  when none matched — the caller then treats the delete as a no-op. */
+  found: string[];
+  /** Re-save input for the lessons that remain; ``null`` when the removal
+   *  empties the set (the caller deletes the whole set instead) or when nothing
+   *  matched. */
+  input: SaveUserSetInput | null;
+  /** Lessons left after the removal. */
+  remaining: number;
+  /** ``true`` when the selection removed every lesson of the set — the set is
+   *  now empty and should be deleted entirely rather than re-saved. */
+  emptied: boolean;
+}
+
+/**
+ * Remove every lesson named in ``filenames`` from ``lessons`` in one pass and
+ * build the re-save input for the remainder (#2065 multi-select delete).
+ *
+ * The removal is a single atomic re-save of the set without the selected
+ * lessons: the surviving lessons keep their ids/filenames (no renumbering,
+ * #2064 decision #3) and their relative order (a filter preserves order), so
+ * ``LessonProgress`` / SRS rows and the stored display order stay attached to
+ * the survivors. When the selection covers ALL lessons, ``emptied`` is set and
+ * ``input`` is ``null`` — the caller deletes the whole set (no empty husk).
+ *
+ * @param entry The set's catalog entry (source of the preserved metadata).
+ * @param lessons Every lesson currently in the set.
+ * @param filenames The lessons to remove (e.g. ``["02-body.json", "04-end.json"]``).
+ */
+export function removeLessonsFromSet(
+  entry: ContentSetEntry,
+  lessons: ContentLesson[],
+  filenames: readonly string[],
+): LessonsRemoval {
+  const targets = new Set(filenames);
+  const found = lessons
+    .map((lesson) => lessonFilename(lesson))
+    .filter((filename) => targets.has(filename));
+  if (found.length === 0) {
+    return { found: [], input: null, remaining: lessons.length, emptied: false };
+  }
+  const remaining = lessons.filter((lesson) => !targets.has(lessonFilename(lesson)));
+  if (remaining.length === 0) {
+    return { found, input: null, remaining: 0, emptied: true };
+  }
+  return {
+    found,
+    input: buildUserSetInputFromEntry(entry, remaining),
+    remaining: remaining.length,
+    emptied: false,
+  };
+}

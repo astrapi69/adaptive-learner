@@ -152,13 +152,12 @@ resmi repoya bir PR onu yeniden üretir.
 ## Manifest formatı
 
 Manifest alan şeması (reponun setlerini listeleyen root `manifest.yaml`
-ve her zorunlu ve isteğe bağlı alan: `schema_version`, `name` ve set
-başına `id`, `title`, `title_native`, `target_language`,
-`source_language`, `level`, `version`, `lesson_count`, `path`,
-`domain`, `tags`, `book`, `visibility`) engine referansında bulunur:
+ve her zorunlu ve isteğe bağlı alanıyla birlikte) engine referansında
+bulunur:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
-Engine'in katı şeması (bilinmeyen alanlar reddedilir) bunu doğrular,
-bu yüzden yukarıdaki alan listesi sapamaz. Dil çifti alanlarını
+Alan listesi burada bilerek tekrarlanmıyor: engine'in katı şeması
+(bilinmeyen alanlar reddedilir) her manifesti doğrular ve engine
+referansı bu listenin tek yetkili açıklamasıdır. Dil çifti alanlarını
 (`target_language` / `source_language`)
 [Dil çiftleri](#dil-ciftleri-v1440) altında açıklandığı gibi yaz; v1.2
 öncesi `language` takma adı hala yüklenir ancak yeni setler için

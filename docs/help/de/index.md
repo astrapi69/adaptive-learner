@@ -104,8 +104,8 @@ die vollständige Historie liegt in
 - **13 Plugins** (Assessment / 3 KI-Anbieter / Session /
   Tracking / Tools / Gamification / Anki / NotebookLM /
   Learning-Repo / Content-Loader / Missions)
-- **26 gebündelte Content-Sets** - 424 Lektionen / 5405
-  Karten über 10 Content-Sprachen und 5 Domänen
+- **Gebündelte Content-Sets** über mehrere Content-Sprachen
+  und Domänen - den aktuellen Bestand zeigt der Set-Browser in der App
 - **30 SQLAlchemy-Modelle**, Sync-Oberfläche 30 Tabellen
 - **2 Speichermodi** (Lokal IndexedDB / FastAPI-Backend),
   plus dem `secrets.yaml`-Overlay des Desktop-Launchers

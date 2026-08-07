@@ -854,9 +854,31 @@
 
 .lesson-summary-score-fill {
   position: absolute;
-  inset: 0 auto 0 0;
-  background: color-mix(in srgb, var(--accent) 35%, var(--surface));
+  top: 0;
+  bottom: 0;
   transition: width 0.4s ease;
+}
+
+/* #2479 — the first-pass segment: solid accent fill, anchored left. */
+.lesson-summary-score-fill-immediate {
+  left: 0;
+  background: color-mix(in srgb, var(--accent) 35%, var(--surface));
+}
+
+/* #2479 — the corrected segment: a green "correct" fill stacked after the
+   immediate one (``left`` + ``width`` set inline). The diagonal hatch makes it
+   distinguishable from the immediate fill WITHOUT relying on colour alone, so
+   it still reads as two segments under colour-blindness / greyscale. */
+.lesson-summary-score-fill-corrected {
+  background-color: color-mix(in srgb, var(--exercise-correct) 45%, var(--surface));
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 5px,
+    color-mix(in srgb, var(--exercise-correct) 75%, var(--surface)) 5px,
+    color-mix(in srgb, var(--exercise-correct) 75%, var(--surface)) 10px
+  );
+  border-left: 2px solid var(--surface);
 }
 
 .lesson-summary-score-label {
@@ -868,6 +890,48 @@
   padding: 0 12px;
   font-size: 0.9375rem;
   color: var(--fg);
+}
+
+/* #2479 — the two-segment legend. Only rendered when something was corrected,
+   so a run without a correction round shows a plain single-segment bar. */
+.lesson-summary-score-legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: calc(-1 * var(--space-2)) 0 var(--space-3) 0;
+  padding: 0;
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+}
+
+.lesson-summary-score-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lesson-summary-score-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.lesson-summary-score-swatch-immediate {
+  background: color-mix(in srgb, var(--accent) 35%, var(--surface));
+}
+
+.lesson-summary-score-swatch-corrected {
+  background-color: color-mix(in srgb, var(--exercise-correct) 45%, var(--surface));
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 3px,
+    color-mix(in srgb, var(--exercise-correct) 75%, var(--surface)) 3px,
+    color-mix(in srgb, var(--exercise-correct) 75%, var(--surface)) 6px
+  );
 }
 
 .lesson-summary-breakdown {

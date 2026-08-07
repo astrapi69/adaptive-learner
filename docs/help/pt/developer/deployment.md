@@ -2,13 +2,13 @@
 
 # Implementação
 
-Quatro modos de implementação são incluídos na v1.20.0:
+Quatro modos de implementação são incluídos:
 
 | Modo | Onde | Backend | Chamadas de IA | Fonte de chave |
 |---|---|---|---|---|
 | Desenvolvimento local | `make dev` | FastAPI em :18001 | Lado do servidor | env / secrets.yaml / BD |
 | GitHub Pages | `astrapi69.github.io/adaptive-learner/` | Nenhum (Dexie) | Direto do navegador | BD (IndexedDB) |
-| Launcher de desktop | Binário PyInstaller | FastAPI iniciado localmente | Lado do servidor | secrets.yaml (criado automaticamente) / Interface de Definições |
+| Launcher de desktop | Binário PyInstaller (baseado em Docker) | FastAPI num contentor Docker | Lado do servidor | `.env` (gerado automaticamente) / Interface de Definições |
 | Docker | Docker Compose self-host | FastAPI em contentor | Lado do servidor | env / Interface de Definições |
 
 ## Desenvolvimento local
@@ -61,13 +61,18 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml` inclui:
+`docker-compose.prod.yml` inclui **um único serviço, `app`**
+(um só contentor desde #2058 - não há nginx nem contentor de
+frontend separado):
 
-- **backend** (FastAPI numa imagem Python 3.12), expondo a porta
-  7880.
-- **nginx** sidecar que serve o frontend compilado
-  (`frontend/dist/`) e proxifica `/api/*` para o backend.
-- **Um volume SQLite** que sobrevive a reinícios do contentor.
+- **FastAPI (imagem Python 3.12)** serve TANTO os statics do
+  frontend compilado COMO `/api/*`, na porta interna
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`.
+- Porta publicada no host:
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}` -
+  loopback por omissão.
+- **Um volume com nome `adaptive-learner-data`** em `/app/data`
+  que sobrevive a reconstruções do contentor.
 
 `install.sh` e `install.ps1` são os instaladores curl-pipe para
 utilizadores finais - descarregam um arquivo de lançamento com
@@ -81,7 +86,7 @@ edite os ficheiros gerados diretamente.
 
 ## Configuração para produção
 
-Três coisas importam para produção:
+Quatro coisas importam para produção:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: deve ser uma chave Fernet
    estável. Gere uma vez, guarde-a num local seguro (HashiCorp
@@ -95,6 +100,11 @@ Três coisas importam para produção:
 3. **`ADAPTIVE_LEARNER_DEBUG`**: deixe indefinido / false em
    produção. O modo de depuração expõe stack traces nas respostas
    de erro.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: por omissão `127.0.0.1`,
+   pelo que a porta publicada só é acessível a partir do próprio
+   host. A aplicação não tem autenticação - só vincule `0.0.0.0`
+   deliberadamente, e apenas numa rede de confiança ou atrás da
+   sua própria camada de auth (reverse proxy com basic auth, VPN).
 
 Para contentores, as variáveis de ambiente são o canal de injeção
 idiomático. A sobreposição `~/.config/adaptive_learner/secrets.yaml`
@@ -104,12 +114,18 @@ variáveis de ambiente.
 
 ## Launcher de desktop
 
-Os binários PyInstaller em `launcher/` iniciam um FastAPI local em
-`http://localhost:7880`, depois abrem o navegador padrão do
-utilizador. Na primeira inicialização, o launcher também cria
-`~/.config/adaptive-learner/secrets.yaml` como modelo comentado +
-`chmod 0600` no POSIX para que o utilizador possa colocar as suas
-chaves de API lá sem nunca tocar na interface de Definições.
+`launcher/` é um launcher de desktop de binário único baseado em
+PyInstaller. Não é um servidor embutido: é um invólucro fino
+sobre o motor publicado `docker-app-launcher`, configurado por
+`launcher/launcher.json`. A configuração distribuída corre em
+**modo imagem** (`deployment_mode: "image"`): o launcher puxa a
+imagem de lançamento já compilada e verificada
+(`ghcr.io/astrapi69/adaptive-learner:<versão>`, fixada à versão
+da app embutida) e inicia-a como contentor Docker (por omissão
+`http://localhost:8501`), com o volume de dados
+`adaptive-learner-data` montado em `/app/data`; depois abre o
+navegador padrão do utilizador. Nada é compilado, descarregado
+como código-fonte ou extraído localmente.
 
 A cadeia de configuração completa de três camadas (YAML do projeto
 < sobreposição do utilizador < variáveis de ambiente) está
@@ -126,9 +142,10 @@ PyInstaller. O GitHub Actions compila três binários por lançamento:
 
 Cada launcher embute a versão (`__version__` literal +
 `_build_info.py` escrito pelo ficheiro de especificação no momento
-da compilação) e descarrega o arquivo de lançamento com etiqueta
-correspondente + extrai + inicia o backend + abre o frontend no
-navegador do utilizador.
+da compilação). O motor também executa uma verificação de
+atualizações em segundo plano contra a API do GitHub Releases
+(ativada com `update_check_enabled` em `launcher.json`); falha em
+silêncio perante qualquer erro para nunca bloquear o launcher.
 
 O launcher não é intencionalmente o canal de distribuição principal
 (o Docker é). Existe para utilizadores que querem uma experiência

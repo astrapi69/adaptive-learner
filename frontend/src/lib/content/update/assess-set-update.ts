@@ -15,14 +15,35 @@
  */
 
 import { getStorage } from "../../../storage";
-import { peekSetIdentities } from "../../../storage/content/peek-set";
+import { peekSetUpdate } from "../../../storage/content/peek-set";
 import { readLearnerState } from "../../learning/learnerState";
-import { computeUpdateImpact, type UpdateImpact } from "./update-impact";
+import {
+    buildIncomingIdentities,
+    computeUpdateImpact,
+    type PeekLesson,
+    type UpdateImpact,
+} from "./update-impact";
+
+/**
+ * The impact plus the peeked lessons it was computed from (#2308).
+ *
+ * The lessons ride along because deriving a re-keying needs the authored
+ * ORDER, which the folded identities drop, and re-peeking for the dialog would
+ * fetch the same set twice. The nightly sync ignores this field; it decides on
+ * ``impact.breaking`` alone and never plans.
+ */
+export interface SetUpdateAssessment {
+    impact: UpdateImpact;
+    incomingLessons: PeekLesson[];
+    /** #2188 — the incoming manifest's declared retirements, so the apply
+     *  path can archive the matching rows without a second peek. */
+    retiredIds: string[];
+}
 
 export async function assessSetUpdate(
     source: string,
     setId: string,
-): Promise<UpdateImpact | null> {
+): Promise<SetUpdateAssessment | null> {
     const userId = readLearnerState().userId;
     if (!userId) return null;
 
@@ -38,14 +59,16 @@ export async function assessSetUpdate(
     // No learner data in this set → nothing to orphan → safe to apply.
     if (setProgress.length === 0 && setSrs.length === 0) return null;
 
-    const incoming = await peekSetIdentities(source, setId);
-    return computeUpdateImpact(
+    const {lessons: incomingLessons, retiredIds} = await peekSetUpdate(source, setId);
+    const impact = computeUpdateImpact(
         setProgress.map((row) => row.lesson_filename),
         setSrs.map((row) => ({
             lesson_id: row.lesson_id,
             exercise_id: row.exercise_id,
             element_key: row.element_key,
         })),
-        incoming,
+        buildIncomingIdentities(incomingLessons),
+        retiredIds,
     );
+    return {impact, incomingLessons, retiredIds};
 }

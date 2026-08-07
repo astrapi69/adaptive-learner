@@ -1,12 +1,12 @@
 # Ανάπτυξη
 
-Τέσσερις λειτουργίες ανάπτυξης παρέχονται στην v1.20.0:
+Τέσσερις λειτουργίες ανάπτυξης παρέχονται:
 
 | Λειτουργία | Πού | Backend | Κλήσεις ΤΝ | Πηγή κλειδιού |
 |---|---|---|---|---|
 | Τοπική ανάπτυξη | `make dev` | FastAPI στο :18001 | Πλευρά διακομιστή | env / secrets.yaml / DB |
 | GitHub Pages | `astrapi69.github.io/adaptive-learner/` | Κανένα (Dexie) | Απευθείας browser | DB (IndexedDB) |
-| Desktop launcher | Binary PyInstaller | FastAPI εκκινείται τοπικά | Πλευρά διακομιστή | secrets.yaml (αυτόματη δημιουργία) / UI Ρυθμίσεων |
+| Desktop launcher | Binary PyInstaller (βασισμένο σε Docker) | FastAPI σε Docker container | Πλευρά διακομιστή | `.env` (αυτόματη δημιουργία) / UI Ρυθμίσεων |
 | Docker | Docker Compose self-host | FastAPI σε container | Πλευρά διακομιστή | env / UI Ρυθμίσεων |
 
 ## Τοπική ανάπτυξη
@@ -58,12 +58,18 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-Το `docker-compose.prod.yml` περιλαμβάνει:
+Το `docker-compose.prod.yml` περιλαμβάνει **έναν μόνο service,
+`app`** (ένα container από το #2058 - δεν υπάρχει nginx ούτε
+ξεχωριστό frontend container):
 
-- **backend** (FastAPI σε image Python 3.12), εκθέτει θύρα 7880.
-- **nginx** sidecar που σερβίρει το χτισμένο frontend
-  (`frontend/dist/`) και δρομολογεί `/api/*` στο backend.
-- **Ένα SQLite volume** που επιβιώνει από επανεκκινήσεις container.
+- **FastAPI (image Python 3.12)** σερβίρει ΚΑΙ τα χτισμένα
+  frontend statics ΚΑΙ το `/api/*`, στην εσωτερική θύρα
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`.
+- Δημοσιευμένη θύρα στον host:
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}` -
+  loopback από προεπιλογή.
+- **Ένα επώνυμο volume `adaptive-learner-data`** στο `/app/data`
+  που επιβιώνει από rebuilds του container.
 
 Τα `install.sh` και `install.ps1` είναι οι curl-pipe installers
 για τελικούς χρήστες - κατεβάζουν tagged release tarball,
@@ -77,7 +83,7 @@ make prod-down   # docker compose down
 
 ## Διαμόρφωση για παραγωγή
 
-Τρία πράγματα έχουν σημασία για την παραγωγή:
+Τέσσερα πράγματα έχουν σημασία για την παραγωγή:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: πρέπει να είναι σταθερό κλειδί
    Fernet. Παράγαγέ το μία φορά, αποθήκευσέ το ασφαλώς (HashiCorp
@@ -91,6 +97,11 @@ make prod-down   # docker compose down
 3. **`ADAPTIVE_LEARNER_DEBUG`**: άφησε χωρίς ορισμό / false στην
    παραγωγή. Η λειτουργία debug εκθέτει stack traces στις
    αποκρίσεις σφαλμάτων.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: προεπιλογή `127.0.0.1`,
+   ώστε η δημοσιευμένη θύρα να είναι προσβάσιμη μόνο από τον ίδιο
+   τον host. Η εφαρμογή δεν έχει πιστοποίηση - δέσε `0.0.0.0` μόνο
+   συνειδητά, και μόνο σε αξιόπιστο δίκτυο ή πίσω από δικό σου
+   στρώμα auth (reverse proxy με basic auth, VPN).
 
 Για containers, οι μεταβλητές περιβάλλοντος είναι το ιδιωματικό
 κανάλι έγχυσης. Η επικάλυψη `~/.config/adaptive_learner/secrets.yaml`
@@ -100,12 +111,19 @@ make prod-down   # docker compose down
 
 ## Desktop launcher
 
-Τα binaries PyInstaller στο `launcher/` εκκινούν τοπικό FastAPI
-στο `http://localhost:7880`, στη συνέχεια ανοίγουν τον προεπιλεγμένο
-browser του χρήστη. Κατά την πρώτη εκκίνηση ο launcher δημιουργεί
-επίσης `~/.config/adaptive-learner/secrets.yaml` ως σχολιασμένο
-πρότυπο + `chmod 0600` σε POSIX ώστε ο χρήστης να μπορεί να
-τοποθετήσει τα API keys του χωρίς να αγγίξει το UI Ρυθμίσεων.
+Το `launcher/` είναι ένας desktop launcher ενός binary,
+βασισμένος σε PyInstaller. Δεν είναι ενσωματωμένος server -
+είναι ένα λεπτό περίβλημα γύρω από τη δημοσιευμένη μηχανή
+`docker-app-launcher`, διαμορφωμένο μέσω `launcher/launcher.json`.
+Η διανεμόμενη διαμόρφωση τρέχει σε **λειτουργία image**
+(`deployment_mode: "image"`): ο launcher τραβά το έτοιμο,
+επαληθευμένο image της έκδοσης
+(`ghcr.io/astrapi69/adaptive-learner:<έκδοση>`, καρφιτσωμένο στην
+ενσωματωμένη έκδοση της εφαρμογής) και το εκκινεί ως Docker
+container (προεπιλογή `http://localhost:8501`), με το volume
+δεδομένων `adaptive-learner-data` προσαρτημένο στο `/app/data`·
+μετά ανοίγει τον προεπιλεγμένο browser του χρήστη. Τίποτα δεν
+χτίζεται, δεν κατεβαίνει ως πηγαίος κώδικας ούτε εξάγεται τοπικά.
 
 Η πλήρης αλυσίδα διαμόρφωσης τριών επιπέδων (YAML έργου < επικάλυψη
 χρήστη < μεταβλητές περιβάλλοντος) τεκμηριώνεται στο
@@ -121,9 +139,11 @@ PyInstaller. Το GitHub Actions χτίζει τρία binaries ανά release:
 - `launcher-windows.yml` → `adaptive-learner-launcher.exe`
 
 Κάθε launcher ενσωματώνει την έκδοση (literal `__version__` +
-`_build_info.py` γραμμένο από το spec αρχείο κατά το build) και
-κατεβάζει το αντίστοιχο tagged release tarball + εξάγει +
-εκκινεί το backend + ανοίγει το frontend στον browser του χρήστη.
+`_build_info.py` γραμμένο από το spec αρχείο κατά το build). Η
+μηχανή εκτελεί επίσης έναν έλεγχο ενημερώσεων στο παρασκήνιο
+έναντι του GitHub Releases API (ενεργοποιημένο μέσω
+`update_check_enabled` στο `launcher.json`)· αποτυγχάνει σιωπηλά
+σε κάθε σφάλμα ώστε να μην μπλοκάρει ποτέ τον launcher.
 
 Ο launcher δεν είναι εσκεμμένα το πρωταρχικό κανάλι διανομής
 (αυτό είναι το Docker). Υπάρχει για χρήστες που θέλουν εμπειρία

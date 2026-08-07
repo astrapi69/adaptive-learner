@@ -211,6 +211,14 @@
       ],
       "title": "PictureImage",
       "type": "object"
+    },
+    "SlugId": {
+      "description": "Slug id: lowercase Unicode letters and digits in hyphen-separated runs (no leading/trailing/double hyphen, no underscore, no uppercase, no whitespace). Exactly the rule the reference consumer (adaptive-learner) enforces on import - an id that fails it is silently skipped there, so the engine rejects it up front (engine#105).",
+      "maxLength": 120,
+      "minLength": 1,
+      "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+      "title": "SlugId",
+      "type": "string"
     }
   },
   "$id": "https://astrapi69.github.io/learn-content-engine/schema/exercise.schema.json",
@@ -362,11 +370,9 @@
       "title": "Hint"
     },
     "id": {
+      "$ref": "#/$defs/SlugId",
       "description": "Slug-safe id, unique within the lesson.",
-      "maxLength": 120,
-      "minLength": 1,
-      "title": "Id",
-      "type": "string"
+      "title": "Id"
     },
     "images": {
       "anyOf": [
@@ -444,6 +450,20 @@
       "description": "CLOZE: the cloze sentence with visible ``___`` markers at each blank position. The renderer splits on the markers + interleaves the per-blank input control. Phase 52D / v1.35.0. In ``multiselect`` mode (#1195) this is instead the question stem (no ``___`` markers, no ``blanks``).",
       "title": "Sentence"
     },
+    "stable_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z0-9][a-z0-9_-]{7,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-].",
+      "title": "Stable Id"
+    },
     "tiles": {
       "anyOf": [
         {
@@ -479,5 +499,5 @@
   ],
   "title": "Exercise",
   "type": "object",
-  "x-schema-version": "1.8"
+  "x-schema-version": "1.9"
 }

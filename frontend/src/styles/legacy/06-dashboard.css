@@ -91,13 +91,6 @@
   flex: 1;
 }
 
-.metric-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
-}
-
 /* v0.4.0: 5-cell metric tile (streak + total / minutes /
  * understanding / stress). #238 — steps 5 -> 3 -> 2 columns so a
  * cell is never too narrow for its label between the desktop and

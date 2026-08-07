@@ -39,20 +39,7 @@ import {arrayMove} from "@dnd-kit/sortable";
 import type {Ref} from "react";
 import {useEffect, useMemo, useRef, useState} from "react";
 
-/** Deterministic Fisher-Yates shuffle keyed by ``seed`` so
- *  reshuffling on every render does NOT move tiles under the
- *  user. Reuses the matching/picture pattern. */
-function _shuffle<T>(items: readonly T[], seed: string): T[] {
-    const out = [...items];
-    let acc = 0;
-    for (const ch of seed) acc = (acc * 31 + ch.charCodeAt(0)) | 0;
-    for (let i = out.length - 1; i > 0; i--) {
-        acc = (acc * 1103515245 + 12345) & 0x7fffffff;
-        const j = acc % (i + 1);
-        [out[i], out[j]] = [out[j], out[i]];
-    }
-    return out;
-}
+import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
 
 /** Apply a @dnd-kit drag-end to the placed-index sequence.
  *  ``activeId`` / ``overId`` are the stringified tile indices
@@ -150,7 +137,7 @@ export function useWordTilesDnd({
      *  iterates ``placed`` in user-tap order. */
     const displayOrder: number[] = useMemo(() => {
         const indices = Array.from({length: tiles.length}, (_, i) => i);
-        return _shuffle(indices, shuffleSeed);
+        return seededShuffle(indices, shuffleSeed);
     }, [tiles.length, shuffleSeed]);
 
     // The tile index currently being pointer-dragged (drives the

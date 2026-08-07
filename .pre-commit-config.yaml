@@ -99,11 +99,15 @@ repos:
 
       - id: docs-hygiene
         name: docs hygiene (umlaut-substitute ratchet + exploration-index orphans)
-        # --auto-lower banks a fall (improvement) into the baseline so the gain
-        # rides this commit; a rise still fails. Like ruff-format, the write
-        # makes pre-commit re-run so the lowered baseline is committed (#2230).
-        entry: python scripts/verify_docs_hygiene.py --auto-lower
+        # The umlaut detector is manuscript-tools' whole-word ascii-umlauts rule
+        # (#2311), a FOREIGN-TOOL ORACLE - so NO --auto-lower here: a fall could
+        # be a real reduction OR the list shrinking under a version bump, and the
+        # count alone cannot tell (gate contract point 5). A rise fails; a genuine
+        # reduction is banked deliberately via `make verify-docs-hygiene-raise`.
+        # The version is pinned exactly so the number is anchored (condition 1).
+        entry: python scripts/verify_docs_hygiene.py
         language: python
+        additional_dependencies: ["manuscript-tools==0.11.0"]
         pass_filenames: false
         files: ^(docs/.*\.md|docs/\.docs-hygiene-baseline\.json|scripts/verify_docs_hygiene\.py)$
         stages: [pre-commit]

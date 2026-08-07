@@ -31,6 +31,7 @@ import {
 import {
   isEmptyPlan,
   planLessonDataDeletion,
+  planLessonsDataDeletion,
   planSetDataDeletion,
   type DeletionPlan,
 } from "../../lib/content/browse/orphan-cleanup";
@@ -38,11 +39,20 @@ import {
   purgeLessonFromLessonCache,
   purgeSetFromLessonCache,
 } from "../../lib/content/cache/sw-lesson-cache";
-import { removeLessonFromSet } from "../../lib/content/lesson/delete/delete-lesson";
-import { assessSetUpdate } from "../../lib/content/update/assess-set-update";
+import {
+  removeLessonFromSet,
+  removeLessonsFromSet,
+} from "../../lib/content/lesson/delete/delete-lesson";
+import {
+  assessSetUpdate,
+  type SetUpdateAssessment,
+} from "../../lib/content/update/assess-set-update";
+import { planSetUpdate } from "../../lib/content/update/plan-set-update";
+import type { RemapPlan } from "../../lib/content/update/remap-plan";
 import type { UpdateImpact } from "../../lib/content/update/update-impact";
 import { removeFavorite } from "../../lib/favorites/favorites";
 import { readLearnerState } from "../../lib/learning/learnerState";
+import { migrateSetExerciseIds } from "../../lib/content/update/stable-id-migration";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
 import { useI18n } from "../ui/useI18n";
@@ -65,6 +75,16 @@ export interface LessonDeleteTarget {
   entry: ContentSetEntry;
   filename: string;
   title: string;
+  onDeleted?: () => void;
+}
+
+/** What a bulk (multi-select) lesson delete targets (#2065): the set, the
+ *  selected lessons' cache filenames, and an optional refresh callback. The
+ *  whole selection is removed in one atomic re-save + one atomic learner-data
+ *  delete (no per-lesson loop of writes). */
+export interface BulkLessonDeleteTarget {
+  entry: ContentSetEntry;
+  filenames: string[];
   onDeleted?: () => void;
 }
 
@@ -94,11 +114,25 @@ export function useContentSetActions({
     useState<LessonDeleteTarget | null>(null);
   const [deletingLesson, setDeletingLesson] = useState(false);
   const [deleteLessonPlan, setDeleteLessonPlan] = useState<DeletionPlan | null>(null);
+  // #2065 — bulk multi-select lesson delete-confirm target + in-flight flag +
+  // aggregated learner-data plan across the selected lessons.
+  const [bulkDeleteLessonsTarget, setBulkDeleteLessonsTargetState] =
+    useState<BulkLessonDeleteTarget | null>(null);
+  const [bulkDeletingLessons, setBulkDeletingLessons] = useState(false);
+  const [bulkDeleteLessonsPlan, setBulkDeleteLessonsPlan] =
+    useState<DeletionPlan | null>(null);
 
   // #2128 — a held breaking update awaiting the learner's decision.
+  // #2308 — plus the PROPOSED re-keying derived from the same peek. The plan
+  // is an inference, so it is carried into the dialog and applied only on the
+  // learner's explicit confirmation, never here.
   const [updateGuard, setUpdateGuard] = useState<{
     entry: ContentSetEntry;
     impact: UpdateImpact;
+    plan: RemapPlan;
+    /** #2188 — declared retirements of the held incoming version; archived
+     *  on confirm, after the download. */
+    retiredIds: readonly string[];
   } | null>(null);
 
   const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
@@ -187,6 +221,40 @@ export function useContentSetActions({
     setDeleteLessonTargetState(target);
     setDeleteLessonPlan(null);
     if (target) void computeLessonDeletionPlan(target).then(setDeleteLessonPlan);
+  };
+
+  /** Plan the aggregated learner-data deletion for SEVERAL lessons of one set
+   *  (#2065). One live read, one merged plan; null on failure so the dialog
+   *  shows the checkbox without a number. */
+  const computeLessonsDeletionPlan = async (
+    target: BulkLessonDeleteTarget,
+  ): Promise<DeletionPlan | null> => {
+    const userId = readLearnerState().userId;
+    if (!userId) return null;
+    try {
+      const storage = getStorage();
+      const [progress, cards] = await Promise.all([
+        storage.lessonProgress.list(userId),
+        storage.elementErrors.list(userId, { includeMastered: true }),
+      ]);
+      return planLessonsDataDeletion(
+        target.entry.source,
+        target.entry.id,
+        target.filenames,
+        progress,
+        cards,
+      );
+    } catch {
+      return null;
+    }
+  };
+
+  const setBulkDeleteLessonsTarget = (target: BulkLessonDeleteTarget | null) => {
+    setBulkDeleteLessonsTargetState(target);
+    setBulkDeleteLessonsPlan(null);
+    if (target && target.filenames.length > 0) {
+      void computeLessonsDeletionPlan(target).then(setBulkDeleteLessonsPlan);
+    }
   };
 
   /** Delete the planned learner data after the cache delete (#1819).
@@ -367,6 +435,78 @@ export function useContentSetActions({
     }
   };
 
+  // #2065 — confirm-delete SEVERAL lessons of a user-generated set in one
+  // atomic operation. All-or-nothing for the content: a single ``saveUserSet``
+  // re-save without the whole selection (or one ``deleteSet`` when the
+  // selection empties the set), so a failure leaves the set untouched — never a
+  // half-deleted state. Learner data is one aggregated, atomic
+  // ``deleteLearningData`` call, opt-in only. Orphaned favorites of every
+  // deleted lesson are purged unconditionally.
+  const handleConfirmBulkDeleteLessons = async (deleteProgress = false) => {
+    const target = bulkDeleteLessonsTarget;
+    if (!target || target.filenames.length === 0) return;
+    const { entry, filenames } = target;
+    setBulkDeletingLessons(true);
+    try {
+      const lessons = await fetchSetLessons(entry);
+      const removal = removeLessonsFromSet(entry, lessons, filenames);
+      if (removal.found.length === 0) {
+        // Every selected lesson is already gone (stale UI): treat as success
+        // and let the caller refresh.
+        notify.success(t("content.lesson_delete.deleted", "Lesson deleted."));
+        target.onDeleted?.();
+        setBulkDeleteLessonsTarget(null);
+        return;
+      }
+      if (removal.emptied) {
+        // The selection covered every lesson — remove the whole set (same purge
+        // as a set delete), leaving no empty husk behind.
+        await getStorage().contentLoader.deleteSet(entry.source, entry.id);
+        await purgeSetFromLessonCache(entry.source, entry.id);
+        dismissSet(entry.source, entry.id);
+        setSets((prev) =>
+          prev.filter((row) => !(row.source === entry.source && row.id === entry.id)),
+        );
+      } else {
+        // One atomic re-save without the whole selection (saveUserSet purges +
+        // rewrites the cache in one write; survivors keep their ids/order).
+        await getStorage().contentLoader.saveUserSet(removal.input!);
+        for (const filename of removal.found) {
+          await purgeLessonFromLessonCache(entry.source, entry.id, filename);
+        }
+        setSets((prev) =>
+          prev.map((row) =>
+            row.source === entry.source && row.id === entry.id
+              ? { ...row, lesson_count: removal.remaining }
+              : row,
+          ),
+        );
+      }
+      // Every deleted lesson's favorite bookmark is now an orphan — always
+      // remove it, regardless of the progress opt-in.
+      const userId = readLearnerState().userId;
+      if (userId) {
+        for (const filename of removal.found) removeFavorite(userId, entry.id, filename);
+      }
+      if (deleteProgress) await deletePlannedLearnerData(bulkDeleteLessonsPlan);
+      notify.success(
+        t("content.lesson_delete.bulk_deleted", "{n} lessons deleted.").replace(
+          "{n}",
+          String(removal.found.length),
+        ),
+      );
+      target.onDeleted?.();
+      setBulkDeleteLessonsTarget(null);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.lesson_delete.bulk_delete_failed", "Could not delete the lessons.")} ${detail}`,
+      );
+    } finally {
+      setBulkDeletingLessons(false);
+    }
+  };
+
   /** Navigate to a specific lesson file (used by search results). */
   const openLessonFile = (source: string, id: string, filename: string) => {
     const slug = source.replace(/\//g, "--");
@@ -496,24 +636,85 @@ export function useContentSetActions({
   // pass straight through; a peek failure does NOT trap a user-initiated
   // update (auto-sync holds on failure, the deliberate manual path proceeds).
   const handleDownload = async (entry: ContentSetEntry) => {
-    let impact: UpdateImpact | null;
+    let assessment: SetUpdateAssessment | null;
     try {
-      impact = await assessSetUpdate(entry.source, entry.id);
+      assessment = await assessSetUpdate(entry.source, entry.id);
     } catch {
-      impact = null;
+      assessment = null;
     }
-    if (impact?.breaking) {
-      setUpdateGuard({ entry, impact });
+    if (assessment?.impact.breaking) {
+      // #2308 — derive what COULD be carried over. Planning happens only on
+      // this manual path; the nightly sync never computes it, so an inference
+      // can never be applied while nobody is watching.
+      let plan: RemapPlan = { certain: [], uncertain: [] };
+      try {
+        plan = await planSetUpdate(
+          entry.source,
+          entry.id,
+          assessment.impact,
+          assessment.incomingLessons,
+        );
+      } catch {
+        // A failed plan is not a failed guard: the dialog still holds the
+        // update, it just cannot offer to carry anything over.
+      }
+      setUpdateGuard({
+        entry,
+        impact: assessment.impact,
+        plan,
+        retiredIds: assessment.retiredIds,
+      });
       return;
     }
-    await applyDownload(entry);
+    await applyDownload(entry, assessment?.retiredIds ?? []);
   };
 
-  const applyDownload = async (entry: ContentSetEntry) => {
+  // #2188 — after a successful download whose incoming manifest declared
+  // retirements, archive the matching learner rows (history kept, out of
+  // scheduling) and tell the learner ONCE, with the count.
+  const archiveRetiredAfterDownload = async (
+    entry: ContentSetEntry,
+    retiredIds: readonly string[],
+  ) => {
+    if (retiredIds.length === 0) return;
+    const userId = readLearnerState().userId;
+    if (!userId) return;
+    try {
+      const { archived } = await getStorage().elementErrors.archiveRetired(
+        userId,
+        entry.id,
+        retiredIds,
+      );
+      if (archived > 0) {
+        notify.info(
+          t(
+            "content.update_guard.retired_archived",
+            "{count} exercises were retired by the author; the related progress is archived.",
+          ).replace("{count}", String(archived)),
+        );
+      }
+    } catch {
+      // Archival is repeatable; the next download/sync retries.
+    }
+  };
+
+  const applyDownload = async (entry: ContentSetEntry, retiredIds: readonly string[] = []) => {
     const key = setKey(entry);
     setPerSetState((prev) => ({ ...prev, [key]: "downloading" }));
     try {
       const updated = await getStorage().contentLoader.downloadSet(entry.source, entry.id);
+      // #2130 — re-key this set's rows onto stable_id now that the freshly
+      // downloaded lessons carry the mapping. Idempotent; best-effort — a
+      // failure leaves the rows on their current key and the next
+      // download/sync retries.
+      const learnerId = readLearnerState().userId;
+      if (learnerId) {
+        // #2130 migration first, so archival (#2188) meets stable-keyed rows.
+        await migrateSetExerciseIds(learnerId, entry.source, entry.id).catch(
+          () => undefined,
+        );
+      }
+      await archiveRetiredAfterDownload(entry, retiredIds);
       // #1709 — an explicit re-download revives a previously deleted set;
       // clear the stale dismissal record (the cached state wins anyway, this
       // just keeps the store tidy).
@@ -539,10 +740,35 @@ export function useContentSetActions({
   };
 
   // #2128 — the learner confirmed a held update: apply it now.
-  const confirmUpdate = async () => {
+  // #2308 — ``carryOver`` re-keys the rows the plan could assign with
+  // confidence. The content is downloaded FIRST: if the re-key then fails, the
+  // learner is left in exactly today's state (rows orphaned) rather than in a
+  // new one (rows pointing at keys no version has). The re-key itself is
+  // atomic and idempotent, so a retry is safe.
+  const confirmUpdate = async (carryOver = false) => {
     const target = updateGuard;
     setUpdateGuard(null);
-    if (target) await applyDownload(target.entry);
+    if (!target) return;
+    await applyDownload(target.entry, target.retiredIds);
+    if (!carryOver || target.plan.certain.length === 0) return;
+    const userId = readLearnerState().userId;
+    if (!userId) return;
+    try {
+      const { applied } = await getStorage().elementErrors.remapKeys(
+        userId,
+        target.plan.certain,
+      );
+      notify.success(
+        `${t("content.update_guard.carried_over", "Progress carried over.")} (${applied})`,
+      );
+    } catch {
+      notify.error(
+        t(
+          "content.update_guard.carry_over_failed",
+          "The update was applied, but the progress could not be carried over.",
+        ),
+      );
+    }
   };
   const dismissUpdateGuard = () => setUpdateGuard(null);
 
@@ -573,6 +799,12 @@ export function useContentSetActions({
     deletingLesson,
     deleteLessonPlan,
     handleConfirmDeleteLesson,
+    // #2065 — bulk multi-select lesson delete.
+    bulkDeleteLessonsTarget,
+    setBulkDeleteLessonsTarget,
+    bulkDeletingLessons,
+    bulkDeleteLessonsPlan,
+    handleConfirmBulkDeleteLessons,
     openLessonFile,
     handleOpenLesson,
     handleEditUserSet,

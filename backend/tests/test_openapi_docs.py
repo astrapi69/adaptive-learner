@@ -85,3 +85,22 @@ def test_key_request_models_have_examples():
     for model in ("UserCreate", "ApiKeySetBody", "LearningProjectCreateBody"):
         assert model in components, f"{model} missing from schema components"
         assert components[model].get("example"), f"{model} has no example"
+
+
+def test_spec_public_while_viewers_debug_gated():
+    """/openapi.json is deliberately public; Swagger/ReDoc stay DEBUG-only.
+
+    Decision #2279: the app has no per-request auth, so gating the raw
+    spec would be security theatre, while the machine-readable
+    description is an integration interface (client generators). The
+    interactive viewers remain a DEBUG-only convenience (#2198). If this
+    test fails because the spec route was gated, that is the pinned
+    intent being "fixed" - read #2279 before changing it.
+    """
+    from app.main import DEBUG
+
+    assert DEBUG is False, "test env must run with ADAPTIVE_LEARNER_DEBUG unset"
+    with TestClient(app) as client:
+        assert client.get("/openapi.json").status_code == 200
+        assert client.get("/api/docs").status_code == 404
+        assert client.get("/api/redoc").status_code == 404

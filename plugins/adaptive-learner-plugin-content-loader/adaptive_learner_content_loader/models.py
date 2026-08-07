@@ -46,7 +46,18 @@ from .manifest_generated import (
     ContentSetBook,
 )
 
-CURRENT_SCHEMA_VERSION = "1.8"
+CURRENT_SCHEMA_VERSION = "1.9"
+# v1.8 -> v1.9 (stable identity + attribution + review status,
+# engine 0.16.0 / engine#90, app pin bump #2265):
+#   - Additive ``stable_id`` on Exercise and Card: an opaque,
+#     author-owned, mint-once identity that never moves when the
+#     content text is corrected. Progress/SRS still key on the
+#     content-derived element_key; switching that key is a separate
+#     decision with its own release condition (#2130), NOT this bump.
+#   - Additive ``attribution`` (author + derived_from chain) and
+#     ``review_status`` on the manifest set entry.
+#   Still a MINOR bump - major-version match means v1.8 readers load
+#   v1.9 content (they ignore the new optional fields).
 # v1.7 → v1.8 (uploaded picture_choice images, engine 0.13.0 / #1774):
 #   - A ``picture_choice`` image reference accepts, besides the
 #     ``assets/`` relative path, an inline base64 data URI so an

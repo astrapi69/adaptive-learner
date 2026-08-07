@@ -79,27 +79,33 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml` ships:
+`docker-compose.prod.yml` ships **one service, `app`** (single
+container since #2058 - there is no nginx and no separate
+frontend container):
 
-- **backend** (FastAPI in a Python 3.12-slim image) running on a
-  fixed internal port **8000** with `--workers 2`. The port is an
-  implementation detail decoupled from the host-published port.
-- **frontend** (nginx) that serves the built frontend and
-  reverse-proxies `/api/*` to the backend over the compose
-  network. nginx listens on container port 80, published to the
-  host on **`${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}`** - this is
-  the port the user reaches in the browser.
+- **FastAPI (Python 3.12-slim image)** serves BOTH the built
+  frontend statics (SPA fallback, 50M body limit and gzip live as
+  middleware - the retired nginx service's feature set) and
+  `/api/*`, with `--workers 2` on the internal port
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`. The internal port is
+  an implementation detail decoupled from the host-published one.
+- The host-published port is
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}`,
+  mapped straight onto the backend port - this is the address the
+  user reaches in the browser. Loopback by default; see
+  `ADAPTIVE_LEARNER_BIND_ADDRESS` below before exposing it.
 - **A named `adaptive-learner-data` volume** mounted at
   `/app/data` (set via `ADAPTIVE_LEARNER_DATA_DIR`) that survives
   container rebuilds. The DB lives at
   `$DATA_DIR/adaptive_learner.db` and uploads at
   `$DATA_DIR/uploads/`.
 
-The backend image runs as a **non-root user** (`adaptive_learner`,
+The image runs as a **non-root user** (`adaptive_learner`,
 created in `backend/Dockerfile`).
 
 `install.sh` and `install.ps1` are the curl-pipe installers
-for end users - they pull a tagged release tarball, set up
+for end users - they clone the tagged release (tarball download
+as the git-less fallback), set up
 `ADAPTIVE_LEARNER_SECRET_KEY`, and `docker compose up`.
 `start.sh` is the equivalent local entry point: it checks Docker,
 generates a random secret into `.env` from `.env.example` when no
@@ -112,7 +118,7 @@ Don't edit the generated files directly.
 
 ## Configuration for production
 
-Three things matter for prod:
+Four things matter for prod:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: must be a stable Fernet
    key. Generate once, store it somewhere safe (HashiCorp
@@ -126,6 +132,11 @@ Three things matter for prod:
    for prod.
 3. **`ADAPTIVE_LEARNER_DEBUG`**: leave unset / false in prod.
    Debug mode exposes stack traces in error responses.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: default `127.0.0.1`, so
+   the published port is reachable only from the host itself. The
+   app has no authentication - bind `0.0.0.0` only deliberately,
+   and only in a trusted network or behind your own auth layer
+   (reverse proxy with basic auth, VPN).
 
 For containers, env vars are the idiomatic injection channel.
 The `~/.config/adaptive_learner/secrets.yaml` overlay is
@@ -136,30 +147,36 @@ several env vars.
 ## Desktop launcher (cross-OS, Docker-based)
 
 `launcher/` is a PyInstaller-based one-binary desktop launcher.
-It is **not** an embedded server - it orchestrates Docker Compose
-under the hood. The flow (`adaptive_learner_launcher/__main__.py`)
-is intentionally linear:
+It is **not** an embedded server - it is a thin wrapper around
+the published `docker-app-launcher` engine, configured by
+`launcher/launcher.json`. The shipped config runs in **image
+mode** (`deployment_mode: "image"`): the launcher pulls the
+ready-built, verified release image
+(`ghcr.io/astrapi69/adaptive-learner:<version>`, pinned to the
+embedded app version) and starts it as a Docker container -
+nothing is built, downloaded as source, or extracted locally.
+The flow is intentionally linear:
 
 1. Check that Docker is installed and running (clear error
    dialogs guide the user to install/start Docker otherwise).
-2. Resolve the app install: on a fresh install, download the
-   matching tagged release ZIP from GitHub and extract it
-   (`installer.py`, stdlib only - no git dependency), then
-   generate `.env` from `.env.example` with a random secret.
-3. `docker compose up` the prod stack.
+2. Pull the pinned release image from GHCR when it is not
+   already present.
+3. Start the container with the named `adaptive-learner-data`
+   volume mounted at `/app/data`, so data survives updates.
 4. Wait for the backend health check, then open the user's
    default browser at the published port.
-5. On user-controlled stop, `docker compose down`.
+5. On user-controlled stop, stop the container.
 
 The launcher embeds the target version (`__version__` literal +
 `_build_info.py` written by the spec file at build time;
-source-of-truth is `backend/pyproject.toml`). It also runs a
-**background update check** against the GitHub Releases API
-(`update_check.py`, added v1.90.0): it queries
-`/repos/.../releases/latest`, and only when a strictly newer
-release exists does it notify the user. The check fails silently
-on any error (no network, GitHub down, rate limit, malformed
-response) so it never blocks or interrupts the launcher.
+source-of-truth is `backend/pyproject.toml`). The engine also
+runs a **background update check** against the GitHub Releases
+API (enabled via `update_check_enabled` in `launcher.json`): it
+queries `/repos/.../releases/latest`, and only when a strictly
+newer release exists does it notify the user. The check fails
+silently on any error (no network, GitHub down, rate limit,
+malformed response) so it never blocks or interrupts the
+launcher.
 
 GitHub Actions builds three binaries per release:
 

@@ -7,8 +7,8 @@
  * back from MatchingExercise, so there is no cycle.
  */
 
-import {ArrowRight, Check, Sparkles, X} from "lucide-react";
-import type {CSSProperties} from "react";
+import {ArrowRight, Check, HelpCircle, Sparkles, X} from "lucide-react";
+import type {CSSProperties, ReactNode} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {cn} from "@/lib/utils";
@@ -176,23 +176,26 @@ export function computeMatchingLabels(
     const sourceName = _languageName(sourceLanguage, uiLang);
     const leftLangName = productive ? sourceName : targetName;
     const rightLangName = productive ? targetName : sourceName;
+    // #2392 — a knowledge set is not "term/definition" (e.g. senses->organs),
+    // and the app cannot know the real column names (content carries no header
+    // field). Printing a generic "Term/Definition" subtitle + labels is wrong
+    // for most such sets, so drop them: the columns stay distinguishable by
+    // their A/B badge and by their content. The neutral column names survive
+    // only as accessible list names (aria-label), never as visible chrome.
     const leftLabel = isKnowledge
-        ? t("lesson.exercise.matching.left_label_knowledge", "Term")
+        ? t("lesson.exercise.matching.column_a", "Column A")
         : (leftLangName ??
           (productive
               ? t("lesson.exercise.matching.left_label_productive", "Meaning")
               : t("lesson.exercise.matching.left_label", "Term")));
     const rightLabel = isKnowledge
-        ? t("lesson.exercise.matching.right_label_knowledge", "Definition")
+        ? t("lesson.exercise.matching.column_b", "Column B")
         : (rightLangName ??
           (productive
               ? t("lesson.exercise.matching.right_label_productive", "Term")
               : t("lesson.exercise.matching.right_label", "Translation")));
     const instruction = isKnowledge
-        ? t(
-              "lesson.exercise.matching.instruction_knowledge",
-              "Match each term with its definition.",
-          )
+        ? ""
         : t(
               instructionKey("matching", direction),
               productive
@@ -631,6 +634,10 @@ export function MatchingResultFooter({
     const total = result?.total ?? 0;
     return (
         <div className="flex flex-wrap items-center gap-3">
+            {/* #2445 — the running pair count moved OUT of the footer up to the
+                prompt row (MatchingPrompt): during solving the learner's
+                attention is at the top, not at the bottom next to Check. The
+                footer now carries only the post-check score. */}
             {submitted && (
                 <>
                     <p
@@ -667,6 +674,50 @@ export function MatchingResultFooter({
     );
 }
 
+/** One column header: the A / B letter cue plus the column label. For a
+ *  knowledge set the visible label is dropped (#2392) — the badge + the
+ *  tiles' own content carry the distinction — while ``label`` stays as the
+ *  list's accessible name on the caller's ``<ul aria-label>``. Extracted so
+ *  the two near-identical headers live in one place and the main renderer
+ *  keeps its complexity budget. */
+export function MatchingColumnHeader({
+    side,
+    label,
+    showLabel,
+    testId,
+}: {
+    side: "a" | "b";
+    label: string;
+    showLabel: boolean;
+    testId: string;
+}) {
+    // Resolve the side-specific bits OUTSIDE the className expression so the
+    // dead-classnames scanner never reads the ``"a"``/``"b"`` comparison
+    // literals as class names (#1465 false-positive otherwise).
+    const isA = side === "a";
+    const letter = isA ? "A" : "B";
+    const badgeColor = isA
+        ? "bg-[var(--matching-side-a-bg)] text-[var(--matching-side-a-fg)]"
+        : "bg-[var(--matching-side-b-bg)] text-[var(--matching-side-b-fg)]";
+    return (
+        <div
+            className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
+            data-testid={testId}
+        >
+            <span
+                aria-hidden="true"
+                className={cn(
+                    "inline-flex h-4 w-4 items-center justify-center rounded-[3px] text-[0.625rem] font-bold ring-1 ring-[var(--border-strong)]",
+                    badgeColor,
+                )}
+            >
+                {letter}
+            </span>
+            {showLabel && label}
+        </div>
+    );
+}
+
 /** Prompt + instruction + running counter + sr-only selection status +
  *  the first-pair flow hint, above the two tile columns. */
 export function MatchingPrompt({
@@ -682,6 +733,7 @@ export function MatchingPrompt({
     submitted,
     leftLabel,
     rightLabel,
+    theoryLink,
 }: {
     prompt: string | undefined;
     ttsLang: string | null;
@@ -695,14 +747,106 @@ export function MatchingPrompt({
     submitted: boolean;
     leftLabel: string;
     rightLabel: string;
+    /** #2453 — the chrome's conditional "Re-read theory" link, passed down
+     *  so it shares the top button row with the how-to disclosure. Null when
+     *  no theory chapter precedes this step. */
+    theoryLink?: ReactNode;
 }) {
     const {t} = useI18n();
     return (
         <>
+            {/* #2453 — the how-to disclosure and the (optional) "Re-read
+                theory" chrome link share one button row directly under the
+                title. The link is computed by LessonStepView and passed down
+                as theoryLink; it sits to the left, the disclosure to its
+                right. Without a preceding theory chapter theoryLink is null
+                and the disclosure sits alone in the same row (consistent
+                position). The disclosure stays in this renderer because its
+                body needs matching state (isKnowledge, matchedCount, labels).
+                Open: it takes the full width and wraps to its own line below
+                (flex-wrap + [&[open]]:w-full). */}
+            <div
+                className="flex flex-wrap items-center gap-x-3 gap-y-1"
+                data-testid="matching-top-actions"
+            >
+                {theoryLink}
+                {/* #2391 — on a phone the how-to text + the first-pair hint
+                    ate the space above the first tile. Collapse them behind a
+                    native <details> (a11y for free: keyboard + screen-reader
+                    can expand, and the content stays in the DOM when
+                    closed). */}
+                <details
+                    className="m-0 [&[open]]:w-full"
+                    data-testid="matching-help"
+                >
+                    <summary
+                        className="inline-flex cursor-pointer list-none items-center gap-1.5 self-start rounded-sm text-[0.8125rem] font-medium text-[var(--fg-secondary)] hover:text-[var(--accent-text)] [&::-webkit-details-marker]:hidden"
+                        data-testid="matching-help-toggle"
+                    >
+                        <HelpCircle size={14} aria-hidden="true" />
+                        {t("lesson.exercise.matching.help_toggle", "How it works")}
+                    </summary>
+                    <div className="mt-1.5 flex flex-col gap-1.5">
+                        <p
+                            className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
+                            data-testid="matching-instructions"
+                        >
+                            {isKnowledge
+                                ? t(
+                                      "lesson.exercise.matching.instructions_knowledge",
+                                      "Select an item on the left, then its match on the right.",
+                                  )
+                                : t(
+                                      "lesson.exercise.matching.instructions",
+                                      "Select an item on the left, then its matching translation on the right.",
+                                  )}
+                        </p>
+
+                        {/* First-pair flow hint: disappears once the learner
+                            has made their first pair (they understand the
+                            mechanic). */}
+                        {matchedCount === 0 && !submitted && (
+                            <p
+                                className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
+                                data-testid="matching-flow-hint"
+                            >
+                                <span>{leftLabel}</span>
+                                <span
+                                    className="font-bold text-[var(--accent-text)]"
+                                    aria-hidden="true"
+                                >
+                                    &rarr;
+                                </span>
+                                <span>{rightLabel}</span>
+                            </p>
+                        )}
+                    </div>
+                </details>
+            </div>
+
             <div className="exercise-prompt-row">
                 <p className="m-0 flex-auto font-medium" data-testid="matching-prompt">
                     <InlineMarkdown>{prompt ?? ""}</InlineMarkdown>
                 </p>
+                {/* #2445 — the running pair count sits at the top by the prompt
+                    (the "heading"), where attention is while the learner is
+                    pairing. Gone once submitted (the footer shows the score).
+                    aria-live keeps the running count announced to screen
+                    readers. */}
+                {!submitted && (
+                    <p
+                        className="m-0 mt-0.5 shrink-0 whitespace-nowrap text-[0.8125rem] font-medium text-[var(--fg-muted)]"
+                        aria-live="polite"
+                        data-testid="matching-counter"
+                    >
+                        {t(
+                            "lesson.exercise.matching.counter",
+                            "{matched} / {total} paired",
+                        )
+                            .replace("{matched}", String(matchedCount))
+                            .replace("{total}", String(totalPairs))}
+                    </p>
+                )}
                 {ttsLang && !codeMode && (
                     <ReadAloudButton
                         text={prompt ?? ""}
@@ -712,22 +856,23 @@ export function MatchingPrompt({
                 )}
             </div>
 
-            <p
-                className="exercise-direction-instruction"
-                data-testid="direction-instruction-matching"
-            >
-                {instruction}
-            </p>
-
-            <p
-                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
-                aria-live="polite"
-                data-testid="matching-counter"
-            >
-                {t("lesson.exercise.matching.counter", "{matched} / {total} paired")
-                    .replace("{matched}", String(matchedCount))
-                    .replace("{total}", String(totalPairs))}
-            </p>
+            {/* #2453 — the instruction keeps its own row below the prompt;
+                the how-to disclosure moved up to the top button row. On a
+                knowledge set the instruction is empty, so the row is omitted
+                entirely rather than rendering an empty line. */}
+            {instruction && (
+                <div
+                    className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
+                    data-testid="matching-meta-row"
+                >
+                    <p
+                        className="exercise-direction-instruction m-0! flex-auto"
+                        data-testid="direction-instruction-matching"
+                    >
+                        {instruction}
+                    </p>
+                </div>
+            )}
 
             {/* UX bugfix — announce the current selection to screen
                 readers (the visual highlight is not conveyed otherwise). */}
@@ -743,39 +888,6 @@ export function MatchingPrompt({
                       ).replace("{label}", leftTiles[selectedLeft]?.label ?? "")
                     : ""}
             </span>
-
-            <p
-                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
-                data-testid="matching-instructions"
-            >
-                {isKnowledge
-                    ? t(
-                          "lesson.exercise.matching.instructions_knowledge",
-                          "Select an item on the left, then its match on the right.",
-                      )
-                    : t(
-                          "lesson.exercise.matching.instructions",
-                          "Select an item on the left, then its matching translation on the right.",
-                      )}
-            </p>
-
-            {/* First-pair flow hint: disappears once the learner has
-                made their first pair (they understand the mechanic). */}
-            {matchedCount === 0 && !submitted && (
-                <p
-                    className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
-                    data-testid="matching-flow-hint"
-                >
-                    <span>{leftLabel}</span>
-                    <span
-                        className="font-bold text-[var(--accent-text)]"
-                        aria-hidden="true"
-                    >
-                        &rarr;
-                    </span>
-                    <span>{rightLabel}</span>
-                </p>
-            )}
         </>
     );
 }

@@ -31,12 +31,12 @@ gates:
 
   - workflow: testid-reference-gate.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
-    body_sha: e6920e09d284021a
+    body_sha: 63d68207e79c4e2e
     note: spec-referenced testids may not be removed without touching the spec (escape label testid-refs-unaffected)
 
   - workflow: docker-build-smoke.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
-    body_sha: e6920e09d284021a
+    body_sha: 63d68207e79c4e2e
     note: builds the prod compose path no other gate builds (the #1771 no-cadence class)
 
   - workflow: complexity-check.yml
@@ -87,9 +87,9 @@ no_rule:
   deploy-preview.yml: deployment
   image-size-measure.yml: measurement only (#2151 - reports a size, enforces nothing, writes nothing)
   publish-image.yml: build/publish (GHCR image, #2142 - enforces no documented rule)
-  launcher-linux.yml: build/publish
-  launcher-macos.yml: build/publish
-  launcher-windows.yml: build/publish
+  launcher-linux.yml: build (smoke; no release publish, #2472)
+  launcher-macos.yml: build (smoke; no release publish, #2472)
+  launcher-windows.yml: build (smoke; no release publish, #2472)
   release.yml: release driver
   release-prepare.yml: release driver
   release-finish.yml: release driver

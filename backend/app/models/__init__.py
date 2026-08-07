@@ -1650,6 +1650,14 @@ class ElementError(Base):
         Text,
         nullable=True,
     )
+    # #2188 - author-declared retirement (manifest ``retired_ids``): an
+    # archived row keeps its history (the error-history input, #2125) but
+    # leaves review scheduling and due counts. Set once by the archive
+    # path, never by learning activity.
+    retired_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

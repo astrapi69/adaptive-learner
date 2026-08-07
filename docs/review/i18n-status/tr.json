@@ -12201,19 +12201,6 @@
     "target_hash": "4fcc4d55e026",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "hints.reveal_pair": {
-    "verdict": "minor",
-    "severity": "low",
-    "note": "Uses arrow instead of 'gehört zu' phrasing; acceptable but changes style",
-    "suggestion": "“{left}”, “{right}” ile eşleşir",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "needs_recheck",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "minor",
-    "de_hash": "fd54c5a3b18c",
-    "target_hash": "ce3d6cd5a122",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "import.analysis_cancel": {
     "verdict": "ok",
     "severity": "low",
@@ -15660,17 +15647,6 @@
     "target_hash": "a04446c86ae9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "lesson.exercise.matching.instruction_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "bf66b4fa79f3",
-    "target_hash": "ef8dca01cd3f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "lesson.exercise.matching.instructions": {
     "verdict": "ok",
     "severity": "low",
@@ -15694,17 +15670,6 @@
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "lesson.exercise.matching.left_label": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "29c820dfc81c",
-    "target_hash": "082d6c028861",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "lesson.exercise.matching.left_label_knowledge": {
     "verdict": "ok",
     "severity": "low",
     "note": "",
@@ -15792,17 +15757,6 @@
     "tier1_verdict": "ok",
     "de_hash": "08145060a96d",
     "target_hash": "5612d646804b",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "lesson.exercise.matching.right_label_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "9813fafb098c",
-    "target_hash": "37c9299cc784",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "lesson.exercise.matching.right_label_productive": {

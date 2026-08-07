@@ -159,14 +159,13 @@ regeneriert sie.
 ## Manifest-Format
 
 Das Feld-Schema des Manifests, also das Root-`manifest.yaml`, das die
-Sets des Repos auflistet, mit jedem Pflicht- und optionalen Feld
-(`schema_version`, `name` sowie pro Set `id`, `title`, `title_native`,
-`target_language`, `source_language`, `level`, `version`,
-`lesson_count`, `path`, `domain`, `tags`, `book`, `visibility`), steht
-in der Engine-Referenz:
+Sets des Repos auflistet, mit jedem Pflicht- und optionalen Feld,
+steht in der Engine-Referenz:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
-Das strikte Schema der Engine (unbekannte Felder werden abgelehnt)
-validiert es, sodass die obige Feldliste nicht driften kann. Die
+Die Feldliste wird hier bewusst nicht wiederholt: das strikte Schema
+der Engine (unbekannte Felder werden abgelehnt) validiert jedes
+Manifest, und die Engine-Referenz ist ihre einzige maßgebliche
+Beschreibung. Die
 Sprachpaar-Felder (`target_language` / `source_language`) werden wie
 unter [Sprachpaare](#sprachpaare-v1440) beschrieben angegeben; der
 Vor-v1.2-Alias `language` lädt weiterhin, ist für neue Sets aber

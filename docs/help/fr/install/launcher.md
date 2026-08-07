@@ -135,11 +135,11 @@ Pièges connus :
   Compose.
 - **Application inaccessible dans le navigateur** : si le navigateur ne
   s'ouvre pas automatiquement, ouvre `http://localhost:8501` manuellement
-  (ou le port affiché dans la fenêtre du lanceur). Attention :
-  l'application est publiée sur toutes les interfaces réseau, pas
-  seulement sur `localhost`, et elle n'a aucune authentification - garde
-  ce port fermé sur ton pare-feu sauf si tu veux délibérément que
-  d'autres appareils de ton réseau y accèdent.
+  (ou le port affiché dans la fenêtre du lanceur). Par défaut,
+  l'application n'écoute que sur `127.0.0.1` et n'est donc accessible
+  que depuis cet ordinateur ; d'autres appareils ne l'atteignent que si
+  tu actives délibérément l'accès réseau - voir « Qui peut accéder à
+  l'application » plus haut.
 
 ## macOS
 

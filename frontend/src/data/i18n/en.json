@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Test mode",
+      "description": "Answers are not graded and no progress is saved.",
+      "exit": "Exit test mode"
+    },
     "ask_ai": {
       "button": "Ask AI",
       "title": "Ask AI about this",
@@ -1942,18 +1947,18 @@
         "submit": "Check answers",
         "retry": "Try again",
         "counter": "{matched} / {total} paired",
+        "help_toggle": "How it works",
         "result": "Score: {correct} / {total}",
         "instructions": "Select an item on the left, then its matching translation on the right.",
         "left_label": "Term",
+        "column_a": "Column A",
+        "column_b": "Column B",
         "right_label": "Translation",
         "empty": "This matching exercise has no pairs.",
         "left_label_productive": "Meaning",
         "right_label_productive": "Term",
-        "left_label_knowledge": "Term",
         "correct_hint": "Correct answer: {label}",
         "your_answer": "Your answer: {label}",
-        "right_label_knowledge": "Definition",
-        "instruction_knowledge": "Match each term with its definition.",
         "instructions_knowledge": "Select an item on the left, then its match on the right.",
         "selected_sr": "Selected: {label}",
         "resolve": "Solve",
@@ -2068,6 +2073,9 @@
       "aria_label": "Lesson summary",
       "score": "Score",
       "score_bar_aria": "Score: {pct} percent",
+      "score_bar_aria_corrected": "Score: {pct} percent, of which {corrected} correct after correcting",
+      "score_legend_immediate": "{n} on the first try",
+      "score_legend_corrected": "{n} after correcting",
       "stars_aria": "{n} of 3 stars",
       "time": "Time",
       "minutes": "{n} min",
@@ -2186,7 +2194,13 @@
       "title": "Update may reset some review progress",
       "message": "Updating \"{title}\" changes content you are already learning. About {cards} review cards and {lessons} lessons with saved progress no longer match the new version and would be reset. Your finished lessons stay; only the changed review items are affected.",
       "confirm": "Update anyway",
-      "cancel": "Keep current version"
+      "cancel": "Keep current version",
+      "carry_over_label": "Carry over what still matches",
+      "preview_more": "and {count} more",
+      "unmappable": "{count} cannot be assigned with confidence and will be reset. Their order or number changed, so nothing is guessed.",
+      "carried_over": "Progress carried over.",
+      "carry_over_failed": "The update was applied, but the progress could not be carried over.",
+      "retired_archived": "{count} exercises were retired by the author; the related progress is archived."
     },
     "recovery": {
       "title": "Restore review progress for corrected lessons",
@@ -2248,7 +2262,10 @@
       "submit": "Export",
       "working": "Exporting…",
       "done": "Your set was pushed to the repository.",
-      "failed": "Export failed."
+      "failed": "Export failed.",
+      "quality_issues": "The quality check found issues. Content-repo gates would reject these:",
+      "export_anyway": "Export anyway",
+      "renamed_note": "Lesson files were renamed with ordering prefixes (NN-) so the display order matches the lesson order."
     },
     "anki_export": {
       "button": "Anki export"
@@ -2359,7 +2376,24 @@
       "delete_failed": "Could not delete the lesson.",
       "delete_aria": "Delete lesson {title}",
       "play_aria": "Play lesson {title}",
-      "edit_aria": "Edit lesson {title}"
+      "edit_aria": "Edit lesson {title}",
+      "bulk_select": "Select lessons",
+      "bulk_select_all": "Select all",
+      "bulk_clear": "Clear selection",
+      "bulk_cancel": "Cancel",
+      "bulk_selected": "{n} selected",
+      "bulk_bar_aria": "Bulk lesson actions",
+      "bulk_select_aria": "Select lesson {title}",
+      "bulk_action_delete_n": "Delete {n}",
+      "bulk_title": "Delete {n} lessons?",
+      "bulk_confirm_body": "The selected lessons will be removed from the set. This cannot be undone - a backup you made earlier still contains them.",
+      "bulk_confirm_empties": "These are all the lessons of the set, so the whole set will be deleted. This cannot be undone - a backup you made earlier still contains them.",
+      "bulk_backup_hint": "Tip: export a backup first under Settings > Data if you might want these lessons back.",
+      "bulk_delete_progress_option": "Also delete my learning progress for these lessons ({cards} review cards)",
+      "bulk_delete_progress_option_nocounts": "Also delete my learning progress for these lessons",
+      "bulk_action_delete": "Delete lessons",
+      "bulk_deleted": "{n} lessons deleted.",
+      "bulk_delete_failed": "Could not delete the lessons."
     },
     "lesson_order": {
       "move_up": "Move lesson {title} up",
@@ -2436,7 +2470,8 @@
       "type_cloze": "Cloze",
       "type_free_text": "Free text",
       "type_word_tiles": "Word tiles",
-      "type_picture_choice": "Picture choice"
+      "type_picture_choice": "Picture choice",
+      "type_multiple_choice": "Multiple choice"
     },
     "save_lesson": {
       "button": "Save as Offline Lesson",
@@ -2555,6 +2590,7 @@
       "back_language_mismatch": "Lesson '{lesson}': card '{card}' back does not look like {source}.",
       "free_text_too_few_accepts": "Lesson '{lesson}': free-text exercise '{exercise}' needs at least {min} accepted answers.",
       "matching_too_few_pairs": "Lesson '{lesson}': matching exercise '{exercise}' needs at least {min} pairs.",
+      "matching_duplicate_left": "Lesson '{lesson}': matching exercise '{exercise}' repeats the left value '{value}' - unsolvable for the learner.",
       "missing_distractors": "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options).",
       "non_cefr_level": "Level '{level}' is not a CEFR band (A1-C2).",
       "level_too_complex": "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected).",
@@ -3130,7 +3166,9 @@
       "check_enoughExercises": "At least 5 exercises",
       "check_enoughTypes": "At least 2 exercise types",
       "check_schemaValid": "Valid lesson structure",
-      "structure_error": "Technical detail"
+      "structure_error": "Technical detail",
+      "structure_internal_error": "An internal error occurred while checking this lesson. This is a problem in the app, not in your lesson. Please reload the page and try again; if it keeps happening, report the problem below.",
+      "structure_report": "Report this problem"
     },
     "save": {
       "saved": "Lesson saved!",
@@ -3593,8 +3631,7 @@
     "length": "The answer has {n} letters",
     "first_letters": "It starts with “{prefix}” ({n} letters)",
     "not": "It's not “{label}”",
-    "item": "Start with “{label}”",
-    "reveal_pair": "“{left}” goes with “{right}”"
+    "item": "Start with “{label}”"
   },
   "favorites": {
     "card_title": "Your favorites",
@@ -3744,19 +3781,43 @@
       "search": "Search",
       "filter": "Filter"
     },
+    "entry": {
+      "label": "I want to",
+      "language": "Learn a language",
+      "knowledge": "A subject",
+      "all": "Everything"
+    },
+    "pairs": {
+      "heading": "Language pairs",
+      "select": "Choose {p}",
+      "choose": "Choose a language pair"
+    },
     "filter": {
       "all": "All",
       "language": "Language",
+      "target_language": "Target language",
       "all_languages": "All languages",
+      "all_target_languages": "All target languages",
       "level": "Level",
       "domain": "Domain",
       "trust": "Trust",
-      "ai_checked": "AI-checked"
+      "source": "Source",
+      "ai_checked": "AI-checked",
+      "review": "Review"
     },
     "trust": {
       "official": "Officially recommended",
       "verified": "Verified",
       "validated": "Validated"
+    },
+    "review": {
+      "no_machine": "No machine sets",
+      "reviewed_only": "Reviewed only",
+      "generated_badge": "Machine-made",
+      "reviewed_badge": "Reviewed"
+    },
+    "chips": {
+      "remove": "Remove: {f}"
     },
     "sort": {
       "label": "Sort",
@@ -3768,15 +3829,28 @@
       "language": "Languages",
       "ai": "AI",
       "psychology": "Psychology",
-      "programming": "Programming"
+      "programming": "Programming",
+      "knowledge": "Knowledge",
+      "math": "Mathematics",
+      "technology": "Technology",
+      "software": "Software",
+      "philosophy": "Philosophy",
+      "dog-training": "Dog training",
+      "traffic-knowledge": "Traffic knowledge"
     },
     "result": {
-      "count": "{n} sets"
+      "count": "{n} sets",
+      "show_more": "Show more"
     },
     "empty": {
       "no_sets": "No content available yet.",
       "no_results": "No results for “{query}”.",
-      "language_hint": "Nothing in this language yet."
+      "language_hint": "Nothing in this language yet.",
+      "without_facet": "Without {facet}: {n} sets",
+      "reset_all": "Reset all filters",
+      "add_source": "Add your own source",
+      "or": "or",
+      "create_lesson": "create a lesson"
     },
     "card": {
       "download": "Download",

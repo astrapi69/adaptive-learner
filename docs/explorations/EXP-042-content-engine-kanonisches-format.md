@@ -2,8 +2,8 @@
 
 **Kategorie:** Querschnitt (Architektur-Grenze, Lib-Extraktions-Vorbereitung)
 **Phase:** ausgeliefert (Boundary + Extraktion) / Fundament
-**Prioritaet:** Mittel-Hoch
-**Abhaengig von:** EXP-039 (JSON-Schema als Single Source of Truth), EXP-002
+**Priorität:** Mittel-Hoch
+**Abhängig von:** EXP-039 (JSON-Schema als Single Source of Truth), EXP-002
 (Content-Repository), EXP-003 (Lektionsformat)
 **Issue:** astrapi69/adaptive-learner#1309
 **Status:** Boundary UND Library-Extraktion **ausgeliefert**. Die Engine ist als
@@ -20,19 +20,19 @@ Extraktion und bleibt zur Nachvollziehbarkeit stehen.
 
 > Dieses Dokument definiert die **Content-Engine-Grenze**: ein kanonisches
 > internes Format, ein Source-Adapter-Muster, und die Naht, an der die Engine
-> spaeter als eigenstaendige Library herausgetrennt werden kann. Der zugehoerige
+> später als eigenständige Library herausgetrennt werden kann. Der zugehörige
 > PR setzt die Abgrenzung um (Parse-/Transform-Logik buendeln), **ohne** das
-> Ladeverhalten, die Dateinamen-Konvention oder das Schema zu aendern.
+> Ladeverhalten, die Dateinamen-Konvention oder das Schema zu ändern.
 
 ---
 
 ## Grundprinzip: die Engine besitzt das kanonische Format, nicht die Quelle
 
 EXP-039 hat die **App als autoritative Schema-Quelle** festgelegt (Pydantic
-`schema.py` fuehrt, das JSON-Schema faellt daraus ab). EXP-042 baut darauf auf und
+`schema.py` führt, das JSON-Schema fällt daraus ab). EXP-042 baut darauf auf und
 zieht die **Laufzeit-Grenze**: Es gibt genau **ein kanonisches internes
 Lesson-Format** — das aktuelle **Single-JSON-Lesson-Objekt** (schema_version
-`1.4`, exakt das EXP-039-Schema). Jede Quelle wird ueber einen **Source-Adapter**
+`1.4`, exakt das EXP-039-Schema). Jede Quelle wird über einen **Source-Adapter**
 in dieses kanonische Format transformiert. Der Rest der App (Viewer, Renderer,
 SRS, Adaptive-Generator) kennt **nur** das kanonische Objekt — nie die Quelle,
 aus der es stammt.
@@ -43,10 +43,10 @@ dieses Dokuments + PRs ist **nicht** ein neuer Adapter, sondern die **saubere
 Naht**: die Parse-/Transform-Logik ist heute im Frontend inline im
 Dexie-God-Loader vergraben und im Backend zwar zentral, aber nicht als Grenze
 benannt. Die Naht macht (a) ein kuenftiges Mehrdatei-Format zu einem *zusaetzlichen
-Adapter* statt einem Umbau, und (b) die Engine spaeter als Library extrahierbar.
+Adapter* statt einem Umbau, und (b) die Engine später als Library extrahierbar.
 
 **Nicht in diesem PR:** der Mehrdatei-Adapter, die Library-Extraktion, ein
-Adapter-Registry-Mechanismus. Ein Registry fuer genau einen Adapter waere
+Adapter-Registry-Mechanismus. Ein Registry für genau einen Adapter wäre
 Over-Engineering — die Naht ist eine benannte, getypte Schnittstelle, mehr nicht.
 
 ---
@@ -84,7 +84,7 @@ Belange:
 
 Befund: Die kanonische Transform-Logik (Roh-JSON/Manifest → kanonisches
 `ContentLesson` / `ContentSetEntry`) lebt **inline** im God-Loader, direkt neben
-Fetch + Dexie. Es gibt keine benannte Grenze; ein zweiter Adapter muesste heute
+Fetch + Dexie. Es gibt keine benannte Grenze; ein zweiter Adapter müsste heute
 den Loader anfassen.
 
 ### 1.3 Asymmetrie
@@ -92,7 +92,7 @@ den Loader anfassen.
 Das Backend ist bereits nah an der Ziel-Architektur (Parse zentral in
 `manifest_parser.py`); das Frontend ist es nicht (Parse inline im Loader). Die
 Abgrenzung gleicht beide Seiten auf **dieselbe benannte Grenze** an — das ist
-zugleich die Voraussetzung fuer Cross-Language-Paritaet (Abschnitt 5).
+zugleich die Voraussetzung für Cross-Language-Parität (Abschnitt 5).
 
 ---
 
@@ -108,18 +108,18 @@ Das kanonische Format ist das **Single-JSON-Lesson-Objekt**:
 
 Jede Quelle produziert **exakt dieses** Objekt. Der Adapter fuegt keine neuen
 Felder hinzu; er transformiert nur die Quelle in die kanonische Form (heute:
-parse + Sprach-/Domaenen-Normalisierung aus dem Set-Kontext, weil eine Lektion
+parse + Sprach-/Domänen-Normalisierung aus dem Set-Kontext, weil eine Lektion
 ihr Sprachpaar vom Set erbt).
 
 **Warum Single-JSON kanonisch bleibt (auch falls je ein Mehrdatei-Format
 kommt):** Single-JSON ist bereits das, was Viewer/Renderer/SRS/Generatoren
 konsumieren, es ist das EXP-039-Schema, und es ist selbst-enthaltend (ein Objekt,
-keine Datei-Joins). Ein Mehrdatei-Format waere ein **Autoren-Komfort** an der
-Quelle, kein besseres internes Modell — deshalb wuerde ein kuenftiger
+keine Datei-Joins). Ein Mehrdatei-Format wäre ein **Autoren-Komfort** an der
+Quelle, kein besseres internes Modell — deshalb würde ein künftiger
 Mehrdatei-Adapter **nach** Single-JSON transformieren, nicht umgekehrt. Ein
-solches Format ist derzeit **zurueckgestellt** (Abschnitt 6): es gibt kein
+solches Format ist derzeit **zurückgestellt** (Abschnitt 6): es gibt kein
 aktuelles Mehrdatei-Template im Content-Repo, und die Engine bezieht sich auf
-keines — sie haelt nur die Naht offen.
+keines — sie hält nur die Naht offen.
 
 ---
 
@@ -139,10 +139,10 @@ keines — sie haelt nur die Naht offen.
   FE+BE gleich): `(rawSource) -> canonicalLesson`.
 - **Heute existiert genau der Single-JSON-Adapter.** Er ist im Kern
   `parse + validate + normalize`. Die Grenze ist so gezogen, dass ein zweiter
-  Adapter *daneben* tritt, ohne Fetch/Cache/Loader/Routen zu aendern.
+  Adapter *daneben* tritt, ohne Fetch/Cache/Loader/Routen zu ändern.
 - **Kein Registry.** Solange es einen Adapter gibt, ist die Auswahl trivial (der
   Aufrufer nennt den Single-JSON-Adapter direkt, per Default-Parameter). Ein
-  Registry/Dispatch ("welcher Adapter fuer diese Quelle?") ist erst faellig, wenn
+  Registry/Dispatch ("welcher Adapter für diese Quelle?") ist erst fällig, wenn
   der zweite Adapter kommt — dann ist es eine kleine, lokale Erweiterung an der
   Engine-Grenze, kein App-Umbau.
 
@@ -153,17 +153,17 @@ einer Quelle. So ist "Quelle → kanonisch" ein austauschbarer Schritt.
 
 ## 4. Lib-Extraktions-Grenze (die Naht)
 
-Die Engine ist so abgegrenzt, dass sie spaeter als eigenstaendige Library
+Die Engine ist so abgegrenzt, dass sie später als eigenständige Library
 extrahiert werden kann. **Jetzt NICHT extrahieren** — nur die Naht ziehen.
 
-**Was in die Lib gehoert (die Engine):**
+**Was in die Lib gehört (die Engine):**
 
 - Das kanonische Format (Schema/Typen): `schema.py` / `content.ts`-Typen,
   `models.py` (`ContentManifest`, Versions-Gate).
 - Parsing + Validierung: `parse_lesson_json` / `parse_manifest_yaml` (BE), die
   neuen `content/engine`-Transformationen (FE).
 - Die Source-Adapter (heute: single-json) + die Adapter-Signatur.
-- Kuenftig (zurueckgestellt): das Merging eines Mehrdatei-Adapters (mehrere
+- Künftig (zurückgestellt): das Merging eines Mehrdatei-Adapters (mehrere
   Quelldateien → kanonisches Single-JSON), falls je ein solches Format definiert
   wird.
 
@@ -174,46 +174,46 @@ extrahiert werden kann. **Jetzt NICHT extrahieren** — nur die Naht ziehen.
 - HTTP-Routen (`routes.py`), Storage-Namespaces, UI.
 
 **Die Lib-Grenze als Schnittstelle:** *Input = rohe Quell-Daten (heute:
-JSON-Text; kuenftig ggf. mehrere Quelldateien) + Set-Kontext (Sprachpaar/Domaene,
+JSON-Text; künftig ggf. mehrere Quelldateien) + Set-Kontext (Sprachpaar/Domäne,
 die eine Lektion vom Set erbt). Output = validiertes kanonisches Lesson-Objekt.*
-Alles, was fuer diese Transformation noetig ist, gehoert in die Lib; alles, was
+Alles, was für diese Transformation nötig ist, gehört in die Lib; alles, was
 die rohen Daten *beschafft* oder das Ergebnis *speichert*, bleibt aussen.
 
 Konkret markiert der PR diese Grenze, indem die Parse-/Transform-Logik in ein
 `content/engine`-Modul (FE) bzw. ein `content_engine`-Modul (BE) wandert, das
-**keine** Fetch-/Cache-/UI-Imports hat. Genau dieses Modul waere spaeter das
+**keine** Fetch-/Cache-/UI-Imports hat. Genau dieses Modul wäre später das
 Paket. Der Import-Graph (Konsument → Engine, nie Engine → Konsument) ist die
-mechanische Pruefung, dass die Naht haelt.
+mechanische Prüfung, dass die Naht hält.
 
 ---
 
-## 5. Cross-Language-Paritaet (FE ⟷ BE)
+## 5. Cross-Language-Parität (FE ⟷ BE)
 
-FE (TS) und BE (Python) haben je einen Loader; die Engine-Grenze gilt fuer
+FE (TS) und BE (Python) haben je einen Loader; die Engine-Grenze gilt für
 **beide, parallel**. Das Repo hat ein etabliertes **Cross-Language-Parity-Golden**
 -Muster (z. B. `lesson-splitter.parity.test.ts`, `lesson-xp.parity.test.ts`,
 `badge-tier.parity.test.ts`): gemeinsame Golden-Testdaten, gegen die beide
 Sprachen gepinnt werden, sodass FE und BE **byte-identisch** rechnen.
 
-Fuer die Engine-Grenze bedeutet Paritaet: derselbe rohe Input + derselbe
+Für die Engine-Grenze bedeutet Parität: derselbe rohe Input + derselbe
 Set-Kontext ergeben in FE und BE **dasselbe kanonische Lesson**. Der
-Single-JSON-Adapter ist heute im Kern Identitaet + Normalisierung (Sprachpaar aus
-dem Set, Domaenen-Default), sodass die Paritaet strukturell gegeben ist. Der
+Single-JSON-Adapter ist heute im Kern Identität + Normalisierung (Sprachpaar aus
+dem Set, Domänen-Default), sodass die Parität strukturell gegeben ist. Der
 begleitende PR **benennt die Grenze in beiden Sprachen konsistent** (gleiche
 Konzeptnamen: `content engine`, `single-json` Source-Adapter, `canonical
 Lesson`), sodass ein spaeteres Parity-Golden direkt andocken kann.
 
 **Entscheidung:** Ein dediziertes Parse/Merge-Parity-Golden wird **als
-Folge-Schritt** vermerkt (es traegt erst mit dem Mehrdatei-Adapter, wo das
-Merging nicht-trivial wird). Fuer diesen PR reicht die konsistente Benennung +
+Folge-Schritt** vermerkt (es trägt erst mit dem Mehrdatei-Adapter, wo das
+Merging nicht-trivial wird). Für diesen PR reicht die konsistente Benennung +
 die identische kanonische Form; die bestehenden FE- und BE-Tests bleiben der
 Verhaltens-Beweis.
 
 ---
 
-## 6. Mehrdatei-Format als zurueckgestellter kuenftiger Adapter
+## 6. Mehrdatei-Format als zurückgestellter künftiger Adapter
 
-**Status: zurueckgestellt (nicht verworfen), kein aktueller Plan, kein Bezug auf
+**Status: zurückgestellt (nicht verworfen), kein aktueller Plan, kein Bezug auf
 ein bestehendes Template.** Ein frueheres `v1.4-preview`-Mehrdatei-Template wurde
 bereits aus den Content-Repos **entfernt**; dieses EXP und die Engine beziehen
 sich **nicht** darauf. Ein Mehrdatei-Format kommt nur, **wenn das Projekt oder
@@ -223,23 +223,23 @@ Quelle.
 
 Was dieses EXP festhaelt, ist ausschliesslich, dass die Engine-Grenze **so
 beschaffen ist**, dass ein solches kuenftiges Format als **weiterer
-Source-Adapter** andocken koennte, **ohne** die Engine-Grenze zu aendern. Die
+Source-Adapter** andocken könnte, **ohne** die Engine-Grenze zu ändern. Die
 Naht bleibt offen, mehr nicht.
 
 Wenn ein Mehrdatei-Format je definiert wird, saehe der Adapter konzeptionell so
 aus (illustrativ, KEINE Festlegung auf konkrete Dateinamen/Struktur):
 
 1. Er liest die dann definierten Quelldateien (Metadaten / Theorie / Karten /
-   Uebungen — die konkrete Aufteilung ist Teil der spaeteren Format-Definition).
+   Übungen — die konkrete Aufteilung ist Teil der späteren Format-Definition).
 2. Er merged sie zu **einem** kanonischen Single-JSON-Lesson-Objekt.
 3. Er validiert das Ergebnis gegen **dasselbe** kanonische Schema (EXP-039).
-4. Der Rest der App bleibt unveraendert — der Viewer sieht nur das kanonische
+4. Der Rest der App bleibt unverändert — der Viewer sieht nur das kanonische
    Objekt.
 
-Der einzige Punkt, der sich aendert, ist dann die **Adapter-Auswahl** an der
-Engine-Grenze (welcher Adapter fuer welche Quell-Form) — heute trivial (nur
+Der einzige Punkt, der sich ändert, ist dann die **Adapter-Auswahl** an der
+Engine-Grenze (welcher Adapter für welche Quell-Form) — heute trivial (nur
 single-json), dann eine kleine Fallunterscheidung. Fetch/Cache/Routen/UI bleiben
-unberuehrt. Das ist der Beweis, dass die Naht richtig gezogen ist.
+unberührt. Das ist der Beweis, dass die Naht richtig gezogen ist.
 
 ---
 
@@ -254,15 +254,15 @@ unberuehrt. Das ist der Beweis, dass die Naht richtig gezogen ist.
 - BE: die Parse-Grenze unter einem `content_engine`-Modul als
   Source-Adapter-Grenze benennen; Konsumenten (`cache.py`/`service.py`) rufen die
   Engine statt direkt `manifest_parser`. `manifest_parser.py` bleibt als
-  Low-Level-Parser (unveraendert getestet).
+  Low-Level-Parser (unverändert getestet).
 - Gleiche Konzeptnamen FE/BE.
-- **Kein** Verhaltenswechsel: keine Aenderung an Ladeweg, Dateinamen-Konvention,
-  Schema. Bestehende Tests bleiben unveraendert gruen (Sicherheitsnachweis); die
+- **Kein** Verhaltenswechsel: keine Änderung an Ladeweg, Dateinamen-Konvention,
+  Schema. Bestehende Tests bleiben unverändert grün (Sicherheitsnachweis); die
   neue Engine-Schnittstelle bekommt eigene Tests.
 
-**Spaeter (Folge-Arbeit, nicht dieser PR):**
+**Später (Folge-Arbeit, nicht dieser PR):**
 
-- Ein Mehrdatei-Adapter (Abschnitt 6) — **zurueckgestellt**, nur bei konkretem
+- Ein Mehrdatei-Adapter (Abschnitt 6) — **zurückgestellt**, nur bei konkretem
   Projekt-/Nutzer-Bedarf, dann als neu definiertes Format.
 - Die echte Library-Extraktion (Abschnitt 4) in ein eigenes Paket.
 - Ein Cross-Language-Parse/Merge-Parity-Golden (Abschnitt 5).
@@ -275,17 +275,17 @@ unberuehrt. Das ist der Beweis, dass die Naht richtig gezogen ist.
 - **Annahme (verifiziert):** Das Backend hat die Parse-Grenze faktisch schon in
   `manifest_parser.py` — die Abgrenzung ist dort ein **Benennen** der Grenze
   (additives `content_engine`-Modul, das die vorhandenen Parser als
-  Source-Adapter fuehrt), kein Umbau. Der eigentliche Extraktions-Aufwand liegt
+  Source-Adapter führt), kein Umbau. Der eigentliche Extraktions-Aufwand liegt
   im Frontend, wo die Parse-/Transform-Logik inline im Dexie-Loader vergraben
   ist. Das ist der Grund, warum der PR asymmetrisch aussieht (viel FE-Bewegung,
   wenig BE-Bewegung).
-- **Annahme (konservativ):** Cross-Language-Parse-Parity via Golden traegt erst
+- **Annahme (konservativ):** Cross-Language-Parse-Parity via Golden trägt erst
   mit dem Mehrdatei-Adapter (heute ist der Single-JSON-Adapter im Kern
-  Identitaet + Normalisierung). Deshalb: konsistente Benennung jetzt,
+  Identität + Normalisierung). Deshalb: konsistente Benennung jetzt,
   Parity-Golden als Folge-Schritt — statt ein Golden zu bauen, das nur die
-  Identitaet pinnt.
-- **Kein Registry jetzt:** Ein Adapter-Dispatch fuer genau einen Adapter waere
-  Over-Engineering (VIBE-CODING/Reusability §7 — Selbst-Bauen nur, wenn noetig).
+  Identität pinnt.
+- **Kein Registry jetzt:** Ein Adapter-Dispatch für genau einen Adapter wäre
+  Over-Engineering (VIBE-CODING/Reusability §7 — Selbst-Bauen nur, wenn nötig).
   Die Naht ist eine getypte Signatur + ein Default-Adapter; der Dispatch kommt
   mit dem zweiten Adapter.
 - **Keine STOP-blockierende Frage.** Der Auftrag war als autonomes Design +

@@ -1599,7 +1599,7 @@
     },
     "help": {
       "learn_more": "Mehr erfahren",
-      "open_help": "Hilfe oeffnen",
+      "open_help": "Hilfe öffnen",
       "drawer_title": "Hilfe",
       "related": "Verwandte Konzepte",
       "search_placeholder": "Glossar durchsuchen...",
@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Testmodus",
+      "description": "Antworten werden nicht bewertet, kein Fortschritt wird gespeichert.",
+      "exit": "Testmodus beenden"
+    },
     "ask_ai": {
       "button": "KI fragen",
       "title": "KI zu diesem Block fragen",
@@ -1942,18 +1947,18 @@
         "submit": "Antworten prüfen",
         "retry": "Erneut versuchen",
         "counter": "{matched} / {total} zugeordnet",
+        "help_toggle": "Wie funktioniert das?",
         "result": "Punktzahl: {correct} / {total}",
         "instructions": "Wähle links ein Element, dann rechts die passende Übersetzung.",
         "left_label": "Begriff",
+        "column_a": "Spalte A",
+        "column_b": "Spalte B",
         "right_label": "Übersetzung",
         "empty": "Diese Zuordnungs-Übung hat keine Paare.",
         "left_label_productive": "Bedeutung",
         "right_label_productive": "Begriff",
-        "left_label_knowledge": "Begriff",
         "correct_hint": "Richtige Antwort: {label}",
         "your_answer": "Deine Antwort: {label}",
-        "right_label_knowledge": "Definition",
-        "instruction_knowledge": "Ordne jeden Begriff seiner Definition zu.",
         "instructions_knowledge": "Wähle links ein Element, dann rechts die passende Zuordnung.",
         "selected_sr": "Ausgewählt: {label}",
         "resolve": "Auflösen",
@@ -2109,6 +2114,9 @@
       "aria_label": "Lektions-Zusammenfassung",
       "score": "Punktzahl",
       "score_bar_aria": "Punktzahl: {pct} Prozent",
+      "score_bar_aria_corrected": "Punktzahl: {pct} Prozent, davon {corrected} nach Korrektur richtig",
+      "score_legend_immediate": "{n} auf Anhieb",
+      "score_legend_corrected": "{n} nach Korrektur",
       "stars_aria": "{n} von 3 Sternen",
       "time": "Zeit",
       "minutes": "{n} Min",
@@ -2186,7 +2194,13 @@
       "title": "Aktualisierung könnte einige Wiederholungen zurücksetzen",
       "message": "Die Aktualisierung von „{title}“ ändert Inhalte, die du bereits lernst. Etwa {cards} Wiederholungskarten und {lessons} Lektionen mit gespeichertem Fortschritt passen nicht mehr zur neuen Version und würden zurückgesetzt. Deine abgeschlossenen Lektionen bleiben; betroffen sind nur die geänderten Wiederholungen.",
       "confirm": "Trotzdem aktualisieren",
-      "cancel": "Aktuelle Version behalten"
+      "cancel": "Aktuelle Version behalten",
+      "carry_over_label": "Gelernten Fortschritt übernehmen",
+      "preview_more": "und {count} weitere",
+      "unmappable": "{count} lassen sich nicht sicher zuordnen und werden zurückgesetzt. Dort hat sich die Reihenfolge oder die Anzahl geändert, deshalb wird nicht geraten.",
+      "carried_over": "Fortschritt übernommen.",
+      "carry_over_failed": "Die Aktualisierung wurde angewendet, der Fortschritt konnte aber nicht übernommen werden.",
+      "retired_archived": "{count} Übungen wurden vom Autor ausgemustert; der zugehörige Lernfortschritt ist archiviert."
     },
     "recovery": {
       "title": "Wiederholungsfortschritt für korrigierte Lektionen wiederherstellen",
@@ -2248,7 +2262,10 @@
       "submit": "Exportieren",
       "working": "Exportiere…",
       "done": "Dein Set wurde ins Repository gepusht.",
-      "failed": "Export fehlgeschlagen."
+      "failed": "Export fehlgeschlagen.",
+      "quality_issues": "Die Qualitätsprüfung hat Mängel gefunden. Content-Repo-Gates würden diese zurückweisen:",
+      "export_anyway": "Trotzdem exportieren",
+      "renamed_note": "Lektionsdateien wurden mit Ordnungs-Präfixen (NN-) umbenannt, damit die Anzeigereihenfolge der Lektionsreihenfolge entspricht."
     },
     "anki_export": {
       "button": "Anki-Export"
@@ -2359,7 +2376,24 @@
       "delete_failed": "Die Lektion konnte nicht gelöscht werden.",
       "delete_aria": "Lektion {title} löschen",
       "play_aria": "Lektion {title} abspielen",
-      "edit_aria": "Lektion {title} bearbeiten"
+      "edit_aria": "Lektion {title} bearbeiten",
+      "bulk_select": "Lektionen auswählen",
+      "bulk_select_all": "Alle auswählen",
+      "bulk_clear": "Auswahl aufheben",
+      "bulk_cancel": "Abbrechen",
+      "bulk_selected": "{n} ausgewählt",
+      "bulk_bar_aria": "Sammelaktionen für Lektionen",
+      "bulk_select_aria": "Lektion {title} auswählen",
+      "bulk_action_delete_n": "{n} löschen",
+      "bulk_title": "{n} Lektionen löschen?",
+      "bulk_confirm_body": "Die ausgewählten Lektionen werden aus dem Set entfernt. Das lässt sich nicht rückgängig machen - ein zuvor erstelltes Backup enthält sie noch.",
+      "bulk_confirm_empties": "Das sind alle Lektionen des Sets, daher wird das gesamte Set gelöscht. Das lässt sich nicht rückgängig machen - ein zuvor erstelltes Backup enthält sie noch.",
+      "bulk_backup_hint": "Tipp: Exportiere vorher ein Backup unter Einstellungen > Daten, falls du diese Lektionen später zurückhaben möchtest.",
+      "bulk_delete_progress_option": "Auch meinen Lernfortschritt für diese Lektionen löschen ({cards} Wiederholungskarten)",
+      "bulk_delete_progress_option_nocounts": "Auch meinen Lernfortschritt für diese Lektionen löschen",
+      "bulk_action_delete": "Lektionen löschen",
+      "bulk_deleted": "{n} Lektionen gelöscht.",
+      "bulk_delete_failed": "Die Lektionen konnten nicht gelöscht werden."
     },
     "lesson_order": {
       "move_up": "Lektion {title} nach oben verschieben",
@@ -2436,7 +2470,8 @@
       "type_cloze": "Lückentext",
       "type_free_text": "Freitext",
       "type_word_tiles": "Wortkacheln",
-      "type_picture_choice": "Bildauswahl"
+      "type_picture_choice": "Bildauswahl",
+      "type_multiple_choice": "Multiple-Choice"
     },
     "save_lesson": {
       "button": "Als Offline-Lektion speichern",
@@ -2555,6 +2590,7 @@
       "back_language_mismatch": "Lektion '{lesson}': Rückseite von Karte '{card}' sieht nicht nach {source} aus.",
       "free_text_too_few_accepts": "Lektion '{lesson}': Freitext-Übung '{exercise}' braucht mindestens {min} akzeptierte Antworten.",
       "matching_too_few_pairs": "Lektion '{lesson}': Zuordnungsübung '{exercise}' braucht mindestens {min} Paare.",
+      "matching_duplicate_left": "Lektion '{lesson}': Zuordnungsübung '{exercise}' wiederholt den linken Wert '{value}' - für Lernende unlösbar.",
       "missing_distractors": "Lektion '{lesson}': Übung '{exercise}' braucht Ablenker (falsche Optionen).",
       "non_cefr_level": "Niveau '{level}' ist keine CEFR-Stufe (A1-C2).",
       "level_too_complex": "Lektion '{lesson}': Text hat im Schnitt {avg} Wörter pro Seite, viel für Niveau {level} (etwa {cap} erwartet).",
@@ -3130,7 +3166,9 @@
       "check_enoughExercises": "Mindestens 5 Übungen",
       "check_enoughTypes": "Mindestens 2 Übungstypen",
       "check_schemaValid": "Gültige Lektionsstruktur",
-      "structure_error": "Technisches Detail"
+      "structure_error": "Technisches Detail",
+      "structure_internal_error": "Beim Prüfen dieser Lektion ist ein interner Fehler aufgetreten. Das ist ein Problem der App, nicht deiner Lektion. Bitte lade die Seite neu und versuche es erneut; wenn es weiterhin auftritt, melde das Problem unten.",
+      "structure_report": "Problem melden"
     },
     "save": {
       "saved": "Lektion gespeichert!",
@@ -3593,8 +3631,7 @@
     "length": "Die Antwort hat {n} Buchstaben",
     "first_letters": "Beginnt mit „{prefix}“ ({n} Buchstaben)",
     "not": "Es ist nicht „{label}“",
-    "item": "Beginne mit „{label}“",
-    "reveal_pair": "„{left}“ gehört zu „{right}“"
+    "item": "Beginne mit „{label}“"
   },
   "favorites": {
     "card_title": "Deine Favoriten",
@@ -3744,19 +3781,43 @@
       "search": "Suchen",
       "filter": "Filtern"
     },
+    "entry": {
+      "label": "Ich möchte",
+      "language": "Sprache lernen",
+      "knowledge": "Fachgebiet",
+      "all": "Alles"
+    },
+    "pairs": {
+      "heading": "Sprachpaare",
+      "select": "{p} auswählen",
+      "choose": "Sprachpaar wählen"
+    },
     "filter": {
       "all": "Alle",
       "language": "Sprache",
+      "target_language": "Zielsprache",
       "all_languages": "Alle Sprachen",
+      "all_target_languages": "Alle Zielsprachen",
       "level": "Niveau",
       "domain": "Bereich",
       "trust": "Vertrauen",
-      "ai_checked": "KI-geprüft"
+      "source": "Quelle",
+      "ai_checked": "KI-geprüft",
+      "review": "Durchsicht"
     },
     "trust": {
       "official": "Offiziell empfohlen",
       "verified": "Verifiziert",
       "validated": "Validiert"
+    },
+    "review": {
+      "no_machine": "Ohne Maschinen-Sets",
+      "reviewed_only": "Nur durchgesehen",
+      "generated_badge": "Maschinell erstellt",
+      "reviewed_badge": "Durchgesehen"
+    },
+    "chips": {
+      "remove": "Entfernen: {f}"
     },
     "sort": {
       "label": "Sortierung",
@@ -3768,15 +3829,28 @@
       "language": "Sprachen",
       "ai": "KI",
       "psychology": "Psychologie",
-      "programming": "Programmierung"
+      "programming": "Programmierung",
+      "knowledge": "Wissen",
+      "math": "Mathematik",
+      "technology": "Technik",
+      "software": "Software",
+      "philosophy": "Philosophie",
+      "dog-training": "Hundetraining",
+      "traffic-knowledge": "Verkehrskunde"
     },
     "result": {
-      "count": "{n} Sets"
+      "count": "{n} Sets",
+      "show_more": "Weitere anzeigen"
     },
     "empty": {
       "no_sets": "Noch keine Inhalte verfügbar.",
       "no_results": "Keine Ergebnisse für „{query}“.",
-      "language_hint": "In dieser Sprache gibt es noch nichts."
+      "language_hint": "In dieser Sprache gibt es noch nichts.",
+      "without_facet": "Ohne {facet}: {n} Sets",
+      "reset_all": "Alle Filter zurücksetzen",
+      "add_source": "Eigene Quelle hinzufügen",
+      "or": "oder",
+      "create_lesson": "eine Lektion anlegen"
     },
     "card": {
       "download": "Herunterladen",

@@ -94,11 +94,11 @@ jobs:
         # oven-sh/setup-bun below, which unpacks the Bun zip (#1829).
         run: apt-get update && apt-get install -y --no-install-recommends make unzip
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
 

@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import { validateExerciseQuality } from "./exercise-quality-gate";
 import type { ExerciseCard } from "./exercise-quality-gate";
+import type { ExtensionCard } from "./extension-cards";
 
 function matching(question: string, n = 3): ExerciseCard {
   return {
@@ -107,5 +108,38 @@ describe("validateExerciseQuality", () => {
     const cards = [freeText("Was bedeutet das Wort?", ["ありがとう"])];
     const { warnings } = validateExerciseQuality(cards);
     expect(warnings.some((w) => w.code === "language_mismatch")).toBe(true);
+  });
+});
+
+describe("validateExerciseQuality — text extensions (#2355)", () => {
+  const readingCard = (passage: string, questions: unknown[]): ExtensionCard => ({
+    type: "ext:al-reading-comprehension",
+    question: "Read and answer.",
+    ext_payload: { passage, questions },
+  });
+
+  it("passes a valid extension card (payload validated via its shipped validator)", () => {
+    const card = readingCard("A passage long enough to read and reason about.", [
+      { prompt: "Q?", type: "free_text", accept: ["an answer"] },
+    ]);
+    const { passed, rejected } = validateExerciseQuality([card]);
+    expect(passed).toHaveLength(1);
+    expect(rejected).toHaveLength(0);
+  });
+
+  it("rejects an extension card whose payload fails its validator (empty passage)", () => {
+    const card = readingCard("", [{ prompt: "Q?", type: "free_text", accept: ["a"] }]);
+    const { passed, rejected } = validateExerciseQuality([card]);
+    expect(passed).toHaveLength(0);
+    expect(rejected).toHaveLength(1);
+  });
+
+  it("dedupes extension cards by prompt", () => {
+    const a = readingCard("Passage one is long enough.", [
+      { prompt: "Q?", type: "free_text", accept: ["x"] },
+    ]);
+    const b = { ...a };
+    const { passed } = validateExerciseQuality([a, b]);
+    expect(passed).toHaveLength(1);
   });
 });

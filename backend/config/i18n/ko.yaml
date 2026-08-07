@@ -1704,6 +1704,10 @@ repo:
     description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
     enable_git: "git 영속화 활성화"
 lesson:
+  test_mode:
+    title: "테스트 모드"
+    description: "답변은 채점되지 않으며 진행 상황이 저장되지 않습니다."
+    exit: "테스트 모드 종료"
   ask_ai:
     button: "AI에게 질문"
     title: "이 내용에 대해 AI에게 질문"
@@ -1804,18 +1808,18 @@ lesson:
       submit: "답 확인"
       retry: "다시 시도"
       counter: "{total}개 중 {matched}개 연결됨"
+      help_toggle: "사용 방법"
       result: "점수: {correct} / {total}"
       instructions: "왼쪽에서 항목을 선택한 다음, 오른쪽에서 일치하는 번역을 선택하세요."
       left_label: "단어"
+      column_a: "A열"
+      column_b: "B열"
       right_label: "번역"
       empty: "이 연결 연습에는 짝이 없습니다."
       left_label_productive: 의미
       right_label_productive: 단어
-      left_label_knowledge: "용어"
       correct_hint: "정답: {label}"
       your_answer: "당신의 답변: {label}"
-      right_label_knowledge: "정의"
-      instruction_knowledge: "각 용어를 그 정의와 연결하세요."
       instructions_knowledge: "왼쪽에서 항목을 선택한 다음, 오른쪽에서 일치하는 것을 선택하세요."
       selected_sr: "선택됨: {label}"
       resolve: "정답 보기"
@@ -1916,6 +1920,9 @@ lesson:
     aria_label: "레슨 요약"
     score: "점수"
     score_bar_aria: "점수: {pct} 퍼센트"
+    score_bar_aria_corrected: "점수: {pct} 퍼센트, 그중 {corrected}개는 교정 후 정답"
+    score_legend_immediate: "{n}개 즉시 정답"
+    score_legend_corrected: "{n}개 교정 후"
     stars_aria: "별 3개 중 {n}개"
     time: "시간"
     minutes: "{n}분"
@@ -2027,6 +2034,12 @@ content:
     message: '"{title}"을(를) 업데이트하면 이미 학습 중인 콘텐츠가 변경됩니다. 저장된 진행 상황이 있는 복습 카드 약 {cards}개와 레슨 {lessons}개가 새 버전과 더 이상 일치하지 않아 초기화됩니다. 완료한 레슨은 유지되며 변경된 복습만 영향을 받습니다.'
     confirm: '그래도 업데이트'
     cancel: '현재 버전 유지'
+    carry_over_label: '여전히 일치하는 학습 기록 이어가기'
+    preview_more: '외 {count}개'
+    unmappable: '{count}개는 확실하게 연결할 수 없어 초기화됩니다. 순서나 개수가 바뀌었으므로 추측하지 않습니다.'
+    carried_over: '학습 기록을 이어갔습니다.'
+    carry_over_failed: '업데이트는 적용되었지만 학습 기록을 이어가지 못했습니다.'
+    retired_archived: '{count}개의 연습 문제가 작성자에 의해 퇴역되었습니다. 관련 학습 진행은 보관되었습니다.'
   recovery:
     title: '수정된 레슨의 복습 진행 상황 복원'
     message: '일본어, 한국어, 중국어(A1) 일부 레슨을 수정했습니다. 변경된 항목에 대해 이미 만든 복습 카드가 더 이상 일치하지 않아 예약되지 않습니다. 수정된 레슨에 다시 연결하거나 세트를 처음부터 다시 시작할 수 있습니다. 이 세트만 영향을 받으며 다른 세트는 그대로 유지됩니다.'
@@ -2082,6 +2095,9 @@ content:
     working: "내보내는 중…"
     done: "세트를 저장소에 푸시했습니다."
     failed: "내보내기 실패."
+    quality_issues: "품질 검사에서 문제가 발견되었습니다. 콘텐츠 저장소 게이트가 이를 거부합니다:"
+    export_anyway: "그래도 내보내기"
+    renamed_note: "표시 순서가 레슨 순서와 일치하도록 레슨 파일 이름에 정렬 접두사(NN-)가 추가되었습니다."
   anki_export:
     button: "Anki 내보내기"
   discover_more: "더 많은 콘텐츠 찾기"
@@ -2181,6 +2197,23 @@ content:
     delete_aria: "레슨 {title} 삭제"
     play_aria: "레슨 {title} 재생"
     edit_aria: "레슨 {title} 편집"
+    bulk_select: "레슨 선택"
+    bulk_select_all: "모두 선택"
+    bulk_clear: "선택 해제"
+    bulk_cancel: "취소"
+    bulk_selected: "{n}개 선택됨"
+    bulk_bar_aria: "레슨 일괄 작업"
+    bulk_select_aria: "레슨 {title} 선택"
+    bulk_action_delete_n: "{n}개 삭제"
+    bulk_title: "레슨 {n}개를 삭제할까요?"
+    bulk_confirm_body: "선택한 레슨이 세트에서 제거됩니다. 이 작업은 되돌릴 수 없습니다 - 이전에 만든 백업에는 아직 남아 있습니다."
+    bulk_confirm_empties: "세트의 모든 레슨이므로 세트 전체가 삭제됩니다. 이 작업은 되돌릴 수 없습니다 - 이전에 만든 백업에는 아직 남아 있습니다."
+    bulk_backup_hint: "팁: 이 레슨을 나중에 되돌리고 싶다면 먼저 설정 > 데이터에서 백업을 내보내세요."
+    bulk_delete_progress_option: "이 레슨의 학습 진행 상황도 삭제 ({cards}개 복습 카드)"
+    bulk_delete_progress_option_nocounts: "이 레슨의 학습 진행 상황도 삭제"
+    bulk_action_delete: "레슨 삭제"
+    bulk_deleted: "레슨 {n}개를 삭제했습니다."
+    bulk_delete_failed: "레슨을 삭제하지 못했습니다."
   lesson_order:
     move_up: "{title} 레슨을 위로 이동"
     move_down: "{title} 레슨을 아래로 이동"
@@ -2252,6 +2285,7 @@ content:
     type_free_text: "자유 입력"
     type_word_tiles: "단어 타일"
     type_picture_choice: "그림 선택"
+    type_multiple_choice: "객관식"
   save_lesson:
     button: "오프라인 레슨으로 저장"
     modal_title: "오프라인 레슨으로 저장"
@@ -2360,6 +2394,7 @@ content:
     back_language_mismatch: "레슨 '{lesson}': 카드 '{card}'의 뒷면이 {source}처럼 보이지 않습니다."
     free_text_too_few_accepts: "레슨 '{lesson}': 자유 입력 연습 '{exercise}'에 허용된 답이 최소 {min}개 필요합니다."
     matching_too_few_pairs: "레슨 '{lesson}': 연결 연습 '{exercise}'에 짝이 최소 {min}개 필요합니다."
+    matching_duplicate_left: "레슨 '{lesson}': 매칭 연습 '{exercise}'에서 왼쪽 값 '{value}'이(가) 중복됩니다. 학습자가 풀 수 없습니다."
     missing_distractors: "레슨 '{lesson}': 연습 '{exercise}'에 오답 보기(틀린 선택지)가 필요합니다."
     non_cefr_level: 레벨 '{level}'은(는) CEFR 등급(A1-C2)이 아닙니다.
     level_too_complex: "레슨 '{lesson}': 텍스트가 한쪽당 평균 {avg}단어로, 레벨 {level}에 비해 높습니다 (약 {cap}개 예상)."
@@ -2880,6 +2915,8 @@ create_lesson:
     check_enoughTypes: "연습 유형 2개 이상"
     check_schemaValid: "유효한 레슨 구조"
     structure_error: "기술적 세부 정보"
+    structure_internal_error: "이 레슨을 확인하는 중 내부 오류가 발생했습니다. 이는 레슨이 아니라 앱의 문제입니다. 페이지를 새로고침한 후 다시 시도하세요. 계속 발생하면 아래에서 문제를 신고해 주세요."
+    structure_report: "문제 신고"
   save:
     saved: "레슨이 저장되었습니다!"
     failed: "레슨을 저장할 수 없었습니다."
@@ -3317,7 +3354,6 @@ hints:
   first_letters: "“{prefix}”로 시작합니다 ({n}글자)"
   not: "“{label}”이(가) 아닙니다"
   item: "“{label}”로 시작하세요"
-  reveal_pair: "“{left}”은(는) “{right}”와(과) 짝입니다"
 
 favorites:
   card_title: "내 즐겨찾기"
@@ -3444,18 +3480,38 @@ discover:
   bar:
     search: "검색"
     filter: "필터"
+  entry:
+    label: "목적"
+    language: "언어 배우기"
+    knowledge: "분야"
+    all: "전체"
+  pairs:
+    heading: "언어 쌍"
+    select: "{p} 선택"
+    choose: "언어 쌍 선택"
   filter:
     all: "전체"
     language: "언어"
+    target_language: "학습 언어"
     all_languages: "모든 언어"
+    all_target_languages: "모든 학습 언어"
     level: "수준"
     domain: "분야"
     trust: "신뢰도"
+    source: "출처"
     ai_checked: "AI 검증됨"
+    review: "검토"
   trust:
     official: "공식 추천"
     verified: "검증됨"
     validated: "확인됨"
+  review:
+    no_machine: "자동 생성 제외"
+    reviewed_only: "검토된 것만"
+    generated_badge: "자동 생성"
+    reviewed_badge: "검토됨"
+  chips:
+    remove: "제거: {f}"
   sort:
     label: "정렬"
     relevance: "관련성"
@@ -3466,12 +3522,25 @@ discover:
     ai: "AI"
     psychology: "심리학"
     programming: "프로그래밍"
+    knowledge: "지식"
+    math: "수학"
+    technology: "기술"
+    software: "소프트웨어"
+    philosophy: "철학"
+    dog-training: "강아지 훈련"
+    traffic-knowledge: "교통 상식"
   result:
     count: "{n}개 세트"
+    show_more: "더 보기"
   empty:
     no_sets: "아직 사용 가능한 콘텐츠가 없습니다."
     no_results: "“{query}”에 대한 결과가 없습니다."
     language_hint: "이 언어로 된 콘텐츠가 아직 없습니다."
+    without_facet: "{facet} 제외: {n}개 세트"
+    reset_all: "모든 필터 재설정"
+    add_source: "내 소스 추가"
+    or: "또는"
+    create_lesson: "레슨 만들기"
   card:
     download: "다운로드"
     downloading: "다운로드 중…"

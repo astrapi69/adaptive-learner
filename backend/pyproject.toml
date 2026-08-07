@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive_learner"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive learning system based on the six-method learning model."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -15,7 +15,7 @@ pydantic = {version = "^2.13.0", extras = ["email"]}
 platformdirs = "^4.2.0"
 pluginforge = "^0.10.0"
 alembic = "^1.18.4"
-cryptography = ">=48,<50"
+cryptography = ">=50,<51"
 ruamel-yaml = "^0.19.0"
 pyyaml = "^6.0"
 
@@ -51,6 +51,10 @@ pip-audit = "^2.10.0"
 pytest-randomly = "^4.1.0"
 pytest-testmon = "^2.2.0"
 datamodel-code-generator = ">=0.68.1,<0.72.0"
+# Exakt gepinnt, nicht "^": die kuratierte Wortliste ist das Orakel der
+# Doku-Hygiene (#2311). Eine schrumpfende Liste saehe sonst aus wie ein
+# Gewinn - siehe quality-checks.md, Fremdwerkzeug-Klasse.
+manuscript-tools = "0.11.0"
 
 [tool.ruff]
 line-length = 100

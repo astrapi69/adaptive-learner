@@ -161,14 +161,12 @@ my-content-repo/
 ## マニフェスト形式
 
 マニフェストのフィールドスキーマ（リポジトリのセットを列挙する
-ルート `manifest.yaml`、および必須・オプションの各フィールド：
-`schema_version`、`name`、そしてセットごとの `id`、`title`、
-`title_native`、`target_language`、`source_language`、`level`、
-`version`、`lesson_count`、`path`、`domain`、`tags`、`book`、
-`visibility`）は、エンジンのリファレンスにあります：
+ルート `manifest.yaml` と、その必須・オプションの全フィールド）は、
+エンジンのリファレンスにあります：
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format)。
-エンジンの厳格なスキーマ（未知のフィールドは拒否される）がそれを
-検証するので、上記のフィールドリストはドリフトできません。言語ペアの
+フィールドの一覧はここでは意図的に繰り返しません。エンジンの厳格な
+スキーマ（未知のフィールドは拒否される）が各マニフェストを検証し、
+エンジンのリファレンスがその唯一の正式な記述です。言語ペアの
 フィールド（`target_language` / `source_language`）は
 「言語ペア」セクションで説明されているとおりに作成してください。
 v1.2 以前の `language` エイリアスも引き続き読み込まれますが、

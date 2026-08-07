@@ -49,12 +49,12 @@ No backup-touching PR merges until a REAL round-trip in `make dev` runs to compl
 
 **Origin**: five consecutive "fixed" backup releases (#49, #57, #64, #115, #117) each shipped with passing unit tests yet none produced a working round-trip in the real app. Synthetic fixtures do not catch schema drift, missing columns, or JSON serialization edge cases that only surface with real user data.
 
-**Coverage status (#2170, recorded 2026-07-30)**: the automated smoke
-spec for this path (`backup-restore.spec.ts`) delivered NO signal from
-2026-05-23 (identity-recovery landed) to 2026-07-30 and is currently
-silenced pending rewrite. Until that rewrite lands, this manual
-round-trip is the ONLY coverage of the backup/restore path - not an
-additional confirmation on top of an automated one.
+**Coverage status (2026-08-05, #2285)**: `backup-restore.spec.ts` is
+live, rewritten against the `.alb` contract (#2247); the skip budget
+is zero. The manual round-trip covers what no browser
+automation sees - standalone mode on a real device, storage eviction
+under pressure. History (why the #2170 gate exists): the spec
+delivered NO signal 2026-05-23 to 2026-07-30 while looking alive.
 
 ### What the test covers
 
@@ -375,8 +375,7 @@ fail-open inside tooling built to prevent fail-open.
 
 Every `.claude/rules/**/*.md` file and `CLAUDE.md` is injected into every
 prompt of every session. The corpus is not a library you consult; it is a
-cost paid on every turn, by every agent, forever. At the time of writing it
-is around 284k characters - roughly 71k tokens per prompt.
+cost paid on every turn, by every agent, forever.
 
 `make verify-rule-corpus-size` ratchets it: the measured total may shrink,
 and the ceiling then follows it down (`make verify-rule-corpus-size` with

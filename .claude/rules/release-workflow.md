@@ -33,7 +33,16 @@ The Step 1-11 detail below is the per-step substance (version bump, changelog, g
 
 ### The develop back-merge goes through a PR (#2182, decided: Variante 1)
 
-`make release-finish` no longer direct-pushes `develop`; it pushes `release/X.Y.Z` and opens a PR to `develop`, then STOPS for develop. Reason: a direct push bypassed the required checks (`enforce_admins=false`), which is how ratchet-tripping changes reached develop ungated (#2180). The back-merge PR runs the required checks like any other; **if a ratchet gate blocks it, that is desired — raise the ratchet's baseline in the release branch and push, do not read the block as a fault.** Merge the PR once green, THEN delete the release branch. The release-test ratchet gates (#2190) catch the normal case before the tag, so a blocked back-merge PR should be rare. Hotfixes back-merge the same way — via a PR to develop, never a direct push. The rejected alternative (a scripted `enforce_admins` off/on toggle) is an automated bypass, not an explained one, and is worse than the open channel because it adds false confidence — see `docs/development/release-ratchet-gap.md`. Closure requires the release manager to enable `enforce_admins` on develop; that decision and its price live in that doc.
+`make release-finish` no longer direct-pushes `develop`; it pushes `release/X.Y.Z` and opens a PR to `develop`, then STOPS for develop. Reason: a direct push bypassed the required checks (`enforce_admins=false`), which is how ratchet-tripping changes reached develop ungated (#2180). The back-merge PR runs the required checks like any other; **if a ratchet gate blocks it, that is desired — raise the ratchet's baseline in the release branch and push, do not read the block as a fault.** Merge the PR once green, THEN delete the release branch. Two things about
+that PR, both learned the hard way on 2026-08-01: **wait for the
+changed-areas detection before reading the check list** - the four test
+contexts are CREATED by it, so for the first minutes "still being
+created" and "will never come" look identical, and only the second is a
+finding; and **verify you are actually ON main before merging the release
+branch into it** - `git checkout main` fails when another worktree holds
+it, the subsequent merge then reports "Already up to date" from the
+release branch itself, and the tag lands on the branch head instead of a
+main merge commit. The release-test ratchet gates (#2190) catch the normal case before the tag, so a blocked back-merge PR should be rare. Hotfixes back-merge the same way — via a PR to develop, never a direct push. The rejected alternative (a scripted `enforce_admins` off/on toggle) is an automated bypass, not an explained one — see `docs/development/release-ratchet-gap.md`. Closed 2026-08-06 (#2182): `enforce_admins` is ON for develop, so the required checks bind admins too; turning it off is a deliberate, visible act, never part of the release script.
 
 ## Ground rules
 
@@ -346,7 +355,7 @@ binaries by itself - the checklist carries the trigger:
 5. COMPLETENESS CHECKPOINT before going visible: the draft's asset list
    MUST equal the expected set - 3 binaries + 3 `.sha256`, the per-arch
    image archives + `.sha256` (the install docs describe the registry-free
-   path as AVAILABLE), and the digest recorded in the notes. Missing
+   path as AVAILABLE), and the `image-digest.txt` asset. Missing
    anything: do not publish - a visible release must not point at
    something absent (the image rule, applied to assets). If archives are
    deliberately deferred, the docs must say "announced", not available.

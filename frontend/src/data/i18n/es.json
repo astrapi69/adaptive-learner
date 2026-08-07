@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "Modo de prueba",
+      "description": "Las respuestas no se evalúan y no se guarda ningún progreso.",
+      "exit": "Salir del modo de prueba"
+    },
     "ask_ai": {
       "button": "Preguntar a la IA",
       "title": "Pregunta a la IA sobre esto",
@@ -1942,18 +1947,18 @@
         "submit": "Comprobar respuestas",
         "retry": "Intentar de nuevo",
         "counter": "{matched} / {total} emparejados",
+        "help_toggle": "Cómo funciona",
         "result": "Puntuación: {correct} / {total}",
         "instructions": "Selecciona un elemento a la izquierda y luego su traducción a la derecha.",
         "left_label": "Término",
+        "column_a": "Columna A",
+        "column_b": "Columna B",
         "right_label": "Traducción",
         "empty": "Este ejercicio no tiene pares.",
         "left_label_productive": "Significado",
         "right_label_productive": "Término",
-        "left_label_knowledge": "Término",
         "correct_hint": "Respuesta correcta: {label}",
         "your_answer": "Tu respuesta: {label}",
-        "right_label_knowledge": "Definición",
-        "instruction_knowledge": "Relaciona cada término con su definición.",
         "instructions_knowledge": "Selecciona un elemento a la izquierda y luego su correspondencia a la derecha.",
         "selected_sr": "Seleccionado: {label}",
         "resolve": "Resolver",
@@ -2109,6 +2114,9 @@
       "aria_label": "Resumen de la lección",
       "score": "Puntuación",
       "score_bar_aria": "Puntuación: {pct} por ciento",
+      "score_bar_aria_corrected": "Puntuación: {pct} por ciento, de los cuales {corrected} correctos tras corregir",
+      "score_legend_immediate": "{n} a la primera",
+      "score_legend_corrected": "{n} tras corregir",
       "stars_aria": "{n} de 3 estrellas",
       "time": "Tiempo",
       "minutes": "{n} min",
@@ -2186,7 +2194,13 @@
       "title": "La actualización puede restablecer parte del repaso",
       "message": "Actualizar «{title}» cambia contenido que ya estás aprendiendo. Unas {cards} tarjetas de repaso y {lessons} lecciones con progreso guardado ya no coinciden con la nueva versión y se restablecerían. Tus lecciones terminadas se mantienen; solo se ven afectados los repasos que cambiaron.",
       "confirm": "Actualizar de todos modos",
-      "cancel": "Conservar la versión actual"
+      "cancel": "Conservar la versión actual",
+      "carry_over_label": "Conservar el progreso que sigue coincidiendo",
+      "preview_more": "y {count} más",
+      "unmappable": "{count} no se pueden asignar con seguridad y se reiniciarán. Ahí cambió el orden o la cantidad, así que no se adivina nada.",
+      "carried_over": "Progreso conservado.",
+      "carry_over_failed": "La actualización se aplicó, pero no se pudo conservar el progreso.",
+      "retired_archived": "{count} ejercicios fueron retirados por el autor; el progreso correspondiente está archivado."
     },
     "recovery": {
       "title": "Restaurar el progreso de repaso de las lecciones corregidas",
@@ -2248,7 +2262,10 @@
       "submit": "Exportar",
       "working": "Exportando…",
       "done": "Tu conjunto se subió al repositorio.",
-      "failed": "Error al exportar."
+      "failed": "Error al exportar.",
+      "quality_issues": "La comprobación de calidad encontró problemas. Las puertas de calidad del repositorio de contenido los rechazarían:",
+      "export_anyway": "Exportar de todos modos",
+      "renamed_note": "Los archivos de lecciones se renombraron con prefijos de orden (NN-) para que el orden de visualización coincida con el orden de las lecciones."
     },
     "anki_export": {
       "button": "Exportar a Anki"
@@ -2359,7 +2376,24 @@
       "delete_failed": "No se pudo eliminar la lección.",
       "delete_aria": "Eliminar la lección {title}",
       "play_aria": "Reproducir la lección {title}",
-      "edit_aria": "Editar la lección {title}"
+      "edit_aria": "Editar la lección {title}",
+      "bulk_select": "Seleccionar lecciones",
+      "bulk_select_all": "Seleccionar todo",
+      "bulk_clear": "Quitar selección",
+      "bulk_cancel": "Cancelar",
+      "bulk_selected": "{n} seleccionadas",
+      "bulk_bar_aria": "Acciones en lote para lecciones",
+      "bulk_select_aria": "Seleccionar la lección {title}",
+      "bulk_action_delete_n": "Eliminar {n}",
+      "bulk_title": "¿Eliminar {n} lecciones?",
+      "bulk_confirm_body": "Las lecciones seleccionadas se eliminarán del conjunto. Esto no se puede deshacer: una copia de seguridad que hayas hecho antes todavía las contiene.",
+      "bulk_confirm_empties": "Son todas las lecciones del conjunto, así que se eliminará el conjunto completo. Esto no se puede deshacer: una copia de seguridad que hayas hecho antes todavía las contiene.",
+      "bulk_backup_hint": "Consejo: exporta antes una copia de seguridad en Ajustes > Datos por si quieres recuperar estas lecciones.",
+      "bulk_delete_progress_option": "Eliminar también mi progreso de aprendizaje de estas lecciones ({cards} tarjetas de repaso)",
+      "bulk_delete_progress_option_nocounts": "Eliminar también mi progreso de aprendizaje de estas lecciones",
+      "bulk_action_delete": "Eliminar lecciones",
+      "bulk_deleted": "{n} lecciones eliminadas.",
+      "bulk_delete_failed": "No se pudieron eliminar las lecciones."
     },
     "lesson_order": {
       "move_up": "Mover la lección {title} hacia arriba",
@@ -2436,7 +2470,8 @@
       "type_cloze": "Rellenar huecos",
       "type_free_text": "Texto libre",
       "type_word_tiles": "Fichas de palabras",
-      "type_picture_choice": "Elección de imagen"
+      "type_picture_choice": "Elección de imagen",
+      "type_multiple_choice": "Opción múltiple"
     },
     "save_lesson": {
       "button": "Guardar como lección sin conexión",
@@ -2555,6 +2590,7 @@
       "back_language_mismatch": "Lección '{lesson}': el reverso de la tarjeta '{card}' no parece estar en {source}.",
       "free_text_too_few_accepts": "Lección '{lesson}': el ejercicio de texto libre '{exercise}' necesita al menos {min} respuestas aceptadas.",
       "matching_too_few_pairs": "Lección '{lesson}': el ejercicio de emparejar '{exercise}' necesita al menos {min} pares.",
+      "matching_duplicate_left": "Lección '{lesson}': el ejercicio de emparejamiento '{exercise}' repite el valor izquierdo '{value}' - irresoluble para el estudiante.",
       "missing_distractors": "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas).",
       "non_cefr_level": "El nivel '{level}' no es una banda CEFR (A1-C2).",
       "level_too_complex": "Lección '{lesson}': el texto promedia {avg} palabras por lado, alto para el nivel {level} (se esperan unas {cap}).",
@@ -3130,7 +3166,9 @@
       "check_enoughExercises": "Al menos 5 ejercicios",
       "check_enoughTypes": "Al menos 2 tipos de ejercicio",
       "check_schemaValid": "Estructura de lección válida",
-      "structure_error": "Detalle técnico"
+      "structure_error": "Detalle técnico",
+      "structure_internal_error": "Se produjo un error interno al comprobar esta lección. Es un problema de la aplicación, no de tu lección. Vuelve a cargar la página e inténtalo de nuevo; si sigue ocurriendo, informa del problema abajo.",
+      "structure_report": "Informar del problema"
     },
     "save": {
       "saved": "¡Lección guardada!",
@@ -3593,8 +3631,7 @@
     "length": "La respuesta tiene {n} letras",
     "first_letters": "Empieza por «{prefix}» ({n} letras)",
     "not": "No es «{label}»",
-    "item": "Empieza con «{label}»",
-    "reveal_pair": "«{left}» va con «{right}»"
+    "item": "Empieza con «{label}»"
   },
   "favorites": {
     "card_title": "Tus favoritos",
@@ -3744,19 +3781,43 @@
       "search": "Buscar",
       "filter": "Filtrar"
     },
+    "entry": {
+      "label": "Quiero",
+      "language": "Aprender un idioma",
+      "knowledge": "Una materia",
+      "all": "Todo"
+    },
+    "pairs": {
+      "heading": "Pares de idiomas",
+      "select": "Elegir {p}",
+      "choose": "Elegir un par de idiomas"
+    },
     "filter": {
       "all": "Todos",
       "language": "Idioma",
+      "target_language": "Idioma meta",
       "all_languages": "Todos los idiomas",
+      "all_target_languages": "Todos los idiomas meta",
       "level": "Nivel",
       "domain": "Área",
       "trust": "Confianza",
-      "ai_checked": "Verificado por IA"
+      "source": "Fuente",
+      "ai_checked": "Verificado por IA",
+      "review": "Revisión"
     },
     "trust": {
       "official": "Recomendado oficialmente",
       "verified": "Verificado",
       "validated": "Validado"
+    },
+    "review": {
+      "no_machine": "Sin sets automáticos",
+      "reviewed_only": "Solo revisados",
+      "generated_badge": "Generado automáticamente",
+      "reviewed_badge": "Revisado"
+    },
+    "chips": {
+      "remove": "Quitar: {f}"
     },
     "sort": {
       "label": "Ordenar",
@@ -3768,15 +3829,28 @@
       "language": "Idiomas",
       "ai": "IA",
       "psychology": "Psicología",
-      "programming": "Programación"
+      "programming": "Programación",
+      "knowledge": "Conocimiento",
+      "math": "Matemáticas",
+      "technology": "Tecnología",
+      "software": "Software",
+      "philosophy": "Filosofía",
+      "dog-training": "Adiestramiento canino",
+      "traffic-knowledge": "Educación vial"
     },
     "result": {
-      "count": "{n} conjuntos"
+      "count": "{n} conjuntos",
+      "show_more": "Mostrar más"
     },
     "empty": {
       "no_sets": "Aún no hay contenido disponible.",
       "no_results": "Sin resultados para «{query}».",
-      "language_hint": "Todavía no hay nada en este idioma."
+      "language_hint": "Todavía no hay nada en este idioma.",
+      "without_facet": "Sin {facet}: {n} conjuntos",
+      "reset_all": "Restablecer todos los filtros",
+      "add_source": "Añade tu propia fuente",
+      "or": "o",
+      "create_lesson": "crea una lección"
     },
     "card": {
       "download": "Descargar",

@@ -113,6 +113,12 @@ Write-Host "  AdaptiveLearner is running!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Open: http://localhost:$port" -ForegroundColor Blue
+Write-Host ""
+Write-Host "  Note: the app listens on 127.0.0.1 only and has no login." -ForegroundColor Yellow
+Write-Host "  To reach it from other devices, deliberately set" -ForegroundColor Yellow
+Write-Host "  ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0 in $InstallDir\.env" -ForegroundColor Yellow
+Write-Host "  - only in a network you trust, or behind your own auth layer." -ForegroundColor Yellow
+Write-Host ""
 Write-Host "  Installed in: $InstallDir"
 Write-Host ""
 Write-Host "  Stop:      cd `"$InstallDir`" ; docker compose -f docker-compose.prod.yml down" -ForegroundColor Yellow

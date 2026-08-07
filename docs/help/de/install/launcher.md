@@ -145,11 +145,10 @@ Bekannte Stolpersteine:
   `install.sh` oder Docker Compose direkt betreiben.
 - **App im Browser nicht erreichbar**: Öffnet der Browser nicht
   automatisch, rufe `http://localhost:8501` von Hand auf (bzw. den im
-  Launcher-Fenster angezeigten Port). Beachte: Die App wird auf allen
-  Netzwerkschnittstellen veröffentlicht, nicht nur auf `localhost`, und
-  sie hat keine Authentifizierung - lass den Port in der Firewall
-  geschlossen, solange du nicht bewusst willst, dass andere Geräte im
-  Netzwerk sie erreichen.
+  Launcher-Fenster angezeigten Port). Standardmäßig lauscht die App nur
+  auf `127.0.0.1` und ist damit nur von diesem Rechner erreichbar;
+  andere Geräte erreichen sie erst, wenn du den Netzwerkzugriff bewusst
+  freischaltest - siehe "Wer die App erreichen kann" oben.
 
 ## macOS
 

@@ -22,6 +22,7 @@ import type {
     LessonProgress,
 } from "../../storage/types";
 import {MATCHING_MIN_PAIRS} from "../exercises/authoring/exercise-edit";
+import {matchesExerciseIdentity} from "../srs/exercise-identity";
 
 /** The failed exercises of a lesson run, in lesson order. Empty when
  *  there's no progress, the lesson was perfect, or only theory steps
@@ -72,15 +73,13 @@ export function openFailedExercises(
     failed: readonly ContentLessonExercise[],
     sessionErrors: readonly ElementError[],
 ): ContentLessonExercise[] {
-    const rowsByExercise = new Map<string, ElementError[]>();
-    for (const row of sessionErrors) {
-        const list = rowsByExercise.get(row.exercise_id) ?? [];
-        list.push(row);
-        rowsByExercise.set(row.exercise_id, list);
-    }
     return failed.filter((exercise) => {
-        const rows = rowsByExercise.get(exercise.id);
-        if (!rows || rows.length === 0) return true; // no live signal → keep
+        // #2130: rows may be keyed by the authored slug (pre-switch) or the
+        // stable_id (post-switch); the exercise answers to either.
+        const rows = sessionErrors.filter((row) =>
+            matchesExerciseIdentity(exercise, row.exercise_id),
+        );
+        if (rows.length === 0) return true; // no live signal → keep
         return rows.some(
             (row) => !row.mastered && (row.correct_streak ?? 0) === 0,
         );
@@ -96,12 +95,15 @@ function isElementStillWrong(row: ElementError): boolean {
 /** The set of still-wrong ``element_key``s for one exercise, drawn from the
  *  live SRS error rows. For matching, ``element_key === pair.left``. */
 function wrongElementKeys(
-    exerciseId: string,
+    exercise: ContentLessonExercise,
     sessionErrors: readonly ElementError[],
 ): Set<string> {
     const keys = new Set<string>();
     for (const row of sessionErrors) {
-        if (row.exercise_id === exerciseId && isElementStillWrong(row)) {
+        if (
+            matchesExerciseIdentity(exercise, row.exercise_id) &&
+            isElementStillWrong(row)
+        ) {
             keys.add(row.element_key);
         }
     }
@@ -157,7 +159,7 @@ export function narrowReplayExercises(
         const pairs = exercise.pairs ?? [];
         if (pairs.length <= MATCHING_MIN_PAIRS) return exercise;
 
-        const wrongKeys = wrongElementKeys(exercise.id, sessionErrors);
+        const wrongKeys = wrongElementKeys(exercise, sessionErrors);
         if (wrongKeys.size === 0) return exercise; // no signal → keep whole
 
         const wrong = pairs.filter((pair) => wrongKeys.has(pair.left));

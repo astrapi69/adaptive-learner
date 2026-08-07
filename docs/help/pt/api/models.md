@@ -14,7 +14,7 @@ detalhe abaixo; os 11 adicionados desde então (importações
 Phase 12+, assuntos/etiquetas Phase 22, gamificação + anki
 Phase 29-30, notebooklm Phase 32) são listados no final por
 nome + tabela. Consulte a especificação OpenAPI em
-`/api/openapi.json` para todos os campos de todos os
+`/openapi.json` para todos os campos de todos os
 modelos.
 
 ## User

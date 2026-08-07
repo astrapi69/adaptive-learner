@@ -2,13 +2,13 @@
 
 # Dağıtım
 
-v1.20.0'da dört dağıtım modu gönderilir:
+Dört dağıtım modu gönderilir:
 
 | Mod | Nerede | Arka uç | AI çağrıları | Anahtar kaynağı |
 |---|---|---|---|---|
 | Yerel geliştirme | `make dev` | :18001'de FastAPI | Sunucu tarafı | env / secrets.yaml / DB |
 | GitHub Pages | `astrapi69.github.io/adaptive-learner/` | Hiçbiri (Dexie) | Tarayıcı doğrudan | DB (IndexedDB) |
-| Masaüstü başlatıcısı | PyInstaller ikili | FastAPI yerel olarak önyüklenmiş | Sunucu tarafı | secrets.yaml (otomatik oluşturulur) / Ayarlar UI |
+| Masaüstü başlatıcısı | PyInstaller ikili (Docker tabanlı) | Docker konteynerinde FastAPI | Sunucu tarafı | `.env` (otomatik oluşturulur) / Ayarlar UI |
 | Docker | Docker Compose kendi kendine barındırma | Konteynerdeki FastAPI | Sunucu tarafı | env / Ayarlar UI |
 
 ## Yerel geliştirme
@@ -60,14 +60,18 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml` şunları gönderir:
+`docker-compose.prod.yml` **tek bir servis, `app`** içerir (#2058
+sonrası tek konteyner - nginx yok, ayrı bir frontend konteyneri
+yok):
 
-- **backend** (Python 3.12 görüntüsünde FastAPI), 7880 portunu
-  açığa çıkarır.
-- **nginx** yardımcı, derlenmiş frontend'i (`frontend/dist/`)
-  sunar ve `/api/*`'yi arka uca proxy yapar.
-- **Konteyner yeniden başlatmalarında hayatta kalan bir SQLite
-  birimi**.
+- **FastAPI (Python 3.12 görüntüsü)**, derlenmiş frontend
+  statics'lerini VE `/api/*`'yi birlikte, iç port
+  `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}` üzerinde sunar.
+- Host'ta yayımlanan port:
+  `${ADAPTIVE_LEARNER_BIND_ADDRESS:-127.0.0.1}:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}` -
+  varsayılan loopback.
+- **Konteyner yeniden kurulumlarında hayatta kalan adlandırılmış
+  `adaptive-learner-data` birimi** (`/app/data`).
 
 `install.sh` ve `install.ps1`, son kullanıcılar için curl-pipe
 yükleyicileridir - etiketli bir sürüm tarbalını çeker, ayarlar
@@ -79,7 +83,7 @@ yeniden oluşturulur. Oluşturulan dosyaları doğrudan düzenlemeyin.
 
 ## Üretim için yapılandırma
 
-Üretim için üç şey önemlidir:
+Üretim için dört şey önemlidir:
 
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: sabit bir Fernet anahtarı
    olmalıdır. Bir kez oluşturun, güvenli bir yerde saklayın
@@ -93,6 +97,12 @@ yeniden oluşturulur. Oluşturulan dosyaları doğrudan düzenlemeyin.
 3. **`ADAPTIVE_LEARNER_DEBUG`**: üretimde ayarlanmamış / false
    bırakın. Debug modu, hata yanıtlarında yığın izlerini açığa
    çıkarır.
+4. **`ADAPTIVE_LEARNER_BIND_ADDRESS`**: varsayılan `127.0.0.1`,
+   yani yayımlanan porta yalnızca host'un kendisinden erişilebilir.
+   Uygulamada kimlik doğrulaması yoktur - `0.0.0.0` bağlamayı
+   yalnızca bilinçli olarak, güvenilir bir ağda ya da kendi kimlik
+   doğrulama katmanının (basic auth'lu reverse proxy, VPN) arkasında
+   yapın.
 
 Konteynerler için env değişkenleri deyimsel enjeksiyon kanalıdır.
 `~/.config/adaptive_learner/secrets.yaml` katmanı, masaüstü /
@@ -102,12 +112,18 @@ bir konteynere bağlayabilirsiniz.
 
 ## Masaüstü başlatıcısı
 
-`launcher/` altındaki PyInstaller ikilileri, `http://localhost:7880`
-adresinde yerel bir FastAPI önyükler, ardından kullanıcının varsayılan
-tarayıcısını açar. İlk başlatmada başlatıcı ayrıca POSIX'te
-`~/.config/adaptive-learner/secrets.yaml`'ı yorumlanmış şablon
-olarak + `chmod 0600` olarak oluşturur, böylece kullanıcı API
-anahtarlarını Ayarlar UI'ına dokunmadan oraya ekleyebilir.
+`launcher/`, PyInstaller tabanlı tek ikili bir masaüstü
+başlatıcısıdır. Gömülü bir sunucu değildir - yayımlanmış
+`docker-app-launcher` motoru etrafında ince bir sarmalayıcıdır ve
+`launcher/launcher.json` ile yapılandırılır. Gönderilen
+yapılandırma **image modunda** (`deployment_mode: "image"`)
+çalışır: başlatıcı, hazır derlenmiş ve doğrulanmış sürüm
+imajını (`ghcr.io/astrapi69/adaptive-learner:<sürüm>`, gömülü
+uygulama sürümüne sabitlenmiş) çeker ve Docker konteyneri olarak
+başlatır (varsayılan `http://localhost:8501`), veri birimi
+`adaptive-learner-data` `/app/data`'ya bağlanır; ardından
+kullanıcının varsayılan tarayıcısını açar. Yerelde hiçbir şey
+derlenmez, kaynak kod indirilmez ve hiçbir şey çıkarılmaz.
 
 Tam üç katmanlı yapılandırma zinciri (proje YAML < kullanıcı
 katmanı < env değişkenleri) `docs/configuration.md`'de
@@ -123,9 +139,11 @@ GitHub Actions, sürüm başına üç ikili derler:
 - `launcher-windows.yml` → `adaptive-learner-launcher.exe`
 
 Her başlatıcı, sürümü gömer (`__version__` değişmezi + spec
-dosyası tarafından derleme zamanında yazılan `_build_info.py`)
-ve eşleşen etiketli sürüm tarbalını getirir + çıkarır + arka
-ucu önyükler + kullanıcının tarayıcısında frontend'i açar.
+dosyası tarafından derleme zamanında yazılan `_build_info.py`).
+Motor ayrıca GitHub Releases API'sine karşı arka planda bir
+güncelleme denetimi yürütür (`launcher.json` içindeki
+`update_check_enabled` ile etkinleştirilir); herhangi bir hatada
+sessizce başarısız olur ve başlatıcıyı asla engellemez.
 
 ## CI/CD mimarisi
 

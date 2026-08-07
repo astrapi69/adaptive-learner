@@ -1693,6 +1693,10 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  test_mode:
+    title: "Test modu"
+    description: "Yanıtlar değerlendirilmez ve ilerleme kaydedilmez."
+    exit: "Test modundan çık"
   ask_ai:
     button: "Yapay zekâya sor"
     title: "Bunu yapay zekâya sor"
@@ -1793,18 +1797,18 @@ lesson:
       submit: "Cevapları kontrol et"
       retry: "Tekrar dene"
       counter: "{total} eşleşmeden {matched}"
+      help_toggle: "Nasıl çalışır"
       result: "Puan: {correct} / {total}"
       instructions: "Soldan bir öğe seç, ardından sağdan eşleşen çevirisini seç."
       left_label: "Terim"
+      column_a: "Sütun A"
+      column_b: "Sütun B"
       right_label: "Çeviri"
       empty: "Bu alıştırmada eşleşme yok."
       left_label_productive: Anlam
       right_label_productive: Terim
-      left_label_knowledge: "Terim"
       correct_hint: "Doğru yanıt: {label}"
       your_answer: "Senin yanıtın: {label}"
-      right_label_knowledge: "Tanım"
-      instruction_knowledge: "Her terimi tanımıyla eşleştir."
       instructions_knowledge: "Soldan bir öğe seç, ardından sağdaki eşini seç."
       selected_sr: "Seçildi: {label}"
       resolve: "Çöz"
@@ -1943,6 +1947,9 @@ lesson:
     aria_label: "Ders özeti"
     score: "Puan"
     score_bar_aria: "Puan: yüzde {pct}"
+    score_bar_aria_corrected: "Puan: yüzde {pct}, bunların {corrected} tanesi düzeltmeden sonra doğru"
+    score_legend_immediate: "{n} ilk denemede"
+    score_legend_corrected: "{n} düzeltmeden sonra"
     stars_aria: "3 yıldızdan {n}"
     time: "Süre"
     minutes: "{n} dk"
@@ -2016,6 +2023,12 @@ content:
     message: '"{title}" güncellemesi, zaten öğrenmekte olduğun içeriği değiştirir. Kayıtlı ilerlemesi olan yaklaşık {cards} tekrar kartı ve {lessons} ders yeni sürümle artık eşleşmez ve sıfırlanır. Tamamladığın dersler kalır; yalnızca değişen tekrarlar etkilenir.'
     confirm: 'Yine de güncelle'
     cancel: 'Mevcut sürümü koru'
+    carry_over_label: 'Hâlâ eşleşen ilerlemeyi koru'
+    preview_more: 've {count} tane daha'
+    unmappable: '{count} tanesi güvenle eşleştirilemiyor ve sıfırlanacak. Orada sıra veya sayı değişti, bu yüzden tahmin yürütülmüyor.'
+    carried_over: 'İlerleme korundu.'
+    carry_over_failed: 'Güncelleme uygulandı, ancak ilerleme korunamadı.'
+    retired_archived: '{count} alıştırma yazar tarafından emekliye ayrıldı; ilgili ilerleme arşivlendi.'
   recovery:
     title: 'Düzeltilen dersler için tekrar ilerlemesini geri yükle'
     message: 'Bazı Japonca, Korece ve Çince (A1) derslerini düzelttik. Değişen ögeler için oluşturduğunuz tekrar kartları artık eşleşmiyor ve bu yüzden planlanmıyor. Bunları düzeltilmiş derslerle yeniden bağlayabilir ya da bir seti baştan başlatabilirsiniz. Yalnızca bu setler etkilenir; diğer setleriniz olduğu gibi kalır.'
@@ -2071,6 +2084,9 @@ content:
     working: "Dışa aktarılıyor…"
     done: "Setiniz depoya gönderildi."
     failed: "Dışa aktarma başarısız."
+    quality_issues: "Kalite denetimi sorunlar buldu. İçerik deposu kapıları bunları reddederdi:"
+    export_anyway: "Yine de dışa aktar"
+    renamed_note: "Görüntüleme sırası ders sırasıyla eşleşsin diye ders dosyaları sıralama önekleriyle (NN-) yeniden adlandırıldı."
   anki_export:
     button: "Anki dışa aktarma"
   discover_more: "Daha fazla içerik bul"
@@ -2170,6 +2186,23 @@ content:
     delete_aria: "{title} dersini sil"
     play_aria: "{title} dersini oynat"
     edit_aria: "{title} dersini düzenle"
+    bulk_select: "Dersleri seç"
+    bulk_select_all: "Tümünü seç"
+    bulk_clear: "Seçimi kaldır"
+    bulk_cancel: "İptal"
+    bulk_selected: "{n} seçili"
+    bulk_bar_aria: "Toplu ders işlemleri"
+    bulk_select_aria: "{title} dersini seç"
+    bulk_action_delete_n: "{n} tanesini sil"
+    bulk_title: "{n} ders silinsin mi?"
+    bulk_confirm_body: "Seçilen dersler setten kaldırılacak. Bu geri alınamaz - daha önce aldığınız bir yedek onları hâlâ içerir."
+    bulk_confirm_empties: "Bunlar setteki tüm derslerdir, bu yüzden setin tamamı silinecek. Bu geri alınamaz - daha önce aldığınız bir yedek onları hâlâ içerir."
+    bulk_backup_hint: "İpucu: Bu dersleri geri isteyebileceğinizi düşünüyorsanız önce Ayarlar > Veriler bölümünden bir yedek dışa aktarın."
+    bulk_delete_progress_option: "Bu derslere ait öğrenme ilerlememi de sil ({cards} tekrar kartı)"
+    bulk_delete_progress_option_nocounts: "Bu derslere ait öğrenme ilerlememi de sil"
+    bulk_action_delete: "Dersleri sil"
+    bulk_deleted: "{n} ders silindi."
+    bulk_delete_failed: "Dersler silinemedi."
   lesson_order:
     move_up: "{title} dersini yukarı taşı"
     move_down: "{title} dersini aşağı taşı"
@@ -2241,6 +2274,7 @@ content:
     type_free_text: "Serbest metin"
     type_word_tiles: "Kelime kartları"
     type_picture_choice: "Resim seçimi"
+    type_multiple_choice: "Çoktan seçmeli"
   save_lesson:
     button: "Çevrimdışı ders olarak kaydet"
     modal_title: "Çevrimdışı ders olarak kaydet"
@@ -2349,6 +2383,7 @@ content:
     back_language_mismatch: "'{lesson}' dersi: '{card}' kartının arka yüzü {source} gibi görünmüyor."
     free_text_too_few_accepts: "'{lesson}' dersi: serbest metin alıştırması '{exercise}' en az {min} kabul edilen yanıt gerektirir."
     matching_too_few_pairs: "'{lesson}' dersi: eşleştirme alıştırması '{exercise}' en az {min} çift gerektirir."
+    matching_duplicate_left: "'{lesson}' dersi: '{exercise}' eşleştirme alıştırması sol değeri '{value}' tekrarlıyor - öğrenci için çözülemez."
     missing_distractors: "'{lesson}' dersi: '{exercise}' alıştırması çeldirici (yanlış seçenek) gerektirir."
     non_cefr_level: "'{level}' seviyesi bir CEFR bandı değil (A1-C2)."
     level_too_complex: "'{lesson}' dersi: metin sayfa başına ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir)."
@@ -2870,6 +2905,8 @@ create_lesson:
     check_enoughTypes: "En az 2 alıştırma türü"
     check_schemaValid: "Geçerli ders yapısı"
     structure_error: "Teknik ayrıntı"
+    structure_internal_error: "Bu ders denetlenirken bir iç hata oluştu. Bu, dersinizle değil uygulamayla ilgili bir sorundur. Lütfen sayfayı yeniden yükleyip tekrar deneyin; sorun devam ederse aşağıdan bildirin."
+    structure_report: "Sorunu bildir"
   save:
     saved: "Ders kaydedildi!"
     failed: "Ders kaydedilemedi."
@@ -3307,7 +3344,6 @@ hints:
   first_letters: "“{prefix}” ile başlıyor ({n} harf)"
   not: "“{label}” değil"
   item: "“{label}” ile başla"
-  reveal_pair: "“{left}” → “{right}”"
 
 favorites:
   card_title: "Favorilerin"
@@ -3434,18 +3470,38 @@ discover:
   bar:
     search: "Ara"
     filter: "Filtrele"
+  entry:
+    label: "Amacım"
+    language: "Dil öğrenmek"
+    knowledge: "Bir konu"
+    all: "Her şey"
+  pairs:
+    heading: "Dil çiftleri"
+    select: "{p} seçin"
+    choose: "Bir dil çifti seçin"
   filter:
     all: "Tümü"
     language: "Dil"
+    target_language: "Hedef dil"
     all_languages: "Tüm diller"
+    all_target_languages: "Tüm hedef diller"
     level: "Seviye"
     domain: "Alan"
     trust: "Güven"
+    source: "Kaynak"
     ai_checked: "Yapay zeka kontrollü"
+    review: "İnceleme"
   trust:
     official: "Resmi olarak önerilen"
     verified: "Doğrulanmış"
     validated: "Onaylanmış"
+  review:
+    no_machine: "Otomatik setler hariç"
+    reviewed_only: "Yalnızca incelenenler"
+    generated_badge: "Otomatik oluşturuldu"
+    reviewed_badge: "İncelendi"
+  chips:
+    remove: "Kaldır: {f}"
   sort:
     label: "Sırala"
     relevance: "İlgililik"
@@ -3456,12 +3512,25 @@ discover:
     ai: "Yapay zeka"
     psychology: "Psikoloji"
     programming: "Programlama"
+    knowledge: "Bilgi"
+    math: "Matematik"
+    technology: "Teknoloji"
+    software: "Yazılım"
+    philosophy: "Felsefe"
+    dog-training: "Köpek eğitimi"
+    traffic-knowledge: "Trafik bilgisi"
   result:
     count: "{n} set"
+    show_more: "Daha fazla göster"
   empty:
     no_sets: "Henüz içerik yok."
     no_results: "“{query}” için sonuç yok."
     language_hint: "Bu dilde henüz bir şey yok."
+    without_facet: "{facet} olmadan: {n} set"
+    reset_all: "Tüm filtreleri sıfırla"
+    add_source: "Kendi kaynağını ekle"
+    or: "veya"
+    create_lesson: "bir ders oluştur"
   card:
     download: "İndir"
     downloading: "İndiriliyor…"

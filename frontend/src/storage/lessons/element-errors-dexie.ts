@@ -21,6 +21,7 @@ import type {
     ElementAttempt,
     ElementError,
     ElementKeyRemap,
+    ExerciseIdRemap,
     ReviewQueueItem,
 } from "../types";
 
@@ -76,6 +77,7 @@ function rowToWire(row: ElementErrorRow): ElementError {
         last_attempt_exam: row.last_attempt_exam ?? false,
         attempt_count: row.attempt_count ?? 0,
         attempt_history: row.attempt_history ?? [],
+        retired_at: row.retired_at ?? null,
         created_at: row.created_at,
         updated_at: row.updated_at,
     };
@@ -276,11 +278,61 @@ export async function remapElementKeysDexie(
     return {applied, skipped};
 }
 
+/**
+ * #2130 stable_id key switch: rewrite ``exercise_id`` old -> new for EVERY
+ * row of the exercise (all element_keys + both drill directions) in one
+ * ``rw`` transaction (all-or-nothing). A row is SKIPPED (never overwritten)
+ * when a row already exists under the new exercise id with the same
+ * element_key + direction, so no two histories collapse (no double-map) and
+ * a re-run is a no-op (idempotent). Returns the counts.
+ */
+export async function remapExerciseIdsDexie(
+    userId: string,
+    remaps: readonly ExerciseIdRemap[],
+): Promise<{applied: number; skipped: number}> {
+    if (remaps.length === 0) return {applied: 0, skipped: 0};
+    const db = getDb();
+    let applied = 0;
+    let skipped = 0;
+    await db.transaction("rw", db.elementErrors, async () => {
+        for (const remap of remaps) {
+            const rows = await db.elementErrors
+                .where("[user_id+set_id]")
+                .equals([userId, remap.set_id])
+                .toArray();
+            const affected = rows.filter(
+                (row) =>
+                    row.lesson_id === remap.lesson_id &&
+                    row.exercise_id === remap.old,
+            );
+            for (const row of affected) {
+                const direction = row.direction ?? "target_to_source";
+                const newId = [
+                    userId, remap.set_id, remap.lesson_id, remap.new, row.element_key, direction,
+                ].join("#");
+                if (row.id === newId) continue; // no-op mapping, nothing to do
+                const existingNew = await db.elementErrors.get(newId);
+                if (existingNew) {
+                    skipped += 1; // target already present -> never collapse
+                    continue;
+                }
+                await db.elementErrors.put({...row, id: newId, exercise_id: remap.new});
+                await db.elementErrors.delete(row.id);
+                applied += 1;
+            }
+        }
+    });
+    return {applied, skipped};
+}
+
 export interface ListElementErrorsOpts {
     setId?: string;
     /** Default true — pass false to exclude mastered elements
      *  (the C11 review-queue path). */
     includeMastered?: boolean;
+    /** #2188 — default false: archived (author-retired) rows leave every
+     *  default read. Pass true for archive views. */
+    includeRetired?: boolean;
 }
 
 export async function listElementErrorsDexie(
@@ -303,8 +355,42 @@ export async function listElementErrorsDexie(
     if (opts.includeMastered === false) {
         rows = rows.filter((r) => !r.mastered);
     }
+    if (opts.includeRetired !== true) {
+        rows = rows.filter((r) => !r.retired_at);
+    }
     rows.sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1));
     return rows.map(rowToWire);
+}
+
+/**
+ * #2188 — archive the learner's rows for identities the author retired via
+ * the set manifest's ``retired_ids``. Stamps ``retired_at`` in ONE ``rw``
+ * transaction; already-archived rows are untouched (idempotent). Archived
+ * rows keep their history but leave the default list + the review queue.
+ * Returns the count of rows newly archived.
+ */
+export async function archiveRetiredDexie(
+    userId: string,
+    setId: string,
+    retiredIds: readonly string[],
+): Promise<{archived: number}> {
+    if (retiredIds.length === 0) return {archived: 0};
+    const db = getDb();
+    const retired = new Set(retiredIds);
+    let archived = 0;
+    await db.transaction("rw", db.elementErrors, async () => {
+        const rows = await db.elementErrors
+            .where("[user_id+set_id]")
+            .equals([userId, setId])
+            .toArray();
+        const nowIso = new Date().toISOString();
+        for (const row of rows) {
+            if (!retired.has(row.exercise_id) || row.retired_at) continue;
+            await db.elementErrors.put({...row, retired_at: nowIso});
+            archived += 1;
+        }
+    });
+    return {archived};
 }
 
 // --- Phase 46C / C12: SRS review-queue computation ---------------------
@@ -404,7 +490,8 @@ export async function computeReviewQueueDexie(
             .equals(userId)
             .toArray();
     }
-    rows = rows.filter((r) => !r.mastered);
+    // #2188 — archived (author-retired) rows never schedule.
+    rows = rows.filter((r) => !r.mastered && !r.retired_at);
     const items = rows.map((r) => _projectReviewItem(r, nowIso));
     // Sort (mirrors the backend ``element_srs._sort_key``, #603):
     // overdue first → weakness tier (wrong > almost-right > correct) →

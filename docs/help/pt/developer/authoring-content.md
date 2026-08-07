@@ -160,14 +160,12 @@ dos conjuntos; um PR ao repo oficial regenera-o.
 ## Formato do manifesto
 
 O esquema de campos do manifesto (o `manifest.yaml` raiz que lista os
-conjuntos do repo, e cada campo obrigatório e opcional:
-`schema_version`, `name`, e por conjunto `id`, `title`,
-`title_native`, `target_language`, `source_language`, `level`,
-`version`, `lesson_count`, `path`, `domain`, `tags`, `book`,
-`visibility`) fica na referência da engine:
+conjuntos do repo, com cada campo obrigatório e opcional) fica na
+referência da engine:
 [learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
-O esquema estrito da engine (campos desconhecidos são rejeitados)
-valida-o, por isso a lista de campos acima não pode derivar. Cria os
+A lista de campos não é repetida aqui de propósito: o esquema estrito
+da engine (campos desconhecidos são rejeitados) valida cada manifesto,
+e a referência da engine é a sua única descrição autoritativa. Cria os
 campos do par de idiomas (`target_language` / `source_language`) como
 descrito em [Pares de idiomas](#pares-de-idiomas-v1440); o alias
 `language` anterior à v1.2 ainda carrega mas é desaconselhado para

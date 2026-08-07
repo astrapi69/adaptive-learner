@@ -1704,6 +1704,10 @@ repo:
     description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
     enable_git: "Aktifkan persistensi git"
 lesson:
+  test_mode:
+    title: "Mode uji"
+    description: "Jawaban tidak dinilai dan tidak ada kemajuan yang disimpan."
+    exit: "Keluar dari mode uji"
   ask_ai:
     button: "Tanya AI"
     title: "Tanya AI tentang ini"
@@ -1804,18 +1808,18 @@ lesson:
       submit: "Periksa jawaban"
       retry: "Coba lagi"
       counter: "{matched} / {total} dipasangkan"
+      help_toggle: "Cara kerjanya"
       result: "Skor: {correct} / {total}"
       instructions: "Pilih item di sebelah kiri, lalu terjemahan yang cocok di sebelah kanan."
       left_label: "Istilah"
+      column_a: "Kolom A"
+      column_b: "Kolom B"
       right_label: "Terjemahan"
       empty: "Latihan mencocokkan ini tidak memiliki pasangan."
       left_label_productive: Makna
       right_label_productive: Istilah
-      left_label_knowledge: "Istilah"
       correct_hint: "Jawaban yang benar: {label}"
       your_answer: "Jawaban Anda: {label}"
-      right_label_knowledge: "Definisi"
-      instruction_knowledge: "Cocokkan setiap istilah dengan definisinya."
       instructions_knowledge: "Pilih item di sebelah kiri, lalu pasangannya di sebelah kanan."
       selected_sr: "Dipilih: {label}"
       resolve: "Selesaikan"
@@ -1916,6 +1920,9 @@ lesson:
     aria_label: "Ringkasan pelajaran"
     score: "Skor"
     score_bar_aria: "Skor: {pct} persen"
+    score_bar_aria_corrected: "Skor: {pct} persen, dengan {corrected} benar setelah dikoreksi"
+    score_legend_immediate: "{n} langsung benar"
+    score_legend_corrected: "{n} setelah dikoreksi"
     stars_aria: "{n} dari 3 bintang"
     time: "Waktu"
     minutes: "{n} mnt"
@@ -2027,6 +2034,12 @@ content:
     message: 'Memperbarui "{title}" mengubah materi yang sedang kamu pelajari. Sekitar {cards} kartu ulasan dan {lessons} pelajaran dengan progres tersimpan tidak lagi cocok dengan versi baru dan akan diatur ulang. Pelajaran yang sudah selesai tetap ada; hanya ulasan yang berubah yang terpengaruh.'
     confirm: 'Perbarui saja'
     cancel: 'Pertahankan versi saat ini'
+    carry_over_label: 'Pertahankan kemajuan yang masih cocok'
+    preview_more: 'dan {count} lainnya'
+    unmappable: '{count} tidak dapat dipetakan dengan pasti dan akan direset. Urutan atau jumlahnya berubah di sana, jadi tidak ada yang ditebak.'
+    carried_over: 'Kemajuan dipertahankan.'
+    carry_over_failed: 'Pembaruan diterapkan, tetapi kemajuan tidak dapat dipertahankan.'
+    retired_archived: '{count} latihan telah dipensiunkan oleh penulis; kemajuan terkait diarsipkan.'
   recovery:
     title: 'Pulihkan progres ulasan untuk pelajaran yang diperbaiki'
     message: 'Kami memperbaiki beberapa pelajaran bahasa Jepang, Korea, dan Tionghoa (A1). Kartu ulasan yang sudah Anda buat untuk item yang berubah tidak lagi cocok sehingga tidak dijadwalkan. Anda dapat menautkannya kembali ke pelajaran yang diperbaiki atau memulai ulang satu set. Hanya set ini yang terpengaruh; set Anda yang lain tetap utuh.'
@@ -2082,6 +2095,9 @@ content:
     working: "Mengekspor…"
     done: "Set Anda telah didorong ke repositori."
     failed: "Ekspor gagal."
+    quality_issues: "Pemeriksaan kualitas menemukan masalah. Gerbang kualitas repositori konten akan menolaknya:"
+    export_anyway: "Tetap ekspor"
+    renamed_note: "File pelajaran diganti namanya dengan awalan urutan (NN-) agar urutan tampilan sesuai dengan urutan pelajaran."
   anki_export:
     button: "Ekspor Anki"
   discover_more: "Temukan konten lainnya"
@@ -2181,6 +2197,23 @@ content:
     delete_aria: "Hapus pelajaran {title}"
     play_aria: "Putar pelajaran {title}"
     edit_aria: "Edit pelajaran {title}"
+    bulk_select: "Pilih pelajaran"
+    bulk_select_all: "Pilih semua"
+    bulk_clear: "Hapus pilihan"
+    bulk_cancel: "Batal"
+    bulk_selected: "{n} dipilih"
+    bulk_bar_aria: "Tindakan massal pelajaran"
+    bulk_select_aria: "Pilih pelajaran {title}"
+    bulk_action_delete_n: "Hapus {n}"
+    bulk_title: "Hapus {n} pelajaran?"
+    bulk_confirm_body: "Pelajaran yang dipilih akan dihapus dari set. Ini tidak dapat dibatalkan - cadangan yang Anda buat sebelumnya masih memuatnya."
+    bulk_confirm_empties: "Ini semua pelajaran dalam set, jadi seluruh set akan dihapus. Ini tidak dapat dibatalkan - cadangan yang Anda buat sebelumnya masih memuatnya."
+    bulk_backup_hint: "Tips: ekspor cadangan dulu di Pengaturan > Data jika Anda mungkin ingin mengembalikan pelajaran ini."
+    bulk_delete_progress_option: "Hapus juga progres belajar saya untuk pelajaran ini ({cards} kartu ulasan)"
+    bulk_delete_progress_option_nocounts: "Hapus juga progres belajar saya untuk pelajaran ini"
+    bulk_action_delete: "Hapus pelajaran"
+    bulk_deleted: "{n} pelajaran dihapus."
+    bulk_delete_failed: "Tidak dapat menghapus pelajaran."
   lesson_order:
     move_up: "Pindahkan pelajaran {title} ke atas"
     move_down: "Pindahkan pelajaran {title} ke bawah"
@@ -2252,6 +2285,7 @@ content:
     type_free_text: "Teks bebas"
     type_word_tiles: "Ubin kata"
     type_picture_choice: "Pilihan gambar"
+    type_multiple_choice: "Pilihan ganda"
   save_lesson:
     button: "Simpan sebagai Pelajaran Luring"
     modal_title: "Simpan sebagai pelajaran luring"
@@ -2360,6 +2394,7 @@ content:
     back_language_mismatch: "Pelajaran '{lesson}': sisi belakang kartu '{card}' tidak tampak seperti {source}."
     free_text_too_few_accepts: "Pelajaran '{lesson}': latihan teks bebas '{exercise}' memerlukan setidaknya {min} jawaban yang diterima."
     matching_too_few_pairs: "Pelajaran '{lesson}': latihan pencocokan '{exercise}' memerlukan setidaknya {min} pasangan."
+    matching_duplicate_left: "Pelajaran '{lesson}': latihan mencocokkan '{exercise}' mengulang nilai kiri '{value}' - tidak dapat diselesaikan oleh pelajar."
     missing_distractors: "Pelajaran '{lesson}': latihan '{exercise}' memerlukan pengecoh (pilihan salah)."
     non_cefr_level: Tingkat '{level}' bukan jenjang CEFR (A1-C2).
     level_too_complex: "Pelajaran '{lesson}': teks rata-rata {avg} kata per halaman, tinggi untuk tingkat {level} (sekitar {cap} diharapkan)."
@@ -2880,6 +2915,8 @@ create_lesson:
     check_enoughTypes: "Setidaknya 2 jenis latihan"
     check_schemaValid: "Struktur pelajaran valid"
     structure_error: "Detail teknis"
+    structure_internal_error: "Terjadi kesalahan internal saat memeriksa pelajaran ini. Ini masalah pada aplikasi, bukan pada pelajaran Anda. Muat ulang halaman dan coba lagi; jika terus terjadi, laporkan masalahnya di bawah."
+    structure_report: "Laporkan masalah ini"
   save:
     saved: "Pelajaran disimpan!"
     failed: "Tidak dapat menyimpan pelajaran."
@@ -3317,7 +3354,6 @@ hints:
   first_letters: "Diawali dengan “{prefix}” ({n} huruf)"
   not: "Bukan “{label}”"
   item: "Mulai dengan “{label}”"
-  reveal_pair: "“{left}” berpasangan dengan “{right}”"
 
 favorites:
   card_title: "Favoritmu"
@@ -3444,18 +3480,38 @@ discover:
   bar:
     search: "Cari"
     filter: "Filter"
+  entry:
+    label: "Saya ingin"
+    language: "Belajar bahasa"
+    knowledge: "Suatu bidang"
+    all: "Semua"
+  pairs:
+    heading: "Pasangan bahasa"
+    select: "Pilih {p}"
+    choose: "Pilih pasangan bahasa"
   filter:
     all: "Semua"
     language: "Bahasa"
+    target_language: "Bahasa target"
     all_languages: "Semua bahasa"
+    all_target_languages: "Semua bahasa target"
     level: "Tingkat"
     domain: "Bidang"
     trust: "Kepercayaan"
+    source: "Sumber"
     ai_checked: "Diperiksa AI"
+    review: "Tinjauan"
   trust:
     official: "Direkomendasikan secara resmi"
     verified: "Terverifikasi"
     validated: "Tervalidasi"
+  review:
+    no_machine: "Tanpa set mesin"
+    reviewed_only: "Hanya yang ditinjau"
+    generated_badge: "Buatan mesin"
+    reviewed_badge: "Ditinjau"
+  chips:
+    remove: "Hapus: {f}"
   sort:
     label: "Urutkan"
     relevance: "Relevansi"
@@ -3466,12 +3522,25 @@ discover:
     ai: "AI"
     psychology: "Psikologi"
     programming: "Pemrograman"
+    knowledge: "Pengetahuan"
+    math: "Matematika"
+    technology: "Teknologi"
+    software: "Perangkat lunak"
+    philosophy: "Filsafat"
+    dog-training: "Pelatihan anjing"
+    traffic-knowledge: "Pengetahuan lalu lintas"
   result:
     count: "{n} set"
+    show_more: "Tampilkan lainnya"
   empty:
     no_sets: "Belum ada konten tersedia."
     no_results: "Tidak ada hasil untuk “{query}”."
     language_hint: "Belum ada apa pun dalam bahasa ini."
+    without_facet: "Tanpa {facet}: {n} set"
+    reset_all: "Setel ulang semua filter"
+    add_source: "Tambahkan sumber Anda sendiri"
+    or: "atau"
+    create_lesson: "buat pelajaran"
   card:
     download: "Unduh"
     downloading: "Mengunduh…"

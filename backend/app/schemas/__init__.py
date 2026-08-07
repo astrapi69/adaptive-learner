@@ -1703,6 +1703,39 @@ class ElementKeyRemapResult(BaseModel):
     skipped: int
 
 
+class ExerciseIdRemapIn(BaseModel):
+    """One #2130 stable_id key-switch remap: rewrite ``exercise_id`` from
+    ``old`` (the authored slug the rows were recorded under) to ``new`` (the
+    exercise's ``stable_id``) for a specific (set, lesson)."""
+
+    set_id: str
+    lesson_id: str
+    old: str
+    new: str
+
+
+class ExerciseIdRemapsIn(BaseModel):
+    """Bulk body for the #2130 key switch. One call carries all remaps for a
+    single set (the caller applies per set, atomically)."""
+
+    remaps: list[ExerciseIdRemapIn] = Field(..., min_length=1, max_length=1000)
+
+
+class ArchiveRetiredIn(BaseModel):
+    """#2188: archive the learner's rows for the identities the author
+    retired via the set manifest's ``retired_ids`` list."""
+
+    set_id: str
+    retired_ids: list[str] = Field(..., min_length=1, max_length=1000)
+
+
+class ArchiveRetiredResult(BaseModel):
+    """Outcome of an archive-retired call: rows newly archived. Already-
+    archived rows are not counted (idempotent)."""
+
+    archived: int
+
+
 class AttemptRecordOut(BaseModel):
     """#603 - one recorded attempt in the per-element history ring buffer."""
 
@@ -1742,6 +1775,9 @@ class ElementErrorOut(BaseModel):
     # #603 Smart Review Queue — total attempts + the last-10 ring buffer.
     attempt_count: int = 0
     attempt_history: list[AttemptRecordOut] = Field(default_factory=list)
+    # #2188 — author-declared retirement: set = archived (out of scheduling
+    # + due counts, history kept). None = active.
+    retired_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
 

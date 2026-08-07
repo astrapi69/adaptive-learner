@@ -17,6 +17,10 @@
 
 import {stringify as stringifyYaml} from "yaml";
 
+import {
+    DEFAULT_DOMAIN,
+    isKnownContentDomain,
+} from "./content-domains";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
 
 /** One file to commit to the export repository. */
@@ -42,9 +46,38 @@ export interface RepoExportInput {
  *  the major, so a 1.x set imports cleanly). */
 const EXPORT_SCHEMA_VERSION = "1.4";
 
+/**
+ * ``schema_version`` for the root ``search-index.json`` (#2300). This is the
+ * INDEX format version, independent of the manifest/lesson schema version
+ * above: the canonical generator (``generate_search_index.py`` in the content
+ * repo) emits ``"1.0"`` — pinned by the ``__fixtures__/search-index-official.json``
+ * round-trip test so a re-mirror that bumps it fails loudly here.
+ */
+const SEARCH_INDEX_SCHEMA_VERSION = "1.0";
+
 /** Total card count across the lessons (for the search index + README). */
 function totalCards(lessons: readonly RepoExportLesson[]): number {
     return lessons.reduce((sum, l) => sum + (l.lesson.cards?.length ?? 0), 0);
+}
+
+/**
+ * The content domain to WRITE into an exported repo (#2376 class 2).
+ *
+ * ``set.domain`` can carry app-internal origin values ("imported" from
+ * "My lessons") that are not content domains - ``KNOWN_CONTENT_DOMAINS``
+ * does not know them, and the Discover filter would receive a domain that
+ * does not exist. Only the default language domain and known non-language
+ * domains pass through; anything else falls back to ``knowledge`` when
+ * source == target (a same-language set, e.g. a book, would fail the
+ * language-pair validation as ``language``) and ``language`` otherwise.
+ */
+export function exportDomain(set: ContentSetEntry): string {
+    const value = (set.domain || "").trim().toLowerCase();
+    if (value === DEFAULT_DOMAIN || isKnownContentDomain(value)) return value;
+    const source = (set.source_language || "").split("-")[0].toLowerCase();
+    const target = (set.target_language || "").split("-")[0].toLowerCase();
+    if (source && target && source === target) return "knowledge";
+    return DEFAULT_DOMAIN;
 }
 
 /** Build the set-level ``manifest.yaml`` body. */
@@ -60,7 +93,7 @@ export function buildManifestYaml(
         source_language: set.source_language,
         target_language: set.target_language,
         level: set.level,
-        domain: set.domain || "language",
+        domain: exportDomain(set),
         lesson_count: lessonCount,
         version: set.version || "1.0.0",
     };
@@ -71,11 +104,30 @@ export function buildManifestYaml(
     return stringifyYaml(manifest);
 }
 
-/** Build the repo-root ``search-index.json`` (one entry for this set). */
+/** Build the repo-root ``search-index.json`` (one entry for this set).
+ *
+ * Matches the canonical index format (``schema/search-index.schema.json`` in
+ * the content repo, whose root ``required`` is ``[repo, schema_version,
+ * sets]``): #2300 - the earlier export omitted ``repo`` + ``schema_version``,
+ * so ``scripts/validate_registered_repo.py`` rejected an app-exported repo on
+ * two missing required fields (and ``RegistrySubmitSection`` read no
+ * ``index_schema_version``), through no fault of the author.
+ *
+ * Per-set enrichment fields the canonical generator also emits -
+ * ``visibility``, ``review_status``, ``ai_validated``, ``trust_level``,
+ * ``updated_at`` - are deliberately NOT written here: the read side
+ * ({@link ./repos/search-index-loader} ``parseSearchIndex``) normalises their
+ * absence (visible / authored / registry-floored trust / null), and the app
+ * cannot honestly self-assign them - ``trust_level`` is the registry's to
+ * grant, ``review_status`` / ``ai_validated`` are author-workflow signals the
+ * export does not know. They are omitted, not forgotten.
+ */
 export function buildSearchIndexJson(input: RepoExportInput): string {
-    const {set, lessons} = input;
+    const {set, lessons, ownerRepo} = input;
     const index = {
-        generated_at: new Date().toISOString(),
+        repo: ownerRepo,
+        generated: new Date().toISOString(),
+        schema_version: SEARCH_INDEX_SCHEMA_VERSION,
         sets: [
             {
                 id: set.id,
@@ -84,7 +136,7 @@ export function buildSearchIndexJson(input: RepoExportInput): string {
                 source_language: set.source_language,
                 target_language: set.target_language,
                 level: set.level,
-                domain: set.domain || "language",
+                domain: exportDomain(set),
                 lesson_count: lessons.length,
                 card_count: totalCards(lessons),
                 tags: set.tags ?? [],
@@ -107,7 +159,7 @@ export function buildReadme(input: RepoExportInput): string {
         `- ${lessons.length} lessons, ${cards} cards`,
         `- Language: ${set.source_language} → ${set.target_language}`,
         `- Level: ${set.level}`,
-        `- Domain: ${set.domain || "language"}`,
+        `- Domain: ${exportDomain(set)}`,
         "",
         "## Installation",
         "",
@@ -147,6 +199,43 @@ export function lessonFilename(
     return `${nn}-${slug}.json`;
 }
 
+/** The chosen lesson filenames plus whether they had to be renamed. */
+export interface LessonFilenamePlan {
+    /** One filename per input lesson, in source order. */
+    filenames: string[];
+    /** True when ordering prefixes were (re)assigned because the existing
+     *  names did not sort into the source order. */
+    reordered: boolean;
+}
+
+/**
+ * Choose the exported lesson filenames (#2376 class 1).
+ *
+ * The display order of a set is the LEXICOGRAPHIC sort of the lesson ids
+ * (learn-content-engine#106), so ``kapitel-1..kapitel-14 + epilog`` exported
+ * verbatim displays as ``epilog, kapitel-1, kapitel-10..``. Existing names
+ * are kept ONLY when their sort order already reproduces the source order;
+ * otherwise every lesson gets a fresh ``NN-`` prefix (replacing any stale
+ * numeric prefix, never stacking a second one).
+ */
+export function planLessonFilenames(
+    lessons: readonly RepoExportLesson[],
+): LessonFilenamePlan {
+    const chosen = lessons.map((l, i) =>
+        lessonFilename(l.lesson, l.filename, i),
+    );
+    const inOrder = chosen.every(
+        (name, i) => i === 0 || chosen[i - 1].localeCompare(name, "en") < 0,
+    );
+    if (inOrder) return {filenames: chosen, reordered: false};
+    const width = Math.max(2, String(lessons.length).length);
+    const filenames = chosen.map((name, i) => {
+        const base = name.replace(/^\d+-/, "");
+        return `${String(i + 1).padStart(width, "0")}-${base}`;
+    });
+    return {filenames, reordered: true};
+}
+
 /**
  * Build the full content-repo file map for ``input``.
  *
@@ -162,9 +251,10 @@ export function buildRepoExportFiles(
             content: buildManifestYaml(input.set, input.lessons.length),
         },
     ];
+    const plan = planLessonFilenames(input.lessons);
     input.lessons.forEach((l, i) => {
         files.push({
-            path: `lessons/${lessonFilename(l.lesson, l.filename, i)}`,
+            path: `lessons/${plan.filenames[i]}`,
             content: JSON.stringify(l.lesson, null, 2) + "\n",
         });
     });

@@ -22,9 +22,9 @@ available set; click one to download it. The set is cached locally
 browser-only mode), so you can learn offline after the first
 download.
 
-The bundled library has grown to **26 content sets - 424 lessons
-/ 5405 cards** across 10 content languages and 5 domains. Every
-release adds more - see the
+The bundled library keeps growing across multiple content
+languages and domains; the set browser shows the current
+inventory. Every release adds more - see the
 [set repo](https://github.com/astrapi69/adaptive-learner-content)
 for the current catalog.
 

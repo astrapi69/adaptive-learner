@@ -1825,6 +1825,11 @@
     }
   },
   "lesson": {
+    "test_mode": {
+      "title": "テストモード",
+      "description": "回答は採点されず、進捗は保存されません。",
+      "exit": "テストモードを終了"
+    },
     "ask_ai": {
       "button": "AIに質問",
       "title": "このブロックについてAIに質問",
@@ -1942,18 +1947,18 @@
         "submit": "答えを確認",
         "retry": "もう一度",
         "counter": "{matched} / {total} 組ペア完了",
+        "help_toggle": "使い方",
         "result": "スコア: {correct} / {total}",
         "instructions": "左の項目を選び、次に右で対応する訳を選びます。",
         "left_label": "用語",
+        "column_a": "列A",
+        "column_b": "列B",
         "right_label": "訳",
         "empty": "このマッチング演習にはペアがありません。",
         "left_label_productive": "意味",
         "right_label_productive": "用語",
-        "left_label_knowledge": "用語",
         "correct_hint": "正解は {label}",
         "your_answer": "あなたの回答: {label}",
-        "right_label_knowledge": "定義",
-        "instruction_knowledge": "各用語を定義と一致させてください。",
         "instructions_knowledge": "左の項目を選んでから、右の対応する項目を選んでください。",
         "selected_sr": "選択中: {label}",
         "resolve": "解答を表示",
@@ -2109,6 +2114,9 @@
       "aria_label": "レッスンのまとめ",
       "score": "スコア",
       "score_bar_aria": "スコア: {pct} パーセント",
+      "score_bar_aria_corrected": "スコア: {pct} パーセント、うち {corrected} 件は訂正後に正解",
+      "score_legend_immediate": "{n} 件は一発正解",
+      "score_legend_corrected": "{n} 件は訂正後",
       "stars_aria": "3 つ星のうち {n} つ",
       "time": "時間",
       "minutes": "{n} 分",
@@ -2186,7 +2194,13 @@
       "title": "更新すると一部の復習の進捗がリセットされる場合があります",
       "message": "「{title}」を更新すると、すでに学習中の内容が変わります。保存済みの進捗がある復習カード約{cards}件とレッスン{lessons}件が新しいバージョンと一致しなくなり、リセットされます。完了したレッスンは残り、変更された復習だけが影響を受けます。",
       "confirm": "それでも更新する",
-      "cancel": "現在のバージョンを保持"
+      "cancel": "現在のバージョンを保持",
+      "carry_over_label": "一致している学習の記録を引き継ぐ",
+      "preview_more": "ほか {count} 件",
+      "unmappable": "{count} 件は確実に対応づけられないため、リセットされます。順序または数が変わっているので、推測はしません。",
+      "carried_over": "学習の記録を引き継ぎました。",
+      "carry_over_failed": "更新は適用されましたが、学習の記録は引き継げませんでした。",
+      "retired_archived": "{count}件の練習問題が作者により廃止されました。関連する学習進捗はアーカイブされています。"
     },
     "recovery": {
       "title": "修正されたレッスンの復習の進捗を復元",
@@ -2248,7 +2262,10 @@
       "submit": "エクスポート",
       "working": "エクスポート中…",
       "done": "セットをリポジトリにプッシュしました。",
-      "failed": "エクスポートに失敗しました。"
+      "failed": "エクスポートに失敗しました。",
+      "quality_issues": "品質チェックで問題が見つかりました。コンテンツリポジトリのゲートはこれらを拒否します：",
+      "export_anyway": "それでもエクスポート",
+      "renamed_note": "表示順がレッスン順と一致するよう、レッスンファイルは順序プレフィックス（NN-）付きにリネームされました。"
     },
     "anki_export": {
       "button": "Anki エクスポート"
@@ -2359,7 +2376,24 @@
       "delete_failed": "レッスンを削除できませんでした。",
       "delete_aria": "レッスン{title}を削除",
       "play_aria": "レッスン{title}を再生",
-      "edit_aria": "レッスン{title}を編集"
+      "edit_aria": "レッスン{title}を編集",
+      "bulk_select": "レッスンを選択",
+      "bulk_select_all": "すべて選択",
+      "bulk_clear": "選択を解除",
+      "bulk_cancel": "キャンセル",
+      "bulk_selected": "{n} 件選択中",
+      "bulk_bar_aria": "レッスンの一括操作",
+      "bulk_select_aria": "レッスン{title}を選択",
+      "bulk_action_delete_n": "{n} 件を削除",
+      "bulk_title": "{n} 件のレッスンを削除しますか？",
+      "bulk_confirm_body": "選択したレッスンはセットから削除されます。この操作は元に戻せません。以前に作成したバックアップにはまだ含まれています。",
+      "bulk_confirm_empties": "これらはセット内のすべてのレッスンなので、セット全体が削除されます。この操作は元に戻せません。以前に作成したバックアップにはまだ含まれています。",
+      "bulk_backup_hint": "ヒント：これらのレッスンを後で元に戻したい場合は、先に「設定 > データ」でバックアップをエクスポートしてください。",
+      "bulk_delete_progress_option": "これらのレッスンの学習進捗も削除する（{cards} 枚の復習カード）",
+      "bulk_delete_progress_option_nocounts": "これらのレッスンの学習進捗も削除する",
+      "bulk_action_delete": "レッスンを削除",
+      "bulk_deleted": "{n} 件のレッスンを削除しました。",
+      "bulk_delete_failed": "レッスンを削除できませんでした。"
     },
     "lesson_order": {
       "move_up": "レッスン{title}を上に移動",
@@ -2436,7 +2470,8 @@
       "type_cloze": "穴埋め",
       "type_free_text": "自由記述",
       "type_word_tiles": "ワードタイル",
-      "type_picture_choice": "画像選択"
+      "type_picture_choice": "画像選択",
+      "type_multiple_choice": "多肢選択"
     },
     "save_lesson": {
       "button": "オフラインレッスンとして保存",
@@ -2555,6 +2590,7 @@
       "back_language_mismatch": "レッスン '{lesson}': カード '{card}' の裏面が {source} に見えません。",
       "free_text_too_few_accepts": "レッスン '{lesson}': 自由記述演習 '{exercise}' には最低 {min} 個の正解が必要です。",
       "matching_too_few_pairs": "レッスン '{lesson}': マッチング演習 '{exercise}' には最低 {min} 組必要です。",
+      "matching_duplicate_left": "レッスン'{lesson}'：マッチング練習'{exercise}'で左側の値'{value}'が重複しています。学習者には解けません。",
       "missing_distractors": "レッスン '{lesson}': 演習 '{exercise}' には誤答選択肢が必要です。",
       "non_cefr_level": "レベル '{level}' は CEFR の区分（A1〜C2）ではありません。",
       "level_too_complex": "レッスン '{lesson}': 片面あたり平均 {avg} 語で、レベル {level} には多めです（目安は約 {cap} 語）。",
@@ -3130,7 +3166,9 @@
       "check_enoughExercises": "5問以上の演習",
       "check_enoughTypes": "2種類以上の演習タイプ",
       "check_schemaValid": "有効なレッスン構造",
-      "structure_error": "技術的な詳細"
+      "structure_error": "技術的な詳細",
+      "structure_internal_error": "このレッスンの確認中に内部エラーが発生しました。これはレッスンではなくアプリの問題です。ページを再読み込みして再度お試しください。問題が続く場合は、下から報告してください。",
+      "structure_report": "問題を報告する"
     },
     "save": {
       "saved": "レッスンを保存しました！",
@@ -3593,8 +3631,7 @@
     "length": "答えは{n}文字です",
     "first_letters": "「{prefix}」で始まります（{n}文字）",
     "not": "「{label}」ではありません",
-    "item": "「{label}」から始めましょう",
-    "reveal_pair": "「{left}」は「{right}」と対応します"
+    "item": "「{label}」から始めましょう"
   },
   "favorites": {
     "card_title": "お気に入り",
@@ -3744,19 +3781,43 @@
       "search": "検索",
       "filter": "フィルター"
     },
+    "entry": {
+      "label": "目的",
+      "language": "言語を学ぶ",
+      "knowledge": "分野",
+      "all": "すべて"
+    },
+    "pairs": {
+      "heading": "言語ペア",
+      "select": "{p} を選択",
+      "choose": "言語ペアを選択"
+    },
     "filter": {
       "all": "すべて",
       "language": "言語",
+      "target_language": "学習言語",
       "all_languages": "すべての言語",
+      "all_target_languages": "すべての学習言語",
       "level": "レベル",
       "domain": "分野",
       "trust": "信頼度",
-      "ai_checked": "AIチェック済み"
+      "source": "ソース",
+      "ai_checked": "AIチェック済み",
+      "review": "確認"
     },
     "trust": {
       "official": "公式推奨",
       "verified": "検証済み",
       "validated": "確認済み"
+    },
+    "review": {
+      "no_machine": "自動生成を除く",
+      "reviewed_only": "確認済みのみ",
+      "generated_badge": "自動生成",
+      "reviewed_badge": "確認済み"
+    },
+    "chips": {
+      "remove": "解除: {f}"
     },
     "sort": {
       "label": "並べ替え",
@@ -3768,15 +3829,28 @@
       "language": "言語",
       "ai": "AI",
       "psychology": "心理学",
-      "programming": "プログラミング"
+      "programming": "プログラミング",
+      "knowledge": "知識",
+      "math": "数学",
+      "technology": "テクノロジー",
+      "software": "ソフトウェア",
+      "philosophy": "哲学",
+      "dog-training": "犬のトレーニング",
+      "traffic-knowledge": "交通知識"
     },
     "result": {
-      "count": "{n} セット"
+      "count": "{n} セット",
+      "show_more": "もっと見る"
     },
     "empty": {
       "no_sets": "まだ利用可能なコンテンツはありません。",
       "no_results": "「{query}」の結果はありません。",
-      "language_hint": "この言語のコンテンツはまだありません。"
+      "language_hint": "この言語のコンテンツはまだありません。",
+      "without_facet": "{facet}なし: {n} セット",
+      "reset_all": "すべてのフィルターをリセット",
+      "add_source": "独自のソースを追加",
+      "or": "または",
+      "create_lesson": "レッスンを作成"
     },
     "card": {
       "download": "ダウンロード",

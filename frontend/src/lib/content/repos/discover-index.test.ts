@@ -4,16 +4,22 @@ import { describe, expect, it } from "vitest";
 
 import {
   availableDomains,
+  availableLanguagePairs,
+  availableSources,
   availableSourceLanguages,
+  availableTargetLanguages,
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
+  hasReviewableSets,
   isSetDownloaded,
   matchesQuery,
   passesFilters,
   queryDiscoverSets,
+  relaxationHints,
   sortDiscoverSets,
   sourceLanguageCounts,
+  targetLanguageCounts,
   type DiscoverFilters,
 } from "./discover-index";
 import { normalizeSearchText } from "../browse/content-search";
@@ -37,6 +43,7 @@ function makeSet(over: Partial<SearchableSet>): SearchableSet {
     updated_at: null,
     repo_url: "owner/repo",
     repo_name: "owner/repo",
+    review_status: "authored",
     ...over,
   };
 }
@@ -58,6 +65,69 @@ describe("matchesQuery", () => {
   it("an empty query matches everything", () => {
     expect(matchesQuery(makeSet({}), "")).toBe(true);
   });
+
+  it("includes the UI-language names of the pair in the haystack (EXP-048 #2329)", () => {
+    // A German-authored Spanish set: the visible name is "Spanisch A1".
+    const set = makeSet({ name: "Spanisch A1", source_language: "de", target_language: "es" });
+    const names = (code: string): string =>
+      ({ de: "German", es: "Spanish" })[code] ?? code;
+    // Without the resolver, the English SOURCE-language name "German" is not in
+    // the haystack (the set's visible text is the German "Spanisch A1"). A
+    // non-typo query is used on purpose: "spanish" ≈ "spanisch" now fuzzy-matches
+    // (EXP-048 #2336), so it no longer proves the resolver added the name.
+    expect(matchesQuery(set, normalizeSearchText("german"))).toBe(false);
+    // With it, the UI-language names of BOTH sides become searchable.
+    expect(matchesQuery(set, normalizeSearchText("spanish"), names)).toBe(true);
+    expect(matchesQuery(set, normalizeSearchText("german"), names)).toBe(true);
+  });
+});
+
+describe("matchesQuery — typo tolerance (EXP-048 #2336, Schwelle bewusst überschritten)", () => {
+  it("matches a query token with one typo via bounded edit distance", () => {
+    const set = makeSet({ name: "Spanisch A1" });
+    // "spanissch" -> "spanisch" is a single insertion (edit distance 1).
+    expect(matchesQuery(set, normalizeSearchText("spanissch"))).toBe(true);
+  });
+
+  it("does not match a query token with two or more typos", () => {
+    const set = makeSet({ name: "Spanisch A1" });
+    // "spanissssch" -> "spanisch" needs > 1 edit.
+    expect(matchesQuery(set, normalizeSearchText("spanissssch"))).toBe(false);
+  });
+
+  it("requires an exact (substring) match for short query tokens (< 4 chars)", () => {
+    const set = makeSet({ name: "Ruby", description: "", tags: [] });
+    // "rob" is a 3-char typo of "rub"/"ruby": too short for fuzzy, must miss.
+    expect(matchesQuery(set, normalizeSearchText("rob"))).toBe(false);
+  });
+
+  it("still requires EVERY query token to match (precision kept)", () => {
+    const set = makeSet({ name: "Spanisch A1", description: "", tags: [] });
+    // First token fuzzy-matches, second is unrelated: no overall match.
+    expect(matchesQuery(set, normalizeSearchText("spanissch python"))).toBe(false);
+  });
+
+  it("fuzzy-matches against the resolved UI-language names too (EXP-048 #2329 + #2336)", () => {
+    const set = makeSet({ name: "Spanisch A1", source_language: "de", target_language: "es" });
+    const names = (code: string): string =>
+      ({ de: "German", es: "Spanish" })[code] ?? code;
+    // "spanicsh" -> "spanish" (delete one char, distance 1) via the resolved name.
+    expect(matchesQuery(set, normalizeSearchText("spanicsh"), names)).toBe(true);
+  });
+});
+
+describe("queryDiscoverSets — typo ranking (EXP-048 #2336, Schwelle bewusst überschritten)", () => {
+  it("ranks exact query matches above typo-only matches under relevance", () => {
+    const exact = makeSet({ id: "exact", name: "Spanisch Grundkurs" });
+    // "Spanissch" only fuzzy-matches "spanisch" — no exact substring.
+    const fuzzy = makeSet({ id: "fuzzy", name: "Spanissch Aufbau" });
+    const sorted = queryDiscoverSets(
+      [fuzzy, exact],
+      { ...EMPTY_FILTERS, query: "spanisch" },
+      "relevance",
+    );
+    expect(sorted.map((s) => s.id)).toEqual(["exact", "fuzzy"]);
+  });
 });
 
 describe("passesFilters", () => {
@@ -69,6 +139,23 @@ describe("passesFilters", () => {
     expect(passesFilters(set, { ...EMPTY_FILTERS, sourceLanguage: "fr" })).toBe(false);
     // Empty = all languages.
     expect(passesFilters(set, { ...EMPTY_FILTERS, sourceLanguage: "" })).toBe(true);
+  });
+
+  it("targetLanguage matches the target (learned) language only (EXP-048 #2322)", () => {
+    const set = makeSet({ source_language: "de", target_language: "es" });
+    expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "es" })).toBe(true);
+    // The source language must NOT satisfy the target-language facet.
+    expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "de" })).toBe(false);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "fr" })).toBe(false);
+    // Empty = every target.
+    expect(passesFilters(set, { ...EMPTY_FILTERS, targetLanguage: "" })).toBe(true);
+  });
+
+  it("source matches the set's repo_url exactly (EXP-048 #2330)", () => {
+    const set = makeSet({ repo_url: "owner/repo" });
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "owner/repo" })).toBe(true);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "other/repo" })).toBe(false);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, source: "" })).toBe(true);
   });
 
   it("level + domain are exact", () => {
@@ -85,17 +172,87 @@ describe("passesFilters", () => {
     expect(passesFilters(makeSet({ trust_level: 2 }), { ...EMPTY_FILTERS, trust: "2" })).toBe(true);
   });
 
-  it("ai-checked yes/no", () => {
-    expect(passesFilters(makeSet({ ai_validated: true }), { ...EMPTY_FILTERS, aiChecked: "yes" })).toBe(true);
-    expect(passesFilters(makeSet({ ai_validated: false }), { ...EMPTY_FILTERS, aiChecked: "yes" })).toBe(false);
-    expect(passesFilters(makeSet({ ai_validated: false }), { ...EMPTY_FILTERS, aiChecked: "no" })).toBe(true);
+  it("review status is an exact match; empty = all (EXP-048 #2321)", () => {
+    const authored = makeSet({ review_status: "authored" });
+    const generated = makeSet({ review_status: "generated" });
+    const reviewed = makeSet({ review_status: "reviewed" });
+    // "Ohne Maschinen-Sets" keeps only hand-written sets (generated + reviewed out).
+    expect(passesFilters(authored, { ...EMPTY_FILTERS, reviewStatus: "authored" })).toBe(true);
+    expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "authored" })).toBe(false);
+    expect(passesFilters(reviewed, { ...EMPTY_FILTERS, reviewStatus: "authored" })).toBe(false);
+    // "Nur durchgesehen" keeps only reviewed machine sets.
+    expect(passesFilters(reviewed, { ...EMPTY_FILTERS, reviewStatus: "reviewed" })).toBe(true);
+    expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "reviewed" })).toBe(false);
+    // Empty = every review standing.
+    expect(passesFilters(generated, { ...EMPTY_FILTERS, reviewStatus: "" })).toBe(true);
+  });
+
+  it("entry 'language' keeps language sets, 'knowledge' the inverse, '' both (#2331)", () => {
+    const lang = makeSet({ id: "es", domain: "language", source_language: "de", target_language: "es" });
+    const knowSameLang = makeSet({ id: "psy", domain: "psychology", source_language: "de", target_language: "de" });
+    const knowDomainPair = makeSet({ id: "prog", domain: "programming", source_language: "de", target_language: "es" });
+    // "Sprache lernen": only the clean language pair.
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "language" })).toBe(true);
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    expect(passesFilters(knowDomainPair, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    // "Fachgebiet": the inverse (non-language domain OR same-language pair).
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
+    expect(passesFilters(knowDomainPair, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(false);
+    // "Alles": no entry filter.
+    expect(passesFilters(lang, { ...EMPTY_FILTERS, entry: "" })).toBe(true);
+    expect(passesFilters(knowSameLang, { ...EMPTY_FILTERS, entry: "" })).toBe(true);
+  });
+
+  it("surfaces a Mischfall: a language-domain set with source==target is not a clean language set (#2331)", () => {
+    // The convention (domain=="language" <=> source!=target) is pinned by the
+    // entry filter: a broken "language" set (source==target) is caught by the
+    // knowledge rule, so it cannot hide silently in the language entry.
+    const mischfall = makeSet({ domain: "language", source_language: "de", target_language: "de" });
+    expect(passesFilters(mischfall, { ...EMPTY_FILTERS, entry: "language" })).toBe(false);
+    expect(passesFilters(mischfall, { ...EMPTY_FILTERS, entry: "knowledge" })).toBe(true);
   });
 
   it("combines facets with AND", () => {
-    const set = makeSet({ level: "a1", domain: "language", trust_level: 3, ai_validated: true });
-    const f: DiscoverFilters = { ...EMPTY_FILTERS, level: "a1", domain: "language", trust: "2", aiChecked: "yes" };
+    const set = makeSet({ level: "a1", domain: "language", trust_level: 3, review_status: "reviewed" });
+    const f: DiscoverFilters = { ...EMPTY_FILTERS, level: "a1", domain: "language", trust: "2", reviewStatus: "reviewed" };
     expect(passesFilters(set, f)).toBe(true);
     expect(passesFilters({ ...set, level: "a2" }, f)).toBe(false);
+  });
+});
+
+describe("hasReviewableSets", () => {
+  it("true only when the catalogue carries a generated or reviewed set", () => {
+    expect(hasReviewableSets([makeSet({ review_status: "authored" })])).toBe(false);
+    expect(hasReviewableSets([makeSet({ review_status: "generated" })])).toBe(true);
+    expect(hasReviewableSets([makeSet({ review_status: "reviewed" })])).toBe(true);
+    expect(hasReviewableSets([])).toBe(false);
+  });
+});
+
+describe("availableLanguagePairs (EXP-048 #2337, Schwelle bewusst überschritten)", () => {
+  it("lists distinct source→target language pairs (source != target), most first", () => {
+    const sets = [
+      makeSet({ id: "1", source_language: "de", target_language: "es" }),
+      makeSet({ id: "2", source_language: "de", target_language: "es" }),
+      makeSet({ id: "3", source_language: "de", target_language: "fr" }),
+      makeSet({ id: "4", source_language: "en", target_language: "es" }),
+      // Excluded: source == target (a knowledge set, not a language pair).
+      makeSet({ id: "5", source_language: "de", target_language: "de" }),
+      // Excluded: no target language.
+      makeSet({ id: "6", source_language: "de", target_language: "" }),
+    ];
+    expect(availableLanguagePairs(sets)).toEqual([
+      { source: "de", target: "es", count: 2 },
+      { source: "de", target: "fr", count: 1 },
+      { source: "en", target: "es", count: 1 },
+    ]);
+  });
+
+  it("returns an empty list when no cross-language pairs exist", () => {
+    expect(
+      availableLanguagePairs([makeSet({ source_language: "de", target_language: "de" })]),
+    ).toEqual([]);
   });
 });
 
@@ -189,11 +346,88 @@ describe("available* option helpers", () => {
     ];
     expect(sourceLanguageCounts(counted)).toEqual({ de: 2, el: 1 });
   });
+  it("target languages: distinct TARGET codes only, sorted (source ignored)", () => {
+    expect(availableTargetLanguages(sets)).toEqual(["es"]);
+    const mixed = [
+      makeSet({ source_language: "de", target_language: "fr" }),
+      makeSet({ source_language: "en", target_language: "es" }),
+      makeSet({ source_language: "de", target_language: "es" }),
+      makeSet({ source_language: "de", target_language: "" }),
+    ];
+    expect(availableTargetLanguages(mixed)).toEqual(["es", "fr"]);
+  });
+  it("counts sets per target language", () => {
+    const counted = [
+      makeSet({ target_language: "es" }),
+      makeSet({ target_language: "es" }),
+      makeSet({ target_language: "fr" }),
+      makeSet({ target_language: "" }),
+    ];
+    expect(targetLanguageCounts(counted)).toEqual({ es: 2, fr: 1 });
+  });
   it("levels sorted", () => {
     expect(availableLevels(sets)).toEqual(["a1", "b1"]);
   });
   it("domains sorted", () => {
     expect(availableDomains(sets)).toEqual(["ai", "language"]);
+  });
+  it("sources: distinct repo_url with name + count, sorted by name (#2330)", () => {
+    const withSources = [
+      makeSet({ repo_url: "o/a", repo_name: "Beta" }),
+      makeSet({ repo_url: "o/a", repo_name: "Beta" }),
+      makeSet({ repo_url: "o/b", repo_name: "Alpha" }),
+    ];
+    expect(availableSources(withSources)).toEqual([
+      { url: "o/b", name: "Alpha", count: 1 },
+      { url: "o/a", name: "Beta", count: 2 },
+    ]);
+  });
+});
+
+describe("relaxationHints (EXP-048 #2324)", () => {
+  const sets = [
+    makeSet({ id: "es-a1", target_language: "es", level: "a1", domain: "language" }),
+    makeSet({ id: "es-a2", target_language: "es", level: "a2", domain: "language" }),
+    makeSet({ id: "fr-a1", target_language: "fr", level: "a1", domain: "language" }),
+  ];
+
+  it("offers each active facet whose removal yields results, most first", () => {
+    // Active target=ja (no match) + level=a1 -> zero results.
+    const filters: DiscoverFilters = { ...EMPTY_FILTERS, targetLanguage: "ja", level: "a1" };
+    expect(queryDiscoverSets(sets, filters, "relevance")).toHaveLength(0);
+    // Clearing target keeps the two a1 sets; clearing level keeps 0 (still ja).
+    expect(relaxationHints(sets, filters)).toEqual([{ facet: "targetLanguage", count: 2 }]);
+  });
+
+  it("sorts multiple viable relaxations by their yield (most first)", () => {
+    const twoWay = [
+      makeSet({ id: "es-1", target_language: "es", level: "a1" }),
+      makeSet({ id: "es-2", target_language: "es", level: "a1" }),
+      makeSet({ id: "fr-2", target_language: "fr", level: "a2" }),
+    ];
+    // target=es AND level=a2 -> 0 (es sets are a1, the a2 set is fr).
+    const filters: DiscoverFilters = { ...EMPTY_FILTERS, targetLanguage: "es", level: "a2" };
+    expect(queryDiscoverSets(twoWay, filters, "relevance")).toHaveLength(0);
+    // Clear level -> target es keeps 2; clear target -> level a2 keeps 1.
+    expect(relaxationHints(twoWay, filters)).toEqual([
+      { facet: "level", count: 2 },
+      { facet: "targetLanguage", count: 1 },
+    ]);
+  });
+
+  it("returns nothing when no single relaxation helps", () => {
+    const filters: DiscoverFilters = { ...EMPTY_FILTERS, targetLanguage: "ja", level: "b2" };
+    expect(relaxationHints(sets, filters)).toEqual([]);
+  });
+
+  it("does not offer the source language (it owns a dedicated escape)", () => {
+    const withSources = [
+      makeSet({ id: "de", source_language: "de", target_language: "es" }),
+      makeSet({ id: "en", source_language: "en", target_language: "es" }),
+    ];
+    // source=hi (no match) alone -> the source escape handles it, not a hint.
+    const filters: DiscoverFilters = { ...EMPTY_FILTERS, sourceLanguage: "hi" };
+    expect(relaxationHints(withSources, filters)).toEqual([]);
   });
 });
 

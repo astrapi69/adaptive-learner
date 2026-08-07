@@ -2,9 +2,9 @@
 
 > **Generiert** aus dem kanonischen `learn-content-engine`-Schemaspiegel (`schema/lesson.schema.json`, ein Byte-Spiegel des gepinnten Engine-Release) via `make sync-schema` (EXP-039). Die strukturelle Pydantic-Schicht der App wird aus diesem Spiegel regeneriert; nur die semantischen Validatoren sind handgeschrieben. Nicht von Hand editieren; eine Formatänderung beginnt in der Engine, dann wird der Pin erhöht und der Generator läuft erneut.
 
-Schema-Version: **1.8** (JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter `schema/lesson.schema.json`; referenziere es aus einer Lektions-`.json` via `"$schema"` fuer IDE-Autocomplete + Validierung.
+Schema-Version: **1.9** (JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter `schema/lesson.schema.json`; referenziere es aus einer Lektions-`.json` via `"$schema"` für IDE-Autocomplete + Validierung.
 
-Die Feldbeschreibungen stammen woertlich aus den Modelldefinitionen (englisch).
+Die Feldbeschreibungen stammen wörtlich aus den Modelldefinitionen (englisch).
 
 
 ## Modelle
@@ -21,7 +21,7 @@ One lesson in a content set (Phase 43 / 2B-lesson).
 | `description` | `string | null` | no | - |
 | `domain` | `string | null` | no | - |
 | `estimated_minutes` | `number` | no | min=1, max=240 |
-| `id` | `string` | yes | minLen=1, maxLen=120 |
+| `id` | `SlugId` | yes | - |
 | `requires_extensions` | `string[]` | no | - |
 | `resources` | `LessonResource[] | null` | no | - |
 | `source_language` | `string | null` | no | - |
@@ -46,11 +46,12 @@ The smallest learnable unit (Phase 43 / 2B-lesson).
 | `expected_output` | `string | null` | no | - |
 | `front` | `string` | yes | minLen=1, maxLen=500 |
 | `hint` | `string | null` | no | - |
-| `id` | `string` | yes | minLen=1, maxLen=120 |
+| `id` | `SlugId` | yes | - |
 | `image` | `string | null` | no | - |
 | `media_type` | `"text" | "code" | "formula" | "diagram" | null` | no | - |
 | `notes` | `string | null` | no | - |
-| `tags` | `string[]` | no | maxItems=20 |
+| `stable_id` | `string | null` | no | - |
+| `tags` | `SlugId[]` | no | maxItems=20 |
 | `token_roles` | `CardTokenRole[] | null` | no | - |
 
 
@@ -92,13 +93,14 @@ One exercise step. Type-tagged via ``type``.
 | `ext_payload` | `object` | no | - |
 | `from_cards` | `boolean` | no | - |
 | `hint` | `string | null` | no | - |
-| `id` | `string` | yes | minLen=1, maxLen=120 |
+| `id` | `SlugId` | yes | - |
 | `images` | `PictureImage[] | null` | no | - |
 | `multiple` | `boolean` | no | - |
 | `options` | `MultipleChoiceOption[] | null` | no | - |
 | `pairs` | `Pair[] | null` | no | - |
 | `prompt` | `string` | yes | minLen=1, maxLen=1000 |
 | `sentence` | `string | null` | no | - |
+| `stable_id` | `string | null` | no | - |
 | `tiles` | `string[] | null` | no | - |
 | `type` | `ExerciseType | ExtExerciseType` | yes | - |
 
@@ -148,7 +150,7 @@ One step in the lesson sequence.
 | `example_url` | `string | null` | no | - |
 | `examples` | `InlineExample[] | null` | no | - |
 | `exercise` | `Exercise | null` | no | - |
-| `id` | `string` | yes | minLen=1, maxLen=120 |
+| `id` | `SlugId` | yes | - |
 | `review_lesson_id` | `string | null` | no | - |
 | `theory_ref` | `string | null` | no | - |
 | `title` | `string | null` | no | - |

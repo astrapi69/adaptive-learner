@@ -292,13 +292,16 @@ describe("#1205 fixture 6 — accept_orderings permutation (imperative)", () => 
 });
 
 // ---------------------------------------------------------------------------
-// Fixture 7 — slug-safe ids + uniqueness (imperative).
+// Fixture 7 — slug-safe ids + uniqueness (imperative). Since engine
+// schema 1.11 (0.20.0 re-pin, #2335) the unicode SlugId pattern rejects
+// bad ids at the Ajv layer BEFORE the imperative slug check fires, so the
+// message is the pattern error; the assertions accept either channel.
 // ---------------------------------------------------------------------------
 describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
   it("rejects a non-slug card id", () => {
     const lesson = makeLesson();
     lesson.cards[0].id = "Not Slug";
-    expect(() => validateGeneratedLesson(lesson)).toThrow(/slug-safe/);
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/slug-safe|must match pattern/);
   });
 
   it("rejects a duplicate card id", () => {
@@ -331,7 +334,7 @@ describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
   it("still rejects uppercase umlauts and inner spaces", () => {
     const lesson = makeLesson();
     lesson.cards[0].tags = ["\u00c4rger"];
-    expect(() => validateGeneratedLesson(lesson)).toThrow(/slug-safe/);
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/slug-safe|must match pattern/);
   });
 });
 

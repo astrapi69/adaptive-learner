@@ -46,6 +46,51 @@ export async function peekSetIdentities(
     setId: string,
     sources: ContentSetSource[] = DEFAULT_SOURCES,
 ): Promise<IncomingSetIdentities> {
+    return buildIncomingIdentities(await peekSetLessons(source, setId, sources));
+}
+
+/** What an update peek returns beyond the lessons (#2188). */
+export interface PeekedSetUpdate {
+    lessons: PeekLesson[];
+    /** ``metadata.retired_ids`` of the INCOMING set manifest — identities
+     *  the author DECLARED retired. Empty when the manifest carries none. */
+    retiredIds: string[];
+}
+
+/**
+ * The incoming lessons plus the manifest's ``retired_ids`` (#2188), in one
+ * fetch pass. Callers that only need the lessons keep using
+ * {@link peekSetLessons}.
+ */
+export async function peekSetUpdate(
+    source: string,
+    setId: string,
+    sources: ContentSetSource[] = DEFAULT_SOURCES,
+): Promise<PeekedSetUpdate> {
+    return peekSet(source, setId, sources);
+}
+
+/**
+ * The incoming lessons themselves, in authored ORDER (#2308).
+ *
+ * ``peekSetIdentities`` folds these into sets, which is all the guard needs to
+ * decide whether something is lost. Deriving a remap needs the ORDER too - the
+ * position of a key is what separates a correction from a reorder - so the
+ * planning path takes the lessons instead of the folded identities.
+ */
+export async function peekSetLessons(
+    source: string,
+    setId: string,
+    sources: ContentSetSource[] = DEFAULT_SOURCES,
+): Promise<PeekLesson[]> {
+    return (await peekSet(source, setId, sources)).lessons;
+}
+
+async function peekSet(
+    source: string,
+    setId: string,
+    sources: ContentSetSource[] = DEFAULT_SOURCES,
+): Promise<PeekedSetUpdate> {
     const src = sources.find((s) => s.source === source) ?? {
         source,
         branch: "main",
@@ -93,5 +138,12 @@ export async function peekSetIdentities(
         lessons.push({ filename, exercises: lessonExercises(raw) });
     }
 
-    return buildIncomingIdentities(lessons);
+    // #2188 — the manifest's declared retirements ride along so the apply
+    // path can archive the matching learner rows without a second fetch.
+    const rawRetired = setManifest?.metadata?.retired_ids;
+    const retiredIds = Array.isArray(rawRetired)
+        ? rawRetired.filter((x): x is string => typeof x === "string")
+        : [];
+
+    return { lessons, retiredIds };
 }

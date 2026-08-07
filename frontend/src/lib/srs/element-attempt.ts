@@ -34,6 +34,8 @@ import {asGradedQuizPayload, canonicalAnswer as gradedQuizCanonicalAnswer} from 
 import {canonicalDictationAnswer} from "../exercises/payload/dictation";
 import {canonicalImageDescriptionAnswer} from "../exercises/payload/image-description";
 import {resolveConcreteDirection} from "../exercises/direction";
+import {elementKeysOf} from "./element-keys";
+import {exerciseIdentityOf} from "./exercise-identity";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
 export interface AttemptContext {
@@ -50,11 +52,16 @@ function _baseAttempt(
     return {
         set_id: ctx.setId,
         lesson_id: ctx.lessonId,
-        exercise_id: exercise.id,
+        // #2130: rows are keyed by the version-stable identity (stable_id
+        // when the content ships one, authored id otherwise).
+        exercise_id: exerciseIdentityOf(exercise) ?? "",
         // EXP-018 / Phase 62: stamp the exercise's concrete drill
         // direction on every attempt so the SRS layer tracks
         // receptive vs productive mastery independently. Resolved
-        // centrally here so all five exercise types agree.
+        // centrally here so all five exercise types agree. The seed stays
+        // the AUTHORED id: switching it to stable_id would re-resolve every
+        // "random"-direction exercise and strand its rows on the other
+        // direction key (#2130).
         direction: resolveConcreteDirection(exercise.direction, exercise.id),
     };
 }
@@ -74,6 +81,7 @@ export function deriveMatchingAttempts(
     productive = false,
 ): ElementAttempt[] {
     const pairs = exercise.pairs ?? [];
+    const keys = elementKeysOf(exercise) ?? [];
     const rightValue = (i: number): string =>
         (productive ? pairs[i]?.left : pairs[i]?.right) ?? "";
     return pairs.map((pair, leftIdx) => {
@@ -87,7 +95,7 @@ export function deriveMatchingAttempts(
             rightValue(userRightOriginalIdx) === rightValue(leftIdx);
         return {
             ..._baseAttempt(exercise, ctx),
-            element_key: pair.left,
+            element_key: keys[leftIdx] ?? "",
             element_type: "vocabulary",
             user_answer: userPairingText,
             correct_answer: pair.right,
@@ -109,12 +117,15 @@ export function deriveCategorizationAttempts(
 ): ElementAttempt[] {
     const payload = asCategorizationPayload(exercise);
     if (!payload) return [];
+    const keys = elementKeysOf(exercise) ?? [];
+    let index = 0;
     return payload.categories.flatMap((bucket) =>
         bucket.items.map((item) => {
             const chosenBucket = assignments.get(item) ?? "";
+            const elementKey = keys[index++] ?? item;
             return {
                 ..._baseAttempt(exercise, ctx),
-                element_key: item,
+                element_key: elementKey,
                 element_type: "vocabulary" as const,
                 user_answer: chosenBucket,
                 correct_answer: bucket.name,
@@ -142,7 +153,7 @@ export function deriveErrorCorrectionAttempt(
     const canonical = payload?.accept[0] ?? "";
     return {
         ..._baseAttempt(exercise, ctx),
-        element_key: canonical,
+        element_key: elementKeysOf(exercise)?.[0] ?? canonical,
         element_type: "grammar_rule",
         user_answer: `${pickedToken} -> ${answer.typedCorrection}`,
         correct_answer: `${markedToken} -> ${canonical}`,
@@ -163,12 +174,13 @@ export function deriveReadingComprehensionAttempts(
 ): ElementAttempt[] {
     const payload = asReadingComprehensionPayload(exercise);
     if (!payload) return [];
+    const keys = elementKeysOf(exercise) ?? [];
     return payload.questions.map((question, index) => {
         const canonical = canonicalAnswer(question);
         const result = results[index];
         return {
             ..._baseAttempt(exercise, ctx),
-            element_key: canonical || question.prompt,
+            element_key: keys[index] ?? question.prompt,
             element_type: "vocabulary" as const,
             user_answer: result?.answer ?? "",
             correct_answer: canonical,
@@ -188,12 +200,13 @@ export function deriveGradedQuizAttempts(
 ): ElementAttempt[] {
     const payload = asGradedQuizPayload(exercise);
     if (!payload) return [];
+    const keys = elementKeysOf(exercise) ?? [];
     return payload.questions.map((question, index) => {
         const canonical = gradedQuizCanonicalAnswer(question);
         const result = results[index];
         return {
             ..._baseAttempt(exercise, ctx),
-            element_key: canonical || question.prompt,
+            element_key: keys[index] ?? question.prompt,
             element_type: "vocabulary" as const,
             user_answer: result?.answer ?? "",
             correct_answer: canonical,
@@ -214,7 +227,7 @@ export function derivePictureChoiceAttempt(
     const images = exercise.images ?? [];
     const correctImage = images.find((img) => img.is_correct === "true");
     const selected = images[selectedIndex];
-    const correctLabel = correctImage?.label ?? "";
+    const correctLabel = elementKeysOf(exercise)?.[0] ?? correctImage?.label ?? "";
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: correctLabel,
@@ -236,7 +249,7 @@ export function deriveFreeTextAttempt(
     userInput: string,
     isCorrect: boolean,
 ): ElementAttempt {
-    const canonical = exercise.accept?.[0] ?? "";
+    const canonical = elementKeysOf(exercise)?.[0] ?? "";
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,
@@ -257,7 +270,7 @@ export function deriveDictationAttempt(
     userInput: string,
     isCorrect: boolean,
 ): ElementAttempt {
-    const canonical = canonicalDictationAnswer(exercise);
+    const canonical = elementKeysOf(exercise)?.[0] ?? canonicalDictationAnswer(exercise);
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,
@@ -278,7 +291,7 @@ export function deriveImageDescriptionAttempt(
     userInput: string,
     isCorrect: boolean,
 ): ElementAttempt {
-    const canonical = canonicalImageDescriptionAnswer(exercise);
+    const canonical = elementKeysOf(exercise)?.[0] ?? canonicalImageDescriptionAnswer(exercise);
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,
@@ -301,7 +314,7 @@ export function deriveWordTilesAttempt(
     isCorrect: boolean,
 ): ElementAttempt {
     const tiles = exercise.tiles ?? [];
-    const canonical = tiles.join(" ");
+    const canonical = elementKeysOf(exercise)?.[0] ?? tiles.join(" ");
     const userAnswer = placedOrder
         .map((i) => tiles[i] ?? "")
         .join(" ");
@@ -331,8 +344,9 @@ export function deriveClozeAttempts(
     perBlankCorrect: readonly boolean[],
 ): ElementAttempt[] {
     const blanks = exercise.blanks ?? [];
+    const keys = elementKeysOf(exercise) ?? [];
     return blanks.map((blank, i) => {
-        const canonical = blank.accept[0] ?? "";
+        const canonical = keys[i] ?? blank.accept[0] ?? "";
         return {
             ..._baseAttempt(exercise, ctx),
             element_key: canonical,
@@ -355,7 +369,7 @@ export function deriveClozeMultiSelectAttempt(
     selected: readonly string[],
     isCorrect: boolean,
 ): ElementAttempt {
-    const canonical = [...(exercise.accept ?? [])].sort().join(", ");
+    const canonical = elementKeysOf(exercise)?.[0] ?? "";
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,
@@ -377,11 +391,7 @@ export function deriveMultipleChoiceAttempt(
     selected: readonly string[],
     isCorrect: boolean,
 ): ElementAttempt {
-    const canonical = (exercise.options ?? [])
-        .filter((option) => option.correct === true)
-        .map((option) => option.text)
-        .sort()
-        .join(", ");
+    const canonical = elementKeysOf(exercise)?.[0] ?? "";
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,

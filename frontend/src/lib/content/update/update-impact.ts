@@ -15,18 +15,19 @@
  * storage-mode-independent).
  */
 
-/** Minimal shape of a lesson exercise this module reads (a subset of
- *  ContentLessonExercise) — kept structural so the peek can pass raw
- *  parsed JSON without importing the full engine type. */
-export interface PeekExercise {
+import {elementKeysOf, type KeyBearingExercise} from "../../srs/element-keys";
+
+/**
+ * A lesson exercise as the peek sees it: raw parsed JSON, not a constructed
+ * ``ContentLessonExercise``. Only the id fields are read here; every
+ * answer-bearing field is read by the shared key rule (see
+ * {@link elementKeysOf}).
+ */
+export type PeekExercise = KeyBearingExercise & {
     id?: string;
-    type?: string;
-    pairs?: ({left?: string} | null)[] | null;
-    accept?: string[] | null;
-    tiles?: string[] | null;
-    images?: ({label?: string | null; is_correct?: string | null} | null)[] | null;
-    blanks?: ({accept?: string[]} | null)[] | null;
-}
+    /** ``null`` admitted because the engine's generated type allows it. */
+    stable_id?: string | null;
+};
 
 /** A lesson as the peek sees it: its filename + its exercises. */
 export interface PeekLesson {
@@ -34,65 +35,23 @@ export interface PeekLesson {
     exercises: PeekExercise[];
 }
 
-/** matching: one key per authored pair (``pair.left``). */
-function matchingKeys(ex: PeekExercise): Set<string> {
-    const keys = new Set<string>();
-    for (const p of ex.pairs ?? []) {
-        if (p && typeof p.left === "string") keys.add(p.left);
-    }
-    return keys;
-}
-
-/** free_text (and the cloze fallback): the first accepted answer. */
-function firstAcceptKey(ex: PeekExercise): Set<string> {
-    return ex.accept?.[0] !== undefined ? new Set([ex.accept[0]]) : new Set();
-}
-
-/** word_tiles: the canonical ``tiles.join(" ")`` phrase. */
-function wordTilesKeys(ex: PeekExercise): Set<string> {
-    return ex.tiles ? new Set([ex.tiles.join(" ")]) : new Set();
-}
-
-/** picture_choice: the correct image's label. */
-function pictureChoiceKeys(ex: PeekExercise): Set<string> {
-    const keys = new Set<string>();
-    for (const img of ex.images ?? []) {
-        if (img && img.is_correct === "true" && typeof img.label === "string") {
-            keys.add(img.label);
-        }
-    }
-    return keys;
-}
-
-/** cloze: one key per blank (``blank.accept[0]``), or the exercise-level
- *  ``accept[0]`` when there are no authored blanks. */
-function clozeKeys(ex: PeekExercise): Set<string> {
-    if (!ex.blanks || ex.blanks.length === 0) return firstAcceptKey(ex);
-    const keys = new Set<string>();
-    for (const b of ex.blanks) {
-        if (b?.accept?.[0] !== undefined) keys.add(b.accept[0]);
-    }
-    return keys;
-}
-
-const ELEMENT_KEY_EXTRACTORS: Record<string, (ex: PeekExercise) => Set<string>> = {
-    matching: matchingKeys,
-    free_text: firstAcceptKey,
-    word_tiles: wordTilesKeys,
-    picture_choice: pictureChoiceKeys,
-    cloze: clozeKeys,
-};
-
 /**
- * The element_keys an exercise contributes to the SRS, mirroring
- * ``lib/srs/element-attempt.ts`` for the five shipped content types. For any
- * OTHER type the set is EMPTY on purpose: an SRS row on an unhandled type
- * then fails the "still resolves" check and is conservatively flagged
- * at-risk — the guard must never under-warn (silently lose progress).
+ * The element_keys an exercise contributes to the SRS.
+ *
+ * Delegates to {@link elementKeysOf} — the SAME rule the runtime derivers in
+ * ``lib/srs/element-attempt.ts`` apply when recording an attempt. Before #2303
+ * this module carried its own copy covering five of thirteen types, so a
+ * learner with rows on any other type saw EVERY update reported as breaking,
+ * harmless ones included. A guard that always warns stops being read.
+ *
+ * ``null`` is preserved from the rule and means "type not known here" — an
+ * undeclared ``ext:`` extension or a future core type. The caller treats that
+ * as at-risk, so the guard still never under-warns. It is NOT the same as an
+ * empty set, which means the type is known and contributes no keys.
  */
-export function exerciseElementKeys(ex: PeekExercise): Set<string> {
-    const extractor = ELEMENT_KEY_EXTRACTORS[ex.type ?? ""];
-    return extractor ? extractor(ex) : new Set();
+export function exerciseElementKeys(ex: PeekExercise): Set<string> | null {
+    const keys = elementKeysOf(ex);
+    return keys === null ? null : new Set(keys);
 }
 
 /** Fold peeked lessons into the {@link IncomingSetIdentities} the impact
@@ -100,13 +59,18 @@ export function exerciseElementKeys(ex: PeekExercise): Set<string> {
 export function buildIncomingIdentities(
     lessons: readonly PeekLesson[],
 ): IncomingSetIdentities {
-    const byLesson = new Map<string, Map<string, Set<string>>>();
+    const byLesson = new Map<string, Map<string, Set<string> | null>>();
     const lessonSet = new Set<string>();
     for (const lesson of lessons) {
         lessonSet.add(lesson.filename);
-        const byEx = new Map<string, Set<string>>();
+        const byEx = new Map<string, Set<string> | null>();
         for (const ex of lesson.exercises) {
-            if (ex.id) byEx.set(ex.id, exerciseElementKeys(ex));
+            // #2130: an exercise is reachable under BOTH of its ids — the
+            // authored slug (pre-switch rows) and the stable_id (post-switch
+            // rows). Both entries share one key set.
+            const keys = ex.id || ex.stable_id ? exerciseElementKeys(ex) : null;
+            if (ex.id) byEx.set(ex.id, keys);
+            if (ex.stable_id) byEx.set(ex.stable_id, keys);
         }
         byLesson.set(lesson.filename, byEx);
     }
@@ -129,7 +93,10 @@ export interface SrsIdentity {
  */
 export interface IncomingSetIdentities {
     lessons: ReadonlySet<string>;
-    byLesson: ReadonlyMap<string, ReadonlyMap<string, ReadonlySet<string>>>;
+    byLesson: ReadonlyMap<
+        string,
+        ReadonlyMap<string, ReadonlySet<string> | null>
+    >;
 }
 
 export interface UpdateImpact {
@@ -137,6 +104,11 @@ export interface UpdateImpact {
     lostLessons: string[];
     /** SRS identities the incoming version no longer resolves. */
     lostCards: SrsIdentity[];
+    /** #2188 — identities the author DECLARED retired (manifest
+     *  ``retired_ids``). A declared retirement is not an accident: these
+     *  rows are archived on apply (history kept, out of scheduling), so
+     *  they never make the update breaking. */
+    retiredCards: SrsIdentity[];
     /** True when applying the update would orphan any progress-bearing identity. */
     breaking: boolean;
 }
@@ -146,25 +118,36 @@ export interface UpdateImpact {
  * progress + SRS identities. ``breaking`` is true iff at least one identity
  * the learner has would no longer resolve — that is exactly when the update
  * must be held for a decision instead of auto-applied. A superset update
- * (added lessons / exercises / accept-variants) is never breaking.
+ * (added lessons / exercises / accept-variants) is never breaking, and
+ * neither is an author-declared retirement (``retiredIds``, #2188) — those
+ * rows are archived on apply instead of orphaned.
  */
 export function computeUpdateImpact(
     progressLessonFilenames: readonly string[],
     srsIdentities: readonly SrsIdentity[],
     incoming: IncomingSetIdentities,
+    retiredIds: readonly string[] = [],
 ): UpdateImpact {
+    const retired = new Set(retiredIds);
     const lostLessons = [...new Set(progressLessonFilenames)].filter(
         (filename) => !incoming.lessons.has(filename),
     );
-    const lostCards = srsIdentities.filter((identity) => {
+    const unresolved = srsIdentities.filter((identity) => {
         const keys = incoming.byLesson.get(identity.lesson_id)?.get(
             identity.exercise_id,
         );
         return !keys || !keys.has(identity.element_key);
     });
+    const retiredCards = unresolved.filter((identity) =>
+        retired.has(identity.exercise_id),
+    );
+    const lostCards = unresolved.filter(
+        (identity) => !retired.has(identity.exercise_id),
+    );
     return {
         lostLessons,
         lostCards,
+        retiredCards,
         breaking: lostLessons.length > 0 || lostCards.length > 0,
     };
 }

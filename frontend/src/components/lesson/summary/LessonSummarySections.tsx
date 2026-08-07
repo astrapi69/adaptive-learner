@@ -100,6 +100,14 @@ export function SummaryFavorite({
  * The result scoreboard: the 0-3 star row, the encouraging headline message
  * and the count-up score bar (#1411 toggleable, part of "Result and
  * statistics" together with {@link SummaryStatsList}).
+ *
+ * #2479 — the score bar is two-segment: a solid "immediate" fill (correct on
+ * the first pass) and a hatched "corrected" fill (previously-wrong elements
+ * fixed in the correction round). The two segments are distinguished by a
+ * diagonal hatch AND a labelled legend, never by colour alone. When nothing
+ * was corrected (``correctedCount === 0``) the bar renders as a single solid
+ * fill with no legend, so a run without a correction round looks unchanged.
+ * The stars + message follow the correction-adjusted final state.
  */
 export function SummaryScoreboard({
   enabled,
@@ -109,6 +117,9 @@ export function SummaryScoreboard({
   scorePct,
   correct,
   total,
+  immediateCorrect,
+  correctedCount,
+  immediatePct,
   t,
 }: {
   enabled: boolean;
@@ -118,9 +129,33 @@ export function SummaryScoreboard({
   scorePct: number;
   correct: number;
   total: number;
+  /** Correct on the first pass (#2479); drives the solid segment's width. */
+  immediateCorrect: number;
+  /** Previously-wrong elements corrected (#2479); drives the hatched
+   *  segment. 0 => single-segment bar, no legend. */
+  correctedCount: number;
+  /** First-pass percentage: the immediate segment's width AND the corrected
+   *  segment's left offset (it stacks straight after). */
+  immediatePct: number;
   t: TFn;
 }) {
   if (!enabled) return null;
+  const hasCorrections = correctedCount > 0;
+  // The animated count-up runs on the FINAL percentage; split it across the
+  // two segments so the immediate segment never overshoots its own share.
+  const animatedImmediatePct = Math.min(animatedPct, immediatePct);
+  const animatedCorrectedPct = Math.max(0, animatedPct - immediatePct);
+  const barAria = hasCorrections
+    ? t(
+        "lesson.summary.score_bar_aria_corrected",
+        "Score: {pct} percent, of which {corrected} fixed after correction",
+      )
+        .replace("{pct}", String(scorePct))
+        .replace("{corrected}", String(correctedCount))
+    : t("lesson.summary.score_bar_aria", "Score: {pct} percent").replace(
+        "{pct}",
+        String(scorePct),
+      );
   return (
     <>
       <div
@@ -162,16 +197,25 @@ export function SummaryScoreboard({
         aria-valuenow={scorePct}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={t(
-          "lesson.summary.score_bar_aria",
-          "Score: {pct} percent",
-        ).replace("{pct}", String(scorePct))}
+        aria-label={barAria}
         data-testid="lesson-summary-score-bar"
+        data-has-corrections={hasCorrections ? "true" : "false"}
       >
         <div
-          className="lesson-summary-score-fill"
-          style={{ width: `${animatedPct}%` }}
+          className="lesson-summary-score-fill lesson-summary-score-fill-immediate"
+          style={{ width: `${animatedImmediatePct}%` }}
+          data-testid="lesson-summary-score-fill-immediate"
         />
+        {hasCorrections && (
+          <div
+            className="lesson-summary-score-fill lesson-summary-score-fill-corrected"
+            style={{
+              left: `${immediatePct}%`,
+              width: `${animatedCorrectedPct}%`,
+            }}
+            data-testid="lesson-summary-score-fill-corrected"
+          />
+        )}
         <span className="lesson-summary-score-label">
           <strong>{t("lesson.summary.score", "Score")}:</strong>{" "}
           <span data-testid="lesson-summary-score">
@@ -181,6 +225,38 @@ export function SummaryScoreboard({
           %)
         </span>
       </div>
+
+      {hasCorrections && (
+        <ul
+          className="lesson-summary-score-legend"
+          data-testid="lesson-summary-score-legend"
+        >
+          <li className="lesson-summary-score-legend-item">
+            <span
+              className="lesson-summary-score-swatch lesson-summary-score-swatch-immediate"
+              aria-hidden="true"
+            />
+            <span>
+              {t(
+                "lesson.summary.score_legend_immediate",
+                "{n} on the first try",
+              ).replace("{n}", String(immediateCorrect))}
+            </span>
+          </li>
+          <li className="lesson-summary-score-legend-item">
+            <span
+              className="lesson-summary-score-swatch lesson-summary-score-swatch-corrected"
+              aria-hidden="true"
+            />
+            <span>
+              {t(
+                "lesson.summary.score_legend_corrected",
+                "{n} after correcting",
+              ).replace("{n}", String(correctedCount))}
+            </span>
+          </li>
+        </ul>
+      )}
     </>
   );
 }

@@ -77,11 +77,50 @@ class TestConfigLoads:
 
     def test_launcher_json_declares_internal_ports(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
-        assert cfg.show_advanced_ports is True
-        # Single container since #2058: the nginx service is gone, so only
-        # the backend port stays expert-tunable.
+        # The ports stay DECLARED - the launcher passes them into the
+        # container. Single container since #2058: the nginx service is gone,
+        # so only the backend port exists at all.
         assert cfg.internal_ports == {"backend": 8000}
         assert cfg.env_internal_port_keys == {"backend": "ADAPTIVE_LEARNER_BACKEND_PORT"}
+
+    def test_the_internal_port_panel_is_off_because_we_ship_image_mode(self) -> None:
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        # Both halves are asserted, deliberately, and NOT as an if/else
+        # (#2345). The rule is: outside compose mode the internal port is
+        # carried by the image itself - only a new app version can change it -
+        # so docker-app-launcher is explicit that image/dockerfile consumers
+        # must not offer the expert panel at all. Before 0.27.0 the control
+        # took a Compose path this deployment never had and failed naming a
+        # file that does not exist.
+        #
+        # Pinning only `show_advanced_ports is False` would survive a move
+        # back to compose mode and silently keep the panel hidden where it
+        # would work. Pinning only the mode would survive someone re-enabling
+        # the panel. Together they fail whenever the pair stops agreeing, and
+        # whoever changes one is made to look at the other.
+        assert cfg.effective_deployment_mode == "image"
+        assert cfg.show_advanced_ports is False
+
+    def test_no_shipped_config_offers_the_panel_outside_compose_mode(self) -> None:
+        # The rule, over EVERY config this repo ships - not just the live one.
+        # launcher.example.json is what someone copies to start from, and it
+        # carried `dockerfile` mode together with the panel switched on: the
+        # exact pairing upstream says cannot work. A template that teaches the
+        # wrong combination is worse than a wrong value in one file.
+        configs = sorted(Path(LAUNCHER_JSON).parent.glob("launcher*.json"))
+
+        # Report WHAT was scanned. An empty glob and a clean sweep both print
+        # "no failures" otherwise, and only one of them means anything.
+        assert len(configs) == 2, f"expected 2 shipped configs, found {configs}"
+
+        for path in configs:
+            cfg = LauncherConfig.from_json(str(path))
+            if cfg.effective_deployment_mode == "compose":
+                continue  # there the internal port really is tunable
+            assert cfg.show_advanced_ports is False, (
+                f"{path.name} offers the internal-port panel in "
+                f"{cfg.effective_deployment_mode} mode, where it cannot take effect"
+            )
 
     def test_legacy_names_drive_cleanup(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)

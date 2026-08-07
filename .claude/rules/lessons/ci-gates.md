@@ -111,7 +111,7 @@ A green PR merge proves only that the surface the PR-CI looks at is green. By th
 
 2. **Selection mechanics** (#1620, #1665, #1614). The test IS in the PR-CI suite but the selective runner (`vitest --changed` #615, `pytest --testmon`) does not pick it, because it reads its subject via `readFileSync` (invisible to the module graph) instead of importing it. A moved CSS token broke a `readFileSync` hue-pin the PR-CI never ran (#1665); an `index.html` guard kept develop red across five PRs (#1614). Mitigation candidate: Vitest `forceRerunTriggers` for `src/styles/**/*.css` + `index.html` + `data/i18n/*.json`.
 
-3. **Stale base / semantic merge conflict** (#1729). Two PRs, each tsc-green and textually conflict-free, combine on develop to a type error. `strict: false` branch protection let a PR with 32-minute-old CI merge behind a fresh neighbor. Decided + shipped (2026-07-16): Merge Queue is an Org-only feature (422 on this user-owned repo), so the fallback `strict: true` is active on develop - PR merges now require an up-to-date branch, re-running CI on the combined state. `enforce_admins=false` keeps `make release-finish`'s direct back-merge working.
+3. **Stale base / semantic merge conflict** (#1729). Two PRs, each tsc-green and textually conflict-free, combine on develop to a type error. `strict: false` branch protection let a PR with 32-minute-old CI merge behind a fresh neighbor. Decided + shipped (2026-07-16): Merge Queue is an Org-only feature (422 on this user-owned repo), so the fallback `strict: true` is active on develop - PR merges now require an up-to-date branch, re-running CI on the combined state. (`enforce_admins` ON since 2026-08-06, #2182; the back-merge is a PR, #2199.)
 
 4. **No cadence at all** (#1771). The verified variant: the surface is not even nightly-covered. The bun migration (#1496) dropped `package-lock.json`; `frontend/Dockerfile` still ran `npm ci` and broke the entire self-hosted/desktop path for ~2 release cycles. No automated consumer existed - discovery was manual. Shipped (#1990): `docker-build-smoke.yml` - a build-only `docker compose -f docker-compose.prod.yml build`, path-filtered on the Docker inputs on PRs + on `release/**` + weekly, analogous to the dexie-smoke pattern (#552).
 
@@ -155,6 +155,43 @@ Rule: before reading OR raising any ratchet baseline on a feature branch, merge 
 
 Surfaced 2026-07-30, TWICE in one day (version badges, then css-size, #2182). Both times develop went red on a ratchet by a commit that changed what the ratchet MEASURES without moving its baseline, and both reached develop via `make release-finish`'s back-merge, NOT a feature PR.
 
-Decide the vector in one look when a ratchet-tripping commit is on develop: `git log --first-parent origin/develop` does NOT list the sha AND `git rev-list --merges --ancestry-path <sha>..origin/develop` names a `Release` / `Merge release ... back into develop` merge -> it came through the release/hotfix flow. That flow runs `enforce_admins=false` (a deliberate admin merge so `release-finish` works), so branch-protection required checks NEVER run against it. Version bumps and late foundation fixes (the #2175 a11y anchor layer) happen ON the release/hotfix branch; the back-merge lands them ungated; develop is then red for EVERY branch (no PR can go green) until a human notices.
+Decide the vector in one look when a ratchet-tripping commit is on develop: `git log --first-parent origin/develop` does NOT list the sha AND `git rev-list --merges --ancestry-path <sha>..origin/develop` names a `Release` / `Merge release ... back into develop` merge -> it came through the release/hotfix flow. That flow RAN with `enforce_admins=false` (a deliberate admin merge so `release-finish` worked), so branch-protection required checks never ran against it. Version bumps and late foundation fixes (the #2175 a11y anchor layer) happen ON the release/hotfix branch; the back-merge lands them ungated; develop is then red for EVERY branch (no PR can go green) until a human notices.
 
-Rule: a change made on a release/hotfix branch that trips a ratchet moves that ratchet's baseline IN THE SAME BRANCH, before `make release-finish` - whoever bumps a version or adds a foundation CSS line owns the matching baseline bump. The structural fix (ratchet gates inside `make release-test`, or a develop-push gate) is tracked in #2182; until it lands, check the ratchet gates on develop after every release/hotfix back-merge. Pairs with "Operational gaps masquerade as wired infrastructure" and core.md "Claimed enforcement without enforcement" - a gate the release channel routes around is advisory on exactly the changes releases make.
+Rule: a change made on a release/hotfix branch that trips a ratchet moves that ratchet's baseline IN THE SAME BRANCH, before `make release-finish` - whoever bumps a version or adds a foundation CSS line owns the matching baseline bump. Closed via #2182: ratchet gates inside `make release-test` (#2190), a develop-push detection gate (#2193), the back-merge routed through a PR (#2199), and `enforce_admins=true` on develop (2026-08-06). Pairs with "Operational gaps masquerade as wired infrastructure" and core.md "Claimed enforcement without enforcement" - a gate the release channel routes around is advisory on exactly the changes releases make.
+
+## Ein Byte-Gate kann eine zufällige Übereinstimmung prüfen statt der Spiegelung (#2265)
+
+Aufgetaucht 2026-08-01 beim Engine-Pin 0.14.0 -> 0.17.0. `schema/lesson.schema.json`,
+`content-manifest.schema.json` und `quality-rules.json` sind als BYTE-SPIEGEL der
+gepinnten Engine-Fassung erklärt, und zwei Gates verglichen Bytes
+(`sync-schema-check`, `engine-parity-check`). Beide gingen rot, ohne dass sich
+Inhalt geändert hatte: `json.loads(a) == json.loads(b)` war `True`, sogar die
+Byte-LÄNGE stimmte.
+
+Ursache: die drei Dateien hatten ZWEI Schreiber. Das Spiegel-Skript kopierte die
+Engine-Bytes, danach schrieb `generate_lesson_schema.py` dieselben Dokumente aus
+dem eigenen Serialisierer erneut. Bis Engine 0.14.0 schrieb die Engine
+`sort_keys=True` + ASCII-escaped - exakt das, was der App-Generator erzeugt. Die
+Gates waren grün, weil zwei unabhängige Erzeuger zufällig dieselben Bytes
+lieferten. Engine 0.16.x wechselte auf Einfüge-Reihenfolge + literales UTF-8,
+und die Zufallsgleichheit endete.
+
+Regeln:
+
+- **Ein erzeugter Pfad hat genau EINEN Schreiber.** Zwei Schreiber auf einem Pfad
+  sind ein Defekt, auch wenn beide dasselbe schreiben - die Gleichheit ist dann
+  eine Beobachtung, keine Eigenschaft. Gepinnt von
+  `backend/tests/test_schema_single_writer.py`.
+- **Ein Byte-Gate über einem Pfad mit zwei Schreibern misst nicht, was sein Name
+  sagt.** Vor dem Verschärfen oder Lockern eines Vergleichs erst fragen: WER
+  schreibt diesen Pfad? Solange die Antwort mehr als einen nennt, ist ein roter
+  Gate kein Inhaltsbefund.
+- **Die Gegenprobe ist billig und empirisch**: jeden Generator einzeln laufen
+  lassen und die geschriebenen Dateien per mtime zuordnen
+  (`scripts/audit_generator_writers.sh`). Statisches Lesen der Schreibaufrufe
+  beantwortet es nicht - die Pfade stehen dort als Ausdrücke.
+
+Passt zu "Gate-Test-Vertrag: fünf Tests, und fail closed" (Punkt 5, die Zahl
+muss überall dasselbe bedeuten) und zu core.md "Behauptete Durchsetzung ohne
+Durchsetzung": hier war die Durchsetzung echt, aber sie prüft etwas anderes als
+angenommen.

@@ -534,7 +534,15 @@ class ContentLoaderService:
         *,
         version: str | None = None,
     ) -> list[str]:
-        """Return every lesson filename the cache holds for a set."""
+        """Return the cached lesson filenames in display order.
+
+        The cached set manifest's ``metadata.lessons`` is the
+        authoritative order (#2367): lexicographic filename sorting
+        breaks mixed 2-digit/3-digit prefixes (``100-`` sorts between
+        ``10-`` and ``11-``). Files the manifest does not declare
+        append sorted; a manifest without the field keeps the sorted
+        fallback unchanged.
+        """
         if version is None:
             version = latest_cached_version(self.cache_root, source, set_id)
             if version is None:
@@ -542,7 +550,35 @@ class ContentLoaderService:
         lessons_dir = cache_path_for_set(self.cache_root, source, set_id, version) / "lessons"
         if not lessons_dir.is_dir():
             return []
-        return sorted(p.name for p in lessons_dir.iterdir() if p.is_file())
+        files = sorted(p.name for p in lessons_dir.iterdir() if p.is_file())
+        declared = self._declared_lesson_order(source, set_id, version)
+        if not declared:
+            return files
+        present = set(files)
+        declared_set = set(declared)
+        ordered = [name for name in declared if name in present]
+        leftovers = [name for name in files if name not in declared_set]
+        return ordered + leftovers
+
+    def _declared_lesson_order(
+        self,
+        source: str,
+        set_id: str,
+        version: str,
+    ) -> list[str]:
+        """``metadata.lessons`` from the cached set manifest, or ``[]``.
+
+        Missing manifest, missing field, or a non-string-list shape all
+        mean "no declared order" - the caller keeps its sorted fallback.
+        """
+        try:
+            manifest = read_manifest(self.cache_root, source, set_id, version)
+        except ContentNotFoundError:
+            return []
+        declared = (manifest.metadata or {}).get("lessons")
+        if isinstance(declared, list) and all(isinstance(name, str) for name in declared):
+            return declared
+        return []
 
     def has_cached_set(
         self,

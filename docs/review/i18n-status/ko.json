@@ -12367,19 +12367,6 @@
     "target_hash": "e545d28bf085",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "hints.reveal_pair": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "needs_recheck",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "ok",
-    "de_hash": "fd54c5a3b18c",
-    "target_hash": "15caadebeed7",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "import.analysis_cancel": {
     "verdict": "ok",
     "severity": "low",
@@ -15856,17 +15843,6 @@
     "target_hash": "d423419daad3",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "lesson.exercise.matching.instruction_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "Accurate and natural.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "bf66b4fa79f3",
-    "target_hash": "7d20a4af649d",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "lesson.exercise.matching.instructions": {
     "verdict": "ok",
     "severity": "low",
@@ -15898,17 +15874,6 @@
     "tier1_verdict": "ok",
     "de_hash": "29c820dfc81c",
     "target_hash": "bc97e79178e9",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "lesson.exercise.matching.left_label_knowledge": {
-    "verdict": "minor",
-    "severity": "low",
-    "note": "'left_label' uses '단어' for 'Begriff' but here '용어' is used. Inconsistent terminology for the same source word.",
-    "suggestion": "단어",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "minor",
-    "de_hash": "29c820dfc81c",
-    "target_hash": "376a778546cf",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "lesson.exercise.matching.left_label_productive": {
@@ -15986,17 +15951,6 @@
     "tier1_verdict": "ok",
     "de_hash": "08145060a96d",
     "target_hash": "03270bdd0c07",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "lesson.exercise.matching.right_label_knowledge": {
-    "verdict": "ok",
-    "severity": "low",
-    "note": "Correct.",
-    "suggestion": "",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "ok",
-    "de_hash": "9813fafb098c",
-    "target_hash": "87c242333a3e",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "lesson.exercise.matching.right_label_productive": {

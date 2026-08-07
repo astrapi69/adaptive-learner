@@ -12,16 +12,16 @@ Closes #XX im Commit.
 |---------|------|----------------|
 | active | Feature funktioniert | Keiner |
 | disabled | User kann handeln | "API-Schlüssel konfigurieren" |
-| disabled | Genuinely unmoeglich in diesem Deployment | "Nur mit der Desktop-App verfügbar" |
-| hidden | NUR Dev-Feature-Flags waehrend Entwicklung | Keiner |
+| disabled | Genuinely unmöglich in diesem Deployment | "Nur mit der Desktop-App verfügbar" |
+| hidden | NUR Dev-Feature-Flags während Entwicklung | Keiner |
 
 Hidden wird in der Produkt-UI NICHT verwendet. Alles was dem User
-gehoert ist sichtbar, entweder active oder disabled mit Erklaerung.
+gehört ist sichtbar, entweder active oder disabled mit Erklärung.
 Begruendung: beim Testen ist sofort sichtbar was fehlt, und disabled
 Desktop-Features kommunizieren dass die Desktop-App existiert.
 
 Das Fail-Closed-Verhalten der Library (unbekannte Feature-IDs ->
-hidden) bleibt davon unberuehrt: das ist ein Sicherheitsnetz fuer
+hidden) bleibt davon unberührt: das ist ein Sicherheitsnetz für
 Tippfehler, keine UI-Policy.
 
 ---
@@ -35,7 +35,7 @@ Vom Library-Autor verifiziert. Nicht optional.
 
 Dieser Prompt beschreibt die Architektur und das Ziel. Die EXAKTEN
 API-Aufrufe, Props, Typen und Konstruktoren MUSST du aus den
-tatsaechlichen .d.ts Dateien lesen:
+tatsächlichen .d.ts Dateien lesen:
 
 ```bash
 cat node_modules/@astrapi69/feature-strategy/dist/index.d.ts
@@ -50,15 +50,15 @@ Bekannte Eckpunkte der echten API:
   (Strategy wird auf der Registry gesetzt, nicht als separater Prop)
 - `<Feature>` verwendet `whenDisabled` / `whenHidden` Props
 - ConditionalFeatureStrategy nimmt ein `Record<featureId, FeatureCondition>`,
-  KEINE einzelne Evaluationsfunktion ueber alle Features
-- Strategien koennen sich enthalten: `evaluate()` darf `undefined`
+  KEINE einzelne Evaluationsfunktion über alle Features
+- Strategien können sich enthalten: `evaluate()` darf `undefined`
   zurueckgeben, dann greift der `defaultState` des Descriptors
-- Unbekannte Feature-IDs loest die Registry zu `hidden` auf (fail closed)
+- Unbekannte Feature-IDs löst die Registry zu `hidden` auf (fail closed)
 
 ### B. defaultState + Abstention ist das Kernprinzip — keine Totalfunktion
 
 Die Library ist so gedacht: Descriptors tragen den Normalzustand,
-die Strategy enthaelt NUR Abweichungsregeln und enthaelt sich bei
+die Strategy enthält NUR Abweichungsregeln und enthält sich bei
 allem anderen.
 
 FALSCH (Strategy als Totalfunktion, dupliziert die Feature-Listen):
@@ -72,17 +72,17 @@ return 'active'; // Fallback fuer Unbekanntes
 
 Probleme: der defaultState der Descriptors wird toter Code, jedes
 Feature steht in zwei Quellen (Descriptor + Set) die synchron gehalten
-werden muessen, und der active-Fallback fuer unbekannte IDs hebelt
+werden müssen, und der active-Fallback für unbekannte IDs hebelt
 das Fail-Closed-Verhalten der Registry aus.
 
 RICHTIG:
 - Gruppe 1 (immer active): NUR Descriptor mit `defaultState: 'active'`.
   Taucht in der Strategy NICHT auf.
-- Gruppe 2 (key-abhaengig): Descriptor `defaultState: 'active'` PLUS
+- Gruppe 2 (key-abhängig): Descriptor `defaultState: 'active'` PLUS
   Regel in der Strategy.
 - Gruppe 3 (desktop-only): Descriptor `defaultState: 'active'` PLUS
   Regel in der Strategy.
-- Kein Fallback-Zweig. Features ohne Regel: Strategy enthaelt sich.
+- Kein Fallback-Zweig. Features ohne Regel: Strategy enthält sich.
 
 Ergebnis: rund 10 Regeln statt 30, genau eine Quelle der Wahrheit
 pro Feature.
@@ -109,19 +109,19 @@ const featureContext = useMemo(
 
 ZUSAETZLICH PFLICHT: `hasAiKey` muss REAKTIV sein (React-State oder
 Store-Subscription). Ein einmaliger localStorage-Read beim Mount
-bedeutet: User traegt Key in den Settings ein, alle KI-Buttons
-bleiben disabled bis zum Reload. Pruefe wie der Key-Status aktuell
+bedeutet: User trägt Key in den Settings ein, alle KI-Buttons
+bleiben disabled bis zum Reload. Prüfe wie der Key-Status aktuell
 ermittelt wird. Wenn die Quelle nicht reaktiv ist, baue zuerst einen
 reaktiven Hook (z.B. Store-basiert oder Event-basiert) und verifiziere:
 Key in Settings eintragen -> KI-Buttons werden OHNE Reload active.
 
-### D. Condition-Funktionen muessen billig und pur sein
+### D. Condition-Funktionen müssen billig und pur sein
 
 Die Evaluation ist NICHT eager-im-Provider. Sie ist lazy-per-consumer:
 `useFeature()` ruft `getState()` + `getReason()` bei jedem Render
 des konsumierenden Components auf.
 
-REGEL: Conditions duerfen NUR synchrone, pure Lookups auf dem
+REGEL: Conditions dürfen NUR synchrone, pure Lookups auf dem
 Context-Objekt sein. Kein Async, kein DOM-Zugriff, keine Berechnung,
 kein localStorage-Read, kein API-Call. Der Key-Status wird im
 Provider-Context bereitgestellt (siehe C), NICHT in der Condition
@@ -135,7 +135,7 @@ Aktuell hat Adaptive Learner ad-hoc Feature-Gating:
 - `disabled` + `title="API-Schlüssel erforderlich."` auf einzelnen Buttons
 - FUNKTION-NICHT-VERFUEGBAR Regel in `.claude/rules/` (manuell, nicht enforced)
 - Inkonsistente Entscheidung: manche Features disabled, manche hidden,
-  manche vergessen (Anki-Seite war leer ohne Erklaerung bis #276)
+  manche vergessen (Anki-Seite war leer ohne Erklärung bis #276)
 - API-Key-Checks verstreut in verschiedenen Komponenten
 - NotebookLM AI-Buttons waren nicht key-gated (#281)
 
@@ -146,12 +146,12 @@ if-checks. Zustaende gemaess Zustands-Policy oben.
 
 ## Gate vs Branch vs Infra — die drei Kategorien
 
-NICHT alles gehoert in die Feature-Registry. Saubere Trennung:
+NICHT alles gehört in die Feature-Registry. Saubere Trennung:
 
 ### True Gate (-> useFeature / <Feature>)
 
 Feature das disabled wird basierend auf Mode/Key. Der User sieht
-einen erklaerenden Hinweis. Beispiele: Sync-Panel, Anki-Extraktion,
+einen erklärenden Hinweis. Beispiele: Sync-Panel, Anki-Extraktion,
 Session-Start.
 
 ### Logic Branch (-> useStorageMode() direkt)
@@ -207,8 +207,8 @@ Erstelle `frontend/src/features/featureConfig.ts` mit DREI Deliverables:
 ### 3a. FEATURES-Konstante
 
 Ein `as const` Objekt das CONSTANT_CASE-Namen auf kebab-case-IDs
-mappt. Alle Verwendungen im Code laufen ueber diese Konstante,
-niemals ueber String-Literale:
+mappt. Alle Verwendungen im Code laufen über diese Konstante,
+niemals über String-Literale:
 
 ```typescript
 export const FEATURES = {
@@ -275,7 +275,7 @@ LEARNING_REPO_GIT     Lern-Repository Git-Integration
 ### 3c. Registry als Modul-Konstante
 
 Die Registry ist zustandslos konfiguriert, sie braucht KEIN useMemo
-und gehoert nicht in eine Komponente:
+und gehört nicht in eine Komponente:
 
 ```typescript
 export const featureRegistry = new FeatureRegistry<AppFeatureContext>();
@@ -283,17 +283,17 @@ featureRegistry.registerAll(descriptors);
 featureRegistry.setStrategy(strategy);
 ```
 
-(Exakte API gegen .d.ts pruefen.)
+(Exakte API gegen .d.ts prüfen.)
 
 ---
 
 ## Step 4 — Strategy erstellen
 
-NUR Regeln fuer Gruppe 2 und 3. Kein Always-Active-Set, kein
+NUR Regeln für Gruppe 2 und 3. Kein Always-Active-Set, kein
 Fallback-Zweig. Generiere das Rule-Record programmatisch aus zwei
 kleinen Arrays, statt 10 Regeln von Hand zu schreiben.
 
-Skizze (gegen echte API pruefen, Typen aus .d.ts):
+Skizze (gegen echte API prüfen, Typen aus .d.ts):
 
 ```typescript
 interface AppFeatureContext {
@@ -332,7 +332,7 @@ const strategy = new ConditionalFeatureStrategy<AppFeatureContext>(rules);
 
 Alternative falls die Record-Generierung sperrig wird: ein eigenes
 Objekt das das FeatureStrategy-Interface implementiert (zwei Methoden:
-getState, getReason). Auch dort gilt: enthaelt sich bei Features ohne
+getState, getReason). Auch dort gilt: enthält sich bei Features ohne
 Regel (return undefined), kein active-Fallback, kein hidden.
 
 ---
@@ -390,16 +390,16 @@ grep -rn 'sync\|git-persist\|SYNC' frontend/src/ --include='*.tsx' \
 | 3 | Import-Detail: "Anki-Karten extrahieren" | ANKI_EXTRACT | disabled + title | useFeature disabled |
 | 4 | Anki-Seite: Empty State Key-Hinweis | ANKI_EXTRACT | hardcoded Check | useFeature disabled |
 | 5 | Fortschritt: "Lernfragen generieren" | LEARNING_QUESTIONS | NICHT gegated (#281) | useFeature disabled |
-| 6 | Fortschritt: "NotebookLM-Paket" | NOTEBOOKLM_DOWNLOAD | kein Gate noetig | active (kein KI) |
+| 6 | Fortschritt: "NotebookLM-Paket" | NOTEBOOKLM_DOWNLOAD | kein Gate nötig | active (kein KI) |
 | 7 | Fortschritt: "Lernleitfaden" | LEARNING_GUIDE | NICHT gegated (#281) | useFeature disabled |
-| 8 | Dashboard: "Neue Session starten" | SESSION_START | pruefe aktuellen Zustand | useFeature disabled |
-| 9 | Session-Seite: Resume/Start | SESSION_RESUME | pruefe aktuellen Zustand | useFeature disabled |
-| 10 | S > Daten: Sync-Sektion | SYNC | pruefe aktuellen Zustand | disabled + Notice (NICHT hidden) |
-| 11 | S > Lern-Repository: Git-Persistenz | GIT_PERSIST | pruefe aktuellen Zustand | disabled + Notice (NICHT hidden) |
+| 8 | Dashboard: "Neue Session starten" | SESSION_START | prüfe aktuellen Zustand | useFeature disabled |
+| 9 | Session-Seite: Resume/Start | SESSION_RESUME | prüfe aktuellen Zustand | useFeature disabled |
+| 10 | S > Daten: Sync-Sektion | SYNC | prüfe aktuellen Zustand | disabled + Notice (NICHT hidden) |
+| 11 | S > Lern-Repository: Git-Persistenz | GIT_PERSIST | prüfe aktuellen Zustand | disabled + Notice (NICHT hidden) |
 
 ### Umstellungs-Pattern
 
-Fuer disabled BUTTONS (User soll verstehen warum):
+Für disabled BUTTONS (User soll verstehen warum):
 
 ```typescript
 // Gegen echte API pruefen!
@@ -414,10 +414,10 @@ Fuer disabled BUTTONS (User soll verstehen warum):
 </Feature>
 ```
 
-Fuer disabled SEKTIONEN (Sync-Panel, Git-Persistenz): eine disabled
+Für disabled SEKTIONEN (Sync-Panel, Git-Persistenz): eine disabled
 Sektion ist NICHT einfach ein ausgegrauter Block mit toten Controls.
 Pattern: Sektions-Header bleibt sichtbar, die Controls werden durch
-eine Notice-Card ersetzt die den Reason erklaert:
+eine Notice-Card ersetzt die den Reason erklärt:
 
 ```typescript
 <Feature id={FEATURES.SYNC}
@@ -433,10 +433,10 @@ eine Notice-Card ersetzt die den Reason erklaert:
 </Feature>
 ```
 
-Pruefe ob eine NoticeCard-aehnliche Komponente schon existiert
+Prüfe ob eine NoticeCard-ähnliche Komponente schon existiert
 (api-key-required-notice). Wiederverwenden, nicht neu erfinden.
 
-Fuer programmatischen Zugriff:
+Für programmatischen Zugriff:
 
 ```typescript
 const { state, reason } = useFeature(FEATURES.SESSION_START);
@@ -463,12 +463,12 @@ feature:
 ```
 
 Die Reason-Strings der Strategy (`api-key-required`, `desktop-only`)
-sind Maschinen-Keys, die UI uebersetzt sie via i18n. Mappe konsistent:
+sind Maschinen-Keys, die UI übersetzt sie via i18n. Mappe konsistent:
 reason `api-key-required` -> Key `feature.api_key_required`,
 reason `desktop-only` -> Key `feature.desktop_only`.
 
-Pruefe die bestehenden i18n Keys: gibt es schon aehnliche Texte
-die wiederverwendet werden koennen? Nicht doppeln.
+Prüfe die bestehenden i18n Keys: gibt es schon ähnliche Texte
+die wiederverwendet werden können? Nicht doppeln.
 
 ---
 
@@ -488,14 +488,14 @@ ersetzt.
 
 ---
 
-## Step 9 — Alte Gating-Artefakte loeschen
+## Step 9 — Alte Gating-Artefakte löschen
 
 Wenn ALLE Stellen umgestellt sind:
 
-1. Pruefe ob `useOfflineFeatureGate` existiert. Wenn ja: loeschen.
-2. Pruefe ob `OfflineFeatureNotice` existiert. Wenn ja: loeschen.
-3. Pruefe ob ad-hoc `disabled + title="API-Schlüssel"` noch
-   irgendwo steht. Wenn ja: umstellen oder loeschen.
+1. Prüfe ob `useOfflineFeatureGate` existiert. Wenn ja: löschen.
+2. Prüfe ob `OfflineFeatureNotice` existiert. Wenn ja: löschen.
+3. Prüfe ob ad-hoc `disabled + title="API-Schlüssel"` noch
+   irgendwo steht. Wenn ja: umstellen oder löschen.
 4. Grep-Verify:
 
 ```bash
@@ -511,7 +511,7 @@ grep -rn 'title="API-Schlüssel' frontend/src/ --include='*.tsx'
 
 ## Step 10 — Verify
 
-### Feature-Tabelle (vom Maintainer bestaetigt, Zustands-Policy beachtet)
+### Feature-Tabelle (vom Maintainer bestätigt, Zustands-Policy beachtet)
 
 | Feature | API-Mode | Dexie ohne Key | Dexie mit Key |
 |---------|----------|----------------|---------------|
@@ -549,9 +549,9 @@ grep -rn 'title="API-Schlüssel' frontend/src/ --include='*.tsx'
 
 1. **GitHub Pages (Dexie, kein Key):** navigiere ALLE Views.
    - Active Features: funktionieren wie bisher.
-   - Disabled Features: sichtbar mit Erklaerung. Buttons disabled
+   - Disabled Features: sichtbar mit Erklärung. Buttons disabled
      mit Tooltip, Sektionen mit Notice-Card. NICHTS ist hidden.
-   - ZERO "tote Buttons" die nichts tun ohne Erklaerung.
+   - ZERO "tote Buttons" die nichts tun ohne Erklärung.
    - ZERO verschwundene Features: jedes Feature aus der Tabelle ist
      in der UI auffindbar, entweder active oder disabled+Reason.
 
@@ -566,7 +566,7 @@ grep -rn 'title="API-Schlüssel' frontend/src/ --include='*.tsx'
 4. **Fail-Closed-Stichprobe:** ein bewusst falsch getipptes
    `useFeature('does-not-exist')` in einer Test-Komponente muss
    `hidden` ergeben, nicht active. Danach wieder entfernen.
-   (Das ist Library-Verhalten fuer Tippfehler, kein Widerspruch
+   (Das ist Library-Verhalten für Tippfehler, kein Widerspruch
    zur Zustands-Policy.)
 
 5. **Grep-Verify:** 0 alte Gating-Artefakte (Step 9).
@@ -594,12 +594,12 @@ Ein PR mit diesen Commits. Squash-Merge zu main.
 
 ## Do NOT
 
-- Do NOT die feature-strategy Library aendern. Nur integrieren.
+- Do NOT die feature-strategy Library ändern. Nur integrieren.
 - Do NOT ein ALWAYS_ACTIVE_SET oder einen active-Fallback in die
   Strategy bauen. Gruppe 1 lebt ausschliesslich im defaultState
-  der Descriptors. Die Strategy enthaelt sich bei allem ohne Regel.
+  der Descriptors. Die Strategy enthält sich bei allem ohne Regel.
 - Do NOT irgendein Produkt-Feature hidden machen. Zustands-Policy:
-  hidden ist NUR fuer Dev-Feature-Flags reserviert. Desktop-only
+  hidden ist NUR für Dev-Feature-Flags reserviert. Desktop-only
   Features sind disabled mit reason `desktop-only`.
 - Do NOT disabled Sektionen als tote ausgegraute Controls rendern.
   Pattern: Header + Notice-Card (Step 6).
@@ -610,11 +610,11 @@ Ein PR mit diesen Commits. Squash-Merge zu main.
 - Do NOT den Context OHNE useMemo uebergeben (Performance-Bug).
 - Do NOT einen nicht-reaktiven Key-Status verwenden (Reload-Bug).
 - Do NOT teure/impure Conditions in der Strategy verwenden.
-- Do NOT Feature-IDs als String-Literale verstreuen. Immer ueber
+- Do NOT Feature-IDs als String-Literale verstreuen. Immer über
   die FEATURES-Konstante.
 - Do NOT Prompt-Code copy-pasten. .d.ts lesen.
 - Kein mass-git add, explicit paths.
 - Kein Version-Bump.
 - TSDoc, keine Inline-Kommentare.
 - i18n 8 Sprachen.
-- Tailwind fuer UI.
+- Tailwind für UI.

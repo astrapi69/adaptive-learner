@@ -16,6 +16,8 @@ const LABELS: SetDiscoveryCardLabels = {
   trust: "Official",
   remove: "Remove",
   progress: "Downloading lessons",
+  reviewGenerated: "Maschinell erstellt",
+  reviewReviewed: "Durchgesehen",
 };
 
 function makeSet(over: Partial<SearchableSet> = {}): SearchableSet {
@@ -36,6 +38,7 @@ function makeSet(over: Partial<SearchableSet> = {}): SearchableSet {
     updated_at: null,
     repo_url: "owner/repo",
     repo_name: "owner/repo",
+    review_status: "authored",
     ...over,
   };
 }
@@ -195,6 +198,52 @@ describe("SetDiscoveryCard", () => {
     const badge = screen.getByTestId("set-discovery-card-new");
     expect(badge).toBeInTheDocument();
     expect(badge).toHaveTextContent("New");
+  });
+
+  // --- EXP-048 #2321: Durchsichtsstand badge ---
+
+  it("shows a neutral review badge for a generated set", () => {
+    render(
+      <SetDiscoveryCard
+        set={makeSet({ review_status: "generated" })}
+        isDownloaded={false}
+        onDownload={() => {}}
+        languageLabel="DE → ES"
+        labels={LABELS}
+      />,
+    );
+    const badge = screen.getByTestId("set-discovery-card-review");
+    expect(badge).toHaveTextContent("Maschinell erstellt");
+    // Neutral, not a warning: reuses the secondary-badge treatment.
+    expect(badge).toHaveAttribute("data-review", "generated");
+  });
+
+  it("shows a review badge for a reviewed set", () => {
+    render(
+      <SetDiscoveryCard
+        set={makeSet({ review_status: "reviewed" })}
+        isDownloaded={false}
+        onDownload={() => {}}
+        languageLabel="DE → ES"
+        labels={LABELS}
+      />,
+    );
+    const badge = screen.getByTestId("set-discovery-card-review");
+    expect(badge).toHaveTextContent("Durchgesehen");
+    expect(badge).toHaveAttribute("data-review", "reviewed");
+  });
+
+  it("shows NO review badge for an authored set (absence is not a defect)", () => {
+    render(
+      <SetDiscoveryCard
+        set={makeSet({ review_status: "authored" })}
+        isDownloaded={false}
+        onDownload={() => {}}
+        languageLabel="DE → ES"
+        labels={LABELS}
+      />,
+    );
+    expect(screen.queryByTestId("set-discovery-card-review")).toBeNull();
   });
 
   it("hides the New badge when isNew is false", () => {
