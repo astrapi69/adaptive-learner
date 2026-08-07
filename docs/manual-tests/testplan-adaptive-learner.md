@@ -485,6 +485,27 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Regression andere Typen: Freitext/Lueckentext bei "Fehler
       wiederholen" weiterhin nur die falschen Elemente
 
+### Zusammenfassung zählt Korrekturen mit (#2479)
+- [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der
+      Korrektur-Runde am Ende die Fehler beheben. Der Punktzahl-Balken zeigt
+      zwei Abschnitte: was auf Anhieb saß (voll gefüllt) und was nach Korrektur
+      dazukam (schraffiert), mit Legende "N auf Anhieb" / "N nach Korrektur".
+- [ ] Sterne, Botschaft und die "+N XP" richten sich nach dem Endstand: wer alle
+      Fehler behebt, bekommt volle Sterne und "Volle Punktzahl!", nicht mehr
+      "1 von 3 Sternen" / "Guter Anfang". Die gutgeschriebene XP entspricht der
+      angezeigten Zahl.
+- [ ] Ohne Korrektur-Runde bleibt der Balken einfarbig (kein leerer zweiter
+      Abschnitt, keine Legende), Sterne + Botschaft wie gehabt.
+- [ ] Prüfungsmodus (Exam): Der Endstand richtet sich NICHT nach der Korrektur
+      - ein Prüfungsergebnis ist der erste Durchgang (Balken einfarbig, Sterne
+      + XP unverändert).
+- [ ] Barrierefreiheit: Die beiden Balkenabschnitte sind auch ohne Farbe
+      unterscheidbar (Schraffur + Legende) - in hellem UND dunklem Design
+      prüfen.
+- [ ] iOS PWA/Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm
+      hinzugefügten Symbol (der Befund kam von dort). Balken, Sterne, Botschaft
+      und XP zeigen den Endstand nach der Korrektur.
+
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar

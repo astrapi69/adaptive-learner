@@ -454,6 +454,25 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Regression, other types: free-text/cloze in "Retry errors" still show
       only the wrong elements
 
+### Summary counts corrections (#2479)
+- [ ] Play a lesson with several wrong answers, then fix them in the
+      end-of-lesson correction round. The score bar shows two segments: what
+      was right on the first try (solid fill) and what was fixed after
+      correcting (hatched), with a legend "N on the first try" / "N after
+      correcting".
+- [ ] Stars, message and the "+N XP" follow the final state: fixing every
+      mistake earns full stars and "Perfect score!", not "1 of 3 stars" /
+      "Good start". The credited XP matches the number shown.
+- [ ] Without a correction round the bar stays a single solid segment (no empty
+      second segment, no legend); stars + message unchanged.
+- [ ] Exam mode: the result does NOT follow the correction - an exam result is
+      the first pass (single-segment bar, stars + XP unchanged).
+- [ ] Accessibility: the two bar segments are distinguishable without colour
+      (hatch + legend) - check in BOTH light and dark themes.
+- [ ] iOS PWA/Standalone: same check on the icon added to the home screen
+      (the report came from there). Bar, stars, message and XP show the final
+      state after correction.
+
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
 - [ ] ext:al-categorization: assign categories, readable resolution

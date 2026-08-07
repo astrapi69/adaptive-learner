@@ -238,4 +238,15 @@
 # .chat-message-cursor (gegen node_modules/@astrapi69/*/dist
 # nachverifiziert, 0 Treffer). Ein src-Grep allein ist kein
 # Tot-Urteil - Laufzeitpakete emittieren Klassennamen.
-7581
+# 2026-08-07: 7581 -> 7645 (#2479 Korrektur-zaehlender Zusammenfassungs-
+# Balken, Merge-Rebase der +64 auf die #2484-Wiederherstellung): +64 Zeilen
+# in 12-navigation.css - der zweigeteilte Punktzahl-Balken erweitert die
+# bestehende Score-Bar-Primitive um einen zweiten ("nach Korrektur")
+# Abschnitt: ein solider + ein schraffierter Fill (repeating-linear-gradient
+# ueber color-mix, damit die Segmente auch ohne Farbe unterscheidbar sind -
+# Barrierefreiheit) plus die zweizeilige Legende mit Swatches. Legitime
+# Fundament-Erweiterung einer bereits ungelayerten Legacy-Regel (kein
+# Tailwind-Utility-Aequivalent fuer den Hatch-Verlauf); neue Farben laufen
+# ueber die vorhandenen Tokens --accent / --exercise-correct / --surface.
+# Kein neues global.css.
+7645

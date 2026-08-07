@@ -63,9 +63,9 @@ import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSession
 import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
 import {
   buildExerciseBreakdown,
-  computeStars,
   type StarRating,
 } from "../../../lib/lesson/lesson-summary";
+import { resolveSummaryScoreDisplay } from "../../../lib/lesson/correction-adjusted-score";
 import type { LessonResultLabels } from "../../../lib/lesson/result-export";
 import {
   buildLessonJsonExport,
@@ -192,9 +192,10 @@ export default function LessonSummary({
     bestTotal,
   } = deriveSummaryStats(progress);
 
-  const stars: StarRating = computeStars(correct, total);
-
-  // #1007 — exam-mode pass/fail against the configured threshold.
+  // #1007 — exam-mode pass/fail against the configured threshold. An exam
+  // result is first-pass by design (you cannot pass an exam by correcting
+  // afterwards), so it stays on the immediate score — see the
+  // correction-adjustment display resolver below.
   const examThreshold = useMemo(() => readExamPassThreshold(), []);
   const examPass =
     lessonMode === "exam" && examPassed(correct, total, examThreshold);
@@ -219,6 +220,34 @@ export default function LessonSummary({
   // summary still renders if storage is unreachable; the
   // demoted action links below remain a working exit.
   const sessionErrors = useLessonSessionErrors(userId, setId, lessonFilename);
+
+  // #2479 — fold the correction round (and error-replay / SRS advances) into
+  // the displayed result. The frozen ``score_correct`` counts only the first
+  // pass; the correction round lifts SRS ``ElementError`` rows but never that
+  // number, so the summary showed "1 von 3 Sternen / Guter Anfang" on the
+  // same screen that reported "Alle Fehler korrigiert". ``deriveCorrection‑
+  // AdjustedScore`` derives the final view WITHOUT mutating the frozen score,
+  // so the two-segment bar keeps "where it stalled" visible. Exam mode is
+  // exempt: an exam result is first-pass by design (SUMMARY-CORRECTION §Part3).
+  // #2479 — resolve the displayed score view in one tested place: the
+  // correction-adjusted breakdown (for the two-segment bar) plus the stars /
+  // correct-count / percentage the stars, message and XP follow. Exam mode is
+  // exempt (an exam result is the first pass). ``immediateStars`` (the mount
+  // celebration + confetti + exam verdict) rides along.
+  const {
+    adjusted: adjustedScore,
+    immediateStars,
+    stars,
+    displayCorrect,
+    displayPct: displayScorePct,
+    correctedCount: displayCorrectedCount,
+  } = useMemo(
+    () =>
+      resolveSummaryScoreDisplay(progress, sessionErrors, {
+        isExam: lessonMode === "exam",
+      }),
+    [progress, sessionErrors, lessonMode],
+  );
 
   // #505 — the XP this run is worth. Computed with the same pure,
   // parity-tested gamification calculator the award path uses
@@ -410,29 +439,38 @@ export default function LessonSummary({
   }, [lesson, progress, correct, total, scorePct, sessionErrors]);
 
   // Count the score percentage up from 0 (instant under
-  // "subtle" / reduced motion - see useCountUp).
-  const animatedPct = useCountUp(scorePct, 1000, intensity !== "subtle");
+  // "subtle" / reduced motion - see useCountUp). #2479 — counts to the
+  // correction-adjusted final percentage.
+  const animatedPct = useCountUp(displayScorePct, 1000, intensity !== "subtle");
 
   // Confetti only on a perfect (3-star) lesson, and only when
-  // the intensity allows it. Self-dismisses after the burst.
-  const celebrateConfetti = stars === 3 && allowsConfetti(intensity);
+  // the intensity allows it. Self-dismisses after the burst. Uses the
+  // first-pass stars so the burst is tied to the completion moment (#2479),
+  // not re-triggered by a later correction.
+  const celebrateConfetti = immediateStars === 3 && allowsConfetti(intensity);
 
-  // The headline message: a "lesson_complete" praise phrase on a
-  // perfect run (when phrases are allowed), otherwise the
-  // per-star encouraging message. Picked once on mount.
+  // The headline message. #2479 — follows the correction-adjusted final
+  // stars, so a learner who fixed every mistake is not told "Guter Anfang".
+  // The random "lesson_complete" praise phrase (perfect run + phrases
+  // allowed) is picked ONCE, at the mount moment, so it never reshuffles on a
+  // re-render; the per-star encouraging message is otherwise resolved live
+  // from the current final stars.
   const ENCOURAGE_FALLBACK: Record<StarRating, string> = {
     0: "Practice makes perfect!",
     1: "Good start - keep going!",
     2: "Almost perfect!",
     3: "Perfect score!",
   };
-  const [celebrateMessage] = useState<string>(() => {
-    if (stars === 3 && intensity !== "subtle") {
-      const picked = nextPraise("lesson_complete", lang);
-      if (picked) return picked.phrase;
+  const [mountPraisePhrase] = useState<string | null>(() => {
+    if (immediateStars === 3 && intensity !== "subtle") {
+      return nextPraise("lesson_complete", lang)?.phrase ?? null;
     }
-    return t(`lesson.summary.encourage_${stars}`, ENCOURAGE_FALLBACK[stars]);
+    return null;
   });
+  const celebrateMessage =
+    stars === 3 && mountPraisePhrase
+      ? mountPraisePhrase
+      : t(`lesson.summary.encourage_${stars}`, ENCOURAGE_FALLBACK[stars]);
 
   // Fire the lesson-complete celebration sounds once on mount.
   // The star chime + confetti sparkle only on a perfect run.
@@ -440,8 +478,8 @@ export default function LessonSummary({
   useEffect(() => {
     if (celebrationFired.current) return;
     celebrationFired.current = true;
-    emitCelebration({ type: "lesson_complete", payload: { stars } });
-    if (stars === 3) {
+    emitCelebration({ type: "lesson_complete", payload: { stars: immediateStars } });
+    if (immediateStars === 3) {
       emitCelebration({ type: "stars_earned" });
       if (celebrateConfetti) emitCelebration({ type: "confetti" });
     }
@@ -477,9 +515,12 @@ export default function LessonSummary({
           stars={stars}
           message={celebrateMessage}
           animatedPct={animatedPct}
-          scorePct={scorePct}
-          correct={correct}
+          scorePct={displayScorePct}
+          correct={displayCorrect}
           total={total}
+          immediateCorrect={adjustedScore.immediateCorrect}
+          correctedCount={displayCorrectedCount}
+          immediatePct={adjustedScore.immediatePct}
           t={t}
         />
         {/* #1007 Phase 2 — dedicated exam result panel (verdict + score +
@@ -523,16 +564,19 @@ export default function LessonSummary({
     xp: (
       <SummaryXp enabled xpGain={xpGain} animate={intensity !== "subtle"} t={t} />
     ),
-    // #1073 — share the result (lesson title + score).
+    // #1073 — share the result (lesson title + score). #2479 — shares the
+    // correction-adjusted final (correct/pct/stars all follow the same
+    // displayed result), so a shared card can never contradict the on-screen
+    // stars.
     share: (
       <SummaryShare
         enabled
         total={total}
         result={{
           lessonTitle: lesson.title,
-          correct,
+          correct: displayCorrect,
           total,
-          scorePct,
+          scorePct: displayScorePct,
           stars,
           level,
           xp: totalXp,
@@ -602,7 +646,7 @@ export default function LessonSummary({
 
   return (
     <section
-      className={`lesson-summary${stars === 3 ? " is-celebrating" : ""}`}
+      className={`lesson-summary${immediateStars === 3 ? " is-celebrating" : ""}`}
       data-testid="lesson-summary"
       data-stars={String(stars)}
       aria-label={t("lesson.summary.aria_label", "Lesson summary")}

@@ -102,6 +102,40 @@ function buildCompletedProgress(opts: {
     };
 }
 
+/** #2479 — seed ``count`` corrected element rows (erred once, now on a
+ *  positive streak) for the lesson, so the award scores on the final state. */
+async function seedCorrectedElements(count: number): Promise<void> {
+    const db = getDb();
+    const now = new Date().toISOString();
+    for (let i = 0; i < count; i++) {
+        await db.elementErrors.put({
+            id: `elem-${i}`,
+            user_id: USER,
+            set_id: SET_ID,
+            lesson_id: LESSON,
+            exercise_id: `ex-${i}`,
+            element_key: `key-${i}`,
+            direction: "target_to_source",
+            element_type: "vocabulary",
+            user_answer: "",
+            correct_answer: "",
+            error_count: 1,
+            correct_streak: 1,
+            last_error_at: now,
+            last_attempt_at: now,
+            mastered: false,
+            mastered_at: null,
+            hint_used: false,
+            hint_used_count: 0,
+            last_attempt_exam: false,
+            attempt_count: 2,
+            attempt_history: [],
+            created_at: now,
+            updated_at: now,
+        });
+    }
+}
+
 beforeEach(async () => {
     await _resetDbForTests();
     const {IDBFactory} = await import("fake-indexeddb");
@@ -118,7 +152,57 @@ beforeEach(async () => {
     await db.users.clear();
     await db.learningProjects.clear();
     await db.userBadges.clear();
+    await db.elementErrors.clear();
     await seedUserAndProject();
+});
+
+describe("awardLessonXpDexie correction-adjusted stars (#2479)", () => {
+    it("scores on the final state when the correction round fixed the errors", async () => {
+        // 10/16 first pass (attempts=2, no first-attempt bonus); all 6 wrong
+        // elements corrected -> 16/16 -> 3 stars -> base 30 + star_bonus 30.
+        const progress = buildCompletedProgress({
+            score_correct: 10,
+            score_total: 16,
+            attempts: 2,
+        });
+        await seedCorrectedElements(6);
+        const award = await awardLessonXpDexie(USER, progress);
+        expect(award.xp_earned).toBe(60);
+        expect(award.breakdown).toEqual({base: 30, star_bonus: 30});
+    });
+
+    it("scores on the first pass when nothing was corrected", async () => {
+        // 10/16 = 63% -> 1 star -> base 30 + star_bonus 10 = 40. No corrected
+        // rows seeded, so the adjustment is a no-op.
+        const progress = buildCompletedProgress({
+            score_correct: 10,
+            score_total: 16,
+            attempts: 2,
+        });
+        const award = await awardLessonXpDexie(USER, progress);
+        expect(award.xp_earned).toBe(40);
+        expect(award.breakdown).toEqual({base: 30, star_bonus: 10});
+    });
+
+    it("exam mode ignores corrections (first-pass result stands)", async () => {
+        const progress = {
+            ...buildCompletedProgress({
+                score_correct: 10,
+                score_total: 16,
+                attempts: 2,
+            }),
+            lesson_mode: "exam" as const,
+        };
+        await seedCorrectedElements(6);
+        const award = await awardLessonXpDexie(USER, progress);
+        // exam multiplier 1.5x on the first-pass 1-star award (30 + 10 = 40).
+        expect(award.breakdown).toEqual({
+            base: 30,
+            star_bonus: 10,
+            mode_multiplier_pct: 50,
+        });
+        expect(award.xp_earned).toBe(60);
+    });
 });
 
 describe("awardLessonXpDexie (Phase 50D)", () => {

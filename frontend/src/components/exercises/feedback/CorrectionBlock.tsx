@@ -39,6 +39,7 @@ import {
     type LessonEnterNav,
 } from "../../../hooks/lesson/interaction/useLessonEnterKey";
 import {generateClozeFromError} from "../../../lib/exercises/grading/cloze-generator";
+import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
 import {resolveCorrectionSourceCard} from "./correction-source-card";
 import {getStorage} from "../../../storage";
 import type {
@@ -191,6 +192,12 @@ export default function CorrectionBlock({
                     userId,
                     attempts,
                 );
+                // #2479 — the SRS state changed, so the lesson summary's live
+                // ElementError read (useLessonSessionErrors) must refresh: the
+                // correction-adjusted score bar + the "Fehler wiederholen"
+                // open-count both depend on it. Mirrors the notify the
+                // error-replay / review runners already fire.
+                notifyReviewsChanged();
             } catch {
                 // Non-blocking — the user sees their result locally,
                 // SRS just doesn't advance on the failure case.
