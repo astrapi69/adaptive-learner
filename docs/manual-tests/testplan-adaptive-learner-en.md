@@ -338,6 +338,11 @@ Requires domain knowledge. Not automatable.
 - [ ] Matching: pairs SAME height (no visual offset)
 - [ ] Matching: "Resolve" animation looks good (test all 4 effects)
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
+- [ ] Word Tiles: on a CORRECT answer the built sentence stays visible (#2494):
+      assemble a sentence correctly and check it. The composed sentence remains
+      shown (all green) afterwards and does NOT disappear; the success message
+      ("Correct!") and the Continue button appear below it. iOS PWA/Standalone:
+      run the same check on the web app icon added to the home screen.
 - [ ] Free Text: correction READABLE (token diff understandable)
 - [ ] Picture Choice: tiles SAME height
 - [ ] Answer order shuffled (#2317): open a picture_choice exercise across
