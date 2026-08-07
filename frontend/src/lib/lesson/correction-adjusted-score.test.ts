@@ -14,6 +14,7 @@ import type {ElementError, LessonProgress} from "../../storage/types";
 import {
     countCorrectedElements,
     deriveCorrectionAdjustedScore,
+    resolveSummaryScoreDisplay,
 } from "./correction-adjusted-score";
 
 /** Minimal ElementError row builder — only the fields the helper reads. */
@@ -184,3 +185,43 @@ describe("deriveCorrectionAdjustedScore", () => {
         expect(result.hasCorrections).toBe(false);
     });
 });
+
+describe("resolveSummaryScoreDisplay", () => {
+    const corrected = (n: number) =>
+        Array.from({length: n}, () => row({error_count: 1, correct_streak: 1}));
+
+    it("practice mode shows the corrected final state", () => {
+        const d = resolveSummaryScoreDisplay(progress(10, 16), corrected(6), {
+            isExam: false,
+        });
+        expect(d.applyCorrection).toBe(true);
+        expect(d.displayCorrect).toBe(16);
+        expect(d.displayPct).toBe(100);
+        expect(d.stars).toBe(3);
+        expect(d.immediateStars).toBe(1);
+        expect(d.correctedCount).toBe(6);
+        expect(d.adjusted.hasCorrections).toBe(true);
+    });
+
+    it("exam mode ignores corrections and shows the first pass", () => {
+        const d = resolveSummaryScoreDisplay(progress(10, 16), corrected(6), {
+            isExam: true,
+        });
+        expect(d.applyCorrection).toBe(false);
+        expect(d.displayCorrect).toBe(10);
+        expect(d.displayPct).toBe(63);
+        expect(d.stars).toBe(1);
+        expect(d.immediateStars).toBe(1);
+        expect(d.correctedCount).toBe(0);
+    });
+
+    it("no corrections: display equals the first pass in practice mode", () => {
+        const d = resolveSummaryScoreDisplay(progress(10, 16), [], {
+            isExam: false,
+        });
+        expect(d.displayCorrect).toBe(10);
+        expect(d.stars).toBe(1);
+        expect(d.correctedCount).toBe(0);
+        expect(d.adjusted.hasCorrections).toBe(false);
+    });
+})

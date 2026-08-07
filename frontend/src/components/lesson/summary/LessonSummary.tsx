@@ -63,10 +63,9 @@ import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSession
 import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
 import {
   buildExerciseBreakdown,
-  computeStars,
   type StarRating,
 } from "../../../lib/lesson/lesson-summary";
-import { deriveCorrectionAdjustedScore } from "../../../lib/lesson/correction-adjusted-score";
+import { resolveSummaryScoreDisplay } from "../../../lib/lesson/correction-adjusted-score";
 import type { LessonResultLabels } from "../../../lib/lesson/result-export";
 import {
   buildLessonJsonExport,
@@ -193,16 +192,10 @@ export default function LessonSummary({
     bestTotal,
   } = deriveSummaryStats(progress);
 
-  // #2479 — the first-pass stars (frozen ``score_correct``). Kept for the
-  // mount celebration + confetti (which fire once, at the completion moment)
-  // and the exam verdict below. The DISPLAYED stars/message/bar/XP use the
-  // correction-adjusted ``stars`` computed once ``sessionErrors`` are in.
-  const immediateStars: StarRating = computeStars(correct, total);
-
   // #1007 — exam-mode pass/fail against the configured threshold. An exam
   // result is first-pass by design (you cannot pass an exam by correcting
   // afterwards), so it stays on the immediate score — see the
-  // correction-adjustment gate below.
+  // correction-adjustment display resolver below.
   const examThreshold = useMemo(() => readExamPassThreshold(), []);
   const examPass =
     lessonMode === "exam" && examPassed(correct, total, examThreshold);
@@ -236,25 +229,25 @@ export default function LessonSummary({
   // AdjustedScore`` derives the final view WITHOUT mutating the frozen score,
   // so the two-segment bar keeps "where it stalled" visible. Exam mode is
   // exempt: an exam result is first-pass by design (SUMMARY-CORRECTION §Part3).
-  const useCorrectionAdjusted = lessonMode !== "exam";
-  // Always derived from the REAL progress so the immediate segment (score_correct
-  // + its percentage) is right in EVERY mode; only the corrected part is gated
-  // off for exam below (an exam result is the first pass).
-  const adjustedScore = useMemo(
-    () => deriveCorrectionAdjustedScore(progress, sessionErrors),
-    [progress, sessionErrors],
+  // #2479 — resolve the displayed score view in one tested place: the
+  // correction-adjusted breakdown (for the two-segment bar) plus the stars /
+  // correct-count / percentage the stars, message and XP follow. Exam mode is
+  // exempt (an exam result is the first pass). ``immediateStars`` (the mount
+  // celebration + confetti + exam verdict) rides along.
+  const {
+    adjusted: adjustedScore,
+    immediateStars,
+    stars,
+    displayCorrect,
+    displayPct: displayScorePct,
+    correctedCount: displayCorrectedCount,
+  } = useMemo(
+    () =>
+      resolveSummaryScoreDisplay(progress, sessionErrors, {
+        isExam: lessonMode === "exam",
+      }),
+    [progress, sessionErrors, lessonMode],
   );
-  // The displayed correct/total the stars + message + XP follow. Exam mode
-  // ignores the correction and shows the first pass.
-  const displayCorrect = useCorrectionAdjusted
-    ? adjustedScore.finalCorrect
-    : correct;
-  const stars: StarRating = useCorrectionAdjusted
-    ? computeStars(adjustedScore.finalCorrect, adjustedScore.total)
-    : immediateStars;
-  const displayScorePct = useCorrectionAdjusted
-    ? adjustedScore.finalPct
-    : scorePct;
 
   // #505 — the XP this run is worth. Computed with the same pure,
   // parity-tested gamification calculator the award path uses
@@ -526,9 +519,7 @@ export default function LessonSummary({
           correct={displayCorrect}
           total={total}
           immediateCorrect={adjustedScore.immediateCorrect}
-          correctedCount={
-            useCorrectionAdjusted ? adjustedScore.correctedCount : 0
-          }
+          correctedCount={displayCorrectedCount}
           immediatePct={adjustedScore.immediatePct}
           t={t}
         />

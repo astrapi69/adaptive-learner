@@ -225,4 +225,14 @@
 # dead-selectors-removed.test.ts. NICHT entfernt (Karten-Korrektur):
 # nav-mode-badge-content/-ai-augmented sind LIVE via
 # `nav-mode-badge-${mode}` (NavIndicators.tsx:25).
-7335
+# 2026-08-07: 7335 -> 7399 (#2479 Korrektur-zaehlender Zusammenfassungs-
+# Balken): +64 Zeilen in 12-navigation.css - der zweigeteilte Punktzahl-
+# Balken erweitert die bestehende Score-Bar-Primitive um einen zweiten
+# ("nach Korrektur") Abschnitt: ein solider + ein schraffierter Fill
+# (repeating-linear-gradient ueber color-mix, damit die Segmente auch ohne
+# Farbe unterscheidbar sind - Barrierefreiheit) plus die zweizeilige Legende
+# mit Swatches. Legitime Fundament-Erweiterung einer bereits ungelayerten
+# Legacy-Regel (kein Tailwind-Utility-Aequivalent fuer den Hatch-Verlauf);
+# neue Farben laufen ueber die vorhandenen Tokens --accent / --exercise-
+# correct / --surface. Kein neues global.css.
+7399

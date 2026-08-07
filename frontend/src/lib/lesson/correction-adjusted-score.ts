@@ -24,6 +24,7 @@
  */
 
 import type {ElementError, LessonProgress} from "../../storage/types";
+import {computeStars, type StarRating} from "./lesson-summary";
 
 export interface CorrectionAdjustedScore {
     /** Elements correct on the first pass (the frozen ``score_correct``). */
@@ -107,5 +108,55 @@ export function deriveCorrectionAdjustedScore(
         immediatePct: pct(immediateCorrect),
         remaining,
         hasCorrections: correctedCount > 0,
+    };
+}
+
+/** The score view the summary actually displays: the adjusted breakdown plus
+ *  the stars / correct-count / percentage the stars, message and XP follow.
+ *  Exam mode is exempt (an exam result is the first pass, by design), so it
+ *  reports the frozen first-pass numbers with the corrected part suppressed.
+ *
+ *  Extracted from ``LessonSummary`` so the mode branching lives in one tested
+ *  place instead of inflating the component's cyclomatic complexity (#2479). */
+export interface SummaryScoreDisplay {
+    /** The full correction-adjusted breakdown (drives the two-segment bar). */
+    adjusted: CorrectionAdjustedScore;
+    /** Whether the correction folds into the display (false in exam mode). */
+    applyCorrection: boolean;
+    /** First-pass stars — the mount celebration + confetti + exam verdict. */
+    immediateStars: StarRating;
+    /** Displayed stars: final in practice, first-pass in exam. */
+    stars: StarRating;
+    /** Displayed correct count (final in practice, first-pass in exam). */
+    displayCorrect: number;
+    /** Displayed percentage (final in practice, first-pass in exam). */
+    displayPct: number;
+    /** The corrected segment count the bar renders (0 in exam mode). */
+    correctedCount: number;
+}
+
+export function resolveSummaryScoreDisplay(
+    progress: LessonProgress | null,
+    sessionErrors: readonly ElementError[],
+    opts: {isExam: boolean},
+): SummaryScoreDisplay {
+    const adjusted = deriveCorrectionAdjustedScore(progress, sessionErrors);
+    const applyCorrection = !opts.isExam;
+    const immediateStars = computeStars(
+        adjusted.immediateCorrect,
+        adjusted.total,
+    );
+    return {
+        adjusted,
+        applyCorrection,
+        immediateStars,
+        stars: applyCorrection
+            ? computeStars(adjusted.finalCorrect, adjusted.total)
+            : immediateStars,
+        displayCorrect: applyCorrection
+            ? adjusted.finalCorrect
+            : adjusted.immediateCorrect,
+        displayPct: applyCorrection ? adjusted.finalPct : adjusted.immediatePct,
+        correctedCount: applyCorrection ? adjusted.correctedCount : 0,
     };
 }
