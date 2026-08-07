@@ -120,8 +120,27 @@ def test_every_release_driven_workflow_has_the_precondition() -> None:
         for path in workflows
         if "verify_release_commit_green.py" in path.read_text(encoding="utf-8")
     ]
-    print(f"examined {len(workflows)} workflow(s), {len(gate_calling)} gate-calling")
-    assert len(gate_calling) >= 4, f"expected the four publishers, found {len(gate_calling)}"
+    # #2482: the three launcher builds lost their gate call with the dead
+    # release-event steps (#2475) but their jobs still run on the tag
+    # commit's main push - they self-identify via the explicit racing
+    # marker instead. The anti-shrink pin covers the COMBINED exclusion
+    # basis, so neither class can silently fall out.
+    racing_marked = [
+        path
+        for path in workflows
+        if "green-gate-exclusion: release-racing" in path.read_text(encoding="utf-8")
+    ]
+    print(
+        f"examined {len(workflows)} workflow(s), {len(gate_calling)} gate-calling, "
+        f"{len(racing_marked)} racing-marked"
+    )
+    assert len(gate_calling) >= 1, f"expected a gate-calling publisher, found {len(gate_calling)}"
+    assert len(racing_marked) >= 3, (
+        f"expected the three launcher builds racing-marked, found {len(racing_marked)}"
+    )
+    assert len(gate_calling) + len(racing_marked) >= 4, (
+        "the exclusion basis shrank below the four release-driven workflows"
+    )
     # Option 1 (v2.8.0): NO workflow may listen on release events again -
     # created never fires for drafts, and published re-runs the chain on
     # draft-publish against a non-bit-identical rebuild. The chain runs on
