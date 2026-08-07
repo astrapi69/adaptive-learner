@@ -2162,7 +2162,10 @@
       "next": "다음",
       "complete_heading": "교정 라운드 완료",
       "improvement": "요소 {n}개가 향상되었습니다.",
-      "improvement_singular": "요소 {n}개가 향상되었습니다."
+      "improvement_singular": "요소 {n}개가 향상되었습니다.",
+      "mistakes_heading": "실수 바로잡기",
+      "expand": "지금 바로잡기",
+      "replay_all": "모든 문제 다시 풀기 ({count})"
     },
     "error": {
       "load_failed": "레슨을 불러올 수 없었습니다.",

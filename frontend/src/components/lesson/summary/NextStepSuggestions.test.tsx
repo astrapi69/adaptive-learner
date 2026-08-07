@@ -41,21 +41,13 @@ function makeSuggestions(
     };
 }
 
-import type {ErrorReplayPayload} from "./NextStepSuggestions";
-
-function renderCard(
-    suggestions: Suggestions,
-    errorReplay?: ErrorReplayPayload,
-    setId = "fr-a1",
-) {
+function renderCard(suggestions: Suggestions, setId = "fr-a1") {
     return render(
         <MemoryRouter>
             <NextStepSuggestions
                 suggestions={suggestions}
                 setId={setId}
                 setSlug="bundled:adaptive-learner-content"
-                lessonFilename="03-ser-estar.json"
-                errorReplay={errorReplay}
             />
         </MemoryRouter>,
     );
@@ -70,10 +62,7 @@ afterEach(() => {
 /** Render the card inside a router that reports the current path, so a
  *  test can assert whether an Enter keystroke navigated (and to where).
  *  Returns a getter for the live path. */
-function renderWithLocation(
-    suggestions: Suggestions,
-    errorReplay?: ErrorReplayPayload,
-): () => string {
+function renderWithLocation(suggestions: Suggestions): () => string {
     let path = "/summary";
     function Probe() {
         path = useLocation().pathname;
@@ -85,8 +74,6 @@ function renderWithLocation(
                 suggestions={suggestions}
                 setId="fr-a1"
                 setSlug="bundled:adaptive-learner-content"
-                lessonFilename="03-ser-estar.json"
-                errorReplay={errorReplay}
             />
             <Probe />
         </MemoryRouter>,
@@ -298,7 +285,6 @@ describe("NextStepSuggestions", () => {
                 setTitle: "Python Grundlagen",
                 lessonCount: 3,
             }),
-            undefined,
             "de/python-basics",
         );
         expect(screen.getByTestId("next-step-cta-view-set")).toHaveAttribute(
@@ -368,121 +354,25 @@ describe("NextStepSuggestions", () => {
         expect(card.getAttribute("style")).toBeFalsy();
     });
 
-    // --- error-replay card ----------------------------------------
-
-    const PAYLOAD = {
-        exercises: [
-            {
-                id: "ex-a",
-                type: "free_text" as const,
-                prompt: "p",
-                card_ids: [],
-                accept: ["x"],
-                distractors: [],
-            },
-        ],
-        cards: [],
-        lessonTitle: "Ser/Estar",
-    };
-
-    it("shows the error-replay card when available + a payload is given", () => {
+    // #2496 — the error-replay CTA moved into the summary's correction
+    // section; this card stack never renders it, even with open errors.
+    it("never renders an error-replay card (moved to the correction section)", () => {
         renderCard(
             makeSuggestions({
-                errorReplay: {available: true, errorCount: 3, correctedCount: 0, allCorrected: false},
-            }),
-            PAYLOAD,
-        );
-        const card = screen.getByTestId("next-step-card-error-replay");
-        expect(card).toBeInTheDocument();
-        // "{count} exercises again"
-        expect(card.textContent).toMatch(/3/);
-        // Links to the error-replay route.
-        const cta = screen.getByTestId("next-step-cta-error-replay");
-        expect(cta.getAttribute("href")).toContain(
-            "/error-replay/bundled:adaptive-learner-content/fr-a1/03-ser-estar.json",
-        );
-    });
-
-    it("shows the corrected progress on the replay card (#1372)", () => {
-        // 2 still open, 3 already corrected in a replay → "3 of 5 corrected".
-        renderCard(
-            makeSuggestions({
+                nextLesson: {available: true, isPaused: false, title: "x"},
                 errorReplay: {
                     available: true,
-                    errorCount: 2,
-                    correctedCount: 3,
+                    errorCount: 3,
+                    correctedCount: 0,
                     allCorrected: false,
                 },
             }),
-            PAYLOAD,
-        );
-        expect(screen.getByTestId("next-step-card-error-replay")).toBeInTheDocument();
-        const corrected = screen.getByTestId(
-            "next-step-error-replay-corrected",
-        );
-        expect(corrected.textContent).toMatch(/3/);
-        expect(corrected.textContent).toMatch(/5/);
-    });
-
-    it("all corrected: replaces the replay card with a success card (#1372)", () => {
-        renderCard(
-            makeSuggestions({
-                errorReplay: {
-                    available: false,
-                    errorCount: 0,
-                    correctedCount: 4,
-                    allCorrected: true,
-                },
-            }),
-            // no payload — nothing left to replay
         );
         expect(
             screen.queryByTestId("next-step-card-error-replay"),
         ).not.toBeInTheDocument();
         expect(
-            screen.getByTestId("next-step-card-all-corrected"),
-        ).toBeInTheDocument();
-    });
-
-    it("hides the error-replay card when there's no payload (no errors)", () => {
-        renderCard(
-            makeSuggestions({
-                errorReplay: {available: true, errorCount: 3, correctedCount: 0, allCorrected: false},
-            }),
-            // no payload
-        );
-        expect(
-            screen.queryByTestId("next-step-card-error-replay"),
+            screen.queryByTestId("next-step-card-all-corrected"),
         ).not.toBeInTheDocument();
-    });
-
-    it("hides the error-replay card when not available (clean run)", () => {
-        renderCard(
-            makeSuggestions({
-                nextLesson: {available: true, isPaused: false, title: "x"},
-                errorReplay: {available: false, errorCount: 0, correctedCount: 0, allCorrected: false},
-            }),
-            PAYLOAD,
-        );
-        expect(
-            screen.queryByTestId("next-step-card-error-replay"),
-        ).not.toBeInTheDocument();
-    });
-
-    it("marks error-replay primary when primaryAction is error_replay", () => {
-        renderCard(
-            makeSuggestions({
-                nextLesson: {available: true, isPaused: false, title: "x"},
-                errorReplay: {available: true, errorCount: 2, correctedCount: 0, allCorrected: false},
-                primaryAction: "error_replay",
-            }),
-            PAYLOAD,
-        );
-        const card = screen.getByTestId("next-step-card-error-replay");
-        expect(card.getAttribute("data-primary")).toBe("true");
-        // The next card is demoted to secondary.
-        expect(
-            screen.getByTestId("next-step-card-next").getAttribute("data-primary"),
-        ).toBe("false");
     });
 });

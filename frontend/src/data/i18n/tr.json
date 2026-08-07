@@ -2107,7 +2107,10 @@
       "next": "İleri",
       "complete_heading": "Düzeltme turu tamamlandı",
       "improvement": "{n} öğe geliştirildi.",
-      "improvement_singular": "{n} öğe geliştirildi."
+      "improvement_singular": "{n} öğe geliştirildi.",
+      "mistakes_heading": "Hatalarını düzelt",
+      "expand": "Şimdi düzelt",
+      "replay_all": "Tüm alıştırmaları tekrarla ({count})"
     },
     "summary": {
       "heading": "Tamamladın",

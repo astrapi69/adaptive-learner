@@ -608,22 +608,14 @@ export default function LessonSummary({
         suggestions={suggestions}
         setId={setId}
         setSlug={setSlug}
-        lessonFilename={lessonFilename}
-        errorReplay={
-          replayExercises.length > 0
-            ? {
-                exercises: replayExercises,
-                cards: lesson.cards,
-                lessonTitle: lesson.title,
-              }
-            : undefined
-        }
       />
     ),
-    // Phase 52F / v1.35.0 — correction round (#1376/#1411). Self-hides on a
-    // perfect score, with no ElementError rows, or when no cloze can be
-    // generated. The same errors stay reachable through "Fehler wiederholen"
-    // / SRS review when the section is off or hidden.
+    // Phase 52F / v1.35.0 — the SINGLE "your mistakes" section (#1376/#1411,
+    // reworked #2496). Lands collapsed so it never pops the mobile keyboard;
+    // folds the inline correction drills AND the full "redo the exact
+    // exercises" replay (retired NextStepSuggestions error-replay card) into
+    // one opt-in entry. Self-hides on a perfect score / when there is nothing
+    // to drill or replay.
     correction:
       progress && userId ? (
         <CorrectionBlock
@@ -632,6 +624,23 @@ export default function LessonSummary({
           userId={userId}
           setId={setId}
           lessonFilename={lessonFilename}
+          replayHref={
+            replayExercises.length > 0
+              ? `/error-replay/${setSlug}/${setId}/${lessonFilename}`
+              : null
+          }
+          replayState={
+            replayExercises.length > 0
+              ? {
+                  exercises: replayExercises,
+                  cards: lesson.cards,
+                  lessonTitle: lesson.title,
+                }
+              : null
+          }
+          errorCount={suggestions.errorReplay.errorCount}
+          correctedCount={suggestions.errorReplay.correctedCount}
+          allCorrected={suggestions.errorReplay.allCorrected}
           onComplete={() => {
             // Best-effort improvement counter is rendered inside
             // CorrectionBlock's "complete" surface; nothing further needed.

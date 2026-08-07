@@ -2006,6 +2006,9 @@ lesson:
     complete_heading: "Babak koreksi selesai"
     improvement: "{n} elemen meningkat."
     improvement_singular: "{n} elemen meningkat."
+    mistakes_heading: "Perbaiki kesalahanmu"
+    expand: "Perbaiki sekarang"
+    replay_all: "Ulangi semua latihan ({count})"
   error:
     load_failed: "Tidak dapat memuat pelajaran."
     invalid_data: "Pelajaran ini tidak dapat dibuka karena berisi data yang tidak valid atau rusak. Silakan hubungi penulis konten."

@@ -473,6 +473,25 @@ preview delivery). In the regular build the mode does not exist.
       (the report came from there). Bar, stars, message and XP show the final
       state after correction.
 
+### One collapsed mistakes section (#2496)
+- [ ] Play a lesson with at least one mistake. On the summary the
+      "Fix your mistakes (N)" section appears COLLAPSED: NO text field has
+      focus, NO keyboard pops up (check on a phone - that was the report).
+      The score stays visible.
+- [ ] Tap "Fix now" -> the section expands, the first correction drill
+      (cloze) appears and NOW takes focus (the keyboard may open here - it is
+      the user's deliberate action).
+- [ ] Inside the expanded section there is a secondary "Redo all exercises (N)"
+      action -> goes to the error-replay page with the real failed exercises.
+- [ ] The "What's next?" cards no longer contain a separate "Retry errors"
+      card (folded into the one section). Enter still activates the primary
+      forward card (Next lesson / Adaptive / Review), never the collapsed
+      mistakes section.
+- [ ] Only non-cloze-able mistakes (no cloze can be generated): the section
+      still appears collapsed and, on expand, offers only "Redo all exercises".
+- [ ] When every mistake is already corrected, the section shows a short
+      success note ("All errors corrected!") instead of a drill.
+
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
 - [ ] ext:al-categorization: assign categories, readable resolution

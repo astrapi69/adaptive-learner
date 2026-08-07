@@ -17,12 +17,24 @@
 
 import type {
     ContentLesson,
+    ContentLessonCard,
     ContentLessonExercise,
     ElementError,
     LessonProgress,
 } from "../../storage/types";
 import {MATCHING_MIN_PAIRS} from "../exercises/authoring/exercise-edit";
 import {matchesExerciseIdentity} from "../srs/exercise-identity";
+
+/** Router-state payload handed to the ErrorReplayLesson page — the
+ *  exact failed exercises (+ the lesson's cards for code-mode +
+ *  per-element context, + the title for the header). Lives here (the
+ *  replay lib) so every consumer — the summary's mistakes section and
+ *  the replay page — shares one definition. */
+export interface ErrorReplayPayload {
+    exercises: ContentLessonExercise[];
+    cards: ContentLessonCard[];
+    lessonTitle: string;
+}
 
 /** The failed exercises of a lesson run, in lesson order. Empty when
  *  there's no progress, the lesson was perfect, or only theory steps

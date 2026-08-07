@@ -3,12 +3,17 @@
  * lesson summary screen (Phase 64 / smart-next-steps).
  *
  * Renders the suggestions computed by ``useNextStepSuggestions``
- * as a prioritised stack of cards:
+ * as a prioritised stack of forward-navigation cards:
  *
  *   - Next Lesson    (Start, or Resume when Phase-63 paused)
  *   - Adaptive       (focus on the run's top weakness; errors > 0)
  *   - Review         (SRS items due for this set)
  *   - Set Complete   (last lesson; offers another unfinished set)
+ *
+ * #2496 — the "Retry Errors" card (and its all-corrected success
+ * state) moved into the summary's single mistakes section
+ * (``CorrectionBlock``), so it is no longer part of this stack; the
+ * two used to duplicate the same "fix your mistakes" intent.
  *
  * The ``primaryAction`` from the hook decides which of the
  * next / adaptive / review cards gets the accent-coloured primary
@@ -27,15 +32,7 @@
  */
 
 import {useRef, type RefObject} from "react";
-import {
-    ArrowRight,
-    CheckCircle2,
-    Play,
-    RefreshCw,
-    RotateCcw,
-    Target,
-    Trophy,
-} from "lucide-react";
+import {ArrowRight, Play, RefreshCw, Target, Trophy} from "lucide-react";
 import {Link} from "react-router";
 
 import {Button} from "@/components/ui/button";
@@ -45,19 +42,6 @@ import {useSummaryEnterKey} from "../../../hooks/lesson/interaction/useSummaryEn
 import type {ErrorTag} from "../../../lib/adaptive/error-classifier";
 import {prefersReducedMotion} from "../../../lib/feedback/feedbackPref";
 import type {NextStepSuggestions as Suggestions} from "../../../hooks/learning/useNextStepSuggestions";
-import type {
-    ContentLessonCard,
-    ContentLessonExercise,
-} from "../../../storage/types";
-
-/** Router-state payload handed to the ErrorReplayLesson page — the
- *  exact failed exercises (+ the lesson's cards for code-mode +
- *  per-element context, + the title for the header). */
-export interface ErrorReplayPayload {
-    exercises: ContentLessonExercise[];
-    cards: ContentLessonCard[];
-    lessonTitle: string;
-}
 
 /** Reuse the Dashboard FocusAreasCard tag labels so the
  *  weakness headline stays consistent across the app. */
@@ -84,12 +68,6 @@ export interface NextStepSuggestionsProps {
     /** The raw set slug from the route (``--``-encoded source),
      *  needed to build the next-lesson + error-replay hrefs. */
     setSlug: string;
-    /** This lesson's filename — part of the error-replay route. */
-    lessonFilename: string;
-    /** The failed exercises (+ cards + title) handed to the
-     *  ErrorReplay page via router state. Present only when there
-     *  were errors; the error-replay card hides without it. */
-    errorReplay?: ErrorReplayPayload;
 }
 
 type PrimaryAction = Suggestions["primaryAction"];
@@ -178,122 +156,6 @@ function NextLessonCard({
                     <ArrowRight aria-hidden="true" />
                 </Link>
             </Button>
-        </div>
-    );
-}
-
-function ErrorReplayCard({
-    data,
-    payload,
-    setSlug,
-    setId,
-    lessonFilename,
-    primaryAction,
-    animate,
-    idx,
-    ctaRef,
-}: {
-    data: Suggestions["errorReplay"];
-    payload: ErrorReplayPayload;
-    setSlug: string;
-    setId: string;
-    lessonFilename: string;
-    primaryAction: PrimaryAction;
-    animate: boolean;
-    idx: number;
-    ctaRef: RefObject<HTMLAnchorElement | null>;
-}) {
-    const {t} = useI18n();
-    const isPrimary = primaryAction === "error_replay";
-    return (
-        <div
-            className={cardClassName(
-                "error-replay",
-                isPrimary ? "is-primary" : "is-secondary",
-                animate,
-            )}
-            style={cardStyle(animate, idx)}
-            data-testid="next-step-card-error-replay"
-            data-primary={isPrimary ? "true" : "false"}
-        >
-            <span className="lesson-next-step-card-icon" aria-hidden="true">
-                <RotateCcw size={20} />
-            </span>
-            <span className="lesson-next-step-card-body">
-                <span className="lesson-next-step-card-kicker">
-                    {t("lesson.next_step.error_replay", "Retry Errors")}
-                </span>
-                <span className="lesson-next-step-card-title">
-                    {t(
-                        "lesson.next_step.error_replay_detail",
-                        "{count} exercises again",
-                    ).replace("{count}", String(data.errorCount))}
-                </span>
-                {data.correctedCount > 0 && (
-                    <span
-                        className="lesson-next-step-card-sub"
-                        data-testid="next-step-error-replay-corrected"
-                    >
-                        {t(
-                            "lesson.next_step.error_replay_corrected",
-                            "{corrected} of {total} corrected",
-                        )
-                            .replace("{corrected}", String(data.correctedCount))
-                            .replace(
-                                "{total}",
-                                String(data.errorCount + data.correctedCount),
-                            )}
-                    </span>
-                )}
-            </span>
-            <Button asChild variant={isPrimary ? "default" : "secondary"}>
-                <Link
-                    to={`/error-replay/${setSlug}/${setId}/${lessonFilename}`}
-                    state={payload}
-                    ref={isPrimary ? ctaRef : undefined}
-                    data-testid="next-step-cta-error-replay"
-                >
-                    {t("lesson.next_step.start", "Start")}
-                    <ArrowRight aria-hidden="true" />
-                </Link>
-            </Button>
-        </div>
-    );
-}
-
-/** Shown when EVERY originally-failed exercise has been corrected in a
- *  replay: the "Retry Errors" CTA is gone, replaced by a short success
- *  note so the learner sees the corrected state land. */
-function AllCorrectedCard({
-    correctedCount,
-    animate,
-    idx,
-}: {
-    correctedCount: number;
-    animate: boolean;
-    idx: number;
-}) {
-    const {t} = useI18n();
-    return (
-        <div
-            className={cardClassName("all-corrected", "is-complete", animate)}
-            style={cardStyle(animate, idx)}
-            data-testid="next-step-card-all-corrected"
-        >
-            <span className="lesson-next-step-card-icon" aria-hidden="true">
-                <CheckCircle2 size={20} />
-            </span>
-            <span className="lesson-next-step-card-body">
-                <span className="lesson-next-step-card-kicker">
-                    {t("lesson.next_step.all_corrected", "All errors corrected!")}
-                </span>
-                <span className="lesson-next-step-card-title">
-                    {t(
-                        "lesson.next_step.all_corrected_detail",
-                        "Nice - no open errors left.",
-                    ).replace("{count}", String(correctedCount))}
-                </span>
-            </span>
         </div>
     );
 }
@@ -489,8 +351,6 @@ export default function NextStepSuggestions({
     suggestions,
     setId,
     setSlug,
-    lessonFilename,
-    errorReplay: errorReplayPayload,
 }: NextStepSuggestionsProps) {
     const {t} = useI18n();
 
@@ -511,7 +371,6 @@ export default function NextStepSuggestions({
 
     const {
         nextLesson,
-        errorReplay,
         adaptiveLesson,
         reviewSession,
         setComplete,
@@ -521,13 +380,11 @@ export default function NextStepSuggestions({
         primaryAction,
     } = suggestions;
 
-    const showErrorReplay =
-        errorReplay.available && errorReplayPayload != null;
-
+    // #2496 — the error-replay CTA (and its all-corrected success state) moved
+    // into the summary's correction section, so this card stack no longer
+    // renders it. Forward-navigation cards only.
     const anything =
         nextLesson.available ||
-        showErrorReplay ||
-        errorReplay.allCorrected ||
         adaptiveLesson.available ||
         reviewSession.available ||
         setComplete;
@@ -550,31 +407,6 @@ export default function NextStepSuggestions({
                 animate={animate}
                 idx={cards.length}
                 ctaRef={primaryCtaRef}
-            />,
-        );
-    }
-    if (showErrorReplay && errorReplayPayload) {
-        cards.push(
-            <ErrorReplayCard
-                key="error-replay"
-                data={errorReplay}
-                payload={errorReplayPayload}
-                setSlug={setSlug}
-                setId={setId}
-                lessonFilename={lessonFilename}
-                primaryAction={primaryAction}
-                animate={animate}
-                idx={cards.length}
-                ctaRef={primaryCtaRef}
-            />,
-        );
-    } else if (errorReplay.allCorrected) {
-        cards.push(
-            <AllCorrectedCard
-                key="all-corrected"
-                correctedCount={errorReplay.correctedCount}
-                animate={animate}
-                idx={cards.length}
             />,
         );
     }

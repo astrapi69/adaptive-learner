@@ -221,24 +221,15 @@ describe("computePrimaryAction", () => {
         expect(computePrimaryAction(3, false, false, false)).toBe("next");
     });
 
-    // Error replay (the exact failed exercises) outranks everything
-    // after a weak run.
-    it("0-1 stars with a replay → error_replay (over adaptive + next)", () => {
-        expect(computePrimaryAction(0, true, true, true, true)).toBe(
-            "error_replay",
-        );
-        expect(computePrimaryAction(1, true, true, false, true)).toBe(
-            "error_replay",
-        );
+    // #2496 — the error-replay CTA moved into the correction section, so it
+    // is never the primary next-step action: a weak run surfaces "adaptive".
+    it("0-1 stars with errors → adaptive (error-replay is no longer primary)", () => {
+        expect(computePrimaryAction(0, true, true, true)).toBe("adaptive");
+        expect(computePrimaryAction(1, true, true, false)).toBe("adaptive");
     });
-    it("2-3 stars → next even when a replay is available", () => {
-        expect(computePrimaryAction(2, true, true, false, true)).toBe("next");
-        expect(computePrimaryAction(3, true, false, false, true)).toBe("next");
-    });
-    it("0-1 stars without a replay falls back to adaptive", () => {
-        expect(computePrimaryAction(1, true, true, false, false)).toBe(
-            "adaptive",
-        );
+    it("2-3 stars → next regardless of residual errors", () => {
+        expect(computePrimaryAction(2, true, true, false)).toBe("next");
+        expect(computePrimaryAction(3, true, false, false)).toBe("next");
     });
 });
 
@@ -282,8 +273,8 @@ describe("useNextStepSuggestions", () => {
         expect(view.result.current.adaptiveLesson.focusTag).toBe(
             "article_gender",
         );
-        // With failed exercises, error-replay is the primary action at
-        // 0-1 stars — above the adaptive card.
+        // #2496 — at 0-1 stars with errors, adaptive is the primary action
+        // (error-replay is no longer a next-step card).
         expect(view.result.current.primaryAction).toBe("adaptive");
     });
 
@@ -295,8 +286,9 @@ describe("useNextStepSuggestions", () => {
         });
         expect(view.result.current.errorReplay.available).toBe(true);
         expect(view.result.current.errorReplay.errorCount).toBe(3);
-        // 0-1 stars + a replay → error_replay is the primary action.
-        expect(view.result.current.primaryAction).toBe("error_replay");
+        // #2496 — error-replay is no longer a next-step primary; with no
+        // adaptive card (no sessionErrors) the primary stays "next".
+        expect(view.result.current.primaryAction).toBe("next");
     });
 
     it("hides error replay when there were no failed exercises", async () => {

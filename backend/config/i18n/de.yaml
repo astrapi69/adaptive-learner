@@ -1947,6 +1947,9 @@ lesson:
     complete_heading: "Korrektur-Runde abgeschlossen"
     improvement: "{n} Elemente verbessert."
     improvement_singular: "{n} Element verbessert."
+    mistakes_heading: "Fehler ausbessern"
+    expand: "Jetzt ausbessern"
+    replay_all: "Alle Übungen erneut ({count})"
   summary:
     heading: "Geschafft"
     aria_label: "Lektions-Zusammenfassung"
