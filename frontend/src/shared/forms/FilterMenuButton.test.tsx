@@ -68,6 +68,31 @@ describe("FilterMenuButton (#1386)", () => {
     );
   });
 
+  it("resets the browser list marker on the menu (no bullets, #2498)", () => {
+    // Tailwind's preflight reset is intentionally NOT imported in this
+    // project, so an un-reset portalled <ul> would render native disc
+    // bullets + a ~40px indent. The list-none/m-0 utilities must be present.
+    renderButton();
+    fireEvent.click(screen.getByTestId("status-menu"));
+    const menu = screen.getByRole("menu");
+    expect(menu.tagName).toBe("UL");
+    expect(menu.className).toContain("list-none");
+    expect(menu.className).toContain("m-0");
+  });
+
+  it("marks the selected option beyond the check icon (#2498)", () => {
+    renderButton("active");
+    fireEvent.click(screen.getByTestId("status-menu"));
+    const active = screen.getByTestId("status-menu-active");
+    const inactive = screen.getByTestId("status-menu-all");
+    // The selected row carries a persistent elevated-surface highlight +
+    // medium weight; an inactive row only lights up on hover/focus.
+    expect(active.className).toContain("font-medium");
+    expect(active.className).toContain("bg-[var(--bg-elevated)]");
+    expect(inactive.className).not.toContain("font-medium");
+    expect(inactive.className).toContain("hover:bg-[var(--bg-elevated)]");
+  });
+
   it("selecting an option fires onChange and closes the menu", () => {
     const onChange = renderButton("active");
     fireEvent.click(screen.getByTestId("status-menu"));
