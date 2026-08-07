@@ -153,6 +153,58 @@ describe("buildExerciseGenerationPrompt", () => {
   });
 });
 
+describe("buildExerciseGenerationPrompt — user type selection (#2510)", () => {
+  function coreLineOf(prompt: string): string {
+    const lines = prompt.split("\n");
+    const idx = lines.findIndex((l) => /Core types:/i.test(l));
+    return idx < 0 ? "" : `${lines[idx]}\n${lines[idx + 1] ?? ""}`;
+  }
+
+  it("offers ONLY the selected core types and names them in a hard allow-list", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, {
+      types: ["cloze", "matching"],
+    });
+    expect(prompt).toMatch(/Use ONLY these exercise types/i);
+    const coreLine = coreLineOf(prompt);
+    expect(coreLine).toContain("cloze");
+    expect(coreLine).toContain("matching");
+    expect(coreLine).not.toContain("word_tiles");
+    expect(coreLine).not.toContain("free_text");
+  });
+
+  it("lists only the selected text-extension types and drops the ext block when none are selected", () => {
+    const withExt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, {
+      types: ["cloze", "ext:al-categorization"],
+    });
+    expect(withExt).toContain("ext:al-categorization");
+    expect(withExt).not.toContain("ext:al-graded-quiz");
+    expect(withExt).not.toContain("ext:al-reading-comprehension");
+
+    const noExt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, {
+      types: ["cloze", "matching"],
+    });
+    expect(noExt).not.toMatch(/EXTENSION TYPES/);
+    expect(noExt).not.toContain("ext:al-");
+  });
+
+  it("softens the 3-type variety demand when fewer than 3 types are selected", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, {
+      types: ["cloze"],
+    });
+    expect(prompt).not.toMatch(/at least 3 DIFFERENT exercise types/i);
+    expect(prompt).toMatch(/repeat a fitting type/i);
+  });
+
+  it("keeps today's full-mix behaviour when no selection is given", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).not.toMatch(/Use ONLY these exercise types/i);
+    expect(prompt).toMatch(/at least 3 DIFFERENT exercise types/i);
+    for (const type of ALLOWED_EXERCISE_TYPES) {
+      expect(coreLineOf(prompt)).toContain(type);
+    }
+  });
+});
+
 describe("recommendedCardCount", () => {
   it("asks for at least one per ~2.5 steps, never below 3, capped at maxCards", () => {
     expect(recommendedCardCount(2, 8)).toBe(3); // floor of 3

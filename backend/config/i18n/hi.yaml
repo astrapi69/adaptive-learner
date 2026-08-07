@@ -2617,6 +2617,14 @@ create_lesson:
     theory_failed: "AI ने कोई उपयोगी सिद्धांत नहीं दिया। कृपया फिर से प्रयास करें।"
     exercises_failed: "कोई उपयोगी अभ्यास नहीं बना। कृपया फिर से प्रयास करें।"
     generate_failed: "पाठ नहीं बनाया जा सका। कृपया फिर से प्रयास करें।"
+    gen_missing_intro: "ये चयनित प्रकार टेक्स्ट से उत्पन्न नहीं हुए:"
+    types:
+      heading: "अभ्यास प्रकार"
+      group_standard: "मानक प्रकार"
+      group_extension: "एक्सटेंशन प्रकार"
+      group_unavailable: "टेक्स्ट से उत्पन्न नहीं"
+      unavailable_reason: "टेक्स्ट से छवियाँ या ऑडियो उत्पन्न नहीं किए जा सकते। आप इन प्रकारों को बाद में एडिटर में जोड़ सकते हैं।"
+      floor_hint: "कम से कम एक अभ्यास प्रकार चयनित रहना चाहिए।"
     generate_to_advance: "जारी रखने के लिए अपने टेक्स्ट से पाठ बनाएं।"
     review_theory: "{n} सिद्धांत चरण"
     review_exercises: "{n} अभ्यास"
@@ -2732,6 +2740,7 @@ create_lesson:
     types_label: अभ्यास प्रकार
     add: "अभ्यास जोड़ें"
     add_heading: "अभ्यास प्रकार चुनें"
+    add_ext_group: "एक्सटेंशन प्रकार"
     incomplete_to_advance: "जारी रखने के लिए अधूरे अभ्यास पूरे करें या हटाएँ।"
     direction_label: दिशा
     generate: अभ्यास स्वतः बनाएँ

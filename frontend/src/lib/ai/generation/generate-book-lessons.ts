@@ -100,6 +100,9 @@ export interface BookGenerationOptions {
      *  Markdown-only, so it defaults to ``false`` and ``picture_choice`` is not
      *  offered (the model cannot supply image sources). */
     hasAssets?: boolean;
+    /** #2510 — the exercise types the user selected for the assistant. When
+     *  present, only these types are requested + kept. Absent -> full mix. */
+    types?: readonly string[];
 }
 
 /**
@@ -132,6 +135,8 @@ export async function generateBookLessonContent(
         language: options.language,
         // Book text is Markdown-only: no images, so picture_choice is not offered.
         hasAssets: options.hasAssets ?? false,
+        // #2510 — restrict to the user's selected types when given.
+        types: options.types,
     });
     const {exercises} = cardsToExercises(generated.cards, {
         clozePrompt: options.clozePrompt,

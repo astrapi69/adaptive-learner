@@ -107,6 +107,7 @@ export async function generateExercises(
     feedback: options.feedback,
     avoidQuestions: options.avoidQuestions,
     hasAssets: options.hasAssets,
+    types: options.types,
   });
   const raw = await provider.complete(prompt, {
     signal: options.signal,
@@ -115,10 +116,18 @@ export async function generateExercises(
   // AI -> Parser (AIX-01) -> Quality Gate (AIX-03) -> Distribution (AIX-04) -> Result.
   const parsed = parseGeneratedExercises(raw);
   const gate = validateExerciseQuality(parsed.cards);
+  // #2510 — enforce the user's type selection: a model that ignores the prompt
+  // allow-list still cannot surface a deselected type. Absent selection -> keep
+  // every passed card (today's behaviour).
+  const selected =
+    options.types && options.types.length > 0 ? new Set(options.types) : null;
+  const passed = selected
+    ? gate.passed.filter((card) => selected.has(card.type))
+    : gate.passed;
   // #2355 — core cards ride the percentage distribution; extension cards get
   // their own budget and are appended after the balanced core set.
-  const coreCards = gate.passed.filter((card): card is ValidCard => !isExtensionCard(card));
-  const extCards = capExtensionCards(gate.passed.filter(isExtensionCard)).cards;
+  const coreCards = passed.filter((card): card is ValidCard => !isExtensionCard(card));
+  const extCards = capExtensionCards(passed.filter(isExtensionCard)).cards;
   return {
     cards: [...balanceExercises(coreCards), ...extCards],
     skipped: parsed.skipped,

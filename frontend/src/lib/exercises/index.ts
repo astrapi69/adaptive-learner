@@ -13,6 +13,7 @@
  * ``lib/content/lesson/`` — they are consumers of this kit, not part of it.
  */
 
+export * from "./authoring/assistant-types";
 export * from "./authoring/exercise-builder";
 export * from "./authoring/exercise-edit";
 export * from "./authoring/extension-edit";

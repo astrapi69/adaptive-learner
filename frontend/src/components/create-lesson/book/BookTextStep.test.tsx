@@ -198,3 +198,42 @@ describe("BookTextStep", () => {
         expect(onBatchGenerated).not.toHaveBeenCalled();
     });
 });
+
+describe("BookTextStep — exercise-type selection (#2510)", () => {
+    it("renders the type selector with the asset-bound types greyed out", () => {
+        globalThis.localStorage?.clear();
+        setup();
+        expect(screen.getByTestId("assistant-type-selector")).toBeTruthy();
+        const img = screen.getByTestId(
+            "assistant-type-unavailable-image-description",
+        ) as HTMLInputElement;
+        expect(img.disabled).toBe(true);
+    });
+
+    it("passes the selected types into generation", async () => {
+        globalThis.localStorage?.clear();
+        setup();
+        fireEvent.click(screen.getByTestId("book-generate"));
+        await waitFor(() => expect(exercisesOk).toHaveBeenCalled());
+        const lastCall = exercisesOk.mock.calls.at(-1) as unknown[] | undefined;
+        const opts = lastCall?.[2] as {types?: string[]} | undefined;
+        expect(opts?.types).toEqual(
+            expect.arrayContaining(["free_text", "cloze", "matching"]),
+        );
+        // A greyed, asset-bound type is never in the selection.
+        expect(opts?.types).not.toContain("picture_choice");
+        expect(opts?.types).not.toContain("ext:al-image-description");
+    });
+
+    it("names selected types that produced nothing (Part 4)", async () => {
+        globalThis.localStorage?.clear();
+        setup();
+        fireEvent.click(screen.getByTestId("book-generate"));
+        await waitFor(() =>
+            expect(screen.getByTestId("book-gen-missing")).toBeTruthy(),
+        );
+        // free_text WAS produced -> not listed; a selected-but-absent type is.
+        expect(screen.queryByTestId("book-gen-missing-free_text")).toBeNull();
+        expect(screen.getByTestId("book-gen-missing-matching")).toBeTruthy();
+    });
+});
