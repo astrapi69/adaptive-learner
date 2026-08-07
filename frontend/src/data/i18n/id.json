@@ -2992,6 +2992,7 @@
       "types_label": "Jenis latihan",
       "add": "Tambah latihan",
       "add_heading": "Pilih jenis latihan",
+      "add_ext_group": "Tipe ekstensi",
       "incomplete_to_advance": "Lengkapi atau hapus latihan yang belum lengkap untuk melanjutkan.",
       "direction_label": "Arah",
       "generate": "Buat latihan otomatis",

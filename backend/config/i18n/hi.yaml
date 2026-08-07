@@ -2732,6 +2732,7 @@ create_lesson:
     types_label: अभ्यास प्रकार
     add: "अभ्यास जोड़ें"
     add_heading: "अभ्यास प्रकार चुनें"
+    add_ext_group: "एक्सटेंशन प्रकार"
     incomplete_to_advance: "जारी रखने के लिए अधूरे अभ्यास पूरे करें या हटाएँ।"
     direction_label: दिशा
     generate: अभ्यास स्वतः बनाएँ

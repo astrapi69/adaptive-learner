@@ -397,3 +397,73 @@ describe("ExerciseGenerator — multiple_choice type (#1850)", () => {
         ).toBeInTheDocument();
     });
 });
+
+// #2508 — the manual "Add exercise" picker also offers the extension types
+// (Kategorisierung, Fehlerkorrektur, Leseverstaendnis, Benotetes Quiz,
+// Bildbeschreibung), so both blocks are reachable from one place. Diktat is
+// NOT repeated here — it is already the standard group's 7th button (#1895).
+describe("ExerciseGenerator — extension types in the picker (#2508)", () => {
+    const EXT_SLUGS = [
+        "categorization",
+        "error-correction",
+        "reading-comprehension",
+        "graded-quiz",
+        "image-description",
+    ];
+
+    it("offers the extension types as a second picker group", () => {
+        render(<ListHarness initial={[]} />);
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        // A labelled extension group is present.
+        expect(
+            screen.getByTestId("exercise-add-ext-group"),
+        ).toBeInTheDocument();
+        for (const slug of EXT_SLUGS) {
+            expect(
+                screen.getByTestId(`exercise-add-type-${slug}`),
+            ).toBeInTheDocument();
+        }
+    });
+
+    it("does not duplicate Diktat into the extension group", () => {
+        render(<ListHarness initial={[]} />);
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        // Diktat appears exactly once (the standard group's 7th button).
+        expect(
+            screen.getAllByTestId("exercise-add-type-dictation"),
+        ).toHaveLength(1);
+    });
+
+    it("picking an extension type appends an ext exercise in the extension editor", () => {
+        const onAdd = vi.fn();
+        function Harness3() {
+            const [exercises, setExercises] = useState<ContentLessonExercise[]>(
+                [],
+            );
+            return (
+                <ExerciseGenerator
+                    exercises={exercises}
+                    config={DEFAULT_EXERCISE_GEN_CONFIG}
+                    onConfigChange={vi.fn()}
+                    onGenerate={vi.fn()}
+                    onReorder={vi.fn()}
+                    onDelete={vi.fn()}
+                    onUpdate={vi.fn()}
+                    onAdd={(exercise) => {
+                        onAdd(exercise);
+                        setExercises((prev) => [...prev, exercise]);
+                    }}
+                />
+            );
+        }
+        render(<Harness3 />);
+        fireEvent.click(screen.getByTestId("exercise-add"));
+        fireEvent.click(screen.getByTestId("exercise-add-type-categorization"));
+        expect(onAdd).toHaveBeenCalledTimes(1);
+        expect(onAdd.mock.calls[0][0].type).toBe("ext:al-categorization");
+        // Opened in the EXTENSION editor, not the core ExerciseEditor.
+        expect(
+            screen.getByTestId(/^exercise-ext-editor-/),
+        ).toBeInTheDocument();
+    });
+});

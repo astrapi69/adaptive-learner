@@ -813,6 +813,20 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       (egal ob über den Core-Picker ODER den Extension-Wizard angelegt) und ist
       abspielbar. **Regression:** der bestehende Extension-Wizard-Weg für Diktat
       funktioniert unverändert
+- [ ] **Erweiterungstypen im Core-Picker (#2508):** Haupt-Wizard (kartenbasiert),
+      Schritt 3 "Übung generieren" → "Übung hinzufügen" öffnet "Übungstyp wählen".
+      Unter den Standardtypen (sechs Core-Typen + Diktat) erscheint jetzt eine
+      zweite, beschriftete Gruppe **"Erweiterungstypen"** mit Kategorisierung,
+      Fehlerkorrektur, Leseverständnis, Benotetes Quiz und Bildbeschreibung
+      (Diktat erscheint **nicht** doppelt). Klick auf einen dieser Knöpfe → eine
+      Erweiterungsübung wird angehängt und öffnet direkt im Extension-Editor.
+      Bildbeschreibung ist hier **wählbar** (das Bild wird im Editor ergänzt).
+      "Lokal speichern" → die gespeicherte Lektion trägt
+      `requires_extensions: ["ext:al-...@1"]` und ist abspielbar. **iOS-Standalone
+      (zum Home-Bildschirm hinzugefügte PWA, Dexie-Modus):** Picker öffnet, beide
+      Gruppen sind sichtbar und antippbar, die gewählte Erweiterungsübung wird
+      gespeichert und rendert nach einem Reload. **Regression:** der separate
+      Erweiterungs-Wizard funktioniert unverändert
 - [ ] **Diktat-Audio-Upload (#1911, Slice 3):** Im Diktat-Editor (Core-Picker
       ODER Extension-Wizard) zeigt das Audio-Feld einen **"Audio hochladen"**-
       Button über einem **"…assets/audio/clip.mp3"**-Pfad-Eingabefeld. Klick auf

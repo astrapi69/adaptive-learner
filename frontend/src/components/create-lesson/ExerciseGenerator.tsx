@@ -42,12 +42,14 @@ import {
     createBlankExercise,
     createBlankExtensionExercise,
     DICTATION_EXT_TYPE,
+    EXTENSION_WIZARD_TYPES,
     isExtensionType,
     newExerciseId,
     newExtensionExerciseId,
     validateExerciseEdit,
     validateExtensionExercise,
     type ExerciseGenConfig,
+    type ExtensionWizardType,
     type GeneratableType,
 } from "../../lib/exercises";
 import {exerciseTypeLabelKey} from "../../lib/content/lesson/edit-error-keys";
@@ -105,6 +107,27 @@ const ALL_TYPES: GeneratableType[] = [
     "multiple_choice",
 ];
 
+/** #2508 — the extension types offered in the manual picker's second group.
+ *  Dictation is excluded here because it is already the standard group's 7th
+ *  button (#1895); listing it twice would duplicate it within one picker. */
+const PICKER_EXTENSION_TYPES: ExtensionWizardType[] = EXTENSION_WIZARD_TYPES.filter(
+    (type) => type !== DICTATION_EXT_TYPE,
+);
+
+/** Short slug for a type's testid / i18n key (strips the ``ext:al-`` prefix):
+ *  ``ext:al-error-correction`` -> ``error-correction``. Mirrors ExtensionSteps. */
+function extSlug(type: string): string {
+    return type.replace("ext:al-", "");
+}
+
+/** Narrow a picked picker type to an {@link ExtensionWizardType} so the
+ *  extension blank factory is only ever called with an extension type. */
+function isWizardExtension(
+    type: GeneratableType | ExtensionWizardType,
+): type is ExtensionWizardType {
+    return (EXTENSION_WIZARD_TYPES as readonly string[]).includes(type);
+}
+
 export interface ExerciseGeneratorProps {
     exercises: ContentLessonExercise[];
     config: ExerciseGenConfig;
@@ -148,16 +171,14 @@ export default function ExerciseGenerator({
     const [picking, setPicking] = useState(false);
     const [autoEditId, setAutoEditId] = useState<string | null>(null);
 
-    // Dictation (#1895) is an EXTENSION type reachable from the core picker:
-    // it reuses the extension blank factory + editor, not the core ones.
-    function addManual(type: GeneratableType | typeof DICTATION_EXT_TYPE) {
-        const exercise =
-            type === DICTATION_EXT_TYPE
-                ? createBlankExtensionExercise(
-                      DICTATION_EXT_TYPE,
-                      newExtensionExerciseId(),
-                  )
-                : createBlankExercise(type, newExerciseId());
+    // An extension type picked here (#1895 Diktat, #2508 the rest) reuses the
+    // extension blank factory + editor, not the core ones. The core types use
+    // the core factory. The guard narrows the union so neither factory is
+    // called with the wrong type.
+    function addManual(type: GeneratableType | ExtensionWizardType) {
+        const exercise = isWizardExtension(type)
+            ? createBlankExtensionExercise(type, newExtensionExerciseId())
+            : createBlankExercise(type, newExerciseId());
         onAdd(exercise);
         setAutoEditId(exercise.id);
         setPicking(false);
@@ -456,6 +477,40 @@ export default function ExerciseGenerator({
                                     "Dictation",
                                 )}
                             </Button>
+                        </div>
+
+                        {/* #2508 — the extension types as a second, labelled
+                            group so both blocks are reachable from one picker. */}
+                        <span
+                            className="form-label mt-1 text-sm font-medium text-fg-primary"
+                            id="exercise-add-ext-group"
+                            data-testid="exercise-add-ext-group"
+                        >
+                            {t(
+                                "create_lesson.exercises.add_ext_group",
+                                "Extension types",
+                            )}
+                        </span>
+                        <div
+                            className="flex flex-wrap gap-2"
+                            role="group"
+                            aria-labelledby="exercise-add-ext-group"
+                        >
+                            {PICKER_EXTENSION_TYPES.map((type) => (
+                                <Button
+                                    key={type}
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    data-testid={`exercise-add-type-${extSlug(type)}`}
+                                    onClick={() => addManual(type)}
+                                >
+                                    {t(
+                                        `create_lesson.extensions.type.${extSlug(type)}`,
+                                        type,
+                                    )}
+                                </Button>
+                            ))}
                         </div>
                         <Button
                             type="button"

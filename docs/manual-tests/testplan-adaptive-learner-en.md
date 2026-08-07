@@ -757,6 +757,20 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       `requires_extensions: ["ext:al-dictation@1"]`** (whether added via the core
       picker OR the extension wizard) and is playable. **Regression:** the
       existing extension-wizard path for dictation still works unchanged
+- [ ] **Extension types in the core picker (#2508):** Main wizard (card-based),
+      Step 3 "Generate exercises" → "Add exercise" opens the "Choose an exercise
+      type" picker. Below the standard types (six core types + Dictation) a
+      second, labelled group **"Extension types"** now appears with
+      Categorization, Error correction, Reading comprehension, Graded quiz and
+      Image description (Dictation is **not** shown twice). Click one of these →
+      an extension exercise is appended and opens straight in the extension
+      editor. Image description is **selectable** here (the image is added in the
+      editor). "Save locally" → the stored lesson carries
+      `requires_extensions: ["ext:al-...@1"]` and is playable. **iOS standalone
+      (PWA added to the home screen, Dexie mode):** the picker opens, both groups
+      are visible and tappable, the chosen extension exercise is saved and
+      renders after a reload. **Regression:** the separate extension wizard still
+      works unchanged
 - [ ] **Dictation audio upload (#1911, Slice 3):** In the dictation editor
       (core picker OR extension wizard) the audio field shows an **"Upload
       audio"** button above a **"…assets/audio/clip.mp3"** path input. Click

@@ -2992,6 +2992,7 @@
       "types_label": "Types d'exercices",
       "add": "Ajouter un exercice",
       "add_heading": "Choisissez un type d'exercice",
+      "add_ext_group": "Types d'extension",
       "incomplete_to_advance": "Complétez ou supprimez les exercices incomplets pour continuer.",
       "direction_label": "Direction",
       "generate": "Générer les exercices automatiquement",

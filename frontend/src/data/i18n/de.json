@@ -2992,6 +2992,7 @@
       "types_label": "Übungstypen",
       "add": "Übung hinzufügen",
       "add_heading": "Übungstyp wählen",
+      "add_ext_group": "Erweiterungstypen",
       "incomplete_to_advance": "Vervollständige oder entferne die unvollständigen Übungen, um fortzufahren.",
       "direction_label": "Richtung",
       "generate": "Übungen automatisch erstellen",

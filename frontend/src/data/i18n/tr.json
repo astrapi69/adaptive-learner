@@ -2992,6 +2992,7 @@
       "types_label": "Alıştırma türleri",
       "add": "Alıştırma ekle",
       "add_heading": "Bir alıştırma türü seçin",
+      "add_ext_group": "Uzantı türleri",
       "incomplete_to_advance": "Devam etmek için eksik alıştırmaları tamamlayın veya kaldırın.",
       "direction_label": "Yön",
       "generate": "Alıştırmaları otomatik oluştur",

@@ -2741,6 +2741,7 @@ create_lesson:
     types_label: "Tipos de ejercicio"
     add: "Añadir ejercicio"
     add_heading: "Elige un tipo de ejercicio"
+    add_ext_group: "Tipos de extensión"
     incomplete_to_advance: "Completa o elimina los ejercicios incompletos para continuar."
     direction_label: "Dirección"
     generate: "Generar ejercicios automáticamente"

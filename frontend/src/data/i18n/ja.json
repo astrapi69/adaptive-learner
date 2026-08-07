@@ -2992,6 +2992,7 @@
       "types_label": "演習の種類",
       "add": "問題を追加",
       "add_heading": "問題タイプを選択",
+      "add_ext_group": "拡張タイプ",
       "incomplete_to_advance": "続行するには、未完成の問題を完成させるか削除してください。",
       "direction_label": "方向",
       "generate": "演習を自動生成",
