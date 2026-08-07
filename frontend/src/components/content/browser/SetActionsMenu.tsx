@@ -101,12 +101,16 @@ export default function SetActionsMenu({
       {menu.open &&
         menu.pos &&
         createPortal(
+        // ``list-none m-0`` explicitly resets the browser list marker +
+        // indent: Tailwind's utilities are imported WITHOUT preflight
+        // (styles/tailwind.css), so an un-reset portalled <ul> otherwise
+        // shows disc bullets and a ~40px inline padding (#2498).
         <ul
           ref={menu.menuRef}
           role="menu"
           aria-label={t("content.set_status.menu_aria", "Set actions")}
           style={{ position: "fixed", top: menu.pos.top, right: menu.pos.right }}
-          className="z-50 min-w-48 max-w-[calc(100vw-1rem)] rounded-app border border-border bg-card py-1 shadow-elevated"
+          className="z-50 m-0 min-w-52 max-w-[calc(100vw-1rem)] list-none rounded-app border border-border bg-card p-1.5 shadow-elevated"
           data-testid={`set-actions-menu-${entry.id}`}
         >
           {TRANSITIONS[status].map((next) => (
@@ -114,7 +118,7 @@ export default function SetActionsMenu({
               <button
                 type="button"
                 role="menuitem"
-                className="block w-full px-3 py-2 text-left text-sm text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:bg-[var(--bg-elevated)] focus-visible:outline-none"
+                className="block w-full rounded-[calc(var(--radius-app)-3px)] px-2.5 py-2 text-left text-sm text-fg-primary transition-colors hover:bg-[var(--bg-elevated)] focus-visible:bg-[var(--bg-elevated)] focus-visible:outline-none"
                 onClick={() => menu.choose(() => onSetStatus(next))}
                 onKeyDown={menu.onItemKeyDown}
                 data-testid={`set-action-${entry.id}-${next}`}
@@ -127,7 +131,7 @@ export default function SetActionsMenu({
             <button
               type="button"
               role="menuitem"
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[var(--error)] hover:bg-[var(--error-bg)] focus-visible:bg-[var(--error-bg)] focus-visible:outline-none"
+              className="flex w-full items-center gap-2 rounded-[calc(var(--radius-app)-3px)] px-2.5 py-2 text-left text-sm text-[var(--error)] transition-colors hover:bg-[var(--error-bg)] focus-visible:bg-[var(--error-bg)] focus-visible:outline-none"
               onClick={() => menu.choose(onDelete)}
               onKeyDown={menu.onItemKeyDown}
               data-testid={`set-action-${entry.id}-delete`}

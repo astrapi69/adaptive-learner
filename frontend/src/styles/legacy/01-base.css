@@ -332,6 +332,37 @@ select {
   border-radius: var(--radius-sm);
 }
 
+/* #2498 — native <select> polish, applied once for every Settings dropdown.
+ * Drops the OS caret (`appearance: none`) and draws the app's own chevron
+ * from two token-coloured gradients (no image asset, no hardcoded colour),
+ * leaves room for it on the right, and adds a pointer + hover affordance so
+ * the control reads as part of the app instead of a raw browser widget. */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: var(--space-6);
+  cursor: pointer;
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--fg-muted) 50%),
+    linear-gradient(135deg, var(--fg-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) calc(50% - 1px),
+    calc(100% - 12px) calc(50% - 1px);
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+select:hover {
+  border-color: var(--accent);
+  background-color: var(--bg-elevated);
+}
+
 /* The default form-control padding lives in @layer base so explicit
    Tailwind padding utilities can win: unlayered author CSS beats every
    layered declaration, and an unlayered `input { padding }` silently
