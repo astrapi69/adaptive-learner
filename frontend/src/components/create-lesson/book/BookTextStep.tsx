@@ -20,7 +20,14 @@ import {BookOpen, Sparkles} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import ApiKeyRequiredNotice from "../../settings/ai/ApiKeyRequiredNotice";
+import FormHint from "../../../shared/forms/FormHint";
 import BookFileUpload from "./BookFileUpload";
+import AssistantTypeSelector from "./AssistantTypeSelector";
+import {
+    loadAssistantTypes,
+    saveAssistantTypes,
+} from "../../../lib/exercises";
+import {exerciseTypeLabelKey} from "../../../lib/content/lesson/edit-error-keys";
 import {
     browserDirectProvider,
     generateExercises as defaultGenerate,
@@ -106,6 +113,17 @@ export default function BookTextStep({
         total: number;
         failures: BatchFailure[];
     } | null>(null);
+    // #2510 — the user's exercise-type selection (remembered across runs) and
+    // the feedback list of selected types that produced nothing (Part 4).
+    const [selectedTypes, setSelectedTypes] = useState<string[]>(() =>
+        loadAssistantTypes(),
+    );
+    const [missingTypes, setMissingTypes] = useState<string[]>([]);
+
+    function changeTypes(types: string[]) {
+        setSelectedTypes(types);
+        saveAssistantTypes(types);
+    }
 
     /** #1949 — batch: generate one lesson per selected section. Reuses the
      *  same chunk->lesson pipeline as the single path via
@@ -134,6 +152,7 @@ export default function BookTextStep({
                         "Fill in the missing word.",
                     ),
                     maxSectionChars: MAX_SECTION_CHARS,
+                    types: selectedTypes,
                 },
                 {
                     generateTheory,
@@ -191,6 +210,7 @@ export default function BookTextStep({
         }
         setBusy(true);
         setNeedsKey(false);
+        setMissingTypes([]);
         try {
             const config = await resolveProvider();
             if (!config) {
@@ -208,13 +228,22 @@ export default function BookTextStep({
                 );
                 return;
             }
-            const result = await generate(theory.steps, provider, {language});
+            const result = await generate(theory.steps, provider, {
+                language,
+                // #2510 — restrict generation to the user's selected types.
+                types: selectedTypes,
+            });
             const {exercises} = cardsToExercises(result.cards, {
                 clozePrompt: t(
                     "content.lesson_gen.cloze_prompt",
                     "Fill in the missing word.",
                 ),
             });
+            // #2510 (Part 4) — a selected type the text did not yield is named,
+            // never silently dropped: "less delivered" must be distinguishable
+            // from "all delivered".
+            const produced = new Set(exercises.map((ex) => ex.type));
+            setMissingTypes(selectedTypes.filter((type) => !produced.has(type)));
             if (exercises.length === 0) {
                 notify.error(
                     t(
@@ -408,6 +437,38 @@ export default function BookTextStep({
                     </label>
                 </div>
             </fieldset>
+
+            <AssistantTypeSelector
+                selected={selectedTypes}
+                onChange={changeTypes}
+                t={t}
+            />
+
+            {missingTypes.length > 0 && (
+                <div
+                    className="flex flex-col gap-1.5 rounded-lg border border-border bg-card p-3"
+                    data-testid="book-gen-missing"
+                    role="status"
+                >
+                    <FormHint as="p" variant="warning">
+                        {t(
+                            "create_lesson.book.gen_missing_intro",
+                            "These selected types did not come out of the text:",
+                        )}
+                    </FormHint>
+                    <ul className="m-0 flex list-none flex-col gap-1 p-0">
+                        {missingTypes.map((type) => (
+                            <li
+                                key={type}
+                                className="text-sm text-fg-secondary"
+                                data-testid={`book-gen-missing-${type.replace("ext:al-", "")}`}
+                            >
+                                {t(exerciseTypeLabelKey(type), type)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             <div className="flex flex-wrap items-center gap-3">
                 <Button

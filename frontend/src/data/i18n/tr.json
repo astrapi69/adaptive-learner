@@ -2870,6 +2870,15 @@
       "theory_failed": "Yapay zeka kullanılabilir teori üretmedi. Lütfen tekrar deneyin.",
       "exercises_failed": "Kullanılabilir alıştırma üretilemedi. Lütfen tekrar deneyin.",
       "generate_failed": "Ders üretilemedi. Lütfen tekrar deneyin.",
+      "gen_missing_intro": "Seçilen bu türler metinden çıkmadı:",
+      "types": {
+        "heading": "Alıştırma türleri",
+        "group_standard": "Standart türler",
+        "group_extension": "Uzantı türleri",
+        "group_unavailable": "Metinden oluşturulamaz",
+        "unavailable_reason": "Görseller ve ses metinden oluşturulamaz. Bu türleri daha sonra düzenleyicide ekleyebilirsin.",
+        "floor_hint": "En az bir alıştırma türü seçili kalmalıdır."
+      },
       "generate_to_advance": "Devam etmek için dersi metninizden üretin.",
       "review_theory": "{n} teori adımı",
       "review_exercises": "{n} alıştırma",
@@ -2992,6 +3001,7 @@
       "types_label": "Alıştırma türleri",
       "add": "Alıştırma ekle",
       "add_heading": "Bir alıştırma türü seçin",
+      "add_ext_group": "Uzantı türleri",
       "incomplete_to_advance": "Devam etmek için eksik alıştırmaları tamamlayın veya kaldırın.",
       "direction_label": "Yön",
       "generate": "Alıştırmaları otomatik oluştur",
