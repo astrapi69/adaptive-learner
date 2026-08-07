@@ -1991,6 +1991,9 @@ lesson:
     complete_heading: सुधार दौर पूर्ण
     improvement: '{n} तत्वों में सुधार हुआ।'
     improvement_singular: '{n} तत्व में सुधार हुआ।'
+    mistakes_heading: अपनी गलतियाँ सुधारें
+    expand: अभी सुधारें
+    replay_all: 'सभी अभ्यास फिर से करें ({count})'
   error:
     load_failed: पाठ लोड नहीं हो सका।
     invalid_data: "इस पाठ में अमान्य या दूषित डेटा होने के कारण इसे नहीं खोला जा सकता। कृपया सामग्री के लेखक से संपर्क करें।"

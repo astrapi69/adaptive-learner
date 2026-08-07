@@ -2006,6 +2006,9 @@ lesson:
     complete_heading: "Correction round complete"
     improvement: "{n} elements improved."
     improvement_singular: "{n} element improved."
+    mistakes_heading: "Fix your mistakes"
+    expand: "Fix now"
+    replay_all: "Redo all exercises ({count})"
   error:
     load_failed: "Could not load lesson."
     invalid_data: "This lesson can't be opened because it contains invalid or corrupted data. Please contact the content author."

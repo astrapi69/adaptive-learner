@@ -512,6 +512,27 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       hinzugefügten Symbol (der Befund kam von dort). Balken, Sterne, Botschaft
       und XP zeigen den Endstand nach der Korrektur.
 
+### Ein Fehler-Bereich, zugeklappt (#2496)
+- [ ] Eine Lektion mit mindestens einem Fehler spielen. Auf der
+      Zusammenfassung erscheint der Bereich "Fehler ausbessern (N)"
+      ZUGEKLAPPT: KEIN Textfeld hat den Fokus, es poppt KEINE Tastatur auf
+      (auf dem Handy prüfen - das war der Befund). Die Punktzahl bleibt sichtbar.
+- [ ] Auf "Jetzt ausbessern" tippen -> der Bereich klappt auf, die erste
+      Korrektur-Übung (Lückentext) erscheint und bekommt JETZT den Fokus
+      (Tastatur darf jetzt aufgehen - bewusste Aktion des Nutzers).
+- [ ] Innerhalb des aufgeklappten Bereichs gibt es die sekundäre Aktion
+      "Alle Übungen erneut (N)" -> führt auf die Fehler-wiederholen-Seite
+      mit den echten fehlgeschlagenen Übungen.
+- [ ] In den "Nächste Schritte"-Karten gibt es KEINE eigene
+      "Fehler wiederholen"-Karte mehr (in den einen Bereich zusammengeführt).
+      Enter aktiviert weiterhin die primäre Vorwärts-Karte (Nächste Lektion /
+      Adaptiv / Wiederholung), nie den zugeklappten Fehler-Bereich.
+- [ ] Nur nicht-lückentext-fähige Fehler (kein Cloze generierbar): der Bereich
+      erscheint trotzdem zugeklappt und bietet beim Aufklappen nur
+      "Alle Übungen erneut" an.
+- [ ] Sind bereits alle Fehler korrigiert, zeigt der Bereich eine kurze
+      Erfolgsmeldung ("Alle Fehler korrigiert!") statt einer Übung.
+
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar

@@ -2162,7 +2162,10 @@
       "next": "Next",
       "complete_heading": "Correction round complete",
       "improvement": "{n} elements improved.",
-      "improvement_singular": "{n} element improved."
+      "improvement_singular": "{n} element improved.",
+      "mistakes_heading": "Fix your mistakes",
+      "expand": "Fix now",
+      "replay_all": "Redo all exercises ({count})"
     },
     "error": {
       "load_failed": "Could not load lesson.",

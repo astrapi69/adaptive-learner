@@ -2107,7 +2107,10 @@
       "next": "Suivant",
       "complete_heading": "Tour de correction terminé",
       "improvement": "{n} éléments améliorés.",
-      "improvement_singular": "{n} élément amélioré."
+      "improvement_singular": "{n} élément amélioré.",
+      "mistakes_heading": "Corrige tes erreurs",
+      "expand": "Corriger maintenant",
+      "replay_all": "Refaire tous les exercices ({count})"
     },
     "summary": {
       "heading": "Terminé",
