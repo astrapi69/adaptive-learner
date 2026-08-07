@@ -2107,7 +2107,10 @@
       "next": "次へ",
       "complete_heading": "修正ラウンド完了",
       "improvement": "{n}個の要素が改善されました。",
-      "improvement_singular": "{n}個の要素が改善されました。"
+      "improvement_singular": "{n}個の要素が改善されました。",
+      "mistakes_heading": "間違いを直す",
+      "expand": "今すぐ直す",
+      "replay_all": "すべての問題をやり直す（{count}）"
     },
     "summary": {
       "heading": "完了",

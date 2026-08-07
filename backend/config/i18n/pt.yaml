@@ -1942,6 +1942,9 @@ lesson:
     complete_heading: "Ronda de correção completa"
     improvement: "{n} elementos melhorados."
     improvement_singular: "{n} elemento melhorado."
+    mistakes_heading: "Corrige os teus erros"
+    expand: "Corrigir agora"
+    replay_all: "Refazer todos os exercícios ({count})"
   summary:
     heading: "Terminado"
     aria_label: "Resumo da lição"

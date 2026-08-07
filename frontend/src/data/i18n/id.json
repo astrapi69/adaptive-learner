@@ -2162,7 +2162,10 @@
       "next": "Berikutnya",
       "complete_heading": "Babak koreksi selesai",
       "improvement": "{n} elemen meningkat.",
-      "improvement_singular": "{n} elemen meningkat."
+      "improvement_singular": "{n} elemen meningkat.",
+      "mistakes_heading": "Perbaiki kesalahanmu",
+      "expand": "Perbaiki sekarang",
+      "replay_all": "Ulangi semua latihan ({count})"
     },
     "error": {
       "load_failed": "Tidak dapat memuat pelajaran.",
