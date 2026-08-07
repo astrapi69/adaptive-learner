@@ -161,12 +161,26 @@ export function WordTilesReveal({
 }) {
     if (!submitted || !showAnswerToggle) return null;
     if (isCorrect && onAdvance) {
+        // The interactive editor unmounts on submit, so unlike cloze/free-text
+        // (whose inputs stay mounted) the built sentence would vanish here.
+        // Keep it on screen, all green, above the success badge (#2494).
         return (
-            <ExerciseSuccessAdvance
-                onAdvance={onAdvance}
-                label={advanceLabel}
-                testIdPrefix="word-tiles"
-            />
+            <>
+                <WordTilesAnswerView
+                    labels={myAnswerLabels}
+                    correctness={null}
+                    testId="word-tiles-correct-sentence"
+                    ariaLabel={t(
+                        "lesson.exercise.word_tiles.answer_label",
+                        "Your answer",
+                    )}
+                />
+                <ExerciseSuccessAdvance
+                    onAdvance={onAdvance}
+                    label={advanceLabel}
+                    testIdPrefix="word-tiles"
+                />
+            </>
         );
     }
     return (

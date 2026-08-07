@@ -88,6 +88,36 @@ describe("success-merge: correct answer replaces the toggle (#1218)", () => {
         expect(screen.queryByTestId("word-tiles-solution")).toBeNull();
     });
 
+    it("word_tiles: a correct answer keeps the built sentence visible (#2494)", () => {
+        // The interactive editor unmounts on submit; without an explicit
+        // reveal the correctly-built sentence would vanish, leaving only the
+        // success badge (the reported bug). The all-green sentence must stay.
+        const ref = createRef<ExerciseHandle>();
+        render(
+            <WordTilesExercise
+                ref={ref}
+                exercise={WORD_TILES}
+                controlled
+                onAdvance={vi.fn()}
+                onComplete={vi.fn()}
+            />,
+        );
+        fireEvent.click(screen.getByTestId("word-tile-scrambled-0"));
+        fireEvent.click(screen.getByTestId("word-tile-scrambled-1"));
+        act(() => ref.current!.submit());
+
+        const sentence = screen.getByTestId("word-tiles-correct-sentence");
+        expect(sentence).toHaveTextContent("yo");
+        expect(sentence).toHaveTextContent("hablo");
+        expect(
+            screen.getByTestId("word-tiles-correct-sentence-tile-0"),
+        ).toHaveAttribute("data-correct", "true");
+        // The success-advance badge is still shown alongside the sentence.
+        expect(
+            screen.getByTestId("word-tiles-success-advance"),
+        ).toBeInTheDocument();
+    });
+
     it("word_tiles: a WRONG answer keeps the toggle, no success-advance", () => {
         const ref = createRef<ExerciseHandle>();
         render(
