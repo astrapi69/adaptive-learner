@@ -40,6 +40,32 @@ check-dead-classnames`` builds it, then runs this. In CI the cohesion
 workflow does the same. Run standalone after a ``VITE_STORAGE_MODE=dexie
 npm run build``.
 
+THE LIMIT OF THIS METHOD (#2484, documented as decided in #2486): name
+matching answers "does this name occur somewhere", NOT "does this rule
+take effect". A name-occurrence check is therefore NEVER a sufficient
+basis for deleting CSS rules. Four blind spots, each with its precedent:
+
+1. Dynamically composed names: a runtime-built classname never occurs
+   verbatim in the source (``nav-mode-badge-${mode}`` nearly condemned
+   two LIVE rules in the #2476 tranche; caught in re-verification).
+2. Rules without classnames: element/attribute/sibling/inheritance
+   selectors carry no name a search can find.
+3. Inherited effect: a rule removed on a parent changes children that
+   carry no name themselves.
+4. Names from foreign sources: packages, content, or generated markup
+   emit classnames that never appear in frontend/src. THIS ONE STRUCK
+   in #2484 - ``@astrapi69/ai-key-vault-react``'s dist renders the
+   AI-key settings with app-styled classnames; the #2476 tranche
+   deleted their rules on a src-only '0 consumers' grep and the
+   Settings > KI page shipped unstyled. This gate scans frontend/src
+   only, so it saw nothing in either direction.
+
+Consequence: a CSS-removal tranche needs a rendered-application check
+of the affected surfaces (and the visual suite must actually COVER
+them - the settings-ai tab had no baseline motif, which is why the
+dispatched 0-diff run stayed green). Extension of this gate to
+package-emitted classnames: #2486.
+
 Exit codes:
   0 = no dead class name beyond the baseline (clean; may print ratchet-down hints)
   1 = a new dead class name appeared, or the build CSS / a required path is missing
