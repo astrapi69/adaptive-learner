@@ -65,7 +65,9 @@ export default function FilterMenuButton({
       <button
         ref={menu.triggerRef}
         type="button"
-        className="inline-flex min-h-11 items-center gap-1.5 rounded-app border border-border bg-card px-3 text-sm font-medium text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        className={`inline-flex min-h-11 items-center gap-1.5 rounded-app border bg-card px-3 text-sm font-medium text-fg-primary transition-colors hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+          menu.open ? "border-accent" : "border-border"
+        }`}
         aria-haspopup="menu"
         aria-expanded={menu.open}
         onClick={(e) => {
@@ -77,17 +79,27 @@ export default function FilterMenuButton({
       >
         <span className="text-fg-muted">{label}:</span>
         <span data-testid={`${testId}-label`}>{active?.label ?? value}</span>
-        <ChevronDown size={14} aria-hidden="true" className="text-fg-muted" />
+        <ChevronDown
+          size={14}
+          aria-hidden="true"
+          className={`text-fg-muted transition-transform duration-150 ${
+            menu.open ? "rotate-180" : ""
+          }`}
+        />
       </button>
       {menu.open &&
         menu.pos &&
         createPortal(
+          // ``list-none m-0`` explicitly resets the browser list marker +
+          // indent: this project imports Tailwind's utilities WITHOUT
+          // preflight (styles/tailwind.css), so an un-reset portalled <ul>
+          // otherwise shows disc bullets and a ~40px inline padding (#2498).
           <ul
             ref={menu.menuRef}
             role="menu"
             aria-label={label}
             style={{ position: "fixed", top: menu.pos.top, left: menu.pos.left }}
-            className="z-50 min-w-48 max-w-[calc(100vw-1rem)] rounded-app border border-border bg-card py-1 shadow-elevated"
+            className="z-50 m-0 min-w-52 max-w-[calc(100vw-1rem)] list-none rounded-app border border-border bg-card p-1.5 shadow-elevated"
             data-testid={`${testId}-menu`}
           >
             {options.map((option) => {
@@ -98,17 +110,21 @@ export default function FilterMenuButton({
                     type="button"
                     role="menuitemradio"
                     aria-checked={selected}
-                    className="flex min-h-11 w-full items-center gap-2 px-3 py-2 text-left text-sm text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:bg-[var(--bg-elevated)] focus-visible:outline-none"
+                    className={`flex min-h-10 w-full items-center gap-2 rounded-[calc(var(--radius-app)-3px)] px-2.5 py-2 text-left text-sm transition-colors focus-visible:outline-none ${
+                      selected
+                        ? "bg-[var(--bg-elevated)] font-medium text-fg-primary"
+                        : "text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:bg-[var(--bg-elevated)]"
+                    }`}
                     onClick={() => menu.choose(() => onChange(option.value))}
                     onKeyDown={menu.onItemKeyDown}
                     data-testid={`${testId}-${option.value}`}
                   >
                     <Check
-                      size={14}
+                      size={15}
                       aria-hidden="true"
                       className={selected ? "text-accent" : "invisible"}
                     />
-                    {option.label}
+                    <span className="flex-1">{option.label}</span>
                   </button>
                 </li>
               );
