@@ -23,6 +23,11 @@ name: Launcher (macOS)
 # Gatekeeper. Code signing requires an Apple Developer account and is
 # out of scope for the initial D-02.
 
+# green-gate-exclusion: release-racing - this build runs on the tag
+# commit's main push while the publish gate asks "is the commit green";
+# the green-gate script derives this workflow's job names into its
+# exclusion set via this marker line (#2482).
+
 on:
   push:
     branches: [develop, main]
