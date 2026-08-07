@@ -113,7 +113,12 @@ export default defineConfig({
                 "icon-512-dark.png",
                 "maskable-icon-512x512.png",
                 "og-image.png",
-                "offline.html",
+                // offline.html is deliberately NOT listed here: the
+                // workbox globPatterns "**/*.html" sweep below already
+                // precaches it from dist, and a second includeAssets
+                // entry produced two manifest rows with conflicting
+                // revisions - Workbox then rejects the whole precache
+                // list at install time (#2499).
             ],
             // Manifest is the single source of truth in src/pwa/pwa-manifest.ts
             // (asserted by pwa-manifest.test.ts so display/icons/colors can't

@@ -3,6 +3,9 @@
  * install-critical fields so they can't silently regress.
  */
 
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { buildPwaManifest } from "./pwa-manifest";
@@ -38,5 +41,30 @@ describe("buildPwaManifest", () => {
         expect(m.start_url).toBe("/adaptive-learner/");
         expect(m.scope).toBe("/adaptive-learner/");
         expect(m.icons[0].src.startsWith("/adaptive-learner/")).toBe(true);
+    });
+});
+
+describe("precache manifest has one source per html file (#2499)", () => {
+    it("includeAssets lists no .html entry - the workbox glob owns html", () => {
+        // offline.html listed in BOTH includeAssets and the
+        // "**/*.html" globPatterns sweep produced two precache rows
+        // with conflicting revisions; Workbox then rejects the whole
+        // list at SW install time and nothing is precached. The glob
+        // is the single owner of html entries.
+        const config = readFileSync(
+            join(process.cwd(), "vite.config.ts"),
+            "utf-8",
+        );
+        const includeAssets = config.match(
+            /includeAssets:\s*\[([^\]]*)\]/,
+        );
+        expect(includeAssets, "includeAssets block not found").toBeTruthy();
+        // Assert on the ENTRIES only - the block's comment names
+        // offline.html to explain the rule and must not trip it.
+        const entries = includeAssets![1]
+            .split("\n")
+            .filter((line) => !line.trim().startsWith("//"))
+            .join("\n");
+        expect(entries).not.toMatch(/\.html/);
     });
 });
