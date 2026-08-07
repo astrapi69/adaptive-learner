@@ -249,4 +249,13 @@
 # Tailwind-Utility-Aequivalent fuer den Hatch-Verlauf); neue Farben laufen
 # ueber die vorhandenen Tokens --accent / --exercise-correct / --surface.
 # Kein neues global.css.
-7645
+# 2026-08-07: 7645 -> 7676 (#2498 Dropdown-Redesign): +31 Zeilen in
+# 01-base.css - eine Fundament-Regel fuer die native <select>-Basis: der
+# OS-Caret wird per `appearance: none` durch den App-eigenen Chevron
+# ersetzt (zwei token-gefaerbte linear-gradient-Dreiecke, kein Bild-Asset,
+# kein Farb-Literal), plus Platz fuer den Caret, Pointer-Cursor und ein
+# Hover-Affordance. Element-weite Regel fuer ALLE ~40 Settings-Dropdowns -
+# kein Tailwind-Utility-Aequivalent fuer eine globale `select`-Element-Regel.
+# Neue Farben laufen ueber die vorhandenen Tokens --fg-muted / --surface /
+# --bg-elevated / --accent. Kein neues global.css.
+7676
