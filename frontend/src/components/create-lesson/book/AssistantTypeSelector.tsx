@@ -68,7 +68,7 @@ export default function AssistantTypeSelector({
 
     return (
         <fieldset
-            className="assistant-types m-0 flex flex-col gap-3 border-0 p-0"
+            className="m-0 flex flex-col gap-3 border-0 p-0"
             data-testid="assistant-type-selector"
         >
             <legend className="form-label text-sm font-medium text-fg-primary">

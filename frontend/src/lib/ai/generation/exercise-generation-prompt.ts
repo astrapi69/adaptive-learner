@@ -183,28 +183,19 @@ export function recommendedCardCount(stepCount: number, maxCards: number): numbe
   return Math.max(3, Math.min(maxCards, perBlock));
 }
 
-/**
- * Build the exercise-generation prompt from theory steps.
- *
- * @param steps - The lesson's theory steps (prose context).
- * @param options - Language + card-count overrides.
- * @returns A single prompt string ready to send as the user message.
- */
-export function buildExerciseGenerationPrompt(
-  steps: TheoryStep[],
-  options: ExercisePromptOptions = {},
-): string {
-  const maxCards = options.maxCards ?? DEFAULT_MAX_CARDS;
-  const context = theoryContext(steps);
-  const language = options.language ?? detectLanguageHint(context);
-  const want = recommendedCardCount(steps.length, maxCards);
-  // #2356 — asset-dependent type set: without images, picture_choice cannot be
-  // filled (the model supplies no image src), so it is not offered at all.
-  const hasAssets = options.hasAssets ?? true;
+/** The types the prompt may offer, after applying the user's selection and
+ *  the asset gate. ``selected`` is null when no selection was given. */
+interface AllowedTypes {
+  selected: Set<string> | null;
+  allowedCore: string[];
+  allowedExt: string[];
+}
 
-  // #2510 — the user's type selection restricts the offered types to a hard
-  // allow-list. Absent -> today's full mix. Asset-bound picture_choice is
-  // already removed by hasAssets above, so it never appears here.
+/** Resolve the offered core + extension types from the options + asset gate. */
+function resolveAllowedTypes(
+  options: ExercisePromptOptions,
+  hasAssets: boolean,
+): AllowedTypes {
   const selected =
     options.types && options.types.length > 0 ? new Set(options.types) : null;
   const baseCore = hasAssets
@@ -214,8 +205,25 @@ export function buildExerciseGenerationPrompt(
   const allowedExt = selected
     ? TEXT_EXTENSION_TYPES.filter((t) => selected.has(t))
     : [...TEXT_EXTENSION_TYPES];
-  const allowedAll = [...allowedCore, ...allowedExt];
+  return {selected, allowedCore, allowedExt};
+}
 
+/** The RULES enumeration lines derived from the allowed types. */
+interface SelectionRuleLines {
+  selectionLine: string[];
+  varietyLines: string[];
+  coreLines: string[];
+  extIntroLines: string[];
+}
+
+/** Build the RULES-section lines: the hard allow-list, the variety demand
+ *  (softened for a narrow selection), and the core + extension type offers. */
+function buildSelectionRuleLines(
+  selected: Set<string> | null,
+  allowedCore: string[],
+  allowedExt: string[],
+): SelectionRuleLines {
+  const allowedAll = [...allowedCore, ...allowedExt];
   const coreLines =
     allowedCore.length > 0
       ? [
@@ -246,39 +254,72 @@ export function buildExerciseGenerationPrompt(
           "  forcing an unfitting one (suitability beats variety; see TYPE",
           "  SELECTION below).",
         ];
-  // TYPE SELECTION extension-routing hints, one block per selectable ext type,
-  // emitted only for selected types so a deselected type is never suggested.
-  const extRouting = [
-    ...(allowedExt.includes(READING_COMPREHENSION)
-      ? [
-          "- A passage the learner must READ and then answer several questions about",
-          "  -> ext:al-reading-comprehension (ONE per lesson at most).",
-        ]
-      : []),
-    ...(allowedExt.includes(CATEGORIZATION)
-      ? ["- Terms/examples that group into named categories -> ext:al-categorization."]
-      : []),
-    ...(allowedExt.includes(ERROR_CORRECTION)
-      ? [
-          "- A single sentence with ONE wrong word to spot and fix ->",
-          "  ext:al-error-correction.",
-        ]
-      : []),
-    ...(allowedExt.includes(GRADED_QUIZ)
-      ? [
-          "- A short scored summary of the lesson's key facts -> ext:al-graded-quiz",
-          "  (at most ONE, as an end-of-lesson summary; never one per small point).",
-        ]
-      : []),
+  return {selectionLine, varietyLines, coreLines, extIntroLines};
+}
+
+/** TYPE SELECTION extension-routing hints, one block per selectable ext type,
+ *  emitted only for selected types so a deselected type is never suggested. */
+function buildExtRoutingLines(allowedExt: string[]): string[] {
+  const routing: Record<string, string[]> = {
+    [READING_COMPREHENSION]: [
+      "- A passage the learner must READ and then answer several questions about",
+      "  -> ext:al-reading-comprehension (ONE per lesson at most).",
+    ],
+    [CATEGORIZATION]: [
+      "- Terms/examples that group into named categories -> ext:al-categorization.",
+    ],
+    [ERROR_CORRECTION]: [
+      "- A single sentence with ONE wrong word to spot and fix ->",
+      "  ext:al-error-correction.",
+    ],
+    [GRADED_QUIZ]: [
+      "- A short scored summary of the lesson's key facts -> ext:al-graded-quiz",
+      "  (at most ONE, as an end-of-lesson summary; never one per small point).",
+    ],
+  };
+  // Emit in the canonical TEXT_EXTENSION_TYPES order, filtered to the selection.
+  return TEXT_EXTENSION_TYPES.filter((t) => allowedExt.includes(t)).flatMap(
+    (t) => routing[t],
+  );
+}
+
+/** The EXTENSION TYPES shape block for the selected ext types (empty if none). */
+function buildExtShapeBlock(allowedExt: string[]): string[] {
+  if (allowedExt.length === 0) return [];
+  return [
+    "",
+    "EXTENSION TYPES (optional, text-only; use sparingly - see the caps above)",
+    ...allowedExt.flatMap((t) => EXT_SHAPE_LINES[t]),
   ];
-  const extBlock =
-    allowedExt.length > 0
-      ? [
-          "",
-          "EXTENSION TYPES (optional, text-only; use sparingly - see the caps above)",
-          ...allowedExt.flatMap((t) => EXT_SHAPE_LINES[t]),
-        ]
-      : [];
+}
+
+/**
+ * Build the exercise-generation prompt from theory steps.
+ *
+ * @param steps - The lesson's theory steps (prose context).
+ * @param options - Language + card-count overrides.
+ * @returns A single prompt string ready to send as the user message.
+ */
+export function buildExerciseGenerationPrompt(
+  steps: TheoryStep[],
+  options: ExercisePromptOptions = {},
+): string {
+  const maxCards = options.maxCards ?? DEFAULT_MAX_CARDS;
+  const context = theoryContext(steps);
+  const language = options.language ?? detectLanguageHint(context);
+  const want = recommendedCardCount(steps.length, maxCards);
+  // #2356 — asset-dependent type set: without images, picture_choice cannot be
+  // filled (the model supplies no image src), so it is not offered at all.
+  const hasAssets = options.hasAssets ?? true;
+
+  // #2510 — the user's type selection restricts the offered types to a hard
+  // allow-list (absent -> today's full mix). The line assembly is split into
+  // helpers so this builder stays under the complexity gate.
+  const {selected, allowedCore, allowedExt} = resolveAllowedTypes(options, hasAssets);
+  const {selectionLine, varietyLines, coreLines, extIntroLines} =
+    buildSelectionRuleLines(selected, allowedCore, allowedExt);
+  const extRouting = buildExtRoutingLines(allowedExt);
+  const extBlock = buildExtShapeBlock(allowedExt);
 
   return [
     "You are an instructional designer. Read the THEORY below.",
