@@ -107,6 +107,9 @@ def load_json(source: str) -> list[dict] | None:
     return data
 
 
+RACING_MARKER = "green-gate-exclusion: release-racing"
+
+
 def release_driven_job_names(repo_root: Path) -> tuple[list[str], str | None]:
     """Display names of every job in a release-driven workflow.
 
@@ -114,6 +117,14 @@ def release_driven_job_names(repo_root: Path) -> tuple[list[str], str | None]:
     is excluded without anyone remembering to add it. Returns the names and
     an error message when the scan itself could not be performed - finding
     nothing to exclude is only sound if we know we looked in the right place.
+
+    Two marker classes qualify a workflow (#2482): a PUBLISHER calls this
+    gate; a RELEASE-RACING BUILDER carries the explicit ``RACING_MARKER``
+    comment because its jobs run on the tag commit's main push while a
+    publisher gates on "commit green" - counting them as pending would
+    deadlock the publish (#2149). The launcher builds lost their gate call
+    with the dead release-event steps (#2475), so the call alone stopped
+    being a sufficient basis.
     """
     directory = repo_root / ".github" / "workflows"
     if not directory.is_dir():
@@ -126,9 +137,11 @@ def release_driven_job_names(repo_root: Path) -> tuple[list[str], str | None]:
         # that calls THIS gate. Trigger-text matching broke twice - created
         # vs published, then the release trigger's removal - while the gate
         # call is the one marker a publisher cannot lack.
-        if "verify_release_commit_green.py" not in text:
+        is_publisher = "verify_release_commit_green.py" in text
+        if not is_publisher and RACING_MARKER not in text:
             continue
-        found_release_workflow = True
+        if is_publisher:
+            found_release_workflow = True
         for line in text.splitlines():
             stripped = line.strip()
             if stripped.startswith("name:") and line.startswith("    name:"):
