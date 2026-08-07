@@ -39,7 +39,15 @@
  */
 
 import {ArrowRight, CheckCircle2, ChevronDown, ChevronRight, X} from "lucide-react";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type ReactNode,
+    type RefObject,
+} from "react";
 import {Link} from "react-router";
 
 import {Button} from "@/components/ui/button";
@@ -61,8 +69,15 @@ import type {
     ElementError,
     LessonProgress,
 } from "../../../storage/types";
-import type {ExerciseHandle} from "../shell/exercise-control";
+import type {
+    ExerciseHandle,
+    ExerciseScored,
+} from "../shell/exercise-control";
 import ClozeExercise from "../renderers/ClozeExercise";
+
+/** i18n lookup shape used by the presentational sub-components:
+ *  ``(key, fallback) -> string``. */
+type CorrectionT = (key: string, fallback: string) => string;
 
 export interface CorrectionBlockProps {
     lesson: ContentLesson;
@@ -304,21 +319,211 @@ export default function CorrectionBlock({
         enterLockRef,
     });
 
-    // Still preparing the clozes: wait so the section appears at the same
-    // moment as the rest of the summary rather than flashing an empty shell.
-    if (status === "loading") {
+    // Which view to render — the branch decision lives in a pure helper so
+    // this component stays flat (#2496). "hidden" covers both the still-
+    // loading and the nothing-to-do states.
+    const {kind, drillsDone, drillsAvailable, hasReplay} = correctionView({
+        status,
+        expanded,
+        clozeCount: clozes.length,
+        errorCount,
+        hasReplayHref: Boolean(replayHref),
+        allCorrected,
+    });
+    if (kind === "hidden") {
         return null;
     }
 
-    const hasReplay = Boolean(replayHref) && errorCount > 0;
-    const drillsAvailable =
-        (status === "ready" || status === "active") && clozes.length > 0;
-    const drillsDone = status === "complete";
-    // Collapsed-header count: open failed exercises, falling back to the
-    // generated-drill count on the (defensive) chance the exercise-level
-    // count was not supplied.
-    const mistakeCount = errorCount > 0 ? errorCount : clozes.length;
+    // #2496 — the full-replay CTA, folded in from the retired standalone
+    // next-step card (redo the EXACT failed exercises, all types).
+    const replay =
+        hasReplay && replayHref ? (
+            <CorrectionReplayCta
+                t={t}
+                replayHref={replayHref}
+                replayState={replayState}
+                errorCount={errorCount}
+            />
+        ) : null;
 
+    if (kind === "complete") {
+        return (
+            <CorrectionComplete
+                t={t}
+                allCorrected={!drillsDone}
+                improved={correctCount}
+                replay={drillsDone ? replay : null}
+            />
+        );
+    }
+
+    if (kind === "collapsed") {
+        return (
+            <CorrectionCollapsed
+                t={t}
+                status={status}
+                mistakeCount={errorCount > 0 ? errorCount : clozes.length}
+                errorCount={errorCount}
+                correctedCount={correctedCount}
+                onExpand={() => setExpanded(true)}
+            />
+        );
+    }
+
+    // EXPANDED drill — the cloze mounts HERE, so its #692 auto-focus (and the
+    // mobile keyboard) fire only now, on the user's explicit opt-in.
+    return (
+        <CorrectionDrill
+            t={t}
+            status={status}
+            current={drillsAvailable ? clozes[currentIndex] : null}
+            drillsAvailable={drillsAvailable}
+            currentIndex={currentIndex}
+            total={clozes.length}
+            setId={setId}
+            lessonFilename={lessonFilename}
+            answerable={answerable}
+            exerciseRef={exerciseRef}
+            onInteraction={setAnswerable}
+            onClozeComplete={handleClozeComplete}
+            onSkip={handleSkip}
+            replay={replay}
+        />
+    );
+}
+
+type CorrectionView = "hidden" | "complete" | "collapsed" | "drill";
+
+/** Pure view decision for the mistakes section (#2496), extracted so the
+ *  component body stays flat. Returns the view kind plus the derived flags
+ *  the render needs. "hidden" folds the still-loading and nothing-to-do
+ *  cases. */
+function correctionView(args: {
+    status: Status;
+    expanded: boolean;
+    clozeCount: number;
+    errorCount: number;
+    hasReplayHref: boolean;
+    allCorrected: boolean;
+}): {
+    kind: CorrectionView;
+    drillsDone: boolean;
+    drillsAvailable: boolean;
+    hasReplay: boolean;
+} {
+    const hasReplay = args.hasReplayHref && args.errorCount > 0;
+    const drillsAvailable =
+        (args.status === "ready" || args.status === "active") &&
+        args.clozeCount > 0;
+    const drillsDone = args.status === "complete";
+    const nothingActionable = !drillsAvailable && !hasReplay;
+    const flags = {drillsDone, drillsAvailable, hasReplay};
+    if (args.status === "loading") {
+        return {kind: "hidden", ...flags};
+    }
+    if (drillsDone || (args.allCorrected && nothingActionable)) {
+        return {kind: "complete", ...flags};
+    }
+    if (nothingActionable) {
+        return {kind: "hidden", ...flags};
+    }
+    return {kind: args.expanded ? "drill" : "collapsed", ...flags};
+}
+
+/** The full-replay CTA — redo the exact failed exercises (any type). */
+function CorrectionReplayCta({
+    t,
+    replayHref,
+    replayState,
+    errorCount,
+}: {
+    t: CorrectionT;
+    replayHref: string;
+    replayState: ErrorReplayPayload | null;
+    errorCount: number;
+}) {
+    return (
+        <Button asChild variant="secondary">
+            <Link
+                to={replayHref}
+                state={replayState ?? undefined}
+                data-testid="lesson-correction-replay"
+            >
+                {t(
+                    "lesson.correction.replay_all",
+                    "Redo all exercises ({count})",
+                ).replace("{count}", String(errorCount))}
+                <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+        </Button>
+    );
+}
+
+/** Completed state: the finished-drill improvement note, or the
+ *  all-corrected success note. */
+function CorrectionComplete({
+    t,
+    allCorrected,
+    improved,
+    replay,
+}: {
+    t: CorrectionT;
+    allCorrected: boolean;
+    improved: number;
+    replay: ReactNode;
+}) {
+    const heading = allCorrected
+        ? t("lesson.next_step.all_corrected", "All errors corrected!")
+        : t("lesson.correction.complete_heading", "Correction round complete");
+    const message = allCorrected
+        ? t("lesson.next_step.all_corrected_detail", "Nice - no open errors left.")
+        : (improved === 1
+              ? t("lesson.correction.improvement_singular", "{n} element improved.")
+              : t("lesson.correction.improvement", "{n} elements improved.")
+          ).replace("{n}", String(improved));
+    return (
+        <section
+            className="lesson-correction-block lesson-correction-block-complete"
+            data-testid="lesson-correction-block"
+            data-status="complete"
+            data-expanded="true"
+            aria-label={heading}
+        >
+            <h3>
+                {allCorrected && (
+                    <>
+                        <CheckCircle2 size={18} aria-hidden="true" />{" "}
+                    </>
+                )}
+                {heading}
+            </h3>
+            <p data-testid="lesson-correction-improvement">{message}</p>
+            {replay && (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {replay}
+                </div>
+            )}
+        </section>
+    );
+}
+
+/** Collapsed default: the "Fix your mistakes (N)" opt-in card. No cloze is
+ *  mounted here, so nothing grabs focus and the mobile keyboard stays down. */
+function CorrectionCollapsed({
+    t,
+    status,
+    mistakeCount,
+    errorCount,
+    correctedCount,
+    onExpand,
+}: {
+    t: CorrectionT;
+    status: Status;
+    mistakeCount: number;
+    errorCount: number;
+    correctedCount: number;
+    onExpand: () => void;
+}) {
     const correctedNote =
         correctedCount > 0
             ? t(
@@ -328,160 +533,82 @@ export default function CorrectionBlock({
                   .replace("{corrected}", String(correctedCount))
                   .replace("{total}", String(correctedCount + errorCount))
             : null;
-
-    // #2496 — the full-replay CTA, folded in from the retired standalone
-    // next-step card (redo the EXACT failed exercises, all types).
-    const replayLink =
-        hasReplay && replayHref ? (
-            <Button asChild variant="secondary">
-                <Link
-                    to={replayHref}
-                    state={replayState ?? undefined}
-                    data-testid="lesson-correction-replay"
-                >
-                    {t(
-                        "lesson.correction.replay_all",
-                        "Redo all exercises ({count})",
-                    ).replace("{count}", String(errorCount))}
-                    <ArrowRight size={16} aria-hidden="true" />
-                </Link>
-            </Button>
-        ) : null;
-
-    // Every originally-failed exercise already corrected — nothing left to
-    // drill or replay: a short success note (mirrors the retired #1372 card).
-    if (allCorrected && !drillsAvailable && !hasReplay && !drillsDone) {
-        return (
-            <section
-                className="lesson-correction-block lesson-correction-block-complete"
-                data-testid="lesson-correction-block"
-                data-status="complete"
-                data-expanded="true"
-                aria-label={t(
-                    "lesson.next_step.all_corrected",
-                    "All errors corrected!",
-                )}
-            >
+    return (
+        <section
+            className="lesson-correction-block"
+            data-testid="lesson-correction-block"
+            data-status={status}
+            data-expanded="false"
+            aria-label={t("lesson.correction.mistakes_heading", "Fix your mistakes")}
+        >
+            <header className="lesson-correction-block-header">
                 <h3>
-                    <CheckCircle2 size={18} aria-hidden="true" />{" "}
-                    {t(
-                        "lesson.next_step.all_corrected",
-                        "All errors corrected!",
-                    )}
+                    {t("lesson.correction.mistakes_heading", "Fix your mistakes")}{" "}
+                    <span className="lesson-correction-block-progress">
+                        ({mistakeCount})
+                    </span>
                 </h3>
-                <p data-testid="lesson-correction-improvement">
+                <p className="lesson-correction-block-subtitle">
                     {t(
-                        "lesson.next_step.all_corrected_detail",
-                        "Nice - no open errors left.",
+                        "lesson.correction.subtitle",
+                        "A few quick drills on the words you missed.",
                     )}
                 </p>
-            </section>
-        );
-    }
-
-    // Finished the inline drills: the improvement note, plus the full-replay
-    // CTA when errors remain that no generated cloze covered.
-    if (drillsDone) {
-        const message =
-            correctCount === 1
-                ? t(
-                      "lesson.correction.improvement_singular",
-                      "{n} element improved.",
-                  ).replace("{n}", String(correctCount))
-                : t(
-                      "lesson.correction.improvement",
-                      "{n} elements improved.",
-                  ).replace("{n}", String(correctCount));
-        return (
-            <section
-                className="lesson-correction-block lesson-correction-block-complete"
-                data-testid="lesson-correction-block"
-                data-status="complete"
-                data-expanded="true"
-                aria-label={t(
-                    "lesson.correction.complete_heading",
-                    "Correction round complete",
-                )}
-            >
-                <h3>
-                    {t(
-                        "lesson.correction.complete_heading",
-                        "Correction round complete",
-                    )}
-                </h3>
-                <p data-testid="lesson-correction-improvement">{message}</p>
-                {replayLink && (
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                        {replayLink}
-                    </div>
-                )}
-            </section>
-        );
-    }
-
-    // Nothing actionable (no drills, no replay) and not a success state.
-    if (!drillsAvailable && !hasReplay) {
-        return null;
-    }
-
-    // COLLAPSED shell (default) — the single opt-in "your mistakes" entry.
-    // Collapsed there is no input to grab focus, so no mobile keyboard pops.
-    if (!expanded) {
-        return (
-            <section
-                className="lesson-correction-block lesson-correction-block-collapsed"
-                data-testid="lesson-correction-block"
-                data-status={status}
-                data-expanded="false"
-                aria-label={t(
-                    "lesson.correction.mistakes_heading",
-                    "Fix your mistakes",
-                )}
-            >
-                <header className="lesson-correction-block-header">
-                    <h3>
-                        {t(
-                            "lesson.correction.mistakes_heading",
-                            "Fix your mistakes",
-                        )}{" "}
-                        <span className="lesson-correction-block-progress">
-                            ({mistakeCount})
-                        </span>
-                    </h3>
-                    <p className="lesson-correction-block-subtitle">
-                        {t(
-                            "lesson.correction.subtitle",
-                            "A few quick drills on the words you missed.",
-                        )}
-                    </p>
-                    {correctedNote && (
-                        <p
-                            className="lesson-correction-block-corrected"
-                            data-testid="lesson-correction-corrected"
-                        >
-                            {correctedNote}
-                        </p>
-                    )}
-                </header>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <Button
-                        type="button"
-                        onClick={() => setExpanded(true)}
-                        data-testid="lesson-correction-block-expand"
+                {correctedNote && (
+                    <p
+                        className="lesson-correction-block-subtitle"
+                        data-testid="lesson-correction-corrected"
                     >
-                        {t("lesson.correction.expand", "Fix now")}
-                        <ChevronDown size={16} aria-hidden="true" />
-                    </Button>
-                </div>
-            </section>
-        );
-    }
+                        {correctedNote}
+                    </p>
+                )}
+            </header>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Button
+                    type="button"
+                    onClick={onExpand}
+                    data-testid="lesson-correction-block-expand"
+                >
+                    {t("lesson.correction.expand", "Fix now")}
+                    <ChevronDown size={16} aria-hidden="true" />
+                </Button>
+            </div>
+        </section>
+    );
+}
 
-    // EXPANDED — the drill (if any generated cloze exists) + the full-replay
-    // CTA. The cloze mounts HERE, so its #692 auto-focus (and the mobile
-    // keyboard) fire only now, on the user's explicit opt-in.
-    const current = drillsAvailable ? clozes[currentIndex] : null;
-
+/** Expanded drill: the current cloze + Check, plus the full-replay CTA. */
+function CorrectionDrill({
+    t,
+    status,
+    current,
+    drillsAvailable,
+    currentIndex,
+    total,
+    setId,
+    lessonFilename,
+    answerable,
+    exerciseRef,
+    onInteraction,
+    onClozeComplete,
+    onSkip,
+    replay,
+}: {
+    t: CorrectionT;
+    status: Status;
+    current: PreparedCloze | null;
+    drillsAvailable: boolean;
+    currentIndex: number;
+    total: number;
+    setId: string;
+    lessonFilename: string;
+    answerable: boolean;
+    exerciseRef: RefObject<ExerciseHandle | null>;
+    onInteraction: (answerable: boolean) => void;
+    onClozeComplete: (scored: ExerciseScored) => void;
+    onSkip: () => void;
+    replay: ReactNode;
+}) {
     return (
         <section
             className="lesson-correction-block"
@@ -489,21 +616,15 @@ export default function CorrectionBlock({
             data-status={status}
             data-expanded="true"
             data-cloze-index={String(currentIndex)}
-            data-cloze-total={String(clozes.length)}
-            aria-label={t(
-                "lesson.correction.mistakes_heading",
-                "Fix your mistakes",
-            )}
+            data-cloze-total={String(total)}
+            aria-label={t("lesson.correction.mistakes_heading", "Fix your mistakes")}
         >
             <header className="lesson-correction-block-header">
                 <h3>
-                    {t(
-                        "lesson.correction.mistakes_heading",
-                        "Fix your mistakes",
-                    )}{" "}
+                    {t("lesson.correction.mistakes_heading", "Fix your mistakes")}{" "}
                     {drillsAvailable && (
                         <span className="lesson-correction-block-progress">
-                            ({currentIndex + 1} / {clozes.length})
+                            ({currentIndex + 1} / {total})
                         </span>
                     )}
                 </h3>
@@ -517,7 +638,7 @@ export default function CorrectionBlock({
                     <button
                         type="button"
                         className="btn btn-text lesson-correction-block-skip"
-                        onClick={handleSkip}
+                        onClick={onSkip}
                         data-testid="lesson-correction-block-skip"
                     >
                         <X size={14} aria-hidden="true" />
@@ -532,12 +653,12 @@ export default function CorrectionBlock({
                         key={current.exercise.id}
                         ref={exerciseRef}
                         controlled
-                        onInteraction={setAnswerable}
+                        onInteraction={onInteraction}
                         exercise={current.exercise}
                         setId={setId}
                         lessonId={lessonFilename}
                         onComplete={(scored) => {
-                            void handleClozeComplete(scored);
+                            void onClozeComplete(scored);
                         }}
                     />
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -552,9 +673,9 @@ export default function CorrectionBlock({
                     </div>
                 </>
             )}
-            {replayLink && (
+            {replay && (
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                    {replayLink}
+                    {replay}
                 </div>
             )}
         </section>
