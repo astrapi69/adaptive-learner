@@ -11,6 +11,11 @@ name: Launcher (Windows)
 # them via `gh release upload` (release-workflow.md Step 8), never a
 # rebuild (bit-drift between identical-content builds).
 
+# green-gate-exclusion: release-racing - this build runs on the tag
+# commit's main push while the publish gate asks "is the commit green";
+# the green-gate script derives this workflow's job names into its
+# exclusion set via this marker line (#2482).
+
 on:
   push:
     branches: [develop, main]
