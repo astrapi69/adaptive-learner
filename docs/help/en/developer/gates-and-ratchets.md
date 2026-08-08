@@ -111,7 +111,31 @@ Never lower a ceiling to make a local red go green. The number means
 the same thing everywhere by design; moving it silently is exactly the
 failure the ratchet exists to prevent.
 
-## Run the gates locally before you push
+### A worked example: the rule-corpus ratchet
+
+Say you add a section to a rule file under `.claude/rules/`. Every such
+file is injected into every prompt, so the corpus ratchet guards its
+total size. Run it and it blocks:
+
+```
+$ make verify-rule-corpus-size
+rule corpus: 24 files, 292314 chars (~73078 tokens per prompt)
+rule corpus is 58 chars over the ceiling (292314 > 292256).
+  - condense or delete elsewhere in the corpus (see the condensation rule
+  - raise the ceiling deliberately:
+      make verify-rule-corpus-size-raise
+    and say in the commit what the corpus bought for the space.
+make: *** [Makefile:899: verify-rule-corpus-size] Error 1
+```
+
+The gate prints the two legitimate ways out, and only those two: condense
+or delete something else so the total fits again, or raise the ceiling on
+purpose with `make verify-rule-corpus-size-raise` and justify it in the
+commit. It exits non-zero (`Error 1`), so it fails the build until you do
+one of them - there is no third path where the addition just slips in.
+Every ratchet in the table above blocks the same shape: a line naming what
+it measured, the current value against the ceiling, and its own
+raise/update target.
 
 A gate that only bites after the push costs a round trip. Run the
 build-free gates in CI order with one command:

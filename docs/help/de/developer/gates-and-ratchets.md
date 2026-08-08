@@ -116,6 +116,34 @@ Senke niemals eine Obergrenze, um ein lokales Rot grün zu machen. Die
 Zahl bedeutet überall dasselbe, per Konstruktion; sie stillschweigend
 zu verschieben ist genau der Fehler, den der Ratchet verhindern soll.
 
+### Ein durchgerechnetes Beispiel: der Regelkorpus-Ratchet
+
+Angenommen, du fügst einen Abschnitt in einer Regeldatei unter
+`.claude/rules/` hinzu. Jede solche Datei wird in jeden Prompt injiziert,
+also wacht der Korpus-Ratchet über ihre Gesamtgröße. Fährst du ihn,
+blockiert er:
+
+```
+$ make verify-rule-corpus-size
+rule corpus: 24 files, 292314 chars (~73078 tokens per prompt)
+rule corpus is 58 chars over the ceiling (292314 > 292256).
+  - condense or delete elsewhere in the corpus (see the condensation rule
+  - raise the ceiling deliberately:
+      make verify-rule-corpus-size-raise
+    and say in the commit what the corpus bought for the space.
+make: *** [Makefile:899: verify-rule-corpus-size] Error 1
+```
+
+Das Tor druckt die zwei berechtigten Auswege, und nur diese zwei:
+anderswo verdichten oder löschen, damit die Summe wieder passt, oder die
+Obergrenze bewusst mit `make verify-rule-corpus-size-raise` anheben und es
+im Commit begründen. Es endet mit einem Fehlercode (`Error 1`), scheitert
+also den Build, bis du eines von beiden tust - es gibt keinen dritten Weg,
+auf dem die Hinzufügung einfach durchrutscht. Jeder Ratchet in der Tabelle
+oben blockiert in derselben Form: eine Zeile, die nennt, was er gemessen
+hat, der aktuelle Wert gegen die Obergrenze und sein eigenes
+Anhebe-/Aktualisierungs-Ziel.
+
 ## Fahre die Tore lokal, bevor du pushst
 
 Ein Tor, das erst nach dem Push beißt, kostet eine Runde. Fahre die
