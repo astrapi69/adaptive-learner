@@ -41,6 +41,8 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
+| KI-Anbieter — Perplexity in der Übersicht, "Nur Desktop" (#2512) | `ai-providers/configured-with-perplexity.png` | `ai-providers/configured-with-perplexity.mobile.png` | #2514 |
+| KI-Schlüssel-Tresor — Export + Cross-App-Import (#2512) | `ai-providers/key-vault-import.png` | `ai-providers/key-vault-import.mobile.png` | #2514 |
 | Landeseite (statisch, DE) | `landing-page/de.png` | `landing-page/de.mobile.png` | #2409 |
 | Landeseite (statisch, EN) | `landing-page/en.png` | `landing-page/en.mobile.png` | #2409 |
 | Dashboard Tabs — Übersicht | `dashboard-tabs/uebersicht.png` | `dashboard-tabs/uebersicht.mobile.png` | v2.1.0 |
