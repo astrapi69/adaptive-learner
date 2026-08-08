@@ -195,13 +195,22 @@ Die CI prüft bei jedem PR die Korrektheits-Gates:
 - Complexity-Gate (Baseline-Ratsche - neue Funktionen bleiben unter
   der zyklomatischen Komplexitätsschwelle)
 - Folder-Size- + File-Size-Guards (God-File-/God-Folder-Vermeidung)
-- i18n-Parität (alle 11 Sprachen müssen jeden Key definieren)
+- i18n-Parität (jeder Katalog unter `backend/config/i18n/` muss
+  jeden Key definieren)
 - Design-Token-Guard (keine hartcodierten Farben / Fixed-Palette-Klassen)
 - Docs-Drift-Verifier
 
 Schwerere Checks (Dexie-Modus-E2E, Coverage, Mutation-Testing,
 Security-Scan, Content-Stats-Drift) laufen nächtlich + beim Release,
-nicht bei jedem PR.
+nicht bei jedem PR. Ein grüner PR ist also kein Beweis, dass `develop`
+grün ist.
+
+Wenn ein Tor dich blockiert - besonders eine **Ratsche** (Komplexität,
+Dateigröße, Ordnergröße, ...) - lies erst
+[Tore, Ratchets und Zweigschutz](gates-and-ratchets.md), bevor du es
+für falsch hältst. Dort steht, was jedes Tor ist, was zu tun ist, wenn
+eine Ratsche blockiert, und wie du die Tore mit `make ci` lokal fährst,
+bevor du pushst.
 
 ## 11. Review + Merge
 
@@ -222,8 +231,10 @@ zusammenfallen.
 | Dexie-Modus-Parität | alles funktioniert in Dexie *und* API-Modus |
 | Library-First | native API > Framework > Library > eigener Code |
 | Conventional Commits | `fix()`, `feat()`, `refactor()`, `docs()`, ... |
-| i18n | alle UI-Texte in allen 11 Sprachen |
+| i18n | alle UI-Texte in jedem `backend/config/i18n/`-Katalog |
 | 44px Touch-Targets | mobil-freundliche interaktive Elemente |
+| Ein Concern pro PR | jeder PR trägt genau eine zusammenhängende Änderung |
+| Zweigschutz | `develop` braucht aktuellen Branch + grüne Checks (gilt auch für Admins) |
 
 Vollständiges Regelwerk: [`.claude/rules/`](https://github.com/astrapi69/adaptive-learner/tree/develop/.claude/rules).
 
@@ -266,7 +277,8 @@ backend/app/
   models/       SQLAlchemy-Modelle (Single-File-Domänenmodell)
   hookspecs.py  die 10 Plugin-Hooks
 
-plugins/        13 PluginForge-Plugins (je ein Paket)
+plugins/        PluginForge-Plugins (je ein Paket; der Katalog
+                steht in CLAUDE.md)
 ```
 
 Details: [Architektur](architecture.md).
@@ -277,6 +289,7 @@ Details: [Architektur](architecture.md).
 |---|---|
 | Projekt-Regeln | [`.claude/rules/`](https://github.com/astrapi69/adaptive-learner/tree/develop/.claude/rules) |
 | Architektur | [Architektur](architecture.md) |
+| Tore, Ratchets, Zweigschutz | [Tore, Ratchets und Zweigschutz](gates-and-ratchets.md) |
 | Storage-Layer | [Storage-Layer](storage-layer.md) |
 | Plugin-System | [Plugin-Leitfaden](plugin-guide.md) |
 | KI-Integration | [KI-Integration](ai-integration.md) |
