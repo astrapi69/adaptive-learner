@@ -391,7 +391,57 @@ async function gotoBookUploadPicker(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings -> AI scrolled to the configured-providers table, which
+ *  lists Perplexity as the fourth provider (#2512). In this Dexie-mode
+ *  build it is desktop-only (corsBlocked) and shown disabled with a
+ *  reason instead of hidden - exactly the state worth pinning. */
+async function gotoConfiguredProviders(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=ai");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    // The panel loads its settings snapshot async - waitFor instead of an
+    // immediate count check (the desktop run rendered a beat later).
+    const table = page.getByTestId("configured-providers");
+    try {
+        await table.waitFor({timeout: 15_000});
+    } catch {
+        return false;
+    }
+    await table.scrollIntoViewIfNeeded();
+    await expect(table).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/** Open Settings -> Data scrolled to the key-vault block whose import
+ *  half accepts sibling-app exports since #2512 (format-agnostic import,
+ *  provider aliases). */
+async function gotoKeyVaultSection(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=data");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const section = page.getByTestId("key-vault-section");
+    try {
+        await section.waitFor({timeout: 15_000});
+    } catch {
+        return false;
+    }
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- AI providers + cross-app key import (#2512) ---------------------
+    {
+        path: "ai-providers/configured-with-perplexity",
+        setup: gotoConfiguredProviders,
+        pinTo: "configured-providers",
+    },
+    {
+        path: "ai-providers/key-vault-import",
+        setup: gotoKeyVaultSection,
+        pinTo: "key-vault-section",
+    },
     // --- Static landing page (#2409) -------------------------------------
     // Not an app view: real static HTML delivered next to the SPA under
     // /start/. It follows prefers-color-scheme instead of the app theme,
