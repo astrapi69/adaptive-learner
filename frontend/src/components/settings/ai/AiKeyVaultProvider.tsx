@@ -43,6 +43,12 @@ const PROVIDER_ICONS: Partial<Record<AIProvider, ProviderIcon>> = {
     gemini: Gem,
 };
 
+// Port keys from sibling apps: Topos (and other @astrapi69 hosts) call the
+// Google provider "google"; this app calls it "gemini". Combined with the
+// kit's format-agnostic import, a Topos .alk (format "topos-ai-keys", key
+// under "google") imports here and lands on "gemini".
+const IMPORT_PROVIDER_ALIASES = { google: "gemini" } as const;
+
 const ButtonSlotImpl: ButtonSlot = ({ variant, size, ...rest }) => (
     <Button variant={variant} size={size} {...rest} />
 );
@@ -86,6 +92,7 @@ export function AiKeyVaultProvider({ children }: { children: ReactNode }) {
             notify={notify}
             confirm={confirm}
             vaultFormat="adaptive-learner-keys"
+            importProviderAliases={IMPORT_PROVIDER_ALIASES}
             browserRuntime={resolveStorageMode() === "dexie"}
             Button={ButtonSlotImpl}
             Input={InputSlotImpl}
