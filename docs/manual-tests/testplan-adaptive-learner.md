@@ -588,7 +588,8 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       KI-Key: freundlicher Hinweis, kein Crash; "Weiter" erst nach
       erfolgreicher Generierung
 - [ ] **Aufgabentyp-Auswahl im Assistenten (#2510):** Im Buchtext-Schritt
-      steht über "Theorie + Übungen generieren" eine Auswahl "Aufgabentypen"
+      steht **vor dem Textfeld** (zwischen Datei-/Abschnitts-Fläche und dem
+      Lehrbuch-Textfeld, #2522) eine Auswahl "Aufgabentypen"
       mit drei Gruppen: **Standardtypen** (Zuordnung, Freitext, Lückentext,
       Wort-Kacheln, Multiple Choice) sind vorausgewählt; **Erweiterungstypen**
       (Kategorisierung, Fehlerkorrektur, Leseverständnis, Benotetes Quiz) sind
@@ -606,6 +607,13 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       kompakte, umbrechende Gruppen), ist antippbar, und die gemerkte Auswahl
       übersteht einen Reload. **Barrierefrei:** die ausgegrauten Felder tragen
       eine Beschriftung + `aria-describedby` auf die Begründung.
+- [ ] **Reihenfolge der Typ-Auswahl (#2522):** Die Auswahl steht **oberhalb**
+      des Lehrbuch-Textfelds, nicht darunter (erst sehen was erkannt wurde,
+      dann Typen wählen, dann Text einfügen). **iOS-Standalone (PWA, kleines
+      Gerät):** beim Öffnen des Buchtext-Schritts ist das Textfeld **ohne
+      Scrollen** erreichbar - die Auswahl drückt es nicht unter die Falz; wer
+      ein Kapitel einfügt, muss danach nicht nach oben scrollen, um die Typen zu
+      finden. DOM-Reihenfolge entspricht der sichtbaren (keine Axe-Regression).
 - [ ] **Titel-Pflichtfeld im Buchtext-Pfad (#1946):** Schritt 1 OHNE
       Titel → Karte "Wissenslektion aus Text" klicken → bleibt auf
       Schritt 1 mit dem freundlichen Hinweis "Ein Titel ist

@@ -210,6 +210,19 @@ describe("BookTextStep — exercise-type selection (#2510)", () => {
         expect(img.disabled).toBe(true);
     });
 
+    it("places the type selector BEFORE the textbook textarea (#2522)", () => {
+        globalThis.localStorage?.clear();
+        setup();
+        const selector = screen.getByTestId("assistant-type-selector");
+        const textarea = screen.getByTestId("book-text-input");
+        // The textarea must FOLLOW the selector in document order, so the user
+        // decides the types before pasting the (large) chapter text.
+        expect(
+            selector.compareDocumentPosition(textarea) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+    });
+
     it("passes the selected types into generation", async () => {
         globalThis.localStorage?.clear();
         setup();
