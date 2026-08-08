@@ -38,9 +38,11 @@ export interface UserSettingsRow {
     api_key_anthropic: string | null;
     api_key_openai: string | null;
     api_key_gemini: string | null;
+    api_key_perplexity?: string | null;
     model_override_anthropic: string | null;
     model_override_openai: string | null;
     model_override_gemini: string | null;
+    model_override_perplexity?: string | null;
     /** #508 — base64 data URL of the profile picture, or null (use the
      *  generated initials avatar). */
     avatar: string | null;

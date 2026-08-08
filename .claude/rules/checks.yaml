@@ -47,7 +47,7 @@ checks:
     probe: script_exists=backend/tests/test_verify_docs_fail_closed.py
 
   - id: openapi-snapshot
-    verifies: the committed schema/openapi.json matches the spec the booted app serves, with the full 13/13 plugin set asserted before comparing (#2281)
+    verifies: the committed schema/openapi.json matches the spec the booted app serves, with the full plugin set (all plugins on disk) asserted before comparing (#2281)
     rule: "-"
     status: active
     wired_in: make sync-openapi-check; .github/workflows/ci.yml; backend/tests/test_openapi_snapshot_gate.py

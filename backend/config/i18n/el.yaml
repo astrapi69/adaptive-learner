@@ -696,6 +696,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - pinakas ton diamorfomenon parochon sto karteli AI.
   providers:
     title: Διαμορφωμένοι πάροχοι AI

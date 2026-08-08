@@ -741,6 +741,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "구성된 AI 공급자",
       "hint": "저장한 키는 그대로 유지됩니다. 전체 키는 표시되지 않으며 마스킹된 미리 보기만 표시됩니다.",

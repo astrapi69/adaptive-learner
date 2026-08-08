@@ -74,9 +74,11 @@ _ENV_SECRET_OVERRIDES: dict[str, tuple[str, ...]] = {
     "ADAPTIVE_LEARNER_ANTHROPIC_API_KEY": ("ai", "anthropic", "api_key"),
     "ADAPTIVE_LEARNER_OPENAI_API_KEY": ("ai", "openai", "api_key"),
     "ADAPTIVE_LEARNER_GEMINI_API_KEY": ("ai", "gemini", "api_key"),
+    "ADAPTIVE_LEARNER_PERPLEXITY_API_KEY": ("ai", "perplexity", "api_key"),
     "ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL": ("ai", "anthropic", "default_model"),
     "ADAPTIVE_LEARNER_OPENAI_DEFAULT_MODEL": ("ai", "openai", "default_model"),
     "ADAPTIVE_LEARNER_GEMINI_DEFAULT_MODEL": ("ai", "gemini", "default_model"),
+    "ADAPTIVE_LEARNER_PERPLEXITY_DEFAULT_MODEL": ("ai", "perplexity", "default_model"),
 }
 
 

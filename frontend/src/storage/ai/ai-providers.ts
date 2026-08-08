@@ -54,6 +54,7 @@ export const DEFAULT_MODELS: Record<AIProvider, string> = {
     anthropic: "claude-haiku-4-5-20251001",
     openai: "gpt-4o-mini",
     gemini: "gemini-2.0-flash",
+    perplexity: "sonar-pro",
 };
 
 interface AiCompleteOptions {
@@ -126,7 +127,25 @@ export async function aiCompleteWithMeta(
                 maxTokens,
                 opts.signal,
             );
+        case "perplexity":
+            throw browserDirectUnsupported("perplexity");
     }
+}
+
+/**
+ * A provider that rejects browser CORS calls (``corsBlocked`` in the
+ * key-vault registry) cannot be reached from Dexie mode; the settings UI
+ * marks it desktop-only, and this guard keeps any residual call path
+ * (e.g. an imported vault whose active provider is CORS-blocked) failing
+ * loud instead of surfacing an opaque network error.
+ */
+function browserDirectUnsupported(provider: AIProvider): ApiError {
+    return new ApiError(
+        400,
+        `${provider}: browser-direct calls are blocked by the provider (CORS); ` +
+            "use the desktop app / server mode for this provider.",
+        provider,
+    );
 }
 
 // ---- Anthropic --------------------------------------------------------
@@ -330,6 +349,8 @@ export async function aiStream(opts: AiStreamOptions): Promise<void> {
                 opts.onChunk,
                 opts.signal,
             );
+        case "perplexity":
+            throw browserDirectUnsupported("perplexity");
     }
 }
 

@@ -105,7 +105,7 @@ export function cycleStepForIndex(index: number): CycleStep {
  * ``constants.test.ts`` so a "looks alphabetical, let me tidy it"
  * refactor fails loudly.
  */
-export const AI_PROVIDERS = ["anthropic", "openai", "gemini"] as const;
+export const AI_PROVIDERS = ["anthropic", "openai", "gemini", "perplexity"] as const;
 
 export type AIProvider = (typeof AI_PROVIDERS)[number];
 
@@ -127,6 +127,7 @@ export const MODEL_SUGGESTIONS: Record<AIProvider, readonly string[]> = {
     ],
     openai: ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"],
     gemini: ["gemini-2.0-flash", "gemini-2.5-pro", "gemini-1.5-pro"],
+    perplexity: ["sonar", "sonar-pro", "sonar-reasoning"],
 };
 
 // --- Session enums -------------------------------------------------------

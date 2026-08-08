@@ -32,6 +32,7 @@ _PROVIDER_COLUMNS: dict[AIProvider, str] = {
     AIProvider.ANTHROPIC: "api_key_anthropic",
     AIProvider.OPENAI: "api_key_openai",
     AIProvider.GEMINI: "api_key_gemini",
+    AIProvider.PERPLEXITY: "api_key_perplexity",
 }
 
 
@@ -91,7 +92,12 @@ def update_settings(
     # the override (column → NULL → "use the default"); non-empty
     # string sets it. ``None`` (field omitted) leaves the column
     # alone.
-    for column in ("model_override_anthropic", "model_override_openai", "model_override_gemini"):
+    for column in (
+        "model_override_anthropic",
+        "model_override_openai",
+        "model_override_gemini",
+        "model_override_perplexity",
+    ):
         if column in fields and fields[column] is not None:
             stripped = fields[column].strip()
             setattr(settings, column, stripped or None)
@@ -206,12 +212,14 @@ _PROVIDER_ENV_VARS: dict[AIProvider, str] = {
     AIProvider.ANTHROPIC: "ADAPTIVE_LEARNER_ANTHROPIC_API_KEY",
     AIProvider.OPENAI: "ADAPTIVE_LEARNER_OPENAI_API_KEY",
     AIProvider.GEMINI: "ADAPTIVE_LEARNER_GEMINI_API_KEY",
+    AIProvider.PERPLEXITY: "ADAPTIVE_LEARNER_PERPLEXITY_API_KEY",
 }
 
 _PROVIDER_MODEL_ENV_VARS: dict[AIProvider, str] = {
     AIProvider.ANTHROPIC: "ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL",
     AIProvider.OPENAI: "ADAPTIVE_LEARNER_OPENAI_DEFAULT_MODEL",
     AIProvider.GEMINI: "ADAPTIVE_LEARNER_GEMINI_DEFAULT_MODEL",
+    AIProvider.PERPLEXITY: "ADAPTIVE_LEARNER_PERPLEXITY_DEFAULT_MODEL",
 }
 
 

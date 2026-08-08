@@ -696,6 +696,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - AIタブの設定済みプロバイダー一覧表。
   providers:
     title: 設定済みのAIプロバイダー

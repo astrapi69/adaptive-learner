@@ -162,7 +162,7 @@ Voraussetzungen: Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + Bun + alle 13 Plugins als Path-Deps
+make install   # Poetry + Bun + alle 14 Plugins als Path-Deps
 make dev       # Backend :18001 + Frontend :15174 (Vite-Dev-Server)
 ```
 
@@ -184,7 +184,7 @@ Vollständige Setup-Anleitung unter
 
 ## Ausgelieferte Plugins
 
-13 Plugins, alle unter `plugins/`. Routen werden unter
+14 Plugins, alle unter `plugins/`. Routen werden unter
 `/api/plugins/<name>/*` eingebunden.
 
 | Plugin | Routen | Zweck |
