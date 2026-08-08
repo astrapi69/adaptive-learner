@@ -414,6 +414,11 @@ On a failed deploy: pull the error from the action logs and fix it, but the rele
 
 - `docs/journal/chat-journal-session-{today}.md`: release entry with version, date, main changes, deploy time
 - `ROADMAP.md`: mark every item included in the release as `[x]`
+- `ROADMAP.md` + `backlog.md` dated-prose version headers: `make
+  roadmap-header-bump` prepends the released version (summary seeded from the
+  changelog), then refine the seeded summary by hand. `make
+  verify-docs-discipline` must report zero version WARNs afterwards (#2503:
+  the WARN alone had no consumer and the headers sat stale for five releases).
 - `ROADMAP.md` "Blocked / Upstream Wait": read it - does this tag now trigger a
   held entry (e.g. a PR parked for the NEXT release)? If so, un-draft it, merge,
   and archive the entry. The read step for a draft parked on a tag it cannot
@@ -471,6 +476,7 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
 - [ ] MkDocs site deployed and verified
 - [ ] Chat journal release entry
 - [ ] ROADMAP done items marked
+- [ ] ROADMAP/backlog header prose refreshed to the released version (`make roadmap-header-bump` + hand-refined summary); `make verify-docs-discipline` reports 0 version WARNs (#2503)
 - [ ] ROADMAP "Blocked / Upstream Wait" read: any entry triggered by this tag actioned (held PRs un-drafted + merged, entry archived)
 - [ ] CLAUDE.md updated (if needed)
 - [ ] Post-release commit pushed
