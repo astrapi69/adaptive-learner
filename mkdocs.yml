@@ -86,6 +86,7 @@ plugins:
             Der Sieben-Schritt-Zyklus: The seven-step cycle
             Werkzeuge: Tools
             Entwickler-Dokumentation: Developer docs
+            Tore, Ratchets und Zweigschutz: Gates, ratchets, and branch protection
             Architektur: Architecture
             Plugin-Leitfaden: Plugin guide
             Storage-Layer: Storage layer
@@ -148,6 +149,7 @@ plugins:
             Tracking: Seguimiento
             Werkzeuge: Herramientas
             Entwickler-Dokumentation: Documentación para desarrolladores
+            Tore, Ratchets und Zweigschutz: Puertas, trinquetes y protección de rama
             Architektur: Arquitectura
             Setup: Configuración inicial
             Plugin-Leitfaden: Guía de plugins
@@ -208,6 +210,7 @@ plugins:
             Tracking: Suivi
             Werkzeuge: Outils
             Entwickler-Dokumentation: Documentation développeur
+            Tore, Ratchets und Zweigschutz: Barrières, cliquets et protection de branche
             Architektur: Architecture
             Setup: Installation
             Plugin-Leitfaden: Guide des plugins
@@ -273,6 +276,7 @@ plugins:
             Tracking: Παρακολούθηση
             Werkzeuge: Εργαλεία
             Entwickler-Dokumentation: Τεκμηρίωση προγραμματιστή
+            Tore, Ratchets und Zweigschutz: Πύλες, καστάνιες και προστασία κλάδου
             Architektur: Αρχιτεκτονική
             Setup: Εγκατάσταση
             Plugin-Leitfaden: Οδηγός προσθέτων
@@ -338,6 +342,7 @@ plugins:
             Tracking: Acompanhamento
             Werkzeuge: Ferramentas
             Entwickler-Dokumentation: Documentação do desenvolvedor
+            Tore, Ratchets und Zweigschutz: Portões, catracas e proteção de branch
             Architektur: Arquitetura
             Setup: Configuração
             Plugin-Leitfaden: Guia de plugins
@@ -403,6 +408,7 @@ plugins:
             Tracking: Takip
             Werkzeuge: Araçlar
             Entwickler-Dokumentation: Geliştirici belgeleri
+            Tore, Ratchets und Zweigschutz: Kapılar, cırcırlar ve dal koruması
             Architektur: Mimari
             Setup: Kurulum
             Plugin-Leitfaden: Eklenti kılavuzu
@@ -468,6 +474,7 @@ plugins:
             Tracking: トラッキング
             Werkzeuge: ツール
             Entwickler-Dokumentation: 開発者ドキュメント
+            Tore, Ratchets und Zweigschutz: ゲート、ラチェット、ブランチ保護
             Architektur: アーキテクチャ
             Setup: セットアップ
             Plugin-Leitfaden: プラグインガイド
@@ -554,6 +561,7 @@ nav:
   - Werkzeuge: de/concept/tools.md
 - Entwickler-Dokumentation:
   - Onboarding: de/developer/onboarding.md
+  - Tore, Ratchets und Zweigschutz: de/developer/gates-and-ratchets.md
   - Architektur: de/developer/architecture.md
   - Setup: de/developer/setup.md
   - Plugin-Leitfaden: de/developer/plugin-guide.md

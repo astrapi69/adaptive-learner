@@ -185,13 +185,21 @@ CI runs the correctness gates on every PR:
 - Complexity gate (baseline ratchet - new functions must stay under
   the cyclomatic-complexity threshold)
 - Folder-size + file-size guards (god-file / god-folder prevention)
-- i18n parity (all 11 languages must define every key)
+- i18n parity (every catalog under `backend/config/i18n/` must
+  define every key)
 - Design-token guard (no hardcoded colors / fixed-palette utilities)
 - Docs-drift verifier
 
 Heavier checks (Dexie-mode E2E, coverage, mutation testing,
 security scan, content-stats drift) run nightly + at release, not on
-every PR.
+every PR. A green PR is therefore not proof that `develop` is green.
+
+When a gate blocks you - especially a **ratchet** (complexity,
+file-size, folder-size, ...) - read
+[Gates, ratchets, and branch protection](gates-and-ratchets.md)
+before assuming it is wrong. It explains what each gate is, what to do
+when a ratchet blocks you, and how to run the gates locally with
+`make ci` before you push.
 
 ## 11. Review and merge
 
@@ -211,8 +219,10 @@ one clean commit on the trunk.
 | Dexie-mode parity | everything works in Dexie *and* API mode |
 | Library-first | native API > framework > library > custom code |
 | Conventional Commits | `fix()`, `feat()`, `refactor()`, `docs()`, ... |
-| i18n | all UI strings in all 11 languages |
+| i18n | all UI strings in every `backend/config/i18n/` catalog |
 | 44px touch targets | mobile-friendly interactive elements |
+| One concern per PR | each PR carries a single coherent change |
+| Branch protection | `develop` needs an up-to-date branch + green checks (binds admins too) |
 
 Full rule set: [`.claude/rules/`](https://github.com/astrapi69/adaptive-learner/tree/develop/.claude/rules).
 
@@ -255,7 +265,8 @@ backend/app/
   models/       SQLAlchemy models (single-file domain model)
   hookspecs.py  the 10 plugin hooks
 
-plugins/        13 PluginForge plugins (one package each)
+plugins/        PluginForge plugins (one package each; the
+                catalogue lives in CLAUDE.md)
 ```
 
 Details: [Architecture](architecture.md).
@@ -266,6 +277,7 @@ Details: [Architecture](architecture.md).
 |---|---|
 | Project rules | [`.claude/rules/`](https://github.com/astrapi69/adaptive-learner/tree/develop/.claude/rules) |
 | Architecture | [Architecture](architecture.md) |
+| Gates, ratchets, branch protection | [Gates, ratchets, and branch protection](gates-and-ratchets.md) |
 | Storage layer | [Storage layer](storage-layer.md) |
 | Plugin system | [Plugin guide](plugin-guide.md) |
 | AI integration | [AI integration](ai-integration.md) |
