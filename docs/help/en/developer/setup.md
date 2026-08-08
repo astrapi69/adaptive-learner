@@ -89,7 +89,7 @@ E2E tests:
 cd e2e && npx playwright test
 ```
 
-17 smoke spec files: landing, onboarding +
+Smoke spec files cover: landing, onboarding +
 assessment, session (3-chunk SSE), curriculum, settings,
 mobile viewports, sync pairing, backup roundtrip,
 multi-cycle auto-loop, import + analysis, MD export,
