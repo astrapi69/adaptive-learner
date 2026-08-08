@@ -3,9 +3,9 @@
 Adaptive Learner fährt jede Lern-Konversation durch bis zu
 **drei** KI-Aufrufe pro Roundtrip - die gestreamte Antwort, den
 Schritt-Bewerter und (bei Schritt 7) den
-Themen-Übergangs-Bewerter. Drei Anbieter sind out-of-the-box
-dabei; neue Anbieter klinken sich über die `ai_complete*`-Hook-
-Familie ein.
+Themen-Übergangs-Bewerter. Vier Anbieter sind out-of-the-box
+dabei (einer, Perplexity, nur im Backend); neue Anbieter klinken sich
+über die `ai_complete*`-Hook-Familie ein.
 
 ## Der ai_complete-Hook
 
@@ -35,8 +35,11 @@ def ai_complete(
     # ... Anthropic-API aufrufen, Text zurückgeben ...
 ```
 
-Drei Plugins gehören zum Standardumfang: `ai-anthropic`
-(claude-*), `ai-openai` (gpt-*), `ai-gemini` (gemini-*).
+Vier Plugins gehören zum Standardumfang: `ai-anthropic`
+(claude-*), `ai-openai` (gpt-*), `ai-gemini` (gemini-*) und
+`ai-perplexity` (sonar-*). Das Perplexity-Plugin ist nur im Backend
+(kein browser-direkter Client), bedient also den API-Modus, aber nicht
+den Dexie-Modus-Build.
 
 ## Async- + Streaming-Varianten
 
