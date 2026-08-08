@@ -6,7 +6,8 @@
         "enum": [
           "anthropic",
           "openai",
-          "gemini"
+          "gemini",
+          "perplexity"
         ],
         "title": "AIProvider",
         "type": "string"
@@ -5057,6 +5058,18 @@
               }
             ],
             "title": "Model Override Openai"
+          },
+          "model_override_perplexity": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Override Perplexity"
           }
         },
         "title": "SettingsPatchBody",
@@ -5780,6 +5793,11 @@
             "title": "Has Openai Key",
             "type": "boolean"
           },
+          "has_perplexity_key": {
+            "default": false,
+            "title": "Has Perplexity Key",
+            "type": "boolean"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -5817,6 +5835,17 @@
             ],
             "title": "Key Preview Openai"
           },
+          "key_preview_perplexity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Preview Perplexity"
+          },
           "key_source_anthropic": {
             "$ref": "#/components/schemas/ApiKeySource",
             "default": "none"
@@ -5826,6 +5855,10 @@
             "default": "none"
           },
           "key_source_openai": {
+            "$ref": "#/components/schemas/ApiKeySource",
+            "default": "none"
+          },
+          "key_source_perplexity": {
             "$ref": "#/components/schemas/ApiKeySource",
             "default": "none"
           },
@@ -5865,6 +5898,17 @@
               }
             ],
             "title": "Model Override Openai"
+          },
+          "model_override_perplexity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Override Perplexity"
           },
           "updated_at": {
             "format": "date-time",

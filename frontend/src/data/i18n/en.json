@@ -737,6 +737,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "Configured AI providers",
       "hint": "Keys you have saved stay stored. Only a masked preview is shown - never the full key.",

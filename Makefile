@@ -20,6 +20,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        install install-backend install-frontend install-plugins install-e2e \
        test test-fast test-changed test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
+       test-plugin-ai-perplexity \
        test-plugin-session test-plugin-tracking \
        test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-webkit test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
@@ -278,7 +279,7 @@ test-backend: ## Run backend tests
 # per-plugin pytest run uses that same env via its absolute Python
 # binary; the plugin doesn't need its own poetry env / lock.
 
-test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-session test-plugin-tracking test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions ## Run every plugin's own test suite (incl. content-loader v1.27.0)
+test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-ai-perplexity test-plugin-session test-plugin-tracking test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions ## Run every plugin's own test suite (incl. content-loader v1.27.0)
 	@echo ""
 	@echo "=== All plugin tests complete ==="
 
@@ -307,6 +308,11 @@ test-plugin-ai-gemini: ## ai-gemini plugin: Gemini provider for ai_complete (moc
 	@echo ""
 	@echo "=== Plugin: ai-gemini ==="
 	cd plugins/adaptive-learner-plugin-ai-gemini && $(PLUGIN_PYTHON) -m pytest tests/ -q
+
+test-plugin-ai-perplexity: ## ai-perplexity plugin: Perplexity sonar provider for ai_complete (mocked SDK)
+	@echo ""
+	@echo "=== Plugin: ai-perplexity ==="
+	cd plugins/adaptive-learner-plugin-ai-perplexity && $(PLUGIN_PYTHON) -m pytest tests/ -q
 
 test-plugin-session: ## session plugin: 7-step prompts, method-switch rec, 4 routes
 	@echo ""
@@ -695,7 +701,7 @@ sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or
 sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json from the booted app (#2281; single writer)
 	@cd backend && poetry run python ../scripts/sync_openapi.py
 
-sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts 13/13 plugins)
+sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts the full plugin set)
 	@cd backend && poetry run python ../scripts/sync_openapi.py --check
 
 engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)

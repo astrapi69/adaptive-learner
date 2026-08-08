@@ -2,7 +2,7 @@
 
 [[package]]
 name = "adaptive-learner-plugin-ai-anthropic"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: Anthropic Claude provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -20,7 +20,7 @@ url = "../plugins/adaptive-learner-plugin-ai-anthropic"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-gemini"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -38,7 +38,7 @@ url = "../plugins/adaptive-learner-plugin-ai-gemini"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-openai"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: OpenAI GPT provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -55,8 +55,26 @@ type = "directory"
 url = "../plugins/adaptive-learner-plugin-ai-openai"
 
 [[package]]
+name = "adaptive-learner-plugin-ai-perplexity"
+version = "2.11.0"
+description = "Adaptive Learner: Perplexity sonar provider for the ai_complete hook (OpenAI-compatible)."
+optional = false
+python-versions = "^3.11"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+openai = "^2.0.0"
+pluginforge = "^0.10.0"
+
+[package.source]
+type = "directory"
+url = "../plugins/adaptive-learner-plugin-ai-perplexity"
+
+[[package]]
 name = "adaptive-learner-plugin-anki"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: AI-extracted Anki flashcard suggestions (Phase 30)."
 optional = false
 python-versions = "^3.11"
@@ -76,7 +94,7 @@ url = "../plugins/adaptive-learner-plugin-anki"
 
 [[package]]
 name = "adaptive-learner-plugin-assessment"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: 12-question learner-profile assessment + 6-method-weight calculation."
 optional = false
 python-versions = "^3.11"
@@ -96,7 +114,7 @@ url = "../plugins/adaptive-learner-plugin-assessment"
 
 [[package]]
 name = "adaptive-learner-plugin-content-loader"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: Content-Loader — downloads and caches structured lesson sets from public content repos (Phase 43 / EXP-002). Works in API mode and Dexie / GitHub-Pages mode."
 optional = false
 python-versions = "^3.11"
@@ -117,7 +135,7 @@ url = "../plugins/adaptive-learner-plugin-content-loader"
 
 [[package]]
 name = "adaptive-learner-plugin-gamification"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: XP, badges, and enhanced streaks (Phase 29)."
 optional = false
 python-versions = "^3.11"
@@ -138,7 +156,7 @@ url = "../plugins/adaptive-learner-plugin-gamification"
 
 [[package]]
 name = "adaptive-learner-plugin-learning-repo"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: Git-backed Learning Repository — auto-emits per-project Markdown artefacts (README/STATS/CHEATSHEET/ROADMAP) from DB state (Phase 42 / BL-30)."
 optional = false
 python-versions = "^3.11"
@@ -158,7 +176,7 @@ url = "../plugins/adaptive-learner-plugin-learning-repo"
 
 [[package]]
 name = "adaptive-learner-plugin-missions"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: daily missions (EXP-010) - deterministic per-user/per-day goals evaluated against existing learning data."
 optional = false
 python-versions = "^3.11"
@@ -179,7 +197,7 @@ url = "../plugins/adaptive-learner-plugin-missions"
 
 [[package]]
 name = "adaptive-learner-plugin-notebooklm"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: NotebookLM-optimized study materials + active-recall questions (Phase 32)."
 optional = false
 python-versions = "^3.11"
@@ -199,7 +217,7 @@ url = "../plugins/adaptive-learner-plugin-notebooklm"
 
 [[package]]
 name = "adaptive-learner-plugin-session"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: 7-step learning cycle, per-method system prompts, stagnation-based method switching."
 optional = false
 python-versions = "^3.11"
@@ -219,7 +237,7 @@ url = "../plugins/adaptive-learner-plugin-session"
 
 [[package]]
 name = "adaptive-learner-plugin-tools"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: static external-tool recommendations tailored to the learner's profile."
 optional = false
 python-versions = "^3.11"
@@ -239,7 +257,7 @@ url = "../plugins/adaptive-learner-plugin-tools"
 
 [[package]]
 name = "adaptive-learner-plugin-tracking"
-version = "2.10.0"
+version = "2.11.0"
 description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
 optional = false
 python-versions = "^3.11"
@@ -3590,4 +3608,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "1c93a6c29c89956afdc81b49876cdbc751af031c4f91a9405acb917cfa9add30"
+content-hash = "30ed6d4d458ce4081fbdc24fc3dc7e8a283dac2e3200c679cd3bb5222aadbaeb"

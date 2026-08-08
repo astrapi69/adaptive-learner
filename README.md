@@ -221,7 +221,7 @@ Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + Bun + all 13 plugins as path-deps
+make install   # Poetry + Bun + all 14 plugins as path-deps
 make dev       # backend :18001 + frontend :15174 (Vite dev server)
 ```
 
@@ -263,7 +263,7 @@ reference lives at
 
 ## Plugins shipped
 
-13 plugins, all under `plugins/`. Routes mounted at
+14 plugins, all under `plugins/`. Routes mounted at
 `/api/plugins/<name>/*`.
 
 | Plugin | Routes | Purpose |

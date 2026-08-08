@@ -74,7 +74,7 @@ describe("AI_PROVIDERS", () => {
         // preferred provider and the app's recommended default;
         // a future "looks alphabetical, let me tidy it" refactor
         // would silently put Anthropic, Gemini, OpenAI — wrong.
-        expect(AI_PROVIDERS).toEqual(["anthropic", "openai", "gemini"]);
+        expect(AI_PROVIDERS).toEqual(["anthropic", "openai", "gemini", "perplexity"]);
         expect(AI_PROVIDERS[0]).toBe("anthropic");
     });
 

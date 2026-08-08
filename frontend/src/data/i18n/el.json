@@ -737,6 +737,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "Διαμορφωμένοι πάροχοι AI",
       "hint": "Τα αποθηκευμένα κλειδιά διατηρούνται. Εμφανίζεται μόνο μια καλυμμένη προεπισκόπηση, ποτέ ολόκληρο το κλειδί.",

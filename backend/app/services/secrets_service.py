@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 _SECRETS_FILENAME = "secrets.yaml"
 
 #: Supported provider keys (string values of ``schemas.AIProvider``).
-PROVIDERS: tuple[str, ...] = ("anthropic", "openai", "gemini")
+PROVIDERS: tuple[str, ...] = ("anthropic", "openai", "gemini", "perplexity")
 
 #: Provider -> the legacy ``UserSettings`` ciphertext column. Kept
 #: local (not imported from settings_service) to avoid an import cycle.
@@ -44,6 +44,7 @@ _DB_COLUMNS: dict[str, str] = {
     "anthropic": "api_key_anthropic",
     "openai": "api_key_openai",
     "gemini": "api_key_gemini",
+    "perplexity": "api_key_perplexity",
 }
 
 

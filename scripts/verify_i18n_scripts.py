@@ -204,6 +204,7 @@ LATIN_ALLOWED_TOKENS = frozenset(
         "Anthropic",
         "OpenAI",
         "Gemini",
+        "Perplexity",
         "Google",
         "Docker",
         "Markdown",

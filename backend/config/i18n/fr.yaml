@@ -696,6 +696,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - tableau des fournisseurs configurés dans l'onglet IA.
   providers:
     title: Fournisseurs d'IA configurés

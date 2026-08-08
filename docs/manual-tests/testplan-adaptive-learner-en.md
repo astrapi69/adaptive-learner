@@ -1348,6 +1348,25 @@ Location: Settings → Data → content-repo list → "Remove".
       Settings → AI shows the key IMMEDIATELY, without a reload (#1769)
 - [ ] Passphrase masked with a reveal toggle; key/passphrase never logged
 
+### Cross-app vault import (Topos → Adaptive Learner) (#2512)
+- [ ] An .alk file exported from Topos (format "topos-ai-keys") imports
+      without a "foreign file" rejection; the FILE's passphrase is asked
+- [ ] The Topos key stored under "google" lands on the "Gemini" provider
+      after the import (Settings → AI shows it there)
+- [ ] Wrong passphrase → warning, no key is written
+- [ ] AL export unchanged: an exported file still carries the format
+      "adaptive-learner-keys"
+
+### Perplexity provider (OpenAI-compatible, server mode only) (#2512)
+- [ ] Settings → AI: "Perplexity" appears in the provider selection
+      (after Gemini)
+- [ ] Server mode (make dev): store a pplx- key, the model picker shows
+      the static sonar list (sonar, sonar-pro, sonar-reasoning)
+- [ ] Server mode: a session message with Perplexity active returns a
+      response (model sonar-pro as the default)
+- [ ] Browser mode (Dexie/PWA): Perplexity is visible but marked
+      "desktop only" (no dead menu item, no CORS error)
+
 ---
 
 ## PRIO 6: THEMES (subjective aesthetics)

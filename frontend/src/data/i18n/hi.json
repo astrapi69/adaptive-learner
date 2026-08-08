@@ -737,6 +737,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "कॉन्फ़िगर किए गए AI प्रदाता",
       "hint": "आपके द्वारा सहेजी गई कुंजियाँ संग्रहीत रहती हैं। केवल मास्क किया गया पूर्वावलोकन दिखाया जाता है, पूरी कुंजी कभी नहीं।",

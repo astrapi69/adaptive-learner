@@ -741,6 +741,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "Penyedia AI yang dikonfigurasi",
       "hint": "Kunci yang Anda simpan tetap tersimpan. Hanya pratinjau yang disamarkan yang ditampilkan, tidak pernah kunci lengkapnya.",

@@ -31,6 +31,7 @@ async function readApiKeyFor(
     if (provider === "anthropic") return row.api_key_anthropic ?? null;
     if (provider === "openai") return row.api_key_openai ?? null;
     if (provider === "gemini") return row.api_key_gemini ?? null;
+    if (provider === "perplexity") return row.api_key_perplexity ?? null;
     return null;
   } catch {
     return null;
@@ -55,6 +56,8 @@ export async function resolveActiveAiProvider(
       ? settings.model_override_anthropic
       : provider === "openai"
         ? settings.model_override_openai
-        : settings.model_override_gemini;
+        : provider === "gemini"
+          ? settings.model_override_gemini
+          : settings.model_override_perplexity;
   return { provider, model: resolveModel(provider, override ?? null), apiKey };
 }

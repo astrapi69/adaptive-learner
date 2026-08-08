@@ -314,5 +314,14 @@ export async function fetchAvailableModels(
     if (provider === "anthropic") return fetchAnthropicModels(apiKey);
     if (provider === "openai") return fetchOpenAiModels(apiKey);
     if (provider === "gemini") return fetchGeminiModels(apiKey);
+    if (provider === "perplexity") {
+        // corsBlocked provider: no browser-direct endpoint to list models.
+        throw new ApiError(
+            400,
+            "Perplexity: model discovery needs the desktop app / server mode " +
+                "(the provider blocks browser calls).",
+            "perplexity",
+        );
+    }
     throw new ApiError(400, `Unsupported provider: ${provider}`, String(provider));
 }

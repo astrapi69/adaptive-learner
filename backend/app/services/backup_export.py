@@ -35,6 +35,7 @@ EXCLUDED_USER_SETTINGS_FIELDS: set[str] = {
     "api_key_anthropic",
     "api_key_openai",
     "api_key_gemini",
+    "api_key_perplexity",
 }
 
 

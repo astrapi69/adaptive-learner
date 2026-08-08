@@ -32,7 +32,9 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../../api/client";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import type {AIProvider} from "../../../lib/constants";
-import {BUILTIN_REGISTRY, partitionModels} from "@astrapi69/ai-key-vault";
+import {partitionModels} from "@astrapi69/ai-key-vault";
+
+import {APP_PROVIDER_REGISTRY} from "../../../lib/ai/provider-registry";
 import {getStorage} from "../../../storage";
 import type {AvailableModel} from "../../../storage/types";
 
@@ -138,7 +140,7 @@ export function ModelPicker({
     // Curated grouping shared by all three providers (#917): pull the
     // recommended families to the top instead of the provider's raw order.
     const {recommended, rest} = partitionModels(
-        BUILTIN_REGISTRY.get(provider).recommendedModels ?? [],
+        APP_PROVIDER_REGISTRY.get(provider).recommendedModels ?? [],
         filtered,
     );
 
