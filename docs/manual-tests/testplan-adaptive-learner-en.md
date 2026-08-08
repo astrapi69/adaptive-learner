@@ -551,7 +551,8 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       an AI key: friendly notice, no crash; "Next" only after a
       successful generation
 - [ ] **Exercise-type selection in the assistant (#2510):** In the book-text
-      step, above "Generate theory + exercises" there is an "Exercise types"
+      step, **above the textbook textarea** (between the file/sections area and
+      the textarea, #2522) there is an "Exercise types"
       selector with three groups: **Standard types** (Matching, Free text,
       Cloze, Word tiles, Multiple choice) are pre-selected; **Extension types**
       (Categorization, Error correction, Reading comprehension, Graded quiz) are
@@ -568,6 +569,13 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       groups), is tappable, and the remembered selection survives a reload.
       **Accessible:** the greyed fields carry a label + `aria-describedby` to the
       reason.
+- [ ] **Order of the type selection (#2522):** The selector sits **above** the
+      textbook textarea, not below it (see what was detected, choose the types,
+      then paste). **iOS standalone (PWA, small device):** on opening the
+      book-text step the textarea is reachable **without scrolling** - the
+      selector does not push it below the fold; after pasting a chapter the user
+      need not scroll back up to find the types. DOM order matches the visible
+      order (no axe regression).
 - [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
       a title → click the "Knowledge lesson from text" card → stays on
       step 1 with the friendly "A title is required." message (NOT the
