@@ -327,7 +327,8 @@ catches drift between the two lists.
 The element-tracking + SRS chain works identically in
 **both** storage modes - the ``IElementErrorsNamespace``
 contract is mode-agnostic and the dexie-mode release gate
-(18 specs incl. the ``/review`` route) blocks any regression.
+(covering the nav-reachable routes incl. ``/review``) blocks
+any regression.
 
 The lesson-session unification + gamification side effects
 are **API-mode only**. In Dexie mode the lesson completion

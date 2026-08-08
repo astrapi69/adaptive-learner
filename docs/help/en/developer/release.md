@@ -12,7 +12,7 @@ Adaptive Learner follows Semantic Versioning 2.0.0:
 - **Major (X.0.0)** - breaking changes in API or
   architecture. Reserved for future big shifts.
 - **Minor (X.Y.0)** - new features, backward-compatible.
-  Default for each phase completion (we're at v1.91.0).
+  Default for each phase completion.
 - **Patch (X.Y.Z)** - bug fixes, backward-compatible. Hotfix
   chains.
 
@@ -54,15 +54,16 @@ version = "X.Y.Z"
 make sync-versions
 ```
 
-Updates **18 files** automatically:
+Updates every version-bearing file automatically (the full set is
+enumerated in `scripts/sync_versions.py`):
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
 - `launcher/adaptive-learner-launcher.spec` (CFBundle plist
   + CFBundleShortVersionString)
-- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- 3× plugin `__init__.py` `__version__` literals
+- every `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- each plugin `__init__.py` that carries a `__version__` literal
 - `install.sh` (regenerated from `install.sh.template`)
 - `install.ps1` (regenerated from `install.ps1.template`)
 
@@ -70,7 +71,7 @@ Updates **18 files** automatically:
 
 ```bash
 make sync-versions-check     # exits non-zero on drift
-make test                    # 2634 tests must pass
+make test                    # the full suite must pass
 cd frontend && bun run build # must succeed
 ```
 
@@ -121,10 +122,10 @@ per-release notes committed in step 2.
 ## Plugin versions
 
 Plugins lock-step with the canonical app version. The same
-number across all 10 plugin `pyproject.toml` files plus the
-three plugin `__init__.py` `__version__` literals. A future
-"core vs third-party plugin" decision may unlink them, but
-the current setup is uniform across the 18 propagated files.
+number across every plugin `pyproject.toml` plus the plugin
+`__init__.py` `__version__` literals. A future "core vs
+third-party plugin" decision may unlink them, but the current
+setup is uniform across all propagated files.
 
 ## Hotfix flow
 

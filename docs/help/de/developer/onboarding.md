@@ -8,8 +8,8 @@ Klon bis zum gemergten Pull Request.
 
 ## 1. Entwicklungsumgebung einrichten
 
-Voraussetzungen: **Python 3.11+** (3.12 empfohlen - Plugins werden
-gegen 3.12 getestet), **Node 24+** (von Vite 8 vorausgesetzt),
+Voraussetzungen: **Python 3.12** (die Backend-Vorgabe ist `~3.12`),
+**Node 24+** (von Vite 8 vorausgesetzt),
 **Poetry**, **Bun** und **GNU Make**.
 
 ```bash

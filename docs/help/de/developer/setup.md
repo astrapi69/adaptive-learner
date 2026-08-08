@@ -2,8 +2,8 @@
 
 ## Voraussetzungen
 
-- **Python 3.12+** (3.11 reicht fürs Backend, Plugins testen
-  aber mit 3.12).
+- **Python 3.12** (die Backend-Vorgabe ist `~3.12`; die einzelnen
+  Plugin-Pakete deklarieren weiterhin `^3.11`).
 - **Node 24+** (von Vite 8 gefordert). Ältere Node-Versionen
   scheitern beim Build mit `crypto.hash is not a function`.
 - **Poetry** für Python-Dependencies. Installation:
