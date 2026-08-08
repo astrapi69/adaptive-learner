@@ -114,7 +114,7 @@ summarizes). In short:
 | Γαλλικά A1 (για ελληνόφωνους) | el | fr | A1 | 8 | authored |
 | अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 | authored |
 | अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 | authored |
-| Adaptive Learner — App-Tutorial | de | de | Einsteiger | 12 | authored |
+| Adaptive Learner — App-Tutorial | de | de | none | 12 | authored |
 
 _3 AI-generated sets excluded from the badge pending native-speaker review._
 <!-- CONTENT-STATS:END -->
