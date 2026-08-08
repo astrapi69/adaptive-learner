@@ -737,6 +737,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "Provedores de IA configurados",
       "hint": "As chaves guardadas permanecem armazenadas. Apenas é mostrada uma pré-visualização mascarada, nunca a chave completa.",

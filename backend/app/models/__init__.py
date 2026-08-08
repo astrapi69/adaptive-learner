@@ -120,6 +120,7 @@ class UserSettings(Base):
     api_key_anthropic: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_openai: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_gemini: Mapped[str | None] = mapped_column(Text, nullable=True)
+    api_key_perplexity: Mapped[str | None] = mapped_column(Text, nullable=True)
     # v0.4.0: per-provider model override. NULL means the
     # session plugin's ai_orchestration.DEFAULT_MODELS pick wins;
     # a non-NULL value replaces it for THAT provider only. Plain
@@ -129,6 +130,7 @@ class UserSettings(Base):
     model_override_anthropic: Mapped[str | None] = mapped_column(String(200), nullable=True)
     model_override_openai: Mapped[str | None] = mapped_column(String(200), nullable=True)
     model_override_gemini: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    model_override_perplexity: Mapped[str | None] = mapped_column(String(200), nullable=True)
     # #508 — optional profile picture as a small base64 data URL (a
     # client-resized, <=100 KB square JPEG/PNG). Stored here so it rides
     # the existing user_settings sync + backup surface; NULL = use the
@@ -166,6 +168,10 @@ class UserSettings(Base):
     @property
     def has_gemini_key(self) -> bool:
         return self.api_key_gemini is not None
+
+    @property
+    def has_perplexity_key(self) -> bool:
+        return self.api_key_perplexity is not None
 
 
 # --- Learning projects ------------------------------------------------------

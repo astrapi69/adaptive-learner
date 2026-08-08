@@ -27,6 +27,7 @@ adaptive-learner-plugin-assessment = {path = "../plugins/adaptive-learner-plugin
 adaptive-learner-plugin-ai-anthropic = {path = "../plugins/adaptive-learner-plugin-ai-anthropic", develop = true}
 adaptive-learner-plugin-ai-openai = {path = "../plugins/adaptive-learner-plugin-ai-openai", develop = true}
 adaptive-learner-plugin-ai-gemini = {path = "../plugins/adaptive-learner-plugin-ai-gemini", develop = true}
+adaptive-learner-plugin-ai-perplexity = {path = "../plugins/adaptive-learner-plugin-ai-perplexity", develop = true}
 adaptive-learner-plugin-session = {path = "../plugins/adaptive-learner-plugin-session", develop = true}
 adaptive-learner-plugin-tracking = {path = "../plugins/adaptive-learner-plugin-tracking", develop = true}
 adaptive-learner-plugin-tools = {path = "../plugins/adaptive-learner-plugin-tools", develop = true}

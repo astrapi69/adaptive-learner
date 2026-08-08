@@ -699,6 +699,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - AI 탭의 구성된 공급자 목록 표.
   providers:
     title: 구성된 AI 공급자

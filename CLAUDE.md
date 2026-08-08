@@ -63,7 +63,7 @@ ProjectTag, UserXP, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
 StudyQuestion, LessonProgress, ElementError, UserMission
 Full spec: docs/adaptive-learner-project-reference.md
 
-## Plugins (13 shipped)
+## Plugins (14 shipped)
 | Plugin | Tier | Purpose |
 |---|---|---|
 | assessment | 1 | 12 questions, 6-method weights |
@@ -79,12 +79,13 @@ Full spec: docs/adaptive-learner-project-reference.md
 | ai-anthropic | 3 | Claude provider |
 | ai-openai | 3 | GPT provider |
 | ai-gemini | 3 | Gemini provider |
+| ai-perplexity | 3 | Perplexity provider (OpenAI-compatible, backend-only) |
 
 ## Directory Structure (top level)
 adaptive-learner/
 backend/app/           FastAPI app, routers, services, models
 backend/config/        app.yaml + i18n/ (11 catalogs)
-plugins/               13 plugin packages
+plugins/               14 plugin packages
 frontend/src/          React app, storage, components, styles
 e2e/smoke/             Playwright smoke specs
 launcher/              PyInstaller cross-OS launcher

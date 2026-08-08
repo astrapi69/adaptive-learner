@@ -699,6 +699,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - tabel penyedia yang dikonfigurasi di tab AI.
   providers:
     title: Penyedia AI yang dikonfigurasi

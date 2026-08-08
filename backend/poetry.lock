@@ -55,6 +55,24 @@ type = "directory"
 url = "../plugins/adaptive-learner-plugin-ai-openai"
 
 [[package]]
+name = "adaptive-learner-plugin-ai-perplexity"
+version = "2.11.0"
+description = "Adaptive Learner: Perplexity sonar provider for the ai_complete hook (OpenAI-compatible)."
+optional = false
+python-versions = "^3.11"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+openai = "^2.0.0"
+pluginforge = "^0.10.0"
+
+[package.source]
+type = "directory"
+url = "../plugins/adaptive-learner-plugin-ai-perplexity"
+
+[[package]]
 name = "adaptive-learner-plugin-anki"
 version = "2.11.0"
 description = "Adaptive Learner: AI-extracted Anki flashcard suggestions (Phase 30)."
@@ -3584,4 +3602,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.12"
-content-hash = "680140092893695da2792d2384217431fa236f8a80e6c9b5426f18aac6c2e10e"
+content-hash = "b94288b41de6c0c8b1e55d649fb14ce5794eada6bb32fbe6ea7ada4d742843db"

@@ -10,7 +10,7 @@ import { ensureSettings, requireRow, rowToSettings } from "./dexie-rows";
 import { fetchAvailableModels } from "../ai/model-discovery";
 import { ApiError } from "../../api/client";
 import type { UserSettingsRow } from "./db";
-import type { AIProvider } from "../../lib/constants";
+import { AI_PROVIDERS, type AIProvider } from "../../lib/constants";
 import type { ApiKeySetBody, SettingsPatchBody } from "../../api/client";
 import type { UserSettings } from "../../types/domain";
 import type { ApiKeyBackupInfo, ApiKeyTestResult, AvailableModel, IStorageService } from "../types";
@@ -124,7 +124,7 @@ export const dexieSettings: IStorageService["settings"] = {
       const row = await ensureSettings(db, userId, user.language);
       const raw = row as unknown as Record<string, unknown>;
       const out: Partial<Record<AIProvider, string>> = {};
-      for (const provider of ["anthropic", "openai", "gemini"] as const) {
+      for (const provider of AI_PROVIDERS) {
         const value = raw[`api_key_${provider}`];
         if (typeof value === "string" && value.trim().length > 0) {
           out[provider] = value;

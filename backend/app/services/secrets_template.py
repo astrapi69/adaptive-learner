@@ -62,6 +62,9 @@ SECRETS_TEMPLATE = """\
 #   gemini:
 #     api_key: "AIza..."
 #     default_model: "gemini-2.0-flash"  # optional override
+#   perplexity:
+#     api_key: "pplx-..."
+#     default_model: "sonar-pro"  # optional override
 """
 
 

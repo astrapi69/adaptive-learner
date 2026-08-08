@@ -737,6 +737,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "設定済みのAIプロバイダー",
       "hint": "保存したキーは保持されます。マスクされたプレビューのみが表示され、完全なキーは表示されません。",

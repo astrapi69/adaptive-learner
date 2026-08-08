@@ -75,6 +75,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 
 # --- User -------------------------------------------------------------------
@@ -183,12 +184,14 @@ class UserSettingsOut(BaseModel):
     has_anthropic_key: bool = False
     has_openai_key: bool = False
     has_gemini_key: bool = False
+    has_perplexity_key: bool = False
     # v0.4.0 — nullable override per provider. ``None`` means
     # "use the session plugin's DEFAULT_MODELS for that provider";
     # a non-null string replaces the default at /message time.
     model_override_anthropic: str | None = None
     model_override_openai: str | None = None
     model_override_gemini: str | None = None
+    model_override_perplexity: str | None = None
     # #508 — base64 data URL of the profile picture, or None.
     avatar: str | None = None
     # Phase 34 (v1.20.0) — per-provider key-source enum. The router
@@ -199,6 +202,7 @@ class UserSettingsOut(BaseModel):
     key_source_anthropic: ApiKeySource = ApiKeySource.NONE
     key_source_openai: ApiKeySource = ApiKeySource.NONE
     key_source_gemini: ApiKeySource = ApiKeySource.NONE
+    key_source_perplexity: ApiKeySource = ApiKeySource.NONE
     # #810 — masked preview of the resolved key (first 4 + last 4 chars,
     # e.g. "AIza…7f3k"), or None when no key is configured. The full /
     # decrypted key is NEVER returned; the router computes the preview by
@@ -207,6 +211,7 @@ class UserSettingsOut(BaseModel):
     key_preview_anthropic: str | None = None
     key_preview_openai: str | None = None
     key_preview_gemini: str | None = None
+    key_preview_perplexity: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -235,6 +240,7 @@ class SettingsPatchBody(BaseModel):
     model_override_anthropic: str | None = Field(default=None, max_length=200)
     model_override_openai: str | None = Field(default=None, max_length=200)
     model_override_gemini: str | None = Field(default=None, max_length=200)
+    model_override_perplexity: str | None = Field(default=None, max_length=200)
     # #508 — base64 data URL of a profile picture. ``""`` clears it,
     # a non-empty value sets it, ``None`` (omitted) means "no change".
     # The cap (~200 KB) backstops the client's <=100 KB resize.

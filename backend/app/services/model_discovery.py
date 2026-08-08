@@ -324,6 +324,37 @@ def fetch_gemini_models(api_key: str) -> list[ModelInfo]:
     return list(models)
 
 
+# --- Perplexity ------------------------------------------------------------
+
+
+def fetch_perplexity_models(api_key: str) -> list[ModelInfo]:
+    """Return the Perplexity model catalogue.
+
+    Perplexity exposes no public model-list endpoint on its
+    OpenAI-compatible API, so the picker is fed the documented
+    sonar family as a static list. The ``api_key`` parameter keeps
+    the dispatcher signature uniform; nothing is sent upstream.
+    """
+    del api_key
+    return [
+        ModelInfo(
+            id="sonar-pro",
+            name="Sonar Pro",
+            description="Search-augmented, higher quality",
+        ),
+        ModelInfo(
+            id="sonar",
+            name="Sonar",
+            description="Search-augmented, fast",
+        ),
+        ModelInfo(
+            id="sonar-reasoning",
+            name="Sonar Reasoning",
+            description="Chain-of-thought over search results",
+        ),
+    ]
+
+
 # --- Dispatch --------------------------------------------------------------
 
 
@@ -335,6 +366,8 @@ def fetch_models(provider: AIProvider, api_key: str) -> list[ModelInfo]:
         return fetch_openai_models(api_key)
     if provider == AIProvider.GEMINI:
         return fetch_gemini_models(api_key)
+    if provider == AIProvider.PERPLEXITY:
+        return fetch_perplexity_models(api_key)
     raise ValidationError(f"Unsupported AI provider: {provider!r}")
 
 
