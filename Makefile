@@ -31,6 +31,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
        check-blockers archive-task archive-task-dry install-hooks \
+       roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
        ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
@@ -457,6 +458,12 @@ archive-task: ## Move completed [x] tasks out of ROADMAP/backlog into docs/roadm
 
 archive-task-dry: ## Same as archive-task but writes nothing (preview)
 	@python3 scripts/archive_completed_task.py --dry-run
+
+roadmap-header-bump: ## Prepend the released version to the ROADMAP/backlog dated-prose headers (release Step 11; refine the seeded summary by hand)
+	@python3 scripts/bump_roadmap_header.py
+
+roadmap-header-bump-dry: ## Same as roadmap-header-bump but writes nothing (preview)
+	@python3 scripts/bump_roadmap_header.py --dry-run
 
 # --- Git Hooks ---
 
