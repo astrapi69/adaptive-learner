@@ -8,8 +8,8 @@ merged pull request.
 
 ## 1. Set up the development environment
 
-Prerequisites: **Python 3.11+** (3.12 recommended - plugins test
-against 3.12), **Node 24+** (required by Vite 8), **Poetry**, **Bun**,
+Prerequisites: **Python 3.12** (the backend constraint is `~3.12`),
+**Node 24+** (required by Vite 8), **Poetry**, **Bun**,
 and **GNU Make**.
 
 ```bash
