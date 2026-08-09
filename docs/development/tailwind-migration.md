@@ -18,7 +18,7 @@ rewrite. This document is the contract for that migration.
   restyle (it wraps Radix UI, which the app already uses), instead of a
   heavyweight component library.
 - **Our theme system stays.** Tailwind **consumes** the existing CSS
-  variables; it does not replace them (see below). The 6 themes keep working
+  variables; it does not replace them (see below). The themes keep working
   unchanged.
 
 ## How the theme integration works
@@ -127,7 +127,7 @@ scoped preflight is a deliberate later-phase decision, not the default.
   a component for a feature or bugfix, convert its styles to Tailwind as part
   of that change and delete the now-dead global.css rules. Do **not** open
   standalone "migrate component X" changes unless explicitly planned.
-- When migrating, verify the component in **all 6 themes** and check the
+- When migrating, verify the component in **all themes** and check the
   Dexie-mode gate still passes (`make test-dexie-smoke`).
 - The proof-of-concept seed for the lesson navigation is
   `frontend/src/components/lesson/LessonStickyFooter.tsx`.
@@ -179,7 +179,7 @@ example mapping shadcn `--primary` to our brand `--accent`, shadcn `accent`
 via a second `@theme inline` block (`--color-primary`, `--color-background`,
 `--color-muted`, ...). Define both a light default and the per-`[data-theme]`
 overrides only where the theme var names differ. Verify the rendered
-component in all 6 themes before committing — that visual check is exactly
+component in all themes before committing — that visual check is exactly
 why the bridge is deferred to first-component time rather than guessed now.
 
 ## Verifying after Tailwind changes

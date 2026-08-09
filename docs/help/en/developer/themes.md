@@ -79,7 +79,7 @@ The full token reference is in
    only matters relative to light).
 4. **Allow it in the pre-paint guard**: add the id to the `valid`
    array in the inline `<script>` in `index.html`.
-5. **i18n**: add `ui.themes.midnight` to all eight catalogs under
+5. **i18n**: add `ui.themes.midnight` to every catalog under
    `backend/config/i18n/*.yaml` and run `make sync-i18n`.
 6. **Check**: `bunx vitest run src/styles/themes src/styles/contrast`
    - the completeness and contrast pins must stay green (adjust

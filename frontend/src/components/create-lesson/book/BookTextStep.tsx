@@ -354,6 +354,16 @@ export default function BookTextStep({
                 </div>
             )}
 
+            {/* #2522 — the type selection sits BEFORE the (large) textarea:
+                see the detected sections, decide the types, then paste. On a
+                phone the textarea is tall, so a selector below it would only be
+                found after scrolling back past the pasted text. */}
+            <AssistantTypeSelector
+                selected={selectedTypes}
+                onChange={changeTypes}
+                t={t}
+            />
+
             <label className="form-row flex flex-col gap-1.5">
                 <span className="form-label text-sm font-medium text-fg-primary">
                     {t("create_lesson.book.text_label", "Textbook section")}
@@ -437,12 +447,6 @@ export default function BookTextStep({
                     </label>
                 </div>
             </fieldset>
-
-            <AssistantTypeSelector
-                selected={selectedTypes}
-                onChange={changeTypes}
-                t={t}
-            />
 
             {missingTypes.length > 0 && (
                 <div

@@ -83,7 +83,7 @@ Die vollständige Token-Referenz steht in
    Reihenfolge zählt nur relativ zu Hell).
 4. **Erlaube es im Pre-Paint-Guard**: ergänze die id im `valid`-Array
    im Inline-`<script>` in `index.html`.
-5. **i18n**: füge `ui.themes.midnight` in allen acht Katalogen unter
+5. **i18n**: füge `ui.themes.midnight` in jedem Katalog unter
    `backend/config/i18n/*.yaml` hinzu und führe `make sync-i18n` aus.
 6. **Prüfe**: `bunx vitest run src/styles/themes src/styles/contrast` -
    die Vollständigkeits- und Kontrast-Pins müssen grün bleiben (passe
