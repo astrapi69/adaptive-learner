@@ -39,7 +39,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
        sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
-       sync-openapi sync-openapi-check \
+       sync-openapi sync-openapi-check emit-spa-routes \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -906,6 +906,9 @@ verify-docs-fix: ## Best-effort auto-fix of mechanical docs drift (version badge
 
 check-mkdocs-orphans: ## List help .md files orphaned from / dangling in mkdocs.yml nav
 	@python3 scripts/verify_docs.py --check mkdocs
+
+emit-spa-routes: ## Give every static route a real dist/<route>/index.html so GitHub Pages answers 200 (#2543; run AFTER the frontend build)
+	@python3 scripts/emit_spa_route_pages.py
 
 verify-docs-discipline: ## Full docs gate: drift verifier + mkdocs nav sync (release-blocking)
 	@$(MAKE) verify-docs
