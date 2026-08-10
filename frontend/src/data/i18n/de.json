@@ -104,8 +104,7 @@
     "mode_badge_ai": "KI+Inhalte",
     "mode_badge_tooltip_content": "Kein API-Schlüssel konfiguriert - nur vorgefertigte Inhalte. Schlüssel in den Einstellungen hinterlegen, um KI-Funktionen zu aktivieren.",
     "mode_badge_tooltip_ai": "KI-Anbieter konfiguriert - Übungen nutzen KI für Distraktoren und Hinweise. Tippen, um Inhalte zu durchstöbern.",
-    "mode_badge_label_content": "Modus: Nur Inhalte",
-    "mode_badge_label_ai": "Modus: KI + Inhalte",
+    "mode_badge_action": "Inhalte durchsuchen",
     "sync_paired": "Sync: gekoppelt (Einstellungen > Sync)",
     "sync_unpaired": "Sync: nicht gekoppelt (Einstellungen > Sync)"
   },
@@ -1260,7 +1259,7 @@
     "xp_no_data": "Schließe eine Sitzung ab, um XP zu sammeln.",
     "xp_earned": "XP erhalten",
     "xp_gain_aria": "Du hast {n} XP für diese Lektion erhalten",
-    "xp_header_aria": "Level {level}, {xp} XP insgesamt",
+    "xp_total_suffix": "insgesamt",
     "xp_header_tooltip": "Deine Erfahrungspunkte",
     "xp_to_next_level": "{n} XP bis zum nächsten Level",
     "max_level": "Höchstes Level erreicht",
@@ -3610,7 +3609,7 @@
   "srs": {
     "due_badge": "{n} fällig",
     "due_badge_tooltip": "Wiederholungen fällig",
-    "due_badge_aria": "{n} Wiederholungen fällig",
+    "due_badge_action": "Wiederholungen ansehen",
     "status_new": "Neu",
     "status_learning": "Am Lernen",
     "status_due": "Fällig",

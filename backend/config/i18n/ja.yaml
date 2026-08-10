@@ -96,8 +96,7 @@ nav:
   mode_badge_ai: "AI+コンテンツ"
   mode_badge_tooltip_content: "API キーが設定されていません - 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。"
   mode_badge_tooltip_ai: "AI プロバイダー設定済み - 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。"
-  mode_badge_label_content: "モード: コンテンツのみ"
-  mode_badge_label_ai: "モード: AI + コンテンツ"
+  mode_badge_action: "コンテンツを見る"
   sync_paired: "同期：ペアリング済み（設定 > 同期）"
   sync_unpaired: "同期：未ペアリング（設定 > 同期）"
 import:
@@ -1183,7 +1182,7 @@ gamification:
   xp_no_data: セッションを完了してXPを獲得しましょう。
   xp_earned: 獲得XP
   xp_gain_aria: このレッスンで{n} XPを獲得しました
-  xp_header_aria: レベル{level}、合計{xp} XP
+  xp_total_suffix: "合計"
   xp_header_tooltip: あなたの経験値
   xp_to_next_level: 次のレベルまで {n} XP
   max_level: 最大レベルに到達しました
@@ -3321,7 +3320,7 @@ shortcuts:
 srs:
   due_badge: "{n}件が期限"
   due_badge_tooltip: "復習あり"
-  due_badge_aria: "復習が{n}件"
+  due_badge_action: "復習を見る"
   status_new: "新規"
   status_learning: "学習中"
   status_due: "期限"
