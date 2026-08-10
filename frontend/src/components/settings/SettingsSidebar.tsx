@@ -42,7 +42,7 @@ export default function SettingsSidebar({ groups, activeTab, onChange }: Setting
               {group.label}
             </h2>
           ) : null}
-          <ul className="flex flex-col">
+          <ul className="m-0 flex list-none flex-col">
             {group.items.map((item) => {
               const active = item.value === activeTab;
               return (
@@ -53,7 +53,7 @@ export default function SettingsSidebar({ groups, activeTab, onChange }: Setting
                     aria-current={active ? "page" : undefined}
                     data-testid={item.testId}
                     className={cn(
-                      "block w-full min-h-11 rounded-app py-2 pl-3 pr-2 text-left text-sm",
+                      "block w-full min-h-11 rounded-app border-0 py-2 pl-3 pr-2 text-left text-sm",
                       "indent-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                       "hover:bg-card",
                       group.variant === "danger" && "text-destructive",
