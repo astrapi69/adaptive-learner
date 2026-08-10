@@ -98,8 +98,7 @@ nav:
   mode_badge_ai: AI+सामग्री
   mode_badge_tooltip_content: कोई API कुंजी कॉन्फ़िगर नहीं - केवल पूर्व-निर्मित सामग्री का उपयोग। AI सुविधाएँ सक्षम करने के लिए सेटिंग्स में कुंजी जोड़ें।
   mode_badge_tooltip_ai: AI प्रदाता कॉन्फ़िगर - अभ्यास डिस्ट्रैक्टर + संकेत के लिए AI का उपयोग करते हैं। सामग्री सेट देखने के लिए टैप करें।
-  mode_badge_label_content: 'मोड: केवल सामग्री'
-  mode_badge_label_ai: 'मोड: AI + सामग्री'
+  mode_badge_action: "सामग्री ब्राउज़ करें"
   sync_paired: 'सिंक: युग्मित (सेटिंग्स > सिंक)'
   sync_unpaired: 'सिंक: युग्मित नहीं (सेटिंग्स > सिंक)'
 import:
@@ -1184,7 +1183,7 @@ gamification:
   xp_no_data: XP अर्जित करने के लिए एक सत्र पूरा करें।
   xp_earned: अर्जित XP
   xp_gain_aria: आपने इस पाठ के लिए {n} XP अर्जित किए
-  xp_header_aria: स्तर {level}, कुल {xp} XP
+  xp_total_suffix: "कुल"
   xp_header_tooltip: आपके अनुभव अंक
   xp_to_next_level: 'अगले स्तर तक {n} XP'
   max_level: अधिकतम स्तर तक पहुँच गए
@@ -3307,7 +3306,7 @@ shortcuts:
 srs:
   due_badge: "{n} बाकी"
   due_badge_tooltip: "समीक्षाएँ बाकी"
-  due_badge_aria: "{n} समीक्षाएँ बाकी"
+  due_badge_action: "समीक्षाएँ देखें"
   status_new: "नया"
   status_learning: "सीख रहे"
   status_due: "बाकी"
