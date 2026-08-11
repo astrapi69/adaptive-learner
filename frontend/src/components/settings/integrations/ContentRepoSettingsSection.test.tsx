@@ -282,6 +282,60 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     });
   });
 
+  it("keeps other recommended-repo buttons enabled while one is being added (#2558)", async () => {
+    fetchRecommendedRepos.mockResolvedValue([
+      { url: "jane/deck", branch: "main", title: "Jane Deck" },
+      { url: "bob/cards", branch: "main", title: "Bob Cards" },
+    ]);
+    let resolveValidate!: (value: {
+      ok: true;
+      setCount: number;
+      lessonCount: number;
+    }) => void;
+    validateUserRepo.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveValidate = resolve;
+        }),
+    );
+    render(<ContentRepoSettingsSection />);
+    const addFirst = await screen.findByTestId(
+      "content-repo-recommended-add-jane/deck",
+    );
+    const addSecond = screen.getByTestId(
+      "content-repo-recommended-add-bob/cards",
+    );
+    fireEvent.click(addFirst);
+    await waitFor(() => expect(addFirst).toBeDisabled());
+    expect(addSecond).not.toBeDisabled();
+    resolveValidate({ ok: true, setCount: 1, lessonCount: 4 });
+  });
+
+  it("shows a progress indicator scoped to the recommended repo being added (#2558)", async () => {
+    fetchRecommendedRepos.mockResolvedValue([
+      { url: "jane/deck", branch: "main", title: "Jane Deck" },
+    ]);
+    let resolveValidate!: (value: {
+      ok: true;
+      setCount: number;
+      lessonCount: number;
+    }) => void;
+    validateUserRepo.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveValidate = resolve;
+        }),
+    );
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(
+      await screen.findByTestId("content-repo-recommended-add-jane/deck"),
+    );
+    expect(
+      await screen.findByTestId("content-repo-recommended-progress-jane/deck"),
+    ).toBeInTheDocument();
+    resolveValidate({ ok: true, setCount: 1, lessonCount: 4 });
+  });
+
   it("hides a recommended repo that is already connected", async () => {
     fetchRecommendedRepos.mockResolvedValue([
       { url: "jane/deck", branch: "main" },

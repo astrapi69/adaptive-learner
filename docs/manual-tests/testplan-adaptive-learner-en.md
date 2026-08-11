@@ -1313,6 +1313,21 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] The checkbox only appears when there IS progress to delete
       (Dexie mode)
 
+### Recommended repositories: per-row buttons (#2558)
+
+Location: Settings → Data → Recommended repositories.
+
+- [ ] Multiple recommendations visible → click "Add repository" on ONE →
+      ONLY that button disables, the others stay clickable
+- [ ] While adding, a progress indicator (label + bar once the sync
+      phase reports numbers) appears right at the clicked row, not
+      globally
+- [ ] Click a second recommendation while the first is still loading →
+      both run through independently, no error
+- [ ] After completion: the row disappears from "Recommended" (now
+      under "Your content repositories"), the other rows' button state
+      is unaffected
+
 ### Social sharing (visual + native)
 - [ ] Share button visible after a lesson
 - [ ] Mobile: native share sheet (WhatsApp/Telegram)
