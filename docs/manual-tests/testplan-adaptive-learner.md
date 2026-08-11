@@ -1408,6 +1408,22 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] Häkchen erscheint nur wenn es Fortschritt zu löschen gibt
       (Dexie-Modus)
 
+### Empfohlene Repositories: Buttons pro Zeile (#2558)
+
+Ort: Settings → Daten → Empfohlene Repositories.
+
+- [ ] Mehrere Empfehlungen sichtbar → "Repository hinzufügen" bei EINER
+      klicken → NUR dieser Button wird deaktiviert, die anderen bleiben
+      klickbar
+- [ ] Während des Hinzufügens erscheint ein Fortschrittsanzeige (Label +
+      Balken sobald die Sync-Phase Zahlen liefert) direkt bei der
+      geklickten Zeile, nicht global
+- [ ] Zweite Empfehlung während des Ladens der ersten klicken → beide
+      laufen unabhängig durch, keine Fehlermeldung
+- [ ] Nach Abschluss: Zeile verschwindet aus "Empfohlen" (jetzt in
+      "Meine Content-Repositories"), Button-Zustand der übrigen Zeilen
+      unverändert
+
 ### Social Sharing (visuell + nativ)
 - [ ] Share-Button nach Lektion sichtbar
 - [ ] Mobile: native Share-Sheet (WhatsApp/Telegram)
