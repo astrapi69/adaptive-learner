@@ -119,4 +119,37 @@ describe("collectDiscoveryRepos", () => {
       branch: "dev",
     });
   });
+
+  it("flags a connected user repo for the #2562 manifest fallback", async () => {
+    fetchRecommendedRepos.mockResolvedValue([]);
+    readUserRepos.mockResolvedValue([
+      { owner: "me", repo: "sets", branch: "dev" },
+    ]);
+    const repos = await collectDiscoveryRepos();
+    expect(repos.find((r) => r.url === "me/sets")).toMatchObject({
+      allowManifestFallback: true,
+    });
+  });
+
+  it("never flags the official or a recommended repo for the manifest fallback (governance stays strict)", async () => {
+    const commit = "a".repeat(40);
+    fetchRecommendedRepos.mockResolvedValue([
+      {
+        url: "https://github.com/jane/content",
+        branch: "main",
+        title: "Jane",
+        commit,
+        trust_level: 1,
+        validation: { status: "validated", validated_at: "2026-07-09T00:00:00Z" },
+      },
+    ]);
+    readUserRepos.mockResolvedValue([]);
+    const repos = await collectDiscoveryRepos();
+    const official = repos.find((r) => r.url === OFFICIAL);
+    const jane = repos.find((r) => r.url === "https://github.com/jane/content");
+    expect(official).toBeDefined();
+    expect(jane).toBeDefined();
+    expect(official?.allowManifestFallback).toBeUndefined();
+    expect(jane?.allowManifestFallback).toBeUndefined();
+  });
 });
