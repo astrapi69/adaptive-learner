@@ -74,6 +74,7 @@ One blank inside a cloze exercise's ``sentence`` (Phase 52D / v1.35.0 / P-127).
 | `accept` | `string[]` | yes | minItems=1 |
 | `hint` | `string | null` | no | - |
 | `placeholder` | `string | null` | no | - |
+| `stable_id` | `SlugId | null` | no | - |
 
 
 ### `Exercise`
@@ -164,6 +165,7 @@ One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
 | Field | Type | Required | Constraints |
 |-------|------|----------|-------------|
 | `correct` | `boolean` | no | - |
+| `stable_id` | `SlugId | null` | no | - |
 | `text` | `string` | yes | minLen=1, maxLen=500 |
 
 
@@ -175,6 +177,7 @@ One left↔right pair in a MATCHING exercise.
 |-------|------|----------|-------------|
 | `left` | `string` | yes | minLen=1, maxLen=500 |
 | `right` | `string` | yes | minLen=1, maxLen=500 |
+| `stable_id` | `SlugId | null` | no | - |
 
 
 ### `PictureImage`
