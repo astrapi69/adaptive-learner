@@ -321,6 +321,29 @@ button:disabled {
   opacity: 0.55;
 }
 
+/* #2556 — @astrapi69/ai-key-vault-react 0.3.2's KeyVaultImportForm ships
+   its file input with ONLY a stable `.akv-file-input` class and no
+   appearance of its own (the kit stays app-agnostic; see the package
+   README's "Styling the native file-picker button" section). Unlayered
+   (not @layer base like the button reset above): this is a specific,
+   named selector for one kit element, not a generic raw-element fallback
+   meant to be overridden by any utility. */
+.akv-file-input::file-selector-button,
+.akv-file-input::-webkit-file-upload-button {
+  cursor: pointer;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  margin-right: var(--space-2);
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.akv-file-input:hover::file-selector-button,
+.akv-file-input:hover::-webkit-file-upload-button {
+  background: var(--accent-hover);
+}
+
 input,
 textarea,
 select {

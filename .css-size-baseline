@@ -258,4 +258,20 @@
 # kein Tailwind-Utility-Aequivalent fuer eine globale `select`-Element-Regel.
 # Neue Farben laufen ueber die vorhandenen Tokens --fg-muted / --surface /
 # --bg-elevated / --accent. Kein neues global.css.
-7676
+# 2026-08-11: 7676 -> 7699 (#2556, @astrapi69/ai-key-vault-react 0.3.2):
+# +23 Zeilen in 01-base.css - `.akv-file-input::file-selector-button` (+
+# `::-webkit-file-upload-button`) fuer den nativen File-Input-Button des
+# Kits. Kein Tailwind-Utility-Aequivalent: ein Utility-Klassenname aus
+# einem npm-Paket wird vom Host-JIT-Scanner nie gesehen (der scannt nur
+# den eigenen Quellbaum, nie node_modules - astrapi69/ai-key-vault#15).
+# Das Kit selbst liefert bewusst KEIN eigenes Aussehen mehr (0.3.2, nach
+# Diskussion: nur eine stabile `.akv-file-input`-Klasse als Anker, kein
+# CSS-Export, keine `--akv-*`-Variablen, kein hartcodierter Default) -
+# der Host stylt das Element komplett selbst. Neue Farben laufen ueber
+# die vorhandenen Tokens --accent / --accent-fg / --accent-hover / \
+# --radius-sm / --space-2 / --space-4. Unlayered (nicht @layer base wie
+# der button-Fundament-Reset direkt darueber): eine spezifische, benannte
+# Selektor-Regel fuer EIN Kit-Element, kein generischer Rohelement-
+# Fallback, der von Utilities ueberschrieben werden soll. Kein neues
+# global.css.
+7699
