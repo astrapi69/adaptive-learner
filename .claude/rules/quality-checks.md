@@ -135,10 +135,20 @@ Full flow: docs/developer/testing.md + e2e/visual/features/README.md.
 
 ## Visual-Baseline duty for visually critical PRs (#1640)
 
-A PR that changes visually critical paths (lesson components/pages, exercise
-renderers, `global.css` / `tailwind.css` / theme files) MUST carry the affected
+A PR that changes a visually critical path MUST carry the affected
 `e2e/visual/screenshots/` baselines IN THE SAME PR - never hope for the next
-nightly run. Enforced by `.github/workflows/visual-baseline-gate.yml`.
+nightly run. Enforced by `.github/workflows/visual-baseline-gate.yml`, whose
+filter is deliberately coarse: all of `frontend/src/pages/**`,
+`frontend/src/components/**`, `frontend/src/shared/**`, and
+`frontend/src/styles/**`. A curated per-directory list (lesson/exercises/CSS
+only) missed `components/settings/**` (#2546) after already causing
+#1628/#1638/#1635 in the same shape - view names in `e2e/visual/helpers.ts`
+don't map 1:1 onto source directories (statistics lives under
+`pages/dashboard/`, shortcut-help under `shared/` + `components/a11y/`), so
+any narrower list will keep missing entries. Any file under the three UI
+roots can in principle render into a screenshot; catching too much costs a
+reviewer the escape-label call below, catching too little produced three
+incidents.
 
 Flow: `gh workflow run visual-regression.yml --ref <pr-branch> -f
 update_baselines=true`, download the `visual-baselines` artifact, review EVERY

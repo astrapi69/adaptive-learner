@@ -26,8 +26,8 @@ gates:
 
   - workflow: visual-baseline-gate.yml
     enforces: quality-checks.md#visual-baseline-duty-for-visually-critical-prs-1640
-    body_sha: 7bec2fdde2c984b2
-    note: visually critical PRs carry their baseline updates (escape label visual-baselines-unaffected)
+    body_sha: 714e348412ded633
+    note: visually critical PRs carry their baseline updates (escape label visual-baselines-unaffected); filter is coarse (pages/components/shared/styles) since #2552
 
   - workflow: testid-reference-gate.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
