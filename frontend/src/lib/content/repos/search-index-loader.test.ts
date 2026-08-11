@@ -32,6 +32,14 @@ function jsonRes(status: number, body: unknown): Response {
   } as Response;
 }
 
+function notFoundRes(): Response {
+  return { ok: false, status: 404, text: async () => "" } as Response;
+}
+
+function textRes(status: number, body: string): Response {
+  return { ok: status >= 200 && status < 300, status, text: async () => body } as Response;
+}
+
 const SAMPLE_INDEX = {
   repo: "jane/content",
   generated: "2026-06-17T12:00:00Z",
@@ -241,6 +249,75 @@ describe("fetchSearchIndex — caching", () => {
 
     expect(sets).toEqual([]);
     expect(readSearchIndexCache("jane/content")).toBeNull();
+  });
+});
+
+describe("fetchSearchIndex — manifest fallback (#2562)", () => {
+  const MANIFEST_YAML = [
+    "schema_version: '1.0'",
+    "sets:",
+    "  - id: es-a1-from-de",
+    "    title: Spanisch A1",
+    "    level: a1",
+    "    version: '1.0'",
+    "    lesson_count: 12",
+    "    source_language: de",
+    "    target_language: es",
+  ].join("\n");
+
+  it("a repo WITHOUT allowManifestFallback still resolves to [] on a missing search-index.json (no regression)", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(notFoundRes());
+    vi.stubGlobal("fetch", fetchMock);
+
+    const sets = await fetchSearchIndex({ url: "jane/content" });
+
+    expect(sets).toEqual([]);
+    // Never reaches for manifest.yaml - the flag gates the fallback.
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("a repo WITH allowManifestFallback derives sets from manifest.yaml when search-index.json is missing", async () => {
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url.includes("search-index.json")) return Promise.resolve(notFoundRes());
+      if (url.includes("manifest.yaml")) return Promise.resolve(textRes(200, MANIFEST_YAML));
+      throw new Error(`unexpected fetch: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const sets = await fetchSearchIndex({
+      url: "jane/content",
+      allowManifestFallback: true,
+    });
+
+    expect(sets.map((s) => s.id)).toEqual(["es-a1-from-de"]);
+    expect(sets[0].source_language).toBe("de");
+  });
+
+  it("caches the manifest-derived fallback so a second call makes no network request", async () => {
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url.includes("search-index.json")) return Promise.resolve(notFoundRes());
+      return Promise.resolve(textRes(200, MANIFEST_YAML));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await fetchSearchIndex({ url: "jane/content", allowManifestFallback: true });
+    fetchMock.mockClear();
+    const sets = await fetchSearchIndex({ url: "jane/content", allowManifestFallback: true });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(sets).toHaveLength(1);
+  });
+
+  it("a repo WITH allowManifestFallback still resolves to [] when manifest.yaml is also missing", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(notFoundRes());
+    vi.stubGlobal("fetch", fetchMock);
+
+    const sets = await fetchSearchIndex({
+      url: "jane/content",
+      allowManifestFallback: true,
+    });
+
+    expect(sets).toEqual([]);
   });
 
   it("an unresolvable URL resolves to [] with no network", async () => {
