@@ -4,6 +4,15 @@ FROM node:24-slim AS frontend-build
 
 RUN npm install --global bun@1.3.14
 
+# #2559 — the engine schema mirror lives at the repo root, not under
+# frontend/. schema-version.test.ts imports it via a relative
+# ../../../../schema/... path (4 levels up from frontend/src/lib/content/
+# resolves to the repo root in a normal checkout); `tsc -b` (part of the
+# build script below) type-checks that import and fails without it. The
+# absolute /schema/ destination mirrors the same repo-root-relative layout
+# regardless of WORKDIR.
+COPY schema/ /schema/
+
 WORKDIR /frontend
 COPY frontend/package.json frontend/bun.lock ./
 RUN bun install --frozen-lockfile
