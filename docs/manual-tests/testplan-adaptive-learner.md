@@ -957,6 +957,12 @@ jeder Karten-Zeile (`CardImageField`).
       Discover/Meine Inhalte (#1702/#1706)
 - [ ] Per-Set Share-Link öffnet direkt die Set-Detailseite (#1572)
 - [ ] Registrierten Content-Repo hinzufügen (register-a-repo #1511)
+- [ ] Manifest-Fallback für eigene Repos ohne search-index.json (#2562):
+      eigenes Repo über Settings → Daten → "Repository hinzufügen" verbinden,
+      das NIE mit dem Engine-Generator gebaut wurde (kein search-index.json
+      an der Wurzel) - Sets erscheinen trotzdem in Entdecken; sobald mehr als
+      eine Quelle beiträgt, erscheint der Filter "Quelle" (vorher fehlte er
+      bei nur einer beitragenden Quelle)
 - [ ] "Als Repository teilen" (#2376): ein Set mit Qualitätsmängeln
       (z. B. Zuordnungsübung mit doppeltem linkem Wert) wird beim ersten
       Klick NICHT gepusht - die Mängelliste erscheint, der Button wechselt

@@ -894,6 +894,12 @@ each card row (`CardImageField`).
       Discover/My Content (#1702/#1706)
 - [ ] Per-set share link opens the set detail page directly (#1572)
 - [ ] Add a registered content repo (register-a-repo #1511)
+- [ ] Manifest fallback for own repos without a search-index.json (#2562):
+      connect your own repo via Settings → Data → "Add a repository" that
+      was NEVER built with the engine generator (no search-index.json at
+      its root) - its sets still appear in Discover; once more than one
+      source contributes, the "Source" filter appears (previously missing
+      when only one source contributed)
 - [ ] "Share as repository" (#2376): a set with quality issues (e.g. a
       matching exercise with a duplicate left value) is NOT pushed on the
       first click - the issue list appears and the button flips to

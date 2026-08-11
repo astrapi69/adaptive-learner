@@ -8,6 +8,14 @@
  * recommended entries keep their curated display titles. Per-repo read tokens
  * are resolved for private / coach repos.
  *
+ * A connected user repo is the only class flagged
+ * ``allowManifestFallback: true`` (#2562): it already has no governance gate
+ * (unlike the recommended registry's validated-snapshot requirement), so it
+ * may also fall back to a live ``manifest.yaml`` read in
+ * ``search-index-loader.ts`` when it has no ``search-index.json`` — without
+ * that, a repo the user connects stays invisible in Discover until its owner
+ * separately runs the engine's index generator.
+ *
  * This is the impure glue (storage + network) the pure DIS-05 filter/sort layer
  * is deliberately kept free of.
  */
@@ -71,6 +79,11 @@ export async function collectDiscoveryRepos(): Promise<SearchIndexRepo[]> {
       branch: repo.branch || "main",
       name: source,
       token: resolveRepoToken(source),
+      // #2562 — a connected user repo has no governance/validation gate to
+      // begin with (unlike the recommended-repos registry below), so it is
+      // also the one class allowed to fall back to a live manifest.yaml read
+      // when it never published a search-index.json.
+      allowManifestFallback: true,
     });
   }
 

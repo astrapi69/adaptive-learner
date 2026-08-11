@@ -23,10 +23,19 @@
  *
  * Pure + dependency-light so it is unit-testable: the only side effects are
  * the network fetch (mockable via global ``fetch``) and localStorage.
+ *
+ * #2562 — a repo flagged {@link SearchIndexRepo.allowManifestFallback} (set
+ * only for connected user repos, see ``discover-repos.ts``) derives its sets
+ * from ``manifest.yaml`` when ``search-index.json`` is missing, via
+ * {@link manifest-search-index}, instead of degrading straight to ``[]``.
+ * The curated ``recommended-repos.json`` registry never sets this flag — it
+ * keeps its strict validated-snapshot contract.
  */
 
 import { parseGitHubRepoUrl } from "./content-repos";
-import { buildFileRequest, fetchWithRetry } from "./github-fetch";
+import { buildFileRequest, fetchGitHubFileText, fetchWithRetry } from "./github-fetch";
+import { deriveSearchIndexFromManifest } from "./search-index/manifest-search-index";
+import type { SearchableSet, SearchIndexBook } from "./search-index/searchable-set";
 import type { SetReviewStatus, SetVisibility } from "../../../storage/types";
 
 /** The conventional index filename at a content repo's root. */
@@ -40,49 +49,11 @@ export const MAX_CONCURRENT_INDEX_FETCHES = 10;
 
 const CACHE_PREFIX = "adaptive-learner.search_index::";
 
-/** Optional book-companion metadata carried in the index. */
-export interface SearchIndexBook {
-  title: string;
-  author?: string | null;
-}
-
-/**
- * One set as advertised by a repo's ``search-index.json``, enriched with the
- * repo it came from. This is the unit the discovery UI searches + filters.
- */
-export interface SearchableSet {
-  id: string;
-  name: string;
-  description: string;
-  source_language: string;
-  target_language: string;
-  level: string;
-  domain: string;
-  lesson_count: number;
-  card_count: number;
-  tags: string[];
-  ai_validated: boolean;
-  /** Technical/curation trust level (0 unknown .. 3 officially recommended). */
-  trust_level: number;
-  book: SearchIndexBook | null;
-  /** ISO-8601 last-update timestamp, or null when the index omits it. */
-  updated_at: string | null;
-  /** ``owner/repo`` source identifier the set came from. */
-  repo_url: string;
-  /** Display name for the repo (a curated title, else ``owner/repo``). */
-  repo_name: string;
-  /** #1707 — consumer-display visibility advertised by the index entry.
-   *  ``"hidden"`` marks a conformance/reference fixture; such entries are
-   *  dropped at parse time so they never enter the catalogue. Absent ⇒
-   *  visible. */
-  visibility?: SetVisibility;
-  /** #2299 — review standing advertised by the index entry (engine schema
-   *  1.9). ``"generated"`` is machine-generated with the review pending,
-   *  ``"reviewed"`` is machine-generated and reviewed, ``"authored"`` is
-   *  hand-written and needs none. Absent or out-of-enum ⇒ ``"authored"``,
-   *  matching the engine + index-generator normalisation. */
-  review_status: SetReviewStatus;
-}
+// #2562 — moved to search-index/searchable-set.ts to break an import cycle
+// with the manifest-fallback deriver, which produces this same shape;
+// re-exported here so every existing consumer keeps importing from this
+// module.
+export type { SearchableSet, SearchIndexBook };
 
 /** A content repo to load a search index from. */
 export interface SearchIndexRepo {
@@ -102,6 +73,12 @@ export interface SearchIndexRepo {
    *  FLOOR for the trust of every set in this repo, so the governance trust
    *  drives ranking even when a set's own index omits it. */
   trustLevel?: number;
+  /** #2562 — when ``search-index.json`` is missing, derive sets from the
+   *  repo's own ``manifest.yaml`` instead of degrading to ``[]``. Set ONLY
+   *  for connected user repos ({@link collectDiscoveryRepos}); the curated
+   *  ``recommended-repos.json`` registry keeps its strict validated-snapshot
+   *  contract and never falls back to a live manifest read. */
+  allowManifestFallback?: boolean;
 }
 
 interface ResolvedRepo {
@@ -299,10 +276,40 @@ export function clearSearchIndexCache(source: string): void {
 }
 
 /**
+ * #2562 — read the repo's own ``manifest.yaml`` and derive the equivalent
+ * sets, for a repo flagged {@link SearchIndexRepo.allowManifestFallback}.
+ * Never throws: a missing/unparseable manifest resolves to ``[]``, the same
+ * degrade-to-empty contract {@link fetchSearchIndexFromNetwork} has for a
+ * missing ``search-index.json``.
+ */
+async function fetchManifestFallbackSets(
+  resolved: ResolvedRepo,
+): Promise<SearchableSet[]> {
+  try {
+    const text = await fetchGitHubFileText(
+      resolved.source,
+      resolved.ref,
+      "manifest.yaml",
+      resolved.token,
+    );
+    return deriveSearchIndexFromManifest(
+      text,
+      resolved.source,
+      resolved.name,
+      resolved.trustFloor,
+    );
+  } catch {
+    return [];
+  }
+}
+
+/**
  * Fetch + parse ``search-index.json`` straight from the network (no cache).
- * Throws on an unresolvable URL only via an empty result; throws on a non-OK
- * HTTP response so the caller's stale-while-revalidate / cache-miss branches
- * can decide what to do.
+ * Throws on an unresolvable URL only via an empty result. On a non-OK HTTP
+ * response: if the repo allows the #2562 manifest fallback, reads
+ * ``manifest.yaml`` instead (see {@link fetchManifestFallbackSets}); otherwise
+ * throws so the caller's stale-while-revalidate / cache-miss branches can
+ * decide what to do.
  */
 export async function fetchSearchIndexFromNetwork(
   repo: SearchIndexRepo,
@@ -317,6 +324,7 @@ export async function fetchSearchIndexFromNetwork(
   );
   const response = await fetchWithRetry(url, init);
   if (!response.ok) {
+    if (repo.allowManifestFallback) return fetchManifestFallbackSets(resolved);
     throw new Error(`search-index.json HTTP ${response.status} for ${resolved.source}`);
   }
   const data = await response.json();
