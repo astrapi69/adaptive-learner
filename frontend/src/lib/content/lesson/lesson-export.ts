@@ -28,6 +28,7 @@ import { stringify as stringifyYaml } from "yaml";
 
 import type { ContentLesson } from "../../../storage/types";
 import { slugify } from "../analysis/analysis-to-lesson";
+import { CURRENT_MANIFEST_SCHEMA_VERSION } from "../schema-version";
 
 /** Metadata describing a set to export (mirrors the saved set). */
 export interface ExportSetMeta {
@@ -58,7 +59,7 @@ export function buildManifestYaml(
   lessonCount: number,
 ): string {
   const manifest = {
-    schema_version: "1.4",
+    schema_version: CURRENT_MANIFEST_SCHEMA_VERSION,
     name: meta.title,
     description: meta.description ?? null,
     sets: [

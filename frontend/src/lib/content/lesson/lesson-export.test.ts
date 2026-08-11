@@ -15,6 +15,7 @@ import {
   lessonJson,
   type CommunityPrDetails,
 } from "./lesson-export";
+import { CURRENT_MANIFEST_SCHEMA_VERSION } from "../schema-version";
 import type { ConversationAnalysisResult } from "../../../types/domain";
 
 const ANALYSIS: ConversationAnalysisResult = {
@@ -80,7 +81,7 @@ describe("buildManifestYaml", () => {
   it("produces a one-entry ContentManifest that re-parses", () => {
     const yaml = buildManifestYaml(META, 1);
     const parsed = parseYaml(yaml);
-    expect(parsed.schema_version).toBe("1.4");
+    expect(parsed.schema_version).toBe(CURRENT_MANIFEST_SCHEMA_VERSION);
     expect(parsed.sets).toHaveLength(1);
     expect(parsed.sets[0].id).toBe("analysis-conv-1");
     expect(parsed.sets[0].language).toBe("es");
