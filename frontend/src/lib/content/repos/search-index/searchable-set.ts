@@ -8,7 +8,7 @@
  * type).
  */
 
-import type { SetReviewStatus, SetVisibility } from "../../../storage/types";
+import type { SetReviewStatus, SetVisibility } from "../../../../storage/types";
 
 /** Optional book-companion metadata carried in the index. */
 export interface SearchIndexBook {

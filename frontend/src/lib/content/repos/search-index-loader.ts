@@ -34,8 +34,8 @@
 
 import { parseGitHubRepoUrl } from "./content-repos";
 import { buildFileRequest, fetchGitHubFileText, fetchWithRetry } from "./github-fetch";
-import { deriveSearchIndexFromManifest } from "./manifest-search-index";
-import type { SearchableSet, SearchIndexBook } from "./searchable-set";
+import { deriveSearchIndexFromManifest } from "./search-index/manifest-search-index";
+import type { SearchableSet, SearchIndexBook } from "./search-index/searchable-set";
 import type { SetReviewStatus, SetVisibility } from "../../../storage/types";
 
 /** The conventional index filename at a content repo's root. */
@@ -49,9 +49,10 @@ export const MAX_CONCURRENT_INDEX_FETCHES = 10;
 
 const CACHE_PREFIX = "adaptive-learner.search_index::";
 
-// #2562 — moved to searchable-set.ts to break an import cycle with the
-// manifest-fallback deriver, which produces this same shape; re-exported
-// here so every existing consumer keeps importing from this module.
+// #2562 — moved to search-index/searchable-set.ts to break an import cycle
+// with the manifest-fallback deriver, which produces this same shape;
+// re-exported here so every existing consumer keeps importing from this
+// module.
 export type { SearchableSet, SearchIndexBook };
 
 /** A content repo to load a search index from. */

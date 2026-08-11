@@ -24,8 +24,8 @@
  * manifest text.
  */
 
-import { asContentSetBook, parseManifest, type ParsedSet } from "../engine";
-import type { SetReviewStatus, SetVisibility } from "../../../storage/types";
+import { asContentSetBook, parseManifest, type ParsedSet } from "../../engine";
+import type { SetReviewStatus, SetVisibility } from "../../../../storage/types";
 import type { SearchableSet } from "./searchable-set";
 
 const REVIEW_STATUS_VALUES: readonly SetReviewStatus[] = [

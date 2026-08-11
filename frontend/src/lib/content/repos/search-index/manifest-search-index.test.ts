@@ -7,7 +7,7 @@
 import { describe, expect, it } from "vitest";
 
 import { deriveSearchableSet, deriveSearchIndexFromManifest } from "./manifest-search-index";
-import type { ParsedSet } from "../engine";
+import type { ParsedSet } from "../../engine";
 
 function set(overrides: Partial<ParsedSet> = {}): ParsedSet {
   return {
