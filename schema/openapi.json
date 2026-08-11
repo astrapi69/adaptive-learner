@@ -797,6 +797,20 @@
               }
             ],
             "title": "Placeholder"
+          },
+          "stable_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stable Id"
           }
         },
         "required": [
@@ -3846,6 +3860,20 @@
             "title": "Correct",
             "type": "boolean"
           },
+          "stable_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stable Id"
+          },
           "text": {
             "maxLength": 500,
             "minLength": 1,
@@ -3874,6 +3902,20 @@
             "minLength": 1,
             "title": "Right",
             "type": "string"
+          },
+          "stable_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stable Id"
           }
         },
         "required": [
