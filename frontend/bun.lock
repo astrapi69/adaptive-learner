@@ -7,7 +7,7 @@
       "dependencies": {
         "@assistant-ui/react": "^0.14.28",
         "@astrapi69/ai-key-vault": "0.2.0",
-        "@astrapi69/ai-key-vault-react": "0.3.0",
+        "@astrapi69/ai-key-vault-react": "0.3.2",
         "@astrapi69/feature-strategy": "^0.1.2",
         "@astrapi69/feature-strategy-react": "^0.1.2",
         "@astrapi69/pwa-update": "0.2.0",
@@ -136,7 +136,7 @@
 
     "@astrapi69/ai-key-vault": ["@astrapi69/ai-key-vault@0.2.0", "", { "dependencies": { "@astrapi69/passphrase-vault": "0.1.1" } }, "sha512-WfLnwUnB1dVZAmkh5GZqxMaOYqwYgFBwUpiIoGgcgeGtcYPf94NaBKggUd0WO4ZcFY2/goUoPA5G9pKh+NJGnQ=="],
 
-    "@astrapi69/ai-key-vault-react": ["@astrapi69/ai-key-vault-react@0.3.0", "", { "dependencies": { "@astrapi69/ai-key-vault": "0.2.0" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-fMMEoDDs4Y1e5tfGDZdmGjpMbsZYmISkNWEkQwjKoOZNQIisNEX34VVAw/Ohkmb9LvideJkdCZaafDHwGz9QBg=="],
+    "@astrapi69/ai-key-vault-react": ["@astrapi69/ai-key-vault-react@0.3.2", "", { "dependencies": { "@astrapi69/ai-key-vault": "0.2.0" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-gkS19JDTS+1EJ8Sq4v+nfJI5+rNy0B9oFFx2agVptlfK7niPjVapbuFXdQXyxslUQWaXoZyDBBxM1ENN3mJW4w=="],
 
     "@astrapi69/feature-strategy": ["@astrapi69/feature-strategy@0.1.2", "", {}, "sha512-o+3yHmrOMJhINNjDJMoWiqbeqUPqqioKHNz+pNbCSxXk1LPfpD+Mwc6Jx9posOsX0ByFqneORTw/FXmOhPSlIw=="],
 
