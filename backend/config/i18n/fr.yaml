@@ -2936,6 +2936,8 @@ create_lesson:
     to_browser: "Vers le navigateur de contenu"
     save_file: "Enregistrer dans un fichier"
     file_saved: "Leçon enregistrée dans un fichier."
+    progress_carried_over: "{count} carte(s) de révision reportée(s) pour la réponse modifiée."
+    progress_not_carried_over: "{count} carte(s) de révision n'ont pas pu être associées avec certitude à la réponse modifiée et seront recréées lors du prochain exercice."
   templates:
     extensions:
       title: "Types d'exercices avancés"

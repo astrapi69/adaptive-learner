@@ -2944,6 +2944,8 @@ create_lesson:
     to_browser: "Ke Penjelajah Konten"
     save_file: "Simpan sebagai berkas"
     file_saved: "Pelajaran disimpan sebagai berkas."
+    progress_carried_over: "{count} kartu ulasan dipindahkan untuk jawaban yang diubah."
+    progress_not_carried_over: "{count} kartu ulasan tidak dapat dicocokkan dengan yakin ke jawaban yang diubah dan akan dibuat ulang pada latihan berikutnya."
   templates:
     extensions:
       title: "Tipe latihan lanjutan"

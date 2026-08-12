@@ -2936,6 +2936,8 @@ create_lesson:
     to_browser: "Al explorador de contenido"
     save_file: "Guardar como archivo"
     file_saved: "Lección guardada como archivo."
+    progress_carried_over: "Se transfirieron {count} tarjeta(s) de repaso para la respuesta modificada."
+    progress_not_carried_over: "{count} tarjeta(s) de repaso no se pudieron asociar con confianza a la respuesta modificada y se recrearán en el próximo repaso."
   templates:
     extensions:
       title: "Tipos de ejercicio avanzados"
