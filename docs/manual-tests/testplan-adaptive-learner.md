@@ -1205,6 +1205,13 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       ("N lassen sich nicht sicher zuordnen und werden zurückgesetzt"). Prüfen,
       dass für diese NICHTS übernommen wurde - eine falsche Zuordnung wäre
       schlimmer als ein Verlust, weil sie unsichtbar ist.
+- [ ] AUTH-05: Übungskennung selbst geändert (nicht nur die Antwort) - z. B.
+      eine Übung ohne `stable_id` wird beim Update umbenannt (Slug-Wechsel).
+      Die Zählung im Haken "Gelernten Fortschritt übernehmen" schließt diesen
+      Fall mit ein (kombinierte Zahl aus Übungs- und Element-Ebene); die
+      lesbare Vorschauliste zeigt weiterhin nur Antworttext-Paare, keine
+      rohen Übungs-Slugs. Nach Bestätigen mit Haken: die Wiederholkarte
+      bleibt unter der NEUEN Übungskennung erhalten, kein Neustart bei null.
 - [ ] Auto-Sync (24h, verbundenes Nutzer-Repo): Es wird WEDER aktualisiert NOCH
       etwas übernommen. Die Zuordnung darf nur im manuellen Dialog entstehen.
 - [ ] Zweimal hintereinander bestätigen (Update erneut anstossen): keine
