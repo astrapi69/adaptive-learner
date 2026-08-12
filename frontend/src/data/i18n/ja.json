@@ -1,5 +1,9 @@
 {
   "app": {
+    "loading": "読み込み中…",
+    "loading_slow": "読み込みに予想より時間がかかっています。",
+    "view_load_failed": "このビューを読み込めませんでした。",
+    "reload": "再読み込み",
     "name": "Adaptive Learner",
     "tagline": "6メソッドモデルに基づく適応学習。",
     "skeleton_notice": "スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます - docs/adaptive-learner-project-reference.md を参照してください。"

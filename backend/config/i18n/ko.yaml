@@ -1,4 +1,8 @@
 app:
+  loading: "불러오는 중…"
+  loading_slow: "예상보다 시간이 오래 걸리고 있습니다."
+  view_load_failed: "이 화면을 불러올 수 없습니다."
+  reload: "새로고침"
   name: Adaptive Learner
   tagline: 6단계 방법론 모델에 따른 적응형 학습.
   skeleton_notice: 스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 - docs/adaptive-learner-project-reference.md를 참고하세요.

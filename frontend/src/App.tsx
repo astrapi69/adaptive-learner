@@ -15,6 +15,7 @@ import "./styles/toast-theme.css";
 
 import type { ApiError } from "./api/client";
 import ErrorBoundary from "./components/error/ErrorBoundary";
+import { RouteLoading, RouteLoadError } from "./components/system/RouteFallback";
 import MilestoneHost from "./components/feedback/MilestoneHost";
 import GlobalShortcuts from "./components/a11y/GlobalShortcuts";
 import UpdatePromptHost from "./components/pwa/UpdatePromptHost";
@@ -182,7 +183,12 @@ export default function App() {
             <DesktopUpdateHost />
             <Navigation />
             <OfflineIndicator />
-            <Suspense fallback={null}>
+            {/* Content-scoped boundary: a lazy route whose import REJECTS
+                throws here (readable "could not load" + reload) instead of
+                blanking the whole shell via the top-level boundary. The
+                visible Suspense fallback covers the load/stall case (#2573). */}
+            <ErrorBoundary fallback={(error) => <RouteLoadError error={error} />}>
+            <Suspense fallback={<RouteLoading />}>
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/onboarding" element={<Onboarding />} />
@@ -240,6 +246,7 @@ export default function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
+            </ErrorBoundary>
             <InstallPrompt />
             <IosInstallHint />
             <MilestoneHost />

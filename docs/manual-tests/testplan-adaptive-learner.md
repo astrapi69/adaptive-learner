@@ -73,6 +73,23 @@ Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
       Session abarbeiten (Liste aus den jeweiligen Issues, jeweils Ergebnis
       als Issue-Kommentar).
 
+#### A3b. Einstieg für Wiederkehrer bleibt nie leer (#2573)
+
+Robustheit beim Nachladen auf iOS - der Einstieg darf nie einen leeren
+Inhaltsbereich unter intakter Kopf-/Navigationsleiste hinterlassen:
+
+- [ ] Als WIEDERKEHRENDER Nutzer (Daten vorhanden) die App-URL frisch öffnen
+      (z. B. einen geteilten QR-Code der App-URL scannen). Erwartet: du
+      landest auf dem Dashboard - nie ein komplett leerer Inhaltsbereich
+      zwischen Kopfzeile und unterer Navigationsleiste.
+- [ ] Während eine Ansicht lädt, erscheint eine sichtbare Ladeanzeige
+      (Spinner + „Lädt ..."), nie ein leerer Kasten.
+- [ ] Fehlerfall erzwingen: Gerät offline / drosseln, sodass eine Lazy-Ansicht
+      nicht laden kann, dann eine Route öffnen. Erwartet: nach kurzer
+      Wartezeit eine lesbare Meldung („Das dauert länger als erwartet." bzw.
+      „Diese Ansicht ließ sich nicht laden.") mit „Neu laden"-Knopf - kein
+      stiller Leerbildschirm.
+
 #### A4. Lektion löschen (#2064, gemerged) - überschneidet sich mit A1
 
 Dieses Feature verlangt laut Testplan beide Speichermodi plus

@@ -1,4 +1,8 @@
 app:
+  loading: "Memuat…"
+  loading_slow: "Ini memakan waktu lebih lama dari yang diharapkan."
+  view_load_failed: "Tampilan ini tidak dapat dimuat."
+  reload: "Muat ulang"
   name: Adaptive Learner
   tagline: Pembelajaran adaptif berdasarkan Model Enam Metode.
   skeleton_notice: Status kerangka. Model domain, plugin, dan halaman akan hadir pada fase mendatang - lihat docs/adaptive-learner-project-reference.md.

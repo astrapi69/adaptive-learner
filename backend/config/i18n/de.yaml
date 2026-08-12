@@ -1,4 +1,8 @@
 app:
+  loading: "Lädt …"
+  loading_slow: "Das dauert länger als erwartet."
+  view_load_failed: "Diese Ansicht ließ sich nicht laden."
+  reload: "Neu laden"
   name: Adaptive Learner
   tagline: Adaptives Lernen nach dem Sechs-Methoden-Modell.
   skeleton_notice: Skeleton-Stand. Domain-Modelle, Plugins und Seiten folgen in den nächsten Phasen - siehe docs/adaptive-learner-project-reference.md.

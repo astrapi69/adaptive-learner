@@ -73,6 +73,22 @@ screenshot + which step, which becomes an issue with forensics.
       same session (list from the respective issues, each result as an issue
       comment).
 
+#### A3b. Returning-user entry never blanks (#2573)
+
+Content-load resilience on iOS - the entry flow must never leave a blank
+content area under an intact header/nav:
+
+- [ ] As a RETURNING user (data present) open the app URL fresh (e.g. scan a
+      shared QR code of the app URL). Expected: you land on the Dashboard -
+      never a completely empty content area between the header and the bottom
+      nav.
+- [ ] While a view loads, a visible loading indicator shows (spinner +
+      "Loading..."), never an empty box.
+- [ ] Force the failure: put the device offline / throttle so a lazy view
+      cannot load, then open a route. Expected: after a short wait a readable
+      "taking longer than expected" (or "this view could not be loaded")
+      message with a Reload button - not a silent blank screen.
+
 #### A4. Delete a lesson (#2064, merged) - overlaps with A1
 
 Per the test plan this feature requires both storage modes plus a backup
