@@ -56,8 +56,10 @@ describe("SummarySectionsControl", () => {
   it("the first row's Up and the last row's Down are disabled", () => {
     render(<SummarySectionsControl />);
     expect(screen.getByTestId("summary-sections-up-favorite")).toBeDisabled();
+    // #2570 — next_steps is now the last default section (correction moved
+    // ahead of it).
     expect(
-      screen.getByTestId("summary-sections-down-correction"),
+      screen.getByTestId("summary-sections-down-next_steps"),
     ).toBeDisabled();
   });
 

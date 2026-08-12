@@ -673,10 +673,15 @@ export default function LessonSummary({
           #1432 — the #599 "why you missed these" mistake review renders
           immediately ABOVE the correction round (following it wherever the user
           reorders it), so the review and the drill that fixes those mistakes
-          stay adjacent and ``correction`` is the last content section by
-          default. It is not one of the reorderable sections (its own shared
-          Settings toggle, ``review/reviewPref``), so it is spliced in here
-          rather than added to the order block. */}
+          stay adjacent. #2570 moved ``correction``'s default position ahead of
+          ``next_steps`` (fixing today's mistakes belongs before the "what
+          next" cards, not trailing after them), so ``next_steps`` - not
+          ``correction`` - is the last content section by default; this splice
+          rule itself is unaffected, still relative to wherever ``correction``
+          currently sits. ``SummaryExplanations`` is not one of the
+          reorderable sections (its own shared Settings toggle,
+          ``review/reviewPref``), so it is spliced in here rather than added
+          to the order block. */}
       {sections.map(({ id, enabled }) => {
         if (!enabled) return null;
         if (id === "correction") {

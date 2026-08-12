@@ -49,10 +49,12 @@ export const SUMMARY_SECTION_KEYS = [
   "answers",
   /** The result-export action row (copy / Markdown / JSON / Anki). */
   "export",
+  /** The SRS correction round (#1376). #2570 - moved ahead of ``next_steps``:
+   *  fixing today's mistakes belongs before the cards that offer what to do
+   *  next, not trailing after them. */
+  "correction",
   /** The smart "What would you like to do next?" suggestion cards. */
   "next_steps",
-  /** The SRS correction round (last element, #1376). */
-  "correction",
 ] as const;
 
 export type SummarySectionKey = (typeof SUMMARY_SECTION_KEYS)[number];
