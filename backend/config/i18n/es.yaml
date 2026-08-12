@@ -1947,6 +1947,8 @@ lesson:
     mistakes_heading: "Corrige tus errores"
     expand: "Corregir ahora"
     replay_all: "Repetir todos los ejercicios ({count})"
+    replay_only_heading: "Repite tus errores"
+    replay_only_subtitle: "Esto no se puede practicar como ejercicio rápido - repite los ejercicios en su lugar."
   summary:
     heading: "Terminaste"
     aria_label: "Resumen de la lección"

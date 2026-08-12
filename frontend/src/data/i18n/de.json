@@ -2110,7 +2110,9 @@
       "improvement_singular": "{n} Element verbessert.",
       "mistakes_heading": "Fehler ausbessern",
       "expand": "Jetzt ausbessern",
-      "replay_all": "Alle Übungen erneut ({count})"
+      "replay_all": "Alle Übungen erneut ({count})",
+      "replay_only_heading": "Wiederhole deine Fehler",
+      "replay_only_subtitle": "Das lässt sich nicht als Schnellübung anzeigen - wiederhole stattdessen die Übungen."
     },
     "summary": {
       "heading": "Geschafft",

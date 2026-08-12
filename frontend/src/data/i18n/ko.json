@@ -2165,7 +2165,9 @@
       "improvement_singular": "요소 {n}개가 향상되었습니다.",
       "mistakes_heading": "실수 바로잡기",
       "expand": "지금 바로잡기",
-      "replay_all": "모든 문제 다시 풀기 ({count})"
+      "replay_all": "모든 문제 다시 풀기 ({count})",
+      "replay_only_heading": "실수 반복하기",
+      "replay_only_subtitle": "이 문제는 빠른 연습으로 풀 수 없습니다 - 대신 문제를 다시 풀어보세요."
     },
     "error": {
       "load_failed": "레슨을 불러올 수 없었습니다.",

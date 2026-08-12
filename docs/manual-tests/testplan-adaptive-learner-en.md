@@ -492,10 +492,17 @@ preview delivery). In the regular build the mode does not exist.
       card (folded into the one section). Enter still activates the primary
       forward card (Next lesson / Adaptive / Review), never the collapsed
       mistakes section.
-- [ ] Only non-cloze-able mistakes (no cloze can be generated): the section
-      still appears collapsed and, on expand, offers only "Redo all exercises".
 - [ ] When every mistake is already corrected, the section shows a short
       success note ("All errors corrected!") instead of a drill.
+- [ ] #2570: only non-cloze-able mistakes (no cloze can be generated) - the
+      section shows "Repeat your mistakes" DIRECTLY, with "These can't be
+      practiced as a quick drill - redo the exercises instead." + the "Redo
+      all exercises (N)" button. NO "Fix now" intermediate step that would
+      only expand into nothing.
+- [ ] #2570 placement: the mistakes section sits BEFORE the "What's next?"
+      cards (Next lesson / Adaptive / ...) in the default order, not after -
+      fix your own mistakes first, then decide where to go next. Still freely
+      reorderable via Settings.
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt

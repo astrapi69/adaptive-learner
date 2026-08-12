@@ -2110,7 +2110,9 @@
       "improvement_singular": "{n} élément amélioré.",
       "mistakes_heading": "Corrige tes erreurs",
       "expand": "Corriger maintenant",
-      "replay_all": "Refaire tous les exercices ({count})"
+      "replay_all": "Refaire tous les exercices ({count})",
+      "replay_only_heading": "Refaire vos erreurs",
+      "replay_only_subtitle": "Cela ne peut pas être pratiqué comme exercice rapide - refaites plutôt les exercices."
     },
     "summary": {
       "heading": "Terminé",

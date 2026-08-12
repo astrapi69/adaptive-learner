@@ -527,11 +527,17 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       "Fehler wiederholen"-Karte mehr (in den einen Bereich zusammengeführt).
       Enter aktiviert weiterhin die primäre Vorwärts-Karte (Nächste Lektion /
       Adaptiv / Wiederholung), nie den zugeklappten Fehler-Bereich.
-- [ ] Nur nicht-lückentext-fähige Fehler (kein Cloze generierbar): der Bereich
-      erscheint trotzdem zugeklappt und bietet beim Aufklappen nur
-      "Alle Übungen erneut" an.
 - [ ] Sind bereits alle Fehler korrigiert, zeigt der Bereich eine kurze
       Erfolgsmeldung ("Alle Fehler korrigiert!") statt einer Übung.
+- [ ] #2570: Nur nicht-lückentext-fähige Fehler (kein Cloze generierbar) - der
+      Bereich zeigt DIREKT "Wiederhole deine Fehler" mit dem Hinweis "Das lässt
+      sich nicht als Schnellübung anzeigen - wiederhole stattdessen die
+      Übungen." + dem Button "Alle Übungen erneut (N)". KEIN "Jetzt
+      ausbessern"-Zwischenschritt mehr, der nur ins Leere aufklappen würde.
+- [ ] #2570 Platzierung: der Fehler-Bereich steht in der Standard-Reihenfolge
+      VOR den "Nächste Schritte"-Karten (Nächste Lektion / Adaptiv / ...), nicht
+      danach - erst die eigenen Fehler ausbessern, dann entscheiden wie es
+      weitergeht. Bleibt über Settings weiterhin frei umsortierbar.
 
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
