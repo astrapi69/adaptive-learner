@@ -9,7 +9,7 @@ integration in the middle, E2E smoke at the top.
 | Layer | Tool |
 |---|---|
 | Backend unit + integration | pytest ^9 |
-| Plugin tests (13 plugins) | pytest ^9 |
+| Plugin tests (all plugins) | pytest ^9 |
 | Frontend unit + integration | Vitest 4 |
 | E2E smoke | Playwright |
 | Dexie-mode release gate | Playwright |
@@ -17,10 +17,208 @@ integration in the middle, E2E smoke at the top.
 The counts grow every release. To avoid duplicated numbers
 that drift out of sync, this page does NOT hardcode a total.
 `docs/audits/current-coverage.md` is the single canonical,
-always-current source for test counts and coverage. The 13
-plugins are assessment, the three AI providers (anthropic /
-openai / gemini), session, tracking, tools, gamification,
+always-current source for test counts and coverage. The
+plugins are assessment, the AI providers (anthropic / openai /
+gemini / perplexity), session, tracking, tools, gamification,
 anki, notebooklm, learning-repo, content-loader, and missions.
+
+## Test-driven development: the workflow
+
+Everything below this section describes the infrastructure: which
+runner to invoke, how to mock, where CI runs what. This section
+describes the order of work. The binding norm lives in the
+repository's rule catalogue (`.claude/rules/tdd.md` and the Tests
+section of `.claude/rules/coding-standards.md`); this page explains
+the workflow and walks through one real cycle. Where the two differ,
+the rule catalogue wins.
+
+The cycle is Red-Green-Refactor:
+
+1. **RED** - write a test that describes the wanted behaviour, and
+   run it. It must fail, and it must fail for the expected reason.
+2. **GREEN** - write the minimal code that makes it pass. Nothing
+   "for later".
+3. **REFACTOR** - clean up names, duplication, formatting. The tests
+   stay green and are not touched.
+
+### When the obligation applies
+
+Every change with behaviour: a new code path, a condition, a
+calculation, a validation, a mapping. Bug fixes are the strictest
+case: a fix without a first-failing test is not a proven fix. The
+reproduction test is written before the fix and stays in the repo as
+the regression pin afterwards.
+
+It does not apply to pure renames, mechanical refactors already
+covered by existing tests (the suite staying green is the proof),
+formatting, configuration without logic, or documentation.
+
+### A real cycle from this repository
+
+The example is the release helper `scripts/bump_roadmap_header.py`
+with its suite `backend/tests/test_bump_roadmap_header.py`. It was
+chosen because its red state is unambiguous and needs no domain
+knowledge: the module under test did not exist yet, and the decisive
+error case is a missing file.
+
+**What was to be built**, in two sentences: `docs/ROADMAP.md` and
+`docs/backlog.md` open with a dated "Current state" prose entry that
+had gone stale for five releases in a row. The helper prepends the
+released version as the new entry (summary seeded from the release
+notes), demotes the previous entry into the prior chain, and must
+refuse loudly when the release-notes file or the header anchor is
+missing.
+
+**The test first.** The fixture builds the real repo shape in
+`tmp_path` (a `backend/pyproject.toml` carrying the canonical
+version, both header files, one release-notes file), and the tests
+drive the CLI entry point, not internal functions:
+
+```python
+@pytest.fixture()
+def fake_repo(tmp_path: Path) -> Path:
+    """Build a minimal repo layout the script operates on."""
+    (tmp_path / "backend").mkdir()
+    (tmp_path / "backend" / "pyproject.toml").write_text(
+        '[tool.poetry]\nname = "adaptive_learner"\nversion = "2.7.0"\n',
+        encoding="utf-8",
+    )
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "ROADMAP.md").write_text(ROADMAP_TEMPLATE, encoding="utf-8")
+    (docs / "backlog.md").write_text(BACKLOG_TEMPLATE, encoding="utf-8")
+    releases = tmp_path / "changelog" / "releases"
+    releases.mkdir(parents=True)
+    (releases / "v2.7.0.md").write_text(CHANGELOG_BODY, encoding="utf-8")
+    return tmp_path
+
+
+def test_bump_prepends_current_state_and_demotes_prior_when_stale(
+    fake_repo: Path,
+) -> None:
+    exit_code = bump_roadmap_header.main(["--repo-root", str(fake_repo), "--date", "2026-07-30"])
+    assert exit_code == 0
+
+    roadmap = (fake_repo / "docs" / "ROADMAP.md").read_text(encoding="utf-8")
+    assert roadmap.count("Current state:") == 1
+    assert "Current state: **v2.7.0 (released 2026-07-30 - " in roadmap
+    assert (
+        "see changelog/releases/v2.7.0.md).** Recent prior: **v2.6.1 (released 2026-07-24"
+        in roadmap
+    )
+    assert "Recent prior: **v2.6.0" in roadmap
+```
+
+The error case the helper exists for: the release-notes file is
+missing, so the run must fail instead of writing a half-truth into
+the headers.
+
+```python
+def test_bump_fails_when_changelog_missing(fake_repo: Path) -> None:
+    (fake_repo / "changelog" / "releases" / "v2.7.0.md").unlink()
+    exit_code = bump_roadmap_header.main(["--repo-root", str(fake_repo), "--date", "2026-07-30"])
+    assert exit_code == 1
+```
+
+The file holds six tests in total; the other four cover idempotence
+at the canonical version, a missing header anchor, the seed-summary
+extraction, and `--dry-run` writing nothing. Read the file itself for
+the complete picture.
+
+**The red run.** Before one line of implementation existed:
+
+```text
+$ poetry run pytest tests/test_bump_roadmap_header.py -q
+ERROR tests/test_bump_roadmap_header.py - FileNotFoundError: [Errno 2] No suc...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.09s
+```
+
+(The truncated line is pytest's own `-q` output, unedited.)
+
+**Why this is the most important step.** A test that was never red
+proves nothing about what it checks. It can be green because it asks
+the wrong question, because it never reaches the code, or because its
+fixture contains nothing. This repository has paid for that lesson
+more than once:
+
+- Five consecutive "fixed" backup releases (#49, #57, #64, #115,
+  #117) each shipped with passing unit tests, and none of them
+  produced a working export/import round-trip in the real app.
+  Green, and wrong: the tests asked a question the real data never
+  asked. That history is why the manual backup round-trip gate
+  exists (BACKUP-AKZEPTANZTEST in `.claude/rules/quality-checks.md`).
+- The content availability oracle (#1816 / #1818) was green against
+  hand-built `{source, id}` fixtures that encoded the author's own
+  assumption about what `listSets` returns. Against the real
+  `ContentSetEntry` shape the assumption was false in API mode;
+  module and tests were green and wrong together. That is the most
+  common trap: building the fixture to fit the test instead of
+  copying the real data shape into the fixture.
+
+A note on the quality of a red: the collection error above is
+acceptable only because the module under test did not exist at all.
+For a brand-new file, "cannot import" is the expected reason. The
+moment the module exists, every test must fail for its own reason:
+the missing-changelog test above goes red through `exit_code == 1`,
+not through an import error. A test that is red because of a typo in
+an import has proven nothing.
+
+**The code that makes it green**, in its first version. The core is
+an anchored replacement plus a fail-loud guard in the entry point:
+
+```python
+ROADMAP_ANCHOR = re.compile(r"Current state: \*\*v(\d+\.\d+\.\d+) \(released ")
+
+
+def bump_roadmap(text: str, version: str, date: str, summary: str) -> str | None:
+    """Prepend the new Current-state entry; None when already current."""
+    match = ROADMAP_ANCHOR.search(text)
+    if match is None:
+        raise ValueError("ROADMAP.md: 'Current state: **vX.Y.Z (released' anchor not found")
+    if match.group(1) == version:
+        return None
+    new_entry = (
+        f"Current state: **v{version} (released {date} - {summary} "
+        f"see changelog/releases/v{version}.md).** "
+        f"Recent prior: **v{match.group(1)} (released "
+    )
+    return text.replace(match.group(0), new_entry, 1)
+```
+
+```python
+    changelog_path = repo_root / "changelog" / "releases" / f"v{version}.md"
+    if not changelog_path.exists():
+        print(f"ERROR: {changelog_path} not found - draft the release notes first")
+        return 1
+```
+
+**The green run:**
+
+```text
+$ poetry run pytest tests/test_bump_roadmap_header.py -q
+......                                                                   [100%]
+6 passed in 0.16s
+```
+
+**The cleanup afterwards.** In this cycle it was purely mechanical:
+`ruff format` reformatted the new test file before the commit
+("1 file reformatted"), no logic change, and the suite stayed green.
+When a real refactor is needed (naming, extraction, deduplication),
+the same contract holds: the tests are not touched and are green
+before and after.
+
+### Running the cycle in this project
+
+```bash
+cd backend && poetry run pytest tests/test_<yourfile>.py -q   # the tight loop
+make test                                                     # the full gate before commit
+```
+
+The frontend equivalent of the tight loop is
+`cd frontend && bunx vitest run src/path/to/file.test.tsx`. The
+pre-commit hook runs the backend smoke suite on every commit either
+way, and `make test` must be green after every change.
 
 ## Backend pytest
 

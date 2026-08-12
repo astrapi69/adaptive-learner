@@ -19,11 +19,8 @@ Adaptive Learner is a 4-layer plugin-driven application.
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ Plugins            13 packages under plugins/               │
-│                    (ai-{anthropic,openai,gemini}, assessment,│
-│                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm, learning-repo,         │
-│                    content-loader, missions)                │
+│ Plugins            one Poetry package each under plugins/;  │
+│                    the catalogue and tiers live in CLAUDE.md│
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -132,7 +129,7 @@ UI (React) → IStorageService
             ↓
             AI orchestrator → resolve_api_key (env > yaml > DB)
                             → pluginforge → provider plugin's ai_complete*
-                            → Anthropic / OpenAI / Gemini SDK
+                            → Anthropic / OpenAI / Gemini / Perplexity SDK
 ```
 
 Unidirectional. No direct DB access from routers. Core

@@ -100,8 +100,7 @@ nav:
   mode_badge_ai: "IA+Conteúdo"
   mode_badge_tooltip_content: "Sem chave API configurada - apenas conteúdo pré-construído. Adiciona uma chave em Definições para ativar as funcionalidades IA."
   mode_badge_tooltip_ai: "Fornecedor de IA configurado - os exercícios usam IA para distratores e dicas. Toca para explorar os conjuntos."
-  mode_badge_label_content: "Modo: Apenas conteúdo"
-  mode_badge_label_ai: "Modo: IA + Conteúdo"
+  mode_badge_action: "explorar conteúdo"
   sync_paired: "Sinc.: emparelhado (Configurações > Sinc.)"
   sync_unpaired: "Sinc.: não emparelhado (Configurações > Sinc.)"
 import:
@@ -1187,7 +1186,7 @@ gamification:
   xp_no_data: Conclua uma sessão para ganhar XP.
   xp_earned: XP ganhos
   xp_gain_aria: Você ganhou {n} XP por esta lição
-  xp_header_aria: Nível {level}, {xp} XP no total
+  xp_total_suffix: "no total"
   xp_header_tooltip: Seus pontos de experiência
   xp_to_next_level: '{n} XP até o próximo nível'
   max_level: Nível máximo alcançado
@@ -2939,6 +2938,8 @@ create_lesson:
     to_browser: "Para o navegador de conteúdo"
     save_file: "Guardar como ficheiro"
     file_saved: "Lição guardada como ficheiro."
+    progress_carried_over: "Foram transferidos {count} cartão(ões) de revisão para a resposta alterada."
+    progress_not_carried_over: "{count} cartão(ões) de revisão não puderam ser associados com confiança à resposta alterada e serão recriados na próxima prática."
   templates:
     extensions:
       title: "Tipos de exercício avançados"
@@ -3325,7 +3326,7 @@ shortcuts:
 srs:
   due_badge: "{n} pendentes"
   due_badge_tooltip: "Revisões pendentes"
-  due_badge_aria: "{n} revisões pendentes"
+  due_badge_action: "ver revisões"
   status_new: "Novo"
   status_learning: "A aprender"
   status_due: "Pendente"

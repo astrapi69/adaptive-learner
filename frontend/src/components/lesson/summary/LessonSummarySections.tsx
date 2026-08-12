@@ -493,8 +493,17 @@ export function SummaryExplanations({
   t: TFn;
 }) {
   if (!readExplanationsEnabled()) return null;
+  // #2547 — ``mastered`` is an SRS-streak flag (3 consecutive correct
+  // answers), not "the last attempt was wrong". A freshly correct answer
+  // (even the very first, or a case-insensitive match) advances
+  // correct_streak to >= 1 while mastered stays false until the streak
+  // reaches 3 — filtering on !mastered showed already-correct answers
+  // here with a diff implying a mistake that never happened. Every wrong
+  // attempt resets correct_streak to 0 (applyScoreOutcome,
+  // element-errors-dexie.ts), so correct_streak === 0 is exactly "the
+  // last attempt on this element was wrong".
   const mistakes = sessionErrors
-    .filter((e) => !e.mastered && (e.user_answer ?? "").trim() !== "")
+    .filter((e) => e.correct_streak === 0 && (e.user_answer ?? "").trim() !== "")
     .slice(0, 5);
   if (mistakes.length === 0) return null;
   return (

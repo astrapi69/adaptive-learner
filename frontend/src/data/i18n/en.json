@@ -108,8 +108,7 @@
     "mode_badge_ai": "AI+Content",
     "mode_badge_tooltip_content": "No API key configured - using pre-built content only. Add a key in Settings to enable AI features.",
     "mode_badge_tooltip_ai": "AI provider configured - exercises use AI for distractors + hints. Tap to browse content sets.",
-    "mode_badge_label_content": "Mode: Content only",
-    "mode_badge_label_ai": "Mode: AI + Content",
+    "mode_badge_action": "browse content",
     "sync_paired": "Sync: paired (Settings > Sync)",
     "sync_unpaired": "Sync: not paired (Settings > Sync)"
   },
@@ -1264,7 +1263,7 @@
     "xp_no_data": "Complete a session to earn XP.",
     "xp_earned": "XP earned",
     "xp_gain_aria": "You earned {n} XP for this lesson",
-    "xp_header_aria": "Level {level}, {xp} total XP",
+    "xp_total_suffix": "total",
     "xp_header_tooltip": "Your experience points",
     "xp_to_next_level": "{n} XP to next level",
     "max_level": "Max level reached",
@@ -3202,7 +3201,9 @@
       "create_another": "Create another lesson",
       "to_browser": "To Content Browser",
       "save_file": "Save as file",
-      "file_saved": "Lesson saved as a file."
+      "file_saved": "Lesson saved as a file.",
+      "progress_carried_over": "Carried over {count} review card(s) for the changed answer.",
+      "progress_not_carried_over": "{count} review card(s) could not be confidently matched to the changed answer and will be recreated on next practice."
     },
     "templates": {
       "extensions": {
@@ -3614,7 +3615,7 @@
   "srs": {
     "due_badge": "{n} due",
     "due_badge_tooltip": "Reviews due",
-    "due_badge_aria": "{n} reviews due",
+    "due_badge_action": "view reviews",
     "status_new": "New",
     "status_learning": "Learning",
     "status_due": "Due",

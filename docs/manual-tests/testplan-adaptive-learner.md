@@ -605,7 +605,8 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       KI-Key: freundlicher Hinweis, kein Crash; "Weiter" erst nach
       erfolgreicher Generierung
 - [ ] **Aufgabentyp-Auswahl im Assistenten (#2510):** Im Buchtext-Schritt
-      steht über "Theorie + Übungen generieren" eine Auswahl "Aufgabentypen"
+      steht **vor dem Textfeld** (zwischen Datei-/Abschnitts-Fläche und dem
+      Lehrbuch-Textfeld, #2522) eine Auswahl "Aufgabentypen"
       mit drei Gruppen: **Standardtypen** (Zuordnung, Freitext, Lückentext,
       Wort-Kacheln, Multiple Choice) sind vorausgewählt; **Erweiterungstypen**
       (Kategorisierung, Fehlerkorrektur, Leseverständnis, Benotetes Quiz) sind
@@ -623,6 +624,13 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       kompakte, umbrechende Gruppen), ist antippbar, und die gemerkte Auswahl
       übersteht einen Reload. **Barrierefrei:** die ausgegrauten Felder tragen
       eine Beschriftung + `aria-describedby` auf die Begründung.
+- [ ] **Reihenfolge der Typ-Auswahl (#2522):** Die Auswahl steht **oberhalb**
+      des Lehrbuch-Textfelds, nicht darunter (erst sehen was erkannt wurde,
+      dann Typen wählen, dann Text einfügen). **iOS-Standalone (PWA, kleines
+      Gerät):** beim Öffnen des Buchtext-Schritts ist das Textfeld **ohne
+      Scrollen** erreichbar - die Auswahl drückt es nicht unter die Falz; wer
+      ein Kapitel einfügt, muss danach nicht nach oben scrollen, um die Typen zu
+      finden. DOM-Reihenfolge entspricht der sichtbaren (keine Axe-Regression).
 - [ ] **Titel-Pflichtfeld im Buchtext-Pfad (#1946):** Schritt 1 OHNE
       Titel → Karte "Wissenslektion aus Text" klicken → bleibt auf
       Schritt 1 mit dem freundlichen Hinweis "Ein Titel ist
@@ -708,6 +716,15 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Kopie importieren") zeigen den Hinweis, dass eine Kopie OHNE
       Lernfortschritt startet, während das Original seinen Fortschritt
       und seine Wiederholungskarten behält
+- [ ] **Wiederholkarte übersteht Antwort-Korrektur (#2519):** eigene
+      Lektion mit einer Freitext-Übung anlegen/speichern → üben, bis eine
+      Wiederholkarte für diese Übung existiert (Wiederholungs-Warteschlange
+      zeigt sie) → Lektion bearbeiten, Tippfehler in der akzeptierten
+      Antwort korrigieren (z. B. "Merci" → "Merci !"), speichern.
+      Erwartung: Toast "{N} Wiederholkarte(n) für die geänderte Antwort
+      übernommen." erscheint, die Wiederholkarte bleibt (kein stiller
+      Verlust der Fehler-/SRS-Historie). Gilt für BEIDE Speichermodi
+      (API + Dexie)
 - [ ] **Einfache Lektion (ohne Extension) bleibt speicherbar (#1919):**
       eine Lektion per Auto-Generieren erstellen (nur die sechs CORE-Typen,
       keine Extension-Übung), lokal speichern → über Bearbeiten erneut
@@ -966,6 +983,12 @@ jeder Karten-Zeile (`CardImageField`).
       Discover/Meine Inhalte (#1702/#1706)
 - [ ] Per-Set Share-Link öffnet direkt die Set-Detailseite (#1572)
 - [ ] Registrierten Content-Repo hinzufügen (register-a-repo #1511)
+- [ ] Manifest-Fallback für eigene Repos ohne search-index.json (#2562):
+      eigenes Repo über Settings → Daten → "Repository hinzufügen" verbinden,
+      das NIE mit dem Engine-Generator gebaut wurde (kein search-index.json
+      an der Wurzel) - Sets erscheinen trotzdem in Entdecken; sobald mehr als
+      eine Quelle beiträgt, erscheint der Filter "Quelle" (vorher fehlte er
+      bei nur einer beitragenden Quelle)
 - [ ] "Als Repository teilen" (#2376): ein Set mit Qualitätsmängeln
       (z. B. Zuordnungsübung mit doppeltem linkem Wert) wird beim ersten
       Klick NICHT gepusht - die Mängelliste erscheint, der Button wechselt
@@ -1193,6 +1216,13 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       ("N lassen sich nicht sicher zuordnen und werden zurückgesetzt"). Prüfen,
       dass für diese NICHTS übernommen wurde - eine falsche Zuordnung wäre
       schlimmer als ein Verlust, weil sie unsichtbar ist.
+- [ ] AUTH-05: Übungskennung selbst geändert (nicht nur die Antwort) - z. B.
+      eine Übung ohne `stable_id` wird beim Update umbenannt (Slug-Wechsel).
+      Die Zählung im Haken "Gelernten Fortschritt übernehmen" schließt diesen
+      Fall mit ein (kombinierte Zahl aus Übungs- und Element-Ebene); die
+      lesbare Vorschauliste zeigt weiterhin nur Antworttext-Paare, keine
+      rohen Übungs-Slugs. Nach Bestätigen mit Haken: die Wiederholkarte
+      bleibt unter der NEUEN Übungskennung erhalten, kein Neustart bei null.
 - [ ] Auto-Sync (24h, verbundenes Nutzer-Repo): Es wird WEDER aktualisiert NOCH
       etwas übernommen. Die Zuordnung darf nur im manuellen Dialog entstehen.
 - [ ] Zweimal hintereinander bestätigen (Update erneut anstossen): keine
@@ -1204,6 +1234,11 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       antippbar), Übernahme funktioniert im Dexie-Modus genauso.
 - [ ] Sprache prüfen (#2160): der Bestätigungstext erscheint in der App-Sprache
       (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
+- [ ] Erst-Prägung (engine#91, Element-Ebene): Set, dessen Paare/Lücken/Optionen
+      erstmals eine stable_id erhalten, Inhalt sonst unverändert oder im selben
+      Update mitkorrigiert. Der Übergang wird wie eine normale, sicher
+      zuordenbare Korrektur behandelt, nicht als "nicht zuordenbar" gemeldet.
+      Fortschritt bleibt bei bestätigter Übernahme erhalten.
 
 ### Ausmusterung: archivierter Fortschritt bei retired_ids (#2188)
 
@@ -1416,6 +1451,22 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] Trennen + löschen → wieder verbinden → Fortschritt leer
 - [ ] Häkchen erscheint nur wenn es Fortschritt zu löschen gibt
       (Dexie-Modus)
+
+### Empfohlene Repositories: Buttons pro Zeile (#2558)
+
+Ort: Settings → Daten → Empfohlene Repositories.
+
+- [ ] Mehrere Empfehlungen sichtbar → "Repository hinzufügen" bei EINER
+      klicken → NUR dieser Button wird deaktiviert, die anderen bleiben
+      klickbar
+- [ ] Während des Hinzufügens erscheint ein Fortschrittsanzeige (Label +
+      Balken sobald die Sync-Phase Zahlen liefert) direkt bei der
+      geklickten Zeile, nicht global
+- [ ] Zweite Empfehlung während des Ladens der ersten klicken → beide
+      laufen unabhängig durch, keine Fehlermeldung
+- [ ] Nach Abschluss: Zeile verschwindet aus "Empfohlen" (jetzt in
+      "Meine Content-Repositories"), Button-Zustand der übrigen Zeilen
+      unverändert
 
 ### Social Sharing (visuell + nativ)
 - [ ] Share-Button nach Lektion sichtbar

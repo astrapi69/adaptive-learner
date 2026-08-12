@@ -3,8 +3,8 @@
 Adaptive Learner runs every learning conversation through up
 to **three** AI calls per round-trip - the streamed response,
 the step evaluator, and (at step 7) the topic-transition
-evaluator. Three providers ship out of the box; new providers
-plug in via the `ai_complete*` hook family.
+evaluator. Four providers ship out of the box (one, Perplexity, is
+backend-only); new providers plug in via the `ai_complete*` hook family.
 
 ## The ai_complete hook
 
@@ -34,8 +34,10 @@ def ai_complete(
     # ... call Anthropic API, return the text ...
 ```
 
-Three plugins ship: `ai-anthropic` (claude-*), `ai-openai`
-(gpt-*), `ai-gemini` (gemini-*).
+Four plugins ship: `ai-anthropic` (claude-*), `ai-openai`
+(gpt-*), `ai-gemini` (gemini-*), and `ai-perplexity` (sonar-*).
+The Perplexity plugin is backend-only (it has no browser-direct
+client), so it serves API mode but not the Dexie-mode build.
 
 ## Async + streaming variants
 

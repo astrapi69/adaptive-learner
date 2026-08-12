@@ -335,8 +335,8 @@ fängt Drift zwischen den beiden Listen ab.
 Die Element-Verfolgung + SRS-Kette funktioniert in
 **beiden** Speichermodi identisch - der
 ``IElementErrorsNamespace``-Vertrag ist modusagnostisch,
-und das Dexie-Mode-Release-Gate (18 Specs inkl.
-``/review``-Route) blockiert jede Regression.
+und das Dexie-Mode-Release-Gate (deckt die nav-erreichbaren
+Routen inkl. ``/review`` ab) blockiert jede Regression.
 
 Die Lektions-Session-Vereinheitlichung +
 Gamification-Seiteneffekte sind **nur im API-Modus**

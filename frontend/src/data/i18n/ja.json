@@ -108,8 +108,7 @@
     "mode_badge_ai": "AI+コンテンツ",
     "mode_badge_tooltip_content": "API キーが設定されていません - 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。",
     "mode_badge_tooltip_ai": "AI プロバイダー設定済み - 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。",
-    "mode_badge_label_content": "モード: コンテンツのみ",
-    "mode_badge_label_ai": "モード: AI + コンテンツ",
+    "mode_badge_action": "コンテンツを見る",
     "sync_paired": "同期：ペアリング済み（設定 > 同期）",
     "sync_unpaired": "同期：未ペアリング（設定 > 同期）"
   },
@@ -1264,7 +1263,7 @@
     "xp_no_data": "セッションを完了してXPを獲得しましょう。",
     "xp_earned": "獲得XP",
     "xp_gain_aria": "このレッスンで{n} XPを獲得しました",
-    "xp_header_aria": "レベル{level}、合計{xp} XP",
+    "xp_total_suffix": "合計",
     "xp_header_tooltip": "あなたの経験値",
     "xp_to_next_level": "次のレベルまで {n} XP",
     "max_level": "最大レベルに到達しました",
@@ -3202,7 +3201,9 @@
       "create_another": "別のレッスンを作成",
       "to_browser": "コンテンツブラウザへ",
       "save_file": "ファイルとして保存",
-      "file_saved": "レッスンをファイルとして保存しました。"
+      "file_saved": "レッスンをファイルとして保存しました。",
+      "progress_carried_over": "変更した解答について、復習カードを{count}件引き継ぎました。",
+      "progress_not_carried_over": "{count}件の復習カードは変更した解答に確実に対応付けできなかったため、次回の練習時に再作成されます。"
     },
     "templates": {
       "extensions": {
@@ -3614,7 +3615,7 @@
   "srs": {
     "due_badge": "{n}件が期限",
     "due_badge_tooltip": "復習あり",
-    "due_badge_aria": "復習が{n}件",
+    "due_badge_action": "復習を見る",
     "status_new": "新規",
     "status_learning": "学習中",
     "status_due": "期限",

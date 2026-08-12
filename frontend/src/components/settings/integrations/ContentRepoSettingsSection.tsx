@@ -92,6 +92,15 @@ export default function ContentRepoSettingsSection() {
   >(null);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<RepoProgress | null>(null);
+  // #2558 — recommended-repo "Add" is per-row, not gated by the shared
+  // `busy` flag: clicking one must not disable the others. Keyed by source
+  // so more than one can be in flight without the rows fighting over state.
+  const [addingRecommended, setAddingRecommended] = useState<
+    Record<string, boolean>
+  >({});
+  const [addingProgress, setAddingProgress] = useState<
+    Record<string, RepoProgress>
+  >({});
   // #1388 — per-row sync state: the source currently syncing (also the
   // double-start guard) and per-row error messages, reported at the row.
   const [syncing, setSyncing] = useState<string | null>(null);
@@ -236,14 +245,24 @@ export default function ContentRepoSettingsSection() {
     async (rec: RecommendedRepo) => {
       const parsed = parseGitHubRepoUrl(rec.url);
       if (!parsed) return;
-      setBusy(true);
-      setProgress({
-        label: t("content_repo.progress.validating", "Validating repository…"),
-        current: 0,
-        total: 0,
-      });
+      const source = userRepoSource(parsed.owner, parsed.repo);
+      setAddingRecommended((prev) => ({ ...prev, [source]: true }));
+      setAddingProgress((prev) => ({
+        ...prev,
+        [source]: {
+          label: t("content_repo.progress.validating", "Validating repository…"),
+          current: 0,
+          total: 0,
+        },
+      }));
+      const reportItemProgress = (p: SyncProgress) => {
+        const { key, fallback } = syncPhaseI18n(p.phase);
+        setAddingProgress((prev) => ({
+          ...prev,
+          [source]: { label: t(key, fallback), current: p.current, total: p.total },
+        }));
+      };
       try {
-        const source = userRepoSource(parsed.owner, parsed.repo);
         const validation = await validateUserRepo({
           owner: parsed.owner,
           repo: parsed.repo,
@@ -269,7 +288,7 @@ export default function ContentRepoSettingsSection() {
           lesson_count: validation.lessonCount,
           trust: 1,
         });
-        await syncUserRepo(source, reportProgress);
+        await syncUserRepo(source, reportItemProgress);
         await refresh();
         notify.success(t("content_repo.added", "Repository added."));
       } catch {
@@ -277,11 +296,19 @@ export default function ContentRepoSettingsSection() {
           t("content_repo.error.save_failed", "Could not add the repository."),
         );
       } finally {
-        setBusy(false);
-        setProgress(null);
+        setAddingRecommended((prev) => {
+          const next = { ...prev };
+          delete next[source];
+          return next;
+        });
+        setAddingProgress((prev) => {
+          const next = { ...prev };
+          delete next[source];
+          return next;
+        });
       }
     },
-    [refresh, reportProgress, t],
+    [refresh, t],
   );
 
   const handleRate = useCallback((source: string, rating: number) => {
@@ -666,11 +693,34 @@ export default function ContentRepoSettingsSection() {
                       size="sm"
                       className="ml-auto min-h-11"
                       onClick={() => handleAddRecommended(rec)}
-                      disabled={busy}
+                      disabled={Boolean(addingRecommended[source])}
                       data-testid={`content-repo-recommended-add-${source}`}
                     >
                       {t("content_repo.action.add", "Add repository")}
                     </Button>
+                    {addingRecommended[source] && addingProgress[source] && (
+                      <div
+                        className="flex w-full items-center gap-2"
+                        role="status"
+                        aria-live="polite"
+                        data-testid={`content-repo-recommended-progress-${source}`}
+                      >
+                        <span className="flex items-center gap-2 text-sm text-[var(--fg-muted)]">
+                          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                          {addingProgress[source].total > 0
+                            ? `${addingProgress[source].label} (${addingProgress[source].current}/${addingProgress[source].total})`
+                            : addingProgress[source].label}
+                        </span>
+                        {addingProgress[source].total > 0 && (
+                          <DownloadProgress
+                            current={addingProgress[source].current}
+                            total={addingProgress[source].total}
+                            ariaLabel={addingProgress[source].label}
+                            testId={`content-repo-recommended-progress-bar-${source}`}
+                          />
+                        )}
+                      </div>
+                    )}
                   </li>
                 );
               })}

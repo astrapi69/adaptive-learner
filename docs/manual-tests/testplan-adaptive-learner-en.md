@@ -567,7 +567,8 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       an AI key: friendly notice, no crash; "Next" only after a
       successful generation
 - [ ] **Exercise-type selection in the assistant (#2510):** In the book-text
-      step, above "Generate theory + exercises" there is an "Exercise types"
+      step, **above the textbook textarea** (between the file/sections area and
+      the textarea, #2522) there is an "Exercise types"
       selector with three groups: **Standard types** (Matching, Free text,
       Cloze, Word tiles, Multiple choice) are pre-selected; **Extension types**
       (Categorization, Error correction, Reading comprehension, Graded quiz) are
@@ -584,6 +585,13 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       groups), is tappable, and the remembered selection survives a reload.
       **Accessible:** the greyed fields carry a label + `aria-describedby` to the
       reason.
+- [ ] **Order of the type selection (#2522):** The selector sits **above** the
+      textbook textarea, not below it (see what was detected, choose the types,
+      then paste). **iOS standalone (PWA, small device):** on opening the
+      book-text step the textarea is reachable **without scrolling** - the
+      selector does not push it below the fold; after pasting a chapter the user
+      need not scroll back up to find the types. DOM order matches the visible
+      order (no axe regression).
 - [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
       a title → click the "Knowledge lesson from text" card → stays on
       step 1 with the friendly "A title is required." message (NOT the
@@ -662,6 +670,14 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       "Import as copy") both show a note that a copy starts WITHOUT
       learning progress, while the original keeps its progress and
       review cards
+- [ ] **A review card survives an answer-text correction (#2519):**
+      create/save an own lesson with a free_text exercise → practice it
+      until a review card exists for that exercise (the review queue shows
+      it) → edit the lesson, fix a typo in the accepted answer (e.g.
+      "Merci" → "Merci !"), save. Expected: a toast "Carried over {N}
+      review card(s) for the changed answer." appears, the review card
+      survives (no silent loss of the error/SRS history). Applies to BOTH
+      storage modes (API + Dexie)
 - [ ] **Reopen a plain (no-extension) lesson stays saveable (#1919):**
       create a lesson via Auto-generate (only the six CORE types, no
       extension exercise), Save locally → reopen via Edit → step to Review:
@@ -902,6 +918,12 @@ each card row (`CardImageField`).
       Discover/My Content (#1702/#1706)
 - [ ] Per-set share link opens the set detail page directly (#1572)
 - [ ] Add a registered content repo (register-a-repo #1511)
+- [ ] Manifest fallback for own repos without a search-index.json (#2562):
+      connect your own repo via Settings → Data → "Add a repository" that
+      was NEVER built with the engine generator (no search-index.json at
+      its root) - its sets still appear in Discover; once more than one
+      source contributes, the "Source" filter appears (previously missing
+      when only one source contributed)
 - [ ] "Share as repository" (#2376): a set with quality issues (e.g. a
       matching exercise with a duplicate left value) is NOT pushed on the
       first click - the issue list appears and the button flips to
@@ -1114,6 +1136,13 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
       assigned with confidence and will be reset"). Verify NOTHING was carried
       over for them - a wrong assignment is worse than a loss because it is
       invisible.
+- [ ] AUTH-05: the exercise's OWN id changed (not just the answer text) - e.g.
+      an exercise without a `stable_id` gets renamed (slug change) on update.
+      The count in the "Carry over what still matches" checkbox includes this
+      case (a combined number from the exercise and element level); the
+      readable preview list still shows only answer-text pairs, never raw
+      exercise slugs. After confirming with the box checked: the review card
+      survives under the NEW exercise id, no restart from zero.
 - [ ] Auto-sync (24h, connected user repo): NEITHER updates NOR carries anything
       over. The mapping may only come into being in the manual dialog.
 - [ ] Confirm twice in a row (trigger the update again): no double carry-over, no
@@ -1123,6 +1152,11 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
 - [ ] iOS standalone (PWA): dialog including the pair list and the checkbox is
       fully readable and operable (the list does not overflow the dialog, the
       checkbox is tappable); carry-over works the same in Dexie mode.
+- [ ] First minting (engine#91, element level): a set whose pairs/blanks/options
+      get a stable_id for the first time, content otherwise unchanged or
+      corrected in the same update. The transition is treated as a normal,
+      safely assignable correction, not reported as "cannot be assigned".
+      Progress survives when carry-over is confirmed.
 
 ### Retirement: archived progress on retired_ids (#2188)
 
@@ -1320,6 +1354,21 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] Disconnect + delete → reconnect → progress empty
 - [ ] The checkbox only appears when there IS progress to delete
       (Dexie mode)
+
+### Recommended repositories: per-row buttons (#2558)
+
+Location: Settings → Data → Recommended repositories.
+
+- [ ] Multiple recommendations visible → click "Add repository" on ONE →
+      ONLY that button disables, the others stay clickable
+- [ ] While adding, a progress indicator (label + bar once the sync
+      phase reports numbers) appears right at the clicked row, not
+      globally
+- [ ] Click a second recommendation while the first is still loading →
+      both run through independently, no error
+- [ ] After completion: the row disappears from "Recommended" (now
+      under "Your content repositories"), the other rows' button state
+      is unaffected
 
 ### Social sharing (visual + native)
 - [ ] Share button visible after a lesson

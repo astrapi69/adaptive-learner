@@ -406,6 +406,16 @@ navigation:
           ja: オンボーディング
         slug: developer/onboarding
       - title:
+          de: Tore, Ratchets und Zweigschutz
+          en: Gates, ratchets, and branch protection
+          es: Puertas, trinquetes y protección de rama
+          fr: Barrières, cliquets et protection de branche
+          el: Πύλες, καστάνιες και προστασία κλάδου
+          pt: Portões, catracas e proteção de branch
+          tr: Kapılar, cırcırlar ve dal koruması
+          ja: ゲート、ラチェット、ブランチ保護
+        slug: developer/gates-and-ratchets
+      - title:
           de: Architektur
           en: Architecture
           es: Arquitectura

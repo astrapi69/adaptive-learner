@@ -20,6 +20,7 @@ import {
     deriveClozeMultiSelectAttempt,
     deriveFreeTextAttempt,
     deriveMatchingAttempts,
+    deriveMultipleChoiceAttempt,
     derivePictureChoiceAttempt,
     deriveWordTilesAttempt,
     type AttemptContext,
@@ -647,5 +648,65 @@ describe("exercise identity on attempts (#2130)", () => {
         const a = deriveMatchingAttempts(random, CTX, matches)[0];
         const b = deriveMatchingAttempts(withStable, CTX, matches)[0];
         expect(b.direction).toBe(a.direction);
+    });
+});
+
+// --- engine#91 element-level stable_id key switch ---------------------------
+
+describe("element identity on attempts (engine#91)", () => {
+    it("matching: element_key uses the pair's stable_id when present, correct_answer is unaffected", () => {
+        const exercise: ContentLessonExercise = {
+            id: "ex-match",
+            type: "matching",
+            prompt: "Match",
+            card_ids: [],
+            pairs: [{left: "Bonjour", right: "Hello", stable_id: "pair-aaaa0001"}],
+            distractors: [],
+        };
+        const attempt = deriveMatchingAttempts(exercise, CTX, new Map([[0, 0]]))[0];
+        expect(attempt?.element_key).toBe("pair-aaaa0001");
+        expect(attempt?.correct_answer).toBe("Hello");
+    });
+
+    it("cloze: element_key uses the blank's stable_id, but correct_answer STILL shows the real text, never the opaque id", () => {
+        const exercise: ContentLessonExercise = {
+            id: "ex-cloze",
+            type: "cloze",
+            prompt: "Fill in",
+            card_ids: [],
+            sentence: "Je ___ ici.",
+            blanks: [{accept: ["suis"], stable_id: "blank-aaaa0001"}],
+            distractors: [],
+        };
+        const attempt = deriveClozeAttempts(exercise, CTX, ["suis"], [true])[0];
+        expect(attempt?.element_key).toBe("blank-aaaa0001");
+        expect(attempt?.correct_answer).toBe("suis");
+    });
+
+    it("multiple_choice: element_key uses the option's stable_id, correct_answer STILL shows the real option text", () => {
+        const exercise: ContentLessonExercise = {
+            id: "ex-mc",
+            type: "multiple_choice",
+            prompt: "Pick",
+            card_ids: [],
+            options: [{text: "un", correct: true, stable_id: "opt-aaaa0001"}],
+            distractors: [],
+        };
+        const attempt = deriveMultipleChoiceAttempt(exercise, CTX, ["un"], true);
+        expect(attempt.element_key).toBe("opt-aaaa0001");
+        expect(attempt.correct_answer).toBe("un");
+    });
+
+    it("falls back to the canonical text for element_key when no stable_id is present (unchanged behaviour)", () => {
+        const exercise: ContentLessonExercise = {
+            id: "ex-match",
+            type: "matching",
+            prompt: "Match",
+            card_ids: [],
+            pairs: [{left: "Bonjour", right: "Hello"}],
+            distractors: [],
+        };
+        const attempt = deriveMatchingAttempts(exercise, CTX, new Map([[0, 0]]))[0];
+        expect(attempt?.element_key).toBe("Bonjour");
     });
 });

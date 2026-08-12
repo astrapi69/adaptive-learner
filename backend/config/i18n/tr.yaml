@@ -100,8 +100,7 @@ nav:
   mode_badge_ai: "Yapay Zeka+İçerik"
   mode_badge_tooltip_content: "Yapılandırılmış API anahtarı yok - yalnızca hazır içerik kullanılıyor. Yapay zeka özelliklerini etkinleştirmek için Ayarlar'dan anahtar ekleyin."
   mode_badge_tooltip_ai: "Yapay zeka sağlayıcısı yapılandırıldı - alıştırmalar dikkat dağıtıcılar ve ipuçları için yapay zeka kullanır. İçerik setlerine göz atmak için dokunun."
-  mode_badge_label_content: "Mod: Yalnızca içerik"
-  mode_badge_label_ai: "Mod: Yapay Zeka + İçerik"
+  mode_badge_action: "içeriğe göz at"
   sync_paired: "Eşitleme: eşleşti (Ayarlar > Eşitleme)"
   sync_unpaired: "Eşitleme: eşleşmedi (Ayarlar > Eşitleme)"
 import:
@@ -1187,7 +1186,7 @@ gamification:
   xp_no_data: XP kazanmak için bir oturumu tamamla.
   xp_earned: Kazanılan XP
   xp_gain_aria: Bu ders için {n} XP kazandınız
-  xp_header_aria: Seviye {level}, toplam {xp} XP
+  xp_total_suffix: "toplam"
   xp_header_tooltip: Deneyim puanlarınız
   xp_to_next_level: Bir sonraki seviye için {n} XP
   max_level: Maksimum seviyeye ulaşıldı
@@ -2939,6 +2938,8 @@ create_lesson:
     to_browser: "İçerik tarayıcısına"
     save_file: "Dosya olarak kaydet"
     file_saved: "Ders dosya olarak kaydedildi."
+    progress_carried_over: "Değiştirilen cevap için {count} tekrar kartı aktarıldı."
+    progress_not_carried_over: "{count} tekrar kartı, değiştirilen cevapla güvenilir şekilde eşleştirilemedi ve bir sonraki alıştırmada yeniden oluşturulacak."
   templates:
     extensions:
       title: "Gelişmiş alıştırma türleri"
@@ -3325,7 +3326,7 @@ shortcuts:
 srs:
   due_badge: "{n} bekliyor"
   due_badge_tooltip: "Tekrarlar bekliyor"
-  due_badge_aria: "{n} tekrar bekliyor"
+  due_badge_action: "tekrarları görüntüle"
   status_new: "Yeni"
   status_learning: "Öğreniliyor"
   status_due: "Zamanı geldi"

@@ -26,7 +26,7 @@
   "dependencies": {
     "@assistant-ui/react": "^0.14.28",
     "@astrapi69/ai-key-vault": "0.2.0",
-    "@astrapi69/ai-key-vault-react": "0.3.0",
+    "@astrapi69/ai-key-vault-react": "0.3.2",
     "@astrapi69/feature-strategy": "^0.1.2",
     "@astrapi69/feature-strategy-react": "^0.1.2",
     "@astrapi69/pwa-update": "0.2.0",
@@ -77,7 +77,7 @@
     "highlight.js": "11.11.1",
     "html5-qrcode": "2.3.8",
     "jszip": "3.10.1",
-    "learn-content-engine": "0.21.0",
+    "learn-content-engine": "0.22.0",
     "lowlight": "3.3.0",
     "lucide-react": "^1.27.0",
     "qrcode": "1.5.4",

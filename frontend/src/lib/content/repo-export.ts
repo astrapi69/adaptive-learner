@@ -21,6 +21,7 @@ import {
     DEFAULT_DOMAIN,
     isKnownContentDomain,
 } from "./content-domains";
+import {CURRENT_MANIFEST_SCHEMA_VERSION} from "./schema-version";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
 
 /** One file to commit to the export repository. */
@@ -41,10 +42,6 @@ export interface RepoExportInput {
     /** ``owner/repo`` of the target repository (for the README + index). */
     ownerRepo: string;
 }
-
-/** Schema version stamped on the exported manifest (the loader matches on
- *  the major, so a 1.x set imports cleanly). */
-const EXPORT_SCHEMA_VERSION = "1.4";
 
 /**
  * ``schema_version`` for the root ``search-index.json`` (#2300). This is the
@@ -88,7 +85,7 @@ export function buildManifestYaml(
     // Only emit fields the loader reads; omit empties so the file stays
     // clean. ``name`` is the source-language title (the loader's title key).
     const manifest: Record<string, unknown> = {
-        schema_version: EXPORT_SCHEMA_VERSION,
+        schema_version: CURRENT_MANIFEST_SCHEMA_VERSION,
         name: set.title,
         source_language: set.source_language,
         target_language: set.target_language,

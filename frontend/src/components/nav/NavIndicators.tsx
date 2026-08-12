@@ -19,6 +19,15 @@ import { useI18n } from "../../hooks/ui/useI18n";
 /** "AI+Content" vs "Content"-only mode badge (links to the content browser). */
 export function NavModeBadge({ mode }: { mode: string }) {
   const { t } = useI18n();
+  // WCAG 2.5.3 (#2539): the accessible name is COMPOSED from the visible
+  // badge text plus the action, never written as a parallel sentence. A
+  // separate translated label drifted from the visible text (it read
+  // "Modus: KI + Inhalte" against a visible "KI+Inhalte", so the visible
+  // string was not even a substring) and speech input could not match it.
+  const badgeText =
+    mode === "ai-augmented"
+      ? t("nav.mode_badge_ai", "AI+Content")
+      : t("nav.mode_badge_content", "Content");
   return (
     <NavLink
       to="/content"
@@ -36,15 +45,9 @@ export function NavModeBadge({ mode }: { mode: string }) {
               "No API key configured - using pre-built content only. Add a key in Settings to enable AI features.",
             )
       }
-      aria-label={
-        mode === "ai-augmented"
-          ? t("nav.mode_badge_label_ai", "Mode: AI + Content")
-          : t("nav.mode_badge_label_content", "Mode: Content only")
-      }
+      aria-label={`${badgeText}, ${t("nav.mode_badge_action", "browse content")}`}
     >
-      {mode === "ai-augmented"
-        ? t("nav.mode_badge_ai", "AI+Content")
-        : t("nav.mode_badge_content", "Content")}
+      {badgeText}
     </NavLink>
   );
 }

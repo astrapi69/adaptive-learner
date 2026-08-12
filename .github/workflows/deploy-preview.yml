@@ -141,17 +141,15 @@ jobs:
           VITE_BUILD_BRANCH: ${{ env.VITE_BUILD_BRANCH }}
           VITE_BUILD_STRANG: ${{ env.VITE_BUILD_STRANG }}
 
-      # SPA-router fallback for GH Pages: without 404.html, a direct
-      # hit on a nested route (``/dashboard``, ``/settings``) returns
-      # a GH-Pages 404 instead of letting React Router resolve it.
-      # #1713 — a real SPA shell inside the bundled ``content/``
-      # directory keeps the ``/content`` route from 301+404ing against
-      # the directory (see deploy-gh-pages.yml for the full story).
+      # SPA-router fallback for GH Pages: without 404.html, a direct hit on
+      # a nested route returns a GH-Pages 404 instead of letting React
+      # Router resolve it. #1713 established the trick for ``/content``;
+      # #2543 generalised it to every static route, so the served status is
+      # 200 rather than "renders, but 404". The route list is derived from
+      # the router. Runs AFTER the build: the copies must not enter the
+      # service worker's precache manifest.
       - name: Configure SPA fallback
-        run: |
-          cp frontend/dist/index.html frontend/dist/404.html
-          mkdir -p frontend/dist/content
-          cp frontend/dist/index.html frontend/dist/content/index.html
+        run: python3 scripts/emit_spa_route_pages.py
 
       # GitHub Pages otherwise runs the build through Jekyll, which skips
       # files/dirs starting with "_" and can choke on the Vite output.

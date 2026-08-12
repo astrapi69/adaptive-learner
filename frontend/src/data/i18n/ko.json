@@ -108,8 +108,7 @@
     "mode_badge_ai": "AI+콘텐츠",
     "mode_badge_tooltip_content": "API 키가 설정되지 않았습니다 - 사전 제작된 콘텐츠만 사용합니다. AI 기능을 사용하려면 설정에서 키를 추가하세요.",
     "mode_badge_tooltip_ai": "AI 제공자가 설정되었습니다 - 연습 문제에 AI를 활용해 오답 보기와 힌트를 생성합니다. 콘텐츠 세트를 둘러보려면 누르세요.",
-    "mode_badge_label_content": "모드: 콘텐츠 전용",
-    "mode_badge_label_ai": "모드: AI + 콘텐츠",
+    "mode_badge_action": "콘텐츠 둘러보기",
     "sync_paired": "동기화: 페어링됨 (설정 > 동기화)",
     "sync_unpaired": "동기화: 페어링 안 됨 (설정 > 동기화)"
   },
@@ -1264,7 +1263,7 @@
     "xp_no_data": "세션을 완료하여 XP를 획득하세요.",
     "xp_earned": "획득한 XP",
     "xp_gain_aria": "이 레슨으로 {n} XP를 획득했습니다",
-    "xp_header_aria": "레벨 {level}, 총 {xp} XP",
+    "xp_total_suffix": "총",
     "xp_header_tooltip": "당신의 경험치",
     "xp_to_next_level": "다음 레벨까지 {n} XP",
     "max_level": "최고 레벨 도달",
@@ -3202,7 +3201,9 @@
       "create_another": "다른 레슨 만들기",
       "to_browser": "콘텐츠 브라우저로",
       "save_file": "파일로 저장",
-      "file_saved": "레슨을 파일로 저장했습니다."
+      "file_saved": "레슨을 파일로 저장했습니다.",
+      "progress_carried_over": "변경된 답변에 대해 복습 카드 {count}개를 이어받았습니다.",
+      "progress_not_carried_over": "복습 카드 {count}개는 변경된 답변과 확실하게 연결할 수 없어 다음 연습 시 다시 생성됩니다."
     },
     "templates": {
       "extensions": {
@@ -3614,7 +3615,7 @@
   "srs": {
     "due_badge": "{n}개 예정",
     "due_badge_tooltip": "복습 예정",
-    "due_badge_aria": "복습 {n}개 예정",
+    "due_badge_action": "복습 보기",
     "status_new": "신규",
     "status_learning": "학습 중",
     "status_due": "예정",

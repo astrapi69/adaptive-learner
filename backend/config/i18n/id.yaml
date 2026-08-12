@@ -100,8 +100,7 @@ nav:
   mode_badge_ai: "AI+Konten"
   mode_badge_tooltip_content: "Tidak ada kunci API yang dikonfigurasi - hanya menggunakan konten siap pakai. Tambahkan kunci di Pengaturan untuk mengaktifkan fitur AI."
   mode_badge_tooltip_ai: "Penyedia AI dikonfigurasi - latihan menggunakan AI untuk pengecoh + petunjuk. Ketuk untuk menjelajahi set konten."
-  mode_badge_label_content: "Mode: Hanya konten"
-  mode_badge_label_ai: "Mode: AI + Konten"
+  mode_badge_action: "jelajahi konten"
   sync_paired: "Sinkron: terpasang (Pengaturan > Sinkron)"
   sync_unpaired: "Sinkron: tidak terpasang (Pengaturan > Sinkron)"
 import:
@@ -1187,7 +1186,7 @@ gamification:
   xp_no_data: Selesaikan sesi untuk mendapatkan XP.
   xp_earned: XP diperoleh
   xp_gain_aria: Anda memperoleh {n} XP untuk pelajaran ini
-  xp_header_aria: Level {level}, total {xp} XP
+  xp_total_suffix: "total"
   xp_header_tooltip: Poin pengalaman Anda
   xp_to_next_level: '{n} XP menuju level berikutnya'
   max_level: Level maksimum tercapai
@@ -2949,6 +2948,8 @@ create_lesson:
     to_browser: "Ke Penjelajah Konten"
     save_file: "Simpan sebagai berkas"
     file_saved: "Pelajaran disimpan sebagai berkas."
+    progress_carried_over: "{count} kartu ulasan dipindahkan untuk jawaban yang diubah."
+    progress_not_carried_over: "{count} kartu ulasan tidak dapat dicocokkan dengan yakin ke jawaban yang diubah dan akan dibuat ulang pada latihan berikutnya."
   templates:
     extensions:
       title: "Tipe latihan lanjutan"
@@ -3335,7 +3336,7 @@ shortcuts:
 srs:
   due_badge: "{n} jatuh tempo"
   due_badge_tooltip: "Tinjauan jatuh tempo"
-  due_badge_aria: "{n} tinjauan jatuh tempo"
+  due_badge_action: "lihat tinjauan"
   status_new: "Baru"
   status_learning: "Belajar"
   status_due: "Jatuh tempo"

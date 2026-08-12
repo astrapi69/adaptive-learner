@@ -26,42 +26,6 @@ class MediaType(str, Enum):
     DIAGRAM = 'diagram'
 
 
-class ClozeBlank(BaseModel):
-    """
-    One blank inside a cloze exercise's ``sentence`` (Phase 52D /
-    v1.35.0 / P-127).
-
-    Marker-based convention: the sentence carries visible ``___``
-    tokens; ``blanks[i]`` provides the metadata for the i-th
-    marker (left-to-right). The validator enforces
-    ``sentence.count("___") == len(blanks)`` so the i↔i mapping
-    is unambiguous at render time.
-
-    ``accept`` carries the per-blank canonical + acceptable
-    variants — the renderer reuses FreeText's ``isFreeTextCorrect``
-    matcher (NFC-normalised + Levenshtein <= 1) so authors only
-    need to enumerate semantic variants (gendered article,
-    capitalisation, et cetera), not typos.
-    """
-
-    model_config = ConfigDict(
-        extra='forbid',
-        frozen=True,
-    )
-    accept: list[str] = Field(..., min_length=1, title='Accept')
-    """
-    Accepted answers for this blank. First entry is the canonical (shown after a wrong attempt). Same shape as FREE_TEXT.accept.
-    """
-    hint: str | None = Field(None, max_length=200, title='Hint')
-    """
-    Optional per-blank hint. Surfaced inline next to this specific blank, not lesson-wide.
-    """
-    placeholder: str | None = Field(None, max_length=40, title='Placeholder')
-    """
-    Optional placeholder text shown inside the input (``type`` mode) before the user starts typing.
-    """
-
-
 class ClozeMode(str, Enum):
     """
     CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a single-answer ``<select>`` per blank with options from ``distractors``, ``multiselect`` (#1195) renders a checkbox group of ``accept`` (all correct) + ``distractors`` for a 'select all that apply' question. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.
@@ -186,60 +150,6 @@ class LessonResource(BaseModel):
     """
 
 
-class MultipleChoiceOption(BaseModel):
-    """
-    One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
-
-    Correctness is a per-option flag, so the type needs no separate
-    accept/distractor lists and no disjointness rule - the structure
-    makes that class of authoring error impossible. Grading contract:
-    with ``multiple: false`` exactly one option carries ``correct``
-    and a single pick is graded; with ``multiple: true`` the learner
-    must select the exact set of correct options (no partial credit,
-    mirroring the cloze multiselect grading).
-    """
-
-    model_config = ConfigDict(
-        extra='forbid',
-        frozen=True,
-    )
-    correct: bool = Field(False, title='Correct')
-    """
-    Set to true on the correct option(s). Exactly one with ``multiple: false``; at least one with ``multiple: true``.
-    """
-    text: str = Field(..., max_length=500, min_length=1, title='Text')
-    """
-    The option text shown to the learner. Unique within the exercise - the text IS the option, so a duplicate would be ambiguous.
-    """
-
-
-class Pair(BaseModel):
-    """
-    One left↔right pair in a MATCHING exercise.
-
-    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
-    so the generated JSON-Schema / TS types carry the structured
-    ``{left, right}`` shape instead of a loose string map. The
-    ``extra="forbid"`` config + the two required fields replace the
-    former per-pair key check in ``_validate_matching_fields``;
-    validation semantics are unchanged (a pair must have exactly
-    ``left`` and ``right``).
-    """
-
-    model_config = ConfigDict(
-        extra='forbid',
-        frozen=True,
-    )
-    left: str = Field(..., max_length=500, min_length=1, title='Left')
-    """
-    The left-column item. The renderer shuffles before display.
-    """
-    right: str = Field(..., max_length=500, min_length=1, title='Right')
-    """
-    The right-column item this pairs with.
-    """
-
-
 Src = Annotated[str, StringConstraints(max_length=500, min_length=1)]
 """
     Image reference in one of two explicit formats (schema v1.8): a relative path inside the set's ``assets/`` directory ('assets/img/cat.png', <= 500 chars, resolved by the asset loader) OR an inline base64 data URI ('data:image/...;base64,...', its own 250000-char cap - sized for the reference consumer's 150-KiB upload compression: 153600 bytes -> 204800 base64 chars plus header). Repo content should prefer the assets/ path; the ``W-PIC-DATA-URI`` author lint flags inline data URIs.
@@ -358,6 +268,199 @@ class CardTokenRole(BaseModel):
     token: str = Field(..., max_length=120, min_length=1, title='Token')
     """
     Verbatim slice of the card's ``front``. The generator matches this against the wrong-answer key recorded by the SRS layer.
+    """
+
+
+class ClozeBlank(BaseModel):
+    """
+    One blank inside a cloze exercise's ``sentence`` (Phase 52D /
+    v1.35.0 / P-127).
+
+    Marker-based convention: the sentence carries visible ``___``
+    tokens; ``blanks[i]`` provides the metadata for the i-th
+    marker (left-to-right). The validator enforces
+    ``sentence.count("___") == len(blanks)`` so the i↔i mapping
+    is unambiguous at render time.
+
+    ``accept`` carries the per-blank canonical + acceptable
+    variants — the renderer reuses FreeText's ``isFreeTextCorrect``
+    matcher (NFC-normalised + Levenshtein <= 1) so authors only
+    need to enumerate semantic variants (gendered article,
+    capitalisation, et cetera), not typos.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    accept: list[str] = Field(..., min_length=1, title='Accept')
+    """
+    Accepted answers for this blank. First entry is the canonical (shown after a wrong attempt). Same shape as FREE_TEXT.accept.
+    """
+    hint: str | None = Field(None, max_length=200, title='Hint')
+    """
+    Optional per-blank hint. Surfaced inline next to this specific blank, not lesson-wide.
+    """
+    placeholder: str | None = Field(None, max_length=40, title='Placeholder')
+    """
+    Optional placeholder text shown inside the input (``type`` mode) before the user starts typing.
+    """
+    stable_id: SlugId | None = Field(None, title='Stable Id')
+    """
+    engine#91 - schema 1.12 (additive). Element-level counterpart to the exercise/card stable_id (engine#90): identifies THIS blank for progress/SRS joins below the exercise level, so an answer-text correction (moving `accept[0]`) does not orphan its learner row. Once published it NEVER changes. Shares the SAME per-set stable_id namespace as card/exercise ids (checked the same way: collectStableIds set-wide, the schema's E-STABLE-ID-DUP rule per-document). Opaque mint-once value, NOT derived from content. Optional: content without it validates unchanged. Uses the strict $defs/SlugId shape (hyphens only) - unlike the card/exercise field, this is a brand-new field with no legacy underscore-bearing ids to grandfather.
+    """
+
+
+class MultipleChoiceOption(BaseModel):
+    """
+    One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
+
+    Correctness is a per-option flag, so the type needs no separate
+    accept/distractor lists and no disjointness rule - the structure
+    makes that class of authoring error impossible. Grading contract:
+    with ``multiple: false`` exactly one option carries ``correct``
+    and a single pick is graded; with ``multiple: true`` the learner
+    must select the exact set of correct options (no partial credit,
+    mirroring the cloze multiselect grading).
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    correct: bool = Field(False, title='Correct')
+    """
+    Set to true on the correct option(s). Exactly one with ``multiple: false``; at least one with ``multiple: true``.
+    """
+    stable_id: SlugId | None = Field(None, title='Stable Id')
+    """
+    engine#91 - schema 1.12 (additive). Element-level counterpart to the exercise/card stable_id (engine#90): identifies THIS option for progress/SRS joins below the exercise level. Once published it NEVER changes. Shares the SAME per-set stable_id namespace as card/exercise ids (checked the same way: collectStableIds set-wide, the schema's E-STABLE-ID-DUP rule per-document). Opaque mint-once value, NOT derived from content. Optional: content without it validates unchanged. Uses the strict $defs/SlugId shape (hyphens only) - unlike the card/exercise field, this is a brand-new field with no legacy underscore-bearing ids to grandfather.
+    """
+    text: str = Field(..., max_length=500, min_length=1, title='Text')
+    """
+    The option text shown to the learner. Unique within the exercise - the text IS the option, so a duplicate would be ambiguous.
+    """
+
+
+class Pair(BaseModel):
+    """
+    One left↔right pair in a MATCHING exercise.
+
+    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
+    so the generated JSON-Schema / TS types carry the structured
+    ``{left, right}`` shape instead of a loose string map. The
+    ``extra="forbid"`` config + the two required fields replace the
+    former per-pair key check in ``_validate_matching_fields``;
+    validation semantics are unchanged (a pair must have exactly
+    ``left`` and ``right``).
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    left: str = Field(..., max_length=500, min_length=1, title='Left')
+    """
+    The left-column item. The renderer shuffles before display.
+    """
+    right: str = Field(..., max_length=500, min_length=1, title='Right')
+    """
+    The right-column item this pairs with.
+    """
+    stable_id: SlugId | None = Field(None, title='Stable Id')
+    """
+    engine#91 - schema 1.12 (additive). Element-level counterpart to the exercise/card stable_id (engine#90): identifies THIS pair for progress/SRS joins below the exercise level, so an answer-text correction (moving `left`/`right`) does not orphan its learner row. Once published it NEVER changes. Shares the SAME per-set stable_id namespace as card/exercise ids (checked the same way: collectStableIds set-wide, the schema's E-STABLE-ID-DUP rule per-document). Opaque mint-once value, NOT derived from content. Optional: content without it validates unchanged. Uses the strict $defs/SlugId shape (hyphens only) - unlike the card/exercise field, this is a brand-new field with no legacy underscore-bearing ids to grandfather.
+    """
+
+
+class Card(BaseModel):
+    """
+    The smallest learnable unit (Phase 43 / 2B-lesson).
+
+    A card carries a single term / concept / fact in a single
+    direction. SRS (Phase 46) tracks one card at a time;
+    individual exercises reference cards by id so a single
+    'Bonjour = Hello' card can drive a matching exercise, a
+    free-text drill, and a summary review without
+    duplication.
+
+    Convention: ``card.id`` is unique within the lesson, not
+    globally. Cross-lesson card sharing happens via a
+    separate ``shared/`` directory inside the set (P-111
+    territory — not yet implemented).
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    audio: str | None = Field(None, title='Audio')
+    """
+    Optional relative path inside ``assets/`` for TTS-recorded pronunciation. The voice plugin already supports playback (v1.18.0).
+    """
+    back: str = Field(..., max_length=500, min_length=1, title='Back')
+    """
+    What the learner is being TAUGHT to recall. Typically the translation / definition / answer (e.g. 'Hello').
+    """
+    code_language: str | None = Field(None, max_length=30, title='Code Language')
+    """
+    Highlighter language hint for ``code_snippet`` ('python', 'javascript', 'sql', 'excel', ...). Free string; the viewer maps unknown values to plain text.
+    """
+    code_snippet: str | None = Field(None, max_length=5000, title='Code Snippet')
+    """
+    Optional code / formula the card teaches (e.g. a Python snippet or an Excel formula). Rendered as a monospace, syntax-highlighted block in the viewer.
+    """
+    difficulty: int | None = Field(None, ge=1, le=5, title='Difficulty')
+    """
+    Optional 1-5 difficulty scale (1 = easiest).
+    """
+    expected_output: str | None = Field(None, max_length=2000, title='Expected Output')
+    """
+    What ``code_snippet`` produces, shown in an 'Output:' block.
+    """
+    front: str = Field(..., max_length=500, min_length=1, title='Front')
+    """
+    What the learner sees first. Typically the target-language term (e.g. 'Bonjour').
+    """
+    hint: str | None = Field(None, max_length=1000, title='Hint')
+    """
+    Progressive hint, revealed on request during an exercise.
+    """
+    id: str = Field(
+        ...,
+        max_length=120,
+        min_length=1,
+        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
+        title='Id',
+    )
+    """
+    Slug-safe id. Unique within the parent lesson. SRS reviews this id, not the surface term.
+    """
+    stable_id: str | None = Field(
+        None, pattern='^[a-z0-9][a-z0-9_-]{7,63}$', title='Stable Id'
+    )
+    """
+    engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-].
+    """
+    image: str | None = Field(None, title='Image')
+    """
+    Optional relative path inside the set's ``assets/`` directory ('assets/img/bonjour.png'). Resolved by the asset loader.
+    """
+    media_type: MediaType | None = Field(None, title='Media Type')
+    """
+    Card content kind: 'text' (default when null), 'code', 'formula', or 'diagram'. Drives code-aware rendering + exercise input (monospace editor for code/formula). EXP-039: a closed ``Literal`` so the generated JSON-Schema / TS types carry the exact union (was a free ``str`` gated by a runtime validator).
+    """
+    notes: str | None = Field(None, max_length=2000, title='Notes')
+    """
+    Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings — anything that helps long-term retention.
+    """
+    tags: list[SlugId] = Field([], max_length=20, title='Tags', validate_default=True)
+    """
+    Tags for SRS filtering ('greeting', 'verb-present', 'irregular'). Each tag must match $defs/SlugId - the reference consumer checks tags with the same regex it applies to ids and skips lessons whose tags fail (engine#108, hard since schema 1.11 after the published corpus was cleaned).
+    """
+    token_roles: list[CardTokenRole] | None = Field(None, max_length=10, title='Token Roles')
+    """
+    Phase 52I / v1.35.0 / P-130. Optional list of ``{token, role}`` annotations on the card's ``front``. The cloze generator (52E) uses these to pick a semantically-meaningful blank when available; absent annotations fall through to a position-based heuristic so old content keeps working unchanged.
     """
 
 
@@ -530,97 +633,6 @@ class LessonStep(BaseModel):
     type: StepType
     """
     THEORY or EXERCISE.
-    """
-
-
-class Card(BaseModel):
-    """
-    The smallest learnable unit (Phase 43 / 2B-lesson).
-
-    A card carries a single term / concept / fact in a single
-    direction. SRS (Phase 46) tracks one card at a time;
-    individual exercises reference cards by id so a single
-    'Bonjour = Hello' card can drive a matching exercise, a
-    free-text drill, and a summary review without
-    duplication.
-
-    Convention: ``card.id`` is unique within the lesson, not
-    globally. Cross-lesson card sharing happens via a
-    separate ``shared/`` directory inside the set (P-111
-    territory — not yet implemented).
-    """
-
-    model_config = ConfigDict(
-        extra='forbid',
-        frozen=True,
-    )
-    audio: str | None = Field(None, title='Audio')
-    """
-    Optional relative path inside ``assets/`` for TTS-recorded pronunciation. The voice plugin already supports playback (v1.18.0).
-    """
-    back: str = Field(..., max_length=500, min_length=1, title='Back')
-    """
-    What the learner is being TAUGHT to recall. Typically the translation / definition / answer (e.g. 'Hello').
-    """
-    code_language: str | None = Field(None, max_length=30, title='Code Language')
-    """
-    Highlighter language hint for ``code_snippet`` ('python', 'javascript', 'sql', 'excel', ...). Free string; the viewer maps unknown values to plain text.
-    """
-    code_snippet: str | None = Field(None, max_length=5000, title='Code Snippet')
-    """
-    Optional code / formula the card teaches (e.g. a Python snippet or an Excel formula). Rendered as a monospace, syntax-highlighted block in the viewer.
-    """
-    difficulty: int | None = Field(None, ge=1, le=5, title='Difficulty')
-    """
-    Optional 1-5 difficulty scale (1 = easiest).
-    """
-    expected_output: str | None = Field(None, max_length=2000, title='Expected Output')
-    """
-    What ``code_snippet`` produces, shown in an 'Output:' block.
-    """
-    front: str = Field(..., max_length=500, min_length=1, title='Front')
-    """
-    What the learner sees first. Typically the target-language term (e.g. 'Bonjour').
-    """
-    hint: str | None = Field(None, max_length=1000, title='Hint')
-    """
-    Progressive hint, revealed on request during an exercise.
-    """
-    id: str = Field(
-        ...,
-        max_length=120,
-        min_length=1,
-        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
-        title='Id',
-    )
-    """
-    Slug-safe id. Unique within the parent lesson. SRS reviews this id, not the surface term.
-    """
-    stable_id: str | None = Field(
-        None, pattern='^[a-z0-9][a-z0-9_-]{7,63}$', title='Stable Id'
-    )
-    """
-    engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-].
-    """
-    image: str | None = Field(None, title='Image')
-    """
-    Optional relative path inside the set's ``assets/`` directory ('assets/img/bonjour.png'). Resolved by the asset loader.
-    """
-    media_type: MediaType | None = Field(None, title='Media Type')
-    """
-    Card content kind: 'text' (default when null), 'code', 'formula', or 'diagram'. Drives code-aware rendering + exercise input (monospace editor for code/formula). EXP-039: a closed ``Literal`` so the generated JSON-Schema / TS types carry the exact union (was a free ``str`` gated by a runtime validator).
-    """
-    notes: str | None = Field(None, max_length=2000, title='Notes')
-    """
-    Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings — anything that helps long-term retention.
-    """
-    tags: list[SlugId] = Field([], max_length=20, title='Tags', validate_default=True)
-    """
-    Tags for SRS filtering ('greeting', 'verb-present', 'irregular'). Each tag must match $defs/SlugId - the reference consumer checks tags with the same regex it applies to ids and skips lessons whose tags fail (engine#108, hard since schema 1.11 after the published corpus was cleaned).
-    """
-    token_roles: list[CardTokenRole] | None = Field(None, max_length=10, title='Token Roles')
-    """
-    Phase 52I / v1.35.0 / P-130. Optional list of ``{token, role}`` annotations on the card's ``front``. The cloze generator (52E) uses these to pick a semantically-meaningful blank when available; absent annotations fall through to a position-based heuristic so old content keeps working unchanged.
     """
 
 

@@ -57,13 +57,21 @@ jobs:
         with:
           filters: |
             visual_critical:
-              - 'frontend/src/components/lesson/**'
-              - 'frontend/src/pages/lesson/**'
-              - 'frontend/src/components/exercises/**'
-              - 'frontend/src/styles/global.css'
-              - 'frontend/src/styles/legacy/**'
-              - 'frontend/src/styles/tailwind.css'
-              - 'frontend/src/styles/themes/**'
+              # #2552 — deliberately coarse. e2e/visual/helpers.ts drives
+              # baselines for a much wider view set than "lesson" (content,
+              # dashboard, learning-path, settings, statistics,
+              # shortcut-help, ...), and view names don't map 1:1 onto
+              # source directories (statistics lives under pages/dashboard/,
+              # shortcut-help under shared/ + components/a11y/). A curated
+              # per-directory list missed components/settings/** (#2546)
+              # after already causing #1628/#1638/#1635 in the same shape.
+              # Any file under these three UI roots can in principle appear
+              # in a screenshot, so "anything here is visual-critical" is
+              # the only form that can't miss a future view.
+              - 'frontend/src/pages/**'
+              - 'frontend/src/components/**'
+              - 'frontend/src/shared/**'
+              - 'frontend/src/styles/**'
             baselines:
               - 'e2e/visual/screenshots/**'
 
