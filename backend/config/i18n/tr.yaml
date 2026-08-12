@@ -1,4 +1,8 @@
 app:
+  loading: "Yükleniyor…"
+  loading_slow: "Bu beklenenden uzun sürüyor."
+  view_load_failed: "Bu görünüm yüklenemedi."
+  reload: "Yeniden yükle"
   name: Adaptive Learner
   tagline: Altı Yöntemli Modele göre uyarlanabilir öğrenme.
   skeleton_notice: İskelet aşaması. Alan modelleri, eklentiler ve sayfalar sonraki aşamalarda geliyor - bkz. docs/adaptive-learner-project-reference.md.

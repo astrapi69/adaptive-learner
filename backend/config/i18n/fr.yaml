@@ -1,4 +1,8 @@
 app:
+  loading: "Chargement…"
+  loading_slow: "Cela prend plus de temps que prévu."
+  view_load_failed: "Cette vue n'a pas pu être chargée."
+  reload: "Recharger"
   name: Adaptive Learner
   tagline: Un apprentissage qui s'adapte a toi.
   skeleton_notice: État squelette. Les modèles de domaine, plugins et pages arrivent dans les phases suivantes - voir docs/adaptive-learner-project-reference.md.

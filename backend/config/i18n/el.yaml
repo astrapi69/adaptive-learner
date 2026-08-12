@@ -1,4 +1,8 @@
 app:
+  loading: "Φόρτωση…"
+  loading_slow: "Αυτό διαρκεί περισσότερο από το αναμενόμενο."
+  view_load_failed: "Δεν ήταν δυνατή η φόρτωση αυτής της προβολής."
+  reload: "Επαναφόρτωση"
   name: Adaptive Learner
   tagline: Προσαρμοστική μάθηση βάσει του μοντέλου των έξι μεθόδων.
   skeleton_notice: Σκελετική κατάσταση. Τα μοντέλα του τομέα, τα plugins και οι σελίδες έρχονται στις επόμενες φάσεις - δες docs/adaptive-learner-project-reference.md.
