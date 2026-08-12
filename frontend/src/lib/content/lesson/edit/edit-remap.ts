@@ -20,10 +20,14 @@
  */
 
 import {getStorage} from "../../../../storage";
+import {notify} from "../../../../utils/notify";
+import {readLearnerState} from "../../../learning/learnerState";
 import {cachedLessonToPeek} from "../../update/plan-set-update";
 import {planElementKeyRemaps} from "../../update/remap-plan";
 import type {SrsIdentity} from "../../update/update-impact";
 import type {ContentLesson} from "../../../../storage/types";
+
+type Translate = (key: string, fallback?: string) => string;
 
 /** The ``lessons/{id}.json`` path ``ElementError.lesson_id`` is stored under
  *  - ``lesson.id`` is the bare id; every read/write path keys on the
@@ -79,4 +83,58 @@ export async function remapOrphanedElementKeys(
     }
     const {applied} = await storage.elementErrors.remapKeys(userId, plan.certain);
     return {applied, uncertain: plan.uncertain.length};
+}
+
+/**
+ * ``CreateLesson.saveLocally``'s call site: run {@link remapOrphanedElementKeys}
+ * for the just-saved lesson and translate the result into the same toast
+ * vocabulary the repo-download-update path already uses (``carried_over`` /
+ * ``carry_over_failed``, #2309's messaging). Kept out of the page component
+ * so it stays under the cohesion size gate (same reasoning as
+ * ``edit-session.ts``). Best-effort: the lesson content is already saved
+ * regardless of this outcome, so a failure here is reported, never thrown -
+ * the user's edit is never lost because progress carry-over failed. A no-op
+ * (no storage read at all) when nobody is signed in.
+ */
+export async function carryOverReviewProgress(
+    setId: string,
+    lessonId: string,
+    oldLesson: ContentLesson,
+    newLesson: ContentLesson,
+    t: Translate,
+): Promise<void> {
+    const userId = readLearnerState().userId;
+    if (!userId) return;
+    try {
+        const {applied, uncertain} = await remapOrphanedElementKeys(
+            userId,
+            setId,
+            lessonId,
+            oldLesson,
+            newLesson,
+        );
+        if (applied > 0) {
+            notify.success(
+                t(
+                    "create_lesson.save.progress_carried_over",
+                    "Carried over {count} review card(s) for the changed answer.",
+                ).replace("{count}", String(applied)),
+            );
+        }
+        if (uncertain > 0) {
+            notify.info(
+                t(
+                    "create_lesson.save.progress_not_carried_over",
+                    "{count} review card(s) could not be confidently matched to the changed answer and will be recreated on next practice.",
+                ).replace("{count}", String(uncertain)),
+            );
+        }
+    } catch {
+        notify.error(
+            t(
+                "content.update_guard.carry_over_failed",
+                "The update was applied, but the progress could not be carried over.",
+            ),
+        );
+    }
 }
