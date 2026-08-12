@@ -2934,6 +2934,8 @@ create_lesson:
     to_browser: "コンテンツブラウザへ"
     save_file: "ファイルとして保存"
     file_saved: "レッスンをファイルとして保存しました。"
+    progress_carried_over: "変更した解答について、復習カードを{count}件引き継ぎました。"
+    progress_not_carried_over: "{count}件の復習カードは変更した解答に確実に対応付けできなかったため、次回の練習時に再作成されます。"
   templates:
     extensions:
       title: "高度な演習タイプ"

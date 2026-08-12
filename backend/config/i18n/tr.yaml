@@ -2934,6 +2934,8 @@ create_lesson:
     to_browser: "İçerik tarayıcısına"
     save_file: "Dosya olarak kaydet"
     file_saved: "Ders dosya olarak kaydedildi."
+    progress_carried_over: "Değiştirilen cevap için {count} tekrar kartı aktarıldı."
+    progress_not_carried_over: "{count} tekrar kartı, değiştirilen cevapla güvenilir şekilde eşleştirilemedi ve bir sonraki alıştırmada yeniden oluşturulacak."
   templates:
     extensions:
       title: "Gelişmiş alıştırma türleri"

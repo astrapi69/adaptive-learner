@@ -3197,7 +3197,9 @@
       "create_another": "Create another lesson",
       "to_browser": "To Content Browser",
       "save_file": "Save as file",
-      "file_saved": "Lesson saved as a file."
+      "file_saved": "Lesson saved as a file.",
+      "progress_carried_over": "Carried over {count} review card(s) for the changed answer.",
+      "progress_not_carried_over": "{count} review card(s) could not be confidently matched to the changed answer and will be recreated on next practice."
     },
     "templates": {
       "extensions": {

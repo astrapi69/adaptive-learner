@@ -76,6 +76,7 @@ import {
     mergeEditedLessonIntoSet,
     withPreservedSetBook,
 } from "../../lib/content/lesson/edit/edit-session";
+import {remapOrphanedElementKeys} from "../../lib/content/lesson/edit/edit-remap";
 import {useEditLessonSession} from "../../hooks/content/edit/useEditLessonSession";
 import {
     buildBookLessons,
@@ -497,6 +498,57 @@ export default function CreateLesson() {
         }
     }
 
+    /**
+     * #2519 — after an edit-save overwrites the lesson, carry over any
+     * review-card rows a changed answer text would otherwise orphan (the
+     * remap-plan machinery the repo-download-update path already trusts,
+     * see ``edit-remap.ts``). Best-effort: the lesson content is already
+     * saved regardless of this outcome, so a failure here is reported, not
+     * thrown - the user's edit is never lost because progress carry-over
+     * failed.
+     */
+    async function carryOverReviewProgress(
+        setId: string,
+        lessonId: string,
+        oldLesson: ContentLesson,
+        newLesson: ContentLesson,
+    ): Promise<void> {
+        const userId = readLearnerState().userId;
+        if (!userId) return;
+        try {
+            const {applied, uncertain} = await remapOrphanedElementKeys(
+                userId,
+                setId,
+                lessonId,
+                oldLesson,
+                newLesson,
+            );
+            if (applied > 0) {
+                notify.success(
+                    t(
+                        "create_lesson.save.progress_carried_over",
+                        "Carried over {count} review card(s) for the changed answer.",
+                    ).replace("{count}", String(applied)),
+                );
+            }
+            if (uncertain > 0) {
+                notify.info(
+                    t(
+                        "create_lesson.save.progress_not_carried_over",
+                        "{count} review card(s) could not be confidently matched to the changed answer and will be recreated on next practice.",
+                    ).replace("{count}", String(uncertain)),
+                );
+            }
+        } catch {
+            notify.error(
+                t(
+                    "content.update_guard.carry_over_failed",
+                    "The update was applied, but the progress could not be carried over.",
+                ),
+            );
+        }
+    }
+
     async function saveLocally(): Promise<ContentSetEntry | null> {
         if (saving) return null;
         // #1946 — defense-in-depth: every save path (book / extension / core)
@@ -567,6 +619,14 @@ export default function CreateLesson() {
                 input = buildUserSetInput({meta, cards, exercises}, lesson);
             }
             const entry = await getStorage().contentLoader.saveUserSet(input);
+            if (editContext) {
+                await carryOverReviewProgress(
+                    editContext.setId,
+                    editContext.lessonId,
+                    editContext.lessons[editContext.editIndex],
+                    lesson,
+                );
+            }
             if (!editMode) clearLessonDraft();
             setSavedLessonId(lesson.id);
             setSavedLesson(lesson);

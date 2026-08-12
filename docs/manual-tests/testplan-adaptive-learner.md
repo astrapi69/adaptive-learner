@@ -699,6 +699,15 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Kopie importieren") zeigen den Hinweis, dass eine Kopie OHNE
       Lernfortschritt startet, während das Original seinen Fortschritt
       und seine Wiederholungskarten behält
+- [ ] **Wiederholkarte übersteht Antwort-Korrektur (#2519):** eigene
+      Lektion mit einer Freitext-Übung anlegen/speichern → üben, bis eine
+      Wiederholkarte für diese Übung existiert (Wiederholungs-Warteschlange
+      zeigt sie) → Lektion bearbeiten, Tippfehler in der akzeptierten
+      Antwort korrigieren (z. B. "Merci" → "Merci !"), speichern.
+      Erwartung: Toast "{N} Wiederholkarte(n) für die geänderte Antwort
+      übernommen." erscheint, die Wiederholkarte bleibt (kein stiller
+      Verlust der Fehler-/SRS-Historie). Gilt für BEIDE Speichermodi
+      (API + Dexie)
 - [ ] **Einfache Lektion (ohne Extension) bleibt speicherbar (#1919):**
       eine Lektion per Auto-Generieren erstellen (nur die sechs CORE-Typen,
       keine Extension-Übung), lokal speichern → über Bearbeiten erneut

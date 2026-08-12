@@ -3197,7 +3197,9 @@
       "create_another": "Criar outra lição",
       "to_browser": "Para o navegador de conteúdo",
       "save_file": "Guardar como ficheiro",
-      "file_saved": "Lição guardada como ficheiro."
+      "file_saved": "Lição guardada como ficheiro.",
+      "progress_carried_over": "Foram transferidos {count} cartão(ões) de revisão para a resposta alterada.",
+      "progress_not_carried_over": "{count} cartão(ões) de revisão não puderam ser associados com confiança à resposta alterada e serão recriados na próxima prática."
     },
     "templates": {
       "extensions": {

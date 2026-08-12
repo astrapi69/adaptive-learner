@@ -654,6 +654,14 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       "Import as copy") both show a note that a copy starts WITHOUT
       learning progress, while the original keeps its progress and
       review cards
+- [ ] **A review card survives an answer-text correction (#2519):**
+      create/save an own lesson with a free_text exercise → practice it
+      until a review card exists for that exercise (the review queue shows
+      it) → edit the lesson, fix a typo in the accepted answer (e.g.
+      "Merci" → "Merci !"), save. Expected: a toast "Carried over {N}
+      review card(s) for the changed answer." appears, the review card
+      survives (no silent loss of the error/SRS history). Applies to BOTH
+      storage modes (API + Dexie)
 - [ ] **Reopen a plain (no-extension) lesson stays saveable (#1919):**
       create a lesson via Auto-generate (only the six CORE types, no
       extension exercise), Save locally → reopen via Edit → step to Review:

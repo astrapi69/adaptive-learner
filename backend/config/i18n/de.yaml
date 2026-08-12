@@ -2938,6 +2938,8 @@ create_lesson:
     to_browser: "Zum Content Browser"
     save_file: "Als Datei speichern"
     file_saved: "Lektion als Datei gespeichert."
+    progress_carried_over: "{count} Wiederholungskarte(n) für die geänderte Antwort übernommen."
+    progress_not_carried_over: "{count} Wiederholungskarte(n) konnten der geänderten Antwort nicht sicher zugeordnet werden und werden beim nächsten Üben neu angelegt."
   templates:
     extensions:
       title: "Erweiterte Übungstypen"
