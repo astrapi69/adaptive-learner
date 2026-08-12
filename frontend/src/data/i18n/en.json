@@ -1,5 +1,9 @@
 {
   "app": {
+    "loading": "Loading…",
+    "loading_slow": "This is taking longer than expected.",
+    "view_load_failed": "This view could not be loaded.",
+    "reload": "Reload",
     "name": "Adaptive Learner",
     "tagline": "Learning that adapts to you.",
     "skeleton_notice": "Skeleton state. Domain models, plugins and pages land in upcoming phases - see docs/adaptive-learner-project-reference.md."

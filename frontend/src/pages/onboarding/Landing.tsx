@@ -53,6 +53,11 @@ import {shouldShowPortChangeHint} from "../../lib/backup/portChangeHint";
  * string swap) and to localStorage (persists for the next cold
  * start). The Start button routes to ``/onboarding``.
  */
+/** Fall back to the landing UI if the returning-user recovery neither
+ *  resolves nor rejects within this window (iOS Safari IndexedDB stall,
+ *  #2573). Generous - a real recovery is sub-second. */
+const RECOVERY_TIMEOUT_MS = 8000;
+
 export default function Landing() {
     const {t, lang, setLang} = useI18n();
     const {theme} = useTheme();
@@ -144,8 +149,20 @@ export default function Landing() {
             if (!cancelled) setChecking(false);
         });
 
+        // Recovery timeout (#2573): iOS Safari's IndexedDB can STALL - a
+        // ``findMostRecent`` / ``users.get`` that neither resolves nor
+        // rejects would leave the user on the checking screen forever. Fall
+        // back to the landing UI after RECOVERY_TIMEOUT_MS so a stalled read
+        // never wedges the entry flow. A successful recovery navigates away
+        // (unmount clears the timer); a resolved "no recovery" already
+        // flipped ``checking`` so this fires as a harmless no-op.
+        const recoveryTimeout = window.setTimeout(() => {
+            if (!cancelled) setChecking(false);
+        }, RECOVERY_TIMEOUT_MS);
+
         return () => {
             cancelled = true;
+            window.clearTimeout(recoveryTimeout);
         };
     }, [navigate, t]);
 

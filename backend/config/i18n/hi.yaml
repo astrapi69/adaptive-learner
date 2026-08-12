@@ -1,6 +1,10 @@
 # Hindi (hi) UI catalog - AI-generated draft, review-pending.
 # Generated from en.yaml; structure mirrors EN (I18N-05).
 app:
+  loading: "लोड हो रहा है…"
+  loading_slow: "यह अपेक्षा से अधिक समय ले रहा है।"
+  view_load_failed: "यह दृश्य लोड नहीं हो सका।"
+  reload: "फिर से लोड करें"
   name: अडैप्टिव लर्नर
   tagline: ऐसी शिक्षा जो आपके अनुसार ढलती है।
   skeleton_notice: स्केलेटन अवस्था। डोमेन मॉडल, प्लगइन और पेज आने वाले चरणों में जुड़ेंगे - देखें docs/adaptive-learner-project-reference.md।

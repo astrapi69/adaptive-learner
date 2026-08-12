@@ -1,5 +1,9 @@
 {
   "app": {
+    "loading": "Cargando…",
+    "loading_slow": "Esto está tardando más de lo esperado.",
+    "view_load_failed": "No se pudo cargar esta vista.",
+    "reload": "Recargar",
     "name": "Adaptive Learner",
     "tagline": "Aprendizaje que se adapta a ti.",
     "skeleton_notice": "Estado esqueleto. Los modelos de dominio, plugins y páginas llegan en fases próximas - ver docs/adaptive-learner-project-reference.md."
