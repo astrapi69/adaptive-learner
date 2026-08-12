@@ -15,7 +15,8 @@
  * storage-mode-independent).
  */
 
-import {elementKeysOf, type KeyBearingExercise} from "../../srs/element-keys";
+import {elementIdentityKeysOf} from "../../srs/element-identity";
+import type {KeyBearingExercise} from "../../srs/element-keys";
 
 /**
  * A lesson exercise as the peek sees it: raw parsed JSON, not a constructed
@@ -38,8 +39,10 @@ export interface PeekLesson {
 /**
  * The element_keys an exercise contributes to the SRS.
  *
- * Delegates to {@link elementKeysOf} — the SAME rule the runtime derivers in
- * ``lib/srs/element-attempt.ts`` apply when recording an attempt. Before #2303
+ * Delegates to {@link elementIdentityKeysOf} - the SAME rule the runtime
+ * derivers in ``lib/srs/element-attempt.ts`` apply when recording an
+ * attempt (identity-preferring: a pair/blank/option's own stable_id when
+ * minted, engine#91, else the canonical content-derived text). Before #2303
  * this module carried its own copy covering five of thirteen types, so a
  * learner with rows on any other type saw EVERY update reported as breaking,
  * harmless ones included. A guard that always warns stops being read.
@@ -50,7 +53,7 @@ export interface PeekLesson {
  * empty set, which means the type is known and contributes no keys.
  */
 export function exerciseElementKeys(ex: PeekExercise): Set<string> | null {
-    const keys = elementKeysOf(ex);
+    const keys = elementIdentityKeysOf(ex);
     return keys === null ? null : new Set(keys);
 }
 
