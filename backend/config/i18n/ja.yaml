@@ -2241,7 +2241,15 @@ content:
     bulk_deleted: "{n} 個のセットを削除しました。"
     bulk_delete_title: "{n} 個のセットを削除しますか？"
     bulk_delete_confirm: "選択したセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。"
+    restarted: "新しい周回を開始しました。前回の周回は保持されます。"
+    restart_failed: "新しい周回を開始できませんでした。"
+    restart_confirm:
+      title: "このセットをもう一度学習しますか？"
+      message: "「{title}」の新しい周回が最初から始まります。前回の周回は履歴として保持され、何も削除されません。"
+      confirm: "新しい周回を開始"
+      cancel: "キャンセル"
     action:
+      restart: "もう一度学習"
       activate: "再アクティブ化"
       defer: "保留にする"
       complete: "完了としてマーク"

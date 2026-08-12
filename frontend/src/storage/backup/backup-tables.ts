@@ -11,11 +11,12 @@
 import type {AdaptiveLearnerDB} from "../dexie/db";
 
 export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
-// 1.4.0 — adds the optional ``local_storage`` snapshot block (P1 offline
-// parity). Backward-compatible: a reader ignores the block it doesn't know,
-// and a pre-1.4.0 backup simply lacks it (import then leaves localStorage
-// untouched).
-export const BACKUP_VERSION = "1.4.0";
+// 1.5.0 — EXP-051 / #2125: the ``set_runs`` table + ``run_id`` on
+// ``element_errors`` ride the backup. Backward-compatible: a pre-1.5.0
+// backup lacks ``set_runs`` and its element-error rows have no ``run_id``
+// (they import as the implicit run 1, materialised lazily on first
+// read/write). 1.4.0 added the optional ``local_storage`` snapshot block.
+export const BACKUP_VERSION = "1.5.0";
 
 export const EXCLUDED_USER_SETTINGS_FIELDS: ReadonlySet<string> = new Set([
     "api_key_anthropic",
@@ -235,6 +236,15 @@ export const BACKUP_TABLES: Record<string, BackupTableSpec> = {
         appendOnly: false,
         scope: "user",
     },
+    // EXP-051 / #2125 — Durchgang (run/pass) bookkeeping. Mutable
+    // (``closed_at`` stamped on the run close); direct user scope. Rides the
+    // backup so a learner's runs survive Export -> wipe -> Import.
+    set_runs: {
+        store: "setRuns",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
     // Phase 65 — API-key rollback cache. Carries Fernet ciphertext
     // (same scheme as ``UserSettings.api_key_*``). The backend syncs
     // and backs this up, so we mirror it for a "same file both
@@ -290,5 +300,7 @@ export const RESTORE_ORDER: readonly string[] = [
     "lesson_progress",
     "element_errors",
     "user_missions",
+    // EXP-051 / #2125 — direct user-scope, no cross-table FK in the backup set.
+    "set_runs",
     "api_key_backups",
 ];

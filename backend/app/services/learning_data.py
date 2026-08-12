@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 from app.exceptions import NotFoundError
 from app.repositories.element_errors_repo import ElementErrorsRepository
 from app.repositories.lesson_progress_repo import LessonProgressRepository
+from app.repositories.set_runs_repo import SetRunsRepository
 
 
 @dataclass(frozen=True)
@@ -45,6 +46,8 @@ def delete_learning_data(
     errors_repo: ElementErrorsRepository,
     user_id: str,
     deletion: LearningDataDeletion,
+    *,
+    set_runs_repo: SetRunsRepository | None = None,
 ) -> LearningDataDeletionResult:
     """Atomically delete the given progress rows + set-scoped review cards.
 
@@ -55,6 +58,9 @@ def delete_learning_data(
         user_id: owner scope; foreign users' rows are never touched.
         deletion: row ids + set ids to remove. Unknown ids are a
             zero-count no-op, never an error.
+        set_runs_repo: optional SetRun persistence (EXP-051 / #2125). When a
+            whole set is deleted, its Durchgang (run) rows are swept too -
+            across ALL runs - so no orphan bookkeeping survives the set.
 
     Returns:
         The per-table counts actually removed.
@@ -67,6 +73,9 @@ def delete_learning_data(
     lessons_deleted = progress_repo.delete_by_ids(user_id, deletion.lesson_progress_ids)
     cards_deleted = errors_repo.delete_by_set_ids(user_id, deletion.set_ids)
     cards_deleted += errors_repo.delete_by_lessons(user_id, deletion.lesson_cards)
+    if set_runs_repo is not None and deletion.set_ids:
+        # EXP-051 / #2125 - deleting a set removes ALL of its runs.
+        set_runs_repo.delete_by_set_ids(user_id, deletion.set_ids)
     progress_repo.commit()
     return LearningDataDeletionResult(
         lessons_deleted=lessons_deleted,

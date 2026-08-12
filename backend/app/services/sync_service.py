@@ -62,6 +62,7 @@ from app.models import (
     SessionMessage,
     SessionNote,
     SessionRating,
+    SetRun,
     StepEvaluation,
     StudyQuestion,
     Subject,
@@ -622,6 +623,7 @@ TABLES: dict[str, TableSpec] = {
         columns=(
             "id",
             "user_id",
+            "run_id",  # EXP-051 / #2125 - Durchgang generation; part of identity
             "set_id",
             "lesson_id",
             "exercise_id",
@@ -692,6 +694,24 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=32,
+        scope="direct",
+    ),
+    # EXP-051 / #2125 — Durchgang bookkeeping. MUTABLE (closed_at on close).
+    "set_runs": TableSpec(
+        model=SetRun,
+        columns=(
+            "id",
+            "user_id",
+            "set_id",
+            "run_id",
+            "content_version_at_start",
+            "started_at",
+            "closed_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=33,
         scope="direct",
     ),
 }

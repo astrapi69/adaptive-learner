@@ -42,6 +42,8 @@ interface ContentSetListViewProps extends SelectionProps {
   onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
   /** #1300 — open the delete-confirm dialog for a set. */
   onDelete?: (entry: ContentSetEntry) => void;
+  /** EXP-051 / #2125 — start a new Durchgang for a completed set. */
+  onRestart?: (entry: ContentSetEntry) => void;
 }
 
 /** Stable selection key for a set (source + id). */
@@ -56,6 +58,7 @@ function ContentSetListRow({
   entry,
   onSetStatus,
   onDelete,
+  onRestart,
   selectable,
   selectedKeys,
   onToggleSelect,
@@ -63,6 +66,7 @@ function ContentSetListRow({
   entry: ContentSetEntry;
   onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
   onDelete?: (entry: ContentSetEntry) => void;
+  onRestart?: (entry: ContentSetEntry) => void;
 } & SelectionProps) {
   const { t } = useI18n();
   const knowledge = isKnowledgeDomain(entry.domain, entry.source_language, entry.target_language);
@@ -126,6 +130,7 @@ function ContentSetListRow({
             status={entry.status ?? "active"}
             onSetStatus={(status) => onSetStatus(entry, status)}
             onDelete={() => onDelete(entry)}
+            onRestart={onRestart ? () => onRestart(entry) : undefined}
           />
         )}
       </div>
@@ -144,6 +149,7 @@ export default function ContentSetListView({
   sets,
   onSetStatus,
   onDelete,
+  onRestart,
   selectable,
   selectedKeys,
   onToggleSelect,
@@ -156,6 +162,7 @@ export default function ContentSetListView({
           entry={entry}
           onSetStatus={onSetStatus}
           onDelete={onDelete}
+          onRestart={onRestart}
           selectable={selectable}
           selectedKeys={selectedKeys}
           onToggleSelect={onToggleSelect}

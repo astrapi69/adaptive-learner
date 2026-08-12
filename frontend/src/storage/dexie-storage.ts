@@ -98,6 +98,7 @@ import {
   remapElementKeysDexie,
   remapExerciseIdsDexie,
 } from "./lessons/element-errors-dexie";
+import { listRunsDexie, startRunDexie } from "./lessons/set-runs-dexie";
 import { deleteLearningDataDexie } from "./lessons/orphan-data-dexie";
 import type {
   IStorageService,
@@ -248,6 +249,8 @@ export const dexieStorage: IStorageService = {
     list: (userId, opts) => listElementErrorsDexie(userId, opts),
     recordBulk: (userId, attempts) =>
       recordElementAttemptsDexie(userId, attempts),
+    startRun: (userId, setId, opts) => startRunDexie(userId, setId, opts),
+    listRuns: (userId, setId) => listRunsDexie(userId, setId),
     reviewQueue: (userId, opts) => computeReviewQueueDexie(userId, opts),
     remapKeys: (userId, remaps) => remapElementKeysDexie(userId, remaps),
     remapExerciseIds: (userId, remaps) => remapExerciseIdsDexie(userId, remaps),

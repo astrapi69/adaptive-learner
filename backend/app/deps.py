@@ -54,6 +54,10 @@ from app.repositories.reset_repo import (
     ResetRepository,
     SqlAlchemyResetRepository,
 )
+from app.repositories.set_runs_repo import (
+    SetRunsRepository,
+    SqlAlchemySetRunsRepository,
+)
 from app.repositories.settings_repo import (
     SettingsRepository,
     SqlAlchemySettingsRepository,
@@ -127,6 +131,11 @@ def get_element_errors_repo(db: Session = Depends(get_db)) -> ElementErrorsRepos
     return SqlAlchemyElementErrorsRepository(db)
 
 
+def get_set_runs_repo(db: Session = Depends(get_db)) -> SetRunsRepository:
+    """Provide a :class:`SetRunsRepository` bound to the request session."""
+    return SqlAlchemySetRunsRepository(db)
+
+
 def get_lesson_progress_repo(db: Session = Depends(get_db)) -> LessonProgressRepository:
     """Provide a :class:`LessonProgressRepository` bound to the request session."""
     return SqlAlchemyLessonProgressRepository(db)
@@ -149,6 +158,7 @@ __all__ = [
     "get_lesson_session_unification_repo",
     "get_projects_repo",
     "get_reset_repo",
+    "get_set_runs_repo",
     "get_settings_repo",
     "get_sync_repo",
     "get_taxonomy_repo",

@@ -54,13 +54,13 @@ Full reference: .claude/rules/architecture.md
 3. Read this file + relevant .claude/rules/ per task
 
 ## Data Model
-30 SQLAlchemy models in backend/app/models/__init__.py:
+31 SQLAlchemy models in backend/app/models/__init__.py:
 User, UserSettings, ApiKeyBackup, LearningProject, LearningProfile,
 Curriculum, LearningTopic, Lesson, LearningSession, SessionMessage,
 SessionRating, SessionNote, ProgressCommit, StepEvaluation, MethodSwitch,
 ImportedConversation, ImportedMessage, Subject, Tag, ProjectSubject,
 ProjectTag, UserXP, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
-StudyQuestion, LessonProgress, ElementError, UserMission
+StudyQuestion, LessonProgress, ElementError, SetRun, UserMission
 Full spec: docs/adaptive-learner-project-reference.md
 
 ## Plugins (14 shipped)

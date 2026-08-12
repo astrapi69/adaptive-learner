@@ -2243,7 +2243,15 @@ content:
     bulk_deleted: "{n} conjuntos eliminados."
     bulk_delete_title: "¿Eliminar {n} conjuntos?"
     bulk_delete_confirm: "Los conjuntos seleccionados y sus lecciones se eliminarán de Mi contenido. Tu progreso de aprendizaje se conserva y puedes volver a descargar los conjuntos en cualquier momento."
+    restarted: "Ha comenzado una nueva ronda. Se conserva tu ronda anterior."
+    restart_failed: "No se pudo iniciar una nueva ronda."
+    restart_confirm:
+      title: "¿Volver a trabajar este set?"
+      message: "Una nueva ronda de «{title}» empieza desde cero. Tu ronda anterior se conserva en tu historial; no se elimina nada."
+      confirm: "Iniciar nueva ronda"
+      cancel: "Cancelar"
     action:
+      restart: "Volver a trabajar"
       activate: "Reactivar"
       defer: "Aplazar"
       complete: "Marcar como completado"

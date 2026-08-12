@@ -2241,7 +2241,15 @@ content:
     bulk_deleted: "{n} conjuntos removidos."
     bulk_delete_title: "Excluir {n} conjuntos?"
     bulk_delete_confirm: "Os conjuntos selecionados e suas lições serão removidos de Meu conteúdo. Seu progresso de aprendizagem é mantido, e você pode baixar os conjuntos novamente a qualquer momento."
+    restarted: "Uma nova rodada começou. A sua rodada anterior é mantida."
+    restart_failed: "Não foi possível iniciar uma nova rodada."
+    restart_confirm:
+      title: "Trabalhar este conjunto novamente?"
+      message: "Uma nova rodada de “{title}” começa do zero. A sua rodada anterior é mantida no seu histórico; nada é excluído."
+      confirm: "Iniciar nova rodada"
+      cancel: "Cancelar"
     action:
+      restart: "Trabalhar novamente"
       activate: "Reativar"
       defer: "Adiar"
       complete: "Marcar como concluído"

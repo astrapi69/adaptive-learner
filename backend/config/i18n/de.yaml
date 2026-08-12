@@ -2246,7 +2246,15 @@ content:
     bulk_deleted: "{n} Sets entfernt."
     bulk_delete_title: "{n} Sets löschen?"
     bulk_delete_confirm: "Die ausgewählten Sets und ihre Lektionen werden aus „Meine Inhalte“ entfernt. Dein Lernfortschritt bleibt erhalten, und du kannst die Sets jederzeit erneut herunterladen."
+    restarted: "Ein neuer Durchgang wurde gestartet. Dein vorheriger Durchgang bleibt erhalten."
+    restart_failed: "Neuer Durchgang konnte nicht gestartet werden."
+    restart_confirm:
+      title: "Dieses Set erneut durcharbeiten?"
+      message: "Ein neuer Durchgang von „{title}“ beginnt von vorne. Dein vorheriger Durchgang bleibt für deine Historie erhalten; es wird nichts gelöscht."
+      confirm: "Neuen Durchgang starten"
+      cancel: "Abbrechen"
     action:
+      restart: "Erneut durcharbeiten"
       activate: "Wieder aktivieren"
       defer: "Zurückstellen"
       complete: "Als abgeschlossen markieren"

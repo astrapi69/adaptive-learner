@@ -2243,7 +2243,15 @@ content:
     bulk_deleted: "{n} ensembles supprimés."
     bulk_delete_title: "Supprimer {n} ensembles ?"
     bulk_delete_confirm: "Les ensembles sélectionnés et leurs leçons seront retirés de Mon contenu. Votre progression est conservée et vous pouvez les retélécharger à tout moment."
+    restarted: "Un nouveau passage a commencé. Votre passage précédent est conservé."
+    restart_failed: "Impossible de démarrer un nouveau passage."
+    restart_confirm:
+      title: "Retravailler ce set ?"
+      message: "Un nouveau passage de « {title} » recommence depuis le début. Votre passage précédent est conservé dans votre historique ; rien n’est supprimé."
+      confirm: "Démarrer un nouveau passage"
+      cancel: "Annuler"
     action:
+      restart: "Retravailler"
       activate: "Réactiver"
       defer: "Reporter"
       complete: "Marquer comme terminé"

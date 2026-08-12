@@ -38,7 +38,9 @@ from datetime import UTC, datetime
 
 from app.models import ElementError
 from app.repositories.element_errors_repo import ElementErrorsRepository
+from app.repositories.set_runs_repo import SetRunsRepository
 from app.schemas import ElementAttemptIn
+from app.services import set_runs as set_runs_service
 
 # D4 (Phase 46 plan): 3 consecutive correct = mastered. The
 # constant lives here at the service layer (not in a global
@@ -81,9 +83,10 @@ def _find_row(
     repo: ElementErrorsRepository,
     user_id: str,
     attempt: ElementAttemptIn,
+    run_id: int,
 ) -> ElementError | None:
     """Return the existing element-error row for the
-    composite key, or ``None`` if first attempt."""
+    composite key (within ``run_id``), or ``None`` if first attempt."""
     return repo.find(
         user_id=user_id,
         set_id=attempt.set_id,
@@ -91,6 +94,7 @@ def _find_row(
         exercise_id=attempt.exercise_id,
         element_key=attempt.element_key,
         direction=attempt.direction,
+        run_id=run_id,
     )
 
 
@@ -98,20 +102,29 @@ def record_attempt(
     repo: ElementErrorsRepository,
     user_id: str,
     attempt: ElementAttemptIn,
+    *,
+    run_id: int = 1,
 ) -> ElementError:
     """Upsert one attempt; apply the transition matrix.
 
     Flushes BUT does not commit — the caller (route layer)
     owns the transaction boundary so a bulk upsert is atomic.
     Returns the post-state row.
+
+    ``run_id`` is the active Durchgang (EXP-051 / #2125) the attempt
+    belongs to; new rows are stamped with it and the upsert only matches
+    a row of the SAME run, so a second run never overwrites the first.
+    The route resolves the active run per set; direct callers default to
+    the first run.
     """
     now = _utcnow()
-    row = _find_row(repo, user_id, attempt)
+    row = _find_row(repo, user_id, attempt, run_id)
 
     if row is None:
-        # First time we see this element for this user.
+        # First time we see this element for this user (in this run).
         row = ElementError(
             user_id=user_id,
+            run_id=run_id,
             set_id=attempt.set_id,
             lesson_id=attempt.lesson_id,
             exercise_id=attempt.exercise_id,
@@ -196,6 +209,8 @@ def record_attempts(
     repo: ElementErrorsRepository,
     user_id: str,
     attempts: list[ElementAttemptIn],
+    *,
+    set_runs_repo: SetRunsRepository | None = None,
 ) -> list[ElementError]:
     """Bulk upsert; preserves input order in the return list.
 
@@ -203,10 +218,27 @@ def record_attempts(
     commit lands them atomically (or rolls them all back on
     error). Empty input returns an empty list without touching
     the DB.
+
+    When ``set_runs_repo`` is given (the route path), each attempt is
+    recorded under its set's ACTIVE Durchgang (EXP-051 / #2125), lazily
+    materialising the implicit run 1 on first write. The active run is
+    resolved once per set (cached) so a bulk of same-set attempts costs
+    one lookup. Without it, attempts default to run 1.
     """
     if not attempts:
         return []
-    return [record_attempt(repo, user_id, a) for a in attempts]
+    run_by_set: dict[str, int] = {}
+    rows: list[ElementError] = []
+    for attempt in attempts:
+        if set_runs_repo is not None:
+            run_id = run_by_set.get(attempt.set_id)
+            if run_id is None:
+                run_id = set_runs_service.ensure_active_run(set_runs_repo, user_id, attempt.set_id)
+                run_by_set[attempt.set_id] = run_id
+        else:
+            run_id = 1
+        rows.append(record_attempt(repo, user_id, attempt, run_id=run_id))
+    return rows
 
 
 def remap_element_keys(
@@ -248,8 +280,9 @@ def list_for_user(
     set_id: str | None = None,
     include_mastered: bool = True,
     include_retired: bool = False,
+    run_id: int | None = None,
 ) -> list[ElementError]:
-    """Read all element-error rows for a user.
+    """Read element-error rows for a user.
 
     Used by the debug / list endpoint (commit C6) and as
     the data source for the review-queue computation
@@ -257,12 +290,18 @@ def list_for_user(
     since mastered elements are excluded from review).
     Archived rows (#2188 retirement) are excluded unless
     ``include_retired`` is ``True``.
+
+    ``run_id`` selects the Durchgang (EXP-051 / #2125): ``None`` (default)
+    scopes to each set's active run — the review-queue / current-state
+    view; an ``int`` targets exactly that run (incl. a closed one) for the
+    Fehlerhistorie.
     """
     return repo.list_for_user(
         user_id,
         set_id=set_id,
         include_mastered=include_mastered,
         include_retired=include_retired,
+        run_id=run_id,
     )
 
 

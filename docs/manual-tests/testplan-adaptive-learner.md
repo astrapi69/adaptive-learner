@@ -580,6 +580,31 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
 
+### Set erneut durcharbeiten - zweiter Durchgang (#2125, EXP-051)
+
+Ort: Meine Inhalte (`/content?tab=my`), Drei-Punkte-Menü eines Sets im
+Status **Abgeschlossen**. Ein neuer Durchgang hebt den ersten für die
+spätere Auswertung auf, statt ihn zu überschreiben oder zurückzusetzen.
+
+- [ ] Ein Set als **Abgeschlossen** markieren -> im Drei-Punkte-Menü
+      erscheint **"Erneut durcharbeiten"** (bei aktiven/zurückgestellten
+      Sets NICHT vorhanden)
+- [ ] Klick -> **einfache** Bestätigung ("Ein neuer Durchgang beginnt von
+      vorne, der vorherige bleibt erhalten"), OHNE gezählte Löschmengen
+- [ ] Bestätigen -> Toast "Ein neuer Durchgang wurde gestartet …", das Set
+      steht wieder auf **Aktiv**, KEINE Fehlermeldung, kein Datenverlust
+- [ ] Abbrechen -> nichts passiert, Status bleibt Abgeschlossen
+- [ ] Nach dem Neustart eine zuvor gelernte Übung falsch beantworten -> die
+      Wiederholungswarteschlange füllt sich **frisch** (kalte Planung; die
+      Karten des ersten Durchgangs tauchen NICHT als überfällig auf)
+- [ ] Set löschen (mit "Fortschritt löschen") -> ALLE Durchgänge des Sets
+      verschwinden, keine verwaisten Zeilen
+- [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
+      (Dexie-Modus) - der Ablauf muss in BEIDEN Modi funktionieren
+- [ ] Backup-Rundlauf: Export -> Wipe -> Import; die Durchgänge (inkl. des
+      abgeschlossenen ersten) überstehen den Import. Eine ältere Sicherung
+      ohne Durchgangsdaten importiert als impliziter Durchgang 1 (kein Crash)
+
 ### Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +

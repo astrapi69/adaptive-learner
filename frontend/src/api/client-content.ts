@@ -70,7 +70,12 @@ export const contentApi = {
     /** GET /api/users/{user_id}/element-errors */
     list: (
       userId: string,
-      opts: { setId?: string; includeMastered?: boolean; includeRetired?: boolean } = {},
+      opts: {
+        setId?: string;
+        includeMastered?: boolean;
+        includeRetired?: boolean;
+        runId?: number;
+      } = {},
     ) => {
       const params = new URLSearchParams();
       if (opts.setId !== undefined) params.set("set_id", opts.setId);
@@ -80,6 +85,8 @@ export const contentApi = {
       if (opts.includeRetired === true) {
         params.set("include_retired", "true");
       }
+      // EXP-051 / #2125 — read a specific Durchgang (omit for the active run).
+      if (opts.runId !== undefined) params.set("run_id", String(opts.runId));
       const qs = params.toString();
       const path = qs
         ? `/users/${encodeURIComponent(userId)}/element-errors?${qs}`
@@ -91,6 +98,24 @@ export const contentApi = {
       apiCall<import("../storage/types").ElementError[]>(
         `/users/${encodeURIComponent(userId)}/element-errors`,
         { method: "POST", body: { attempts } },
+      ),
+    /** POST /api/users/{user_id}/set-runs (EXP-051 / #2125 — start a run) */
+    startRun: (
+      userId: string,
+      setId: string,
+      opts: { contentVersion?: string } = {},
+    ) =>
+      apiCall<import("../storage/types").SetRun>(
+        `/users/${encodeURIComponent(userId)}/set-runs`,
+        {
+          method: "POST",
+          body: { set_id: setId, content_version: opts.contentVersion },
+        },
+      ),
+    /** GET /api/users/{user_id}/set-runs?set_id=... (EXP-051 — list runs) */
+    listRuns: (userId: string, setId: string) =>
+      apiCall<import("../storage/types").SetRun[]>(
+        `/users/${encodeURIComponent(userId)}/set-runs?set_id=${encodeURIComponent(setId)}`,
       ),
     /** POST /api/users/{user_id}/element-errors/remap (#2161 one-off recovery) */
     remap: (

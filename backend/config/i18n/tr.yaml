@@ -2241,7 +2241,15 @@ content:
     bulk_deleted: "{n} set kaldırıldı."
     bulk_delete_title: "{n} set silinsin mi?"
     bulk_delete_confirm: "Seçilen setler ve dersleri İçeriğim'den kaldırılacak. Öğrenme ilerlemeniz korunur ve setleri istediğiniz zaman yeniden indirebilirsiniz."
+    restarted: "Yeni bir tur başladı. Önceki turunuz saklanır."
+    restart_failed: "Yeni tur başlatılamadı."
+    restart_confirm:
+      title: "Bu set tekrar çalışılsın mı?"
+      message: "“{title}” için yeni bir tur baştan başlar. Önceki turunuz geçmişiniz için saklanır; hiçbir şey silinmez."
+      confirm: "Yeni tur başlat"
+      cancel: "İptal"
     action:
+      restart: "Tekrar çalış"
       activate: "Yeniden etkinleştir"
       defer: "Ertele"
       complete: "Tamamlandı olarak işaretle"

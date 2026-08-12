@@ -71,7 +71,7 @@ describe("backup-tables parity", () => {
 
     it("keeps the wire constants and the 3-provider key exclusion", () => {
         expect(BACKUP_FORMAT).toBe("adaptive-learner-backup");
-        expect(BACKUP_VERSION).toBe("1.4.0");
+        expect(BACKUP_VERSION).toBe("1.5.0");
         expect([...EXCLUDED_USER_SETTINGS_FIELDS].sort()).toEqual([
             "api_key_anthropic",
             "api_key_gemini",

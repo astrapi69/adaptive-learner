@@ -18,9 +18,10 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
 
-from app.deps import get_element_errors_repo
+from app.deps import get_element_errors_repo, get_set_runs_repo
 from app.exceptions import NotFoundError
 from app.repositories.element_errors_repo import ElementErrorsRepository
+from app.repositories.set_runs_repo import SetRunsRepository
 from app.schemas import (
     ArchiveRetiredIn,
     ArchiveRetiredResult,
@@ -30,9 +31,12 @@ from app.schemas import (
     ElementKeyRemapsIn,
     ExerciseIdRemapsIn,
     ReviewQueueItemOut,
+    SetRunOut,
+    StartRunIn,
 )
 from app.services import element_errors as element_errors_service
 from app.services import element_srs as element_srs_service
+from app.services import set_runs as set_runs_service
 
 router = APIRouter(prefix="/users", tags=["element-errors"])
 
@@ -69,9 +73,19 @@ def list_element_errors(
             "scheduling + due counts."
         ),
     ),
+    run_id: int | None = Query(
+        default=None,
+        ge=1,
+        description=(
+            "EXP-051 / #2125 — the Durchgang (run/pass) to read. Omit for "
+            "each set's ACTIVE run (current state); pass a run number to read "
+            "a specific past run for the Fehlerhistorie."
+        ),
+    ),
     repo: ElementErrorsRepository = Depends(get_element_errors_repo),
 ) -> list[ElementErrorOut]:
-    """List the user's element-error rows, optionally filtered by set and mastery state."""
+    """List the user's element-error rows, optionally filtered by set, mastery
+    state, and Durchgang."""
     _require_user(repo, user_id)
     rows = element_errors_service.list_for_user(
         repo,
@@ -79,6 +93,7 @@ def list_element_errors(
         set_id=set_id,
         include_mastered=include_mastered,
         include_retired=include_retired,
+        run_id=run_id,
     )
     return [ElementErrorOut.model_validate(row) for row in rows]
 
@@ -133,18 +148,24 @@ def record_element_attempts(
     user_id: str,
     payload: ElementAttemptsIn,
     repo: ElementErrorsRepository = Depends(get_element_errors_repo),
+    set_runs_repo: SetRunsRepository = Depends(get_set_runs_repo),
 ) -> list[ElementErrorOut]:
     """Bulk upsert; preserves input order in the response.
 
     The viewer's per-step recordStepResult hook (C10) calls
     this once per exercise submit with the attempts the
     exercise-side deriver produced. Per the Pydantic schema
-    in C4 the body caps at 100 attempts per call."""
+    in C4 the body caps at 100 attempts per call.
+
+    Each attempt is recorded under its set's active Durchgang (EXP-051 /
+    #2125). ``repo`` and ``set_runs_repo`` share the request session, so
+    the lazy run-1 materialisation and the attempt rows commit together."""
     _require_user(repo, user_id)
     rows = element_errors_service.record_attempts(
         repo,
         user_id,
         payload.attempts,
+        set_runs_repo=set_runs_repo,
     )
     repo.commit()
     return [ElementErrorOut.model_validate(row) for row in rows]
@@ -215,3 +236,56 @@ def archive_retired(
         repo, user_id, payload.set_id, payload.retired_ids
     )
     return ArchiveRetiredResult(archived=archived)
+
+
+def _require_user_for_runs(repo: SetRunsRepository, user_id: str) -> None:
+    if repo.get_user(user_id) is None:
+        raise NotFoundError(f"User {user_id} not found")
+
+
+@router.get(
+    "/{user_id}/set-runs",
+    response_model=list[SetRunOut],
+)
+def list_set_runs(
+    user_id: str,
+    set_id: str = Query(
+        ...,
+        min_length=1,
+        description="The content set whose Durchgänge (runs) to list.",
+    ),
+    repo: SetRunsRepository = Depends(get_set_runs_repo),
+) -> list[SetRunOut]:
+    """List every Durchgang (run/pass) of a set for the user, oldest first
+    (EXP-051 / #2125). The active run has ``closed_at = null``. The
+    Fehlerhistorie enumerates runs here, then reads each run's rows via the
+    ``run_id`` filter on the element-errors list."""
+    _require_user_for_runs(repo, user_id)
+    return [
+        SetRunOut.model_validate(row) for row in set_runs_service.list_runs(repo, user_id, set_id)
+    ]
+
+
+@router.post(
+    "/{user_id}/set-runs",
+    response_model=SetRunOut,
+)
+def start_set_run(
+    user_id: str,
+    payload: StartRunIn,
+    repo: SetRunsRepository = Depends(get_set_runs_repo),
+) -> SetRunOut:
+    """Start a new Durchgang of a set ("Set erneut durcharbeiten", #2125).
+
+    Atomically closes the current active run and opens the next: the prior
+    run's element-error rows stay frozen under their ``run_id`` for the
+    Fehlerhistorie, and new attempts write fresh rows under the new run
+    (cold SRS scheduling). Returns the newly opened run."""
+    _require_user_for_runs(repo, user_id)
+    new_run = set_runs_service.start_new_run(
+        repo,
+        user_id,
+        payload.set_id,
+        content_version=payload.content_version,
+    )
+    return SetRunOut.model_validate(new_run)
