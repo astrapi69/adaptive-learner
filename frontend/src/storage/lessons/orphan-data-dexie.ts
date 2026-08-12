@@ -57,29 +57,41 @@ export async function deleteLearningDataDexie(
   const lessonSetIds = [...new Set(lessonCards.map((card) => card.set_id))];
   let lessonsDeleted = 0;
   let cardsDeleted = 0;
-  await db.transaction("rw", db.lessonProgress, db.elementErrors, async () => {
-    if (progressIds.length > 0) {
-      lessonsDeleted = await db.lessonProgress
-        .where("id")
-        .anyOf(progressIds)
-        .and((row) => row.user_id === userId)
-        .delete();
-    }
-    if (setIds.length > 0) {
-      cardsDeleted = await db.elementErrors
-        .where("[user_id+set_id]")
-        .anyOf(setIds.map((setId) => [userId, setId]))
-        .delete();
-    }
-    if (lessonKeys.size > 0) {
-      // Lesson-scoped card delete (#2064): scan the affected sets via the
-      // ``[user_id+set_id]`` index, keep only rows whose lesson matches.
-      cardsDeleted += await db.elementErrors
-        .where("[user_id+set_id]")
-        .anyOf(lessonSetIds.map((setId) => [userId, setId]))
-        .and((row) => lessonKeys.has(`${row.set_id}#${row.lesson_id}`))
-        .delete();
-    }
-  });
+  await db.transaction(
+    "rw",
+    db.lessonProgress,
+    db.elementErrors,
+    db.setRuns,
+    async () => {
+      if (progressIds.length > 0) {
+        lessonsDeleted = await db.lessonProgress
+          .where("id")
+          .anyOf(progressIds)
+          .and((row) => row.user_id === userId)
+          .delete();
+      }
+      if (setIds.length > 0) {
+        cardsDeleted = await db.elementErrors
+          .where("[user_id+set_id]")
+          .anyOf(setIds.map((setId) => [userId, setId]))
+          .delete();
+        // EXP-051 / #2125 — a deleted set takes ALL of its Durchgang (run)
+        // rows with it, not just the active run.
+        await db.setRuns
+          .where("[user_id+set_id]")
+          .anyOf(setIds.map((setId) => [userId, setId]))
+          .delete();
+      }
+      if (lessonKeys.size > 0) {
+        // Lesson-scoped card delete (#2064): scan the affected sets via the
+        // ``[user_id+set_id]`` index, keep only rows whose lesson matches.
+        cardsDeleted += await db.elementErrors
+          .where("[user_id+set_id]")
+          .anyOf(lessonSetIds.map((setId) => [userId, setId]))
+          .and((row) => lessonKeys.has(`${row.set_id}#${row.lesson_id}`))
+          .delete();
+      }
+    },
+  );
   return { lessonsDeleted, cardsDeleted };
 }

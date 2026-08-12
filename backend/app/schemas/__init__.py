@@ -1742,6 +1742,33 @@ class ArchiveRetiredResult(BaseModel):
     archived: int
 
 
+class StartRunIn(BaseModel):
+    """Start a new Durchgang (run/pass) of a set (EXP-051 / #2125).
+
+    The learner triggers this from the "Set erneut durcharbeiten" action on
+    a completed set. The optional ``content_version`` records which content
+    fassung the run started against so the Fehlerhistorie can flag a run
+    whose content changed mid-run; it is not required.
+    """
+
+    set_id: str = Field(..., min_length=1, max_length=120)
+    content_version: str | None = Field(default=None, max_length=120)
+
+
+class SetRunOut(BaseModel):
+    """One Durchgang of a set. ``closed_at`` is null for the active run."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    set_id: str
+    run_id: int
+    content_version_at_start: str | None = None
+    started_at: datetime
+    closed_at: datetime | None = None
+
+
 class AttemptRecordOut(BaseModel):
     """#603 - one recorded attempt in the per-element history ring buffer."""
 
@@ -1764,6 +1791,9 @@ class ElementErrorOut(BaseModel):
     exercise_id: str
     element_key: str
     direction: str
+    # EXP-051 / #2125 — the Durchgang (run/pass) this row belongs to.
+    # Defaulted so pre-EXP-051 rows / older backups read back as run 1.
+    run_id: int = 1
     element_type: str
     user_answer: str
     correct_answer: str

@@ -66,6 +66,8 @@ interface ContentSetRowProps {
   onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
   /** #1300 — open the delete-confirm dialog for the set. */
   onDelete?: (entry: ContentSetEntry) => void;
+  /** EXP-051 / #2125 — start a new Durchgang for a completed set. */
+  onRestart?: (entry: ContentSetEntry) => void;
   /** #1351 — multi-select: show a selection checkbox on the tile. */
   selectable?: boolean;
   /** #1351 — whether this tile is currently selected. */
@@ -343,6 +345,7 @@ export default function ContentSetRow({
   aiBadgeStatus = "none",
   onSetStatus,
   onDelete,
+  onRestart,
   selectable,
   selected = false,
   onToggleSelect,
@@ -440,6 +443,7 @@ export default function ContentSetRow({
               status={entry.status ?? "active"}
               onSetStatus={(status) => onSetStatus(entry, status)}
               onDelete={() => onDelete(entry)}
+              onRestart={onRestart ? () => onRestart(entry) : undefined}
             />
           )}
         </>

@@ -107,6 +107,10 @@ export function useContentSetActions({
   const [bulkDeleteTargets, setBulkDeleteTargetsState] = useState<ContentSetEntry[] | null>(null);
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [bulkDeletePlan, setBulkDeletePlan] = useState<DeletionPlan | null>(null);
+
+  // EXP-051 / #2125 — "Set erneut durcharbeiten" confirm target + in-flight.
+  const [restartSetTarget, setRestartSetTarget] = useState<ContentSetEntry | null>(null);
+  const [restarting, setRestarting] = useState(false);
   // #2064 — single-lesson delete-confirm modal target (the set + the lesson
   // filename + a display title) + in-flight flag + learner-data plan.
   const [deleteLessonTarget, setDeleteLessonTargetState] =
@@ -281,6 +285,54 @@ export function useContentSetActions({
     );
     storeSetStatus(entry.source, entry.id, status);
     notify.success(t("content.set_status.changed", "Status updated."));
+  };
+
+  // EXP-051 / #2125 — request a new Durchgang (run/pass) of a COMPLETED set
+  // ("Set erneut durcharbeiten"). Opens a simple confirmation; the actual
+  // work runs in ``handleConfirmRestartSet``.
+  const requestRestartSet = (entry: ContentSetEntry) => {
+    setRestartSetTarget(entry);
+  };
+
+  // EXP-051 / #2125 — start the new run: the prior run's element-error
+  // history is kept (frozen for the Fehlerhistorie), a fresh run opens with
+  // cold SRS scheduling, and the set is reactivated so it shows in the
+  // active view for reworking. Routes through ``getStorage`` so it works in
+  // both storage modes.
+  const handleConfirmRestartSet = async () => {
+    const target = restartSetTarget;
+    if (!target) return;
+    const userId = readLearnerState().userId;
+    if (!userId) {
+      setRestartSetTarget(null);
+      return;
+    }
+    setRestarting(true);
+    try {
+      await getStorage().elementErrors.startRun(userId, target.id);
+      setSets((prev) =>
+        prev.map((row) =>
+          row.source === target.source && row.id === target.id
+            ? { ...row, status: "active" as SetStatus }
+            : row,
+        ),
+      );
+      storeSetStatus(target.source, target.id, "active");
+      notify.success(
+        t(
+          "content.set_status.restarted",
+          "A new run has started. Your previous run is kept.",
+        ),
+      );
+      setRestartSetTarget(null);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.set_status.restart_failed", "Could not start a new run.")} ${detail}`,
+      );
+    } finally {
+      setRestarting(false);
+    }
   };
 
   // #1300 — confirm-delete a downloaded set (purges the cached set + its
@@ -801,6 +853,12 @@ export function useContentSetActions({
     bulkDeletePlan,
     handleSetStatus,
     handleConfirmDeleteSet,
+    // EXP-051 / #2125 — "Set erneut durcharbeiten" (new Durchgang).
+    restartSetTarget,
+    setRestartSetTarget,
+    restarting,
+    requestRestartSet,
+    handleConfirmRestartSet,
     // #1351 — bulk multi-select actions.
     bulkDeleteTargets,
     setBulkDeleteTargets,

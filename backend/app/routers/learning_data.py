@@ -11,9 +11,14 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.deps import get_element_errors_repo, get_lesson_progress_repo
+from app.deps import (
+    get_element_errors_repo,
+    get_lesson_progress_repo,
+    get_set_runs_repo,
+)
 from app.repositories.element_errors_repo import ElementErrorsRepository
 from app.repositories.lesson_progress_repo import LessonProgressRepository
+from app.repositories.set_runs_repo import SetRunsRepository
 from app.schemas import LearningDataDeleteIn, LearningDataDeleteOut
 from app.services import learning_data as learning_data_service
 
@@ -29,6 +34,7 @@ def delete_learning_data(
     payload: LearningDataDeleteIn,
     progress_repo: LessonProgressRepository = Depends(get_lesson_progress_repo),
     errors_repo: ElementErrorsRepository = Depends(get_element_errors_repo),
+    set_runs_repo: SetRunsRepository = Depends(get_set_runs_repo),
 ) -> LearningDataDeleteOut:
     """Atomically delete the given progress rows + set-scoped review cards."""
     result = learning_data_service.delete_learning_data(
@@ -40,6 +46,7 @@ def delete_learning_data(
             set_ids=payload.set_ids,
             lesson_cards=[(c.set_id, c.lesson_id) for c in payload.lesson_cards],
         ),
+        set_runs_repo=set_runs_repo,
     )
     return LearningDataDeleteOut(
         lessons_deleted=result.lessons_deleted,

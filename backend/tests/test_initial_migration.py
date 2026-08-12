@@ -70,6 +70,8 @@ EXPECTED_TABLES = {
     "user_missions",
     # Phase 65 — API-key rollback cache.
     "api_key_backups",
+    # EXP-051 / #2125 — Durchgang (run/pass) bookkeeping.
+    "set_runs",
 }
 
 

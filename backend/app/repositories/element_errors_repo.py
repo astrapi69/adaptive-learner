@@ -13,11 +13,36 @@ from __future__ import annotations
 from abc import abstractmethod
 from datetime import UTC, datetime
 
-from sqlalchemy import select
+from sqlalchemy import ColumnElement, select
 from sqlalchemy.orm import Session
 
-from app.models import ElementError, User
+from app.models import ElementError, SetRun, User
 from app.repositories.base import Repository
+
+
+def _active_run_only() -> ColumnElement[bool]:
+    """SQL predicate that keeps only the rows of each set's ACTIVE run
+    (EXP-051 / #2125).
+
+    A row is active when NO *open* ``SetRun`` (``closed_at IS NULL``)
+    exists for its set under a DIFFERENT ``run_id``. This is
+    backward-compatible without a backfill: a set with no ``set_runs``
+    row at all (a pre-EXP-051 user, all rows ``run_id = 1``) has no open
+    run, so every row is kept; and a cold-started new run (open run N,
+    rows still under N-1) correctly drops the N-1 rows from the active
+    scope.
+    """
+    open_other_run = (
+        select(SetRun.id)
+        .where(
+            SetRun.user_id == ElementError.user_id,
+            SetRun.set_id == ElementError.set_id,
+            SetRun.closed_at.is_(None),
+            SetRun.run_id != ElementError.run_id,
+        )
+        .exists()
+    )
+    return ~open_other_run
 
 
 class ElementErrorsRepository(Repository):
@@ -37,8 +62,9 @@ class ElementErrorsRepository(Repository):
         exercise_id: str,
         element_key: str,
         direction: str,
+        run_id: int,
     ) -> ElementError | None:
-        """Return the row for the composite key, or ``None``."""
+        """Return the row for the composite key (incl. ``run_id``), or ``None``."""
 
     @abstractmethod
     def add(self, row: ElementError) -> None:
@@ -60,12 +86,22 @@ class ElementErrorsRepository(Repository):
         set_id: str | None = None,
         include_mastered: bool = True,
         include_retired: bool = False,
+        run_id: int | None = None,
     ) -> list[ElementError]:
         """Return the user's rows, newest-updated first.
 
         Archived rows (#2188 ``retired_at`` set) are excluded by default so
         they leave review scheduling and due counts everywhere; pass
         ``include_retired=True`` for archive views.
+
+        ``run_id`` (EXP-051 / #2125) selects the Durchgang:
+
+        - ``None`` (default) -> only the ACTIVE run of each set. This is
+          the review-queue / current-state scope; a closed run's rows are
+          never returned. Backward-compatible (a set with no ``set_runs``
+          row yields all its ``run_id = 1`` rows).
+        - an ``int`` -> exactly that run, including a closed one. The
+          Fehlerhistorie reads a specific past run this way.
         """
 
     @abstractmethod
@@ -142,11 +178,15 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
         exercise_id: str,
         element_key: str,
         direction: str,
+        run_id: int,
     ) -> ElementError | None:
-        """Return the row matching the full composite key (including direction), or ``None``.
+        """Return the row matching the full composite key (including direction
+        and ``run_id``), or ``None``.
 
         Receptive and productive rows for the same card are distinct
         identities (EXP-018 / Phase 62); the direction is part of the key.
+        A row of a different run (EXP-051 / #2125) is a distinct identity
+        too — the same card in run 2 never collapses onto its run-1 row.
         """
         stmt = select(ElementError).where(
             ElementError.user_id == user_id,
@@ -157,6 +197,8 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
             # EXP-018 / Phase 62: a card's receptive and productive
             # rows are distinct identities; never collapse them.
             ElementError.direction == direction,
+            # EXP-051 / #2125: the run generation is part of the identity.
+            ElementError.run_id == run_id,
         )
         return self._db.execute(stmt).scalar_one_or_none()
 
@@ -179,12 +221,17 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
         set_id: str | None = None,
         include_mastered: bool = True,
         include_retired: bool = False,
+        run_id: int | None = None,
     ) -> list[ElementError]:
         """Return the user's rows newest-updated first.
 
         Optionally narrow to a single ``set_id``, exclude mastered rows when
         ``include_mastered`` is ``False``, and include archived (#2188
         retired) rows when ``include_retired`` is ``True``.
+
+        ``run_id`` selects the Durchgang (EXP-051 / #2125): ``None`` scopes
+        to each set's active run (the default, review-queue scope); an
+        ``int`` targets exactly that run for the Fehlerhistorie.
         """
         stmt = select(ElementError).where(ElementError.user_id == user_id)
         if set_id is not None:
@@ -193,6 +240,10 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
             stmt = stmt.where(ElementError.mastered.is_(False))
         if not include_retired:
             stmt = stmt.where(ElementError.retired_at.is_(None))
+        if run_id is None:
+            stmt = stmt.where(_active_run_only())
+        else:
+            stmt = stmt.where(ElementError.run_id == run_id)
         stmt = stmt.order_by(ElementError.updated_at.desc())
         return list(self._db.execute(stmt).scalars().all())
 
@@ -208,6 +259,9 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
                     ElementError.set_id == set_id,
                     ElementError.exercise_id.in_(retired_ids),
                     ElementError.retired_at.is_(None),
+                    # EXP-051 / #2125: only the active run is archived; a
+                    # closed run's rows are already frozen and never touched.
+                    _active_run_only(),
                 )
             )
             .scalars()
@@ -281,6 +335,7 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
                     exercise_id=exercise_id,
                     element_key=new_key,
                     direction=row.direction,
+                    run_id=row.run_id,
                 )
                 if target is not None:
                     skipped += 1
@@ -321,6 +376,7 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
                     exercise_id=new_id,
                     element_key=row.element_key,
                     direction=row.direction,
+                    run_id=row.run_id,
                 )
                 if target is not None:
                     skipped += 1

@@ -50,6 +50,7 @@ import type {
     ContentSetRow,
     LessonProgressRow,
     ElementErrorRow,
+    SetRunRow,
     ContentSetFileRow,
     UserStreakRow,
     StepEvaluationRow,
@@ -109,6 +110,10 @@ export class AdaptiveLearnerDB extends Dexie {
     // ``{user_id}#{set_id}#{lesson_id}#{exercise_id}#{element_key}``
     // mirrors the backend UNIQUE constraint.
     elementErrors!: EntityTable<ElementErrorRow, "id">;
+    // EXP-051 / #2125 — Durchgang (run/pass) bookkeeping. One row per
+    // {user_id, set_id, run_id}; ``[user_id+set_id]`` supports the
+    // active-run lookup + the per-set run list.
+    setRuns!: EntityTable<SetRunRow, "id">;
     // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
     // per-plugin settings round-trip. One row per plugin
     // name; lazy-created on first ``update``. Reads against
@@ -609,6 +614,37 @@ export class AdaptiveLearnerDB extends Dexie {
                     .modify((row: Record<string, unknown>) => {
                         if (!row.status) row.status = "active";
                     });
+            });
+        // Schema v31 — EXP-051 / #2125: Durchgang (run/pass) generation.
+        // Adds the ``setRuns`` store and a ``run_id`` on every
+        // ``elementErrors`` row. Like the v23 direction migration, the
+        // composite primary ``id`` grows a seventh ``#{run_id}`` segment,
+        // so each existing row must be RE-KEYED (delete + re-add) —
+        // ``.modify()`` cannot change the keyPath value. Every pre-EXP-051
+        // row belongs to the implicit first run, so it gets ``run_id = 1``
+        // and its id gains ``#1``. Without the re-key, a new run-1 upsert
+        // would compute the seven-segment id and orphan the old six-segment
+        // row, losing its error/streak/mastery history. No ``setRuns`` rows
+        // are seeded here — the first read/write lazily materialises the
+        // implicit active run 1. No dynamic import (the v21
+        // DatabaseClosedError trap).
+        this.version(31)
+            .stores({
+                setRuns: "id, user_id, [user_id+set_id]",
+            })
+            .upgrade(async (tx) => {
+                const table = tx.table("elementErrors");
+                const rows = await table.toArray();
+                for (const row of rows as Record<string, unknown>[]) {
+                    if (row.run_id !== undefined && row.run_id !== null) {
+                        continue;
+                    }
+                    const oldId = row.id as string;
+                    row.run_id = 1;
+                    row.id = `${oldId}#1`;
+                    await table.delete(oldId);
+                    await table.put(row);
+                }
             });
     }
 }

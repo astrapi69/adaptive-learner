@@ -2434,7 +2434,16 @@
       "bulk_deleted": "{n} set dihapus.",
       "bulk_delete_title": "Hapus {n} set?",
       "bulk_delete_confirm": "Set yang dipilih beserta pelajarannya akan dihapus dari Konten Saya. Progres belajar Anda tetap tersimpan, dan Anda dapat mengunduh set lagi kapan saja.",
+      "restarted": "Sesi baru telah dimulai. Sesi Anda sebelumnya tetap disimpan.",
+      "restart_failed": "Tidak dapat memulai sesi baru.",
+      "restart_confirm": {
+        "title": "Kerjakan lagi set ini?",
+        "message": "Sesi baru “{title}” dimulai dari awal. Sesi Anda sebelumnya tetap disimpan dalam riwayat; tidak ada yang dihapus.",
+        "confirm": "Mulai sesi baru",
+        "cancel": "Batal"
+      },
       "action": {
+        "restart": "Kerjakan lagi",
         "activate": "Aktifkan kembali",
         "defer": "Tunda",
         "complete": "Tandai sebagai selesai",

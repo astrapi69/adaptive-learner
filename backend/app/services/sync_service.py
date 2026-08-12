@@ -62,6 +62,7 @@ from app.models import (
     SessionMessage,
     SessionNote,
     SessionRating,
+    SetRun,
     StepEvaluation,
     StudyQuestion,
     Subject,
@@ -622,6 +623,10 @@ TABLES: dict[str, TableSpec] = {
         columns=(
             "id",
             "user_id",
+            # EXP-051 / #2125 - the Durchgang (run/pass) generation. Part of
+            # the unique identity, so it MUST ride sync + backup or a second
+            # run's rows collapse onto the first on restore.
+            "run_id",
             "set_id",
             "lesson_id",
             "exercise_id",
@@ -692,6 +697,28 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=32,
+        scope="direct",
+    ),
+    # EXP-051 / #2125 — Durchgang (run/pass) bookkeeping. MUTABLE: a row
+    # is inserted when a run opens and its ``closed_at`` is stamped when
+    # the run closes (``updated_at`` bumps, so the close propagates to
+    # other devices). Direct user scope. Must ride sync + backup so a
+    # learner's runs survive a device switch / restore.
+    "set_runs": TableSpec(
+        model=SetRun,
+        columns=(
+            "id",
+            "user_id",
+            "set_id",
+            "run_id",
+            "content_version_at_start",
+            "started_at",
+            "closed_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=33,
         scope="direct",
     ),
 }

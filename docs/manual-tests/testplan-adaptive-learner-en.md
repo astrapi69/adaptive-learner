@@ -565,6 +565,30 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] Create-Lesson "Save as file": the save step offers a file
       download of the just-created lesson (canonical JSON)
 
+### Work through a set again - second run (#2125, EXP-051)
+
+Location: My Content (`/content?tab=my`), the three-dot menu of a set with
+status **Completed**. A new run keeps the first one for later analysis
+instead of overwriting or resetting it.
+
+- [ ] Mark a set **Completed** -> the three-dot menu shows **"Work through
+      again"** (NOT present for active/deferred sets)
+- [ ] Click it -> a **simple** confirmation ("a new run starts from
+      scratch, the previous one is kept"), with NO counted deletion figures
+- [ ] Confirm -> toast "A new run has started …", the set flips back to
+      **Active**, no error, no data loss
+- [ ] Cancel -> nothing happens, the status stays Completed
+- [ ] After restarting, answer a previously-learned exercise wrong -> the
+      review queue fills **fresh** (cold scheduling; the first run's cards
+      do NOT appear as overdue)
+- [ ] Delete the set (with "delete progress") -> ALL of the set's runs are
+      gone, no orphan rows
+- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+      (Dexie mode) - the flow must work in BOTH modes
+- [ ] Backup round-trip: Export -> wipe -> Import; the runs (incl. the
+      completed first one) survive the import. An older backup with no run
+      data imports as the implicit run 1 (no crash)
+
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
 - [ ] **Book-text path (#1745):** Step 1 → the "Knowledge lesson from

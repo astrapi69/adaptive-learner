@@ -26,7 +26,11 @@ from app.services.sync_service import (
 logger = logging.getLogger(__name__)
 
 
-BACKUP_VERSION = "1.3.0"
+# EXP-051 / #2125 — bumped for the Durchgang schema: element_errors gains
+# a run_id column and a new set_runs table ride the export. Older backups
+# (no run_id / no set_runs) import unchanged: run_id defaults to 1 and the
+# first read/write lazily materialises the implicit active run 1.
+BACKUP_VERSION = "1.4.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 # API keys are sensitive; the backup file is meant to travel

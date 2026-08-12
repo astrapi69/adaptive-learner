@@ -579,7 +579,9 @@ describe("Dexie elementErrors: EXP-018 direction-awareness", () => {
         const [row] = await recordElementAttemptsDexie(USER, [
             attempt({direction: "source_to_target", correct: true}),
         ]);
-        expect(row.id.endsWith("#source_to_target")).toBe(true);
+        // EXP-051 / #2125 — the run_id is now the seventh (trailing) segment,
+        // so direction is the penultimate one.
+        expect(row.id.endsWith("#source_to_target#1")).toBe(true);
     });
 });
 

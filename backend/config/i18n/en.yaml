@@ -2252,7 +2252,15 @@ content:
     bulk_deleted: "{n} sets removed."
     bulk_delete_title: "Delete {n} sets?"
     bulk_delete_confirm: "The selected sets and their lessons will be removed from My Content. Your learning progress is kept, and you can download the sets again anytime."
+    restarted: "A new run has started. Your previous run is kept."
+    restart_failed: "Could not start a new run."
+    restart_confirm:
+      title: "Work through this set again?"
+      message: "A new run of “{title}” starts from scratch. Your previous run is kept for your history; nothing is deleted."
+      confirm: "Start new run"
+      cancel: "Cancel"
     action:
+      restart: "Work through again"
       activate: "Reactivate"
       defer: "Defer"
       complete: "Mark as completed"
