@@ -47,8 +47,7 @@ import {
   assessSetUpdate,
   type SetUpdateAssessment,
 } from "../../lib/content/update/assess-set-update";
-import { planSetUpdate } from "../../lib/content/update/plan-set-update";
-import type { RemapPlan } from "../../lib/content/update/remap-plan";
+import { planSetUpdate, type SetUpdatePlan } from "../../lib/content/update/plan-set-update";
 import type { UpdateImpact } from "../../lib/content/update/update-impact";
 import { removeFavorite } from "../../lib/favorites/favorites";
 import { readLearnerState } from "../../lib/learning/learnerState";
@@ -129,7 +128,7 @@ export function useContentSetActions({
   const [updateGuard, setUpdateGuard] = useState<{
     entry: ContentSetEntry;
     impact: UpdateImpact;
-    plan: RemapPlan;
+    plan: SetUpdatePlan;
     /** #2188 — declared retirements of the held incoming version; archived
      *  on confirm, after the download. */
     retiredIds: readonly string[];
@@ -646,7 +645,10 @@ export function useContentSetActions({
       // #2308 — derive what COULD be carried over. Planning happens only on
       // this manual path; the nightly sync never computes it, so an inference
       // can never be applied while nobody is watching.
-      let plan: RemapPlan = { certain: [], uncertain: [] };
+      let plan: SetUpdatePlan = {
+        exercise: { certain: [], uncertain: [] },
+        element: { certain: [], uncertain: [] },
+      };
       try {
         plan = await planSetUpdate(
           entry.source,
@@ -750,14 +752,26 @@ export function useContentSetActions({
     setUpdateGuard(null);
     if (!target) return;
     await applyDownload(target.entry, target.retiredIds);
-    if (!carryOver || target.plan.certain.length === 0) return;
+    const totalCertain =
+      target.plan.exercise.certain.length + target.plan.element.certain.length;
+    if (!carryOver || totalCertain === 0) return;
     const userId = readLearnerState().userId;
     if (!userId) return;
     try {
-      const { applied } = await getStorage().elementErrors.remapKeys(
+      const storage = getStorage();
+      // AUTH-05 — exercise_id resolved first: the element-key plan's
+      // proposed exercise_id already assumes the exercise remap has landed
+      // (plan-set-update.ts), so applying out of order would look a row up
+      // under an exercise_id storage does not have yet.
+      const exerciseResult = await storage.elementErrors.remapExerciseIds(
         userId,
-        target.plan.certain,
+        target.plan.exercise.certain,
       );
+      const elementResult = await storage.elementErrors.remapKeys(
+        userId,
+        target.plan.element.certain,
+      );
+      const applied = exerciseResult.applied + elementResult.applied;
       notify.success(
         `${t("content.update_guard.carried_over", "Progress carried over.")} (${applied})`,
       );
