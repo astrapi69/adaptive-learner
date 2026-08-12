@@ -229,6 +229,40 @@ tiebreaker.
   top of it without further backend changes. Audit
   ([docs/audits/pluginforge-0.9.0-adoption-signal-2026-05-21.md](audits/pluginforge-0.9.0-adoption-signal-2026-05-21.md)).
 
+- [ ] **TOKEN-ALIAS-GATE-GAP-01**: `no-hardcoded-colors.test.ts`
+  blocks raw hex/rgb/hsl literals in consumer code, but does not see
+  legacy alias tokens (`var(--surface)`, `var(--border)`,
+  `var(--danger)`, defined as pass-throughs to the canonical tokens
+  in `frontend/src/styles/legacy/00-head.css:87-97` — `--surface` to
+  `--bg-surface`, `--border` to `--border-primary`, `--danger` to
+  `--error`). An alias is already `var()`-bound, so the guard treats
+  it as compliant; it verifies "no raw color", not "canonical token
+  name", which is a different property than design-tokens.md's own
+  "Legacy aliases" section implies it enforces. That section calls
+  the aliases legacy and says to prefer the semantic names for new
+  code, but that preference is a documented convention with no gate
+  behind it anywhere in the guard suite (same shape as the earlier
+  #2079-era gaps: a rule stated in prose, unchecked in CI).
+  The aliases are alive and heavily used, not dead code: in
+  `frontend`, `grep -rnE "var\(--(border|surface|danger)\)"
+  --include="*.tsx" --include="*.ts" src/components src/pages
+  src/shared | grep -v "\.test\.ts"` (consumer UI code, definitions
+  and tests excluded) counted 138 call sites as of this filing,
+  across exercise renderers, sync, settings and about-panel
+  components — re-run before trusting the number in a later session.
+  Migrating all of them is a large, visually-critical-surface change
+  with no gate forcing it and no confirmed payoff — the cost of
+  touching 138 sites plausibly exceeds the harm of the aliases
+  surviving, so this item is the gate gap only, not a migration
+  proposal. Whether migration
+  ever pays for itself is a separate open question. Surfaced while
+  auditing a UI-duplication extraction candidate: a repeated
+  `border-[var(--border)] bg-[var(--surface)]` card wrapper at 4
+  sites (`pages/content/RedeemInvite.tsx:110`,
+  `pages/content/SetDeepLink.tsx:129`,
+  `pages/content/AddRepo.tsx:164` and `:183`) — those 4 stay as the
+  concrete example, not the scope of this item.
+
 ## P4 — Future / SaaS
 
 - [ ] **BL-14**: PostgreSQL migration — Replace SQLite with
