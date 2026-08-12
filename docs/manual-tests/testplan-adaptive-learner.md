@@ -1201,6 +1201,11 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       antippbar), Übernahme funktioniert im Dexie-Modus genauso.
 - [ ] Sprache prüfen (#2160): der Bestätigungstext erscheint in der App-Sprache
       (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
+- [ ] Erst-Prägung (engine#91, Element-Ebene): Set, dessen Paare/Lücken/Optionen
+      erstmals eine stable_id erhalten, Inhalt sonst unverändert oder im selben
+      Update mitkorrigiert. Der Übergang wird wie eine normale, sicher
+      zuordenbare Korrektur behandelt, nicht als "nicht zuordenbar" gemeldet.
+      Fortschritt bleibt bei bestätigter Übernahme erhalten.
 
 ### Ausmusterung: archivierter Fortschritt bei retired_ids (#2188)
 

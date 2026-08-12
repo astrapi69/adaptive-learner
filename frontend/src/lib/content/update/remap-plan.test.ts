@@ -243,3 +243,59 @@ describe("planElementKeyRemaps with stable_id-keyed rows (#2130)", () => {
         }]);
     });
 });
+
+// --- engine#91 element-level stable_id key switch ---------------------------
+
+describe("planElementKeyRemaps with element-level stable_id (engine#91)", () => {
+    it("a text correction under an existing element stable_id proposes NOTHING - the row's identity key still resolves, nothing looks changed", () => {
+        const old = lesson([
+            {id: "ex-1", type: "matching", pairs: [
+                {left: "bonjour", right: "hallo", stable_id: "pair-aaaa0001"},
+            ]},
+        ]);
+        const incoming = lesson([
+            {id: "ex-1", type: "matching", pairs: [
+                {left: "bonjour (corrige)", right: "hallo", stable_id: "pair-aaaa0001"},
+            ]},
+        ]);
+        // The row's element_key is already the stable_id (it was recorded
+        // after the element-identity switch shipped).
+        const plan = planElementKeyRemaps([srs("pair-aaaa0001")], old, incoming, SET);
+        expect(plan.certain).toEqual([]);
+        expect(plan.uncertain).toEqual([]);
+    });
+
+    it("the mint transition (old key = content text, new key = fresh stable_id) classifies as a normal certain correction", () => {
+        const old = lesson([
+            {id: "ex-1", type: "matching", pairs: [
+                {left: "bonjour", right: "hallo"},
+            ]},
+        ]);
+        const incoming = lesson([
+            {id: "ex-1", type: "matching", pairs: [
+                {left: "bonjour", right: "hallo", stable_id: "pair-aaaa0001"},
+            ]},
+        ]);
+        const plan = planElementKeyRemaps([srs("bonjour")], old, incoming, SET);
+        expect(plan.uncertain).toEqual([]);
+        expect(plan.certain).toEqual([
+            {set_id: SET, lesson_id: L, exercise_id: "ex-1", old: "bonjour", new: "pair-aaaa0001"},
+        ]);
+    });
+
+    it("a text correction under an existing blank stable_id proposes nothing (cloze, mirrors the matching case)", () => {
+        const old = lesson([
+            {id: "ex-1", type: "cloze", blanks: [
+                {accept: ["suis"], stable_id: "blank-aaaa0001"},
+            ]},
+        ]);
+        const incoming = lesson([
+            {id: "ex-1", type: "cloze", blanks: [
+                {accept: ["suis (variante)"], stable_id: "blank-aaaa0001"},
+            ]},
+        ]);
+        const plan = planElementKeyRemaps([srs("blank-aaaa0001")], old, incoming, SET);
+        expect(plan.certain).toEqual([]);
+        expect(plan.uncertain).toEqual([]);
+    });
+});

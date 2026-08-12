@@ -1121,6 +1121,11 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
 - [ ] iOS standalone (PWA): dialog including the pair list and the checkbox is
       fully readable and operable (the list does not overflow the dialog, the
       checkbox is tappable); carry-over works the same in Dexie mode.
+- [ ] First minting (engine#91, element level): a set whose pairs/blanks/options
+      get a stable_id for the first time, content otherwise unchanged or
+      corrected in the same update. The transition is treated as a normal,
+      safely assignable correction, not reported as "cannot be assigned".
+      Progress survives when carry-over is confirmed.
 
 ### Retirement: archived progress on retired_ids (#2188)
 
