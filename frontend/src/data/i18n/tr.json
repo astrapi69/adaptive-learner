@@ -2114,7 +2114,9 @@
       "improvement_singular": "{n} öğe geliştirildi.",
       "mistakes_heading": "Hatalarını düzelt",
       "expand": "Şimdi düzelt",
-      "replay_all": "Tüm alıştırmaları tekrarla ({count})"
+      "replay_all": "Tüm alıştırmaları tekrarla ({count})",
+      "replay_only_heading": "Hatalarını tekrarla",
+      "replay_only_subtitle": "Bunlar hızlı alıştırma olarak çalışılamaz - bunun yerine alıştırmaları tekrar yap."
     },
     "summary": {
       "heading": "Tamamladın",

@@ -2169,7 +2169,9 @@
       "improvement_singular": "{n} elemen meningkat.",
       "mistakes_heading": "Perbaiki kesalahanmu",
       "expand": "Perbaiki sekarang",
-      "replay_all": "Ulangi semua latihan ({count})"
+      "replay_all": "Ulangi semua latihan ({count})",
+      "replay_only_heading": "Ulangi kesalahanmu",
+      "replay_only_subtitle": "Ini tidak dapat dilatih sebagai latihan cepat - ulangi latihan sebagai gantinya."
     },
     "error": {
       "load_failed": "Tidak dapat memuat pelajaran.",
