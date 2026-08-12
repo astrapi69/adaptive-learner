@@ -1120,6 +1120,13 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
       assigned with confidence and will be reset"). Verify NOTHING was carried
       over for them - a wrong assignment is worse than a loss because it is
       invisible.
+- [ ] AUTH-05: the exercise's OWN id changed (not just the answer text) - e.g.
+      an exercise without a `stable_id` gets renamed (slug change) on update.
+      The count in the "Carry over what still matches" checkbox includes this
+      case (a combined number from the exercise and element level); the
+      readable preview list still shows only answer-text pairs, never raw
+      exercise slugs. After confirming with the box checked: the review card
+      survives under the NEW exercise id, no restart from zero.
 - [ ] Auto-sync (24h, connected user repo): NEITHER updates NOR carries anything
       over. The mapping may only come into being in the manual dialog.
 - [ ] Confirm twice in a row (trigger the update again): no double carry-over, no

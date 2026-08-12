@@ -2,7 +2,7 @@
  * #2128 — the manual "Update" identity guard in useContentSetActions.
  * A breaking update (one that would orphan the learner's progress/SRS) is held
  * behind a confirmation instead of overwriting silently; a safe update applies
- * straight away.
+ * straight away. AUTH-05 added the exercise-id half of the carried-over plan.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -17,11 +17,15 @@ const downloadSetMock = vi.fn();
 const assessSetUpdateMock = vi.fn();
 const planSetUpdateMock = vi.fn();
 const remapKeysMock = vi.fn();
+const remapExerciseIdsMock = vi.fn();
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
         contentLoader: {downloadSet: (...a: unknown[]) => downloadSetMock(...a)},
-        elementErrors: {remapKeys: (...a: unknown[]) => remapKeysMock(...a)},
+        elementErrors: {
+            remapKeys: (...a: unknown[]) => remapKeysMock(...a),
+            remapExerciseIds: (...a: unknown[]) => remapExerciseIdsMock(...a),
+        },
     }),
 }));
 vi.mock("../../lib/learning/learnerState", () => ({
@@ -73,6 +77,18 @@ const REMAP = {
     new: "さようなら (sayounara)",
 };
 
+const EXERCISE_REMAP = {
+    set_id: "ja-a1",
+    lesson_id: "01.json",
+    old: "ex-pic-1",
+    new: "ex-pic-2",
+};
+
+const EMPTY_PLAN = {
+    exercise: {certain: [], uncertain: []},
+    element: {certain: [], uncertain: []},
+};
+
 function setup() {
     return renderHook(() =>
         useContentSetActions({
@@ -86,8 +102,9 @@ function setup() {
 beforeEach(() => {
     vi.clearAllMocks();
     downloadSetMock.mockResolvedValue({});
-    planSetUpdateMock.mockResolvedValue({certain: [], uncertain: []});
+    planSetUpdateMock.mockResolvedValue(EMPTY_PLAN);
     remapKeysMock.mockResolvedValue({applied: 1, skipped: 0});
+    remapExerciseIdsMock.mockResolvedValue({applied: 0, skipped: 0});
 });
 
 describe("handleDownload update guard (#2128)", () => {
@@ -104,12 +121,15 @@ describe("handleDownload update guard (#2128)", () => {
 
     it("carries the derived plan into the guard, unapplied (#2308)", async () => {
         assessSetUpdateMock.mockResolvedValue(breaking);
-        planSetUpdateMock.mockResolvedValue({certain: [REMAP], uncertain: []});
+        planSetUpdateMock.mockResolvedValue({
+            exercise: {certain: [], uncertain: []},
+            element: {certain: [REMAP], uncertain: []},
+        });
         const {result} = setup();
         await act(async () => {
             await result.current.handleDownload(entry());
         });
-        expect(result.current.updateGuard?.plan.certain).toEqual([REMAP]);
+        expect(result.current.updateGuard?.plan.element.certain).toEqual([REMAP]);
         // Held, not applied: the mapping is an inference and needs a decision.
         expect(remapKeysMock).not.toHaveBeenCalled();
         expect(downloadSetMock).not.toHaveBeenCalled();
@@ -122,7 +142,7 @@ describe("handleDownload update guard (#2128)", () => {
         await act(async () => {
             await result.current.handleDownload(entry());
         });
-        expect(result.current.updateGuard?.plan).toEqual({certain: [], uncertain: []});
+        expect(result.current.updateGuard?.plan).toEqual(EMPTY_PLAN);
         expect(downloadSetMock).not.toHaveBeenCalled();
     });
 
@@ -152,7 +172,10 @@ describe("handleDownload update guard (#2128)", () => {
 
     it("confirmUpdate WITHOUT carry-over re-keys nothing (#2308)", async () => {
         assessSetUpdateMock.mockResolvedValue(breaking);
-        planSetUpdateMock.mockResolvedValue({certain: [REMAP], uncertain: []});
+        planSetUpdateMock.mockResolvedValue({
+            exercise: {certain: [], uncertain: []},
+            element: {certain: [REMAP], uncertain: []},
+        });
         const {result} = setup();
         await act(async () => {
             await result.current.handleDownload(entry());
@@ -162,11 +185,15 @@ describe("handleDownload update guard (#2128)", () => {
         });
         expect(downloadSetMock).toHaveBeenCalled();
         expect(remapKeysMock).not.toHaveBeenCalled();
+        expect(remapExerciseIdsMock).not.toHaveBeenCalled();
     });
 
     it("confirmUpdate WITH carry-over re-keys after downloading (#2308)", async () => {
         assessSetUpdateMock.mockResolvedValue(breaking);
-        planSetUpdateMock.mockResolvedValue({certain: [REMAP], uncertain: []});
+        planSetUpdateMock.mockResolvedValue({
+            exercise: {certain: [], uncertain: []},
+            element: {certain: [REMAP], uncertain: []},
+        });
         const {result} = setup();
         await act(async () => {
             await result.current.handleDownload(entry());
@@ -186,8 +213,11 @@ describe("handleDownload update guard (#2128)", () => {
     it("carry-over with an empty certain list touches nothing (#2308)", async () => {
         assessSetUpdateMock.mockResolvedValue(breaking);
         planSetUpdateMock.mockResolvedValue({
-            certain: [],
-            uncertain: [{identity: breakingImpact.lostCards[0], reason: "reordered"}],
+            exercise: {certain: [], uncertain: []},
+            element: {
+                certain: [],
+                uncertain: [{identity: breakingImpact.lostCards[0], reason: "reordered"}],
+            },
         });
         const {result} = setup();
         await act(async () => {
@@ -197,6 +227,7 @@ describe("handleDownload update guard (#2128)", () => {
             await result.current.confirmUpdate(true);
         });
         expect(remapKeysMock).not.toHaveBeenCalled();
+        expect(remapExerciseIdsMock).not.toHaveBeenCalled();
     });
 
     it("a safe update (null impact) downloads straight away", async () => {
@@ -207,5 +238,64 @@ describe("handleDownload update guard (#2128)", () => {
         });
         expect(downloadSetMock).toHaveBeenCalledWith("owner/repo", "ja-a1");
         expect(result.current.updateGuard).toBeNull();
+    });
+
+    describe("AUTH-05: exercise-id remap applies before element-key remap", () => {
+        it("carry-over with only an exercise remap applies remapExerciseIds, not remapKeys", async () => {
+            assessSetUpdateMock.mockResolvedValue(breaking);
+            planSetUpdateMock.mockResolvedValue({
+                exercise: {certain: [EXERCISE_REMAP], uncertain: []},
+                element: {certain: [], uncertain: []},
+            });
+            remapExerciseIdsMock.mockResolvedValue({applied: 1, skipped: 0});
+            const {result} = setup();
+            await act(async () => {
+                await result.current.handleDownload(entry());
+            });
+            await act(async () => {
+                await result.current.confirmUpdate(true);
+            });
+            expect(remapExerciseIdsMock).toHaveBeenCalledWith("u1", [EXERCISE_REMAP]);
+            expect(remapKeysMock).toHaveBeenCalledWith("u1", []);
+        });
+
+        it("applies the exercise remap BEFORE the element remap - the element plan's exercise_id already assumes it landed", async () => {
+            assessSetUpdateMock.mockResolvedValue(breaking);
+            planSetUpdateMock.mockResolvedValue({
+                exercise: {certain: [EXERCISE_REMAP], uncertain: []},
+                element: {certain: [REMAP], uncertain: []},
+            });
+            const {result} = setup();
+            await act(async () => {
+                await result.current.handleDownload(entry());
+            });
+            await act(async () => {
+                await result.current.confirmUpdate(true);
+            });
+            expect(remapExerciseIdsMock.mock.invocationCallOrder[0]).toBeLessThan(
+                remapKeysMock.mock.invocationCallOrder[0],
+            );
+        });
+
+        it("sums applied counts from both dimensions into one toast", async () => {
+            assessSetUpdateMock.mockResolvedValue(breaking);
+            planSetUpdateMock.mockResolvedValue({
+                exercise: {certain: [EXERCISE_REMAP], uncertain: []},
+                element: {certain: [REMAP], uncertain: []},
+            });
+            remapExerciseIdsMock.mockResolvedValue({applied: 1, skipped: 0});
+            remapKeysMock.mockResolvedValue({applied: 1, skipped: 0});
+            const {result} = setup();
+            await act(async () => {
+                await result.current.handleDownload(entry());
+            });
+            await act(async () => {
+                await result.current.confirmUpdate(true);
+            });
+            const {notify} = await import("../../utils/notify");
+            expect(notify.success).toHaveBeenCalledWith(
+                expect.stringContaining("(2)"),
+            );
+        });
     });
 });

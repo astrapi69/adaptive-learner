@@ -60,7 +60,7 @@ describe.each(["API mode", "Dexie mode"])("planSetUpdate (%s)", () => {
     it("proposes the corrected answer for the orphaned row", async () => {
         getLesson.mockResolvedValue(cachedLesson("Merci"));
         const plan = await planSetUpdate("owner/repo", "fr-a1", impact, incoming);
-        expect(plan.certain).toEqual([
+        expect(plan.element.certain).toEqual([
             {
                 set_id: "fr-a1",
                 lesson_id: "01.json",
@@ -69,7 +69,8 @@ describe.each(["API mode", "Dexie mode"])("planSetUpdate (%s)", () => {
                 new: "Merci !",
             },
         ]);
-        expect(plan.uncertain).toEqual([]);
+        expect(plan.element.uncertain).toEqual([]);
+        expect(plan.exercise).toEqual({certain: [], uncertain: []});
     });
 
     it("reads only the lessons the learner has rows in", async () => {
@@ -86,7 +87,10 @@ describe.each(["API mode", "Dexie mode"])("planSetUpdate (%s)", () => {
             {lostLessons: [], lostCards: [], retiredCards: [], breaking: false},
             incoming,
         );
-        expect(plan).toEqual({certain: [], uncertain: []});
+        expect(plan).toEqual({
+            exercise: {certain: [], uncertain: []},
+            element: {certain: [], uncertain: []},
+        });
         expect(getLesson).not.toHaveBeenCalled();
     });
 
@@ -97,8 +101,50 @@ describe.each(["API mode", "Dexie mode"])("planSetUpdate (%s)", () => {
         // refuses.
         getLesson.mockRejectedValue(new Error("not cached"));
         const plan = await planSetUpdate("owner/repo", "fr-a1", impact, incoming);
-        expect(plan.certain).toEqual([]);
-        expect(plan.uncertain).toHaveLength(1);
-        expect(plan.uncertain[0].reason).toBe("not_in_cached");
+        expect(plan.element.certain).toEqual([]);
+        expect(plan.element.uncertain).toHaveLength(1);
+        expect(plan.element.uncertain[0].reason).toBe("not_in_cached");
+    });
+
+    it("AUTH-05: resolves a renumbered exercise_id first, then remaps the element_key underneath it", async () => {
+        // The exercise slug itself was renumbered (ex-1 -> ex-2, no
+        // stable_id involved) AND the answer text was corrected in the same
+        // update - both dimensions must resolve in one planSetUpdate call.
+        getLesson.mockResolvedValue({
+            id: "01",
+            cards: [],
+            steps: [
+                {
+                    id: "s1",
+                    type: "exercise",
+                    exercise: {id: "ex-1", type: "free_text", accept: ["Merci"]},
+                },
+            ],
+        });
+        const renumberedIncoming: PeekLesson[] = [
+            {
+                filename: "01.json",
+                exercises: [{id: "ex-2", type: "free_text", accept: ["Merci !"]}],
+            },
+        ];
+        const plan = await planSetUpdate("owner/repo", "fr-a1", impact, renumberedIncoming);
+
+        expect(plan.exercise.certain).toEqual([
+            {set_id: "fr-a1", lesson_id: "01.json", old: "ex-1", new: "ex-2"},
+        ]);
+        // The element-key plan classifies against the RESOLVED exercise_id
+        // (ex-2), which is where the row will actually live once the
+        // exercise remap is applied - not the original ex-1, which the
+        // element plan alone would have reported as exercise_gone.
+        expect(plan.element.certain).toEqual([
+            {
+                set_id: "fr-a1",
+                lesson_id: "01.json",
+                exercise_id: "ex-2",
+                old: "Merci",
+                new: "Merci !",
+            },
+        ]);
+        expect(plan.element.uncertain).toEqual([]);
     });
 });
