@@ -1949,6 +1949,8 @@ lesson:
     mistakes_heading: "間違いを直す"
     expand: "今すぐ直す"
     replay_all: "すべての問題をやり直す（{count}）"
+    replay_only_heading: "間違いをやり直す"
+    replay_only_subtitle: "これらはクイックドリルとして練習できません。代わりに問題をやり直してください。"
   summary:
     heading: "完了"
     aria_label: "レッスンのまとめ"

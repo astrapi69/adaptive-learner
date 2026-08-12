@@ -533,9 +533,12 @@ describe("CorrectionBlock: folded-in full-replay CTA (#2496)", () => {
         lessonTitle: "Articles",
     };
 
-    it("renders a collapsed mistakes section with a replay CTA when no cloze generates", async () => {
+    it("#2570 — renders the replay CTA directly when no cloze generates, no expand step", async () => {
         // A ghost exercise_id → no cloze can be generated, but there is still
-        // a replayable failed set: the section stays, offering the full replay.
+        // a replayable failed set: the section renders the replay link right
+        // away (the old "Fix now" -> expand -> nothing-but-replay flow is
+        // gone - there is nothing to fix in place, so no expand step is
+        // offered that would only reveal that).
         listMock.mockResolvedValue([_error({exercise_id: "ex-ghost"})]);
         render(
             <MemoryRouter>
@@ -553,16 +556,13 @@ describe("CorrectionBlock: folded-in full-replay CTA (#2496)", () => {
                 />
             </MemoryRouter>,
         );
-        const block = await screen.findByTestId("lesson-correction-block");
-        expect(block).toHaveAttribute("data-expanded", "false");
-        // Expand → the full-replay link, no cloze.
-        fireEvent.click(
-            screen.getByTestId("lesson-correction-block-expand"),
-        );
+        expect(
+            screen.queryByTestId("lesson-correction-block-expand"),
+        ).not.toBeInTheDocument();
         expect(
             screen.queryByTestId("cloze-exercise"),
         ).not.toBeInTheDocument();
-        const replay = screen.getByTestId("lesson-correction-replay");
+        const replay = await screen.findByTestId("lesson-correction-replay");
         expect(replay).toHaveAttribute(
             "href",
             "/error-replay/bundled:x/fr-a1/03-articles.json",
@@ -570,21 +570,25 @@ describe("CorrectionBlock: folded-in full-replay CTA (#2496)", () => {
     });
 
     it("shows the corrected-progress note when some errors are already fixed", async () => {
+        // #2570 — replay_only renders the Link-based replay CTA immediately
+        // (no expand click), so it needs Router context from the start.
         listMock.mockResolvedValue([_error({exercise_id: "ex-ghost"})]);
         render(
-            <CorrectionBlock
-                lesson={_lesson()}
-                progress={_progress()}
-                userId="user-1"
-                setId="fr-a1"
-                lessonFilename="03-articles.json"
-                onComplete={vi.fn()}
-                onSkip={vi.fn()}
-                replayHref="/error-replay/bundled:x/fr-a1/03-articles.json"
-                replayState={REPLAY}
-                errorCount={2}
-                correctedCount={3}
-            />,
+            <MemoryRouter>
+                <CorrectionBlock
+                    lesson={_lesson()}
+                    progress={_progress()}
+                    userId="user-1"
+                    setId="fr-a1"
+                    lessonFilename="03-articles.json"
+                    onComplete={vi.fn()}
+                    onSkip={vi.fn()}
+                    replayHref="/error-replay/bundled:x/fr-a1/03-articles.json"
+                    replayState={REPLAY}
+                    errorCount={2}
+                    correctedCount={3}
+                />
+            </MemoryRouter>,
         );
         const corrected = await screen.findByTestId(
             "lesson-correction-corrected",

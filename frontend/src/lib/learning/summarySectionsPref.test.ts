@@ -44,7 +44,9 @@ describe("summarySectionsPref", () => {
   });
 
   it("the default order pins today's top-to-bottom sequence", () => {
-    // Regression pin: favorite first, correction last, result second.
+    // Regression pin: favorite first, correction right before next_steps
+    // (#2570 - between the score sections and the next-step cards, not
+    // trailing after them), result second.
     expect([...DEFAULT_SUMMARY_SECTION_ORDER]).toEqual([
       "favorite",
       "result",
@@ -52,8 +54,8 @@ describe("summarySectionsPref", () => {
       "share",
       "answers",
       "export",
-      "next_steps",
       "correction",
+      "next_steps",
     ]);
   });
 
@@ -73,7 +75,7 @@ describe("summarySectionsPref", () => {
     expect(orderOf(base)[0]).toBe("favorite");
     // Already-first up and already-last down are no-ops (same ref).
     expect(moveSummarySection(base, "favorite", -1)).toBe(base);
-    expect(moveSummarySection(base, "correction", 1)).toBe(base);
+    expect(moveSummarySection(base, "next_steps", 1)).toBe(base);
   });
 
   it("a disabled section keeps its ON/OFF state while it moves", () => {

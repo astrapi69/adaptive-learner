@@ -2013,6 +2013,8 @@ lesson:
     mistakes_heading: "Fix your mistakes"
     expand: "Fix now"
     replay_all: "Redo all exercises ({count})"
+    replay_only_heading: "Repeat your mistakes"
+    replay_only_subtitle: "These can't be practiced as a quick drill - redo the exercises instead."
   error:
     load_failed: "Could not load lesson."
     invalid_data: "This lesson can't be opened because it contains invalid or corrupted data. Please contact the content author."

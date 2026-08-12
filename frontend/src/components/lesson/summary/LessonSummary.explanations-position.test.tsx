@@ -1,18 +1,22 @@
 /**
  * LessonSummary — mistake-review ("Why you missed these", #599) position vs the
- * correction round (#1432).
+ * correction round (#1432; default order revised #2570).
  *
- * The architect directive is that the SRS correction round is the LAST content
- * section, directly above the pinned continue-actions. #599's
- * ``SummaryExplanations`` area (a standalone, separately-toggled review of the
- * run's still-weak text mistakes) used to render BELOW the whole reorderable
- * block, so it landed under correction and pushed it to second-to-last.
+ * #599's ``SummaryExplanations`` area (a standalone, separately-toggled review
+ * of the run's still-weak text mistakes) is spliced in immediately ABOVE
+ * wherever ``correction`` renders in the section loop (``LessonSummary.tsx``)
+ * - a relative rule, not a fixed slot, so it follows ``correction`` whenever
+ * the user reorders it. #2570 moved ``correction``'s DEFAULT position ahead
+ * of ``next_steps`` (fixing today's mistakes belongs before the "what next"
+ * cards, not trailing after them) - the splice rule itself is untouched, so
+ * the review now renders directly above correction, which now precedes
+ * next_steps, which is the last content section by default.
  *
- * These pin: by default the review renders directly ABOVE the correction round
- * (and below ``next_steps``) with correction as the last content section; the
- * review follows correction when the user reorders it; when correction is OFF
- * the review still renders (fallback) above the pinned actions; and rendering
- * NEVER rewrites the stored order (no silent reset of a #1427 saved order).
+ * These pin: by default the review renders directly ABOVE the correction
+ * round (and above ``next_steps``); the review follows correction when the
+ * user reorders it; when correction is OFF the review still renders
+ * (fallback) above the pinned actions; and rendering NEVER rewrites the
+ * stored order (no silent reset of a #1427 saved order).
  *
  * CorrectionBlock + NextStepSuggestions are stubbed so we assert LessonSummary's
  * own layout, not their internals. ``useLessonSessionErrors`` returns one
@@ -190,21 +194,21 @@ afterEach(() => {
 });
 
 describe("LessonSummary mistake-review vs correction position (#1432)", () => {
-  it("default order: 'Why you missed these' renders directly above the correction round, which stays the last content section", () => {
+  it("default order: 'Why you missed these' renders directly above the correction round, which now precedes next_steps as the last content section", () => {
     renderSummary();
     const nextSteps = screen.getByTestId("next-steps-stub");
     const explanations = screen.getByTestId("lesson-summary-explanations");
     const correction = screen.getByTestId("correction-block-stub");
     const exit = screen.getByTestId("lesson-summary-exit");
 
-    // next_steps → explanations → correction → (pinned) actions.
-    expect(precedes(nextSteps, explanations)).toBe(true);
+    // explanations → correction → next_steps → (pinned) actions (#2570).
     expect(precedes(explanations, correction)).toBe(true);
-    expect(precedes(correction, exit)).toBe(true);
+    expect(precedes(correction, nextSteps)).toBe(true);
+    expect(precedes(nextSteps, exit)).toBe(true);
 
-    // Correction is the last CONTENT section: nothing renders between it and
+    // next_steps is the last CONTENT section: nothing renders between it and
     // the pinned actions block.
-    expect(precedes(correction, screen.getByTestId("lesson-summary-repeat"))).toBe(
+    expect(precedes(nextSteps, screen.getByTestId("lesson-summary-repeat"))).toBe(
       true,
     );
   });

@@ -370,6 +370,20 @@ export default function CorrectionBlock({
         );
     }
 
+    // #2570 — no cloze exists to fix in place; the replay link is the only
+    // real option in EITHER the collapsed or expanded state, so it renders
+    // directly instead of behind an "expand" step that would reveal nothing.
+    if (kind === "replay_only") {
+        return (
+            <CorrectionReplayOnly
+                t={t}
+                errorCount={errorCount}
+                correctedCount={correctedCount}
+                replay={replay}
+            />
+        );
+    }
+
     // EXPANDED drill — the cloze mounts HERE, so its #692 auto-focus (and the
     // mobile keyboard) fire only now, on the user's explicit opt-in.
     return (
@@ -392,13 +406,25 @@ export default function CorrectionBlock({
     );
 }
 
-type CorrectionView = "hidden" | "complete" | "collapsed" | "drill";
+type CorrectionView = "hidden" | "complete" | "collapsed" | "drill" | "replay_only";
 
-/** Pure view decision for the mistakes section (#2496), extracted so the
- *  component body stays flat. Returns the view kind plus the derived flags
- *  the render needs. "hidden" folds the still-loading and nothing-to-do
- *  cases. */
-function correctionView(args: {
+/**
+ * Pure view decision for the mistakes section (#2496), extracted so the
+ * component body stays flat. Returns the view kind plus the derived flags
+ * the render needs. "hidden" folds the still-loading and nothing-to-do
+ * cases.
+ *
+ * #2570 — "replay_only": when cloze generation produced no drill for this
+ * run's errors (the generator's documented graceful-degradation contract -
+ * not every exercise type maps to a fill-in-the-blank), the OLD "collapsed"
+ * -> "Fix now" -> drill flow expanded into an empty cloze area with only the
+ * replay link inside it - a "Fix your mistakes" heading offering nothing to
+ * fix in place. Named separately so the render can be honest about it
+ * up front (no pointless expand click that reveals nothing), instead of
+ * silently degrading the drill view. Exported for a direct unit test - the
+ * decision matrix is worth pinning without mounting the component.
+ */
+export function correctionView(args: {
     status: Status;
     expanded: boolean;
     clozeCount: number;
@@ -426,6 +452,9 @@ function correctionView(args: {
     }
     if (nothingActionable) {
         return {kind: "hidden", ...flags};
+    }
+    if (!drillsAvailable && hasReplay) {
+        return {kind: "replay_only", ...flags};
     }
     return {kind: args.expanded ? "drill" : "collapsed", ...flags};
 }
@@ -573,6 +602,66 @@ function CorrectionCollapsed({
                     <ChevronDown size={16} aria-hidden="true" />
                 </Button>
             </div>
+        </section>
+    );
+}
+
+/** #2570 — no in-place drill exists for this run's errors (cloze generation's
+ *  documented graceful-degradation contract: not every exercise type maps to
+ *  a fill-in-the-blank); the full-exercise replay is the only real option, so
+ *  it renders directly, honestly labelled, with no "Fix now" step that would
+ *  expand into nothing. */
+function CorrectionReplayOnly({
+    t,
+    errorCount,
+    correctedCount,
+    replay,
+}: {
+    t: CorrectionT;
+    errorCount: number;
+    correctedCount: number;
+    replay: ReactNode;
+}) {
+    const correctedNote =
+        correctedCount > 0
+            ? t(
+                  "lesson.next_step.error_replay_corrected",
+                  "{corrected} of {total} corrected",
+              )
+                  .replace("{corrected}", String(correctedCount))
+                  .replace("{total}", String(correctedCount + errorCount))
+            : null;
+    return (
+        <section
+            className="lesson-correction-block"
+            data-testid="lesson-correction-block"
+            data-status="ready"
+            data-expanded="false"
+            aria-label={t("lesson.correction.replay_only_heading", "Repeat your mistakes")}
+        >
+            <header className="lesson-correction-block-header">
+                <h3>
+                    {t("lesson.correction.replay_only_heading", "Repeat your mistakes")}{" "}
+                    <span className="lesson-correction-block-progress">
+                        ({errorCount})
+                    </span>
+                </h3>
+                <p className="lesson-correction-block-subtitle">
+                    {t(
+                        "lesson.correction.replay_only_subtitle",
+                        "These can't be practiced as a quick drill - redo the exercises instead.",
+                    )}
+                </p>
+                {correctedNote && (
+                    <p
+                        className="lesson-correction-block-subtitle"
+                        data-testid="lesson-correction-corrected"
+                    >
+                        {correctedNote}
+                    </p>
+                )}
+            </header>
+            <div className="mt-3 flex flex-wrap items-center gap-2">{replay}</div>
         </section>
     );
 }
