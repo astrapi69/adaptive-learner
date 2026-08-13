@@ -31,24 +31,38 @@
 # "Wahrheit" einfrieren, waehrend die App laengst mit der neuen baut). Radon
 # im Complexity-Gate ist dagegen gepinnt (siehe .complexity-baseline).
 # Entscheidung nicht erneut aufwerfen; Aenderung nur mit neuem Beschluss.
+#
+# Paket-Scan (#2486, 2026-08-13): der Gate scannt jetzt zusaetzlich
+# node_modules/@astrapi69/{ai-key-vault-react,pwa-update-react}/dist
+# (PACKAGE_CONSUMER_FILES in check-dead-classnames.py) - der #2477-Vorfall
+# entstand, weil ein Dead-CSS-Audit nur frontend/src grepte und Paket-
+# konsumierte Klassen faelschlich fuer verwaist hielt. Der erste Lauf mit
+# Paket-Scan fand 6 neue Eintraege, alle einzeln verifiziert (siehe #2587):
+#   akv-secret-toggle, min-h-4 (ai-key-vault-react) + pwa-update-prompt-
+#   apply/dismiss/hint (pwa-update-react): echte, bislang unbemerkte
+#   Styling-Luecken (jedes Element traegt bereits echte Tailwind-Utilities
+#   aus demselben className, der fehlende Token ist ein ergaenzender Hook,
+#   kein Totalausfall) - Fix braucht Design-Input, daher hier eingetragen
+#   statt in dieser PR geraten.
+#   lp-edge (frontend/src/lib/learning-path/layout.ts:74): kein Fund im
+#   package-Sinn, sondern eine echte Erweiterung der Gate-Abdeckung - die
+#   className:-Objektsyntax (React-Flow-Edge-Daten, keine JSX) war vorher
+#   fuer den Gate unsichtbar (nur className= wurde erkannt). Der Basis-
+#   Token traegt bewusst keine eigene Regel, er tritt nie ohne einen der
+#   drei echten Modifikatoren auf (.lp-edge--completed/--upcoming/--
+#   adaptive, styles/legacy/42-learning-path.css:262+) - legitim hier
+#   eingetragen, kein Fix noetig.
 activity-trend
 adaptive-save-row
 adaptive-summary-improvement
 adaptive-transparency
+akv-secret-toggle
 anki-card--suggested
 anki-empty
 answer-feedback-pulse
 api-key-required-compact
 api-key-required-notice
 api-key-source-file-hint
-aui-composer
-aui-composer-input
-aui-composer-send
-aui-message
-aui-message-assistant
-aui-message-user
-aui-thread
-aui-thread-viewport
 backup-actions
 backup-auto
 backup-auto-count
@@ -193,7 +207,9 @@ lesson-summary-diff
 lesson-summary-explanations
 lesson-summary-export-actions
 lesson-summary-share
+lp-edge
 mastered
+min-h-4
 missed
 model-override-row-head
 na
@@ -210,6 +226,9 @@ popper
 profile-radar
 prose-sm
 provider-chip-model
+pwa-update-prompt-apply
+pwa-update-prompt-dismiss
+pwa-update-prompt-hint
 review-summary-note
 settings-subsection
 shadow-elevated
