@@ -84,6 +84,33 @@ BASELINE_FILE = REPO_ROOT / ".dead-classnames-baseline"
 UNSTYLED_BASELINE_FILE = REPO_ROOT / ".unstyled-classnames-baseline"
 AUDIT = "docs/audits/global-css-analysis-2026-07-08.md"
 
+# npm packages under node_modules/@astrapi69 whose React components emit
+# APP-STYLED classNames (a "headless-styled" pattern: the package renders
+# semantic classNames like ``api-key-row``, this project's own CSS supplies
+# the rule). #2484/#2486 - a dead-CSS audit that greps only frontend/src for
+# consumers cannot see these; it declared ai-key-vault-react's classes
+# orphaned and removed them, shipping Settings > AI unstyled (#2477,
+# restored #2485). Verified 2026-08-13 by grepping each @astrapi69/*-react
+# package's dist for className usage: ai-key-vault-react and
+# pwa-update-react both emit app-styled classNames; feature-strategy-react
+# is logic-only (0 occurrences, ruled out with evidence, not left unchecked).
+# Docs inventory: docs/development/package-classname-consumers.md.
+PACKAGE_CONSUMER_FILES = [
+    REPO_ROOT / "frontend" / "node_modules" / "@astrapi69" / "ai-key-vault-react" / "dist" / "index.js",
+    REPO_ROOT / "frontend" / "node_modules" / "@astrapi69" / "pwa-update-react" / "dist" / "index.js",
+]
+
+
+def package_consumer_files() -> list[Path]:
+    """The subset of PACKAGE_CONSUMER_FILES actually present.
+
+    node_modules is gitignored - absent before ``bun install``. Missing
+    files are silently skipped rather than an error: a fresh clone
+    without deps installed should still let ``--list``/``--unstyled``
+    (both src-only, no package layer) run.
+    """
+    return [p for p in PACKAGE_CONSUMER_FILES if p.is_file()]
+
 # A token that could be a CSS class in this codebase: lowercase-kebab plus
 # Tailwind's variant/arbitrary-value punctuation (``hover:``, ``max-h-[85vh]``,
 # ``w-1/2``, ``gap-2.5``). Deliberately lowercase-only so identifier and
@@ -309,7 +336,11 @@ def extract_used_classes(text: str) -> tuple[set[str], int]:
         j = m.end()
         while j < n and text[j] in " \t\n\r":
             j += 1
-        if j >= n or text[j] != "=":
+        # ``=`` for JSX attributes (our own .tsx source); ``:`` for the
+        # compiled createElement/jsx-runtime props object shape a built
+        # package dist file uses (#2486 - package_consumer_files() feeds
+        # this same function, so both syntaxes must resolve here).
+        if j >= n or text[j] not in "=:":
             continue
         j += 1
         while j < n and text[j] in " \t\n\r":
@@ -550,7 +581,7 @@ def compute_dead() -> tuple[set[str], set[str], int]:
 
     used: set[str] = set()
     unchecked = 0
-    for path in source_files():
+    for path in [*source_files(), *package_consumer_files()]:
         text = strip_comments(path.read_text(encoding="utf-8", errors="replace"))
         file_used, file_unchecked = extract_used_classes(text)
         used |= file_used
@@ -575,6 +606,31 @@ def main() -> int:
     # .unstyled-classnames-baseline reproducibly.
     if "--unstyled" in sys.argv[1:]:
         return run_unstyled(regen="--list" in sys.argv[1:])
+
+    # ``--consumers <name>`` (#2486): the tool a dead-CSS-REMOVAL audit runs
+    # BEFORE declaring a selector orphaned, so "0 consumers" means src AND
+    # every known package dist - never src alone (the #2477 method gap).
+    # Build-independent, no frontend/dist needed.
+    if "--consumers" in sys.argv[1:]:
+        args = sys.argv[1:]
+        idx = args.index("--consumers")
+        if idx + 1 >= len(args):
+            print("FEHLER: --consumers braucht einen Klassennamen.", file=sys.stderr)
+            return 1
+        target = args[idx + 1]
+        hits: list[str] = []
+        for path in [*source_files(), *package_consumer_files()]:
+            text = strip_comments(path.read_text(encoding="utf-8", errors="replace"))
+            file_used, _ = extract_used_classes(text)
+            if target in file_used:
+                hits.append(str(path))
+        if not hits:
+            print(f"0 Konsumenten fuer '{target}' (src + package dist) - vermutlich wirklich tot.")
+            return 0
+        print(f"{len(hits)} Konsument(en) fuer '{target}':")
+        for h in sorted(hits):
+            print(f"  {h}")
+        return 0
 
     # ``--list`` prints the bare dead class names (one per line) so the
     # baseline can be (re)generated reproducibly. It never consults or
