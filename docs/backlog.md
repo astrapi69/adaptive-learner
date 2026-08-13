@@ -102,26 +102,12 @@ tiebreaker.
 > Explorations-Dokumenten + in den P3-P5-Detailabschnitten unten. Kuratierte
 > Sicht: [ROADMAP.md](ROADMAP.md).
 
-## Jetzt (v1.86.0+)
-
-> **v1.86.0-Release-Blocker (#689, offen):** CI rot auf `develop` —
-> `content-loader-dexie.ts` > 1000 Zeilen (File-Size-Gate) + `Content.tsx`
-> cc 22 (Complexity-Gate), aus #683/#687. Entschaerfen vor dem v1.86.0-Tag.
+## Jetzt
 
 - **EXP-033 — KI-Content-Validierung** (PARTIAL): **offen AIV-06**
   (CI-Action `ai_review.py`), **AIV-07** (Auto-Fix nur User-Content),
   **AIV-12** (Signatur-Invalidierung). Erledigt: AIV-01..05 + AIV-08..11
   (#674/#676/#686/#687/#690/#691).
-- **EXP-031 — .alb ZIP-Backup**: BAK-01..BAK-06.
-- **EXP-032 — deterministische Content-Validierung**: CQV-01..CQV-03
-  (CQV-04/05 später).
-- **#696 — Library-First F-1**: PyYAML als expliziten Backend-Runtime-Dep
-  deklarieren (kleiner Hygiene-Fix).
-- **Bug #622** — A11y link-name Lesson-Viewer (offen, P3/a11y).
-- **Erledigt diese Session**: **EXP-029** Medien-Integration MED-01..07
-  (#678/#680/#684/#685/#688; MED-10 offen → Deferred); **Bug #656**
-  Complexity-Gate FreeText/WordTiles (v1.85.0); **Bug #675** Review-Badge-
-  Abstieg nach Session (Closes #673, v1.86.0).
 
 ## Nächste Phase
 
@@ -150,6 +136,9 @@ tiebreaker.
 - **EXP-030 — Multi-User**: MU-01..MU-05, MU-10, MU-20.
 - **EXP-023 — Server-Features (Phase C)**: Community-Ratings, Trust 2,
   zentraler Index, Coach-Aggregation, Einmal-Invite-Tokens.
+- **EXP-032 — CQV-04/05**: Batch-LLM-Review mit Confidence-Score (teuer,
+  Release-Lauf, nach CQV-01..03) + anonymer Fehler-Melden-Button →
+  Content-Repo-Issue (moderiert, nach EXP-030).
 - **EXP-027 — RTL-Infrastruktur**: I18N-01 (RTL-Basis), I18N-04 (Arabisch-UI),
   I18N-05 (Koreanisch/Hangul).
 - **EXP-013 Stufe 3** — KI-augmentierte adaptive Generierung (P-150..P-152).
