@@ -391,3 +391,81 @@ describe("ExerciseEditor — multiple_choice (#1850, #1888)", () => {
         expect(saved.options.filter((o: {correct: boolean}) => o.correct)).toHaveLength(1);
     });
 });
+
+describe("ExerciseEditor — type conversion (EXP-050 Stage 1)", () => {
+    const wordTiles = (): ContentLessonExercise =>
+        ({
+            id: "wt1",
+            type: "word_tiles",
+            prompt: "Arrange the sentence",
+            card_ids: [],
+            distractors: [],
+            tiles: ["Je", "suis", "ici"],
+        }) as ContentLessonExercise;
+
+    const multipleChoice = (): ContentLessonExercise =>
+        ({
+            id: "mc9",
+            type: "multiple_choice",
+            prompt: "Pick the translation",
+            card_ids: [],
+            distractors: [],
+            multiple: false,
+            options: [
+                {text: "danke", correct: true},
+                {text: "bitte", correct: false},
+            ],
+        }) as ContentLessonExercise;
+
+    it("offers no type control for a non-convertible source", () => {
+        render(
+            <Harness
+                exercise={
+                    {
+                        id: "ft0",
+                        type: "free_text",
+                        prompt: "Translate",
+                        card_ids: [],
+                        distractors: [],
+                        accept: ["danke"],
+                    } as ContentLessonExercise
+                }
+            />,
+        );
+        expect(screen.queryByTestId("exercise-edit-type-select-ft0")).toBeNull();
+    });
+
+    it("converts word_tiles to free_text, carrying the sentence into accept", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={wordTiles()} onSaved={onSaved} />);
+        fireEvent.change(screen.getByTestId("exercise-edit-type-select-wt1"), {
+            target: {value: "free_text"},
+        });
+        // The free-text accept editor now shows the joined tiles.
+        expect(screen.getByTestId("exercise-edit-accept-wt1-item-0")).toHaveTextContent(
+            "Je suis ici",
+        );
+        // The word_tiles control is gone.
+        expect(screen.queryByTestId("exercise-edit-type-select-wt1")).toBeNull();
+        fireEvent.click(saveButton("wt1"));
+        const saved = onSaved.mock.calls[0][0];
+        expect(saved.type).toBe("free_text");
+        expect(saved.accept).toEqual(["Je suis ici"]);
+        expect("tiles" in saved).toBe(false);
+    });
+
+    it("converts multiple_choice to free_text, wrong options become distractors", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={multipleChoice()} onSaved={onSaved} />);
+        fireEvent.change(screen.getByTestId("exercise-edit-type-select-mc9"), {
+            target: {value: "free_text"},
+        });
+        fireEvent.click(saveButton("mc9"));
+        const saved = onSaved.mock.calls[0][0];
+        expect(saved.type).toBe("free_text");
+        expect(saved.accept).toEqual(["danke"]);
+        expect(saved.distractors).toEqual(["bitte"]);
+        expect("options" in saved).toBe(false);
+        expect("multiple" in saved).toBe(false);
+    });
+});

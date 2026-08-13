@@ -3046,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "Opsi jawaban",
+        "convert_label": "Jenis latihan",
+        "convert_hint": "Konversi mempertahankan jawaban yang ditulis dan kemajuan pelajar.",
         "mc_option_placeholder": "Teks opsi",
         "mc_option_add": "Tambah opsi",
         "mc_option_remove": "Hapus opsi",

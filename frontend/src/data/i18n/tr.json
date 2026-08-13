@@ -3046,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "Yanıt seçenekleri",
+        "convert_label": "Alıştırma türü",
+        "convert_hint": "Dönüştürme, yazılan yanıtı ve öğrencinin ilerlemesini korur.",
         "mc_option_placeholder": "Seçenek metni",
         "mc_option_add": "Seçenek ekle",
         "mc_option_remove": "Seçeneği kaldır",

@@ -2791,6 +2791,8 @@ create_lesson:
       picture_choice: "Επιλογή εικόνας: προσθέστε μια εικόνα σε τουλάχιστον δύο κάρτες."
     edit:
       mc_options_label: "Επιλογές απάντησης"
+      convert_label: "Τύπος άσκησης"
+      convert_hint: "Η μετατροπή διατηρεί τη γραπτή απάντηση και την πρόοδο του μαθητή."
       mc_option_placeholder: "Κείμενο επιλογής"
       mc_option_add: "Προσθήκη επιλογής"
       mc_option_remove: "Αφαίρεση επιλογής"
