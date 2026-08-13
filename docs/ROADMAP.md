@@ -8,35 +8,16 @@ Current state: **v2.11.0 (released 2026-08-07 - feature release on top of v2.10.
 > Task-Liste (mit IDs) steht in [backlog.md](backlog.md); Abgeschlossenes
 > in der Phase-History-Tabelle weiter unten + unter "Abgeschlossen".
 
-## Aktueller Fokus (v1.86.0+)
+## Aktueller Fokus
 
-> **v1.86.0-Release-Blocker (#689, offen):** zwei CI-Gates sind auf `develop`
-> rot, eingeschleppt durch die EXP-029/033-Feature-Arbeit (#683/#687) —
-> `content-loader-dexie.ts` > 1000 Zeilen (File-Size-Gate) + `Content.tsx`
-> cc 22 (Complexity-Gate). Erst entschaerfen (Datei splitten / Funktion
-> dekomponieren), dann v1.86.0 taggen. Kein Feature-Blocker, ein Gate-Blocker.
-
-- **EXP-033 — KI-gestützte Content-Validierung** (PARTIAL, Rest für
-  v1.86.0+). Ausgeliefert: set-weite Batch-Prüfung + Report-UI + Kosten-
-  Bestätigung (AIV-01..05) und Content-Hash + Signatur + "AI-Checked"-Badge
-  (AIV-08..11), #674/#676/#686/#687/#690/#691. **Offen: AIV-06**
-  (CI-Action `ai_review.py` im Content-Repo), **AIV-07** (Auto-Fix, nur
-  User-Content), **AIV-12** (Signatur bei Content-Änderung invalidieren).
-  Siehe [EXP-033](explorations/EXP-033-ai-content-validation.md).
-- **EXP-031 — ZIP-Backup-Format (.alb)**. Container + Manifest, Magic-Byte-
-  Erkennung, Legacy-JSON-Fallback; Tasks BAK-01..06. Siehe
-  [EXP-031](explorations/EXP-031-zip-backup-format.md).
-- **EXP-032 — Deterministische Content-Validierung**. Encoding/Antwortlaengen,
-  Sprachpaar-Konsistenz, Akzent-/Artikel-Woerterbuecher; Tasks CQV-01..03
-  (CQV-04/05 später). Siehe
-  [EXP-032](explorations/EXP-032-content-quality-validation.md).
-- **#696 — Library-First-Follow-up F-1**: PyYAML als expliziten Backend-
-  Runtime-Dependency deklarieren (kleiner Hygiene-Fix).
-- **Offene Bugs**: **#622** — A11y link-name-Verstoss im Lesson-Viewer (P3,
-  offen). (#656 Complexity-Gate FreeText/WordTiles bereits in v1.85.0
-  geschlossen; das Review-Badge stieg nach einer Session nicht korrekt ab —
-  in **#675** behoben (Closes #673), released mit v1.86.0. Beide siehe
-  "Abgeschlossen".)
+- **EXP-033 — KI-gestützte Content-Validierung** (PARTIAL). Ausgeliefert:
+  set-weite Batch-Prüfung + Report-UI + Kosten-Bestätigung (AIV-01..05)
+  und Content-Hash + Signatur + "AI-Checked"-Badge (AIV-08..11),
+  #674/#676/#686/#687/#690/#691. **Offen: AIV-06** (CI-Action
+  `ai_review.py` im Content-Repo — existiert dort noch nicht, kein
+  Issue angelegt), **AIV-07** (Auto-Fix, nur User-Content), **AIV-12**
+  (Signatur bei Content-Änderung invalidieren). Siehe
+  [EXP-033](explorations/EXP-033-ai-content-validation.md).
 
 ## Nächste Phase
 
