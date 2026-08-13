@@ -18,9 +18,10 @@ Current state: **v2.11.0 (released 2026-08-07 - feature release on top of v2.10.
   direkt aus AIV-10s Verify-on-Read-Design (`verifySignature()` /
   `badgeStatusForCachedSet()` liefern bei Hash-Mismatch `"stale"`,
   `AiCheckedBadge` rendert das sichtbar anders als "verified"; gepinnt
-  in `validation-signature.test.ts`). **Offen: AIV-06** (CI-Action
-  `ai_review.py` im Content-Repo, PR
-  astrapi69/adaptive-learner-content#188 offen), **AIV-07** (Auto-Fix,
+  in `validation-signature.test.ts`) — und **AIV-06** (CI-Action
+  `ai_review.py` + `ai-review.yml` im Content-Repo,
+  astrapi69/adaptive-learner-content#188 gemergt 2026-08-13).
+  **Offen: AIV-07** (Auto-Fix,
   nur User-Content, L-Aufwand — mutiert Nutzerinhalte automatisch,
   noch nicht begonnen, braucht eigene Risiko-Abwägung vor Umsetzung).
   Siehe [EXP-033](explorations/EXP-033-ai-content-validation.md).
@@ -170,8 +171,8 @@ Teilweise erledigt (Rest in Aktueller Fokus / Nächste Phase): **EXP-013**
 **EXP-022** (UC1; UC2/UC4 offen), **EXP-023** (A/B/C-slice; Phase-C-Rest
 offen), **EXP-024** (Phase 1; Phase 2/3 offen), **EXP-025** (AUTH-01/02;
 AUTH-03..09 offen), **EXP-027** (Hindi-UI + Picker-Skalierung + Hindi-Content;
-weitere Sprachen + RTL offen), **EXP-033** (AIV-01..05 + AIV-08..12
-ausgeliefert; AIV-06/07 offen).
+weitere Sprachen + RTL offen), **EXP-033** (AIV-01..06 + AIV-08..12
+ausgeliefert; AIV-07 offen).
 
 Kürzlich geschlossene Bugs: **#656** (Complexity-Gate FreeText/WordTiles
 baselined, v1.85.0); **#675** (Review-Badge stieg nach einer Session nicht ab
