@@ -195,3 +195,47 @@ Passt zu "Gate-Test-Vertrag: fünf Tests, und fail closed" (Punkt 5, die Zahl
 muss überall dasselbe bedeuten) und zu core.md "Behauptete Durchsetzung ohne
 Durchsetzung": hier war die Durchsetzung echt, aber sie prüft etwas anderes als
 angenommen.
+
+## Ein Namens-Grep über frontend/src ist kein "0 Konsumenten"-Beweis, wenn Pakete mitrendern (#2477/#2486)
+
+Ein Dead-CSS-Audit (#2452/#2476) grepte `frontend/src` nach Konsumenten
+eines CSS-Selektors, fand keine, erklärte ihn für tot und löschte die Regel.
+Der einzige Konsument lag in `@astrapi69/ai-key-vault-react` -
+`node_modules` wurde nie durchsucht. Settings > KI lief ausgeliefert ohne
+Styling (#2477), Wiederherstellung in #2485.
+
+Der Vergleichslauf davor war grün: ein dispatchter 0-diff Visual-Run auf
+`visual-baselines-unaffected` gestellt. Nachmessung (#2486) zeigte:
+richtiges Werkzeug (Playwright navigiert echte Routen, kein isoliertes
+Rendering), falscher Umfang - 21 Settings-Bildmotive existierten, keins für
+den KI-Tab. Der 0-diff-Beweis bewies nur, dass die GEPRÜFTEN Flächen sich
+nicht änderten; die betroffene Fläche gehörte nicht dazu.
+
+Regeln:
+
+- **"0 Konsumenten" ist nur ein Beweis, wenn die Suche jeden Renderer
+  einschließt** - eigener Code UND jedes npm-Paket, das App-gestylte
+  classNames rendert (ein "headless-styled"-Muster: das Paket liefert
+  Markup + semantische Klassennamen, das Host-Projekt liefert die Regel).
+  Eine Paket-Inventarliste dieser Kandidaten gehört ins Repo, nicht ins
+  Gedächtnis der Session, die sie zuletzt geprüft hat (docs/development/,
+  #2588).
+- **Ein 0-diff-Visual-Run ist nur ein Beweis für die Flächen im
+  Motiv-Satz.** Vor dem Vertrauen auf "0 diff" fragen: ist die Fläche, die
+  die Änderung trifft, überhaupt im Satz? Ein neuer Tab/Panel braucht sein
+  eigenes Motiv, bevor er sich auf den Gate verlassen kann - sonst ist grün
+  nur Abwesenheit von Prüfung, keine Abwesenheit von Fehlern.
+- **Eine Stiländerung braucht einen Blick auf die gerenderte Anwendung,
+  nicht nur auf Namen.** Ein Architekten-Beschluss stoppte auf #1485 jede
+  weitere Dead-CSS-Tranche, bis (1) der Gate paket-bewusst ist
+  (`scripts/check-dead-classnames.py` scannt jetzt zusaetzlich Paket-Dist,
+  neuer `--consumers <name>`-Modus, #2588), (2) diese Lektion existiert, (3) das
+  Paket-Inventar steht und (4) die Visual-Lücke geschlossen ist (#2589).
+  Ein Tranchen-Stopp mit konkreten, prüfbaren Vorbedingungen ist stärker
+  als eine allgemeine Mahnung "vorsichtiger sein".
+
+Passt zu core.md "Cross-Layer-Annahmen müssen gegen ECHTE Datenformen
+gepinnt sein" - derselbe Fehler-Typ, andere Schicht: eine Prüfung, deren
+Eingabemenge nicht die reale Konsumentenmenge abdeckt. Passt zu "PR-CI vs
+nightly gates" - der 0-diff-Lauf ist eine ANDERE Prüfung als "ist diese
+Fläche überhaupt im Prüfsatz", und die zweite Frage stellte hier niemand.
