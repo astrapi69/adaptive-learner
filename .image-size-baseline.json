@@ -1,10 +1,11 @@
 {
   "note": "Ceiling for the published image (#2132). Compressed bytes - what crosses the wire on a pull. MEASURED IN CI (ubuntu-latest, docker-build-smoke.yml), because that is the environment that gates. NEVER lower this to match a laptop - and the reason is now PROVEN, not assumed (#2134): the number depends on the DAEMON'S IMAGE STORE. The same published artifact (ghcr.io/astrapi69/adaptive-learner:2.8.2, amd64) measured 125606171 bytes on a runner (classic graphdriver, overlay2) and 112828486 bytes on a containerd-image-store machine - 12.78 MB apart, same command, same bytes of content. docker save emits already-compressed blobs under the containerd store and raw layer tars under the classic graphdriver, and gzip -1 packs the latter far worse. Base-image and apt drift were the ORIGINAL guess here and are ruled out: the local base image was digest-identical to the current one (docker pull -> 0 byte delta).",
-  "compressed_bytes": 125668464,
+  "compressed_bytes": 126148228,
   "measured_in": "ci/ubuntu-latest",
   "_tightening": "Tightening stays MANUAL (#2140): the gate offers headroom above the jitter tolerance but never applies it. This ceiling is a CI measurement; a local run lowering it would pin the project to one machine's IMAGE STORE, which is worth ~12.8 MB (#2134, proven by measuring the same published image on both stores - run 30638091353).",
+  "_raise_2575": "Raised 125668464 -> 126148228 (#2575, docker-build-smoke.yml run 31693708819): eruda, the ?debug=1-gated on-device debugging console, ships in frontend `dependencies` because it must be fetchable on the deployed build, not just local dev - its chunk is excluded from the PWA precache (globIgnores) but still ships as a static asset in the image's frontend/dist. Deliberate --allow-raise, CI-measured, not a local reading.",
   "per_arch": {
-    "amd64": 125668464,
+    "amd64": 126148228,
     "arm64": 124288511
   },
   "_per_arch_note": "Per-architecture ceilings (#2147) - two published architectures are two environments (#2136 point 5), so neither may borrow the other's number. amd64 carries the CI measurement from docker-build-smoke.yml. arm64 was seeded from image-size-measure.yml run 30532123506 (native ubuntu-24.04-arm, gzip -1, after the #2163 runs-on fix; the workflow reports and a human enters, per #2140).",
