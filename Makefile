@@ -16,7 +16,7 @@ FRONTEND_PORT ?= $(or $(ADAPTIVE_LEARNER_FRONTEND_PORT),15174)
 # this file is dev-only.
 ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 
-.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret dev-lan build-frontend stop restart fix-watchers \
+.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret dev-lan dev-lan-dexie build-frontend stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
        test test-fast test-changed test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
@@ -115,6 +115,32 @@ dev-lan: dev-secret build-frontend ## LAN device test: serve built frontend + AP
 		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
 		ADAPTIVE_LEARNER_SERVE_FRONTEND=1 \
 		poetry run uvicorn app.main:app --host 0.0.0.0 --port $(BACKEND_PORT)
+
+DEXIE_PREVIEW_PORT ?= 4173
+
+dev-lan-dexie: STORAGE_MODE=dexie
+dev-lan-dexie: build-frontend ## LAN device test: serve the Dexie/GH-Pages-shape build (no backend) at 0.0.0.0:$(DEXIE_PREVIEW_PORT) — see #2575
+	@LAN_IP=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
+		if [ -n "$$ADAPTIVE_LEARNER_LAN_CERT" ] && [ -n "$$ADAPTIVE_LEARNER_LAN_KEY" ]; then SCHEME=https; else SCHEME=http; fi; \
+		echo ""; \
+		echo "Adaptive Learner — LAN device-test mode (Dexie/GH-Pages shape, no backend)"; \
+		echo "  On this machine:  $$SCHEME://localhost:$(DEXIE_PREVIEW_PORT)"; \
+		if [ -n "$$LAN_IP" ]; then \
+			echo "  On your phone:    $$SCHEME://$$LAN_IP:$(DEXIE_PREVIEW_PORT)   (same WLAN, open in Safari/Chrome)"; \
+		else \
+			echo "  (Could not detect a LAN IP via 'hostname -I'; find it manually with 'ip addr'.)"; \
+		fi; \
+		if [ "$$SCHEME" = "http" ]; then \
+			echo "  Plain HTTP: iOS Safari treats this as a non-secure origin, so the"; \
+			echo "  service worker will NOT register (fine for an IndexedDB-stall repro,"; \
+			echo "  not for a stale-SW/chunk repro). For a secure-context repro, see"; \
+			echo "  docs/developer/testing.md (mkcert HTTPS for a LAN IP)."; \
+		else \
+			echo "  Secure context (HTTPS cert set) — the service worker registers."; \
+		fi; \
+		echo "  This is a dev build, NOT the installed PWA. Press Ctrl+C to stop."; \
+		echo ""
+	@cd frontend && npx vite preview --host 0.0.0.0 --port $(DEXIE_PREVIEW_PORT) --strictPort
 
 DEV_LOG_DIR ?= /tmp/adaptive-learner-logs
 

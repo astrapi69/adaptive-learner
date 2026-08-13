@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+import {readFileSync} from "node:fs";
 import {fileURLToPath} from "node:url";
 import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
@@ -333,5 +334,25 @@ export default defineConfig({
                 changeOrigin: true,
             },
         },
+    },
+    preview: {
+        // #2575 — secure-context LAN device debugging (iOS Safari only
+        // registers a service worker over https). Both env vars unset
+        // (the default) leaves this plain http, matching every other
+        // `vite preview` caller (make test-dexie-smoke, make
+        // dev-lan-dexie). Generate a LAN-IP cert with mkcert, then set
+        // both paths before `make dev-lan-dexie` — see
+        // docs/developer/testing.md "LAN device debugging".
+        https: (() => {
+            const certPath = process.env.ADAPTIVE_LEARNER_LAN_CERT;
+            const keyPath = process.env.ADAPTIVE_LEARNER_LAN_KEY;
+            if (!certPath || !keyPath) {
+                return undefined;
+            }
+            return {
+                cert: readFileSync(certPath),
+                key: readFileSync(keyPath),
+            };
+        })(),
     },
 });

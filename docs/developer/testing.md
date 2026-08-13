@@ -165,3 +165,46 @@ the behaviour became observable - not writing a test that looks at it.
    deliberate, stance revised in #1610).
    `frontend/src/styles/ios-zoom-guard.test.ts` pins the markup; the
    behaviour itself is only observable on the device.
+
+## LAN device debugging (iOS Safari, no Mac)
+
+For device-only bugs (#2573, #1569) that need a real console, not a
+guess. On a Linux dev machine Safari Web Inspector is not available, so
+the loop is: serve the build over the LAN, open it on the phone, read
+whatever error surfaces on the page itself.
+
+```bash
+make dev-lan-dexie   # builds VITE_STORAGE_MODE=dexie, serves it at
+                      # 0.0.0.0:4173 (vite preview, no backend — the
+                      # exact GH-Pages shape), prints the phone URL
+```
+
+This is plain HTTP by default. iOS Safari treats a plain-HTTP LAN
+origin as non-secure, so the **service worker will not register** —
+fine for reproducing an IndexedDB stall, not for a stale-SW/chunk-load
+repro. For a secure-context repro:
+
+1. Install [mkcert](https://github.com/FiloSottile/mkcert) and run its
+   local CA once: `mkcert -install`.
+2. Find the LAN IP `make dev-lan-dexie` prints (or `hostname -I`), then
+   generate a cert for it: `mkcert 192.168.1.23 localhost 127.0.0.1`
+   (produces `192.168.1.23+2.pem` + `192.168.1.23+2-key.pem` in the
+   current directory).
+3. Trust the mkcert CA on the phone too (AirDrop/email the
+   `rootCA.pem` from `mkcert -CAROOT`, install the profile in iOS
+   Settings) — otherwise Safari still flags the cert as untrusted.
+4. Point `frontend/vite.config.ts`'s `preview.https` at the two files
+   and re-run:
+   ```bash
+   ADAPTIVE_LEARNER_LAN_CERT=/path/to/192.168.1.23+2.pem \
+   ADAPTIVE_LEARNER_LAN_KEY=/path/to/192.168.1.23+2-key.pem \
+   make dev-lan-dexie
+   ```
+   The banner switches to `https://` and confirms the secure context.
+
+**On-device console:** not yet built (#2575 tracks it — an
+`?debug=1`-gated eruda/vConsole overlay, deferred pending a
+new-dependency decision per `coding-standards.md` §Dependencies). Until
+then, read errors from the visible page state (error toasts, blank
+regions) and from `page.on("pageerror")`-style reasoning about what the
+build's own error boundaries would show.
