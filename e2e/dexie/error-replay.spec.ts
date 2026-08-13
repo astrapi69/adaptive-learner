@@ -106,11 +106,18 @@ test.describe("Error Replay — retry only failed exercises", () => {
             timeout: 15000,
         });
 
-        // The mistakes section (#2496) lands collapsed; expanding it exposes
-        // the full-replay CTA that opens the Error Replay lesson.
+        // The mistakes section (#2496) exposes the full-replay CTA either
+        // behind an explicit "Fix now" expand step ("collapsed" kind), or
+        // directly when the run produced no cloze drill to fix in place
+        // ("replay_only" kind, #2570/#2571) - both are correct UI, so the
+        // spec follows whichever one this run's error mix produced instead
+        // of assuming "collapsed" (fixes #2581).
         const mistakes = page.getByTestId("lesson-correction-block");
         await expect(mistakes).toBeVisible({timeout: 10000});
-        await page.getByTestId("lesson-correction-block-expand").click();
+        const expand = page.getByTestId("lesson-correction-block-expand");
+        if (await expand.count()) {
+            await expand.click();
+        }
         const replayCta = page.getByTestId("lesson-correction-replay");
         await expect(replayCta).toBeVisible();
         await replayCta.click();
