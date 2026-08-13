@@ -6,6 +6,7 @@ import AssessmentNav from "../../components/assessment/AssessmentNav";
 import AssessmentProgress from "../../components/assessment/AssessmentProgress";
 import ProfileRadar from "../../components/progress/ProfileRadar";
 import QuestionCard from "../../components/assessment/QuestionCard";
+import MethodBadge from "../../components/session/MethodBadge";
 import SpeechButton from "../../components/voice/SpeechButton";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
@@ -21,9 +22,7 @@ import {
     readAssessmentProgress,
     writeAssessmentProgress,
 } from "../../lib/assessment/assessmentProgress";
-import {METHOD_COLORS} from "../../lib/constants";
 import {getStorage} from "../../storage";
-import {bestTextOn} from "../../styles/contrast";
 import {notify} from "../../utils/notify";
 import type {AssessmentQuestion, LearningProfile} from "../../types";
 
@@ -341,15 +340,7 @@ export default function Assessment() {
                     data-testid="assessment-dominant-method"
                 >
                     {t("assessment.dominant_method", "Preferred method")}:{" "}
-                    <span
-                        className="method-badge"
-                        style={{
-                            background: `var(--method-${profile.dominant_method})`,
-                            color: bestTextOn(METHOD_COLORS[profile.dominant_method]),
-                        }}
-                    >
-                        {t(`methods.${profile.dominant_method}.label`, profile.dominant_method)}
-                    </span>
+                    <MethodBadge method={profile.dominant_method} dot={false} />
                 </p>
                 <div className="assessment-result-actions">
                     <SpeechButton
