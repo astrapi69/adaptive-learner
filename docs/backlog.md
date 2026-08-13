@@ -105,9 +105,11 @@ tiebreaker.
 ## Jetzt
 
 - **EXP-033 — KI-Content-Validierung** (PARTIAL): **offen AIV-06**
-  (CI-Action `ai_review.py`), **AIV-07** (Auto-Fix nur User-Content),
-  **AIV-12** (Signatur-Invalidierung). Erledigt: AIV-01..05 + AIV-08..11
-  (#674/#676/#686/#687/#690/#691).
+  (CI-Action `ai_review.py`, PR adaptive-learner-content#188 offen),
+  **AIV-07** (Auto-Fix nur User-Content, L-Aufwand, noch nicht
+  begonnen). Erledigt: AIV-01..05 + AIV-08..12
+  (#674/#676/#686/#687/#690/#691; AIV-12 kam ohne eigenen Code mit
+  AIV-10s Verify-on-Read-Design, siehe ROADMAP.md).
 
 ## Nächste Phase
 
