@@ -131,6 +131,12 @@ export default defineConfig({
                 // is one of them so the SW can serve it without a
                 // network roundtrip.
                 globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
+                // #2575 — eruda (the ?debug=1 on-device console) must stay
+                // a genuine on-demand fetch, never a background precache;
+                // precaching it would download it for every normal user on
+                // SW install, defeating the "only when explicitly asked
+                // for" design (`components/dev/debug-console.ts`).
+                globIgnores: ["**/eruda-*.js"],
                 // Purge the previous build's precached chunks when the
                 // SW updates, so a stale index can't keep pointing at a
                 // hashed chunk this deploy removed (#113 — pairs with

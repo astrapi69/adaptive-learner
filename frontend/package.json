@@ -73,6 +73,7 @@
     "clsx": "^2.1.1",
     "dagre": "^0.8.5",
     "dexie": "^4.4.4",
+    "eruda": "^3.4.3",
     "fflate": "^0.8.3",
     "highlight.js": "11.11.1",
     "html5-qrcode": "2.3.8",

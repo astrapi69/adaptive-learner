@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import {BrowserRouter} from "react-router";
 import App from "./App";
+import {loadDebugConsole, shouldLoadDebugConsole} from "./components/dev/debug-console";
 import {initSyncQueueReplay} from "./lib/pwa/sync-queue";
 // Tailwind first: it declares the @layer order (theme, base, components,
 // utilities) and emits only LAYERED CSS, so every unlayered rule in the
@@ -68,6 +69,15 @@ if (import.meta.env.DEV) {
  */
 if (new URLSearchParams(window.location.search).has("e2e-hooks")) {
     void import("./storage/e2e/concurrency-hooks");
+}
+
+/**
+ * #2575 — on-device console for LAN device debugging (iOS Safari, no
+ * Mac). ``?debug=1`` only; a normal visit never fetches eruda's chunk.
+ * See ``components/dev/debug-console.ts``.
+ */
+if (shouldLoadDebugConsole(window.location.search)) {
+    void loadDebugConsole();
 }
 
 // S3 (PWA hardening) — replay any lesson-progress upserts that were
