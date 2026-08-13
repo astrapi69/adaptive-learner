@@ -274,4 +274,19 @@
 # Selektor-Regel fuer EIN Kit-Element, kein generischer Rohelement-
 # Fallback, der von Utilities ueberschrieben werden soll. Kein neues
 # global.css.
-7699
+# 2026-08-13: 7699 -> 7674 (EXP-044 Option C, #1485): -25 Zeilen. Die
+# god-class .method-badge/.method-dot (19-method-badges.css, 24 Zeilen +
+# 1 @import-Zeile in global.css) geloescht - vier handkopierte
+# Konsumenten (Assessment.tsx, MethodSwitchBanner.tsx,
+# ToolRecommendations.tsx, QuickStartButton.tsx) auf die bereits
+# bestehende MethodBadge.tsx-Komponente umgestellt (die selbst von
+# CSS-Klassen auf token-backed Tailwind-Utilities umgezogen ist:
+# bg-bg-elevated/text-fg-primary statt var(--surface-2)/var(--fg)
+# Legacy-Alias-Klassen, bg-accent statt var(--accent)). Neuer dot-Prop
+# (default true) fasst die bisher uneinheitliche Dot-Anwesenheit (nur
+# QuickStartButton hatte einen Dot) explizit statt sie stillschweigend
+# anzugleichen; testId-Prop erhaelt die bestehenden testids
+# (method-switch-suggested, quick-start-method). Assessment.tsx
+# wechselt von var(--method-${x}) auf METHOD_COLORS[x] als Farbquelle -
+# beide Werte sind pro Methode identisch (verifiziert). Kein neues CSS.
+7674

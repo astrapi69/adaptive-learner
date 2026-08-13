@@ -1,7 +1,6 @@
+import MethodBadge from "./MethodBadge";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {METHOD_COLORS} from "../../lib/constants";
 import Tile from "../../shared/layout/Tile";
-import {bestTextOn} from "../../styles/contrast";
 import type {ToolRecommendation} from "../../types";
 
 interface ToolRecommendationsProps {
@@ -40,16 +39,7 @@ export default function ToolRecommendations({tools}: ToolRecommendationsProps) {
                     <p className="tool-why">{tool.why}</p>
                     <div className="tool-methods">
                         {tool.weight_keys.map((method) => (
-                            <span
-                                key={method}
-                                className="method-badge"
-                                style={{
-                                    background: METHOD_COLORS[method],
-                                    color: bestTextOn(METHOD_COLORS[method]),
-                                }}
-                            >
-                                {t(`methods.${method}.label`, method)}
-                            </span>
+                            <MethodBadge key={method} method={method} dot={false} />
                         ))}
                     </div>
                 </li>
