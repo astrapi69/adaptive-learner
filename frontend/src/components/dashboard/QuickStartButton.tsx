@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router";
 
+import MethodBadge from "../session/MethodBadge";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {METHOD_COLORS, type LearningMethod} from "../../lib/constants";
-import {bestTextOn} from "../../styles/contrast";
+import type {LearningMethod} from "../../lib/constants";
 
 interface QuickStartButtonProps {
     /**
@@ -44,26 +44,7 @@ export default function QuickStartButton({
                 {t("dashboard.quick_start_subtitle")}
             </span>
             {suggestedMethod && (
-                <span
-                    className="method-badge"
-                    data-testid="quick-start-method"
-                    style={{
-                        background: METHOD_COLORS[suggestedMethod],
-                        color: bestTextOn(METHOD_COLORS[suggestedMethod]),
-                    }}
-                >
-                    <span
-                        className="method-dot"
-                        style={{
-                            background:
-                                bestTextOn(METHOD_COLORS[suggestedMethod]) === "#000000"
-                                    ? "rgba(0,0,0,0.85)"
-                                    : "rgba(255,255,255,0.85)",
-                        }}
-                        aria-hidden="true"
-                    />
-                    {t(`methods.${suggestedMethod}.label`, suggestedMethod)}
-                </span>
+                <MethodBadge method={suggestedMethod} testId="quick-start-method" />
             )}
         </button>
     );

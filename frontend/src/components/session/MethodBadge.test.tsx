@@ -25,4 +25,20 @@ describe("MethodBadge", () => {
         // Compact mode -> no inline background.
         expect(badge.style.background).toBe("");
     });
+
+    it("renders the leading dot by default", () => {
+        const {container} = render(<MethodBadge method="dialogic" />);
+        expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument();
+    });
+
+    it("dot={false} omits the leading dot", () => {
+        const {container} = render(<MethodBadge method="dialogic" dot={false} />);
+        expect(container.querySelector('[aria-hidden="true"]')).not.toBeInTheDocument();
+    });
+
+    it("testId overrides the default method-badge-<method> testid", () => {
+        render(<MethodBadge method="contextual" testId="my-custom-testid" />);
+        expect(screen.getByTestId("my-custom-testid")).toBeInTheDocument();
+        expect(screen.queryByTestId("method-badge-contextual")).not.toBeInTheDocument();
+    });
 });
