@@ -3,7 +3,10 @@
  * LessonPage for the complexity burn-down #417).
  */
 
-import { SUPPORTED_EXERCISE_TYPES } from "../../components/exercises";
+import {
+  SUPPORTED_EXERCISE_TYPES,
+  SUPPORTED_EXT_EXERCISE_TYPES,
+} from "../../components/exercises";
 import type {
   ContentLesson,
   ContentLessonStep,
@@ -29,6 +32,10 @@ export function storedStepResult(
  * True when ``step`` is a playable exercise step — i.e. it gates the
  * two-phase Check/Next button. Theory steps and unsupported/placeholder
  * exercise types keep the plain always-enabled "Next" button.
+ *
+ * Must accept exactly what ``ExerciseDispatcher`` renders: core types
+ * plus the adopted ``ext:al-*`` extensions (#2600) — a renderable
+ * exercise the footer treats as theory is playable but never graded.
  */
 export function isPlayableExerciseStep(
   step: ContentLessonStep | null,
@@ -37,6 +44,7 @@ export function isPlayableExerciseStep(
     step !== null &&
     step.type !== "theory" &&
     step.exercise != null &&
-    SUPPORTED_EXERCISE_TYPES.has(step.exercise.type)
+    (SUPPORTED_EXERCISE_TYPES.has(step.exercise.type) ||
+      SUPPORTED_EXT_EXERCISE_TYPES.has(step.exercise.type))
   );
 }

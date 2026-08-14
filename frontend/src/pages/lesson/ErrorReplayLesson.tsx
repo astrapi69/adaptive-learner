@@ -27,10 +27,8 @@ import {Button} from "@/components/ui/button";
 
 import Confetti from "../../components/feedback/Confetti";
 import ProgressBar from "../../shared/data-display/ProgressBar";
-import {
-    ExerciseDispatcher,
-    SUPPORTED_EXERCISE_TYPES,
-} from "../../components/exercises";
+import {ExerciseDispatcher} from "../../components/exercises";
+import {isPlayableExerciseStep} from "../../lib/lesson/lesson-step-state";
 import type {
     ExerciseHandle,
     ExerciseScored,
@@ -111,10 +109,7 @@ export default function ErrorReplayLesson() {
     const total = steps.length;
     const isSummary = index >= total;
     const step = isSummary ? null : steps[index];
-    const isExerciseStep =
-        step != null &&
-        step.exercise != null &&
-        SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
+    const isExerciseStep = isPlayableExerciseStep(step);
 
     // Refresh the Enter-decision state every render (no re-subscribe);
     // the listener reads it through the ref. Error-Replay has no
