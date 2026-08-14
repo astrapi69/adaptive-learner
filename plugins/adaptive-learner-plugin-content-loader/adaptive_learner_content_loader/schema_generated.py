@@ -458,7 +458,9 @@ class Card(BaseModel):
     """
     Tags for SRS filtering ('greeting', 'verb-present', 'irregular'). Each tag must match $defs/SlugId - the reference consumer checks tags with the same regex it applies to ids and skips lessons whose tags fail (engine#108, hard since schema 1.11 after the published corpus was cleaned).
     """
-    token_roles: list[CardTokenRole] | None = Field(None, max_length=10, title='Token Roles')
+    token_roles: list[CardTokenRole] | None = Field(
+        None, max_length=10, title='Token Roles'
+    )
     """
     Phase 52I / v1.35.0 / P-130. Optional list of ``{token, role}`` annotations on the card's ``front``. The cloze generator (52E) uses these to pick a semantically-meaningful blank when available; absent annotations fall through to a position-based heuristic so old content keeps working unchanged.
     """
@@ -548,7 +550,9 @@ class Exercise(BaseModel):
     """
     MULTIPLE_CHOICE: when false (default) exactly one option is correct (single choice); when true the learner selects ALL correct options ('select all that apply', graded by exact-set match). Ignored by the other exercise types.
     """
-    options: list[MultipleChoiceOption] | None = Field(None, max_length=20, title='Options')
+    options: list[MultipleChoiceOption] | None = Field(
+        None, max_length=20, title='Options'
+    )
     """
     MULTIPLE_CHOICE: list of {text, correct?} answer options (schema v1.6). At least two options; ``multiple`` controls whether exactly one or at least one must be marked correct. Correctness is a per-option flag, so no separate accept/distractor lists (and no disjointness rule) are needed. The renderer shuffles before display.
     """
