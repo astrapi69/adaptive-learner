@@ -3046,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "Answer options",
+        "convert_label": "Exercise type",
+        "convert_hint": "Converting keeps the written answer and the learner's progress.",
         "mc_option_placeholder": "Option text",
         "mc_option_add": "Add option",
         "mc_option_remove": "Remove option",

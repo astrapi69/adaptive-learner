@@ -3046,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "답 선택지",
+        "convert_label": "문제 유형",
+        "convert_hint": "변환해도 입력한 답과 학습자의 진행 상황이 유지됩니다.",
         "mc_option_placeholder": "선택지 텍스트",
         "mc_option_add": "선택지 추가",
         "mc_option_remove": "선택지 삭제",

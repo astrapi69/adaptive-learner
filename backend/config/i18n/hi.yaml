@@ -2782,6 +2782,8 @@ create_lesson:
       picture_choice: "चित्र चयन: कम से कम दो कार्डों में एक छवि जोड़ें।"
     edit:
       mc_options_label: "उत्तर विकल्प"
+      convert_label: "अभ्यास प्रकार"
+      convert_hint: "रूपांतरण से लिखा गया उत्तर और सीखने वाले की प्रगति बनी रहती है।"
       mc_option_placeholder: "विकल्प पाठ"
       mc_option_add: "विकल्प जोड़ें"
       mc_option_remove: "विकल्प हटाएँ"
