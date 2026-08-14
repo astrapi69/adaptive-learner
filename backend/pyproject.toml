@@ -9,7 +9,7 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "~3.12"
 fastapi = "^0.136.0"
-uvicorn = { extras = ["standard"], version = ">=0.48,<0.52" }
+uvicorn = { extras = ["standard"], version = ">=0.48,<0.53" }
 sqlalchemy = "^2.0.49"
 pydantic = {version = "^2.13.0", extras = ["email"]}
 platformdirs = "^4.2.0"
@@ -51,7 +51,7 @@ pre-commit = "^4.5.1"
 pip-audit = "^2.10.0"
 pytest-randomly = "^4.1.0"
 pytest-testmon = "^2.2.0"
-datamodel-code-generator = ">=0.68.1,<0.72.0"
+datamodel-code-generator = ">=0.68.1,<0.73.0"
 # Exakt gepinnt, nicht "^": die kuratierte Wortliste ist das Orakel der
 # Doku-Hygiene (#2311). Eine schrumpfende Liste saehe sonst aus wie ein
 # Gewinn - siehe quality-checks.md, Fremdwerkzeug-Klasse.
