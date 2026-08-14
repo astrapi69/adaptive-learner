@@ -24,7 +24,7 @@
     "generate:validator": "node scripts/generate-lesson-validator.mjs"
   },
   "dependencies": {
-    "@assistant-ui/react": "^0.15.13",
+    "@assistant-ui/react": "^0.14.28",
     "@astrapi69/ai-key-vault": "0.2.0",
     "@astrapi69/ai-key-vault-react": "0.3.2",
     "@astrapi69/feature-strategy": "^0.1.2",
