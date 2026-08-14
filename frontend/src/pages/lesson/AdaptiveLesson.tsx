@@ -48,10 +48,8 @@ import {
 } from "react-router";
 
 import SaveAdaptiveLessonButton from "../../components/content/lessons/SaveAdaptiveLessonButton";
-import {
-  ExerciseDispatcher,
-  SUPPORTED_EXERCISE_TYPES,
-} from "../../components/exercises";
+import { ExerciseDispatcher } from "../../components/exercises";
+import { isPlayableExerciseStep } from "../../lib/lesson/lesson-step-state";
 import type { ExerciseHandle } from "../../components/exercises";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "../../shared/data-display/ProgressBar";
@@ -173,11 +171,7 @@ export default function AdaptiveLessonPage() {
   }
 
   const step = isSummary ? null : lesson.steps[currentStepIndex];
-  const isExerciseStep =
-    step != null &&
-    step.type === "exercise" &&
-    step.exercise != null &&
-    SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
+  const isExerciseStep = isPlayableExerciseStep(step);
   const progressPct =
     totalSteps === 0 ? 100 : Math.round((currentStepIndex / totalSteps) * 100);
 
