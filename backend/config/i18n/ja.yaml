@@ -2789,6 +2789,8 @@ create_lesson:
       picture_choice: "画像選択：2枚以上のカードに画像を追加してください。"
     edit:
       mc_options_label: "選択肢"
+      convert_label: "問題タイプ"
+      convert_hint: "変換しても入力した答えと学習の進捗は保持されます。"
       mc_option_placeholder: "選択肢のテキスト"
       mc_option_add: "選択肢を追加"
       mc_option_remove: "選択肢を削除"

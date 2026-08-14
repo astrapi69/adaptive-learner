@@ -3046,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "Opções de resposta",
+        "convert_label": "Tipo de exercício",
+        "convert_hint": "A conversão mantém a resposta escrita e o progresso do aluno.",
         "mc_option_placeholder": "Texto da opção",
         "mc_option_add": "Adicionar opção",
         "mc_option_remove": "Remover opção",

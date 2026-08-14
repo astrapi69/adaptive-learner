@@ -24,11 +24,17 @@ import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
 import CardImageField from "./CardImageField";
 import {
+    convertExercise,
+    coreConversionTargets,
     countClozeMarkers,
     normalizeExerciseEdit,
     validateExerciseEdit,
+    type ConversionTargetType,
 } from "../../lib/exercises";
-import {exerciseEditErrorKey} from "../../lib/content/lesson/edit-error-keys";
+import {
+    exerciseEditErrorKey,
+    exerciseTypeLabelKey,
+} from "../../lib/content/lesson/edit-error-keys";
 import type {
     ContentLessonExercise,
     ContentLessonClozeBlank,
@@ -52,6 +58,15 @@ export default function ExerciseEditor({
 
     function patch(next: Patch) {
         setDraft((prev) => ({...prev, ...next}) as ContentLessonExercise);
+    }
+
+    const conversionTargets = coreConversionTargets(draft);
+
+    function convertType(nextType: string) {
+        if (nextType === draft.type) return;
+        if (conversionTargets.includes(nextType as ConversionTargetType)) {
+            setDraft(convertExercise(draft, nextType as ConversionTargetType));
+        }
     }
 
     const issue = validateExerciseEdit(draft);
@@ -79,6 +94,38 @@ export default function ExerciseEditor({
                     onChange={(e) => patch({prompt: e.target.value})}
                 />
             </label>
+
+            {conversionTargets.length > 0 && (
+                <label
+                    className="form-field flex flex-col gap-1.5"
+                    data-testid={`exercise-edit-type-${id}`}
+                >
+                    <span className="form-label text-sm font-medium text-fg-primary">
+                        {t("create_lesson.exercises.edit.convert_label", "Exercise type")}
+                    </span>
+                    <select
+                        className="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        value={draft.type}
+                        data-testid={`exercise-edit-type-select-${id}`}
+                        onChange={(e) => convertType(e.target.value)}
+                    >
+                        <option value={draft.type}>
+                            {t(exerciseTypeLabelKey(draft.type), draft.type)}
+                        </option>
+                        {conversionTargets.map((target) => (
+                            <option key={target} value={target}>
+                                {t(exerciseTypeLabelKey(target), target)}
+                            </option>
+                        ))}
+                    </select>
+                    <FormHint as="p">
+                        {t(
+                            "create_lesson.exercises.edit.convert_hint",
+                            "Converting keeps the written answer and the learner's progress.",
+                        )}
+                    </FormHint>
+                </label>
+            )}
 
             <TypeFields draft={draft} onPatch={patch} />
 

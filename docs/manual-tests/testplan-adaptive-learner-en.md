@@ -893,6 +893,17 @@ instead of overwriting or resetting it.
       **playable** with multi-select. Switching back to "Allow one answer" →
       pruned to exactly one correct. An existing MC exercise with a set
       `multiple` value opens **unchanged** in its original state.
+- [ ] **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
+      inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
+      **Multiple choice** exercise, a **"Exercise type"** select at the top
+      lists the current type plus **"Free text"**. Switching to "Free text":
+      the fields change to the free-text editor with the **accepted answer
+      pre-filled** (word tiles: the joined tile sentence; MC: the correct
+      option, wrong options move into the distractors). Save and play it as a
+      free-text exercise. For other exercise types (free text, matching, cloze,
+      picture choice) **no** select appears. Expectation: the converted
+      exercise keeps the learner's progress (same answer key), and Cancel
+      discards the conversion.
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
