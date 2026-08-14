@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-08-05 (v2.10.0)
-**Anzahl EXPs:** 47 (Zeilen der Übersichtstabelle; die Nummern 019 und 043
+**Stand:** 2026-08-07 (v2.11.0)
+**Anzahl EXPs:** 49 (Zeilen der Übersichtstabelle; die Nummern 019 und 043
 existieren nicht, 001-017 sind in `docs/roadmap-archive/phase-1-complete.md`
 archiviert und bleiben als historische Zeilen stehen)
 
@@ -68,6 +68,8 @@ archiviert und bleiben als historische Zeilen stehen)
 | 047 | Vorlesefunktion für alle Aufgabentypen (Auftrag, noch nicht ausgeführt) | Feature | Auftrag | Mittel | 001, 006, #2053 |
 | 048 | Entdecken bei wachsender Bibliothek (Sprachkombination vs. Fachgebiet, Durchsichtsstand) | Feature | Analyse | P2 | 034/#736, #1343/#1699, 023, #2297 |
 | 049 | Auffindbarkeit der öffentlichen Flächen (SEO, drei Zielgruppen, Lerninhalte; mit Engine-Fassung zusammengeführt, Entscheidungen eingetragen) | Querschnitt | Analyse + Entscheidung | P3 | #1104, 034, 048/#2297, #2299, #2400, #2403-#2406 |
+| 050 | Aufgaben zwischen Typen umwandeln (Matrix, Fortschritts-Verwaisung, Zuschnitt) | Feature | Analyse | P3 | 041, 045/#2455, 036, #2510 |
+| 051 | Durchgänge und Fehlerhistorie (gemeinsames Generationsmodell, Entscheidungen eingetragen) | Querschnitt | Analyse + Entscheidung | P2 | AUTH-05, 045, #2308/#2161/#2519, #2125 |
 
 ## Umsetzungsstand (Stand v1.99.0)
 

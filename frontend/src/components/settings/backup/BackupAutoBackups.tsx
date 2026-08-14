@@ -122,7 +122,7 @@ export function BackupAutoBackups({
                 </p>
             )}
 
-            <div className="backup-actions flex flex-wrap gap-2">
+            <div className="backup-actions mt-4 flex flex-wrap gap-2">
                 <Button
                     type="button"
                     variant="default"

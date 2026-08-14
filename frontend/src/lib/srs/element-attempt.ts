@@ -35,6 +35,7 @@ import {canonicalDictationAnswer} from "../exercises/payload/dictation";
 import {canonicalImageDescriptionAnswer} from "../exercises/payload/image-description";
 import {resolveConcreteDirection} from "../exercises/direction";
 import {elementKeysOf} from "./element-keys";
+import {elementIdentityKeysOf} from "./element-identity";
 import {exerciseIdentityOf} from "./exercise-identity";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
@@ -81,7 +82,9 @@ export function deriveMatchingAttempts(
     productive = false,
 ): ElementAttempt[] {
     const pairs = exercise.pairs ?? [];
-    const keys = elementKeysOf(exercise) ?? [];
+    // engine#91: prefer each pair's own stable_id for the STORAGE key;
+    // correct_answer below is unaffected (it reads pair.right directly).
+    const keys = elementIdentityKeysOf(exercise) ?? [];
     const rightValue = (i: number): string =>
         (productive ? pairs[i]?.left : pairs[i]?.right) ?? "";
     return pairs.map((pair, leftIdx) => {
@@ -329,13 +332,15 @@ export function deriveWordTilesAttempt(
 }
 
 /** CLOZE: fan-out one attempt per blank (Phase 52D / v1.35.0 /
- *  P-127). Note the plural name — cloze emits MULTIPLE attempts
+ *  P-127). Note the plural name - cloze emits MULTIPLE attempts
  *  per exercise, one per blank, so element-level mastery
  *  granularity matches the granularity of the wrong-answer
- *  signal. element_key per blank = ``blank.accept[0]`` (the
- *  canonical of THAT blank), so a user who fluently fills
+ *  signal. correct_answer per blank is the canonical of THAT
+ *  blank (``blank.accept[0]``), shown to the learner; element_key
+ *  is the same blank's own stable_id when minted (engine#91),
+ *  else the same canonical text, so a user who fluently fills
  *  blank A but consistently misses blank B gets per-blank
- *  mastery tracking — the cloze generator (52E) can then
+ *  mastery tracking - the cloze generator (52E) can then
  *  target blank B specifically. */
 export function deriveClozeAttempts(
     exercise: ContentLessonExercise,
@@ -344,12 +349,16 @@ export function deriveClozeAttempts(
     perBlankCorrect: readonly boolean[],
 ): ElementAttempt[] {
     const blanks = exercise.blanks ?? [];
-    const keys = elementKeysOf(exercise) ?? [];
+    const canonicalKeys = elementKeysOf(exercise) ?? [];
+    // engine#91: element_key prefers each blank's own stable_id (storage);
+    // correct_answer stays on the canonical text - it is shown to the
+    // learner and must never surface an opaque id.
+    const identityKeys = elementIdentityKeysOf(exercise) ?? [];
     return blanks.map((blank, i) => {
-        const canonical = keys[i] ?? blank.accept[0] ?? "";
+        const canonical = canonicalKeys[i] ?? blank.accept[0] ?? "";
         return {
             ..._baseAttempt(exercise, ctx),
-            element_key: canonical,
+            element_key: identityKeys[i] ?? canonical,
             element_type: "vocabulary",
             user_answer: perBlankInputs[i] ?? "",
             correct_answer: canonical,
@@ -381,10 +390,13 @@ export function deriveClozeMultiSelectAttempt(
 }
 
 /** Native multiple_choice (#1525, schema v1.6): a single attempt for the
- *  question. element_key + correct_answer are the canonical correct
- *  option texts (sorted, joined) so reviews re-target the same question;
- *  ``correct`` is the verdict from the grading module (single pick or
- *  exact-set, no re-validation here). */
+ *  question. correct_answer is the canonical correct option text(s) (sorted,
+ *  joined), shown to the learner. element_key is the same shape but prefers
+ *  each correct option's stable_id when minted (engine#91), so a wording fix
+ *  on an already-identified option does not move the key even though
+ *  correct_answer's TEXT still updates to match. ``correct`` is the verdict
+ *  from the grading module (single pick or exact-set, no re-validation
+ *  here). */
 export function deriveMultipleChoiceAttempt(
     exercise: ContentLessonExercise,
     ctx: AttemptContext,
@@ -392,9 +404,13 @@ export function deriveMultipleChoiceAttempt(
     isCorrect: boolean,
 ): ElementAttempt {
     const canonical = elementKeysOf(exercise)?.[0] ?? "";
+    // engine#91: element_key prefers minted options' stable_id (storage);
+    // correct_answer stays canonical text for display, same reasoning as
+    // deriveClozeAttempts above.
+    const identityKey = elementIdentityKeysOf(exercise)?.[0] ?? canonical;
     return {
         ..._baseAttempt(exercise, ctx),
-        element_key: canonical,
+        element_key: identityKey,
         element_type: "vocabulary",
         user_answer: [...selected].sort().join(", "),
         correct_answer: canonical,

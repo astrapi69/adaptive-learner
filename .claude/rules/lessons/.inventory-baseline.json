@@ -20,6 +20,7 @@
   "Doc values: read from code, not from memory": "cb96a1d98be3893c",
   "Docs are specification, not a wish list": "ffac6d6b52042284",
   "Ein Byte-Gate kann eine zuf\u00e4llige \u00dcbereinstimmung pr\u00fcfen statt der Spiegelung (#2265)": "d1dc996d377be34b",
+  "Ein Namens-Grep \u00fcber frontend/src ist kein \"0 Konsumenten\"-Beweis, wenn Pakete mitrendern (#2477/#2486)": "1f2b9dedf433379a",
   "End-user help is versionless; provenance belongs to the changelog": "0e83c38c74f67fc5",
   "Engine re-pin without `make sync-schema` is invisible until the release gate": "3b21b7970742be58",
   "External GitHub Action major-version drift": "4a46f63ea6f855c7",

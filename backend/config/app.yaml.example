@@ -28,6 +28,7 @@ plugins:
     - ai-anthropic
     - ai-openai
     - ai-gemini
+    - ai-perplexity
     - session
     - tracking
     - tools

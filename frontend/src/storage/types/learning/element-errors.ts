@@ -49,6 +49,10 @@ export interface ElementAttempt {
 export interface ElementError {
   id: string;
   user_id: string;
+  /** EXP-051 / #2125 — the Durchgang (run/pass) this row belongs to.
+   *  Present from the backend and DexieStorage; optional in the type so
+   *  pre-EXP-051 fixtures still type-check (absent = run 1). */
+  run_id?: number;
   set_id: string;
   lesson_id: string;
   exercise_id: string;
@@ -86,6 +90,21 @@ export interface ElementError {
   retired_at?: string | null;
   created_at: string;
   updated_at: string;
+}
+
+/**
+ * One Durchgang (run/pass) of a content set (EXP-051 / #2125). Mirrors
+ * the backend ``SetRunOut`` schema. ``closed_at`` is null for the active
+ * run; earlier runs are an immutable archive for the Fehlerhistorie.
+ */
+export interface SetRun {
+  id: string;
+  user_id: string;
+  set_id: string;
+  run_id: number;
+  content_version_at_start?: string | null;
+  started_at: string;
+  closed_at: string | null;
 }
 
 /**
@@ -147,9 +166,31 @@ export interface ExerciseIdRemap {
 export interface IElementErrorsNamespace {
   list(
     userId: string,
-    opts?: { setId?: string; includeMastered?: boolean; includeRetired?: boolean },
+    opts?: {
+      setId?: string;
+      includeMastered?: boolean;
+      includeRetired?: boolean;
+      /** EXP-051 / #2125 — the Durchgang to read. Omit for each set's
+       *  ACTIVE run (current state); pass a run number for a specific past
+       *  run (the Fehlerhistorie). */
+      runId?: number;
+    },
   ): Promise<ElementError[]>;
   recordBulk(userId: string, attempts: readonly ElementAttempt[]): Promise<ElementError[]>;
+  /** EXP-051 / #2125 — start a new Durchgang of a set ("Set erneut
+   *  durcharbeiten"). Atomically closes the active run and opens the next:
+   *  the prior run's rows stay frozen for the Fehlerhistorie, new attempts
+   *  write fresh rows under the new run (cold SRS scheduling). Works in
+   *  both storage modes. Returns the newly opened run. */
+  startRun(
+    userId: string,
+    setId: string,
+    opts?: { contentVersion?: string },
+  ): Promise<SetRun>;
+  /** EXP-051 / #2125 — list every Durchgang of a set, oldest first. The
+   *  active run has ``closed_at = null``. The Fehlerhistorie enumerates
+   *  runs here, then reads each run's rows via ``list(..., { runId })``. */
+  listRuns(userId: string, setId: string): Promise<SetRun[]>;
   /** #2161 one-off recovery: rewrite orphaned element_key old -> new for the
    *  given remaps. Idempotent and no double-map (a target row that already
    *  exists is skipped, never collapsed). One call is atomic (all-or-nothing);

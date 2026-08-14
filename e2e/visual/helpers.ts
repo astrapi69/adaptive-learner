@@ -602,6 +602,7 @@ export const SURFACE_NAMES = [
     "settings-general",
     "settings-data",
     "settings-about",
+    "settings-ai",
     "shortcut-help",
 ] as const;
 
@@ -928,6 +929,18 @@ export async function gotoSurface(
         case "settings-about":
             await seedLearner(page);
             await page.goto("/settings?tab=about");
+            await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "settings-ai":
+            // #2486 - the AI provider-key tab renders
+            // @astrapi69/ai-key-vault-react (a package-consumed-classNames
+            // surface, see docs/development/package-classname-consumers.md).
+            // Its absence from this matrix is why the #2477 unstyled-ship
+            // stayed invisible to a dispatched 0-diff verify run.
+            await seedLearner(page);
+            await page.goto("/settings?tab=ai");
             await expect(page.getByTestId("settings")).toBeVisible({
                 timeout: 20_000,
             });

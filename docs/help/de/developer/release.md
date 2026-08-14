@@ -54,15 +54,16 @@ version = "0.X.Y"
 make sync-versions
 ```
 
-Aktualisiert **18 Dateien** automatisch:
+Aktualisiert jede versionstragende Datei automatisch (die
+vollständige Menge steht in `scripts/sync_versions.py`):
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
 - `launcher/adaptive-learner-launcher.spec`
   (CFBundle-plist + CFBundleShortVersionString)
-- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- 3× Plugin-`__init__.py`-`__version__`-Literale
+- jede `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- jede Plugin-`__init__.py` mit `__version__`-Literal
 - `install.sh` (aus `install.sh.template` neu generiert)
 - `install.ps1` (aus `install.ps1.template` neu generiert)
 
@@ -70,7 +71,7 @@ Aktualisiert **18 Dateien** automatisch:
 
 ```bash
 make sync-versions-check     # Exit-Code != 0 bei Drift
-make test                    # 2634 Tests müssen passieren
+make test                    # die vollständige Suite muss passieren
 cd frontend && bun run build # muss durchlaufen
 ```
 
@@ -123,11 +124,11 @@ den in Schritt 2 committeten Per-Release-Notes entspricht.
 ## Plugin-Versionen
 
 Plugins laufen im Gleichschritt mit der kanonischen App-
-Version: dieselbe Nummer in allen 10
-Plugin-`pyproject.toml`-Dateien plus den drei Plugin-
+Version: dieselbe Nummer in jeder
+Plugin-`pyproject.toml` plus den Plugin-
 `__init__.py`-`__version__`-Literalen. Eine spätere „Core
 vs Third-Party-Plugin"-Entscheidung könnte das entkoppeln;
-das aktuelle Setup ist einheitlich über die 18 propagierten
+das aktuelle Setup ist einheitlich über alle propagierten
 Dateien.
 
 ## Hotfix-Flow

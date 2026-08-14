@@ -357,6 +357,7 @@ def test_ai_provider_enum_order_is_anthropic_first():
         AIProvider.ANTHROPIC,
         AIProvider.OPENAI,
         AIProvider.GEMINI,
+        AIProvider.PERPLEXITY,
     ]
 
 

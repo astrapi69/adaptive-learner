@@ -29,7 +29,7 @@
  * ```
  */
 
-import {elementKeysOf} from "../../srs/element-keys";
+import {elementIdentityKeysOf} from "../../srs/element-identity";
 import {matchesExerciseIdentity} from "../../srs/exercise-identity";
 import type {ElementKeyRemap} from "../../../storage/types";
 import type {PeekExercise, PeekLesson, SrsIdentity} from "./update-impact";
@@ -112,8 +112,10 @@ function classify(
     const cachedHit = findExercise(cached, identity.lesson_id, identity.exercise_id);
     if (!cachedHit.exercise) return refuse("not_in_cached");
 
-    const oldKeys = elementKeysOf(cachedHit.exercise);
-    const newKeys = elementKeysOf(incomingHit.exercise);
+    // engine#91: identity keys, not canonical display text - a text
+    // correction under an already-minted stable_id must look unchanged here.
+    const oldKeys = elementIdentityKeysOf(cachedHit.exercise);
+    const newKeys = elementIdentityKeysOf(incomingHit.exercise);
     if (oldKeys === null || newKeys === null) return refuse("unknown_type");
 
     const index = oldKeys.indexOf(identity.element_key);
@@ -172,8 +174,11 @@ export function planElementKeyRemaps(
             identity.exercise_id,
         );
         // Still resolves in the incoming version -> nothing was orphaned.
+        // engine#91: identity keys here too, or a row already keyed by a
+        // minted stable_id would never short-circuit on a harmless text
+        // correction and would fall through to classify() needlessly.
         const stillThere = incomingHit.exercise
-            ? elementKeysOf(incomingHit.exercise)?.includes(identity.element_key)
+            ? elementIdentityKeysOf(incomingHit.exercise)?.includes(identity.element_key)
             : false;
         if (stillThere) continue;
 

@@ -1,6 +1,10 @@
 # Hindi (hi) UI catalog - AI-generated draft, review-pending.
 # Generated from en.yaml; structure mirrors EN (I18N-05).
 app:
+  loading: "लोड हो रहा है…"
+  loading_slow: "यह अपेक्षा से अधिक समय ले रहा है।"
+  view_load_failed: "यह दृश्य लोड नहीं हो सका।"
+  reload: "फिर से लोड करें"
   name: अडैप्टिव लर्नर
   tagline: ऐसी शिक्षा जो आपके अनुसार ढलती है।
   skeleton_notice: स्केलेटन अवस्था। डोमेन मॉडल, प्लगइन और पेज आने वाले चरणों में जुड़ेंगे - देखें docs/adaptive-learner-project-reference.md।
@@ -98,8 +102,7 @@ nav:
   mode_badge_ai: AI+सामग्री
   mode_badge_tooltip_content: कोई API कुंजी कॉन्फ़िगर नहीं - केवल पूर्व-निर्मित सामग्री का उपयोग। AI सुविधाएँ सक्षम करने के लिए सेटिंग्स में कुंजी जोड़ें।
   mode_badge_tooltip_ai: AI प्रदाता कॉन्फ़िगर - अभ्यास डिस्ट्रैक्टर + संकेत के लिए AI का उपयोग करते हैं। सामग्री सेट देखने के लिए टैप करें।
-  mode_badge_label_content: 'मोड: केवल सामग्री'
-  mode_badge_label_ai: 'मोड: AI + सामग्री'
+  mode_badge_action: "सामग्री ब्राउज़ करें"
   sync_paired: 'सिंक: युग्मित (सेटिंग्स > सिंक)'
   sync_unpaired: 'सिंक: युग्मित नहीं (सेटिंग्स > सिंक)'
 import:
@@ -698,6 +701,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - AI tab par configured providers ki suchi tabel.
   providers:
     title: कॉन्फ़िगर किए गए AI प्रदाता
@@ -1183,7 +1187,7 @@ gamification:
   xp_no_data: XP अर्जित करने के लिए एक सत्र पूरा करें।
   xp_earned: अर्जित XP
   xp_gain_aria: आपने इस पाठ के लिए {n} XP अर्जित किए
-  xp_header_aria: स्तर {level}, कुल {xp} XP
+  xp_total_suffix: "कुल"
   xp_header_tooltip: आपके अनुभव अंक
   xp_to_next_level: 'अगले स्तर तक {n} XP'
   max_level: अधिकतम स्तर तक पहुँच गए
@@ -1991,6 +1995,11 @@ lesson:
     complete_heading: सुधार दौर पूर्ण
     improvement: '{n} तत्वों में सुधार हुआ।'
     improvement_singular: '{n} तत्व में सुधार हुआ।'
+    mistakes_heading: अपनी गलतियाँ सुधारें
+    expand: अभी सुधारें
+    replay_all: 'सभी अभ्यास फिर से करें ({count})'
+    replay_only_heading: 'अपनी गलतियाँ दोहराएँ'
+    replay_only_subtitle: 'इन्हें त्वरित अभ्यास के रूप में अभ्यास नहीं किया जा सकता - इसके बजाय अभ्यास फिर से करें।'
   error:
     load_failed: पाठ लोड नहीं हो सका।
     invalid_data: "इस पाठ में अमान्य या दूषित डेटा होने के कारण इसे नहीं खोला जा सकता। कृपया सामग्री के लेखक से संपर्क करें।"
@@ -2227,7 +2236,15 @@ content:
     bulk_deleted: "{n} सेट हटाए गए।"
     bulk_delete_title: "{n} सेट हटाएँ?"
     bulk_delete_confirm: "चयनित सेट और उनके पाठ मेरी सामग्री से हटा दिए जाएँगे। आपकी सीखने की प्रगति सुरक्षित रहती है, और आप सेट कभी भी फिर से डाउनलोड कर सकते हैं।"
+    restarted: "एक नया दौर शुरू हो गया है। आपका पिछला दौर सुरक्षित रखा गया है।"
+    restart_failed: "नया दौर शुरू नहीं किया जा सका।"
+    restart_confirm:
+      title: "इस सेट पर फिर से काम करें?"
+      message: "“{title}” का एक नया दौर शुरू से आरंभ होता है। आपका पिछला दौर आपके इतिहास के लिए सुरक्षित रहता है; कुछ भी नहीं हटाया जाता।"
+      confirm: "नया दौर शुरू करें"
+      cancel: "रद्द करें"
     action:
+      restart: "फिर से काम करें"
       activate: "फिर से सक्रिय करें"
       defer: "स्थगित करें"
       complete: "पूर्ण के रूप में चिह्नित करें"
@@ -2614,6 +2631,14 @@ create_lesson:
     theory_failed: "AI ने कोई उपयोगी सिद्धांत नहीं दिया। कृपया फिर से प्रयास करें।"
     exercises_failed: "कोई उपयोगी अभ्यास नहीं बना। कृपया फिर से प्रयास करें।"
     generate_failed: "पाठ नहीं बनाया जा सका। कृपया फिर से प्रयास करें।"
+    gen_missing_intro: "ये चयनित प्रकार टेक्स्ट से उत्पन्न नहीं हुए:"
+    types:
+      heading: "अभ्यास प्रकार"
+      group_standard: "मानक प्रकार"
+      group_extension: "एक्सटेंशन प्रकार"
+      group_unavailable: "टेक्स्ट से उत्पन्न नहीं"
+      unavailable_reason: "टेक्स्ट से छवियाँ या ऑडियो उत्पन्न नहीं किए जा सकते। आप इन प्रकारों को बाद में एडिटर में जोड़ सकते हैं।"
+      floor_hint: "कम से कम एक अभ्यास प्रकार चयनित रहना चाहिए।"
     generate_to_advance: "जारी रखने के लिए अपने टेक्स्ट से पाठ बनाएं।"
     review_theory: "{n} सिद्धांत चरण"
     review_exercises: "{n} अभ्यास"
@@ -2729,6 +2754,7 @@ create_lesson:
     types_label: अभ्यास प्रकार
     add: "अभ्यास जोड़ें"
     add_heading: "अभ्यास प्रकार चुनें"
+    add_ext_group: "एक्सटेंशन प्रकार"
     incomplete_to_advance: "जारी रखने के लिए अधूरे अभ्यास पूरे करें या हटाएँ।"
     direction_label: दिशा
     generate: अभ्यास स्वतः बनाएँ
@@ -2756,6 +2782,8 @@ create_lesson:
       picture_choice: "चित्र चयन: कम से कम दो कार्डों में एक छवि जोड़ें।"
     edit:
       mc_options_label: "उत्तर विकल्प"
+      convert_label: "अभ्यास प्रकार"
+      convert_hint: "रूपांतरण से लिखा गया उत्तर और सीखने वाले की प्रगति बनी रहती है।"
       mc_option_placeholder: "विकल्प पाठ"
       mc_option_add: "विकल्प जोड़ें"
       mc_option_remove: "विकल्प हटाएँ"
@@ -2915,6 +2943,8 @@ create_lesson:
     to_browser: सामग्री ब्राउज़र पर जाएँ
     save_file: "फ़ाइल के रूप में सहेजें"
     file_saved: "पाठ फ़ाइल के रूप में सहेजा गया।"
+    progress_carried_over: "बदले गए उत्तर के लिए {count} पुनरावृत्ति कार्ड स्थानांतरित किए गए।"
+    progress_not_carried_over: "{count} पुनरावृत्ति कार्ड बदले गए उत्तर से निश्चित रूप से नहीं जोड़े जा सके और अगले अभ्यास में फिर से बनाए जाएंगे।"
   templates:
     extensions:
       title: "उन्नत अभ्यास प्रकार"
@@ -3294,7 +3324,7 @@ shortcuts:
 srs:
   due_badge: "{n} बाकी"
   due_badge_tooltip: "समीक्षाएँ बाकी"
-  due_badge_aria: "{n} समीक्षाएँ बाकी"
+  due_badge_action: "समीक्षाएँ देखें"
   status_new: "नया"
   status_learning: "सीख रहे"
   status_due: "बाकी"

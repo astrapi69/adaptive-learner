@@ -16,10 +16,11 @@ FRONTEND_PORT ?= $(or $(ADAPTIVE_LEARNER_FRONTEND_PORT),15174)
 # this file is dev-only.
 ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 
-.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret dev-lan build-frontend stop restart fix-watchers \
+.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret dev-lan dev-lan-dexie build-frontend stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
        test test-fast test-changed test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
+       test-plugin-ai-perplexity \
        test-plugin-session test-plugin-tracking \
        test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-webkit test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
@@ -30,6 +31,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
        check-blockers archive-task archive-task-dry install-hooks \
+       roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
        ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
@@ -37,7 +39,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
        sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
-       sync-openapi sync-openapi-check \
+       sync-openapi sync-openapi-check emit-spa-routes \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -113,6 +115,32 @@ dev-lan: dev-secret build-frontend ## LAN device test: serve built frontend + AP
 		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
 		ADAPTIVE_LEARNER_SERVE_FRONTEND=1 \
 		poetry run uvicorn app.main:app --host 0.0.0.0 --port $(BACKEND_PORT)
+
+DEXIE_PREVIEW_PORT ?= 4173
+
+dev-lan-dexie: STORAGE_MODE=dexie
+dev-lan-dexie: build-frontend ## LAN device test: serve the Dexie/GH-Pages-shape build (no backend) at 0.0.0.0:$(DEXIE_PREVIEW_PORT) — see #2575
+	@LAN_IP=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
+		if [ -n "$$ADAPTIVE_LEARNER_LAN_CERT" ] && [ -n "$$ADAPTIVE_LEARNER_LAN_KEY" ]; then SCHEME=https; else SCHEME=http; fi; \
+		echo ""; \
+		echo "Adaptive Learner — LAN device-test mode (Dexie/GH-Pages shape, no backend)"; \
+		echo "  On this machine:  $$SCHEME://localhost:$(DEXIE_PREVIEW_PORT)"; \
+		if [ -n "$$LAN_IP" ]; then \
+			echo "  On your phone:    $$SCHEME://$$LAN_IP:$(DEXIE_PREVIEW_PORT)   (same WLAN, open in Safari/Chrome)"; \
+		else \
+			echo "  (Could not detect a LAN IP via 'hostname -I'; find it manually with 'ip addr'.)"; \
+		fi; \
+		if [ "$$SCHEME" = "http" ]; then \
+			echo "  Plain HTTP: iOS Safari treats this as a non-secure origin, so the"; \
+			echo "  service worker will NOT register (fine for an IndexedDB-stall repro,"; \
+			echo "  not for a stale-SW/chunk repro). For a secure-context repro, see"; \
+			echo "  docs/developer/testing.md (mkcert HTTPS for a LAN IP)."; \
+		else \
+			echo "  Secure context (HTTPS cert set) — the service worker registers."; \
+		fi; \
+		echo "  This is a dev build, NOT the installed PWA. Press Ctrl+C to stop."; \
+		echo ""
+	@cd frontend && npx vite preview --host 0.0.0.0 --port $(DEXIE_PREVIEW_PORT) --strictPort
 
 DEV_LOG_DIR ?= /tmp/adaptive-learner-logs
 
@@ -278,7 +306,7 @@ test-backend: ## Run backend tests
 # per-plugin pytest run uses that same env via its absolute Python
 # binary; the plugin doesn't need its own poetry env / lock.
 
-test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-session test-plugin-tracking test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions ## Run every plugin's own test suite (incl. content-loader v1.27.0)
+test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-ai-perplexity test-plugin-session test-plugin-tracking test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions ## Run every plugin's own test suite (incl. content-loader v1.27.0)
 	@echo ""
 	@echo "=== All plugin tests complete ==="
 
@@ -307,6 +335,11 @@ test-plugin-ai-gemini: ## ai-gemini plugin: Gemini provider for ai_complete (moc
 	@echo ""
 	@echo "=== Plugin: ai-gemini ==="
 	cd plugins/adaptive-learner-plugin-ai-gemini && $(PLUGIN_PYTHON) -m pytest tests/ -q
+
+test-plugin-ai-perplexity: ## ai-perplexity plugin: Perplexity sonar provider for ai_complete (mocked SDK)
+	@echo ""
+	@echo "=== Plugin: ai-perplexity ==="
+	cd plugins/adaptive-learner-plugin-ai-perplexity && $(PLUGIN_PYTHON) -m pytest tests/ -q
 
 test-plugin-session: ## session plugin: 7-step prompts, method-switch rec, 4 routes
 	@echo ""
@@ -451,6 +484,12 @@ archive-task: ## Move completed [x] tasks out of ROADMAP/backlog into docs/roadm
 
 archive-task-dry: ## Same as archive-task but writes nothing (preview)
 	@python3 scripts/archive_completed_task.py --dry-run
+
+roadmap-header-bump: ## Prepend the released version to the ROADMAP/backlog dated-prose headers (release Step 11; refine the seeded summary by hand)
+	@python3 scripts/bump_roadmap_header.py
+
+roadmap-header-bump-dry: ## Same as roadmap-header-bump but writes nothing (preview)
+	@python3 scripts/bump_roadmap_header.py --dry-run
 
 # --- Git Hooks ---
 
@@ -695,7 +734,7 @@ sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or
 sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json from the booted app (#2281; single writer)
 	@cd backend && poetry run python ../scripts/sync_openapi.py
 
-sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts 13/13 plugins)
+sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts the full plugin set)
 	@cd backend && poetry run python ../scripts/sync_openapi.py --check
 
 engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)
@@ -893,6 +932,9 @@ verify-docs-fix: ## Best-effort auto-fix of mechanical docs drift (version badge
 
 check-mkdocs-orphans: ## List help .md files orphaned from / dangling in mkdocs.yml nav
 	@python3 scripts/verify_docs.py --check mkdocs
+
+emit-spa-routes: ## Give every static route a real dist/<route>/index.html so GitHub Pages answers 200 (#2543; run AFTER the frontend build)
+	@python3 scripts/emit_spa_route_pages.py
 
 verify-docs-discipline: ## Full docs gate: drift verifier + mkdocs nav sync (release-blocking)
 	@$(MAKE) verify-docs

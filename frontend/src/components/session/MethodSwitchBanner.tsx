@@ -1,8 +1,8 @@
 import HelpLink from "../help/HelpLink";
+import MethodBadge from "./MethodBadge";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {METHOD_COLORS, type LearningMethod} from "../../lib/constants";
-import {bestTextOn} from "../../styles/contrast";
+import type {LearningMethod} from "../../lib/constants";
 
 interface MethodSwitchBannerProps {
     /** Method the recommender suggests switching to. */
@@ -40,16 +40,7 @@ export default function MethodSwitchBanner({
             <header className="method-switch-banner-head">
                 <strong>{t("session.switch_recommended", "Method switch recommended")}</strong>
                 <HelpLink glossaryKey="feature_method_switch" />
-                <span
-                    className="method-badge"
-                    style={{
-                        background: METHOD_COLORS[suggested],
-                        color: bestTextOn(METHOD_COLORS[suggested]),
-                    }}
-                    data-testid="method-switch-suggested"
-                >
-                    {t(`methods.${suggested}.label`, suggested)}
-                </span>
+                <MethodBadge method={suggested} dot={false} testId="method-switch-suggested" />
             </header>
             <p className="method-switch-banner-body">
                 {reason ?? t("session.switch_recommended_subtitle")}

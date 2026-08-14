@@ -1,14 +1,18 @@
 /**
  * Tests for the lesson-end correction block
- * (Phase 52F / v1.35.0 / P-128, F-113).
+ * (Phase 52F / v1.35.0 / P-128, F-113; reworked #2496).
  *
  * Pins the self-hiding contract (perfect score / no errors / no
- * cloze-generation possible → nothing rendered), the skip path, and
- * the recordBulk plumbing on successful cloze completion.
+ * cloze-generation possible AND no replay → nothing rendered), the
+ * #2496 collapse-by-default (no cloze mounts until the user expands, so
+ * the mobile keyboard no longer pops on the summary), the folded-in
+ * full-replay CTA, the skip path, and the recordBulk plumbing on
+ * successful cloze completion.
  */
 
 import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import CorrectionBlock from "./CorrectionBlock";
@@ -256,7 +260,7 @@ describe("CorrectionBlock: self-hiding contract", () => {
 });
 
 describe("CorrectionBlock: render + skip + record", () => {
-    it("renders the first cloze when at least one error is generative", async () => {
+    it("collapsed by default; expands to the first cloze (#2496)", async () => {
         listMock.mockResolvedValue([
             _error({
                 exercise_id: "ex-1",
@@ -276,14 +280,18 @@ describe("CorrectionBlock: render + skip + record", () => {
                 onSkip={vi.fn()}
             />,
         );
-        await waitFor(() =>
-            expect(
-                screen.queryByTestId("lesson-correction-block"),
-            ).toBeInTheDocument(),
-        );
+        const block = await screen.findByTestId("lesson-correction-block");
+        // #2496 — collapsed by default: no cloze is mounted, so nothing can
+        // grab focus and pop the mobile keyboard on the summary.
+        expect(block).toHaveAttribute("data-expanded", "false");
         expect(
-            screen.getByTestId("cloze-exercise"),
-        ).toBeInTheDocument();
+            screen.queryByTestId("cloze-exercise"),
+        ).not.toBeInTheDocument();
+        // Expanding is the explicit opt-in: only THEN does the cloze mount.
+        fireEvent.click(
+            screen.getByTestId("lesson-correction-block-expand"),
+        );
+        expect(screen.getByTestId("cloze-exercise")).toBeInTheDocument();
         expect(
             screen.getByTestId("lesson-correction-block"),
         ).toHaveAttribute("data-cloze-total", "1");
@@ -309,12 +317,9 @@ describe("CorrectionBlock: render + skip + record", () => {
                 onSkip={onSkip}
             />,
         );
-        await waitFor(() =>
-            expect(
-                screen.queryByTestId(
-                    "lesson-correction-block-skip",
-                ),
-            ).toBeInTheDocument(),
+        // #2496 — expand first: the skip control lives in the drill view.
+        fireEvent.click(
+            await screen.findByTestId("lesson-correction-block-expand"),
         );
         fireEvent.click(
             screen.getByTestId("lesson-correction-block-skip"),
@@ -346,6 +351,10 @@ describe("CorrectionBlock: render + skip + record", () => {
                 onComplete={onComplete}
                 onSkip={vi.fn()}
             />,
+        );
+        // #2496 — expand to mount the cloze before interacting with it.
+        fireEvent.click(
+            await screen.findByTestId("lesson-correction-block-expand"),
         );
         await waitFor(() =>
             expect(
@@ -413,6 +422,10 @@ describe("CorrectionBlock: render + skip + record", () => {
                 onSkip={vi.fn()}
             />,
         );
+        // #2496 — expand to mount the cloze before interacting with it.
+        fireEvent.click(
+            await screen.findByTestId("lesson-correction-block-expand"),
+        );
         await waitFor(() =>
             expect(
                 screen.queryByTestId("cloze-input-0"),
@@ -457,6 +470,10 @@ describe("CorrectionBlock: render + skip + record", () => {
                 onSkip={vi.fn()}
             />,
         );
+        // #2496 — expand to mount the cloze before interacting with it.
+        fireEvent.click(
+            await screen.findByTestId("lesson-correction-block-expand"),
+        );
         await waitFor(() =>
             expect(
                 screen.queryByTestId("cloze-input-0"),
@@ -480,5 +497,135 @@ describe("CorrectionBlock: render + skip + record", () => {
         await waitFor(() =>
             expect(recordBulkMock).toHaveBeenCalled(),
         );
+    });
+
+    it("Enter is inert while the section is collapsed (#2496)", async () => {
+        listMock.mockResolvedValue([
+            _error({
+                exercise_id: "ex-1",
+                correct_answer: "un",
+                element_key: "un",
+            }),
+        ]);
+        render(
+            <CorrectionBlock
+                lesson={_lesson()}
+                progress={_progress()}
+                userId="user-1"
+                setId="fr-a1"
+                lessonFilename="03-articles.json"
+                onComplete={vi.fn()}
+                onSkip={vi.fn()}
+            />,
+        );
+        // Collapsed: no cloze mounted, so Enter must not reach a checker.
+        await screen.findByTestId("lesson-correction-block-expand");
+        fireEvent.keyDown(window, {key: "Enter"});
+        expect(recordBulkMock).not.toHaveBeenCalled();
+        expect(screen.queryByTestId("cloze-exercise")).not.toBeInTheDocument();
+    });
+});
+
+describe("CorrectionBlock: folded-in full-replay CTA (#2496)", () => {
+    const REPLAY = {
+        exercises: [],
+        cards: [],
+        lessonTitle: "Articles",
+    };
+
+    it("#2570 — renders the replay CTA directly when no cloze generates, no expand step", async () => {
+        // A ghost exercise_id → no cloze can be generated, but there is still
+        // a replayable failed set: the section renders the replay link right
+        // away (the old "Fix now" -> expand -> nothing-but-replay flow is
+        // gone - there is nothing to fix in place, so no expand step is
+        // offered that would only reveal that).
+        listMock.mockResolvedValue([_error({exercise_id: "ex-ghost"})]);
+        render(
+            <MemoryRouter>
+                <CorrectionBlock
+                    lesson={_lesson()}
+                    progress={_progress()}
+                    userId="user-1"
+                    setId="fr-a1"
+                    lessonFilename="03-articles.json"
+                    onComplete={vi.fn()}
+                    onSkip={vi.fn()}
+                    replayHref="/error-replay/bundled:x/fr-a1/03-articles.json"
+                    replayState={REPLAY}
+                    errorCount={2}
+                />
+            </MemoryRouter>,
+        );
+        expect(
+            screen.queryByTestId("lesson-correction-block-expand"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId("cloze-exercise"),
+        ).not.toBeInTheDocument();
+        const replay = await screen.findByTestId("lesson-correction-replay");
+        expect(replay).toHaveAttribute(
+            "href",
+            "/error-replay/bundled:x/fr-a1/03-articles.json",
+        );
+    });
+
+    it("shows the corrected-progress note when some errors are already fixed", async () => {
+        // #2570 — replay_only renders the Link-based replay CTA immediately
+        // (no expand click), so it needs Router context from the start.
+        listMock.mockResolvedValue([_error({exercise_id: "ex-ghost"})]);
+        render(
+            <MemoryRouter>
+                <CorrectionBlock
+                    lesson={_lesson()}
+                    progress={_progress()}
+                    userId="user-1"
+                    setId="fr-a1"
+                    lessonFilename="03-articles.json"
+                    onComplete={vi.fn()}
+                    onSkip={vi.fn()}
+                    replayHref="/error-replay/bundled:x/fr-a1/03-articles.json"
+                    replayState={REPLAY}
+                    errorCount={2}
+                    correctedCount={3}
+                />
+            </MemoryRouter>,
+        );
+        const corrected = await screen.findByTestId(
+            "lesson-correction-corrected",
+        );
+        // "{corrected} of {total}" → 3 of 5.
+        expect(corrected.textContent).toMatch(/3/);
+        expect(corrected.textContent).toMatch(/5/);
+    });
+
+    it("shows an all-corrected success note when every error is fixed", async () => {
+        listMock.mockResolvedValue([]);
+        render(
+            <CorrectionBlock
+                lesson={_lesson()}
+                progress={_progress()}
+                userId="user-1"
+                setId="fr-a1"
+                lessonFilename="03-articles.json"
+                onComplete={vi.fn()}
+                onSkip={vi.fn()}
+                replayHref={null}
+                errorCount={0}
+                correctedCount={4}
+                allCorrected
+            />,
+        );
+        const block = await screen.findByTestId("lesson-correction-block");
+        expect(block).toHaveAttribute("data-status", "complete");
+        expect(
+            screen.getByTestId("lesson-correction-improvement"),
+        ).toBeInTheDocument();
+        // No drill, no expand button — nothing left to do.
+        expect(
+            screen.queryByTestId("lesson-correction-block-expand"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId("lesson-correction-replay"),
+        ).not.toBeInTheDocument();
     });
 });

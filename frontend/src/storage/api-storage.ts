@@ -305,6 +305,8 @@ export const apiStorage: IStorageService = {
     list: (userId, opts) => api.elementErrors.list(userId, opts),
     recordBulk: (userId, attempts) =>
       api.elementErrors.recordBulk(userId, attempts),
+    startRun: (userId, setId, opts) => api.elementErrors.startRun(userId, setId, opts),
+    listRuns: (userId, setId) => api.elementErrors.listRuns(userId, setId),
     reviewQueue: (userId, opts) => api.elementErrors.reviewQueue(userId, opts),
     remapKeys: (userId, remaps) => api.elementErrors.remap(userId, remaps),
     remapExerciseIds: (userId, remaps) =>

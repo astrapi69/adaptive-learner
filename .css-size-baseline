@@ -249,4 +249,44 @@
 # Tailwind-Utility-Aequivalent fuer den Hatch-Verlauf); neue Farben laufen
 # ueber die vorhandenen Tokens --accent / --exercise-correct / --surface.
 # Kein neues global.css.
-7645
+# 2026-08-07: 7645 -> 7676 (#2498 Dropdown-Redesign): +31 Zeilen in
+# 01-base.css - eine Fundament-Regel fuer die native <select>-Basis: der
+# OS-Caret wird per `appearance: none` durch den App-eigenen Chevron
+# ersetzt (zwei token-gefaerbte linear-gradient-Dreiecke, kein Bild-Asset,
+# kein Farb-Literal), plus Platz fuer den Caret, Pointer-Cursor und ein
+# Hover-Affordance. Element-weite Regel fuer ALLE ~40 Settings-Dropdowns -
+# kein Tailwind-Utility-Aequivalent fuer eine globale `select`-Element-Regel.
+# Neue Farben laufen ueber die vorhandenen Tokens --fg-muted / --surface /
+# --bg-elevated / --accent. Kein neues global.css.
+# 2026-08-11: 7676 -> 7699 (#2556, @astrapi69/ai-key-vault-react 0.3.2):
+# +23 Zeilen in 01-base.css - `.akv-file-input::file-selector-button` (+
+# `::-webkit-file-upload-button`) fuer den nativen File-Input-Button des
+# Kits. Kein Tailwind-Utility-Aequivalent: ein Utility-Klassenname aus
+# einem npm-Paket wird vom Host-JIT-Scanner nie gesehen (der scannt nur
+# den eigenen Quellbaum, nie node_modules - astrapi69/ai-key-vault#15).
+# Das Kit selbst liefert bewusst KEIN eigenes Aussehen mehr (0.3.2, nach
+# Diskussion: nur eine stabile `.akv-file-input`-Klasse als Anker, kein
+# CSS-Export, keine `--akv-*`-Variablen, kein hartcodierter Default) -
+# der Host stylt das Element komplett selbst. Neue Farben laufen ueber
+# die vorhandenen Tokens --accent / --accent-fg / --accent-hover / \
+# --radius-sm / --space-2 / --space-4. Unlayered (nicht @layer base wie
+# der button-Fundament-Reset direkt darueber): eine spezifische, benannte
+# Selektor-Regel fuer EIN Kit-Element, kein generischer Rohelement-
+# Fallback, der von Utilities ueberschrieben werden soll. Kein neues
+# global.css.
+# 2026-08-13: 7699 -> 7674 (EXP-044 Option C, #1485): -25 Zeilen. Die
+# god-class .method-badge/.method-dot (19-method-badges.css, 24 Zeilen +
+# 1 @import-Zeile in global.css) geloescht - vier handkopierte
+# Konsumenten (Assessment.tsx, MethodSwitchBanner.tsx,
+# ToolRecommendations.tsx, QuickStartButton.tsx) auf die bereits
+# bestehende MethodBadge.tsx-Komponente umgestellt (die selbst von
+# CSS-Klassen auf token-backed Tailwind-Utilities umgezogen ist:
+# bg-bg-elevated/text-fg-primary statt var(--surface-2)/var(--fg)
+# Legacy-Alias-Klassen, bg-accent statt var(--accent)). Neuer dot-Prop
+# (default true) fasst die bisher uneinheitliche Dot-Anwesenheit (nur
+# QuickStartButton hatte einen Dot) explizit statt sie stillschweigend
+# anzugleichen; testId-Prop erhaelt die bestehenden testids
+# (method-switch-suggested, quick-start-method). Assessment.tsx
+# wechselt von var(--method-${x}) auf METHOD_COLORS[x] als Farbquelle -
+# beide Werte sind pro Methode identisch (verifiziert). Kein neues CSS.
+7674

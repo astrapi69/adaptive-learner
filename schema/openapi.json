@@ -6,7 +6,8 @@
         "enum": [
           "anthropic",
           "openai",
-          "gemini"
+          "gemini",
+          "perplexity"
         ],
         "title": "AIProvider",
         "type": "string"
@@ -796,6 +797,20 @@
               }
             ],
             "title": "Placeholder"
+          },
+          "stable_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stable Id"
           }
         },
         "required": [
@@ -1150,6 +1165,11 @@
               }
             ],
             "title": "Retired At"
+          },
+          "run_id": {
+            "default": 1,
+            "title": "Run Id",
+            "type": "integer"
           },
           "set_id": {
             "title": "Set Id",
@@ -3845,6 +3865,20 @@
             "title": "Correct",
             "type": "boolean"
           },
+          "stable_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stable Id"
+          },
           "text": {
             "maxLength": 500,
             "minLength": 1,
@@ -3873,6 +3907,20 @@
             "minLength": 1,
             "title": "Right",
             "type": "string"
+          },
+          "stable_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stable Id"
           }
         },
         "required": [
@@ -4957,6 +5005,64 @@
         "title": "SetEntryResponse",
         "type": "object"
       },
+      "SetRunOut": {
+        "description": "One Durchgang of a set. ``closed_at`` is null for the active run.",
+        "properties": {
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "content_version_at_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Version At Start"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "integer"
+          },
+          "set_id": {
+            "title": "Set Id",
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "user_id": {
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "set_id",
+          "run_id",
+          "started_at"
+        ],
+        "title": "SetRunOut",
+        "type": "object"
+      },
       "SetsListResponse": {
         "properties": {
           "sets": {
@@ -5057,9 +5163,49 @@
               }
             ],
             "title": "Model Override Openai"
+          },
+          "model_override_perplexity": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Override Perplexity"
           }
         },
         "title": "SettingsPatchBody",
+        "type": "object"
+      },
+      "StartRunIn": {
+        "description": "Start a new Durchgang (run/pass) of a set (EXP-051 / #2125).\n\nThe learner triggers this from the \"Set erneut durcharbeiten\" action on\na completed set. The optional ``content_version`` records which content\nfassung the run started against so the Fehlerhistorie can flag a run\nwhose content changed mid-run; it is not required.",
+        "properties": {
+          "content_version": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Version"
+          },
+          "set_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Set Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "set_id"
+        ],
+        "title": "StartRunIn",
         "type": "object"
       },
       "StatusResponse": {
@@ -5780,6 +5926,11 @@
             "title": "Has Openai Key",
             "type": "boolean"
           },
+          "has_perplexity_key": {
+            "default": false,
+            "title": "Has Perplexity Key",
+            "type": "boolean"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -5817,6 +5968,17 @@
             ],
             "title": "Key Preview Openai"
           },
+          "key_preview_perplexity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Preview Perplexity"
+          },
           "key_source_anthropic": {
             "$ref": "#/components/schemas/ApiKeySource",
             "default": "none"
@@ -5826,6 +5988,10 @@
             "default": "none"
           },
           "key_source_openai": {
+            "$ref": "#/components/schemas/ApiKeySource",
+            "default": "none"
+          },
+          "key_source_perplexity": {
             "$ref": "#/components/schemas/ApiKeySource",
             "default": "none"
           },
@@ -5865,6 +6031,17 @@
               }
             ],
             "title": "Model Override Openai"
+          },
+          "model_override_perplexity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Override Perplexity"
           },
           "updated_at": {
             "format": "date-time",
@@ -13668,7 +13845,7 @@
     },
     "/api/users/{user_id}/element-errors": {
       "get": {
-        "description": "List the user's element-error rows, optionally filtered by set and mastery state.",
+        "description": "List the user's element-error rows, optionally filtered by set, mastery\nstate, and Durchgang.",
         "operationId": "list_element_errors_api_users__user_id__element_errors_get",
         "parameters": [
           {
@@ -13721,6 +13898,25 @@
               "title": "Include Retired",
               "type": "boolean"
             }
+          },
+          {
+            "description": "EXP-051 / #2125 — the Durchgang (run/pass) to read. Omit for each set's ACTIVE run (current state); pass a run number to read a specific past run for the Fehlerhistorie.",
+            "in": "query",
+            "name": "run_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "EXP-051 / #2125 — the Durchgang (run/pass) to read. Omit for each set's ACTIVE run (current state); pass a run number to read a specific past run for the Fehlerhistorie.",
+              "title": "Run Id"
+            }
           }
         ],
         "responses": {
@@ -13755,7 +13951,7 @@
         ]
       },
       "post": {
-        "description": "Bulk upsert; preserves input order in the response.\n\nThe viewer's per-step recordStepResult hook (C10) calls\nthis once per exercise submit with the attempts the\nexercise-side deriver produced. Per the Pydantic schema\nin C4 the body caps at 100 attempts per call.",
+        "description": "Bulk upsert; preserves input order in the response.\n\nThe viewer's per-step recordStepResult hook (C10) calls\nthis once per exercise submit with the attempts the\nexercise-side deriver produced. Per the Pydantic schema\nin C4 the body caps at 100 attempts per call.\n\nEach attempt is recorded under its set's active Durchgang (EXP-051 /\n#2125). ``repo`` and ``set_runs_repo`` share the request session, so\nthe lazy run-1 materialisation and the attempt rows commit together.",
         "operationId": "record_element_attempts_api_users__user_id__element_errors_post",
         "parameters": [
           {
@@ -14467,6 +14663,116 @@
         "summary": "Create project",
         "tags": [
           "Projects"
+        ]
+      }
+    },
+    "/api/users/{user_id}/set-runs": {
+      "get": {
+        "description": "List every Durchgang (run/pass) of a set for the user, oldest first\n(EXP-051 / #2125). The active run has ``closed_at = null``. The\nFehlerhistorie enumerates runs here, then reads each run's rows via the\n``run_id`` filter on the element-errors list.",
+        "operationId": "list_set_runs_api_users__user_id__set_runs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The content set whose Durchgänge (runs) to list.",
+            "in": "query",
+            "name": "set_id",
+            "required": true,
+            "schema": {
+              "description": "The content set whose Durchgänge (runs) to list.",
+              "minLength": 1,
+              "title": "Set Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SetRunOut"
+                  },
+                  "title": "Response List Set Runs Api Users  User Id  Set Runs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List set runs",
+        "tags": [
+          "Users"
+        ]
+      },
+      "post": {
+        "description": "Start a new Durchgang of a set (\"Set erneut durcharbeiten\", #2125).\n\nAtomically closes the current active run and opens the next: the prior\nrun's element-error rows stay frozen under their ``run_id`` for the\nFehlerhistorie, and new attempts write fresh rows under the new run\n(cold SRS scheduling). Returns the newly opened run.",
+        "operationId": "start_set_run_api_users__user_id__set_runs_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartRunIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetRunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start set run",
+        "tags": [
+          "Users"
         ]
       }
     },

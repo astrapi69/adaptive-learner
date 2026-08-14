@@ -608,22 +608,14 @@ export default function LessonSummary({
         suggestions={suggestions}
         setId={setId}
         setSlug={setSlug}
-        lessonFilename={lessonFilename}
-        errorReplay={
-          replayExercises.length > 0
-            ? {
-                exercises: replayExercises,
-                cards: lesson.cards,
-                lessonTitle: lesson.title,
-              }
-            : undefined
-        }
       />
     ),
-    // Phase 52F / v1.35.0 — correction round (#1376/#1411). Self-hides on a
-    // perfect score, with no ElementError rows, or when no cloze can be
-    // generated. The same errors stay reachable through "Fehler wiederholen"
-    // / SRS review when the section is off or hidden.
+    // Phase 52F / v1.35.0 — the SINGLE "your mistakes" section (#1376/#1411,
+    // reworked #2496). Lands collapsed so it never pops the mobile keyboard;
+    // folds the inline correction drills AND the full "redo the exact
+    // exercises" replay (retired NextStepSuggestions error-replay card) into
+    // one opt-in entry. Self-hides on a perfect score / when there is nothing
+    // to drill or replay.
     correction:
       progress && userId ? (
         <CorrectionBlock
@@ -632,6 +624,23 @@ export default function LessonSummary({
           userId={userId}
           setId={setId}
           lessonFilename={lessonFilename}
+          replayHref={
+            replayExercises.length > 0
+              ? `/error-replay/${setSlug}/${setId}/${lessonFilename}`
+              : null
+          }
+          replayState={
+            replayExercises.length > 0
+              ? {
+                  exercises: replayExercises,
+                  cards: lesson.cards,
+                  lessonTitle: lesson.title,
+                }
+              : null
+          }
+          errorCount={suggestions.errorReplay.errorCount}
+          correctedCount={suggestions.errorReplay.correctedCount}
+          allCorrected={suggestions.errorReplay.allCorrected}
           onComplete={() => {
             // Best-effort improvement counter is rendered inside
             // CorrectionBlock's "complete" surface; nothing further needed.
@@ -664,10 +673,15 @@ export default function LessonSummary({
           #1432 — the #599 "why you missed these" mistake review renders
           immediately ABOVE the correction round (following it wherever the user
           reorders it), so the review and the drill that fixes those mistakes
-          stay adjacent and ``correction`` is the last content section by
-          default. It is not one of the reorderable sections (its own shared
-          Settings toggle, ``review/reviewPref``), so it is spliced in here
-          rather than added to the order block. */}
+          stay adjacent. #2570 moved ``correction``'s default position ahead of
+          ``next_steps`` (fixing today's mistakes belongs before the "what
+          next" cards, not trailing after them), so ``next_steps`` - not
+          ``correction`` - is the last content section by default; this splice
+          rule itself is unaffected, still relative to wherever ``correction``
+          currently sits. ``SummaryExplanations`` is not one of the
+          reorderable sections (its own shared Settings toggle,
+          ``review/reviewPref``), so it is spliced in here rather than added
+          to the order block. */}
       {sections.map(({ id, enabled }) => {
         if (!enabled) return null;
         if (id === "correction") {

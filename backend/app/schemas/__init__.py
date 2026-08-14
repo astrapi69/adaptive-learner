@@ -75,6 +75,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 
 # --- User -------------------------------------------------------------------
@@ -183,12 +184,14 @@ class UserSettingsOut(BaseModel):
     has_anthropic_key: bool = False
     has_openai_key: bool = False
     has_gemini_key: bool = False
+    has_perplexity_key: bool = False
     # v0.4.0 — nullable override per provider. ``None`` means
     # "use the session plugin's DEFAULT_MODELS for that provider";
     # a non-null string replaces the default at /message time.
     model_override_anthropic: str | None = None
     model_override_openai: str | None = None
     model_override_gemini: str | None = None
+    model_override_perplexity: str | None = None
     # #508 — base64 data URL of the profile picture, or None.
     avatar: str | None = None
     # Phase 34 (v1.20.0) — per-provider key-source enum. The router
@@ -199,6 +202,7 @@ class UserSettingsOut(BaseModel):
     key_source_anthropic: ApiKeySource = ApiKeySource.NONE
     key_source_openai: ApiKeySource = ApiKeySource.NONE
     key_source_gemini: ApiKeySource = ApiKeySource.NONE
+    key_source_perplexity: ApiKeySource = ApiKeySource.NONE
     # #810 — masked preview of the resolved key (first 4 + last 4 chars,
     # e.g. "AIza…7f3k"), or None when no key is configured. The full /
     # decrypted key is NEVER returned; the router computes the preview by
@@ -207,6 +211,7 @@ class UserSettingsOut(BaseModel):
     key_preview_anthropic: str | None = None
     key_preview_openai: str | None = None
     key_preview_gemini: str | None = None
+    key_preview_perplexity: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -235,6 +240,7 @@ class SettingsPatchBody(BaseModel):
     model_override_anthropic: str | None = Field(default=None, max_length=200)
     model_override_openai: str | None = Field(default=None, max_length=200)
     model_override_gemini: str | None = Field(default=None, max_length=200)
+    model_override_perplexity: str | None = Field(default=None, max_length=200)
     # #508 — base64 data URL of a profile picture. ``""`` clears it,
     # a non-empty value sets it, ``None`` (omitted) means "no change".
     # The cap (~200 KB) backstops the client's <=100 KB resize.
@@ -1736,6 +1742,33 @@ class ArchiveRetiredResult(BaseModel):
     archived: int
 
 
+class StartRunIn(BaseModel):
+    """Start a new Durchgang (run/pass) of a set (EXP-051 / #2125).
+
+    The learner triggers this from the "Set erneut durcharbeiten" action on
+    a completed set. The optional ``content_version`` records which content
+    fassung the run started against so the Fehlerhistorie can flag a run
+    whose content changed mid-run; it is not required.
+    """
+
+    set_id: str = Field(..., min_length=1, max_length=120)
+    content_version: str | None = Field(default=None, max_length=120)
+
+
+class SetRunOut(BaseModel):
+    """One Durchgang of a set. ``closed_at`` is null for the active run."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    set_id: str
+    run_id: int
+    content_version_at_start: str | None = None
+    started_at: datetime
+    closed_at: datetime | None = None
+
+
 class AttemptRecordOut(BaseModel):
     """#603 - one recorded attempt in the per-element history ring buffer."""
 
@@ -1758,6 +1791,9 @@ class ElementErrorOut(BaseModel):
     exercise_id: str
     element_key: str
     direction: str
+    # EXP-051 / #2125 — the Durchgang (run/pass) this row belongs to.
+    # Defaulted so pre-EXP-051 rows / older backups read back as run 1.
+    run_id: int = 1
     element_type: str
     user_answer: str
     correct_answer: str

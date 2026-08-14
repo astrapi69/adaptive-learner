@@ -1,4 +1,4 @@
-import {render, screen, fireEvent, waitFor} from "@testing-library/react";
+import {act, render, screen, fireEvent, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router";
 import {beforeEach, afterEach, describe, expect, it, vi} from "vitest";
 
@@ -172,6 +172,36 @@ describe("Landing page", () => {
         expect(localStorage.getItem("adaptive-learner.user_id")).toBe("u-back");
         // localStorage hit path does not consult identity.yaml.
         expect(apiIdentityGet).not.toHaveBeenCalled();
+    });
+
+    it("falls back to the landing UI when the recovery read stalls (#2573)", async () => {
+        // iOS Safari's IndexedDB can hang a verification read that never
+        // resolves NOR rejects. Before #2573 that wedged the user on the
+        // checking screen forever; the recovery timeout now flips to the
+        // landing UI so the entry flow is never a permanent dead end.
+        vi.useFakeTimers();
+        try {
+            localStorage.setItem("adaptive-learner.user_id", "u-stall");
+            // A promise that never settles - the stall.
+            apiUsersGet.mockReturnValue(new Promise<never>(() => {}));
+
+            renderLanding();
+            expect(screen.getByTestId("landing-checking")).toBeInTheDocument();
+
+            // Advance past the recovery timeout; flush the effect + state.
+            await act(async () => {
+                vi.advanceTimersByTime(8000);
+            });
+
+            expect(screen.getByTestId("landing")).toBeInTheDocument();
+            expect(screen.getByTestId("landing-start")).toBeInTheDocument();
+            // No redirect happened - the read never resolved.
+            expect(mockNavigate).not.toHaveBeenCalledWith("/dashboard", {
+                replace: true,
+            });
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     it("keeps localStorage on 5xx + shows Landing so the user can retry", async () => {

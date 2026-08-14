@@ -12,11 +12,8 @@
 
 import { useMemo, type ReactNode } from "react";
 import { Link } from "react-router";
-import { Bot, Gem, Sparkles } from "lucide-react";
-import {
-    BUILTIN_PROVIDERS,
-    createProviderRegistry,
-} from "@astrapi69/ai-key-vault";
+import { Bot, Gem, Search, Sparkles } from "lucide-react";
+import { createProviderRegistry } from "@astrapi69/ai-key-vault";
 import {
     AiSettingsProvider,
     type ButtonSlot,
@@ -33,7 +30,8 @@ import { useConfirm } from "../../../contexts/ConfirmContext";
 import { notify } from "../../../utils/notify";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import { resolveStorageMode } from "../../../storage";
-import { AI_PROVIDERS, MODEL_SUGGESTIONS, type AIProvider } from "../../../lib/constants";
+import { MODEL_SUGGESTIONS, type AIProvider } from "../../../lib/constants";
+import { APP_PROVIDER_DESCRIPTORS } from "../../../lib/ai/provider-registry";
 import { createSettingsKeyStoreAdapter } from "../../../lib/keys/ai-key-store-adapter";
 import { ModelPicker } from "./ModelPicker";
 
@@ -41,7 +39,14 @@ const PROVIDER_ICONS: Partial<Record<AIProvider, ProviderIcon>> = {
     anthropic: Sparkles,
     openai: Bot,
     gemini: Gem,
+    perplexity: Search,
 };
+
+// Port keys from sibling apps: Topos (and other @astrapi69 hosts) call the
+// Google provider "google"; this app calls it "gemini". Combined with the
+// kit's format-agnostic import, a Topos .alk (format "topos-ai-keys", key
+// under "google") imports here and lands on "gemini".
+const IMPORT_PROVIDER_ALIASES = { google: "gemini" } as const;
 
 const ButtonSlotImpl: ButtonSlot = ({ variant, size, ...rest }) => (
     <Button variant={variant} size={size} {...rest} />
@@ -70,9 +75,10 @@ export function AiKeyVaultProvider({ children }: { children: ReactNode }) {
     const registry = useMemo(
         () =>
             createProviderRegistry(
-                BUILTIN_PROVIDERS.filter((d) => AI_PROVIDERS.includes(d.id as AIProvider)).map(
-                    (d) => ({ ...d, label: t(`settings.provider_${d.id}`, d.label) }),
-                ),
+                APP_PROVIDER_DESCRIPTORS.map((d) => ({
+                    ...d,
+                    label: t(`settings.provider_${d.id}`, d.label),
+                })),
             ),
         [t],
     );
@@ -86,6 +92,7 @@ export function AiKeyVaultProvider({ children }: { children: ReactNode }) {
             notify={notify}
             confirm={confirm}
             vaultFormat="adaptive-learner-keys"
+            importProviderAliases={IMPORT_PROVIDER_ALIASES}
             browserRuntime={resolveStorageMode() === "dexie"}
             Button={ButtonSlotImpl}
             Input={InputSlotImpl}

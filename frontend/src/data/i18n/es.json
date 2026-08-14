@@ -1,5 +1,9 @@
 {
   "app": {
+    "loading": "Cargando…",
+    "loading_slow": "Esto está tardando más de lo esperado.",
+    "view_load_failed": "No se pudo cargar esta vista.",
+    "reload": "Recargar",
     "name": "Adaptive Learner",
     "tagline": "Aprendizaje que se adapta a ti.",
     "skeleton_notice": "Estado esqueleto. Los modelos de dominio, plugins y páginas llegan en fases próximas - ver docs/adaptive-learner-project-reference.md."
@@ -104,8 +108,7 @@
     "mode_badge_ai": "IA+Contenido",
     "mode_badge_tooltip_content": "Sin clave API configurada - solo contenido predefinido. Añade una clave en Ajustes para activar funciones de IA.",
     "mode_badge_tooltip_ai": "Proveedor de IA configurado - los ejercicios usan IA para distractores y pistas. Pulsa para explorar los sets.",
-    "mode_badge_label_content": "Modo: Solo contenido",
-    "mode_badge_label_ai": "Modo: IA + Contenido",
+    "mode_badge_action": "explorar contenido",
     "sync_paired": "Sinc.: emparejado (Ajustes > Sinc.)",
     "sync_unpaired": "Sinc.: sin emparejar (Ajustes > Sinc.)"
   },
@@ -737,6 +740,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "Proveedores de IA configurados",
       "hint": "Las claves guardadas se conservan. Solo se muestra una vista previa enmascarada, nunca la clave completa.",
@@ -1259,7 +1263,7 @@
     "xp_no_data": "Completa una sesión para ganar XP.",
     "xp_earned": "XP ganados",
     "xp_gain_aria": "Has ganado {n} XP por esta lección",
-    "xp_header_aria": "Nivel {level}, {xp} XP en total",
+    "xp_total_suffix": "en total",
     "xp_header_tooltip": "Tus puntos de experiencia",
     "xp_to_next_level": "{n} XP hasta el siguiente nivel",
     "max_level": "Nivel máximo alcanzado",
@@ -2107,7 +2111,12 @@
       "next": "Siguiente",
       "complete_heading": "Ronda de corrección completa",
       "improvement": "{n} elementos mejorados.",
-      "improvement_singular": "{n} elemento mejorado."
+      "improvement_singular": "{n} elemento mejorado.",
+      "mistakes_heading": "Corrige tus errores",
+      "expand": "Corregir ahora",
+      "replay_all": "Repetir todos los ejercicios ({count})",
+      "replay_only_heading": "Repite tus errores",
+      "replay_only_subtitle": "Esto no se puede practicar como ejercicio rápido - repite los ejercicios en su lugar."
     },
     "summary": {
       "heading": "Terminaste",
@@ -2425,7 +2434,16 @@
       "bulk_deleted": "{n} conjuntos eliminados.",
       "bulk_delete_title": "¿Eliminar {n} conjuntos?",
       "bulk_delete_confirm": "Los conjuntos seleccionados y sus lecciones se eliminarán de Mi contenido. Tu progreso de aprendizaje se conserva y puedes volver a descargar los conjuntos en cualquier momento.",
+      "restarted": "Ha comenzado una nueva ronda. Se conserva tu ronda anterior.",
+      "restart_failed": "No se pudo iniciar una nueva ronda.",
+      "restart_confirm": {
+        "title": "¿Volver a trabajar este set?",
+        "message": "Una nueva ronda de «{title}» empieza desde cero. Tu ronda anterior se conserva en tu historial; no se elimina nada.",
+        "confirm": "Iniciar nueva ronda",
+        "cancel": "Cancelar"
+      },
       "action": {
+        "restart": "Volver a trabajar",
         "activate": "Reactivar",
         "defer": "Aplazar",
         "complete": "Marcar como completado",
@@ -2867,6 +2885,15 @@
       "theory_failed": "La IA no devolvió teoría utilizable. Inténtalo de nuevo.",
       "exercises_failed": "No se generaron ejercicios utilizables. Inténtalo de nuevo.",
       "generate_failed": "No se pudo generar la lección. Inténtalo de nuevo.",
+      "gen_missing_intro": "Estos tipos seleccionados no surgieron del texto:",
+      "types": {
+        "heading": "Tipos de ejercicio",
+        "group_standard": "Tipos estándar",
+        "group_extension": "Tipos de extensión",
+        "group_unavailable": "No generable a partir de texto",
+        "unavailable_reason": "Las imágenes y el audio no se pueden generar a partir de texto. Puedes añadir estos tipos más tarde en el editor.",
+        "floor_hint": "Debe permanecer seleccionado al menos un tipo de ejercicio."
+      },
       "generate_to_advance": "Genera la lección a partir de tu texto para continuar.",
       "review_theory": "{n} paso(s) de teoría",
       "review_exercises": "{n} ejercicio(s)",
@@ -2989,6 +3016,7 @@
       "types_label": "Tipos de ejercicio",
       "add": "Añadir ejercicio",
       "add_heading": "Elige un tipo de ejercicio",
+      "add_ext_group": "Tipos de extensión",
       "incomplete_to_advance": "Completa o elimina los ejercicios incompletos para continuar.",
       "direction_label": "Dirección",
       "generate": "Generar ejercicios automáticamente",
@@ -3018,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "Opciones de respuesta",
+        "convert_label": "Tipo de ejercicio",
+        "convert_hint": "Al convertir se conservan la respuesta escrita y el progreso del alumno.",
         "mc_option_placeholder": "Texto de la opción",
         "mc_option_add": "Añadir opción",
         "mc_option_remove": "Quitar opción",
@@ -3184,7 +3214,9 @@
       "create_another": "Crear otra lección",
       "to_browser": "Al explorador de contenido",
       "save_file": "Guardar como archivo",
-      "file_saved": "Lección guardada como archivo."
+      "file_saved": "Lección guardada como archivo.",
+      "progress_carried_over": "Se transfirieron {count} tarjeta(s) de repaso para la respuesta modificada.",
+      "progress_not_carried_over": "{count} tarjeta(s) de repaso no se pudieron asociar con confianza a la respuesta modificada y se recrearán en el próximo repaso."
     },
     "templates": {
       "extensions": {
@@ -3596,7 +3628,7 @@
   "srs": {
     "due_badge": "{n} pendientes",
     "due_badge_tooltip": "Repasos pendientes",
-    "due_badge_aria": "{n} repasos pendientes",
+    "due_badge_action": "ver repasos",
     "status_new": "Nuevo",
     "status_learning": "Aprendiendo",
     "status_due": "Pendiente",

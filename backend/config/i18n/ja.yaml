@@ -1,4 +1,8 @@
 app:
+  loading: "読み込み中…"
+  loading_slow: "読み込みに予想より時間がかかっています。"
+  view_load_failed: "このビューを読み込めませんでした。"
+  reload: "再読み込み"
   name: Adaptive Learner
   tagline: 6メソッドモデルに基づく適応学習。
   skeleton_notice: スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます - docs/adaptive-learner-project-reference.md を参照してください。
@@ -96,8 +100,7 @@ nav:
   mode_badge_ai: "AI+コンテンツ"
   mode_badge_tooltip_content: "API キーが設定されていません - 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。"
   mode_badge_tooltip_ai: "AI プロバイダー設定済み - 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。"
-  mode_badge_label_content: "モード: コンテンツのみ"
-  mode_badge_label_ai: "モード: AI + コンテンツ"
+  mode_badge_action: "コンテンツを見る"
   sync_paired: "同期：ペアリング済み（設定 > 同期）"
   sync_unpaired: "同期：未ペアリング（設定 > 同期）"
 import:
@@ -696,6 +699,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - AIタブの設定済みプロバイダー一覧表。
   providers:
     title: 設定済みのAIプロバイダー
@@ -1182,7 +1186,7 @@ gamification:
   xp_no_data: セッションを完了してXPを獲得しましょう。
   xp_earned: 獲得XP
   xp_gain_aria: このレッスンで{n} XPを獲得しました
-  xp_header_aria: レベル{level}、合計{xp} XP
+  xp_total_suffix: "合計"
   xp_header_tooltip: あなたの経験値
   xp_to_next_level: 次のレベルまで {n} XP
   max_level: 最大レベルに到達しました
@@ -1942,6 +1946,11 @@ lesson:
     complete_heading: "修正ラウンド完了"
     improvement: "{n}個の要素が改善されました。"
     improvement_singular: "{n}個の要素が改善されました。"
+    mistakes_heading: "間違いを直す"
+    expand: "今すぐ直す"
+    replay_all: "すべての問題をやり直す（{count}）"
+    replay_only_heading: "間違いをやり直す"
+    replay_only_subtitle: "これらはクイックドリルとして練習できません。代わりに問題をやり直してください。"
   summary:
     heading: "完了"
     aria_label: "レッスンのまとめ"
@@ -2232,7 +2241,15 @@ content:
     bulk_deleted: "{n} 個のセットを削除しました。"
     bulk_delete_title: "{n} 個のセットを削除しますか？"
     bulk_delete_confirm: "選択したセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。"
+    restarted: "新しい周回を開始しました。前回の周回は保持されます。"
+    restart_failed: "新しい周回を開始できませんでした。"
+    restart_confirm:
+      title: "このセットをもう一度学習しますか？"
+      message: "「{title}」の新しい周回が最初から始まります。前回の周回は履歴として保持され、何も削除されません。"
+      confirm: "新しい周回を開始"
+      cancel: "キャンセル"
     action:
+      restart: "もう一度学習"
       activate: "再アクティブ化"
       defer: "保留にする"
       complete: "完了としてマーク"
@@ -2621,6 +2638,14 @@ create_lesson:
     theory_failed: "AIは使用可能な理論を返しませんでした。もう一度お試しください。"
     exercises_failed: "使用可能な演習が生成されませんでした。もう一度お試しください。"
     generate_failed: "レッスンを生成できませんでした。もう一度お試しください。"
+    gen_missing_intro: "選択したこれらのタイプはテキストから生成されませんでした:"
+    types:
+      heading: "問題タイプ"
+      group_standard: "標準タイプ"
+      group_extension: "拡張タイプ"
+      group_unavailable: "テキストからは生成不可"
+      unavailable_reason: "テキストから画像や音声は生成できません。これらのタイプはエディターで後から追加できます。"
+      floor_hint: "少なくとも1つの問題タイプを選択したままにする必要があります。"
     generate_to_advance: "続行するにはテキストからレッスンを生成してください。"
     review_theory: "理論ステップ{n}件"
     review_exercises: "演習{n}件"
@@ -2736,6 +2761,7 @@ create_lesson:
     types_label: "演習の種類"
     add: "問題を追加"
     add_heading: "問題タイプを選択"
+    add_ext_group: "拡張タイプ"
     incomplete_to_advance: "続行するには、未完成の問題を完成させるか削除してください。"
     direction_label: "方向"
     generate: "演習を自動生成"
@@ -2763,6 +2789,8 @@ create_lesson:
       picture_choice: "画像選択：2枚以上のカードに画像を追加してください。"
     edit:
       mc_options_label: "選択肢"
+      convert_label: "問題タイプ"
+      convert_hint: "変換しても入力した答えと学習の進捗は保持されます。"
       mc_option_placeholder: "選択肢のテキスト"
       mc_option_add: "選択肢を追加"
       mc_option_remove: "選択肢を削除"
@@ -2922,6 +2950,8 @@ create_lesson:
     to_browser: "コンテンツブラウザへ"
     save_file: "ファイルとして保存"
     file_saved: "レッスンをファイルとして保存しました。"
+    progress_carried_over: "変更した解答について、復習カードを{count}件引き継ぎました。"
+    progress_not_carried_over: "{count}件の復習カードは変更した解答に確実に対応付けできなかったため、次回の練習時に再作成されます。"
   templates:
     extensions:
       title: "高度な演習タイプ"
@@ -3308,7 +3338,7 @@ shortcuts:
 srs:
   due_badge: "{n}件が期限"
   due_badge_tooltip: "復習あり"
-  due_badge_aria: "復習が{n}件"
+  due_badge_action: "復習を見る"
   status_new: "新規"
   status_learning: "学習中"
   status_due: "期限"

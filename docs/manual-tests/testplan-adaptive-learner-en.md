@@ -73,6 +73,22 @@ screenshot + which step, which becomes an issue with forensics.
       same session (list from the respective issues, each result as an issue
       comment).
 
+#### A3b. Returning-user entry never blanks (#2573)
+
+Content-load resilience on iOS - the entry flow must never leave a blank
+content area under an intact header/nav:
+
+- [ ] As a RETURNING user (data present) open the app URL fresh (e.g. scan a
+      shared QR code of the app URL). Expected: you land on the Dashboard -
+      never a completely empty content area between the header and the bottom
+      nav.
+- [ ] While a view loads, a visible loading indicator shows (spinner +
+      "Loading..."), never an empty box.
+- [ ] Force the failure: put the device offline / throttle so a lazy view
+      cannot load, then open a route. Expected: after a short wait a readable
+      "taking longer than expected" (or "this view could not be loaded")
+      message with a Reload button - not a silent blank screen.
+
 #### A4. Delete a lesson (#2064, merged) - overlaps with A1
 
 Per the test plan this feature requires both storage modes plus a backup
@@ -338,6 +354,11 @@ Requires domain knowledge. Not automatable.
 - [ ] Matching: pairs SAME height (no visual offset)
 - [ ] Matching: "Resolve" animation looks good (test all 4 effects)
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
+- [ ] Word Tiles: on a CORRECT answer the built sentence stays visible (#2494):
+      assemble a sentence correctly and check it. The composed sentence remains
+      shown (all green) afterwards and does NOT disappear; the success message
+      ("Correct!") and the Continue button appear below it. iOS PWA/Standalone:
+      run the same check on the web app icon added to the home screen.
 - [ ] Free Text: correction READABLE (token diff understandable)
 - [ ] Picture Choice: tiles SAME height
 - [ ] Answer order shuffled (#2317): open a picture_choice exercise across
@@ -473,6 +494,32 @@ preview delivery). In the regular build the mode does not exist.
       (the report came from there). Bar, stars, message and XP show the final
       state after correction.
 
+### One collapsed mistakes section (#2496)
+- [ ] Play a lesson with at least one mistake. On the summary the
+      "Fix your mistakes (N)" section appears COLLAPSED: NO text field has
+      focus, NO keyboard pops up (check on a phone - that was the report).
+      The score stays visible.
+- [ ] Tap "Fix now" -> the section expands, the first correction drill
+      (cloze) appears and NOW takes focus (the keyboard may open here - it is
+      the user's deliberate action).
+- [ ] Inside the expanded section there is a secondary "Redo all exercises (N)"
+      action -> goes to the error-replay page with the real failed exercises.
+- [ ] The "What's next?" cards no longer contain a separate "Retry errors"
+      card (folded into the one section). Enter still activates the primary
+      forward card (Next lesson / Adaptive / Review), never the collapsed
+      mistakes section.
+- [ ] When every mistake is already corrected, the section shows a short
+      success note ("All errors corrected!") instead of a drill.
+- [ ] #2570: only non-cloze-able mistakes (no cloze can be generated) - the
+      section shows "Repeat your mistakes" DIRECTLY, with "These can't be
+      practiced as a quick drill - redo the exercises instead." + the "Redo
+      all exercises (N)" button. NO "Fix now" intermediate step that would
+      only expand into nothing.
+- [ ] #2570 placement: the mistakes section sits BEFORE the "What's next?"
+      cards (Next lesson / Adaptive / ...) in the default order, not after -
+      fix your own mistakes first, then decide where to go next. Still freely
+      reorderable via Settings.
+
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
 - [ ] ext:al-categorization: assign categories, readable resolution
@@ -518,6 +565,30 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] Create-Lesson "Save as file": the save step offers a file
       download of the just-created lesson (canonical JSON)
 
+### Work through a set again - second run (#2125, EXP-051)
+
+Location: My Content (`/content?tab=my`), the three-dot menu of a set with
+status **Completed**. A new run keeps the first one for later analysis
+instead of overwriting or resetting it.
+
+- [ ] Mark a set **Completed** -> the three-dot menu shows **"Work through
+      again"** (NOT present for active/deferred sets)
+- [ ] Click it -> a **simple** confirmation ("a new run starts from
+      scratch, the previous one is kept"), with NO counted deletion figures
+- [ ] Confirm -> toast "A new run has started …", the set flips back to
+      **Active**, no error, no data loss
+- [ ] Cancel -> nothing happens, the status stays Completed
+- [ ] After restarting, answer a previously-learned exercise wrong -> the
+      review queue fills **fresh** (cold scheduling; the first run's cards
+      do NOT appear as overdue)
+- [ ] Delete the set (with "delete progress") -> ALL of the set's runs are
+      gone, no orphan rows
+- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+      (Dexie mode) - the flow must work in BOTH modes
+- [ ] Backup round-trip: Export -> wipe -> Import; the runs (incl. the
+      completed first one) survive the import. An older backup with no run
+      data imports as the implicit run 1 (no crash)
+
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
 - [ ] **Book-text path (#1745):** Step 1 → the "Knowledge lesson from
@@ -526,6 +597,32 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       rephrases theory in its own words + generates exercises; WITHOUT
       an AI key: friendly notice, no crash; "Next" only after a
       successful generation
+- [ ] **Exercise-type selection in the assistant (#2510):** In the book-text
+      step, **above the textbook textarea** (between the file/sections area and
+      the textarea, #2522) there is an "Exercise types"
+      selector with three groups: **Standard types** (Matching, Free text,
+      Cloze, Word tiles, Multiple choice) are pre-selected; **Extension types**
+      (Categorization, Error correction, Reading comprehension, Graded quiz) are
+      opt-in; **"Not generatable from text"** (Picture choice, Image description,
+      Dictation) are greyed out/disabled with a one-line reason ("Images and
+      audio cannot be generated from text … add later in the editor"). Doing
+      nothing yields today's behaviour. Deselect all but one → the last one stays
+      selected and the "At least one exercise type must stay selected." hint
+      appears (not silent). An opted-in type is still selected on the next run
+      (remembered). Generate → only the selected types come out; a selected type
+      the text did not yield is listed by name under "These selected types did
+      not come out of the text:" (not silently fewer). **iOS standalone (PWA,
+      Dexie mode):** the selector costs little height (three compact, wrapping
+      groups), is tappable, and the remembered selection survives a reload.
+      **Accessible:** the greyed fields carry a label + `aria-describedby` to the
+      reason.
+- [ ] **Order of the type selection (#2522):** The selector sits **above** the
+      textbook textarea, not below it (see what was detected, choose the types,
+      then paste). **iOS standalone (PWA, small device):** on opening the
+      book-text step the textarea is reachable **without scrolling** - the
+      selector does not push it below the fold; after pasting a chapter the user
+      need not scroll back up to find the types. DOM order matches the visible
+      order (no axe regression).
 - [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
       a title → click the "Knowledge lesson from text" card → stays on
       step 1 with the friendly "A title is required." message (NOT the
@@ -604,6 +701,14 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       "Import as copy") both show a note that a copy starts WITHOUT
       learning progress, while the original keeps its progress and
       review cards
+- [ ] **A review card survives an answer-text correction (#2519):**
+      create/save an own lesson with a free_text exercise → practice it
+      until a review card exists for that exercise (the review queue shows
+      it) → edit the lesson, fix a typo in the accepted answer (e.g.
+      "Merci" → "Merci !"), save. Expected: a toast "Carried over {N}
+      review card(s) for the changed answer." appears, the review card
+      survives (no silent loss of the error/SRS history). Applies to BOTH
+      storage modes (API + Dexie)
 - [ ] **Reopen a plain (no-extension) lesson stays saveable (#1919):**
       create a lesson via Auto-generate (only the six CORE types, no
       extension exercise), Save locally → reopen via Edit → step to Review:
@@ -733,6 +838,20 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       `requires_extensions: ["ext:al-dictation@1"]`** (whether added via the core
       picker OR the extension wizard) and is playable. **Regression:** the
       existing extension-wizard path for dictation still works unchanged
+- [ ] **Extension types in the core picker (#2508):** Main wizard (card-based),
+      Step 3 "Generate exercises" → "Add exercise" opens the "Choose an exercise
+      type" picker. Below the standard types (six core types + Dictation) a
+      second, labelled group **"Extension types"** now appears with
+      Categorization, Error correction, Reading comprehension, Graded quiz and
+      Image description (Dictation is **not** shown twice). Click one of these →
+      an extension exercise is appended and opens straight in the extension
+      editor. Image description is **selectable** here (the image is added in the
+      editor). "Save locally" → the stored lesson carries
+      `requires_extensions: ["ext:al-...@1"]` and is playable. **iOS standalone
+      (PWA added to the home screen, Dexie mode):** the picker opens, both groups
+      are visible and tappable, the chosen extension exercise is saved and
+      renders after a reload. **Regression:** the separate extension wizard still
+      works unchanged
 - [ ] **Dictation audio upload (#1911, Slice 3):** In the dictation editor
       (core picker OR extension wizard) the audio field shows an **"Upload
       audio"** button above a **"…assets/audio/clip.mp3"** path input. Click
@@ -774,6 +893,17 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       **playable** with multi-select. Switching back to "Allow one answer" →
       pruned to exactly one correct. An existing MC exercise with a set
       `multiple` value opens **unchanged** in its original state.
+- [ ] **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
+      inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
+      **Multiple choice** exercise, a **"Exercise type"** select at the top
+      lists the current type plus **"Free text"**. Switching to "Free text":
+      the fields change to the free-text editor with the **accepted answer
+      pre-filled** (word tiles: the joined tile sentence; MC: the correct
+      option, wrong options move into the distractors). Save and play it as a
+      free-text exercise. For other exercise types (free text, matching, cloze,
+      picture choice) **no** select appears. Expectation: the converted
+      exercise keeps the learner's progress (same answer key), and Cancel
+      discards the conversion.
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
@@ -830,6 +960,12 @@ each card row (`CardImageField`).
       Discover/My Content (#1702/#1706)
 - [ ] Per-set share link opens the set detail page directly (#1572)
 - [ ] Add a registered content repo (register-a-repo #1511)
+- [ ] Manifest fallback for own repos without a search-index.json (#2562):
+      connect your own repo via Settings → Data → "Add a repository" that
+      was NEVER built with the engine generator (no search-index.json at
+      its root) - its sets still appear in Discover; once more than one
+      source contributes, the "Source" filter appears (previously missing
+      when only one source contributed)
 - [ ] "Share as repository" (#2376): a set with quality issues (e.g. a
       matching exercise with a duplicate left value) is NOT pushed on the
       first click - the issue list appears and the button flips to
@@ -1042,6 +1178,13 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
       assigned with confidence and will be reset"). Verify NOTHING was carried
       over for them - a wrong assignment is worse than a loss because it is
       invisible.
+- [ ] AUTH-05: the exercise's OWN id changed (not just the answer text) - e.g.
+      an exercise without a `stable_id` gets renamed (slug change) on update.
+      The count in the "Carry over what still matches" checkbox includes this
+      case (a combined number from the exercise and element level); the
+      readable preview list still shows only answer-text pairs, never raw
+      exercise slugs. After confirming with the box checked: the review card
+      survives under the NEW exercise id, no restart from zero.
 - [ ] Auto-sync (24h, connected user repo): NEITHER updates NOR carries anything
       over. The mapping may only come into being in the manual dialog.
 - [ ] Confirm twice in a row (trigger the update again): no double carry-over, no
@@ -1051,6 +1194,11 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
 - [ ] iOS standalone (PWA): dialog including the pair list and the checkbox is
       fully readable and operable (the list does not overflow the dialog, the
       checkbox is tappable); carry-over works the same in Dexie mode.
+- [ ] First minting (engine#91, element level): a set whose pairs/blanks/options
+      get a stable_id for the first time, content otherwise unchanged or
+      corrected in the same update. The transition is treated as a normal,
+      safely assignable correction, not reported as "cannot be assigned".
+      Progress survives when carry-over is confirmed.
 
 ### Retirement: archived progress on retired_ids (#2188)
 
@@ -1249,6 +1397,21 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] The checkbox only appears when there IS progress to delete
       (Dexie mode)
 
+### Recommended repositories: per-row buttons (#2558)
+
+Location: Settings → Data → Recommended repositories.
+
+- [ ] Multiple recommendations visible → click "Add repository" on ONE →
+      ONLY that button disables, the others stay clickable
+- [ ] While adding, a progress indicator (label + bar once the sync
+      phase reports numbers) appears right at the clicked row, not
+      globally
+- [ ] Click a second recommendation while the first is still loading →
+      both run through independently, no error
+- [ ] After completion: the row disappears from "Recommended" (now
+      under "Your content repositories"), the other rows' button state
+      is unaffected
+
 ### Social sharing (visual + native)
 - [ ] Share button visible after a lesson
 - [ ] Mobile: native share sheet (WhatsApp/Telegram)
@@ -1291,6 +1454,25 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] After a successful import (file OR paste): switching to
       Settings → AI shows the key IMMEDIATELY, without a reload (#1769)
 - [ ] Passphrase masked with a reveal toggle; key/passphrase never logged
+
+### Cross-app vault import (Topos → Adaptive Learner) (#2512)
+- [ ] An .alk file exported from Topos (format "topos-ai-keys") imports
+      without a "foreign file" rejection; the FILE's passphrase is asked
+- [ ] The Topos key stored under "google" lands on the "Gemini" provider
+      after the import (Settings → AI shows it there)
+- [ ] Wrong passphrase → warning, no key is written
+- [ ] AL export unchanged: an exported file still carries the format
+      "adaptive-learner-keys"
+
+### Perplexity provider (OpenAI-compatible, server mode only) (#2512)
+- [ ] Settings → AI: "Perplexity" appears in the provider selection
+      (after Gemini)
+- [ ] Server mode (make dev): store a pplx- key, the model picker shows
+      the static sonar list (sonar, sonar-pro, sonar-reasoning)
+- [ ] Server mode: a session message with Perplexity active returns a
+      response (model sonar-pro as the default)
+- [ ] Browser mode (Dexie/PWA): Perplexity is visible but marked
+      "desktop only" (no dead menu item, no CORS error)
 
 ---
 

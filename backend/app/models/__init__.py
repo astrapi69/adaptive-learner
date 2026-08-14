@@ -120,6 +120,7 @@ class UserSettings(Base):
     api_key_anthropic: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_openai: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_gemini: Mapped[str | None] = mapped_column(Text, nullable=True)
+    api_key_perplexity: Mapped[str | None] = mapped_column(Text, nullable=True)
     # v0.4.0: per-provider model override. NULL means the
     # session plugin's ai_orchestration.DEFAULT_MODELS pick wins;
     # a non-NULL value replaces it for THAT provider only. Plain
@@ -129,6 +130,7 @@ class UserSettings(Base):
     model_override_anthropic: Mapped[str | None] = mapped_column(String(200), nullable=True)
     model_override_openai: Mapped[str | None] = mapped_column(String(200), nullable=True)
     model_override_gemini: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    model_override_perplexity: Mapped[str | None] = mapped_column(String(200), nullable=True)
     # #508 — optional profile picture as a small base64 data URL (a
     # client-resized, <=100 KB square JPEG/PNG). Stored here so it rides
     # the existing user_settings sync + backup surface; NULL = use the
@@ -166,6 +168,10 @@ class UserSettings(Base):
     @property
     def has_gemini_key(self) -> bool:
         return self.api_key_gemini is not None
+
+    @property
+    def has_perplexity_key(self) -> bool:
+        return self.api_key_perplexity is not None
 
 
 # --- Learning projects ------------------------------------------------------
@@ -1536,6 +1542,14 @@ class ElementError(Base):
             # A card can have one receptive row + one productive row,
             # each with independent error_count / streak / mastery.
             "direction",
+            # EXP-051 / #2125: the Durchgang (run/pass) generation. A
+            # second run of the same set writes new rows under the next
+            # run_id instead of overwriting the first; the earlier run
+            # stays a frozen archive for the Fehlerhistorie. Absent
+            # column value (the migration default) means run 1 — the same
+            # "absence = first generation" pattern review_status /
+            # hint_used already use.
+            "run_id",
             name="uq_element_errors_user_element_direction",
         ),
     )
@@ -1546,6 +1560,19 @@ class ElementError(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
+    )
+    # EXP-051 / #2125: the Durchgang (run/pass) this row belongs to.
+    # A new run of a completed set closes the current run's rows and
+    # writes fresh ones under run_id + 1; the closed run's rows are
+    # never read for review scheduling again (only the active run — the
+    # open ``SetRun`` — fills the queue) and never rewritten. Default 1
+    # so every pre-EXP-051 row and every backup without the field reads
+    # back as the first run with no backfill script.
+    run_id: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=1,
+        server_default=text("1"),
     )
     # Content-loader identifiers stored as strings — NOT FKs.
     # The content set / lesson / exercise live in the cache,
@@ -1674,9 +1701,93 @@ class ElementError(Base):
         return (
             f"<ElementError user={self.user_id!r} "
             f"set={self.set_id!r} lesson={self.lesson_id!r} "
-            f"key={self.element_key!r} errors={self.error_count} "
+            f"key={self.element_key!r} run={self.run_id} "
+            f"errors={self.error_count} "
             f"streak={self.correct_streak} mastered={self.mastered}>"
         )
+
+
+class SetRun(Base):
+    """One Durchgang (run/pass) of a content set for one user
+    (EXP-051 / #2125).
+
+    A learner reworks a finished set as a *second* run without
+    overwriting the first: the ``ElementError`` rows carry a ``run_id``
+    generation, and this table records WHICH run of each ``(user,
+    set)`` is currently active. Starting a new run is one atomic
+    transaction — stamp ``closed_at`` on the old row, insert a new row
+    with ``run_id + 1``.
+
+    ``closed_at IS NULL`` marks the active run — the same
+    nullable-timestamp "absence = still open" pattern as
+    ``ElementError.retired_at`` / ``mastered_at``. Only the active run
+    fills the review queue; closed runs are an immutable archive.
+
+    The invariant "at most one active run per (user, set)" is enforced
+    by the service (start = close-old-then-open-new in one
+    transaction), not a partial DB index — SQLite would support the
+    partial unique index but the service boundary is the simpler place
+    to keep the rule.
+
+    Backward compatibility: a user with pre-EXP-051 ``element_errors``
+    (all ``run_id = 1``) has NO ``set_runs`` row until the first
+    read/write after the upgrade lazily materialises the implicit
+    active run 1 — no blocking migration script.
+    """
+
+    __tablename__ = "set_runs"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "set_id",
+            "run_id",
+            name="uq_set_runs_user_set_run",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    # Content-loader set id — a string, NOT an FK (the set lives in the
+    # cache, not the DB), mirroring ``ElementError.set_id``.
+    set_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    run_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    # Optional content-version marker taken at run start (EXP-051
+    # "Inhalts-Update mitten im Durchgang"). Lets the Fehlerhistorie
+    # flag or exclude a run whose content changed mid-run; nullable
+    # because the content-version wiring is a separate concern and the
+    # run model does not depend on it.
+    content_version_at_start: Mapped[str | None] = mapped_column(
+        String(120),
+        nullable=True,
+    )
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+    )
+    # NULL = active; set = closed (archived, never rewritten).
+    closed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    # Bumps on every write (create + the close-transition). The sync
+    # surface compares rows by this field, so closing a run on one device
+    # propagates to the others (started_at alone never changes on close).
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+        onupdate=_utcnow,
+    )
+
+    def __repr__(self) -> str:
+        state = "active" if self.closed_at is None else "closed"
+        return f"<SetRun user={self.user_id!r} set={self.set_id!r} run={self.run_id} {state}>"
 
 
 class UserMission(Base):
@@ -1818,5 +1929,6 @@ __all__ = [
     "StudyQuestion",
     "LessonProgress",
     "ElementError",
+    "SetRun",
     "UserMission",
 ]

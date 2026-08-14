@@ -1,0 +1,197 @@
+/**
+ * exercise-remap-plan (AUTH-05) — lift #2308/#2161/#2519's element-key remap
+ * technique one layer up onto ``exercise_id``.
+ *
+ * A row's ``exercise_id`` orphans the SAME way an ``element_key`` does: a
+ * content update renumbers an authored exercise slug (positional generators
+ * re-mint ``ex-match-{n}``-style ids on ANY structural change earlier in the
+ * lesson), and the row is left pointing at an id that no longer exists.
+ * ``matchesExerciseIdentity`` (#2130) already prevents this the moment an
+ * exercise carries a ``stable_id`` - this module is the fallback for content
+ * that predates that, or never adopted it, exactly mirroring
+ * ``remap-plan.ts``'s own relationship to engine#91's element-level
+ * ``stable_id``.
+ *
+ * Same algorithm, one level up: compare the ORDERED exercise-identity lists
+ * of the two lesson versions. The row's identity at index i in the OLD list
+ * -> candidate is new[i]. Certain only when both lists are the same length
+ * AND the candidate does not already exist elsewhere in the old list (proof
+ * it is a renamed form of the SAME exercise, not a different one that moved
+ * into this slot). Anything else is refused, never guessed - reported with
+ * the candidate it would have picked so a human can still decide.
+ *
+ * Pure and side-effect free: the caller supplies both lesson versions and the
+ * rows. Sequencing (#2519's own lesson, EXP-051): this plan/apply pair runs
+ * BEFORE ``planElementKeyRemaps``/``remapElementKeys`` - once an exercise's
+ * identity is resolved, the two dimensions are independent (an exercise-id
+ * remap carries every element_key through unchanged, see
+ * ``remapExerciseIdsDexie``), but element-key classification hard-assumes
+ * the exercise already resolves.
+ */
+
+import {exerciseIdentityOf, matchesExerciseIdentity} from "../../srs/exercise-identity";
+import type {ExerciseIdRemap} from "../../../storage/types";
+import type {PeekExercise, PeekLesson} from "./update-impact";
+
+/** Why a row's exercise_id could not be mapped. Each value is a REASON TO
+ *  REFUSE, never a fallback that still writes something. */
+export type ExerciseUncertainReason =
+    /** The candidate at the same position exists elsewhere in the old
+     *  version: the list was reordered, so position proves nothing. */
+    | "reordered"
+    /** The two lists differ in length: every position after the change is
+     *  shifted by an unknown amount. */
+    | "shifted"
+    /** The whole lesson file is not in the incoming version. */
+    | "lesson_gone"
+    /** The row's exercise_id is not in the CACHED version either, so there
+     *  is no position to read. Typically a row an earlier update already
+     *  orphaned. */
+    | "not_in_cached"
+    /** Two rows would map onto the same new exercise_id. Applying both would
+     *  collapse two histories into one, so neither is offered. */
+    | "ambiguous_target";
+
+/** The identity one learner row's exercise_id pins to. */
+export interface ExerciseSrsIdentity {
+    lesson_id: string;
+    exercise_id: string;
+}
+
+export interface ExerciseUncertainRemap {
+    identity: ExerciseSrsIdentity;
+    reason: ExerciseUncertainReason;
+    /** What a position-only match would have picked. Shown so the decision
+     *  is informed; never written. */
+    candidate?: string;
+}
+
+export interface ExerciseRemapPlan {
+    /** Safe to offer. Still requires confirmation - the mapping is an
+     *  inference, not a fact. */
+    certain: ExerciseIdRemap[];
+    /** Reported, never applied. */
+    uncertain: ExerciseUncertainRemap[];
+}
+
+/** The ordered exercise-identity list of a lesson (``stable_id ?? id`` per
+ *  exercise, #2130) - the SAME rule ``matchesExerciseIdentity`` uses, so an
+ *  exercise that already resolves via its stable_id never reaches here with
+ *  a stale entry. */
+function exerciseIdentityList(lesson: PeekLesson): string[] {
+    return lesson.exercises
+        .map((ex) => exerciseIdentityOf(ex as PeekExercise))
+        .filter((id): id is string => id !== undefined);
+}
+
+function findLesson(
+    lessons: readonly PeekLesson[],
+    lessonId: string,
+): PeekLesson | undefined {
+    return lessons.find((entry) => entry.filename === lessonId);
+}
+
+/** Classify ONE row against the two versions. Returns either a remap or the
+ *  reason it is being refused. */
+function classify(
+    identity: ExerciseSrsIdentity,
+    cached: readonly PeekLesson[],
+    incoming: readonly PeekLesson[],
+    setId: string,
+): {remap: ExerciseIdRemap} | ExerciseUncertainRemap {
+    const refuse = (
+        reason: ExerciseUncertainReason,
+        candidate?: string,
+    ): ExerciseUncertainRemap =>
+        candidate === undefined ? {identity, reason} : {identity, reason, candidate};
+
+    const incomingLesson = findLesson(incoming, identity.lesson_id);
+    if (!incomingLesson) return refuse("lesson_gone");
+
+    const cachedLesson = findLesson(cached, identity.lesson_id);
+    if (!cachedLesson) return refuse("not_in_cached");
+
+    const oldIds = exerciseIdentityList(cachedLesson);
+    const newIds = exerciseIdentityList(incomingLesson);
+
+    const index = oldIds.indexOf(identity.exercise_id);
+    if (index < 0) return refuse("not_in_cached");
+
+    const candidate = newIds[index];
+    // Reorder is checked BEFORE length, for the same reason remap-plan.ts
+    // checks it first at the element level: a list that both shrinks and
+    // reorders must report "this slot now holds a DIFFERENT exercise that
+    // already existed", not a mere length change.
+    if (candidate !== undefined && oldIds.includes(candidate)) {
+        return refuse("reordered", candidate);
+    }
+    if (newIds.length !== oldIds.length) return refuse("shifted", candidate);
+    if (candidate === undefined) return refuse("shifted");
+
+    return {
+        remap: {
+            set_id: setId,
+            lesson_id: identity.lesson_id,
+            old: identity.exercise_id,
+            new: candidate,
+        },
+    };
+}
+
+/** Key identifying one target row, so two proposals onto the same exercise
+ *  are detectable before anything is written. */
+function targetKey(remap: ExerciseIdRemap): string {
+    return [remap.lesson_id, remap.new].join("\u0000");
+}
+
+/**
+ * Build the proposed exercise_id mapping for the learner's rows in one set.
+ *
+ * ``identities`` are the (lesson_id, exercise_id) pairs whose exercise no
+ * longer resolves (deduped from the update guard's ``lostCards`` - see
+ * ``plan-set-update.ts``); a pair that still resolves (directly, or via its
+ * ``stable_id``) needs nothing and is skipped silently.
+ */
+export function planExerciseIdRemaps(
+    identities: readonly ExerciseSrsIdentity[],
+    cached: readonly PeekLesson[],
+    incoming: readonly PeekLesson[],
+    setId: string,
+): ExerciseRemapPlan {
+    const certain: ExerciseIdRemap[] = [];
+    const uncertain: ExerciseUncertainRemap[] = [];
+
+    for (const identity of identities) {
+        const incomingLesson = findLesson(incoming, identity.lesson_id);
+        const stillThere = incomingLesson
+            ? incomingLesson.exercises.some((ex) =>
+                  matchesExerciseIdentity(ex as PeekExercise, identity.exercise_id),
+              )
+            : false;
+        if (stillThere) continue;
+
+        const verdict = classify(identity, cached, incoming, setId);
+        if ("remap" in verdict) certain.push(verdict.remap);
+        else uncertain.push(verdict);
+    }
+
+    // Two rows proposing the same target would collapse two exercises'
+    // histories into one. The remap primitive refuses the second write, but
+    // a plan that OFFERS the collision has already misled the learner about
+    // what will happen, so neither is offered.
+    const perTarget = new Map<string, number>();
+    for (const remap of certain) {
+        perTarget.set(targetKey(remap), (perTarget.get(targetKey(remap)) ?? 0) + 1);
+    }
+    const unique = certain.filter((remap) => perTarget.get(targetKey(remap)) === 1);
+    for (const remap of certain) {
+        if (perTarget.get(targetKey(remap)) === 1) continue;
+        uncertain.push({
+            identity: {lesson_id: remap.lesson_id, exercise_id: remap.old},
+            reason: "ambiguous_target",
+            candidate: remap.new,
+        });
+    }
+
+    return {certain: unique, uncertain};
+}

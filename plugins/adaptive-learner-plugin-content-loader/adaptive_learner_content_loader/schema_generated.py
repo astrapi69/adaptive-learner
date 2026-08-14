@@ -26,42 +26,6 @@ class MediaType(str, Enum):
     DIAGRAM = 'diagram'
 
 
-class ClozeBlank(BaseModel):
-    """
-    One blank inside a cloze exercise's ``sentence`` (Phase 52D /
-    v1.35.0 / P-127).
-
-    Marker-based convention: the sentence carries visible ``___``
-    tokens; ``blanks[i]`` provides the metadata for the i-th
-    marker (left-to-right). The validator enforces
-    ``sentence.count("___") == len(blanks)`` so the i↔i mapping
-    is unambiguous at render time.
-
-    ``accept`` carries the per-blank canonical + acceptable
-    variants — the renderer reuses FreeText's ``isFreeTextCorrect``
-    matcher (NFC-normalised + Levenshtein <= 1) so authors only
-    need to enumerate semantic variants (gendered article,
-    capitalisation, et cetera), not typos.
-    """
-
-    model_config = ConfigDict(
-        extra='forbid',
-        frozen=True,
-    )
-    accept: list[str] = Field(..., min_length=1, title='Accept')
-    """
-    Accepted answers for this blank. First entry is the canonical (shown after a wrong attempt). Same shape as FREE_TEXT.accept.
-    """
-    hint: str | None = Field(None, max_length=200, title='Hint')
-    """
-    Optional per-blank hint. Surfaced inline next to this specific blank, not lesson-wide.
-    """
-    placeholder: str | None = Field(None, max_length=40, title='Placeholder')
-    """
-    Optional placeholder text shown inside the input (``type`` mode) before the user starts typing.
-    """
-
-
 class ClozeMode(str, Enum):
     """
     CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a single-answer ``<select>`` per blank with options from ``distractors``, ``multiselect`` (#1195) renders a checkbox group of ``accept`` (all correct) + ``distractors`` for a 'select all that apply' question. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.
@@ -186,60 +150,6 @@ class LessonResource(BaseModel):
     """
 
 
-class MultipleChoiceOption(BaseModel):
-    """
-    One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
-
-    Correctness is a per-option flag, so the type needs no separate
-    accept/distractor lists and no disjointness rule - the structure
-    makes that class of authoring error impossible. Grading contract:
-    with ``multiple: false`` exactly one option carries ``correct``
-    and a single pick is graded; with ``multiple: true`` the learner
-    must select the exact set of correct options (no partial credit,
-    mirroring the cloze multiselect grading).
-    """
-
-    model_config = ConfigDict(
-        extra='forbid',
-        frozen=True,
-    )
-    correct: bool = Field(False, title='Correct')
-    """
-    Set to true on the correct option(s). Exactly one with ``multiple: false``; at least one with ``multiple: true``.
-    """
-    text: str = Field(..., max_length=500, min_length=1, title='Text')
-    """
-    The option text shown to the learner. Unique within the exercise - the text IS the option, so a duplicate would be ambiguous.
-    """
-
-
-class Pair(BaseModel):
-    """
-    One left↔right pair in a MATCHING exercise.
-
-    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
-    so the generated JSON-Schema / TS types carry the structured
-    ``{left, right}`` shape instead of a loose string map. The
-    ``extra="forbid"`` config + the two required fields replace the
-    former per-pair key check in ``_validate_matching_fields``;
-    validation semantics are unchanged (a pair must have exactly
-    ``left`` and ``right``).
-    """
-
-    model_config = ConfigDict(
-        extra='forbid',
-        frozen=True,
-    )
-    left: str = Field(..., max_length=500, min_length=1, title='Left')
-    """
-    The left-column item. The renderer shuffles before display.
-    """
-    right: str = Field(..., max_length=500, min_length=1, title='Right')
-    """
-    The right-column item this pairs with.
-    """
-
-
 Src = Annotated[str, StringConstraints(max_length=500, min_length=1)]
 """
     Image reference in one of two explicit formats (schema v1.8): a relative path inside the set's ``assets/`` directory ('assets/img/cat.png', <= 500 chars, resolved by the asset loader) OR an inline base64 data URI ('data:image/...;base64,...', its own 250000-char cap - sized for the reference consumer's 150-KiB upload compression: 153600 bytes -> 204800 base64 chars plus header). Repo content should prefer the assets/ path; the ``W-PIC-DATA-URI`` author lint flags inline data URIs.
@@ -361,175 +271,105 @@ class CardTokenRole(BaseModel):
     """
 
 
-class Exercise(BaseModel):
+class ClozeBlank(BaseModel):
     """
-    One exercise step. Type-tagged via ``type``.
+    One blank inside a cloze exercise's ``sentence`` (Phase 52D /
+    v1.35.0 / P-127).
 
-    The fields are kept in a single flat shape per
-    ``type`` rather than per-type discriminated unions
-    because the JSON manifests are author-edited; flat
-    shapes are easier to read and to diff in PRs. The
-    validator enforces type-specific requirements via
-    model_validator instead.
-    """
+    Marker-based convention: the sentence carries visible ``___``
+    tokens; ``blanks[i]`` provides the metadata for the i-th
+    marker (left-to-right). The validator enforces
+    ``sentence.count("___") == len(blanks)`` so the i↔i mapping
+    is unambiguous at render time.
 
-    model_config = ConfigDict(
-        extra='forbid',
-        frozen=True,
-    )
-    accept: list[str] | None = Field(None, title='Accept')
-    """
-    FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.
-    """
-    accept_orderings: list[list[int]] | None = Field(None, title='Accept Orderings')
-    """
-    WORD_TILES: optional list of accepted tile-index orderings (each is a permutation of [0..len-1]). If omitted, only the canonical order in ``tiles`` is accepted.
-    """
-    blanks: list[ClozeBlank] | None = Field(None, title='Blanks')
-    """
-    CLOZE: per-marker metadata in left-to-right order. ``len(blanks) == sentence.count('___')`` enforced at validation time. Phase 52D / v1.35.0. Not used in ``multiselect`` mode (#1195).
-    """
-    card_ids: list[str] = Field([], max_length=50, title='Card Ids')
-    """
-    Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.
-    """
-    cloze_mode: ClozeMode | None = Field(None, title='Cloze Mode')
-    """
-    CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a single-answer ``<select>`` per blank with options from ``distractors``, ``multiselect`` (#1195) renders a checkbox group of ``accept`` (all correct) + ``distractors`` for a 'select all that apply' question. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.
-    """
-    direction: Direction = Field(Direction.TARGET_TO_SOURCE, title='Direction')
-    """
-    EXP-018 / Phase 62 / v1.46.0: which way the card is drilled. ``target_to_source`` (default) shows the target language and asks the learner to recognise the source language (RECEPTIVE, easier). ``source_to_target`` shows the source and asks the learner to produce the target (PRODUCTIVE, harder). ``both`` / ``random`` let the renderer or the adaptive generator pick per attempt. Additive + optional; schema_version stays 1.2. Cloze ignores it (in-context).
-    """
-    distractors: list[str] = Field([], max_length=20, title='Distractors')
-    """
-    Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.
-    """
-    examples: list[InlineExample] | None = Field(None, max_length=20, title='Examples')
-    """
-    Optional inline worked examples shown BEFORE the answer controls, to help the learner understand the task (schema v1.5, additive). Each is plain text or a syntax-highlighted code snippet (see ``InlineExample.language``). Author responsibility not to spoil the answer. Independent of the per-type fields; absent on exercises that need no example.
-    """
-    ext_payload: dict[str, Any] | None = None
-    """
-    Opaque per-exercise payload for an ``ext:`` extension type. The core engine does not interpret it; the registered extension validator does. Absent on core exercises.
-    """
-    from_cards: bool = Field(False, title='From Cards')
-    """
-    MATCHING: when true, the exercise derives its ``pairs`` from the referenced cards (left = card ``front``, right = card ``back``) instead of listing them explicitly, so a definition lives in one place. Requires non-empty ``card_ids`` and forbids an explicit ``pairs`` list. The engine resolves it to concrete ``pairs`` at parse time. Additive + optional; schema_version stays 1.5.
-    """
-    hint: str | None = Field(None, max_length=1000, title='Hint')
-    """
-    Optional Markdown hint shown on demand. The viewer renders this behind a 'Need a hint?' button.
-    """
-    id: str = Field(
-        ...,
-        max_length=120,
-        min_length=1,
-        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
-        title='Id',
-    )
-    """
-    Slug-safe id, unique within the lesson.
-    """
-    stable_id: str | None = Field(
-        None, pattern='^[a-z0-9][a-z0-9_-]{7,63}$', title='Stable Id'
-    )
-    """
-    engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-].
-    """
-    images: list[PictureImage] | None = Field(None, title='Images')
-    """
-    PICTURE_CHOICE: list of {src, label, is_correct?} options. Exactly one entry MUST include 'is_correct': 'true'. ``src`` is a relative path inside the set's ``assets/`` directory.
-    """
-    multiple: bool = Field(False, title='Multiple')
-    """
-    MULTIPLE_CHOICE: when false (default) exactly one option is correct (single choice); when true the learner selects ALL correct options ('select all that apply', graded by exact-set match). Ignored by the other exercise types.
-    """
-    options: list[MultipleChoiceOption] | None = Field(None, max_length=20, title='Options')
-    """
-    MULTIPLE_CHOICE: list of {text, correct?} answer options (schema v1.6). At least two options; ``multiple`` controls whether exactly one or at least one must be marked correct. Correctness is a per-option flag, so no separate accept/distractor lists (and no disjointness rule) are needed. The renderer shuffles before display.
-    """
-    pairs: list[Pair] | None = Field(None, title='Pairs')
-    """
-    MATCHING: list of {left, right} pairs to match up. The renderer shuffles before display.
-    """
-    prompt: str = Field(..., max_length=1000, min_length=1, title='Prompt')
-    """
-    The question text shown to the learner.
-    """
-    sentence: str | None = Field(None, max_length=1000, title='Sentence')
-    """
-    CLOZE: the cloze sentence with visible ``___`` markers at each blank position. The renderer splits on the markers + interleaves the per-blank input control. Phase 52D / v1.35.0. In ``multiselect`` mode (#1195) this is instead the question stem (no ``___`` markers, no ``blanks``).
-    """
-    tiles: list[str] | None = Field(None, title='Tiles')
-    """
-    WORD_TILES: ordered list of tile labels. The renderer shuffles before display. Multiple correct orderings are configured via ``accept_orderings`` below.
-    """
-    type: ExerciseType | ExtExerciseType
-    """
-    Which exercise renderer handles this step. A core ExerciseType value, or an ``ext:<vendor>-<name>`` extension type (ExtExerciseType) that the lesson declares in ``requires_extensions``.
-    """
-
-
-class LessonStep(BaseModel):
-    """
-    One step in the lesson sequence.
-
-    Theory steps carry a Markdown body. Exercise steps carry
-    a fully-validated ``Exercise``. The viewer renders these
-    in order; ``id`` lets deep-linking land on a specific
-    step.
+    ``accept`` carries the per-blank canonical + acceptable
+    variants — the renderer reuses FreeText's ``isFreeTextCorrect``
+    matcher (NFC-normalised + Levenshtein <= 1) so authors only
+    need to enumerate semantic variants (gendered article,
+    capitalisation, et cetera), not typos.
     """
 
     model_config = ConfigDict(
         extra='forbid',
         frozen=True,
     )
-    body: str | None = Field(None, title='Body')
+    accept: list[str] = Field(..., min_length=1, title='Accept')
     """
-    THEORY: Markdown content. Rendered by the same react-markdown pipeline the help system uses.
+    Accepted answers for this blank. First entry is the canonical (shown after a wrong attempt). Same shape as FREE_TEXT.accept.
     """
-    example_label: str | None = Field(None, max_length=200, title='Example Label')
+    hint: str | None = Field(None, max_length=200, title='Hint')
     """
-    Optional display text for the example link. The viewer falls back to a localized 'View example' label when empty.
+    Optional per-blank hint. Surfaced inline next to this specific blank, not lesson-wide.
     """
-    example_url: str | None = Field(None, max_length=2000, title='Example Url')
+    placeholder: str | None = Field(None, max_length=40, title='Placeholder')
     """
-    Optional URL to an external example that illustrates the theory (article / video / interactive visualisation). Rendered as a link button under a THEORY step's content (schema v1.4, additive). Must be an http(s) URL.
+    Optional placeholder text shown inside the input (``type`` mode) before the user starts typing.
     """
-    examples: list[InlineExample] | None = Field(None, max_length=20, title='Examples')
+    stable_id: SlugId | None = Field(None, title='Stable Id')
     """
-    THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet — see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.
+    engine#91 - schema 1.12 (additive). Element-level counterpart to the exercise/card stable_id (engine#90): identifies THIS blank for progress/SRS joins below the exercise level, so an answer-text correction (moving `accept[0]`) does not orphan its learner row. Once published it NEVER changes. Shares the SAME per-set stable_id namespace as card/exercise ids (checked the same way: collectStableIds set-wide, the schema's E-STABLE-ID-DUP rule per-document). Opaque mint-once value, NOT derived from content. Optional: content without it validates unchanged. Uses the strict $defs/SlugId shape (hyphens only) - unlike the card/exercise field, this is a brand-new field with no legacy underscore-bearing ids to grandfather.
     """
-    exercise: Exercise | None = None
+
+
+class MultipleChoiceOption(BaseModel):
     """
-    EXERCISE: the exercise payload.
+    One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
+
+    Correctness is a per-option flag, so the type needs no separate
+    accept/distractor lists and no disjointness rule - the structure
+    makes that class of authoring error impossible. Grading contract:
+    with ``multiple: false`` exactly one option carries ``correct``
+    and a single pick is graded; with ``multiple: true`` the learner
+    must select the exact set of correct options (no partial credit,
+    mirroring the cloze multiselect grading).
     """
-    id: str = Field(
-        ...,
-        max_length=120,
-        min_length=1,
-        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
-        title='Id',
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
     )
+    correct: bool = Field(False, title='Correct')
     """
-    Slug-safe id, unique within the lesson.
+    Set to true on the correct option(s). Exactly one with ``multiple: false``; at least one with ``multiple: true``.
     """
-    review_lesson_id: str | None = Field(None, max_length=200, title='Review Lesson Id')
+    stable_id: SlugId | None = Field(None, title='Stable Id')
     """
-    Set ONLY on synthesised SRS review steps (#673). Carries the source lesson_id the reviewed element belongs to, so the review recorder can address the exact stored ElementError row. Absent on real content lessons. Modeled here (EXP-039) so the schema covers the synthesised-review shape the frontend already emits.
+    engine#91 - schema 1.12 (additive). Element-level counterpart to the exercise/card stable_id (engine#90): identifies THIS option for progress/SRS joins below the exercise level. Once published it NEVER changes. Shares the SAME per-set stable_id namespace as card/exercise ids (checked the same way: collectStableIds set-wide, the schema's E-STABLE-ID-DUP rule per-document). Opaque mint-once value, NOT derived from content. Optional: content without it validates unchanged. Uses the strict $defs/SlugId shape (hyphens only) - unlike the card/exercise field, this is a brand-new field with no legacy underscore-bearing ids to grandfather.
     """
-    theory_ref: str | None = Field(None, max_length=200, title='Theory Ref')
+    text: str = Field(..., max_length=500, min_length=1, title='Text')
     """
-    EXERCISE: optional explicit reference to the theory step this exercise practices, by the theory step's id (preferred) or title. The viewer's 'Re-read theory' backlink resolves it exactly, falling back to the term-overlap heuristic when absent or unresolvable (additive, #709).
+    The option text shown to the learner. Unique within the exercise - the text IS the option, so a duplicate would be ambiguous.
     """
-    title: str | None = Field(None, max_length=200, title='Title')
+
+
+class Pair(BaseModel):
     """
-    Optional step title. Shown in the progress bar / step list (Phase 44 viewer).
+    One left↔right pair in a MATCHING exercise.
+
+    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
+    so the generated JSON-Schema / TS types carry the structured
+    ``{left, right}`` shape instead of a loose string map. The
+    ``extra="forbid"`` config + the two required fields replace the
+    former per-pair key check in ``_validate_matching_fields``;
+    validation semantics are unchanged (a pair must have exactly
+    ``left`` and ``right``).
     """
-    type: StepType
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    left: str = Field(..., max_length=500, min_length=1, title='Left')
     """
-    THEORY or EXERCISE.
+    The left-column item. The renderer shuffles before display.
+    """
+    right: str = Field(..., max_length=500, min_length=1, title='Right')
+    """
+    The right-column item this pairs with.
+    """
+    stable_id: SlugId | None = Field(None, title='Stable Id')
+    """
+    engine#91 - schema 1.12 (additive). Element-level counterpart to the exercise/card stable_id (engine#90): identifies THIS pair for progress/SRS joins below the exercise level, so an answer-text correction (moving `left`/`right`) does not orphan its learner row. Once published it NEVER changes. Shares the SAME per-set stable_id namespace as card/exercise ids (checked the same way: collectStableIds set-wide, the schema's E-STABLE-ID-DUP rule per-document). Opaque mint-once value, NOT derived from content. Optional: content without it validates unchanged. Uses the strict $defs/SlugId shape (hyphens only) - unlike the card/exercise field, this is a brand-new field with no legacy underscore-bearing ids to grandfather.
     """
 
 
@@ -618,9 +458,185 @@ class Card(BaseModel):
     """
     Tags for SRS filtering ('greeting', 'verb-present', 'irregular'). Each tag must match $defs/SlugId - the reference consumer checks tags with the same regex it applies to ids and skips lessons whose tags fail (engine#108, hard since schema 1.11 after the published corpus was cleaned).
     """
-    token_roles: list[CardTokenRole] | None = Field(None, max_length=10, title='Token Roles')
+    token_roles: list[CardTokenRole] | None = Field(
+        None, max_length=10, title='Token Roles'
+    )
     """
     Phase 52I / v1.35.0 / P-130. Optional list of ``{token, role}`` annotations on the card's ``front``. The cloze generator (52E) uses these to pick a semantically-meaningful blank when available; absent annotations fall through to a position-based heuristic so old content keeps working unchanged.
+    """
+
+
+class Exercise(BaseModel):
+    """
+    One exercise step. Type-tagged via ``type``.
+
+    The fields are kept in a single flat shape per
+    ``type`` rather than per-type discriminated unions
+    because the JSON manifests are author-edited; flat
+    shapes are easier to read and to diff in PRs. The
+    validator enforces type-specific requirements via
+    model_validator instead.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    accept: list[str] | None = Field(None, title='Accept')
+    """
+    FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.
+    """
+    accept_orderings: list[list[int]] | None = Field(None, title='Accept Orderings')
+    """
+    WORD_TILES: optional list of accepted tile-index orderings (each is a permutation of [0..len-1]). If omitted, only the canonical order in ``tiles`` is accepted.
+    """
+    blanks: list[ClozeBlank] | None = Field(None, title='Blanks')
+    """
+    CLOZE: per-marker metadata in left-to-right order. ``len(blanks) == sentence.count('___')`` enforced at validation time. Phase 52D / v1.35.0. Not used in ``multiselect`` mode (#1195).
+    """
+    card_ids: list[str] = Field([], max_length=50, title='Card Ids')
+    """
+    Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.
+    """
+    cloze_mode: ClozeMode | None = Field(None, title='Cloze Mode')
+    """
+    CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a single-answer ``<select>`` per blank with options from ``distractors``, ``multiselect`` (#1195) renders a checkbox group of ``accept`` (all correct) + ``distractors`` for a 'select all that apply' question. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.
+    """
+    direction: Direction = Field(Direction.TARGET_TO_SOURCE, title='Direction')
+    """
+    EXP-018 / Phase 62 / v1.46.0: which way the card is drilled. ``target_to_source`` (default) shows the target language and asks the learner to recognise the source language (RECEPTIVE, easier). ``source_to_target`` shows the source and asks the learner to produce the target (PRODUCTIVE, harder). ``both`` / ``random`` let the renderer or the adaptive generator pick per attempt. Additive + optional; schema_version stays 1.2. Cloze ignores it (in-context).
+    """
+    distractors: list[str] = Field([], max_length=20, title='Distractors')
+    """
+    Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.
+    """
+    examples: list[InlineExample] | None = Field(None, max_length=20, title='Examples')
+    """
+    Optional inline worked examples shown BEFORE the answer controls, to help the learner understand the task (schema v1.5, additive). Each is plain text or a syntax-highlighted code snippet (see ``InlineExample.language``). Author responsibility not to spoil the answer. Independent of the per-type fields; absent on exercises that need no example.
+    """
+    ext_payload: dict[str, Any] | None = None
+    """
+    Opaque per-exercise payload for an ``ext:`` extension type. The core engine does not interpret it; the registered extension validator does. Absent on core exercises.
+    """
+    from_cards: bool = Field(False, title='From Cards')
+    """
+    MATCHING: when true, the exercise derives its ``pairs`` from the referenced cards (left = card ``front``, right = card ``back``) instead of listing them explicitly, so a definition lives in one place. Requires non-empty ``card_ids`` and forbids an explicit ``pairs`` list. The engine resolves it to concrete ``pairs`` at parse time. Additive + optional; schema_version stays 1.5.
+    """
+    hint: str | None = Field(None, max_length=1000, title='Hint')
+    """
+    Optional Markdown hint shown on demand. The viewer renders this behind a 'Need a hint?' button.
+    """
+    id: str = Field(
+        ...,
+        max_length=120,
+        min_length=1,
+        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
+        title='Id',
+    )
+    """
+    Slug-safe id, unique within the lesson.
+    """
+    stable_id: str | None = Field(
+        None, pattern='^[a-z0-9][a-z0-9_-]{7,63}$', title='Stable Id'
+    )
+    """
+    engine#90 - schema 1.9 (additive). Author-owned, version-stable identity for progress/SRS joins: once published it NEVER changes, set-wide unique (cross-lesson uniqueness is checked by the repo gate via collectStableIds; the schema sees one document). Opaque mint-once value (lowercase slug, 8-64 chars), NOT derived from content, so answer-text fixes do not move it. Optional: pre-1.9 content validates unchanged. SCOPE: this closes orphaning by slug rename or position shift on the exercise/card level; it does NOT close the element-level case (an answer correction inside a surviving exercise still moves the content-derived element key, engine#91). COMPAT NOTE (engine#105): this pattern predates $defs/SlugId and is deliberately NOT tightened - stable_ids are immutable once published, so the underscore stays allowed here even though SlugId forbids it. For NEW mints prefer the stricter SlugId shape (hyphens only); the bundled mint-stable-ids minter already emits only [a-z0-9-].
+    """
+    images: list[PictureImage] | None = Field(None, title='Images')
+    """
+    PICTURE_CHOICE: list of {src, label, is_correct?} options. Exactly one entry MUST include 'is_correct': 'true'. ``src`` is a relative path inside the set's ``assets/`` directory.
+    """
+    multiple: bool = Field(False, title='Multiple')
+    """
+    MULTIPLE_CHOICE: when false (default) exactly one option is correct (single choice); when true the learner selects ALL correct options ('select all that apply', graded by exact-set match). Ignored by the other exercise types.
+    """
+    options: list[MultipleChoiceOption] | None = Field(
+        None, max_length=20, title='Options'
+    )
+    """
+    MULTIPLE_CHOICE: list of {text, correct?} answer options (schema v1.6). At least two options; ``multiple`` controls whether exactly one or at least one must be marked correct. Correctness is a per-option flag, so no separate accept/distractor lists (and no disjointness rule) are needed. The renderer shuffles before display.
+    """
+    pairs: list[Pair] | None = Field(None, title='Pairs')
+    """
+    MATCHING: list of {left, right} pairs to match up. The renderer shuffles before display.
+    """
+    prompt: str = Field(..., max_length=1000, min_length=1, title='Prompt')
+    """
+    The question text shown to the learner.
+    """
+    sentence: str | None = Field(None, max_length=1000, title='Sentence')
+    """
+    CLOZE: the cloze sentence with visible ``___`` markers at each blank position. The renderer splits on the markers + interleaves the per-blank input control. Phase 52D / v1.35.0. In ``multiselect`` mode (#1195) this is instead the question stem (no ``___`` markers, no ``blanks``).
+    """
+    tiles: list[str] | None = Field(None, title='Tiles')
+    """
+    WORD_TILES: ordered list of tile labels. The renderer shuffles before display. Multiple correct orderings are configured via ``accept_orderings`` below.
+    """
+    type: ExerciseType | ExtExerciseType
+    """
+    Which exercise renderer handles this step. A core ExerciseType value, or an ``ext:<vendor>-<name>`` extension type (ExtExerciseType) that the lesson declares in ``requires_extensions``.
+    """
+
+
+class LessonStep(BaseModel):
+    """
+    One step in the lesson sequence.
+
+    Theory steps carry a Markdown body. Exercise steps carry
+    a fully-validated ``Exercise``. The viewer renders these
+    in order; ``id`` lets deep-linking land on a specific
+    step.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    body: str | None = Field(None, title='Body')
+    """
+    THEORY: Markdown content. Rendered by the same react-markdown pipeline the help system uses.
+    """
+    example_label: str | None = Field(None, max_length=200, title='Example Label')
+    """
+    Optional display text for the example link. The viewer falls back to a localized 'View example' label when empty.
+    """
+    example_url: str | None = Field(None, max_length=2000, title='Example Url')
+    """
+    Optional URL to an external example that illustrates the theory (article / video / interactive visualisation). Rendered as a link button under a THEORY step's content (schema v1.4, additive). Must be an http(s) URL.
+    """
+    examples: list[InlineExample] | None = Field(None, max_length=20, title='Examples')
+    """
+    THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet — see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.
+    """
+    exercise: Exercise | None = None
+    """
+    EXERCISE: the exercise payload.
+    """
+    id: str = Field(
+        ...,
+        max_length=120,
+        min_length=1,
+        pattern='^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$',
+        title='Id',
+    )
+    """
+    Slug-safe id, unique within the lesson.
+    """
+    review_lesson_id: str | None = Field(None, max_length=200, title='Review Lesson Id')
+    """
+    Set ONLY on synthesised SRS review steps (#673). Carries the source lesson_id the reviewed element belongs to, so the review recorder can address the exact stored ElementError row. Absent on real content lessons. Modeled here (EXP-039) so the schema covers the synthesised-review shape the frontend already emits.
+    """
+    theory_ref: str | None = Field(None, max_length=200, title='Theory Ref')
+    """
+    EXERCISE: optional explicit reference to the theory step this exercise practices, by the theory step's id (preferred) or title. The viewer's 'Re-read theory' backlink resolves it exactly, falling back to the term-overlap heuristic when absent or unresolvable (additive, #709).
+    """
+    title: str | None = Field(None, max_length=200, title='Title')
+    """
+    Optional step title. Shown in the progress bar / step list (Phase 44 viewer).
+    """
+    type: StepType
+    """
+    THEORY or EXERCISE.
     """
 
 

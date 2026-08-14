@@ -153,6 +153,15 @@ jobs:
         working-directory: docs
         run: poetry install --no-interaction --no-ansi
 
+      - name: PyYAML for the bare python3 (#2604)
+        # verify_docs.py is stdlib-only, but its i18n check shells out via
+        # `python3 scripts/sync_i18n_to_frontend.py`, which imports yaml. That
+        # runs under the setup-python interpreter, NOT a poetry venv, so PyYAML
+        # must be installed for it. The mainline ci.yml "Docs drift verifier"
+        # job installs it for the same reason. Needed by both the doc-header
+        # `--fix` step below AND make release-test's verify-docs-discipline gate.
+        run: python -m pip install pyyaml
+
       # NO `playwright install` step: the browsers are baked into the container.
       # release-test's dexie + manual-plan gates and the extra e2e smoke use the
       # pre-baked browsers via the image's default browser path.

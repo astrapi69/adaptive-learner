@@ -3,12 +3,12 @@
  *
  * Dexie build, NO backend. Plays a real bundled lesson while answering
  * WRONG on purpose, so the lesson records element errors and lands on a
- * low (0-1 star) summary. The NextStepSuggestions surface then offers
- * the error-replay card as the PRIMARY next step; clicking it opens the
- * Error Replay lesson (only the failed exercises) which we walk to its
- * summary.
+ * low (0-1 star) summary. The summary's single mistakes section
+ * (``CorrectionBlock``, #2496) lands collapsed; expanding it exposes the
+ * "Redo all exercises" full-replay CTA, which opens the Error Replay
+ * lesson (only the failed exercises) that we walk to its summary.
  *
- * STABLE SELECTORS ONLY (Phase-B-proof): the NextStepSuggestions and
+ * STABLE SELECTORS ONLY (Phase-B-proof): the correction-section and
  * ErrorReplayLesson ``data-testid`` anchors, plus the two-phase
  * check/next lesson buttons. No CSS-class or DOM-structure assertions.
  */
@@ -106,14 +106,21 @@ test.describe("Error Replay — retry only failed exercises", () => {
             timeout: 15000,
         });
 
-        // NextStepSuggestions offers the error-replay card (PRIMARY at a
-        // low score). Its CTA opens the Error Replay lesson.
-        await expect(page.getByTestId("next-step-suggestions")).toBeVisible({
-            timeout: 10000,
-        });
-        const replayCard = page.getByTestId("next-step-card-error-replay");
-        await expect(replayCard).toBeVisible();
-        await page.getByTestId("next-step-cta-error-replay").click();
+        // The mistakes section (#2496) exposes the full-replay CTA either
+        // behind an explicit "Fix now" expand step ("collapsed" kind), or
+        // directly when the run produced no cloze drill to fix in place
+        // ("replay_only" kind, #2570/#2571) - both are correct UI, so the
+        // spec follows whichever one this run's error mix produced instead
+        // of assuming "collapsed" (fixes #2581).
+        const mistakes = page.getByTestId("lesson-correction-block");
+        await expect(mistakes).toBeVisible({timeout: 10000});
+        const expand = page.getByTestId("lesson-correction-block-expand");
+        if (await expand.count()) {
+            await expand.click();
+        }
+        const replayCta = page.getByTestId("lesson-correction-replay");
+        await expect(replayCta).toBeVisible();
+        await replayCta.click();
 
         // The Error Replay lesson renders (only the failed exercises).
         await expect(page.getByTestId("error-replay-page")).toBeVisible({

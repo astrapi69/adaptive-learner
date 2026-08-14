@@ -50,18 +50,21 @@ export interface UserSettings {
     has_anthropic_key: boolean;
     has_openai_key: boolean;
     has_gemini_key: boolean;
+    has_perplexity_key: boolean;
     // v0.4.0 — per-provider model override. ``null`` means
     // "use the session plugin's DEFAULT_MODELS pick"; a string
     // replaces it.
     model_override_anthropic: string | null;
     model_override_openai: string | null;
     model_override_gemini: string | null;
+    model_override_perplexity: string | null;
     // #508 — base64 data URL of the profile picture, or null.
     avatar: string | null;
     // Phase 34 — per-provider key-source attribution.
     key_source_anthropic: ApiKeySource;
     key_source_openai: ApiKeySource;
     key_source_gemini: ApiKeySource;
+    key_source_perplexity: ApiKeySource;
     // #810 — masked preview of the stored key (first 4 + last 4 chars,
     // e.g. "AIza…7f3k"), or null when no key is configured. The full key
     // is NEVER sent to the client. Optional so legacy payloads / fixtures
@@ -69,6 +72,7 @@ export interface UserSettings {
     key_preview_anthropic?: string | null;
     key_preview_openai?: string | null;
     key_preview_gemini?: string | null;
+    key_preview_perplexity?: string | null;
     created_at: string;
     updated_at: string;
 }

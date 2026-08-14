@@ -1,4 +1,8 @@
 app:
+  loading: "Memuat…"
+  loading_slow: "Ini memakan waktu lebih lama dari yang diharapkan."
+  view_load_failed: "Tampilan ini tidak dapat dimuat."
+  reload: "Muat ulang"
   name: Adaptive Learner
   tagline: Pembelajaran adaptif berdasarkan Model Enam Metode.
   skeleton_notice: Status kerangka. Model domain, plugin, dan halaman akan hadir pada fase mendatang - lihat docs/adaptive-learner-project-reference.md.
@@ -96,8 +100,7 @@ nav:
   mode_badge_ai: "AI+Konten"
   mode_badge_tooltip_content: "Tidak ada kunci API yang dikonfigurasi - hanya menggunakan konten siap pakai. Tambahkan kunci di Pengaturan untuk mengaktifkan fitur AI."
   mode_badge_tooltip_ai: "Penyedia AI dikonfigurasi - latihan menggunakan AI untuk pengecoh + petunjuk. Ketuk untuk menjelajahi set konten."
-  mode_badge_label_content: "Mode: Hanya konten"
-  mode_badge_label_ai: "Mode: AI + Konten"
+  mode_badge_action: "jelajahi konten"
   sync_paired: "Sinkron: terpasang (Pengaturan > Sinkron)"
   sync_unpaired: "Sinkron: tidak terpasang (Pengaturan > Sinkron)"
 import:
@@ -699,6 +702,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - tabel penyedia yang dikonfigurasi di tab AI.
   providers:
     title: Penyedia AI yang dikonfigurasi
@@ -1182,7 +1186,7 @@ gamification:
   xp_no_data: Selesaikan sesi untuk mendapatkan XP.
   xp_earned: XP diperoleh
   xp_gain_aria: Anda memperoleh {n} XP untuk pelajaran ini
-  xp_header_aria: Level {level}, total {xp} XP
+  xp_total_suffix: "total"
   xp_header_tooltip: Poin pengalaman Anda
   xp_to_next_level: '{n} XP menuju level berikutnya'
   max_level: Level maksimum tercapai
@@ -2006,6 +2010,11 @@ lesson:
     complete_heading: "Babak koreksi selesai"
     improvement: "{n} elemen meningkat."
     improvement_singular: "{n} elemen meningkat."
+    mistakes_heading: "Perbaiki kesalahanmu"
+    expand: "Perbaiki sekarang"
+    replay_all: "Ulangi semua latihan ({count})"
+    replay_only_heading: "Ulangi kesalahanmu"
+    replay_only_subtitle: "Ini tidak dapat dilatih sebagai latihan cepat - ulangi latihan sebagai gantinya."
   error:
     load_failed: "Tidak dapat memuat pelajaran."
     invalid_data: "Pelajaran ini tidak dapat dibuka karena berisi data yang tidak valid atau rusak. Silakan hubungi penulis konten."
@@ -2243,7 +2252,15 @@ content:
     bulk_deleted: "{n} set dihapus."
     bulk_delete_title: "Hapus {n} set?"
     bulk_delete_confirm: "Set yang dipilih beserta pelajarannya akan dihapus dari Konten Saya. Progres belajar Anda tetap tersimpan, dan Anda dapat mengunduh set lagi kapan saja."
+    restarted: "Sesi baru telah dimulai. Sesi Anda sebelumnya tetap disimpan."
+    restart_failed: "Tidak dapat memulai sesi baru."
+    restart_confirm:
+      title: "Kerjakan lagi set ini?"
+      message: "Sesi baru “{title}” dimulai dari awal. Sesi Anda sebelumnya tetap disimpan dalam riwayat; tidak ada yang dihapus."
+      confirm: "Mulai sesi baru"
+      cancel: "Batal"
     action:
+      restart: "Kerjakan lagi"
       activate: "Aktifkan kembali"
       defer: "Tunda"
       complete: "Tandai sebagai selesai"
@@ -2631,6 +2648,14 @@ create_lesson:
     theory_failed: "AI tidak menghasilkan teori yang dapat digunakan. Silakan coba lagi."
     exercises_failed: "Tidak ada latihan yang dapat digunakan. Silakan coba lagi."
     generate_failed: "Tidak dapat membuat pelajaran. Silakan coba lagi."
+    gen_missing_intro: "Tipe terpilih ini tidak muncul dari teks:"
+    types:
+      heading: "Jenis latihan"
+      group_standard: "Tipe standar"
+      group_extension: "Tipe ekstensi"
+      group_unavailable: "Tidak dapat dibuat dari teks"
+      unavailable_reason: "Gambar dan audio tidak dapat dibuat dari teks. Kamu dapat menambahkan tipe ini nanti di editor."
+      floor_hint: "Setidaknya satu jenis latihan harus tetap dipilih."
     generate_to_advance: "Buat pelajaran dari teks Anda untuk melanjutkan."
     review_theory: "{n} langkah teori"
     review_exercises: "{n} latihan"
@@ -2746,6 +2771,7 @@ create_lesson:
     types_label: "Jenis latihan"
     add: "Tambah latihan"
     add_heading: "Pilih jenis latihan"
+    add_ext_group: "Tipe ekstensi"
     incomplete_to_advance: "Lengkapi atau hapus latihan yang belum lengkap untuk melanjutkan."
     direction_label: "Arah"
     generate: "Buat latihan otomatis"
@@ -2773,6 +2799,8 @@ create_lesson:
       picture_choice: "Pilihan gambar: tambahkan gambar ke minimal dua kartu."
     edit:
       mc_options_label: "Opsi jawaban"
+      convert_label: "Jenis latihan"
+      convert_hint: "Konversi mempertahankan jawaban yang ditulis dan kemajuan pelajar."
       mc_option_placeholder: "Teks opsi"
       mc_option_add: "Tambah opsi"
       mc_option_remove: "Hapus opsi"
@@ -2932,6 +2960,8 @@ create_lesson:
     to_browser: "Ke Penjelajah Konten"
     save_file: "Simpan sebagai berkas"
     file_saved: "Pelajaran disimpan sebagai berkas."
+    progress_carried_over: "{count} kartu ulasan dipindahkan untuk jawaban yang diubah."
+    progress_not_carried_over: "{count} kartu ulasan tidak dapat dicocokkan dengan yakin ke jawaban yang diubah dan akan dibuat ulang pada latihan berikutnya."
   templates:
     extensions:
       title: "Tipe latihan lanjutan"
@@ -3318,7 +3348,7 @@ shortcuts:
 srs:
   due_badge: "{n} jatuh tempo"
   due_badge_tooltip: "Tinjauan jatuh tempo"
-  due_badge_aria: "{n} tinjauan jatuh tempo"
+  due_badge_action: "lihat tinjauan"
   status_new: "Baru"
   status_learning: "Belajar"
   status_due: "Jatuh tempo"

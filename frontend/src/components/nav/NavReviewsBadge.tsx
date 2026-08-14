@@ -109,10 +109,11 @@ export default function NavReviewsBadge() {
             className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning"
             data-testid="nav-reviews-badge"
             title={t("srs.due_badge_tooltip", "Reviews due")}
-            aria-label={t("srs.due_badge_aria", "{n} reviews due").replace(
-                "{n}",
-                String(state.overdue),
-            )}
+            // WCAG 2.5.3 (#2539): compose the name from the VISIBLE label
+            // plus the action. The previous parallel string interposed a
+            // word ("2 Wiederholungen fällig" vs a visible "2 fällig"), so
+            // speech input could not address the badge by what it shows.
+            aria-label={`${label}, ${t("srs.due_badge_action", "view reviews")}`}
         >
             <RefreshCw size={12} aria-hidden="true" />
             {label}

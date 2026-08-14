@@ -1,4 +1,8 @@
 app:
+  loading: "Lädt …"
+  loading_slow: "Das dauert länger als erwartet."
+  view_load_failed: "Diese Ansicht ließ sich nicht laden."
+  reload: "Neu laden"
   name: Adaptive Learner
   tagline: Adaptives Lernen nach dem Sechs-Methoden-Modell.
   skeleton_notice: Skeleton-Stand. Domain-Modelle, Plugins und Seiten folgen in den nächsten Phasen - siehe docs/adaptive-learner-project-reference.md.
@@ -96,8 +100,7 @@ nav:
   mode_badge_ai: "KI+Inhalte"
   mode_badge_tooltip_content: "Kein API-Schlüssel konfiguriert - nur vorgefertigte Inhalte. Schlüssel in den Einstellungen hinterlegen, um KI-Funktionen zu aktivieren."
   mode_badge_tooltip_ai: "KI-Anbieter konfiguriert - Übungen nutzen KI für Distraktoren und Hinweise. Tippen, um Inhalte zu durchstöbern."
-  mode_badge_label_content: "Modus: Nur Inhalte"
-  mode_badge_label_ai: "Modus: KI + Inhalte"
+  mode_badge_action: "Inhalte durchsuchen"
   sync_paired: "Sync: gekoppelt (Einstellungen > Sync)"
   sync_unpaired: "Sync: nicht gekoppelt (Einstellungen > Sync)"
 import:
@@ -696,6 +699,7 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  provider_perplexity: Perplexity
   # #810 - Uebersichtstabelle der konfigurierten Anbieter im KI-Tab.
   providers:
     title: Konfigurierte KI-Anbieter
@@ -1182,7 +1186,7 @@ gamification:
   xp_no_data: Schließe eine Sitzung ab, um XP zu sammeln.
   xp_earned: XP erhalten
   xp_gain_aria: Du hast {n} XP für diese Lektion erhalten
-  xp_header_aria: Level {level}, {xp} XP insgesamt
+  xp_total_suffix: "insgesamt"
   xp_header_tooltip: Deine Erfahrungspunkte
   xp_to_next_level: '{n} XP bis zum nächsten Level'
   max_level: Höchstes Level erreicht
@@ -1947,6 +1951,11 @@ lesson:
     complete_heading: "Korrektur-Runde abgeschlossen"
     improvement: "{n} Elemente verbessert."
     improvement_singular: "{n} Element verbessert."
+    mistakes_heading: "Fehler ausbessern"
+    expand: "Jetzt ausbessern"
+    replay_all: "Alle Übungen erneut ({count})"
+    replay_only_heading: "Wiederhole deine Fehler"
+    replay_only_subtitle: "Das lässt sich nicht als Schnellübung anzeigen - wiederhole stattdessen die Übungen."
   summary:
     heading: "Geschafft"
     aria_label: "Lektions-Zusammenfassung"
@@ -2237,7 +2246,15 @@ content:
     bulk_deleted: "{n} Sets entfernt."
     bulk_delete_title: "{n} Sets löschen?"
     bulk_delete_confirm: "Die ausgewählten Sets und ihre Lektionen werden aus „Meine Inhalte“ entfernt. Dein Lernfortschritt bleibt erhalten, und du kannst die Sets jederzeit erneut herunterladen."
+    restarted: "Ein neuer Durchgang wurde gestartet. Dein vorheriger Durchgang bleibt erhalten."
+    restart_failed: "Neuer Durchgang konnte nicht gestartet werden."
+    restart_confirm:
+      title: "Dieses Set erneut durcharbeiten?"
+      message: "Ein neuer Durchgang von „{title}“ beginnt von vorne. Dein vorheriger Durchgang bleibt für deine Historie erhalten; es wird nichts gelöscht."
+      confirm: "Neuen Durchgang starten"
+      cancel: "Abbrechen"
     action:
+      restart: "Erneut durcharbeiten"
       activate: "Wieder aktivieren"
       defer: "Zurückstellen"
       complete: "Als abgeschlossen markieren"
@@ -2625,6 +2642,14 @@ create_lesson:
     theory_failed: "Die KI hat keine brauchbare Theorie erzeugt. Bitte erneut versuchen."
     exercises_failed: "Es wurden keine brauchbaren Übungen erzeugt. Bitte erneut versuchen."
     generate_failed: "Die Lektion konnte nicht generiert werden. Bitte erneut versuchen."
+    gen_missing_intro: "Diese gewählten Typen sind aus dem Text nicht entstanden:"
+    types:
+      heading: "Aufgabentypen"
+      group_standard: "Standardtypen"
+      group_extension: "Erweiterungstypen"
+      group_unavailable: "Aus Text nicht erzeugbar"
+      unavailable_reason: "Aus einem Text lassen sich keine Bilder oder Audio erzeugen. Diese Typen kannst du im Editor nachträglich ergänzen."
+      floor_hint: "Mindestens ein Aufgabentyp muss gewählt bleiben."
     generate_to_advance: "Generiere die Lektion aus deinem Text, um fortzufahren."
     review_theory: "{n} Theorie-Schritt(e)"
     review_exercises: "{n} Übung(en)"
@@ -2740,6 +2765,7 @@ create_lesson:
     types_label: "Übungstypen"
     add: "Übung hinzufügen"
     add_heading: "Übungstyp wählen"
+    add_ext_group: "Erweiterungstypen"
     incomplete_to_advance: "Vervollständige oder entferne die unvollständigen Übungen, um fortzufahren."
     direction_label: "Richtung"
     generate: "Übungen automatisch erstellen"
@@ -2767,6 +2793,8 @@ create_lesson:
       picture_choice: "Bildauswahl: Füge mindestens zwei Karten ein Bild hinzu."
     edit:
       mc_options_label: "Antwortoptionen"
+      convert_label: "Aufgabentyp"
+      convert_hint: "Beim Umwandeln bleiben die Antwort und der Lernfortschritt erhalten."
       mc_option_placeholder: "Optionstext"
       mc_option_add: "Option hinzufügen"
       mc_option_remove: "Option entfernen"
@@ -2926,6 +2954,8 @@ create_lesson:
     to_browser: "Zum Content Browser"
     save_file: "Als Datei speichern"
     file_saved: "Lektion als Datei gespeichert."
+    progress_carried_over: "{count} Wiederholungskarte(n) für die geänderte Antwort übernommen."
+    progress_not_carried_over: "{count} Wiederholungskarte(n) konnten der geänderten Antwort nicht sicher zugeordnet werden und werden beim nächsten Üben neu angelegt."
   templates:
     extensions:
       title: "Erweiterte Übungstypen"
@@ -3312,7 +3342,7 @@ shortcuts:
 srs:
   due_badge: "{n} fällig"
   due_badge_tooltip: "Wiederholungen fällig"
-  due_badge_aria: "{n} Wiederholungen fällig"
+  due_badge_action: "Wiederholungen ansehen"
   status_new: "Neu"
   status_learning: "Am Lernen"
   status_due: "Fällig"

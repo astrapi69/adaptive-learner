@@ -76,6 +76,7 @@ import {
     mergeEditedLessonIntoSet,
     withPreservedSetBook,
 } from "../../lib/content/lesson/edit/edit-session";
+import {carryOverReviewProgress} from "../../lib/content/lesson/edit/edit-remap";
 import {useEditLessonSession} from "../../hooks/content/edit/useEditLessonSession";
 import {
     buildBookLessons,
@@ -567,6 +568,15 @@ export default function CreateLesson() {
                 input = buildUserSetInput({meta, cards, exercises}, lesson);
             }
             const entry = await getStorage().contentLoader.saveUserSet(input);
+            if (editContext) {
+                await carryOverReviewProgress(
+                    editContext.setId,
+                    editContext.lessonId,
+                    editContext.lessons[editContext.editIndex],
+                    lesson,
+                    t,
+                );
+            }
             if (!editMode) clearLessonDraft();
             setSavedLessonId(lesson.id);
             setSavedLesson(lesson);

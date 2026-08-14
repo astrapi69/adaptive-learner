@@ -163,11 +163,14 @@ jobs:
       # load of "Meine Inhalte"). A real SPA shell inside the
       # directory makes ``/content/`` a proper 200 — the same
       # mechanism the bundled ``docs/`` subtree relies on.
+      # Pages serves static files only, so an unmatched path answers with
+      # 404.html AND a 404 status. Giving every static route a real file
+      # turns those into 200s (#2543); the route list is derived from the
+      # router, so a new route is covered without editing this workflow.
+      # Runs AFTER the build on purpose: the copies must not enter the
+      # service worker's precache manifest.
       - name: Configure SPA fallback
-        run: |
-          cp frontend/dist/index.html frontend/dist/404.html
-          mkdir -p frontend/dist/content
-          cp frontend/dist/index.html frontend/dist/content/index.html
+        run: python3 scripts/emit_spa_route_pages.py
 
       # ---- Docs build ----
 

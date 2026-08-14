@@ -2,7 +2,7 @@
 
 How Adaptive Learner's release-cycle mechanics work: version propagation, pre-tag verification, aggregate Makefile targets, and the CI gate. The companion human-side flow lives at [.claude/rules/release-workflow.md](../../.claude/rules/release-workflow.md); this document is the architecture + tooling reference.
 
-**TL;DR:** `backend/pyproject.toml` is the canonical single-source-of-truth. `make sync-versions` propagates to 17 derived files (sync-versions reports "16" because install.sh + install.ps1 share one change-counter). `scripts/verify_version_pins.sh` is the pre-tag validation chain. Seven aggregate `make release-*` targets cover the Step 1 / 4b / 5 / 6 / 7 / 8 mechanics. The `release-gate.yml` CI workflow re-runs the same checks on every tag push.
+**TL;DR:** `backend/pyproject.toml` is the canonical single-source-of-truth. `make sync-versions` propagates to every derived version-bearing file (the authoritative set is `collect_targets()` in `scripts/sync_versions.py`). `scripts/verify_version_pins.sh` is the pre-tag validation chain. Seven aggregate `make release-*` targets cover the Step 1 / 4b / 5 / 6 / 7 / 8 mechanics. The `release-gate.yml` CI workflow re-runs the same checks on every tag push.
 
 ---
 
@@ -18,7 +18,7 @@ Adaptive Learner implements the Maven-property pattern in a multi-language repo:
 
 ### Tier 2 — Auto-propagated by `make sync-versions`
 
-17 locations updated by `scripts/sync_versions.py` in one invocation (1 + 1 + 3 launcher + 10 plugin pyprojects + 2 installer artifacts):
+The locations updated by `scripts/sync_versions.py` in one invocation (backend + frontend + the launcher files + every plugin pyproject + the installer artifacts; the exact list is `collect_targets()` in that script):
 
 | File | Mechanism |
 |---|---|
@@ -26,7 +26,7 @@ Adaptive Learner implements the Maven-property pattern in a multi-language repo:
 | `launcher/pyproject.toml` | TOML edit at `tool.poetry.version` |
 | `launcher/adaptive_learner_launcher/__init__.py` | `__version__ = "..."` literal substitution (kept for PyInstaller frozen-binary compatibility) |
 | `launcher/adaptive-learner-launcher.spec` | `CFBundleVersion` + `CFBundleShortVersionString` (both same value) |
-| `plugins/*/pyproject.toml` × 10 | Lock-step (plugin-independent versioning deferred per CLAUDE.md note) |
+| `plugins/*/pyproject.toml` (every plugin) | Lock-step (plugin-independent versioning deferred per CLAUDE.md note) |
 | `install.sh` | Regenerated from `install.sh.template` via `scripts/generate_install_sh.sh` |
 | `install.ps1` | Regenerated from `install.ps1.template` (same mechanism) |
 
@@ -37,7 +37,7 @@ Adaptive Learner implements the Maven-property pattern in a multi-language repo:
 | `backend/app/__init__.py:__version__` | `tomllib.load(backend/pyproject.toml)["tool"]["poetry"]["version"]` at import | `"0.0.0+unknown"` sentinel + WARN log |
 | `frontend __APP_VERSION__` | Vite `define` build-time literal from `package.json` | n/a (build-time fail) |
 | `launcher/adaptive_learner_launcher/installer.py:ADAPTIVE_LEARNER_TARGET_VERSION` | PyInstaller spec writes `_build_info.py` at build time (gitignored); dev fallback reads pyproject | `"0.0.0+unknown"` |
-| 10 plugin `__init__.py` (all plugins, post-Phase-40-refactor) | `importlib.metadata.version("adaptive-learner-plugin-<name>")` | `"0.0.0+unknown"` sentinel |
+| plugin `__init__.py` (each plugin that carries a `__version__`) | `importlib.metadata.version("adaptive-learner-plugin-<name>")` | `"0.0.0+unknown"` sentinel |
 
 ### Tier 4 — Manual content (LLM/human-drafted per release)
 

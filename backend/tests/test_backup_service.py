@@ -44,6 +44,7 @@ from app.models import (
     SessionMessage,
     SessionNote,
     SessionRating,
+    SetRun,
     StepEvaluation,
     StudyQuestion,
     Subject,
@@ -295,6 +296,15 @@ def _seed_all_tables(db) -> User:
             user_id=user.id,
             provider="anthropic",
             encrypted_key="gAAAAAB-ciphertext-blob",
+        )
+    )
+
+    # EXP-051 / #2125 — a Durchgang (run/pass) row for the set above.
+    db.add(
+        SetRun(
+            user_id=user.id,
+            set_id="fr-a1",
+            run_id=1,
         )
     )
 

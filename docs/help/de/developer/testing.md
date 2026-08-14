@@ -10,7 +10,7 @@ oben.
 | Schicht | Werkzeug |
 |---|---|
 | Backend-Unit + -Integration | pytest ^9 |
-| Plugin-Tests (13 Plugins) | pytest ^9 |
+| Plugin-Tests (alle Plugins) | pytest ^9 |
 | Frontend-Unit + -Integration | Vitest 4 |
 | E2E-Smoke | Playwright |
 | Dexie-Modus-Release-Gate | Playwright |
@@ -19,10 +19,212 @@ Die Zahlen wachsen mit jedem Release. Um duplizierte Zahlen zu
 vermeiden, die auseinanderdriften, hält diese Seite KEINE
 Gesamtzahl fest. `docs/audits/current-coverage.md` ist die
 einzige kanonische, stets aktuelle Quelle für Test-Zahlen und
-Coverage. Die 13 Plugins sind assessment, die drei KI-Anbieter
-(anthropic / openai / gemini), session, tracking, tools,
-gamification, anki, notebooklm, learning-repo, content-loader
-und missions.
+Coverage. Die Plugins sind assessment, die KI-Anbieter
+(anthropic / openai / gemini / perplexity), session, tracking,
+tools, gamification, anki, notebooklm, learning-repo,
+content-loader und missions.
+
+## Testgetriebene Entwicklung: der Ablauf
+
+Alles unterhalb dieses Abschnitts beschreibt die Infrastruktur:
+welcher Runner, wie gemockt wird, wo CI was ausführt. Dieser
+Abschnitt beschreibt die Reihenfolge der Arbeit. Die bindende Norm
+liegt im Regelkatalog des Repositories (`.claude/rules/tdd.md` und
+der Tests-Abschnitt von `.claude/rules/coding-standards.md`); diese
+Seite erklärt den Ablauf und geht einen echten Zyklus durch. Wo
+beide abweichen, gilt der Regelkatalog.
+
+Der Zyklus ist Rot-Grün-Refaktorieren:
+
+1. **ROT** - einen Test schreiben, der das gewünschte Verhalten
+   beschreibt, und ihn ausführen. Er muss fehlschlagen, und zwar aus
+   dem erwarteten Grund.
+2. **GRÜN** - den minimalen Code schreiben, der ihn bestehen lässt.
+   Nichts "für später".
+3. **REFAKTORIEREN** - Namen, Duplikate, Formatierung aufräumen. Die
+   Tests bleiben grün und werden nicht angefasst.
+
+### Wann die Verpflichtung greift
+
+Jede Änderung mit Verhalten: ein neuer Codepfad, eine Bedingung,
+eine Berechnung, eine Validierung, ein Mapping. Fehlerbehebungen
+sind der strengste Fall: eine Behebung ohne zuerst fehlschlagenden
+Test ist nicht belegt. Der Reproduktionstest wird VOR der Behebung
+geschrieben und bleibt danach als Regressionsanker im Repo.
+
+Sie greift nicht bei reinen Umbenennungen, mechanischen Refactorings
+mit bestehender Testabdeckung (die grün bleibende Suite ist der
+Beleg), Formatierung, Konfiguration ohne Logik oder Dokumentation.
+
+### Ein echter Zyklus aus diesem Repository
+
+Das Beispiel ist der Release-Helfer `scripts/bump_roadmap_header.py`
+mit seiner Suite `backend/tests/test_bump_roadmap_header.py`.
+Gewählt, weil sein roter Zustand eindeutig ist und keine Fachlichkeit
+voraussetzt: das getestete Modul existierte noch nicht, und der
+entscheidende Fehlerfall ist eine fehlende Datei.
+
+**Was gebaut werden sollte**, in zwei Sätzen: `docs/ROADMAP.md` und
+`docs/backlog.md` beginnen mit einem datierten "Current state"-
+Prosaeintrag, der fünf Releases in Folge veraltet war. Der Helfer
+stellt die veröffentlichte Version als neuen Eintrag voran (Zusammen-
+fassung aus den Release-Notes), stuft den vorherigen Eintrag in die
+Kette zurück und muss laut verweigern, wenn die Release-Notes-Datei
+oder der Header-Anker fehlt.
+
+**Der Test zuerst.** Die Vorrichtung baut die echte Repo-Form in
+`tmp_path` (ein `backend/pyproject.toml` mit der kanonischen Version,
+beide Header-Dateien, eine Release-Notes-Datei), und die Tests fahren
+den CLI-Einstieg, keine internen Funktionen:
+
+```python
+@pytest.fixture()
+def fake_repo(tmp_path: Path) -> Path:
+    """Build a minimal repo layout the script operates on."""
+    (tmp_path / "backend").mkdir()
+    (tmp_path / "backend" / "pyproject.toml").write_text(
+        '[tool.poetry]\nname = "adaptive_learner"\nversion = "2.7.0"\n',
+        encoding="utf-8",
+    )
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "ROADMAP.md").write_text(ROADMAP_TEMPLATE, encoding="utf-8")
+    (docs / "backlog.md").write_text(BACKLOG_TEMPLATE, encoding="utf-8")
+    releases = tmp_path / "changelog" / "releases"
+    releases.mkdir(parents=True)
+    (releases / "v2.7.0.md").write_text(CHANGELOG_BODY, encoding="utf-8")
+    return tmp_path
+
+
+def test_bump_prepends_current_state_and_demotes_prior_when_stale(
+    fake_repo: Path,
+) -> None:
+    exit_code = bump_roadmap_header.main(["--repo-root", str(fake_repo), "--date", "2026-07-30"])
+    assert exit_code == 0
+
+    roadmap = (fake_repo / "docs" / "ROADMAP.md").read_text(encoding="utf-8")
+    assert roadmap.count("Current state:") == 1
+    assert "Current state: **v2.7.0 (released 2026-07-30 - " in roadmap
+    assert (
+        "see changelog/releases/v2.7.0.md).** Recent prior: **v2.6.1 (released 2026-07-24"
+        in roadmap
+    )
+    assert "Recent prior: **v2.6.0" in roadmap
+```
+
+Der Fehlerfall, für den der Helfer existiert: die Release-Notes-Datei
+fehlt, der Lauf muss scheitern, statt eine Halbwahrheit in die Header
+zu schreiben.
+
+```python
+def test_bump_fails_when_changelog_missing(fake_repo: Path) -> None:
+    (fake_repo / "changelog" / "releases" / "v2.7.0.md").unlink()
+    exit_code = bump_roadmap_header.main(["--repo-root", str(fake_repo), "--date", "2026-07-30"])
+    assert exit_code == 1
+```
+
+Die Datei enthält insgesamt sechs Tests; die anderen vier decken
+Idempotenz bei kanonischer Version, einen fehlenden Header-Anker, die
+Zusammenfassungs-Extraktion und `--dry-run` ohne Schreibzugriff ab.
+Für das vollständige Bild die Datei selbst lesen.
+
+**Der rote Lauf.** Bevor eine Zeile Implementierung existierte:
+
+```text
+$ poetry run pytest tests/test_bump_roadmap_header.py -q
+ERROR tests/test_bump_roadmap_header.py - FileNotFoundError: [Errno 2] No suc...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.09s
+```
+
+(Die abgeschnittene Zeile ist pytests eigene `-q`-Ausgabe,
+unverändert.)
+
+**Warum das der wichtigste Schritt ist.** Ein Test, der nie rot war,
+belegt nicht, dass er etwas prüft. Er kann grün sein, weil er die
+falsche Frage stellt, weil er den Code nie erreicht oder weil seine
+Vorrichtung nichts enthält. Dieses Repository hat dafür mehrfach
+bezahlt:
+
+- Fünf aufeinanderfolgende "behobene" Backup-Releases (#49, #57,
+  #64, #115, #117) erschienen jeweils mit grünen Unit-Tests, und
+  keines davon lieferte einen funktionierenden Export/Import-
+  Roundtrip in der echten App. Grün, und falsch: die Tests stellten
+  eine Frage, die die echten Daten nie stellten. Diese Geschichte
+  ist der Grund für das manuelle Backup-Roundtrip-Gate
+  (BACKUP-AKZEPTANZTEST in `.claude/rules/quality-checks.md`).
+- Das Content-Verfügbarkeits-Orakel (#1816 / #1818) war grün gegen
+  handgebaute `{source, id}`-Vorrichtungen, die die Annahme des
+  Autors über `listSets` kodierten. Gegen die echte
+  `ContentSetEntry`-Form war die Annahme im API-Modus falsch; Modul
+  und Tests waren gemeinsam grün und falsch. Das ist die häufigste
+  Falle: die Vorrichtung so bauen, dass sie zum Test passt, statt
+  die echte Datenform in die Vorrichtung zu kopieren.
+
+Eine Anmerkung zur Qualität eines Rots: der Sammelfehler oben ist nur
+akzeptabel, weil das getestete Modul überhaupt nicht existierte. Für
+eine brandneue Datei ist "kann nicht importieren" der erwartete
+Grund. Sobald das Modul existiert, muss jeder Test aus seinem eigenen
+Grund scheitern: der Test zur fehlenden Release-Notes-Datei oben wird
+über `exit_code == 1` rot, nicht über einen Importfehler. Ein Test,
+der wegen eines Tippfehlers im Import rot ist, hat nichts belegt.
+
+**Der Code, der ihn grün macht**, in der ersten Fassung. Der Kern ist
+eine verankerte Ersetzung plus ein laut scheiternder Wächter im
+Einstiegspunkt:
+
+```python
+ROADMAP_ANCHOR = re.compile(r"Current state: \*\*v(\d+\.\d+\.\d+) \(released ")
+
+
+def bump_roadmap(text: str, version: str, date: str, summary: str) -> str | None:
+    """Prepend the new Current-state entry; None when already current."""
+    match = ROADMAP_ANCHOR.search(text)
+    if match is None:
+        raise ValueError("ROADMAP.md: 'Current state: **vX.Y.Z (released' anchor not found")
+    if match.group(1) == version:
+        return None
+    new_entry = (
+        f"Current state: **v{version} (released {date} - {summary} "
+        f"see changelog/releases/v{version}.md).** "
+        f"Recent prior: **v{match.group(1)} (released "
+    )
+    return text.replace(match.group(0), new_entry, 1)
+```
+
+```python
+    changelog_path = repo_root / "changelog" / "releases" / f"v{version}.md"
+    if not changelog_path.exists():
+        print(f"ERROR: {changelog_path} not found - draft the release notes first")
+        return 1
+```
+
+**Der grüne Lauf:**
+
+```text
+$ poetry run pytest tests/test_bump_roadmap_header.py -q
+......                                                                   [100%]
+6 passed in 0.16s
+```
+
+**Das Aufräumen danach.** In diesem Zyklus rein mechanisch:
+`ruff format` formatierte die neue Testdatei vor dem Commit um
+("1 file reformatted"), keine Logikänderung, die Suite blieb grün.
+Wenn ein echtes Refactoring nötig ist (Benennung, Extraktion,
+Deduplizierung), gilt derselbe Vertrag: die Tests werden nicht
+angefasst und sind vorher wie nachher grün.
+
+### Den Zyklus in diesem Projekt fahren
+
+```bash
+cd backend && poetry run pytest tests/test_<deinedatei>.py -q  # die enge Schleife
+make test                                                      # das volle Gate vor dem Commit
+```
+
+Das Frontend-Äquivalent der engen Schleife ist
+`cd frontend && bunx vitest run src/pfad/zur/datei.test.tsx`. Der
+Pre-Commit-Hook führt die Backend-Smoke-Suite ohnehin bei jedem
+Commit aus, und `make test` muss nach jeder Änderung grün sein.
 
 ## Backend-pytest
 

@@ -75,6 +75,9 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # Phase 65: API-key rollback cache — one row per
         # (user, provider), overwritten on each successful save.
         "api_key_backups",
+        # EXP-051 / #2125: Durchgang (run/pass) bookkeeping — a run row's
+        # closed_at is stamped in place when the run closes.
+        "set_runs",
     }
 )
 

@@ -1,5 +1,9 @@
 {
   "app": {
+    "loading": "Yükleniyor…",
+    "loading_slow": "Bu beklenenden uzun sürüyor.",
+    "view_load_failed": "Bu görünüm yüklenemedi.",
+    "reload": "Yeniden yükle",
     "name": "Adaptive Learner",
     "tagline": "Altı Yöntemli Modele göre uyarlanabilir öğrenme.",
     "skeleton_notice": "İskelet aşaması. Alan modelleri, eklentiler ve sayfalar sonraki aşamalarda geliyor - bkz. docs/adaptive-learner-project-reference.md."
@@ -104,8 +108,7 @@
     "mode_badge_ai": "Yapay Zeka+İçerik",
     "mode_badge_tooltip_content": "Yapılandırılmış API anahtarı yok - yalnızca hazır içerik kullanılıyor. Yapay zeka özelliklerini etkinleştirmek için Ayarlar'dan anahtar ekleyin.",
     "mode_badge_tooltip_ai": "Yapay zeka sağlayıcısı yapılandırıldı - alıştırmalar dikkat dağıtıcılar ve ipuçları için yapay zeka kullanır. İçerik setlerine göz atmak için dokunun.",
-    "mode_badge_label_content": "Mod: Yalnızca içerik",
-    "mode_badge_label_ai": "Mod: Yapay Zeka + İçerik",
+    "mode_badge_action": "içeriğe göz at",
     "sync_paired": "Eşitleme: eşleşti (Ayarlar > Eşitleme)",
     "sync_unpaired": "Eşitleme: eşleşmedi (Ayarlar > Eşitleme)"
   },
@@ -737,6 +740,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "Yapılandırılmış yapay zekâ sağlayıcıları",
       "hint": "Kaydettiğiniz anahtarlar saklanır. Yalnızca maskelenmiş bir önizleme gösterilir, anahtarın tamamı asla gösterilmez.",
@@ -1259,7 +1263,7 @@
     "xp_no_data": "XP kazanmak için bir oturumu tamamla.",
     "xp_earned": "Kazanılan XP",
     "xp_gain_aria": "Bu ders için {n} XP kazandınız",
-    "xp_header_aria": "Seviye {level}, toplam {xp} XP",
+    "xp_total_suffix": "toplam",
     "xp_header_tooltip": "Deneyim puanlarınız",
     "xp_to_next_level": "Bir sonraki seviye için {n} XP",
     "max_level": "Maksimum seviyeye ulaşıldı",
@@ -2107,7 +2111,12 @@
       "next": "İleri",
       "complete_heading": "Düzeltme turu tamamlandı",
       "improvement": "{n} öğe geliştirildi.",
-      "improvement_singular": "{n} öğe geliştirildi."
+      "improvement_singular": "{n} öğe geliştirildi.",
+      "mistakes_heading": "Hatalarını düzelt",
+      "expand": "Şimdi düzelt",
+      "replay_all": "Tüm alıştırmaları tekrarla ({count})",
+      "replay_only_heading": "Hatalarını tekrarla",
+      "replay_only_subtitle": "Bunlar hızlı alıştırma olarak çalışılamaz - bunun yerine alıştırmaları tekrar yap."
     },
     "summary": {
       "heading": "Tamamladın",
@@ -2425,7 +2434,16 @@
       "bulk_deleted": "{n} set kaldırıldı.",
       "bulk_delete_title": "{n} set silinsin mi?",
       "bulk_delete_confirm": "Seçilen setler ve dersleri İçeriğim'den kaldırılacak. Öğrenme ilerlemeniz korunur ve setleri istediğiniz zaman yeniden indirebilirsiniz.",
+      "restarted": "Yeni bir tur başladı. Önceki turunuz saklanır.",
+      "restart_failed": "Yeni tur başlatılamadı.",
+      "restart_confirm": {
+        "title": "Bu set tekrar çalışılsın mı?",
+        "message": "“{title}” için yeni bir tur baştan başlar. Önceki turunuz geçmişiniz için saklanır; hiçbir şey silinmez.",
+        "confirm": "Yeni tur başlat",
+        "cancel": "İptal"
+      },
       "action": {
+        "restart": "Tekrar çalış",
         "activate": "Yeniden etkinleştir",
         "defer": "Ertele",
         "complete": "Tamamlandı olarak işaretle",
@@ -2867,6 +2885,15 @@
       "theory_failed": "Yapay zeka kullanılabilir teori üretmedi. Lütfen tekrar deneyin.",
       "exercises_failed": "Kullanılabilir alıştırma üretilemedi. Lütfen tekrar deneyin.",
       "generate_failed": "Ders üretilemedi. Lütfen tekrar deneyin.",
+      "gen_missing_intro": "Seçilen bu türler metinden çıkmadı:",
+      "types": {
+        "heading": "Alıştırma türleri",
+        "group_standard": "Standart türler",
+        "group_extension": "Uzantı türleri",
+        "group_unavailable": "Metinden oluşturulamaz",
+        "unavailable_reason": "Görseller ve ses metinden oluşturulamaz. Bu türleri daha sonra düzenleyicide ekleyebilirsin.",
+        "floor_hint": "En az bir alıştırma türü seçili kalmalıdır."
+      },
       "generate_to_advance": "Devam etmek için dersi metninizden üretin.",
       "review_theory": "{n} teori adımı",
       "review_exercises": "{n} alıştırma",
@@ -2989,6 +3016,7 @@
       "types_label": "Alıştırma türleri",
       "add": "Alıştırma ekle",
       "add_heading": "Bir alıştırma türü seçin",
+      "add_ext_group": "Uzantı türleri",
       "incomplete_to_advance": "Devam etmek için eksik alıştırmaları tamamlayın veya kaldırın.",
       "direction_label": "Yön",
       "generate": "Alıştırmaları otomatik oluştur",
@@ -3018,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "Yanıt seçenekleri",
+        "convert_label": "Alıştırma türü",
+        "convert_hint": "Dönüştürme, yazılan yanıtı ve öğrencinin ilerlemesini korur.",
         "mc_option_placeholder": "Seçenek metni",
         "mc_option_add": "Seçenek ekle",
         "mc_option_remove": "Seçeneği kaldır",
@@ -3184,7 +3214,9 @@
       "create_another": "Başka bir ders oluştur",
       "to_browser": "İçerik tarayıcısına",
       "save_file": "Dosya olarak kaydet",
-      "file_saved": "Ders dosya olarak kaydedildi."
+      "file_saved": "Ders dosya olarak kaydedildi.",
+      "progress_carried_over": "Değiştirilen cevap için {count} tekrar kartı aktarıldı.",
+      "progress_not_carried_over": "{count} tekrar kartı, değiştirilen cevapla güvenilir şekilde eşleştirilemedi ve bir sonraki alıştırmada yeniden oluşturulacak."
     },
     "templates": {
       "extensions": {
@@ -3596,7 +3628,7 @@
   "srs": {
     "due_badge": "{n} bekliyor",
     "due_badge_tooltip": "Tekrarlar bekliyor",
-    "due_badge_aria": "{n} tekrar bekliyor",
+    "due_badge_action": "tekrarları görüntüle",
     "status_new": "Yeni",
     "status_learning": "Öğreniliyor",
     "status_due": "Zamanı geldi",

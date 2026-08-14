@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.12.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -221,7 +221,7 @@ Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + Bun + all 13 plugins as path-deps
+make install   # Poetry + Bun + all 14 plugins as path-deps
 make dev       # backend :18001 + frontend :15174 (Vite dev server)
 ```
 
@@ -263,7 +263,7 @@ reference lives at
 
 ## Plugins shipped
 
-13 plugins, all under `plugins/`. Routes mounted at
+14 plugins, all under `plugins/`. Routes mounted at
 `/api/plugins/<name>/*`.
 
 | Plugin | Routes | Purpose |
@@ -339,7 +339,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.11.0** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198, lesson-validator eval #2205; v2.8.1 was never published); the v2.8.0 headline
+Active development. The current release is **v2.12.0** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198, lesson-validator eval #2205; v2.8.1 was never published); the v2.8.0 headline
 is the **distribution switch**: the desktop launcher now **pulls a
 published, per-architecture verified image from GHCR** instead of
 building on the user's device (building from source stays for

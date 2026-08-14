@@ -168,6 +168,11 @@ export default function ContentPage() {
     deletingSet,
     handleSetStatus,
     handleConfirmDeleteSet,
+    restartSetTarget,
+    setRestartSetTarget,
+    restarting,
+    requestRestartSet,
+    handleConfirmRestartSet,
     bulkDeleteTargets,
     setBulkDeleteTargets,
     bulkDeleting,
@@ -346,6 +351,7 @@ export default function ContentPage() {
           onBulkDelete={() => setBulkDeleteTargets(selectedEntries)}
           onSetStatus={(e, status) => void handleSetStatus(e, status)}
           onDeleteSet={setDeleteSetTarget}
+          onRestartSet={requestRestartSet}
           treeProps={{
             tree,
             lang,
@@ -371,6 +377,7 @@ export default function ContentPage() {
                 aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
               onSetStatus: (e, status) => void handleSetStatus(e, status),
               onDelete: setDeleteSetTarget,
+              onRestart: requestRestartSet,
               selectable: true,
               selectedKeys: selection.selected,
               onToggleSelect: (e) => selection.toggle(setSelectionKey(e)),
@@ -478,6 +485,31 @@ export default function ContentPage() {
           />
         ) : null}
       </ConfirmDialog>
+
+      {/* EXP-051 / #2125 — "Set erneut durcharbeiten": a simple, un-quantified
+          confirmation (no counted deletion — nothing is lost). Strings live in
+          content.set_status.restart_confirm.* (all catalogs). */}
+      <ConfirmDialog
+        open={restartSetTarget !== null}
+        title={t(
+          "content.set_status.restart_confirm.title",
+          "Work through this set again?",
+        )}
+        message={
+          restartSetTarget
+            ? t(
+                "content.set_status.restart_confirm.message",
+                'A new run of "{title}" starts from scratch. Your previous run is kept for your history; nothing is deleted.',
+              ).replace("{title}", restartSetTarget.title ?? restartSetTarget.id)
+            : ""
+        }
+        confirmLabel={t("content.set_status.restart_confirm.confirm", "Start new run")}
+        cancelLabel={t("content.set_status.restart_confirm.cancel", "Cancel")}
+        confirmDisabled={restarting}
+        testId="restart-set-confirm"
+        onConfirm={() => void handleConfirmRestartSet()}
+        onCancel={() => setRestartSetTarget(null)}
+      />
     </PageContainer>
   );
 }

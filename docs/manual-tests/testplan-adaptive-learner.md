@@ -73,6 +73,23 @@ Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
       Session abarbeiten (Liste aus den jeweiligen Issues, jeweils Ergebnis
       als Issue-Kommentar).
 
+#### A3b. Einstieg für Wiederkehrer bleibt nie leer (#2573)
+
+Robustheit beim Nachladen auf iOS - der Einstieg darf nie einen leeren
+Inhaltsbereich unter intakter Kopf-/Navigationsleiste hinterlassen:
+
+- [ ] Als WIEDERKEHRENDER Nutzer (Daten vorhanden) die App-URL frisch öffnen
+      (z. B. einen geteilten QR-Code der App-URL scannen). Erwartet: du
+      landest auf dem Dashboard - nie ein komplett leerer Inhaltsbereich
+      zwischen Kopfzeile und unterer Navigationsleiste.
+- [ ] Während eine Ansicht lädt, erscheint eine sichtbare Ladeanzeige
+      (Spinner + „Lädt ..."), nie ein leerer Kasten.
+- [ ] Fehlerfall erzwingen: Gerät offline / drosseln, sodass eine Lazy-Ansicht
+      nicht laden kann, dann eine Route öffnen. Erwartet: nach kurzer
+      Wartezeit eine lesbare Meldung („Das dauert länger als erwartet." bzw.
+      „Diese Ansicht ließ sich nicht laden.") mit „Neu laden"-Knopf - kein
+      stiller Leerbildschirm.
+
 #### A4. Lektion löschen (#2064, gemerged) - überschneidet sich mit A1
 
 Dieses Feature verlangt laut Testplan beide Speichermodi plus
@@ -357,6 +374,12 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Matching: Paare GLEICHE Höhe (kein visueller Versatz)
 - [ ] Matching: "Aufloesen" Animation sieht gut aus (4 Effekte testen)
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
+- [ ] Word Tiles: bei RICHTIGER Lösung bleibt der gebaute Satz sichtbar (#2494):
+      einen Satz korrekt zusammensetzen und prüfen. Der zusammengesetzte Satz
+      wird danach weiterhin (grün) angezeigt und verschwindet NICHT; darunter
+      erscheinen die Erfolgsmeldung ("Richtig!") und der Weiter-Knopf. iOS PWA/
+      Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
+      Web-App-Icon durchführen.
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verständlich)
 - [ ] Picture Choice: Kacheln GLEICHE Höhe
 - [ ] Antwort-Reihenfolge gemischt (#2317): eine Bildauswahl (picture_choice)
@@ -506,6 +529,33 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       hinzugefügten Symbol (der Befund kam von dort). Balken, Sterne, Botschaft
       und XP zeigen den Endstand nach der Korrektur.
 
+### Ein Fehler-Bereich, zugeklappt (#2496)
+- [ ] Eine Lektion mit mindestens einem Fehler spielen. Auf der
+      Zusammenfassung erscheint der Bereich "Fehler ausbessern (N)"
+      ZUGEKLAPPT: KEIN Textfeld hat den Fokus, es poppt KEINE Tastatur auf
+      (auf dem Handy prüfen - das war der Befund). Die Punktzahl bleibt sichtbar.
+- [ ] Auf "Jetzt ausbessern" tippen -> der Bereich klappt auf, die erste
+      Korrektur-Übung (Lückentext) erscheint und bekommt JETZT den Fokus
+      (Tastatur darf jetzt aufgehen - bewusste Aktion des Nutzers).
+- [ ] Innerhalb des aufgeklappten Bereichs gibt es die sekundäre Aktion
+      "Alle Übungen erneut (N)" -> führt auf die Fehler-wiederholen-Seite
+      mit den echten fehlgeschlagenen Übungen.
+- [ ] In den "Nächste Schritte"-Karten gibt es KEINE eigene
+      "Fehler wiederholen"-Karte mehr (in den einen Bereich zusammengeführt).
+      Enter aktiviert weiterhin die primäre Vorwärts-Karte (Nächste Lektion /
+      Adaptiv / Wiederholung), nie den zugeklappten Fehler-Bereich.
+- [ ] Sind bereits alle Fehler korrigiert, zeigt der Bereich eine kurze
+      Erfolgsmeldung ("Alle Fehler korrigiert!") statt einer Übung.
+- [ ] #2570: Nur nicht-lückentext-fähige Fehler (kein Cloze generierbar) - der
+      Bereich zeigt DIREKT "Wiederhole deine Fehler" mit dem Hinweis "Das lässt
+      sich nicht als Schnellübung anzeigen - wiederhole stattdessen die
+      Übungen." + dem Button "Alle Übungen erneut (N)". KEIN "Jetzt
+      ausbessern"-Zwischenschritt mehr, der nur ins Leere aufklappen würde.
+- [ ] #2570 Platzierung: der Fehler-Bereich steht in der Standard-Reihenfolge
+      VOR den "Nächste Schritte"-Karten (Nächste Lektion / Adaptiv / ...), nicht
+      danach - erst die eigenen Fehler ausbessern, dann entscheiden wie es
+      weitergeht. Bleibt über Settings weiterhin frei umsortierbar.
+
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar
@@ -529,6 +579,31 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       ein neutrales Bild-Label, nicht die Lösung.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
+
+### Set erneut durcharbeiten - zweiter Durchgang (#2125, EXP-051)
+
+Ort: Meine Inhalte (`/content?tab=my`), Drei-Punkte-Menü eines Sets im
+Status **Abgeschlossen**. Ein neuer Durchgang hebt den ersten für die
+spätere Auswertung auf, statt ihn zu überschreiben oder zurückzusetzen.
+
+- [ ] Ein Set als **Abgeschlossen** markieren -> im Drei-Punkte-Menü
+      erscheint **"Erneut durcharbeiten"** (bei aktiven/zurückgestellten
+      Sets NICHT vorhanden)
+- [ ] Klick -> **einfache** Bestätigung ("Ein neuer Durchgang beginnt von
+      vorne, der vorherige bleibt erhalten"), OHNE gezählte Löschmengen
+- [ ] Bestätigen -> Toast "Ein neuer Durchgang wurde gestartet …", das Set
+      steht wieder auf **Aktiv**, KEINE Fehlermeldung, kein Datenverlust
+- [ ] Abbrechen -> nichts passiert, Status bleibt Abgeschlossen
+- [ ] Nach dem Neustart eine zuvor gelernte Übung falsch beantworten -> die
+      Wiederholungswarteschlange füllt sich **frisch** (kalte Planung; die
+      Karten des ersten Durchgangs tauchen NICHT als überfällig auf)
+- [ ] Set löschen (mit "Fortschritt löschen") -> ALLE Durchgänge des Sets
+      verschwinden, keine verwaisten Zeilen
+- [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
+      (Dexie-Modus) - der Ablauf muss in BEIDEN Modi funktionieren
+- [ ] Backup-Rundlauf: Export -> Wipe -> Import; die Durchgänge (inkl. des
+      abgeschlossenen ersten) überstehen den Import. Eine ältere Sicherung
+      ohne Durchgangsdaten importiert als impliziter Durchgang 1 (kein Crash)
 
 ### Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
@@ -560,6 +635,33 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       formuliert Theorie in eigenen Worten + erzeugt Übungen; OHNE
       KI-Key: freundlicher Hinweis, kein Crash; "Weiter" erst nach
       erfolgreicher Generierung
+- [ ] **Aufgabentyp-Auswahl im Assistenten (#2510):** Im Buchtext-Schritt
+      steht **vor dem Textfeld** (zwischen Datei-/Abschnitts-Fläche und dem
+      Lehrbuch-Textfeld, #2522) eine Auswahl "Aufgabentypen"
+      mit drei Gruppen: **Standardtypen** (Zuordnung, Freitext, Lückentext,
+      Wort-Kacheln, Multiple Choice) sind vorausgewählt; **Erweiterungstypen**
+      (Kategorisierung, Fehlerkorrektur, Leseverständnis, Benotetes Quiz) sind
+      hinzuwählbar; **"Aus Text nicht erzeugbar"** (Bildauswahl, Bildbeschreibung,
+      Diktat) sind ausgegraut/deaktiviert mit einem Satz Begründung ("Aus einem
+      Text lassen sich keine Bilder oder Audio erzeugen … im Editor nachträglich
+      ergänzbar"). Wer nichts ändert, bekommt das heutige Verhalten. Alles außer
+      einem Typ abwählen → der letzte bleibt gewählt und der Hinweis "Mindestens
+      ein Aufgabentyp muss gewählt bleiben." erscheint (nicht still). Ein
+      hinzugewählter Typ ist beim nächsten Durchlauf noch gewählt (gemerkt).
+      Generieren → nur die gewählten Typen entstehen; ein gewählter Typ, der
+      aus dem Text nicht entstand, wird namentlich unter "Diese gewählten Typen
+      sind aus dem Text nicht entstanden:" gelistet (nicht still weniger).
+      **iOS-Standalone (PWA, Dexie-Modus):** die Auswahl kostet wenig Höhe (drei
+      kompakte, umbrechende Gruppen), ist antippbar, und die gemerkte Auswahl
+      übersteht einen Reload. **Barrierefrei:** die ausgegrauten Felder tragen
+      eine Beschriftung + `aria-describedby` auf die Begründung.
+- [ ] **Reihenfolge der Typ-Auswahl (#2522):** Die Auswahl steht **oberhalb**
+      des Lehrbuch-Textfelds, nicht darunter (erst sehen was erkannt wurde,
+      dann Typen wählen, dann Text einfügen). **iOS-Standalone (PWA, kleines
+      Gerät):** beim Öffnen des Buchtext-Schritts ist das Textfeld **ohne
+      Scrollen** erreichbar - die Auswahl drückt es nicht unter die Falz; wer
+      ein Kapitel einfügt, muss danach nicht nach oben scrollen, um die Typen zu
+      finden. DOM-Reihenfolge entspricht der sichtbaren (keine Axe-Regression).
 - [ ] **Titel-Pflichtfeld im Buchtext-Pfad (#1946):** Schritt 1 OHNE
       Titel → Karte "Wissenslektion aus Text" klicken → bleibt auf
       Schritt 1 mit dem freundlichen Hinweis "Ein Titel ist
@@ -645,6 +747,15 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Kopie importieren") zeigen den Hinweis, dass eine Kopie OHNE
       Lernfortschritt startet, während das Original seinen Fortschritt
       und seine Wiederholungskarten behält
+- [ ] **Wiederholkarte übersteht Antwort-Korrektur (#2519):** eigene
+      Lektion mit einer Freitext-Übung anlegen/speichern → üben, bis eine
+      Wiederholkarte für diese Übung existiert (Wiederholungs-Warteschlange
+      zeigt sie) → Lektion bearbeiten, Tippfehler in der akzeptierten
+      Antwort korrigieren (z. B. "Merci" → "Merci !"), speichern.
+      Erwartung: Toast "{N} Wiederholkarte(n) für die geänderte Antwort
+      übernommen." erscheint, die Wiederholkarte bleibt (kein stiller
+      Verlust der Fehler-/SRS-Historie). Gilt für BEIDE Speichermodi
+      (API + Dexie)
 - [ ] **Einfache Lektion (ohne Extension) bleibt speicherbar (#1919):**
       eine Lektion per Auto-Generieren erstellen (nur die sechs CORE-Typen,
       keine Extension-Übung), lokal speichern → über Bearbeiten erneut
@@ -786,6 +897,20 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       (egal ob über den Core-Picker ODER den Extension-Wizard angelegt) und ist
       abspielbar. **Regression:** der bestehende Extension-Wizard-Weg für Diktat
       funktioniert unverändert
+- [ ] **Erweiterungstypen im Core-Picker (#2508):** Haupt-Wizard (kartenbasiert),
+      Schritt 3 "Übung generieren" → "Übung hinzufügen" öffnet "Übungstyp wählen".
+      Unter den Standardtypen (sechs Core-Typen + Diktat) erscheint jetzt eine
+      zweite, beschriftete Gruppe **"Erweiterungstypen"** mit Kategorisierung,
+      Fehlerkorrektur, Leseverständnis, Benotetes Quiz und Bildbeschreibung
+      (Diktat erscheint **nicht** doppelt). Klick auf einen dieser Knöpfe → eine
+      Erweiterungsübung wird angehängt und öffnet direkt im Extension-Editor.
+      Bildbeschreibung ist hier **wählbar** (das Bild wird im Editor ergänzt).
+      "Lokal speichern" → die gespeicherte Lektion trägt
+      `requires_extensions: ["ext:al-...@1"]` und ist abspielbar. **iOS-Standalone
+      (zum Home-Bildschirm hinzugefügte PWA, Dexie-Modus):** Picker öffnet, beide
+      Gruppen sind sichtbar und antippbar, die gewählte Erweiterungsübung wird
+      gespeichert und rendert nach einem Reload. **Regression:** der separate
+      Erweiterungs-Wizard funktioniert unverändert
 - [ ] **Diktat-Audio-Upload (#1911, Slice 3):** Im Diktat-Editor (Core-Picker
       ODER Extension-Wizard) zeigt das Audio-Feld einen **"Audio hochladen"**-
       Button über einem **"…assets/audio/clip.mp3"**-Pfad-Eingabefeld. Klick auf
@@ -831,6 +956,17 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       "Eine Antwort" → auf genau eine richtige reduziert. Eine bestehende
       MC-Übung mit gesetztem `multiple`-Wert öffnet **unverändert** in ihrem
       urspruenglichen Zustand.
+- [ ] **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
+      Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
+      **Multiple-Choice**-Übung steht oben ein Auswahlfeld **"Aufgabentyp"** mit
+      dem aktuellen Typ und der Alternative **"Freitext"**. Auf "Freitext"
+      umstellen: die Felder wechseln zum Freitext-Editor, die **akzeptierte
+      Antwort ist vorbefüllt** (Wortkacheln: die zusammengesetzte Kachel-Reihe;
+      MC: die richtige Option, falsche Optionen wandern in die Distraktoren).
+      Speichern und die Übung als Freitext abspielen. Bei anderen Übungstypen
+      (Freitext, Matching, Cloze, Bildauswahl) erscheint **kein** Auswahlfeld.
+      Erwartung: der Lernfortschritt der umgewandelten Übung bleibt erhalten
+      (gleicher Antwort-Schlüssel), Abbrechen verwirft die Umwandlung.
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
@@ -889,6 +1025,12 @@ jeder Karten-Zeile (`CardImageField`).
       Discover/Meine Inhalte (#1702/#1706)
 - [ ] Per-Set Share-Link öffnet direkt die Set-Detailseite (#1572)
 - [ ] Registrierten Content-Repo hinzufügen (register-a-repo #1511)
+- [ ] Manifest-Fallback für eigene Repos ohne search-index.json (#2562):
+      eigenes Repo über Settings → Daten → "Repository hinzufügen" verbinden,
+      das NIE mit dem Engine-Generator gebaut wurde (kein search-index.json
+      an der Wurzel) - Sets erscheinen trotzdem in Entdecken; sobald mehr als
+      eine Quelle beiträgt, erscheint der Filter "Quelle" (vorher fehlte er
+      bei nur einer beitragenden Quelle)
 - [ ] "Als Repository teilen" (#2376): ein Set mit Qualitätsmängeln
       (z. B. Zuordnungsübung mit doppeltem linkem Wert) wird beim ersten
       Klick NICHT gepusht - die Mängelliste erscheint, der Button wechselt
@@ -1116,6 +1258,13 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       ("N lassen sich nicht sicher zuordnen und werden zurückgesetzt"). Prüfen,
       dass für diese NICHTS übernommen wurde - eine falsche Zuordnung wäre
       schlimmer als ein Verlust, weil sie unsichtbar ist.
+- [ ] AUTH-05: Übungskennung selbst geändert (nicht nur die Antwort) - z. B.
+      eine Übung ohne `stable_id` wird beim Update umbenannt (Slug-Wechsel).
+      Die Zählung im Haken "Gelernten Fortschritt übernehmen" schließt diesen
+      Fall mit ein (kombinierte Zahl aus Übungs- und Element-Ebene); die
+      lesbare Vorschauliste zeigt weiterhin nur Antworttext-Paare, keine
+      rohen Übungs-Slugs. Nach Bestätigen mit Haken: die Wiederholkarte
+      bleibt unter der NEUEN Übungskennung erhalten, kein Neustart bei null.
 - [ ] Auto-Sync (24h, verbundenes Nutzer-Repo): Es wird WEDER aktualisiert NOCH
       etwas übernommen. Die Zuordnung darf nur im manuellen Dialog entstehen.
 - [ ] Zweimal hintereinander bestätigen (Update erneut anstossen): keine
@@ -1127,6 +1276,11 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       antippbar), Übernahme funktioniert im Dexie-Modus genauso.
 - [ ] Sprache prüfen (#2160): der Bestätigungstext erscheint in der App-Sprache
       (nicht englisch), in mehreren Sprachen stichprobenartig (de/ja/ko/el/hi).
+- [ ] Erst-Prägung (engine#91, Element-Ebene): Set, dessen Paare/Lücken/Optionen
+      erstmals eine stable_id erhalten, Inhalt sonst unverändert oder im selben
+      Update mitkorrigiert. Der Übergang wird wie eine normale, sicher
+      zuordenbare Korrektur behandelt, nicht als "nicht zuordenbar" gemeldet.
+      Fortschritt bleibt bei bestätigter Übernahme erhalten.
 
 ### Ausmusterung: archivierter Fortschritt bei retired_ids (#2188)
 
@@ -1340,6 +1494,22 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] Häkchen erscheint nur wenn es Fortschritt zu löschen gibt
       (Dexie-Modus)
 
+### Empfohlene Repositories: Buttons pro Zeile (#2558)
+
+Ort: Settings → Daten → Empfohlene Repositories.
+
+- [ ] Mehrere Empfehlungen sichtbar → "Repository hinzufügen" bei EINER
+      klicken → NUR dieser Button wird deaktiviert, die anderen bleiben
+      klickbar
+- [ ] Während des Hinzufügens erscheint ein Fortschrittsanzeige (Label +
+      Balken sobald die Sync-Phase Zahlen liefert) direkt bei der
+      geklickten Zeile, nicht global
+- [ ] Zweite Empfehlung während des Ladens der ersten klicken → beide
+      laufen unabhängig durch, keine Fehlermeldung
+- [ ] Nach Abschluss: Zeile verschwindet aus "Empfohlen" (jetzt in
+      "Meine Content-Repositories"), Button-Zustand der übrigen Zeilen
+      unverändert
+
 ### Social Sharing (visuell + nativ)
 - [ ] Share-Button nach Lektion sichtbar
 - [ ] Mobile: native Share-Sheet (WhatsApp/Telegram)
@@ -1383,6 +1553,26 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] Nach erfolgreichem Import (Datei ODER Einfügen): Wechsel zu
       Settings → KI zeigt den Key SOFORT, ohne Reload (#1769)
 - [ ] Passphrase maskiert mit Reveal-Toggle; Key/Passphrase nie geloggt
+
+### Cross-App-Tresor-Import (Topos → Adaptive Learner) (#2512)
+- [ ] Eine in Topos exportierte .alk-Datei (Format "topos-ai-keys")
+      importiert ohne "Fremd-Datei"-Ablehnung; die Passphrase der DATEI
+      wird abgefragt
+- [ ] Der Topos-Key unter "google" landet nach dem Import auf dem
+      Provider "Gemini" (Settings → KI zeigt ihn dort)
+- [ ] Falsche Passphrase → Warnung, kein Key wird geschrieben
+- [ ] AL-Export unverändert: exportierte Datei trägt weiter das Format
+      "adaptive-learner-keys"
+
+### Perplexity-Provider (OpenAI-kompatibel, nur Server-Modus) (#2512)
+- [ ] Settings → KI: "Perplexity" erscheint in der Provider-Auswahl
+      (nach Gemini)
+- [ ] Server-Modus (make dev): pplx--Key speichern, Modell-Picker zeigt
+      die statische sonar-Liste (sonar, sonar-pro, sonar-reasoning)
+- [ ] Server-Modus: Session-Nachricht mit aktivem Perplexity liefert
+      eine Antwort (Modell sonar-pro als Default)
+- [ ] Browser-Modus (Dexie/PWA): Perplexity ist sichtbar, aber als
+      "nur Desktop" markiert (kein toter Menüpunkt, kein CORS-Fehler)
 
 ---
 

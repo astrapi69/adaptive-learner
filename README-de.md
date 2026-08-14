@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.12.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Nachtschicht](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -162,7 +162,7 @@ Voraussetzungen: Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + Bun + alle 13 Plugins als Path-Deps
+make install   # Poetry + Bun + alle 14 Plugins als Path-Deps
 make dev       # Backend :18001 + Frontend :15174 (Vite-Dev-Server)
 ```
 
@@ -184,7 +184,7 @@ Vollständige Setup-Anleitung unter
 
 ## Ausgelieferte Plugins
 
-13 Plugins, alle unter `plugins/`. Routen werden unter
+14 Plugins, alle unter `plugins/`. Routen werden unter
 `/api/plugins/<name>/*` eingebunden.
 
 | Plugin | Routen | Zweck |
@@ -261,7 +261,7 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.11.0** (Sicherheits-Patch auf v2.8.0 - CSP #2197, Debug-Default #2198, Lesson-Validator-Eval #2205; v2.8.1 wurde nie veröffentlicht); das v2.8.0-Kernstück ist dessen
+Aktive Entwicklung. Das aktuelle Release ist **v2.12.0** (Sicherheits-Patch auf v2.8.0 - CSP #2197, Debug-Default #2198, Lesson-Validator-Eval #2205; v2.8.1 wurde nie veröffentlicht); das v2.8.0-Kernstück ist dessen
 Kernstück der **Vertriebswechsel** ist: Der Desktop-Launcher **bezieht
 jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der
 GHCR** statt auf dem Gerät zu bauen (Selbstbauen aus dem Quellbaum

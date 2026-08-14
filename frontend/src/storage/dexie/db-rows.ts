@@ -38,9 +38,11 @@ export interface UserSettingsRow {
     api_key_anthropic: string | null;
     api_key_openai: string | null;
     api_key_gemini: string | null;
+    api_key_perplexity?: string | null;
     model_override_anthropic: string | null;
     model_override_openai: string | null;
     model_override_gemini: string | null;
+    model_override_perplexity?: string | null;
     /** #508 — base64 data URL of the profile picture, or null (use the
      *  generated initials avatar). */
     avatar: string | null;
@@ -532,6 +534,11 @@ export interface ElementErrorRow {
     /** Composite key. See the class docstring. */
     id: string;
     user_id: string;
+    /** EXP-051 / #2125 — the Durchgang (run/pass) generation. Part of the
+     *  composite ``id`` (seventh segment). Always written by the adapter +
+     *  the v31 backfill; optional in the type so pre-EXP-051 fixtures still
+     *  type-check (absent = run 1). */
+    run_id?: number;
     set_id: string;
     lesson_id: string;
     exercise_id: string;
@@ -573,6 +580,29 @@ export interface ElementErrorRow {
      *  Stored inline (non-indexed) so no Dexie version bump is needed. */
     retired_at?: string | null;
     created_at: string;
+    updated_at: string;
+}
+
+/**
+ * One Durchgang (run/pass) of a content set for one user
+ * (EXP-051 / #2125). Mirrors the backend ``set_runs`` table. A new run
+ * closes the current one (``closed_at`` stamped) and opens the next
+ * (``run_id + 1``); ``element_errors`` rows carry the matching
+ * ``run_id`` so a second run never overwrites the first.
+ */
+export interface SetRunRow {
+    /** Composite key ``{user_id}#{set_id}#{run_id}``. */
+    id: string;
+    user_id: string;
+    set_id: string;
+    run_id: number;
+    /** Optional content-version marker taken at run start. */
+    content_version_at_start?: string | null;
+    started_at: string;
+    /** Null = active run; set = closed (archived, never rewritten). */
+    closed_at: string | null;
+    /** Bumps on create + the close-transition so the sync surface
+     *  propagates a run close (``started_at`` never changes on close). */
     updated_at: string;
 }
 

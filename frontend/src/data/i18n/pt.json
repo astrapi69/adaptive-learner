@@ -1,5 +1,9 @@
 {
   "app": {
+    "loading": "Carregando…",
+    "loading_slow": "Isto está a demorar mais do que o esperado.",
+    "view_load_failed": "Não foi possível carregar esta vista.",
+    "reload": "Recarregar",
     "name": "Adaptive Learner",
     "tagline": "Aprendizado que se adapta a você.",
     "skeleton_notice": "Estado de esqueleto. Modelos de domínio, plugins e páginas chegam em fases posteriores - veja docs/adaptive-learner-project-reference.md."
@@ -104,8 +108,7 @@
     "mode_badge_ai": "IA+Conteúdo",
     "mode_badge_tooltip_content": "Sem chave API configurada - apenas conteúdo pré-construído. Adiciona uma chave em Definições para ativar as funcionalidades IA.",
     "mode_badge_tooltip_ai": "Fornecedor de IA configurado - os exercícios usam IA para distratores e dicas. Toca para explorar os conjuntos.",
-    "mode_badge_label_content": "Modo: Apenas conteúdo",
-    "mode_badge_label_ai": "Modo: IA + Conteúdo",
+    "mode_badge_action": "explorar conteúdo",
     "sync_paired": "Sinc.: emparelhado (Configurações > Sinc.)",
     "sync_unpaired": "Sinc.: não emparelhado (Configurações > Sinc.)"
   },
@@ -737,6 +740,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "Provedores de IA configurados",
       "hint": "As chaves guardadas permanecem armazenadas. Apenas é mostrada uma pré-visualização mascarada, nunca a chave completa.",
@@ -1259,7 +1263,7 @@
     "xp_no_data": "Conclua uma sessão para ganhar XP.",
     "xp_earned": "XP ganhos",
     "xp_gain_aria": "Você ganhou {n} XP por esta lição",
-    "xp_header_aria": "Nível {level}, {xp} XP no total",
+    "xp_total_suffix": "no total",
     "xp_header_tooltip": "Seus pontos de experiência",
     "xp_to_next_level": "{n} XP até o próximo nível",
     "max_level": "Nível máximo alcançado",
@@ -2107,7 +2111,12 @@
       "next": "Seguinte",
       "complete_heading": "Ronda de correção completa",
       "improvement": "{n} elementos melhorados.",
-      "improvement_singular": "{n} elemento melhorado."
+      "improvement_singular": "{n} elemento melhorado.",
+      "mistakes_heading": "Corrige os teus erros",
+      "expand": "Corrigir agora",
+      "replay_all": "Refazer todos os exercícios ({count})",
+      "replay_only_heading": "Repete os teus erros",
+      "replay_only_subtitle": "Estes não podem ser praticados como exercício rápido - refaz os exercícios em vez disso."
     },
     "summary": {
       "heading": "Terminado",
@@ -2425,7 +2434,16 @@
       "bulk_deleted": "{n} conjuntos removidos.",
       "bulk_delete_title": "Excluir {n} conjuntos?",
       "bulk_delete_confirm": "Os conjuntos selecionados e suas lições serão removidos de Meu conteúdo. Seu progresso de aprendizagem é mantido, e você pode baixar os conjuntos novamente a qualquer momento.",
+      "restarted": "Uma nova rodada começou. A sua rodada anterior é mantida.",
+      "restart_failed": "Não foi possível iniciar uma nova rodada.",
+      "restart_confirm": {
+        "title": "Trabalhar este conjunto novamente?",
+        "message": "Uma nova rodada de “{title}” começa do zero. A sua rodada anterior é mantida no seu histórico; nada é excluído.",
+        "confirm": "Iniciar nova rodada",
+        "cancel": "Cancelar"
+      },
       "action": {
+        "restart": "Trabalhar novamente",
         "activate": "Reativar",
         "defer": "Adiar",
         "complete": "Marcar como concluído",
@@ -2867,6 +2885,15 @@
       "theory_failed": "A IA não retornou teoria utilizável. Tente novamente.",
       "exercises_failed": "Nenhum exercício utilizável foi gerado. Tente novamente.",
       "generate_failed": "Não foi possível gerar a lição. Tente novamente.",
+      "gen_missing_intro": "Estes tipos selecionados não surgiram do texto:",
+      "types": {
+        "heading": "Tipos de exercício",
+        "group_standard": "Tipos padrão",
+        "group_extension": "Tipos de extensão",
+        "group_unavailable": "Não gerável a partir de texto",
+        "unavailable_reason": "Imagens e áudio não podem ser gerados a partir de texto. Você pode adicionar esses tipos depois no editor.",
+        "floor_hint": "Pelo menos um tipo de exercício deve permanecer selecionado."
+      },
       "generate_to_advance": "Gere a lição a partir do seu texto para continuar.",
       "review_theory": "{n} passo(s) de teoria",
       "review_exercises": "{n} exercício(s)",
@@ -2989,6 +3016,7 @@
       "types_label": "Tipos de exercício",
       "add": "Adicionar exercício",
       "add_heading": "Escolha um tipo de exercício",
+      "add_ext_group": "Tipos de extensão",
       "incomplete_to_advance": "Complete ou remova os exercícios incompletos para continuar.",
       "direction_label": "Direção",
       "generate": "Gerar exercícios automaticamente",
@@ -3018,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "Opções de resposta",
+        "convert_label": "Tipo de exercício",
+        "convert_hint": "A conversão mantém a resposta escrita e o progresso do aluno.",
         "mc_option_placeholder": "Texto da opção",
         "mc_option_add": "Adicionar opção",
         "mc_option_remove": "Remover opção",
@@ -3184,7 +3214,9 @@
       "create_another": "Criar outra lição",
       "to_browser": "Para o navegador de conteúdo",
       "save_file": "Guardar como ficheiro",
-      "file_saved": "Lição guardada como ficheiro."
+      "file_saved": "Lição guardada como ficheiro.",
+      "progress_carried_over": "Foram transferidos {count} cartão(ões) de revisão para a resposta alterada.",
+      "progress_not_carried_over": "{count} cartão(ões) de revisão não puderam ser associados com confiança à resposta alterada e serão recriados na próxima prática."
     },
     "templates": {
       "extensions": {
@@ -3596,7 +3628,7 @@
   "srs": {
     "due_badge": "{n} pendentes",
     "due_badge_tooltip": "Revisões pendentes",
-    "due_badge_aria": "{n} revisões pendentes",
+    "due_badge_action": "ver revisões",
     "status_new": "Novo",
     "status_learning": "A aprender",
     "status_due": "Pendente",

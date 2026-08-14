@@ -31,8 +31,11 @@ jobs:
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      i18n_only: ${{ steps.scope.outputs.i18n_only }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: dorny/paths-filter@v4
         id: filter
         with:
@@ -53,6 +56,39 @@ jobs:
               - 'Makefile'
               - 'schema/**'
               - '.github/workflows/ci.yml'
+
+      # i18n_only (translation-PR-policy): true only when EVERY changed file
+      # is a translation catalog - backend/config/i18n/*.yaml (the authoring
+      # surface) or the generated frontend/src/data/i18n/*.json. i18n files
+      # live under backend/** and frontend/**, so they already trip the SAME
+      # filters as code (PR #1754: a 14-file, catalog-only PR ran the FULL
+      # backend + frontend suites, ~6 minutes each, for a text-only change).
+      # dorny/paths-filter answers "did ANY file match", not "did ALL files
+      # match ONLY this", so a plain diff walk does the "only" part. Mixed
+      # changes (any file outside the two globs) fall through to `false`
+      # unchanged - the full suite, same as any other PR.
+      - name: Detect i18n-only changeset
+        id: scope
+        if: github.event_name == 'pull_request'
+        run: |
+          BASE="origin/${{ github.base_ref }}"
+          git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
+          if git rev-parse --verify "$BASE" >/dev/null 2>&1; then
+            FILES=$(git diff --name-only "$BASE"...HEAD)
+          else
+            echo "::warning::base ref $BASE unresolved - treating as mixed (full scope)"
+            FILES="unresolved"
+          fi
+          i18n_only=true
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "$f" in
+              backend/config/i18n/*.yaml|frontend/src/data/i18n/*.json) ;;
+              *) i18n_only=false ;;
+            esac
+          done <<< "$FILES"
+          echo "::notice::i18n_only=$i18n_only"
+          echo "i18n_only=$i18n_only" >> "$GITHUB_OUTPUT"
 
   backend-tests:
     name: Backend Tests
@@ -97,7 +133,7 @@ jobs:
       # builds the DB — the natural fallback (no silent skip). Push to
       # develop/main + nightly + release always run the full suite (below).
       - name: Restore testmon data (PR only)
-        if: github.event_name == 'pull_request' && needs.changes.outputs.backend == 'true'
+        if: github.event_name == 'pull_request' && needs.changes.outputs.backend == 'true' && needs.changes.outputs.i18n_only != 'true'
         uses: actions/cache@v6
         with:
           path: backend/.testmondata
@@ -116,8 +152,17 @@ jobs:
         # deselecting everything (nothing impacted) — treated as success, not a
         # silent skip; the nightly full suite is the safety net for false
         # negatives.
+        #
+        # i18n_only (translation-PR-policy): a translation catalog is not a
+        # Python file, so testmon's coverage-based dependency graph never
+        # associates it with any test - the selective branch above would
+        # silently deselect test_i18n_parity.py instead of running it. Run
+        # that one file directly, bypassing testmon, on both PR and push.
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ needs.changes.outputs.i18n_only }}" = "true" ]; then
+            echo "::notice::i18n-only changeset, running test_i18n_parity.py only"
+            poetry run pytest tests/test_i18n_parity.py -q
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "::notice::PR detected — Test Impact Analysis (pytest --testmon)"
             set +e
             poetry run pytest tests/ -q --testmon
@@ -140,7 +185,7 @@ jobs:
       # gate tests are exactly the selection-mechanics blind spot class
       # (#1620/#1665).
       - name: OpenAPI snapshot drift gate (#2281)
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry run python ../scripts/sync_openapi.py --check
 
@@ -185,17 +230,19 @@ jobs:
           restore-keys: |
             poetry-backend-${{ runner.os }}-py3.12-
 
+      # i18n_only PRs (translation-PR-policy) skip this job entirely: the
+      # plugin suites cover no i18n catalog behaviour.
       - name: Install Poetry
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         run: pip install poetry
 
       - name: Install backend dependencies (path-installs every plugin)
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
 
       - name: Run plugin tests (make test-plugins via the backend venv)
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         run: make test-plugins
 
   # Plugin matrix job: skeleton ships zero plugins, so this job is
@@ -275,8 +322,11 @@ jobs:
         # without npm's peer-dep strictness (#1492).
         run: bun install --frozen-lockfile
 
+      # i18n_only PRs (translation-PR-policy) skip the five steps below:
+      # none of tsc, the ajv schema mirror, ESLint, the circular-dep guard
+      # or Stylelint say anything about a translation catalog's content.
       - name: TypeScript type check
-        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bunx tsc --noEmit
 
@@ -287,7 +337,7 @@ jobs:
       # (schema/quality-rules/doc) is covered by backend
       # test_lesson_schema_drift.py.
       - name: Lesson schema mirror drift check
-        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: node scripts/sync-schema-mirror.mjs --check
 
@@ -295,7 +345,7 @@ jobs:
       # so the ceiling is 0 — any new warning fails CI. Blocking errors
       # (react-hooks/rules-of-hooks, react/jsx-key) also have zero violations.
       - name: ESLint
-        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bunx eslint src/ --max-warnings 0
 
@@ -304,7 +354,7 @@ jobs:
       # the pre-existing debt (#252) doesn't block CI. Uses npx-pinned madge
       # (peer-incompatible with TS 6 as a devDependency; CI-only tool).
       - name: Circular dependency check
-        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bun run check:circular
 
@@ -313,7 +363,7 @@ jobs:
       # separate step-2 PR. Remove continue-on-error once the codebase is
       # formatted and the format-on-touch hook has caught up.
       - name: Prettier check (non-blocking)
-        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bun run format:check
         continue-on-error: true
@@ -323,7 +373,7 @@ jobs:
       # / no-descending-specificity / declaration-no-important are warnings
       # (36 pre-existing, reported not blocked — drive to zero then promote).
       - name: Stylelint
-        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bun run lint:css
 
@@ -333,11 +383,20 @@ jobs:
       # full suite is an unresolvable base ref — a hard guard against a silent
       # skip. Push to develop/main always runs the full suite (the merge gate);
       # nightly + release run full too.
+      # i18n_only (translation-PR-policy): a translation catalog is not a
+      # source file the changed-files diff picks up as "related" the same
+      # way `--changed` resolves for .ts/.tsx, so route straight to the one
+      # file that actually verifies it: the backend-YAML <-> frontend-JSON
+      # parity pin (i18n-sync.test.ts). Same on PR and push - no reason to
+      # run testmon-equivalent selection for a single fixed target.
       - name: Run Vitest (selective on PR, full on push)
         if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ needs.changes.outputs.i18n_only }}" = "true" ]; then
+            echo "::notice::i18n-only changeset, running i18n-sync.test.ts only"
+            bunx vitest run src/data/i18n/i18n-sync.test.ts
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="origin/${{ github.base_ref }}"
             git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
             if git rev-parse --verify "$BASE" >/dev/null 2>&1; then
@@ -353,7 +412,7 @@ jobs:
           fi
 
       - name: Build
-        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bunx vite build
 
@@ -361,7 +420,7 @@ jobs:
       # moderate/low advisories surface in the log without blocking the
       # build; a high/critical advisory fails CI for immediate triage.
       - name: npm audit (high+)
-        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bun audit --audit-level=high
 
@@ -410,19 +469,22 @@ jobs:
           key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
           restore-keys: |
             poetry-backend-${{ runner.os }}-py3.12-
+      # i18n_only PRs (translation-PR-policy) skip this job entirely: ruff
+      # and mypy say nothing about a YAML catalog value, and pip-audit below
+      # audits the same venv regardless of what changed.
       - name: Install Poetry
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         run: pip install poetry
       - name: Install backend dependencies
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
       - name: ruff check
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry run ruff check app/
       - name: mypy
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry run mypy app/
       # Dependency vulnerability scan (#224). pip-audit is a backend dev
@@ -437,7 +499,7 @@ jobs:
       # A toolchain advisory with no fix yet can be parked with
       # `--ignore-vuln <ID>` (document the ID), never by dropping the gate.
       - name: pip-audit (backend deps)
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: |
           poetry run pip install --quiet --upgrade pip setuptools wheel

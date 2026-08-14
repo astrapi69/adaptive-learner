@@ -21,6 +21,7 @@ import {
     type RepoExportInput,
 } from "./repo-export";
 import {parseSearchIndex} from "./repos/search-index-loader";
+import {CURRENT_MANIFEST_SCHEMA_VERSION} from "./schema-version";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
 
 const SET = {
@@ -70,7 +71,7 @@ describe("buildManifestYaml", () => {
         expect(m.level).toBe("B2");
         expect(m.domain).toBe("language");
         expect(m.lesson_count).toBe(2);
-        expect(m.schema_version).toBe("1.4");
+        expect(m.schema_version).toBe(CURRENT_MANIFEST_SCHEMA_VERSION);
         expect(m.tags).toEqual(["grammar", "b2"]);
     });
 });

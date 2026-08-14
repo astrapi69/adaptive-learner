@@ -61,7 +61,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
         await db.open();
         // verno tracks the latest declared schema version; bump
         // this when a new this.version(N) is added to db.ts.
-        expect(db.verno).toBe(30);
+        expect(db.verno).toBe(31);
 
         const badge = (await db.table("badges").get("b1")) as Record<string, unknown>;
         expect(badge.base_tier).toBeTruthy();
@@ -105,7 +105,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
         const db = new AdaptiveLearnerDB(PAIR_NAME);
         await db.open();
-        expect(db.verno).toBe(30);
+        expect(db.verno).toBe(31);
         const row = (await db
             .table("contentSets")
             .get("src/language-fr-a1/1.0.0")) as Record<string, unknown>;
@@ -149,22 +149,77 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
         const db = new AdaptiveLearnerDB(DIR_NAME);
         await db.open();
-        expect(db.verno).toBe(30);
-        // Old id is gone; the row was re-keyed under the new id.
+        expect(db.verno).toBe(31);
+        // Old id is gone; the row was re-keyed (v23 direction + v31 run_id).
         const oldRow = await db
             .table("elementErrors")
             .get("u1#set#lesson#ex#merci");
         expect(oldRow).toBeUndefined();
+        // EXP-051 / #2125: after v31 the id also carries the trailing run_id.
         const newRow = (await db
             .table("elementErrors")
-            .get("u1#set#lesson#ex#merci#target_to_source")) as Record<
+            .get("u1#set#lesson#ex#merci#target_to_source#1")) as Record<
             string,
             unknown
         >;
         expect(newRow).toBeDefined();
         expect(newRow.direction).toBe("target_to_source");
+        expect(newRow.run_id).toBe(1);
         // History preserved across the re-key.
         expect(newRow.error_count).toBe(2);
+        db.close();
+    });
+
+    it("re-keys elementErrors with the run_id segment + adds setRuns (v31, #2125)", async () => {
+        // A pre-EXP-051 (v30) row already carries the direction segment but
+        // no run_id. The v31 upgrade appends ``#1`` to the id, backfills
+        // run_id=1, and creates the setRuns store (empty — the run is
+        // materialised lazily on first read/write).
+        const RUN_NAME = "adaptive-learner-run-upgrade";
+        const legacy = new Dexie(RUN_NAME);
+        legacy.version(30).stores({
+            elementErrors: "id, user_id, [user_id+set_id], mastered, updated_at",
+        });
+        await legacy.open();
+        await legacy.table("elementErrors").put({
+            id: "u1#set#lesson#ex#merci#target_to_source",
+            user_id: "u1",
+            set_id: "set",
+            lesson_id: "lesson",
+            exercise_id: "ex",
+            element_key: "merci",
+            direction: "target_to_source",
+            element_type: "vocabulary",
+            user_answer: "",
+            correct_answer: "Merci",
+            error_count: 3,
+            correct_streak: 0,
+            last_error_at: null,
+            last_attempt_at: "2026-08-01T00:00:00Z",
+            mastered: false,
+            mastered_at: null,
+            created_at: "2026-08-01T00:00:00Z",
+            updated_at: "2026-08-01T00:00:00Z",
+        });
+        legacy.close();
+
+        const db = new AdaptiveLearnerDB(RUN_NAME);
+        await db.open();
+        expect(db.verno).toBe(31);
+        expect(
+            await db.table("elementErrors").get("u1#set#lesson#ex#merci#target_to_source"),
+        ).toBeUndefined();
+        const newRow = (await db
+            .table("elementErrors")
+            .get("u1#set#lesson#ex#merci#target_to_source#1")) as Record<
+            string,
+            unknown
+        >;
+        expect(newRow).toBeDefined();
+        expect(newRow.run_id).toBe(1);
+        expect(newRow.error_count).toBe(3);
+        // The setRuns store exists and starts empty (lazy materialisation).
+        expect(await db.table("setRuns").count()).toBe(0);
         db.close();
     });
 
@@ -199,7 +254,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
         const db = new AdaptiveLearnerDB(STATUS_NAME);
         await db.open();
-        expect(db.verno).toBe(30);
+        expect(db.verno).toBe(31);
         const row = (await db
             .table("contentSets")
             .get("src/language-fr-a1/1.0.0")) as Record<string, unknown>;

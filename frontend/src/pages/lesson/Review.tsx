@@ -37,10 +37,8 @@ import {
     type NavigateFunction,
 } from "react-router";
 
-import {
-    ExerciseDispatcher,
-    SUPPORTED_EXERCISE_TYPES,
-} from "../../components/exercises";
+import {ExerciseDispatcher} from "../../components/exercises";
+import {isPlayableExerciseStep} from "../../lib/lesson/lesson-step-state";
 import type {
     ExerciseHandle,
     ExerciseScored,
@@ -164,11 +162,7 @@ export default function ReviewPage() {
     const totalSteps = lesson.steps.length;
     const isSummary = currentStepIndex >= totalSteps;
     const step = isSummary ? null : lesson.steps[currentStepIndex];
-    const isExerciseStep =
-        step != null &&
-        step.type === "exercise" &&
-        step.exercise != null &&
-        SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
+    const isExerciseStep = isPlayableExerciseStep(step);
     const progressPct =
         totalSteps === 0
             ? 100

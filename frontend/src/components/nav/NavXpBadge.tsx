@@ -167,12 +167,12 @@ export default function NavXpBadge() {
         aria-haspopup="dialog"
         aria-expanded={open}
         title={t("gamification.xp_header_tooltip", "Your experience points")}
-        aria-label={t(
-          "gamification.xp_header_aria",
-          "Level {level}, {xp} total XP",
-        )
-          .replace("{level}", String(state.level))
-          .replace("{xp}", String(state.total_xp))}
+        // WCAG 2.5.3 (#2539): built from the SAME strings XpBadge renders
+        // ("Stufe 4" / "680 XP"), so the accessible name can never drift
+        // from the visible text. The previous parallel German string had
+        // been left untranslated ("Level 4, ...") while the badge showed
+        // "Stufe 4" - the visible word was absent from the name entirely.
+        aria-label={`${levelLabel} ${state.level}, ${state.total_xp} ${xpLabel} ${t("gamification.xp_total_suffix", "total")}`}
         onClick={() => setOpen((o) => !o)}
       >
         <XpBadge

@@ -1,5 +1,9 @@
 {
   "app": {
+    "loading": "불러오는 중…",
+    "loading_slow": "예상보다 시간이 오래 걸리고 있습니다.",
+    "view_load_failed": "이 화면을 불러올 수 없습니다.",
+    "reload": "새로고침",
     "name": "Adaptive Learner",
     "tagline": "6단계 방법론 모델에 따른 적응형 학습.",
     "skeleton_notice": "스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 - docs/adaptive-learner-project-reference.md를 참고하세요."
@@ -104,8 +108,7 @@
     "mode_badge_ai": "AI+콘텐츠",
     "mode_badge_tooltip_content": "API 키가 설정되지 않았습니다 - 사전 제작된 콘텐츠만 사용합니다. AI 기능을 사용하려면 설정에서 키를 추가하세요.",
     "mode_badge_tooltip_ai": "AI 제공자가 설정되었습니다 - 연습 문제에 AI를 활용해 오답 보기와 힌트를 생성합니다. 콘텐츠 세트를 둘러보려면 누르세요.",
-    "mode_badge_label_content": "모드: 콘텐츠 전용",
-    "mode_badge_label_ai": "모드: AI + 콘텐츠",
+    "mode_badge_action": "콘텐츠 둘러보기",
     "sync_paired": "동기화: 페어링됨 (설정 > 동기화)",
     "sync_unpaired": "동기화: 페어링 안 됨 (설정 > 동기화)"
   },
@@ -741,6 +744,7 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "provider_perplexity": "Perplexity",
     "providers": {
       "title": "구성된 AI 공급자",
       "hint": "저장한 키는 그대로 유지됩니다. 전체 키는 표시되지 않으며 마스킹된 미리 보기만 표시됩니다.",
@@ -1259,7 +1263,7 @@
     "xp_no_data": "세션을 완료하여 XP를 획득하세요.",
     "xp_earned": "획득한 XP",
     "xp_gain_aria": "이 레슨으로 {n} XP를 획득했습니다",
-    "xp_header_aria": "레벨 {level}, 총 {xp} XP",
+    "xp_total_suffix": "총",
     "xp_header_tooltip": "당신의 경험치",
     "xp_to_next_level": "다음 레벨까지 {n} XP",
     "max_level": "최고 레벨 도달",
@@ -2162,7 +2166,12 @@
       "next": "다음",
       "complete_heading": "교정 라운드 완료",
       "improvement": "요소 {n}개가 향상되었습니다.",
-      "improvement_singular": "요소 {n}개가 향상되었습니다."
+      "improvement_singular": "요소 {n}개가 향상되었습니다.",
+      "mistakes_heading": "실수 바로잡기",
+      "expand": "지금 바로잡기",
+      "replay_all": "모든 문제 다시 풀기 ({count})",
+      "replay_only_heading": "실수 반복하기",
+      "replay_only_subtitle": "이 문제는 빠른 연습으로 풀 수 없습니다 - 대신 문제를 다시 풀어보세요."
     },
     "error": {
       "load_failed": "레슨을 불러올 수 없었습니다.",
@@ -2425,7 +2434,16 @@
       "bulk_deleted": "{n}개 세트를 제거했습니다.",
       "bulk_delete_title": "{n}개 세트를 삭제하시겠습니까?",
       "bulk_delete_confirm": "선택한 세트와 해당 레슨이 내 콘텐츠에서 제거됩니다. 학습 진행 상황은 유지되며 언제든지 세트를 다시 다운로드할 수 있습니다.",
+      "restarted": "새 회차를 시작했습니다. 이전 회차는 그대로 유지됩니다.",
+      "restart_failed": "새 회차를 시작할 수 없습니다.",
+      "restart_confirm": {
+        "title": "이 세트를 다시 학습할까요?",
+        "message": "“{title}”의 새 회차가 처음부터 시작됩니다. 이전 회차는 기록에 그대로 유지되며 삭제되는 것은 없습니다.",
+        "confirm": "새 회차 시작",
+        "cancel": "취소"
+      },
       "action": {
+        "restart": "다시 학습",
         "activate": "다시 활성화",
         "defer": "보류",
         "complete": "완료로 표시",
@@ -2867,6 +2885,15 @@
       "theory_failed": "AI가 사용 가능한 이론을 반환하지 않았습니다. 다시 시도하세요.",
       "exercises_failed": "사용 가능한 연습문제가 생성되지 않았습니다. 다시 시도하세요.",
       "generate_failed": "레슨을 생성할 수 없습니다. 다시 시도하세요.",
+      "gen_missing_intro": "선택한 이 유형은 텍스트에서 생성되지 않았습니다:",
+      "types": {
+        "heading": "문제 유형",
+        "group_standard": "표준 유형",
+        "group_extension": "확장 유형",
+        "group_unavailable": "텍스트로 생성 불가",
+        "unavailable_reason": "이미지와 오디오는 텍스트로 생성할 수 없습니다. 이러한 유형은 나중에 편집기에서 추가할 수 있습니다.",
+        "floor_hint": "최소한 하나의 문제 유형은 선택된 상태로 유지해야 합니다."
+      },
       "generate_to_advance": "계속하려면 텍스트에서 레슨을 생성하세요.",
       "review_theory": "이론 단계 {n}개",
       "review_exercises": "연습문제 {n}개",
@@ -2989,6 +3016,7 @@
       "types_label": "연습 유형",
       "add": "문제 추가",
       "add_heading": "문제 유형 선택",
+      "add_ext_group": "확장 유형",
       "incomplete_to_advance": "계속하려면 미완성 문제를 완성하거나 삭제하세요.",
       "direction_label": "방향",
       "generate": "연습 자동 생성",
@@ -3018,6 +3046,8 @@
       },
       "edit": {
         "mc_options_label": "답 선택지",
+        "convert_label": "문제 유형",
+        "convert_hint": "변환해도 입력한 답과 학습자의 진행 상황이 유지됩니다.",
         "mc_option_placeholder": "선택지 텍스트",
         "mc_option_add": "선택지 추가",
         "mc_option_remove": "선택지 삭제",
@@ -3184,7 +3214,9 @@
       "create_another": "다른 레슨 만들기",
       "to_browser": "콘텐츠 브라우저로",
       "save_file": "파일로 저장",
-      "file_saved": "레슨을 파일로 저장했습니다."
+      "file_saved": "레슨을 파일로 저장했습니다.",
+      "progress_carried_over": "변경된 답변에 대해 복습 카드 {count}개를 이어받았습니다.",
+      "progress_not_carried_over": "복습 카드 {count}개는 변경된 답변과 확실하게 연결할 수 없어 다음 연습 시 다시 생성됩니다."
     },
     "templates": {
       "extensions": {
@@ -3596,7 +3628,7 @@
   "srs": {
     "due_badge": "{n}개 예정",
     "due_badge_tooltip": "복습 예정",
-    "due_badge_aria": "복습 {n}개 예정",
+    "due_badge_action": "복습 보기",
     "status_new": "신규",
     "status_learning": "학습 중",
     "status_due": "예정",

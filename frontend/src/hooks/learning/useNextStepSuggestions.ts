@@ -47,7 +47,7 @@ import type {ErrorTag} from "../../lib/adaptive/error-classifier";
 import {getStorage} from "../../storage";
 import type {ElementError} from "../../storage/types";
 
-export type PrimaryAction = "next" | "adaptive" | "review" | "error_replay";
+export type PrimaryAction = "next" | "adaptive" | "review";
 
 export interface NextStepSuggestions {
     /** True until the first round of storage reads resolves. */
@@ -173,12 +173,14 @@ function deriveTitle(filename: string): string {
 
 /** Pick which card gets the accent-coloured primary CTA.
  *
- *   - 0-1 stars + failed exercises → fix them first: "error_replay"
- *     (the most immediate, highest-signal action after a weak run)
- *   - 2-3 stars → advance: "next" (error replay stays a secondary
- *     option when there are residual errors)
  *   - last lesson → "adaptive" (if errors) / "review" (if due) / "next"
- *   - 0-1 stars without a replay but with errors → "adaptive"
+ *   - 0-1 stars with errors → "adaptive" (fix the weakness first)
+ *   - otherwise → "next" (advance)
+ *
+ * #2496 — the error-replay CTA moved into the summary's correction
+ * section, so it is no longer a next-step card and no longer a
+ * ``primaryAction``; a weak run now surfaces "adaptive" as primary and
+ * the mistakes section carries the retry.
  *
  * Exported for direct unit testing.
  */
@@ -187,11 +189,7 @@ export function computePrimaryAction(
     hasNext: boolean,
     hasAdaptive: boolean,
     hasReview: boolean,
-    hasErrorReplay = false,
 ): PrimaryAction {
-    // After a weak run, retrying the exact failed exercises is the
-    // single most useful next step — it outranks everything else.
-    if (stars <= 1 && hasErrorReplay) return "error_replay";
     if (!hasNext) {
         // Last lesson in the set.
         if (hasAdaptive) return "adaptive";
@@ -450,7 +448,6 @@ export function useNextStepSuggestions(
                 fetched.nextLesson.available,
                 adaptiveLesson.available,
                 fetched.reviewSession.available,
-                errorReplay.available,
             ),
         }),
         [fetched, errorReplay, adaptiveLesson, stars],

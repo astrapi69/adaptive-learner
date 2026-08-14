@@ -54,4 +54,24 @@ describe("SettingsSidebar", () => {
     expect(dangerGroup.querySelector("h2")).toBeNull();
     expect(screen.getByTestId("settings-tab-danger")).toBeInTheDocument();
   });
+
+  // #2545 — Tailwind preflight is OFF in this project (styles/tailwind.css),
+  // so a raw <ul> and raw <button> both fall back to UA default chrome
+  // unless explicitly reset: a native disc bullet + ~40px indent on the
+  // list, and a bordered/boxed look on every button regardless of state
+  // (legacy/01-base.css's #185/#271 base rule resets button color/background
+  // globally, but deliberately NOT border — the established convention,
+  // e.g. word-tiles-editor.tsx, is an explicit per-component border-0).
+  // Same defect class #2498 fixed for FilterMenuButton/SetActionsMenu.
+  it("resets the native list marker on the group <ul> (#2498 sibling)", () => {
+    render(<SettingsSidebar groups={groups} activeTab="general" onChange={vi.fn()} />);
+    const list = screen.getByTestId("settings-tab-general").closest("ul");
+    expect(list?.className).toContain("list-none");
+  });
+
+  it("resets the native UA button border on every item (#2498 sibling)", () => {
+    render(<SettingsSidebar groups={groups} activeTab="general" onChange={vi.fn()} />);
+    expect(screen.getByTestId("settings-tab-general").className).toContain("border-0");
+    expect(screen.getByTestId("settings-tab-danger").className).toContain("border-0");
+  });
 });

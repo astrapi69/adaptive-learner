@@ -33,6 +33,8 @@ export interface ContentBrowsePanelProps {
   onBulkDelete: () => void;
   onSetStatus: (entry: ContentSetEntry, status: SetStatus) => void;
   onDeleteSet: (entry: ContentSetEntry) => void;
+  /** EXP-051 / #2125 — start a new Durchgang for a completed set. */
+  onRestartSet?: (entry: ContentSetEntry) => void;
   treeProps: ComponentProps<typeof ContentTree>;
 }
 
@@ -54,6 +56,7 @@ export default function ContentBrowsePanel({
   onBulkDelete,
   onSetStatus,
   onDeleteSet,
+  onRestartSet,
   treeProps,
 }: ContentBrowsePanelProps) {
   const { t } = useI18n();
@@ -126,6 +129,7 @@ export default function ContentBrowsePanel({
               sets={visibleSets}
               onSetStatus={onSetStatus}
               onDelete={onDeleteSet}
+              onRestart={onRestartSet}
               selectable
               selectedKeys={selection.selected}
               onToggleSelect={(e) => selection.toggle(setSelectionKey(e))}

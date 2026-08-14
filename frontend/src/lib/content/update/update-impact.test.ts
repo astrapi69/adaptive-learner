@@ -367,6 +367,41 @@ describe("buildIncomingIdentities with stable_id (#2130)", () => {
     });
 });
 
+// --- engine#91 element-level stable_id key switch ---------------------------
+
+describe("exerciseElementKeys prefers element-level stable_id (engine#91)", () => {
+    it("matching: a pair's own stable_id, not its content-derived text", () => {
+        expect(
+            exerciseElementKeys({
+                type: "matching",
+                pairs: [{left: "merci", right: "danke", stable_id: "pair-aaaa0001"}],
+            }),
+        ).toEqual(new Set(["pair-aaaa0001"]));
+    });
+
+    it("agrees with remap-plan's switch: a row keyed by an element stable_id resolves against corrected content", () => {
+        const incomingIds = buildIncomingIdentities([
+            {
+                filename: "01.json",
+                exercises: [
+                    {
+                        id: "ex-match-1",
+                        type: "matching",
+                        pairs: [{left: "bonjour (corrige)", right: "hallo", stable_id: "pair-aaaa0001"}],
+                    },
+                ],
+            },
+        ]);
+        const impact = computeUpdateImpact(
+            [],
+            [{lesson_id: "01.json", exercise_id: "ex-match-1", element_key: "pair-aaaa0001"}],
+            incomingIds,
+        );
+        expect(impact.breaking).toBe(false);
+        expect(impact.lostCards).toEqual([]);
+    });
+});
+
 // --- #2188 retired_ids classification ----------------------------------------
 
 describe("computeUpdateImpact with retired_ids (#2188)", () => {

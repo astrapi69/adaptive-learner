@@ -37,6 +37,7 @@ function record<T>(fn: (provider: AIProvider) => T): Record<AIProvider, T> {
         anthropic: fn("anthropic"),
         openai: fn("openai"),
         gemini: fn("gemini"),
+        perplexity: fn("perplexity"),
     };
 }
 

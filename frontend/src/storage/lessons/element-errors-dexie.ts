@@ -24,9 +24,11 @@ import type {
     ExerciseIdRemap,
     ReviewQueueItem,
 } from "../types";
-
-/** The two drill directions an element_key row can carry (EXP-018). */
-const DIRECTIONS = ["source_to_target", "target_to_source"] as const;
+import {
+    ensureActiveRunDexie,
+    isActiveRunRow,
+    openRunBySetDexie,
+} from "./set-runs-dexie";
 
 /** Phase 46 D4: 3 consecutive correct → mastered. Same
  *  constant as ``backend/app/services/element_errors.py``;
@@ -40,24 +42,50 @@ function directionOf(attempt: ElementAttempt): string {
     return attempt.direction ?? "target_to_source";
 }
 
-function rowKey(userId: string, attempt: ElementAttempt): string {
+/** Build the composite primary key. EXP-051 / #2125 adds ``run_id`` as the
+ *  seventh segment (after ``direction``), keeping a card's rows in run 2
+ *  distinct from its run-1 rows. Mirrors the backend UNIQUE(user, set,
+ *  lesson, exercise, element_key, direction, run_id). */
+function elementRowKey(
+    userId: string,
+    setId: string,
+    lessonId: string,
+    exerciseId: string,
+    elementKey: string,
+    direction: string,
+    runId: number,
+): string {
     return [
+        userId,
+        setId,
+        lessonId,
+        exerciseId,
+        elementKey,
+        // EXP-018 / Phase 62: keeps the receptive and productive rows of
+        // one card distinct.
+        direction,
+        // EXP-051 / #2125: the Durchgang (run/pass) generation.
+        String(runId),
+    ].join("#");
+}
+
+function rowKey(userId: string, attempt: ElementAttempt, runId: number): string {
+    return elementRowKey(
         userId,
         attempt.set_id,
         attempt.lesson_id,
         attempt.exercise_id,
         attempt.element_key,
-        // EXP-018 / Phase 62: sixth segment keeps the receptive and
-        // productive rows of one card distinct. Mirrors the backend
-        // UNIQUE(user, set, lesson, exercise, element_key, direction).
         directionOf(attempt),
-    ].join("#");
+        runId,
+    );
 }
 
 function rowToWire(row: ElementErrorRow): ElementError {
     return {
         id: row.id,
         user_id: row.user_id,
+        run_id: row.run_id ?? 1,
         set_id: row.set_id,
         lesson_id: row.lesson_id,
         exercise_id: row.exercise_id,
@@ -105,10 +133,12 @@ function createElementRow(
     userId: string,
     attempt: ElementAttempt,
     nowIso: string,
+    runId: number,
 ): ElementErrorRow {
     return {
-        id: rowKey(userId, attempt),
+        id: rowKey(userId, attempt, runId),
         user_id: userId,
+        run_id: runId,
         set_id: attempt.set_id,
         lesson_id: attempt.lesson_id,
         exercise_id: attempt.exercise_id,
@@ -200,10 +230,11 @@ function applyTransition(
     userId: string,
     attempt: ElementAttempt,
     nowIso: string,
+    runId: number,
 ): ElementErrorRow {
     return existing
         ? advanceElementRow(existing, attempt, nowIso)
-        : createElementRow(userId, attempt, nowIso);
+        : createElementRow(userId, attempt, nowIso, runId);
 }
 
 export async function recordElementAttemptsDexie(
@@ -222,12 +253,23 @@ export async function recordElementAttemptsDexie(
     // preserves the intra-call compounding (3 corrects on one key in a
     // single call still flip ``mastered``), because each iteration
     // reads the post-state of the previous put within the same tx.
-    await db.transaction("rw", db.elementErrors, async () => {
+    //
+    // EXP-051 / #2125: the transaction also spans ``setRuns`` so the lazy
+    // run-1 materialisation and the attempt rows commit together. The
+    // active run is resolved once per set (cached) and stamped into the
+    // composite key, so a second run's attempts never overwrite the first.
+    await db.transaction("rw", db.elementErrors, db.setRuns, async () => {
+        const runBySet = new Map<string, number>();
         for (const attempt of attempts) {
-            const key = rowKey(userId, attempt);
-            const existing = await db.elementErrors.get(key);
             const nowIso = new Date().toISOString();
-            const next = applyTransition(existing, userId, attempt, nowIso);
+            let runId = runBySet.get(attempt.set_id);
+            if (runId === undefined) {
+                runId = await ensureActiveRunDexie(userId, attempt.set_id, nowIso);
+                runBySet.set(attempt.set_id, runId);
+            }
+            const key = rowKey(userId, attempt, runId);
+            const existing = await db.elementErrors.get(key);
+            const next = applyTransition(existing, userId, attempt, nowIso, runId);
             await db.elementErrors.put(next);
             result.push(next);
         }
@@ -254,23 +296,38 @@ export async function remapElementKeysDexie(
     let skipped = 0;
     await db.transaction("rw", db.elementErrors, async () => {
         for (const remap of remaps) {
-            for (const direction of DIRECTIONS) {
-                const oldId = [
-                    userId, remap.set_id, remap.lesson_id, remap.exercise_id, remap.old, direction,
-                ].join("#");
-                const oldRow = await db.elementErrors.get(oldId);
-                if (!oldRow) continue;
-                const newId = [
-                    userId, remap.set_id, remap.lesson_id, remap.exercise_id, remap.new, direction,
-                ].join("#");
-                if (oldId === newId) continue; // no-op mapping, nothing to do
+            // EXP-051 / #2125: a card can now have a row per run, so match
+            // every affected row (all directions + all runs) by query
+            // instead of reconstructing a single key.
+            const rows = await db.elementErrors
+                .where("[user_id+set_id]")
+                .equals([userId, remap.set_id])
+                .toArray();
+            const affected = rows.filter(
+                (row) =>
+                    row.lesson_id === remap.lesson_id &&
+                    row.exercise_id === remap.exercise_id &&
+                    row.element_key === remap.old,
+            );
+            for (const oldRow of affected) {
+                const direction = oldRow.direction ?? "target_to_source";
+                const newId = elementRowKey(
+                    userId,
+                    remap.set_id,
+                    remap.lesson_id,
+                    remap.exercise_id,
+                    remap.new,
+                    direction,
+                    oldRow.run_id ?? 1,
+                );
+                if (oldRow.id === newId) continue; // no-op mapping
                 const existingNew = await db.elementErrors.get(newId);
                 if (existingNew) {
                     skipped += 1; // target already present -> never collapse
                     continue;
                 }
                 await db.elementErrors.put({...oldRow, id: newId, element_key: remap.new});
-                await db.elementErrors.delete(oldId);
+                await db.elementErrors.delete(oldRow.id);
                 applied += 1;
             }
         }
@@ -307,9 +364,15 @@ export async function remapExerciseIdsDexie(
             );
             for (const row of affected) {
                 const direction = row.direction ?? "target_to_source";
-                const newId = [
-                    userId, remap.set_id, remap.lesson_id, remap.new, row.element_key, direction,
-                ].join("#");
+                const newId = elementRowKey(
+                    userId,
+                    remap.set_id,
+                    remap.lesson_id,
+                    remap.new,
+                    row.element_key,
+                    direction,
+                    row.run_id ?? 1,
+                );
                 if (row.id === newId) continue; // no-op mapping, nothing to do
                 const existingNew = await db.elementErrors.get(newId);
                 if (existingNew) {
@@ -333,6 +396,10 @@ export interface ListElementErrorsOpts {
     /** #2188 — default false: archived (author-retired) rows leave every
      *  default read. Pass true for archive views. */
     includeRetired?: boolean;
+    /** EXP-051 / #2125 — the Durchgang to read. Omit for each set's ACTIVE
+     *  run (current state); pass a run number for a specific past run (the
+     *  Fehlerhistorie). */
+    runId?: number;
 }
 
 export async function listElementErrorsDexie(
@@ -351,6 +418,15 @@ export async function listElementErrorsDexie(
             .where("user_id")
             .equals(userId)
             .toArray();
+    }
+    if (opts.runId !== undefined) {
+        // Fehlerhistorie: exactly one run (incl. a closed one).
+        rows = rows.filter((r) => (r.run_id ?? 1) === opts.runId);
+    } else {
+        // Default: each set's active run only. A closed run's rows never
+        // appear in the current-state view / review queue.
+        const openBySet = await openRunBySetDexie(userId, opts.setId);
+        rows = rows.filter((r) => isActiveRunRow(r, openBySet));
     }
     if (opts.includeMastered === false) {
         rows = rows.filter((r) => !r.mastered);
@@ -490,6 +566,10 @@ export async function computeReviewQueueDexie(
             .equals(userId)
             .toArray();
     }
+    // EXP-051 / #2125 — only the ACTIVE run of each set fills the queue;
+    // closed runs are a frozen archive.
+    const openBySet = await openRunBySetDexie(userId, opts.setId);
+    rows = rows.filter((r) => isActiveRunRow(r, openBySet));
     // #2188 — archived (author-retired) rows never schedule.
     rows = rows.filter((r) => !r.mastered && !r.retired_at);
     const items = rows.map((r) => _projectReviewItem(r, nowIso));
