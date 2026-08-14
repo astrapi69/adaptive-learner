@@ -2791,6 +2791,8 @@ create_lesson:
       picture_choice: "Choix d'image : ajoutez une image à au moins deux cartes."
     edit:
       mc_options_label: "Options de réponse"
+      convert_label: "Type d'exercice"
+      convert_hint: "La conversion conserve la réponse saisie et la progression de l'apprenant."
       mc_option_placeholder: "Texte de l'option"
       mc_option_add: "Ajouter une option"
       mc_option_remove: "Supprimer l'option"

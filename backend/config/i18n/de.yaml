@@ -2793,6 +2793,8 @@ create_lesson:
       picture_choice: "Bildauswahl: Füge mindestens zwei Karten ein Bild hinzu."
     edit:
       mc_options_label: "Antwortoptionen"
+      convert_label: "Aufgabentyp"
+      convert_hint: "Beim Umwandeln bleiben die Antwort und der Lernfortschritt erhalten."
       mc_option_placeholder: "Optionstext"
       mc_option_add: "Option hinzufügen"
       mc_option_remove: "Option entfernen"

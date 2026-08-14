@@ -956,6 +956,17 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       "Eine Antwort" → auf genau eine richtige reduziert. Eine bestehende
       MC-Übung mit gesetztem `multiple`-Wert öffnet **unverändert** in ihrem
       urspruenglichen Zustand.
+- [ ] **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
+      Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
+      **Multiple-Choice**-Übung steht oben ein Auswahlfeld **"Aufgabentyp"** mit
+      dem aktuellen Typ und der Alternative **"Freitext"**. Auf "Freitext"
+      umstellen: die Felder wechseln zum Freitext-Editor, die **akzeptierte
+      Antwort ist vorbefüllt** (Wortkacheln: die zusammengesetzte Kachel-Reihe;
+      MC: die richtige Option, falsche Optionen wandern in die Distraktoren).
+      Speichern und die Übung als Freitext abspielen. Bei anderen Übungstypen
+      (Freitext, Matching, Cloze, Bildauswahl) erscheint **kein** Auswahlfeld.
+      Erwartung: der Lernfortschritt der umgewandelten Übung bleibt erhalten
+      (gleicher Antwort-Schlüssel), Abbrechen verwirft die Umwandlung.
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
