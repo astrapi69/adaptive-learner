@@ -299,3 +299,68 @@ describe("ExtensionExerciseEditor — dictation", () => {
         expect(screen.getByTestId("exercise-ext-error-d1")).toBeInTheDocument();
     });
 });
+
+describe("ExtensionExerciseEditor — type conversion (EXP-050 Stage 1)", () => {
+    const dictation = (): ContentLessonExercise =>
+        ({
+            id: "cd1",
+            type: DICTATION_EXT_TYPE,
+            prompt: "Write what you hear",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {audio: "assets/audio/clip.mp3", accept: ["bonjour"]},
+        }) as ContentLessonExercise;
+
+    it("offers the free_text conversion when allowed and calls onConvert", () => {
+        const onConvert = vi.fn();
+        render(
+            <ExtensionExerciseEditor
+                exercise={dictation()}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+                allowConversion
+                onConvert={onConvert}
+            />,
+        );
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-cd1"), {
+            target: {value: "free_text"},
+        });
+        expect(onConvert).toHaveBeenCalledTimes(1);
+        const converted = onConvert.mock.calls[0][0];
+        expect(converted.type).toBe("free_text");
+        expect(converted.accept).toEqual(["bonjour"]);
+        expect("ext_payload" in converted).toBe(false);
+    });
+
+    it("hides the conversion control when not allowed", () => {
+        render(
+            <ExtensionExerciseEditor
+                exercise={dictation()}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+            />,
+        );
+        expect(screen.queryByTestId("exercise-ext-type-select-cd1")).toBeNull();
+    });
+
+    it("shows no conversion control for a non-convertible extension type", () => {
+        const categorization = {
+            id: "cd2",
+            type: CATEGORIZATION_EXT_TYPE,
+            prompt: "Sort",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {categories: [{name: "A", items: ["x"]}]},
+        } as ContentLessonExercise;
+        render(
+            <ExtensionExerciseEditor
+                exercise={categorization}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+                allowConversion
+                onConvert={vi.fn()}
+            />,
+        );
+        expect(screen.queryByTestId("exercise-ext-type-select-cd2")).toBeNull();
+    });
+});
