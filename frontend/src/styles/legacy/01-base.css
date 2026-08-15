@@ -302,17 +302,23 @@ button {
    box (#271) — both invisible / wrong. The buttonface background is
    theme-independent (it follows `color-scheme: light`), so a raw
    un-backgrounded button looks identical in every theme (a glaring light
-   box on the 6 dark themes). This `base`-layer default makes every
-   un-styled raw button inherit the page foreground and stay transparent.
-   The cascade-layer order (theme, base, components, utilities) keeps it
-   correct: it beats the UA fallback (author layers win over UA) yet loses
-   to any explicit `text-*` / `bg-*` utility (utilities layer) and to the
-   unlayered component classes, so shadcn <Button> variants and
-   intentionally-styled raw buttons are untouched. */
+   box on the 6 dark themes). #2631 closed the third UA leftover the same
+   way: without preflight a raw button also keeps the UA `outset
+   buttonborder` frame, so every text-style toggle (SetDetail
+   "Element details", the LearningRepo file buttons) rendered as a boxed
+   native button. This `base`-layer default makes every un-styled raw
+   button inherit the page foreground, stay transparent, and carry no
+   border. The cascade-layer order (theme, base, components, utilities)
+   keeps it correct: it beats the UA fallback (author layers win over UA)
+   yet loses to any explicit `text-*` / `bg-*` / `border-*` utility
+   (utilities layer) and to the unlayered component classes, so shadcn
+   <Button> variants and intentionally-styled raw buttons are
+   untouched. */
 @layer base {
   button {
     color: inherit;
     background-color: transparent;
+    border: none;
   }
 }
 
