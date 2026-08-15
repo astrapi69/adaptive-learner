@@ -294,25 +294,24 @@ button {
   cursor: pointer;
 }
 
-/* #185 / #271 — raw <button> elements have no author `color` or
-   `background`, so with Tailwind preflight OFF they fall back to the UA
-   stylesheet's system colours: `color: buttontext` (~black) and
-   `background-color: buttonface` (~#efefef). On a dark theme that renders
-   the text/icon black-on-dark (#185) and the button itself a near-white
-   box (#271) — both invisible / wrong. The buttonface background is
-   theme-independent (it follows `color-scheme: light`), so a raw
-   un-backgrounded button looks identical in every theme (a glaring light
-   box on the 6 dark themes). This `base`-layer default makes every
-   un-styled raw button inherit the page foreground and stay transparent.
-   The cascade-layer order (theme, base, components, utilities) keeps it
-   correct: it beats the UA fallback (author layers win over UA) yet loses
-   to any explicit `text-*` / `bg-*` utility (utilities layer) and to the
-   unlayered component classes, so shadcn <Button> variants and
-   intentionally-styled raw buttons are untouched. */
+/* #185 / #271 / #2631 — with Tailwind preflight OFF, raw <button>
+   elements fall back to the UA stylesheet: `color: buttontext` (~black,
+   invisible on dark themes, #185), `background-color: buttonface`
+   (a glaring light box on the 6 dark themes — theme-independent, it
+   follows `color-scheme: light`; #271), and the `outset buttonborder`
+   frame that boxed every text-style toggle (SetDetail "Element
+   details", the LearningRepo file buttons; #2631). This `base`-layer
+   default neutralises all three. The cascade-layer order (theme, base,
+   components, utilities) keeps it correct: it beats the UA fallback
+   (author layers win over UA) yet loses to any explicit `text-*` /
+   `bg-*` / `border-*` utility and to the unlayered component classes,
+   so shadcn <Button> variants and intentionally-styled raw buttons are
+   untouched. */
 @layer base {
   button {
     color: inherit;
     background-color: transparent;
+    border: none;
   }
 }
 
