@@ -78,7 +78,11 @@ export default function LearningRepoPage() {
     } finally {
       setLoading(false);
     }
-  }, [projectId, navigate, t]);
+    // t is only consumed for the error-toast fallback string; keeping it
+    // out of the deps prevents a refetch loop when the i18n provider (or
+    // its test mock) hands out a fresh t per render (lessons/frontend.md).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, navigate]);
 
   useEffect(() => {
     void loadRepo();
@@ -241,6 +245,30 @@ export default function LearningRepoPage() {
           <Markdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
+            components={{
+              a: ({ href, children, ...rest }) => {
+                const target = resolveRepoLink(href, activeFile, state.files);
+                if (target !== null) {
+                  return (
+                    <a
+                      href={href}
+                      {...rest}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setActiveFile(target);
+                      }}
+                    >
+                      {children}
+                    </a>
+                  );
+                }
+                return (
+                  <a href={href} {...rest}>
+                    {children}
+                  </a>
+                );
+              },
+            }}
           >
             {activeContent}
           </Markdown>
@@ -298,14 +326,54 @@ function FileButton({ path, active, onClick, nested }: FileButtonProps) {
     <button
       type="button"
       onClick={() => onClick(path)}
-      className={`learning-repo-file ${active ? "active" : ""} ${nested ? "nested" : ""}`}
+      className={[
+        "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors",
+        active
+          ? "bg-[var(--bg-elevated)] font-medium text-fg-primary"
+          : "text-fg-secondary hover:bg-[var(--bg-elevated)] hover:text-fg-primary",
+        nested ? "ml-4" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       data-testid={`repo-file-${path}`}
       aria-current={active ? "true" : undefined}
     >
-      <FileCode size={14} />
-      <span>{label}</span>
+      <FileCode size={14} className="shrink-0" />
+      <span className="truncate">{label}</span>
     </button>
   );
+}
+
+/**
+ * Resolve a Markdown link against the active file's folder and the
+ * rendered file map. Returns the matching file path (a valid
+ * ``setActiveFile`` target), or ``null`` for anything that is not an
+ * in-repo file link (external URLs, anchors, mailto, unknown paths) —
+ * those keep the default anchor behaviour.
+ *
+ * The generators emit links relative to the CONTAINING file (correct
+ * for the ZIP/git artifact), so ``../ROADMAP.md`` inside
+ * ``01_topic/README.md`` resolves to the root ``ROADMAP.md``.
+ */
+export function resolveRepoLink(
+  href: string | undefined,
+  activeFile: string,
+  files: Record<string, string>,
+): string | null {
+  if (!href || /^([a-z][a-z0-9+.-]*:|\/\/|#)/i.test(href)) return null;
+  const cleanHref = href.split("#", 1)[0];
+  if (cleanHref === "") return null;
+  const baseSegments = activeFile.split("/").slice(0, -1);
+  for (const segment of cleanHref.split("/")) {
+    if (segment === "" || segment === ".") continue;
+    if (segment === "..") {
+      baseSegments.pop();
+    } else {
+      baseSegments.push(segment);
+    }
+  }
+  const resolved = baseSegments.join("/");
+  return resolved in files ? resolved : null;
 }
 
 function triggerDownload(blob: Blob, filename: string): void {
