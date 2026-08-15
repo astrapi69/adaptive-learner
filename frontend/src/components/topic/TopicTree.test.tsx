@@ -239,3 +239,26 @@ describe("TopicNode swipe-to-reveal (Phase 23D)", () => {
         expect(row.getAttribute("data-actions-revealed")).toBe("false");
     });
 });
+
+describe("TopicTree orphan tolerance", () => {
+    it("renders a topic whose parent was deleted, as a root", () => {
+        // A dangling parent_id is reachable state (parent deleted, child
+        // survived a sync). tree-kit's strict default THROWS on it - and
+        // a curriculum that crashes on one bad row is worse than one
+        // showing the row at top level. Pinned via tree-kit 0.3.0's
+        // onInvalidParent: "promoteToRoot".
+        render(
+            <TopicTree
+                topics={[
+                    topic("a", null, "Mathematik", 1),
+                    topic("waise", "geloescht", "Verwaister Zweig", 2),
+                ]}
+                onAddSubtopic={vi.fn()}
+                onRename={vi.fn()}
+                onDelete={vi.fn()}
+            />,
+        );
+        expect(screen.getByText("Mathematik")).toBeInTheDocument();
+        expect(screen.getByText("Verwaister Zweig")).toBeInTheDocument();
+    });
+});
