@@ -622,8 +622,15 @@ function SortableExerciseRow({
                 <span className="exercise-row-type w-fit rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
                     {t(exerciseTypeLabelKey(exercise.type), exercise.type)}
                 </span>
+                {/* Key on the type so a COMMITTED conversion that keeps the
+                    same editor family (ext<->ext, e.g. graded-quiz <->
+                    reading-comprehension) remounts the editor onto the converted
+                    exercise instead of keeping the old internal draft. An
+                    in-draft core conversion never changes exercise.type until
+                    Save, so this leaves it untouched. */}
                 {isExtensionType(exercise.type) ? (
                     <ExtensionExerciseEditor
+                        key={exercise.type}
                         exercise={exercise}
                         onSave={handleSave}
                         onCancel={handleCancel}
@@ -632,6 +639,7 @@ function SortableExerciseRow({
                     />
                 ) : (
                     <ExerciseEditor
+                        key={exercise.type}
                         exercise={exercise}
                         onSave={handleSave}
                         onCancel={handleCancel}
