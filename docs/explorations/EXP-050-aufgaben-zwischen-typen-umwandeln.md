@@ -1,6 +1,35 @@
 # CCW-Prompt: Exploration Aufgaben zwischen Typen umwandeln (EXP-050)
 
-**Kategorie:** Feature (Lektions-Editor) · **Stand:** 2026-08-07 · **Status:** Exploration, kein Code
+**Kategorie:** Feature (Lektions-Editor) · **Stand:** 2026-08-15 · **Status:** Exploration, Stufe 1 umgesetzt
+
+> **Korrektur 2026-08-15 (#2613), gegen den Code geprüft — die ursprüngliche
+> Fassung (2026-08-07) behauptete an drei Stellen etwas anderes als der Code:**
+>
+> 1. **`ext:al-error-correction -> free_text` ist schlüsselerhaltend, NICHT
+>    wandernd.** `element-keys.ts` leitet den Fehlerkorrektur-Schlüssel als
+>    `asErrorCorrectionPayload(...).accept[0]` ab — identisch zur
+>    `free_text`-Regel `accept[0]`. Bei `accept = ec.accept` bleibt der
+>    Schlüssel gleich. Die alte Zeile („`accept = [korrigierter Satz]` …
+>    wandert") war im Mapping UND in der Schlüsselfolge falsch.
+> 2. **`graded-quiz -> reading-comprehension` ist KEINE verlustfreie Umwandlung
+>    (VF), sondern eine mit Ergänzung (E).** `GradedQuizPayload =
+>    {pass_threshold?, questions}` trägt **kein** `passage`;
+>    `ReadingComprehensionPayload` verlangt ein nicht-leeres `passage`. Das Ziel
+>    braucht ein Feld, das die Quelle nicht hat -> Ergänzung (Stufe 3/4), nicht
+>    Stufe 2.
+> 3. **„Kein Netz auf dem Editier-Weg" (Teil 2) ist überholt.**
+>    `CreateLesson.saveLocally` ruft seit #2519/#2566
+>    (`carryOverReviewProgress`, `lib/content/lesson/edit/edit-remap.ts`)
+>    `planElementKeyRemaps` gegen alte + neue Lektion und wendet den Remap über
+>    `storage.elementErrors.remapKeys` an (Dexie + API). `certain` wird
+>    automatisch übernommen, `uncertain` gemeldet. Der „stille Verlust" ist
+>    nicht mehr der Normalfall.
+>
+> Lehre (mehrfach an einem Tag aufgetreten): Eine Exploration ist eine
+> Vorhersage, kein Vertrag. Vor der Umsetzung jede Feldabbildung + Schlüsselfolge
+> gegen `element-keys.ts` + die Payload-Module prüfen, nicht gegen diese Tabelle.
+> Die betroffenen Zeilen unten sind korrigiert und tragen den Vermerk **[korr.
+> 2026-08-15]**.
 
 ## Kurzfazit und Empfehlung
 
@@ -18,8 +47,10 @@ Empfehlung (kleinster erster Wurf): nur die **schlüssel-erhaltenden
 Einzelantwort-Umwandlungen** (im Kern `-> free_text`, wo die eine kanonische
 Antwort 1:1 übernommen wird). Dort gibt es weder Rückfrage noch Erfindung
 **noch** stillen Fortschrittsverlust. Alles Weitere (Erfindung von Distraktoren,
-Passagen, Bildern; Fan-out-Typen) ist ein späterer, eigener Schritt und verlangt
-zwingend eine Ansage vor der Umwandlung.
+Passagen, Bildern; Fan-out-Typen) ist ein späterer, eigener Schritt. **[korr.
+2026-08-15]** Eine Ansage vor der Umwandlung ist dabei nur für die
+`uncertain`-Schlüsselwanderung nötig — der `certain`-Fall wird vom Editier-Remap
+(#2519/#2566) beim Speichern verlustfrei übernommen, siehe Teil 2.
 
 **Geprüfte Menge:** alle 13 Typen gegen die Schema-Wahrheitsquelle
 (`plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema_generated.py`,
@@ -84,11 +115,11 @@ Matrix; alles Übrige fällt nach den Familienregeln oben in **X**.
 |---|---|---|---|
 | `word_tiles -> free_text` | **VF** | `accept = [tiles.join(" ")]` | identisch (beide: der eine String) -> **Fortschritt bleibt** |
 | `multiple_choice -> free_text` | VA | `accept = [richtige.sort().join(", ")]`, `distractors = falsche` | identisch, wenn `accept[0]` = derselbe sortierte String -> bleibt |
-| `cloze(select) -> free_text` | VA | `accept = blanks[0].accept`, Satz/Distraktoren fallen | 1 Schlüssel bleibt, wenn `accept[0]` erhalten |
+| `cloze(select) -> free_text` | VA | `accept = blanks[0].accept`, Satz/Distraktoren fallen | **[korr. 2026-08-15]** EIN-blockig: 1 Schlüssel `blanks[0].accept[0]` bleibt -> Fortschritt bleibt. MEHR-blockig: N Schlüssel -> 1 -> wandert (Editier-Remap meldet `uncertain`, siehe Teil 2) |
 | `ext:al-dictation -> free_text` | VA | `accept` übernehmen, `audio` fällt | identisch |
 | `ext:al-image-description -> free_text` | VA | `accept` übernehmen, `image` fällt | identisch |
-| `ext:al-error-correction -> free_text` | VA | `accept = [korrigierter Satz]` | **wandert** (Fehlerkorrektur-Key != Satz) -> verwaist |
-| `graded-quiz -> reading-comprehension` | **VF** | `points`/`pass_threshold` fallen, `passage`+`questions` bleiben | wandert (RC- vs GQ-Regel) -> verwaist |
+| `ext:al-error-correction -> free_text` | VA | **[korr. 2026-08-15]** `accept = ec.accept` übernehmen, `tokens`/`error_index` fallen | **identisch** — der EC-Schlüssel IST `accept[0]` (`element-keys.ts`), gleich der `free_text`-Regel -> **Fortschritt bleibt**, keine Ansage |
+| `graded-quiz -> reading-comprehension` | **[korr. 2026-08-15] E** | `points`/`pass_threshold` fallen, `questions` bleiben — ABER `passage` **fehlt in GQ** und ist in RC Pflicht -> muss ergänzt werden | Schlüssel bleibt bei Ein-Richtig-MC/Freitext-Fragen (RC- = GQ-Kanon), wandert nur bei Mehr-Richtig-MC; nachrangig, weil ohnehin Ergänzung -> Stufe 3/4 |
 | `free_text -> multiple_choice` | **E** | `accept -> richtige Option`, Falsche aus `distractors` **oder erfunden** | wandert, wenn Satz nicht gleich bleibt |
 | `reading-comprehension -> graded-quiz` | **E** | pro Frage `points` ergänzen (+`pass_threshold`) | wandert |
 | `free_text -> cloze` | **E** | Satz mit `___` + Lücke bestimmen | wandert |
@@ -103,10 +134,15 @@ richtigen Texte; solange dieselben Richtigen richtig bleiben, ändert er sich
 nicht. Das ist der billigste „Fortschritt bleibt"-Fall und braucht **keine neue
 Umwandlung**, nur ggf. eine klarere Beschriftung.
 
-Fazit Teil 1: sinnvoll sind im Wesentlichen **Umwandlungen innerhalb Familie A**
-und **B -> A**, plus das saubere Paar **RC <-> GQ**. Alles Richtung Struktur (C),
-Passage (D) oder Medien ist Neuerfindung und gehört nicht in eine Umwandlung,
-sondern in Neuanlegen.
+Fazit Teil 1 **[korr. 2026-08-15]**: schlüsselerhaltend und ohne Ergänzung sind
+die Umwandlungen **innerhalb Familie A** und **B -> A** — inklusive
+`error-correction -> free_text` (der EC-Schlüssel IST `accept[0]`) und
+ein-blockigem `cloze(select) -> free_text`; diese gehören zur Stufe-1-Klasse.
+Das Paar **RC <-> GQ** ist NICHT sauber verlustfrei: `graded-quiz ->
+reading-comprehension` braucht ein `passage`, das GQ nicht hat (Ergänzung), und
+`reading-comprehension -> graded-quiz` braucht `points` — beide sind
+Ergänzungsfälle (Stufe 3/4), nicht Stufe 2. Alles Richtung Struktur (C), Passage
+(D) oder Medien ist Neuerfindung und gehört in Neuanlegen.
 
 ---
 
@@ -155,27 +191,42 @@ Was **immer** überlebt: die grobe `LessonProgress.step_results` (Schlüssel
 nicht die feingranulare SRS-Historie (`lesson-progress-dexie.ts:171-200`).
 Verschiebt sich beim Editieren zusätzlich der Array-Index `i`, verwaist auch das.
 
-**Kein Netz auf dem Editier-Weg.** Es existiert bereits
-Umschlüsselungs-Technik (`lib/content/update/update-impact.ts`,
-`remap-plan.ts:159-208` `planElementKeyRemaps`,
-`element-errors-dexie.ts:247-394` `remapElementKeysDexie`/`archiveRetiredDexie`,
-#2161/#2130/#2308) - aber sie hängt **nur** am Repo-Content-Update, **nicht** am
-lokalen Editor-Speichern. `CreateLesson.saveLocally`
-(`frontend/src/pages/lesson/CreateLesson.tsx:519-569`) ruft **keinen**
-Impact/Remap. Eine Umwandlung, die heute den Schlüssel verschöbe, verlöre die
-Historie **still**. Genau die Klasse, gegen die dieser Bestand über Wochen
-(EXP-045, #2455/#2309) gearbeitet hat.
+**Das Netz auf dem Editier-Weg existiert bereits [korr. 2026-08-15].** Die
+frühere Fassung schrieb, `CreateLesson.saveLocally` rufe keinen Impact/Remap und
+ein Schlüsselwechsel verliere die Historie *still*. Das stimmt seit #2519/#2566
+nicht mehr: `CreateLesson.saveLocally`
+(`frontend/src/pages/lesson/CreateLesson.tsx:572`) ruft direkt nach dem
+erfolgreichen `saveUserSet` `carryOverReviewProgress(...)`
+(`frontend/src/lib/content/lesson/edit/edit-remap.ts`). Das führt
+`planElementKeyRemaps` gegen die **alte** Lektion
+(`editContext.lessons[editIndex]`) und die **neue** aus und wendet den Plan über
+`storage.elementErrors.remapKeys` an — **storage-modus-agnostisch** (Dexie via
+`remapElementKeysDexie`, API via `api.elementErrors.remap`). Ergebnis:
 
-**Konsequenz für das Feature:**
-1. Vor einer Umwandlung wird **berechnet**, ob die `element_key`-Menge erhalten
-   bleibt (das ist deterministisch aus Quelle+Zielabbildung ableitbar).
-2. Bleibt sie erhalten -> Umwandlung ist eine reine Änderung, Fortschritt geht
-   mit, keine Ansage nötig.
-3. Wandert sie -> **vor** dem Übernehmen sagen, was verloren geht, und
-   idealerweise die vorhandene Remap-Technik (`planElementKeyRemaps`) auf den
-   Editier-Weg heben, damit die Historie mitgenommen statt verworfen wird.
+- **`certain`** (gleiche Position, gleiche Länge): Historie wird automatisch
+  umgeschlüsselt, kein Verlust, keine Ansage nötig.
+- **`uncertain`** (Längenänderung / Umsortierung / mehrdeutig, z. B. `cloze` mit
+  N Lücken -> 1 `free_text`): NICHT übernommen, wird als Toast gemeldet.
 
-Der stille Verlust ist die einzige inakzeptable Variante.
+Die Umschlüsselungs-Technik selbst
+(`remap-plan.ts` `planElementKeyRemaps`, `update-impact.ts`,
+`element-errors-dexie.ts` `remapElementKeysDexie`/`archiveRetiredDexie`,
+#2161/#2130/#2308) hängt also NICHT mehr nur am Repo-Content-Update.
+
+**Konsequenz für das Feature [korr. 2026-08-15]:**
+1. Vor einer Umwandlung wird mit `conversionPreservesElementKeys`
+   (`exercise-convert.ts`, Stufe 1) **berechnet**, ob die `element_key`-Menge
+   erhalten bleibt (deterministisch aus Quelle+Zielabbildung).
+2. Bleibt sie erhalten -> reine Änderung, Fortschritt geht mit, keine Ansage
+   (Stufe-1-Klasse).
+3. Wandert sie -> der Editier-Remap trägt sie beim Speichern automatisch mit,
+   wo er kann (`certain`), und meldet den Rest (`uncertain`). Eine **Vor**-
+   Umwandlungs-Ansage ist deshalb nur noch dort nötig, wo die Prüfung sagt, der
+   Schlüssel wandert UND der Carry nicht greift (die `uncertain`-Klasse, im Kern
+   `cloze` N -> 1). Das ist der einzige Rest von Stufe 2.
+
+Der stille Verlust — die einzige inakzeptable Variante — ist durch #2519/#2566
+bereits ausgeschlossen.
 
 ---
 
@@ -253,21 +304,37 @@ Dieser Wurf braucht: das Typ-Feld im Editor, vier deterministische
 Abbildungsfunktionen, eine Schlüssel-Erhalt-Prüfung (rein rechnerisch) und den
 `extra="forbid"`-sauberen Feldtausch. Kein Modell, keine Ansage, kein Remap.
 
+> **Umgesetzt [2026-08-15]:** Stufe 1 ist ausgeliefert — Kern-Editor
+> (`word_tiles` / `multiple_choice`, #2595/#2596) und Extension-Quellen
+> (`ext:al-dictation` / `ext:al-image-description`, #2606/#2609). Die
+> Schlüssel-Erhalt-Prüfung ist `conversionPreservesElementKeys` in
+> `frontend/src/lib/exercises/authoring/exercise-convert.ts`.
+
 **Danach, in Reihenfolge (je eigener Vorgang, mit Aufwand grob):**
 
-- **Stufe 2 - VA mit Ansage (S):** `cloze(select) -> free_text`,
-  `error-correction -> free_text`, `graded-quiz -> reading-comprehension`. Hier
-  wandert der Schlüssel; nötig ist die **Fortschritts-Ansage** und - besser - das
-  Heben von `planElementKeyRemaps` auf den Editier-Weg (Wiederverwendung, kein
-  neues Schema). Aufwand mittel, weil der Remap-Weg heute nur am Content-Update
-  hängt.
+- **Stufe 2 - Rest-Ansage (S) [korr. 2026-08-15]:** Der ursprüngliche
+  Stufe-2-Zuschnitt ist durch die drei Korrekturen oben weitgehend aufgelöst:
+  - `error-correction -> free_text` ist schlüsselerhaltend -> **Stufe-1-Klasse**
+    (`accept = ec.accept`, kein Ansage-Bedarf).
+  - `cloze(select) -> free_text` ist ein-blockig schlüsselerhaltend; nur der
+    MEHR-blockige Fall (N -> 1) wandert und wird vom Editier-Remap als
+    `uncertain` gemeldet.
+  - `graded-quiz -> reading-comprehension` ist ein **Ergänzungsfall** (fehlendes
+    `passage`) -> Stufe 3/4, nicht hier.
+
+  Der echte Rest von Stufe 2 ist damit klein: die schlüsselerhaltenden
+  `error-correction`/ein-blockig-`cloze` als Stufe-1-Nachzügler ergänzen, plus
+  eine **Vor**-Umwandlungs-Ansage (`useConfirm`) NUR dort, wo
+  `conversionPreservesElementKeys` false ist UND der Editier-Remap nicht trägt
+  (`cloze` N -> 1). Kein neues Remap-Heben nötig — das ist seit #2519/#2566 da.
 - **Stufe 3 - E, Nutzer füllt (M):** `free_text -> multiple_choice`,
-  `reading-comprehension -> graded-quiz`, `free_text -> cloze`. Zielentwurf mit
+  `graded-quiz <-> reading-comprehension` (beide Richtungen: GQ->RC ergänzt
+  `passage`, RC->GQ ergänzt `points`), `free_text -> cloze`. Zielentwurf mit
   leeren Pflichtfeldern, „Speichern" durch den Validator gesperrt, bis der Nutzer
   ergänzt.
 - **Stufe 4 - E, Modellvorschlag (M-L):** derselbe E-Fall mit optionalem
-  KI-Vorschlag für Distraktoren/Lücke, Vorschau im Entwurf, Qualitäts-Gate wie
-  bei der Erzeugung.
+  KI-Vorschlag für Distraktoren/Lücke/Passage, Vorschau im Entwurf, Qualitäts-Gate
+  wie bei der Erzeugung.
 
 **Was ausdrücklich NICHT gebaut werden sollte (mit Begründung):**
 
@@ -294,9 +361,10 @@ Abbildungsfunktionen, eine Schlüssel-Erhalt-Prüfung (rein rechnerisch) und den
 **Keiner für dieses Feature.** Umwandeln nutzt nur Felder, die auf dem flachen
 `Exercise`-Objekt bereits existieren; kein neues Feld, keine Engine-Änderung. Die
 stabile Kennung (`stable_id`) ist seit v2.11.0 vorhanden und trägt den
-Identitätsteil. Sollte Stufe 2 die SRS-Umschlüsselung auf den Editier-Weg heben,
-geschieht auch das mit **vorhandener** Technik (`planElementKeyRemaps`) -
-ebenfalls ohne Schema-Eingriff. Falls später ein erstklassiges
+Identitätsteil. Die SRS-Umschlüsselung auf dem Editier-Weg ist **[korr.
+2026-08-15] bereits gehoben** (`carryOverReviewProgress` /
+`planElementKeyRemaps`, #2519/#2566) - ebenfalls ohne Schema-Eingriff. Falls
+später ein erstklassiges
 „Umwandlungs-Protokoll" pro Aufgabe gewünscht wird (für Undo über Sitzungen),
 wäre das eine Schema-Frage und gehörte zu `learn-content-engine` angemeldet,
 nicht app-seitig erfunden.
@@ -305,17 +373,22 @@ nicht app-seitig erfunden.
 
 ## Endbericht (Zusammenfassung)
 
-- **Matrix / geprüfte Menge:** alle 13 Typen, vier Antwort-Familien (A Text,
-  B Auswahl, C Struktur, D Passage). Von 169 geordneten Paaren tragen nur die
-  Umwandlungen **innerhalb A**, **B -> A** und **RC <-> GQ**; der Rest ist
-  Neuerfindung (Medien-Assets, Paare, Passagen) und gehört zu Neuanlegen. Ein
-  begründetes Weniger ist hier die Antwort.
-- **Fortschritt (Fundstelle):** SRS/Fehler hängen an
+- **Matrix / geprüfte Menge [korr. 2026-08-15]:** alle 13 Typen, vier
+  Antwort-Familien (A Text, B Auswahl, C Struktur, D Passage). Schlüsselerhaltend
+  ohne Ergänzung tragen die Umwandlungen **innerhalb A** und **B -> A** (inkl.
+  `error-correction -> free_text` und ein-blockig `cloze(select) -> free_text`).
+  `RC <-> GQ` ist KEIN sauberes Paar: beide Richtungen brauchen ein Feld, das die
+  Quelle nicht hat (GQ->RC das `passage`, RC->GQ die `points`) -> Ergänzung. Der
+  Rest ist Neuerfindung (Medien-Assets, Paare, Passagen). Ein begründetes Weniger
+  ist die Antwort.
+- **Fortschritt (Fundstelle) [korr. 2026-08-15]:** SRS/Fehler hängen an
   `(exercise_id, element_key, ...)`; `exercise_id = stable_id ?? id` überlebt
-  (`exercise-identity.ts:35-39`), aber `element_key` ist der typ-abhängige
-  kanonische Antwort-Text (`element-keys.ts:105-182`). Bleibt die Schlüsselmenge
-  gleich, geht der Fortschritt mit; wandert sie, verwaist er - heute **still**,
-  weil der Editier-Weg (`CreateLesson.tsx:519-569`) kein Impact/Remap ruft.
+  (`exercise-identity.ts`), `element_key` ist der typ-abhängige kanonische
+  Antwort-Text (`element-keys.ts`). Bleibt die Schlüsselmenge gleich, geht der
+  Fortschritt mit. Wandert sie, wird sie beim Speichern umgeschlüsselt -
+  `CreateLesson.saveLocally` ruft `carryOverReviewProgress` (#2519/#2566), das
+  `certain` automatisch überträgt und `uncertain` meldet. Der stille Verlust ist
+  ausgeschlossen.
 - **Ergänzung / Vorschau:** Nutzer-Eingabe oder Modellvorschlag, nie stille
   Erfindung; der bestehende Inline-Editor (Entwurf + Speichern/Abbrechen +
   Validator-Gate) ist bereits die Vorschau.
@@ -323,16 +396,22 @@ nicht app-seitig erfunden.
   Ziele ausgegraut + begründet (`aria-describedby`, wie #2510); kein eigener
   Undo-Stack (Abbrechen + Lektions-Historie genügt); ein bereits gespeicherter
   Roh-Antwortzustand wird bei Umwandlung verworfen.
-- **Zuschnitt / kleinster Wurf:** zuerst die schlüssel-erhaltenden
-  `-> free_text`-Umwandlungen (kein Modell, keine Ansage, kein Verlust); danach
-  VA-mit-Ansage (Remap heben), dann E-mit-Nutzereingabe, dann E-mit-KI-Vorschlag.
-  Nicht bauen: Medien-/Struktur-Ziele aus Text, Umwandlungs-Undo-Sonderweg,
-  single/multiple als zweite Bedienung, stiller Verlust.
+- **Zuschnitt / kleinster Wurf [korr. 2026-08-15]:** Stufe 1 (alle
+  schlüssel-erhaltenden `-> free_text`-Umwandlungen) ist ausgeliefert
+  (#2596/#2609). Rest von Stufe 2: die schlüsselerhaltenden Nachzügler
+  (`error-correction`, ein-blockig `cloze`) plus eine Vor-Ansage NUR für die
+  `uncertain`-Fälle (`cloze` N -> 1) - kein Remap-Heben nötig, das ist da. Dann
+  E-mit-Nutzereingabe (inkl. `RC <-> GQ`), dann E-mit-KI-Vorschlag. Nicht bauen:
+  Medien-/Struktur-Ziele aus Text, Umwandlungs-Undo-Sonderweg, single/multiple
+  als zweite Bedienung, stiller Verlust.
 
 **Offene Fragen / Annahmen:**
 - Angenommen, dass die Schlüssel-Erhalt-Prüfung rein aus Quelle+Zielabbildung
-  rechenbar ist (belegt durch die deterministischen Regeln in `element-keys.ts`);
-  zu bestätigen bei der Umsetzung mit echten Zeilen.
-- Ob Stufe 2 die Remap-Technik auf den Editier-Weg hebt oder nur eine Ansage
-  zeigt, ist eine Produktentscheidung (Aufwand vs. Datenrettung) und in diesem
+  rechenbar ist (belegt durch die deterministischen Regeln in `element-keys.ts`
+  und die Stufe-1-Umsetzung `conversionPreservesElementKeys`). Bestätigt.
+- ~~Ob Stufe 2 die Remap-Technik auf den Editier-Weg hebt oder nur eine Ansage
+  zeigt~~ **[korr. 2026-08-15: erledigt]** — der Editier-Remap ist seit
+  #2519/#2566 gehoben; die Frage ist keine offene Produktentscheidung mehr. Die
+  historische Formulierung darunter bleibt als Beleg stehen, ist aber
+  überholt.
   Dokument als Empfehlung, nicht als Festlegung, formuliert.
