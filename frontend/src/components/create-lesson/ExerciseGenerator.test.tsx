@@ -525,3 +525,57 @@ describe("ExerciseGenerator — convert dictation to free_text (EXP-050 #2511)",
         expect(screen.queryByTestId("exercise-editor-d1")).toBeNull();
     });
 });
+
+describe("ExerciseGenerator — convert graded-quiz to reading-comprehension (EXP-050 3b)", () => {
+    const gradedQuiz = (id: string): ContentLessonExercise =>
+        ({
+            id,
+            type: "ext:al-graded-quiz",
+            prompt: "Quiz",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                pass_threshold: 60,
+                questions: [
+                    {prompt: "Q1", type: "free_text", accept: ["x"], points: 1},
+                ],
+            },
+        }) as ContentLessonExercise;
+
+    it("swaps to the RC editor (same ext family) with an empty passage blocking Save", () => {
+        render(<ListHarness initial={[gradedQuiz("gq9")]} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-gq9"));
+        expect(screen.getByTestId("exercise-ext-editor-gq9")).toBeInTheDocument();
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-gq9"), {
+            target: {value: "ext:al-reading-comprehension"},
+        });
+        // Still the extension editor, now showing the RC passage field (remounted).
+        expect(screen.getByTestId("exercise-ext-rc-passage-gq9")).toBeInTheDocument();
+        // Empty passage -> Save disabled.
+        expect(
+            screen.getByTestId("exercise-ext-save-gq9") as HTMLButtonElement,
+        ).toBeDisabled();
+        // Fill the passage -> Save enabled.
+        fireEvent.change(screen.getByTestId("exercise-ext-rc-passage-gq9"), {
+            target: {value: "A passage the learner reads."},
+        });
+        expect(
+            screen.getByTestId("exercise-ext-save-gq9") as HTMLButtonElement,
+        ).not.toBeDisabled();
+    });
+
+    it("Cancel after converting restores the original graded-quiz", () => {
+        render(<ListHarness initial={[gradedQuiz("gq9")]} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-gq9"));
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-gq9"), {
+            target: {value: "ext:al-reading-comprehension"},
+        });
+        fireEvent.click(screen.getByTestId("exercise-ext-cancel-gq9"));
+        // Re-open: back to a graded-quiz (its type select offers RC again).
+        fireEvent.click(screen.getByTestId("exercise-edit-gq9"));
+        const select = screen.getByTestId(
+            "exercise-ext-type-select-gq9",
+        ) as HTMLSelectElement;
+        expect(select.value).toBe("ext:al-graded-quiz");
+    });
+});
