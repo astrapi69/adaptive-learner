@@ -17,7 +17,7 @@ import {
     coreConversionTargets,
     extensionConversionTargets,
 } from "./exercise-convert";
-import {normalizeExerciseEdit} from "./exercise-edit";
+import {normalizeExerciseEdit, validateExerciseEdit} from "./exercise-edit";
 import {elementKeysOf} from "../../srs/element-keys";
 import type {ContentLessonExercise} from "../../../storage/types";
 
@@ -109,6 +109,13 @@ describe("coreConversionTargets", () => {
         expect(coreConversionTargets(clozeMulti())).toEqual(["free_text"]);
     });
 
+    it("offers the completion targets for a free_text source (Stage 3)", () => {
+        expect(coreConversionTargets(base({type: "free_text"}))).toEqual([
+            "multiple_choice",
+            "cloze",
+        ]);
+    });
+
     it("does not offer conversion for a multiselect cloze", () => {
         expect(
             coreConversionTargets(
@@ -118,7 +125,6 @@ describe("coreConversionTargets", () => {
     });
 
     it("offers nothing for a non-convertible source", () => {
-        expect(coreConversionTargets(base({type: "free_text"}))).toEqual([]);
         expect(
             coreConversionTargets(base({type: "matching", pairs: []})),
         ).toEqual([]);
@@ -303,6 +309,76 @@ describe("convertExercise — cloze -> free_text", () => {
         // Source has 2 element keys, free_text has 1 -> not preserved.
         expect(elementKeysOf(normalizeExerciseEdit(src))).toHaveLength(2);
         expect(conversionPreservesElementKeys(src, out)).toBe(false);
+    });
+});
+
+describe("convertExercise — free_text -> multiple_choice (Stage 3 completion)", () => {
+    const freeText = (over: Partial<ContentLessonExercise> = {}) =>
+        base({type: "free_text", prompt: "Translate", accept: ["danke"], ...over});
+
+    it("makes the accepted answer the single correct option + one empty slot", () => {
+        const out = convertExercise(freeText(), "multiple_choice");
+        expect(out.type).toBe("multiple_choice");
+        expect(out.multiple).toBe(false);
+        expect(out.options).toEqual([
+            {text: "danke", correct: true},
+            {text: "", correct: false},
+        ]);
+        expect("accept" in out).toBe(false);
+    });
+
+    it("seeds wrong options from the free_text distractors when present", () => {
+        const out = convertExercise(
+            freeText({distractors: ["bitte", "hallo"]}),
+            "multiple_choice",
+        );
+        expect(out.options).toEqual([
+            {text: "danke", correct: true},
+            {text: "bitte", correct: false},
+            {text: "hallo", correct: false},
+        ]);
+        expect(out.distractors).toEqual([]);
+    });
+
+    it("leaves an incomplete draft (Save-blocked) when there are no distractors", () => {
+        const out = convertExercise(freeText(), "multiple_choice");
+        // The empty second option keeps the multiple-choice validator failing.
+        expect(validateExerciseEdit(out).valid).toBe(false);
+    });
+
+    it("is valid once a distractor seeds a second option", () => {
+        const out = convertExercise(
+            freeText({distractors: ["bitte"]}),
+            "multiple_choice",
+        );
+        expect(validateExerciseEdit(out).valid).toBe(true);
+    });
+
+    it("preserves the element key (the one correct option = accept[0])", () => {
+        const src = freeText();
+        expect(
+            conversionPreservesElementKeys(src, convertExercise(src, "multiple_choice")),
+        ).toBe(true);
+    });
+});
+
+describe("convertExercise — free_text -> cloze (Stage 3 completion)", () => {
+    const freeText = () => base({type: "free_text", prompt: "Fill in", accept: ["suis"]});
+
+    it("builds a single ___ blank carrying the accepted answer", () => {
+        const out = convertExercise(freeText(), "cloze");
+        expect(out.type).toBe("cloze");
+        expect(out.sentence).toBe("___");
+        expect(out.cloze_mode).toBe("type");
+        expect(out.blanks).toEqual([{accept: ["suis"]}]);
+        expect("accept" in out).toBe(false);
+    });
+
+    it("is a valid starter cloze and preserves the element key", () => {
+        const src = freeText();
+        const out = convertExercise(src, "cloze");
+        expect(validateExerciseEdit(out).valid).toBe(true);
+        expect(conversionPreservesElementKeys(src, out)).toBe(true);
     });
 });
 
