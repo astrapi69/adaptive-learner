@@ -525,6 +525,15 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] ext:al-categorization: assign categories, readable resolution
 - [ ] ext:al-error-correction: find + correct errors
 - [ ] ext:al-reading-comprehension: text + questions
+- [ ] ext:al-reading-comprehension resolution (#2633): after "Check answers"
+      the correct multiple-choice option is highlighted GREEN — with a check
+      icon and a text badge, never by color alone. If you picked it yourself it
+      reads "Correct"; if you picked wrong, the right option reads "Correct
+      answer" (green, dashed border) and your own pick reads "Wrong" (red).
+      For free-text questions the solution line renders in the green tint with
+      a check instead of as grey body text. Same color language as the pairs
+      (matching). Check across all 12 themes: the text stays readable on the
+      tint.
 - [ ] ext:al-graded-quiz: grading + result display
 - [ ] ext:al-dictation (#1881): "Listen first" plays the clip, type the
       transcription; correct / near-miss ("Almost!") / wrong shows the
