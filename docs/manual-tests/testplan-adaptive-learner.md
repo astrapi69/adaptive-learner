@@ -1030,6 +1030,27 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       - Randfall: hat eine Multiple-Choice-Frage **mehrere richtige** Optionen,
         erscheint der rote Bestätigungsdialog (Schlüssel wandert); sonst keine
         Rückfrage.
+- [ ] **Leere Felder nach Umwandlung per KI vorschlagen (EXP-050 Stufe 4, #2511):**
+      Nach einer Umwandlung (Stufe 3) das jeweils leere Zielfeld füllen lassen.
+      Der Knopf erscheint **nur solange das Feld leer** ist (bei Multiple Choice:
+      solange weniger als drei falsche Optionen vorhanden sind).
+      - **Multiple Choice -> "Falsche Antworten per KI vorschlagen":** die
+        richtige Antwort bleibt unberührt; die KI ergänzt die fehlenden falschen
+        Optionen. Bereits eingetippte Optionen und die richtige Antwort werden
+        **nie überschrieben**. Vorschläge, die der Antwort gleichen, zu kurz oder
+        Dubletten sind, werden verworfen ("lieber einer weniger"); bleibt nichts
+        übrig, erscheint der Hinweis, eine falsche Antwort von Hand zu ergänzen.
+      - **Lückentext -> "Satz per KI vorschlagen":** nur wenn der Satz noch der
+        blosse Platzhalter `___` ist -> die KI liefert einen Beispielsatz, in dem
+        die Antwort als `___` erscheint. Danach ist der Knopf weg.
+      - **Leseverständnis -> "Lesetext per KI vorschlagen":** nur bei leerer
+        Passage und mindestens einer Frage -> die KI schreibt einen Lesetext zu
+        den Fragen.
+      - **Ohne eigenen KI-Schlüssel (BYOK):** der Knopf ist ausgegraut, aber
+        antippbar; Tippen/Fokus zeigt einen Hinweis mit Link zu **AI-Einstellungen**
+        und löst **keine** KI-Anfrage aus.
+      - Unter jedem Knopf steht der Hinweis, dass es KI-Entwürfe sind, die vor dem
+        Speichern zu prüfen und anzupassen sind. (Sichtprüfung: Desktop + Mobil.)
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

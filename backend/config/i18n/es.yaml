@@ -2977,6 +2977,18 @@ create_lesson:
       title: "Práctica de conversación"
       desc: "5 espacios de tarjeta, fichas de palabras + cloze."
 
+  suggest:
+    distractors: "Sugerir respuestas incorrectas con IA"
+    distractors_empty: "No hay sugerencias utilizables: añade una respuesta incorrecta a mano."
+    cloze_sentence: "Sugerir una frase con IA"
+    cloze_sentence_empty: "No hay una frase utilizable: escribe una a mano."
+    passage: "Sugerir un texto con IA"
+    passage_empty: "No hay un texto utilizable: escribe uno a mano."
+    busy: "Sugiriendo…"
+    disclaimer: "Borradores de IA: revísalos y edítalos antes de guardar."
+    no_key: "Esto requiere tu propia clave de IA (BYOK). Añade una en los ajustes de IA."
+    open_settings: "Ajustes de IA"
+    error: "La solicitud de IA falló. Inténtalo de nuevo."
 learning_path:
   continue: "Continuar"
   start: "Empezar"

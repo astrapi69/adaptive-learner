@@ -3246,6 +3246,19 @@
         "title": "Konuşma alıştırması",
         "desc": "5 kart yuvası, kelime parçaları + boşluk doldurma."
       }
+    },
+    "suggest": {
+      "distractors": "Yapay zekâ ile yanlış yanıtlar öner",
+      "distractors_empty": "Kullanılabilir öneri yok - elle bir yanlış yanıt ekleyin.",
+      "cloze_sentence": "Yapay zekâ ile bir cümle öner",
+      "cloze_sentence_empty": "Kullanılabilir cümle yok - elle bir tane yazın.",
+      "passage": "Yapay zekâ ile bir metin öner",
+      "passage_empty": "Kullanılabilir metin yok - elle bir tane yazın.",
+      "busy": "Öneriliyor…",
+      "disclaimer": "Yapay zekâ taslakları - kaydetmeden önce gözden geçirip düzenleyin.",
+      "no_key": "Bunun için kendi yapay zekâ anahtarınız (BYOK) gerekir. Yapay zekâ ayarlarından bir tane ekleyin.",
+      "open_settings": "Yapay zekâ ayarları",
+      "error": "Yapay zekâ isteği başarısız oldu. Lütfen tekrar deneyin."
     }
   },
   "learning_path": {

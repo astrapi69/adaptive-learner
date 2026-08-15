@@ -2975,6 +2975,18 @@ create_lesson:
       title: "会話練習"
       desc: "5枚のカード枠、単語タイル + 穴埋め。"
 
+  suggest:
+    distractors: "AIで誤答を提案"
+    distractors_empty: "使える提案がありません - 手動で誤答を追加してください。"
+    cloze_sentence: "AIで文を提案"
+    cloze_sentence_empty: "使える文がありません - 手動で入力してください。"
+    passage: "AIで文章を提案"
+    passage_empty: "使える文章がありません - 手動で入力してください。"
+    busy: "提案中…"
+    disclaimer: "AIの下書きです - 保存する前に確認して編集してください。"
+    no_key: "これには自分のAIキー（BYOK）が必要です。AI設定で追加してください。"
+    open_settings: "AI設定"
+    error: "AIリクエストに失敗しました。もう一度お試しください。"
 learning_path:
   continue: "続ける"
   start: "開始"

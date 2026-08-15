@@ -2977,6 +2977,18 @@ create_lesson:
       title: "Pratique de conversation"
       desc: "5 emplacements de carte, tuiles de mots + texte à trous."
 
+  suggest:
+    distractors: "Proposer de mauvaises réponses avec l'IA"
+    distractors_empty: "Aucune suggestion utilisable - ajoutez une mauvaise réponse à la main."
+    cloze_sentence: "Proposer une phrase avec l'IA"
+    cloze_sentence_empty: "Aucune phrase utilisable - écrivez-en une à la main."
+    passage: "Proposer un texte avec l'IA"
+    passage_empty: "Aucun texte utilisable - écrivez-en un à la main."
+    busy: "Suggestion en cours…"
+    disclaimer: "Brouillons de l'IA - à vérifier et à modifier avant d'enregistrer."
+    no_key: "Cela nécessite votre propre clé IA (BYOK). Ajoutez-en une dans les paramètres IA."
+    open_settings: "Paramètres IA"
+    error: "La requête IA a échoué. Veuillez réessayer."
 learning_path:
   continue: "Continuer"
   start: "Commencer"
