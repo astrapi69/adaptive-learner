@@ -12,7 +12,7 @@
         "@astrapi69/feature-strategy-react": "^0.1.2",
         "@astrapi69/pwa-update": "0.2.0",
         "@astrapi69/pwa-update-react": "0.2.0",
-        "@astrapi69/tree-kit": "^0.1.0",
+        "@astrapi69/tree-kit": "^0.3.0",
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/sortable": "^10.0.0",
         "@dnd-kit/utilities": "^3.2.2",
@@ -149,7 +149,7 @@
 
     "@astrapi69/pwa-update-react": ["@astrapi69/pwa-update-react@0.2.0", "", { "dependencies": { "@astrapi69/pwa-update": "^0.2.0" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-Gkmvy/yDwoE/VkNxNQ8NHaDOgYdWd5TMhIHOMBimHNQ+I1+wSfogULbm00ruTDxEDh8oAPUvoUa8Bw+jsMS6Jw=="],
 
-    "@astrapi69/tree-kit": ["@astrapi69/tree-kit@0.1.0", "", {}, "sha512-ePSH3t2jTwGs24IRH6/c7lNx7ekizdMbN8GFqc/p8yCG+WPM+3JNc3IsmpTWA2Q+0vvmAmNsYg+aWazuHukJfg=="],
+    "@astrapi69/tree-kit": ["@astrapi69/tree-kit@0.3.0", "", {}, "sha512-TyaNpjmDcj4OHIKd1PBHN/oL5/9buUTNj+o/5+NnRSoxNJGus1S8eVv27f/5pwAla5OTO/aDiF+z8rt8PiHjrw=="],
 
     "@astrapi69/vite-plugin-build-version": ["@astrapi69/vite-plugin-build-version@0.1.0", "", { "peerDependencies": { "vite": "^5 || ^6 || ^7 || ^8" } }, "sha512-jeNsjBMe28JAbVEfo30fFOTPa0ybhdQN/+qsUP7SvegfgmhL3BPJZBxF+NcyDL6aCdu1DZJizkgIuxbxHz/lyw=="],
 
