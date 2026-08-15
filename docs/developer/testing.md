@@ -202,9 +202,13 @@ repro. For a secure-context repro:
    ```
    The banner switches to `https://` and confirms the secure context.
 
-**On-device console:** not yet built (#2575 tracks it — an
-`?debug=1`-gated eruda/vConsole overlay, deferred pending a
-new-dependency decision per `coding-standards.md` §Dependencies). Until
-then, read errors from the visible page state (error toasts, blank
-regions) and from `page.on("pageerror")`-style reasoning about what the
-build's own error boundaries would show.
+**On-device console:** an `?debug=1`-gated [eruda](https://github.com/liriliri/eruda)
+overlay (#2575/#2584). It is **compiled in only for the LAN-debug build** —
+`make dev-lan` and `make dev-lan-dexie` set `VITE_DEBUG_CONSOLE=1` — and is
+**absent from the shipped image and the public GH-Pages build** (#2610: a
+debug inspector is an attack surface and must not ship in production, so the
+`import("eruda")` is dead-code-eliminated when the flag is off). To read
+errors from an iPhone: run `make dev-lan-dexie` (which carries the console),
+open the printed LAN URL on the phone, and append `?debug=1` to mount the
+console. Debugging the *deployed* public build this way is intentionally not
+possible; build locally with the flag and serve over LAN instead.

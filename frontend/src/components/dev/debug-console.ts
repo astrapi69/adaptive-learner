@@ -4,18 +4,35 @@
  * debugging"). A Linux dev machine has no Safari Web Inspector, so an
  * on-page console is the only way to read errors from an iPhone.
  *
- * Strictly opt-in via ``?debug=1`` (same self-gating pattern as the
- * ``?e2e-hooks=1`` concurrency probe in main.tsx): a normal visit never
- * carries the flag, so eruda's chunk is never fetched. eruda ships as a
- * real ``dependencies`` entry (not dev-only like @axe-core/react) because
- * it must be reachable on the deployed GH-Pages build, not just local dev.
+ * #2610 — the console is DEV-ONLY: a debug inspector must never ship in
+ * the production image or the public GH-Pages build (attack surface). It
+ * is compiled in ONLY for the dev server (``import.meta.env.DEV``) and for
+ * the LAN-debug build, which sets ``VITE_DEBUG_CONSOLE=1`` (``make dev-lan``
+ * / ``make dev-lan-dexie``). In the shipped build both flags are statically
+ * false, so Rollup dead-code-eliminates the ``import("eruda")`` below and no
+ * ``eruda-*.js`` chunk is emitted at all — the ``?debug=1`` opt-in then has
+ * nothing to load.
+ */
+export const debugConsoleAvailable: boolean =
+    import.meta.env.DEV || import.meta.env.VITE_DEBUG_CONSOLE === "1";
+
+/**
+ * True only when the debug console is compiled in AND the caller opted in
+ * via ``?debug=1`` (same self-gating pattern as the ``?e2e-hooks=1``
+ * concurrency probe in main.tsx).
  */
 export function shouldLoadDebugConsole(search: string): boolean {
-    return new URLSearchParams(search).has("debug");
+    return debugConsoleAvailable && new URLSearchParams(search).has("debug");
 }
 
-/** Loads and mounts eruda. Call only behind {@link shouldLoadDebugConsole}. */
+/**
+ * Loads and mounts eruda. A no-op in builds where the console is not
+ * compiled in; call behind {@link shouldLoadDebugConsole}. The early return
+ * on the statically-false flag is what lets Rollup drop the eruda chunk from
+ * the shipped bundle.
+ */
 export async function loadDebugConsole(): Promise<void> {
+    if (!debugConsoleAvailable) return;
     const {default: eruda} = await import("eruda");
     eruda.init();
 }

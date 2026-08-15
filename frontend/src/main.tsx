@@ -72,9 +72,11 @@ if (new URLSearchParams(window.location.search).has("e2e-hooks")) {
 }
 
 /**
- * #2575 — on-device console for LAN device debugging (iOS Safari, no
- * Mac). ``?debug=1`` only; a normal visit never fetches eruda's chunk.
- * See ``components/dev/debug-console.ts``.
+ * #2575 — on-device console for LAN device debugging (iOS Safari, no Mac).
+ * #2610 — DEV-ONLY: eruda is compiled in only for the dev server and the
+ * LAN-debug build (``VITE_DEBUG_CONSOLE=1``), never the shipped image /
+ * public GH-Pages, so a production visitor's ``?debug=1`` has no chunk to
+ * load. See ``components/dev/debug-console.ts``.
  */
 if (shouldLoadDebugConsole(window.location.search)) {
     void loadDebugConsole();
