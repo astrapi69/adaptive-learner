@@ -967,6 +967,18 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       (Freitext, Matching, Cloze, Bildauswahl) erscheint **kein** Auswahlfeld.
       Erwartung: der Lernfortschritt der umgewandelten Übung bleibt erhalten
       (gleicher Antwort-Schlüssel), Abbrechen verwirft die Umwandlung.
+- [ ] **Extension-Aufgabe umwandeln -> Freitext (EXP-050 Stufe 1, #2511):**
+      Eine **bestehende Lektion mit einer Diktat- oder Bildbeschreibungs-Übung
+      bearbeiten** (nicht der reine "Extension hinzufügen"-Flow). Im
+      Inline-Editor der Diktat-/Bildbeschreibungs-Zeile steht dasselbe
+      Auswahlfeld **"Aufgabentyp"** mit der Alternative **"Freitext"**. Auf
+      "Freitext" umstellen: der Editor **wechselt zum Freitext-Editor**, die
+      akzeptierten Transkriptionen/Antworten sind als akzeptierte Antworten
+      **vorbefüllt** (das Audio/Bild entfällt). Speichern -> die Lektion enthält
+      jetzt eine Freitext-Übung. **Abbrechen** nach dem Umschalten stellt die
+      **ursprüngliche Diktat-/Bildbeschreibungs-Übung wieder her**. Wichtig: Im
+      reinen "Extension-Aufgaben hinzufügen"-Flow (`ExtensionSteps`) erscheint
+      das Auswahlfeld **nicht** (dort ist ein Kern-Typ nicht gültig).
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

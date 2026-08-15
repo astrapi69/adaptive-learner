@@ -904,6 +904,17 @@ instead of overwriting or resetting it.
       picture choice) **no** select appears. Expectation: the converted
       exercise keeps the learner's progress (same answer key), and Cancel
       discards the conversion.
+- [ ] **Convert an extension exercise -> free text (EXP-050 Stage 1, #2511):**
+      **Edit an existing lesson that contains a Dictation or Image-description
+      exercise** (not the "add extension exercises" flow). In that row's inline
+      editor the same **"Exercise type"** select offers **"Free text"**.
+      Switching to "Free text": the editor **swaps to the free-text editor**
+      with the accepted transcriptions/answers **pre-filled** as accepted
+      answers (the audio/image is dropped). Save -> the lesson now holds a
+      free-text exercise. **Cancel** after switching **restores the original
+      dictation / image-description exercise**. Note: the "add extension
+      exercises" flow (`ExtensionSteps`) does **not** show the select (a core
+      type is not valid there).
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

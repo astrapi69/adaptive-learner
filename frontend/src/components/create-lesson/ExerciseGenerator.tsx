@@ -578,11 +578,37 @@ function SortableExerciseRow({
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} =
         useSortable({id: exercise.id});
     const [editing, setEditing] = useState(autoEdit);
+    // EXP-050 (#2511): a type conversion from an extension source
+    // (dictation / image-description) to a core ``free_text`` swaps the row's
+    // editor family, so it must commit to the parent (it cannot live in the
+    // ext editor's draft). This single-slot snapshot of the pre-conversion
+    // exercise lets Cancel restore it — the editor-session "original", not a
+    // conversion undo stack (EXP-050 explicitly rules that out).
+    const [preConvert, setPreConvert] = useState<ContentLessonExercise | null>(
+        null,
+    );
     const style: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.6 : 1,
     };
+
+    function handleConvert(converted: ContentLessonExercise) {
+        setPreConvert((prev) => prev ?? exercise);
+        onUpdate(exercise.id, converted);
+    }
+    function handleSave(updated: ContentLessonExercise) {
+        onUpdate(exercise.id, updated);
+        setPreConvert(null);
+        setEditing(false);
+    }
+    function handleCancel() {
+        if (preConvert) {
+            onUpdate(exercise.id, preConvert);
+            setPreConvert(null);
+        }
+        setEditing(false);
+    }
 
     if (editing) {
         return (
@@ -599,20 +625,16 @@ function SortableExerciseRow({
                 {isExtensionType(exercise.type) ? (
                     <ExtensionExerciseEditor
                         exercise={exercise}
-                        onSave={(updated) => {
-                            onUpdate(exercise.id, updated);
-                            setEditing(false);
-                        }}
-                        onCancel={() => setEditing(false)}
+                        onSave={handleSave}
+                        onCancel={handleCancel}
+                        allowConversion
+                        onConvert={handleConvert}
                     />
                 ) : (
                     <ExerciseEditor
                         exercise={exercise}
-                        onSave={(updated) => {
-                            onUpdate(exercise.id, updated);
-                            setEditing(false);
-                        }}
-                        onCancel={() => setEditing(false)}
+                        onSave={handleSave}
+                        onCancel={handleCancel}
                     />
                 )}
             </li>
