@@ -24,6 +24,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
+from app.openapi_metadata import iter_api_routes
 from app.main import app, manager
 from app.models import AnkiCardSuggestion, ImportedConversation
 
@@ -58,7 +59,7 @@ def test_plugin_is_active(client: TestClient) -> None:
 
 
 def test_router_paths_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/plugins/anki/cards/{user_id}" in paths
     assert "/api/plugins/anki/cards" in paths
     assert "/api/plugins/anki/cards/{card_id}" in paths

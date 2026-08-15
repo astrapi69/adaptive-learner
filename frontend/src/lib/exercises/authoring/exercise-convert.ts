@@ -31,13 +31,20 @@
  *   {@link conversionPreservesElementKeys} (Stage 2). The edit-save remap
  *   (``carryOverReviewProgress``, #2519/#2566) still reports the moved rows.
  *
+ * Stage 3 also completes BETWEEN the passage-quiz extension types:
+ * ``ext:al-graded-quiz <-> ext:al-reading-comprehension`` — the questions carry
+ * over; GQ->RC starts an empty ``passage`` (RC requires one, the validator
+ * blocks Save until it is written) and strips the per-question ``points``, RC->GQ
+ * drops the passage and gives each question a default weight (valid at once).
+ *
  * The two conversion FAMILIES map onto the two inline editors:
  * {@link coreConversionTargets} feeds the core ``ExerciseEditor`` (word_tiles /
- * multiple_choice / cloze), {@link extensionConversionTargets} feeds
- * ``ExtensionExerciseEditor`` (dictation / image-description / error-correction).
- * Every target is ``free_text``, a core type — which is why the ext conversion
- * is offered only where a core exercise is valid (the ``ExerciseGenerator`` row,
- * saved via the core lesson path), never in the ext-only ``ExtensionSteps`` flow.
+ * multiple_choice / cloze / free_text), {@link extensionConversionTargets} feeds
+ * ``ExtensionExerciseEditor``. A conversion that CROSSES into a core type
+ * (``ext:* -> free_text``) is offered only where a core exercise is valid (the
+ * ``ExerciseGenerator`` row, saved via the core lesson path), never in the
+ * ext-only ``ExtensionSteps`` flow; the ext<->ext RC/GQ pair rides the same
+ * gate for uniformity.
  *
  * Framework-free so the mapping + the key-preservation check are
  * unit-testable and reusable by the later stages.
@@ -63,6 +70,16 @@ import {
     ERROR_CORRECTION_EXT_TYPE,
     asErrorCorrectionPayload,
 } from "../payload/error-correction";
+import {
+    READING_COMPREHENSION_EXT_TYPE,
+    asReadingComprehensionPayload,
+    type RcQuestion,
+} from "../payload/reading-comprehension";
+import {
+    GRADED_QUIZ_EXT_TYPE,
+    asGradedQuizPayload,
+    type GqQuestion,
+} from "../payload/graded-quiz";
 
 /** The core exercise types whose content a conversion can carry into
  *  ``free_text``. ``word_tiles`` / ``multiple_choice`` preserve the key by
@@ -80,10 +97,16 @@ export type ConvertibleExtensionType =
     | typeof ERROR_CORRECTION_EXT_TYPE;
 
 /** The exercise types a conversion can produce. ``free_text`` is the
- *  key-preserving target (Stage 1/2); ``multiple_choice`` / ``cloze`` are the
- *  Stage-3 COMPLETION targets — they build a draft with an empty required field
- *  the author fills, gated by the existing validator. */
-export type ConversionTargetType = "free_text" | "multiple_choice" | "cloze";
+ *  key-preserving target (Stage 1/2); ``multiple_choice`` / ``cloze`` and the
+ *  reading-comprehension / graded-quiz pair are the Stage-3 COMPLETION targets
+ *  — they build a draft with a field the author fills (empty ``passage``, empty
+ *  MC option), gated by the existing validator. */
+export type ConversionTargetType =
+    | "free_text"
+    | "multiple_choice"
+    | "cloze"
+    | typeof READING_COMPREHENSION_EXT_TYPE
+    | typeof GRADED_QUIZ_EXT_TYPE;
 
 /** Per-source core conversion targets. The ``-> free_text`` sources carry a
  *  single answer out; ``free_text`` converts INTO the richer types (Stage 3),
@@ -95,11 +118,16 @@ const CORE_CONVERSION_TARGETS: Record<string, ConversionTargetType[]> = {
     free_text: ["multiple_choice", "cloze"],
 };
 
-const CONVERTIBLE_EXTENSION_SOURCES: readonly ConvertibleExtensionType[] = [
-    DICTATION_EXT_TYPE,
-    IMAGE_DESCRIPTION_EXT_TYPE,
-    ERROR_CORRECTION_EXT_TYPE,
-];
+/** Per-source extension conversion targets. The media/correction sources carry
+ *  a single answer out to ``free_text``; the passage-quiz pair converts between
+ *  each other (Stage 3b), completing the field the target needs. */
+const EXTENSION_CONVERSION_TARGETS: Record<string, ConversionTargetType[]> = {
+    [DICTATION_EXT_TYPE]: ["free_text"],
+    [IMAGE_DESCRIPTION_EXT_TYPE]: ["free_text"],
+    [ERROR_CORRECTION_EXT_TYPE]: ["free_text"],
+    [GRADED_QUIZ_EXT_TYPE]: [READING_COMPREHENSION_EXT_TYPE],
+    [READING_COMPREHENSION_EXT_TYPE]: [GRADED_QUIZ_EXT_TYPE],
+};
 
 /**
  * Top-level ``Exercise`` fields that belong to a specific type and MUST be
@@ -154,11 +182,7 @@ export function coreConversionTargets(
 export function extensionConversionTargets(
     exercise: ContentLessonExercise,
 ): ConversionTargetType[] {
-    return CONVERTIBLE_EXTENSION_SOURCES.includes(
-        exercise.type as ConvertibleExtensionType,
-    )
-        ? ["free_text"]
-        : [];
+    return EXTENSION_CONVERSION_TARGETS[exercise.type] ?? [];
 }
 
 /** Drop every type-specific field from a shallow copy, leaving the shared
@@ -270,6 +294,50 @@ function freeTextToCloze(source: ContentLessonExercise): {
     };
 }
 
+/** A sub-question kept as-is minus its grading fields — the reading-comprehension
+ *  shape (``{prompt, type, options?/accept?}``). Stripping ``points`` /
+ *  ``partial_credit`` matters: the flat ``extra="forbid"`` schema rejects them
+ *  on an RC question. */
+function toRcQuestion(question: GqQuestion): RcQuestion {
+    const rc: RcQuestion = {prompt: question.prompt, type: question.type};
+    if (question.options !== undefined) rc.options = question.options;
+    if (question.accept !== undefined) rc.accept = question.accept;
+    return rc;
+}
+
+/** A sub-question given a default weight — the graded-quiz shape. Reading
+ *  comprehension carries no ``points``; a graded quiz requires positive points,
+ *  so a default of 1 makes each carried question immediately valid. */
+function toGqQuestion(question: RcQuestion): GqQuestion {
+    const gq: GqQuestion = {prompt: question.prompt, type: question.type, points: 1};
+    if (question.options !== undefined) gq.options = question.options;
+    if (question.accept !== undefined) gq.accept = question.accept;
+    return gq;
+}
+
+/** Build the ``reading-comprehension`` draft a ``graded-quiz`` converts into
+ *  (Stage 3b). The questions carry over (grading fields stripped) but a passage
+ *  is REQUIRED and the quiz has none, so it starts empty — the RC validator
+ *  blocks Save until the author writes it. */
+function gradedQuizToReadingComprehension(exercise: ContentLessonExercise): {
+    passage: string;
+    questions: RcQuestion[];
+} {
+    const questions = asGradedQuizPayload(exercise)?.questions ?? [];
+    return {passage: "", questions: questions.map(toRcQuestion)};
+}
+
+/** Build the ``graded-quiz`` draft a ``reading-comprehension`` converts into
+ *  (Stage 3b). The passage is dropped; each question gets a default weight, so
+ *  the draft is immediately valid. */
+function readingComprehensionToGradedQuiz(exercise: ContentLessonExercise): {
+    pass_threshold: number;
+    questions: GqQuestion[];
+} {
+    const questions = asReadingComprehensionPayload(exercise)?.questions ?? [];
+    return {pass_threshold: 60, questions: questions.map(toGqQuestion)};
+}
+
 /**
  * Convert ``exercise`` to ``target``, carrying its content into the target
  * type's fields and dropping the source type's fields. Handles the
@@ -313,6 +381,26 @@ export function convertExercise(
             type: "cloze",
             distractors: [],
             ...freeTextToCloze(source),
+        } as ContentLessonExercise;
+    }
+    if (
+        target === READING_COMPREHENSION_EXT_TYPE &&
+        source.type === GRADED_QUIZ_EXT_TYPE
+    ) {
+        return {
+            ...base,
+            type: READING_COMPREHENSION_EXT_TYPE,
+            ext_payload: gradedQuizToReadingComprehension(source),
+        } as ContentLessonExercise;
+    }
+    if (
+        target === GRADED_QUIZ_EXT_TYPE &&
+        source.type === READING_COMPREHENSION_EXT_TYPE
+    ) {
+        return {
+            ...base,
+            type: GRADED_QUIZ_EXT_TYPE,
+            ext_payload: readingComprehensionToGradedQuiz(source),
         } as ContentLessonExercise;
     }
     return exercise;

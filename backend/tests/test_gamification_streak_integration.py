@@ -21,6 +21,7 @@ from adaptive_learner_gamification import streak_service
 from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
+from app.openapi_metadata import iter_api_routes
 from app.main import app
 from app.models import LearningProject, LearningSession
 
@@ -63,7 +64,7 @@ def _run_one_session(client: TestClient, project_id: str) -> str:
 
 
 def test_router_paths_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/plugins/gamification/streak/{user_id}" in paths
     assert "/api/plugins/gamification/streak/{user_id}/heatmap" in paths
     assert (
