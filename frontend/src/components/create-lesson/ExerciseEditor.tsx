@@ -24,6 +24,7 @@ import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
 import CardImageField from "./CardImageField";
 import {
+    conversionPreservesElementKeys,
     convertExercise,
     coreConversionTargets,
     countClozeMarkers,
@@ -35,6 +36,7 @@ import {
     exerciseEditErrorKey,
     exerciseTypeLabelKey,
 } from "../../lib/content/lesson/edit-error-keys";
+import {useConfirm} from "../../contexts/ConfirmContext";
 import type {
     ContentLessonExercise,
     ContentLessonClozeBlank,
@@ -54,6 +56,7 @@ export default function ExerciseEditor({
     onCancel,
 }: ExerciseEditorProps) {
     const {t} = useI18n();
+    const confirm = useConfirm();
     const [draft, setDraft] = useState<ContentLessonExercise>(exercise);
 
     function patch(next: Patch) {
@@ -62,11 +65,28 @@ export default function ExerciseEditor({
 
     const conversionTargets = coreConversionTargets(draft);
 
-    function convertType(nextType: string) {
+    async function convertType(nextType: string) {
         if (nextType === draft.type) return;
-        if (conversionTargets.includes(nextType as ConversionTargetType)) {
-            setDraft(convertExercise(draft, nextType as ConversionTargetType));
+        if (!conversionTargets.includes(nextType as ConversionTargetType)) return;
+        const converted = convertExercise(draft, nextType as ConversionTargetType);
+        // Key-moving conversion (e.g. a multi-blank cloze -> one free_text
+        // answer) can strand SRS/review history, so confirm first (EXP-050
+        // Stage 2, #2511). Key-preserving conversions apply silently.
+        if (!conversionPreservesElementKeys(draft, converted)) {
+            const proceed = await confirm({
+                title: t(
+                    "create_lesson.exercises.edit.convert_confirm_title",
+                    "Convert exercise type?",
+                ),
+                message: t(
+                    "create_lesson.exercises.edit.convert_confirm_message",
+                    "This exercise has more than one answer. Converting keeps only the first, and the review history for the others is not carried over.",
+                ),
+                variant: "danger",
+            });
+            if (!proceed) return;
         }
+        setDraft(converted);
     }
 
     const issue = validateExerciseEdit(draft);
@@ -107,7 +127,7 @@ export default function ExerciseEditor({
                         className="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                         value={draft.type}
                         data-testid={`exercise-edit-type-select-${id}`}
-                        onChange={(e) => convertType(e.target.value)}
+                        onChange={(e) => void convertType(e.target.value)}
                     >
                         <option value={draft.type}>
                             {t(exerciseTypeLabelKey(draft.type), draft.type)}

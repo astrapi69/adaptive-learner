@@ -332,6 +332,35 @@ describe("ExtensionExerciseEditor — type conversion (EXP-050 Stage 1)", () => 
         expect("ext_payload" in converted).toBe(false);
     });
 
+    it("converts error-correction to free_text, lifting accept (key-preserving)", () => {
+        const onConvert = vi.fn();
+        const ec = {
+            id: "ec1",
+            type: "ext:al-error-correction",
+            prompt: "Fix the wrong word",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {tokens: ["Je", "suit", "ici"], error_index: 1, accept: ["suis"]},
+        } as ContentLessonExercise;
+        render(
+            <ExtensionExerciseEditor
+                exercise={ec}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+                allowConversion
+                onConvert={onConvert}
+            />,
+        );
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-ec1"), {
+            target: {value: "free_text"},
+        });
+        expect(onConvert).toHaveBeenCalledTimes(1);
+        const converted = onConvert.mock.calls[0][0];
+        expect(converted.type).toBe("free_text");
+        expect(converted.accept).toEqual(["suis"]);
+        expect("ext_payload" in converted).toBe(false);
+    });
+
     it("hides the conversion control when not allowed", () => {
         render(
             <ExtensionExerciseEditor

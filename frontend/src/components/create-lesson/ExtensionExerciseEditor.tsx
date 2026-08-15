@@ -26,6 +26,7 @@ import {
     GRADED_QUIZ_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
+    conversionPreservesElementKeys,
     convertExercise,
     extensionConversionTargets,
     normalizeExtensionExercise,
@@ -37,6 +38,7 @@ import {
     exerciseTypeLabelKey,
     extensionEditErrorKey,
 } from "../../lib/content/lesson/edit-error-keys";
+import {useConfirm} from "../../contexts/ConfirmContext";
 import {
     DictationFields,
     GradedQuizFields,
@@ -88,6 +90,7 @@ export default function ExtensionExerciseEditor({
     onConvert,
 }: ExtensionExerciseEditorProps) {
     const {t} = useI18n();
+    const confirm = useConfirm();
     const [draft, setDraft] = useState<ContentLessonExercise>(exercise);
     const id = exercise.id;
 
@@ -101,11 +104,28 @@ export default function ExtensionExerciseEditor({
     const conversionTargets =
         allowConversion && onConvert ? extensionConversionTargets(draft) : [];
 
-    function convertType(nextType: string) {
+    async function convertType(nextType: string) {
         if (nextType === draft.type) return;
-        if (conversionTargets.includes(nextType as ConversionTargetType)) {
-            onConvert?.(convertExercise(draft, nextType as ConversionTargetType));
+        if (!conversionTargets.includes(nextType as ConversionTargetType)) return;
+        const converted = convertExercise(draft, nextType as ConversionTargetType);
+        // A key-moving conversion can strand review history; confirm first
+        // (EXP-050 Stage 2, #2511). The shipped ext sources here are all
+        // key-preserving, so this never fires today — it guards future ones.
+        if (!conversionPreservesElementKeys(draft, converted)) {
+            const proceed = await confirm({
+                title: t(
+                    "create_lesson.exercises.edit.convert_confirm_title",
+                    "Convert exercise type?",
+                ),
+                message: t(
+                    "create_lesson.exercises.edit.convert_confirm_message",
+                    "This exercise has more than one answer. Converting keeps only the first, and the review history for the others is not carried over.",
+                ),
+                variant: "danger",
+            });
+            if (!proceed) return;
         }
+        onConvert?.(converted);
     }
 
     const issue = validateExtensionExercise(draft);
@@ -143,7 +163,7 @@ export default function ExtensionExerciseEditor({
                         className="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                         value={draft.type}
                         data-testid={`exercise-ext-type-select-${id}`}
-                        onChange={(e) => convertType(e.target.value)}
+                        onChange={(e) => void convertType(e.target.value)}
                     >
                         <option value={draft.type}>
                             {t(exerciseTypeLabelKey(draft.type), draft.type)}

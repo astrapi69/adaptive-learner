@@ -3048,6 +3048,8 @@
         "mc_options_label": "Yanıt seçenekleri",
         "convert_label": "Alıştırma türü",
         "convert_hint": "Dönüştürme, yazılan yanıtı ve öğrencinin ilerlemesini korur.",
+        "convert_confirm_title": "Alıştırma türü dönüştürülsün mü?",
+        "convert_confirm_message": "Bu alıştırmanın birden fazla yanıtı var. Dönüştürme yalnızca ilkini korur; diğerlerinin ilerlemesi aktarılmaz.",
         "mc_option_placeholder": "Seçenek metni",
         "mc_option_add": "Seçenek ekle",
         "mc_option_remove": "Seçeneği kaldır",

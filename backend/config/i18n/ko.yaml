@@ -2801,6 +2801,8 @@ create_lesson:
       mc_options_label: "답 선택지"
       convert_label: "문제 유형"
       convert_hint: "변환해도 입력한 답과 학습자의 진행 상황이 유지됩니다."
+      convert_confirm_title: "문제 유형을 변환할까요?"
+      convert_confirm_message: "이 문제에는 답이 여러 개입니다. 변환하면 첫 번째 답만 유지되고 나머지의 학습 기록은 이어지지 않습니다."
       mc_option_placeholder: "선택지 텍스트"
       mc_option_add: "선택지 추가"
       mc_option_remove: "선택지 삭제"

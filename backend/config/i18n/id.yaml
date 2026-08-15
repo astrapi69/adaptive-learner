@@ -2801,6 +2801,8 @@ create_lesson:
       mc_options_label: "Opsi jawaban"
       convert_label: "Jenis latihan"
       convert_hint: "Konversi mempertahankan jawaban yang ditulis dan kemajuan pelajar."
+      convert_confirm_title: "Ubah jenis latihan?"
+      convert_confirm_message: "Latihan ini memiliki lebih dari satu jawaban. Konversi hanya menyimpan yang pertama; kemajuan untuk yang lain tidak dibawa serta."
       mc_option_placeholder: "Teks opsi"
       mc_option_add: "Tambah opsi"
       mc_option_remove: "Hapus opsi"
