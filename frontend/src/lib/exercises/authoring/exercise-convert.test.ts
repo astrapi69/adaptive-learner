@@ -18,8 +18,12 @@ import {
     extensionConversionTargets,
 } from "./exercise-convert";
 import {normalizeExerciseEdit, validateExerciseEdit} from "./exercise-edit";
+import {validateExtensionExercise} from "./extension-edit";
 import {elementKeysOf} from "../../srs/element-keys";
 import type {ContentLessonExercise} from "../../../storage/types";
+
+const GQ = "ext:al-graded-quiz";
+const RC = "ext:al-reading-comprehension";
 
 function base(over: Partial<ContentLessonExercise>): ContentLessonExercise {
     return {
@@ -379,6 +383,111 @@ describe("convertExercise — free_text -> cloze (Stage 3 completion)", () => {
         const out = convertExercise(src, "cloze");
         expect(validateExerciseEdit(out).valid).toBe(true);
         expect(conversionPreservesElementKeys(src, out)).toBe(true);
+    });
+});
+
+describe("convertExercise — graded-quiz <-> reading-comprehension (Stage 3b)", () => {
+    const gq = (over: Partial<ContentLessonExercise> = {}) =>
+        base({
+            type: GQ,
+            prompt: "Quiz",
+            ext_payload: {
+                pass_threshold: 60,
+                questions: [
+                    {
+                        prompt: "Q1",
+                        type: "multiple_choice",
+                        options: [
+                            {text: "a", correct: true},
+                            {text: "b", correct: false},
+                        ],
+                        points: 2,
+                    },
+                    {prompt: "Q2", type: "free_text", accept: ["x"], points: 1},
+                ],
+            },
+            ...over,
+        });
+
+    const rc = (over: Partial<ContentLessonExercise> = {}) =>
+        base({
+            type: RC,
+            prompt: "Read",
+            ext_payload: {
+                passage: "Some passage.",
+                questions: [
+                    {
+                        prompt: "Q1",
+                        type: "multiple_choice",
+                        options: [
+                            {text: "a", correct: true},
+                            {text: "b", correct: false},
+                        ],
+                    },
+                    {prompt: "Q2", type: "free_text", accept: ["x"]},
+                ],
+            },
+            ...over,
+        });
+
+    it("offers the paired ext target both ways", () => {
+        expect(extensionConversionTargets(gq())).toEqual([RC]);
+        expect(extensionConversionTargets(rc())).toEqual([GQ]);
+    });
+
+    it("graded-quiz -> reading-comprehension: strips points, starts an empty passage", () => {
+        const out = convertExercise(gq(), RC as "free_text");
+        expect(out.type).toBe(RC);
+        const payload = out.ext_payload as {passage: string; questions: unknown[]};
+        expect(payload.passage).toBe("");
+        expect(payload.questions).toHaveLength(2);
+        expect(payload.questions.every((q) => !("points" in (q as object)))).toBe(true);
+        // Empty passage -> RC validator blocks Save.
+        expect(validateExtensionExercise(out).valid).toBe(false);
+    });
+
+    it("reading-comprehension -> graded-quiz: drops passage, weights each question (valid)", () => {
+        const out = convertExercise(rc(), GQ as "free_text");
+        expect(out.type).toBe(GQ);
+        const payload = out.ext_payload as {
+            pass_threshold: number;
+            questions: {points: number}[];
+        };
+        expect("passage" in payload).toBe(false);
+        expect(payload.questions.every((q) => q.points === 1)).toBe(true);
+        expect(validateExtensionExercise(out).valid).toBe(true);
+    });
+
+    it("preserves the element key for single-correct MC + free_text questions", () => {
+        expect(
+            conversionPreservesElementKeys(gq(), convertExercise(gq(), RC as "free_text")),
+        ).toBe(true);
+        expect(
+            conversionPreservesElementKeys(rc(), convertExercise(rc(), GQ as "free_text")),
+        ).toBe(true);
+    });
+
+    it("MOVES the key when an MC question has several correct options", () => {
+        const multi = gq({
+            ext_payload: {
+                pass_threshold: 60,
+                questions: [
+                    {
+                        prompt: "Q1",
+                        type: "multiple_choice",
+                        options: [
+                            {text: "a", correct: true},
+                            {text: "b", correct: true},
+                        ],
+                        points: 1,
+                    },
+                ],
+            },
+        });
+        // GQ key joins the correct set ("a, b"); RC key is the first correct ("a").
+        expect(
+            conversionPreservesElementKeys(multi, convertExercise(multi, RC as "free_text")),
+        ).toBe(false);
     });
 });
 

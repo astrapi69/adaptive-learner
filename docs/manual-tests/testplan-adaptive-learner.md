@@ -1008,6 +1008,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
         speichern.
       - Erwartung: `id`/`stable_id` unverändert, Lernfortschritt bleibt
         (gleicher Antwort-Schlüssel).
+- [ ] **Benotetes Quiz <-> Leseverständnis umwandeln (EXP-050 Stufe 3b, #2511):**
+      Beim Bearbeiten einer bestehenden Lektion (Zeile im `ExerciseGenerator`,
+      nicht der reine "Extension hinzufügen"-Flow):
+      - **Benotetes Quiz -> Leseverständnis:** im "Aufgabentyp"-Feld
+        "Leseverständnis" wählen -> der Editor **bleibt der Extension-Editor**,
+        die Fragen bleiben, aber die **Passage ist leer** und **"Speichern" ist
+        gesperrt**, bis ein Text eingegeben ist. (Die Punkte pro Frage entfallen.)
+      - **Leseverständnis -> Benotetes Quiz:** "Benotetes Quiz" wählen -> die
+        Passage entfällt, jede Frage bekommt **1 Punkt** (direkt gültig), Bestehens-
+        schwelle 60 %.
+      - Randfall: hat eine Multiple-Choice-Frage **mehrere richtige** Optionen,
+        erscheint der rote Bestätigungsdialog (Schlüssel wandert); sonst keine
+        Rückfrage.
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
