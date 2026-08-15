@@ -160,15 +160,85 @@ def ensure_route_metadata(app: FastAPI) -> None:
 
     Idempotent; safe to call at import time (core routers) and again in
     the lifespan (plugin routers).
-    """
-    from fastapi.routing import APIRoute
 
-    for route in app.routes:
-        if not isinstance(route, APIRoute):
-            continue
+    Mechanics under FastAPI >= 0.141 (#2625): every ``include_router``
+    inserts an ``_IncludedRouter`` whose route contexts SNAPSHOT the
+    route's tags/summary the first time they are built, and the OpenAPI
+    builder reads those cached snapshots — mutating the underlying
+    ``APIRoute`` objects no longer reaches the schema. So this does two
+    things: it still mutates the original routes (so direct route
+    introspection agrees), and it wraps ``app.openapi`` so the SERVED
+    schema gets the same normalisation as a post-processing step over
+    the finished document — immune to any router-level caching.
+    """
+    name_by_operation: dict[str, str] = {}
+    for context in iter_api_routes(app):
         new_tags: list[str | Enum] = [
-            tag for tag in (route.tags or []) if tag in _CANONICAL_TAGS
-        ] or [derive_tag(route.path)]
-        route.tags = new_tags
-        if not route.summary:
-            route.summary = _prettify(route.name)
+            tag for tag in (context.tags or []) if tag in _CANONICAL_TAGS
+        ] or [derive_tag(context.path)]
+        original = context.original_route
+        original.tags = new_tags
+        if not original.summary:
+            original.summary = _prettify(context.name)
+        operation_id = getattr(context, "operation_id", None) or getattr(context, "unique_id", None)
+        if operation_id:
+            name_by_operation[operation_id] = context.name
+    _install_schema_backfill(app, name_by_operation)
+
+
+def _install_schema_backfill(app: FastAPI, name_by_operation: dict[str, str]) -> None:
+    """Wrap ``app.openapi`` so the served schema carries canonical tags.
+
+    Idempotent: re-installing replaces the previous wrapper's mapping but
+    never stacks wrappers (the original builder is remembered on the app
+    instance). Clears ``app.openapi_schema`` so an already-cached schema
+    is rebuilt through the wrapper.
+    """
+    original_openapi = getattr(app, "_openapi_before_metadata", None) or app.openapi
+    app._openapi_before_metadata = original_openapi  # type: ignore[attr-defined]
+
+    def openapi_with_canonical_tags() -> dict:
+        schema = original_openapi()
+        for path, operations in schema.get("paths", {}).items():
+            for operation in operations.values():
+                if not isinstance(operation, dict):
+                    continue
+                tags = [tag for tag in operation.get("tags", []) if tag in _CANONICAL_TAGS] or [
+                    derive_tag(path)
+                ]
+                operation["tags"] = tags
+                if not operation.get("summary"):
+                    handler = name_by_operation.get(operation.get("operationId", ""))
+                    if handler:
+                        operation["summary"] = _prettify(handler)
+        return schema
+
+    app.openapi = openapi_with_canonical_tags  # type: ignore[method-assign]
+    app.openapi_schema = None
+
+
+def iter_api_routes(app: FastAPI):
+    """Yield a route context for every API route on ``app``, flattened.
+
+    FastAPI 0.141 stopped copying an included router's routes into
+    ``app.routes``; ``include_router`` now inserts an ``_IncludedRouter``
+    node, and the routes only surface through route contexts — with the
+    include-prefix applied to ``context.path`` (the raw
+    ``original_route.path`` is UNPREFIXED, e.g. ``/progress/{id}``
+    instead of ``/api/plugins/tracking/progress/{id}``). Flat iteration
+    over ``app.routes`` therefore misses every included router, and
+    reading ``original_route.path`` yields the wrong paths (#2625).
+
+    This delegates to ``fastapi.routing.iter_route_contexts`` — the same
+    public utility ``get_openapi`` uses — so the paths seen here are
+    exactly the ones the schema and the request matcher see. Each yielded
+    context carries ``path`` / ``tags`` / ``summary`` / ``name`` /
+    ``original_route``. It is the ONE sanctioned way to introspect the
+    route table (``ensure_route_metadata`` and the route-catalogue tests
+    both use it).
+    """
+    from fastapi.routing import APIRoute, iter_route_contexts
+
+    for context in iter_route_contexts(app.routes):
+        if isinstance(getattr(context, "original_route", None), APIRoute):
+            yield context
