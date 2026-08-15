@@ -13,6 +13,7 @@ from fastapi import APIRouter
 from fastapi.testclient import TestClient
 
 from app.main import app, manager
+from app.openapi_metadata import iter_api_routes
 
 
 @pytest.fixture()
@@ -35,7 +36,7 @@ def test_plugin_is_active(client: TestClient):
 
 def test_router_exposes_three_paths(client: TestClient):
     """Pin the three documented paths land under the /api prefix."""
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/plugins/assessment/questions" in paths
     assert "/api/plugins/assessment/evaluate" in paths
     assert "/api/plugins/assessment/profile/{project_id}" in paths

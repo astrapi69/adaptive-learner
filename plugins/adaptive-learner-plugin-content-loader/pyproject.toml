@@ -9,7 +9,7 @@ packages = [{include = "adaptive_learner_content_loader"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 pluginforge = "^0.10.0"
-fastapi = "^0.136.0"
+fastapi = "^0.141.0"
 pydantic = "^2.13.0"
 httpx = "^0.28.0"
 pyyaml = "^6.0.2"

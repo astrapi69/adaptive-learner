@@ -17,6 +17,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.openapi_metadata import iter_api_routes
 
 
 @pytest.fixture()
@@ -57,7 +58,7 @@ def _attempt_payload(
 
 
 def test_routes_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/users/{user_id}/element-errors" in paths
 
 
@@ -252,7 +253,7 @@ def test_post_rejects_missing_required_field(
 
 
 def test_review_queue_route_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/users/{user_id}/element-errors/review-queue" in paths
 
 

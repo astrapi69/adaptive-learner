@@ -16,6 +16,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app, manager
+from app.openapi_metadata import iter_api_routes
 
 hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 
@@ -50,7 +51,7 @@ def test_plugin_is_active(client: TestClient):
 
 
 def test_router_exposes_four_paths(client: TestClient):
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/plugins/session/start" in paths
     assert "/api/plugins/session/{session_id}/message" in paths
     assert "/api/plugins/session/{session_id}/rate" in paths

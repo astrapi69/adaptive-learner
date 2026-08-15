@@ -19,6 +19,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
+from app.openapi_metadata import iter_api_routes
 from app.main import app, manager
 from app.models import ProgressCommit
 
@@ -78,7 +79,7 @@ def test_plugin_is_active(client: TestClient):
 
 
 def test_router_exposes_two_paths(client: TestClient):
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/plugins/tracking/progress/{project_id}" in paths
     assert "/api/plugins/tracking/commits/{project_id}" in paths
 

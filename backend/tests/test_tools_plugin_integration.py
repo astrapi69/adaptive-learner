@@ -14,6 +14,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app, manager
+from app.openapi_metadata import iter_api_routes
 
 
 @pytest.fixture()
@@ -60,7 +61,7 @@ def test_plugin_is_active(client: TestClient):
 
 
 def test_router_exposes_one_path(client: TestClient):
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/plugins/tools/recommendations/{project_id}" in paths
 
 
@@ -155,7 +156,7 @@ def test_get_tool_recommendations_hook_dispatches(client: TestClient):
 
 
 def test_spaced_route_registered(client: TestClient):
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/plugins/tools/spaced/{project_id}" in paths
 
 
