@@ -311,6 +311,43 @@ describe("ExtensionExerciseEditor — type conversion (EXP-050 Stage 1)", () => 
             ext_payload: {audio: "assets/audio/clip.mp3", accept: ["bonjour"]},
         }) as ContentLessonExercise;
 
+    it("offers the reading-comprehension target for a graded-quiz + calls onConvert", () => {
+        const onConvert = vi.fn();
+        const gq = {
+            id: "gq1",
+            type: "ext:al-graded-quiz",
+            prompt: "Quiz",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                pass_threshold: 60,
+                questions: [
+                    {prompt: "Q1", type: "free_text", accept: ["x"], points: 1},
+                ],
+            },
+        } as ContentLessonExercise;
+        render(
+            <ExtensionExerciseEditor
+                exercise={gq}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+                allowConversion
+                onConvert={onConvert}
+            />,
+        );
+        const select = screen.getByTestId(
+            "exercise-ext-type-select-gq1",
+        ) as HTMLSelectElement;
+        expect(Array.from(select.options).map((o) => o.value)).toContain(
+            "ext:al-reading-comprehension",
+        );
+        fireEvent.change(select, {target: {value: "ext:al-reading-comprehension"}});
+        expect(onConvert).toHaveBeenCalledTimes(1);
+        const converted = onConvert.mock.calls[0][0];
+        expect(converted.type).toBe("ext:al-reading-comprehension");
+        expect(converted.ext_payload.passage).toBe("");
+    });
+
     it("offers the free_text conversion when allowed and calls onConvert", () => {
         const onConvert = vi.fn();
         render(
