@@ -26,11 +26,17 @@ import {
     GRADED_QUIZ_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
+    convertExercise,
+    extensionConversionTargets,
     normalizeExtensionExercise,
     validateExtensionExercise,
+    type ConversionTargetType,
     type WizardSubQuestion,
 } from "../../lib/exercises";
-import {extensionEditErrorKey} from "../../lib/content/lesson/edit-error-keys";
+import {
+    exerciseTypeLabelKey,
+    extensionEditErrorKey,
+} from "../../lib/content/lesson/edit-error-keys";
 import {
     DictationFields,
     GradedQuizFields,
@@ -43,6 +49,16 @@ export interface ExtensionExerciseEditorProps {
     exercise: ContentLessonExercise;
     onSave: (updated: ContentLessonExercise) => void;
     onCancel: () => void;
+    /** When true, offer the Stage-1 ``-> free_text`` type conversion for a
+     *  convertible extension source (dictation / image-description). Passed
+     *  only where a resulting core exercise is valid — the ``ExerciseGenerator``
+     *  row, saved via the core lesson path — never the ext-only
+     *  ``ExtensionSteps`` flow (EXP-050, #2511). */
+    allowConversion?: boolean;
+    /** Commit a type conversion to the parent (the row swaps to the core
+     *  ``ExerciseEditor`` for the resulting ``free_text``). Required for the
+     *  conversion control to appear. */
+    onConvert?: (converted: ContentLessonExercise) => void;
 }
 
 type Patch = Partial<ContentLessonExercise>;
@@ -68,6 +84,8 @@ export default function ExtensionExerciseEditor({
     exercise,
     onSave,
     onCancel,
+    allowConversion = false,
+    onConvert,
 }: ExtensionExerciseEditorProps) {
     const {t} = useI18n();
     const [draft, setDraft] = useState<ContentLessonExercise>(exercise);
@@ -78,6 +96,16 @@ export default function ExtensionExerciseEditor({
     }
     function patchPayload(payload: unknown) {
         patch({ext_payload: payload} as Patch);
+    }
+
+    const conversionTargets =
+        allowConversion && onConvert ? extensionConversionTargets(draft) : [];
+
+    function convertType(nextType: string) {
+        if (nextType === draft.type) return;
+        if (conversionTargets.includes(nextType as ConversionTargetType)) {
+            onConvert?.(convertExercise(draft, nextType as ConversionTargetType));
+        }
     }
 
     const issue = validateExtensionExercise(draft);
@@ -102,6 +130,38 @@ export default function ExtensionExerciseEditor({
                     onChange={(e) => patch({prompt: e.target.value})}
                 />
             </label>
+
+            {conversionTargets.length > 0 && (
+                <label
+                    className="form-field flex flex-col gap-1.5"
+                    data-testid={`exercise-ext-type-${id}`}
+                >
+                    <span className="form-label text-sm font-medium text-fg-primary">
+                        {t("create_lesson.exercises.edit.convert_label", "Exercise type")}
+                    </span>
+                    <select
+                        className="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        value={draft.type}
+                        data-testid={`exercise-ext-type-select-${id}`}
+                        onChange={(e) => convertType(e.target.value)}
+                    >
+                        <option value={draft.type}>
+                            {t(exerciseTypeLabelKey(draft.type), draft.type)}
+                        </option>
+                        {conversionTargets.map((target) => (
+                            <option key={target} value={target}>
+                                {t(exerciseTypeLabelKey(target), target)}
+                            </option>
+                        ))}
+                    </select>
+                    <FormHint as="p">
+                        {t(
+                            "create_lesson.exercises.edit.convert_hint",
+                            "Converting keeps the written answer and the learner's progress.",
+                        )}
+                    </FormHint>
+                </label>
+            )}
 
             {draft.type === CATEGORIZATION_EXT_TYPE && (
                 <CategorizationFields

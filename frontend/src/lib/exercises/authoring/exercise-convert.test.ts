@@ -15,6 +15,7 @@ import {
     conversionPreservesElementKeys,
     convertExercise,
     coreConversionTargets,
+    extensionConversionTargets,
 } from "./exercise-convert";
 import {normalizeExerciseEdit} from "./exercise-edit";
 import {elementKeysOf} from "../../srs/element-keys";
@@ -52,6 +53,22 @@ const multipleChoice = (over: Partial<ContentLessonExercise> = {}) =>
         ...over,
     });
 
+const dictation = (over: Partial<ContentLessonExercise> = {}) =>
+    base({
+        type: "ext:al-dictation",
+        prompt: "Write what you hear",
+        ext_payload: {audio: "assets/audio/clip.mp3", accept: ["bonjour", "Bonjour"]},
+        ...over,
+    });
+
+const imageDescription = (over: Partial<ContentLessonExercise> = {}) =>
+    base({
+        type: "ext:al-image-description",
+        prompt: "Describe the picture",
+        ext_payload: {image: "data:image/png;base64,AAAA", accept: ["a cat", "cat"]},
+        ...over,
+    });
+
 describe("coreConversionTargets", () => {
     it("offers free_text for the convertible core sources", () => {
         expect(coreConversionTargets(wordTiles())).toEqual(["free_text"]);
@@ -65,6 +82,24 @@ describe("coreConversionTargets", () => {
         ).toEqual([]);
         expect(
             coreConversionTargets(base({type: "ext:al-dictation"})),
+        ).toEqual([]);
+    });
+});
+
+describe("extensionConversionTargets", () => {
+    it("offers free_text for the convertible extension sources", () => {
+        expect(extensionConversionTargets(dictation())).toEqual(["free_text"]);
+        expect(extensionConversionTargets(imageDescription())).toEqual([
+            "free_text",
+        ]);
+    });
+
+    it("offers nothing for a core source or a non-convertible extension", () => {
+        expect(extensionConversionTargets(wordTiles())).toEqual([]);
+        expect(
+            extensionConversionTargets(
+                base({type: "ext:al-categorization", ext_payload: {}}),
+            ),
         ).toEqual([]);
     });
 });
@@ -145,6 +180,44 @@ describe("convertExercise — multiple_choice -> free_text", () => {
         ).toBe(true);
         expect(
             conversionPreservesElementKeys(multi, convertExercise(multi, "free_text")),
+        ).toBe(true);
+    });
+});
+
+describe("convertExercise — ext:al-dictation -> free_text", () => {
+    it("lifts the tolerated transcriptions from ext_payload into accept", () => {
+        const out = convertExercise(dictation(), "free_text");
+        expect(out.type).toBe("free_text");
+        expect(out.accept).toEqual(["bonjour", "Bonjour"]);
+    });
+
+    it("drops ext_payload so extra=forbid stays clean", () => {
+        const out = convertExercise(dictation(), "free_text");
+        expect("ext_payload" in out).toBe(false);
+    });
+
+    it("keeps the exercise identity and preserves the element key", () => {
+        const src = dictation({id: "d-7", stable_id: "dict-stable-7"});
+        const out = convertExercise(src, "free_text");
+        expect(out.id).toBe("d-7");
+        expect(out.stable_id).toBe("dict-stable-7");
+        // dictation key = first non-empty accept; free_text key = accept[0].
+        expect(conversionPreservesElementKeys(src, out)).toBe(true);
+    });
+});
+
+describe("convertExercise — ext:al-image-description -> free_text", () => {
+    it("lifts the accepted answers from ext_payload and drops the image", () => {
+        const out = convertExercise(imageDescription(), "free_text");
+        expect(out.type).toBe("free_text");
+        expect(out.accept).toEqual(["a cat", "cat"]);
+        expect("ext_payload" in out).toBe(false);
+    });
+
+    it("preserves the element key", () => {
+        const src = imageDescription();
+        expect(
+            conversionPreservesElementKeys(src, convertExercise(src, "free_text")),
         ).toBe(true);
     });
 });
