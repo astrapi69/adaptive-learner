@@ -3246,6 +3246,19 @@
         "title": "Konversations-Übung",
         "desc": "5 Kartenplätze, Wort-Kacheln + Lückentext."
       }
+    },
+    "suggest": {
+      "distractors": "Falsche Antworten per KI vorschlagen",
+      "distractors_empty": "Keine brauchbaren Vorschläge - füge eine falsche Antwort von Hand hinzu.",
+      "cloze_sentence": "Satz per KI vorschlagen",
+      "cloze_sentence_empty": "Kein brauchbarer Satz - schreibe einen von Hand.",
+      "passage": "Lesetext per KI vorschlagen",
+      "passage_empty": "Kein brauchbarer Text - schreibe einen von Hand.",
+      "busy": "Wird vorgeschlagen…",
+      "disclaimer": "KI-Entwürfe - vor dem Speichern prüfen und anpassen.",
+      "no_key": "Dafür brauchst du deinen eigenen KI-Schlüssel (BYOK). Hinterlege einen in den KI-Einstellungen.",
+      "open_settings": "KI-Einstellungen",
+      "error": "Die KI-Anfrage ist fehlgeschlagen. Bitte versuche es erneut."
     }
   },
   "learning_path": {

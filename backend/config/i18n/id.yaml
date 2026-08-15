@@ -2985,6 +2985,18 @@ create_lesson:
       title: "Latihan Percakapan"
       desc: "5 slot kartu, ubin kata + cloze."
 
+  suggest:
+    distractors: "Sarankan jawaban salah dengan AI"
+    distractors_empty: "Tidak ada saran yang bisa dipakai - tambahkan jawaban salah secara manual."
+    cloze_sentence: "Sarankan kalimat dengan AI"
+    cloze_sentence_empty: "Tidak ada kalimat yang bisa dipakai - tulis satu secara manual."
+    passage: "Sarankan bacaan dengan AI"
+    passage_empty: "Tidak ada bacaan yang bisa dipakai - tulis satu secara manual."
+    busy: "Menyarankan…"
+    disclaimer: "Draf AI - periksa dan sunting sebelum menyimpan."
+    no_key: "Ini memerlukan kunci AI Anda sendiri (BYOK). Tambahkan satu di pengaturan AI."
+    open_settings: "Pengaturan AI"
+    error: "Permintaan AI gagal. Silakan coba lagi."
 learning_path:
   continue: "Lanjutkan"
   start: "Mulai"

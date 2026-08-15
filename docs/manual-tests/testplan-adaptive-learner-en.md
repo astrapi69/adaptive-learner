@@ -952,6 +952,26 @@ instead of overwriting or resetting it.
         pass threshold 60%.
       - Edge: if a multiple-choice question has **several correct** options, the
         danger confirmation dialog appears (key moves); otherwise no prompt.
+- [ ] **Suggest empty fields after a conversion with AI (EXP-050 Stage 4, #2511):**
+      After a conversion (Stage 3), fill the now-empty target field via AI. The
+      button appears **only while the field is empty** (for multiple choice: while
+      fewer than three wrong options exist).
+      - **Multiple choice -> "Suggest wrong answers with AI":** the correct answer
+        is left untouched; the AI fills the missing wrong options. Options already
+        typed and the correct answer are **never overwritten**. Suggestions equal
+        to the answer, too short, or duplicates are dropped ("rather one fewer");
+        if nothing survives, a hint to add a wrong answer by hand appears.
+      - **Cloze -> "Suggest a sentence with AI":** only while the sentence is
+        still the bare `___` placeholder -> the AI returns an example sentence with
+        the answer shown as `___`. The button then disappears.
+      - **Reading comprehension -> "Suggest a passage with AI":** only with an
+        empty passage and at least one question -> the AI writes a passage for the
+        questions.
+      - **Without your own AI key (BYOK):** the button is greyed but tappable;
+        tap/focus shows a hint linking to **AI settings** and fires **no** AI
+        request.
+      - Each button carries a note that these are AI drafts to review and edit
+        before saving. (Visual check: desktop + mobile.)
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

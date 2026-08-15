@@ -3246,6 +3246,19 @@
         "title": "Conversation Practice",
         "desc": "5 card slots, word tiles + cloze."
       }
+    },
+    "suggest": {
+      "distractors": "Suggest wrong answers with AI",
+      "distractors_empty": "No usable suggestions - add a wrong answer by hand.",
+      "cloze_sentence": "Suggest a sentence with AI",
+      "cloze_sentence_empty": "No usable sentence - write one by hand.",
+      "passage": "Suggest a passage with AI",
+      "passage_empty": "No usable passage - write one by hand.",
+      "busy": "Suggesting…",
+      "disclaimer": "AI drafts - review and edit before saving.",
+      "no_key": "This needs your own AI key (BYOK). Add one under AI settings.",
+      "open_settings": "AI settings",
+      "error": "The AI request failed. Please try again."
     }
   },
   "learning_path": {

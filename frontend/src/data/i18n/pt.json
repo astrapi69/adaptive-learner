@@ -3246,6 +3246,19 @@
         "title": "Prática de conversação",
         "desc": "5 espaços de cartão, peças de palavras + cloze."
       }
+    },
+    "suggest": {
+      "distractors": "Sugerir respostas erradas com IA",
+      "distractors_empty": "Nenhuma sugestão utilizável - adicione uma resposta errada à mão.",
+      "cloze_sentence": "Sugerir uma frase com IA",
+      "cloze_sentence_empty": "Nenhuma frase utilizável - escreva uma à mão.",
+      "passage": "Sugerir um texto com IA",
+      "passage_empty": "Nenhum texto utilizável - escreva um à mão.",
+      "busy": "A sugerir…",
+      "disclaimer": "Rascunhos de IA - reveja e edite antes de guardar.",
+      "no_key": "Isto precisa da sua própria chave de IA (BYOK). Adicione uma nas definições de IA.",
+      "open_settings": "Definições de IA",
+      "error": "O pedido de IA falhou. Tente novamente."
     }
   },
   "learning_path": {

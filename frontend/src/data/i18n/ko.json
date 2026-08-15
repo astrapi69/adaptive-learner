@@ -3246,6 +3246,19 @@
         "title": "회화 연습",
         "desc": "카드 슬롯 5개, 단어 타일 + 빈칸 채우기."
       }
+    },
+    "suggest": {
+      "distractors": "AI로 오답 제안",
+      "distractors_empty": "사용할 수 있는 제안이 없습니다 - 오답을 직접 추가하세요.",
+      "cloze_sentence": "AI로 문장 제안",
+      "cloze_sentence_empty": "사용할 수 있는 문장이 없습니다 - 직접 작성하세요.",
+      "passage": "AI로 지문 제안",
+      "passage_empty": "사용할 수 있는 지문이 없습니다 - 직접 작성하세요.",
+      "busy": "제안 중…",
+      "disclaimer": "AI 초안입니다 - 저장하기 전에 검토하고 수정하세요.",
+      "no_key": "이 기능에는 본인의 AI 키(BYOK)가 필요합니다. AI 설정에서 추가하세요.",
+      "open_settings": "AI 설정",
+      "error": "AI 요청이 실패했습니다. 다시 시도하세요."
     }
   },
   "learning_path": {

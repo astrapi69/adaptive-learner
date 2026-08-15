@@ -23,6 +23,12 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
 import CardImageField from "./CardImageField";
+import AiSuggestButton from "./AiSuggestButton";
+import {
+    suggestClozeSentence,
+    suggestDistractors,
+    TARGET_DISTRACTOR_COUNT,
+} from "../../lib/ai/suggest/exercise-suggest";
 import {
     conversionPreservesElementKeys,
     convertExercise,
@@ -312,6 +318,13 @@ function ClozeFields({draft, onPatch}: TypeFieldsProps) {
     const markers = countClozeMarkers(draft.sentence);
     const blanks = draft.blanks ?? [];
 
+    // Offer an AI sentence only while the sentence is still the conversion's
+    // bare placeholder (a single ``___`` and nothing else) and there is an
+    // answer to build around — never over a sentence the author already wrote.
+    const clozeAnswer = blanks[0]?.accept?.[0]?.trim() ?? "";
+    const sentenceIsPlaceholder = (draft.sentence ?? "").trim() === "___";
+    const canSuggestSentence = clozeAnswer.length > 0 && sentenceIsPlaceholder;
+
     function setBlankAccept(index: number, accept: string[]) {
         const next: ContentLessonClozeBlank[] = [];
         for (let i = 0; i < markers; i++) {
@@ -345,6 +358,24 @@ function ClozeFields({draft, onPatch}: TypeFieldsProps) {
                     )}
                 </FormHint>
             </label>
+            {canSuggestSentence && (
+                <AiSuggestButton
+                    run={(provider) => suggestClozeSentence(draft, provider)}
+                    isEmpty={(sentence) => sentence === null}
+                    onResult={(sentence) => {
+                        if (sentence) onPatch({sentence});
+                    }}
+                    label={t(
+                        "create_lesson.suggest.cloze_sentence",
+                        "Suggest a sentence with AI",
+                    )}
+                    emptyLabel={t(
+                        "create_lesson.suggest.cloze_sentence_empty",
+                        "No usable sentence — write one by hand.",
+                    )}
+                    testId={`exercise-edit-cloze-suggest-${id}`}
+                />
+            )}
             {Array.from({length: markers}, (_v, i) => (
                 <StringListEditor
                     key={i}
@@ -574,6 +605,26 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
         onPatch({options: options.filter((_o, i) => i !== index)});
     }
 
+    function applyDistractors(words: string[]) {
+        // Fill in the wrong options: drop any empty placeholder slot the
+        // conversion left, keep the correct option and every filled wrong one,
+        // then append the suggestions.
+        const kept = options.filter(
+            (o) => o.correct === true || o.text.trim().length > 0,
+        );
+        onPatch({
+            options: [...kept, ...words.map((text) => ({text, correct: false}))],
+        });
+    }
+
+    const correctAnswer =
+        options.find((o) => o.correct === true)?.text.trim() ?? "";
+    const filledWrong = options.filter(
+        (o) => o.correct !== true && o.text.trim().length > 0,
+    ).length;
+    const canSuggestDistractors =
+        correctAnswer.length > 0 && filledWrong < TARGET_DISTRACTOR_COUNT;
+
     const correctLabel = t(
         "create_lesson.exercises.edit.mc_correct",
         "Correct answer",
@@ -692,6 +743,22 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
                     <Plus size={14} aria-hidden="true" />
                     {t("create_lesson.exercises.edit.mc_option_add", "Add option")}
                 </Button>
+                {canSuggestDistractors && (
+                    <AiSuggestButton
+                        run={(provider) => suggestDistractors(draft, provider)}
+                        isEmpty={(words) => words.length === 0}
+                        onResult={applyDistractors}
+                        label={t(
+                            "create_lesson.suggest.distractors",
+                            "Suggest wrong answers with AI",
+                        )}
+                        emptyLabel={t(
+                            "create_lesson.suggest.distractors_empty",
+                            "No usable suggestions — add a wrong answer by hand.",
+                        )}
+                        testId={`exercise-edit-mc-suggest-${id}`}
+                    />
+                )}
             </fieldset>
         </fieldset>
     );
