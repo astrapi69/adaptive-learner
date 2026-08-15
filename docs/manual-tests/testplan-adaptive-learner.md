@@ -993,6 +993,21 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
         als Freitext-Antwort), **Abbrechen** lässt den Lückentext unverändert.
       - Ein **Multiselect-Lückentext** trägt **kein** Auswahlfeld (nicht
         angeboten).
+- [ ] **Freitext umwandeln -> Multiple-Choice / Lückentext (EXP-050 Stufe 3, #2511):**
+      Beim Bearbeiten einer bestehenden Lektion eine **Freitext**-Übung öffnen.
+      Das "Aufgabentyp"-Auswahlfeld bietet jetzt **"Multiple Choice"** und
+      **"Cloze"** an.
+      - **-> Multiple Choice:** die akzeptierte Antwort wird die **richtige
+        Option**; sind im Freitext Distraktoren hinterlegt, füllen sie die
+        falschen Optionen (dann direkt gültig). Ohne Distraktoren steht **eine
+        leere Option** da und **"Speichern" ist gesperrt**, bis eine zweite,
+        andere Option eingetragen ist (der Validator-Hinweis erscheint). Keine
+        Rückfrage (schlüsselerhaltend).
+      - **-> Cloze:** es entsteht ein Ein-Lücken-Cloze (`___`) mit der Antwort in
+        der Lücke, direkt gültig; den Satz um die Lücke herum ergänzen und
+        speichern.
+      - Erwartung: `id`/`stable_id` unverändert, Lernfortschritt bleibt
+        (gleicher Antwort-Schlüssel).
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

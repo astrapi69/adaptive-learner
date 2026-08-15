@@ -79,14 +79,21 @@ export type ConvertibleExtensionType =
     | typeof IMAGE_DESCRIPTION_EXT_TYPE
     | typeof ERROR_CORRECTION_EXT_TYPE;
 
-/** The only conversion target so far. */
-export type ConversionTargetType = "free_text";
+/** The exercise types a conversion can produce. ``free_text`` is the
+ *  key-preserving target (Stage 1/2); ``multiple_choice`` / ``cloze`` are the
+ *  Stage-3 COMPLETION targets — they build a draft with an empty required field
+ *  the author fills, gated by the existing validator. */
+export type ConversionTargetType = "free_text" | "multiple_choice" | "cloze";
 
-const CONVERTIBLE_SOURCES: readonly ConvertibleCoreType[] = [
-    "word_tiles",
-    "multiple_choice",
-    "cloze",
-];
+/** Per-source core conversion targets. The ``-> free_text`` sources carry a
+ *  single answer out; ``free_text`` converts INTO the richer types (Stage 3),
+ *  seeding what it can and leaving the rest for the author. */
+const CORE_CONVERSION_TARGETS: Record<string, ConversionTargetType[]> = {
+    word_tiles: ["free_text"],
+    multiple_choice: ["free_text"],
+    cloze: ["free_text"],
+    free_text: ["multiple_choice", "cloze"],
+};
 
 const CONVERTIBLE_EXTENSION_SOURCES: readonly ConvertibleExtensionType[] = [
     DICTATION_EXT_TYPE,
@@ -131,13 +138,10 @@ const TYPE_SPECIFIC_FIELDS = [
 export function coreConversionTargets(
     exercise: ContentLessonExercise,
 ): ConversionTargetType[] {
-    if (!CONVERTIBLE_SOURCES.includes(exercise.type as ConvertibleCoreType)) {
-        return [];
-    }
     if (exercise.type === "cloze" && exercise.cloze_mode === "multiselect") {
         return [];
     }
-    return ["free_text"];
+    return CORE_CONVERSION_TARGETS[exercise.type] ?? [];
 }
 
 /**
@@ -224,29 +228,103 @@ function clozeAcceptAnswers(exercise: ContentLessonExercise): string[] {
 }
 
 /**
+ * Build the ``multiple_choice`` draft a ``free_text`` converts into (Stage 3).
+ * The accepted answer becomes the single correct option; the free-text
+ * ``distractors`` pool, if any, seeds the wrong options — otherwise ONE empty
+ * option keeps the draft incomplete so the shared validator blocks Save until
+ * the author adds a real alternative. Key-preserving: the one correct option
+ * text equals ``accept[0]``.
+ */
+function freeTextToMultipleChoice(
+    source: ContentLessonExercise,
+): {multiple: boolean; options: {text: string; correct: boolean}[]} {
+    const correctText = source.accept?.[0]?.trim() ?? "";
+    const wrong = (source.distractors ?? [])
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.length > 0)
+        .map((text) => ({text, correct: false}));
+    return {
+        multiple: false,
+        options: [
+            {text: correctText, correct: true},
+            ...(wrong.length > 0 ? wrong : [{text: "", correct: false}]),
+        ],
+    };
+}
+
+/**
+ * Build the ``cloze`` draft a ``free_text`` converts into (Stage 3). A single
+ * ``___`` blank carries the accepted answer, so the draft is a valid one-blank
+ * cloze that the author expands into a real sentence. ``type`` mode; the key
+ * (``blanks[0].accept[0]``) equals ``accept[0]``, so it is preserved.
+ */
+function freeTextToCloze(source: ContentLessonExercise): {
+    sentence: string;
+    cloze_mode: "type";
+    blanks: {accept: string[]}[];
+} {
+    return {
+        sentence: "___",
+        cloze_mode: "type",
+        blanks: [{accept: source.accept ?? []}],
+    };
+}
+
+/**
  * Convert ``exercise`` to ``target``, carrying its content into the target
- * type's fields and dropping the source type's fields. Stage 1 supports only
- * ``-> free_text`` from a {@link ConvertibleCoreType} or a
- * {@link ConvertibleExtensionType}; any other source is returned unchanged
- * (the caller gates on {@link coreConversionTargets} /
+ * type's fields and dropping the source type's fields. Handles the
+ * ``-> free_text`` conversions (Stage 1/2) and the ``free_text ->
+ * multiple_choice`` / ``free_text -> cloze`` COMPLETION conversions (Stage 3);
+ * any unsupported ``(source, target)`` pair returns the exercise unchanged (the
+ * caller gates on {@link coreConversionTargets} /
  * {@link extensionConversionTargets}).
  *
  * The result is a fresh object; ``id`` / ``stable_id`` are untouched so the
- * exercise-level SRS identity survives, and the derived ``accept[0]`` equals
- * the source's element key so the element-level history survives too (proven
- * by {@link conversionPreservesElementKeys}).
+ * exercise-level SRS identity survives, and the derived answer preserves the
+ * source's element key (proven by {@link conversionPreservesElementKeys}). A
+ * completion target may return an INTENTIONALLY INVALID draft (a
+ * ``multiple_choice`` with one empty option) so the shared validator blocks
+ * Save until the author completes it.
  */
 export function convertExercise(
     exercise: ContentLessonExercise,
     target: ConversionTargetType,
 ): ContentLessonExercise {
-    if (target !== "free_text") return exercise;
     // Derive from the NORMALIZED source (trimmed + empties dropped) so the
-    // carried ``accept`` matches the element key the source contributes after
-    // its own normalization — the equality {@link conversionPreservesElementKeys}
+    // carried answer matches the element key the source contributes after its
+    // own normalization — the equality {@link conversionPreservesElementKeys}
     // relies on, robust against an un-normalized in-editor draft.
     const source = normalizeExerciseEdit(exercise);
     const base = stripTypeSpecificFields(source);
+    if (target === "free_text") {
+        return toFreeText(source, base) ?? exercise;
+    }
+    if (target === "multiple_choice" && source.type === "free_text") {
+        return {
+            ...base,
+            type: "multiple_choice",
+            distractors: [],
+            ...freeTextToMultipleChoice(source),
+        } as ContentLessonExercise;
+    }
+    if (target === "cloze" && source.type === "free_text") {
+        return {
+            ...base,
+            type: "cloze",
+            distractors: [],
+            ...freeTextToCloze(source),
+        } as ContentLessonExercise;
+    }
+    return exercise;
+}
+
+/** The ``-> free_text`` mapping (Stage 1/2): one canonical answer carried out
+ *  of the source, source-type fields dropped. Returns ``null`` for a source
+ *  with no free-text conversion so the caller can pass the exercise through. */
+function toFreeText(
+    source: ContentLessonExercise,
+    base: ContentLessonExercise,
+): ContentLessonExercise | null {
     if (source.type === "word_tiles") {
         return {
             ...base,
@@ -281,7 +359,7 @@ export function convertExercise(
             accept: extensionAcceptAnswers(source),
         } as ContentLessonExercise;
     }
-    return exercise;
+    return null;
 }
 
 /** Compare two element-key lists for exact, order-sensitive equality. */

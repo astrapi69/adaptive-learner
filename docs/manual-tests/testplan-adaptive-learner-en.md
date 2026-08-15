@@ -928,6 +928,18 @@ instead of overwriting or resetting it.
         not carried over. **Confirm** converts (first blank as the free-text
         answer); **Cancel** leaves the cloze unchanged.
       - A **multiselect cloze** shows **no** select (not offered).
+- [ ] **Convert free text -> multiple choice / cloze (EXP-050 Stage 3, #2511):**
+      While editing an existing lesson, open a **free-text** exercise. The
+      "Exercise type" select now offers **"Multiple choice"** and **"Cloze"**.
+      - **-> Multiple choice:** the accepted answer becomes the **correct
+        option**; if the free-text exercise has distractors they fill the wrong
+        options (valid right away). Without distractors, **one empty option**
+        remains and **Save is blocked** until a second, distinct option is added
+        (the validator hint shows). No prompt (key-preserving).
+      - **-> Cloze:** produces a one-blank cloze (`___`) with the answer in the
+        blank, valid immediately; expand the sentence around the blank and save.
+      - Expectation: `id`/`stable_id` unchanged, progress preserved (same answer
+        key).
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
