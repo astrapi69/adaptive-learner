@@ -12,6 +12,14 @@
  * as the sibling extension types, and the reviewed (locked) reconstruction
  * shows exactly the same state as a fresh submit.
  *
+ * #2633 - the resolution speaks the SAME feedback vocabulary as the pairs
+ * (``MatchingExercise``, #183/#191) and ``MultipleChoiceExercise``: after
+ * checking, the right MC option is tinted GREEN (``correct`` when the learner
+ * picked it, ``missed`` when they did not) and their wrong pick RED, and the
+ * canonical-answer line for a free-text question renders green with a check
+ * instead of as muted body text. The solution was previously legible only as
+ * grey prose, so the learner had to diff it against the options by hand.
+ *
  * Result contract: ``onComplete({correct, total, attempts, raw_answer})`` with
  * ``raw_answer.kind === "al_reading_comprehension"`` (one answer per question).
  */
@@ -20,29 +28,29 @@ import {Check, X} from "lucide-react";
 import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
-import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
+import {useI18n} from "../../../../hooks/ui/useI18n";
+import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
 import {cn} from "@/lib/utils";
-import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
-import {deriveReadingComprehensionAttempts} from "../../../lib/srs/element-attempt";
-import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
-import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
+import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
+import {deriveReadingComprehensionAttempts} from "../../../../lib/srs/element-attempt";
+import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
+import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
 import {
     asReadingComprehensionPayload,
-    canonicalAnswer,
     type RcQuestion,
-} from "../../../lib/exercises/payload/reading-comprehension";
-import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
-import type {ContentLessonExercise} from "../../../storage/types";
-import AnswerCelebration from "../feedback/AnswerCelebration";
-import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
-import ExerciseFooter from "../shell/ExerciseFooter";
-import ExerciseHint from "../feedback/ExerciseHint";
+} from "../../../../lib/exercises/payload/reading-comprehension";
+import {ReadingComprehensionQuestion} from "./reading-comprehension-parts";
+import {isFreeTextCorrect} from "../../../../lib/exercises/grading/free-text-grading";
+import type {ContentLessonExercise} from "../../../../storage/types";
+import AnswerCelebration from "../../feedback/AnswerCelebration";
+import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
+import ExerciseFooter from "../../shell/ExerciseFooter";
+import ExerciseHint from "../../feedback/ExerciseHint";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
     ExerciseScored,
-} from "../shell/exercise-control";
+} from "../../shell/exercise-control";
 
 export interface ReadingComprehensionExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
@@ -221,6 +229,18 @@ function ReadingComprehensionExercise(
                             "lesson.exercise.al_reading_comprehension.input_label",
                             "Answer",
                         ),
+                        badgeCorrect: t(
+                            "lesson.exercise.al_reading_comprehension.badge_correct",
+                            "Correct",
+                        ),
+                        badgeWrong: t(
+                            "lesson.exercise.al_reading_comprehension.badge_wrong",
+                            "Wrong",
+                        ),
+                        badgeMissed: t(
+                            "lesson.exercise.al_reading_comprehension.badge_missed",
+                            "Correct answer",
+                        ),
                     }}
                 />
             ))}
@@ -237,95 +257,6 @@ function ReadingComprehensionExercise(
                 onCheck={submit}
                 onRetry={reset}
             />
-        </section>
-    );
-}
-
-/** One sub-question: MC option buttons or a free-text input, with a
- *  post-check verdict on the block and the canonical solution when wrong. */
-function ReadingComprehensionQuestion({
-    question,
-    displayOptions,
-    questionIndex,
-    answer,
-    submitted,
-    correct,
-    onSelect,
-    labels,
-}: {
-    question: RcQuestion;
-    /** #2317: the question's options in shuffled display order (grading is
-     *  by text, so this is a pure presentation reorder). */
-    displayOptions: RcQuestion["options"];
-    questionIndex: number;
-    answer: string;
-    submitted: boolean;
-    correct: boolean;
-    onSelect: (value: string) => void;
-    labels: {solution: string; inputLabel: string};
-}) {
-    const verdict = submitted ? (correct ? "correct" : "wrong") : undefined;
-    return (
-        <section
-            className={cn(
-                "flex flex-col gap-2 rounded-sm border p-2",
-                submitted && correct && "border-[var(--success)]",
-                submitted && !correct && "border-[var(--danger)]",
-                !submitted && "border-[var(--border-strong)]",
-            )}
-            data-testid={`reading-comprehension-question-${questionIndex}`}
-            data-verdict={verdict}
-        >
-            <p className="m-0 font-medium">
-                <InlineMarkdown>{question.prompt}</InlineMarkdown>
-            </p>
-
-            {question.type === "multiple_choice" ? (
-                <div className="flex flex-col gap-2">
-                    {(displayOptions ?? []).map((option, optionIndex) => (
-                        <button
-                            key={optionIndex}
-                            type="button"
-                            aria-pressed={answer === option.text}
-                            disabled={submitted}
-                            onClick={() => onSelect(option.text)}
-                            className={cn(
-                                "min-h-11 rounded-sm border px-3 py-2 text-left text-base",
-                                "border-[var(--border-strong)] bg-[var(--surface)]",
-                                answer === option.text &&
-                                    !submitted &&
-                                    "border-[var(--accent)] outline outline-2 outline-[var(--accent)]",
-                                answer === option.text &&
-                                    submitted &&
-                                    "border-[var(--fg-muted)]",
-                            )}
-                        >
-                            {option.text}
-                        </button>
-                    ))}
-                </div>
-            ) : (
-                <input
-                    type="text"
-                    value={answer}
-                    disabled={submitted}
-                    onChange={(changeEvent) => onSelect(changeEvent.target.value)}
-                    aria-label={labels.inputLabel}
-                    className="min-h-11 w-full rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-base"
-                    data-testid={`reading-comprehension-q${questionIndex}-input`}
-                />
-            )}
-
-            {submitted && !correct && (
-                <p
-                    className="m-0 text-sm text-[var(--fg-muted)]"
-                    data-testid={`reading-comprehension-q${questionIndex}-solution`}
-                >
-                    {labels.solution}
-                    {": "}
-                    <strong>{canonicalAnswer(question)}</strong>
-                </p>
-            )}
         </section>
     );
 }
@@ -363,8 +294,8 @@ function ReadingComprehensionResult({
                         className={cn(
                             "answer-feedback m-0 inline-flex items-center gap-1 font-medium",
                             isCorrect
-                                ? "is-correct text-[var(--success)]"
-                                : "is-wrong text-[var(--danger)]",
+                                ? "is-correct text-[var(--exercise-correct)]"
+                                : "is-wrong text-[var(--exercise-wrong)]",
                         )}
                         data-testid="reading-comprehension-result"
                         data-result={isCorrect ? "correct" : "wrong"}

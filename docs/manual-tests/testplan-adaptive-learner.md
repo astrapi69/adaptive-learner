@@ -561,6 +561,15 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar
 - [ ] ext:al-error-correction: Fehler finden + korrigieren
 - [ ] ext:al-reading-comprehension: Text + Fragen
+- [ ] ext:al-reading-comprehension Auflösung (#2633): nach "Antworten prüfen"
+      wird die richtige Multiple-Choice-Option GRÜN hervorgehoben - mit Häkchen
+      und Text-Badge, nicht durch Farbe allein. Hat man sie selbst gewählt,
+      steht dort "Richtig"; hat man daneben gegriffen, trägt die richtige
+      Option "Richtige Antwort" (grün, gestrichelter Rahmen) und die eigene
+      Wahl "Falsch" (rot). Bei Freitext-Fragen erscheint die Lösungszeile grün
+      getönt mit Häkchen statt als grauer Fließtext. Gleiche Farbsprache wie
+      bei den Paaren (Matching). In allen 12 Themes prüfen: der Text bleibt
+      auf der Tönung lesbar.
 - [ ] ext:al-graded-quiz: Bewertung + Ergebnisanzeige
 - [ ] ext:al-dictation (#1881): "Listen first" spielt den Clip, Transkription
       tippen; richtig / knapp daneben ("Almost!") / falsch zeigt die Lösung;
