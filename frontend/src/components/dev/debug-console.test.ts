@@ -36,6 +36,23 @@ describe("shouldLoadDebugConsole", () => {
         expect(shouldLoadDebugConsole("?debug=1", {DEV: false})).toBe(false);
     });
 
+    it("is always true in a LAN-debug build - no query flag needed", () => {
+        expect(
+            shouldLoadDebugConsole("", {DEV: false, VITE_DEBUG_CONSOLE: "1"}),
+        ).toBe(true);
+        expect(
+            shouldLoadDebugConsole("?foo=bar", {
+                DEV: false,
+                VITE_DEBUG_CONSOLE: "1",
+            }),
+        ).toBe(true);
+    });
+
+    it("stays opt-in via ?debug=1 in plain local dev", () => {
+        expect(shouldLoadDebugConsole("", {DEV: true})).toBe(false);
+        expect(shouldLoadDebugConsole("?debug=1", {DEV: true})).toBe(true);
+    });
+
     it("is false for a normal visit with no query string", () => {
         expect(shouldLoadDebugConsole("")).toBe(false);
     });

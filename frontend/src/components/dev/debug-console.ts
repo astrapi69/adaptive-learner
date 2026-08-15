@@ -8,9 +8,14 @@
  * LAN-debug build (``VITE_DEBUG_CONSOLE=1``, set by ``make dev-lan`` /
  * ``dev-lan-dexie``). The shipped build (production Docker image, public
  * GH-Pages) carries no eruda chunk at all — a debug console in the
- * deployed artifact is an attack surface, not a convenience. Inside an
- * enabled build it stays opt-in via ``?debug=1`` (same self-gating
- * pattern as the ``?e2e-hooks=1`` concurrency probe in main.tsx).
+ * deployed artifact is an attack surface, not a convenience.
+ *
+ * In the LAN-debug build the console mounts ALWAYS — that build exists
+ * only for on-device debugging, is started and stopped by the developer,
+ * and asking them to remember ``?debug=1`` on a phone keyboard is pure
+ * friction. Plain local dev (``bun run dev``) keeps the ``?debug=1``
+ * opt-in (same self-gating pattern as the ``?e2e-hooks=1`` concurrency
+ * probe in main.tsx) so the overlay never surprises normal desktop dev.
  *
  * The gate in {@link loadDebugConsole} is written INLINE on
  * ``import.meta.env`` so the bundler statically folds it in a shipped
@@ -39,8 +44,9 @@ export function debugConsoleEnabled(
 }
 
 /**
- * True when the console should mount for this visit: the build carries
- * it AND the visitor opted in via ``?debug=1``.
+ * True when the console should mount for this visit: always in the
+ * LAN-debug build (``VITE_DEBUG_CONSOLE=1``), opt-in via ``?debug=1``
+ * in plain local dev, never in a shipped build.
  *
  * @param search - ``window.location.search``.
  * @param env - injectable for tests; defaults to the real build env.
@@ -49,7 +55,8 @@ export function shouldLoadDebugConsole(
     search: string,
     env: DebugConsoleEnv = import.meta.env,
 ): boolean {
-    return debugConsoleEnabled(env) && new URLSearchParams(search).has("debug");
+    if (env.VITE_DEBUG_CONSOLE === "1") return true;
+    return env.DEV && new URLSearchParams(search).has("debug");
 }
 
 /** Loads and mounts eruda. Call only behind {@link shouldLoadDebugConsole}. */

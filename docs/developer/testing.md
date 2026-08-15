@@ -202,9 +202,11 @@ repro. For a secure-context repro:
    ```
    The banner switches to `https://` and confirms the secure context.
 
-**On-device console:** eruda, mounted via `?debug=1` (#2575). Dev-only
-since #2610: the `make dev-lan` / `dev-lan-dexie` builds carry it
-(`VITE_DEBUG_CONSOLE=1`), the shipped build (production image, public
-GH-Pages) contains no eruda chunk at all — a debug console in the
-deployed artifact is an attack surface. On the phone, open
-`http://<lan-ip>:<port>/?debug=1` and the console overlay appears.
+**On-device console:** eruda (#2575), dev-only since #2610: the
+`make dev-lan` / `dev-lan-dexie` builds carry it (`VITE_DEBUG_CONSOLE=1`)
+and mount it **automatically** — open the LAN URL on the phone and the
+console overlay is just there, no query flag to remember. In plain
+`bun run dev` it stays behind `?debug=1` so it never surprises normal
+desktop dev. The shipped build (production image, public GH-Pages)
+contains no eruda chunk at all — a debug console in the deployed
+artifact is an attack surface.
