@@ -202,9 +202,9 @@ repro. For a secure-context repro:
    ```
    The banner switches to `https://` and confirms the secure context.
 
-**On-device console:** not yet built (#2575 tracks it — an
-`?debug=1`-gated eruda/vConsole overlay, deferred pending a
-new-dependency decision per `coding-standards.md` §Dependencies). Until
-then, read errors from the visible page state (error toasts, blank
-regions) and from `page.on("pageerror")`-style reasoning about what the
-build's own error boundaries would show.
+**On-device console:** eruda, mounted via `?debug=1` (#2575). Dev-only
+since #2610: the `make dev-lan` / `dev-lan-dexie` builds carry it
+(`VITE_DEBUG_CONSOLE=1`), the shipped build (production image, public
+GH-Pages) contains no eruda chunk at all — a debug console in the
+deployed artifact is an attack surface. On the phone, open
+`http://<lan-ip>:<port>/?debug=1` and the console overlay appears.
