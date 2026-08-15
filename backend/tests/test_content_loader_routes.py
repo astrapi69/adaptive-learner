@@ -34,6 +34,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app, manager
+from app.openapi_metadata import iter_api_routes
 
 SOURCE = "astrapi69/adaptive-learner-content"
 SOURCE_SLUG = "astrapi69--adaptive-learner-content"
@@ -151,7 +152,7 @@ def test_plugin_is_active(client: TestClient) -> None:
 
 
 def test_router_paths_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     expected = {
         "/api/plugins/content-loader/sets",
         "/api/plugins/content-loader/sets/{source_slug}/{set_id}/download",
@@ -348,7 +349,7 @@ FAKE_PNG = b"\x89PNG\r\n\x1a\n" + b"FAKE_PIXEL_DATA"
 
 
 def test_asset_route_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert (
         "/api/plugins/content-loader/sets/{source_slug}/{set_id}/assets/{asset_path:path}" in paths
     )
