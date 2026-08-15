@@ -940,6 +940,18 @@ instead of overwriting or resetting it.
         blank, valid immediately; expand the sentence around the blank and save.
       - Expectation: `id`/`stable_id` unchanged, progress preserved (same answer
         key).
+- [ ] **Convert graded quiz <-> reading comprehension (EXP-050 Stage 3b, #2511):**
+      While editing an existing lesson (a row in the `ExerciseGenerator`, not
+      the "add extension exercises" flow):
+      - **Graded quiz -> Reading comprehension:** pick "Reading comprehension"
+        in the "Exercise type" select -> the editor **stays the extension
+        editor**, the questions carry over, but the **passage is empty** and
+        **Save is blocked** until you type one. (Per-question points are dropped.)
+      - **Reading comprehension -> Graded quiz:** pick "Graded quiz" -> the
+        passage is dropped, each question gets **1 point** (valid at once),
+        pass threshold 60%.
+      - Edge: if a multiple-choice question has **several correct** options, the
+        danger confirmation dialog appears (key moves); otherwise no prompt.
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
