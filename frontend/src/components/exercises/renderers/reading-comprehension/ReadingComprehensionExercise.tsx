@@ -28,29 +28,29 @@ import {Check, X} from "lucide-react";
 import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
-import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
+import {useI18n} from "../../../../hooks/ui/useI18n";
+import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
 import {cn} from "@/lib/utils";
-import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
-import {deriveReadingComprehensionAttempts} from "../../../lib/srs/element-attempt";
-import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
-import {seededShuffle} from "../../../lib/exercises/grading/seeded-shuffle";
+import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
+import {deriveReadingComprehensionAttempts} from "../../../../lib/srs/element-attempt";
+import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
+import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
 import {
     asReadingComprehensionPayload,
     type RcQuestion,
-} from "../../../lib/exercises/payload/reading-comprehension";
+} from "../../../../lib/exercises/payload/reading-comprehension";
 import {ReadingComprehensionQuestion} from "./reading-comprehension-parts";
-import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
-import type {ContentLessonExercise} from "../../../storage/types";
-import AnswerCelebration from "../feedback/AnswerCelebration";
-import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
-import ExerciseFooter from "../shell/ExerciseFooter";
-import ExerciseHint from "../feedback/ExerciseHint";
+import {isFreeTextCorrect} from "../../../../lib/exercises/grading/free-text-grading";
+import type {ContentLessonExercise} from "../../../../storage/types";
+import AnswerCelebration from "../../feedback/AnswerCelebration";
+import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
+import ExerciseFooter from "../../shell/ExerciseFooter";
+import ExerciseHint from "../../feedback/ExerciseHint";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
     ExerciseScored,
-} from "../shell/exercise-control";
+} from "../../shell/exercise-control";
 
 export interface ReadingComprehensionExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;

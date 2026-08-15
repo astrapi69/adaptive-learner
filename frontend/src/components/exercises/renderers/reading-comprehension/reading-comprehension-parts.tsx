@@ -4,6 +4,11 @@
  * renderer already uses (``matching-parts.tsx``, #431). Holds the per-option
  * verdict vocabulary, one MC option tile, and the sub-question block.
  *
+ * The pair lives in its own ``reading-comprehension/`` folder rather than flat
+ * in ``renderers/``: that directory sits at the #809 god-folder ceiling (15
+ * flat source files), so a second file there would trip the gate. Same shape
+ * as the existing ``image-description/`` and ``word-tiles/`` renderer folders.
+ *
  * The resolution speaks the SAME feedback language as the pairs
  * (``MatchingExercise``, #183/#191) and ``MultipleChoiceExercise``: after
  * checking, the authored-correct option is tinted GREEN and the learner's
@@ -16,11 +21,11 @@
 import {Check, X} from "lucide-react";
 
 import {cn} from "@/lib/utils";
-import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
+import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
 import {
     canonicalAnswer,
     type RcQuestion,
-} from "../../../lib/exercises/payload/reading-comprehension";
+} from "../../../../lib/exercises/payload/reading-comprehension";
 
 /** Per-option resolution state for a checked multiple_choice sub-question,
  *  mirroring the ``MultipleChoiceExercise`` vocabulary:

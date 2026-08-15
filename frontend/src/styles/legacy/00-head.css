@@ -106,15 +106,13 @@
    * saturated red in every theme. Mirrors --accent-fg for --accent. */
   --danger-fg: #ffffff;
 
-  /* Exercise result feedback tint (#183; named after its first consumer).
-   * After checking, a correct answer is tinted GREEN and a wrong one RED
-   * (red as error feedback is correct here; red as a PAIR color stays
-   * forbidden, see #181). Defined once but resolve PER THEME through each
-   * theme's --exercise-correct / --exercise-wrong + --bg-surface, so they
-   * adapt to all 12 themes. The tint is subtle enough that --fg-primary
-   * stays readable on it; contrast.test.ts pins the computed mix at WCAG
-   * AA. Consumers: matching pairs (matching-parts.tsx) and reading
-   * comprehension (ReadingComprehensionExercise.tsx, #2633). */
+  /* Exercise result feedback tint (#183; reading comprehension too, #2633).
+   * A correct answer is tinted GREEN and a wrong one RED (red as error
+   * feedback is correct here; red as a PAIR color stays forbidden, see
+   * #181). Defined once but resolve PER THEME through each theme's
+   * --exercise-correct / --exercise-wrong + --bg-surface, so they adapt
+   * to all 12 themes. The tint is subtle enough that --fg-primary stays
+   * readable on it; contrast.test.ts pins the computed mix at WCAG AA. */
   --matching-correct-bg: color-mix(in srgb, var(--exercise-correct) 22%, var(--bg-surface));
   --matching-correct-fg: var(--fg-primary);
   --matching-error-bg: color-mix(in srgb, var(--exercise-wrong) 22%, var(--bg-surface));

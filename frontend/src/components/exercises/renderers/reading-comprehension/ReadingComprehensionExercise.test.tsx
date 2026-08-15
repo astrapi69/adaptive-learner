@@ -19,7 +19,7 @@ import {fireEvent, render, screen, within} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import ReadingComprehensionExercise from "./ReadingComprehensionExercise";
-import type {ContentLessonExercise} from "../../../storage/types";
+import type {ContentLessonExercise} from "../../../../storage/types";
 
 const PASSAGE = "Rex lief in den Garten und bellte den Briefträger an.";
 

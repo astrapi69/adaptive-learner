@@ -25,7 +25,7 @@ import type {
 } from "../../../storage/types";
 import CategorizationExercise from "../renderers/CategorizationExercise";
 import ErrorCorrectionExercise from "../renderers/ErrorCorrectionExercise";
-import ReadingComprehensionExercise from "../renderers/ReadingComprehensionExercise";
+import ReadingComprehensionExercise from "../renderers/reading-comprehension/ReadingComprehensionExercise";
 import GradedQuizExercise from "../renderers/GradedQuizExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
 import DictationExercise from "../renderers/DictationExercise";
