@@ -422,17 +422,20 @@ describe("ExerciseEditor — type conversion (EXP-050 Stage 1)", () => {
             <Harness
                 exercise={
                     {
-                        id: "ft0",
-                        type: "free_text",
-                        prompt: "Translate",
+                        id: "mt0",
+                        type: "matching",
+                        prompt: "Match",
                         card_ids: [],
                         distractors: [],
-                        accept: ["danke"],
+                        pairs: [
+                            {left: "un", right: "one"},
+                            {left: "deux", right: "two"},
+                        ],
                     } as ContentLessonExercise
                 }
             />,
         );
-        expect(screen.queryByTestId("exercise-edit-type-select-ft0")).toBeNull();
+        expect(screen.queryByTestId("exercise-edit-type-select-mt0")).toBeNull();
     });
 
     it("converts word_tiles to free_text, carrying the sentence into accept", () => {
@@ -445,8 +448,12 @@ describe("ExerciseEditor — type conversion (EXP-050 Stage 1)", () => {
         expect(screen.getByTestId("exercise-edit-accept-wt1-item-0")).toHaveTextContent(
             "Je suis ici",
         );
-        // The word_tiles control is gone.
-        expect(screen.queryByTestId("exercise-edit-type-select-wt1")).toBeNull();
+        // The draft is now free_text; the type control reflects that (and now
+        // offers the Stage-3 completion targets instead of word_tiles).
+        expect(
+            (screen.getByTestId("exercise-edit-type-select-wt1") as HTMLSelectElement)
+                .value,
+        ).toBe("free_text");
         fireEvent.click(saveButton("wt1"));
         const saved = onSaved.mock.calls[0][0];
         expect(saved.type).toBe("free_text");
@@ -467,5 +474,78 @@ describe("ExerciseEditor — type conversion (EXP-050 Stage 1)", () => {
         expect(saved.distractors).toEqual(["bitte"]);
         expect("options" in saved).toBe(false);
         expect("multiple" in saved).toBe(false);
+    });
+});
+
+describe("ExerciseEditor — free_text completion conversions (EXP-050 Stage 3)", () => {
+    const freeText = (over: Partial<ContentLessonExercise> = {}): ContentLessonExercise =>
+        ({
+            id: "ft3",
+            type: "free_text",
+            prompt: "Translate: danke",
+            card_ids: [],
+            distractors: [],
+            accept: ["danke"],
+            ...over,
+        }) as ContentLessonExercise;
+
+    it("offers multiple_choice + cloze in the type control for a free_text", () => {
+        render(<Harness exercise={freeText()} />);
+        const select = screen.getByTestId(
+            "exercise-edit-type-select-ft3",
+        ) as HTMLSelectElement;
+        const values = Array.from(select.options).map((o) => o.value);
+        expect(values).toContain("multiple_choice");
+        expect(values).toContain("cloze");
+    });
+
+    it("converts to an incomplete multiple_choice: Save blocked until a 2nd option", () => {
+        render(<Harness exercise={freeText()} />);
+        fireEvent.change(screen.getByTestId("exercise-edit-type-select-ft3"), {
+            target: {value: "multiple_choice"},
+        });
+        // MC fields now render, the correct option carries the answer.
+        expect(screen.getByTestId("exercise-edit-mc-mode-ft3")).toBeInTheDocument();
+        expect(
+            (screen.getByTestId("exercise-edit-mc-text-ft3-0") as HTMLInputElement).value,
+        ).toBe("danke");
+        // Incomplete (one empty option) -> Save disabled + error shown.
+        expect(saveButton("ft3")).toBeDisabled();
+        // Fill the second option -> Save enabled.
+        fireEvent.change(screen.getByTestId("exercise-edit-mc-text-ft3-1"), {
+            target: {value: "bitte"},
+        });
+        expect(saveButton("ft3")).not.toBeDisabled();
+    });
+
+    it("seeds wrong options from the free_text distractors", () => {
+        const onSaved = vi.fn();
+        render(
+            <Harness exercise={freeText({distractors: ["bitte"]})} onSaved={onSaved} />,
+        );
+        fireEvent.change(screen.getByTestId("exercise-edit-type-select-ft3"), {
+            target: {value: "multiple_choice"},
+        });
+        // A seeded distractor makes the draft valid immediately.
+        fireEvent.click(saveButton("ft3"));
+        const saved = onSaved.mock.calls[0][0];
+        expect(saved.type).toBe("multiple_choice");
+        expect(saved.options).toEqual([
+            {text: "danke", correct: true},
+            {text: "bitte", correct: false},
+        ]);
+    });
+
+    it("converts to a valid starter cloze with the answer in the blank", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={freeText()} onSaved={onSaved} />);
+        fireEvent.change(screen.getByTestId("exercise-edit-type-select-ft3"), {
+            target: {value: "cloze"},
+        });
+        fireEvent.click(saveButton("ft3"));
+        const saved = onSaved.mock.calls[0][0];
+        expect(saved.type).toBe("cloze");
+        expect(saved.sentence).toBe("___");
+        expect(saved.blanks).toEqual([{accept: ["danke"]}]);
     });
 });
