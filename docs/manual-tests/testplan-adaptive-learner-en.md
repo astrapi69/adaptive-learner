@@ -915,6 +915,19 @@ instead of overwriting or resetting it.
       dictation / image-description exercise**. Note: the "add extension
       exercises" flow (`ExtensionSteps`) does **not** show the select (a core
       type is not valid there).
+- [ ] **Convert error-correction + cloze -> free text (EXP-050 Stage 2, #2511):**
+      While editing an existing lesson:
+      - An **error-correction** exercise (`ext:al-error-correction`) shows the
+        same "Exercise type" select; choosing "Free text" pre-fills the accepted
+        correction, **no prompt** (key-preserving).
+      - A **cloze** (select/type mode) with **exactly one blank**: choosing
+        "Free text" pre-fills, **no prompt**.
+      - A **cloze with several blanks**: choosing "Free text" pops a
+        **confirmation dialog** ("Convert exercise type?", danger style) because
+        only the first answer is kept and the review history for the others is
+        not carried over. **Confirm** converts (first blank as the free-text
+        answer); **Cancel** leaves the cloze unchanged.
+      - A **multiselect cloze** shows **no** select (not offered).
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

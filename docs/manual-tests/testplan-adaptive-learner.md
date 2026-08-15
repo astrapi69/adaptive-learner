@@ -979,6 +979,20 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       **ursprüngliche Diktat-/Bildbeschreibungs-Übung wieder her**. Wichtig: Im
       reinen "Extension-Aufgaben hinzufügen"-Flow (`ExtensionSteps`) erscheint
       das Auswahlfeld **nicht** (dort ist ein Kern-Typ nicht gültig).
+- [ ] **Fehlerkorrektur + Lückentext umwandeln -> Freitext (EXP-050 Stufe 2, #2511):**
+      Beim Bearbeiten einer bestehenden Lektion:
+      - Eine **Fehlerkorrektur**-Übung (`ext:al-error-correction`) trägt dasselbe
+        "Aufgabentyp"-Auswahlfeld; "Freitext" wählen -> die akzeptierte Korrektur
+        ist als Antwort vorbefüllt, **keine Rückfrage** (schlüsselerhaltend).
+      - Ein **Lückentext** (Cloze, Modus Auswahl/Tippen) mit **genau einer
+        Lücke**: "Freitext" wählen -> vorbefüllt, **keine Rückfrage**.
+      - Ein **Lückentext mit mehreren Lücken**: "Freitext" wählen -> **es
+        erscheint ein Bestätigungsdialog** ("Aufgabentyp umwandeln?", rot),
+        weil nur die erste Antwort erhalten bleibt und der Lernfortschritt der
+        übrigen nicht mitgenommen wird. **Bestätigen** wandelt um (erste Lücke
+        als Freitext-Antwort), **Abbrechen** lässt den Lückentext unverändert.
+      - Ein **Multiselect-Lückentext** trägt **kein** Auswahlfeld (nicht
+        angeboten).
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

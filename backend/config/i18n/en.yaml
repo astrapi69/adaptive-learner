@@ -2801,6 +2801,8 @@ create_lesson:
       mc_options_label: "Answer options"
       convert_label: "Exercise type"
       convert_hint: "Converting keeps the written answer and the learner's progress."
+      convert_confirm_title: "Convert exercise type?"
+      convert_confirm_message: "This exercise has more than one answer. Converting keeps only the first, and the review history for the others is not carried over."
       mc_option_placeholder: "Option text"
       mc_option_add: "Add option"
       mc_option_remove: "Remove option"

@@ -69,10 +69,52 @@ const imageDescription = (over: Partial<ContentLessonExercise> = {}) =>
         ...over,
     });
 
+const errorCorrection = (over: Partial<ContentLessonExercise> = {}) =>
+    base({
+        type: "ext:al-error-correction",
+        prompt: "Fix the wrong word",
+        ext_payload: {
+            tokens: ["Je", "suit", "ici"],
+            error_index: 1,
+            accept: ["suis"],
+        },
+        ...over,
+    });
+
+const clozeSingle = (over: Partial<ContentLessonExercise> = {}) =>
+    base({
+        type: "cloze",
+        prompt: "Fill the blank",
+        sentence: "Je ___ ici",
+        cloze_mode: "select",
+        blanks: [{accept: ["suis"]}],
+        ...over,
+    });
+
+const clozeMulti = (over: Partial<ContentLessonExercise> = {}) =>
+    base({
+        type: "cloze",
+        prompt: "Fill the blanks",
+        sentence: "Je ___ ___ ici",
+        cloze_mode: "type",
+        blanks: [{accept: ["suis"]}, {accept: ["vraiment"]}],
+        ...over,
+    });
+
 describe("coreConversionTargets", () => {
     it("offers free_text for the convertible core sources", () => {
         expect(coreConversionTargets(wordTiles())).toEqual(["free_text"]);
         expect(coreConversionTargets(multipleChoice())).toEqual(["free_text"]);
+        expect(coreConversionTargets(clozeSingle())).toEqual(["free_text"]);
+        expect(coreConversionTargets(clozeMulti())).toEqual(["free_text"]);
+    });
+
+    it("does not offer conversion for a multiselect cloze", () => {
+        expect(
+            coreConversionTargets(
+                clozeSingle({cloze_mode: "multiselect", accept: ["a", "b"]}),
+            ),
+        ).toEqual([]);
     });
 
     it("offers nothing for a non-convertible source", () => {
@@ -90,6 +132,9 @@ describe("extensionConversionTargets", () => {
     it("offers free_text for the convertible extension sources", () => {
         expect(extensionConversionTargets(dictation())).toEqual(["free_text"]);
         expect(extensionConversionTargets(imageDescription())).toEqual([
+            "free_text",
+        ]);
+        expect(extensionConversionTargets(errorCorrection())).toEqual([
             "free_text",
         ]);
     });
@@ -219,6 +264,45 @@ describe("convertExercise — ext:al-image-description -> free_text", () => {
         expect(
             conversionPreservesElementKeys(src, convertExercise(src, "free_text")),
         ).toBe(true);
+    });
+});
+
+describe("convertExercise — ext:al-error-correction -> free_text", () => {
+    it("lifts the accepted correction into accept and drops ext_payload", () => {
+        const out = convertExercise(errorCorrection(), "free_text");
+        expect(out.type).toBe("free_text");
+        expect(out.accept).toEqual(["suis"]);
+        expect("ext_payload" in out).toBe(false);
+    });
+
+    it("preserves the element key (EC key IS accept[0])", () => {
+        const src = errorCorrection();
+        expect(
+            conversionPreservesElementKeys(src, convertExercise(src, "free_text")),
+        ).toBe(true);
+    });
+});
+
+describe("convertExercise — cloze -> free_text", () => {
+    it("carries a single blank's accepts and preserves the key", () => {
+        const out = convertExercise(clozeSingle(), "free_text");
+        expect(out.type).toBe("free_text");
+        expect(out.accept).toEqual(["suis"]);
+        expect("sentence" in out).toBe(false);
+        expect("blanks" in out).toBe(false);
+        expect("cloze_mode" in out).toBe(false);
+        expect(
+            conversionPreservesElementKeys(clozeSingle(), out),
+        ).toBe(true);
+    });
+
+    it("MOVES the key for a multi-blank cloze (N -> 1)", () => {
+        const src = clozeMulti();
+        const out = convertExercise(src, "free_text");
+        expect(out.accept).toEqual(["suis"]); // only the first blank carries
+        // Source has 2 element keys, free_text has 1 -> not preserved.
+        expect(elementKeysOf(normalizeExerciseEdit(src))).toHaveLength(2);
+        expect(conversionPreservesElementKeys(src, out)).toBe(false);
     });
 });
 

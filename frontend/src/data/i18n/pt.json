@@ -3048,6 +3048,8 @@
         "mc_options_label": "Opções de resposta",
         "convert_label": "Tipo de exercício",
         "convert_hint": "A conversão mantém a resposta escrita e o progresso do aluno.",
+        "convert_confirm_title": "Converter o tipo de exercício?",
+        "convert_confirm_message": "Este exercício tem mais de uma resposta. A conversão mantém apenas a primeira; o progresso das outras não é transferido.",
         "mc_option_placeholder": "Texto da opção",
         "mc_option_add": "Adicionar opção",
         "mc_option_remove": "Remover opção",

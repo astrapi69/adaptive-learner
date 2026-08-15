@@ -3048,6 +3048,8 @@
         "mc_options_label": "Antwortoptionen",
         "convert_label": "Aufgabentyp",
         "convert_hint": "Beim Umwandeln bleiben die Antwort und der Lernfortschritt erhalten.",
+        "convert_confirm_title": "Aufgabentyp umwandeln?",
+        "convert_confirm_message": "Diese Aufgabe hat mehr als eine Antwort. Beim Umwandeln bleibt nur die erste erhalten; der Lernfortschritt der übrigen wird nicht übernommen.",
         "mc_option_placeholder": "Optionstext",
         "mc_option_add": "Option hinzufügen",
         "mc_option_remove": "Option entfernen",

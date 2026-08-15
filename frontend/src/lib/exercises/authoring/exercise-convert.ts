@@ -15,20 +15,29 @@
  * {@link ../../srs/element-keys}) is not orphaned and no announcement is
  * needed:
  *
- * - ``word_tiles -> free_text``  — ``accept = [tiles.join(" ")]`` (VF).
+ * - ``word_tiles -> free_text``  — ``accept = [tiles.join(" ")]`` (key-preserving).
  * - ``multiple_choice -> free_text`` — ``accept = [sorted-joined correct]``,
- *   the wrong options move to ``distractors`` (VA).
+ *   the wrong options move to ``distractors`` (key-preserving).
  * - ``ext:al-dictation -> free_text`` / ``ext:al-image-description ->
  *   free_text`` — the tolerated transcriptions/answers in ``ext_payload.accept``
- *   become the top-level ``accept``; the audio/image stimulus is dropped (VA).
+ *   become the top-level ``accept``; the audio/image stimulus is dropped
+ *   (key-preserving).
+ * - ``ext:al-error-correction -> free_text`` — ``accept = ext_payload.accept``;
+ *   the ``tokens`` sentence is dropped. Key-preserving: the error-correction
+ *   element key IS ``accept[0]`` (Stage 2, #2511).
+ * - ``cloze -> free_text`` — ``accept = blanks[0].accept`` (the ``type`` /
+ *   ``select`` modes). A single blank preserves the key; several blanks drop to
+ *   one and MOVE it, so the caller shows a progress announcement first, gated on
+ *   {@link conversionPreservesElementKeys} (Stage 2). The edit-save remap
+ *   (``carryOverReviewProgress``, #2519/#2566) still reports the moved rows.
  *
  * The two conversion FAMILIES map onto the two inline editors:
  * {@link coreConversionTargets} feeds the core ``ExerciseEditor`` (word_tiles /
- * multiple_choice), {@link extensionConversionTargets} feeds
- * ``ExtensionExerciseEditor`` (dictation / image-description). Both cross into
- * ``free_text``, a core type — which is why the ext conversion is offered only
- * where a core exercise is valid (the ``ExerciseGenerator`` row, saved via the
- * core lesson path), never in the ext-only ``ExtensionSteps`` flow.
+ * multiple_choice / cloze), {@link extensionConversionTargets} feeds
+ * ``ExtensionExerciseEditor`` (dictation / image-description / error-correction).
+ * Every target is ``free_text``, a core type — which is why the ext conversion
+ * is offered only where a core exercise is valid (the ``ExerciseGenerator`` row,
+ * saved via the core lesson path), never in the ext-only ``ExtensionSteps`` flow.
  *
  * Framework-free so the mapping + the key-preservation check are
  * unit-testable and reusable by the later stages.
@@ -50,28 +59,39 @@ import {
     IMAGE_DESCRIPTION_EXT_TYPE,
     asImageDescriptionPayload,
 } from "../payload/image-description";
+import {
+    ERROR_CORRECTION_EXT_TYPE,
+    asErrorCorrectionPayload,
+} from "../payload/error-correction";
 
-/** The core exercise types whose content a Stage-1 conversion can carry into
- *  ``free_text`` without moving the element key. */
-export type ConvertibleCoreType = "word_tiles" | "multiple_choice";
+/** The core exercise types whose content a conversion can carry into
+ *  ``free_text``. ``word_tiles`` / ``multiple_choice`` preserve the key by
+ *  construction (Stage 1); ``cloze`` preserves it for a single blank and
+ *  MOVES it for several (Stage 2 — the announcement covers the move). */
+export type ConvertibleCoreType = "word_tiles" | "multiple_choice" | "cloze";
 
-/** The extension exercise types whose ``ext_payload.accept`` a Stage-1
- *  conversion can carry into ``free_text`` without moving the element key. */
+/** The extension exercise types whose ``ext_payload.accept`` a conversion can
+ *  carry into ``free_text``. dictation / image-description drop a media
+ *  stimulus (Stage 1); error-correction is key-preserving too — its element
+ *  key IS ``accept[0]`` (Stage 2). */
 export type ConvertibleExtensionType =
     | typeof DICTATION_EXT_TYPE
-    | typeof IMAGE_DESCRIPTION_EXT_TYPE;
+    | typeof IMAGE_DESCRIPTION_EXT_TYPE
+    | typeof ERROR_CORRECTION_EXT_TYPE;
 
-/** The only Stage-1 target. */
+/** The only conversion target so far. */
 export type ConversionTargetType = "free_text";
 
 const CONVERTIBLE_SOURCES: readonly ConvertibleCoreType[] = [
     "word_tiles",
     "multiple_choice",
+    "cloze",
 ];
 
 const CONVERTIBLE_EXTENSION_SOURCES: readonly ConvertibleExtensionType[] = [
     DICTATION_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
+    ERROR_CORRECTION_EXT_TYPE,
 ];
 
 /**
@@ -100,16 +120,24 @@ const TYPE_SPECIFIC_FIELDS = [
 ] as const;
 
 /**
- * The Stage-1 conversion targets available for ``exercise``. Returns
+ * The conversion targets available for a CORE ``exercise``. Returns
  * ``["free_text"]`` for a convertible core source, otherwise ``[]`` (the UI
  * hides the type control when empty).
+ *
+ * ``multiselect`` cloze is excluded: its answer lives in the top-level
+ * ``accept`` set (not per-blank), so it is a different mapping than the
+ * blank-based ``type`` / ``select`` cloze this covers — deferred.
  */
 export function coreConversionTargets(
     exercise: ContentLessonExercise,
 ): ConversionTargetType[] {
-    return CONVERTIBLE_SOURCES.includes(exercise.type as ConvertibleCoreType)
-        ? ["free_text"]
-        : [];
+    if (!CONVERTIBLE_SOURCES.includes(exercise.type as ConvertibleCoreType)) {
+        return [];
+    }
+    if (exercise.type === "cloze" && exercise.cloze_mode === "multiselect") {
+        return [];
+    }
+    return ["free_text"];
 }
 
 /**
@@ -168,16 +196,29 @@ function multipleChoiceAnswer(exercise: ContentLessonExercise): {
     return {accept: correct, distractors};
 }
 
-/** The tolerated answers of a dictation / image-description source, read from
- *  ``ext_payload.accept`` and cleaned. ``accept[0]`` is the source's canonical
- *  answer (its element key), so the resulting ``free_text.accept`` preserves
- *  it. */
+/** The tolerated answers of an extension source, read from ``ext_payload`` and
+ *  cleaned. For dictation / image-description a media stimulus is dropped; for
+ *  error-correction the ``tokens`` sentence is dropped. In every case
+ *  ``accept[0]`` is the source's canonical answer (its element key), so the
+ *  resulting ``free_text.accept`` preserves it. */
 function extensionAcceptAnswers(exercise: ContentLessonExercise): string[] {
-    const payload =
+    const accept =
         exercise.type === DICTATION_EXT_TYPE
-            ? asDictationPayload(exercise)
-            : asImageDescriptionPayload(exercise);
-    return (payload?.accept ?? [])
+            ? asDictationPayload(exercise)?.accept
+            : exercise.type === IMAGE_DESCRIPTION_EXT_TYPE
+              ? asImageDescriptionPayload(exercise)?.accept
+              : asErrorCorrectionPayload(exercise)?.accept;
+    return (accept ?? [])
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.length > 0);
+}
+
+/** The accepted answers a ``cloze`` carries into ``free_text``: the FIRST
+ *  blank's accepts (the blank-based ``type`` / ``select`` modes). A single
+ *  blank preserves the key; several blanks drop to one and MOVE it (the
+ *  announcement covers that — see {@link conversionPreservesElementKeys}). */
+function clozeAcceptAnswers(exercise: ContentLessonExercise): string[] {
+    return (exercise.blanks?.[0]?.accept ?? [])
         .map((entry) => entry.trim())
         .filter((entry) => entry.length > 0);
 }
@@ -222,9 +263,17 @@ export function convertExercise(
             distractors,
         } as ContentLessonExercise;
     }
+    if (source.type === "cloze") {
+        return {
+            ...base,
+            type: "free_text",
+            accept: clozeAcceptAnswers(source),
+        } as ContentLessonExercise;
+    }
     if (
         source.type === DICTATION_EXT_TYPE ||
-        source.type === IMAGE_DESCRIPTION_EXT_TYPE
+        source.type === IMAGE_DESCRIPTION_EXT_TYPE ||
+        source.type === ERROR_CORRECTION_EXT_TYPE
     ) {
         return {
             ...base,
