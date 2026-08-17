@@ -160,10 +160,10 @@ describe("CreateLesson — local edit carries over review progress (#2519)", () 
     it("remaps the review-card row onto the corrected answer text after saving", async () => {
         listElementErrorsMock.mockResolvedValue([
             {
-                id: `${USER_ID}#${SET_ID}#lessons/l0.json#ex-1#Merci#target_to_source`,
+                id: `${USER_ID}#${SET_ID}#l0.json#ex-1#Merci#target_to_source`,
                 user_id: USER_ID,
                 set_id: SET_ID,
-                lesson_id: "lessons/l0.json",
+                lesson_id: "l0.json",
                 exercise_id: "ex-1",
                 element_key: "Merci",
                 element_type: "free_text",
@@ -187,7 +187,7 @@ describe("CreateLesson — local edit carries over review progress (#2519)", () 
             expect(remapKeysMock).toHaveBeenCalledWith(USER_ID, [
                 {
                     set_id: SET_ID,
-                    lesson_id: "lessons/l0.json",
+                    lesson_id: "l0.json",
                     exercise_id: "ex-1",
                     old: "Merci",
                     new: "Merci !",

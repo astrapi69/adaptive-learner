@@ -113,6 +113,21 @@ function relabelCachedExercises(
     });
 }
 
+/**
+ * The filename a lesson is addressed by wherever a learner row or a content
+ * read is keyed: the BARE ``{lesson.id}.json``.
+ *
+ * Not the ``lessons/``-prefixed cache path. ``listLessons`` strips that prefix
+ * from its cache rows and ``getLesson`` re-adds it, so every value that
+ * travels between the two - the lesson route's ``filename``, the attempt
+ * recorder's ``lessonId``, and therefore ``ElementError.lesson_id`` - is the
+ * bare form. #2657 is what one module assuming the prefixed form cost: its
+ * row filter matched nothing and the fix shipped inert.
+ */
+export function lessonFileName(lessonId: string): string {
+    return `${lessonId}.json`;
+}
+
 /** Pull the exercises out of a cached lesson, mirroring the peek's shape so
  *  both sides of the comparison are read the same way. Shared with the
  *  #2130 stable-id migration, which reads cached lessons the same way. */
@@ -126,6 +141,45 @@ export function cachedLessonToPeek(filename: string, lesson: ContentLesson): Pee
 }
 
 /**
+ * Plan BOTH remap dimensions for one set from two lesson versions already in
+ * hand - the pure half of {@link planSetUpdate}, with no storage read of its
+ * own.
+ *
+ * Extracted (#2592) because all three entry points that overwrite a set's
+ * content need the identical two-dimension sequence and differ only in where
+ * the two versions come from: the repo-download path peeks them over HTTP
+ * (below), the local edit path holds them in the wizard's own state
+ * (``edit-remap.ts``), and the import-overwrite path reads the saved set and
+ * parses the incoming file (``import-remap.ts``). The sequence itself is NOT
+ * a detail any caller may re-derive: ``exercise_id`` must resolve first,
+ * because ``planElementKeyRemaps``'s ``classify()`` hard-assumes the exercise
+ * already resolves - see this module's header.
+ */
+export function planRemapsForVersions(
+    identities: readonly SrsIdentity[],
+    cached: readonly PeekLesson[],
+    incoming: readonly PeekLesson[],
+    setId: string,
+): SetUpdatePlan {
+    const exercise = planExerciseIdRemaps(
+        uniqueExerciseIdentities(identities),
+        cached,
+        incoming,
+        setId,
+    );
+    const resolvedIdentities = resolveExerciseIds(identities, exercise.certain);
+    const relabeledCached = relabelCachedExercises(cached, exercise.certain);
+    const element = planElementKeyRemaps(
+        resolvedIdentities,
+        relabeledCached,
+        incoming,
+        setId,
+    );
+
+    return {exercise, element};
+}
+
+/**
  * Propose a mapping for the rows this update would orphan.
  *
  * Only the lessons the learner actually holds rows in are read - a set with
@@ -133,6 +187,11 @@ export function cachedLessonToPeek(filename: string, lesson: ContentLesson): Pee
  * cannot be read (evicted cache, transient failure) is simply absent from the
  * cached side, and every row in it comes back as uncertain rather than being
  * mapped from a half-known state.
+ *
+ * ``impact.lostCards[].lesson_id`` is passed straight to ``getLesson`` as the
+ * filename: an ``ElementError.lesson_id`` IS the bare lesson filename that
+ * ``listLessons`` returns (the ``lessons/`` prefix is stripped there and
+ * re-added by ``getLesson``). #2657 is what assuming otherwise costs.
  */
 export async function planSetUpdate(
     source: string,
@@ -155,20 +214,5 @@ export async function planSetUpdate(
         }
     }
 
-    const exercise = planExerciseIdRemaps(
-        uniqueExerciseIdentities(impact.lostCards),
-        cached,
-        incomingLessons,
-        setId,
-    );
-    const resolvedIdentities = resolveExerciseIds(impact.lostCards, exercise.certain);
-    const relabeledCached = relabelCachedExercises(cached, exercise.certain);
-    const element = planElementKeyRemaps(
-        resolvedIdentities,
-        relabeledCached,
-        incomingLessons,
-        setId,
-    );
-
-    return {exercise, element};
+    return planRemapsForVersions(impact.lostCards, cached, incomingLessons, setId);
 }

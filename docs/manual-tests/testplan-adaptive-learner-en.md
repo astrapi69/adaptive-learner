@@ -564,6 +564,21 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] Name collision: three-way dialog appears (Overwrite /
       Import as copy / Cancel), NO silent overwrite;
       "Import as copy" creates a fresh id + "(copy)" title
+- [ ] **#2592 Overwrite carries the learning progress across:** create a set
+      with your own lesson, answer one exercise wrongly (so an error/review
+      row exists), export the set, correct ONE answer text in the exported
+      file (e.g. a typo in `free_text.accept[0]`), re-import → collision
+      dialog → "Overwrite". Expected: a toast "Carried over N review
+      card(s)", and the error history still shows the row (with its old error
+      count) under the NEW answer text — not as a fresh row and not gone.
+      Before this fix the row was orphaned silently.
+- [ ] **#2592 an unresolvable case is reported, not silent:** same setup, but
+      DELETE an exercise in the file (so positions shift) → "Overwrite".
+      Expected: an info toast "… could not be confidently matched", no silent
+      loss
+- [ ] **#2592 "Import as copy" is untouched:** same flow but choose "Import
+      as copy" → the original keeps its progress AND review cards, the copy
+      starts without either
 - [ ] Partial import (ZIP with broken lessons): valid ones import,
       warning "N lesson(s) skipped" is shown
 - [ ] Set with ONLY broken lessons: clean error, no crash
