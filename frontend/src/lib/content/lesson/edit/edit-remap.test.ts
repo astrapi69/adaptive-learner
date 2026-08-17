@@ -24,7 +24,11 @@ vi.mock("../../../../storage", () => ({
 const USER = "u1";
 const SET = "created-buch";
 const LESSON_ID = "01";
-const FILE_PATH = "lessons/01.json";
+/** The REAL shape: ``listLessons()`` strips the ``lessons/`` prefix, so this
+ *  is what ``ElementError.lesson_id`` holds. Hard-coded to the bare form on
+ *  purpose (#2657) - deriving it from the module under test would let the
+ *  fixture follow the module back into the wrong convention. */
+const FILE_PATH = "01.json";
 
 function lessonWithFreeText(answer: string): ContentLesson {
     return {
@@ -76,8 +80,8 @@ beforeEach(() => {
 });
 
 describe("lessonFilePath", () => {
-    it("builds the lessons/{id}.json path ElementError.lesson_id is stored under", () => {
-        expect(lessonFilePath("01")).toBe("lessons/01.json");
+    it("builds the BARE {id}.json filename ElementError.lesson_id is stored under (#2657)", () => {
+        expect(lessonFilePath("01")).toBe("01.json");
     });
 });
 
@@ -115,6 +119,20 @@ describe("remapOrphanedElementKeys", () => {
         expect(result).toEqual({applied: 0, uncertain: 0});
     });
 
+    it("does not opt out of the learner's MASTERED rows - they carry the most history", async () => {
+        list.mockResolvedValue([]);
+
+        await remapOrphanedElementKeys(
+            USER,
+            SET,
+            LESSON_ID,
+            lessonWithFreeText("Merci"),
+            lessonWithFreeText("Merci !"),
+        );
+
+        expect(list).toHaveBeenCalledWith(USER, {setId: SET, includeMastered: true});
+    });
+
     it("is a no-op with no storage read of remapKeys when the lesson has no rows to carry", async () => {
         list.mockResolvedValue([]);
 
@@ -133,7 +151,7 @@ describe("remapOrphanedElementKeys", () => {
     it("only considers rows belonging to the edited lesson", async () => {
         list.mockResolvedValue([
             row("Merci"),
-            {...row("Danke", "ex-2"), lesson_id: "lessons/02.json"},
+            {...row("Danke", "ex-2"), lesson_id: "02.json"},
         ]);
         remapKeys.mockResolvedValue({applied: 1, skipped: 0});
 
