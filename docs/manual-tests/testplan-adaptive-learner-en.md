@@ -1610,6 +1610,25 @@ characters.
 - [ ] Known platform limit, NOT a bug: pause/resume has no effect on iOS
       Safari (it stops and restarts there)
 
+#### Read-aloud keeps playing when the screen auto-locks (#2666) - MANDATORY
+
+The screen wake lock keeps the display awake while read-aloud is playing so
+the device's inactivity timer doesn't interrupt speech synthesis (iOS
+Safari and mobile Chrome browsers stop `speechSynthesis` the moment the
+screen auto-locks).
+
+- [ ] On the iPhone (Safari), open a lesson, start read-aloud, and do NOT
+      touch the device
+- [ ] Wait past the device's normal auto-lock timeout (leave the phone
+      alone): the screen stays on for as long as read-aloud is playing
+- [ ] Read-aloud plays uninterrupted through to the end of the text
+- [ ] After "Stop" or the end of read-aloud, the screen is again allowed to
+      auto-lock normally (the wake lock is released)
+- [ ] Repeat the same flow on an Android device (Chrome)
+- [ ] Known platform limit, NOT a bug: manually pressing the lock/power
+      button still turns the screen off immediately and stops playback -
+      no web API can prevent that
+
 #### App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 
 The one path no automated test covers: on iOS/WKWebView a new service
