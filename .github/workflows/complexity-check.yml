@@ -20,16 +20,12 @@ name: Complexity Check
 # warn-view report moved to the night shift.
 
 on:
+  # No `paths:` filter (#2641): the gate is a REQUIRED status check on
+  # develop, and a path-filtered workflow never starts on out-of-scope PRs,
+  # which would leave the required context pending forever. Instead the
+  # `changes` job detects in-scope files and the gate's steps skip cheaply
+  # (ci.yml `changes` pattern, #1617/#1658) — the context always reports.
   pull_request:
-    paths:
-      - "backend/app/**.py"
-      - "plugins/**/*.py"
-      - "frontend/src/**.ts"
-      - "frontend/src/**.tsx"
-      - ".complexity-baseline"
-      - "scripts/check-complexity.sh"
-      - "scripts/complexity_gate.py"
-      - ".github/workflows/complexity-check.yml"
   schedule:
     # Daily at 02:30 UTC.
     - cron: "30 2 * * *"
@@ -42,28 +38,80 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
+  changes:
+    name: Detect gate-relevant changes
+    # PR only: dorny/paths-filter reads the PR file list via the API. On
+    # workflow_dispatch the gate job runs unconditionally (see step ifs).
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          # The former `on.paths` list, plus the folder-size guard's own
+          # inputs (.dirsize-baseline + both guard scripts) which the old
+          # filter missed — a baseline-only edit must run the gate too.
+          filters: |
+            code:
+              - "backend/app/**.py"
+              - "plugins/**/*.py"
+              - "frontend/src/**.ts"
+              - "frontend/src/**.tsx"
+              - ".complexity-baseline"
+              - ".dirsize-baseline"
+              - "scripts/check-complexity.sh"
+              - "scripts/complexity_gate.py"
+              - "scripts/check-folder-size.sh"
+              - "scripts/check-directory-size.sh"
+              - ".github/workflows/complexity-check.yml"
+
   complexity-gate:
     name: Complexity ratchet gate
     # PR + manual only — not on the nightly schedule (the gate guards PRs).
-    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    # `always()` so the workflow_dispatch path runs although `changes` was
+    # skipped; the fail-closed step below re-arms the PR safety.
+    needs: changes
+    if: always() && (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # On a PR: run the real gate only when gate-relevant files changed.
+      # On workflow_dispatch: always run (changes was skipped, outputs empty).
+      RUN_GATE: ${{ github.event_name != 'pull_request' || needs.changes.outputs.code == 'true' }}
     steps:
+      - name: Fail closed if change detection failed
+        # Gate test contract #2083 point 3: "I could not check" must never
+        # report green. If the `changes` job errored on a PR, its outputs are
+        # empty and every gate step below would skip — a fail-open. Refuse.
+        if: github.event_name == 'pull_request' && needs.changes.result != 'success'
+        run: |
+          echo "change detection did not succeed (result: ${{ needs.changes.result }}) — failing closed"
+          exit 1
+
       - uses: actions/checkout@v7
+        if: env.RUN_GATE == 'true'
 
       - uses: actions/setup-python@v7
+        if: env.RUN_GATE == 'true'
         with:
           python-version: "3.12"
 
       - uses: actions/setup-node@v7
+        if: env.RUN_GATE == 'true'
         with:
           node-version: "24"
 
       - uses: oven-sh/setup-bun@v2
+        if: env.RUN_GATE == 'true'
         with:
           bun-version: "1.3.14"
 
       - name: Cache bun install
+        if: env.RUN_GATE == 'true'
         uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
@@ -71,6 +119,7 @@ jobs:
           restore-keys: bun-${{ runner.os }}-
 
       - name: Install frontend dependencies
+        if: env.RUN_GATE == 'true'
         working-directory: frontend
         run: bun install --frozen-lockfile
 
@@ -78,6 +127,7 @@ jobs:
         # check-complexity.sh --gate bootstraps radon into an isolated venv,
         # runs eslint's complexity rule, and exits non-zero on a new/regressed
         # offender vs .complexity-baseline. No `|| true`: this is the hard gate.
+        if: env.RUN_GATE == 'true'
         run: bash scripts/check-complexity.sh --gate
 
       - name: Folder-size guard (god-folder gate)
@@ -85,7 +135,13 @@ jobs:
         # .dirsize-baseline. Tolerates the not-yet-migrated god-folders listed
         # in the baseline (ratchet: may only shrink). check-folder-size.sh is a
         # thin alias of the #809 check-directory-size.sh --gate.
+        if: env.RUN_GATE == 'true'
         run: bash scripts/check-folder-size.sh
+
+      - name: Out of scope — reporting success without running
+        # Gate test contract #2083 point 4: say WHAT was (not) measured.
+        if: env.RUN_GATE != 'true'
+        run: echo "No gate-relevant files in this PR (see the 'Detect gate-relevant changes' job) — complexity + folder-size gates skipped by scope, context reports success."
 
   complexity-report:
     name: Complexity report (warn-view)
