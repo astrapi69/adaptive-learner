@@ -22,8 +22,7 @@ import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
-import CardImageField from "./CardImageField";
-import AiSuggestButton from "./AiSuggestButton";
+import {AiSuggestButton, CardImageField} from "./fields";
 import {
     suggestClozeSentence,
     suggestDistractors,

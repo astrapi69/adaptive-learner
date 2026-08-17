@@ -15,27 +15,27 @@ import {MemoryRouter} from "react-router";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 const keyStatus = vi.fn();
-vi.mock("../../hooks/settings/useApiKeyStatus", () => ({
+vi.mock("../../../hooks/settings/useApiKeyStatus", () => ({
     useApiKeyStatus: () => keyStatus(),
 }));
-vi.mock("../../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
     useI18n: () => ({t: (_k: string, fb?: string) => fb ?? _k, lang: "en"}),
 }));
-vi.mock("../../lib/learning/learnerState", () => ({
+vi.mock("../../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "user-1"}),
 }));
 const resolveProvider = vi.fn();
-vi.mock("../../lib/ai/providers/resolve-provider", () => ({
+vi.mock("../../../lib/ai/providers/resolve-provider", () => ({
     resolveActiveAiProvider: (...a: unknown[]) => resolveProvider(...a),
 }));
 const aiComplete = vi.fn();
-vi.mock("../../storage/ai/ai-providers", () => ({
+vi.mock("../../../storage/ai/ai-providers", () => ({
     aiComplete: (...a: unknown[]) => aiComplete(...a),
 }));
 
 import AiSuggestButton from "./AiSuggestButton";
-import {suggestDistractors} from "../../lib/ai/suggest/exercise-suggest";
-import type {ContentLessonExercise} from "../../storage/types";
+import {suggestDistractors} from "../../../lib/ai/suggest/exercise-suggest";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 const MC: ContentLessonExercise = {
     id: "ex-1",
