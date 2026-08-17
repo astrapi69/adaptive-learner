@@ -37,12 +37,14 @@ export const THEME_IDS = [
 
 export type ThemeId = (typeof THEME_IDS)[number];
 
-/** The 5 critical views screenshotted across every theme. */
+/** The 7 critical views screenshotted across every theme. */
 export const VIEW_NAMES = [
     "dashboard",
     "learning-path",
     "lesson-matching",
     "lesson-result",
+    "lesson-reading-comprehension-checked",
+    "lesson-graded-quiz-checked",
     "settings",
 ] as const;
 
@@ -525,6 +527,245 @@ async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
     return true;
 }
 
+/* ------------------------------------------------------------------ *
+ * Checked-state extension exercises (#2646).
+ *
+ * The bundled set carries none of the adopted extension exercise types,
+ * so the reading-comprehension / graded-quiz CHECKED states (the whole
+ * point of #2633's verdict tinting) were captured by NO baseline — the
+ * #1640 gate could only answer 0-diff or the escape label for changes to
+ * those renderers. These seeds author a minimal lesson through the REAL
+ * create-lesson extension wizard (the same flow the
+ * ``extension-wizard-3-4`` dexie spec proves end to end), play it, answer
+ * deterministically, and stop on the post-check resolution so all four
+ * verdicts (correct / missed / wrong / neutral), the free-text solution
+ * line, and the graded-quiz score badge are in frame.
+ *
+ * Determinism notes:
+ * - Both renderers shuffle MC options via ``seededShuffle(options,
+ *   `${exercise.id}#${index}`)`` (#2317). The exercise ids come from
+ *   ``crypto.randomUUID`` at authoring time, so the caller MUST install
+ *   ``pinRandomness`` before first navigation — ids (and therefore the
+ *   displayed option order) are then identical run-to-run.
+ * - Answers are selected by option TEXT, never by position, so the seeds
+ *   stay correct even if the pinned shuffle order ever changes.
+ */
+
+/** Fill one MC sub-question in the extension editor: prompt + a correct
+ *  and a wrong option. ``base`` is e.g. ``exercise-ext-rc-q-<id>-0``. */
+async function fillEditorMcQuestion(
+    page: Page,
+    base: string,
+    prompt: string,
+    correct: string,
+    wrong: string,
+): Promise<void> {
+    await page.getByTestId(`${base}-prompt`).fill(prompt);
+    await page.getByTestId(`${base}-opt-text-0`).fill(correct);
+    await page.getByTestId(`${base}-opt-text-1`).fill(wrong);
+    await page.getByTestId(`${base}-opt-correct-0`).check();
+}
+
+/** The id of the currently-open inline extension editor (``ex-ext-N``). */
+async function openExtensionEditorId(page: Page): Promise<string> {
+    const editor = page.locator('[data-testid^="exercise-ext-editor-"]');
+    await expect(editor).toBeVisible({timeout: 10_000});
+    const testid = await editor.getAttribute("data-testid");
+    return testid!.replace("exercise-ext-editor-", "");
+}
+
+/**
+ * Author one lesson holding a reading-comprehension exercise (two MC
+ * sub-questions + one free-text) and a graded-quiz exercise (one MC
+ * question, default 60% threshold), save it locally, and open it in the
+ * lesson player. Leaves the page on the first step (the RC exercise).
+ */
+async function authorExtensionLesson(page: Page): Promise<boolean> {
+    await page.goto("/create-lesson");
+    await expect(page.getByTestId("create-lesson-page")).toBeVisible({
+        timeout: 15_000,
+    });
+    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+        await page.getByTestId("create-lesson-draft-fresh").click();
+    }
+    await page.getByTestId("create-lesson-title").fill("Visual: Extensions geprüft");
+    await page.getByTestId("template-extensions").click();
+    await expect(page.getByTestId("create-lesson-extension-step")).toBeVisible();
+
+    // --- Reading comprehension: 2 MC + 1 free-text sub-question ---
+    await page.getByTestId("extension-add").click();
+    await page.getByTestId("extension-add-type-reading-comprehension").click();
+    const rcId = await openExtensionEditorId(page);
+    await page
+        .getByTestId(`exercise-ext-prompt-${rcId}`)
+        .fill("Lies den Text und beantworte die Fragen");
+    await page
+        .getByTestId(`exercise-ext-rc-passage-${rcId}`)
+        .fill("Rex lief in den Garten und bellte den Postboten an.");
+    await fillEditorMcQuestion(
+        page,
+        `exercise-ext-rc-q-${rcId}-0`,
+        "Wohin lief Rex?",
+        "In den Garten",
+        "Auf die Straße",
+    );
+    await page.getByTestId(`exercise-ext-rc-q-add-${rcId}`).click();
+    await fillEditorMcQuestion(
+        page,
+        `exercise-ext-rc-q-${rcId}-1`,
+        "Wen bellte Rex an?",
+        "Den Postboten",
+        "Die Katze",
+    );
+    await page.getByTestId(`exercise-ext-rc-q-add-${rcId}`).click();
+    const freeBase = `exercise-ext-rc-q-${rcId}-2`;
+    await page.getByTestId(`${freeBase}-type-free`).check();
+    await page.getByTestId(`${freeBase}-prompt`).fill("Was tat Rex im Garten?");
+    await page.getByTestId(`${freeBase}-accept-input`).fill("bellen");
+    await page.getByTestId(`${freeBase}-accept-add`).click();
+    await expect(page.getByTestId(`exercise-ext-save-${rcId}`)).toBeEnabled();
+    await page.getByTestId(`exercise-ext-save-${rcId}`).click();
+
+    // --- Graded quiz: 1 MC question, default threshold (60%) ---
+    await page.getByTestId("extension-add").click();
+    await page.getByTestId("extension-add-type-graded-quiz").click();
+    const gqId = await openExtensionEditorId(page);
+    await page.getByTestId(`exercise-ext-prompt-${gqId}`).fill("Kurzes Quiz");
+    await fillEditorMcQuestion(
+        page,
+        `exercise-ext-gq-q-${gqId}-0`,
+        "Wer bellte?",
+        "Rex",
+        "Der Postbote",
+    );
+    await expect(page.getByTestId(`exercise-ext-save-${gqId}`)).toBeEnabled();
+    await page.getByTestId(`exercise-ext-save-${gqId}`).click();
+
+    // --- Review, save locally, play ---
+    await page.getByTestId("create-lesson-next").click();
+    await expect(page.getByTestId("create-lesson-extension-review")).toBeVisible();
+    await page.getByTestId("create-lesson-save-local").click();
+    await expect(page.getByTestId("create-lesson-saved")).toBeVisible({
+        timeout: 15_000,
+    });
+    await page.getByTestId("create-lesson-play").click();
+    await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
+    // The extension template may prepend theory/intro steps before the
+    // first exercise — advance until the RC step renders (bounded).
+    for (let i = 0; i < 10; i++) {
+        if (await page.getByTestId("reading-comprehension-exercise").count()) {
+            return true;
+        }
+        const next = page.getByTestId("lesson-next");
+        if (await next.count()) {
+            await next.click();
+            await page.waitForTimeout(120);
+            continue;
+        }
+        const check = page.getByTestId("lesson-check");
+        if (await check.count()) {
+            await expect(check).toBeEnabled({timeout: 5_000});
+            await check.click();
+            await page.waitForTimeout(120);
+            continue;
+        }
+        await page.waitForTimeout(250);
+    }
+    return (await page.getByTestId("reading-comprehension-exercise").count()) > 0;
+}
+
+/** Click the MC option carrying ``text`` inside sub-question ``q`` of the
+ *  reading-comprehension renderer (position-independent — options are
+ *  shuffle-displayed, #2317). */
+async function clickRcOptionByText(
+    page: Page,
+    q: number,
+    text: string,
+): Promise<void> {
+    await page
+        .locator(`[data-testid^="reading-comprehension-q${q}-option-"]`)
+        .filter({hasText: text})
+        .first()
+        .click();
+}
+
+/**
+ * Seed the CHECKED reading-comprehension state: q0 answered correctly
+ * (``correct`` verdict), q1 answered wrongly (``wrong`` + dashed-green
+ * ``missed`` on its correct option, ``neutral`` on the untouched ones),
+ * q2 free-text answered wrongly (green solution line). Ends on the
+ * post-check resolution.
+ */
+async function gotoReadingComprehensionChecked(page: Page): Promise<boolean> {
+    if (!(await authorExtensionLesson(page))) return false;
+    await clickRcOptionByText(page, 0, "In den Garten");
+    await clickRcOptionByText(page, 1, "Die Katze");
+    await page
+        .getByTestId("reading-comprehension-q2-input")
+        .fill("schlafen");
+    const check = page.getByTestId("lesson-check");
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    await expect(page.getByTestId("reading-comprehension-result")).toBeVisible({
+        timeout: 10_000,
+    });
+    // The free-text solution line is the LAST verdict element to render —
+    // pin it before the shot so the fullPage height has settled. The lesson
+    // document scrolls inside #root (html/body are viewport-locked), so
+    // ``fullPage`` captures only the current scroll state — bring the
+    // solution line into frame; the q0-q2 verdict block is short enough
+    // that every verdict stays visible after the minimal scroll.
+    await expect(
+        page.getByTestId("reading-comprehension-q2-solution"),
+    ).toBeVisible({timeout: 5_000});
+    await waitForStableLayout(page);
+    return true;
+}
+
+/**
+ * Seed the CHECKED graded-quiz state: pass the RC step minimally, then
+ * answer the quiz question wrongly and check — the resolution shows the
+ * score badge (``failed`` at 0/1 under the default 60% threshold) plus
+ * the per-option verdict marks.
+ */
+async function gotoGradedQuizChecked(page: Page): Promise<boolean> {
+    if (!(await authorExtensionLesson(page))) return false;
+    // Step past the RC exercise with minimal correct-ish answers.
+    await clickRcOptionByText(page, 0, "In den Garten");
+    await clickRcOptionByText(page, 1, "Den Postboten");
+    await page.getByTestId("reading-comprehension-q2-input").fill("bellen");
+    const check = page.getByTestId("lesson-check");
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    await expect(page.getByTestId("reading-comprehension-result")).toBeVisible({
+        timeout: 10_000,
+    });
+    const next = page.getByTestId("lesson-next");
+    await expect(next).toBeVisible({timeout: 5_000});
+    await next.click();
+    await expect(page.getByTestId("graded-quiz-exercise")).toBeVisible({
+        timeout: 10_000,
+    });
+    // Answer the single question WRONG (by text, position-independent):
+    // 0 points of 1 sits under the default 60% threshold -> failed badge.
+    await page
+        .getByTestId("graded-quiz-question-0")
+        .locator("label")
+        .filter({hasText: "Der Postbote"})
+        .first()
+        .click();
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    await expect(page.getByTestId("graded-quiz-result")).toBeVisible({
+        timeout: 10_000,
+    });
+    await expect(page.getByTestId("graded-quiz-score")).toBeVisible({
+        timeout: 5_000,
+    });
+    await waitForStableLayout(page);
+    return true;
+}
+
 /**
  * Bring ``view`` into its screenshot state (theme already pinned by the
  * caller). Returns true when ready, false when the view could not be
@@ -562,6 +803,23 @@ export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
             return playBundledLesson(page, "summary");
         case "lesson-matching":
             return playBundledLesson(page, "matching-result");
+        case "lesson-reading-comprehension-checked":
+            // #2646 — authored ids feed the option-shuffle seed (#2317);
+            // pin randomness BEFORE any navigation so ids and therefore
+            // the displayed option order are identical run-to-run. The
+            // taller viewport keeps the whole verdict block (down to the
+            // free-text solution line) in frame: ``settleForScreenshot``
+            // deliberately pins the scroll to the top (#1785), so the
+            // frame must FIT the content instead of scrolling to it.
+            await page.setViewportSize({width: 1440, height: 1220});
+            await pinRandomness(page);
+            await seedLearner(page);
+            return gotoReadingComprehensionChecked(page);
+        case "lesson-graded-quiz-checked":
+            await page.setViewportSize({width: 1440, height: 1220});
+            await pinRandomness(page);
+            await seedLearner(page);
+            return gotoGradedQuizChecked(page);
         default:
             return false;
     }
