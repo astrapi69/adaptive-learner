@@ -377,13 +377,15 @@ describe("CorrectionBlock: render + skip + record", () => {
         await waitFor(() =>
             expect(recordBulkMock).toHaveBeenCalled(),
         );
+        // #2663 — the recorded attempt must carry the ORIGINAL error's
+        // exercise_id (via the generated cloze's ``stable_id``), not the
+        // synthetic ``gen-cloze-...`` id, so it resolves onto the SAME
+        // ElementError row instead of orphaning a fresh one.
         expect(recordBulkMock).toHaveBeenCalledWith(
             "user-1",
             expect.arrayContaining([
                 expect.objectContaining({
-                    exercise_id: expect.stringContaining(
-                        "gen-cloze-ex-1",
-                    ),
+                    exercise_id: "ex-1",
                     correct: true,
                 }),
             ]),
