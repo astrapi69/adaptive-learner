@@ -2048,6 +2048,70 @@
         "retry": "Coba lagi",
         "empty": "Latihan pilihan ganda ini tidak memiliki opsi."
       },
+      "al_categorization": {
+        "empty": "Latihan kategorisasi ini tidak memiliki kategori.",
+        "instructions": "Ketuk sebuah item, lalu ketuk kategorinya.",
+        "pool_label": "Item",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat. Periksa item yang ditandai.",
+        "retry": "Coba lagi",
+        "submit": "Periksa jawaban"
+      },
+      "al_dictation": {
+        "empty": "Latihan dikte ini tidak memiliki audio.",
+        "input_label": "Ketik apa yang Anda dengar",
+        "input_placeholder": "Ketik apa yang Anda dengar…",
+        "result_correct": "Benar!",
+        "result_near_miss": "Hampir! Periksa ejaan Anda.",
+        "result_wrong": "Belum tepat.",
+        "retry": "Coba lagi",
+        "solution_label": "Solusi",
+        "submit": "Periksa jawaban"
+      },
+      "al_error_correction": {
+        "empty": "Latihan koreksi kesalahan ini tidak memiliki kalimat.",
+        "input_label": "Koreksi",
+        "instructions": "Ketuk kata yang salah, lalu ketik koreksinya.",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat. Lihat solusi di bawah.",
+        "retry": "Coba lagi",
+        "solution_label": "Solusi",
+        "submit": "Periksa jawaban"
+      },
+      "al_graded_quiz": {
+        "empty": "Kuis ini tidak memiliki pertanyaan.",
+        "failed": "Tidak lulus",
+        "input_label": "Jawaban",
+        "passed": "Lulus",
+        "retry": "Coba lagi",
+        "solution_label": "Solusi",
+        "submit": "Kirim kuis"
+      },
+      "al_image_description": {
+        "empty": "Latihan deskripsi gambar ini tidak memiliki gambar.",
+        "image_alt": "Gambar untuk dideskripsikan — deskripsinya adalah jawaban yang diketik di bawah",
+        "image_unavailable": "Gambar tidak tersedia di sini.",
+        "input_label": "Deskripsikan gambar",
+        "input_placeholder": "Ketik deskripsi Anda…",
+        "result_correct": "Benar!",
+        "result_near_miss": "Hampir! Periksa ejaan Anda.",
+        "result_wrong": "Belum tepat.",
+        "retry": "Coba lagi",
+        "solution_label": "Solusi",
+        "submit": "Periksa jawaban"
+      },
+      "al_reading_comprehension": {
+        "badge_correct": "Benar",
+        "badge_missed": "Jawaban yang benar",
+        "badge_wrong": "Salah",
+        "empty": "Latihan membaca ini tidak memiliki pertanyaan.",
+        "input_label": "Jawaban",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat. Periksa pertanyaan yang ditandai.",
+        "retry": "Coba lagi",
+        "solution_label": "Solusi",
+        "submit": "Periksa jawaban"
+      },
       "instruction": {
         "matching": {
           "receptive": "Cocokkan pasangannya (Pengenalan)",
