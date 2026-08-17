@@ -2048,6 +2048,70 @@
         "retry": "Tentar novamente",
         "empty": "Este exercício de múltipla escolha não tem opções."
       },
+      "al_categorization": {
+        "empty": "Este exercício de categorização não tem categorias.",
+        "instructions": "Toca num item e depois na sua categoria.",
+        "pool_label": "Itens",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase. Revise os itens destacados.",
+        "retry": "Tentar novamente",
+        "submit": "Verificar resposta"
+      },
+      "al_dictation": {
+        "empty": "Este exercício de ditado não tem áudio.",
+        "input_label": "Escreve o que ouves",
+        "input_placeholder": "Escreve o que ouves…",
+        "result_correct": "Correto!",
+        "result_near_miss": "Quase! Verifica a ortografia.",
+        "result_wrong": "Quase.",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Verificar resposta"
+      },
+      "al_error_correction": {
+        "empty": "Este exercício de correção não tem frase.",
+        "input_label": "Correção",
+        "instructions": "Toca na palavra errada e depois escreve a correção.",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase. Vê a solução abaixo.",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Verificar resposta"
+      },
+      "al_graded_quiz": {
+        "empty": "Este questionário não tem perguntas.",
+        "failed": "Não aprovado",
+        "input_label": "Resposta",
+        "passed": "Aprovado",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Entregar questionário"
+      },
+      "al_image_description": {
+        "empty": "Este exercício de descrição de imagem não tem imagem.",
+        "image_alt": "Imagem a descrever — a sua descrição é a resposta a escrever abaixo",
+        "image_unavailable": "A imagem não está disponível aqui.",
+        "input_label": "Descreve a imagem",
+        "input_placeholder": "Escreve a tua descrição…",
+        "result_correct": "Correto!",
+        "result_near_miss": "Quase! Verifica a ortografia.",
+        "result_wrong": "Quase.",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Verificar resposta"
+      },
+      "al_reading_comprehension": {
+        "badge_correct": "Correto",
+        "badge_missed": "Resposta correta",
+        "badge_wrong": "Errado",
+        "empty": "Este exercício de leitura não tem perguntas.",
+        "input_label": "Resposta",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase. Revise as perguntas destacadas.",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Verificar respostas"
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",
