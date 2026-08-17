@@ -9,10 +9,13 @@ packages = [{include = "adaptive_learner_ai_anthropic"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 pluginforge = "^0.10.0"
-# anthropic 0.55 ships the messages.create API the plugin relies on.
-# Pinned with a caret so a future-incompatible 0.60 doesn't sneak in;
-# bump the lower bound when the project tests a newer release.
-anthropic = "^0.55.0"
+# anthropic 0.122: the plugin's whole surface (messages.create,
+# messages.stream + text_stream, Anthropic/AsyncAnthropic constructors,
+# native exception classes) verified against the 0.55->0.122 changelog:
+# no breaking change touches it (#2650). Caret-pinned so an
+# incompatible future 0.x doesn't sneak in; bump the lower bound only
+# with a fresh changelog review + live-call proof.
+anthropic = "^0.122.0"
 
 [tool.poetry.plugins."adaptive_learner.plugins"]
 ai-anthropic = "adaptive_learner_ai_anthropic.plugin:AiAnthropicPlugin"
