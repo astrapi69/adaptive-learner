@@ -9,6 +9,7 @@ import {
   type ImportedSet,
   type SkippedLesson,
 } from "../../../lib/content/lesson/lesson-import";
+import { prepareOverwriteCarryOver } from "../../../lib/content/lesson/import-remap";
 import { getStorage } from "../../../storage";
 import { USER_GENERATED_SOURCE } from "../../../storage/types";
 import { notify } from "../../../utils/notify";
@@ -133,7 +134,17 @@ export default function ImportLessonModal({
     setCollisionIds(null);
     setImporting(true);
     try {
+      // #2592 — an overwrite replaces the very version the learner's SRS /
+      // error rows were recorded against, so plan the carry-over BEFORE the
+      // save (afterwards there is nothing left to compare) and apply it
+      // AFTER (a failed save must leave the old identities untouched).
+      const carryOver = await prepareOverwriteCarryOver(
+        parsed.set_id,
+        parsed.lessons,
+        t,
+      );
       await saveSet(parsed);
+      await carryOver();
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       notify.error(
