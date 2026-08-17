@@ -626,6 +626,22 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 - [ ] Namenskollision: Drei-Wege-Dialog erscheint (Überschreiben /
       Als Kopie importieren / Abbrechen), KEIN stilles Überschreiben;
       "Als Kopie" erzeugt neue id + "(Kopie)"-Titel
+- [ ] **#2592 Überschreiben trägt den Lernfortschritt mit:** Set mit
+      eigener Lektion anlegen, eine Übung falsch beantworten (damit eine
+      Fehler-/Wiederholungszeile entsteht), das Set exportieren, in der
+      exportierten Datei EINEN Antworttext korrigieren (z. B. Tippfehler in
+      `free_text.accept[0]`), re-importieren → Kollisionsdialog →
+      "Überschreiben". Erwartung: Toast "N Wiederholungskarte(n) übertragen",
+      und die Fehlerhistorie zeigt die Zeile weiterhin (mit dem alten
+      Fehlerzähler) unter dem NEUEN Antworttext — nicht als frische Zeile
+      und nicht verschwunden. Vorher verwaiste die Zeile still.
+- [ ] **#2592 unsicherer Fall meldet statt zu schweigen:** dieselbe Übung,
+      aber in der Datei eine Übung LÖSCHEN (Positionen verschieben sich) →
+      "Überschreiben". Erwartung: Hinweis-Toast "… konnte(n) nicht
+      zweifelsfrei zugeordnet werden", kein stiller Verlust
+- [ ] **#2592 "Als Kopie" bleibt unberührt:** derselbe Ablauf, aber
+      "Als Kopie importieren" → das Original behält Fortschritt UND
+      Wiederholungskarten, die Kopie startet ohne beides
 - [ ] Teil-Import (ZIP mit kaputten Lektionen): gültige importieren,
       Warnung "N Lektion(en) übersprungen" wird angezeigt
 - [ ] Set mit NUR kaputten Lektionen: sauberer Fehler, kein Crash
