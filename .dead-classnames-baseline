@@ -37,13 +37,34 @@
 # (PACKAGE_CONSUMER_FILES in check-dead-classnames.py) - der #2477-Vorfall
 # entstand, weil ein Dead-CSS-Audit nur frontend/src grepte und Paket-
 # konsumierte Klassen faelschlich fuer verwaist hielt. Der erste Lauf mit
-# Paket-Scan fand 6 neue Eintraege, alle einzeln verifiziert (siehe #2587):
-#   akv-secret-toggle, min-h-4 (ai-key-vault-react) + pwa-update-prompt-
-#   apply/dismiss/hint (pwa-update-react): echte, bislang unbemerkte
-#   Styling-Luecken (jedes Element traegt bereits echte Tailwind-Utilities
-#   aus demselben className, der fehlende Token ist ein ergaenzender Hook,
-#   kein Totalausfall) - Fix braucht Design-Input, daher hier eingetragen
-#   statt in dieser PR geraten.
+# Paket-Scan fand 6 neue Eintraege, alle einzeln verifiziert (siehe #2587).
+# In #2587 nachgemessen und aufgeloest - von den 5 "Styling-Luecken" waren
+# es zwei, in zwei verschiedenen Klassen, und drei Fehlbefunde:
+#   min-h-4 (ai-key-vault-react): KEINE fehlende Regel, sondern ein
+#   Content-Scan-Loch. Tailwind v4 steigt nie in node_modules ab (es ehrt
+#   .gitignore), also wurde eine NUR vom Paket benutzte Utility nicht
+#   erzeugt. Alle anderen Paket-Utilities (rounded-app, bg-accent-hover,
+#   text-accent-foreground, ...) existierten bloss, weil frontend/src sie
+#   zufaellig ebenfalls benutzt - Styling per Zufall, nicht per
+#   Konstruktion (Lektion "zufaellige Uebereinstimmung", #2265). Behoben
+#   ueber @source-Direktiven in styles/tailwind.css; der Rebuild emittiert
+#   danach genau min-h-4 zusaetzlich und nichts faellt weg. Eintrag hier
+#   geloescht.
+#   akv-secret-toggle (ai-key-vault-react): die einzige echte Luecke. Der
+#   Reveal-Toggle trug ausschliesslich Geometrie, keinerlei Hover-
+#   Affordance. Der vom Issue vermisste "Design-Input" stand im Repo: die
+#   projekteigene shared/forms/SecretInput.tsx ist die Referenz. Regel in
+#   styles/legacy/01-base.css neben dem .akv-file-input-Praezedenzfall
+#   (#2556); Eintrag hier geloescht.
+#   pwa-update-prompt-apply/dismiss/hint (pwa-update-react): KEINE Luecken.
+#   Nachgemessen am dist-Markup traegt jedes dieser Elemente aus demselben
+#   className bereits die vollstaendige Behandlung (apply: bg-accent +
+#   hover:bg-accent-hover + text-accent-foreground + min-h-[44px];
+#   dismiss: text-fg-secondary + hover:bg-bg-elevated + 44px-Trefferflaeche;
+#   hint: pl-6 + text-xs + text-fg-secondary). Der semantische Token ist
+#   ein optionaler Override-Anker fuer den Host, exakt die lp-edge-Form
+#   unten - kein Defekt, der auf einen Fix wartet. Bleiben hier auf
+#   Legitimierungsweg (c); sie brauchen KEINEN Design-Input.
 #   lp-edge (frontend/src/lib/learning-path/layout.ts:74): kein Fund im
 #   package-Sinn, sondern eine echte Erweiterung der Gate-Abdeckung - die
 #   className:-Objektsyntax (React-Flow-Edge-Daten, keine JSX) war vorher
@@ -56,7 +77,6 @@ activity-trend
 adaptive-save-row
 adaptive-summary-improvement
 adaptive-transparency
-akv-secret-toggle
 anki-card--suggested
 anki-empty
 answer-feedback-pulse
@@ -209,7 +229,6 @@ lesson-summary-export-actions
 lesson-summary-share
 lp-edge
 mastered
-min-h-4
 missed
 model-override-row-head
 na
