@@ -9,7 +9,7 @@ import {Plus} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import SubQuestionEditor from "./SubQuestionEditor";
-import AiSuggestButton from "../AiSuggestButton";
+import {AiSuggestButton} from "../fields";
 import {suggestPassageForQuestions} from "../../../lib/ai/suggest/exercise-suggest";
 import {blankSubQuestion, type WizardSubQuestion} from "../../../lib/exercises";
 

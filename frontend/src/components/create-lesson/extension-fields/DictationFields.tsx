@@ -12,7 +12,7 @@
  */
 
 import StringListEditor from "../../../shared/forms/StringListEditor";
-import DictationAudioField from "../DictationAudioField";
+import {DictationAudioField} from "../fields";
 
 type Translate = (key: string, fallback?: string) => string;
 

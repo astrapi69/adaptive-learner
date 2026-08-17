@@ -27,9 +27,9 @@ import {Loader2, Sparkles} from "lucide-react";
 import {useState} from "react";
 import {Link} from "react-router";
 
-import {useExerciseSuggest} from "../../hooks/ai/useExerciseSuggest";
-import {useI18n} from "../../hooks/ui/useI18n";
-import type {AiProvider} from "../../lib/ai/generation/generate-exercises";
+import {useExerciseSuggest} from "../../../hooks/ai/useExerciseSuggest";
+import {useI18n} from "../../../hooks/ui/useI18n";
+import type {AiProvider} from "../../../lib/ai/generation/generate-exercises";
 
 export interface AiSuggestButtonProps<T> {
     /** Bound pure suggester — receives the resolved provider. */

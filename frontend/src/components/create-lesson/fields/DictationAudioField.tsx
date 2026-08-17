@@ -27,13 +27,13 @@ import {FileAudio, Trash2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import FormHint from "../../shared/forms/FormHint";
+import FormHint from "../../../shared/forms/FormHint";
 import {
     AUDIO_ACCEPT_ATTR,
     DICT_AUDIO_ERROR_DECODE,
     isDataUri,
     processAudioFile,
-} from "../../lib/content/media/dictation-audio";
+} from "../../../lib/content/media/dictation-audio";
 
 type Translate = (key: string, fallback?: string) => string;
 
