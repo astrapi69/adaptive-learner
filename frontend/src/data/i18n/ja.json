@@ -2048,6 +2048,70 @@
         "retry": "もう一度",
         "empty": "この選択問題には選択肢がありません。"
       },
+      "al_categorization": {
+        "empty": "この分類演習にはカテゴリーがありません。",
+        "instructions": "項目をタップし、次にそのカテゴリーをタップします。",
+        "pool_label": "項目",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい。ハイライトされた項目を確認してください。",
+        "retry": "もう一度",
+        "submit": "答えを確認"
+      },
+      "al_dictation": {
+        "empty": "このディクテーション演習には音声がありません。",
+        "input_label": "聞こえたとおりに入力",
+        "input_placeholder": "聞こえたとおりに入力…",
+        "result_correct": "正解！",
+        "result_near_miss": "おしい！つづりを確認してください。",
+        "result_wrong": "惜しい。",
+        "retry": "もう一度",
+        "solution_label": "解答",
+        "submit": "答えを確認"
+      },
+      "al_error_correction": {
+        "empty": "この誤り訂正演習には文がありません。",
+        "input_label": "訂正",
+        "instructions": "誤っている語をタップし、訂正を入力します。",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい。下の解答を確認してください。",
+        "retry": "もう一度",
+        "solution_label": "解答",
+        "submit": "答えを確認"
+      },
+      "al_graded_quiz": {
+        "empty": "このクイズには問題がありません。",
+        "failed": "不合格",
+        "input_label": "解答",
+        "passed": "合格",
+        "retry": "もう一度",
+        "solution_label": "解答",
+        "submit": "クイズを提出"
+      },
+      "al_image_description": {
+        "empty": "この画像説明演習には画像がありません。",
+        "image_alt": "説明する画像 — その説明が下に入力する答えです",
+        "image_unavailable": "画像はここでは利用できません。",
+        "input_label": "画像を説明",
+        "input_placeholder": "説明を入力…",
+        "result_correct": "正解！",
+        "result_near_miss": "おしい！つづりを確認してください。",
+        "result_wrong": "惜しい。",
+        "retry": "もう一度",
+        "solution_label": "解答",
+        "submit": "答えを確認"
+      },
+      "al_reading_comprehension": {
+        "badge_correct": "正解",
+        "badge_missed": "正しい答え",
+        "badge_wrong": "不正解",
+        "empty": "この読解演習には問題がありません。",
+        "input_label": "解答",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい。ハイライトされた問題を確認してください。",
+        "retry": "もう一度",
+        "solution_label": "解答",
+        "submit": "答えを確認"
+      },
       "instruction": {
         "matching": {
           "receptive": "ペアを結ぶ（認識）",
