@@ -53,17 +53,17 @@ export default function LessonResumeDialog({
             aria-labelledby="lesson-resume-title"
             data-testid="lesson-resume-dialog"
         >
-            <div className="modal-card lesson-resume-panel">
+            <div className="modal-card">
                 <h2 id="lesson-resume-title" className="modal-title">
                     {t("lesson.resume.heading", "Resume lesson?")}
                 </h2>
-                <p className="lesson-resume-desc">
+                <p>
                     {t(
                         "lesson.resume.body",
                         'You paused "{title}". Would you like to continue where you left off or start over?',
                     ).replace("{title}", lessonTitle)}
                 </p>
-                <div className="lesson-resume-actions">
+                <div className="flex flex-wrap gap-3">
                     <Button
                         type="button"
                         onClick={onResume}
