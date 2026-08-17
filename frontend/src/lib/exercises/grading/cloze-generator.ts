@@ -198,6 +198,20 @@ function _blankWithSingleMarker(
     return _buildCloze(error, sourceExercise, sourceCard, sentence);
 }
 
+/** ``ElementError.direction`` is typed as a plain ``string`` (loose, so
+ *  pre-EXP-018 fixtures still type-check) while ``ContentLessonExercise
+ *  .direction`` is the engine's narrow ``Direction`` union. Narrow to the
+ *  two concrete values a recorded attempt ever carries; anything else
+ *  (including ``undefined``) is left unset, which ``resolveConcreteDirection``
+ *  already defaults to the same receptive fallback. */
+function _asConcreteDirection(
+    value: string | undefined,
+): "source_to_target" | "target_to_source" | undefined {
+    return value === "source_to_target" || value === "target_to_source"
+        ? value
+        : undefined;
+}
+
 function _buildCloze(
     error: ElementError,
     sourceExercise: ContentLessonExercise,
@@ -207,14 +221,35 @@ function _buildCloze(
     const correct = error.correct_answer;
     const distractors = _buildDistractors(error, sourceExercise);
     return {
+        // The generated id is synthetic (readable, deterministic, unique
+        // per call site) but must never be what SRS attempts are keyed by -
+        // ``stable_id`` below carries the ORIGINAL exercise's identity so
+        // ``exerciseIdentityOf`` (lib/srs/exercise-identity) resolves a
+        // completed cloze back onto the SAME ElementError row the error
+        // came from, instead of orphaning a fresh row under this synthetic
+        // id (#2663: the correction round silently never resolved the
+        // original error - the summary's correction-adjusted score and the
+        // "still open" replay check both match on exercise identity).
         id: `gen-cloze-${error.exercise_id}-${error.element_key}`,
+        stable_id: error.exercise_id,
         type: "cloze",
         prompt: sourceExercise.prompt,
         card_ids: sourceCard ? [sourceCard.id] : [],
         sentence,
+        // #2663 - the concrete direction the original error was recorded
+        // under. Without it, a productive (source_to_target) error's
+        // correction was attributed to the receptive direction's row (the
+        // deriver's default), leaving the productive row's original error
+        // untouched.
+        direction: _asConcreteDirection(error.direction),
         blanks: [
             {
                 accept: [correct],
+                // #2663 - same reasoning as ``stable_id`` above, one level
+                // down: the blank's own identity, so the derived attempt's
+                // ``element_key`` matches the original error's even when it
+                // isn't literally equal to the display text.
+                stable_id: error.element_key,
             },
         ],
         cloze_mode: "type",
