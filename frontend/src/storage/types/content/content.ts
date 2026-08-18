@@ -102,6 +102,9 @@ export interface ContentSetEntry {
    *  Inhalte". Absent ⇒ visible (the storage layer + UI treat a missing
    *  value as ``"visible"``). */
   visibility?: SetVisibility;
+  /** #2655 — content attribution + bounded derivation chain (engine#90 /
+   *  schema 1.9). ``null``/absent when the set carries none. */
+  attribution?: SetAttribution | null;
 }
 
 /** A set's manifest-level book block surfaced to the lesson media section
@@ -111,6 +114,26 @@ export interface ContentSetBook {
   author?: string | null;
   url?: string | null;
   asin?: string | null;
+}
+
+/** One entry in a set's bounded derivation chain (engine#90 / schema 1.9).
+ *  Mirrors the manifest \`sets[].attribution.derived_from[]\` shape. */
+export interface SetDerivedFromItem {
+  author: string;
+}
+
+/**
+ * #2655 — a set's manifest-level content attribution (engine#90, schema
+ * 1.9, additive; mirrored at the current learn-content-engine 0.22.0 pin).
+ * Who the set is attributed to, plus the bounded chain (oldest first,
+ * capped at 8 entries) it was derived through. Attribution, NOT
+ * authorization — the name is unverifiable without accounts or a server,
+ * and this claims nothing more (EXP-046 Teil 3.3: never render as
+ * verified). PERSONAL DATA: travels with the set when shared.
+ */
+export interface SetAttribution {
+  author: string;
+  derived_from?: SetDerivedFromItem[];
 }
 
 export interface ContentSetSource {
@@ -415,6 +438,12 @@ export interface SaveUserSetInput {
    *  section surfaces it. Set by the book-text wizard path; ``null`` /
    *  absent for a non-book lesson. */
   book?: ContentSetBook | null;
+  /** #2655 — optional set-level attribution/derivation chain, carried
+   *  forward by the fork paths (``ImportLessonModal``,
+   *  ``CreateLesson.saveCopy``, ``useEditAsCopy``) via
+   *  {@link buildForkAttribution}. ``null``/absent for a set with no
+   *  known attribution. */
+  attribution?: SetAttribution | null;
   /** One or more schema-valid lessons. Stored as
    *  ``lessons/{lesson.id}.json`` so the existing viewer +
    *  ``getLesson`` / ``listLessons`` paths work unchanged. */

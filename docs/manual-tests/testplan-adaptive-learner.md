@@ -638,6 +638,35 @@ Ort: Meine Inhalte (`/content`), Drei-Punkte-Menü eines HERUNTERGELADENEN
 - [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
       (Dexie-Modus) - der Fork muss in BEIDEN Modi funktionieren
 
+### Abstammung beim Fork - "Eigene Bearbeitung"-Badge + "basiert auf"-Credit (#2655, EXP-046)
+
+Ort: Import-Tab (`/content?tab=import`), Abschnitt "Meine Lektionen" - jede
+geforkte Kopie (egal ob per "Als Kopie bearbeiten", "Lektion importieren"
+oder "Als Kopie speichern" im Lektioneditor entstanden).
+
+- [ ] Ein heruntergeladenes Set (mit sichtbarem Autoren-Credit in einer
+      Lektion, z. B. "Beigetragen von …") per "Als Kopie bearbeiten" forken
+      -> die neue Kopie erscheint unter "Meine Lektionen" MIT dem Badge
+      **"Eigene Bearbeitung"** neben dem Titel
+- [ ] Darunter steht eine kompakte Zeile **"Basierend auf {Autor}"** -
+      Mauszeiger/Tooltip auf der Zeile zeigt den Hinweis, dass Angaben
+      selbst deklariert und nicht überprüft sind (KEIN Häkchen, KEIN
+      "verifiziert"-Badge)
+- [ ] Ein Set OHNE jeden Autoren-Credit forken -> Badge "Eigene Bearbeitung"
+      erscheint weiterhin, aber KEINE "Basierend auf"-Zeile (nichts zu
+      credititieren)
+- [ ] Eine SELBST erstellte, nie geforkte Lektion ("Meine Lektionen" ohne
+      vorherigen Import/Kopie-Schritt) zeigt WEDER das Badge NOCH eine
+      Credit-Zeile
+- [ ] Gleicher Ablauf über "Lektion importieren" (eine geteilte `.json`
+      mit Autoren-Credit importieren) -> dieselben zwei Anzeigen
+- [ ] Gleicher Ablauf über "Als Kopie speichern" im Lektioneditor (eine
+      bereits geforkte eigene Lektion erneut als Kopie speichern) -> die
+      neue Kopie trägt weiterhin denselben "basiert auf"-Credit (die
+      Kette wächst nicht unbegrenzt)
+- [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
+      (Dexie-Modus) - Badge + Credit-Zeile müssen in BEIDEN Modi erscheinen
+
 ### Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +

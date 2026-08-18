@@ -637,6 +637,33 @@ have a direct "Edit".
 - [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the fork must work in BOTH modes
 
+### Derivation on fork - "Your edit" badge + "based on" credit (#2655, EXP-046)
+
+Location: Import tab (`/content?tab=import`), "My Lessons" section - every
+forked copy (whether created via "Edit as a copy", "Import a lesson", or
+"Save as a copy" in the lesson editor).
+
+- [ ] Fork a downloaded set that has a visible author credit on one of its
+      lessons (e.g. "Contributed by …") via "Edit as a copy" -> the new
+      copy shows up under "My Lessons" WITH the **"Your edit"** badge next
+      to its title
+- [ ] Below it, a compact **"Based on {author}"** line appears - hovering
+      the line shows a tooltip stating that credits are self-declared and
+      not verified (NO checkmark, NO "verified" badge)
+- [ ] Fork a set with NO author credit at all -> the "Your edit" badge
+      still appears, but NO "Based on" line (nothing to credit)
+- [ ] A SELF-authored lesson under "My Lessons" that was never forked
+      (no prior import/copy step) shows NEITHER the badge NOR a credit
+      line
+- [ ] Same flow via "Import a lesson" (import a shared `.json` carrying an
+      author credit) -> the same two indicators appear
+- [ ] Same flow via "Save as a copy" in the lesson editor (save an
+      already-forked own lesson as a copy again) -> the new copy still
+      carries the same "based on" credit (the chain does not grow
+      unbounded)
+- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+      (Dexie mode) - the badge + credit line must appear in BOTH modes
+
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
 - [ ] **Book-text path (#1745):** Step 1 → the "Knowledge lesson from

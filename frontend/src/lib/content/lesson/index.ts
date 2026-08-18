@@ -2,6 +2,7 @@ export * from "./adaptive-snapshot";
 export * from "./csv-cards";
 export * from "./draft-to-lesson";
 export * from "./exercise";
+export * from "./fork-provenance";
 export * from "./import-title";
 export * from "./lesson-draft";
 export * from "./lesson-export";

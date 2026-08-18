@@ -12,7 +12,7 @@
 
 import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../../lib/constants";
 import type {AttemptRecord} from "../types/learning/element-errors";
-import type {ContentSetBook, SetStatus} from "../types/content/content";
+import type {ContentSetBook, SetAttribution, SetStatus} from "../types/content/content";
 
 // ---- Row shapes (mirror backend Pydantic Out-schemas) -----------------
 
@@ -443,6 +443,10 @@ export interface ContentSetRow {
      *  not indexed, so no schema bump). Older rows read as
      *  ``undefined`` -> treated as "no book". */
     book?: ContentSetBook | null;
+    /** #2655 — optional set-level attribution/derivation chain
+     *  (structured-cloned, not indexed, so no schema bump). Older rows
+     *  read as ``undefined`` -> treated as "no attribution". */
+    attribution?: SetAttribution | null;
 }
 
 /**

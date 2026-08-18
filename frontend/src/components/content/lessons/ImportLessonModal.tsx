@@ -9,6 +9,7 @@ import {
   type ImportedSet,
   type SkippedLesson,
 } from "../../../lib/content/lesson/lesson-import";
+import { buildForkAttribution, stampVariationOf } from "../../../lib/content/lesson/fork-provenance";
 import { prepareOverwriteCarryOver } from "../../../lib/content/lesson/import-remap";
 import { getStorage } from "../../../storage";
 import { USER_GENERATED_SOURCE } from "../../../storage/types";
@@ -77,7 +78,13 @@ export default function ImportLessonModal({
 
   /** Persist a resolved set (the parsed one or a fresh copy). Managed
    *  ``importing`` state is owned by the callers so the whole
-   *  collision-check + save is guarded. */
+   *  collision-check + save is guarded.
+   *
+   *  #2655 — an import is a fork of someone else's shared file: every
+   *  lesson gets ``variation_of`` stamped, and the set carries forward
+   *  the shared lessons' ``contributed_by`` credit as its attribution
+   *  (the imported manifest carries no set-level attribution of its own
+   *  yet, so this is the only source of a "basiert auf" credit today). */
   async function saveSet(set: ImportedSet) {
     await getStorage().contentLoader.saveUserSet({
       set_id: set.set_id,
@@ -86,7 +93,8 @@ export default function ImportLessonModal({
       level: set.level,
       origin: "imported",
       description: set.description,
-      lessons: set.lessons,
+      attribution: buildForkAttribution(null, set.lessons),
+      lessons: stampVariationOf(set.lessons),
     });
     notify.success(t("content.import_lesson.imported", "Lesson imported."));
     onImported();

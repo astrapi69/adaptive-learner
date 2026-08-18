@@ -600,6 +600,41 @@ describe("CreateLesson — edit mode (#1740)", () => {
         expect(input.title).toContain("(copy)");
     });
 
+    it("#2655 — Save-as-copy carries the edited set's attribution forward", async () => {
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {
+                    source: "user-generated",
+                    id: "created-colours-a1",
+                    level: "A2",
+                    title_native: "Farben A1",
+                    domain: "imported",
+                    attribution: { author: "Original Author" },
+                },
+            ],
+        });
+        await toReview();
+        fireEvent.click(screen.getByTestId("create-lesson-save-copy"));
+        await waitFor(() => expect(saveUserSetMock).toHaveBeenCalled());
+        const input = saveUserSetMock.mock.calls[0][0] as unknown as {
+            attribution?: {author: string} | null;
+        };
+        expect(input.attribution).toEqual({ author: "Original Author" });
+    });
+
+    it("#2655 — Save-as-copy stamps variation_of on the copy, pointing at the edited lesson", async () => {
+        await toReview();
+        fireEvent.click(screen.getByTestId("create-lesson-save-copy"));
+        await waitFor(() => expect(saveUserSetMock).toHaveBeenCalled());
+        const input = saveUserSetMock.mock.calls[0][0] as unknown as {
+            lessons: {id: string; variation_of?: string | null}[];
+        };
+        // The copy's lesson id is FRESH (derived from the copy's title),
+        // distinct from the original — variation_of records the original.
+        expect(input.lessons[0].id).not.toBe(fixtureLesson().id);
+        expect(input.lessons[0].variation_of).toBe(fixtureLesson().id);
+    });
+
     it("surfaces an error when the lesson can't be loaded", async () => {
         listLessonsMock.mockResolvedValue({
             set_id: "x",

@@ -2522,6 +2522,11 @@
       "saved": "Kendi kopyanız olarak kaydedildi.",
       "failed": "Kopya oluşturulamadı."
     },
+    "fork": {
+      "based_on": "{author} temel alınarak",
+      "based_on_and_others": "{author} ve diğerleri temel alınarak",
+      "credit_disclaimer": "Katkı bilgileri kullanıcı beyanına dayanır ve doğrulanmamıştır."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Tüm dersler için oluştur",

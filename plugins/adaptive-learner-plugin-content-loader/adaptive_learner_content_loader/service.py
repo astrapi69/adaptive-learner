@@ -35,13 +35,14 @@ from .cache import (
     store_set,
     unslugify_source,
 )
+from .content_engine import parse_manifest
 from .exceptions import (
     ContentLoaderError,
     ContentNotFoundError,
     ContentSchemaError,
 )
-from .content_engine import parse_manifest
 from .github_adapter import GitHubRawAdapter
+from .manifest_generated import Attribution
 from .models import (
     CURRENT_SCHEMA_VERSION,
     ContentManifest,
@@ -603,6 +604,7 @@ class ContentLoaderService:
         title_native: str | None = None,
         description: str | None = None,
         book: ContentSetBook | None = None,
+        attribution: Attribution | None = None,
     ) -> SetEntry:
         """Persist a user-generated set into the cache (Phase 59B).
 
@@ -627,6 +629,7 @@ class ContentLoaderService:
             tags=[],
             assets=[],
             book=book,
+            attribution=attribution,
         )
         manifest = ContentManifest(
             schema_version=CURRENT_SCHEMA_VERSION,

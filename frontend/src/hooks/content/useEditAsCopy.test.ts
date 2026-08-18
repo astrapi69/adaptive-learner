@@ -114,13 +114,66 @@ describe("requestEditAsCopy / handleConfirmEditAsCopy (#2654)", () => {
         set_id: "psych-copy",
         title: "Psychologie",
         origin: "imported",
-        lessons: [lesson("01")],
+        // #2655 — the fork stamps variation_of on every lesson (ids are
+        // never remapped on this path, so the unchanged id IS the
+        // original lesson's id).
+        lessons: [{ ...lesson("01"), variation_of: "01" }],
+        // The source entry carries no attribution/contributed_by in this
+        // fixture, so nothing is carried forward.
+        attribution: null,
       }),
     );
     expect(onForked).toHaveBeenCalledWith(forked);
     expect(notifySuccess).toHaveBeenCalled();
     // Closes the confirmation after a successful fork.
     expect(hook.result.current.editAsCopyTarget).toBeNull();
+  });
+
+  it("#2655 — carries the source set's attribution forward unchanged on fork", async () => {
+    const forked = entry({ source: "user-generated", id: "psych-copy", domain: "imported" });
+    saveUserSetMock.mockResolvedValue(forked);
+    const { hook, fetchSetLessons } = setup();
+    const target = entry({
+      id: "psych",
+      attribution: { author: "Original Author", derived_from: [{ author: "Earlier Author" }] },
+    });
+    act(() => hook.result.current.requestEditAsCopy(target));
+
+    await act(async () => {
+      await hook.result.current.handleConfirmEditAsCopy();
+    });
+
+    expect(fetchSetLessons).toHaveBeenCalledWith(target);
+    expect(saveUserSetMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attribution: {
+          author: "Original Author",
+          derived_from: [{ author: "Earlier Author" }],
+        },
+      }),
+    );
+  });
+
+  it("#2655 — synthesizes attribution from a lesson's contributed_by when the source set has none", async () => {
+    const forked = entry({ source: "user-generated", id: "psych-copy", domain: "imported" });
+    saveUserSetMock.mockResolvedValue(forked);
+    const onForked = vi.fn();
+    const fetchSetLessons = vi.fn().mockResolvedValue([
+      { ...lesson("01"), contributed_by: "Jane Doe" },
+    ]);
+    const hook = renderHook(() => useEditAsCopy({ fetchSetLessons, onForked }));
+    const target = entry({ id: "psych" });
+    act(() => hook.result.current.requestEditAsCopy(target));
+
+    await act(async () => {
+      await hook.result.current.handleConfirmEditAsCopy();
+    });
+
+    expect(saveUserSetMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attribution: { author: "Jane Doe" },
+      }),
+    );
   });
 
   it("escalates to -copy-2 when the learner already forked this set once", async () => {

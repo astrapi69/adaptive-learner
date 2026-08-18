@@ -454,6 +454,62 @@
         "title": "AttemptRecordOut",
         "type": "object"
       },
+      "AttributionRequest": {
+        "description": "Wire shape for an incoming set-level attribution/derivation chain\n(engine#90 / schema 1.9, #2655).",
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          },
+          "derived_from": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DerivedFromItemRequest"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Derived From"
+          }
+        },
+        "required": [
+          "author"
+        ],
+        "title": "AttributionRequest",
+        "type": "object"
+      },
+      "AttributionResponse": {
+        "description": "Wire shape for a set's attribution/derivation chain (engine#90 /\nschema 1.9, #2655).",
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          },
+          "derived_from": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DerivedFromItemResponse"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Derived From"
+          }
+        },
+        "required": [
+          "author"
+        ],
+        "title": "AttributionResponse",
+        "type": "object"
+      },
       "AvailableModelOut": {
         "description": "One row returned by ``GET /api/settings/{user_id}/available-models``.\n\nv1.11.0 / Phase 24A — model discovery picker. The list is\nderived from the provider's own models endpoint (Anthropic\n``/v1/models``, OpenAI ``/v1/models``, Gemini ``/v1beta/models``)\nso the Settings UI can show what the user actually has access\nto instead of a static suggestion list.",
         "properties": {
@@ -933,6 +989,34 @@
           }
         },
         "title": "CurriculumUpdate",
+        "type": "object"
+      },
+      "DerivedFromItemRequest": {
+        "description": "Wire shape for one incoming derivation-chain entry (#2655).",
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          }
+        },
+        "required": [
+          "author"
+        ],
+        "title": "DerivedFromItemRequest",
+        "type": "object"
+      },
+      "DerivedFromItemResponse": {
+        "description": "Wire shape for one entry of a set's derivation chain (#2655).",
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          }
+        },
+        "required": [
+          "author"
+        ],
+        "title": "DerivedFromItemResponse",
         "type": "object"
       },
       "Direction": {
@@ -4592,6 +4676,16 @@
       "SaveUserSetRequest": {
         "description": "Wire shape for saving a user-generated set. ``lessons`` are\nfull, schema-valid lessons (FastAPI validates them as ``Lesson``\nbefore the handler runs).",
         "properties": {
+          "attribution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttributionRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "book": {
             "anyOf": [
               {
@@ -4868,6 +4962,16 @@
       "SetEntryResponse": {
         "description": "Wire shape for one set in the Set Browser.",
         "properties": {
+          "attribution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttributionResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "book": {
             "anyOf": [
               {

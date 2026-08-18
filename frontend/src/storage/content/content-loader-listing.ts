@@ -128,6 +128,7 @@ export async function rowToCachedEntry(
     downloaded_at: row.downloaded_at ?? null,
     status: row.status ?? "active",
     book: row.book ?? null,
+    attribution: row.attribution ?? null,
   };
 }
 
