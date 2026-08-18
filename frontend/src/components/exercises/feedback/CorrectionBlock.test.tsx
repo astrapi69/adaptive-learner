@@ -216,6 +216,46 @@ describe("CorrectionBlock: self-hiding contract", () => {
         ).not.toBeInTheDocument();
     });
 
+    it("finds the source exercise by stable_id when the error was recorded under it (#2665)", async () => {
+        // Since EXP-045/#2130, shipped content carries an authored `id`
+        // (e.g. "ex-1") AND a minted, version-stable `stable_id` (e.g.
+        // "ex-ms9433kf4m3aj"). ElementError.exercise_id is written via
+        // exerciseIdentityOf, which PREFERS stable_id — so a lesson lookup
+        // that only compares `.id` never finds the exercise on any
+        // stable-id-minted content (which is the current shape for
+        // essentially all real content), and the correction round silently
+        // degrades to replay-only for every mistake.
+        const lesson = _lesson();
+        lesson.steps[0].exercise!.stable_id = "ex-minted-1";
+        listMock.mockResolvedValue([
+            _error({exercise_id: "ex-minted-1", correct_answer: "un"}),
+        ]);
+        render(
+            <CorrectionBlock
+                lesson={lesson}
+                progress={_progress()}
+                userId="user-1"
+                setId="fr-a1"
+                lessonFilename="03-articles.json"
+                onComplete={vi.fn()}
+                onSkip={vi.fn()}
+            />,
+        );
+        await waitFor(() => expect(listMock).toHaveBeenCalled());
+        // A real cloze WAS generated (not the "nothing to fix" self-hide) -
+        // the block renders and, once expanded, mounts the cloze input.
+        await expect(
+            screen.findByTestId("lesson-correction-block"),
+        ).resolves.toBeInTheDocument();
+        const expand = await screen.findByTestId(
+            "lesson-correction-block-expand",
+        );
+        fireEvent.click(expand);
+        await waitFor(() =>
+            expect(screen.queryByTestId("cloze-input-0")).toBeInTheDocument(),
+        );
+    });
+
     it("filters out mastered errors", async () => {
         listMock.mockResolvedValue([
             _error({mastered: true, mastered_at: "2026-05-27T12:00:00Z"}),
@@ -377,13 +417,15 @@ describe("CorrectionBlock: render + skip + record", () => {
         await waitFor(() =>
             expect(recordBulkMock).toHaveBeenCalled(),
         );
+        // #2663 — the recorded attempt must carry the ORIGINAL error's
+        // exercise_id (via the generated cloze's ``stable_id``), not the
+        // synthetic ``gen-cloze-...`` id, so it resolves onto the SAME
+        // ElementError row instead of orphaning a fresh one.
         expect(recordBulkMock).toHaveBeenCalledWith(
             "user-1",
             expect.arrayContaining([
                 expect.objectContaining({
-                    exercise_id: expect.stringContaining(
-                        "gen-cloze-ex-1",
-                    ),
+                    exercise_id: "ex-1",
                     correct: true,
                 }),
             ]),
