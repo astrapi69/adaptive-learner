@@ -44,6 +44,9 @@ interface ContentSetListViewProps extends SelectionProps {
   onDelete?: (entry: ContentSetEntry) => void;
   /** EXP-051 / #2125 — start a new Durchgang for a completed set. */
   onRestart?: (entry: ContentSetEntry) => void;
+  /** EXP-046 item 3 / #2654 — fork this set into a user-generated copy and
+   *  open it in the editor (overflow menu). */
+  onEditAsCopy?: (entry: ContentSetEntry) => void;
 }
 
 /** Stable selection key for a set (source + id). */
@@ -59,6 +62,7 @@ function ContentSetListRow({
   onSetStatus,
   onDelete,
   onRestart,
+  onEditAsCopy,
   selectable,
   selectedKeys,
   onToggleSelect,
@@ -67,6 +71,7 @@ function ContentSetListRow({
   onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
   onDelete?: (entry: ContentSetEntry) => void;
   onRestart?: (entry: ContentSetEntry) => void;
+  onEditAsCopy?: (entry: ContentSetEntry) => void;
 } & SelectionProps) {
   const { t } = useI18n();
   const knowledge = isKnowledgeDomain(entry.domain, entry.source_language, entry.target_language);
@@ -131,6 +136,7 @@ function ContentSetListRow({
             onSetStatus={(status) => onSetStatus(entry, status)}
             onDelete={() => onDelete(entry)}
             onRestart={onRestart ? () => onRestart(entry) : undefined}
+            onEditAsCopy={onEditAsCopy ? () => onEditAsCopy(entry) : undefined}
           />
         )}
       </div>
@@ -150,6 +156,7 @@ export default function ContentSetListView({
   onSetStatus,
   onDelete,
   onRestart,
+  onEditAsCopy,
   selectable,
   selectedKeys,
   onToggleSelect,
@@ -163,6 +170,7 @@ export default function ContentSetListView({
           onSetStatus={onSetStatus}
           onDelete={onDelete}
           onRestart={onRestart}
+          onEditAsCopy={onEditAsCopy}
           selectable={selectable}
           selectedKeys={selectedKeys}
           onToggleSelect={onToggleSelect}

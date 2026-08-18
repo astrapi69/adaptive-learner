@@ -2514,6 +2514,14 @@
         "delete": "Excluir"
       }
     },
+    "edit_as_copy": {
+      "action": "Editar como cópia",
+      "confirm_title": "Editar como sua própria cópia?",
+      "confirm_message": "Abre “{title}” como sua própria cópia editável no editor de lições. O original permanece inalterado e continua disponível para download.",
+      "confirm": "Editar cópia",
+      "saved": "Salvo como sua própria cópia.",
+      "failed": "Não foi possível criar a cópia."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Gerar para todas as lições",

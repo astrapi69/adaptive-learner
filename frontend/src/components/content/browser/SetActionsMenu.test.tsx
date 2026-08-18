@@ -144,4 +144,31 @@ describe("SetActionsMenu", () => {
     fireEvent.click(screen.getByTestId("set-action-psych-delete"));
     expect(onDelete).toHaveBeenCalledTimes(1);
   });
+
+  // EXP-046 item 3 / #2654 — the discoverable fork entry point for a
+  // read-only downloaded set.
+  it("hides the 'edit as copy' item when onEditAsCopy is omitted", () => {
+    renderMenu("active");
+    fireEvent.click(screen.getByTestId("set-actions-psych"));
+    expect(screen.queryByTestId("set-action-psych-edit-as-copy")).toBeNull();
+  });
+
+  it("shows and fires 'edit as copy' first in the list, and closes the menu", () => {
+    const onEditAsCopy = vi.fn();
+    render(
+      <SetActionsMenu
+        entry={entry()}
+        status="active"
+        onSetStatus={vi.fn()}
+        onDelete={vi.fn()}
+        onEditAsCopy={onEditAsCopy}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("set-actions-psych"));
+    const items = screen.getAllByRole("menuitem");
+    expect(items[0]).toBe(screen.getByTestId("set-action-psych-edit-as-copy"));
+    fireEvent.click(screen.getByTestId("set-action-psych-edit-as-copy"));
+    expect(onEditAsCopy).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("set-actions-menu-psych")).toBeNull();
+  });
 });

@@ -2514,6 +2514,14 @@
         "delete": "Supprimer"
       }
     },
+    "edit_as_copy": {
+      "action": "Modifier en tant que copie",
+      "confirm_title": "Modifier en tant que votre propre copie ?",
+      "confirm_message": "Ouvre « {title} » en tant que votre propre copie modifiable dans l’éditeur de leçons. L’original reste inchangé et toujours téléchargeable.",
+      "confirm": "Modifier la copie",
+      "saved": "Enregistré en tant que votre propre copie.",
+      "failed": "Impossible de créer la copie."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Générer pour toutes les leçons",

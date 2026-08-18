@@ -2323,6 +2323,13 @@ content:
       defer: "Tunda"
       complete: "Tandai sebagai selesai"
       delete: "Hapus"
+  edit_as_copy:
+    action: "Edit sebagai salinan"
+    confirm_title: "Edit sebagai salinan Anda sendiri?"
+    confirm_message: "Membuka “{title}” sebagai salinan Anda sendiri yang dapat diedit di editor pelajaran. Aslinya tetap tidak berubah dan tetap dapat diunduh."
+    confirm: "Edit salinan"
+    saved: "Disimpan sebagai salinan Anda sendiri."
+    failed: "Salinan tidak dapat dibuat."
   ai_exercises:
     batch:
       button: "Buat untuk semua pelajaran"

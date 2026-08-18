@@ -2514,6 +2514,14 @@
         "delete": "Löschen"
       }
     },
+    "edit_as_copy": {
+      "action": "Als Kopie bearbeiten",
+      "confirm_title": "Als eigene Kopie bearbeiten?",
+      "confirm_message": "Öffnet „{title}“ als deine eigene, bearbeitbare Kopie im Lektionseditor. Das Original bleibt unverändert und weiterhin herunterladbar.",
+      "confirm": "Kopie bearbeiten",
+      "saved": "Als eigene Kopie gespeichert.",
+      "failed": "Kopie konnte nicht erstellt werden."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Übungen für alle Lektionen generieren",

@@ -613,6 +613,30 @@ instead of overwriting or resetting it.
       completed first one) survive the import. An older backup with no run
       data imports as the implicit run 1 (no crash)
 
+### Edit as a copy - forking a downloaded set (#2654, EXP-046)
+
+Location: My Content (`/content`), the three-dot menu of a DOWNLOADED
+(foreign) set - not shown on your own "My Lessons" sets, which already
+have a direct "Edit".
+
+- [ ] Open a downloaded set -> the three-dot menu shows **"Edit as a
+      copy"** as the FIRST entry
+- [ ] Click it -> a confirmation dialog: notes that the original stays
+      unchanged and remains downloadable, PLUS the progress note ("A copy
+      starts without learning progress …")
+- [ ] Cancel in the dialog -> nothing happens, no new set is created
+- [ ] Confirm -> toast "Saved as your own copy", the app switches
+      automatically into the lesson editor, PRE-FILLED with the
+      original's content
+- [ ] The new copy then shows up under "My Lessons"; the original stays
+      unchanged among the downloaded sets with its status unchanged and
+      remains downloadable
+- [ ] Edit the same source as a copy a second time -> the second copy
+      gets its OWN, collision-free id (e.g. `...-copy-2`), never
+      overwriting the first copy
+- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+      (Dexie mode) - the fork must work in BOTH modes
+
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
 - [ ] **Book-text path (#1745):** Step 1 → the "Knowledge lesson from

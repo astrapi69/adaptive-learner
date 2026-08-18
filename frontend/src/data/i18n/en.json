@@ -2514,6 +2514,14 @@
         "delete": "Delete"
       }
     },
+    "edit_as_copy": {
+      "action": "Edit as a copy",
+      "confirm_title": "Edit as your own copy?",
+      "confirm_message": "Opens “{title}” as your own, editable copy in the lesson editor. The original stays unchanged and stays downloadable.",
+      "confirm": "Edit copy",
+      "saved": "Saved as your own copy.",
+      "failed": "Could not create the copy."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Generate for all lessons",

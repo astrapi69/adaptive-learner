@@ -68,6 +68,10 @@ interface ContentSetRowProps {
   onDelete?: (entry: ContentSetEntry) => void;
   /** EXP-051 / #2125 — start a new Durchgang for a completed set. */
   onRestart?: (entry: ContentSetEntry) => void;
+  /** EXP-046 item 3 / #2654 — fork this set into a user-generated copy and
+   *  open it in the editor. Omit (with onSetStatus/onDelete) to hide the
+   *  per-set overflow menu entirely. */
+  onEditAsCopy?: (entry: ContentSetEntry) => void;
   /** #1351 — multi-select: show a selection checkbox on the tile. */
   selectable?: boolean;
   /** #1351 — whether this tile is currently selected. */
@@ -346,6 +350,7 @@ export default function ContentSetRow({
   onSetStatus,
   onDelete,
   onRestart,
+  onEditAsCopy,
   selectable,
   selected = false,
   onToggleSelect,
@@ -444,6 +449,7 @@ export default function ContentSetRow({
               onSetStatus={(status) => onSetStatus(entry, status)}
               onDelete={() => onDelete(entry)}
               onRestart={onRestart ? () => onRestart(entry) : undefined}
+              onEditAsCopy={onEditAsCopy ? () => onEditAsCopy(entry) : undefined}
             />
           )}
         </>
