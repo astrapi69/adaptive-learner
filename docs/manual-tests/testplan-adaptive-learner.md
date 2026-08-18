@@ -1718,6 +1718,25 @@ Stueckgrenze, ein mittlerer Lauf hat 1551 Zeichen.
 - [ ] Bekanntes Plattform-Limit, KEIN Fehler: Pause/Fortsetzen wirkt auf
       iOS Safari nicht (dort stoppt + startet die App neu)
 
+#### Vorlesen läuft weiter, wenn der Bildschirm automatisch ausgeht (#2666) - PFLICHT
+
+Der Screen Wake Lock hält den Bildschirm während des Vorlesens wach, damit
+der Inaktivitäts-Timer des Geräts die Sprachausgabe nicht unterbricht
+(iOS Safari + mobile Chrome-Browser stoppen `speechSynthesis`, sobald der
+Bildschirm automatisch ausgeht).
+
+- [ ] Auf dem iPhone (Safari) eine Lektion öffnen, Vorlesen starten und
+      das Gerät NICHT berühren
+- [ ] Bis kurz vor den normalen Sperr-Timeout des Geräts warten (Handy
+      liegen lassen): der Bildschirm bleibt an, solange vorgelesen wird
+- [ ] Das Vorlesen läuft ununterbrochen bis zum Ende des Textes weiter
+- [ ] Nach "Stop" bzw. Ende des Vorlesens darf der Bildschirm wieder
+      normal automatisch ausgehen (Wake Lock wird freigegeben)
+- [ ] Gleicher Ablauf auf einem Android-Gerät (Chrome)
+- [ ] Bekanntes Plattform-Limit, KEIN Fehler: ein manuelles Drücken des
+      Sperr-/Power-Buttons schaltet den Bildschirm trotzdem sofort aus und
+      stoppt die Wiedergabe - das kann keine Web-API verhindern
+
 #### App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 
 Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert
