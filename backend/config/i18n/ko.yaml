@@ -2617,6 +2617,9 @@ content:
     name_placeholder: "예: 김민지"
     show_name: 레슨에 이름 표시
     privacy: "당신의 이름이 레슨과 풀 리퀘스트에 표시됩니다."
+    foreign_notice: "이 콘텐츠는 {author}을(를) 제작자로 표시합니다. 공유 시 이름도 함께 전달되며, 삭제할 수 있습니다."
+    foreign_remove: 크레딧 삭제
+    foreign_removed: 크레딧이 삭제되었습니다.
 milestone:
   streak: "{n}일 연속!"
   level_up: "레벨 {n} 도달!"

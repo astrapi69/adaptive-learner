@@ -381,6 +381,82 @@ describe("ShareWizard: author credit (64C-2)", () => {
   });
 });
 
+describe("ShareWizard: carried foreign credit disclosure + removal (#2656)", () => {
+  it("shows no disclosure when neither the set nor the lesson carries a foreign credit", () => {
+    renderWizard();
+    expect(
+      screen.queryByTestId("share-wizard-foreign-credit"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows a disclosure naming the set-level attribution author", () => {
+    renderWizard({ entry: entry({ attribution: { author: "Original Author" } }) });
+    expect(screen.getByTestId("share-wizard-foreign-credit")).toHaveTextContent(
+      "Original Author",
+    );
+  });
+
+  it("falls back to the lesson's contributed_by when the set carries no attribution", () => {
+    const foreignLesson = { ...lesson("mine", ["word0"]), contributed_by: "Jane Doe" };
+    renderWizard({ lessons: [foreignLesson] });
+    expect(screen.getByTestId("share-wizard-foreign-credit")).toHaveTextContent(
+      "Jane Doe",
+    );
+  });
+
+  it("the foreign credit travels with the share by default (silent-travel gap closed by disclosure, not by dropping it)", async () => {
+    const foreignLesson = { ...lesson("mine", ["word0"]), contributed_by: "Jane Doe" };
+    const { openUrl } = renderWizard({ lessons: [foreignLesson] });
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-step-2");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+    const url = openUrl.mock.calls[0][0] as string;
+    const value = new URL(url).searchParams.get("value") ?? "";
+    expect(value).toContain("Jane Doe");
+  });
+
+  it("one-click 'Remove credits' strips the name from the outgoing share payload", async () => {
+    const foreignLesson = { ...lesson("mine", ["word0"]), contributed_by: "Jane Doe" };
+    const { openUrl } = renderWizard({ lessons: [foreignLesson] });
+    fireEvent.click(screen.getByTestId("share-wizard-foreign-credit-remove"));
+    expect(
+      screen.getByTestId("share-wizard-foreign-credit-removed"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("share-wizard-foreign-credit-remove"),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-step-2");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+    const url = openUrl.mock.calls[0][0] as string;
+    const value = new URL(url).searchParams.get("value") ?? "";
+    expect(value).not.toContain("Jane Doe");
+    expect(JSON.parse(value).contributed_by).toBeNull();
+  });
+
+  it("the learner's own opted-in name still wins over a removed foreign credit", async () => {
+    const foreignLesson = { ...lesson("mine", ["word0"]), contributed_by: "Jane Doe" };
+    const { openUrl } = renderWizard({ lessons: [foreignLesson] });
+    fireEvent.change(screen.getByTestId("share-wizard-author-name"), {
+      target: { value: "Maria S." },
+    });
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-step-2");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+    const url = openUrl.mock.calls[0][0] as string;
+    const value = new URL(url).searchParams.get("value") ?? "";
+    expect(value).toContain("Maria S.");
+    expect(value).not.toContain("Jane Doe");
+  });
+});
+
 /** An empty lesson: no exercises, no cards (the BUG B scenario — an
  *  old analysis-to-lesson generator failure that saved anyway). */
 function emptyLesson(): ContentLesson {

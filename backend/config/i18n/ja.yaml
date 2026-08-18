@@ -2606,6 +2606,9 @@ content:
     name_placeholder: '例: Maria S.'
     show_name: レッスンに名前を表示する
     privacy: "あなたの名前はレッスンとプルリクエストに表示されます。"
+    foreign_notice: "このコンテンツは {author} を作者としています。共有すると名前も一緒に渡ります。削除できます。"
+    foreign_remove: クレジットを削除
+    foreign_removed: クレジットを削除しました。
 milestone:
   streak: "{n}日連続記録!"
   level_up: "レベル{n}に到達!"

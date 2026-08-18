@@ -2835,7 +2835,10 @@
       "name_label": "Namamu (opsional)",
       "name_placeholder": "mis. Maria S.",
       "show_name": "Tampilkan nama di pelajaran",
-      "privacy": "Namamu akan ditampilkan di pelajaran dan pull request."
+      "privacy": "Namamu akan ditampilkan di pelajaran dan pull request.",
+      "foreign_notice": "Konten ini mencantumkan {author} sebagai kontributor. Nama tersebut ikut terbawa saat dibagikan, Anda dapat menghapusnya.",
+      "foreign_remove": "Hapus kredit",
+      "foreign_removed": "Kredit dihapus."
     }
   },
   "milestone": {

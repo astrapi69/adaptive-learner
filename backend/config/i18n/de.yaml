@@ -2611,6 +2611,9 @@ content:
     name_placeholder: z.B. Maria S.
     show_name: Namen in der Lektion anzeigen
     privacy: "Dein Name wird in der Lektion und im Pull Request angezeigt."
+    foreign_notice: "Dieser Inhalt nennt {author} als Urheber. Der Name reist beim Teilen mit, du kannst ihn entfernen."
+    foreign_remove: "Credits entfernen"
+    foreign_removed: "Credits entfernt."
 milestone:
   streak: "{n}-Tage-Serie!"
   level_up: "Level {n} erreicht!"

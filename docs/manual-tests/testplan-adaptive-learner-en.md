@@ -664,6 +664,35 @@ forked copy (whether created via "Edit as a copy", "Import a lesson", or
 - [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the badge + credit line must appear in BOTH modes
 
+### Share Wizard - hint + removal for carried-over foreign credits (#2656, EXP-046)
+
+Location: `ShareWizard` step 1, directly below the existing "Your name
+(optional)" block. Precondition for a visible foreign credit: a forked
+lesson carrying a "based on" credit (#2655) or an imported lesson whose
+`contributed_by` is already set before the wizard opens.
+
+- [ ] Share a self-authored, never-forked lesson -> NO foreign-credit
+      hint appears (nothing to disclose)
+- [ ] Share a forked lesson with set-level attribution (#2655) -> the
+      hint "This content credits {author}. Their name travels when you
+      share, you can remove it." appears, WITH the name from the
+      attribution
+- [ ] Share an imported lesson with `contributed_by` set but no set-level
+      attribution -> the same hint, with the name from `contributed_by`
+- [ ] Share WITHOUT clicking "Remove credits" -> the foreign credit
+      travels with the shared content (default behavior, now visible
+      instead of silent)
+- [ ] Click "Remove credits" -> the button disappears, a "Credits
+      removed." confirmation appears; sharing afterwards -> the name no
+      longer appears in the shared content (the structural
+      `variation_of` link stays untouched)
+- [ ] Enter your own name AND enable "Show name", WITHOUT removing the
+      foreign credit -> YOUR OWN name wins in the shared content, the
+      foreign-credit hint stays visible but gets overwritten on share (no
+      double credit)
+- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+      (Dexie mode) - the hint + removal button must work in BOTH modes
+
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
 - [ ] **Book-text path (#1745):** Step 1 → the "Knowledge lesson from
