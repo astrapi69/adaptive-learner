@@ -343,6 +343,24 @@ button:disabled {
   background: var(--accent-hover);
 }
 
+/* #2587 — the same kit's SecretInput reveal toggle, shipped with geometry
+   only (`akv-secret-toggle absolute right-2 flex h-7 w-7 ... rounded`) and
+   no hover affordance. Everything else it needs is already app-wide:
+   `button` gives cursor:pointer, `button:disabled` the not-allowed/opacity
+   pair, the global :focus-visible ring applies, and reduced-motion is
+   handled by 39-motion-catchall.css — so hover is all this adds.
+   A BACKGROUND, not a text colour: our own shared/forms/SecretInput.tsx is
+   the reference treatment but colours lucide <Eye> icons, while the kit
+   renders the colour-emoji 👁/🙈, which ignore `color`.
+   Unlayered like .akv-file-input above: one named kit element. */
+.akv-secret-toggle {
+  transition: background-color 0.15s ease-in-out;
+}
+
+.akv-secret-toggle:hover:not(:disabled) {
+  background: var(--interactive-hover);
+}
+
 input,
 textarea,
 select {

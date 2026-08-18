@@ -49,6 +49,34 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 /*
+ * Package-consumed utilities (#2587, root cause of the `min-h-4` finding).
+ *
+ * Tailwind v4 detects content automatically, but its automatic detection
+ * NEVER descends into ``node_modules`` (it honours .gitignore, and
+ * node_modules is always ignored). Our ``@astrapi69/*-react`` packages are
+ * "headless-styled": they ship NO CSS of their own and render app-styled
+ * classNames plus plain Tailwind utilities, expecting THIS project's build
+ * to emit them (docs/development/package-classname-consumers.md).
+ *
+ * Without the lines below, a utility used ONLY by a package is silently not
+ * generated, and the element renders without it. That was invisible for a
+ * long time for the worst possible reason: every OTHER package utility
+ * (``rounded-app``, ``bg-accent-hover``, ``text-accent-foreground``, ...)
+ * happened to be used somewhere in ``frontend/src`` as well, so it was
+ * emitted for an unrelated reason. The packages were styled by COINCIDENCE,
+ * not by construction - and ``min-h-4`` (used by no file under
+ * ``frontend/src``) was the single spot where the coincidence ran out.
+ *
+ * ``@source`` is scanned explicitly and overrides the gitignore exclusion,
+ * which is exactly what this needs. Keep this list in lockstep with
+ * ``PACKAGE_CONSUMER_FILES`` in ``scripts/check-dead-classnames.py`` - the
+ * gate proves the classNames have rules, these lines make the utilities
+ * exist. Pinned by ``package-source-scan.test.ts``.
+ */
+@source "../../node_modules/@astrapi69/ai-key-vault-react/dist/**/*.js";
+@source "../../node_modules/@astrapi69/pwa-update-react/dist/**/*.js";
+
+/*
  * Theme integration (Phase A / commit C2).
  *
  * Tailwind v4 is configured CSS-first via @theme, not via a v3-style

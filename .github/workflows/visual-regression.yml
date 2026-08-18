@@ -85,8 +85,14 @@ jobs:
 
       # Baseline-refresh mode (#1532): the regenerated PNGs are an artifact,
       # NEVER auto-committed — download, review every image, commit via PR.
+      # #2661 — `always()` is required, not optional: an unrelated flaky/
+      # broken spec elsewhere in the 100+-spec matrix fails the job exit
+      # code even under --update-snapshots (which never fails on a pixel
+      # diff itself), and without always() this step is silently skipped —
+      # the regenerated PNGs exist transiently in the runner workspace and
+      # are lost. Matches the precedent on "Upload report + diffs" above.
       - name: Upload regenerated baselines
-        if: inputs.update_baselines == true
+        if: always() && inputs.update_baselines == true
         uses: actions/upload-artifact@v7
         with:
           name: visual-baselines

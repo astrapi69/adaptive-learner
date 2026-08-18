@@ -289,4 +289,15 @@
 # (method-switch-suggested, quick-start-method). Assessment.tsx
 # wechselt von var(--method-${x}) auf METHOD_COLORS[x] als Farbquelle -
 # beide Werte sind pro Methode identisch (verifiziert). Kein neues CSS.
-7674
+#
+# 7674 -> 7691 (#2587): +17 Zeilen fuer .akv-secret-toggle (Hover) in
+# styles/legacy/01-base.css, davon 10 Kommentar. Legitimer Ausnahmefall
+# nach der Regel oben, und zwar der einzige, den der Standardweg nicht
+# bedienen kann: der Gate verweist auf "neue Styles als Tailwind-Utility
+# an die Komponente" - hier gibt es keine Komponente. Das Element wird
+# von @astrapi69/ai-key-vault-react gerendert (Settings > KI), das
+# bewusst app-agnostisch bleibt und kein eigenes CSS mitliefert; der
+# einzige Ort fuer die Regel ist der Host. Direkt neben dem gleich
+# gelagerten .akv-file-input-Praezedenzfall (#2556) einsortiert.
+# Faellt weg, sobald das Paket den Hover selbst mitbringt.
+7691
