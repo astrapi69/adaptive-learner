@@ -614,6 +614,30 @@ spätere Auswertung auf, statt ihn zu überschreiben oder zurückzusetzen.
       abgeschlossenen ersten) überstehen den Import. Eine ältere Sicherung
       ohne Durchgangsdaten importiert als impliziter Durchgang 1 (kein Crash)
 
+### Als Kopie bearbeiten - heruntergeladene Sets forken (#2654, EXP-046)
+
+Ort: Meine Inhalte (`/content`), Drei-Punkte-Menü eines HERUNTERGELADENEN
+(fremden) Sets - nicht bei eigenen "Meine Lektionen"-Sets, die haben direkt
+"Bearbeiten".
+
+- [ ] Ein heruntergeladenes Set öffnen -> im Drei-Punkte-Menü erscheint als
+      ERSTER Eintrag **"Als Kopie bearbeiten"**
+- [ ] Klick -> Bestätigungsdialog: Hinweis, dass das Original unverändert
+      und weiterhin herunterladbar bleibt, PLUS der Fortschritts-Hinweis
+      ("Eine Kopie startet ohne Lernfortschritt …")
+- [ ] Abbrechen im Dialog -> nichts passiert, kein neues Set wird angelegt
+- [ ] Bestätigen -> Toast "Als eigene Kopie gespeichert", die App wechselt
+      automatisch in den Lektionseditor, VORBEFÜLLT mit dem Inhalt des
+      Originals
+- [ ] Die neue Kopie erscheint danach unter "Meine Lektionen"; das
+      Original bleibt unverändert unter den heruntergeladenen Sets mit
+      unverändertem Status und bleibt weiterhin herunterladbar
+- [ ] Dieselbe Quelle ein zweites Mal als Kopie bearbeiten -> die zweite
+      Kopie bekommt eine EIGENE, kollisionsfreie ID (z. B. `...-copy-2`),
+      keine Überschreibung der ersten Kopie
+- [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
+      (Dexie-Modus) - der Fork muss in BEIDEN Modi funktionieren
+
 ### Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +

@@ -2323,6 +2323,13 @@ content:
       defer: "보류"
       complete: "완료로 표시"
       delete: "삭제"
+  edit_as_copy:
+    action: "사본으로 편집"
+    confirm_title: "나만의 사본으로 편집할까요?"
+    confirm_message: "“{title}”을(를) 레슨 편집기에서 편집 가능한 나만의 사본으로 엽니다. 원본은 변경되지 않으며 계속 다운로드할 수 있습니다."
+    confirm: "사본 편집"
+    saved: "나만의 사본으로 저장했습니다."
+    failed: "사본을 만들 수 없습니다."
   ai_exercises:
     batch:
       button: "모든 레슨에 대해 생성"

@@ -2514,6 +2514,14 @@
         "delete": "Sil"
       }
     },
+    "edit_as_copy": {
+      "action": "Kopya olarak düzenle",
+      "confirm_title": "Kendi kopyanız olarak düzenlensin mi?",
+      "confirm_message": "“{title}” içeriğini ders düzenleyicisinde kendi düzenlenebilir kopyanız olarak açar. Orijinal değişmeden kalır ve indirilebilir olmaya devam eder.",
+      "confirm": "Kopyayı düzenle",
+      "saved": "Kendi kopyanız olarak kaydedildi.",
+      "failed": "Kopya oluşturulamadı."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Tüm dersler için oluştur",

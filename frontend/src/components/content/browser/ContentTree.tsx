@@ -59,6 +59,9 @@ export interface ContentSetRowActions {
   onDelete?: (entry: ContentSetEntry) => void;
   /** EXP-051 / #2125 — start a new Durchgang for a completed set. */
   onRestart?: (entry: ContentSetEntry) => void;
+  /** EXP-046 item 3 / #2654 — fork this set into a user-generated copy and
+   *  open it in the editor (overflow menu). */
+  onEditAsCopy?: (entry: ContentSetEntry) => void;
   /** #1351 — multi-select: show a per-tile selection checkbox. */
   selectable?: boolean;
   /** #1351 — the selected keys (``${source}#${id}``). */
@@ -140,6 +143,7 @@ export default function ContentTree({
       onSetStatus={setRow.onSetStatus}
       onDelete={setRow.onDelete}
       onRestart={setRow.onRestart}
+      onEditAsCopy={setRow.onEditAsCopy}
       selectable={setRow.selectable}
       selected={setRow.selectedKeys?.has(`${entry.source}#${entry.id}`) ?? false}
       onToggleSelect={setRow.onToggleSelect}

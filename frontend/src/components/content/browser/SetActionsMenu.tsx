@@ -34,7 +34,7 @@
  */
 
 import { createPortal } from "react-dom";
-import { MoreVertical, RotateCcw, Trash2 } from "lucide-react";
+import { Copy, MoreVertical, RotateCcw, Trash2 } from "lucide-react";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { useMenuButtonBehavior } from "../../../shared/hooks/useMenuButtonBehavior";
@@ -51,6 +51,11 @@ export interface SetActionsMenuProps {
   /** EXP-051 / #2125 — start a new Durchgang ("Set erneut durcharbeiten").
    *  Offered only for a ``completed`` set; omit to hide the action. */
   onRestart?: () => void;
+  /** EXP-046 item 3 / #2654 — fork this (read-only, downloaded) set into a
+   *  user-generated copy and open it in the editor. Omit to hide the
+   *  action (e.g. a surface that has no fork target, like search results
+   *  before they carry the menu at all). */
+  onEditAsCopy?: () => void;
 }
 
 /** The sensible status transitions offered for each current status —
@@ -67,6 +72,7 @@ export default function SetActionsMenu({
   onSetStatus,
   onDelete,
   onRestart,
+  onEditAsCopy,
 }: SetActionsMenuProps) {
   const { t } = useI18n();
   // Shared menu-button mechanics (#1386): open/position state, portal
@@ -117,6 +123,24 @@ export default function SetActionsMenu({
           className="z-50 m-0 min-w-52 max-w-[calc(100vw-1rem)] list-none rounded-app border border-border bg-card p-1.5 shadow-elevated"
           data-testid={`set-actions-menu-${entry.id}`}
         >
+          {/* EXP-046 item 3 / #2654 — the discoverable fork entry point for
+              a read-only downloaded set. First in the list: it is the
+              primary, non-destructive action a learner reaches for here. */}
+          {onEditAsCopy && (
+            <li role="none">
+              <button
+                type="button"
+                role="menuitem"
+                className="flex w-full items-center gap-2 rounded-[calc(var(--radius-app)-3px)] px-2.5 py-2 text-left text-sm text-fg-primary transition-colors hover:bg-[var(--bg-elevated)] focus-visible:bg-[var(--bg-elevated)] focus-visible:outline-none"
+                onClick={() => menu.choose(onEditAsCopy)}
+                onKeyDown={menu.onItemKeyDown}
+                data-testid={`set-action-${entry.id}-edit-as-copy`}
+              >
+                <Copy size={14} aria-hidden="true" />
+                {t("content.edit_as_copy.action", "Edit as a copy")}
+              </button>
+            </li>
+          )}
           {status === "completed" && onRestart && (
             <li role="none">
               <button
