@@ -135,7 +135,7 @@ export default function DashboardBadgeWidget({
             )}
 
             <BadgeGrid
-                className="badge-widget-grid"
+                className="badge-widget-grid w-full"
                 testId="dashboard-badge-grid"
                 items={gridItems}
                 onSelect={(id) =>
@@ -151,7 +151,7 @@ export default function DashboardBadgeWidget({
             <Button
                 type="button"
                 variant="secondary"
-                className="badge-widget-view-all"
+                className="badge-widget-view-all mt-2"
                 data-testid="badge-widget-view-all"
                 onClick={() => openGallery()}
             >

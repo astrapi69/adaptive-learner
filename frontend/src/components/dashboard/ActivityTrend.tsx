@@ -60,7 +60,7 @@ export default function ActivityTrend({entries}: ActivityTrendProps) {
     const {Icon} = trend;
 
     return (
-        <div className="activity-trend" data-testid="activity-trend">
+        <div className="activity-trend w-full" data-testid="activity-trend">
             <div
                 style={{
                     display: "flex",
