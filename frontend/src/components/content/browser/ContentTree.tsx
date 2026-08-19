@@ -189,7 +189,7 @@ export default function ContentTree({
                 <h3 className="content-level-title">
                   {levelGroup.level} · {levelGroup.sets.length} {t("content.lessons", "lessons")}
                   {levelGroup.userLessons.length > 0 && (
-                    <span className="content-level-own-count" data-testid={`content-level-${nodeId}-${levelGroup.level}-own-count`}>
+                    <span className="content-level-own-count text-fg-muted" data-testid={`content-level-${nodeId}-${levelGroup.level}-own-count`}>
                       {" ("}
                       {t("content.tree.plus_own", "+{n} own").replace(
                         "{n}",
@@ -230,7 +230,7 @@ export default function ContentTree({
     <div className="content-tree" data-testid="content-tree">
       {/* Primary: the source language(s) the learner speaks. */}
       {tree.primary.length > 0 && (
-        <section className="content-source-primary" data-testid="content-source-primary">
+        <section className="content-source-primary w-full" data-testid="content-source-primary">
           <h2 className="content-source-heading">
             {t("content.tree.i_speak", "I speak")}:{" "}
             {tree.primary.map((g) => languageDisplayName(g.sourceLanguage, lang)).join(", ")}
@@ -259,7 +259,7 @@ export default function ContentTree({
 
       {/* Other source languages — collapsed by default. */}
       {tree.other.length > 0 && (
-        <section className="content-source-other" data-testid="content-source-other">
+        <section className="content-source-other w-full" data-testid="content-source-other">
           <button
             type="button"
             className="content-tree-toggle content-other-toggle"
@@ -301,7 +301,7 @@ export default function ContentTree({
       {/* v1.3 — Knowledge ("Wissen"): non-language domain sets,
       grouped by domain with a domain-specific icon. */}
       {tree.knowledge.length > 0 && (
-        <section className="content-source-knowledge" data-testid="content-knowledge">
+        <section className="content-source-knowledge w-full" data-testid="content-knowledge">
           <h2 className="content-source-heading">{t("content.tree.knowledge", "Knowledge")}</h2>
           {tree.knowledge.map((group) => (
             <div key={group.domain} data-testid={`content-domain-${group.domain}`}>
@@ -309,7 +309,7 @@ export default function ContentTree({
                 {domainIcon(group.domain)} {domainLabel(group.domain)}
                 {group.userLessons.length > 0 && (
                   <span
-                    className="content-level-own-count"
+                    className="content-level-own-count text-fg-muted"
                     data-testid={`content-domain-${group.domain}-own-count`}
                   >
                     {" ("}

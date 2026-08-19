@@ -236,7 +236,7 @@ export default function SaveOfflineLessonModal({
           />
         </label>
         <div className="form-row form-row-inline">
-          <label className="form-field">
+          <label className="form-field flex flex-col gap-1">
             <span className="form-label">
               {t("content.save_lesson.target_lang_label", "Language learned")}
             </span>
@@ -253,7 +253,7 @@ export default function SaveOfflineLessonModal({
               ))}
             </select>
           </label>
-          <label className="form-field">
+          <label className="form-field flex flex-col gap-1">
             <span className="form-label">
               {t("content.save_lesson.source_lang_label", "Your language")}
             </span>
@@ -270,7 +270,7 @@ export default function SaveOfflineLessonModal({
               ))}
             </select>
           </label>
-          <label className="form-field">
+          <label className="form-field flex flex-col gap-1">
             <span className="form-label">
               {t("content.save_lesson.level_label", "Level")}
             </span>

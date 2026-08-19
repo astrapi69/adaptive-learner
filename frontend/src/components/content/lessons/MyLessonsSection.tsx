@@ -77,7 +77,10 @@ export default function MyLessonsSection({
   };
 
   return (
-    <section className="content-section content-my-lessons" data-testid="content-my-lessons">
+    <section
+      className="content-section content-my-lessons flex flex-col gap-3"
+      data-testid="content-my-lessons"
+    >
       <div className="content-section-head flex flex-wrap items-center justify-between gap-2">
         <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
         {userSets.length > 0 && (

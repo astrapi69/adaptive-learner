@@ -81,7 +81,7 @@ export default function ContentShareDialog({
             type="button"
             variant="secondary"
             size="sm"
-            className="content-ai-fix"
+            className="content-ai-fix shrink-0"
             onClick={() => void applyAutoFix(fixKey, kind, targetId, text)}
             data-testid={`content-ai-fix-${fixKey}`}
           >
@@ -158,7 +158,7 @@ export default function ContentShareDialog({
           <section className="content-ai-validation" data-testid="content-ai-validation">
             {!aiResult && !aiRunning && (
               <>
-                <p className="content-ai-intro">
+                <p className="content-ai-intro text-sm text-fg-muted">
                   {t(
                     "content.ai_validation.intro",
                     "An AI can additionally check translation accuracy, grammar and level fit.",
