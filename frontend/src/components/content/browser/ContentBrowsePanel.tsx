@@ -69,7 +69,7 @@ export default function ContentBrowsePanel({
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="content-section-title">
+        <h2 className="content-section-title text-lg font-semibold">
           {t("content.my_lessons.downloaded_title", "Downloaded sets")}
         </h2>
         {hasDownloadedSets && (

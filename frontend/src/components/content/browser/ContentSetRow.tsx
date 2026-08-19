@@ -294,7 +294,7 @@ function ContentSetActions({
         <Button
           type="button"
           variant="outline"
-          className="content-set-quality-btn"
+          className="content-set-quality-btn shrink-0"
           onClick={() => onQualityCheck(entry)}
           data-testid={`content-set-${entry.id}-quality-check`}
         >
@@ -306,7 +306,7 @@ function ContentSetActions({
         <Button
           type="button"
           variant="outline"
-          className="content-set-aicheck-btn"
+          className="content-set-aicheck-btn shrink-0"
           onClick={() => onAiCheck(entry)}
           disabled={!!aiCheckDisabledReason}
           title={aiCheckDisabledReason || undefined}
