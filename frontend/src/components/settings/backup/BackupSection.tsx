@@ -191,7 +191,10 @@ function RestoreConfirmPanel({
     t: Translate;
 }) {
     return (
-        <div className="backup-comparison" data-testid="backup-comparison">
+        <div
+            className="backup-comparison flex flex-col gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
+            data-testid="backup-comparison"
+        >
             <h3>{t("backup.comparison_title", "Confirm restore")}</h3>
             <p className="muted">
                 {t(
@@ -199,20 +202,26 @@ function RestoreConfirmPanel({
                     "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
                 )}
             </p>
-            <table className="backup-comparison-table">
+            <table className="backup-comparison-table w-full text-sm">
                 <thead>
                     <tr>
-                        <th scope="col">{t("backup.table_header", "Table")}</th>
-                        <th scope="col">{t("backup.current_header", "Current")}</th>
-                        <th scope="col">{t("backup.incoming_header", "Backup")}</th>
+                        <th scope="col" className="text-left">
+                            {t("backup.table_header", "Table")}
+                        </th>
+                        <th scope="col" className="text-right">
+                            {t("backup.current_header", "Current")}
+                        </th>
+                        <th scope="col" className="text-right">
+                            {t("backup.incoming_header", "Backup")}
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     {comparison.map((row) => (
                         <tr key={row.table}>
-                            <td>{row.table}</td>
-                            <td>{row.current}</td>
-                            <td>{row.incoming}</td>
+                            <td className="text-left">{row.table}</td>
+                            <td className="text-right">{row.current}</td>
+                            <td className="text-right">{row.incoming}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -285,7 +294,10 @@ function RestoreSummaryPanel({
     t: Translate;
 }) {
     return (
-        <div className="backup-summary" data-testid="backup-summary">
+        <div
+            className="backup-summary flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
+            data-testid="backup-summary"
+        >
             <p>{t("backup.restored_summary", "Restore complete.")}</p>
             <ul>
                 <li>
@@ -774,7 +786,7 @@ export default function BackupSection() {
 
             {lastBackup !== null && (
                 <p
-                    className="backup-last"
+                    className="backup-last text-sm text-fg-muted"
                     data-testid="backup-last-backup"
                 >
                     {t("backup.last_backup", "Last backup: {{when}}").replace(
@@ -786,7 +798,7 @@ export default function BackupSection() {
 
             {reminderDue && lastBackup !== null && (
                 <p
-                    className="backup-reminder"
+                    className="backup-reminder rounded-app border border-warning bg-[var(--warning-bg)] px-3 py-2 text-sm text-warning"
                     data-testid="backup-reminder"
                 >
                     {t(
@@ -798,13 +810,13 @@ export default function BackupSection() {
 
             {backupStats !== null && backupStats.total_records > 0 && (
                 <div
-                    className="backup-contents"
+                    className="backup-contents flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
                     data-testid="backup-contents"
                 >
-                    <p className="backup-contents-title">
+                    <p className="backup-contents-title font-medium">
                         {t("backup.contains_title", "Your backup contains:")}
                     </p>
-                    <ul className="backup-contents-list">
+                    <ul className="backup-contents-list flex flex-col gap-1 text-sm">
                         {PREVIEW_TABLES.map(({table, key, fallback}) => {
                             const n = backupStats.tables[table] ?? 0;
                             if (n === 0) {
@@ -820,7 +832,7 @@ export default function BackupSection() {
                             );
                         })}
                         <li
-                            className="backup-contents-total"
+                            className="backup-contents-total mt-1 border-t border-border pt-1 font-semibold"
                             data-testid="backup-contents-total"
                         >
                             {t(

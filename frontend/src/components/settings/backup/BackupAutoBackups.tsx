@@ -84,11 +84,11 @@ export function BackupAutoBackups({
 
     return (
         <div
-            className="backup-auto"
+            className="backup-auto flex flex-col gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
             data-testid="backup-auto"
         >
             <h3>{t("backup.auto_title", "Auto-backup")}</h3>
-            <label className="backup-auto-toggle">
+            <label className="backup-auto-toggle flex items-center gap-2">
                 <input
                     type="checkbox"
                     checked={autoEnabled}
@@ -109,7 +109,7 @@ export function BackupAutoBackups({
 
             {pressure !== null && pressure.is_pressured && (
                 <p
-                    className="backup-pressure"
+                    className="backup-pressure rounded-app border border-warning bg-[var(--warning-bg)] px-3 py-2 text-sm text-warning"
                     data-testid="backup-pressure"
                 >
                     {t(
@@ -178,7 +178,7 @@ export function BackupAutoBackups({
                 </p>
             ) : (
                 <ul
-                    className="backup-auto-list"
+                    className="backup-auto-list flex flex-col gap-2"
                     data-testid="backup-auto-list"
                 >
                     {autoBackups.map((entry) => (
@@ -186,10 +186,10 @@ export function BackupAutoBackups({
                             key={entry.id}
                             className="flex flex-wrap items-center gap-2"
                         >
-                            <span className="backup-auto-when">
+                            <span className="backup-auto-when font-medium">
                                 {new Date(entry.created_at).toLocaleString()}
                             </span>
-                            <span className="backup-auto-count">
+                            <span className="backup-auto-count text-sm text-fg-muted">
                                 {t(
                                     "backup.auto_records",
                                     "{{n}} records",
