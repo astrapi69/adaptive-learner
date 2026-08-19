@@ -48,16 +48,11 @@ content-source-primary
 curriculum-description
 curriculum-description-actions
 custom
-error-replay-summary-score
 extra
 extra-hook
 form-field
 form-select
-lesson-reviewed-fallback
-lesson-reviewed-prompt
-lesson-summary-breakdown-diff
 lesson-summary-diff
-lesson-summary-explanations
 onboarding-subject-suggestions
 page
 provider-chip-model
