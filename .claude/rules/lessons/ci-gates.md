@@ -239,3 +239,34 @@ gepinnt sein" - derselbe Fehler-Typ, andere Schicht: eine Prüfung, deren
 Eingabemenge nicht die reale Konsumentenmenge abdeckt. Passt zu "PR-CI vs
 nightly gates" - der 0-diff-Lauf ist eine ANDERE Prüfung als "ist diese
 Fläche überhaupt im Prüfsatz", und die zweite Frage stellte hier niemand.
+
+## Vorläufige Regel: `visual-baseline-sync` ungezielt - Gate bleibt, Sync-Scope ist der Bremser (#2682)
+
+Aufgefallen 2026-08-19 über drei Cluster-PRs plus den parallelen
+#2669/#2670-Stack: jeder `refresh-visual-baselines`-Dispatch rendert alle
+~150 Motive, egal was die PR ändert (23-26 Min/Lauf). Eine Dashboard-only-PR
+(#2676) kam mit 118 geänderten PNGs zurück, keins zur eigenen Diff gehörig
+(alle berührten Elemente strukturell unsichtbar - Tab-Gate,
+Mehr-Projekte-Bedingung, Fold). Eine reine Backend/i18n-PR (#2669, 0
+`.tsx`-Dateien) bekam denselben Ausschlag. Der Gate selbst ist schnell
+(5-9s) und incident-begründet (`quality-checks.md` §1640,
+#1628→#1638→#1635) - der ungezielte Sync dahinter ist der Bremser.
+Struktureller Fix (Sync nach Diff-Pfaden scopen) in #2682, noch offen.
+
+Bis dahin, bei jedem `refresh-visual-baselines`-Dispatch:
+
+1. Ergebnis nie blind annehmen (#1532).
+2. Prüfen: rendert die geänderte Komponente überhaupt in der betroffenen
+   Aufnahme? Häufigster Fehlschluss: Tab-Gate, Feature-Flag, oder eine
+   Fußzeile unterhalb des festen Viewport-Falls (kein echtes `fullPage`
+   sobald `#root` selbst scrollt, siehe frontend.md).
+3. Nicht zurechenbare Dateien aus dem Sync-Commit zurücksetzen
+   (`git restore --source=<pre-sync-sha> -- <pfad>`) vor dem Merge.
+4. Bleibt nichts Zurechenbares: `visual-baselines-unaffected` mit
+   Begründung im PR-Body, nicht kommentarlos.
+5. Label-Trigger feuern nur auf `labeled`, nicht `synchronize` - nach
+   jedem Push das Label toggeln, sonst rendert der Sync den alten HEAD.
+
+Passt zu "Ein 0-diff-Visual-Run ist nur ein Beweis für die Flächen im
+Motiv-Satz" (oben) - dieselbe Disziplin, auf den Sync-Workflow selbst
+angewandt.
