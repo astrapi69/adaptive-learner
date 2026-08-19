@@ -440,7 +440,7 @@ function ErrorReplaySummary({
                 )}
             </h2>
             <p
-                className="error-replay-summary-score"
+                className="error-replay-summary-score text-lg font-semibold"
                 data-testid="error-replay-summary-score"
             >
                 {t("lesson.error_replay.score", "{correct}/{total} correct now!")

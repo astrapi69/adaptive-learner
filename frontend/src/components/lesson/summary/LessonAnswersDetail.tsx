@@ -65,7 +65,7 @@ function AnswerRow({
             {showAnswer &&
                 (entry.userAnswer ? (
                     <span
-                        className="lesson-summary-breakdown-diff"
+                        className="lesson-summary-breakdown-diff block"
                         data-testid={`lesson-summary-breakdown-diff-${entry.stepId}`}
                     >
                         <DiffHighlight
