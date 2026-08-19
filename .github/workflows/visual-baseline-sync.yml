@@ -210,22 +210,79 @@ jobs:
           git commit \
             -m "chore(visual): refresh baselines (#1662)" \
             -m "CI-rendered visual baselines, auto-synced by visual-baseline-sync. Review every changed PNG before merge (#1532)."
-          # Prefer the PAT push - it re-triggers the Visual baseline gate. If the
-          # PAT lacks contents:write or is otherwise rejected (#2435), fall back
-          # to the default GITHUB_TOKEN (the job declares contents:write) so the
-          # baselines still land; the gate then needs a one-time manual re-run,
-          # which the PR comment below already spells out. The `-c ...extraheader=`
-          # clears the PAT auth header actions/checkout persisted, so the fallback
-          # actually uses the GITHUB_TOKEN in the URL instead of re-sending the PAT.
-          if git push origin "HEAD:$BRANCH"; then
+
+          # The branch can move under us while "Regenerate baselines" above
+          # was running (~25 min: a develop back-merge, another concurrent
+          # run, a manual "Update branch"), so a plain push can be rejected
+          # as non-fast-forward even though nothing about OUR change
+          # conflicts. Retry with a fetch + rebase in between - the commit
+          # here touches only e2e/visual/screenshots, so it replays cleanly
+          # onto whatever else landed on the branch meanwhile (#2677).
+          #
+          # Prefer the PAT push - it re-triggers the Visual baseline gate. If
+          # the PAT lacks contents:write or is otherwise rejected (#2435),
+          # fall back to the default GITHUB_TOKEN (the job declares
+          # contents:write) so the baselines still land; the gate then needs
+          # a one-time manual re-run, which the PR comment below already
+          # spells out. The `-c ...extraheader=` clears the PAT auth header
+          # actions/checkout persisted, so the fallback actually uses the
+          # GITHUB_TOKEN in the URL instead of re-sending the PAT.
+          MAX_ATTEMPTS=5
+          ATTEMPT=1
+          PAT_OK=0
+          while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+            if OUTPUT=$(git push origin "HEAD:$BRANCH" 2>&1); then
+              printf '%s\n' "$OUTPUT"
+              PAT_OK=1
+              break
+            fi
+            printf '%s\n' "$OUTPUT"
+            if printf '%s' "$OUTPUT" | grep -qi "permission denied\|error: 403"; then
+              echo "::notice::PAT push denied (permission, #2435) - not a race, skipping retries for this token."
+              break
+            fi
+            if [ "$ATTEMPT" -eq "$MAX_ATTEMPTS" ]; then
+              echo "::warning::PAT push still rejected after $MAX_ATTEMPTS attempts."
+              break
+            fi
+            echo "::warning::PAT push rejected (attempt $ATTEMPT/$MAX_ATTEMPTS, branch likely moved) - fetching + rebasing onto the current $BRANCH tip and retrying."
+            git fetch origin "$BRANCH"
+            git rebase FETCH_HEAD
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
+          if [ "$PAT_OK" = "1" ]; then
             echo "pushed_with=pat" >> "$GITHUB_OUTPUT"
           else
-            echo "::warning::PAT push rejected - retrying with the default GITHUB_TOKEN (#2435); the Visual baseline gate will need a one-time manual re-run."
-            git -c http.https://github.com/.extraheader= push \
-              "https://x-access-token:${FALLBACK_TOKEN}@github.com/${REPO}.git" \
-              "HEAD:$BRANCH"
-            echo "pushed_with=github_token" >> "$GITHUB_OUTPUT"
+            echo "::warning::Falling back to the default GITHUB_TOKEN (#2435); the Visual baseline gate will need a one-time manual re-run."
+            ATTEMPT=1
+            TOKEN_OK=0
+            while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+              if OUTPUT=$(git -c http.https://github.com/.extraheader= push \
+                "https://x-access-token:${FALLBACK_TOKEN}@github.com/${REPO}.git" \
+                "HEAD:$BRANCH" 2>&1); then
+                printf '%s\n' "$OUTPUT"
+                TOKEN_OK=1
+                break
+              fi
+              printf '%s\n' "$OUTPUT"
+              if [ "$ATTEMPT" -eq "$MAX_ATTEMPTS" ]; then
+                echo "::error::GITHUB_TOKEN push still rejected after $MAX_ATTEMPTS attempts."
+                break
+              fi
+              echo "::warning::GITHUB_TOKEN push rejected (attempt $ATTEMPT/$MAX_ATTEMPTS, branch likely moved) - fetching + rebasing onto the current $BRANCH tip and retrying."
+              git fetch origin "$BRANCH"
+              git rebase FETCH_HEAD
+              ATTEMPT=$((ATTEMPT + 1))
+            done
+            if [ "$TOKEN_OK" = "1" ]; then
+              echo "pushed_with=github_token" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error::Failed to push refreshed baselines onto $BRANCH after retries with both tokens."
+              exit 1
+            fi
           fi
+
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "::notice::Pushed refreshed baselines to $BRANCH. Review the changed PNGs image by image (#1532) - NOT auto-merged."
 
