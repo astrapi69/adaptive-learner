@@ -667,6 +667,38 @@ oder "Als Kopie speichern" im Lektioneditor entstanden).
 - [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
       (Dexie-Modus) - Badge + Credit-Zeile müssen in BEIDEN Modi erscheinen
 
+### Teilen-Assistent - Hinweis + Entfernen für mitgereiste Fremd-Credits (#2656, EXP-046)
+
+Ort: Teilen-Assistent (`ShareWizard`) Schritt 1, direkt unter dem
+bestehenden "Dein Name (optional)"-Block. Voraussetzung für einen
+sichtbaren Fremd-Credit: eine geforkte Lektion mit "basiert auf"-Credit
+(#2655) oder eine importierte Lektion, deren `contributed_by` bereits
+gesetzt ist, bevor der Assistent geöffnet wird.
+
+- [ ] Eine eigene, nie geforkte Lektion teilen -> KEIN
+      Fremd-Credit-Hinweis erscheint (nichts zu melden)
+- [ ] Eine geforkte Lektion mit Set-Attribution (#2655) teilen -> der
+      Hinweis "Dieser Inhalt nennt {Autor} als Urheber. Der Name reist
+      beim Teilen mit, du kannst ihn entfernen." erscheint, MIT dem
+      Namen aus der Attribution
+- [ ] Eine importierte Lektion mit gesetztem `contributed_by`, aber ohne
+      Set-Attribution teilen -> derselbe Hinweis, mit dem Namen aus
+      `contributed_by`
+- [ ] OHNE Klick auf "Credits entfernen" teilen -> der Fremd-Credit
+      reist im geteilten Inhalt mit (Standardverhalten, jetzt sichtbar
+      statt still)
+- [ ] Klick auf "Credits entfernen" -> Button verschwindet, Bestätigung
+      "Credits entfernt." erscheint; danach geteilt -> der Name taucht
+      NICHT mehr im geteilten Inhalt auf (das strukturelle
+      `variation_of` bleibt unberührt)
+- [ ] Eigenen Namen eintragen UND "Namen anzeigen" aktivieren, OHNE
+      Fremd-Credits zu entfernen -> der EIGENE Name gewinnt im geteilten
+      Inhalt, der Fremd-Credit-Hinweis bleibt sichtbar, aber wird beim
+      Teilen überschrieben (kein doppeltes Credit)
+- [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
+      (Dexie-Modus) - Hinweis + Entfernen-Knopf müssen in BEIDEN Modi
+      funktionieren
+
 ### Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +

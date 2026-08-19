@@ -2835,7 +2835,10 @@
       "name_label": "Your name (optional)",
       "name_placeholder": "e.g. Maria S.",
       "show_name": "Show name in lesson",
-      "privacy": "Your name will be shown in the lesson and the pull request."
+      "privacy": "Your name will be shown in the lesson and the pull request.",
+      "foreign_notice": "This content credits {author}. Their name travels when you share, you can remove it.",
+      "foreign_remove": "Remove credits",
+      "foreign_removed": "Credits removed."
     }
   },
   "milestone": {

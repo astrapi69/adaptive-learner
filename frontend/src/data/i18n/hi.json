@@ -2835,7 +2835,10 @@
       "name_label": "आपका नाम (वैकल्पिक)",
       "name_placeholder": "जैसे Maria S.",
       "show_name": "पाठ में नाम दिखाएँ",
-      "privacy": "आपका नाम पाठ और pull request में दिखाया जाएगा।"
+      "privacy": "आपका नाम पाठ और pull request में दिखाया जाएगा।",
+      "foreign_notice": "यह सामग्री {author} को श्रेय देती है। साझा करते समय नाम भी साथ जाता है, आप इसे हटा सकते हैं।",
+      "foreign_remove": "श्रेय हटाएँ",
+      "foreign_removed": "श्रेय हटा दिया गया।"
     }
   },
   "milestone": {

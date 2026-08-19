@@ -2835,7 +2835,10 @@
       "name_label": "Ton nom (facultatif)",
       "name_placeholder": "par ex. Maria S.",
       "show_name": "Afficher le nom dans la leçon",
-      "privacy": "Ton nom sera affiché dans la leçon et dans la pull request."
+      "privacy": "Ton nom sera affiché dans la leçon et dans la pull request.",
+      "foreign_notice": "Ce contenu crédite {author} comme auteur. Le nom voyage lors du partage, tu peux le supprimer.",
+      "foreign_remove": "Supprimer les crédits",
+      "foreign_removed": "Crédits supprimés."
     }
   },
   "milestone": {

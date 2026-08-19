@@ -2835,7 +2835,10 @@
       "name_label": "Adınız (isteğe bağlı)",
       "name_placeholder": "ör. Maria S.",
       "show_name": "Adı derste göster",
-      "privacy": "Adınız derste ve pull request'te gösterilecek."
+      "privacy": "Adınız derste ve pull request'te gösterilecek.",
+      "foreign_notice": "Bu içerik {author} kişisini katkı sahibi olarak gösteriyor. Paylaşırken isim de taşınır, kaldırabilirsiniz.",
+      "foreign_remove": "Katkıları kaldır",
+      "foreign_removed": "Katkılar kaldırıldı."
     }
   },
   "milestone": {

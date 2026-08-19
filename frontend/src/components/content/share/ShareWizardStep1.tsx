@@ -44,6 +44,9 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
     setAuthorName,
     showName,
     setShowName,
+    foreignCredit,
+    removeForeignCredit,
+    setRemoveForeignCredit,
   } = wiz;
 
   return (
@@ -301,6 +304,42 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
               "Your name will be shown in the lesson and the pull request.",
             )}
           </p>
+        )}
+        {/* #2656 — a carried-over FOREIGN credit (from an authored
+            original, or a #2655 fork) travels with the share by
+            default; schema 1.9 requires disclosing that before it
+            becomes visible, plus a one-click way to remove it. */}
+        {foreignCredit && (
+          <div
+            className="flex flex-col gap-2"
+            data-testid="share-wizard-foreign-credit"
+          >
+            <p className="text-sm text-fg-secondary">
+              {t(
+                "content.credit.foreign_notice",
+                "This content credits {author}. Their name travels when you share, you can remove it.",
+              ).replace("{author}", foreignCredit)}
+            </p>
+            {removeForeignCredit ? (
+              <p
+                className="text-sm text-fg-secondary"
+                data-testid="share-wizard-foreign-credit-removed"
+              >
+                {t("content.credit.foreign_removed", "Credits removed.")}
+              </p>
+            ) : (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="self-start"
+                onClick={() => setRemoveForeignCredit(true)}
+                data-testid="share-wizard-foreign-credit-remove"
+              >
+                {t("content.credit.foreign_remove", "Remove credits")}
+              </Button>
+            )}
+          </div>
         )}
       </div>
     </section>
