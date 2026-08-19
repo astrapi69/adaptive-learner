@@ -37,7 +37,7 @@ export default function LearningRepoWidget({projectId}: LearningRepoWidgetProps)
             </p>
             <Link
                 to={`/projects/${encodeURIComponent(projectId)}/learning-repo`}
-                className="learning-repo-widget-link"
+                className="learning-repo-widget-link text-sm text-accent hover:underline"
                 data-testid="learning-repo-widget-link"
             >
                 {t("repo.widget.open", "Open repository")}
