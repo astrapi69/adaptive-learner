@@ -31,8 +31,21 @@ export default defineConfig({
     // phase shifted lesson-matching mobile by ~4px, #1540). It cannot
     // paper over a wrong baseline: a real mismatch is deterministic and
     // fails every retry, so the gate stays sharp.
-    fullyParallel: false,
-    workers: 1,
+    //
+    // CI runs 4 workers (#2684): the suite is Dexie-mode (client-side
+    // IndexedDB only, no backend), so every test gets an isolated
+    // browser-context storage profile - concurrent workers cannot bleed
+    // state between captures. The single `vite preview` webServer is a
+    // static file server, safe under concurrent requests. GitHub-hosted
+    // `ubuntu-latest` has 4 vCPUs. Local runs stay serial (workers: 1) so a
+    // human reproducing a diff by hand gets deterministic, one-at-a-time
+    // output. Cuts the ~150-screenshot suite's wall-clock roughly
+    // proportionally without changing WHAT gets rendered - no coverage
+    // tradeoff, unlike a path-scoped subset
+    // (rejected for this suite, see ci-gates.md "Vorlaeufige Regel...
+    // #2682" and quality-checks.md's #1628/#1638/#1635 precedent).
+    fullyParallel: !!process.env.CI,
+    workers: process.env.CI ? 4 : 1,
     retries: 1,
     // Seeding a learner (onboarding + a lesson playthrough) before the
     // shot takes longer than a smoke nav.
