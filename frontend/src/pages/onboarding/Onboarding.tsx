@@ -501,7 +501,7 @@ export default function Onboarding() {
 
                 {suggestions.length > 0 && (
                     <div
-                        className="onboarding-subject-suggestions"
+                        className="onboarding-subject-suggestions flex flex-col gap-1.5"
                         data-testid="onboarding-subject-suggestions"
                     >
                         <p className="form-label">
@@ -510,7 +510,7 @@ export default function Onboarding() {
                                 "Suggested subjects (tap to assign):",
                             )}
                         </p>
-                        <ul className="taxonomy-chip-list">
+                        <ul className="taxonomy-chip-list flex flex-wrap gap-2">
                             {suggestions.map((suggestion) => {
                                 const isOn = selectedSubjectIds.has(
                                     suggestion.subject.id,

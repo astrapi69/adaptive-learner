@@ -102,7 +102,7 @@ export default function LessonModeControl() {
                     {t("settings.lesson_mode.default_label", "Default mode")}
                 </span>
                 <select
-                    className="form-select"
+                    className="form-select min-h-11 rounded-md border border-input bg-background px-2 text-foreground"
                     value={mode}
                     onChange={(e) => {
                         const next = e.target.value as LessonMode;
@@ -126,7 +126,7 @@ export default function LessonModeControl() {
                     )}
                 </span>
                 <select
-                    className="form-select"
+                    className="form-select min-h-11 rounded-md border border-input bg-background px-2 text-foreground"
                     value={threshold}
                     onChange={(e) => {
                         const next = Number(e.target.value) as ExamPassThreshold;
@@ -150,7 +150,7 @@ export default function LessonModeControl() {
                     )}
                 </span>
                 <select
-                    className="form-select"
+                    className="form-select min-h-11 rounded-md border border-input bg-background px-2 text-foreground"
                     value={difficulty}
                     onChange={(e) => {
                         const next = e.target.value as TimedDifficulty;

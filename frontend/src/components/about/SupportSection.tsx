@@ -33,7 +33,7 @@ export default function SupportSection() {
 
     return (
         <div
-            className="settings-subsection"
+            className="settings-subsection w-full"
             data-testid="settings-support-section"
             style={{marginTop: "1.5rem"}}
         >
