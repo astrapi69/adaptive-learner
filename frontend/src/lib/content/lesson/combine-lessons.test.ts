@@ -11,7 +11,7 @@ import {
 import {buildLessonFromDraft} from "./draft-to-lesson";
 import {generateExercises} from "../../exercises";
 import {buildContentSetZip} from "./lesson-export";
-import {parseImportFile} from "./lesson-import";
+import {parseImportFile} from "./fork/lesson-import";
 import type {LessonMeta} from "./lesson-draft";
 import type {ContentSetEntry} from "../../../storage/types";
 

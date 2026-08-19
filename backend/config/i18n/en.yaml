@@ -2330,6 +2330,10 @@ content:
     confirm: "Edit copy"
     saved: "Saved as your own copy."
     failed: "Could not create the copy."
+  fork:
+    based_on: "Based on {author}"
+    based_on_and_others: "Based on {author} and others"
+    credit_disclaimer: "Credits are self-declared and not verified."
   ai_exercises:
     batch:
       button: "Generate for all lessons"

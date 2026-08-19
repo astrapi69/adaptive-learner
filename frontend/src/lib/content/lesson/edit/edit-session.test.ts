@@ -8,12 +8,14 @@ import {describe, expect, it} from "vitest";
 
 import {
     buildEditPrefill,
+    buildSaveCopyInput,
     editSnapshot,
     lessonPickerLabel,
     mergeEditedLessonIntoSet,
     resolveEditLessonIndex,
     withPreservedSetBook,
 } from "./edit-session";
+import type {LessonMeta} from "../lesson-draft";
 import type {
     ContentLesson,
     ContentSetEntry,
@@ -111,6 +113,88 @@ describe("withPreservedSetBook (#1989)", () => {
         expect(withPreservedSetBook(base, entry())).toBe(base);
         expect(withPreservedSetBook(base, undefined)).toBe(base);
         expect(base.book).toBeUndefined();
+    });
+});
+
+const COPY_META: LessonMeta = {
+    title: "Colours A1 (copy)",
+    titleNative: "",
+    sourceLanguage: "de",
+    targetLanguage: "fr",
+    level: "A1",
+    description: "",
+    author: "",
+    domain: "language",
+};
+
+function copyInput() {
+    return {meta: COPY_META, cards: [], exercises: []};
+}
+
+describe("buildSaveCopyInput (#1740 / #2655)", () => {
+    it("stamps variation_of pointing at the original lesson id, with a fresh copy id", () => {
+        const {lesson: copiedLesson, input} = buildSaveCopyInput(
+            copyInput(),
+            {
+                lessonId: "01-colours",
+                originalSteps: [{id: "th", type: "theory", title: "T", body: "Body"}],
+                lessons: [lesson("01-colours", "Colours")],
+                entry: entry(),
+            },
+            "created-copy",
+        );
+        expect(copiedLesson.id).not.toBe("01-colours");
+        expect(copiedLesson.variation_of).toBe("01-colours");
+        expect(input.set_id).toBe("created-copy");
+        expect(input.origin).toBe("imported");
+    });
+
+    it("carries the source entry's attribution forward onto the copy", () => {
+        const source = entry();
+        source.attribution = {author: "Original Author"};
+        const {input} = buildSaveCopyInput(
+            copyInput(),
+            {
+                lessonId: "01-colours",
+                originalSteps: [{id: "th", type: "theory", title: "T", body: "Body"}],
+                lessons: [lesson("01-colours", "Colours")],
+                entry: source,
+            },
+            "created-copy",
+        );
+        expect(input.attribution).toEqual({author: "Original Author"});
+    });
+
+    it("preserves the source entry's book block onto the copy (#1989)", () => {
+        const source = entry();
+        source.book = {title: "A Book", author: "Someone", url: null, asin: null};
+        const {input} = buildSaveCopyInput(
+            copyInput(),
+            {
+                lessonId: "01-colours",
+                originalSteps: [{id: "th", type: "theory", title: "T", body: "Body"}],
+                lessons: [lesson("01-colours", "Colours")],
+                entry: source,
+            },
+            "created-copy",
+        );
+        expect(input.book).toEqual(source.book);
+    });
+
+    it("without a source entry: no attribution, no book, still stamps variation_of", () => {
+        const {lesson: copiedLesson, input} = buildSaveCopyInput(
+            copyInput(),
+            {
+                lessonId: "01-colours",
+                originalSteps: [{id: "th", type: "theory", title: "T", body: "Body"}],
+                lessons: [lesson("01-colours", "Colours")],
+                entry: undefined,
+            },
+            "created-copy",
+        );
+        expect(copiedLesson.variation_of).toBe("01-colours");
+        expect(input.attribution).toBeNull();
+        expect(input.book).toBeUndefined();
     });
 });
 

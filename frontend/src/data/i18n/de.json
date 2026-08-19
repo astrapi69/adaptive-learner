@@ -2522,6 +2522,11 @@
       "saved": "Als eigene Kopie gespeichert.",
       "failed": "Kopie konnte nicht erstellt werden."
     },
+    "fork": {
+      "based_on": "Basierend auf {author}",
+      "based_on_and_others": "Basierend auf {author} und anderen",
+      "credit_disclaimer": "Angaben sind selbst deklariert und nicht überprüft."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Übungen für alle Lektionen generieren",

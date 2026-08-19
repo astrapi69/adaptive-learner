@@ -2319,6 +2319,10 @@ content:
     confirm: "コピーを編集"
     saved: "自分のコピーとして保存しました。"
     failed: "コピーを作成できませんでした。"
+  fork:
+    based_on: "{author} をもとにしています"
+    based_on_and_others: "{author} 他をもとにしています"
+    credit_disclaimer: "クレジットは自己申告であり、検証されていません。"
   ai_exercises:
     batch:
       button: "すべてのレッスンの練習問題を生成"

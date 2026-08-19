@@ -2522,6 +2522,11 @@
       "saved": "Salvo como sua própria cópia.",
       "failed": "Não foi possível criar a cópia."
     },
+    "fork": {
+      "based_on": "Baseado em {author}",
+      "based_on_and_others": "Baseado em {author} e outros",
+      "credit_disclaimer": "Os créditos são autodeclarados e não verificados."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Gerar para todas as lições",

@@ -17,7 +17,8 @@
 
 import { useState } from "react";
 
-import { nextCopySetId } from "../../lib/content/lesson/lesson-import";
+import { buildForkAttribution, stampVariationOf } from "../../lib/content/lesson/fork/fork-provenance";
+import { nextCopySetId } from "../../lib/content/lesson/fork/lesson-import";
 import { getStorage } from "../../storage";
 import {
   USER_GENERATED_SOURCE,
@@ -69,6 +70,8 @@ export function useEditAsCopy({ fetchSetLessons, onForked }: UseEditAsCopyDeps) 
       const lessons = await fetchSetLessons(target);
       const existing = await listExistingUserSetIds();
       const setId = nextCopySetId(target.id, existing);
+      // #2655 — record the fork's derivation: variation_of on every
+      // lesson, and a carried-forward set-level attribution/credit.
       const entry = await getStorage().contentLoader.saveUserSet({
         set_id: setId,
         title: target.title,
@@ -80,7 +83,8 @@ export function useEditAsCopy({ fetchSetLessons, onForked }: UseEditAsCopyDeps) 
         origin: "imported",
         description: target.description,
         book: target.book,
-        lessons,
+        attribution: buildForkAttribution(target.attribution, lessons),
+        lessons: stampVariationOf(lessons),
       });
       setEditAsCopyTarget(null);
       notify.success(t("content.edit_as_copy.saved", "Saved as your own copy."));

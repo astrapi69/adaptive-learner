@@ -23,6 +23,7 @@ import type {
     ContentLessonStep,
     ContentLessonExercise,
     SaveUserSetInput,
+    SetAttribution,
     UserLessonOrigin,
 } from "../../../storage/types";
 
@@ -256,6 +257,10 @@ export interface BuildUserSetOptions {
     setId?: string;
     /** Preserve the existing set's origin. Absent = ``"imported"``. */
     origin?: UserLessonOrigin;
+    /** #2655 — set-level attribution/derivation chain to persist, built by
+     *  ``buildForkAttribution`` on a fork. Absent = no attribution
+     *  (a fresh, non-forked lesson). */
+    attribution?: SetAttribution | null;
 }
 
 /** Wrap a built lesson in the ``SaveUserSetInput`` that persists it to
@@ -280,6 +285,7 @@ export function buildUserSetInput(
         // flow). The viewer + sharing treat all user sets identically.
         origin: opts.origin ?? "imported",
         description: meta.description.trim() || null,
+        attribution: opts.attribution ?? null,
         lessons: [lesson],
     };
 }

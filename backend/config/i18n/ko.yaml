@@ -2330,6 +2330,10 @@ content:
     confirm: "사본 편집"
     saved: "나만의 사본으로 저장했습니다."
     failed: "사본을 만들 수 없습니다."
+  fork:
+    based_on: "{author} 기반"
+    based_on_and_others: "{author} 외 여러 명 기반"
+    credit_disclaimer: "크레딧은 자진 신고된 것이며 검증되지 않았습니다."
   ai_exercises:
     batch:
       button: "모든 레슨에 대해 생성"

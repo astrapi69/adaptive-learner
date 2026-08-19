@@ -169,6 +169,9 @@ export async function downloadSetDexie(
       status: prior?.status ?? "active",
       manifest_yaml: setManifestText,
       book: asContentSetBook(target.book),
+      // #2655 — mirror the manifest's own attribution/derivation chain
+      // (engine#90 / schema 1.9), if the source set already carries one.
+      attribution: target.attribution ?? null,
     };
     await db.contentSets.put(row);
 

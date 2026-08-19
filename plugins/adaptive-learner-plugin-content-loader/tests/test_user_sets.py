@@ -153,6 +153,58 @@ def test_save_user_set_without_book_leaves_it_unset(tmp_path: Path) -> None:
     assert entry.set.book is None
 
 
+def test_save_user_set_persists_attribution_block(tmp_path: Path) -> None:
+    """#2655 — a fork's carried-forward attribution/derivation chain is
+    written to ``sets[].attribution`` and survives a re-read from the
+    cached manifest."""
+    from adaptive_learner_content_loader.cache import read_manifest
+    from adaptive_learner_content_loader.manifest_generated import (
+        Attribution,
+        DerivedFromItem,
+    )
+    from adaptive_learner_content_loader.service import USER_SET_VERSION
+
+    service = _service(tmp_path)
+    attribution = Attribution(
+        author="Original Author",
+        derived_from=[DerivedFromItem(author="Even Earlier Author")],
+    )
+    entry = service.save_user_set(
+        set_id="conv-1",
+        title="Spanish travel vocabulary",
+        target_language="es",
+        level="beginner",
+        origin="imported",
+        lessons=[_lesson()],
+        attribution=attribution,
+    )
+    assert entry.set.attribution is not None
+    assert entry.set.attribution.author == "Original Author"
+    assert entry.set.attribution.derived_from is not None
+    assert entry.set.attribution.derived_from[0].author == "Even Earlier Author"
+
+    # Round-trip: re-read the cached manifest from disk.
+    manifest = read_manifest(
+        tmp_path, USER_GENERATED_SOURCE, "conv-1", USER_SET_VERSION
+    )
+    assert manifest.sets[0].attribution is not None
+    assert manifest.sets[0].attribution.author == "Original Author"
+
+
+def test_save_user_set_without_attribution_leaves_it_unset(tmp_path: Path) -> None:
+    """A save with no attribution leaves ``sets[].attribution`` as ``None``."""
+    service = _service(tmp_path)
+    entry = service.save_user_set(
+        set_id="conv-1",
+        title="Spanish travel vocabulary",
+        target_language="es",
+        level="beginner",
+        origin="analysis",
+        lessons=[_lesson()],
+    )
+    assert entry.set.attribution is None
+
+
 def test_resave_overwrites_in_place(tmp_path: Path) -> None:
     service = _service(tmp_path)
     service.save_user_set(

@@ -2522,6 +2522,11 @@
       "saved": "Disimpan sebagai salinan Anda sendiri.",
       "failed": "Salinan tidak dapat dibuat."
     },
+    "fork": {
+      "based_on": "Berdasarkan {author}",
+      "based_on_and_others": "Berdasarkan {author} dan lainnya",
+      "credit_disclaimer": "Kredit dinyatakan sendiri dan belum diverifikasi."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Buat untuk semua pelajaran",
