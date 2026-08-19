@@ -707,6 +707,8 @@
     "lesson_shortcuts_description": "Drücke die Eingabetaste, um deine Antwort zu prüfen, und erneut, um zum nächsten Schritt zu gehen.",
     "lesson_auto_advance": "Bei richtiger Antwort automatisch weiter",
     "lesson_auto_advance_description": "Nach einer richtigen Antwort automatisch zur nächsten Aufgabe. Bei einer falschen Antwort wird immer gewartet, damit du die Lösung ansehen kannst.",
+    "ask_ai_visible": "'KI fragen'-Button anzeigen",
+    "ask_ai_visible_description": "Zeigt den 'KI fragen'-Button unter Theorie- und Übungsblöcken. Standardmäßig sichtbar; der Button braucht weiterhin deinen eigenen KI-Schlüssel (BYOK), um zu antworten.",
     "button_tooltips": "Button-Tooltips anzeigen",
     "button_tooltips_description": "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv.",
     "developer_mode": "Entwicklermodus",

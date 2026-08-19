@@ -5,3 +5,4 @@ export * from "./useSummaryEnterKey";
 export * from "./useLessonShortcuts";
 export * from "./useExerciseHints";
 export * from "./useErrorReplayScope";
+export * from "./useAskAiVisible";

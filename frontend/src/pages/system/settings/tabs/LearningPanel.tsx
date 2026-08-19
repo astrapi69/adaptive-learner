@@ -28,6 +28,10 @@ import {
   readLessonAutoAdvanceEnabled,
   setLessonAutoAdvanceEnabled,
 } from "../../../../hooks/settings/useLessonAutoAdvance";
+import {
+  readAskAiVisible,
+  setAskAiVisible,
+} from "../../../../lib/lesson/askAiVisibilityPref";
 
 interface LearningPanelProps {
   /** Whether the Learning tab is the active tab (drives ``hidden``). */
@@ -83,6 +87,17 @@ export default function LearningPanel({ active }: LearningPanelProps) {
   const handleAutoAdvanceToggle = (next: boolean) => {
     setAutoAdvanceOn(next);
     setLessonAutoAdvanceEnabled(next);
+  };
+
+  // "Ask AI" button visibility (#2693). localStorage-backed so
+  // AskAiPanel (via useAskAiVisible) reads the same flag. Default ON.
+  const [askAiVisibleOn, setAskAiVisibleOn] = useState<boolean>(() =>
+    readAskAiVisible(),
+  );
+
+  const handleAskAiVisibleToggle = (next: boolean) => {
+    setAskAiVisibleOn(next);
+    setAskAiVisible(next);
   };
 
   return (
@@ -158,6 +173,25 @@ export default function LearningPanel({ active }: LearningPanelProps) {
             data-testid="settings-lesson-auto-advance-toggle"
             checked={autoAdvanceOn}
             onChange={(e) => handleAutoAdvanceToggle(e.target.checked)}
+          />
+        </label>
+        <label className="form-row form-row-toggle">
+          <span className="form-label-stack">
+            <span className="form-label">
+              {t("settings.ask_ai_visible", "Show \"Ask AI\" button")}
+            </span>
+            <FormHint as="span">
+              {t(
+                "settings.ask_ai_visible_description",
+                "Show the \"Ask AI\" button under theory and exercises. Shown by default; the button still needs your own AI key (BYOK) to answer.",
+              )}
+            </FormHint>
+          </span>
+          <input
+            type="checkbox"
+            data-testid="settings-ask-ai-visible-toggle"
+            checked={askAiVisibleOn}
+            onChange={(e) => handleAskAiVisibleToggle(e.target.checked)}
           />
         </label>
       </section>

@@ -707,6 +707,8 @@
     "lesson_shortcuts_description": "Cevabınızı kontrol etmek için Enter'a, sonraki adıma geçmek için tekrar Enter'a basın.",
     "lesson_auto_advance": "Doğru cevapta otomatik ilerle",
     "lesson_auto_advance_description": "Doğru cevaptan sonra otomatik olarak sonraki alıştırmaya geçer. Yanlış cevapta çözümü inceleyebilmen için her zaman bekler.",
+    "ask_ai_visible": "'Yapay zekâya sor' düğmesini göster",
+    "ask_ai_visible_description": "Teori ve alıştırmaların altında 'Yapay zekâya sor' düğmesini gösterir. Varsayılan olarak gösterilir; düğmenin yanıt verebilmesi için hâlâ kendi yapay zekâ anahtarına (BYOK) ihtiyacı vardır.",
     "button_tooltips": "Buton ipuçlarını göster",
     "button_tooltips_description": "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır.",
     "developer_mode": "Geliştirici Modu",

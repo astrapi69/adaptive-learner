@@ -707,6 +707,8 @@
     "lesson_shortcuts_description": "Press Enter to check your answer, then Enter again to go to the next step.",
     "lesson_auto_advance": "Auto-advance on a correct answer",
     "lesson_auto_advance_description": "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution.",
+    "ask_ai_visible": "Show 'Ask AI' button",
+    "ask_ai_visible_description": "Show the 'Ask AI' button under theory and exercises. Shown by default; the button still needs your own AI key (BYOK) to answer.",
     "button_tooltips": "Show button tooltips",
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
     "developer_mode": "Developer Mode",
