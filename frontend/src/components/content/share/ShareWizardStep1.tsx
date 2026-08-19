@@ -311,7 +311,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
             becomes visible, plus a one-click way to remove it. */}
         {foreignCredit && (
           <div
-            className="share-wizard-foreign-credit flex flex-col gap-2"
+            className="flex flex-col gap-2"
             data-testid="share-wizard-foreign-credit"
           >
             <p className="text-sm text-fg-secondary">
