@@ -502,7 +502,7 @@ function ReviewSummary({
             onExit={onExit}
             testId="review-summary"
         >
-            <p className="review-summary-note">
+            <p className="review-summary-note text-sm text-fg-muted">
                 {t(
                     "review.summary.note",
                     "Element scores have been updated. Mastered elements will not appear in the next session.",
@@ -513,7 +513,7 @@ function ReviewSummary({
                     className="mt-2 flex flex-col items-start gap-2"
                     data-testid="review-summary-another"
                 >
-                    <p className="review-summary-note">
+                    <p className="review-summary-note text-sm text-fg-muted">
                         {t(
                             "review.summary_remaining",
                             "Still {n} due. Keep going?",
@@ -530,7 +530,7 @@ function ReviewSummary({
                 </div>
             )}
             <p
-                className="review-summary-note"
+                className="review-summary-note text-sm text-fg-muted"
                 data-testid="review-summary-repeat"
             >
                 {t(

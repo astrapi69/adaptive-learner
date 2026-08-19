@@ -34,11 +34,7 @@
 # Orakel-Pin (#2138, entschieden 2026-07-31): bewusst UNgepinnt - gleiche
 # Begruendung wie in .dead-classnames-baseline (das Bauergebnis ist selbst
 # der Pruefgegenstand). Entscheidung nicht erneut aufwerfen.
-adaptive-save-row
-adaptive-summary-improvement
-answer-feedback-pulse
 chat-welcome
-cloze-blank-diff
 content-ai-fix
 content-ai-intro
 content-level-own-count
@@ -57,19 +53,14 @@ extra
 extra-hook
 form-field
 form-select
-free-text-diff
-free-text-diff-row
 lesson-reviewed-fallback
 lesson-reviewed-prompt
-lesson-step-nav
 lesson-summary-breakdown-diff
 lesson-summary-diff
 lesson-summary-explanations
 onboarding-subject-suggestions
 page
-picture-tile-skeleton
 provider-chip-model
-review-summary-note
 settings-subsection
 spaced-rec-body
 spaced-rec-title

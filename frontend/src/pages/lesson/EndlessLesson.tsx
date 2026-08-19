@@ -195,7 +195,7 @@ export default function EndlessLessonPage() {
             )}
 
             <nav
-                className="lesson-step-nav"
+                className="lesson-step-nav sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
                 aria-label={t("lesson.nav.aria_label", "Step navigation")}
             >
                 {!checked ? (

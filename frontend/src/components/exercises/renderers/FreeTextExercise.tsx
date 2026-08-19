@@ -336,12 +336,12 @@ function FreeTextResult({
                             />
                             {view === "my-answer" ? (
                                 <div
-                                    className="free-text-diff-row"
+                                    className="free-text-diff-row rounded-sm border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
                                     data-testid="free-text-diff-row"
                                 >
                                     <DiffHighlight
                                         tokens={tokenDiff(input, canonical)}
-                                        className="free-text-diff"
+                                        className="free-text-diff block"
                                     />
                                 </div>
                             ) : (

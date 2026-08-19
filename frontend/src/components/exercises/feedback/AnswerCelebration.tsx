@@ -83,7 +83,7 @@ export default function AnswerCelebration({
                 <FeedbackPulse
                     variant={isCorrect ? "success" : "error"}
                     testId="answer-pulse"
-                    className="answer-feedback-pulse"
+                    className="answer-feedback-pulse shrink-0"
                 >
                     {isCorrect ? (
                         <Check
