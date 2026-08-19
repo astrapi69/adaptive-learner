@@ -39,6 +39,12 @@
 #   The PR housekeeping steps (label removal + status comment) use the
 #   default GITHUB_TOKEN, scoped via the job `permissions:` block, so they
 #   do NOT depend on the PAT's scope (#2014).
+#
+# THREE JOBS, not one (#2673): the render step needs the Playwright browser
+# pre-baked into a container image (see the `render` job comment below) to
+# avoid the #317/#1248 CDN-hang class, but that container has no `gh` CLI.
+# `gh pr view` / `gh pr edit` / `gh pr comment` therefore run in plain
+# `ubuntu-latest` jobs before/after the containerized render.
 
 name: Visual baseline sync
 
@@ -65,16 +71,18 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
-  sync:
-    name: Render + push visual baselines onto the PR branch
+  resolve:
+    name: Resolve PR + head branch
     # Label path: only the dedicated label. Dispatch path: always.
     if: >-
       github.event_name == 'workflow_dispatch'
       || github.event.label.name == 'refresh-visual-baselines'
     runs-on: ubuntu-latest
+    outputs:
+      number: ${{ steps.pr.outputs.number }}
+      branch: ${{ steps.head.outputs.branch }}
     env:
       GH_TOKEN: ${{ secrets.VISUAL_BASELINE_TOKEN || github.token }}
-      HAS_PAT: ${{ secrets.VISUAL_BASELINE_TOKEN != '' }}
     steps:
       - name: Resolve PR number
         id: pr
@@ -112,18 +120,50 @@ jobs:
           fi
           echo "branch=$branch" >> "$GITHUB_OUTPUT"
 
+  render:
+    name: Render + push visual baselines onto the PR branch
+    needs: resolve
+    runs-on: ubuntu-latest
+    # Run inside the official Playwright image so Chromium + the headless
+    # shell are PRE-BAKED - no cdn.playwright.dev download (the #317 failure
+    # mode: the CDN was unreachable from the runner, so `npx playwright
+    # install` hung at zero bytes; actions/cache could not help because the
+    # first download never succeeded). The image is pulled from
+    # mcr.microsoft.com, which the runner reaches fine, and is the
+    # established fix already used by dexie-smoke.yml + manual-automation.yml
+    # + release-prepare.yml + release.yml. Pin the tag to the
+    # @playwright/test version in e2e/package.json (1.61.1); bump both
+    # together. Refs #317, #1248, #2673.
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
+      # --user 1001 = the runner user, so checkout-owned files stay writable
+      # (matches dexie-smoke.yml; also means no root-vs-uid-1001 "dubious
+      # ownership" git config is needed for the later commit + push, #2035).
+      options: --user 1001
+    env:
+      BRANCH: ${{ needs.resolve.outputs.branch }}
+    outputs:
+      changed: ${{ steps.push.outputs.changed }}
+      pushed_with: ${{ steps.push.outputs.pushed_with }}
+    steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ steps.head.outputs.branch }}
+          ref: ${{ needs.resolve.outputs.branch }}
           token: ${{ secrets.VISUAL_BASELINE_TOKEN || github.token }}
 
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.3.14"
+      # NOT oven-sh/setup-bun here: it unpacks the Bun zip with `unzip`,
+      # which the Playwright noble image does not ship, and the job runs as
+      # --user 1001 (no apt). The npm distribution of Bun carries the binary
+      # as a plain npm tarball (no unzip), installed to a user-writable
+      # prefix (#1530, same pattern as dexie-smoke.yml).
+      - name: Install Bun 1.3.14 (npm; image lacks unzip for setup-bun)
+        run: |
+          npm install --global --prefix "$HOME/.bun-npm" bun@1.3.14
+          echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
 
       - name: Cache bun install
         uses: actions/cache@v6
@@ -144,9 +184,8 @@ jobs:
         working-directory: e2e
         run: bun install --frozen-lockfile
 
-      - name: Install Playwright browsers
-        working-directory: e2e
-        run: npx playwright install --with-deps chromium
+      # NO `playwright install` step: the browsers are baked into the
+      # container. This is the whole point of the fix (#2673).
 
       # Same config + environment as visual-regression.yml, so the
       # rendered PNGs match what the nightly diff compares against.
@@ -157,7 +196,6 @@ jobs:
       - name: Commit + push refreshed baselines
         id: push
         env:
-          BRANCH: ${{ steps.head.outputs.branch }}
           FALLBACK_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
@@ -191,6 +229,16 @@ jobs:
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "::notice::Pushed refreshed baselines to $BRANCH. Review the changed PNGs image by image (#1532) - NOT auto-merged."
 
+  notify:
+    name: PR housekeeping (label + comment)
+    needs: [resolve, render]
+    # Run whenever `resolve` actually executed (regardless of whether
+    # `render` succeeded, so a render failure still gets reported) - but NOT
+    # when `resolve` itself was skipped by the job-level trigger guard above
+    # (an unrelated label event on the PR must stay silent).
+    if: always() && needs.resolve.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
       - name: Remove the trigger label
         if: github.event_name == 'pull_request'
         continue-on-error: true
@@ -200,22 +248,21 @@ jobs:
           # PAT is only needed for the push (so the commit re-triggers the
           # gate) and may lack pull-requests scope (#2014).
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_NUMBER: ${{ needs.resolve.outputs.number }}
           REPO: ${{ github.repository }}
         run: |
           gh pr edit "$PR_NUMBER" --repo "$REPO" \
             --remove-label refresh-visual-baselines
 
       - name: Comment on the PR
-        if: always()
         continue-on-error: true
         env:
           # Default GITHUB_TOKEN (job-``permissions``-scoped), not the PAT — see
           # the label step above (#2014).
           GH_TOKEN: ${{ github.token }}
-          CHANGED: ${{ steps.push.outputs.changed }}
-          PUSHED_WITH: ${{ steps.push.outputs.pushed_with }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          CHANGED: ${{ needs.render.outputs.changed }}
+          PUSHED_WITH: ${{ needs.render.outputs.pushed_with }}
+          PR_NUMBER: ${{ needs.resolve.outputs.number }}
           REPO: ${{ github.repository }}
         run: |
           if [ "$CHANGED" = "true" ]; then
