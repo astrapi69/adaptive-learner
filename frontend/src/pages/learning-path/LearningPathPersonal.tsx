@@ -198,7 +198,11 @@ export default function LearningPathPersonal() {
     );
 
     const viewFallback = (
-        <main id="main" className="page" data-testid="learning-path-page">
+        <main
+            id="main"
+            className="page flex flex-col gap-2 p-3"
+            data-testid="learning-path-page"
+        >
             <p className="muted" role="status" aria-live="polite">
                 {t("learning_path.loading", "Building your learning path…")}
             </p>

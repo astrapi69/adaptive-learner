@@ -106,15 +106,15 @@ export default function SpacedRecommendations({cards}: Props) {
     };
 
     return (
-        <ul className="spaced-recs" data-testid="spaced-recs">
+        <ul className="spaced-recs flex flex-col gap-2" data-testid="spaced-recs">
             {visible.map((card) => (
                 <li
                     key={card.id}
                     className="spaced-rec-card"
                     data-testid={`spaced-rec-${card.id}`}
                 >
-                    <div className="spaced-rec-body">
-                        <p className="spaced-rec-title">{card.title}</p>
+                    <div className="spaced-rec-body flex flex-col gap-1">
+                        <p className="spaced-rec-title font-medium">{card.title}</p>
                         <p className="spaced-rec-meta muted">
                             {t(
                                 "dashboard.spaced_interval_label",
