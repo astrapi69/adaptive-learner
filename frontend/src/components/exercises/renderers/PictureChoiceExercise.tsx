@@ -495,7 +495,7 @@ function PictureChoiceTile({
         >
             {isLoading ? (
                 <span
-                    className="picture-tile-skeleton"
+                    className="picture-tile-skeleton block aspect-square w-full animate-pulse rounded-sm bg-[var(--surface-2)]"
                     data-testid={`picture-tile-skeleton-${choice.index}`}
                     aria-hidden="true"
                 />

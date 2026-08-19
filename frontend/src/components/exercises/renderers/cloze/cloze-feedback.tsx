@@ -87,7 +87,7 @@ function ClozeDiffRow({
                     <DiffHighlight
                         key={idx}
                         tokens={tokenDiff(inputs[idx], blank.accept[0] ?? "")}
-                        className="cloze-blank-diff"
+                        className="cloze-blank-diff block"
                     />
                 ),
             )}

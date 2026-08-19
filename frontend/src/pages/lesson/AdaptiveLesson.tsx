@@ -226,7 +226,10 @@ export default function AdaptiveLessonPage() {
             onExit={() => navigate("/dashboard")}
           />
           {/* Phase 59F — save this adaptive lesson for replay. */}
-          <div className="adaptive-save-row" data-testid="adaptive-save-row">
+          <div
+            className="adaptive-save-row mt-4 flex justify-center"
+            data-testid="adaptive-save-row"
+          >
             <SaveAdaptiveLessonButton lesson={lesson} />
           </div>
         </>
@@ -581,7 +584,7 @@ function AdaptiveSummary({
       </ul>
       {masteredDelta !== null && masteredDelta > 0 && (
         <p
-          className="adaptive-summary-improvement"
+          className="adaptive-summary-improvement flex items-center gap-1 text-sm text-[var(--success-fg,var(--accent))]"
           data-testid="adaptive-summary-mastered-delta"
         >
           <TrendingUp size={14} aria-hidden="true" />
@@ -591,7 +594,7 @@ function AdaptiveSummary({
           ).replace("{n}", String(masteredDelta))}
         </p>
       )}
-      <p className="review-summary-note">
+      <p className="review-summary-note text-sm text-fg-muted">
         {t(
           "adaptive.summary.note",
           "Element scores have been updated. Your next adaptive lesson will target the elements that still need work.",
