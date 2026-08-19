@@ -13,7 +13,7 @@ import {
   stampVariationOf,
   withVariationOf,
 } from "./fork-provenance";
-import type { ContentLesson, SetAttribution } from "../../../storage/types";
+import type { ContentLesson, SetAttribution } from "../../../../storage/types";
 
 function lesson(over: Partial<ContentLesson> = {}): ContentLesson {
   return { id: "01-greetings", title: "Greetings", steps: [], ...over } as ContentLesson;

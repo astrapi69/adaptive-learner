@@ -14,7 +14,7 @@ import type {
   BulkLessonDeleteTarget,
   LessonDeleteTarget,
 } from "../../../hooks/content/useContentSetActions";
-import { forkCreditLine } from "../../../lib/content/lesson/fork-provenance";
+import { forkCreditLine } from "../../../lib/content/lesson/fork/fork-provenance";
 import type { ContentSetEntry } from "../../../storage/types";
 import IconBadge from "../../../shared/layout/IconBadge";
 import GenerateSetExercisesButton from "../quality/GenerateSetExercisesButton";

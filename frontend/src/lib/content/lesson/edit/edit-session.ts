@@ -20,7 +20,7 @@ import {
     preservedTheorySteps,
     type DraftLessonInput,
 } from "../draft-to-lesson";
-import {buildForkAttribution, withVariationOf} from "../fork-provenance";
+import {buildForkAttribution, withVariationOf} from "../fork/fork-provenance";
 import {migrateLegacyExercisePrompts} from "../exercise/legacy-prompt-migration";
 import type {LessonCardDraft, LessonMeta} from "../lesson-draft";
 import type {

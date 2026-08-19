@@ -18,7 +18,7 @@
  * unverified text only (EXP-046 Teil 3.3) — never rendered as verified.
  */
 
-import type { ContentLesson, SetAttribution, SetDerivedFromItem } from "../../../storage/types";
+import type { ContentLesson, SetAttribution, SetDerivedFromItem } from "../../../../storage/types";
 
 /** ``attribution.derived_from`` bound (schema/content-set.schema.json,
  *  engine#90 / schema 1.9: ``maxItems: 8``). */

@@ -8,8 +8,8 @@ import {
   parseImportFile,
   type ImportedSet,
   type SkippedLesson,
-} from "../../../lib/content/lesson/lesson-import";
-import { buildForkAttribution, stampVariationOf } from "../../../lib/content/lesson/fork-provenance";
+} from "../../../lib/content/lesson/fork/lesson-import";
+import { buildForkAttribution, stampVariationOf } from "../../../lib/content/lesson/fork/fork-provenance";
 import { prepareOverwriteCarryOver } from "../../../lib/content/lesson/import-remap";
 import { getStorage } from "../../../storage";
 import { USER_GENERATED_SOURCE } from "../../../storage/types";

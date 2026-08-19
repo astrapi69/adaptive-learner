@@ -17,8 +17,8 @@
 
 import { useState } from "react";
 
-import { buildForkAttribution, stampVariationOf } from "../../lib/content/lesson/fork-provenance";
-import { nextCopySetId } from "../../lib/content/lesson/lesson-import";
+import { buildForkAttribution, stampVariationOf } from "../../lib/content/lesson/fork/fork-provenance";
+import { nextCopySetId } from "../../lib/content/lesson/fork/lesson-import";
 import { getStorage } from "../../storage";
 import {
   USER_GENERATED_SOURCE,

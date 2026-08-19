@@ -86,7 +86,7 @@ import {
 } from "../../lib/content/lesson/book-to-lesson";
 import type {GeneratedBookLesson} from "../../lib/ai/generation/generate-book-lessons";
 import {downloadLessonJson} from "../../lib/content/lesson/lesson-export";
-import {nextCopySetId} from "../../lib/content/lesson/lesson-import";
+import {nextCopySetId} from "../../lib/content/lesson/fork/lesson-import";
 import {BookSteps, type BookFields} from "../../components/create-lesson/book";
 import {resolveActiveAiProvider} from "../../lib/ai/providers/resolve-provider";
 import {readLearnerState} from "../../lib/learning/learnerState";
