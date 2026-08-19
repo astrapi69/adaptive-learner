@@ -35,19 +35,7 @@
 # Begruendung wie in .dead-classnames-baseline (das Bauergebnis ist selbst
 # der Pruefgegenstand). Entscheidung nicht erneut aufwerfen.
 chat-welcome
-curriculum-description
-curriculum-description-actions
 custom
 extra
 extra-hook
-form-select
 lesson-summary-diff
-onboarding-subject-suggestions
-page
-provider-chip-model
-settings-subsection
-spaced-rec-body
-spaced-rec-title
-spaced-recs
-speech-button__label
-taxonomy-chip-list

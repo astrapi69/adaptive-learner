@@ -98,7 +98,7 @@ export default function CurriculumDescriptionEditor({
     if (!editing) {
         return (
             <div
-                className="curriculum-description"
+                className="curriculum-description flex flex-col gap-3"
                 data-testid={`${testidNamespace}-root`}
             >
                 {hasDescription ? (
@@ -118,7 +118,7 @@ export default function CurriculumDescriptionEditor({
                         )}
                     </p>
                 )}
-                <div className="curriculum-description-actions">
+                <div className="curriculum-description-actions flex flex-wrap gap-2">
                     <Button
                         type="button"
                         variant="secondary"
@@ -136,7 +136,7 @@ export default function CurriculumDescriptionEditor({
 
     return (
         <div
-            className="curriculum-description is-editing"
+            className="curriculum-description is-editing flex flex-col gap-3"
             data-testid={`${testidNamespace}-root`}
         >
             <EditorToolbar
@@ -159,7 +159,7 @@ export default function CurriculumDescriptionEditor({
                     "Curriculum description",
                 )}
             />
-            <div className="curriculum-description-actions">
+            <div className="curriculum-description-actions flex flex-wrap gap-2">
                 <Button
                     type="button"
                     variant="secondary"

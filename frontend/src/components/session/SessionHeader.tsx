@@ -107,7 +107,7 @@ export default function SessionHeader({
                                 <>
                                     :{" "}
                                     <span
-                                        className="provider-chip-model"
+                                        className="provider-chip-model font-medium"
                                         data-testid="session-active-model"
                                     >
                                         {activeModelInfo.name}

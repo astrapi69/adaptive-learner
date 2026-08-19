@@ -121,7 +121,9 @@ export default function SpeechButton({
             <span className="speech-button__icon" aria-hidden="true">
                 {speaking ? "■" : "▶"}
             </span>
-            {label && <span className="speech-button__label">{label}</span>}
+            {label && (
+                <span className="speech-button__label leading-none">{label}</span>
+            )}
         </button>
     );
 }
