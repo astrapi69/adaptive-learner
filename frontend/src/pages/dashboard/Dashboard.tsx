@@ -297,7 +297,7 @@ export default function Dashboard() {
           <Button
             type="button"
             variant="secondary"
-            className="dashboard-create-lesson"
+            className="dashboard-create-lesson shrink-0"
             onClick={() => navigate("/create-lesson")}
             title={t("dashboard.create_lesson", "Create a lesson")}
             aria-label={t("dashboard.create_lesson", "Create a lesson")}
@@ -312,7 +312,7 @@ export default function Dashboard() {
           <Button
             type="button"
             variant="secondary"
-            className="dashboard-learning-path"
+            className="dashboard-learning-path shrink-0"
             onClick={() => navigate("/learning-path")}
             title={t("nav.learning_path", "Learning Path")}
             aria-label={t("nav.learning_path", "Learning Path")}

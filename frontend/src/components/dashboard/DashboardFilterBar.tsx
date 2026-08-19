@@ -259,7 +259,7 @@ export default function DashboardFilterBar({
     if (loading) {
         return (
             <div
-                className="dashboard-filter-bar"
+                className="dashboard-filter-bar rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-fg-muted"
                 data-testid="dashboard-filter-loading"
             >
                 {t("taxonomy.loading", "Loading filters…")}
@@ -269,10 +269,10 @@ export default function DashboardFilterBar({
 
     return (
         <section
-            className="dashboard-filter-bar"
+            className="dashboard-filter-bar flex flex-col gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
             data-testid="dashboard-filter-bar"
         >
-            <header className="dashboard-filter-header">
+            <header className="dashboard-filter-header flex items-center justify-between gap-2">
                 <h2>{t("taxonomy.filter_title", "Filter projects")}</h2>
                 {hasFilter && (
                     <Button
@@ -287,11 +287,14 @@ export default function DashboardFilterBar({
                 )}
             </header>
 
-            <div className="dashboard-filter-controls">
+            <div className="dashboard-filter-controls flex flex-col gap-3">
                 {rankedSubjects.length > 1 && (
-                    <label className="dashboard-filter-row">
-                        <span>{t("taxonomy.subject", "Subject")}</span>
+                    <label className="dashboard-filter-row flex flex-col gap-1.5">
+                        <span className="text-sm font-medium text-fg-primary">
+                            {t("taxonomy.subject", "Subject")}
+                        </span>
                         <select
+                            className="min-h-11 rounded-md border border-input bg-background px-2 text-foreground"
                             data-testid="dashboard-filter-subject-select"
                             value={selectedSubjectId ?? ""}
                             onChange={(e) =>
@@ -332,7 +335,7 @@ export default function DashboardFilterBar({
                         </span>
                     ) : (
                         <ul
-                            className="taxonomy-chip-list"
+                            className="taxonomy-chip-list flex flex-wrap gap-2"
                             data-testid="dashboard-filter-tag-list"
                         >
                             {allTags.map((tag) => {
@@ -361,7 +364,7 @@ export default function DashboardFilterBar({
             </div>
 
             <div
-                className="dashboard-filter-results"
+                className="dashboard-filter-results flex flex-col gap-2"
                 data-testid="dashboard-filter-results"
             >
                 <h3>
@@ -386,7 +389,7 @@ export default function DashboardFilterBar({
                     </p>
                 ) : (
                     <ul
-                        className="dashboard-project-list"
+                        className="dashboard-project-list flex flex-col gap-1"
                         data-testid="dashboard-filter-project-list"
                     >
                         {matched.map((project) => {
