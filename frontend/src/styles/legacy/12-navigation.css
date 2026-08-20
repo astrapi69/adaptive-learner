@@ -217,6 +217,10 @@
 .content-set-meta {
   flex: 1 1 280px;
   min-width: 0;
+  /* Without this, a nowrap (truncate) descendant's intrinsic content
+     width leaks through as this item's rendered size on a wrapped
+     flex line, defeating flex-shrink entirely (#2698). */
+  max-width: 100%;
 }
 
 /* Phase 60 — source -> target -> level content tree. */
