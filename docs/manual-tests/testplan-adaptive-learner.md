@@ -1728,6 +1728,16 @@ Ort: Settings → Daten → Empfohlene Repositories.
 - [ ] Nach erfolgreichem Durchlauf (alle Lektionen fertig): Button wird
       ohne Reload deaktiviert
 
+### "KI fragen"-Button in Lektionen (#2693)
+- [ ] Standardmäßig sichtbar: unter jedem Theorie-Block und jeder Übung
+      erscheint der "KI fragen"-Button, auch ohne AI-Key (dann ausgegraut
+      mit BYOK-Hinweis-Popover statt versteckt)
+- [ ] Einstellungen → Lernen → Interaktion → "'KI fragen'-Button
+      anzeigen" ausschalten: der Button verschwindet in der laufenden
+      Lektion (Theorie und Übungen), ohne Reload
+- [ ] Toggle wieder einschalten: Button erscheint sofort wieder
+- [ ] Der Toggle-Zustand bleibt nach einem Reload erhalten (localStorage)
+
 ### KI-Schlüssel-Tresor Import (#1765 / #1769)
 - [ ] Settings → KI → "Konfigurierte Provider" → "Importieren" springt zu
       Settings → Daten und scrollt den KeyVault-Import-Block sichtbar (#1765)

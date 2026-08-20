@@ -660,3 +660,57 @@ describe("Settings — gesture toggle (Phase 23E)", () => {
     expect(toggle.checked).toBe(false);
   });
 });
+
+describe("Settings — Ask AI visibility toggle (#2693)", () => {
+  beforeEach(() => {
+    mockNavigate.mockReset();
+    apiGet.mockReset();
+    toastError.mockReset();
+    toastSuccess.mockReset();
+    localStorage.clear();
+    localStorage.setItem("adaptive-learner.user_id", "u-1");
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("renders the toggle in the Learning tab, ON by default", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.click(screen.getByTestId("settings-tab-learning"));
+    const toggle = screen.getByTestId(
+      "settings-ask-ai-visible-toggle",
+    ) as HTMLInputElement;
+    expect(toggle).toBeVisible();
+    expect(toggle.checked).toBe(true);
+  });
+
+  it("flipping the toggle persists the new value", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.click(screen.getByTestId("settings-tab-learning"));
+    const toggle = screen.getByTestId(
+      "settings-ask-ai-visible-toggle",
+    ) as HTMLInputElement;
+    fireEvent.click(toggle);
+    expect(toggle.checked).toBe(false);
+    expect(
+      localStorage.getItem("adaptive-learner.lesson.ask_ai_visible"),
+    ).toBe("false");
+  });
+
+  it("initialises from a persisted opt-out", async () => {
+    localStorage.setItem("adaptive-learner.lesson.ask_ai_visible", "false");
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.click(screen.getByTestId("settings-tab-learning"));
+    const toggle = screen.getByTestId(
+      "settings-ask-ai-visible-toggle",
+    ) as HTMLInputElement;
+    expect(toggle.checked).toBe(false);
+  });
+});

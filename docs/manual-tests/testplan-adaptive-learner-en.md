@@ -1616,6 +1616,16 @@ Location: Settings → Data → Recommended repositories.
 - [ ] After a successful full run: the button turns disabled without a
       reload
 
+### "Ask AI" button in lessons (#2693)
+- [ ] Shown by default: the "Ask AI" button appears under every theory
+      block and exercise, even without an AI key (then greyed-out with a
+      BYOK hint popover instead of being hidden)
+- [ ] Settings → Learning → Interaction → turn off "Show 'Ask AI'
+      button": the button disappears in the running lesson (theory and
+      exercises), no reload needed
+- [ ] Turn the toggle back on: the button reappears immediately
+- [ ] The toggle state survives a reload (localStorage)
+
 ### AI key vault import (#1765 / #1769)
 - [ ] Settings → AI → "Configured providers" → "Import" jumps to
       Settings → Data and scrolls the KeyVault import block into view (#1765)

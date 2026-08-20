@@ -707,6 +707,8 @@
     "lesson_shortcuts_description": "Pressione Enter para verificar a sua resposta e Enter novamente para ir para o próximo passo.",
     "lesson_auto_advance": "Avançar automaticamente após uma resposta correta",
     "lesson_auto_advance_description": "Após uma resposta correta, avança automaticamente para o próximo exercício. Uma resposta errada sempre espera para você revisar a solução.",
+    "ask_ai_visible": "Mostrar botão 'Perguntar à IA'",
+    "ask_ai_visible_description": "Mostra o botão 'Perguntar à IA' abaixo da teoria e dos exercícios. Exibido por padrão; o botão ainda precisa da sua própria chave de IA (BYOK) para responder.",
     "button_tooltips": "Mostrar dicas dos botões",
     "button_tooltips_description": "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de ecrã permanecem ativas independentemente.",
     "developer_mode": "Modo desenvolvedor",
