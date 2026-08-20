@@ -251,15 +251,17 @@ Mehr-Projekte-Bedingung, Fold). Eine reine Backend/i18n-PR (#2669, 0
 `.tsx`-Dateien) bekam denselben Ausschlag. Der Gate selbst ist schnell
 (5-9s) und incident-begründet (`quality-checks.md` §1640,
 #1628→#1638→#1635) - der ungezielte Sync dahinter ist der Bremser.
-Struktureller Fix (Sync nach Diff-Pfaden scopen) in #2682, noch offen.
-
-Bis dahin, bei jedem `refresh-visual-baselines`-Dispatch:
+#2682 wurde BEWUSST ohne Pfad→Motiv-Scoping geschlossen: genau so eine
+Liste hat die dokumentierte #1640-Fehlerhistorie ("any narrower list
+will keep missing entries"); stattdessen senkte #2684/#2685 die
+Wall-Clock ~3x (CI-Parallelisierung). Die Review-Last bleibt - darum
+gilt diese Regel weiter, bei jedem `refresh-visual-baselines`-Dispatch:
 
 1. Ergebnis nie blind annehmen (#1532).
 2. Prüfen: rendert die geänderte Komponente überhaupt in der betroffenen
-   Aufnahme? Häufigster Fehlschluss: Tab-Gate, Feature-Flag, oder eine
-   Fußzeile unterhalb des festen Viewport-Falls (kein echtes `fullPage`
-   sobald `#root` selbst scrollt, siehe frontend.md).
+   Aufnahme? Häufigster Fehlschluss: Tab-Gate oder Feature-Flag. (Der
+   frühere dritte Fall - Inhalt unterhalb des Viewports fehlt im Shot -
+   ist seit dem #2696-Capture-Fix strukturell weg.)
 3. Nicht zurechenbare Dateien aus dem Sync-Commit zurücksetzen
    (`git restore --source=<pre-sync-sha> -- <pfad>`) vor dem Merge.
 4. Bleibt nichts Zurechenbares: `visual-baselines-unaffected` mit
@@ -270,3 +272,42 @@ Bis dahin, bei jedem `refresh-visual-baselines`-Dispatch:
 Passt zu "Ein 0-diff-Visual-Run ist nur ein Beweis für die Flächen im
 Motiv-Satz" (oben) - dieselbe Disziplin, auf den Sync-Workflow selbst
 angewandt.
+
+## Ein Bildvergleich prüft nur, was die Referenz unterscheidbar macht (#2696)
+
+Aufgetaucht 2026-08-20. `fullPage: true` (CDP `captureBeyondViewport`)
+malte auf dem App-Layout (`html,body{overflow:hidden}` +
+`#root{overflow-y:auto}`) NIE etwas unterhalb des Viewports: alle 7
+Baselines von Seiten hoeher als der Viewport waren ab ~Viewport-Hoehe
+uniform weiss (74-95% tote Pixel). Der Vergleich blieb trotzdem gruen -
+die committed Referenzen trugen DIESELBE Leere. Leere gegen Leere ist
+Uebereinstimmung, keine Pruefung. Sichtbar wurde es nur als
+Fehl-Meldung "Capture landet auf der falschen Seite" (#2696): der
+obere Streifen der RICHTIGEN Seite ueber zwei Dritteln Weiss liest
+sich wie die Default-Ansicht.
+
+Regeln:
+
+- **Ein gruener Pixelvergleich beweist Uebereinstimmung, nicht Inhalt.**
+  Beim Anlegen oder Reparieren einer Baseline einmal pruefen, dass die
+  Referenz das Behauptete ZEIGT - eine Uniform-Band-Analyse (PIL,
+  100px-Streifen auf Extrema) kostet Sekunden und haette die Klasse
+  jederzeit gefunden. Verwandt mit dem Gate-Vertrag Punkt 4
+  (quality-checks.md): "0 Findings" und "0 geprueft" drucken dasselbe
+  Gruen.
+- **Der Fix macht die Klasse selbstpinnend, ein Extra-Guard waere falsch
+  gebaut.** Seit die Baselines echten Inhalt tragen, kollidiert jede
+  Rueckkehr der Leere (Helper entfernt, Chromium-Verhalten geaendert)
+  mit inhaltsvoller Referenz und wird rot. Ein pauschaler
+  Leere-Schwellwert dagegen muesste 72% LEGITIME Leere tolerieren
+  (review-session-desktop ist ein fast leerer Empty-State) und finge
+  nichts.
+- **`expandViewportToDocument` statt `fullPage`** (e2e/visual/helpers.ts):
+  Viewport auf Dokumenthoehe wachsen lassen, dann normaler Shot -
+  in-viewport wird immer gerastert. Kein neues `fullPage: true` in
+  Visual-Specs; auf diesem Layout ist es strukturell kaputt.
+
+Passt zu "Vorlaeufige Regel: visual-baseline-sync ungezielt" (oben,
+der Fold-Fehlschluss dort war diese Klasse) und zu core.md "Behauptete
+Durchsetzung ohne Durchsetzung" - ein Gate, das jede Nacht lief und
+auf drei Flaechen nichts absicherte.

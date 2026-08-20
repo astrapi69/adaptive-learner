@@ -19,6 +19,7 @@
   "Doc files: existence is not discoverability": "8bb5c419ff4085fe",
   "Doc values: read from code, not from memory": "cb96a1d98be3893c",
   "Docs are specification, not a wish list": "ffac6d6b52042284",
+  "Ein Bildvergleich pr\u00fcft nur, was die Referenz unterscheidbar macht (#2696)": "f5da44f986173096",
   "Ein Byte-Gate kann eine zuf\u00e4llige \u00dcbereinstimmung pr\u00fcfen statt der Spiegelung (#2265)": "d1dc996d377be34b",
   "Ein Namens-Grep \u00fcber frontend/src ist kein \"0 Konsumenten\"-Beweis, wenn Pakete mitrendern (#2477/#2486)": "1f2b9dedf433379a",
   "End-user help is versionless; provenance belongs to the changelog": "0e83c38c74f67fc5",
@@ -66,7 +67,7 @@
   "User-reported UI bugs: confirm against a FRESH deploy before fixing": "0505ebab2e47454d",
   "Vite 7 requires Node 20.19+ / 22.12+": "1d75146e9022e37e",
   "Vite 8 migration (DEP-09 + SEC-01)": "b38c25593337a1e2",
-  "Vorl\u00e4ufige Regel: `visual-baseline-sync` ungezielt - Gate bleibt, Sync-Scope ist der Bremser (#2682)": "a59ed9511c7a436b",
+  "Vorl\u00e4ufige Regel: `visual-baseline-sync` ungezielt - Gate bleibt, Sync-Scope ist der Bremser (#2682)": "071464c5807736bc",
   "`@types/node` major bumps cascade into tsconfig `lib`": "d09953349874e508",
   "`poetry update` vs `poetry lock` semantics": "af313595f8829304",
   "install.sh VERSION drift": "0f553bbcc94a33f5"
