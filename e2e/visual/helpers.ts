@@ -352,6 +352,55 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     await waitForStableLayout(page);
 }
 
+/**
+ * Chromium hard-caps raster surfaces at 16384px; a capture near that limit
+ * would silently degrade, so the expansion fails loud well below it. The
+ * tallest real surface today is set-detail@mobile at ~14.6k.
+ */
+const MAX_EXPANDED_VIEWPORT_HEIGHT = 16_000;
+
+/**
+ * Grow the viewport to the full document height so a plain (non-fullPage)
+ * screenshot captures the whole page — the replacement for ``fullPage: true``
+ * on this app's layout (#2696).
+ *
+ * ``fullPage`` uses CDP ``captureBeyondViewport``, which on the app's
+ * ``html,body{overflow:hidden}`` + ``#root{overflow-y:auto}`` nested-scroll
+ * layout never paints anything below the viewport: every tall-page baseline
+ * was blank from ~viewport height down (74-95% dead pixels, measured across
+ * content-browser / set-detail / settings-general@mobile at all three
+ * viewports) — and stayed green because actual and baseline were blank in
+ * the same place. With the viewport grown to the document height everything
+ * is genuinely in-viewport, so Chromium rasters every tile.
+ *
+ * Runs to a fixpoint: growing the viewport reflows ``dvh``-sized elements,
+ * which can change the document height again. No-op for pages that already
+ * fit (the majority — only 3 surfaces exceed their viewport today).
+ * Call AFTER ``settleForScreenshot`` so the measured height is stable.
+ */
+export async function expandViewportToDocument(page: Page): Promise<void> {
+    const viewport = page.viewportSize();
+    if (!viewport) return;
+    let height = viewport.height;
+    for (let i = 0; i < 4; i++) {
+        const docHeight = await page.evaluate(() =>
+            Math.ceil(document.documentElement.scrollHeight),
+        );
+        if (docHeight > MAX_EXPANDED_VIEWPORT_HEIGHT) {
+            throw new Error(
+                `expandViewportToDocument: document is ${docHeight}px tall, ` +
+                    `over the ${MAX_EXPANDED_VIEWPORT_HEIGHT}px raster-safety cap — ` +
+                    "shrink the surface fixture instead of capturing a degraded shot",
+            );
+        }
+        if (docHeight <= height) return;
+        height = docHeight;
+        await page.setViewportSize({width: viewport.width, height});
+        await page.waitForTimeout(150);
+        await waitForStableLayout(page);
+    }
+}
+
 /** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard.
  *  Exported so the per-feature capture script (#1023) reuses the single
  *  onboarding path instead of re-implementing it. */
