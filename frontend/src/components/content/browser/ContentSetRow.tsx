@@ -360,7 +360,7 @@ export default function ContentSetRow({
   return (
     <ListRow
       className="content-set-row"
-      metaClassName="content-set-meta"
+      metaClassName="content-set-meta max-w-full"
       actionsClassName="content-set-action"
       testId={`content-set-${entry.id}`}
       title={
