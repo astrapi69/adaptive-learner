@@ -275,15 +275,36 @@ explicit `list-none` utility or a scoped `list-style: none` rule
 (`styles/legacy/*.css`) - these two were missed. Fixed with `list-none`
 on both; re-captured and confirmed the bullets are gone.
 
-**My Content's mobile bug** (#2698, not fixed here): desktop renders
-correctly (3 full cards with real chrome), but mobile clips the first
-card's title with no ellipsis and then renders nothing further - no
-metadata, no description, no buttons, no other cards - leaving a
-~8257px-tall page with ~700px of actual content. This needed live
-DOM/devtools inspection to root-cause (the CSS chain read structurally
-correct from source alone), so it's filed with the specific leads
-gathered rather than a diagnosis pretending to be more certain than it
-is.
+**My Content's mobile bug** (#2698, root-caused and fixed 2026-08-20,
+PR #2700): desktop rendered correctly, but mobile clipped the first
+card's title with no ellipsis and appeared to render nothing further.
+Live DOM measurement found the cause: `.content-set-meta` carried
+`flex: 1 1 280px; min-width: 0` but no `max-width`, so the `truncate`
+(nowrap) title span's intrinsic content width leaked through as the
+flex item's rendered size on a wrapped flex line - the meta block
+measured 566-634px inside a 331px card, defeating `flex-shrink`
+entirely. Every row ballooned past the viewport, pushing the rest of
+the list thousands of pixels down (the "content vanishes" symptom was
+displacement, not absence). Fix: `max-width: 100%` on
+`.content-set-meta`. Verified by before/after computed-style probes
+(the span went from unclipped-at-566px to properly ellipsized at
+257px) and a real-viewport scroll-through showing all cards in normal
+flow.
+
+**The set-detail capture bug** (#2696, root-caused 2026-08-20, no app
+change): NOT an app bug and not actually "the wrong page". The capture
+flow reaches the correct expanded/downloaded state - DOM probes
+(`aria-expanded`, `isVisible()`, `boundingBox()`) all confirm it - but
+Chromium/Playwright `fullPage: true` capture leaves everything below a
+threshold unpainted on this app's very tall (7000px+)
+`#root`-scrolls-internally pages. The baseline PNG shows the top slice
+of the RIGHT page with the lower two-thirds blank, which reads as the
+default view. Real users are unaffected (verified with unmodified
+viewport + non-fullPage capture: button, toast, expanded section all
+render). Two capture-layer fixes were tried and failed (skipping the
+`scrollTo(0,0)` reset; pre-rastering via full scroll-through), so the
+remaining work is a deliberate capture-strategy change for that
+surface, tracked on #2696.
 
 **Two sub-cosmetic mobile-only wrap artifacts** (Settings > Data's
 title wrap, Settings > AI's orphaned dash) were verified real but are
@@ -299,7 +320,8 @@ archetype that motivated the whole audit is fully migrated (down to
 one deliberately-deferred entry, `chat-welcome`, tracked under the
 separate #1485 track). The live-render pass found the app in
 materially better shape than the original static audit could have
-predicted - one small cosmetic fix landed directly, one real mobile
-bug is filed and actionable (#2698), and two trivial artifacts are
-documented rather than chased. #1728 itself can be closed once #2698
-lands or is triaged; nothing else in the original scope remains open.
+predicted - one small cosmetic fix landed directly, the one real
+mobile bug is root-caused and fixed (#2698, PR #2700), the capture
+anomaly is root-caused as test infrastructure with zero user impact
+(#2696), and two trivial artifacts are documented rather than chased.
+Nothing in the original #1728 scope remains open.

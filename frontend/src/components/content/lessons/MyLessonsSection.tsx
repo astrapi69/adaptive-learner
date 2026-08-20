@@ -156,7 +156,7 @@ export default function MyLessonsSection({
                     />
                   </label>
                 )}
-                <div className="content-set-meta">
+                <div className="content-set-meta max-w-full">
                   <h3>
                     {entry.title}{" "}
                     {isFork && (

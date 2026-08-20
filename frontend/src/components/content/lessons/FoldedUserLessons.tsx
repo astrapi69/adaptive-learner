@@ -68,7 +68,7 @@ export default function FoldedUserLessons({
               className="content-set-row"
               data-testid={`folded-lesson-${lesson.lessonId}`}
             >
-              <div className="content-set-meta">
+              <div className="content-set-meta max-w-full">
                 <h3>
                   {lesson.title}{" "}
                   {lesson.origin === "edit" ? (
