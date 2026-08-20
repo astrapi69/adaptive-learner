@@ -945,17 +945,22 @@ export async function advanceLessonUntil(
     return false;
 }
 
-/** Open the bundled lesson and stop on the first ``lesson-theory`` step. */
+/** Open the bundled lesson and stop on the first theory step.
+ *
+ * #2704 - the renderer's testid has been ``lesson-theory-body`` since the
+ * viewer shipped (Phase 44); this helper looked for a bare ``lesson-theory``
+ * that never existed, so the surface silently skipped at every viewport
+ * from the day the #705 matrix landed and never produced a baseline. */
 async function gotoLessonTheory(page: Page): Promise<boolean> {
     await openFirstBundledLesson(page);
-    const theory = page.getByTestId("lesson-theory");
+    const theory = page.getByTestId("lesson-theory-body");
     if (await theory.count()) {
         await expect(theory.first()).toBeVisible({timeout: 10_000});
         return true;
     }
     return advanceLessonUntil(
         page,
-        async () => (await page.getByTestId("lesson-theory").count()) > 0,
+        async () => (await page.getByTestId("lesson-theory-body").count()) > 0,
     );
 }
 
