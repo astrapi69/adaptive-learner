@@ -826,7 +826,7 @@ export default function Discover() {
           {/* Computed, per-facet exits: "Without {facet}: {n} sets" — the
               source-language fallback generalised to every facet (#2324). */}
           {relaxHints.length > 0 && (
-            <ul className="mt-2 flex flex-col gap-1" data-testid="discover-empty-hints">
+            <ul className="mt-2 flex list-none flex-col gap-1" data-testid="discover-empty-hints">
               {relaxHints.map((hint) => (
                 <li key={hint.facet}>
                   <button
@@ -881,7 +881,10 @@ export default function Discover() {
           }}
         />
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="discover-results">
+        <ul
+          className="grid list-none gap-3 sm:grid-cols-2 lg:grid-cols-3"
+          data-testid="discover-results"
+        >
           {visibleResults.map((set) => {
             const key = discoverSetKey(set);
             return (
