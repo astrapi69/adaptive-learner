@@ -22,6 +22,7 @@ import {expect, test} from "@playwright/test";
 import {
     THEME_IDS,
     VIEW_NAMES,
+    expandViewportToDocument,
     freezeClock,
     gotoView,
     pinContentRegistry,
@@ -41,9 +42,11 @@ for (const theme of THEME_IDS) {
             const ready = await gotoView(page, view);
             test.skip(!ready, `Could not reach ${view} deterministically`);
             await settleForScreenshot(page);
-            await expect(page).toHaveScreenshot(`${view}-${theme}.png`, {
-                fullPage: true,
-            });
+            // #2696 - viewport expansion replaces ``fullPage: true``, which
+            // never painted below the viewport on this app's nested-scroll
+            // layout (see expandViewportToDocument). No-op for views that fit.
+            await expandViewportToDocument(page);
+            await expect(page).toHaveScreenshot(`${view}-${theme}.png`);
         });
     }
 }
