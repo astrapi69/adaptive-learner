@@ -33,6 +33,7 @@ import {
     SURFACE_NAMES,
     VIEWPORTS,
     type ViewportName,
+    assertSurfaceStillReady,
     expandViewportToDocument,
     freezeClock,
     gotoSurface,
@@ -75,6 +76,10 @@ for (const surface of SURFACE_NAMES) {
                 surface === "lesson-matching" && viewport === "mobile"
                     ? {maxDiffPixelRatio: 0.08}
                     : {};
+            // #2703 - fail loud if the surface's ready-state collapsed
+            // between gotoSurface and here, instead of silently
+            // photographing whatever it collapsed into.
+            await assertSurfaceStillReady(page, surface);
             await expect(page).toHaveScreenshot(`${surface}-${viewport}.png`, shotOpts);
         });
     }

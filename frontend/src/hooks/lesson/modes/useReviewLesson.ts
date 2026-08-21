@@ -33,7 +33,7 @@
  * concept.
  */
 
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
 import {
@@ -59,7 +59,9 @@ export type ReviewLessonStatus =
 export interface UseReviewLessonOptions {
     setId: string;
     /** Localised title for the synthesised lesson — caller
-     *  passes the i18n string. */
+     *  passes the i18n string. Read once per fetch (a ref, not a
+     *  dependency, see the effect below) so a translation catalog
+     *  landing after first paint can never restart the session. */
     title: string;
     description?: string | null;
     /** Cap; default 10 (matches DEFAULT_REVIEW_LIMIT). */
@@ -120,6 +122,24 @@ export function useReviewLesson(
     const [reloadKey, setReloadKey] = useState(0);
 
     const userId = useMemo(() => readLearnerState().userId, []);
+
+    // #2703 — ``title``/``description`` are DISPLAY-ONLY strings (they end
+    // up on ``lesson.title``/``.description``, never in a fetch parameter).
+    // ``title`` in particular comes from ``t("review.session_title", ...)``:
+    // on first paint (before the async i18n catalog resolves) it's the
+    // caller-supplied English fallback; once the catalog lands it flips to
+    // the translated string. Depending on that value in the fetch effect
+    // meant the catalog landing mid-session tore down an already-ready
+    // review session (back to "loading", then re-querying the SRS queue) —
+    // the #1540-class coin flip this time hitting AFTER first paint, which
+    // is how a review-session visual baseline could show the ready state and
+    // then collapse to the empty state before the screenshot fired. Latest
+    // values live in refs so the effect always uses fresh text without
+    // treating a text-only change as a reason to refetch.
+    const titleRef = useRef(title);
+    titleRef.current = title;
+    const descriptionRef = useRef(description);
+    descriptionRef.current = description;
 
     useEffect(() => {
         if (!setId || !userId) {
@@ -192,7 +212,7 @@ export function useReviewLesson(
                 const synthesised = synthesizeReviewLesson(
                     dedupedQueue,
                     lessonMap,
-                    {title, description, limit},
+                    {title: titleRef.current, description: descriptionRef.current, limit},
                 );
                 if (synthesised.steps.length === 0) {
                     // Every queued lesson was evicted from
@@ -211,7 +231,10 @@ export function useReviewLesson(
         return () => {
             cancelled = true;
         };
-    }, [setId, userId, title, description, limit, reloadKey]);
+        // title/description intentionally excluded — see the refs above;
+        // they are read via titleRef/descriptionRef, not as dependencies,
+        // so a display-only text change never retriggers the SRS fetch.
+    }, [setId, userId, limit, reloadKey]);
 
     const reload = useCallback(() => {
         setCurrentStepIndex(0);
