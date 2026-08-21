@@ -350,6 +350,31 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // run-to-run). Wait for the layout height to settle first. Bounded, so a
     // never-settling surface can't hang; animations are already killed above.
     await waitForStableLayout(page);
+    // #2721 — wait out TRANSIENT toasts before the shot. The lesson
+    // motivation toast (useLessonMotivation, autoClose: 3000) fires on
+    // entering the LAST step; ``playBundledLesson`` walks through that step
+    // on the way to the summary/result surfaces, so whether the toast is
+    // still fading at shot time depends on runner speed — under CI worker
+    // contention the walk sits near the 3s boundary and the toast's ~19k px
+    // flip between runs (the lesson-result/-summary flap; the diff artifact
+    // shows exactly the toast box). ``freezeClock`` only freezes ``Date``,
+    // real timers keep running, so every autoClose toast clears within its
+    // own lifetime; the 8s cap covers autoClose + exit fade with margin. A
+    // surface that ever legitimately BASELINES a persistent toast would
+    // time out here and must opt out explicitly instead of racing.
+    try {
+        await page.waitForFunction(
+            () => document.querySelectorAll(".Toastify__toast").length === 0,
+            undefined,
+            {timeout: 8_000},
+        );
+    } catch {
+        throw new Error(
+            "settleForScreenshot: a toast is still visible after 8s - " +
+                "either a persistent toast leaked into this surface or an " +
+                "autoClose grew past the cap (#2721).",
+        );
+    }
 }
 
 /**

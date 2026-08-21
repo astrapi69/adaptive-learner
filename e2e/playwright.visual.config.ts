@@ -78,6 +78,19 @@ export default defineConfig({
     },
     use: {
         baseURL: `http://localhost:${PREVIEW_PORT}`,
+        // #2721 - pin Chromium's text rasterization path. It is chosen per
+        // browser-process launch (GPU vs software raster, LCD-subpixel vs
+        // grayscale anti-aliasing); with 4 parallel CI workers (#2684) = 4
+        // independent launches, individual workers landed on different
+        // paths under runner contention, flipping the WHOLE-page text
+        // weight per run and per test (~19k px on lesson-result themes +
+        // lesson-summary-tablet; the #2690 font-weight shift, now with a
+        // mechanism). Serial local runs (one browser) never flipped.
+        // Software raster + grayscale AA is the only combination every
+        // launch can satisfy, so it is the deterministic one.
+        launchOptions: {
+            args: ["--disable-gpu", "--disable-lcd-text"],
+        },
         actionTimeout: 15_000,
         viewport: {width: 1440, height: 900},
         trace: "on-first-retry",
