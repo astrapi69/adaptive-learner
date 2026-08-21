@@ -199,7 +199,14 @@ jobs:
           FALLBACK_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          if git diff --quiet -- e2e/visual/screenshots; then
+          # #2719 - `git status --porcelain`, NOT `git diff`: a baseline
+          # DELETED on the PR branch and freshly re-rendered by
+          # --update-snapshots is an UNTRACKED file, invisible to git diff.
+          # Delete-then-resync is the only way to force a rewrite of a
+          # wrong-but-within-tolerance baseline (update mode rewrites only
+          # on a FAILED comparison, #2712), so the old check silently
+          # discarded exactly the renders that path exists to produce.
+          if [ -z "$(git status --porcelain -- e2e/visual/screenshots)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Baselines already current - nothing to push."
             exit 0
