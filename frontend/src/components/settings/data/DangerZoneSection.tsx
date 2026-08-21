@@ -45,6 +45,7 @@ import {getStorage} from "../../../storage";
 import {backupFilename, saveBackupToDisk} from "../../../utils/backup-download";
 import {withLocalStorageSnapshot} from "../../../lib/backup/localStorageSnapshot";
 import {notify} from "../../../utils/notify";
+import {SettingsSection} from "../SettingsSection";
 
 type Step = "idle" | "confirm" | "typed";
 
@@ -161,17 +162,13 @@ export default function DangerZoneSection() {
     }
 
     return (
-        <section
-            className="settings-section mt-8"
-            data-testid="settings-danger-zone"
+        <SettingsSection
+            className="mt-8"
+            testid="settings-danger-zone"
             style={dangerSectionStyle}
+            title={t("settings.danger_zone_heading", "Danger Zone")}
+            titleStyle={{color: "var(--danger)"}}
         >
-            <h2
-                className="settings-section-title"
-                style={{color: "var(--danger)"}}
-            >
-                {t("settings.danger_zone_heading", "Danger Zone")}
-            </h2>
             <p className="muted mt-0">
                 {t(
                     "settings.danger_zone_intro",
@@ -328,7 +325,7 @@ export default function DangerZoneSection() {
                     </div>
                 </div>
             )}
-        </section>
+        </SettingsSection>
     );
 }
 

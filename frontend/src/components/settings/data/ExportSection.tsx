@@ -27,6 +27,7 @@ import {
 import {openPrintWindow} from "../../../lib/export/pdf-generator";
 import {filterStandardProjects} from "../../../lib/learning/learning-project";
 import {getStorage} from "../../../storage";
+import {SettingsSection} from "../SettingsSection";
 import type {
     CurriculumOverview,
     ProgressReport,
@@ -288,13 +289,10 @@ export default function ExportSection() {
     }
 
     return (
-        <section
-            className="settings-section export-section"
-            data-testid="export-section"
+        <SettingsSection
+            testid="export-section"
+            title={t("export.title", "Export")}
         >
-            <h2 className="settings-section-title">
-                {t("export.title", "Export")}
-            </h2>
             <p className="muted">
                 {t(
                     "export.intro",
@@ -371,6 +369,6 @@ export default function ExportSection() {
                     </div>
                 </div>
             )}
-        </section>
+        </SettingsSection>
     );
 }

@@ -19,6 +19,7 @@ import {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     readGamificationPrefs,
     setBadgeNotifications,
@@ -139,14 +140,10 @@ export default function GamificationSettingsSection() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-gamification"
+        <SettingsSection
+            title={t("settings.section_gamification", "Gamification")}
+            testid="settings-section-gamification"
         >
-            <h2 className="settings-section-title">
-                {t("settings.section_gamification", "Gamification")}
-            </h2>
-
             <label className="form-row form-row-toggle">
                 <span className="form-label-stack">
                     <span className="form-label">
@@ -296,6 +293,6 @@ export default function GamificationSettingsSection() {
                             )}
                 </Button>
             </div>
-        </section>
+        </SettingsSection>
     );
 }

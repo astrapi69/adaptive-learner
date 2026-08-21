@@ -22,6 +22,7 @@ import {useEffect, useState} from "react";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
+import {SettingsSection} from "../settings/SettingsSection";
 import {
     isSpeechRecognitionSupported,
 } from "../../lib/voice/speech-recognition";
@@ -69,14 +70,10 @@ export default function VoiceSettingsSection() {
         setPrefs((p) => ({...p, ...patch}));
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-voice"
+        <SettingsSection
+            title={t("settings.section_voice", "Voice")}
+            testid="settings-section-voice"
         >
-            <h2 className="settings-section-title">
-                {t("settings.section_voice", "Voice")}
-            </h2>
-
             {ttsSupported && (
                 <>
                     <label className="form-row form-row-toggle">
@@ -297,6 +294,6 @@ export default function VoiceSettingsSection() {
                     data-testid="settings-pronunciation-enabled"
                 />
             </label>
-        </section>
+        </SettingsSection>
     );
 }

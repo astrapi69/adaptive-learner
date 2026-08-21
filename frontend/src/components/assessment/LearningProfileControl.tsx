@@ -7,6 +7,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
+import {SettingsSection} from "../settings/SettingsSection";
 
 /**
  * Settings > Learning entry for the learning profile (#106).
@@ -77,13 +78,10 @@ export default function LearningProfileControl() {
             };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-learning-profile"
+        <SettingsSection
+            title={t("settings.profile_title", "Learning profile")}
+            testid="settings-section-learning-profile"
         >
-            <h2 className="settings-section-title">
-                {t("settings.profile_title", "Learning profile")}
-            </h2>
             <FormHint>{hint}</FormHint>
             <Button
                 type="button"
@@ -92,6 +90,6 @@ export default function LearningProfileControl() {
             >
                 {label}
             </Button>
-        </section>
+        </SettingsSection>
     );
 }

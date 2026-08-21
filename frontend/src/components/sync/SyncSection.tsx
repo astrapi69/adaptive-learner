@@ -27,6 +27,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import {useConfirm} from "../../contexts/ConfirmContext";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {resolveStorageMode} from "../../storage";
+import {SettingsSection} from "../settings/SettingsSection";
 import {
     buildPairingUri,
     getSyncEngine,
@@ -198,14 +199,11 @@ export default function SyncSection() {
     }
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-sync"
+        <SettingsSection
+            title={t("settings.section_sync", "Sync")}
+            testid="settings-sync"
             style={{marginTop: "1.5rem"}}
         >
-            <h2 className="settings-section-title">
-                {t("settings.section_sync", "Sync")}
-            </h2>
             <p className="muted">
                 {t("sync.intro")}
             </p>
@@ -252,7 +250,7 @@ export default function SyncSection() {
                     onCancel={handleConflictCancelled}
                 />
             )}
-        </section>
+        </SettingsSection>
     );
 }
 

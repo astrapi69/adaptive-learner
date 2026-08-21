@@ -18,6 +18,7 @@ import {useHelp} from "../../contexts/HelpContext";
 import {useGlossary} from "../../hooks/content/useGlossary";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {listGlossaryEntries} from "../../lib/help/help-glossary";
+import {SettingsSection} from "../settings/SettingsSection";
 import type {GlossaryCategory, GlossaryEntry} from "../../types/help";
 
 const CATEGORY_ORDER: GlossaryCategory[] = [
@@ -70,21 +71,20 @@ export default function HelpBrowser() {
     const grouped = useMemo(() => groupByCategory(filtered), [filtered]);
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-help-section"
+        <SettingsSection
+            testid="settings-help-section"
+            title={
+                <>
+                    <BookOpen size={18} />
+                    {t("ui.help.drawer_title", "Help")}
+                </>
+            }
+            titleStyle={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "var(--space-2)",
+            }}
         >
-            <h2
-                className="settings-section-title"
-                style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "var(--space-2)",
-                }}
-            >
-                <BookOpen size={18} />
-                {t("ui.help.drawer_title", "Help")}
-            </h2>
             <p
                 style={{
                     color: "var(--fg-muted)",
@@ -235,6 +235,6 @@ export default function HelpBrowser() {
                     </div>
                 );
             })}
-        </section>
+        </SettingsSection>
     );
 }

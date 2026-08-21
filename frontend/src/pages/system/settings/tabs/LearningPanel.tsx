@@ -17,6 +17,7 @@ import MissionSettingsControl from "../../../../components/settings/controls/mot
 import SourceLanguagesControl from "../../../../components/settings/controls/lesson/SourceLanguagesControl";
 import SoundSettingsControl from "../../../../components/settings/controls/motivation/SoundSettingsControl";
 import VoiceSettingsSection from "../../../../components/voice/VoiceSettingsSection";
+import { SettingsSection } from "../../../../components/settings/SettingsSection";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import { readGesturePref, writeGesturePref } from "../../../../lib/settings/gesturePref";
@@ -113,10 +114,10 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       <DirectionStrategyControl />
       <HintSettingsControl />
       <MatchingResolveControl />
-      <section className="settings-section" data-testid="settings-section-interaction">
-        <h2 className="settings-section-title">
-          {t("settings.section_interaction", "Interaction")}
-        </h2>
+      <SettingsSection
+        title={t("settings.section_interaction", "Interaction")}
+        testid="settings-section-interaction"
+      >
         <label className="form-row form-row-toggle">
           <span className="form-label-stack">
             <span className="form-label">{t("settings.gestures", "Swipe Gestures")}</span>
@@ -194,17 +195,19 @@ export default function LearningPanel({ active }: LearningPanelProps) {
             onChange={(e) => handleAskAiVisibleToggle(e.target.checked)}
           />
         </label>
-      </section>
+      </SettingsSection>
       <VoiceSettingsSection />
       <ReviewSettingsControl />
       <SrsTransparencySection />
       <SummarySectionsControl />
       <ErrorReplayScopeControl />
-      <section className="settings-section" data-testid="settings-section-feedback">
-        <h2 className="settings-section-title">{t("settings.section_feedback", "Feedback")}</h2>
+      <SettingsSection
+        title={t("settings.section_feedback", "Feedback")}
+        testid="settings-section-feedback"
+      >
         <FeedbackIntensityControl />
         <SoundSettingsControl />
-      </section>
+      </SettingsSection>
       <MissionSettingsControl />
       <DailyRemindersControl />
       <PausedLessonsRetentionControl />
