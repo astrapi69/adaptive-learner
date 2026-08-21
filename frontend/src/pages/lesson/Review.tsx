@@ -201,7 +201,13 @@ export default function ReviewPage() {
                     <BookOpen size={16} aria-hidden="true" />
                     {t("review.back_to_dashboard", "Back to Dashboard")}
                 </button>
-                <h1>{lesson.title}</h1>
+                {/* #2703 — read live from ``t()`` rather than
+                    ``lesson.title``: the hook now captures the title once
+                    per fetch (a ref, so a translation catalog landing after
+                    first paint can't restart the session), so the fetched
+                    value can go stale if the catalog resolves after the
+                    English fallback was baked in. */}
+                <h1>{t("review.session_title", "Review session")}</h1>
                 <p className="lesson-description" data-testid="review-subtitle">
                     {/* #664 — the header MUST match the progress bar: both
                         read the actually-presented step count, never the raw

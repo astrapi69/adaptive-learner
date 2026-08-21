@@ -1272,3 +1272,39 @@ export async function gotoSurface(
             return false;
     }
 }
+
+/**
+ * #2703 — fail LOUD, not silent, when a surface's ready-state collapses
+ * between ``gotoSurface`` returning true and the screenshot actually
+ * firing. ``review-session`` is the known case: its anchor
+ * (``review-page`` + ``review-subtitle``) was satisfied at ``gotoSurface``
+ * time, but an unrelated re-render (the review-fetch effect re-running
+ * on a text-only ``title`` change, see ``useReviewLesson``) tore the
+ * session back down to the empty state before ``settleForScreenshot``
+ * finished — so the CI comparison stayed green against a baseline that
+ * never showed what the test name promised. Re-asserting the same anchor
+ * immediately before the shot turns that silent content-swap into a red,
+ * diagnosable test failure instead of a wrong committed baseline.
+ *
+ * A no-op for every surface without a known collapse risk; extend the
+ * switch as new instances of this class turn up rather than asserting
+ * broadly (a stale/renamed testid here would itself become a source of
+ * false failures for surfaces that never had this problem).
+ */
+export async function assertSurfaceStillReady(
+    page: Page,
+    surface: SurfaceName,
+): Promise<void> {
+    switch (surface) {
+        case "review-session":
+            await expect(page.getByTestId("review-page")).toBeVisible({
+                timeout: 2_000,
+            });
+            await expect(page.getByTestId("review-subtitle")).toBeVisible({
+                timeout: 2_000,
+            });
+            return;
+        default:
+            return;
+    }
+}
