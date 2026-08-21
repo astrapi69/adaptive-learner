@@ -163,11 +163,10 @@ export default function DangerZoneSection() {
 
     return (
         <SettingsSection
-            className="mt-8"
+            className="mt-8 rounded-[var(--radius-md)] border-2 border-error p-[var(--space-4)]"
             testid="settings-danger-zone"
-            style={dangerSectionStyle}
             title={t("settings.danger_zone_heading", "Danger Zone")}
-            titleStyle={{color: "var(--danger)"}}
+            titleClassName="text-error"
         >
             <p className="muted mt-0">
                 {t(
@@ -223,11 +222,10 @@ export default function DangerZoneSection() {
                 <div className="modal-overlay" data-testid="danger-zone-modal">
                     <div
                         ref={dialogRef}
-                        className="modal-card"
+                        className="modal-card max-w-[540px]"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="danger-zone-modal-title"
-                        style={{maxWidth: 540}}
                     >
                         <h3
                             id="danger-zone-modal-title"
@@ -328,19 +326,3 @@ export default function DangerZoneSection() {
         </SettingsSection>
     );
 }
-
-/**
- * Kept as an inline style on purpose: ``.settings-section`` sets
- * ``border`` / ``border-radius`` / ``padding`` UNLAYERED in global.css,
- * so layered Tailwind utilities (``border-2`` / ``rounded-app`` /
- * ``p-4``) would lose the cascade. Same for the two
- * ``color: var(--danger)`` reads against the unlayered
- * ``.settings-section-title`` color and the modal's 540px override of
- * the unlayered ``.modal-card`` ``max-width: 32rem``. All values are
- * token-backed; only the delivery stays inline (#1476).
- */
-const dangerSectionStyle: React.CSSProperties = {
-    border: "2px solid var(--danger)",
-    borderRadius: "var(--radius-md)",
-    padding: "var(--space-4)",
-};
