@@ -14,6 +14,7 @@ import {useMemo, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {useNotificationPermission} from "../../../../hooks/system/useNotificationPermission";
 import {
     readReminderSettings,
@@ -72,14 +73,10 @@ export default function DailyRemindersControl() {
     const controlsDisabled = !enabled;
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-reminders"
+        <SettingsSection
+            title={t("settings.section_reminders", "Reminders")}
+            testid="settings-section-reminders"
         >
-            <h2 className="settings-section-title">
-                {t("settings.section_reminders", "Reminders")}
-            </h2>
-
             <label className="form-row form-row-toggle">
                 <span className="form-label-stack">
                     <span className="form-label">
@@ -200,6 +197,6 @@ export default function DailyRemindersControl() {
                     )}
                 </FormHint>
             )}
-        </section>
+        </SettingsSection>
     );
 }

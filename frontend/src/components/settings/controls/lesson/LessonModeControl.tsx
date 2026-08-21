@@ -14,6 +14,7 @@ import {useEffect, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     EXAM_PASS_THRESHOLD_OPTIONS,
     LESSON_MODE_PREF_CHANGE_EVENT,
@@ -84,13 +85,10 @@ export default function LessonModeControl() {
     }, []);
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-lesson-mode"
+        <SettingsSection
+            title={t("settings.lesson_mode.title", "Lesson mode")}
+            testid="settings-section-lesson-mode"
         >
-            <h2 className="settings-section-title">
-                {t("settings.lesson_mode.title", "Lesson mode")}
-            </h2>
             <FormHint>
                 {t(
                     "settings.lesson_mode.hint",
@@ -169,6 +167,6 @@ export default function LessonModeControl() {
                     ))}
                 </select>
             </label>
-        </section>
+        </SettingsSection>
     );
 }

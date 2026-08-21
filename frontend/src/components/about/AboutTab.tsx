@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { getStorage, resolveStorageMode } from "../../storage";
+import { SettingsSection } from "../settings/SettingsSection";
 import type { SystemInfo } from "../../types/domain";
 
 import ContributeSection from "./ContributeSection";
@@ -54,14 +55,11 @@ export default function AboutTab() {
   }, []);
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-about"
+    <SettingsSection
+      title={t("about.section_heading", "About Adaptive Learner")}
+      testid="settings-about"
       style={{ marginTop: "1.5rem" }}
     >
-      <h2 className="settings-section-title">
-        {t("about.section_heading", "About Adaptive Learner")}
-      </h2>
       {loading && (
         <p
           data-testid="about-loading"
@@ -96,6 +94,6 @@ export default function AboutTab() {
         </div>
       )}
       <SupportSection />
-    </section>
+    </SettingsSection>
   );
 }

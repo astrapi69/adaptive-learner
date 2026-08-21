@@ -15,6 +15,7 @@ import { Feature } from "@astrapi69/feature-strategy-react";
 import { FEATURES } from "../../../../features/featureConfig";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import { resolveStorageMode } from "../../../../storage";
+import { SettingsSection } from "../../../../components/settings/SettingsSection";
 
 interface DataPanelProps {
   /** Whether the Data tab is the active tab (drives ``hidden``). */
@@ -72,18 +73,18 @@ export default function DataPanel({ active }: DataPanelProps) {
       <Feature
         id={FEATURES.SYNC}
         whenDisabled={
-          <section
-            className="settings-section mt-6"
-            data-testid="settings-sync-desktop-only"
+          <SettingsSection
+            className="mt-6"
+            testid="settings-sync-desktop-only"
+            title={t("settings.section_sync", "Sync")}
           >
-            <h2 className="settings-section-title">{t("settings.section_sync", "Sync")}</h2>
             <div className="flex items-start gap-2 rounded-app border border-border bg-card px-3 py-2 text-sm text-fg-secondary">
               <Monitor size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
               <span>
                 {t("feature.desktop_only", "Only available with the desktop app.")}
               </span>
             </div>
-          </section>
+          </SettingsSection>
         }
       >
         <SyncSection />

@@ -17,6 +17,7 @@ import {useEffect, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     ERROR_REPLAY_SCOPE_CHANGE_EVENT,
     readErrorReplayErrorsOnly,
@@ -49,13 +50,10 @@ export default function ErrorReplayScopeControl() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-error-replay-scope"
+        <SettingsSection
+            title={t("settings.error_replay_scope.title", "Retry errors")}
+            testid="settings-section-error-replay-scope"
         >
-            <h2 className="settings-section-title">
-                {t("settings.error_replay_scope.title", "Retry errors")}
-            </h2>
             <FormHint>
                 {t(
                     "settings.error_replay_scope.hint",
@@ -85,6 +83,6 @@ export default function ErrorReplayScopeControl() {
                     </option>
                 </select>
             </label>
-        </section>
+        </SettingsSection>
     );
 }

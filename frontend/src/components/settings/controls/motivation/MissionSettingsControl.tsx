@@ -12,6 +12,7 @@ import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {readLearnerState} from "../../../../lib/learning/learnerState";
 import {
     readMissionPrefs,
@@ -63,14 +64,10 @@ export default function MissionSettingsControl() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-missions"
+        <SettingsSection
+            title={t("settings.missions_title", "Daily Missions")}
+            testid="settings-section-missions"
         >
-            <h2 className="settings-section-title">
-                {t("settings.missions_title", "Daily Missions")}
-            </h2>
-
             <label className="form-row form-row-toggle">
                 <span className="form-label-stack">
                     <span className="form-label">
@@ -159,6 +156,6 @@ export default function MissionSettingsControl() {
                     </div>
                 </>
             )}
-        </section>
+        </SettingsSection>
     );
 }

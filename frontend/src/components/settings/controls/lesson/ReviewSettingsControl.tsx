@@ -8,6 +8,7 @@ import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     readExplanationsEnabled,
     setExplanationsEnabled,
@@ -34,13 +35,10 @@ export default function ReviewSettingsControl() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-review"
+        <SettingsSection
+            title={t("settings.section_review", "Review")}
+            testid="settings-section-review"
         >
-            <h2 className="settings-section-title">
-                {t("settings.section_review", "Review")}
-            </h2>
             <label className="form-row form-row-toggle">
                 <span className="form-label-stack">
                     <span className="form-label">
@@ -91,6 +89,6 @@ export default function ReviewSettingsControl() {
                     ))}
                 </select>
             </label>
-        </section>
+        </SettingsSection>
     );
 }

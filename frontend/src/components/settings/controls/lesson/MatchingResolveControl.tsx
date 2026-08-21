@@ -13,6 +13,7 @@ import {useEffect, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     MATCHING_RESOLVE_EFFECT_OPTIONS,
     MATCHING_RESOLVE_PREF_CHANGE_EVENT,
@@ -54,13 +55,10 @@ export default function MatchingResolveControl() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-matching-resolve"
+        <SettingsSection
+            title={t("settings.matching_resolve.title", "Solve animation")}
+            testid="settings-section-matching-resolve"
         >
-            <h2 className="settings-section-title">
-                {t("settings.matching_resolve.title", "Solve animation")}
-            </h2>
             <FormHint>
                 {t(
                     "settings.matching_resolve.hint",
@@ -83,6 +81,6 @@ export default function MatchingResolveControl() {
                     ))}
                 </select>
             </label>
-        </section>
+        </SettingsSection>
     );
 }

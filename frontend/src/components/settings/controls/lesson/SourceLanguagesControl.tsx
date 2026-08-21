@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import { SettingsSection } from "../../SettingsSection";
 import { languageDisplayName } from "../../../../lib/content/language/language-names";
 import {
   readAdditionalSourceLanguages,
@@ -49,13 +50,10 @@ export default function SourceLanguagesControl() {
   };
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-section-source-languages"
+    <SettingsSection
+      title={t("settings.source_languages.title", "Additional source languages")}
+      testid="settings-section-source-languages"
     >
-      <h2 className="settings-section-title">
-        {t("settings.source_languages.title", "Additional source languages")}
-      </h2>
       <FormHint>
         {t(
           "settings.source_languages.hint",
@@ -88,6 +86,6 @@ export default function SourceLanguagesControl() {
           );
         })}
       </div>
-    </section>
+    </SettingsSection>
   );
 }

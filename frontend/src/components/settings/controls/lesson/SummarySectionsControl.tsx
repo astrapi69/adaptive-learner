@@ -21,6 +21,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import { SettingsSection } from "../../SettingsSection";
 import { useSummarySections } from "../../../../hooks/settings/useSummarySections";
 import {
   moveSummarySection,
@@ -76,13 +77,10 @@ export default function SummarySectionsControl() {
   };
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-section-summary-sections"
+    <SettingsSection
+      title={t("settings.section_lesson_summary", "Lesson summary")}
+      testid="settings-section-summary-sections"
     >
-      <h2 className="settings-section-title">
-        {t("settings.section_lesson_summary", "Lesson summary")}
-      </h2>
       <FormHint className="mb-2">
         {t(
           "settings.summary_sections_desc",
@@ -148,6 +146,6 @@ export default function SummarySectionsControl() {
           );
         })}
       </ol>
-    </section>
+    </SettingsSection>
   );
 }

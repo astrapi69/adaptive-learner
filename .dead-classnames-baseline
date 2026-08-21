@@ -179,7 +179,6 @@ exercise-gen-types
 exercise-row
 exercise-row-desc
 exercise-row-type
-export-section
 extra
 extra-hook
 focus-areas-hint-answers

@@ -27,6 +27,7 @@ import {getStorage, resolveStorageMode} from "../../../storage";
 import {SHARE_URL} from "../../../lib/share/generate-share-text";
 import {notify} from "../../../utils/notify";
 import {readBackupFile} from "../../../lib/backup/validateBackupFile";
+import {SettingsSection} from "../SettingsSection";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
@@ -725,14 +726,11 @@ export default function BackupSection() {
     }
 
     return (
-        <section
+        <SettingsSection
             ref={sectionRef}
-            className="settings-section"
-            data-testid="settings-backup"
+            testid="settings-backup"
+            title={t("backup.section_title", "Backup")}
         >
-            <h2 className="settings-section-title">
-                {t("backup.section_title", "Backup")}
-            </h2>
             <p className="muted">
                 {t(
                     "backup.section_help",
@@ -873,6 +871,6 @@ export default function BackupSection() {
             )}
 
             <BackupCompareSection compare={compare} />
-        </section>
+        </SettingsSection>
     );
 }

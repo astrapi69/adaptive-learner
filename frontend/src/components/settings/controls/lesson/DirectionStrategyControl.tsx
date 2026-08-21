@@ -14,6 +14,7 @@ import {useEffect, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import type {DirectionStrategy} from "../../../../lib/adaptive/lesson-generator";
 import {
   DIRECTION_PREF_CHANGE_EVENT,
@@ -58,13 +59,10 @@ export default function DirectionStrategyControl() {
   };
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-section-direction-strategy"
+    <SettingsSection
+      title={t("settings.direction.title", "Preferred exercise direction")}
+      testid="settings-section-direction-strategy"
     >
-      <h2 className="settings-section-title">
-        {t("settings.direction.title", "Preferred exercise direction")}
-      </h2>
       <FormHint>
         {t(
           "settings.direction.hint",
@@ -87,6 +85,6 @@ export default function DirectionStrategyControl() {
           ))}
         </select>
       </label>
-    </section>
+    </SettingsSection>
   );
 }

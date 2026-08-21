@@ -14,6 +14,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import { SettingsSection } from "../../SettingsSection";
 import { useContentTabOrder } from "../../../../hooks/content/useContentTabOrder";
 import {
   moveContentTab,
@@ -36,13 +37,10 @@ export default function ContentTabsOrderControl() {
   };
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-section-content-tabs"
+    <SettingsSection
+      title={t("settings.section_content_tabs", "Content tabs order")}
+      testid="settings-section-content-tabs"
     >
-      <h2 className="settings-section-title">
-        {t("settings.section_content_tabs", "Content tabs order")}
-      </h2>
       <FormHint className="mb-2">
         {t(
           "settings.content_tabs_desc",
@@ -91,6 +89,6 @@ export default function ContentTabsOrderControl() {
           </li>
         ))}
       </ol>
-    </section>
+    </SettingsSection>
   );
 }

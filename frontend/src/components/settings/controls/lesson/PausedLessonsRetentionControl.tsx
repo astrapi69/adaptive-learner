@@ -11,6 +11,7 @@ import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     RETENTION_OPTIONS,
     readRetentionDays,
@@ -28,16 +29,13 @@ export default function PausedLessonsRetentionControl() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-paused-retention"
+        <SettingsSection
+            title={t(
+                "settings.paused_retention.title",
+                "Paused lesson retention",
+            )}
+            testid="settings-section-paused-retention"
         >
-            <h2 className="settings-section-title">
-                {t(
-                    "settings.paused_retention.title",
-                    "Paused lesson retention",
-                )}
-            </h2>
             <FormHint>
                 {t(
                     "settings.paused_retention.hint",
@@ -63,6 +61,6 @@ export default function PausedLessonsRetentionControl() {
                     ))}
                 </select>
             </label>
-        </section>
+        </SettingsSection>
     );
 }

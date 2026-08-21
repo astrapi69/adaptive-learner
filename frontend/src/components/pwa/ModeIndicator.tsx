@@ -10,17 +10,15 @@
 import {CheckCircle2, Lock} from "lucide-react";
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import {SettingsSection} from "../settings/SettingsSection";
 
 export default function ModeIndicator() {
     const {t} = useI18n();
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-mode"
+        <SettingsSection
+            title={t("settings.mode_title", "Mode")}
+            testid="settings-section-mode"
         >
-            <h2 className="settings-section-title">
-                {t("settings.mode_title", "Mode")}
-            </h2>
             <div className="mode-cards">
                 <div
                     className="mode-card is-active"
@@ -70,6 +68,6 @@ export default function ModeIndicator() {
                     </div>
                 </div>
             </div>
-        </section>
+        </SettingsSection>
     );
 }
