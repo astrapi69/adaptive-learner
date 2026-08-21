@@ -59,7 +59,20 @@ for (const surface of SURFACE_NAMES) {
             await pinContentRegistry(page);
             const ready = await gotoSurface(page, surface);
             test.skip(!ready, `Could not reach ${surface} deterministically`);
+            // TEMP-DEBUG #2703 - remove before merge.
+            if (surface === "review-session") {
+                const testid = await page.evaluate(
+                    () => document.querySelector("main")?.getAttribute("data-testid"),
+                );
+                console.log(`[DEBUG2703] after gotoSurface(${viewport}) testid=${testid}`);
+            }
             await settleForScreenshot(page);
+            if (surface === "review-session") {
+                const testid = await page.evaluate(
+                    () => document.querySelector("main")?.getAttribute("data-testid"),
+                );
+                console.log(`[DEBUG2703] after settleForScreenshot(${viewport}) testid=${testid}`);
+            }
             // #2696 - grow the viewport to the document height and take a
             // plain shot instead of ``fullPage: true``: captureBeyondViewport
             // never painted below the viewport on this app's nested-scroll
@@ -76,11 +89,24 @@ for (const surface of SURFACE_NAMES) {
                 surface === "lesson-matching" && viewport === "mobile"
                     ? {maxDiffPixelRatio: 0.08}
                     : {};
+            if (surface === "review-session") {
+                const testid = await page.evaluate(
+                    () => document.querySelector("main")?.getAttribute("data-testid"),
+                );
+                console.log(`[DEBUG2703] after expandViewport(${viewport}) testid=${testid}`);
+            }
             // #2703 - fail loud if the surface's ready-state collapsed
             // between gotoSurface and here, instead of silently
             // photographing whatever it collapsed into.
             await assertSurfaceStillReady(page, surface);
+            if (surface === "review-session") {
+                const testid = await page.evaluate(
+                    () => document.querySelector("main")?.getAttribute("data-testid"),
+                );
+                console.log(`[DEBUG2703] after assertSurfaceStillReady(${viewport}) testid=${testid}`);
+            }
             await expect(page).toHaveScreenshot(`${surface}-${viewport}.png`, shotOpts);
+            // TEMP-DEBUG #2703 end - remove before merge.
         });
     }
 }
