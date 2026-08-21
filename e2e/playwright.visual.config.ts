@@ -54,8 +54,24 @@ export default defineConfig({
     snapshotPathTemplate: "{testDir}/screenshots/{arg}{ext}",
     expect: {
         toHaveScreenshot: {
+            // #2712 - the ratio alone scales with viewport AREA: 1% of
+            // desktop 1920x1080 allowed 20,736 differing pixels, enough for
+            // a COMPLETE page-state swap on a sparse-text surface (the
+            // review-session empty-vs-active incident: only ~18k glyph
+            // pixels exceed the colour threshold, the pastel fills do not).
+            // The absolute cap makes the budget mean the same thing at
+            // every viewport (gate contract point 5, quality-checks.md);
+            // Playwright applies min(maxDiffPixels, ratio * area). 2,500
+            // equals the mobile 1% budget, so mobile keeps its bound and
+            // tablet/desktop tighten to it. A per-shot override that
+            // loosens the ratio must loosen maxDiffPixels too (see the
+            // lesson-matching@mobile override in critical-surfaces.spec.ts).
+            maxDiffPixels: 2_500,
             maxDiffPixelRatio: 0.01,
             // Per-pixel colour-distance tolerance for anti-aliasing (#705).
+            // Deliberately NOT lowered for #2712: pastel-fill sensitivity
+            // would surface anti-aliasing churn across all ~150 baselines;
+            // the absolute cap already catches state swaps via their text.
             threshold: 0.2,
             animations: "disabled",
         },

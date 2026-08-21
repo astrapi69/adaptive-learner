@@ -72,9 +72,13 @@ for (const surface of SURFACE_NAMES) {
             // on this one shot (0.08 > the residual, still far below any real
             // regression) so it is deterministic; the line-height pin is the
             // actual root-cause fix, this only covers the remainder.
+            // #2712 - the config-level absolute maxDiffPixels (2,500) still
+            // applies on top of a per-shot ratio (Playwright takes the
+            // minimum), so this override must raise BOTH bounds or the 0.08
+            // ratio is dead letter: 0.05 of mobile 375x667 is ~12.5k pixels.
             const shotOpts =
                 surface === "lesson-matching" && viewport === "mobile"
-                    ? {maxDiffPixelRatio: 0.08}
+                    ? {maxDiffPixelRatio: 0.08, maxDiffPixels: 20_000}
                     : {};
             // #2703 - fail loud if the surface's ready-state collapsed
             // between gotoSurface and here, instead of silently
