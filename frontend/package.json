@@ -74,7 +74,7 @@
     "dagre": "^0.8.5",
     "dexie": "^4.4.5",
     "fflate": "^0.8.3",
-    "highlight.js": "11.11.1",
+    "highlight.js": "11.12.0",
     "html5-qrcode": "2.3.8",
     "jszip": "3.10.1",
     "learn-content-engine": "0.22.0",
@@ -90,7 +90,7 @@
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
-    "sql.js": "1.14.1",
+    "sql.js": "1.14.2",
     "tailwind-merge": "^3.6.0",
     "yaml": "^2.9.0"
   },
