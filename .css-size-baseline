@@ -328,4 +328,11 @@
 # (src/shared/layout/DashboardCard); Regeln card/wide/title plus die
 # mobilen Overrides geloescht (das mobile title-font-size-Override war
 # ein No-op gegen die 1rem-Basis).
-7486
+# 7486 -> 7439 (Option C Slice 4, #2735): form-Familie auf Inline-
+# Utilities konvertiert (~285 Stellen); Regeln toggle/fieldset/stack/
+# label-stack/required/actions + Mobile-Block geloescht. form-row +
+# form-label BLEIBEN als Paket-Klassennamen-Vertrag
+# (@astrapi69/ai-key-vault-react rendert beide, #2477-Klasse) - vom
+# paket-bewussten Dead-Gate gefangen, nicht loeschbar bis das Paket
+# eigene Styles traegt.
+7439

@@ -212,12 +212,8 @@
   /* (The former generic mobile 44px button rule is gone: the shadcn
      Button base carries min-h-11 on every size at all viewports.) */
 
-  /* ----- Form actions: stack vertically when cramped ---------- */
-  .form-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-2);
-  }
+  /* (The form-actions mobile stacking moved to the consumers as
+     max-[769px]: utilities, #2735.) */
 
   /* ----- Settings: model-override + API-key rows stack -------- */
   .api-key-row-input,

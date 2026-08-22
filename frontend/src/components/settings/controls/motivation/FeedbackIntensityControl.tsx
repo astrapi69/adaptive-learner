@@ -54,10 +54,10 @@ export default function FeedbackIntensityControl() {
 
     return (
         <fieldset
-            className="form-row form-row-fieldset"
+            className="m-0 flex flex-col gap-2 border-none p-0"
             data-testid="settings-feedback-intensity"
         >
-            <legend className="form-label">
+            <legend className="text-[0.95rem] font-medium">
                 {t("settings.feedback_intensity", "Feedback Intensity")}
             </legend>
             <FormHint as="span">
@@ -81,7 +81,7 @@ export default function FeedbackIntensityControl() {
                             data-testid={`settings-feedback-intensity-${level}`}
                         />
                         <span className="feedback-intensity-option-text">
-                            <span className="form-label">
+                            <span className="text-[0.95rem] font-medium">
                                 {t(
                                     `settings.feedback_intensity_${level}`,
                                     LABELS[level].label,

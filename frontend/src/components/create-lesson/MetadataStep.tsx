@@ -116,7 +116,7 @@ export default function MetadataStep({
                 className="create-lesson-templates flex flex-col gap-2"
                 data-testid="create-lesson-templates"
             >
-                <p className="form-label text-sm font-medium text-fg-primary">
+                <p className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.templates.heading",
                         "Start from a template",
@@ -203,10 +203,10 @@ export default function MetadataStep({
             </div>
 
             <label
-                className="form-row flex flex-col gap-1.5"
+                className="flex flex-col gap-1.5"
                 data-testid="create-lesson-title-field"
             >
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.meta.title_label", "Title")} *
                 </span>
                 <Input
@@ -250,8 +250,8 @@ export default function MetadataStep({
                 )}
             </label>
 
-            <label className="form-row flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+            <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.meta.title_native_label",
                         "Title in target language",
@@ -270,8 +270,8 @@ export default function MetadataStep({
                 content: a single content language (source == target) with an
                 optional level-less shape, mirroring the Share wizard's domain
                 handling. */}
-            <label className="form-row flex flex-col gap-1.5">
-                <span id="create-lesson-domain-label" className="form-label text-sm font-medium text-fg-primary">
+            <label className="flex flex-col gap-1.5">
+                <span id="create-lesson-domain-label" className="text-sm font-medium text-fg-primary">
                     {t("discover.filter.domain", "Domain")}
                 </span>
                 <Select
@@ -297,11 +297,11 @@ export default function MetadataStep({
                 </Select>
             </label>
 
-            <div className="form-row form-row-inline flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
                 {knowledgeDomain ? (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="form-field flex flex-col gap-1.5">
-                            <span id="create-lesson-content-lang-label" className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-content-lang-label" className="text-sm font-medium text-fg-primary">
                                 {t(
                                     "create_lesson.meta.content_lang_label",
                                     "Content language",
@@ -330,7 +330,7 @@ export default function MetadataStep({
                             </Select>
                         </div>
                         <div className="form-field flex flex-col gap-1.5">
-                            <span id="create-lesson-level-label" className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-level-label" className="text-sm font-medium text-fg-primary">
                                 {t("create_lesson.meta.level_label", "Level")}
                             </span>
                             <Select
@@ -366,7 +366,7 @@ export default function MetadataStep({
                 ) : (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         <div className="form-field flex flex-col gap-1.5">
-                            <span id="create-lesson-target-lang-label" className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-target-lang-label" className="text-sm font-medium text-fg-primary">
                                 {t(
                                     "create_lesson.meta.target_lang_label",
                                     "Language learned",
@@ -395,7 +395,7 @@ export default function MetadataStep({
                             </Select>
                         </div>
                         <div className="form-field flex flex-col gap-1.5">
-                            <span id="create-lesson-source-lang-label" className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-source-lang-label" className="text-sm font-medium text-fg-primary">
                                 {t(
                                     "create_lesson.meta.source_lang_label",
                                     "Your language",
@@ -423,7 +423,7 @@ export default function MetadataStep({
                             </Select>
                         </div>
                         <div className="form-field flex flex-col gap-1.5">
-                            <span id="create-lesson-level-2-label" className="form-label text-sm font-medium text-fg-primary">
+                            <span id="create-lesson-level-2-label" className="text-sm font-medium text-fg-primary">
                                 {t("create_lesson.meta.level_label", "Level")}
                             </span>
                             <Select
@@ -488,8 +488,8 @@ export default function MetadataStep({
                 )}
             </div>
 
-            <label className="form-row flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+            <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.meta.description_label",
                         "Topic / description",
@@ -504,8 +504,8 @@ export default function MetadataStep({
                 />
             </label>
 
-            <label className="form-row flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+            <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.meta.author_label", "Author name")}
                 </span>
                 <Input

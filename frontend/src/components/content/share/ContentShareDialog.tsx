@@ -170,12 +170,13 @@ export default function ContentShareDialog({
                     "Your lesson content will be sent to {provider}. No personal data is transmitted.",
                   ).replace("{provider}", activeProvider ?? "the AI provider")}
                 </p>
-                <label className="form-row form-row-toggle">
-                  <span className="form-label">
+                <label className="flex items-center justify-between gap-2">
+                  <span className="text-[0.95rem] font-medium">
                     {t("content.ai_validation.consent", "Run AI validation")}
                   </span>
                   <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     checked={aiConsent}
                     onChange={(e) => setAiConsent(e.target.checked)}
                     data-testid="content-ai-consent"

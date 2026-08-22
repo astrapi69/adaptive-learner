@@ -136,7 +136,7 @@ export default function ExtensionExerciseEditor({
             data-testid={`exercise-ext-editor-${id}`}
         >
             <label className="form-field flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.extensions.edit.prompt_label",
                         "Instruction / prompt",
@@ -156,7 +156,7 @@ export default function ExtensionExerciseEditor({
                     className="form-field flex flex-col gap-1.5"
                     data-testid={`exercise-ext-type-${id}`}
                 >
-                    <span className="form-label text-sm font-medium text-fg-primary">
+                    <span className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.edit.convert_label", "Exercise type")}
                     </span>
                     <select
@@ -254,7 +254,7 @@ export default function ExtensionExerciseEditor({
                 </FormHint>
             )}
 
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                 <Button
                     type="button"
                     variant="secondary"
@@ -313,7 +313,7 @@ function CategorizationFields({
 
     return (
         <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t(
                     "create_lesson.extensions.edit.cat_categories_label",
                     "Categories",
@@ -428,7 +428,7 @@ function ErrorCorrectionFields({
     return (
         <div className="flex flex-col gap-3">
             <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-                <legend className="form-label text-sm font-medium text-fg-primary">
+                <legend className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.extensions.edit.ec_tokens_label",
                         "Sentence words (mark the wrong one)",

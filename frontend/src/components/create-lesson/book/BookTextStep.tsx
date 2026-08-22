@@ -368,8 +368,8 @@ export default function BookTextStep({
                 t={t}
             />
 
-            <label className="form-row flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+            <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.book.text_label", "Textbook section")}
                 </span>
                 <textarea
@@ -402,8 +402,8 @@ export default function BookTextStep({
                         "Book reference (optional)",
                     )}
                 </legend>
-                <label className="form-row flex flex-col gap-1.5">
-                    <span className="form-label text-sm font-medium text-fg-primary">
+                <label className="flex flex-col gap-1.5">
+                    <span className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.book.title_label", "Book title")}
                     </span>
                     <Input
@@ -415,7 +415,7 @@ export default function BookTextStep({
                 </label>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.book.author_label", "Author")}
                         </span>
                         <Input
@@ -428,7 +428,7 @@ export default function BookTextStep({
                         />
                     </label>
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.book.url_label", "URL")}
                         </span>
                         <Input
@@ -439,7 +439,7 @@ export default function BookTextStep({
                         />
                     </label>
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.book.asin_label", "ISBN / ASIN")}
                         </span>
                         <Input

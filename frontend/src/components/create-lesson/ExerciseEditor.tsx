@@ -108,7 +108,7 @@ export default function ExerciseEditor({
             data-testid={`exercise-editor-${id}`}
         >
             <label className="form-field flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.exercises.edit.prompt_label", "Question / prompt")}
                 </span>
                 <Input
@@ -125,7 +125,7 @@ export default function ExerciseEditor({
                     className="form-field flex flex-col gap-1.5"
                     data-testid={`exercise-edit-type-${id}`}
                 >
-                    <span className="form-label text-sm font-medium text-fg-primary">
+                    <span className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.edit.convert_label", "Exercise type")}
                     </span>
                     <select
@@ -168,7 +168,7 @@ export default function ExerciseEditor({
                 </FormHint>
             )}
 
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                 <Button
                     type="button"
                     variant="secondary"
@@ -236,7 +236,7 @@ function MatchingFields({draft, onPatch}: TypeFieldsProps) {
 
     return (
         <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.exercises.edit.pairs_label", "Pairs")}
             </legend>
             {pairs.map((pair, i) => (
@@ -336,7 +336,7 @@ function ClozeFields({draft, onPatch}: TypeFieldsProps) {
     return (
         <div className="flex flex-col gap-3">
             <label className="form-field flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.exercises.edit.sentence_label",
                         "Sentence (use ___ for each blank)",
@@ -417,7 +417,7 @@ function WordTilesFields({draft, onPatch}: TypeFieldsProps) {
 
     return (
         <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t(
                     "create_lesson.exercises.edit.tiles_label",
                     "Tiles (in the correct order)",
@@ -499,7 +499,7 @@ function PictureChoiceFields({draft, onPatch}: TypeFieldsProps) {
 
     return (
         <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.exercises.edit.images_label", "Image options")}
             </legend>
             {images.map((img, i) => (
@@ -531,7 +531,7 @@ function PictureChoiceFields({draft, onPatch}: TypeFieldsProps) {
                         </button>
                     </label>
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.exercises.edit.image_label_label", "Label")}
                         </span>
                         <Input
@@ -654,7 +654,7 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
                 className="m-0 flex flex-col gap-1.5 border-0 p-0"
                 data-testid={`exercise-edit-mc-mode-${id}`}
             >
-                <legend className="form-label text-sm font-medium text-fg-primary">
+                <legend className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.exercises.edit.mc_mode_label",
                         "How many answers are correct?",
@@ -687,7 +687,7 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
                 </div>
             </fieldset>
             <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-                <legend className="form-label text-sm font-medium text-fg-primary">
+                <legend className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.exercises.edit.mc_options_label", "Answer options")}
                 </legend>
                 {options.map((option, i) => (

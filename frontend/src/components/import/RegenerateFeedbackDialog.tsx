@@ -143,8 +143,8 @@ export default function RegenerateFeedbackDialog({
           ))}
         </div>
         {reason === "wrong_language" && (
-          <label className="form-row mt-2">
-            <span className="form-label">
+          <label className="mt-2 flex flex-col gap-2">
+            <span className="text-[0.95rem] font-medium">
               {t("content.ai_exercises.feedback.language_label", "Language")}
             </span>
             <select
@@ -160,8 +160,8 @@ export default function RegenerateFeedbackDialog({
             </select>
           </label>
         )}
-        <label className="form-row mt-2">
-          <span className="form-label">
+        <label className="mt-2 flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.ai_exercises.feedback.freetext_label", "Anything else? (optional)")}
           </span>
           <textarea
@@ -172,7 +172,7 @@ export default function RegenerateFeedbackDialog({
             placeholder={t("content.ai_exercises.feedback.freetext_placeholder", "Your feedback…")}
           />
         </label>
-        <div className="form-actions">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
           <Button
             type="button"
             variant="secondary"

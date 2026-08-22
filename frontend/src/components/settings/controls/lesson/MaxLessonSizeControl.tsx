@@ -50,8 +50,8 @@ export default function MaxLessonSizeControl() {
                     "When saving a long chat analysis as an offline lesson, lessons with more than this many steps are automatically split into multiple parts.",
                 )}
             </FormHint>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t(
                         "settings.max_lesson_size.label",
                         "Steps per part",

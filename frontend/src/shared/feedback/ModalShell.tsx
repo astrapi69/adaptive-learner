@@ -18,7 +18,7 @@
  * @example
  * <ModalShell open={open} title="AI content check" onClose={() => setOpen(false)}>
  *   <ReportList … />
- *   <div className="form-actions">…</div>
+ *   <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">…</div>
  * </ModalShell>
  */
 

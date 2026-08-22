@@ -176,7 +176,7 @@ export default function QualityCheckDialog({
               items={items}
               testId="quality-check-report"
             />
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
               <Button
                 type="button"
                 onClick={close}
@@ -197,7 +197,7 @@ export default function QualityCheckDialog({
               {t("content.quality.failed", "Quality check unavailable.")}{" "}
               {state.error}
             </p>
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
               <Button type="button" variant="outline" onClick={close}>
                 {t("common.close", "Close")}
               </Button>

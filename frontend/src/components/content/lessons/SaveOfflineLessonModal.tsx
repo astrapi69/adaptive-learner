@@ -210,8 +210,8 @@ export default function SaveOfflineLessonModal({
         <ModalTitle id="save-lesson-title">
           {t("content.save_lesson.modal_title", "Save as offline lesson")}
         </ModalTitle>
-        <label className="form-row">
-          <span className="form-label">
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.save_lesson.title_label", "Lesson title")}
           </span>
           <input
@@ -223,8 +223,8 @@ export default function SaveOfflineLessonModal({
             autoFocus
           />
         </label>
-        <label className="form-row">
-          <span className="form-label">
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.save_lesson.title_native_label", "Title in target language")}
           </span>
           <input
@@ -235,9 +235,9 @@ export default function SaveOfflineLessonModal({
             disabled={saving}
           />
         </label>
-        <div className="form-row form-row-inline">
+        <div className="flex flex-col gap-2">
           <label className="form-field flex flex-col gap-1">
-            <span className="form-label">
+            <span className="text-[0.95rem] font-medium">
               {t("content.save_lesson.target_lang_label", "Language learned")}
             </span>
             <select
@@ -254,7 +254,7 @@ export default function SaveOfflineLessonModal({
             </select>
           </label>
           <label className="form-field flex flex-col gap-1">
-            <span className="form-label">
+            <span className="text-[0.95rem] font-medium">
               {t("content.save_lesson.source_lang_label", "Your language")}
             </span>
             <select
@@ -271,7 +271,7 @@ export default function SaveOfflineLessonModal({
             </select>
           </label>
           <label className="form-field flex flex-col gap-1">
-            <span className="form-label">
+            <span className="text-[0.95rem] font-medium">
               {t("content.save_lesson.level_label", "Level")}
             </span>
             <select
@@ -325,7 +325,7 @@ export default function SaveOfflineLessonModal({
               .replace("{max}", String(maxStepsPerPart))}
           </FormHint>
         )}
-        <div className="form-actions">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
           <Button
             type="button"
             variant="secondary"

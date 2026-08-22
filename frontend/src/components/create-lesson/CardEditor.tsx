@@ -157,9 +157,9 @@ export default function CardEditor({
                 className="card-editor-form flex flex-col gap-3 rounded-lg border border-border bg-card p-4"
                 data-testid="card-editor-form"
             >
-                <div className="form-row form-row-inline grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.cards.front_label", "Front (learned)")} *
                         </span>
                         <Input
@@ -175,7 +175,7 @@ export default function CardEditor({
                         />
                     </label>
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.cards.back_label", "Back (your language)")} *
                         </span>
                         <Input
@@ -191,8 +191,8 @@ export default function CardEditor({
                         />
                     </label>
                 </div>
-                <label className="form-row">
-                    <span className="form-label">
+                <label className="flex flex-col gap-2">
+                    <span className="text-[0.95rem] font-medium">
                         {t("create_lesson.cards.notes_label", "Notes (optional)")}
                     </span>
                     <Input
@@ -202,8 +202,8 @@ export default function CardEditor({
                         onChange={(e) => setNotes(e.target.value)}
                     />
                 </label>
-                <label className="form-row">
-                    <span className="form-label">
+                <label className="flex flex-col gap-2">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "create_lesson.cards.example_label",
                             "Example sentence (optional)",
@@ -226,7 +226,7 @@ export default function CardEditor({
                         )}
                     </FormHint>
                 </label>
-                <div className="form-row">
+                <div className="flex flex-col gap-2">
                     <StringListEditor
                         values={altAnswers}
                         onChange={setAltAnswers}
@@ -253,7 +253,7 @@ export default function CardEditor({
                         )}
                     </FormHint>
                 </div>
-                <div className="form-row">
+                <div className="flex flex-col gap-2">
                     <CardImageField
                         value={image}
                         onChange={setImage}
@@ -261,7 +261,7 @@ export default function CardEditor({
                         idPrefix="card"
                     />
                 </div>
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         data-testid="card-add-button"
@@ -427,7 +427,7 @@ export default function CardEditor({
                                 "Remove all cards?",
                             )}
                         </ModalTitle>
-                        <div className="form-actions">
+                        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                             <Button
                                 type="button"
                                 variant="secondary"
@@ -503,7 +503,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                 className="card-row is-editing flex flex-col gap-3 rounded-lg border border-border bg-card p-3"
                 data-testid={`card-row-${card.id}`}
             >
-                <div className="form-row form-row-inline grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <Input
                         type="text"
                         data-testid={`card-edit-front-${card.id}`}
@@ -572,7 +572,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     previewAlt={draft.front.trim() || undefined}
                     idPrefix={`card-edit-${card.id}`}
                 />
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         variant="secondary"

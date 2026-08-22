@@ -223,8 +223,8 @@ export default function GeneralPanel({
         testid="settings-section-profile"
         title={t("settings.section_profile", "Profile")}
       >
-        <div className="form-row" data-testid="settings-username-row">
-          <label className="form-label" htmlFor="settings-username-input">
+        <div className="flex flex-col gap-2" data-testid="settings-username-row">
+          <label className="text-[0.95rem] font-medium" htmlFor="settings-username-input">
             {t("settings.username_label", "Display name")}
           </label>
           <div className="flex flex-wrap items-center gap-2">
@@ -314,8 +314,8 @@ export default function GeneralPanel({
       </div>
 
       <SettingsSection title={t("settings.section_language", "Language")}>
-        <div className="form-row">
-          <span className="form-label" id="settings-language-label">
+        <div className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium" id="settings-language-label">
             {t("settings.language_label", "Display language")}
           </span>
           <div className="min-w-64 flex-1">
@@ -341,9 +341,9 @@ export default function GeneralPanel({
         testid="settings-section-ui"
         title={t("settings.section_ui", "Interface")}
       >
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
               {t("settings.button_tooltips", "Show button tooltips")}
             </span>
             <FormHint as="span">
@@ -355,14 +355,15 @@ export default function GeneralPanel({
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-button-tooltips-toggle"
             checked={buttonTooltipsOn}
             onChange={(e) => handleButtonTooltipsToggle(e.target.checked)}
           />
         </label>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">{t("settings.developer_mode", "Developer Mode")}</span>
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">{t("settings.developer_mode", "Developer Mode")}</span>
             <FormHint as="span">
               {t(
                 "settings.developer_mode_description",
@@ -372,6 +373,7 @@ export default function GeneralPanel({
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-developer-mode-toggle"
             checked={devModeOn}
             onChange={(e) => handleDevModeToggle(e.target.checked)}

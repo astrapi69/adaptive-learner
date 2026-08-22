@@ -247,10 +247,10 @@ export default function ExerciseGenerator({
                 className="exercise-gen-config flex flex-col gap-4 rounded-lg border border-border bg-card p-4"
                 data-testid="exercise-gen-config"
             >
-                <div className="form-row flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5">
                     <label
                         htmlFor="exercise-count-input"
-                        className="form-label text-sm font-medium text-fg-primary"
+                        className="text-sm font-medium text-fg-primary"
                     >
                         {countLabel}
                     </label>
@@ -290,7 +290,7 @@ export default function ExerciseGenerator({
                 </div>
 
                 <fieldset className="exercise-gen-types m-0 flex flex-col gap-2 border-0 p-0">
-                    <legend className="form-label text-sm font-medium text-fg-primary">
+                    <legend className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.types_label", "Exercise types")}
                     </legend>
                     {ALL_TYPES.map((type) => (
@@ -308,7 +308,7 @@ export default function ExerciseGenerator({
                 </fieldset>
 
                 <label className="form-field flex flex-col gap-1.5">
-                    <span className="form-label text-sm font-medium text-fg-primary">
+                    <span className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.direction_label", "Direction")}
                     </span>
                     <select
@@ -334,7 +334,7 @@ export default function ExerciseGenerator({
                     </select>
                 </label>
 
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         data-testid="exercise-generate"
@@ -441,7 +441,7 @@ export default function ExerciseGenerator({
                         className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3"
                         data-testid="exercise-add-picker"
                     >
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t(
                                 "create_lesson.exercises.add_heading",
                                 "Choose an exercise type",
@@ -482,7 +482,7 @@ export default function ExerciseGenerator({
                         {/* #2508 — the extension types as a second, labelled
                             group so both blocks are reachable from one picker. */}
                         <span
-                            className="form-label mt-1 text-sm font-medium text-fg-primary"
+                            className="mt-1 text-sm font-medium text-fg-primary"
                             id="exercise-add-ext-group"
                             data-testid="exercise-add-ext-group"
                         >

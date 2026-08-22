@@ -27,10 +27,10 @@ export default function ContentViewControl() {
 
   return (
     <fieldset
-      className="form-row form-row-fieldset"
+      className="m-0 flex flex-col gap-2 border-none p-0"
       data-testid="settings-content-view"
     >
-      <legend className="form-label">
+      <legend className="text-[0.95rem] font-medium">
         {t("settings.content_view", "Content view")}
       </legend>
       <FormHint as="span">
@@ -51,7 +51,7 @@ export default function ContentViewControl() {
               data-testid={`settings-content-view-${m}`}
             />
             <span className="feedback-intensity-option-text">
-              <span className="form-label">{labelFor(m)}</span>
+              <span className="text-[0.95rem] font-medium">{labelFor(m)}</span>
             </span>
           </label>
         ))}

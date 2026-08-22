@@ -42,9 +42,9 @@ export default function HintSettingsControl() {
             title={t("settings.section_hints", "Hints")}
             testid="settings-section-hints"
         >
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.hints_enabled",
                             "Show hints during exercises",
@@ -59,14 +59,15 @@ export default function HintSettingsControl() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     data-testid="settings-hints-toggle"
                     checked={enabled}
                     onChange={(e) => handleEnabled(e.target.checked)}
                 />
             </label>
-            <label className="form-row">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t("settings.hint_xp_cost", "XP cost per hint")}
                     </span>
                     <FormHint as="span">

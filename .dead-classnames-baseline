@@ -187,7 +187,6 @@ focus-areas-mastery-split
 focus-areas-progress
 focus-areas-tags
 form-field
-form-row-inline
 form-select
 free-text-diff
 free-text-diff-row
@@ -257,7 +256,6 @@ share-wizard-header
 share-wizard-metadata
 share-wizard-metadata-intro
 share-wizard-mode
-share-wizard-nav
 share-wizard-newset
 share-wizard-note
 share-wizard-overlap

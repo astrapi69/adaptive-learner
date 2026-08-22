@@ -110,7 +110,7 @@ export default function OnboardingWizard({
             <div className="flex min-h-[240px] flex-col sm:min-h-[190px]">
             {step === 0 && (
                 <div className="flex flex-col gap-3">
-                    <label className="form-label" htmlFor="wizard-goal">
+                    <label className="text-[0.95rem] font-medium" htmlFor="wizard-goal">
                         {t("onboarding.wizard.goal_title", "What's your learning goal?")}
                     </label>
                     <textarea
@@ -127,7 +127,7 @@ export default function OnboardingWizard({
 
             {step === 1 && (
                 <div className="flex flex-col gap-3">
-                    <span className="form-label">
+                    <span className="text-[0.95rem] font-medium">
                         {t("onboarding.wizard.timeframe_title", "How much time do you have?")}
                     </span>
                     <ChoiceButtonGroup
@@ -150,7 +150,7 @@ export default function OnboardingWizard({
 
             {step === 2 && (
                 <div className="flex flex-col gap-3">
-                    <label className="form-label" htmlFor="wizard-minutes">
+                    <label className="text-[0.95rem] font-medium" htmlFor="wizard-minutes">
                         {t("onboarding.wizard.minutes_title", "How many minutes per day?")}
                     </label>
                     <input
@@ -183,7 +183,7 @@ export default function OnboardingWizard({
 
             {step === 3 && (
                 <div className="flex flex-col gap-3">
-                    <label className="form-label" htmlFor="wizard-problem">
+                    <label className="text-[0.95rem] font-medium" htmlFor="wizard-problem">
                         {t("onboarding.wizard.problem_title", "What's holding you back right now?")}
                     </label>
                     <textarea

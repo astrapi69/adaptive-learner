@@ -102,7 +102,7 @@ export default function BulkDeleteLessonsModal({
           noCountsFallback="Also delete my learning progress for these lessons"
         />
       </div>
-      <div className="form-actions mt-4">
+      <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
         <Button
           type="button"
           variant="outline"

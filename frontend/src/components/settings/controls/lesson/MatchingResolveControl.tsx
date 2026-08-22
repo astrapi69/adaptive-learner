@@ -65,8 +65,8 @@ export default function MatchingResolveControl() {
                     "How the matching exercise reveals the correct pairs when you press 'Solve' after checking.",
                 )}
             </FormHint>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t("settings.matching_resolve.label", "Effect")}
                 </span>
                 <select

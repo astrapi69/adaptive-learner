@@ -85,7 +85,7 @@ export default function DictationAudioField({
 
     return (
         <div className="flex flex-col gap-2">
-            <span className="form-label text-sm font-medium text-fg-primary">
+            <span className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.extensions.edit.dict_audio_label", "Audio")}
             </span>
 

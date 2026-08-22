@@ -82,8 +82,8 @@ export default function AddTopicDialog({
                         onSubmit(trimmed);
                     }}
                 >
-                    <label className="form-row">
-                        <span className="form-label">
+                    <label className="flex flex-col gap-2">
+                        <span className="text-[0.95rem] font-medium">
                             {t("curriculum.topic_title", "Title")}
                         </span>
                         <input
@@ -96,7 +96,7 @@ export default function AddTopicDialog({
                             required
                         />
                     </label>
-                    <div className="form-actions">
+                    <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                         <Button
                             type="button"
                             variant="secondary"

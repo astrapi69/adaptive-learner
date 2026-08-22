@@ -212,8 +212,8 @@ export default function ImportLessonModal({
         <ModalTitle id="import-lesson-title">
           {t("content.import_lesson.modal_title", "Import a lesson")}
         </ModalTitle>
-        <label className="form-row">
-          <span className="form-label">
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t(
               "content.import_lesson.choose_file",
               "Choose a .json or .zip file",
@@ -257,7 +257,7 @@ export default function ImportLessonModal({
         </div>
         {collisionIds ? (
           <div data-testid="import-lesson-collision">
-            <p className="form-label">
+            <p className="text-[0.95rem] font-medium">
               {t(
                 "content.import_lesson.collision_title",
                 "This lesson already exists",
@@ -275,7 +275,7 @@ export default function ImportLessonModal({
                 "A copy starts without learning progress; the original keeps its progress and review cards.",
               )}
             </FormHint>
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
               <Button
                 type="button"
                 variant="secondary"
@@ -305,7 +305,7 @@ export default function ImportLessonModal({
             </div>
           </div>
         ) : (
-          <div className="form-actions">
+          <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
             <Button
               type="button"
               variant="secondary"
