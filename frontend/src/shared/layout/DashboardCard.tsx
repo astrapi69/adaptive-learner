@@ -6,9 +6,16 @@
  * The former legacy rules (`dashboard-card` / `dashboard-card-wide` /
  * `dashboard-card-title`) were deleted WITH this extraction; the defaults
  * live here as token-backed Tailwind utilities, byte-for-byte equivalent
- * to the deleted rules (including the sub-768px padding shrink, carried
- * as `max-md:`; the old mobile title font-size override was a no-op —
- * it restated the base 1rem — and was dropped).
+ * to the deleted rules (including the mobile padding shrink; the old
+ * mobile title font-size override was a no-op — it restated the base
+ * 1rem — and was dropped).
+ *
+ * Breakpoint note: the legacy block was `@media (max-width: 768px)` —
+ * INCLUSIVE of 768, the iPad-portrait/tablet width that the visual
+ * tablet motifs render at. Tailwind's `max-md:` compiles to
+ * `width < 768px` and misses exactly that width (the tablet baselines
+ * caught the 1px gap as real pixel diffs), so the shrink is carried as
+ * `max-[769px]:` (`width < 769px`), which includes 768.
  *
  * `min-w-0` is load-bearing: a grid item defaults to `min-width: auto`
  * (= min-content), so a wide child (e.g. a Recharts SVG) would floor the
@@ -36,7 +43,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils";
 
 const CARD_BASE =
-  "flex min-w-0 flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-[var(--space-5)] py-[var(--space-4)] shadow-[var(--shadow-card)] max-md:p-[var(--space-3)]";
+  "flex min-w-0 flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-[var(--space-5)] py-[var(--space-4)] shadow-[var(--shadow-card)] max-[769px]:p-[var(--space-3)]";
 
 export interface DashboardCardProps extends ComponentPropsWithoutRef<"div"> {
   /** Semantic element — keep each consumer's existing markup. */
