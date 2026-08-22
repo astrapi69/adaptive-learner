@@ -153,23 +153,16 @@
 
 @media (max-width: 600px) {
   /* .lesson-nav* responsive rules migrated to Tailwind (Phase B / B2). */
-  .lesson-summary-actions .btn {
-    width: 100%;
-  }
   .lesson-summary-breakdown-row {
     grid-template-columns: 1fr;
   }
   .lesson-summary-breakdown-score {
     grid-column: 1 / -1;
   }
-  /* Phase 64 — stack the suggestion cards vertically with a
-     full-width CTA so the 44px touch target spans the row. */
+  /* Phase 64 — stack the suggestion cards vertically (the CTA is a
+     shadcn Button and carries its own 44px touch target). */
   .lesson-next-step-card {
     flex-wrap: wrap;
-  }
-  .lesson-next-step-card .btn {
-    width: 100%;
-    justify-content: center;
   }
 }
 

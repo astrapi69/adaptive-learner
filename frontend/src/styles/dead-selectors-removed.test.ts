@@ -138,3 +138,35 @@ describe("modal-extraction selectors stay removed (#2729, refs #1485)", () => {
         },
     );
 });
+
+/**
+ * The legacy button family moved to the shadcn `Button`
+ * (components/ui/button.tsx, #2731 — Option C Slice 2): every consumer
+ * renders `<Button>` / `buttonVariants()`, whose base carries the 44px
+ * touch target (min-h-11) at all viewports. 02-buttons.css and every
+ * `.X .btn` context rule were deleted with the migration; neither the
+ * base classes nor the spinner may reappear as legacy rules.
+ */
+const REMOVED_SELECTORS_BTN_MIGRATION = [
+    "btn",
+    "btn-primary",
+    "btn-secondary",
+    "btn-spinner",
+] as const;
+
+describe("btn-family selectors stay removed (#2731, refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_BTN_MIGRATION)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was replaced by the shadcn Button ` +
+                    "(components/ui/button.tsx, #2731) and its legacy rule " +
+                    "deleted. Use a Button variant (or buttonVariants()) " +
+                    "instead of re-adding the rule.",
+            ).toBe(false);
+        },
+    );
+});

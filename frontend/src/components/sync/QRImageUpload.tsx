@@ -27,6 +27,8 @@
 
 import {useRef, useState} from "react";
 
+import {Button} from "@/components/ui/button";
+
 import {decodeQrImage} from "../../shared/qr";
 import {parsePairingUri} from "../../storage/sync/sync-engine";
 
@@ -93,9 +95,9 @@ export default function QRImageUpload({
 
     return (
         <div data-testid="qr-image-upload">
-            <button
+            <Button
                 type="button"
-                className="btn btn-secondary"
+                variant="secondary"
                 onClick={() => inputRef.current?.click()}
                 disabled={status.kind === "decoding"}
                 data-testid="qr-image-upload-button"
@@ -103,7 +105,7 @@ export default function QRImageUpload({
                 {status.kind === "decoding"
                     ? t("sync.image_decoding")
                     : t("sync.upload_qr")}
-            </button>
+            </Button>
             <input
                 ref={inputRef}
                 type="file"

@@ -264,25 +264,27 @@ describe("#185 / #271 — raw <button> never falls back to UA system colours", (
 });
 
 describe("#194/#1723 — the content-link rule must not beat class-styled anchors", () => {
-  // `<Link className="btn btn-primary">` renders as `<a class="btn">`, and
-  // the skip link renders as `<a class="skip-to-content">`. The generic
-  // content-link rule needs its `data-slot`/`.btn` carve-outs for the
+  // Button-styled anchors (shadcn `<Button asChild>` + a router <Link>,
+  // marked `data-slot="button"`) and the skip link (`<a
+  // class="skip-to-content">`) must keep their own text colors. The
+  // generic content-link rule needs its `data-slot` carve-out for the
   // LAYERED-utility case (#146/#194: an unlayered rule beats layered
-  // utilities regardless of specificity) — but the carve-out arguments
-  // count toward specificity, so a bare `a:not(...):not(.btn)` reached
-  // (0,2,1) and beat EVERY unlayered class rule at (0,1,0), painting the
-  // skip link's label accent-on-accent (#1723). The exclusions must
-  // therefore live inside `:where()`, which keeps the matched set but
-  // pins the selector at (0,0,1).
+  // utilities regardless of specificity) — but carve-out arguments
+  // count toward specificity, so bare `:not()` chains reached (0,2,1)
+  // and beat EVERY unlayered class rule at (0,1,0), painting the skip
+  // link's label accent-on-accent (#1723). The exclusion must therefore
+  // live inside `:where()`, which keeps the matched set but pins the
+  // selector at (0,0,1). (The former second carve-out for hand-rolled
+  // btn-classed anchors was removed with the #2731 shadcn migration.)
   const css = readLegacyCssSum();
 
-  it("the generic anchor color rule keeps both carve-outs inside :where()", () => {
+  it("the generic anchor color rule keeps its carve-out inside :where()", () => {
     const rule = css.match(
-      /a:where\(:not\(\[data-slot="button"\]\):not\(\.btn\)\)\s*\{[^}]*color:\s*var\(--accent\)/,
+      /a:where\(:not\(\[data-slot="button"\]\)\)\s*\{[^}]*color:\s*var\(--accent\)/,
     );
     expect(
       rule,
-      'the content-link rule must be `a:where(:not([data-slot="button"]):not(.btn))` (see #194/#1723)',
+      'the content-link rule must be `a:where(:not([data-slot="button"]))` (see #194/#1723/#2731)',
     ).toBeTruthy();
   });
 
@@ -297,12 +299,6 @@ describe("#194/#1723 — the content-link rule must not beat class-styled anchor
       unguarded,
       "the anchor color rule must wrap its exclusions in :where() (see #1723)",
     ).toBeFalsy();
-  });
-
-  it(".btn sets text-decoration: none (carved-out anchors must not underline)", () => {
-    const btn = css.match(/\n\.btn\s*\{[^}]*\}/);
-    expect(btn?.[0], ".btn rule not found").toBeTruthy();
-    expect(btn?.[0]).toMatch(/text-decoration:\s*none/);
   });
 
   it("the skip link keeps its on-accent label color (#1723)", () => {
@@ -390,22 +386,7 @@ describe("#108 — matching side tints pass WCAG AA (text on the tinted tile)", 
   }
 });
 
-describe("#211 — the .btn base class declares a readable text color", () => {
-  // Root-cause guard: a bare ``.btn`` (no .btn-primary/-secondary/-danger
-  // variant) must define a ``color`` so it is never invisible in dark
-  // themes. The variants override it; this pins the base default.
-  const css = readLegacyCssSum();
-
-  it(".btn { ... } sets a color token", () => {
-    // Line-anchored so context rules like `.lesson-next-step-card .btn`
-    // (which stay in global.css and precede the peeled base rule in the
-    // stylesheet sum) cannot shadow the BASE `.btn` rule under test.
-    const match = css.match(/^\.btn\s*\{([^}]*)\}/m);
-    expect(match, ".btn rule not found in global.css + styles/legacy").toBeTruthy();
-    const body = match![1];
-    expect(
-      /color:\s*var\(--[a-z0-9-]+\)/.test(body),
-      ".btn base rule must set color: var(--...) so a variant-less .btn stays readable",
-    ).toBe(true);
-  });
-});
+/* (#211's guard — the legacy btn base class must declare a readable text
+   color — retired with the #2731 shadcn-Button migration: the legacy
+   button rules are deleted and every Button variant pins its own
+   foreground color in components/ui/button.tsx, see the #148 note there.) */

@@ -5,7 +5,7 @@
  * share handlers come from {@link useShareWizard}.
  */
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import FormHint from "../../../shared/forms/FormHint";
@@ -101,7 +101,8 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
             href={sharedUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={popupBlocked ? "btn btn-primary" : undefined}
+            className={popupBlocked ? buttonVariants() : undefined}
+            data-slot={popupBlocked ? "button" : undefined}
             data-testid="share-wizard-pr-link"
           >
             {shareMethod === "upload"

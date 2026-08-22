@@ -15,7 +15,7 @@
  */
 
 import {useState} from "react";
-import {BookOpen, Sparkles} from "lucide-react";
+import {BookOpen, Loader2, Sparkles} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -312,7 +312,11 @@ export default function BookTextStep({
                     role="status"
                     aria-live="polite"
                 >
-                    <span className="btn-spinner" aria-hidden="true" />
+                    <Loader2
+                        size={16}
+                        className="animate-spin motion-reduce:hidden"
+                        aria-hidden="true"
+                    />
                     {t(
                         "create_lesson.book.batch_progress",
                         "Generating lesson {current} of {total}: {title}…",
@@ -482,8 +486,9 @@ export default function BookTextStep({
                     data-testid="book-generate"
                 >
                     {busy ? (
-                        <span
-                            className="btn-spinner"
+                        <Loader2
+                            size={16}
+                            className="mr-1 animate-spin motion-reduce:hidden"
                             data-testid="book-generate-spinner"
                             aria-hidden="true"
                         />

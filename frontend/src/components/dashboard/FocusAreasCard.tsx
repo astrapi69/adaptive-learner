@@ -31,6 +31,8 @@ import {Sparkles} from "lucide-react";
 import {useEffect, useState} from "react";
 import {Link} from "react-router";
 
+import {Button} from "@/components/ui/button";
+
 import {analyzeErrors} from "../../lib/adaptive/error-analyzer";
 import {
     buildContentAvailability,
@@ -229,17 +231,15 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
                     </li>
                 ))}
             </ul>
-            <Link
-                to={adaptiveHref}
-                className="btn btn-primary"
-                data-testid="focus-areas-cta"
-            >
-                <Sparkles size={14} aria-hidden="true" />
-                {t(
-                    "dashboard.focus_areas.cta",
-                    "Start adaptive lesson",
-                )}
-            </Link>
+            <Button asChild>
+                <Link to={adaptiveHref} data-testid="focus-areas-cta">
+                    <Sparkles size={14} aria-hidden="true" />
+                    {t(
+                        "dashboard.focus_areas.cta",
+                        "Start adaptive lesson",
+                    )}
+                </Link>
+            </Button>
         </article>
     );
 }

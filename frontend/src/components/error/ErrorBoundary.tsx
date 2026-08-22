@@ -1,5 +1,7 @@
 import {Component, type ErrorInfo, type ReactNode} from "react";
 
+import {Button} from "@/components/ui/button";
+
 interface ErrorBoundaryProps {
     children: ReactNode;
     /** Optional override for the fallback render. */
@@ -72,13 +74,9 @@ export default class ErrorBoundary extends Component<
                     <p style={{margin: 0, opacity: 0.7, maxWidth: "32rem"}}>
                         {error.message}
                     </p>
-                    <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={this.handleReload}
-                    >
+                    <Button type="button" onClick={this.handleReload}>
                         Reload
-                    </button>
+                    </Button>
                 </main>
             );
         }

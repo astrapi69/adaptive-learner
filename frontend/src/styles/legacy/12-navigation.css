@@ -799,10 +799,6 @@
   color: var(--fg-muted);
 }
 
-.lesson-next-step-card .btn {
-  flex: 0 0 auto;
-  min-height: 44px;
-}
 
 /* Demoted secondary navigation below the smart cards. */
 .lesson-summary-secondary-actions {

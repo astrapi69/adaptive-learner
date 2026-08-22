@@ -106,8 +106,6 @@ backup-summary-tables
 badge-tile--earned
 badge-widget-grid
 badge-widget-view-all
-btn-outline
-btn-text
 card-csv-preview
 card-csv-preview-list
 card-csv-row
@@ -204,7 +202,6 @@ landing-checking
 learning-repo-actions
 learning-repo-body
 learning-repo-content
-learning-repo-file
 learning-repo-header
 learning-repo-meta
 learning-repo-sidebar
@@ -214,9 +211,6 @@ learning-repo-widget-link
 lesson-node-exercises
 lesson-node-star
 lesson-resources
-lesson-resume-actions
-lesson-resume-desc
-lesson-resume-panel
 lesson-reviewed-fallback
 lesson-reviewed-prompt
 lesson-reviewed-status

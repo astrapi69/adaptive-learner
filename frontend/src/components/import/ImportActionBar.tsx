@@ -11,6 +11,8 @@
 
 import type { ReactNode } from "react";
 
+import { Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import type {
   ConversationAnalysisResult,
@@ -87,7 +89,12 @@ function AnalyzeButton({
       data-testid="analyze-button"
     >
       {analyzing && (
-        <span className="btn-spinner" data-testid="analyze-spinner" aria-hidden="true" />
+        <Loader2
+          size={16}
+          className="mr-1 animate-spin motion-reduce:hidden"
+          data-testid="analyze-spinner"
+          aria-hidden="true"
+        />
       )}
       {analyzing
         ? t("import.analyzing", "Analyzing…")

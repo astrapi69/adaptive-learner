@@ -12,6 +12,8 @@
 
 import {useMemo, useState} from "react";
 
+import {Button} from "@/components/ui/button";
+
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import {SettingsSection} from "../../SettingsSection";
@@ -174,9 +176,9 @@ export default function DailyRemindersControl() {
                 </FormHint>
             )}
             {enabled && supported && permission === "default" && (
-                <button
+                <Button
                     type="button"
-                    className="btn btn-outline"
+                    variant="outline"
                     data-testid="settings-reminders-request"
                     onClick={() => void request()}
                 >
@@ -184,7 +186,7 @@ export default function DailyRemindersControl() {
                         "settings.reminders_permission_request",
                         "Enable notifications",
                     )}
-                </button>
+                </Button>
             )}
             {enabled && !supported && (
                 <FormHint

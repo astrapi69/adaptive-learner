@@ -27,7 +27,7 @@
  */
 
 import {useMemo, useRef, useState} from "react";
-import {FileUp, Sparkles} from "lucide-react";
+import {FileUp, Loader2, Sparkles} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import FormHint from "../../../shared/forms/FormHint";
@@ -217,8 +217,9 @@ export default function BookFileUpload({
                     data-testid="book-upload-button"
                 >
                     {busy ? (
-                        <span
-                            className="btn-spinner"
+                        <Loader2
+                            size={16}
+                            className="mr-1 animate-spin motion-reduce:hidden"
                             data-testid="book-upload-spinner"
                             aria-hidden="true"
                         />
