@@ -61,7 +61,7 @@ export default function CreateLessonDialogs({
                                 "Your unsaved changes to the current lesson will be lost.",
                             )}
                         </p>
-                        <div className="form-actions">
+                        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                             <Button
                                 type="button"
                                 variant="outline"
@@ -105,7 +105,7 @@ export default function CreateLessonDialogs({
                                 "Your unsaved lesson will be lost.",
                             )}
                         </p>
-                        <div className="form-actions">
+                        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                             <Button
                                 type="button"
                                 variant="outline"
@@ -146,7 +146,7 @@ export default function CreateLessonDialogs({
                                 "You have an unfinished lesson. Continue where you left off or start fresh?",
                             )}
                         </p>
-                        <div className="form-actions">
+                        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                             <Button
                                 type="button"
                                 variant="secondary"

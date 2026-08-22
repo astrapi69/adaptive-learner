@@ -69,8 +69,8 @@ export default function DirectionStrategyControl() {
           "How adaptive lessons balance recognising (target → your language) vs producing (your language → target). Producing is harder; Automatic introduces it once recognition is solid.",
         )}
       </FormHint>
-      <label className="form-row">
-        <span className="form-label">
+      <label className="flex flex-col gap-2">
+        <span className="text-[0.95rem] font-medium">
           {t("settings.direction.label", "Direction")}
         </span>
         <select

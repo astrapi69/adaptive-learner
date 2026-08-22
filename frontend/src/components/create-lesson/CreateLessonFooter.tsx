@@ -35,7 +35,7 @@ export function SavedLessonActions({
             <h2 className="text-xl font-semibold text-fg-primary">
                 {t("create_lesson.save.saved", "Lesson saved!")}
             </h2>
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                 <Button type="button" data-testid="create-lesson-play" onClick={onPlay}>
                     {t("create_lesson.save.play", "Play lesson")}
                 </Button>

@@ -60,8 +60,8 @@ export default function ErrorReplayScopeControl() {
                     'When you retry errors after a lesson, replay only the parts you got wrong, or the whole exercises again. For matching exercises, "only errors" shows just the wrong pairs (plus a few correct ones so there is something to match).',
                 )}
             </FormHint>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t("settings.error_replay_scope.label", "Retry scope")}
                 </span>
                 <select

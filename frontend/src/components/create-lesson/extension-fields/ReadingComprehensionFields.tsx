@@ -49,7 +49,7 @@ export default function ReadingComprehensionFields({
     return (
         <div className="flex flex-col gap-3">
             <label className="flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.extensions.edit.rc_passage_label", "Reading passage")}
                 </span>
                 <textarea
@@ -86,7 +86,7 @@ export default function ReadingComprehensionFields({
                 />
             )}
 
-            <span className="form-label text-sm font-medium text-fg-primary">
+            <span className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.extensions.edit.q_list_label", "Questions")}
             </span>
             <ul

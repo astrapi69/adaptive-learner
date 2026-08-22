@@ -65,8 +65,8 @@ export default function SourceLanguagesControl() {
           const isPrimary = code === primary;
           const checked = isPrimary || selected.includes(code);
           return (
-            <label key={code} className="form-row form-row-toggle">
-              <span className="form-label">
+            <label key={code} className="flex items-center justify-between gap-2">
+              <span className="text-[0.95rem] font-medium">
                 {languageDisplayName(code, lang)}
                 {isPrimary && (
                   <FormHint as="span">
@@ -77,6 +77,7 @@ export default function SourceLanguagesControl() {
               </span>
               <input
                 type="checkbox"
+                className="m-0 size-4 flex-none p-0"
                 data-testid={`settings-source-language-${code}`}
                 checked={checked}
                 disabled={isPrimary}

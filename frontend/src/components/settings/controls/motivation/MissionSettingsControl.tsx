@@ -68,9 +68,9 @@ export default function MissionSettingsControl() {
             title={t("settings.missions_title", "Daily Missions")}
             testid="settings-section-missions"
         >
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t("settings.missions_enabled", "Daily missions")}
                     </span>
                     <FormHint as="span">
@@ -82,6 +82,7 @@ export default function MissionSettingsControl() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     data-testid="settings-missions-toggle"
                     checked={enabled}
                     onChange={(e) => {
@@ -93,8 +94,8 @@ export default function MissionSettingsControl() {
 
             {enabled && (
                 <>
-                    <label className="form-row" data-testid="settings-missions-count-row">
-                        <span className="form-label">
+                    <label className="flex flex-col gap-2" data-testid="settings-missions-count-row">
+                        <span className="text-[0.95rem] font-medium">
                             {t("settings.missions_count", "Missions per day")}
                         </span>
                         <select
@@ -114,8 +115,8 @@ export default function MissionSettingsControl() {
                         </select>
                     </label>
 
-                    <label className="form-row" data-testid="settings-missions-mix-row">
-                        <span className="form-label">
+                    <label className="flex flex-col gap-2" data-testid="settings-missions-mix-row">
+                        <span className="text-[0.95rem] font-medium">
                             {t("settings.missions_difficulty", "Difficulty mix")}
                         </span>
                         <select
@@ -138,7 +139,7 @@ export default function MissionSettingsControl() {
                         </select>
                     </label>
 
-                    <div className="form-row">
+                    <div className="flex flex-col gap-2">
                         <Button
                             type="button"
                             variant="destructive"

@@ -29,56 +29,29 @@
   gap: var(--space-4);
 }
 
+/* The form-family variants (toggle / label-stack / required / actions,
+ * incl. the #1817 toggle-checkbox pin) were converted to token-backed
+ * Tailwind utilities at their app consumers (Option C, #2735); the
+ * checkbox pin lives as utilities on each toggle checkbox, which win
+ * over the @layer base input rule the same way this block did.
+ *
+ * The TWO rules below stay as a PACKAGE CLASSNAME CONTRACT (the #2477
+ * headless-styled pattern, same as the Settings section head, #2725):
+ * `@astrapi69/ai-key-vault-react`'s dist renders markup carrying these
+ * classNames and relies on the host app for their styling
+ * (docs/development/package-classname-consumers.md). No file under
+ * frontend/src uses them any more - do NOT delete them until the
+ * package ships its own styles (upstream follow-up tracked on #1485). */
+
 .form-row {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-/* v1.10.0 / Phase 23E — toggle row variant. Label + hint stack
- * on the left, the input (checkbox) sits on the right. */
-.form-row-toggle {
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* #1817 — pin every toggle-row checkbox to one fixed size. The shared
- * primitive never constrained its checkbox, so its size was left to the
- * global `input {}` base rule (its inherited padding inflates a native
- * checkbox in Firefox/Safari, Chrome ignores it) and flex-shrink. This
- * block wins over @layer base (order base < legacy): padding: 0 drops the
- * inherited padding, flex: none stops the shrink, 1rem = design-system
- * size. The wrapping label stays the >=44px touch target. */
-.form-row-toggle input[type="checkbox"] {
-  flex: none;
-  width: 1rem;
-  height: 1rem;
-  margin: 0;
-  padding: 0;
-}
-
-.form-label-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
 .form-label {
   font-weight: 500;
   font-size: 0.95rem;
-}
-
-.form-required {
-  color: var(--danger);
-  margin-left: var(--space-1);
-}
-
-.form-actions {
-  display: flex;
-  gap: var(--space-3);
-  justify-content: flex-end;
-  margin-top: var(--space-4);
 }
 
 } /* @layer legacy */

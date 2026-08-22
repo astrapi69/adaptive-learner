@@ -167,7 +167,7 @@ export default function AiValidationDialog({
                 )}
               </p>
             )}
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
               <Button
                 type="button"
                 variant="outline"
@@ -203,7 +203,7 @@ export default function AiValidationDialog({
                 .replace("{current}", String(state.progress.current))
                 .replace("{total}", String(state.progress.total))}
             </p>
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
               <Button
                 type="button"
                 variant="outline"
@@ -267,7 +267,7 @@ export default function AiValidationDialog({
                 {checkedWith}
               </p>
             )}
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
               <Button
                 type="button"
                 variant="outline"
@@ -299,7 +299,7 @@ export default function AiValidationDialog({
             <p className="text-sm text-error">
               {t("content.ai_check.failed", "AI check unavailable.")} {state.error}
             </p>
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
               <Button type="button" variant="outline" onClick={close}>
                 {t("common.close", "Close")}
               </Button>

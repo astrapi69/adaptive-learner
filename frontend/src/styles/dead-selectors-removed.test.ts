@@ -200,3 +200,43 @@ describe("dashboard-card selectors stay removed (refs #1485)", () => {
         },
     );
 });
+
+/**
+ * The form family was converted to token-backed Tailwind utilities at
+ * its ~285 consumer sites (Option C, #2735): the classes were 1-3
+ * declaration layout primitives on heterogeneous elements
+ * (label/div/span/legend/p/fieldset), so the conversion is inline
+ * utilities, not an `as`-polymorphic component. The #1817
+ * toggle-checkbox pin lives as utilities on each toggle checkbox.
+ * (`form-hint` moved into shared/forms/FormHint earlier, #1629.)
+ *
+ * Deliberately NOT pinned: the base `form-row` / `form-label` rules.
+ * `@astrapi69/ai-key-vault-react`'s dist renders those classNames
+ * (package classname contract, the #2477/#2725 class) - their rules
+ * stay in 04-onboarding.css until the package ships its own styles.
+ */
+const REMOVED_SELECTORS_FORM_FAMILY = [
+    "form-row-toggle",
+    "form-row-fieldset",
+    "form-row-stack",
+    "form-label-stack",
+    "form-required",
+    "form-actions",
+] as const;
+
+describe("form-family selectors stay removed (#2735, refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_FORM_FAMILY)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was converted to Tailwind utilities at its ` +
+                    "consumers (#2735) and its legacy rule deleted. Style the " +
+                    "consumers (or extract a real shared component) instead " +
+                    "of re-adding the rule.",
+            ).toBe(false);
+        },
+    );
+});

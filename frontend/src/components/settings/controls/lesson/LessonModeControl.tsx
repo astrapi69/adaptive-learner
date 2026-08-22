@@ -95,8 +95,8 @@ export default function LessonModeControl() {
                     "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions.",
                 )}
             </FormHint>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t("settings.lesson_mode.default_label", "Default mode")}
                 </span>
                 <select
@@ -116,8 +116,8 @@ export default function LessonModeControl() {
                     ))}
                 </select>
             </label>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t(
                         "settings.lesson_mode.threshold_label",
                         "Exam pass threshold",
@@ -140,8 +140,8 @@ export default function LessonModeControl() {
                     ))}
                 </select>
             </label>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t(
                         "settings.lesson_mode.timed_difficulty_label",
                         "Timed mode difficulty",

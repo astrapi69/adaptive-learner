@@ -110,7 +110,7 @@ export default function ExtensionSteps({
                         className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3"
                         data-testid="extension-add-picker"
                     >
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t(
                                 "create_lesson.extensions.add_heading",
                                 "Choose an extension type",
@@ -198,7 +198,7 @@ export default function ExtensionSteps({
                         </dd>
                     </div>
                 </dl>
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         data-testid="create-lesson-save-local"

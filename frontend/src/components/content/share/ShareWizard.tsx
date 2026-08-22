@@ -91,7 +91,7 @@ export default function ShareWizard(props: ShareWizardProps) {
         {/* Step 4 — Share as a pull request + celebration */}
         {step === 4 && <ShareWizardStep4 wiz={wiz} />}
 
-        <div className="form-actions share-wizard-nav">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
           <Button
             type="button"
             variant="secondary"

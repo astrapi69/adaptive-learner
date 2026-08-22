@@ -118,9 +118,9 @@ export default function LearningPanel({ active }: LearningPanelProps) {
         title={t("settings.section_interaction", "Interaction")}
         testid="settings-section-interaction"
       >
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">{t("settings.gestures", "Swipe Gestures")}</span>
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">{t("settings.gestures", "Swipe Gestures")}</span>
             <FormHint as="span">
               {t(
                 "settings.gestures_description",
@@ -130,14 +130,15 @@ export default function LearningPanel({ active }: LearningPanelProps) {
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-gestures-toggle"
             checked={gesturesOn}
             onChange={(e) => handleGesturesToggle(e.target.checked)}
           />
         </label>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
               {t("settings.lesson_shortcuts", "Lesson keyboard shortcuts")}
             </span>
             <FormHint as="span">
@@ -149,14 +150,15 @@ export default function LearningPanel({ active }: LearningPanelProps) {
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-lesson-shortcuts-toggle"
             checked={lessonShortcutsOn}
             onChange={(e) => handleLessonShortcutsToggle(e.target.checked)}
           />
         </label>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
               {t(
                 "settings.lesson_auto_advance",
                 "Auto-advance on a correct answer",
@@ -171,14 +173,15 @@ export default function LearningPanel({ active }: LearningPanelProps) {
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-lesson-auto-advance-toggle"
             checked={autoAdvanceOn}
             onChange={(e) => handleAutoAdvanceToggle(e.target.checked)}
           />
         </label>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
               {t("settings.ask_ai_visible", "Show \"Ask AI\" button")}
             </span>
             <FormHint as="span">
@@ -190,6 +193,7 @@ export default function LearningPanel({ active }: LearningPanelProps) {
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-ask-ai-visible-toggle"
             checked={askAiVisibleOn}
             onChange={(e) => handleAskAiVisibleToggle(e.target.checked)}

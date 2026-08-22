@@ -76,9 +76,9 @@ export default function VoiceSettingsSection() {
         >
             {ttsSupported && (
                 <>
-                    <label className="form-row form-row-toggle">
-                        <span className="form-label-stack">
-                            <span className="form-label">
+                    <label className="flex items-center justify-between gap-2">
+                        <span className="flex flex-col gap-0.5">
+                            <span className="text-[0.95rem] font-medium">
                                 {t(
                                     "settings.voice.tts_enabled",
                                     "Show speech buttons",
@@ -93,6 +93,7 @@ export default function VoiceSettingsSection() {
                         </span>
                         <input
                             type="checkbox"
+                            className="m-0 size-4 flex-none p-0"
                             checked={prefs.ttsEnabled}
                             onChange={(e) => {
                                 writeTtsEnabled(e.target.checked);
@@ -102,9 +103,9 @@ export default function VoiceSettingsSection() {
                         />
                     </label>
 
-                    <label className="form-row form-row-toggle">
-                        <span className="form-label-stack">
-                            <span className="form-label">
+                    <label className="flex items-center justify-between gap-2">
+                        <span className="flex flex-col gap-0.5">
+                            <span className="text-[0.95rem] font-medium">
                                 {t(
                                     "settings.voice.auto_play",
                                     "Auto-play AI responses",
@@ -119,6 +120,7 @@ export default function VoiceSettingsSection() {
                         </span>
                         <input
                             type="checkbox"
+                            className="m-0 size-4 flex-none p-0"
                             checked={prefs.autoPlayAi}
                             onChange={(e) => {
                                 writeAutoPlayAi(e.target.checked);
@@ -128,9 +130,9 @@ export default function VoiceSettingsSection() {
                         />
                     </label>
 
-                    <label className="form-row">
-                        <span className="form-label-stack">
-                            <span className="form-label">
+                    <label className="flex flex-col gap-2">
+                        <span className="flex flex-col gap-0.5">
+                            <span className="text-[0.95rem] font-medium">
                                 {t("settings.voice.tts_voice", "Voice")}
                             </span>
                             <FormHint as="span">
@@ -162,9 +164,9 @@ export default function VoiceSettingsSection() {
                         </select>
                     </label>
 
-                    <label className="form-row">
-                        <span className="form-label-stack">
-                            <span className="form-label">
+                    <label className="flex flex-col gap-2">
+                        <span className="flex flex-col gap-0.5">
+                            <span className="text-[0.95rem] font-medium">
                                 {t("settings.voice.tts_rate", "Rate")}
                             </span>
                             <FormHint as="span">
@@ -186,9 +188,9 @@ export default function VoiceSettingsSection() {
                         />
                     </label>
 
-                    <label className="form-row">
-                        <span className="form-label-stack">
-                            <span className="form-label">
+                    <label className="flex flex-col gap-2">
+                        <span className="flex flex-col gap-0.5">
+                            <span className="text-[0.95rem] font-medium">
                                 {t("settings.voice.tts_pitch", "Pitch")}
                             </span>
                             <FormHint as="span">
@@ -214,9 +216,9 @@ export default function VoiceSettingsSection() {
 
             {sttSupported && (
                 <>
-                    <label className="form-row form-row-toggle">
-                        <span className="form-label-stack">
-                            <span className="form-label">
+                    <label className="flex items-center justify-between gap-2">
+                        <span className="flex flex-col gap-0.5">
+                            <span className="text-[0.95rem] font-medium">
                                 {t(
                                     "settings.voice.stt_enabled",
                                     "Show microphone button",
@@ -231,6 +233,7 @@ export default function VoiceSettingsSection() {
                         </span>
                         <input
                             type="checkbox"
+                            className="m-0 size-4 flex-none p-0"
                             checked={prefs.sttEnabled}
                             onChange={(e) => {
                                 writeSttEnabled(e.target.checked);
@@ -240,9 +243,9 @@ export default function VoiceSettingsSection() {
                         />
                     </label>
 
-                    <label className="form-row">
-                        <span className="form-label-stack">
-                            <span className="form-label">
+                    <label className="flex flex-col gap-2">
+                        <span className="flex flex-col gap-0.5">
+                            <span className="text-[0.95rem] font-medium">
                                 {t(
                                     "settings.voice.stt_lang",
                                     "Dictation language override",
@@ -269,9 +272,9 @@ export default function VoiceSettingsSection() {
                 </>
             )}
 
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.voice.pronunciation_enabled",
                             "Pronunciation Practice",
@@ -286,6 +289,7 @@ export default function VoiceSettingsSection() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     checked={prefs.pronunciationEnabled}
                     onChange={(e) => {
                         writePronunciationEnabled(e.target.checked);

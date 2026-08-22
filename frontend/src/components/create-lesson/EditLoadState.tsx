@@ -50,7 +50,7 @@ export default function EditLoadState({
                         "Could not load this lesson for editing.",
                     )}
                 </FormHint>
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         variant="outline"
@@ -99,7 +99,7 @@ export function LessonPicker({
         >
             <label
                 htmlFor="create-lesson-lesson-select"
-                className="form-label text-sm font-medium text-fg-primary"
+                className="text-sm font-medium text-fg-primary"
             >
                 {t(
                     "create_lesson.edit.lesson_picker_label",

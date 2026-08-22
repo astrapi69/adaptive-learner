@@ -79,9 +79,9 @@ export default function DailyRemindersControl() {
             title={t("settings.section_reminders", "Reminders")}
             testid="settings-section-reminders"
         >
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.reminders_enabled",
                             "Daily learning reminders",
@@ -96,15 +96,16 @@ export default function DailyRemindersControl() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     data-testid="settings-reminders-toggle"
                     checked={enabled}
                     onChange={(e) => void handleEnabled(e.target.checked)}
                 />
             </label>
 
-            <label className="form-row">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t("settings.reminders_time", "Reminder time")}
                     </span>
                     <FormHint as="span">
@@ -123,9 +124,9 @@ export default function DailyRemindersControl() {
                 />
             </label>
 
-            <div className="form-row">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <div className="flex flex-col gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t("settings.reminders_weekdays", "Days")}
                     </span>
                     <FormHint as="span">

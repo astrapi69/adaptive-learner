@@ -230,7 +230,7 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
 
       <div className="notebooklm-filter">
         <label>
-          <span className="form-label">
+          <span className="text-[0.95rem] font-medium">
             {t("notebooklm.filter_difficulty", "Filter by difficulty")}
           </span>
           <select

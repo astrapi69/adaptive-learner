@@ -186,8 +186,8 @@ export default function GitHubIntegrationSection() {
 
       {!envManaged && (
         <div>
-          <label className="form-row">
-            <span className="form-label">
+          <label className="flex flex-col gap-2">
+            <span className="text-[0.95rem] font-medium">
               {t("settings.github.token", "GitHub token")}
             </span>
             <SecretInput
@@ -213,7 +213,7 @@ export default function GitHubIntegrationSection() {
             </FormHint>
           )}
 
-          <div className="form-actions">
+          <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
             <Button
               type="button"
               variant="secondary"

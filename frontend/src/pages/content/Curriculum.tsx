@@ -301,8 +301,8 @@ export default function Curriculum() {
              *  helping the user. */}
             <section className="curriculum-toolbar">
                 {curricula.length > 1 && (
-                    <label className="form-row">
-                        <span className="form-label">
+                    <label className="flex flex-col gap-2">
+                        <span className="text-[0.95rem] font-medium">
                             {t("curriculum.active", "Active curriculum")}
                         </span>
                         <select

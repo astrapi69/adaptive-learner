@@ -42,7 +42,7 @@ export default function DeleteLessonModal({
         <p>
           {t("content.my_lessons.delete_confirm", "Delete this lesson? This cannot be undone.")}
         </p>
-        <div className="form-actions">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
           <Button
             type="button"
             variant="outline"

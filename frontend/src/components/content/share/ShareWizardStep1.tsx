@@ -89,8 +89,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
         className="share-wizard-metadata flex flex-col gap-3"
         data-testid="share-wizard-metadata"
       >
-        <label className="form-row">
-          <span className="form-label">
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.wizard.edit_title", "Title")}
           </span>
           <Input
@@ -100,8 +100,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
             data-testid="share-wizard-edit-title"
           />
         </label>
-        <div className="form-row">
-          <span className="form-label" id="share-wizard-edit-source-label">
+        <div className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium" id="share-wizard-edit-source-label">
             {t("content.wizard.edit_source", "Source language (you speak)")}
           </span>
           <Select
@@ -128,8 +128,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
             </SelectContent>
           </Select>
         </div>
-        <div className="form-row">
-          <span className="form-label" id="share-wizard-edit-target-label">
+        <div className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium" id="share-wizard-edit-target-label">
             {t("content.wizard.edit_target", "Target language (you learn)")}
           </span>
           <Select
@@ -156,8 +156,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
             </SelectContent>
           </Select>
         </div>
-        <div className="form-row">
-          <span className="form-label" id="share-wizard-edit-level-label">
+        <div className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium" id="share-wizard-edit-level-label">
             {t("content.wizard.edit_level", "Level (CEFR)")}
           </span>
           <Select
@@ -269,8 +269,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
         className="share-wizard-author mt-4 flex flex-col gap-3"
         data-testid="share-wizard-author"
       >
-        <label className="form-row">
-          <span className="form-label">
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.credit.name_label", "Your name (optional)")}
           </span>
           <Input
@@ -285,12 +285,13 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
           />
         </label>
         {authorName.trim() && (
-          <label className="form-row form-row-toggle">
-            <span className="form-label">
+          <label className="flex items-center justify-between gap-2">
+            <span className="text-[0.95rem] font-medium">
               {t("content.credit.show_name", "Show name in lesson")}
             </span>
             <input
               type="checkbox"
+              className="m-0 size-4 flex-none p-0"
               checked={showName}
               onChange={(e) => setShowName(e.target.checked)}
               data-testid="share-wizard-author-show"

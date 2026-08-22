@@ -147,7 +147,7 @@ export default function DesktopUpdateHost() {
             t={t}
             limit={RELEASE_NOTES_LIMIT * 8}
           />
-          <div className="form-actions">
+          <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
             {result.releaseUrl && (
               <a
                 href={result.releaseUrl}

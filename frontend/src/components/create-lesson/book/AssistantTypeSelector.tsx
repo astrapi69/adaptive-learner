@@ -71,7 +71,7 @@ export default function AssistantTypeSelector({
             className="m-0 flex flex-col gap-3 border-0 p-0"
             data-testid="assistant-type-selector"
         >
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.book.types.heading", "Exercise types")}
             </legend>
 

@@ -279,7 +279,7 @@ export default function DangerZoneSection() {
                                 />
                             </div>
                         )}
-                        <div className="form-actions mt-6">
+                        <div className="mt-6 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                             <Button
                                 type="button"
                                 variant="secondary"
