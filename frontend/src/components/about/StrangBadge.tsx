@@ -78,8 +78,7 @@ export default function StrangBadge({ t, info }: Props) {
       {isLatest && (
         <p
           data-testid="about-strang-warning"
-          className="text-sm text-fg-secondary"
-          style={{ marginTop: 6, marginBottom: 0 }}
+          className="text-sm text-fg-secondary mt-1.5 mb-0"
         >
           {t(
             "about.strang.latest_warning",
@@ -88,10 +87,7 @@ export default function StrangBadge({ t, info }: Props) {
         </p>
       )}
 
-      <dl
-        className="mt-2 grid gap-x-4 gap-y-1 text-sm"
-        style={{ gridTemplateColumns: "minmax(0, max-content) minmax(0, 1fr)" }}
-      >
+      <dl className="mt-2 grid grid-cols-[minmax(0,max-content)_minmax(0,1fr)] gap-x-4 gap-y-1 text-sm">
         <dt className="text-fg-secondary">
           {t("about.strang.branch_label", "Branch")}
         </dt>
@@ -116,8 +112,7 @@ export default function StrangBadge({ t, info }: Props) {
       {build.derivedFromFallback && build.strang !== "unknown" && (
         <p
           data-testid="about-strang-fallback-note"
-          className="muted"
-          style={{ marginTop: 6, marginBottom: 0, fontSize: "0.8rem" }}
+          className="muted mt-1.5 mb-0 text-[0.8rem]"
         >
           {t(
             "about.strang.fallback_note",

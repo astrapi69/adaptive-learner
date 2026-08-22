@@ -178,9 +178,8 @@ export default function ViewportDiagnostic() {
   const report = buildReport(snap, taps);
   return (
     <div
-      className="fixed inset-x-0 top-0 z-[9999] border-b border-border bg-card/95 px-2 py-1.5 font-mono text-[12px] leading-snug text-fg-primary"
+      className="pointer-events-none fixed inset-x-0 top-0 z-[9999] border-b border-border bg-card/95 px-2 py-1.5 font-mono text-[12px] leading-snug text-fg-primary"
       data-testid={PANEL_TESTID}
-      style={{ pointerEvents: "none" }}
     >
       <div className="font-semibold" data-testid="viewport-diagnostic-values">
         fix={activeFix()} winY={snap.winScrollY} vvTop={snap.vvOffsetTop} scale=
@@ -191,7 +190,7 @@ export default function ViewportDiagnostic() {
           ? `letzter Tipp: ${tapLine(taps[0])}`
           : "letzter Tipp: (tippe irgendwo)"}
       </div>
-      <div className="mt-1 flex items-center gap-2" style={{ pointerEvents: "auto" }}>
+      <div className="pointer-events-auto mt-1 flex items-center gap-2">
         <button
           type="button"
           onClick={handleCopy}
@@ -208,8 +207,7 @@ export default function ViewportDiagnostic() {
         readOnly
         value={report}
         onFocus={(e) => e.currentTarget.select()}
-        className="mt-1 h-16 w-full resize-none rounded-app border border-border bg-[var(--bg-elevated)] p-1 text-[11px] text-fg-primary"
-        style={{ pointerEvents: "auto" }}
+        className="pointer-events-auto mt-1 h-16 w-full resize-none rounded-app border border-border bg-[var(--bg-elevated)] p-1 text-[11px] text-fg-primary"
         data-testid="viewport-diagnostic-report"
       />
     </div>

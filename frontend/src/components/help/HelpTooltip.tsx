@@ -67,7 +67,15 @@ export default function HelpTooltip({
         <HoverCard.Root openDelay={openDelay} closeDelay={closeDelay}>
             <HoverCard.Trigger asChild>
                 <span
-                    className="help-term"
+                    // Padding (px-0.5 py-0) lets the hover-tint
+                    // background pill breathe a few pixels around
+                    // the term without nudging line layout.
+                    //
+                    // The hover background-color transition is set
+                    // in global.css on .help-term so it respects
+                    // the page-wide prefers-reduced-motion
+                    // catch-all.
+                    className="help-term rounded-[4px] px-0.5 py-0"
                     data-testid={`help-term-${glossaryKey}`}
                     style={{
                         // Longhand (not shorthand) so happy-dom's
@@ -83,6 +91,13 @@ export default function HelpTooltip({
                         // ``.help-term:hover`` in ``global.css``
                         // adds a 10% accent-tinted background
                         // pill so the hover state is unambiguous.
+                        //
+                        // These longhands + ``cursor: help`` stay
+                        // INLINE (not utilities): the unit test
+                        // ``HelpTooltip.test.tsx`` pins them on the
+                        // inline ``style`` attribute (happy-dom
+                        // resolves CSS-variable borders
+                        // inconsistently in computed style).
                         borderBottomWidth: "2px",
                         borderBottomStyle: "dashed",
                         // ``--accent`` is defined in
@@ -90,15 +105,6 @@ export default function HelpTooltip({
                         // fallback needed.
                         borderBottomColor: "var(--accent)",
                         cursor: "help",
-                        // Padding lets the hover-tint background
-                        // pill breathe a few pixels around the
-                        // term without nudging line layout.
-                        padding: "0 2px",
-                        borderRadius: "4px",
-                        // The hover background-color transition
-                        // is set in global.css on .help-term so
-                        // it respects the page-wide
-                        // prefers-reduced-motion catch-all.
                     }}
                 >
                     {children}
@@ -109,28 +115,12 @@ export default function HelpTooltip({
                     sideOffset={6}
                     align="start"
                     data-testid={`help-popover-${glossaryKey}`}
-                    style={{
-                        maxWidth: "20rem",
-                        background: "var(--surface)",
-                        border: "1px solid var(--border)",
-                        borderRadius: "var(--radius-md)",
-                        boxShadow: "var(--shadow-elevated)",
-                        padding: "var(--space-3)",
-                        fontSize: "0.875rem",
-                        lineHeight: 1.4,
-                        zIndex: 1100,
-                    }}
+                    className="z-[1100] max-w-[20rem] rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-[var(--space-3)] text-[0.875rem] leading-[1.4] shadow-[var(--shadow-elevated)]"
                 >
-                    <div
-                        style={{
-                            fontWeight: 600,
-                            marginBottom: 4,
-                            fontSize: "0.9375rem",
-                        }}
-                    >
+                    <div className="mb-1 text-[0.9375rem] font-semibold">
                         {entry.title}
                     </div>
-                    <div style={{color: "var(--fg)"}}>{entry.short}</div>
+                    <div className="text-[var(--fg)]">{entry.short}</div>
                     <button
                         type="button"
                         data-testid={`help-learn-more-${glossaryKey}`}
@@ -138,18 +128,7 @@ export default function HelpTooltip({
                             e.stopPropagation();
                             openHelp(glossaryKey);
                         }}
-                        style={{
-                            display: "inline-block",
-                            marginTop: "var(--space-2)",
-                            padding: 0,
-                            background: "none",
-                            border: "none",
-                            color: "var(--accent)",
-                            cursor: "pointer",
-                            fontSize: "0.8125rem",
-                            fontWeight: 500,
-                            textDecoration: "underline",
-                        }}
+                        className="inline-block border-none bg-transparent p-0 mt-[var(--space-2)] text-[0.8125rem] font-medium text-[var(--accent)] underline"
                     >
                         {t("ui.help.learn_more", "Learn more")}
                     </button>

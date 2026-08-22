@@ -111,16 +111,12 @@ export default function QRImageUpload({
                 type="file"
                 accept="image/*"
                 onChange={onChange}
-                style={{display: "none"}}
+                className="hidden"
                 data-testid="qr-image-upload-input"
             />
             {status.kind === "invalid" && (
                 <p
-                    style={{
-                        marginTop: "0.5rem",
-                        fontSize: "0.85rem",
-                        color: "var(--danger)",
-                    }}
+                    className="mt-2 text-[0.85rem] text-[var(--danger)]"
                     data-testid="qr-image-upload-invalid"
                     role="status"
                     aria-live="polite"
@@ -130,11 +126,7 @@ export default function QRImageUpload({
             )}
             {status.kind === "decode-failed" && (
                 <p
-                    style={{
-                        marginTop: "0.5rem",
-                        fontSize: "0.85rem",
-                        color: "var(--danger)",
-                    }}
+                    className="mt-2 text-[0.85rem] text-[var(--danger)]"
                     data-testid="qr-image-upload-failed"
                     role="status"
                     aria-live="polite"

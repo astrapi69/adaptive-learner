@@ -14,19 +14,10 @@ export default function NotFound() {
         <main
             id="main"
             data-testid="not-found"
-            style={{
-                minHeight: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "2rem",
-                gap: "1rem",
-                textAlign: "center",
-            }}
+            className="flex min-h-full flex-col items-center justify-center gap-4 p-8 text-center"
         >
-            <h1 style={{margin: 0}}>404</h1>
-            <p style={{margin: 0, opacity: 0.7}}>
+            <h1 className="m-0">404</h1>
+            <p className="m-0 opacity-70">
                 {t("errors.not_found", "Not found.")}
             </p>
             <Button

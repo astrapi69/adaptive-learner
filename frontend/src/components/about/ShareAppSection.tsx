@@ -28,18 +28,16 @@ interface Props {
   t: (key: string, fallback?: string) => string;
 }
 
-const sectionStyle: React.CSSProperties = {
-  borderTop: "1px solid var(--border)",
-  paddingTop: 16,
-};
-
 export default function ShareAppSection({ t }: Props) {
   /** Which strand's QR modal is open (``null`` = closed). */
   const [qrStrand, setQrStrand] = useState<"haupt" | "latest" | null>(null);
 
   return (
-    <article data-testid="about-share-section" style={sectionStyle}>
-      <h3 style={{ marginTop: 0, marginBottom: 8 }}>
+    <article
+      data-testid="about-share-section"
+      className="border-t border-t-[var(--border)] pt-4"
+    >
+      <h3 className="mt-0 mb-2">
         {t("share.app.heading", "Share the app")}
       </h3>
 
@@ -51,7 +49,7 @@ export default function ShareAppSection({ t }: Props) {
         <h4 className="mb-1 text-sm font-semibold text-fg-primary">
           {t("share.app.haupt_label", "Main version (stable)")}
         </h4>
-        <p className="muted" style={{ marginTop: 0, marginBottom: 12 }}>
+        <p className="muted mt-0 mb-3">
           {t(
             "share.app.haupt_intro",
             "Share the stable app via QR code so others can open it.",
@@ -82,11 +80,7 @@ export default function ShareAppSection({ t }: Props) {
 
       {/* ---- Latest (preview / unstable) ---- */}
       <div
-        className="mt-3 rounded-md border p-3"
-        style={{
-          borderColor: "var(--warning)",
-          background: "var(--warning-bg)",
-        }}
+        className="mt-3 rounded-md border border-[var(--warning)] bg-[var(--warning-bg)] p-3"
         data-testid="about-share-latest"
       >
         <h4 className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-warning">
@@ -94,8 +88,7 @@ export default function ShareAppSection({ t }: Props) {
           {t("share.app.latest_label", "Latest version (test)")}
         </h4>
         <p
-          className="text-sm text-fg-secondary"
-          style={{ marginTop: 0, marginBottom: 8 }}
+          className="text-sm text-fg-secondary mt-0 mb-2"
           data-testid="about-share-latest-warning"
         >
           {t(

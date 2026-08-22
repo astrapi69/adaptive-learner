@@ -58,17 +58,9 @@ export default function BadgeGrid({
 
     return (
         <ul
-            className={className}
+            className={`m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(48px,1fr))] gap-2 p-0 ${className ?? ""}`}
             data-testid={testId}
             aria-label={ariaLabel}
-            style={{
-                listStyle: "none",
-                margin: 0,
-                padding: 0,
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(48px, 1fr))",
-                gap: 8,
-            }}
         >
             {items.map((item) => {
                 const title = item.earned

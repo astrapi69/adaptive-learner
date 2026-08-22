@@ -59,9 +59,9 @@ export default function IdentitySection({t}: Props) {
     return (
         <article
             data-testid="about-identity-section"
-            style={sectionStyle}
+            className="p-4 border border-[var(--border)] rounded-[8px] bg-[var(--surface)]"
         >
-            <h3 style={{marginTop: 0, marginBottom: 12}}>
+            <h3 className="mt-0 mb-3">
                 {t("about.identity_heading", "Identity file")}
             </h3>
             {loading && (
@@ -70,21 +70,21 @@ export default function IdentitySection({t}: Props) {
                 </p>
             )}
             {status && (
-                <dl style={dlStyle}>
+                <dl className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-[0.9rem] m-0">
                     <dt>
                         <strong>{t("about.identity_path_label", "Path")}</strong>
                     </dt>
-                    <dd data-testid="about-identity-path" style={ddStyle}>
+                    <dd data-testid="about-identity-path" className="m-0 break-all">
                         <code>{status.path}</code>
                     </dd>
                     <dt>
                         <strong>{t("about.identity_status_label", "Status")}</strong>
                     </dt>
-                    <dd data-testid="about-identity-status" style={ddStyle}>
+                    <dd data-testid="about-identity-status" className="m-0 break-all">
                         {status.exists ? (
                             <span
                                 data-testid="about-identity-status-active"
-                                style={{color: "var(--success)"}}
+                                className="text-[var(--success)]"
                             >
                                 {t("about.identity_status_active", "Active")}
                             </span>
@@ -106,7 +106,7 @@ export default function IdentitySection({t}: Props) {
                             </dt>
                             <dd
                                 data-testid="about-identity-last-seen"
-                                style={ddStyle}
+                                className="m-0 break-all"
                             >
                                 {formatLastSeen(status.last_seen)}
                             </dd>
@@ -114,10 +114,7 @@ export default function IdentitySection({t}: Props) {
                     )}
                 </dl>
             )}
-            <p
-                className="muted"
-                style={{marginTop: 12, fontSize: "0.85rem"}}
-            >
+            <p className="muted mt-3 text-[0.85rem]">
                 {t(
                     "about.identity_explainer",
                     "This file is auto-managed by Adaptive Learner. It lets the app recover your user identity after a browser data wipe. Do not edit it manually.",
@@ -137,20 +134,3 @@ function formatLastSeen(iso: string): string {
     if (Number.isNaN(d.getTime())) return iso; // defensive
     return d.toLocaleString();
 }
-
-const sectionStyle: React.CSSProperties = {
-    padding: 16,
-    border: "1px solid var(--border)",
-    borderRadius: 8,
-    background: "var(--surface)",
-};
-
-const dlStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "max-content 1fr",
-    gap: "4px 16px",
-    fontSize: "0.9rem",
-    margin: 0,
-};
-
-const ddStyle: React.CSSProperties = {margin: 0, wordBreak: "break-all"};

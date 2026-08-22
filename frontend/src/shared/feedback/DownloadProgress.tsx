@@ -37,16 +37,7 @@ export default function DownloadProgress({
     return (
         <div className={className} data-testid={testId}>
             {label != null && (
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        gap: "0.5rem",
-                        fontSize: "0.8125rem",
-                        color: "var(--fg-muted)",
-                        marginBottom: 4,
-                    }}
-                >
+                <div className="mb-1 flex justify-between gap-2 text-[0.8125rem] text-[var(--fg-muted)]">
                     <span>{label}</span>
                     <span data-testid={`${testId}-count`}>
                         {clamped} / {safeTotal}
@@ -59,21 +50,12 @@ export default function DownloadProgress({
                 aria-valuenow={clamped}
                 aria-valuemin={0}
                 aria-valuemax={safeTotal}
-                style={{
-                    height: 6,
-                    borderRadius: "var(--radius-sm)",
-                    background: "var(--bg-elevated)",
-                    overflow: "hidden",
-                }}
+                className="h-1.5 overflow-hidden rounded-[var(--radius-sm)] bg-[var(--bg-elevated)]"
             >
                 <div
                     data-testid={`${testId}-fill`}
-                    style={{
-                        height: "100%",
-                        width: `${pct}%`,
-                        background: "var(--accent)",
-                        transition: "width 300ms ease",
-                    }}
+                    className="h-full bg-[var(--accent)] [transition:width_300ms_ease]"
+                    style={{width: `${pct}%`}}
                 />
             </div>
         </div>

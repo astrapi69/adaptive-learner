@@ -283,10 +283,7 @@ export default function Navigation() {
           <HelpCircle
             size={16}
             aria-hidden="true"
-            style={{
-              verticalAlign: "middle",
-              marginRight: 6,
-            }}
+            className="mr-1.5 align-middle"
           />
           {t(HELP_TARGET.labelKey, HELP_TARGET.labelFallback)}
         </Button>

@@ -591,7 +591,7 @@ export default function Onboarding() {
                         type="file"
                         accept=".alb,.json,application/zip,application/json"
                         onChange={handleRestoreFile}
-                        style={{display: "none"}}
+                        className="hidden"
                         data-testid="onboarding-restore-input"
                     />
                 </section>

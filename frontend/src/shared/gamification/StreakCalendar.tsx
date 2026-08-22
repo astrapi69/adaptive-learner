@@ -87,17 +87,13 @@ export default function StreakCalendar({
 
     return (
         <div
-            className={className}
+            className={`flex gap-[3px] overflow-x-auto ${className ?? ""}`}
             data-testid={testId}
             role="img"
             aria-label={ariaLabel}
-            style={{display: "flex", gap: 3, overflowX: "auto"}}
         >
             {weeks.map((week, wi) => (
-                <div
-                    key={wi}
-                    style={{display: "flex", flexDirection: "column", gap: 3}}
-                >
+                <div key={wi} className="flex flex-col gap-[3px]">
                     {week.map((day) => {
                         const tier = Math.min(4, Math.max(0, tierFor(day.count)));
                         const isToday = today != null && day.date === today;

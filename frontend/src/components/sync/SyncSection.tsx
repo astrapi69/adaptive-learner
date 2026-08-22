@@ -202,7 +202,7 @@ export default function SyncSection() {
         <SettingsSection
             title={t("settings.section_sync", "Sync")}
             testid="settings-sync"
-            style={{marginTop: "1.5rem"}}
+            className="mt-6"
         >
             <p className="muted">
                 {t("sync.intro")}
@@ -277,25 +277,17 @@ function PairedView({
 }) {
     return (
         <div data-testid="sync-paired-view">
-            <div
-                style={{
-                    border: "1px solid var(--border)",
-                    borderRadius: 6,
-                    padding: "0.75rem 1rem",
-                    marginBottom: "0.75rem",
-                    background: "var(--surface)",
-                }}
-            >
-                <div style={{fontWeight: 600}}>
+            <div className="border border-[var(--border)] rounded-[6px] py-3 px-4 mb-3 bg-[var(--surface)]">
+                <div className="font-semibold">
                     {t("sync.connected_to")}: {config.user_name}
                 </div>
-                <small style={{opacity: 0.7}}>
+                <small className="opacity-70">
                     {config.host}:{config.port}
                     {" · "}
                     {t("sync.paired_at")}:{" "}
                     {new Date(config.paired_at).toLocaleString()}
                 </small>
-                <div style={{marginTop: "0.5rem"}}>
+                <div className="mt-2">
                     <small data-testid="sync-last">
                         {t("sync.last_sync")}:{" "}
                         {lastSync
@@ -303,14 +295,7 @@ function PairedView({
                             : t("sync.never")}
                     </small>
                 </div>
-                <div
-                    style={{
-                        display: "flex",
-                        gap: "0.5rem",
-                        marginTop: "0.75rem",
-                        flexWrap: "wrap",
-                    }}
-                >
+                <div className="flex gap-2 mt-3 flex-wrap">
                     <Button
                         type="button"
                         variant="default"
@@ -333,10 +318,7 @@ function PairedView({
                     </Button>
                 </div>
                 {storageMode === "api" && (
-                    <p
-                        className="muted"
-                        style={{marginTop: "0.5rem", fontSize: "0.85rem"}}
-                    >
+                    <p className="muted mt-2 text-[0.85rem]">
                         {t("sync.api_mode_note")}
                     </p>
                 )}
@@ -344,19 +326,15 @@ function PairedView({
 
             {history.length > 0 && (
                 <div data-testid="sync-history">
-                    <h3 style={{margin: "1rem 0 0.5rem"}}>
+                    <h3 className="mt-4 mx-0 mb-2">
                         {t("sync.history")}
                     </h3>
-                    <ul style={{listStyle: "none", padding: 0, margin: 0}}>
+                    <ul className="list-none p-0 m-0">
                         {history.map((h, i) => (
                             <li
                                 key={`${h.at}-${i}`}
                                 data-testid={`sync-history-${i}`}
-                                style={{
-                                    borderBottom: "1px solid var(--border)",
-                                    padding: "0.4rem 0",
-                                    fontSize: "0.9rem",
-                                }}
+                                className="border-b border-[var(--border)] py-[0.4rem] px-0 text-[0.9rem]"
                             >
                                 <span
                                     aria-hidden="true"
@@ -368,7 +346,7 @@ function PairedView({
                                 >
                                     {h.success ? "✓" : "✕"}
                                 </span>{" "}
-                                <span style={{opacity: 0.7}}>
+                                <span className="opacity-70">
                                     {new Date(h.at).toLocaleString()}
                                 </span>{" "}
                                 - {h.summary}
@@ -436,17 +414,9 @@ function DesktopUnpairedView({
             <p className="muted">
                 {t("sync.desktop_hint")}
             </p>
-            <div
-                style={{
-                    display: "flex",
-                    gap: "0.5rem",
-                    flexWrap: "wrap",
-                    alignItems: "flex-end",
-                    marginBottom: "0.75rem",
-                }}
-            >
-                <label style={{display: "flex", flexDirection: "column"}}>
-                    <small style={{opacity: 0.7}}>
+            <div className="flex gap-2 flex-wrap items-end mb-3">
+                <label className="flex flex-col">
+                    <small className="opacity-70">
                         {t("sync.host")}
                     </small>
                     <input
@@ -454,11 +424,11 @@ function DesktopUnpairedView({
                         value={host}
                         onChange={(e) => setHost(e.target.value)}
                         data-testid="sync-host-input"
-                        style={{padding: "0.35rem 0.5rem", minWidth: 180}}
+                        className="py-[0.35rem] px-2 min-w-45"
                     />
                 </label>
-                <label style={{display: "flex", flexDirection: "column"}}>
-                    <small style={{opacity: 0.7}}>{t("sync.port")}</small>
+                <label className="flex flex-col">
+                    <small className="opacity-70">{t("sync.port")}</small>
                     <input
                         type="number"
                         value={port}
@@ -466,7 +436,7 @@ function DesktopUnpairedView({
                             setPort(parseInt(e.target.value, 10) || DEFAULT_BACKEND_PORT)
                         }
                         data-testid="sync-port-input"
-                        style={{padding: "0.35rem 0.5rem", width: 100}}
+                        className="py-[0.35rem] px-2 w-25"
                     />
                 </label>
                 <Button
@@ -484,35 +454,23 @@ function DesktopUnpairedView({
             {qrDataUrl && link && (
                 <div
                     data-testid="sync-qr-panel"
-                    style={{
-                        border: "1px solid var(--border)",
-                        borderRadius: 6,
-                        padding: "1rem",
-                        background: "var(--surface)",
-                    }}
+                    className="border border-[var(--border)] rounded-[6px] p-4 bg-[var(--surface)]"
                 >
-                    <div style={{textAlign: "center"}}>
+                    <div className="text-center">
                         <img
                             src={qrDataUrl}
                             alt={t("sync.qr_alt")}
                             data-testid="sync-qr-image"
-                            style={{maxWidth: 256, height: "auto"}}
+                            className="max-w-64 h-auto"
                         />
                     </div>
                     <p
-                        style={{
-                            marginTop: "0.5rem",
-                            fontSize: "0.85rem",
-                            wordBreak: "break-all",
-                            background: "var(--bg)",
-                            padding: "0.5rem",
-                            borderRadius: 4,
-                        }}
+                        className="mt-2 text-[0.85rem] break-all bg-[var(--bg)] p-2 rounded-[4px]"
                         data-testid="sync-qr-link"
                     >
                         {link}
                     </p>
-                    <div style={{display: "flex", gap: "0.5rem", flexWrap: "wrap"}}>
+                    <div className="flex gap-2 flex-wrap">
                         <Button
                             type="button"
                             variant="secondary"
@@ -522,21 +480,13 @@ function DesktopUnpairedView({
                             {t("sync.copy_link")}
                         </Button>
                         {expiresAt && (
-                            <small
-                                style={{
-                                    opacity: 0.7,
-                                    alignSelf: "center",
-                                }}
-                            >
+                            <small className="opacity-70 self-center">
                                 {t("sync.expires_at")}:{" "}
                                 {new Date(expiresAt).toLocaleTimeString()}
                             </small>
                         )}
                     </div>
-                    <p
-                        className="muted"
-                        style={{marginTop: "0.5rem", fontSize: "0.85rem"}}
-                    >
+                    <p className="muted mt-2 text-[0.85rem]">
                         {t("sync.scan_hint")}
                     </p>
                 </div>
@@ -571,22 +521,15 @@ function PhoneUnpairedView({
                 onClick={onScanClick}
                 disabled={busy !== ""}
                 data-testid="sync-scan-button"
-                style={{marginBottom: "0.75rem", width: "100%", maxWidth: 320}}
+                className="mb-3 w-full max-w-80"
             >
                 {t("sync.scan_qr")}
             </Button>
             <details
                 data-testid="sync-paste-fallback"
-                style={{marginTop: "0.5rem"}}
+                className="mt-2"
             >
-                <summary
-                    style={{
-                        cursor: "pointer",
-                        fontSize: "0.9rem",
-                        opacity: 0.8,
-                        padding: "0.25rem 0",
-                    }}
-                >
+                <summary className="cursor-pointer text-[0.9rem] opacity-80 py-1 px-0">
                     {t("sync.paste_link_fallback")}
                 </summary>
                 <textarea
@@ -614,7 +557,7 @@ function PhoneUnpairedView({
                     onClick={onConnect}
                     disabled={!pairingLink.trim() || busy !== ""}
                     data-testid="sync-pair-button"
-                    style={{marginTop: "0.5rem"}}
+                    className="mt-2"
                 >
                     {busy === "pair"
                         ? t("sync.pairing")
