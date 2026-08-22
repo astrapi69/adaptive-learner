@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import FormHint from "../../../shared/forms/FormHint";
 import {
@@ -200,16 +201,15 @@ export default function SaveOfflineLessonModal({
   const canSave = saveable && title.trim().length > 0;
 
   return (
-    <div className="modal-overlay" data-testid="save-offline-lesson-modal">
-      <div
-        className="modal-card"
+    <ModalOverlay data-testid="save-offline-lesson-modal">
+      <ModalCard
         role="dialog"
         aria-modal="true"
         aria-labelledby="save-lesson-title"
       >
-        <h2 id="save-lesson-title" className="modal-title">
+        <ModalTitle id="save-lesson-title">
           {t("content.save_lesson.modal_title", "Save as offline lesson")}
-        </h2>
+        </ModalTitle>
         <label className="form-row">
           <span className="form-label">
             {t("content.save_lesson.title_label", "Lesson title")}
@@ -346,7 +346,7 @@ export default function SaveOfflineLessonModal({
               : t("content.save_lesson.save", "Save")}
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalCard>
+    </ModalOverlay>
   );
 }

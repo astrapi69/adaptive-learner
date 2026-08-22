@@ -3,6 +3,7 @@ import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
 import {Button} from "@/components/ui/button";
+import {ModalOverlay, ModalCard, ModalTitle} from "@/shared/modal";
 import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
 import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../hooks/ui/useI18n";
@@ -114,17 +115,16 @@ export default function RatingDialog({
     };
 
     return (
-        <div className="modal-overlay" data-testid="rating-dialog">
-            <div
+        <ModalOverlay data-testid="rating-dialog">
+            <ModalCard
                 ref={dialogRef}
-                className="modal-card"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="rating-title"
             >
-                <h2 id="rating-title" className="modal-title">
+                <ModalTitle id="rating-title">
                     {t("session.rating_title", "How did the session go?")}
-                </h2>
+                </ModalTitle>
                 {cycleCount && cycleCount > 1 && (
                     <div
                         className="rating-cycles-summary"
@@ -247,8 +247,8 @@ export default function RatingDialog({
                         </Button>
                     </div>
                 </form>
-            </div>
-        </div>
+            </ModalCard>
+        </ModalOverlay>
     );
 }
 

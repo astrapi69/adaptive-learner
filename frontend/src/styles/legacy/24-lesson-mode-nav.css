@@ -356,14 +356,8 @@
     display: none;
   }
 
-  /* ----- 9C: RatingDialog modal sized for thumb reach -------- */
-  .modal-card {
-    /* On a phone, give the modal the whole viewport with some
-       breathing room. The form-actions row also stacks via 9A. */
-    width: 100%;
-    max-height: 92vh;
-    overflow-y: auto;
-  }
+  /* (9C thumb-reach modal sizing moved into the shared ModalCard
+     component as max-md: utilities, #2729.) */
 }
 
 @media (max-width: 360px) {

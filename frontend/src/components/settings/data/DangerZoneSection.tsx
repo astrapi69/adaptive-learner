@@ -46,6 +46,7 @@ import {backupFilename, saveBackupToDisk} from "../../../utils/backup-download";
 import {withLocalStorageSnapshot} from "../../../lib/backup/localStorageSnapshot";
 import {notify} from "../../../utils/notify";
 import {SettingsSection} from "../SettingsSection";
+import {ModalOverlay, ModalCard, ModalTitle} from "@/shared/modal";
 
 type Step = "idle" | "confirm" | "typed";
 
@@ -219,24 +220,25 @@ export default function DangerZoneSection() {
             )}
 
             {step !== "idle" && (
-                <div className="modal-overlay" data-testid="danger-zone-modal">
-                    <div
+                <ModalOverlay data-testid="danger-zone-modal">
+                    <ModalCard
                         ref={dialogRef}
-                        className="modal-card max-w-[540px]"
+                        className="max-w-[540px]"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="danger-zone-modal-title"
                     >
-                        <h3
+                        <ModalTitle
+                            as="h3"
                             id="danger-zone-modal-title"
-                            className="modal-title text-destructive"
+                            className="text-destructive"
                         >
                             ⚠️{" "}
                             {t(
                                 "settings.danger_zone_reset_button",
                                 "Reset Everything",
                             )}
-                        </h3>
+                        </ModalTitle>
                         <p
                             data-testid="danger-zone-warning"
                             className="leading-normal"
@@ -320,8 +322,8 @@ export default function DangerZoneSection() {
                                 </Button>
                             )}
                         </div>
-                    </div>
-                </div>
+                    </ModalCard>
+                </ModalOverlay>
             )}
         </SettingsSection>
     );

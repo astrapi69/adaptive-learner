@@ -313,4 +313,8 @@
 # eigene Regel (Vererbung vom Button rettete das Aussehen bislang
 # unbemerkt) - der neue Code traegt gar keinen Klassennamen mehr auf
 # dem Label-Span, dieselbe Vererbung greift weiterhin. Kein neues CSS.
-7658
+# 7658 -> 7624 (#2729, Option C): Modal-Extraktion. .modal-overlay/
+# .modal-card/.modal-title (08-qr-scanner.css) + die 9C-Mobile-Override
+# (24-lesson-mode-nav.css) geloescht - die Werte leben als token-backed
+# Utilities in src/shared/modal/Modal.tsx weiter.
+7624

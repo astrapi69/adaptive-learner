@@ -11,6 +11,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import DeleteProgressOption from "./DeleteProgressOption";
@@ -51,19 +52,18 @@ export default function BulkDeleteSetsModal({
 
   if (count === 0) return null;
   return (
-    <div className="modal-overlay" data-testid="bulk-delete-sets-modal">
-      <div
-        className="modal-card"
+    <ModalOverlay data-testid="bulk-delete-sets-modal">
+      <ModalCard
         role="dialog"
         aria-modal="true"
         aria-labelledby="bulk-delete-sets-title"
       >
-        <h2 id="bulk-delete-sets-title" className="modal-title">
+        <ModalTitle id="bulk-delete-sets-title">
           {t("content.set_status.bulk_delete_title", "Delete {n} sets?").replace(
             "{n}",
             String(count),
           )}
-        </h2>
+        </ModalTitle>
         <p>
           {t(
             "content.set_status.bulk_delete_confirm",
@@ -100,7 +100,7 @@ export default function BulkDeleteSetsModal({
               : t("content.set_status.action.delete", "Delete")}
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalCard>
+    </ModalOverlay>
   );
 }

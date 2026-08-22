@@ -12,6 +12,7 @@ import {GripVertical, Pencil, Plus, Trash2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {ModalCard, ModalOverlay, ModalTitle} from "@/shared/modal";
 import {
     DndContext,
     type DragEndEvent,
@@ -413,23 +414,19 @@ export default function CardEditor({
             </DndContext>
 
             {confirmClear && (
-                <div
-                    className="modal-overlay"
-                    data-testid="card-clear-confirm"
-                >
-                    <div
+                <ModalOverlay data-testid="card-clear-confirm">
+                    <ModalCard
                         ref={confirmClearRef}
-                        className="modal-card"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="card-clear-confirm-title"
                     >
-                        <h2 id="card-clear-confirm-title" className="modal-title">
+                        <ModalTitle id="card-clear-confirm-title">
                             {t(
                                 "create_lesson.cards.clear_confirm_title",
                                 "Remove all cards?",
                             )}
-                        </h2>
+                        </ModalTitle>
                         <div className="form-actions">
                             <Button
                                 type="button"
@@ -453,8 +450,8 @@ export default function CardEditor({
                                 )}
                             </Button>
                         </div>
-                    </div>
-                </div>
+                    </ModalCard>
+                </ModalOverlay>
             )}
         </section>
     );

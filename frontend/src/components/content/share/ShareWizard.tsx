@@ -64,7 +64,10 @@ export default function ShareWizard(props: ShareWizardProps) {
         className="max-h-[90vh] overflow-y-auto"
       >
         <header className="share-wizard-header mb-4 flex flex-col gap-1">
-          <DialogTitle id="share-wizard-title" className="modal-title">
+          <DialogTitle
+            id="share-wizard-title"
+            className="m-0 text-[1.25rem] font-semibold"
+          >
             {t("content.wizard.title", "Share with the community")}
           </DialogTitle>
           <DialogDescription

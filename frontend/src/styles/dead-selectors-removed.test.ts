@@ -109,3 +109,32 @@ describe("dead-CSS tranche selectors stay removed (#2476, refs #1485)", () => {
         },
     );
 });
+
+/**
+ * The modal shell classes moved into the shared Modal components
+ * (src/shared/modal, #2729 — Option C): every consumer renders the
+ * ModalOverlay/ModalCard/ModalTitle parts, whose styling is token-backed
+ * Tailwind utilities. The legacy rules were deleted WITH the extraction;
+ * neither the classnames nor the rules may reappear.
+ */
+const REMOVED_SELECTORS_MODAL_EXTRACTION = [
+    "modal-overlay",
+    "modal-card",
+    "modal-title",
+] as const;
+
+describe("modal-extraction selectors stay removed (#2729, refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_MODAL_EXTRACTION)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was replaced by the shared Modal parts ` +
+                    "(src/shared/modal, #2729) and its legacy rule deleted. " +
+                    "Style the shared component instead of re-adding the rule.",
+            ).toBe(false);
+        },
+    );
+});

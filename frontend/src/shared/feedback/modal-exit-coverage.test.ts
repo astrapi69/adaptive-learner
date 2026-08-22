@@ -128,8 +128,18 @@ function walk(dir: string, acc: string[] = []): string[] {
   return acc;
 }
 
-/** The `.modal-overlay` className usage (raw hand-rolled pattern). */
-const RAW_CLASS = /className=\{?["'`][^"'`]*\bmodal-overlay\b/;
+/**
+ * The raw hand-rolled pattern. Historically the `.modal-overlay` className;
+ * since the #2729 styling extraction (Option C, #1485) the same dialogs
+ * render the shared `<ModalOverlay>`/`<ModalCard>` parts instead — a pure
+ * STYLING move that does NOT provide the height-independent exits this
+ * ratchet tracks (no X, no Escape, no backdrop close). Both forms therefore
+ * count as `raw`: the detector follows the pattern's new spelling so the
+ * #2266 ratchet cannot be hollowed out by a rename. Migrating a dialog to
+ * ModalShell (which DOES provide the exits) is what lowers the baseline.
+ */
+const RAW_CLASS =
+  /className=\{?["'`][^"'`]*\bmodal-overlay\b|<ModalOverlay\b/;
 
 /** Any marker that makes a file a modal surface. */
 const MODAL_MARKERS: RegExp[] = [
