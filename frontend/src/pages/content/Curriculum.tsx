@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useState, type FormEvent} from "react";
 import {useNavigate} from "react-router";
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 
 import AddTopicDialog from "../../components/topic/AddTopicDialog";
 import CurriculumDescriptionEditor from "../../components/topic/CurriculumDescriptionEditor";
@@ -346,11 +347,11 @@ export default function Curriculum() {
             </section>
 
             {selectedId ? (
-                <section className="dashboard-card dashboard-card-wide">
+                <DashboardCard as="section" wide>
                     <div className="curriculum-tree-head">
-                        <h2 className="dashboard-card-title">
+                        <DashboardCardTitle>
                             {curricula.find((c) => c.id === selectedId)?.title ?? ""}
-                        </h2>
+                        </DashboardCardTitle>
                         <Button
                             variant="secondary"
                             type="button"
@@ -392,14 +393,14 @@ export default function Curriculum() {
                             onDelete={handleDelete}
                         />
                     )}
-                </section>
+                </DashboardCard>
             ) : null}
 
             {selectedId && (
-                <section className="dashboard-card dashboard-card-wide">
-                    <h2 className="dashboard-card-title">
+                <DashboardCard as="section" wide>
+                    <DashboardCardTitle>
                         {t("curriculum.lessons_title", "Lessons")}
-                    </h2>
+                    </DashboardCardTitle>
                     <LessonList
                         lessons={lessons}
                         onCreate={handleCreateLesson}
@@ -407,7 +408,7 @@ export default function Curriculum() {
                         onDelete={handleDeleteLesson}
                         submitting={submitting}
                     />
-                </section>
+                </DashboardCard>
             )}
 
             {!selectedId ? (

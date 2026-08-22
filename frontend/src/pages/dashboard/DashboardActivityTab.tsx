@@ -10,6 +10,7 @@
 
 import { useNavigate } from "react-router";
 
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import ActivityTrend from "../../components/dashboard/ActivityTrend";
 import LearningRepoWidget from "../../components/dashboard/LearningRepoWidget";
 import ReviewQueueCard from "../../components/dashboard/ReviewQueueCard";
@@ -64,21 +65,21 @@ export default function DashboardActivityTab({
     >
       {userId && <ReviewQueueCard userId={userId} />}
 
-      <article className="dashboard-card dashboard-card-wide">
-        <h2 className="dashboard-card-title">
+      <DashboardCard wide>
+        <DashboardCardTitle>
           {t("gamification.card_streak", "Streak")}
-        </h2>
+        </DashboardCardTitle>
         <ActivityTrend entries={heatmap} />
         <StreakCalendar entries={heatmap} />
-      </article>
+      </DashboardCard>
 
-      <article className="dashboard-card">
-        <h2 className="dashboard-card-title">
+      <DashboardCard>
+        <DashboardCardTitle>
           <HelpTooltip glossaryKey="learning_profile">
             {t("dashboard.card_profile", "Learning profile")}
           </HelpTooltip>
           <HelpLink glossaryKey="learning_profile" />
-        </h2>
+        </DashboardCardTitle>
         {profile ? (
           <ProfileRadar profile={profile} height={280} />
         ) : incompleteAssessment ? (
@@ -111,56 +112,56 @@ export default function DashboardActivityTab({
             </Button>
           </Tile>
         )}
-      </article>
+      </DashboardCard>
 
-      <article className="dashboard-card">
-        <h2 className="dashboard-card-title">
+      <DashboardCard>
+        <DashboardCardTitle>
           <HelpTooltip glossaryKey="learning_session">
             {t("dashboard.card_counter", "Sessions")}
           </HelpTooltip>
           <HelpLink glossaryKey="learning_session" />
-        </h2>
+        </DashboardCardTitle>
         <SessionCounter summary={summary} />
-      </article>
+      </DashboardCard>
 
-      <article className="dashboard-card dashboard-card-wide">
-        <h2 className="dashboard-card-title">{t("dashboard.card_progress", "Progress")}</h2>
+      <DashboardCard wide>
+        <DashboardCardTitle>{t("dashboard.card_progress", "Progress")}</DashboardCardTitle>
         <ProgressTimeline summary={summary} />
-      </article>
+      </DashboardCard>
 
-      <article className="dashboard-card">
-        <h2 className="dashboard-card-title">
+      <DashboardCard>
+        <DashboardCardTitle>
           <HelpTooltip glossaryKey="method_ai_adaptive">
             {t("dashboard.card_distribution", "Method distribution")}
           </HelpTooltip>
           <HelpLink glossaryKey="method_ai_adaptive" />
-        </h2>
+        </DashboardCardTitle>
         <MethodDistribution summary={summary} />
-      </article>
+      </DashboardCard>
 
-      <article className="dashboard-card">
-        <h2 className="dashboard-card-title">
+      <DashboardCard>
+        <DashboardCardTitle>
           {t("dashboard.card_tools", "Tool recommendations")}
-        </h2>
+        </DashboardCardTitle>
         <ToolRecommendations tools={tools} />
-      </article>
+      </DashboardCard>
 
-      <article className="dashboard-card">
-        <h2 className="dashboard-card-title">
+      <DashboardCard>
+        <DashboardCardTitle>
           <HelpTooltip glossaryKey="feature_spaced_repetition">
             {t("dashboard.card_spaced", "Spaced practice")}
           </HelpTooltip>
           <HelpLink glossaryKey="feature_spaced_repetition" />
-        </h2>
+        </DashboardCardTitle>
         <SpacedRecommendations cards={spaced} />
-      </article>
+      </DashboardCard>
 
-      <article className="dashboard-card dashboard-card-wide">
-        <h2 className="dashboard-card-title">
+      <DashboardCard wide>
+        <DashboardCardTitle>
           {t("dashboard.card_recent_sessions", "Recent sessions")}
-        </h2>
+        </DashboardCardTitle>
         <RecentSessions sessions={summary?.recent_sessions ?? []} />
-      </article>
+      </DashboardCard>
 
       {projectId ? <LearningRepoWidget projectId={projectId} /> : null}
     </section>

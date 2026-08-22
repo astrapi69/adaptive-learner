@@ -170,3 +170,33 @@ describe("btn-family selectors stay removed (#2731, refs #1485)", () => {
         },
     );
 });
+
+/**
+ * The widget-card family moved into the shared DashboardCard components
+ * (src/shared/layout/DashboardCard, Option C, #1485): every consumer
+ * renders DashboardCard / DashboardCardTitle, whose styling is
+ * token-backed Tailwind utilities (including the mobile padding shrink).
+ * The legacy rules were deleted WITH the extraction and may not reappear.
+ */
+const REMOVED_SELECTORS_DASHBOARD_CARD = [
+    "dashboard-card",
+    "dashboard-card-wide",
+    "dashboard-card-title",
+] as const;
+
+describe("dashboard-card selectors stay removed (refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_DASHBOARD_CARD)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was replaced by the shared DashboardCard ` +
+                    "parts (src/shared/layout/DashboardCard) and its legacy " +
+                    "rule deleted. Style the shared component instead of " +
+                    "re-adding the rule.",
+            ).toBe(false);
+        },
+    );
+});

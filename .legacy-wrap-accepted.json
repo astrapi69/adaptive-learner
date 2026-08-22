@@ -23,13 +23,6 @@
       "reason": "Intended: the Danger-Zone confirm/cancel action row wants extra top separation from the destructive controls above it (DangerZoneSection.tsx:285), so it overrides the .form-actions default margin-top (var(--space-4)) with the larger mt-6. Deliberate spacing, already live."
     },
     {
-      "block": "Dashboard page",
-      "legacy_selector": ".tile",
-      "property": "align-items",
-      "override_utility": "items-start",
-      "reason": "Intended: the Dashboard activity tiles are a vertical column layout (DashboardActivityTab.tsx:85/99 use 'tile flex flex-col items-start gap-2'), so they override the .tile centred-row default (align-items:center) to top-align their stacked content. The .tile centre default still applies to the many single-item tiles elsewhere."
-    },
-    {
       "block": "Lesson header / summary + content-set heading",
       "legacy_selector": ".content-set-meta h4",
       "property": "font-weight",

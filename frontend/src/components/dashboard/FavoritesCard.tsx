@@ -11,6 +11,7 @@
 
 import {useNavigate} from "react-router";
 
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import FavoritesList from "../../shared/media/FavoritesList";
 import {useFavorites} from "../../hooks/learning/useFavorites";
 import {useI18n} from "../../hooks/ui/useI18n";
@@ -40,10 +41,10 @@ export default function FavoritesCard({userId}: FavoritesCardProps) {
         favorites.find((f) => favoriteId(f.setId, f.filename) === id);
 
     return (
-        <article className="dashboard-card" data-testid="favorites-card">
-            <h2 className="dashboard-card-title">
+        <DashboardCard data-testid="favorites-card">
+            <DashboardCardTitle>
                 {t("favorites.card_title", "Your favorites")}
-            </h2>
+            </DashboardCardTitle>
             <FavoritesList
                 items={items}
                 onOpen={(id) => {
@@ -72,6 +73,6 @@ export default function FavoritesCard({userId}: FavoritesCardProps) {
                     )}
                 </p>
             )}
-        </article>
+        </DashboardCard>
     );
 }

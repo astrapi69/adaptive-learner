@@ -61,7 +61,7 @@ export default function ProfileRadar({ profile, height = 320 }: ProfileRadarProp
                 next element (#105). ``minHeight`` + ``minWidth: 0``
                 are load-bearing — a 100%-height chart child collapses
                 to 0 on the first layout pass inside a flex column
-                (here and in ``.dashboard-card``) without them.
+                (here and in the shared ``DashboardCard``) without them.
                 ``role="img"`` + the aria-label live HERE, on the
                 chart-only wrapper, NOT on the outer container — the
                 outer container also holds the interactive

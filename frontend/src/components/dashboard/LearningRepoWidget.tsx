@@ -11,6 +11,7 @@
 
 import {GitBranch} from "lucide-react";
 import {Link} from "react-router";
+import {DashboardCard} from "@/shared/layout";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 
@@ -21,10 +22,7 @@ interface LearningRepoWidgetProps {
 export default function LearningRepoWidget({projectId}: LearningRepoWidgetProps) {
     const {t} = useI18n();
     return (
-        <div
-            className="dashboard-card learning-repo-widget"
-            data-testid="learning-repo-widget"
-        >
+        <DashboardCard as="div" data-testid="learning-repo-widget">
             <h3>
                 <GitBranch size={18} />
                 {t("repo.widget.title", "Learning Repository")}
@@ -37,11 +35,11 @@ export default function LearningRepoWidget({projectId}: LearningRepoWidgetProps)
             </p>
             <Link
                 to={`/projects/${encodeURIComponent(projectId)}/learning-repo`}
-                className="learning-repo-widget-link text-sm text-accent hover:underline"
+                className="text-sm text-accent hover:underline"
                 data-testid="learning-repo-widget-link"
             >
                 {t("repo.widget.open", "Open repository")}
             </Link>
-        </div>
+        </DashboardCard>
     );
 }
