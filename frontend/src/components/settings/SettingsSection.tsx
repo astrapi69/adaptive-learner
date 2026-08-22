@@ -21,29 +21,22 @@
  * consumer-specific overrides (DangerZoneSection's red border, HelpBrowser's
  * inline-flex title) keep working unchanged through the extraction. Forwards
  * its ref to the `<section>` root (BackupSection scrolls to it after a
- * restore).
+ * restore); every other `<section>` attribute (`style`, `hidden`, `id`,
+ * `aria-busy`, ...) passes straight through via rest props.
  */
 import { forwardRef } from "react";
-import type { ReactNode, CSSProperties } from "react";
+import type { ComponentPropsWithoutRef, ReactNode, CSSProperties } from "react";
 
-export interface SettingsSectionProps {
+export interface SettingsSectionProps
+  extends Omit<ComponentPropsWithoutRef<"section">, "title"> {
   /** Heading text/content. Omit for the rare section with no title. */
   title?: ReactNode;
   /** `data-testid` on the `<section>` root. */
   testid?: string;
-  /** Extra classes merged onto the `<section>` root (e.g. `mt-6`). */
-  className?: string;
-  /** Extra inline styles merged onto the `<section>` root. */
-  style?: CSSProperties;
   /** Extra classes merged onto the `<h2>` title. */
   titleClassName?: string;
   /** Extra inline styles merged onto the `<h2>` title. */
   titleStyle?: CSSProperties;
-  /** Passed straight through to the `<section>` (e.g. the Dexie-only gate). */
-  hidden?: boolean;
-  /** `id` on the `<section>` root, when a consumer needs to anchor to it. */
-  id?: string;
-  children?: ReactNode;
 }
 
 /**
@@ -59,17 +52,7 @@ export interface SettingsSectionProps {
  */
 export const SettingsSection = forwardRef<HTMLElement, SettingsSectionProps>(
   function SettingsSection(
-    {
-      title,
-      testid,
-      className,
-      style,
-      titleClassName,
-      titleStyle,
-      hidden,
-      id,
-      children,
-    },
+    { title, testid, className, titleClassName, titleStyle, children, ...rest },
     ref,
   ) {
     const sectionClassName = className
@@ -82,11 +65,9 @@ export const SettingsSection = forwardRef<HTMLElement, SettingsSectionProps>(
     return (
       <section
         ref={ref}
-        id={id}
         className={sectionClassName}
-        style={style}
         data-testid={testid}
-        hidden={hidden}
+        {...rest}
       >
         {title !== undefined && (
           <h2 className={titleClass} style={titleStyle}>

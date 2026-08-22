@@ -26,6 +26,7 @@ import { SecretInput } from "../../../shared/forms/SecretInput";
 import { buildAddRepoLink, parseAddRepoQr } from "../../../lib/content/placement/share-link";
 import { QrImageUpload } from "../../../shared/qr";
 import ContentRepoRow from "./ContentRepoRow";
+import { SettingsSection } from "../SettingsSection";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
 import { readLearnerState } from "../../../lib/learning/learnerState";
@@ -536,19 +537,19 @@ export default function ContentRepoSettingsSection() {
 
   if (!loaded) {
     return (
-      <section
-        className="settings-section"
-        data-testid="content-repo-section"
+      <SettingsSection
+        testid="content-repo-section"
         aria-busy="true"
-      >
-        <h2>{t("content_repo.title", "Content repositories")}</h2>
-      </section>
+        title={t("content_repo.title", "Content repositories")}
+      />
     );
   }
 
   return (
-    <section className="settings-section" data-testid="content-repo-section">
-      <h2>{t("content_repo.title", "Content repositories")}</h2>
+    <SettingsSection
+      testid="content-repo-section"
+      title={t("content_repo.title", "Content repositories")}
+    >
 
       {/* Official, read-only. */}
       <div
@@ -910,6 +911,6 @@ export default function ContentRepoSettingsSection() {
         onConfirm={confirmRemove}
         onCancel={cancelRemove}
       />
-    </section>
+    </SettingsSection>
   );
 }

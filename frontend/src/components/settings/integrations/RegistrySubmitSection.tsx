@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { ApiError } from "../../../api/client";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage, resolveStorageMode } from "../../../storage";
+import { SettingsSection } from "../SettingsSection";
 import {
   parseGitHubRepoUrl,
   readUserRepos,
@@ -299,11 +300,10 @@ export default function RegistrySubmitSection() {
   const canCreatePr = resolveStorageMode() === "dexie" && tokenConfigured;
 
   return (
-    <section
-      className="settings-section"
-      data-testid="registry-submit-section"
+    <SettingsSection
+      testid="registry-submit-section"
+      title={t("registry.title", "Register your repository")}
     >
-      <h2>{t("registry.title", "Register your repository")}</h2>
       <p className="m-0 mb-3 text-sm text-[var(--fg-muted)]">
         {t(
           "registry.intro",
@@ -528,6 +528,6 @@ export default function RegistrySubmitSection() {
         </div>
         );
       })()}
-    </section>
+    </SettingsSection>
   );
 }
