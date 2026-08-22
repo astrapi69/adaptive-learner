@@ -8,6 +8,7 @@
 
 import DailyMissionsCard from "../../components/gamification/DailyMissionsCard";
 import DashboardBadgeWidget from "../../components/badges/DashboardBadgeWidget";
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import { useI18n } from "../../hooks/ui/useI18n";
 import type { BadgeWithProgress } from "../../storage/types";
 
@@ -27,15 +28,15 @@ export default function DashboardMissionsTab({
       data-testid="dashboard-tab-missions-panel"
     >
       {userId && (
-        <article className="dashboard-card dashboard-card-wide">
+        <DashboardCard wide>
           <DailyMissionsCard userId={userId} />
-        </article>
+        </DashboardCard>
       )}
 
-      <article className="dashboard-card dashboard-card-wide">
-        <h2 className="dashboard-card-title">{t("gamification.card_badges", "Badges")}</h2>
+      <DashboardCard wide>
+        <DashboardCardTitle>{t("gamification.card_badges", "Badges")}</DashboardCardTitle>
         <DashboardBadgeWidget badges={badges} />
-      </article>
+      </DashboardCard>
     </section>
   );
 }

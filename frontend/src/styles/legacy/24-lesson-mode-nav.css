@@ -277,12 +277,9 @@
   .dashboard-page {
     padding: var(--space-4) var(--space-3);
   }
-  .dashboard-card {
-    padding: var(--space-3) var(--space-3);
-  }
-  .dashboard-card-title {
-    font-size: 1rem;
-  }
+  /* (The widget-card mobile padding moved into the shared
+     DashboardCard as max-md:p-*; the old mobile title font-size
+     override merely restated the base 1rem and was dropped.) */
 
   /* ----- Tables overflow horizontally rather than the page --- */
   .commit-table-wrap {

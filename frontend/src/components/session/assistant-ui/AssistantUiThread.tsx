@@ -333,7 +333,7 @@ export default function AssistantUiThread({
                     />
                     <ComposerMic />
                     <ComposerPrimitive.Send
-                        className={cn(buttonVariants(), "max-md:min-w-16")}
+                        className={cn(buttonVariants(), "max-[769px]:min-w-16")}
                         data-testid="chat-send"
                     >
                         {t("session.send_message", "Send")}

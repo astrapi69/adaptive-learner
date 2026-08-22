@@ -323,4 +323,9 @@
 # laengst shadcn Buttons bzw. das Vault-Paket emittiert keine
 # btn-Klassen) sowie btn-spinner + Keyframes (jetzt Loader2 mit
 # animate-spin an den Konsumenten).
-7520
+# 7520 -> 7486 (Option C Slice 3, refs #1485): dashboard-card-Familie in
+# die geteilten DashboardCard-Komponenten extrahiert
+# (src/shared/layout/DashboardCard); Regeln card/wide/title plus die
+# mobilen Overrides geloescht (das mobile title-font-size-Override war
+# ein No-op gegen die 1rem-Basis).
+7486

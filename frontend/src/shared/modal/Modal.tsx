@@ -26,8 +26,11 @@
  * `role`/`aria-*`/`data-testid`/`onClick` wiring unchanged.
  *
  * Responsive note: the old mobile override lived in a
- * `@media (max-width: 768px)` block; `max-md:` compiles to
- * `width < 768px` — a 1px boundary nuance with no practical effect.
+ * `@media (max-width: 768px)` block — INCLUSIVE of 768, the
+ * iPad-portrait/tablet width. `max-md:` compiles to `width < 768px`
+ * and misses exactly that width (a real device class, and the width
+ * the visual tablet motifs render at — see the DashboardCard
+ * breakpoint note), so the overrides use `max-[769px]:` instead.
  *
  * @example
  * ```tsx
@@ -70,7 +73,7 @@ export const ModalCard = forwardRef<
     <div
       ref={ref}
       className={cn(
-        "flex w-full max-w-[32rem] flex-col gap-[var(--space-4)] rounded-[var(--radius-lg)] bg-bg-surface p-[var(--space-5)] shadow-[var(--shadow-elevated)] max-md:max-h-[92vh] max-md:overflow-y-auto",
+        "flex w-full max-w-[32rem] flex-col gap-[var(--space-4)] rounded-[var(--radius-lg)] bg-bg-surface p-[var(--space-5)] shadow-[var(--shadow-elevated)] max-[769px]:max-h-[92vh] max-[769px]:overflow-y-auto",
         className,
       )}
       {...rest}
