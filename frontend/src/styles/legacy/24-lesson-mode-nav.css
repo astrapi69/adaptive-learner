@@ -209,20 +209,14 @@
     margin-left: var(--space-2);
   }
 
-  /* ----- 44px touch targets everywhere on mobile -------------- */
-  .btn {
-    min-height: 44px;
-    padding: var(--space-3) var(--space-5);
-  }
+  /* (The former generic mobile 44px button rule is gone: the shadcn
+     Button base carries min-h-11 on every size at all viewports.) */
 
   /* ----- Form actions: stack vertically when cramped ---------- */
   .form-actions {
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-2);
-  }
-  .form-actions .btn {
-    width: 100%;
   }
 
   /* ----- Settings: model-override + API-key rows stack -------- */
@@ -234,10 +228,6 @@
   }
   .api-key-row-input input,
   .model-override-row-input input {
-    width: 100%;
-  }
-  .api-key-row-input .btn,
-  .model-override-row-input .btn {
     width: 100%;
   }
 
@@ -281,10 +271,6 @@
   .spaced-rec-actions {
     flex-direction: row;
     gap: var(--space-2);
-  }
-  .spaced-rec-actions .btn {
-    flex: 1;
-    min-height: 44px;
   }
 
   /* ----- Dashboard / Progress page padding shrinks ----------- */
@@ -337,12 +323,9 @@
     min-height: 3rem;
     font-size: 16px;
   }
-  .chat-input-row .btn {
-    /* Pin the send button square + 44px tall so it's an obvious
-       thumb target adjacent to the textarea, not a row below. */
-    min-width: 4rem;
-    min-height: 44px;
-  }
+  /* (The send button's mobile min-width moved onto the Send
+     primitive itself as max-md:min-w-16; its 44px height comes
+     from the shadcn Button base.) */
 
   /* ----- 9C: CycleProgress horizontal scroll on cramped widths */
   /* The 7-step grid drops labels at ≤720px (from 6A) but the 7

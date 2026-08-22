@@ -162,9 +162,9 @@ code {
  * color. global.css is unlayered and would otherwise override the
  * layered Tailwind utility, putting accent text on an accent
  * background (invisible in dark mode).
- * #194 — same hazard for hand-rolled button anchors
- * (``<Link className="btn btn-primary">``): the carve-outs used to
- * raise this rule's specificity so it ALSO beat ``.btn-primary``.
+ * #194 — the same hazard once applied to hand-rolled btn-classed
+ * anchors; those were migrated to shadcn Button (#2731) and their
+ * extra carve-out was removed with the legacy button rules.
  * #1723 — end the specificity arms race: the ``:not()`` arguments
  * count toward specificity, so the carved-out selector reached
  * (0,2,1) and silently beat EVERY class-styled anchor — next victim
@@ -182,12 +182,12 @@ code {
  * success-tinted bg at 3.93:1). Inside ``legacy`` the #1723 intent holds
  * again: weakest link color, any class rule wins. */
 @layer legacy {
-  a:where(:not([data-slot="button"]):not(.btn)) {
+  a:where(:not([data-slot="button"])) {
     color: var(--accent);
     text-decoration: none;
   }
 
-  a:where(:not([data-slot="button"]):not(.btn)):hover {
+  a:where(:not([data-slot="button"])):hover {
     text-decoration: underline;
   }
 }

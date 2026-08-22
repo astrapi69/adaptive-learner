@@ -9,6 +9,8 @@
 
 import {useState} from "react";
 
+import {Button} from "@/components/ui/button";
+
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import {playSound} from "../../../../lib/audio/sound-effects";
@@ -86,14 +88,14 @@ export default function SoundSettingsControl() {
                         >
                             {volume}%
                         </span>
-                        <button
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="ghost"
                             data-testid="settings-sounds-test"
                             onClick={() => playSound("star_earned")}
                         >
                             {t("settings.sounds_test", "Test")}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}

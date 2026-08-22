@@ -727,7 +727,7 @@ function CorrectionDrill({
                 {drillsAvailable && (
                     <button
                         type="button"
-                        className="btn btn-text lesson-correction-block-skip"
+                        className="lesson-correction-block-skip font-medium max-md:min-h-11"
                         onClick={onSkip}
                         data-testid="lesson-correction-block-skip"
                     >

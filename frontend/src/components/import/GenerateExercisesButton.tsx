@@ -23,7 +23,7 @@
  */
 
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import ApiKeyRequiredNotice from "../settings/ai/ApiKeyRequiredNotice";
@@ -184,8 +184,9 @@ export default function GenerateExercisesButton({
         data-testid="generate-exercises-button"
       >
         {busy ? (
-          <span
-            className="btn-spinner"
+          <Loader2
+            size={16}
+            className="mr-1 animate-spin motion-reduce:hidden"
             data-testid="generate-exercises-spinner"
             aria-hidden="true"
           />

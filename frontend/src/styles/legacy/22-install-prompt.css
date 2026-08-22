@@ -61,9 +61,5 @@
   .install-prompt-actions {
     width: 100%;
   }
-  .install-prompt-actions .btn {
-    flex: 1;
-    min-height: 44px;
-  }
 }
 } /* @layer legacy */

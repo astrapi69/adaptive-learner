@@ -15,6 +15,7 @@
  * future Ko-fi configuration genuinely disappears the channel can
  * be removed by deleting one entry from the array below.
  */
+import {Button} from "@/components/ui/button";
 
 interface DonationChannel {
     id: string;
@@ -82,29 +83,28 @@ export default function DonationSection({t}: Props) {
                         data-testid={`about-donation-${channel.id}`}
                         style={{marginBottom: 8}}
                     >
-                        <a
-                            href={channel.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`btn ${channel.primary ? "btn-primary" : "btn-secondary"}`}
-                            data-testid={`about-donation-${channel.id}-link`}
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: 8,
-                                marginRight: 8,
-                            }}
+                        <Button
+                            asChild
+                            variant={channel.primary ? "default" : "secondary"}
+                            className="mr-2"
                         >
-                            {channel.label}
-                            {channel.primary && (
-                                <span
-                                    data-testid="about-donation-preferred-badge"
-                                    className="rounded-[3px] px-[0.4em] py-[0.1em] text-[0.7rem] bg-[color-mix(in_srgb,var(--accent-fg)_22%,transparent)] text-[var(--accent-fg)]"
-                                >
-                                    {t("about.donations_primary", "preferred")}
-                                </span>
-                            )}
-                        </a>
+                            <a
+                                href={channel.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                data-testid={`about-donation-${channel.id}-link`}
+                            >
+                                {channel.label}
+                                {channel.primary && (
+                                    <span
+                                        data-testid="about-donation-preferred-badge"
+                                        className="rounded-[3px] px-[0.4em] py-[0.1em] text-[0.7rem] bg-[color-mix(in_srgb,var(--accent-fg)_22%,transparent)] text-[var(--accent-fg)]"
+                                    >
+                                        {t("about.donations_primary", "preferred")}
+                                    </span>
+                                )}
+                            </a>
+                        </Button>
                         <small style={{opacity: 0.7}}>
                             {t(channel.description_key, channel.description_fallback)}
                         </small>

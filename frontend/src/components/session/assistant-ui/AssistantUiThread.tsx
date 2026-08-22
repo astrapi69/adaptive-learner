@@ -56,6 +56,9 @@ import {
     type TextMessagePartComponent,
 } from "@assistant-ui/react";
 
+import {buttonVariants} from "@/components/ui/button";
+import {cn} from "@/lib/utils";
+
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
 import {getStorage} from "../../../storage";
@@ -330,7 +333,7 @@ export default function AssistantUiThread({
                     />
                     <ComposerMic />
                     <ComposerPrimitive.Send
-                        className="btn btn-primary"
+                        className={cn(buttonVariants(), "max-md:min-w-16")}
                         data-testid="chat-send"
                     >
                         {t("session.send_message", "Send")}

@@ -317,4 +317,10 @@
 # .modal-card/.modal-title (08-qr-scanner.css) + die 9C-Mobile-Override
 # (24-lesson-mode-nav.css) geloescht - die Werte leben als token-backed
 # Utilities in src/shared/modal/Modal.tsx weiter.
-7624
+# 7624 -> 7520 (#2731, Option C Slice 2): btn-Familie auf shadcn Button
+# migriert. 02-buttons.css geloescht (btn/btn-primary/btn-secondary),
+# dazu alle 8 .X .btn-Kontextregeln (7 davon tot: die Container nutzen
+# laengst shadcn Buttons bzw. das Vault-Paket emittiert keine
+# btn-Klassen) sowie btn-spinner + Keyframes (jetzt Loader2 mit
+# animate-spin an den Konsumenten).
+7520
