@@ -65,6 +65,27 @@
       "reason": "Intended per-instance override (currently a silent no-op, activated by this wrap - the #1597 fix): the timed-mode stats list (LessonSummarySections.tsx:314, rendered only when lessonMode==='timed', data-testid lesson-summary-timed-stats) drops the .lesson-summary-stats default vertical margin (var(--space-3) 0) with m-0 because it sits inside a summary card that already provides spacing. Other .lesson-summary-stats instances (LessonSummarySections.tsx:203, AdaptiveLesson.tsx:580) keep the default. Utility-wins-over-default is the designed layer behaviour, parallel to the .tile items-start entry."
     },
     {
+      "block": "Settings page",
+      "legacy_selector": ".settings-section :is(select, input, textarea)",
+      "property": "max-width",
+      "override_utility": "max-w-[12rem]",
+      "reason": "Tag-heuristic false positive (not a real override): the flagged max-w-[12rem] sits on <label> elements (ContentRepoSettingsSection.tsx:771, RegistrySubmitSection.tsx:360), which :is(select, input, textarea) never matches - the rule targets the form controls INSIDE those labels, a different element. No cascade collision; wrapping the Settings head (#2725) is 0-diff for these labels."
+    },
+    {
+      "block": "Settings page",
+      "legacy_selector": ".settings-section :is(select, input, textarea)",
+      "property": "min-width",
+      "override_utility": "min-w-[14rem]",
+      "reason": "Tag-heuristic false positive (not a real override): the flagged min-w-[14rem] sits on <label> elements (ContentRepoSettingsSection.tsx:785, RegistrySubmitSection.tsx:374), which :is(select, input, textarea) never matches. Same rationale as the max-w-[12rem] entry; 0 rendering change from the #2725 wrap."
+    },
+    {
+      "block": "QR scanner + session chat + cycle steps",
+      "legacy_selector": ".modal-card",
+      "property": "max-width",
+      "override_utility": "max-w-[540px]",
+      "reason": "Intended per-instance override (#2725, the Tranche-3 crutch removal this wrap unlocks): the Danger-Zone confirm modal (DangerZoneSection.tsx) wants 540px instead of the .modal-card 32rem default; it previously delivered that via an inline style because unlayered .modal-card beat utilities (#1476/#1479). With .modal-card layered (#1695) the utility wins, so the inline crutch became max-w-[540px]. Same computed value as before, 0 rendering change."
+    },
+    {
       "block": "Lesson-mode + landscape compact nav",
       "legacy_selector": ".lesson-header h1",
       "property": "font-size",

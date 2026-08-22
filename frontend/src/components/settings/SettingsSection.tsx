@@ -9,12 +9,14 @@
  * drift per-file again (the class of bug #1465/#1484 fixed one at a time).
  *
  * Deliberately still emits the legacy `.settings-section` / `.settings-
- * section-title` classnames underneath — this PR only extracts the shared
- * component, it does not yet convert the card to token-backed Tailwind
- * utilities or delete the legacy CSS rule (that rule also constrains
- * descendant `select`/`input`/`textarea` widths, the exact conflict that
- * excluded the Settings block from EXP-044 Tranche 2; resolving it is a
- * separate, deliberate follow-up). `className`/`style` on the section and
+ * section-title` classnames underneath. They cannot be deleted or replaced
+ * with inline utilities: `@astrapi69/ai-key-vault-react` renders BOTH
+ * classnames from `node_modules` (headless-styled pattern, the #2477
+ * incident class — found by the package-aware consumer check, #2725), so
+ * they are a styling contract with that package until it ships its own
+ * styles. Their rules live in `styles/legacy/10-settings.css` inside
+ * `@layer legacy` (#2725), so Tailwind utilities passed via `className`
+ * win over them. `className`/`style` on the section and
  * `titleClassName`/`titleStyle` on the heading exist so today's few
  * consumer-specific overrides (DangerZoneSection's red border, HelpBrowser's
  * inline-flex title) keep working unchanged through the extraction. Forwards
