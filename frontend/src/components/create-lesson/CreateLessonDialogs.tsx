@@ -7,6 +7,7 @@
  */
 
 import {Button} from "@/components/ui/button";
+import {ModalCard, ModalOverlay, ModalTitle} from "@/shared/modal";
 import type {LessonDraft} from "../../lib/content/lesson/lesson-draft";
 
 type Translate = (key: string, fallback?: string) => string;
@@ -42,25 +43,18 @@ export default function CreateLessonDialogs({
     return (
         <>
             {pendingLessonSwitch !== null && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-switch-confirm"
-                >
-                    <div
-                        className="modal-card"
+                <ModalOverlay data-testid="create-lesson-switch-confirm">
+                    <ModalCard
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="create-lesson-switch-title"
                     >
-                        <h2
-                            id="create-lesson-switch-title"
-                            className="modal-title"
-                        >
+                        <ModalTitle id="create-lesson-switch-title">
                             {t(
                                 "create_lesson.edit.switch_confirm_title",
                                 "Switch lesson?",
                             )}
-                        </h2>
+                        </ModalTitle>
                         <p>
                             {t(
                                 "create_lesson.edit.switch_confirm_body",
@@ -88,30 +82,23 @@ export default function CreateLessonDialogs({
                                 )}
                             </Button>
                         </div>
-                    </div>
-                </div>
+                    </ModalCard>
+                </ModalOverlay>
             )}
 
             {confirmCancel && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-cancel-confirm"
-                >
-                    <div
-                        className="modal-card"
+                <ModalOverlay data-testid="create-lesson-cancel-confirm">
+                    <ModalCard
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="create-lesson-cancel-title"
                     >
-                        <h2
-                            id="create-lesson-cancel-title"
-                            className="modal-title"
-                        >
+                        <ModalTitle id="create-lesson-cancel-title">
                             {t(
                                 "create_lesson.cancel_confirm_title",
                                 "Discard this lesson?",
                             )}
-                        </h2>
+                        </ModalTitle>
                         <p>
                             {t(
                                 "create_lesson.cancel_confirm_body",
@@ -139,27 +126,20 @@ export default function CreateLessonDialogs({
                                 {t("create_lesson.cancel_discard", "Discard")}
                             </Button>
                         </div>
-                    </div>
-                </div>
+                    </ModalCard>
+                </ModalOverlay>
             )}
 
             {pendingDraft && (
-                <div
-                    className="modal-overlay"
-                    data-testid="create-lesson-draft-prompt"
-                >
-                    <div
-                        className="modal-card"
+                <ModalOverlay data-testid="create-lesson-draft-prompt">
+                    <ModalCard
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="create-lesson-draft-title"
                     >
-                        <h2
-                            id="create-lesson-draft-title"
-                            className="modal-title"
-                        >
+                        <ModalTitle id="create-lesson-draft-title">
                             {t("create_lesson.draft.title", "Draft found")}
-                        </h2>
+                        </ModalTitle>
                         <p>
                             {t(
                                 "create_lesson.draft.body",
@@ -186,8 +166,8 @@ export default function CreateLessonDialogs({
                                 {t("create_lesson.draft.continue", "Continue")}
                             </Button>
                         </div>
-                    </div>
-                </div>
+                    </ModalCard>
+                </ModalOverlay>
             )}
         </>
     );

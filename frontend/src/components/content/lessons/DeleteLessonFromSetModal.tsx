@@ -13,6 +13,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import DeleteProgressOption from "../browser/delete/DeleteProgressOption";
@@ -55,16 +56,15 @@ export default function DeleteLessonFromSetModal({
 
   if (!target) return null;
   return (
-    <div className="modal-overlay" data-testid="delete-lesson-from-set-modal">
-      <div
-        className="modal-card"
+    <ModalOverlay data-testid="delete-lesson-from-set-modal">
+      <ModalCard
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-lesson-from-set-title"
       >
-        <h2 id="delete-lesson-from-set-title" className="modal-title">
+        <ModalTitle id="delete-lesson-from-set-title">
           {target.title}
-        </h2>
+        </ModalTitle>
         <p>
           {t(
             "content.lesson_delete.confirm_body",
@@ -105,7 +105,7 @@ export default function DeleteLessonFromSetModal({
               : t("content.lesson_delete.action_delete", "Delete lesson")}
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalCard>
+    </ModalOverlay>
   );
 }

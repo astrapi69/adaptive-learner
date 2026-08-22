@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import FormHint from "../../../shared/forms/FormHint";
 import {
@@ -202,16 +203,15 @@ export default function ImportLessonModal({
     : "";
 
   return (
-    <div className="modal-overlay" data-testid="import-lesson-modal">
-      <div
-        className="modal-card"
+    <ModalOverlay data-testid="import-lesson-modal">
+      <ModalCard
         role="dialog"
         aria-modal="true"
         aria-labelledby="import-lesson-title"
       >
-        <h2 id="import-lesson-title" className="modal-title">
+        <ModalTitle id="import-lesson-title">
           {t("content.import_lesson.modal_title", "Import a lesson")}
-        </h2>
+        </ModalTitle>
         <label className="form-row">
           <span className="form-label">
             {t(
@@ -327,7 +327,7 @@ export default function ImportLessonModal({
             </Button>
           </div>
         )}
-      </div>
-    </div>
+      </ModalCard>
+    </ModalOverlay>
   );
 }

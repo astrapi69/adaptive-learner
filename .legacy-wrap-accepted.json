@@ -79,13 +79,6 @@
       "reason": "Tag-heuristic false positive (not a real override): the flagged min-w-[14rem] sits on <label> elements (ContentRepoSettingsSection.tsx:785, RegistrySubmitSection.tsx:374), which :is(select, input, textarea) never matches. Same rationale as the max-w-[12rem] entry; 0 rendering change from the #2725 wrap."
     },
     {
-      "block": "QR scanner + session chat + cycle steps",
-      "legacy_selector": ".modal-card",
-      "property": "max-width",
-      "override_utility": "max-w-[540px]",
-      "reason": "Intended per-instance override (#2725, the Tranche-3 crutch removal this wrap unlocks): the Danger-Zone confirm modal (DangerZoneSection.tsx) wants 540px instead of the .modal-card 32rem default; it previously delivered that via an inline style because unlayered .modal-card beat utilities (#1476/#1479). With .modal-card layered (#1695) the utility wins, so the inline crutch became max-w-[540px]. Same computed value as before, 0 rendering change."
-    },
-    {
       "block": "Lesson-mode + landscape compact nav",
       "legacy_selector": ".lesson-header h1",
       "property": "font-size",
