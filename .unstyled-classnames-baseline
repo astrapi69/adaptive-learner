@@ -34,7 +34,6 @@
 # Orakel-Pin (#2138, entschieden 2026-07-31): bewusst UNgepinnt - gleiche
 # Begruendung wie in .dead-classnames-baseline (das Bauergebnis ist selbst
 # der Pruefgegenstand). Entscheidung nicht erneut aufwerfen.
-chat-welcome
 custom
 extra
 extra-hook

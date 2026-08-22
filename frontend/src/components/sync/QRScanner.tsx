@@ -172,10 +172,7 @@ export default function QRScanner({
         <div
             data-testid="qr-scanner"
             data-status={status}
-            style={{
-                width: "100%",
-                position: "relative",
-            }}
+            className="w-full relative"
         >
             <div
                 id={SCANNER_DIV_ID}

@@ -289,21 +289,15 @@ export default function AssistantUiThread({
                 <ThreadPrimitive.Viewport className="chat-messages" data-testid="chat-messages">
                     <ThreadPrimitive.Empty>
                         <div
-                            className="chat-welcome"
+                            className="chat-welcome px-4 py-6 text-center italic text-[var(--fg-muted)]"
                             data-testid="chat-welcome"
-                            style={{
-                                padding: "1.5rem 1rem",
-                                textAlign: "center",
-                                color: "var(--fg-muted)",
-                                fontStyle: "italic",
-                            }}
                         >
                             {introTopic ? (
                                 <>
                                     <div data-testid="chat-intro-topic">
                                         {t("session.topic_label", "Topic")}: {introTopic}
                                     </div>
-                                    <div style={{marginTop: "0.5rem"}}>
+                                    <div className="mt-2">
                                         {t(
                                             "session.welcome_empty",
                                             "Ready to learn! Write your first message.",

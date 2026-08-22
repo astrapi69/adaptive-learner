@@ -55,12 +55,7 @@ export default function OfflineIndicator() {
         role="status"
         aria-live="polite"
         data-testid="online-flash"
-        className="flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium"
-        style={{
-          background: "var(--success-bg)",
-          color: "var(--success)",
-          borderBottom: "1px solid var(--success)",
-        }}
+        className="flex items-center justify-center gap-2 border-b border-b-[var(--success)] bg-[var(--success-bg)] px-4 py-1.5 text-sm font-medium text-[var(--success)]"
       >
         {t("pwa.online_message", "Back online!")}
       </div>
@@ -74,12 +69,7 @@ export default function OfflineIndicator() {
       role="status"
       aria-live="polite"
       data-testid="offline-indicator"
-      className="flex items-center gap-2 px-4 py-1.5 text-sm"
-      style={{
-        background: "var(--warning-bg)",
-        color: "var(--warning)",
-        borderBottom: "1px solid var(--warning)",
-      }}
+      className="flex items-center gap-2 border-b border-b-[var(--warning)] bg-[var(--warning-bg)] px-4 py-1.5 text-sm text-[var(--warning)]"
     >
       <WifiOff size={15} aria-hidden="true" className="shrink-0" />
       <span className="flex-1">
@@ -93,8 +83,7 @@ export default function OfflineIndicator() {
         onClick={() => setDismissed(true)}
         aria-label={t("pwa.offline_dismiss", "Dismiss")}
         data-testid="offline-indicator-dismiss"
-        className="shrink-0 rounded p-0.5 hover:opacity-70"
-        style={{ color: "var(--warning)" }}
+        className="shrink-0 rounded p-0.5 text-[var(--warning)] hover:opacity-70"
       >
         <X size={15} aria-hidden="true" />
       </button>

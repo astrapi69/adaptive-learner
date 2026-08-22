@@ -58,13 +58,12 @@ export default function AboutTab() {
     <SettingsSection
       title={t("about.section_heading", "About Adaptive Learner")}
       testid="settings-about"
-      style={{ marginTop: "1.5rem" }}
+      className="mt-6"
     >
       {loading && (
         <p
           data-testid="about-loading"
-          className="muted"
-          style={{ padding: "1rem 0" }}
+          className="muted py-4 px-0"
         >
           {t("about.loading", "Loading information…")}
         </p>
@@ -73,7 +72,7 @@ export default function AboutTab() {
         <p
           data-testid="about-error"
           role="alert"
-          style={{ color: "var(--danger)", padding: "1rem 0" }}
+          className="py-4 px-0 text-[var(--danger)]"
         >
           {t("about.load_failed", "Could not load system info:")} {error}
         </p>
@@ -81,7 +80,7 @@ export default function AboutTab() {
       {info && (
         <div
           data-testid="about-content"
-          style={{ display: "flex", flexDirection: "column", gap: 16 }}
+          className="flex flex-col gap-4"
         >
           <StrangBadge t={t} />
           <VersionSection info={info} t={t} />

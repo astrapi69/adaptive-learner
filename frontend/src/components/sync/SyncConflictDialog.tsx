@@ -182,30 +182,10 @@ export default function SyncConflictDialog({
             role="dialog"
             aria-modal="true"
             data-testid="sync-conflict-dialog"
-            style={{
-                position: "fixed",
-                inset: 0,
-                background: "var(--bg-overlay)",
-                zIndex: 1000,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "1rem",
-            }}
+            className="fixed inset-0 bg-[var(--bg-overlay)] z-[1000] flex items-center justify-center p-4"
         >
-            <div
-                style={{
-                    background: "var(--bg)",
-                    color: "var(--text)",
-                    borderRadius: 8,
-                    maxWidth: 1000,
-                    width: "100%",
-                    maxHeight: "90vh",
-                    overflowY: "auto",
-                    padding: "1.5rem",
-                }}
-            >
-                <h2 style={{marginTop: 0}}>
+            <div className="bg-[var(--bg)] text-[var(--text)] rounded-[8px] max-w-[1000px] w-full max-h-[90vh] overflow-y-auto p-6">
+                <h2 className="mt-0">
                     {t("sync.conflicts_title")}{" "}
                     ({conflicts.length})
                 </h2>
@@ -228,14 +208,7 @@ export default function SyncConflictDialog({
                         t={t}
                     />
                 ))}
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        gap: "0.5rem",
-                        marginTop: "1.5rem",
-                    }}
-                >
+                <div className="flex justify-end gap-2 mt-6">
                     <Button
                         type="button"
                         variant="secondary"
@@ -278,25 +251,13 @@ function ConflictRow({
     return (
         <div
             data-testid={`sync-conflict-${index}`}
-            style={{
-                border: "1px solid var(--border)",
-                borderRadius: 6,
-                padding: "1rem",
-                marginBottom: "1rem",
-                background: "var(--surface)",
-            }}
+            className="border border-[var(--border)] rounded-[6px] p-4 mb-4 bg-[var(--surface)]"
         >
-            <header style={{marginBottom: "0.5rem"}}>
+            <header className="mb-2">
                 <strong>{conflict.table}</strong>{" "}
-                <small style={{opacity: 0.6}}>#{conflict.id.slice(0, 8)}…</small>
+                <small className="opacity-60">#{conflict.id.slice(0, 8)}…</small>
             </header>
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "0.75rem",
-                }}
-            >
+            <div className="grid grid-cols-[1fr_1fr] gap-3">
                 <ColumnCard
                     title={t("sync.local_version")}
                     record={conflict.local}
@@ -310,16 +271,7 @@ function ConflictRow({
                     highlightAgainst={conflict.local}
                 />
             </div>
-            <fieldset
-                style={{
-                    border: "none",
-                    padding: 0,
-                    marginTop: "0.75rem",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "0.75rem",
-                }}
-            >
+            <fieldset className="border-none p-0 mt-3 flex flex-wrap gap-3">
                 <Choice
                     label={t("sync.keep_local")}
                     value="local"
@@ -351,7 +303,7 @@ function ConflictRow({
                         disabled={state.aiBusy}
                         variant="secondary"
                         data-testid={`sync-conflict-${index}-smart`}
-                        style={{marginLeft: "auto"}}
+                        className="ml-auto"
                     >
                         {state.aiBusy
                             ? t("sync.smart_merge_running")
@@ -383,29 +335,16 @@ function ColumnCard({
     highlightAgainst: Record<string, unknown>;
 }) {
     return (
-        <div
-            style={{
-                background: "var(--bg)",
-                borderRadius: 4,
-                padding: "0.5rem 0.75rem",
-                fontSize: "0.85rem",
-            }}
-        >
-            <h3 style={{margin: "0 0 0.25rem", fontSize: "0.95rem"}}>{title}</h3>
-            <dl style={{margin: 0}}>
+        <div className="bg-[var(--bg)] rounded-[4px] py-2 px-3 text-[0.85rem]">
+            <h3 className="mt-0 mx-0 mb-1 text-[0.95rem]">{title}</h3>
+            <dl className="m-0">
                 {fields.map((f) => {
                     const value = record[f];
                     const otherValue = highlightAgainst[f];
                     const differs = !isEqual(value, otherValue);
                     return (
-                        <div key={f} style={{marginBottom: "0.15rem"}}>
-                            <dt
-                                style={{
-                                    fontWeight: 600,
-                                    display: "inline",
-                                    opacity: 0.7,
-                                }}
-                            >
+                        <div key={f} className="mb-[0.15rem]">
+                            <dt className="font-semibold inline opacity-70">
                                 {f}:
                             </dt>{" "}
                             <dd
@@ -443,20 +382,15 @@ function MergeEditor({
     return (
         <div
             data-testid="merge-editor"
-            style={{
-                marginTop: "0.75rem",
-                background: "var(--bg)",
-                borderRadius: 4,
-                padding: "0.5rem 0.75rem",
-            }}
+            className="mt-3 bg-[var(--bg)] rounded-[4px] py-2 px-3"
         >
-            <small style={{opacity: 0.7}}>
+            <small className="opacity-70">
                 {t("sync.merge_editor")}
             </small>
             {fields.map((f) => {
                 if (f === "id" || f.endsWith("_at") || f === "user_id") {
                     return (
-                        <div key={f} style={{fontSize: "0.85rem"}}>
+                        <div key={f} className="text-[0.85rem]">
                             <strong>{f}:</strong> {renderValue(merged[f])}
                         </div>
                     );
@@ -466,11 +400,7 @@ function MergeEditor({
                     return (
                         <label
                             key={f}
-                            style={{
-                                display: "block",
-                                fontSize: "0.85rem",
-                                margin: "0.25rem 0",
-                            }}
+                            className="block text-[0.85rem] my-1 mx-0"
                         >
                             <input
                                 type="checkbox"
@@ -488,11 +418,7 @@ function MergeEditor({
                     return (
                         <label
                             key={f}
-                            style={{
-                                display: "block",
-                                fontSize: "0.85rem",
-                                margin: "0.25rem 0",
-                            }}
+                            className="block text-[0.85rem] my-1 mx-0"
                         >
                             <span>{f}:</span>{" "}
                             <input
@@ -505,7 +431,7 @@ function MergeEditor({
                                     )
                                 }
                                 data-testid={`merge-field-${f}`}
-                                style={{width: 100}}
+                                className="w-25"
                             />
                         </label>
                     );
@@ -514,13 +440,9 @@ function MergeEditor({
                 return (
                     <label
                         key={f}
-                        style={{
-                            display: "block",
-                            fontSize: "0.85rem",
-                            margin: "0.25rem 0",
-                        }}
+                        className="block text-[0.85rem] my-1 mx-0"
                     >
-                        <span style={{display: "block", opacity: 0.7}}>
+                        <span className="block opacity-70">
                             {f}:
                         </span>
                         <input
@@ -560,7 +482,7 @@ function Choice({
     testid: string;
 }) {
     return (
-        <label style={{display: "flex", gap: "0.25rem", alignItems: "center"}}>
+        <label className="flex gap-1 items-center">
             <input
                 type="radio"
                 name={name}

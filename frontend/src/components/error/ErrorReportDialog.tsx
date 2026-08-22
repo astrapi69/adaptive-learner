@@ -143,42 +143,8 @@ export default function ErrorReportDialog({
         onClose();
     };
 
-    const cardStyle: React.CSSProperties = {
-        background: "var(--surface)",
-        borderRadius: "var(--radius-lg)",
-        padding: "var(--space-5)",
-        boxShadow: "var(--shadow-elevated)",
-        maxWidth: "44rem",
-        width: "100%",
-        maxHeight: "85vh",
-        overflowY: "auto",
-        display: "flex",
-        flexDirection: "column",
-        gap: "var(--space-3)",
-    };
-    const overlayStyle: React.CSSProperties = {
-        position: "fixed",
-        inset: 0,
-        background: "var(--bg-overlay)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-        padding: "var(--space-4)",
-    };
-    const previewBoxStyle: React.CSSProperties = {
-        maxHeight: 200,
-        overflowY: "auto",
-        padding: 10,
-        background: "var(--surface-2)",
-        border: "1px solid var(--border)",
-        borderRadius: "var(--radius-sm)",
-        fontFamily: "var(--font-mono)",
-        fontSize: "0.6875rem",
-        lineHeight: 1.5,
-        whiteSpace: "pre-wrap",
-        wordBreak: "break-all",
-    };
+    const previewBoxClassName =
+        "overflow-y-auto p-2.5 bg-[var(--surface-2)] border border-[var(--border)] rounded-[var(--radius-sm)] font-[var(--font-mono)] text-[0.6875rem] leading-[1.5] whitespace-pre-wrap break-all";
 
     return (
         <Dialog.Root
@@ -188,40 +154,20 @@ export default function ErrorReportDialog({
             }}
         >
             <Dialog.Portal>
-                <Dialog.Overlay style={overlayStyle} />
+                <Dialog.Overlay className="fixed inset-0 z-[1000] flex items-center justify-center bg-[var(--bg-overlay)] p-[var(--space-4)]" />
                 <Dialog.Content
-                    style={{
-                        position: "fixed",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        zIndex: 1001,
-                        ...cardStyle,
-                    }}
+                    className="fixed left-1/2 top-1/2 z-[1001] flex w-full max-w-[44rem] -translate-x-1/2 -translate-y-1/2 flex-col gap-[var(--space-3)] overflow-y-auto rounded-[var(--radius-lg)] bg-[var(--surface)] p-[var(--space-5)] shadow-[var(--shadow-elevated)] max-h-[85vh]"
                     data-testid="error-report-dialog"
                     aria-describedby="error-report-description"
                 >
-                    <Dialog.Title
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            margin: 0,
-                            fontSize: "1.125rem",
-                            fontWeight: 600,
-                        }}
-                    >
+                    <Dialog.Title className="m-0 flex items-center gap-2 text-[1.125rem] font-semibold">
                         <Bug size={18} />
                         {t("ui.error_report.dialog_title", "Report an issue")}
                     </Dialog.Title>
 
                     <Dialog.Description
                         id="error-report-description"
-                        style={{
-                            fontSize: "0.875rem",
-                            color: "var(--fg-muted)",
-                            margin: 0,
-                        }}
+                        className="m-0 text-[0.875rem] text-[var(--fg-muted)]"
                     >
                         {proactive
                             ? t(
@@ -237,12 +183,7 @@ export default function ErrorReportDialog({
                     {snapshot && (
                         <p
                             data-testid="error-report-snapshot"
-                            style={{
-                                fontSize: "0.75rem",
-                                color: "var(--fg-muted)",
-                                margin: 0,
-                                fontFamily: "var(--font-mono)",
-                            }}
+                            className="m-0 font-[var(--font-mono)] text-[0.75rem] text-[var(--fg-muted)]"
                         >
                             {t("ui.error_report.app_state", "App state")}:{" "}
                             {snapshot.storageMode} · {snapshot.language} ·{" "}
@@ -254,11 +195,7 @@ export default function ErrorReportDialog({
 
                     <label
                         htmlFor="error-report-description"
-                        style={{
-                            display: "block",
-                            fontSize: "0.8125rem",
-                            fontWeight: 500,
-                        }}
+                        className="block text-[0.8125rem] font-medium"
                     >
                         {t(
                             "ui.error_report.description_label",
@@ -289,37 +226,15 @@ export default function ErrorReportDialog({
                     />
 
                     {/* Checkboxes */}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 8,
-                        }}
-                    >
-                        <label
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 8,
-                                fontSize: "0.875rem",
-                                cursor: "not-allowed",
-                            }}
-                        >
+                    <div className="flex flex-col gap-2">
+                        <label className="flex cursor-not-allowed items-center gap-2 text-[0.875rem]">
                             <input type="checkbox" checked disabled />
                             {t(
                                 "ui.error_report.include_error",
                                 "Error message and stacktrace",
                             )}
                         </label>
-                        <label
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 8,
-                                fontSize: "0.875rem",
-                                cursor: "pointer",
-                            }}
-                        >
+                        <label className="flex cursor-pointer items-center gap-2 text-[0.875rem]">
                             <input
                                 type="checkbox"
                                 checked={includeEnv}
@@ -333,15 +248,7 @@ export default function ErrorReportDialog({
                                 "Environment info (version, browser, OS)",
                             )}
                         </label>
-                        <label
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 8,
-                                fontSize: "0.875rem",
-                                cursor: "pointer",
-                            }}
-                        >
+                        <label className="flex cursor-pointer items-center gap-2 text-[0.875rem]">
                             <input
                                 type="checkbox"
                                 checked={includeHistory}
@@ -363,12 +270,7 @@ export default function ErrorReportDialog({
                                     onClick={() =>
                                         setShowHistory(!showHistory)
                                     }
-                                    style={{
-                                        marginLeft: 4,
-                                        padding: "1px 6px",
-                                        fontSize: "0.75rem",
-                                        gap: 2,
-                                    }}
+                                    className="ml-1 gap-0.5 px-1.5 py-[1px] text-[0.75rem]"
                                 >
                                     {showHistory ? (
                                         <ChevronUp size={12} />
@@ -388,11 +290,7 @@ export default function ErrorReportDialog({
                     {showHistory && categories.length > 1 && (
                         <div
                             data-testid="error-report-category-filter"
-                            style={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 4,
-                            }}
+                            className="flex flex-wrap gap-1"
                         >
                             <CategoryChip
                                 active={categoryFilter === null}
@@ -418,7 +316,7 @@ export default function ErrorReportDialog({
                     {/* Action history preview */}
                     {showHistory && events.length > 0 && (
                         <div
-                            style={previewBoxStyle}
+                            className={`${previewBoxClassName} max-h-[200px]`}
                             data-testid="error-report-history-preview"
                         >
                             {historyLog ||
@@ -430,13 +328,7 @@ export default function ErrorReportDialog({
                     )}
 
                     {/* Privacy note */}
-                    <p
-                        style={{
-                            fontSize: "0.75rem",
-                            color: "var(--fg-muted)",
-                            margin: 0,
-                        }}
-                    >
+                    <p className="m-0 text-[0.75rem] text-[var(--fg-muted)]">
                         {t(
                             "ui.error_report.privacy_note",
                             "No project content, no passwords, no API keys are ever sent.",
@@ -446,7 +338,7 @@ export default function ErrorReportDialog({
                     {/* Full preview toggle */}
                     {showPreview && (
                         <div
-                            style={{...previewBoxStyle, maxHeight: 300}}
+                            className={`${previewBoxClassName} max-h-[300px]`}
                             data-testid="error-report-full-preview"
                         >
                             {issueBody}
@@ -454,14 +346,7 @@ export default function ErrorReportDialog({
                     )}
 
                     {/* Footer */}
-                    <div
-                        style={{
-                            display: "flex",
-                            gap: "var(--space-2)",
-                            flexWrap: "wrap",
-                            marginTop: "var(--space-2)",
-                        }}
-                    >
+                    <div className="mt-[var(--space-2)] flex flex-wrap gap-[var(--space-2)]">
                         <Button
                             type="button"
                             variant="secondary"
@@ -483,7 +368,7 @@ export default function ErrorReportDialog({
                             variant="secondary"
                             onClick={handleCopyPreview}
                             data-testid="error-report-copy-preview"
-                            style={{gap: 4}}
+                            className="gap-1"
                         >
                             {copyState === "ok" ? (
                                 <Check size={14} />
@@ -507,7 +392,7 @@ export default function ErrorReportDialog({
                             variant="secondary"
                             onClick={handleDownloadJson}
                             data-testid="error-report-download-json"
-                            style={{gap: 4}}
+                            className="gap-1"
                         >
                             <Download size={14} />
                             {t(
@@ -515,7 +400,7 @@ export default function ErrorReportDialog({
                                 "Download JSON",
                             )}
                         </Button>
-                        <div style={{flexGrow: 1}} />
+                        <div className="grow" />
                         <Button
                             type="button"
                             variant="secondary"
@@ -528,7 +413,7 @@ export default function ErrorReportDialog({
                             type="button"
                             onClick={handleSubmit}
                             data-testid="error-report-submit"
-                            style={{gap: 4}}
+                            className="gap-1"
                         >
                             <Bug size={14} />
                             {t(

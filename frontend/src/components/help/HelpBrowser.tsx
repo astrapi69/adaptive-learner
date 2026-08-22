@@ -85,35 +85,15 @@ export default function HelpBrowser() {
                 gap: "var(--space-2)",
             }}
         >
-            <p
-                style={{
-                    color: "var(--fg-muted)",
-                    fontSize: "0.875rem",
-                    marginTop: 0,
-                }}
-            >
+            <p className="mt-0 text-[0.875rem] text-[var(--fg-muted)]">
                 {t(
                     "settings.help_intro",
                     "Browse and search the in-app glossary. Click any entry for the full article.",
                 )}
             </p>
 
-            <div
-                style={{
-                    position: "relative",
-                    marginBottom: "var(--space-4)",
-                }}
-            >
-                <span
-                    style={{
-                        position: "absolute",
-                        top: "50%",
-                        right: 10,
-                        transform: "translateY(-50%)",
-                        color: "var(--fg-muted)",
-                        pointerEvents: "none",
-                    }}
-                >
+            <div className="relative mb-[var(--space-4)]">
+                <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--fg-muted)]">
                     <Search size={14} />
                 </span>
                 <input
@@ -142,11 +122,7 @@ export default function HelpBrowser() {
             {filtered.length === 0 && (
                 <p
                     data-testid="settings-help-no-results"
-                    style={{
-                        color: "var(--fg-muted)",
-                        fontSize: "0.875rem",
-                        marginTop: "var(--space-4)",
-                    }}
+                    className="mt-[var(--space-4)] text-[0.875rem] text-[var(--fg-muted)]"
                 >
                     {t("ui.help.no_results", "No matching entries.")}
                 </p>
@@ -159,50 +135,22 @@ export default function HelpBrowser() {
                     <div
                         key={category}
                         data-testid={`settings-help-group-${category}`}
-                        style={{marginBottom: "var(--space-4)"}}
+                        className="mb-[var(--space-4)]"
                     >
-                        <h3
-                            style={{
-                                fontSize: "0.75rem",
-                                fontWeight: 600,
-                                margin: 0,
-                                marginBottom: "var(--space-2)",
-                                color: "var(--fg-muted)",
-                                textTransform: "uppercase",
-                                letterSpacing: "0.05em",
-                            }}
-                        >
+                        <h3 className="m-0 mb-[var(--space-2)] text-[0.75rem] font-semibold uppercase tracking-[0.05em] text-[var(--fg-muted)]">
                             {t(
                                 `ui.help.categories.${category}`,
                                 category,
                             )}
                         </h3>
-                        <ul
-                            style={{
-                                listStyle: "none",
-                                padding: 0,
-                                margin: 0,
-                            }}
-                        >
+                        <ul className="m-0 list-none p-0">
                             {entries.map((entry) => (
                                 <li key={entry.key}>
                                     <button
                                         type="button"
                                         data-testid={`settings-help-entry-${entry.key}`}
                                         onClick={() => openHelp(entry.key)}
-                                        style={{
-                                            display: "block",
-                                            width: "100%",
-                                            textAlign: "left",
-                                            background: "none",
-                                            border: "none",
-                                            padding: "var(--space-2) var(--space-3)",
-                                            cursor: "pointer",
-                                            borderRadius: "var(--radius-sm)",
-                                            color: "var(--fg)",
-                                            fontSize: "0.875rem",
-                                            lineHeight: 1.4,
-                                        }}
+                                        className="block w-full rounded-[var(--radius-sm)] border-none bg-transparent px-[var(--space-3)] py-[var(--space-2)] text-left text-[0.875rem] leading-[1.4] text-[var(--fg)]"
                                         onMouseEnter={(e) => {
                                             e.currentTarget.style.background =
                                                 "var(--surface-2)";
@@ -212,20 +160,10 @@ export default function HelpBrowser() {
                                                 "none";
                                         }}
                                     >
-                                        <div
-                                            style={{
-                                                fontWeight: 500,
-                                                marginBottom: 2,
-                                            }}
-                                        >
+                                        <div className="mb-0.5 font-medium">
                                             {entry.title}
                                         </div>
-                                        <div
-                                            style={{
-                                                color: "var(--fg-muted)",
-                                                fontSize: "0.8125rem",
-                                            }}
-                                        >
+                                        <div className="text-[0.8125rem] text-[var(--fg-muted)]">
                                             {entry.short}
                                         </div>
                                     </button>

@@ -51,9 +51,8 @@ export default function ProfileRadar({ profile, height = 320 }: ProfileRadarProp
   const chartLabel = t("ui.a11y.chart_radar_label", "Learning profile radar chart");
   return (
     <div
-      className="profile-radar flex flex-col gap-3"
+      className="profile-radar flex w-full min-w-0 flex-col gap-3"
       data-testid="profile-radar"
-      style={{ width: "100%", minWidth: 0 }}
     >
       {/* The chart wrapper carries the explicit height so the
                 ``ChartSummary`` below can flow naturally instead of

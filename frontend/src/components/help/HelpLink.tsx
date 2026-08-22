@@ -71,27 +71,12 @@ export default function HelpLink({
             title={tooltipsOn ? ariaLabel : undefined}
             tabIndex={tabIndex}
             data-testid={`help-link-${glossaryKey}`}
-            className="help-link"
-            style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--fg-muted)",
-                opacity: 0.5,
-                padding: 4,
-                marginLeft: 4,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                verticalAlign: "middle",
-                borderRadius: "var(--radius-sm)",
-                // Inline next to headings — keep the
-                // bounding box close to the icon size so the
-                // line-height stays clean. Mobile touch
-                // target is handled by a global CSS rule in
-                // ``global.css`` that bumps the padding to
-                // 12px on viewports <= 768px.
-            }}
+            // Inline next to headings — keep the bounding box
+            // (p-1) close to the icon size so the line-height
+            // stays clean. Mobile touch target is handled by a
+            // global CSS rule (``.help-link``, !important) that
+            // bumps the padding to 12px on viewports <= 768px.
+            className="help-link ml-1 inline-flex items-center justify-center rounded-[var(--radius-sm)] border-none bg-transparent p-1 align-middle text-[var(--fg-muted)] opacity-50"
             onMouseEnter={(e) => {
                 e.currentTarget.style.opacity = "1";
             }}

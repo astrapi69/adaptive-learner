@@ -72,10 +72,9 @@ export default function FeedbackPulse({
     return (
         <span
             ref={ref}
-            className={className}
+            className={`inline-flex ${className ?? ""}`}
             data-testid={testId}
             data-variant={variant}
-            style={{display: "inline-flex"}}
         >
             {children}
         </span>

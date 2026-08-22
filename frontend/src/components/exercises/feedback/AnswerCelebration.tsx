@@ -89,13 +89,13 @@ export default function AnswerCelebration({
                         <Check
                             size={18}
                             aria-hidden="true"
-                            style={{color: "var(--exercise-correct)"}}
+                            className="text-[var(--exercise-correct)]"
                         />
                     ) : (
                         <X
                             size={18}
                             aria-hidden="true"
-                            style={{color: "var(--exercise-wrong)"}}
+                            className="text-[var(--exercise-wrong)]"
                         />
                     )}
                 </FeedbackPulse>

@@ -33,10 +33,7 @@ export default function XPWidget({ state }: XPWidgetProps) {
   const pct = denom > 0 ? Math.min(100, Math.round((state.xp_into_level / denom) * 100)) : 100;
   return (
     <div className="xp-widget" data-testid="xp-widget">
-      <div
-        className="xp-widget__header"
-        style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
-      >
+      <div className="xp-widget__header flex items-center gap-3">
         <ProgressRing
           value={state.xp_into_level}
           max={denom}
@@ -46,7 +43,7 @@ export default function XPWidget({ state }: XPWidgetProps) {
         >
           {state.level}
         </ProgressRing>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div className="flex flex-col">
           <span className="xp-widget__level" data-testid="xp-widget-level">
             {t("gamification.level", "Level")} {state.level}
           </span>
