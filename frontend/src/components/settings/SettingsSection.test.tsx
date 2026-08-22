@@ -52,6 +52,21 @@ describe("SettingsSection", () => {
     expect(heading.style.color).toBe("var(--danger)");
   });
 
+  it("passes arbitrary section attributes through (aria-busy)", () => {
+    render(
+      <SettingsSection
+        title="Content repositories"
+        testid="content-repo-section"
+        aria-busy="true"
+      />,
+    );
+
+    expect(screen.getByTestId("content-repo-section")).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+  });
+
   it("respects the hidden prop", () => {
     render(
       <SettingsSection title="Storage mode" testid="settings-storage-mode" hidden>
