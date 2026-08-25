@@ -925,6 +925,7 @@ export const SURFACE_NAMES = [
     "content-browser",
     "content-discover",
     "content-import",
+    "create-lesson",
     "set-detail",
     "lesson-theory",
     "lesson-cloze",
@@ -1212,6 +1213,23 @@ export async function gotoSurface(
             await expect(page.getByTestId("page-import")).toBeVisible({
                 timeout: 20_000,
             });
+            return true;
+        case "create-lesson":
+            // #2755 - wizard step 1: the required title leads the form and
+            // the template picker sits behind the collapsed disclosure;
+            // this motif IS the visual pin of that order (the checked-state
+            // motifs enter the wizard via the extensions path and never
+            // show step 1, which is why the #2755 rework produced a 0-diff
+            // sync until this surface existed).
+            await seedLearner(page);
+            await page.goto("/create-lesson");
+            await expect(page.getByTestId("create-lesson-step-1")).toBeVisible({
+                timeout: 15_000,
+            });
+            await expect(page.getByTestId("create-lesson-title")).toBeVisible();
+            await expect(
+                page.getByTestId("create-lesson-templates-toggle"),
+            ).toBeVisible();
             return true;
         case "set-detail":
             await seedLearner(page);
