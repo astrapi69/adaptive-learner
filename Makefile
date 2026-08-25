@@ -517,6 +517,9 @@ css-identity-ref: ## EXP-044 concern-split (#1655): build + store the byte-ident
 css-identity-check: ## EXP-044 concern-split (#1655): build + byte-compare the emitted CSS against the stored reference
 	bash scripts/check-css-identity.sh check
 
+ai-metrics: ## AI-output metrics report (#2743): aggregate optional journal blocks
+	python3 scripts/ai_metrics.py
+
 check-dead-code: ## Dead-code ratchet (#2741): vulture (backend+plugins) + knip (frontend), list baseline
 	cd backend && poetry run python ../scripts/check_dead_code.py
 
