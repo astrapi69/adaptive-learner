@@ -663,6 +663,7 @@ async function authorExtensionLesson(page: Page): Promise<boolean> {
         await page.getByTestId("create-lesson-draft-fresh").click();
     }
     await page.getByTestId("create-lesson-title").fill("Visual: Extensions geprüft");
+    await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-extensions").click();
     await expect(page.getByTestId("create-lesson-extension-step")).toBeVisible();
 

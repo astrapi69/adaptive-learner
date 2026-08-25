@@ -128,6 +128,7 @@ test.describe("Lesson Creator — build + save a lesson", () => {
 
         // Enter the book-text path from step 1.
         await page.getByTestId("create-lesson-title").fill("Pawlow");
+        await page.getByTestId("create-lesson-templates-toggle").click();
         await page.getByTestId("template-knowledge-from-text").click();
 
         // The book step renders the paste field + book-metadata inputs.
@@ -167,6 +168,7 @@ test.describe("Lesson Creator — build + save a lesson", () => {
             await page.getByTestId("create-lesson-draft-fresh").click();
         }
         await page.getByTestId("create-lesson-title").fill("Upload-Test");
+        await page.getByTestId("create-lesson-templates-toggle").click();
         await page.getByTestId("template-knowledge-from-text").click();
         await expect(page.getByTestId("create-lesson-book-step")).toBeVisible();
 
