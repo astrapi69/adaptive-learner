@@ -695,7 +695,16 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
 
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
-- [ ] **Book-text path (#1745):** Step 1 → the "Knowledge lesson from
+- [ ] **Step-1 order + template disclosure (#2755):** In step 1 the
+      required **Title field comes first** (right under the heading,
+      focused). The template picker behind it is a disclosure
+      "Start from a template", **collapsed by default**; the collapsed
+      row shows the current pick ("· Blank Lesson" is preselected).
+      Opening it shows the four template cards plus "Knowledge lesson
+      from text" and "Advanced exercise types"; picking a card marks it
+      pressed and the collapsed row then shows the new pick.
+- [ ] **Book-text path (#1745):** Step 1 → open the template disclosure
+      → the "Knowledge lesson from
       text" card (below the template grid) starts a 3-step flow
       (Metadata → Book text → Review); paste text + Generate → the AI
       rephrases theory in its own words + generates exercises; WITHOUT

@@ -99,6 +99,7 @@ test("captures the extension-authoring path", async ({page}) => {
     await page.getByTestId("create-lesson-templates").scrollIntoViewIfNeeded();
     await shot(page, "e1-extensions-entry");
 
+    await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-extensions").click();
     await expect(page.getByTestId("create-lesson-extension-step")).toBeVisible();
 
@@ -206,6 +207,7 @@ test("captures the book-text path", async ({page}) => {
     // so this shot and e1 differ by which entry the reader is being pointed at.
     await shot(page, "s5-template-book");
 
+    await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-knowledge-from-text").click();
     await expect(page.getByTestId("book-text-input")).toBeVisible();
     await page.getByTestId("book-text-input").fill(

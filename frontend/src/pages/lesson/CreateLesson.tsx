@@ -200,7 +200,11 @@ export default function CreateLesson() {
     // #1756 — which card-based template was applied. Pure feedback state:
     // the templates fill cards/genConfig silently (visible only on step 2),
     // so the clicked card renders a pressed state.
-    const [selectedTemplate, setSelectedTemplate] = useState<LessonTemplateKey | null>(null);
+    // #2755 - "blank" starts PRESELECTED: applyTemplate("blank") yields
+    // exactly the initial wizard state (no cards, default gen config), so
+    // seeding the pressed state needs no template application - and the
+    // collapsed template disclosure can honestly summarise the pick.
+    const [selectedTemplate, setSelectedTemplate] = useState<LessonTemplateKey | null>("blank");
 
     // #1743 — book-text path state. ``bookMode`` switches the wizard to the
     // 3-step Metadata -> BookText -> Review flow; the AI produces the theory
