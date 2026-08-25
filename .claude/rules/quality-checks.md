@@ -481,6 +481,23 @@ it("displays toast error on end-session failure", () => { ... })
 
 Pattern: `test_{action}_{expected_outcome}_when_{condition}`. The name must describe the behavior, not the implementation.
 
+### Parametrized tests (#2739)
+
+Same assertion logic over a value table: use `@pytest.mark.parametrize`
+(Python) / `it.each` (Vitest) instead of copied test functions - DRY
+applies to tests too. Established practice in this repo; this section
+just pins it.
+
+- Every case carries a SPEAKING identifier (pytest `ids=`, the `it.each`
+  name template) so a red case reads in the CI log without decoding the
+  table - `test_foo[3]` tells nobody what broke.
+- Parametrize only while the assertion logic stays identical. A case
+  needing its own setup or its own assertions is its own test - no
+  if-cascades on the parameter inside the test body.
+- Counting: N cases report as N tests; the tdd.md four-test target
+  (happy/edge/boundary/repro) is therefore often ONE parametrized
+  function plus the reproduction test.
+
 ## Integration Test Rules
 
 - Use `TestClient(app)` for backend integration tests.

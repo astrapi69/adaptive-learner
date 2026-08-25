@@ -53,6 +53,10 @@ For a real feature or fix, the TARGET is the following breakdown — at least fo
 3. **Edge cases** — empty/missing/unexpected inputs.
 4. **Boundary values** — the edges of the valid range.
 
+Edge cases + boundary values are the standard case for ONE parametrized
+test (`@pytest.mark.parametrize` / `it.each`) - see "Parametrized tests"
+in `quality-checks.md`.
+
 Floor (happy path + error case) and target (4-test breakdown) are NOT contradictory: the floor applies to trivial new functions, the target to features and fixes. More tests are allowed, fewer than the floor are not.
 
 No artificial tests just for counting — every test checks a real behavior property (see "Meaningful coverage is the goal" in `quality-checks.md`).
