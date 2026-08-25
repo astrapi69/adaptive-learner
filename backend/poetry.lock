@@ -3556,6 +3556,18 @@ platformdirs = ">=3.9.1,<5"
 python-discovery = ">=1.4.2"
 
 [[package]]
+name = "vulture"
+version = "2.16"
+description = "Find dead code"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "vulture-2.16-py3-none-any.whl", hash = "sha256:6e0f1c312cef1c87856957e5c2ca9608834a7c794c2180477f30bf0e4cc58eee"},
+    {file = "vulture-2.16.tar.gz", hash = "sha256:f8d9f6e2af03011664a3c6c240c9765b3f392917d3135fddca6d6a68d359f717"},
+]
+
+[[package]]
 name = "watchfiles"
 version = "1.2.0"
 description = "Simple, modern and high performance file watching and code reload in python."
@@ -3809,4 +3821,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.12"
-content-hash = "2ce061b763c08b6d825bc63aea980d610d60a5fb61c7a9c31f88e4194a6236fa"
+content-hash = "e0e4da4ea3796a199b5a34e689a91d39c3458f237e0cc9b1e9d513de19bd1a22"

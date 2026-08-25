@@ -1,0 +1,54 @@
+# Dead-code report (#2741) - night shift (#575), NOT a PR gate.
+#
+# vulture (backend/app + every plugin package in ONE scope, so cross-package
+# callers count as usage, #2486) + knip (frontend exports/types) behind
+# scripts/check_dead_code.py's list baseline: a NEW finding turns this red,
+# the tracked tail stays visible in .dead-code-baseline.json. Findings are
+# detector CLAIMS - a deletion PR verifies each one individually against
+# every caller surface (entry_points, hookspecs, dynamic imports,
+# package-emitted usage; the #2477/#2486 incident class). Weekly cadence:
+# dead code does not rot faster than that, and the detectors are too noisy
+# for a merge gate.
+
+name: Dead-code report
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly, Sunday 03:30 UTC - inside the night-shift window (#575).
+    - cron: "30 3 * * 0"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: read
+
+jobs:
+  dead-code:
+    name: vulture + knip against the list baseline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install backend (brings vulture)
+        working-directory: backend
+        run: |
+          pipx install poetry
+          poetry install --only main,dev --no-interaction --no-ansi
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Install frontend deps (brings knip)
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      - name: Run the dead-code check
+        working-directory: backend
+        run: poetry run python ../scripts/check_dead_code.py
