@@ -115,6 +115,29 @@ describe("user-generated sets (Dexie / My Lessons)", () => {
     expect(entry.book ?? null).toBeNull();
   });
 
+  it("#2655 — persists the optional attribution/derivation chain into the saved set", async () => {
+    const attribution = {
+      author: "Original Author",
+      derived_from: [{ author: "Even Earlier Author" }],
+    };
+    const entry = await saveUserSetDexie(
+      saveInput({ attribution }),
+      "2026-08-17T00:00:00Z",
+    );
+    expect(entry.attribution).toEqual(attribution);
+    // Survives a round-trip through listSets (read back from IndexedDB).
+    const list = await listSetsDexie([]);
+    const stored = list.sets.find(
+      (s) => s.source === USER_GENERATED_SOURCE && s.id === "conv-1",
+    );
+    expect(stored?.attribution).toEqual(attribution);
+  });
+
+  it("saves no attribution when none is supplied (attribution is null)", async () => {
+    const entry = await saveUserSetDexie(saveInput(), "t0");
+    expect(entry.attribution ?? null).toBeNull();
+  });
+
   it("re-saving overwrites in place (no duplicate sets)", async () => {
     await saveUserSetDexie(saveInput({ title: "Old" }), "t1");
     const e2 = await saveUserSetDexie(saveInput({ title: "New" }), "t2");

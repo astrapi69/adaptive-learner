@@ -17,6 +17,7 @@ import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import { SettingsSection } from "../SettingsSection";
 import {
   clearLessonCache,
   formatMegabytes,
@@ -53,13 +54,10 @@ export default function CacheManagementSection() {
   const empty = info !== null && info.lessonCount === 0 && info.bytes === 0;
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-section-cache"
+    <SettingsSection
+      title={t("pwa.cache_heading", "Offline cache")}
+      testid="settings-section-cache"
     >
-      <h2 className="settings-section-title">
-        {t("pwa.cache_heading", "Offline cache")}
-      </h2>
       <p className="muted mt-0" data-testid="cache-summary">
         {info === null
           ? "…"
@@ -116,6 +114,6 @@ export default function CacheManagementSection() {
           </Button>
         </div>
       )}
-    </section>
+    </SettingsSection>
   );
 }

@@ -130,6 +130,19 @@ describe("ExtensionSteps — step 2 authoring", () => {
         expect(editor).toBeInTheDocument();
     });
 
+    it("does NOT offer the -> free_text conversion in the ext-only flow (EXP-050 #2511)", () => {
+        // A dictation IS convertible, but the ext-only ExtensionSteps flow saves
+        // via buildExtensionLesson, so a resulting core exercise would not fit —
+        // the conversion control must never appear here.
+        render(<Harness />);
+        fireEvent.click(screen.getByTestId("extension-add"));
+        fireEvent.click(screen.getByTestId("extension-add-type-dictation"));
+        expect(screen.getByTestId(/^exercise-ext-editor-/)).toBeInTheDocument();
+        expect(
+            screen.queryByTestId(/^exercise-ext-type-select-/),
+        ).toBeNull();
+    });
+
     it("deletes an exercise row", () => {
         render(<Harness initial={[completeCategorization("c1")]} />);
         expect(screen.getByTestId("extension-row-c1")).toBeInTheDocument();

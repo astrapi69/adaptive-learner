@@ -83,19 +83,19 @@ export default function AnswerCelebration({
                 <FeedbackPulse
                     variant={isCorrect ? "success" : "error"}
                     testId="answer-pulse"
-                    className="answer-feedback-pulse"
+                    className="answer-feedback-pulse shrink-0"
                 >
                     {isCorrect ? (
                         <Check
                             size={18}
                             aria-hidden="true"
-                            style={{color: "var(--exercise-correct)"}}
+                            className="text-[var(--exercise-correct)]"
                         />
                     ) : (
                         <X
                             size={18}
                             aria-hidden="true"
-                            style={{color: "var(--exercise-wrong)"}}
+                            className="text-[var(--exercise-wrong)]"
                         />
                     )}
                 </FeedbackPulse>

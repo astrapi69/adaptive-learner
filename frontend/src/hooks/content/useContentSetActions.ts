@@ -54,6 +54,7 @@ import { readLearnerState } from "../../lib/learning/learnerState";
 import { migrateSetExerciseIds } from "../../lib/content/update/stable-id-migration";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
+import { useEditAsCopy } from "./useEditAsCopy";
 import { useI18n } from "../ui/useI18n";
 import { notify } from "../../utils/notify";
 
@@ -653,6 +654,18 @@ export function useContentSetActions({
     );
   };
 
+  // EXP-046 item 3 / #2654 — "Als Kopie bearbeiten": fork a downloaded set
+  // into a user-generated copy, then route into the editor exactly like
+  // ``handleEditUserSet`` already does for "My Lessons". Extracted into its
+  // own hook to keep this file under the size gate (#2654 review).
+  const {
+    editAsCopyTarget,
+    setEditAsCopyTarget,
+    editingAsCopy,
+    requestEditAsCopy,
+    handleConfirmEditAsCopy,
+  } = useEditAsCopy({ fetchSetLessons, onForked: handleEditUserSet });
+
   const handleExportJson = async (entry: ContentSetEntry) => {
     try {
       const lessons = await fetchSetLessons(entry);
@@ -859,6 +872,12 @@ export function useContentSetActions({
     restarting,
     requestRestartSet,
     handleConfirmRestartSet,
+    // EXP-046 item 3 / #2654 — "Als Kopie bearbeiten" fork-then-edit.
+    editAsCopyTarget,
+    setEditAsCopyTarget,
+    editingAsCopy,
+    requestEditAsCopy,
+    handleConfirmEditAsCopy,
     // #1351 — bulk multi-select actions.
     bulkDeleteTargets,
     setBulkDeleteTargets,

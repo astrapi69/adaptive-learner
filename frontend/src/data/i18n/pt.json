@@ -707,6 +707,8 @@
     "lesson_shortcuts_description": "Pressione Enter para verificar a sua resposta e Enter novamente para ir para o próximo passo.",
     "lesson_auto_advance": "Avançar automaticamente após uma resposta correta",
     "lesson_auto_advance_description": "Após uma resposta correta, avança automaticamente para o próximo exercício. Uma resposta errada sempre espera para você revisar a solução.",
+    "ask_ai_visible": "Mostrar botão 'Perguntar à IA'",
+    "ask_ai_visible_description": "Mostra o botão 'Perguntar à IA' abaixo da teoria e dos exercícios. Exibido por padrão; o botão ainda precisa da sua própria chave de IA (BYOK) para responder.",
     "button_tooltips": "Mostrar dicas dos botões",
     "button_tooltips_description": "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de ecrã permanecem ativas independentemente.",
     "developer_mode": "Modo desenvolvedor",
@@ -2048,6 +2050,70 @@
         "retry": "Tentar novamente",
         "empty": "Este exercício de múltipla escolha não tem opções."
       },
+      "al_categorization": {
+        "empty": "Este exercício de categorização não tem categorias.",
+        "instructions": "Toca num item e depois na sua categoria.",
+        "pool_label": "Itens",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase. Revise os itens destacados.",
+        "retry": "Tentar novamente",
+        "submit": "Verificar resposta"
+      },
+      "al_dictation": {
+        "empty": "Este exercício de ditado não tem áudio.",
+        "input_label": "Escreve o que ouves",
+        "input_placeholder": "Escreve o que ouves…",
+        "result_correct": "Correto!",
+        "result_near_miss": "Quase! Verifica a ortografia.",
+        "result_wrong": "Quase.",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Verificar resposta"
+      },
+      "al_error_correction": {
+        "empty": "Este exercício de correção não tem frase.",
+        "input_label": "Correção",
+        "instructions": "Toca na palavra errada e depois escreve a correção.",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase. Vê a solução abaixo.",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Verificar resposta"
+      },
+      "al_graded_quiz": {
+        "empty": "Este questionário não tem perguntas.",
+        "failed": "Não aprovado",
+        "input_label": "Resposta",
+        "passed": "Aprovado",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Entregar questionário"
+      },
+      "al_image_description": {
+        "empty": "Este exercício de descrição de imagem não tem imagem.",
+        "image_alt": "Imagem a descrever — a sua descrição é a resposta a escrever abaixo",
+        "image_unavailable": "A imagem não está disponível aqui.",
+        "input_label": "Descreve a imagem",
+        "input_placeholder": "Escreve a tua descrição…",
+        "result_correct": "Correto!",
+        "result_near_miss": "Quase! Verifica a ortografia.",
+        "result_wrong": "Quase.",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Verificar resposta"
+      },
+      "al_reading_comprehension": {
+        "badge_correct": "Correto",
+        "badge_missed": "Resposta correta",
+        "badge_wrong": "Errado",
+        "empty": "Este exercício de leitura não tem perguntas.",
+        "input_label": "Resposta",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase. Revise as perguntas destacadas.",
+        "retry": "Tentar novamente",
+        "solution_label": "Solução",
+        "submit": "Verificar respostas"
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",
@@ -2450,6 +2516,19 @@
         "delete": "Excluir"
       }
     },
+    "edit_as_copy": {
+      "action": "Editar como cópia",
+      "confirm_title": "Editar como sua própria cópia?",
+      "confirm_message": "Abre “{title}” como sua própria cópia editável no editor de lições. O original permanece inalterado e continua disponível para download.",
+      "confirm": "Editar cópia",
+      "saved": "Salvo como sua própria cópia.",
+      "failed": "Não foi possível criar a cópia."
+    },
+    "fork": {
+      "based_on": "Baseado em {author}",
+      "based_on_and_others": "Baseado em {author} e outros",
+      "credit_disclaimer": "Os créditos são autodeclarados e não verificados."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Gerar para todas as lições",
@@ -2758,7 +2837,10 @@
       "name_label": "O seu nome (opcional)",
       "name_placeholder": "ex. Maria S.",
       "show_name": "Mostrar nome na lição",
-      "privacy": "Seu nome será exibido na lição e no pull request."
+      "privacy": "Seu nome será exibido na lição e no pull request.",
+      "foreign_notice": "Este conteúdo credita {author} como autor. O nome viaja ao compartilhar, você pode removê-lo.",
+      "foreign_remove": "Remover créditos",
+      "foreign_removed": "Créditos removidos."
     }
   },
   "milestone": {
@@ -3048,6 +3130,8 @@
         "mc_options_label": "Opções de resposta",
         "convert_label": "Tipo de exercício",
         "convert_hint": "A conversão mantém a resposta escrita e o progresso do aluno.",
+        "convert_confirm_title": "Converter o tipo de exercício?",
+        "convert_confirm_message": "Este exercício tem mais de uma resposta. A conversão mantém apenas a primeira; o progresso das outras não é transferido.",
         "mc_option_placeholder": "Texto da opção",
         "mc_option_add": "Adicionar opção",
         "mc_option_remove": "Remover opção",
@@ -3244,6 +3328,19 @@
         "title": "Prática de conversação",
         "desc": "5 espaços de cartão, peças de palavras + cloze."
       }
+    },
+    "suggest": {
+      "distractors": "Sugerir respostas erradas com IA",
+      "distractors_empty": "Nenhuma sugestão utilizável - adicione uma resposta errada à mão.",
+      "cloze_sentence": "Sugerir uma frase com IA",
+      "cloze_sentence_empty": "Nenhuma frase utilizável - escreva uma à mão.",
+      "passage": "Sugerir um texto com IA",
+      "passage_empty": "Nenhum texto utilizável - escreva um à mão.",
+      "busy": "A sugerir…",
+      "disclaimer": "Rascunhos de IA - reveja e edite antes de guardar.",
+      "no_key": "Isto precisa da sua própria chave de IA (BYOK). Adicione uma nas definições de IA.",
+      "open_settings": "Definições de IA",
+      "error": "O pedido de IA falhou. Tente novamente."
     }
   },
   "learning_path": {

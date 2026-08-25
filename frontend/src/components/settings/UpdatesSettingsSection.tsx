@@ -18,6 +18,7 @@ import {
   writeUpdatePrefs,
   type UpdateInterval,
 } from "../../lib/utils/updatePrefs";
+import { SettingsSection } from "./SettingsSection";
 
 const INTERVAL_OPTIONS: UpdateInterval[] = ["daily", "weekly", "monthly", "never"];
 
@@ -62,9 +63,10 @@ export default function UpdatesSettingsSection() {
   const lastChecked = prefs.last_check_at ? relativeTime(prefs.last_check_at, lang) : null;
 
   return (
-    <section className="settings-section" data-testid="settings-section-updates">
-      <h2 className="settings-section-title">{t("settings.updates.title", "Updates")}</h2>
-
+    <SettingsSection
+      title={t("settings.updates.title", "Updates")}
+      testid="settings-section-updates"
+    >
       <label className="flex items-center justify-between gap-3 py-2">
         <span className="text-fg-primary">
           {t("settings.updates.auto_check", "Automatic update check")}
@@ -109,6 +111,6 @@ export default function UpdatesSettingsSection() {
           CURRENT_BUILD.version,
         )}
       </p>
-    </section>
+    </SettingsSection>
   );
 }

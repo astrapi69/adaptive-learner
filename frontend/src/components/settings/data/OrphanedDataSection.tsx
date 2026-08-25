@@ -19,6 +19,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import ConfirmDialog from "../../../shared/feedback/ConfirmDialog";
+import { SettingsSection } from "../SettingsSection";
 import {
   isEmptyPlan,
   planOrphanCleanup,
@@ -88,13 +89,10 @@ export default function OrphanedDataSection() {
   if (!plan || isEmptyPlan(plan)) return null;
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-section-orphaned"
+    <SettingsSection
+      title={t("settings.orphaned.heading", "Disconnected content")}
+      testid="settings-section-orphaned"
     >
-      <h2 className="settings-section-title">
-        {t("settings.orphaned.heading", "Disconnected content")}
-      </h2>
       <p className="muted" data-testid="orphaned-summary">
         {t(
           "settings.orphaned.summary",
@@ -131,6 +129,6 @@ export default function OrphanedDataSection() {
         onCancel={() => setConfirming(false)}
         testId="orphaned-confirm-dialog"
       />
-    </section>
+    </SettingsSection>
   );
 }

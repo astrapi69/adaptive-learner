@@ -33,6 +33,20 @@ jobs:
   visual:
     name: Visual screenshot matrix (themes + critical surfaces)
     runs-on: ubuntu-latest
+    # #2715 — the comparison MUST render in the SAME environment that
+    # produces the baselines: visual-baseline-sync.yml renders inside this
+    # pinned Playwright image, and after the #2695 resync anchored every
+    # PNG to the container's system fonts, a bare-runner render diffs by
+    # 9k-497k pixels per surface (the #2690 font-weight shift) and the
+    # nightly went permanently red (2026-08-20/21). Same image + --user
+    # 1001 pattern as visual-baseline-sync.yml / dexie-smoke.yml /
+    # manual-automation.yml (browsers pre-baked, no cdn.playwright.dev
+    # download — the #317/#1248 hang class). Pin the tag to the
+    # @playwright/test version in e2e/package.json (1.61.1); bump both
+    # together.
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
+      options: --user 1001
     steps:
       - uses: actions/checkout@v7
 
@@ -40,9 +54,15 @@ jobs:
         with:
           node-version: "24"
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.3.14"
+      # NOT oven-sh/setup-bun: it unpacks the Bun zip with `unzip`, which
+      # the Playwright noble image does not ship, and the job runs as
+      # --user 1001 (no apt). The npm distribution carries the binary as a
+      # plain npm tarball, installed to a user-writable prefix (#1530,
+      # same pattern as visual-baseline-sync.yml / dexie-smoke.yml).
+      - name: Install Bun 1.3.14 (npm; image lacks unzip for setup-bun)
+        run: |
+          npm install --global --prefix "$HOME/.bun-npm" bun@1.3.14
+          echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
 
       - name: Cache bun install
         uses: actions/cache@v6
@@ -63,9 +83,8 @@ jobs:
         working-directory: e2e
         run: bun install --frozen-lockfile
 
-      - name: Install Playwright browsers
-        working-directory: e2e
-        run: npx playwright install --with-deps chromium
+      # NO `playwright install` step: the browsers are baked into the
+      # container image (#2715; the #317 CDN-hang class).
 
       - name: Run visual regression
         working-directory: e2e
@@ -85,8 +104,14 @@ jobs:
 
       # Baseline-refresh mode (#1532): the regenerated PNGs are an artifact,
       # NEVER auto-committed — download, review every image, commit via PR.
+      # #2661 — `always()` is required, not optional: an unrelated flaky/
+      # broken spec elsewhere in the 100+-spec matrix fails the job exit
+      # code even under --update-snapshots (which never fails on a pixel
+      # diff itself), and without always() this step is silently skipped —
+      # the regenerated PNGs exist transiently in the runner workspace and
+      # are lost. Matches the precedent on "Upload report + diffs" above.
       - name: Upload regenerated baselines
-        if: inputs.update_baselines == true
+        if: always() && inputs.update_baselines == true
         uses: actions/upload-artifact@v7
         with:
           name: visual-baselines

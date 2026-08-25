@@ -6,6 +6,7 @@
  * - Renders title + body text when open=true
  * - "Continue" calls onResume (not onStartOver)
  * - "Start over" calls onStartOver (not onResume)
+ * - Action buttons are spaced apart (regression #2637)
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -75,6 +76,24 @@ describe("LessonResumeDialog", () => {
         fireEvent.click(screen.getByTestId("lesson-resume-restart"));
         expect(onStartOver).toHaveBeenCalledTimes(1);
         expect(onResume).not.toHaveBeenCalled();
+    });
+
+    it("spaces the action buttons apart (regression #2637)", () => {
+        render(
+            <LessonResumeDialog
+                open={true}
+                lessonTitle="Greetings"
+                onResume={vi.fn()}
+                onStartOver={vi.fn()}
+            />,
+        );
+        // #2637: the actions row shipped with a styling-hook class that no
+        // CSS rule defined, so the two buttons rendered flush against each
+        // other. Pin the token-backed utilities that provide the gap.
+        const actions = screen.getByTestId("lesson-resume-continue")
+            .parentElement as HTMLElement;
+        expect(actions.className).toMatch(/\bflex\b/);
+        expect(actions.className).toMatch(/\bgap-3\b/);
     });
 
     it("has role=dialog and aria-modal=true for accessibility", () => {

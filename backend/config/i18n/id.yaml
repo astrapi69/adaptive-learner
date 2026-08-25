@@ -669,6 +669,8 @@ settings:
   lesson_shortcuts_description: "Tekan Enter untuk memeriksa jawaban Anda, lalu Enter lagi untuk ke langkah berikutnya."
   lesson_auto_advance: "Lanjut otomatis setelah jawaban benar"
   lesson_auto_advance_description: "Setelah jawaban benar, otomatis lanjut ke latihan berikutnya. Jawaban salah selalu menunggu agar kamu bisa meninjau solusinya."
+  ask_ai_visible: "Tampilkan tombol 'Tanya AI'"
+  ask_ai_visible_description: "Menampilkan tombol 'Tanya AI' di bawah teori dan latihan. Ditampilkan secara default; tombol ini tetap memerlukan kunci AI milikmu sendiri (BYOK) untuk menjawab."
   button_tooltips: Tampilkan tooltip tombol
   button_tooltips_description: "Tampilkan tooltip arahkan kursor pada tombol ikon yang menjelaskan fungsinya. Label pembaca layar tetap aktif terlepas dari ini."
   developer_mode: Mode Pengembang
@@ -1902,6 +1904,64 @@ lesson:
       submit: "Periksa jawaban"
       retry: "Coba lagi"
       empty: "Latihan pilihan ganda ini tidak memiliki opsi."
+    al_categorization:
+      empty: "Latihan kategorisasi ini tidak memiliki kategori."
+      instructions: "Ketuk sebuah item, lalu ketuk kategorinya."
+      pool_label: "Item"
+      result_correct: "Benar!"
+      result_wrong: "Belum tepat. Periksa item yang ditandai."
+      retry: "Coba lagi"
+      submit: "Periksa jawaban"
+    al_dictation:
+      empty: "Latihan dikte ini tidak memiliki audio."
+      input_label: "Ketik apa yang Anda dengar"
+      input_placeholder: "Ketik apa yang Anda dengar…"
+      result_correct: "Benar!"
+      result_near_miss: "Hampir! Periksa ejaan Anda."
+      result_wrong: "Belum tepat."
+      retry: "Coba lagi"
+      solution_label: "Solusi"
+      submit: "Periksa jawaban"
+    al_error_correction:
+      empty: "Latihan koreksi kesalahan ini tidak memiliki kalimat."
+      input_label: "Koreksi"
+      instructions: "Ketuk kata yang salah, lalu ketik koreksinya."
+      result_correct: "Benar!"
+      result_wrong: "Belum tepat. Lihat solusi di bawah."
+      retry: "Coba lagi"
+      solution_label: "Solusi"
+      submit: "Periksa jawaban"
+    al_graded_quiz:
+      empty: "Kuis ini tidak memiliki pertanyaan."
+      failed: "Tidak lulus"
+      input_label: "Jawaban"
+      passed: "Lulus"
+      retry: "Coba lagi"
+      solution_label: "Solusi"
+      submit: "Kirim kuis"
+    al_image_description:
+      empty: "Latihan deskripsi gambar ini tidak memiliki gambar."
+      image_alt: "Gambar untuk dideskripsikan — deskripsinya adalah jawaban yang diketik di bawah"
+      image_unavailable: "Gambar tidak tersedia di sini."
+      input_label: "Deskripsikan gambar"
+      input_placeholder: "Ketik deskripsi Anda…"
+      result_correct: "Benar!"
+      result_near_miss: "Hampir! Periksa ejaan Anda."
+      result_wrong: "Belum tepat."
+      retry: "Coba lagi"
+      solution_label: "Solusi"
+      submit: "Periksa jawaban"
+    al_reading_comprehension:
+      badge_correct: "Benar"
+      badge_missed: "Jawaban yang benar"
+      badge_wrong: "Salah"
+      empty: "Latihan membaca ini tidak memiliki pertanyaan."
+      input_label: "Jawaban"
+      result_correct: "Benar!"
+      result_wrong: "Belum tepat. Periksa pertanyaan yang ditandai."
+      retry: "Coba lagi"
+      solution_label: "Solusi"
+      submit: "Periksa jawaban"
     instruction:
       matching:
         receptive: Cocokkan pasangannya (Pengenalan)
@@ -2265,6 +2325,17 @@ content:
       defer: "Tunda"
       complete: "Tandai sebagai selesai"
       delete: "Hapus"
+  edit_as_copy:
+    action: "Edit sebagai salinan"
+    confirm_title: "Edit sebagai salinan Anda sendiri?"
+    confirm_message: "Membuka “{title}” sebagai salinan Anda sendiri yang dapat diedit di editor pelajaran. Aslinya tetap tidak berubah dan tetap dapat diunduh."
+    confirm: "Edit salinan"
+    saved: "Disimpan sebagai salinan Anda sendiri."
+    failed: "Salinan tidak dapat dibuat."
+  fork:
+    based_on: "Berdasarkan {author}"
+    based_on_and_others: "Berdasarkan {author} dan lainnya"
+    credit_disclaimer: "Kredit dinyatakan sendiri dan belum diverifikasi."
   ai_exercises:
     batch:
       button: "Buat untuk semua pelajaran"
@@ -2548,6 +2619,9 @@ content:
     name_placeholder: mis. Maria S.
     show_name: Tampilkan nama di pelajaran
     privacy: "Namamu akan ditampilkan di pelajaran dan pull request."
+    foreign_notice: "Konten ini mencantumkan {author} sebagai kontributor. Nama tersebut ikut terbawa saat dibagikan, Anda dapat menghapusnya."
+    foreign_remove: "Hapus kredit"
+    foreign_removed: "Kredit dihapus."
 milestone:
   streak: "Rentetan {n} Hari!"
   level_up: "Level {n} tercapai!"
@@ -2801,6 +2875,8 @@ create_lesson:
       mc_options_label: "Opsi jawaban"
       convert_label: "Jenis latihan"
       convert_hint: "Konversi mempertahankan jawaban yang ditulis dan kemajuan pelajar."
+      convert_confirm_title: "Ubah jenis latihan?"
+      convert_confirm_message: "Latihan ini memiliki lebih dari satu jawaban. Konversi hanya menyimpan yang pertama; kemajuan untuk yang lain tidak dibawa serta."
       mc_option_placeholder: "Teks opsi"
       mc_option_add: "Tambah opsi"
       mc_option_remove: "Hapus opsi"
@@ -2983,6 +3059,18 @@ create_lesson:
       title: "Latihan Percakapan"
       desc: "5 slot kartu, ubin kata + cloze."
 
+  suggest:
+    distractors: "Sarankan jawaban salah dengan AI"
+    distractors_empty: "Tidak ada saran yang bisa dipakai - tambahkan jawaban salah secara manual."
+    cloze_sentence: "Sarankan kalimat dengan AI"
+    cloze_sentence_empty: "Tidak ada kalimat yang bisa dipakai - tulis satu secara manual."
+    passage: "Sarankan bacaan dengan AI"
+    passage_empty: "Tidak ada bacaan yang bisa dipakai - tulis satu secara manual."
+    busy: "Menyarankan…"
+    disclaimer: "Draf AI - periksa dan sunting sebelum menyimpan."
+    no_key: "Ini memerlukan kunci AI Anda sendiri (BYOK). Tambahkan satu di pengaturan AI."
+    open_settings: "Pengaturan AI"
+    error: "Permintaan AI gagal. Silakan coba lagi."
 learning_path:
   continue: "Lanjutkan"
   start: "Mulai"

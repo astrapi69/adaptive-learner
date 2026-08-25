@@ -269,8 +269,7 @@ export default function ImageCropDialog({
         <div className="flex justify-center">
           <div
             ref={viewportRef}
-            className="relative touch-none select-none overflow-hidden rounded-app bg-[var(--bg-elevated)]"
-            style={{ width: VIEWPORT, height: VIEWPORT }}
+            className="relative size-56 touch-none select-none overflow-hidden rounded-app bg-[var(--bg-elevated)]"
             data-testid="crop-viewport"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}

@@ -31,8 +31,21 @@ export default defineConfig({
     // phase shifted lesson-matching mobile by ~4px, #1540). It cannot
     // paper over a wrong baseline: a real mismatch is deterministic and
     // fails every retry, so the gate stays sharp.
-    fullyParallel: false,
-    workers: 1,
+    //
+    // CI runs 4 workers (#2684): the suite is Dexie-mode (client-side
+    // IndexedDB only, no backend), so every test gets an isolated
+    // browser-context storage profile - concurrent workers cannot bleed
+    // state between captures. The single `vite preview` webServer is a
+    // static file server, safe under concurrent requests. GitHub-hosted
+    // `ubuntu-latest` has 4 vCPUs. Local runs stay serial (workers: 1) so a
+    // human reproducing a diff by hand gets deterministic, one-at-a-time
+    // output. Cuts the ~150-screenshot suite's wall-clock roughly
+    // proportionally without changing WHAT gets rendered - no coverage
+    // tradeoff, unlike a path-scoped subset
+    // (rejected for this suite, see ci-gates.md "Vorlaeufige Regel...
+    // #2682" and quality-checks.md's #1628/#1638/#1635 precedent).
+    fullyParallel: !!process.env.CI,
+    workers: process.env.CI ? 4 : 1,
     retries: 1,
     // Seeding a learner (onboarding + a lesson playthrough) before the
     // shot takes longer than a smoke nav.
@@ -41,14 +54,43 @@ export default defineConfig({
     snapshotPathTemplate: "{testDir}/screenshots/{arg}{ext}",
     expect: {
         toHaveScreenshot: {
+            // #2712 - the ratio alone scales with viewport AREA: 1% of
+            // desktop 1920x1080 allowed 20,736 differing pixels, enough for
+            // a COMPLETE page-state swap on a sparse-text surface (the
+            // review-session empty-vs-active incident: only ~18k glyph
+            // pixels exceed the colour threshold, the pastel fills do not).
+            // The absolute cap makes the budget mean the same thing at
+            // every viewport (gate contract point 5, quality-checks.md);
+            // Playwright applies min(maxDiffPixels, ratio * area). 2,500
+            // equals the mobile 1% budget, so mobile keeps its bound and
+            // tablet/desktop tighten to it. A per-shot override that
+            // loosens the ratio must loosen maxDiffPixels too (see the
+            // lesson-matching@mobile override in critical-surfaces.spec.ts).
+            maxDiffPixels: 2_500,
             maxDiffPixelRatio: 0.01,
             // Per-pixel colour-distance tolerance for anti-aliasing (#705).
+            // Deliberately NOT lowered for #2712: pastel-fill sensitivity
+            // would surface anti-aliasing churn across all ~150 baselines;
+            // the absolute cap already catches state swaps via their text.
             threshold: 0.2,
             animations: "disabled",
         },
     },
     use: {
         baseURL: `http://localhost:${PREVIEW_PORT}`,
+        // #2721 - pin Chromium's text rasterization path. It is chosen per
+        // browser-process launch (GPU vs software raster, LCD-subpixel vs
+        // grayscale anti-aliasing); with 4 parallel CI workers (#2684) = 4
+        // independent launches, individual workers landed on different
+        // paths under runner contention, flipping the WHOLE-page text
+        // weight per run and per test (~19k px on lesson-result themes +
+        // lesson-summary-tablet; the #2690 font-weight shift, now with a
+        // mechanism). Serial local runs (one browser) never flipped.
+        // Software raster + grayscale AA is the only combination every
+        // launch can satisfy, so it is the deterministic one.
+        launchOptions: {
+            args: ["--disable-gpu", "--disable-lcd-text"],
+        },
         actionTimeout: 15_000,
         viewport: {width: 1440, height: 900},
         trace: "on-first-retry",

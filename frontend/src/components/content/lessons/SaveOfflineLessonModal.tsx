@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import FormHint from "../../../shared/forms/FormHint";
 import {
@@ -200,18 +201,17 @@ export default function SaveOfflineLessonModal({
   const canSave = saveable && title.trim().length > 0;
 
   return (
-    <div className="modal-overlay" data-testid="save-offline-lesson-modal">
-      <div
-        className="modal-card"
+    <ModalOverlay data-testid="save-offline-lesson-modal">
+      <ModalCard
         role="dialog"
         aria-modal="true"
         aria-labelledby="save-lesson-title"
       >
-        <h2 id="save-lesson-title" className="modal-title">
+        <ModalTitle id="save-lesson-title">
           {t("content.save_lesson.modal_title", "Save as offline lesson")}
-        </h2>
-        <label className="form-row">
-          <span className="form-label">
+        </ModalTitle>
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.save_lesson.title_label", "Lesson title")}
           </span>
           <input
@@ -223,8 +223,8 @@ export default function SaveOfflineLessonModal({
             autoFocus
           />
         </label>
-        <label className="form-row">
-          <span className="form-label">
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.save_lesson.title_native_label", "Title in target language")}
           </span>
           <input
@@ -235,9 +235,9 @@ export default function SaveOfflineLessonModal({
             disabled={saving}
           />
         </label>
-        <div className="form-row form-row-inline">
-          <label className="form-field">
-            <span className="form-label">
+        <div className="flex flex-col gap-2">
+          <label className="form-field flex flex-col gap-1">
+            <span className="text-[0.95rem] font-medium">
               {t("content.save_lesson.target_lang_label", "Language learned")}
             </span>
             <select
@@ -253,8 +253,8 @@ export default function SaveOfflineLessonModal({
               ))}
             </select>
           </label>
-          <label className="form-field">
-            <span className="form-label">
+          <label className="form-field flex flex-col gap-1">
+            <span className="text-[0.95rem] font-medium">
               {t("content.save_lesson.source_lang_label", "Your language")}
             </span>
             <select
@@ -270,8 +270,8 @@ export default function SaveOfflineLessonModal({
               ))}
             </select>
           </label>
-          <label className="form-field">
-            <span className="form-label">
+          <label className="form-field flex flex-col gap-1">
+            <span className="text-[0.95rem] font-medium">
               {t("content.save_lesson.level_label", "Level")}
             </span>
             <select
@@ -325,7 +325,7 @@ export default function SaveOfflineLessonModal({
               .replace("{max}", String(maxStepsPerPart))}
           </FormHint>
         )}
-        <div className="form-actions">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
           <Button
             type="button"
             variant="secondary"
@@ -346,7 +346,7 @@ export default function SaveOfflineLessonModal({
               : t("content.save_lesson.save", "Save")}
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalCard>
+    </ModalOverlay>
   );
 }

@@ -191,6 +191,24 @@ export function useShareWizard({
   const primary = lessons[0] ?? null;
   const singleLesson = lessons.length === 1 && primary != null;
 
+  // #2656 — a carried-over FOREIGN credit: a contributed_by/attribution
+  // the content already had BEFORE this share session touched it (an
+  // originally-authored lesson, or a #2655 fork carrying it forward).
+  // Captured once at mount so a later own-name opt-in (which overwrites
+  // ``contributed_by`` at ship time, see ``computeShippedLessons`` below)
+  // doesn't make the disclosure disappear. The set-level attribution
+  // (engine#90) is the more specific "who this set traces back to";
+  // falls back to the primary lesson's own credit.
+  const [foreignCredit] = useState<string | null>(
+    () => entry.attribution?.author ?? primary?.contributed_by ?? null,
+  );
+  // Schema 1.9's attribution description requires a consumer app to
+  // "point that out before it becomes visible" — the disclosure above is
+  // that point. This is the opt-OUT: removes the name(s) from the
+  // outgoing lessons, keeps the structural derivation link
+  // (``variation_of``) untouched (it carries no personal data).
+  const [removeForeignCredit, setRemoveForeignCredit] = useState(false);
+
   // BUG A/C — editable lesson metadata, still correctable by the user.
   const appLang = baseLang(lang);
   // An explicit NON-language content domain marks a same-language pair as
@@ -402,7 +420,15 @@ export function useShareWizard({
       source_language: editSource,
       target_language: editTarget,
       domain: resolvedDomain,
-      ...(author ? { contributed_by: author, contributed_at: stampedAt } : {}),
+      // #2656 — own name wins when opted in (unchanged); otherwise a
+      // carried-over foreign credit either travels as-is (default,
+      // matching the existing opt-in-only-for-own-name pattern) or is
+      // stripped when the learner clicked "Remove credits".
+      ...(author
+        ? { contributed_by: author, contributed_at: stampedAt }
+        : removeForeignCredit
+          ? { contributed_by: null, contributed_at: null }
+          : {}),
     }));
     return shipped;
   }
@@ -650,6 +676,9 @@ export function useShareWizard({
     setAuthorName,
     showName,
     setShowName,
+    foreignCredit,
+    removeForeignCredit,
+    setRemoveForeignCredit,
     // step 2 — duplicate scan
     scanning,
     dup,

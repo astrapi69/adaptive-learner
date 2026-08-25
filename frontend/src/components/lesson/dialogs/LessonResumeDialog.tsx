@@ -19,6 +19,7 @@ import {useRef} from "react";
 import {PlayCircle, RotateCcw} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
+import {ModalCard, ModalOverlay, ModalTitle} from "@/shared/modal";
 import {useDialogFocus} from "../../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../../hooks/ui/useI18n";
 
@@ -45,25 +46,24 @@ export default function LessonResumeDialog({
     if (!open) return null;
 
     return (
-        <div
+        <ModalOverlay
             ref={dialogRef}
-            className="modal-overlay"
             role="dialog"
             aria-modal="true"
             aria-labelledby="lesson-resume-title"
             data-testid="lesson-resume-dialog"
         >
-            <div className="modal-card lesson-resume-panel">
-                <h2 id="lesson-resume-title" className="modal-title">
+            <ModalCard>
+                <ModalTitle id="lesson-resume-title">
                     {t("lesson.resume.heading", "Resume lesson?")}
-                </h2>
-                <p className="lesson-resume-desc">
+                </ModalTitle>
+                <p>
                     {t(
                         "lesson.resume.body",
                         'You paused "{title}". Would you like to continue where you left off or start over?',
                     ).replace("{title}", lessonTitle)}
                 </p>
-                <div className="lesson-resume-actions">
+                <div className="flex flex-wrap gap-3">
                     <Button
                         type="button"
                         onClick={onResume}
@@ -83,7 +83,7 @@ export default function LessonResumeDialog({
                         {t("lesson.resume.action_restart", "Start over")}
                     </Button>
                 </div>
-            </div>
-        </div>
+            </ModalCard>
+        </ModalOverlay>
     );
 }

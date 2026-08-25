@@ -1,4 +1,5 @@
 // Barrel for shared/layout (grouped by concern, #809). Re-export only.
+export * from "./DashboardCard";
 export * from "./IconBadge";
 export {default as IconBadge} from "./IconBadge";
 export * from "./LessonStepNav";

@@ -56,7 +56,7 @@ export default function GradedQuizFields({
                 />
             </label>
 
-            <span className="form-label text-sm font-medium text-fg-primary">
+            <span className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.extensions.edit.q_list_label", "Questions")}
             </span>
             <ul

@@ -12,6 +12,7 @@ import {GripVertical, Pencil, Plus, Trash2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {ModalCard, ModalOverlay, ModalTitle} from "@/shared/modal";
 import {
     DndContext,
     type DragEndEvent,
@@ -35,7 +36,7 @@ import {CARD_SIDE_MAX_LENGTH} from "../../lib/content/lesson/draft-to-lesson";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
-import CardImageField from "./CardImageField";
+import {CardImageField} from "./fields";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/lesson/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
 
@@ -156,9 +157,9 @@ export default function CardEditor({
                 className="card-editor-form flex flex-col gap-3 rounded-lg border border-border bg-card p-4"
                 data-testid="card-editor-form"
             >
-                <div className="form-row form-row-inline grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.cards.front_label", "Front (learned)")} *
                         </span>
                         <Input
@@ -174,7 +175,7 @@ export default function CardEditor({
                         />
                     </label>
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.cards.back_label", "Back (your language)")} *
                         </span>
                         <Input
@@ -190,8 +191,8 @@ export default function CardEditor({
                         />
                     </label>
                 </div>
-                <label className="form-row">
-                    <span className="form-label">
+                <label className="flex flex-col gap-2">
+                    <span className="text-[0.95rem] font-medium">
                         {t("create_lesson.cards.notes_label", "Notes (optional)")}
                     </span>
                     <Input
@@ -201,8 +202,8 @@ export default function CardEditor({
                         onChange={(e) => setNotes(e.target.value)}
                     />
                 </label>
-                <label className="form-row">
-                    <span className="form-label">
+                <label className="flex flex-col gap-2">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "create_lesson.cards.example_label",
                             "Example sentence (optional)",
@@ -225,7 +226,7 @@ export default function CardEditor({
                         )}
                     </FormHint>
                 </label>
-                <div className="form-row">
+                <div className="flex flex-col gap-2">
                     <StringListEditor
                         values={altAnswers}
                         onChange={setAltAnswers}
@@ -252,7 +253,7 @@ export default function CardEditor({
                         )}
                     </FormHint>
                 </div>
-                <div className="form-row">
+                <div className="flex flex-col gap-2">
                     <CardImageField
                         value={image}
                         onChange={setImage}
@@ -260,7 +261,7 @@ export default function CardEditor({
                         idPrefix="card"
                     />
                 </div>
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         data-testid="card-add-button"
@@ -413,24 +414,20 @@ export default function CardEditor({
             </DndContext>
 
             {confirmClear && (
-                <div
-                    className="modal-overlay"
-                    data-testid="card-clear-confirm"
-                >
-                    <div
+                <ModalOverlay data-testid="card-clear-confirm">
+                    <ModalCard
                         ref={confirmClearRef}
-                        className="modal-card"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="card-clear-confirm-title"
                     >
-                        <h2 id="card-clear-confirm-title" className="modal-title">
+                        <ModalTitle id="card-clear-confirm-title">
                             {t(
                                 "create_lesson.cards.clear_confirm_title",
                                 "Remove all cards?",
                             )}
-                        </h2>
-                        <div className="form-actions">
+                        </ModalTitle>
+                        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                             <Button
                                 type="button"
                                 variant="secondary"
@@ -453,8 +450,8 @@ export default function CardEditor({
                                 )}
                             </Button>
                         </div>
-                    </div>
-                </div>
+                    </ModalCard>
+                </ModalOverlay>
             )}
         </section>
     );
@@ -506,7 +503,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                 className="card-row is-editing flex flex-col gap-3 rounded-lg border border-border bg-card p-3"
                 data-testid={`card-row-${card.id}`}
             >
-                <div className="form-row form-row-inline grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <Input
                         type="text"
                         data-testid={`card-edit-front-${card.id}`}
@@ -575,7 +572,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     previewAlt={draft.front.trim() || undefined}
                     idPrefix={`card-edit-${card.id}`}
                 />
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         variant="secondary"

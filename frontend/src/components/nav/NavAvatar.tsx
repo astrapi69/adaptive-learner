@@ -79,8 +79,7 @@ export default function NavAvatar() {
           src={avatar}
           alt=""
           aria-hidden="true"
-          className="rounded-full object-cover"
-          style={{ width: SIZE, height: SIZE }}
+          className="size-7 rounded-full object-cover"
           data-testid="nav-avatar-image"
         />
       ) : (

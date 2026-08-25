@@ -26,7 +26,7 @@ export default function SystemInfoSection({info, storageMode, t}: Props) {
                 <dt>
                     <strong>{label}</strong>
                 </dt>
-                <dd data-testid={testid} style={ddStyle}>
+                <dd data-testid={testid} className="m-0 min-w-0 break-all">
                     {version ?? t("about.dep_unknown", "unknown")}
                 </dd>
             </>
@@ -34,16 +34,16 @@ export default function SystemInfoSection({info, storageMode, t}: Props) {
     return (
         <article
             data-testid="about-system-section"
-            style={sectionStyle}
+            className="p-4 border border-[var(--border)] rounded-[8px] bg-[var(--surface)]"
         >
-            <h3 style={{marginTop: 0, marginBottom: 12}}>
+            <h3 className="mt-0 mb-3">
                 {t("about.system_heading", "System")}
             </h3>
-            <dl style={dlStyle}>
+            <dl className="grid grid-cols-[minmax(0,max-content)_minmax(0,1fr)] gap-x-4 gap-y-1 text-[0.9rem] m-0">
                 <dt>
                     <strong>{t("about.storage_label", "Storage")}</strong>
                 </dt>
-                <dd data-testid="about-storage-mode" style={ddStyle}>
+                <dd data-testid="about-storage-mode" className="m-0 min-w-0 break-all">
                     {isDexie
                         ? t("about.storage_dexie", "Local Browser Storage (IndexedDB)")
                         : t("about.storage_api", "Server (FastAPI + SQLite)")}
@@ -51,7 +51,7 @@ export default function SystemInfoSection({info, storageMode, t}: Props) {
                 <dt>
                     <strong>{t("about.data_dir_label", "Data directory")}</strong>
                 </dt>
-                <dd data-testid="about-data-dir" style={ddStyle}>
+                <dd data-testid="about-data-dir" className="m-0 min-w-0 break-all">
                     {info.paths.data_directory}
                 </dd>
                 {!isDexie && (
@@ -61,7 +61,7 @@ export default function SystemInfoSection({info, storageMode, t}: Props) {
                                 {t("about.db_path_label", "Database path")}
                             </strong>
                         </dt>
-                        <dd data-testid="about-db-path" style={ddStyle}>
+                        <dd data-testid="about-db-path" className="m-0 min-w-0 break-all">
                             {info.paths.database_path}
                         </dd>
                     </>
@@ -71,7 +71,7 @@ export default function SystemInfoSection({info, storageMode, t}: Props) {
                         <dt>
                             <strong>Python</strong>
                         </dt>
-                        <dd data-testid="about-python-version" style={ddStyle}>
+                        <dd data-testid="about-python-version" className="m-0 min-w-0 break-all">
                             {info.runtime.python_version}
                         </dd>
                     </>
@@ -79,7 +79,7 @@ export default function SystemInfoSection({info, storageMode, t}: Props) {
                 <dt>
                     <strong>{t("about.platform_label", "Platform")}</strong>
                 </dt>
-                <dd data-testid="about-platform" style={ddStyle}>
+                <dd data-testid="about-platform" className="m-0 min-w-0 break-all">
                     {info.runtime.platform_system}
                     {info.runtime.platform_release
                         ? ` ${info.runtime.platform_release}`
@@ -104,24 +104,3 @@ export default function SystemInfoSection({info, storageMode, t}: Props) {
         </article>
     );
 }
-
-const sectionStyle: React.CSSProperties = {
-    padding: 16,
-    border: "1px solid var(--border)",
-    borderRadius: 8,
-    background: "var(--surface)",
-};
-
-const dlStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "minmax(0, max-content) minmax(0, 1fr)",
-    gap: "4px 16px",
-    fontSize: "0.9rem",
-    margin: 0,
-};
-
-const ddStyle: React.CSSProperties = {
-    margin: 0,
-    minWidth: 0,
-    wordBreak: "break-all",
-};

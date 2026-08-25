@@ -148,6 +148,16 @@ describe("ContentSetRow long-title containment (#1392)", () => {
     expect(heading.className).toContain("min-w-0");
   });
 
+  it("caps the meta wrapper at the row width so flex-shrink engages (#2698)", () => {
+    renderRow({ id: "pt-br", title: LONG });
+    // Without max-w-full, the truncate span's nowrap intrinsic width leaks
+    // through .content-set-meta (flex-basis 280px) as the item's rendered
+    // size on a wrapped flex line, and the title clips with no ellipsis.
+    const meta = screen.getByTitle(LONG).closest(".content-set-meta") as HTMLElement;
+    expect(meta).not.toBeNull();
+    expect(meta.className).toContain("max-w-full");
+  });
+
   it("keeps the source badge visible and non-shrinking on a long title", () => {
     renderRow({ id: "pt-br", title: LONG });
     const source = screen.getByTestId("content-set-pt-br-source");

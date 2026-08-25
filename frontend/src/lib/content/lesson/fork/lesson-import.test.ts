@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 
-import { generateLessonFromAnalysis } from "../analysis/analysis-to-lesson";
-import { buildContentSetZip, lessonJson } from "./lesson-export";
+import { generateLessonFromAnalysis } from "../../analysis/analysis-to-lesson";
+import { buildContentSetZip, lessonJson } from "../lesson-export";
 import {
   asImportedCopy,
   MAX_IMPORT_FILE_SIZE,
@@ -9,7 +9,7 @@ import {
   parseImportFile,
   type ImportedSet,
 } from "./lesson-import";
-import type { ConversationAnalysisResult } from "../../../types/domain";
+import type { ConversationAnalysisResult } from "../../../../types/domain";
 
 const ANALYSIS: ConversationAnalysisResult = {
   topic: "Spanish travel",

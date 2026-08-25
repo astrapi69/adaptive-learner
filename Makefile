@@ -94,10 +94,11 @@ dev: dev-secret ## Start backend + frontend (backend first, then frontend)
 		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
 		bun run dev
 
-build-frontend: ## Build frontend/dist. Default API mode; STORAGE_MODE=dexie for the GH-Pages shape.
+build-frontend: ## Build frontend/dist. Default API mode; STORAGE_MODE=dexie for the GH-Pages shape; DEBUG_CONSOLE=1 bundles eruda (#2610, dev-lan only).
 	@echo "Building frontend/dist (storage mode: $(or $(STORAGE_MODE),api))..."
-	@cd frontend && $(if $(filter dexie,$(STORAGE_MODE)),VITE_STORAGE_MODE=dexie ,)bun run build
+	@cd frontend && $(if $(filter dexie,$(STORAGE_MODE)),VITE_STORAGE_MODE=dexie ,)$(if $(filter 1,$(DEBUG_CONSOLE)),VITE_DEBUG_CONSOLE=1 ,)bun run build
 
+dev-lan: DEBUG_CONSOLE=1
 dev-lan: dev-secret build-frontend ## LAN device test: serve built frontend + API on ONE origin at 0.0.0.0:$(BACKEND_PORT), no --reload
 	@LAN_IP=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
 		echo ""; \
@@ -119,6 +120,7 @@ dev-lan: dev-secret build-frontend ## LAN device test: serve built frontend + AP
 DEXIE_PREVIEW_PORT ?= 4173
 
 dev-lan-dexie: STORAGE_MODE=dexie
+dev-lan-dexie: DEBUG_CONSOLE=1
 dev-lan-dexie: build-frontend ## LAN device test: serve the Dexie/GH-Pages-shape build (no backend) at 0.0.0.0:$(DEXIE_PREVIEW_PORT) — see #2575
 	@LAN_IP=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
 		if [ -n "$$ADAPTIVE_LEARNER_LAN_CERT" ] && [ -n "$$ADAPTIVE_LEARNER_LAN_KEY" ]; then SCHEME=https; else SCHEME=http; fi; \

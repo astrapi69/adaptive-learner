@@ -107,8 +107,7 @@ export default function LevelProgressCard({
         </h4>
         {hasActivity ? (
           <div
-            className="flex items-end justify-between gap-1"
-            style={{ height: 48 }}
+            className="flex h-12 items-end justify-between gap-1"
             data-testid="level-detail-history"
           >
             {history.map((d) => {

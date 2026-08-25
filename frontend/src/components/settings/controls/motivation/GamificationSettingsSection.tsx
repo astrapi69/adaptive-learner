@@ -19,6 +19,7 @@ import {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     readGamificationPrefs,
     setBadgeNotifications,
@@ -139,17 +140,13 @@ export default function GamificationSettingsSection() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-gamification"
+        <SettingsSection
+            title={t("settings.section_gamification", "Gamification")}
+            testid="settings-section-gamification"
         >
-            <h2 className="settings-section-title">
-                {t("settings.section_gamification", "Gamification")}
-            </h2>
-
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.xp_notifications",
                             "Show XP notifications",
@@ -164,15 +161,16 @@ export default function GamificationSettingsSection() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     data-testid="settings-xp-notifications-toggle"
                     checked={prefs.xpNotifications}
                     onChange={(e) => handleXpToggle(e.target.checked)}
                 />
             </label>
 
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.badge_notifications",
                             "Show badge notifications",
@@ -187,15 +185,16 @@ export default function GamificationSettingsSection() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     data-testid="settings-badge-notifications-toggle"
                     checked={prefs.badgeNotifications}
                     onChange={(e) => handleBadgeToggle(e.target.checked)}
                 />
             </label>
 
-            <div className="form-row">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <div className="flex flex-col gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t("gamification.gallery.title", "Badges")}
                     </span>
                 </span>
@@ -215,9 +214,9 @@ export default function GamificationSettingsSection() {
                 badges={badges}
             />
 
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t("gamification.weekend_mode", "Weekend mode")}
                     </span>
                     <FormHint as="span">
@@ -229,6 +228,7 @@ export default function GamificationSettingsSection() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     data-testid="settings-weekend-mode-toggle"
                     checked={weekendMode}
                     disabled={loadingStreak || !userId}
@@ -236,9 +236,9 @@ export default function GamificationSettingsSection() {
                 />
             </label>
 
-            <label className="form-row">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.daily_session_goal",
                             "Daily session goal",
@@ -263,9 +263,9 @@ export default function GamificationSettingsSection() {
                 />
             </label>
 
-            <div className="form-row form-row-stack">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <div className="flex flex-col items-stretch gap-1">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t("settings.reset_progress", "Reset progress")}
                     </span>
                     <FormHint as="span">
@@ -296,6 +296,6 @@ export default function GamificationSettingsSection() {
                             )}
                 </Button>
             </div>
-        </section>
+        </SettingsSection>
     );
 }

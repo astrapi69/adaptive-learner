@@ -10,6 +10,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
+from app.openapi_metadata import iter_api_routes
 from app.main import app, manager
 from app.models import ProjectSubject, Subject, UserSettings
 from app.repositories.settings_repo import SqlAlchemySettingsRepository
@@ -78,7 +79,7 @@ def _assign_language_subject(project_id: str) -> None:
 
 
 def test_router_paths_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/plugins/session/pronunciation/phrase" in paths
     assert "/api/plugins/session/pronunciation/judge" in paths
     assert "/api/plugins/session/pronunciation/eligibility/{project_id}" in paths

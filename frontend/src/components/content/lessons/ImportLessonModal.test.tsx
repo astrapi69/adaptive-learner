@@ -114,6 +114,52 @@ describe("ImportLessonModal", () => {
     expect(toastSuccess).toHaveBeenCalled();
   });
 
+  it("#2655 — stamps variation_of on every imported lesson", async () => {
+    saveUserSet.mockResolvedValue({});
+    render(<ImportLessonModal open onCancel={() => {}} onImported={() => {}} />);
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("import-lesson-file"), {
+        target: { files: [validLessonFile()] },
+      });
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId("import-lesson-preview")).toBeInTheDocument(),
+    );
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("import-lesson-confirm"));
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as Record<string, unknown>;
+    const lessons = arg.lessons as { id: string; variation_of?: string | null }[];
+    expect(lessons[0].variation_of).toBe(lessons[0].id);
+  });
+
+  it("#2655 — synthesizes attribution from an imported lesson's contributed_by credit", async () => {
+    saveUserSet.mockResolvedValue({});
+    const lesson = {
+      ...generateLessonFromAnalysis(ANALYSIS, { id: "analysis-conv-1" }),
+      contributed_by: "Jane Doe",
+    };
+    const file = new File([JSON.stringify(lesson)], "spanish.json", {
+      type: "application/json",
+    });
+    render(<ImportLessonModal open onCancel={() => {}} onImported={() => {}} />);
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("import-lesson-file"), {
+        target: { files: [file] },
+      });
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId("import-lesson-preview")).toBeInTheDocument(),
+    );
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("import-lesson-confirm"));
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as Record<string, unknown>;
+    expect(arg.attribution).toEqual({ author: "Jane Doe" });
+  });
+
   it("shows a specific error for an invalid file and disables Import", async () => {
     render(
       <ImportLessonModal open onCancel={() => {}} onImported={() => {}} />,

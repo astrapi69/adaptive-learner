@@ -9,6 +9,8 @@ to avoid.
 
 from __future__ import annotations
 
+import pytest
+
 from app.services.extract_json import (
     extract_json_object,
     find_balanced_objects,
@@ -26,61 +28,53 @@ def test_strip_fences_removes_plain_fence():
     assert strip_fences('```\n{"a": 1}\n```') == '{"a": 1}\n'
 
 
-def test_extract_json_object_pure_json():
-    assert extract_json_object('{"a": 1, "b": 2}') == {"a": 1, "b": 2}
-
-
-def test_extract_json_object_with_preamble():
-    raw = 'Sure! Here is the analysis:\n{"topic": "Bayes"}\nLet me know!'
-    assert extract_json_object(raw) == {"topic": "Bayes"}
-
-
-def test_extract_json_object_with_fenced_json():
-    raw = '```json\n{"topic": "Bayes"}\n```'
-    assert extract_json_object(raw) == {"topic": "Bayes"}
-
-
-def test_extract_json_object_with_prose_braces_picks_largest():
-    """Regression for the original v1.0.1 bug — prose contains
-    ``{placeholder}`` before the real JSON. The greedy regex would
-    have grabbed from the first ``{`` to the last ``}``; the
-    balanced scan picks the larger valid candidate."""
-    raw = (
-        "The user said {placeholder} before getting to the point. "
-        'Result: {"topic": "Induction", "user_level": "beginner"}'
-    )
-    assert extract_json_object(raw) == {
-        "topic": "Induction",
-        "user_level": "beginner",
-    }
-
-
-def test_extract_json_object_with_nested_braces_in_string():
-    """A brace inside a JSON string literal must NOT unbalance the
-    depth counter."""
-    raw = '{"summary": "User asked about {scope}", "topic": "x"}'
-    assert extract_json_object(raw) == {
-        "summary": "User asked about {scope}",
-        "topic": "x",
-    }
-
-
-def test_extract_json_object_returns_none_on_garbage():
-    assert extract_json_object("totally unparseable") is None
-
-
-def test_extract_json_object_returns_none_on_empty():
-    assert extract_json_object("") is None
-
-
-def test_extract_json_object_unwraps_array_with_inner_object():
-    """A top-level array isn't a dict, so ``json.loads`` succeeds
-    but ``_try_parse`` rejects it. The balanced-brace scan then
-    finds the inner ``{...}`` and returns it — matches the
-    frontend's behaviour. The analysis prompt forbids array
-    output, so this is a recovery path for misbehaving models,
-    not the happy path."""
-    assert extract_json_object('[{"a": 1}]') == {"a": 1}
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        pytest.param('{"a": 1, "b": 2}', {"a": 1, "b": 2}, id="pure_json"),
+        pytest.param(
+            'Sure! Here is the analysis:\n{"topic": "Bayes"}\nLet me know!',
+            {"topic": "Bayes"},
+            id="with_preamble",
+        ),
+        pytest.param(
+            '```json\n{"topic": "Bayes"}\n```',
+            {"topic": "Bayes"},
+            id="with_fenced_json",
+        ),
+        # Regression for the original v1.0.1 bug — prose contains
+        # ``{placeholder}`` before the real JSON. The greedy regex would
+        # have grabbed from the first ``{`` to the last ``}``; the
+        # balanced scan picks the larger valid candidate.
+        pytest.param(
+            "The user said {placeholder} before getting to the point. "
+            'Result: {"topic": "Induction", "user_level": "beginner"}',
+            {"topic": "Induction", "user_level": "beginner"},
+            id="prose_braces_picks_largest",
+        ),
+        # A brace inside a JSON string literal must NOT unbalance the
+        # depth counter.
+        pytest.param(
+            '{"summary": "User asked about {scope}", "topic": "x"}',
+            {"summary": "User asked about {scope}", "topic": "x"},
+            id="nested_braces_in_string",
+        ),
+        pytest.param("totally unparseable", None, id="none_on_garbage"),
+        pytest.param("", None, id="none_on_empty"),
+        # A top-level array isn't a dict, so ``json.loads`` succeeds but
+        # ``_try_parse`` rejects it. The balanced-brace scan then finds the
+        # inner ``{...}`` and returns it — matches the frontend's behaviour.
+        # The analysis prompt forbids array output, so this is a recovery
+        # path for misbehaving models, not the happy path.
+        pytest.param('[{"a": 1}]', {"a": 1}, id="unwraps_array_with_inner_object"),
+    ],
+)
+def test_extract_json_object(raw: str, expected: dict | None) -> None:
+    """One value table over the extractor's whole input space
+    (quality-checks.md "Parametrized tests", #2744): every case is
+    exactly ``extract_json_object(raw) == expected`` — the speaking
+    ids carry the former per-function names."""
+    assert extract_json_object(raw) == expected
 
 
 def test_find_balanced_objects_picks_largest_first():

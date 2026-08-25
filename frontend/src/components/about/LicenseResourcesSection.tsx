@@ -25,23 +25,23 @@ export default function LicenseResourcesSection({info, t, lang}: Props) {
     return (
         <article
             data-testid="about-license-section"
-            style={sectionStyle}
+            className="p-4 border border-[var(--border)] rounded-[8px] bg-[var(--surface)]"
         >
-            <h3 style={{marginTop: 0, marginBottom: 12}}>
+            <h3 className="mt-0 mb-3">
                 {t("about.license_heading", "License & resources")}
             </h3>
-            <dl style={dlStyle}>
+            <dl className="grid grid-cols-[minmax(0,max-content)_minmax(0,1fr)] gap-x-4 gap-y-1 text-[0.9rem] m-0">
                 <dt>
                     <strong>{t("about.license_label", "License")}</strong>
                 </dt>
-                <dd data-testid="about-license" style={ddStyle}>
+                <dd data-testid="about-license" className="m-0 min-w-0 break-all">
                     {info.app.license}{" "}
                     <a
                         href={`${info.app.repository_url}/blob/main/LICENSE`}
                         target="_blank"
                         rel="noopener noreferrer"
                         data-testid="about-license-link"
-                        style={{fontSize: "0.85rem"}}
+                        className="text-[0.85rem]"
                     >
                         {t("about.license_text_link", "(text)")}
                     </a>
@@ -49,7 +49,7 @@ export default function LicenseResourcesSection({info, t, lang}: Props) {
                 <dt>
                     <strong>{t("about.repo_label", "Repository")}</strong>
                 </dt>
-                <dd data-testid="about-repo" style={ddStyle}>
+                <dd data-testid="about-repo" className="m-0 min-w-0 break-all">
                     <a
                         href={info.app.repository_url}
                         target="_blank"
@@ -62,7 +62,7 @@ export default function LicenseResourcesSection({info, t, lang}: Props) {
                 <dt>
                     <strong>{t("about.docs_label", "Documentation")}</strong>
                 </dt>
-                <dd data-testid="about-docs" style={ddStyle}>
+                <dd data-testid="about-docs" className="m-0 min-w-0 break-all">
                     <a
                         href={docsUrl}
                         target="_blank"
@@ -75,7 +75,7 @@ export default function LicenseResourcesSection({info, t, lang}: Props) {
                 <dt>
                     <strong>{t("about.tutorial_label", "App tutorial")}</strong>
                 </dt>
-                <dd data-testid="about-tutorial" style={ddStyle}>
+                <dd data-testid="about-tutorial" className="m-0 min-w-0 break-all">
                     <Link
                         to={APP_TUTORIAL_PATH}
                         data-testid="about-tutorial-link"
@@ -86,7 +86,7 @@ export default function LicenseResourcesSection({info, t, lang}: Props) {
                 <dt>
                     <strong>{t("about.issues_label", "Issues")}</strong>
                 </dt>
-                <dd data-testid="about-issues" style={ddStyle}>
+                <dd data-testid="about-issues" className="m-0 min-w-0 break-all">
                     <a
                         href={info.app.issues_url}
                         target="_blank"
@@ -100,24 +100,3 @@ export default function LicenseResourcesSection({info, t, lang}: Props) {
         </article>
     );
 }
-
-const sectionStyle: React.CSSProperties = {
-    padding: 16,
-    border: "1px solid var(--border)",
-    borderRadius: 8,
-    background: "var(--surface)",
-};
-
-const dlStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "minmax(0, max-content) minmax(0, 1fr)",
-    gap: "4px 16px",
-    fontSize: "0.9rem",
-    margin: 0,
-};
-
-const ddStyle: React.CSSProperties = {
-    margin: 0,
-    minWidth: 0,
-    wordBreak: "break-all",
-};

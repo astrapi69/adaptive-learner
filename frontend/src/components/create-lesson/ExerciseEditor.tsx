@@ -22,8 +22,14 @@ import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
-import CardImageField from "./CardImageField";
+import {AiSuggestButton, CardImageField} from "./fields";
 import {
+    suggestClozeSentence,
+    suggestDistractors,
+    TARGET_DISTRACTOR_COUNT,
+} from "../../lib/ai/suggest/exercise-suggest";
+import {
+    conversionPreservesElementKeys,
     convertExercise,
     coreConversionTargets,
     countClozeMarkers,
@@ -35,6 +41,7 @@ import {
     exerciseEditErrorKey,
     exerciseTypeLabelKey,
 } from "../../lib/content/lesson/edit-error-keys";
+import {useConfirm} from "../../contexts/ConfirmContext";
 import type {
     ContentLessonExercise,
     ContentLessonClozeBlank,
@@ -54,6 +61,7 @@ export default function ExerciseEditor({
     onCancel,
 }: ExerciseEditorProps) {
     const {t} = useI18n();
+    const confirm = useConfirm();
     const [draft, setDraft] = useState<ContentLessonExercise>(exercise);
 
     function patch(next: Patch) {
@@ -62,11 +70,28 @@ export default function ExerciseEditor({
 
     const conversionTargets = coreConversionTargets(draft);
 
-    function convertType(nextType: string) {
+    async function convertType(nextType: string) {
         if (nextType === draft.type) return;
-        if (conversionTargets.includes(nextType as ConversionTargetType)) {
-            setDraft(convertExercise(draft, nextType as ConversionTargetType));
+        if (!conversionTargets.includes(nextType as ConversionTargetType)) return;
+        const converted = convertExercise(draft, nextType as ConversionTargetType);
+        // Key-moving conversion (e.g. a multi-blank cloze -> one free_text
+        // answer) can strand SRS/review history, so confirm first (EXP-050
+        // Stage 2, #2511). Key-preserving conversions apply silently.
+        if (!conversionPreservesElementKeys(draft, converted)) {
+            const proceed = await confirm({
+                title: t(
+                    "create_lesson.exercises.edit.convert_confirm_title",
+                    "Convert exercise type?",
+                ),
+                message: t(
+                    "create_lesson.exercises.edit.convert_confirm_message",
+                    "This exercise has more than one answer. Converting keeps only the first, and the review history for the others is not carried over.",
+                ),
+                variant: "danger",
+            });
+            if (!proceed) return;
         }
+        setDraft(converted);
     }
 
     const issue = validateExerciseEdit(draft);
@@ -83,7 +108,7 @@ export default function ExerciseEditor({
             data-testid={`exercise-editor-${id}`}
         >
             <label className="form-field flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.exercises.edit.prompt_label", "Question / prompt")}
                 </span>
                 <Input
@@ -100,14 +125,14 @@ export default function ExerciseEditor({
                     className="form-field flex flex-col gap-1.5"
                     data-testid={`exercise-edit-type-${id}`}
                 >
-                    <span className="form-label text-sm font-medium text-fg-primary">
+                    <span className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.edit.convert_label", "Exercise type")}
                     </span>
                     <select
                         className="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                         value={draft.type}
                         data-testid={`exercise-edit-type-select-${id}`}
-                        onChange={(e) => convertType(e.target.value)}
+                        onChange={(e) => void convertType(e.target.value)}
                     >
                         <option value={draft.type}>
                             {t(exerciseTypeLabelKey(draft.type), draft.type)}
@@ -143,7 +168,7 @@ export default function ExerciseEditor({
                 </FormHint>
             )}
 
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                 <Button
                     type="button"
                     variant="secondary"
@@ -211,7 +236,7 @@ function MatchingFields({draft, onPatch}: TypeFieldsProps) {
 
     return (
         <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.exercises.edit.pairs_label", "Pairs")}
             </legend>
             {pairs.map((pair, i) => (
@@ -292,6 +317,13 @@ function ClozeFields({draft, onPatch}: TypeFieldsProps) {
     const markers = countClozeMarkers(draft.sentence);
     const blanks = draft.blanks ?? [];
 
+    // Offer an AI sentence only while the sentence is still the conversion's
+    // bare placeholder (a single ``___`` and nothing else) and there is an
+    // answer to build around — never over a sentence the author already wrote.
+    const clozeAnswer = blanks[0]?.accept?.[0]?.trim() ?? "";
+    const sentenceIsPlaceholder = (draft.sentence ?? "").trim() === "___";
+    const canSuggestSentence = clozeAnswer.length > 0 && sentenceIsPlaceholder;
+
     function setBlankAccept(index: number, accept: string[]) {
         const next: ContentLessonClozeBlank[] = [];
         for (let i = 0; i < markers; i++) {
@@ -304,7 +336,7 @@ function ClozeFields({draft, onPatch}: TypeFieldsProps) {
     return (
         <div className="flex flex-col gap-3">
             <label className="form-field flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.exercises.edit.sentence_label",
                         "Sentence (use ___ for each blank)",
@@ -325,6 +357,24 @@ function ClozeFields({draft, onPatch}: TypeFieldsProps) {
                     )}
                 </FormHint>
             </label>
+            {canSuggestSentence && (
+                <AiSuggestButton
+                    run={(provider) => suggestClozeSentence(draft, provider)}
+                    isEmpty={(sentence) => sentence === null}
+                    onResult={(sentence) => {
+                        if (sentence) onPatch({sentence});
+                    }}
+                    label={t(
+                        "create_lesson.suggest.cloze_sentence",
+                        "Suggest a sentence with AI",
+                    )}
+                    emptyLabel={t(
+                        "create_lesson.suggest.cloze_sentence_empty",
+                        "No usable sentence — write one by hand.",
+                    )}
+                    testId={`exercise-edit-cloze-suggest-${id}`}
+                />
+            )}
             {Array.from({length: markers}, (_v, i) => (
                 <StringListEditor
                     key={i}
@@ -367,7 +417,7 @@ function WordTilesFields({draft, onPatch}: TypeFieldsProps) {
 
     return (
         <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t(
                     "create_lesson.exercises.edit.tiles_label",
                     "Tiles (in the correct order)",
@@ -449,7 +499,7 @@ function PictureChoiceFields({draft, onPatch}: TypeFieldsProps) {
 
     return (
         <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.exercises.edit.images_label", "Image options")}
             </legend>
             {images.map((img, i) => (
@@ -481,7 +531,7 @@ function PictureChoiceFields({draft, onPatch}: TypeFieldsProps) {
                         </button>
                     </label>
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.exercises.edit.image_label_label", "Label")}
                         </span>
                         <Input
@@ -554,6 +604,26 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
         onPatch({options: options.filter((_o, i) => i !== index)});
     }
 
+    function applyDistractors(words: string[]) {
+        // Fill in the wrong options: drop any empty placeholder slot the
+        // conversion left, keep the correct option and every filled wrong one,
+        // then append the suggestions.
+        const kept = options.filter(
+            (o) => o.correct === true || o.text.trim().length > 0,
+        );
+        onPatch({
+            options: [...kept, ...words.map((text) => ({text, correct: false}))],
+        });
+    }
+
+    const correctAnswer =
+        options.find((o) => o.correct === true)?.text.trim() ?? "";
+    const filledWrong = options.filter(
+        (o) => o.correct !== true && o.text.trim().length > 0,
+    ).length;
+    const canSuggestDistractors =
+        correctAnswer.length > 0 && filledWrong < TARGET_DISTRACTOR_COUNT;
+
     const correctLabel = t(
         "create_lesson.exercises.edit.mc_correct",
         "Correct answer",
@@ -584,7 +654,7 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
                 className="m-0 flex flex-col gap-1.5 border-0 p-0"
                 data-testid={`exercise-edit-mc-mode-${id}`}
             >
-                <legend className="form-label text-sm font-medium text-fg-primary">
+                <legend className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.exercises.edit.mc_mode_label",
                         "How many answers are correct?",
@@ -617,7 +687,7 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
                 </div>
             </fieldset>
             <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-                <legend className="form-label text-sm font-medium text-fg-primary">
+                <legend className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.exercises.edit.mc_options_label", "Answer options")}
                 </legend>
                 {options.map((option, i) => (
@@ -672,6 +742,22 @@ function MultipleChoiceFields({draft, onPatch}: TypeFieldsProps) {
                     <Plus size={14} aria-hidden="true" />
                     {t("create_lesson.exercises.edit.mc_option_add", "Add option")}
                 </Button>
+                {canSuggestDistractors && (
+                    <AiSuggestButton
+                        run={(provider) => suggestDistractors(draft, provider)}
+                        isEmpty={(words) => words.length === 0}
+                        onResult={applyDistractors}
+                        label={t(
+                            "create_lesson.suggest.distractors",
+                            "Suggest wrong answers with AI",
+                        )}
+                        emptyLabel={t(
+                            "create_lesson.suggest.distractors_empty",
+                            "No usable suggestions — add a wrong answer by hand.",
+                        )}
+                        testId={`exercise-edit-mc-suggest-${id}`}
+                    />
+                )}
             </fieldset>
         </fieldset>
     );

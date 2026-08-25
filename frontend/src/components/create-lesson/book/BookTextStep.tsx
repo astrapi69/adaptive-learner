@@ -15,7 +15,7 @@
  */
 
 import {useState} from "react";
-import {BookOpen, Sparkles} from "lucide-react";
+import {BookOpen, Loader2, Sparkles} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -312,7 +312,11 @@ export default function BookTextStep({
                     role="status"
                     aria-live="polite"
                 >
-                    <span className="btn-spinner" aria-hidden="true" />
+                    <Loader2
+                        size={16}
+                        className="animate-spin motion-reduce:hidden"
+                        aria-hidden="true"
+                    />
                     {t(
                         "create_lesson.book.batch_progress",
                         "Generating lesson {current} of {total}: {title}…",
@@ -364,8 +368,8 @@ export default function BookTextStep({
                 t={t}
             />
 
-            <label className="form-row flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+            <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.book.text_label", "Textbook section")}
                 </span>
                 <textarea
@@ -398,8 +402,8 @@ export default function BookTextStep({
                         "Book reference (optional)",
                     )}
                 </legend>
-                <label className="form-row flex flex-col gap-1.5">
-                    <span className="form-label text-sm font-medium text-fg-primary">
+                <label className="flex flex-col gap-1.5">
+                    <span className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.book.title_label", "Book title")}
                     </span>
                     <Input
@@ -411,7 +415,7 @@ export default function BookTextStep({
                 </label>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.book.author_label", "Author")}
                         </span>
                         <Input
@@ -424,7 +428,7 @@ export default function BookTextStep({
                         />
                     </label>
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.book.url_label", "URL")}
                         </span>
                         <Input
@@ -435,7 +439,7 @@ export default function BookTextStep({
                         />
                     </label>
                     <label className="form-field flex flex-col gap-1.5">
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t("create_lesson.book.asin_label", "ISBN / ASIN")}
                         </span>
                         <Input
@@ -482,8 +486,9 @@ export default function BookTextStep({
                     data-testid="book-generate"
                 >
                     {busy ? (
-                        <span
-                            className="btn-spinner"
+                        <Loader2
+                            size={16}
+                            className="mr-1 animate-spin motion-reduce:hidden"
                             data-testid="book-generate-spinner"
                             aria-hidden="true"
                         />

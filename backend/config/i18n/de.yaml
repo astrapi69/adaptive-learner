@@ -666,6 +666,8 @@ settings:
   lesson_shortcuts_description: "Drücke die Eingabetaste, um deine Antwort zu prüfen, und erneut, um zum nächsten Schritt zu gehen."
   lesson_auto_advance: "Bei richtiger Antwort automatisch weiter"
   lesson_auto_advance_description: "Nach einer richtigen Antwort automatisch zur nächsten Aufgabe. Bei einer falschen Antwort wird immer gewartet, damit du die Lösung ansehen kannst."
+  ask_ai_visible: "'KI fragen'-Button anzeigen"
+  ask_ai_visible_description: "Zeigt den 'KI fragen'-Button unter Theorie- und Übungsblöcken. Standardmäßig sichtbar; der Button braucht weiterhin deinen eigenen KI-Schlüssel (BYOK), um zu antworten."
   button_tooltips: Button-Tooltips anzeigen
   button_tooltips_description: "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv."
   developer_mode: Entwicklermodus
@@ -1896,6 +1898,64 @@ lesson:
       submit: "Antwort prüfen"
       retry: "Nochmal versuchen"
       empty: "Diese Multiple-Choice-Aufgabe hat keine Optionen."
+    al_categorization:
+      empty: "Diese Zuordnungsübung hat keine Kategorien."
+      instructions: "Tippe ein Element an, dann seine Kategorie."
+      pool_label: "Elemente"
+      result_correct: "Richtig!"
+      result_wrong: "Nicht ganz. Sieh dir die markierten Elemente an."
+      retry: "Nochmal versuchen"
+      submit: "Antwort prüfen"
+    al_dictation:
+      empty: "Diese Diktat-Übung hat kein Audio."
+      input_label: "Tippe, was du hörst"
+      input_placeholder: "Tippe, was du hörst…"
+      result_correct: "Richtig!"
+      result_near_miss: "Fast! Prüfe die Schreibweise."
+      result_wrong: "Nicht ganz."
+      retry: "Nochmal versuchen"
+      solution_label: "Lösung"
+      submit: "Antwort prüfen"
+    al_error_correction:
+      empty: "Diese Fehlerkorrektur-Übung hat keinen Satz."
+      input_label: "Korrektur"
+      instructions: "Tippe das falsche Wort an, dann tippe die Korrektur."
+      result_correct: "Richtig!"
+      result_wrong: "Nicht ganz. Sieh dir die Lösung unten an."
+      retry: "Nochmal versuchen"
+      solution_label: "Lösung"
+      submit: "Antwort prüfen"
+    al_graded_quiz:
+      empty: "Dieses Quiz hat keine Fragen."
+      failed: "Nicht bestanden"
+      input_label: "Antwort"
+      passed: "Bestanden"
+      retry: "Nochmal versuchen"
+      solution_label: "Lösung"
+      submit: "Quiz abgeben"
+    al_image_description:
+      empty: "Diese Bildbeschreibungs-Übung hat kein Bild."
+      image_alt: "Bild zum Beschreiben — die Beschreibung ist die Antwort, die unten einzutippen ist"
+      image_unavailable: "Das Bild ist hier nicht verfügbar."
+      input_label: "Beschreibe das Bild"
+      input_placeholder: "Tippe deine Beschreibung…"
+      result_correct: "Richtig!"
+      result_near_miss: "Fast! Prüfe die Schreibweise."
+      result_wrong: "Nicht ganz."
+      retry: "Nochmal versuchen"
+      solution_label: "Lösung"
+      submit: "Antwort prüfen"
+    al_reading_comprehension:
+      badge_correct: "Richtig"
+      badge_missed: "Richtige Antwort"
+      badge_wrong: "Falsch"
+      empty: "Diese Leseverständnis-Übung hat keine Fragen."
+      input_label: "Antwort"
+      result_correct: "Richtig!"
+      result_wrong: "Nicht ganz. Sieh dir die markierten Fragen an."
+      retry: "Nochmal versuchen"
+      solution_label: "Lösung"
+      submit: "Antworten prüfen"
     instruction:
       matching:
         receptive: Paare verbinden (Erkennen)
@@ -2259,6 +2319,17 @@ content:
       defer: "Zurückstellen"
       complete: "Als abgeschlossen markieren"
       delete: "Löschen"
+  edit_as_copy:
+    action: "Als Kopie bearbeiten"
+    confirm_title: "Als eigene Kopie bearbeiten?"
+    confirm_message: "Öffnet „{title}“ als deine eigene, bearbeitbare Kopie im Lektionseditor. Das Original bleibt unverändert und weiterhin herunterladbar."
+    confirm: "Kopie bearbeiten"
+    saved: "Als eigene Kopie gespeichert."
+    failed: "Kopie konnte nicht erstellt werden."
+  fork:
+    based_on: "Basierend auf {author}"
+    based_on_and_others: "Basierend auf {author} und anderen"
+    credit_disclaimer: "Angaben sind selbst deklariert und nicht überprüft."
   ai_exercises:
     batch:
       button: "Übungen für alle Lektionen generieren"
@@ -2542,6 +2613,9 @@ content:
     name_placeholder: z.B. Maria S.
     show_name: Namen in der Lektion anzeigen
     privacy: "Dein Name wird in der Lektion und im Pull Request angezeigt."
+    foreign_notice: "Dieser Inhalt nennt {author} als Urheber. Der Name reist beim Teilen mit, du kannst ihn entfernen."
+    foreign_remove: "Credits entfernen"
+    foreign_removed: "Credits entfernt."
 milestone:
   streak: "{n}-Tage-Serie!"
   level_up: "Level {n} erreicht!"
@@ -2795,6 +2869,8 @@ create_lesson:
       mc_options_label: "Antwortoptionen"
       convert_label: "Aufgabentyp"
       convert_hint: "Beim Umwandeln bleiben die Antwort und der Lernfortschritt erhalten."
+      convert_confirm_title: "Aufgabentyp umwandeln?"
+      convert_confirm_message: "Diese Aufgabe hat mehr als eine Antwort. Beim Umwandeln bleibt nur die erste erhalten; der Lernfortschritt der übrigen wird nicht übernommen."
       mc_option_placeholder: "Optionstext"
       mc_option_add: "Option hinzufügen"
       mc_option_remove: "Option entfernen"
@@ -2977,6 +3053,18 @@ create_lesson:
       title: "Konversations-Übung"
       desc: "5 Kartenplätze, Wort-Kacheln + Lückentext."
 
+  suggest:
+    distractors: "Falsche Antworten per KI vorschlagen"
+    distractors_empty: "Keine brauchbaren Vorschläge - füge eine falsche Antwort von Hand hinzu."
+    cloze_sentence: "Satz per KI vorschlagen"
+    cloze_sentence_empty: "Kein brauchbarer Satz - schreibe einen von Hand."
+    passage: "Lesetext per KI vorschlagen"
+    passage_empty: "Kein brauchbarer Text - schreibe einen von Hand."
+    busy: "Wird vorgeschlagen…"
+    disclaimer: "KI-Entwürfe - vor dem Speichern prüfen und anpassen."
+    no_key: "Dafür brauchst du deinen eigenen KI-Schlüssel (BYOK). Hinterlege einen in den KI-Einstellungen."
+    open_settings: "KI-Einstellungen"
+    error: "Die KI-Anfrage ist fehlgeschlagen. Bitte versuche es erneut."
 learning_path:
   continue: "Fortsetzen"
   start: "Starten"

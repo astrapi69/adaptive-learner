@@ -36,6 +36,10 @@ export default function TopicTree({
             }
             return a.created_at.localeCompare(b.created_at);
         },
+        // A dangling parent_id (parent deleted, child survived a sync)
+        // must render at top level, not crash the whole curriculum view -
+        // tree-kit's strict default throws on the first bad row.
+        onInvalidParent: "promoteToRoot",
     });
     return (
         <ul className="topic-tree" data-testid="topic-tree">

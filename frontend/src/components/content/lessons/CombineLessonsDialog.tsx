@@ -13,6 +13,7 @@
 import {useMemo, useState} from "react";
 
 import {Button} from "@/components/ui/button";
+import {ModalOverlay, ModalCard, ModalTitle} from "@/shared/modal";
 import FormHint from "../../../shared/forms/FormHint";
 import {CEFR_LEVELS} from "../../../lib/content/language/language-options";
 import type {CombinedLanguages} from "../../../lib/content/lesson/combine-lessons";
@@ -86,16 +87,16 @@ export default function CombineLessonsDialog({
     };
 
     return (
-        <div className="modal-overlay" data-testid="combine-lessons-dialog">
-            <div
-                className="modal-card flex flex-col gap-4"
+        <ModalOverlay data-testid="combine-lessons-dialog">
+            <ModalCard
+                className="gap-4"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="combine-lessons-title"
             >
-                <h2 id="combine-lessons-title" className="modal-title">
+                <ModalTitle id="combine-lessons-title">
                     {t("content.combine.title", "Combine into a set")}
-                </h2>
+                </ModalTitle>
                 <p className="text-sm text-fg-muted">
                     {t(
                         "content.combine.summary",
@@ -230,7 +231,7 @@ export default function CombineLessonsDialog({
                     )}
                 </p>
 
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         variant="outline"
@@ -250,7 +251,7 @@ export default function CombineLessonsDialog({
                             : t("content.combine.confirm", "Combine")}
                     </Button>
                 </div>
-            </div>
-        </div>
+            </ModalCard>
+        </ModalOverlay>
     );
 }

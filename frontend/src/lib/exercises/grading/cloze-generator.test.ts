@@ -11,6 +11,9 @@
 import {describe, expect, it} from "vitest";
 
 import {generateClozeFromError} from "./cloze-generator";
+import {deriveClozeAttempts} from "../../srs/element-attempt";
+import {exerciseIdentityOf} from "../../srs/exercise-identity";
+import {elementIdentityKeysOf} from "../../srs/element-identity";
 import type {
     ContentLessonCard,
     ContentLessonExercise,
@@ -359,5 +362,81 @@ describe("generateClozeFromError: card_ids referential integrity (handover § 5.
             sourceCard: null,
         });
         expect(cloze!.card_ids).toEqual([]);
+    });
+});
+
+describe("generateClozeFromError: SRS identity carries the original error's key (#2663)", () => {
+    // Regression for: completing the correction-round / review-session cloze
+    // orphaned a brand-new ElementError row under the synthetic
+    // ``gen-cloze-...`` id instead of resolving the ORIGINAL error's row, so
+    // the lesson summary's correction-adjusted score (#2479) and the "still
+    // open" replay check never saw the fix.
+    it("stamps stable_id / blank stable_id / direction from the source error", () => {
+        const error = _error({
+            exercise_id: "ex-match-articles",
+            element_key: "art-un",
+            correct_answer: "un",
+            direction: "source_to_target",
+        });
+        const cloze = generateClozeFromError({
+            error,
+            sourceExercise: _exercise(),
+            sourceCard: _card({front: "un chat"}),
+        });
+        expect(cloze).not.toBeNull();
+        expect(cloze!.stable_id).toBe(error.exercise_id);
+        expect(cloze!.blanks?.[0]?.stable_id).toBe(error.element_key);
+        expect(cloze!.direction).toBe(error.direction);
+    });
+
+    it("round-trips through the real identity resolvers back onto the original error's composite key", () => {
+        const error = _error({
+            exercise_id: "ex-match-articles",
+            element_key: "art-un",
+            correct_answer: "un",
+            direction: "source_to_target",
+        });
+        const cloze = generateClozeFromError({
+            error,
+            sourceExercise: _exercise(),
+            sourceCard: _card({front: "un chat"}),
+        });
+        expect(cloze).not.toBeNull();
+        // Same resolvers ``_baseAttempt`` / ``deriveClozeAttempts`` use to
+        // build the recorded ElementAttempt.
+        expect(exerciseIdentityOf(cloze!)).toBe(error.exercise_id);
+        expect(elementIdentityKeysOf(cloze!)).toEqual([error.element_key]);
+
+        const attempts = deriveClozeAttempts(
+            cloze!,
+            {setId: error.set_id, lessonId: error.lesson_id},
+            ["un"],
+            [true],
+        );
+        expect(attempts).toHaveLength(1);
+        expect(attempts[0]).toMatchObject({
+            exercise_id: error.exercise_id,
+            element_key: error.element_key,
+            direction: error.direction,
+        });
+    });
+
+    it("defaults direction to the pre-existing receptive fallback when the error carries none", () => {
+        // No ``direction`` on the fixture error - must not regress existing
+        // (undirected) content, which resolves to the documented
+        // "target_to_source" default.
+        const cloze = generateClozeFromError({
+            error: _error({correct_answer: "un"}),
+            sourceExercise: _exercise(),
+            sourceCard: _card({front: "un chat"}),
+        });
+        expect(cloze).not.toBeNull();
+        const attempts = deriveClozeAttempts(
+            cloze!,
+            {setId: "language-fr-a1", lessonId: "03-articles.json"},
+            ["un"],
+            [true],
+        );
+        expect(attempts[0].direction).toBe("target_to_source");
     });
 });

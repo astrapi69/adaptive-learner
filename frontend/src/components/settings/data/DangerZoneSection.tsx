@@ -45,6 +45,8 @@ import {getStorage} from "../../../storage";
 import {backupFilename, saveBackupToDisk} from "../../../utils/backup-download";
 import {withLocalStorageSnapshot} from "../../../lib/backup/localStorageSnapshot";
 import {notify} from "../../../utils/notify";
+import {SettingsSection} from "../SettingsSection";
+import {ModalOverlay, ModalCard, ModalTitle} from "@/shared/modal";
 
 type Step = "idle" | "confirm" | "typed";
 
@@ -161,17 +163,12 @@ export default function DangerZoneSection() {
     }
 
     return (
-        <section
-            className="settings-section mt-8"
-            data-testid="settings-danger-zone"
-            style={dangerSectionStyle}
+        <SettingsSection
+            className="mt-8 rounded-[var(--radius-md)] border-2 border-error p-[var(--space-4)]"
+            testid="settings-danger-zone"
+            title={t("settings.danger_zone_heading", "Danger Zone")}
+            titleClassName="text-error"
         >
-            <h2
-                className="settings-section-title"
-                style={{color: "var(--danger)"}}
-            >
-                {t("settings.danger_zone_heading", "Danger Zone")}
-            </h2>
             <p className="muted mt-0">
                 {t(
                     "settings.danger_zone_intro",
@@ -223,25 +220,25 @@ export default function DangerZoneSection() {
             )}
 
             {step !== "idle" && (
-                <div className="modal-overlay" data-testid="danger-zone-modal">
-                    <div
+                <ModalOverlay data-testid="danger-zone-modal">
+                    <ModalCard
                         ref={dialogRef}
-                        className="modal-card"
+                        className="max-w-[540px]"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="danger-zone-modal-title"
-                        style={{maxWidth: 540}}
                     >
-                        <h3
+                        <ModalTitle
+                            as="h3"
                             id="danger-zone-modal-title"
-                            className="modal-title text-destructive"
+                            className="text-destructive"
                         >
                             ⚠️{" "}
                             {t(
                                 "settings.danger_zone_reset_button",
                                 "Reset Everything",
                             )}
-                        </h3>
+                        </ModalTitle>
                         <p
                             data-testid="danger-zone-warning"
                             className="leading-normal"
@@ -282,7 +279,7 @@ export default function DangerZoneSection() {
                                 />
                             </div>
                         )}
-                        <div className="form-actions mt-6">
+                        <div className="mt-6 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                             <Button
                                 type="button"
                                 variant="secondary"
@@ -325,25 +322,9 @@ export default function DangerZoneSection() {
                                 </Button>
                             )}
                         </div>
-                    </div>
-                </div>
+                    </ModalCard>
+                </ModalOverlay>
             )}
-        </section>
+        </SettingsSection>
     );
 }
-
-/**
- * Kept as an inline style on purpose: ``.settings-section`` sets
- * ``border`` / ``border-radius`` / ``padding`` UNLAYERED in global.css,
- * so layered Tailwind utilities (``border-2`` / ``rounded-app`` /
- * ``p-4``) would lose the cascade. Same for the two
- * ``color: var(--danger)`` reads against the unlayered
- * ``.settings-section-title`` color and the modal's 540px override of
- * the unlayered ``.modal-card`` ``max-width: 32rem``. All values are
- * token-backed; only the delivery stays inline (#1476).
- */
-const dangerSectionStyle: React.CSSProperties = {
-    border: "2px solid var(--danger)",
-    borderRadius: "var(--radius-md)",
-    padding: "var(--space-4)",
-};

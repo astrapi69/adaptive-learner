@@ -289,4 +289,50 @@
 # (method-switch-suggested, quick-start-method). Assessment.tsx
 # wechselt von var(--method-${x}) auf METHOD_COLORS[x] als Farbquelle -
 # beide Werte sind pro Methode identisch (verifiziert). Kein neues CSS.
-7674
+#
+# 7674 -> 7691 (#2587): +17 Zeilen fuer .akv-secret-toggle (Hover) in
+# styles/legacy/01-base.css, davon 10 Kommentar. Legitimer Ausnahmefall
+# nach der Regel oben, und zwar der einzige, den der Standardweg nicht
+# bedienen kann: der Gate verweist auf "neue Styles als Tailwind-Utility
+# an die Komponente" - hier gibt es keine Komponente. Das Element wird
+# von @astrapi69/ai-key-vault-react gerendert (Settings > KI), das
+# bewusst app-agnostisch bleibt und kein eigenes CSS mitliefert; der
+# einzige Ort fuer die Regel ist der Host. Direkt neben dem gleich
+# gelagerten .akv-file-input-Praezedenzfall (#2556) einsortiert.
+# Faellt weg, sobald das Paket den Hover selbst mitbringt.
+#
+# 2026-08-21: 7691 -> 7658 (EXP-044 Option C, #1485): -33 Zeilen. Die
+# .speech-button-Klassenfamilie (35-voice.css, 32 Zeilen + 1 @import-
+# Zeile in global.css) geloescht - einziger Konsument SpeechButton.tsx
+# direkt auf token-backed Tailwind-Utilities umgestellt (border-border/
+# bg-bg-elevated/text-fg-primary/text-fg-muted statt der Legacy-Alias-
+# Klassen var(--border)/var(--bg-elevated)/var(--text)/var(--text-muted);
+# border-radius 6px als rounded-[6px] exakt erhalten, kein Token trifft
+# den Wert). Der .speech-button__label-Eintrag in beiden Baselines
+# (dead + unstyled) ebenfalls entfernt: die Klasse hatte nie eine
+# eigene Regel (Vererbung vom Button rettete das Aussehen bislang
+# unbemerkt) - der neue Code traegt gar keinen Klassennamen mehr auf
+# dem Label-Span, dieselbe Vererbung greift weiterhin. Kein neues CSS.
+# 7658 -> 7624 (#2729, Option C): Modal-Extraktion. .modal-overlay/
+# .modal-card/.modal-title (08-qr-scanner.css) + die 9C-Mobile-Override
+# (24-lesson-mode-nav.css) geloescht - die Werte leben als token-backed
+# Utilities in src/shared/modal/Modal.tsx weiter.
+# 7624 -> 7520 (#2731, Option C Slice 2): btn-Familie auf shadcn Button
+# migriert. 02-buttons.css geloescht (btn/btn-primary/btn-secondary),
+# dazu alle 8 .X .btn-Kontextregeln (7 davon tot: die Container nutzen
+# laengst shadcn Buttons bzw. das Vault-Paket emittiert keine
+# btn-Klassen) sowie btn-spinner + Keyframes (jetzt Loader2 mit
+# animate-spin an den Konsumenten).
+# 7520 -> 7486 (Option C Slice 3, refs #1485): dashboard-card-Familie in
+# die geteilten DashboardCard-Komponenten extrahiert
+# (src/shared/layout/DashboardCard); Regeln card/wide/title plus die
+# mobilen Overrides geloescht (das mobile title-font-size-Override war
+# ein No-op gegen die 1rem-Basis).
+# 7486 -> 7439 (Option C Slice 4, #2735): form-Familie auf Inline-
+# Utilities konvertiert (~285 Stellen); Regeln toggle/fieldset/stack/
+# label-stack/required/actions + Mobile-Block geloescht. form-row +
+# form-label BLEIBEN als Paket-Klassennamen-Vertrag
+# (@astrapi69/ai-key-vault-react rendert beide, #2477-Klasse) - vom
+# paket-bewussten Dead-Gate gefangen, nicht loeschbar bis das Paket
+# eigene Styles traegt.
+7439

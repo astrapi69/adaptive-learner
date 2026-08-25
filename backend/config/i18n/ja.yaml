@@ -666,6 +666,8 @@ settings:
   lesson_shortcuts_description: "Enterキーで回答を確認し、もう一度Enterキーで次のステップに進みます。"
   lesson_auto_advance: "正解したら自動で次へ進む"
   lesson_auto_advance_description: "正解すると自動的に次の問題へ進みます。不正解のときは常に停止し、解答を確認できます。"
+  ask_ai_visible: "'AIに質問'ボタンを表示"
+  ask_ai_visible_description: "理論と練習問題の下に 'AIに質問' ボタンを表示します。既定で表示されます。回答には引き続き自分のAIキー（BYOK）が必要です。"
   button_tooltips: ボタンのツールチップを表示
   button_tooltips_description: "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。"
   developer_mode: 開発者モード
@@ -1891,6 +1893,64 @@ lesson:
       submit: "答えを確認"
       retry: "もう一度"
       empty: "この選択問題には選択肢がありません。"
+    al_categorization:
+      empty: "この分類演習にはカテゴリーがありません。"
+      instructions: "項目をタップし、次にそのカテゴリーをタップします。"
+      pool_label: "項目"
+      result_correct: "正解！"
+      result_wrong: "惜しい。ハイライトされた項目を確認してください。"
+      retry: "もう一度"
+      submit: "答えを確認"
+    al_dictation:
+      empty: "このディクテーション演習には音声がありません。"
+      input_label: "聞こえたとおりに入力"
+      input_placeholder: "聞こえたとおりに入力…"
+      result_correct: "正解！"
+      result_near_miss: "おしい！つづりを確認してください。"
+      result_wrong: "惜しい。"
+      retry: "もう一度"
+      solution_label: "解答"
+      submit: "答えを確認"
+    al_error_correction:
+      empty: "この誤り訂正演習には文がありません。"
+      input_label: "訂正"
+      instructions: "誤っている語をタップし、訂正を入力します。"
+      result_correct: "正解！"
+      result_wrong: "惜しい。下の解答を確認してください。"
+      retry: "もう一度"
+      solution_label: "解答"
+      submit: "答えを確認"
+    al_graded_quiz:
+      empty: "このクイズには問題がありません。"
+      failed: "不合格"
+      input_label: "解答"
+      passed: "合格"
+      retry: "もう一度"
+      solution_label: "解答"
+      submit: "クイズを提出"
+    al_image_description:
+      empty: "この画像説明演習には画像がありません。"
+      image_alt: "説明する画像 — その説明が下に入力する答えです"
+      image_unavailable: "画像はここでは利用できません。"
+      input_label: "画像を説明"
+      input_placeholder: "説明を入力…"
+      result_correct: "正解！"
+      result_near_miss: "おしい！つづりを確認してください。"
+      result_wrong: "惜しい。"
+      retry: "もう一度"
+      solution_label: "解答"
+      submit: "答えを確認"
+    al_reading_comprehension:
+      badge_correct: "正解"
+      badge_missed: "正しい答え"
+      badge_wrong: "不正解"
+      empty: "この読解演習には問題がありません。"
+      input_label: "解答"
+      result_correct: "正解！"
+      result_wrong: "惜しい。ハイライトされた問題を確認してください。"
+      retry: "もう一度"
+      solution_label: "解答"
+      submit: "答えを確認"
     instruction:
       matching:
         receptive: ペアを結ぶ（認識）
@@ -2254,6 +2314,17 @@ content:
       defer: "保留にする"
       complete: "完了としてマーク"
       delete: "削除"
+  edit_as_copy:
+    action: "コピーとして編集"
+    confirm_title: "自分のコピーとして編集しますか？"
+    confirm_message: "「{title}」を、レッスンエディタで編集可能な自分のコピーとして開きます。元のセットは変更されず、引き続きダウンロードできます。"
+    confirm: "コピーを編集"
+    saved: "自分のコピーとして保存しました。"
+    failed: "コピーを作成できませんでした。"
+  fork:
+    based_on: "{author} をもとにしています"
+    based_on_and_others: "{author} 他をもとにしています"
+    credit_disclaimer: "クレジットは自己申告であり、検証されていません。"
   ai_exercises:
     batch:
       button: "すべてのレッスンの練習問題を生成"
@@ -2537,6 +2608,9 @@ content:
     name_placeholder: '例: Maria S.'
     show_name: レッスンに名前を表示する
     privacy: "あなたの名前はレッスンとプルリクエストに表示されます。"
+    foreign_notice: "このコンテンツは {author} を作者としています。共有すると名前も一緒に渡ります。削除できます。"
+    foreign_remove: クレジットを削除
+    foreign_removed: クレジットを削除しました。
 milestone:
   streak: "{n}日連続記録!"
   level_up: "レベル{n}に到達!"
@@ -2791,6 +2865,8 @@ create_lesson:
       mc_options_label: "選択肢"
       convert_label: "問題タイプ"
       convert_hint: "変換しても入力した答えと学習の進捗は保持されます。"
+      convert_confirm_title: "問題タイプを変換しますか？"
+      convert_confirm_message: "この問題には複数の答えがあります。変換すると最初の答えだけが残り、それ以外の学習履歴は引き継がれません。"
       mc_option_placeholder: "選択肢のテキスト"
       mc_option_add: "選択肢を追加"
       mc_option_remove: "選択肢を削除"
@@ -2973,6 +3049,18 @@ create_lesson:
       title: "会話練習"
       desc: "5枚のカード枠、単語タイル + 穴埋め。"
 
+  suggest:
+    distractors: "AIで誤答を提案"
+    distractors_empty: "使える提案がありません - 手動で誤答を追加してください。"
+    cloze_sentence: "AIで文を提案"
+    cloze_sentence_empty: "使える文がありません - 手動で入力してください。"
+    passage: "AIで文章を提案"
+    passage_empty: "使える文章がありません - 手動で入力してください。"
+    busy: "提案中…"
+    disclaimer: "AIの下書きです - 保存する前に確認して編集してください。"
+    no_key: "これには自分のAIキー（BYOK）が必要です。AI設定で追加してください。"
+    open_settings: "AI設定"
+    error: "AIリクエストに失敗しました。もう一度お試しください。"
 learning_path:
   continue: "続ける"
   start: "開始"

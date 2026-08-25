@@ -1,6 +1,5 @@
 @import "./legacy/00-head.css";
 @import "./legacy/01-base.css";
-@import "./legacy/02-buttons.css";
 @import "./legacy/03-landing.css";
 @import "./legacy/04-onboarding.css";
 @import "./legacy/05-assessment.css";
@@ -31,7 +30,6 @@
 @import "./legacy/32-badges.css";
 @import "./legacy/33-streaks.css";
 @import "./legacy/34-anki.css";
-@import "./legacy/35-voice.css";
 @import "./legacy/36-read-aloud.css";
 @import "./legacy/37-pronunciation.css";
 @import "./legacy/38-notebooklm.css";

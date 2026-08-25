@@ -15,42 +15,11 @@
   font-size: 1.75rem;
 }
 
-/* .dashboard-grid migrated to Tailwind utilities (grid grid-cols-1
+/* The dashboard grid migrated to Tailwind utilities (grid grid-cols-1
    gap-4 sm:grid-cols-2) on its two consumers (Dashboard, Progress) —
-   Phase B / B3. The .dashboard-card* rules stay until each widget is
-   migrated organically (shared by 10+ components). */
-
-.dashboard-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-5);
-  box-shadow: var(--shadow-card);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  /* P0 mobile — a grid item defaults to ``min-width: auto`` (=
-     min-content), so a wide child (the Recharts radar SVG) would
-     floor the cell at its rendered width and overflow the
-     viewport. ``min-width: 0`` lets the cell shrink to the grid
-     track; the chart's ResponsiveContainer then re-measures and
-     scales down responsively (the radar stays visible on mobile,
-     it just gets smaller). */
-  min-width: 0;
-}
-
-.dashboard-card-wide {
-  grid-column: 1 / -1;
-}
-
-.dashboard-card-title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--fg-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
+   Phase B / B3. The widget-card rules (card / wide / title) moved into
+   the shared DashboardCard components (src/shared/layout/DashboardCard,
+   Option C, #1485) and were deleted with that extraction. */
 
 .quick-start-btn {
   display: flex;

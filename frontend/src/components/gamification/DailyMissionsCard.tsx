@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { DashboardCardTitle } from "@/shared/layout";
+
 import { useI18n } from "../../hooks/ui/useI18n";
 import { allowsConfetti, effectiveIntensity } from "../../lib/feedback/feedbackPref";
 import { MISSION_PREF_CHANGE_EVENT, readMissionPrefs } from "../../lib/missions/missionPref";
@@ -107,7 +109,7 @@ export default function DailyMissionsCard({ userId }: DailyMissionsCardProps) {
   return (
     <div className="daily-missions" data-testid="daily-missions">
       {burst && <Confetti onDone={() => setBurst(false)} />}
-      <h2 className="dashboard-card-title">{t("missions.card_title", "Today's missions")}</h2>
+      <DashboardCardTitle>{t("missions.card_title", "Today's missions")}</DashboardCardTitle>
 
       {missions === null ? (
         <p className="muted" role="status">

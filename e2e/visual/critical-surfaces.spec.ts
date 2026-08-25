@@ -33,6 +33,8 @@ import {
     SURFACE_NAMES,
     VIEWPORTS,
     type ViewportName,
+    assertSurfaceStillReady,
+    expandViewportToDocument,
     freezeClock,
     gotoSurface,
     pinContentRegistry,
@@ -58,16 +60,30 @@ for (const surface of SURFACE_NAMES) {
             const ready = await gotoSurface(page, surface);
             test.skip(!ready, `Could not reach ${surface} deterministically`);
             await settleForScreenshot(page);
+            // #2696 - grow the viewport to the document height and take a
+            // plain shot instead of ``fullPage: true``: captureBeyondViewport
+            // never painted below the viewport on this app's nested-scroll
+            // layout, leaving every tall-page baseline blank from ~viewport
+            // height down. A viewport-sized page is a no-op here.
+            await expandViewportToDocument(page);
             // #1540 - the .lesson-header h1 line-height pin removed most of the
             // bistable title-height shift, but lesson-matching@mobile keeps a
             // ~5px residual (observed ratio 0.05, content-identical). Allow it
             // on this one shot (0.08 > the residual, still far below any real
             // regression) so it is deterministic; the line-height pin is the
             // actual root-cause fix, this only covers the remainder.
+            // #2712 - the config-level absolute maxDiffPixels (2,500) still
+            // applies on top of a per-shot ratio (Playwright takes the
+            // minimum), so this override must raise BOTH bounds or the 0.08
+            // ratio is dead letter: 0.05 of mobile 375x667 is ~12.5k pixels.
             const shotOpts =
                 surface === "lesson-matching" && viewport === "mobile"
-                    ? {fullPage: true, maxDiffPixelRatio: 0.08}
-                    : {fullPage: true};
+                    ? {maxDiffPixelRatio: 0.08, maxDiffPixels: 20_000}
+                    : {};
+            // #2703 - fail loud if the surface's ready-state collapsed
+            // between gotoSurface and here, instead of silently
+            // photographing whatever it collapsed into.
+            await assertSurfaceStillReady(page, surface);
             await expect(page).toHaveScreenshot(`${surface}-${viewport}.png`, shotOpts);
         });
     }

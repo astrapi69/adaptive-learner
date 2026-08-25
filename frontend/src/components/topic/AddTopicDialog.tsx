@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
+import {ModalCard, ModalOverlay, ModalTitle} from "@/shared/modal";
 import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../hooks/ui/useI18n";
 
@@ -62,17 +63,16 @@ export default function AddTopicDialog({
     if (!open) return null;
 
     return (
-        <div className="modal-overlay" data-testid="add-topic-dialog">
-            <div
+        <ModalOverlay data-testid="add-topic-dialog">
+            <ModalCard
                 ref={dialogRef}
-                className="modal-card"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="add-topic-title"
             >
-                <h2 id="add-topic-title" className="modal-title">
+                <ModalTitle id="add-topic-title">
                     {t(titleKey, "Topic")}
-                </h2>
+                </ModalTitle>
                 <form
                     className="add-topic-form"
                     onSubmit={(event) => {
@@ -82,8 +82,8 @@ export default function AddTopicDialog({
                         onSubmit(trimmed);
                     }}
                 >
-                    <label className="form-row">
-                        <span className="form-label">
+                    <label className="flex flex-col gap-2">
+                        <span className="text-[0.95rem] font-medium">
                             {t("curriculum.topic_title", "Title")}
                         </span>
                         <input
@@ -96,7 +96,7 @@ export default function AddTopicDialog({
                             required
                         />
                     </label>
-                    <div className="form-actions">
+                    <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                         <Button
                             type="button"
                             variant="secondary"
@@ -115,7 +115,7 @@ export default function AddTopicDialog({
                         </Button>
                     </div>
                 </form>
-            </div>
-        </div>
+            </ModalCard>
+        </ModalOverlay>
     );
 }

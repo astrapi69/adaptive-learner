@@ -47,6 +47,7 @@ from .exceptions import (
     ContentNotFoundError,
     ContentSchemaError,
 )
+from .manifest_generated import Attribution, DerivedFromItem
 from .models import ContentSetBook
 from .schema import Lesson
 from .service import (
@@ -151,6 +152,37 @@ class SetBookResponse(BaseModel):
         )
 
 
+class DerivedFromItemResponse(BaseModel):
+    """Wire shape for one entry of a set's derivation chain (#2655)."""
+
+    author: str
+
+    @classmethod
+    def from_model(cls, item: DerivedFromItem) -> DerivedFromItemResponse:
+        return cls(author=item.author)
+
+
+class AttributionResponse(BaseModel):
+    """Wire shape for a set's attribution/derivation chain (engine#90 /
+    schema 1.9, #2655)."""
+
+    author: str
+    derived_from: list[DerivedFromItemResponse] | None = None
+
+    @classmethod
+    def from_model(cls, attribution: Attribution | None) -> AttributionResponse | None:
+        if attribution is None:
+            return None
+        return cls(
+            author=attribution.author,
+            derived_from=(
+                [DerivedFromItemResponse.from_model(item) for item in attribution.derived_from]
+                if attribution.derived_from
+                else None
+            ),
+        )
+
+
 class SetEntryResponse(BaseModel):
     """Wire shape for one set in the Set Browser."""
 
@@ -182,6 +214,9 @@ class SetEntryResponse(BaseModel):
     # surface a conformance/reference fixture; the frontend filters on it.
     # Defaults to ``"visible"`` so pre-0.14.0 manifests stay visible.
     visibility: str = "visible"
+    # #2655 — content attribution + bounded derivation chain (engine#90 /
+    # schema 1.9). ``None`` when the set carries none.
+    attribution: AttributionResponse | None = None
 
     @classmethod
     def from_entry(cls, entry: SetEntry) -> SetEntryResponse:
@@ -205,6 +240,7 @@ class SetEntryResponse(BaseModel):
             update_available=entry.update_available,
             book=SetBookResponse.from_model(entry.set.book),
             visibility=entry.set.visibility.value,
+            attribution=AttributionResponse.from_model(entry.set.attribution),
         )
 
 
@@ -425,6 +461,31 @@ class SetBookRequest(BaseModel):
         )
 
 
+class DerivedFromItemRequest(BaseModel):
+    """Wire shape for one incoming derivation-chain entry (#2655)."""
+
+    author: str
+
+    def to_model(self) -> DerivedFromItem:
+        return DerivedFromItem(author=self.author)
+
+
+class AttributionRequest(BaseModel):
+    """Wire shape for an incoming set-level attribution/derivation chain
+    (engine#90 / schema 1.9, #2655)."""
+
+    author: str
+    derived_from: list[DerivedFromItemRequest] | None = None
+
+    def to_model(self) -> Attribution:
+        return Attribution(
+            author=self.author,
+            derived_from=(
+                [item.to_model() for item in self.derived_from] if self.derived_from else None
+            ),
+        )
+
+
 class SaveUserSetRequest(BaseModel):
     """Wire shape for saving a user-generated set. ``lessons`` are
     full, schema-valid lessons (FastAPI validates them as ``Lesson``
@@ -440,6 +501,9 @@ class SaveUserSetRequest(BaseModel):
     description: str | None = None
     # #1743 — optional set-level book block, written to ``sets[].book``.
     book: SetBookRequest | None = None
+    # #2655 — optional set-level attribution/derivation chain, carried
+    # forward by a fork.
+    attribution: AttributionRequest | None = None
     lessons: list[Lesson]
 
     @model_validator(mode="before")
@@ -472,6 +536,7 @@ async def save_user_set(body: SaveUserSetRequest) -> SetEntryResponse:
             lessons=body.lessons,
             description=body.description,
             book=body.book.to_model() if body.book else None,
+            attribution=body.attribution.to_model() if body.attribution else None,
         )
     except PydanticValidationError as err:
         # ContentSet/ContentManifest construction rejected the input

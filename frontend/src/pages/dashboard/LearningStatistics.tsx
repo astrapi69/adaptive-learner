@@ -19,6 +19,7 @@
 
 import {useEffect, useMemo, useState} from "react";
 import {useNavigate} from "react-router";
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import {Flame, GraduationCap, Target, Timer} from "lucide-react";
 
 import ActivityHeatmap from "../../shared/gamification/ActivityHeatmap";
@@ -189,9 +190,8 @@ export default function LearningStatistics() {
 
             <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 {stats.map((stat) => (
-                    <article
+                    <DashboardCard
                         key={stat.key}
-                        className="dashboard-card"
                         data-testid={stat.testId}
                     >
                         <div className="flex items-center gap-2 text-fg-muted">
@@ -201,14 +201,14 @@ export default function LearningStatistics() {
                         <p className="mt-1 text-2xl font-semibold text-fg-primary">
                             {stat.value}
                         </p>
-                    </article>
+                    </DashboardCard>
                 ))}
             </section>
 
-            <section className="dashboard-card dashboard-card-wide">
-                <h2 className="dashboard-card-title">
+            <DashboardCard as="section" wide>
+                <DashboardCardTitle>
                     {t("statistics.weak_areas_title", "Areas to improve")}
-                </h2>
+                </DashboardCardTitle>
                 <WeakAreasList
                     items={weakAreas.map((area) => ({
                         id: `${area.setId}:${area.elementKey}`,
@@ -232,12 +232,12 @@ export default function LearningStatistics() {
                     )}
                     testId="statistics-weak-areas"
                 />
-            </section>
+            </DashboardCard>
 
-            <section className="dashboard-card dashboard-card-wide">
-                <h2 className="dashboard-card-title">
+            <DashboardCard as="section" wide>
+                <DashboardCardTitle>
                     {t("statistics.activity_title", "Activity (last 90 days)")}
-                </h2>
+                </DashboardCardTitle>
                 <ActivityHeatmap
                     data={activity}
                     ariaLabel={t(
@@ -255,12 +255,12 @@ export default function LearningStatistics() {
                     )}
                     testId="statistics-activity"
                 />
-            </section>
+            </DashboardCard>
 
-            <section className="dashboard-card dashboard-card-wide">
-                <h2 className="dashboard-card-title">
+            <DashboardCard as="section" wide>
+                <DashboardCardTitle>
                     {t("statistics.pairs_title", "Progress by language pair")}
-                </h2>
+                </DashboardCardTitle>
                 <ProgressByPair
                     pairs={pairs}
                     emptyLabel={t(
@@ -269,7 +269,7 @@ export default function LearningStatistics() {
                     )}
                     testId="statistics-pairs"
                 />
-            </section>
+            </DashboardCard>
         </main>
     );
 }

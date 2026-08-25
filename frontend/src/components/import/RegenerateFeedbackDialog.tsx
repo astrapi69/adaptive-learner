@@ -15,6 +15,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 import { LANGUAGE_OPTIONS } from "../../lib/content/language/language-options";
 
 type Translate = (key: string, fallback?: string) => string;
@@ -117,16 +118,15 @@ export default function RegenerateFeedbackDialog({
   if (!open) return null;
 
   return (
-    <div className="modal-overlay" data-testid="regenerate-feedback-dialog">
-      <div
-        className="modal-card"
+    <ModalOverlay data-testid="regenerate-feedback-dialog">
+      <ModalCard
         role="dialog"
         aria-modal="true"
         aria-labelledby="regenerate-feedback-title"
       >
-        <h2 id="regenerate-feedback-title" className="modal-title">
+        <ModalTitle id="regenerate-feedback-title">
           {t("content.ai_exercises.feedback.title", "Why regenerate?")}
-        </h2>
+        </ModalTitle>
         <div className="flex flex-col gap-2">
           {REASONS.map((r) => (
             <label key={r} className="flex items-center gap-2 text-sm text-fg-primary">
@@ -143,8 +143,8 @@ export default function RegenerateFeedbackDialog({
           ))}
         </div>
         {reason === "wrong_language" && (
-          <label className="form-row mt-2">
-            <span className="form-label">
+          <label className="mt-2 flex flex-col gap-2">
+            <span className="text-[0.95rem] font-medium">
               {t("content.ai_exercises.feedback.language_label", "Language")}
             </span>
             <select
@@ -160,8 +160,8 @@ export default function RegenerateFeedbackDialog({
             </select>
           </label>
         )}
-        <label className="form-row mt-2">
-          <span className="form-label">
+        <label className="mt-2 flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.ai_exercises.feedback.freetext_label", "Anything else? (optional)")}
           </span>
           <textarea
@@ -172,7 +172,7 @@ export default function RegenerateFeedbackDialog({
             placeholder={t("content.ai_exercises.feedback.freetext_placeholder", "Your feedback…")}
           />
         </label>
-        <div className="form-actions">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
           <Button
             type="button"
             variant="secondary"
@@ -195,7 +195,7 @@ export default function RegenerateFeedbackDialog({
             {t("content.ai_exercises.regenerate", "Regenerate")}
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalCard>
+    </ModalOverlay>
   );
 }

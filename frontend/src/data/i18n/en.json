@@ -707,6 +707,8 @@
     "lesson_shortcuts_description": "Press Enter to check your answer, then Enter again to go to the next step.",
     "lesson_auto_advance": "Auto-advance on a correct answer",
     "lesson_auto_advance_description": "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution.",
+    "ask_ai_visible": "Show 'Ask AI' button",
+    "ask_ai_visible_description": "Show the 'Ask AI' button under theory and exercises. Shown by default; the button still needs your own AI key (BYOK) to answer.",
     "button_tooltips": "Show button tooltips",
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
     "developer_mode": "Developer Mode",
@@ -2048,6 +2050,70 @@
         "retry": "Try again",
         "empty": "This multiple-choice exercise has no options."
       },
+      "al_categorization": {
+        "empty": "This categorization exercise has no categories.",
+        "instructions": "Tap an item, then tap its category.",
+        "pool_label": "Items",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite. Review the highlighted items.",
+        "retry": "Try again",
+        "submit": "Check answer"
+      },
+      "al_dictation": {
+        "empty": "This dictation exercise has no audio.",
+        "input_label": "Type what you hear",
+        "input_placeholder": "Type what you hear…",
+        "result_correct": "Correct!",
+        "result_near_miss": "Almost! Check your spelling.",
+        "result_wrong": "Not quite.",
+        "retry": "Try again",
+        "solution_label": "Solution",
+        "submit": "Check answer"
+      },
+      "al_error_correction": {
+        "empty": "This error-correction exercise has no sentence.",
+        "input_label": "Correction",
+        "instructions": "Tap the wrong word, then type the correction.",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite. Check the solution below.",
+        "retry": "Try again",
+        "solution_label": "Solution",
+        "submit": "Check answer"
+      },
+      "al_graded_quiz": {
+        "empty": "This quiz has no questions.",
+        "failed": "Not passed",
+        "input_label": "Answer",
+        "passed": "Passed",
+        "retry": "Try again",
+        "solution_label": "Solution",
+        "submit": "Submit quiz"
+      },
+      "al_image_description": {
+        "empty": "This image-description exercise has no image.",
+        "image_alt": "Image to describe — its description is the answer to type below",
+        "image_unavailable": "The image is unavailable here.",
+        "input_label": "Describe the image",
+        "input_placeholder": "Type your description…",
+        "result_correct": "Correct!",
+        "result_near_miss": "Almost! Check your spelling.",
+        "result_wrong": "Not quite.",
+        "retry": "Try again",
+        "solution_label": "Solution",
+        "submit": "Check answer"
+      },
+      "al_reading_comprehension": {
+        "badge_correct": "Correct",
+        "badge_missed": "Correct answer",
+        "badge_wrong": "Wrong",
+        "empty": "This reading exercise has no questions.",
+        "input_label": "Answer",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite. Review the highlighted questions.",
+        "retry": "Try again",
+        "solution_label": "Solution",
+        "submit": "Check answers"
+      },
       "instruction": {
         "matching": {
           "receptive": "Match the pairs (Recognition)",
@@ -2450,6 +2516,19 @@
         "delete": "Delete"
       }
     },
+    "edit_as_copy": {
+      "action": "Edit as a copy",
+      "confirm_title": "Edit as your own copy?",
+      "confirm_message": "Opens “{title}” as your own, editable copy in the lesson editor. The original stays unchanged and stays downloadable.",
+      "confirm": "Edit copy",
+      "saved": "Saved as your own copy.",
+      "failed": "Could not create the copy."
+    },
+    "fork": {
+      "based_on": "Based on {author}",
+      "based_on_and_others": "Based on {author} and others",
+      "credit_disclaimer": "Credits are self-declared and not verified."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Generate for all lessons",
@@ -2758,7 +2837,10 @@
       "name_label": "Your name (optional)",
       "name_placeholder": "e.g. Maria S.",
       "show_name": "Show name in lesson",
-      "privacy": "Your name will be shown in the lesson and the pull request."
+      "privacy": "Your name will be shown in the lesson and the pull request.",
+      "foreign_notice": "This content credits {author}. Their name travels when you share, you can remove it.",
+      "foreign_remove": "Remove credits",
+      "foreign_removed": "Credits removed."
     }
   },
   "milestone": {
@@ -3048,6 +3130,8 @@
         "mc_options_label": "Answer options",
         "convert_label": "Exercise type",
         "convert_hint": "Converting keeps the written answer and the learner's progress.",
+        "convert_confirm_title": "Convert exercise type?",
+        "convert_confirm_message": "This exercise has more than one answer. Converting keeps only the first, and the review history for the others is not carried over.",
         "mc_option_placeholder": "Option text",
         "mc_option_add": "Add option",
         "mc_option_remove": "Remove option",
@@ -3244,6 +3328,19 @@
         "title": "Conversation Practice",
         "desc": "5 card slots, word tiles + cloze."
       }
+    },
+    "suggest": {
+      "distractors": "Suggest wrong answers with AI",
+      "distractors_empty": "No usable suggestions - add a wrong answer by hand.",
+      "cloze_sentence": "Suggest a sentence with AI",
+      "cloze_sentence_empty": "No usable sentence - write one by hand.",
+      "passage": "Suggest a passage with AI",
+      "passage_empty": "No usable passage - write one by hand.",
+      "busy": "Suggesting…",
+      "disclaimer": "AI drafts - review and edit before saving.",
+      "no_key": "This needs your own AI key (BYOK). Add one under AI settings.",
+      "open_settings": "AI settings",
+      "error": "The AI request failed. Please try again."
     }
   },
   "learning_path": {

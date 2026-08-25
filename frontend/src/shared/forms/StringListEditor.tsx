@@ -74,7 +74,7 @@ export default function StringListEditor({
 
     return (
         <div className="flex flex-col gap-1.5" data-testid={testIdPrefix}>
-            <span className="form-label text-sm font-medium text-fg-primary">
+            <span className="text-sm font-medium text-fg-primary">
                 {label}
             </span>
             {values.length > 0 && (

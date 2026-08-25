@@ -9,7 +9,7 @@
  */
 
 import {act, renderHook} from "@testing-library/react";
-import {beforeEach, describe, expect, it, vi} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {readLessonSpeed, useReadAloud, type ReadAloudController} from "./useReadAloud";
 
@@ -89,8 +89,33 @@ async function renderReady(): Promise<{current: () => ReadAloudController}> {
     return {current: () => result.current};
 }
 
+/** Mount a mock ``navigator.wakeLock`` so the hook's wake-lock effect
+ *  (#2666) has something to request against. */
+function mountMockWakeLock(): {
+    request: ReturnType<typeof vi.fn>;
+    release: ReturnType<typeof vi.fn>;
+} {
+    const release = vi.fn().mockResolvedValue(undefined);
+    const request = vi.fn().mockResolvedValue({release, released: false});
+    (navigator as unknown as {wakeLock: {request: typeof request}}).wakeLock = {
+        request,
+    };
+    return {request, release};
+}
+
+/** Flush the microtask queue so async effects (wake-lock request) settle. */
+async function flush(): Promise<void> {
+    await act(async () => {
+        await new Promise((r) => setTimeout(r, 0));
+    });
+}
+
 beforeEach(() => {
     localStorage.clear();
+});
+
+afterEach(() => {
+    delete (navigator as unknown as {wakeLock?: unknown}).wakeLock;
 });
 
 describe("useReadAloud engine", () => {
@@ -160,5 +185,46 @@ describe("useReadAloud engine", () => {
         expect(h.current().speaking).toBe(false);
         expect(h.current().activeId).toBeNull();
         expect(h.current().boundaryIndex).toBe(-1);
+    });
+
+    describe("screen wake lock (#2666)", () => {
+        it("requests a screen wake lock while a stream is speaking", async () => {
+            setMockSynth([makeVoice("DE", "de")]);
+            const {request} = mountMockWakeLock();
+            const h = await renderReady();
+            act(() => h.current().speak("read me", {lang: "de"}));
+            await flush();
+            expect(request).toHaveBeenCalledWith("screen");
+        });
+
+        it("releases the wake lock when playback is stopped", async () => {
+            setMockSynth([makeVoice("DE", "de")]);
+            const {release} = mountMockWakeLock();
+            const h = await renderReady();
+            act(() => h.current().speak("read me", {lang: "de"}));
+            await flush();
+            act(() => h.current().stop());
+            await flush();
+            expect(release).toHaveBeenCalled();
+        });
+
+        it("releases the wake lock when a stream ends naturally", async () => {
+            setMockSynth([makeVoice("DE", "de")]);
+            const {release} = mountMockWakeLock();
+            const h = await renderReady();
+            act(() => h.current().speak("read me", {lang: "de"}));
+            await flush();
+            act(() => spoken[0].onend?.());
+            await flush();
+            expect(release).toHaveBeenCalled();
+        });
+
+        it("does not request a wake lock when the API is unsupported", async () => {
+            setMockSynth([makeVoice("DE", "de")]);
+            const h = await renderReady();
+            expect(() => act(() => h.current().speak("read me", {lang: "de"}))).not.toThrow();
+            await flush();
+            expect(h.current().speaking).toBe(true);
+        });
     });
 });

@@ -27,6 +27,7 @@ import {
   type StorageMode,
 } from "../../../../storage";
 import { notify } from "../../../../utils/notify";
+import { SettingsSection } from "../../../../components/settings/SettingsSection";
 import type { UserSettings } from "../../../../types";
 
 interface GeneralPanelProps {
@@ -218,13 +219,12 @@ export default function GeneralPanel({
       hidden={!active}
       data-testid="settings-panel-general"
     >
-      <section
-        className="settings-section"
-        data-testid="settings-section-profile"
+      <SettingsSection
+        testid="settings-section-profile"
+        title={t("settings.section_profile", "Profile")}
       >
-        <h2 className="settings-section-title">{t("settings.section_profile", "Profile")}</h2>
-        <div className="form-row" data-testid="settings-username-row">
-          <label className="form-label" htmlFor="settings-username-input">
+        <div className="flex flex-col gap-2" data-testid="settings-username-row">
+          <label className="text-[0.95rem] font-medium" htmlFor="settings-username-input">
             {t("settings.username_label", "Display name")}
           </label>
           <div className="flex flex-wrap items-center gap-2">
@@ -296,28 +296,26 @@ export default function GeneralPanel({
             testId="settings-avatar-upload"
           />
         )}
-      </section>
+      </SettingsSection>
 
-      <section
-        className="settings-section"
-        data-testid="settings-section-appearance"
+      <SettingsSection
+        testid="settings-section-appearance"
+        title={t("settings.section_appearance", "Appearance")}
       >
-        <h2 className="settings-section-title">{t("settings.section_appearance", "Appearance")}</h2>
         <ThemePicker />
         {/* #1257 — global content-view preference (list/grid). Shares the
             same source as the in-tab quick-toggle. */}
         <ContentViewControl />
-      </section>
+      </SettingsSection>
 
       <div>
         {/* #1378 — configurable order of the Content-area tabs. */}
         <ContentTabsOrderControl />
       </div>
 
-      <section className="settings-section">
-        <h2 className="settings-section-title">{t("settings.section_language", "Language")}</h2>
-        <div className="form-row">
-          <span className="form-label" id="settings-language-label">
+      <SettingsSection title={t("settings.section_language", "Language")}>
+        <div className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium" id="settings-language-label">
             {t("settings.language_label", "Display language")}
           </span>
           <div className="min-w-64 flex-1">
@@ -337,16 +335,15 @@ export default function GeneralPanel({
             />
           </div>
         </div>
-      </section>
+      </SettingsSection>
 
-      <section
-        className="settings-section"
-        data-testid="settings-section-ui"
+      <SettingsSection
+        testid="settings-section-ui"
+        title={t("settings.section_ui", "Interface")}
       >
-        <h2 className="settings-section-title">{t("settings.section_ui", "Interface")}</h2>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
               {t("settings.button_tooltips", "Show button tooltips")}
             </span>
             <FormHint as="span">
@@ -358,14 +355,15 @@ export default function GeneralPanel({
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-button-tooltips-toggle"
             checked={buttonTooltipsOn}
             onChange={(e) => handleButtonTooltipsToggle(e.target.checked)}
           />
         </label>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">{t("settings.developer_mode", "Developer Mode")}</span>
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">{t("settings.developer_mode", "Developer Mode")}</span>
             <FormHint as="span">
               {t(
                 "settings.developer_mode_description",
@@ -375,24 +373,22 @@ export default function GeneralPanel({
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-developer-mode-toggle"
             checked={devModeOn}
             onChange={(e) => handleDevModeToggle(e.target.checked)}
           />
         </label>
-      </section>
+      </SettingsSection>
 
-      <section
-        className="settings-section"
-        data-testid="settings-storage-mode"
+      <SettingsSection
+        testid="settings-storage-mode"
         // Hidden on a Dexie-only build (GH Pages / installed PWA): there is no
         // backend, so the Server option does not exist and the mode is forced
         // to Dexie (#907).
         hidden={isDexieOnlyBuild()}
+        title={t("settings.section_storage_mode", "Storage mode")}
       >
-        <h2 className="settings-section-title">
-          {t("settings.section_storage_mode", "Storage mode")}
-        </h2>
         <p className="muted">
           {t(
             "settings.storage_mode_help",
@@ -452,7 +448,7 @@ export default function GeneralPanel({
             ))}
           </ul>
         )}
-      </section>
+      </SettingsSection>
 
       {/* #840 — desktop/API-mode update preferences. Hidden in Dexie/PWA
           mode (that path uses the service worker, no GitHub check). */}

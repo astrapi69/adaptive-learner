@@ -39,6 +39,7 @@ import ContentBookCompanions from "../../components/content/media/ContentBookCom
 import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
 import ContentSearchBar from "../../components/content/browser/ContentSearchBar";
 import FilterMenuButton from "../../shared/forms/FilterMenuButton";
+import FormHint from "../../shared/forms/FormHint";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
 import { setSelectionKey } from "../../components/content/browser/ContentSetListView";
 import ConfirmDialog from "../../shared/feedback/ConfirmDialog";
@@ -173,6 +174,11 @@ export default function ContentPage() {
     restarting,
     requestRestartSet,
     handleConfirmRestartSet,
+    editAsCopyTarget,
+    setEditAsCopyTarget,
+    editingAsCopy,
+    requestEditAsCopy,
+    handleConfirmEditAsCopy,
     bulkDeleteTargets,
     setBulkDeleteTargets,
     bulkDeleting,
@@ -352,6 +358,7 @@ export default function ContentPage() {
           onSetStatus={(e, status) => void handleSetStatus(e, status)}
           onDeleteSet={setDeleteSetTarget}
           onRestartSet={requestRestartSet}
+          onEditAsCopy={requestEditAsCopy}
           treeProps={{
             tree,
             lang,
@@ -378,6 +385,7 @@ export default function ContentPage() {
               onSetStatus: (e, status) => void handleSetStatus(e, status),
               onDelete: setDeleteSetTarget,
               onRestart: requestRestartSet,
+              onEditAsCopy: requestEditAsCopy,
               selectable: true,
               selectedKeys: selection.selected,
               onToggleSelect: (e) => selection.toggle(setSelectionKey(e)),
@@ -510,6 +518,41 @@ export default function ContentPage() {
         onConfirm={() => void handleConfirmRestartSet()}
         onCancel={() => setRestartSetTarget(null)}
       />
+
+      {/* EXP-046 item 3 / #2654 — the discoverable fork entry point for a
+          read-only downloaded set: forks into a user-generated copy and
+          opens the editor. Strings live in content.edit_as_copy.* (all 11
+          catalogs); the inline text is the fallback of record. */}
+      <ConfirmDialog
+        open={editAsCopyTarget !== null}
+        title={t("content.edit_as_copy.confirm_title", "Edit as your own copy?")}
+        message={
+          editAsCopyTarget
+            ? t(
+                "content.edit_as_copy.confirm_message",
+                'Opens "{title}" as your own, editable copy in the lesson editor. The original stays unchanged and stays downloadable.',
+              ).replace(
+                "{title}",
+                editAsCopyTarget.title ?? editAsCopyTarget.id,
+              )
+            : ""
+        }
+        confirmLabel={t("content.edit_as_copy.confirm", "Edit copy")}
+        cancelLabel={t("common.cancel", "Cancel")}
+        confirmDisabled={editingAsCopy}
+        testId="edit-as-copy-confirm"
+        onConfirm={() => void handleConfirmEditAsCopy()}
+        onCancel={() => setEditAsCopyTarget(null)}
+      >
+        {/* #2201 — the fork-moment progress statement, reused verbatim
+            (the same key ImportLessonModal's collision step shows). */}
+        <FormHint data-testid="edit-as-copy-progress-note">
+          {t(
+            "create_lesson.copy_progress_note",
+            "A copy starts without learning progress; the original keeps its progress and review cards.",
+          )}
+        </FormHint>
+      </ConfirmDialog>
     </PageContainer>
   );
 }

@@ -525,6 +525,15 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] ext:al-categorization: assign categories, readable resolution
 - [ ] ext:al-error-correction: find + correct errors
 - [ ] ext:al-reading-comprehension: text + questions
+- [ ] ext:al-reading-comprehension resolution (#2633): after "Check answers"
+      the correct multiple-choice option is highlighted GREEN — with a check
+      icon and a text badge, never by color alone. If you picked it yourself it
+      reads "Correct"; if you picked wrong, the right option reads "Correct
+      answer" (green, dashed border) and your own pick reads "Wrong" (red).
+      For free-text questions the solution line renders in the green tint with
+      a check instead of as grey body text. Same color language as the pairs
+      (matching). Check across all 12 themes: the text stays readable on the
+      tint.
 - [ ] ext:al-graded-quiz: grading + result display
 - [ ] ext:al-dictation (#1881): "Listen first" plays the clip, type the
       transcription; correct / near-miss ("Almost!") / wrong shows the
@@ -555,6 +564,21 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] Name collision: three-way dialog appears (Overwrite /
       Import as copy / Cancel), NO silent overwrite;
       "Import as copy" creates a fresh id + "(copy)" title
+- [ ] **#2592 Overwrite carries the learning progress across:** create a set
+      with your own lesson, answer one exercise wrongly (so an error/review
+      row exists), export the set, correct ONE answer text in the exported
+      file (e.g. a typo in `free_text.accept[0]`), re-import → collision
+      dialog → "Overwrite". Expected: a toast "Carried over N review
+      card(s)", and the error history still shows the row (with its old error
+      count) under the NEW answer text — not as a fresh row and not gone.
+      Before this fix the row was orphaned silently.
+- [ ] **#2592 an unresolvable case is reported, not silent:** same setup, but
+      DELETE an exercise in the file (so positions shift) → "Overwrite".
+      Expected: an info toast "… could not be confidently matched", no silent
+      loss
+- [ ] **#2592 "Import as copy" is untouched:** same flow but choose "Import
+      as copy" → the original keeps its progress AND review cards, the copy
+      starts without either
 - [ ] Partial import (ZIP with broken lessons): valid ones import,
       warning "N lesson(s) skipped" is shown
 - [ ] Set with ONLY broken lessons: clean error, no crash
@@ -588,6 +612,86 @@ instead of overwriting or resetting it.
 - [ ] Backup round-trip: Export -> wipe -> Import; the runs (incl. the
       completed first one) survive the import. An older backup with no run
       data imports as the implicit run 1 (no crash)
+
+### Edit as a copy - forking a downloaded set (#2654, EXP-046)
+
+Location: My Content (`/content`), the three-dot menu of a DOWNLOADED
+(foreign) set - not shown on your own "My Lessons" sets, which already
+have a direct "Edit".
+
+- [ ] Open a downloaded set -> the three-dot menu shows **"Edit as a
+      copy"** as the FIRST entry
+- [ ] Click it -> a confirmation dialog: notes that the original stays
+      unchanged and remains downloadable, PLUS the progress note ("A copy
+      starts without learning progress …")
+- [ ] Cancel in the dialog -> nothing happens, no new set is created
+- [ ] Confirm -> toast "Saved as your own copy", the app switches
+      automatically into the lesson editor, PRE-FILLED with the
+      original's content
+- [ ] The new copy then shows up under "My Lessons"; the original stays
+      unchanged among the downloaded sets with its status unchanged and
+      remains downloadable
+- [ ] Edit the same source as a copy a second time -> the second copy
+      gets its OWN, collision-free id (e.g. `...-copy-2`), never
+      overwriting the first copy
+- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+      (Dexie mode) - the fork must work in BOTH modes
+
+### Derivation on fork - "Your edit" badge + "based on" credit (#2655, EXP-046)
+
+Location: Import tab (`/content?tab=import`), "My Lessons" section - every
+forked copy (whether created via "Edit as a copy", "Import a lesson", or
+"Save as a copy" in the lesson editor).
+
+- [ ] Fork a downloaded set that has a visible author credit on one of its
+      lessons (e.g. "Contributed by …") via "Edit as a copy" -> the new
+      copy shows up under "My Lessons" WITH the **"Your edit"** badge next
+      to its title
+- [ ] Below it, a compact **"Based on {author}"** line appears - hovering
+      the line shows a tooltip stating that credits are self-declared and
+      not verified (NO checkmark, NO "verified" badge)
+- [ ] Fork a set with NO author credit at all -> the "Your edit" badge
+      still appears, but NO "Based on" line (nothing to credit)
+- [ ] A SELF-authored lesson under "My Lessons" that was never forked
+      (no prior import/copy step) shows NEITHER the badge NOR a credit
+      line
+- [ ] Same flow via "Import a lesson" (import a shared `.json` carrying an
+      author credit) -> the same two indicators appear
+- [ ] Same flow via "Save as a copy" in the lesson editor (save an
+      already-forked own lesson as a copy again) -> the new copy still
+      carries the same "based on" credit (the chain does not grow
+      unbounded)
+- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+      (Dexie mode) - the badge + credit line must appear in BOTH modes
+
+### Share Wizard - hint + removal for carried-over foreign credits (#2656, EXP-046)
+
+Location: `ShareWizard` step 1, directly below the existing "Your name
+(optional)" block. Precondition for a visible foreign credit: a forked
+lesson carrying a "based on" credit (#2655) or an imported lesson whose
+`contributed_by` is already set before the wizard opens.
+
+- [ ] Share a self-authored, never-forked lesson -> NO foreign-credit
+      hint appears (nothing to disclose)
+- [ ] Share a forked lesson with set-level attribution (#2655) -> the
+      hint "This content credits {author}. Their name travels when you
+      share, you can remove it." appears, WITH the name from the
+      attribution
+- [ ] Share an imported lesson with `contributed_by` set but no set-level
+      attribution -> the same hint, with the name from `contributed_by`
+- [ ] Share WITHOUT clicking "Remove credits" -> the foreign credit
+      travels with the shared content (default behavior, now visible
+      instead of silent)
+- [ ] Click "Remove credits" -> the button disappears, a "Credits
+      removed." confirmation appears; sharing afterwards -> the name no
+      longer appears in the shared content (the structural
+      `variation_of` link stays untouched)
+- [ ] Enter your own name AND enable "Show name", WITHOUT removing the
+      foreign credit -> YOUR OWN name wins in the shared content, the
+      foreign-credit hint stays visible but gets overwritten on share (no
+      double credit)
+- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+      (Dexie mode) - the hint + removal button must work in BOTH modes
 
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
@@ -904,6 +1008,74 @@ instead of overwriting or resetting it.
       picture choice) **no** select appears. Expectation: the converted
       exercise keeps the learner's progress (same answer key), and Cancel
       discards the conversion.
+- [ ] **Convert an extension exercise -> free text (EXP-050 Stage 1, #2511):**
+      **Edit an existing lesson that contains a Dictation or Image-description
+      exercise** (not the "add extension exercises" flow). In that row's inline
+      editor the same **"Exercise type"** select offers **"Free text"**.
+      Switching to "Free text": the editor **swaps to the free-text editor**
+      with the accepted transcriptions/answers **pre-filled** as accepted
+      answers (the audio/image is dropped). Save -> the lesson now holds a
+      free-text exercise. **Cancel** after switching **restores the original
+      dictation / image-description exercise**. Note: the "add extension
+      exercises" flow (`ExtensionSteps`) does **not** show the select (a core
+      type is not valid there).
+- [ ] **Convert error-correction + cloze -> free text (EXP-050 Stage 2, #2511):**
+      While editing an existing lesson:
+      - An **error-correction** exercise (`ext:al-error-correction`) shows the
+        same "Exercise type" select; choosing "Free text" pre-fills the accepted
+        correction, **no prompt** (key-preserving).
+      - A **cloze** (select/type mode) with **exactly one blank**: choosing
+        "Free text" pre-fills, **no prompt**.
+      - A **cloze with several blanks**: choosing "Free text" pops a
+        **confirmation dialog** ("Convert exercise type?", danger style) because
+        only the first answer is kept and the review history for the others is
+        not carried over. **Confirm** converts (first blank as the free-text
+        answer); **Cancel** leaves the cloze unchanged.
+      - A **multiselect cloze** shows **no** select (not offered).
+- [ ] **Convert free text -> multiple choice / cloze (EXP-050 Stage 3, #2511):**
+      While editing an existing lesson, open a **free-text** exercise. The
+      "Exercise type" select now offers **"Multiple choice"** and **"Cloze"**.
+      - **-> Multiple choice:** the accepted answer becomes the **correct
+        option**; if the free-text exercise has distractors they fill the wrong
+        options (valid right away). Without distractors, **one empty option**
+        remains and **Save is blocked** until a second, distinct option is added
+        (the validator hint shows). No prompt (key-preserving).
+      - **-> Cloze:** produces a one-blank cloze (`___`) with the answer in the
+        blank, valid immediately; expand the sentence around the blank and save.
+      - Expectation: `id`/`stable_id` unchanged, progress preserved (same answer
+        key).
+- [ ] **Convert graded quiz <-> reading comprehension (EXP-050 Stage 3b, #2511):**
+      While editing an existing lesson (a row in the `ExerciseGenerator`, not
+      the "add extension exercises" flow):
+      - **Graded quiz -> Reading comprehension:** pick "Reading comprehension"
+        in the "Exercise type" select -> the editor **stays the extension
+        editor**, the questions carry over, but the **passage is empty** and
+        **Save is blocked** until you type one. (Per-question points are dropped.)
+      - **Reading comprehension -> Graded quiz:** pick "Graded quiz" -> the
+        passage is dropped, each question gets **1 point** (valid at once),
+        pass threshold 60%.
+      - Edge: if a multiple-choice question has **several correct** options, the
+        danger confirmation dialog appears (key moves); otherwise no prompt.
+- [ ] **Suggest empty fields after a conversion with AI (EXP-050 Stage 4, #2511):**
+      After a conversion (Stage 3), fill the now-empty target field via AI. The
+      button appears **only while the field is empty** (for multiple choice: while
+      fewer than three wrong options exist).
+      - **Multiple choice -> "Suggest wrong answers with AI":** the correct answer
+        is left untouched; the AI fills the missing wrong options. Options already
+        typed and the correct answer are **never overwritten**. Suggestions equal
+        to the answer, too short, or duplicates are dropped ("rather one fewer");
+        if nothing survives, a hint to add a wrong answer by hand appears.
+      - **Cloze -> "Suggest a sentence with AI":** only while the sentence is
+        still the bare `___` placeholder -> the AI returns an example sentence with
+        the answer shown as `___`. The button then disappears.
+      - **Reading comprehension -> "Suggest a passage with AI":** only with an
+        empty passage and at least one question -> the AI writes a passage for the
+        questions.
+      - **Without your own AI key (BYOK):** the button is greyed but tappable;
+        tap/focus shows a hint linking to **AI settings** and fires **no** AI
+        request.
+      - Each button carries a note that these are AI drafts to review and edit
+        before saving. (Visual check: desktop + mobile.)
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
@@ -1444,6 +1616,16 @@ Location: Settings → Data → Recommended repositories.
 - [ ] After a successful full run: the button turns disabled without a
       reload
 
+### "Ask AI" button in lessons (#2693)
+- [ ] Shown by default: the "Ask AI" button appears under every theory
+      block and exercise, even without an AI key (then greyed-out with a
+      BYOK hint popover instead of being hidden)
+- [ ] Settings → Learning → Interaction → turn off "Show 'Ask AI'
+      button": the button disappears in the running lesson (theory and
+      exercises), no reload needed
+- [ ] Turn the toggle back on: the button reappears immediately
+- [ ] The toggle state survives a reload (localStorage)
+
 ### AI key vault import (#1765 / #1769)
 - [ ] Settings → AI → "Configured providers" → "Import" jumps to
       Settings → Data and scrolls the KeyVault import block into view (#1765)
@@ -1517,6 +1699,25 @@ characters.
 - [ ] No audible stutter between chunks
 - [ ] Known platform limit, NOT a bug: pause/resume has no effect on iOS
       Safari (it stops and restarts there)
+
+#### Read-aloud keeps playing when the screen auto-locks (#2666) - MANDATORY
+
+The screen wake lock keeps the display awake while read-aloud is playing so
+the device's inactivity timer doesn't interrupt speech synthesis (iOS
+Safari and mobile Chrome browsers stop `speechSynthesis` the moment the
+screen auto-locks).
+
+- [ ] On the iPhone (Safari), open a lesson, start read-aloud, and do NOT
+      touch the device
+- [ ] Wait past the device's normal auto-lock timeout (leave the phone
+      alone): the screen stays on for as long as read-aloud is playing
+- [ ] Read-aloud plays uninterrupted through to the end of the text
+- [ ] After "Stop" or the end of read-aloud, the screen is again allowed to
+      auto-lock normally (the wake lock is released)
+- [ ] Repeat the same flow on an Android device (Chrome)
+- [ ] Known platform limit, NOT a bug: manually pressing the lock/power
+      button still turns the screen off immediately and stops playback -
+      no web API can prevent that
 
 #### App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 

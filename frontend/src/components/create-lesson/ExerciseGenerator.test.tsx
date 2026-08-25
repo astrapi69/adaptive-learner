@@ -19,6 +19,7 @@ import ExerciseGenerator, {
 } from "./ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
+    DICTATION_EXT_TYPE,
     type ExerciseGenConfig,
 } from "../../lib/exercises";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -465,5 +466,116 @@ describe("ExerciseGenerator — extension types in the picker (#2508)", () => {
         expect(
             screen.getByTestId(/^exercise-ext-editor-/),
         ).toBeInTheDocument();
+    });
+});
+
+describe("ExerciseGenerator — convert dictation to free_text (EXP-050 #2511)", () => {
+    const dictationEx = (id: string): ContentLessonExercise =>
+        ({
+            id,
+            type: DICTATION_EXT_TYPE,
+            prompt: "Write what you hear",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {audio: "assets/audio/clip.mp3", accept: ["bonjour"]},
+        }) as ContentLessonExercise;
+
+    it("swaps the ext editor for the core free_text editor with the answer carried", () => {
+        render(<ListHarness initial={[dictationEx("d1")]} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-d1"));
+        // Opens in the extension editor with the conversion control.
+        expect(screen.getByTestId("exercise-ext-editor-d1")).toBeInTheDocument();
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-d1"), {
+            target: {value: "free_text"},
+        });
+        // Row now renders the core editor with the transcription pre-filled.
+        expect(screen.getByTestId("exercise-editor-d1")).toBeInTheDocument();
+        expect(screen.queryByTestId("exercise-ext-editor-d1")).toBeNull();
+        expect(screen.getByTestId("exercise-edit-accept-d1-item-0")).toHaveTextContent(
+            "bonjour",
+        );
+    });
+
+    it("commits the converted free_text exercise on Save", () => {
+        const onUpdate = vi.fn();
+        render(<ListHarness initial={[dictationEx("d1")]} onUpdate={onUpdate} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-d1"));
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-d1"), {
+            target: {value: "free_text"},
+        });
+        fireEvent.click(screen.getByTestId("exercise-edit-save-d1"));
+        const saved = onUpdate.mock.calls.at(-1)?.[1];
+        expect(saved.type).toBe("free_text");
+        expect(saved.accept).toEqual(["bonjour"]);
+        expect("ext_payload" in saved).toBe(false);
+        expect(screen.queryByTestId("exercise-editor-d1")).toBeNull();
+    });
+
+    it("Cancel after converting restores the original dictation exercise", () => {
+        render(<ListHarness initial={[dictationEx("d1")]} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-d1"));
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-d1"), {
+            target: {value: "free_text"},
+        });
+        expect(screen.getByTestId("exercise-editor-d1")).toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("exercise-edit-cancel-d1"));
+        // Re-open: it is the extension (dictation) editor again, not free_text.
+        fireEvent.click(screen.getByTestId("exercise-edit-d1"));
+        expect(screen.getByTestId("exercise-ext-editor-d1")).toBeInTheDocument();
+        expect(screen.queryByTestId("exercise-editor-d1")).toBeNull();
+    });
+});
+
+describe("ExerciseGenerator — convert graded-quiz to reading-comprehension (EXP-050 3b)", () => {
+    const gradedQuiz = (id: string): ContentLessonExercise =>
+        ({
+            id,
+            type: "ext:al-graded-quiz",
+            prompt: "Quiz",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                pass_threshold: 60,
+                questions: [
+                    {prompt: "Q1", type: "free_text", accept: ["x"], points: 1},
+                ],
+            },
+        }) as ContentLessonExercise;
+
+    it("swaps to the RC editor (same ext family) with an empty passage blocking Save", () => {
+        render(<ListHarness initial={[gradedQuiz("gq9")]} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-gq9"));
+        expect(screen.getByTestId("exercise-ext-editor-gq9")).toBeInTheDocument();
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-gq9"), {
+            target: {value: "ext:al-reading-comprehension"},
+        });
+        // Still the extension editor, now showing the RC passage field (remounted).
+        expect(screen.getByTestId("exercise-ext-rc-passage-gq9")).toBeInTheDocument();
+        // Empty passage -> Save disabled.
+        expect(
+            screen.getByTestId("exercise-ext-save-gq9") as HTMLButtonElement,
+        ).toBeDisabled();
+        // Fill the passage -> Save enabled.
+        fireEvent.change(screen.getByTestId("exercise-ext-rc-passage-gq9"), {
+            target: {value: "A passage the learner reads."},
+        });
+        expect(
+            screen.getByTestId("exercise-ext-save-gq9") as HTMLButtonElement,
+        ).not.toBeDisabled();
+    });
+
+    it("Cancel after converting restores the original graded-quiz", () => {
+        render(<ListHarness initial={[gradedQuiz("gq9")]} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-gq9"));
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-gq9"), {
+            target: {value: "ext:al-reading-comprehension"},
+        });
+        fireEvent.click(screen.getByTestId("exercise-ext-cancel-gq9"));
+        // Re-open: back to a graded-quiz (its type select offers RC again).
+        fireEvent.click(screen.getByTestId("exercise-edit-gq9"));
+        const select = screen.getByTestId(
+            "exercise-ext-type-select-gq9",
+        ) as HTMLSelectElement;
+        expect(select.value).toBe("ext:al-graded-quiz");
     });
 });

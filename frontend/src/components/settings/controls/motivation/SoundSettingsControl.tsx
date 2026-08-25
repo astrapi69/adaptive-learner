@@ -9,6 +9,8 @@
 
 import {useState} from "react";
 
+import {Button} from "@/components/ui/button";
+
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import {playSound} from "../../../../lib/audio/sound-effects";
@@ -36,9 +38,9 @@ export default function SoundSettingsControl() {
 
     return (
         <div data-testid="settings-sounds">
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t("settings.sounds", "Sounds")}
                     </span>
                     <FormHint as="span">
@@ -50,6 +52,7 @@ export default function SoundSettingsControl() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     data-testid="settings-sounds-toggle"
                     checked={enabled}
                     onChange={(e) => handleToggle(e.target.checked)}
@@ -58,11 +61,11 @@ export default function SoundSettingsControl() {
 
             {enabled && (
                 <div
-                    className="form-row form-row-stack"
+                    className="flex flex-col items-stretch gap-1"
                     data-testid="settings-sounds-volume-row"
                 >
                     <label
-                        className="form-label"
+                        className="text-[0.95rem] font-medium"
                         htmlFor="settings-sounds-volume"
                     >
                         {t("settings.sounds_volume", "Volume")}
@@ -86,14 +89,14 @@ export default function SoundSettingsControl() {
                         >
                             {volume}%
                         </span>
-                        <button
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="ghost"
                             data-testid="settings-sounds-test"
                             onClick={() => playSound("star_earned")}
                         >
                             {t("settings.sounds_test", "Test")}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}

@@ -3,6 +3,7 @@ import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
 import {Button} from "@/components/ui/button";
+import {ModalOverlay, ModalCard, ModalTitle} from "@/shared/modal";
 import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
 import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../hooks/ui/useI18n";
@@ -114,17 +115,16 @@ export default function RatingDialog({
     };
 
     return (
-        <div className="modal-overlay" data-testid="rating-dialog">
-            <div
+        <ModalOverlay data-testid="rating-dialog">
+            <ModalCard
                 ref={dialogRef}
-                className="modal-card"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="rating-title"
             >
-                <h2 id="rating-title" className="modal-title">
+                <ModalTitle id="rating-title">
                     {t("session.rating_title", "How did the session go?")}
-                </h2>
+                </ModalTitle>
                 {cycleCount && cycleCount > 1 && (
                     <div
                         className="rating-cycles-summary"
@@ -191,8 +191,8 @@ export default function RatingDialog({
                         onChange={setMethodFit}
                         disabled={submitting}
                     />
-                    <div className="form-row">
-                        <span className="form-label" id="rating-notes-label">
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[0.95rem] font-medium" id="rating-notes-label">
                             {t("session.rating_notes", "Notes (optional)")}
                         </span>
                         <EditorToolbar
@@ -227,7 +227,7 @@ export default function RatingDialog({
                             )}
                         </div>
                     </div>
-                    <div className="form-actions">
+                    <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                         <Button
                             variant="secondary"
                             type="button"
@@ -247,8 +247,8 @@ export default function RatingDialog({
                         </Button>
                     </div>
                 </form>
-            </div>
-        </div>
+            </ModalCard>
+        </ModalOverlay>
     );
 }
 
@@ -316,7 +316,7 @@ function RatingRow({
 
     return (
         <div className="rating-row" data-testid={testid}>
-            <span className="form-label rating-row-label">
+            <span className="rating-row-label text-[0.95rem] font-medium">
                 {t(labelKey, fallback)}{" "}
                 <span className="rating-value" data-testid={`${testid}-value`}>
                     {value} / 5

@@ -109,3 +109,134 @@ describe("dead-CSS tranche selectors stay removed (#2476, refs #1485)", () => {
         },
     );
 });
+
+/**
+ * The modal shell classes moved into the shared Modal components
+ * (src/shared/modal, #2729 — Option C): every consumer renders the
+ * ModalOverlay/ModalCard/ModalTitle parts, whose styling is token-backed
+ * Tailwind utilities. The legacy rules were deleted WITH the extraction;
+ * neither the classnames nor the rules may reappear.
+ */
+const REMOVED_SELECTORS_MODAL_EXTRACTION = [
+    "modal-overlay",
+    "modal-card",
+    "modal-title",
+] as const;
+
+describe("modal-extraction selectors stay removed (#2729, refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_MODAL_EXTRACTION)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was replaced by the shared Modal parts ` +
+                    "(src/shared/modal, #2729) and its legacy rule deleted. " +
+                    "Style the shared component instead of re-adding the rule.",
+            ).toBe(false);
+        },
+    );
+});
+
+/**
+ * The legacy button family moved to the shadcn `Button`
+ * (components/ui/button.tsx, #2731 — Option C Slice 2): every consumer
+ * renders `<Button>` / `buttonVariants()`, whose base carries the 44px
+ * touch target (min-h-11) at all viewports. 02-buttons.css and every
+ * `.X .btn` context rule were deleted with the migration; neither the
+ * base classes nor the spinner may reappear as legacy rules.
+ */
+const REMOVED_SELECTORS_BTN_MIGRATION = [
+    "btn",
+    "btn-primary",
+    "btn-secondary",
+    "btn-spinner",
+] as const;
+
+describe("btn-family selectors stay removed (#2731, refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_BTN_MIGRATION)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was replaced by the shadcn Button ` +
+                    "(components/ui/button.tsx, #2731) and its legacy rule " +
+                    "deleted. Use a Button variant (or buttonVariants()) " +
+                    "instead of re-adding the rule.",
+            ).toBe(false);
+        },
+    );
+});
+
+/**
+ * The widget-card family moved into the shared DashboardCard components
+ * (src/shared/layout/DashboardCard, Option C, #1485): every consumer
+ * renders DashboardCard / DashboardCardTitle, whose styling is
+ * token-backed Tailwind utilities (including the mobile padding shrink).
+ * The legacy rules were deleted WITH the extraction and may not reappear.
+ */
+const REMOVED_SELECTORS_DASHBOARD_CARD = [
+    "dashboard-card",
+    "dashboard-card-wide",
+    "dashboard-card-title",
+] as const;
+
+describe("dashboard-card selectors stay removed (refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_DASHBOARD_CARD)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was replaced by the shared DashboardCard ` +
+                    "parts (src/shared/layout/DashboardCard) and its legacy " +
+                    "rule deleted. Style the shared component instead of " +
+                    "re-adding the rule.",
+            ).toBe(false);
+        },
+    );
+});
+
+/**
+ * The form family was converted to token-backed Tailwind utilities at
+ * its ~285 consumer sites (Option C, #2735): the classes were 1-3
+ * declaration layout primitives on heterogeneous elements
+ * (label/div/span/legend/p/fieldset), so the conversion is inline
+ * utilities, not an `as`-polymorphic component. The #1817
+ * toggle-checkbox pin lives as utilities on each toggle checkbox.
+ * (`form-hint` moved into shared/forms/FormHint earlier, #1629.)
+ *
+ * Deliberately NOT pinned: the base `form-row` / `form-label` rules.
+ * `@astrapi69/ai-key-vault-react`'s dist renders those classNames
+ * (package classname contract, the #2477/#2725 class) - their rules
+ * stay in 04-onboarding.css until the package ships its own styles.
+ */
+const REMOVED_SELECTORS_FORM_FAMILY = [
+    "form-row-toggle",
+    "form-row-fieldset",
+    "form-row-stack",
+    "form-label-stack",
+    "form-required",
+    "form-actions",
+] as const;
+
+describe("form-family selectors stay removed (#2735, refs #1485)", () => {
+    const css = readLegacyCssSum();
+
+    it.each(REMOVED_SELECTORS_FORM_FAMILY)(
+        "does not define .%s in global.css + styles/legacy",
+        (selector) => {
+            expect(
+                definesSelector(css, selector),
+                `\`.${selector}\` was converted to Tailwind utilities at its ` +
+                    "consumers (#2735) and its legacy rule deleted. Style the " +
+                    "consumers (or extract a real shared component) instead " +
+                    "of re-adding the rule.",
+            ).toBe(false);
+        },
+    );
+});

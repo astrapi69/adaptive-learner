@@ -666,6 +666,8 @@ settings:
   lesson_shortcuts_description: "Appuie sur Entrée pour vérifier ta réponse, puis à nouveau pour passer à l'étape suivante."
   lesson_auto_advance: "Passer automatiquement après une bonne réponse"
   lesson_auto_advance_description: "Après une bonne réponse, passe automatiquement à l'exercice suivant. Une mauvaise réponse attend toujours pour que tu puisses revoir la solution."
+  ask_ai_visible: "Afficher le bouton 'Demander à l'IA'"
+  ask_ai_visible_description: "Affiche le bouton 'Demander à l'IA' sous la théorie et les exercices. Affiché par défaut ; le bouton a toujours besoin de ta propre clé IA (BYOK) pour répondre."
   button_tooltips: "Afficher les infobulles des boutons"
   button_tooltips_description: "Affiche une infobulle au survol des boutons à icône. Les libellés pour lecteurs d’écran restent actifs quoi qu’il arrive."
   developer_mode: Mode développeur
@@ -1893,6 +1895,64 @@ lesson:
       submit: "Vérifier la réponse"
       retry: "Réessayer"
       empty: "Cet exercice à choix multiple n'a pas d'options."
+    al_categorization:
+      empty: "Cet exercice de catégorisation n'a pas de catégories."
+      instructions: "Touche un élément, puis sa catégorie."
+      pool_label: "Éléments"
+      result_correct: "Correct !"
+      result_wrong: "Pas tout à fait. Regarde les éléments marqués."
+      retry: "Réessayer"
+      submit: "Vérifier la réponse"
+    al_dictation:
+      empty: "Cet exercice de dictée n'a pas d'audio."
+      input_label: "Écris ce que tu entends"
+      input_placeholder: "Écris ce que tu entends…"
+      result_correct: "Correct !"
+      result_near_miss: "Presque ! Vérifie l'orthographe."
+      result_wrong: "Pas tout à fait."
+      retry: "Réessayer"
+      solution_label: "Solution"
+      submit: "Vérifier la réponse"
+    al_error_correction:
+      empty: "Cet exercice de correction n'a pas de phrase."
+      input_label: "Correction"
+      instructions: "Touche le mot incorrect, puis écris la correction."
+      result_correct: "Correct !"
+      result_wrong: "Pas tout à fait. Regarde la solution ci-dessous."
+      retry: "Réessayer"
+      solution_label: "Solution"
+      submit: "Vérifier la réponse"
+    al_graded_quiz:
+      empty: "Ce quiz n'a pas de questions."
+      failed: "Non réussi"
+      input_label: "Réponse"
+      passed: "Réussi"
+      retry: "Réessayer"
+      solution_label: "Solution"
+      submit: "Soumettre le quiz"
+    al_image_description:
+      empty: "Cet exercice de description d'image n'a pas d'image."
+      image_alt: "Image à décrire — sa description est la réponse à écrire ci-dessous"
+      image_unavailable: "L'image n'est pas disponible ici."
+      input_label: "Décris l'image"
+      input_placeholder: "Écris ta description…"
+      result_correct: "Correct !"
+      result_near_miss: "Presque ! Vérifie l'orthographe."
+      result_wrong: "Pas tout à fait."
+      retry: "Réessayer"
+      solution_label: "Solution"
+      submit: "Vérifier la réponse"
+    al_reading_comprehension:
+      badge_correct: "Correct"
+      badge_missed: "Bonne réponse"
+      badge_wrong: "Faux"
+      empty: "Cet exercice de lecture n'a pas de questions."
+      input_label: "Réponse"
+      result_correct: "Correct !"
+      result_wrong: "Pas tout à fait. Regarde les questions marquées."
+      retry: "Réessayer"
+      solution_label: "Solution"
+      submit: "Vérifier les réponses"
     instruction:
       matching:
         receptive: Associe les paires (Reconnaître)
@@ -2256,6 +2316,17 @@ content:
       defer: "Reporter"
       complete: "Marquer comme terminé"
       delete: "Supprimer"
+  edit_as_copy:
+    action: "Modifier en tant que copie"
+    confirm_title: "Modifier en tant que votre propre copie ?"
+    confirm_message: "Ouvre « {title} » en tant que votre propre copie modifiable dans l’éditeur de leçons. L’original reste inchangé et toujours téléchargeable."
+    confirm: "Modifier la copie"
+    saved: "Enregistré en tant que votre propre copie."
+    failed: "Impossible de créer la copie."
+  fork:
+    based_on: "Basé sur {author}"
+    based_on_and_others: "Basé sur {author} et d’autres"
+    credit_disclaimer: "Les crédits sont déclarés par l’utilisateur et non vérifiés."
   ai_exercises:
     batch:
       button: "Générer pour toutes les leçons"
@@ -2539,6 +2610,9 @@ content:
     name_placeholder: par ex. Maria S.
     show_name: Afficher le nom dans la leçon
     privacy: "Ton nom sera affiché dans la leçon et dans la pull request."
+    foreign_notice: "Ce contenu crédite {author} comme auteur. Le nom voyage lors du partage, tu peux le supprimer."
+    foreign_remove: "Supprimer les crédits"
+    foreign_removed: "Crédits supprimés."
 milestone:
   streak: "Série de {n} jours !"
   level_up: "Niveau {n} atteint !"
@@ -2793,6 +2867,8 @@ create_lesson:
       mc_options_label: "Options de réponse"
       convert_label: "Type d'exercice"
       convert_hint: "La conversion conserve la réponse saisie et la progression de l'apprenant."
+      convert_confirm_title: "Convertir le type d'exercice ?"
+      convert_confirm_message: "Cet exercice a plusieurs réponses. La conversion ne conserve que la première ; la progression des autres n'est pas reprise."
       mc_option_placeholder: "Texte de l'option"
       mc_option_add: "Ajouter une option"
       mc_option_remove: "Supprimer l'option"
@@ -2975,6 +3051,18 @@ create_lesson:
       title: "Pratique de conversation"
       desc: "5 emplacements de carte, tuiles de mots + texte à trous."
 
+  suggest:
+    distractors: "Proposer de mauvaises réponses avec l'IA"
+    distractors_empty: "Aucune suggestion utilisable - ajoutez une mauvaise réponse à la main."
+    cloze_sentence: "Proposer une phrase avec l'IA"
+    cloze_sentence_empty: "Aucune phrase utilisable - écrivez-en une à la main."
+    passage: "Proposer un texte avec l'IA"
+    passage_empty: "Aucun texte utilisable - écrivez-en un à la main."
+    busy: "Suggestion en cours…"
+    disclaimer: "Brouillons de l'IA - à vérifier et à modifier avant d'enregistrer."
+    no_key: "Cela nécessite votre propre clé IA (BYOK). Ajoutez-en une dans les paramètres IA."
+    open_settings: "Paramètres IA"
+    error: "La requête IA a échoué. Veuillez réessayer."
 learning_path:
   continue: "Continuer"
   start: "Commencer"

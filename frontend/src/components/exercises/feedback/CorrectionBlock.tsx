@@ -60,6 +60,7 @@ import {
 import {generateClozeFromError} from "../../../lib/exercises/grading/cloze-generator";
 import type {ErrorReplayPayload} from "../../../lib/lesson/error-replay";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
+import {matchesExerciseIdentity} from "../../../lib/srs/exercise-identity";
 import {resolveCorrectionSourceCard} from "./correction-source-card";
 import {getStorage} from "../../../storage";
 import type {
@@ -726,7 +727,7 @@ function CorrectionDrill({
                 {drillsAvailable && (
                     <button
                         type="button"
-                        className="btn btn-text lesson-correction-block-skip"
+                        className="lesson-correction-block-skip font-medium max-[769px]:min-h-11"
                         onClick={onSkip}
                         data-testid="lesson-correction-block-skip"
                     >
@@ -771,12 +772,23 @@ function CorrectionDrill({
     );
 }
 
+/**
+ * Locate the exercise an ``ElementError`` was recorded against. Rows are
+ * keyed by ``exerciseIdentityOf`` (the version-stable ``stable_id`` when the
+ * content ships one, else the authored ``id`` — #2130), so the lookup must
+ * accept EITHER id via {@link matchesExerciseIdentity}, not a bare ``===``
+ * on ``.id`` — a bare comparison never matches once content is stable-id
+ * minted, silently degrading every correction round to "replay only" for
+ * ALL current content (#2665). The sibling cloze-generator callers
+ * (``lib/review/review-lesson.ts``, ``lib/adaptive/exercise-pool.ts``)
+ * already do this correctly; this one had drifted.
+ */
 function _findSourceExercise(
     lesson: ContentLesson,
     exerciseId: string,
 ): ContentLessonExercise | null {
     for (const step of lesson.steps) {
-        if (step.exercise?.id === exerciseId) {
+        if (step.exercise && matchesExerciseIdentity(step.exercise, exerciseId)) {
             return step.exercise;
         }
     }

@@ -21,14 +21,14 @@ import {ImagePlus, Trash2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {useI18n} from "../../hooks/ui/useI18n";
-import FormHint from "../../shared/forms/FormHint";
+import {useI18n} from "../../../hooks/ui/useI18n";
+import FormHint from "../../../shared/forms/FormHint";
 import {
     ACCEPTED_CARD_IMAGE_TYPES,
     CARD_IMAGE_ERROR_DECODE,
     isDataUri,
     processCardImageFile,
-} from "../../lib/content/lesson/card-image";
+} from "../../../lib/content/lesson/card-image";
 
 export interface CardImageFieldProps {
     /** Current image reference: an uploaded data URI, an asset path, or "". */
@@ -82,7 +82,7 @@ export default function CardImageField({
 
     return (
         <div className="flex flex-col gap-2">
-            <span className="form-label text-sm font-medium text-fg-primary">
+            <span className="text-sm font-medium text-fg-primary">
                 {label ?? t("create_lesson.cards.image_label", "Image (optional)")}
             </span>
 

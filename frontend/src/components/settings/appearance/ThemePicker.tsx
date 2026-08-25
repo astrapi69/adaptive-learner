@@ -89,10 +89,10 @@ export default function ThemePicker() {
 
     return (
         <fieldset
-            className="form-row form-row-fieldset"
+            className="m-0 flex flex-col gap-2 border-none p-0"
             data-testid="settings-theme-picker"
         >
-            <legend className="form-label">{t("settings.theme", "Theme")}</legend>
+            <legend className="text-[0.95rem] font-medium">{t("settings.theme", "Theme")}</legend>
             <FormHint as="span">
                 {t(
                     "settings.theme_description",

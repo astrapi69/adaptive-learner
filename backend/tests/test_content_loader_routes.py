@@ -34,6 +34,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app, manager
+from app.openapi_metadata import iter_api_routes
 
 SOURCE = "astrapi69/adaptive-learner-content"
 SOURCE_SLUG = "astrapi69--adaptive-learner-content"
@@ -151,7 +152,7 @@ def test_plugin_is_active(client: TestClient) -> None:
 
 
 def test_router_paths_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     expected = {
         "/api/plugins/content-loader/sets",
         "/api/plugins/content-loader/sets/{source_slug}/{set_id}/download",
@@ -348,7 +349,7 @@ FAKE_PNG = b"\x89PNG\r\n\x1a\n" + b"FAKE_PIXEL_DATA"
 
 
 def test_asset_route_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert (
         "/api/plugins/content-loader/sets/{source_slug}/{set_id}/assets/{asset_path:path}" in paths
     )
@@ -542,6 +543,51 @@ def test_save_user_set_with_book_block(client: TestClient) -> None:
     assert entry["book"] is not None
     assert entry["book"]["title"] == "KI fuer Einsteiger"
     assert entry["book"]["asin"] == "B0F43H6T2M"
+
+
+def test_save_user_set_with_attribution_block(client: TestClient) -> None:
+    """#2655 — a fork's carried-forward attribution/derivation chain
+    round-trips through the route into the response's ``attribution``
+    field."""
+    lesson = _user_lesson_payload("conv-attrib")
+    body = {
+        "set_id": "conv-attrib",
+        "title": "Route test",
+        "language": "en",
+        "level": "beginner",
+        "origin": "imported",
+        "attribution": {
+            "author": "Original Author",
+            "derived_from": [{"author": "Even Earlier Author"}],
+        },
+        "lessons": [lesson],
+    }
+    r = client.post("/api/plugins/content-loader/user-sets", json=body)
+    assert r.status_code == 200, r.text
+    entry = r.json()
+    assert entry["attribution"] is not None
+    assert entry["attribution"]["author"] == "Original Author"
+    assert entry["attribution"]["derived_from"] == [{"author": "Even Earlier Author"}]
+
+    # Round-trip through /sets listing too, not just the save response.
+    r = client.get("/api/plugins/content-loader/sets")
+    listed = next(s for s in r.json()["sets"] if s["id"] == "conv-attrib")
+    assert listed["attribution"]["author"] == "Original Author"
+
+
+def test_save_user_set_without_attribution_leaves_it_null(client: TestClient) -> None:
+    lesson = _user_lesson_payload("conv-no-attrib")
+    body = {
+        "set_id": "conv-no-attrib",
+        "title": "Route test",
+        "language": "en",
+        "level": "beginner",
+        "origin": "analysis",
+        "lessons": [lesson],
+    }
+    r = client.post("/api/plugins/content-loader/user-sets", json=body)
+    assert r.status_code == 200, r.text
+    assert r.json()["attribution"] is None
 
 
 def test_save_user_set_rejects_bad_set_id(client: TestClient) -> None:

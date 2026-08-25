@@ -212,3 +212,116 @@ issues; everything else can likely be batched by directory
    note above) is itself worth tightening in the gate, that is a
    `check-dead-classnames.py` change, not a #1728 finding - noted here
    only so it isn't silently forgotten.
+
+## Phase 2: live-render pass (2026-08-20)
+
+Closes follow-up items 1 and 2 above. By this point every dead-classname
+cluster the Phase 1 report identified had shipped (#2671, #2674, #2680,
+#2686, #2688, #2691 - `.unstyled-classnames-baseline` 118 -> 5 real
+entries), so this pass checks the items the static analysis explicitly
+could not: spacing consistency, card chrome, and mobile viewport, by
+eye, in a real browser.
+
+### Method
+
+A local Dexie-mode build (`VITE_STORAGE_MODE=dexie`) served via
+`vite preview`, driven by a throwaway Playwright spec reusing the
+existing `gotoSurface()` helpers from `e2e/visual/helpers.ts` (not
+committed to the suite - this was a one-off QA pass, not a new gate).
+12 screens from the #1728 scope list were captured at both desktop
+(1920x1080) and mobile (375x667): Dashboard, Discover, My Content,
+two lesson exercise types (cloze + matching-checked), Lesson summary,
+Review, four Settings panels (General/Data/About/AI), and Progress >
+Statistik. (Set-detail and CreateLesson steps 2-4 were not covered -
+set-detail's own capture path is currently broken per #2696,
+unrelated to this pass's scope; CreateLesson has no existing capture
+helper and needs a dedicated fixture to reach steps 2-4 deterministically.)
+
+Each screen pair was reviewed against the reference-good pattern
+(token-scale Tailwind spacing + real card/container chrome) by an
+independent reviewer agent, then every non-clean finding was verified
+directly by re-inspecting the actual screenshots (crops, side-by-side
+comparison) before acting - matching this repo's own "review every
+image, never blind accept" discipline (#1532) applied to a findings
+report instead of a baseline diff.
+
+### Results
+
+| Screen | Spacing | Card chrome | Mobile | Severity |
+|---|---|---|---|---|
+| Dashboard | consistent | ok | clean | none |
+| Discover | consistent | **stray bullet on every card** | same bullet | cosmetic - fixed |
+| My Content | consistent (where rendered) | ok (where rendered) | **title clips, content vanishes past first card, ~91% blank scroll** | confusing - filed #2698 |
+| Lesson (cloze) | consistent | ok | clean | none |
+| Lesson (matching, checked) | consistent | ok | clean | none |
+| Lesson summary | consistent | ok | clean | none |
+| Review | consistent | ok | clean | none |
+| Settings > General | consistent | ok | clean | none |
+| Settings > Data | consistent | ok | minor title wrap, not cut off | cosmetic (not filed) |
+| Settings > About | consistent | ok | clean | none |
+| Settings > AI | consistent | ok | orphaned dash separator when a provider row wraps | cosmetic (not filed) |
+| Progress > Statistik | consistent | ok | clean | none |
+
+**8 of 12 screens are clean.** The dead-classname migration work already
+fixed most of what the Phase 1 static pass could only guess at -
+spacing and card chrome are consistent everywhere checked, on both
+viewports.
+
+**Discover's stray bullet** (fixed in this same change): `discover-results`
+and `discover-empty-hints` in `pages/content/Discover.tsx` are
+`<ul>`/`<li>` grids with no `list-style` reset. This app does not reset
+list-style globally - every other `<ul>` in the codebase carries an
+explicit `list-none` utility or a scoped `list-style: none` rule
+(`styles/legacy/*.css`) - these two were missed. Fixed with `list-none`
+on both; re-captured and confirmed the bullets are gone.
+
+**My Content's mobile bug** (#2698, root-caused and fixed 2026-08-20,
+PR #2700): desktop rendered correctly, but mobile clipped the first
+card's title with no ellipsis and appeared to render nothing further.
+Live DOM measurement found the cause: `.content-set-meta` carried
+`flex: 1 1 280px; min-width: 0` but no `max-width`, so the `truncate`
+(nowrap) title span's intrinsic content width leaked through as the
+flex item's rendered size on a wrapped flex line - the meta block
+measured 566-634px inside a 331px card, defeating `flex-shrink`
+entirely. Every row ballooned past the viewport, pushing the rest of
+the list thousands of pixels down (the "content vanishes" symptom was
+displacement, not absence). Fix: `max-width: 100%` on
+`.content-set-meta`. Verified by before/after computed-style probes
+(the span went from unclipped-at-566px to properly ellipsized at
+257px) and a real-viewport scroll-through showing all cards in normal
+flow.
+
+**The set-detail capture bug** (#2696, root-caused 2026-08-20, no app
+change): NOT an app bug and not actually "the wrong page". The capture
+flow reaches the correct expanded/downloaded state - DOM probes
+(`aria-expanded`, `isVisible()`, `boundingBox()`) all confirm it - but
+Chromium/Playwright `fullPage: true` capture leaves everything below a
+threshold unpainted on this app's very tall (7000px+)
+`#root`-scrolls-internally pages. The baseline PNG shows the top slice
+of the RIGHT page with the lower two-thirds blank, which reads as the
+default view. Real users are unaffected (verified with unmodified
+viewport + non-fullPage capture: button, toast, expanded section all
+render). Two capture-layer fixes were tried and failed (skipping the
+`scrollTo(0,0)` reset; pre-rastering via full scroll-through), so the
+remaining work is a deliberate capture-strategy change for that
+surface, tracked on #2696.
+
+**Two sub-cosmetic mobile-only wrap artifacts** (Settings > Data's
+title wrap, Settings > AI's orphaned dash) were verified real but are
+minor enough - nothing cut off, nothing unreadable, no blocked
+interaction - that they were not filed as separate issues, consistent
+with the Phase 1 report's own "cosmetic hygiene, opportunistic fixing"
+category rather than a dedicated sweep.
+
+### Closing #1728
+
+Both follow-up items from Phase 1 are done. The dead-classname
+archetype that motivated the whole audit is fully migrated (down to
+one deliberately-deferred entry, `chat-welcome`, tracked under the
+separate #1485 track). The live-render pass found the app in
+materially better shape than the original static audit could have
+predicted - one small cosmetic fix landed directly, the one real
+mobile bug is root-caused and fixed (#2698, PR #2700), the capture
+anomaly is root-caused as test infrastructure with zero user impact
+(#2696), and two trivial artifacts are documented rather than chased.
+Nothing in the original #1728 scope remains open.

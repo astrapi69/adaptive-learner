@@ -1,64 +1,105 @@
 /**
  * #1817 — settings toggle-row checkboxes must render at one fixed size.
  *
- * Every settings toggle row uses the shared ``.form-row-toggle`` layout
- * primitive (``display: flex; justify-content: space-between``) with a
- * bare native ``<input type="checkbox">``. A native checkbox is a flex
- * item with the default ``flex-shrink: 1``, so a row with a wider
- * label/description column squeezes its checkbox and renders it smaller
- * than sibling rows (the visible bug: the Interface panel's "Show button
- * tooltips" and "Developer Mode" checkboxes came out at different sizes).
+ * Every settings toggle row uses the shared toggle-row layout (a
+ * `flex items-center justify-between` label) with a bare native
+ * ``<input type="checkbox">``. A native checkbox is a flex item with the
+ * default ``flex-shrink: 1``, so a row with a wider label/description
+ * column squeezes its checkbox and renders it smaller than sibling rows
+ * (the visible bug: the Interface panel's "Show button tooltips" and
+ * "Developer Mode" checkboxes came out at different sizes). The global
+ * ``input {...}`` base rule additionally bleeds text-input padding onto
+ * checkboxes, which Firefox/Safari apply to the native control.
  *
- * The fix constrains the checkbox in the ONE shared class rather than
- * duplicating a size utility across ~13 call sites. This pins that the
- * rule stays there: a fixed 1rem square that never shrinks.
+ * Historically ONE shared legacy rule
+ * (``.form-row-toggle input[type="checkbox"]``) constrained them; the
+ * #2735 utility conversion moved that pin onto each checkbox as the
+ * utilities ``m-0 size-4 flex-none p-0`` (``flex-none`` stops the
+ * shrink, ``size-4`` = the fixed 1rem square, ``p-0``/``m-0`` cancel the
+ * inherited input padding — utilities beat @layer base exactly like the
+ * legacy rule did).
+ *
+ * This test pins the utility form: in every non-test .tsx file that
+ * renders the toggle-row layout, EVERY native checkbox tag must carry
+ * all four pin utilities. It reports the size of the scanned set so an
+ * empty scan can never read as a clean one (gate contract #2083 pt. 4).
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const CSS = readFileSync(join(HERE, "legacy", "04-onboarding.css"), "utf8");
+const SRC = join(HERE, ".."); // styles -> src
 
-/** Extract the declaration body of a CSS rule by its exact selector. */
-function ruleBody(css: string, selector: string): string | null {
-  const at = css.indexOf(selector);
-  if (at === -1) return null;
-  const open = css.indexOf("{", at + selector.length);
-  const close = css.indexOf("}", open + 1);
-  if (open === -1 || close === -1) return null;
-  // Guard against matching a longer selector that merely starts with `selector`:
-  // everything between the found selector and `{` must be whitespace.
-  if (css.slice(at + selector.length, open).trim() !== "") return null;
-  return css.slice(open + 1, close);
+const TOGGLE_ROW = 'className="flex items-center justify-between gap-2"';
+const PIN_UTILITIES = ["m-0", "size-4", "flex-none", "p-0"] as const;
+
+function walk(dir: string, acc: string[] = []): string[] {
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) {
+      walk(full, acc);
+    } else if (entry.endsWith(".tsx") && !entry.includes(".test.")) {
+      acc.push(full);
+    }
+  }
+  return acc;
 }
 
-describe("#1817 — shared toggle-checkbox sizing", () => {
-  it("constrains the checkbox inside .form-row-toggle", () => {
-    const body = ruleBody(CSS, '.form-row-toggle input[type="checkbox"]');
-    expect(body).not.toBeNull();
+interface CheckboxTag {
+  file: string;
+  tag: string;
+}
+
+/** Every `<input ... type="checkbox" ... >` tag in toggle-row files. */
+function collectToggleFileCheckboxes(): {
+  toggleFiles: number;
+  checkboxes: CheckboxTag[];
+} {
+  const checkboxes: CheckboxTag[] = [];
+  let toggleFiles = 0;
+  for (const file of walk(SRC)) {
+    const text = readFileSync(file, "utf8");
+    if (!text.includes(TOGGLE_ROW)) continue;
+    toggleFiles += 1;
+    const rel = relative(SRC, file).split("\\").join("/");
+    let from = 0;
+    for (;;) {
+      const at = text.indexOf('type="checkbox"', from);
+      if (at === -1) break;
+      const open = text.lastIndexOf("<input", at);
+      const close = text.indexOf(">", at);
+      checkboxes.push({ file: rel, tag: text.slice(open, close + 1) });
+      from = close + 1;
+    }
+  }
+  return { toggleFiles, checkboxes };
+}
+
+describe("#1817 — toggle-checkbox sizing pin (utility form, #2735)", () => {
+  const { toggleFiles, checkboxes } = collectToggleFileCheckboxes();
+
+  it("scanned a non-empty toggle-row surface", () => {
+    // Fail closed: the settings toggle rows exist; finding none means the
+    // scan (or the toggle-row spelling) broke, not that the class is gone.
+    expect(toggleFiles).toBeGreaterThanOrEqual(10);
+    expect(checkboxes.length).toBeGreaterThanOrEqual(15);
   });
 
-  it("stops the checkbox from shrinking (flex: none / flex-shrink: 0)", () => {
-    const body = ruleBody(CSS, '.form-row-toggle input[type="checkbox"]') ?? "";
-    const noShrink = /flex\s*:\s*none/.test(body) || /flex-shrink\s*:\s*0/.test(body);
-    expect(noShrink).toBe(true);
-  });
-
-  it("pins a fixed square size on the checkbox", () => {
-    const body = ruleBody(CSS, '.form-row-toggle input[type="checkbox"]') ?? "";
-    expect(/width\s*:/.test(body)).toBe(true);
-    expect(/height\s*:/.test(body)).toBe(true);
-  });
-
-  it("neutralises the inherited text-input padding (cross-browser inflation)", () => {
-    // The global `input {...}` base rule bleeds `padding: var(--space-2)
-    // var(--space-3)` onto checkboxes; Firefox/Safari apply it to the
-    // native control and inflate it. This block sits in @layer legacy,
-    // which wins over @layer base, so `padding: 0` cancels it.
-    const body = ruleBody(CSS, '.form-row-toggle input[type="checkbox"]') ?? "";
-    expect(/padding\s*:\s*0/.test(body)).toBe(true);
-  });
+  it.each(PIN_UTILITIES)(
+    "every checkbox in a toggle-row file carries %s",
+    (utility) => {
+      const missing = checkboxes
+        .filter(({ tag }) => !tag.includes(utility))
+        .map(({ file }) => file);
+      expect(
+        missing,
+        `Checkbox(es) missing the ${utility} pin utility (the #1817 ` +
+          `fixed-size/no-shrink/no-padding pin, carried per-checkbox ` +
+          `since #2735): ${missing.join(", ")}`,
+      ).toEqual([]);
+    },
+  );
 });

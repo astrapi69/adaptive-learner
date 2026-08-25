@@ -508,7 +508,7 @@ export function SummaryExplanations({
   if (mistakes.length === 0) return null;
   return (
     <section
-      className="lesson-summary-explanations"
+      className="lesson-summary-explanations flex flex-col gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
       data-testid="lesson-summary-explanations"
     >
       <h3>{t("review.explain_heading", "Why you missed these")}</h3>

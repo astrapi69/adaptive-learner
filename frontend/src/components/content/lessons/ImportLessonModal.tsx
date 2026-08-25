@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import FormHint from "../../../shared/forms/FormHint";
 import {
@@ -8,7 +9,9 @@ import {
   parseImportFile,
   type ImportedSet,
   type SkippedLesson,
-} from "../../../lib/content/lesson/lesson-import";
+} from "../../../lib/content/lesson/fork/lesson-import";
+import { buildForkAttribution, stampVariationOf } from "../../../lib/content/lesson/fork/fork-provenance";
+import { prepareOverwriteCarryOver } from "../../../lib/content/lesson/import-remap";
 import { getStorage } from "../../../storage";
 import { USER_GENERATED_SOURCE } from "../../../storage/types";
 import { notify } from "../../../utils/notify";
@@ -76,7 +79,13 @@ export default function ImportLessonModal({
 
   /** Persist a resolved set (the parsed one or a fresh copy). Managed
    *  ``importing`` state is owned by the callers so the whole
-   *  collision-check + save is guarded. */
+   *  collision-check + save is guarded.
+   *
+   *  #2655 — an import is a fork of someone else's shared file: every
+   *  lesson gets ``variation_of`` stamped, and the set carries forward
+   *  the shared lessons' ``contributed_by`` credit as its attribution
+   *  (the imported manifest carries no set-level attribution of its own
+   *  yet, so this is the only source of a "basiert auf" credit today). */
   async function saveSet(set: ImportedSet) {
     await getStorage().contentLoader.saveUserSet({
       set_id: set.set_id,
@@ -85,7 +94,8 @@ export default function ImportLessonModal({
       level: set.level,
       origin: "imported",
       description: set.description,
-      lessons: set.lessons,
+      attribution: buildForkAttribution(null, set.lessons),
+      lessons: stampVariationOf(set.lessons),
     });
     notify.success(t("content.import_lesson.imported", "Lesson imported."));
     onImported();
@@ -133,7 +143,17 @@ export default function ImportLessonModal({
     setCollisionIds(null);
     setImporting(true);
     try {
+      // #2592 — an overwrite replaces the very version the learner's SRS /
+      // error rows were recorded against, so plan the carry-over BEFORE the
+      // save (afterwards there is nothing left to compare) and apply it
+      // AFTER (a failed save must leave the old identities untouched).
+      const carryOver = await prepareOverwriteCarryOver(
+        parsed.set_id,
+        parsed.lessons,
+        t,
+      );
       await saveSet(parsed);
+      await carryOver();
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       notify.error(
@@ -183,18 +203,17 @@ export default function ImportLessonModal({
     : "";
 
   return (
-    <div className="modal-overlay" data-testid="import-lesson-modal">
-      <div
-        className="modal-card"
+    <ModalOverlay data-testid="import-lesson-modal">
+      <ModalCard
         role="dialog"
         aria-modal="true"
         aria-labelledby="import-lesson-title"
       >
-        <h2 id="import-lesson-title" className="modal-title">
+        <ModalTitle id="import-lesson-title">
           {t("content.import_lesson.modal_title", "Import a lesson")}
-        </h2>
-        <label className="form-row">
-          <span className="form-label">
+        </ModalTitle>
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t(
               "content.import_lesson.choose_file",
               "Choose a .json or .zip file",
@@ -238,7 +257,7 @@ export default function ImportLessonModal({
         </div>
         {collisionIds ? (
           <div data-testid="import-lesson-collision">
-            <p className="form-label">
+            <p className="text-[0.95rem] font-medium">
               {t(
                 "content.import_lesson.collision_title",
                 "This lesson already exists",
@@ -256,7 +275,7 @@ export default function ImportLessonModal({
                 "A copy starts without learning progress; the original keeps its progress and review cards.",
               )}
             </FormHint>
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
               <Button
                 type="button"
                 variant="secondary"
@@ -286,7 +305,7 @@ export default function ImportLessonModal({
             </div>
           </div>
         ) : (
-          <div className="form-actions">
+          <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
             <Button
               type="button"
               variant="secondary"
@@ -308,7 +327,7 @@ export default function ImportLessonModal({
             </Button>
           </div>
         )}
-      </div>
-    </div>
+      </ModalCard>
+    </ModalOverlay>
   );
 }

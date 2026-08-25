@@ -160,8 +160,7 @@ export default function AvatarUpload({
         aria-label={avatarButtonLabel}
         title={avatarButtonLabel}
         data-testid="avatar-trigger"
-        className="group relative inline-flex shrink-0 cursor-pointer rounded-full p-0 leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
-        style={{ minWidth: 44, minHeight: 44 }}
+        className="group relative inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer rounded-full p-0 leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
         {value ? (
           <img

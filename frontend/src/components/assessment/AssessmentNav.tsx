@@ -41,7 +41,7 @@ export default function AssessmentNav({
     t,
 }: AssessmentNavProps) {
     return (
-        <div className="form-actions">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
             {isFirst ? (
                 // First question: no previous step to go back to. Offer a
                 // non-dead-end exit instead of a disabled button — the

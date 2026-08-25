@@ -22,18 +22,25 @@
 import {getStorage} from "../../../../storage";
 import {notify} from "../../../../utils/notify";
 import {readLearnerState} from "../../../learning/learnerState";
-import {cachedLessonToPeek} from "../../update/plan-set-update";
+import {cachedLessonToPeek, lessonFileName} from "../../update/plan-set-update";
 import {planElementKeyRemaps} from "../../update/remap-plan";
 import type {SrsIdentity} from "../../update/update-impact";
 import type {ContentLesson} from "../../../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
 
-/** The ``lessons/{id}.json`` path ``ElementError.lesson_id`` is stored under
- *  - ``lesson.id`` is the bare id; every read/write path keys on the
- *  filename (see ``useEndlessLesson.ts`` / ``useShuffleLesson.ts``). */
+/**
+ * The filename ``ElementError.lesson_id`` is stored under.
+ *
+ * #2657: this returned the ``lessons/``-PREFIXED cache path, which no row ever
+ * carries - ``listLessons()`` strips that prefix and the attempt recorder
+ * stores what it hands out, so the filter below matched nothing and this whole
+ * module was a silent no-op for every learner from #2566 until now. Delegates
+ * to the shared {@link lessonFileName} so there is one definition of the
+ * convention rather than one per caller.
+ */
 export function lessonFilePath(lessonId: string): string {
-    return `lessons/${lessonId}.json`;
+    return lessonFileName(lessonId);
 }
 
 export interface RemapOrphanedElementKeysResult {
@@ -64,7 +71,15 @@ export async function remapOrphanedElementKeys(
 ): Promise<RemapOrphanedElementKeysResult> {
     const storage = getStorage();
     const filePath = lessonFilePath(lessonId);
-    const rows = await storage.elementErrors.list(userId, {setId});
+    // ``includeMastered`` is the DEFAULT in both modes (the backend query
+    // default is ``True``, and the Dexie read filters only on an explicit
+    // ``false``), so this states the intent rather than changing behaviour: a
+    // mastered element carries the most history, and a future default flip must
+    // not quietly stop carrying it. Same reason ``assess-set-update`` says it.
+    const rows = await storage.elementErrors.list(userId, {
+        setId,
+        includeMastered: true,
+    });
     const identities: SrsIdentity[] = rows
         .filter((row) => row.lesson_id === filePath)
         .map((row) => ({

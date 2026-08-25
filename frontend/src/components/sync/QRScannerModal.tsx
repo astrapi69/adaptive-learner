@@ -100,17 +100,7 @@ export default function QRScannerModal({
                 if (e.target === e.currentTarget) onClose();
             }}
         >
-            <div
-                style={{
-                    background: "var(--surface)",
-                    color: "var(--text)",
-                    borderRadius: 8,
-                    padding: "1rem",
-                    maxWidth: 480,
-                    width: "100%",
-                    position: "relative",
-                }}
-            >
+            <div className="bg-[var(--surface)] text-[var(--text)] rounded-[8px] p-4 max-w-[480px] w-full relative">
                 <Button
                     type="button"
                     variant="ghost"
@@ -123,18 +113,11 @@ export default function QRScannerModal({
                             ? t("common.close", "Close")
                             : undefined
                     }
-                    style={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        fontSize: "1.5rem",
-                        color: "var(--text)",
-                        lineHeight: 1,
-                    }}
+                    className="absolute top-2 right-2 text-[1.5rem] text-[var(--text)] leading-none"
                 >
                     ×
                 </Button>
-                <h3 style={{marginTop: 0, paddingRight: "2rem"}}>
+                <h3 className="mt-0 pr-8">
                     {t("sync.scan_qr")}
                 </h3>
 
@@ -151,7 +134,7 @@ export default function QRScannerModal({
                 ) : (
                     <>
                         <p
-                            style={{margin: "0 0 0.75rem", fontSize: "0.9rem"}}
+                            className="mt-0 mx-0 mb-3 text-[0.9rem]"
                             data-testid="qr-scanner-instruction"
                         >
                             {t("sync.scan_instruction")}
@@ -181,11 +164,7 @@ export default function QRScannerModal({
                         />
                         {invalidHint && (
                             <p
-                                style={{
-                                    marginTop: "0.75rem",
-                                    fontSize: "0.85rem",
-                                    color: "var(--danger)",
-                                }}
+                                className="mt-3 text-[0.85rem] text-[var(--danger)]"
                                 data-testid="qr-scanner-invalid-hint"
                                 role="status"
                                 aria-live="polite"
@@ -193,20 +172,8 @@ export default function QRScannerModal({
                                 {t("sync.invalid_qr")}
                             </p>
                         )}
-                        <div
-                            style={{
-                                marginTop: "1rem",
-                                paddingTop: "0.75rem",
-                                borderTop: "1px solid var(--border)",
-                            }}
-                        >
-                            <p
-                                style={{
-                                    margin: "0 0 0.5rem",
-                                    fontSize: "0.85rem",
-                                    opacity: 0.75,
-                                }}
-                            >
+                        <div className="mt-4 pt-3 border-t border-[var(--border)]">
+                            <p className="mt-0 mx-0 mb-2 text-[0.85rem] opacity-75">
                                 {t("sync.upload_qr_hint")}
                             </p>
                             <QRImageUpload onScan={onScan} t={t} />
@@ -250,20 +217,13 @@ function ErrorPanel({
 
     return (
         <div data-testid="qr-scanner-error">
-            <p style={{fontWeight: 600, marginTop: "0.5rem"}}>
+            <p className="font-semibold mt-2">
                 {t(titleKey)}
             </p>
-            <p style={{fontSize: "0.9rem", opacity: 0.8}}>
+            <p className="text-[0.9rem] opacity-80">
                 {t(hintKey)}
             </p>
-            <div
-                style={{
-                    display: "flex",
-                    gap: "0.5rem",
-                    flexWrap: "wrap",
-                    marginBottom: "0.75rem",
-                }}
-            >
+            <div className="flex gap-2 flex-wrap mb-3">
                 <Button
                     type="button"
                     variant="secondary"
@@ -285,19 +245,8 @@ function ErrorPanel({
                 doesn't (in-app browsers, older PWAs, desktop with
                 no webcam). Keep it visible inside the error panel
                 so the user has a one-tap path forward. */}
-            <div
-                style={{
-                    paddingTop: "0.75rem",
-                    borderTop: "1px solid var(--border)",
-                }}
-            >
-                <p
-                    style={{
-                        margin: "0 0 0.5rem",
-                        fontSize: "0.85rem",
-                        opacity: 0.75,
-                    }}
-                >
+            <div className="pt-3 border-t border-[var(--border)]">
+                <p className="mt-0 mx-0 mb-2 text-[0.85rem] opacity-75">
                     {t("sync.upload_qr_hint")}
                 </p>
                 <QRImageUpload onScan={onScan} t={t} />
@@ -314,7 +263,7 @@ function SuccessPanel({
     return (
         <div
             data-testid="qr-scanner-success"
-            style={{textAlign: "center", padding: "1.5rem 0"}}
+            className="text-center py-6 px-0"
         >
             <div
                 className="qr-success-checkmark"
@@ -323,10 +272,10 @@ function SuccessPanel({
             >
                 ✓
             </div>
-            <p style={{fontWeight: 600}}>
+            <p className="font-semibold">
                 {t("sync.scan_success")}
             </p>
-            <p style={{fontSize: "0.85rem", opacity: 0.8}}>
+            <p className="text-[0.85rem] opacity-80">
                 {t("sync.scan_success_hint")}
             </p>
         </div>

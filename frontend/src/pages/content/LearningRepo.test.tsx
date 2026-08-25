@@ -11,7 +11,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -97,5 +97,66 @@ describe("LearningRepo — shared page container (#1384)", () => {
     const main = screen.getByTestId("learning-repo-page-missing-id");
     expect(main).toHaveAttribute("data-slot", "page-container");
     expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
+  });
+});
+
+describe("LearningRepo — see-also links switch the file (#2619)", () => {
+  const files = {
+    "README.md":
+      "See [LEARNING_STATS.md](LEARNING_STATS.md) and [site](https://example.com/docs).",
+    "LEARNING_STATS.md": "# Stats body",
+    "01_topic/README.md": "Back to [ROADMAP.md](../ROADMAP.md).",
+    "ROADMAP.md": "# Roadmap body",
+  };
+
+  beforeEach(() => {
+    renderMock.mockImplementation(async () => ({
+      rendered_at: "2026-08-15T10:00:00Z",
+      language: "en",
+      files,
+    }));
+  });
+
+  it("clicking an in-repo link selects that file instead of navigating", async () => {
+    renderAt("/projects/p1/learning-repo");
+    const link = await screen.findByRole("link", { name: "LEARNING_STATS.md" });
+    fireEvent.click(link);
+    expect(await screen.findByText("Stats body")).toBeInTheDocument();
+    expect(screen.getByTestId("repo-file-LEARNING_STATS.md")).toHaveAttribute(
+      "aria-current",
+      "true",
+    );
+  });
+
+  it("resolves a ../-relative link against the active file's folder", async () => {
+    renderAt("/projects/p1/learning-repo");
+    fireEvent.click(await screen.findByTestId("repo-file-01_topic/README.md"));
+    const link = await screen.findByRole("link", { name: "ROADMAP.md" });
+    fireEvent.click(link);
+    expect(await screen.findByText("Roadmap body")).toBeInTheDocument();
+  });
+
+  it("keeps external links as plain anchors", async () => {
+    renderAt("/projects/p1/learning-repo");
+    const link = await screen.findByRole("link", { name: "site" });
+    expect(link).toHaveAttribute("href", "https://example.com/docs");
+  });
+});
+
+describe("LearningRepo — file buttons carry styling (#2618)", () => {
+  beforeEach(() => {
+    renderMock.mockImplementation(async () => ({
+      rendered_at: "2026-08-15T10:00:00Z",
+      language: "en",
+      files: { "README.md": "hi", "ROADMAP.md": "ho" },
+    }));
+  });
+
+  it("active and inactive buttons render visually distinct classes", async () => {
+    renderAt("/projects/p1/learning-repo");
+    const active = await screen.findByTestId("repo-file-README.md");
+    const inactive = screen.getByTestId("repo-file-ROADMAP.md");
+    expect(active.className).not.toBe(inactive.className);
+    expect(active.className).not.toContain("learning-repo-file");
   });
 });

@@ -711,6 +711,8 @@
     "lesson_shortcuts_description": "Enter를 눌러 답을 확인하고, 다시 Enter를 눌러 다음 단계로 이동하세요.",
     "lesson_auto_advance": "정답 시 자동으로 다음으로 이동",
     "lesson_auto_advance_description": "정답이면 자동으로 다음 문제로 이동합니다. 오답일 때는 항상 멈춰 정답을 확인할 수 있습니다.",
+    "ask_ai_visible": "'AI에게 질문' 버튼 표시",
+    "ask_ai_visible_description": "이론과 연습문제 아래에 'AI에게 질문' 버튼을 표시합니다. 기본적으로 표시되며, 답변을 받으려면 여전히 본인의 AI 키(BYOK)가 필요합니다.",
     "button_tooltips": "버튼 툴팁 표시",
     "button_tooltips_description": "아이콘 버튼 위에 마우스를 올리면 기능을 설명하는 툴팁을 표시합니다. 화면 낭독기 레이블은 관계없이 항상 유지됩니다.",
     "developer_mode": "개발자 모드",
@@ -2048,6 +2050,70 @@
         "retry": "다시 시도",
         "empty": "이 선택형 문제에는 선택지가 없습니다."
       },
+      "al_categorization": {
+        "empty": "이 분류 연습에는 범주가 없습니다.",
+        "instructions": "항목을 탭한 다음 해당 범주를 탭하세요.",
+        "pool_label": "항목",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 표시된 항목을 확인하세요.",
+        "retry": "다시 시도",
+        "submit": "정답 확인"
+      },
+      "al_dictation": {
+        "empty": "이 받아쓰기 연습에는 오디오가 없습니다.",
+        "input_label": "들은 대로 입력하세요",
+        "input_placeholder": "들은 대로 입력하세요…",
+        "result_correct": "정답!",
+        "result_near_miss": "거의 맞았어요! 철자를 확인하세요.",
+        "result_wrong": "아쉽네요.",
+        "retry": "다시 시도",
+        "solution_label": "정답",
+        "submit": "정답 확인"
+      },
+      "al_error_correction": {
+        "empty": "이 오류 수정 연습에는 문장이 없습니다.",
+        "input_label": "수정",
+        "instructions": "틀린 단어를 탭한 다음 수정을 입력하세요.",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 아래 정답을 확인하세요.",
+        "retry": "다시 시도",
+        "solution_label": "정답",
+        "submit": "정답 확인"
+      },
+      "al_graded_quiz": {
+        "empty": "이 퀴즈에는 문제가 없습니다.",
+        "failed": "불합격",
+        "input_label": "답변",
+        "passed": "합격",
+        "retry": "다시 시도",
+        "solution_label": "정답",
+        "submit": "퀴즈 제출"
+      },
+      "al_image_description": {
+        "empty": "이 이미지 설명 연습에는 이미지가 없습니다.",
+        "image_alt": "설명할 이미지 — 그 설명이 아래에 입력할 답입니다",
+        "image_unavailable": "여기서는 이미지를 사용할 수 없습니다.",
+        "input_label": "이미지를 설명하세요",
+        "input_placeholder": "설명을 입력하세요…",
+        "result_correct": "정답!",
+        "result_near_miss": "거의 맞았어요! 철자를 확인하세요.",
+        "result_wrong": "아쉽네요.",
+        "retry": "다시 시도",
+        "solution_label": "정답",
+        "submit": "정답 확인"
+      },
+      "al_reading_comprehension": {
+        "badge_correct": "정답",
+        "badge_missed": "이것이 정답",
+        "badge_wrong": "오답",
+        "empty": "이 읽기 연습에는 문제가 없습니다.",
+        "input_label": "답변",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 표시된 문제를 확인하세요.",
+        "retry": "다시 시도",
+        "solution_label": "정답",
+        "submit": "정답 확인"
+      },
       "instruction": {
         "matching": {
           "receptive": "짝을 맞추세요 (인식)",
@@ -2450,6 +2516,19 @@
         "delete": "삭제"
       }
     },
+    "edit_as_copy": {
+      "action": "사본으로 편집",
+      "confirm_title": "나만의 사본으로 편집할까요?",
+      "confirm_message": "“{title}”을(를) 레슨 편집기에서 편집 가능한 나만의 사본으로 엽니다. 원본은 변경되지 않으며 계속 다운로드할 수 있습니다.",
+      "confirm": "사본 편집",
+      "saved": "나만의 사본으로 저장했습니다.",
+      "failed": "사본을 만들 수 없습니다."
+    },
+    "fork": {
+      "based_on": "{author} 기반",
+      "based_on_and_others": "{author} 외 여러 명 기반",
+      "credit_disclaimer": "크레딧은 자진 신고된 것이며 검증되지 않았습니다."
+    },
     "ai_exercises": {
       "batch": {
         "button": "모든 레슨에 대해 생성",
@@ -2758,7 +2837,10 @@
       "name_label": "이름 (선택)",
       "name_placeholder": "예: 김민지",
       "show_name": "레슨에 이름 표시",
-      "privacy": "당신의 이름이 레슨과 풀 리퀘스트에 표시됩니다."
+      "privacy": "당신의 이름이 레슨과 풀 리퀘스트에 표시됩니다.",
+      "foreign_notice": "이 콘텐츠는 {author}을(를) 제작자로 표시합니다. 공유 시 이름도 함께 전달되며, 삭제할 수 있습니다.",
+      "foreign_remove": "크레딧 삭제",
+      "foreign_removed": "크레딧이 삭제되었습니다."
     }
   },
   "milestone": {
@@ -3048,6 +3130,8 @@
         "mc_options_label": "답 선택지",
         "convert_label": "문제 유형",
         "convert_hint": "변환해도 입력한 답과 학습자의 진행 상황이 유지됩니다.",
+        "convert_confirm_title": "문제 유형을 변환할까요?",
+        "convert_confirm_message": "이 문제에는 답이 여러 개입니다. 변환하면 첫 번째 답만 유지되고 나머지의 학습 기록은 이어지지 않습니다.",
         "mc_option_placeholder": "선택지 텍스트",
         "mc_option_add": "선택지 추가",
         "mc_option_remove": "선택지 삭제",
@@ -3244,6 +3328,19 @@
         "title": "회화 연습",
         "desc": "카드 슬롯 5개, 단어 타일 + 빈칸 채우기."
       }
+    },
+    "suggest": {
+      "distractors": "AI로 오답 제안",
+      "distractors_empty": "사용할 수 있는 제안이 없습니다 - 오답을 직접 추가하세요.",
+      "cloze_sentence": "AI로 문장 제안",
+      "cloze_sentence_empty": "사용할 수 있는 문장이 없습니다 - 직접 작성하세요.",
+      "passage": "AI로 지문 제안",
+      "passage_empty": "사용할 수 있는 지문이 없습니다 - 직접 작성하세요.",
+      "busy": "제안 중…",
+      "disclaimer": "AI 초안입니다 - 저장하기 전에 검토하고 수정하세요.",
+      "no_key": "이 기능에는 본인의 AI 키(BYOK)가 필요합니다. AI 설정에서 추가하세요.",
+      "open_settings": "AI 설정",
+      "error": "AI 요청이 실패했습니다. 다시 시도하세요."
     }
   },
   "learning_path": {

@@ -22,6 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { readLearnerState } from "../../../lib/learning/learnerState";
+import { SettingsSection } from "../SettingsSection";
 import {
   allCategoryIds,
   categoryById,
@@ -99,12 +100,10 @@ export default function SelectiveExportSection() {
   }
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-section-data-export"
+    <SettingsSection
+      title={t("data_export.title", "Data export")}
+      testid="settings-section-data-export"
     >
-      <h2 className="settings-section-title">{t("data_export.title", "Data export")}</h2>
-
       {/* Full backup — every table, the one-click emergency net. */}
       <div className="mb-4">
         <p className="mb-2 text-sm text-fg-secondary">
@@ -196,6 +195,6 @@ export default function SelectiveExportSection() {
             : t("data_export.selective_button", "Export selected data")}
         </Button>
       </div>
-    </section>
+    </SettingsSection>
   );
 }

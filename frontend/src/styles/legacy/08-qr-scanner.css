@@ -369,36 +369,8 @@
   justify-content: flex-end;
 }
 
-/* Rating dialog (inline modal) */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: var(--space-4);
-}
-
-.modal-card {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-elevated);
-  max-width: 32rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.modal-title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
+/* Rating dialog: the modal shell classes (overlay/card/title) moved to
+   the shared Modal components (src/shared/modal, #2729). */
 
 .rating-form {
   display: flex;

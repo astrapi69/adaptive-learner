@@ -27,6 +27,8 @@
 
 import {useRef, useState} from "react";
 
+import {Button} from "@/components/ui/button";
+
 import {decodeQrImage} from "../../shared/qr";
 import {parsePairingUri} from "../../storage/sync/sync-engine";
 
@@ -93,9 +95,9 @@ export default function QRImageUpload({
 
     return (
         <div data-testid="qr-image-upload">
-            <button
+            <Button
                 type="button"
-                className="btn btn-secondary"
+                variant="secondary"
                 onClick={() => inputRef.current?.click()}
                 disabled={status.kind === "decoding"}
                 data-testid="qr-image-upload-button"
@@ -103,22 +105,18 @@ export default function QRImageUpload({
                 {status.kind === "decoding"
                     ? t("sync.image_decoding")
                     : t("sync.upload_qr")}
-            </button>
+            </Button>
             <input
                 ref={inputRef}
                 type="file"
                 accept="image/*"
                 onChange={onChange}
-                style={{display: "none"}}
+                className="hidden"
                 data-testid="qr-image-upload-input"
             />
             {status.kind === "invalid" && (
                 <p
-                    style={{
-                        marginTop: "0.5rem",
-                        fontSize: "0.85rem",
-                        color: "var(--danger)",
-                    }}
+                    className="mt-2 text-[0.85rem] text-[var(--danger)]"
                     data-testid="qr-image-upload-invalid"
                     role="status"
                     aria-live="polite"
@@ -128,11 +126,7 @@ export default function QRImageUpload({
             )}
             {status.kind === "decode-failed" && (
                 <p
-                    style={{
-                        marginTop: "0.5rem",
-                        fontSize: "0.85rem",
-                        color: "var(--danger)",
-                    }}
+                    className="mt-2 text-[0.85rem] text-[var(--danger)]"
                     data-testid="qr-image-upload-failed"
                     role="status"
                     aria-live="polite"

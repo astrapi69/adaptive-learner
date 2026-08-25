@@ -35,6 +35,10 @@ export interface ContentBrowsePanelProps {
   onDeleteSet: (entry: ContentSetEntry) => void;
   /** EXP-051 / #2125 — start a new Durchgang for a completed set. */
   onRestartSet?: (entry: ContentSetEntry) => void;
+  /** EXP-046 item 3 / #2654 — fork a downloaded set into a user-generated
+   *  copy and open it in the editor (list view; the tree/grid view gets
+   *  the same handler via treeProps.setRow). */
+  onEditAsCopy?: (entry: ContentSetEntry) => void;
   treeProps: ComponentProps<typeof ContentTree>;
 }
 
@@ -57,6 +61,7 @@ export default function ContentBrowsePanel({
   onSetStatus,
   onDeleteSet,
   onRestartSet,
+  onEditAsCopy,
   treeProps,
 }: ContentBrowsePanelProps) {
   const { t } = useI18n();
@@ -64,7 +69,7 @@ export default function ContentBrowsePanel({
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="content-section-title">
+        <h2 className="content-section-title text-lg font-semibold">
           {t("content.my_lessons.downloaded_title", "Downloaded sets")}
         </h2>
         {hasDownloadedSets && (
@@ -130,6 +135,7 @@ export default function ContentBrowsePanel({
               onSetStatus={onSetStatus}
               onDelete={onDeleteSet}
               onRestart={onRestartSet}
+              onEditAsCopy={onEditAsCopy}
               selectable
               selectedKeys={selection.selected}
               onToggleSelect={(e) => selection.toggle(setSelectionKey(e))}

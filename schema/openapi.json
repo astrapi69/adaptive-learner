@@ -454,6 +454,62 @@
         "title": "AttemptRecordOut",
         "type": "object"
       },
+      "AttributionRequest": {
+        "description": "Wire shape for an incoming set-level attribution/derivation chain\n(engine#90 / schema 1.9, #2655).",
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          },
+          "derived_from": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DerivedFromItemRequest"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Derived From"
+          }
+        },
+        "required": [
+          "author"
+        ],
+        "title": "AttributionRequest",
+        "type": "object"
+      },
+      "AttributionResponse": {
+        "description": "Wire shape for a set's attribution/derivation chain (engine#90 /\nschema 1.9, #2655).",
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          },
+          "derived_from": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DerivedFromItemResponse"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Derived From"
+          }
+        },
+        "required": [
+          "author"
+        ],
+        "title": "AttributionResponse",
+        "type": "object"
+      },
       "AvailableModelOut": {
         "description": "One row returned by ``GET /api/settings/{user_id}/available-models``.\n\nv1.11.0 / Phase 24A — model discovery picker. The list is\nderived from the provider's own models endpoint (Anthropic\n``/v1/models``, OpenAI ``/v1/models``, Gemini ``/v1beta/models``)\nso the Settings UI can show what the user actually has access\nto instead of a static suggestion list.",
         "properties": {
@@ -933,6 +989,34 @@
           }
         },
         "title": "CurriculumUpdate",
+        "type": "object"
+      },
+      "DerivedFromItemRequest": {
+        "description": "Wire shape for one incoming derivation-chain entry (#2655).",
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          }
+        },
+        "required": [
+          "author"
+        ],
+        "title": "DerivedFromItemRequest",
+        "type": "object"
+      },
+      "DerivedFromItemResponse": {
+        "description": "Wire shape for one entry of a set's derivation chain (#2655).",
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          }
+        },
+        "required": [
+          "author"
+        ],
+        "title": "DerivedFromItemResponse",
         "type": "object"
       },
       "Direction": {
@@ -4592,6 +4676,16 @@
       "SaveUserSetRequest": {
         "description": "Wire shape for saving a user-generated set. ``lessons`` are\nfull, schema-valid lessons (FastAPI validates them as ``Lesson``\nbefore the handler runs).",
         "properties": {
+          "attribution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttributionRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "book": {
             "anyOf": [
               {
@@ -4868,6 +4962,16 @@
       "SetEntryResponse": {
         "description": "Wire shape for one set in the Set Browser.",
         "properties": {
+          "attribution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttributionResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "book": {
             "anyOf": [
               {
@@ -7281,7 +7385,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Backup stats",
+        "summary": "Backup Stats",
         "tags": [
           "Backup"
         ]
@@ -7323,7 +7427,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Validate lesson",
+        "summary": "Validate Lesson",
         "tags": [
           "System"
         ]
@@ -7359,7 +7463,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete curriculum",
+        "summary": "Delete Curriculum",
         "tags": [
           "Curriculum"
         ]
@@ -7400,7 +7504,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get curriculum",
+        "summary": "Get Curriculum",
         "tags": [
           "Curriculum"
         ]
@@ -7451,7 +7555,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update curriculum",
+        "summary": "Update Curriculum",
         "tags": [
           "Curriculum"
         ]
@@ -7498,7 +7602,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List lessons",
+        "summary": "List Lessons",
         "tags": [
           "Curriculum"
         ]
@@ -7549,7 +7653,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create lesson",
+        "summary": "Create Lesson",
         "tags": [
           "Curriculum"
         ]
@@ -7596,7 +7700,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List topics",
+        "summary": "List Topics",
         "tags": [
           "Curriculum"
         ]
@@ -7647,7 +7751,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create topic",
+        "summary": "Create Topic",
         "tags": [
           "Curriculum"
         ]
@@ -7702,7 +7806,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Export curriculum overview",
+        "summary": "Export Curriculum Overview",
         "tags": [
           "Curriculum"
         ]
@@ -7757,7 +7861,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Export progress report",
+        "summary": "Export Progress Report",
         "tags": [
           "System"
         ]
@@ -7812,7 +7916,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Export session detail",
+        "summary": "Export Session Detail",
         "tags": [
           "System"
         ]
@@ -7860,7 +7964,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get badges",
+        "summary": "Get Badges",
         "tags": [
           "System"
         ]
@@ -7904,7 +8008,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get streak",
+        "summary": "Get Streak",
         "tags": [
           "System"
         ]
@@ -7948,7 +8052,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get summary",
+        "summary": "Get Summary",
         "tags": [
           "System"
         ]
@@ -7996,7 +8100,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get xp history",
+        "summary": "Get Xp History",
         "tags": [
           "System"
         ]
@@ -8038,7 +8142,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create pr",
+        "summary": "Create Pr",
         "tags": [
           "System"
         ]
@@ -8060,7 +8164,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Clear token",
+        "summary": "Clear Token",
         "tags": [
           "System"
         ]
@@ -8080,7 +8184,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Get token status",
+        "summary": "Get Token Status",
         "tags": [
           "System"
         ]
@@ -8120,7 +8224,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Set token",
+        "summary": "Set Token",
         "tags": [
           "System"
         ]
@@ -8162,7 +8266,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Verify token",
+        "summary": "Verify Token",
         "tags": [
           "System"
         ]
@@ -8248,7 +8352,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get glossary",
+        "summary": "Get Glossary",
         "tags": [
           "System"
         ]
@@ -8305,7 +8409,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get glossary entry",
+        "summary": "Get Glossary Entry",
         "tags": [
           "System"
         ]
@@ -8364,7 +8468,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Delete identity",
+        "summary": "Delete Identity",
         "tags": [
           "System"
         ]
@@ -8384,7 +8488,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Get identity",
+        "summary": "Get Identity",
         "tags": [
           "System"
         ]
@@ -8406,7 +8510,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Get identity status",
+        "summary": "Get Identity Status",
         "tags": [
           "System"
         ]
@@ -8442,7 +8546,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete import",
+        "summary": "Delete Import",
         "tags": [
           "Import/Analysis"
         ]
@@ -8483,7 +8587,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get import",
+        "summary": "Get Import",
         "tags": [
           "Import/Analysis"
         ]
@@ -8534,7 +8638,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update import",
+        "summary": "Update Import",
         "tags": [
           "Import/Analysis"
         ]
@@ -8585,7 +8689,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get active session for import",
+        "summary": "Get Active Session For Import",
         "tags": [
           "Import/Analysis"
         ]
@@ -8638,7 +8742,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Save analysis",
+        "summary": "Save Analysis",
         "tags": [
           "Import/Analysis"
         ]
@@ -8741,7 +8845,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get curriculum for import",
+        "summary": "Get Curriculum For Import",
         "tags": [
           "Import/Analysis"
         ]
@@ -8777,7 +8881,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete lesson",
+        "summary": "Delete Lesson",
         "tags": [
           "Curriculum"
         ]
@@ -8818,7 +8922,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get lesson",
+        "summary": "Get Lesson",
         "tags": [
           "Curriculum"
         ]
@@ -8869,7 +8973,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update lesson",
+        "summary": "Update Lesson",
         "tags": [
           "Curriculum"
         ]
@@ -8912,7 +9016,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get plugin settings",
+        "summary": "Get Plugin Settings",
         "tags": [
           "Settings"
         ]
@@ -8963,7 +9067,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update plugin settings",
+        "summary": "Update Plugin Settings",
         "tags": [
           "Settings"
         ]
@@ -9016,7 +9120,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create card",
+        "summary": "Create Card",
         "tags": [
           "Anki"
         ]
@@ -9063,7 +9167,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Extract conversation cards",
+        "summary": "Extract Conversation Cards",
         "tags": [
           "Anki"
         ]
@@ -9110,7 +9214,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Extract session cards",
+        "summary": "Extract Session Cards",
         "tags": [
           "Anki"
         ]
@@ -9154,7 +9258,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Mark exported",
+        "summary": "Mark Exported",
         "tags": [
           "Anki"
         ]
@@ -9198,7 +9302,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete card",
+        "summary": "Delete Card",
         "tags": [
           "Anki"
         ]
@@ -9249,7 +9353,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update card",
+        "summary": "Update Card",
         "tags": [
           "Anki"
         ]
@@ -9332,7 +9436,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List cards",
+        "summary": "List Cards",
         "tags": [
           "Anki"
         ]
@@ -9417,7 +9521,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get latest profile",
+        "summary": "Get Latest Profile",
         "tags": [
           "Assessment"
         ]
@@ -9466,7 +9570,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get questions",
+        "summary": "Get Questions",
         "tags": [
           "Assessment"
         ]
@@ -9533,7 +9637,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete set",
+        "summary": "Delete Set",
         "tags": [
           "Content"
         ]
@@ -9596,7 +9700,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get asset",
+        "summary": "Get Asset",
         "tags": [
           "Content"
         ]
@@ -9702,7 +9806,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List set lessons",
+        "summary": "List Set Lessons",
         "tags": [
           "Content"
         ]
@@ -9762,7 +9866,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get lesson",
+        "summary": "Get Lesson",
         "tags": [
           "Content"
         ]
@@ -9804,7 +9908,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Save user set",
+        "summary": "Save User Set",
         "tags": [
           "Content"
         ]
@@ -9856,7 +9960,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "List badge catalog",
+        "summary": "List Badge Catalog",
         "tags": [
           "Gamification"
         ]
@@ -9904,7 +10008,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List user badges",
+        "summary": "List User Badges",
         "tags": [
           "Gamification"
         ]
@@ -9949,7 +10053,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Trigger badge evaluation",
+        "summary": "Trigger Badge Evaluation",
         "tags": [
           "Gamification"
         ]
@@ -9994,7 +10098,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Reset progress",
+        "summary": "Reset Progress",
         "tags": [
           "Gamification"
         ]
@@ -10039,7 +10143,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get streak",
+        "summary": "Get Streak",
         "tags": [
           "Gamification"
         ]
@@ -10097,7 +10201,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get streak heatmap",
+        "summary": "Get Streak Heatmap",
         "tags": [
           "Gamification"
         ]
@@ -10152,7 +10256,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Set weekend mode",
+        "summary": "Set Weekend Mode",
         "tags": [
           "Gamification"
         ]
@@ -10196,7 +10300,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get xp state",
+        "summary": "Get Xp State",
         "tags": [
           "Gamification"
         ]
@@ -10251,7 +10355,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Manual award",
+        "summary": "Manual Award",
         "tags": [
           "Gamification"
         ]
@@ -10296,7 +10400,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Award assessment",
+        "summary": "Award Assessment",
         "tags": [
           "Gamification"
         ]
@@ -10341,7 +10445,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Award import",
+        "summary": "Award Import",
         "tags": [
           "Gamification"
         ]
@@ -10398,7 +10502,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Spend xp",
+        "summary": "Spend Xp",
         "tags": [
           "Gamification"
         ]
@@ -10523,7 +10627,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Export zip",
+        "summary": "Export Zip",
         "tags": [
           "Learning Repo"
         ]
@@ -10780,7 +10884,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Get templates",
+        "summary": "Get Templates",
         "tags": [
           "Gamification"
         ]
@@ -10869,7 +10973,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get today",
+        "summary": "Get Today",
         "tags": [
           "Gamification"
         ]
@@ -10922,7 +11026,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create question",
+        "summary": "Create Question",
         "tags": [
           "NotebookLM"
         ]
@@ -10969,7 +11073,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Generate from project",
+        "summary": "Generate From Project",
         "tags": [
           "NotebookLM"
         ]
@@ -11016,7 +11120,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Generate from session",
+        "summary": "Generate From Session",
         "tags": [
           "NotebookLM"
         ]
@@ -11060,7 +11164,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete question",
+        "summary": "Delete Question",
         "tags": [
           "NotebookLM"
         ]
@@ -11111,7 +11215,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update question",
+        "summary": "Update Question",
         "tags": [
           "NotebookLM"
         ]
@@ -11206,7 +11310,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List questions",
+        "summary": "List Questions",
         "tags": [
           "NotebookLM"
         ]
@@ -11249,7 +11353,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Generate study guide",
+        "summary": "Generate Study Guide",
         "tags": [
           "NotebookLM"
         ]
@@ -11294,7 +11398,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Pronunciation eligibility",
+        "summary": "Pronunciation Eligibility",
         "tags": [
           "Pronunciation"
         ]
@@ -11336,7 +11440,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Judge pronunciation",
+        "summary": "Judge Pronunciation",
         "tags": [
           "Pronunciation"
         ]
@@ -11378,7 +11482,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get pronunciation phrase",
+        "summary": "Get Pronunciation Phrase",
         "tags": [
           "Pronunciation"
         ]
@@ -11419,7 +11523,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Start session",
+        "summary": "Start Session",
         "tags": [
           "Sessions"
         ]
@@ -11462,7 +11566,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get switch recommendation",
+        "summary": "Get Switch Recommendation",
         "tags": [
           "Sessions"
         ]
@@ -11505,7 +11609,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get session",
+        "summary": "Get Session",
         "tags": [
           "Sessions"
         ]
@@ -11564,7 +11668,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "End session",
+        "summary": "End Session",
         "tags": [
           "Sessions"
         ]
@@ -11675,7 +11779,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Append message stream",
+        "summary": "Append Message Stream",
         "tags": [
           "AI"
         ]
@@ -11722,7 +11826,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List session messages",
+        "summary": "List Session Messages",
         "tags": [
           "Sessions"
         ]
@@ -11774,7 +11878,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Rate session",
+        "summary": "Rate Session",
         "tags": [
           "Sessions"
         ]
@@ -11827,7 +11931,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Accept method switch",
+        "summary": "Accept Method Switch",
         "tags": [
           "Sessions"
         ]
@@ -11884,7 +11988,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get recommendations",
+        "summary": "Get Recommendations",
         "tags": [
           "Tools"
         ]
@@ -11942,7 +12046,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get spaced recommendations",
+        "summary": "Get Spaced Recommendations",
         "tags": [
           "Tools"
         ]
@@ -11989,7 +12093,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List commits",
+        "summary": "List Commits",
         "tags": [
           "Tracking"
         ]
@@ -12033,7 +12137,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get progress",
+        "summary": "Get Progress",
         "tags": [
           "Tracking"
         ]
@@ -12076,7 +12180,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get project",
+        "summary": "Get Project",
         "tags": [
           "Projects"
         ]
@@ -12127,7 +12231,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update project",
+        "summary": "Update Project",
         "tags": [
           "Projects"
         ]
@@ -12174,7 +12278,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List project subjects",
+        "summary": "List Project Subjects",
         "tags": [
           "Taxonomy"
         ]
@@ -12225,7 +12329,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Assign subject to project",
+        "summary": "Assign Subject To Project",
         "tags": [
           "Taxonomy"
         ]
@@ -12270,7 +12374,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Unassign subject from project",
+        "summary": "Unassign Subject From Project",
         "tags": [
           "Taxonomy"
         ]
@@ -12317,7 +12421,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List project tags",
+        "summary": "List Project Tags",
         "tags": [
           "Taxonomy"
         ]
@@ -12368,7 +12472,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Assign tag to project",
+        "summary": "Assign Tag To Project",
         "tags": [
           "Taxonomy"
         ]
@@ -12413,7 +12517,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Unassign tag from project",
+        "summary": "Unassign Tag From Project",
         "tags": [
           "Taxonomy"
         ]
@@ -12498,7 +12602,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get settings",
+        "summary": "Get Settings",
         "tags": [
           "Settings"
         ]
@@ -12549,7 +12653,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Patch settings",
+        "summary": "Patch Settings",
         "tags": [
           "Settings"
         ]
@@ -12654,7 +12758,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Backup api key",
+        "summary": "Backup Api Key",
         "tags": [
           "Settings"
         ]
@@ -12705,7 +12809,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get api key backup info",
+        "summary": "Get Api Key Backup Info",
         "tags": [
           "Settings"
         ]
@@ -12756,7 +12860,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Restore api key backup",
+        "summary": "Restore Api Key Backup",
         "tags": [
           "Settings"
         ]
@@ -12807,7 +12911,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete api key",
+        "summary": "Delete Api Key",
         "tags": [
           "Settings"
         ]
@@ -12864,7 +12968,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List available models",
+        "summary": "List Available Models",
         "tags": [
           "Settings"
         ]
@@ -12917,7 +13021,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Test api key",
+        "summary": "Test Api Key",
         "tags": [
           "Settings"
         ]
@@ -12943,7 +13047,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "List subjects",
+        "summary": "List Subjects",
         "tags": [
           "Taxonomy"
         ]
@@ -12983,7 +13087,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create subject",
+        "summary": "Create Subject",
         "tags": [
           "Taxonomy"
         ]
@@ -13019,7 +13123,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete subject",
+        "summary": "Delete Subject",
         "tags": [
           "Taxonomy"
         ]
@@ -13060,7 +13164,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get subject",
+        "summary": "Get Subject",
         "tags": [
           "Taxonomy"
         ]
@@ -13111,7 +13215,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update subject",
+        "summary": "Update Subject",
         "tags": [
           "Taxonomy"
         ]
@@ -13153,7 +13257,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Pair generate",
+        "summary": "Pair Generate",
         "tags": [
           "Sync"
         ]
@@ -13195,7 +13299,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Pair verify",
+        "summary": "Pair Verify",
         "tags": [
           "Sync"
         ]
@@ -13237,7 +13341,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Sync pull",
+        "summary": "Sync Pull",
         "tags": [
           "Sync"
         ]
@@ -13279,7 +13383,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Sync push",
+        "summary": "Sync Push",
         "tags": [
           "Sync"
         ]
@@ -13321,7 +13425,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Sync resolve",
+        "summary": "Sync Resolve",
         "tags": [
           "Sync"
         ]
@@ -13364,7 +13468,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Sync status",
+        "summary": "Sync Status",
         "tags": [
           "Sync"
         ]
@@ -13388,7 +13492,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Get system info",
+        "summary": "Get System Info",
         "tags": [
           "System"
         ]
@@ -13424,7 +13528,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete tag",
+        "summary": "Delete Tag",
         "tags": [
           "Taxonomy"
         ]
@@ -13475,7 +13579,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update tag",
+        "summary": "Update Tag",
         "tags": [
           "Taxonomy"
         ]
@@ -13511,7 +13615,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete topic",
+        "summary": "Delete Topic",
         "tags": [
           "Curriculum"
         ]
@@ -13552,7 +13656,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get topic",
+        "summary": "Get Topic",
         "tags": [
           "Curriculum"
         ]
@@ -13603,7 +13707,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update topic",
+        "summary": "Update Topic",
         "tags": [
           "Curriculum"
         ]
@@ -13645,7 +13749,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create user",
+        "summary": "Create User",
         "tags": [
           "Users"
         ]
@@ -13688,7 +13792,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get user",
+        "summary": "Get User",
         "tags": [
           "Users"
         ]
@@ -13739,7 +13843,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update user",
+        "summary": "Update User",
         "tags": [
           "Users"
         ]
@@ -13786,7 +13890,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List curricula",
+        "summary": "List Curricula",
         "tags": [
           "Curriculum"
         ]
@@ -13837,7 +13941,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create curriculum",
+        "summary": "Create Curriculum",
         "tags": [
           "Curriculum"
         ]
@@ -13945,7 +14049,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List element errors",
+        "summary": "List Element Errors",
         "tags": [
           "Progress"
         ]
@@ -14000,7 +14104,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Record element attempts",
+        "summary": "Record Element Attempts",
         "tags": [
           "Progress"
         ]
@@ -14053,7 +14157,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Archive retired",
+        "summary": "Archive Retired",
         "tags": [
           "Progress"
         ]
@@ -14106,7 +14210,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Remap element keys",
+        "summary": "Remap Element Keys",
         "tags": [
           "Progress"
         ]
@@ -14159,7 +14263,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Remap exercise ids",
+        "summary": "Remap Exercise Ids",
         "tags": [
           "Progress"
         ]
@@ -14243,7 +14347,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Review queue",
+        "summary": "Review Queue",
         "tags": [
           "Progress"
         ]
@@ -14290,7 +14394,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List imports",
+        "summary": "List Imports",
         "tags": [
           "Import/Analysis"
         ]
@@ -14341,7 +14445,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create import",
+        "summary": "Create Import",
         "tags": [
           "Import/Analysis"
         ]
@@ -14394,7 +14498,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete learning data",
+        "summary": "Delete Learning Data",
         "tags": [
           "Users"
         ]
@@ -14441,7 +14545,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List lesson progress",
+        "summary": "List Lesson Progress",
         "tags": [
           "Progress"
         ]
@@ -14492,7 +14596,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Upsert lesson progress",
+        "summary": "Upsert Lesson Progress",
         "tags": [
           "Progress"
         ]
@@ -14562,7 +14666,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Get lesson progress",
+        "summary": "Get Lesson Progress",
         "tags": [
           "Progress"
         ]
@@ -14609,7 +14713,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List projects",
+        "summary": "List Projects",
         "tags": [
           "Projects"
         ]
@@ -14660,7 +14764,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create project",
+        "summary": "Create Project",
         "tags": [
           "Projects"
         ]
@@ -14719,7 +14823,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List set runs",
+        "summary": "List Set Runs",
         "tags": [
           "Users"
         ]
@@ -14770,7 +14874,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Start set run",
+        "summary": "Start Set Run",
         "tags": [
           "Users"
         ]
@@ -14817,7 +14921,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List user tags",
+        "summary": "List User Tags",
         "tags": [
           "Taxonomy"
         ]
@@ -14868,7 +14972,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create user tag",
+        "summary": "Create User Tag",
         "tags": [
           "Taxonomy"
         ]

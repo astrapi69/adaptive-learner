@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import { SettingsSection } from "../../SettingsSection";
 import { languageDisplayName } from "../../../../lib/content/language/language-names";
 import {
   readAdditionalSourceLanguages,
@@ -49,13 +50,10 @@ export default function SourceLanguagesControl() {
   };
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-section-source-languages"
+    <SettingsSection
+      title={t("settings.source_languages.title", "Additional source languages")}
+      testid="settings-section-source-languages"
     >
-      <h2 className="settings-section-title">
-        {t("settings.source_languages.title", "Additional source languages")}
-      </h2>
       <FormHint>
         {t(
           "settings.source_languages.hint",
@@ -67,8 +65,8 @@ export default function SourceLanguagesControl() {
           const isPrimary = code === primary;
           const checked = isPrimary || selected.includes(code);
           return (
-            <label key={code} className="form-row form-row-toggle">
-              <span className="form-label">
+            <label key={code} className="flex items-center justify-between gap-2">
+              <span className="text-[0.95rem] font-medium">
                 {languageDisplayName(code, lang)}
                 {isPrimary && (
                   <FormHint as="span">
@@ -79,6 +77,7 @@ export default function SourceLanguagesControl() {
               </span>
               <input
                 type="checkbox"
+                className="m-0 size-4 flex-none p-0"
                 data-testid={`settings-source-language-${code}`}
                 checked={checked}
                 disabled={isPrimary}
@@ -88,6 +87,6 @@ export default function SourceLanguagesControl() {
           );
         })}
       </div>
-    </section>
+    </SettingsSection>
   );
 }

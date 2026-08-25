@@ -28,6 +28,7 @@
 
 import {BookOpen, Clock} from "lucide-react";
 import {useEffect, useState} from "react";
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import {Link} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
@@ -242,14 +243,11 @@ export default function PausedLessonsCard({
     if (paused.length === 0) return null;
 
     return (
-        <article
-            className="dashboard-card"
-            data-testid="paused-lessons-card"
-        >
-            <h2 className="dashboard-card-title">
+        <DashboardCard data-testid="paused-lessons-card">
+            <DashboardCardTitle>
                 <BookOpen size={16} aria-hidden="true" />
                 {t("dashboard.card_paused_lessons", "Continue learning")}
-            </h2>
+            </DashboardCardTitle>
 
             <ul
                 className="flex flex-col gap-1"
@@ -285,6 +283,6 @@ export default function PausedLessonsCard({
                     </li>
                 ))}
             </ul>
-        </article>
+        </DashboardCard>
     );
 }

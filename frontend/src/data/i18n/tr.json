@@ -707,6 +707,8 @@
     "lesson_shortcuts_description": "Cevabınızı kontrol etmek için Enter'a, sonraki adıma geçmek için tekrar Enter'a basın.",
     "lesson_auto_advance": "Doğru cevapta otomatik ilerle",
     "lesson_auto_advance_description": "Doğru cevaptan sonra otomatik olarak sonraki alıştırmaya geçer. Yanlış cevapta çözümü inceleyebilmen için her zaman bekler.",
+    "ask_ai_visible": "'Yapay zekâya sor' düğmesini göster",
+    "ask_ai_visible_description": "Teori ve alıştırmaların altında 'Yapay zekâya sor' düğmesini gösterir. Varsayılan olarak gösterilir; düğmenin yanıt verebilmesi için hâlâ kendi yapay zekâ anahtarına (BYOK) ihtiyacı vardır.",
     "button_tooltips": "Buton ipuçlarını göster",
     "button_tooltips_description": "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır.",
     "developer_mode": "Geliştirici Modu",
@@ -2048,6 +2050,70 @@
         "retry": "Tekrar dene",
         "empty": "Bu çoktan seçmeli alıştırmada seçenek yok."
       },
+      "al_categorization": {
+        "empty": "Bu sınıflandırma alıştırmasında kategori yok.",
+        "instructions": "Bir ögeye, ardından kategorisine dokun.",
+        "pool_label": "Ögeler",
+        "result_correct": "Doğru!",
+        "result_wrong": "Tam değil. İşaretli ögelere bak.",
+        "retry": "Tekrar dene",
+        "submit": "Cevabı kontrol et"
+      },
+      "al_dictation": {
+        "empty": "Bu dikte alıştırmasında ses yok.",
+        "input_label": "Duyduğunu yaz",
+        "input_placeholder": "Duyduğunu yaz…",
+        "result_correct": "Doğru!",
+        "result_near_miss": "Neredeyse! Yazımı kontrol et.",
+        "result_wrong": "Tam değil.",
+        "retry": "Tekrar dene",
+        "solution_label": "Çözüm",
+        "submit": "Cevabı kontrol et"
+      },
+      "al_error_correction": {
+        "empty": "Bu hata düzeltme alıştırmasında cümle yok.",
+        "input_label": "Düzeltme",
+        "instructions": "Yanlış kelimeye dokun, sonra düzeltmeyi yaz.",
+        "result_correct": "Doğru!",
+        "result_wrong": "Tam değil. Aşağıdaki çözüme bak.",
+        "retry": "Tekrar dene",
+        "solution_label": "Çözüm",
+        "submit": "Cevabı kontrol et"
+      },
+      "al_graded_quiz": {
+        "empty": "Bu testte soru yok.",
+        "failed": "Geçemedin",
+        "input_label": "Cevap",
+        "passed": "Geçtin",
+        "retry": "Tekrar dene",
+        "solution_label": "Çözüm",
+        "submit": "Testi gönder"
+      },
+      "al_image_description": {
+        "empty": "Bu görsel açıklama alıştırmasında görsel yok.",
+        "image_alt": "Açıklanacak görsel — açıklaması aşağıya yazılacak cevaptır",
+        "image_unavailable": "Görsel burada kullanılamıyor.",
+        "input_label": "Görseli açıkla",
+        "input_placeholder": "Açıklamanı yaz…",
+        "result_correct": "Doğru!",
+        "result_near_miss": "Neredeyse! Yazımı kontrol et.",
+        "result_wrong": "Tam değil.",
+        "retry": "Tekrar dene",
+        "solution_label": "Çözüm",
+        "submit": "Cevabı kontrol et"
+      },
+      "al_reading_comprehension": {
+        "badge_correct": "Doğru",
+        "badge_missed": "Doğru yanıt",
+        "badge_wrong": "Yanlış",
+        "empty": "Bu okuma alıştırmasında soru yok.",
+        "input_label": "Cevap",
+        "result_correct": "Doğru!",
+        "result_wrong": "Tam değil. İşaretli sorulara bak.",
+        "retry": "Tekrar dene",
+        "solution_label": "Çözüm",
+        "submit": "Cevapları kontrol et"
+      },
       "instruction": {
         "matching": {
           "receptive": "Çiftleri eşleştir (Tanıma)",
@@ -2450,6 +2516,19 @@
         "delete": "Sil"
       }
     },
+    "edit_as_copy": {
+      "action": "Kopya olarak düzenle",
+      "confirm_title": "Kendi kopyanız olarak düzenlensin mi?",
+      "confirm_message": "“{title}” içeriğini ders düzenleyicisinde kendi düzenlenebilir kopyanız olarak açar. Orijinal değişmeden kalır ve indirilebilir olmaya devam eder.",
+      "confirm": "Kopyayı düzenle",
+      "saved": "Kendi kopyanız olarak kaydedildi.",
+      "failed": "Kopya oluşturulamadı."
+    },
+    "fork": {
+      "based_on": "{author} temel alınarak",
+      "based_on_and_others": "{author} ve diğerleri temel alınarak",
+      "credit_disclaimer": "Katkı bilgileri kullanıcı beyanına dayanır ve doğrulanmamıştır."
+    },
     "ai_exercises": {
       "batch": {
         "button": "Tüm dersler için oluştur",
@@ -2758,7 +2837,10 @@
       "name_label": "Adınız (isteğe bağlı)",
       "name_placeholder": "ör. Maria S.",
       "show_name": "Adı derste göster",
-      "privacy": "Adınız derste ve pull request'te gösterilecek."
+      "privacy": "Adınız derste ve pull request'te gösterilecek.",
+      "foreign_notice": "Bu içerik {author} kişisini katkı sahibi olarak gösteriyor. Paylaşırken isim de taşınır, kaldırabilirsiniz.",
+      "foreign_remove": "Katkıları kaldır",
+      "foreign_removed": "Katkılar kaldırıldı."
     }
   },
   "milestone": {
@@ -3048,6 +3130,8 @@
         "mc_options_label": "Yanıt seçenekleri",
         "convert_label": "Alıştırma türü",
         "convert_hint": "Dönüştürme, yazılan yanıtı ve öğrencinin ilerlemesini korur.",
+        "convert_confirm_title": "Alıştırma türü dönüştürülsün mü?",
+        "convert_confirm_message": "Bu alıştırmanın birden fazla yanıtı var. Dönüştürme yalnızca ilkini korur; diğerlerinin ilerlemesi aktarılmaz.",
         "mc_option_placeholder": "Seçenek metni",
         "mc_option_add": "Seçenek ekle",
         "mc_option_remove": "Seçeneği kaldır",
@@ -3244,6 +3328,19 @@
         "title": "Konuşma alıştırması",
         "desc": "5 kart yuvası, kelime parçaları + boşluk doldurma."
       }
+    },
+    "suggest": {
+      "distractors": "Yapay zekâ ile yanlış yanıtlar öner",
+      "distractors_empty": "Kullanılabilir öneri yok - elle bir yanlış yanıt ekleyin.",
+      "cloze_sentence": "Yapay zekâ ile bir cümle öner",
+      "cloze_sentence_empty": "Kullanılabilir cümle yok - elle bir tane yazın.",
+      "passage": "Yapay zekâ ile bir metin öner",
+      "passage_empty": "Kullanılabilir metin yok - elle bir tane yazın.",
+      "busy": "Öneriliyor…",
+      "disclaimer": "Yapay zekâ taslakları - kaydetmeden önce gözden geçirip düzenleyin.",
+      "no_key": "Bunun için kendi yapay zekâ anahtarınız (BYOK) gerekir. Yapay zekâ ayarlarından bir tane ekleyin.",
+      "open_settings": "Yapay zekâ ayarları",
+      "error": "Yapay zekâ isteği başarısız oldu. Lütfen tekrar deneyin."
     }
   },
   "learning_path": {

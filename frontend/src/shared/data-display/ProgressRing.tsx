@@ -52,7 +52,7 @@ export default function ProgressRing({
 
     return (
         <div
-            className={className}
+            className={`relative inline-flex ${className ?? ""}`}
             data-testid={testId}
             role="progressbar"
             aria-label={ariaLabel}
@@ -60,8 +60,6 @@ export default function ProgressRing({
             aria-valuemin={0}
             aria-valuemax={safeMax}
             style={{
-                position: "relative",
-                display: "inline-flex",
                 width: size,
                 height: size,
             }}
@@ -91,22 +89,11 @@ export default function ProgressRing({
                     strokeDasharray={circumference}
                     strokeDashoffset={dashOffset}
                     transform={`rotate(-90 ${center} ${center})`}
-                    style={{transition: "stroke-dashoffset 400ms ease"}}
+                    className="[transition:stroke-dashoffset_400ms_ease]"
                 />
             </svg>
             {children != null && (
-                <span
-                    style={{
-                        position: "absolute",
-                        inset: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "0.875rem",
-                        fontWeight: 600,
-                        color: "var(--fg-primary)",
-                    }}
-                >
+                <span className="absolute inset-0 flex items-center justify-center text-[0.875rem] font-semibold text-[var(--fg-primary)]">
                     {children}
                 </span>
             )}

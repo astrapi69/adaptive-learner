@@ -227,8 +227,8 @@ export default function AnkiPage() {
       </header>
 
       <section className="anki-toolbar" data-testid="anki-toolbar">
-        <label className="form-row">
-          <span className="form-label">{t("anki.filter_project", "Project")}</span>
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">{t("anki.filter_project", "Project")}</span>
           <select
             value={filterProject}
             onChange={(e) => setFilterProject(e.target.value)}
@@ -242,10 +242,11 @@ export default function AnkiPage() {
             ))}
           </select>
         </label>
-        <label className="form-row form-row-toggle">
-          <span className="form-label">{t("anki.filter_accepted", "Accepted only")}</span>
+        <label className="flex items-center justify-between gap-2">
+          <span className="text-[0.95rem] font-medium">{t("anki.filter_accepted", "Accepted only")}</span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             checked={filterAccepted}
             onChange={(e) => setFilterAccepted(e.target.checked)}
             data-testid="anki-filter-accepted"
@@ -317,7 +318,7 @@ export default function AnkiPage() {
                 {editing && editDraft ? (
                   <>
                     <label>
-                      <span className="form-label">{t("anki.front", "Front")}</span>
+                      <span className="text-[0.95rem] font-medium">{t("anki.front", "Front")}</span>
                       <textarea
                         value={editDraft.front}
                         onChange={(e) =>
@@ -330,7 +331,7 @@ export default function AnkiPage() {
                       />
                     </label>
                     <label>
-                      <span className="form-label">{t("anki.back", "Back")}</span>
+                      <span className="text-[0.95rem] font-medium">{t("anki.back", "Back")}</span>
                       <textarea
                         value={editDraft.back}
                         onChange={(e) =>
@@ -343,7 +344,7 @@ export default function AnkiPage() {
                       />
                     </label>
                     <label>
-                      <span className="form-label">{t("anki.card_type", "Type")}</span>
+                      <span className="text-[0.95rem] font-medium">{t("anki.card_type", "Type")}</span>
                       <select
                         value={editDraft.card_type}
                         onChange={(e) =>

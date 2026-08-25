@@ -457,10 +457,10 @@ export default function Onboarding() {
             </header>
 
             <form className="onboarding-form" onSubmit={handleSubmit} noValidate>
-                <label className="form-row">
-                    <span className="form-label">
+                <label className="flex flex-col gap-2">
+                    <span className="text-[0.95rem] font-medium">
                         {t("onboarding.field_name", "Your name")}{" "}
-                        <span className="form-required" aria-hidden="true">
+                        <span className="ml-1 text-[var(--danger)]" aria-hidden="true">
                             *
                         </span>
                     </span>
@@ -475,10 +475,10 @@ export default function Onboarding() {
                     />
                 </label>
 
-                <label className="form-row">
-                    <span className="form-label">
+                <label className="flex flex-col gap-2">
+                    <span className="text-[0.95rem] font-medium">
                         {t("onboarding.field_topic", "Topic")}{" "}
-                        <span className="form-required" aria-hidden="true">
+                        <span className="ml-1 text-[var(--danger)]" aria-hidden="true">
                             *
                         </span>
                         {/* tabIndex=-1 so Tab flows Name -> Topic input
@@ -501,16 +501,16 @@ export default function Onboarding() {
 
                 {suggestions.length > 0 && (
                     <div
-                        className="onboarding-subject-suggestions"
+                        className="onboarding-subject-suggestions flex flex-col gap-1.5"
                         data-testid="onboarding-subject-suggestions"
                     >
-                        <p className="form-label">
+                        <p className="text-[0.95rem] font-medium">
                             {t(
                                 "onboarding.subject_suggestions",
                                 "Suggested subjects (tap to assign):",
                             )}
                         </p>
-                        <ul className="taxonomy-chip-list">
+                        <ul className="taxonomy-chip-list flex flex-wrap gap-2">
                             {suggestions.map((suggestion) => {
                                 const isOn = selectedSubjectIds.has(
                                     suggestion.subject.id,
@@ -538,7 +538,7 @@ export default function Onboarding() {
                     </div>
                 )}
 
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         variant="secondary"
@@ -591,7 +591,7 @@ export default function Onboarding() {
                         type="file"
                         accept=".alb,.json,application/zip,application/json"
                         onChange={handleRestoreFile}
-                        style={{display: "none"}}
+                        className="hidden"
                         data-testid="onboarding-restore-input"
                     />
                 </section>

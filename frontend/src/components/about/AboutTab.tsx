@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { getStorage, resolveStorageMode } from "../../storage";
+import { SettingsSection } from "../settings/SettingsSection";
 import type { SystemInfo } from "../../types/domain";
 
 import ContributeSection from "./ContributeSection";
@@ -54,19 +55,15 @@ export default function AboutTab() {
   }, []);
 
   return (
-    <section
-      className="settings-section"
-      data-testid="settings-about"
-      style={{ marginTop: "1.5rem" }}
+    <SettingsSection
+      title={t("about.section_heading", "About Adaptive Learner")}
+      testid="settings-about"
+      className="mt-6"
     >
-      <h2 className="settings-section-title">
-        {t("about.section_heading", "About Adaptive Learner")}
-      </h2>
       {loading && (
         <p
           data-testid="about-loading"
-          className="muted"
-          style={{ padding: "1rem 0" }}
+          className="muted py-4 px-0"
         >
           {t("about.loading", "Loading information…")}
         </p>
@@ -75,7 +72,7 @@ export default function AboutTab() {
         <p
           data-testid="about-error"
           role="alert"
-          style={{ color: "var(--danger)", padding: "1rem 0" }}
+          className="py-4 px-0 text-[var(--danger)]"
         >
           {t("about.load_failed", "Could not load system info:")} {error}
         </p>
@@ -83,7 +80,7 @@ export default function AboutTab() {
       {info && (
         <div
           data-testid="about-content"
-          style={{ display: "flex", flexDirection: "column", gap: 16 }}
+          className="flex flex-col gap-4"
         >
           <StrangBadge t={t} />
           <VersionSection info={info} t={t} />
@@ -96,6 +93,6 @@ export default function AboutTab() {
         </div>
       )}
       <SupportSection />
-    </section>
+    </SettingsSection>
   );
 }

@@ -12,17 +12,15 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import {SRS_MASTERY_THRESHOLD, SRS_SCHEDULE} from "../../lib/srs/status";
 import {docsHomeUrl} from "../../lib/help/help-routes";
+import {SettingsSection} from "../settings/SettingsSection";
 
 export default function SrsTransparencySection() {
     const {t, lang} = useI18n();
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-srs"
+        <SettingsSection
+            title={t("settings.section_srs", "Spaced repetition")}
+            testid="settings-section-srs"
         >
-            <h2 className="settings-section-title">
-                {t("settings.section_srs", "Spaced repetition")}
-            </h2>
             <FormHint>
                 {t(
                     "srs.settings_intro",
@@ -72,6 +70,6 @@ export default function SrsTransparencySection() {
             >
                 {t("srs.settings_learn_more", "Learn more about the method")}
             </a>
-        </section>
+        </SettingsSection>
     );
 }

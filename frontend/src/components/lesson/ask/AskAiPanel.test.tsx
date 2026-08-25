@@ -19,6 +19,10 @@ const keyStatus = vi.fn();
 vi.mock("../../../hooks/settings/useApiKeyStatus", () => ({
   useApiKeyStatus: () => keyStatus(),
 }));
+const askAiVisible = vi.fn();
+vi.mock("../../../hooks/lesson/interaction/useAskAiVisible", () => ({
+  useAskAiVisible: () => askAiVisible(),
+}));
 vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb?: string) => fb ?? _k, lang: "en" }),
 }));
@@ -52,6 +56,8 @@ function renderPanel() {
 
 beforeEach(() => {
   keyStatus.mockReset();
+  askAiVisible.mockReset();
+  askAiVisible.mockReturnValue(true);
   resolveProvider.mockReset();
   aiComplete.mockReset();
   resolveProvider.mockResolvedValue({
@@ -66,6 +72,13 @@ afterEach(() => vi.restoreAllMocks());
 describe("AskAiPanel", () => {
   it("renders nothing until the key status is ready", () => {
     keyStatus.mockReturnValue({ ready: false, hasKey: false });
+    const { container } = renderPanel();
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders nothing when the user turned the button off in Settings (#2693)", () => {
+    askAiVisible.mockReturnValue(false);
+    keyStatus.mockReturnValue({ ready: true, hasKey: true });
     const { container } = renderPanel();
     expect(container).toBeEmptyDOMElement();
   });

@@ -97,8 +97,7 @@ export default function AvatarPreviewDialog({
             src={imageUrl}
             alt=""
             aria-hidden="true"
-            className="rounded-app object-contain"
-            style={{ maxWidth: "80vw", maxHeight: "80vh" }}
+            className="max-h-[80vh] max-w-[80vw] rounded-app object-contain"
             data-testid="avatar-preview-large"
           />
         </div>

@@ -17,6 +17,7 @@ import MissionSettingsControl from "../../../../components/settings/controls/mot
 import SourceLanguagesControl from "../../../../components/settings/controls/lesson/SourceLanguagesControl";
 import SoundSettingsControl from "../../../../components/settings/controls/motivation/SoundSettingsControl";
 import VoiceSettingsSection from "../../../../components/voice/VoiceSettingsSection";
+import { SettingsSection } from "../../../../components/settings/SettingsSection";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import { readGesturePref, writeGesturePref } from "../../../../lib/settings/gesturePref";
@@ -28,6 +29,10 @@ import {
   readLessonAutoAdvanceEnabled,
   setLessonAutoAdvanceEnabled,
 } from "../../../../hooks/settings/useLessonAutoAdvance";
+import {
+  readAskAiVisible,
+  setAskAiVisible,
+} from "../../../../lib/lesson/askAiVisibilityPref";
 
 interface LearningPanelProps {
   /** Whether the Learning tab is the active tab (drives ``hidden``). */
@@ -85,6 +90,17 @@ export default function LearningPanel({ active }: LearningPanelProps) {
     setLessonAutoAdvanceEnabled(next);
   };
 
+  // "Ask AI" button visibility (#2693). localStorage-backed so
+  // AskAiPanel (via useAskAiVisible) reads the same flag. Default ON.
+  const [askAiVisibleOn, setAskAiVisibleOn] = useState<boolean>(() =>
+    readAskAiVisible(),
+  );
+
+  const handleAskAiVisibleToggle = (next: boolean) => {
+    setAskAiVisibleOn(next);
+    setAskAiVisible(next);
+  };
+
   return (
     <div
       className="settings-tabpanel"
@@ -98,13 +114,13 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       <DirectionStrategyControl />
       <HintSettingsControl />
       <MatchingResolveControl />
-      <section className="settings-section" data-testid="settings-section-interaction">
-        <h2 className="settings-section-title">
-          {t("settings.section_interaction", "Interaction")}
-        </h2>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">{t("settings.gestures", "Swipe Gestures")}</span>
+      <SettingsSection
+        title={t("settings.section_interaction", "Interaction")}
+        testid="settings-section-interaction"
+      >
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">{t("settings.gestures", "Swipe Gestures")}</span>
             <FormHint as="span">
               {t(
                 "settings.gestures_description",
@@ -114,14 +130,15 @@ export default function LearningPanel({ active }: LearningPanelProps) {
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-gestures-toggle"
             checked={gesturesOn}
             onChange={(e) => handleGesturesToggle(e.target.checked)}
           />
         </label>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
               {t("settings.lesson_shortcuts", "Lesson keyboard shortcuts")}
             </span>
             <FormHint as="span">
@@ -133,14 +150,15 @@ export default function LearningPanel({ active }: LearningPanelProps) {
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-lesson-shortcuts-toggle"
             checked={lessonShortcutsOn}
             onChange={(e) => handleLessonShortcutsToggle(e.target.checked)}
           />
         </label>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
               {t(
                 "settings.lesson_auto_advance",
                 "Auto-advance on a correct answer",
@@ -155,22 +173,45 @@ export default function LearningPanel({ active }: LearningPanelProps) {
           </span>
           <input
             type="checkbox"
+            className="m-0 size-4 flex-none p-0"
             data-testid="settings-lesson-auto-advance-toggle"
             checked={autoAdvanceOn}
             onChange={(e) => handleAutoAdvanceToggle(e.target.checked)}
           />
         </label>
-      </section>
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
+              {t("settings.ask_ai_visible", "Show \"Ask AI\" button")}
+            </span>
+            <FormHint as="span">
+              {t(
+                "settings.ask_ai_visible_description",
+                "Show the \"Ask AI\" button under theory and exercises. Shown by default; the button still needs your own AI key (BYOK) to answer.",
+              )}
+            </FormHint>
+          </span>
+          <input
+            type="checkbox"
+            className="m-0 size-4 flex-none p-0"
+            data-testid="settings-ask-ai-visible-toggle"
+            checked={askAiVisibleOn}
+            onChange={(e) => handleAskAiVisibleToggle(e.target.checked)}
+          />
+        </label>
+      </SettingsSection>
       <VoiceSettingsSection />
       <ReviewSettingsControl />
       <SrsTransparencySection />
       <SummarySectionsControl />
       <ErrorReplayScopeControl />
-      <section className="settings-section" data-testid="settings-section-feedback">
-        <h2 className="settings-section-title">{t("settings.section_feedback", "Feedback")}</h2>
+      <SettingsSection
+        title={t("settings.section_feedback", "Feedback")}
+        testid="settings-section-feedback"
+      >
         <FeedbackIntensityControl />
         <SoundSettingsControl />
-      </section>
+      </SettingsSection>
       <MissionSettingsControl />
       <DailyRemindersControl />
       <PausedLessonsRetentionControl />

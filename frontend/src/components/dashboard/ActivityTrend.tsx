@@ -60,31 +60,16 @@ export default function ActivityTrend({entries}: ActivityTrendProps) {
     const {Icon} = trend;
 
     return (
-        <div className="activity-trend" data-testid="activity-trend">
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "0.5rem",
-                    marginBottom: "0.5rem",
-                }}
-            >
-                <span
-                    style={{fontSize: "0.8125rem", color: "var(--fg-muted)"}}
-                >
+        <div className="activity-trend w-full" data-testid="activity-trend">
+            <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-[0.8125rem] text-[var(--fg-muted)]">
                     {t("gamification.activity_7d", "Activity (last 7 days)")}
                 </span>
                 <span
                     data-testid="activity-trend-indicator"
                     data-direction={direction}
-                    style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 4,
-                        fontSize: "0.8125rem",
-                        color: trend.color,
-                    }}
+                    className="inline-flex items-center gap-1 text-[0.8125rem]"
+                    style={{color: trend.color}}
                 >
                     <Icon size={14} aria-hidden="true" />
                     {trend.label}

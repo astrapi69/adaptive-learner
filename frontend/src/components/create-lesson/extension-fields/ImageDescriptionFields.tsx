@@ -14,7 +14,7 @@
  * matcher, so there is no image-specific list control or grader.
  */
 
-import CardImageField from "../CardImageField";
+import {CardImageField} from "../fields";
 import StringListEditor from "../../../shared/forms/StringListEditor";
 import FormHint from "../../../shared/forms/FormHint";
 

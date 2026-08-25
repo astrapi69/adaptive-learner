@@ -16,6 +16,7 @@
 
 import {RefreshCw, Zap} from "lucide-react";
 import {useEffect, useState} from "react";
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import {useNavigate} from "react-router";
 
 import DueReviewCard from "../../shared/gamification/DueReviewCard";
@@ -77,17 +78,14 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
 
     if (items === null) {
         return (
-            <article
-                className="dashboard-card"
-                data-testid="review-queue-card-loading"
-            >
-                <h2 className="dashboard-card-title">
+            <DashboardCard data-testid="review-queue-card-loading">
+                <DashboardCardTitle>
                     {t("dashboard.card_review_queue", "Due for review")}
-                </h2>
+                </DashboardCardTitle>
                 <p className="muted">
                     {t("dashboard.review_queue.loading", "Loading…")}
                 </p>
-            </article>
+            </DashboardCard>
         );
     }
 
@@ -103,10 +101,10 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
     const firstSetId = items[0].set_id;
 
     return (
-        <article className="dashboard-card" data-testid="review-queue-card">
-            <h2 className="dashboard-card-title">
+        <DashboardCard data-testid="review-queue-card">
+            <DashboardCardTitle>
                 {t("dashboard.card_review_queue", "Due for review")}
-            </h2>
+            </DashboardCardTitle>
             <DueReviewCard
                 total={items.length}
                 overdue={overdue}
@@ -138,6 +136,6 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
                 secondaryIcon={<Zap size={14} aria-hidden="true" />}
                 testId="review-queue"
             />
-        </article>
+        </DashboardCard>
     );
 }

@@ -7,6 +7,11 @@
  * per-question grading (MC exact, free_text via the shared matcher), the
  * aggregate score + SRS fan-out + raw_answer, the per-question solution after
  * a wrong attempt, retry, and the reviewed (locked) reconstruction.
+ *
+ * #2633 also pins the per-option resolution: after checking, the authored
+ * correct option is marked green (``correct`` when picked, ``missed`` when
+ * not), the learner's wrong pick red, and the free-text solution line renders
+ * in the green feedback tint rather than as muted prose.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -14,7 +19,7 @@ import {fireEvent, render, screen, within} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import ReadingComprehensionExercise from "./ReadingComprehensionExercise";
-import type {ContentLessonExercise} from "../../../storage/types";
+import type {ContentLessonExercise} from "../../../../storage/types";
 
 const PASSAGE = "Rex lief in den Garten und bellte den Briefträger an.";
 
@@ -187,6 +192,88 @@ describe("ReadingComprehensionExercise: reviewed (locked) reconstruction", () =>
         expect(
             screen.queryByTestId("reading-comprehension-submit"),
         ).not.toBeInTheDocument();
+    });
+});
+
+describe("ReadingComprehensionExercise: green correct-answer resolution (#2633)", () => {
+    /** The option tile for ``text`` inside question ``questionIndex``. Located
+     *  by label, not by index, because #2317 shuffles the display order. */
+    const optionTile = (questionIndex: number, text: string) =>
+        within(
+            screen.getByTestId(`reading-comprehension-question-${questionIndex}`),
+        ).getByRole("button", {
+            // Prefix match: after checking, the accessible name also carries
+            // the verdict badge ("In den Garten Correct answer").
+            name: (accessibleName: string) => accessibleName.startsWith(text),
+        });
+
+    it("carries no verdict on any option before checking", () => {
+        render(<ReadingComprehensionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pickOption(0, "In den Garten");
+        expect(optionTile(0, "In den Garten")).not.toHaveAttribute("data-verdict");
+        expect(optionTile(0, "Auf die Straße")).not.toHaveAttribute("data-verdict");
+    });
+
+    it("marks the picked correct option 'correct' and leaves distractors neutral", () => {
+        render(<ReadingComprehensionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pickOption(0, "In den Garten");
+        typeAnswer(1, "Rex");
+        submit();
+        expect(optionTile(0, "In den Garten")).toHaveAttribute(
+            "data-verdict",
+            "correct",
+        );
+        expect(optionTile(0, "Auf die Straße")).toHaveAttribute(
+            "data-verdict",
+            "neutral",
+        );
+    });
+
+    it("marks a wrong pick 'wrong' and the unpicked right option 'missed'", () => {
+        render(<ReadingComprehensionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pickOption(0, "Auf die Straße");
+        typeAnswer(1, "Rex");
+        submit();
+        expect(optionTile(0, "Auf die Straße")).toHaveAttribute(
+            "data-verdict",
+            "wrong",
+        );
+        const right = optionTile(0, "In den Garten");
+        expect(right).toHaveAttribute("data-verdict", "missed");
+        // The right answer is legible without color: a text badge, not a tint alone.
+        expect(right).toHaveTextContent("Correct answer");
+    });
+
+    it("renders the free-text solution line in the green feedback tint", () => {
+        render(<ReadingComprehensionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pickOption(0, "In den Garten");
+        typeAnswer(1, "Bello"); // wrong
+        submit();
+        const solution = screen.getByTestId("reading-comprehension-q1-solution");
+        expect(solution).toHaveTextContent("Rex");
+        expect(solution.className).toContain("--exercise-correct");
+        expect(solution.className).toContain("--matching-correct-bg");
+    });
+
+    it("reconstructs the same per-option verdicts in the reviewed (locked) view", () => {
+        render(
+            <ReadingComprehensionExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                reviewed={{
+                    kind: "al_reading_comprehension",
+                    answers: ["Auf die Straße", "Rex"],
+                }}
+            />,
+        );
+        expect(optionTile(0, "Auf die Straße")).toHaveAttribute(
+            "data-verdict",
+            "wrong",
+        );
+        expect(optionTile(0, "In den Garten")).toHaveAttribute(
+            "data-verdict",
+            "missed",
+        );
     });
 });
 

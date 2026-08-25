@@ -252,6 +252,56 @@ describe("ImportActionsPanel — My Lessons", () => {
     expect(screen.queryByTestId("content-my-lessons")).not.toBeInTheDocument();
   });
 
+  it("#2655 — shows the 'Your edit' badge + basiert-auf credit line on a forked set", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [
+        {
+          ...USER_ENTRY,
+          id: "forked-x",
+          domain: "imported",
+          attribution: { author: "Original Author" },
+        },
+      ],
+      sources: [],
+    });
+    renderPanel();
+    await screen.findByTestId("import-actions-panel");
+    expect(await screen.findByTestId("my-lesson-forked-x-badge")).toHaveTextContent(
+      "Your edit",
+    );
+    expect(screen.getByTestId("my-lesson-forked-x-credit")).toHaveTextContent(
+      "Based on Original Author",
+    );
+  });
+
+  it("#2655 — shows neither badge nor credit line for a non-forked (own) lesson", async () => {
+    listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
+    renderPanel();
+    await screen.findByTestId("import-actions-panel");
+    await screen.findByTestId("my-lesson-analysis-conv-1");
+    expect(
+      screen.queryByTestId("my-lesson-analysis-conv-1-badge"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("my-lesson-analysis-conv-1-credit"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("#2655 — shows the badge without a credit line when a fork carries no attribution", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [{ ...USER_ENTRY, id: "forked-no-credit", domain: "imported" }],
+      sources: [],
+    });
+    renderPanel();
+    await screen.findByTestId("import-actions-panel");
+    expect(
+      await screen.findByTestId("my-lesson-forked-no-credit-badge"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("my-lesson-forked-no-credit-credit"),
+    ).not.toBeInTheDocument();
+  });
+
   it("deletes a user lesson after confirmation", async () => {
     listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
     deleteSetMock.mockResolvedValue(undefined);

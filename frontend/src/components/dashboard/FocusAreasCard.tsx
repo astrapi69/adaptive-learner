@@ -29,7 +29,10 @@
 
 import {Sparkles} from "lucide-react";
 import {useEffect, useState} from "react";
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import {Link} from "react-router";
+
+import {Button} from "@/components/ui/button";
 
 import {analyzeErrors} from "../../lib/adaptive/error-analyzer";
 import {
@@ -134,17 +137,14 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
 
     if (state === "loading") {
         return (
-            <article
-                className="dashboard-card"
-                data-testid="focus-areas-card-loading"
-            >
-                <h2 className="dashboard-card-title">
+            <DashboardCard data-testid="focus-areas-card-loading">
+                <DashboardCardTitle>
                     {t("dashboard.card_focus_areas", "Focus areas")}
-                </h2>
+                </DashboardCardTitle>
                 <p className="muted">
                     {t("dashboard.focus_areas.loading", "Analyzing your errors…")}
                 </p>
-            </article>
+            </DashboardCard>
         );
     }
 
@@ -155,13 +155,10 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
     const adaptiveHref = `/adaptive-lesson/${encodeURIComponent(state.targetSetId)}`;
 
     return (
-        <article
-            className="dashboard-card"
-            data-testid="focus-areas-card"
-        >
-            <h2 className="dashboard-card-title">
+        <DashboardCard data-testid="focus-areas-card">
+            <DashboardCardTitle>
                 {t("dashboard.card_focus_areas", "Focus areas")}
-            </h2>
+            </DashboardCardTitle>
             {(state.mastery.receptive > 0 || state.mastery.productive > 0) && (
                 <p
                     className="muted focus-areas-mastery-split"
@@ -229,17 +226,15 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
                     </li>
                 ))}
             </ul>
-            <Link
-                to={adaptiveHref}
-                className="btn btn-primary"
-                data-testid="focus-areas-cta"
-            >
-                <Sparkles size={14} aria-hidden="true" />
-                {t(
-                    "dashboard.focus_areas.cta",
-                    "Start adaptive lesson",
-                )}
-            </Link>
-        </article>
+            <Button asChild>
+                <Link to={adaptiveHref} data-testid="focus-areas-cta">
+                    <Sparkles size={14} aria-hidden="true" />
+                    {t(
+                        "dashboard.focus_areas.cta",
+                        "Start adaptive lesson",
+                    )}
+                </Link>
+            </Button>
+        </DashboardCard>
     );
 }

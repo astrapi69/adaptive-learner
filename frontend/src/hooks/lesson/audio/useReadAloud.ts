@@ -38,6 +38,11 @@ import {
     writeLessonAutoRead as writeLessonAutoReadPref,
     writeLessonSpeed as writeLessonSpeedPref,
 } from "../../../lib/voice/voicePref";
+import {
+    releaseWakeLock,
+    requestWakeLock,
+    type WakeLockHandle,
+} from "../../../lib/voice/wake-lock";
 
 /** Inline speed multipliers offered during playback (C4). */
 export const READ_ALOUD_SPEEDS = [0.5, 0.75, 1, 1.25] as const;
@@ -143,6 +148,43 @@ export function useReadAloud(): ReadAloudController {
     useEffect(() => {
         return () => stopRaw();
     }, []);
+
+    // Hold a screen wake lock for as long as a stream is active (#2666):
+    // without it, iOS Safari (and mobile Chrome) suspends speechSynthesis
+    // the moment the device's inactivity timer turns the screen off, which
+    // stops a hands-free read-aloud mid-lesson. The lock is released
+    // automatically by the browser whenever the document goes hidden and
+    // does not reacquire itself, so the visibilitychange listener requests
+    // a fresh one if the tab comes back to the foreground while still
+    // "speaking" (covers e.g. a brief app-switch during playback).
+    useEffect(() => {
+        if (!speaking) return;
+        let cancelled = false;
+        let handle: WakeLockHandle = null;
+
+        const acquire = async () => {
+            const lock = await requestWakeLock();
+            if (cancelled) {
+                void releaseWakeLock(lock);
+                return;
+            }
+            handle = lock;
+        };
+        void acquire();
+
+        const onVisibilityChange = () => {
+            if (document.visibilityState === "visible" && !handle) {
+                void acquire();
+            }
+        };
+        document.addEventListener("visibilitychange", onVisibilityChange);
+
+        return () => {
+            cancelled = true;
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+            void releaseWakeLock(handle);
+        };
+    }, [speaking]);
 
     const reset = useCallback(() => {
         speakingRef.current = false;

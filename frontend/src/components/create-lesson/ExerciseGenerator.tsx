@@ -247,10 +247,10 @@ export default function ExerciseGenerator({
                 className="exercise-gen-config flex flex-col gap-4 rounded-lg border border-border bg-card p-4"
                 data-testid="exercise-gen-config"
             >
-                <div className="form-row flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5">
                     <label
                         htmlFor="exercise-count-input"
-                        className="form-label text-sm font-medium text-fg-primary"
+                        className="text-sm font-medium text-fg-primary"
                     >
                         {countLabel}
                     </label>
@@ -290,7 +290,7 @@ export default function ExerciseGenerator({
                 </div>
 
                 <fieldset className="exercise-gen-types m-0 flex flex-col gap-2 border-0 p-0">
-                    <legend className="form-label text-sm font-medium text-fg-primary">
+                    <legend className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.types_label", "Exercise types")}
                     </legend>
                     {ALL_TYPES.map((type) => (
@@ -308,7 +308,7 @@ export default function ExerciseGenerator({
                 </fieldset>
 
                 <label className="form-field flex flex-col gap-1.5">
-                    <span className="form-label text-sm font-medium text-fg-primary">
+                    <span className="text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.direction_label", "Direction")}
                     </span>
                     <select
@@ -334,7 +334,7 @@ export default function ExerciseGenerator({
                     </select>
                 </label>
 
-                <div className="form-actions">
+                <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                     <Button
                         type="button"
                         data-testid="exercise-generate"
@@ -441,7 +441,7 @@ export default function ExerciseGenerator({
                         className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3"
                         data-testid="exercise-add-picker"
                     >
-                        <span className="form-label text-sm font-medium text-fg-primary">
+                        <span className="text-sm font-medium text-fg-primary">
                             {t(
                                 "create_lesson.exercises.add_heading",
                                 "Choose an exercise type",
@@ -482,7 +482,7 @@ export default function ExerciseGenerator({
                         {/* #2508 — the extension types as a second, labelled
                             group so both blocks are reachable from one picker. */}
                         <span
-                            className="form-label mt-1 text-sm font-medium text-fg-primary"
+                            className="mt-1 text-sm font-medium text-fg-primary"
                             id="exercise-add-ext-group"
                             data-testid="exercise-add-ext-group"
                         >
@@ -578,11 +578,37 @@ function SortableExerciseRow({
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} =
         useSortable({id: exercise.id});
     const [editing, setEditing] = useState(autoEdit);
+    // EXP-050 (#2511): a type conversion from an extension source
+    // (dictation / image-description) to a core ``free_text`` swaps the row's
+    // editor family, so it must commit to the parent (it cannot live in the
+    // ext editor's draft). This single-slot snapshot of the pre-conversion
+    // exercise lets Cancel restore it — the editor-session "original", not a
+    // conversion undo stack (EXP-050 explicitly rules that out).
+    const [preConvert, setPreConvert] = useState<ContentLessonExercise | null>(
+        null,
+    );
     const style: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.6 : 1,
     };
+
+    function handleConvert(converted: ContentLessonExercise) {
+        setPreConvert((prev) => prev ?? exercise);
+        onUpdate(exercise.id, converted);
+    }
+    function handleSave(updated: ContentLessonExercise) {
+        onUpdate(exercise.id, updated);
+        setPreConvert(null);
+        setEditing(false);
+    }
+    function handleCancel() {
+        if (preConvert) {
+            onUpdate(exercise.id, preConvert);
+            setPreConvert(null);
+        }
+        setEditing(false);
+    }
 
     if (editing) {
         return (
@@ -596,23 +622,27 @@ function SortableExerciseRow({
                 <span className="exercise-row-type w-fit rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
                     {t(exerciseTypeLabelKey(exercise.type), exercise.type)}
                 </span>
+                {/* Key on the type so a COMMITTED conversion that keeps the
+                    same editor family (ext<->ext, e.g. graded-quiz <->
+                    reading-comprehension) remounts the editor onto the converted
+                    exercise instead of keeping the old internal draft. An
+                    in-draft core conversion never changes exercise.type until
+                    Save, so this leaves it untouched. */}
                 {isExtensionType(exercise.type) ? (
                     <ExtensionExerciseEditor
+                        key={exercise.type}
                         exercise={exercise}
-                        onSave={(updated) => {
-                            onUpdate(exercise.id, updated);
-                            setEditing(false);
-                        }}
-                        onCancel={() => setEditing(false)}
+                        onSave={handleSave}
+                        onCancel={handleCancel}
+                        allowConversion
+                        onConvert={handleConvert}
                     />
                 ) : (
                     <ExerciseEditor
+                        key={exercise.type}
                         exercise={exercise}
-                        onSave={(updated) => {
-                            onUpdate(exercise.id, updated);
-                            setEditing(false);
-                        }}
-                        onCancel={() => setEditing(false)}
+                        onSave={handleSave}
+                        onCancel={handleCancel}
                     />
                 )}
             </li>

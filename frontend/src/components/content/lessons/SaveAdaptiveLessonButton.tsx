@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+
 import { useI18n } from "../../../hooks/ui/useI18n";
 import FormHint from "../../../shared/forms/FormHint";
 import { snapshotAdaptiveLesson } from "../../../lib/content/lesson/adaptive-snapshot";
@@ -60,9 +62,9 @@ export default function SaveAdaptiveLessonButton({
   }
 
   return (
-    <button
+    <Button
       type="button"
-      className="btn btn-secondary"
+      variant="secondary"
       data-testid="adaptive-save-lesson"
       onClick={save}
       disabled={saving}
@@ -70,6 +72,6 @@ export default function SaveAdaptiveLessonButton({
       {saving
         ? t("common.loading", "Loading…")
         : t("content.save_adaptive.button", "Save this lesson?")}
-    </button>
+    </Button>
   );
 }

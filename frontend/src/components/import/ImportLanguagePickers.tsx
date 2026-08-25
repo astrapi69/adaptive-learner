@@ -37,8 +37,8 @@ export default function ImportLanguagePickers({
       className="import-language-pickers flex flex-wrap gap-4 mt-4"
       data-testid="import-language-pickers"
     >
-      <div className="form-row">
-        <span className="form-label" id="import-source-language-label">
+      <div className="flex flex-col gap-2">
+        <span className="text-[0.95rem] font-medium" id="import-source-language-label">
           {t("import.chat_language", "Chat language (you speak)")}
         </span>
         <Select value={sourceLang || undefined} onValueChange={onSourceChange}>
@@ -57,8 +57,8 @@ export default function ImportLanguagePickers({
           </SelectContent>
         </Select>
       </div>
-      <div className="form-row">
-        <span className="form-label" id="import-target-language-label">{t("import.learning_language", "Learning language")}</span>
+      <div className="flex flex-col gap-2">
+        <span className="text-[0.95rem] font-medium" id="import-target-language-label">{t("import.learning_language", "Learning language")}</span>
         <Select value={targetLang || undefined} onValueChange={onTargetChange}>
           <SelectTrigger
             data-testid="import-target-language"

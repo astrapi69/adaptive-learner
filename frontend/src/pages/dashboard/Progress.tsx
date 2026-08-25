@@ -1,5 +1,6 @@
 import {Fragment, useEffect, useState} from "react";
 import {useNavigate} from "react-router";
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 
 import MethodBadge from "../../components/session/MethodBadge";
 import NotebookLMSection from "../../components/settings/integrations/NotebookLMSection";
@@ -100,35 +101,35 @@ export default function Progress() {
             </header>
 
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <article className="dashboard-card dashboard-card-wide">
-                    <h2 className="dashboard-card-title">
+                <DashboardCard wide>
+                    <DashboardCardTitle>
                         {t("progress.chart_timeline", "Understanding and stress over time")}
-                    </h2>
+                    </DashboardCardTitle>
                     <ProgressTimeline summary={summary} height={280} />
-                </article>
+                </DashboardCard>
 
-                <article className="dashboard-card dashboard-card-wide">
-                    <h2 className="dashboard-card-title">
+                <DashboardCard wide>
+                    <DashboardCardTitle>
                         {t("progress.chart_methods", "Method distribution")}
-                    </h2>
+                    </DashboardCardTitle>
                     <MethodDistribution summary={summary} height={260} />
-                </article>
+                </DashboardCard>
             </section>
 
-            <section className="dashboard-card dashboard-card-wide">
-                <h2 className="dashboard-card-title">
+            <DashboardCard as="section" wide>
+                <DashboardCardTitle>
                     {t(
                         "progress.step_eval_title",
                         "AI step-evaluation insights",
                     )}
-                </h2>
+                </DashboardCardTitle>
                 <StepEvaluationInsights summary={stepEvalSummary} />
-            </section>
+            </DashboardCard>
 
-            <section className="dashboard-card dashboard-card-wide">
-                <h2 className="dashboard-card-title">
+            <DashboardCard as="section" wide>
+                <DashboardCardTitle>
                     {t("progress.commit_history", "Session history")}
-                </h2>
+                </DashboardCardTitle>
                 {commits.length === 0 ? (
                     <p className="muted" data-testid="progress-commits-empty">
                         {t("progress.no_commits", "No completed sessions yet.")}
@@ -204,7 +205,7 @@ export default function Progress() {
                         </table>
                     </div>
                 )}
-            </section>
+            </DashboardCard>
 
             {/* v1.19.0 / Phase 32 — NotebookLM-ready study
                 materials surface. Only renders when a project is

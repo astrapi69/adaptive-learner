@@ -28,10 +28,10 @@ export default function ReviewedFallbackPanel({
   const allCorrect = total > 0 && correct === total;
   return (
     <section
-      className="lesson-reviewed-fallback"
+      className="lesson-reviewed-fallback flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
       data-testid="lesson-reviewed-fallback"
     >
-      <p className="lesson-reviewed-prompt">{exercise.prompt}</p>
+      <p className="lesson-reviewed-prompt font-medium">{exercise.prompt}</p>
       <p
         className={`lesson-reviewed-status answer-feedback${
           allCorrect ? " is-correct" : " is-wrong"

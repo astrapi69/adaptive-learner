@@ -299,3 +299,134 @@ describe("ExtensionExerciseEditor — dictation", () => {
         expect(screen.getByTestId("exercise-ext-error-d1")).toBeInTheDocument();
     });
 });
+
+describe("ExtensionExerciseEditor — type conversion (EXP-050 Stage 1)", () => {
+    const dictation = (): ContentLessonExercise =>
+        ({
+            id: "cd1",
+            type: DICTATION_EXT_TYPE,
+            prompt: "Write what you hear",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {audio: "assets/audio/clip.mp3", accept: ["bonjour"]},
+        }) as ContentLessonExercise;
+
+    it("offers the reading-comprehension target for a graded-quiz + calls onConvert", () => {
+        const onConvert = vi.fn();
+        const gq = {
+            id: "gq1",
+            type: "ext:al-graded-quiz",
+            prompt: "Quiz",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                pass_threshold: 60,
+                questions: [
+                    {prompt: "Q1", type: "free_text", accept: ["x"], points: 1},
+                ],
+            },
+        } as ContentLessonExercise;
+        render(
+            <ExtensionExerciseEditor
+                exercise={gq}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+                allowConversion
+                onConvert={onConvert}
+            />,
+        );
+        const select = screen.getByTestId(
+            "exercise-ext-type-select-gq1",
+        ) as HTMLSelectElement;
+        expect(Array.from(select.options).map((o) => o.value)).toContain(
+            "ext:al-reading-comprehension",
+        );
+        fireEvent.change(select, {target: {value: "ext:al-reading-comprehension"}});
+        expect(onConvert).toHaveBeenCalledTimes(1);
+        const converted = onConvert.mock.calls[0][0];
+        expect(converted.type).toBe("ext:al-reading-comprehension");
+        expect(converted.ext_payload.passage).toBe("");
+    });
+
+    it("offers the free_text conversion when allowed and calls onConvert", () => {
+        const onConvert = vi.fn();
+        render(
+            <ExtensionExerciseEditor
+                exercise={dictation()}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+                allowConversion
+                onConvert={onConvert}
+            />,
+        );
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-cd1"), {
+            target: {value: "free_text"},
+        });
+        expect(onConvert).toHaveBeenCalledTimes(1);
+        const converted = onConvert.mock.calls[0][0];
+        expect(converted.type).toBe("free_text");
+        expect(converted.accept).toEqual(["bonjour"]);
+        expect("ext_payload" in converted).toBe(false);
+    });
+
+    it("converts error-correction to free_text, lifting accept (key-preserving)", () => {
+        const onConvert = vi.fn();
+        const ec = {
+            id: "ec1",
+            type: "ext:al-error-correction",
+            prompt: "Fix the wrong word",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {tokens: ["Je", "suit", "ici"], error_index: 1, accept: ["suis"]},
+        } as ContentLessonExercise;
+        render(
+            <ExtensionExerciseEditor
+                exercise={ec}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+                allowConversion
+                onConvert={onConvert}
+            />,
+        );
+        fireEvent.change(screen.getByTestId("exercise-ext-type-select-ec1"), {
+            target: {value: "free_text"},
+        });
+        expect(onConvert).toHaveBeenCalledTimes(1);
+        const converted = onConvert.mock.calls[0][0];
+        expect(converted.type).toBe("free_text");
+        expect(converted.accept).toEqual(["suis"]);
+        expect("ext_payload" in converted).toBe(false);
+    });
+
+    it("hides the conversion control when not allowed", () => {
+        render(
+            <ExtensionExerciseEditor
+                exercise={dictation()}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+            />,
+        );
+        expect(screen.queryByTestId("exercise-ext-type-select-cd1")).toBeNull();
+    });
+
+    it("shows no conversion control for a non-convertible extension type", () => {
+        const categorization = {
+            id: "cd2",
+            type: CATEGORIZATION_EXT_TYPE,
+            prompt: "Sort",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {categories: [{name: "A", items: ["x"]}]},
+        } as ContentLessonExercise;
+        render(
+            <ExtensionExerciseEditor
+                exercise={categorization}
+                onSave={vi.fn()}
+                onCancel={vi.fn()}
+                allowConversion
+                onConvert={vi.fn()}
+            />,
+        );
+        expect(screen.queryByTestId("exercise-ext-type-select-cd2")).toBeNull();
+    });
+});

@@ -14,6 +14,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import DeleteProgressOption from "./DeleteProgressOption";
@@ -56,16 +57,15 @@ export default function DeleteSetModal({
 
   if (!target) return null;
   return (
-    <div className="modal-overlay" data-testid="delete-set-modal">
-      <div
-        className="modal-card"
+    <ModalOverlay data-testid="delete-set-modal">
+      <ModalCard
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-set-title"
       >
-        <h2 id="delete-set-title" className="modal-title">
+        <ModalTitle id="delete-set-title">
           {target.title}
-        </h2>
+        </ModalTitle>
         <p>
           {t(
             "content.set_status.delete_confirm",
@@ -79,7 +79,7 @@ export default function DeleteSetModal({
           onChange={setDeleteProgress}
           testId="delete-set-progress-option"
         />
-        <div className="form-actions">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
           <Button
             type="button"
             variant="outline"
@@ -102,7 +102,7 @@ export default function DeleteSetModal({
               : t("content.set_status.action.delete", "Delete")}
           </Button>
         </div>
-      </div>
-    </div>
+      </ModalCard>
+    </ModalOverlay>
   );
 }

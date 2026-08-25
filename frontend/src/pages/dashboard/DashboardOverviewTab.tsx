@@ -9,6 +9,7 @@
 
 import AiInviteCard from "../../components/dashboard/AiInviteCard";
 import ContinueLearning from "../../components/dashboard/ContinueLearning";
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import FavoritesCard from "../../components/dashboard/FavoritesCard";
 import FocusAreasCard from "../../components/dashboard/FocusAreasCard";
 import PausedLessonsCard from "../../components/dashboard/PausedLessonsCard";
@@ -59,22 +60,22 @@ export default function DashboardOverviewTab({
       )}
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <article className="dashboard-card">
-          <h2 className="dashboard-card-title">
+        <DashboardCard>
+          <DashboardCardTitle>
             <HelpTooltip glossaryKey="feature_gamification">
               {t("gamification.card_xp", "XP & Level")}
             </HelpTooltip>
             <HelpLink glossaryKey="feature_gamification" />
-          </h2>
+          </DashboardCardTitle>
           <XPWidget state={xpState} />
-        </article>
+        </DashboardCard>
 
-        <article className="dashboard-card">
-          <h2 className="dashboard-card-title">
+        <DashboardCard>
+          <DashboardCardTitle>
             {t("gamification.card_streak", "Streak")}
-          </h2>
+          </DashboardCardTitle>
           <StreakWidget state={streakState} />
-        </article>
+        </DashboardCard>
 
         {userId && (
           <>

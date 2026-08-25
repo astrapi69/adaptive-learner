@@ -1,5 +1,6 @@
 
 /* --- Settings page -------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485, #2725): utilities must win over this block. NOTE: .settings-section / .settings-section-title cannot be DELETED - they are a styling contract with @astrapi69/ai-key-vault-react (renders both classnames, #2477 class). */
 
 .settings-page {
   /* Holds the #549 sidebar grid (max-w-[1180px], 220px + 1fr). The page
@@ -259,7 +260,6 @@
 }
 
 /* --- Phase 10F: storage-mode toggle --- */
-@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .storage-mode-fieldset {
   display: flex;

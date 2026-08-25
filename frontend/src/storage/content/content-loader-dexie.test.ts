@@ -360,6 +360,49 @@ describe("Dexie content-loader: downloadSet", () => {
     expect(filenames).toContain("manifest.yaml");
   });
 
+  it("#2655 — mirrors the manifest's own attribution/derivation chain, and persists it", async () => {
+    // The repo-level manifest (not the per-set one) is where downloadSetDexie
+    // reads ``target`` from, so the attribution block lives HERE.
+    const attributedRepoManifest = `
+schema_version: '1.0'
+name: Adaptive Learner Pilot
+sets:
+  - id: language-fr-a1
+    title: French A1
+    language: fr
+    level: A1
+    version: '1.0.0'
+    lesson_count: 1
+    domain: language
+    tags: [beginner]
+    attribution:
+      author: Original Author
+      derived_from:
+        - author: Even Earlier Author
+`.trim();
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: attributedRepoManifest,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+    });
+    const entry = await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(entry.attribution).toEqual({
+      author: "Original Author",
+      derived_from: [{ author: "Even Earlier Author" }],
+    });
+
+    // Survives a round-trip through listSets (read back from IndexedDB).
+    const list = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    const stored = list.sets.find((s) => s.source === SOURCE && s.id === SET_ID);
+    expect(stored?.attribution).toEqual({
+      author: "Original Author",
+      derived_from: [{ author: "Even Earlier Author" }],
+    });
+  });
+
   it("reports per-lesson download progress (DIS-06)", async () => {
     installFetchMock({
       [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,

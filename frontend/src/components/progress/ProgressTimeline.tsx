@@ -70,7 +70,7 @@ export default function ProgressTimeline({summary, height = 240}: ProgressTimeli
             data-testid="progress-timeline"
             role="img"
             aria-label={`${chartLabel}. ${summaryText}`}
-            // ``minHeight`` is load-bearing: ``.dashboard-card``
+            // ``minHeight`` is load-bearing: ``DashboardCard``
             // is ``display: flex; flex-direction: column``, so a
             // flex child without an explicit min-height collapses
             // to 0 during the first layout pass — Recharts' own

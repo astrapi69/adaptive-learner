@@ -14,6 +14,7 @@ import {useEffect, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     EXAM_PASS_THRESHOLD_OPTIONS,
     LESSON_MODE_PREF_CHANGE_EVENT,
@@ -84,25 +85,22 @@ export default function LessonModeControl() {
     }, []);
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-lesson-mode"
+        <SettingsSection
+            title={t("settings.lesson_mode.title", "Lesson mode")}
+            testid="settings-section-lesson-mode"
         >
-            <h2 className="settings-section-title">
-                {t("settings.lesson_mode.title", "Lesson mode")}
-            </h2>
             <FormHint>
                 {t(
                     "settings.lesson_mode.hint",
                     "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions.",
                 )}
             </FormHint>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t("settings.lesson_mode.default_label", "Default mode")}
                 </span>
                 <select
-                    className="form-select"
+                    className="form-select min-h-11 rounded-md border border-input bg-background px-2 text-foreground"
                     value={mode}
                     onChange={(e) => {
                         const next = e.target.value as LessonMode;
@@ -118,15 +116,15 @@ export default function LessonModeControl() {
                     ))}
                 </select>
             </label>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t(
                         "settings.lesson_mode.threshold_label",
                         "Exam pass threshold",
                     )}
                 </span>
                 <select
-                    className="form-select"
+                    className="form-select min-h-11 rounded-md border border-input bg-background px-2 text-foreground"
                     value={threshold}
                     onChange={(e) => {
                         const next = Number(e.target.value) as ExamPassThreshold;
@@ -142,15 +140,15 @@ export default function LessonModeControl() {
                     ))}
                 </select>
             </label>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t(
                         "settings.lesson_mode.timed_difficulty_label",
                         "Timed mode difficulty",
                     )}
                 </span>
                 <select
-                    className="form-select"
+                    className="form-select min-h-11 rounded-md border border-input bg-background px-2 text-foreground"
                     value={difficulty}
                     onChange={(e) => {
                         const next = e.target.value as TimedDifficulty;
@@ -169,6 +167,6 @@ export default function LessonModeControl() {
                     ))}
                 </select>
             </label>
-        </section>
+        </SettingsSection>
     );
 }

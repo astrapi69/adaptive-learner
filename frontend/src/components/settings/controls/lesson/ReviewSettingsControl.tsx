@@ -8,6 +8,7 @@ import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     readExplanationsEnabled,
     setExplanationsEnabled,
@@ -34,16 +35,13 @@ export default function ReviewSettingsControl() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-review"
+        <SettingsSection
+            title={t("settings.section_review", "Review")}
+            testid="settings-section-review"
         >
-            <h2 className="settings-section-title">
-                {t("settings.section_review", "Review")}
-            </h2>
-            <label className="form-row form-row-toggle">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.explanations_enabled",
                             "Show error explanations",
@@ -58,14 +56,15 @@ export default function ReviewSettingsControl() {
                 </span>
                 <input
                     type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
                     data-testid="settings-explanations-toggle"
                     checked={enabled}
                     onChange={(e) => handle(e.target.checked)}
                 />
             </label>
-            <label className="form-row">
-                <span className="form-label-stack">
-                    <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.review_limit.label",
                             "Questions per review",
@@ -91,6 +90,6 @@ export default function ReviewSettingsControl() {
                     ))}
                 </select>
             </label>
-        </section>
+        </SettingsSection>
     );
 }

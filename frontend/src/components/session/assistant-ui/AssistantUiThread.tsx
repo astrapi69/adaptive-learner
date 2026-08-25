@@ -24,7 +24,7 @@
  *     cutover keeps the specs green.
  *
  * Phase 3a adds Voice parity with ``SessionChat``: dictation (``MicButton``)
- * writes into the assistant-ui composer via ``useComposerRuntime().setText``,
+ * writes into the assistant-ui composer via ``useAui().composer().setText``,
  * and each settled assistant bubble carries a read-aloud ``SpeechButton``. Both
  * buttons hide themselves when the browser lacks Web Speech or the user has the
  * feature off in Settings, so this never renders a broken control.
@@ -49,12 +49,15 @@ import {
     ComposerPrimitive,
     MessagePrimitive,
     ThreadPrimitive,
-    useComposerRuntime,
+    useAui,
+    useAuiState,
     useLocalRuntime,
-    useMessage,
     type AssistantRuntime,
     type TextMessagePartComponent,
 } from "@assistant-ui/react";
+
+import {buttonVariants} from "@/components/ui/button";
+import {cn} from "@/lib/utils";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
@@ -137,10 +140,10 @@ function AssistantMessage() {
     // assistant turn, so it needs the message's joined text and must wait until
     // the stream settles (no button on a still-running bubble). Both come from
     // the message store, not the per-part Text renderer.
-    const messageId = useMessage((message) => message.id);
-    const isRunning = useMessage((message) => message.status?.type === "running");
-    const text = useMessage((message) =>
-        message.content
+    const messageId = useAuiState((s) => s.message.id);
+    const isRunning = useAuiState((s) => s.message.status?.type === "running");
+    const text = useAuiState((s) =>
+        s.message.content
             .map((part) => (part.type === "text" ? part.text : ""))
             .join(""),
     );
@@ -162,16 +165,16 @@ function AssistantMessage() {
 
 /**
  * Dictation control for the assistant-ui composer. Lives inside
- * ``ComposerPrimitive.Root`` so ``useComposerRuntime`` resolves the thread
+ * ``ComposerPrimitive.Root`` so ``useAui().composer()`` resolves the thread
  * composer; each transcript (interim + final) overwrites the composer draft,
  * mirroring ``SessionChat``'s ``setDraft`` on ``onTranscript``. The user still
  * presses Send (or Enter) to submit.
  */
 function ComposerMic() {
-    const composer = useComposerRuntime();
+    const aui = useAui();
     return (
         <MicButton
-            onTranscript={(text) => composer.setText(text)}
+            onTranscript={(text) => aui.composer().setText(text)}
             testId="session-input"
         />
     );
@@ -286,21 +289,15 @@ export default function AssistantUiThread({
                 <ThreadPrimitive.Viewport className="chat-messages" data-testid="chat-messages">
                     <ThreadPrimitive.Empty>
                         <div
-                            className="chat-welcome"
+                            className="chat-welcome px-4 py-6 text-center italic text-[var(--fg-muted)]"
                             data-testid="chat-welcome"
-                            style={{
-                                padding: "1.5rem 1rem",
-                                textAlign: "center",
-                                color: "var(--fg-muted)",
-                                fontStyle: "italic",
-                            }}
                         >
                             {introTopic ? (
                                 <>
                                     <div data-testid="chat-intro-topic">
                                         {t("session.topic_label", "Topic")}: {introTopic}
                                     </div>
-                                    <div style={{marginTop: "0.5rem"}}>
+                                    <div className="mt-2">
                                         {t(
                                             "session.welcome_empty",
                                             "Ready to learn! Write your first message.",
@@ -330,7 +327,7 @@ export default function AssistantUiThread({
                     />
                     <ComposerMic />
                     <ComposerPrimitive.Send
-                        className="btn btn-primary"
+                        className={cn(buttonVariants(), "max-[769px]:min-w-16")}
                         data-testid="chat-send"
                     >
                         {t("session.send_message", "Send")}

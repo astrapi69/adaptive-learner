@@ -64,7 +64,10 @@ export default function ShareWizard(props: ShareWizardProps) {
         className="max-h-[90vh] overflow-y-auto"
       >
         <header className="share-wizard-header mb-4 flex flex-col gap-1">
-          <DialogTitle id="share-wizard-title" className="modal-title">
+          <DialogTitle
+            id="share-wizard-title"
+            className="m-0 text-[1.25rem] font-semibold"
+          >
             {t("content.wizard.title", "Share with the community")}
           </DialogTitle>
           <DialogDescription
@@ -88,7 +91,7 @@ export default function ShareWizard(props: ShareWizardProps) {
         {/* Step 4 — Share as a pull request + celebration */}
         {step === 4 && <ShareWizardStep4 wiz={wiz} />}
 
-        <div className="form-actions share-wizard-nav">
+        <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
           <Button
             type="button"
             variant="secondary"

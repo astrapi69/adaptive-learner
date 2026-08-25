@@ -72,6 +72,7 @@ import {
     type DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
 import {
+    buildSaveCopyInput,
     editSnapshot,
     mergeEditedLessonIntoSet,
     withPreservedSetBook,
@@ -85,7 +86,7 @@ import {
 } from "../../lib/content/lesson/book-to-lesson";
 import type {GeneratedBookLesson} from "../../lib/ai/generation/generate-book-lessons";
 import {downloadLessonJson} from "../../lib/content/lesson/lesson-export";
-import {nextCopySetId} from "../../lib/content/lesson/lesson-import";
+import {nextCopySetId} from "../../lib/content/lesson/fork/lesson-import";
 import {BookSteps, type BookFields} from "../../components/create-lesson/book";
 import {resolveActiveAiProvider} from "../../lib/ai/providers/resolve-provider";
 import {readLearnerState} from "../../lib/learning/learnerState";
@@ -613,22 +614,11 @@ export default function CreateLesson() {
                 )}`,
             };
             const copyInput = {meta: copyMeta, cards, exercises};
-            const lesson = buildLessonFromDraft(copyInput, {
-                theorySteps: preservedTheorySteps(
-                    editContext.originalSteps,
-                    copyMeta,
-                ),
-            });
             const existing = await listExistingUserSetIds();
             const setId = nextCopySetId(draftSetId(copyMeta), existing);
-            // #1989 — a copy of a book lesson keeps the same book reference.
-            const input = withPreservedSetBook(
-                buildUserSetInput(copyInput, lesson, {
-                    setId,
-                    origin: "imported",
-                }),
-                editContext.entry,
-            );
+            // #1740 / #2655 — the copy's derivation (variation_of + carried
+            // attribution) + the preserved book reference (#1989).
+            const {lesson, input} = buildSaveCopyInput(copyInput, editContext, setId);
             const entry = await getStorage().contentLoader.saveUserSet(input);
             setSavedLessonId(lesson.id);
             setSavedLesson(lesson);

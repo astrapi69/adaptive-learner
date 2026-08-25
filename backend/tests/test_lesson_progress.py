@@ -12,6 +12,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.openapi_metadata import iter_api_routes
 
 
 @pytest.fixture()
@@ -39,7 +40,7 @@ LESSON = "01-greetings.json"
 
 
 def test_router_paths_mounted(client: TestClient) -> None:
-    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    paths = {r.path for r in iter_api_routes(app)}
     assert "/api/users/{user_id}/lesson-progress" in paths
     assert (
         "/api/users/{user_id}/lesson-progress/{source_slug}/"

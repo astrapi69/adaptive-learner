@@ -15,6 +15,7 @@
  * future Ko-fi configuration genuinely disappears the channel can
  * be removed by deleting one entry from the array below.
  */
+import {Button} from "@/components/ui/button";
 
 interface DonationChannel {
     id: string;
@@ -61,51 +62,50 @@ export default function DonationSection({t}: Props) {
     return (
         <article
             data-testid="about-donations-section"
-            style={sectionStyle}
+            className="p-4 border border-[var(--border)] rounded-[8px] bg-[var(--surface)]"
         >
-            <h3 style={{marginTop: 0, marginBottom: 8}}>
+            <h3 className="mt-0 mb-2">
                 {t("about.donations_heading", "Support development")}
             </h3>
-            <p style={{marginTop: 0, opacity: 0.85, fontSize: "0.9rem"}}>
+            <p className="mt-0 opacity-85 text-[0.9rem]">
                 {t(
                     "about.donations_intro",
                     "Adaptive Learner is free and open-source. If it helps you, consider chipping in.",
                 )}
             </p>
             <ul
-                style={{listStyle: "none", padding: 0, margin: 0}}
+                className="list-none p-0 m-0"
                 data-testid="about-donations-list"
             >
                 {CHANNELS.map((channel) => (
                     <li
                         key={channel.id}
                         data-testid={`about-donation-${channel.id}`}
-                        style={{marginBottom: 8}}
+                        className="mb-2"
                     >
-                        <a
-                            href={channel.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`btn ${channel.primary ? "btn-primary" : "btn-secondary"}`}
-                            data-testid={`about-donation-${channel.id}-link`}
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: 8,
-                                marginRight: 8,
-                            }}
+                        <Button
+                            asChild
+                            variant={channel.primary ? "default" : "secondary"}
+                            className="mr-2"
                         >
-                            {channel.label}
-                            {channel.primary && (
-                                <span
-                                    data-testid="about-donation-preferred-badge"
-                                    className="rounded-[3px] px-[0.4em] py-[0.1em] text-[0.7rem] bg-[color-mix(in_srgb,var(--accent-fg)_22%,transparent)] text-[var(--accent-fg)]"
-                                >
-                                    {t("about.donations_primary", "preferred")}
-                                </span>
-                            )}
-                        </a>
-                        <small style={{opacity: 0.7}}>
+                            <a
+                                href={channel.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                data-testid={`about-donation-${channel.id}-link`}
+                            >
+                                {channel.label}
+                                {channel.primary && (
+                                    <span
+                                        data-testid="about-donation-preferred-badge"
+                                        className="rounded-[3px] px-[0.4em] py-[0.1em] text-[0.7rem] bg-[color-mix(in_srgb,var(--accent-fg)_22%,transparent)] text-[var(--accent-fg)]"
+                                    >
+                                        {t("about.donations_primary", "preferred")}
+                                    </span>
+                                )}
+                            </a>
+                        </Button>
+                        <small className="opacity-70">
                             {t(channel.description_key, channel.description_fallback)}
                         </small>
                     </li>
@@ -114,10 +114,3 @@ export default function DonationSection({t}: Props) {
         </article>
     );
 }
-
-const sectionStyle: React.CSSProperties = {
-    padding: 16,
-    border: "1px solid var(--border)",
-    borderRadius: 8,
-    background: "var(--surface)",
-};

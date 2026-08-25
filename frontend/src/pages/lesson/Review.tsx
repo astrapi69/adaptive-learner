@@ -201,7 +201,13 @@ export default function ReviewPage() {
                     <BookOpen size={16} aria-hidden="true" />
                     {t("review.back_to_dashboard", "Back to Dashboard")}
                 </button>
-                <h1>{lesson.title}</h1>
+                {/* #2703 — read live from ``t()`` rather than
+                    ``lesson.title``: the hook now captures the title once
+                    per fetch (a ref, so a translation catalog landing after
+                    first paint can't restart the session), so the fetched
+                    value can go stale if the catalog resolves after the
+                    English fallback was baked in. */}
+                <h1>{t("review.session_title", "Review session")}</h1>
                 <p className="lesson-description" data-testid="review-subtitle">
                     {/* #664 — the header MUST match the progress bar: both
                         read the actually-presented step count, never the raw
@@ -502,7 +508,7 @@ function ReviewSummary({
             onExit={onExit}
             testId="review-summary"
         >
-            <p className="review-summary-note">
+            <p className="review-summary-note text-sm text-fg-muted">
                 {t(
                     "review.summary.note",
                     "Element scores have been updated. Mastered elements will not appear in the next session.",
@@ -513,7 +519,7 @@ function ReviewSummary({
                     className="mt-2 flex flex-col items-start gap-2"
                     data-testid="review-summary-another"
                 >
-                    <p className="review-summary-note">
+                    <p className="review-summary-note text-sm text-fg-muted">
                         {t(
                             "review.summary_remaining",
                             "Still {n} due. Keep going?",
@@ -530,7 +536,7 @@ function ReviewSummary({
                 </div>
             )}
             <p
-                className="review-summary-note"
+                className="review-summary-note text-sm text-fg-muted"
                 data-testid="review-summary-repeat"
             >
                 {t(

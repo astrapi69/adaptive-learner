@@ -3,15 +3,6 @@
    EXP-008 / Phase 55E — feedback intensity control
    =============================================================*/
 @layer legacy { /* EXP-044 Tranche 2c-nav (#1597): utilities must win over this block */
-.form-row-fieldset {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
 /* Phase 58E — theme picker preview cards (Settings > Appearance). */
 .theme-picker-grid {
   display: grid;
@@ -122,13 +113,6 @@
 }
 
 /* Phase 55F — sound volume row */
-.form-row-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--space-1);
-}
-
 .sounds-volume-row {
   display: flex;
   align-items: center;
@@ -153,23 +137,16 @@
 
 @media (max-width: 600px) {
   /* .lesson-nav* responsive rules migrated to Tailwind (Phase B / B2). */
-  .lesson-summary-actions .btn {
-    width: 100%;
-  }
   .lesson-summary-breakdown-row {
     grid-template-columns: 1fr;
   }
   .lesson-summary-breakdown-score {
     grid-column: 1 / -1;
   }
-  /* Phase 64 — stack the suggestion cards vertically with a
-     full-width CTA so the 44px touch target spans the row. */
+  /* Phase 64 — stack the suggestion cards vertically (the CTA is a
+     shadcn Button and carries its own 44px touch target). */
   .lesson-next-step-card {
     flex-wrap: wrap;
-  }
-  .lesson-next-step-card .btn {
-    width: 100%;
-    justify-content: center;
   }
 }
 

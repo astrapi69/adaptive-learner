@@ -30,6 +30,7 @@ import { FEATURES } from "../../../features/featureConfig";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
 import { notify } from "../../../utils/notify";
+import { SettingsSection } from "../SettingsSection";
 
 const DEFAULT_REPOS_DIR = "~/.local/share/adaptive_learner/repos";
 
@@ -104,20 +105,17 @@ export default function LearningRepoSettingsSection() {
 
   if (loading || settings === null) {
     return (
-      <section
-        className="settings-section"
-        data-testid="learning-repo-settings-loading"
-      >
+      <SettingsSection testid="learning-repo-settings-loading">
         <p>{t("repo.settings.loading", "Loading…")}</p>
-      </section>
+      </SettingsSection>
     );
   }
 
   return (
-    <section className="settings-section" data-testid="learning-repo-settings">
-      <h2 className="settings-section-title">
-        {t("repo.settings.title", "Learning Repository")}
-      </h2>
+    <SettingsSection
+      testid="learning-repo-settings"
+      title={t("repo.settings.title", "Learning Repository")}
+    >
       <p className="m-0 text-sm text-[var(--fg-muted)]">
         {t(
           "repo.settings.description",
@@ -185,6 +183,6 @@ export default function LearningRepoSettingsSection() {
           {saving ? t("repo.settings.saving", "Saving…") : t("repo.settings.save", "Save settings")}
         </Button>
       </div>
-    </section>
+    </SettingsSection>
   );
 }

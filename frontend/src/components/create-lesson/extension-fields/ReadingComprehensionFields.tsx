@@ -9,6 +9,8 @@ import {Plus} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import SubQuestionEditor from "./SubQuestionEditor";
+import {AiSuggestButton} from "../fields";
+import {suggestPassageForQuestions} from "../../../lib/ai/suggest/exercise-suggest";
 import {blankSubQuestion, type WizardSubQuestion} from "../../../lib/exercises";
 
 type Translate = (key: string, fallback?: string) => string;
@@ -36,10 +38,18 @@ export default function ReadingComprehensionFields({
         onChange({passage, questions: questions.map((q, i) => (i === index ? next : q))});
     }
 
+    // Offer an AI passage only while the passage is still empty (the state a
+    // graded-quiz -> reading-comprehension conversion leaves it in) and at least
+    // one question exists to steer it — never over a passage the author wrote.
+    const questionPrompts = questions.map((question) => question.prompt);
+    const canSuggestPassage =
+        passage.trim().length === 0 &&
+        questionPrompts.some((prompt) => prompt.trim().length > 0);
+
     return (
         <div className="flex flex-col gap-3">
             <label className="flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t("create_lesson.extensions.edit.rc_passage_label", "Reading passage")}
                 </span>
                 <textarea
@@ -55,8 +65,28 @@ export default function ReadingComprehensionFields({
                     onChange={(e) => onChange({passage: e.target.value, questions})}
                 />
             </label>
+            {canSuggestPassage && (
+                <AiSuggestButton
+                    run={(provider) =>
+                        suggestPassageForQuestions(questionPrompts, provider)
+                    }
+                    isEmpty={(result) => result === null}
+                    onResult={(result) => {
+                        if (result) onChange({passage: result, questions});
+                    }}
+                    label={t(
+                        "create_lesson.suggest.passage",
+                        "Suggest a passage with AI",
+                    )}
+                    emptyLabel={t(
+                        "create_lesson.suggest.passage_empty",
+                        "No usable passage — write one by hand.",
+                    )}
+                    testId={`exercise-ext-rc-suggest-${id}`}
+                />
+            )}
 
-            <span className="form-label text-sm font-medium text-fg-primary">
+            <span className="text-sm font-medium text-fg-primary">
                 {t("create_lesson.extensions.edit.q_list_label", "Questions")}
             </span>
             <ul

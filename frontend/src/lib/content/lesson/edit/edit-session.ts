@@ -13,7 +13,14 @@
  */
 
 import {getStorage} from "../../../../storage";
-import {lessonToDraftInput} from "../draft-to-lesson";
+import {
+    buildLessonFromDraft,
+    buildUserSetInput,
+    lessonToDraftInput,
+    preservedTheorySteps,
+    type DraftLessonInput,
+} from "../draft-to-lesson";
+import {buildForkAttribution, withVariationOf} from "../fork/fork-provenance";
 import {migrateLegacyExercisePrompts} from "../exercise/legacy-prompt-migration";
 import type {LessonCardDraft, LessonMeta} from "../lesson-draft";
 import type {
@@ -178,4 +185,29 @@ export function withPreservedSetBook(
     entry: ContentSetEntry | undefined,
 ): SaveUserSetInput {
     return entry?.book ? {...input, book: entry.book} : input;
+}
+
+/** #1740 / #2655 — build the lesson + ``SaveUserSetInput`` for "Save as a
+ *  copy": the edited lesson rebuilt with preserved theory, ``variation_of``
+ *  stamped to record the fork, the new copy's set id, and the source set's
+ *  attribution carried forward. Kept out of the page component for the
+ *  same reason the rest of this module is (cohesion size gate). */
+export function buildSaveCopyInput(
+    copyInput: DraftLessonInput,
+    original: {lessonId: string; originalSteps: ContentLessonStep[]} & EditLessonSet,
+    setId: string,
+): {lesson: ContentLesson; input: SaveUserSetInput} {
+    const builtLesson = buildLessonFromDraft(copyInput, {
+        theorySteps: preservedTheorySteps(original.originalSteps, copyInput.meta),
+    });
+    const lesson = withVariationOf(builtLesson, original.lessonId);
+    const input = withPreservedSetBook(
+        buildUserSetInput(copyInput, lesson, {
+            setId,
+            origin: "imported",
+            attribution: buildForkAttribution(original.entry?.attribution, original.lessons),
+        }),
+        original.entry,
+    );
+    return {lesson, input};
 }

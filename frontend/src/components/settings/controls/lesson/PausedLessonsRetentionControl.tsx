@@ -11,6 +11,7 @@ import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import {SettingsSection} from "../../SettingsSection";
 import {
     RETENTION_OPTIONS,
     readRetentionDays,
@@ -28,24 +29,21 @@ export default function PausedLessonsRetentionControl() {
     };
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-section-paused-retention"
+        <SettingsSection
+            title={t(
+                "settings.paused_retention.title",
+                "Paused lesson retention",
+            )}
+            testid="settings-section-paused-retention"
         >
-            <h2 className="settings-section-title">
-                {t(
-                    "settings.paused_retention.title",
-                    "Paused lesson retention",
-                )}
-            </h2>
             <FormHint>
                 {t(
                     "settings.paused_retention.hint",
                     "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age.",
                 )}
             </FormHint>
-            <label className="form-row">
-                <span className="form-label">
+            <label className="flex flex-col gap-2">
+                <span className="text-[0.95rem] font-medium">
                     {t(
                         "settings.paused_retention.label",
                         "Keep paused lessons for",
@@ -63,6 +61,6 @@ export default function PausedLessonsRetentionControl() {
                     ))}
                 </select>
             </label>
-        </section>
+        </SettingsSection>
     );
 }

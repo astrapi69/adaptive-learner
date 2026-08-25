@@ -108,20 +108,24 @@ export default function SpeechButton({
         ? t("voice.stop_speaking", "Stop speaking")
         : t("voice.speak", "Read aloud");
 
+    const speakingClasses = speaking
+        ? "border-accent bg-[color-mix(in_srgb,var(--accent)_15%,transparent)] text-accent"
+        : "border-border bg-transparent text-fg-muted hover:bg-bg-elevated hover:text-fg-primary";
+
     return (
         <button
             type="button"
-            className={`speech-button ${speaking ? "speech-button--speaking" : ""} ${className ?? ""}`}
+            className={`inline-flex items-center gap-1.5 rounded-[6px] border px-2.5 py-1 text-[0.85rem] transition-colors duration-150 ${speakingClasses} ${className ?? ""}`}
             data-testid={testId ? `speech-button-${testId}` : "speech-button"}
             data-speaking={speaking ? "true" : "false"}
             onClick={onClick}
             aria-label={aria}
             title={tooltipsOn ? aria : undefined}
         >
-            <span className="speech-button__icon" aria-hidden="true">
+            <span className="text-[0.85rem] leading-none" aria-hidden="true">
                 {speaking ? "■" : "▶"}
             </span>
-            {label && <span className="speech-button__label">{label}</span>}
+            {label && <span className="leading-none">{label}</span>}
         </button>
     );
 }

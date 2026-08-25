@@ -15,6 +15,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
 import { ApiError } from "../../../api/client";
@@ -171,10 +172,10 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
   };
 
   return (
-    <section className="dashboard-card dashboard-card-wide" data-testid="notebooklm-section">
-      <h2 className="dashboard-card-title">
+    <DashboardCard as="section" wide data-testid="notebooklm-section">
+      <DashboardCardTitle>
         {t("notebooklm.section_title", "Study materials (NotebookLM-ready)")}
-      </h2>
+      </DashboardCardTitle>
 
       {questionsFeature.isDisabled && (
         <ApiKeyRequiredNotice
@@ -229,7 +230,7 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
 
       <div className="notebooklm-filter">
         <label>
-          <span className="form-label">
+          <span className="text-[0.95rem] font-medium">
             {t("notebooklm.filter_difficulty", "Filter by difficulty")}
           </span>
           <select
@@ -288,6 +289,6 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
           ))}
         </ul>
       )}
-    </section>
+    </DashboardCard>
   );
 }

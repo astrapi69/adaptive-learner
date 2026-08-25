@@ -44,6 +44,9 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
     setAuthorName,
     showName,
     setShowName,
+    foreignCredit,
+    removeForeignCredit,
+    setRemoveForeignCredit,
   } = wiz;
 
   return (
@@ -86,8 +89,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
         className="share-wizard-metadata flex flex-col gap-3"
         data-testid="share-wizard-metadata"
       >
-        <label className="form-row">
-          <span className="form-label">
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.wizard.edit_title", "Title")}
           </span>
           <Input
@@ -97,8 +100,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
             data-testid="share-wizard-edit-title"
           />
         </label>
-        <div className="form-row">
-          <span className="form-label" id="share-wizard-edit-source-label">
+        <div className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium" id="share-wizard-edit-source-label">
             {t("content.wizard.edit_source", "Source language (you speak)")}
           </span>
           <Select
@@ -125,8 +128,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
             </SelectContent>
           </Select>
         </div>
-        <div className="form-row">
-          <span className="form-label" id="share-wizard-edit-target-label">
+        <div className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium" id="share-wizard-edit-target-label">
             {t("content.wizard.edit_target", "Target language (you learn)")}
           </span>
           <Select
@@ -153,8 +156,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
             </SelectContent>
           </Select>
         </div>
-        <div className="form-row">
-          <span className="form-label" id="share-wizard-edit-level-label">
+        <div className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium" id="share-wizard-edit-level-label">
             {t("content.wizard.edit_level", "Level (CEFR)")}
           </span>
           <Select
@@ -266,8 +269,8 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
         className="share-wizard-author mt-4 flex flex-col gap-3"
         data-testid="share-wizard-author"
       >
-        <label className="form-row">
-          <span className="form-label">
+        <label className="flex flex-col gap-2">
+          <span className="text-[0.95rem] font-medium">
             {t("content.credit.name_label", "Your name (optional)")}
           </span>
           <Input
@@ -282,12 +285,13 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
           />
         </label>
         {authorName.trim() && (
-          <label className="form-row form-row-toggle">
-            <span className="form-label">
+          <label className="flex items-center justify-between gap-2">
+            <span className="text-[0.95rem] font-medium">
               {t("content.credit.show_name", "Show name in lesson")}
             </span>
             <input
               type="checkbox"
+              className="m-0 size-4 flex-none p-0"
               checked={showName}
               onChange={(e) => setShowName(e.target.checked)}
               data-testid="share-wizard-author-show"
@@ -301,6 +305,42 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
               "Your name will be shown in the lesson and the pull request.",
             )}
           </p>
+        )}
+        {/* #2656 — a carried-over FOREIGN credit (from an authored
+            original, or a #2655 fork) travels with the share by
+            default; schema 1.9 requires disclosing that before it
+            becomes visible, plus a one-click way to remove it. */}
+        {foreignCredit && (
+          <div
+            className="flex flex-col gap-2"
+            data-testid="share-wizard-foreign-credit"
+          >
+            <p className="text-sm text-fg-secondary">
+              {t(
+                "content.credit.foreign_notice",
+                "This content credits {author}. Their name travels when you share, you can remove it.",
+              ).replace("{author}", foreignCredit)}
+            </p>
+            {removeForeignCredit ? (
+              <p
+                className="text-sm text-fg-secondary"
+                data-testid="share-wizard-foreign-credit-removed"
+              >
+                {t("content.credit.foreign_removed", "Credits removed.")}
+              </p>
+            ) : (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="self-start"
+                onClick={() => setRemoveForeignCredit(true)}
+                data-testid="share-wizard-foreign-credit-remove"
+              >
+                {t("content.credit.foreign_remove", "Remove credits")}
+              </Button>
+            )}
+          </div>
         )}
       </div>
     </section>

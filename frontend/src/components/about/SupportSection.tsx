@@ -33,20 +33,13 @@ export default function SupportSection() {
 
     return (
         <div
-            className="settings-subsection"
+            className="settings-subsection w-full mt-6"
             data-testid="settings-support-section"
-            style={{marginTop: "1.5rem"}}
         >
-            <h3 style={{margin: "0 0 0.25rem", fontSize: "1rem"}}>
+            <h3 className="mt-0 mx-0 mb-1 text-[1rem]">
                 {t("settings.support.heading", "Support")}
             </h3>
-            <p
-                style={{
-                    margin: "0 0 0.75rem",
-                    fontSize: "0.875rem",
-                    color: "var(--fg-muted)",
-                }}
-            >
+            <p className="mt-0 mx-0 mb-3 text-[0.875rem] text-[var(--fg-muted)]">
                 {t(
                     "settings.support.description",
                     "Something not working as expected? Create a report of your recent actions to help the developer reproduce it. You review everything before it leaves your browser.",
@@ -57,7 +50,7 @@ export default function SupportSection() {
                 variant="outline"
                 onClick={openReport}
                 data-testid="settings-create-error-report"
-                style={{gap: 6}}
+                className="gap-1.5"
             >
                 <LifeBuoy size={16} />
                 {t("settings.support.create_report", "Create error report")}

@@ -561,6 +561,15 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar
 - [ ] ext:al-error-correction: Fehler finden + korrigieren
 - [ ] ext:al-reading-comprehension: Text + Fragen
+- [ ] ext:al-reading-comprehension Auflösung (#2633): nach "Antworten prüfen"
+      wird die richtige Multiple-Choice-Option GRÜN hervorgehoben - mit Häkchen
+      und Text-Badge, nicht durch Farbe allein. Hat man sie selbst gewählt,
+      steht dort "Richtig"; hat man daneben gegriffen, trägt die richtige
+      Option "Richtige Antwort" (grün, gestrichelter Rahmen) und die eigene
+      Wahl "Falsch" (rot). Bei Freitext-Fragen erscheint die Lösungszeile grün
+      getönt mit Häkchen statt als grauer Fließtext. Gleiche Farbsprache wie
+      bei den Paaren (Matching). In allen 12 Themes prüfen: der Text bleibt
+      auf der Tönung lesbar.
 - [ ] ext:al-graded-quiz: Bewertung + Ergebnisanzeige
 - [ ] ext:al-dictation (#1881): "Listen first" spielt den Clip, Transkription
       tippen; richtig / knapp daneben ("Almost!") / falsch zeigt die Lösung;
@@ -605,6 +614,91 @@ spätere Auswertung auf, statt ihn zu überschreiben oder zurückzusetzen.
       abgeschlossenen ersten) überstehen den Import. Eine ältere Sicherung
       ohne Durchgangsdaten importiert als impliziter Durchgang 1 (kein Crash)
 
+### Als Kopie bearbeiten - heruntergeladene Sets forken (#2654, EXP-046)
+
+Ort: Meine Inhalte (`/content`), Drei-Punkte-Menü eines HERUNTERGELADENEN
+(fremden) Sets - nicht bei eigenen "Meine Lektionen"-Sets, die haben direkt
+"Bearbeiten".
+
+- [ ] Ein heruntergeladenes Set öffnen -> im Drei-Punkte-Menü erscheint als
+      ERSTER Eintrag **"Als Kopie bearbeiten"**
+- [ ] Klick -> Bestätigungsdialog: Hinweis, dass das Original unverändert
+      und weiterhin herunterladbar bleibt, PLUS der Fortschritts-Hinweis
+      ("Eine Kopie startet ohne Lernfortschritt …")
+- [ ] Abbrechen im Dialog -> nichts passiert, kein neues Set wird angelegt
+- [ ] Bestätigen -> Toast "Als eigene Kopie gespeichert", die App wechselt
+      automatisch in den Lektionseditor, VORBEFÜLLT mit dem Inhalt des
+      Originals
+- [ ] Die neue Kopie erscheint danach unter "Meine Lektionen"; das
+      Original bleibt unverändert unter den heruntergeladenen Sets mit
+      unverändertem Status und bleibt weiterhin herunterladbar
+- [ ] Dieselbe Quelle ein zweites Mal als Kopie bearbeiten -> die zweite
+      Kopie bekommt eine EIGENE, kollisionsfreie ID (z. B. `...-copy-2`),
+      keine Überschreibung der ersten Kopie
+- [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
+      (Dexie-Modus) - der Fork muss in BEIDEN Modi funktionieren
+
+### Abstammung beim Fork - "Eigene Bearbeitung"-Badge + "basiert auf"-Credit (#2655, EXP-046)
+
+Ort: Import-Tab (`/content?tab=import`), Abschnitt "Meine Lektionen" - jede
+geforkte Kopie (egal ob per "Als Kopie bearbeiten", "Lektion importieren"
+oder "Als Kopie speichern" im Lektioneditor entstanden).
+
+- [ ] Ein heruntergeladenes Set (mit sichtbarem Autoren-Credit in einer
+      Lektion, z. B. "Beigetragen von …") per "Als Kopie bearbeiten" forken
+      -> die neue Kopie erscheint unter "Meine Lektionen" MIT dem Badge
+      **"Eigene Bearbeitung"** neben dem Titel
+- [ ] Darunter steht eine kompakte Zeile **"Basierend auf {Autor}"** -
+      Mauszeiger/Tooltip auf der Zeile zeigt den Hinweis, dass Angaben
+      selbst deklariert und nicht überprüft sind (KEIN Häkchen, KEIN
+      "verifiziert"-Badge)
+- [ ] Ein Set OHNE jeden Autoren-Credit forken -> Badge "Eigene Bearbeitung"
+      erscheint weiterhin, aber KEINE "Basierend auf"-Zeile (nichts zu
+      credititieren)
+- [ ] Eine SELBST erstellte, nie geforkte Lektion ("Meine Lektionen" ohne
+      vorherigen Import/Kopie-Schritt) zeigt WEDER das Badge NOCH eine
+      Credit-Zeile
+- [ ] Gleicher Ablauf über "Lektion importieren" (eine geteilte `.json`
+      mit Autoren-Credit importieren) -> dieselben zwei Anzeigen
+- [ ] Gleicher Ablauf über "Als Kopie speichern" im Lektioneditor (eine
+      bereits geforkte eigene Lektion erneut als Kopie speichern) -> die
+      neue Kopie trägt weiterhin denselben "basiert auf"-Credit (die
+      Kette wächst nicht unbegrenzt)
+- [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
+      (Dexie-Modus) - Badge + Credit-Zeile müssen in BEIDEN Modi erscheinen
+
+### Teilen-Assistent - Hinweis + Entfernen für mitgereiste Fremd-Credits (#2656, EXP-046)
+
+Ort: Teilen-Assistent (`ShareWizard`) Schritt 1, direkt unter dem
+bestehenden "Dein Name (optional)"-Block. Voraussetzung für einen
+sichtbaren Fremd-Credit: eine geforkte Lektion mit "basiert auf"-Credit
+(#2655) oder eine importierte Lektion, deren `contributed_by` bereits
+gesetzt ist, bevor der Assistent geöffnet wird.
+
+- [ ] Eine eigene, nie geforkte Lektion teilen -> KEIN
+      Fremd-Credit-Hinweis erscheint (nichts zu melden)
+- [ ] Eine geforkte Lektion mit Set-Attribution (#2655) teilen -> der
+      Hinweis "Dieser Inhalt nennt {Autor} als Urheber. Der Name reist
+      beim Teilen mit, du kannst ihn entfernen." erscheint, MIT dem
+      Namen aus der Attribution
+- [ ] Eine importierte Lektion mit gesetztem `contributed_by`, aber ohne
+      Set-Attribution teilen -> derselbe Hinweis, mit dem Namen aus
+      `contributed_by`
+- [ ] OHNE Klick auf "Credits entfernen" teilen -> der Fremd-Credit
+      reist im geteilten Inhalt mit (Standardverhalten, jetzt sichtbar
+      statt still)
+- [ ] Klick auf "Credits entfernen" -> Button verschwindet, Bestätigung
+      "Credits entfernt." erscheint; danach geteilt -> der Name taucht
+      NICHT mehr im geteilten Inhalt auf (das strukturelle
+      `variation_of` bleibt unberührt)
+- [ ] Eigenen Namen eintragen UND "Namen anzeigen" aktivieren, OHNE
+      Fremd-Credits zu entfernen -> der EIGENE Name gewinnt im geteilten
+      Inhalt, der Fremd-Credit-Hinweis bleibt sichtbar, aber wird beim
+      Teilen überschrieben (kein doppeltes Credit)
+- [ ] Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
+      (Dexie-Modus) - Hinweis + Entfernen-Knopf müssen in BEIDEN Modi
+      funktionieren
+
 ### Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +
@@ -617,6 +711,22 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 - [ ] Namenskollision: Drei-Wege-Dialog erscheint (Überschreiben /
       Als Kopie importieren / Abbrechen), KEIN stilles Überschreiben;
       "Als Kopie" erzeugt neue id + "(Kopie)"-Titel
+- [ ] **#2592 Überschreiben trägt den Lernfortschritt mit:** Set mit
+      eigener Lektion anlegen, eine Übung falsch beantworten (damit eine
+      Fehler-/Wiederholungszeile entsteht), das Set exportieren, in der
+      exportierten Datei EINEN Antworttext korrigieren (z. B. Tippfehler in
+      `free_text.accept[0]`), re-importieren → Kollisionsdialog →
+      "Überschreiben". Erwartung: Toast "N Wiederholungskarte(n) übertragen",
+      und die Fehlerhistorie zeigt die Zeile weiterhin (mit dem alten
+      Fehlerzähler) unter dem NEUEN Antworttext — nicht als frische Zeile
+      und nicht verschwunden. Vorher verwaiste die Zeile still.
+- [ ] **#2592 unsicherer Fall meldet statt zu schweigen:** dieselbe Übung,
+      aber in der Datei eine Übung LÖSCHEN (Positionen verschieben sich) →
+      "Überschreiben". Erwartung: Hinweis-Toast "… konnte(n) nicht
+      zweifelsfrei zugeordnet werden", kein stiller Verlust
+- [ ] **#2592 "Als Kopie" bleibt unberührt:** derselbe Ablauf, aber
+      "Als Kopie importieren" → das Original behält Fortschritt UND
+      Wiederholungskarten, die Kopie startet ohne beides
 - [ ] Teil-Import (ZIP mit kaputten Lektionen): gültige importieren,
       Warnung "N Lektion(en) übersprungen" wird angezeigt
 - [ ] Set mit NUR kaputten Lektionen: sauberer Fehler, kein Crash
@@ -967,6 +1077,81 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       (Freitext, Matching, Cloze, Bildauswahl) erscheint **kein** Auswahlfeld.
       Erwartung: der Lernfortschritt der umgewandelten Übung bleibt erhalten
       (gleicher Antwort-Schlüssel), Abbrechen verwirft die Umwandlung.
+- [ ] **Extension-Aufgabe umwandeln -> Freitext (EXP-050 Stufe 1, #2511):**
+      Eine **bestehende Lektion mit einer Diktat- oder Bildbeschreibungs-Übung
+      bearbeiten** (nicht der reine "Extension hinzufügen"-Flow). Im
+      Inline-Editor der Diktat-/Bildbeschreibungs-Zeile steht dasselbe
+      Auswahlfeld **"Aufgabentyp"** mit der Alternative **"Freitext"**. Auf
+      "Freitext" umstellen: der Editor **wechselt zum Freitext-Editor**, die
+      akzeptierten Transkriptionen/Antworten sind als akzeptierte Antworten
+      **vorbefüllt** (das Audio/Bild entfällt). Speichern -> die Lektion enthält
+      jetzt eine Freitext-Übung. **Abbrechen** nach dem Umschalten stellt die
+      **ursprüngliche Diktat-/Bildbeschreibungs-Übung wieder her**. Wichtig: Im
+      reinen "Extension-Aufgaben hinzufügen"-Flow (`ExtensionSteps`) erscheint
+      das Auswahlfeld **nicht** (dort ist ein Kern-Typ nicht gültig).
+- [ ] **Fehlerkorrektur + Lückentext umwandeln -> Freitext (EXP-050 Stufe 2, #2511):**
+      Beim Bearbeiten einer bestehenden Lektion:
+      - Eine **Fehlerkorrektur**-Übung (`ext:al-error-correction`) trägt dasselbe
+        "Aufgabentyp"-Auswahlfeld; "Freitext" wählen -> die akzeptierte Korrektur
+        ist als Antwort vorbefüllt, **keine Rückfrage** (schlüsselerhaltend).
+      - Ein **Lückentext** (Cloze, Modus Auswahl/Tippen) mit **genau einer
+        Lücke**: "Freitext" wählen -> vorbefüllt, **keine Rückfrage**.
+      - Ein **Lückentext mit mehreren Lücken**: "Freitext" wählen -> **es
+        erscheint ein Bestätigungsdialog** ("Aufgabentyp umwandeln?", rot),
+        weil nur die erste Antwort erhalten bleibt und der Lernfortschritt der
+        übrigen nicht mitgenommen wird. **Bestätigen** wandelt um (erste Lücke
+        als Freitext-Antwort), **Abbrechen** lässt den Lückentext unverändert.
+      - Ein **Multiselect-Lückentext** trägt **kein** Auswahlfeld (nicht
+        angeboten).
+- [ ] **Freitext umwandeln -> Multiple-Choice / Lückentext (EXP-050 Stufe 3, #2511):**
+      Beim Bearbeiten einer bestehenden Lektion eine **Freitext**-Übung öffnen.
+      Das "Aufgabentyp"-Auswahlfeld bietet jetzt **"Multiple Choice"** und
+      **"Cloze"** an.
+      - **-> Multiple Choice:** die akzeptierte Antwort wird die **richtige
+        Option**; sind im Freitext Distraktoren hinterlegt, füllen sie die
+        falschen Optionen (dann direkt gültig). Ohne Distraktoren steht **eine
+        leere Option** da und **"Speichern" ist gesperrt**, bis eine zweite,
+        andere Option eingetragen ist (der Validator-Hinweis erscheint). Keine
+        Rückfrage (schlüsselerhaltend).
+      - **-> Cloze:** es entsteht ein Ein-Lücken-Cloze (`___`) mit der Antwort in
+        der Lücke, direkt gültig; den Satz um die Lücke herum ergänzen und
+        speichern.
+      - Erwartung: `id`/`stable_id` unverändert, Lernfortschritt bleibt
+        (gleicher Antwort-Schlüssel).
+- [ ] **Benotetes Quiz <-> Leseverständnis umwandeln (EXP-050 Stufe 3b, #2511):**
+      Beim Bearbeiten einer bestehenden Lektion (Zeile im `ExerciseGenerator`,
+      nicht der reine "Extension hinzufügen"-Flow):
+      - **Benotetes Quiz -> Leseverständnis:** im "Aufgabentyp"-Feld
+        "Leseverständnis" wählen -> der Editor **bleibt der Extension-Editor**,
+        die Fragen bleiben, aber die **Passage ist leer** und **"Speichern" ist
+        gesperrt**, bis ein Text eingegeben ist. (Die Punkte pro Frage entfallen.)
+      - **Leseverständnis -> Benotetes Quiz:** "Benotetes Quiz" wählen -> die
+        Passage entfällt, jede Frage bekommt **1 Punkt** (direkt gültig), Bestehens-
+        schwelle 60 %.
+      - Randfall: hat eine Multiple-Choice-Frage **mehrere richtige** Optionen,
+        erscheint der rote Bestätigungsdialog (Schlüssel wandert); sonst keine
+        Rückfrage.
+- [ ] **Leere Felder nach Umwandlung per KI vorschlagen (EXP-050 Stufe 4, #2511):**
+      Nach einer Umwandlung (Stufe 3) das jeweils leere Zielfeld füllen lassen.
+      Der Knopf erscheint **nur solange das Feld leer** ist (bei Multiple Choice:
+      solange weniger als drei falsche Optionen vorhanden sind).
+      - **Multiple Choice -> "Falsche Antworten per KI vorschlagen":** die
+        richtige Antwort bleibt unberührt; die KI ergänzt die fehlenden falschen
+        Optionen. Bereits eingetippte Optionen und die richtige Antwort werden
+        **nie überschrieben**. Vorschläge, die der Antwort gleichen, zu kurz oder
+        Dubletten sind, werden verworfen ("lieber einer weniger"); bleibt nichts
+        übrig, erscheint der Hinweis, eine falsche Antwort von Hand zu ergänzen.
+      - **Lückentext -> "Satz per KI vorschlagen":** nur wenn der Satz noch der
+        blosse Platzhalter `___` ist -> die KI liefert einen Beispielsatz, in dem
+        die Antwort als `___` erscheint. Danach ist der Knopf weg.
+      - **Leseverständnis -> "Lesetext per KI vorschlagen":** nur bei leerer
+        Passage und mindestens einer Frage -> die KI schreibt einen Lesetext zu
+        den Fragen.
+      - **Ohne eigenen KI-Schlüssel (BYOK):** der Knopf ist ausgegraut, aber
+        antippbar; Tippen/Fokus zeigt einen Hinweis mit Link zu **AI-Einstellungen**
+        und löst **keine** KI-Anfrage aus.
+      - Unter jedem Knopf steht der Hinweis, dass es KI-Entwürfe sind, die vor dem
+        Speichern zu prüfen und anzupassen sind. (Sichtprüfung: Desktop + Mobil.)
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
@@ -1543,6 +1728,16 @@ Ort: Settings → Daten → Empfohlene Repositories.
 - [ ] Nach erfolgreichem Durchlauf (alle Lektionen fertig): Button wird
       ohne Reload deaktiviert
 
+### "KI fragen"-Button in Lektionen (#2693)
+- [ ] Standardmäßig sichtbar: unter jedem Theorie-Block und jeder Übung
+      erscheint der "KI fragen"-Button, auch ohne AI-Key (dann ausgegraut
+      mit BYOK-Hinweis-Popover statt versteckt)
+- [ ] Einstellungen → Lernen → Interaktion → "'KI fragen'-Button
+      anzeigen" ausschalten: der Button verschwindet in der laufenden
+      Lektion (Theorie und Übungen), ohne Reload
+- [ ] Toggle wieder einschalten: Button erscheint sofort wieder
+- [ ] Der Toggle-Zustand bleibt nach einem Reload erhalten (localStorage)
+
 ### KI-Schlüssel-Tresor Import (#1765 / #1769)
 - [ ] Settings → KI → "Konfigurierte Provider" → "Importieren" springt zu
       Settings → Daten und scrollt den KeyVault-Import-Block sichtbar (#1765)
@@ -1617,6 +1812,25 @@ Stueckgrenze, ein mittlerer Lauf hat 1551 Zeichen.
 - [ ] Zwischen den Stuecken entsteht kein hoerbares Stocken
 - [ ] Bekanntes Plattform-Limit, KEIN Fehler: Pause/Fortsetzen wirkt auf
       iOS Safari nicht (dort stoppt + startet die App neu)
+
+#### Vorlesen läuft weiter, wenn der Bildschirm automatisch ausgeht (#2666) - PFLICHT
+
+Der Screen Wake Lock hält den Bildschirm während des Vorlesens wach, damit
+der Inaktivitäts-Timer des Geräts die Sprachausgabe nicht unterbricht
+(iOS Safari + mobile Chrome-Browser stoppen `speechSynthesis`, sobald der
+Bildschirm automatisch ausgeht).
+
+- [ ] Auf dem iPhone (Safari) eine Lektion öffnen, Vorlesen starten und
+      das Gerät NICHT berühren
+- [ ] Bis kurz vor den normalen Sperr-Timeout des Geräts warten (Handy
+      liegen lassen): der Bildschirm bleibt an, solange vorgelesen wird
+- [ ] Das Vorlesen läuft ununterbrochen bis zum Ende des Textes weiter
+- [ ] Nach "Stop" bzw. Ende des Vorlesens darf der Bildschirm wieder
+      normal automatisch ausgehen (Wake Lock wird freigegeben)
+- [ ] Gleicher Ablauf auf einem Android-Gerät (Chrome)
+- [ ] Bekanntes Plattform-Limit, KEIN Fehler: ein manuelles Drücken des
+      Sperr-/Power-Buttons schaltet den Bildschirm trotzdem sofort aus und
+      stoppt die Wiedergabe - das kann keine Web-API verhindern
 
 #### App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 

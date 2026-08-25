@@ -81,7 +81,7 @@ export default function MethodDistribution({summary, height = 240}: MethodDistri
             aria-label={`${chartLabel}. ${summaryText}`}
             // ``minHeight`` is load-bearing — see ProgressTimeline
             // for the full explanation. Flex child of
-            // ``.dashboard-card`` collapses to 0 during the first
+            // ``DashboardCard`` collapses to 0 during the first
             // layout pass without this; Recharts' ResizeObserver
             // then measures the parent as 0 and emits the
             // "width(-1) height(-1)" warning.

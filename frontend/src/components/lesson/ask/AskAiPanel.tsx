@@ -28,6 +28,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 
 import { useApiKeyStatus } from "../../../hooks/settings/useApiKeyStatus";
+import { useAskAiVisible } from "../../../hooks/lesson/interaction/useAskAiVisible";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   buildAskAiMessages,
@@ -57,12 +58,16 @@ export default function AskAiPanel({
 }: AskAiPanelProps) {
   const { t, lang } = useI18n();
   const { ready, hasKey } = useApiKeyStatus();
+  const visible = useAskAiVisible();
   const [open, setOpen] = useState(false);
   const [hintOpen, setHintOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Settings opt-out (#2693) — the learner turned the button off.
+  if (!visible) return null;
 
   // Still resolving the key status — render nothing to avoid a flash.
   if (!ready) return null;

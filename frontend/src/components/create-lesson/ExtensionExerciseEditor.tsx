@@ -26,11 +26,19 @@ import {
     GRADED_QUIZ_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
+    conversionPreservesElementKeys,
+    convertExercise,
+    extensionConversionTargets,
     normalizeExtensionExercise,
     validateExtensionExercise,
+    type ConversionTargetType,
     type WizardSubQuestion,
 } from "../../lib/exercises";
-import {extensionEditErrorKey} from "../../lib/content/lesson/edit-error-keys";
+import {
+    exerciseTypeLabelKey,
+    extensionEditErrorKey,
+} from "../../lib/content/lesson/edit-error-keys";
+import {useConfirm} from "../../contexts/ConfirmContext";
 import {
     DictationFields,
     GradedQuizFields,
@@ -43,6 +51,16 @@ export interface ExtensionExerciseEditorProps {
     exercise: ContentLessonExercise;
     onSave: (updated: ContentLessonExercise) => void;
     onCancel: () => void;
+    /** When true, offer the Stage-1 ``-> free_text`` type conversion for a
+     *  convertible extension source (dictation / image-description). Passed
+     *  only where a resulting core exercise is valid — the ``ExerciseGenerator``
+     *  row, saved via the core lesson path — never the ext-only
+     *  ``ExtensionSteps`` flow (EXP-050, #2511). */
+    allowConversion?: boolean;
+    /** Commit a type conversion to the parent (the row swaps to the core
+     *  ``ExerciseEditor`` for the resulting ``free_text``). Required for the
+     *  conversion control to appear. */
+    onConvert?: (converted: ContentLessonExercise) => void;
 }
 
 type Patch = Partial<ContentLessonExercise>;
@@ -68,8 +86,11 @@ export default function ExtensionExerciseEditor({
     exercise,
     onSave,
     onCancel,
+    allowConversion = false,
+    onConvert,
 }: ExtensionExerciseEditorProps) {
     const {t} = useI18n();
+    const confirm = useConfirm();
     const [draft, setDraft] = useState<ContentLessonExercise>(exercise);
     const id = exercise.id;
 
@@ -80,6 +101,33 @@ export default function ExtensionExerciseEditor({
         patch({ext_payload: payload} as Patch);
     }
 
+    const conversionTargets =
+        allowConversion && onConvert ? extensionConversionTargets(draft) : [];
+
+    async function convertType(nextType: string) {
+        if (nextType === draft.type) return;
+        if (!conversionTargets.includes(nextType as ConversionTargetType)) return;
+        const converted = convertExercise(draft, nextType as ConversionTargetType);
+        // A key-moving conversion can strand review history; confirm first
+        // (EXP-050 Stage 2, #2511). The shipped ext sources here are all
+        // key-preserving, so this never fires today — it guards future ones.
+        if (!conversionPreservesElementKeys(draft, converted)) {
+            const proceed = await confirm({
+                title: t(
+                    "create_lesson.exercises.edit.convert_confirm_title",
+                    "Convert exercise type?",
+                ),
+                message: t(
+                    "create_lesson.exercises.edit.convert_confirm_message",
+                    "This exercise has more than one answer. Converting keeps only the first, and the review history for the others is not carried over.",
+                ),
+                variant: "danger",
+            });
+            if (!proceed) return;
+        }
+        onConvert?.(converted);
+    }
+
     const issue = validateExtensionExercise(draft);
 
     return (
@@ -88,7 +136,7 @@ export default function ExtensionExerciseEditor({
             data-testid={`exercise-ext-editor-${id}`}
         >
             <label className="form-field flex flex-col gap-1.5">
-                <span className="form-label text-sm font-medium text-fg-primary">
+                <span className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.extensions.edit.prompt_label",
                         "Instruction / prompt",
@@ -102,6 +150,38 @@ export default function ExtensionExerciseEditor({
                     onChange={(e) => patch({prompt: e.target.value})}
                 />
             </label>
+
+            {conversionTargets.length > 0 && (
+                <label
+                    className="form-field flex flex-col gap-1.5"
+                    data-testid={`exercise-ext-type-${id}`}
+                >
+                    <span className="text-sm font-medium text-fg-primary">
+                        {t("create_lesson.exercises.edit.convert_label", "Exercise type")}
+                    </span>
+                    <select
+                        className="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        value={draft.type}
+                        data-testid={`exercise-ext-type-select-${id}`}
+                        onChange={(e) => void convertType(e.target.value)}
+                    >
+                        <option value={draft.type}>
+                            {t(exerciseTypeLabelKey(draft.type), draft.type)}
+                        </option>
+                        {conversionTargets.map((target) => (
+                            <option key={target} value={target}>
+                                {t(exerciseTypeLabelKey(target), target)}
+                            </option>
+                        ))}
+                    </select>
+                    <FormHint as="p">
+                        {t(
+                            "create_lesson.exercises.edit.convert_hint",
+                            "Converting keeps the written answer and the learner's progress.",
+                        )}
+                    </FormHint>
+                </label>
+            )}
 
             {draft.type === CATEGORIZATION_EXT_TYPE && (
                 <CategorizationFields
@@ -174,7 +254,7 @@ export default function ExtensionExerciseEditor({
                 </FormHint>
             )}
 
-            <div className="form-actions">
+            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                 <Button
                     type="button"
                     variant="secondary"
@@ -233,7 +313,7 @@ function CategorizationFields({
 
     return (
         <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-            <legend className="form-label text-sm font-medium text-fg-primary">
+            <legend className="text-sm font-medium text-fg-primary">
                 {t(
                     "create_lesson.extensions.edit.cat_categories_label",
                     "Categories",
@@ -348,7 +428,7 @@ function ErrorCorrectionFields({
     return (
         <div className="flex flex-col gap-3">
             <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-                <legend className="form-label text-sm font-medium text-fg-primary">
+                <legend className="text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.extensions.edit.ec_tokens_label",
                         "Sentence words (mark the wrong one)",

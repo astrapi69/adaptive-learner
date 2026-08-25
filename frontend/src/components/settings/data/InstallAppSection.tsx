@@ -15,6 +15,7 @@ import {Download} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
+import {SettingsSection} from "../SettingsSection";
 import {useInstallAvailable} from "../../../hooks/system/useInstallAvailable";
 import {isStandalone, promptInstall} from "../../../lib/pwa/install";
 import {notify} from "../../../utils/notify";
@@ -39,13 +40,10 @@ export default function InstallAppSection() {
           );
 
     return (
-        <section
-            className="settings-section"
-            data-testid="settings-install-section"
+        <SettingsSection
+            title={t("settings.install.heading", "Install app")}
+            testid="settings-install-section"
         >
-            <h2 className="settings-section-title">
-                {t("settings.install.heading", "Install app")}
-            </h2>
             <p className="m-0 text-sm text-fg-muted">
                 {t(
                     "settings.install.description",
@@ -65,6 +63,6 @@ export default function InstallAppSection() {
                     ? t("settings.install.already", "Already installed")
                     : t("settings.install.button", "Install app")}
             </Button>
-        </section>
+        </SettingsSection>
     );
 }

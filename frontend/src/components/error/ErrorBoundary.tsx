@@ -1,5 +1,7 @@
 import {Component, type ErrorInfo, type ReactNode} from "react";
 
+import {Button} from "@/components/ui/button";
+
 interface ErrorBoundaryProps {
     children: ReactNode;
     /** Optional override for the fallback render. */
@@ -57,28 +59,15 @@ export default class ErrorBoundary extends Component<
             return (
                 <main
                     data-testid="error-boundary"
-                    style={{
-                        minHeight: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "1rem",
-                        padding: "2rem",
-                        textAlign: "center",
-                    }}
+                    className="flex min-h-full flex-col items-center justify-center gap-4 p-8 text-center"
                 >
-                    <h1 style={{margin: 0}}>Something broke.</h1>
-                    <p style={{margin: 0, opacity: 0.7, maxWidth: "32rem"}}>
+                    <h1 className="m-0">Something broke.</h1>
+                    <p className="m-0 max-w-[32rem] opacity-70">
                         {error.message}
                     </p>
-                    <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={this.handleReload}
-                    >
+                    <Button type="button" onClick={this.handleReload}>
                         Reload
-                    </button>
+                    </Button>
                 </main>
             );
         }
