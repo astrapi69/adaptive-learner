@@ -517,6 +517,9 @@ css-identity-ref: ## EXP-044 concern-split (#1655): build + store the byte-ident
 css-identity-check: ## EXP-044 concern-split (#1655): build + byte-compare the emitted CSS against the stored reference
 	bash scripts/check-css-identity.sh check
 
+check-dead-code: ## Dead-code ratchet (#2741): vulture (backend+plugins) + knip (frontend), list baseline
+	cd backend && poetry run python ../scripts/check_dead_code.py
+
 check-dead-classnames: ## Usage-side gates: dead classNames (#1491) + render-unstyled archetype (all-dead className, #1892)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
 	cd frontend && VITE_STORAGE_MODE=dexie bun run build
