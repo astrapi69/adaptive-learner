@@ -11,6 +11,10 @@ alwaysApply: false
 
 # Implementation Workflow
 
+Repeat-task prompt templates (endpoint, plugin service, bugfix, i18n batch)
+live in docs/prompts/ (#2742) - start recurring assignments from those
+instead of re-deriving the PFLICHT chain per session.
+
 ## Session start
 
 On the first message of a session:
