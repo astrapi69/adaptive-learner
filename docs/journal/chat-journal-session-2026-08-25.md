@@ -40,3 +40,9 @@
 - 12 PRs gemergt (#2710 #2713 #2714 #2716 #2720 #2722 #2740 #2745 #2747 #2749 + #2708-Reparatur + dieser), 1 PR superseded geschlossen (#2718).
 - 10 Issues geschlossen (#2704 #2712 #2715 #2717 #2719 #2721 #2739 #2744 #2748 + #2703 via Cloud-PR #2711), 5 neue offen (#2741 #2742 #2743 #2746 + —).
 - Release v2.13.0 vollständig durch alle Pflicht-Gates.
+
+## AI-Metriken (#2743)
+- aufgaben: 12
+- direkt-gruen: 7
+- korrektur-runden: 7
+- praemissen-korrekturen: 3

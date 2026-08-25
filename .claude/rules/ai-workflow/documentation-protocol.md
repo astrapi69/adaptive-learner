@@ -183,6 +183,9 @@ A pre-commit hook (`roadmap-archive-reminder` in `.pre-commit-config.yaml`) prin
 ## End-of-session flow
 
 1. Write a chat-journal entry covering all changes from the session.
+   Optionally append the ``## AI-Metriken (#2743)`` block (format +
+   definitions: `scripts/ai_metrics.py`; aggregate: `make ai-metrics`) -
+   optional by design, absence is reported as coverage, never an error.
 2. At phase completion: extend docs/CHANGELOG.md, bump the CLAUDE.md version.
 3. Check whether CLAUDE.md, CONCEPT.md, ROADMAP.md, API.md or lessons-learned.md need updates.
 4. Commit everything: `docs: update chat journal and documentation`
