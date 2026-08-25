@@ -82,6 +82,7 @@ no_rule:
   mutation-frontend.yml: informational report behind ENABLE_NIGHTLY_MUTATION
   visual-regression.yml: produces baselines; the duty to carry them is visual-baseline-gate.yml
   visual-baseline-sync.yml: housekeeping that pushes CI-rendered baselines onto the PR branch
+  dead-code.yml: night-shift dead-code report (#2741, vulture+knip list baseline); findings are detector claims, deletion PRs verify individually (#2486)
   manual-automation.yml: executes the manual test plan, does not gate a rule
   deploy-gh-pages.yml: deployment
   deploy-preview.yml: deployment

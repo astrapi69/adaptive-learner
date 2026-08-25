@@ -25,6 +25,13 @@
 #              make_target / script_exists / called_in / no_warn
 
 checks:
+  - id: dead-code-ratchet
+    verifies: no NEW unused Python functions/methods/classes (vulture, app+plugins one scope) or TS exports/types (knip) beyond the tracked list baseline (#2741)
+    rule: none (night-shift report; deletion discipline lives in the #2486 lesson)
+    status: active
+    wired_in: make check-dead-code; scripts/check_dead_code.py; .github/workflows/dead-code.yml
+    probe: make_target=check-dead-code
+
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
