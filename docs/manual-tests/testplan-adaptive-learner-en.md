@@ -494,6 +494,18 @@ preview delivery). In the regular build the mode does not exist.
       (the report came from there). Bar, stars, message and XP show the final
       state after correction.
 
+### "Why you missed these" shows the question (#2757)
+- [ ] Play a lesson with at least one wrongly answered element (explanations
+      enabled in Settings > Learning). In the "Why you missed these" section,
+      each answer comparison carries a "Question:" line above it showing what
+      was asked (the exercise prompt, the sentence with "___" for cloze, the
+      asked term for matching) - not just "Your answer" / "Correct".
+- [ ] Matching exercise with one wrong pair: the question shown is the asked
+      term (the pair's left side), never an internal ID.
+- [ ] When the question cannot be resolved (e.g. the content was updated in
+      the meantime), the entry renders as before without a question line -
+      no error, no empty line.
+
 ### One collapsed mistakes section (#2496)
 - [ ] Play a lesson with at least one mistake. On the summary the
       "Fix your mistakes (N)" section appears COLLAPSED: NO text field has

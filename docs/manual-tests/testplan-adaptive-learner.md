@@ -529,6 +529,19 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       hinzugefügten Symbol (der Befund kam von dort). Balken, Sterne, Botschaft
       und XP zeigen den Endstand nach der Korrektur.
 
+### "Warum du diese verpasst hast" zeigt die Frage (#2757)
+- [ ] Eine Lektion mit mindestens einem falsch beantworteten Element spielen
+      (Erklärungen in Einstellungen > Lernen aktiv). Im Bereich "Warum du
+      diese verpasst hast" steht über jedem Antwort-Vergleich die Zeile
+      "Frage:" mit dem, was gefragt war (Aufgabentext, bei Lückentext der
+      Satz mit "___", bei Zuordnen der abgefragte Begriff) - nicht nur
+      "Deine Antwort" / "Richtig".
+- [ ] Zuordnen-Übung mit einem falschen Paar: Als Frage erscheint der
+      abgefragte Begriff (linke Seite des Paars), niemals eine interne ID.
+- [ ] Kann die Frage nicht ermittelt werden (z. B. Inhalt inzwischen
+      aktualisiert), erscheint der Eintrag wie bisher ohne Frage-Zeile -
+      kein Fehler, keine leere Zeile.
+
 ### Ein Fehler-Bereich, zugeklappt (#2496)
 - [ ] Eine Lektion mit mindestens einem Fehler spielen. Auf der
       Zusammenfassung erscheint der Bereich "Fehler ausbessern (N)"

@@ -372,6 +372,7 @@ adaptive:
 review:
   your_answer: "Cevabın:"
   correct_answer: "Doğru:"
+  question_label: "Soru:"
   summary_corrected: "{total} işlemden {corrected} tanesi düzeltildi"
   summary_trend: "Güzel - zayıf noktaların güçleniyor."
   summary_next: "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner."
