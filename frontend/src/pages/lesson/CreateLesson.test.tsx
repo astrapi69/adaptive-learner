@@ -161,8 +161,21 @@ describe("CreateLesson — card step gate + draft", () => {
         fireEvent.click(screen.getByTestId("card-add-button"));
     }
 
+    it("preselects the blank template so the collapsed disclosure is honest (#2755)", () => {
+        renderPage();
+        expect(
+            screen.getByTestId("template-blank").getAttribute("aria-pressed"),
+        ).toBe("true");
+        expect(
+            screen.getByTestId("create-lesson-templates-toggle"),
+        ).toHaveTextContent("Blank Lesson");
+    });
+
     it("pre-fills cards from a template", () => {
         renderPage();
+        // #2755 - the template section starts collapsed; open it the way
+        // a user does before picking a card.
+        fireEvent.click(screen.getByTestId("create-lesson-templates-toggle"));
         fireEvent.click(screen.getByTestId("template-vocabulary"));
         fireEvent.change(screen.getByTestId("create-lesson-title"), {
             target: {value: "Vocab lesson"},

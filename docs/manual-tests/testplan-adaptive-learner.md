@@ -739,7 +739,17 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 
 ### Create-Lesson-Wizard (`/create-lesson`, v2.3.0)
 
-- [ ] **Buchtext-Pfad (#1745):** Schritt 1 → Karte "Wissenslektion aus
+- [ ] **Schritt-1-Reihenfolge + Vorlagen-Aufklapper (#2755):** In Schritt 1
+      steht das Pflichtfeld **Titel als erstes** (direkt unter der
+      Überschrift, Fokus liegt darin). Die Vorlagen-Auswahl ist dahinter
+      als Aufklapper "Aus einer Vorlage starten" **standardmäßig
+      zugeklappt**; die zugeklappte Zeile zeigt die aktuelle Wahl
+      ("· Leere Lektion" ist vorausgewählt). Aufklappen zeigt die vier
+      Vorlagen-Karten plus "Wissenslektion aus Text" und "Erweiterte
+      Aufgabentypen"; eine Karte wählen markiert sie gedrückt und die
+      zugeklappte Zeile zeigt danach die neue Wahl.
+- [ ] **Buchtext-Pfad (#1745):** Schritt 1 → Vorlagen-Aufklapper öffnen →
+      Karte "Wissenslektion aus
       Text" (unter der Template-Auswahl) startet einen 3-Schritt-Flow
       (Metadaten → Buchtext → Review); Text einfügen + Generieren → KI
       formuliert Theorie in eigenen Worten + erzeugt Übungen; OHNE

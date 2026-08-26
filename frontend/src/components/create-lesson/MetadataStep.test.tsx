@@ -7,7 +7,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
@@ -28,7 +28,7 @@ const meta: LessonMeta = {
 
 function setup(
     over: Partial<LessonMeta> = {},
-    props: {sameLanguage?: boolean} = {},
+    props: {sameLanguage?: boolean; selectedTemplate?: "blank" | null} = {},
 ) {
     render(
         <MetadataStep
@@ -38,7 +38,7 @@ function setup(
             sameLanguage={props.sameLanguage ?? false}
             onUpdate={vi.fn()}
             onApplyTemplate={vi.fn()}
-            selectedTemplate={null}
+            selectedTemplate={props.selectedTemplate ?? null}
             onStartBookMode={vi.fn()}
             onStartExtensions={vi.fn()}
             t={emptyCatalogT}
@@ -116,5 +116,41 @@ describe("MetadataStep content domain (#1716)", () => {
         expect(
             screen.queryByTestId("create-lesson-domain-hint"),
         ).not.toBeInTheDocument();
+    });
+});
+
+describe("MetadataStep template disclosure (#2755)", () => {
+    it("starts collapsed with the body hidden and the toggle unexpanded", () => {
+        setup();
+        expect(
+            screen.getByTestId("create-lesson-templates-toggle").getAttribute("aria-expanded"),
+        ).toBe("false");
+        expect(screen.getByTestId("create-lesson-templates-body")).toHaveAttribute("hidden");
+    });
+
+    it("shows the selected template as the collapsed summary", () => {
+        setup({}, {selectedTemplate: "blank"});
+        expect(
+            screen.getByTestId("create-lesson-templates-toggle"),
+        ).toHaveTextContent("Blank Lesson");
+    });
+
+    it("opens on toggle click and unhides the template cards", () => {
+        setup();
+        fireEvent.click(screen.getByTestId("create-lesson-templates-toggle"));
+        expect(
+            screen.getByTestId("create-lesson-templates-toggle").getAttribute("aria-expanded"),
+        ).toBe("true");
+        expect(screen.getByTestId("create-lesson-templates-body")).not.toHaveAttribute("hidden");
+    });
+
+    it("renders the required title field BEFORE the template section", () => {
+        setup();
+        const step = screen.getByTestId("create-lesson-step-1");
+        const title = screen.getByTestId("create-lesson-title-field");
+        const templates = screen.getByTestId("create-lesson-templates");
+        const order = title.compareDocumentPosition(templates);
+        expect(order & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(step).toContainElement(title);
     });
 });

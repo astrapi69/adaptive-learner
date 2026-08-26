@@ -6,9 +6,10 @@
  * come via props.
  */
 
-import type {Ref} from "react";
-import {Blocks, BookOpen, Info} from "lucide-react";
+import {useState, type Ref} from "react";
+import {Blocks, BookOpen, ChevronDown, ChevronRight, Info} from "lucide-react";
 
+import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {cn} from "@/lib/utils";
 import {
@@ -99,6 +100,7 @@ export default function MetadataStep({
     onStartBookMode,
     t,
 }: MetadataStepProps) {
+    const [templatesOpen, setTemplatesOpen] = useState(false);
     // #1716 — a knowledge (non-language) domain collapses the source/target
     // pair to a single content language and offers a level-less shape.
     const knowledgeDomain = isKnownContentDomain(meta.domain);
@@ -112,16 +114,97 @@ export default function MetadataStep({
                 {t("create_lesson.meta.heading", "Lesson details")}
             </h2>
 
+            <label
+                className="flex flex-col gap-1.5"
+                data-testid="create-lesson-title-field"
+            >
+                <span className="text-sm font-medium text-fg-primary">
+                    {t("create_lesson.meta.title_label", "Title")} *
+                </span>
+                <Input
+                    ref={titleInputRef}
+                    type="text"
+                    data-testid="create-lesson-title"
+                    // #2036 — mark the field invalid with the shared --error
+                    // token (same token as the message below) so the required
+                    // state is visible, not conveyed by the text alone.
+                    className={cn(
+                        showError &&
+                            titleMissing &&
+                            "border-[var(--error)] focus-visible:ring-[var(--error)]",
+                    )}
+                    aria-invalid={showError && titleMissing ? true : undefined}
+                    aria-describedby={
+                        showError && titleMissing
+                            ? "create-lesson-title-error"
+                            : undefined
+                    }
+                    value={meta.title}
+                    placeholder={t(
+                        "create_lesson.meta.title_placeholder",
+                        "My Lesson",
+                    )}
+                    onChange={(e) => onUpdate("title", e.target.value)}
+                    autoFocus
+                />
+                {showError && titleMissing && (
+                    <span
+                        id="create-lesson-title-error"
+                        className="m-0 text-sm font-medium text-[var(--error)]"
+                        data-testid="create-lesson-title-error"
+                        role="alert"
+                    >
+                        {t(
+                            "create_lesson.meta.title_required",
+                            "A title is required.",
+                        )}
+                    </span>
+                )}
+            </label>
+
             <div
                 className="create-lesson-templates flex flex-col gap-2"
                 data-testid="create-lesson-templates"
             >
-                <p className="text-sm font-medium text-fg-primary">
+                {/* #2755 - the template section starts COLLAPSED so the
+                    required title leads the form; the in-house disclosure
+                    idiom (LessonOptionsPanel): Button + aria-expanded +
+                    hidden body, collapsed summary shows the current pick. */}
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="min-h-11 justify-start gap-1.5 px-2 text-xs font-medium"
+                    aria-expanded={templatesOpen}
+                    aria-controls="create-lesson-templates-body"
+                    onClick={() => setTemplatesOpen((v) => !v)}
+                    data-testid="create-lesson-templates-toggle"
+                >
+                    {templatesOpen ? (
+                        <ChevronDown aria-hidden="true" className="size-4" />
+                    ) : (
+                        <ChevronRight aria-hidden="true" className="size-4" />
+                    )}
                     {t(
                         "create_lesson.templates.heading",
                         "Start from a template",
                     )}
-                </p>
+                    {!templatesOpen && selectedTemplate && (
+                        <span className="font-normal text-fg-muted">
+                            {"\u00b7 "}
+                            {t(
+                                `create_lesson.templates.${selectedTemplate}.title`,
+                                TEMPLATE_FALLBACKS[selectedTemplate].title,
+                            )}
+                        </span>
+                    )}
+                </Button>
+                <div
+                    id="create-lesson-templates-body"
+                    hidden={!templatesOpen}
+                    className="flex flex-col gap-2"
+                    data-testid="create-lesson-templates-body"
+                >
                 <div className="template-cards grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {LESSON_TEMPLATE_KEYS.map((key) => (
                         <button
@@ -200,55 +283,9 @@ export default function MetadataStep({
                         </span>
                     </span>
                 </button>
+                </div>
             </div>
 
-            <label
-                className="flex flex-col gap-1.5"
-                data-testid="create-lesson-title-field"
-            >
-                <span className="text-sm font-medium text-fg-primary">
-                    {t("create_lesson.meta.title_label", "Title")} *
-                </span>
-                <Input
-                    ref={titleInputRef}
-                    type="text"
-                    data-testid="create-lesson-title"
-                    // #2036 — mark the field invalid with the shared --error
-                    // token (same token as the message below) so the required
-                    // state is visible, not conveyed by the text alone.
-                    className={cn(
-                        showError &&
-                            titleMissing &&
-                            "border-[var(--error)] focus-visible:ring-[var(--error)]",
-                    )}
-                    aria-invalid={showError && titleMissing ? true : undefined}
-                    aria-describedby={
-                        showError && titleMissing
-                            ? "create-lesson-title-error"
-                            : undefined
-                    }
-                    value={meta.title}
-                    placeholder={t(
-                        "create_lesson.meta.title_placeholder",
-                        "My Lesson",
-                    )}
-                    onChange={(e) => onUpdate("title", e.target.value)}
-                    autoFocus
-                />
-                {showError && titleMissing && (
-                    <span
-                        id="create-lesson-title-error"
-                        className="m-0 text-sm font-medium text-[var(--error)]"
-                        data-testid="create-lesson-title-error"
-                        role="alert"
-                    >
-                        {t(
-                            "create_lesson.meta.title_required",
-                            "A title is required.",
-                        )}
-                    </span>
-                )}
-            </label>
 
             <label className="flex flex-col gap-1.5">
                 <span className="text-sm font-medium text-fg-primary">

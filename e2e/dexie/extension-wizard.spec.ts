@@ -42,6 +42,7 @@ test.describe("Create-Lesson extension wizard (#1852)", () => {
         await page.getByTestId("create-lesson-title").fill("E2E extensions");
 
         // Enter the extension path from the step-1 template card.
+        await page.getByTestId("create-lesson-templates-toggle").click();
         await page.getByTestId("template-extensions").click();
         await expect(
             page.getByTestId("create-lesson-extension-step"),

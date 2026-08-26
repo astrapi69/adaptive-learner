@@ -368,6 +368,7 @@ async function gotoBookUploadPicker(page: Page): Promise<boolean> {
         await page.getByTestId("create-lesson-draft-fresh").click();
     }
     await page.getByTestId("create-lesson-title").fill("Lernpsychologie");
+    await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-knowledge-from-text").click();
     await expect(page.getByTestId("create-lesson-book-step")).toBeVisible({
         timeout: 20_000,

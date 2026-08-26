@@ -73,6 +73,7 @@ test.describe("#2036 title validation scrolled into view (mobile 375px)", () => 
         page,
     }) => {
         await openFresh(page);
+        await page.getByTestId("create-lesson-templates-toggle").click();
         const trigger = page.getByTestId("template-knowledge-from-text");
         await trigger.scrollIntoViewIfNeeded();
         await trigger.click();
@@ -87,6 +88,7 @@ test.describe("#2036 title validation scrolled into view (mobile 375px)", () => 
         page,
     }) => {
         await openFresh(page);
+        await page.getByTestId("create-lesson-templates-toggle").click();
         const trigger = page.getByTestId("template-extensions");
         await trigger.scrollIntoViewIfNeeded();
         await trigger.click();
