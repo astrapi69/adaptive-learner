@@ -399,6 +399,7 @@
   "review": {
     "your_answer": "A sua resposta:",
     "correct_answer": "Correto:",
+    "question_label": "Pergunta:",
     "summary_corrected": "{corrected} de {total} corrigidos",
     "summary_trend": "Boa - os seus pontos fracos estão a melhorar.",
     "summary_next": "Os elementos dominados saem; os restantes voltam em breve para revisão.",

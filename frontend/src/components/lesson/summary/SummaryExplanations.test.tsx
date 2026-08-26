@@ -15,9 +15,36 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { SummaryExplanations } from "./LessonSummarySections";
-import type { ElementError } from "../../../storage/types";
+import type { ContentLesson, ElementError } from "../../../storage/types";
 
 const t = (_key: string, fallback?: string) => fallback ?? _key;
+
+/** A lesson whose one free_text exercise matches the ``ex-1`` fixture rows,
+ *  so the question line (#2757) can resolve its prompt. */
+function makeLesson(prompt: string): ContentLesson {
+    return {
+        id: "lesson-1",
+        title: "Lesson 1",
+        description: null,
+        estimated_minutes: 10,
+        cards: [],
+        steps: [
+            {
+                id: "step-ex-1",
+                type: "exercise",
+                title: null,
+                exercise: {
+                    id: "ex-1",
+                    type: "free_text",
+                    prompt,
+                    accept: ["días"],
+                    card_ids: [],
+                    distractors: [],
+                },
+            },
+        ],
+    };
+}
 
 function makeError(overrides: Partial<ElementError>): ElementError {
     return {
@@ -105,6 +132,79 @@ describe("SummaryExplanations", () => {
         expect(screen.getByTestId("lesson-summary-explain-e-wrong")).toBeInTheDocument();
         expect(
             screen.queryByTestId("lesson-summary-explain-e-correct"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("shows the question above the answer diff when the lesson resolves it (#2757)", () => {
+        const errors = [
+            makeError({
+                element_key: "días",
+                user_answer: "Dias",
+                correct_answer: "días",
+                correct_streak: 0,
+                error_count: 1,
+            }),
+        ];
+        render(
+            <SummaryExplanations
+                sessionErrors={errors}
+                lesson={makeLesson("Translate: days")}
+                t={t}
+            />,
+        );
+        const question = screen.getByTestId(
+            `lesson-summary-explain-question-${errors[0].id}`,
+        );
+        expect(question).toHaveTextContent("Question:");
+        expect(question).toHaveTextContent("Translate: days");
+    });
+
+    it("keeps the answer-only rendering when no lesson is passed", () => {
+        const errors = [
+            makeError({
+                element_key: "días",
+                user_answer: "Dias",
+                correct_answer: "días",
+                correct_streak: 0,
+                error_count: 1,
+            }),
+        ];
+        render(<SummaryExplanations sessionErrors={errors} t={t} />);
+        expect(
+            screen.getByTestId(`lesson-summary-explain-${errors[0].id}`),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId(
+                `lesson-summary-explain-question-${errors[0].id}`,
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it("keeps the answer-only rendering when the error's exercise is not in the lesson", () => {
+        const errors = [
+            makeError({
+                exercise_id: "ex-gone",
+                element_key: "días",
+                user_answer: "Dias",
+                correct_answer: "días",
+                correct_streak: 0,
+                error_count: 1,
+            }),
+        ];
+        render(
+            <SummaryExplanations
+                sessionErrors={errors}
+                lesson={makeLesson("Translate: days")}
+                t={t}
+            />,
+        );
+        expect(
+            screen.getByTestId(`lesson-summary-explain-${errors[0].id}`),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId(
+                `lesson-summary-explain-question-${errors[0].id}`,
+            ),
         ).not.toBeInTheDocument();
     });
 });

@@ -687,7 +687,11 @@ export default function LessonSummary({
         if (id === "correction") {
           return (
             <Fragment key={id}>
-              <SummaryExplanations sessionErrors={sessionErrors} t={t} />
+              <SummaryExplanations
+                sessionErrors={sessionErrors}
+                lesson={lesson}
+                t={t}
+              />
               {sectionNodes[id]}
             </Fragment>
           );
@@ -700,7 +704,11 @@ export default function LessonSummary({
           — it is gated by its own toggle and must never be lost with correction
           off. */}
       {!isSummarySectionEnabled(sections, "correction") && (
-        <SummaryExplanations sessionErrors={sessionErrors} t={t} />
+        <SummaryExplanations
+          sessionErrors={sessionErrors}
+          lesson={lesson}
+          t={t}
+        />
       )}
 
       {/* Essential completion navigation — never toggleable, never in the
