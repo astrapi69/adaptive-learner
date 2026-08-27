@@ -584,9 +584,27 @@ With rules, it is a legitimate engineering practice that happens to be faster th
 
 The rules are not restrictions on the AI. They are restrictions on the chaos that speed creates.
 
+## What This Article Does Not Cover
+
+These rules focus on the discipline of AI-assisted development. Several adjacent topics were left out because they each
+warrant their own deep dive:
+
+- **Multi-agent coordination:** rules for when multiple AI agents work on the same codebase simultaneously, including
+  lock contention, PR conflicts, and session isolation.
+- **Prompt engineering methodology:** systematic approaches to prompt construction beyond templates, including
+  chain-of-thought prompting, few-shot examples, and context window management.
+- **Cost management:** monitoring and optimizing token spend across AI-assisted workflows, including when to use cheaper
+  models for simpler tasks.
+- **Security review of AI output:** systematic security auditing beyond what plugins catch, including supply chain risks
+  from AI-suggested dependencies.
+- **Onboarding new team members:** how to introduce developers to a rule-governed AI workflow without overwhelming them
+  with 17 rules on day one.
+- **Property-based testing** (Hypothesis, jqwik): a natural extension of parameterized tests that generates hundreds of
+  random inputs to find edge cases.
+
 ---
 
 *The full rule set is public: [github.com/astrapi69/adaptive-learner](https://github.com/astrapi69/adaptive-learner),
 directory `.claude/rules/`. Contributions and feedback welcome.*
 
-*Previous article: [Your Code Coverage Is Lying to You. Here's How to Fix It.](https://asterios-raptis.medium.com/your-code-coverage-is-lying-to-you-heres-how-to-fix-it-f3c4bcf00a66)*
+*Previous article: [Your Code Coverage Is Lying to You. Here's How to Fix It.](link-to-part-1)*
