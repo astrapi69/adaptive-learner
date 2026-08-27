@@ -489,6 +489,12 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       dem Editor-Link; ohne Notizen und bei fremden Lektionen erscheint
       der Block nicht (#2768)
 - [ ] Heruntergeladene/Analyse-Lektion: nirgends Mentor-Notiz-UI (#2768)
+- [ ] Editor einer eigenen Lektion mit Mentor-Notizen: Panel
+      "Mentor-Notizen zu dieser Lektion (n)" über dem Wizard; Entfernen
+      einer Notiz aktualisiert Panel, Runner und Zusammenfassung (#2769)
+- [ ] "KI-Vorschlag" je Notiz: mit hinterlegtem Schlüssel erscheint ein
+      kurzer Textvorschlag; ohne Schlüssel der BYOK-Hinweis; leere
+      Antwort zeigt die "nichts Brauchbares"-Meldung (#2769)
 - [ ] "Optionen"-Button steht in DERSELBEN Zeile wie die Fortschritts-
       anzeige ("Schritt n von m"), nicht darunter (Desktop: Balken links,
       Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,

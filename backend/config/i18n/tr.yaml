@@ -1743,6 +1743,10 @@ lesson:
     remove: "Notu sil"
     summary_title: "Mentor notları ({n})"
     summary_hint: "Bu oturumdaki notların. Bunları uygulamak için dersi düzenleyicide aç."
+    edit_panel_title: "Bu dersin mentor notları ({n})"
+    edit_panel_hint: "Bu dersi oynarken aldığın notlar. Bir notu çözülünce kaldır."
+    suggest_label: "Yapay zeka önerisi"
+    suggest_empty: "Kullanılabilir bir öneri gelmedi. Tekrar dene veya adımı elle düzenle."
   exam:
     passed: "Geçti"
     not_passed: "Geçmedi"

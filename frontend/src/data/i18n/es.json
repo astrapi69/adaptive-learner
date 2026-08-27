@@ -1880,7 +1880,11 @@
       "save": "Guardar nota",
       "remove": "Eliminar nota",
       "summary_title": "Notas de mentor ({n})",
-      "summary_hint": "Tus anotaciones de esta sesión. Abre la lección en el editor para aplicarlas."
+      "summary_hint": "Tus anotaciones de esta sesión. Abre la lección en el editor para aplicarlas.",
+      "edit_panel_title": "Notas de mentor de esta lección ({n})",
+      "edit_panel_hint": "Tus anotaciones al jugar esta lección. Elimina una nota cuando esté resuelta.",
+      "suggest_label": "Sugerencia de IA",
+      "suggest_empty": "No llegó nada utilizable. Inténtalo de nuevo o ajusta el paso a mano."
     },
     "exam": {
       "passed": "Aprobado",

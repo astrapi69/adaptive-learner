@@ -1880,7 +1880,11 @@
       "save": "Notiz speichern",
       "remove": "Notiz entfernen",
       "summary_title": "Mentor-Notizen ({n})",
-      "summary_hint": "Deine Anmerkungen aus diesem Durchlauf. Öffne die Lektion im Editor, um sie umzusetzen."
+      "summary_hint": "Deine Anmerkungen aus diesem Durchlauf. Öffne die Lektion im Editor, um sie umzusetzen.",
+      "edit_panel_title": "Mentor-Notizen zu dieser Lektion ({n})",
+      "edit_panel_hint": "Deine Anmerkungen aus dem Durchspielen. Entferne eine Notiz, wenn sie umgesetzt ist.",
+      "suggest_label": "KI-Vorschlag",
+      "suggest_empty": "Kein brauchbarer Vorschlag. Versuche es erneut oder passe den Schritt manuell an."
     },
     "exam": {
       "passed": "Bestanden",

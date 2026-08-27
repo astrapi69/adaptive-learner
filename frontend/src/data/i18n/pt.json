@@ -1880,7 +1880,11 @@
       "save": "Salvar nota",
       "remove": "Remover nota",
       "summary_title": "Notas de mentor ({n})",
-      "summary_hint": "Suas anotações desta sessão. Abra a lição no editor para resolvê-las."
+      "summary_hint": "Suas anotações desta sessão. Abra a lição no editor para resolvê-las.",
+      "edit_panel_title": "Notas de mentor desta lição ({n})",
+      "edit_panel_hint": "Suas anotações ao jogar esta lição. Remova uma nota quando estiver resolvida.",
+      "suggest_label": "Sugestão de IA",
+      "suggest_empty": "Nada utilizável retornou. Tente novamente ou ajuste o passo manualmente."
     },
     "exam": {
       "passed": "Aprovado",

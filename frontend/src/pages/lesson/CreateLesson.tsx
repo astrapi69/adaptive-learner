@@ -24,6 +24,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
 import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
+import MentorNotesEditPanel from "../../components/create-lesson/MentorNotesEditPanel";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
 import WizardSteps from "../../components/create-lesson/WizardSteps";
 import EditLoadState, {
@@ -794,6 +795,25 @@ export default function CreateLesson() {
                 onSelect={requestLessonSwitch}
                 t={t}
             />
+
+            {/* #2769 — mentor-mode Phase 3: the author's punch list from
+                playing this lesson (#2768), listed where they fix it.
+                Self-gating (own set + notes present); keyed by the lesson
+                so a multi-lesson switch re-reads the store. */}
+            {editContext && !editLoading && !editError && !savedEntry && (
+                <MentorNotesEditPanel
+                    key={editContext.lessonId}
+                    source={editContext.source}
+                    setId={editContext.setId}
+                    filename={
+                        editContext.lessonId.endsWith(".json")
+                            ? editContext.lessonId
+                            : `${editContext.lessonId}.json`
+                    }
+                    lessonTitle={meta.title}
+                    exercises={exercises}
+                />
+            )}
 
             {!editLoading && !editError && step === 1 && (
                 <MetadataStep

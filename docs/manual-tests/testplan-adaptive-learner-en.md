@@ -458,6 +458,12 @@ preview delivery). In the regular build the mode does not exist.
       category, text, per-row removal, and the editor link; without
       notes and on non-own lessons the block does not appear (#2768)
 - [ ] Downloaded/analysis lesson: no mentor-note UI anywhere (#2768)
+- [ ] Editor of an own lesson with mentor notes: panel
+      "Mentor notes for this lesson (n)" above the wizard; removing a
+      note updates the panel, the runner and the summary (#2769)
+- [ ] "AI suggestion" per note: with a configured key a short text
+      proposal appears; without a key the BYOK hint; an empty reply
+      shows the "nothing usable" message (#2769)
 - [ ] "Options" button sits in the SAME ROW as the progress indicator
       ("Step n of m"), not below it (desktop: bar on the left, button
       beside it on the right; mobile: tightly packed or a clean wrap,

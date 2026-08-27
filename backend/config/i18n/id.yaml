@@ -1754,6 +1754,10 @@ lesson:
     remove: "Hapus catatan"
     summary_title: "Catatan mentor ({n})"
     summary_hint: "Anotasimu dari sesi ini. Buka pelajaran di editor untuk menindaklanjutinya."
+    edit_panel_title: "Catatan mentor untuk pelajaran ini ({n})"
+    edit_panel_hint: "Anotasimu saat memainkan pelajaran ini. Hapus catatan setelah ditindaklanjuti."
+    suggest_label: "Saran AI"
+    suggest_empty: "Tidak ada saran yang berguna. Coba lagi atau sesuaikan langkah secara manual."
   exam:
     passed: "Lulus"
     not_passed: "Tidak lulus"

@@ -1880,7 +1880,11 @@
       "save": "Enregistrer la note",
       "remove": "Supprimer la note",
       "summary_title": "Notes de mentor ({n})",
-      "summary_hint": "Vos annotations de cette session. Ouvrez la leçon dans l’éditeur pour les traiter."
+      "summary_hint": "Vos annotations de cette session. Ouvrez la leçon dans l’éditeur pour les traiter.",
+      "edit_panel_title": "Notes de mentor pour cette leçon ({n})",
+      "edit_panel_hint": "Vos annotations faites en jouant cette leçon. Supprimez une note une fois traitée.",
+      "suggest_label": "Suggestion IA",
+      "suggest_empty": "Rien d’utilisable n’est revenu. Réessayez ou ajustez l’étape à la main."
     },
     "exam": {
       "passed": "Réussi",

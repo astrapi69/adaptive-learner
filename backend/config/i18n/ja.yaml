@@ -1743,6 +1743,10 @@ lesson:
     remove: "メモを削除"
     summary_title: "メンターメモ（{n}）"
     summary_hint: "この学習でのメモです。エディタでレッスンを開いて反映しましょう。"
+    edit_panel_title: "このレッスンのメンターメモ（{n}）"
+    edit_panel_hint: "このレッスンをプレイした際のメモです。対応済みのメモは削除してください。"
+    suggest_label: "AI提案"
+    suggest_empty: "使える提案が得られませんでした。もう一度試すか、手動でステップを調整してください。"
   exam:
     passed: "合格"
     not_passed: "不合格"
