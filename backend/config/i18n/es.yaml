@@ -1728,6 +1728,7 @@ lesson:
     endless: "Infinito"
   options:
     title: "Opciones"
+    edit_in_editor: "Editar esta lección en el editor"
   exam:
     passed: "Aprobado"
     not_passed: "No aprobado"

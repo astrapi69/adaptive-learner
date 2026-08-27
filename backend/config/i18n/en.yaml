@@ -1737,6 +1737,7 @@ lesson:
     endless: "Endless"
   options:
     title: "Options"
+    edit_in_editor: "Edit this lesson in the editor"
   exam:
     passed: "Passed"
     not_passed: "Not passed"

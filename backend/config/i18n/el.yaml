@@ -1728,6 +1728,7 @@ lesson:
     endless: "Ατέρμονο"
   options:
     title: "Επιλογές"
+    edit_in_editor: "Επεξεργασία αυτού του μαθήματος στον επεξεργαστή"
   exam:
     passed: "Επιτυχία"
     not_passed: "Αποτυχία"

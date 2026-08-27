@@ -1861,7 +1861,8 @@
       "endless": "무한"
     },
     "options": {
-      "title": "옵션"
+      "title": "옵션",
+      "edit_in_editor": "이 레슨을 편집기에서 편집"
     },
     "exam": {
       "passed": "합격",

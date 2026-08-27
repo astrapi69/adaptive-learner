@@ -1861,7 +1861,8 @@
       "endless": "Sonsuz"
     },
     "options": {
-      "title": "Seçenekler"
+      "title": "Seçenekler",
+      "edit_in_editor": "Bu dersi düzenleyicide düzenle"
     },
     "exam": {
       "passed": "Geçti",

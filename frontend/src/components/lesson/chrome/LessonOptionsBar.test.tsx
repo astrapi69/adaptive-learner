@@ -6,9 +6,11 @@
 
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
 import LessonOptionsBar from "./LessonOptionsBar";
+import { USER_GENERATED_SOURCE } from "../../../storage/types";
 import type { ContentLesson } from "../../../storage/types";
 import type { ReadAloudController } from "../../../hooks/lesson/audio/useReadAloud";
 
@@ -57,6 +59,27 @@ describe("LessonOptionsBar", () => {
     // Expanding reveals it.
     fireEvent.click(screen.getByTestId("lesson-options-toggle"));
     expect(screen.getByTestId("lesson-mode-toggle")).toBeVisible();
+  });
+
+  it("offers the editor deep link for a user-generated lesson (#2766)", () => {
+    render(
+      <MemoryRouter>
+        <LessonOptionsBar
+          {...baseProps({ source: USER_GENERATED_SOURCE, setId: "my-set" })}
+        />
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByTestId("lesson-options-toggle"));
+    expect(screen.getByTestId("lesson-edit-in-editor")).toHaveAttribute(
+      "href",
+      "/create-lesson/edit/user-generated/my-set?lesson=01.json",
+    );
+  });
+
+  it("offers no editor link for a downloaded lesson (#2766)", () => {
+    render(<LessonOptionsBar {...baseProps()} />);
+    fireEvent.click(screen.getByTestId("lesson-options-toggle"));
+    expect(screen.queryByTestId("lesson-edit-in-editor")).toBeNull();
   });
 
   it("renders nothing on the summary screen", () => {

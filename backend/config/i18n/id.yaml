@@ -1737,6 +1737,7 @@ lesson:
     endless: "Tanpa henti"
   options:
     title: "Opsi"
+    edit_in_editor: "Edit pelajaran ini di editor"
   exam:
     passed: "Lulus"
     not_passed: "Tidak lulus"

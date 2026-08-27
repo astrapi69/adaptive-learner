@@ -1861,7 +1861,8 @@
       "endless": "エンドレス"
     },
     "options": {
-      "title": "オプション"
+      "title": "オプション",
+      "edit_in_editor": "このレッスンをエディタで編集"
     },
     "exam": {
       "passed": "合格",

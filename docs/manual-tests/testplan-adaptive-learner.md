@@ -473,6 +473,12 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
       hinter dem Panel, nicht mehr direkt sichtbar)
+- [ ] Options-Panel einer EIGENEN Lektion (erstellt, importiert oder
+      "Als Kopie bearbeiten"-Fork): Eintrag "Diese Lektion im Editor
+      bearbeiten" sichtbar; Klick landet im Editor mit genau diesem Set
+      und dieser Lektion vorgeladen (#2766)
+- [ ] Options-Panel einer HERUNTERGELADENEN Lektion und einer
+      Analyse-Lektion: KEIN Editor-Eintrag (#2766)
 - [ ] "Optionen"-Button steht in DERSELBEN Zeile wie die Fortschritts-
       anzeige ("Schritt n von m"), nicht darunter (Desktop: Balken links,
       Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,

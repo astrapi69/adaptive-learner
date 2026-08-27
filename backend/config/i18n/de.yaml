@@ -1731,6 +1731,7 @@ lesson:
     endless: "Endlos"
   options:
     title: "Optionen"
+    edit_in_editor: "Diese Lektion im Editor bearbeiten"
   exam:
     passed: "Bestanden"
     not_passed: "Nicht bestanden"

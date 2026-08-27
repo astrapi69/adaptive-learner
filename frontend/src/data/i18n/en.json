@@ -1861,7 +1861,8 @@
       "endless": "Endless"
     },
     "options": {
-      "title": "Options"
+      "title": "Options",
+      "edit_in_editor": "Edit this lesson in the editor"
     },
     "exam": {
       "passed": "Passed",

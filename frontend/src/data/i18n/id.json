@@ -1861,7 +1861,8 @@
       "endless": "Tanpa henti"
     },
     "options": {
-      "title": "Opsi"
+      "title": "Opsi",
+      "edit_in_editor": "Edit pelajaran ini di editor"
     },
     "exam": {
       "passed": "Lulus",

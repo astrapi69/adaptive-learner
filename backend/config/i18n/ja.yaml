@@ -1726,6 +1726,7 @@ lesson:
     endless: "エンドレス"
   options:
     title: "オプション"
+    edit_in_editor: "このレッスンをエディタで編集"
   exam:
     passed: "合格"
     not_passed: "不合格"

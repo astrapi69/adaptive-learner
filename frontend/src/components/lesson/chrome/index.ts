@@ -1,3 +1,5 @@
+export type { LessonEditLinkProps } from "./LessonEditLink";
+export { default as LessonEditLink } from "./LessonEditLink";
 export type { LessonFavoriteToggleProps } from "./LessonFavoriteToggle";
 export { default as LessonFavoriteToggle } from "./LessonFavoriteToggle";
 export { default as LessonFooterNav } from "./LessonFooterNav";

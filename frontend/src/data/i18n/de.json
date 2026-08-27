@@ -1861,7 +1861,8 @@
       "endless": "Endlos"
     },
     "options": {
-      "title": "Optionen"
+      "title": "Optionen",
+      "edit_in_editor": "Diese Lektion im Editor bearbeiten"
     },
     "exam": {
       "passed": "Bestanden",

@@ -443,6 +443,12 @@ preview delivery). In the regular build the mode does not exist.
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628
       it lives behind the panel, no longer directly visible)
+- [ ] Options panel of an OWN lesson (created, imported, or an
+      "Edit as a copy" fork): entry "Edit this lesson in the editor"
+      visible; clicking lands in the editor with exactly this set and
+      lesson preloaded (#2766)
+- [ ] Options panel of a DOWNLOADED lesson and of an analysis lesson:
+      NO editor entry (#2766)
 - [ ] "Options" button sits in the SAME ROW as the progress indicator
       ("Step n of m"), not below it (desktop: bar on the left, button
       beside it on the right; mobile: tightly packed or a clean wrap,

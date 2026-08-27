@@ -1726,6 +1726,7 @@ lesson:
     endless: "Sonsuz"
   options:
     title: "Seçenekler"
+    edit_in_editor: "Bu dersi düzenleyicide düzenle"
   exam:
     passed: "Geçti"
     not_passed: "Geçmedi"

@@ -1861,7 +1861,8 @@
       "endless": "Infini"
     },
     "options": {
-      "title": "Options"
+      "title": "Options",
+      "edit_in_editor": "Modifier cette leçon dans l’éditeur"
     },
     "exam": {
       "passed": "Réussi",

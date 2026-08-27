@@ -1722,6 +1722,7 @@ lesson:
     endless: "अंतहीन"
   options:
     title: "विकल्प"
+    edit_in_editor: "इस पाठ को संपादक में संपादित करें"
   exam:
     passed: "उत्तीर्ण"
     not_passed: "अनुत्तीर्ण"
