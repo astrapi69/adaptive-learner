@@ -475,6 +475,23 @@ The era of "we'll test later" is over. So is the era of "the AI wrote it, it pro
 
 *Next up: The rules of vibe coding, how to use AI-assisted development without losing control over your codebase.*
 
+## What This Article Does Not Cover
+
+This article focuses on test strategy, quality measurement, and CI automation. Several related topics were intentionally
+left out because they each deserve their own treatment:
+
+- **Property-based testing** (Hypothesis for Python, jqwik for Java): generating hundreds of random inputs to find edge
+  cases your parameterized tests missed. A powerful complement to everything described here.
+- **Contract testing** (Pact, Spring Cloud Contract): verifying API contracts between services independently. Essential
+  for microservice architectures.
+- **Flaky test management:** detecting, quarantining, and fixing tests that pass and fail nondeterministically. A real
+  problem at scale that requires its own tooling and discipline.
+- **Test isolation and execution order:** ensuring tests do not depend on each other or on shared mutable state. Becomes
+  critical as suites grow.
+- **Pre-commit hooks:** running fast checks (linting, formatting, type checks) before code even reaches CI. Mentioned in
+  passing but not detailed here.
+- **Performance and load testing:** verifying that code is not just correct but fast enough under load.
+
 ---
 
 *All code examples use Java (JUnit 5, Maven) and Python (pytest). PIT version numbers should be verified against the
