@@ -1864,6 +1864,24 @@
       "title": "Optionen",
       "edit_in_editor": "Diese Lektion im Editor bearbeiten"
     },
+    "mentor": {
+      "note_button": "Mentor-Notiz",
+      "note_edit": "Mentor-Notiz bearbeiten",
+      "category_label": "Kategorie",
+      "category": {
+        "typo": "Tippfehler",
+        "unclear": "Unklar formuliert",
+        "too_easy": "Zu leicht",
+        "too_hard": "Zu schwer",
+        "wrong_answer": "Antwort falsch bewertet",
+        "other": "Sonstiges"
+      },
+      "placeholder": "Was soll an diesem Schritt verbessert werden?",
+      "save": "Notiz speichern",
+      "remove": "Notiz entfernen",
+      "summary_title": "Mentor-Notizen ({n})",
+      "summary_hint": "Deine Anmerkungen aus diesem Durchlauf. Öffne die Lektion im Editor, um sie umzusetzen."
+    },
     "exam": {
       "passed": "Bestanden",
       "not_passed": "Nicht bestanden",

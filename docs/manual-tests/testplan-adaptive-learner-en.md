@@ -449,6 +449,15 @@ preview delivery). In the regular build the mode does not exist.
       lesson preloaded (#2766)
 - [ ] Options panel of a DOWNLOADED lesson and of an analysis lesson:
       NO editor entry (#2766)
+- [ ] Mentor note (own lesson): below every step the "Mentor note"
+      button; save category + text, reopening shows the note prefilled,
+      removing deletes it (#2768)
+- [ ] Mentor notes survive a reload and re-entering the lesson
+      (localStorage store, identical in both storage modes) (#2768)
+- [ ] Summary of an own lesson with notes: "Mentor notes (n)" block with
+      category, text, per-row removal, and the editor link; without
+      notes and on non-own lessons the block does not appear (#2768)
+- [ ] Downloaded/analysis lesson: no mentor-note UI anywhere (#2768)
 - [ ] "Options" button sits in the SAME ROW as the progress indicator
       ("Step n of m"), not below it (desktop: bar on the left, button
       beside it on the right; mobile: tightly packed or a clean wrap,

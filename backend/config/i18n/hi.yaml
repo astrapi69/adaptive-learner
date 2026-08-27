@@ -1723,6 +1723,22 @@ lesson:
   options:
     title: "विकल्प"
     edit_in_editor: "इस पाठ को संपादक में संपादित करें"
+  mentor:
+    note_button: "मेंटर नोट"
+    note_edit: "मेंटर नोट संपादित करें"
+    category_label: "श्रेणी"
+    category:
+      typo: "वर्तनी की गलती"
+      unclear: "अस्पष्ट वाक्य"
+      too_easy: "बहुत आसान"
+      too_hard: "बहुत कठिन"
+      wrong_answer: "उत्तर का गलत मूल्यांकन"
+      other: "अन्य"
+    placeholder: "इस चरण में क्या सुधारा जाना चाहिए?"
+    save: "नोट सहेजें"
+    remove: "नोट हटाएं"
+    summary_title: "मेंटर नोट्स ({n})"
+    summary_hint: "इस सत्र की आपकी टिप्पणियां। इन्हें लागू करने के लिए पाठ को संपादक में खोलें।"
   exam:
     passed: "उत्तीर्ण"
     not_passed: "अनुत्तीर्ण"

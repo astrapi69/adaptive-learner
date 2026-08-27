@@ -479,6 +479,16 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       und dieser Lektion vorgeladen (#2766)
 - [ ] Options-Panel einer HERUNTERGELADENEN Lektion und einer
       Analyse-Lektion: KEIN Editor-Eintrag (#2766)
+- [ ] Mentor-Notiz (eigene Lektion): unter jedem Schritt der Button
+      "Mentor-Notiz"; Kategorie + Text speichern, erneutes Öffnen zeigt
+      die Notiz vorausgefüllt, Entfernen löscht sie (#2768)
+- [ ] Mentor-Notizen überleben Reload und erneutes Betreten der Lektion
+      (LocalStorage-Store, in beiden Speicher-Modi identisch) (#2768)
+- [ ] Zusammenfassung einer eigenen Lektion mit Notizen: Block
+      "Mentor-Notizen (n)" mit Kategorie, Text, Entfernen je Zeile und
+      dem Editor-Link; ohne Notizen und bei fremden Lektionen erscheint
+      der Block nicht (#2768)
+- [ ] Heruntergeladene/Analyse-Lektion: nirgends Mentor-Notiz-UI (#2768)
 - [ ] "Optionen"-Button steht in DERSELBEN Zeile wie die Fortschritts-
       anzeige ("Schritt n von m"), nicht darunter (Desktop: Balken links,
       Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,

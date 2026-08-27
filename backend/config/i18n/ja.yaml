@@ -1727,6 +1727,22 @@ lesson:
   options:
     title: "オプション"
     edit_in_editor: "このレッスンをエディタで編集"
+  mentor:
+    note_button: "メンターメモ"
+    note_edit: "メンターメモを編集"
+    category_label: "カテゴリ"
+    category:
+      typo: "誤字"
+      unclear: "分かりにくい表現"
+      too_easy: "簡単すぎる"
+      too_hard: "難しすぎる"
+      wrong_answer: "解答の判定が誤り"
+      other: "その他"
+    placeholder: "このステップで改善すべき点は?"
+    save: "メモを保存"
+    remove: "メモを削除"
+    summary_title: "メンターメモ（{n}）"
+    summary_hint: "この学習でのメモです。エディタでレッスンを開いて反映しましょう。"
   exam:
     passed: "合格"
     not_passed: "不合格"

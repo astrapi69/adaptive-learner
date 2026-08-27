@@ -1864,6 +1864,24 @@
       "title": "Opsi",
       "edit_in_editor": "Edit pelajaran ini di editor"
     },
+    "mentor": {
+      "note_button": "Catatan mentor",
+      "note_edit": "Edit catatan mentor",
+      "category_label": "Kategori",
+      "category": {
+        "typo": "Salah ketik",
+        "unclear": "Rumusan tidak jelas",
+        "too_easy": "Terlalu mudah",
+        "too_hard": "Terlalu sulit",
+        "wrong_answer": "Jawaban dinilai salah",
+        "other": "Lainnya"
+      },
+      "placeholder": "Apa yang perlu diperbaiki pada langkah ini?",
+      "save": "Simpan catatan",
+      "remove": "Hapus catatan",
+      "summary_title": "Catatan mentor ({n})",
+      "summary_hint": "Anotasimu dari sesi ini. Buka pelajaran di editor untuk menindaklanjutinya."
+    },
     "exam": {
       "passed": "Lulus",
       "not_passed": "Tidak lulus",

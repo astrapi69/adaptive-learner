@@ -1864,6 +1864,24 @@
       "title": "Options",
       "edit_in_editor": "Modifier cette leçon dans l’éditeur"
     },
+    "mentor": {
+      "note_button": "Note de mentor",
+      "note_edit": "Modifier la note de mentor",
+      "category_label": "Catégorie",
+      "category": {
+        "typo": "Faute de frappe",
+        "unclear": "Formulation peu claire",
+        "too_easy": "Trop facile",
+        "too_hard": "Trop difficile",
+        "wrong_answer": "Réponse mal évaluée",
+        "other": "Autre"
+      },
+      "placeholder": "Que faut-il améliorer dans cette étape ?",
+      "save": "Enregistrer la note",
+      "remove": "Supprimer la note",
+      "summary_title": "Notes de mentor ({n})",
+      "summary_hint": "Vos annotations de cette session. Ouvrez la leçon dans l’éditeur pour les traiter."
+    },
     "exam": {
       "passed": "Réussi",
       "not_passed": "Échoué",

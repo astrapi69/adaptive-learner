@@ -22,7 +22,7 @@ import {Pencil} from "lucide-react";
 import {Link} from "react-router";
 
 import {Button} from "@/components/ui/button";
-import {USER_GENERATED_SOURCE} from "../../../storage/types";
+import {isOwnEditableSet} from "../../../lib/lesson/own-set";
 import {useI18n} from "../../../hooks/ui/useI18n";
 
 export interface LessonEditLinkProps {
@@ -46,9 +46,7 @@ export default function LessonEditLink({
     filename,
 }: LessonEditLinkProps) {
     const {t} = useI18n();
-    const editable =
-        source === USER_GENERATED_SOURCE && !setId.startsWith("analysis-");
-    if (!editable) return null;
+    if (!isOwnEditableSet(source, setId)) return null;
 
     const href =
         `/create-lesson/edit/${encodeURIComponent(source)}/` +

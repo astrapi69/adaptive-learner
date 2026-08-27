@@ -1738,6 +1738,22 @@ lesson:
   options:
     title: "Options"
     edit_in_editor: "Edit this lesson in the editor"
+  mentor:
+    note_button: "Mentor note"
+    note_edit: "Edit mentor note"
+    category_label: "Category"
+    category:
+      typo: "Typo"
+      unclear: "Unclear wording"
+      too_easy: "Too easy"
+      too_hard: "Too hard"
+      wrong_answer: "Answer graded wrong"
+      other: "Other"
+    placeholder: "What should be improved on this step?"
+    save: "Save note"
+    remove: "Remove note"
+    summary_title: "Mentor notes ({n})"
+    summary_hint: "Your annotations from this run. Open the lesson in the editor to work them off."
   exam:
     passed: "Passed"
     not_passed: "Not passed"

@@ -1864,6 +1864,24 @@
       "title": "Seçenekler",
       "edit_in_editor": "Bu dersi düzenleyicide düzenle"
     },
+    "mentor": {
+      "note_button": "Mentor notu",
+      "note_edit": "Mentor notunu düzenle",
+      "category_label": "Kategori",
+      "category": {
+        "typo": "Yazım hatası",
+        "unclear": "Belirsiz ifade",
+        "too_easy": "Çok kolay",
+        "too_hard": "Çok zor",
+        "wrong_answer": "Yanıt yanlış değerlendirildi",
+        "other": "Diğer"
+      },
+      "placeholder": "Bu adımda ne iyileştirilmeli?",
+      "save": "Notu kaydet",
+      "remove": "Notu sil",
+      "summary_title": "Mentor notları ({n})",
+      "summary_hint": "Bu oturumdaki notların. Bunları uygulamak için dersi düzenleyicide aç."
+    },
     "exam": {
       "passed": "Geçti",
       "not_passed": "Geçmedi",
