@@ -24,6 +24,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
 import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
+import CreateLessonHeader from "../../components/create-lesson/CreateLessonHeader";
 import MentorNotesEditPanel from "../../components/create-lesson/MentorNotesEditPanel";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
 import WizardSteps from "../../components/create-lesson/WizardSteps";
@@ -120,17 +121,6 @@ const EMPTY_BOOK_FIELDS: BookFields = {title: "", author: "", url: "", asin: ""}
  *  Metadata -> content -> Review flow; the card-driven path has 4. */
 function stepCountFor(compactFlow: boolean): number {
     return compactFlow ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
-}
-
-/** The wizard's page heading — "Edit lesson" when reopening an existing
- *  lesson, otherwise "Create a lesson". */
-function headerTitle(
-    editMode: boolean,
-    t: (key: string, fallback?: string) => string,
-): string {
-    return editMode
-        ? t("create_lesson.edit_title", "Edit lesson")
-        : t("create_lesson.title", "Create a lesson");
 }
 
 /** Build the default metadata, seeding source language from the
@@ -760,19 +750,12 @@ export default function CreateLesson() {
 
     return (
         <PageContainer testId="create-lesson-page">
-            <header className="create-lesson-header mb-6 flex flex-col gap-1">
-                <h1>{headerTitle(editMode, t)}</h1>
-                {!editLoading && !editError && (
-                    <p
-                        className="create-lesson-step-indicator text-sm text-fg-muted"
-                        data-testid="create-lesson-step-indicator"
-                    >
-                        {t("create_lesson.step_of", "Step {current} of {total}")
-                            .replace("{current}", String(step))
-                            .replace("{total}", String(totalSteps))}
-                    </p>
-                )}
-            </header>
+            <CreateLessonHeader
+                editMode={editMode}
+                showStep={!editLoading && !editError}
+                step={step}
+                totalSteps={totalSteps}
+            />
 
             <EditLoadState
                 loading={editLoading}
