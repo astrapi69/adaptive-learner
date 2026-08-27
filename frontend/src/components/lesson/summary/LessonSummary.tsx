@@ -661,7 +661,11 @@ export default function LessonSummary({
       aria-label={t("lesson.summary.aria_label", "Lesson summary")}
     >
       <SummaryConfetti active={celebrateConfetti} />
-      <h2>
+      {/* #2761 — ``wrap-anywhere`` (not ``break-words``): this heading is
+          inline-flex, and only ``overflow-wrap: anywhere`` shrinks the text
+          item's min-content width so a long unbreakable title word wraps
+          instead of overflowing the viewport on mobile. */}
+      <h2 className="wrap-anywhere">
         {isCompleted ? <CheckCircle2 size={20} aria-hidden="true" /> : null}
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
       </h2>
