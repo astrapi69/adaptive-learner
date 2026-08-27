@@ -213,7 +213,11 @@ export default function ErrorReplayLesson() {
                     <BookOpen size={16} aria-hidden="true" />
                     {t("lesson.action.back_to_lesson", "Back to lesson")}
                 </button>
-                <h1>
+                {/* #2761 — ``wrap-anywhere`` breaks long unbreakable title
+                    words ("Organisationspsychologie"); without it the h1
+                    widens the page sideways and iOS WebKit clips the sticky
+                    footer's "Weiter" button (#1834 class). */}
+                <h1 className="wrap-anywhere">
                     {t(
                         "lesson.error_replay.title",
                         "Retry errors: {lesson}",

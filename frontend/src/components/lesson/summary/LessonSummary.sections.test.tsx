@@ -188,6 +188,20 @@ afterEach(() => {
 });
 
 describe("LessonSummary configurable + reorderable sections (#1426)", () => {
+  it("the heading wraps long unbreakable title words (#2761)", () => {
+    renderSummary();
+    // "You finished: {title}" is an inline-flex heading; only
+    // ``wrap-anywhere`` (overflow-wrap: anywhere) shrinks the text item's
+    // min-content width so a word like "Organisationspsychologie" wraps
+    // instead of pushing the page (and the sticky footer's Pause button on
+    // iOS WebKit, #1834 class) past the viewport edge.
+    const heading = screen
+      .getByTestId("lesson-summary")
+      .querySelector("h2");
+    expect(heading).toBeTruthy();
+    expect(heading).toHaveClass("wrap-anywhere");
+  });
+
   it("defaults ON — renders every configurable section", () => {
     renderSummary();
     for (const key of SUMMARY_SECTION_KEYS) {

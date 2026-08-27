@@ -80,6 +80,20 @@ describe("ErrorReplayLesson", () => {
         expect(screen.getByText(/Greetings/)).toBeInTheDocument();
     });
 
+    it("wraps a long unbreakable title word instead of overflowing sideways (#2761)", () => {
+        renderWithState({
+            exercises: [FREE("ex-a", "hola")],
+            cards: [],
+            lessonTitle: "Arbeits- und Organisationspsychologie",
+        });
+        // ``wrap-anywhere`` (overflow-wrap: anywhere) lets the 24-char word
+        // break; without it the h1 widens the page horizontally and iOS
+        // WebKit clips the sticky footer's "Weiter" button (#1834 class).
+        expect(screen.getByRole("heading", {level: 1})).toHaveClass(
+            "wrap-anywhere",
+        );
+    });
+
     it("all correct after replay → celebration + score", async () => {
         renderWithState({
             exercises: [FREE("ex-a", "hola"), FREE("ex-b", "adios")],
