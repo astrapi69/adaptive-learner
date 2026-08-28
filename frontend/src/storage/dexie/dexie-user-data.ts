@@ -48,6 +48,10 @@ export const MANAGED_USER_DATA_KEYS = [
     // rename, so lesson identity (and thus progress/SRS) is untouched.
     // Mode-agnostic, survives a Dexie restore + rides the .alb backup.
     "adaptive-learner.lesson-order",
+    // #2768 — per-step mentor notes an author leaves while playing their
+    // OWN lesson (lib/lesson/mentor-notes-store). Local authoring aid,
+    // mode-agnostic, survives a Dexie restore + rides the .alb backup.
+    "adaptive-learner.mentor-notes",
 ] as const;
 
 /**

@@ -1861,7 +1861,30 @@
       "endless": "Infinito"
     },
     "options": {
-      "title": "Opções"
+      "title": "Opções",
+      "edit_in_editor": "Editar esta lição no editor"
+    },
+    "mentor": {
+      "note_button": "Nota de mentor",
+      "note_edit": "Editar nota de mentor",
+      "category_label": "Categoria",
+      "category": {
+        "typo": "Erro de digitação",
+        "unclear": "Formulação pouco clara",
+        "too_easy": "Fácil demais",
+        "too_hard": "Difícil demais",
+        "wrong_answer": "Resposta avaliada incorretamente",
+        "other": "Outro"
+      },
+      "placeholder": "O que deve ser melhorado neste passo?",
+      "save": "Salvar nota",
+      "remove": "Remover nota",
+      "summary_title": "Notas de mentor ({n})",
+      "summary_hint": "Suas anotações desta sessão. Abra a lição no editor para resolvê-las.",
+      "edit_panel_title": "Notas de mentor desta lição ({n})",
+      "edit_panel_hint": "Suas anotações ao jogar esta lição. Remova uma nota quando estiver resolvida.",
+      "suggest_label": "Sugestão de IA",
+      "suggest_empty": "Nada utilizável retornou. Tente novamente ou ajuste o passo manualmente."
     },
     "exam": {
       "passed": "Aprovado",
