@@ -34,9 +34,14 @@ describe("AssistantUiThread AI opening (Phase 3b part 2, #1126)", () => {
 
         render(<AssistantUiThread sessionId="sess-1" autoOpen introTopic="Reflexive Verben" />);
 
-        // The AI opening streams into an assistant bubble.
+        // The AI opening streams into an assistant bubble. Since
+        // @assistant-ui/react 0.15.16 the streamed chunk is flushed a tick
+        // AFTER the bubble mounts, so the text assertion polls instead of
+        // reading synchronously - same user-visible property, no timing bet.
         const assistant = await screen.findByTestId("chat-message-assistant");
-        expect(assistant).toHaveTextContent("Willkommen! Erste Frage:");
+        await waitFor(() =>
+            expect(assistant).toHaveTextContent("Willkommen! Erste Frage:"),
+        );
 
         // Guardrail: the hidden trigger never surfaces as a user bubble.
         expect(screen.queryByTestId("chat-message-user")).not.toBeInTheDocument();
