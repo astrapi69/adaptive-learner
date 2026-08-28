@@ -178,6 +178,108 @@ describe("CategorizationExercise: submit lifecycle", () => {
     });
 });
 
+describe("CategorizationExercise: solve view (#2772)", () => {
+    const assignWithOneMisplaced = () => {
+        assign("flache Hand", "Sichtzeichen");
+        assign("Zeigefinger hoch", "Sichtzeichen");
+        assign("Sitz", "Sichtzeichen"); // misplaced
+        assign("Platz", "Hoerzeichen");
+    };
+
+    it("offers the view toggle only after a not-fully-correct check", () => {
+        render(<CategorizationExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(
+            screen.queryByTestId("categorization-view-toggle"),
+        ).not.toBeInTheDocument();
+        assignWithOneMisplaced();
+        fireEvent.click(screen.getByTestId("categorization-submit"));
+        expect(
+            screen.getByTestId("categorization-view-toggle"),
+        ).toBeInTheDocument();
+        expect(screen.getByTestId("categorization-resolve")).toBeInTheDocument();
+    });
+
+    it("does not offer the toggle on a fully-correct answer", () => {
+        render(<CategorizationExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        assignAllCorrectly();
+        fireEvent.click(screen.getByTestId("categorization-submit"));
+        expect(
+            screen.queryByTestId("categorization-view-toggle"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("solve reveals the authored assignment; my-answers returns to the graded grid", () => {
+        render(<CategorizationExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        assignWithOneMisplaced();
+        fireEvent.click(screen.getByTestId("categorization-submit"));
+        fireEvent.click(screen.getByTestId("categorization-resolve"));
+
+        const resolution = screen.getByTestId("categorization-resolution");
+        const sicht = within(resolution).getByTestId(
+            "categorization-resolved-bucket-Sichtzeichen",
+        );
+        expect(within(sicht).getByText("flache Hand")).toBeInTheDocument();
+        expect(within(sicht).getByText("Zeigefinger hoch")).toBeInTheDocument();
+        const hoer = within(resolution).getByTestId(
+            "categorization-resolved-bucket-Hoerzeichen",
+        );
+        // The misplaced item appears in its AUTHORED bucket, unmarked;
+        // the correctly-placed sibling carries the was-correct marker.
+        expect(
+            within(hoer).getByTestId("categorization-resolved-item-Sitz"),
+        ).not.toHaveAttribute("data-was-correct");
+        expect(
+            within(hoer).getByTestId("categorization-resolved-item-Platz"),
+        ).toHaveAttribute("data-was-correct", "true");
+        // The interactive grid is replaced while the solution shows.
+        expect(
+            screen.queryByTestId("categorization-bucket-Sichtzeichen"),
+        ).not.toBeInTheDocument();
+
+        fireEvent.click(screen.getByTestId("categorization-my-answers"));
+        expect(
+            screen.queryByTestId("categorization-resolution"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId("categorization-bucket-Sichtzeichen"),
+        ).toBeInTheDocument();
+    });
+
+    it("retry from the solve view returns to the interactive grid", () => {
+        render(<CategorizationExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        assignWithOneMisplaced();
+        fireEvent.click(screen.getByTestId("categorization-submit"));
+        fireEvent.click(screen.getByTestId("categorization-resolve"));
+        fireEvent.click(screen.getByTestId("categorization-retry"));
+        expect(
+            screen.queryByTestId("categorization-resolution"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId("categorization-bucket-Sichtzeichen"),
+        ).toBeInTheDocument();
+        expect(screen.getByTestId("categorization-pool")).toBeInTheDocument();
+    });
+});
+
+describe("CategorizationExercise: chip overflow containment (#2771)", () => {
+    it("caps a graded chip at the bucket width and puts the correction on its own wrapped line", () => {
+        render(<CategorizationExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        assign("flache Hand", "Sichtzeichen");
+        assign("Zeigefinger hoch", "Sichtzeichen");
+        assign("Sitz", "Sichtzeichen"); // misplaced
+        assign("Platz", "Hoerzeichen");
+        fireEvent.click(screen.getByTestId("categorization-submit"));
+        const chip = screen.getByTestId("categorization-chip-Sitz");
+        expect(chip.className).toContain("max-w-full");
+        expect(chip.className).toContain("flex-wrap");
+        const correction = within(chip).getByTestId(
+            "categorization-chip-authored-Sitz",
+        );
+        expect(correction).toHaveTextContent("Hoerzeichen");
+        expect(correction.className).toContain("w-full");
+    });
+});
+
 describe("CategorizationExercise: reviewed (locked) reconstruction", () => {
     it("restores the persisted assignment as a checked, locked result", () => {
         render(

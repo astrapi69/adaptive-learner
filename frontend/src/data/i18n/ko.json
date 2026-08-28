@@ -2077,7 +2077,10 @@
       "al_categorization": {
         "empty": "이 분류 연습에는 범주가 없습니다.",
         "instructions": "항목을 탭한 다음 해당 범주를 탭하세요.",
+        "my_answers": "내 답변",
         "pool_label": "항목",
+        "resolve": "정답 보기",
+        "resolve_announce": "정답을 표시했습니다. {total}개 항목 중 {correct}개가 올바르게 분류되었습니다.",
         "result_correct": "정답!",
         "result_wrong": "아쉽네요. 표시된 항목을 확인하세요.",
         "retry": "다시 시도",

@@ -2077,7 +2077,10 @@
       "al_categorization": {
         "empty": "Este exercício de categorização não tem categorias.",
         "instructions": "Toca num item e depois na sua categoria.",
+        "my_answers": "Minhas respostas",
         "pool_label": "Itens",
+        "resolve": "Resolver",
+        "resolve_announce": "Solução exibida. {correct} de {total} itens estavam no lugar certo.",
         "result_correct": "Correto!",
         "result_wrong": "Quase. Revise os itens destacados.",
         "retry": "Tentar novamente",

@@ -593,7 +593,18 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
-- [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar
+- [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar; nach
+      "Antwort prüfen" bleiben die Verdikt-Chips samt roter Korrektur-Kategorie
+      INNERHALB ihrer Spalte (kein Überlaufen in die Nachbarspalte, #2771) -
+      die Korrektur steht auf einer eigenen Zeile unter dem Element
+- [ ] ext:al-categorization Auflösen-Umschalter (#2772): nach einer nicht
+      komplett richtigen Prüfung erscheint neben der Ergebniszeile der
+      Umschalter "Meine Antworten" / "Auflösen" (wie bei den Paaren).
+      "Auflösen" zeigt jede Kategorie mit ihren richtigen Elementen; selbst
+      richtig zugeordnete Elemente sind grün getönt mit Häkchen. "Meine
+      Antworten" kehrt zur bewerteten Ansicht zurück, "Nochmal versuchen"
+      setzt auf die interaktive Ansicht zurück. Bei komplett richtiger
+      Antwort erscheint KEIN Umschalter (nur "Weiter")
 - [ ] ext:al-error-correction: Fehler finden + korrigieren
 - [ ] ext:al-reading-comprehension: Text + Fragen
 - [ ] ext:al-reading-comprehension Auflösung (#2633): nach "Antworten prüfen"

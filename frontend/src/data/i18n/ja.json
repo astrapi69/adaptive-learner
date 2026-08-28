@@ -2077,7 +2077,10 @@
       "al_categorization": {
         "empty": "この分類演習にはカテゴリーがありません。",
         "instructions": "項目をタップし、次にそのカテゴリーをタップします。",
+        "my_answers": "自分の回答",
         "pool_label": "項目",
+        "resolve": "解答を表示",
+        "resolve_announce": "解答を表示しました。{total} 項目中 {correct} 項目が正しく分類されていました。",
         "result_correct": "正解！",
         "result_wrong": "惜しい。ハイライトされた項目を確認してください。",
         "retry": "もう一度",

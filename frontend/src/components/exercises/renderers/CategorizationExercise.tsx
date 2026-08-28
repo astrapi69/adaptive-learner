@@ -43,6 +43,8 @@ import AnswerCelebration from "../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import ExerciseFooter from "../shell/ExerciseFooter";
 import ExerciseHint from "../feedback/ExerciseHint";
+import CategorizationResolution from "./CategorizationResolution";
+import {MatchingViewToggle} from "./matching-parts";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -85,6 +87,12 @@ function CategorizationExercise(
         () => new Map(reviewedAnswer?.assignments ?? []),
     );
     const [activeItem, setActiveItem] = useState<string | null>(null);
+    /** #2772 — after checking, the learner toggles between their own
+     *  graded buckets ("user-answers") and the revealed authored
+     *  assignment ("solution"), mirroring the matching exercise. */
+    const [view, setView] = useState<"user-answers" | "solution">(
+        "user-answers",
+    );
 
     /** Shuffled item pool, stable per mount via the exercise-id seed. */
     const itemPool = useMemo(
@@ -134,6 +142,7 @@ function CategorizationExercise(
         resetAnswer: () => {
             setAssignments(new Map());
             setActiveItem(null);
+            setView("user-answers");
         },
     });
 
@@ -198,23 +207,34 @@ function CategorizationExercise(
                 testId="categorization-hint-button"
             />
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-                {payload.categories.map((bucket) => (
-                    <CategorizationBucket
-                        key={bucket.name}
-                        bucketName={bucket.name}
-                        payload={payload}
-                        itemPool={itemPool}
-                        assignments={assignments}
-                        submitted={submitted}
-                        armed={activeItem !== null}
-                        onAssign={handleBucketTap}
-                        onUnassign={handleChipTap}
-                    />
-                ))}
-            </div>
+            {view === "user-answers" && (
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                    {payload.categories.map((bucket) => (
+                        <CategorizationBucket
+                            key={bucket.name}
+                            bucketName={bucket.name}
+                            payload={payload}
+                            itemPool={itemPool}
+                            assignments={assignments}
+                            submitted={submitted}
+                            armed={activeItem !== null}
+                            onAssign={handleBucketTap}
+                            onUnassign={handleChipTap}
+                        />
+                    ))}
+                </div>
+            )}
 
-            {unassignedItems.length > 0 && (
+            {view === "solution" && result !== null && (
+                <CategorizationResolution
+                    payload={payload}
+                    assignments={assignments}
+                    correctCount={result.correct}
+                    totalCount={result.total}
+                />
+            )}
+
+            {view === "user-answers" && unassignedItems.length > 0 && (
                 <div className="flex flex-col gap-1">
                     <p className="m-0 text-sm text-[var(--fg-muted)]">
                         {t("lesson.exercise.al_categorization.pool_label", "Items")}
@@ -255,6 +275,9 @@ function CategorizationExercise(
                 canCheck={canCheck}
                 onCheck={submit}
                 onRetry={reset}
+                view={view}
+                onShowUserAnswers={() => setView("user-answers")}
+                onShowSolution={() => setView("solution")}
             />
         </section>
     );
@@ -319,7 +342,10 @@ function CategorizationBucket({
                             data-testid={`categorization-chip-${item}`}
                             data-verdict={verdict}
                             className={cn(
-                                "inline-flex min-h-11 items-center gap-1 rounded-sm border px-3 py-2 text-base",
+                                // #2771 — max-w-full + wrapping content keep
+                                // long verdict labels inside the bucket
+                                // instead of bleeding into the next column.
+                                "flex min-h-11 max-w-full flex-wrap items-center gap-1 rounded-sm border px-3 py-2 text-base",
                                 "border-[var(--border-strong)] bg-[var(--surface)]",
                                 submitted && "cursor-default",
                                 verdict === "correct" &&
@@ -328,17 +354,24 @@ function CategorizationBucket({
                                     "border-[var(--danger)] bg-[color-mix(in_srgb,var(--danger)_14%,var(--surface))]",
                             )}
                         >
-                            {item}
+                            <span className="min-w-0 break-words">{item}</span>
                             {verdict === "correct" && (
                                 <Check
                                     size={12}
                                     aria-hidden="true"
-                                    className="text-[var(--success)]"
+                                    className="shrink-0 text-[var(--success)]"
                                 />
                             )}
                             {verdict === "wrong" && authoredBucket && (
-                                <span className="inline-flex items-center gap-1 text-xs font-medium text-[var(--danger)]">
-                                    <X size={12} aria-hidden="true" />
+                                <span
+                                    className="flex w-full min-w-0 items-center justify-center gap-1 break-words text-xs font-medium text-[var(--danger)]"
+                                    data-testid={`categorization-chip-authored-${item}`}
+                                >
+                                    <X
+                                        size={12}
+                                        aria-hidden="true"
+                                        className="shrink-0"
+                                    />
                                     {authoredBucket}
                                 </span>
                             )}
@@ -352,7 +385,8 @@ function CategorizationBucket({
 
 /** Post-check feedback + the shared check/retry footer. Extracted so the
  *  main renderer stays under the complexity gate (same split as
- *  MultipleChoiceExercise). */
+ *  MultipleChoiceExercise). On a not-fully-correct answer it offers the
+ *  #977-style view toggle (my answers / solve, #2772). */
 function CategorizationResult({
     submitted,
     isCorrect,
@@ -364,6 +398,9 @@ function CategorizationResult({
     canCheck,
     onCheck,
     onRetry,
+    view,
+    onShowUserAnswers,
+    onShowSolution,
 }: {
     submitted: boolean;
     isCorrect: boolean;
@@ -375,6 +412,9 @@ function CategorizationResult({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
+    view: "user-answers" | "solution";
+    onShowUserAnswers: () => void;
+    onShowSolution: () => void;
 }) {
     const {t} = useI18n();
     return (
@@ -412,6 +452,22 @@ function CategorizationResult({
                             onAdvance={onAdvance}
                             label={advanceLabel}
                             testIdPrefix="categorization"
+                        />
+                    )}
+                    {!isCorrect && showAnswerToggle && (
+                        <MatchingViewToggle
+                            view={view}
+                            onShowUserAnswers={onShowUserAnswers}
+                            onShowSolution={onShowSolution}
+                            myAnswersLabel={t(
+                                "lesson.exercise.al_categorization.my_answers",
+                                "My answers",
+                            )}
+                            solveLabel={t(
+                                "lesson.exercise.al_categorization.resolve",
+                                "Solve",
+                            )}
+                            testidPrefix="categorization"
                         />
                     )}
                     <AnswerCelebration isCorrect={isCorrect} />

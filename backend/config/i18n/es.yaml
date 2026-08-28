@@ -1920,7 +1920,10 @@ lesson:
     al_categorization:
       empty: "Este ejercicio de categorización no tiene categorías."
       instructions: "Toca un elemento y luego su categoría."
+      my_answers: "Mis respuestas"
       pool_label: "Elementos"
+      resolve: "Resolver"
+      resolve_announce: "Solución mostrada. {correct} de {total} elementos estaban bien colocados."
       result_correct: "¡Correcto!"
       result_wrong: "No del todo. Revisa los elementos marcados."
       retry: "Inténtalo de nuevo"

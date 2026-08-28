@@ -1914,7 +1914,10 @@ lesson:
     al_categorization:
       empty: "इस वर्गीकरण अभ्यास में कोई श्रेणी नहीं है।"
       instructions: "किसी वस्तु पर टैप करें, फिर उसकी श्रेणी पर।"
+      my_answers: "मेरे उत्तर"
       pool_label: "वस्तुएँ"
+      resolve: "हल दिखाएँ"
+      resolve_announce: "समाधान दिखाया गया। {total} में से {correct} वस्तुएँ सही श्रेणी में थीं।"
       result_correct: "सही!"
       result_wrong: "बिल्कुल नहीं। चिह्नित वस्तुएँ देखें।"
       retry: "फिर से कोशिश करें"

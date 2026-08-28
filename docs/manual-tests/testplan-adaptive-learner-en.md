@@ -555,7 +555,17 @@ preview delivery). In the regular build the mode does not exist.
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
-- [ ] ext:al-categorization: assign categories, readable resolution
+- [ ] ext:al-categorization: assign categories, readable resolution; after
+      "Check answer" the verdict chips including the red correction category
+      stay INSIDE their column (no bleeding into the neighbor column, #2771) -
+      the correction sits on its own line under the item
+- [ ] ext:al-categorization solve toggle (#2772): after a not-fully-correct
+      check, the "My answers" / "Solve" toggle appears next to the result
+      line (like the pairs exercise). "Solve" shows every category with its
+      correct items; items you had placed correctly yourself are tinted green
+      with a check mark. "My answers" returns to the graded view, "Try again"
+      resets to the interactive view. On a fully-correct answer NO toggle
+      appears (only "Continue")
 - [ ] ext:al-error-correction: find + correct errors
 - [ ] ext:al-reading-comprehension: text + questions
 - [ ] ext:al-reading-comprehension resolution (#2633): after "Check answers"
