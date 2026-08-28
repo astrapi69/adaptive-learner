@@ -1737,6 +1737,27 @@ lesson:
     endless: "무한"
   options:
     title: "옵션"
+    edit_in_editor: "이 레슨을 편집기에서 편집"
+  mentor:
+    note_button: "멘토 메모"
+    note_edit: "멘토 메모 편집"
+    category_label: "카테고리"
+    category:
+      typo: "오타"
+      unclear: "불명확한 표현"
+      too_easy: "너무 쉬움"
+      too_hard: "너무 어려움"
+      wrong_answer: "답변 채점 오류"
+      other: "기타"
+    placeholder: "이 단계에서 무엇을 개선해야 하나요?"
+    save: "메모 저장"
+    remove: "메모 삭제"
+    summary_title: "멘토 메모 ({n})"
+    summary_hint: "이번 학습에서 남긴 메모입니다. 편집기에서 레슨을 열어 반영하세요."
+    edit_panel_title: "이 레슨의 멘토 메모 ({n})"
+    edit_panel_hint: "이 레슨을 플레이하며 남긴 메모입니다. 처리한 메모는 삭제하세요."
+    suggest_label: "AI 제안"
+    suggest_empty: "쓸 만한 제안이 없었습니다. 다시 시도하거나 단계를 직접 수정하세요."
   exam:
     passed: "합격"
     not_passed: "불합격"

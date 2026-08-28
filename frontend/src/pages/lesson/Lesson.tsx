@@ -42,6 +42,7 @@ import { maybeReverseLesson } from "../../lib/reverse/reverse-lesson";
 import LessonReverseNote from "../../components/lesson/chrome/LessonReverseNote";
 import LessonSummaryScreen from "../../components/lesson/summary/LessonSummaryScreen";
 import LessonHeader from "../../components/lesson/chrome/LessonHeader";
+import LessonMentorNote from "../../components/lesson/mentor/LessonMentorNote";
 import LessonOptionsBar from "../../components/lesson/chrome/LessonOptionsBar";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
@@ -465,6 +466,16 @@ export default function LessonPage() {
               ? t("lesson.action.finish", "Finish lesson")
               : t("lesson.button.next", "Continue")
           }
+        />
+        {/* #2768 — mentor-mode Phase 2: per-step authoring note for OWN
+            lessons (self-gating, null for non-own sets). Keyed by the
+            step so a step change resets the disclosure + draft. */}
+        <LessonMentorNote
+          key={`mentor-${step!.id}`}
+          source={source}
+          setId={setId}
+          filename={filename}
+          stepId={step!.id}
         />
         </>
       )}

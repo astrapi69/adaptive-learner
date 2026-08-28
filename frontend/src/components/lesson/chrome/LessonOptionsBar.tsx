@@ -12,6 +12,7 @@
  * step change within the same lesson preserves the choice.
  */
 
+import LessonEditLink from "./LessonEditLink";
 import LessonFavoriteToggle from "./LessonFavoriteToggle";
 import LessonModeToggle from "./LessonModeToggle";
 import LessonOptionsPanel from "./LessonOptionsPanel";
@@ -101,6 +102,10 @@ export default function LessonOptionsBar({
         onChange={onModeChange}
         disabled={modeLocked}
       />
+
+      {/* #2766 — mentor-mode Phase 1: jump from an OWN lesson straight into
+          the editor's edit route (self-gating, null for non-own sets). */}
+      <LessonEditLink source={source} setId={setId} filename={filename} />
 
       {showReadAloud && (
         <LessonTtsControls

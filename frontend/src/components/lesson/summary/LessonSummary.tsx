@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import FormHint from "../../../shared/forms/FormHint";
 import {CorrectionBlock} from "../../exercises";
 import LessonAnswersDetail from "./LessonAnswersDetail";
+import MentorNotesSummary from "./MentorNotesSummary";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
 import {
@@ -702,6 +703,15 @@ export default function LessonSummary({
         }
         return <Fragment key={id}>{sectionNodes[id]}</Fragment>;
       })}
+
+      {/* #2768 — mentor-mode punch list: the author's per-step notes from
+          this run, with the editor deep link. Self-gated (own set + notes
+          present), deliberately outside the configurable-section registry. */}
+      <MentorNotesSummary
+        source={source}
+        setId={setId}
+        filename={lessonFilename}
+      />
 
       {/* When the correction section is disabled it is not rendered above, so
           the mistake review (#599) falls back to just above the continue-actions
