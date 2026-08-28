@@ -1728,6 +1728,27 @@ lesson:
     endless: "Infinito"
   options:
     title: "Opciones"
+    edit_in_editor: "Editar esta lección en el editor"
+  mentor:
+    note_button: "Nota de mentor"
+    note_edit: "Editar nota de mentor"
+    category_label: "Categoría"
+    category:
+      typo: "Errata"
+      unclear: "Formulación poco clara"
+      too_easy: "Demasiado fácil"
+      too_hard: "Demasiado difícil"
+      wrong_answer: "Respuesta mal evaluada"
+      other: "Otro"
+    placeholder: "¿Qué se debería mejorar en este paso?"
+    save: "Guardar nota"
+    remove: "Eliminar nota"
+    summary_title: "Notas de mentor ({n})"
+    summary_hint: "Tus anotaciones de esta sesión. Abre la lección en el editor para aplicarlas."
+    edit_panel_title: "Notas de mentor de esta lección ({n})"
+    edit_panel_hint: "Tus anotaciones al jugar esta lección. Elimina una nota cuando esté resuelta."
+    suggest_label: "Sugerencia de IA"
+    suggest_empty: "No llegó nada utilizable. Inténtalo de nuevo o ajusta el paso a mano."
   exam:
     passed: "Aprobado"
     not_passed: "No aprobado"

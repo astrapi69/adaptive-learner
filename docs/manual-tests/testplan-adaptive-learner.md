@@ -473,6 +473,28 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
       hinter dem Panel, nicht mehr direkt sichtbar)
+- [ ] Options-Panel einer EIGENEN Lektion (erstellt, importiert oder
+      "Als Kopie bearbeiten"-Fork): Eintrag "Diese Lektion im Editor
+      bearbeiten" sichtbar; Klick landet im Editor mit genau diesem Set
+      und dieser Lektion vorgeladen (#2766)
+- [ ] Options-Panel einer HERUNTERGELADENEN Lektion und einer
+      Analyse-Lektion: KEIN Editor-Eintrag (#2766)
+- [ ] Mentor-Notiz (eigene Lektion): unter jedem Schritt der Button
+      "Mentor-Notiz"; Kategorie + Text speichern, erneutes Öffnen zeigt
+      die Notiz vorausgefüllt, Entfernen löscht sie (#2768)
+- [ ] Mentor-Notizen überleben Reload und erneutes Betreten der Lektion
+      (LocalStorage-Store, in beiden Speicher-Modi identisch) (#2768)
+- [ ] Zusammenfassung einer eigenen Lektion mit Notizen: Block
+      "Mentor-Notizen (n)" mit Kategorie, Text, Entfernen je Zeile und
+      dem Editor-Link; ohne Notizen und bei fremden Lektionen erscheint
+      der Block nicht (#2768)
+- [ ] Heruntergeladene/Analyse-Lektion: nirgends Mentor-Notiz-UI (#2768)
+- [ ] Editor einer eigenen Lektion mit Mentor-Notizen: Panel
+      "Mentor-Notizen zu dieser Lektion (n)" über dem Wizard; Entfernen
+      einer Notiz aktualisiert Panel, Runner und Zusammenfassung (#2769)
+- [ ] "KI-Vorschlag" je Notiz: mit hinterlegtem Schlüssel erscheint ein
+      kurzer Textvorschlag; ohne Schlüssel der BYOK-Hinweis; leere
+      Antwort zeigt die "nichts Brauchbares"-Meldung (#2769)
 - [ ] "Optionen"-Button steht in DERSELBEN Zeile wie die Fortschritts-
       anzeige ("Schritt n von m"), nicht darunter (Desktop: Balken links,
       Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,

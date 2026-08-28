@@ -101,6 +101,7 @@ plugins:
             Release-Prozess: Release workflow
             Für Content-Ersteller: For content creators
             Überblick: Overview
+            Mentor-Modus: Mentor mode
             Content-Repos: Content repos
             Buchempfehlungen: Book recommendations
             Design-Tokens: Design tokens
@@ -166,6 +167,7 @@ plugins:
             Release-Prozess: Flujo de publicación
             Für Content-Ersteller: Para creadores de contenido
             Überblick: Visión general
+            Mentor-Modus: Modo mentor
             Content-Repos: Repositorios de contenido
             Buchempfehlungen: Recomendaciones de libros
             Design-Tokens: Tokens de diseño
@@ -227,6 +229,7 @@ plugins:
             Release-Prozess: Processus de publication
             Für Content-Ersteller: Pour les créateurs de contenu
             Überblick: Vue d'ensemble
+            Mentor-Modus: Mode mentor
             Content-Repos: Dépôts de contenu
             Buchempfehlungen: Recommandations de livres
             Design-Tokens: Jetons de design
@@ -293,6 +296,7 @@ plugins:
             Release-Prozess: Ροή έκδοσης
             Für Content-Ersteller: Για δημιουργούς περιεχομένου
             Überblick: Επισκόπηση
+            Mentor-Modus: Λειτουργία μέντορα
             Content-Repos: Αποθετήρια περιεχομένου
             Buchempfehlungen: Προτάσεις βιβλίων
             Design-Tokens: Design tokens
@@ -359,6 +363,7 @@ plugins:
             Release-Prozess: Fluxo de lançamento
             Für Content-Ersteller: Para criadores de conteúdo
             Überblick: Visão geral
+            Mentor-Modus: Modo mentor
             Content-Repos: Repositórios de conteúdo
             Buchempfehlungen: Recomendações de livros
             Design-Tokens: Tokens de design
@@ -425,6 +430,7 @@ plugins:
             Release-Prozess: Yayın süreci
             Für Content-Ersteller: İçerik oluşturanlar için
             Überblick: Genel bakış
+            Mentor-Modus: Mentor modu
             Content-Repos: İçerik depoları
             Buchempfehlungen: Kitap önerileri
             Design-Tokens: Tasarım token'ları
@@ -491,6 +497,7 @@ plugins:
             Release-Prozess: リリースワークフロー
             Für Content-Ersteller: コンテンツ作成者向け
             Überblick: 概要
+            Mentor-Modus: メンターモード
             Content-Repos: コンテンツリポジトリ
             Buchempfehlungen: 書籍の推薦
             Design-Tokens: デザイントークン
@@ -580,6 +587,7 @@ nav:
   - Release-Prozess: de/developer/release.md
 - Für Content-Ersteller:
   - Überblick: de/content-creation/overview.md
+  - Mentor-Modus: de/content-creation/mentor-mode.md
   - Content-Repos: de/content-creation/content-repos.md
   - Buchempfehlungen: de/content-creation/books.md
 - Architektur:

@@ -135,6 +135,33 @@ beforeEach(() => {
     });
 });
 
+describe("CreateLesson — mentor-note punch list in edit mode (#2769)", () => {
+    it("shows the mentor panel when the edited lesson carries notes, and hides it without", async () => {
+        const {storeMentorNote} = await import(
+            "../../lib/lesson/mentor-notes-store"
+        );
+        const lesson = smallBookLesson();
+        storeMentorNote(
+            {
+                source: "user-generated",
+                setId: "created-vater",
+                filename: `${lesson.id}.json`,
+                stepId: "ex-ft-0",
+            },
+            {category: "typo", text: "Fragezeichen fehlt"},
+        );
+        renderEdit();
+        await screen.findByTestId("create-lesson-step-indicator");
+        const panel = await screen.findByTestId("mentor-edit-panel");
+        expect(panel).toHaveTextContent("Fragezeichen fehlt");
+
+        // Working the note off removes the panel ("wired vs. working" both
+        // ways: it appears with notes and disappears without).
+        fireEvent.click(screen.getByTestId("mentor-edit-remove-ex-ft-0"));
+        expect(screen.queryByTestId("mentor-edit-panel")).toBeNull();
+    });
+});
+
 describe("CreateLesson — editing a small book-text lesson (#1970)", () => {
     it("precondition: the fixture is a valid book lesson under the create-time minimums", () => {
         const lesson = smallBookLesson();

@@ -19,6 +19,7 @@ import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { ComponentProps } from "react";
 
 beforeEach(() => {
   vi.stubGlobal(
@@ -132,7 +133,9 @@ function configFrom(
   return order.map((id) => ({ id, enabled: !off.has(id) }));
 }
 
-function renderSummary() {
+function renderSummary(
+  overrides: Partial<ComponentProps<typeof LessonSummary>> = {},
+) {
   return render(
     <MemoryRouter>
       <LessonSummary
@@ -149,6 +152,7 @@ function renderSummary() {
         onNextLesson={vi.fn()}
         onRepeat={vi.fn()}
         onExit={vi.fn()}
+        {...overrides}
       />
     </MemoryRouter>,
   );
@@ -188,6 +192,30 @@ afterEach(() => {
 });
 
 describe("LessonSummary configurable + reorderable sections (#1426)", () => {
+  it("shows the mentor punch list for an own lesson with notes (#2768)", async () => {
+    const { storeMentorNote } = await import(
+      "../../../lib/lesson/mentor-notes-store"
+    );
+    storeMentorNote(
+      {
+        source: "user-generated",
+        setId: "set1",
+        filename: "01-greetings.json",
+        stepId: "s1",
+      },
+      { category: "typo", text: "Umlaut fehlt" },
+    );
+    renderSummary({ source: "user-generated" });
+    expect(screen.getByTestId("lesson-mentor-summary")).toHaveTextContent(
+      "Umlaut fehlt",
+    );
+  });
+
+  it("shows no mentor punch list on a non-own lesson (#2768)", () => {
+    renderSummary();
+    expect(screen.queryByTestId("lesson-mentor-summary")).toBeNull();
+  });
+
   it("the heading wraps long unbreakable title words (#2761)", () => {
     renderSummary();
     // "You finished: {title}" is an inline-flex heading; only
