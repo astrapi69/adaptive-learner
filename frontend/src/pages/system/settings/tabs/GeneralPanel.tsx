@@ -10,6 +10,7 @@ import ThemePicker from "../../../../components/settings/appearance/ThemePicker"
 import AvatarUpload from "../../../../shared/media/AvatarUpload";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../../../../hooks/settings/useButtonTooltips";
 import { setDevModeEnabled, useDevMode } from "../../../../hooks/settings/useDevMode";
+import { setNavPosition, useNavPosition } from "../../../../hooks/settings/useNavPosition";
 import {
   setViewportDiagnosticEnabled,
   setVvPanelVisible,
@@ -96,6 +97,9 @@ export default function GeneralPanel({
   const handleDevModeToggle = (next: boolean) => {
     setDevModeEnabled(next);
   };
+
+  // #2786 — mobile nav position (top menu button vs restored bottom bar).
+  const navPositionValue = useNavPosition();
 
   // Diagnostics probe (#2782): toggle shares the ?vvdiag flag; the
   // persistent protocol is exportable/clearable right here so a mis-tap
@@ -413,6 +417,41 @@ export default function GeneralPanel({
             onChange={(e) => handleDevModeToggle(e.target.checked)}
           />
         </label>
+        <div className="flex flex-col gap-1">
+          <span className="text-[0.95rem] font-medium">
+            {t("settings.nav_position", "Menu position (mobile)")}
+          </span>
+          <FormHint as="span">
+            {t(
+              "settings.nav_position_description",
+              "Where the primary navigation sits on the phone: at the top as a menu button (default) or at the bottom as a thumb-reach tab bar.",
+            )}
+          </FormHint>
+          <div className="mt-1 flex flex-wrap gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="nav-position"
+                className="m-0 size-4 flex-none p-0"
+                data-testid="settings-nav-position-top"
+                checked={navPositionValue === "top"}
+                onChange={() => setNavPosition("top")}
+              />
+              {t("settings.nav_position_top", "Top (menu button)")}
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="nav-position"
+                className="m-0 size-4 flex-none p-0"
+                data-testid="settings-nav-position-bottom"
+                checked={navPositionValue === "bottom"}
+                onChange={() => setNavPosition("bottom")}
+              />
+              {t("settings.nav_position_bottom", "Bottom (tab bar)")}
+            </label>
+          </div>
+        </div>
       </SettingsSection>
 
       <SettingsSection

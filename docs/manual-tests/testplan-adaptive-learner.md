@@ -1275,6 +1275,18 @@ jeder Karten-Zeile (`CardImageField`).
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
 
+### Menüposition mobil: untere Tab-Leiste als Option (#2786)
+- [ ] Einstellungen > Allgemein > Oberfläche: "Menüposition (mobil)"
+      steht auf "Oben (Menü-Knopf)" (Standard) - KEINE untere Leiste
+- [ ] "Unten (Tab-Leiste)" wählen: die Leiste erscheint SOFORT unten
+      (Lernen/Inhalte/Lernpfad/Fortschritt/Mehr); Inhalt wird nicht
+      von ihr verdeckt (Scroll-Reserve unten)
+- [ ] Mit unterer Leiste: Hamburger-Menü oben funktioniert weiterhin
+- [ ] In einer laufenden Lektion und auf Landing/Onboarding/Assessment
+      bleibt die Leiste verborgen (Lektions-Footer behält die Unterkante)
+- [ ] Zurück auf "Oben": Leiste verschwindet sofort; Einstellung
+      übersteht einen Reload
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert

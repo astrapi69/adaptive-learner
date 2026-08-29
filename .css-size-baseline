@@ -335,4 +335,10 @@
 # (@astrapi69/ai-key-vault-react rendert beide, #2477-Klasse) - vom
 # paket-bewussten Dead-Gate gefangen, nicht loeschbar bis das Paket
 # eigene Styles traegt.
-7439
+# 2026-08-29: 7439 -> 7449 (#2786 BottomTabBar-Restore): +10 Zeilen in
+# global.css - die in #1512 entfernte body.has-bottom-nav-#root-
+# Reservierung kehrt mit der wiederhergestellten, jetzt opt-in
+# Bottom-Tab-Bar zurueck (siehe Eintrag "7506 -> 7497 (#1512)" oben -
+# exakt dieselbe Regel). Fundament-Layout (Spacing auf #root, das keine
+# Komponente per Utility erreichen kann), kein Farb-/Theme-Stoff.
+7449
