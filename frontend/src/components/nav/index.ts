@@ -8,5 +8,6 @@ export { default as NavReviewsBadge } from "./NavReviewsBadge";
 export * from "./NavXpBadge";
 export { default as NavXpBadge } from "./NavXpBadge";
 export * from "./Navigation";
+export { default as BottomTabBar } from "./BottomTabBar";
 export { default as Navigation } from "./Navigation";
 export * from "./nav-targets";

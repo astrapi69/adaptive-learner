@@ -1191,6 +1191,7 @@ each card row (`CardImageField`).
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
 
+<<<<<<< HEAD
 ### In-set position + navigation (#2793)
 - [ ] Inside a lesson from a set, the header shows "Lesson N of M"
       with the correct number
@@ -1201,6 +1202,19 @@ each card row (`CardImageField`).
 - [ ] After jumping, the readout shows the new position
 - [ ] For a standalone lesson without a set (e.g. an own lesson) the
       position row is absent entirely
+=======
+### Mobile menu position: bottom tab bar as an option (#2786)
+- [ ] Settings > General > Interface: "Menu position (mobile)" is
+      "Top (menu button)" (default) - NO bottom bar
+- [ ] Pick "Bottom (tab bar)": the bar appears IMMEDIATELY at the
+      bottom (Learn/Content/Learning Path/Progress/More); content is
+      not hidden behind it (bottom scroll reserve)
+- [ ] With the bottom bar: the top hamburger menu still works
+- [ ] During an active lesson and on Landing/Onboarding/Assessment the
+      bar stays hidden (the lesson footer keeps the bottom edge)
+- [ ] Back to "Top": the bar disappears immediately; the choice
+      survives a reload
+>>>>>>> origin/develop
 
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view

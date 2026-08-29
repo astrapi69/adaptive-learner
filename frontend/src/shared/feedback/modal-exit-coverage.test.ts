@@ -84,6 +84,10 @@ const MODAL_REGISTRY: Record<string, ExitKind> = {
   "components/sync/QRScannerModal.tsx": "custom",
   "components/sync/SyncConflictDialog.tsx": "custom",
   "components/nav/NavXpBadge.tsx": "custom",
+  // #2786 — the restored bottom bar's "More" sheet: Escape handler, backdrop
+  // click, an always-visible X, and a route-change auto-close; the panel is a
+  // short fixed list, so no height-dependent exit exists.
+  "components/nav/BottomTabBar.tsx": "custom",
 
   // Hand-rolled `.modal-overlay` — the ratchet. Each is tracked for
   // migration to a shell (#2266 follow-up); DesktopUpdateHost left it.

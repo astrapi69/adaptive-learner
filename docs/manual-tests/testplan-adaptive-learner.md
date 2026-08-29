@@ -1275,6 +1275,17 @@ jeder Karten-Zeile (`CardImageField`).
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
 
+### Menüposition mobil: untere Tab-Leiste als Option (#2786)
+- [ ] Einstellungen > Allgemein > Oberfläche: "Menüposition (mobil)"
+      steht auf "Oben (Menü-Knopf)" (Standard) - KEINE untere Leiste
+- [ ] "Unten (Tab-Leiste)" wählen: die Leiste erscheint SOFORT unten
+      (Lernen/Inhalte/Lernpfad/Fortschritt/Mehr); Inhalt wird nicht
+      von ihr verdeckt (Scroll-Reserve unten)
+- [ ] Mit unterer Leiste: Hamburger-Menü oben funktioniert weiterhin
+- [ ] In einer laufenden Lektion und auf Landing/Onboarding/Assessment
+      bleibt die Leiste verborgen (Lektions-Footer behält die Unterkante)
+- [ ] Zurück auf "Oben": Leiste verschwindet sofort; Einstellung
+      übersteht einen Reload
 ### Position + Navigation im Set (#2793)
 - [ ] In einer Lektion aus einem Set steht oben "Lektion N von M" mit
       der richtigen Nummer
