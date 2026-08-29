@@ -673,6 +673,13 @@ settings:
   button_tooltips_description: "Muestra una descripción al pasar el cursor sobre los botones de iconos. Las etiquetas para lectores de pantalla siguen activas igualmente."
   developer_mode: Modo Desarrollador
   developer_mode_description: "Muestra todos los detalles técnicos (código de estado, endpoint, traza) en los avisos de error. Aparece una etiqueta 'DEV' en la barra de navegación mientras está activo. Desactivado por defecto; actívalo solo para depurar."
+  section_diagnostics: "Diagnóstico"
+  vvdiag_toggle: "Sonda de toques y viewport"
+  vvdiag_description: "Muestra una barra de medición y guarda un protocolo persistente de las posiciones de los toques y los cambios del viewport mientras la sonda está activa. Ayuda a documentar errores de visualización difíciles de reproducir (p. ej. toques que caen debajo de su objetivo). También puede activarse con el parámetro de URL ?vvdiag=1."
+  vvdiag_log_count: "{count} eventos registrados"
+  vvdiag_copy_log: "Copiar protocolo"
+  vvdiag_copied: "¡Copiado!"
+  vvdiag_clear_log: "Borrar protocolo"
   feedback_intensity: "Intensidad del feedback"
   feedback_intensity_description: "Con cuánta efusividad celebra la app tu progreso."
   feedback_intensity_subtle: "Discreto"

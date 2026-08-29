@@ -676,6 +676,13 @@ settings:
   button_tooltips_description: "아이콘 버튼 위에 마우스를 올리면 기능을 설명하는 툴팁을 표시합니다. 화면 낭독기 레이블은 관계없이 항상 유지됩니다."
   developer_mode: 개발자 모드
   developer_mode_description: "오류 알림에 전체 기술 정보(상태 코드, 엔드포인트, 스택 트레이스)를 표시합니다. 이 기능이 켜져 있는 동안 탐색 막대에 'DEV' 배지가 나타납니다. 기본값은 꺼짐이며, 디버깅용으로 선택해 사용하세요."
+  section_diagnostics: "진단"
+  vvdiag_toggle: "탭·뷰포트 진단 프로브"
+  vvdiag_description: "측정 바를 표시하고 프로브가 켜져 있는 동안 탭 위치와 뷰포트 변화를 지속적으로 기록합니다. 재현하기 어려운 표시 오류(예: 대상 아래로 빗나가는 탭)를 나중에 입증하는 데 도움이 됩니다. URL 매개변수 ?vvdiag=1 로도 켤 수 있습니다."
+  vvdiag_log_count: "{count}개의 기록된 이벤트"
+  vvdiag_copy_log: "기록 복사"
+  vvdiag_copied: "복사됨!"
+  vvdiag_clear_log: "기록 지우기"
   feedback_intensity: "피드백 강도"
   feedback_intensity_description: "앱이 당신의 진행을 얼마나 크게 축하할지 정합니다."
   feedback_intensity_subtle: "은은하게"
