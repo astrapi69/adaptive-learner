@@ -25,13 +25,15 @@
 
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import SetShareButton from "../../components/content/share/SetShareButton";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
+import {buildSetLessonList, type SetLessonList} from "../../lib/content/browse/set-lesson-list";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import { undismissSet } from "../../lib/content/browse/dismissed-sets";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
@@ -53,6 +55,10 @@ export default function SetDeepLink() {
   const [entry, setEntry] = useState<ContentSetEntry | null>(null);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null);
+  // #2793 - the set page stops being a pure launcher: it lists the set's
+  // lessons with their state, so any lesson is one click away and "how far am
+  // I" is answered where the set actually appears.
+  const [lessonList, setLessonList] = useState<SetLessonList | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -80,6 +86,36 @@ export default function SetDeepLink() {
       cancelled = true;
     };
   }, [setId]);
+
+  // Load the lesson list + per-lesson progress once the set has resolved.
+  // Decoration, never a blocker: any failure simply leaves the list out.
+  useEffect(() => {
+    if (!entry) return;
+    const userId = readLearnerState().userId;
+    let cancelled = false;
+    void (async () => {
+      const storage = getStorage();
+      const [listing, progressRows] = await Promise.all([
+        storage.contentLoader
+          .listLessons(entry.source, entry.id)
+          .catch(() => ({ lessons: [] as string[] })),
+        userId
+          ? storage.lessonProgress.list(userId).catch(() => [])
+          : Promise.resolve([]),
+      ]);
+      if (cancelled) return;
+      setLessonList(
+        buildSetLessonList({
+          setId: entry.id,
+          lessons: listing.lessons,
+          progress: progressRows,
+        }),
+      );
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [entry]);
 
   const openFirstLesson = useCallback(
     async (set: ContentSetEntry) => {
@@ -201,6 +237,65 @@ export default function SetDeepLink() {
                   />
                 )}
               </div>
+            )}
+
+            {lessonList && lessonList.total > 0 && (
+              <section className="mt-5" data-testid="set-lesson-list">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 className="m-0 text-base font-semibold">
+                    {t("content.set_link.lesson_list", "Lessons")}
+                  </h2>
+                  <span
+                    className="text-sm text-[var(--fg-muted)]"
+                    data-testid="set-lesson-progress"
+                  >
+                    {t(
+                      "content.set_link.progress_done",
+                      "{done} of {total} lessons completed",
+                    )
+                      .replace("{done}", String(lessonList.completed))
+                      .replace("{total}", String(lessonList.total))}
+                  </span>
+                </div>
+                <ul className="mt-2 flex flex-col gap-1">
+                  {lessonList.lessons.map((lesson) => (
+                    <li key={lesson.filename}>
+                      <Link
+                        to={`/lesson/${encodeURIComponent(
+                          setSlug(entry.source),
+                        )}/${encodeURIComponent(entry.id)}/${encodeURIComponent(
+                          lesson.filename,
+                        )}`}
+                        className="flex min-h-11 items-center justify-between gap-3 rounded-md border border-[var(--border)] px-3 py-2 text-sm"
+                        data-testid={`set-lesson-${lesson.index}`}
+                        data-status={lesson.status}
+                        aria-current={lesson.isCurrent ? "step" : undefined}
+                      >
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span className="flex-none text-[var(--fg-muted)]">
+                            {lesson.index}
+                          </span>
+                          <span className="truncate">{lesson.filename}</span>
+                          {lesson.isCurrent && (
+                            <span
+                              className="flex-none rounded-md bg-accent px-2 py-0.5 text-xs text-accent-foreground"
+                              data-testid="set-lesson-current"
+                            >
+                              {t("content.set_link.current_lesson", "Continue here")}
+                            </span>
+                          )}
+                        </span>
+                        {lesson.status === "completed" &&
+                          lesson.scoreTotal !== null && (
+                            <span className="flex-none text-[var(--fg-muted)]">
+                              {lesson.scoreCorrect} / {lesson.scoreTotal}
+                            </span>
+                          )}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             )}
 
             <div className="mt-5 flex flex-wrap items-center gap-2">

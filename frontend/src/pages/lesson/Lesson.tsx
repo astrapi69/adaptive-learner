@@ -315,6 +315,7 @@ export default function LessonPage() {
         position={position}
         prevHref={prevLessonHref}
         nextHref={nextLessonHref}
+        setHref={setId ? `/content/set/${encodeURIComponent(setId)}` : null}
       />
 
       {/* #2319 — visible while test mode is active (preview build only). */}

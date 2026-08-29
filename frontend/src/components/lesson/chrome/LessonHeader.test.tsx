@@ -130,4 +130,28 @@ describe("LessonHeader", () => {
     expect(screen.queryByTestId("lesson-back-btn")).toBeNull();
     expect(screen.queryByTestId("lesson-pause-btn")).toBeNull();
   });
+
+  it("links the set title to the set's lesson list when a route is given (#2793)", () => {
+    render(
+      <MemoryRouter>
+        <LessonHeader
+          lesson={LESSON}
+          setTitle="Die Währung des Geistes"
+          setHref="/content/set/waehrung"
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId("lesson-header-set-link")).toHaveAttribute(
+      "href",
+      "/content/set/waehrung",
+    );
+  });
+
+  it("renders the set title as plain text when no route is known (#2793)", () => {
+    renderHeader();
+    expect(screen.queryByTestId("lesson-header-set-link")).not.toBeInTheDocument();
+    expect(screen.getByTestId("lesson-header-set")).toHaveTextContent(
+      "Die Währung des Geistes",
+    );
+  });
 });
