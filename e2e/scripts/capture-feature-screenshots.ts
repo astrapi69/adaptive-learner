@@ -339,6 +339,16 @@ async function gotoErrorReportFullPreview(page: Page): Promise<boolean> {
  * dexie-preview pipeline — baselining them needs an API-mode capture
  * project first (documented in #1480).
  */
+/** Open the dashboard with the opt-in tap-offset probe active (#1569/#2779). */
+async function gotoViewportDiagnostic(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/dashboard?vvdiag=1");
+    await expect(page.getByTestId("viewport-diagnostic")).toBeVisible({
+        timeout: 20_000,
+    });
+    return true;
+}
+
 async function gotoSyncDesktopOnlyNotice(page: Page): Promise<boolean> {
     await seedLearner(page);
     await page.goto("/settings?tab=data");
@@ -614,6 +624,20 @@ const FEATURES: FeatureShot[] = [
         path: "create-lesson/buch-upload-picker",
         setup: gotoBookUploadPicker,
         pinTo: "book-file-upload",
+    },
+
+    // --- ViewportDiagnostic tap-offset probe (#1569, collapsed #2779) ---
+    {path: "viewport-diagnostic/eingeklappt", setup: gotoViewportDiagnostic},
+    {
+        path: "viewport-diagnostic/details",
+        setup: async (page) => {
+            if (!(await gotoViewportDiagnostic(page))) return false;
+            await page.getByTestId("viewport-diagnostic-toggle").click();
+            await expect(
+                page.getByTestId("viewport-diagnostic-report"),
+            ).toBeVisible();
+            return true;
+        },
     },
 ];
 
