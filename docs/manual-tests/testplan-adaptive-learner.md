@@ -1297,6 +1297,16 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Bei einer Einzel-Lektion ohne Set (z. B. eigene Lektion) fehlt
       die Positionszeile vollständig
 
+### Erstanzeige: keine Sprachmischung (#2796)
+- [ ] App bei deutscher Oberfläche neu laden (Cache leeren): Startseite,
+      Navigation, Installations-Hinweis, Update-Banner und Offline-Meldung
+      sind sofort deutsch - kein englischer Text, kein roher Schlüssel
+      wie `landing.intro`
+- [ ] Dasselbe im Flugmodus/offline: die Texte bleiben deutsch (die
+      Erstanzeige braucht kein Netz)
+- [ ] Update-Banner: "Was ist neu?", "Release-Seite", "Später" sind
+      lesbar beschriftet (nicht leer, ausreichender Kontrast)
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert

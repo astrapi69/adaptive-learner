@@ -30,7 +30,12 @@ describe("first-paint fallback catalog — landing keys (#1902)", () => {
     for (const [lang, catalog] of Object.entries(FALLBACK_CATALOGS)) {
         for (const key of REQUIRED_LANDING_KEYS) {
             it(`${lang}: landing.${key} is present and non-empty`, () => {
-                const value = catalog.landing?.[key];
+                // #2796 — catalog values are now a nested union, so read the
+                // group through a narrowing cast instead of a bare index.
+                const landing = catalog.landing as
+                    | Record<string, string>
+                    | undefined;
+                const value = landing?.[key];
                 expect(value, `fallbacks.ts landing.${key} missing for "${lang}"`).toBeTruthy();
                 expect(typeof value).toBe("string");
             });
