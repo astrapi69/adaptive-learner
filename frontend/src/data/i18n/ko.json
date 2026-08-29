@@ -4241,5 +4241,21 @@
       },
       "aria": "난이도: {tier} (5단계 중 {level})"
     }
+  },
+  "set_summary": {
+    "title": "평가: {set}",
+    "subtitle": "이 세트의 모든 오답을 한눈에",
+    "open": "평가 보기",
+    "total_errors": "총 오답",
+    "mastered_share": "숙달함",
+    "elements_open": "아직 남음",
+    "time_spent": "학습 시간",
+    "by_lesson": "레슨별 오답",
+    "by_type": "문제 유형별 오답",
+    "weak_areas": "가장 약한 부분",
+    "no_errors": "기록된 오답이 없습니다. 훌륭해요!",
+    "lesson_errors": "오답 {count}개",
+    "practice_errors": "오답 연습",
+    "back_to_set": "세트로 돌아가기"
   }
 }
