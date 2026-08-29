@@ -11,6 +11,7 @@
  * come from the hooks here.
  */
 
+import { exitRouteForLesson } from "../../../lib/content/browse/continue-learning";
 import type { ComponentProps } from "react";
 import { useNavigate } from "react-router";
 
@@ -146,7 +147,9 @@ export default function LessonSummaryScreen({
           // storage layer. Then jump back to the first step.
           void markRestarted().then(() => goToStep(0));
         }}
-        onExit={() => navigate("/content?tab=my")}
+        // #2811 - back to the set the learner just worked through, not a
+        // flat content list; a lesson without a set keeps the old target.
+        onExit={() => navigate(exitRouteForLesson(setId))}
       />
       <LessonResources
         lesson={originalLesson}

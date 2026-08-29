@@ -59,7 +59,7 @@ import { useLessonFlowControl } from "../../hooks/lesson/session/useLessonFlowCo
 import { useLessonMotivation } from "../../hooks/lesson/session/useLessonMotivation";
 import { useLessonNavigation } from "../../hooks/lesson/session/useLessonNavigation";
 import { useLessonSetContext } from "../../hooks/lesson/session/useLessonSetContext";
-import { lessonRoute } from "../../lib/content/browse/continue-learning";
+import { exitRouteForLesson, lessonRoute } from "../../lib/content/browse/continue-learning";
 import { useLessonStepState } from "../../hooks/lesson/session/useLessonStepState";
 import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrientationReanchor";
 import { clearHintUsage } from "../../lib/hints/hint-usage";
@@ -519,7 +519,7 @@ export default function LessonPage() {
         delayedFeedback={!modeConfig.immediateFeedback}
         isInProgress={isInProgress}
         onPause={() => setExitOpen(true)}
-        onExit={() => navigate("/content?tab=my")}
+        onExit={() => navigate(exitRouteForLesson(setId))}
         goPrev={goPrev}
         goNext={goNext}
         onCheck={() => exerciseRef.current?.submit()}

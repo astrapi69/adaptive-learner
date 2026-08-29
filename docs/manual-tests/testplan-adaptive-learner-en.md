@@ -1277,6 +1277,14 @@ each card row (`CardImageField`).
 - [ ] With no recorded progress the list still appears, just without
       markers
 
+### Leaving a lesson returns to its set (#2811)
+- [ ] Pause and leave a set lesson: the app lands on the SET page with
+      the lesson list, not on "My content"
+- [ ] "Exit" after the summary: the set page too - the lesson just
+      finished is marked completed there
+- [ ] A lesson without a set (own lesson, standalone import) still
+      lands on "My content"
+
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists

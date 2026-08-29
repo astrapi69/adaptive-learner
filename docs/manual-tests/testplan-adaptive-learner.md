@@ -1364,6 +1364,14 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Ohne angemeldeten Lernfortschritt erscheint die Liste trotzdem,
       nur ohne Markierungen
 
+### Lektion verlassen führt zum Set (#2811)
+- [ ] In einer Set-Lektion pausieren und verlassen: die App landet auf
+      der SET-Seite mit der Lektionsliste, nicht auf "Meine Inhalte"
+- [ ] Nach der Zusammenfassung "Verlassen": ebenfalls die Set-Seite -
+      die gerade beendete Lektion ist dort als abgeschlossen markiert
+- [ ] Eine Lektion ohne Set (eigene Lektion, Einzelimport) landet
+      weiterhin auf "Meine Inhalte"
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
