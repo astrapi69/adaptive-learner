@@ -673,6 +673,13 @@ settings:
   button_tooltips_description: "Affiche une infobulle au survol des boutons à icône. Les libellés pour lecteurs d’écran restent actifs quoi qu’il arrive."
   developer_mode: Mode développeur
   developer_mode_description: "Affiche tous les détails techniques (code d'état, point de terminaison, trace) dans les notifications d'erreur. Un badge 'DEV' apparaît dans la barre de navigation. Désactivé par défaut ; active-le uniquement pour le débogage."
+  section_diagnostics: "Diagnostic"
+  vvdiag_toggle: "Sonde de touchers et de viewport"
+  vvdiag_description: "Affiche une barre de mesure et conserve un protocole persistant des positions de toucher et des changements de viewport tant que la sonde est active. Aide à documenter a posteriori des bugs d'affichage difficiles à reproduire (p. ex. des touchers qui atterrissent sous leur cible). Activable aussi via le paramètre d'URL ?vvdiag=1."
+  vvdiag_log_count: "{count} événements enregistrés"
+  vvdiag_copy_log: "Copier le protocole"
+  vvdiag_copied: "Copié !"
+  vvdiag_clear_log: "Effacer le protocole"
   feedback_intensity: "Intensité du retour"
   feedback_intensity_description: "À quel point l'application célèbre tes progrès."
   feedback_intensity_subtle: "Discret"

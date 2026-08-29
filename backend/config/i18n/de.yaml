@@ -673,6 +673,13 @@ settings:
   button_tooltips_description: "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv."
   developer_mode: Entwicklermodus
   developer_mode_description: "Zeigt vollständige technische Details (Statuscode, Endpunkt, Stack-Trace) in Fehlermeldungen. Bei aktivem Modus erscheint ein 'DEV'-Hinweis in der Navigationsleiste. Standardmäßig aus; nur zum Debugging einschalten."
+  section_diagnostics: "Diagnose"
+  vvdiag_toggle: "Tipp- und Viewport-Sonde"
+  vvdiag_description: "Blendet eine Mess-Leiste ein und protokolliert Tipp-Positionen und Viewport-Änderungen dauerhaft, solange die Sonde aktiv ist. Hilft, schwer reproduzierbare Anzeigefehler (z. B. daneben landende Tipps) im Nachhinein zu belegen. Alternativ per URL-Parameter ?vvdiag=1 aktivierbar."
+  vvdiag_log_count: "{count} aufgezeichnete Ereignisse"
+  vvdiag_copy_log: "Protokoll kopieren"
+  vvdiag_copied: "Kopiert!"
+  vvdiag_clear_log: "Protokoll leeren"
   feedback_intensity: "Feedback-Intensität"
   feedback_intensity_description: "Wie ausgiebig die App deinen Fortschritt feiert."
   feedback_intensity_subtle: "Dezent"

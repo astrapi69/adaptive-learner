@@ -676,6 +676,13 @@ settings:
   button_tooltips_description: "Tampilkan tooltip arahkan kursor pada tombol ikon yang menjelaskan fungsinya. Label pembaca layar tetap aktif terlepas dari ini."
   developer_mode: Mode Pengembang
   developer_mode_description: "Tampilkan detail teknis lengkap (kode status, titik akhir, jejak tumpukan) dalam toast kesalahan. Lencana 'DEV' muncul di bilah navigasi saat ini aktif. Nonaktif secara bawaan; ikut serta untuk debugging."
+  section_diagnostics: "Diagnostik"
+  vvdiag_toggle: "Probe ketukan & viewport"
+  vvdiag_description: "Menampilkan bilah pengukuran dan menyimpan protokol persisten dari posisi ketukan serta perubahan viewport selama probe aktif. Membantu membuktikan bug tampilan yang sulit direproduksi (mis. ketukan yang jatuh di bawah target) setelah kejadian. Bisa juga diaktifkan lewat parameter URL ?vvdiag=1."
+  vvdiag_log_count: "{count} peristiwa terekam"
+  vvdiag_copy_log: "Salin protokol"
+  vvdiag_copied: "Disalin!"
+  vvdiag_clear_log: "Bersihkan protokol"
   feedback_intensity: "Intensitas Umpan Balik"
   feedback_intensity_description: "Seberapa meriah aplikasi merayakan kemajuan Anda."
   feedback_intensity_subtle: "Halus"
