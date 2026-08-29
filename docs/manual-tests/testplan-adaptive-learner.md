@@ -1270,6 +1270,10 @@ jeder Karten-Zeile (`CardImageField`).
       überlebt Reload); "Protokoll leeren" setzt ihn auf 0
 - [ ] `?vvdiag=1` an die URL angehaengt aktiviert dieselbe Sonde;
       der Settings-Schalter zeigt danach AN (ein gemeinsames Flag)
+- [ ] "Mess-Leiste anzeigen" AUS: die Leiste verschwindet sofort,
+      Kopfbereich/Menü sind wieder frei - aber neue Taps erhöhen
+      weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
+      weiter, #2785)
 
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
