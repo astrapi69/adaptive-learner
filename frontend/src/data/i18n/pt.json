@@ -1946,6 +1946,10 @@
     "contributed_by": "Contribuído por {name}",
     "page_title": "Lição",
     "set_label": "Conjunto",
+    "position": "Lição {current} de {total}",
+    "nav_previous": "Lição anterior",
+    "nav_next": "Próxima lição",
+    "nav_set_overview": "Todas as lições deste conjunto",
     "loading": "A carregar a lição…",
     "not_cached_body": "Esta lição ainda não foi transferida. Abre o explorador de conteúdo e transfere primeiro o conjunto.",
     "progress": {

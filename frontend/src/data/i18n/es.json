@@ -1946,6 +1946,10 @@
     "contributed_by": "Contribuido por {name}",
     "page_title": "Lección",
     "set_label": "Curso",
+    "position": "Lección {current} de {total}",
+    "nav_previous": "Lección anterior",
+    "nav_next": "Lección siguiente",
+    "nav_set_overview": "Todas las lecciones de este set",
     "loading": "Cargando lección…",
     "not_cached_body": "Esta lección aún no se ha descargado. Abre el explorador de contenido y descarga primero el set.",
     "progress": {

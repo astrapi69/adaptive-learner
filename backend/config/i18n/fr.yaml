@@ -1803,6 +1803,10 @@ lesson:
   contributed_by: Proposée par {name}
   page_title: "Leçon"
   set_label: "Cours"
+  position: "Leçon {current} sur {total}"
+  nav_previous: "Leçon précédente"
+  nav_next: "Leçon suivante"
+  nav_set_overview: "Toutes les leçons de ce set"
   loading: "Chargement de la leçon…"
   not_cached_body: "Cette leçon n'est pas encore téléchargée. Ouvre l'explorateur de contenu et télécharge d'abord le set."
   progress:

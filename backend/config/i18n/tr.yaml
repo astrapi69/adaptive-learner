@@ -1801,6 +1801,10 @@ lesson:
   contributed_by: '{name} tarafından katkıda bulunuldu'
   page_title: "Ders"
   set_label: "Set"
+  position: "Ders {current} / {total}"
+  nav_previous: "Önceki ders"
+  nav_next: "Sonraki ders"
+  nav_set_overview: "Bu setteki tüm dersler"
   loading: "Ders yükleniyor…"
   not_cached_body: "Bu ders henüz indirilmemiş. İçerik tarayıcısını aç ve önce seti indir."
   progress:

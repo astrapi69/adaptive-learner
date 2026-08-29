@@ -1812,6 +1812,10 @@ lesson:
   contributed_by: Contributed by {name}
   page_title: "Lesson"
   set_label: "Set"
+  position: "Lesson {current} of {total}"
+  nav_previous: "Previous lesson"
+  nav_next: "Next lesson"
+  nav_set_overview: "All lessons of this set"
   loading: "Loading lesson…"
   not_cached_body: "This lesson isn't downloaded yet. Open the content browser and download the set first."
   progress:
