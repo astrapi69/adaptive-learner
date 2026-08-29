@@ -19,6 +19,12 @@
  * block is the fallback if the clipboard API is blocked. Taps ON the panel are
  * ignored, so copying never pollutes the measurement.
  *
+ * Collapsed by default (#2779): the fallback textarea sat as a full-width
+ * ``pointer-events: auto`` surface over the page and swallowed scroll gestures,
+ * so the page could not be scrolled up past the panel on the phone. The report
+ * block now lives behind an explicit Details toggle; collapsed, only the two
+ * small buttons accept touches.
+ *
  * Strictly opt-in and inert for normal users: renders only with ``?vvdiag=1``
  * (persisted; ``?vvdiag=0`` clears) or the ``adaptive-learner.vv_diag`` flag.
  * Fails open — a missing ``visualViewport`` degrades to a no-op.
@@ -107,6 +113,7 @@ export default function ViewportDiagnostic() {
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [taps, setTaps] = useState<TapInfo[]>([]);
   const [copied, setCopied] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   // Latest values kept in refs so the Copy handler reads them without re-binding.
   const snapRef = useRef<Snapshot | null>(null);
   const tapsRef = useRef<TapInfo[]>([]);
@@ -190,26 +197,38 @@ export default function ViewportDiagnostic() {
           ? `letzter Tipp: ${tapLine(taps[0])}`
           : "letzter Tipp: (tippe irgendwo)"}
       </div>
-      <div className="pointer-events-auto mt-1 flex items-center gap-2">
+      <div className="mt-1 flex items-center gap-2">
         <button
           type="button"
           onClick={handleCopy}
-          className="min-h-9 rounded-app border border-accent bg-accent px-3 text-[13px] font-semibold text-accent-foreground"
+          className="pointer-events-auto min-h-9 rounded-app border border-accent bg-accent px-3 text-[13px] font-semibold text-accent-foreground"
           data-testid="viewport-diagnostic-copy"
         >
           {copied ? "Kopiert!" : "Werte kopieren"}
         </button>
+        <button
+          type="button"
+          onClick={() => setExpanded((open) => !open)}
+          aria-expanded={expanded}
+          className="pointer-events-auto min-h-9 rounded-app border border-border bg-[var(--bg-elevated)] px-3 text-[13px] text-fg-primary"
+          data-testid="viewport-diagnostic-toggle"
+        >
+          {expanded ? "Details zu" : "Details"}
+        </button>
         <span className="text-fg-muted">{taps.length} Tipps</span>
       </div>
       {/* Fallback if the clipboard API is blocked: a selectable block to
-          long-press-copy or screenshot. */}
-      <textarea
-        readOnly
-        value={report}
-        onFocus={(e) => e.currentTarget.select()}
-        className="pointer-events-auto mt-1 h-16 w-full resize-none rounded-app border border-border bg-[var(--bg-elevated)] p-1 text-[11px] text-fg-primary"
-        data-testid="viewport-diagnostic-report"
-      />
+          long-press-copy or screenshot. Behind the toggle (#2779) so no
+          full-width touch-accepting surface blocks page scrolling. */}
+      {expanded && (
+        <textarea
+          readOnly
+          value={report}
+          onFocus={(e) => e.currentTarget.select()}
+          className="pointer-events-auto mt-1 h-16 w-full resize-none rounded-app border border-border bg-[var(--bg-elevated)] p-1 text-[11px] text-fg-primary"
+          data-testid="viewport-diagnostic-report"
+        />
+      )}
     </div>
   );
 }

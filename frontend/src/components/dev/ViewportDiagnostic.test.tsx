@@ -60,9 +60,44 @@ describe("ViewportDiagnostic", () => {
     // The readout reports the finger Y and a ΔY (rendered-top minus finger Y).
     expect(line).toHaveTextContent("y=300");
     expect(line).toHaveTextContent(/ΔY=/);
-    // The report block carries the same tap for copy/paste.
+    // The report block carries the same tap for copy/paste (behind the toggle).
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
     const report = screen.getByTestId("viewport-diagnostic-report") as HTMLTextAreaElement;
     expect(report.value).toContain("button[target-btn]");
+  });
+
+  it("starts collapsed: no full-width report textarea over the page (#2779)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    expect(screen.queryByTestId("viewport-diagnostic-report")).toBeNull();
+    expect(screen.getByTestId("viewport-diagnostic-toggle")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  it("the toggle expands the report block and collapses it again (#2779)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    const toggle = screen.getByTestId("viewport-diagnostic-toggle");
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("viewport-diagnostic-report")).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByTestId("viewport-diagnostic-report")).toBeNull();
+  });
+
+  it("a tap on the toggle is not recorded as a measurement (#2779)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.pointerDown(screen.getByTestId("viewport-diagnostic-toggle"), {
+      clientX: 5,
+      clientY: 5,
+    });
+    expect(screen.getByTestId("viewport-diagnostic-tap")).toHaveTextContent(
+      /tippe irgendwo/i,
+    );
   });
 
   it("a tap on the panel itself is not recorded (never pollutes the measurement)", () => {
