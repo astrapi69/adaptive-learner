@@ -22,7 +22,7 @@ import type {ExerciseHandle} from "../../../components/exercises/shell/exercise-
 import {
     decideLessonEnterAction,
     type LessonEnterState,
-} from "../../../lib/lesson/lessonShortcutsPref";
+} from "../../../lib/lesson/prefs/lessonShortcutsPref";
 import {focusOwnsEnter, isPlainEnter} from "./enterKeyGuards";
 
 /** The decision state plus the advance callback the listener needs. */

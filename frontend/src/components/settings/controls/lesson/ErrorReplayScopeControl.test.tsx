@@ -11,7 +11,7 @@ import {act, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, describe, expect, it} from "vitest";
 
 import ErrorReplayScopeControl from "./ErrorReplayScopeControl";
-import {readErrorReplayErrorsOnly} from "../../../../lib/lesson/errorReplayScopePref";
+import {readErrorReplayErrorsOnly} from "../../../../lib/lesson/prefs/errorReplayScopePref";
 
 afterEach(() => {
     localStorage.clear();

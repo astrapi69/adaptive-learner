@@ -3,8 +3,8 @@ export { LESSON_STEP_ANCHOR_PREFIX, findStepById, parseStepAnchor, rewriteAnchor
 export { isPlayableExerciseStep, storedStepResult } from "./lesson-step-state";
 export { buildExerciseBreakdown, computeStars, deriveCanonicalAnswer } from "./lesson-summary";
 export type { ExerciseBreakdownEntry, StarRating } from "./lesson-summary";
-export { DEFAULT_LESSON_SHORTCUTS_ENABLED, LESSON_SHORTCUTS_CHANGE_EVENT, decideLessonEnterAction, readLessonShortcutsEnabled, setLessonShortcutsEnabled } from "./lessonShortcutsPref";
-export type { LessonEnterAction, LessonEnterState } from "./lessonShortcutsPref";
+export { DEFAULT_LESSON_SHORTCUTS_ENABLED, LESSON_SHORTCUTS_CHANGE_EVENT, decideLessonEnterAction, readLessonShortcutsEnabled, setLessonShortcutsEnabled } from "./prefs/lessonShortcutsPref";
+export type { LessonEnterAction, LessonEnterState } from "./prefs/lessonShortcutsPref";
 export { lessonMotivation } from "./motivation";
 export type { MotivationKind } from "./motivation";
 export { buildLessonJsonExport, buildLessonMarkdownExport, downloadBlob } from "./result-download";

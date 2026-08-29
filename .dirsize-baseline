@@ -8,5 +8,3 @@
 # Punkt-5-Pruefung (#2135, 2026-07-29): zaehlt ausschliesslich
 # `git ls-files`, also den Commit-Stand, nicht den Arbeitsbaum. Zwei Laeufe
 # identisch. GEPRUEFT - nicht erneut pruefen.
-
-frontend/src/lib/lesson  # 17 files after the #2767 mentor-mode merge landed past the gate; split tracked in #2775

@@ -24,7 +24,7 @@ import { readGesturePref, writeGesturePref } from "../../../../lib/settings/gest
 import {
   readLessonShortcutsEnabled,
   setLessonShortcutsEnabled,
-} from "../../../../lib/lesson/lessonShortcutsPref";
+} from "../../../../lib/lesson/prefs/lessonShortcutsPref";
 import {
   readLessonAutoAdvanceEnabled,
   setLessonAutoAdvanceEnabled,
@@ -32,7 +32,7 @@ import {
 import {
   readAskAiVisible,
   setAskAiVisible,
-} from "../../../../lib/lesson/askAiVisibilityPref";
+} from "../../../../lib/lesson/prefs/askAiVisibilityPref";
 
 interface LearningPanelProps {
   /** Whether the Learning tab is the active tab (drives ``hidden``). */
