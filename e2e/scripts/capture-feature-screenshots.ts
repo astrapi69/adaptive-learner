@@ -626,6 +626,32 @@ const FEATURES: FeatureShot[] = [
         pinTo: "book-file-upload",
     },
 
+    // --- Mobile bottom tab bar, opt-in (#2786 restore of #1512) ---------
+    {
+        path: "bottom-tab-bar/leiste",
+        setup: async (page) => {
+            // The bar is md:hidden — only the mobile viewport can show it.
+            const vp = page.viewportSize();
+            if (!vp || vp.width >= 768) return false;
+            await seedLearner(page);
+            await page.addInitScript(() => {
+                try {
+                    localStorage.setItem(
+                        "adaptive-learner.nav_position",
+                        "bottom",
+                    );
+                } catch {
+                    /* ignore */
+                }
+            });
+            await page.goto("/dashboard");
+            await expect(page.getByTestId("bottom-tab-bar")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        },
+    },
+
     // --- Settings diagnostics section (#2782) ---------------------------
     {
         path: "viewport-diagnostic/settings-sektion",

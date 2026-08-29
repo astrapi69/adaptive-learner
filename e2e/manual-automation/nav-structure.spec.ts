@@ -65,6 +65,7 @@ test.describe("Navigation structure", () => {
     await expect(page.getByTestId("nav-hamburger")).toHaveCount(0);
     await expect(page.getByTestId("sidebar-open-toggle")).toHaveCount(0);
     await expect(page.getByTestId("desktop-sidebar")).toHaveCount(0);
+    // #2786: the bar is opt-in (nav_position="bottom"); default top => absent.
     await expect(page.getByTestId("bottom-tab-bar")).toHaveCount(0);
     expect(errors.pageErrors()).toEqual([]);
   });
@@ -82,6 +83,7 @@ test.describe("Navigation structure", () => {
     }
     await expect(page.getByTestId("nav-hamburger")).toHaveCount(0);
     await expect(page.getByTestId("desktop-sidebar")).toHaveCount(0);
+    // #2786: the bar is opt-in (nav_position="bottom"); default top => absent.
     await expect(page.getByTestId("bottom-tab-bar")).toHaveCount(0);
     expect(errors.pageErrors()).toEqual([]);
   });
@@ -96,6 +98,7 @@ test.describe("Navigation structure", () => {
 
     // #1512 — the mobile bottom tab bar was removed; the hamburger drawer is
     // the single mobile navigation.
+    // #2786: the bar is opt-in (nav_position="bottom"); default top => absent.
     await expect(page.getByTestId("bottom-tab-bar")).toHaveCount(0);
 
     // The hamburger drawer is the mobile primary nav and carries the FULL

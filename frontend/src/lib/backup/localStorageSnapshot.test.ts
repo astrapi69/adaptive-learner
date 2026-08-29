@@ -49,6 +49,12 @@ describe("captureLocalStorageSnapshot", () => {
         expect(snap["adaptive-learner.theme"]).toBe("dark");
     });
 
+    it("carries the mobile nav-position preference (#2786 pin, lessons #2053)", () => {
+        localStorage.setItem("adaptive-learner.nav_position", "bottom");
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.nav_position"]).toBe("bottom");
+    });
+
     it("excludes the device-local storage_mode key", () => {
         localStorage.setItem("adaptive-learner.storage_mode", "dexie");
         expect(captureLocalStorageSnapshot()).not.toHaveProperty(

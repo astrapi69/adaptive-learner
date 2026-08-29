@@ -1188,6 +1188,18 @@ each card row (`CardImageField`).
 - [ ] Appending `?vvdiag=1` to the URL enables the same probe; the
       Settings toggle then shows ON (one shared flag)
 
+### Mobile menu position: bottom tab bar as an option (#2786)
+- [ ] Settings > General > Interface: "Menu position (mobile)" is
+      "Top (menu button)" (default) - NO bottom bar
+- [ ] Pick "Bottom (tab bar)": the bar appears IMMEDIATELY at the
+      bottom (Learn/Content/Learning Path/Progress/More); content is
+      not hidden behind it (bottom scroll reserve)
+- [ ] With the bottom bar: the top hamburger menu still works
+- [ ] During an active lesson and on Landing/Onboarding/Assessment the
+      bar stays hidden (the lesson footer keeps the bottom edge)
+- [ ] Back to "Top": the bar disappears immediately; the choice
+      survives a reload
+
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
