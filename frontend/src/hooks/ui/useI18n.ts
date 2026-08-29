@@ -1,9 +1,8 @@
 import {createContext, useContext, useEffect, useState, useCallback, type ReactNode} from "react";
-import {fallbackString} from "../../i18n/fallbacks";
-import {SUPPORTED_LANGUAGES, type SupportedLanguage} from "../../lib/constants";
 import {UI_LANGUAGES} from "../../lib/i18n/languages";
 import {readLearnerState, setLanguage} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
+import {addCatalog, getI18n} from "../../i18n/engine";
 import {setCurrentLanguage} from "../../utils/appState";
 import {clearDiscoverSourceLanguage} from "../../lib/content/repos/discoverLanguagePref";
 import React from "react";
@@ -14,10 +13,6 @@ interface I18nContextValue {
     t: (key: string, fallback?: string) => string;
     lang: string;
     setLang: (lang: string) => void;
-}
-
-function isSupportedLang(value: string): value is SupportedLanguage {
-    return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
 }
 
 /** The 11 shipped UI-language codes — the picker's source of truth
@@ -127,21 +122,14 @@ const CATALOG_RETRY_DELAYS_MS: readonly number[] = [1000, 2000, 4000, 8000, 1600
  * so they re-render on language switch.
  */
 export function resolveI18n(key: string, fallback: string): string {
-    const parts = key.split(".");
-    let current: unknown = cachedStrings;
-    for (const part of parts) {
-        if (
-            current &&
-            typeof current === "object" &&
-            part in (current as Record<string, unknown>)
-        ) {
-            current = (current as Record<string, unknown>)[part];
-        } else {
-            return fallback;
-        }
-    }
-    return typeof current === "string" ? current : fallback;
+    // #2797 - same engine as the hook, so a non-React caller cannot drift from
+    // what the UI resolves.
+    const engine = getI18n();
+    if (!engine.exists(key)) return fallback;
+    const resolved = engine.t(key);
+    return typeof resolved === "string" ? resolved : fallback;
 }
+
 
 export function I18nProvider({children}: {children: ReactNode}) {
     const [strings, setStrings] = useState<I18nStrings>(cachedStrings);
@@ -194,6 +182,9 @@ export function I18nProvider({children}: {children: ReactNode}) {
                     if (cancelled) return;
                     cachedLang = lang;
                     cachedStrings = data;
+                    // #2797 - i18next owns resolution; merge the full catalog
+                    // over the preloaded first-paint strings (deep, overwrite).
+                    addCatalog(lang, data as object);
                     setStrings(data);
                 })
                 .catch(() => {
@@ -225,6 +216,8 @@ export function I18nProvider({children}: {children: ReactNode}) {
     // the active UI language so screen readers choose the
     // correct pronunciation rules.
     useEffect(() => {
+        // #2797 - i18next resolves against the active language.
+        void getI18n().changeLanguage(lang);
         document.documentElement.lang = lang;
         // Keep the event-recorder app-state snapshot (EVT-02) in sync
         // with the active UI language.
@@ -250,27 +243,23 @@ export function I18nProvider({children}: {children: ReactNode}) {
     }, [lang]);
 
     const t = useCallback((key: string, fallback?: string): string => {
-        // 1) Backend catalog (live strings from
-        //    /api/i18n/{lang}). Walk dot-notation path.
-        const parts = key.split(".");
-        let current: unknown = strings;
-        let resolved = true;
-        for (const part of parts) {
-            if (current && typeof current === "object" && part in (current as Record<string, unknown>)) {
-                current = (current as Record<string, unknown>)[part];
-            } else {
-                resolved = false;
-                break;
-            }
+        // #2797 - i18next walks the FULL dot path and applies the language
+        // fallback chain (active language -> preloaded first-paint strings ->
+        // "en"). The hand-rolled walk this replaces could only see two levels,
+        // which is what hid ``update.banner.message`` from the first paint
+        // (#2796).
+        //
+        // ``strings`` stays in the dependency list: it changes when a catalog
+        // lands, and that is exactly when consumers must re-render.
+        const engine = getI18n();
+        if (engine.exists(key)) {
+            const resolved = engine.t(key);
+            if (typeof resolved === "string") return resolved;
         }
-        if (resolved && typeof current === "string") return current;
-        // 2) Hardcoded frontend fallbacks (first-paint resilience).
-        const localised = isSupportedLang(lang) ? fallbackString(lang, key) : undefined;
-        if (localised) return localised;
-        // 3) Caller-supplied fallback, then the key itself. Nullish, not
-        //    falsy: an explicit empty-string fallback means "render nothing",
-        //    never the raw dot-notation key (#1667).
+        // Nullish, not falsy: an explicit empty-string fallback means "render
+        // nothing", never the raw dot-notation key (#1667 / #1676).
         return fallback ?? key;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [strings, lang]);
 
     const value: I18nContextValue = {t, lang, setLang};
