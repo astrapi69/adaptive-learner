@@ -1349,6 +1349,21 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
       kommen dort aus der lokalen Datenbank
 
+### Set-Seite: Lektionsliste + Fortschritt (#2793 Stufen 2-3)
+- [ ] Eine Set-Seite öffnen (/content/set/<id> oder über einen
+      geteilten Link): unter den Set-Angaben steht die Liste ALLER
+      Lektionen mit Nummer
+- [ ] Rechts oben an der Liste steht "{x} von {y} Lektionen
+      abgeschlossen"
+- [ ] Abgeschlossene Lektionen zeigen ihre Punktzahl; die erste
+      unfertige trägt die Marke "Hier weitermachen"
+- [ ] Ein Klick auf eine beliebige Zeile öffnet genau diese Lektion -
+      auch eine weit zurückliegende
+- [ ] In einer laufenden Lektion ist der Set-Name in der Kopfzeile
+      anklickbar und führt auf ebendiese Liste
+- [ ] Ohne angemeldeten Lernfortschritt erscheint die Liste trotzdem,
+      nur ohne Markierungen
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert

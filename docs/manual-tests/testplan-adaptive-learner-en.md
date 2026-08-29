@@ -1264,6 +1264,19 @@ each card row (`CardImageField`).
 - [ ] Check both in browser mode (no server) - the figures come from
       the local database there
 
+### Set page: lesson list + progress (#2793 stages 2-3)
+- [ ] Open a set page (/content/set/<id> or via a shared link): below
+      the set details, ALL lessons are listed with their number
+- [ ] The list header shows "{x} of {y} lessons completed"
+- [ ] Completed lessons show their score; the first unfinished one
+      carries the "Continue here" marker
+- [ ] Clicking any row opens exactly that lesson - including one far
+      back in the set
+- [ ] Inside a running lesson the set name in the header is clickable
+      and leads to that same list
+- [ ] With no recorded progress the list still appears, just without
+      markers
+
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
