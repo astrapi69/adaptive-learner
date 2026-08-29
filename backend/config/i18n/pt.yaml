@@ -2190,6 +2190,9 @@ content:
     start: "Começar a aprender"
     download_start: "Baixar e começar"
     lessons: "{n} lições"
+    lesson_list: "Lições"
+    progress_done: "{done} de {total} lições concluídas"
+    current_lesson: "Continuar aqui"
   repo_export:
     button: "Partilhar como repositório"
     title: "Partilhar como repositório"

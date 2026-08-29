@@ -2190,6 +2190,9 @@ content:
     start: "学習を始める"
     download_start: "ダウンロードして開始"
     lessons: "{n} レッスン"
+    lesson_list: "レッスン"
+    progress_done: "{total} 件中 {done} 件のレッスンが完了"
+    current_lesson: "ここから続ける"
   repo_export:
     button: "リポジトリとして共有"
     title: "リポジトリとして共有"

@@ -2201,6 +2201,9 @@ content:
     start: "학습 시작"
     download_start: "다운로드 후 시작"
     lessons: "{n}개 레슨"
+    lesson_list: "레슨"
+    progress_done: "{total}개 중 {done}개 레슨 완료"
+    current_lesson: "여기서 계속하기"
   repo_export:
     button: "저장소로 공유"
     title: "저장소로 공유"
