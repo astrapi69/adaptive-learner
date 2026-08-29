@@ -2195,6 +2195,9 @@ content:
     start: "Lernen starten"
     download_start: "Herunterladen & starten"
     lessons: "{n} Lektionen"
+    lesson_list: "Lektionen"
+    progress_done: "{done} von {total} Lektionen abgeschlossen"
+    current_lesson: "Hier weitermachen"
   repo_export:
     button: "Als Repository teilen"
     title: "Als Repository teilen"

@@ -1349,6 +1349,20 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
       kommen dort aus der lokalen Datenbank
 
+### Set-Seite: Lektionsliste + Fortschritt (#2793 Stufen 2-3)
+- [ ] Eine Set-Seite öffnen (/content/set/<id> oder über einen
+      geteilten Link): unter den Set-Angaben steht die Liste ALLER
+      Lektionen mit Nummer
+- [ ] Rechts oben an der Liste steht "{x} von {y} Lektionen
+      abgeschlossen"
+- [ ] Abgeschlossene Lektionen zeigen ihre Punktzahl; die erste
+      unfertige trägt die Marke "Hier weitermachen"
+- [ ] Ein Klick auf eine beliebige Zeile öffnet genau diese Lektion -
+      auch eine weit zurückliegende
+- [ ] In einer laufenden Lektion ist der Set-Name in der Kopfzeile
+      anklickbar und führt auf ebendiese Liste
+- [ ] Ohne angemeldeten Lernfortschritt erscheint die Liste trotzdem,
+      nur ohne Markierungen
 ### Zusammenfassung: Alle Antworten mit Frage (#2807)
 - [ ] Lektion beenden, "Alle Antworten ansehen" öffnen: jede Zeile mit
       etwas zu zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)

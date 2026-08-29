@@ -2201,6 +2201,9 @@ content:
     start: "Mulai belajar"
     download_start: "Unduh & mulai"
     lessons: "{n} pelajaran"
+    lesson_list: "Pelajaran"
+    progress_done: "{done} dari {total} pelajaran selesai"
+    current_lesson: "Lanjutkan di sini"
   repo_export:
     button: "Bagikan sebagai repositori"
     title: "Bagikan sebagai repositori"

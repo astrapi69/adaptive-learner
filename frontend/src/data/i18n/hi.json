@@ -2375,7 +2375,10 @@
       "go_discover": "सामग्री खोजें",
       "start": "सीखना शुरू करें",
       "download_start": "डाउनलोड करें और शुरू करें",
-      "lessons": "{n} पाठ"
+      "lessons": "{n} पाठ",
+      "lesson_list": "पाठ",
+      "progress_done": "{total} में से {done} पाठ पूरे",
+      "current_lesson": "यहाँ से जारी रखें"
     },
     "repo_export": {
       "button": "रिपॉज़िटरी के रूप में साझा करें",

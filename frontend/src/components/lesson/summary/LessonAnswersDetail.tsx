@@ -73,7 +73,7 @@ function AnswerRow({
         <>
             {entry.question && (
                 <span
-                    className="lesson-summary-breakdown-question block text-fg-secondary"
+                    className="block pt-0.5 text-[0.8125rem] text-fg-secondary"
                     data-testid={`lesson-summary-question-${entry.stepId}`}
                 >
                     {entry.question}
@@ -84,7 +84,7 @@ function AnswerRow({
                 spelled out where no diff is rendered. */}
             {entry.userAnswer && !entry.canonicalAnswer && (
                 <span
-                    className="lesson-summary-breakdown-your-answer block"
+                    className="block pt-0.5 text-[0.8125rem] text-fg-muted"
                     data-testid={`lesson-summary-your-answer-${entry.stepId}`}
                 >
                     {t("review.your_answer", "Your answer:")} {entry.userAnswer}
@@ -94,7 +94,7 @@ function AnswerRow({
                 (entry.userAnswer ? (
                     <>
                         <span
-                            className="lesson-summary-breakdown-your-answer block"
+                            className="block pt-0.5 text-[0.8125rem] text-fg-muted"
                             data-testid={`lesson-summary-your-answer-${entry.stepId}`}
                         >
                             {t("review.your_answer", "Your answer:")}{" "}
@@ -134,7 +134,7 @@ function AnswerRow({
                 // Open by default: the learner asked to see all answers, so the
                 // context is the point - collapsing is the escape, not the norm.
                 <details open data-testid={`lesson-summary-row-details-${entry.stepId}`}>
-                    <summary className="lesson-summary-breakdown-summary-row">
+                    <summary className="grid cursor-pointer grid-cols-[1fr_auto] items-baseline gap-2">
                         {head}
                     </summary>
                     {body}
