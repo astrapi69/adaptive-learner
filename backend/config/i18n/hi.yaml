@@ -682,6 +682,12 @@ settings:
   vvdiag_copy_log: "प्रोटोकॉल कॉपी करें"
   vvdiag_copied: "कॉपी हो गया!"
   vvdiag_clear_log: "प्रोटोकॉल साफ़ करें"
+  vvdiag_panel_toggle: "माप पट्टी दिखाएँ"
+  vvdiag_panel_description: "बंद: जांच ऊपर की पट्टी दिखाए बिना अदृश्य रूप से रिकॉर्ड करती रहती है - हेडर और मेनू पूरी तरह उपलब्ध रहते हैं।"
+  nav_position: "मेनू की स्थिति (मोबाइल)"
+  nav_position_description: "फोन पर मुख्य नेविगेशन कहाँ रहे: ऊपर मेनू बटन के रूप में (डिफ़ॉल्ट) या नीचे अंगूठे की पहुँच वाली टैब पट्टी के रूप में।"
+  nav_position_top: "ऊपर (मेनू बटन)"
+  nav_position_bottom: "नीचे (टैब पट्टी)"
   feedback_intensity: फ़ीडबैक तीव्रता
   feedback_intensity_description: ऐप आपकी प्रगति का कितने ज़ोर से जश्न मनाता है।
   feedback_intensity_subtle: सूक्ष्म
