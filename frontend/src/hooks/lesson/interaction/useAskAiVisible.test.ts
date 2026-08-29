@@ -11,7 +11,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { setAskAiVisible } from "../../../lib/lesson/askAiVisibilityPref";
+import { setAskAiVisible } from "../../../lib/lesson/prefs/askAiVisibilityPref";
 import { useAskAiVisible } from "./useAskAiVisible";
 
 beforeEach(() => {

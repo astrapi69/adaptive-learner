@@ -14,7 +14,7 @@ import {useEffect, useState} from "react";
 import {
     ERROR_REPLAY_SCOPE_CHANGE_EVENT,
     readErrorReplayErrorsOnly,
-} from "../../../lib/lesson/errorReplayScopePref";
+} from "../../../lib/lesson/prefs/errorReplayScopePref";
 
 /** Whether error-replay is scoped to only the wrong elements. */
 export function useErrorReplayScope(): boolean {

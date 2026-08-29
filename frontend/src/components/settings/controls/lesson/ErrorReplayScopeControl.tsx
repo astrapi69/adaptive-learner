@@ -22,7 +22,7 @@ import {
     ERROR_REPLAY_SCOPE_CHANGE_EVENT,
     readErrorReplayErrorsOnly,
     setErrorReplayErrorsOnly,
-} from "../../../../lib/lesson/errorReplayScopePref";
+} from "../../../../lib/lesson/prefs/errorReplayScopePref";
 
 const ERRORS_ONLY = "errors_only";
 const WHOLE_SET = "whole_set";
