@@ -172,7 +172,7 @@ export default function BottomTabBar() {
             <NavGroup label={t("nav.group.more", "MORE")} testId="more-group-utility">
               <NavLink
                 to={settingsTarget.to}
-                className="more-sheet-link flex min-h-[44px] items-center gap-3 rounded-app px-2 text-fg-primary hover:bg-bg-elevated"
+                className="flex min-h-[44px] items-center gap-3 rounded-app px-2 text-fg-primary hover:bg-bg-elevated"
                 data-testid="more-settings"
               >
                 <SettingsIcon size={18} aria-hidden="true" />
@@ -184,7 +184,7 @@ export default function BottomTabBar() {
                   openHelp(helpKeyForPath(pathname));
                   setMoreOpen(false);
                 }}
-                className="more-sheet-link flex min-h-[44px] w-full items-center gap-3 rounded-app px-2 text-left text-fg-primary hover:bg-bg-elevated"
+                className="flex min-h-[44px] w-full items-center gap-3 rounded-app px-2 text-left text-fg-primary hover:bg-bg-elevated"
                 data-testid="more-help"
               >
                 <HelpIcon size={18} aria-hidden="true" />
