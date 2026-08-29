@@ -59,6 +59,7 @@ import { useLessonFlowControl } from "../../hooks/lesson/session/useLessonFlowCo
 import { useLessonMotivation } from "../../hooks/lesson/session/useLessonMotivation";
 import { useLessonNavigation } from "../../hooks/lesson/session/useLessonNavigation";
 import { useLessonSetContext } from "../../hooks/lesson/session/useLessonSetContext";
+import { lessonRoute } from "../../lib/content/browse/continue-learning";
 import { useLessonStepState } from "../../hooks/lesson/session/useLessonStepState";
 import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrientationReanchor";
 import { clearHintUsage } from "../../lib/hints/hint-usage";
@@ -245,8 +246,22 @@ export default function LessonPage() {
 
   // Next-lesson pointer + set title/domain/book (three silent-degrade
   // mount reads) live in the extracted hook (#1790).
-  const {nextLessonFilename, setTitle, setDomain, setBook} =
-    useLessonSetContext({source, setId, filename});
+  const {
+    nextLessonFilename,
+    prevLessonFilename,
+    position,
+    setTitle,
+    setDomain,
+    setBook,
+  } = useLessonSetContext({source, setId, filename});
+  // #2793 — the header's backward/forward links; the same route builder the
+  // rest of the app uses, so a neighbour opens exactly like any other lesson.
+  const prevLessonHref = prevLessonFilename
+    ? lessonRoute(source, setId, prevLessonFilename)
+    : null;
+  const nextLessonHref = nextLessonFilename
+    ? lessonRoute(source, setId, nextLessonFilename)
+    : null;
 
   const statusKind = resolveLessonStatusKind(
     source,
@@ -294,7 +309,13 @@ export default function LessonPage() {
       className="lesson-page flex flex-col min-h-full"
       data-testid="lesson-page"
     >
-      <LessonHeader lesson={lesson} setTitle={setTitle} />
+      <LessonHeader
+        lesson={lesson}
+        setTitle={setTitle}
+        position={position}
+        prevHref={prevLessonHref}
+        nextHref={nextLessonHref}
+      />
 
       {/* #2319 — visible while test mode is active (preview build only). */}
       <TestModeBanner />

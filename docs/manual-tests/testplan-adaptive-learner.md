@@ -1286,6 +1286,16 @@ jeder Karten-Zeile (`CardImageField`).
       bleibt die Leiste verborgen (Lektions-Footer behält die Unterkante)
 - [ ] Zurück auf "Oben": Leiste verschwindet sofort; Einstellung
       übersteht einen Reload
+### Position + Navigation im Set (#2793)
+- [ ] In einer Lektion aus einem Set steht oben "Lektion N von M" mit
+      der richtigen Nummer
+- [ ] Der Pfeil nach links öffnet die VORIGE Lektion des Sets; der
+      Pfeil nach rechts die nächste
+- [ ] In der ersten Lektion fehlt der Links-Pfeil (kein toter Knopf),
+      die Anzeige bleibt; in der letzten fehlt der Rechts-Pfeil
+- [ ] Nach dem Sprung zeigt die Anzeige die neue Position
+- [ ] Bei einer Einzel-Lektion ohne Set (z. B. eigene Lektion) fehlt
+      die Positionszeile vollständig
 
 ### Erstanzeige: keine Sprachmischung (#2796)
 - [ ] App bei deutscher Oberfläche neu laden (Cache leeren): Startseite,
