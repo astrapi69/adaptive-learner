@@ -2375,7 +2375,10 @@
       "go_discover": "Découvrir du contenu",
       "start": "Commencer à apprendre",
       "download_start": "Télécharger et commencer",
-      "lessons": "{n} leçons"
+      "lessons": "{n} leçons",
+      "lesson_list": "Leçons",
+      "progress_done": "{done} leçons sur {total} terminées",
+      "current_lesson": "Continuer ici"
     },
     "repo_export": {
       "button": "Partager comme dépôt",
