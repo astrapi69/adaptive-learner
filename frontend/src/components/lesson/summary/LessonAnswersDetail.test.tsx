@@ -25,6 +25,7 @@ function entry(
         fullyCorrect: over.fullyCorrect ?? true,
         canonicalAnswer: over.canonicalAnswer ?? "",
         userAnswer: over.userAnswer ?? null,
+        question: over.question ?? null,
     };
 }
 
@@ -98,5 +99,86 @@ describe("LessonAnswersDetail", () => {
         expect(
             screen.getByTestId("lesson-summary-breakdown-s1"),
         ).toHaveAttribute("data-status", "unattempted");
+    });
+
+    it("a row is expandable and reveals the question plus both answers (#2807)", () => {
+        render(
+            <LessonAnswersDetail
+                breakdown={[
+                    entry({
+                        stepId: "s1",
+                        title: "Warum eine Wissenschaft",
+                        correct: 2,
+                        total: 3,
+                        attempted: true,
+                        fullyCorrect: false,
+                        question: "Warum ist das eine Wissenschaft?",
+                        userAnswer: "weil",
+                        canonicalAnswer: "weil sie pruefbar ist",
+                    }),
+                ]}
+            />,
+        );
+        // Collapsed the row stays compact: title + score only.
+        expect(screen.getByTestId("lesson-summary-breakdown-s1")).toHaveTextContent(
+            "Warum eine Wissenschaft",
+        );
+        // The question and the learner's own answer are present in the row's
+        // disclosure body - the #2757 class ("answers without the question").
+        expect(screen.getByTestId("lesson-summary-question-s1")).toHaveTextContent(
+            "Warum ist das eine Wissenschaft?",
+        );
+        expect(screen.getByTestId("lesson-summary-your-answer-s1")).toHaveTextContent(
+            "weil",
+        );
+    });
+
+    it("a partially correct row without a text answer still reveals question + solution (#2807)", () => {
+        render(
+            <LessonAnswersDetail
+                breakdown={[
+                    entry({
+                        stepId: "s2",
+                        correct: 2,
+                        total: 3,
+                        attempted: true,
+                        fullyCorrect: false,
+                        question: "Ordne die Paare zu",
+                        userAnswer: null,
+                        canonicalAnswer: "A-1, B-2",
+                    }),
+                ]}
+            />,
+        );
+        expect(screen.getByTestId("lesson-summary-question-s2")).toBeInTheDocument();
+        expect(screen.getByTestId("lesson-summary-breakdown-s2")).toHaveTextContent(
+            "A-1, B-2",
+        );
+        expect(screen.queryByTestId("lesson-summary-your-answer-s2")).toBeNull();
+    });
+
+    it("a fully correct row still shows its question - the section promises ALL answers (#2807)", () => {
+        render(
+            <LessonAnswersDetail
+                breakdown={[
+                    entry({
+                        stepId: "s3",
+                        correct: 3,
+                        total: 3,
+                        attempted: true,
+                        fullyCorrect: true,
+                        question: "Frage",
+                    }),
+                ]}
+            />,
+        );
+        // "View all answers" means all of them: the question belongs to a
+        // correct row too. Only the wrong-answer diff is absent here.
+        expect(screen.getByTestId("lesson-summary-question-s3")).toHaveTextContent(
+            "Frage",
+        );
+        expect(
+            screen.queryByTestId("lesson-summary-breakdown-diff-s3"),
+        ).toBeNull();
     });
 });

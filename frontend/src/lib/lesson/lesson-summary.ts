@@ -21,6 +21,7 @@
  * rather than misleading 0/0 numbers.
  */
 
+import {questionForExercise} from "../review/error-question";
 import type {
     ContentLesson,
     ContentLessonExercise,
@@ -58,6 +59,11 @@ export interface ExerciseBreakdownEntry {
      *  ``<DiffHighlight />`` when present, falls back to the
      *  canonical-only line otherwise. */
     userAnswer: string | null;
+    /** #2807 - the question the step asked (cloze sentence, exercise prompt).
+     *  ``null`` when the exercise carries none. The summary row keeps its
+     *  compact title + score when collapsed and reveals this on expand, so an
+     *  answer is never shown without what was asked (the #2757 class). */
+    question: string | null;
 }
 
 /** Map a raw correct/total pair to the 0–3 star rating per
@@ -173,6 +179,7 @@ export function buildExerciseBreakdown(
             fullyCorrect: attempted && total > 0 && correct === total,
             canonicalAnswer: deriveCanonicalAnswer(step.exercise),
             userAnswer: stepResult?.user_answer ?? null,
+            question: questionForExercise(step.exercise),
         });
     }
     return entries;

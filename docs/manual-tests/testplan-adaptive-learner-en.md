@@ -1276,6 +1276,16 @@ each card row (`CardImageField`).
       and leads to that same list
 - [ ] With no recorded progress the list still appears, just without
       markers
+### Summary: all answers with their question (#2807)
+- [ ] Finish a lesson, open "View all answers": every row with something
+      to show is expandable (title + score stay visible)
+- [ ] Expanded, the QUESTION sits above the answers - including on a
+      partially correct row like "2 / 3", which previously showed nothing
+- [ ] Choice/matching exercises (no text answer) show question and
+      correct answer
+- [ ] Text answers keep the coloured token diff, plus your own answer
+      spelled out
+- [ ] A fully correct row shows its question but no mistake diff
 
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
