@@ -4241,5 +4241,21 @@
       },
       "aria": "Difficulty: {tier} ({level} of 5)"
     }
+  },
+  "set_summary": {
+    "title": "Review: {set}",
+    "subtitle": "Every mistake in this set at a glance",
+    "open": "View review",
+    "total_errors": "Total mistakes",
+    "mastered_share": "Mastered",
+    "elements_open": "Still open",
+    "time_spent": "Time spent",
+    "by_lesson": "Mistakes per lesson",
+    "by_type": "Mistakes per exercise type",
+    "weak_areas": "Biggest weak spots",
+    "no_errors": "No mistakes recorded - excellent!",
+    "lesson_errors": "{count} mistakes",
+    "practice_errors": "Practise mistakes",
+    "back_to_set": "Back to the set"
   }
 }

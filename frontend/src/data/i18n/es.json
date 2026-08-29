@@ -4241,5 +4241,21 @@
       },
       "aria": "Dificultad: {tier} ({level} de 5)"
     }
+  },
+  "set_summary": {
+    "title": "Evaluación: {set}",
+    "subtitle": "Todos los errores de este set de un vistazo",
+    "open": "Ver evaluación",
+    "total_errors": "Errores en total",
+    "mastered_share": "Dominado",
+    "elements_open": "Aún pendiente",
+    "time_spent": "Tiempo de estudio",
+    "by_lesson": "Errores por lección",
+    "by_type": "Errores por tipo de ejercicio",
+    "weak_areas": "Mayores puntos débiles",
+    "no_errors": "Sin errores registrados. ¡Excelente!",
+    "lesson_errors": "{count} errores",
+    "practice_errors": "Practicar errores",
+    "back_to_set": "Volver al set"
   }
 }
