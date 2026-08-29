@@ -311,3 +311,26 @@ export function lessonRoute(
     const slug = source.replace(/\//g, "--");
     return `/lesson/${slug}/${setId}/${filename}`;
 }
+
+/**
+ * Where "leave the lesson" should land (#2811).
+ *
+ * Pausing or finishing used to drop the learner on ``/content?tab=my`` - a
+ * flat overview with no relation to the set they were just working through.
+ * Since #2810 the set page lists that set's lessons with their progress and
+ * marks where to continue, so it is the natural place to come back to. A
+ * lesson without a set (an own lesson, a standalone import) keeps the old
+ * target.
+ *
+ * @param setId - The lesson's set id, if it has one.
+ * @returns The route to navigate to on exit.
+ *
+ * @example
+ * exitRouteForLesson("es-a1"); // "/content/set/es-a1"
+ * exitRouteForLesson(null);    // "/content?tab=my"
+ */
+export function exitRouteForLesson(setId: string | null | undefined): string {
+    const trimmed = (setId ?? "").trim();
+    if (!trimmed) return "/content?tab=my";
+    return `/content/set/${encodeURIComponent(trimmed)}`;
+}
