@@ -567,6 +567,14 @@ preview delivery). In the regular build the mode does not exist.
       resets to the interactive view. On a fully-correct answer NO toggle
       appears (only "Continue")
 - [ ] ext:al-error-correction: find + correct errors
+- [ ] ext:al-error-correction solve view (#2803): after a wrong check,
+      the "My answer" / "Solution" toggle appears next to the result
+      line (like pairs/categories). "Solution" renders the sentence as
+      word tiles: the wrong word struck through in red with an X, the
+      canonical correction right beside it in green with a check mark -
+      you see WHERE in the sentence the error sat. "My answer" returns
+      to the graded view (incl. the solution line); "Try again" resets
+      to the interactive view. On a correct answer NO toggle appears
 - [ ] ext:al-reading-comprehension: text + questions
 - [ ] ext:al-reading-comprehension resolution (#2633): after "Check answers"
       the correct multiple-choice option is highlighted GREEN — with a check

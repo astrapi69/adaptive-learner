@@ -129,7 +129,7 @@ describe("ErrorCorrectionExercise: submit lifecycle", () => {
             "data-verdict",
             "correct",
         );
-        const solution = screen.getByTestId("error-correction-solution");
+        const solution = screen.getByTestId("error-correction-solution-line");
         expect(solution).toHaveTextContent("das");
         expect(solution).toHaveTextContent("dem");
     });
@@ -147,7 +147,7 @@ describe("ErrorCorrectionExercise: submit lifecycle", () => {
             "data-verdict",
             "missed",
         );
-        expect(screen.getByTestId("error-correction-solution")).toBeInTheDocument();
+        expect(screen.getByTestId("error-correction-solution-line")).toBeInTheDocument();
     });
 
     it("retry clears pick, input, and verdicts", () => {
@@ -161,6 +161,89 @@ describe("ErrorCorrectionExercise: submit lifecycle", () => {
         expect(
             screen.getByTestId("error-correction-token-2"),
         ).not.toHaveAttribute("data-verdict");
+    });
+});
+
+describe("ErrorCorrectionExercise: solve view (#2803)", () => {
+    const submitWrong = () => {
+        pickToken(2); // wrong token
+        typeCorrection("dem");
+        check();
+    };
+
+    it("offers the answer toggle only after a not-fully-correct check", () => {
+        render(<ErrorCorrectionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(
+            screen.queryByTestId("error-correction-answer-toggle"),
+        ).not.toBeInTheDocument();
+        submitWrong();
+        expect(
+            screen.getByTestId("error-correction-answer-toggle"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("error-correction-solution"),
+        ).toBeInTheDocument();
+    });
+
+    it("does not offer the toggle on a correct answer", () => {
+        render(<ErrorCorrectionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pickToken(3);
+        typeCorrection("dem");
+        check();
+        expect(
+            screen.queryByTestId("error-correction-answer-toggle"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("solution view shows the correction inside the token row", () => {
+        render(<ErrorCorrectionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        submitWrong();
+        fireEvent.click(screen.getByTestId("error-correction-solution"));
+
+        const resolution = screen.getByTestId("error-correction-resolution");
+        expect(resolution).toBeInTheDocument();
+        // Every healthy token renders in place ...
+        expect(resolution).toHaveTextContent("Der");
+        expect(resolution).toHaveTextContent("Kommando");
+        // ... the wrong token is struck through, the canonical correction
+        // stands green beside it.
+        const wrong = screen.getByTestId("error-correction-resolved-wrong");
+        expect(wrong).toHaveTextContent("das");
+        expect(wrong.className).toContain("line-through");
+        expect(
+            screen.getByTestId("error-correction-resolved-correction"),
+        ).toHaveTextContent("dem");
+        // The interactive surfaces are replaced while the solution shows.
+        expect(
+            screen.queryByTestId("error-correction-token-0"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId("error-correction-input"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId("error-correction-solution-line"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("my-answer returns to the graded tokens; retry resets the view", () => {
+        render(<ErrorCorrectionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        submitWrong();
+        fireEvent.click(screen.getByTestId("error-correction-solution"));
+        fireEvent.click(screen.getByTestId("error-correction-my-answer"));
+        expect(
+            screen.queryByTestId("error-correction-resolution"),
+        ).not.toBeInTheDocument();
+        expect(screen.getByTestId("error-correction-token-2")).toHaveAttribute(
+            "data-verdict",
+            "wrong",
+        );
+
+        fireEvent.click(screen.getByTestId("error-correction-solution"));
+        fireEvent.click(screen.getByTestId("error-correction-retry"));
+        expect(
+            screen.queryByTestId("error-correction-resolution"),
+        ).not.toBeInTheDocument();
+        expect(screen.getByTestId("error-correction-input")).toHaveValue("");
     });
 });
 
@@ -185,7 +268,7 @@ describe("ErrorCorrectionExercise: reviewed (locked) reconstruction", () => {
             "data-verdict",
             "wrong",
         );
-        expect(screen.getByTestId("error-correction-solution")).toBeInTheDocument();
+        expect(screen.getByTestId("error-correction-solution-line")).toBeInTheDocument();
         expect(screen.getByTestId("error-correction-input")).toHaveValue("dem");
         expect(
             screen.queryByTestId("error-correction-submit"),
@@ -209,7 +292,7 @@ describe("ErrorCorrectionExercise: reviewed (locked) reconstruction", () => {
             "correct",
         );
         expect(
-            screen.queryByTestId("error-correction-solution"),
+            screen.queryByTestId("error-correction-solution-line"),
         ).not.toBeInTheDocument();
     });
 });

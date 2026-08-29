@@ -37,9 +37,13 @@ import {
 import {isFreeTextCorrect} from "../../../lib/exercises/grading/free-text-grading";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
+import ExerciseAnswerToggle, {
+    type AnswerView,
+} from "../feedback/ExerciseAnswerToggle";
 import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import ExerciseFooter from "../shell/ExerciseFooter";
 import ExerciseHint from "../feedback/ExerciseHint";
+import ErrorCorrectionResolution from "./ErrorCorrectionResolution";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -100,6 +104,10 @@ function ErrorCorrectionExercise(
     const [typedCorrection, setTypedCorrection] = useState<string>(
         () => reviewedAnswer?.typed ?? "",
     );
+    /** #2803 — after checking, the learner toggles between their own
+     *  graded tokens ("my-answer") and the corrected sentence rendered
+     *  in the token row ("solution"), mirroring matching/categorization. */
+    const [view, setView] = useState<AnswerView>("my-answer");
 
     const gradeAttempt = (
         attemptIndex: number | null,
@@ -157,6 +165,7 @@ function ErrorCorrectionExercise(
         resetAnswer: () => {
             setPickedIndex(null);
             setTypedCorrection("");
+            setView("my-answer");
         },
     });
 
@@ -205,6 +214,84 @@ function ErrorCorrectionExercise(
                 testId="error-correction-hint-button"
             />
 
+            {view === "solution" && (
+                <ErrorCorrectionResolution
+                    tokens={payload.tokens}
+                    errorIndex={payload.error_index}
+                    correction={canonicalSolution}
+                />
+            )}
+
+            {view === "my-answer" && (
+                <ErrorCorrectionMyAnswer
+                    payload={payload}
+                    pickedIndex={pickedIndex}
+                    onPickToken={(tokenIndex) =>
+                        setPickedIndex((previous) =>
+                            previous === tokenIndex ? null : tokenIndex,
+                        )
+                    }
+                    typedCorrection={typedCorrection}
+                    onTypeCorrection={setTypedCorrection}
+                    submitted={submitted}
+                    canCheck={canCheck}
+                    onSubmit={submit}
+                    isCorrect={isCorrect}
+                    markedToken={markedToken}
+                    canonicalSolution={canonicalSolution}
+                />
+            )}
+
+            <ErrorCorrectionResult
+                submitted={submitted}
+                isCorrect={isCorrect}
+                showAnswerToggle={showAnswerToggle}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
+                controlled={controlled}
+                canCheck={canCheck}
+                onCheck={submit}
+                onRetry={reset}
+                view={view}
+                onShowMyAnswer={() => setView("my-answer")}
+                onShowSolution={() => setView("solution")}
+            />
+        </section>
+    );
+}
+
+/** The interactive "my answer" view: token buttons with post-check
+ *  verdicts, the correction input, and the canonical solution line after
+ *  a wrong attempt. Extracted so the main renderer stays under the
+ *  complexity gate (#2803 added the view branching). */
+function ErrorCorrectionMyAnswer({
+    payload,
+    pickedIndex,
+    onPickToken,
+    typedCorrection,
+    onTypeCorrection,
+    submitted,
+    canCheck,
+    onSubmit,
+    isCorrect,
+    markedToken,
+    canonicalSolution,
+}: {
+    payload: {tokens: string[]; error_index: number};
+    pickedIndex: number | null;
+    onPickToken: (tokenIndex: number) => void;
+    typedCorrection: string;
+    onTypeCorrection: (value: string) => void;
+    submitted: boolean;
+    canCheck: boolean;
+    onSubmit: () => void;
+    isCorrect: boolean;
+    markedToken: string;
+    canonicalSolution: string;
+}) {
+    const {t} = useI18n();
+    return (
+        <>
             <div
                 className="flex flex-wrap gap-2"
                 data-testid="error-correction-tokens"
@@ -222,11 +309,7 @@ function ErrorCorrectionExercise(
                             type="button"
                             aria-pressed={pickedIndex === tokenIndex}
                             disabled={submitted}
-                            onClick={() =>
-                                setPickedIndex((previous) =>
-                                    previous === tokenIndex ? null : tokenIndex,
-                                )
-                            }
+                            onClick={() => onPickToken(tokenIndex)}
                             data-testid={`error-correction-token-${tokenIndex}`}
                             data-verdict={verdict}
                             className={cn(
@@ -255,10 +338,10 @@ function ErrorCorrectionExercise(
                 value={typedCorrection}
                 disabled={submitted}
                 onChange={(changeEvent) =>
-                    setTypedCorrection(changeEvent.target.value)
+                    onTypeCorrection(changeEvent.target.value)
                 }
                 onKeyDown={(keyEvent) => {
-                    if (keyEvent.key === "Enter" && canCheck) submit();
+                    if (keyEvent.key === "Enter" && canCheck) onSubmit();
                 }}
                 aria-label={t(
                     "lesson.exercise.al_error_correction.input_label",
@@ -275,7 +358,7 @@ function ErrorCorrectionExercise(
             {submitted && !isCorrect && (
                 <p
                     className="m-0 text-sm"
-                    data-testid="error-correction-solution"
+                    data-testid="error-correction-solution-line"
                 >
                     {t(
                         "lesson.exercise.al_error_correction.solution_label",
@@ -287,25 +370,14 @@ function ErrorCorrectionExercise(
                     <strong>{canonicalSolution}</strong>
                 </p>
             )}
-
-            <ErrorCorrectionResult
-                submitted={submitted}
-                isCorrect={isCorrect}
-                showAnswerToggle={showAnswerToggle}
-                onAdvance={onAdvance}
-                advanceLabel={advanceLabel}
-                controlled={controlled}
-                canCheck={canCheck}
-                onCheck={submit}
-                onRetry={reset}
-            />
-        </section>
+        </>
     );
 }
 
 /** Post-check feedback + the shared check/retry footer. Extracted so the
  *  main renderer stays under the complexity gate (same split as
- *  MultipleChoiceExercise / CategorizationExercise). */
+ *  MultipleChoiceExercise / CategorizationExercise). On a wrong answer it
+ *  offers the #1005 my-answer / solution toggle (#2803). */
 function ErrorCorrectionResult({
     submitted,
     isCorrect,
@@ -316,6 +388,9 @@ function ErrorCorrectionResult({
     canCheck,
     onCheck,
     onRetry,
+    view,
+    onShowMyAnswer,
+    onShowSolution,
 }: {
     submitted: boolean;
     isCorrect: boolean;
@@ -326,6 +401,9 @@ function ErrorCorrectionResult({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
+    view: AnswerView;
+    onShowMyAnswer: () => void;
+    onShowSolution: () => void;
 }) {
     const {t} = useI18n();
     return (
@@ -364,6 +442,14 @@ function ErrorCorrectionResult({
                         <ExerciseSuccessAdvance
                             onAdvance={onAdvance}
                             label={advanceLabel}
+                            testIdPrefix="error-correction"
+                        />
+                    )}
+                    {!isCorrect && showAnswerToggle && (
+                        <ExerciseAnswerToggle
+                            view={view}
+                            onShowMyAnswer={onShowMyAnswer}
+                            onShowSolution={onShowSolution}
                             testIdPrefix="error-correction"
                         />
                     )}

@@ -1967,6 +1967,7 @@ lesson:
       empty: "Cet exercice de correction n'a pas de phrase."
       input_label: "Correction"
       instructions: "Touche le mot incorrect, puis écris la correction."
+      resolve_announce: "Solution affichée. La phrase corrigée est : {sentence}"
       result_correct: "Correct !"
       result_wrong: "Pas tout à fait. Regarde la solution ci-dessous."
       retry: "Réessayer"

@@ -2126,6 +2126,7 @@
         "empty": "이 오류 수정 연습에는 문장이 없습니다.",
         "input_label": "수정",
         "instructions": "틀린 단어를 탭한 다음 수정을 입력하세요.",
+        "resolve_announce": "정답을 표시했습니다. 수정된 문장: {sentence}",
         "result_correct": "정답!",
         "result_wrong": "아쉽네요. 아래 정답을 확인하세요.",
         "retry": "다시 시도",

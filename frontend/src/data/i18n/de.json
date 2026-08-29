@@ -2126,6 +2126,7 @@
         "empty": "Diese Fehlerkorrektur-Übung hat keinen Satz.",
         "input_label": "Korrektur",
         "instructions": "Tippe das falsche Wort an, dann tippe die Korrektur.",
+        "resolve_announce": "Lösung angezeigt. Der korrigierte Satz lautet: {sentence}",
         "result_correct": "Richtig!",
         "result_wrong": "Nicht ganz. Sieh dir die Lösung unten an.",
         "retry": "Nochmal versuchen",

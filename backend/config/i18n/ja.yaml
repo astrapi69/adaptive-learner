@@ -1965,6 +1965,7 @@ lesson:
       empty: "この誤り訂正演習には文がありません。"
       input_label: "訂正"
       instructions: "誤っている語をタップし、訂正を入力します。"
+      resolve_announce: "解答を表示しました。訂正後の文：{sentence}"
       result_correct: "正解！"
       result_wrong: "惜しい。下の解答を確認してください。"
       retry: "もう一度"

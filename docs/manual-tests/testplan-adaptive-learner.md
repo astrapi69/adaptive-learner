@@ -606,6 +606,15 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       setzt auf die interaktive Ansicht zurück. Bei komplett richtiger
       Antwort erscheint KEIN Umschalter (nur "Weiter")
 - [ ] ext:al-error-correction: Fehler finden + korrigieren
+- [ ] ext:al-error-correction Auflösung (#2803): nach einer falschen
+      Prüfung erscheint neben der Ergebniszeile der Umschalter "Meine
+      Antwort" / "Auflösung" (wie bei Paaren/Kategorien). "Auflösung"
+      zeigt den Satz als Wortkacheln: das falsche Wort rot
+      durchgestrichen mit X, direkt daneben die richtige Korrektur grün
+      mit Häkchen - man sieht, WO im Satz der Fehler lag. "Meine
+      Antwort" kehrt zur bewerteten Ansicht (inkl. Lösungszeile)
+      zurück; "Nochmal versuchen" setzt auf die interaktive Ansicht
+      zurück. Bei richtiger Antwort erscheint KEIN Umschalter
 - [ ] ext:al-reading-comprehension: Text + Fragen
 - [ ] ext:al-reading-comprehension Auflösung (#2633): nach "Antworten prüfen"
       wird die richtige Multiple-Choice-Option GRÜN hervorgehoben - mit Häkchen
