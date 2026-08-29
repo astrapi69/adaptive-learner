@@ -42,7 +42,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { appendVvLogEntry } from "../../lib/diagnostics/vv-log";
-import { useViewportDiagnostic } from "../../hooks/settings/useViewportDiagnostic";
+import {
+  useViewportDiagnostic,
+  useVvPanelVisible,
+} from "../../hooks/settings/useViewportDiagnostic";
 
 const FLAG_KEY = "adaptive-learner.vv_diag";
 const PANEL_TESTID = "viewport-diagnostic";
@@ -144,6 +147,7 @@ export default function ViewportDiagnostic() {
     return true;
   });
   const enabled = useViewportDiagnostic();
+  const panelVisible = useVvPanelVisible();
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [taps, setTaps] = useState<TapInfo[]>([]);
   const [copied, setCopied] = useState(false);
@@ -228,7 +232,10 @@ export default function ViewportDiagnostic() {
     }
   }, []);
 
-  if (!enabled || !snap) return null;
+  // Recording is bound to ``enabled`` alone (the effect above): with the
+  // panel hidden (#2785) the probe keeps appending to the persistent
+  // protocol while rendering nothing — the header/menu stay reachable.
+  if (!enabled || !panelVisible || !snap) return null;
   const report = buildReport(snap, taps);
   return (
     <div

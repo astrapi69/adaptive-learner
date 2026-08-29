@@ -1187,6 +1187,9 @@ each card row (`CardImageField`).
       reloads); "Clear protocol" resets it to 0
 - [ ] Appending `?vvdiag=1` to the URL enables the same probe; the
       Settings toggle then shows ON (one shared flag)
+- [ ] "Show measurement bar" OFF: the bar disappears immediately and
+      the header/menu are reachable again - but new taps still raise
+      the protocol counter (recording continues invisibly, #2785)
 
 ### Mobile menu position: bottom tab bar as an option (#2786)
 - [ ] Settings > General > Interface: "Menu position (mobile)" is
