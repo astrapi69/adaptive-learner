@@ -2126,6 +2126,7 @@
         "empty": "Bu hata düzeltme alıştırmasında cümle yok.",
         "input_label": "Düzeltme",
         "instructions": "Yanlış kelimeye dokun, sonra düzeltmeyi yaz.",
+        "resolve_announce": "Çözüm gösterildi. Düzeltilmiş cümle: {sentence}",
         "result_correct": "Doğru!",
         "result_wrong": "Tam değil. Aşağıdaki çözüme bak.",
         "retry": "Tekrar dene",

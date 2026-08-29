@@ -1976,6 +1976,7 @@ lesson:
       empty: "Latihan koreksi kesalahan ini tidak memiliki kalimat."
       input_label: "Koreksi"
       instructions: "Ketuk kata yang salah, lalu ketik koreksinya."
+      resolve_announce: "Solusi ditampilkan. Kalimat yang sudah diperbaiki: {sentence}"
       result_correct: "Benar!"
       result_wrong: "Belum tepat. Lihat solusi di bawah."
       retry: "Coba lagi"

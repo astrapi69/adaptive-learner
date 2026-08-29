@@ -133,7 +133,10 @@ test.describe("Create-Lesson extension wizard (#1852)", () => {
             } else if (await page.getByTestId("error-correction-exercise").count()) {
                 sawErrorCorrection = true;
                 await page.getByTestId("error-correction-token-1").click();
-                await page.getByTestId("error-correction-input").fill("follows");
+                // Deliberately wrong correction (#2803) so the checked step
+                // offers the my-answer/solution toggle below; the correct
+                // grading path is covered by the Vitest suite.
+                await page.getByTestId("error-correction-input").fill("wrongword");
             }
 
             const check = page.getByTestId("lesson-check");
@@ -152,6 +155,21 @@ test.describe("Create-Lesson extension wizard (#1852)", () => {
                 await expect(
                     page.getByTestId("categorization-resolution"),
                 ).toBeVisible();
+            }
+            // #2803 — the wrong error-correction answer above offers the
+            // solve toggle; the solution view renders the correction in
+            // the token row.
+            if (
+                (await page.getByTestId("error-correction-exercise").count()) &&
+                (await page.getByTestId("error-correction-solution").count())
+            ) {
+                await page.getByTestId("error-correction-solution").click();
+                await expect(
+                    page.getByTestId("error-correction-resolution"),
+                ).toBeVisible();
+                await expect(
+                    page.getByTestId("error-correction-resolved-correction"),
+                ).toContainText("follows");
             }
             const next = page.getByTestId("lesson-next");
             if (!(await next.count())) break;

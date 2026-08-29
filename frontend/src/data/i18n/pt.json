@@ -2126,6 +2126,7 @@
         "empty": "Este exercício de correção não tem frase.",
         "input_label": "Correção",
         "instructions": "Toca na palavra errada e depois escreve a correção.",
+        "resolve_announce": "Solução exibida. A frase corrigida é: {sentence}",
         "result_correct": "Correto!",
         "result_wrong": "Quase. Vê a solução abaixo.",
         "retry": "Tentar novamente",

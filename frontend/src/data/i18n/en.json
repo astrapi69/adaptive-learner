@@ -2126,6 +2126,7 @@
         "empty": "This error-correction exercise has no sentence.",
         "input_label": "Correction",
         "instructions": "Tap the wrong word, then type the correction.",
+        "resolve_announce": "Solution shown. The corrected sentence is: {sentence}",
         "result_correct": "Correct!",
         "result_wrong": "Not quite. Check the solution below.",
         "retry": "Try again",
