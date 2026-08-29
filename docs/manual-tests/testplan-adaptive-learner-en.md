@@ -1191,6 +1191,24 @@ each card row (`CardImageField`).
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
 
+### Sticky button for the measurement bar (#2799)
+- [ ] Settings > General > Diagnostics: enable "Sticky button for the
+      measurement bar" (the probe must be ON) - a round floating
+      button appears IMMEDIATELY at the bottom left
+- [ ] Tap the button: the measurement bar disappears (exactly like
+      "Show measurement bar" OFF); tap again: it reappears - the
+      Settings "Show measurement bar" toggle mirrors every tap (one
+      shared flag)
+- [ ] The position choice (4 corners) appears under the toggle: pick
+      "Top right" - the button jumps to that corner immediately;
+      default is "Bottom left"
+- [ ] Taps ON the button do NOT enter the diagnostics protocol (the
+      counter in Settings stays put while toggling)
+- [ ] With the bottom tab bar active (#2786): the button in a bottom
+      corner floats ABOVE the tab bar, covering no tabs
+- [ ] Probe OFF: the button disappears with it (without the probe
+      there is no bar to toggle)
+
 ### Mobile menu position: bottom tab bar as an option (#2786)
 - [ ] Settings > General > Interface: "Menu position (mobile)" is
       "Top (menu button)" (default) - NO bottom bar

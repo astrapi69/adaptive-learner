@@ -1275,6 +1275,24 @@ jeder Karten-Zeile (`CardImageField`).
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
 
+### Sticky-Knopf für die Mess-Leiste (#2799)
+- [ ] Einstellungen > Allgemein > Diagnose: "Sticky-Knopf für die
+      Mess-Leiste" einschalten (Sonde muss AN sein) - ein runder
+      schwebender Knopf erscheint SOFORT unten links
+- [ ] Knopf antippen: die Mess-Leiste verschwindet (genau wie
+      "Mess-Leiste anzeigen" AUS); erneut antippen: sie erscheint
+      wieder - der Settings-Schalter "Mess-Leiste anzeigen" spiegelt
+      jeden Tipp (ein gemeinsames Flag)
+- [ ] Unter dem Schalter erscheint die Positionswahl (4 Ecken):
+      "Oben rechts" wählen - der Knopf springt sofort in die Ecke;
+      Standard ist "Unten links"
+- [ ] Tipps AUF den Knopf tauchen NICHT im Diagnose-Protokoll auf
+      (der Zähler in den Einstellungen bleibt beim Umschalten stehen)
+- [ ] Mit aktiver unterer Tab-Leiste (#2786): der Knopf in einer
+      unteren Ecke schwebt ÜBER der Tab-Leiste, verdeckt keine Tabs
+- [ ] Sonde AUS: der Knopf verschwindet mit (ohne Sonde gibt es
+      keine Leiste zum Umschalten)
+
 ### Menüposition mobil: untere Tab-Leiste als Option (#2786)
 - [ ] Einstellungen > Allgemein > Oberfläche: "Menüposition (mobil)"
       steht auf "Oben (Menü-Knopf)" (Standard) - KEINE untere Leiste

@@ -6,8 +6,11 @@ import {afterEach, beforeEach, describe, expect, it} from "vitest";
 import {
   isViewportDiagnosticEnabled,
   setViewportDiagnosticEnabled,
+  setVvFabEnabled,
+  setVvFabPosition,
   setVvPanelVisible,
   useViewportDiagnostic,
+  useVvFab,
   useVvPanelVisible,
 } from "./useViewportDiagnostic";
 
@@ -39,6 +42,26 @@ describe("useViewportDiagnostic", () => {
     act(() => setVvPanelVisible(true));
     expect(result.current).toBe(true);
     expect(localStorage.getItem("adaptive-learner.vv_diag_panel")).toBeNull();
+  });
+
+  it("fab defaults to OFF at bottom-left and flips live via its setters (#2799)", () => {
+    const {result} = renderHook(() => useVvFab());
+    expect(result.current.enabled).toBe(false);
+    expect(result.current.position).toBe("bottom-left");
+    act(() => setVvFabEnabled(true));
+    expect(result.current.enabled).toBe(true);
+    expect(localStorage.getItem("adaptive-learner.vv_diag_fab")).toBe("1");
+    act(() => setVvFabPosition("top-right"));
+    expect(result.current.position).toBe("top-right");
+    act(() => setVvFabEnabled(false));
+    expect(result.current.enabled).toBe(false);
+    expect(localStorage.getItem("adaptive-learner.vv_diag_fab")).toBeNull();
+  });
+
+  it("an unknown persisted fab position falls back to bottom-left (#2799)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag_fab_pos", "middle-of-nowhere");
+    const {result} = renderHook(() => useVvFab());
+    expect(result.current.position).toBe("bottom-left");
   });
 
   it("setter flips subscribed consumers immediately (no reload)", () => {

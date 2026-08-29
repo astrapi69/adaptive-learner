@@ -45,6 +45,24 @@ describe("ViewportDiagnostic", () => {
     expect(localStorage.getItem("adaptive-learner.vv_diag")).toBeNull();
   });
 
+  it("ignores taps on the sticky bar-toggle button (#2799)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <button data-testid="vv-panel-fab">toggle</button>
+      </>,
+    );
+    fireEvent.pointerDown(screen.getByTestId("vv-panel-fab"), {
+      clientX: 5,
+      clientY: 500,
+    });
+    expect(screen.getByTestId("viewport-diagnostic-tap")).toHaveTextContent(
+      /tippe irgendwo/i,
+    );
+    expect(readVvLog().filter((e) => e.kind === "tap")).toHaveLength(0);
+  });
+
   it("captures the tapped element's tag + testid and the vertical desync", () => {
     localStorage.setItem("adaptive-learner.vv_diag", "1");
     render(
