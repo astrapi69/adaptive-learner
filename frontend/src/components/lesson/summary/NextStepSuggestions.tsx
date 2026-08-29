@@ -333,6 +333,18 @@ function SetCompleteCard({
                 lesson list), NOT the generic Discover overview — the card is
                 about this set, so the CTA shows whenever the set is complete,
                 independent of the optional "How about …" suggestion above. */}
+            {/* #2792 - the set is finished, so the first thing offered is the
+                review of everything that went wrong in it; "View Set" stays as
+                the secondary way back. */}
+            <Button asChild>
+                <Link
+                    to={`/set-summary/${setIdEnc}`}
+                    data-testid="next-step-cta-set-summary"
+                >
+                    {t("set_summary.open", "View review")}
+                    <ArrowRight aria-hidden="true" />
+                </Link>
+            </Button>
             <Button asChild variant="secondary">
                 <Link
                     to={`/content/set/${setIdEnc}`}

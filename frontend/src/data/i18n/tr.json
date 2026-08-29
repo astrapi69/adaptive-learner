@@ -4242,5 +4242,21 @@
       },
       "aria": "Zorluk: {tier} ({level}/5)"
     }
+  },
+  "set_summary": {
+    "title": "Değerlendirme: {set}",
+    "subtitle": "Bu setteki tüm hatalar tek bakışta",
+    "open": "Değerlendirmeyi gör",
+    "total_errors": "Toplam hata",
+    "mastered_share": "Öğrenildi",
+    "elements_open": "Hâlâ açık",
+    "time_spent": "Çalışma süresi",
+    "by_lesson": "Derse göre hatalar",
+    "by_type": "Alıştırma türüne göre hatalar",
+    "weak_areas": "En büyük zayıf noktalar",
+    "no_errors": "Kayıtlı hata yok - harika!",
+    "lesson_errors": "{count} hata",
+    "practice_errors": "Hataları çalış",
+    "back_to_set": "Sete dön"
   }
 }

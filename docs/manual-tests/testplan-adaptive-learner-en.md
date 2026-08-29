@@ -1250,6 +1250,20 @@ each card row (`CardImageField`).
 - [ ] Update banner: "Was ist neu?", "Release-Seite", "Später" carry
       readable labels (not empty, sufficient contrast)
 
+### Set-completion review (#2792)
+- [ ] Finish the last lesson of a set: the completion card offers
+      "View review" as the first action, "View Set" beside it
+- [ ] The review shows four headline figures (total mistakes,
+      mastered percentage, still open, time spent) and below them
+      mistakes per lesson, per exercise type, and the biggest weak
+      spots with your own wrong answer next to the correct one
+- [ ] "Practise mistakes" leads into the set's review session,
+      "Back to the set" to the set page
+- [ ] A set with no recorded mistakes shows the friendly message
+      instead of empty sections
+- [ ] Check both in browser mode (no server) - the figures come from
+      the local database there
+
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists

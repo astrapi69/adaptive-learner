@@ -4242,5 +4242,21 @@
       },
       "aria": "Kesulitan: {tier} ({level} dari 5)"
     }
+  },
+  "set_summary": {
+    "title": "Evaluasi: {set}",
+    "subtitle": "Semua kesalahan dalam set ini sekilas",
+    "open": "Lihat evaluasi",
+    "total_errors": "Total kesalahan",
+    "mastered_share": "Dikuasai",
+    "elements_open": "Masih terbuka",
+    "time_spent": "Waktu belajar",
+    "by_lesson": "Kesalahan per pelajaran",
+    "by_type": "Kesalahan per jenis latihan",
+    "weak_areas": "Titik lemah terbesar",
+    "no_errors": "Tidak ada kesalahan tercatat - luar biasa!",
+    "lesson_errors": "{count} kesalahan",
+    "practice_errors": "Latih kesalahan",
+    "back_to_set": "Kembali ke set"
   }
 }
