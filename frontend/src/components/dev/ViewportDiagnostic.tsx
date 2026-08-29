@@ -26,11 +26,23 @@
  * small buttons accept touches.
  *
  * Strictly opt-in and inert for normal users: renders only with ``?vvdiag=1``
- * (persisted; ``?vvdiag=0`` clears) or the ``adaptive-learner.vv_diag`` flag.
- * Fails open — a missing ``visualViewport`` degrades to a no-op.
+ * (persisted; ``?vvdiag=0`` clears), the ``adaptive-learner.vv_diag`` flag, or
+ * the Settings toggle (Settings > General > Diagnostics, #2782) — all three
+ * share one flag via {@link useViewportDiagnostic}, and the toggle takes
+ * effect live (no reload). Fails open — a missing ``visualViewport`` degrades
+ * to a no-op.
+ *
+ * Ghost-bug recorder (#2782): while enabled, every tap record and every
+ * significant viewport transition is ALSO appended to the persistent
+ * ring-buffer log (``lib/diagnostics/vv-log``), exportable from the same
+ * Settings section — so a mis-tap that happened before the overlay's 8-tap
+ * history rolled over is still recoverable.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+
+import { appendVvLogEntry } from "../../lib/diagnostics/vv-log";
+import { useViewportDiagnostic } from "../../hooks/settings/useViewportDiagnostic";
 
 const FLAG_KEY = "adaptive-learner.vv_diag";
 const PANEL_TESTID = "viewport-diagnostic";
@@ -93,6 +105,21 @@ function activeFix(): string {
   return document.documentElement.dataset.vvfix ?? "off";
 }
 
+/**
+ * Whether a viewport change is worth a persistent log entry (#2782):
+ * the keyboard opened/closed, the pinch-zoom scale moved, or a phantom
+ * offset appeared/disappeared in either channel. Plain address-bar /
+ * scroll jitter stays out of the log.
+ */
+function isSignificantTransition(prev: Snapshot, next: Snapshot): boolean {
+  const kbdFlipped =
+    prev.keyboardShrink >= 150 !== next.keyboardShrink >= 150;
+  const scaleMoved = prev.vvScale !== next.vvScale;
+  const vvTopFlipped = (prev.vvOffsetTop !== 0) !== (next.vvOffsetTop !== 0);
+  const winYFlipped = (prev.winScrollY !== 0) !== (next.winScrollY !== 0);
+  return kbdFlipped || scaleMoved || vvTopFlipped || winYFlipped;
+}
+
 function tapLine(t: TapInfo): string {
   return `y=${t.y} ${t.tag}[${t.testid}] top=${t.rectTop} ΔY=${t.deltaY} @winY=${t.atWinScrollY} @vvTop=${t.atVvOffsetTop}`;
 }
@@ -109,7 +136,14 @@ function buildReport(snap: Snapshot, taps: TapInfo[]): string {
 }
 
 export default function ViewportDiagnostic() {
-  const [enabled] = useState(viewportDiagnosticEnabled);
+  // Process the ?vvdiag URL parameter ONCE, before the preference hook's
+  // initial read — the URL path persists into the same flag the hook (and
+  // the Settings toggle, #2782) reads, so both stay a single source.
+  useState(() => {
+    viewportDiagnosticEnabled();
+    return true;
+  });
+  const enabled = useViewportDiagnostic();
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [taps, setTaps] = useState<TapInfo[]>([]);
   const [copied, setCopied] = useState(false);
@@ -122,6 +156,18 @@ export default function ViewportDiagnostic() {
     if (!enabled || typeof window === "undefined") return;
     const refresh = () => {
       const s = readSnapshot();
+      const prev = snapRef.current;
+      if (prev && isSignificantTransition(prev, s)) {
+        appendVvLogEntry({
+          kind: "viewport",
+          ts: Date.now(),
+          fix: activeFix(),
+          winY: s.winScrollY,
+          vvTop: s.vvOffsetTop,
+          scale: s.vvScale,
+          kbd: s.keyboardShrink,
+        });
+      }
       snapRef.current = s;
       setSnap(s);
     };
@@ -145,6 +191,7 @@ export default function ViewportDiagnostic() {
       };
       // eslint-disable-next-line no-console
       console.log("[vvdiag]", JSON.stringify(tap));
+      appendVvLogEntry({kind: "tap", ts: Date.now(), fix: activeFix(), ...tap});
       const next = [tap, ...tapsRef.current].slice(0, MAX_TAPS);
       tapsRef.current = next;
       setTaps(next);

@@ -10,6 +10,11 @@ import ThemePicker from "../../../../components/settings/appearance/ThemePicker"
 import AvatarUpload from "../../../../shared/media/AvatarUpload";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../../../../hooks/settings/useButtonTooltips";
 import { setDevModeEnabled, useDevMode } from "../../../../hooks/settings/useDevMode";
+import {
+  setViewportDiagnosticEnabled,
+  useViewportDiagnostic,
+} from "../../../../hooks/settings/useViewportDiagnostic";
+import { clearVvLog, vvLogAsText, vvLogCount } from "../../../../lib/diagnostics/vv-log";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import { buildLanguageOptions } from "../../../../lib/i18n/languages";
@@ -88,6 +93,32 @@ export default function GeneralPanel({
   const devModeOn = useDevMode();
   const handleDevModeToggle = (next: boolean) => {
     setDevModeEnabled(next);
+  };
+
+  // Diagnostics probe (#2782): toggle shares the ?vvdiag flag; the
+  // persistent protocol is exportable/clearable right here so a mis-tap
+  // noticed later is still recoverable.
+  const vvDiagOn = useViewportDiagnostic();
+  const [vvLogEntries, setVvLogEntries] = useState(() => vvLogCount());
+  const [vvLogCopied, setVvLogCopied] = useState(false);
+  useEffect(() => {
+    setVvLogEntries(vvLogCount());
+  }, [vvDiagOn]);
+  const handleVvLogCopy = () => {
+    setVvLogEntries(vvLogCount());
+    const done = () => {
+      setVvLogCopied(true);
+      window.setTimeout(() => setVvLogCopied(false), 1500);
+    };
+    try {
+      void navigator.clipboard?.writeText(vvLogAsText()).then(done, done);
+    } catch {
+      done();
+    }
+  };
+  const handleVvLogClear = () => {
+    clearVvLog();
+    setVvLogEntries(0);
   };
 
   // Per-operation busy marker for the language switch + profile edits.
@@ -379,6 +410,60 @@ export default function GeneralPanel({
             onChange={(e) => handleDevModeToggle(e.target.checked)}
           />
         </label>
+      </SettingsSection>
+
+      <SettingsSection
+        testid="settings-diagnostics"
+        title={t("settings.section_diagnostics", "Diagnostics")}
+      >
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
+              {t("settings.vvdiag_toggle", "Tap & viewport probe")}
+            </span>
+            <FormHint as="span">
+              {t(
+                "settings.vvdiag_description",
+                "Shows a measurement bar and keeps a persistent protocol of tap positions and viewport changes while the probe is on. Helps pin down hard-to-reproduce display bugs (e.g. taps landing below their target) after the fact. Can also be enabled via the ?vvdiag=1 URL parameter.",
+              )}
+            </FormHint>
+          </span>
+          <input
+            type="checkbox"
+            className="m-0 size-4 flex-none p-0"
+            data-testid="settings-vvdiag-toggle"
+            checked={vvDiagOn}
+            onChange={(e) => setViewportDiagnosticEnabled(e.target.checked)}
+          />
+        </label>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-testid="settings-vvdiag-copy-log"
+            onClick={handleVvLogCopy}
+          >
+            {vvLogCopied
+              ? t("settings.vvdiag_copied", "Copied!")
+              : t("settings.vvdiag_copy_log", "Copy protocol")}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-testid="settings-vvdiag-clear-log"
+            onClick={handleVvLogClear}
+          >
+            {t("settings.vvdiag_clear_log", "Clear protocol")}
+          </Button>
+          <span className="muted" data-testid="settings-vvdiag-log-count">
+            {t("settings.vvdiag_log_count", "{count} recorded events").replace(
+              "{count}",
+              String(vvLogEntries),
+            )}
+          </span>
+        </div>
       </SettingsSection>
 
       <SettingsSection

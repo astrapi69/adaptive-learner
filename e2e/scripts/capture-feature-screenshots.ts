@@ -626,6 +626,19 @@ const FEATURES: FeatureShot[] = [
         pinTo: "book-file-upload",
     },
 
+    // --- Settings diagnostics section (#2782) ---------------------------
+    {
+        path: "viewport-diagnostic/settings-sektion",
+        setup: async (page) => {
+            await seedLearner(page);
+            await page.goto("/settings?tab=general");
+            const section = page.getByTestId("settings-diagnostics");
+            await expect(section).toBeVisible({timeout: 20_000});
+            return true;
+        },
+        pinTo: "settings-diagnostics",
+    },
+
     // --- ViewportDiagnostic tap-offset probe (#1569, collapsed #2779) ---
     {path: "viewport-diagnostic/eingeklappt", setup: gotoViewportDiagnostic},
     {
