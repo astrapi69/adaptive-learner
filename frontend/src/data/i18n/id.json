@@ -2077,7 +2077,10 @@
       "al_categorization": {
         "empty": "Latihan kategorisasi ini tidak memiliki kategori.",
         "instructions": "Ketuk sebuah item, lalu ketuk kategorinya.",
+        "my_answers": "Jawaban saya",
         "pool_label": "Item",
+        "resolve": "Selesaikan",
+        "resolve_announce": "Solusi ditampilkan. {correct} dari {total} item ditempatkan dengan benar.",
         "result_correct": "Benar!",
         "result_wrong": "Belum tepat. Periksa item yang ditandai.",
         "retry": "Coba lagi",

@@ -1929,7 +1929,10 @@ lesson:
     al_categorization:
       empty: "This categorization exercise has no categories."
       instructions: "Tap an item, then tap its category."
+      my_answers: "My answers"
       pool_label: "Items"
+      resolve: "Solve"
+      resolve_announce: "Solution shown. {correct} of {total} items were placed correctly."
       result_correct: "Correct!"
       result_wrong: "Not quite. Review the highlighted items."
       retry: "Try again"

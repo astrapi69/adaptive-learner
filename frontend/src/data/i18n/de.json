@@ -2077,7 +2077,10 @@
       "al_categorization": {
         "empty": "Diese Zuordnungsübung hat keine Kategorien.",
         "instructions": "Tippe ein Element an, dann seine Kategorie.",
+        "my_answers": "Meine Antworten",
         "pool_label": "Elemente",
+        "resolve": "Auflösen",
+        "resolve_announce": "Lösung angezeigt. {correct} von {total} Elementen waren richtig zugeordnet.",
         "result_correct": "Richtig!",
         "result_wrong": "Nicht ganz. Sieh dir die markierten Elemente an.",
         "retry": "Nochmal versuchen",

@@ -25,3 +25,5 @@
 # Classname-Gates) bleiben bewusst UNgepinnt: dort ist das Bauergebnis selbst
 # der Pruefgegenstand, ein Pin hielte die falsche Sache fest. Entscheidung
 # nicht erneut aufwerfen; Aenderung nur mit neuem Beschluss am Issue.
+
+frontend/src/pages/lesson/CreateLesson.tsx 22

@@ -2077,7 +2077,10 @@
       "al_categorization": {
         "empty": "Cet exercice de catégorisation n'a pas de catégories.",
         "instructions": "Touche un élément, puis sa catégorie.",
+        "my_answers": "Mes réponses",
         "pool_label": "Éléments",
+        "resolve": "Résoudre",
+        "resolve_announce": "Solution affichée. {correct} éléments bien placés sur {total}.",
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait. Regarde les éléments marqués.",
         "retry": "Réessayer",

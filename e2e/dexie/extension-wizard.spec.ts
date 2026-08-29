@@ -141,6 +141,18 @@ test.describe("Create-Lesson extension wizard (#1852)", () => {
                 await expect(check).toBeEnabled({timeout: 5000});
                 await check.click();
             }
+            // #2772 — the first-bucket blanket assignment above is never
+            // fully correct, so the checked categorization offers the
+            // solve toggle; open the revealed assignment once.
+            if (
+                (await page.getByTestId("categorization-exercise").count()) &&
+                (await page.getByTestId("categorization-resolve").count())
+            ) {
+                await page.getByTestId("categorization-resolve").click();
+                await expect(
+                    page.getByTestId("categorization-resolution"),
+                ).toBeVisible();
+            }
             const next = page.getByTestId("lesson-next");
             if (!(await next.count())) break;
             await next.click();

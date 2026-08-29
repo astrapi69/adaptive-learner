@@ -1918,7 +1918,10 @@ lesson:
     al_categorization:
       empty: "Bu sınıflandırma alıştırmasında kategori yok."
       instructions: "Bir ögeye, ardından kategorisine dokun."
+      my_answers: "Cevaplarım"
       pool_label: "Ögeler"
+      resolve: "Çöz"
+      resolve_announce: "Çözüm gösterildi. {total} ögeden {correct} tanesi doğru yerleştirilmişti."
       result_correct: "Doğru!"
       result_wrong: "Tam değil. İşaretli ögelere bak."
       retry: "Tekrar dene"

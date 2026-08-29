@@ -558,19 +558,23 @@ export function MatchingRightTile({
  *  answers and the revealed solution. The active view is a ``default``
  *  (filled) button carrying a Check; the inactive view is an ``outline``
  *  button. ``aria-pressed`` conveys the active state to assistive tech.
- *  Shown only after submit (the caller gates it). */
+ *  Shown only after submit (the caller gates it). ``testidPrefix``
+ *  (#2772) lets sibling exercise types (categorization) reuse the toggle
+ *  under their own testid namespace; matching keeps its defaults. */
 export function MatchingViewToggle({
     view,
     onShowUserAnswers,
     onShowSolution,
     myAnswersLabel,
     solveLabel,
+    testidPrefix = "matching",
 }: {
     view: "user-answers" | "solution";
     onShowUserAnswers: () => void;
     onShowSolution: () => void;
     myAnswersLabel: string;
     solveLabel: string;
+    testidPrefix?: string;
 }) {
     const userActive = view === "user-answers";
     const solutionActive = view === "solution";
@@ -578,7 +582,7 @@ export function MatchingViewToggle({
         <div
             className="flex flex-wrap gap-2"
             role="group"
-            data-testid="matching-view-toggle"
+            data-testid={`${testidPrefix}-view-toggle`}
         >
             <Button
                 type="button"
@@ -586,7 +590,7 @@ export function MatchingViewToggle({
                 size="sm"
                 aria-pressed={userActive}
                 onClick={onShowUserAnswers}
-                data-testid="matching-my-answers"
+                data-testid={`${testidPrefix}-my-answers`}
             >
                 {userActive && <Check size={14} aria-hidden="true" />}
                 {myAnswersLabel}
@@ -597,7 +601,7 @@ export function MatchingViewToggle({
                 size="sm"
                 aria-pressed={solutionActive}
                 onClick={onShowSolution}
-                data-testid="matching-resolve"
+                data-testid={`${testidPrefix}-resolve`}
             >
                 {solutionActive ? (
                     <Check size={14} aria-hidden="true" />
