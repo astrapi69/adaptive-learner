@@ -178,9 +178,16 @@ export default function ViewportDiagnostic() {
 
     const onPointerDown = (e: PointerEvent) => {
       const el = e.target as Element | null;
-      // Ignore taps ON the diagnostic panel (the Copy button, the text block) so
-      // they never pollute the measured history.
-      if (el?.closest?.(`[data-testid="${PANEL_TESTID}"]`)) return;
+      // Ignore taps ON the diagnostic panel (the Copy button, the text block)
+      // and on the sticky bar-toggle button (#2799) so they never pollute the
+      // measured history.
+      if (
+        el?.closest?.(
+          `[data-testid="${PANEL_TESTID}"], [data-testid="vv-panel-fab"]`,
+        )
+      ) {
+        return;
+      }
       const rect = el?.getBoundingClientRect();
       const rectTop = rect ? Math.round(rect.top) : 0;
       const vv = window.visualViewport;

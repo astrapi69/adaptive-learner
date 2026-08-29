@@ -146,3 +146,107 @@ export function setVvPanelVisible(value: boolean): void {
     window.dispatchEvent(new CustomEvent(PANEL_EVENT, {detail: {value}}));
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Sticky bar-toggle button (#2799): an opt-in floating button that
+ * flips the SAME panel-visibility flag as the Settings toggle above,
+ * so the bar can be shown/hidden without opening Settings. Off by
+ * default; its corner is configurable. Renders only while the probe
+ * itself is on (with the probe off there is no bar to toggle).
+ * ------------------------------------------------------------------ */
+
+const FAB_KEY = "adaptive-learner.vv_diag_fab";
+const FAB_POS_KEY = "adaptive-learner.vv_diag_fab_pos";
+const FAB_EVENT = "adaptive-learner:vv-fab-changed";
+
+export const VV_FAB_POSITIONS = [
+  "bottom-left",
+  "bottom-right",
+  "top-left",
+  "top-right",
+] as const;
+
+export type VvFabPosition = (typeof VV_FAB_POSITIONS)[number];
+
+function readFabEnabled(): boolean {
+  if (typeof localStorage === "undefined") return false;
+  try {
+    return localStorage.getItem(FAB_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function readFabPosition(): VvFabPosition {
+  if (typeof localStorage === "undefined") return "bottom-left";
+  try {
+    const raw = localStorage.getItem(FAB_POS_KEY);
+    return (VV_FAB_POSITIONS as readonly string[]).includes(raw ?? "")
+      ? (raw as VvFabPosition)
+      : "bottom-left";
+  } catch {
+    return "bottom-left";
+  }
+}
+
+/**
+ * Hook returning whether the sticky bar-toggle button is enabled and
+ * which corner it sits in (#2799). Re-renders on either setter and on
+ * cross-tab storage changes.
+ */
+export function useVvFab(): {enabled: boolean; position: VvFabPosition} {
+  const [enabled, setEnabled] = useState<boolean>(() => readFabEnabled());
+  const [position, setPosition] = useState<VvFabPosition>(() =>
+    readFabPosition(),
+  );
+
+  useEffect(() => {
+    if (
+      typeof window === "undefined" ||
+      typeof window.addEventListener !== "function"
+    ) {
+      return;
+    }
+    const handler = () => {
+      setEnabled(readFabEnabled());
+      setPosition(readFabPosition());
+    };
+    window.addEventListener(FAB_EVENT, handler);
+    const storageHandler = (e: StorageEvent) => {
+      if (e.key === FAB_KEY || e.key === FAB_POS_KEY) handler();
+    };
+    window.addEventListener("storage", storageHandler);
+    return () => {
+      window.removeEventListener(FAB_EVENT, handler);
+      window.removeEventListener("storage", storageHandler);
+    };
+  }, []);
+
+  return {enabled, position};
+}
+
+/** Imperative setter for the fab Settings toggle (#2799). */
+export function setVvFabEnabled(value: boolean): void {
+  try {
+    if (value) localStorage.setItem(FAB_KEY, "1");
+    else localStorage.removeItem(FAB_KEY);
+  } catch {
+    /* localStorage unavailable — best effort */
+  }
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(FAB_EVENT, {detail: {value}}));
+  }
+}
+
+/** Imperative setter for the fab's corner (#2799). */
+export function setVvFabPosition(value: VvFabPosition): void {
+  try {
+    if (value === "bottom-left") localStorage.removeItem(FAB_POS_KEY);
+    else localStorage.setItem(FAB_POS_KEY, value);
+  } catch {
+    /* localStorage unavailable — best effort */
+  }
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(FAB_EVENT, {detail: {value}}));
+  }
+}

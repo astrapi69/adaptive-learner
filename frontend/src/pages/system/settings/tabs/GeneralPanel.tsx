@@ -13,11 +13,16 @@ import { setDevModeEnabled, useDevMode } from "../../../../hooks/settings/useDev
 import { setNavPosition, useNavPosition } from "../../../../hooks/settings/useNavPosition";
 import {
   setViewportDiagnosticEnabled,
+  setVvFabEnabled,
+  setVvFabPosition,
   setVvPanelVisible,
   useViewportDiagnostic,
+  useVvFab,
   useVvPanelVisible,
+  VV_FAB_POSITIONS,
 } from "../../../../hooks/settings/useViewportDiagnostic";
 import { clearVvLog, vvLogAsText, vvLogCount } from "../../../../lib/diagnostics/vv-log";
+import type { VvFabPosition } from "../../../../hooks/settings/useViewportDiagnostic";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import { buildLanguageOptions } from "../../../../lib/i18n/languages";
@@ -66,6 +71,15 @@ interface GeneralPanelProps {
  *   active={activeTab === "general"}
  * />
  */
+/** English fallbacks for the fab-corner radio labels (#2799); the
+ *  catalogs carry the translated ``settings.vvdiag_fab_pos_*`` keys. */
+const FAB_POSITION_FALLBACKS: Record<VvFabPosition, string> = {
+  "bottom-left": "Bottom left",
+  "bottom-right": "Bottom right",
+  "top-left": "Top left",
+  "top-right": "Top right",
+};
+
 export default function GeneralPanel({
   settings,
   onSettingsChange,
@@ -106,6 +120,7 @@ export default function GeneralPanel({
   // noticed later is still recoverable.
   const vvDiagOn = useViewportDiagnostic();
   const vvPanelOn = useVvPanelVisible();
+  const {enabled: vvFabOn, position: vvFabPos} = useVvFab();
   const [vvLogEntries, setVvLogEntries] = useState(() => vvLogCount());
   const [vvLogCopied, setVvLogCopied] = useState(false);
   useEffect(() => {
@@ -498,6 +513,51 @@ export default function GeneralPanel({
             onChange={(e) => setVvPanelVisible(e.target.checked)}
           />
         </label>
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
+              {t("settings.vvdiag_fab_toggle", "Sticky button for the measurement bar")}
+            </span>
+            <FormHint as="span">
+              {t(
+                "settings.vvdiag_fab_description",
+                "Shows a floating button that toggles the measurement bar with one tap - handy for quickly switching the bar on and off while testing. Visible only while the probe is on.",
+              )}
+            </FormHint>
+          </span>
+          <input
+            type="checkbox"
+            className="m-0 size-4 flex-none p-0"
+            data-testid="settings-vvdiag-fab-toggle"
+            checked={vvFabOn}
+            onChange={(e) => setVvFabEnabled(e.target.checked)}
+          />
+        </label>
+        {vvFabOn && (
+          <div className="flex flex-col gap-1">
+            <span className="text-[0.95rem] font-medium">
+              {t("settings.vvdiag_fab_position", "Button position")}
+            </span>
+            <div className="mt-1 flex flex-wrap gap-4">
+              {VV_FAB_POSITIONS.map((pos) => (
+                <label key={pos} className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="vvdiag-fab-position"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid={`settings-vvdiag-fab-pos-${pos}`}
+                    checked={vvFabPos === pos}
+                    onChange={() => setVvFabPosition(pos)}
+                  />
+                  {t(
+                    `settings.vvdiag_fab_pos_${pos.replace("-", "_")}`,
+                    FAB_POSITION_FALLBACKS[pos],
+                  )}
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"

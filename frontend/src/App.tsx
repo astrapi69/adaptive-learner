@@ -33,6 +33,7 @@ import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
 import { useVisualViewportRealign } from "./hooks/ui/useVisualViewportRealign";
 import ViewportDiagnostic from "./components/dev/ViewportDiagnostic";
+import VvPanelToggleFab from "./components/dev/VvPanelToggleFab";
 import { useViewportFixExperiment } from "./components/dev/useViewportFixExperiment";
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/onboarding/Landing";
@@ -180,6 +181,9 @@ export default function App() {
                 to nothing for normal users; pointer-events:none so it never
                 perturbs the hit-testing it measures. */}
             <ViewportDiagnostic />
+            {/* #2799 — opt-in sticky toggle for the probe's measurement bar.
+                Self-gates to nothing unless probe + fab pref are both on. */}
+            <VvPanelToggleFab />
             <UpdatePromptHost />
             <DesktopUpdateHost />
             <Navigation />
