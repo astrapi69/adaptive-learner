@@ -85,3 +85,64 @@ export function setViewportDiagnosticEnabled(value: boolean): void {
     window.dispatchEvent(new CustomEvent(EVENT_NAME, {detail: {value}}));
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Panel visibility (#2785): the probe's RECORDING and its on-screen
+ * measurement bar are independent switches. With the bar hidden the
+ * probe keeps appending to the persistent protocol invisibly, and the
+ * header/menu stay fully reachable. Default: visible.
+ * ------------------------------------------------------------------ */
+
+const PANEL_KEY = "adaptive-learner.vv_diag_panel";
+const PANEL_EVENT = "adaptive-learner:vv-panel-changed";
+
+function readPanelPreference(): boolean {
+  if (typeof localStorage === "undefined") return true;
+  try {
+    return localStorage.getItem(PANEL_KEY) !== "0";
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Hook returning whether the measurement bar is shown while the probe
+ * is enabled (#2785). Defaults to true; re-renders on toggle.
+ */
+export function useVvPanelVisible(): boolean {
+  const [visible, setVisible] = useState<boolean>(() => readPanelPreference());
+
+  useEffect(() => {
+    if (
+      typeof window === "undefined" ||
+      typeof window.addEventListener !== "function"
+    ) {
+      return;
+    }
+    const handler = () => setVisible(readPanelPreference());
+    window.addEventListener(PANEL_EVENT, handler);
+    const storageHandler = (e: StorageEvent) => {
+      if (e.key === PANEL_KEY) setVisible(readPanelPreference());
+    };
+    window.addEventListener("storage", storageHandler);
+    return () => {
+      window.removeEventListener(PANEL_EVENT, handler);
+      window.removeEventListener("storage", storageHandler);
+    };
+  }, []);
+
+  return visible;
+}
+
+/** Imperative setter for the panel-visibility Settings toggle (#2785). */
+export function setVvPanelVisible(value: boolean): void {
+  try {
+    if (value) localStorage.removeItem(PANEL_KEY);
+    else localStorage.setItem(PANEL_KEY, "0");
+  } catch {
+    /* localStorage unavailable — best effort */
+  }
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(PANEL_EVENT, {detail: {value}}));
+  }
+}

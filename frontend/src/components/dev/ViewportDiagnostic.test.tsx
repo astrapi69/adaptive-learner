@@ -142,6 +142,27 @@ describe("ViewportDiagnostic", () => {
     expect(logged[0].fix).toBe("off");
   });
 
+  it("panel hidden: renders nothing but KEEPS recording to the protocol (#2785)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    localStorage.setItem("adaptive-learner.vv_diag_panel", "0");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <button data-testid="target-btn">Tap me</button>
+      </>,
+    );
+    expect(screen.queryByTestId("viewport-diagnostic")).toBeNull();
+    fireEvent.pointerDown(screen.getByTestId("target-btn"), {
+      clientX: 10,
+      clientY: 300,
+    });
+    expect(screen.queryByTestId("viewport-diagnostic")).toBeNull();
+    const logged = readVvLog();
+    expect(logged).toHaveLength(1);
+    expect(logged[0].kind).toBe("tap");
+    expect(logged[0].testid).toBe("target-btn");
+  });
+
   it("the Copy button shows feedback when pressed", async () => {
     localStorage.setItem("adaptive-learner.vv_diag", "1");
     render(<ViewportDiagnostic />);
