@@ -2201,6 +2201,9 @@ content:
     start: "Start learning"
     download_start: "Download & start"
     lessons: "{n} lessons"
+    lesson_list: "Lessons"
+    progress_done: "{done} of {total} lessons completed"
+    current_lesson: "Continue here"
   repo_export:
     button: "Share as repository"
     title: "Share as repository"

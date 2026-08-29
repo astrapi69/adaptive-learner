@@ -2375,7 +2375,10 @@
       "go_discover": "Ανακάλυψε περιεχόμενο",
       "start": "Ξεκίνα τη μάθηση",
       "download_start": "Λήψη και έναρξη",
-      "lessons": "{n} μαθήματα"
+      "lessons": "{n} μαθήματα",
+      "lesson_list": "Μαθήματα",
+      "progress_done": "{done} από {total} μαθήματα ολοκληρώθηκαν",
+      "current_lesson": "Συνέχεια εδώ"
     },
     "repo_export": {
       "button": "Κοινή χρήση ως αποθετήριο",

@@ -2375,7 +2375,10 @@
       "go_discover": "İçerik keşfet",
       "start": "Öğrenmeye başla",
       "download_start": "İndir ve başla",
-      "lessons": "{n} ders"
+      "lessons": "{n} ders",
+      "lesson_list": "Dersler",
+      "progress_done": "{total} dersten {done} tanesi tamamlandı",
+      "current_lesson": "Buradan devam et"
     },
     "repo_export": {
       "button": "Depo olarak paylaş",
