@@ -1325,6 +1325,21 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Update-Banner: "Was ist neu?", "Release-Seite", "Später" sind
       lesbar beschriftet (nicht leer, ausreichender Kontrast)
 
+### Auswertung am Set-Ende (#2792)
+- [ ] Letzte Lektion eines Sets abschließen: auf der Abschluss-Karte
+      steht "Auswertung ansehen" als erste Aktion, "Set ansehen"
+      daneben
+- [ ] Die Auswertung zeigt vier Kennzahlen (Fehler insgesamt,
+      gemeistert in Prozent, noch offen, Lernzeit) und darunter
+      Fehler nach Lektion, nach Aufgabentyp und die größten
+      Schwachstellen mit eigener falscher Antwort neben der richtigen
+- [ ] "Fehler trainieren" führt in die Wiederholung des Sets,
+      "Zurück zum Set" auf die Set-Seite
+- [ ] Ein Set ohne aufgezeichnete Fehler zeigt die freundliche
+      Meldung statt leerer Abschnitte
+- [ ] Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
+      kommen dort aus der lokalen Datenbank
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert

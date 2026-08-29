@@ -50,6 +50,7 @@ const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
 const Contribute = lazyWithReload(() => import("./pages/content/Contribute"));
 // #892 — deep-link to a single content set (prerequisite for set-level QR).
 const SetDeepLink = lazyWithReload(() => import("./pages/content/SetDeepLink"));
+const SetSummary = lazyWithReload(() => import("./pages/content/SetSummary"));
 const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
 const RedeemInvite = lazyWithReload(() => import("./pages/content/RedeemInvite"));
 const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
@@ -225,6 +226,8 @@ export default function App() {
                 <Route path="/content" element={<ContentHub />} />
                 {/* #892 — deep-link to a single set (set-level QR / share). */}
                 <Route path="/content/set/:setId" element={<SetDeepLink />} />
+                {/* #2792 - the set-completion review (all mistakes of one set). */}
+                <Route path="/set-summary/:setId" element={<SetSummary />} />
                 <Route path="/contribute" element={<Contribute />} />
                 <Route path="/content/import/:conversationId" element={<ImportDetail />} />
                 {/* Old import-detail link kept alive for existing bookmarks. */}
