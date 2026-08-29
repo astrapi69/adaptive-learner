@@ -41,6 +41,7 @@ function entry(over: Partial<ExerciseBreakdownEntry>): ExerciseBreakdownEntry {
     fullyCorrect: false,
     canonicalAnswer: "hola",
     userAnswer: "ola",
+    question: null,
     ...over,
   };
 }

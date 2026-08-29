@@ -1363,6 +1363,17 @@ jeder Karten-Zeile (`CardImageField`).
       anklickbar und führt auf ebendiese Liste
 - [ ] Ohne angemeldeten Lernfortschritt erscheint die Liste trotzdem,
       nur ohne Markierungen
+### Zusammenfassung: Alle Antworten mit Frage (#2807)
+- [ ] Lektion beenden, "Alle Antworten ansehen" öffnen: jede Zeile mit
+      etwas zu zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)
+- [ ] Aufgeklappt steht die FRAGE über den Antworten - auch bei einer
+      teilrichtigen Zeile wie "2 / 3", die vorher gar nichts zeigte
+- [ ] Bei Auswahl-/Zuordnungsaufgaben (ohne Textantwort) erscheinen
+      Frage und richtige Antwort
+- [ ] Bei Textantworten bleibt der farbige Wort-Vergleich, ergänzt um
+      die eigene Antwort im Klartext
+- [ ] Eine vollständig richtige Zeile zeigt ihre Frage, aber keinen
+      Fehler-Vergleich
 
 ### Lektion verlassen führt zum Set (#2811)
 - [ ] In einer Set-Lektion pausieren und verlassen: die App landet auf

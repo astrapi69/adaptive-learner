@@ -34,8 +34,13 @@ function rowStatusOf(entry: ExerciseBreakdownEntry): string {
     return entry.fullyCorrect ? "correct" : "wrong";
 }
 
-/** One exercise's result row: title + score + (on a wrong text answer) the
- *  token diff, else the bare canonical answer. */
+/** One exercise's result row: a compact ``title + score`` line that expands
+ *  into what was asked, what the learner answered, and the solution.
+ *
+ *  #2807 - the row used to show ONLY the title and the score, and revealed a
+ *  detail solely for a wrong TEXT answer. A partially correct row ("2 / 3")
+ *  therefore showed nothing at all, and no row ever showed the QUESTION: the
+ *  same "answers without context" gap #2757 fixed on the sibling surface. */
 function AnswerRow({
     entry,
     t,
@@ -44,14 +49,13 @@ function AnswerRow({
     t: Translate;
 }) {
     const status = rowStatusOf(entry);
-    const showAnswer =
-        entry.attempted && !entry.fullyCorrect && entry.canonicalAnswer;
-    return (
-        <li
-            className={`lesson-summary-breakdown-row is-${status}`}
-            data-testid={`lesson-summary-breakdown-${entry.stepId}`}
-            data-status={status}
-        >
+    // There is something to review whenever the step was attempted and not
+    // perfect - regardless of whether a text answer happens to exist.
+    const reviewable = entry.attempted && !entry.fullyCorrect;
+    const showAnswer = reviewable && Boolean(entry.canonicalAnswer);
+
+    const head = (
+        <>
             <span className="lesson-summary-breakdown-title">{entry.title}</span>
             {entry.attempted ? (
                 <span className="lesson-summary-breakdown-score">
@@ -62,27 +66,82 @@ function AnswerRow({
                     {t("lesson.summary.breakdown_unattempted", "Not attempted")}
                 </span>
             )}
+        </>
+    );
+
+    const body = (
+        <>
+            {entry.question && (
+                <span
+                    className="block pt-0.5 text-[0.8125rem] text-fg-secondary"
+                    data-testid={`lesson-summary-question-${entry.stepId}`}
+                >
+                    {entry.question}
+                </span>
+            )}
+            {/* The learner's own answer, for the types that record one. The
+                diff below already contains it for text answers, so it is only
+                spelled out where no diff is rendered. */}
+            {entry.userAnswer && !entry.canonicalAnswer && (
+                <span
+                    className="block pt-0.5 text-[0.8125rem] text-fg-muted"
+                    data-testid={`lesson-summary-your-answer-${entry.stepId}`}
+                >
+                    {t("review.your_answer", "Your answer:")} {entry.userAnswer}
+                </span>
+            )}
             {showAnswer &&
                 (entry.userAnswer ? (
-                    <span
-                        className="lesson-summary-breakdown-diff block"
-                        data-testid={`lesson-summary-breakdown-diff-${entry.stepId}`}
-                    >
-                        <DiffHighlight
-                            tokens={tokenDiff(
-                                entry.userAnswer,
-                                entry.canonicalAnswer,
-                            )}
-                        />
-                    </span>
+                    <>
+                        <span
+                            className="block pt-0.5 text-[0.8125rem] text-fg-muted"
+                            data-testid={`lesson-summary-your-answer-${entry.stepId}`}
+                        >
+                            {t("review.your_answer", "Your answer:")}{" "}
+                            {entry.userAnswer}
+                        </span>
+                        <span
+                            className="lesson-summary-breakdown-diff block"
+                            data-testid={`lesson-summary-breakdown-diff-${entry.stepId}`}
+                        >
+                            <DiffHighlight
+                                tokens={tokenDiff(
+                                    entry.userAnswer,
+                                    entry.canonicalAnswer,
+                                )}
+                            />
+                        </span>
+                    </>
                 ) : (
-                    <span className="lesson-summary-breakdown-canonical">
+                    <span className="lesson-summary-breakdown-canonical block">
                         {t(
                             "lesson.summary.breakdown_correct_answer",
                             "Correct answer: {answer}",
                         ).replace("{answer}", entry.canonicalAnswer)}
                     </span>
                 ))}
+        </>
+    );
+
+    const hasBody = Boolean(entry.question) || showAnswer || Boolean(entry.userAnswer);
+    return (
+        <li
+            className={`lesson-summary-breakdown-row is-${status}`}
+            data-testid={`lesson-summary-breakdown-${entry.stepId}`}
+            data-status={status}
+        >
+            {hasBody ? (
+                // Open by default: the learner asked to see all answers, so the
+                // context is the point - collapsing is the escape, not the norm.
+                <details open data-testid={`lesson-summary-row-details-${entry.stepId}`}>
+                    <summary className="grid cursor-pointer grid-cols-[1fr_auto] items-baseline gap-2">
+                        {head}
+                    </summary>
+                    {body}
+                </details>
+            ) : (
+                head
+            )}
         </li>
     );
 }

@@ -133,3 +133,34 @@ export function questionForError(
     }
     return question ?? _nonEmpty(exercise.prompt) ?? _nonEmpty(step.title);
 }
+
+/**
+ * The question a whole exercise STEP asked, for the summary's per-answer
+ * disclosure (#2807).
+ *
+ * {@link questionForError} answers "what was asked for THIS element" and needs
+ * an ``ElementError`` to locate it. The lesson summary works one level up: its
+ * rows are steps, not elements, so it needs the step's own prompt - the cloze
+ * sentence, the exercise prompt, the instruction of a matching block.
+ *
+ * Kept in this module on purpose: #2757 fixed "answers shown without the
+ * question" for one surface and left the sibling one (#2807) with the same
+ * gap. One home for the class, so the next surface reuses instead of
+ * re-deriving.
+ *
+ * @param exercise - The step's exercise content.
+ * @returns The question text, or ``null`` when the exercise carries none.
+ *
+ * @example
+ * questionForExercise({type: "cloze", sentence: "El ___ come."}); // "El ___ come."
+ */
+export function questionForExercise(
+    exercise: ContentLessonExercise | null | undefined,
+): string | null {
+    if (!exercise) return null;
+    // A cloze's sentence IS the question; its prompt is only an instruction.
+    if (exercise.type === "cloze") {
+        return _nonEmpty(exercise.sentence) ?? _nonEmpty(exercise.prompt);
+    }
+    return _nonEmpty(exercise.prompt);
+}
