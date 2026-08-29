@@ -1203,6 +1203,16 @@ each card row (`CardImageField`).
 - [ ] Back to "Top": the bar disappears immediately; the choice
       survives a reload
 
+### First paint: no language mix (#2796)
+- [ ] Reload the app with a German UI (clear the cache): landing page,
+      navigation, install hint, update banner and offline notice are
+      German immediately - no English text, no raw key like
+      `landing.intro`
+- [ ] Same in airplane mode / offline: the strings stay German (the
+      first paint needs no network)
+- [ ] Update banner: "Was ist neu?", "Release-Seite", "Später" carry
+      readable labels (not empty, sufficient contrast)
+
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
