@@ -74,6 +74,7 @@ Baseline zu committen.
 | Create-Lesson — Buchtext-Datei-Upload mit Kapitel-Picker (#1927) | `create-lesson/buch-upload-picker.png` | `create-lesson/buch-upload-picker.mobile.png` | v2.5.0+ |
 | Viewport-Diagnose — Tap-Offset-Sonde, eingeklappt (#1569/#2779) | `viewport-diagnostic/eingeklappt.png` | `viewport-diagnostic/eingeklappt.mobile.png` | v2.13.0+ |
 | Viewport-Diagnose — Details-Block geöffnet (#1569/#2779) | `viewport-diagnostic/details.png` | `viewport-diagnostic/details.mobile.png` | v2.13.0+ |
+| Viewport-Diagnose — Settings-Sektion mit Schalter + Protokoll (#2782) | `viewport-diagnostic/settings-sektion.png` | `viewport-diagnostic/settings-sektion.mobile.png` | v2.13.0+ |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
 > konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.

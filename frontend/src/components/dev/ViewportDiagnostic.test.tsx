@@ -1,8 +1,10 @@
 /** Tests for the opt-in iOS tap-offset probe (#1569). */
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+import { setViewportDiagnosticEnabled } from "../../hooks/settings/useViewportDiagnostic";
+import { readVvLog } from "../../lib/diagnostics/vv-log";
 import ViewportDiagnostic from "./ViewportDiagnostic";
 
 describe("ViewportDiagnostic", () => {
@@ -110,6 +112,34 @@ describe("ViewportDiagnostic", () => {
     expect(screen.getByTestId("viewport-diagnostic-tap")).toHaveTextContent(
       /tippe irgendwo/i,
     );
+  });
+
+  it("the Settings toggle mounts and unmounts the overlay live, no reload (#2782)", () => {
+    render(<ViewportDiagnostic />);
+    expect(screen.queryByTestId("viewport-diagnostic")).toBeNull();
+    act(() => setViewportDiagnosticEnabled(true));
+    expect(screen.getByTestId("viewport-diagnostic")).toBeInTheDocument();
+    act(() => setViewportDiagnosticEnabled(false));
+    expect(screen.queryByTestId("viewport-diagnostic")).toBeNull();
+  });
+
+  it("a tap lands in the persistent protocol, not only the in-memory history (#2782)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <button data-testid="target-btn">Tap me</button>
+      </>,
+    );
+    fireEvent.pointerDown(screen.getByTestId("target-btn"), {
+      clientX: 10,
+      clientY: 300,
+    });
+    const logged = readVvLog();
+    expect(logged).toHaveLength(1);
+    expect(logged[0].kind).toBe("tap");
+    expect(logged[0].testid).toBe("target-btn");
+    expect(logged[0].fix).toBe("off");
   });
 
   it("the Copy button shows feedback when pressed", async () => {

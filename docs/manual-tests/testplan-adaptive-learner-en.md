@@ -1176,6 +1176,18 @@ each card row (`CardImageField`).
 - [ ] With Developer Mode ON (Settings): the technical detail text is
       appended again
 
+### Diagnostics probe: Settings toggle + protocol (#2782)
+- [ ] Settings > General > Diagnostics: enable the "Tap & viewport
+      probe" toggle - the measurement bar appears IMMEDIATELY at the
+      top (no reload); disabling removes it immediately
+- [ ] With the probe on: tap anywhere, then "Copy protocol" in
+      Settings - the clipboard holds the entry (a line with `tap` and
+      `deltaY=`); the counter next to it shows > 0 recorded events
+- [ ] Reload the page: the counter is preserved (the protocol survives
+      reloads); "Clear protocol" resets it to 0
+- [ ] Appending `?vvdiag=1` to the URL enables the same probe; the
+      Settings toggle then shows ON (one shared flag)
+
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists

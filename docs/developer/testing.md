@@ -210,3 +210,23 @@ console overlay is just there, no query flag to remember. In plain
 desktop dev. The shipped build (production image, public GH-Pages)
 contains no eruda chunk at all — a debug console in the deployed
 artifact is an attack surface.
+
+**Tap/viewport probe (the ghost-bug recorder, #1569/#2340/#2782):** the
+`ViewportDiagnostic` overlay ships in EVERY build (it is query/setting
+gated, not build-gated). Three equivalent ways to enable it, all sharing
+one flag:
+
+- Settings > General > Diagnostics > "Tap & viewport probe" toggle
+  (takes effect live, no reload);
+- `?vvdiag=1` on any URL (persists; `?vvdiag=0` clears);
+- the `adaptive-learner.vv_diag` localStorage flag.
+
+While enabled, every tap (element, `ΔY`, `@winY`, `@vvTop`) and every
+significant viewport transition (keyboard open/close, scale change, a
+phantom offset appearing) is appended to a persistent ring-buffer
+protocol (`lib/diagnostics/vv-log`, capped at 500 entries, survives
+reloads). Export it from the same Settings section ("Copy protocol") or
+from the overlay's Copy button (last 8 taps only). Fix candidates for
+the tap-offset stay togglable at runtime via `?vvfix=<id>`
+(`novhd` / `vpheight` / `nolock` / `hardreset`, `?vvfix=off` clears); the
+active candidate is recorded with every protocol entry.

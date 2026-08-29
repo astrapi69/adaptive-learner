@@ -1258,6 +1258,19 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Mit Entwicklermodus AN (Settings): der technische Detail-Text
       erscheint wieder angehängt
 
+### Diagnose-Sonde: Settings-Schalter + Protokoll (#2782)
+- [ ] Einstellungen > Allgemein > Diagnose: Schalter "Tipp- und
+      Viewport-Sonde" einschalten - die Mess-Leiste erscheint SOFORT
+      oben (ohne Neuladen); ausschalten entfernt sie sofort
+- [ ] Mit aktiver Sonde: irgendwo tippen, dann in den Einstellungen
+      "Protokoll kopieren" - die Zwischenablage enthält den Eintrag
+      (Zeile mit `tap` und `deltaY=`); der Zähler daneben zeigt > 0
+      aufgezeichnete Ereignisse
+- [ ] Seite neu laden: der Zähler bleibt erhalten (Protokoll
+      überlebt Reload); "Protokoll leeren" setzt ihn auf 0
+- [ ] `?vvdiag=1` an die URL angehaengt aktiviert dieselbe Sonde;
+      der Settings-Schalter zeigt danach AN (ein gemeinsames Flag)
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
