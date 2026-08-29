@@ -12,7 +12,9 @@ import { setButtonTooltipsEnabled, useButtonTooltips } from "../../../../hooks/s
 import { setDevModeEnabled, useDevMode } from "../../../../hooks/settings/useDevMode";
 import {
   setViewportDiagnosticEnabled,
+  setVvPanelVisible,
   useViewportDiagnostic,
+  useVvPanelVisible,
 } from "../../../../hooks/settings/useViewportDiagnostic";
 import { clearVvLog, vvLogAsText, vvLogCount } from "../../../../lib/diagnostics/vv-log";
 import { useI18n } from "../../../../hooks/ui/useI18n";
@@ -99,6 +101,7 @@ export default function GeneralPanel({
   // persistent protocol is exportable/clearable right here so a mis-tap
   // noticed later is still recoverable.
   const vvDiagOn = useViewportDiagnostic();
+  const vvPanelOn = useVvPanelVisible();
   const [vvLogEntries, setVvLogEntries] = useState(() => vvLogCount());
   const [vvLogCopied, setVvLogCopied] = useState(false);
   useEffect(() => {
@@ -434,6 +437,26 @@ export default function GeneralPanel({
             data-testid="settings-vvdiag-toggle"
             checked={vvDiagOn}
             onChange={(e) => setViewportDiagnosticEnabled(e.target.checked)}
+          />
+        </label>
+        <label className="flex items-center justify-between gap-2">
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[0.95rem] font-medium">
+              {t("settings.vvdiag_panel_toggle", "Show measurement bar")}
+            </span>
+            <FormHint as="span">
+              {t(
+                "settings.vvdiag_panel_description",
+                "Off: the probe keeps recording invisibly without showing the bar at the top - the header and menu stay fully reachable.",
+              )}
+            </FormHint>
+          </span>
+          <input
+            type="checkbox"
+            className="m-0 size-4 flex-none p-0"
+            data-testid="settings-vvdiag-panel-toggle"
+            checked={vvPanelOn}
+            onChange={(e) => setVvPanelVisible(e.target.checked)}
           />
         </label>
         <div className="flex flex-wrap items-center gap-2">

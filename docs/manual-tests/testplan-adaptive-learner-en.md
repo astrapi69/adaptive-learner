@@ -1187,6 +1187,9 @@ each card row (`CardImageField`).
       reloads); "Clear protocol" resets it to 0
 - [ ] Appending `?vvdiag=1` to the URL enables the same probe; the
       Settings toggle then shows ON (one shared flag)
+- [ ] "Show measurement bar" OFF: the bar disappears immediately and
+      the header/menu are reachable again - but new taps still raise
+      the protocol counter (recording continues invisibly, #2785)
 
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view

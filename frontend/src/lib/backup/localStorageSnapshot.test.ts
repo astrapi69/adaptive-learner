@@ -30,6 +30,25 @@ describe("captureLocalStorageSnapshot", () => {
         expect(snap["adaptive-learner.voice.tts_enabled"]).toBe("true");
     });
 
+    it("carries the diagnostics + developer configuration (#2785 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem("adaptive-learner.developer_mode", "true");
+        localStorage.setItem("adaptive-learner.vv_diag", "1");
+        localStorage.setItem("adaptive-learner.vv_diag_panel", "0");
+        localStorage.setItem(
+            "adaptive-learner.vv_diag_log",
+            '[{"kind":"tap","ts":1,"fix":"off"}]',
+        );
+
+        const snap = captureLocalStorageSnapshot();
+
+        expect(snap["adaptive-learner.developer_mode"]).toBe("true");
+        expect(snap["adaptive-learner.vv_diag"]).toBe("1");
+        expect(snap["adaptive-learner.vv_diag_panel"]).toBe("0");
+        expect(snap["adaptive-learner.vv_diag_log"]).toBe(
+            '[{"kind":"tap","ts":1,"fix":"off"}]',
+        );
+    });
+
     it("excludes secret keys (tokens, api keys, passwords)", () => {
         localStorage.setItem("adaptive-learner.github_token", "ghp_secret");
         localStorage.setItem(
