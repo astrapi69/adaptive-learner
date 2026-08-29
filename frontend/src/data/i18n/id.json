@@ -1946,6 +1946,10 @@
     "contributed_by": "Dikontribusikan oleh {name}",
     "page_title": "Pelajaran",
     "set_label": "Set",
+    "position": "Pelajaran {current} dari {total}",
+    "nav_previous": "Pelajaran sebelumnya",
+    "nav_next": "Pelajaran berikutnya",
+    "nav_set_overview": "Semua pelajaran dalam set ini",
     "loading": "Memuat pelajaran…",
     "not_cached_body": "Pelajaran ini belum diunduh. Buka penjelajah konten dan unduh set terlebih dahulu.",
     "progress": {

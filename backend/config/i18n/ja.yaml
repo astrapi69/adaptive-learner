@@ -1801,6 +1801,10 @@ lesson:
   contributed_by: '{name}さんによる貢献'
   page_title: "レッスン"
   set_label: "セット"
+  position: "レッスン {current} / {total}"
+  nav_previous: "前のレッスン"
+  nav_next: "次のレッスン"
+  nav_set_overview: "このセットの全レッスン"
   loading: "レッスンを読み込み中…"
   not_cached_body: "このレッスンはまだダウンロードされていません。コンテンツブラウザを開いてセットをダウンロードしてください。"
   progress:

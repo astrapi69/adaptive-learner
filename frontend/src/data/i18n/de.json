@@ -1946,6 +1946,10 @@
     "contributed_by": "Bereitgestellt von {name}",
     "page_title": "Lektion",
     "set_label": "Lernset",
+    "position": "Lektion {current} von {total}",
+    "nav_previous": "Vorige Lektion",
+    "nav_next": "Nächste Lektion",
+    "nav_set_overview": "Alle Lektionen des Sets",
     "loading": "Lektion wird geladen…",
     "not_cached_body": "Diese Lektion ist noch nicht heruntergeladen. Öffne den Inhalts-Browser und lade das Set zuerst herunter.",
     "progress": {

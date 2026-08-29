@@ -1797,6 +1797,10 @@ lesson:
   contributed_by: '{name} द्वारा योगदान'
   page_title: पाठ
   set_label: सेट
+  position: "पाठ {current} / {total}"
+  nav_previous: "पिछला पाठ"
+  nav_next: "अगला पाठ"
+  nav_set_overview: "इस सेट के सभी पाठ"
   loading: पाठ लोड हो रहा है…
   not_cached_body: यह पाठ अभी डाउनलोड नहीं हुआ है। पहले सामग्री ब्राउज़र खोलें और सेट डाउनलोड करें।
   progress:

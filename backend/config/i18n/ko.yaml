@@ -1812,6 +1812,10 @@ lesson:
   contributed_by: 기여자 {name}
   page_title: "레슨"
   set_label: "세트"
+  position: "레슨 {current} / {total}"
+  nav_previous: "이전 레슨"
+  nav_next: "다음 레슨"
+  nav_set_overview: "이 세트의 모든 레슨"
   loading: "레슨을 불러오는 중…"
   not_cached_body: "이 레슨은 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 세트를 다운로드하세요."
   progress:
