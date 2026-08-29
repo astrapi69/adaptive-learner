@@ -1349,6 +1349,18 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
       kommen dort aus der lokalen Datenbank
 
+### Zusammenfassung: Alle Antworten mit Frage (#2807)
+- [ ] Lektion beenden, "Alle Antworten ansehen" öffnen: jede Zeile mit
+      etwas zu zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)
+- [ ] Aufgeklappt steht die FRAGE über den Antworten - auch bei einer
+      teilrichtigen Zeile wie "2 / 3", die vorher gar nichts zeigte
+- [ ] Bei Auswahl-/Zuordnungsaufgaben (ohne Textantwort) erscheinen
+      Frage und richtige Antwort
+- [ ] Bei Textantworten bleibt der farbige Wort-Vergleich, ergänzt um
+      die eigene Antwort im Klartext
+- [ ] Eine vollständig richtige Zeile zeigt ihre Frage, aber keinen
+      Fehler-Vergleich
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
