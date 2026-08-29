@@ -68,6 +68,13 @@ jobs:
               - "scripts/check-folder-size.sh"
               - "scripts/check-directory-size.sh"
               - ".github/workflows/complexity-check.yml"
+              # #2773 - the TS half of the oracle is eslint/typescript-eslint
+              # from the frontend lockfile; a dep bump changes what cc the
+              # SAME code measures (eslint 10.9.1 moved CreateLesson 20->22
+              # past this filter). Any change to the toolchain inputs must
+              # run the gate, mirroring how a baseline-only edit already does.
+              - "frontend/package.json"
+              - "frontend/bun.lock"
 
   complexity-gate:
     name: Complexity ratchet gate
