@@ -1275,6 +1275,17 @@ jeder Karten-Zeile (`CardImageField`).
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
 
+### Position + Navigation im Set (#2793)
+- [ ] In einer Lektion aus einem Set steht oben "Lektion N von M" mit
+      der richtigen Nummer
+- [ ] Der Pfeil nach links öffnet die VORIGE Lektion des Sets; der
+      Pfeil nach rechts die nächste
+- [ ] In der ersten Lektion fehlt der Links-Pfeil (kein toter Knopf),
+      die Anzeige bleibt; in der letzten fehlt der Rechts-Pfeil
+- [ ] Nach dem Sprung zeigt die Anzeige die neue Position
+- [ ] Bei einer Einzel-Lektion ohne Set (z. B. eigene Lektion) fehlt
+      die Positionszeile vollständig
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert

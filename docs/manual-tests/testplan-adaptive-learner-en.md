@@ -1191,6 +1191,17 @@ each card row (`CardImageField`).
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
 
+### In-set position + navigation (#2793)
+- [ ] Inside a lesson from a set, the header shows "Lesson N of M"
+      with the correct number
+- [ ] The left arrow opens the PREVIOUS lesson of the set; the right
+      arrow the next one
+- [ ] On the first lesson the left arrow is absent (no dead button),
+      the readout stays; on the last one the right arrow is absent
+- [ ] After jumping, the readout shows the new position
+- [ ] For a standalone lesson without a set (e.g. an own lesson) the
+      position row is absent entirely
+
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists

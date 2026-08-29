@@ -626,6 +626,19 @@ const FEATURES: FeatureShot[] = [
         pinTo: "book-file-upload",
     },
 
+    // --- In-set position + lesson navigation (#2793) --------------------
+    {
+        path: "lesson-navigation/position-zeile",
+        setup: async (page) => {
+            if (!(await gotoLessonRunner(page))) return false;
+            const row = page.getByTestId("lesson-position-row");
+            if (!(await row.count())) return false;
+            await expect(row).toBeVisible({timeout: 10_000});
+            return true;
+        },
+        pinTo: "lesson-position-row",
+    },
+
     // --- Settings diagnostics section (#2782) ---------------------------
     {
         path: "viewport-diagnostic/settings-sektion",
