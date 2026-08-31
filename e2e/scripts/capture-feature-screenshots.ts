@@ -670,7 +670,8 @@ const FEATURES: FeatureShot[] = [
         path: "viewport-diagnostic/settings-sektion",
         setup: async (page) => {
             await seedLearner(page);
-            await page.goto("/settings?tab=general");
+            // #2789 - moved from General to the new Diagnostics & Support tab.
+            await page.goto("/settings?tab=diagnostics");
             const section = page.getByTestId("settings-diagnostics");
             await expect(section).toBeVisible({timeout: 20_000});
             return true;

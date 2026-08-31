@@ -1284,7 +1284,7 @@ jeder Karten-Zeile (`CardImageField`).
       erscheint wieder angehängt
 
 ### Diagnose-Sonde: Settings-Schalter + Protokoll (#2782)
-- [ ] Einstellungen > Allgemein > Diagnose: Schalter "Tipp- und
+- [ ] Einstellungen > Diagnose & Support: Schalter "Tipp- und
       Viewport-Sonde" einschalten - die Mess-Leiste erscheint SOFORT
       oben (ohne Neuladen); ausschalten entfernt sie sofort
 - [ ] Mit aktiver Sonde: irgendwo tippen, dann in den Einstellungen
@@ -1301,7 +1301,7 @@ jeder Karten-Zeile (`CardImageField`).
       weiter, #2785)
 
 ### Sticky-Knopf für die Mess-Leiste (#2799)
-- [ ] Einstellungen > Allgemein > Diagnose: "Sticky-Knopf für die
+- [ ] Einstellungen > Diagnose & Support: "Sticky-Knopf für die
       Mess-Leiste" einschalten (Sonde muss AN sein) - ein runder
       schwebender Knopf erscheint SOFORT unten links
 - [ ] Knopf antippen: die Mess-Leiste verschwindet (genau wie
@@ -1411,6 +1411,19 @@ jeder Karten-Zeile (`CardImageField`).
       Meldung "Bild gespeichert"
 - [ ] Teilen-Auswahl abbrechen: keine Datei landet still im
       Download-Ordner
+
+### Neuer Tab "Diagnose & Support" vereint Fehlerbericht + Sonde (#2789)
+- [ ] Einstellungen > Info: zwischen "Hilfe" und "Über" steht jetzt
+      "Diagnose & Support"
+- [ ] Dort zuerst der Support-Abschnitt mit "Fehlerbericht erstellen"
+      (früher unter "Über"), darunter die Diagnose-Sektion mit
+      Entwicklermodus (früher unter "Allgemein > Oberfläche") und der
+      Tipp-/Viewport-Sonde (früher unter "Allgemein > Diagnose")
+- [ ] "Über" zeigt weiterhin Version, Strang und Links, aber keinen
+      Support-Knopf mehr
+- [ ] "Allgemein" zeigt weiterhin Menüposition, aber keinen
+      Entwicklermodus-Schalter und keine Diagnose-Sektion mehr
+- [ ] Direkter Link `?tab=diagnostics` öffnet den Tab unmittelbar
 
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht

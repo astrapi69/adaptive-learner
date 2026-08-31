@@ -14,6 +14,7 @@ import type { UserSettings } from "../../types";
 import {
   AboutPanel,
   DataPanel,
+  DiagnosticsPanel,
   GeneralPanel,
   HelpPanel,
   IntegrationsPanel,
@@ -52,6 +53,7 @@ const SETTINGS_TABS = [
   "data",
   "integrations",
   "help",
+  "diagnostics",
   "about",
 ] as const;
 type SettingsTab = (typeof SETTINGS_TABS)[number];
@@ -71,6 +73,11 @@ const SETTINGS_TAB_LABELS: Record<SettingsTab, { key: string; fallback: string }
     fallback: "Integrations",
   },
   help: { key: "settings.tab_help", fallback: "Help" },
+  // #2789 - unites the error report (moved from About > Support), the
+  // tap/viewport probe (moved from General), and Developer Mode (moved from
+  // General > Interface): all three serve the same job of helping the
+  // developer see what happened on a user's device.
+  diagnostics: { key: "settings.tab_diagnostics", fallback: "Diagnostics & Support" },
   about: { key: "settings.tab_about", fallback: "About" },
 };
 
@@ -184,7 +191,7 @@ export default function Settings() {
       {
         key: "info",
         label: t("settings.group_info", "Info"),
-        items: [item("help"), item("about")],
+        items: [item("help"), item("diagnostics"), item("about")],
       },
     ];
   }, [t]);
@@ -284,6 +291,7 @@ export default function Settings() {
           <DataPanel active={activeTab === "data"} />
           <IntegrationsPanel active={activeTab === "integrations"} />
           <HelpPanel active={activeTab === "help"} />
+          <DiagnosticsPanel active={activeTab === "diagnostics"} />
           <AboutPanel active={activeTab === "about"} />
         </div>
       </div>

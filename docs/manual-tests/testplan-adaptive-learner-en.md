@@ -1200,7 +1200,7 @@ each card row (`CardImageField`).
       appended again
 
 ### Diagnostics probe: Settings toggle + protocol (#2782)
-- [ ] Settings > General > Diagnostics: enable the "Tap & viewport
+- [ ] Settings > Diagnostics & Support: enable the "Tap & viewport
       probe" toggle - the measurement bar appears IMMEDIATELY at the
       top (no reload); disabling removes it immediately
 - [ ] With the probe on: tap anywhere, then "Copy protocol" in
@@ -1215,7 +1215,7 @@ each card row (`CardImageField`).
       the protocol counter (recording continues invisibly, #2785)
 
 ### Sticky button for the measurement bar (#2799)
-- [ ] Settings > General > Diagnostics: enable "Sticky button for the
+- [ ] Settings > Diagnostics & Support: enable "Sticky button for the
       measurement bar" (the probe must be ON) - a round floating
       button appears IMMEDIATELY at the bottom left
 - [ ] Tap the button: the measurement bar disappears (exactly like
@@ -1320,6 +1320,19 @@ each card row (`CardImageField`).
 - [ ] On desktop (no share sheet): the image downloads, toast "Image
       saved"
 - [ ] Dismiss the share sheet: no file lands silently in the downloads
+
+### New "Diagnostics & Support" tab unites error report + probe (#2789)
+- [ ] Settings > Info: between "Help" and "About" there is now
+      "Diagnostics & Support"
+- [ ] It shows the Support section first ("Create error report",
+      formerly under "About"), then the Diagnostics section with
+      Developer Mode (formerly under "General > Interface") and the
+      tap/viewport probe (formerly under "General > Diagnostics")
+- [ ] "About" still shows version, strand and links, but no Support
+      button anymore
+- [ ] "General" still shows the menu position, but no Developer Mode
+      toggle and no Diagnostics section anymore
+- [ ] The direct link `?tab=diagnostics` opens the tab immediately
 
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
