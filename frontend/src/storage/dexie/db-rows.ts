@@ -517,6 +517,30 @@ export interface LessonProgressRow {
 }
 
 /**
+ * engine#68 idea 3 - one learner-recorded audio clip for a "speak and
+ * record" exercise. Composite key
+ * ``{user_id}#{source-slug}#{set_id}#{lesson_filename}#{exercise_id}``,
+ * one level deeper than ``LessonProgressRow`` (a lesson can carry several
+ * speak-and-record exercises). Dexie schema v32.
+ *
+ * Wire shape parity: a row converts to the ApiStorage ``SpeechRecording``
+ * type 1:1 - the conversion lives in ``speech-recordings-dexie.ts``.
+ */
+export interface SpeechRecordingRow {
+    id: string;
+    user_id: string;
+    source: string;
+    set_id: string;
+    lesson_filename: string;
+    exercise_id: string;
+    audio_base64: string;
+    mime_type: string;
+    duration_ms: number;
+    recorded_at: string;
+    updated_at: string;
+}
+
+/**
  * Phase 46B / EXP-007 / P-129 — per-element error +
  * mastery tracking. Dexie schema v18.
  *

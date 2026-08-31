@@ -63,6 +63,7 @@ from app.models import (
     SessionNote,
     SessionRating,
     SetRun,
+    SpeechRecording,
     StepEvaluation,
     StudyQuestion,
     Subject,
@@ -712,6 +713,29 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=33,
+        scope="direct",
+    ),
+    # engine#68 idea 3 - speak-and-record clip storage. Mutable: a
+    # re-recording overwrites the existing row (upsert), so this is not
+    # append-only like an attempt log.
+    "speech_recordings": TableSpec(
+        model=SpeechRecording,
+        columns=(
+            "id",
+            "user_id",
+            "source",
+            "set_id",
+            "lesson_filename",
+            "exercise_id",
+            "audio_base64",
+            "mime_type",
+            "duration_ms",
+            "recorded_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=34,
         scope="direct",
     ),
 }

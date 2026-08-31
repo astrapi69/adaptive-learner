@@ -49,6 +49,7 @@ import type {
     AnkiCardRow,
     ContentSetRow,
     LessonProgressRow,
+    SpeechRecordingRow,
     ElementErrorRow,
     SetRunRow,
     ContentSetFileRow,
@@ -105,6 +106,10 @@ export class AdaptiveLearnerDB extends Dexie {
     // matches the backend's UniqueConstraint so the row shape
     // round-trips identically across modes.
     lessonProgress!: EntityTable<LessonProgressRow, "id">;
+    // engine#68 idea 3 - per-user x per-exercise speak-and-record clip.
+    // Composite key (``{user_id}#{source-slug}#{set_id}#{lesson_filename}
+    // #{exercise_id}``) matches the backend UniqueConstraint.
+    speechRecordings!: EntityTable<SpeechRecordingRow, "id">;
     // Phase 46B / EXP-007 / P-129 — element-level error +
     // mastery tracking. Composite key
     // ``{user_id}#{set_id}#{lesson_id}#{exercise_id}#{element_key}``
@@ -646,6 +651,12 @@ export class AdaptiveLearnerDB extends Dexie {
                     await table.put(row);
                 }
             });
+        // Schema v32 - engine#68 idea 3: speak-and-record clip storage.
+        // A brand-new store; no upgrade callback needed (nothing to
+        // migrate out of).
+        this.version(32).stores({
+            speechRecordings: "id, user_id, set_id, lesson_filename",
+        });
     }
 }
 

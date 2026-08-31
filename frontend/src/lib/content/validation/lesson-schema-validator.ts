@@ -72,6 +72,7 @@ export const SUPPORTED_EXTENSIONS: readonly string[] = [
   "ext:al-graded-quiz",
   "ext:al-dictation",
   "ext:al-image-description",
+  "ext:al-speak-and-record",
 ];
 
 /** The extension-tier load guard (#1565): structurally a lesson declaring

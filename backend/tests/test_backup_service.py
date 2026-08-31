@@ -45,6 +45,7 @@ from app.models import (
     SessionNote,
     SessionRating,
     SetRun,
+    SpeechRecording,
     StepEvaluation,
     StudyQuestion,
     Subject,
@@ -305,6 +306,20 @@ def _seed_all_tables(db) -> User:
             user_id=user.id,
             set_id="fr-a1",
             run_id=1,
+        )
+    )
+
+    # engine#68 idea 3 - a speak-and-record clip for the lesson above.
+    db.add(
+        SpeechRecording(
+            user_id=user.id,
+            source="astrapi69/adaptive-learner-content",
+            set_id="fr-a1",
+            lesson_filename="01-intro.json",
+            exercise_id="ex-speak-1",
+            audio_base64="UklGRiQAAABXQVZFZm10IBAAAAABAAEA",
+            mime_type="audio/webm",
+            duration_ms=2500,
         )
     )
 
@@ -813,8 +828,8 @@ def test_restore_curriculum_from_import_and_nested_topics(db_session):
     assert restored_session.imported_conversation_id == conversation.id
 
 
-def test_export_and_restore_all_thirty_tables(db_session):
-    """Round-trip the full 30-table surface: seed every table, export,
+def test_export_and_restore_all_tables(db_session):
+    """Round-trip the full table surface: seed every table, export,
     wipe, restore, and assert every table's row count is preserved.
     """
     user = _seed_all_tables(db_session)

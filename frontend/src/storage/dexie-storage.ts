@@ -89,6 +89,11 @@ import {
   listLessonProgressDexie,
   upsertLessonProgressDexie,
 } from "./lessons/lesson-progress-dexie";
+import {
+  deleteSpeechRecordingDexie,
+  getSpeechRecordingDexie,
+  saveSpeechRecordingDexie,
+} from "./lessons/speech-recordings-dexie";
 import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
 import {
   archiveRetiredDexie,
@@ -241,6 +246,16 @@ export const dexieStorage: IStorageService = {
       }
       return updated;
     },
+  },
+
+  // --- Speech Recordings (engine#68 idea 3: speak-and-record) --------
+
+  speechRecordings: {
+    get: (userId, source, setId, lessonFilename, exerciseId) =>
+      getSpeechRecordingDexie(userId, source, setId, lessonFilename, exerciseId),
+    save: (userId, body) => saveSpeechRecordingDexie(userId, body),
+    delete: (userId, source, setId, lessonFilename, exerciseId) =>
+      deleteSpeechRecordingDexie(userId, source, setId, lessonFilename, exerciseId),
   },
 
   // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------

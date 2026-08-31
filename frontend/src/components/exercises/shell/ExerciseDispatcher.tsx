@@ -30,6 +30,7 @@ import GradedQuizExercise from "../renderers/GradedQuizExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
 import DictationExercise from "../renderers/DictationExercise";
 import ImageDescriptionExercise from "../renderers/image-description/ImageDescriptionExercise";
+import SpeakAndRecordExercise from "../renderers/SpeakAndRecordExercise";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -64,6 +65,7 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-graded-quiz",
     "ext:al-dictation",
     "ext:al-image-description",
+    "ext:al-speak-and-record",
 ]);
 
 /** The prop bag every renderer shares (everything except the exercise, the
@@ -108,6 +110,15 @@ function renderAdoptedExtension(
         // self-contained and needs none). Review/adaptive routes pass an empty
         // source and get the no-image fallback.
         return <ImageDescriptionExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-speak-and-record") {
+        // Needs `source` for the same reason dictation/image-description do:
+        // an authored reference clip is an `assets/` path resolved by
+        // useAsset. The learner's OWN recording is loaded/saved via
+        // getStorage().speechRecordings inside the renderer itself, keyed
+        // by (source, setId, lessonId, exercise.id) - not threaded through
+        // props, since it is per-user storage, not a content asset.
+        return <SpeakAndRecordExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
     }
     return null;
 }

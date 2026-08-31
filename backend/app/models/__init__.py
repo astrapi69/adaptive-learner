@@ -1898,6 +1898,76 @@ class ApiKeyBackup(Base):
         )
 
 
+class SpeechRecording(Base):
+    """One learner-recorded audio clip for a "speak and record" exercise
+    (``ext:al-speak-and-record``, engine#68 idea 3).
+
+    Per-user × per-exercise row, keyed like ``LessonProgress`` but one level
+    deeper (``exercise_id``, not just the lesson): a lesson can carry several
+    speak-and-record exercises, each with its own clip. Re-recording
+    overwrites the existing row (upsert), matching the "one current clip"
+    self-review model - there is no history/versioning, unlike
+    ``LessonProgress.attempt_history``.
+
+    ``audio_base64`` follows the app's established convention for
+    user-media-like fields (``UserSettings.avatar``): base64-in-a-Text-column,
+    not a file upload - the backend deliberately has no multipart/UploadFile
+    endpoint (see ``routers/backup.py``). No SRS/ElementError row is written
+    for this exercise type: it is ungraded by design (nothing to check a
+    recording against), so this table is the exercise's ENTIRE persisted
+    state.
+    """
+
+    __tablename__ = "speech_recordings"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "source",
+            "set_id",
+            "lesson_filename",
+            "exercise_id",
+            name="uq_speech_recordings_user_exercise",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    # The content-loader source slug shape (``owner/name``). NOT a FK -
+    # content sources live in the cache, not the DB (mirrors LessonProgress).
+    source: Mapped[str] = mapped_column(String(200), nullable=False)
+    set_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    lesson_filename: Mapped[str] = mapped_column(String(200), nullable=False)
+    exercise_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    # Base64-encoded audio clip (see class docstring). Text, not a length-
+    # capped String: the practical cap is the client's recording-length limit
+    # (30s, low-bitrate opus), enforced in the frontend recorder, not here.
+    audio_base64: Mapped[str] = mapped_column(Text, nullable=False)
+    mime_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    duration_ms: Mapped[int] = mapped_column(Integer, nullable=False)
+    recorded_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+        onupdate=_utcnow,
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<SpeechRecording user={self.user_id!r} "
+            f"exercise={self.exercise_id!r} duration_ms={self.duration_ms}>"
+        )
+
+
 __all__ = [
     "Base",
     "User",
@@ -1931,4 +2001,5 @@ __all__ = [
     "ElementError",
     "SetRun",
     "UserMission",
+    "SpeechRecording",
 ]

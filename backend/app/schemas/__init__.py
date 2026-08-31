@@ -1607,6 +1607,48 @@ class LessonProgressOut(BaseModel):
     attempt_history: list[dict[str, Any]] = Field(default_factory=list)
 
 
+# --- SpeechRecording (engine#68 idea 3: speak-and-record) ------------------
+
+
+class SpeechRecordingUpsert(BaseModel):
+    """Body for the speech-recording upsert endpoint.
+
+    Re-recording overwrites the existing clip for the same exercise (no
+    history) - mirrors the "one current answer" model of every other
+    exercise type's persisted state.
+    """
+
+    source: str = Field(..., min_length=1, max_length=200)
+    set_id: str = Field(..., min_length=1, max_length=120)
+    lesson_filename: str = Field(..., min_length=1, max_length=200)
+    exercise_id: str = Field(..., min_length=1, max_length=120)
+    # Base64-encoded audio clip. The real size control is the client's
+    # recording-length cap (30s, low-bitrate opus); this max_length is a
+    # defensive ceiling only, generous enough not to reject a legitimate
+    # clip.
+    audio_base64: str = Field(..., min_length=1, max_length=2_000_000)
+    mime_type: str = Field(..., min_length=1, max_length=100)
+    duration_ms: int = Field(..., ge=0)
+
+
+class SpeechRecordingOut(BaseModel):
+    """Server-side speech-recording payload."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    source: str
+    set_id: str
+    lesson_filename: str
+    exercise_id: str
+    audio_base64: str
+    mime_type: str
+    duration_ms: int
+    recorded_at: datetime
+    updated_at: datetime
+
+
 # --- ElementError (Phase 46B / EXP-007 / P-129) ----------------------------
 
 

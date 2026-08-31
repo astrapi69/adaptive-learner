@@ -23,6 +23,7 @@ import type {
   IPluginSettingsNamespace,
 } from "../integrations/learning-repo";
 import type { ILessonProgressNamespace } from "../content/lesson-progress";
+import type { ISpeechRecordingsNamespace } from "../content/speech-recording";
 import type { IMissionsNamespace } from "../learning/missions";
 import type { INotebookLMNamespace } from "../integrations/notebooklm";
 import type {
@@ -85,6 +86,7 @@ export interface IStorageService {
   notebooklm: INotebookLMNamespace;
   contentLoader: IContentLoaderNamespace;
   lessonProgress: ILessonProgressNamespace;
+  speechRecordings: ISpeechRecordingsNamespace;
   elementErrors: IElementErrorsNamespace;
   learningData: ILearningDataNamespace;
   pluginSettings: IPluginSettingsNamespace;
