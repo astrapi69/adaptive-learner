@@ -19,7 +19,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getLessonOrder,
   storeLessonOrder,
-} from "../lib/content/browse/lesson-order-store";
+} from "../lib/content/browse/prefs/lesson-order-store";
 import type { ContentLesson, ContentSetEntry, SaveUserSetInput } from "./types";
 import { USER_GENERATED_SOURCE } from "./types";
 

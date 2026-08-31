@@ -18,7 +18,7 @@ import {
   type FoldedUserLesson,
   type SourceGroup,
   type TargetGroup,
-} from "../../../lib/content/browse/content-tree";
+} from "../../../lib/content/browse/discovery/content-tree";
 import { languageDisplayName } from "../../../lib/content/language/language-names";
 import { booksForDomain, type BookRecommendations } from "../../../lib/content/media/book-recommendations";
 import { mediaForDomain, type MediaResource } from "../../../lib/content/media/media-loader";

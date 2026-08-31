@@ -39,7 +39,7 @@ import {
 import {
     buildContentAvailability,
     filterAvailableProgress,
-} from "../../lib/content/browse/content-availability";
+} from "../../lib/content/browse/lifecycle/content-availability";
 import {
     MAX_PAUSED,
     readRetentionDays,

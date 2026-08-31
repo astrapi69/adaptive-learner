@@ -34,7 +34,7 @@ import { useI18n } from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
 import {buildSetLessonList, type SetLessonList} from "../../lib/content/browse/set-lesson-list";
 import {readLearnerState} from "../../lib/learning/learnerState";
-import { undismissSet } from "../../lib/content/browse/dismissed-sets";
+import { undismissSet } from "../../lib/content/browse/lifecycle/dismissed-sets";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import { notify } from "../../utils/notify";

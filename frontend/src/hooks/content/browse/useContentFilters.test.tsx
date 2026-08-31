@@ -10,7 +10,7 @@ import {act, renderHook} from "@testing-library/react";
 import {describe, expect, it} from "vitest";
 
 import {useContentFilters} from "./useContentFilters";
-import type {ContentSearchResult} from "../../../lib/content/browse/content-search";
+import type {ContentSearchResult} from "../../../lib/content/browse/discovery/content-search";
 import type {ContentSetEntry} from "../../../storage/types";
 
 const t = (_key: string, fallback: string) => fallback;

@@ -18,7 +18,7 @@ import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import ContinueLearning from "./ContinueLearning";
-import {storeSetStatus} from "../../lib/content/browse/set-status-store";
+import {storeSetStatus} from "../../lib/content/browse/lifecycle/set-status-store";
 import type {LessonProgress} from "../../storage/types";
 
 const listProgressMock = vi.fn();

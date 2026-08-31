@@ -15,7 +15,7 @@ vi.mock("../../../hooks/ui/useI18n", () => ({
 }));
 
 import RemoveRepoDialog from "./RemoveRepoDialog";
-import type { DeletionPlan } from "../../../lib/content/browse/orphan-cleanup";
+import type { DeletionPlan } from "../../../lib/content/browse/lifecycle/orphan-cleanup";
 
 const REPO = {
   url: "https://github.com/jane/repo",

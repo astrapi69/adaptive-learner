@@ -59,7 +59,7 @@ import { useSourceLanguages } from "../../hooks/settings/useSourceLanguages";
 import {
   buildContentTree,
   type FoldedUserLesson,
-} from "../../lib/content/browse/content-tree";
+} from "../../lib/content/browse/discovery/content-tree";
 import { computeUserFold } from "../../lib/content/browse/user-fold";
 import { resolveAiCheckDisabledReason } from "../../lib/content/validation/ai-check-gate";
 import {
@@ -72,7 +72,7 @@ import AiValidationDialog from "../../components/content/quality/AiValidationDia
 import QualityCheckDialog from "../../components/content/quality/QualityCheckDialog";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
-import { type StatusFilter } from "../../lib/content/browse/set-status-filter";
+import { type StatusFilter } from "../../lib/content/browse/lifecycle/set-status-filter";
 import type { ContentSetEntry, SetStatus } from "../../storage/types";
 import UpdateGuardPlanPanel from "../../components/content/UpdateGuardPlanPanel";
 

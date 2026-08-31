@@ -23,18 +23,18 @@ import {
   dismissSet,
   dismissSets,
   undismissSet,
-} from "../../lib/content/browse/dismissed-sets";
+} from "../../lib/content/browse/lifecycle/dismissed-sets";
 import {
   storeSetStatus,
   storeSetStatuses,
-} from "../../lib/content/browse/set-status-store";
+} from "../../lib/content/browse/lifecycle/set-status-store";
 import {
   isEmptyPlan,
   planLessonDataDeletion,
   planLessonsDataDeletion,
   planSetDataDeletion,
   type DeletionPlan,
-} from "../../lib/content/browse/orphan-cleanup";
+} from "../../lib/content/browse/lifecycle/orphan-cleanup";
 import {
   purgeLessonFromLessonCache,
   purgeSetFromLessonCache,

@@ -17,7 +17,7 @@ import {describe, expect, it} from "vitest";
 
 import DirectionInstruction from "./DirectionInstruction";
 import {isKnowledgeDomain} from "../../../lib/exercises/knowledge-domain";
-import {computeMatchingLabels} from "../renderers/matching-parts";
+import {computeMatchingLabels} from "../renderers/matching/matching-parts";
 import type {ContentLessonExercise} from "../../../storage/types";
 
 const WORD_TILES: ContentLessonExercise = {

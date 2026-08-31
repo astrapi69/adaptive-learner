@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import ModalShell from "../../../shared/feedback/ModalShell";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import DeleteProgressOption from "../browser/delete/DeleteProgressOption";
-import type { DeletionPlan } from "../../../lib/content/browse/orphan-cleanup";
+import type { DeletionPlan } from "../../../lib/content/browse/lifecycle/orphan-cleanup";
 
 export interface BulkDeleteLessonsModalProps {
   /** How many lessons will be deleted, or 0 when the dialog is closed. */

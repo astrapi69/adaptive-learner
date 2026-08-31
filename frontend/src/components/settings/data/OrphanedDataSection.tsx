@@ -24,7 +24,7 @@ import {
   isEmptyPlan,
   planOrphanCleanup,
   type DeletionPlan,
-} from "../../../lib/content/browse/orphan-cleanup";
+} from "../../../lib/content/browse/lifecycle/orphan-cleanup";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import { getStorage } from "../../../storage";
 import { notify } from "../../../utils/notify";

@@ -13,7 +13,7 @@
  */
 
 import { isOfficialSource } from "./content-repos";
-import { normalizeSearchText } from "../browse/content-search";
+import { normalizeSearchText } from "../browse/discovery/content-search";
 import { isKnowledgeDomain } from "../../exercises/knowledge-domain";
 import type { SearchableSet } from "./search-index-loader";
 

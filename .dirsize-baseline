@@ -8,6 +8,3 @@
 # Punkt-5-Pruefung (#2135, 2026-07-29): zaehlt ausschliesslich
 # `git ls-files`, also den Commit-Stand, nicht den Arbeitsbaum. Zwei Laeufe
 # identisch. GEPRUEFT - nicht erneut pruefen.
-
-frontend/src/components/exercises/renderers  # 16 Dateien, pre-existing (gemessen gegen develop vor PR #2816) - Split nach Concern (Muster: cloze/, image-description/, reading-comprehension/, word-tiles/) tracked in #2820
-frontend/src/lib/content/browse  # 16 Dateien, pre-existing (gemessen gegen develop vor PR #2816) - eigene Gruppierung tracked in #2820
