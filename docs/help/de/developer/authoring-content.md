@@ -287,7 +287,7 @@ Lektion, die sie nutzt, deklariert sie in `requires_extensions`, und die
 Payload validiert die registrierte Extension, nie das Core-Schema. Der
 Mechanismus ist in der Engine-Referenz
 [learn-content-engine - `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md)
-beschrieben. Die App hat fünf Extension-Typen adoptiert
+beschrieben. Die App hat sieben Extension-Typen adoptiert
 (`SUPPORTED_EXT_EXERCISE_TYPES` im `ExerciseDispatcher`; ein
 Paritäts-Gate hält Dispatcher und Load-Guard synchron, sodass alles
 Ladbare renderbar ist):
@@ -299,17 +299,23 @@ Ladbare renderbar ist):
 | `ext:al-reading-comprehension` | Leseverständnis (Textpassage + Fragen) | `passage` + `questions[]` (je eine `multiple_choice`- / `free_text`-Teilfrage) | #1603 |
 | `ext:al-graded-quiz` | Benotetes Quiz | `questions[]` (je mit `points`) + optionale `pass_threshold` | #1616; das Demo-Referenz-Set ist in Entdecken / Meine Inhalte ausgeblendet (#1702) |
 | `ext:al-dictation` | Audio-Diktat (hören, dann transkribieren) | `audio` (ein `assets/`-Clip oder ein per Editor-Upload eingebetteter Daten-URI, #1911) + `accept[]` (toleranter Transkriptions-Abgleich) | #1881 (fünfte Adoption) |
+| `ext:al-image-description` | Bild beschreiben (Bild + Freitext-Beschreibung) | `image` (ein `assets/`-Pfad oder ein eingebetteter Daten-URI) + `accept[]` (toleranter Beschreibungs-Abgleich) | #2095 (sechste Adoption) |
+| `ext:al-speak-and-record` | Nachsprechen (Satz hören/anzeigen, eigene Aufnahme) | `sentence` + optionale `audio` (Referenz-Clip; ohne Clip Sprachsynthese) | engine#68 Idee 3 (siebte Adoption; bewusst UNGEWERTET - kein richtig/falsch, keine SRS-Zeile) |
 
 **Zwei Autorenwege.** Extension-Aufgaben lassen sich (a) direkt als
 Content-Repo-JSON schreiben (der kanonische Weg, in der Engine-Referenz
 beschrieben) oder (b) in der App. Der Lektions-Creator hat einen
 **Extension-Autoren-Wizard** bekommen (#1852), erreichbar über die Vorlage
-*Erweiterte Aufgabentypen* in Schritt 1, der alle fünf Typen abdeckt (#1859
-Kategorisierung + Fehlerkorrektur, #1865 Leseverständnis + Graded-Quiz, #1887
-Diktat). Diktat ist außerdem über den Core-Aufgabentyp-Picker in Schritt 3
-erreichbar, hinter einem verallgemeinerten `requires_extensions`-Gate (#1895).
-Beide Wege erzeugen dasselbe Lektions-JSON und setzen `requires_extensions`
-(versioniert, z. B. `ext:al-dictation@1`).
+*Erweiterte Aufgabentypen* in Schritt 1, der sechs der sieben Typen abdeckt
+(#1859 Kategorisierung + Fehlerkorrektur, #1865 Leseverständnis +
+Graded-Quiz, #1887 Diktat, #2095 Bildbeschreibung). Diktat ist außerdem über
+den Core-Aufgabentyp-Picker in Schritt 3 erreichbar, hinter einem
+verallgemeinerten `requires_extensions`-Gate (#1895). **`ext:al-speak-and-record`
+ist noch NICHT im Wizard** - nur Content-Repo-JSON (Weg a) kann ihn heute
+anlegen; die Wizard-Anbindung ist ein eigener, benannter Vorgang
+(adaptive-learner#2817), keine stillschweigende Lücke. Beide Wege erzeugen
+dasselbe Lektions-JSON und setzen `requires_extensions` (versioniert, z. B.
+`ext:al-dictation@1`).
 
 #### Beispiel je Extension-Typ
 
@@ -396,6 +402,33 @@ ist die `docs/extensions.md` der Engine.
 }
 ```
 
+```json
+{
+  "type": "ext:al-image-description",
+  "prompt": "Sieh dir das Bild an und beschreibe es.",
+  "ext_payload": {
+    "image": "assets/images/maus.jpg",
+    "accept": ["Maus", "eine Maus"]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-speak-and-record",
+  "prompt": "Höre den Satz, zeige ihn dir an und nimm dich selbst auf.",
+  "ext_payload": {
+    "sentence": "Je suis ici.",
+    "audio": "assets/audio/je-suis-ici.mp3"
+  }
+}
+```
+
+`audio` ist bei `ext:al-speak-and-record` optional: fehlt er, liest die App
+den `sentence`-Text per Sprachsynthese vor statt einen Autoren-Clip
+abzuspielen. Kein `accept`-Feld - die Aufgabe ist ungewertet, es gibt nichts,
+wogegen die Aufnahme geprüft würde.
+
 ### Verfügbarkeit im Lektions-Wizard
 
 Spielbar (ein Renderer existiert), generierbar (der KI-Mix kann den Typ
@@ -419,9 +452,13 @@ hinzufügen**-Button (#1849, #1853).
 | `ext:al-error-correction` | ja | nein | über den Extension-Wizard (#1859) |
 | `ext:al-reading-comprehension` | ja | nein | über den Extension-Wizard (#1865) |
 | `ext:al-graded-quiz` | ja | nein | über den Extension-Wizard (#1865) |
+| `ext:al-image-description` | ja | nein | über den Extension-Wizard (#2095) |
+| `ext:al-speak-and-record` | ja | nein | nein - noch nicht im Wizard (adaptive-learner#2817); nur Content-Repo-JSON |
 
-Die vier Nicht-Diktat-Extension-Typen werden im Extension-Wizard (oder als
-Content-Repo-JSON) angelegt, nie in die Core-KI-Generierung gemischt.
+Die sechs Nicht-Diktat-Extension-Typen werden im Extension-Wizard (oder als
+Content-Repo-JSON) angelegt, nie in die Core-KI-Generierung gemischt - bis
+auf `ext:al-speak-and-record`, das (Stand heute) NUR als Content-Repo-JSON
+anlegbar ist.
 
 **Listen-First ist ein Modus, kein Typ.** Seit #1687 (Entscheidung
 #1600, Option A) können `free_text`- und `matching`-Aufgaben ein
@@ -470,7 +507,7 @@ Autorenoberfläche, nicht nur ein KI-Generieren-Knopf:
 | Ausgeschlossen | Warum (ein Satz) |
 |----------------|------------------|
 | Essay / Langtext / Zeichnen / Formel / Peer-Review / freie Selbstbewertung | Nicht binär SRS-bewertbar; Selbstbewertung zurückgestellt (#1268). |
-| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. Einzige Ausnahme: kurze Diktat-Audio-Clips, die der Übungs-Editor als Daten-URI in die Lektion einbettet. |
+| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. Zwei benannte Ausnahmen: kurze Diktat-/Bildbeschreibungs-Audio-Clips, die der Übungs-Editor als Daten-URI in die Lektion einbettet, und `ext:al-speak-and-record`s eigene Lernenden-Aufnahme (`MediaRecorder`, per-Nutzer in Dexie bzw. Backend gespeichert, NICHT in die Lektion selbst eingebettet) - mit explizit geprüftem Speicher-Fußabdruck (24kbps-Bitrate-Deckel, adaptive-learner#2818 verfolgt das noch offene Gesamt-Volumen-Risiko). |
 | Hotspot / Simulation / Memory / Kreuzworträtsel | Aufwand ohne SRS-Mehrwert (später ggf. eigene Entscheidung). |
 | Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
 | Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |
