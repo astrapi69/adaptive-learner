@@ -1295,6 +1295,17 @@ each card row (`CardImageField`).
 - [ ] A lesson without a set (own lesson, standalone import) still
       lands on "My content"
 
+### Share the result as an image (#2813)
+- [ ] After a lesson press "Share image only" next to "Share": the share
+      sheet opens WITH the result card and WITHOUT text or link
+- [ ] Pick Facebook: a photo post with the card appears (not the generic
+      app image)
+- [ ] WhatsApp still works through the normal "Share" button (card plus
+      text)
+- [ ] On desktop (no share sheet): the image downloads, toast "Image
+      saved"
+- [ ] Dismiss the share sheet: no file lands silently in the downloads
+
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
