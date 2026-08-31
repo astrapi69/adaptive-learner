@@ -10,4 +10,5 @@ export { default as PluginsPanel } from "./PluginsPanel";
 export { default as DataPanel } from "./DataPanel";
 export { default as IntegrationsPanel } from "./IntegrationsPanel";
 export { default as HelpPanel } from "./HelpPanel";
+export { default as DiagnosticsPanel } from "./DiagnosticsPanel";
 export { default as AboutPanel } from "./AboutPanel";

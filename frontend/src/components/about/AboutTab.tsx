@@ -22,7 +22,6 @@ import CreditsSection from "./CreditsSection";
 import DonationSection from "./DonationSection";
 import ShareAppSection from "./ShareAppSection";
 import LicenseResourcesSection from "./LicenseResourcesSection";
-import SupportSection from "./SupportSection";
 import StrangBadge from "./StrangBadge";
 import SystemInfoSection from "./SystemInfoSection";
 import VersionSection from "./VersionSection";
@@ -92,7 +91,6 @@ export default function AboutTab() {
           <LicenseResourcesSection info={info} t={t} lang={lang} />
         </div>
       )}
-      <SupportSection />
     </SettingsSection>
   );
 }
