@@ -3537,6 +3537,10 @@
     }
   },
   "share": {
+    "share_image": "Partager seulement l'image",
+    "share_image_hint": "Partage la carte de résultat en image - pour les réseaux comme Facebook qui n'affichent que l'image de l'application pour les liens.",
+    "image_saved": "Image enregistrée",
+    "image_failed": "L'image n'a pas pu être créée.",
     "menu": {
       "heading": "Partager",
       "facebook": "Partager sur Facebook",

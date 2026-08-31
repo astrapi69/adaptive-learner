@@ -3537,6 +3537,10 @@
     }
   },
   "share": {
+    "share_image": "Share image only",
+    "share_image_hint": "Shares the result card as an image - for networks like Facebook that show only the app image for links.",
+    "image_saved": "Image saved",
+    "image_failed": "The image could not be created.",
     "menu": {
       "heading": "Share",
       "facebook": "Share on Facebook",

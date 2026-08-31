@@ -3537,6 +3537,10 @@
     }
   },
   "share": {
+    "share_image": "이미지만 공유",
+    "share_image_hint": "결과 카드를 이미지로 공유합니다. 링크에서는 앱 이미지만 보여주는 페이스북 같은 서비스를 위한 기능입니다.",
+    "image_saved": "이미지를 저장했습니다",
+    "image_failed": "이미지를 만들 수 없습니다.",
     "menu": {
       "heading": "공유",
       "facebook": "Facebook에 공유",

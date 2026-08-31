@@ -3537,6 +3537,10 @@
     }
   },
   "share": {
+    "share_image": "Nur Bild teilen",
+    "share_image_hint": "Teilt die Ergebniskarte als Bild - für Netzwerke wie Facebook, die bei Links nur das App-Bild zeigen.",
+    "image_saved": "Bild gespeichert",
+    "image_failed": "Bild konnte nicht erzeugt werden.",
     "menu": {
       "heading": "Teilen",
       "facebook": "Auf Facebook teilen",

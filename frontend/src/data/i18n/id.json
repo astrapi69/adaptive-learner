@@ -3537,6 +3537,10 @@
     }
   },
   "share": {
+    "share_image": "Bagikan gambar saja",
+    "share_image_hint": "Membagikan kartu hasil sebagai gambar - untuk jaringan seperti Facebook yang pada tautan hanya menampilkan gambar aplikasi.",
+    "image_saved": "Gambar disimpan",
+    "image_failed": "Gambar tidak dapat dibuat.",
     "menu": {
       "heading": "Bagikan",
       "facebook": "Bagikan ke Facebook",

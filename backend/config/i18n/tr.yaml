@@ -3240,6 +3240,10 @@ pwa:
     later: "Sonra"
     ios_restart_hint: "Bir şey değişmezse, uygulamayı kapatıp yeniden açın."
 share:
+  share_image: "Sadece görseli paylaş"
+  share_image_hint: "Sonuç kartını görsel olarak paylaşır - bağlantılarda yalnızca uygulama görselini gösteren Facebook gibi ağlar için."
+  image_saved: "Görsel kaydedildi"
+  image_failed: "Görsel oluşturulamadı."
   menu:
     heading: "Paylaş"
     facebook: "Facebook'ta paylaş"

@@ -3232,6 +3232,10 @@ pwa:
     later: "बाद में"
     ios_restart_hint: "अगर कुछ नहीं बदलता, तो ऐप बंद करके फिर से खोलें।"
 share:
+  share_image: "केवल छवि साझा करें"
+  share_image_hint: "परिणाम कार्ड को छवि के रूप में साझा करता है - Facebook जैसे नेटवर्क के लिए, जो लिंक पर केवल ऐप की छवि दिखाते हैं।"
+  image_saved: "छवि सहेजी गई"
+  image_failed: "छवि नहीं बनाई जा सकी।"
   menu:
     heading: "साझा करें"
     facebook: "Facebook पर साझा करें"

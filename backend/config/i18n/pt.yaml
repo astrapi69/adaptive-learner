@@ -3240,6 +3240,10 @@ pwa:
     later: "Mais tarde"
     ios_restart_hint: "Se nada mudar, feche o app e abra novamente."
 share:
+  share_image: "Compartilhar só a imagem"
+  share_image_hint: "Compartilha o cartão de resultado como imagem - para redes como o Facebook, que em links mostram apenas a imagem do aplicativo."
+  image_saved: "Imagem salva"
+  image_failed: "Não foi possível criar a imagem."
   menu:
     heading: "Compartilhar"
     facebook: "Compartilhar no Facebook"
