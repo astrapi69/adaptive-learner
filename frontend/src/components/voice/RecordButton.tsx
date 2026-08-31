@@ -102,19 +102,26 @@ export default function RecordButton({
         ? t("voice.stop_recording", "Stop recording")
         : t("voice.start_recording", "Start recording");
 
+    // Tailwind utilities, not a new legacy CSS rule (#1467 - global.css/
+    // styles/legacy is a frozen size ratchet; new component styling
+    // belongs on the component). Mirrors SpeechButton's idle/active
+    // two-state recipe; `motion-safe:animate-pulse` is the recording
+    // indicator, respecting prefers-reduced-motion automatically.
+    const recordingClasses = recording
+        ? "border-[var(--danger)] bg-[color-mix(in_srgb,var(--danger)_15%,transparent)] text-[var(--danger)] motion-safe:animate-pulse"
+        : "border-border bg-transparent text-fg-muted hover:bg-bg-elevated hover:text-fg-primary";
+
     return (
         <button
             type="button"
-            className={`record-button ${recording ? "record-button--recording" : ""} ${className ?? ""}`}
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-full border text-base transition-colors duration-150 ${recordingClasses} ${className ?? ""}`}
             data-testid={testId ? `record-button-${testId}` : "record-button"}
             data-recording={recording ? "true" : "false"}
             onClick={onClick}
             aria-label={aria}
             title={tooltipsOn ? aria : undefined}
         >
-            <span className="record-button__icon" aria-hidden="true">
-                {recording ? "■" : "⏺"}
-            </span>
+            <span aria-hidden="true">{recording ? "■" : "⏺"}</span>
         </button>
     );
 }
