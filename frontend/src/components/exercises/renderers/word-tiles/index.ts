@@ -1,8 +1,9 @@
 /**
- * Word-Tiles concern group (#1776) — the DnD hook, the pre-check
+ * Word-Tiles concern group (#1776, #2820) — the DnD hook, the pre-check
  * editing surface, the post-check feedback surfaces, and the shared
- * tile styling / answer view. The renderer itself stays one level up
- * (``renderers/WordTilesExercise.tsx``) beside its exercise siblings.
+ * tile styling / answer view. The renderer (``WordTilesExercise.tsx``)
+ * lives alongside this barrel in the same folder (#2820 completed the
+ * concern grouping the earlier split left half-done).
  */
 
 export {applyDragReorder, useWordTilesDnd} from "./useWordTilesDnd";

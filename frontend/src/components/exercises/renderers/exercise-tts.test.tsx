@@ -14,11 +14,11 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {I18nProvider} from "../../../hooks/ui/useI18n";
 import type {ContentLessonExercise} from "../../../storage/types";
 
-import FreeTextExercise from "./FreeTextExercise";
-import MatchingExercise from "./MatchingExercise";
-import ClozeExercise from "./ClozeExercise";
-import PictureChoiceExercise from "./PictureChoiceExercise";
-import WordTilesExercise from "./WordTilesExercise";
+import FreeTextExercise from "./free-text/FreeTextExercise";
+import MatchingExercise from "./matching/MatchingExercise";
+import ClozeExercise from "./cloze/ClozeExercise";
+import PictureChoiceExercise from "./picture-choice/PictureChoiceExercise";
+import WordTilesExercise from "./word-tiles/WordTilesExercise";
 import ImageDescriptionExercise from "./image-description/ImageDescriptionExercise";
 
 function setMockSynth(): void {

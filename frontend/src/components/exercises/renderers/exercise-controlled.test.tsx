@@ -20,12 +20,12 @@ import {act, fireEvent, render, screen} from "@testing-library/react";
 import {createRef} from "react";
 import {describe, expect, it, vi} from "vitest";
 
-import ClozeExercise from "./ClozeExercise";
+import ClozeExercise from "./cloze/ClozeExercise";
 import type {ExerciseHandle} from "../shell/exercise-control";
-import FreeTextExercise from "./FreeTextExercise";
-import MatchingExercise from "./MatchingExercise";
-import PictureChoiceExercise from "./PictureChoiceExercise";
-import WordTilesExercise from "./WordTilesExercise";
+import FreeTextExercise from "./free-text/FreeTextExercise";
+import MatchingExercise from "./matching/MatchingExercise";
+import PictureChoiceExercise from "./picture-choice/PictureChoiceExercise";
+import WordTilesExercise from "./word-tiles/WordTilesExercise";
 import type {ContentLessonExercise} from "../../../storage/types";
 
 const MATCHING: ContentLessonExercise = {

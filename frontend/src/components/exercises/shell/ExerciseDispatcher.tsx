@@ -23,12 +23,12 @@ import type {
     ContentLessonExercise,
     ContentLessonStep,
 } from "../../../storage/types";
-import CategorizationExercise from "../renderers/CategorizationExercise";
-import ErrorCorrectionExercise from "../renderers/ErrorCorrectionExercise";
+import CategorizationExercise from "../renderers/categorization/CategorizationExercise";
+import ErrorCorrectionExercise from "../renderers/error-correction/ErrorCorrectionExercise";
 import ReadingComprehensionExercise from "../renderers/reading-comprehension/ReadingComprehensionExercise";
-import GradedQuizExercise from "../renderers/GradedQuizExercise";
-import ClozeExercise from "../renderers/ClozeExercise";
-import DictationExercise from "../renderers/DictationExercise";
+import GradedQuizExercise from "../renderers/graded-quiz/GradedQuizExercise";
+import ClozeExercise from "../renderers/cloze/ClozeExercise";
+import DictationExercise from "../renderers/dictation/DictationExercise";
 import ImageDescriptionExercise from "../renderers/image-description/ImageDescriptionExercise";
 import SpeakAndRecordExercise from "../renderers/speak-and-record/SpeakAndRecordExercise";
 import type {
@@ -38,11 +38,11 @@ import type {
 } from "./exercise-control";
 import ExerciseDifficultyBadge from "../shared/ExerciseDifficultyBadge";
 import ListenFirstAudio from "../shared/ListenFirstAudio";
-import FreeTextExercise from "../renderers/FreeTextExercise";
-import MatchingExercise from "../renderers/MatchingExercise";
-import MultipleChoiceExercise from "../renderers/MultipleChoiceExercise";
-import PictureChoiceExercise from "../renderers/PictureChoiceExercise";
-import WordTilesExercise from "../renderers/WordTilesExercise";
+import FreeTextExercise from "../renderers/free-text/FreeTextExercise";
+import MatchingExercise from "../renderers/matching/MatchingExercise";
+import MultipleChoiceExercise from "../renderers/multiple-choice/MultipleChoiceExercise";
+import PictureChoiceExercise from "../renderers/picture-choice/PictureChoiceExercise";
+import WordTilesExercise from "../renderers/word-tiles/WordTilesExercise";
 
 export const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "matching",
