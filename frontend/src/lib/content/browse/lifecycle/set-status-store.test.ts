@@ -28,8 +28,8 @@ import {
   applyLocalStorageSnapshot,
   captureLocalStorageSnapshot,
   isExcludedLocalStorageKey,
-} from "../../backup/localStorageSnapshot";
-import type { ContentSetEntry, SetStatus } from "../../../storage/types";
+} from "../../../backup/localStorageSnapshot";
+import type { ContentSetEntry, SetStatus } from "../../../../storage/types";
 
 const KEY = "adaptive-learner.set-status";
 

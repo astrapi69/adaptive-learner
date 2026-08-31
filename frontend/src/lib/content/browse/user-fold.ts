@@ -13,7 +13,7 @@
  */
 
 import type { ContentSetEntry } from "../../../storage/types";
-import type { UserFoldInput } from "./content-tree";
+import type { UserFoldInput } from "./discovery/content-tree";
 import { baseLanguage } from "../language/language-utils";
 import { resolveTreePlacement } from "../placement/tree-placement";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { ContentSetEntry } from "../../../storage/types";
+import type { ContentSetEntry } from "../../../../storage/types";
 import { sortSetsByLanguageRelevance } from "./relevance-sort";
 
 /** Minimal entry: only the fields the sort reads plus an id to track order. */

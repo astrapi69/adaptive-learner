@@ -13,7 +13,7 @@
 import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { storeLessonOrder } from "../lib/content/browse/lesson-order-store";
+import { storeLessonOrder } from "../lib/content/browse/prefs/lesson-order-store";
 
 // Dexie mode: stub the raw cached read so the test targets the FACADE overlay,
 // not Dexie seeding (covered elsewhere).

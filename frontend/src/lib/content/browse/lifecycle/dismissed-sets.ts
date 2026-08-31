@@ -28,7 +28,7 @@
  * pure (no Dexie side effect) — the same contract contribution-history uses.
  */
 
-import { mirrorUserData } from "../../../storage/dexie/dexie-user-data";
+import { mirrorUserData } from "../../../../storage/dexie/dexie-user-data";
 
 const STORAGE_KEY = "adaptive-learner.dismissed-sets";
 

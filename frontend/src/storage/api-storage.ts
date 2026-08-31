@@ -14,7 +14,7 @@ import { enqueueRequest } from "../lib/pwa/sync-queue";
 import {
   applyStoredLessonOrderToList,
   recordSavedSetOrder,
-} from "../lib/content/browse/lesson-order-store";
+} from "../lib/content/browse/prefs/lesson-order-store";
 import type {
   ApiKeyTestResult,
   GitHubVerifyKind,

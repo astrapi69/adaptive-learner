@@ -29,7 +29,7 @@ import {
   applyStoredStatuses,
   storeSetStatus,
   storeSetStatuses,
-} from "../../lib/content/browse/set-status-store";
+} from "../../lib/content/browse/lifecycle/set-status-store";
 import { _resetDbForTests, getDb } from "../dexie/db";
 
 const SOURCE = "astrapi69/adaptive-learner-content";

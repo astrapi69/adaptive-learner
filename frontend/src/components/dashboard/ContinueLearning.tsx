@@ -46,8 +46,8 @@ import {
 import {
     buildContentAvailability,
     filterAvailableProgress,
-} from "../../lib/content/browse/content-availability";
-import {getSetStatus} from "../../lib/content/browse/set-status-store";
+} from "../../lib/content/browse/lifecycle/content-availability";
+import {getSetStatus} from "../../lib/content/browse/lifecycle/set-status-store";
 import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {getStorage} from "../../storage";
 import ShareResultButton from "../share/ShareResultButton";

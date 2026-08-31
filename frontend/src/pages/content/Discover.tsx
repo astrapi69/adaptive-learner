@@ -20,7 +20,7 @@ import { Link } from "react-router";
 import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { isOfficialSource } from "../../lib/content/repos/content-repos";
-import { dismissSet, undismissSet } from "../../lib/content/browse/dismissed-sets";
+import { dismissSet, undismissSet } from "../../lib/content/browse/lifecycle/dismissed-sets";
 import {
   flaggedName,
   languageDisplayName,
@@ -54,7 +54,7 @@ import {
 import {
   markCatalogSeen,
   newKeysAgainstSeen,
-} from "../../lib/content/browse/seen-catalog";
+} from "../../lib/content/browse/prefs/seen-catalog";
 import InfoHint from "../../shared/feedback/InfoHint";
 import PageContainer from "../../shared/layout/PageContainer";
 import { type FilterDef } from "../../shared/forms/FilterBar";

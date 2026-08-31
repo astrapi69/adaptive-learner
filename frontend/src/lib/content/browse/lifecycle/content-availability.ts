@@ -33,7 +33,7 @@
  * blip never false-orphans official progress.
  */
 
-import { isOfficialSource } from "../repos/source-identity";
+import { isOfficialSource } from "../../repos/source-identity";
 
 /**
  * Sources that can never be "removed" and so never orphan their progress:

@@ -66,9 +66,9 @@
  * effect) - the same contract ``set-status-store`` uses.
  */
 
-import { mirrorUserData } from "../../../storage/dexie/dexie-user-data";
-import type { ContentLessonList } from "../../../storage/types";
-import { USER_GENERATED_SOURCE } from "../../../storage/types";
+import { mirrorUserData } from "../../../../storage/dexie/dexie-user-data";
+import type { ContentLessonList } from "../../../../storage/types";
+import { USER_GENERATED_SOURCE } from "../../../../storage/types";
 
 /** localStorage key; registered in ``MANAGED_USER_DATA_KEYS``. */
 const STORAGE_KEY = "adaptive-learner.lesson-order";

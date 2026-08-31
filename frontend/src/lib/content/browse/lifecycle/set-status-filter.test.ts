@@ -8,7 +8,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import type { ContentSetEntry, SetStatus } from "../../../storage/types";
+import type { ContentSetEntry, SetStatus } from "../../../../storage/types";
 import { effectiveStatus, matchesStatusFilter } from "./set-status-filter";
 
 function set(over: Partial<ContentSetEntry>): ContentSetEntry {

@@ -8,7 +8,7 @@
 
 import { describe, expect, it } from "vitest";
 import type { ContentSetEntry } from "../../../storage/types";
-import type { UserFoldInput } from "./content-tree";
+import type { UserFoldInput } from "./discovery/content-tree";
 import { computeUserFold } from "./user-fold";
 
 function entry(over: Partial<ContentSetEntry>): ContentSetEntry {

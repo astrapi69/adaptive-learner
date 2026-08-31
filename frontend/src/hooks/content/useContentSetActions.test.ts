@@ -13,8 +13,8 @@ import { useContentSetActions } from "./useContentSetActions";
 import {
   dismissSet,
   isDismissedSet,
-} from "../../lib/content/browse/dismissed-sets";
-import { getSetStatus } from "../../lib/content/browse/set-status-store";
+} from "../../lib/content/browse/lifecycle/dismissed-sets";
+import { getSetStatus } from "../../lib/content/browse/lifecycle/set-status-store";
 import type { ContentSetEntry } from "../../storage/types";
 
 const deleteSetMock = vi.fn();

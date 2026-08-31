@@ -83,7 +83,7 @@ import {
 import {
   applyStoredLessonOrderToList,
   recordSavedSetOrder,
-} from "../lib/content/browse/lesson-order-store";
+} from "../lib/content/browse/prefs/lesson-order-store";
 import {
   getLessonProgressDexie,
   listLessonProgressDexie,

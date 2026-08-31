@@ -13,7 +13,7 @@
  */
 
 import { useI18n } from "../../../../hooks/ui/useI18n";
-import type { DeletionPlan } from "../../../../lib/content/browse/orphan-cleanup";
+import type { DeletionPlan } from "../../../../lib/content/browse/lifecycle/orphan-cleanup";
 
 export interface DeleteProgressOptionProps {
     plan: DeletionPlan | null;

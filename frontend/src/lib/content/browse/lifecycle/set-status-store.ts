@@ -39,8 +39,8 @@
  * effect) — the same contract ``dismissed-sets`` uses.
  */
 
-import { mirrorUserData } from "../../../storage/dexie/dexie-user-data";
-import type { SetStatus } from "../../../storage/types";
+import { mirrorUserData } from "../../../../storage/dexie/dexie-user-data";
+import type { SetStatus } from "../../../../storage/types";
 
 /** localStorage key; registered in ``MANAGED_USER_DATA_KEYS``. */
 const STORAGE_KEY = "adaptive-learner.set-status";

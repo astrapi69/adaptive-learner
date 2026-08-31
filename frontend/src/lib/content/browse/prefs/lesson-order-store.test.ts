@@ -27,12 +27,12 @@ import {
   storeImportLessonOrder,
   storeLessonOrder,
 } from "./lesson-order-store";
-import type { ContentLessonList } from "../../../storage/types";
+import type { ContentLessonList } from "../../../../storage/types";
 import {
   applyLocalStorageSnapshot,
   captureLocalStorageSnapshot,
   isExcludedLocalStorageKey,
-} from "../../backup/localStorageSnapshot";
+} from "../../../backup/localStorageSnapshot";
 
 const KEY = "adaptive-learner.lesson-order";
 const SRC = "user-generated";

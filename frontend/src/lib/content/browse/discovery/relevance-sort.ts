@@ -9,7 +9,7 @@
  * groups and for users without a matching language.
  */
 
-import type { ContentSetEntry } from "../../../storage/types";
+import type { ContentSetEntry } from "../../../../storage/types";
 
 /** Base language of a BCP-47-ish code ("pt-BR" -> "pt"); empty stays empty. */
 function baseLanguage(code: string | null | undefined): string {

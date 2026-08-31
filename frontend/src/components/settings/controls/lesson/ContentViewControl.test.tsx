@@ -18,7 +18,7 @@ import { useContentViewMode } from "../../../../hooks/content/useContentViewMode
 import {
   readContentViewMode,
   writeContentViewMode,
-} from "../../../../lib/content/browse/viewModePref";
+} from "../../../../lib/content/browse/prefs/viewModePref";
 
 afterEach(() => {
   localStorage.clear();

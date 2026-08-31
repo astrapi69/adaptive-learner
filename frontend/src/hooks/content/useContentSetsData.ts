@@ -27,15 +27,15 @@ import {
   type MediaResource,
   fetchMediaResources,
 } from "../../lib/content/media/media-loader";
-import { type UserFoldInput } from "../../lib/content/browse/content-tree";
-import { sortSetsByLanguageRelevance } from "../../lib/content/browse/relevance-sort";
+import { type UserFoldInput } from "../../lib/content/browse/discovery/content-tree";
+import { sortSetsByLanguageRelevance } from "../../lib/content/browse/discovery/relevance-sort";
 import {
   listContributions,
   type SharedContribution,
 } from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
-import { isDismissedSet } from "../../lib/content/browse/dismissed-sets";
-import { applyStoredStatuses } from "../../lib/content/browse/set-status-store";
+import { isDismissedSet } from "../../lib/content/browse/lifecycle/dismissed-sets";
+import { applyStoredStatuses } from "../../lib/content/browse/lifecycle/set-status-store";
 import {
   fetchRecommendedRepos,
   recommendedSource,

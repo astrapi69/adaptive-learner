@@ -7,7 +7,7 @@
  * cached sets always show in the default active view.
  */
 
-import type { ContentSetEntry, SetStatus } from "../../../storage/types";
+import type { ContentSetEntry, SetStatus } from "../../../../storage/types";
 
 /** The status-filter choices: every concrete status plus "all". */
 export type StatusFilter = "all" | SetStatus;

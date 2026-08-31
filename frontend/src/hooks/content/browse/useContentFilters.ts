@@ -15,8 +15,8 @@ import {
   STATUS_FILTER_ORDER,
   matchesStatusFilter,
   type StatusFilter,
-} from "../../../lib/content/browse/set-status-filter";
-import type { ContentSearchResult } from "../../../lib/content/browse/content-search";
+} from "../../../lib/content/browse/lifecycle/set-status-filter";
+import type { ContentSearchResult } from "../../../lib/content/browse/discovery/content-search";
 import type { ContentSetEntry } from "../../../storage/types";
 
 /** i18n translate signature (key + fallback). */

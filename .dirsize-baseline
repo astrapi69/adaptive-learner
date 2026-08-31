@@ -10,4 +10,3 @@
 # identisch. GEPRUEFT - nicht erneut pruefen.
 
 frontend/src/components/exercises/renderers  # 16 Dateien, pre-existing (gemessen gegen develop vor PR #2816) - Split nach Concern (Muster: cloze/, image-description/, reading-comprehension/, word-tiles/) tracked in #2820
-frontend/src/lib/content/browse  # 16 Dateien, pre-existing (gemessen gegen develop vor PR #2816) - eigene Gruppierung tracked in #2820

@@ -29,7 +29,7 @@ import {describe, expect, it} from "vitest";
 import {
     buildContentAvailability,
     filterAvailableProgress,
-} from "./content-availability";
+} from "./lifecycle/content-availability";
 import {
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,
