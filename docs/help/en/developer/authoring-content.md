@@ -270,7 +270,7 @@ schema: a lesson using them declares them in `requires_extensions`, and
 the payload is validated by the registered extension, never by the core
 schema. The mechanism is described in the engine reference
 [learn-content-engine - `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md).
-The app has adopted seven extension types (`SUPPORTED_EXT_EXERCISE_TYPES` in
+The app has adopted nine extension types (`SUPPORTED_EXT_EXERCISE_TYPES` in
 the `ExerciseDispatcher`; a parity gate keeps dispatcher and load guard in
 sync, so everything loadable is renderable):
 
@@ -283,20 +283,23 @@ sync, so everything loadable is renderable):
 | `ext:al-dictation` | Audio dictation (listen, then transcribe) | `audio` (an `assets/` clip or a data URI embedded via the editor upload, #1911) + `accept[]` (tolerant transcription match) | #1881 (fifth adoption) |
 | `ext:al-image-description` | Describe an image (image + free-text description) | `image` (an `assets/` path or an embedded data URI) + `accept[]` (tolerant description match) | #2095 (sixth adoption) |
 | `ext:al-speak-and-record` | Speak and record (listen/reveal a sentence, record yourself) | `sentence` + optional `audio` (reference clip; falls back to speech synthesis without one) | engine#68 idea 3 (seventh adoption; deliberately UNGRADED - no correct/incorrect, no SRS row) |
+| `ext:al-audio-choice` | Gapped sentence with audio options (listen, pick the word that fits) | `sentence` (with a `___` gap) + `options[]` (each `audio` + optional `is_correct: "true"`, exactly one correct) | engine#68 idea 1 (eighth adoption; no `label` on an option by design - a visible word would spoil the listening exercise) |
+| `ext:al-audio-tiles` | Build a translation from word tiles, by ear | `audio` (source language) + `tiles[]` (target language) + optional `accept_orderings[][]` | engine#68 idea 2 (ninth adoption; reuses the same tile mechanic as `word_tiles`, just with audio instead of a visible source sentence) |
 
 **Two authoring paths.** Extension exercises can be authored (a) directly as
 content-repo JSON (the canonical path, described in the engine reference), or
 (b) in the app. The Lesson Creator gained an **extension-authoring wizard**
 (#1852), reached from the *Advanced exercise types* template on step 1, that
-covers six of the seven types (#1859 categorization + error-correction, #1865
+covers six of the nine types (#1859 categorization + error-correction, #1865
 reading-comprehension + graded-quiz, #1887 dictation, #2095 image
 description). Dictation is also reachable from the core exercise-type picker
 on step 3, behind a generalized `requires_extensions` gate (#1895).
-**`ext:al-speak-and-record` is NOT yet in the wizard** - only content-repo
-JSON (path a) can author it today; the wizard integration is its own named
-follow-up (adaptive-learner#2817), not a silent gap. Either path emits the
-same lesson JSON and sets `requires_extensions` (versioned, e.g.
-`ext:al-dictation@1`).
+**`ext:al-speak-and-record`, `ext:al-audio-choice` and `ext:al-audio-tiles`
+are NOT yet in the wizard** - only content-repo JSON (path a) can author them
+today; the wizard integration is its own named follow-up
+(adaptive-learner#2817 - now all three audio-based types, not just speak-and-
+record), not a silent gap. Either path emits the same lesson JSON and sets
+`requires_extensions` (versioned, e.g. `ext:al-dictation@1`).
 
 #### Example per extension type
 
@@ -410,6 +413,38 @@ the `sentence` text aloud via speech synthesis instead of playing an authored
 clip. No `accept` field - the exercise is ungraded, there is nothing to check
 the recording against.
 
+```json
+{
+  "type": "ext:al-audio-choice",
+  "prompt": "Listen to the words and pick the one that fits.",
+  "ext_payload": {
+    "sentence": "Je ___ ici.",
+    "options": [
+      {"audio": "assets/audio/suis.mp3", "is_correct": "true"},
+      {"audio": "assets/audio/es.mp3"},
+      {"audio": "assets/audio/sommes.mp3"}
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-audio-tiles",
+  "prompt": "Listen to the sentence, then build the translation.",
+  "ext_payload": {
+    "audio": "assets/audio/je-suis-ici.mp3",
+    "tiles": ["Je", "suis", "ici"]
+  }
+}
+```
+
+Neither type carries a visible word next to the audio by design - on
+`ext:al-audio-choice` a `label` on an option would spoil the exercise the same
+way alt-text would spoil `ext:al-image-description`. Their `assets/` paths
+resolve through the same `useAsset` chain as any other audio clip; an
+embedded `data:audio/…` URI works the same way.
+
 ### Lesson-wizard availability
 
 Playable (a renderer exists), generatable (the AI mix can produce it) and
@@ -434,10 +469,13 @@ a manual **+ Add exercise** button (#1849, #1853).
 | `ext:al-graded-quiz` | yes | no | via the extension wizard (#1865) |
 | `ext:al-image-description` | yes | no | via the extension wizard (#2095) |
 | `ext:al-speak-and-record` | yes | no | no - not yet in the wizard (adaptive-learner#2817); content-repo JSON only |
+| `ext:al-audio-choice` | yes | no | no - not yet in the wizard (adaptive-learner#2817); content-repo JSON only |
+| `ext:al-audio-tiles` | yes | no | no - not yet in the wizard (adaptive-learner#2817); content-repo JSON only |
 
 The six non-dictation extension types are authored in the extension wizard
 (or as content-repo JSON), never mixed into the core AI generation - except
-`ext:al-speak-and-record`, which (as of today) can ONLY be authored as
+the three audio-based types (`ext:al-speak-and-record`, `ext:al-audio-choice`,
+`ext:al-audio-tiles`), which (as of today) can ONLY be authored as
 content-repo JSON.
 
 **Listen-first is a mode, not a type.** Since #1687 (decision #1600,
@@ -484,7 +522,7 @@ only an AI-generate button:
 | Excluded | Why (one line) |
 |----------|----------------|
 | Essay / long text / drawing / formula / peer review / free self-assessment | Not binary SRS-gradable; self-assessment deferred (#1268). |
-| Audio / video / file upload | Storage + infrastructure; conflicts with offline-first. Two named exceptions: short dictation/image-description audio clips the exercise editor embeds into the lesson as a data URI, and `ext:al-speak-and-record`'s own learner recording (`MediaRecorder`, stored per-user in Dexie or the backend, NOT embedded in the lesson itself) - with an explicitly measured storage footprint (24kbps bitrate cap; adaptive-learner#2818 tracks the still-open total-volume question). |
+| Audio / video / file upload | Storage + infrastructure; conflicts with offline-first. Two named exceptions: short authored audio clips (dictation, image-description, and `ext:al-audio-choice`'s options / `ext:al-audio-tiles`'s sentence audio) that the exercise editor embeds into the lesson as a data URI or that ship as an `assets/` file in the content repo, and `ext:al-speak-and-record`'s own learner recording (`MediaRecorder`, stored per-user in Dexie or the backend, NOT embedded in the lesson itself) - with an explicitly measured storage footprint (24kbps bitrate cap; adaptive-learner#2818 tracks the still-open total-volume question). |
 | Hotspot / simulation / memory / crossword | Build effort without SRS value (a later, separate decision if ever). |
 | Matrix / Likert / slider | Survey types, not learning types. |
 | Date / time pickers | Form types, not learning types. |

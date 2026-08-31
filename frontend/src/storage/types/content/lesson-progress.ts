@@ -45,7 +45,15 @@ export type RawAnswer =
    *  lives in the separate ``speechRecordings`` store (keyed by
    *  exercise, not step-history) - this flag is only a locked-view
    *  marker, mirroring every other ungraded step's minimal footprint. */
-  | { kind: "al_speak_and_record"; recorded: boolean };
+  | { kind: "al_speak_and_record"; recorded: boolean }
+  /** adopted extension ``ext:al-audio-choice``: the selected option's audio
+   *  reference, persisted so a revisited, locked exercise restores its
+   *  exact selection. */
+  | { kind: "al_audio_choice"; selected_audio: string }
+  /** adopted extension ``ext:al-audio-tiles``: the learner's placed tile
+   *  order (indices into ``ext_payload.tiles``), mirroring core
+   *  ``word_tiles``'s own ``placed`` shape. */
+  | { kind: "al_audio_tiles"; placed: number[] };
 
 export interface LessonStepResult {
   step_id: string;
