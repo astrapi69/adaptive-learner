@@ -3537,6 +3537,10 @@
     }
   },
   "share": {
+    "share_image": "Compartir solo la imagen",
+    "share_image_hint": "Comparte la tarjeta de resultado como imagen, para redes como Facebook que en los enlaces solo muestran la imagen de la app.",
+    "image_saved": "Imagen guardada",
+    "image_failed": "No se pudo crear la imagen.",
     "menu": {
       "heading": "Compartir",
       "facebook": "Compartir en Facebook",

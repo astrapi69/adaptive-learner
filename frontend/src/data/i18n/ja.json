@@ -3537,6 +3537,10 @@
     }
   },
   "share": {
+    "share_image": "画像だけ共有",
+    "share_image_hint": "結果カードを画像として共有します。リンクではアプリ画像しか表示しない Facebook などのサービス向けです。",
+    "image_saved": "画像を保存しました",
+    "image_failed": "画像を作成できませんでした。",
     "menu": {
       "heading": "共有",
       "facebook": "Facebookで共有",
