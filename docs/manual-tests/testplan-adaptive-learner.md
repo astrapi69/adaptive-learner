@@ -1383,6 +1383,19 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Eine Lektion ohne Set (eigene Lektion, Einzelimport) landet
       weiterhin auf "Meine Inhalte"
 
+### Ergebnis als Bild teilen (#2813)
+- [ ] Nach einer Lektion neben "Teilen" den Knopf "Nur Bild teilen"
+      drücken: die Teilen-Auswahl öffnet sich MIT der Ergebniskarte und
+      OHNE Text/Link
+- [ ] In Facebook auswählen: es entsteht ein Bild-Beitrag mit der Karte
+      (nicht das allgemeine App-Bild)
+- [ ] WhatsApp funktioniert weiterhin über den normalen "Teilen"-Knopf
+      (Karte plus Text)
+- [ ] Am Desktop (ohne Teilen-Auswahl): das Bild wird heruntergeladen,
+      Meldung "Bild gespeichert"
+- [ ] Teilen-Auswahl abbrechen: keine Datei landet still im
+      Download-Ordner
+
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
