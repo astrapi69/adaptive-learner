@@ -182,7 +182,7 @@ Review-Queue-Pfade zu berühren, die weiterhin implizit auf "aktiv" scopen.
 **Nutzer-ausgelöst, nicht automatisch.** Über eine explizite Aktion ("Set
 erneut durcharbeiten" - der Name aus #2125s eigenem Titel), verfügbar für
 Sets im Status `completed` (bestehender Status-Store,
-`frontend/src/lib/content/browse/set-status-store.ts`). Kein automatischer
+`frontend/src/lib/content/browse/lifecycle/set-status-store.ts`). Kein automatischer
 Trigger beim Erreichen von "abgeschlossen" - der Lernende entscheidet den
 Zeitpunkt, nicht die App. Passt zur bereits entschiedenen Vorgabe "kein
 quantifizierter Dialog, nur eine einfache Bestätigung": eine
@@ -246,7 +246,7 @@ Nur die Datenanforderung, nicht ihre Darstellung:
 ### Waisen
 
 **Set gelöscht:** die bestehende Aufräum-Maschinerie (#2064-Linie,
-`frontend/src/lib/content/browse/orphan-cleanup.ts`) muss über ALLE
+`frontend/src/lib/content/browse/lifecycle/orphan-cleanup.ts`) muss über ALLE
 `run_id`-Werte des Sets fegen, nicht nur den aktiven - eine Erweiterung des
 bestehenden Fegens, kein neuer Mechanismus.
 
