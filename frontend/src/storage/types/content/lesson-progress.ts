@@ -38,7 +38,14 @@ export type RawAnswer =
    *  of the audio clip, persisted so a revisited, locked exercise restores
    *  its exact input. */
   | { kind: "al_dictation"; input: string }
-  | { kind: "al_image_description"; input: string };
+  | { kind: "al_image_description"; input: string }
+  /** engine#68 idea 3 - adopted extension ``ext:al-speak-and-record``:
+   *  whether the learner recorded a clip this step, persisted so a
+   *  revisited step shows the same completed state. The clip ITSELF
+   *  lives in the separate ``speechRecordings`` store (keyed by
+   *  exercise, not step-history) - this flag is only a locked-view
+   *  marker, mirroring every other ungraded step's minimal footprint. */
+  | { kind: "al_speak_and_record"; recorded: boolean };
 
 export interface LessonStepResult {
   step_id: string;

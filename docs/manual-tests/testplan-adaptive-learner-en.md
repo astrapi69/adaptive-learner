@@ -600,6 +600,21 @@ preview delivery). In the regular build the mode does not exist.
       this type is visually gated by design (the answer IS the image
       description) — a screen reader hears a neutral image label, not the
       solution.
+- [ ] ext:al-speak-and-record (engine#68 idea 3): the sentence is read aloud
+      via TTS (falls back to speech synthesis when no authored `audio` is
+      present; with `audio` the authored clip plays instead); "Show text"
+      reveals the sentence only after clicking; "Record" requests the
+      microphone - test a REAL recording on a device with a microphone, the
+      automated suite can only mock MediaRecorder. After recording: a
+      playback player appears, "Done" becomes clickable. Re-recording
+      overwrites the previous clip (no history). Revisiting the step
+      replays the last saved clip automatically; a lesson with
+      `requires_extensions: ["ext:al-speak-and-record@1"]` loads (not
+      refused by the guard). Deliberately UNGRADED: no correct/incorrect
+      state, no SRS row after completion (unlike every other exercise
+      type). Microphone access denied yields a friendly error, no crash. No
+      microphone present disables/hides the record button accordingly, no
+      crash.
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
 

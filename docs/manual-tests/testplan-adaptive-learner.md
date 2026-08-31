@@ -641,6 +641,22 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Antwort). a11y-Hinweis: dieser Typ ist bewusst visuell voraussetzungs-
       behaftet (die Antwort IST die Bildbeschreibung) - ein Screenreader hört
       ein neutrales Bild-Label, nicht die Lösung.
+- [ ] ext:al-speak-and-record (engine#68 Idee 3): der Satz wird per TTS
+      vorgelesen (ohne autorisiertes `audio` fällt es auf die
+      Sprachsynthese zurück, mit `audio` spielt der authentische Clip ab);
+      "Text anzeigen" deckt den Satz erst nach Klick auf; "Aufnahme"
+      fordert das Mikrofon an - ECHTE Aufnahme auf einem Gerät mit
+      Mikrofon testen, die automatisierte Suite kann MediaRecorder nur
+      mocken. Nach der Aufnahme: Wiedergabe-Player erscheint, "Fertig" wird
+      klickbar. Erneut aufnehmen überschreibt den vorherigen Clip (keine
+      Historie). Schritt erneut besuchen -> der zuletzt gespeicherte Clip
+      spielt automatisch nach; eine Lektion mit
+      `requires_extensions: ["ext:al-speak-and-record@1"]` lädt (nicht vom
+      Guard abgelehnt). Bewusst UNGEWERTET: kein "richtig/falsch", keine
+      SRS-Zeile nach Abschluss (im Gegensatz zu jedem anderen Aufgabentyp).
+      Mikrofon-Zugriff verweigert -> freundliche Fehlermeldung, kein
+      Absturz. Kein Mikrofon vorhanden -> Aufnahme-Button entsprechend
+      deaktiviert/verborgen, kein Absturz.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
 

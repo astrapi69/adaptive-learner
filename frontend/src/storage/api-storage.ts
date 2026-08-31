@@ -299,6 +299,32 @@ export const apiStorage: IStorageService = {
     },
   },
 
+  // --- Speech Recordings (engine#68 idea 3: speak-and-record) --------
+
+  speechRecordings: {
+    get: (userId, source, setId, lessonFilename, exerciseId) =>
+      api.speechRecordings.get(userId, source, setId, lessonFilename, exerciseId),
+    save: async (userId, body) => {
+      try {
+        return await api.speechRecordings.save(userId, body);
+      } catch (err) {
+        // Mirrors lessonProgress.upsert's offline queue (S3): a
+        // recording made while offline is not lost, it replays on
+        // reconnect. Online failures (5xx/4xx) are NOT queued.
+        if (typeof navigator !== "undefined" && !navigator.onLine) {
+          enqueueRequest(
+            `/users/${encodeURIComponent(userId)}/speech-recordings`,
+            "PUT",
+            body,
+          );
+        }
+        throw err;
+      }
+    },
+    delete: (userId, source, setId, lessonFilename, exerciseId) =>
+      api.speechRecordings.delete(userId, source, setId, lessonFilename, exerciseId),
+  },
+
   // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------
 
   elementErrors: {

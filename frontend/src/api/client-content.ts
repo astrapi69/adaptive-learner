@@ -64,6 +64,64 @@ export const contentApi = {
       ),
   },
 
+  // --- Speech Recordings (engine#68 idea 3: speak-and-record) ---------
+
+  speechRecordings: {
+    /** GET /api/users/{user_id}/speech-recordings/{src}/{set}/{lesson}/{exercise}
+     *  Translates the 404 into a ``null`` return, mirroring
+     *  ``lessonProgress.get`` - "never recorded" is not an error. */
+    get: async (
+      userId: string,
+      source: string,
+      setId: string,
+      lessonFilename: string,
+      exerciseId: string,
+    ): Promise<import("../storage/types").SpeechRecording | null> => {
+      const slug = source.replace(/\//g, "--");
+      try {
+        return await apiCall<import("../storage/types").SpeechRecording>(
+          `/users/${encodeURIComponent(userId)}/speech-recordings/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/${encodeURIComponent(lessonFilename)}/${encodeURIComponent(exerciseId)}`,
+        );
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 404) {
+          return null;
+        }
+        throw err;
+      }
+    },
+    /** PUT /api/users/{user_id}/speech-recordings - save or overwrite. */
+    save: (
+      userId: string,
+      body: import("../storage/types").SpeechRecordingUpsertBody,
+    ) =>
+      apiCall<import("../storage/types").SpeechRecording>(
+        `/users/${encodeURIComponent(userId)}/speech-recordings`,
+        { method: "PUT", body },
+      ),
+    /** DELETE /api/users/{user_id}/speech-recordings/{src}/{set}/{lesson}/{exercise}
+     *  Idempotent: a 404 (nothing to delete) is swallowed rather than thrown. */
+    delete: async (
+      userId: string,
+      source: string,
+      setId: string,
+      lessonFilename: string,
+      exerciseId: string,
+    ): Promise<void> => {
+      const slug = source.replace(/\//g, "--");
+      try {
+        await apiCall<void>(
+          `/users/${encodeURIComponent(userId)}/speech-recordings/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/${encodeURIComponent(lessonFilename)}/${encodeURIComponent(exerciseId)}`,
+          { method: "DELETE" },
+        );
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 404) {
+          return;
+        }
+        throw err;
+      }
+    },
+  },
+
   // --- Element Errors (Phase 46B / EXP-007 / P-129) ------------------
 
   elementErrors: {

@@ -62,6 +62,10 @@ from app.repositories.settings_repo import (
     SettingsRepository,
     SqlAlchemySettingsRepository,
 )
+from app.repositories.speech_recording_repo import (
+    SpeechRecordingRepository,
+    SqlAlchemySpeechRecordingRepository,
+)
 from app.repositories.sync_repo import (
     SqlAlchemySyncRepository,
     SyncRepository,
@@ -136,6 +140,13 @@ def get_set_runs_repo(db: Session = Depends(get_db)) -> SetRunsRepository:
     return SqlAlchemySetRunsRepository(db)
 
 
+def get_speech_recording_repo(
+    db: Session = Depends(get_db),
+) -> SpeechRecordingRepository:
+    """Provide a :class:`SpeechRecordingRepository` bound to the request session."""
+    return SqlAlchemySpeechRecordingRepository(db)
+
+
 def get_lesson_progress_repo(db: Session = Depends(get_db)) -> LessonProgressRepository:
     """Provide a :class:`LessonProgressRepository` bound to the request session."""
     return SqlAlchemyLessonProgressRepository(db)
@@ -160,6 +171,7 @@ __all__ = [
     "get_reset_repo",
     "get_set_runs_repo",
     "get_settings_repo",
+    "get_speech_recording_repo",
     "get_sync_repo",
     "get_taxonomy_repo",
     "get_users_repo",
