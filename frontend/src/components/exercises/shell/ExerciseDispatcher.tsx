@@ -31,6 +31,8 @@ import ClozeExercise from "../renderers/cloze/ClozeExercise";
 import DictationExercise from "../renderers/dictation/DictationExercise";
 import ImageDescriptionExercise from "../renderers/image-description/ImageDescriptionExercise";
 import SpeakAndRecordExercise from "../renderers/speak-and-record/SpeakAndRecordExercise";
+import AudioChoiceExercise from "../renderers/audio-choice/AudioChoiceExercise";
+import AudioTilesExercise from "../renderers/audio-tiles/AudioTilesExercise";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -66,6 +68,8 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-dictation",
     "ext:al-image-description",
     "ext:al-speak-and-record",
+    "ext:al-audio-choice",
+    "ext:al-audio-tiles",
 ]);
 
 /** The prop bag every renderer shares (everything except the exercise, the
@@ -119,6 +123,16 @@ function renderAdoptedExtension(
         // by (source, setId, lessonId, exercise.id) - not threaded through
         // props, since it is per-user storage, not a content asset.
         return <SpeakAndRecordExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-audio-choice") {
+        // Needs `source` for the same reason dictation does: each option's
+        // audio can be an `assets/` path resolved by useAsset (an embedded
+        // data URI is self-contained and needs none).
+        return <AudioChoiceExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-audio-tiles") {
+        // Needs `source` for the sentence audio, same as audio-choice.
+        return <AudioTilesExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
     }
     return null;
 }

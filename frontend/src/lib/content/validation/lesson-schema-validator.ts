@@ -73,6 +73,8 @@ export const SUPPORTED_EXTENSIONS: readonly string[] = [
   "ext:al-dictation",
   "ext:al-image-description",
   "ext:al-speak-and-record",
+  "ext:al-audio-choice",
+  "ext:al-audio-tiles",
 ];
 
 /** The extension-tier load guard (#1565): structurally a lesson declaring
