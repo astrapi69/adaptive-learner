@@ -638,6 +638,7 @@ settings:
   tab_plugins: "Extensions"
   tab_data: "Données"
   tab_help: "Aide"
+  tab_diagnostics: "Diagnostic et assistance"
   tab_about: "À propos"
   tabs_aria: "Sections des paramètres"
   section_feedback: "Retour"

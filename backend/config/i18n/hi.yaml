@@ -640,6 +640,7 @@ settings:
   tab_plugins: प्लगइन्स
   tab_data: डेटा
   tab_help: सहायता
+  tab_diagnostics: "निदान और सहायता"
   tab_about: परिचय
   tabs_aria: सेटिंग्स अनुभाग
   section_feedback: प्रतिक्रिया

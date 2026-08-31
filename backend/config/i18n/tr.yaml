@@ -638,6 +638,7 @@ settings:
   tab_plugins: "Eklentiler"
   tab_data: "Veri"
   tab_help: "Yardım"
+  tab_diagnostics: "Tanılama ve destek"
   tab_about: "Hakkında"
   tabs_aria: "Ayar bölümleri"
   section_feedback: "Geri bildirim"
