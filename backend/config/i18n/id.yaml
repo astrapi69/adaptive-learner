@@ -641,6 +641,7 @@ settings:
   tab_plugins: "Plugin"
   tab_data: "Data"
   tab_help: "Bantuan"
+  tab_diagnostics: "Diagnostik & Dukungan"
   tab_about: "Tentang"
   tabs_aria: "Bagian pengaturan"
   section_feedback: "Umpan balik"
