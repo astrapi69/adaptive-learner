@@ -98,6 +98,11 @@ describe("createDexieBackup", () => {
             "study_questions",
             "user_streaks",
             "lesson_progress",
+            // #2818/#2824 — ext:al-speak-and-record (#2816) shipped the
+            // speechRecordings Dexie store without registering it here,
+            // silently dropping every recording from every browser-mode
+            // backup. Same class of incident as BACKUP-DIR-EXPORT-01 above.
+            "speech_recordings",
             "element_errors",
             "user_missions",
             "api_key_backups",
@@ -145,6 +150,39 @@ describe("createDexieBackup", () => {
         expect(summary.tables.element_errors.inserted).toBe(1);
         expect(await db.lessonProgress.get("lp-1")).toBeTruthy();
         expect(await db.elementErrors.get("ee-1")).toBeTruthy();
+    });
+
+    it("round-trips a speech recording, audio blob included (#2818/#2824)", async () => {
+        const {user} = await seedUser();
+        const db = getDb();
+        await db.speechRecordings.add({
+            id: "sr-1",
+            user_id: user.id,
+            source: "astrapi69/adaptive-learner-content",
+            set_id: "es-a1",
+            lesson_filename: "03-pronunciation.json",
+            exercise_id: "ex-1",
+            audio_base64: "UklGRhdummyBASE64AUDIODATAxyz",
+            mime_type: "audio/webm",
+            duration_ms: 4200,
+            recorded_at: "2026-06-01T10:00:00.000Z",
+            updated_at: "2026-06-01T10:00:00.000Z",
+        } as never);
+
+        const payload = await createDexieBackup(user.id, "test");
+        expect(payload.data.speech_recordings).toHaveLength(1);
+
+        // Wipe the whole table (as an evicted/cleared browser would), then
+        // restore — the audio content itself must come back byte-for-byte,
+        // not just a row with an empty/truncated field.
+        await db.speechRecordings.clear();
+        expect(await db.speechRecordings.count()).toBe(0);
+
+        const summary = await restoreDexieBackup(user.id, payload);
+        expect(summary.tables.speech_recordings.inserted).toBe(1);
+        const restored = await db.speechRecordings.get("sr-1");
+        expect(restored?.audio_base64).toBe("UklGRhdummyBASE64AUDIODATAxyz");
+        expect(restored?.duration_ms).toBe(4200);
     });
 
     it("excludes api_key_* fields from user_settings rows", async () => {

@@ -236,6 +236,18 @@ export const BACKUP_TABLES: Record<string, BackupTableSpec> = {
         appendOnly: false,
         scope: "user",
     },
+    // #2818/#2824 — the Dexie speechRecordings store shipped with #2816
+    // but was never registered here, so every browser-mode backup silently
+    // dropped every recording (verified against the real Dexie schema,
+    // storage/dexie/db.ts). timestampField uses updated_at like every other
+    // mutable table; recordings are edited (re-recorded) in place, not
+    // append-only.
+    speech_recordings: {
+        store: "speechRecordings",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
     // EXP-051 / #2125 — Durchgang (run/pass) bookkeeping. Mutable
     // (``closed_at`` stamped on the run close); direct user scope. Rides the
     // backup so a learner's runs survive Export -> wipe -> Import.
@@ -298,6 +310,7 @@ export const RESTORE_ORDER: readonly string[] = [
     "study_questions",
     "user_streaks",
     "lesson_progress",
+    "speech_recordings",
     "element_errors",
     "user_missions",
     // EXP-051 / #2125 — direct user-scope, no cross-table FK in the backup set.
