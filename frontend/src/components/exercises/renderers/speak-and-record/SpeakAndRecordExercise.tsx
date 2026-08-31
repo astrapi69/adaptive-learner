@@ -26,24 +26,24 @@ import {Mic} from "lucide-react";
 import type {Ref} from "react";
 import {forwardRef, useEffect, useMemo, useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
-import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
-import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
-import {asSpeakAndRecordPayload} from "../../../lib/exercises/payload/speak-and-record";
-import {blobToBase64} from "../../../lib/voice/audio-recording";
-import {readLearnerState} from "../../../lib/learning/learnerState";
-import {getStorage} from "../../../storage";
-import type {ContentLessonExercise} from "../../../storage/types";
-import SpeechButton from "../../voice/SpeechButton";
-import RecordButton from "../../voice/RecordButton";
-import ListenFirstAudio from "../shared/ListenFirstAudio";
-import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
-import ExerciseFooter from "../shell/ExerciseFooter";
+import {useI18n} from "../../../../hooks/ui/useI18n";
+import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
+import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
+import {asSpeakAndRecordPayload} from "../../../../lib/exercises/payload/speak-and-record";
+import {blobToBase64} from "../../../../lib/voice/audio-recording";
+import {readLearnerState} from "../../../../lib/learning/learnerState";
+import {getStorage} from "../../../../storage";
+import type {ContentLessonExercise} from "../../../../storage/types";
+import SpeechButton from "../../../voice/SpeechButton";
+import RecordButton from "../../../voice/RecordButton";
+import ListenFirstAudio from "../../shared/ListenFirstAudio";
+import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
+import ExerciseFooter from "../../shell/ExerciseFooter";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
     ExerciseScored,
-} from "../shell/exercise-control";
+} from "../../shell/exercise-control";
 
 export interface SpeakAndRecordExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;

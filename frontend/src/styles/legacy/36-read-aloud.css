@@ -310,3 +310,43 @@
     animation: none;
   }
 }
+
+/* RecordButton (engine#68 idea 3: speak-and-record) - the recording
+   analogue of .mic-button above, same circular icon-button shape and
+   accent-pulse-while-active language, distinct name since it captures
+   raw audio rather than a live transcript. */
+.record-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms,
+    transform 150ms;
+}
+.record-button:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+.record-button--recording {
+  background: var(--danger);
+  color: var(--danger-fg);
+  border-color: var(--danger);
+  animation: mic-pulse 1.2s infinite ease-in-out;
+}
+.record-button__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .record-button--recording {
+    animation: none;
+  }
+}

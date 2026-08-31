@@ -1945,7 +1945,9 @@ class SpeechRecording(Base):
     exercise_id: Mapped[str] = mapped_column(String(120), nullable=False)
     # Base64-encoded audio clip (see class docstring). Text, not a length-
     # capped String: the practical cap is the client's recording-length limit
-    # (30s, low-bitrate opus), enforced in the frontend recorder, not here.
+    # (30s at an explicit 24kbps opus bitrate, ~120KB base64 typical),
+    # enforced in the frontend recorder; the API layer's Pydantic schema
+    # (SpeechRecordingUpsert.audio_base64) adds a defensive 400KB ceiling.
     audio_base64: Mapped[str] = mapped_column(Text, nullable=False)
     mime_type: Mapped[str] = mapped_column(String(100), nullable=False)
     duration_ms: Mapped[int] = mapped_column(Integer, nullable=False)

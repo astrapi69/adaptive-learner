@@ -1623,10 +1623,14 @@ class SpeechRecordingUpsert(BaseModel):
     lesson_filename: str = Field(..., min_length=1, max_length=200)
     exercise_id: str = Field(..., min_length=1, max_length=120)
     # Base64-encoded audio clip. The real size control is the client's
-    # recording-length cap (30s, low-bitrate opus); this max_length is a
-    # defensive ceiling only, generous enough not to reject a legitimate
-    # clip.
-    audio_base64: str = Field(..., min_length=1, max_length=2_000_000)
+    # recording-length cap (30s) at an explicit voice-optimized bitrate
+    # (24kbps opus, NOT the browser default - the frontend sets this
+    # deliberately, see lib/voice/audio-recording.ts): a 30s clip at
+    # 24kbps is under ~120KB base64. This ceiling gives roughly 3x
+    # margin over that for codec/browser variance (Safari's fallback
+    # encoder, container overhead) without reopening the door to the
+    # ~625KB clips an unset bitrate would produce.
+    audio_base64: str = Field(..., min_length=1, max_length=400_000)
     mime_type: str = Field(..., min_length=1, max_length=100)
     duration_ms: int = Field(..., ge=0)
 

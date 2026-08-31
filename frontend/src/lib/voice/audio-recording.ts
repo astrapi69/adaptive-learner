@@ -8,13 +8,27 @@
  *
  * Unlike the Web Speech wrapper this one is genuinely new - there was no
  * MediaRecorder/getUserMedia usage anywhere in the app before this
- * feature. A hard length cap (``MAX_DURATION_MS``) auto-stops the
- * recording: there is no existing size-cap precedent for user-recorded
- * media to reuse (the closest, ``UserSettings.avatar``, caps a resized
- * image client-side before upload), so this wrapper enforces its own
- * ceiling by DURATION rather than by byte count - simpler to reason
- * about for a live capture, and low-bitrate opus keeps the resulting
- * clip well under a size that would strain base64-in-JSON storage.
+ * feature, and it stores a data kind nothing here has stored before:
+ * audio, orders of magnitude larger per row than the progress/error rows
+ * every other exercise type writes. Two controls keep the footprint
+ * predictable rather than open-ended:
+ *
+ * - A hard length cap (``MAX_RECORDING_DURATION_MS``) auto-stops the
+ *   recording. There is no existing size-cap precedent for user-recorded
+ *   media to reuse (the closest, ``UserSettings.avatar``, caps a resized
+ *   image client-side before upload), so this wrapper caps by DURATION
+ *   rather than by byte count - simpler to reason about for a live
+ *   capture.
+ * - An explicit voice-optimized bitrate (``audioBitsPerSecond``, NOT the
+ *   browser default): left unset, Chromium's default opus bitrate runs
+ *   roughly 128kbps, which turns a 30s clip into a ~625KB base64 string.
+ *   At 24kbps, the same 30s clip is under ~120KB - about 5x smaller,
+ *   still clearly intelligible speech. This matters twice over: the clip
+ *   is stored client-side (mobile browsers evict IndexedDB data under
+ *   storage pressure, and a multi-hundred-KB-per-clip footprint invites
+ *   that sooner than a few-KB progress row would), and it is included in
+ *   every full backup/sync export, where several undersized clips would
+ *   otherwise inflate every backup a user takes.
  *
  * Callers should gate UI on ``isMediaRecordingSupported()`` and hide the
  * record button entirely when false.
@@ -95,9 +109,20 @@ export async function startRecording(
     const startedAt = Date.now();
     let stopTimer: ReturnType<typeof setTimeout> | null = null;
 
+    // Voice-optimized bitrate, NOT the browser default: left unset, Chromium's
+    // default opus bitrate runs ~128kbps, which turns a 30s clip into a
+    // ~470KB blob (~625KB once base64-encoded for storage) - four to five
+    // times larger than needed for spoken-word clarity, and this is stored
+    // client-side (mobile IndexedDB quota, subject to eviction under
+    // pressure) as well as carried in every full backup export. 24kbps opus
+    // keeps a 30s clip's base64 form under ~120KB while staying clearly
+    // intelligible for speech.
+    const recorderOptions: MediaRecorderOptions = {audioBitsPerSecond: 24_000};
+    if (mimeType) recorderOptions.mimeType = mimeType;
+
     let recorder: MediaRecorder;
     try {
-        recorder = mimeType ? new Ctor(stream, {mimeType}) : new Ctor(stream);
+        recorder = new Ctor(stream, recorderOptions);
     } catch {
         for (const track of stream.getTracks()) track.stop();
         options.onError?.("start-failed");

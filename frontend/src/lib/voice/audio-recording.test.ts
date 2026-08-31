@@ -35,12 +35,14 @@ interface MockRecorderInstance {
 
 const instances: MockRecorderInstance[] = [];
 const tracks: MockTrack[] = [];
+const constructorOptions: MediaRecorderOptions[] = [];
 let typeSupported = true;
 let nextStartThrows = false;
 
 function mountMediaRecorder(): void {
     instances.length = 0;
     tracks.length = 0;
+    constructorOptions.length = 0;
     typeSupported = true;
     nextStartThrows = false;
 
@@ -56,7 +58,8 @@ function mountMediaRecorder(): void {
             this.ondataavailable?.({data: {size: 3}});
             this.onstop?.();
         });
-        constructor() {
+        constructor(_stream: unknown, options: MediaRecorderOptions = {}) {
+            constructorOptions.push(options);
             instances.push(this as unknown as MockRecorderInstance);
         }
         static isTypeSupported(): boolean {
@@ -178,6 +181,22 @@ describe("startRecording()", () => {
         const handle = await startRecording({onStop});
         handle!.stop();
         expect(onStop.mock.calls[0][0].mimeType).toBe("audio/webm");
+    });
+
+    it("requests a voice-optimized bitrate, not the browser default (storage footprint)", async () => {
+        mountMediaRecorder();
+        mountGetUserMedia(null);
+        await startRecording({});
+        expect(constructorOptions[0].audioBitsPerSecond).toBe(24_000);
+    });
+
+    it("still requests the voice-optimized bitrate when the preferred mime type is unsupported", async () => {
+        mountMediaRecorder();
+        typeSupported = false;
+        mountGetUserMedia(null);
+        await startRecording({});
+        expect(constructorOptions[0].audioBitsPerSecond).toBe(24_000);
+        expect(constructorOptions[0].mimeType).toBeUndefined();
     });
 
     it("auto-stops at MAX_RECORDING_DURATION_MS", async () => {

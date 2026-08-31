@@ -13,19 +13,19 @@ import "@testing-library/jest-dom/vitest";
 import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
-vi.mock("../shared/ListenFirstAudio", () => ({
+vi.mock("../../shared/ListenFirstAudio", () => ({
     default: ({audioPath}: {audioPath: string | null | undefined}) => (
         <div data-testid="listen-first-stub" data-audio={audioPath ?? ""} />
     ),
 }));
 
-vi.mock("../../voice/SpeechButton", () => ({
+vi.mock("../../../voice/SpeechButton", () => ({
     default: ({text}: {text: string}) => (
         <button type="button" data-testid="speech-button-stub" data-text={text} />
     ),
 }));
 
-vi.mock("../../voice/RecordButton", () => ({
+vi.mock("../../../voice/RecordButton", () => ({
     default: ({
         onRecorded,
     }: {
@@ -43,7 +43,7 @@ vi.mock("../../voice/RecordButton", () => ({
 
 const getMock = vi.fn();
 const saveMock = vi.fn();
-vi.mock("../../../storage", () => ({
+vi.mock("../../../../storage", () => ({
     getStorage: () => ({
         speechRecordings: {
             get: (...args: unknown[]) => getMock(...args),
@@ -53,8 +53,8 @@ vi.mock("../../../storage", () => ({
 }));
 
 import SpeakAndRecordExercise from "./SpeakAndRecordExercise";
-import {setUserId} from "../../../lib/learning/learnerState";
-import type {ContentLessonExercise} from "../../../storage/types";
+import {setUserId} from "../../../../lib/learning/learnerState";
+import type {ContentLessonExercise} from "../../../../storage/types";
 
 const EXERCISE: ContentLessonExercise = {
     id: "ex-speak-01",
