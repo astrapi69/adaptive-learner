@@ -134,23 +134,23 @@ describe("startRecording()", () => {
         expect(instances[0].start).toHaveBeenCalled();
     });
 
-    it("maps a permission-denied getUserMedia rejection to not-allowed", async () => {
-        mountMediaRecorder();
-        mountGetUserMedia(null, "NotAllowedError");
-        const onError = vi.fn();
-        const handle = await startRecording({onError});
-        expect(handle).toBeNull();
-        expect(onError).toHaveBeenCalledWith("not-allowed");
-    });
-
-    it("maps a no-device getUserMedia rejection to no-device", async () => {
-        mountMediaRecorder();
-        mountGetUserMedia(null, "NotFoundError");
-        const onError = vi.fn();
-        const handle = await startRecording({onError});
-        expect(handle).toBeNull();
-        expect(onError).toHaveBeenCalledWith("no-device");
-    });
+    it.each([
+        ["NotAllowedError", "not-allowed"],
+        ["PermissionDeniedError", "not-allowed"],
+        ["NotFoundError", "no-device"],
+        ["DevicesNotFoundError", "no-device"],
+        ["SecurityError", "not-allowed"],
+    ] as const)(
+        "maps a %s getUserMedia rejection to %s",
+        async (rejectName, expectedCode) => {
+            mountMediaRecorder();
+            mountGetUserMedia(null, rejectName);
+            const onError = vi.fn();
+            const handle = await startRecording({onError});
+            expect(handle).toBeNull();
+            expect(onError).toHaveBeenCalledWith(expectedCode);
+        },
+    );
 
     it("fires onStop with the captured clip on handle.stop()", async () => {
         mountMediaRecorder();

@@ -68,16 +68,14 @@ def test_router_paths_mounted(client: TestClient) -> None:
 def test_get_missing_recording_returns_404(client: TestClient) -> None:
     user_id = _make_user(client)
     r = client.get(
-        f"/api/users/{user_id}/speech-recordings/"
-        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
+        f"/api/users/{user_id}/speech-recordings/{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
     )
     assert r.status_code == 404
 
 
 def test_get_for_unknown_user_returns_404(client: TestClient) -> None:
     r = client.get(
-        "/api/users/no-such-user/speech-recordings/"
-        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
+        f"/api/users/no-such-user/speech-recordings/{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
     )
     assert r.status_code == 404
 
@@ -85,8 +83,7 @@ def test_get_for_unknown_user_returns_404(client: TestClient) -> None:
 def test_delete_missing_recording_returns_404(client: TestClient) -> None:
     user_id = _make_user(client)
     r = client.delete(
-        f"/api/users/{user_id}/speech-recordings/"
-        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
+        f"/api/users/{user_id}/speech-recordings/{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
     )
     assert r.status_code == 404
 
@@ -108,12 +105,44 @@ def test_upsert_creates_new_row(client: TestClient) -> None:
     assert body["duration_ms"] == 2500
 
 
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        pytest.param({"audio_base64": ""}, id="audio_base64-empty"),
+        pytest.param({"audio_base64": "x" * 400_001}, id="audio_base64-over-400kb-ceiling"),
+        pytest.param({"source": ""}, id="source-empty"),
+        pytest.param({"source": "x" * 201}, id="source-over-200-chars"),
+        pytest.param({"set_id": ""}, id="set_id-empty"),
+        pytest.param({"lesson_filename": ""}, id="lesson_filename-empty"),
+        pytest.param({"exercise_id": ""}, id="exercise_id-empty"),
+        pytest.param({"exercise_id": "x" * 121}, id="exercise_id-over-120-chars"),
+        pytest.param({"mime_type": ""}, id="mime_type-empty"),
+        pytest.param({"duration_ms": -1}, id="duration_ms-negative"),
+    ],
+)
+def test_upsert_rejects_invalid_field(client: TestClient, overrides: dict) -> None:
+    user_id = _make_user(client)
+    r = client.put(
+        f"/api/users/{user_id}/speech-recordings",
+        json=_upsert_body(**overrides),
+    )
+    assert r.status_code == 422, r.text
+
+
+def test_upsert_accepts_audio_base64_at_exactly_the_400kb_ceiling(client: TestClient) -> None:
+    user_id = _make_user(client)
+    r = client.put(
+        f"/api/users/{user_id}/speech-recordings",
+        json=_upsert_body(audio_base64="x" * 400_000),
+    )
+    assert r.status_code == 200, r.text
+
+
 def test_upsert_then_get_round_trips(client: TestClient) -> None:
     user_id = _make_user(client)
     client.put(f"/api/users/{user_id}/speech-recordings", json=_upsert_body())
     r = client.get(
-        f"/api/users/{user_id}/speech-recordings/"
-        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
+        f"/api/users/{user_id}/speech-recordings/{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
     )
     assert r.status_code == 200
     assert r.json()["mime_type"] == "audio/webm"
@@ -148,12 +177,10 @@ def test_two_exercises_in_the_same_lesson_get_independent_rows(
         json=_upsert_body(exercise_id="ex-speak-2", duration_ms=500),
     )
     r1 = client.get(
-        f"/api/users/{user_id}/speech-recordings/"
-        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}/ex-speak-1",
+        f"/api/users/{user_id}/speech-recordings/{SOURCE_SLUG}/{SET_ID}/{LESSON}/ex-speak-1",
     )
     r2 = client.get(
-        f"/api/users/{user_id}/speech-recordings/"
-        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}/ex-speak-2",
+        f"/api/users/{user_id}/speech-recordings/{SOURCE_SLUG}/{SET_ID}/{LESSON}/ex-speak-2",
     )
     assert r1.json()["duration_ms"] == 2500
     assert r2.json()["duration_ms"] == 500
@@ -166,12 +193,10 @@ def test_delete_removes_the_recording(client: TestClient) -> None:
     user_id = _make_user(client)
     client.put(f"/api/users/{user_id}/speech-recordings", json=_upsert_body())
     r = client.delete(
-        f"/api/users/{user_id}/speech-recordings/"
-        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
+        f"/api/users/{user_id}/speech-recordings/{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
     )
     assert r.status_code == 204
     after = client.get(
-        f"/api/users/{user_id}/speech-recordings/"
-        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
+        f"/api/users/{user_id}/speech-recordings/{SOURCE_SLUG}/{SET_ID}/{LESSON}/{EXERCISE_ID}",
     )
     assert after.status_code == 404
