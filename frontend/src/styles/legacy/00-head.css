@@ -41,6 +41,13 @@
   --method-contextual: #f59e0b;
   --method-ai_adaptive: #6366f1;
 
+  /* Avatar-frame metals (#2850) — decoration rings around the user
+   * avatar. Theme-agnostic on purpose, like --method-*: bronze/silver/
+   * gold are identity colors of the progression reward, not chrome. */
+  --frame-bronze: #b07a45;
+  --frame-silver: #9aa4b2;
+  --frame-gold: #d4a017;
+
   /* Matching-pair palette (#181) — distinct colors for matched pairs in
    * the Matching exercise. Theme-agnostic on purpose: like --method-*,
    * the same hues in every theme (used as a ring + faint tint + number

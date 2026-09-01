@@ -16,7 +16,10 @@ import FormHint from "../../../../shared/forms/FormHint";
 import { buildLanguageOptions } from "../../../../lib/i18n/languages";
 import LanguagePicker from "../../../../shared/forms/LanguagePicker";
 import { readLearnerState, setLanguage } from "../../../../lib/learning/learnerState";
-import { notifyProfileUpdated } from "../../../../lib/learning/profileSignal";
+import { notifyProfileUpdated, PROFILE_UPDATED_EVENT } from "../../../../lib/learning/profileSignal";
+import { avatarFrameById } from "../../../../lib/avatar/avatar-frames";
+import { readAvatarFrameState } from "../../../../lib/avatar/avatar-frame-store";
+import AvatarFrameControl from "../../../../components/settings/controls/profile/AvatarFrameControl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -87,6 +90,21 @@ export default function GeneralPanel({
   // Per-operation busy marker for the language switch + profile edits.
   // The AI tab owns its own busy state inside ``useAiKeySettings``.
   const [busy, setBusy] = useState<string | null>(null);
+
+  // #2850 — the decorative avatar frame around the preview; re-read on
+  // the profile signal so a picker save applies without a reload.
+  const [frameRing, setFrameRing] = useState<string | null>(() =>
+    avatarFrameById(readAvatarFrameState(settings.user_id).selected).ring,
+  );
+  useEffect(() => {
+    const refresh = () =>
+      setFrameRing(
+        avatarFrameById(readAvatarFrameState(settings.user_id).selected).ring,
+      );
+    refresh();
+    window.addEventListener(PROFILE_UPDATED_EVENT, refresh);
+    return () => window.removeEventListener(PROFILE_UPDATED_EVENT, refresh);
+  }, [settings.user_id]);
 
   // Phase 10F: storage-mode toggle. ``currentMode`` reflects
   // what's active *right now* (snapshot at mount). Switching is
@@ -287,6 +305,7 @@ export default function GeneralPanel({
             onError={(key) =>
               notify.error(t(key, "Could not use that image. Try another file."))
             }
+            frameRing={frameRing}
             testId="settings-avatar-upload"
           />
         )}
@@ -308,6 +327,7 @@ export default function GeneralPanel({
             onSelect={(dataUrl) => void handleAvatarChange(dataUrl)}
           />
         )}
+        <AvatarFrameControl userId={settings.user_id} />
       </SettingsSection>
 
       <SettingsSection
