@@ -42,6 +42,55 @@ once with per-channel diagnostics and the dexie-smoke project is skipped
 timeouts. Reproduce that failure state on demand with
 `CONTENT_PROBE_SIMULATE_UNOBTAINABLE=1`.
 
+### Programmatic backup round-trip proof, content-verified (#2818/#2824/#2828)
+
+BACKUP-AKZEPTANZTEST (`quality-checks.md`) requires a REAL manual
+Export/Import round-trip in `make dev` before any backup-touching PR
+merges - unit tests alone missed five consecutive "fixed" backup releases
+(#49, #57, #64, #115, #117). That manual pass is still the gate; it is not
+replaced by anything below.
+
+What CAN complement it (proposed in #2828, not yet folded into the formal
+rule - see that issue before treating this as a substitute for the manual
+pass): a Playwright spec that drives the real app in a real browser,
+captures the real downloaded file, and inspects its real bytes - stronger
+than a `fake-indexeddb` unit test because it exercises the actual
+export/download/re-import UI path, and reproducible/CI-able unlike the
+manual pass.
+
+Worked example: `e2e/dexie/backup-speech-recording-roundtrip.spec.ts`
+(written for the #2824 fix - `speech_recordings` silently missing from the
+Dexie `.alb` export). Pattern:
+
+1. **Seed real data via raw IndexedDB**, not a mock - open the app's own
+   live Dexie database (`indexedDB.open("adaptive-learner")` from
+   `page.evaluate`) and `put()` a row shaped exactly like the app's own
+   Dexie row type. Use this when the UI path to create the data needs
+   hardware Playwright can't provide (here: a microphone) - only the
+   capture step is bypassed, not the storage layer.
+2. **Drive the real export button**, capture the real download
+   (`page.waitForEvent("download")`), read the real file from disk
+   (`download.path()` + `readFileSync`).
+3. **Inspect the real bytes.** For a `.alb` (ZIP): `unzipSync` +
+   `strFromU8` (`fflate`, already a project dependency - added to
+   `e2e/package.json` as a devDependency rather than mocking the format).
+   Assert a real size lower bound tied to the seeded payload (not just
+   `> 0`) and the exact byte content of the seeded field inside
+   `data.json` - not a truncated preview, not a length check.
+4. **Wipe the store**, so the next step is provably doing the work.
+5. **Drive the real import**: `fileInput.setInputFiles({name, mimeType,
+   buffer})` with the exact bytes from step 2, confirm via the real
+   restore-summary UI, then read the row back via a second raw IndexedDB
+   read and assert it matches byte-for-byte.
+
+Verify the spec itself the same way any regression test is verified: break
+the fix under test (temporarily strip the relevant `BACKUP_TABLES` entry,
+rebuild `VITE_STORAGE_MODE=dexie`, re-run - confirm RED at the expected
+assertion), then restore and confirm GREEN. `git checkout -- <file>` after
+a hand-edit is safe here specifically because the file was clean
+(committed) before the edit - never do this on a file with real
+uncommitted changes.
+
 ## Visual regression vs per-feature screenshots
 
 Two complementary screenshot surfaces, both run against the **dexie preview
