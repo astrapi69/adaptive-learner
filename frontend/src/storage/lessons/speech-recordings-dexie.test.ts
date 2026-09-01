@@ -13,8 +13,13 @@ import {
     deleteSpeechRecordingDexie,
     getSpeechRecordingDexie,
     saveSpeechRecordingDexie,
+    wasEvictedDexie,
 } from "./speech-recordings-dexie";
 import {_resetDbForTests, getDb} from "../dexie/db";
+import {
+    wasSpeechRecordingEvicted,
+    markSpeechRecordingEvicted,
+} from "../../lib/voice/speech-recording-evicted-store";
 
 const USER = "user-1";
 const SOURCE = "astrapi69/adaptive-learner-content";
@@ -31,6 +36,7 @@ beforeEach(async () => {
         /* fresh DB */
     }
     await _resetDbForTests();
+    localStorage.clear();
 });
 
 function upsertBody(overrides: Partial<Parameters<typeof saveSpeechRecordingDexie>[1]> = {}) {
@@ -104,5 +110,93 @@ describe("Dexie speechRecordings: delete", () => {
         await expect(
             deleteSpeechRecordingDexie(USER, SOURCE, SET_ID, LESSON, EXERCISE),
         ).resolves.not.toThrow();
+    });
+});
+
+// #2841 — a tiny cap override (bytes, not the real 20 MB default) keeps
+// these fast: eviction is exercised with 2-3 rows, not the ~170 real
+// max-length recordings a 20 MB cap would actually take to trigger.
+describe("Dexie speechRecordings: storage-cap eviction (#2841)", () => {
+    it("evicts the OLDEST row (by recorded_at) once a save exceeds the cap", async () => {
+        await saveSpeechRecordingDexie(
+            USER,
+            upsertBody({exercise_id: "ex-old", audio_base64: "A".repeat(10)}),
+            15,
+        );
+        await new Promise((r) => setTimeout(r, 2));
+        await saveSpeechRecordingDexie(
+            USER,
+            upsertBody({exercise_id: "ex-new", audio_base64: "B".repeat(10)}),
+            15,
+        );
+        const oldRow = await getSpeechRecordingDexie(USER, SOURCE, SET_ID, LESSON, "ex-old");
+        const newRow = await getSpeechRecordingDexie(USER, SOURCE, SET_ID, LESSON, "ex-new");
+        expect(oldRow).toBeNull();
+        expect(newRow).not.toBeNull();
+    });
+
+    it("marks an evicted row so wasEvicted reports true afterwards", async () => {
+        await saveSpeechRecordingDexie(
+            USER,
+            upsertBody({exercise_id: "ex-old", audio_base64: "A".repeat(10)}),
+            15,
+        );
+        await new Promise((r) => setTimeout(r, 2));
+        await saveSpeechRecordingDexie(
+            USER,
+            upsertBody({exercise_id: "ex-new", audio_base64: "B".repeat(10)}),
+            15,
+        );
+        const evicted = await wasEvictedDexie(USER, SOURCE, SET_ID, LESSON, "ex-old");
+        expect(evicted).toBe(true);
+        const notEvicted = await wasEvictedDexie(USER, SOURCE, SET_ID, LESSON, "ex-new");
+        expect(notEvicted).toBe(false);
+    });
+
+    it("only evicts THIS user's rows, never another user's", async () => {
+        await saveSpeechRecordingDexie(
+            "other-user",
+            upsertBody({exercise_id: "ex-other", audio_base64: "A".repeat(10)}),
+            20,
+        );
+        await new Promise((r) => setTimeout(r, 2));
+        await saveSpeechRecordingDexie(
+            USER,
+            upsertBody({exercise_id: "ex-mine", audio_base64: "B".repeat(10)}),
+            20,
+        );
+        const otherRow = await getSpeechRecordingDexie(
+            "other-user",
+            SOURCE,
+            SET_ID,
+            LESSON,
+            "ex-other",
+        );
+        expect(otherRow).not.toBeNull();
+    });
+
+    it("does not evict when under the cap", async () => {
+        await saveSpeechRecordingDexie(
+            USER,
+            upsertBody({exercise_id: "ex-1", audio_base64: "A".repeat(5)}),
+            1_000_000,
+        );
+        await saveSpeechRecordingDexie(
+            USER,
+            upsertBody({exercise_id: "ex-2", audio_base64: "B".repeat(5)}),
+            1_000_000,
+        );
+        const row1 = await getSpeechRecordingDexie(USER, SOURCE, SET_ID, LESSON, "ex-1");
+        expect(row1).not.toBeNull();
+    });
+
+    it("clears a prior eviction marker when the exercise is re-recorded", async () => {
+        const key = `${USER}#${SOURCE.replace(/\//g, "--")}#${SET_ID}#${LESSON}#ex-old`;
+        markSpeechRecordingEvicted(key);
+        expect(wasSpeechRecordingEvicted(key)).toBe(true);
+
+        await saveSpeechRecordingDexie(USER, upsertBody({exercise_id: "ex-old"}));
+
+        expect(wasSpeechRecordingEvicted(key)).toBe(false);
     });
 });

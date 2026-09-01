@@ -2007,6 +2007,11 @@ lesson:
       retry: "Réessayer"
       solution_label: "Solution"
       submit: "Vérifier les réponses"
+    al_speak_and_record:
+      # #2841 - the only key so far; show/saving/done/record_again/empty
+      # stay TSX-only fallbacks until the whole exercise type gets its
+      # i18n block (a separate, larger task, out of scope here).
+      recording_evicted: "Ton enregistrement précédent a été supprimé pour économiser de l'espace de stockage. Tu peux réenregistrer à tout moment."
     instruction:
       matching:
         receptive: Associe les paires (Reconnaître)

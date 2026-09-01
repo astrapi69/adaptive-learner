@@ -2170,6 +2170,9 @@
         "solution_label": "Lösung",
         "submit": "Antworten prüfen"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "Deine vorherige Aufnahme wurde entfernt, um Speicherplatz zu sparen. Du kannst jederzeit neu aufnehmen."
+      },
       "instruction": {
         "matching": {
           "receptive": "Paare verbinden (Erkennen)",

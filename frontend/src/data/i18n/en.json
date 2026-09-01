@@ -2170,6 +2170,9 @@
         "solution_label": "Solution",
         "submit": "Check answers"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "Your previous recording was removed to save storage space. Record again anytime."
+      },
       "instruction": {
         "matching": {
           "receptive": "Match the pairs (Recognition)",

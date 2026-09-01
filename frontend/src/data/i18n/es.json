@@ -2170,6 +2170,9 @@
         "solution_label": "Solución",
         "submit": "Comprobar respuestas"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "Tu grabación anterior se eliminó para ahorrar espacio de almacenamiento. Puedes grabar de nuevo cuando quieras."
+      },
       "instruction": {
         "matching": {
           "receptive": "Une las parejas (Reconocer)",

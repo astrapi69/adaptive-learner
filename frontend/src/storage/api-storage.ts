@@ -323,6 +323,10 @@ export const apiStorage: IStorageService = {
     },
     delete: (userId, source, setId, lessonFilename, exerciseId) =>
       api.speechRecordings.delete(userId, source, setId, lessonFilename, exerciseId),
+    // #2841 — API mode has no comparable browser-storage-quota risk (a
+    // real SQLite DB on the user's own machine, not an IndexedDB cap),
+    // so no cap/eviction exists here and nothing is ever "evicted".
+    wasEvicted: async () => false,
   },
 
   // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------

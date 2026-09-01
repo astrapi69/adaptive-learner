@@ -55,4 +55,18 @@ export interface ISpeechRecordingsNamespace {
     lessonFilename: string,
     exerciseId: string,
   ): Promise<void>;
+  /**
+   * Whether this exercise's recording was removed to stay under the
+   * Dexie storage cap (#2841) and has not been re-recorded since.
+   * Browser-storage-quota mitigation only - API mode has no comparable
+   * risk (a real SQLite DB on the user's own machine, not a browser
+   * IndexedDB quota), so it always resolves ``false`` there.
+   */
+  wasEvicted(
+    userId: string,
+    source: string,
+    setId: string,
+    lessonFilename: string,
+    exerciseId: string,
+  ): Promise<boolean>;
 }

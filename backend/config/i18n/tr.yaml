@@ -2005,6 +2005,11 @@ lesson:
       retry: "Tekrar dene"
       solution_label: "Çözüm"
       submit: "Cevapları kontrol et"
+    al_speak_and_record:
+      # #2841 - the only key so far; show/saving/done/record_again/empty
+      # stay TSX-only fallbacks until the whole exercise type gets its
+      # i18n block (a separate, larger task, out of scope here).
+      recording_evicted: "Depolama alanından tasarruf etmek için önceki kaydın kaldırıldı. İstediğin zaman tekrar kaydedebilirsin."
     instruction:
       matching:
         receptive: Çiftleri eşleştir (Tanıma)

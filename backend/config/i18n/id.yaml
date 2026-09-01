@@ -2016,6 +2016,11 @@ lesson:
       retry: "Coba lagi"
       solution_label: "Solusi"
       submit: "Periksa jawaban"
+    al_speak_and_record:
+      # #2841 - the only key so far; show/saving/done/record_again/empty
+      # stay TSX-only fallbacks until the whole exercise type gets its
+      # i18n block (a separate, larger task, out of scope here).
+      recording_evicted: "Rekaman sebelumnya dihapus untuk menghemat ruang penyimpanan. Kamu bisa merekam lagi kapan saja."
     instruction:
       matching:
         receptive: Cocokkan pasangannya (Pengenalan)

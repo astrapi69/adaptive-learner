@@ -15,6 +15,22 @@ import type {
 } from "../types";
 import {getDb, nowIso} from "../dexie/db";
 import type {SpeechRecordingRow} from "../dexie/db";
+import {
+    clearSpeechRecordingEvicted,
+    markSpeechRecordingEvicted,
+    wasSpeechRecordingEvicted,
+} from "../../lib/voice/speech-recording-evicted-store";
+
+/**
+ * Total speechRecordings storage per user, in stored base64 characters
+ * (a close proxy for bytes - base64 overhead is fixed, so this is
+ * consistent as both the cap and the eviction measure). 20 MB fits
+ * roughly 170 max-length recordings (~30s at 24kbps -> ~90KB raw / ~120KB
+ * base64 each, #2818) - generous for real usage, bounded for worst-case
+ * IndexedDB growth on mobile. No prior art in this codebase for this
+ * number; a product/UX call, not derived from an existing constant.
+ */
+export const SPEECH_RECORDINGS_MAX_TOTAL_BYTES = 20 * 1024 * 1024;
 
 function slugifySource(source: string): string {
     return source.replace(/\//g, "--");
@@ -60,9 +76,38 @@ export async function getSpeechRecordingDexie(
     return row ? rowToWire(row) : null;
 }
 
+/**
+ * Delete the oldest (by ``recorded_at``) rows of ``userId`` until the
+ * total is back under ``maxTotalBytes``, marking each as evicted so
+ * {@link wasEvictedDexie} can tell the difference between "never
+ * recorded" and "was recorded, then evicted" once the row is gone.
+ * The row just saved is never a candidate: it is always the most
+ * recent (or ties on ``recorded_at`` with itself), so a single save
+ * can never evict itself under a realistic cap.
+ */
+async function evictOldestUntilUnderCap(
+    userId: string,
+    maxTotalBytes: number,
+): Promise<void> {
+    const db = getDb();
+    const rows = await db.speechRecordings.where("user_id").equals(userId).toArray();
+    let total = rows.reduce((sum, r) => sum + r.audio_base64.length, 0);
+    if (total <= maxTotalBytes) return;
+    const oldestFirst = [...rows].sort((a, b) =>
+        a.recorded_at < b.recorded_at ? -1 : a.recorded_at > b.recorded_at ? 1 : 0,
+    );
+    for (const row of oldestFirst) {
+        if (total <= maxTotalBytes) break;
+        await db.speechRecordings.delete(row.id);
+        markSpeechRecordingEvicted(row.id);
+        total -= row.audio_base64.length;
+    }
+}
+
 export async function saveSpeechRecordingDexie(
     userId: string,
     body: SpeechRecordingUpsertBody,
+    maxTotalBytesOverride?: number,
 ): Promise<SpeechRecording> {
     const db = getDb();
     const key = rowKey(
@@ -88,7 +133,26 @@ export async function saveSpeechRecordingDexie(
         updated_at: now,
     };
     await db.speechRecordings.put(row);
+    // A fresh recording supersedes any earlier eviction of this exact
+    // exercise - the marker must not outlive the row it referred to.
+    clearSpeechRecordingEvicted(key);
+    await evictOldestUntilUnderCap(
+        userId,
+        maxTotalBytesOverride ?? SPEECH_RECORDINGS_MAX_TOTAL_BYTES,
+    );
     return rowToWire(row);
+}
+
+export async function wasEvictedDexie(
+    userId: string,
+    source: string,
+    setId: string,
+    lessonFilename: string,
+    exerciseId: string,
+): Promise<boolean> {
+    return wasSpeechRecordingEvicted(
+        rowKey(userId, source, setId, lessonFilename, exerciseId),
+    );
 }
 
 export async function deleteSpeechRecordingDexie(
