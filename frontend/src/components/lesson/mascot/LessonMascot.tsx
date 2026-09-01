@@ -51,7 +51,7 @@ export default function LessonMascot({large = false}: LessonMascotProps) {
                 <div
                     role="status"
                     data-testid="lesson-mascot-bubble"
-                    className="lernfunke-bubble absolute right-0 top-full z-20 mt-1 max-w-[14rem] rounded-md border border-[var(--border-strong)] bg-[var(--bg-elevated)] px-2 py-1 text-xs text-[var(--fg-primary)] shadow-md"
+                    className="absolute right-0 top-full z-20 mt-1 max-w-[14rem] rounded-md border border-[var(--border-strong)] bg-[var(--bg-elevated)] px-2 py-1 text-xs text-[var(--fg-primary)] shadow-md"
                 >
                     {bubble}
                 </div>

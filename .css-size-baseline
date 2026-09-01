@@ -341,4 +341,14 @@
 # Bottom-Tab-Bar zurueck (siehe Eintrag "7506 -> 7497 (#1512)" oben -
 # exakt dieselbe Regel). Fundament-Layout (Spacing auf #root, das keine
 # Komponente per Utility erreichen kann), kein Farb-/Theme-Stoff.
-7449
+# 2026-09-01: 7449 -> 7479 (#2849 Lernfunke-Maskottchen): +30 Zeilen -
+# neue styles/legacy/43-mascot.css (drei Pose-Keyframes lernfunke-hop/
+# -wiggle/-pop, 28 Zeilen inkl. 5 Kommentar) + die @import-Zeile in
+# global.css. Legitime Fundament-Erweiterung: @keyframes haben kein
+# Tailwind-Utility-Aequivalent (die Komponente konsumiert sie via
+# motion-safe:animate-[...] Arbitrary-Animations, Konvention aus
+# 16-feedback-intensity.css); alle sonstigen Styles des Maskottchens
+# sind token-backed Utilities an der Komponente. Keine Farben, kein
+# Selektor - reine Transform-Keyframes. Auf das Minimum kompaktiert
+# (Identitaets-Frames weggelassen, Blasen-Animation gestrichen).
+7479

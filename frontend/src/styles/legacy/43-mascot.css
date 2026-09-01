@@ -1,28 +1,17 @@
-/* Lernfunke mascot (#2849). Keyframes are global (never
-   @layer-scoped, see 16-feedback-intensity.css); consumers apply
-   them via motion-safe: Tailwind arbitrary animations, and the
-   39-motion-catchall keeps reduced-motion users animation-free. */
-
+/* Lernfunke mascot pose keyframes (#2849), consumed via motion-safe:
+   Tailwind arbitrary animations; the 39-motion-catchall covers reduced
+   motion. Keyframes are global - never @layer-scoped (see
+   16-feedback-intensity.css). Omitted from/to frames fall back to the
+   element's resting transform. */
 @keyframes lernfunke-hop {
-  0% {
-    transform: translateY(0);
-  }
   40% {
     transform: translateY(-22%) scale(1.06);
   }
   70% {
     transform: translateY(0) scale(0.98);
   }
-  100% {
-    transform: translateY(0) scale(1);
-  }
 }
-
 @keyframes lernfunke-wiggle {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
   25% {
     transform: rotate(-8deg);
   }
@@ -30,32 +19,11 @@
     transform: rotate(8deg);
   }
 }
-
 @keyframes lernfunke-pop {
   0% {
     transform: scale(0.7);
   }
   55% {
     transform: scale(1.18);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@layer legacy {
-  .lernfunke-bubble {
-    animation: lernfunke-bubble-in 200ms ease-out both;
-  }
-}
-
-@keyframes lernfunke-bubble-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
