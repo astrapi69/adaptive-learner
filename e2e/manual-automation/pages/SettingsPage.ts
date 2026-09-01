@@ -83,6 +83,12 @@ export class SettingsPage {
   get cropConfirm(): Locator {
     return this.page.getByTestId("crop-confirm");
   }
+  get avatarPresets(): Locator {
+    return this.page.getByTestId("settings-avatar-presets");
+  }
+  avatarPreset(id: string): Locator {
+    return this.page.getByTestId(`settings-avatar-preset-${id}`);
+  }
   get selectiveExport(): Locator {
     return this.page.getByTestId("data-export-selective");
   }
