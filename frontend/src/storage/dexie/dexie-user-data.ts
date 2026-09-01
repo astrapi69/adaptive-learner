@@ -52,6 +52,10 @@ export const MANAGED_USER_DATA_KEYS = [
     // OWN lesson (lib/lesson/mentor-notes-store). Local authoring aid,
     // mode-agnostic, survives a Dexie restore + rides the .alb backup.
     "adaptive-learner.mentor-notes",
+    // #2841 — speech-recording ids evicted for storage-cap reasons
+    // (lib/voice/speech-recording-evicted-store). Survives a Dexie
+    // restore + rides the .alb backup's localStorage snapshot.
+    "adaptive-learner.speech-recording-evicted",
 ] as const;
 
 /**

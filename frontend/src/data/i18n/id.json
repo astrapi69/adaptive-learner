@@ -2170,6 +2170,9 @@
         "solution_label": "Solusi",
         "submit": "Periksa jawaban"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "Rekaman sebelumnya dihapus untuk menghemat ruang penyimpanan. Kamu bisa merekam lagi kapan saja."
+      },
       "instruction": {
         "matching": {
           "receptive": "Cocokkan pasangannya (Pengenalan)",

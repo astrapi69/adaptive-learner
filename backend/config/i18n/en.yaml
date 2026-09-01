@@ -2016,6 +2016,11 @@ lesson:
       retry: "Try again"
       solution_label: "Solution"
       submit: "Check answers"
+    al_speak_and_record:
+      # #2841 - the only key so far; show/saving/done/record_again/empty
+      # stay TSX-only fallbacks until the whole exercise type gets its
+      # i18n block (a separate, larger task, out of scope here).
+      recording_evicted: "Your previous recording was removed to save storage space. Record again anytime."
     instruction:
       matching:
         receptive: Match the pairs (Recognition)

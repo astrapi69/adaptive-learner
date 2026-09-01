@@ -2170,6 +2170,9 @@
         "solution_label": "정답",
         "submit": "정답 확인"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "저장 공간을 절약하기 위해 이전 녹음이 삭제되었습니다. 언제든지 다시 녹음할 수 있습니다."
+      },
       "instruction": {
         "matching": {
           "receptive": "짝을 맞추세요 (인식)",
