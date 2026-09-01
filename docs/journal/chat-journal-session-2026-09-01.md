@@ -47,6 +47,18 @@
 - Ergebnis: `components/lesson/mascot/` (Figur mit 4 Posen, `useMascotState` mit Decay + reactionKey für Animations-Restart, `LessonMascot` mit Sprechblase), Wiring in `Lesson.tsx`, 1 i18n-Key (`lesson.mascot_label`) in 11 Katalogen, Testplan DE+EN (Unterabschnitt der Spielmodus-Sektion), alle 4 Posen in echtem Chromium gerendert und geprüft (Vorschau an den Nutzer).
 - Commit: siehe PR (Closes #2849, Refs #2847).
 
+## 5. Stufe C: Avatar-Rahmen-Progression (#2850)
+- Original prompt: "Okay, dann mach die Stufe C"
+- Optimized prompt: "Baue Avatar-Rahmen als Progressions-Belohnung: Bronze/Silber/Gold über Level, Flamme über das streak_3_days-Abzeichen, Stern/Akzent kaufbar über gamification.spendXp - Auswahl und Käufe browser-lokal nach dem dismissed-sets-Muster, Backup-fähig, in beiden Speicher-Modi."
+- Ziel: Die gesammelten XP bekommen einen Zweck; der bislang kaum genutzte spendXp-Pfad wird zum Konsumenten.
+- Architektur-Entscheide:
+  - **Kaufprüfung gehört dem Aufrufer**: `spendXp` klemmt in Backend UND Dexie bei 0 und lehnt nie ab - ohne eigenen Guthaben-Guard bekäme ein Nutzer ohne XP den Rahmen gratis. Der Kauf-Knopf ist unter dem Preis deaktiviert, der Kauf ein Zwei-Schritt-Confirm (Missions-Reset-Muster).
+  - **Browser-lokaler Store** `lib/avatar/avatar-frame-store.ts` (mentor-notes-Vorlage): pro Nutzer `{selected, purchased}`; Key in `MANAGED_USER_DATA_KEYS` registriert (gepinnte Liste + Test erweitert), Snapshot-Pin in `localStorageSnapshot.test.ts` - kein Backend, kein per-Mode-Schreibpfad (#2053-Klasse vermieden).
+  - **Ringe als token-only box-shadows** inline an den Render-Stellen; drei neue theme-agnostische Tokens `--frame-bronze/-silver/-gold` in `00-head.css` neben `--method-*` (der in der css-size-Regel selbst benannte Ausnahmefall "neue Farben als Token"; Baseline 7479 -> 7486 mit Begründung). Flamme/Stern/Akzent nutzen vorhandene Tokens.
+  - **Live-Updates über bestehende Signale**: Auswahl/Kauf feuern `notifyProfileUpdated` (NavAvatar + Settings-Vorschau ziehen den Ring sofort nach) und `emitXpSpent` (Kopfleisten-XP-Badge blinkt/aktualisiert).
+- Ergebnis: Katalog `lib/avatar/avatar-frames.ts` (7 Rahmen, 4 Unlock-Arten, pure `isFrameUnlocked`), Store, `AvatarFrameControl` (neue Concern-Gruppe `controls/profile/`), `frameRing`-Prop an `AvatarUpload`, Ring-Wrapper in `NavAvatar`; 14 i18n-Keys in 11 Katalogen; Testplan DE+EN (Unterabschnitt unter PRIO 11); alle 7 Ringe in echtem Chromium gerendert und geprüft.
+- Commit: siehe PR (Closes #2850, Refs #2847 - damit ist das Umbrella komplett).
+
 ## Fragen und Annahmen
 - Stil-Entscheid Stufe B: Der Nutzer gab "weiter mit der nächsten Stufe" ohne explizite Stil-Wahl; umgesetzt wurde die in #2849 dokumentierte Empfehlung Funke/Flamme. Die Figur ist als austauschbare SVG-Komponente (`LernfunkeFigure`) gekapselt - ein Stilwechsel (Roboter/Tier) ersetzt eine Datei, Posen-API und Hook bleiben.
 - Konservative Annahme: Der Intensitäts-Floor überschreibt auch eine bewusst gewählte "dezent"-Einstellung, solange der Spielmodus an ist - der Modus ist Opt-in und seine Beschreibung benennt genau das; reduced-motion bleibt als Barrierefreiheits-Override unangetastet.
