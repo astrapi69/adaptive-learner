@@ -47,16 +47,19 @@ timeouts. Reproduce that failure state on demand with
 BACKUP-AKZEPTANZTEST (`quality-checks.md`) requires a REAL manual
 Export/Import round-trip in `make dev` before any backup-touching PR
 merges - unit tests alone missed five consecutive "fixed" backup releases
-(#49, #57, #64, #115, #117). That manual pass is still the gate; it is not
+(#49, #57, #64, #115, #117). That manual pass is still the gate for
+device-specific behaviour (storage eviction, standalone mode); it is not
 replaced by anything below.
 
-What CAN complement it (proposed in #2828, not yet folded into the formal
-rule - see that issue before treating this as a substitute for the manual
-pass): a Playwright spec that drives the real app in a real browser,
-captures the real downloaded file, and inspects its real bytes - stronger
-than a `fake-indexeddb` unit test because it exercises the actual
-export/download/re-import UI path, and reproducible/CI-able unlike the
-manual pass.
+What complements it, per the "Accepted alternative evidence" carve-out
+`quality-checks.md` added in #2828: a Playwright spec that drives the real
+app in a real browser, captures the real downloaded file, and inspects its
+real bytes - stronger than a `fake-indexeddb` unit test because it exercises
+the actual export/download/re-import UI path, and reproducible/CI-able
+unlike the manual pass. Accepted as evidence when the manual pass has
+already run once for the data shape (this becomes the regression pin), or
+when the project owner explicitly defers the manual pass for a given PR
+(their call, stated in the PR/issue) - see the rule for the exact two cases.
 
 Worked example: `e2e/dexie/backup-speech-recording-roundtrip.spec.ts`
 (written for the #2824 fix - `speech_recordings` silently missing from the

@@ -85,6 +85,33 @@ re-capture until the import completes with zero unexpected errors. No commit
 before a clean round-trip exists. Pairs with lessons/core.md "Operational
 gaps masquerade as wired infrastructure".
 
+### Accepted alternative evidence: content-verified E2E round-trip (#2828)
+
+A human click-through is not the only way to prove a real round-trip. A
+Playwright spec that drives the actual Export/Import UI in a real browser,
+captures the real downloaded file, inspects its real bytes/content (not a
+mock, not a truncated preview), wipes the store, re-imports the same file,
+and re-reads the result closes the exact gap unit tests miss (real UI path,
+real serialized bytes, real re-import) without a human at a keyboard. The
+worked pattern: `docs/developer/testing.md` "Programmatic backup round-trip
+proof, content-verified"; worked example:
+`e2e/dexie/backup-speech-recording-roundtrip.spec.ts`.
+
+This is accepted evidence for a PR when EITHER:
+
+- the manual round-trip has already been performed once for the underlying
+  data shape, and the automated spec is the regression pin from then on, not
+  the sole proof, or
+- the manual pass is explicitly deferred by the project owner for that PR
+  (their call, stated in the PR or the tracking issue), with the automated
+  spec as interim evidence and the manual pass still expected before the
+  next release ships that data path.
+
+It does NOT cover what only a real device shows: storage eviction under
+pressure and standalone (home-screen) mode - see
+`docs/developer/testing.md` "Device-only limits", item 1. Those stay gated
+on the manual round-trip, no substitute.
+
 ## Visual Device Check (MANDATORY for visual features)
 
 Features that are primarily visual or interactive (banners, dialogs, toasts, overlays, touch interactions) MUST include a screenshot or description of a manual check on at least one real device in the PR description:
