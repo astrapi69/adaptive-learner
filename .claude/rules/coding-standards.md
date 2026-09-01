@@ -57,9 +57,9 @@ When unclear: ask rather than guess.
 
 ## Formatting
 
-- No em-dash (-- or Unicode U+2014). Use hyphens (-) or commas.
-- Standard UTF-8 characters only.
-- No emojis in code or comments.
+Text-content rules (em-dash, UTF-8/umlauts, emojis) apply everywhere
+text is written, not only in code - see `text-formatting.md`.
+
 - Indentation: 4 spaces (Python), 2 spaces (TypeScript/CSS).
 - Automatic formatting: ruff (Python), Prettier (TypeScript). See code-hygiene.md.
 - Automatic linting: ruff (Python), ESLint (TypeScript). See code-hygiene.md.
