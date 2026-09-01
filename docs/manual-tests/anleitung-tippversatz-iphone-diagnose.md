@@ -48,10 +48,17 @@ Bedeutung der Felder:
 |------|-----------|
 | `winY` | aktueller Fenster-Scroll (`window.scrollY`) |
 | `vvTop` | Versatz des sichtbaren Viewports (`visualViewport.offsetTop`) |
-| `scale` | Zoomstufe (1 = kein Pinch-Zoom) |
+| `scale` | Zoomstufe (1 = kein Zoom; unter 1 = Safari hat die Seite herausgezoomt) |
 | `kbd` | wie stark die Tastatur den sichtbaren Bereich verkleinert (px) |
+| `vvW` / `innerW` / `docW` | Breiten: sichtbarer Viewport, Fenster, Dokument - `docW` größer als `innerW` heißt, ein Element ist breiter als der Bildschirm |
 | `fix` | welcher Fix-Kandidat gerade aktiv ist (`off` = keiner) |
 | `letzter Tipp …` | beim letzten Tipp: das getroffene Element und **`ΔY`** |
+
+Jede Tipp-Zeile trägt zusätzlich den Zustand **zum Zeitpunkt des Tipps**
+(die Kopfzeile zeigt nur den Zustand danach): `@winY`/`@vvTop` (die beiden
+Versatz-Kanäle), `@kbd` (war die Tastatur da gerade offen?), `@scale` (war
+die Seite gerade gezoomt?) und `focus=` (welches Feld beim Tipp noch den
+Fokus hielt, `-` = keines).
 
 Die Karte sammelt automatisch die letzten 8 Tipps (im Textfeld unten, neueste
 zuerst). Tipps auf die Karte selbst (den Kopier-Knopf, das Textfeld) zählen
