@@ -56,6 +56,7 @@
     "group_extra": "Πρόσθετα δεδομένα",
     "group_gamification": "Παιχνιδοποίηση",
     "group_config": "Ρυθμίσεις",
+    "group_media": "Πολυμέσα",
     "cat_projects": "Έργα μάθησης (με συνεδρίες, αξιολογήσεις, σημειώσεις)",
     "cat_curricula": "Προγράμματα (με θέματα και μαθήματα)",
     "cat_progress": "Πρόοδος μαθημάτων (με λάθη / SRS)",
@@ -66,7 +67,8 @@
     "cat_questions": "Ερωτήσεις μελέτης",
     "cat_gamification": "XP, διακριτικά, σερί, αποστολές",
     "cat_settings": "Ρυθμίσεις",
-    "cat_ai_config": "Αντίγραφο κλειδιού AI"
+    "cat_ai_config": "Αντίγραφο κλειδιού AI",
+    "cat_speech_recordings": "Ηχογραφήσεις ομιλίας (από ασκήσεις προφοράς)"
   },
   "nav": {
     "group": {

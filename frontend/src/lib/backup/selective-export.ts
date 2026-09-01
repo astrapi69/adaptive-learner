@@ -91,11 +91,14 @@ export const EXPORT_GROUPS: readonly ExportGroup[] = [
         includes: ["learning_topics", "lessons"],
       },
       {
+        // #2842 — set_runs (EXP-051 Durchgang/run bookkeeping) ties into
+        // element_errors.run_id, so it rides with progress rather than
+        // getting its own category.
         id: "progress",
         labelKey: "data_export.cat_progress",
         labelFallback: "Lesson progress (with mistakes / SRS)",
-        tables: ["lesson_progress", "element_errors"],
-        includes: ["element_errors"],
+        tables: ["lesson_progress", "element_errors", "set_runs"],
+        includes: ["element_errors", "set_runs"],
       },
     ],
   },
@@ -158,6 +161,25 @@ export const EXPORT_GROUPS: readonly ExportGroup[] = [
         labelKey: "data_export.cat_gamification",
         labelFallback: "XP, badges, streak, missions",
         tables: ["user_xp", "badges", "user_badges", "user_streaks", "user_missions"],
+        includes: [],
+      },
+    ],
+  },
+  {
+    // #2840 (from #2818's storage-growth review) — speech-and-record
+    // clips are large media (base64 audio), unlike every other backup
+    // table, and default OFF: a user who wants their learning data but
+    // not the audio blobs can leave this unticked without losing
+    // anything else.
+    id: "media",
+    labelKey: "data_export.group_media",
+    labelFallback: "Media",
+    categories: [
+      {
+        id: "speech_recordings",
+        labelKey: "data_export.cat_speech_recordings",
+        labelFallback: "Speech recordings (speak-and-record exercises)",
+        tables: ["speech_recordings"],
         includes: [],
       },
     ],

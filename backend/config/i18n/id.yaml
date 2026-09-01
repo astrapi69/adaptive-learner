@@ -51,6 +51,7 @@ data_export:
   group_extra: "Data tambahan"
   group_gamification: "Gamifikasi"
   group_config: "Konfigurasi"
+  group_media: "Media"
   cat_projects: "Proyek pembelajaran (dengan sesi, peringkat, catatan)"
   cat_curricula: "Kurikulum (dengan topik dan pelajaran)"
   cat_progress: "Kemajuan pelajaran (dengan kesalahan / SRS)"
@@ -62,6 +63,7 @@ data_export:
   cat_gamification: "XP, lencana, runtun, misi"
   cat_settings: "Pengaturan"
   cat_ai_config: "Cadangan kunci AI"
+  cat_speech_recordings: "Rekaman suara (latihan bicara-dan-rekam)"
 nav:
   group:
     learn: "Belajar"

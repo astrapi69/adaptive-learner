@@ -56,6 +56,7 @@
     "group_extra": "Zusatzdaten",
     "group_gamification": "Gamification",
     "group_config": "Konfiguration",
+    "group_media": "Medien",
     "cat_projects": "Lernprojekte (mit Sitzungen, Bewertungen, Notizen)",
     "cat_curricula": "Curricula (mit Themen und Lektionen)",
     "cat_progress": "Lernfortschritt (mit Fehlern / SRS)",
@@ -66,7 +67,8 @@
     "cat_questions": "Lernfragen",
     "cat_gamification": "XP, Abzeichen, Streak, Missionen",
     "cat_settings": "Einstellungen",
-    "cat_ai_config": "KI-Schlüssel-Sicherung"
+    "cat_ai_config": "KI-Schlüssel-Sicherung",
+    "cat_speech_recordings": "Sprachaufnahmen (aus Sprechübungen)"
   },
   "nav": {
     "group": {

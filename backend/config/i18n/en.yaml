@@ -51,6 +51,7 @@ data_export:
   group_extra: "Extra data"
   group_gamification: "Gamification"
   group_config: "Configuration"
+  group_media: "Media"
   cat_projects: "Learning projects (with sessions, ratings, notes)"
   cat_curricula: "Curricula (with topics and lessons)"
   cat_progress: "Lesson progress (with mistakes / SRS)"
@@ -62,6 +63,7 @@ data_export:
   cat_gamification: "XP, badges, streak, missions"
   cat_settings: "Settings"
   cat_ai_config: "AI key backup"
+  cat_speech_recordings: "Speech recordings (speak-and-record exercises)"
 nav:
   group:
     learn: "Learn"

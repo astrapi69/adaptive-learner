@@ -2162,6 +2162,20 @@ bewusst keine Zahlen, die veralten könnten.
 
 ---
 
+## PRIO 10: Selektiver Datenexport - Sprachaufnahmen-Kategorie (#2840)
+
+Ort: Einstellungen > Daten > "Ausgewählte Daten exportieren".
+
+- [ ] Gruppe "Medien" mit Kategorie "Sprachaufnahmen" ist sichtbar,
+      standardmäßig NICHT angehakt (im Gegensatz zu Lernprojekte/
+      Curricula/Fortschritt/Fächer, die vorausgewählt sind)
+- [ ] Ohne Anhaken: exportierte Datei enthält KEINE
+      `speech_recordings`-Zeilen, auch wenn welche vorhanden sind
+- [ ] Anhaken + Export: die Datei enthält die `speech_recordings`-Zeilen
+      des Nutzers
+
+---
+
 # TEIL B: AUTOMATISIERTE TESTS (Referenz)
 
 Diese Tests laufen in CI oder via `make test`.
