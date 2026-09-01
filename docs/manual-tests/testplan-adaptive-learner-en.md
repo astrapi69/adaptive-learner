@@ -2055,6 +2055,23 @@ Location: Settings > Data > "Export selected data".
 - [ ] Checking it + export: the file contains the user's
       `speech_recordings` rows
 
+## PRIO 11: Preset avatar gallery (#2848)
+
+Location: Settings > General > Profile, below the photo upload.
+
+- [ ] "Or pick a figure" row with 8 figures visible (Spark, Robot,
+      Star, Cat, Owl, Ghost, Lightning, Heart), each with a speaking
+      tooltip/screen-reader name
+- [ ] Tapping a figure: success toast, the preview above and the header
+      avatar show the figure immediately (no reload)
+- [ ] The chosen figure is marked (ring); picking another moves the mark
+- [ ] Uploading a photo replaces the figure; afterwards NO figure is
+      marked; picking a figure replaces the photo again
+- [ ] "Remove" clears the avatar; the header falls back to the initials
+- [ ] Backup round-trip: pick a figure, export (`.alb`), wipe data,
+      import - the figure is set again
+- [ ] Both storage modes (server + browser) behave identically
+
 ---
 
 # PART B: AUTOMATED TESTS (reference)

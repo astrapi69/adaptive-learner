@@ -12,6 +12,7 @@ import {
   type AlbManifest,
 } from "./albContainer";
 import type { BackupPayload } from "../../types/domain";
+import { PRESET_AVATARS, presetAvatarDataUrl } from "../avatar/preset-avatars";
 
 const TINY_JPEG_B64 =
   "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB";
@@ -90,6 +91,21 @@ describe("avatar as an asset (BAK-04)", () => {
     expect(parsed.payload.data.user_settings[0].avatar).toBe(
       `data:image/jpeg;base64,${TINY_JPEG_B64}`,
     );
+  });
+
+  it("round-trips a preset (utf8 SVG) avatar inline, without externalising (#2848)", () => {
+    const svgAvatar = presetAvatarDataUrl(PRESET_AVATARS[0].id);
+    const withPreset = payload({
+      data: {
+        user_settings: [{ id: "s1", user_id: "user-1234", avatar: svgAvatar }],
+      },
+    });
+    const files = unzipSync(buildAlbBytes(withPreset));
+    // Not base64 -> stays inline in data.json instead of assets/.
+    const data = JSON.parse(strFromU8(files["data.json"])) as BackupPayload;
+    expect(data.data.user_settings[0].avatar).toBe(svgAvatar);
+    const parsed = parseAlbBytes(buildAlbBytes(withPreset));
+    expect(parsed.payload.data.user_settings[0].avatar).toBe(svgAvatar);
   });
 
   it("does not mutate the caller's payload", () => {

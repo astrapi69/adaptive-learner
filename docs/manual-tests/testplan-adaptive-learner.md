@@ -2184,6 +2184,25 @@ Ort: Einstellungen > Daten > "Ausgewählte Daten exportieren".
 - [ ] Anhaken + Export: die Datei enthält die `speech_recordings`-Zeilen
       des Nutzers
 
+## PRIO 11: Preset-Avatar-Galerie (#2848)
+
+Ort: Einstellungen > Allgemein > Profil, unter dem Foto-Upload.
+
+- [ ] Zeile "Oder wähle eine Figur" mit 8 Figuren sichtbar (Funke,
+      Roboter, Stern, Katze, Eule, Geist, Blitz, Herz), jede mit
+      sprechendem Tooltip/Screenreader-Namen
+- [ ] Figur antippen: Erfolgs-Toast, Vorschau oben und der Avatar in der
+      Kopfleiste zeigen die Figur sofort (ohne Reload)
+- [ ] Gewählte Figur ist markiert (Rahmen); eine andere wählen
+      verschiebt die Markierung
+- [ ] Foto hochladen ersetzt die Figur; danach ist KEINE Figur mehr
+      markiert; Figur wählen ersetzt umgekehrt das Foto
+- [ ] "Entfernen" löscht den Avatar; die Kopfleiste fällt auf die
+      Initialen zurück
+- [ ] Backup-Round-trip: Figur wählen, Export (`.alb`), Daten löschen,
+      Import → die Figur ist wieder gesetzt
+- [ ] Beide Speicher-Modi (Server + Browser) verhalten sich identisch
+
 ---
 
 # TEIL B: AUTOMATISIERTE TESTS (Referenz)

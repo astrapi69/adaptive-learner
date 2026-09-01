@@ -8,6 +8,7 @@ import ModeIndicator from "../../../../components/pwa/ModeIndicator";
 import UpdatesSettingsSection from "../../../../components/settings/UpdatesSettingsSection";
 import ThemePicker from "../../../../components/settings/appearance/ThemePicker";
 import AvatarUpload from "../../../../shared/media/AvatarUpload";
+import PresetAvatarGallery from "../../../../shared/media/PresetAvatarGallery";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../../../../hooks/settings/useButtonTooltips";
 import { setNavPosition, useNavPosition } from "../../../../hooks/settings/useNavPosition";
 import { useI18n } from "../../../../hooks/ui/useI18n";
@@ -287,6 +288,24 @@ export default function GeneralPanel({
               notify.error(t(key, "Could not use that image. Try another file."))
             }
             testId="settings-avatar-upload"
+          />
+        )}
+        {settings && (
+          <PresetAvatarGallery
+            value={settings.avatar}
+            title={t("settings.avatar_presets_title", "Or pick a figure")}
+            optionLabels={{
+              spark: t("settings.avatar_preset_spark", "Spark"),
+              robot: t("settings.avatar_preset_robot", "Robot"),
+              star: t("settings.avatar_preset_star", "Star"),
+              cat: t("settings.avatar_preset_cat", "Cat"),
+              owl: t("settings.avatar_preset_owl", "Owl"),
+              ghost: t("settings.avatar_preset_ghost", "Ghost"),
+              bolt: t("settings.avatar_preset_bolt", "Lightning"),
+              heart: t("settings.avatar_preset_heart", "Heart"),
+            }}
+            disabled={busy === "avatar"}
+            onSelect={(dataUrl) => void handleAvatarChange(dataUrl)}
           />
         )}
       </SettingsSection>
