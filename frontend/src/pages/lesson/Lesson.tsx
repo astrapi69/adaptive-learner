@@ -45,6 +45,7 @@ import LessonHeader from "../../components/lesson/chrome/LessonHeader";
 import LessonMentorNote from "../../components/lesson/mentor/LessonMentorNote";
 import LessonOptionsBar from "../../components/lesson/chrome/LessonOptionsBar";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
+import PlayfulModeHint from "../../components/lesson/chrome/PlayfulModeHint";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
@@ -320,6 +321,10 @@ export default function LessonPage() {
 
       {/* #2319 — visible while test mode is active (preview build only). */}
       <TestModeBanner />
+
+      {/* #2844 — one-time playful-mode discovery hint at the lesson start;
+          the component gates itself on the pref + dismissal flags. */}
+      {!isSummary && currentStepIndex === 0 && <PlayfulModeHint />}
 
       {/* #1642 — the pause control moved into the footer; the exit dialog it
           opens is lifted here (portal, controlled by the lesson's exitOpen

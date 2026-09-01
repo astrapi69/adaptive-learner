@@ -12,7 +12,7 @@
  * the main lesson player wraps its content in {@link LessonModeProvider}.
  */
 
-import {createContext, useContext, type ReactNode} from "react";
+import {createContext, useContext, useMemo, type ReactNode} from "react";
 
 import {
     configForMode,
@@ -20,6 +20,7 @@ import {
     type LessonModeConfig,
 } from "../../../lib/learning/lessonModeConfig";
 import type {LessonMode} from "../../../lib/learning/lessonModePref";
+import {usePlayfulMode} from "../../settings/usePlayfulMode";
 
 const LessonModeContext = createContext<LessonModeConfig>(
     MODE_CONFIGS.practice,
@@ -30,10 +31,16 @@ export interface LessonModeProviderProps {
     children: ReactNode;
 }
 
-/** Provide the active mode's config to the subtree. */
+/** Provide the active mode's config to the subtree, overlaid with the
+ *  live playful-mode flag (#2844) — orthogonal to the mode itself. */
 export function LessonModeProvider({mode, children}: LessonModeProviderProps) {
+    const playful = usePlayfulMode();
+    const value = useMemo(
+        () => ({...configForMode(mode), playful}),
+        [mode, playful],
+    );
     return (
-        <LessonModeContext.Provider value={configForMode(mode)}>
+        <LessonModeContext.Provider value={value}>
             {children}
         </LessonModeContext.Provider>
     );

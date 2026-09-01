@@ -530,6 +530,27 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Regression andere Typen: Freitext/Lueckentext bei "Fehler
       wiederholen" weiterhin nur die falschen Elemente
 
+### Spielmodus (#2844)
+- [ ] Settings -> Lernen: Sektion "Spielmodus" mit Schalter "Spielerische
+      Lektionen" vorhanden, Standard: aus
+- [ ] Lektionsstart (erster Schritt, Spielmodus aus, Hinweis nie
+      ausgeblendet): Banner "Spielmodus ausprobieren" mit "Einschalten"
+      und Schließen-Knopf sichtbar
+- [ ] "Einschalten" im Banner: Erfolgs-Toast, Banner verschwindet, der
+      Schalter in den Einstellungen steht danach auf an
+- [ ] Banner schließen ("Nicht mehr anzeigen"): Banner verschwindet und
+      erscheint auch bei der nächsten Lektion nicht wieder; Spielmodus
+      bleibt aus
+- [ ] Spielmodus an: Lob-Phrase bei JEDER richtigen Antwort (nicht nur
+      periodisch), Konfetti/Meilenstein-Overlays erlaubt, unabhängig von
+      der eingestellten Feedback-Intensität
+- [ ] Spielmodus an + reduzierte Bewegung im System: Feedback bleibt
+      dezent (reduced motion gewinnt)
+- [ ] Spielmodus aus: Verhalten wie bisher (Feedback-Intensität greift
+      unverändert)
+- [ ] Umschalten wirkt ohne Reload (Change-Event) und verhält sich in
+      beiden Speicher-Modi identisch (localStorage)
+
 ### Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der
       Korrektur-Runde am Ende die Fehler beheben. Der Punktzahl-Balken zeigt

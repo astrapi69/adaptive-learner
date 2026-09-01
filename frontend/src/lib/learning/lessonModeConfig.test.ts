@@ -56,6 +56,12 @@ describe("MODE_CONFIGS", () => {
         expect(ti.timeBonusOnCorrect).toBe(5);
     });
 
+    it("every mode config is playful-off by default (#2844)", () => {
+        for (const mode of ALL_MODES) {
+            expect(MODE_CONFIGS[mode].playful).toBe(false);
+        }
+    });
+
     it("drives the card-source modes via cardSource / direction / end", () => {
         expect(MODE_CONFIGS.error.cardSource).toBe("errors");
         expect(MODE_CONFIGS.reverse.cardDirection).toBe("reverse");

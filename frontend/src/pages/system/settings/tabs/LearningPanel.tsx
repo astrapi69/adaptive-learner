@@ -14,6 +14,7 @@ import LearningProfileControl from "../../../../components/assessment/LearningPr
 import MaxLessonSizeControl from "../../../../components/settings/controls/lesson/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../../../../components/settings/controls/lesson/PausedLessonsRetentionControl";
 import MissionSettingsControl from "../../../../components/settings/controls/motivation/MissionSettingsControl";
+import PlayfulModeControl from "../../../../components/settings/controls/motivation/PlayfulModeControl";
 import SourceLanguagesControl from "../../../../components/settings/controls/lesson/SourceLanguagesControl";
 import SoundSettingsControl from "../../../../components/settings/controls/motivation/SoundSettingsControl";
 import VoiceSettingsSection from "../../../../components/voice/VoiceSettingsSection";
@@ -205,6 +206,7 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       <SrsTransparencySection />
       <SummarySectionsControl />
       <ErrorReplayScopeControl />
+      <PlayfulModeControl />
       <SettingsSection
         title={t("settings.section_feedback", "Feedback")}
         testid="settings-section-feedback"

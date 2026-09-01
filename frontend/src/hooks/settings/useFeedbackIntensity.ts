@@ -19,6 +19,7 @@ import {
     FEEDBACK_PREF_CHANGE_EVENT,
     type FeedbackIntensity,
 } from "../../lib/feedback/feedbackPref";
+import {PLAYFUL_MODE_CHANGE_EVENT} from "../../lib/learning/playfulModePref";
 
 export function useFeedbackIntensity(): FeedbackIntensity {
     const [intensity, setIntensity] = useState<FeedbackIntensity>(() =>
@@ -29,6 +30,9 @@ export function useFeedbackIntensity(): FeedbackIntensity {
         const refresh = () => setIntensity(effectiveIntensity());
 
         window.addEventListener(FEEDBACK_PREF_CHANGE_EVENT, refresh);
+        // Playful mode (#2844) raises the effective intensity, so its
+        // pref changes must refresh celebration components too.
+        window.addEventListener(PLAYFUL_MODE_CHANGE_EVENT, refresh);
         window.addEventListener("storage", refresh);
 
         let media: MediaQueryList | null = null;
@@ -48,6 +52,7 @@ export function useFeedbackIntensity(): FeedbackIntensity {
 
         return () => {
             window.removeEventListener(FEEDBACK_PREF_CHANGE_EVENT, refresh);
+            window.removeEventListener(PLAYFUL_MODE_CHANGE_EVENT, refresh);
             window.removeEventListener("storage", refresh);
             if (media) {
                 if (typeof media.removeEventListener === "function") {

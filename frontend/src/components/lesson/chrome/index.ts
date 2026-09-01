@@ -9,4 +9,5 @@ export { default as LessonOptionsBar } from "./LessonOptionsBar";
 export type { LessonOptionsPanelProps } from "./LessonOptionsPanel";
 export { default as LessonOptionsPanel } from "./LessonOptionsPanel";
 export { default as LessonProgressBar } from "./LessonProgressBar";
+export { default as PlayfulModeHint } from "./PlayfulModeHint";
 export { default as LessonStickyFooter } from "./LessonStickyFooter";

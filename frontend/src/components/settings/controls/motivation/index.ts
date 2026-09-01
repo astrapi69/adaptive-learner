@@ -8,6 +8,8 @@ export * from "./GamificationSettingsSection";
 export { default as GamificationSettingsSection } from "./GamificationSettingsSection";
 export * from "./MissionSettingsControl";
 export { default as MissionSettingsControl } from "./MissionSettingsControl";
+export * from "./PlayfulModeControl";
+export { default as PlayfulModeControl } from "./PlayfulModeControl";
 export * from "./FeedbackIntensityControl";
 export { default as FeedbackIntensityControl } from "./FeedbackIntensityControl";
 export * from "./SoundSettingsControl";

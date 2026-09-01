@@ -496,6 +496,25 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Regression, other types: free-text/cloze in "Retry errors" still show
       only the wrong elements
 
+### Game mode (#2844)
+- [ ] Settings -> Learning: "Game Mode" section with the "Playful
+      lessons" switch, default off
+- [ ] Lesson start (first step, game mode off, hint never dismissed):
+      "Try game mode" banner with "Turn on" and a close control
+- [ ] "Turn on" in the banner: success toast, banner disappears, the
+      Settings switch is on afterwards
+- [ ] Closing the banner ("Don't show again"): banner disappears and does
+      not come back on the next lesson; game mode stays off
+- [ ] Game mode on: praise phrase on EVERY correct answer (not just
+      periodically), confetti/milestone overlays allowed, regardless of
+      the configured feedback intensity
+- [ ] Game mode on + reduced motion in the system: feedback stays subtle
+      (reduced motion wins)
+- [ ] Game mode off: behaviour unchanged (feedback intensity applies as
+      before)
+- [ ] Toggling takes effect without a reload (change event) and behaves
+      identically in both storage modes (localStorage)
+
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the
       end-of-lesson correction round. The score bar shows two segments: what

@@ -22,6 +22,8 @@
  * when their stored level is higher.
  */
 
+import {readPlayfulMode} from "../learning/playfulModePref";
+
 export type FeedbackIntensity = "subtle" | "normal" | "enthusiastic";
 
 const KEY_INTENSITY = "adaptive-learner.feedback.intensity";
@@ -146,11 +148,14 @@ export function prefersReducedMotion(): boolean {
 }
 
 /**
- * The intensity actually in effect: the stored level, clamped to
- * "subtle" whenever reduced motion is requested.
+ * The intensity actually in effect: the stored level, raised to
+ * "enthusiastic" while playful mode (#2844) is on, and clamped to
+ * "subtle" whenever reduced motion is requested — reduced motion
+ * always wins.
  */
 export function effectiveIntensity(): FeedbackIntensity {
     if (prefersReducedMotion()) return "subtle";
+    if (readPlayfulMode()) return "enthusiastic";
     return readFeedbackIntensity();
 }
 
