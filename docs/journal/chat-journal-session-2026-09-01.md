@@ -34,7 +34,21 @@
   - i18n: 9 neue `settings.avatar_preset*`-Keys in allen 11 Katalogen, `make sync-i18n`; Testplan DE+EN (PRIO 11).
 - Commit: siehe PR (Closes #2848, Refs #2847).
 
+## 4. Stufe B: Lernfunke-Maskottchen im Spielmodus (#2849)
+- Original prompt: "Weiter mit der nächsten Stufe"
+- Optimized prompt: "Baue das Spielmodus-Maskottchen (Stil: Funke/Flamme, die dokumentierte Empfehlung): Token-SVG-Figur mit vier Posen am Celebration-Bus, Sprechblase mit Lob-Phrase beim Lektionsabschluss, klein in der Progress-Row und größer auf der Zusammenfassung, nur bei aktivem Spielmodus."
+- Ziel: Der Spielmodus bekommt sein Gesicht - eine Begleitfigur, die auf das Lerngeschehen reagiert.
+- Architektur-Entscheide:
+  - Signal-Quelle ist der Celebration-Bus (`subscribeCelebration`): alle 15 Renderer emittieren `answer_correct/answer_wrong` bereits über `AnswerCelebration`, kein Renderer wird angefasst; Prüfungsmodus emittiert nichts (korrekt, kein Sofort-Feedback).
+  - Kein Doppel-Lob: `AnswerCelebration` zeigt die Antwort-Phrase schon, und `nextCorrectAnswerIndex()` ist read-and-increment - das Maskottchen reagiert auf Antworten nur mit Posen; die Sprechblase spricht genau einmal, beim `lesson_complete` (Kategorie aus dem vorhandenen Praise-Katalog, 8 Sprachen mit EN-Fallback).
+  - Ein Mount-Punkt in der Sticky-Progress-Row (außerhalb des `LessonModeProvider`, daher `usePlayfulMode()` direkt), `large` auf der Zusammenfassung; Milestone-Overlays (z-200, oben mittig) bleiben unberührt, das Maskottchen hängt am selben Bus statt an der Single-Listener-Queue.
+  - Inline-Token-SVG (var(--method-contextual)/--fg-primary/--star/--bg-primary) - anders als die Stufe-A-Presets rendert die Figur inline, `var()` löst auf, die #2847-Leitplanke gilt.
+  - Keyframes nach Konvention in neuem `styles/legacy/43-mascot.css` (global, `motion-safe:`-Konsum, 39-motion-catchall drosselt reduced motion); Posen wechseln auch ohne Motion (statische Mimik).
+- Ergebnis: `components/lesson/mascot/` (Figur mit 4 Posen, `useMascotState` mit Decay + reactionKey für Animations-Restart, `LessonMascot` mit Sprechblase), Wiring in `Lesson.tsx`, 1 i18n-Key (`lesson.mascot_label`) in 11 Katalogen, Testplan DE+EN (Unterabschnitt der Spielmodus-Sektion), alle 4 Posen in echtem Chromium gerendert und geprüft (Vorschau an den Nutzer).
+- Commit: siehe PR (Closes #2849, Refs #2847).
+
 ## Fragen und Annahmen
+- Stil-Entscheid Stufe B: Der Nutzer gab "weiter mit der nächsten Stufe" ohne explizite Stil-Wahl; umgesetzt wurde die in #2849 dokumentierte Empfehlung Funke/Flamme. Die Figur ist als austauschbare SVG-Komponente (`LernfunkeFigure`) gekapselt - ein Stilwechsel (Roboter/Tier) ersetzt eine Datei, Posen-API und Hook bleiben.
 - Konservative Annahme: Der Intensitäts-Floor überschreibt auch eine bewusst gewählte "dezent"-Einstellung, solange der Spielmodus an ist - der Modus ist Opt-in und seine Beschreibung benennt genau das; reduced-motion bleibt als Barrierefreiheits-Override unangetastet.
 - Konservative Annahme: Der Sound bleibt vom Spielmodus unberührt (weiter eigenes Opt-in, Default aus) - ein Modus-Toggle, der ungefragt Ton einschaltet, wäre invasiv.
 - Evidenzbasiert entschieden: localStorage-Pref statt `IStorageService`/UserSettings (etablierte Konvention für Lern-Prefs: `lessonModePref`, `feedbackPref`, `gamificationPref`); Banner-Gestaltung nach dem `TestModeBanner`-Muster; Hinweis nur auf dem ersten Schritt, damit er nicht durch die Lektion nagt.

@@ -17,11 +17,12 @@
 # schieben, ohne dass sich Code aendert. Das Gate druckt die aufgeloeste
 # Version mit, damit eine lokal/CI-Abweichung zuordenbar ist. GEPRUEFT.
 #
-# Orakel-Pin (#2138, entschieden 2026-07-31): radon ist GEPINNT
-# (RADON_PIN in scripts/check-complexity.sh); der Gate-Modus verweigert eine
-# fremde radon-Version, statt mit ihr zu messen. Grund: ein driftendes Orakel
-# ist in der stillen Richtung nach unten gefaehrlich - die Latte sinkt, ohne
-# dass es jemand sieht. Die aus dem Bau abgeleiteten Orakel (Tailwind-
-# Classname-Gates) bleiben bewusst UNgepinnt: dort ist das Bauergebnis selbst
-# der Pruefgegenstand, ein Pin hielte die falsche Sache fest. Entscheidung
-# nicht erneut aufwerfen; Aenderung nur mit neuem Beschluss am Issue.
+# Oracle pin (#2138, decided 2026-07-31): the Python half of this verdict
+# is produced by the pinned radon (RADON_PIN in scripts/check-complexity.sh);
+# the gate refuses a foreign radon version instead of measuring with it,
+# because a drifting oracle lowers the bar silently in the downward
+# direction. The build-derived oracles (Tailwind classname gates) stay
+# deliberately unpinned - there the build output is itself the test
+# subject, and a pin would freeze the wrong thing.
+
+frontend/src/components/exercises/renderers/audio-choice/AudioChoiceExercise.tsx 26

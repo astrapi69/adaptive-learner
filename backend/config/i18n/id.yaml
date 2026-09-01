@@ -1747,6 +1747,7 @@ repo:
     description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
     enable_git: "Aktifkan persistensi git"
 lesson:
+  mascot_label: "Teman belajarmu"
   playful_hint_title: "Coba mode permainan"
   playful_hint_body: "Pelajaran merayakan setiap jawaban benar dengan pujian dan konfeti. Anda dapat mengubahnya kapan saja di Pengaturan."
   playful_hint_activate: "Aktifkan"
