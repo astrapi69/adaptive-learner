@@ -2178,6 +2178,9 @@
         "solution_label": "Solução",
         "submit": "Verificar respostas"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "Sua gravação anterior foi removida para economizar espaço de armazenamento. Você pode gravar novamente quando quiser."
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",

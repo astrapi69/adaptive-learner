@@ -2009,6 +2009,11 @@ lesson:
       retry: "फिर से कोशिश करें"
       solution_label: "समाधान"
       submit: "उत्तर जांचें"
+    al_speak_and_record:
+      # #2841 - the only key so far; show/saving/done/record_again/empty
+      # stay TSX-only fallbacks until the whole exercise type gets its
+      # i18n block (a separate, larger task, out of scope here).
+      recording_evicted: "स्टोरेज स्थान बचाने के लिए तुम्हारी पिछली रिकॉर्डिंग हटा दी गई है। तुम कभी भी दोबारा रिकॉर्ड कर सकते हो।"
     instruction:
       matching:
         receptive: जोड़े मिलाएँ (पहचान)

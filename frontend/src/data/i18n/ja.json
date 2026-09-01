@@ -2178,6 +2178,9 @@
         "solution_label": "解答",
         "submit": "答えを確認"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "ストレージ容量を節約するため、以前の録音は削除されました。いつでも録り直せます。"
+      },
       "instruction": {
         "matching": {
           "receptive": "ペアを結ぶ（認識）",

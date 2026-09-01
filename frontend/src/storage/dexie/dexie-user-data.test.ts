@@ -83,7 +83,7 @@ describe("syncUserDataAtBoot (#791)", () => {
         expect(await getDb().userData.get(CONTRIB_KEY)).toBeUndefined();
     });
 
-    it("covers the contributions, contributor-name, custom-paths, dismissed-sets, set-status, lesson-order and mentor-notes keys", () => {
+    it("covers the contributions, contributor-name, custom-paths, dismissed-sets, set-status, lesson-order, mentor-notes and speech-recording-evicted keys", () => {
         expect(MANAGED_USER_DATA_KEYS).toEqual([
             "adaptive-learner.contributions",
             "adaptive-learner.contributor-name",
@@ -93,6 +93,8 @@ describe("syncUserDataAtBoot (#791)", () => {
             "adaptive-learner.lesson-order",
             // #2768 — per-step mentor notes (lib/lesson/mentor-notes-store).
             "adaptive-learner.mentor-notes",
+            // #2841 — evicted speech-recording ids (lib/voice/speech-recording-evicted-store).
+            "adaptive-learner.speech-recording-evicted",
         ]);
     });
 });

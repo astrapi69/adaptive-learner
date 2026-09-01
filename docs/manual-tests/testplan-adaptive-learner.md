@@ -678,6 +678,16 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Mikrofon-Zugriff verweigert -> freundliche Fehlermeldung, kein
       Absturz. Kein Mikrofon vorhanden -> Aufnahme-Button entsprechend
       deaktiviert/verborgen, kein Absturz.
+- [ ] **Speicherdeckel + Verdrängung (#2841):** Aufnahmen werden ab einem
+      Gesamtvolumen automatisch verdrängt (älteste zuerst) - im normalen
+      Gebrauch praktisch nicht erreichbar (~170 max-lange Aufnahmen nötig),
+      daher hier nur der Regressionscheck: normaler Aufnahme-Ablauf
+      (aufnehmen -> Wiedergabe -> erneut aufnehmen) funktioniert weiterhin
+      unverändert. Die Verdrängungslogik selbst ist durch automatisierte
+      Tests abgedeckt (`speech-recordings-dexie.test.ts`), nicht manuell
+      geprüft. Falls doch einmal die Meldung "Deine vorherige Aufnahme
+      wurde entfernt…" erscheint: kein Absturz, "Erneut aufnehmen"
+      funktioniert normal und die Meldung verschwindet danach.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
 

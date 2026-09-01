@@ -43,11 +43,13 @@ vi.mock("../../../voice/RecordButton", () => ({
 
 const getMock = vi.fn();
 const saveMock = vi.fn();
+const wasEvictedMock = vi.fn();
 vi.mock("../../../../storage", () => ({
     getStorage: () => ({
         speechRecordings: {
             get: (...args: unknown[]) => getMock(...args),
             save: (...args: unknown[]) => saveMock(...args),
+            wasEvicted: (...args: unknown[]) => wasEvictedMock(...args),
         },
     }),
 }));
@@ -74,7 +76,9 @@ beforeEach(() => {
     setUserId("user-1");
     getMock.mockReset();
     saveMock.mockReset();
+    wasEvictedMock.mockReset();
     getMock.mockResolvedValue(null);
+    wasEvictedMock.mockResolvedValue(false);
     saveMock.mockResolvedValue({
         id: "row-1",
         user_id: "user-1",
@@ -166,6 +170,35 @@ describe("SpeakAndRecordExercise: recording", () => {
         });
         expect(screen.getByTestId("speak-and-record-submit")).not.toBeDisabled();
         expect(screen.getByTestId("speak-and-record-playback")).toBeInTheDocument();
+    });
+
+    // #2841 — a recording removed for storage-cap reasons explains
+    // itself instead of looking identical to "never recorded".
+    it("shows the eviction message when no row exists but it was evicted", async () => {
+        wasEvictedMock.mockResolvedValue(true);
+        render(<SpeakAndRecordExercise exercise={EXERCISE} setId="set-1" lessonId="lesson-1" onComplete={vi.fn()} />);
+        await waitFor(() =>
+            expect(screen.getByTestId("speak-and-record-evicted")).toBeInTheDocument(),
+        );
+        expect(screen.queryByTestId("speak-and-record-playback")).not.toBeInTheDocument();
+    });
+
+    it("does not show the eviction message for a fresh, never-recorded exercise", async () => {
+        render(<SpeakAndRecordExercise exercise={EXERCISE} setId="set-1" lessonId="lesson-1" onComplete={vi.fn()} />);
+        await waitFor(() => expect(getMock).toHaveBeenCalled());
+        expect(screen.queryByTestId("speak-and-record-evicted")).not.toBeInTheDocument();
+    });
+
+    it("clears the eviction message once the learner records again", async () => {
+        wasEvictedMock.mockResolvedValue(true);
+        render(<SpeakAndRecordExercise exercise={EXERCISE} setId="set-1" lessonId="lesson-1" onComplete={vi.fn()} />);
+        await waitFor(() =>
+            expect(screen.getByTestId("speak-and-record-evicted")).toBeInTheDocument(),
+        );
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("record-button-stub"));
+        });
+        expect(screen.queryByTestId("speak-and-record-evicted")).not.toBeInTheDocument();
     });
 
     it("loads a previously-saved clip on mount", async () => {

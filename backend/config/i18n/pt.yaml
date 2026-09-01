@@ -2013,6 +2013,11 @@ lesson:
       retry: "Tentar novamente"
       solution_label: "Solução"
       submit: "Verificar respostas"
+    al_speak_and_record:
+      # #2841 - the only key so far; show/saving/done/record_again/empty
+      # stay TSX-only fallbacks until the whole exercise type gets its
+      # i18n block (a separate, larger task, out of scope here).
+      recording_evicted: "Sua gravação anterior foi removida para economizar espaço de armazenamento. Você pode gravar novamente quando quiser."
     instruction:
       matching:
         receptive: Una os pares (Reconhecer)

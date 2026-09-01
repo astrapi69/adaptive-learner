@@ -2178,6 +2178,9 @@
         "solution_label": "Çözüm",
         "submit": "Cevapları kontrol et"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "Depolama alanından tasarruf etmek için önceki kaydın kaldırıldı. İstediğin zaman tekrar kaydedebilirsin."
+      },
       "instruction": {
         "matching": {
           "receptive": "Çiftleri eşleştir (Tanıma)",

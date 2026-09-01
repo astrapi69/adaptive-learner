@@ -634,6 +634,16 @@ preview delivery). In the regular build the mode does not exist.
       type). Microphone access denied yields a friendly error, no crash. No
       microphone present disables/hides the record button accordingly, no
       crash.
+- [ ] **Storage cap + eviction (#2841):** recordings are auto-evicted
+      oldest-first once total storage crosses a cap - practically
+      unreachable in normal use (~170 max-length recordings needed), so
+      only the regression check applies here: the normal record flow
+      (record -> playback -> re-record) keeps working unchanged. The
+      eviction logic itself is covered by automated tests
+      (`speech-recordings-dexie.test.ts`), not manually verified. If the
+      "Your previous recording was removed…" message ever appears: no
+      crash, "Record again" works normally and the message clears
+      afterwards.
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
 

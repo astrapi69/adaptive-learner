@@ -657,6 +657,15 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(32).stores({
             speechRecordings: "id, user_id, set_id, lesson_filename",
         });
+
+        // #2841 — additive index on the existing speechRecordings store
+        // (mirrors the v27 pattern: re-declare the full current index
+        // list, Dexie diffs it itself). recorded_at is needed for the
+        // oldest-first storage-cap eviction query; no .upgrade() callback
+        // needed, existing rows already carry the field.
+        this.version(33).stores({
+            speechRecordings: "id, user_id, set_id, lesson_filename, recorded_at",
+        });
     }
 }
 

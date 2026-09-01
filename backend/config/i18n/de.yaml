@@ -2018,6 +2018,11 @@ lesson:
       retry: "Nochmal versuchen"
       solution_label: "Lösung"
       submit: "Antworten prüfen"
+    al_speak_and_record:
+      # #2841 - the only key so far; show/saving/done/record_again/empty
+      # stay TSX-only fallbacks until the whole exercise type gets its
+      # i18n block (a separate, larger task, out of scope here).
+      recording_evicted: "Deine vorherige Aufnahme wurde entfernt, um Speicherplatz zu sparen. Du kannst jederzeit neu aufnehmen."
     instruction:
       matching:
         receptive: Paare verbinden (Erkennen)

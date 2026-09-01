@@ -93,6 +93,7 @@ import {
   deleteSpeechRecordingDexie,
   getSpeechRecordingDexie,
   saveSpeechRecordingDexie,
+  wasEvictedDexie,
 } from "./lessons/speech-recordings-dexie";
 import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
 import {
@@ -256,6 +257,8 @@ export const dexieStorage: IStorageService = {
     save: (userId, body) => saveSpeechRecordingDexie(userId, body),
     delete: (userId, source, setId, lessonFilename, exerciseId) =>
       deleteSpeechRecordingDexie(userId, source, setId, lessonFilename, exerciseId),
+    wasEvicted: (userId, source, setId, lessonFilename, exerciseId) =>
+      wasEvictedDexie(userId, source, setId, lessonFilename, exerciseId),
   },
 
   // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------

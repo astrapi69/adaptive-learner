@@ -2013,6 +2013,11 @@ lesson:
       retry: "もう一度"
       solution_label: "解答"
       submit: "答えを確認"
+    al_speak_and_record:
+      # #2841 - the only key so far; show/saving/done/record_again/empty
+      # stay TSX-only fallbacks until the whole exercise type gets its
+      # i18n block (a separate, larger task, out of scope here).
+      recording_evicted: "ストレージ容量を節約するため、以前の録音は削除されました。いつでも録り直せます。"
     instruction:
       matching:
         receptive: ペアを結ぶ（認識）

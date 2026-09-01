@@ -78,6 +78,10 @@ function SpeakAndRecordExercise(
     const [clipUrl, setClipUrl] = useState<string | null>(null);
     const [hasClip, setHasClip] = useState(reviewed?.kind === "al_speak_and_record");
     const [saving, setSaving] = useState(false);
+    // #2841 - true when no row exists AND it was removed for storage-cap
+    // reasons (not simply "never recorded"), so the empty state explains
+    // itself instead of looking like the recording never happened.
+    const [wasEvicted, setWasEvicted] = useState(false);
 
     const userId = readLearnerState().userId;
 
@@ -86,12 +90,24 @@ function SpeakAndRecordExercise(
     useEffect(() => {
         let cancelled = false;
         if (!userId) return;
-        getStorage()
-            .speechRecordings.get(userId, source, setId, lessonId, exercise.id)
+        const storage = getStorage();
+        storage.speechRecordings
+            .get(userId, source, setId, lessonId, exercise.id)
             .then((row) => {
-                if (cancelled || !row) return;
-                setClipUrl(`data:${row.mime_type};base64,${row.audio_base64}`);
-                setHasClip(true);
+                if (cancelled) return;
+                if (row) {
+                    setClipUrl(`data:${row.mime_type};base64,${row.audio_base64}`);
+                    setHasClip(true);
+                    return;
+                }
+                storage.speechRecordings
+                    .wasEvicted(userId, source, setId, lessonId, exercise.id)
+                    .then((evicted) => {
+                        if (!cancelled) setWasEvicted(evicted);
+                    })
+                    .catch(() => {
+                        /* not evicted, or evicted-check unavailable - stay silent */
+                    });
             })
             .catch(() => {
                 /* no prior recording - the record button starts empty */
@@ -141,6 +157,7 @@ function SpeakAndRecordExercise(
         const url = URL.createObjectURL(clip.blob);
         setClipUrl(url);
         setHasClip(true);
+        setWasEvicted(false);
         if (!userId) return;
         setSaving(true);
         try {
@@ -207,6 +224,18 @@ function SpeakAndRecordExercise(
                     </span>
                 )}
             </div>
+
+            {wasEvicted && !hasClip && (
+                <p
+                    className="m-0 text-[0.85rem] text-fg-muted"
+                    data-testid="speak-and-record-evicted"
+                >
+                    {t(
+                        "lesson.exercise.al_speak_and_record.recording_evicted",
+                        "Your previous recording was removed to save storage space. Record again anytime.",
+                    )}
+                </p>
+            )}
 
             {clipUrl && (
                 <audio

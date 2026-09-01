@@ -2178,6 +2178,9 @@
         "solution_label": "Solution",
         "submit": "Vérifier les réponses"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "Ton enregistrement précédent a été supprimé pour économiser de l'espace de stockage. Tu peux réenregistrer à tout moment."
+      },
       "instruction": {
         "matching": {
           "receptive": "Associe les paires (Reconnaître)",
