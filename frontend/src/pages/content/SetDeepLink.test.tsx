@@ -24,6 +24,7 @@ import type { ContentSetEntry } from "../../storage/types";
 const listSetsMock = vi.fn();
 const listLessonsMock = vi.fn();
 const downloadSetMock = vi.fn();
+const getLessonMock = vi.fn();
 
 vi.mock("../../storage", () => ({
   getStorage: () => ({
@@ -31,6 +32,7 @@ vi.mock("../../storage", () => ({
       listSets: listSetsMock,
       listLessons: listLessonsMock,
       downloadSet: downloadSetMock,
+      getLesson: getLessonMock,
     },
   }),
 }));
@@ -89,9 +91,11 @@ beforeEach(() => {
   listSetsMock.mockReset();
   listLessonsMock.mockReset();
   downloadSetMock.mockReset();
+  getLessonMock.mockReset();
   notifyError.mockReset();
   notifyWarning.mockReset();
   listLessonsMock.mockResolvedValue({ lessons: ["01.json", "02.json"] });
+  getLessonMock.mockRejectedValue(new Error("not mocked for this test"));
 });
 
 describe("SetDeepLink (#892)", () => {
@@ -109,6 +113,22 @@ describe("SetDeepLink (#892)", () => {
     await waitFor(() => expect(screen.getByTestId("lesson-page")).toBeInTheDocument());
     expect(downloadSetMock).not.toHaveBeenCalled();
     expect(listLessonsMock).toHaveBeenCalledWith("owner/repo", "fr-a1");
+  });
+
+  // #2835 — the list previously rendered the raw filename.
+  it("shows each lesson's title, falling back to the filename when the fetch fails", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [makeEntry({ id: "fr-a1", cached_version: "1.0.0" })],
+    });
+    getLessonMock.mockImplementation(async (_source: string, _setId: string, filename: string) => {
+      if (filename === "01.json") return { title: "Greetings" };
+      throw new Error("upstream unreachable");
+    });
+    renderAt("fr-a1");
+
+    await screen.findByTestId("set-lesson-list");
+    expect(screen.getByTestId("set-lesson-1")).toHaveTextContent("Greetings");
+    expect(screen.getByTestId("set-lesson-2")).toHaveTextContent("02.json");
   });
 
   it("downloads a not-yet-cached set before opening it", async () => {

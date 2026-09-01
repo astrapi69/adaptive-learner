@@ -104,11 +104,36 @@ export default function SetDeepLink() {
           : Promise.resolve([]),
       ]);
       if (cancelled) return;
+      // #2835 - the list previously showed the raw filename. Fetch each
+      // lesson's title (mirroring SetLessonList.tsx's "Meine Lektionen"
+      // pattern); a per-lesson fetch failure just falls back to the
+      // filename for that one row instead of failing the whole list.
+      const titles = new Map<string, string>(
+        (
+          await Promise.all(
+            listing.lessons.map(async (filename) => {
+              try {
+                const lesson = await storage.contentLoader.getLesson(
+                  entry.source,
+                  entry.id,
+                  filename,
+                );
+                const title = lesson.title?.trim();
+                return title ? ([filename, title] as const) : null;
+              } catch {
+                return null;
+              }
+            }),
+          )
+        ).filter((row): row is readonly [string, string] => row !== null),
+      );
+      if (cancelled) return;
       setLessonList(
         buildSetLessonList({
           setId: entry.id,
           lessons: listing.lessons,
           progress: progressRows,
+          titles,
         }),
       );
     })();
@@ -275,7 +300,7 @@ export default function SetDeepLink() {
                           <span className="flex-none text-[var(--fg-muted)]">
                             {lesson.index}
                           </span>
-                          <span className="truncate">{lesson.filename}</span>
+                          <span className="truncate">{lesson.title}</span>
                           {lesson.isCurrent && (
                             <span
                               className="flex-none rounded-md bg-accent px-2 py-0.5 text-xs text-accent-foreground"
