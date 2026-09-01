@@ -551,6 +551,29 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Umschalten wirkt ohne Reload (Change-Event) und verhält sich in
       beiden Speicher-Modi identisch (localStorage)
 
+#### Lernfunke-Maskottchen (#2849, nur bei aktivem Spielmodus)
+
+- [ ] Spielmodus an, Lektion öffnen: kleine Flammen-Figur neben der
+      Fortschrittsleiste sichtbar (Tooltip/Screenreader: "Dein
+      Lernbegleiter"); Spielmodus aus: keine Figur, Zeile wie bisher
+- [ ] Richtige Antwort: Figur jubelt kurz (Hüpfer, fröhliche Augen)
+      und kehrt zur Ruhepose zurück
+- [ ] Falsche Antwort: Figur muntert auf (Wackeln, überraschter Blick),
+      kein Lob-Text an der Figur (das Lob unter der Aufgabe bleibt wie
+      gehabt)
+- [ ] Meilenstein während der Lektion (Level-up, Streak, Badge): Figur
+      feiert (Sternaugen + Funkeln), Milestone-Overlay erscheint
+      weiterhin ungestört oben mittig
+- [ ] Lektionsabschluss: Figur wird größer, feiert und zeigt EINE
+      lokalisierte Lob-Phrase als Sprechblase; Blase verschwindet von
+      selbst
+- [ ] Reduzierte Bewegung im System: Posen wechseln weiterhin (Mimik),
+      aber ohne Hüpf-/Wackel-Animation
+- [ ] Prüfungsmodus + Spielmodus: keine Reaktionen pro Antwort (kein
+      Sofort-Feedback), Figur bleibt in Ruhepose bis zum Abschluss
+- [ ] Schmaler Viewport (Mobile): Figur verdrängt die Fortschritts-
+      leiste nicht; die Zeile bricht sauber um
+
 ### Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der
       Korrektur-Runde am Ende die Fehler beheben. Der Punktzahl-Balken zeigt

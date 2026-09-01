@@ -515,6 +515,29 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Toggling takes effect without a reload (change event) and behaves
       identically in both storage modes (localStorage)
 
+#### Lernfunke mascot (#2849, only while game mode is on)
+
+- [ ] Game mode on, open a lesson: small flame figure next to the
+      progress bar (tooltip/screen reader: "Your learning companion");
+      game mode off: no figure, row unchanged
+- [ ] Correct answer: the figure cheers briefly (hop, happy eyes) and
+      returns to its resting pose
+- [ ] Wrong answer: the figure encourages (wiggle, surprised look), no
+      praise text at the figure (the praise line under the exercise
+      stays as before)
+- [ ] Milestone during the lesson (level-up, streak, badge): the figure
+      celebrates (star eyes + sparkles); the milestone overlay still
+      appears undisturbed at the top center
+- [ ] Lesson completion: the figure grows, celebrates, and shows ONE
+      localized praise phrase as a speech bubble; the bubble dismisses
+      itself
+- [ ] Reduced motion in the system: poses still change (expression),
+      but without hop/wiggle animation
+- [ ] Exam mode + game mode: no per-answer reactions (no immediate
+      feedback); the figure stays resting until completion
+- [ ] Narrow viewport (mobile): the figure does not crowd out the
+      progress bar; the row wraps cleanly
+
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the
       end-of-lesson correction round. The score bar shows two segments: what

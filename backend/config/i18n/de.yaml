@@ -1741,6 +1741,7 @@ repo:
     description: "Erzeugt automatisch Markdown-Artefakte (README, STATS, CHEATSHEET, ROADMAP) pro Projekt aus deinen Sitzungsdaten. Die optionale Git-Integration committet jede Erzeugung, sodass du den Verlauf mit jedem Git-Client durchsehen kannst."
     enable_git: "Git-Persistenz aktivieren"
 lesson:
+  mascot_label: "Dein Lernbegleiter"
   playful_hint_title: "Spielmodus ausprobieren"
   playful_hint_body: "Lektionen feiern jede richtige Antwort mit Lob und Konfetti. Du kannst das jederzeit in den Einstellungen ändern."
   playful_hint_activate: "Einschalten"
