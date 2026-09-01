@@ -25,6 +25,7 @@ import {
     type ConflictResolution,
 } from "./sync-engine";
 import {_resetDbForTests, getDb} from "../dexie/db";
+import {BACKUP_TABLES} from "../backup/backup-tables";
 
 beforeEach(async () => {
     await _resetDbForTests();
@@ -845,52 +846,26 @@ describe("SyncEngine.sync", () => {
 
 describe("SYNC_TABLES — surface audit", () => {
     /**
-     * Pinned list of every Dexie table that domain code writes
-     * to. If a new table is added to ``db.ts`` but not
-     * ``SYNC_TABLES``, the test below fails and surfaces it as
-     * a missing-from-sync hazard.
+     * #2827 — the previous version of this test kept its own
+     * hand-curated ``EXPECTED_TABLES`` literal, independent of
+     * ``SYNC_TABLES``. Both drifted together and froze at v1.19.0 /
+     * Phase 32B, so the "audit" passed while six real domain tables
+     * (lesson_progress, element_errors, user_missions, set_runs,
+     * api_key_backups, speech_recordings) were missing from LAN
+     * device-sync — a real data-loss hazard the test was supposed to
+     * catch.
      *
-     * Kept in this test file (not imported from db.ts) so the
-     * canonical "is this table synced?" check has a hand-curated
-     * audit list backing it — a code reviewer adding a Dexie
-     * table has to touch BOTH places, which is the point.
+     * The expected set is now DERIVED from ``BACKUP_TABLES``
+     * (storage/backup/backup-tables.ts), the actively-maintained
+     * registry of every domain table that travels in an ``.alb``
+     * backup. Both surfaces exist to carry the same domain data to
+     * another device (LAN pairing vs a file); keeping them in
+     * lock-step means a table added to one and not the other fails
+     * here immediately, instead of silently drifting for releases.
      */
-    const EXPECTED_TABLES = [
-        "users",
-        "user_settings",
-        "learning_projects",
-        "learning_profiles",
-        "curriculums",
-        "learning_topics",
-        "lessons",
-        "learning_sessions",
-        "session_messages",
-        "session_ratings",
-        "session_notes",
-        "progress_commits",
-        "method_switches",
-        "step_evaluations",
-        "imported_conversations",
-        "imported_messages",
-        // v1.9.0 / Phase 22A — Subjects + Tags taxonomy.
-        "subjects",
-        "tags",
-        "project_subjects",
-        "project_tags",
-        // v1.16.0 / Phase 29A — gamification XP singleton.
-        "user_xp",
-        // v1.16.0 / Phase 29B — badge catalog + earned record.
-        "badges",
-        "user_badges",
-        // v1.16.0 / Phase 29C — streak state singleton.
-        "user_streaks",
-        // v1.17.0 / Phase 30B — Anki flashcard suggestions.
-        "anki_card_suggestions",
-        // v1.19.0 / Phase 32B — Study questions.
-        "study_questions",
-    ];
+    const EXPECTED_TABLES = Object.keys(BACKUP_TABLES);
 
-    it("covers every domain Dexie table", () => {
+    it("covers every domain table that BACKUP_TABLES also carries", () => {
         const actual = SYNC_TABLES.map((t) => t.name).sort();
         const expected = [...EXPECTED_TABLES].sort();
         expect(actual).toEqual(expected);
