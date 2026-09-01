@@ -32,6 +32,15 @@
  * effect live (no reload). Fails open — a missing ``visualViewport`` degrades
  * to a no-op.
  *
+ * Per-tap state (#2853): each tap record also carries ``@kbd`` (keyboard
+ * shrink), ``@scale`` and ``focus=`` (the element focused BEFORE the tap)
+ * AT TAP TIME — the head snapshot only shows the state after the run, which
+ * left the 2026-09-01 iPhone reading (``winY=vvTop`` up to 191 while the
+ * head said ``kbd=0``) ambiguous between keyboard-open reveal-scroll and a
+ * zoomed-out drift. The head additionally reports ``vvW``/``innerW``/``docW``
+ * so a layout wider than the viewport (the suspected trigger of Safari's
+ * auto zoom-out to ``scale<1`` despite ``user-scalable=no``) is measurable.
+ *
  * Ghost-bug recorder (#2782): while enabled, every tap record and every
  * significant viewport transition is ALSO appended to the persistent
  * ring-buffer log (``lib/diagnostics/vv-log``), exportable from the same
@@ -78,6 +87,9 @@ interface TapInfo {
   deltaY: number;
   atWinScrollY: number;
   atVvOffsetTop: number;
+  atKbd: number;
+  atScale: number;
+  focus: string;
 }
 
 interface Snapshot {
@@ -87,11 +99,15 @@ interface Snapshot {
   vvHeight: number;
   innerHeight: number;
   keyboardShrink: number;
+  vvWidth: number;
+  innerWidth: number;
+  docWidth: number;
 }
 
 function readSnapshot(): Snapshot {
   const vv = window.visualViewport;
   const innerHeight = window.innerHeight;
+  const innerWidth = window.innerWidth;
   const vvHeight = vv ? vv.height : innerHeight;
   return {
     winScrollY: Math.round(window.scrollY),
@@ -100,7 +116,30 @@ function readSnapshot(): Snapshot {
     vvHeight: Math.round(vvHeight),
     innerHeight: Math.round(innerHeight),
     keyboardShrink: Math.round(innerHeight - vvHeight),
+    vvWidth: Math.round(vv ? vv.width : innerWidth),
+    innerWidth: Math.round(innerWidth),
+    docWidth:
+      typeof document === "undefined"
+        ? 0
+        : Math.round(document.documentElement.scrollWidth),
   };
+}
+
+/**
+ * The element holding focus RIGHT NOW, as ``tag[testid]`` (``-`` when
+ * nothing is focused). Read at ``pointerdown`` time this is the element
+ * focused BEFORE the tap — i.e. whether a text field (and thus the
+ * keyboard / Safari's focus-reveal scroll) was still active when the
+ * tap landed (#2853).
+ */
+function describeFocused(): string {
+  if (typeof document === "undefined") return "-";
+  const el = document.activeElement;
+  if (!el || el === document.body || el === document.documentElement) {
+    return "-";
+  }
+  const testid = el.getAttribute("data-testid") ?? "";
+  return `${el.tagName.toLowerCase()}[${testid || "-"}]`;
 }
 
 function activeFix(): string {
@@ -124,14 +163,19 @@ function isSignificantTransition(prev: Snapshot, next: Snapshot): boolean {
 }
 
 function tapLine(t: TapInfo): string {
-  return `y=${t.y} ${t.tag}[${t.testid}] top=${t.rectTop} ΔY=${t.deltaY} @winY=${t.atWinScrollY} @vvTop=${t.atVvOffsetTop}`;
+  return (
+    `y=${t.y} ${t.tag}[${t.testid}] top=${t.rectTop} ΔY=${t.deltaY} ` +
+    `@winY=${t.atWinScrollY} @vvTop=${t.atVvOffsetTop} @kbd=${t.atKbd} ` +
+    `@scale=${t.atScale} focus=${t.focus}`
+  );
 }
 
 /** The plain-text report the Copy button (and the selectable block) share. */
 function buildReport(snap: Snapshot, taps: TapInfo[]): string {
   const head =
     `[vvdiag] fix=${activeFix()} winY=${snap.winScrollY} vvTop=${snap.vvOffsetTop} ` +
-    `scale=${snap.vvScale} kbd=${snap.keyboardShrink} vvH=${snap.vvHeight} innerH=${snap.innerHeight}`;
+    `scale=${snap.vvScale} kbd=${snap.keyboardShrink} vvH=${snap.vvHeight} innerH=${snap.innerHeight} ` +
+    `vvW=${snap.vvWidth} innerW=${snap.innerWidth} docW=${snap.docWidth}`;
   const body = taps.length
     ? taps.map((t, i) => `${i + 1}. ${tapLine(t)}`).join("\n")
     : "(no taps yet)";
@@ -199,6 +243,9 @@ export default function ViewportDiagnostic() {
         deltaY: rectTop - Math.round(e.clientY),
         atWinScrollY: Math.round(window.scrollY),
         atVvOffsetTop: vv ? Math.round(vv.offsetTop) : 0,
+        atKbd: Math.round(window.innerHeight - (vv ? vv.height : window.innerHeight)),
+        atScale: vv ? Math.round(vv.scale * 1000) / 1000 : 1,
+        focus: describeFocused(),
       };
       // eslint-disable-next-line no-console
       console.log("[vvdiag]", JSON.stringify(tap));
