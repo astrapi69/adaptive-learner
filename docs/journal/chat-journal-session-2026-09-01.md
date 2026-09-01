@@ -15,6 +15,25 @@
   - TDD: Pref-, Floor-, Config-, Toggle- und Banner-Tests zuerst RED, dann GREEN; Testplan DE+EN um die Spielmodus-Sektion ergänzt (TESTPLAN-PFLICHT).
 - Commit: siehe PR (Closes #2844).
 
+## 2. Brainstorming Figuren/Avatare + Folge-Issues (#2847-#2850)
+- Original prompt: "können wir auf irgendwelche figuren oder avatars oder beides, brainstorming" -> "Beides, gestuft" + "erst 1, 2 und 3 als folge issue"
+- Ziel: Ausbaupfad für Figuren im Spielmodus festhalten, bevor implementiert wird.
+- Ergebnis: Umbrella #2847 (Leitplanken: Token-SVGs, keine neuen Dependencies, reduced-motion, beide Speicher-Modi, Maskottchen nur hinter dem playful-Flag) mit Sub-Issues #2848 (Stufe A: Preset-Avatar-Galerie), #2849 (Stufe B: Maskottchen am Celebration-Bus, Stil-Entscheid offen, Funke empfohlen), #2850 (Stufe C: Progression über Level/Badges/XP-Spend).
+
+## 3. Stufe A: Preset-Avatar-Galerie (#2848)
+- Original prompt: "ja dann kannst du mit stufe a weitermachen"
+- Optimized prompt: "Ergänze in Settings > Allgemein > Profil eine Galerie aus 8 Preset-Figuren neben dem Foto-Upload; die Auswahl persistiert über den bestehenden UserSettings.avatar-Pfad und überlebt den Backup-Round-trip."
+- Ziel: Niedrigschwellige, DSGVO-freundliche Avatar-Wahl ohne Foto.
+- Architektur-Entscheid (Format): SVG-**data-URLs mit eingebackenen Markenpalette-Farben** (METHOD_COLORS + 2 Erweiterungen) statt Preset-Id + Renderer. Grund: beide Render-Stellen (`NavAvatar`, `AvatarUpload`-Vorschau) zeigen `<img src>`, wo CSS-`var()` nicht auflöst; eine Id-Auflösung müsste jeden Konsumenten anfassen (#2477-Klasse). Avatare sind Nutzer-DATEN, nicht Chrome - dieselbe Token-Ausnahme wie User-Tag-Farben/Charts; Präzedenzfall `placeholder-svg.ts`. Die Token-SVG-Leitplanke aus #2847 bleibt für das inline gerenderte Maskottchen (Stufe B) bindend.
+- Ergebnis:
+  - `lib/avatar/preset-avatars.ts`: 8 deterministische Figuren (Funke, Roboter, Stern, Katze, Eule, Geist, Blitz, Herz) als `data:image/svg+xml;utf8,...`; unbekannte Id wirft; Größe weit unter dem Avatar-Byte-Cap.
+  - `shared/media/PresetAvatarGallery.tsx`: props-driven (value/onSelect/Labels/disabled), `aria-pressed`-Markierung per data-URL-Vergleich, Barrel-Export.
+  - Wiring in `GeneralPanel` (Profil-Sektion, unter dem Upload) über den bestehenden `handleAvatarChange`-Pfad - Persistenz, `notifyProfileUpdated` und beide Speicher-Modi kommen gratis mit.
+  - Backup-Pin in `albContainer.test.ts`: eine utf8-SVG-data-URL wird NICHT externalisiert (Base64-Regex greift nicht), bleibt inline in `data.json` und überlebt den Round-trip unverändert.
+  - Visuelle Eigenkontrolle: alle 8 Figuren in echtem Chromium gerendert und geprüft, Vorschau an den Nutzer geschickt.
+  - i18n: 9 neue `settings.avatar_preset*`-Keys in allen 11 Katalogen, `make sync-i18n`; Testplan DE+EN (PRIO 11).
+- Commit: siehe PR (Closes #2848, Refs #2847).
+
 ## Fragen und Annahmen
 - Konservative Annahme: Der Intensitäts-Floor überschreibt auch eine bewusst gewählte "dezent"-Einstellung, solange der Spielmodus an ist - der Modus ist Opt-in und seine Beschreibung benennt genau das; reduced-motion bleibt als Barrierefreiheits-Override unangetastet.
 - Konservative Annahme: Der Sound bleibt vom Spielmodus unberührt (weiter eigenes Opt-in, Default aus) - ein Modus-Toggle, der ungefragt Ton einschaltet, wäre invasiv.
