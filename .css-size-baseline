@@ -351,4 +351,11 @@
 # sind token-backed Utilities an der Komponente. Keine Farben, kein
 # Selektor - reine Transform-Keyframes. Auf das Minimum kompaktiert
 # (Identitaets-Frames weggelassen, Blasen-Animation gestrichen).
-7479
+# 2026-09-01: 7479 -> 7486 (#2850 Avatar-Rahmen): +7 Zeilen in
+# 00-head.css - drei neue theme-agnostische Tokens --frame-bronze/
+# -silver/-gold (Identitaetsfarben der Progressions-Ringe, wie
+# --method-*) plus Kommentar. Exakt der Ausnahmefall der Regel oben:
+# "neue Farben als Token nach ... global.css :root". Die Ring-Styles
+# selbst sind inline box-shadows aus var()-Tokens an der Komponente,
+# kein weiteres CSS.
+7486

@@ -2226,6 +2226,29 @@ Ort: Einstellungen > Allgemein > Profil, unter dem Foto-Upload.
       Import → die Figur ist wieder gesetzt
 - [ ] Beide Speicher-Modi (Server + Browser) verhalten sich identisch
 
+#### Avatar-Rahmen (#2850)
+
+Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
+
+- [ ] Zeile "Avatar-Rahmen" mit 7 Optionen (Ohne, Bronze, Silber, Gold,
+      Flamme, Stern, Akzent); gesperrte zeigen ein Schloss und die
+      Bedingung ("Ab Level 5", "Benötigt das 3-Tage-Serien-Abzeichen")
+- [ ] Level-Freischaltung: mit ausreichendem Level ist der Rahmen wählbar;
+      Auswahl legt den Ring sofort um die Vorschau UND den Avatar in der
+      Kopfleiste (ohne Reload)
+- [ ] XP-Kauf (Stern 150 / Akzent 300): Kauf-Knopf zeigt den Preis, erster
+      Klick "Bestätigen", zweiter Klick zieht die XP ab (Kopfleisten-XP
+      aktualisiert live), der Rahmen ist danach dauerhaft freigeschaltet
+      und gewählt
+- [ ] Zu wenig XP: der Kauf-Knopf ist deaktiviert, kein Abzug möglich
+- [ ] Badge-Rahmen (Flamme): erst nach verdientem 3-Tage-Streak-Abzeichen
+      wählbar
+- [ ] Rahmen wirkt auf Foto-Avatare UND Preset-Figuren gleichermaßen;
+      "Ohne" entfernt den Ring
+- [ ] Backup-Round-trip: Rahmen wählen + einen kaufen, Export (`.alb`),
+      Daten löschen, Import → Auswahl und Kauf sind wieder da
+- [ ] Beide Speicher-Modi verhalten sich identisch (XP-Abzug inklusive)
+
 ---
 
 # TEIL B: AUTOMATISIERTE TESTS (Referenz)

@@ -56,6 +56,11 @@ export const MANAGED_USER_DATA_KEYS = [
     // (lib/voice/speech-recording-evicted-store). Survives a Dexie
     // restore + rides the .alb backup's localStorage snapshot.
     "adaptive-learner.speech-recording-evicted",
+    // #2850 — selected + XP-purchased avatar frames per user
+    // (lib/avatar/avatar-frame-store). Decoration state without a
+    // backend column; mode-agnostic, survives a Dexie restore + rides
+    // the .alb backup's localStorage snapshot.
+    "adaptive-learner.avatar.frames",
 ] as const;
 
 /**

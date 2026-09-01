@@ -30,6 +30,17 @@ describe("captureLocalStorageSnapshot", () => {
         expect(snap["adaptive-learner.voice.tts_enabled"]).toBe("true");
     });
 
+    it("carries the avatar-frame state (#2850 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.avatar.frames",
+            '{"u1":{"selected":"gold","purchased":["star"]}}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.avatar.frames"]).toBe(
+            '{"u1":{"selected":"gold","purchased":["star"]}}',
+        );
+    });
+
     it("carries the diagnostics + developer configuration (#2785 pin: never drift into the exclusion list)", () => {
         localStorage.setItem("adaptive-learner.developer_mode", "true");
         localStorage.setItem("adaptive-learner.vv_diag", "1");
