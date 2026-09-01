@@ -46,6 +46,7 @@ import LessonMentorNote from "../../components/lesson/mentor/LessonMentorNote";
 import LessonOptionsBar from "../../components/lesson/chrome/LessonOptionsBar";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
 import PlayfulModeHint from "../../components/lesson/chrome/PlayfulModeHint";
+import LessonMascot from "../../components/lesson/mascot/LessonMascot";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
@@ -388,6 +389,11 @@ export default function LessonPage() {
             className="my-0 min-w-[8rem] flex-1"
           />
         </TestModeActivationZone>
+
+        {/* #2849 — the Lernfunke companion, playful mode only. Reacts to
+            the celebration bus (cheer/encourage/celebrate) and speaks one
+            praise phrase on lesson completion; grows on the summary. */}
+        <LessonMascot large={isSummary} />
 
         {/* #1625 — the lesson's mode/display SETTINGS (favorite, mode
             toggle, auto read-aloud) are bundled into one compact,
