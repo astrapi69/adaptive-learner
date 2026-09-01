@@ -51,6 +51,7 @@ data_export:
   group_extra: "Ek veriler"
   group_gamification: "Oyunlaştırma"
   group_config: "Yapılandırma"
+  group_media: "Medya"
   cat_projects: "Öğrenme projeleri (oturumlar, değerlendirmeler, notlar ile)"
   cat_curricula: "Müfredatlar (konular ve dersler ile)"
   cat_progress: "Ders ilerlemesi (hatalar / SRS ile)"
@@ -62,6 +63,7 @@ data_export:
   cat_gamification: "XP, rozetler, seri, görevler"
   cat_settings: "Ayarlar"
   cat_ai_config: "AI anahtar yedeği"
+  cat_speech_recordings: "Ses kayıtları (konuşup kaydetme alıştırmaları)"
 nav:
   group:
     learn: "Öğren"

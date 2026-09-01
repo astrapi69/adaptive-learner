@@ -53,6 +53,7 @@ data_export:
   group_extra: अतिरिक्त डेटा
   group_gamification: गेमिफिकेशन
   group_config: कॉन्फ़िगरेशन
+  group_media: मीडिया
   cat_projects: सीखने की परियोजनाएँ (सत्र, रेटिंग, नोट्स सहित)
   cat_curricula: पाठ्यक्रम (विषयों और पाठों सहित)
   cat_progress: पाठ प्रगति (गलतियों / SRS सहित)
@@ -64,6 +65,7 @@ data_export:
   cat_gamification: XP, बैज, स्ट्रीक, मिशन
   cat_settings: सेटिंग्स
   cat_ai_config: AI कुंजी बैकअप
+  cat_speech_recordings: आवाज़ रिकॉर्डिंग (बोलकर रिकॉर्ड करने वाले अभ्यास)
 nav:
   group:
     learn: "सीखें"

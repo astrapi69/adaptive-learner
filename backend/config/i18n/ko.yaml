@@ -51,6 +51,7 @@ data_export:
   group_extra: "추가 데이터"
   group_gamification: "게이미피케이션"
   group_config: "설정"
+  group_media: "미디어"
   cat_projects: "학습 프로젝트 (세션, 평가, 메모 포함)"
   cat_curricula: "커리큘럼 (주제 및 레슨 포함)"
   cat_progress: "학습 진행도 (오답 / SRS 포함)"
@@ -62,6 +63,7 @@ data_export:
   cat_gamification: "XP, 배지, 연속 기록, 미션"
   cat_settings: "설정"
   cat_ai_config: "AI 키 백업"
+  cat_speech_recordings: "음성 녹음 (말하고 녹음하는 연습)"
 nav:
   group:
     learn: "학습"
