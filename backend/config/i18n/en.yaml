@@ -695,6 +695,9 @@ settings:
   nav_position_description: "Where the primary navigation sits on the phone: at the top as a menu button (default) or at the bottom as a thumb-reach tab bar."
   nav_position_top: "Top (menu button)"
   nav_position_bottom: "Bottom (tab bar)"
+  playful_mode_title: "Game Mode"
+  playful_mode: "Playful lessons"
+  playful_mode_description: "Turn lessons into a game: praise on every correct answer, confetti, and milestone celebrations. Works with every lesson mode; scoring and progress stay the same. Reduced-motion in your system still keeps feedback subtle."
   feedback_intensity: "Feedback Intensity"
   feedback_intensity_description: "How loudly the app celebrates your progress."
   feedback_intensity_subtle: "Subtle"
@@ -1733,6 +1736,11 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  playful_hint_title: "Try game mode"
+  playful_hint_body: "Lessons celebrate every correct answer with praise and confetti. You can change this any time in Settings."
+  playful_hint_activate: "Turn on"
+  playful_hint_dismiss: "Don't show again"
+  playful_hint_activated: "Game mode is on. Have fun!"
   test_mode:
     title: "Test mode"
     description: "Answers are not graded and no progress is saved."

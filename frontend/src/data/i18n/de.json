@@ -736,6 +736,9 @@
     "nav_position_description": "Wo die Hauptnavigation auf dem Handy liegt: oben als Menü-Knopf (Standard) oder unten als Tab-Leiste in Daumenreichweite.",
     "nav_position_top": "Oben (Menü-Knopf)",
     "nav_position_bottom": "Unten (Tab-Leiste)",
+    "playful_mode_title": "Spielmodus",
+    "playful_mode": "Spielerische Lektionen",
+    "playful_mode_description": "Macht Lektionen zum Spiel: Lob bei jeder richtigen Antwort, Konfetti und Meilenstein-Feiern. Funktioniert mit jedem Lektionsmodus; Bewertung und Fortschritt bleiben gleich. Reduzierte Bewegung in deinem System hält das Feedback weiterhin dezent.",
     "feedback_intensity": "Feedback-Intensität",
     "feedback_intensity_description": "Wie ausgiebig die App deinen Fortschritt feiert.",
     "feedback_intensity_subtle": "Dezent",
@@ -1854,6 +1857,11 @@
     }
   },
   "lesson": {
+    "playful_hint_title": "Spielmodus ausprobieren",
+    "playful_hint_body": "Lektionen feiern jede richtige Antwort mit Lob und Konfetti. Du kannst das jederzeit in den Einstellungen ändern.",
+    "playful_hint_activate": "Einschalten",
+    "playful_hint_dismiss": "Nicht mehr anzeigen",
+    "playful_hint_activated": "Spielmodus ist an. Viel Spaß!",
     "test_mode": {
       "title": "Testmodus",
       "description": "Antworten werden nicht bewertet, kein Fortschritt wird gespeichert.",

@@ -697,6 +697,9 @@ settings:
   nav_position_description: "फोन पर मुख्य नेविगेशन कहाँ रहे: ऊपर मेनू बटन के रूप में (डिफ़ॉल्ट) या नीचे अंगूठे की पहुँच वाली टैब पट्टी के रूप में।"
   nav_position_top: "ऊपर (मेनू बटन)"
   nav_position_bottom: "नीचे (टैब पट्टी)"
+  playful_mode_title: "गेम मोड"
+  playful_mode: "खेल जैसे पाठ"
+  playful_mode_description: "पाठों को खेल में बदलता है: हर सही उत्तर पर प्रशंसा, कंफ़ेटी और उपलब्धि समारोह। हर पाठ मोड के साथ काम करता है; स्कोर और प्रगति वही रहते हैं। अगर आपके सिस्टम में कम एनिमेशन चालू है, तो फीडबैक फिर भी संयमित रहता है।"
   feedback_intensity: फ़ीडबैक तीव्रता
   feedback_intensity_description: ऐप आपकी प्रगति का कितने ज़ोर से जश्न मनाता है।
   feedback_intensity_subtle: सूक्ष्म
@@ -1718,6 +1721,11 @@ repo:
     description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
     enable_git: git दृढ़ता सक्षम करें
 lesson:
+  playful_hint_title: "गेम मोड आज़माएँ"
+  playful_hint_body: "पाठ हर सही उत्तर को प्रशंसा और कंफ़ेटी के साथ मनाते हैं। आप इसे कभी भी सेटिंग्स में बदल सकते हैं।"
+  playful_hint_activate: "चालू करें"
+  playful_hint_dismiss: "फिर से न दिखाएँ"
+  playful_hint_activated: "गेम मोड चालू है। मज़े करें!"
   test_mode:
     title: "परीक्षण मोड"
     description: "उत्तरों का मूल्यांकन नहीं किया जाता और कोई प्रगति सहेजी नहीं जाती।"

@@ -736,6 +736,9 @@
     "nav_position_description": "スマートフォンでのメインナビゲーションの位置：上部のメニューボタン（デフォルト）か、親指の届く下部のタブバーか。",
     "nav_position_top": "上（メニューボタン）",
     "nav_position_bottom": "下（タブバー）",
+    "playful_mode_title": "ゲームモード",
+    "playful_mode": "遊び心のあるレッスン",
+    "playful_mode_description": "レッスンをゲームのように楽しくします。正解のたびに称賛、紙吹雪、節目のお祝いがあります。どのレッスンモードでも使えます。採点と進捗は変わりません。システムで視覚効果を減らす設定が有効な場合、フィードバックは控えめのままです。",
     "feedback_intensity": "フィードバックの強さ",
     "feedback_intensity_description": "アプリがあなたの進歩をどれだけ盛大に祝うか。",
     "feedback_intensity_subtle": "控えめ",
@@ -1854,6 +1857,11 @@
     }
   },
   "lesson": {
+    "playful_hint_title": "ゲームモードを試す",
+    "playful_hint_body": "正解のたびに称賛と紙吹雪でお祝いします。設定でいつでも変更できます。",
+    "playful_hint_activate": "オンにする",
+    "playful_hint_dismiss": "今後表示しない",
+    "playful_hint_activated": "ゲームモードがオンになりました。楽しんでください!",
     "test_mode": {
       "title": "テストモード",
       "description": "回答は採点されず、進捗は保存されません。",

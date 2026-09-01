@@ -695,6 +695,9 @@ settings:
   nav_position_description: "Onde fica a navegação principal no celular: no topo como botão de menu (padrão) ou embaixo como barra de abas ao alcance do polegar."
   nav_position_top: "Em cima (botão de menu)"
   nav_position_bottom: "Embaixo (barra de abas)"
+  playful_mode_title: "Modo jogo"
+  playful_mode: "Lições lúdicas"
+  playful_mode_description: "Transforma as lições em um jogo: elogios a cada resposta correta, confete e celebrações de marcos. Funciona com todos os modos de lição; a pontuação e o progresso não mudam. Se o seu sistema reduz animações, o feedback continua discreto."
   feedback_intensity: "Intensidade do feedback"
   feedback_intensity_description: "Com quanta efusividade o app celebra o seu progresso."
   feedback_intensity_subtle: "Discreto"
@@ -1722,6 +1725,11 @@ repo:
     description: "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git."
     enable_git: "Ativar persistência git"
 lesson:
+  playful_hint_title: "Experimente o modo jogo"
+  playful_hint_body: "As lições celebram cada resposta correta com elogios e confete. Você pode mudar isso a qualquer momento nas configurações."
+  playful_hint_activate: "Ativar"
+  playful_hint_dismiss: "Não mostrar novamente"
+  playful_hint_activated: "O modo jogo está ativado. Divirta-se!"
   test_mode:
     title: "Modo de teste"
     description: "As respostas não são avaliadas e nenhum progresso é salvo."

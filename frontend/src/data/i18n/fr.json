@@ -736,6 +736,9 @@
     "nav_position_description": "Où se trouve la navigation principale sur le téléphone : en haut comme bouton de menu (par défaut) ou en bas comme barre d'onglets à portée de pouce.",
     "nav_position_top": "En haut (bouton de menu)",
     "nav_position_bottom": "En bas (barre d'onglets)",
+    "playful_mode_title": "Mode jeu",
+    "playful_mode": "Leçons ludiques",
+    "playful_mode_description": "Transforme les leçons en jeu : des félicitations à chaque bonne réponse, des confettis et des célébrations d'étapes. Fonctionne avec tous les modes de leçon ; la notation et la progression restent identiques. Si votre système réduit les animations, le retour reste discret.",
     "feedback_intensity": "Intensité du retour",
     "feedback_intensity_description": "À quel point l'application célèbre tes progrès.",
     "feedback_intensity_subtle": "Discret",
@@ -1854,6 +1857,11 @@
     }
   },
   "lesson": {
+    "playful_hint_title": "Essayez le mode jeu",
+    "playful_hint_body": "Les leçons célèbrent chaque bonne réponse avec des félicitations et des confettis. Vous pouvez changer cela à tout moment dans les réglages.",
+    "playful_hint_activate": "Activer",
+    "playful_hint_dismiss": "Ne plus afficher",
+    "playful_hint_activated": "Le mode jeu est activé. Amusez-vous bien !",
     "test_mode": {
       "title": "Mode test",
       "description": "Les réponses ne sont pas évaluées et aucune progression n'est enregistrée.",
