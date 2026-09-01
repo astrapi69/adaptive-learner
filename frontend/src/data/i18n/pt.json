@@ -1868,6 +1868,7 @@
     }
   },
   "lesson": {
+    "mascot_label": "Seu companheiro de aprendizado",
     "playful_hint_title": "Experimente o modo jogo",
     "playful_hint_body": "As lições celebram cada resposta correta com elogios e confete. Você pode mudar isso a qualquer momento nas configurações.",
     "playful_hint_activate": "Ativar",
