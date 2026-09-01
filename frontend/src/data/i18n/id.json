@@ -1868,6 +1868,7 @@
     }
   },
   "lesson": {
+    "mascot_label": "Teman belajarmu",
     "playful_hint_title": "Coba mode permainan",
     "playful_hint_body": "Pelajaran merayakan setiap jawaban benar dengan pujian dan konfeti. Anda dapat mengubahnya kapan saja di Pengaturan.",
     "playful_hint_activate": "Aktifkan",

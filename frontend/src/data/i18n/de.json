@@ -1868,6 +1868,7 @@
     }
   },
   "lesson": {
+    "mascot_label": "Dein Lernbegleiter",
     "playful_hint_title": "Spielmodus ausprobieren",
     "playful_hint_body": "Lektionen feiern jede richtige Antwort mit Lob und Konfetti. Du kannst das jederzeit in den Einstellungen ändern.",
     "playful_hint_activate": "Einschalten",
