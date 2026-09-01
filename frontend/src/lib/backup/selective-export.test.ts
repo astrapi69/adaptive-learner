@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { BackupPayload } from "../../types/domain";
+import { BACKUP_TABLES } from "../../storage/backup/backup-tables";
 import {
   ALWAYS_INCLUDED_TABLES,
   allCategoryIds,
@@ -15,39 +16,13 @@ import {
   selectiveExportFilename,
 } from "./selective-export";
 
-/** The 30 backup tables (mirrors storage/backup.ts BACKUP_TABLES). */
-const KNOWN_TABLES = new Set([
-  "users",
-  "user_settings",
-  "learning_projects",
-  "learning_profiles",
-  "curriculums",
-  "learning_topics",
-  "lessons",
-  "learning_sessions",
-  "session_messages",
-  "session_ratings",
-  "session_notes",
-  "progress_commits",
-  "method_switches",
-  "step_evaluations",
-  "imported_conversations",
-  "imported_messages",
-  "subjects",
-  "tags",
-  "project_subjects",
-  "project_tags",
-  "user_xp",
-  "badges",
-  "user_badges",
-  "anki_card_suggestions",
-  "study_questions",
-  "user_streaks",
-  "lesson_progress",
-  "element_errors",
-  "user_missions",
-  "api_key_backups",
-]);
+/**
+ * Every real backup table, derived from the live registry (#2840) - a
+ * hand-copied literal here drifted silently (missing `set_runs` and
+ * `speech_recordings`, #2827's exact drift class: a fixture that agrees
+ * with a stale copy of the thing it's meant to check).
+ */
+const KNOWN_TABLES = new Set(Object.keys(BACKUP_TABLES));
 
 function fullPayload(): BackupPayload {
   const tables = [...KNOWN_TABLES];
@@ -86,6 +61,16 @@ describe("selective-export category model", () => {
   it("looks up categories by id", () => {
     expect(categoryById("projects")?.tables).toContain("learning_projects");
     expect(categoryById("nope")).toBeUndefined();
+  });
+
+  // #2840 — speech_recordings (speak-and-record clips) gets its own
+  // deselectable category, not folded into an existing one, so a user
+  // can leave the large audio blobs out of an export without losing
+  // anything else.
+  it("carries speech_recordings as its own category", () => {
+    const cat = categoryById("speech_recordings");
+    expect(cat?.tables).toEqual(["speech_recordings"]);
+    expect(cat?.includes).toEqual([]);
   });
 });
 

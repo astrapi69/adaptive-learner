@@ -56,6 +56,7 @@
     "group_extra": "Données supplémentaires",
     "group_gamification": "Gamification",
     "group_config": "Configuration",
+    "group_media": "Médias",
     "cat_projects": "Projets d'apprentissage (avec sessions, évaluations, notes)",
     "cat_curricula": "Cursus (avec thèmes et leçons)",
     "cat_progress": "Progression des leçons (avec erreurs / SRS)",
@@ -66,7 +67,8 @@
     "cat_questions": "Questions d'étude",
     "cat_gamification": "XP, badges, série, missions",
     "cat_settings": "Paramètres",
-    "cat_ai_config": "Sauvegarde de clé IA"
+    "cat_ai_config": "Sauvegarde de clé IA",
+    "cat_speech_recordings": "Enregistrements vocaux (exercices de parler et enregistrer)"
   },
   "nav": {
     "group": {

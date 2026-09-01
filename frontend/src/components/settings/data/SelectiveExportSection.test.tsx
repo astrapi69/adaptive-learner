@@ -72,6 +72,15 @@ describe("SelectiveExportSection", () => {
     expect(payload.format).toBe("adaptive-learner-backup");
   });
 
+  // #2840 — speech recordings are large media; the user opted into an
+  // own, separately deselectable category that is OFF by default.
+  it("renders the speech_recordings category, unchecked by default", () => {
+    render(<SelectiveExportSection />);
+    const checkbox = screen.getByTestId("data-export-cat-speech_recordings");
+    expect(checkbox).toBeInTheDocument();
+    expect(checkbox).toHaveAttribute("aria-checked", "false");
+  });
+
   it("disables the selective export when nothing is selected", () => {
     render(<SelectiveExportSection />);
     fireEvent.click(screen.getByTestId("data-export-select-all")); // all

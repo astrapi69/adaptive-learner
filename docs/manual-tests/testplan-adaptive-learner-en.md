@@ -2014,6 +2014,20 @@ no numbers that could go stale, on purpose.
 
 ---
 
+## PRIO 10: Selective data export - speech recordings category (#2840)
+
+Location: Settings > Data > "Export selected data".
+
+- [ ] The "Media" group with the "Speech recordings" category is visible,
+      NOT checked by default (unlike Learning projects/Curricula/
+      Progress/Subjects, which are pre-selected)
+- [ ] Without checking it: the exported file contains NO
+      `speech_recordings` rows, even when some exist
+- [ ] Checking it + export: the file contains the user's
+      `speech_recordings` rows
+
+---
+
 # PART B: AUTOMATED TESTS (reference)
 
 These tests run in CI or via `make test`.

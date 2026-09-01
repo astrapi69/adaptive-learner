@@ -51,6 +51,7 @@ data_export:
   group_extra: "追加データ"
   group_gamification: "ゲーミフィケーション"
   group_config: "設定"
+  group_media: "メディア"
   cat_projects: "学習プロジェクト（セッション・評価・メモを含む）"
   cat_curricula: "カリキュラム（トピックとレッスンを含む）"
   cat_progress: "レッスンの進捗（間違い / SRS を含む）"
@@ -62,6 +63,7 @@ data_export:
   cat_gamification: "XP・バッジ・連続記録・ミッション"
   cat_settings: "設定"
   cat_ai_config: "AI キーのバックアップ"
+  cat_speech_recordings: "音声録音（話して録音する練習）"
 nav:
   group:
     learn: "学習"
