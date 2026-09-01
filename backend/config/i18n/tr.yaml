@@ -697,6 +697,9 @@ settings:
   nav_position_description: "Ana gezinmenin telefonda nerede duracağı: üstte menü düğmesi olarak (varsayılan) veya altta başparmak erişimindeki sekme çubuğu olarak."
   nav_position_top: "Üstte (menü düğmesi)"
   nav_position_bottom: "Altta (sekme çubuğu)"
+  playful_mode_title: "Oyun modu"
+  playful_mode: "Oyunlaştırılmış dersler"
+  playful_mode_description: "Dersleri oyuna dönüştürür: her doğru cevapta övgü, konfeti ve kilometre taşı kutlamaları. Tüm ders modlarıyla çalışır; puanlama ve ilerleme aynı kalır. Sisteminizde azaltılmış hareket açıksa geri bildirim yine sade kalır."
   feedback_intensity: "Geri bildirim yoğunluğu"
   feedback_intensity_description: "Uygulamanın ilerlemeni ne kadar coşkuyla kutladığı."
   feedback_intensity_subtle: "Sade"
@@ -1724,6 +1727,11 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  playful_hint_title: "Oyun modunu dene"
+  playful_hint_body: "Dersler her doğru cevabı övgü ve konfetiyle kutlar. Bunu istediğin zaman ayarlardan değiştirebilirsin."
+  playful_hint_activate: "Aç"
+  playful_hint_dismiss: "Bir daha gösterme"
+  playful_hint_activated: "Oyun modu açık. İyi eğlenceler!"
   test_mode:
     title: "Test modu"
     description: "Yanıtlar değerlendirilmez ve ilerleme kaydedilmez."

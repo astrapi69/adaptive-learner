@@ -23,6 +23,7 @@ import {
     shouldPraiseCorrect,
     type FeedbackIntensity,
 } from "./feedbackPref";
+import {setPlayfulMode} from "../learning/playfulModePref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -109,6 +110,57 @@ describe("feedbackPref — correct-answer counter", () => {
         expect(nextCorrectAnswerIndex()).toBe(2);
         resetCorrectAnswerCount();
         expect(nextCorrectAnswerIndex()).toBe(0);
+    });
+});
+
+describe("feedbackPref — playful-mode floor (#2844)", () => {
+    it.each([
+        ["subtle", "enthusiastic"],
+        ["normal", "enthusiastic"],
+        ["enthusiastic", "enthusiastic"],
+    ] as [FeedbackIntensity, FeedbackIntensity][])(
+        "raises stored %s to %s when playful mode is on",
+        (stored, expected) => {
+            setFeedbackIntensity(stored);
+            setPlayfulMode(true);
+            vi.stubGlobal(
+                "matchMedia",
+                vi.fn(() => ({
+                    matches: false,
+                    addEventListener: vi.fn(),
+                    removeEventListener: vi.fn(),
+                })),
+            );
+            expect(effectiveIntensity()).toBe(expected);
+        },
+    );
+
+    it("reduced motion still wins over playful mode", () => {
+        setFeedbackIntensity("normal");
+        setPlayfulMode(true);
+        vi.stubGlobal(
+            "matchMedia",
+            vi.fn(() => ({
+                matches: true,
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn(),
+            })),
+        );
+        expect(effectiveIntensity()).toBe("subtle");
+    });
+
+    it("keeps the stored level when playful mode is off", () => {
+        setFeedbackIntensity("subtle");
+        setPlayfulMode(false);
+        vi.stubGlobal(
+            "matchMedia",
+            vi.fn(() => ({
+                matches: false,
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn(),
+            })),
+        );
+        expect(effectiveIntensity()).toBe("subtle");
     });
 });
 

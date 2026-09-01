@@ -244,6 +244,7 @@ describe("Settings page", () => {
       "settings-section-srs",
       "settings-section-summary-sections",
       "settings-section-error-replay-scope",
+      "settings-section-playful",
       "settings-section-feedback",
       "settings-section-missions",
       "settings-section-reminders",

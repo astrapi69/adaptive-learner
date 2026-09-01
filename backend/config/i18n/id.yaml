@@ -700,6 +700,9 @@ settings:
   nav_position_description: "Letak navigasi utama di ponsel: di atas sebagai tombol menu (bawaan) atau di bawah sebagai bilah tab yang terjangkau ibu jari."
   nav_position_top: "Atas (tombol menu)"
   nav_position_bottom: "Bawah (bilah tab)"
+  playful_mode_title: "Mode permainan"
+  playful_mode: "Pelajaran yang menyenangkan"
+  playful_mode_description: "Mengubah pelajaran menjadi permainan: pujian di setiap jawaban benar, konfeti, dan perayaan pencapaian. Berfungsi dengan semua mode pelajaran; penilaian dan kemajuan tetap sama. Jika sistem Anda mengurangi animasi, umpan balik tetap sederhana."
   feedback_intensity: "Intensitas Umpan Balik"
   feedback_intensity_description: "Seberapa meriah aplikasi merayakan kemajuan Anda."
   feedback_intensity_subtle: "Halus"
@@ -1735,6 +1738,11 @@ repo:
     description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
     enable_git: "Aktifkan persistensi git"
 lesson:
+  playful_hint_title: "Coba mode permainan"
+  playful_hint_body: "Pelajaran merayakan setiap jawaban benar dengan pujian dan konfeti. Anda dapat mengubahnya kapan saja di Pengaturan."
+  playful_hint_activate: "Aktifkan"
+  playful_hint_dismiss: "Jangan tampilkan lagi"
+  playful_hint_activated: "Mode permainan aktif. Selamat bersenang-senang!"
   test_mode:
     title: "Mode uji"
     description: "Jawaban tidak dinilai dan tidak ada kemajuan yang disimpan."

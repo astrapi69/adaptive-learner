@@ -24,6 +24,10 @@ import type {LessonMode} from "./lessonModePref";
 
 export interface LessonModeConfig {
     mode: LessonMode;
+    /** Playful mode (#2844): orthogonal to the mode — renderers opt into
+     *  game-like presentation. Overlaid live by ``LessonModeProvider``
+     *  from the playful-mode preference; ``false`` in the static rows. */
+    playful: boolean;
     showHints: boolean;
     showTheoryRecap: boolean;
     showReadAloud: boolean;
@@ -41,6 +45,7 @@ export interface LessonModeConfig {
 }
 
 const BASE: Omit<LessonModeConfig, "mode"> = {
+    playful: false,
     showHints: true,
     showTheoryRecap: true,
     showReadAloud: true,

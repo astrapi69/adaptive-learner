@@ -742,6 +742,9 @@
     "nav_position_description": "휴대폰에서 기본 탐색의 위치: 상단 메뉴 버튼(기본값) 또는 엄지가 닿는 하단 탭 바.",
     "nav_position_top": "위(메뉴 버튼)",
     "nav_position_bottom": "아래(탭 바)",
+    "playful_mode_title": "게임 모드",
+    "playful_mode": "놀이형 레슨",
+    "playful_mode_description": "레슨을 게임처럼 바꿉니다: 정답마다 칭찬, 색종이, 이정표 축하가 나타납니다. 모든 레슨 모드에서 작동하며 채점과 진행 상황은 그대로입니다. 시스템에서 동작 줄이기가 켜져 있으면 피드백은 계속 차분하게 유지됩니다.",
     "feedback_intensity": "피드백 강도",
     "feedback_intensity_description": "앱이 당신의 진행을 얼마나 크게 축하할지 정합니다.",
     "feedback_intensity_subtle": "은은하게",
@@ -1856,6 +1859,11 @@
     }
   },
   "lesson": {
+    "playful_hint_title": "게임 모드를 사용해 보세요",
+    "playful_hint_body": "레슨이 정답마다 칭찬과 색종이로 축하합니다. 설정에서 언제든지 바꿀 수 있습니다.",
+    "playful_hint_activate": "켜기",
+    "playful_hint_dismiss": "다시 표시하지 않음",
+    "playful_hint_activated": "게임 모드가 켜졌습니다. 즐겁게 학습하세요!",
     "test_mode": {
       "title": "테스트 모드",
       "description": "답변은 채점되지 않으며 진행 상황이 저장되지 않습니다.",
