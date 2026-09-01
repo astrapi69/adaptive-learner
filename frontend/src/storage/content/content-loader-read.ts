@@ -7,7 +7,7 @@
  * asset Blob (Phase 54).
  */
 
-import { parseLesson } from "../../lib/content/engine";
+import { parseLesson, parseManifest } from "../../lib/content/engine";
 
 import type { ContentLesson, ContentLessonList } from "../types";
 import { getDb } from "../dexie/db";
@@ -17,6 +17,42 @@ import {
   mimeTypeForAssetPath,
 } from "./content-loader-sources";
 import { latestCachedRow } from "./content-loader-listing";
+
+/**
+ * The cached set manifest's ``metadata.lessons`` (#2835), mirroring the
+ * backend's ``ContentLoaderService._declared_lesson_order``. Missing
+ * manifest, missing field, or a non-string-list shape all mean "no
+ * declared order" - the caller keeps its lexicographic fallback.
+ *
+ * Read fresh from ``manifest_yaml`` on every call (not cached at
+ * download time only): the #2367 frontend fix seeds a lesson-order
+ * overlay from the manifest at download time
+ * (``content-loader-download.ts``'s ``storeImportLessonOrder``), but a
+ * set cached before that seeding step existed - or via any path that
+ * bypasses it - has no overlay entry and no other way to recover the
+ * declared order. Deriving it here, on every read, fixes those already-
+ * cached sets without requiring a re-download.
+ */
+function declaredLessonOrder(manifestYaml: string): string[] {
+  const manifest = parseManifest(manifestYaml);
+  const declared = manifest?.metadata?.lessons;
+  if (Array.isArray(declared) && declared.every((name) => typeof name === "string")) {
+    return declared;
+  }
+  return [];
+}
+
+/** Reorder ``files`` (already lexicographically sorted) to match
+ *  ``declared`` where possible; files the manifest doesn't declare are
+ *  appended afterwards, keeping their sorted order. */
+function applyDeclaredOrder(files: string[], declared: string[]): string[] {
+  if (declared.length === 0) return files;
+  const present = new Set(files);
+  const declaredSet = new Set(declared);
+  const ordered = declared.filter((name) => present.has(name));
+  const leftovers = files.filter((name) => !declaredSet.has(name));
+  return [...ordered, ...leftovers];
+}
 
 export async function listLessonsDexie(
   source: string,
@@ -44,7 +80,7 @@ export async function listLessonsDexie(
     set_id: setId,
     source,
     version: cached.version,
-    lessons,
+    lessons: applyDeclaredOrder(lessons, declaredLessonOrder(cached.manifest_yaml)),
   };
 }
 

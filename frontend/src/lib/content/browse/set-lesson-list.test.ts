@@ -90,4 +90,25 @@ describe("buildSetLessonList", () => {
     expect(list.percent).toBe(0);
     expect(list.currentFilename).toBeNull();
   });
+
+  // #2835 — the list previously carried only the filename, which the
+  // page rendered verbatim (e.g. "100-wiederholung-....json") instead
+  // of the lesson's actual title.
+  it("carries each lesson's title from the titles map", () => {
+    const list = buildSetLessonList({
+      setId: "s1", lessons: FILES, progress: [],
+      titles: new Map([
+        ["01.json", "Greetings"],
+        ["02.json", "Numbers"],
+      ]),
+    });
+    expect(list.lessons.map((l) => l.title)).toEqual([
+      "Greetings", "Numbers", "03.json",
+    ]);
+  });
+
+  it("falls back to the filename when no titles map is given", () => {
+    const list = buildSetLessonList({setId: "s1", lessons: FILES, progress: []});
+    expect(list.lessons.map((l) => l.title)).toEqual(FILES);
+  });
 });

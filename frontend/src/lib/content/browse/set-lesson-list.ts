@@ -32,6 +32,10 @@ export interface SetLessonEntry {
   /** 1-based position in set order (what "Lesson 3 of 12" counts). */
   index: number;
   filename: string;
+  /** Human-readable lesson title (#2835). Falls back to ``filename``
+   *  when the caller has no title for it (title fetch failed, or no
+   *  ``titles`` map was given at all). */
+  title: string;
   status: SetLessonStatus;
   /** Score of the completed run, when there is one. */
   scoreCorrect: number | null;
@@ -57,6 +61,11 @@ export interface SetLessonListInput {
   lessons: readonly string[];
   /** Progress rows; rows of other sets are ignored. */
   progress: readonly LessonProgress[];
+  /** Filename -> title (#2835). Fetching lesson content is I/O, so this
+   *  stays the caller's job - the model itself stays pure. A filename
+   *  missing from the map (or no map at all) falls back to the
+   *  filename itself. */
+  titles?: ReadonlyMap<string, string>;
 }
 
 function statusOf(row: LessonProgress | undefined): SetLessonStatus {
@@ -90,6 +99,7 @@ export function buildSetLessonList(input: SetLessonListInput): SetLessonList {
     return {
       index: i + 1,
       filename,
+      title: input.titles?.get(filename) ?? filename,
       status,
       scoreCorrect: status === "completed" ? (row?.score_correct ?? null) : null,
       scoreTotal: status === "completed" ? (row?.score_total ?? null) : null,
