@@ -70,6 +70,8 @@ const MODAL_REGISTRY: Record<string, ExitKind> = {
 
   // ConfirmDialog consumers (rendered directly or via the provider).
   "components/create-lesson/book/BookFileUpload.tsx": "confirm",
+  // #2862 — photo-replace guard around the preset gallery.
+  "components/settings/controls/profile/PresetAvatarPicker.tsx": "confirm",
   "components/settings/data/OrphanedDataSection.tsx": "confirm",
   "components/settings/integrations/RemoveRepoDialog.tsx": "confirm",
   "contexts/ConfirmContext.tsx": "confirm",
