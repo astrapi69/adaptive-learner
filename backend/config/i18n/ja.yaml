@@ -757,6 +757,9 @@ settings:
   playful_arcade_description: "ゲームモードのごほうびとしての短いミニゲーム: レッスンカードで遊ぶ学習メモリーと、XPでアンロックするクラシックなスネーク。オフにするとアーケードカードとゲームは完全に非表示になります。"
   playful_arcade_snake_seconds: "スネークのラウンド時間(秒)"
   playful_arcade_memory_pairs: "メモリーのペア数"
+  playful_special_rounds: "スペシャルラウンド"
+  playful_special_rounds_description: "セットをクリア(全レッスンを星1つ以上)すると、最難関カードで作られたフラッシュラウンドがアンロックされ、カウントダウンリング付きでプレイできます。オフにするとフラッシュラウンドのカードは完全に非表示になります。"
+  playful_flash_round_cards: "フラッシュラウンドのカード数"
   feedback_intensity: "フィードバックの強さ"
   feedback_intensity_description: "アプリがあなたの進歩をどれだけ盛大に祝うか。"
   feedback_intensity_subtle: "控えめ"
@@ -2141,6 +2144,14 @@ lesson:
     direction:
       receptive_hint: 意味を認識する
       productive_hint: 答えを産出する
+  flash_round:
+    title: "フラッシュラウンド: {set}"
+    card_title: "フラッシュラウンド"
+    card_description: "このセットの最難関カードで挑む短いラウンド。カウントダウンリング付き。"
+    start: "フラッシュラウンドを開始"
+    locked_tooltip: "アンロックするには、このセットの全レッスンを星1つ以上でクリアしてください。"
+    perfect_tooltip: "エラーカードなし。このセットはすでにパーフェクトです!"
+    no_content: "このセットにプレイ可能なエラーカードが見つかりません。"
   error_replay:
     title: "間違いをやり直す：{lesson}"
     heading: "やり直し完了"

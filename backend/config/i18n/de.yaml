@@ -757,6 +757,9 @@ settings:
   playful_arcade_description: "Kurze Minispiele als Spielmodus-Belohnung: Lern-Memory mit deinen Lektionskarten, dazu der Klassiker Snake als XP-Freischaltung. Aus blendet Arcade-Karte und Spiele komplett aus."
   playful_arcade_snake_seconds: "Snake-Rundenlänge (Sekunden)"
   playful_arcade_memory_pairs: "Memory-Paare"
+  playful_special_rounds: "Sonderrunden"
+  playful_special_rounds_description: "Der Abschluss eines Sets (jede Lektion mit mindestens einem Stern) schaltet eine Blitzrunde aus seinen kniffligsten Karten frei, gespielt mit dem Countdown-Ring. Aus blendet die Blitzrunden-Karte komplett aus."
+  playful_flash_round_cards: "Blitzrunden-Karten"
   feedback_intensity: "Feedback-Intensität"
   feedback_intensity_description: "Wie ausgiebig die App deinen Fortschritt feiert."
   feedback_intensity_subtle: "Dezent"
@@ -2146,6 +2149,14 @@ lesson:
     direction:
       receptive_hint: Bedeutung erkennen
       productive_hint: Antwort produzieren
+  flash_round:
+    title: "Blitzrunde: {set}"
+    card_title: "Blitzrunde"
+    card_description: "Eine schnelle Runde mit den kniffligsten Karten dieses Sets, mit Countdown-Ring."
+    start: "Blitzrunde starten"
+    locked_tooltip: "Schließe jede Lektion dieses Sets mit mindestens einem Stern ab, um freizuschalten."
+    perfect_tooltip: "Keine Fehlerkarten - dieses Set ist schon perfekt!"
+    no_content: "Keine spielbaren Fehlerkarten für dieses Set gefunden."
   error_replay:
     title: "Fehler wiederholen: {lesson}"
     heading: "Wiederholung abgeschlossen"

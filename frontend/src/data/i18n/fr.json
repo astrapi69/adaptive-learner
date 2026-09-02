@@ -798,6 +798,9 @@
     "playful_arcade_description": "De courts mini-jeux comme récompense du mode jeu : le Memory d'apprentissage avec tes cartes de leçon, plus le classique Snake à débloquer avec des XP. Désactivé masque entièrement la carte de l'arcade et les jeux.",
     "playful_arcade_snake_seconds": "Durée d'une manche de Snake (secondes)",
     "playful_arcade_memory_pairs": "Paires du Memory",
+    "playful_special_rounds": "Manches spéciales",
+    "playful_special_rounds_description": "Terminer un set (chaque leçon avec au moins une étoile) débloque une manche éclair construite avec ses cartes les plus difficiles, jouée avec l'anneau de compte à rebours. Désactivé masque entièrement la carte de la manche éclair.",
+    "playful_flash_round_cards": "Cartes de la manche éclair",
     "feedback_intensity": "Intensité du retour",
     "feedback_intensity_description": "À quel point l'application célèbre tes progrès.",
     "feedback_intensity_subtle": "Discret",
@@ -2315,6 +2318,15 @@
         "receptive_hint": "Reconnaître le sens",
         "productive_hint": "Produire la réponse"
       }
+    },
+    "flash_round": {
+      "title": "Manche éclair : {set}",
+      "card_title": "Manche éclair",
+      "card_description": "Une manche rapide avec les cartes les plus difficiles de ce set, avec l'anneau de compte à rebours.",
+      "start": "Lancer la manche éclair",
+      "locked_tooltip": "Termine chaque leçon de ce set avec au moins une étoile pour débloquer.",
+      "perfect_tooltip": "Aucune carte d'erreur : ce set est déjà parfait !",
+      "no_content": "Aucune carte d'erreur jouable trouvée pour ce set."
     },
     "error_replay": {
       "title": "Refaire les erreurs : {lesson}",

@@ -802,6 +802,9 @@
     "playful_arcade_description": "게임 모드 보상인 짧은 미니 게임: 수업 카드로 즐기는 학습 메모리와 XP로 잠금 해제하는 클래식 스네이크. 끄면 아케이드 카드와 게임이 완전히 숨겨집니다.",
     "playful_arcade_snake_seconds": "스네이크 라운드 길이(초)",
     "playful_arcade_memory_pairs": "메모리 짝 수",
+    "playful_special_rounds": "스페셜 라운드",
+    "playful_special_rounds_description": "세트를 완료하면(모든 수업 별 1개 이상) 가장 어려운 카드로 만든 플래시 라운드가 잠금 해제되며 카운트다운 링과 함께 플레이합니다. 끄면 플래시 라운드 카드가 완전히 숨겨집니다.",
+    "playful_flash_round_cards": "플래시 라운드 카드 수",
     "feedback_intensity": "피드백 강도",
     "feedback_intensity_description": "앱이 당신의 진행을 얼마나 크게 축하할지 정합니다.",
     "feedback_intensity_subtle": "은은하게",
@@ -2370,6 +2373,15 @@
       "encourage_1": "좋은 출발이에요 - 계속 가세요!",
       "encourage_2": "거의 완벽해요!",
       "encourage_3": "만점입니다!"
+    },
+    "flash_round": {
+      "title": "플래시 라운드: {set}",
+      "card_title": "플래시 라운드",
+      "card_description": "이 세트의 가장 어려운 카드로 즐기는 빠른 라운드. 카운트다운 링과 함께.",
+      "start": "플래시 라운드 시작",
+      "locked_tooltip": "잠금 해제하려면 이 세트의 모든 수업을 별 1개 이상으로 완료하세요.",
+      "perfect_tooltip": "오류 카드 없음: 이 세트는 이미 완벽해요!",
+      "no_content": "이 세트에 플레이할 수 있는 오류 카드가 없습니다."
     },
     "error_replay": {
       "title": "오답 다시 풀기: {lesson}",

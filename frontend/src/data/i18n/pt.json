@@ -798,6 +798,9 @@
     "playful_arcade_description": "Minijogos curtos como recompensa do modo jogo: Memory de aprendizagem com os teus cartões de lição e o clássico Snake como desbloqueio por XP. Desligado esconde por completo o cartão do arcade e os jogos.",
     "playful_arcade_snake_seconds": "Duração da ronda de Snake (segundos)",
     "playful_arcade_memory_pairs": "Pares do Memory",
+    "playful_special_rounds": "Rondas especiais",
+    "playful_special_rounds_description": "Terminar um conjunto (cada lição com pelo menos uma estrela) desbloqueia uma ronda relâmpago com os seus cartões mais difíceis, jogada com o anel de contagem decrescente. Desligado esconde por completo o cartão da ronda relâmpago.",
+    "playful_flash_round_cards": "Cartões da ronda relâmpago",
     "feedback_intensity": "Intensidade do feedback",
     "feedback_intensity_description": "Com quanta efusividade o app celebra o seu progresso.",
     "feedback_intensity_subtle": "Discreto",
@@ -2315,6 +2318,15 @@
         "receptive_hint": "Reconhecer o significado",
         "productive_hint": "Produzir a resposta"
       }
+    },
+    "flash_round": {
+      "title": "Ronda relâmpago: {set}",
+      "card_title": "Ronda relâmpago",
+      "card_description": "Uma ronda rápida com os cartões mais difíceis deste conjunto, com o anel de contagem decrescente.",
+      "start": "Iniciar ronda relâmpago",
+      "locked_tooltip": "Termina cada lição deste conjunto com pelo menos uma estrela para desbloquear.",
+      "perfect_tooltip": "Sem cartões de erro: este conjunto já é perfeito!",
+      "no_content": "Nenhum cartão de erro jogável encontrado para este conjunto."
     },
     "error_replay": {
       "title": "Repetir erros: {lesson}",
