@@ -753,6 +753,10 @@ settings:
   playful_combo_xp: "XP de bónus por sequência"
   playful_combo_xp_description: "A partir da terceira resposta da sequência, cada resposta certa seguida dá +1 XP de bónus, com limite por lição. Desligado, os XP do modo jogo ficam idênticos ao modo normal."
   playful_combo_xp_cap: "Limite de XP de bónus por lição"
+  playful_arcade: "Arcade"
+  playful_arcade_description: "Minijogos curtos como recompensa do modo jogo: Memory de aprendizagem com os teus cartões de lição e o clássico Snake como desbloqueio por XP. Desligado esconde por completo o cartão do arcade e os jogos."
+  playful_arcade_snake_seconds: "Duração da ronda de Snake (segundos)"
+  playful_arcade_memory_pairs: "Pares do Memory"
   feedback_intensity: "Intensidade do feedback"
   feedback_intensity_description: "Com quanta efusividade o app celebra o seu progresso."
   feedback_intensity_subtle: "Discreto"
@@ -1426,6 +1430,41 @@ gamification:
   danger_zone_cancel: Cancelar
   danger_zone_continue: Continuar
   danger_zone_failed_toast: 'Falha na redefinição:'
+arcade:
+  title: "Arcade"
+  subtitle: "Rondas curtas, de um a dois minutos: uma recompensa do modo jogo. Sem XP, só diversão."
+  card_description: "Rondas curtas de Memory de aprendizagem e Snake: a tua recompensa do modo jogo."
+  card_open: "Ir para o arcade"
+  requires_playful: "O arcade faz parte do modo jogo. Ativa o modo jogo (e o interruptor do arcade) nas definições."
+  open_settings: "Abrir definições"
+  play: "Jogar"
+  pause: "Pausa"
+  resume: "Continuar"
+  restart: "Reiniciar"
+  back_to_games: "Voltar aos jogos"
+  unlock_for_xp: "Desbloquear por {n} XP"
+  unlock_confirm: "Desbloquear mesmo por {n} XP?"
+  unlock_not_enough_xp: "Ainda não tens XP suficientes: continua a aprender!"
+  memory:
+    name: "Memory de aprendizagem"
+    description: "Encontra os pares de termo e tradução das tuas lições."
+    set_label: "Conjunto de lições"
+    loading: "A carregar cartões ..."
+    empty: "Nenhum conjunto descarregado com cartões suficientes. Descarrega primeiro um conjunto de lições."
+    load_failed: "O carregamento dos cartões falhou. Tenta outro conjunto."
+    progress: "Pares: {a} / {b}"
+    attempts: "Tentativas: {n}"
+    won: "Todos os pares encontrados em {n} tentativas!"
+  snake:
+    name: "Snake"
+    description: "O clássico: apanha comida, cresce e não te mordas a ti próprio."
+    score: "Pontos: {n}"
+    time_left: "Tempo: {n}s"
+    goal: "Meta: {n} pontos"
+    highscore: "Recorde: {n}"
+    board_aria: "Tabuleiro de Snake: guia com as setas ou deslizando"
+    won: "Ronda ganha: {n} pontos!"
+    lost: "Ronda terminada: {n} pontos. Tenta outra vez!"
 anki:
   title: Exportação Anki
   intro: Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.

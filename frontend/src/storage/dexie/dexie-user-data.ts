@@ -71,6 +71,11 @@ export const MANAGED_USER_DATA_KEYS = [
     // from Settings > General; mode-agnostic, survives a Dexie restore
     // + rides the .alb backup's localStorage snapshot.
     "adaptive-learner.avatar.photo-stash",
+    // #2887 — XP-purchased arcade games per user
+    // (lib/arcade/arcade-unlock-store). Same cosmetics pattern:
+    // mode-agnostic, survives a Dexie restore + rides the .alb
+    // backup's localStorage snapshot.
+    "adaptive-learner.arcade.unlocks",
 ] as const;
 
 /**

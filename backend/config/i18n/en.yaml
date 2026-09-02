@@ -753,6 +753,10 @@ settings:
   playful_combo_xp: "Streak bonus XP"
   playful_combo_xp_description: "From the third streak answer, every correct answer in a row earns +1 bonus XP, capped per lesson. Off keeps game-mode XP identical to normal mode."
   playful_combo_xp_cap: "Bonus XP cap per lesson"
+  playful_arcade: "Arcade"
+  playful_arcade_description: "Short mini-games as a game-mode reward: Learn Memory with your lesson cards, plus the classic Snake as an XP unlock. Off hides the arcade card and games entirely."
+  playful_arcade_snake_seconds: "Snake round length (seconds)"
+  playful_arcade_memory_pairs: "Memory pairs"
   feedback_intensity: "Feedback Intensity"
   feedback_intensity_description: "How loudly the app celebrates your progress."
   feedback_intensity_subtle: "Subtle"
@@ -1426,6 +1430,41 @@ gamification:
   danger_zone_cancel: Cancel
   danger_zone_continue: Continue
   danger_zone_failed_toast: 'Reset failed:'
+arcade:
+  title: "Arcade"
+  subtitle: "Short rounds, one to two minutes - a game-mode reward. No XP, just fun."
+  card_description: "Short rounds of Learn Memory and Snake - your game-mode reward."
+  card_open: "To the arcade"
+  requires_playful: "The arcade is part of the game mode. Turn on the game mode (and the arcade switch) in the settings."
+  open_settings: "Open settings"
+  play: "Play"
+  pause: "Pause"
+  resume: "Resume"
+  restart: "Restart"
+  back_to_games: "Back to the games"
+  unlock_for_xp: "Unlock for {n} XP"
+  unlock_confirm: "Really unlock for {n} XP?"
+  unlock_not_enough_xp: "Not enough XP yet - keep learning!"
+  memory:
+    name: "Learn Memory"
+    description: "Find the matching term and translation pairs from your lessons."
+    set_label: "Lesson set"
+    loading: "Loading cards ..."
+    empty: "No downloaded set with enough cards found. Download a lesson set first."
+    load_failed: "Loading the cards failed. Try another set."
+    progress: "Pairs: {a} / {b}"
+    attempts: "Tries: {n}"
+    won: "All pairs found in {n} tries!"
+  snake:
+    name: "Snake"
+    description: "The classic: collect food, grow, do not bite yourself."
+    score: "Points: {n}"
+    time_left: "Time: {n}s"
+    goal: "Goal: {n} points"
+    highscore: "Best: {n}"
+    board_aria: "Snake board - steer with the arrow keys or swipe"
+    won: "Round won - {n} points!"
+    lost: "Round over - {n} points. Try again!"
 anki:
   title: Anki Export
   intro: Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.

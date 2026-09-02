@@ -23,6 +23,11 @@ import {
     readComboXpCap,
     readPlayfulComboXp,
 } from "../../../../lib/learning/playful/playfulComboXpPref";
+import {
+    readMemoryPairs,
+    readPlayfulArcade,
+    readSnakeSeconds,
+} from "../../../../lib/learning/playful/playfulArcadePref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -197,5 +202,46 @@ describe("PlayfulModeControl: combo bonus XP (#2893)", () => {
         expect(
             screen.getByTestId("settings-playful-combo-xp-cap"),
         ).toHaveValue(20);
+    });
+});
+
+describe("PlayfulModeControl: arcade (#2887)", () => {
+    it("renders the switch ON by default with editable snake/memory fields", () => {
+        render(<PlayfulModeControl />);
+        expect(
+            screen.getByTestId("settings-playful-arcade-toggle"),
+        ).toBeChecked();
+        expect(
+            screen.getByTestId("settings-playful-arcade-snake-seconds"),
+        ).toHaveValue(60);
+        expect(
+            screen.getByTestId("settings-playful-arcade-memory-pairs"),
+        ).toHaveValue(8);
+    });
+
+    it("disabling persists and disables both number inputs", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(screen.getByTestId("settings-playful-arcade-toggle"));
+        expect(readPlayfulArcade()).toBe(false);
+        expect(
+            screen.getByTestId("settings-playful-arcade-snake-seconds"),
+        ).toBeDisabled();
+        expect(
+            screen.getByTestId("settings-playful-arcade-memory-pairs"),
+        ).toBeDisabled();
+    });
+
+    it("clamps and persists both number settings", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.change(
+            screen.getByTestId("settings-playful-arcade-snake-seconds"),
+            {target: {value: "999"}},
+        );
+        fireEvent.change(
+            screen.getByTestId("settings-playful-arcade-memory-pairs"),
+            {target: {value: "1"}},
+        );
+        expect(readSnakeSeconds()).toBe(120);
+        expect(readMemoryPairs()).toBe(4);
     });
 });

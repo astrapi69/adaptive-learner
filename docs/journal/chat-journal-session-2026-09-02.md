@@ -219,6 +219,32 @@ Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
 - Commit: a3a9ed62 (i18n), fd325987 (Formel + Paritaet), 8879b638
   (Frontend-Verkabelung); Doku-Commit folgt.
 
+## 9. Arcade Stufe A: Lern-Memory + Snake (#2887) (22:45)
+
+- Original prompt: Fortsetzung des #2886-Programms nach dem
+  #2893-Merge - Stufe A laut Issue #2887.
+- Optimized prompt: "Baue die zwei beschlossenen Arcade-Minispiele:
+  reine Spielkerne per TDD (Snake-Schritt/Kollision mit injizierbarem
+  Zufall, Memory-Reducer mit Paar-Ziehung aus echten Lektionskarten),
+  Arcade-Pref (Schalter Standard AN, Snake 30-120s/60, Paare 4-12/8),
+  Snake als 200-XP-Freischaltung ueber unlockables + selection-store
+  (MANAGED_USER_DATA_KEYS + beide Pins), /arcade-Seite mit
+  Spieleliste und Gate-Hinweis, selbst-gatende Dashboard-Karte,
+  Settings-Block nach #2878-Muster, i18n zuerst, Testplan DE+EN."
+- Ziel: #2887 komplett auf einem PR; Checkbox A in #2886.
+- Ergebnis: lib/arcade (snake.ts, memory.ts, arcade-games.ts,
+  arcade-unlock-store.ts) mit 29 Logik-Tests; playfulArcadePref;
+  Dexie-Key adaptive-learner.arcade.unlocks registriert + beide
+  Backup-Pins; /arcade-Route mit XP-Kauf (zweistufig, useXpPurchase),
+  Snake als token-only DOM-Grid (Uhr, Pause, Tastatur+Wisch,
+  Bestwert lokal), Memory laedt nur gecachte Sets (#1816) mit
+  deterministischen Karten-Testids; ArcadeCard verschwindet komplett
+  bei Schalter aus (Issue-Entscheid), die Seite behaelt den
+  Hinweis-mit-Grund; 32 UI-Tests; arcade-i18n-Block (36 Keys x 11);
+  Testplan DE+EN, Hilfe celebrations.md.
+- Commit: 40c77cf6 (i18n), 96bca06b (Logik + Store), fb4eda88 (UI);
+  Doku-Commit folgt.
+
 ## Fragen und Annahmen
 
 - Farbwahl der Varianten aus der bestehenden Markenpalette

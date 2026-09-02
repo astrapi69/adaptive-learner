@@ -753,6 +753,10 @@ settings:
   playful_combo_xp: "Seri bonus XP"
   playful_combo_xp_description: "Serinin üçüncü yanıtından itibaren art arda her doğru yanıt +1 bonus XP kazandırır, ders başına üst sınırla. Kapalıyken oyun modu XP'si normal modla aynı kalır."
   playful_combo_xp_cap: "Ders başına bonus XP üst sınırı"
+  playful_arcade: "Arcade"
+  playful_arcade_description: "Oyun modu ödülü olarak kısa mini oyunlar: ders kartlarınla Öğrenme Hafıza Oyunu ve XP ile açılan klasik Snake. Kapalıyken arcade kartı ve oyunlar tamamen gizlenir."
+  playful_arcade_snake_seconds: "Snake tur süresi (saniye)"
+  playful_arcade_memory_pairs: "Hafıza oyunu çiftleri"
   feedback_intensity: "Geri bildirim yoğunluğu"
   feedback_intensity_description: "Uygulamanın ilerlemeni ne kadar coşkuyla kutladığı."
   feedback_intensity_subtle: "Sade"
@@ -1426,6 +1430,41 @@ gamification:
   danger_zone_cancel: Vazgeç
   danger_zone_continue: Devam et
   danger_zone_failed_toast: 'Sıfırlama başarısız:'
+arcade:
+  title: "Arcade"
+  subtitle: "Kısa turlar, bir-iki dakika: oyun modunun bir ödülü. XP yok, sadece eğlence."
+  card_description: "Kısa turlarla Öğrenme Hafıza Oyunu ve Snake: oyun modu ödülün."
+  card_open: "Arcade'e git"
+  requires_playful: "Arcade oyun modunun bir parçasıdır. Ayarlardan oyun modunu (ve arcade anahtarını) aç."
+  open_settings: "Ayarları aç"
+  play: "Oyna"
+  pause: "Duraklat"
+  resume: "Devam et"
+  restart: "Yeniden başlat"
+  back_to_games: "Oyunlara geri dön"
+  unlock_for_xp: "{n} XP karşılığında aç"
+  unlock_confirm: "Gerçekten {n} XP karşılığında açılsın mı?"
+  unlock_not_enough_xp: "Henüz yeterli XP yok: öğrenmeye devam et!"
+  memory:
+    name: "Öğrenme Hafıza Oyunu"
+    description: "Derslerindeki terim ve çeviri çiftlerini eşleştir."
+    set_label: "Ders seti"
+    loading: "Kartlar yükleniyor ..."
+    empty: "Yeterli kartı olan indirilmiş bir set bulunamadı. Önce bir ders seti indir."
+    load_failed: "Kartlar yüklenemedi. Başka bir set dene."
+    progress: "Çiftler: {a} / {b}"
+    attempts: "Deneme: {n}"
+    won: "Tüm çiftler {n} denemede bulundu!"
+  snake:
+    name: "Snake"
+    description: "Klasik oyun: yem topla, büyü, kendini ısırma."
+    score: "Puan: {n}"
+    time_left: "Süre: {n}sn"
+    goal: "Hedef: {n} puan"
+    highscore: "Rekor: {n}"
+    board_aria: "Snake tahtası: ok tuşlarıyla veya kaydırarak yönlendir"
+    won: "Tur kazanıldı: {n} puan!"
+    lost: "Tur bitti: {n} puan. Tekrar dene!"
 anki:
   title: Anki Dışa Aktarma
   intro: YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.

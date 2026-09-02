@@ -1,5 +1,7 @@
 export * from "./ActivityTrend";
 export { default as ActivityTrend } from "./ActivityTrend";
+export * from "./ArcadeCard";
+export { default as ArcadeCard } from "./ArcadeCard";
 export * from "./ContinueLearning";
 export { default as ContinueLearning } from "./ContinueLearning";
 export * from "./DashboardFilterBar";

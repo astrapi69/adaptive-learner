@@ -80,6 +80,12 @@ With game mode on:
   lesson (configurable 5-20, default 10). The summary shows the
   bonus as "+N XP" next to your best streak; exam mode and a
   disabled switch earn no bonus.
+- The **arcade** (on by default, can be switched off) rewards you
+  with two short mini-games, reachable from the dashboard card:
+  **Learn Memory** built from real cards of your downloaded lesson
+  sets (free) and the classic **Snake** (unlockable with XP). Round
+  length and pair count are configurable in the game-mode settings;
+  the games award no XP.
 - **Lernfunke**, your learning companion, sits as a small flame
   figure next to the progress bar: it cheers on correct answers,
   encourages after wrong ones, celebrates milestones, and sends

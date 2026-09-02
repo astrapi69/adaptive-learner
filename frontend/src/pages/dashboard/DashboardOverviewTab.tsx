@@ -8,6 +8,7 @@
  */
 
 import AiInviteCard from "../../components/dashboard/AiInviteCard";
+import ArcadeCard from "../../components/dashboard/ArcadeCard";
 import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import FavoritesCard from "../../components/dashboard/FavoritesCard";
@@ -79,6 +80,7 @@ export default function DashboardOverviewTab({
 
         {userId && (
           <>
+            <ArcadeCard />
             <PausedLessonsCard userId={userId} />
             <FocusAreasCard userId={userId} />
             <FavoritesCard userId={userId} />
