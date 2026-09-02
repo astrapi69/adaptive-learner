@@ -12,7 +12,13 @@ import {
     PLAYFUL_MODE_CHANGE_EVENT,
     readPlayfulMode,
     setPlayfulMode,
-} from "../../../../lib/learning/playfulModePref";
+} from "../../../../lib/learning/playful/playfulModePref";
+import {
+    readPlayfulCountdown,
+    readPlayfulCountdownSeconds,
+    readPlayfulHearts,
+    readPlayfulHeartsCount,
+} from "../../../../lib/learning/playful/playfulTensionPref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -55,13 +61,13 @@ describe("PlayfulModeControl", () => {
 
 describe("game-mode sounds (#2875)", async () => {
     const {setPlayfulMode} = await import(
-        "../../../../lib/learning/playfulModePref"
+        "../../../../lib/learning/playful/playfulModePref"
     );
     const {
         readPlayfulSounds,
         readPlayfulSoundsPrompted,
         setPlayfulSounds,
-    } = await import("../../../../lib/learning/playfulSoundsPref");
+    } = await import("../../../../lib/learning/playful/playfulSoundsPref");
     const {fireEvent} = await import("@testing-library/react");
 
     it("renders the sound toggle and persists a change", () => {
@@ -111,5 +117,47 @@ describe("game-mode sounds (#2875)", async () => {
         expect(
             screen.queryByTestId("settings-playful-sounds-offer"),
         ).not.toBeInTheDocument();
+    });
+});
+
+describe("PlayfulModeControl: tension systems (#2878)", () => {
+    it("renders both switches off by default with disabled number inputs", () => {
+        render(<PlayfulModeControl />);
+        expect(
+            screen.getByTestId("settings-playful-hearts-toggle"),
+        ).not.toBeChecked();
+        expect(
+            screen.getByTestId("settings-playful-countdown-toggle"),
+        ).not.toBeChecked();
+        expect(screen.getByTestId("settings-playful-hearts-count")).toBeDisabled();
+        expect(
+            screen.getByTestId("settings-playful-countdown-seconds"),
+        ).toBeDisabled();
+    });
+
+    it("toggling hearts persists and enables the count input", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(screen.getByTestId("settings-playful-hearts-toggle"));
+        expect(readPlayfulHearts()).toBe(true);
+        expect(
+            screen.getByTestId("settings-playful-hearts-count"),
+        ).not.toBeDisabled();
+        fireEvent.change(screen.getByTestId("settings-playful-hearts-count"), {
+            target: {value: "99"},
+        });
+        expect(readPlayfulHeartsCount()).toBe(5);
+    });
+
+    it("toggling the countdown persists and clamps the seconds", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(
+            screen.getByTestId("settings-playful-countdown-toggle"),
+        );
+        expect(readPlayfulCountdown()).toBe(true);
+        fireEvent.change(
+            screen.getByTestId("settings-playful-countdown-seconds"),
+            {target: {value: "2"}},
+        );
+        expect(readPlayfulCountdownSeconds()).toBe(5);
     });
 });

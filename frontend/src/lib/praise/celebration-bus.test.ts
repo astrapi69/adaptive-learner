@@ -204,8 +204,8 @@ describe("celebrateTierUpgrade (Phase 57)", () => {
 });
 
 describe("game-mode sounds (#2875)", async () => {
-    const {setPlayfulMode} = await import("../learning/playfulModePref");
-    const {setPlayfulSounds} = await import("../learning/playfulSoundsPref");
+    const {setPlayfulMode} = await import("../learning/playful/playfulModePref");
+    const {setPlayfulSounds} = await import("../learning/playful/playfulSoundsPref");
 
     function armGameSounds() {
         setPlayfulMode(true);

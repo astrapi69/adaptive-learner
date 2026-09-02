@@ -67,6 +67,8 @@ const MODAL_REGISTRY: Record<string, ExitKind> = {
   "components/content/share/ShareWizard.tsx": "radix",
   "components/help/HelpDrawer.tsx": "radix",
   "components/lesson/dialogs/LessonExitDialog.tsx": "radix",
+  // #2878 — out-of-hearts forced choice (Escape/overlay == retry).
+  "components/lesson/dialogs/LessonHeartsDialog.tsx": "radix",
 
   // ConfirmDialog consumers (rendered directly or via the provider).
   "components/create-lesson/book/BookFileUpload.tsx": "confirm",

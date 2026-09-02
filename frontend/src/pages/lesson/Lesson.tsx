@@ -50,6 +50,9 @@ import LessonCombo from "../../components/lesson/chrome/LessonCombo";
 import LessonMascot from "../../components/lesson/mascot/LessonMascot";
 import { useLessonCombo } from "../../hooks/lesson/useLessonCombo";
 import { usePlayfulMode } from "../../hooks/settings/usePlayfulMode";
+import { useLessonTension } from "../../hooks/lesson/useLessonTension";
+import LessonTensionChrome from "../../components/lesson/chrome/tension/LessonTensionChrome";
+import LessonHeartsDialog from "../../components/lesson/dialogs/LessonHeartsDialog";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
@@ -205,6 +208,21 @@ export default function LessonPage() {
     progress,
     recordStepResult,
     goNext,
+  });
+
+  // #2878 game-mode tension - hearts + per-exercise countdown ring,
+  // both opt-in (default OFF). All gating (mode, summary, correction
+  // round) lives inside the hook.
+  const tension = useLessonTension({
+    playful,
+    lesson,
+    playedLesson,
+    currentStepIndex,
+    lessonMode,
+    checked,
+    source,
+    setId,
+    filename,
   });
 
   // Scroll-to-top on step change + the #140 theory back-link
@@ -366,6 +384,18 @@ export default function LessonPage() {
         onStartOver={() => void handleStartOver()}
       />
 
+      {/* #2878 — out of hearts: the run ends with a friendly forced
+          choice. Retry restarts the run (recorded results stay) and
+          refills the hearts; exit returns to the lesson overview. */}
+      <LessonHeartsDialog
+        open={tension.depleted}
+        onRetry={() => {
+          tension.resetHearts();
+          void handleStartOver();
+        }}
+        onExit={() => navigate(exitRouteForLesson(setId))}
+      />
+
       {/* #959 — scroll anchor: a step change scrolls this to the top of
           the viewport, lifting the header off-screen so the progress bar +
           task land in view. scroll-mt leaves a little gap under the
@@ -407,6 +437,11 @@ export default function LessonPage() {
         {/* #2874 — the streak chip (game mode only): live run during the
             lesson, the best run on the summary. */}
         {playful && <LessonCombo combo={combo} showBest={isSummary} />}
+
+        {/* #2878 — the tension systems (both opt-in): the lives row and
+            the per-exercise countdown ring. Self-gating, hidden on the
+            summary. */}
+        <LessonTensionChrome tension={tension} />
 
         {/* #2849 — the Lernfunke companion, playful mode only. Reacts to
             the celebration bus (cheer/encourage/celebrate) and speaks one

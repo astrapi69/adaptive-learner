@@ -19,7 +19,7 @@
  */
 
 import {playSound, type SoundName} from "../audio/sound-effects";
-import {playfulSoundsActive} from "../learning/playfulSoundsPref";
+import {playfulSoundsActive} from "../learning/playful/playfulSoundsPref";
 import {enqueueMilestone} from "../feedback/celebrationQueue";
 import {
     allowsMilestones,

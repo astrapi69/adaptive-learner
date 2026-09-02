@@ -785,6 +785,12 @@
     "playful_sounds_offer": "Mit Sound spielen?",
     "playful_sounds_offer_yes": "Ja, Sounds an",
     "playful_sounds_offer_later": "Später",
+    "playful_hearts": "Herzen (Leben)",
+    "playful_hearts_description": "Eine falsche Antwort kostet ein Herz. Bei null endet der Lektionsdurchlauf mit einem freundlichen Nochmal-Angebot - nichts Gelöstes geht verloren. In Prüfungs- und Auf-Zeit-Lektionen aus.",
+    "playful_hearts_count": "Herzen pro Lektion",
+    "playful_countdown": "Countdown-Ring",
+    "playful_countdown_description": "Ein kleiner Zeitring pro Übung. Läuft er ab, reißt die Serie und ein Herz geht verloren - die Übung bleibt offen, nichts wird automatisch abgeschickt. In Prüfungs- und Auf-Zeit-Lektionen aus (der Auf-Zeit-Modus hat seinen eigenen Timer).",
+    "playful_countdown_seconds": "Sekunden pro Übung",
     "feedback_intensity": "Feedback-Intensität",
     "feedback_intensity_description": "Wie ausgiebig die App deinen Fortschritt feiert.",
     "feedback_intensity_subtle": "Dezent",
@@ -1907,6 +1913,16 @@
     "combo_chip": "x{n}",
     "combo_aria": "Antwortserie: {n} in Folge",
     "combo_best": "Beste Serie: {n}",
+    "hearts": {
+      "aria": "Leben: {n} von {max}",
+      "empty_heading": "Keine Herzen mehr!",
+      "empty_body": "Kein Problem - nichts ist verloren, alles Gelöste bleibt gespeichert. Kurz durchatmen und die Lektion nochmal versuchen.",
+      "action_retry": "Nochmal versuchen",
+      "action_exit": "Lektion verlassen"
+    },
+    "countdown": {
+      "aria": "Zeitring: {n}s übrig"
+    },
     "playful_hint_title": "Spielmodus ausprobieren",
     "playful_hint_enable_sound": "Mit Sound einschalten",
     "playful_hint_body": "Lektionen feiern jede richtige Antwort mit Lob und Konfetti. Du kannst das jederzeit in den Einstellungen ändern.",

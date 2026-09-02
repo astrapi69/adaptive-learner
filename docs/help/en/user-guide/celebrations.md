@@ -69,6 +69,12 @@ With game mode on:
   large tiles, picked words jump into the blank in cloze
   exercises, and matching pairs snap together with a pop.
   Interaction and grading are identical to the normal look.
+- For extra tension there are two add-ons, both off by default:
+  **hearts** (a wrong answer costs a life; at zero the run ends
+  with a friendly retry offer, nothing is lost) and a **countdown
+  ring** per exercise (when it runs out, the streak breaks and a
+  heart is lost - the exercise stays open). Both stay off in exam
+  and timed lessons, and the correction round never costs hearts.
 - **Lernfunke**, your learning companion, sits as a small flame
   figure next to the progress bar: it cheers on correct answers,
   encourages after wrong ones, celebrates milestones, and sends

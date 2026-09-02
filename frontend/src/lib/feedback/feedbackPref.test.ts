@@ -23,7 +23,7 @@ import {
     shouldPraiseCorrect,
     type FeedbackIntensity,
 } from "./feedbackPref";
-import {setPlayfulMode} from "../learning/playfulModePref";
+import {setPlayfulMode} from "../learning/playful/playfulModePref";
 
 beforeEach(() => {
     localStorage.clear();

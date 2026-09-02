@@ -14,7 +14,7 @@ import {
     readPlayfulHintDismissed,
     readPlayfulMode,
     setPlayfulMode,
-} from "../../../lib/learning/playfulModePref";
+} from "../../../lib/learning/playful/playfulModePref";
 
 const notifySuccess = vi.fn();
 vi.mock("../../../utils/notify", () => ({
@@ -75,10 +75,10 @@ describe("PlayfulModeHint", () => {
 
 describe("turn on with sound (#2875)", async () => {
     const {readPlayfulMode} = await import(
-        "../../../lib/learning/playfulModePref"
+        "../../../lib/learning/playful/playfulModePref"
     );
     const {readPlayfulSounds} = await import(
-        "../../../lib/learning/playfulSoundsPref"
+        "../../../lib/learning/playful/playfulSoundsPref"
     );
     const {fireEvent} = await import("@testing-library/react");
 

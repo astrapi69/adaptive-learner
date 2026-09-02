@@ -616,6 +616,31 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Prüfungsmodus + Spielmodus + Sounds: kein Ton pro Antwort (kein
       Sofort-Feedback); die Abschluss-Fanfare bleibt erlaubt
 
+#### Spannungssysteme: Herzen + Countdown-Ring (#2878, opt-in, Standard aus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: die Schalter "Herzen (Leben)"
+      und "Countdown-Ring" sind standardmäßig AUS; die Zahlenfelder
+      (Herzen pro Lektion, Sekunden pro Übung) sind erst nach dem
+      Einschalten des jeweiligen Schalters bedienbar und klemmen auf
+      1-5 bzw. 5-120
+- [ ] Herzen an + Spielmodus an: neben dem Serien-Chip erscheint die
+      Herz-Leiste (gefüllt); jede falsche Antwort leert ein Herz mit
+      kurzem Schütteln
+- [ ] Bei 0 Herzen: freundlicher Dialog "Keine Herzen mehr!" mit
+      "Nochmal versuchen" (startet die Lektion neu, Herzen voll) und
+      "Lektion verlassen" (zur Übersicht); nichts Gelöstes geht verloren
+- [ ] Korrektur-Runde in der Zusammenfassung: Fehler beheben kostet
+      KEINE Herzen (die Leiste ist dort ausgeblendet)
+- [ ] Countdown-Ring an: pro Übung läuft ein kleiner Ring (grün > gelb
+      > rot, Puls in den letzten 5 Sekunden); Ablauf reißt die Serie,
+      kostet ein Herz (falls an) und spielt den Fehl-Ton - die Übung
+      bleibt aber offen und normal lösbar, nichts wird automatisch
+      abgeschickt; nach dem Prüfen pausiert der Ring
+- [ ] Prüfungsmodus und Auf-Zeit-Modus: weder Herzen noch Ring
+      erscheinen (der Auf-Zeit-Modus behält seinen eigenen Zeitbalken)
+- [ ] Bewertung unverändert: Punktzahl, Sterne und Fortschritt sind
+      mit und ohne Spannungssysteme identisch
+
 #### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
 
 - [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln

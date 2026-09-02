@@ -789,6 +789,12 @@
     "playful_sounds_offer": "사운드와 함께 플레이할까요?",
     "playful_sounds_offer_yes": "네, 사운드 켜기",
     "playful_sounds_offer_later": "나중에",
+    "playful_hearts": "하트(생명)",
+    "playful_hearts_description": "오답이면 하트가 하나 줄어듭니다. 0이 되면 라운드가 끝나고 친절한 재도전 안내가 나옵니다. 푼 내용은 사라지지 않습니다. 시험·시간제한 레슨에서는 꺼져 있습니다.",
+    "playful_hearts_count": "레슨당 하트 수",
+    "playful_countdown": "카운트다운 링",
+    "playful_countdown_description": "연습 문제마다 작은 시간 링이 돕니다. 시간이 다 되면 연속 기록이 끊기고 하트를 하나 잃지만, 문제는 열린 채로 남고 자동 제출되지 않습니다. 시험·시간제한 레슨에서는 꺼져 있습니다(시간제한 모드에는 자체 타이머가 있습니다).",
+    "playful_countdown_seconds": "연습 문제당 초",
     "feedback_intensity": "피드백 강도",
     "feedback_intensity_description": "앱이 당신의 진행을 얼마나 크게 축하할지 정합니다.",
     "feedback_intensity_subtle": "은은하게",
@@ -1907,6 +1913,16 @@
     "combo_chip": "x{n}",
     "combo_aria": "연속 정답: {n}회 연속",
     "combo_best": "최고 연속 기록: {n}",
+    "hearts": {
+      "aria": "생명: {max}개 중 {n}개",
+      "empty_heading": "하트가 다 떨어졌어요!",
+      "empty_body": "괜찮아요. 잃은 것은 없고, 푼 내용은 모두 저장되어 있습니다. 숨 한 번 고르고 레슨을 다시 도전해 보세요.",
+      "action_retry": "다시 도전",
+      "action_exit": "레슨 나가기"
+    },
+    "countdown": {
+      "aria": "시간 링: {n}초 남음"
+    },
     "playful_hint_title": "게임 모드를 사용해 보세요",
     "playful_hint_enable_sound": "사운드와 함께 켜기",
     "playful_hint_body": "레슨이 정답마다 칭찬과 색종이로 축하합니다. 설정에서 언제든지 바꿀 수 있습니다.",

@@ -14,7 +14,7 @@ import type {ReactElement} from "react";
 
 import ClozeExercise from "./ClozeExercise";
 import {LessonModeProvider} from "../../../../hooks/lesson/modes/useLessonMode";
-import {setPlayfulMode} from "../../../../lib/learning/playfulModePref";
+import {setPlayfulMode} from "../../../../lib/learning/playful/playfulModePref";
 import type {ContentLessonExercise} from "../../../../storage/types";
 
 const SELECT_MODE: ContentLessonExercise = {
