@@ -4,20 +4,18 @@
  * unlock by level, one by the streak badge, two are purchasable with
  * XP through ``gamification.spendXp`` (both storage modes).
  *
- * Affordability is checked HERE before spending - the backend/Dexie
- * spend clamps at 0 and never rejects, so an unguarded call would
- * hand a broke user the frame for free. Purchases are a two-step
- * confirm (the MissionSettingsControl reset pattern). Selection and
- * purchases persist in the mode-agnostic ``avatar-frame-store`` and
- * announce themselves via ``notifyProfileUpdated`` so the header
- * avatar re-renders live; a purchase additionally emits the
- * xp-spent event so the header XP badge refreshes.
+ * The guarded two-step purchase lives in the shared
+ * ``useXpPurchase`` hook (#2861). Selection and purchases persist
+ * in the mode-agnostic ``avatar-frame-store`` and announce
+ * themselves via ``notifyProfileUpdated`` so the header avatar
+ * re-renders live.
  */
 
 import {useEffect, useState} from "react";
 import {Lock} from "lucide-react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import {useXpPurchase} from "../../../../hooks/gamification/useXpPurchase";
 import FormHint from "../../../../shared/forms/FormHint";
 import {
     AVATAR_FRAMES,
@@ -29,10 +27,8 @@ import {
     readAvatarFrameState,
     setSelectedAvatarFrame,
 } from "../../../../lib/avatar/avatar-frame-store";
-import {emitXpSpent} from "../../../../lib/gamification/xp-spent-event";
 import {notifyProfileUpdated} from "../../../../lib/learning/profileSignal";
 import {getStorage} from "../../../../storage";
-import {notify} from "../../../../utils/notify";
 
 export interface AvatarFrameControlProps {
     userId: string;
@@ -50,8 +46,24 @@ export default function AvatarFrameControl({userId}: AvatarFrameControlProps) {
     const [frameState, setFrameState] = useState(() =>
         readAvatarFrameState(userId),
     );
-    const [confirmBuy, setConfirmBuy] = useState<string | null>(null);
-    const [busy, setBusy] = useState(false);
+
+    const purchase = useXpPurchase({
+        userId,
+        totalXp: data?.totalXp ?? 0,
+        reason: "avatar_frame",
+        failedText: t("settings.avatar_frame_buy_failed", "Purchase failed."),
+        onPurchased: (id, next) => {
+            addPurchasedAvatarFrame(userId, id);
+            setSelectedAvatarFrame(userId, id);
+            setFrameState(readAvatarFrameState(userId));
+            setData((prev) =>
+                prev
+                    ? {...prev, totalXp: next.total_xp, level: next.level}
+                    : prev,
+            );
+            notifyProfileUpdated();
+        },
+    });
 
     useEffect(() => {
         let cancelled = false;
@@ -95,38 +107,6 @@ export default function AvatarFrameControl({userId}: AvatarFrameControlProps) {
         notifyProfileUpdated();
     };
 
-    const handleBuy = async (frame: AvatarFrame) => {
-        if (frame.unlock.kind !== "xp" || busy) return;
-        const cost = frame.unlock.cost;
-        if (data.totalXp < cost) return;
-        if (confirmBuy !== frame.id) {
-            setConfirmBuy(frame.id);
-            return;
-        }
-        setConfirmBuy(null);
-        setBusy(true);
-        try {
-            const next = await getStorage().gamification.spendXp(
-                userId,
-                cost,
-                "avatar_frame",
-            );
-            addPurchasedAvatarFrame(userId, frame.id);
-            setSelectedAvatarFrame(userId, frame.id);
-            setFrameState(readAvatarFrameState(userId));
-            setData({...data, totalXp: next.total_xp, level: next.level});
-            emitXpSpent(cost, "avatar_frame");
-            notifyProfileUpdated();
-            notify.success(t("settings.saved", "Saved."));
-        } catch {
-            notify.error(
-                t("settings.avatar_frame_buy_failed", "Purchase failed."),
-            );
-        } finally {
-            setBusy(false);
-        }
-    };
-
     const conditionLabel = (frame: AvatarFrame): string | null => {
         switch (frame.unlock.kind) {
             case "level":
@@ -165,7 +145,6 @@ export default function AvatarFrameControl({userId}: AvatarFrameControlProps) {
                     );
                     const xpCost =
                         frame.unlock.kind === "xp" ? frame.unlock.cost : null;
-                    const buyable = xpCost !== null && !unlocked;
                     const affordable =
                         xpCost !== null && data.totalXp >= xpCost;
                     return (
@@ -178,7 +157,7 @@ export default function AvatarFrameControl({userId}: AvatarFrameControlProps) {
                                 aria-pressed={active}
                                 aria-label={name}
                                 title={name}
-                                disabled={!unlocked || busy}
+                                disabled={!unlocked || purchase.busy}
                                 onClick={() => handleSelect(frame)}
                                 data-testid={`settings-avatar-frame-${frame.id}`}
                                 className={`relative m-1 inline-flex size-12 items-center justify-center rounded-full border-2 bg-[var(--bg-elevated)] ${
@@ -206,15 +185,17 @@ export default function AvatarFrameControl({userId}: AvatarFrameControlProps) {
                                     {conditionLabel(frame)}
                                 </FormHint>
                             )}
-                            {buyable && (
+                            {xpCost !== null && !unlocked && (
                                 <button
                                     type="button"
-                                    disabled={!affordable || busy}
-                                    onClick={() => void handleBuy(frame)}
+                                    disabled={!affordable || purchase.busy}
+                                    onClick={() =>
+                                        void purchase.buy(frame.id, xpCost)
+                                    }
                                     data-testid={`settings-avatar-frame-buy-${frame.id}`}
                                     className="cursor-pointer rounded-sm border border-[var(--border-strong)] px-2 py-0.5 text-xs font-medium hover:bg-[var(--surface-2)] disabled:cursor-not-allowed disabled:opacity-50"
                                 >
-                                    {confirmBuy === frame.id
+                                    {purchase.confirmId === frame.id
                                         ? t(
                                               "settings.avatar_frame_buy_confirm",
                                               "Confirm",

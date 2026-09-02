@@ -16,11 +16,13 @@
  * at 0 and never rejects.
  */
 
-export type AvatarFrameUnlock =
-    | {kind: "default"}
-    | {kind: "level"; level: number}
-    | {kind: "badge"; badgeKey: string}
-    | {kind: "xp"; cost: number};
+import {
+    isUnlocked,
+    type UnlockCondition,
+    type UnlockContext,
+} from "../gamification/unlockables";
+
+export type AvatarFrameUnlock = UnlockCondition;
 
 export interface AvatarFrame {
     /** Stable id, also the i18n suffix (``settings.avatar_frame_<id>``). */
@@ -54,25 +56,12 @@ export function avatarFrameById(id: string | null | undefined): AvatarFrame {
     return AVATAR_FRAMES.find((f) => f.id === id) ?? AVATAR_FRAMES[0];
 }
 
-export interface FrameUnlockContext {
-    level: number;
-    earnedBadgeKeys: ReadonlySet<string>;
-    purchased: ReadonlySet<string>;
-}
+export type FrameUnlockContext = UnlockContext;
 
 /** Whether ``frame`` is available to a user in ``ctx``. */
 export function isFrameUnlocked(
     frame: AvatarFrame,
     ctx: FrameUnlockContext,
 ): boolean {
-    switch (frame.unlock.kind) {
-        case "default":
-            return true;
-        case "level":
-            return ctx.level >= frame.unlock.level;
-        case "badge":
-            return ctx.earnedBadgeKeys.has(frame.unlock.badgeKey);
-        case "xp":
-            return ctx.purchased.has(frame.id);
-    }
+    return isUnlocked(frame.id, frame.unlock, ctx);
 }

@@ -5,8 +5,9 @@ YAML-Eingriff anpassen kannst. Sie ist als **Tab-Seite** aufgebaut:
 Wähle einen Tab und sein Panel öffnet sich, du scrollst also nicht
 eine lange Liste von oben nach unten. Die Tab-Gruppen sind:
 
-- **Allgemein**: UI-Sprache, Darstellung / Theme und
-  Oberflächen-Optionen (Gesten, Tooltips, Entwicklermodus).
+- **Allgemein**: Profil (Anzeigename + Avatar), UI-Sprache,
+  Darstellung / Theme und Oberflächen-Optionen (Gesten, Tooltips,
+  Entwicklermodus).
 - **KI**: Anbieter- + Modell-Picker, API-Schlüssel pro Anbieter mit
   Quellen-Attribution und die Anbieter-Übersicht.
 - **Lernen**: wie Lektionen ablaufen (Standardmodus,
@@ -19,6 +20,24 @@ eine lange Liste von oben nach unten. Die Tab-Gruppen sind:
 - **Gamification**: XP- / Abzeichen-Benachrichtigungen,
   Wochenend-Modus, Tagesziel und Fortschritt zurücksetzen.
 - **Über**: Version, Systeminfo, Credits, Spenden, Lizenz.
+
+## Profil
+
+Unter *Allgemein > Profil* legst du deinen **Anzeigenamen** fest und
+gestaltest deinen **Avatar**:
+
+- **Bild hochladen** öffnet den Zuschnitt-Dialog; das Ergebnis
+  erscheint oben rechts in der Navigation.
+- **Oder wähle eine Figur**: acht vorgefertigte Figuren als
+  Alternative zum eigenen Foto - ein Klick genügt.
+- **Avatar-Rahmen**: dekorative Ringe um den Avatar. Bronze, Silber
+  und Gold schaltest du über dein Level frei, die Flamme über das
+  3-Tage-Serien-Abzeichen; Stern und Akzent tauschst du gegen XP ein
+  (zweistufige Bestätigung, die Kosten stehen auf dem Knopf).
+  Gesperrte Rahmen zeigen ihre Bedingung an.
+
+Auswahl und gekaufte Rahmen bleiben erhalten und wandern mit ins
+[Backup](backup.md).
 
 ## Sprache
 
@@ -258,6 +277,14 @@ beide synchron.
 Außerdem lässt sich hier die **Reihenfolge der Inhalte-Tabs**
 (Entdecken / Meine Inhalte / Importieren) festlegen, sodass der Hub
 auf dem von dir am häufigsten genutzten Tab öffnet.
+
+Ebenfalls im Lernen-Tab: die **Feedback-Sektion**
+(Feedback-Intensität und Töne), der **Spielmodus** samt
+**Maskottchen-Variante** - Farbwelten des Lernfunke, die du über
+Level und Abzeichen freischaltest oder gegen XP eintauschst
+(gesperrte Varianten zeigen ihre Bedingung, Käufe fragen zweistufig
+nach) - sowie Missionen und Erinnerungen. Was der Spielmodus im
+Einzelnen ändert, steht unter [Lob und Belohnungen](celebrations.md).
 
 ## Gamification
 

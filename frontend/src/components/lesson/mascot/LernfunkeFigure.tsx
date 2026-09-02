@@ -12,6 +12,9 @@
  * @param pose - Facial expression: idle, cheer (correct answer),
  *     encourage (wrong answer), celebrate (milestones).
  * @param size - Rendered width/height in px.
+ * @param colors - Optional variant colors (#2861, token ``var()``
+ *     values from the mascot-variant catalog); defaults to the
+ *     classic funke scheme.
  *
  * @example
  * <LernfunkeFigure pose="cheer" size={40} />
@@ -26,15 +29,25 @@ export const MASCOT_POSES = [
 
 export type MascotPose = (typeof MASCOT_POSES)[number];
 
+export interface MascotColors {
+    /** Body/flame fill (token ``var()`` value). */
+    body: string;
+    /** Celebrate-pose sparkle fill (token ``var()`` value). */
+    spark: string;
+}
+
 export interface LernfunkeFigureProps {
     pose: MascotPose;
     size: number;
+    colors?: MascotColors;
 }
 
-const BODY = "var(--method-contextual)";
+const DEFAULT_COLORS: MascotColors = {
+    body: "var(--method-contextual)",
+    spark: "var(--star)",
+};
 const INNER = "var(--bg-primary)";
 const FACE = "var(--fg-primary)";
-const SPARK = "var(--star)";
 
 function Face({pose}: {pose: MascotPose}) {
     switch (pose) {
@@ -98,7 +111,11 @@ function Face({pose}: {pose: MascotPose}) {
     }
 }
 
-export default function LernfunkeFigure({pose, size}: LernfunkeFigureProps) {
+export default function LernfunkeFigure({
+    pose,
+    size,
+    colors = DEFAULT_COLORS,
+}: LernfunkeFigureProps) {
     return (
         <svg
             width={size}
@@ -109,7 +126,7 @@ export default function LernfunkeFigure({pose, size}: LernfunkeFigureProps) {
         >
             <path
                 d="M32 4c2.4 9.6 7.2 13 11.2 18 4 5 5.6 9 5.6 14a16.8 16.8 0 0 1-33.6 0c0-5.6 3.2-10 6.4-14.4C24.8 17 30 13.6 32 4z"
-                fill={BODY}
+                fill={colors.body}
             />
             <path
                 d="M32 26c3.6 5 6.4 7.6 6.4 12.4a6.4 6.4 0 0 1-12.8 0c0-4.8 2.8-7.4 6.4-12.4z"
@@ -118,7 +135,7 @@ export default function LernfunkeFigure({pose, size}: LernfunkeFigureProps) {
             />
             <Face pose={pose} />
             {pose === "celebrate" && (
-                <g fill={SPARK}>
+                <g fill={colors.spark}>
                     <path d="M10 14l1.6 3.4 3.4 1.6-3.4 1.6L10 24l-1.6-3.4L5 19l3.4-1.6z" />
                     <path d="M54 10l1.4 3 3 1.4-3 1.4-1.4 3-1.4-3-3-1.4 3-1.4z" />
                     <path d="M53 30l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" />

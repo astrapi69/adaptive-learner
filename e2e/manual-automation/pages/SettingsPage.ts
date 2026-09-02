@@ -98,6 +98,15 @@ export class SettingsPage {
   avatarFrameBuy(id: string): Locator {
     return this.page.getByTestId(`settings-avatar-frame-buy-${id}`);
   }
+  get mascotVariants(): Locator {
+    return this.page.getByTestId("settings-mascot-variants");
+  }
+  mascotVariant(id: string): Locator {
+    return this.page.getByTestId(`settings-mascot-variant-${id}`);
+  }
+  mascotVariantBuy(id: string): Locator {
+    return this.page.getByTestId(`settings-mascot-variant-buy-${id}`);
+  }
   get selectiveExport(): Locator {
     return this.page.getByTestId("data-export-selective");
   }

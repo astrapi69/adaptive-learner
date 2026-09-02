@@ -574,6 +574,26 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Schmaler Viewport (Mobile): Figur verdrängt die Fortschritts-
       leiste nicht; die Zeile bricht sauber um
 
+#### Maskottchen-Varianten (#2861, Farbwelten des Lernfunke)
+
+- [ ] Settings -> Lernen -> Spielmodus: unter dem Schalter die Zeile
+      "Maskottchen-Variante" mit fünf Mini-Figuren (Funke, Ozean, Wald,
+      Geist, Gold) samt Hinweistext
+- [ ] Frischer Account (Level 1, keine Abzeichen, 0 XP): nur Funke
+      wählbar; Ozean "Ab Level 3", Wald "Ab Level 7", Geist "Benötigt
+      das Abzeichen: Erste Sitzung", Gold mit "250 XP"-Knopf
+      (deaktiviert, solange die XP nicht reichen)
+- [ ] Mit Level 3+: Ozean anklickbar; Auswahl bleibt nach Reload
+      erhalten (Markierungsring an der gewählten Variante)
+- [ ] Bei geöffneter Lektion (Spielmodus an) die Variante wechseln:
+      die Flammen-Figur neben der Fortschrittsleiste färbt sofort um,
+      ohne Reload
+- [ ] Gold-Kauf mit ausreichend XP: erster Klick zeigt "Bestätigen",
+      zweiter Klick zieht 250 XP ab (XP-Anzeige oben aktualisiert
+      sich), Variante ist gewählt und dauerhaft freigeschaltet
+- [ ] Backup-Roundtrip: Export -> Wipe -> Import stellt gewählte und
+      gekaufte Varianten wieder her (beide Speicher-Modi)
+
 ### Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der
       Korrektur-Runde am Ende die Fehler beheben. Der Punktzahl-Balken zeigt

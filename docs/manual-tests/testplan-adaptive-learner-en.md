@@ -538,6 +538,25 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Narrow viewport (mobile): the figure does not crowd out the
       progress bar; the row wraps cleanly
 
+#### Mascot variants (#2861, Lernfunke color schemes)
+
+- [ ] Settings -> Learning -> Game mode: below the switch, the "Mascot
+      variant" row with five mini figures (Spark, Ocean, Forest, Ghost,
+      Gold) plus a hint text
+- [ ] Fresh account (level 1, no badges, 0 XP): only Spark selectable;
+      Ocean "From level 3", Forest "From level 7", Ghost "Needs the
+      badge: First session", Gold with a "250 XP" button (disabled
+      while XP is insufficient)
+- [ ] At level 3+: Ocean clickable; the choice survives a reload
+      (highlight ring on the selected variant)
+- [ ] With a lesson open (game mode on), switch the variant: the flame
+      figure next to the progress bar recolors immediately, no reload
+- [ ] Gold purchase with enough XP: first click shows "Confirm", the
+      second deducts 250 XP (the header XP badge updates), the variant
+      is selected and permanently unlocked
+- [ ] Backup round-trip: export -> wipe -> import restores selected and
+      purchased variants (both storage modes)
+
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the
       end-of-lesson correction round. The score bar shows two segments: what
