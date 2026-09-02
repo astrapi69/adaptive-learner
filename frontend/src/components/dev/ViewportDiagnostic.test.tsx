@@ -168,6 +168,45 @@ describe("ViewportDiagnostic", () => {
     expect(report.value).toMatch(/docH=\d+/);
   });
 
+  it("the report answers the environment questions itself (#2883)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId(
+      "viewport-diagnostic-report",
+    ) as HTMLTextAreaElement;
+    // Page-zoom arithmetic inputs + app context in the head.
+    expect(report.value).toMatch(/screenW=\d+/);
+    expect(report.value).toMatch(/screenH=\d+/);
+    expect(report.value).toMatch(/dpr=[\d.]+/);
+    expect(report.value).toMatch(/standalone=[01]/);
+    // The user agent (iOS version -> interactive-widget support).
+    expect(report.value).toContain("ua=");
+    // The transition timeline section exists even before any event.
+    expect(report.value).toContain("events (newest first):");
+    expect(report.value).toContain("(no events yet)");
+  });
+
+  it("tap lines carry the relative timestamp t= (#2883)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <button data-testid="target-btn">Tap me</button>
+      </>,
+    );
+    fireEvent.pointerDown(screen.getByTestId("target-btn"), {
+      clientX: 10,
+      clientY: 300,
+    });
+    expect(screen.getByTestId("viewport-diagnostic-tap")).toHaveTextContent(
+      /t=[\d.]+ y=300/,
+    );
+    const logged = readVvLog().filter((entry) => entry.kind === "tap");
+    expect(logged).toHaveLength(1);
+    expect(typeof logged[0].t).toBe("number");
+  });
+
   it("starts collapsed: no full-width report textarea over the page (#2779)", () => {
     localStorage.setItem("adaptive-learner.vv_diag", "1");
     render(<ViewportDiagnostic />);
