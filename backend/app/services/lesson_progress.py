@@ -174,6 +174,10 @@ class ProgressUpdate:
     step_result: dict[str, Any] | None = None
     time_spent_seconds_delta: int = 0
     current_step: int | None = None
+    # #2893 - transient game-mode combo bonus (already user-capped by
+    # the client, schema-clamped to the hard ceiling 20). Consumed by
+    # the completion unification, never stored on the row.
+    combo_bonus_xp: int = 0
     mark_completed: bool = False
     mark_paused: bool = False
     mark_abandoned: bool = False
@@ -237,7 +241,9 @@ def upsert_progress(
     repo.refresh(row)
 
     if just_completed:
-        _record_completion_unification(unification_repo, user_id, row)
+        _record_completion_unification(
+            unification_repo, user_id, row, combo_bonus_xp=update.combo_bonus_xp
+        )
 
     return _row_to_wire(row)
 
@@ -374,6 +380,8 @@ def _record_completion_unification(
     unification_repo: LessonSessionUnificationRepository,
     user_id: str,
     row: LessonProgress,
+    *,
+    combo_bonus_xp: int = 0,
 ) -> None:
     """Fire the lesson -> LearningSession unification hook (v1.31.0 / Phase 46F).
 
@@ -393,6 +401,7 @@ def _record_completion_unification(
             lesson_progress_id=row.id,
             score_correct=row.score_correct,
             score_total=row.score_total,
+            combo_bonus_xp=combo_bonus_xp,
         )
     except Exception:  # noqa: BLE001
         logger.exception(

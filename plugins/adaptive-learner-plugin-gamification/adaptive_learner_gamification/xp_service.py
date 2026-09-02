@@ -328,12 +328,20 @@ def _corrected_adjusted_stars(
     return compute_stars(final_correct, score_total)
 
 
+# #2893 - hard ceiling for the game-mode combo bonus. The user-facing
+# cap is configurable client-side (5-20); this is the defensive maximum
+# both formula copies enforce so a stale or manipulated client cannot
+# inflate the credit. Mirrors LESSON_COMBO_BONUS_HARD_CAP in the TS port.
+LESSON_COMBO_BONUS_HARD_CAP = 20
+
+
 def calculate_lesson_session_xp(
     *,
     stars: int,
     first_attempt: bool,
     streak_days: int,
     xp_multiplier: float = 1.0,
+    combo_bonus: int = 0,
 ) -> XPAward:
     """Compute XP for a content-lesson completion (Phase 46E.1).
 
@@ -352,6 +360,12 @@ def calculate_lesson_session_xp(
       :func:`lesson_xp_multiplier_for_mode`. Mirrors the
       ``xpMultiplier`` field of the frontend ``MODE_CONFIGS``
       (``frontend/src/lib/learning/lessonModeConfig.ts``).
+    - Game-mode combo bonus (#2893): ``combo_bonus`` XP added
+      AFTER the multiplier (so no streak/mode factor inflates
+      it), clamped into [0, ``LESSON_COMBO_BONUS_HARD_CAP``].
+      The client counts streak answers from streak 3 and applies
+      the user-configured cap; this clamp is the defensive
+      backstop.
 
     The streak and mode factors compose into one effective
     multiplier (``streak_multiplier * xp_multiplier``) applied to
@@ -376,7 +390,10 @@ def calculate_lesson_session_xp(
     capped_days = min(streak_days, 7)
     streak_multiplier = 1.0 + 0.25 * capped_days
     effective_multiplier = streak_multiplier * xp_multiplier
-    xp_earned = int(round(pre_multiplier * effective_multiplier))
+    clamped_bonus = max(0, min(LESSON_COMBO_BONUS_HARD_CAP, int(combo_bonus)))
+    xp_earned = int(round(pre_multiplier * effective_multiplier)) + clamped_bonus
+    if clamped_bonus > 0:
+        breakdown["combo_bonus"] = clamped_bonus
     if streak_days > 0:
         breakdown["streak_multiplier_pct"] = int(
             round((streak_multiplier - 1.0) * 100)
@@ -631,11 +648,13 @@ def award_xp_for_lesson_session(
         score_total=score_total,
         mode=mode,
     )
+    combo_bonus = int(session.get("combo_bonus_xp") or 0)
     award = calculate_lesson_session_xp(
         stars=stars,
         first_attempt=first_attempt,
         streak_days=streak,
         xp_multiplier=lesson_xp_multiplier_for_mode(mode),
+        combo_bonus=combo_bonus,
     )
 
     row = _get_or_create_user_xp(db, user_id)
