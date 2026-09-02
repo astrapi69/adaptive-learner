@@ -10,7 +10,7 @@
 
 import {Heart} from "lucide-react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 
 export interface LessonHeartsProps {
     /** Remaining lives. */

@@ -19,7 +19,7 @@
  */
 
 import {readSoundEnabled, readSoundVolume} from "../feedback/feedbackPref";
-import {playfulSoundsActive} from "../learning/playfulSoundsPref";
+import {playfulSoundsActive} from "../learning/playful/playfulSoundsPref";
 
 export type SoundName =
     | "correct_answer"

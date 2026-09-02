@@ -13,7 +13,7 @@ import {useEffect, useState} from "react";
 import {
     PLAYFUL_MODE_CHANGE_EVENT,
     readPlayfulMode,
-} from "../../lib/learning/playfulModePref";
+} from "../../lib/learning/playful/playfulModePref";
 
 export function usePlayfulMode(): boolean {
     const [playful, setPlayful] = useState<boolean>(() => readPlayfulMode());

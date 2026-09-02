@@ -51,7 +51,7 @@ import LessonMascot from "../../components/lesson/mascot/LessonMascot";
 import { useLessonCombo } from "../../hooks/lesson/useLessonCombo";
 import { usePlayfulMode } from "../../hooks/settings/usePlayfulMode";
 import { useLessonTension } from "../../hooks/lesson/useLessonTension";
-import LessonTensionChrome from "../../components/lesson/chrome/LessonTensionChrome";
+import LessonTensionChrome from "../../components/lesson/chrome/tension/LessonTensionChrome";
 import LessonHeartsDialog from "../../components/lesson/dialogs/LessonHeartsDialog";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";

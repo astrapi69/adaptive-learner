@@ -6,7 +6,7 @@
  * page mounts it unconditionally.
  */
 
-import type {LessonTension} from "../../../hooks/lesson/useLessonTension";
+import type {LessonTension} from "../../../../hooks/lesson/useLessonTension";
 import LessonCountdownRing from "./LessonCountdownRing";
 import LessonHearts from "./LessonHearts";
 

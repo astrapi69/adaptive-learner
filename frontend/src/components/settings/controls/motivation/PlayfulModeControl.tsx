@@ -24,13 +24,13 @@ import MascotVariantControl from "./MascotVariantControl";
 import {
     readPlayfulMode,
     setPlayfulMode,
-} from "../../../../lib/learning/playfulModePref";
+} from "../../../../lib/learning/playful/playfulModePref";
 import {
     markPlayfulSoundsPrompted,
     readPlayfulSounds,
     readPlayfulSoundsPrompted,
     setPlayfulSounds,
-} from "../../../../lib/learning/playfulSoundsPref";
+} from "../../../../lib/learning/playful/playfulSoundsPref";
 import {
     MAX_COUNTDOWN_SECONDS,
     MAX_HEARTS_COUNT,
@@ -46,7 +46,7 @@ import {
     setPlayfulCountdownSeconds,
     setPlayfulHearts,
     setPlayfulHeartsCount,
-} from "../../../../lib/learning/playfulTensionPref";
+} from "../../../../lib/learning/playful/playfulTensionPref";
 
 export default function PlayfulModeControl() {
     const {t} = useI18n();

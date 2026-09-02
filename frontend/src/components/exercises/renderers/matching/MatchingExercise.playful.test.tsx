@@ -14,7 +14,7 @@ import type {ReactElement} from "react";
 
 import MatchingExercise from "./MatchingExercise";
 import {LessonModeProvider} from "../../../../hooks/lesson/modes/useLessonMode";
-import {setPlayfulMode} from "../../../../lib/learning/playfulModePref";
+import {setPlayfulMode} from "../../../../lib/learning/playful/playfulModePref";
 import type {ContentLessonExercise} from "../../../../storage/types";
 
 const EXERCISE: ContentLessonExercise = {

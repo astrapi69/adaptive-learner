@@ -21,8 +21,8 @@ import {
     readPlayfulHintDismissed,
     readPlayfulMode,
     setPlayfulMode,
-} from "../../../lib/learning/playfulModePref";
-import {setPlayfulSounds} from "../../../lib/learning/playfulSoundsPref";
+} from "../../../lib/learning/playful/playfulModePref";
+import {setPlayfulSounds} from "../../../lib/learning/playful/playfulSoundsPref";
 import {notify} from "../../../utils/notify";
 
 export default function PlayfulModeHint() {

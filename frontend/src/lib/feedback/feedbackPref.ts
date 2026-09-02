@@ -22,7 +22,7 @@
  * when their stored level is higher.
  */
 
-import {readPlayfulMode} from "../learning/playfulModePref";
+import {readPlayfulMode} from "../learning/playful/playfulModePref";
 
 export type FeedbackIntensity = "subtle" | "normal" | "enthusiastic";
 

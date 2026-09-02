@@ -9,7 +9,7 @@
  * playable, see the hook).
  */
 
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 import {cn} from "@/lib/utils";
 
 export interface LessonCountdownRingProps {

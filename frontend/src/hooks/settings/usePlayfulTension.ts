@@ -16,7 +16,7 @@ import {
     readPlayfulCountdownSeconds,
     readPlayfulHearts,
     readPlayfulHeartsCount,
-} from "../../lib/learning/playfulTensionPref";
+} from "../../lib/learning/playful/playfulTensionPref";
 
 export interface PlayfulTension {
     heartsOn: boolean;

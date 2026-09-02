@@ -12,13 +12,13 @@ import {
     PLAYFUL_MODE_CHANGE_EVENT,
     readPlayfulMode,
     setPlayfulMode,
-} from "../../../../lib/learning/playfulModePref";
+} from "../../../../lib/learning/playful/playfulModePref";
 import {
     readPlayfulCountdown,
     readPlayfulCountdownSeconds,
     readPlayfulHearts,
     readPlayfulHeartsCount,
-} from "../../../../lib/learning/playfulTensionPref";
+} from "../../../../lib/learning/playful/playfulTensionPref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -61,13 +61,13 @@ describe("PlayfulModeControl", () => {
 
 describe("game-mode sounds (#2875)", async () => {
     const {setPlayfulMode} = await import(
-        "../../../../lib/learning/playfulModePref"
+        "../../../../lib/learning/playful/playfulModePref"
     );
     const {
         readPlayfulSounds,
         readPlayfulSoundsPrompted,
         setPlayfulSounds,
-    } = await import("../../../../lib/learning/playfulSoundsPref");
+    } = await import("../../../../lib/learning/playful/playfulSoundsPref");
     const {fireEvent} = await import("@testing-library/react");
 
     it("renders the sound toggle and persists a change", () => {

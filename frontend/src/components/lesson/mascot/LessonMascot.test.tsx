@@ -14,7 +14,7 @@ vi.mock("../../../storage/dexie/dexie-user-data", () => ({
 
 import LessonMascot from "./LessonMascot";
 import {emitCelebration} from "../../../lib/praise/celebration-bus";
-import {setPlayfulMode} from "../../../lib/learning/playfulModePref";
+import {setPlayfulMode} from "../../../lib/learning/playful/playfulModePref";
 import {setUserId} from "../../../lib/learning/learnerState";
 import {setSelectedMascotVariant} from "../../../lib/mascot/mascot-variant-store";
 
