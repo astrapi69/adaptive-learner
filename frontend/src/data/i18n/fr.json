@@ -1899,6 +1899,9 @@
   },
   "lesson": {
     "mascot_label": "Ton compagnon d'apprentissage",
+    "combo_chip": "x{n}",
+    "combo_aria": "Série de réponses : {n} d'affilée",
+    "combo_best": "Meilleure série : {n}",
     "playful_hint_title": "Essayez le mode jeu",
     "playful_hint_body": "Les leçons célèbrent chaque bonne réponse avec des félicitations et des confettis. Vous pouvez changer cela à tout moment dans les réglages.",
     "playful_hint_activate": "Activer",

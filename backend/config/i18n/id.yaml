@@ -1778,6 +1778,9 @@ repo:
     enable_git: "Aktifkan persistensi git"
 lesson:
   mascot_label: "Teman belajarmu"
+  combo_chip: "x{n}"
+  combo_aria: "Runtunan jawaban: {n} berturut-turut"
+  combo_best: "Runtunan terbaik: {n}"
   playful_hint_title: "Coba mode permainan"
   playful_hint_body: "Pelajaran merayakan setiap jawaban benar dengan pujian dan konfeti. Anda dapat mengubahnya kapan saja di Pengaturan."
   playful_hint_activate: "Aktifkan"

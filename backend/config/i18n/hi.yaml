@@ -1763,6 +1763,9 @@ repo:
     enable_git: git दृढ़ता सक्षम करें
 lesson:
   mascot_label: "आपका सीखने का साथी"
+  combo_chip: "x{n}"
+  combo_aria: "उत्तर श्रृंखला: लगातार {n}"
+  combo_best: "सर्वश्रेष्ठ श्रृंखला: {n}"
   playful_hint_title: "गेम मोड आज़माएँ"
   playful_hint_body: "पाठ हर सही उत्तर को प्रशंसा और कंफ़ेटी के साथ मनाते हैं। आप इसे कभी भी सेटिंग्स में बदल सकते हैं।"
   playful_hint_activate: "चालू करें"
