@@ -77,7 +77,7 @@ describe("AnswerCelebration", () => {
 
 describe("AnswerCelebration game-mode juice (#2874)", async () => {
     const {setPlayfulMode} = await import(
-        "../../../lib/learning/playfulModePref"
+        "../../../lib/learning/playful/playfulModePref"
     );
     const {LessonModeProvider} = await import(
         "../../../hooks/lesson/modes/useLessonMode"

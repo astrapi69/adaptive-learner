@@ -75,6 +75,13 @@ Mit aktivem Spielmodus:
   in die Lücke, und Zuordnungs-Paare schnappen mit einem Pop
   zusammen. Bedienung und Bewertung sind identisch zum normalen
   Look.
+- Für mehr Spannung gibt es zwei Extras, beide standardmäßig aus:
+  **Herzen** (eine falsche Antwort kostet ein Leben; bei null endet
+  der Durchlauf mit einem freundlichen Nochmal-Angebot, nichts geht
+  verloren) und ein **Countdown-Ring** pro Übung (läuft er ab, reißt
+  die Serie und ein Herz geht verloren - die Übung bleibt offen).
+  Beide sind in Prüfungs- und Auf-Zeit-Lektionen aus, und die
+  Korrektur-Runde kostet nie Herzen.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet

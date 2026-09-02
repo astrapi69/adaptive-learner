@@ -578,6 +578,30 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Exam mode + game mode + sounds: no per-answer tone (no immediate
       feedback); the completion fanfare stays allowed
 
+#### Tension systems: hearts + countdown ring (#2878, opt-in, default off)
+
+- [ ] Settings > Learning > Game Mode: the "Hearts (lives)" and
+      "Countdown ring" switches are OFF by default; the number inputs
+      (hearts per lesson, seconds per exercise) only become editable
+      after enabling their switch and clamp to 1-5 / 5-120
+- [ ] Hearts on + game mode on: the hearts row appears next to the
+      streak chip (filled); every wrong answer empties one heart with
+      a short shake
+- [ ] At 0 hearts: a friendly "Out of hearts!" dialog offers "Try
+      again" (restarts the lesson, hearts refilled) and "Leave lesson"
+      (back to the overview); nothing solved is lost
+- [ ] Correction round on the summary: fixing mistakes costs NO
+      hearts (the row is hidden there)
+- [ ] Countdown ring on: a small ring runs per exercise (green >
+      yellow > red, pulse in the last 5 seconds); expiry breaks the
+      streak, costs a heart (if on) and plays the wrong tone - but
+      the exercise stays open and normally solvable, nothing is
+      auto-submitted; the ring pauses after checking
+- [ ] Exam mode and timed mode: neither hearts nor ring appear (the
+      timed mode keeps its own time bar)
+- [ ] Grading unchanged: score, stars and progress are identical with
+      and without the tension systems
+
 #### Playful exercise renderers (#2876, only while game mode is on)
 
 - [ ] Multiple-choice exercise: the answers render as large tiles

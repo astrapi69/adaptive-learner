@@ -104,6 +104,18 @@ export class SettingsPage {
   get playfulSoundsOffer(): Locator {
     return this.page.getByTestId("settings-playful-sounds-offer");
   }
+  get playfulHeartsToggle(): Locator {
+    return this.page.getByTestId("settings-playful-hearts-toggle");
+  }
+  get playfulHeartsCount(): Locator {
+    return this.page.getByTestId("settings-playful-hearts-count");
+  }
+  get playfulCountdownToggle(): Locator {
+    return this.page.getByTestId("settings-playful-countdown-toggle");
+  }
+  get playfulCountdownSeconds(): Locator {
+    return this.page.getByTestId("settings-playful-countdown-seconds");
+  }
   get mascotVariants(): Locator {
     return this.page.getByTestId("settings-mascot-variants");
   }

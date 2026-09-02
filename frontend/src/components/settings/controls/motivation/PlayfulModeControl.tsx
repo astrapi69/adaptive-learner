@@ -8,6 +8,11 @@
  * exercise renderers can opt into playful presentation. Changing it
  * dispatches the pref-change event so the lesson player and every
  * celebration component re-read live (no reload).
+ *
+ * Also hosts the game-mode sound switch + one-time offer (#2875), the
+ * tension systems - hearts and the per-exercise countdown ring, both
+ * default OFF with clamped number inputs (#2878) - and the mascot
+ * variant picker (#2861).
  */
 
 import {useState} from "react";
@@ -19,13 +24,29 @@ import MascotVariantControl from "./MascotVariantControl";
 import {
     readPlayfulMode,
     setPlayfulMode,
-} from "../../../../lib/learning/playfulModePref";
+} from "../../../../lib/learning/playful/playfulModePref";
 import {
     markPlayfulSoundsPrompted,
     readPlayfulSounds,
     readPlayfulSoundsPrompted,
     setPlayfulSounds,
-} from "../../../../lib/learning/playfulSoundsPref";
+} from "../../../../lib/learning/playful/playfulSoundsPref";
+import {
+    MAX_COUNTDOWN_SECONDS,
+    MAX_HEARTS_COUNT,
+    MIN_COUNTDOWN_SECONDS,
+    MIN_HEARTS_COUNT,
+    clampCountdownSeconds,
+    clampHeartsCount,
+    readPlayfulCountdown,
+    readPlayfulCountdownSeconds,
+    readPlayfulHearts,
+    readPlayfulHeartsCount,
+    setPlayfulCountdown,
+    setPlayfulCountdownSeconds,
+    setPlayfulHearts,
+    setPlayfulHeartsCount,
+} from "../../../../lib/learning/playful/playfulTensionPref";
 
 export default function PlayfulModeControl() {
     const {t} = useI18n();
@@ -50,6 +71,37 @@ export default function PlayfulModeControl() {
     const handleOfferLater = () => {
         markPlayfulSoundsPrompted();
         setPrompted(true);
+    };
+
+    // #2878 - the tension systems (hearts + countdown), both default OFF.
+    const [hearts, setHearts] = useState<boolean>(() => readPlayfulHearts());
+    const [heartsCount, setHeartsCount] = useState<number>(() =>
+        readPlayfulHeartsCount(),
+    );
+    const [countdown, setCountdown] = useState<boolean>(() =>
+        readPlayfulCountdown(),
+    );
+    const [countdownSeconds, setCountdownSeconds] = useState<number>(() =>
+        readPlayfulCountdownSeconds(),
+    );
+
+    const handleHeartsToggle = (next: boolean) => {
+        setHearts(next);
+        setPlayfulHearts(next);
+    };
+    const handleHeartsCount = (raw: string) => {
+        const clamped = clampHeartsCount(Number(raw));
+        setHeartsCount(clamped);
+        setPlayfulHeartsCount(clamped);
+    };
+    const handleCountdownToggle = (next: boolean) => {
+        setCountdown(next);
+        setPlayfulCountdown(next);
+    };
+    const handleCountdownSeconds = (raw: string) => {
+        const clamped = clampCountdownSeconds(Number(raw));
+        setCountdownSeconds(clamped);
+        setPlayfulCountdownSeconds(clamped);
     };
 
     return (
@@ -122,6 +174,79 @@ export default function PlayfulModeControl() {
                     data-testid="settings-playful-sounds-toggle"
                     checked={sounds}
                     onChange={(e) => handleSoundsToggle(e.target.checked)}
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t("settings.playful_hearts", "Hearts (lives)")}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.playful_hearts_description",
+                            "A wrong answer costs one heart. At zero the lesson run ends with a friendly retry offer - nothing you solved is lost. Off in exam and timed lessons.",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-playful-hearts-toggle"
+                    checked={hearts}
+                    onChange={(e) => handleHeartsToggle(e.target.checked)}
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="text-sm">
+                    {t("settings.playful_hearts_count", "Hearts per lesson")}
+                </span>
+                <input
+                    type="number"
+                    className="w-20"
+                    min={MIN_HEARTS_COUNT}
+                    max={MAX_HEARTS_COUNT}
+                    value={heartsCount}
+                    disabled={!hearts}
+                    onChange={(e) => handleHeartsCount(e.target.value)}
+                    data-testid="settings-playful-hearts-count"
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t("settings.playful_countdown", "Countdown ring")}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.playful_countdown_description",
+                            "A small time ring per exercise. When it runs out, the streak breaks and a heart is lost - the exercise stays open, nothing is auto-submitted. Off in exam and timed lessons (the timed mode has its own timer).",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-playful-countdown-toggle"
+                    checked={countdown}
+                    onChange={(e) => handleCountdownToggle(e.target.checked)}
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="text-sm">
+                    {t(
+                        "settings.playful_countdown_seconds",
+                        "Seconds per exercise",
+                    )}
+                </span>
+                <input
+                    type="number"
+                    className="w-20"
+                    min={MIN_COUNTDOWN_SECONDS}
+                    max={MAX_COUNTDOWN_SECONDS}
+                    value={countdownSeconds}
+                    disabled={!countdown}
+                    onChange={(e) => handleCountdownSeconds(e.target.value)}
+                    data-testid="settings-playful-countdown-seconds"
                 />
             </label>
             <MascotVariantControl />
