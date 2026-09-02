@@ -7,6 +7,8 @@
 
 import {describe, expect, it} from "vitest";
 
+import {isPresetAvatarDataUrl} from "./preset-avatars";
+
 import {AVATAR_MAX_BYTES} from "./resize-image";
 import {
     PRESET_AVATARS,
@@ -55,5 +57,20 @@ describe("PRESET_AVATARS registry", () => {
 
     it("an unknown id throws instead of rendering a broken image", () => {
         expect(() => presetAvatarDataUrl("nope")).toThrow();
+    });
+});
+
+describe("isPresetAvatarDataUrl (#2862)", () => {
+    it("recognizes every preset's data URL and rejects photos", () => {
+        for (const p of PRESET_AVATARS) {
+            expect(isPresetAvatarDataUrl(presetAvatarDataUrl(p.id))).toBe(
+                true,
+            );
+        }
+        expect(isPresetAvatarDataUrl("data:image/jpeg;base64,AAA")).toBe(
+            false,
+        );
+        expect(isPresetAvatarDataUrl("")).toBe(false);
+        expect(isPresetAvatarDataUrl(null)).toBe(false);
     });
 });

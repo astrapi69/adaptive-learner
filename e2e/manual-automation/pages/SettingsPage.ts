@@ -107,6 +107,15 @@ export class SettingsPage {
   mascotVariantBuy(id: string): Locator {
     return this.page.getByTestId(`settings-mascot-variant-buy-${id}`);
   }
+  get avatarReplaceDialog(): Locator {
+    return this.page.getByTestId("settings-avatar-replace-dialog");
+  }
+  get avatarReplaceConfirm(): Locator {
+    return this.page.getByTestId("settings-avatar-replace-dialog-confirm");
+  }
+  get avatarRestorePhoto(): Locator {
+    return this.page.getByTestId("settings-avatar-restore-photo");
+  }
   get selectiveExport(): Locator {
     return this.page.getByTestId("data-export-selective");
   }

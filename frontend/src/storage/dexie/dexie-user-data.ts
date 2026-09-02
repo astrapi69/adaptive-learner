@@ -66,6 +66,11 @@ export const MANAGED_USER_DATA_KEYS = [
     // the avatar frames: mode-agnostic, survives a Dexie restore +
     // rides the .alb backup's localStorage snapshot.
     "adaptive-learner.mascot.variants",
+    // #2862 — the uploaded photo displaced by choosing a preset figure
+    // (lib/avatar/avatar-photo-stash). One slot per user, restorable
+    // from Settings > General; mode-agnostic, survives a Dexie restore
+    // + rides the .alb backup's localStorage snapshot.
+    "adaptive-learner.avatar.photo-stash",
 ] as const;
 
 /**
