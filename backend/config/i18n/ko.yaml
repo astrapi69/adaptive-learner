@@ -756,6 +756,10 @@ settings:
   playful_combo_xp: "연속 보너스 XP"
   playful_combo_xp_description: "연속 세 번째 답변부터 연속 정답마다 +1 보너스 XP를 얻습니다(수업당 상한 있음). 끄면 게임 모드 XP가 일반 모드와 동일하게 유지됩니다."
   playful_combo_xp_cap: "수업당 보너스 XP 상한"
+  playful_arcade: "아케이드"
+  playful_arcade_description: "게임 모드 보상인 짧은 미니 게임: 수업 카드로 즐기는 학습 메모리와 XP로 잠금 해제하는 클래식 스네이크. 끄면 아케이드 카드와 게임이 완전히 숨겨집니다."
+  playful_arcade_snake_seconds: "스네이크 라운드 길이(초)"
+  playful_arcade_memory_pairs: "메모리 짝 수"
   feedback_intensity: "피드백 강도"
   feedback_intensity_description: "앱이 당신의 진행을 얼마나 크게 축하할지 정합니다."
   feedback_intensity_subtle: "은은하게"
@@ -1426,6 +1430,41 @@ gamification:
   danger_zone_cancel: 취소
   danger_zone_continue: 계속
   danger_zone_failed_toast: '초기화 실패:'
+arcade:
+  title: "아케이드"
+  subtitle: "1~2분의 짧은 라운드. 게임 모드의 보상입니다. XP 없이 재미만!"
+  card_description: "학습 메모리와 스네이크의 짧은 라운드: 게임 모드 보상입니다."
+  card_open: "아케이드로 가기"
+  requires_playful: "아케이드는 게임 모드의 일부입니다. 설정에서 게임 모드(및 아케이드 스위치)를 켜세요."
+  open_settings: "설정 열기"
+  play: "플레이"
+  pause: "일시정지"
+  resume: "계속"
+  restart: "다시 시작"
+  back_to_games: "게임 목록으로 돌아가기"
+  unlock_for_xp: "{n} XP로 잠금 해제"
+  unlock_confirm: "정말 {n} XP로 잠금 해제할까요?"
+  unlock_not_enough_xp: "아직 XP가 부족해요. 계속 학습하세요!"
+  memory:
+    name: "학습 메모리"
+    description: "수업의 단어와 번역 짝을 찾아보세요."
+    set_label: "수업 세트"
+    loading: "카드를 불러오는 중 ..."
+    empty: "카드가 충분한 다운로드된 세트가 없습니다. 먼저 수업 세트를 다운로드하세요."
+    load_failed: "카드를 불러오지 못했습니다. 다른 세트를 시도해 보세요."
+    progress: "짝: {a} / {b}"
+    attempts: "시도: {n}"
+    won: "{n}번의 시도로 모든 짝을 찾았어요!"
+  snake:
+    name: "스네이크"
+    description: "클래식 게임: 먹이를 모아 성장하고, 자신을 물지 마세요."
+    score: "점수: {n}"
+    time_left: "시간: {n}초"
+    goal: "목표: {n}점"
+    highscore: "최고: {n}"
+    board_aria: "스네이크 보드: 화살표 키 또는 스와이프로 조종"
+    won: "라운드 승리! {n}점!"
+    lost: "라운드 종료: {n}점. 다시 도전하세요!"
 anki:
   title: Anki 내보내기
   intro: AI가 제안한 플래시카드를 검토하고, 원하는 카드를 수락한 다음, Anki용 .apkg 파일로 내보내세요.

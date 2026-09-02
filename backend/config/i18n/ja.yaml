@@ -753,6 +753,10 @@ settings:
   playful_combo_xp: "連続ボーナスXP"
   playful_combo_xp_description: "連続3問目からは、連続する正解ごとに+1ボーナスXPを獲得します(レッスンごとに上限あり)。オフにするとゲームモードのXPは通常モードと同じになります。"
   playful_combo_xp_cap: "レッスンごとのボーナスXP上限"
+  playful_arcade: "アーケード"
+  playful_arcade_description: "ゲームモードのごほうびとしての短いミニゲーム: レッスンカードで遊ぶ学習メモリーと、XPでアンロックするクラシックなスネーク。オフにするとアーケードカードとゲームは完全に非表示になります。"
+  playful_arcade_snake_seconds: "スネークのラウンド時間(秒)"
+  playful_arcade_memory_pairs: "メモリーのペア数"
   feedback_intensity: "フィードバックの強さ"
   feedback_intensity_description: "アプリがあなたの進歩をどれだけ盛大に祝うか。"
   feedback_intensity_subtle: "控えめ"
@@ -1426,6 +1430,41 @@ gamification:
   danger_zone_cancel: キャンセル
   danger_zone_continue: 続行
   danger_zone_failed_toast: 'リセットに失敗:'
+arcade:
+  title: "アーケード"
+  subtitle: "1〜2分の短いラウンド。ゲームモードのごほうびです。XPはなく、楽しむだけ。"
+  card_description: "学習メモリーとスネークの短いラウンド。ゲームモードのごほうびです。"
+  card_open: "アーケードへ"
+  requires_playful: "アーケードはゲームモードの一部です。設定でゲームモード(とアーケードのスイッチ)をオンにしてください。"
+  open_settings: "設定を開く"
+  play: "プレイ"
+  pause: "一時停止"
+  resume: "再開"
+  restart: "リスタート"
+  back_to_games: "ゲーム一覧に戻る"
+  unlock_for_xp: "{n} XPでアンロック"
+  unlock_confirm: "本当に{n} XPでアンロックしますか?"
+  unlock_not_enough_xp: "XPがまだ足りません。学習を続けましょう!"
+  memory:
+    name: "学習メモリー"
+    description: "レッスンの単語と訳のペアを見つけましょう。"
+    set_label: "レッスンセット"
+    loading: "カードを読み込み中 ..."
+    empty: "十分なカードのあるダウンロード済みセットが見つかりません。先にレッスンセットをダウンロードしてください。"
+    load_failed: "カードの読み込みに失敗しました。別のセットを試してください。"
+    progress: "ペア: {a} / {b}"
+    attempts: "試行: {n}"
+    won: "{n}回の試行で全ペアを発見!"
+  snake:
+    name: "スネーク"
+    description: "クラシックなゲーム: エサを集めて成長し、自分を噛まないように。"
+    score: "ポイント: {n}"
+    time_left: "残り時間: {n}秒"
+    goal: "目標: {n}ポイント"
+    highscore: "ベスト: {n}"
+    board_aria: "スネークの盤面。矢印キーまたはスワイプで操作"
+    won: "ラウンド勝利! {n}ポイント!"
+    lost: "ラウンド終了。{n}ポイント。もう一度挑戦!"
 anki:
   title: Ankiエクスポート
   intro: AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。
