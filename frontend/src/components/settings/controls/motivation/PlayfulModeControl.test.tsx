@@ -28,6 +28,10 @@ import {
     readPlayfulArcade,
     readSnakeSeconds,
 } from "../../../../lib/learning/playful/playfulArcadePref";
+import {
+    readFlashRoundCards,
+    readPlayfulSpecialRounds,
+} from "../../../../lib/learning/playful/playfulSpecialRoundsPref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -243,5 +247,37 @@ describe("PlayfulModeControl: arcade (#2887)", () => {
         );
         expect(readSnakeSeconds()).toBe(120);
         expect(readMemoryPairs()).toBe(4);
+    });
+});
+
+describe("PlayfulModeControl: special rounds (#2888)", () => {
+    it("renders the switch ON by default with an editable card count of 10", () => {
+        render(<PlayfulModeControl />);
+        expect(
+            screen.getByTestId("settings-playful-special-rounds-toggle"),
+        ).toBeChecked();
+        expect(
+            screen.getByTestId("settings-playful-flash-round-cards"),
+        ).toHaveValue(10);
+    });
+
+    it("disabling persists and disables the card-count input", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(
+            screen.getByTestId("settings-playful-special-rounds-toggle"),
+        );
+        expect(readPlayfulSpecialRounds()).toBe(false);
+        expect(
+            screen.getByTestId("settings-playful-flash-round-cards"),
+        ).toBeDisabled();
+    });
+
+    it("clamps and persists the card count", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.change(
+            screen.getByTestId("settings-playful-flash-round-cards"),
+            {target: {value: "99"}},
+        );
+        expect(readFlashRoundCards()).toBe(20);
     });
 });

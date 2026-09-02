@@ -798,6 +798,9 @@
     "playful_arcade_description": "Oyun modu ödülü olarak kısa mini oyunlar: ders kartlarınla Öğrenme Hafıza Oyunu ve XP ile açılan klasik Snake. Kapalıyken arcade kartı ve oyunlar tamamen gizlenir.",
     "playful_arcade_snake_seconds": "Snake tur süresi (saniye)",
     "playful_arcade_memory_pairs": "Hafıza oyunu çiftleri",
+    "playful_special_rounds": "Özel turlar",
+    "playful_special_rounds_description": "Bir seti bitirmek (her ders en az bir yıldızla) en zorlu kartlarından oluşan, geri sayım halkasıyla oynanan bir yıldırım turunun kilidini açar. Kapalıyken yıldırım turu kartı tamamen gizlenir.",
+    "playful_flash_round_cards": "Yıldırım turu kartları",
     "feedback_intensity": "Geri bildirim yoğunluğu",
     "feedback_intensity_description": "Uygulamanın ilerlemeni ne kadar coşkuyla kutladığı.",
     "feedback_intensity_subtle": "Sade",
@@ -2315,6 +2318,15 @@
         "receptive_hint": "Anlamı tanı",
         "productive_hint": "Cevabı üret"
       }
+    },
+    "flash_round": {
+      "title": "Yıldırım turu: {set}",
+      "card_title": "Yıldırım turu",
+      "card_description": "Bu setin en zorlu kartlarıyla hızlı bir tur, geri sayım halkasıyla.",
+      "start": "Yıldırım turunu başlat",
+      "locked_tooltip": "Kilidi açmak için bu setin her dersini en az bir yıldızla bitir.",
+      "perfect_tooltip": "Hata kartı yok: bu set zaten mükemmel!",
+      "no_content": "Bu set için oynanabilir hata kartı bulunamadı."
     },
     "error_replay": {
       "title": "Hataları tekrar et: {lesson}",

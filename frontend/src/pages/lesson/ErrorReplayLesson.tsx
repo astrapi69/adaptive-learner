@@ -41,6 +41,8 @@ import {
     type LessonEnterNav,
 } from "../../hooks/lesson/interaction/useLessonEnterKey";
 import {useLessonShortcuts} from "../../hooks/lesson/interaction/useLessonShortcuts";
+import {useLessonCountdown} from "../../hooks/lesson/useLessonCountdown";
+import LessonCountdownRing from "../../components/lesson/chrome/tension/LessonCountdownRing";
 import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
 import {stampHintUsage} from "../../lib/hints/hint-usage";
 import {readLearnerState} from "../../lib/learning/learnerState";
@@ -56,6 +58,10 @@ interface ReplayState {
     exercises: ContentLessonExercise[];
     cards: ContentLessonCard[];
     lessonTitle: string;
+    /** #2888 - present when this round is a set flash round: adds the
+     *  per-exercise countdown ring and retargets the back navigation
+     *  (a flash round has no source lesson file). */
+    flashRound?: {seconds: number; backTo: string};
 }
 
 interface UrlParams {
@@ -66,6 +72,63 @@ interface UrlParams {
 
 function toStep(exercise: ContentLessonExercise): ContentLessonStep {
     return {id: exercise.id, type: "exercise", exercise};
+}
+
+/** #2888 - the round title plus, in flash-round mode, the per-exercise
+ *  countdown ring (the #2878 semantics: expiry breaks the streak via the
+ *  celebration bus inside ``useLessonCountdown``, nothing auto-submits).
+ *  Extracted so the flash-round branches stay off the page component's
+ *  complexity budget; plain replays render title-only (enabled=false). */
+function ReplayTitle({
+    flashRound,
+    lessonTitle,
+    stepIndex,
+    isSummary,
+    isExerciseStep,
+    checked,
+    t,
+}: {
+    flashRound: {seconds: number; backTo: string} | null;
+    lessonTitle: string;
+    stepIndex: number;
+    isSummary: boolean;
+    isExerciseStep: boolean;
+    checked: boolean;
+    t: Translate;
+}) {
+    const countdown = useLessonCountdown({
+        enabled: flashRound !== null && !isSummary,
+        seconds: flashRound?.seconds ?? 0,
+        stepIndex,
+        isExerciseStep,
+        checked,
+    });
+    return (
+        <>
+            {/* #2761 — ``wrap-anywhere`` breaks long unbreakable title
+                words ("Organisationspsychologie"); without it the h1
+                widens the page sideways and iOS WebKit clips the sticky
+                footer's "Weiter" button (#1834 class). */}
+            <h1 className="wrap-anywhere">
+                {flashRound
+                    ? t(
+                          "lesson.flash_round.title",
+                          "Flash round: {set}",
+                      ).replace("{set}", lessonTitle)
+                    : t(
+                          "lesson.error_replay.title",
+                          "Retry errors: {lesson}",
+                      ).replace("{lesson}", lessonTitle)}
+            </h1>
+            {flashRound && !isSummary && isExerciseStep && (
+                <LessonCountdownRing
+                    remaining={countdown.remaining}
+                    total={countdown.total}
+                    expired={countdown.expired}
+                />
+            )}
+        </>
+    );
 }
 
 export default function ErrorReplayLesson() {
@@ -110,6 +173,8 @@ export default function ErrorReplayLesson() {
     const isSummary = index >= total;
     const step = isSummary ? null : steps[index];
     const isExerciseStep = isPlayableExerciseStep(step);
+
+    const flashRound = state?.flashRound ?? null;
 
     // Refresh the Enter-decision state every render (no re-subscribe);
     // the listener reads it through the ref. Error-Replay has no
@@ -187,8 +252,13 @@ export default function ErrorReplayLesson() {
         setIndex(0);
     };
 
-    const backToLesson = () =>
+    const backToLesson = () => {
+        if (flashRound) {
+            navigate(flashRound.backTo);
+            return;
+        }
         navigate(`/lesson/${params.setSlug}/${setId}/${filename}`);
+    };
 
     const progressPct =
         total === 0 ? 100 : Math.round((index / total) * 100);
@@ -213,16 +283,15 @@ export default function ErrorReplayLesson() {
                     <BookOpen size={16} aria-hidden="true" />
                     {t("lesson.action.back_to_lesson", "Back to lesson")}
                 </button>
-                {/* #2761 — ``wrap-anywhere`` breaks long unbreakable title
-                    words ("Organisationspsychologie"); without it the h1
-                    widens the page sideways and iOS WebKit clips the sticky
-                    footer's "Weiter" button (#1834 class). */}
-                <h1 className="wrap-anywhere">
-                    {t(
-                        "lesson.error_replay.title",
-                        "Retry errors: {lesson}",
-                    ).replace("{lesson}", lessonTitle)}
-                </h1>
+                <ReplayTitle
+                    flashRound={flashRound}
+                    lessonTitle={lessonTitle}
+                    stepIndex={index}
+                    isSummary={isSummary}
+                    isExerciseStep={isExerciseStep}
+                    checked={checked}
+                    t={t}
+                />
             </header>
 
             <ProgressBar

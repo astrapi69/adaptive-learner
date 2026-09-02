@@ -70,6 +70,15 @@ import {
     setPlayfulArcade,
     setSnakeSeconds,
 } from "../../../../lib/learning/playful/playfulArcadePref";
+import {
+    MAX_FLASH_ROUND_CARDS,
+    MIN_FLASH_ROUND_CARDS,
+    clampFlashRoundCards,
+    readFlashRoundCards,
+    readPlayfulSpecialRounds,
+    setFlashRoundCards,
+    setPlayfulSpecialRounds,
+} from "../../../../lib/learning/playful/playfulSpecialRoundsPref";
 
 export default function PlayfulModeControl() {
     const {t} = useI18n();
@@ -149,6 +158,24 @@ export default function PlayfulModeControl() {
         const clamped = clampMemoryPairs(Number(raw));
         setMemoryPairsState(clamped);
         setMemoryPairs(clamped);
+    };
+
+    // #2888 - special rounds (per-set flash rounds), DEFAULT ON.
+    const [specialRounds, setSpecialRounds] = useState<boolean>(() =>
+        readPlayfulSpecialRounds(),
+    );
+    const [flashCards, setFlashCards] = useState<number>(() =>
+        readFlashRoundCards(),
+    );
+
+    const handleSpecialRoundsToggle = (next: boolean) => {
+        setSpecialRounds(next);
+        setPlayfulSpecialRounds(next);
+    };
+    const handleFlashCards = (raw: string) => {
+        const clamped = clampFlashRoundCards(Number(raw));
+        setFlashCards(clamped);
+        setFlashRoundCards(clamped);
     };
 
     // #2893 - combo bonus XP (the one decided XP exception, DEFAULT ON).
@@ -402,6 +429,49 @@ export default function PlayfulModeControl() {
                     disabled={!arcade}
                     onChange={(e) => handleMemoryPairs(e.target.value)}
                     data-testid="settings-playful-arcade-memory-pairs"
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t(
+                            "settings.playful_special_rounds",
+                            "Special rounds",
+                        )}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.playful_special_rounds_description",
+                            "Finishing a set (every lesson with at least one star) unlocks a flash round built from its trickiest cards, played with the countdown ring. Off hides the flash-round card entirely.",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-playful-special-rounds-toggle"
+                    checked={specialRounds}
+                    onChange={(e) =>
+                        handleSpecialRoundsToggle(e.target.checked)
+                    }
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="text-sm">
+                    {t(
+                        "settings.playful_flash_round_cards",
+                        "Flash-round cards",
+                    )}
+                </span>
+                <input
+                    type="number"
+                    className="w-20"
+                    min={MIN_FLASH_ROUND_CARDS}
+                    max={MAX_FLASH_ROUND_CARDS}
+                    value={flashCards}
+                    disabled={!specialRounds}
+                    onChange={(e) => handleFlashCards(e.target.value)}
+                    data-testid="settings-playful-flash-round-cards"
                 />
             </label>
             <MascotVariantControl />

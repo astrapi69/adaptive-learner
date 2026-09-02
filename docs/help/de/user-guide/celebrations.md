@@ -94,6 +94,12 @@ Mit aktivem Spielmodus:
   Lektionssets (frei) und der Klassiker **Snake** (freischaltbar
   gegen XP). Rundenlänge und Paar-Anzahl stellst du in den
   Spielmodus-Einstellungen ein; die Spiele vergeben keine XP.
+- **Sonderrunden** (Standard an, abschaltbar): schließt du ein Set
+  mit mindestens einem Stern in jeder Lektion ab, schaltet das eine
+  **Blitzrunde** frei - eine schnelle Runde aus den kniffligsten
+  Karten des Sets, gespielt mit dem Countdown-Ring. Der Einstieg
+  sitzt auf der Set-Übersicht; die Kartenzahl stellst du in den
+  Spielmodus-Einstellungen ein.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet
