@@ -11,7 +11,8 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 const playSound = vi.fn();
 vi.mock("../audio/sound-effects", () => ({
-    playSound: (name: string) => playSound(name),
+    playSound: (name: string, opts?: {pitchSteps?: number}) =>
+        opts === undefined ? playSound(name) : playSound(name, opts),
 }));
 
 import {
@@ -43,14 +44,14 @@ describe("emitCelebration", () => {
         const received: string[] = [];
         const unsub = subscribeCelebration((e) => received.push(e.type));
         emitCelebration({type: "answer_correct"});
-        expect(playSound).toHaveBeenCalledWith("correct_answer");
+        expect(playSound).toHaveBeenCalledWith("correct_answer", {pitchSteps: 0});
         expect(received).toEqual(["answer_correct"]);
         unsub();
     });
 
     it("maps wrong answers to the low thud", () => {
         emitCelebration({type: "answer_wrong"});
-        expect(playSound).toHaveBeenCalledWith("wrong_answer");
+        expect(playSound).toHaveBeenCalledWith("wrong_answer", {pitchSteps: 0});
     });
 
     it("survives a throwing subscriber", () => {
@@ -58,7 +59,7 @@ describe("emitCelebration", () => {
             throw new Error("boom");
         });
         expect(() => emitCelebration({type: "confetti"})).not.toThrow();
-        expect(playSound).toHaveBeenCalledWith("confetti");
+        expect(playSound).toHaveBeenCalledWith("confetti", {pitchSteps: 0});
         unsub();
     });
 });
@@ -75,8 +76,10 @@ describe("milestone helpers", () => {
             "streak",
         ]);
         expect(milestoneQueueLength()).toBe(2);
-        expect(playSound).toHaveBeenCalledWith("level_up");
-        expect(playSound).toHaveBeenCalledWith("star_earned");
+        expect(playSound).toHaveBeenCalledWith("level_up", {pitchSteps: 0});
+        expect(playSound).toHaveBeenCalledWith("star_earned", {
+            pitchSteps: 0,
+        });
     });
 
     it("is suppressed under subtle intensity", () => {
@@ -93,7 +96,9 @@ describe("milestone helpers", () => {
         setFeedbackIntensity("normal");
         celebrateBadge("streak_3_days", "Consistent", "3 days running");
         expect(milestoneQueueLength()).toBe(1);
-        expect(playSound).toHaveBeenCalledWith("badge_earned");
+        expect(playSound).toHaveBeenCalledWith("badge_earned", {
+            pitchSteps: 0,
+        });
     });
 });
 
@@ -116,7 +121,7 @@ describe("celebrateMissions", () => {
             allComplete: false,
             lang: "en",
         });
-        expect(playSound).toHaveBeenCalledWith("badge_earned");
+        expect(playSound).toHaveBeenCalledWith("badge_earned", {pitchSteps: 0});
         expect(r.praise).toBeTruthy();
         expect(r.allClear).toBe(false);
     });
@@ -128,7 +133,7 @@ describe("celebrateMissions", () => {
             allComplete: true,
             lang: "en",
         });
-        expect(playSound).toHaveBeenCalledWith("level_up");
+        expect(playSound).toHaveBeenCalledWith("level_up", {pitchSteps: 0});
         expect(r.allClear).toBe(true);
     });
 
@@ -195,5 +200,59 @@ describe("celebrateTierUpgrade (Phase 57)", () => {
         expect(fired).toBe(true);
         expect(milestoneQueueLength()).toBe(0);
         unsub();
+    });
+});
+
+describe("game-mode sounds (#2875)", async () => {
+    const {setPlayfulMode} = await import("../learning/playfulModePref");
+    const {setPlayfulSounds} = await import("../learning/playfulSoundsPref");
+
+    function armGameSounds() {
+        setPlayfulMode(true);
+        setPlayfulSounds(true);
+    }
+
+    it("raises the correct-answer pitch with the streak and resets on a wrong answer", () => {
+        armGameSounds();
+        emitCelebration({type: "answer_correct"});
+        emitCelebration({type: "answer_correct"});
+        emitCelebration({type: "answer_correct"});
+        expect(playSound).toHaveBeenNthCalledWith(1, "correct_answer", {
+            pitchSteps: 0,
+        });
+        expect(playSound).toHaveBeenNthCalledWith(2, "correct_answer", {
+            pitchSteps: 1,
+        });
+        expect(playSound).toHaveBeenNthCalledWith(3, "correct_answer", {
+            pitchSteps: 2,
+        });
+        emitCelebration({type: "answer_wrong"});
+        emitCelebration({type: "answer_correct"});
+        expect(playSound).toHaveBeenLastCalledWith("correct_answer", {
+            pitchSteps: 0,
+        });
+    });
+
+    it("keeps the pitch flat outside game-mode sounds", () => {
+        emitCelebration({type: "answer_wrong"});
+        emitCelebration({type: "answer_correct"});
+        emitCelebration({type: "answer_correct"});
+        expect(playSound).toHaveBeenLastCalledWith("correct_answer", {
+            pitchSteps: 0,
+        });
+    });
+
+    it("plays the checkpoint jingle for the new event type", () => {
+        armGameSounds();
+        emitCelebration({type: "checkpoint"});
+        expect(playSound).toHaveBeenCalledWith("checkpoint", {pitchSteps: 0});
+    });
+
+    it("plays the fanfare on lesson_complete only with game-mode sounds", () => {
+        emitCelebration({type: "lesson_complete"});
+        expect(playSound).not.toHaveBeenCalledWith("fanfare");
+        armGameSounds();
+        emitCelebration({type: "lesson_complete"});
+        expect(playSound).toHaveBeenCalledWith("fanfare");
     });
 });

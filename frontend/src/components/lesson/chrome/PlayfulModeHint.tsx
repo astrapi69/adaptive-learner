@@ -5,12 +5,15 @@
  * mode (Spielmodus) is OFF and the hint was never dismissed, so
  * learners discover the mode where it matters — right before the
  * exercises. "Turn on" enables the mode in place (and stops the
- * banner for good); the close control dismisses it permanently.
- * Renders nothing once either flag is set.
+ * banner for good); "Turn on with sound" (#2875) additionally
+ * opts into the game-mode sounds in the same click, so the sound
+ * offer reaches learners who never open Settings. The close
+ * control dismisses the banner permanently. Renders nothing once
+ * either flag is set.
  */
 
 import {useState} from "react";
-import {Gamepad2, X} from "lucide-react";
+import {Gamepad2, Volume2, X} from "lucide-react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {
@@ -19,6 +22,7 @@ import {
     readPlayfulMode,
     setPlayfulMode,
 } from "../../../lib/learning/playfulModePref";
+import {setPlayfulSounds} from "../../../lib/learning/playfulSoundsPref";
 import {notify} from "../../../utils/notify";
 
 export default function PlayfulModeHint() {
@@ -28,8 +32,9 @@ export default function PlayfulModeHint() {
     );
     if (!visible) return null;
 
-    const handleActivate = () => {
+    const handleActivate = (withSound: boolean) => {
         setPlayfulMode(true);
+        if (withSound) setPlayfulSounds(true);
         dismissPlayfulHint();
         setVisible(false);
         notify.success(
@@ -65,11 +70,20 @@ export default function PlayfulModeHint() {
             </span>
             <button
                 type="button"
-                onClick={handleActivate}
+                onClick={() => handleActivate(false)}
                 data-testid="lesson-playful-hint-activate"
                 className="inline-flex shrink-0 items-center gap-1 rounded-sm border border-[var(--accent)] px-2 py-1 text-xs font-medium hover:bg-[var(--surface-2)]"
             >
                 {t("lesson.playful_hint_activate", "Turn on")}
+            </button>
+            <button
+                type="button"
+                onClick={() => handleActivate(true)}
+                data-testid="lesson-playful-hint-activate-sound"
+                className="inline-flex shrink-0 items-center gap-1 rounded-sm border border-[var(--accent)] px-2 py-1 text-xs font-medium hover:bg-[var(--surface-2)]"
+            >
+                <Volume2 size={12} aria-hidden="true" />
+                {t("lesson.playful_hint_enable_sound", "Turn on with sound")}
             </button>
             <button
                 type="button"
