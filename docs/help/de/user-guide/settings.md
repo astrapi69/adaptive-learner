@@ -29,7 +29,11 @@ gestaltest deinen **Avatar**:
 - **Bild hochladen** öffnet den Zuschnitt-Dialog; das Ergebnis
   erscheint oben rechts in der Navigation.
 - **Oder wähle eine Figur**: acht vorgefertigte Figuren als
-  Alternative zum eigenen Foto - ein Klick genügt.
+  Alternative zum eigenen Foto - ein Klick genügt. Ist gerade ein
+  hochgeladenes Foto aktiv, fragt ein Dialog nach, bevor die Figur es
+  ersetzt; das Foto wandert dabei in einen Zwischenspeicher und lässt
+  sich über **Foto wiederherstellen** jederzeit zurückholen (bis ein
+  neues Foto hochgeladen wird).
 - **Avatar-Rahmen**: dekorative Ringe um den Avatar. Bronze, Silber
   und Gold schaltest du über dein Level frei, die Flamme über das
   3-Tage-Serien-Abzeichen; Stern und Akzent tauschst du gegen XP ein
