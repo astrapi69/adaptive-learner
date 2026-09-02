@@ -746,6 +746,12 @@ settings:
   playful_sounds_offer: "ध्वनि के साथ खेलें?"
   playful_sounds_offer_yes: "हाँ, ध्वनियाँ चालू"
   playful_sounds_offer_later: "बाद में"
+  playful_hearts: "दिल (जीवन)"
+  playful_hearts_description: "एक गलत उत्तर से एक दिल कम होता है। शून्य पर दौर एक दोस्ताना 'फिर से कोशिश करें' प्रस्ताव के साथ खत्म होता है - हल किया हुआ कुछ भी नहीं खोता। परीक्षा और समयबद्ध पाठों में बंद।"
+  playful_hearts_count: "प्रति पाठ दिल"
+  playful_countdown: "काउंटडाउन रिंग"
+  playful_countdown_description: "प्रति अभ्यास एक छोटी समय-रिंग। समय खत्म होने पर श्रृंखला टूटती है और एक दिल खोता है - अभ्यास खुला रहता है, कुछ भी अपने आप जमा नहीं होता। परीक्षा और समयबद्ध पाठों में बंद (समयबद्ध मोड का अपना टाइमर है)।"
+  playful_countdown_seconds: "प्रति अभ्यास सेकंड"
   feedback_intensity: फ़ीडबैक तीव्रता
   feedback_intensity_description: ऐप आपकी प्रगति का कितने ज़ोर से जश्न मनाता है।
   feedback_intensity_subtle: सूक्ष्म
@@ -1771,6 +1777,14 @@ lesson:
   combo_chip: "x{n}"
   combo_aria: "उत्तर श्रृंखला: लगातार {n}"
   combo_best: "सर्वश्रेष्ठ श्रृंखला: {n}"
+  hearts:
+    aria: "जीवन: {max} में से {n}"
+    empty_heading: "दिल खत्म!"
+    empty_body: "कोई बात नहीं - कुछ भी नहीं खोया, जो हल किया वह सहेजा रहता है। एक सांस लें और पाठ फिर से आज़माएँ।"
+    action_retry: "फिर से कोशिश करें"
+    action_exit: "पाठ छोड़ें"
+  countdown:
+    aria: "समय-रिंग: {n} सेकंड बाकी"
   playful_hint_title: "गेम मोड आज़माएँ"
   playful_hint_enable_sound: "ध्वनि के साथ चालू करें"
   playful_hint_body: "पाठ हर सही उत्तर को प्रशंसा और कंफ़ेटी के साथ मनाते हैं। आप इसे कभी भी सेटिंग्स में बदल सकते हैं।"
