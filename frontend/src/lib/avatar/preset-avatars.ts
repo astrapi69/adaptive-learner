@@ -129,3 +129,17 @@ export function presetAvatarDataUrl(id: string): string {
     }
     return `data:image/svg+xml;utf8,${encodeURIComponent(presetSvg(preset))}`;
 }
+
+/**
+ * Whether ``value`` is one of the preset figures' data URLs (#2862).
+ *
+ * The photo-replace confirmation needs to tell an uploaded photo
+ * (any other non-empty avatar value) apart from a previously chosen
+ * figure - switching figure to figure never asks.
+ */
+export function isPresetAvatarDataUrl(
+    value: string | null | undefined,
+): boolean {
+    if (!value) return false;
+    return PRESET_AVATARS.some((p) => presetAvatarDataUrl(p.id) === value);
+}

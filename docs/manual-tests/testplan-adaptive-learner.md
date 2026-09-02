@@ -2239,12 +2239,30 @@ Ort: Einstellungen > Allgemein > Profil, unter dem Foto-Upload.
 - [ ] Gewählte Figur ist markiert (Rahmen); eine andere wählen
       verschiebt die Markierung
 - [ ] Foto hochladen ersetzt die Figur; danach ist KEINE Figur mehr
-      markiert; Figur wählen ersetzt umgekehrt das Foto
+      markiert; Figur wählen über einem Foto fragt erst nach (siehe
+      Foto-Zwischenspeicher unten)
 - [ ] "Entfernen" löscht den Avatar; die Kopfleiste fällt auf die
       Initialen zurück
 - [ ] Backup-Round-trip: Figur wählen, Export (`.alb`), Daten löschen,
       Import → die Figur ist wieder gesetzt
 - [ ] Beide Speicher-Modi (Server + Browser) verhalten sich identisch
+
+#### Foto-Zwischenspeicher beim Figuren-Wechsel (#2862)
+
+- [ ] Foto hochladen und zuschneiden, dann eine Figur antippen: ein
+      Bestätigungsdialog erscheint ("Foto ersetzen?"); Abbrechen lässt
+      Foto und Auswahl unverändert
+- [ ] Bestätigen ("Figur verwenden"): die Figur ist aktiv und unter der
+      Galerie erscheint der Knopf "Foto wiederherstellen"
+- [ ] "Foto wiederherstellen": das Foto ist zurück (Vorschau +
+      Kopfleiste), der Knopf verschwindet
+- [ ] Figur-zu-Figur-Wechsel: KEIN Dialog (nur ein echtes Foto wird
+      geschützt)
+- [ ] Nach Figur-Wahl ein NEUES Foto hochladen: der alte Zwischenspeicher
+      ist geleert (kein Wiederherstellen-Knopf mit veraltetem Foto)
+- [ ] Backup-Round-trip: mit gefülltem Zwischenspeicher Export -> Wipe ->
+      Import; "Foto wiederherstellen" funktioniert weiterhin (beide
+      Speicher-Modi)
 
 #### Avatar-Rahmen (#2850)
 

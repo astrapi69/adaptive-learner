@@ -8,7 +8,7 @@ import ModeIndicator from "../../../../components/pwa/ModeIndicator";
 import UpdatesSettingsSection from "../../../../components/settings/UpdatesSettingsSection";
 import ThemePicker from "../../../../components/settings/appearance/ThemePicker";
 import AvatarUpload from "../../../../shared/media/AvatarUpload";
-import PresetAvatarGallery from "../../../../shared/media/PresetAvatarGallery";
+import PresetAvatarPicker from "../../../../components/settings/controls/profile/PresetAvatarPicker";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../../../../hooks/settings/useButtonTooltips";
 import { setNavPosition, useNavPosition } from "../../../../hooks/settings/useNavPosition";
 import { useI18n } from "../../../../hooks/ui/useI18n";
@@ -19,6 +19,8 @@ import { readLearnerState, setLanguage } from "../../../../lib/learning/learnerS
 import { notifyProfileUpdated, PROFILE_UPDATED_EVENT } from "../../../../lib/learning/profileSignal";
 import { avatarFrameById } from "../../../../lib/avatar/avatar-frames";
 import { readAvatarFrameState } from "../../../../lib/avatar/avatar-frame-store";
+import { clearStashedAvatarPhoto } from "../../../../lib/avatar/avatar-photo-stash";
+import { isPresetAvatarDataUrl } from "../../../../lib/avatar/preset-avatars";
 import AvatarFrameControl from "../../../../components/settings/controls/profile/AvatarFrameControl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -185,6 +187,11 @@ export default function GeneralPanel({
         avatar: dataUrl ?? "",
       });
       onSettingsChange(updated);
+      // #2862 — a real photo (fresh upload or restore) supersedes the
+      // stash; the parked copy would otherwise resurrect an older photo.
+      if (dataUrl && !isPresetAvatarDataUrl(dataUrl)) {
+        clearStashedAvatarPhoto(settings.user_id);
+      }
       // #579 — refresh the header NavAvatar live.
       notifyProfileUpdated();
       notify.success(t("settings.saved", "Saved."));
@@ -310,21 +317,11 @@ export default function GeneralPanel({
           />
         )}
         {settings && (
-          <PresetAvatarGallery
-            value={settings.avatar}
-            title={t("settings.avatar_presets_title", "Or pick a figure")}
-            optionLabels={{
-              spark: t("settings.avatar_preset_spark", "Spark"),
-              robot: t("settings.avatar_preset_robot", "Robot"),
-              star: t("settings.avatar_preset_star", "Star"),
-              cat: t("settings.avatar_preset_cat", "Cat"),
-              owl: t("settings.avatar_preset_owl", "Owl"),
-              ghost: t("settings.avatar_preset_ghost", "Ghost"),
-              bolt: t("settings.avatar_preset_bolt", "Lightning"),
-              heart: t("settings.avatar_preset_heart", "Heart"),
-            }}
-            disabled={busy === "avatar"}
-            onSelect={(dataUrl) => void handleAvatarChange(dataUrl)}
+          <PresetAvatarPicker
+            userId={settings.user_id}
+            avatar={settings.avatar}
+            busy={busy === "avatar"}
+            onSave={(dataUrl) => void handleAvatarChange(dataUrl)}
           />
         )}
         <AvatarFrameControl userId={settings.user_id} />

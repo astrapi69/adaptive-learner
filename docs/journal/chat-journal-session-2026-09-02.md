@@ -49,15 +49,42 @@ Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
 - Commits: 312fd8dc (i18n), 5fbfc11d (Feature), Testplan/Journal im
   Doku-Commit; PR gegen develop folgt in dieser Session.
 
-## Offene Punkte aus der Session
+## 2. Hilfe-Doku für den Spielmodus-Bogen (08:45)
 
-- Neue Anforderung von Aster (während der Umsetzung eingegangen):
-  Beim Wählen einer Preset-Figur, während ein hochgeladenes Foto
-  aktiv ist, soll ein Bestätigungsdialog erscheinen; das Foto soll in
-  einen Zwischenspeicher wandern und wiederherstellbar sein. Eigenes
-  Issue, Umsetzung nach dem #2861-PR (das Foto ist heute eine
-  Data-URL in `UserSettings.avatar` und geht beim Preset-Wechsel
-  stillschweigend verloren - der Befund bestätigt die Anforderung).
+- Original prompt: "die Dokumentation entsprechend anpassen und sag
+  mir wo das in den Einstellungen ist?"
+- Ergebnis: celebrations.md + settings.md (DE+EN) dokumentieren
+  erstmals den ganzen Spielmodus-Bogen (Schalter, Lernfunke,
+  Varianten, Profil-Kosmetik). Boy-Scout-Korrektur: die Hilfe
+  behauptete "Einstellungen > Oberfläche" für Feedback-Intensität
+  und Töne - beide rendern im Lernen-Tab. Antwort an Aster:
+  Maskottchen-Variante liegt unter Einstellungen > Lernen >
+  Spielmodus, Avatar-Rahmen unter Allgemein > Profil.
+- Commit: e2fb13a2 (im #2863-PR gemerged).
+
+## 3. Foto-Bestätigungsdialog + Zwischenspeicher (#2862) (09:00)
+
+- Original prompt: "Wenn der user ein Bild hochgeladen hat soll wenn
+  eine Figur gewählt wird ein Bestätigungsdialog kommen das dass
+  foto gelöscht wird, aber der anwender kann das foto in ein
+  zwischenspeicher haben oder?"
+- Befund, der die Anforderung bestätigt: das Foto ist eine Data-URL
+  in `UserSettings.avatar`; der Figuren-Klick überschrieb es
+  stillschweigend und unwiederbringlich.
+- Ergebnis: Issue #2862; `avatar-photo-stash` (ein Slot pro Nutzer,
+  mentor-notes-Muster, MANAGED_USER_DATA_KEYS + Snapshot-Pin),
+  `isPresetAvatarDataUrl` am Katalog, neue Komponente
+  `PresetAvatarPicker` (Galerie + ConfirmDialog + Wiederherstellen -
+  extrahiert, damit der Flow ohne GeneralPanel-Gesamtkontext testbar
+  ist), Stash-Clear in `handleAvatarChange`, sobald wieder ein
+  echtes Foto aktiv ist (frischer Upload oder Restore). i18n (4 neue
+  Keys, Cancel via `common.cancel`), Testplan DE+EN (inkl. Korrektur
+  des Alt-Schritts "Figur wählen ersetzt das Foto"), Hilfe
+  settings.md DE+EN.
+- Konservative Annahme: der Slot hält genau EIN Foto (das zuletzt
+  verdrängte); Quota-Fehler beim Stash-Schreiben werden geschluckt
+  (etabliertes Store-Muster), der Wechsel schlägt dadurch nie fehl.
+- Commits: 715dac85 (i18n), 48c8477a (Feature), Doku-Commit folgt.
 
 ## Fragen und Annahmen
 
