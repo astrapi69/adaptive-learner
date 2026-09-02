@@ -1442,6 +1442,9 @@ voice:
   mic_error: Spracherkennungsfehler.
   mic_no_device: "Kein Mikrofon gefunden. Schließe eines an und versuche es erneut."
   mic_network: "Spracherkennung ist offline. Prüfe deine Internetverbindung."
+  record_error: "Aufnahme hat nicht funktioniert. Bitte versuche es erneut."
+  stop_recording: "Aufnahme stoppen"
+  start_recording: "Aufnahme starten"
 pronunciation:
   title: Aussprachetraining
   intro: Generiere einen Satz, sprich ihn laut und erhalte sofortiges Feedback.
@@ -1486,6 +1489,9 @@ feature:
   api_key_required: "API-Schlüssel erforderlich. Konfiguriere einen Provider in den Einstellungen."
   desktop_only: "Nur mit der Desktop-App verfügbar."
 ui:
+  cancel: "Abbrechen"
+  hide_secret: "Wert verbergen"
+  show_secret: "Wert anzeigen"
   info:
     show: "Information anzeigen"
   themes:
@@ -1992,6 +1998,20 @@ lesson:
       submit: "Antwort prüfen"
       retry: "Nochmal versuchen"
       empty: "Diese Multiple-Choice-Aufgabe hat keine Optionen."
+    al_audio_choice:
+      empty: "Diese Audio-Auswahl-Übung hat keine Optionen."
+      result_correct: "Richtig!"
+      result_wrong: "Nicht ganz - hör noch einmal."
+      submit: "Antwort prüfen"
+      retry: "Erneut versuchen"
+      option_aria: "Option abspielen"
+    al_audio_tiles:
+      empty: "Diese Audio-Kacheln-Übung hat keine Kacheln."
+    type_matching: "Zuordnung"
+    type_picture_choice: "Bildauswahl"
+    type_free_text: "Freitext"
+    type_word_tiles: "Wortkacheln"
+    type_cloze: "Lückentext"
     al_categorization:
       empty: "Diese Zuordnungsübung hat keine Kategorien."
       instructions: "Tippe ein Element an, dann seine Kategorie."
@@ -2059,6 +2079,11 @@ lesson:
       # stay TSX-only fallbacks until the whole exercise type gets its
       # i18n block (a separate, larger task, out of scope here).
       recording_evicted: "Deine vorherige Aufnahme wurde entfernt, um Speicherplatz zu sparen. Du kannst jederzeit neu aufnehmen."
+      empty: "Diese Sprich-und-Nimm-auf-Übung hat keinen Satz."
+      show: "Text anzeigen"
+      saving: "Speichere…"
+      done: "Fertig"
+      record_again: "Erneut aufnehmen"
     instruction:
       matching:
         receptive: Paare verbinden (Erkennen)
@@ -2137,6 +2162,7 @@ lesson:
     view_all_answers: "Alle Antworten ansehen ({n})"
     export:
       copy: "Ergebnis kopieren"
+      correct_answer: "Richtig"
       download: "Als Datei speichern"
       download_json: "Als JSON exportieren"
       anki: "Karten exportieren (Anki)"
@@ -3242,6 +3268,12 @@ learning_path:
     mastered: "Gemeistert"
     receptive: "Nur rezeptiv"
     productive: "Nur produktiv"
+  status:
+    not_started: "Nicht gestartet"
+    in_progress: "In Arbeit"
+    paused: "Pausiert"
+    completed: "Abgeschlossen"
+    mastered: "Gemeistert"
   stats:
     title: "Statistik"
     lessons: "Lektionen"
@@ -3309,6 +3341,7 @@ share:
     copy: "In die Zwischenablage kopieren"
   app:
     heading: "Die App teilen"
+    download: "Herunterladen"
     qr_intro: "Teile die App per QR-Code, damit andere sie direkt öffnen können."
     show_qr: "QR-Code anzeigen"
     download_qr: "QR-Code herunterladen"
@@ -3661,6 +3694,7 @@ content_repo:
     star: "{n} von 5 bewerten"
   share:
     copied: "Link kopiert."
+    tab_link: "Link"
     copy: "Kopieren"
     copy_failed: "Kopieren nicht möglich."
     hint: "Teile diesen Link, damit andere dieses ÖFFENTLICHE Repository hinzufügen können. Für ein privates Repository sende die URL und ein schreibgeschütztes Token separat."
@@ -3699,6 +3733,10 @@ discover:
   search_placeholder: "Spanisch, KI, Psychologie…"
   search_aria: "Verfügbare Inhalte durchsuchen"
   search_clear: "Suche zurücksetzen"
+  badge:
+    new: "Neu"
+  new:
+    count: "{n} neu"
   bar:
     search: "Suchen"
     filter: "Filtern"
