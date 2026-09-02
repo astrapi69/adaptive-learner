@@ -13,7 +13,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {fireEvent, render, screen} from "@testing-library/react";
+import {fireEvent, render, screen, within} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import MatchingExercise, {
@@ -889,14 +889,19 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         solveAll();
         fireEvent.click(screen.getByTestId("matching-submit"));
+        // Stack shows one paired row per pair, in the displayed left
+        // order (#2872) - capture it before switching views.
+        const firstDisplayedLeft =
+            within(screen.getByTestId("matching-left"))
+                .getAllByRole("listitem")[0]
+                .textContent?.match(/Bonjour|Merci|Au revoir/)?.[0] ?? "";
         fireEvent.click(screen.getByTestId("matching-resolve"));
         expect(screen.getByTestId("matching-resolution")).toHaveAttribute(
             "data-effect",
             "stack",
         );
-        // Stack shows one paired row per pair, in authored order.
         expect(screen.getByTestId("matching-resolved-row-0")).toHaveTextContent(
-            "Bonjour",
+            firstDisplayedLeft,
         );
     });
 

@@ -386,19 +386,24 @@ function MatchingExercise(
     };
     const showUserAnswers = () => setView("user-answers");
 
-    /** The correct pairs in authored order, ready for the resolution
-     *  view (#824). ``slot`` uses the authored index for stable, distinct
-     *  per-pair colors; ``wasCorrect`` reflects the learner's own match. */
+    /** The correct pairs for the resolution view (#824), in the
+     *  DISPLAYED left-column order (#2872): solving must never reorder
+     *  the column the learner just saw, so the rows follow
+     *  ``displayLeftTiles`` and only the right side realigns to each
+     *  row's correct partner. ``slot`` is the display row, so the
+     *  number badges read 1..n and the connect-effect line colors
+     *  (indexed by row) match the tiles. ``wasCorrect`` reflects the
+     *  learner's own match. */
     const resolvedPairs: ResolvedPair[] = useMemo(
         () =>
-            leftTiles.map((tile) => {
+            displayLeftTiles.map((tile, displayIdx) => {
                 const chosen = matches.get(tile.index);
                 return {
                     left: tile.label,
                     right: productive
                         ? (pairs[tile.index]?.left ?? "")
                         : (pairs[tile.index]?.right ?? ""),
-                    slot: tile.index,
+                    slot: displayIdx,
                     wasCorrect:
                         chosen !== undefined &&
                         matchingPairIsCorrect(
@@ -409,7 +414,7 @@ function MatchingExercise(
                         ),
                 };
             }),
-        [leftTiles, matches, pairs, productive],
+        [displayLeftTiles, matches, pairs, productive],
     );
 
     const releaseSlot = (leftIdx: number) => {

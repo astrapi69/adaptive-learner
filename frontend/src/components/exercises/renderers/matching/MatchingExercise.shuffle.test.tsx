@@ -108,6 +108,45 @@ describe("MatchingExercise: column shuffle distribution (#2371)", () => {
         expect(columnLabels("matching-right", /R\d/)).toEqual(rightBefore);
     });
 
+    it("keeps the displayed left order in the solve view (#2872)", () => {
+        // The interactive left column is shuffled (#2371). Clicking
+        // "Auflösen" must NOT reorder it back to authored order: the
+        // resolution's left column mirrors the column the learner just
+        // saw, each row shows the correct partner on the right, and the
+        // number badges run sequentially down the rows.
+        for (let mount = 0; mount < 10; mount++) {
+            const {unmount} = render(
+                <MatchingExercise
+                    exercise={makeExercise(`ex-resolve-order-${mount}`)}
+                    onComplete={vi.fn()}
+                />,
+            );
+            const displayedLeft = columnLabels("matching-left", /L\d/);
+            for (let pair = 0; pair < 4; pair++) {
+                fireEvent.click(screen.getByTestId(`matching-left-${pair}`));
+                fireEvent.click(screen.getByTestId(`matching-right-${pair}`));
+            }
+            fireEvent.click(screen.getByTestId("matching-submit"));
+            fireEvent.click(screen.getByTestId("matching-resolve"));
+            for (let row = 0; row < 4; row++) {
+                const leftTile = screen.getByTestId(
+                    `matching-resolved-a-${row}`,
+                );
+                const rightTile = screen.getByTestId(
+                    `matching-resolved-b-${row}`,
+                );
+                const label = displayedLeft[row];
+                // Tile text = sequential number badge + label; the
+                // row-aligned correct partner is R{n} for L{n}.
+                expect(leftTile.textContent).toBe(`${row + 1}${label}`);
+                expect(rightTile.textContent).toBe(
+                    `${row + 1}${label.replace("L", "R")}`,
+                );
+            }
+            unmount();
+        }
+    });
+
     it("grades by pair identity, untouched by display order", () => {
         const onComplete = vi.fn();
         render(
