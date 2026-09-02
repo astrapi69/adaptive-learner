@@ -7,8 +7,9 @@
  * so the learner could pair by position (first left = last right) instead
  * of content. These tests pin, over many mounts:
  * - the right column has no fixed position for the first-authored item,
- * - the left column is shuffled too (independently),
+ * - the left column stays in authored order (#2882 - never shuffled),
  * - the order is stable within one mount (no reshuffle under the user),
+ * - the solve view keeps the displayed left order (#2872),
  * - grading stays value-based and untouched by display order.
  */
 
@@ -71,26 +72,25 @@ describe("MatchingExercise: column shuffle distribution (#2371)", () => {
         expect(positions).toContain(0);
     });
 
-    it("shuffles the left column too, independently of the right", () => {
-        const leftOrders = new Set<string>();
-        const relations = new Set<string>();
-        for (let mount = 0; mount < 40; mount++) {
+    it("keeps the left column in authored order on every mount (#2882)", () => {
+        // Deliberate revision of the #2371 left shuffle: a shuffled left
+        // column reads as random noise to the learner. Only the RIGHT
+        // column shuffles - that alone prevents pairing by position.
+        for (let mount = 0; mount < 25; mount++) {
             const {unmount} = render(
                 <MatchingExercise
                     exercise={makeExercise(`ex-match-left-${mount}`)}
                     onComplete={vi.fn()}
                 />,
             );
-            const left = columnLabels("matching-left", /L\d/);
-            const right = columnLabels("matching-right", /R\d/);
-            leftOrders.add(left.join(","));
-            relations.add(
-                `${left.indexOf("L0")}->${right.indexOf("R0")}`,
-            );
+            expect(columnLabels("matching-left", /L\d/)).toEqual([
+                "L0",
+                "L1",
+                "L2",
+                "L3",
+            ]);
             unmount();
         }
-        expect(leftOrders.size).toBeGreaterThan(1);
-        expect(relations.size).toBeGreaterThan(1);
     });
 
     it("keeps both column orders stable across re-renders within one mount", () => {

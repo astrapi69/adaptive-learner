@@ -373,6 +373,10 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 ### Übungstypen (visuell prüfen)
 - [ ] Matching: Paare GLEICHE Höhe (kein visueller Versatz)
 - [ ] Matching: "Aufloesen" Animation sieht gut aus (4 Effekte testen)
+- [ ] Matching: linke Spalte IMMER in Lektions-Reihenfolge (#2882), nur die
+      rechte Spalte ist gemischt; beim "Aufloesen" behält die linke Spalte
+      ihre Reihenfolge (kein Springen, #2872), rechts steht zeilenweise der
+      korrekte Partner, Nummern-Badges laufen 1..n
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
 - [ ] Word Tiles: bei RICHTIGER Lösung bleibt der gebaute Satz sichtbar (#2494):
       einen Satz korrekt zusammensetzen und prüfen. Der zusammengesetzte Satz
