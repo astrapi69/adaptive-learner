@@ -753,6 +753,9 @@ settings:
   playful_countdown: "Cincin hitung mundur"
   playful_countdown_description: "Cincin waktu kecil per latihan. Jika habis, rentetan putus dan satu hati hilang - latihan tetap terbuka, tidak ada yang dikirim otomatis. Nonaktif di pelajaran ujian dan berwaktu (mode berwaktu punya pengatur waktunya sendiri)."
   playful_countdown_seconds: "Detik per latihan"
+  playful_combo_xp: "XP bonus runtunan"
+  playful_combo_xp_description: "Mulai jawaban runtunan ketiga, setiap jawaban benar berturut-turut memberi +1 XP bonus, dengan batas per pelajaran. Jika mati, XP mode permainan tetap sama dengan mode normal."
+  playful_combo_xp_cap: "Batas XP bonus per pelajaran"
   feedback_intensity: "Intensitas Umpan Balik"
   feedback_intensity_description: "Seberapa meriah aplikasi merayakan kemajuan Anda."
   feedback_intensity_subtle: "Halus"
@@ -1792,6 +1795,7 @@ lesson:
   combo_chip: "x{n}"
   combo_aria: "Runtunan jawaban: {n} berturut-turut"
   combo_best: "Runtunan terbaik: {n}"
+  combo_bonus_aria: "Bonus runtunan: {n} XP"
   hearts:
     aria: "Nyawa: {n} dari {max}"
     empty_heading: "Hati habis!"

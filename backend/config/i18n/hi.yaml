@@ -752,6 +752,9 @@ settings:
   playful_countdown: "काउंटडाउन रिंग"
   playful_countdown_description: "प्रति अभ्यास एक छोटी समय-रिंग। समय खत्म होने पर श्रृंखला टूटती है और एक दिल खोता है - अभ्यास खुला रहता है, कुछ भी अपने आप जमा नहीं होता। परीक्षा और समयबद्ध पाठों में बंद (समयबद्ध मोड का अपना टाइमर है)।"
   playful_countdown_seconds: "प्रति अभ्यास सेकंड"
+  playful_combo_xp: "श्रृंखला बोनस XP"
+  playful_combo_xp_description: "श्रृंखला के तीसरे उत्तर से, लगातार हर सही उत्तर पर +1 बोनस XP मिलता है, प्रति पाठ सीमा के साथ। बंद होने पर गेम मोड के XP सामान्य मोड जैसे ही रहते हैं।"
+  playful_combo_xp_cap: "प्रति पाठ बोनस XP सीमा"
   feedback_intensity: फ़ीडबैक तीव्रता
   feedback_intensity_description: ऐप आपकी प्रगति का कितने ज़ोर से जश्न मनाता है।
   feedback_intensity_subtle: सूक्ष्म
@@ -1777,6 +1780,7 @@ lesson:
   combo_chip: "x{n}"
   combo_aria: "उत्तर श्रृंखला: लगातार {n}"
   combo_best: "सर्वश्रेष्ठ श्रृंखला: {n}"
+  combo_bonus_aria: "श्रृंखला बोनस: {n} XP"
   hearts:
     aria: "जीवन: {max} में से {n}"
     empty_heading: "दिल खत्म!"
