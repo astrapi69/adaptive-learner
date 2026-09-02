@@ -88,6 +88,12 @@ Mit aktivem Spielmodus:
   zeigt den Bonus als "+N XP" neben der besten Serie; im
   Prüfungsmodus und mit ausgeschaltetem Schalter gibt es keinen
   Bonus.
+- Die **Arcade** (Standard an, abschaltbar) belohnt dich mit zwei
+  kurzen Minispielen, erreichbar über die Dashboard-Karte: das
+  **Lern-Memory** mit echten Karten aus deinen heruntergeladenen
+  Lektionssets (frei) und der Klassiker **Snake** (freischaltbar
+  gegen XP). Rundenlänge und Paar-Anzahl stellst du in den
+  Spielmodus-Einstellungen ein; die Spiele vergeben keine XP.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet

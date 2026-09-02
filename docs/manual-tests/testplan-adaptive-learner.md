@@ -662,6 +662,38 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Prüfungsmodus: kein Serien-Bonus (der Prüfungs-Multiplikator
       bleibt unverändert)
 
+#### Arcade-Minispiele (#2887, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Arcade" ist
+      standardmäßig AN; die Zahlenfelder "Snake-Rundenlänge" (30-120,
+      Standard 60) und "Memory-Paare" (4-12, Standard 8) klemmen und
+      sind bei ausgeschaltetem Schalter gesperrt
+- [ ] Spielmodus an: auf dem Dashboard erscheint die Arcade-Karte;
+      "Zur Arcade" öffnet die Spieleliste. Arcade-Schalter aus ODER
+      Spielmodus aus: die Karte verschwindet komplett; ein direkter
+      Aufruf von /arcade zeigt einen freundlichen Hinweis mit Link in
+      die Einstellungen
+- [ ] Lern-Memory (frei): Set-Auswahl zeigt nur heruntergeladene
+      Sets; das Brett hat zwei Karten pro Paar (Begriff und
+      Übersetzung aus echten Lektionskarten); ein Paar bleibt offen
+      liegen, ein Fehlversuch zählt hoch und klappt beim nächsten
+      Aufdecken zu; alle Paare gefunden zeigt die Gewinn-Meldung mit
+      Versuchszahl
+- [ ] Snake (gesperrt): auf der Spielkarte steht "Für 200 XP
+      freischalten"; mit zu wenig XP ist der Knopf gesperrt (Tooltip);
+      der Kauf braucht ZWEI Klicks (Bestätigungstext), zieht 200 XP ab
+      (Kopfzeilen-XP sinken) und Snake wird dauerhaft spielbar (bleibt
+      nach Reload freigeschaltet und reist im Backup mit)
+- [ ] Snake spielen: Steuerung mit Pfeiltasten/WASD UND Wischgesten;
+      Pause hält Uhr und Schlange an; Futter macht die Schlange
+      länger (+1 Punkt); Wand oder eigener Körper beendet die Runde;
+      Ablauf der Rundenzeit zeigt das Ergebnis (gewonnen ab 5
+      Punkten); der lokale Bestwert erscheint als reine Anzeige
+- [ ] Spiele vergeben KEINE XP (Kopfzeilen-XP unverändert nach einer
+      gewonnenen Runde)
+- [ ] Reduzierte Bewegung im System: keine Flip-/Blinkeffekte in
+      beiden Spielen
+
 #### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
 
 - [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln

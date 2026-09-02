@@ -622,6 +622,34 @@ preview delivery). In the regular build the mode does not exist.
       identical to normal mode
 - [ ] Exam mode: no streak bonus (the exam multiplier is unchanged)
 
+#### Arcade mini-games (#2887, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Arcade" switch is ON by
+      default; the "Snake round length" (30-120, default 60) and
+      "Memory pairs" (4-12, default 8) number inputs clamp and are
+      disabled while the switch is off
+- [ ] Game mode on: the arcade card appears on the dashboard; "To the
+      arcade" opens the game list. Arcade switch off OR game mode off:
+      the card disappears entirely; visiting /arcade directly shows a
+      friendly notice with a link to the settings
+- [ ] Learn Memory (free): the set picker lists downloaded sets only;
+      the board has two cards per pair (term and translation from real
+      lesson cards); a matched pair stays open, a mismatch counts a
+      try and folds away on the next reveal; finding every pair shows
+      the win message with the try count
+- [ ] Snake (locked): the game card offers "Unlock for 200 XP"; with
+      too little XP the button is disabled (tooltip); the purchase
+      takes TWO clicks (confirm text), deducts 200 XP (header XP
+      drops) and Snake stays playable permanently (survives a reload
+      and rides the backup)
+- [ ] Playing Snake: arrow keys/WASD AND swipe gestures steer; pause
+      halts clock and snake; food grows the snake (+1 point); wall or
+      own body ends the round; the round clock running out shows the
+      result (won from 5 points); the local best score is display-only
+- [ ] Games award NO XP (header XP unchanged after a won round)
+- [ ] Reduced motion in the system: no flip/flash effects in either
+      game
+
 #### Playful exercise renderers (#2876, only while game mode is on)
 
 - [ ] Multiple-choice exercise: the answers render as large tiles
