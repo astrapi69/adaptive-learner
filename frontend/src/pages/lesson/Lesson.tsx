@@ -50,6 +50,12 @@ import LessonCombo from "../../components/lesson/chrome/LessonCombo";
 import LessonMascot from "../../components/lesson/mascot/LessonMascot";
 import { useLessonCombo } from "../../hooks/lesson/useLessonCombo";
 import { usePlayfulMode } from "../../hooks/settings/usePlayfulMode";
+import { usePlayfulTension } from "../../hooks/settings/usePlayfulTension";
+import { useLessonHearts } from "../../hooks/lesson/useLessonHearts";
+import { useLessonCountdown } from "../../hooks/lesson/useLessonCountdown";
+import LessonHearts from "../../components/lesson/chrome/LessonHearts";
+import LessonCountdownRing from "../../components/lesson/chrome/LessonCountdownRing";
+import LessonHeartsDialog from "../../components/lesson/dialogs/LessonHeartsDialog";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
@@ -206,6 +212,37 @@ export default function LessonPage() {
     recordStepResult,
     goNext,
   });
+
+  // #2878 game-mode tension - hearts + per-exercise countdown ring,
+  // both opt-in (default OFF). Null-safe step math because these hooks
+  // run before the loading early-return. Hearts pause on the summary,
+  // so the correction-round drills never cost one; both systems stay
+  // off in exam (no per-answer feedback to leak) and in timed mode
+  // (which has its own timer + auto-advance).
+  const tension = usePlayfulTension();
+  const tensionSummary =
+    lesson !== null && currentStepIndex >= (playedLesson?.steps.length ?? 0);
+  const tensionExercise = isPlayableExerciseStep(
+    tensionSummary ? null : (playedLesson?.steps[currentStepIndex] ?? null),
+  );
+  const tensionModeOk = lessonMode !== "exam" && lessonMode !== "timed";
+  const heartsActive = playful && tension.heartsOn && tensionModeOk;
+  const { hearts, maxHearts, depleted, resetHearts } = useLessonHearts(
+    heartsActive && !tensionSummary,
+    tension.heartsCount,
+  );
+  const countdownActive =
+    playful && tension.countdownOn && tensionModeOk && !tensionSummary;
+  const countdown = useLessonCountdown({
+    enabled: countdownActive,
+    seconds: tension.countdownSeconds,
+    stepIndex: currentStepIndex,
+    isExerciseStep: tensionExercise,
+    checked,
+  });
+  useEffect(() => {
+    resetHearts();
+  }, [source, setId, filename, resetHearts]);
 
   // Scroll-to-top on step change + the #140 theory back-link
   // round-trip live in the extracted hook (#354).
@@ -366,6 +403,18 @@ export default function LessonPage() {
         onStartOver={() => void handleStartOver()}
       />
 
+      {/* #2878 — out of hearts: the run ends with a friendly forced
+          choice. Retry restarts the run (recorded results stay) and
+          refills the hearts; exit returns to the lesson overview. */}
+      <LessonHeartsDialog
+        open={depleted}
+        onRetry={() => {
+          resetHearts();
+          void handleStartOver();
+        }}
+        onExit={() => navigate(exitRouteForLesson(setId))}
+      />
+
       {/* #959 — scroll anchor: a step change scrolls this to the top of
           the viewport, lifting the header off-screen so the progress bar +
           task land in view. scroll-mt leaves a little gap under the
@@ -407,6 +456,19 @@ export default function LessonPage() {
         {/* #2874 — the streak chip (game mode only): live run during the
             lesson, the best run on the summary. */}
         {playful && <LessonCombo combo={combo} showBest={isSummary} />}
+
+        {/* #2878 — the tension systems (both opt-in): the lives row and
+            the per-exercise countdown ring. Hidden on the summary. */}
+        {heartsActive && !isSummary && (
+          <LessonHearts hearts={hearts} maxHearts={maxHearts} />
+        )}
+        {countdownActive && isExerciseStep && (
+          <LessonCountdownRing
+            remaining={countdown.remaining}
+            total={countdown.total}
+            expired={countdown.expired}
+          />
+        )}
 
         {/* #2849 — the Lernfunke companion, playful mode only. Reacts to
             the celebration bus (cheer/encourage/celebrate) and speaks one
