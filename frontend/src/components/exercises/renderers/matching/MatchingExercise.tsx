@@ -206,7 +206,7 @@ function MatchingExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t, lang} = useI18n();
-    const {showAnswerToggle} = useLessonMode();
+    const {showAnswerToggle, playful} = useLessonMode();
     const pairs = useMemo(() => exercise.pairs ?? [], [exercise.pairs]);
     const reviewedMatching =
         reviewed?.kind === "matching" ? reviewed : null;
@@ -527,6 +527,7 @@ function MatchingExercise(
         <section
             className="flex flex-col gap-3"
             data-testid="matching-exercise"
+            data-playful={playful ? "true" : undefined}
         >
             <MatchingPrompt
                 prompt={exercise.prompt}
@@ -586,6 +587,7 @@ function MatchingExercise(
                                     productive,
                                 })}
                                 onClick={() => handleLeftClick(tile.index)}
+                                playful={playful}
                             />
                         ))}
                     </ul>
@@ -618,6 +620,7 @@ function MatchingExercise(
                                 })}
                                 submitted={submitted}
                                 onClick={() => handleRightClick(tile.originalIndex)}
+                                playful={playful}
                             />
                         ))}
                     </ul>

@@ -36,6 +36,7 @@ import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
 import ExerciseHint from "../../feedback/ExerciseHint";
 import {deriveClozeAttempts} from "../../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
@@ -115,6 +116,7 @@ function ClozeExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t} = useI18n();
+    const {playful} = useLessonMode();
     const sentence = exercise.sentence ?? "";
     const blanks = useMemo(() => exercise.blanks ?? [], [exercise.blanks]);
     // ``multiselect`` is handled by the dispatch wrapper before reaching
@@ -265,6 +267,7 @@ function ClozeExercise(
             className="flex flex-col gap-3"
             data-testid="cloze-exercise"
             data-cloze-mode={mode}
+            data-playful={playful ? "true" : undefined}
         >
             <ClozePromptRow
                 prompt={exercise.prompt}
@@ -280,6 +283,7 @@ function ClozeExercise(
 
             {mode === "select" ? (
                 <ClozeSelectChoices
+                    playful={playful}
                     segments={segments}
                     blanks={blanks}
                     submitted={submitted}

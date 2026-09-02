@@ -14,6 +14,12 @@
  * Mobile-first: 44px min touch targets, native inputs with visible
  * labels + focus-visible rings. Resolution marks correct/wrong/missed
  * with an icon badge (not colour alone).
+ *
+ * Game mode (#2876): with ``playful`` from {@link useLessonMode} the
+ * options render as large tappable tiles (two-column grid from ``sm``,
+ * answer physics on the verdicts). Presentation only - testids, scoring
+ * and raw_answer are identical to the classic list, and reduced motion
+ * suppresses every animation via ``motion-safe:``.
  */
 
 import {Check, X} from "lucide-react";
@@ -79,7 +85,7 @@ function MultipleChoiceExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t} = useI18n();
-    const {showAnswerToggle} = useLessonMode();
+    const {showAnswerToggle, playful} = useLessonMode();
     const multiple = exercise.multiple === true;
     const allOptions = useMemo(
         () => exercise.options ?? [],
@@ -195,6 +201,7 @@ function MultipleChoiceExercise(
             className="flex flex-col gap-3"
             data-testid="multiple-choice-exercise"
             data-multiple={multiple ? "true" : "false"}
+            data-playful={playful ? "true" : undefined}
         >
             {exercise.prompt && (
                 <p
@@ -221,7 +228,11 @@ function MultipleChoiceExercise(
             <div
                 role={multiple ? "group" : "radiogroup"}
                 aria-label={groupLabel}
-                className="flex flex-col gap-2"
+                className={cn(
+                    playful
+                        ? "grid gap-2 sm:grid-cols-2"
+                        : "flex flex-col gap-2",
+                )}
                 data-testid="multiple-choice-options"
             >
                 {optionTexts.map((optionText, idx) => {
@@ -236,11 +247,26 @@ function MultipleChoiceExercise(
                                 "flex min-h-11 cursor-pointer items-center gap-3 rounded-sm border px-3 py-2 text-base",
                                 "border-[var(--border-strong)] bg-[var(--surface)]",
                                 "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--accent)]",
+                                playful &&
+                                    "min-h-14 rounded-md border-2 px-4 py-3 font-medium",
+                                playful &&
+                                    !submitted &&
+                                    "transition-transform motion-safe:hover:scale-[1.02]",
+                                playful &&
+                                    !submitted &&
+                                    chosen &&
+                                    "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] motion-safe:animate-[lernfunke-pop_300ms_ease-out]",
                                 submitted && "cursor-default",
                                 verdict === "correct" &&
                                     "border-[var(--success)] bg-[color-mix(in_srgb,var(--success)_14%,var(--surface))]",
+                                playful &&
+                                    verdict === "correct" &&
+                                    "motion-safe:animate-[lernfunke-hop_400ms_ease-out]",
                                 verdict === "wrong" &&
                                     "border-[var(--danger)] bg-[color-mix(in_srgb,var(--danger)_14%,var(--surface))]",
+                                playful &&
+                                    verdict === "wrong" &&
+                                    "motion-safe:animate-[matching-shake_300ms_ease-in-out]",
                                 verdict === "missed" &&
                                     "border-[var(--success)] border-dashed",
                             )}
