@@ -86,6 +86,11 @@ With game mode on:
   sets (free) and the classic **Snake** (unlockable with XP). Round
   length and pair count are configurable in the game-mode settings;
   the games award no XP.
+- **Special rounds** (on by default, can be switched off): finishing
+  a set with at least one star in every lesson unlocks a **flash
+  round** - a quick round of the set's trickiest cards, played with
+  the countdown ring. The entry sits on the set overview; the card
+  count is configurable in the game-mode settings.
 - **Lernfunke**, your learning companion, sits as a small flame
   figure next to the progress bar: it cheers on correct answers,
   encourages after wrong ones, celebrates milestones, and sends

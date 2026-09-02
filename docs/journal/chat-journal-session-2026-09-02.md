@@ -245,6 +245,31 @@ Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
 - Commit: 40c77cf6 (i18n), 96bca06b (Logik + Store), fb4eda88 (UI);
   Doku-Commit folgt.
 
+## 10. Stufe B: Blitzrunden bei Set-Abschluss (#2888) (23:30)
+
+- Original prompt: Fortsetzung des #2886-Programms nach dem
+  #2895-Merge - Stufe B laut Issue #2888.
+- Optimized prompt: "Baue die Blitzrunde als Wiederverwendung des
+  Error-Replay-Players: reine Freischalt-Regel (jede Lektion des Sets
+  mit mindestens einem Stern), deterministische Auswahl der
+  fehlertraechtigsten Elemente aus den ElementError-Rows, Aufloesung
+  zu Uebungen aus den Quell-Lektionen; der Player bekommt per
+  Router-State einen optionalen Countdown-Modus (#2878-Semantik);
+  Einstiegskarte sichtbar-aber-gesperrt in der Set-Uebersicht;
+  Sonderrunden-Pref (Standard AN, Karten 5-20/10); i18n zuerst,
+  Testplan DE+EN."
+- Ziel: #2888 komplett auf einem PR; Checkbox B in #2886.
+- Ergebnis: lib/flash-round (Freischalt-Regel, Auswahl-Ranking,
+  Uebungs-Aufloesung; 9 Tests gegen echte Row-Shapes),
+  playfulSpecialRoundsPref (7 Tests); ErrorReplayLesson additiv um
+  flashRound-State erweitert (Ring, Titel, Ruecksprung; Paritaets-Test
+  fuer gewoehnliche Replays); FlashRoundCard in SetDeepLink mit
+  Gate-, Sperr-, Perfekt- und Start-Payload-Tests (5); Settings-Block
+  (3 Tests); i18n-Block (10 Keys x 11 Kataloge); Testplan DE+EN,
+  Hilfe celebrations.md.
+- Commit: 3e7dcbbd (i18n), e8620e6c + debe6574 (Regeln + Pref),
+  01811482 (UI); Doku-Commit folgt.
+
 ## Fragen und Annahmen
 
 - Farbwahl der Varianten aus der bestehenden Markenpalette

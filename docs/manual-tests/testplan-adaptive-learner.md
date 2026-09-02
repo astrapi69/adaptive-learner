@@ -694,6 +694,33 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Reduzierte Bewegung im System: keine Flip-/Blinkeffekte in
       beiden Spielen
 
+#### Blitzrunden (#2888, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Sonderrunden"
+      ist standardmäßig AN; das Zahlenfeld "Blitzrunden-Karten" klemmt
+      auf 5-20 (Standard 10) und ist bei ausgeschaltetem Schalter
+      gesperrt
+- [ ] Set-Übersicht (/content/set/...) bei aktivem Spielmodus: die
+      Blitzrunden-Karte erscheint; solange nicht jede Lektion des Sets
+      mit mindestens einem Stern abgeschlossen ist, ist der
+      Start-Knopf gesperrt mit Tooltip (Freischalt-Bedingung)
+- [ ] Set komplett (jede Lektion mit mindestens einem Stern) und
+      Fehlerkarten vorhanden: der Start öffnet die Blitzrunde - Titel
+      "Blitzrunde: {Set}", pro Übung läuft der Countdown-Ring (Ablauf
+      reißt die Serie, nichts wird automatisch abgeschickt), die
+      Übungen stammen aus den fehlerträchtigsten Karten des Sets
+- [ ] Der Zurück-Knopf der Blitzrunde führt zur Set-Übersicht zurück
+      (nicht zu einer Lektion)
+- [ ] Perfektes Set (keine Fehlerkarten): der Start-Knopf bleibt
+      gesperrt mit dem Perfekt-Tooltip
+- [ ] Sonderrunden-Schalter aus ODER Spielmodus aus: die
+      Blitzrunden-Karte verschwindet komplett
+- [ ] Gewöhnliches "Fehler wiederholen" aus der Zusammenfassung:
+      unverändert, KEIN Countdown-Ring
+- [ ] Scoring/SRS: die Blitzrunde schreibt keine Lektions-Fortschritte;
+      korrigierte Fehlerkarten verbessern wie beim Fehler-Wiederholen
+      nur den SRS-Stand
+
 #### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
 
 - [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln

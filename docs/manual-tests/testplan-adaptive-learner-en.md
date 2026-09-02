@@ -650,6 +650,32 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Reduced motion in the system: no flip/flash effects in either
       game
 
+#### Flash rounds (#2888, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Special rounds" switch is
+      ON by default; the "Flash-round cards" number input clamps to
+      5-20 (default 10) and is disabled while the switch is off
+- [ ] Set overview (/content/set/...) with game mode on: the
+      flash-round card appears; while not every lesson of the set is
+      completed with at least one star, the start button is disabled
+      with the unlock-condition tooltip
+- [ ] Set finished (every lesson with at least one star) and error
+      cards present: starting opens the flash round - title
+      "Flash round: {set}", the countdown ring runs per exercise
+      (expiry breaks the streak, nothing is auto-submitted), the
+      exercises come from the set's most error-prone cards
+- [ ] The flash round's back button returns to the set overview (not
+      to a lesson)
+- [ ] Perfect set (no error cards): the start button stays disabled
+      with the perfect tooltip
+- [ ] Special-rounds switch off OR game mode off: the flash-round card
+      disappears entirely
+- [ ] A plain "Retry errors" from a lesson summary: unchanged, NO
+      countdown ring
+- [ ] Scoring/SRS: the flash round writes no lesson progress;
+      corrected error cards only advance the SRS state, as in retry
+      errors
+
 #### Playful exercise renderers (#2876, only while game mode is on)
 
 - [ ] Multiple-choice exercise: the answers render as large tiles
