@@ -10,6 +10,8 @@ export * from "./MissionSettingsControl";
 export { default as MissionSettingsControl } from "./MissionSettingsControl";
 export * from "./PlayfulModeControl";
 export { default as PlayfulModeControl } from "./PlayfulModeControl";
+export * from "./MascotVariantControl";
+export { default as MascotVariantControl } from "./MascotVariantControl";
 export * from "./FeedbackIntensityControl";
 export { default as FeedbackIntensityControl } from "./FeedbackIntensityControl";
 export * from "./SoundSettingsControl";

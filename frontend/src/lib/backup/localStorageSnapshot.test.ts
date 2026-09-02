@@ -41,6 +41,17 @@ describe("captureLocalStorageSnapshot", () => {
         );
     });
 
+    it("carries the mascot-variant state (#2861 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.mascot.variants",
+            '{"u1":{"selected":"wald","purchased":["gold"]}}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.mascot.variants"]).toBe(
+            '{"u1":{"selected":"wald","purchased":["gold"]}}',
+        );
+    });
+
     it("carries the diagnostics + developer configuration (#2785 pin: never drift into the exclusion list)", () => {
         localStorage.setItem("adaptive-learner.developer_mode", "true");
         localStorage.setItem("adaptive-learner.vv_diag", "1");
