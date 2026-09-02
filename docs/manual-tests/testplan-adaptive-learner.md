@@ -594,6 +594,28 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Backup-Roundtrip: Export -> Wipe -> Import stellt gewählte und
       gekaufte Varianten wieder her (beide Speicher-Modi)
 
+#### Spielmodus-Sounds (#2875)
+
+- [ ] Settings -> Lernen -> Spielmodus: unter dem Modus-Schalter der
+      Schalter "Spielmodus-Sounds" (Standard aus) mit Hinweistext
+- [ ] Spielmodus einschalten, ohne die Sound-Frage je beantwortet zu
+      haben: Angebot "Mit Sound spielen?" mit "Ja, Sounds an" /
+      "Später"; "Ja" aktiviert die Sounds, "Später" nicht - beides
+      lässt das Angebot dauerhaft verschwinden
+- [ ] Lektionsstart-Banner (Spielmodus aus, nie ausgeblendet): neben
+      "Einschalten" der Knopf "Mit Sound einschalten" - aktiviert
+      Modus UND Sounds in einem Klick
+- [ ] Sounds an, globale Töne AUS: richtige Antwort klingt (Ton steigt
+      mit der Serie hörbar an), falsche Antwort dumpfer Ton,
+      Checkpoint-Jingle beim Überschreiten, Fanfare beim
+      Lektionsabschluss; Lautstärke folgt dem bestehenden Regler
+- [ ] Spielmodus-Sounds AUS und globale Töne AUS: alles still;
+      globale Töne AN verhalten sich wie bisher (keine
+      Spielmodus-Fanfare, kein Serien-Anstieg außerhalb des
+      Spielmodus)
+- [ ] Prüfungsmodus + Spielmodus + Sounds: kein Ton pro Antwort (kein
+      Sofort-Feedback); die Abschluss-Fanfare bleibt erlaubt
+
 #### Juice-Paket (#2874, nur bei aktivem Spielmodus)
 
 - [ ] Lektion spielen, zwei richtige Antworten in Folge: neben der

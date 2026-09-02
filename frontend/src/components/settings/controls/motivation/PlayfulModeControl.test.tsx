@@ -52,3 +52,64 @@ describe("PlayfulModeControl", () => {
         window.removeEventListener(PLAYFUL_MODE_CHANGE_EVENT, listener);
     });
 });
+
+describe("game-mode sounds (#2875)", async () => {
+    const {setPlayfulMode} = await import(
+        "../../../../lib/learning/playfulModePref"
+    );
+    const {
+        readPlayfulSounds,
+        readPlayfulSoundsPrompted,
+        setPlayfulSounds,
+    } = await import("../../../../lib/learning/playfulSoundsPref");
+    const {fireEvent} = await import("@testing-library/react");
+
+    it("renders the sound toggle and persists a change", () => {
+        render(<PlayfulModeControl />);
+        const toggle = screen.getByTestId("settings-playful-sounds-toggle");
+        expect(toggle).not.toBeChecked();
+        fireEvent.click(toggle);
+        expect(readPlayfulSounds()).toBe(true);
+    });
+
+    it("shows the one-time offer only while game mode is on and unanswered", () => {
+        render(<PlayfulModeControl />);
+        expect(
+            screen.queryByTestId("settings-playful-sounds-offer"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("offer 'yes' enables sounds; 'later' only dismisses", () => {
+        setPlayfulMode(true);
+        const first = render(<PlayfulModeControl />);
+        fireEvent.click(
+            screen.getByTestId("settings-playful-sounds-offer-yes"),
+        );
+        expect(readPlayfulSounds()).toBe(true);
+        expect(
+            screen.queryByTestId("settings-playful-sounds-offer"),
+        ).not.toBeInTheDocument();
+        first.unmount();
+
+        localStorage.clear();
+        setPlayfulMode(true);
+        render(<PlayfulModeControl />);
+        fireEvent.click(
+            screen.getByTestId("settings-playful-sounds-offer-later"),
+        );
+        expect(readPlayfulSounds()).toBe(false);
+        expect(readPlayfulSoundsPrompted()).toBe(true);
+        expect(
+            screen.queryByTestId("settings-playful-sounds-offer"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("an answered offer never returns", () => {
+        setPlayfulMode(true);
+        setPlayfulSounds(true);
+        render(<PlayfulModeControl />);
+        expect(
+            screen.queryByTestId("settings-playful-sounds-offer"),
+        ).not.toBeInTheDocument();
+    });
+});

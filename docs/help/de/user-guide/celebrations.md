@@ -59,6 +59,12 @@ Mit aktivem Spielmodus:
   Antwort, Konfetti und Meilenstein-Einblendungen, unabhängig von
   der gewählten Feedback-Intensität. "Bewegung reduzieren" im
   System gewinnt weiterhin, und Töne bleiben ein eigener Schalter.
+- Mit dem Schalter **Spielmodus-Sounds** (direkt beim
+  Spielmodus-Schalter, Standard aus) bekommt der Modus seinen
+  eigenen Klang: ein Ton bei jeder richtigen Antwort, dessen Höhe
+  mit der Serie steigt, ein Checkpoint-Jingle und eine
+  Abschluss-Fanfare - unabhängig vom globalen Töne-Schalter, die
+  Lautstärke folgt dem Regler.
 - Richtige Antworten in Folge bauen eine sichtbare **Serie** auf
   (Flammen-Chip neben der Fortschrittsleiste); ein "+1" steigt von
   jeder richtigen Antwort auf, die Fortschrittsleiste trägt

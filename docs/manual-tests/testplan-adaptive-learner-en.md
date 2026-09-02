@@ -557,6 +557,27 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Backup round-trip: export -> wipe -> import restores selected and
       purchased variants (both storage modes)
 
+#### Game mode sounds (#2875)
+
+- [ ] Settings -> Learning -> Game mode: below the mode switch, the
+      "Game mode sounds" switch (default off) with a hint text
+- [ ] Turn game mode on without ever answering the sound question: the
+      "Play with sound?" offer with "Yes, sounds on" / "Later"; "Yes"
+      enables the sounds, "Later" does not - both make the offer
+      disappear permanently
+- [ ] Lesson-start banner (game mode off, never dismissed): next to
+      "Turn on", the "Turn on with sound" button - enables mode AND
+      sounds in one click
+- [ ] Sounds on, global sounds OFF: a correct answer plays a tone
+      (audibly rising with the streak), a wrong answer a low thud, a
+      checkpoint jingle on crossing, a fanfare on lesson completion;
+      volume follows the existing slider
+- [ ] Game mode sounds OFF and global sounds OFF: everything silent;
+      global sounds ON behave as before (no game-mode fanfare, no
+      streak rise outside game mode)
+- [ ] Exam mode + game mode + sounds: no per-answer tone (no immediate
+      feedback); the completion fanfare stays allowed
+
 #### Juice package (#2874, only while game mode is on)
 
 - [ ] Play a lesson, two correct answers in a row: the streak chip
