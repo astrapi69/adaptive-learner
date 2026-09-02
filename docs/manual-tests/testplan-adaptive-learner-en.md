@@ -578,6 +578,24 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Exam mode + game mode + sounds: no per-answer tone (no immediate
       feedback); the completion fanfare stays allowed
 
+#### Playful exercise renderers (#2876, only while game mode is on)
+
+- [ ] Multiple-choice exercise: the answers render as large tiles
+      (two columns from tablet width); the chosen tile pops briefly
+      and gets an accent border; after checking, the correctly chosen
+      tile hops and a wrongly chosen one shakes
+- [ ] Cloze with word choices: the tapped word "jumps" into the blank
+      in the sentence with a small hop; changing the pick replays the
+      hop with the new word
+- [ ] Matching exercise: a freshly formed pair "snaps" together with a
+      pop on both tiles; after checking, correct pairs hop briefly;
+      tapping a pair still undoes it
+- [ ] Behaviour unchanged: selection, checking, score and resolution
+      are identical to normal mode in all three exercise types
+- [ ] Game mode off: classic lists/chips/tiles without the game look;
+      reduced motion in the system: the shapes stay, all hop/pop
+      animations are suppressed
+
 #### Juice package (#2874, only while game mode is on)
 
 - [ ] Play a lesson, two correct answers in a row: the streak chip

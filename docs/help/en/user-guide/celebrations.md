@@ -65,6 +65,10 @@ With game mode on:
   answer, the progress bar carries checkpoint dots, and the
   summary shows your best streak. Score and progress are
   untouched by any of this.
+- Exercises look more playful: multiple-choice answers become
+  large tiles, picked words jump into the blank in cloze
+  exercises, and matching pairs snap together with a pop.
+  Interaction and grading are identical to the normal look.
 - **Lernfunke**, your learning companion, sits as a small flame
   figure next to the progress bar: it cheers on correct answers,
   encourages after wrong ones, celebrates milestones, and sends

@@ -361,10 +361,13 @@ export function MatchingLeftTile({
     tile,
     state,
     onClick,
+    playful = false,
 }: {
     tile: LeftTile;
     state: LeftTileViewState;
     onClick: () => void;
+    /** Game mode (#2876): pairs snap together, correct tiles hop. */
+    playful?: boolean;
 }) {
     const {
         isSelected,
@@ -388,8 +391,16 @@ export function MatchingLeftTile({
                     isPaired && "is-paired",
                     showPair &&
                         "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
+                    playful &&
+                        showPair &&
+                        !isCorrect &&
+                        !isWrong &&
+                        "motion-safe:animate-[lernfunke-pop_300ms_ease-out]",
                     isCorrect &&
                         "is-correct border-2 border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] text-[var(--matching-correct-fg)]",
+                    playful &&
+                        isCorrect &&
+                        "motion-safe:animate-[lernfunke-hop_400ms_ease-out]",
                     isWrong &&
                         "is-wrong border-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] text-[var(--matching-error-fg)] motion-safe:animate-[matching-shake_0.2s_ease-in-out]",
                 )}
@@ -496,11 +507,14 @@ export function MatchingRightTile({
     state,
     submitted,
     onClick,
+    playful = false,
 }: {
     tile: RightTile;
     state: RightTileViewState;
     submitted: boolean;
     onClick: () => void;
+    /** Game mode (#2876): pairs snap together, correct tiles hop. */
+    playful?: boolean;
 }) {
     const {
         isSelected,
@@ -526,10 +540,18 @@ export function MatchingRightTile({
                         "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
                     showPair &&
                         "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
+                    playful &&
+                        showPair &&
+                        !isCorrect &&
+                        !isWrong &&
+                        "motion-safe:animate-[lernfunke-pop_300ms_ease-out]",
                     // Unmatched after checking stays neutral.
                     submitted && !isPaired && "opacity-60",
                     isCorrect &&
                         "is-correct border-2 border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] text-[var(--matching-correct-fg)]",
+                    playful &&
+                        isCorrect &&
+                        "motion-safe:animate-[lernfunke-hop_400ms_ease-out]",
                     isWrong &&
                         "is-wrong border-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] text-[var(--matching-error-fg)]",
                     isPaired && "is-paired",

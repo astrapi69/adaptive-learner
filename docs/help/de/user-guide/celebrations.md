@@ -70,6 +70,11 @@ Mit aktivem Spielmodus:
   jeder richtigen Antwort auf, die Fortschrittsleiste trägt
   Checkpoint-Punkte, und die Zusammenfassung zeigt deine beste
   Serie. Punktzahl und Fortschritt bleiben davon unberührt.
+- Übungen sehen spielerischer aus: Multiple-Choice-Antworten
+  werden zu großen Kacheln, gewählte Wörter springen im Lückentext
+  in die Lücke, und Zuordnungs-Paare schnappen mit einem Pop
+  zusammen. Bedienung und Bewertung sind identisch zum normalen
+  Look.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet

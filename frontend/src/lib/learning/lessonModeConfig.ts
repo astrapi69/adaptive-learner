@@ -44,6 +44,16 @@ export interface LessonModeConfig {
     sessionEnd: "fixed" | "endless";
 }
 
+
+/**
+ * The value for a renderer root's ``data-playful`` attribute (#2876):
+ * ``"true"`` in game mode, absent otherwise. Shared so the branch lives
+ * here once instead of inside every renderer's render function.
+ */
+export function playfulDataAttr(playful: boolean): "true" | undefined {
+    return playful ? "true" : undefined;
+}
+
 const BASE: Omit<LessonModeConfig, "mode"> = {
     playful: false,
     showHints: true,

@@ -616,6 +616,24 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Prüfungsmodus + Spielmodus + Sounds: kein Ton pro Antwort (kein
       Sofort-Feedback); die Abschluss-Fanfare bleibt erlaubt
 
+#### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
+
+- [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln
+      (ab Tablet-Breite zweispaltig); die gewählte Kachel ploppt kurz
+      und bekommt einen Akzentrahmen; nach dem Prüfen hüpft die richtig
+      gewählte Kachel, eine falsch gewählte schüttelt sich
+- [ ] Lückentext mit Wortauswahl: das angetippte Wort "springt" mit
+      einem kleinen Hüpfer in die Lücke im Satz; ein Wechsel der Wahl
+      wiederholt den Hüpfer mit dem neuen Wort
+- [ ] Zuordnungsübung: ein frisch gebildetes Paar "schnappt" mit einem
+      Pop auf beiden Kacheln zusammen; nach dem Prüfen hüpfen die
+      richtigen Paare kurz; das Antippen eines Paars löst es weiterhin
+- [ ] Verhalten unverändert: Auswahl, Prüfen, Punktzahl und Auflösung
+      sind in allen drei Übungstypen identisch zum normalen Modus
+- [ ] Spielmodus aus: klassische Listen/Chips/Kacheln ohne die
+      Spiel-Optik; reduzierte Bewegung im System: die Formen bleiben,
+      alle Hüpf-/Pop-Animationen entfallen
+
 #### Juice-Paket (#2874, nur bei aktivem Spielmodus)
 
 - [ ] Lektion spielen, zwei richtige Antworten in Folge: neben der
