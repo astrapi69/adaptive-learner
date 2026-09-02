@@ -41,6 +41,15 @@
  * so a layout wider than the viewport (the suspected trigger of Safari's
  * auto zoom-out to ``scale<1`` despite ``user-scalable=no``) is measurable.
  *
+ * Raw heights + the third scroll source (#2870): each tap also carries
+ * ``@vvH``/``@innerH`` (the raw values behind ``@kbd``, so a stuck
+ * ``innerHeight`` — i.e. an ineffective ``interactive-widget=resizes-content``
+ * — is distinguishable from a jumping ``vv.height``) and ``@rootY``
+ * (``#root.scrollTop``); the head adds ``rootY``/``docH``. The 2026-09-01
+ * drift capture showed ``@vvTop + @kbd`` summing exactly to the full
+ * keyboard height — only these raw values can attribute which quantity
+ * Safari actually moved during its focus-reveal.
+ *
  * Ghost-bug recorder (#2782): while enabled, every tap record and every
  * significant viewport transition is ALSO appended to the persistent
  * ring-buffer log (``lib/diagnostics/vv-log``), exportable from the same
@@ -90,6 +99,9 @@ interface TapInfo {
   atKbd: number;
   atScale: number;
   focus: string;
+  atVvHeight: number;
+  atInnerHeight: number;
+  atRootScrollY: number;
 }
 
 interface Snapshot {
@@ -102,6 +114,21 @@ interface Snapshot {
   vvWidth: number;
   innerWidth: number;
   docWidth: number;
+  rootScrollY: number;
+  docHeight: number;
+}
+
+/**
+ * ``#root``'s scrollTop — the app shell's ONLY legitimate scroller
+ * (#1415). Recorded per tap and in the head (#2870) so a focus-reveal
+ * can be attributed: Safari revealing a field by scrolling ``#root`` is
+ * the healthy path; revealing it by panning the visual viewport
+ * (``vvTop`` > 0) is the drift the 2026-09-01 reading caught live.
+ */
+function rootScrollTop(): number {
+  if (typeof document === "undefined") return 0;
+  const root = document.getElementById("root");
+  return root ? Math.round(root.scrollTop) : 0;
 }
 
 function readSnapshot(): Snapshot {
@@ -122,6 +149,11 @@ function readSnapshot(): Snapshot {
       typeof document === "undefined"
         ? 0
         : Math.round(document.documentElement.scrollWidth),
+    rootScrollY: rootScrollTop(),
+    docHeight:
+      typeof document === "undefined"
+        ? 0
+        : Math.round(document.documentElement.scrollHeight),
   };
 }
 
@@ -166,7 +198,8 @@ function tapLine(t: TapInfo): string {
   return (
     `y=${t.y} ${t.tag}[${t.testid}] top=${t.rectTop} ΔY=${t.deltaY} ` +
     `@winY=${t.atWinScrollY} @vvTop=${t.atVvOffsetTop} @kbd=${t.atKbd} ` +
-    `@scale=${t.atScale} focus=${t.focus}`
+    `@scale=${t.atScale} focus=${t.focus} @vvH=${t.atVvHeight} ` +
+    `@innerH=${t.atInnerHeight} @rootY=${t.atRootScrollY}`
   );
 }
 
@@ -175,7 +208,8 @@ function buildReport(snap: Snapshot, taps: TapInfo[]): string {
   const head =
     `[vvdiag] fix=${activeFix()} winY=${snap.winScrollY} vvTop=${snap.vvOffsetTop} ` +
     `scale=${snap.vvScale} kbd=${snap.keyboardShrink} vvH=${snap.vvHeight} innerH=${snap.innerHeight} ` +
-    `vvW=${snap.vvWidth} innerW=${snap.innerWidth} docW=${snap.docWidth}`;
+    `vvW=${snap.vvWidth} innerW=${snap.innerWidth} docW=${snap.docWidth} ` +
+    `rootY=${snap.rootScrollY} docH=${snap.docHeight}`;
   const body = taps.length
     ? taps.map((t, i) => `${i + 1}. ${tapLine(t)}`).join("\n")
     : "(no taps yet)";
@@ -246,6 +280,9 @@ export default function ViewportDiagnostic() {
         atKbd: Math.round(window.innerHeight - (vv ? vv.height : window.innerHeight)),
         atScale: vv ? Math.round(vv.scale * 1000) / 1000 : 1,
         focus: describeFocused(),
+        atVvHeight: Math.round(vv ? vv.height : window.innerHeight),
+        atInnerHeight: Math.round(window.innerHeight),
+        atRootScrollY: rootScrollTop(),
       };
       // eslint-disable-next-line no-console
       console.log("[vvdiag]", JSON.stringify(tap));
