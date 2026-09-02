@@ -602,6 +602,26 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Grading unchanged: score, stars and progress are identical with
       and without the tension systems
 
+#### Streak bonus XP (#2893, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Streak bonus XP" switch is
+      ON by default; the "Bonus XP cap per lesson" number input is
+      editable, clamps to 5-20 (default 10) and is disabled while the
+      switch is off
+- [ ] Game mode on, play a lesson with a streak of at least 3 correct
+      answers in a row: the summary shows a green "+N XP" next to
+      "Best streak: N"; the displayed lesson XP include the bonus, and
+      "Mark as complete" credits exactly the same value (dashboard XP
+      rise by the displayed sum)
+- [ ] The bonus counts from the THIRD streak answer (+1 per further
+      correct answer in a row); a wrong answer stops the growth, a new
+      streak from 3 keeps counting
+- [ ] Cap: with the cap at 5 and a long streak, the summary shows at
+      most "+5 XP"
+- [ ] Switch off OR game mode off: no "+N XP" on the summary, XP are
+      identical to normal mode
+- [ ] Exam mode: no streak bonus (the exam multiplier is unchanged)
+
 #### Playful exercise renderers (#2876, only while game mode is on)
 
 - [ ] Multiple-choice exercise: the answers render as large tiles

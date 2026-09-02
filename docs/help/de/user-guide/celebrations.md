@@ -82,6 +82,12 @@ Mit aktivem Spielmodus:
   die Serie und ein Herz geht verloren - die Übung bleibt offen).
   Beide sind in Prüfungs- und Auf-Zeit-Lektionen aus, und die
   Korrektur-Runde kostet nie Herzen.
+- **Serien-Bonus-XP** (Standard an): ab der dritten richtigen
+  Antwort in Folge bringt jede weitere +1 Bonus-XP, gedeckelt pro
+  Lektion (einstellbar 5-20, Standard 10). Die Zusammenfassung
+  zeigt den Bonus als "+N XP" neben der besten Serie; im
+  Prüfungsmodus und mit ausgeschaltetem Schalter gibt es keinen
+  Bonus.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet
@@ -93,4 +99,6 @@ Mit aktivem Spielmodus:
   Details in den [Einstellungen](settings.md).
 
 Punktzahl, Sterne und Fortschritt bleiben im Spielmodus unverändert -
-er ändert nur, wie gefeiert wird.
+er ändert nur, wie gefeiert wird. Die eine bewusste Ausnahme sind die
+Serien-Bonus-XP oben: kleine, gedeckelte Extra-XP, die du jederzeit
+abschalten kannst.
