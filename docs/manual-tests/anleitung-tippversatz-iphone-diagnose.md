@@ -57,8 +57,12 @@ Bedeutung der Felder:
 Jede Tipp-Zeile trägt zusätzlich den Zustand **zum Zeitpunkt des Tipps**
 (die Kopfzeile zeigt nur den Zustand danach): `@winY`/`@vvTop` (die beiden
 Versatz-Kanäle), `@kbd` (war die Tastatur da gerade offen?), `@scale` (war
-die Seite gerade gezoomt?) und `focus=` (welches Feld beim Tipp noch den
-Fokus hielt, `-` = keines).
+die Seite gerade gezoomt?), `focus=` (welches Feld beim Tipp noch den
+Fokus hielt, `-` = keines), `@vvH`/`@innerH` (die Rohwerte hinter `@kbd`,
+um zu erkennen welcher von beiden sich bewegt hat) und `@rootY` (wie weit
+der App-Scroller `#root` gerade gescrollt war - die dritte Scroll-Quelle
+neben `winY` und `vvTop`). Die Kopfzeile trägt entsprechend `rootY` und
+`docH` (Gesamthöhe des Dokuments).
 
 Die Karte sammelt automatisch die letzten 8 Tipps (im Textfeld unten, neueste
 zuerst). Tipps auf die Karte selbst (den Kopier-Knopf, das Textfeld) zählen
