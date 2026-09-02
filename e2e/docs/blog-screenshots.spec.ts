@@ -106,8 +106,8 @@ test("captures the extension-authoring path", async ({page}) => {
     await page.getByTestId("extension-add").click();
     const picker = page.getByTestId("extension-add-picker");
     await expect(picker).toBeVisible();
-    // Guards the article's central claim: all five adopted types are offered.
-    await expect(picker.getByRole("button")).toHaveCount(6); // 5 types + Cancel
+    // Guards the article's central claim: all adopted types are offered.
+    await expect(picker.getByRole("button")).toHaveCount(7); // 6 types + Cancel
     await shot(page, "e2-type-picker");
 
     await page.getByTestId("extension-add-type-dictation").click();
