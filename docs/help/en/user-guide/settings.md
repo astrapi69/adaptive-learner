@@ -5,7 +5,8 @@ touching code or YAML. It is organized as a **tabbed page**: pick a
 tab and its panel opens, so you are not scrolling one long list top
 to bottom. The tab groups are:
 
-- **General**: UI language, appearance / theme, and interface
+- **General**: profile (display name + avatar), UI language,
+  appearance / theme, and interface
   options (gestures, tooltips, Developer Mode).
 - **AI**: provider + model picker, per-provider API keys with
   source attribution, and the configured-providers overview.
@@ -18,6 +19,24 @@ to bottom. The tab groups are:
 - **Gamification**: XP / badge notifications, weekend mode, daily
   goal, and reset progress.
 - **About**: version, system info, credits, donations, license.
+
+## Profile
+
+Under *General > Profile* you set your **display name** and style
+your **avatar**:
+
+- **Upload picture** opens the crop dialog; the result shows in the
+  top-right of the navigation.
+- **Or pick a figure**: eight preset figures as an alternative to
+  your own photo - one click is enough.
+- **Avatar frames**: decorative rings around the avatar. Bronze,
+  silver, and gold unlock with your level, the flame with the 3-day
+  streak badge; star and accent are exchanged for XP (two-step
+  confirmation, the cost is printed on the button). Locked frames
+  show their condition.
+
+Your choice and purchased frames persist and travel with your
+[backup](backup.md).
 
 ## Language
 
@@ -238,6 +257,14 @@ changing it in either place keeps both in sync.
 
 You can also set the **order of the Content-hub tabs** (Discover /
 My content / Import) here, so the hub opens on the tab you use most.
+
+Also on the Learning tab: the **feedback section** (feedback
+intensity and sounds), **game mode** with its **mascot variant** -
+color schemes for Lernfunke that unlock with levels and badges or in
+exchange for XP (locked variants show their condition, purchases ask
+for a two-step confirmation) - plus missions and reminders. What game
+mode changes in detail is covered in
+[Praise and rewards](celebrations.md).
 
 ## Gamification
 
