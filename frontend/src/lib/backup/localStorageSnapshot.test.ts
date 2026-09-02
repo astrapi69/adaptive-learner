@@ -41,6 +41,17 @@ describe("captureLocalStorageSnapshot", () => {
         );
     });
 
+    it("carries the arcade-unlock state (#2887 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.arcade.unlocks",
+            '{"u1":{"selected":"memory","purchased":["snake"]}}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.arcade.unlocks"]).toBe(
+            '{"u1":{"selected":"memory","purchased":["snake"]}}',
+        );
+    });
+
     it("carries the mascot-variant state (#2861 pin: never drift into the exclusion list)", () => {
         localStorage.setItem(
             "adaptive-learner.mascot.variants",
