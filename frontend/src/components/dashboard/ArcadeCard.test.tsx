@@ -10,8 +10,10 @@ import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it} from "vitest";
 
 import ArcadeCard from "./ArcadeCard";
+import {awardTickets} from "../../lib/arcade/ticket-store";
 import {setPlayfulArcade} from "../../lib/learning/playful/playfulArcadePref";
 import {setPlayfulMode} from "../../lib/learning/playful/playfulModePref";
+import {setPlayfulTickets} from "../../lib/learning/playful/playfulTicketsPref";
 
 function renderCard() {
     return render(
@@ -43,5 +45,24 @@ describe("ArcadeCard", () => {
         setPlayfulArcade(false);
         renderCard();
         expect(screen.queryByTestId("arcade-card")).not.toBeInTheDocument();
+    });
+
+    it("shows the ticket balance while the economy is on (#2889)", () => {
+        setPlayfulMode(true);
+        localStorage.setItem("adaptive-learner.user_id", "u1");
+        awardTickets("u1", 3, 5);
+        renderCard();
+        expect(screen.getByTestId("arcade-card-tickets")).toHaveTextContent(
+            "Tickets: 3",
+        );
+    });
+
+    it("hides the ticket line when the ticket switch is off (#2889)", () => {
+        setPlayfulMode(true);
+        setPlayfulTickets(false);
+        renderCard();
+        expect(
+            screen.queryByTestId("arcade-card-tickets"),
+        ).not.toBeInTheDocument();
     });
 });

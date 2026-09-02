@@ -516,6 +516,7 @@ export default function LessonPage() {
           setDomain={setDomain}
           setBook={setBook}
           comboBonusXp={comboBonusXp}
+          fullHeartsRun={tension.fullHeartsRun}
           markCompleted={markCompleted}
           markRestarted={markRestarted}
           goToStep={goToStep}

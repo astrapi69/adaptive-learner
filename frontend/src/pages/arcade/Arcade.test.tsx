@@ -11,7 +11,9 @@ import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import Arcade from "./Arcade";
+import {awardTickets, readTicketState} from "../../lib/arcade/ticket-store";
 import {setPlayfulMode} from "../../lib/learning/playful/playfulModePref";
+import {setPlayfulTickets} from "../../lib/learning/playful/playfulTicketsPref";
 
 const getState = vi.fn();
 const spendXp = vi.fn();
@@ -87,5 +89,40 @@ describe("Arcade game list", () => {
         expect(
             await screen.findByTestId("arcade-play-snake"),
         ).toBeInTheDocument();
+    });
+});
+
+describe("Arcade ticket economy (#2889)", () => {
+    it("shows the ticket balance while the economy is on", () => {
+        setPlayfulMode(true);
+        awardTickets("u1", 2, 5);
+        renderArcade();
+        expect(screen.getByTestId("arcade-tickets")).toHaveTextContent(
+            "Tickets: 2",
+        );
+    });
+
+    it("hides the balance when the ticket switch is off", () => {
+        setPlayfulMode(true);
+        setPlayfulTickets(false);
+        renderArcade();
+        expect(screen.queryByTestId("arcade-tickets")).not.toBeInTheDocument();
+    });
+
+    it("a ticket plays one round of the locked snake", () => {
+        setPlayfulMode(true);
+        awardTickets("u1", 2, 5);
+        renderArcade();
+        fireEvent.click(screen.getByTestId("arcade-ticket-play-snake"));
+        expect(screen.getByTestId("arcade-back")).toBeInTheDocument();
+        expect(readTicketState("u1").tickets).toBe(1);
+    });
+
+    it("no ticket button without a balance", () => {
+        setPlayfulMode(true);
+        renderArcade();
+        expect(
+            screen.queryByTestId("arcade-ticket-play-snake"),
+        ).not.toBeInTheDocument();
     });
 });

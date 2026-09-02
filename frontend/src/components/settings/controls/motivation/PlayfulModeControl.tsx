@@ -79,6 +79,15 @@ import {
     setFlashRoundCards,
     setPlayfulSpecialRounds,
 } from "../../../../lib/learning/playful/playfulSpecialRoundsPref";
+import {
+    MAX_TICKET_CAP,
+    MIN_TICKET_CAP,
+    clampTicketCap,
+    readPlayfulTickets,
+    readTicketCap,
+    setPlayfulTickets,
+    setTicketCap,
+} from "../../../../lib/learning/playful/playfulTicketsPref";
 
 export default function PlayfulModeControl() {
     const {t} = useI18n();
@@ -176,6 +185,24 @@ export default function PlayfulModeControl() {
         const clamped = clampFlashRoundCards(Number(raw));
         setFlashCards(clamped);
         setFlashRoundCards(clamped);
+    };
+
+    // #2889 - the ticket economy (arcade tickets by performance), DEFAULT ON.
+    const [ticketsOn, setTicketsOn] = useState<boolean>(() =>
+        readPlayfulTickets(),
+    );
+    const [ticketCap, setTicketCapState] = useState<number>(() =>
+        readTicketCap(),
+    );
+
+    const handleTicketsToggle = (next: boolean) => {
+        setTicketsOn(next);
+        setPlayfulTickets(next);
+    };
+    const handleTicketCap = (raw: string) => {
+        const clamped = clampTicketCap(Number(raw));
+        setTicketCapState(clamped);
+        setTicketCap(clamped);
     };
 
     // #2893 - combo bonus XP (the one decided XP exception, DEFAULT ON).
@@ -472,6 +499,41 @@ export default function PlayfulModeControl() {
                     disabled={!specialRounds}
                     onChange={(e) => handleFlashCards(e.target.value)}
                     data-testid="settings-playful-flash-round-cards"
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t("settings.playful_tickets", "Game tickets")}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.playful_tickets_description",
+                            "Earn arcade tickets through performance: a lesson with a perfect score, a run survived with all hearts, and streak milestones (3/7/14/30 days). One ticket plays one round of a locked arcade game. Off leaves the arcade to XP unlocks only.",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-playful-tickets-toggle"
+                    checked={ticketsOn}
+                    onChange={(e) => handleTicketsToggle(e.target.checked)}
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="text-sm">
+                    {t("settings.playful_ticket_cap", "Maximum tickets")}
+                </span>
+                <input
+                    type="number"
+                    className="w-20"
+                    min={MIN_TICKET_CAP}
+                    max={MAX_TICKET_CAP}
+                    value={ticketCap}
+                    disabled={!ticketsOn}
+                    onChange={(e) => handleTicketCap(e.target.value)}
+                    data-testid="settings-playful-ticket-cap"
                 />
             </label>
             <MascotVariantControl />
