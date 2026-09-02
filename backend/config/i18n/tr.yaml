@@ -1767,6 +1767,9 @@ repo:
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
   mascot_label: "Öğrenme arkadaşın"
+  combo_chip: "x{n}"
+  combo_aria: "Cevap serisi: art arda {n}"
+  combo_best: "En iyi seri: {n}"
   playful_hint_title: "Oyun modunu dene"
   playful_hint_body: "Dersler her doğru cevabı övgü ve konfetiyle kutlar. Bunu istediğin zaman ayarlardan değiştirebilirsin."
   playful_hint_activate: "Aç"

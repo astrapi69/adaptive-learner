@@ -55,6 +55,11 @@ With game mode on:
   confetti and milestone overlays, regardless of the chosen
   feedback intensity. "Reduce motion" in your system still wins,
   and sounds remain their own switch.
+- Consecutive correct answers build a visible **streak** (flame
+  chip next to the progress bar); a "+1" floats off every correct
+  answer, the progress bar carries checkpoint dots, and the
+  summary shows your best streak. Score and progress are
+  untouched by any of this.
 - **Lernfunke**, your learning companion, sits as a small flame
   figure next to the progress bar: it cheers on correct answers,
   encourages after wrong ones, celebrates milestones, and sends

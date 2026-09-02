@@ -598,6 +598,26 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Backup-Roundtrip: Export -> Wipe -> Import stellt gewählte und
       gekaufte Varianten wieder her (beide Speicher-Modi)
 
+#### Juice-Paket (#2874, nur bei aktivem Spielmodus)
+
+- [ ] Lektion spielen, zwei richtige Antworten in Folge: neben der
+      Fortschrittsleiste erscheint der Serien-Chip (Flamme + "x2") und
+      hüpft bei jeder weiteren richtigen Antwort ("x3", "x4", ...)
+- [ ] Falsche Antwort: der Chip verschwindet (Serie gerissen); die
+      nächsten zwei richtigen bauen ihn neu auf
+- [ ] Richtige Antwort: ein "+1" steigt vom Häkchen auf und verblasst;
+      das Häkchen hüpft kurz; bei falscher Antwort schüttelt das X
+- [ ] Lektion mit mindestens 3 Schritten: zwei Checkpoint-Punkte bei
+      1/3 und 2/3 auf der Fortschrittsleiste; beim Überschreiten
+      leuchtet der Punkt in Akzentfarbe auf (kleiner Pop)
+- [ ] Zusammenfassung: statt des Live-Chips steht "Beste Serie: N"
+      (ab Serie 2; ohne echte Serie kein Chip)
+- [ ] Prüfungsmodus + Spielmodus: kein Chip, kein "+1", keine
+      Checkpoint-Feier pro Antwort (kein Sofort-Feedback)
+- [ ] Spielmodus aus: nichts davon erscheint; reduzierte Bewegung im
+      System: Chip/Punkte erscheinen ohne Animation, das "+1" bleibt
+      unsichtbar (reine Bewegungs-Dekoration)
+
 ### Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der
       Korrektur-Runde am Ende die Fehler beheben. Der Punktzahl-Balken zeigt

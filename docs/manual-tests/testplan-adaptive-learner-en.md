@@ -561,6 +561,26 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Backup round-trip: export -> wipe -> import restores selected and
       purchased variants (both storage modes)
 
+#### Juice package (#2874, only while game mode is on)
+
+- [ ] Play a lesson, two correct answers in a row: the streak chip
+      (flame + "x2") appears next to the progress bar and hops on every
+      further correct answer ("x3", "x4", ...)
+- [ ] Wrong answer: the chip disappears (streak broken); the next two
+      correct answers rebuild it
+- [ ] Correct answer: a "+1" floats off the check mark and fades; the
+      check hops briefly; on a wrong answer the X shakes
+- [ ] Lesson with at least 3 steps: two checkpoint dots at 1/3 and 2/3
+      on the progress bar; crossing one lights it up in the accent
+      color (small pop)
+- [ ] Summary: instead of the live chip, "Best streak: N" is shown
+      (from streak 2; no chip without a real streak)
+- [ ] Exam mode + game mode: no chip, no "+1", no per-answer checkpoint
+      celebration (no immediate feedback)
+- [ ] Game mode off: none of this appears; reduced motion in the
+      system: chip/dots render without animation, the "+1" stays
+      invisible (pure motion decoration)
+
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the
       end-of-lesson correction round. The score bar shows two segments: what
