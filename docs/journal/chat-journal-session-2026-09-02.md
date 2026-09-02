@@ -162,6 +162,33 @@ Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
   Testplan DE+EN, Hilfe celebrations.md DE+EN erweitert.
 - Commit: siehe Feature- und Doku-Commit dieses PR (Refs #2876).
 
+## 7. Stufe D Spannungssysteme: Herzen + Countdown-Ring (#2878) (16:15)
+
+- Original prompt: Fortsetzung des Umbrella-Beschlusses #2873 (Stufe D
+  nach Merge von Stufe C via PR #2881).
+- Optimized prompt: "Baue Herzen und Countdown-Ring als opt-in
+  Spielmodus-Spannungsschicht: Bus-gespeist, Korrektur-Runde kostet
+  nichts, Ablauf ist ein Fehlversuch ohne Auto-Submit, Scoring/SRS
+  unangetastet."
+- Ziel: Echter Spannungsbogen für alle, die ihn wollen - für niemanden
+  sonst.
+- Ergebnis: playfulTensionPref (4 Keys, geklemmte Zahlen),
+  usePlayfulTension, useLessonHearts (answer_wrong-Subscription, aus
+  auf der Summary => Korrektur-Runde kostet nichts), useLessonCountdown
+  (1s-Intervall, Pause nach Check, EIN answer_wrong-Emit pro Ablauf,
+  Schrittwechsel setzt zurück), LessonHearts-Leiste,
+  LessonCountdownRing (SVG, Farbstufen wie der Auf-Zeit-Balken),
+  LessonHeartsDialog (erzwungene Wahl: Neustart mit Herz-Refill oder
+  Ausstieg), Settings-Erweiterung mit zwei Schaltern + zwei
+  Zahlenfeldern. Beide Systeme aus in Prüfungs- und Auf-Zeit-Modus;
+  der Ablauf-Emit läuft über denselben Bus wie echte Fehlantworten
+  (ein Mechanismus für Serie, Herz, Maskottchen, Ton). Endlos-Player
+  bleibt vorerst ohne Herzen (eigene Seite ohne Spielmodus-Chrome,
+  als Wechselwirkungs-Entscheidung im PR dokumentiert). Die vertagte
+  Combo-Bonus-XP-Entscheidung wird Aster als Frage vorgelegt, nicht
+  eigenmächtig gebaut.
+- Commit: 72f5b2a8 (i18n), aff232f1 (Feature); Doku-Commit folgt.
+
 ## Fragen und Annahmen
 
 - Farbwahl der Varianten aus der bestehenden Markenpalette
