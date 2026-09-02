@@ -96,19 +96,34 @@ describe("MemoryGame", () => {
     });
 
     it("a mismatch counts the try and keeps both cards visible", async () => {
-        mockContent([
-            {front: "eins", back: "one"},
-            {front: "zwei", back: "two"},
-        ]);
-        render(<MemoryGame pairCount={2} />);
-        await screen.findByTestId("arcade-memory-board");
-        // Card 0 (pair 0 front) + card 3 (pair 1 back) never match.
-        fireEvent.click(screen.getByTestId("arcade-memory-card-0"));
-        fireEvent.click(screen.getByTestId("arcade-memory-card-3"));
-        expect(screen.getByTestId("arcade-memory-progress")).toHaveTextContent(
-            "Pairs: 0 / 2",
-        );
-        expect(screen.getByText("eins")).toBeInTheDocument();
+        // Pin the shuffle so the pair order provably REVERSES (rand 0
+        // swaps in the Fisher-Yates walk) - the assertions must not
+        // depend on which input pair became pair 0 (caught by CI).
+        const randSpy = vi.spyOn(Math, "random").mockReturnValue(0);
+        try {
+            mockContent([
+                {front: "eins", back: "one"},
+                {front: "zwei", back: "two"},
+            ]);
+            render(<MemoryGame pairCount={2} />);
+            await screen.findByTestId("arcade-memory-board");
+            // Card 0 (pair 0 front) + card 3 (pair 1 back) never match.
+            fireEvent.click(screen.getByTestId("arcade-memory-card-0"));
+            fireEvent.click(screen.getByTestId("arcade-memory-card-3"));
+            expect(
+                screen.getByTestId("arcade-memory-progress"),
+            ).toHaveTextContent("Pairs: 0 / 2");
+            expect(screen.getByTestId("arcade-memory-card-0")).toHaveAttribute(
+                "aria-pressed",
+                "true",
+            );
+            expect(screen.getByTestId("arcade-memory-card-3")).toHaveAttribute(
+                "aria-pressed",
+                "true",
+            );
+        } finally {
+            randSpy.mockRestore();
+        }
     });
 
     it("shows the empty state when no cached set exists", async () => {
