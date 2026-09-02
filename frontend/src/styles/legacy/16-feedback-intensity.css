@@ -352,4 +352,17 @@
 .nav-theme-toggle:hover {
   background: var(--surface-2);
 }
+/* #2874 game-mode juice: the "+1" that floats off a correct answer.
+   Consumed via motion-safe:animate-[juice-float-up_...] so reduced
+   motion never sees it move (the element is aria-hidden decoration). */
+@keyframes juice-float-up {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-1.25rem);
+  }
+}
 } /* @layer legacy */

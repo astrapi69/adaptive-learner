@@ -126,6 +126,48 @@ describe("ViewportDiagnostic", () => {
     expect(report.value).toMatch(/docW=\d+/);
   });
 
+  it("records the raw heights and the #root scroll position PER TAP (#2870)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    const root = document.createElement("div");
+    root.id = "root";
+    document.body.appendChild(root);
+    try {
+      render(
+        <>
+          <ViewportDiagnostic />
+          <button data-testid="target-btn">Tap me</button>
+        </>,
+      );
+      fireEvent.pointerDown(screen.getByTestId("target-btn"), {
+        clientX: 10,
+        clientY: 300,
+      });
+      const line = screen.getByTestId("viewport-diagnostic-tap");
+      expect(line).toHaveTextContent(/@vvH=\d+/);
+      expect(line).toHaveTextContent(/@innerH=\d+/);
+      expect(line).toHaveTextContent(/@rootY=\d+/);
+      // The persistent protocol carries the same raw values.
+      const logged = readVvLog().filter((entry) => entry.kind === "tap");
+      expect(logged).toHaveLength(1);
+      expect(typeof logged[0].atVvHeight).toBe("number");
+      expect(typeof logged[0].atInnerHeight).toBe("number");
+      expect(typeof logged[0].atRootScrollY).toBe("number");
+    } finally {
+      root.remove();
+    }
+  });
+
+  it("the report head carries rootY and docH (#2870)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId(
+      "viewport-diagnostic-report",
+    ) as HTMLTextAreaElement;
+    expect(report.value).toMatch(/rootY=\d+/);
+    expect(report.value).toMatch(/docH=\d+/);
+  });
+
   it("starts collapsed: no full-width report textarea over the page (#2779)", () => {
     localStorage.setItem("adaptive-learner.vv_diag", "1");
     render(<ViewportDiagnostic />);

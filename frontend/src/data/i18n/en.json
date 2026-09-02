@@ -1899,6 +1899,9 @@
   },
   "lesson": {
     "mascot_label": "Your learning companion",
+    "combo_chip": "x{n}",
+    "combo_aria": "Answer streak: {n} in a row",
+    "combo_best": "Best streak: {n}",
     "playful_hint_title": "Try game mode",
     "playful_hint_body": "Lessons celebrate every correct answer with praise and confetti. You can change this any time in Settings.",
     "playful_hint_activate": "Turn on",

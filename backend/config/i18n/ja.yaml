@@ -1767,6 +1767,9 @@ repo:
     enable_git: "git 永続化を有効にする"
 lesson:
   mascot_label: "学習のおとも"
+  combo_chip: "×{n}"
+  combo_aria: "連続正解: {n}回連続"
+  combo_best: "最高連続記録: {n}"
   playful_hint_title: "ゲームモードを試す"
   playful_hint_body: "正解のたびに称賛と紙吹雪でお祝いします。設定でいつでも変更できます。"
   playful_hint_activate: "オンにする"

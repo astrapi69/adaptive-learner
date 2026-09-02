@@ -46,7 +46,10 @@ import LessonMentorNote from "../../components/lesson/mentor/LessonMentorNote";
 import LessonOptionsBar from "../../components/lesson/chrome/LessonOptionsBar";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
 import PlayfulModeHint from "../../components/lesson/chrome/PlayfulModeHint";
+import LessonCombo from "../../components/lesson/chrome/LessonCombo";
 import LessonMascot from "../../components/lesson/mascot/LessonMascot";
+import { useLessonCombo } from "../../hooks/lesson/useLessonCombo";
+import { usePlayfulMode } from "../../hooks/settings/usePlayfulMode";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
@@ -163,6 +166,16 @@ export default function LessonPage() {
   useEffect(() => {
     clearHintUsage();
   }, [source, setId, filename]);
+
+  // #2874 game-mode juice — the answer streak, fed by the celebration
+  // bus (exam mode emits no per-answer events, so it stays silent
+  // there by construction). One hook instance so the live chip and
+  // the summary's best-run chip read the same lesson.
+  const playful = usePlayfulMode();
+  const { combo, resetCombo } = useLessonCombo(playful);
+  useEffect(() => {
+    resetCombo();
+  }, [source, setId, filename, resetCombo]);
 
   // The two-phase check state cluster (exercise handle, answerable /
   // checked / reviewed flags, render-phase per-step reset, Enter
@@ -386,9 +399,14 @@ export default function LessonPage() {
             isSummary={isSummary}
             currentStepIndex={currentStepIndex}
             totalSteps={totalSteps}
+            playful={playful}
             className="my-0 min-w-[8rem] flex-1"
           />
         </TestModeActivationZone>
+
+        {/* #2874 — the streak chip (game mode only): live run during the
+            lesson, the best run on the summary. */}
+        {playful && <LessonCombo combo={combo} showBest={isSummary} />}
 
         {/* #2849 — the Lernfunke companion, playful mode only. Reacts to
             the celebration bus (cheer/encourage/celebrate) and speaks one
