@@ -74,6 +74,63 @@ function toStep(exercise: ContentLessonExercise): ContentLessonStep {
     return {id: exercise.id, type: "exercise", exercise};
 }
 
+/** #2888 - the round title plus, in flash-round mode, the per-exercise
+ *  countdown ring (the #2878 semantics: expiry breaks the streak via the
+ *  celebration bus inside ``useLessonCountdown``, nothing auto-submits).
+ *  Extracted so the flash-round branches stay off the page component's
+ *  complexity budget; plain replays render title-only (enabled=false). */
+function ReplayTitle({
+    flashRound,
+    lessonTitle,
+    stepIndex,
+    isSummary,
+    isExerciseStep,
+    checked,
+    t,
+}: {
+    flashRound: {seconds: number; backTo: string} | null;
+    lessonTitle: string;
+    stepIndex: number;
+    isSummary: boolean;
+    isExerciseStep: boolean;
+    checked: boolean;
+    t: Translate;
+}) {
+    const countdown = useLessonCountdown({
+        enabled: flashRound !== null && !isSummary,
+        seconds: flashRound?.seconds ?? 0,
+        stepIndex,
+        isExerciseStep,
+        checked,
+    });
+    return (
+        <>
+            {/* #2761 — ``wrap-anywhere`` breaks long unbreakable title
+                words ("Organisationspsychologie"); without it the h1
+                widens the page sideways and iOS WebKit clips the sticky
+                footer's "Weiter" button (#1834 class). */}
+            <h1 className="wrap-anywhere">
+                {flashRound
+                    ? t(
+                          "lesson.flash_round.title",
+                          "Flash round: {set}",
+                      ).replace("{set}", lessonTitle)
+                    : t(
+                          "lesson.error_replay.title",
+                          "Retry errors: {lesson}",
+                      ).replace("{lesson}", lessonTitle)}
+            </h1>
+            {flashRound && !isSummary && isExerciseStep && (
+                <LessonCountdownRing
+                    remaining={countdown.remaining}
+                    total={countdown.total}
+                    expired={countdown.expired}
+                />
+            )}
+        </>
+    );
+}
+
 export default function ErrorReplayLesson() {
     const params = useParams<UrlParams>();
     const navigate = useNavigate();
@@ -117,17 +174,7 @@ export default function ErrorReplayLesson() {
     const step = isSummary ? null : steps[index];
     const isExerciseStep = isPlayableExerciseStep(step);
 
-    // #2888 - a flash round plays with the countdown ring; expiry
-    // breaks the streak via the celebration bus (the #2878 semantics)
-    // but never auto-submits. Plain replays keep enabled=false.
     const flashRound = state?.flashRound ?? null;
-    const countdown = useLessonCountdown({
-        enabled: flashRound !== null && !isSummary,
-        seconds: flashRound?.seconds ?? 0,
-        stepIndex: index,
-        isExerciseStep,
-        checked,
-    });
 
     // Refresh the Enter-decision state every render (no re-subscribe);
     // the listener reads it through the ref. Error-Replay has no
@@ -236,28 +283,15 @@ export default function ErrorReplayLesson() {
                     <BookOpen size={16} aria-hidden="true" />
                     {t("lesson.action.back_to_lesson", "Back to lesson")}
                 </button>
-                {/* #2761 — ``wrap-anywhere`` breaks long unbreakable title
-                    words ("Organisationspsychologie"); without it the h1
-                    widens the page sideways and iOS WebKit clips the sticky
-                    footer's "Weiter" button (#1834 class). */}
-                <h1 className="wrap-anywhere">
-                    {flashRound
-                        ? t(
-                              "lesson.flash_round.title",
-                              "Flash round: {set}",
-                          ).replace("{set}", lessonTitle)
-                        : t(
-                              "lesson.error_replay.title",
-                              "Retry errors: {lesson}",
-                          ).replace("{lesson}", lessonTitle)}
-                </h1>
-                {flashRound && !isSummary && isExerciseStep && (
-                    <LessonCountdownRing
-                        remaining={countdown.remaining}
-                        total={countdown.total}
-                        expired={countdown.expired}
-                    />
-                )}
+                <ReplayTitle
+                    flashRound={flashRound}
+                    lessonTitle={lessonTitle}
+                    stepIndex={index}
+                    isSummary={isSummary}
+                    isExerciseStep={isExerciseStep}
+                    checked={checked}
+                    t={t}
+                />
             </header>
 
             <ProgressBar
