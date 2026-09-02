@@ -28,7 +28,10 @@ your **avatar**:
 - **Upload picture** opens the crop dialog; the result shows in the
   top-right of the navigation.
 - **Or pick a figure**: eight preset figures as an alternative to
-  your own photo - one click is enough.
+  your own photo - one click is enough. If an uploaded photo is
+  active, a dialog asks before the figure replaces it; the photo is
+  parked in a stash and can be brought back anytime via **Restore
+  photo** (until a new photo is uploaded).
 - **Avatar frames**: decorative rings around the avatar. Bronze,
   silver, and gold unlock with your level, the flame with the 3-day
   streak badge; star and accent are exchanged for XP (two-step

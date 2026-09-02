@@ -59,6 +59,11 @@ Mit aktivem Spielmodus:
   Antwort, Konfetti und Meilenstein-Einblendungen, unabhängig von
   der gewählten Feedback-Intensität. "Bewegung reduzieren" im
   System gewinnt weiterhin, und Töne bleiben ein eigener Schalter.
+- Richtige Antworten in Folge bauen eine sichtbare **Serie** auf
+  (Flammen-Chip neben der Fortschrittsleiste); ein "+1" steigt von
+  jeder richtigen Antwort auf, die Fortschrittsleiste trägt
+  Checkpoint-Punkte, und die Zusammenfassung zeigt deine beste
+  Serie. Punktzahl und Fortschritt bleiben davon unberührt.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet

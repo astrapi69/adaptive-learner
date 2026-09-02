@@ -83,7 +83,7 @@ describe("syncUserDataAtBoot (#791)", () => {
         expect(await getDb().userData.get(CONTRIB_KEY)).toBeUndefined();
     });
 
-    it("covers the contributions, contributor-name, custom-paths, dismissed-sets, set-status, lesson-order, mentor-notes, speech-recording-evicted, avatar-frames and mascot-variants keys", () => {
+    it("covers the contributions, contributor-name, custom-paths, dismissed-sets, set-status, lesson-order, mentor-notes, speech-recording-evicted, avatar-frames, mascot-variants and photo-stash keys", () => {
         expect(MANAGED_USER_DATA_KEYS).toEqual([
             "adaptive-learner.contributions",
             "adaptive-learner.contributor-name",
@@ -99,6 +99,8 @@ describe("syncUserDataAtBoot (#791)", () => {
             "adaptive-learner.avatar.frames",
             // #2861 — mascot variants (lib/mascot/mascot-variant-store).
             "adaptive-learner.mascot.variants",
+            // #2862 — displaced avatar photo (lib/avatar/avatar-photo-stash).
+            "adaptive-learner.avatar.photo-stash",
         ]);
     });
 });

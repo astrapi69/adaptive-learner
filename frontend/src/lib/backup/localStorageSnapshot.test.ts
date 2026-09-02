@@ -52,6 +52,17 @@ describe("captureLocalStorageSnapshot", () => {
         );
     });
 
+    it("carries the avatar photo stash (#2862 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.avatar.photo-stash",
+            '{"u1":"data:image/jpeg;base64,AAA"}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.avatar.photo-stash"]).toBe(
+            '{"u1":"data:image/jpeg;base64,AAA"}',
+        );
+    });
+
     it("carries the diagnostics + developer configuration (#2785 pin: never drift into the exclusion list)", () => {
         localStorage.setItem("adaptive-learner.developer_mode", "true");
         localStorage.setItem("adaptive-learner.vv_diag", "1");

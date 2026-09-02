@@ -10,6 +10,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
+import type {ReactElement} from "react";
 import {render, screen} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -71,5 +72,46 @@ describe("AnswerCelebration", () => {
         const text = screen.getByTestId("answer-praise").textContent?.trim();
         expect(text).toBeTruthy();
         expect(text!.endsWith("!")).toBe(true);
+    });
+});
+
+describe("AnswerCelebration game-mode juice (#2874)", async () => {
+    const {setPlayfulMode} = await import(
+        "../../../lib/learning/playfulModePref"
+    );
+    const {LessonModeProvider} = await import(
+        "../../../hooks/lesson/modes/useLessonMode"
+    );
+
+    // The playful flag reaches the component through the mode
+    // provider (as in the real lesson page), so the juice tests
+    // render inside it.
+    const inLesson = (ui: ReactElement) =>
+        render(<LessonModeProvider mode="practice">{ui}</LessonModeProvider>);
+
+    it("floats a +1 off a correct answer in game mode", () => {
+        setPlayfulMode(true);
+        setFeedbackIntensity("normal");
+        inLesson(<AnswerCelebration isCorrect={true} />);
+        expect(screen.getByTestId("answer-float-point")).toHaveTextContent(
+            "+1",
+        );
+    });
+
+    it("shows no +1 outside game mode", () => {
+        setFeedbackIntensity("normal");
+        inLesson(<AnswerCelebration isCorrect={true} />);
+        expect(
+            screen.queryByTestId("answer-float-point"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("shows no +1 on a wrong answer", () => {
+        setPlayfulMode(true);
+        setFeedbackIntensity("normal");
+        inLesson(<AnswerCelebration isCorrect={false} />);
+        expect(
+            screen.queryByTestId("answer-float-point"),
+        ).not.toBeInTheDocument();
     });
 });

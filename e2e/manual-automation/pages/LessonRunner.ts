@@ -40,6 +40,18 @@ export class LessonRunner {
   get theoryBody(): Locator {
     return this.page.getByTestId("lesson-theory-body");
   }
+  get combo(): Locator {
+    return this.page.getByTestId("lesson-combo");
+  }
+  get comboBest(): Locator {
+    return this.page.getByTestId("lesson-combo-best");
+  }
+  get floatPoint(): Locator {
+    return this.page.getByTestId("answer-float-point");
+  }
+  checkpoint(pct: 33 | 67): Locator {
+    return this.page.getByTestId(`lesson-checkpoint-${pct}`);
+  }
   private get activeStep(): Locator {
     return this.page.locator('[data-testid^="lesson-step-"]').first();
   }

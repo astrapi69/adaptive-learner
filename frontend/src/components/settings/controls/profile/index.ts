@@ -4,3 +4,5 @@
 
 export * from "./AvatarFrameControl";
 export {default as AvatarFrameControl} from "./AvatarFrameControl";
+export * from "./PresetAvatarPicker";
+export {default as PresetAvatarPicker} from "./PresetAvatarPicker";
