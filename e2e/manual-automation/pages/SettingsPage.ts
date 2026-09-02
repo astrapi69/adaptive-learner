@@ -89,6 +89,15 @@ export class SettingsPage {
   avatarPreset(id: string): Locator {
     return this.page.getByTestId(`settings-avatar-preset-${id}`);
   }
+  get avatarFrames(): Locator {
+    return this.page.getByTestId("settings-avatar-frames");
+  }
+  avatarFrame(id: string): Locator {
+    return this.page.getByTestId(`settings-avatar-frame-${id}`);
+  }
+  avatarFrameBuy(id: string): Locator {
+    return this.page.getByTestId(`settings-avatar-frame-buy-${id}`);
+  }
   get selectiveExport(): Locator {
     return this.page.getByTestId("data-export-selective");
   }

@@ -86,6 +86,46 @@ describe("ViewportDiagnostic", () => {
     expect(report.value).toContain("button[target-btn]");
   });
 
+  it("records keyboard shrink, scale and the pre-tap focus PER TAP (#2853)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <input data-testid="prev-input" />
+        <button data-testid="target-btn">Tap me</button>
+      </>,
+    );
+    // Focus a field first — at pointerdown the tap record must name it as
+    // the element that HELD focus when the tap landed.
+    screen.getByTestId("prev-input").focus();
+    fireEvent.pointerDown(screen.getByTestId("target-btn"), {
+      clientX: 10,
+      clientY: 300,
+    });
+    const line = screen.getByTestId("viewport-diagnostic-tap");
+    expect(line).toHaveTextContent(/@kbd=/);
+    expect(line).toHaveTextContent(/@scale=/);
+    expect(line).toHaveTextContent("focus=input[prev-input]");
+    // The persistent protocol carries the same per-tap fields.
+    const logged = readVvLog().filter((entry) => entry.kind === "tap");
+    expect(logged).toHaveLength(1);
+    expect(logged[0].focus).toBe("input[prev-input]");
+    expect(typeof logged[0].atKbd).toBe("number");
+    expect(typeof logged[0].atScale).toBe("number");
+  });
+
+  it("the report head carries the width channel: vvW, innerW, docW (#2853)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId(
+      "viewport-diagnostic-report",
+    ) as HTMLTextAreaElement;
+    expect(report.value).toMatch(/vvW=\d+/);
+    expect(report.value).toMatch(/innerW=\d+/);
+    expect(report.value).toMatch(/docW=\d+/);
+  });
+
   it("starts collapsed: no full-width report textarea over the page (#2779)", () => {
     localStorage.setItem("adaptive-learner.vv_diag", "1");
     render(<ViewportDiagnostic />);

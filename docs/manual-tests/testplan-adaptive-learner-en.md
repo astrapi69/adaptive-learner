@@ -2095,6 +2095,28 @@ Location: Settings > General > Profile, below the photo upload.
       import - the figure is set again
 - [ ] Both storage modes (server + browser) behave identically
 
+#### Avatar frames (#2850)
+
+Location: Settings > General > Profile, below the figure gallery.
+
+- [ ] "Avatar frame" row with 7 options (None, Bronze, Silver, Gold,
+      Flame, Star, Accent); locked ones show a lock and the condition
+      ("From level 5", "Needs the 3-day streak badge")
+- [ ] Level unlock: with a sufficient level the frame is selectable;
+      selecting puts the ring around the preview AND the header avatar
+      immediately (no reload)
+- [ ] XP purchase (Star 150 / Accent 300): the buy button shows the
+      price, first click "Confirm", second click deducts the XP (header
+      XP updates live); the frame is permanently unlocked and selected
+- [ ] Insufficient XP: the buy button is disabled, no deduction possible
+- [ ] Badge frame (Flame): selectable only after earning the 3-day
+      streak badge
+- [ ] The frame applies to photo avatars AND preset figures alike;
+      "None" removes the ring
+- [ ] Backup round-trip: pick a frame + buy one, export (`.alb`), wipe
+      data, import - selection and purchase are back
+- [ ] Both storage modes behave identically (XP deduction included)
+
 ---
 
 # PART B: AUTOMATED TESTS (reference)
