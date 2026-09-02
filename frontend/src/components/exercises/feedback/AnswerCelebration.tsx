@@ -46,7 +46,7 @@ export default function AnswerCelebration({
 }: AnswerCelebrationProps) {
     const {lang} = useI18n();
     const intensity = useFeedbackIntensity();
-    const {immediateFeedback} = useLessonMode();
+    const {immediateFeedback, playful} = useLessonMode();
     const [phrase, setPhrase] = useState<string | null>(null);
     const fired = useRef(false);
 
@@ -80,25 +80,47 @@ export default function AnswerCelebration({
     return (
         <>
             {showPulse && (
-                <FeedbackPulse
-                    variant={isCorrect ? "success" : "error"}
-                    testId="answer-pulse"
-                    className="answer-feedback-pulse shrink-0"
-                >
-                    {isCorrect ? (
-                        <Check
-                            size={18}
+                <span className="relative inline-flex shrink-0">
+                    <FeedbackPulse
+                        variant={isCorrect ? "success" : "error"}
+                        testId="answer-pulse"
+                        className="answer-feedback-pulse shrink-0"
+                    >
+                        {isCorrect ? (
+                            <Check
+                                size={18}
+                                aria-hidden="true"
+                                className={`text-[var(--exercise-correct)] ${
+                                    playful
+                                        ? "motion-safe:animate-[lernfunke-hop_400ms_ease-out]"
+                                        : ""
+                                }`}
+                            />
+                        ) : (
+                            <X
+                                size={18}
+                                aria-hidden="true"
+                                className={`text-[var(--exercise-wrong)] ${
+                                    playful
+                                        ? "motion-safe:animate-[matching-shake_300ms_ease-in-out]"
+                                        : ""
+                                }`}
+                            />
+                        )}
+                    </FeedbackPulse>
+                    {/* #2874 game-mode juice: a "+1" floats off every
+                        correct answer (counting model: the summary scores
+                        correct answers, not points). Decoration only. */}
+                    {playful && isCorrect && (
+                        <span
                             aria-hidden="true"
-                            className="text-[var(--exercise-correct)]"
-                        />
-                    ) : (
-                        <X
-                            size={18}
-                            aria-hidden="true"
-                            className="text-[var(--exercise-wrong)]"
-                        />
+                            data-testid="answer-float-point"
+                            className="pointer-events-none absolute -right-4 -top-2 text-sm font-bold text-[var(--exercise-correct)] motion-safe:animate-[juice-float-up_700ms_ease-out_forwards]"
+                        >
+                            +1
+                        </span>
                     )}
-                </FeedbackPulse>
+                </span>
             )}
             {isCorrect && phrase !== null && (
                 <p

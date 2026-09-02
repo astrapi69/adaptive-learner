@@ -358,4 +358,9 @@
 # "neue Farben als Token nach ... global.css :root". Die Ring-Styles
 # selbst sind inline box-shadows aus var()-Tokens an der Komponente,
 # kein weiteres CSS.
-7486
+# 2026-09-02 (#2874): +13 Zeilen fuer den juice-float-up-Keyframe in
+# 16-feedback-intensity.css (das "+1", das im Spielmodus von einer
+# richtigen Antwort aufsteigt). Fundament-Animation der Juice-Schicht;
+# alle uebrigen Juice-Animationen re-usen bestehende Keyframes
+# (lernfunke-hop/-pop, matching-shake) - bewusst KEIN neues CSS sonst.
+7499
