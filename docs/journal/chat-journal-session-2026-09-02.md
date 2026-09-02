@@ -138,6 +138,30 @@ Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
   Klang hat ein sichtbares Pendant (Töne bleiben ergänzend).
 - Commits: d2092776 (i18n), Feature-/Doku-Commits folgen.
 
+## 6. Stufe C Spielerische Übungs-Renderer, erste Tranche (#2876) (15:00)
+
+- Original prompt: Fortsetzung des Umbrella-Beschlusses #2873 (Stufe C nach
+  Merge von Stufe B via PR #2880; dort fand die Baseline-Runde zusätzlich
+  einen Mobile-Umbruchfehler des Hinweis-Banners, im selben PR gefixt).
+- Optimized prompt: "Konsumiere das playful-Flag in den drei häufigsten
+  Übungs-Renderern als reine Präsentationsschicht: MC-Kacheln,
+  Lückentext-Wortsprung, Matching-Pop - gleiche Testids, gleiches Scoring,
+  motion-safe."
+- Ziel: Der Spielmodus verändert erstmals die Übungen selbst, ohne
+  Verhalten oder Bewertung anzufassen.
+- Ergebnis: MultipleChoiceExercise rendert im Spielmodus ein
+  Kachel-Raster (ab sm zweispaltig, Pop bei Wahl, Hüpfer/Schütteln auf dem
+  Urteil); ClozeSelectChoices lässt das gewählte Wort per lernfunke-hop in
+  die Satz-Lücke springen (Key-Wechsel wiederholt die Animation);
+  Matching-Kacheln ploppen beim Paaren und hüpfen bei richtiger Auflösung.
+  Alle drei Wurzeln tragen data-playful. Bewusste Abweichung vom
+  Issue-Wortlaut: "gelöste Paare fliegen ab" wäre eine Verhaltensänderung
+  (Antippen eines Paars löst es heute wieder) - stattdessen nur das
+  Zusammenschnappen; im PR dokumentiert. Keine neuen i18n-Strings (reine
+  Optik). Drei neue parametrisierte Paritäts-Testdateien (17 Tests),
+  Testplan DE+EN, Hilfe celebrations.md DE+EN erweitert.
+- Commit: siehe Feature- und Doku-Commit dieses PR (Refs #2876).
+
 ## Fragen und Annahmen
 
 - Farbwahl der Varianten aus der bestehenden Markenpalette
