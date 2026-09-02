@@ -801,6 +801,9 @@
     "playful_special_rounds": "Özel turlar",
     "playful_special_rounds_description": "Bir seti bitirmek (her ders en az bir yıldızla) en zorlu kartlarından oluşan, geri sayım halkasıyla oynanan bir yıldırım turunun kilidini açar. Kapalıyken yıldırım turu kartı tamamen gizlenir.",
     "playful_flash_round_cards": "Yıldırım turu kartları",
+    "playful_tickets": "Oyun biletleri",
+    "playful_tickets_description": "Performansla atari biletleri kazan: tam puanlı bir ders, tüm kalplerle tamamlanan bir tur ve seri kilometre taşları (3/7/14/30 gün). Bir bilet, kilitli bir atari oyununun bir turunu oynatır. Kapalıyken atari yalnızca XP açılışlarıyla kalır.",
+    "playful_ticket_cap": "En fazla bilet",
     "feedback_intensity": "Geri bildirim yoğunluğu",
     "feedback_intensity_description": "Uygulamanın ilerlemeni ne kadar coşkuyla kutladığı.",
     "feedback_intensity_subtle": "Sade",
@@ -1559,6 +1562,9 @@
     "unlock_for_xp": "{n} XP karşılığında aç",
     "unlock_confirm": "Gerçekten {n} XP karşılığında açılsın mı?",
     "unlock_not_enough_xp": "Henüz yeterli XP yok: öğrenmeye devam et!",
+    "tickets_label": "Biletler: {n}",
+    "ticket_play": "Bir biletle bir tur oyna",
+    "tickets_hint": "Kusursuz dersler, tüm kalplerle biten turlar ve seri kilometre taşlarıyla bilet kazan.",
     "memory": {
       "name": "Öğrenme Hafıza Oyunu",
       "description": "Derslerindeki terim ve çeviri çiftlerini eşleştir.",
@@ -2427,7 +2433,10 @@
       "encourage_0": "Pratik mükemmelleştirir!",
       "encourage_1": "İyi başlangıç - devam et!",
       "encourage_2": "Neredeyse mükemmel!",
-      "encourage_3": "Tam puan!"
+      "encourage_3": "Tam puan!",
+      "ticket_earned_one": "Ödül açıldı: bir oyun bileti!",
+      "ticket_earned_many": "Ödül açıldı: {n} oyun bileti!",
+      "ticket_play_now": "Şimdi oyna"
     },
     "error": {
       "load_failed": "Ders yüklenemedi.",

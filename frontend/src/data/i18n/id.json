@@ -805,6 +805,9 @@
     "playful_special_rounds": "Ronde spesial",
     "playful_special_rounds_description": "Menyelesaikan sebuah set (setiap pelajaran dengan minimal satu bintang) membuka ronde kilat dari kartu-kartu tersulitnya, dimainkan dengan cincin hitung mundur. Jika mati, kartu ronde kilat disembunyikan sepenuhnya.",
     "playful_flash_round_cards": "Kartu ronde kilat",
+    "playful_tickets": "Tiket permainan",
+    "playful_tickets_description": "Dapatkan tiket arcade lewat performa: pelajaran dengan skor sempurna, ronde yang diselesaikan dengan semua hati, dan tonggak runtunan (3/7/14/30 hari). Satu tiket memainkan satu ronde permainan arcade yang terkunci. Jika mati, arcade hanya memakai pembukaan XP.",
+    "playful_ticket_cap": "Tiket maksimum",
     "feedback_intensity": "Intensitas Umpan Balik",
     "feedback_intensity_description": "Seberapa meriah aplikasi merayakan kemajuan Anda.",
     "feedback_intensity_subtle": "Halus",
@@ -1559,6 +1562,9 @@
     "unlock_for_xp": "Buka dengan {n} XP",
     "unlock_confirm": "Benar-benar buka dengan {n} XP?",
     "unlock_not_enough_xp": "XP belum cukup: terus belajar!",
+    "tickets_label": "Tiket: {n}",
+    "ticket_play": "Mainkan satu ronde dengan tiket",
+    "tickets_hint": "Dapatkan tiket dari pelajaran sempurna, ronde dengan semua hati, dan tonggak runtunan.",
     "memory": {
       "name": "Memory Belajar",
       "description": "Temukan pasangan istilah dan terjemahan dari pelajaranmu.",
@@ -2372,7 +2378,10 @@
       "encourage_0": "Latihan membuat sempurna!",
       "encourage_1": "Awal yang baik - terus lanjutkan!",
       "encourage_2": "Hampir sempurna!",
-      "encourage_3": "Skor sempurna!"
+      "encourage_3": "Skor sempurna!",
+      "ticket_earned_one": "Hadiah terbuka: satu tiket permainan!",
+      "ticket_earned_many": "Hadiah terbuka: {n} tiket permainan!",
+      "ticket_play_now": "Main sekarang"
     },
     "flash_round": {
       "title": "Ronde kilat: {set}",

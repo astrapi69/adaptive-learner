@@ -801,6 +801,9 @@
     "playful_special_rounds": "Sonderrunden",
     "playful_special_rounds_description": "Der Abschluss eines Sets (jede Lektion mit mindestens einem Stern) schaltet eine Blitzrunde aus seinen kniffligsten Karten frei, gespielt mit dem Countdown-Ring. Aus blendet die Blitzrunden-Karte komplett aus.",
     "playful_flash_round_cards": "Blitzrunden-Karten",
+    "playful_tickets": "Spiel-Tickets",
+    "playful_tickets_description": "Verdiene Arcade-Tickets durch Leistung: eine Lektion mit voller Punktzahl, ein Durchlauf mit allen Herzen und Streak-Meilensteine (3/7/14/30 Tage). Ein Ticket spielt eine Runde eines gesperrten Arcade-Spiels. Aus lässt der Arcade nur die XP-Freischaltungen.",
+    "playful_ticket_cap": "Maximale Tickets",
     "feedback_intensity": "Feedback-Intensität",
     "feedback_intensity_description": "Wie ausgiebig die App deinen Fortschritt feiert.",
     "feedback_intensity_subtle": "Dezent",
@@ -1559,6 +1562,9 @@
     "unlock_for_xp": "Für {n} XP freischalten",
     "unlock_confirm": "Wirklich für {n} XP freischalten?",
     "unlock_not_enough_xp": "Noch nicht genug XP - weiter lernen!",
+    "tickets_label": "Tickets: {n}",
+    "ticket_play": "Eine Runde mit Ticket spielen",
+    "tickets_hint": "Verdiene Tickets mit perfekten Lektionen, Durchläufen mit allen Herzen und Streak-Meilensteinen.",
     "memory": {
       "name": "Lern-Memory",
       "description": "Finde die passenden Begriff-Übersetzungs-Paare aus deinen Lektionen.",
@@ -2427,7 +2433,10 @@
       "encourage_0": "Übung macht den Meister!",
       "encourage_1": "Guter Anfang - bleib dran!",
       "encourage_2": "Fast perfekt!",
-      "encourage_3": "Volle Punktzahl!"
+      "encourage_3": "Volle Punktzahl!",
+      "ticket_earned_one": "Belohnung freigeschaltet: ein Spiel-Ticket!",
+      "ticket_earned_many": "Belohnung freigeschaltet: {n} Spiel-Tickets!",
+      "ticket_play_now": "Jetzt spielen"
     },
     "error": {
       "load_failed": "Lektion konnte nicht geladen werden.",
