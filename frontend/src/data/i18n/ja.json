@@ -801,6 +801,9 @@
     "playful_special_rounds": "スペシャルラウンド",
     "playful_special_rounds_description": "セットをクリア(全レッスンを星1つ以上)すると、最難関カードで作られたフラッシュラウンドがアンロックされ、カウントダウンリング付きでプレイできます。オフにするとフラッシュラウンドのカードは完全に非表示になります。",
     "playful_flash_round_cards": "フラッシュラウンドのカード数",
+    "playful_tickets": "ゲームチケット",
+    "playful_tickets_description": "成績でアーケードチケットを獲得します。満点のレッスン、ハートを全部残したラン、連続記録の節目(3/7/14/30日)。チケット1枚でロック中のアーケードゲームを1ラウンドプレイできます。オフにするとアーケードはXPアンロックのみになります。",
+    "playful_ticket_cap": "チケットの上限",
     "feedback_intensity": "フィードバックの強さ",
     "feedback_intensity_description": "アプリがあなたの進歩をどれだけ盛大に祝うか。",
     "feedback_intensity_subtle": "控えめ",
@@ -1559,6 +1562,9 @@
     "unlock_for_xp": "{n} XPでアンロック",
     "unlock_confirm": "本当に{n} XPでアンロックしますか?",
     "unlock_not_enough_xp": "XPがまだ足りません。学習を続けましょう!",
+    "tickets_label": "チケット: {n}",
+    "ticket_play": "チケットで1ラウンドプレイ",
+    "tickets_hint": "パーフェクトなレッスン、ハートを全部残したラン、連続記録の節目でチケットを獲得。",
     "memory": {
       "name": "学習メモリー",
       "description": "レッスンの単語と訳のペアを見つけましょう。",
@@ -2427,7 +2433,10 @@
       "encourage_0": "練習あるのみ!",
       "encourage_1": "良いスタート、その調子!",
       "encourage_2": "もう少しで満点!",
-      "encourage_3": "満点!"
+      "encourage_3": "満点!",
+      "ticket_earned_one": "ごほうびアンロック: ゲームチケット1枚!",
+      "ticket_earned_many": "ごほうびアンロック: ゲームチケット{n}枚!",
+      "ticket_play_now": "今すぐプレイ"
     },
     "error": {
       "load_failed": "レッスンを読み込めませんでした。",

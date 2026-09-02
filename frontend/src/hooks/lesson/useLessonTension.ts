@@ -55,6 +55,9 @@ export interface LessonTension {
     /** Render the countdown ring (live exercise step only). */
     showRing: boolean;
     countdown: LessonCountdown;
+    /** #2889 - the hearts system ran AND no heart was lost, the
+     *  full-hearts ticket condition read on the summary. */
+    fullHeartsRun: boolean;
 }
 
 export function useLessonTension({
@@ -104,5 +107,6 @@ export function useLessonTension({
         resetHearts,
         showRing: countdownActive && onExercise,
         countdown,
+        fullHeartsRun: heartsActive && maxHearts > 0 && hearts === maxHearts,
     };
 }

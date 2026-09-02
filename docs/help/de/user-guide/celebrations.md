@@ -100,6 +100,14 @@ Mit aktivem Spielmodus:
   Karten des Sets, gespielt mit dem Countdown-Ring. Der Einstieg
   sitzt auf der Set-Übersicht; die Kartenzahl stellst du in den
   Spielmodus-Einstellungen ein.
+- **Spiel-Tickets** (Standard an, abschaltbar): Leistung verdient
+  Arcade-Tickets - eine Lektion mit voller Punktzahl, ein Durchlauf
+  mit allen Herzen und Streak-Meilensteine (3/7/14/30 Tage) bringen
+  je ein Ticket. Die Zusammenfassung bietet nach dem Verdienst den
+  Sprung in die Arcade an; ein Ticket spielt eine Runde eines noch
+  gesperrten Spiels, ohne den XP-Kauf. Die maximale Anzahl
+  ansparbarer Tickets stellst du in den Spielmodus-Einstellungen
+  ein.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet

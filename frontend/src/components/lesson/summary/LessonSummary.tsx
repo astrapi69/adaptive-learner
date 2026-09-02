@@ -30,6 +30,7 @@ import FormHint from "../../../shared/forms/FormHint";
 import {CorrectionBlock} from "../../exercises";
 import LessonAnswersDetail from "./LessonAnswersDetail";
 import MentorNotesSummary from "./MentorNotesSummary";
+import SummaryTicketReward from "./SummaryTicketReward";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
 import {
@@ -120,6 +121,10 @@ interface LessonSummaryProps {
    *  the client). Included in the displayed XP so the summary matches
    *  the credited award. Default 0 keeps existing callers unaffected. */
   comboBonusXp?: number;
+  /** #2889 - the hearts system ran and no heart was lost, the
+   *  full-hearts ticket condition. Default false keeps existing
+   *  callers unaffected. */
+  fullHeartsRun?: boolean;
   onMarkComplete: () => Promise<void> | void;
   onNextLesson: () => void;
   onRepeat: () => void;
@@ -173,6 +178,7 @@ export default function LessonSummary({
   setSlug,
   lessonFilename,
   comboBonusXp = 0,
+  fullHeartsRun = false,
   onMarkComplete,
   onNextLesson,
   onRepeat,
@@ -640,6 +646,20 @@ export default function LessonSummary({
         {isCompleted ? <CheckCircle2 size={20} aria-hidden="true" /> : null}
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
       </h2>
+
+      {/* #2889 — the ticket-economy banner: banks the tickets this run
+          earned (full score / full hearts / streak milestones) and offers
+          the jump into the arcade. Self-gating (game mode + ticket switch
+          + something actually granted); the already-completed guard keeps
+          a revisited summary from re-awarding. */}
+      <SummaryTicketReward
+        userId={userId}
+        scoreCorrect={correct}
+        scoreTotal={total}
+        fullHeartsRun={fullHeartsRun}
+        alreadyCompleted={isCompleted}
+        streakDays={streakDays}
+      />
 
       {/* #1426 — the configurable sections, in the user-configured order.
           Only sections the config marks ON are rendered; each keeps its own

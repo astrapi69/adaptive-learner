@@ -27,6 +27,15 @@ import {
     addPurchasedArcadeGame,
     readArcadeUnlockState,
 } from "../../lib/arcade/arcade-unlock-store";
+import {
+    ARCADE_TICKET_CHANGE_EVENT,
+    readTicketState,
+    spendTicket,
+} from "../../lib/arcade/ticket-store";
+import {
+    PLAYFUL_TICKETS_CHANGE_EVENT,
+    playfulTicketsActive,
+} from "../../lib/learning/playful/playfulTicketsPref";
 import {isUnlocked} from "../../lib/gamification/unlockables";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
@@ -40,6 +49,32 @@ export default function Arcade() {
         userId ? readArcadeUnlockState(userId).purchased : [],
     );
     const [activeGame, setActiveGame] = useState<ArcadeGameId | null>(null);
+
+    // #2889 - the ticket economy: the balance + the switch, both kept
+    // live via their change events (a summary award in another tab or
+    // a settings flip updates the open page).
+    const [ticketsOn, setTicketsOn] = useState(() => playfulTicketsActive());
+    const [tickets, setTickets] = useState(() =>
+        userId ? readTicketState(userId).tickets : 0,
+    );
+    useEffect(() => {
+        const refreshTickets = () => {
+            setTicketsOn(playfulTicketsActive());
+            setTickets(userId ? readTicketState(userId).tickets : 0);
+        };
+        window.addEventListener(ARCADE_TICKET_CHANGE_EVENT, refreshTickets);
+        window.addEventListener(PLAYFUL_TICKETS_CHANGE_EVENT, refreshTickets);
+        return () => {
+            window.removeEventListener(
+                ARCADE_TICKET_CHANGE_EVENT,
+                refreshTickets,
+            );
+            window.removeEventListener(
+                PLAYFUL_TICKETS_CHANGE_EVENT,
+                refreshTickets,
+            );
+        };
+    }, [userId]);
 
     useEffect(() => {
         if (!userId) return;
@@ -113,6 +148,24 @@ export default function Arcade() {
                 )}
             </p>
 
+            {/* #2889 - the ticket balance + how to earn more. */}
+            {ticketsOn && (
+                <div data-testid="arcade-tickets">
+                    <p className="text-sm font-medium">
+                        {t("arcade.tickets_label", "Tickets: {n}").replace(
+                            "{n}",
+                            String(tickets),
+                        )}
+                    </p>
+                    <p className="text-xs text-[var(--fg-muted)]">
+                        {t(
+                            "arcade.tickets_hint",
+                            "Earn tickets with perfect lessons, runs with all hearts, and streak milestones.",
+                        )}
+                    </p>
+                </div>
+            )}
+
             {activeGame === null ? (
                 <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {ARCADE_GAMES.map((gameEntry) => {
@@ -154,6 +207,29 @@ export default function Arcade() {
                                         {t("arcade.play", "Play")}
                                     </Button>
                                 ) : (
+                                    <>
+                                    {/* #2889 - one ticket buys one round of
+                                        the locked game, next to the
+                                        permanent XP unlock. */}
+                                    {ticketsOn && tickets > 0 && (
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            onClick={() => {
+                                                if (spendTicket(userId)) {
+                                                    setActiveGame(
+                                                        gameEntry.id,
+                                                    );
+                                                }
+                                            }}
+                                            data-testid={`arcade-ticket-play-${gameEntry.id}`}
+                                        >
+                                            {t(
+                                                "arcade.ticket_play",
+                                                "Play one round with a ticket",
+                                            )}
+                                        </Button>
+                                    )}
                                     <Button
                                         type="button"
                                         size="sm"
@@ -189,6 +265,7 @@ export default function Arcade() {
                                                   "Unlock for {n} XP",
                                               ).replace("{n}", String(cost))}
                                     </Button>
+                                    </>
                                 )}
                             </DashboardCard>
                         );

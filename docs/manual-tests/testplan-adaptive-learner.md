@@ -721,6 +721,41 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       korrigierte Fehlerkarten verbessern wie beim Fehler-Wiederholen
       nur den SRS-Stand
 
+#### Spiel-Tickets (#2889, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Spiel-Tickets"
+      ist standardmäßig AN; das Zahlenfeld "Maximale Tickets" klemmt
+      auf 1-10 (Standard 5) und ist bei ausgeschaltetem Schalter
+      gesperrt
+- [ ] Lektion mit voller Punktzahl abschließen: die Zusammenfassung
+      zeigt das Ticket-Banner ("Belohnung freigeschaltet ...") mit dem
+      Knopf "Jetzt spielen", der zur Arcade führt
+- [ ] Herzen aktiv (#2878) und Durchlauf ohne Herzverlust beendet: ein
+      weiteres Ticket (volle Punktzahl + alle Herzen = 2 Tickets)
+- [ ] Streak-Meilensteine (3/7/14/30 Tage): beim Erreichen gibt es je
+      ein Bonus-Ticket, jeder Meilenstein nur einmal
+- [ ] Obergrenze: mehr Tickets als das Maximum lassen sich nicht
+      ansparen; ein durch die Obergrenze blockierter Meilenstein wird
+      nachgereicht, sobald wieder Platz ist
+- [ ] Wiederbesuch der Zusammenfassung einer bereits abgeschlossenen
+      Lektion: KEIN neues Ticket (kein Farmen); "Nochmal üben" mit
+      neuem perfekten Durchlauf verdient regulär
+- [ ] Korrektur-Runde und Fehler-Wiederholen vergeben keine Tickets;
+      eine nachträglich korrigierte Lektion wird dadurch nicht
+      "voll bepunktet"
+- [ ] Prüfungsmodus: volle Punktzahl verdient das Ticket nach derselben
+      Regel
+- [ ] Arcade-Seite und Dashboard-Arcade-Karte zeigen den Ticket-Stand
+      ("Tickets: N"); die Anzeige verschwindet bei ausgeschaltetem
+      Ticket-Schalter
+- [ ] Gesperrtes Spiel (Snake ohne XP-Kauf) mit Ticket-Guthaben: der
+      Knopf "Eine Runde mit Ticket spielen" startet eine Runde und
+      zieht genau ein Ticket ab; ohne Guthaben fehlt der Knopf
+- [ ] Ticket-Schalter aus: die Arcade bietet nur den XP-Kauf bzw.
+      bestehende Freischaltungen an
+- [ ] Backup-Export > Wipe > Import: der Ticket-Stand übersteht die
+      Runde (localStorage-Snapshot)
+
 #### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
 
 - [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln

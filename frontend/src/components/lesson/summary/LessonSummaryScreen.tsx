@@ -42,6 +42,7 @@ type SummaryPassThroughProps = Pick<
   | "setSlug"
   | "lessonFilename"
   | "comboBonusXp"
+  | "fullHeartsRun"
 >;
 
 export interface LessonSummaryScreenProps extends SummaryPassThroughProps {

@@ -32,6 +32,10 @@ import {
     readFlashRoundCards,
     readPlayfulSpecialRounds,
 } from "../../../../lib/learning/playful/playfulSpecialRoundsPref";
+import {
+    readPlayfulTickets,
+    readTicketCap,
+} from "../../../../lib/learning/playful/playfulTicketsPref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -279,5 +283,34 @@ describe("PlayfulModeControl: special rounds (#2888)", () => {
             {target: {value: "99"}},
         );
         expect(readFlashRoundCards()).toBe(20);
+    });
+});
+
+describe("PlayfulModeControl: ticket economy (#2889)", () => {
+    it("renders the switch ON by default with an editable cap of 5", () => {
+        render(<PlayfulModeControl />);
+        expect(
+            screen.getByTestId("settings-playful-tickets-toggle"),
+        ).toBeChecked();
+        expect(screen.getByTestId("settings-playful-ticket-cap")).toHaveValue(
+            5,
+        );
+    });
+
+    it("disabling persists and disables the cap input", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(screen.getByTestId("settings-playful-tickets-toggle"));
+        expect(readPlayfulTickets()).toBe(false);
+        expect(
+            screen.getByTestId("settings-playful-ticket-cap"),
+        ).toBeDisabled();
+    });
+
+    it("clamps and persists the cap", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.change(screen.getByTestId("settings-playful-ticket-cap"), {
+            target: {value: "99"},
+        });
+        expect(readTicketCap()).toBe(10);
     });
 });

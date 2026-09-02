@@ -91,6 +91,13 @@ With game mode on:
   round** - a quick round of the set's trickiest cards, played with
   the countdown ring. The entry sits on the set overview; the card
   count is configurable in the game-mode settings.
+- **Game tickets** (on by default, can be switched off): performance
+  earns arcade tickets - a lesson with a perfect score, a run
+  survived with all hearts, and streak milestones (3/7/14/30 days)
+  grant one ticket each. After earning, the summary offers the jump
+  into the arcade; one ticket plays one round of a still-locked game
+  without the XP purchase. The maximum number of savable tickets is
+  configurable in the game-mode settings.
 - **Lernfunke**, your learning companion, sits as a small flame
   figure next to the progress bar: it cheers on correct answers,
   encourages after wrong ones, celebrates milestones, and sends

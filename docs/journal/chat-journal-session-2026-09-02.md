@@ -270,6 +270,31 @@ Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
 - Commit: 3e7dcbbd (i18n), e8620e6c + debe6574 (Regeln + Pref),
   01811482 (UI); Doku-Commit folgt.
 
+## 11. Stufe C: Spiel-Tickets ueber Leistung + Streaks (#2889) (23:55)
+
+- Original prompt: autonome Fortsetzung des Freischalt-Umbrellas
+  #2886 nach dem Merge von Stufe B (PR #2896).
+- Optimierter Prompt: "Implementiere #2889: reine Vergaberegeln
+  (volle Punktzahl, alle Herzen, Streak-Meilensteine 3/7/14/30 mit
+  Dedupe), browser-lokaler Ticket-Store nach dem Cosmetics-Muster
+  (Cap gegen Horten, blockierte Meilensteine bleiben verfuegbar),
+  Vergabe einmalig auf dem Zusammenfassungs-Screen mit
+  Already-completed-Guard gegen Farmen, Ticket-Stand auf Arcade-Seite
+  und Dashboard-Karte, ein Ticket = eine Runde eines gesperrten
+  Spiels, Settings-Schalter + Obergrenze 1-10/5; i18n zuerst,
+  Testplan DE+EN."
+- Ziel: #2889 komplett auf einem PR; Checkbox C in #2886.
+- Ergebnis: lib/arcade/ticket-rules + ticket-store (parametrisierte
+  Regel-Tests, Store-Tests inkl. Cap-Nachreichung), playfulTicketsPref
+  (Standard AN, Cap 1-10/5), SummaryTicketReward im LessonSummary
+  (Banner + "Jetzt spielen", volle Herzen via
+  useLessonTension.fullHeartsRun), Ticket-Anzeige + Ticket-Runde in
+  Arcade/ArcadeCard, Settings-Block, Backup-Pins fuer den neuen Key;
+  49 neue Tests; i18n-Block (9 Keys x 11 Kataloge); Testplan DE+EN,
+  Hilfe celebrations.md.
+- Commit: 736db1c6 (i18n), d2daf400 (Regeln/Store/Pref), 0f2ebfe3
+  (UI); Doku-Commit folgt.
+
 ## Fragen und Annahmen
 
 - Farbwahl der Varianten aus der bestehenden Markenpalette

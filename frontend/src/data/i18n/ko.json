@@ -805,6 +805,9 @@
     "playful_special_rounds": "스페셜 라운드",
     "playful_special_rounds_description": "세트를 완료하면(모든 수업 별 1개 이상) 가장 어려운 카드로 만든 플래시 라운드가 잠금 해제되며 카운트다운 링과 함께 플레이합니다. 끄면 플래시 라운드 카드가 완전히 숨겨집니다.",
     "playful_flash_round_cards": "플래시 라운드 카드 수",
+    "playful_tickets": "게임 티켓",
+    "playful_tickets_description": "성과로 아케이드 티켓을 얻습니다. 만점 수업, 하트를 모두 지킨 라운드, 스트릭 이정표(3/7/14/30일). 티켓 1장으로 잠긴 아케이드 게임을 한 라운드 플레이할 수 있습니다. 끄면 아케이드는 XP 잠금 해제만 남습니다.",
+    "playful_ticket_cap": "최대 티켓",
     "feedback_intensity": "피드백 강도",
     "feedback_intensity_description": "앱이 당신의 진행을 얼마나 크게 축하할지 정합니다.",
     "feedback_intensity_subtle": "은은하게",
@@ -1559,6 +1562,9 @@
     "unlock_for_xp": "{n} XP로 잠금 해제",
     "unlock_confirm": "정말 {n} XP로 잠금 해제할까요?",
     "unlock_not_enough_xp": "아직 XP가 부족해요. 계속 학습하세요!",
+    "tickets_label": "티켓: {n}",
+    "ticket_play": "티켓으로 한 라운드 플레이",
+    "tickets_hint": "퍼펙트 수업, 하트를 모두 지킨 라운드, 스트릭 이정표로 티켓을 얻으세요.",
     "memory": {
       "name": "학습 메모리",
       "description": "수업의 단어와 번역 짝을 찾아보세요.",
@@ -2372,7 +2378,10 @@
       "encourage_0": "연습이 완벽을 만듭니다!",
       "encourage_1": "좋은 출발이에요 - 계속 가세요!",
       "encourage_2": "거의 완벽해요!",
-      "encourage_3": "만점입니다!"
+      "encourage_3": "만점입니다!",
+      "ticket_earned_one": "보상 잠금 해제: 게임 티켓 1장!",
+      "ticket_earned_many": "보상 잠금 해제: 게임 티켓 {n}장!",
+      "ticket_play_now": "지금 플레이"
     },
     "flash_round": {
       "title": "플래시 라운드: {set}",
