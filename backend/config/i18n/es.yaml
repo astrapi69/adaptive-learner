@@ -1769,6 +1769,9 @@ repo:
     enable_git: "Activar persistencia git"
 lesson:
   mascot_label: "Tu compañero de aprendizaje"
+  combo_chip: "x{n}"
+  combo_aria: "Racha de respuestas: {n} seguidas"
+  combo_best: "Mejor racha: {n}"
   playful_hint_title: "Prueba el modo juego"
   playful_hint_body: "Las lecciones celebran cada respuesta correcta con elogios y confeti. Puedes cambiarlo en cualquier momento en Ajustes."
   playful_hint_activate: "Activar"
