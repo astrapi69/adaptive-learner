@@ -233,7 +233,7 @@ export const dexieStorage: IStorageService = {
       const justCompleted = updated.status === "completed" && !wasCompleted;
       if (justCompleted) {
         try {
-          await awardLessonXpDexie(userId, updated);
+          await awardLessonXpDexie(userId, updated, body.combo_bonus_xp ?? 0);
           // Evaluate badges so lesson-gated badges
           // (first_lesson, lessons_10, etc.) fire after
           // the XP write. Phase 50E lands the badge

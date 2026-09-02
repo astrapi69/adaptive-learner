@@ -47,6 +47,15 @@ import {
     setPlayfulHearts,
     setPlayfulHeartsCount,
 } from "../../../../lib/learning/playful/playfulTensionPref";
+import {
+    MAX_COMBO_XP_CAP,
+    MIN_COMBO_XP_CAP,
+    clampComboXpCap,
+    readComboXpCap,
+    readPlayfulComboXp,
+    setComboXpCap,
+    setPlayfulComboXp,
+} from "../../../../lib/learning/playful/playfulComboXpPref";
 
 export default function PlayfulModeControl() {
     const {t} = useI18n();
@@ -102,6 +111,20 @@ export default function PlayfulModeControl() {
         const clamped = clampCountdownSeconds(Number(raw));
         setCountdownSeconds(clamped);
         setPlayfulCountdownSeconds(clamped);
+    };
+
+    // #2893 - combo bonus XP (the one decided XP exception, DEFAULT ON).
+    const [comboXp, setComboXp] = useState<boolean>(() => readPlayfulComboXp());
+    const [comboCap, setComboCap] = useState<number>(() => readComboXpCap());
+
+    const handleComboXpToggle = (next: boolean) => {
+        setComboXp(next);
+        setPlayfulComboXp(next);
+    };
+    const handleComboCap = (raw: string) => {
+        const clamped = clampComboXpCap(Number(raw));
+        setComboCap(clamped);
+        setComboXpCap(clamped);
     };
 
     return (
@@ -247,6 +270,44 @@ export default function PlayfulModeControl() {
                     disabled={!countdown}
                     onChange={(e) => handleCountdownSeconds(e.target.value)}
                     data-testid="settings-playful-countdown-seconds"
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t("settings.playful_combo_xp", "Streak bonus XP")}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.playful_combo_xp_description",
+                            "From the third streak answer, every correct answer in a row earns +1 bonus XP, capped per lesson. Off keeps game-mode XP identical to normal mode.",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-playful-combo-xp-toggle"
+                    checked={comboXp}
+                    onChange={(e) => handleComboXpToggle(e.target.checked)}
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="text-sm">
+                    {t(
+                        "settings.playful_combo_xp_cap",
+                        "Bonus XP cap per lesson",
+                    )}
+                </span>
+                <input
+                    type="number"
+                    className="w-20"
+                    min={MIN_COMBO_XP_CAP}
+                    max={MAX_COMBO_XP_CAP}
+                    value={comboCap}
+                    disabled={!comboXp}
+                    onChange={(e) => handleComboCap(e.target.value)}
+                    data-testid="settings-playful-combo-xp-cap"
                 />
             </label>
             <MascotVariantControl />

@@ -122,6 +122,10 @@ interface LessonSummaryProps {
   /** Raw route slug (``--``-encoded), for the next-lesson href. */
   setSlug: string;
   lessonFilename: string;
+  /** #2893 - game-mode combo bonus for this run (already capped by
+   *  the client). Included in the displayed XP so the summary matches
+   *  the credited award. Default 0 keeps existing callers unaffected. */
+  comboBonusXp?: number;
   onMarkComplete: () => Promise<void> | void;
   onNextLesson: () => void;
   onRepeat: () => void;
@@ -174,6 +178,7 @@ export default function LessonSummary({
   source,
   setSlug,
   lessonFilename,
+  comboBonusXp = 0,
   onMarkComplete,
   onNextLesson,
   onRepeat,
@@ -308,8 +313,11 @@ export default function LessonSummary({
       // #1007 Phase 2 — show the mode-weighted XP (exam = 1.5×) so the
       // summary matches the XP actually awarded.
       xp_multiplier: configForMode(lessonMode).xpMultiplier,
+      // #2893 — the game-mode combo bonus rides the same calculator,
+      // so display and credit stay one number.
+      combo_bonus: comboBonusXp,
     }).xp_earned;
-  }, [total, progress, stars, streakDays, lessonMode]);
+  }, [total, progress, stars, streakDays, lessonMode, comboBonusXp]);
 
   // #1007 Phase 2 — the mode reward weight as a percent bonus (exam = 50),
   // surfaced in the exam result card. 0 for practice (no bonus note).

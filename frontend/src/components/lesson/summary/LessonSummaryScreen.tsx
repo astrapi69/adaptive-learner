@@ -41,6 +41,7 @@ type SummaryPassThroughProps = Pick<
   | "source"
   | "setSlug"
   | "lessonFilename"
+  | "comboBonusXp"
 >;
 
 export interface LessonSummaryScreenProps extends SummaryPassThroughProps {
@@ -49,7 +50,7 @@ export interface LessonSummaryScreenProps extends SummaryPassThroughProps {
   originalLesson: ContentLesson;
   setDomain: string | null;
   setBook: ContentSetBook | null;
-  markCompleted: () => Promise<unknown>;
+  markCompleted: (options?: {comboBonusXp?: number}) => Promise<unknown>;
   markRestarted: () => Promise<unknown>;
   goToStep: (stepIndex: number) => void;
 }
@@ -73,7 +74,8 @@ export default function LessonSummaryScreen({
 }: LessonSummaryScreenProps) {
   const navigate = useNavigate();
   const { t, lang } = useI18n();
-  const { userId, setSlug, setId, nextLessonFilename } = summaryProps;
+  const { userId, setSlug, setId, nextLessonFilename, comboBonusXp } =
+    summaryProps;
 
   const handleMarkComplete = async () => {
     // Snapshot gamification before completion so
@@ -81,7 +83,7 @@ export default function LessonSummaryScreen({
     // can be detected + celebrated afterwards.
     const before = await captureCelebrationSnapshot(userId);
     try {
-      await markCompleted();
+      await markCompleted({comboBonusXp});
     } catch (err) {
       // #1787 — a failed completion write was invisible on the
       // summary (the hook's error state only renders for load

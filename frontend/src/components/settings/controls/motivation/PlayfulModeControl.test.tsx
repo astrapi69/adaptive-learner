@@ -19,6 +19,10 @@ import {
     readPlayfulHearts,
     readPlayfulHeartsCount,
 } from "../../../../lib/learning/playful/playfulTensionPref";
+import {
+    readComboXpCap,
+    readPlayfulComboXp,
+} from "../../../../lib/learning/playful/playfulComboXpPref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -159,5 +163,39 @@ describe("PlayfulModeControl: tension systems (#2878)", () => {
             {target: {value: "2"}},
         );
         expect(readPlayfulCountdownSeconds()).toBe(5);
+    });
+});
+
+describe("PlayfulModeControl: combo bonus XP (#2893)", () => {
+    it("renders the switch ON by default with the cap enabled at 10", () => {
+        render(<PlayfulModeControl />);
+        expect(
+            screen.getByTestId("settings-playful-combo-xp-toggle"),
+        ).toBeChecked();
+        const cap = screen.getByTestId("settings-playful-combo-xp-cap");
+        expect(cap).not.toBeDisabled();
+        expect(cap).toHaveValue(10);
+    });
+
+    it("disabling persists and disables the cap input", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(
+            screen.getByTestId("settings-playful-combo-xp-toggle"),
+        );
+        expect(readPlayfulComboXp()).toBe(false);
+        expect(
+            screen.getByTestId("settings-playful-combo-xp-cap"),
+        ).toBeDisabled();
+    });
+
+    it("clamps the cap on change and persists the clamped value", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.change(screen.getByTestId("settings-playful-combo-xp-cap"), {
+            target: {value: "99"},
+        });
+        expect(readComboXpCap()).toBe(20);
+        expect(
+            screen.getByTestId("settings-playful-combo-xp-cap"),
+        ).toHaveValue(20);
     });
 });
