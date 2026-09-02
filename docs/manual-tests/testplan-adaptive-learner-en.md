@@ -2108,11 +2108,27 @@ Location: Settings > General > Profile, below the photo upload.
       avatar show the figure immediately (no reload)
 - [ ] The chosen figure is marked (ring); picking another moves the mark
 - [ ] Uploading a photo replaces the figure; afterwards NO figure is
-      marked; picking a figure replaces the photo again
+      marked; picking a figure over a photo asks first (see the photo
+      stash below)
 - [ ] "Remove" clears the avatar; the header falls back to the initials
 - [ ] Backup round-trip: pick a figure, export (`.alb`), wipe data,
       import - the figure is set again
 - [ ] Both storage modes (server + browser) behave identically
+
+#### Photo stash on figure switch (#2862)
+
+- [ ] Upload and crop a photo, then tap a figure: a confirmation dialog
+      appears ("Replace your photo?"); cancel leaves photo and selection
+      unchanged
+- [ ] Confirm ("Use figure"): the figure is active and a "Restore photo"
+      button appears below the gallery
+- [ ] "Restore photo": the photo is back (preview + header), the button
+      disappears
+- [ ] Figure-to-figure switch: NO dialog (only a real photo is guarded)
+- [ ] Upload a NEW photo after picking a figure: the old stash is
+      cleared (no restore button with a stale photo)
+- [ ] Backup round-trip: with a filled stash export -> wipe -> import;
+      "Restore photo" still works (both storage modes)
 
 #### Avatar frames (#2850)
 
