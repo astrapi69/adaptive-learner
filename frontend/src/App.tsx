@@ -43,6 +43,7 @@ import SkipToContent from "./components/a11y/SkipToContent";
 // the entry route; everything else loads on first navigation. See
 // BUNDLE-SIZE-DYNAMIC-IMPORT-01.
 const AnkiPage = lazyWithReload(() => import("./pages/content/Anki"));
+const ArcadePage = lazyWithReload(() => import("./pages/arcade/Arcade"));
 const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"));
 // #856 — Discover + My-content + Import merged into one tabbed hub at /content.
 const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
@@ -233,6 +234,7 @@ export default function App() {
                 {/* Old import-detail link kept alive for existing bookmarks. */}
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />
+                <Route path="/arcade" element={<ArcadePage />} />
                 <Route path="/add-repo" element={<AddRepo />} />
                 <Route path="/invite" element={<RedeemInvite />} />
                 <Route path="/learning-path" element={<LearningPath />} />

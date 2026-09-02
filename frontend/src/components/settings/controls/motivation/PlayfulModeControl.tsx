@@ -56,6 +56,20 @@ import {
     setComboXpCap,
     setPlayfulComboXp,
 } from "../../../../lib/learning/playful/playfulComboXpPref";
+import {
+    MAX_MEMORY_PAIRS,
+    MAX_SNAKE_SECONDS,
+    MIN_MEMORY_PAIRS,
+    MIN_SNAKE_SECONDS,
+    clampMemoryPairs,
+    clampSnakeSeconds,
+    readMemoryPairs,
+    readPlayfulArcade,
+    readSnakeSeconds,
+    setMemoryPairs,
+    setPlayfulArcade,
+    setSnakeSeconds,
+} from "../../../../lib/learning/playful/playfulArcadePref";
 
 export default function PlayfulModeControl() {
     const {t} = useI18n();
@@ -111,6 +125,30 @@ export default function PlayfulModeControl() {
         const clamped = clampCountdownSeconds(Number(raw));
         setCountdownSeconds(clamped);
         setPlayfulCountdownSeconds(clamped);
+    };
+
+    // #2887 - the arcade (card + mini-games), DEFAULT ON.
+    const [arcade, setArcade] = useState<boolean>(() => readPlayfulArcade());
+    const [snakeSeconds, setSnakeSecondsState] = useState<number>(() =>
+        readSnakeSeconds(),
+    );
+    const [memoryPairs, setMemoryPairsState] = useState<number>(() =>
+        readMemoryPairs(),
+    );
+
+    const handleArcadeToggle = (next: boolean) => {
+        setArcade(next);
+        setPlayfulArcade(next);
+    };
+    const handleSnakeSeconds = (raw: string) => {
+        const clamped = clampSnakeSeconds(Number(raw));
+        setSnakeSecondsState(clamped);
+        setSnakeSeconds(clamped);
+    };
+    const handleMemoryPairs = (raw: string) => {
+        const clamped = clampMemoryPairs(Number(raw));
+        setMemoryPairsState(clamped);
+        setMemoryPairs(clamped);
     };
 
     // #2893 - combo bonus XP (the one decided XP exception, DEFAULT ON).
@@ -308,6 +346,62 @@ export default function PlayfulModeControl() {
                     disabled={!comboXp}
                     onChange={(e) => handleComboCap(e.target.value)}
                     data-testid="settings-playful-combo-xp-cap"
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t("settings.playful_arcade", "Arcade")}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.playful_arcade_description",
+                            "Short mini-games as a game-mode reward: Learn Memory with your lesson cards, plus the classic Snake as an XP unlock. Off hides the arcade card and games entirely.",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-playful-arcade-toggle"
+                    checked={arcade}
+                    onChange={(e) => handleArcadeToggle(e.target.checked)}
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="text-sm">
+                    {t(
+                        "settings.playful_arcade_snake_seconds",
+                        "Snake round length (seconds)",
+                    )}
+                </span>
+                <input
+                    type="number"
+                    className="w-20"
+                    min={MIN_SNAKE_SECONDS}
+                    max={MAX_SNAKE_SECONDS}
+                    value={snakeSeconds}
+                    disabled={!arcade}
+                    onChange={(e) => handleSnakeSeconds(e.target.value)}
+                    data-testid="settings-playful-arcade-snake-seconds"
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="text-sm">
+                    {t(
+                        "settings.playful_arcade_memory_pairs",
+                        "Memory pairs",
+                    )}
+                </span>
+                <input
+                    type="number"
+                    className="w-20"
+                    min={MIN_MEMORY_PAIRS}
+                    max={MAX_MEMORY_PAIRS}
+                    value={memoryPairs}
+                    disabled={!arcade}
+                    onChange={(e) => handleMemoryPairs(e.target.value)}
+                    data-testid="settings-playful-arcade-memory-pairs"
                 />
             </label>
             <MascotVariantControl />
