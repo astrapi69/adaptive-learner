@@ -8,18 +8,23 @@
  *   goToStep(0)) and refills the hearts.
  * - **Leave lesson** → back to the lesson overview.
  *
- * Forced choice like {@link ../LessonResumeDialog}: not closable
- * without picking a path, focus is trapped and lands on the primary
- * action.
+ * Built on the shadcn Dialog primitive like {@link LessonExitDialog}
+ * (focus trap, scroll lock). The close affordance is suppressed so
+ * the choice is explicit; Escape / overlay click map to the friendly
+ * default, "try again".
  */
-
-import {useRef} from "react";
 
 import {HeartCrack, LogOut, RotateCcw} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
-import {ModalCard, ModalOverlay, ModalTitle} from "@/shared/modal";
-import {useDialogFocus} from "../../../hooks/ui/useDialogFocus";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import {useI18n} from "../../../hooks/ui/useI18n";
 
 export interface LessonHeartsDialogProps {
@@ -34,41 +39,41 @@ export default function LessonHeartsDialog({
     onExit,
 }: LessonHeartsDialogProps) {
     const {t} = useI18n();
-    const dialogRef = useRef<HTMLDivElement>(null);
-
-    useDialogFocus(dialogRef, {open});
-
-    if (!open) return null;
 
     return (
-        <ModalOverlay
-            ref={dialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="lesson-hearts-title"
-            data-testid="lesson-hearts-dialog"
+        <Dialog
+            open={open}
+            onOpenChange={(next) => {
+                // Escape / overlay click == the friendly default: retry.
+                if (!next) onRetry();
+            }}
         >
-            <ModalCard>
-                <ModalTitle id="lesson-hearts-title">
-                    <HeartCrack
-                        size={18}
-                        aria-hidden="true"
-                        className="mr-1 inline-block align-text-bottom text-[var(--danger)]"
-                    />
-                    {t("lesson.hearts.empty_heading", "Out of hearts!")}
-                </ModalTitle>
-                <p>
-                    {t(
-                        "lesson.hearts.empty_body",
-                        "No worries - nothing is lost, everything you solved stays saved. Take a breath and try the lesson again.",
-                    )}
-                </p>
-                <div className="flex flex-wrap gap-3">
+            <DialogContent
+                showCloseButton={false}
+                data-testid="lesson-hearts-dialog"
+                aria-labelledby="lesson-hearts-title"
+            >
+                <DialogHeader>
+                    <DialogTitle id="lesson-hearts-title">
+                        <HeartCrack
+                            size={18}
+                            aria-hidden="true"
+                            className="mr-1 inline-block align-text-bottom text-[var(--danger)]"
+                        />
+                        {t("lesson.hearts.empty_heading", "Out of hearts!")}
+                    </DialogTitle>
+                    <DialogDescription>
+                        {t(
+                            "lesson.hearts.empty_body",
+                            "No worries - nothing is lost, everything you solved stays saved. Take a breath and try the lesson again.",
+                        )}
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
                     <Button
                         type="button"
                         onClick={onRetry}
                         data-testid="lesson-hearts-retry"
-                        data-autofocus
                     >
                         <RotateCcw size={16} aria-hidden="true" />
                         {t("lesson.hearts.action_retry", "Try again")}
@@ -82,8 +87,8 @@ export default function LessonHeartsDialog({
                         <LogOut size={16} aria-hidden="true" />
                         {t("lesson.hearts.action_exit", "Leave lesson")}
                     </Button>
-                </div>
-            </ModalCard>
-        </ModalOverlay>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
