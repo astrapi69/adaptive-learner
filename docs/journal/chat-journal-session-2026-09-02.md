@@ -115,6 +115,29 @@ Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
   (kein Extra-Gate nötig).
 - Commits: 1fc5090e (i18n), aaf2938b (Feature), Doku-Commit folgt.
 
+## 5. Stufe B Spielmodus-Sounds (#2875) (13:45)
+
+- Fortsetzung des #2873-Umbrellas nach dem #2874-Merge (PR #2879).
+- Ergebnis: `playfulSoundsPref` (zweiter, unabhängiger Opt-in neben
+  dem globalen Töne-Schalter, plus Einmal-Angebot-Flag);
+  `soundOutputEnabled()` in der Sound-Schicht (global ODER
+  Spielmodus+Sound-Flag), `playSound` mit `pitchSteps`
+  (Halbton-Faktor), zwei neue Synth-Rezepte (checkpoint, fanfare);
+  der Celebration-Bus verfolgt die Antwort-Serie selbst und hebt
+  die Tonhöhe des Correct-Tons pro Combo-Stufe (Kappung bei 8
+  Halbtönen, außerhalb des Spielmodus flach - klassisches
+  Verhalten unverändert); neuer Event-Typ `checkpoint` (emittiert
+  vom Fortschrittsbalken beim Überschreiten, ein Event pro
+  Navigation); Fanfare bei `lesson_complete` nur mit aktivem
+  Spielmodus-Sound. UI: Schalter + Einmal-Angebot in der
+  Spielmodus-Sektion, "Mit Sound einschalten"-Knopf im
+  Lektions-Banner.
+- Konservative Annahmen: Lautstärke bleibt der bestehende Regler
+  (kein zweiter); Prüfungsmodus bleibt pro Antwort stumm (der Bus
+  emittiert dort nichts), die Fanfare am Ende ist erlaubt; jeder
+  Klang hat ein sichtbares Pendant (Töne bleiben ergänzend).
+- Commits: d2092776 (i18n), Feature-/Doku-Commits folgen.
+
 ## Fragen und Annahmen
 
 - Farbwahl der Varianten aus der bestehenden Markenpalette

@@ -55,6 +55,11 @@ With game mode on:
   confetti and milestone overlays, regardless of the chosen
   feedback intensity. "Reduce motion" in your system still wins,
   and sounds remain their own switch.
+- The **Game mode sounds** switch (right next to the game-mode
+  switch, default off) gives the mode its own soundtrack: a tone on
+  every correct answer whose pitch rises with the streak, a
+  checkpoint jingle, and a completion fanfare - independent of the
+  global sounds switch, volume follows the slider.
 - Consecutive correct answers build a visible **streak** (flame
   chip next to the progress bar); a "+1" floats off every correct
   answer, the progress bar carries checkpoint dots, and the

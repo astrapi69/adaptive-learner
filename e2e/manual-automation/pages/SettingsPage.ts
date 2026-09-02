@@ -98,6 +98,12 @@ export class SettingsPage {
   avatarFrameBuy(id: string): Locator {
     return this.page.getByTestId(`settings-avatar-frame-buy-${id}`);
   }
+  get playfulSoundsToggle(): Locator {
+    return this.page.getByTestId("settings-playful-sounds-toggle");
+  }
+  get playfulSoundsOffer(): Locator {
+    return this.page.getByTestId("settings-playful-sounds-offer");
+  }
   get mascotVariants(): Locator {
     return this.page.getByTestId("settings-mascot-variants");
   }
