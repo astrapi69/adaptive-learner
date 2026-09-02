@@ -676,6 +676,39 @@ preview delivery). In the regular build the mode does not exist.
       corrected error cards only advance the SRS state, as in retry
       errors
 
+#### Game tickets (#2889, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Game tickets" switch is ON
+      by default; the "Maximum tickets" number input clamps to 1-10
+      (default 5) and is disabled while the switch is off
+- [ ] Finishing a lesson with a perfect score: the summary shows the
+      ticket banner ("Reward unlocked ...") with a "Play now" button
+      leading to the arcade
+- [ ] Hearts active (#2878) and a run finished without losing one:
+      one more ticket (perfect score + all hearts = 2 tickets)
+- [ ] Streak milestones (3/7/14/30 days): reaching one grants a bonus
+      ticket, each milestone only once
+- [ ] Cap: no more tickets than the maximum can be saved up; a
+      milestone blocked by the cap is granted later once a slot is
+      free
+- [ ] Revisiting the summary of an already-completed lesson: NO new
+      ticket (no farming); "Practice again" with a fresh perfect run
+      earns normally
+- [ ] The correction round and retry-errors award no tickets; a run
+      corrected after the fact never counts as a perfect score
+- [ ] Exam mode: a perfect score earns the ticket by the same rule
+- [ ] The arcade page and the dashboard arcade card show the balance
+      ("Tickets: N"); the line disappears while the ticket switch is
+      off
+- [ ] A locked game (snake without the XP purchase) with a balance:
+      the "Play one round with a ticket" button starts one round and
+      deducts exactly one ticket; without a balance the button is
+      absent
+- [ ] Ticket switch off: the arcade offers only the XP purchase /
+      existing unlocks
+- [ ] Backup export > wipe > import: the ticket balance survives the
+      round-trip (localStorage snapshot)
+
 #### Playful exercise renderers (#2876, only while game mode is on)
 
 - [ ] Multiple-choice exercise: the answers render as large tiles
