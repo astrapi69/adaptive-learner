@@ -750,6 +750,9 @@ settings:
   playful_countdown: "Geri sayım halkası"
   playful_countdown_description: "Alıştırma başına küçük bir zaman halkası. Süre dolarsa seri bozulur ve bir kalp kaybedilir; alıştırma açık kalır, hiçbir şey otomatik gönderilmez. Sınav ve süreli derslerde kapalıdır (süreli modun kendi zamanlayıcısı vardır)."
   playful_countdown_seconds: "Alıştırma başına saniye"
+  playful_combo_xp: "Seri bonus XP"
+  playful_combo_xp_description: "Serinin üçüncü yanıtından itibaren art arda her doğru yanıt +1 bonus XP kazandırır, ders başına üst sınırla. Kapalıyken oyun modu XP'si normal modla aynı kalır."
+  playful_combo_xp_cap: "Ders başına bonus XP üst sınırı"
   feedback_intensity: "Geri bildirim yoğunluğu"
   feedback_intensity_description: "Uygulamanın ilerlemeni ne kadar coşkuyla kutladığı."
   feedback_intensity_subtle: "Sade"
@@ -1781,6 +1784,7 @@ lesson:
   combo_chip: "x{n}"
   combo_aria: "Cevap serisi: art arda {n}"
   combo_best: "En iyi seri: {n}"
+  combo_bonus_aria: "Seri bonusu: {n} XP"
   hearts:
     aria: "Can: {n} / {max}"
     empty_heading: "Kalpler bitti!"

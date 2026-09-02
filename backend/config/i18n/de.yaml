@@ -750,6 +750,9 @@ settings:
   playful_countdown: "Countdown-Ring"
   playful_countdown_description: "Ein kleiner Zeitring pro Übung. Läuft er ab, reißt die Serie und ein Herz geht verloren - die Übung bleibt offen, nichts wird automatisch abgeschickt. In Prüfungs- und Auf-Zeit-Lektionen aus (der Auf-Zeit-Modus hat seinen eigenen Timer)."
   playful_countdown_seconds: "Sekunden pro Übung"
+  playful_combo_xp: "Serien-Bonus-XP"
+  playful_combo_xp_description: "Ab der dritten Serienantwort bringt jede weitere richtige Antwort in Folge +1 Bonus-XP, gedeckelt pro Lektion. Aus hält die XP im Spielmodus identisch zum normalen Modus."
+  playful_combo_xp_cap: "Bonus-XP-Obergrenze pro Lektion"
   feedback_intensity: "Feedback-Intensität"
   feedback_intensity_description: "Wie ausgiebig die App deinen Fortschritt feiert."
   feedback_intensity_subtle: "Dezent"
@@ -1786,6 +1789,7 @@ lesson:
   combo_chip: "x{n}"
   combo_aria: "Antwortserie: {n} in Folge"
   combo_best: "Beste Serie: {n}"
+  combo_bonus_aria: "Serien-Bonus: {n} XP"
   hearts:
     aria: "Leben: {n} von {max}"
     empty_heading: "Keine Herzen mehr!"

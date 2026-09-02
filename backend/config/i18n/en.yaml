@@ -750,6 +750,9 @@ settings:
   playful_countdown: "Countdown ring"
   playful_countdown_description: "A small time ring per exercise. When it runs out, the streak breaks and a heart is lost - the exercise stays open, nothing is auto-submitted. Off in exam and timed lessons (the timed mode has its own timer)."
   playful_countdown_seconds: "Seconds per exercise"
+  playful_combo_xp: "Streak bonus XP"
+  playful_combo_xp_description: "From the third streak answer, every correct answer in a row earns +1 bonus XP, capped per lesson. Off keeps game-mode XP identical to normal mode."
+  playful_combo_xp_cap: "Bonus XP cap per lesson"
   feedback_intensity: "Feedback Intensity"
   feedback_intensity_description: "How loudly the app celebrates your progress."
   feedback_intensity_subtle: "Subtle"
@@ -1792,6 +1795,7 @@ lesson:
   combo_chip: "x{n}"
   combo_aria: "Answer streak: {n} in a row"
   combo_best: "Best streak: {n}"
+  combo_bonus_aria: "Streak bonus: {n} XP"
   hearts:
     aria: "Lives: {n} of {max}"
     empty_heading: "Out of hearts!"

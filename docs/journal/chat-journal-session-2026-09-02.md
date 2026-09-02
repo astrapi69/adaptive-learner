@@ -189,6 +189,36 @@ Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
   eigenmächtig gebaut.
 - Commit: 72f5b2a8 (i18n), aff232f1 (Feature); Doku-Commit folgt.
 
+## 8. Freischalt-Umbrella + Serien-Bonus-XP (#2886/#2893) (18:30)
+
+- Original prompt: Brainstorming zu Freischaltbarem (Bonus-Lektionen,
+  Sonderrunden, Minispiele wie Snake/TicTacToe, 1-2 Minuten); danach
+  "alles konfigurierbar in den Spielmodus-Einstellungen"; Combo-Frage
+  beantwortet mit "Ja, kleine Bonus-XP", ebenfalls konfigurierbar.
+- Optimized prompt: "Lege einen Freischalt-Umbrella mit vier
+  Bausteinen (Arcade, Sonderrunden, Ticket-Oekonomie, Bonus-Lektionen)
+  als Issues an, jede Funktion mit Schalter + geklemmten Zahlenfeldern
+  in den Spielmodus-Einstellungen. Implementiere zuerst die
+  beschlossenen Combo-Bonus-XP: +1 ab der dritten Serienantwort,
+  additiv NACH dem Multiplikator, Deckel konfigurierbar 5-20
+  (Standard 10, Schalter Standard AN), harte Obergrenze 20 in beiden
+  XP-Rechnern, Paritaets-Goldens, Vergabe in API- und Dexie-Modus."
+- Ziel: Umbrella #2886 mit Sub-Issues #2887-#2890; #2893 komplett
+  (Formel bis Settings-UI) auf einem PR.
+- Ergebnis: Formel-Kette in Python + TS mit vier neuen
+  Paritaets-Goldens (combo_bonus additiv nach dem Multiplikator,
+  Clamp [0,20]); transientes Feld combo_bonus_xp durch Schema (422
+  ueber 20), Router, Unification bis zum Gamification-Award; Dexie-
+  Award gleichwertig (#2053, eigene Tests); Combo-Reducer zaehlt
+  bonusEligible ab Serienlaenge 3; playfulComboXpPref (Standard AN,
+  Deckel 5-20); Lesson.tsx reicht EINEN Wert an Summary-Anzeige und
+  markCompleted (Anzeige = Vergabe); Summary-Chip "+N XP";
+  Settings-Block mit Schalter + geklemmtem Zahlenfeld; Testplan
+  DE+EN, Hilfe celebrations.md (Ausnahme vom
+  "presentation-only"-Satz dokumentiert).
+- Commit: a3a9ed62 (i18n), fd325987 (Formel + Paritaet), 8879b638
+  (Frontend-Verkabelung); Doku-Commit folgt.
+
 ## Fragen und Annahmen
 
 - Farbwahl der Varianten aus der bestehenden Markenpalette

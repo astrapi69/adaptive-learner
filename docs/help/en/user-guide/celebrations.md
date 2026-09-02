@@ -75,6 +75,11 @@ With game mode on:
   ring** per exercise (when it runs out, the streak breaks and a
   heart is lost - the exercise stays open). Both stay off in exam
   and timed lessons, and the correction round never costs hearts.
+- **Streak bonus XP** (on by default): from the third correct
+  answer in a row, every further one earns +1 bonus XP, capped per
+  lesson (configurable 5-20, default 10). The summary shows the
+  bonus as "+N XP" next to your best streak; exam mode and a
+  disabled switch earn no bonus.
 - **Lernfunke**, your learning companion, sits as a small flame
   figure next to the progress bar: it cheers on correct answers,
   encourages after wrong ones, celebrates milestones, and sends
@@ -85,4 +90,6 @@ With game mode on:
   or in exchange for XP. Details in [Settings](settings.md).
 
 Score, stars, and progress are unchanged in game mode - it only
-changes how success is celebrated.
+changes how success is celebrated. The one deliberate exception is
+the streak bonus XP above: small, capped extra XP you can switch off
+at any time.

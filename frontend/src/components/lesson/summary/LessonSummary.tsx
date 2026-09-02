@@ -19,7 +19,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -61,11 +60,7 @@ import {
 } from "../../../lib/lesson/error-replay";
 import { useErrorReplayScope } from "../../../hooks/lesson/interaction/useErrorReplayScope";
 import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSessionErrors";
-import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
-import {
-  buildExerciseBreakdown,
-  type StarRating,
-} from "../../../lib/lesson/lesson-summary";
+import { buildExerciseBreakdown } from "../../../lib/lesson/lesson-summary";
 import { resolveSummaryScoreDisplay } from "../../../lib/lesson/correction-adjusted-score";
 import type { LessonResultLabels } from "../../../lib/lesson/result-export";
 import {
@@ -82,8 +77,7 @@ import {
   type LessonMode,
 } from "../../../lib/learning/lessonModePref";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
-import { emitCelebration } from "../../../lib/praise/celebration-bus";
-import { nextPraise } from "../../../lib/praise/phrase-picker";
+import { useSummaryCelebration } from "../../../hooks/lesson/useSummaryCelebration";
 import { getStorage } from "../../../storage";
 import type {
   ContentLesson,
@@ -122,6 +116,10 @@ interface LessonSummaryProps {
   /** Raw route slug (``--``-encoded), for the next-lesson href. */
   setSlug: string;
   lessonFilename: string;
+  /** #2893 - game-mode combo bonus for this run (already capped by
+   *  the client). Included in the displayed XP so the summary matches
+   *  the credited award. Default 0 keeps existing callers unaffected. */
+  comboBonusXp?: number;
   onMarkComplete: () => Promise<void> | void;
   onNextLesson: () => void;
   onRepeat: () => void;
@@ -174,6 +172,7 @@ export default function LessonSummary({
   source,
   setSlug,
   lessonFilename,
+  comboBonusXp = 0,
   onMarkComplete,
   onNextLesson,
   onRepeat,
@@ -308,8 +307,11 @@ export default function LessonSummary({
       // #1007 Phase 2 — show the mode-weighted XP (exam = 1.5×) so the
       // summary matches the XP actually awarded.
       xp_multiplier: configForMode(lessonMode).xpMultiplier,
+      // #2893 — the game-mode combo bonus rides the same calculator,
+      // so display and credit stay one number.
+      combo_bonus: comboBonusXp,
     }).xp_earned;
-  }, [total, progress, stars, streakDays, lessonMode]);
+  }, [total, progress, stars, streakDays, lessonMode, comboBonusXp]);
 
   // #1007 Phase 2 — the mode reward weight as a percent bonus (exam = 50),
   // surfaced in the exam result card. 0 for practice (no bonus note).
@@ -444,48 +446,16 @@ export default function LessonSummary({
   // correction-adjusted final percentage.
   const animatedPct = useCountUp(displayScorePct, 1000, intensity !== "subtle");
 
-  // Confetti only on a perfect (3-star) lesson, and only when
-  // the intensity allows it. Self-dismisses after the burst. Uses the
-  // first-pass stars so the burst is tied to the completion moment (#2479),
-  // not re-triggered by a later correction.
-  const celebrateConfetti = immediateStars === 3 && allowsConfetti(intensity);
-
-  // The headline message. #2479 — follows the correction-adjusted final
-  // stars, so a learner who fixed every mistake is not told "Guter Anfang".
-  // The random "lesson_complete" praise phrase (perfect run + phrases
-  // allowed) is picked ONCE, at the mount moment, so it never reshuffles on a
-  // re-render; the per-star encouraging message is otherwise resolved live
-  // from the current final stars.
-  const ENCOURAGE_FALLBACK: Record<StarRating, string> = {
-    0: "Practice makes perfect!",
-    1: "Good start - keep going!",
-    2: "Almost perfect!",
-    3: "Perfect score!",
-  };
-  const [mountPraisePhrase] = useState<string | null>(() => {
-    if (immediateStars === 3 && intensity !== "subtle") {
-      return nextPraise("lesson_complete", lang)?.phrase ?? null;
-    }
-    return null;
+  // The mount celebration (confetti gate, once-picked praise phrase,
+  // per-star headline, one-shot bus emits). #2479 — the burst follows the
+  // first-pass stars, the headline the correction-adjusted final stars.
+  const { celebrateConfetti, celebrateMessage } = useSummaryCelebration({
+    immediateStars,
+    stars,
+    intensity,
+    lang,
+    t,
   });
-  const celebrateMessage =
-    stars === 3 && mountPraisePhrase
-      ? mountPraisePhrase
-      : t(`lesson.summary.encourage_${stars}`, ENCOURAGE_FALLBACK[stars]);
-
-  // Fire the lesson-complete celebration sounds once on mount.
-  // The star chime + confetti sparkle only on a perfect run.
-  const celebrationFired = useRef(false);
-  useEffect(() => {
-    if (celebrationFired.current) return;
-    celebrationFired.current = true;
-    emitCelebration({ type: "lesson_complete", payload: { stars: immediateStars } });
-    if (immediateStars === 3) {
-      emitCelebration({ type: "stars_earned" });
-      if (celebrateConfetti) emitCelebration({ type: "confetti" });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // #1426 — each configurable section as a self-contained render node, keyed
   // by its stable id. The panel renders them in the user-configured order

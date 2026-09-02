@@ -791,6 +791,9 @@
     "playful_countdown": "Anillo de cuenta atrás",
     "playful_countdown_description": "Un pequeño anillo de tiempo por ejercicio. Si se agota, se rompe la racha y se pierde un corazón; el ejercicio sigue abierto, nada se envía automáticamente. Desactivado en lecciones de examen y contrarreloj (el modo contrarreloj tiene su propio temporizador).",
     "playful_countdown_seconds": "Segundos por ejercicio",
+    "playful_combo_xp": "XP extra por racha",
+    "playful_combo_xp_description": "A partir de la tercera respuesta de la racha, cada respuesta correcta seguida da +1 XP extra, con un límite por lección. Desactivado, los XP del modo juego son idénticos al modo normal.",
+    "playful_combo_xp_cap": "Límite de XP extra por lección",
     "feedback_intensity": "Intensidad del feedback",
     "feedback_intensity_description": "Con cuánta efusividad celebra la app tu progreso.",
     "feedback_intensity_subtle": "Discreto",
@@ -1913,6 +1916,7 @@
     "combo_chip": "x{n}",
     "combo_aria": "Racha de respuestas: {n} seguidas",
     "combo_best": "Mejor racha: {n}",
+    "combo_bonus_aria": "Extra por racha: {n} XP",
     "hearts": {
       "aria": "Vidas: {n} de {max}",
       "empty_heading": "¡Sin corazones!",

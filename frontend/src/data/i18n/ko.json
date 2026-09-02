@@ -795,6 +795,9 @@
     "playful_countdown": "카운트다운 링",
     "playful_countdown_description": "연습 문제마다 작은 시간 링이 돕니다. 시간이 다 되면 연속 기록이 끊기고 하트를 하나 잃지만, 문제는 열린 채로 남고 자동 제출되지 않습니다. 시험·시간제한 레슨에서는 꺼져 있습니다(시간제한 모드에는 자체 타이머가 있습니다).",
     "playful_countdown_seconds": "연습 문제당 초",
+    "playful_combo_xp": "연속 보너스 XP",
+    "playful_combo_xp_description": "연속 세 번째 답변부터 연속 정답마다 +1 보너스 XP를 얻습니다(수업당 상한 있음). 끄면 게임 모드 XP가 일반 모드와 동일하게 유지됩니다.",
+    "playful_combo_xp_cap": "수업당 보너스 XP 상한",
     "feedback_intensity": "피드백 강도",
     "feedback_intensity_description": "앱이 당신의 진행을 얼마나 크게 축하할지 정합니다.",
     "feedback_intensity_subtle": "은은하게",
@@ -1913,6 +1916,7 @@
     "combo_chip": "x{n}",
     "combo_aria": "연속 정답: {n}회 연속",
     "combo_best": "최고 연속 기록: {n}",
+    "combo_bonus_aria": "연속 보너스: {n} XP",
     "hearts": {
       "aria": "생명: {max}개 중 {n}개",
       "empty_heading": "하트가 다 떨어졌어요!",

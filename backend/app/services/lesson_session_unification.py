@@ -97,6 +97,7 @@ def record_lesson_completion_session(
     lesson_progress_id: str,
     score_correct: int,
     score_total: int,
+    combo_bonus_xp: int = 0,
 ) -> LearningSession:
     """Persist a LearningSession + fire on_session_complete.
 
@@ -137,6 +138,7 @@ def record_lesson_completion_session(
             "lesson_progress_id": lesson_progress_id,
             "score_correct": score_correct,
             "score_total": score_total,
+            "combo_bonus_xp": combo_bonus_xp,
         },
         rating={},
     )

@@ -791,6 +791,9 @@
     "playful_countdown": "カウントダウンリング",
     "playful_countdown_description": "練習問題ごとの小さなタイムリングです。時間切れになると連続記録が途切れ、ハートを1つ失いますが、問題は開いたままで自動送信はされません。試験・タイムアタックのレッスンでは無効です(タイムアタックには専用タイマーがあります)。",
     "playful_countdown_seconds": "練習問題ごとの秒数",
+    "playful_combo_xp": "連続ボーナスXP",
+    "playful_combo_xp_description": "連続3問目からは、連続する正解ごとに+1ボーナスXPを獲得します(レッスンごとに上限あり)。オフにするとゲームモードのXPは通常モードと同じになります。",
+    "playful_combo_xp_cap": "レッスンごとのボーナスXP上限",
     "feedback_intensity": "フィードバックの強さ",
     "feedback_intensity_description": "アプリがあなたの進歩をどれだけ盛大に祝うか。",
     "feedback_intensity_subtle": "控えめ",
@@ -1913,6 +1916,7 @@
     "combo_chip": "×{n}",
     "combo_aria": "連続正解: {n}回連続",
     "combo_best": "最高連続記録: {n}",
+    "combo_bonus_aria": "連続ボーナス: {n} XP",
     "hearts": {
       "aria": "ライフ: {max}中{n}",
       "empty_heading": "ハートがなくなりました!",

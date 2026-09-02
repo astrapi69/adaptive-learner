@@ -90,6 +90,9 @@ export interface LessonProgressUpsertBody {
    *  value unchanged. */
   current_step?: number;
   mark_completed?: boolean;
+  /** #2893 - transient game-mode combo bonus (client-capped, hard
+   *  ceiling 20 on both backends). Read only with mark_completed. */
+  combo_bonus_xp?: number;
   /** Phase 63A — flip the row to ``paused`` and stamp
    *  ``paused_at``. ``step_results`` stay intact for the resume. */
   mark_paused?: boolean;

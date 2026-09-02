@@ -51,6 +51,7 @@ import LessonMascot from "../../components/lesson/mascot/LessonMascot";
 import { useLessonCombo } from "../../hooks/lesson/useLessonCombo";
 import { usePlayfulMode } from "../../hooks/settings/usePlayfulMode";
 import { useLessonTension } from "../../hooks/lesson/useLessonTension";
+import { comboBonusForRun } from "../../lib/learning/playful/playfulComboXpPref";
 import LessonTensionChrome from "../../components/lesson/chrome/tension/LessonTensionChrome";
 import LessonHeartsDialog from "../../components/lesson/dialogs/LessonHeartsDialog";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
@@ -176,6 +177,11 @@ export default function LessonPage() {
   // the summary's best-run chip read the same lesson.
   const playful = usePlayfulMode();
   const { combo, resetCombo } = useLessonCombo(playful);
+  // #2893 — the game-mode combo bonus for this run: the reducer's
+  // eligible-answer count through the user-configured cap; 0 while the
+  // combo-XP switch or the game mode is off. One number for both the
+  // summary display and the completion award.
+  const comboBonusXp = comboBonusForRun(combo.bonusEligible);
   useEffect(() => {
     resetCombo();
   }, [source, setId, filename, resetCombo]);
@@ -436,7 +442,9 @@ export default function LessonPage() {
 
         {/* #2874 — the streak chip (game mode only): live run during the
             lesson, the best run on the summary. */}
-        {playful && <LessonCombo combo={combo} showBest={isSummary} />}
+        {playful && (
+          <LessonCombo combo={combo} showBest={isSummary} bonusXp={comboBonusXp} />
+        )}
 
         {/* #2878 — the tension systems (both opt-in): the lives row and
             the per-exercise countdown ring. Self-gating, hidden on the
@@ -507,6 +515,7 @@ export default function LessonPage() {
           lessonFilename={filename}
           setDomain={setDomain}
           setBook={setBook}
+          comboBonusXp={comboBonusXp}
           markCompleted={markCompleted}
           markRestarted={markRestarted}
           goToStep={goToStep}

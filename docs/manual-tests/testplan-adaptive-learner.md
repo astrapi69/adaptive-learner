@@ -641,6 +641,27 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Bewertung unverändert: Punktzahl, Sterne und Fortschritt sind
       mit und ohne Spannungssysteme identisch
 
+#### Serien-Bonus-XP (#2893, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+      "Serien-Bonus-XP" ist standardmäßig AN; das Zahlenfeld
+      "Bonus-XP-Obergrenze pro Lektion" ist bedienbar, klemmt auf 5-20
+      (Standard 10) und wird beim Ausschalten des Schalters gesperrt
+- [ ] Spielmodus an, Lektion mit einer Serie von mindestens 3 richtigen
+      Antworten in Folge spielen: in der Zusammenfassung steht neben
+      "Beste Serie: N" ein grünes "+N XP"; die angezeigten Lektions-XP
+      enthalten den Bonus, und "Als erledigt markieren" schreibt exakt
+      denselben Wert gut (Dashboard-XP steigen um die angezeigte Summe)
+- [ ] Der Bonus zählt ab der DRITTEN Serienantwort (+1 pro weiterer
+      richtiger Antwort in Folge); eine falsche Antwort stoppt das
+      Wachstum, eine neue Serie ab 3 zählt weiter
+- [ ] Obergrenze: mit Deckel 5 und einer langen Serie zeigt die
+      Zusammenfassung höchstens "+5 XP"
+- [ ] Schalter aus ODER Spielmodus aus: kein "+N XP" in der
+      Zusammenfassung, die XP sind identisch zum normalen Modus
+- [ ] Prüfungsmodus: kein Serien-Bonus (der Prüfungs-Multiplikator
+      bleibt unverändert)
+
 #### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
 
 - [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln
