@@ -23,7 +23,7 @@ deutlicher das Feedback.
 
 ## Feedback-Intensität
 
-Unter **Einstellungen > Oberfläche > Feedback-Intensität** wählst
+Unter **Einstellungen > Lernen > Feedback-Intensität** wählst
 du, wie ausgiebig gefeiert wird:
 
 - **Dezent** - nur die Richtig/Falsch-Farbe. Keine Phrasen, kein
@@ -40,8 +40,34 @@ dezent, unabhängig von dieser Einstellung.
 ## Töne
 
 Töne sind **standardmäßig aus** - du wirst nie von Audio
-überrascht. Schalte sie unter **Einstellungen > Oberfläche >
+überrascht. Schalte sie unter **Einstellungen > Lernen >
 Töne** ein und nutze den Lautstärkeregler und die **Test**-Taste
 zur Vorschau. Töne sind kurze synthetische Klänge und immer
 ergänzend: jeder Hinweis, den sie geben, wird auch auf dem
 Bildschirm angezeigt.
+
+## Spielmodus
+
+Der **Spielmodus** macht Lektionen spielerischer. Du schaltest ihn
+unter **Einstellungen > Lernen > Spielmodus** ein - oder direkt über
+das Hinweis-Banner, das beim ersten Lektionsschritt erscheint,
+solange der Modus aus ist (einmal weggeklickt, bleibt es weg).
+
+Mit aktivem Spielmodus:
+
+- Das Feedback feiert wie ein Spiel: Lob bei jeder richtigen
+  Antwort, Konfetti und Meilenstein-Einblendungen, unabhängig von
+  der gewählten Feedback-Intensität. "Bewegung reduzieren" im
+  System gewinnt weiterhin, und Töne bleiben ein eigener Schalter.
+- **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
+  neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
+  muntert bei falschen auf, feiert Meilensteine und verabschiedet
+  dich am Lektionsende mit einer Lob-Phrase. Im Prüfungsmodus hält
+  er sich bis zum Abschluss zurück.
+- Unter dem Spielmodus-Schalter wählst du die
+  **Maskottchen-Variante** - Farbwelten des Lernfunke, die du über
+  Level und Abzeichen freischaltest oder gegen XP eintauschst.
+  Details in den [Einstellungen](settings.md).
+
+Punktzahl, Sterne und Fortschritt bleiben im Spielmodus unverändert -
+er ändert nur, wie gefeiert wird.

@@ -61,6 +61,11 @@ export const MANAGED_USER_DATA_KEYS = [
     // backend column; mode-agnostic, survives a Dexie restore + rides
     // the .alb backup's localStorage snapshot.
     "adaptive-learner.avatar.frames",
+    // #2861 — selected + XP-purchased mascot variants per user
+    // (lib/mascot/mascot-variant-store). Same cosmetics pattern as
+    // the avatar frames: mode-agnostic, survives a Dexie restore +
+    // rides the .alb backup's localStorage snapshot.
+    "adaptive-learner.mascot.variants",
 ] as const;
 
 /**

@@ -6,11 +6,17 @@
 
 import "@testing-library/jest-dom/vitest";
 import {act, render, screen} from "@testing-library/react";
-import {beforeEach, describe, expect, it} from "vitest";
+import {beforeEach, describe, expect, it, vi} from "vitest";
+
+vi.mock("../../../storage/dexie/dexie-user-data", () => ({
+    mirrorUserData: async (_key: string, _value: string | null) => undefined,
+}));
 
 import LessonMascot from "./LessonMascot";
 import {emitCelebration} from "../../../lib/praise/celebration-bus";
 import {setPlayfulMode} from "../../../lib/learning/playfulModePref";
+import {setUserId} from "../../../lib/learning/learnerState";
+import {setSelectedMascotVariant} from "../../../lib/mascot/mascot-variant-store";
 
 beforeEach(() => {
     localStorage.clear();
@@ -51,6 +57,25 @@ describe("LessonMascot", () => {
         expect(
             screen.getByTestId("lesson-mascot-bubble").textContent,
         ).not.toBe("");
+    });
+
+    it("renders the selected mascot variant's colors (#2861)", () => {
+        setPlayfulMode(true);
+        setUserId("u1");
+        setSelectedMascotVariant("u1", "wald");
+        const {container} = render(<LessonMascot />);
+        expect(container.innerHTML).toContain("var(--method-dialogic)");
+        expect(container.innerHTML).not.toContain("var(--method-contextual)");
+    });
+
+    it("re-renders live when the variant changes (#2861)", () => {
+        setPlayfulMode(true);
+        setUserId("u1");
+        const {container} = render(<LessonMascot />);
+        expect(container.innerHTML).toContain("var(--method-contextual)");
+        act(() => setSelectedMascotVariant("u1", "ozean"));
+        expect(container.innerHTML).toContain("var(--method-deductive)");
+        expect(container.innerHTML).not.toContain("var(--method-contextual)");
     });
 
     it("appears live when playful mode turns on (change event)", () => {

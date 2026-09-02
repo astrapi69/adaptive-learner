@@ -15,6 +15,7 @@ import {useState} from "react";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import {SettingsSection} from "../../SettingsSection";
+import MascotVariantControl from "./MascotVariantControl";
 import {
     readPlayfulMode,
     setPlayfulMode,
@@ -54,6 +55,7 @@ export default function PlayfulModeControl() {
                     onChange={(e) => handleToggle(e.target.checked)}
                 />
             </label>
+            <MascotVariantControl />
         </SettingsSection>
     );
 }

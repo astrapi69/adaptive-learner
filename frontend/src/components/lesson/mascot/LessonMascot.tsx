@@ -17,11 +17,26 @@
  * <LessonMascot large={isSummary} />
  */
 
+import {useEffect, useState} from "react";
+
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {usePlayfulMode} from "../../../hooks/settings/usePlayfulMode";
+import {readLearnerState} from "../../../lib/learning/learnerState";
+import {mascotVariantById} from "../../../lib/mascot/mascot-variants";
+import {
+    MASCOT_VARIANT_CHANGE_EVENT,
+    readMascotVariantState,
+} from "../../../lib/mascot/mascot-variant-store";
 import LernfunkeFigure from "./LernfunkeFigure";
 import {useMascotState} from "./useMascotState";
 import type {MascotPose} from "./LernfunkeFigure";
+
+function selectedVariant() {
+    const userId = readLearnerState().userId;
+    return mascotVariantById(
+        userId ? readMascotVariantState(userId).selected : null,
+    );
+}
 
 const POSE_ANIMATION: Record<MascotPose, string> = {
     idle: "",
@@ -38,6 +53,14 @@ export default function LessonMascot({large = false}: LessonMascotProps) {
     const playful = usePlayfulMode();
     const {t, lang} = useI18n();
     const {pose, bubble, reactionKey} = useMascotState(lang, playful);
+    const [variant, setVariant] = useState(selectedVariant);
+
+    useEffect(() => {
+        const refresh = () => setVariant(selectedVariant());
+        window.addEventListener(MASCOT_VARIANT_CHANGE_EVENT, refresh);
+        return () =>
+            window.removeEventListener(MASCOT_VARIANT_CHANGE_EVENT, refresh);
+    }, []);
 
     if (!playful) return null;
 
@@ -63,7 +86,11 @@ export default function LessonMascot({large = false}: LessonMascotProps) {
                 aria-label={t("lesson.mascot_label", "Your learning companion")}
                 title={t("lesson.mascot_label", "Your learning companion")}
             >
-                <LernfunkeFigure pose={pose} size={large ? 64 : 40} />
+                <LernfunkeFigure
+                    pose={pose}
+                    size={large ? 64 : 40}
+                    colors={{body: variant.body, spark: variant.spark}}
+                />
             </span>
         </div>
     );

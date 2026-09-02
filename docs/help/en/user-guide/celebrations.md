@@ -20,7 +20,7 @@ achievement, the more prominent the feedback.
 
 ## Feedback intensity
 
-**Settings > Interface > Feedback Intensity** lets you choose how
+**Settings > Learning > Feedback Intensity** lets you choose how
 loud the celebrations are:
 
 - **Subtle** - only the correct/wrong colour. No phrases, no
@@ -37,7 +37,32 @@ this setting.
 ## Sounds
 
 Sounds are **off by default** - you are never surprised by audio.
-Turn them on in **Settings > Interface > Sounds**, then use the
+Turn them on in **Settings > Learning > Sounds**, then use the
 volume slider and the **Test** button to preview. Sounds are
 short synthesized chimes and are always supplementary: every cue
 they give is also shown on screen.
+
+## Game mode
+
+**Game mode** makes lessons feel playful. Turn it on under
+**Settings > Learning > Game Mode** - or straight from the hint
+banner that appears on a lesson's first step while the mode is off
+(dismiss it once and it stays gone).
+
+With game mode on:
+
+- Feedback celebrates like a game: praise on every correct answer,
+  confetti and milestone overlays, regardless of the chosen
+  feedback intensity. "Reduce motion" in your system still wins,
+  and sounds remain their own switch.
+- **Lernfunke**, your learning companion, sits as a small flame
+  figure next to the progress bar: it cheers on correct answers,
+  encourages after wrong ones, celebrates milestones, and sends
+  you off with a praise phrase when the lesson completes. In exam
+  mode it stays quiet until the end.
+- Below the game-mode switch you pick the **mascot variant** -
+  color schemes for Lernfunke that unlock with levels and badges
+  or in exchange for XP. Details in [Settings](settings.md).
+
+Score, stars, and progress are unchanged in game mode - it only
+changes how success is celebrated.

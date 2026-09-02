@@ -273,6 +273,26 @@ async function gotoSummarySections(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning scrolled to the Game Mode section's mascot
+ *  variant picker (#2861 — unlockable Lernfunke color schemes, level/
+ *  badge/XP-gated like the #2850 avatar frames). A fresh seeded learner
+ *  has only the free default unlocked, so this pins the realistic
+ *  mostly-locked first-look state, locks and all. */
+async function gotoMascotVariants(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const section = page.getByTestId("settings-mascot-variants");
+    try {
+        await section.waitFor({timeout: 15_000});
+    } catch {
+        return false;
+    }
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 /**
  * Open the proactive error-report dialog from Settings → About (#1480 —
  * baseline net for the inline-style-heavy dialog before its Tailwind
@@ -610,6 +630,13 @@ const FEATURES: FeatureShot[] = [
 
     // --- Lesson-summary section toggles (#1411) --------------------------
     {path: "summary-sections/settings", setup: gotoSummarySections},
+
+    // --- Mascot color variants (#2861) -----------------------------------
+    {
+        path: "mascot-variants/settings",
+        setup: gotoMascotVariants,
+        pinTo: "settings-mascot-variants",
+    },
 
     // --- Error-report dialog (#1480 — pre-migration pixel net) ----------
     {path: "error-report/dialog", setup: gotoErrorReportDialog},

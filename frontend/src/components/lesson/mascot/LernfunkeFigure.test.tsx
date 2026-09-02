@@ -33,6 +33,19 @@ describe("LernfunkeFigure", () => {
         }
     });
 
+    it("applies variant colors to body and celebrate sparkles (#2861)", () => {
+        const colors = {
+            body: "var(--method-dialogic)",
+            spark: "var(--accent)",
+        };
+        const {container} = render(
+            <LernfunkeFigure pose="celebrate" size={40} colors={colors} />,
+        );
+        expect(container.innerHTML).toContain("var(--method-dialogic)");
+        expect(container.innerHTML).toContain("var(--accent)");
+        expect(container.innerHTML).not.toContain("var(--method-contextual)");
+    });
+
     it("exposes the four poses", () => {
         expect(MASCOT_POSES).toEqual([
             "idle",
