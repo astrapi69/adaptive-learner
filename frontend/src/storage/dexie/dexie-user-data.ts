@@ -76,6 +76,11 @@ export const MANAGED_USER_DATA_KEYS = [
     // mode-agnostic, survives a Dexie restore + rides the .alb
     // backup's localStorage snapshot.
     "adaptive-learner.arcade.unlocks",
+    // #2889 — arcade ticket balance + awarded streak milestones per
+    // user (lib/arcade/ticket-store). Same pattern: mode-agnostic,
+    // survives a Dexie restore + rides the .alb backup's
+    // localStorage snapshot.
+    "adaptive-learner.arcade.tickets",
 ] as const;
 
 /**
