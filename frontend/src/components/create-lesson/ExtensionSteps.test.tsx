@@ -106,6 +106,15 @@ describe("ExtensionSteps — step 2 authoring", () => {
         expect(
             screen.getByTestId("extension-add-type-dictation"),
         ).toBeInTheDocument();
+        // image-description (#2095) and speak-and-record (#2817) shipped
+        // after this test's original assertion list and were missed then;
+        // pinned here now so "every type" stops being an incomplete claim.
+        expect(
+            screen.getByTestId("extension-add-type-image-description"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("extension-add-type-speak-and-record"),
+        ).toBeInTheDocument();
     });
 
     it("adds a blank dictation exercise that opens directly in the editor", () => {
@@ -128,6 +137,17 @@ describe("ExtensionSteps — step 2 authoring", () => {
         // Auto-edit: the inline editor for the new exercise is shown.
         const editor = screen.getByTestId(/^exercise-ext-editor-/);
         expect(editor).toBeInTheDocument();
+    });
+
+    it("adds a blank speak-and-record exercise that opens directly in the editor (#2817)", () => {
+        render(<Harness />);
+        fireEvent.click(screen.getByTestId("extension-add"));
+        fireEvent.click(screen.getByTestId("extension-add-type-speak-and-record"));
+        const editor = screen.getByTestId(/^exercise-ext-editor-/);
+        expect(editor).toBeInTheDocument();
+        expect(
+            screen.getByTestId(/^exercise-ext-sar-sentence-/),
+        ).toBeInTheDocument();
     });
 
     it("does NOT offer the -> free_text conversion in the ext-only flow (EXP-050 #2511)", () => {

@@ -2848,6 +2848,9 @@
       "mc_prompt": "Elige la traducción correcta de: {word}"
     },
     "page_title": "Mis contenidos",
+    "updates_badge": "{n} actualizaciones",
+    "updates_badge_tooltip": "Actualizaciones de contenido disponibles",
+    "updates_badge_action": "ver contenido",
     "intro": "Sets de lecciones prediseñados que puedes usar sin clave API. Las descargas se almacenan localmente y funcionan sin conexión tras la primera descarga.",
     "sources": "Fuentes",
     "lessons": "lecciones",
@@ -3436,7 +3439,8 @@
         "reading-comprehension": "Comprensión lectora",
         "graded-quiz": "Cuestionario calificado",
         "dictation": "Dictado",
-        "image-description": "Descripción de imagen"
+        "image-description": "Descripción de imagen",
+        "speak-and-record": "Hablar y grabar"
       },
       "edit": {
         "prompt_label": "Instrucción / enunciado",
@@ -3464,6 +3468,7 @@
         "dict_accept_remove": "Eliminar transcripción",
         "dict_accept_placeholder": "Lo que el estudiante debe escribir",
         "err_image_description": "Añade una imagen y al menos una respuesta aceptada.",
+        "err_speak_and_record": "Añade una frase para decir (y, opcionalmente, un audio de referencia).",
         "imgdesc_image_label": "Imagen a describir",
         "imgdesc_image_preview_alt": "Imagen a describir",
         "imgdesc_image_budget_hint": "La imagen se comprime e incrusta (máx. ~150 KB, 512 px) para que el ejercicio funcione sin conexión y se incluya en la copia de seguridad. No se permiten enlaces remotos.",
@@ -3471,6 +3476,8 @@
         "imgdesc_accept_add": "Añadir",
         "imgdesc_accept_remove": "Eliminar respuesta",
         "imgdesc_accept_placeholder": "Lo que el estudiante debe escribir",
+        "sar_sentence_label": "Frase a decir",
+        "sar_sentence_placeholder": "La frase que el alumno escucha y repite",
         "q_list_label": "Preguntas",
         "q_prompt_label": "Pregunta",
         "q_prompt_placeholder": "Pregunta",

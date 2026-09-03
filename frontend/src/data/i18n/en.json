@@ -2848,6 +2848,9 @@
       "mc_prompt": "Choose the correct translation of: {word}"
     },
     "page_title": "My content",
+    "updates_badge": "{n} updates",
+    "updates_badge_tooltip": "Content updates available",
+    "updates_badge_action": "view content",
     "intro": "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
     "sources": "Sources",
     "lessons": "lessons",
@@ -3436,7 +3439,8 @@
         "reading-comprehension": "Reading comprehension",
         "graded-quiz": "Graded quiz",
         "dictation": "Dictation",
-        "image-description": "Image description"
+        "image-description": "Image description",
+        "speak-and-record": "Speak & record"
       },
       "edit": {
         "prompt_label": "Instruction / prompt",
@@ -3464,6 +3468,7 @@
         "dict_accept_remove": "Remove transcription",
         "dict_accept_placeholder": "What the learner should type",
         "err_image_description": "Add an image and at least one accepted answer.",
+        "err_speak_and_record": "Add a sentence to speak (and, optionally, a reference clip).",
         "imgdesc_image_label": "Image to describe",
         "imgdesc_image_preview_alt": "Image to describe",
         "imgdesc_image_budget_hint": "The image is compressed and embedded (max ~150 KB, 512 px) so the exercise works offline and travels in the backup. Remote links are not allowed.",
@@ -3471,6 +3476,8 @@
         "imgdesc_accept_add": "Add",
         "imgdesc_accept_remove": "Remove answer",
         "imgdesc_accept_placeholder": "What the learner should type",
+        "sar_sentence_label": "Sentence to speak",
+        "sar_sentence_placeholder": "The sentence the learner hears and repeats",
         "q_list_label": "Questions",
         "q_prompt_label": "Question",
         "q_prompt_placeholder": "Question",

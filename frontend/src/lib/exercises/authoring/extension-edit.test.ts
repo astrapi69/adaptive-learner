@@ -11,6 +11,7 @@ import {
     GRADED_QUIZ_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
+    SPEAK_AND_RECORD_EXT_TYPE,
     createBlankExtensionExercise,
     newExtensionExerciseId,
     normalizeExtensionExercise,
@@ -79,6 +80,16 @@ function img(payload: unknown, prompt = "Describe the image"): ContentLessonExer
         ext_payload: payload,
     } as ContentLessonExercise;
 }
+function sar(payload: unknown, prompt = "Say it out loud"): ContentLessonExercise {
+    return {
+        id: "s1",
+        type: SPEAK_AND_RECORD_EXT_TYPE,
+        prompt,
+        card_ids: [],
+        distractors: [],
+        ext_payload: payload,
+    } as ContentLessonExercise;
+}
 
 describe("newExtensionExerciseId", () => {
     it("is unique + prefixed", () => {
@@ -120,6 +131,12 @@ describe("createBlankExtensionExercise", () => {
         const ex = createBlankExtensionExercise(IMAGE_DESCRIPTION_EXT_TYPE, "i");
         expect(ex.type).toBe(IMAGE_DESCRIPTION_EXT_TYPE);
         expect(ex.ext_payload).toEqual({image: "", accept: []});
+        expect(validateExtensionExercise(ex).valid).toBe(false);
+    });
+    it("speak_and_record blank has an empty sentence and is invalid", () => {
+        const ex = createBlankExtensionExercise(SPEAK_AND_RECORD_EXT_TYPE, "s");
+        expect(ex.type).toBe(SPEAK_AND_RECORD_EXT_TYPE);
+        expect(ex.ext_payload).toEqual({sentence: ""});
         expect(validateExtensionExercise(ex).valid).toBe(false);
     });
     it("graded_quiz blank has a threshold + one question with points and is invalid", () => {
@@ -521,5 +538,45 @@ describe("validateExtensionExercise — image_description (reuses payload valida
         );
         expect(res.valid).toBe(false);
         expect(res.code).toBe("image_description");
+    });
+});
+
+describe("normalizeExtensionExercise — speak_and_record", () => {
+    it("trims the sentence + drops an empty audio field", () => {
+        const out = normalizeExtensionExercise(
+            sar({sentence: "  Guten Tag  ", audio: "   "}, "  Speak  "),
+        );
+        expect(out.prompt).toBe("Speak");
+        expect(out.ext_payload).toEqual({sentence: "Guten Tag"});
+    });
+    it("trims + keeps a non-empty audio reference", () => {
+        const out = normalizeExtensionExercise(
+            sar({sentence: "  Guten Tag  ", audio: "  assets/audio/gt.mp3  "}),
+        );
+        expect(out.ext_payload).toEqual({
+            sentence: "Guten Tag",
+            audio: "assets/audio/gt.mp3",
+        });
+    });
+});
+
+describe("validateExtensionExercise — speak_and_record (reuses payload validator, ungraded)", () => {
+    it("accepts a non-empty sentence with no audio at all", () => {
+        const ex = sar({sentence: "Guten Tag"});
+        expect(validateExtensionExercise(ex).valid).toBe(true);
+    });
+    it("accepts a non-empty sentence plus an optional audio reference", () => {
+        const ex = sar({sentence: "Guten Tag", audio: "assets/audio/gt.mp3"});
+        expect(validateExtensionExercise(ex).valid).toBe(true);
+    });
+    it("rejects an empty prompt", () => {
+        const res = validateExtensionExercise(sar({sentence: "Guten Tag"}, "   "));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("prompt");
+    });
+    it("rejects a missing/empty sentence", () => {
+        const res = validateExtensionExercise(sar({sentence: "   "}));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("speak_and_record");
     });
 });

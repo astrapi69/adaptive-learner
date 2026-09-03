@@ -40,6 +40,10 @@ import {
     IMAGE_DESCRIPTION_EXT_TYPE,
     imageDescriptionPayloadErrors,
 } from "../payload/image-description";
+import {
+    SPEAK_AND_RECORD_EXT_TYPE,
+    speakAndRecordPayloadErrors,
+} from "../payload/speak-and-record";
 import type {ContentLessonExercise} from "../../../storage/types";
 import {createIdFactory} from "./id-factory";
 
@@ -50,10 +54,13 @@ export {
     GRADED_QUIZ_EXT_TYPE,
     DICTATION_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
+    SPEAK_AND_RECORD_EXT_TYPE,
 };
 
 /** The extension exercise types the wizard can author (#1852, editors 1-4;
- *  #1887 added dictation, editor 5; #2095 added image-description, editor 6). */
+ *  #1887 added dictation, editor 5; #2095 added image-description, editor 6;
+ *  #2817 added speak-and-record, editor 7 - deliberately UNGRADED, so it
+ *  carries no ``accept`` field and no conversion target). */
 export const EXTENSION_WIZARD_TYPES = [
     CATEGORIZATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
@@ -61,6 +68,7 @@ export const EXTENSION_WIZARD_TYPES = [
     GRADED_QUIZ_EXT_TYPE,
     DICTATION_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
+    SPEAK_AND_RECORD_EXT_TYPE,
 ] as const;
 
 export type ExtensionWizardType = (typeof EXTENSION_WIZARD_TYPES)[number];
@@ -108,7 +116,8 @@ export type ExtensionEditCode =
     | "reading_comprehension"
     | "graded_quiz"
     | "dictation"
-    | "image_description";
+    | "image_description"
+    | "speak_and_record";
 
 /** Result of validating an extension exercise draft: whether it is saveable
  *  and, when not, the machine {@link ExtensionEditCode} of the failed rule. */
@@ -165,6 +174,7 @@ const BLANK_PAYLOAD: Record<ExtensionWizardType, () => unknown> = {
     }),
     [DICTATION_EXT_TYPE]: () => ({audio: "", accept: []}),
     [IMAGE_DESCRIPTION_EXT_TYPE]: () => ({image: "", accept: []}),
+    [SPEAK_AND_RECORD_EXT_TYPE]: () => ({sentence: ""}),
 };
 
 /**
@@ -229,6 +239,11 @@ export function validateExtensionExercise(
         return imageDescriptionPayloadErrors(ex).length === 0
             ? ok
             : fail("image_description");
+    }
+    if (ex.type === SPEAK_AND_RECORD_EXT_TYPE) {
+        return speakAndRecordPayloadErrors(ex).length === 0
+            ? ok
+            : fail("speak_and_record");
     }
     // A type without a wizard editor is never blocked here.
     return ok;
@@ -344,6 +359,14 @@ const NORMALIZE_EXTENSION_PAYLOAD: Record<
             image: (payload?.image ?? "").trim(),
             accept: trimmedNonEmpty(payload?.accept),
         };
+    },
+    [SPEAK_AND_RECORD_EXT_TYPE]: (ex) => {
+        const payload = ex.ext_payload as
+            | {sentence?: string; audio?: string}
+            | undefined;
+        const sentence = (payload?.sentence ?? "").trim();
+        const audio = (payload?.audio ?? "").trim();
+        return audio.length > 0 ? {sentence, audio} : {sentence};
     },
 };
 

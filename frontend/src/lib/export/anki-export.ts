@@ -12,7 +12,7 @@
  * downloadAnkiDeck(lessonCardsToAnki(lesson.cards), lesson.title);
  */
 
-import {downloadBlob} from "../lesson/result-download";
+import {downloadBlob} from "../lesson/export/result-download";
 import type {ContentLessonCard} from "../../storage/types/content/content";
 
 /** Minimal front/back/tags shape — all an Anki Basic note needs. */
