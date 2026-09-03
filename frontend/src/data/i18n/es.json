@@ -804,6 +804,8 @@
     "playful_tickets": "Tickets de juego",
     "playful_tickets_description": "Gana tickets de arcade con tu rendimiento: una lección con puntuación perfecta, una ronda superada con todos los corazones y los hitos de racha (3/7/14/30 días). Un ticket juega una ronda de un juego de arcade bloqueado. Desactivado deja el arcade solo con los desbloqueos por XP.",
     "playful_ticket_cap": "Tickets máximos",
+    "playful_bonus_lessons": "Lecciones extra",
+    "playful_bonus_lessons_description": "Los sets pueden incluir lecciones extra (archivos de lección que empiezan por \"bonus-\"). Con el modo juego activo aparecen bloqueadas en la lista de lecciones del set hasta que cada lección regular tenga al menos una estrella. Desactivado (o con el modo juego apagado) se tratan como lecciones normales.",
     "feedback_intensity": "Intensidad del feedback",
     "feedback_intensity_description": "Con cuánta efusividad celebra la app tu progreso.",
     "feedback_intensity_subtle": "Discreto",
@@ -2523,6 +2525,8 @@
       "download_start": "Descargar y empezar",
       "lessons": "{n} lecciones",
       "lesson_list": "Lecciones",
+      "bonus_badge": "Bonus",
+      "bonus_locked_tooltip": "Termina cada lección regular de este set con al menos una estrella para desbloquear esta lección extra.",
       "progress_done": "{done} de {total} lecciones completadas",
       "current_lesson": "Continuar aquí"
     },

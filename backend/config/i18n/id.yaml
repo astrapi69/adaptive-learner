@@ -766,6 +766,8 @@ settings:
   playful_tickets: "Tiket permainan"
   playful_tickets_description: "Dapatkan tiket arcade lewat performa: pelajaran dengan skor sempurna, ronde yang diselesaikan dengan semua hati, dan tonggak runtunan (3/7/14/30 hari). Satu tiket memainkan satu ronde permainan arcade yang terkunci. Jika mati, arcade hanya memakai pembukaan XP."
   playful_ticket_cap: "Tiket maksimum"
+  playful_bonus_lessons: "Pelajaran bonus"
+  playful_bonus_lessons_description: "Set dapat memuat pelajaran bonus (berkas pelajaran yang diawali \"bonus-\"). Saat mode permainan aktif, pelajaran itu tampil terkunci di daftar pelajaran set sampai setiap pelajaran reguler punya minimal satu bintang. Jika mati (atau mode permainan mati), diperlakukan seperti pelajaran biasa."
   feedback_intensity: "Intensitas Umpan Balik"
   feedback_intensity_description: "Seberapa meriah aplikasi merayakan kemajuan Anda."
   feedback_intensity_subtle: "Halus"
@@ -2344,6 +2346,8 @@ content:
     download_start: "Unduh & mulai"
     lessons: "{n} pelajaran"
     lesson_list: "Pelajaran"
+    bonus_badge: "Bonus"
+    bonus_locked_tooltip: "Selesaikan setiap pelajaran reguler set ini dengan minimal satu bintang untuk membuka pelajaran bonus ini."
     progress_done: "{done} dari {total} pelajaran selesai"
     current_lesson: "Lanjutkan di sini"
   repo_export:

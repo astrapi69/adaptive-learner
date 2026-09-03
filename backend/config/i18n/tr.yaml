@@ -763,6 +763,8 @@ settings:
   playful_tickets: "Oyun biletleri"
   playful_tickets_description: "Performansla atari biletleri kazan: tam puanlı bir ders, tüm kalplerle tamamlanan bir tur ve seri kilometre taşları (3/7/14/30 gün). Bir bilet, kilitli bir atari oyununun bir turunu oynatır. Kapalıyken atari yalnızca XP açılışlarıyla kalır."
   playful_ticket_cap: "En fazla bilet"
+  playful_bonus_lessons: "Bonus dersler"
+  playful_bonus_lessons_description: "Setler bonus dersler içerebilir (\"bonus-\" ile başlayan ders dosyaları). Oyun modu açıkken, her normal ders en az bir yıldız alana kadar setin ders listesinde kilitli görünürler. Kapalıyken (veya oyun modu kapalıyken) normal ders gibi davranırlar."
   feedback_intensity: "Geri bildirim yoğunluğu"
   feedback_intensity_description: "Uygulamanın ilerlemeni ne kadar coşkuyla kutladığı."
   feedback_intensity_subtle: "Sade"
@@ -2333,6 +2335,8 @@ content:
     download_start: "İndir ve başla"
     lessons: "{n} ders"
     lesson_list: "Dersler"
+    bonus_badge: "Bonus"
+    bonus_locked_tooltip: "Bu bonus dersin kilidini açmak için bu setin her normal dersini en az bir yıldızla bitir."
     progress_done: "{total} dersten {done} tanesi tamamlandı"
     current_lesson: "Buradan devam et"
   repo_export:
