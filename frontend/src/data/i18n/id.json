@@ -1588,6 +1588,16 @@
       "board_aria": "Papan Snake: kendalikan dengan tombol panah atau geser",
       "won": "Ronde dimenangkan: {n} poin!",
       "lost": "Ronde selesai: {n} poin. Coba lagi!"
+    },
+    "tictactoe": {
+      "name": "Tic-Tac-Toe",
+      "description": "Tiga sejajar melawan aplikasi - dan ya, dia bisa dikalahkan.",
+      "your_turn": "Giliranmu (X)",
+      "ai_turn": "Aplikasi sedang berpikir ...",
+      "board_aria": "Papan tic-tac-toe: pilih kotak kosong",
+      "won": "Kamu menang: tiga sejajar!",
+      "lost": "Ronde ini milik aplikasi. Coba lagi!",
+      "draw": "Seri: pertahanan bagus!"
     }
   },
   "anki": {

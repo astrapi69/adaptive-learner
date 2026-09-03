@@ -1476,6 +1476,15 @@ arcade:
     board_aria: "Snake tahtası: ok tuşlarıyla veya kaydırarak yönlendir"
     won: "Tur kazanıldı: {n} puan!"
     lost: "Tur bitti: {n} puan. Tekrar dene!"
+  tictactoe:
+    name: "Tic-Tac-Toe"
+    description: "Uygulamaya karşı üçlü sıra - ve evet, yenilebilir."
+    your_turn: "Sıra sende (X)"
+    ai_turn: "Uygulama düşünüyor ..."
+    board_aria: "Tic-tac-toe tahtası: boş bir kare seç"
+    won: "Kazandın: üçü bir sırada!"
+    lost: "Bu tur uygulamanın oldu. Hemen tekrar dene!"
+    draw: "Berabere: iyi savundun!"
 anki:
   title: Anki Dışa Aktarma
   intro: YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.
