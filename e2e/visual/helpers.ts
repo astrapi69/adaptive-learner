@@ -362,6 +362,17 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // own lifetime; the 8s cap covers autoClose + exit fade with margin. A
     // surface that ever legitimately BASELINES a persistent toast would
     // time out here and must opt out explicitly instead of racing.
+    // #2898 - park the pointer in the neutral top-left corner BEFORE
+    // waiting the toasts out: the app's ToastContainer runs
+    // ``pauseOnHover`` at ``bottom-right`` (App.tsx), and the
+    // bundled-lesson walk leaves the mouse wherever its last
+    // ``lesson-next`` click landed - on the mobile viewport that is
+    // exactly where the motivation toast appears, so a still-fading
+    // toast freezes its autoClose under the parked pointer and
+    // outlives any cap. Moving the mouse lets every transient toast
+    // run its own lifetime; a genuinely persistent toast still trips
+    // the timeout below.
+    await page.mouse.move(0, 0);
     try {
         await page.waitForFunction(
             () => document.querySelectorAll(".Toastify__toast").length === 0,

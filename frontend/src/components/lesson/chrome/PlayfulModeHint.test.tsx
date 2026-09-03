@@ -14,7 +14,7 @@ import {
     readPlayfulHintDismissed,
     readPlayfulMode,
     setPlayfulMode,
-} from "../../../lib/learning/playfulModePref";
+} from "../../../lib/learning/playful/playfulModePref";
 
 const notifySuccess = vi.fn();
 vi.mock("../../../utils/notify", () => ({
@@ -70,5 +70,34 @@ describe("PlayfulModeHint", () => {
         expect(
             screen.queryByTestId("lesson-playful-hint"),
         ).not.toBeInTheDocument();
+    });
+});
+
+describe("turn on with sound (#2875)", async () => {
+    const {readPlayfulMode} = await import(
+        "../../../lib/learning/playful/playfulModePref"
+    );
+    const {readPlayfulSounds} = await import(
+        "../../../lib/learning/playful/playfulSoundsPref"
+    );
+    const {fireEvent} = await import("@testing-library/react");
+
+    it("enables game mode AND its sounds in one click", () => {
+        render(<PlayfulModeHint />);
+        fireEvent.click(
+            screen.getByTestId("lesson-playful-hint-activate-sound"),
+        );
+        expect(readPlayfulMode()).toBe(true);
+        expect(readPlayfulSounds()).toBe(true);
+        expect(
+            screen.queryByTestId("lesson-playful-hint"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("the plain turn-on leaves sounds off", () => {
+        render(<PlayfulModeHint />);
+        fireEvent.click(screen.getByTestId("lesson-playful-hint-activate"));
+        expect(readPlayfulMode()).toBe(true);
+        expect(readPlayfulSounds()).toBe(false);
     });
 });

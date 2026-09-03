@@ -94,6 +94,7 @@ async function starsForAward(
 export async function awardLessonXpDexie(
     userId: string,
     progress: LessonProgress,
+    comboBonusXp = 0,
 ): Promise<XPAwardResult> {
     const today = nowIso().slice(0, 10);
     const activity = await userActivityDates(userId);
@@ -114,11 +115,14 @@ export async function awardLessonXpDexie(
     // corrected (not first-try) run never earns the no-mistakes bonus.
     const stars = await starsForAward(userId, progress, mode);
     const xpMultiplier = configForMode(mode).xpMultiplier;
+    // #2893 - the game-mode combo bonus rides the upsert body; the
+    // calculator clamps it to the shared hard ceiling.
     const award: XPAward = calculateLessonSessionXp({
         stars,
         first_attempt: firstAttempt,
         streak_days: streakDays,
         xp_multiplier: xpMultiplier,
+        combo_bonus: comboBonusXp,
     });
 
     const {row, levelUp} = await persistXP(userId, award.xp_earned);

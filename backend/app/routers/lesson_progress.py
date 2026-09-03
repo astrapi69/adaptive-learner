@@ -99,6 +99,7 @@ def upsert_lesson_progress(
         step_result=step_result,
         time_spent_seconds_delta=payload.time_spent_seconds_delta,
         current_step=payload.current_step,
+        combo_bonus_xp=payload.combo_bonus_xp,
         mark_completed=payload.mark_completed,
         mark_paused=payload.mark_paused,
         mark_abandoned=payload.mark_abandoned,

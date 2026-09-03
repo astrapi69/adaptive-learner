@@ -291,7 +291,10 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         ],
     );
 
-    const markCompleted = useCallback(async () => {
+    const markCompleted = useCallback(async (options?: {
+        /** #2893 - game-mode combo bonus for this run (already capped). */
+        comboBonusXp?: number;
+    }) => {
         if (!userId || lesson === null) return;
         const timeDelta = _consumeStepTime();
         try {
@@ -304,6 +307,10 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                     lesson_mode: lessonModeRef.current,
                     time_spent_seconds_delta: timeDelta,
                     mark_completed: true,
+                    combo_bonus_xp: Math.max(
+                        0,
+                        Math.min(20, Math.trunc(options?.comboBonusXp ?? 0)),
+                    ),
                 },
             );
             setProgress(updated);

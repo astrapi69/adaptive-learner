@@ -28,6 +28,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 
 import { Button } from "@/components/ui/button";
+
+import FlashRoundCard from "../../components/content/FlashRoundCard";
 import SetShareButton from "../../components/content/share/SetShareButton";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
@@ -322,6 +324,16 @@ export default function SetDeepLink() {
                 </ul>
               </section>
             )}
+
+            {/* #2888 - the set's flash round: self-gating on the game
+                mode + special-rounds switch, locked until the set is
+                finished with at least one star everywhere. */}
+            <FlashRoundCard
+              source={entry.source}
+              setId={entry.id}
+              slug={setSlug(entry.source)}
+              setTitle={entry.title}
+            />
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <Button

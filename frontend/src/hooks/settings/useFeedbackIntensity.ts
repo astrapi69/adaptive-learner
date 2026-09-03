@@ -19,7 +19,7 @@ import {
     FEEDBACK_PREF_CHANGE_EVENT,
     type FeedbackIntensity,
 } from "../../lib/feedback/feedbackPref";
-import {PLAYFUL_MODE_CHANGE_EVENT} from "../../lib/learning/playfulModePref";
+import {PLAYFUL_MODE_CHANGE_EVENT} from "../../lib/learning/playful/playfulModePref";
 
 export function useFeedbackIntensity(): FeedbackIntensity {
     const [intensity, setIntensity] = useState<FeedbackIntensity>(() =>

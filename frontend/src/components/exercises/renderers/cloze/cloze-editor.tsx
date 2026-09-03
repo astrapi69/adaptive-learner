@@ -218,6 +218,7 @@ export function ClozeSelectChoices({
     selectOptions,
     perBlankCorrect,
     onChange,
+    playful = false,
 }: {
     segments: string[];
     blanks: readonly ClozeBlank[];
@@ -226,6 +227,8 @@ export function ClozeSelectChoices({
     selectOptions: string[][];
     perBlankCorrect: boolean[];
     onChange: (idx: number, value: string) => void;
+    /** Game mode (#2876): a picked word hops into its blank. */
+    playful?: boolean;
 }) {
     const {t} = useI18n();
     const hasText = segments.some((s) => s.trim() !== "");
@@ -241,7 +244,13 @@ export function ClozeSelectChoices({
                             <InlineMarkdown>{segment}</InlineMarkdown>
                             {segIdx < blanks.length && (
                                 <span
-                                    className="mx-1 rounded-sm bg-[var(--surface)] px-2 py-0.5 font-semibold"
+                                    key={`sel-${segIdx}-${inputs[segIdx] || ""}`}
+                                    className={cn(
+                                        "mx-1 inline-block rounded-sm bg-[var(--surface)] px-2 py-0.5 font-semibold",
+                                        playful &&
+                                            inputs[segIdx] &&
+                                            "border border-[var(--accent)] motion-safe:animate-[lernfunke-hop_400ms_ease-out]",
+                                    )}
                                     data-testid={`cloze-selected-${segIdx}`}
                                 >
                                     {inputs[segIdx] || "___"}

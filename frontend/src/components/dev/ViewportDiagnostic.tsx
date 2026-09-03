@@ -50,6 +50,17 @@
  * keyboard height — only these raw values can attribute which quantity
  * Safari actually moved during its focus-reveal.
  *
+ * Self-answering report (#2883): the head carries the environment the
+ * open diagnosis questions keep asking for — ``screenW``/``screenH``/``dpr``
+ * (``innerW x scale = screenW`` proves a uniform Safari page zoom without
+ * checking the aA menu), ``standalone`` (installed app vs browser tab) —
+ * plus a ``ua=`` line (iOS version decides ``interactive-widget``
+ * support, 17.4+). Every tap line carries ``t=`` (seconds since probe
+ * mount) and the report gains an ``events`` timeline: each significant
+ * viewport transition (keyboard flip, scale change, an offset-channel
+ * jump of ~a line height) with the full state after it — the drift forms
+ * BETWEEN taps, so the transitions themselves are the evidence.
+ *
  * Ghost-bug recorder (#2782): while enabled, every tap record and every
  * significant viewport transition is ALSO appended to the persistent
  * ring-buffer log (``lib/diagnostics/vv-log``), exportable from the same
@@ -68,6 +79,12 @@ import {
 const FLAG_KEY = "adaptive-learner.vv_diag";
 const PANEL_TESTID = "viewport-diagnostic";
 const MAX_TAPS = 8;
+const MAX_EVENTS = 12;
+
+/** Seconds since ``start`` with 0.1 s precision — the report's relative clock. */
+function relSeconds(start: number): number {
+  return Math.round((Date.now() - start) / 100) / 10;
+}
 
 /** Whether the probe is enabled (URL param wins and persists; else the flag). */
 export function viewportDiagnosticEnabled(): boolean {
@@ -89,6 +106,7 @@ export function viewportDiagnosticEnabled(): boolean {
 }
 
 interface TapInfo {
+  t: number;
   y: number;
   tag: string;
   testid: string;
@@ -104,6 +122,24 @@ interface TapInfo {
   atRootScrollY: number;
 }
 
+/**
+ * One significant viewport transition, kept in the report's own timeline
+ * (#2883). The drift forms BETWEEN taps (reading 4: tap N clean, tap N+1
+ * at vvTop=253), so the report needs the transitions themselves — with
+ * the same relative clock the tap lines carry, and the full state after
+ * the transition.
+ */
+interface VvEventInfo {
+  t: number;
+  winY: number;
+  vvTop: number;
+  kbd: number;
+  scale: number;
+  vvH: number;
+  innerH: number;
+  rootY: number;
+}
+
 interface Snapshot {
   winScrollY: number;
   vvOffsetTop: number;
@@ -116,6 +152,10 @@ interface Snapshot {
   docWidth: number;
   rootScrollY: number;
   docHeight: number;
+  screenWidth: number;
+  screenHeight: number;
+  dpr: number;
+  standalone: boolean;
 }
 
 /**
@@ -129,6 +169,23 @@ function rootScrollTop(): number {
   if (typeof document === "undefined") return 0;
   const root = document.getElementById("root");
   return root ? Math.round(root.scrollTop) : 0;
+}
+
+/**
+ * Whether the page runs as an installed (home-screen) app rather than a
+ * browser tab (#2883) — the two contexts differ in browser chrome and
+ * keyboard behaviour, so the report states which one was measured.
+ */
+function isStandaloneDisplay(): boolean {
+  try {
+    if (window.matchMedia?.("(display-mode: standalone)").matches) {
+      return true;
+    }
+    const nav = navigator as Navigator & { standalone?: boolean };
+    return Boolean(nav.standalone);
+  } catch {
+    return false;
+  }
 }
 
 function readSnapshot(): Snapshot {
@@ -154,6 +211,10 @@ function readSnapshot(): Snapshot {
       typeof document === "undefined"
         ? 0
         : Math.round(document.documentElement.scrollHeight),
+    screenWidth: Math.round(window.screen?.width ?? 0),
+    screenHeight: Math.round(window.screen?.height ?? 0),
+    dpr: Math.round((window.devicePixelRatio || 1) * 100) / 100,
+    standalone: isStandaloneDisplay(),
   };
 }
 
@@ -180,10 +241,18 @@ function activeFix(): string {
 }
 
 /**
- * Whether a viewport change is worth a persistent log entry (#2782):
- * the keyboard opened/closed, the pinch-zoom scale moved, or a phantom
- * offset appeared/disappeared in either channel. Plain address-bar /
- * scroll jitter stays out of the log.
+ * Minimum change (px) in a phantom-offset channel that counts as its own
+ * transition (#2883): roughly one text line. Zero-flips alone missed the
+ * reading-1 drift growing 89 -> 155 -> 191 (all non-zero).
+ */
+const OFFSET_STEP_PX = 24;
+
+/**
+ * Whether a viewport change is worth a persistent log entry (#2782) and
+ * a row in the report's event timeline (#2883): the keyboard
+ * opened/closed, the pinch-zoom scale moved, or a phantom offset
+ * appeared/disappeared OR moved by at least {@link OFFSET_STEP_PX} in
+ * either channel. Plain address-bar / scroll jitter stays out.
  */
 function isSignificantTransition(prev: Snapshot, next: Snapshot): boolean {
   const kbdFlipped =
@@ -191,29 +260,60 @@ function isSignificantTransition(prev: Snapshot, next: Snapshot): boolean {
   const scaleMoved = prev.vvScale !== next.vvScale;
   const vvTopFlipped = (prev.vvOffsetTop !== 0) !== (next.vvOffsetTop !== 0);
   const winYFlipped = (prev.winScrollY !== 0) !== (next.winScrollY !== 0);
-  return kbdFlipped || scaleMoved || vvTopFlipped || winYFlipped;
+  const vvTopStepped =
+    Math.abs(next.vvOffsetTop - prev.vvOffsetTop) >= OFFSET_STEP_PX;
+  const winYStepped =
+    Math.abs(next.winScrollY - prev.winScrollY) >= OFFSET_STEP_PX;
+  return (
+    kbdFlipped ||
+    scaleMoved ||
+    vvTopFlipped ||
+    winYFlipped ||
+    vvTopStepped ||
+    winYStepped
+  );
 }
 
 function tapLine(t: TapInfo): string {
   return (
-    `y=${t.y} ${t.tag}[${t.testid}] top=${t.rectTop} ΔY=${t.deltaY} ` +
+    `t=${t.t} y=${t.y} ${t.tag}[${t.testid}] top=${t.rectTop} ΔY=${t.deltaY} ` +
     `@winY=${t.atWinScrollY} @vvTop=${t.atVvOffsetTop} @kbd=${t.atKbd} ` +
     `@scale=${t.atScale} focus=${t.focus} @vvH=${t.atVvHeight} ` +
     `@innerH=${t.atInnerHeight} @rootY=${t.atRootScrollY}`
   );
 }
 
+function eventLine(e: VvEventInfo): string {
+  return (
+    `t=${e.t} winY=${e.winY} vvTop=${e.vvTop} kbd=${e.kbd} ` +
+    `scale=${e.scale} vvH=${e.vvH} innerH=${e.innerH} rootY=${e.rootY}`
+  );
+}
+
 /** The plain-text report the Copy button (and the selectable block) share. */
-function buildReport(snap: Snapshot, taps: TapInfo[]): string {
+function buildReport(
+  snap: Snapshot,
+  taps: TapInfo[],
+  events: VvEventInfo[],
+): string {
   const head =
     `[vvdiag] fix=${activeFix()} winY=${snap.winScrollY} vvTop=${snap.vvOffsetTop} ` +
     `scale=${snap.vvScale} kbd=${snap.keyboardShrink} vvH=${snap.vvHeight} innerH=${snap.innerHeight} ` +
     `vvW=${snap.vvWidth} innerW=${snap.innerWidth} docW=${snap.docWidth} ` +
-    `rootY=${snap.rootScrollY} docH=${snap.docHeight}`;
-  const body = taps.length
+    `rootY=${snap.rootScrollY} docH=${snap.docHeight} ` +
+    `screenW=${snap.screenWidth} screenH=${snap.screenHeight} dpr=${snap.dpr} ` +
+    `standalone=${snap.standalone ? 1 : 0}`;
+  const ua = `ua=${typeof navigator === "undefined" ? "?" : navigator.userAgent}`;
+  const tapBody = taps.length
     ? taps.map((t, i) => `${i + 1}. ${tapLine(t)}`).join("\n")
     : "(no taps yet)";
-  return `${head}\ntaps (newest first):\n${body}`;
+  const eventBody = events.length
+    ? events.map((e, i) => `${i + 1}. ${eventLine(e)}`).join("\n")
+    : "(no events yet)";
+  return (
+    `${head}\n${ua}\ntaps (newest first):\n${tapBody}\n` +
+    `events (newest first):\n${eventBody}`
+  );
 }
 
 export default function ViewportDiagnostic() {
@@ -228,11 +328,15 @@ export default function ViewportDiagnostic() {
   const panelVisible = useVvPanelVisible();
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [taps, setTaps] = useState<TapInfo[]>([]);
+  const [events, setEvents] = useState<VvEventInfo[]>([]);
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
   // Latest values kept in refs so the Copy handler reads them without re-binding.
   const snapRef = useRef<Snapshot | null>(null);
   const tapsRef = useRef<TapInfo[]>([]);
+  const eventsRef = useRef<VvEventInfo[]>([]);
+  // The report's relative clock starts when the probe mounts (#2883).
+  const startRef = useRef<number>(Date.now());
 
   useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
@@ -240,15 +344,25 @@ export default function ViewportDiagnostic() {
       const s = readSnapshot();
       const prev = snapRef.current;
       if (prev && isSignificantTransition(prev, s)) {
+        const event: VvEventInfo = {
+          t: relSeconds(startRef.current),
+          winY: s.winScrollY,
+          vvTop: s.vvOffsetTop,
+          kbd: s.keyboardShrink,
+          scale: s.vvScale,
+          vvH: s.vvHeight,
+          innerH: s.innerHeight,
+          rootY: s.rootScrollY,
+        };
         appendVvLogEntry({
           kind: "viewport",
           ts: Date.now(),
           fix: activeFix(),
-          winY: s.winScrollY,
-          vvTop: s.vvOffsetTop,
-          scale: s.vvScale,
-          kbd: s.keyboardShrink,
+          ...event,
         });
+        const nextEvents = [event, ...eventsRef.current].slice(0, MAX_EVENTS);
+        eventsRef.current = nextEvents;
+        setEvents(nextEvents);
       }
       snapRef.current = s;
       setSnap(s);
@@ -270,6 +384,7 @@ export default function ViewportDiagnostic() {
       const rectTop = rect ? Math.round(rect.top) : 0;
       const vv = window.visualViewport;
       const tap: TapInfo = {
+        t: relSeconds(startRef.current),
         y: Math.round(e.clientY),
         tag: el ? el.tagName.toLowerCase() : "?",
         testid: (el?.getAttribute?.("data-testid") ?? "") || "-",
@@ -311,6 +426,7 @@ export default function ViewportDiagnostic() {
     const report = buildReport(
       snapRef.current ?? readSnapshot(),
       tapsRef.current,
+      eventsRef.current,
     );
     const done = () => {
       setCopied(true);
@@ -327,7 +443,7 @@ export default function ViewportDiagnostic() {
   // panel hidden (#2785) the probe keeps appending to the persistent
   // protocol while rendering nothing — the header/menu stay reachable.
   if (!enabled || !panelVisible || !snap) return null;
-  const report = buildReport(snap, taps);
+  const report = buildReport(snap, taps, events);
   return (
     <div
       className="pointer-events-none fixed inset-x-0 top-0 z-[9999] border-b border-border bg-card/95 px-2 py-1.5 font-mono text-[12px] leading-snug text-fg-primary"

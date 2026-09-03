@@ -780,6 +780,30 @@
     "playful_mode_title": "Mode jeu",
     "playful_mode": "Leçons ludiques",
     "playful_mode_description": "Transforme les leçons en jeu : des félicitations à chaque bonne réponse, des confettis et des célébrations d'étapes. Fonctionne avec tous les modes de leçon ; la notation et la progression restent identiques. Si votre système réduit les animations, le retour reste discret.",
+    "playful_sounds": "Sons du mode jeu",
+    "playful_sounds_description": "Sons brefs en mode jeu : une note à chaque bonne réponse (hauteur croissante par série), un jingle aux points de contrôle et une fanfare à la fin. Indépendants de l'interrupteur général des sons ; le volume suit le curseur.",
+    "playful_sounds_offer": "Jouer avec le son ?",
+    "playful_sounds_offer_yes": "Oui, sons activés",
+    "playful_sounds_offer_later": "Plus tard",
+    "playful_hearts": "Cœurs (vies)",
+    "playful_hearts_description": "Une mauvaise réponse coûte un cœur. À zéro, la session se termine par une invitation bienveillante à réessayer : rien de ce qui est résolu n'est perdu. Désactivé dans les leçons examen et chrono.",
+    "playful_hearts_count": "Cœurs par leçon",
+    "playful_countdown": "Anneau compte à rebours",
+    "playful_countdown_description": "Un petit anneau de temps par exercice. S'il expire, la série se brise et un cœur est perdu ; l'exercice reste ouvert, rien n'est envoyé automatiquement. Désactivé dans les leçons examen et chrono (le mode chrono a son propre minuteur).",
+    "playful_countdown_seconds": "Secondes par exercice",
+    "playful_combo_xp": "XP bonus de série",
+    "playful_combo_xp_description": "À partir de la troisième réponse de la série, chaque bonne réponse d'affilée rapporte +1 XP bonus, plafonné par leçon. Désactivé, les XP du mode jeu restent identiques au mode normal.",
+    "playful_combo_xp_cap": "Plafond d'XP bonus par leçon",
+    "playful_arcade": "Arcade",
+    "playful_arcade_description": "De courts mini-jeux comme récompense du mode jeu : le Memory d'apprentissage avec tes cartes de leçon, plus le classique Snake à débloquer avec des XP. Désactivé masque entièrement la carte de l'arcade et les jeux.",
+    "playful_arcade_snake_seconds": "Durée d'une manche de Snake (secondes)",
+    "playful_arcade_memory_pairs": "Paires du Memory",
+    "playful_special_rounds": "Manches spéciales",
+    "playful_special_rounds_description": "Terminer un set (chaque leçon avec au moins une étoile) débloque une manche éclair construite avec ses cartes les plus difficiles, jouée avec l'anneau de compte à rebours. Désactivé masque entièrement la carte de la manche éclair.",
+    "playful_flash_round_cards": "Cartes de la manche éclair",
+    "playful_tickets": "Tickets de jeu",
+    "playful_tickets_description": "Gagne des tickets d'arcade par ta performance : une leçon avec un score parfait, un parcours terminé avec tous les cœurs et les jalons de série (3/7/14/30 jours). Un ticket joue une manche d'un jeu d'arcade verrouillé. Désactivé, l'arcade ne garde que les déblocages par XP.",
+    "playful_ticket_cap": "Tickets maximum",
     "feedback_intensity": "Intensité du retour",
     "feedback_intensity_description": "À quel point l'application célèbre tes progrès.",
     "feedback_intensity_subtle": "Discret",
@@ -1523,6 +1547,47 @@
     "danger_zone_continue": "Continuer",
     "danger_zone_failed_toast": "La réinitialisation a échoué :"
   },
+  "arcade": {
+    "title": "Arcade",
+    "subtitle": "Des manches courtes, une à deux minutes : une récompense du mode jeu. Pas d'XP, juste du plaisir.",
+    "card_description": "Des manches courtes de Memory d'apprentissage et de Snake : ta récompense du mode jeu.",
+    "card_open": "Vers l'arcade",
+    "requires_playful": "L'arcade fait partie du mode jeu. Active le mode jeu (et l'interrupteur de l'arcade) dans les réglages.",
+    "open_settings": "Ouvrir les réglages",
+    "play": "Jouer",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "restart": "Recommencer",
+    "back_to_games": "Retour aux jeux",
+    "unlock_for_xp": "Débloquer pour {n} XP",
+    "unlock_confirm": "Vraiment débloquer pour {n} XP ?",
+    "unlock_not_enough_xp": "Pas encore assez d'XP : continue d'apprendre !",
+    "tickets_label": "Tickets : {n}",
+    "ticket_play": "Jouer une manche avec un ticket",
+    "tickets_hint": "Gagne des tickets avec des leçons parfaites, des parcours avec tous les cœurs et des jalons de série.",
+    "memory": {
+      "name": "Memory d'apprentissage",
+      "description": "Retrouve les paires terme-traduction de tes leçons.",
+      "set_label": "Set de leçons",
+      "loading": "Chargement des cartes ...",
+      "empty": "Aucun set téléchargé avec assez de cartes. Télécharge d'abord un set de leçons.",
+      "load_failed": "Le chargement des cartes a échoué. Essaie un autre set.",
+      "progress": "Paires : {a} / {b}",
+      "attempts": "Essais : {n}",
+      "won": "Toutes les paires trouvées en {n} essais !"
+    },
+    "snake": {
+      "name": "Snake",
+      "description": "Le classique : ramasse la nourriture, grandis, ne te mords pas toi-même.",
+      "score": "Points : {n}",
+      "time_left": "Temps : {n}s",
+      "goal": "Objectif : {n} points",
+      "highscore": "Record : {n}",
+      "board_aria": "Plateau de Snake : dirige avec les flèches ou en glissant",
+      "won": "Manche gagnée : {n} points !",
+      "lost": "Manche terminée : {n} points. Réessaie !"
+    }
+  },
   "anki": {
     "title": "Exportation Anki",
     "intro": "Examine les cartes suggérées par l'IA, accepte celles que tu veux, puis exporte-les en fichier .apkg pour Anki.",
@@ -1902,7 +1967,19 @@
     "combo_chip": "x{n}",
     "combo_aria": "Série de réponses : {n} d'affilée",
     "combo_best": "Meilleure série : {n}",
+    "combo_bonus_aria": "Bonus de série : {n} XP",
+    "hearts": {
+      "aria": "Vies : {n} sur {max}",
+      "empty_heading": "Plus de cœurs !",
+      "empty_body": "Pas de souci : rien n'est perdu, tout ce qui est résolu reste enregistré. Respire un coup et réessaie la leçon.",
+      "action_retry": "Réessayer",
+      "action_exit": "Quitter la leçon"
+    },
+    "countdown": {
+      "aria": "Anneau de temps : {n}s restantes"
+    },
     "playful_hint_title": "Essayez le mode jeu",
+    "playful_hint_enable_sound": "Activer avec le son",
     "playful_hint_body": "Les leçons célèbrent chaque bonne réponse avec des félicitations et des confettis. Vous pouvez changer cela à tout moment dans les réglages.",
     "playful_hint_activate": "Activer",
     "playful_hint_dismiss": "Ne plus afficher",
@@ -2248,6 +2325,15 @@
         "productive_hint": "Produire la réponse"
       }
     },
+    "flash_round": {
+      "title": "Manche éclair : {set}",
+      "card_title": "Manche éclair",
+      "card_description": "Une manche rapide avec les cartes les plus difficiles de ce set, avec l'anneau de compte à rebours.",
+      "start": "Lancer la manche éclair",
+      "locked_tooltip": "Termine chaque leçon de ce set avec au moins une étoile pour débloquer.",
+      "perfect_tooltip": "Aucune carte d'erreur : ce set est déjà parfait !",
+      "no_content": "Aucune carte d'erreur jouable trouvée pour ce set."
+    },
     "error_replay": {
       "title": "Refaire les erreurs : {lesson}",
       "heading": "Reprise terminée",
@@ -2347,7 +2433,10 @@
       "encourage_0": "C'est en forgeant qu'on devient forgeron !",
       "encourage_1": "Bon début, continue !",
       "encourage_2": "Presque parfait !",
-      "encourage_3": "Score parfait !"
+      "encourage_3": "Score parfait !",
+      "ticket_earned_one": "Récompense débloquée : un ticket de jeu !",
+      "ticket_earned_many": "Récompense débloquée : {n} tickets de jeu !",
+      "ticket_play_now": "Jouer maintenant"
     },
     "error": {
       "load_failed": "Impossible de charger la leçon.",

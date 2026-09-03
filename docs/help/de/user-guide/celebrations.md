@@ -59,11 +59,55 @@ Mit aktivem Spielmodus:
   Antwort, Konfetti und Meilenstein-Einblendungen, unabhängig von
   der gewählten Feedback-Intensität. "Bewegung reduzieren" im
   System gewinnt weiterhin, und Töne bleiben ein eigener Schalter.
+- Mit dem Schalter **Spielmodus-Sounds** (direkt beim
+  Spielmodus-Schalter, Standard aus) bekommt der Modus seinen
+  eigenen Klang: ein Ton bei jeder richtigen Antwort, dessen Höhe
+  mit der Serie steigt, ein Checkpoint-Jingle und eine
+  Abschluss-Fanfare - unabhängig vom globalen Töne-Schalter, die
+  Lautstärke folgt dem Regler.
 - Richtige Antworten in Folge bauen eine sichtbare **Serie** auf
   (Flammen-Chip neben der Fortschrittsleiste); ein "+1" steigt von
   jeder richtigen Antwort auf, die Fortschrittsleiste trägt
   Checkpoint-Punkte, und die Zusammenfassung zeigt deine beste
   Serie. Punktzahl und Fortschritt bleiben davon unberührt.
+- Übungen sehen spielerischer aus: Multiple-Choice-Antworten
+  werden zu großen Kacheln, gewählte Wörter springen im Lückentext
+  in die Lücke, und Zuordnungs-Paare schnappen mit einem Pop
+  zusammen. Bedienung und Bewertung sind identisch zum normalen
+  Look.
+- Für mehr Spannung gibt es zwei Extras, beide standardmäßig aus:
+  **Herzen** (eine falsche Antwort kostet ein Leben; bei null endet
+  der Durchlauf mit einem freundlichen Nochmal-Angebot, nichts geht
+  verloren) und ein **Countdown-Ring** pro Übung (läuft er ab, reißt
+  die Serie und ein Herz geht verloren - die Übung bleibt offen).
+  Beide sind in Prüfungs- und Auf-Zeit-Lektionen aus, und die
+  Korrektur-Runde kostet nie Herzen.
+- **Serien-Bonus-XP** (Standard an): ab der dritten richtigen
+  Antwort in Folge bringt jede weitere +1 Bonus-XP, gedeckelt pro
+  Lektion (einstellbar 5-20, Standard 10). Die Zusammenfassung
+  zeigt den Bonus als "+N XP" neben der besten Serie; im
+  Prüfungsmodus und mit ausgeschaltetem Schalter gibt es keinen
+  Bonus.
+- Die **Arcade** (Standard an, abschaltbar) belohnt dich mit zwei
+  kurzen Minispielen, erreichbar über die Dashboard-Karte: das
+  **Lern-Memory** mit echten Karten aus deinen heruntergeladenen
+  Lektionssets (frei) und der Klassiker **Snake** (freischaltbar
+  gegen XP). Rundenlänge und Paar-Anzahl stellst du in den
+  Spielmodus-Einstellungen ein; die Spiele vergeben keine XP.
+- **Sonderrunden** (Standard an, abschaltbar): schließt du ein Set
+  mit mindestens einem Stern in jeder Lektion ab, schaltet das eine
+  **Blitzrunde** frei - eine schnelle Runde aus den kniffligsten
+  Karten des Sets, gespielt mit dem Countdown-Ring. Der Einstieg
+  sitzt auf der Set-Übersicht; die Kartenzahl stellst du in den
+  Spielmodus-Einstellungen ein.
+- **Spiel-Tickets** (Standard an, abschaltbar): Leistung verdient
+  Arcade-Tickets - eine Lektion mit voller Punktzahl, ein Durchlauf
+  mit allen Herzen und Streak-Meilensteine (3/7/14/30 Tage) bringen
+  je ein Ticket. Die Zusammenfassung bietet nach dem Verdienst den
+  Sprung in die Arcade an; ein Ticket spielt eine Runde eines noch
+  gesperrten Spiels, ohne den XP-Kauf. Die maximale Anzahl
+  ansparbarer Tickets stellst du in den Spielmodus-Einstellungen
+  ein.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet
@@ -75,4 +119,6 @@ Mit aktivem Spielmodus:
   Details in den [Einstellungen](settings.md).
 
 Punktzahl, Sterne und Fortschritt bleiben im Spielmodus unverändert -
-er ändert nur, wie gefeiert wird.
+er ändert nur, wie gefeiert wird. Die eine bewusste Ausnahme sind die
+Serien-Bonus-XP oben: kleine, gedeckelte Extra-XP, die du jederzeit
+abschalten kannst.

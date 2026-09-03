@@ -363,6 +363,54 @@ def test_mark_completed_triggers_gamification_xp_award(client: TestClient):
         db.close()
 
 
+def test_mark_completed_with_combo_bonus_adds_to_xp(client: TestClient):
+    """#2893 - a combo_bonus_xp sent with the completing upsert is
+    credited additively on top of the lesson formula (here: the
+    100-XP baseline of the sibling test + 7 bonus)."""
+    user_id = _make_user(client, name="E2E-Combo")
+    _post_step(client, user_id, LESSON_A)
+    response = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON_A,
+            "mark_completed": True,
+            "combo_bonus_xp": 7,
+        },
+    )
+    assert response.status_code == 200, response.text
+
+    db = SessionLocal()
+    try:
+        xp = db.query(UserXP).filter(UserXP.user_id == user_id).one_or_none()
+        assert xp is not None
+        assert xp.total_xp == 107, (
+            f"Expected 100 (lesson formula) + 7 combo bonus; got {xp.total_xp}"
+        )
+    finally:
+        db.close()
+
+
+def test_combo_bonus_rejected_above_hard_cap(client: TestClient):
+    """#2893 - the schema clamps the transport: values above the hard
+    cap (20) are rejected with 422, a stale/manipulated client cannot
+    inflate the bonus."""
+    user_id = _make_user(client, name="E2E-Combo-Cap")
+    _post_step(client, user_id, LESSON_A)
+    response = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON_A,
+            "mark_completed": True,
+            "combo_bonus_xp": 21,
+        },
+    )
+    assert response.status_code == 422
+
+
 def test_pseudo_project_not_listed_under_user_via_existing_route(
     client: TestClient,
 ):

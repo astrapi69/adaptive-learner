@@ -598,6 +598,188 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Backup-Roundtrip: Export -> Wipe -> Import stellt gewählte und
       gekaufte Varianten wieder her (beide Speicher-Modi)
 
+#### Spielmodus-Sounds (#2875)
+
+- [ ] Settings -> Lernen -> Spielmodus: unter dem Modus-Schalter der
+      Schalter "Spielmodus-Sounds" (Standard aus) mit Hinweistext
+- [ ] Spielmodus einschalten, ohne die Sound-Frage je beantwortet zu
+      haben: Angebot "Mit Sound spielen?" mit "Ja, Sounds an" /
+      "Später"; "Ja" aktiviert die Sounds, "Später" nicht - beides
+      lässt das Angebot dauerhaft verschwinden
+- [ ] Lektionsstart-Banner (Spielmodus aus, nie ausgeblendet): neben
+      "Einschalten" der Knopf "Mit Sound einschalten" - aktiviert
+      Modus UND Sounds in einem Klick
+- [ ] Sounds an, globale Töne AUS: richtige Antwort klingt (Ton steigt
+      mit der Serie hörbar an), falsche Antwort dumpfer Ton,
+      Checkpoint-Jingle beim Überschreiten, Fanfare beim
+      Lektionsabschluss; Lautstärke folgt dem bestehenden Regler
+- [ ] Spielmodus-Sounds AUS und globale Töne AUS: alles still;
+      globale Töne AN verhalten sich wie bisher (keine
+      Spielmodus-Fanfare, kein Serien-Anstieg außerhalb des
+      Spielmodus)
+- [ ] Prüfungsmodus + Spielmodus + Sounds: kein Ton pro Antwort (kein
+      Sofort-Feedback); die Abschluss-Fanfare bleibt erlaubt
+
+#### Spannungssysteme: Herzen + Countdown-Ring (#2878, opt-in, Standard aus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: die Schalter "Herzen (Leben)"
+      und "Countdown-Ring" sind standardmäßig AUS; die Zahlenfelder
+      (Herzen pro Lektion, Sekunden pro Übung) sind erst nach dem
+      Einschalten des jeweiligen Schalters bedienbar und klemmen auf
+      1-5 bzw. 5-120
+- [ ] Herzen an + Spielmodus an: neben dem Serien-Chip erscheint die
+      Herz-Leiste (gefüllt); jede falsche Antwort leert ein Herz mit
+      kurzem Schütteln
+- [ ] Bei 0 Herzen: freundlicher Dialog "Keine Herzen mehr!" mit
+      "Nochmal versuchen" (startet die Lektion neu, Herzen voll) und
+      "Lektion verlassen" (zur Übersicht); nichts Gelöstes geht verloren
+- [ ] Korrektur-Runde in der Zusammenfassung: Fehler beheben kostet
+      KEINE Herzen (die Leiste ist dort ausgeblendet)
+- [ ] Countdown-Ring an: pro Übung läuft ein kleiner Ring (grün > gelb
+      > rot, Puls in den letzten 5 Sekunden); Ablauf reißt die Serie,
+      kostet ein Herz (falls an) und spielt den Fehl-Ton - die Übung
+      bleibt aber offen und normal lösbar, nichts wird automatisch
+      abgeschickt; nach dem Prüfen pausiert der Ring
+- [ ] Prüfungsmodus und Auf-Zeit-Modus: weder Herzen noch Ring
+      erscheinen (der Auf-Zeit-Modus behält seinen eigenen Zeitbalken)
+- [ ] Bewertung unverändert: Punktzahl, Sterne und Fortschritt sind
+      mit und ohne Spannungssysteme identisch
+
+#### Serien-Bonus-XP (#2893, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+      "Serien-Bonus-XP" ist standardmäßig AN; das Zahlenfeld
+      "Bonus-XP-Obergrenze pro Lektion" ist bedienbar, klemmt auf 5-20
+      (Standard 10) und wird beim Ausschalten des Schalters gesperrt
+- [ ] Spielmodus an, Lektion mit einer Serie von mindestens 3 richtigen
+      Antworten in Folge spielen: in der Zusammenfassung steht neben
+      "Beste Serie: N" ein grünes "+N XP"; die angezeigten Lektions-XP
+      enthalten den Bonus, und "Als erledigt markieren" schreibt exakt
+      denselben Wert gut (Dashboard-XP steigen um die angezeigte Summe)
+- [ ] Der Bonus zählt ab der DRITTEN Serienantwort (+1 pro weiterer
+      richtiger Antwort in Folge); eine falsche Antwort stoppt das
+      Wachstum, eine neue Serie ab 3 zählt weiter
+- [ ] Obergrenze: mit Deckel 5 und einer langen Serie zeigt die
+      Zusammenfassung höchstens "+5 XP"
+- [ ] Schalter aus ODER Spielmodus aus: kein "+N XP" in der
+      Zusammenfassung, die XP sind identisch zum normalen Modus
+- [ ] Prüfungsmodus: kein Serien-Bonus (der Prüfungs-Multiplikator
+      bleibt unverändert)
+
+#### Arcade-Minispiele (#2887, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Arcade" ist
+      standardmäßig AN; die Zahlenfelder "Snake-Rundenlänge" (30-120,
+      Standard 60) und "Memory-Paare" (4-12, Standard 8) klemmen und
+      sind bei ausgeschaltetem Schalter gesperrt
+- [ ] Spielmodus an: auf dem Dashboard erscheint die Arcade-Karte;
+      "Zur Arcade" öffnet die Spieleliste. Arcade-Schalter aus ODER
+      Spielmodus aus: die Karte verschwindet komplett; ein direkter
+      Aufruf von /arcade zeigt einen freundlichen Hinweis mit Link in
+      die Einstellungen
+- [ ] Lern-Memory (frei): Set-Auswahl zeigt nur heruntergeladene
+      Sets und ist mit dem zuletzt gelernten Set vorbelegt (#2899),
+      nicht mit dem ersten der Liste; ohne Lernfortschritt bleibt das
+      erste Set vorbelegt; das Brett hat zwei Karten pro Paar (Begriff und
+      Übersetzung aus echten Lektionskarten); ein Paar bleibt offen
+      liegen, ein Fehlversuch zählt hoch und klappt beim nächsten
+      Aufdecken zu; alle Paare gefunden zeigt die Gewinn-Meldung mit
+      Versuchszahl
+- [ ] Snake (gesperrt): auf der Spielkarte steht "Für 200 XP
+      freischalten"; mit zu wenig XP ist der Knopf gesperrt (Tooltip);
+      der Kauf braucht ZWEI Klicks (Bestätigungstext), zieht 200 XP ab
+      (Kopfzeilen-XP sinken) und Snake wird dauerhaft spielbar (bleibt
+      nach Reload freigeschaltet und reist im Backup mit)
+- [ ] Snake spielen: Steuerung mit Pfeiltasten/WASD UND Wischgesten;
+      Pause hält Uhr und Schlange an; Futter macht die Schlange
+      länger (+1 Punkt); Wand oder eigener Körper beendet die Runde;
+      Ablauf der Rundenzeit zeigt das Ergebnis (gewonnen ab 5
+      Punkten); der lokale Bestwert erscheint als reine Anzeige
+- [ ] Spiele vergeben KEINE XP (Kopfzeilen-XP unverändert nach einer
+      gewonnenen Runde)
+- [ ] Reduzierte Bewegung im System: keine Flip-/Blinkeffekte in
+      beiden Spielen
+
+#### Blitzrunden (#2888, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Sonderrunden"
+      ist standardmäßig AN; das Zahlenfeld "Blitzrunden-Karten" klemmt
+      auf 5-20 (Standard 10) und ist bei ausgeschaltetem Schalter
+      gesperrt
+- [ ] Set-Übersicht (/content/set/...) bei aktivem Spielmodus: die
+      Blitzrunden-Karte erscheint; solange nicht jede Lektion des Sets
+      mit mindestens einem Stern abgeschlossen ist, ist der
+      Start-Knopf gesperrt mit Tooltip (Freischalt-Bedingung)
+- [ ] Set komplett (jede Lektion mit mindestens einem Stern) und
+      Fehlerkarten vorhanden: der Start öffnet die Blitzrunde - Titel
+      "Blitzrunde: {Set}", pro Übung läuft der Countdown-Ring (Ablauf
+      reißt die Serie, nichts wird automatisch abgeschickt), die
+      Übungen stammen aus den fehlerträchtigsten Karten des Sets
+- [ ] Der Zurück-Knopf der Blitzrunde führt zur Set-Übersicht zurück
+      (nicht zu einer Lektion)
+- [ ] Perfektes Set (keine Fehlerkarten): der Start-Knopf bleibt
+      gesperrt mit dem Perfekt-Tooltip
+- [ ] Sonderrunden-Schalter aus ODER Spielmodus aus: die
+      Blitzrunden-Karte verschwindet komplett
+- [ ] Gewöhnliches "Fehler wiederholen" aus der Zusammenfassung:
+      unverändert, KEIN Countdown-Ring
+- [ ] Scoring/SRS: die Blitzrunde schreibt keine Lektions-Fortschritte;
+      korrigierte Fehlerkarten verbessern wie beim Fehler-Wiederholen
+      nur den SRS-Stand
+
+#### Spiel-Tickets (#2889, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Spiel-Tickets"
+      ist standardmäßig AN; das Zahlenfeld "Maximale Tickets" klemmt
+      auf 1-10 (Standard 5) und ist bei ausgeschaltetem Schalter
+      gesperrt
+- [ ] Lektion mit voller Punktzahl abschließen: die Zusammenfassung
+      zeigt das Ticket-Banner ("Belohnung freigeschaltet ...") mit dem
+      Knopf "Jetzt spielen", der zur Arcade führt
+- [ ] Herzen aktiv (#2878) und Durchlauf ohne Herzverlust beendet: ein
+      weiteres Ticket (volle Punktzahl + alle Herzen = 2 Tickets)
+- [ ] Streak-Meilensteine (3/7/14/30 Tage): beim Erreichen gibt es je
+      ein Bonus-Ticket, jeder Meilenstein nur einmal
+- [ ] Obergrenze: mehr Tickets als das Maximum lassen sich nicht
+      ansparen; ein durch die Obergrenze blockierter Meilenstein wird
+      nachgereicht, sobald wieder Platz ist
+- [ ] Wiederbesuch der Zusammenfassung einer bereits abgeschlossenen
+      Lektion: KEIN neues Ticket (kein Farmen); "Nochmal üben" mit
+      neuem perfekten Durchlauf verdient regulär
+- [ ] Korrektur-Runde und Fehler-Wiederholen vergeben keine Tickets;
+      eine nachträglich korrigierte Lektion wird dadurch nicht
+      "voll bepunktet"
+- [ ] Prüfungsmodus: volle Punktzahl verdient das Ticket nach derselben
+      Regel
+- [ ] Arcade-Seite und Dashboard-Arcade-Karte zeigen den Ticket-Stand
+      ("Tickets: N"); die Anzeige verschwindet bei ausgeschaltetem
+      Ticket-Schalter
+- [ ] Gesperrtes Spiel (Snake ohne XP-Kauf) mit Ticket-Guthaben: der
+      Knopf "Eine Runde mit Ticket spielen" startet eine Runde und
+      zieht genau ein Ticket ab; ohne Guthaben fehlt der Knopf
+- [ ] Ticket-Schalter aus: die Arcade bietet nur den XP-Kauf bzw.
+      bestehende Freischaltungen an
+- [ ] Backup-Export > Wipe > Import: der Ticket-Stand übersteht die
+      Runde (localStorage-Snapshot)
+
+#### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
+
+- [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln
+      (ab Tablet-Breite zweispaltig); die gewählte Kachel ploppt kurz
+      und bekommt einen Akzentrahmen; nach dem Prüfen hüpft die richtig
+      gewählte Kachel, eine falsch gewählte schüttelt sich
+- [ ] Lückentext mit Wortauswahl: das angetippte Wort "springt" mit
+      einem kleinen Hüpfer in die Lücke im Satz; ein Wechsel der Wahl
+      wiederholt den Hüpfer mit dem neuen Wort
+- [ ] Zuordnungsübung: ein frisch gebildetes Paar "schnappt" mit einem
+      Pop auf beiden Kacheln zusammen; nach dem Prüfen hüpfen die
+      richtigen Paare kurz; das Antippen eines Paars löst es weiterhin
+- [ ] Verhalten unverändert: Auswahl, Prüfen, Punktzahl und Auflösung
+      sind in allen drei Übungstypen identisch zum normalen Modus
+- [ ] Spielmodus aus: klassische Listen/Chips/Kacheln ohne die
+      Spiel-Optik; reduzierte Bewegung im System: die Formen bleiben,
+      alle Hüpf-/Pop-Animationen entfallen
+
 #### Juice-Paket (#2874, nur bei aktivem Spielmodus)
 
 - [ ] Lektion spielen, zwei richtige Antworten in Folge: neben der

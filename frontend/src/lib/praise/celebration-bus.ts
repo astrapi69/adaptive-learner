@@ -19,6 +19,7 @@
  */
 
 import {playSound, type SoundName} from "../audio/sound-effects";
+import {playfulSoundsActive} from "../learning/playful/playfulSoundsPref";
 import {enqueueMilestone} from "../feedback/celebrationQueue";
 import {
     allowsMilestones,
@@ -35,6 +36,7 @@ import {nextPraise} from "./phrase-picker";
 export type CelebrationType =
     | "answer_correct"
     | "answer_wrong"
+    | "checkpoint"
     | "stars_earned"
     | "confetti"
     | "lesson_complete"
@@ -60,6 +62,7 @@ const listeners = new Set<Listener>();
 const SOUND_MAP: Partial<Record<CelebrationType, SoundName>> = {
     answer_correct: "correct_answer",
     answer_wrong: "wrong_answer",
+    checkpoint: "checkpoint",
     stars_earned: "star_earned",
     confetti: "confetti",
     badge_earned: "badge_earned",
@@ -76,10 +79,36 @@ export function subscribeCelebration(cb: Listener): () => void {
     return () => listeners.delete(cb);
 }
 
+// #2875 game mode: the correct-answer tone rises with the streak.
+// The bus sees every per-answer event, so it tracks the run itself
+// (same semantics as the lesson combo reducer); capped so the pitch
+// stays pleasant. Outside game-mode sounds the pitch stays flat -
+// the classic global-sounds behavior is unchanged.
+const MAX_PITCH_STEPS = 8;
+let soundStreak = 0;
+
+function pitchStepsFor(event: CelebrationEvent): number {
+    if (event.type === "answer_correct") {
+        soundStreak += 1;
+        return playfulSoundsActive()
+            ? Math.min(soundStreak - 1, MAX_PITCH_STEPS)
+            : 0;
+    }
+    if (event.type === "answer_wrong") soundStreak = 0;
+    return 0;
+}
+
 /** Emit a celebration event: play its sound + notify listeners. */
 export function emitCelebration(event: CelebrationEvent): void {
+    const pitchSteps = pitchStepsFor(event);
     const sound = SOUND_MAP[event.type];
-    if (sound) playSound(sound);
+    if (sound) playSound(sound, {pitchSteps});
+    // #2875: the game mode gets a completion fanfare; the global
+    // mapping deliberately keeps lesson_complete silent (the 3-star
+    // case emits stars_earned separately).
+    if (event.type === "lesson_complete" && playfulSoundsActive()) {
+        playSound("fanfare");
+    }
     for (const listener of listeners) {
         try {
             listener(event);

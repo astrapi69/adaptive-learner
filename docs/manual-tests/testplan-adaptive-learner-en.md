@@ -561,6 +561,179 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Backup round-trip: export -> wipe -> import restores selected and
       purchased variants (both storage modes)
 
+#### Game mode sounds (#2875)
+
+- [ ] Settings -> Learning -> Game mode: below the mode switch, the
+      "Game mode sounds" switch (default off) with a hint text
+- [ ] Turn game mode on without ever answering the sound question: the
+      "Play with sound?" offer with "Yes, sounds on" / "Later"; "Yes"
+      enables the sounds, "Later" does not - both make the offer
+      disappear permanently
+- [ ] Lesson-start banner (game mode off, never dismissed): next to
+      "Turn on", the "Turn on with sound" button - enables mode AND
+      sounds in one click
+- [ ] Sounds on, global sounds OFF: a correct answer plays a tone
+      (audibly rising with the streak), a wrong answer a low thud, a
+      checkpoint jingle on crossing, a fanfare on lesson completion;
+      volume follows the existing slider
+- [ ] Game mode sounds OFF and global sounds OFF: everything silent;
+      global sounds ON behave as before (no game-mode fanfare, no
+      streak rise outside game mode)
+- [ ] Exam mode + game mode + sounds: no per-answer tone (no immediate
+      feedback); the completion fanfare stays allowed
+
+#### Tension systems: hearts + countdown ring (#2878, opt-in, default off)
+
+- [ ] Settings > Learning > Game Mode: the "Hearts (lives)" and
+      "Countdown ring" switches are OFF by default; the number inputs
+      (hearts per lesson, seconds per exercise) only become editable
+      after enabling their switch and clamp to 1-5 / 5-120
+- [ ] Hearts on + game mode on: the hearts row appears next to the
+      streak chip (filled); every wrong answer empties one heart with
+      a short shake
+- [ ] At 0 hearts: a friendly "Out of hearts!" dialog offers "Try
+      again" (restarts the lesson, hearts refilled) and "Leave lesson"
+      (back to the overview); nothing solved is lost
+- [ ] Correction round on the summary: fixing mistakes costs NO
+      hearts (the row is hidden there)
+- [ ] Countdown ring on: a small ring runs per exercise (green >
+      yellow > red, pulse in the last 5 seconds); expiry breaks the
+      streak, costs a heart (if on) and plays the wrong tone - but
+      the exercise stays open and normally solvable, nothing is
+      auto-submitted; the ring pauses after checking
+- [ ] Exam mode and timed mode: neither hearts nor ring appear (the
+      timed mode keeps its own time bar)
+- [ ] Grading unchanged: score, stars and progress are identical with
+      and without the tension systems
+
+#### Streak bonus XP (#2893, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Streak bonus XP" switch is
+      ON by default; the "Bonus XP cap per lesson" number input is
+      editable, clamps to 5-20 (default 10) and is disabled while the
+      switch is off
+- [ ] Game mode on, play a lesson with a streak of at least 3 correct
+      answers in a row: the summary shows a green "+N XP" next to
+      "Best streak: N"; the displayed lesson XP include the bonus, and
+      "Mark as complete" credits exactly the same value (dashboard XP
+      rise by the displayed sum)
+- [ ] The bonus counts from the THIRD streak answer (+1 per further
+      correct answer in a row); a wrong answer stops the growth, a new
+      streak from 3 keeps counting
+- [ ] Cap: with the cap at 5 and a long streak, the summary shows at
+      most "+5 XP"
+- [ ] Switch off OR game mode off: no "+N XP" on the summary, XP are
+      identical to normal mode
+- [ ] Exam mode: no streak bonus (the exam multiplier is unchanged)
+
+#### Arcade mini-games (#2887, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Arcade" switch is ON by
+      default; the "Snake round length" (30-120, default 60) and
+      "Memory pairs" (4-12, default 8) number inputs clamp and are
+      disabled while the switch is off
+- [ ] Game mode on: the arcade card appears on the dashboard; "To the
+      arcade" opens the game list. Arcade switch off OR game mode off:
+      the card disappears entirely; visiting /arcade directly shows a
+      friendly notice with a link to the settings
+- [ ] Learn Memory (free): the set picker lists downloaded sets only
+      and is preselected with the most recently learned set (#2899),
+      not the first in the list; without any progress the first set
+      stays preselected;
+      the board has two cards per pair (term and translation from real
+      lesson cards); a matched pair stays open, a mismatch counts a
+      try and folds away on the next reveal; finding every pair shows
+      the win message with the try count
+- [ ] Snake (locked): the game card offers "Unlock for 200 XP"; with
+      too little XP the button is disabled (tooltip); the purchase
+      takes TWO clicks (confirm text), deducts 200 XP (header XP
+      drops) and Snake stays playable permanently (survives a reload
+      and rides the backup)
+- [ ] Playing Snake: arrow keys/WASD AND swipe gestures steer; pause
+      halts clock and snake; food grows the snake (+1 point); wall or
+      own body ends the round; the round clock running out shows the
+      result (won from 5 points); the local best score is display-only
+- [ ] Games award NO XP (header XP unchanged after a won round)
+- [ ] Reduced motion in the system: no flip/flash effects in either
+      game
+
+#### Flash rounds (#2888, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Special rounds" switch is
+      ON by default; the "Flash-round cards" number input clamps to
+      5-20 (default 10) and is disabled while the switch is off
+- [ ] Set overview (/content/set/...) with game mode on: the
+      flash-round card appears; while not every lesson of the set is
+      completed with at least one star, the start button is disabled
+      with the unlock-condition tooltip
+- [ ] Set finished (every lesson with at least one star) and error
+      cards present: starting opens the flash round - title
+      "Flash round: {set}", the countdown ring runs per exercise
+      (expiry breaks the streak, nothing is auto-submitted), the
+      exercises come from the set's most error-prone cards
+- [ ] The flash round's back button returns to the set overview (not
+      to a lesson)
+- [ ] Perfect set (no error cards): the start button stays disabled
+      with the perfect tooltip
+- [ ] Special-rounds switch off OR game mode off: the flash-round card
+      disappears entirely
+- [ ] A plain "Retry errors" from a lesson summary: unchanged, NO
+      countdown ring
+- [ ] Scoring/SRS: the flash round writes no lesson progress;
+      corrected error cards only advance the SRS state, as in retry
+      errors
+
+#### Game tickets (#2889, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Game tickets" switch is ON
+      by default; the "Maximum tickets" number input clamps to 1-10
+      (default 5) and is disabled while the switch is off
+- [ ] Finishing a lesson with a perfect score: the summary shows the
+      ticket banner ("Reward unlocked ...") with a "Play now" button
+      leading to the arcade
+- [ ] Hearts active (#2878) and a run finished without losing one:
+      one more ticket (perfect score + all hearts = 2 tickets)
+- [ ] Streak milestones (3/7/14/30 days): reaching one grants a bonus
+      ticket, each milestone only once
+- [ ] Cap: no more tickets than the maximum can be saved up; a
+      milestone blocked by the cap is granted later once a slot is
+      free
+- [ ] Revisiting the summary of an already-completed lesson: NO new
+      ticket (no farming); "Practice again" with a fresh perfect run
+      earns normally
+- [ ] The correction round and retry-errors award no tickets; a run
+      corrected after the fact never counts as a perfect score
+- [ ] Exam mode: a perfect score earns the ticket by the same rule
+- [ ] The arcade page and the dashboard arcade card show the balance
+      ("Tickets: N"); the line disappears while the ticket switch is
+      off
+- [ ] A locked game (snake without the XP purchase) with a balance:
+      the "Play one round with a ticket" button starts one round and
+      deducts exactly one ticket; without a balance the button is
+      absent
+- [ ] Ticket switch off: the arcade offers only the XP purchase /
+      existing unlocks
+- [ ] Backup export > wipe > import: the ticket balance survives the
+      round-trip (localStorage snapshot)
+
+#### Playful exercise renderers (#2876, only while game mode is on)
+
+- [ ] Multiple-choice exercise: the answers render as large tiles
+      (two columns from tablet width); the chosen tile pops briefly
+      and gets an accent border; after checking, the correctly chosen
+      tile hops and a wrongly chosen one shakes
+- [ ] Cloze with word choices: the tapped word "jumps" into the blank
+      in the sentence with a small hop; changing the pick replays the
+      hop with the new word
+- [ ] Matching exercise: a freshly formed pair "snaps" together with a
+      pop on both tiles; after checking, correct pairs hop briefly;
+      tapping a pair still undoes it
+- [ ] Behaviour unchanged: selection, checking, score and resolution
+      are identical to normal mode in all three exercise types
+- [ ] Game mode off: classic lists/chips/tiles without the game look;
+      reduced motion in the system: the shapes stay, all hop/pop
+      animations are suppressed
+
 #### Juice package (#2874, only while game mode is on)
 
 - [ ] Play a lesson, two correct answers in a row: the streak chip

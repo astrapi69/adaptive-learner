@@ -294,6 +294,35 @@ describe("awardLessonXpDexie (Phase 50D)", () => {
     });
 });
 
+describe("awardLessonXpDexie combo bonus XP (#2893)", () => {
+    it("adds the bonus AFTER the streak multiplier", async () => {
+        await seedSameDaySession();
+        const progress = buildCompletedProgress({
+            score_correct: 10,
+            score_total: 10,
+            attempts: 1,
+        });
+        const award = await awardLessonXpDexie(USER, progress, 7);
+        // base 30 + star_bonus 30 + first_attempt 20 = 80, x 1.25 = 100, + 7
+        expect(award.xp_earned).toBe(107);
+        expect(award.breakdown.combo_bonus).toBe(7);
+        const row = await getDb().userXp.where({user_id: USER}).first();
+        expect(row?.total_xp).toBe(107);
+    });
+
+    it("clamps a bonus above the hard ceiling to 20", async () => {
+        const progress = buildCompletedProgress({
+            score_correct: 10,
+            score_total: 10,
+            attempts: 1,
+        });
+        const award = await awardLessonXpDexie(USER, progress, 25);
+        // base 30 + star_bonus 30 + first_attempt 20 = 80, + clamped 20
+        expect(award.xp_earned).toBe(100);
+        expect(award.breakdown.combo_bonus).toBe(20);
+    });
+});
+
 describe("DexieStorage.lessonProgress.upsert fires the lesson-XP hook (Phase 50D)", () => {
     it("in_progress -> completed transition awards XP", async () => {
         // First upsert: starts the lesson, status stays in_progress.
@@ -352,6 +381,25 @@ describe("DexieStorage.lessonProgress.upsert fires the lesson-XP hook (Phase 50D
         });
         const secondXp = await getDb().userXp.where({user_id: USER}).first();
         expect(secondXp?.total_xp).toBe(80);
+    });
+
+    it("passes combo_bonus_xp from the upsert body into the award (#2893)", async () => {
+        await dexieStorage.lessonProgress.upsert(USER, {
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            step_result: {
+                step_id: "step1",
+                correct: 10,
+                total: 10,
+                attempts: 1,
+            },
+            mark_completed: true,
+            combo_bonus_xp: 5,
+        });
+        const xpRow = await getDb().userXp.where({user_id: USER}).first();
+        // base 30 + star_bonus 30 + first_attempt 20 = 80, no streak, + 5
+        expect(xpRow?.total_xp).toBe(85);
     });
 
     it("incremental in_progress upserts do NOT award XP", async () => {

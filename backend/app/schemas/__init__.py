@@ -1529,6 +1529,17 @@ class LessonProgressUpsert(BaseModel):
             "the stored value unchanged."
         ),
     )
+    combo_bonus_xp: int = Field(
+        default=0,
+        ge=0,
+        le=20,
+        description=(
+            "#2893 - game-mode combo bonus XP for this run, already "
+            "capped by the client's configured limit; the schema "
+            "clamps to the hard ceiling 20. Only read together with "
+            "``mark_completed``; never stored on the row."
+        ),
+    )
     mark_completed: bool = Field(
         default=False,
         description=(
