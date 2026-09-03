@@ -274,3 +274,13 @@ describe("elementKeysOf fails closed on an unknown type (#2303)", () => {
         expect(elementKeysOf(ex({type: "cloze", blanks: []}))).toEqual([]);
     });
 });
+
+describe("elementKeysOf — ext:al-speak-and-record (#2817, deliberately ungraded)", () => {
+    it("returns [] (a KNOWN type that contributes no SRS rows), never null", () => {
+        const exercise = ex({
+            type: "ext:al-speak-and-record",
+            ext_payload: {sentence: "Guten Tag"},
+        });
+        expect(elementKeysOf(exercise)).toEqual([]);
+    });
+});

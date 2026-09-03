@@ -7,6 +7,7 @@ import MenuToggleButton from "../../shared/layout/MenuToggleButton";
 import NavGroup from "./NavGroup";
 import NavXpBadge from "./NavXpBadge";
 import NavReviewsBadge from "./NavReviewsBadge";
+import NavContentUpdatesBadge from "./NavContentUpdatesBadge";
 import NavAvatar from "./NavAvatar";
 import { NavModeBadge, NavThemeToggle } from "./NavIndicators";
 import { HELP_TARGET, NAV_GROUPS, navTargetsByGroup } from "./nav-targets";
@@ -289,6 +290,7 @@ export default function Navigation() {
         </Button>
       </div>
       <NavReviewsBadge />
+      <NavContentUpdatesBadge />
       <NavXpBadge />
       <NavAvatar />
       <NavThemeToggle theme={theme} tooltipsOn={tooltipsOn} onToggle={toggle} />

@@ -18,11 +18,11 @@ import type {
   ElementError,
   LessonProgress,
   RawAnswer,
-} from "../../storage/types";
+} from "../../../storage/types";
 import {
   deriveCanonicalAnswer,
   type ExerciseBreakdownEntry,
-} from "./lesson-summary";
+} from "../lesson-summary";
 
 /** Localized section labels, resolved by the caller from the
  *  i18n catalog so this module stays language-agnostic. */

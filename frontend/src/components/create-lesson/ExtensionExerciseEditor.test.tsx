@@ -19,6 +19,7 @@ import {
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
+    SPEAK_AND_RECORD_EXT_TYPE,
 } from "../../lib/exercises";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -297,6 +298,47 @@ describe("ExtensionExerciseEditor — dictation", () => {
         render(<Harness exercise={blank} />);
         expect(saveButton("d1")).toBeDisabled();
         expect(screen.getByTestId("exercise-ext-error-d1")).toBeInTheDocument();
+    });
+});
+
+describe("ExtensionExerciseEditor — speak and record (#2817, ungraded)", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "s1",
+            type: SPEAK_AND_RECORD_EXT_TYPE,
+            prompt: "Say it out loud",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {sentence: "Guten Tag"},
+        }) as ContentLessonExercise;
+
+    it("renders the sentence input + the (reused) audio field", () => {
+        render(<Harness exercise={ex()} />);
+        expect(screen.getByTestId("exercise-ext-sar-sentence-s1")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-ext-dict-audio-s1")).toBeInTheDocument();
+    });
+
+    it("commits an edited sentence on Save", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-ext-sar-sentence-s1"), {
+            target: {value: "Auf Wiedersehen"},
+        });
+        fireEvent.click(saveButton("s1"));
+        expect(savedPayload().sentence).toBe("Auf Wiedersehen");
+    });
+
+    it("saves with no audio at all — this extension is ungraded, audio is optional", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.click(saveButton("s1"));
+        expect(savedPayload()).toEqual({sentence: "Guten Tag"});
+    });
+
+    it("disables Save when the sentence is blank", () => {
+        const blank = ex();
+        (blank.ext_payload as {sentence: string}).sentence = "";
+        render(<Harness exercise={blank} />);
+        expect(saveButton("s1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-ext-error-s1")).toBeInTheDocument();
     });
 });
 

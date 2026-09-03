@@ -2860,6 +2860,9 @@
       "mc_prompt": "इसका सही अनुवाद चुनें: {word}"
     },
     "page_title": "मेरी सामग्री",
+    "updates_badge": "{n} अपडेट",
+    "updates_badge_tooltip": "सामग्री के अपडेट उपलब्ध हैं",
+    "updates_badge_action": "सामग्री देखें",
     "intro": "पहले से बने पाठ सेट जिन्हें आप API key के बिना उपयोग कर सकते हैं। डाउनलोड स्थानीय रूप से कैश होते हैं और पहली बार लाने के बाद ऑफ़लाइन काम करते हैं।",
     "sources": "स्रोत",
     "lessons": "पाठ",
@@ -3448,7 +3451,8 @@
         "reading-comprehension": "पठन बोध",
         "graded-quiz": "अंकित प्रश्नोत्तरी",
         "dictation": "श्रुतलेख",
-        "image-description": "छवि विवरण"
+        "image-description": "छवि विवरण",
+        "speak-and-record": "बोलें और रिकॉर्ड करें"
       },
       "edit": {
         "prompt_label": "निर्देश / प्रश्न",
@@ -3476,6 +3480,7 @@
         "dict_accept_remove": "प्रतिलेखन हटाएं",
         "dict_accept_placeholder": "शिक्षार्थी को क्या टाइप करना चाहिए",
         "err_image_description": "एक छवि और कम से कम एक स्वीकृत उत्तर जोड़ें।",
+        "err_speak_and_record": "बोलने के लिए एक वाक्य जोड़ें (और वैकल्पिक रूप से एक संदर्भ ऑडियो)।",
         "imgdesc_image_label": "वर्णन करने के लिए छवि",
         "imgdesc_image_preview_alt": "वर्णन करने के लिए छवि",
         "imgdesc_image_budget_hint": "छवि को संपीड़ित करके एम्बेड किया जाता है (अधिकतम ~150 KB, 512 px) ताकि अभ्यास ऑफ़लाइन काम करे और बैकअप में शामिल रहे। दूरस्थ लिंक की अनुमति नहीं है।",
@@ -3483,6 +3488,8 @@
         "imgdesc_accept_add": "जोड़ें",
         "imgdesc_accept_remove": "उत्तर हटाएं",
         "imgdesc_accept_placeholder": "शिक्षार्थी को क्या टाइप करना चाहिए",
+        "sar_sentence_label": "बोलने के लिए वाक्य",
+        "sar_sentence_placeholder": "वह वाक्य जिसे शिक्षार्थी सुनता और दोहराता है",
         "q_list_label": "प्रश्न",
         "q_prompt_label": "प्रश्न",
         "q_prompt_placeholder": "प्रश्न",

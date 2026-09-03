@@ -41,6 +41,7 @@ import {
     GRADED_QUIZ_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
+    SPEAK_AND_RECORD_EXT_TYPE,
     isExtensionType,
     type ExtensionWizardType,
 } from "../exercises/authoring/extension-edit";
@@ -157,6 +158,11 @@ const EXT_ELEMENT_KEY_RULES: Record<
     [IMAGE_DESCRIPTION_EXT_TYPE]: (exercise) => [
         canonicalImageDescriptionAnswer(asFullExercise(exercise)),
     ],
+    // Deliberately ungraded (engine#68 idea 3): there is nothing to check a
+    // recording against, so the renderer never derives an ElementAttempt and
+    // this type contributes no SRS rows - `[]`, not `null` (the rule DOES
+    // apply, it just yields nothing).
+    [SPEAK_AND_RECORD_EXT_TYPE]: () => [],
 };
 
 /**

@@ -7,10 +7,10 @@ export { DEFAULT_LESSON_SHORTCUTS_ENABLED, LESSON_SHORTCUTS_CHANGE_EVENT, decide
 export type { LessonEnterAction, LessonEnterState } from "./prefs/lessonShortcutsPref";
 export { lessonMotivation } from "./motivation";
 export type { MotivationKind } from "./motivation";
-export { buildLessonJsonExport, buildLessonMarkdownExport, downloadBlob } from "./result-download";
-export type { LessonExportInputs } from "./result-download";
-export { buildLessonResultJson, buildLessonResultMarkdown, collectWeakAreas, formatUserAnswer, lessonResultFilename } from "./result-export";
-export type { LessonResultJson, LessonResultJsonExercise, LessonResultLabels, WeakArea } from "./result-export";
+export { buildLessonJsonExport, buildLessonMarkdownExport, downloadBlob } from "./export/result-download";
+export type { LessonExportInputs } from "./export/result-download";
+export { buildLessonResultJson, buildLessonResultMarkdown, collectWeakAreas, formatUserAnswer, lessonResultFilename } from "./export/result-export";
+export type { LessonResultJson, LessonResultJsonExercise, LessonResultLabels, WeakArea } from "./export/result-export";
 export { findPrecedingTheoryIndex, findRelatedTheoryIndex, findTheoryIndexByRef } from "./theory-link";
 export { collectTheoryRun, markdownToSpeech, runStepForChar, theoryBlockAround } from "./tts-text";
 export type { TheoryBlock, TheoryRun, TheoryRunStep } from "./tts-text";

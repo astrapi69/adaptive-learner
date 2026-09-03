@@ -1,8 +1,10 @@
 /**
  * Inline editor for a wizard-authored EXTENSION exercise (#1852; #1887 added
- * dictation). Dispatches the five authored types: ``ext:al-categorization`` +
- * ``ext:al-error-correction`` (inline fields), ``ext:al-reading-comprehension``
- * + ``ext:al-graded-quiz`` + ``ext:al-dictation`` (field components).
+ * dictation; #2817 added speak-and-record). Dispatches the authored types:
+ * ``ext:al-categorization`` + ``ext:al-error-correction`` (inline fields),
+ * ``ext:al-reading-comprehension`` + ``ext:al-graded-quiz`` +
+ * ``ext:al-dictation`` + ``ext:al-image-description`` +
+ * ``ext:al-speak-and-record`` (field components).
  *
  * Same interaction model as the core-type ``ExerciseEditor`` (#1845): a
  * private draft, a Save gated on the shipped payload validator
@@ -26,6 +28,7 @@ import {
     GRADED_QUIZ_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
+    SPEAK_AND_RECORD_EXT_TYPE,
     conversionPreservesElementKeys,
     convertExercise,
     extensionConversionTargets,
@@ -44,6 +47,7 @@ import {
     GradedQuizFields,
     ImageDescriptionFields,
     ReadingComprehensionFields,
+    SpeakAndRecordFields,
 } from "./extension-fields";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -80,6 +84,10 @@ interface DictationPayload {
 interface ImageDescriptionPayload {
     image: string;
     accept: string[];
+}
+interface SpeakAndRecordPayload {
+    sentence: string;
+    audio?: string;
 }
 
 export default function ExtensionExerciseEditor({
@@ -235,6 +243,14 @@ export default function ExtensionExerciseEditor({
                 <ImageDescriptionFields
                     id={id}
                     payload={draft.ext_payload as unknown as ImageDescriptionPayload}
+                    onChange={patchPayload}
+                    t={t}
+                />
+            )}
+            {draft.type === SPEAK_AND_RECORD_EXT_TYPE && (
+                <SpeakAndRecordFields
+                    id={id}
+                    payload={draft.ext_payload as unknown as SpeakAndRecordPayload}
                     onChange={patchPayload}
                     t={t}
                 />

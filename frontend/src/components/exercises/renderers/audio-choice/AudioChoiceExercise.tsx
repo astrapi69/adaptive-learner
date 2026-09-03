@@ -39,6 +39,7 @@ import type {
     ControlledExerciseProps,
     ExerciseHandle,
     ExerciseScored,
+    RawAnswer,
 } from "../../shell/exercise-control";
 
 export interface AudioChoiceExerciseProps extends ControlledExerciseProps {
@@ -59,6 +60,19 @@ function audioChoiceReviewedResult(
 ): {correct: number; total: number} | null {
     if (reviewedAudio == null) return null;
     return {correct: reviewedAudio === correctAudio ? 1 : 0, total: 1};
+}
+
+/** Reviewed-state initialization for a persisted audio-choice answer: derives
+ *  the initial selection plus the reviewed score, if any. Kept as its own
+ *  hook so this branching lives in a scope of its own rather than inflating
+ *  {@link AudioChoiceExercise}'s complexity. */
+function useAudioChoiceReviewedState(reviewed: RawAnswer | null | undefined, correctAudio: string) {
+    const reviewedChoice = reviewed?.kind === "al_audio_choice" ? reviewed : null;
+    const [selectedAudio, setSelectedAudio] = useState<string | null>(
+        reviewedChoice?.selected_audio ?? null,
+    );
+    const reviewedResult = audioChoiceReviewedResult(reviewedChoice?.selected_audio, correctAudio);
+    return {selectedAudio, setSelectedAudio, reviewedResult};
 }
 
 function AudioChoiceExercise(
@@ -83,13 +97,8 @@ function AudioChoiceExercise(
     const options = payload?.options ?? [];
     const correctAudio = options.find((o) => o.is_correct === "true")?.audio ?? "";
 
-    const reviewedChoice = reviewed?.kind === "al_audio_choice" ? reviewed : null;
-    const [selectedAudio, setSelectedAudio] = useState<string | null>(
-        reviewedChoice?.selected_audio ?? null,
-    );
-
-    const reviewedResult = audioChoiceReviewedResult(
-        reviewedChoice?.selected_audio,
+    const {selectedAudio, setSelectedAudio, reviewedResult} = useAudioChoiceReviewedState(
+        reviewed,
         correctAudio,
     );
 
@@ -163,49 +172,88 @@ function AudioChoiceExercise(
                 ))}
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-                {submitted && (
-                    <>
-                        <p
-                            className={cn(
-                                "answer-feedback m-0 font-semibold",
-                                isCorrect
-                                    ? "is-correct text-[var(--exercise-correct)]"
-                                    : "is-wrong text-[var(--exercise-wrong)]",
-                            )}
-                            data-testid="audio-choice-result"
-                            data-result={isCorrect ? "correct" : "wrong"}
-                        >
-                            {isCorrect
-                                ? t("lesson.exercise.al_audio_choice.result_correct", "Correct!")
-                                : t("lesson.exercise.al_audio_choice.result_wrong", "Not quite - listen again.")}
-                        </p>
-                        {isCorrect && onAdvance && (
-                            <ExerciseSuccessAdvance
-                                onAdvance={onAdvance}
-                                label={advanceLabel}
-                                testIdPrefix="audio-choice"
-                            />
-                        )}
-                        <AnswerCelebration isCorrect={isCorrect} />
-                    </>
-                )}
-                <ExerciseFooter
-                    testidPrefix="audio-choice"
-                    controlled={controlled}
-                    submitted={submitted}
-                    canCheck={selectedAudio !== null}
-                    onCheck={submit}
-                    onRetry={reset}
-                    checkLabel={t("lesson.exercise.al_audio_choice.submit", "Check answer")}
-                    retryLabel={t("lesson.exercise.al_audio_choice.retry", "Try again")}
-                />
-            </div>
+            <AudioChoiceResultPanel
+                submitted={submitted}
+                isCorrect={isCorrect}
+                controlled={controlled}
+                canCheck={selectedAudio !== null}
+                onCheck={submit}
+                onRetry={reset}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
+            />
         </section>
     );
 }
 
 export default forwardRef(AudioChoiceExercise);
+
+interface AudioChoiceResultPanelProps {
+    submitted: boolean;
+    isCorrect: boolean;
+    controlled: boolean;
+    canCheck: boolean;
+    onCheck: () => void;
+    onRetry: () => void;
+    onAdvance?: () => void;
+    advanceLabel?: string;
+}
+
+/** Feedback line, success-advance button and the check/retry footer - kept
+ *  out of {@link AudioChoiceExercise} so its submitted-state branching lives
+ *  in its own scope. */
+function AudioChoiceResultPanel({
+    submitted,
+    isCorrect,
+    controlled,
+    canCheck,
+    onCheck,
+    onRetry,
+    onAdvance,
+    advanceLabel,
+}: AudioChoiceResultPanelProps) {
+    const {t} = useI18n();
+    return (
+        <div className="flex flex-wrap items-center gap-3">
+            {submitted && (
+                <>
+                    <p
+                        className={cn(
+                            "answer-feedback m-0 font-semibold",
+                            isCorrect
+                                ? "is-correct text-[var(--exercise-correct)]"
+                                : "is-wrong text-[var(--exercise-wrong)]",
+                        )}
+                        data-testid="audio-choice-result"
+                        data-result={isCorrect ? "correct" : "wrong"}
+                    >
+                        {isCorrect
+                            ? t("lesson.exercise.al_audio_choice.result_correct", "Correct!")
+                            : t("lesson.exercise.al_audio_choice.result_wrong", "Not quite - listen again.")}
+                    </p>
+                    {isCorrect && onAdvance && (
+                        <ExerciseSuccessAdvance
+                            onAdvance={onAdvance}
+                            label={advanceLabel}
+                            testIdPrefix="audio-choice"
+                        />
+                    )}
+                    <AnswerCelebration isCorrect={isCorrect} />
+                </>
+            )}
+            <ExerciseFooter
+                testidPrefix="audio-choice"
+                controlled={controlled}
+                submitted={submitted}
+                canCheck={canCheck}
+                onCheck={onCheck}
+                onRetry={onRetry}
+                checkLabel={t("lesson.exercise.al_audio_choice.submit", "Check answer")}
+                retryLabel={t("lesson.exercise.al_audio_choice.retry", "Try again")}
+            />
+        </div>
+    );
+}
 
 interface AudioOptionTileProps {
     index: number;
