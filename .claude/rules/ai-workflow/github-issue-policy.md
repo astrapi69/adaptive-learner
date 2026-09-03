@@ -42,7 +42,7 @@ The umbrella stays open until ALL its sub-issues are closed; close the umbrella 
 When the user says "weiter", "arbeite Bugs ab", "work through the bugs", "next bug" or similar, treat the GitHub issue tracker as the queue:
 
 1. Read the open bug issues: `gh issue list --label bug --state open`.
-2. Work them in priority order. Priority signals, in order: an explicit `P0`..`P5` label or a priority note in the issue body; then data-integrity / data-loss / restore / security issues; then a reproducible crash with a stack trace; then the rest.
+2. Work them in priority order: a `P0`..`P5` label (`documentation-protocol.md` ROADMAP tiers) or a priority note in the body; data-integrity/data-loss/restore/security; then a reproducible crash with a stack trace; the rest. Attach when triaging.
 3. Break ties by smallest scope first.
 4. For each: follow GITHUB-ISSUE-PFLICHT (the issue already exists), fix, add a regression test in the same commit, conventional commit citing the issue (`(#NN)`), open a PR.
 5. Report status after each issue; do not wait for confirmation between issues when the user asked to work through them.
