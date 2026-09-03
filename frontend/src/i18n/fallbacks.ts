@@ -669,30 +669,4 @@ const FALLBACKS: Record<SupportedLanguage, Catalog> = {
     el: EL,
 };
 
-/**
- * Resolve a dot-notation key against the fallback catalog. Returns
- * ``undefined`` if neither bucket nor key match; callers compose
- * this with the API-backed strings so the lookup chain becomes:
- *
- *   backend strings -> hardcoded fallback -> caller-provided fallback -> key
- */
-export function fallbackString(
-    lang: SupportedLanguage,
-    key: string,
-): string | undefined {
-    // #2796 - walk the FULL dot path. The previous two-part destructuring made
-    // every deeper key structurally unreachable, so ``update.banner.message``
-    // and ``install.ios.title`` could never resolve here no matter what the
-    // catalog contained - the cause of the English update banner on a German
-    // first paint.
-    const parts = key.split(".");
-    if (parts.length < 2) return undefined;
-    let current: unknown = FALLBACKS[lang];
-    for (const part of parts) {
-        if (!current || typeof current !== "object") return undefined;
-        current = (current as Record<string, unknown>)[part];
-    }
-    return typeof current === "string" ? current : undefined;
-}
-
 export const FALLBACK_CATALOGS = FALLBACKS;
