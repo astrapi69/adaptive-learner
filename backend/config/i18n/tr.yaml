@@ -754,9 +754,10 @@ settings:
   playful_combo_xp_description: "Serinin üçüncü yanıtından itibaren art arda her doğru yanıt +1 bonus XP kazandırır, ders başına üst sınırla. Kapalıyken oyun modu XP'si normal modla aynı kalır."
   playful_combo_xp_cap: "Ders başına bonus XP üst sınırı"
   playful_arcade: "Arcade"
-  playful_arcade_description: "Oyun modu ödülü olarak kısa mini oyunlar: ders kartlarınla Öğrenme Hafıza Oyunu ve XP ile açılan klasik Snake. Kapalıyken arcade kartı ve oyunlar tamamen gizlenir."
+  playful_arcade_description: "Oyun modu ödülü olarak kısa mini oyunlar: ders kartlarınla Öğrenme Hafıza Oyunu ve XP ile açılan oyun klasikleri. Kapalıyken arcade kartı ve oyunlar tamamen gizlenir."
   playful_arcade_snake_seconds: "Snake tur süresi (saniye)"
   playful_arcade_memory_pairs: "Hafıza oyunu çiftleri"
+  playful_arcade_simon_target: "Simon hedef uzunluğu"
   playful_special_rounds: "Özel turlar"
   playful_special_rounds_description: "Bir seti bitirmek (her ders en az bir yıldızla) en zorlu kartlarından oluşan, geri sayım halkasıyla oynanan bir yıldırım turunun kilidini açar. Kapalıyken yıldırım turu kartı tamamen gizlenir."
   playful_flash_round_cards: "Yıldırım turu kartları"
@@ -1485,6 +1486,16 @@ arcade:
     won: "Kazandın: üçü bir sırada!"
     lost: "Bu tur uygulamanın oldu. Hemen tekrar dene!"
     draw: "Berabere: iyi savundun!"
+  simon:
+    name: "Simon"
+    description: "Büyüyen renk dizisini tekrarla - hedef uzunluğa ulaşan kazanır."
+    watch: "Diziyi izle ..."
+    your_turn: "Sıra sende - diziyi tekrarla"
+    round_label: "Dizi {n} / {m}"
+    board_aria: "Simon tahtası: dört renk alanı"
+    pad_aria: "Renk alanı {n}"
+    won: "Başardın: dizinin tamamı!"
+    lost: "Eyvah: {n} uzunluğa kadar geldin. Hemen tekrar dene!"
 anki:
   title: Anki Dışa Aktarma
   intro: YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.

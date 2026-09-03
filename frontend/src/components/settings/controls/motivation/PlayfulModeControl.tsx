@@ -58,16 +58,21 @@ import {
 } from "../../../../lib/learning/playful/playfulComboXpPref";
 import {
     MAX_MEMORY_PAIRS,
+    MAX_SIMON_TARGET,
     MAX_SNAKE_SECONDS,
     MIN_MEMORY_PAIRS,
+    MIN_SIMON_TARGET,
     MIN_SNAKE_SECONDS,
     clampMemoryPairs,
+    clampSimonTarget,
     clampSnakeSeconds,
     readMemoryPairs,
     readPlayfulArcade,
+    readSimonTarget,
     readSnakeSeconds,
     setMemoryPairs,
     setPlayfulArcade,
+    setSimonTarget,
     setSnakeSeconds,
 } from "../../../../lib/learning/playful/playfulArcadePref";
 import {
@@ -171,6 +176,15 @@ export default function PlayfulModeControl() {
         const clamped = clampMemoryPairs(Number(raw));
         setMemoryPairsState(clamped);
         setMemoryPairs(clamped);
+    };
+    // #2907 - the simon winning sequence length.
+    const [simonTarget, setSimonTargetState] = useState<number>(() =>
+        readSimonTarget(),
+    );
+    const handleSimonTarget = (raw: string) => {
+        const clamped = clampSimonTarget(Number(raw));
+        setSimonTargetState(clamped);
+        setSimonTarget(clamped);
     };
 
     // #2888 - special rounds (per-set flash rounds), DEFAULT ON.
@@ -467,6 +481,24 @@ export default function PlayfulModeControl() {
                     disabled={!arcade}
                     onChange={(e) => handleMemoryPairs(e.target.value)}
                     data-testid="settings-playful-arcade-memory-pairs"
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="text-sm">
+                    {t(
+                        "settings.playful_arcade_simon_target",
+                        "Simon target length",
+                    )}
+                </span>
+                <input
+                    type="number"
+                    className="w-20"
+                    min={MIN_SIMON_TARGET}
+                    max={MAX_SIMON_TARGET}
+                    value={simonTarget}
+                    disabled={!arcade}
+                    onChange={(e) => handleSimonTarget(e.target.value)}
+                    data-testid="settings-playful-arcade-simon-target"
                 />
             </label>
             <label className="flex items-center justify-between gap-2">

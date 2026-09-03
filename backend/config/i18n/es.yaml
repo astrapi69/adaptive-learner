@@ -754,9 +754,10 @@ settings:
   playful_combo_xp_description: "A partir de la tercera respuesta de la racha, cada respuesta correcta seguida da +1 XP extra, con un límite por lección. Desactivado, los XP del modo juego son idénticos al modo normal."
   playful_combo_xp_cap: "Límite de XP extra por lección"
   playful_arcade: "Arcade"
-  playful_arcade_description: "Minijuegos cortos como recompensa del modo juego: Memory de aprendizaje con tus tarjetas de lección y el clásico Snake como desbloqueo por XP. Desactivado oculta por completo la tarjeta del arcade y los juegos."
+  playful_arcade_description: "Minijuegos cortos como recompensa del modo juego: Memory de aprendizaje con tus tarjetas de lección y clásicos desbloqueables por XP. Desactivado oculta por completo la tarjeta del arcade y los juegos."
   playful_arcade_snake_seconds: "Duración de la ronda de Snake (segundos)"
   playful_arcade_memory_pairs: "Parejas del Memory"
+  playful_arcade_simon_target: "Longitud objetivo de Simon"
   playful_special_rounds: "Rondas especiales"
   playful_special_rounds_description: "Terminar un set (cada lección con al menos una estrella) desbloquea una ronda relámpago con sus tarjetas más difíciles, jugada con el anillo de cuenta atrás. Desactivado oculta por completo la tarjeta de la ronda relámpago."
   playful_flash_round_cards: "Tarjetas de la ronda relámpago"
@@ -1485,6 +1486,16 @@ arcade:
     won: "¡Ganaste: tres en raya!"
     lost: "Esta ronda fue para la app. ¡Inténtalo de nuevo!"
     draw: "Empate: ¡bien defendido!"
+  simon:
+    name: "Simon"
+    description: "Repite la secuencia de colores que va creciendo: alcanza la longitud objetivo para ganar."
+    watch: "Observa la secuencia ..."
+    your_turn: "Te toca: repite la secuencia"
+    round_label: "Secuencia {n} de {m}"
+    board_aria: "Tablero de Simon: cuatro campos de color"
+    pad_aria: "Campo de color {n}"
+    won: "¡Lo lograste: la secuencia completa!"
+    lost: "Ups: llegaste hasta la longitud {n}. ¡Inténtalo de nuevo!"
 anki:
   title: Exportación a Anki
   intro: Revisa las tarjetas sugeridas por la IA, acepta las que quieras y expórtalas como archivo .apkg para Anki.

@@ -116,6 +116,28 @@ describe("Arcade tictactoe entry (#2906)", () => {
     });
 });
 
+describe("Arcade simon entry (#2907)", () => {
+    it("lists simon locked behind its 300-XP unlock", async () => {
+        setPlayfulMode(true);
+        renderArcade();
+        expect(
+            screen.queryByTestId("arcade-play-simon"),
+        ).not.toBeInTheDocument();
+        const unlock = screen.getByTestId("arcade-unlock-simon");
+        await waitFor(() => expect(unlock).not.toBeDisabled());
+        expect(unlock).toHaveTextContent("300 XP");
+    });
+
+    it("a ticket plays one simon round", () => {
+        setPlayfulMode(true);
+        awardTickets("u1", 1, 5);
+        renderArcade();
+        fireEvent.click(screen.getByTestId("arcade-ticket-play-simon"));
+        expect(screen.getByTestId("arcade-simon")).toBeInTheDocument();
+        expect(readTicketState("u1").tickets).toBe(0);
+    });
+});
+
 describe("Arcade ticket economy (#2889)", () => {
     it("shows the ticket balance while the economy is on", () => {
         setPlayfulMode(true);

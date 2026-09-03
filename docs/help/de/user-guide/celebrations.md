@@ -88,12 +88,13 @@ Mit aktivem Spielmodus:
   zeigt den Bonus als "+N XP" neben der besten Serie; im
   Prüfungsmodus und mit ausgeschaltetem Schalter gibt es keinen
   Bonus.
-- Die **Arcade** (Standard an, abschaltbar) belohnt dich mit zwei
-  kurzen Minispielen, erreichbar über die Dashboard-Karte: das
+- Die **Arcade** (Standard an, abschaltbar) belohnt dich mit kurzen
+  Minispielen, erreichbar über die Dashboard-Karte: das
   **Lern-Memory** mit echten Karten aus deinen heruntergeladenen
   Lektionssets (frei), **Tic-Tac-Toe** gegen eine bewusst schlagbare
-  App-KI und der Klassiker **Snake** (beide freischaltbar gegen XP).
-  Rundenlänge und Paar-Anzahl stellst du in den
+  App-KI, der Klassiker **Snake** und **Simon**, das
+  Farbfolgen-Gedächtnisspiel (alle drei freischaltbar gegen XP).
+  Rundenlänge, Paar-Anzahl und die Simon-Ziellänge stellst du in den
   Spielmodus-Einstellungen ein; die Spiele vergeben keine XP.
 - **Sonderrunden** (Standard an, abschaltbar): schließt du ein Set
   mit mindestens einem Stern in jeder Lektion ab, schaltet das eine

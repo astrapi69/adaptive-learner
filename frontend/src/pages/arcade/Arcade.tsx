@@ -1,6 +1,6 @@
 /**
- * Arcade page (#2887) - the game-mode arcade: two short, winnable
- * mini-games (learn memory free, classic snake XP-unlockable via the
+ * Arcade page (#2887) - the game-mode arcade: short, winnable
+ * mini-games (learn memory free, the classics XP-unlockable via the
  * shared cosmetics flow #2861). Reachable from the dashboard arcade
  * card; gated on the game mode AND the arcade switch - a direct visit
  * with the gate off shows a friendly notice instead of a dead page
@@ -14,6 +14,7 @@ import {Button} from "@/components/ui/button";
 import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 
 import MemoryGame from "./MemoryGame";
+import SimonGame from "./SimonGame";
 import SnakeGame from "./SnakeGame";
 import TicTacToeGame from "./TicTacToeGame";
 import {useArcadePrefs} from "../../hooks/settings/useArcadePrefs";
@@ -289,6 +290,8 @@ export default function Arcade() {
                         <SnakeGame seconds={prefs.snakeSeconds} />
                     ) : activeGame === "tictactoe" ? (
                         <TicTacToeGame />
+                    ) : activeGame === "simon" ? (
+                        <SimonGame target={prefs.simonTarget} />
                     ) : (
                         <MemoryGame pairCount={prefs.memoryPairs} />
                     )}

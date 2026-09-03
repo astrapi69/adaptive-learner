@@ -29,7 +29,11 @@ export type SoundName =
     | "badge_earned"
     | "level_up"
     | "checkpoint"
-    | "fanfare";
+    | "fanfare"
+    | "simon_1"
+    | "simon_2"
+    | "simon_3"
+    | "simon_4";
 
 interface Tone {
     /** Frequency in Hz. Ignored for noise. */
@@ -112,6 +116,24 @@ const RECIPES: Record<SoundName, Recipe> = {
             {freq: E5, startMs: 360, durMs: 250, gain: 0.28},
             {freq: G5, startMs: 360, durMs: 250, gain: 0.28},
         ],
+    },
+    // #2907 simon: one steady note per color pad (C major so any
+    // playback order sounds consonant), same shape for all four.
+    simon_1: {
+        totalMs: 220,
+        tones: [{freq: C5, startMs: 0, durMs: 200, gain: 0.4}],
+    },
+    simon_2: {
+        totalMs: 220,
+        tones: [{freq: E5, startMs: 0, durMs: 200, gain: 0.4}],
+    },
+    simon_3: {
+        totalMs: 220,
+        tones: [{freq: G5, startMs: 0, durMs: 200, gain: 0.4}],
+    },
+    simon_4: {
+        totalMs: 220,
+        tones: [{freq: C6, startMs: 0, durMs: 200, gain: 0.4}],
     },
     // Triumphant major triad (C-E-G together).
     level_up: {

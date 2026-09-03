@@ -8,6 +8,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     ARCADE_GAMES,
+    ARCADE_SIMON_COST,
     ARCADE_SNAKE_COST,
     ARCADE_TICTACTOE_COST,
 } from "./arcade-games";
@@ -51,6 +52,12 @@ describe("ARCADE_GAMES", () => {
         });
         expect(ARCADE_TICTACTOE_COST).toBeGreaterThan(0);
         expect(ARCADE_TICTACTOE_COST).toBeLessThan(ARCADE_SNAKE_COST);
+    });
+
+    it("simon tops the price ladder above snake (#2907)", () => {
+        const simon = ARCADE_GAMES.find((g) => g.id === "simon");
+        expect(simon?.unlock).toEqual({kind: "xp", cost: ARCADE_SIMON_COST});
+        expect(ARCADE_SIMON_COST).toBeGreaterThan(ARCADE_SNAKE_COST);
     });
 
     it("snake unlocks through a recorded purchase", () => {

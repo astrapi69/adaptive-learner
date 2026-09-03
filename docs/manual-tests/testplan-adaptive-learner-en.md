@@ -671,6 +671,28 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Losing and a draw end friendly with "Restart"; the game awards
       no XP
 
+#### Arcade: Simon (#2907, 300-XP unlock)
+
+- [ ] Arcade game list: Simon appears after Snake, locked behind
+      "Unlock for 300 XP" (two-step confirm); a ticket plays one
+      round without the purchase
+- [ ] A round: the app shows the color sequence field by field
+      (status "Watch the sequence"), then the four fields become
+      active ("Your turn"); during playback they are disabled
+- [ ] A correct input extends the sequence by one field and replays
+      it; the round label counts "Sequence {n} of {m}" up
+- [ ] A wrong input ends friendly with the reached length and
+      "Restart"; reaching the target length wins the round; the game
+      awards no XP
+- [ ] Sounds: with the sounds or game-mode-sounds switch on, each
+      field plays its own tone (playback and input); without the
+      opt-in the game stays silent and fully playable
+- [ ] Settings > Learning > Game Mode: the "Simon target length"
+      number input clamps to 5-15 (default 8) and is disabled while
+      the arcade is off
+- [ ] Reduced motion in the system: fields only change state
+      (ring/brightness), no flash/scale effect
+
 #### Flash rounds (#2888, default on, game mode only)
 
 - [ ] Settings > Learning > Game Mode: the "Special rounds" switch is

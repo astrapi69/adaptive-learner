@@ -81,12 +81,13 @@ With game mode on:
   bonus as "+N XP" next to your best streak; exam mode and a
   disabled switch earn no bonus.
 - The **arcade** (on by default, can be switched off) rewards you
-  with two short mini-games, reachable from the dashboard card:
+  with short mini-games, reachable from the dashboard card:
   **Learn Memory** built from real cards of your downloaded lesson
   sets (free), **Tic-Tac-Toe** against a deliberately beatable app
-  AI, and the classic **Snake** (both unlockable with XP). Round
-  length and pair count are configurable in the game-mode settings;
-  the games award no XP.
+  AI, the classic **Snake**, and **Simon**, the color-sequence
+  memory game (all three unlockable with XP). Round length, pair
+  count, and the Simon target length are configurable in the
+  game-mode settings; the games award no XP.
 - **Special rounds** (on by default, can be switched off): finishing
   a set with at least one star in every lesson unlocks a **flash
   round** - a quick round of the set's trickiest cards, played with
