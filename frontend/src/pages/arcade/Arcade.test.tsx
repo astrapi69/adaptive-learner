@@ -92,6 +92,30 @@ describe("Arcade game list", () => {
     });
 });
 
+describe("Arcade tictactoe entry (#2906)", () => {
+    it("lists tictactoe locked behind its 100-XP unlock", async () => {
+        setPlayfulMode(true);
+        renderArcade();
+        expect(
+            screen.queryByTestId("arcade-play-tictactoe"),
+        ).not.toBeInTheDocument();
+        const unlock = screen.getByTestId("arcade-unlock-tictactoe");
+        await waitFor(() => expect(unlock).not.toBeDisabled());
+        expect(unlock).toHaveTextContent("100 XP");
+    });
+
+    it("a ticket plays one tictactoe round", () => {
+        setPlayfulMode(true);
+        awardTickets("u1", 1, 5);
+        renderArcade();
+        fireEvent.click(
+            screen.getByTestId("arcade-ticket-play-tictactoe"),
+        );
+        expect(screen.getByTestId("arcade-tictactoe")).toBeInTheDocument();
+        expect(readTicketState("u1").tickets).toBe(0);
+    });
+});
+
 describe("Arcade ticket economy (#2889)", () => {
     it("shows the ticket balance while the economy is on", () => {
         setPlayfulMode(true);

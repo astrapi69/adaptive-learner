@@ -52,6 +52,28 @@ develop.
   Flaeche ohne Lesson-Load klassifizieren kann.
 - Commit: siehe PR #2890-Zweig (i18n, Feature, Docs).
 
+## 3. Weitere Arcade-Spiele: TicTacToe (#2905/#2906) (09:50)
+
+- Original prompt: "wir sollten noch ein paar einfache spiele
+  anbieten, welche von denen sind schnell implementiert?" (mit
+  Qwen-Analyse zu Pac-Man/Tetris/Pong) und die Bestätigung
+  "richtige einschätzung ... damit sollten wir weitermachen".
+- Optimierter Prompt: "Bewerte die Kandidaten gegen die
+  Arcade-Leitplanken (1-2 Minuten, gewinnbar, reiner
+  Reducer + DOM-Grid) und implementiere TicTacToe (100 XP) und
+  Simon (300 XP) als eigene Issues/PRs; verwerfe Tetris
+  (Endlosspiel), Pac-Man (zu gross), Pong (monoton)."
+- Ziel: Umbrella #2905 mit TicTacToe #2906 und Simon #2907;
+  TicTacToe zuerst.
+- Ergebnis TicTacToe: reiner Reducer mit bewusst schlagbarer KI
+  (nimmt den eigenen Gewinnzug, blockt nur mit 70 Prozent,
+  injizierter Zufall; 16 Tests), Komponente mit Denk-Pause vor dem
+  KI-Zug (3 Tests), Katalog-Eintrag auf der Preisleiter
+  Memory frei -> TicTacToe 100 -> Snake 200 (+1 Katalog-Pin,
+  +2 Arcade-Tests inkl. Ticket-Runde); i18n-Block (8 Keys x 11);
+  Testplan DE+EN, Hilfe celebrations.md.
+- Commit: siehe PR-Zweig (#2906: i18n, Feature, Docs).
+
 ## Fragen und Annahmen
 
 - Gate-Semantik Bonus-Lektionen: Sperre NUR bei aktivem Spielmodus +

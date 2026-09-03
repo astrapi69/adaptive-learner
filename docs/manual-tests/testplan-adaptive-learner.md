@@ -700,6 +700,21 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Reduzierte Bewegung im System: keine Flip-/Blinkeffekte in
       beiden Spielen
 
+#### Arcade: TicTacToe (#2906, 100-XP-Freischaltung)
+
+- [ ] Arcade-Spieleliste: Tic-Tac-Toe erscheint zwischen Lern-Memory
+      und Snake, gesperrt mit "Für 100 XP freischalten"
+      (zweistufige Bestätigung wie bei Snake); ein Ticket spielt eine
+      Runde ohne Kauf
+- [ ] Runde: Klick setzt X, kurze "Die App überlegt"-Pause, dann
+      setzt die App O; belegte Felder und die Denk-Pause sind
+      gesperrt
+- [ ] Die KI ist schlagbar: sie blockt nicht jede Gewinnchance -
+      über mehrere Runden lässt sich gewinnen (drei in einer Reihe
+      hervorgehoben, freundliche Gewinn-Meldung)
+- [ ] Verlieren und Unentschieden enden freundlich mit
+      "Neu starten"; keine XP-Vergabe durch das Spiel
+
 #### Blitzrunden (#2888, Standard an, nur im Spielmodus)
 
 - [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Sonderrunden"

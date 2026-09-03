@@ -83,7 +83,8 @@ With game mode on:
 - The **arcade** (on by default, can be switched off) rewards you
   with two short mini-games, reachable from the dashboard card:
   **Learn Memory** built from real cards of your downloaded lesson
-  sets (free) and the classic **Snake** (unlockable with XP). Round
+  sets (free), **Tic-Tac-Toe** against a deliberately beatable app
+  AI, and the classic **Snake** (both unlockable with XP). Round
   length and pair count are configurable in the game-mode settings;
   the games award no XP.
 - **Special rounds** (on by default, can be switched off): finishing

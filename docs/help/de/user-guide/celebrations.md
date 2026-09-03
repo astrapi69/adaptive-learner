@@ -91,8 +91,9 @@ Mit aktivem Spielmodus:
 - Die **Arcade** (Standard an, abschaltbar) belohnt dich mit zwei
   kurzen Minispielen, erreichbar über die Dashboard-Karte: das
   **Lern-Memory** mit echten Karten aus deinen heruntergeladenen
-  Lektionssets (frei) und der Klassiker **Snake** (freischaltbar
-  gegen XP). Rundenlänge und Paar-Anzahl stellst du in den
+  Lektionssets (frei), **Tic-Tac-Toe** gegen eine bewusst schlagbare
+  App-KI und der Klassiker **Snake** (beide freischaltbar gegen XP).
+  Rundenlänge und Paar-Anzahl stellst du in den
   Spielmodus-Einstellungen ein; die Spiele vergeben keine XP.
 - **Sonderrunden** (Standard an, abschaltbar): schließt du ein Set
   mit mindestens einem Stern in jeder Lektion ab, schaltet das eine
