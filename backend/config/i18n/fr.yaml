@@ -1476,6 +1476,15 @@ arcade:
     board_aria: "Plateau de Snake : dirige avec les flèches ou en glissant"
     won: "Manche gagnée : {n} points !"
     lost: "Manche terminée : {n} points. Réessaie !"
+  tictactoe:
+    name: "Morpion"
+    description: "Trois en ligne contre l'app - et oui, elle est battable."
+    your_turn: "À toi de jouer (X)"
+    ai_turn: "L'app réfléchit ..."
+    board_aria: "Plateau de morpion : choisis une case libre"
+    won: "Gagné : trois en ligne !"
+    lost: "Cette manche est pour l'app. Réessaie tout de suite !"
+    draw: "Match nul : bien défendu !"
 anki:
   title: Exportation Anki
   intro: Examine les cartes suggérées par l'IA, accepte celles que tu veux, puis exporte-les en fichier .apkg pour Anki.

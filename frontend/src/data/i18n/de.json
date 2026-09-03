@@ -1588,6 +1588,16 @@
       "board_aria": "Snake-Spielfeld - steuere mit den Pfeiltasten oder durch Wischen",
       "won": "Runde gewonnen - {n} Punkte!",
       "lost": "Runde vorbei - {n} Punkte. Versuch es nochmal!"
+    },
+    "tictactoe": {
+      "name": "Tic-Tac-Toe",
+      "description": "Drei in eine Reihe gegen die App - und ja, sie ist schlagbar.",
+      "your_turn": "Du bist dran (X)",
+      "ai_turn": "Die App überlegt ...",
+      "board_aria": "Tic-Tac-Toe-Spielfeld - wähle ein freies Feld",
+      "won": "Gewonnen - drei in einer Reihe!",
+      "lost": "Diese Runde ging an die App - versuch es gleich nochmal!",
+      "draw": "Unentschieden - gut verteidigt!"
     }
   },
   "anki": {

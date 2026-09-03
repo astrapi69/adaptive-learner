@@ -6,7 +6,11 @@
 
 import {describe, expect, it} from "vitest";
 
-import {ARCADE_GAMES, ARCADE_SNAKE_COST} from "./arcade-games";
+import {
+    ARCADE_GAMES,
+    ARCADE_SNAKE_COST,
+    ARCADE_TICTACTOE_COST,
+} from "./arcade-games";
 import {
     addPurchasedArcadeGame,
     readArcadeUnlockState,
@@ -37,6 +41,16 @@ describe("ARCADE_GAMES", () => {
         expect(memory?.unlock).toEqual({kind: "default"});
         expect(snake?.unlock).toEqual({kind: "xp", cost: ARCADE_SNAKE_COST});
         expect(ARCADE_SNAKE_COST).toBeGreaterThan(0);
+    });
+
+    it("tictactoe sits on the price ladder between memory and snake (#2906)", () => {
+        const ttt = ARCADE_GAMES.find((g) => g.id === "tictactoe");
+        expect(ttt?.unlock).toEqual({
+            kind: "xp",
+            cost: ARCADE_TICTACTOE_COST,
+        });
+        expect(ARCADE_TICTACTOE_COST).toBeGreaterThan(0);
+        expect(ARCADE_TICTACTOE_COST).toBeLessThan(ARCADE_SNAKE_COST);
     });
 
     it("snake unlocks through a recorded purchase", () => {

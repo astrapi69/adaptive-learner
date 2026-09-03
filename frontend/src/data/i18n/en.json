@@ -1588,6 +1588,16 @@
       "board_aria": "Snake board - steer with the arrow keys or swipe",
       "won": "Round won - {n} points!",
       "lost": "Round over - {n} points. Try again!"
+    },
+    "tictactoe": {
+      "name": "Tic-Tac-Toe",
+      "description": "Three in a row against the app - and yes, it can be beaten.",
+      "your_turn": "Your turn (X)",
+      "ai_turn": "The app is thinking ...",
+      "board_aria": "Tic-tac-toe board - pick an empty cell",
+      "won": "You won - three in a row!",
+      "lost": "The app got this one - try again!",
+      "draw": "A draw - well defended!"
     }
   },
   "anki": {

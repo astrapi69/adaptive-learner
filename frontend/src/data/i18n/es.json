@@ -1588,6 +1588,16 @@
       "board_aria": "Tablero de Snake: dirige con las flechas o deslizando",
       "won": "¡Ronda ganada: {n} puntos!",
       "lost": "Ronda terminada: {n} puntos. ¡Inténtalo de nuevo!"
+    },
+    "tictactoe": {
+      "name": "Tres en raya",
+      "description": "Tres en raya contra la app; y sí, se la puede ganar.",
+      "your_turn": "Te toca (X)",
+      "ai_turn": "La app está pensando ...",
+      "board_aria": "Tablero de tres en raya: elige una casilla libre",
+      "won": "¡Ganaste: tres en raya!",
+      "lost": "Esta ronda fue para la app. ¡Inténtalo de nuevo!",
+      "draw": "Empate: ¡bien defendido!"
     }
   },
   "anki": {
