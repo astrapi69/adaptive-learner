@@ -1508,6 +1508,9 @@ voice:
   mic_error: 음성 인식 오류입니다.
   mic_no_device: "마이크를 찾을 수 없습니다. 마이크를 연결하고 다시 시도하세요."
   mic_network: "음성 인식이 오프라인 상태입니다. 인터넷 연결을 확인하세요."
+  record_error: "녹음이 실패했습니다. 다시 시도해 주세요."
+  stop_recording: "녹음 중지"
+  start_recording: "녹음 시작"
 pronunciation:
   title: 발음 연습
   intro: 문구를 생성하고, 소리 내어 말한 다음, 즉시 피드백을 받으세요.
@@ -1552,6 +1555,9 @@ feature:
   api_key_required: "API 키가 필요합니다. 설정에서 제공자를 설정하세요."
   desktop_only: "데스크톱 앱에서만 사용할 수 있습니다."
 ui:
+  cancel: "취소"
+  hide_secret: "값 숨기기"
+  show_secret: "값 표시"
   info:
     show: "정보 표시"
   themes:
@@ -2077,6 +2083,20 @@ lesson:
       submit: "정답 확인"
       retry: "다시 시도"
       empty: "이 선택형 문제에는 선택지가 없습니다."
+    al_audio_choice:
+      empty: "이 오디오 선택 연습에는 선택지가 없습니다."
+      result_correct: "정답!"
+      result_wrong: "아쉽네요 - 다시 들어보세요."
+      submit: "답 확인"
+      retry: "다시 시도"
+      option_aria: "선택지 재생"
+    al_audio_tiles:
+      empty: "이 오디오 타일 연습에는 타일이 없습니다."
+    type_matching: "짝맞추기"
+    type_picture_choice: "그림 선택"
+    type_free_text: "자유 서술형"
+    type_word_tiles: "단어 타일"
+    type_cloze: "빈칸 채우기"
     al_categorization:
       empty: "이 분류 연습에는 범주가 없습니다."
       instructions: "항목을 탭한 다음 해당 범주를 탭하세요."
@@ -2144,6 +2164,11 @@ lesson:
       # stay TSX-only fallbacks until the whole exercise type gets its
       # i18n block (a separate, larger task, out of scope here).
       recording_evicted: "저장 공간을 절약하기 위해 이전 녹음이 삭제되었습니다. 언제든지 다시 녹음할 수 있습니다."
+      empty: "이 말하고 녹음하기 연습에는 문장이 없습니다."
+      show: "텍스트 표시"
+      saving: "저장 중…"
+      done: "완료"
+      record_again: "다시 녹음"
     instruction:
       matching:
         receptive: 짝을 맞추세요 (인식)
@@ -2179,6 +2204,7 @@ lesson:
     view_all_answers: "모든 답 보기 ({n})"
     export:
       copy: "결과 복사"
+      correct_answer: "정답"
       download: "파일로 저장"
       download_json: "JSON으로 내보내기"
       anki: "카드 내보내기 (Anki)"
@@ -3338,6 +3364,12 @@ learning_path:
     mastered: "숙달됨"
     receptive: "수용만"
     productive: "산출만"
+  status:
+    not_started: "시작 전"
+    in_progress: "진행 중"
+    paused: "일시정지"
+    completed: "완료"
+    mastered: "숙달"
   stats:
     title: "통계"
     lessons: "레슨"
@@ -3405,6 +3437,7 @@ share:
     copy: "클립보드에 복사"
   app:
     heading: "앱 공유"
+    download: "다운로드"
     qr_intro: "QR 코드로 앱을 공유해 다른 사람이 바로 열 수 있게 하세요."
     show_qr: "QR 코드 표시"
     download_qr: "QR 코드 다운로드"
@@ -3757,6 +3790,7 @@ content_repo:
     star: "5점 중 {n}점 평가"
   share:
     copied: "링크가 복사되었습니다."
+    tab_link: "링크"
     copy: "복사"
     copy_failed: "복사할 수 없었습니다."
     hint: "다른 사람이 이 공개 저장소를 추가할 수 있도록 이 링크를 공유하세요. 비공개 저장소의 경우 URL과 읽기 전용 토큰을 따로 보내세요."
@@ -3795,6 +3829,10 @@ discover:
   search_placeholder: "스페인어, AI, 심리학…"
   search_aria: "사용 가능한 콘텐츠 검색"
   search_clear: "검색 지우기"
+  badge:
+    new: "신규"
+  new:
+    count: "신규 {n}개"
   bar:
     search: "검색"
     filter: "필터"
