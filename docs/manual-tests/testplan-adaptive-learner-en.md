@@ -1370,6 +1370,17 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       **Regression:** dictation + image description still work unchanged,
       including their "→ free text" conversion control (only speak & record
       omits it, by design)
+- [ ] **Header updates badge (#2904):** an installed content set has a newer
+      version (e.g. tap "Update available" on a set in the content browser
+      OR bump the set's manifest version in the test repo). Reload/reopen
+      the app: **without** visiting `/content`, a header badge ("N updates")
+      appears next to the reviews badge, linking to `/content`. Click →
+      lands on `/content`, the affected set shows **"Update available"** in
+      its row (matches the badge's count). **No update available:** the
+      badge does **not** appear (no empty pill in the header). **Error
+      tolerance:** turn off the network at app launch → no crash, no error
+      toast, the header renders normally (the badge simply stays hidden —
+      it is supplementary chrome, never a blocking load state)
 - [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first

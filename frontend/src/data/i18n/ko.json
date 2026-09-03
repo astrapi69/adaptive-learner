@@ -2838,6 +2838,9 @@
       "mc_prompt": "다음 단어의 올바른 번역을 고르세요: {word}"
     },
     "page_title": "내 콘텐츠",
+    "updates_badge": "{n}개 업데이트",
+    "updates_badge_tooltip": "콘텐츠 업데이트 가능",
+    "updates_badge_action": "콘텐츠 보기",
     "intro": "API 키 없이 사용할 수 있는 사전 제작 레슨 세트입니다. 다운로드한 항목은 로컬에 캐시되며 첫 다운로드 후에는 오프라인에서도 작동합니다.",
     "sources": "출처",
     "lessons": "레슨",

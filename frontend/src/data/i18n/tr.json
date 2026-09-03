@@ -2838,6 +2838,9 @@
       "mc_prompt": "Şu kelimenin doğru çevirisini seç: {word}"
     },
     "page_title": "İçeriklerim",
+    "updates_badge": "{n} güncelleme",
+    "updates_badge_tooltip": "İçerik güncellemeleri mevcut",
+    "updates_badge_action": "içeriği görüntüle",
     "intro": "API anahtarı olmadan kullanabileceğiniz hazır ders setleri. İndirmeler yerel olarak önbelleğe alınır ve ilk indirmeden sonra çevrimdışı çalışır.",
     "sources": "Kaynaklar",
     "lessons": "ders",

@@ -1458,6 +1458,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       **Regression:** Diktat + Bildbeschreibung funktionieren unverändert,
       insbesondere bleibt deren "→ Freitext"-Konvertierung sichtbar (nur bei
       Sprechen & Aufnehmen fehlt sie, by design)
+- [ ] **Aktualisierungs-Badge in der Kopfzeile (#2904):** ein installiertes
+      Content-Set hat eine neuere Version (z. B. im Content-Browser bei einem
+      Set "Aktualisierung verfügbar" antippen ODER die Set-Manifest-Version
+      im Test-Repo erhöhen). Neu laden/App neu öffnen: **ohne** `/content`
+      zu besuchen erscheint in der Kopfzeile neben dem Wiederholungs-Badge
+      ein **Aktualisierungs-Badge** ("N Aktualisierungen") mit Link zu
+      `/content`. Klick → landet auf `/content`, das betroffene Set zeigt
+      dort **"Aktualisierung verfügbar"** in der Zeile (deckungsgleich mit
+      dem Badge-Wert). **Kein Update vorhanden:** Badge erscheint **nicht**
+      (kein leeres Pille-Element in der Kopfzeile). **Fehlertoleranz:**
+      Netz beim App-Start ausschalten → kein Absturz, kein Fehler-Toast, die
+      Kopfzeile rendert normal (das Badge bleibt einfach unsichtbar, es
+      handelt sich um Begleit-Chrome, kein blockierender Ladezustand)
 - [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,

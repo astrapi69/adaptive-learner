@@ -2838,6 +2838,9 @@
       "mc_prompt": "正しい訳を選んでください: {word}"
     },
     "page_title": "マイコンテンツ",
+    "updates_badge": "{n}件の更新",
+    "updates_badge_tooltip": "コンテンツの更新があります",
+    "updates_badge_action": "コンテンツを見る",
     "intro": "API キーがなくても使える既製のレッスンセットです。ダウンロードはローカルにキャッシュされ、初回取得後はオフラインでも動作します。",
     "sources": "ソース",
     "lessons": "レッスン",
