@@ -804,6 +804,8 @@
     "playful_tickets": "Bilhetes de jogo",
     "playful_tickets_description": "Ganha bilhetes de arcade pelo teu desempenho: uma lição com pontuação perfeita, uma ronda concluída com todos os corações e os marcos de sequência (3/7/14/30 dias). Um bilhete joga uma ronda de um jogo de arcade bloqueado. Desligado, o arcade fica só com os desbloqueios por XP.",
     "playful_ticket_cap": "Bilhetes máximos",
+    "playful_bonus_lessons": "Lições bónus",
+    "playful_bonus_lessons_description": "Os conjuntos podem conter lições bónus (ficheiros de lição que começam por \"bonus-\"). Com o modo de jogo ativo aparecem bloqueadas na lista de lições do conjunto até cada lição normal ter pelo menos uma estrela. Desligado (ou com o modo de jogo desligado) são tratadas como lições normais.",
     "feedback_intensity": "Intensidade do feedback",
     "feedback_intensity_description": "Com quanta efusividade o app celebra o seu progresso.",
     "feedback_intensity_subtle": "Discreto",
@@ -2551,6 +2553,8 @@
       "download_start": "Baixar e começar",
       "lessons": "{n} lições",
       "lesson_list": "Lições",
+      "bonus_badge": "Bónus",
+      "bonus_locked_tooltip": "Termina cada lição normal deste conjunto com pelo menos uma estrela para desbloquear esta lição bónus.",
       "progress_done": "{done} de {total} lições concluídas",
       "current_lesson": "Continuar aqui"
     },

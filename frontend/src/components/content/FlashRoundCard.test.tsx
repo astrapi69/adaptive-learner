@@ -180,3 +180,17 @@ describe("FlashRoundCard", () => {
         );
     });
 });
+
+describe("bonus lessons never block the flash round (#2890)", () => {
+    it("unlocks with every REGULAR lesson finished despite an untouched bonus file", async () => {
+        setPlayfulMode(true);
+        listLessons.mockResolvedValue({
+            lessons: ["01.json", "bonus-extra.json"],
+        });
+        // Progress only for the regular lesson - the bonus file has none.
+        listProgress.mockResolvedValue([completedRow("01.json")]);
+        renderCard();
+        const start = await screen.findByTestId("flash-round-start");
+        await waitFor(() => expect(start).not.toBeDisabled());
+    });
+});

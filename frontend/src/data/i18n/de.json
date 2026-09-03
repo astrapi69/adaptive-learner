@@ -804,6 +804,8 @@
     "playful_tickets": "Spiel-Tickets",
     "playful_tickets_description": "Verdiene Arcade-Tickets durch Leistung: eine Lektion mit voller Punktzahl, ein Durchlauf mit allen Herzen und Streak-Meilensteine (3/7/14/30 Tage). Ein Ticket spielt eine Runde eines gesperrten Arcade-Spiels. Aus lässt der Arcade nur die XP-Freischaltungen.",
     "playful_ticket_cap": "Maximale Tickets",
+    "playful_bonus_lessons": "Bonus-Lektionen",
+    "playful_bonus_lessons_description": "Sets können Bonus-Lektionen enthalten (Lektionsdateien, die mit \"bonus-\" beginnen). Bei aktivem Spielmodus erscheinen sie in der Lektionsliste des Sets gesperrt, bis jede reguläre Lektion mindestens einen Stern hat. Aus (oder Spielmodus aus) behandelt sie wie normale Lektionen.",
     "feedback_intensity": "Feedback-Intensität",
     "feedback_intensity_description": "Wie ausgiebig die App deinen Fortschritt feiert.",
     "feedback_intensity_subtle": "Dezent",
@@ -2551,6 +2553,8 @@
       "download_start": "Herunterladen & starten",
       "lessons": "{n} Lektionen",
       "lesson_list": "Lektionen",
+      "bonus_badge": "Bonus",
+      "bonus_locked_tooltip": "Schließe jede reguläre Lektion dieses Sets mit mindestens einem Stern ab, um diese Bonus-Lektion freizuschalten.",
       "progress_done": "{done} von {total} Lektionen abgeschlossen",
       "current_lesson": "Hier weitermachen"
     },

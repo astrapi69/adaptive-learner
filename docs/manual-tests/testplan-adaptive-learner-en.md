@@ -712,6 +712,26 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Backup export > wipe > import: the ticket balance survives the
       round-trip (localStorage snapshot)
 
+#### Bonus lessons (#2890, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Bonus lessons" switch is
+      ON by default
+- [ ] A set with a bonus- lesson file (filename starts with
+      "bonus-"): the set page shows the bonus lesson at the END of
+      the list with a "Bonus" badge, even when the file would sort
+      first alphabetically
+- [ ] Game mode on, set unfinished: the bonus row is locked (lock
+      icon, no link); the tooltip names the condition (every regular
+      lesson with at least one star)
+- [ ] Every regular lesson completed with at least one star: the
+      bonus row becomes a normal link and opens the lesson
+- [ ] Bonus switch off OR game mode off: the bonus lesson is a normal
+      link (only the badge stays) - no content is withheld
+- [ ] "Start learning" on the set page opens the first REGULAR
+      lesson, never the bonus file
+- [ ] Flash round (#2888): a still-locked bonus lesson does NOT block
+      the flash-round unlock (only regular lessons count)
+
 #### Playful exercise renderers (#2876, only while game mode is on)
 
 - [ ] Multiple-choice exercise: the answers render as large tiles

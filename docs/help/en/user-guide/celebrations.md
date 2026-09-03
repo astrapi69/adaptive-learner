@@ -98,6 +98,11 @@ With game mode on:
   into the arcade; one ticket plays one round of a still-locked game
   without the XP purchase. The maximum number of savable tickets is
   configurable in the game-mode settings.
+- **Bonus lessons** (on by default, can be switched off): sets can
+  carry special lessons that appear at the end of the set page's
+  lesson list with a "Bonus" badge. In game mode they stay locked
+  until every regular lesson has at least one star - the reward for
+  seeing a set through. Without game mode they are normal lessons.
 - **Lernfunke**, your learning companion, sits as a small flame
   figure next to the progress bar: it cheers on correct answers,
   encourages after wrong ones, celebrates milestones, and sends

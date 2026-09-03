@@ -763,6 +763,8 @@ settings:
   playful_tickets: "Tickets de jeu"
   playful_tickets_description: "Gagne des tickets d'arcade par ta performance : une leçon avec un score parfait, un parcours terminé avec tous les cœurs et les jalons de série (3/7/14/30 jours). Un ticket joue une manche d'un jeu d'arcade verrouillé. Désactivé, l'arcade ne garde que les déblocages par XP."
   playful_ticket_cap: "Tickets maximum"
+  playful_bonus_lessons: "Leçons bonus"
+  playful_bonus_lessons_description: "Les sets peuvent contenir des leçons bonus (fichiers de leçon commençant par « bonus- »). Avec le mode jeu actif, elles apparaissent verrouillées dans la liste des leçons du set jusqu'à ce que chaque leçon normale ait au moins une étoile. Désactivé (ou mode jeu éteint), elles sont traitées comme des leçons normales."
   feedback_intensity: "Intensité du retour"
   feedback_intensity_description: "À quel point l'application célèbre tes progrès."
   feedback_intensity_subtle: "Discret"
@@ -2361,6 +2363,8 @@ content:
     download_start: "Télécharger et commencer"
     lessons: "{n} leçons"
     lesson_list: "Leçons"
+    bonus_badge: "Bonus"
+    bonus_locked_tooltip: "Termine chaque leçon normale de ce set avec au moins une étoile pour débloquer cette leçon bonus."
     progress_done: "{done} leçons sur {total} terminées"
     current_lesson: "Continuer ici"
   repo_export:
