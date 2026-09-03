@@ -15,6 +15,7 @@ import MemoryGame from "./MemoryGame";
 const listSets = vi.fn();
 const listLessons = vi.fn();
 const getLesson = vi.fn();
+const listProgress = vi.fn();
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
@@ -22,6 +23,9 @@ vi.mock("../../storage", () => ({
             listSets: (...args: unknown[]) => listSets(...args),
             listLessons: (...args: unknown[]) => listLessons(...args),
             getLesson: (...args: unknown[]) => getLesson(...args),
+        },
+        lessonProgress: {
+            list: (...args: unknown[]) => listProgress(...args),
         },
     }),
 }));
@@ -49,6 +53,8 @@ function mockContent(cards: {front: string; back: string}[]) {
 
 beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
+    listProgress.mockResolvedValue([]);
 });
 
 describe("MemoryGame", () => {
@@ -141,5 +147,62 @@ describe("MemoryGame", () => {
         expect(
             await screen.findByTestId("arcade-memory-empty"),
         ).toBeInTheDocument();
+    });
+});
+
+describe("MemoryGame set preselection (#2899)", () => {
+    it("preselects the most recently learned cached set, not the first", async () => {
+        localStorage.setItem("adaptive-learner.user_id", "u1");
+        listSets.mockResolvedValue({
+            sets: [
+                {
+                    source: "owner/english",
+                    id: "en-a1",
+                    title: "English A1",
+                    cached_version: "1.0.0",
+                },
+                {
+                    source: "owner/psych",
+                    id: "psy-basics",
+                    title: "Psychologie Grundlagen",
+                    cached_version: "1.0.0",
+                },
+            ],
+        });
+        listLessons.mockResolvedValue({lessons: ["01.json"]});
+        getLesson.mockResolvedValue({
+            cards: [
+                {front: "eins", back: "one"},
+                {front: "zwei", back: "two"},
+            ],
+        });
+        listProgress.mockResolvedValue([
+            {
+                id: "p1",
+                user_id: "u1",
+                source: "owner/psych",
+                set_id: "psy-basics",
+                lesson_filename: "01.json",
+                status: "in_progress",
+                updated_at: "2026-09-03T00:00:00Z",
+            },
+        ]);
+        render(<MemoryGame pairCount={2} />);
+        await screen.findByTestId("arcade-memory-board");
+        expect(screen.getByTestId("arcade-memory-set")).toHaveValue(
+            "psy-basics",
+        );
+        expect(listProgress).toHaveBeenCalledWith("u1");
+    });
+
+    it("an anonymous run keeps the first cached set", async () => {
+        mockContent([
+            {front: "eins", back: "one"},
+            {front: "zwei", back: "two"},
+        ]);
+        render(<MemoryGame pairCount={2} />);
+        await screen.findByTestId("arcade-memory-board");
+        expect(screen.getByTestId("arcade-memory-set")).toHaveValue("set-1");
+        expect(listProgress).not.toHaveBeenCalled();
     });
 });

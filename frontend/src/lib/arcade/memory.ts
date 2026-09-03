@@ -133,3 +133,23 @@ export function revealCard(state: MemoryState, cardId: number): MemoryState {
     }
     return {...state, revealed: [...open, cardId], attempts};
 }
+
+/**
+ * The set the memory dropdown should preselect (#2899): the most
+ * recently learned set that is still cached (the caller passes the
+ * continue-learning recency order), else the first cached set - the
+ * game belongs to the active topic, not to whatever sorts first.
+ *
+ * @example
+ * preferredMemorySetId(["en-a1", "psy"], ["psy", "en-a1"]) // "psy"
+ */
+export function preferredMemorySetId(
+    cachedIds: readonly string[],
+    recentSetIds: readonly string[],
+): string | null {
+    const cached = new Set(cachedIds);
+    for (const id of recentSetIds) {
+        if (cached.has(id)) return id;
+    }
+    return cachedIds[0] ?? null;
+}

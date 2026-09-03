@@ -10,6 +10,7 @@ import {
     buildMemoryDeck,
     drawMemoryPairs,
     initialMemory,
+    preferredMemorySetId,
     revealCard,
     type MemoryState,
 } from "./memory";
@@ -144,5 +145,31 @@ describe("revealCard", () => {
         expect(state.attempts).toBe(3);
         // A won game ignores further reveals.
         expect(revealCard(state, 0)).toBe(state);
+    });
+});
+
+describe("preferredMemorySetId (#2899)", () => {
+    it.each([
+        [
+            "picks the most recently learned cached set",
+            ["en-a1", "psy-basics"],
+            ["psy-basics", "en-a1"],
+            "psy-basics",
+        ],
+        [
+            "skips a recent set that is not cached any more",
+            ["en-a1", "psy-basics"],
+            ["deleted-set", "psy-basics"],
+            "psy-basics",
+        ],
+        [
+            "falls back to the first cached set without progress",
+            ["en-a1", "psy-basics"],
+            [],
+            "en-a1",
+        ],
+        ["no cached sets yields null", [], ["psy-basics"], null],
+    ])("%s", (_name, cachedIds, recentIds, expected) => {
+        expect(preferredMemorySetId(cachedIds, recentIds)).toBe(expected);
     });
 });
