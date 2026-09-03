@@ -25,6 +25,7 @@ const listSetsMock = vi.fn();
 const listLessonsMock = vi.fn();
 const downloadSetMock = vi.fn();
 const getLessonMock = vi.fn();
+const listProgressMock = vi.fn();
 
 vi.mock("../../storage", () => ({
   getStorage: () => ({
@@ -33,6 +34,9 @@ vi.mock("../../storage", () => ({
       listLessons: listLessonsMock,
       downloadSet: downloadSetMock,
       getLesson: getLessonMock,
+    },
+    lessonProgress: {
+      list: listProgressMock,
     },
   }),
 }));
@@ -88,14 +92,17 @@ function renderAt(setId: string) {
 }
 
 beforeEach(() => {
+  localStorage.clear();
   listSetsMock.mockReset();
   listLessonsMock.mockReset();
   downloadSetMock.mockReset();
   getLessonMock.mockReset();
+  listProgressMock.mockReset();
   notifyError.mockReset();
   notifyWarning.mockReset();
   listLessonsMock.mockResolvedValue({ lessons: ["01.json", "02.json"] });
   getLessonMock.mockRejectedValue(new Error("not mocked for this test"));
+  listProgressMock.mockResolvedValue([]);
 });
 
 describe("SetDeepLink (#892)", () => {
@@ -183,5 +190,83 @@ describe("shared page container (#1384)", () => {
     expect(main.tagName).toBe("MAIN");
     expect(main).toHaveAttribute("data-slot", "page-container");
     expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
+  });
+});
+
+describe("SetDeepLink: bonus lessons (#2890)", () => {
+  function setupBonusSet() {
+    localStorage.setItem("adaptive-learner.user_id", "u1");
+    localStorage.setItem("adaptive-learner.lesson.playful_mode", "true");
+    listSetsMock.mockResolvedValue({
+      sets: [makeEntry({ id: "fr-a1", cached_version: "1.0.0" })],
+    });
+    // Directory order puts the bonus file FIRST - the page must sort
+    // it to the end and never make it the "start learning" target.
+    listLessonsMock.mockResolvedValue({
+      lessons: ["bonus-extra.json", "01.json"],
+    });
+    getLessonMock.mockResolvedValue({ title: "T" });
+  }
+
+  function completedRow(filename: string) {
+    return {
+      id: filename,
+      user_id: "u1",
+      source: "owner/repo",
+      set_id: "fr-a1",
+      lesson_filename: filename,
+      status: "completed",
+      step_results: {},
+      score_correct: 8,
+      score_total: 10,
+    };
+  }
+
+  it("sorts the bonus lesson last and locks it while the set is unfinished", async () => {
+    setupBonusSet();
+    renderAt("fr-a1");
+    await screen.findByTestId("set-lesson-list");
+    // Row 1 is the regular lesson, row 2 the bonus lesson.
+    const bonusRow = screen.getByTestId("set-lesson-2");
+    expect(bonusRow).toHaveAttribute("data-locked", "true");
+    expect(bonusRow).not.toHaveAttribute("href");
+    expect(bonusRow).toHaveAttribute(
+      "title",
+      expect.stringContaining("at least one star"),
+    );
+    expect(screen.getByTestId("set-lesson-bonus-badge")).toBeInTheDocument();
+    expect(screen.getByTestId("set-lesson-1")).not.toHaveAttribute(
+      "data-locked",
+    );
+  });
+
+  it("unlocks the bonus lesson once every regular lesson has a star", async () => {
+    setupBonusSet();
+    listProgressMock.mockResolvedValue([completedRow("01.json")]);
+    renderAt("fr-a1");
+    await screen.findByTestId("set-lesson-list");
+    const bonusRow = screen.getByTestId("set-lesson-2");
+    expect(bonusRow).not.toHaveAttribute("data-locked");
+    expect(bonusRow).toHaveAttribute("href");
+    expect(screen.getByTestId("set-lesson-bonus-badge")).toBeInTheDocument();
+  });
+
+  it("with the game mode off the bonus lesson is a normal link", async () => {
+    setupBonusSet();
+    localStorage.removeItem("adaptive-learner.lesson.playful_mode");
+    renderAt("fr-a1");
+    await screen.findByTestId("set-lesson-list");
+    expect(screen.getByTestId("set-lesson-2")).toHaveAttribute("href");
+  });
+
+  it("'Start learning' opens the first REGULAR lesson, not the bonus file", async () => {
+    setupBonusSet();
+    renderAt("fr-a1");
+    await screen.findByTestId("set-deep-link-found");
+    fireEvent.click(screen.getByTestId("set-deep-link-start"));
+    await waitFor(() =>
+      expect(screen.getByTestId("lesson-page")).toBeInTheDocument(),
+    );
+    expect(notifyWarning).not.toHaveBeenCalled();
   });
 });

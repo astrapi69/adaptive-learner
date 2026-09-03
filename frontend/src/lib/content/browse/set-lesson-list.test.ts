@@ -112,3 +112,14 @@ describe("buildSetLessonList", () => {
     expect(list.lessons.map((l) => l.title)).toEqual(FILES);
   });
 });
+
+describe("bonus flag (#2890)", () => {
+    it("marks bonus-prefixed filenames and nothing else", () => {
+        const list = buildSetLessonList({
+            setId: "s1",
+            lessons: ["01-a.json", "bonus-extra.json"],
+            progress: [],
+        });
+        expect(list.lessons.map((l) => l.isBonus)).toEqual([false, true]);
+    });
+});

@@ -16,6 +16,7 @@ import {useLocation, useNavigate} from "react-router";
 import {Button} from "@/components/ui/button";
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import {baseLessons} from "../../lib/content/browse/bonus-lessons";
 import {
     collectFlashRoundExercises,
     isFlashRoundUnlocked,
@@ -90,8 +91,15 @@ export default function FlashRoundCard({
                     }),
                 ]);
                 if (cancelled) return;
+                // #2890 - a still-locked bonus lesson must never block
+                // the flash round: the finish condition counts the
+                // REGULAR lessons only.
                 setUnlocked(
-                    isFlashRoundUnlocked(listing.lessons, progress, setId),
+                    isFlashRoundUnlocked(
+                        baseLessons(listing.lessons),
+                        progress,
+                        setId,
+                    ),
                 );
                 setErrors(errorRows);
             } catch {

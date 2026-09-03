@@ -18,6 +18,7 @@
  * list.currentFilename;  // "02.json" - where "continue" should land
  */
 
+import {isBonusLesson} from "./bonus-lessons";
 import type {LessonProgress} from "../../../storage/types";
 
 /** How far the learner got with one lesson of the set. */
@@ -42,6 +43,9 @@ export interface SetLessonEntry {
   scoreTotal: number | null;
   /** True for the lesson "continue" would resume. */
   isCurrent: boolean;
+  /** #2890 - the ``bonus-`` filename convention
+   *  (lib/content/browse/bonus-lessons). */
+  isBonus: boolean;
 }
 
 /** The whole list plus the set-level progress figures. */
@@ -104,6 +108,7 @@ export function buildSetLessonList(input: SetLessonListInput): SetLessonList {
       scoreCorrect: status === "completed" ? (row?.score_correct ?? null) : null,
       scoreTotal: status === "completed" ? (row?.score_total ?? null) : null,
       isCurrent: filename === firstUnfinished,
+      isBonus: isBonusLesson(filename),
     };
   });
 
