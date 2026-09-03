@@ -1622,7 +1622,10 @@
     "mic_permission_denied": "マイクへのアクセスが拒否されました。",
     "mic_error": "音声認識エラー。",
     "mic_no_device": "マイクが見つかりません。接続してもう一度お試しください。",
-    "mic_network": "音声認識はオフラインです。インターネット接続を確認してください。"
+    "mic_network": "音声認識はオフラインです。インターネット接続を確認してください。",
+    "record_error": "録音に失敗しました。もう一度お試しください。",
+    "stop_recording": "録音を停止",
+    "start_recording": "録音を開始"
   },
   "pronunciation": {
     "title": "発音練習",
@@ -1670,6 +1673,9 @@
     "desktop_only": "デスクトップアプリでのみ利用できます。"
   },
   "ui": {
+    "cancel": "キャンセル",
+    "hide_secret": "値を隠す",
+    "show_secret": "値を表示",
     "info": {
       "show": "情報を表示"
     },
@@ -2230,6 +2236,22 @@
         "retry": "もう一度",
         "empty": "この選択問題には選択肢がありません。"
       },
+      "al_audio_choice": {
+        "empty": "この音声選択問題には選択肢がありません。",
+        "result_correct": "正解!",
+        "result_wrong": "惜しい - もう一度聞いてみましょう。",
+        "submit": "答えを確認",
+        "retry": "もう一度挑戦",
+        "option_aria": "選択肢を再生"
+      },
+      "al_audio_tiles": {
+        "empty": "この音声タイル問題にはタイルがありません。"
+      },
+      "type_matching": "マッチング",
+      "type_picture_choice": "画像選択",
+      "type_free_text": "自由記述",
+      "type_word_tiles": "単語タイル",
+      "type_cloze": "穴埋め",
       "al_categorization": {
         "empty": "この分類演習にはカテゴリーがありません。",
         "instructions": "項目をタップし、次にそのカテゴリーをタップします。",
@@ -2299,7 +2321,12 @@
         "submit": "答えを確認"
       },
       "al_speak_and_record": {
-        "recording_evicted": "ストレージ容量を節約するため、以前の録音は削除されました。いつでも録り直せます。"
+        "recording_evicted": "ストレージ容量を節約するため、以前の録音は削除されました。いつでも録り直せます。",
+        "empty": "この話して録音する問題には文がありません。",
+        "show": "テキストを表示",
+        "saving": "保存中…",
+        "done": "完了",
+        "record_again": "もう一度録音"
       },
       "instruction": {
         "matching": {
@@ -2398,6 +2425,7 @@
       "view_all_answers": "すべての回答を見る ({n})",
       "export": {
         "copy": "結果をコピー",
+        "correct_answer": "正解",
         "download": "ファイルとして保存",
         "download_json": "JSONとしてエクスポート",
         "anki": "カードを書き出す (Anki)",
@@ -3623,6 +3651,13 @@
       "receptive": "受容のみ",
       "productive": "産出のみ"
     },
+    "status": {
+      "not_started": "未開始",
+      "in_progress": "進行中",
+      "paused": "一時停止",
+      "completed": "完了",
+      "mastered": "習得済み"
+    },
     "stats": {
       "title": "統計",
       "lessons": "レッスン",
@@ -3697,6 +3732,7 @@
     },
     "app": {
       "heading": "アプリを共有",
+      "download": "ダウンロード",
       "qr_intro": "QRコードでアプリを共有し、他の人がすぐに開けるようにします。",
       "show_qr": "QRコードを表示",
       "download_qr": "QRコードをダウンロード",
@@ -4067,6 +4103,7 @@
     },
     "share": {
       "copied": "リンクをコピーしました。",
+      "tab_link": "リンク",
       "copy": "コピー",
       "copy_failed": "コピーできませんでした。",
       "hint": "このリンクを共有すると、他の人がこの公開リポジトリを追加できます。プライベートリポジトリの場合は、URL と読み取り専用トークンを別々に送ってください。",
@@ -4112,6 +4149,12 @@
     "search_placeholder": "スペイン語、AI、心理学…",
     "search_aria": "利用可能なコンテンツを検索",
     "search_clear": "検索をクリア",
+    "badge": {
+      "new": "新着"
+    },
+    "new": {
+      "count": "新着{n}件"
+    },
     "bar": {
       "search": "検索",
       "filter": "フィルター"

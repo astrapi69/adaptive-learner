@@ -1508,6 +1508,9 @@ voice:
   mic_error: Kesalahan pengenalan suara.
   mic_no_device: "Tidak ada mikrofon ditemukan. Sambungkan satu dan coba lagi."
   mic_network: "Pengenalan suara sedang offline. Periksa koneksi internet Anda."
+  record_error: "Perekaman tidak berhasil. Coba lagi."
+  stop_recording: "Hentikan perekaman"
+  start_recording: "Mulai merekam"
 pronunciation:
   title: Latihan Pengucapan
   intro: Hasilkan frasa, ucapkan dengan keras, dan dapatkan umpan balik instan.
@@ -1552,6 +1555,9 @@ feature:
   api_key_required: "Kunci API diperlukan. Konfigurasikan penyedia di Pengaturan."
   desktop_only: "Hanya tersedia dengan aplikasi desktop."
 ui:
+  cancel: "Batal"
+  hide_secret: "Sembunyikan nilai"
+  show_secret: "Tampilkan nilai"
   info:
     show: "Tampilkan informasi"
   themes:
@@ -2077,6 +2083,20 @@ lesson:
       submit: "Periksa jawaban"
       retry: "Coba lagi"
       empty: "Latihan pilihan ganda ini tidak memiliki opsi."
+    al_audio_choice:
+      empty: "Latihan pilihan audio ini tidak memiliki opsi."
+      result_correct: "Benar!"
+      result_wrong: "Belum tepat - dengarkan lagi."
+      submit: "Periksa jawaban"
+      retry: "Coba lagi"
+      option_aria: "Putar opsi"
+    al_audio_tiles:
+      empty: "Latihan ubin audio ini tidak memiliki ubin."
+    type_matching: "Pencocokan"
+    type_picture_choice: "Pilihan gambar"
+    type_free_text: "Teks bebas"
+    type_word_tiles: "Ubin kata"
+    type_cloze: "Isian rumpang"
     al_categorization:
       empty: "Latihan kategorisasi ini tidak memiliki kategori."
       instructions: "Ketuk sebuah item, lalu ketuk kategorinya."
@@ -2144,6 +2164,11 @@ lesson:
       # stay TSX-only fallbacks until the whole exercise type gets its
       # i18n block (a separate, larger task, out of scope here).
       recording_evicted: "Rekaman sebelumnya dihapus untuk menghemat ruang penyimpanan. Kamu bisa merekam lagi kapan saja."
+      empty: "Latihan bicara-dan-rekam ini tidak memiliki kalimat."
+      show: "Tampilkan teks"
+      saving: "Menyimpan…"
+      done: "Selesai"
+      record_again: "Rekam lagi"
     instruction:
       matching:
         receptive: Cocokkan pasangannya (Pengenalan)
@@ -2179,6 +2204,7 @@ lesson:
     view_all_answers: "Lihat semua jawaban ({n})"
     export:
       copy: "Salin hasil"
+      correct_answer: "Benar"
       download: "Simpan sebagai berkas"
       download_json: "Ekspor sebagai JSON"
       anki: "Ekspor kartu (Anki)"
@@ -3338,6 +3364,12 @@ learning_path:
     mastered: "Dikuasai"
     receptive: "Hanya reseptif"
     productive: "Hanya produktif"
+  status:
+    not_started: "Belum dimulai"
+    in_progress: "Sedang berlangsung"
+    paused: "Dijeda"
+    completed: "Selesai"
+    mastered: "Dikuasai"
   stats:
     title: "Statistik"
     lessons: "Pelajaran"
@@ -3405,6 +3437,7 @@ share:
     copy: "Salin ke papan klip"
   app:
     heading: "Bagikan aplikasi"
+    download: "Unduh"
     qr_intro: "Bagikan aplikasi lewat kode QR agar orang lain bisa membukanya langsung."
     show_qr: "Tampilkan kode QR"
     download_qr: "Unduh kode QR"
@@ -3757,6 +3790,7 @@ content_repo:
     star: "Beri nilai {n} dari 5"
   share:
     copied: "Tautan disalin."
+    tab_link: "Tautan"
     copy: "Salin"
     copy_failed: "Tidak dapat menyalin."
     hint: "Bagikan tautan ini agar orang lain dapat menambahkan repo PUBLIK ini. Untuk repo privat, kirimkan URL + token hanya-baca secara terpisah."
@@ -3795,6 +3829,10 @@ discover:
   search_placeholder: "Spanyol, AI, psikologi…"
   search_aria: "Cari konten yang tersedia"
   search_clear: "Hapus pencarian"
+  badge:
+    new: "Baru"
+  new:
+    count: "{n} baru"
   bar:
     search: "Cari"
     filter: "Filter"

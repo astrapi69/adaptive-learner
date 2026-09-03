@@ -1622,7 +1622,10 @@
     "mic_permission_denied": "Microphone access denied.",
     "mic_error": "Speech recognition error.",
     "mic_no_device": "No microphone found. Connect one and try again.",
-    "mic_network": "Speech recognition is offline. Check your internet connection."
+    "mic_network": "Speech recognition is offline. Check your internet connection.",
+    "record_error": "Recording didn't work. Please try again.",
+    "stop_recording": "Stop recording",
+    "start_recording": "Start recording"
   },
   "pronunciation": {
     "title": "Pronunciation Practice",
@@ -1670,6 +1673,9 @@
     "desktop_only": "Only available with the desktop app."
   },
   "ui": {
+    "cancel": "Cancel",
+    "hide_secret": "Hide value",
+    "show_secret": "Show value",
     "info": {
       "show": "Show information"
     },
@@ -2230,6 +2236,22 @@
         "retry": "Try again",
         "empty": "This multiple-choice exercise has no options."
       },
+      "al_audio_choice": {
+        "empty": "This audio-choice exercise has no options.",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite - listen again.",
+        "submit": "Check answer",
+        "retry": "Try again",
+        "option_aria": "Play option"
+      },
+      "al_audio_tiles": {
+        "empty": "This audio-tiles exercise has no tiles."
+      },
+      "type_matching": "Matching",
+      "type_picture_choice": "Picture choice",
+      "type_free_text": "Free text",
+      "type_word_tiles": "Word tiles",
+      "type_cloze": "Cloze",
       "al_categorization": {
         "empty": "This categorization exercise has no categories.",
         "instructions": "Tap an item, then tap its category.",
@@ -2299,7 +2321,12 @@
         "submit": "Check answers"
       },
       "al_speak_and_record": {
-        "recording_evicted": "Your previous recording was removed to save storage space. Record again anytime."
+        "recording_evicted": "Your previous recording was removed to save storage space. Record again anytime.",
+        "empty": "This speak-and-record exercise has no sentence.",
+        "show": "Show text",
+        "saving": "Saving…",
+        "done": "Done",
+        "record_again": "Record again"
       },
       "instruction": {
         "matching": {
@@ -2343,6 +2370,7 @@
       "view_all_answers": "View all answers ({n})",
       "export": {
         "copy": "Copy result",
+        "correct_answer": "Correct",
         "download": "Save as file",
         "download_json": "Export as JSON",
         "anki": "Export cards (Anki)",
@@ -3623,6 +3651,13 @@
       "receptive": "Receptive only",
       "productive": "Productive only"
     },
+    "status": {
+      "not_started": "Not started",
+      "in_progress": "In progress",
+      "paused": "Paused",
+      "completed": "Completed",
+      "mastered": "Mastered"
+    },
     "stats": {
       "title": "Stats",
       "lessons": "Lessons",
@@ -3697,6 +3732,7 @@
     },
     "app": {
       "heading": "Share the app",
+      "download": "Download",
       "qr_intro": "Share the app via QR code so others can open it.",
       "show_qr": "Show QR code",
       "download_qr": "Download QR code",
@@ -4067,6 +4103,7 @@
     },
     "share": {
       "copied": "Link copied.",
+      "tab_link": "Link",
       "copy": "Copy",
       "copy_failed": "Could not copy.",
       "hint": "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately.",
@@ -4112,6 +4149,12 @@
     "search_placeholder": "Spanish, AI, psychology…",
     "search_aria": "Search available content",
     "search_clear": "Clear search",
+    "badge": {
+      "new": "New"
+    },
+    "new": {
+      "count": "{n} new"
+    },
     "bar": {
       "search": "Search",
       "filter": "Filter"

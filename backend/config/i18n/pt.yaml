@@ -1508,6 +1508,9 @@ voice:
   mic_error: Erro de reconhecimento de voz.
   mic_no_device: "Nenhum microfone encontrado. Conecte um e tente novamente."
   mic_network: "O reconhecimento de voz está offline. Verifique sua conexão com a internet."
+  record_error: "A gravação não funcionou. Tente novamente."
+  stop_recording: "Parar gravação"
+  start_recording: "Iniciar gravação"
 pronunciation:
   title: Prática de Pronúncia
   intro: Gere uma frase, diga-a em voz alta e receba feedback imediato.
@@ -1552,6 +1555,9 @@ feature:
   api_key_required: "Chave de API necessária. Configure um provedor nas configurações."
   desktop_only: "Disponível apenas com o aplicativo para desktop."
 ui:
+  cancel: "Cancelar"
+  hide_secret: "Ocultar valor"
+  show_secret: "Mostrar valor"
   info:
     show: "Mostrar informações"
   themes:
@@ -2066,6 +2072,20 @@ lesson:
       submit: "Verificar resposta"
       retry: "Tentar novamente"
       empty: "Este exercício de múltipla escolha não tem opções."
+    al_audio_choice:
+      empty: "Este exercício de escolha de áudio não tem opções."
+      result_correct: "Correto!"
+      result_wrong: "Quase - ouça novamente."
+      submit: "Verificar resposta"
+      retry: "Tentar novamente"
+      option_aria: "Reproduzir opção"
+    al_audio_tiles:
+      empty: "Este exercício de blocos de áudio não tem blocos."
+    type_matching: "Correspondência"
+    type_picture_choice: "Escolha de imagem"
+    type_free_text: "Texto livre"
+    type_word_tiles: "Blocos de palavras"
+    type_cloze: "Preencher lacunas"
     al_categorization:
       empty: "Este exercício de categorização não tem categorias."
       instructions: "Toca num item e depois na sua categoria."
@@ -2133,6 +2153,11 @@ lesson:
       # stay TSX-only fallbacks until the whole exercise type gets its
       # i18n block (a separate, larger task, out of scope here).
       recording_evicted: "Sua gravação anterior foi removida para economizar espaço de armazenamento. Você pode gravar novamente quando quiser."
+      empty: "Este exercício de falar e gravar não tem frase."
+      show: "Mostrar texto"
+      saving: "Salvando…"
+      done: "Concluído"
+      record_again: "Gravar novamente"
     instruction:
       matching:
         receptive: Una os pares (Reconhecer)
@@ -2219,6 +2244,7 @@ lesson:
     view_all_answers: "Ver todas as respostas ({n})"
     export:
       copy: "Copiar resultado"
+      correct_answer: "Correto"
       download: "Salvar como arquivo"
       download_json: "Exportar como JSON"
       anki: "Exportar cartões (Anki)"
@@ -3328,6 +3354,12 @@ learning_path:
     mastered: "Dominado"
     receptive: "Apenas recetivo"
     productive: "Apenas produtivo"
+  status:
+    not_started: "Não iniciado"
+    in_progress: "Em andamento"
+    paused: "Pausado"
+    completed: "Concluído"
+    mastered: "Dominado"
   stats:
     title: "Estatísticas"
     lessons: "Lições"
@@ -3395,6 +3427,7 @@ share:
     copy: "Copiar para a área de transferência"
   app:
     heading: "Compartilhar o app"
+    download: "Baixar"
     qr_intro: "Compartilhe o app por código QR para que outros possam abri-lo."
     show_qr: "Mostrar código QR"
     download_qr: "Baixar código QR"
@@ -3747,6 +3780,7 @@ content_repo:
     star: "Avaliar {n} de 5"
   share:
     copied: "Link copiado."
+    tab_link: "Link"
     copy: "Copiar"
     copy_failed: "Não foi possível copiar."
     hint: "Partilha este link para que outros possam adicionar este repositório PÚBLICO. Para um repositório privado, envia o URL e um token apenas de leitura separadamente."
@@ -3785,6 +3819,10 @@ discover:
   search_placeholder: "Espanhol, IA, psicologia…"
   search_aria: "Pesquisar conteúdo disponível"
   search_clear: "Limpar pesquisa"
+  badge:
+    new: "Novo"
+  new:
+    count: "{n} novos"
   bar:
     search: "Pesquisar"
     filter: "Filtrar"
