@@ -3426,7 +3426,8 @@
         "reading-comprehension": "Pemahaman bacaan",
         "graded-quiz": "Kuis bernilai",
         "dictation": "Dikte",
-        "image-description": "Deskripsi gambar"
+        "image-description": "Deskripsi gambar",
+        "speak-and-record": "Bicara & rekam"
       },
       "edit": {
         "prompt_label": "Instruksi / soal",
@@ -3454,6 +3455,7 @@
         "dict_accept_remove": "Hapus transkripsi",
         "dict_accept_placeholder": "Apa yang harus diketik pelajar",
         "err_image_description": "Tambahkan gambar dan setidaknya satu jawaban yang diterima.",
+        "err_speak_and_record": "Tambahkan kalimat untuk diucapkan (dan, opsional, klip audio referensi).",
         "imgdesc_image_label": "Gambar yang akan dideskripsikan",
         "imgdesc_image_preview_alt": "Gambar yang akan dideskripsikan",
         "imgdesc_image_budget_hint": "Gambar dikompresi dan disematkan (maks. ~150 KB, 512 px) agar latihan berfungsi offline dan ikut dalam cadangan. Tautan jarak jauh tidak diizinkan.",
@@ -3461,6 +3463,8 @@
         "imgdesc_accept_add": "Tambah",
         "imgdesc_accept_remove": "Hapus jawaban",
         "imgdesc_accept_placeholder": "Apa yang harus diketik pelajar",
+        "sar_sentence_label": "Kalimat untuk diucapkan",
+        "sar_sentence_placeholder": "Kalimat yang didengar dan diulang oleh pelajar",
         "q_list_label": "Pertanyaan",
         "q_prompt_label": "Pertanyaan",
         "q_prompt_placeholder": "Pertanyaan",

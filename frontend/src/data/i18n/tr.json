@@ -3426,7 +3426,8 @@
         "reading-comprehension": "Okuduğunu anlama",
         "graded-quiz": "Notlu test",
         "dictation": "Dikte",
-        "image-description": "Görsel açıklaması"
+        "image-description": "Görsel açıklaması",
+        "speak-and-record": "Konuş & kaydet"
       },
       "edit": {
         "prompt_label": "Yönerge / soru",
@@ -3454,6 +3455,7 @@
         "dict_accept_remove": "Transkripsiyonu kaldır",
         "dict_accept_placeholder": "Öğrencinin yazması gereken şey",
         "err_image_description": "Bir görsel ve en az bir kabul edilen yanıt ekleyin.",
+        "err_speak_and_record": "Konuşulacak bir cümle ekleyin (isteğe bağlı olarak bir referans ses klibi de ekleyebilirsiniz).",
         "imgdesc_image_label": "Açıklanacak görsel",
         "imgdesc_image_preview_alt": "Açıklanacak görsel",
         "imgdesc_image_budget_hint": "Görsel, alıştırmanın çevrimdışı çalışması ve yedekte yer alması için sıkıştırılıp gömülür (en fazla ~150 KB, 512 px). Uzak bağlantılara izin verilmez.",
@@ -3461,6 +3463,8 @@
         "imgdesc_accept_add": "Ekle",
         "imgdesc_accept_remove": "Yanıtı kaldır",
         "imgdesc_accept_placeholder": "Öğrencinin yazması gereken şey",
+        "sar_sentence_label": "Konuşulacak cümle",
+        "sar_sentence_placeholder": "Öğrencinin duyup tekrar edeceği cümle",
         "q_list_label": "Sorular",
         "q_prompt_label": "Soru",
         "q_prompt_placeholder": "Soru",

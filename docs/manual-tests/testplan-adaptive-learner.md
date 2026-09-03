@@ -1357,20 +1357,21 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       praesentieren
 - [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare
       Titel (auch offline) + einen gedrueckten/ausgewählten Zustand
-- [ ] **Erweiterte Übungstypen / Extension-Wizard (#1852, #1887):** Schritt 1
+- [ ] **Erweiterte Übungstypen / Extension-Wizard (#1852, #1887, #2817):** Schritt 1
       → Karte "Erweiterte Übungstypen" startet einen eigenen 3-Schritt-Flow
       (Autoren → Review → Speichern) mit einem nicht-blockierenden Hinweis,
       dass diese Typen fortgeschritten sind. Schritt 2: "Erweiterungsuebung
-      hinzufügen" bietet sechs Typen — **Kategorisierung**, **Fehlerkorrektur**,
+      hinzufügen" bietet sieben Typen — **Kategorisierung**, **Fehlerkorrektur**,
       **Leseverständnis**, **Benotetes Quiz**, **Diktat**,
-      **Bildbeschreibung**. Je Typ öffnet der
+      **Bildbeschreibung**, **Sprechen & Aufnehmen**. Je Typ öffnet der
       Inline-Editor mit den passenden Feldern; Speichern ist deaktiviert bis der
       shipped Validator erfuellt ist (Kategorisierung: ≥2 benannte Buckets mit
       Items; Fehlerkorrektur: ≥2 Wörter + markierter Fehler + Korrektur;
       Leseverständnis: Text + ≥1 vollständige Frage; Benotetes Quiz: ≥1 Frage
       mit positiven Punkten; Diktat: nicht-leerer Audio-Pfad + ≥1 akzeptierte
       Transkription; Bildbeschreibung: nicht-leeres Bild + ≥1 akzeptierte
-      Antwort). Leseverständnis + Benotetes Quiz: pro Frage Umschalten
+      Antwort; Sprechen & Aufnehmen: nicht-leerer Satz, Audio-Referenz optional
+      — ungewertet, kein "Übernehmen in Freitext"-Pfad). Leseverständnis + Benotetes Quiz: pro Frage Umschalten
       Multiple-Choice ⇄ Freitext, MC-Optionen mit Richtig-Haken, Benotetes Quiz
       zusätzlich Punkte + Teilpunkte + Bestehensgrenze. Diktat (#1887): ein
       getippter `assets/audio/...`-Pfad (kein Upload in v1) + die Liste der
@@ -1394,8 +1395,9 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Schritt 3 "Übung generieren" → "Übung hinzufügen" öffnet "Übungstyp wählen".
       Unter den Standardtypen (sechs Core-Typen + Diktat) erscheint jetzt eine
       zweite, beschriftete Gruppe **"Erweiterungstypen"** mit Kategorisierung,
-      Fehlerkorrektur, Leseverständnis, Benotetes Quiz und Bildbeschreibung
-      (Diktat erscheint **nicht** doppelt). Klick auf einen dieser Knöpfe → eine
+      Fehlerkorrektur, Leseverständnis, Benotetes Quiz, Bildbeschreibung und
+      **Sprechen & Aufnehmen** (#2817; Diktat erscheint **nicht** doppelt).
+      Klick auf einen dieser Knöpfe → eine
       Erweiterungsübung wird angehängt und öffnet direkt im Extension-Editor.
       Bildbeschreibung ist hier **wählbar** (das Bild wird im Editor ergänzt).
       "Lokal speichern" → die gespeicherte Lektion trägt
@@ -1438,6 +1440,24 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       öffnen: Bild + akzeptierte Antworten sind intakt und das Bild wird ohne
       Netz angezeigt (beweist, dass das eingebettete Bild den iOS-IndexedDB- +
       Backup-Round-Trip überlebt, die bekannte Verdraengungs-Risikoflaeche)
+- [ ] **Sprechen & Aufnehmen-Authoring (#2817):** Im Extension-Wizard (Schritt
+      1 → "Erweiterte Übungstypen") ODER im Core-Picker (Schritt 3, zweite
+      Gruppe "Erweiterungstypen") **"Sprechen & Aufnehmen"** wählen. Der
+      Editor zeigt ein Textfeld **"Zu sprechender Satz"** und darunter das
+      (wiederverwendete) Audio-Feld aus dem Diktat-Editor ("Audio hochladen" +
+      getippter Pfad, beides optional). Speichern ist deaktiviert, solange der
+      Satz leer ist; ein Speichern **ohne jegliche Audio-Angabe ist erlaubt**
+      (die Übung ist bewusst ungewertet — kein "Übernehmen"/Konvertieren-Pfad
+      erscheint, anders als bei Diktat/Bildbeschreibung). Lektion speichern,
+      im Viewer öffnen: die Lektion lädt **ohne `E-EXT-UNSUPPORTED`**, der
+      Renderer erscheint (Lautsprecher-Button liest den Satz vor, "Text
+      anzeigen" deckt ihn auf, eine Aufnahme-Steuerung lässt die Lernperson
+      sich selbst aufnehmen). Mit hochgeladenem Referenz-Clip: der Player
+      spielt den eigenen Clip statt der Geräte-TTS. Die gespeicherte Lektion
+      trägt `requires_extensions: ["ext:al-speak-and-record@1"]`.
+      **Regression:** Diktat + Bildbeschreibung funktionieren unverändert,
+      insbesondere bleibt deren "→ Freitext"-Konvertierung sichtbar (nur bei
+      Sprechen & Aufnehmen fehlt sie, by design)
 - [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,

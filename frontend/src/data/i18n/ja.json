@@ -3426,7 +3426,8 @@
         "reading-comprehension": "読解",
         "graded-quiz": "採点クイズ",
         "dictation": "ディクテーション",
-        "image-description": "画像の説明"
+        "image-description": "画像の説明",
+        "speak-and-record": "話す&録音"
       },
       "edit": {
         "prompt_label": "指示 / 問題文",
@@ -3454,6 +3455,7 @@
         "dict_accept_remove": "書き起こしを削除",
         "dict_accept_placeholder": "学習者が入力すべき内容",
         "err_image_description": "画像と、少なくとも1つの受理される回答を追加してください。",
+        "err_speak_and_record": "話す文を追加してください（任意で参照音声も追加できます）。",
         "imgdesc_image_label": "説明する画像",
         "imgdesc_image_preview_alt": "説明する画像",
         "imgdesc_image_budget_hint": "画像は圧縮して埋め込まれ（最大 ~150 KB、512 px）、演習がオフラインで動作しバックアップに含まれるようにします。リモートリンクは許可されていません。",
@@ -3461,6 +3463,8 @@
         "imgdesc_accept_add": "追加",
         "imgdesc_accept_remove": "回答を削除",
         "imgdesc_accept_placeholder": "学習者が入力すべき内容",
+        "sar_sentence_label": "話す文",
+        "sar_sentence_placeholder": "学習者が聞いて繰り返す文",
         "q_list_label": "設問",
         "q_prompt_label": "設問",
         "q_prompt_placeholder": "設問",

@@ -3426,7 +3426,8 @@
         "reading-comprehension": "Compréhension écrite",
         "graded-quiz": "Quiz noté",
         "dictation": "Dictée",
-        "image-description": "Description d'image"
+        "image-description": "Description d'image",
+        "speak-and-record": "Parler et enregistrer"
       },
       "edit": {
         "prompt_label": "Consigne / énoncé",
@@ -3454,6 +3455,7 @@
         "dict_accept_remove": "Supprimer la transcription",
         "dict_accept_placeholder": "Ce que l'apprenant doit saisir",
         "err_image_description": "Ajoutez une image et au moins une réponse acceptée.",
+        "err_speak_and_record": "Ajoutez une phrase à prononcer (et, en option, un extrait audio de référence).",
         "imgdesc_image_label": "Image à décrire",
         "imgdesc_image_preview_alt": "Image à décrire",
         "imgdesc_image_budget_hint": "L'image est compressée et intégrée (max. ~150 KB, 512 px) pour que l'exercice fonctionne hors ligne et soit inclus dans la sauvegarde. Les liens distants ne sont pas autorisés.",
@@ -3461,6 +3463,8 @@
         "imgdesc_accept_add": "Ajouter",
         "imgdesc_accept_remove": "Supprimer la réponse",
         "imgdesc_accept_placeholder": "Ce que l'apprenant doit saisir",
+        "sar_sentence_label": "Phrase à prononcer",
+        "sar_sentence_placeholder": "La phrase que l'apprenant entend et répète",
         "q_list_label": "Questions",
         "q_prompt_label": "Question",
         "q_prompt_placeholder": "Question",
