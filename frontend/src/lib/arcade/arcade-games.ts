@@ -8,7 +8,7 @@
 
 import type {UnlockCondition} from "../gamification/unlockables";
 
-export type ArcadeGameId = "memory" | "tictactoe" | "snake";
+export type ArcadeGameId = "memory" | "tictactoe" | "snake" | "simon";
 
 export interface ArcadeGame {
     id: ArcadeGameId;
@@ -27,6 +27,10 @@ export const ARCADE_SNAKE_COST = 200;
 /** XP price of the tictactoe unlock (#2906) - the cheapest paid game,
  *  below snake so the ladder reads memory (free) -> 100 -> 200. */
 export const ARCADE_TICTACTOE_COST = 100;
+
+/** XP price of the simon unlock (#2907) - the top of the ladder:
+ *  memory (free) -> tictactoe 100 -> snake 200 -> simon 300. */
+export const ARCADE_SIMON_COST = 300;
 
 export const ARCADE_GAMES: ArcadeGame[] = [
     {
@@ -55,5 +59,14 @@ export const ARCADE_GAMES: ArcadeGame[] = [
         descriptionFallback:
             "The classic: collect food, grow, do not bite yourself.",
         unlock: {kind: "xp", cost: ARCADE_SNAKE_COST},
+    },
+    {
+        id: "simon",
+        nameKey: "arcade.simon.name",
+        nameFallback: "Simon",
+        descriptionKey: "arcade.simon.description",
+        descriptionFallback:
+            "Repeat the growing color sequence - reach the target length to win.",
+        unlock: {kind: "xp", cost: ARCADE_SIMON_COST},
     },
 ];

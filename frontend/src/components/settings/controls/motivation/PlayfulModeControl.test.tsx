@@ -25,6 +25,7 @@ import {
 } from "../../../../lib/learning/playful/playfulComboXpPref";
 import {
     readMemoryPairs,
+    readSimonTarget,
     readPlayfulArcade,
     readSnakeSeconds,
 } from "../../../../lib/learning/playful/playfulArcadePref";
@@ -226,9 +227,12 @@ describe("PlayfulModeControl: arcade (#2887)", () => {
         expect(
             screen.getByTestId("settings-playful-arcade-memory-pairs"),
         ).toHaveValue(8);
+        expect(
+            screen.getByTestId("settings-playful-arcade-simon-target"),
+        ).toHaveValue(8);
     });
 
-    it("disabling persists and disables both number inputs", () => {
+    it("disabling persists and disables the number inputs", () => {
         render(<PlayfulModeControl />);
         fireEvent.click(screen.getByTestId("settings-playful-arcade-toggle"));
         expect(readPlayfulArcade()).toBe(false);
@@ -238,9 +242,12 @@ describe("PlayfulModeControl: arcade (#2887)", () => {
         expect(
             screen.getByTestId("settings-playful-arcade-memory-pairs"),
         ).toBeDisabled();
+        expect(
+            screen.getByTestId("settings-playful-arcade-simon-target"),
+        ).toBeDisabled();
     });
 
-    it("clamps and persists both number settings", () => {
+    it("clamps and persists the number settings", () => {
         render(<PlayfulModeControl />);
         fireEvent.change(
             screen.getByTestId("settings-playful-arcade-snake-seconds"),
@@ -250,8 +257,13 @@ describe("PlayfulModeControl: arcade (#2887)", () => {
             screen.getByTestId("settings-playful-arcade-memory-pairs"),
             {target: {value: "1"}},
         );
+        fireEvent.change(
+            screen.getByTestId("settings-playful-arcade-simon-target"),
+            {target: {value: "99"}},
+        );
         expect(readSnakeSeconds()).toBe(120);
         expect(readMemoryPairs()).toBe(4);
+        expect(readSimonTarget()).toBe(15);
     });
 });
 

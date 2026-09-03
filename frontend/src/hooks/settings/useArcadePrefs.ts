@@ -15,6 +15,7 @@ import {
     PLAYFUL_ARCADE_CHANGE_EVENT,
     playfulArcadeActive,
     readMemoryPairs,
+    readSimonTarget,
     readSnakeSeconds,
 } from "../../lib/learning/playful/playfulArcadePref";
 import {PLAYFUL_MODE_CHANGE_EVENT} from "../../lib/learning/playful/playfulModePref";
@@ -24,6 +25,7 @@ export interface ArcadePrefs {
     active: boolean;
     snakeSeconds: number;
     memoryPairs: number;
+    simonTarget: number;
 }
 
 function readPrefs(): ArcadePrefs {
@@ -31,6 +33,7 @@ function readPrefs(): ArcadePrefs {
         active: playfulArcadeActive(),
         snakeSeconds: readSnakeSeconds(),
         memoryPairs: readMemoryPairs(),
+        simonTarget: readSimonTarget(),
     };
 }
 
