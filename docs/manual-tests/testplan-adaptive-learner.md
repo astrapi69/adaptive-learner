@@ -715,6 +715,28 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Verlieren und Unentschieden enden freundlich mit
       "Neu starten"; keine XP-Vergabe durch das Spiel
 
+#### Arcade: Simon (#2907, 300-XP-Freischaltung)
+
+- [ ] Arcade-Spieleliste: Simon erscheint nach Snake, gesperrt mit
+      "Für 300 XP freischalten" (zweistufige Bestätigung); ein
+      Ticket spielt eine Runde ohne Kauf
+- [ ] Runde: die App zeigt die Farbfolge Feld für Feld (Status
+      "Schau dir die Folge an"), danach sind die vier Felder aktiv
+      ("Du bist dran"); während der Wiedergabe sind sie gesperrt
+- [ ] Richtige Eingabe verlängert die Folge um ein Feld und spielt
+      sie erneut ab; das Runden-Label zählt "Folge {n} von {m}" hoch
+- [ ] Falsche Eingabe endet freundlich mit der erreichten Länge und
+      "Neu starten"; das Erreichen der Ziellänge gewinnt die Runde;
+      keine XP-Vergabe durch das Spiel
+- [ ] Töne: mit aktiviertem Töne- oder Spielmodus-Sounds-Schalter
+      klingt jedes Feld mit eigenem Ton (Wiedergabe und Eingabe);
+      ohne Opt-in bleibt das Spiel stumm und voll spielbar
+- [ ] Einstellungen > Lernen > Spielmodus: das Zahlenfeld
+      "Simon-Ziellänge" klemmt auf 5-15 (Standard 8) und ist bei
+      ausgeschalteter Arcade gesperrt
+- [ ] Reduzierte Bewegung im System: Felder wechseln nur den
+      Zustand (Ring/Helligkeit), kein Aufblink-/Skalier-Effekt
+
 #### Blitzrunden (#2888, Standard an, nur im Spielmodus)
 
 - [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Sonderrunden"

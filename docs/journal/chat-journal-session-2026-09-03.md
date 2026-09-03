@@ -74,6 +74,29 @@ develop.
   Testplan DE+EN, Hilfe celebrations.md.
 - Commit: siehe PR-Zweig (#2906: i18n, Feature, Docs).
 
+## 4. Weitere Arcade-Spiele: Simon (#2907) (11:30)
+
+- Original prompt: Fortsetzung des #2905-Plans nach dem
+  TicTacToe-Merge ("damit sollten wir weitermachen").
+- Optimierter Prompt: "Implementiere Simon als viertes Arcade-Spiel:
+  reiner Reducer mit injiziertem Zufall und Tick-Wiedergabe,
+  Ziellaenge 5-15 (Standard 8) im Arcade-Settings-Block, vier
+  Pad-Toene ueber die Sound-Infrastruktur (#2875, stumm ohne
+  Opt-in), Katalog-Eintrag 300 XP; i18n zuerst, Testplan DE+EN."
+- Ziel: Stufe B des Umbrellas #2905.
+- Ergebnis: lib/arcade/simon (Wiedergabe-/Eingabe-Phasen,
+  freundlicher Verlust mit erreichter Laenge; 9 Tests), SimonGame
+  (Tick-Interval, Pad-Highlight als reiner Zustandswechsel,
+  Scale-Pop nur motion-safe, Toene via playSound; 4 Tests), vier
+  simon_-Sound-Rezepte in C-Dur (+1 Test-Pin), Ziellaengen-Pref
+  (+4 Testfaelle), Settings-Zahlenfeld (+3 Assertions),
+  Katalog-Staffel Memory frei -> 100 -> 200 -> Simon 300 (+1 Pin,
+  +2 Arcade-Tests inkl. Ticket-Runde); i18n-Block (9 Keys +
+  Settings-Key x 11, el mit griechischer Schreibweise), die
+  Arcade-Settings-Beschreibung zaehlt keine Spiele mehr auf;
+  Testplan DE+EN, Hilfe celebrations.md DE+EN.
+- Commit: siehe PR-Zweig (#2907: i18n, Feature, Docs).
+
 ## Fragen und Annahmen
 
 - Gate-Semantik Bonus-Lektionen: Sperre NUR bei aktivem Spielmodus +
