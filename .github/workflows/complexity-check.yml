@@ -57,10 +57,18 @@ jobs:
           # filter missed — a baseline-only edit must run the gate too.
           filters: |
             code:
-              - "backend/app/**.py"
+              # #2856 - a globstar not alone in its path segment (no "/"
+              # right before it) degrades to a plain "*" and never crosses a
+              # directory boundary: "backend/app/**.py" and
+              # "frontend/src/**.tsx" matched ONLY direct children of that
+              # folder, so every nested file (the actual bulk of both trees)
+              # was silently out of scope for this gate. "**/*.ext" matches
+              # any depth including zero, verified against micromatch/
+              # picomatch (the matcher dorny/paths-filter builds on).
+              - "backend/app/**/*.py"
               - "plugins/**/*.py"
-              - "frontend/src/**.ts"
-              - "frontend/src/**.tsx"
+              - "frontend/src/**/*.ts"
+              - "frontend/src/**/*.tsx"
               - ".complexity-baseline"
               - ".dirsize-baseline"
               - "scripts/check-complexity.sh"

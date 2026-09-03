@@ -25,4 +25,3 @@
 # deliberately unpinned - there the build output is itself the test
 # subject, and a pin would freeze the wrong thing.
 
-frontend/src/components/exercises/renderers/audio-choice/AudioChoiceExercise.tsx 26
