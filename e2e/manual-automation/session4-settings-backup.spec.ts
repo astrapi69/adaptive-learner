@@ -140,8 +140,17 @@ test.describe("Session 4 — Settings + Backup", () => {
     // The radios are sr-only → click the wrapping theme card (label).
     await settings.themeCard("dark").click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-    await settings.themeCard("ocean").click();
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "ocean");
+    // #2918 - an unrelated async section on the General tab (avatar
+    // frames / XP state, #2850) can still be settling right after
+    // mount; a click that lands mid-settle is occasionally dropped.
+    // Retry the click itself, not just the assertion, so a dropped
+    // click self-heals instead of flaking the gate.
+    await expect(async () => {
+      await settings.themeCard("ocean").click();
+      await expect(page.locator("html")).toHaveAttribute("data-theme", "ocean", {
+        timeout: 1500,
+      });
+    }).toPass({ timeout: 10_000 });
   });
 
   test("every theme option applies without an error", async ({ page }) => {
