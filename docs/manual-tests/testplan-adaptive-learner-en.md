@@ -632,7 +632,10 @@ preview delivery). In the regular build the mode does not exist.
       arcade" opens the game list. Arcade switch off OR game mode off:
       the card disappears entirely; visiting /arcade directly shows a
       friendly notice with a link to the settings
-- [ ] Learn Memory (free): the set picker lists downloaded sets only;
+- [ ] Learn Memory (free): the set picker lists downloaded sets only
+      and is preselected with the most recently learned set (#2899),
+      not the first in the list; without any progress the first set
+      stays preselected;
       the board has two cards per pair (term and translation from real
       lesson cards); a matched pair stays open, a mismatch counts a
       try and folds away on the next reveal; finding every pair shows

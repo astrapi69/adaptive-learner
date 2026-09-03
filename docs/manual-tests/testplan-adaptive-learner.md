@@ -674,7 +674,9 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Aufruf von /arcade zeigt einen freundlichen Hinweis mit Link in
       die Einstellungen
 - [ ] Lern-Memory (frei): Set-Auswahl zeigt nur heruntergeladene
-      Sets; das Brett hat zwei Karten pro Paar (Begriff und
+      Sets und ist mit dem zuletzt gelernten Set vorbelegt (#2899),
+      nicht mit dem ersten der Liste; ohne Lernfortschritt bleibt das
+      erste Set vorbelegt; das Brett hat zwei Karten pro Paar (Begriff und
       Übersetzung aus echten Lektionskarten); ein Paar bleibt offen
       liegen, ein Fehlversuch zählt hoch und klappt beim nächsten
       Aufdecken zu; alle Paare gefunden zeigt die Gewinn-Meldung mit

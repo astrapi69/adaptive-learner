@@ -16,10 +16,13 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import {
     initialMemory,
     drawMemoryPairs,
+    preferredMemorySetId,
     revealCard,
     type MemoryPairInput,
     type MemoryState,
 } from "../../lib/arcade/memory";
+import {groupRecentProgress} from "../../lib/content/browse/continue-learning";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 
 type LoadStatus = "loading" | "ready" | "empty" | "error";
@@ -58,7 +61,30 @@ export default function MemoryGame({pairCount}: MemoryGameProps) {
                 if (cached.length === 0) {
                     setStatus("empty");
                 } else {
-                    setSetId((current) => current || cached[0].id);
+                    // #2899 - preselect the most recently LEARNED cached
+                    // set (continue-learning recency), not whatever sorts
+                    // first; an anonymous run or a failed progress read
+                    // falls back to the first cached set.
+                    const userId = readLearnerState().userId;
+                    let recentIds: string[] = [];
+                    if (userId) {
+                        try {
+                            const rows = await getStorage()
+                                .lessonProgress.list(userId);
+                            recentIds = groupRecentProgress(
+                                rows,
+                                rows.length,
+                            ).map((group) => group.setId);
+                        } catch {
+                            /* best-effort - fall back to the first set */
+                        }
+                    }
+                    if (cancelled) return;
+                    const preferred = preferredMemorySetId(
+                        cached.map((s) => s.id),
+                        recentIds,
+                    );
+                    setSetId((current) => current || (preferred ?? ""));
                 }
             } catch {
                 if (!cancelled) setStatus("error");
