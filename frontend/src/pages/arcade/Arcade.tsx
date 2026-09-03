@@ -15,6 +15,7 @@ import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 
 import MemoryGame from "./MemoryGame";
 import SnakeGame from "./SnakeGame";
+import TicTacToeGame from "./TicTacToeGame";
 import {useArcadePrefs} from "../../hooks/settings/useArcadePrefs";
 import {useXpPurchase} from "../../hooks/gamification/useXpPurchase";
 import {useI18n} from "../../hooks/ui/useI18n";
@@ -286,6 +287,8 @@ export default function Arcade() {
                     </div>
                     {activeGame === "snake" ? (
                         <SnakeGame seconds={prefs.snakeSeconds} />
+                    ) : activeGame === "tictactoe" ? (
+                        <TicTacToeGame />
                     ) : (
                         <MemoryGame pairCount={prefs.memoryPairs} />
                     )}

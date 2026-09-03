@@ -8,7 +8,7 @@
 
 import type {UnlockCondition} from "../gamification/unlockables";
 
-export type ArcadeGameId = "memory" | "snake";
+export type ArcadeGameId = "memory" | "tictactoe" | "snake";
 
 export interface ArcadeGame {
     id: ArcadeGameId;
@@ -24,6 +24,10 @@ export interface ArcadeGame {
 /** XP price of the snake unlock (between the frame tiers 150/300). */
 export const ARCADE_SNAKE_COST = 200;
 
+/** XP price of the tictactoe unlock (#2906) - the cheapest paid game,
+ *  below snake so the ladder reads memory (free) -> 100 -> 200. */
+export const ARCADE_TICTACTOE_COST = 100;
+
 export const ARCADE_GAMES: ArcadeGame[] = [
     {
         id: "memory",
@@ -33,6 +37,15 @@ export const ARCADE_GAMES: ArcadeGame[] = [
         descriptionFallback:
             "Find the matching term and translation pairs from your lessons.",
         unlock: {kind: "default"},
+    },
+    {
+        id: "tictactoe",
+        nameKey: "arcade.tictactoe.name",
+        nameFallback: "Tic-Tac-Toe",
+        descriptionKey: "arcade.tictactoe.description",
+        descriptionFallback:
+            "Three in a row against the app - and yes, it can be beaten.",
+        unlock: {kind: "xp", cost: ARCADE_TICTACTOE_COST},
     },
     {
         id: "snake",
