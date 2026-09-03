@@ -294,15 +294,16 @@ async function gotoMascotVariants(page: Page): Promise<boolean> {
 }
 
 /**
- * Open the proactive error-report dialog from Settings → About (#1480 —
- * baseline net for the inline-style-heavy dialog before its Tailwind
- * migration). The Support card's button dispatches the
+ * Open the proactive error-report dialog from Settings → Diagnostics &
+ * Support (#1480 — baseline net for the inline-style-heavy dialog before
+ * its Tailwind migration; moved here from Settings → About by #2789). The
+ * Support card's button dispatches the
  * ``adaptive-learner:open-error-report`` CustomEvent that App.tsx listens
  * on, so this exercises the real production path.
  */
 async function gotoErrorReportDialog(page: Page): Promise<boolean> {
     await seedLearner(page);
-    await page.goto("/settings?tab=about");
+    await page.goto("/settings?tab=diagnostics");
     await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
     const trigger = page.getByTestId("settings-create-error-report");
     if (!(await trigger.count())) return false;
