@@ -1291,16 +1291,18 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
 - [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
       the "Advanced exercise types" card starts a dedicated 3-step flow (author
       → review → save) with a non-blocking notice that these types are advanced.
-      Step 2: "Add extension exercise" offers six types — **categorization**,
+      Step 2: "Add extension exercise" offers seven types — **categorization**,
       **error correction**, **reading comprehension**, **graded quiz**,
-      **dictation**, **image description**. Each opens the inline editor with
+      **dictation**, **image description**, **speak & record**. Each opens the inline editor with
       type-specific fields;
       Save is disabled until the shipped validator passes (categorization: ≥2
       named buckets with items; error correction: ≥2 words + a marked error + a
       correction; reading comprehension: a passage + ≥1 complete question;
       graded quiz: ≥1 question with positive points; dictation: a non-empty
       audio path + ≥1 accepted transcription; image description: a non-empty
-      image + ≥1 accepted answer). Reading comprehension + graded
+      image + ≥1 accepted answer; speak & record: a non-empty sentence, the
+      audio reference is optional — ungraded, no "convert to free text" path).
+      Reading comprehension + graded
       quiz: per question toggle multiple-choice ⇄ free-text, MC options with a
       correct checkbox, graded quiz additionally points + partial credit + a
       pass threshold. Dictation (#1887): a typed `assets/audio/...` path (no
@@ -1323,8 +1325,9 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       Step 3 "Generate exercises" → "Add exercise" opens the "Choose an exercise
       type" picker. Below the standard types (six core types + Dictation) a
       second, labelled group **"Extension types"** now appears with
-      Categorization, Error correction, Reading comprehension, Graded quiz and
-      Image description (Dictation is **not** shown twice). Click one of these →
+      Categorization, Error correction, Reading comprehension, Graded quiz,
+      Image description and **Speak & record** (#2817; Dictation is **not**
+      shown twice). Click one of these →
       an extension exercise is appended and opens straight in the extension
       editor. Image description is **selectable** here (the image is added in the
       editor). "Save locally" → the stored lesson carries
@@ -1364,6 +1367,34 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       intact and the image displays with no network (proves the embedded image
       survives the iOS IndexedDB + backup round-trip, the known eviction-risk
       surface)
+- [ ] **Speak & record authoring (#2817):** In the extension wizard (Step 1 →
+      "Advanced exercise types") OR the core picker (Step 3, second group
+      "Extension types") pick **"Speak & record"**. The editor shows a text
+      field **"Sentence to speak"** and, below it, the (reused) audio field
+      from the dictation editor ("Upload audio" + a typed path, both
+      optional). Save is disabled while the sentence is empty; saving **with
+      no audio at all is allowed** (the exercise is deliberately ungraded —
+      no "convert"/type-conversion control appears, unlike dictation/image
+      description). Save the lesson, open it in the viewer: the lesson loads
+      **without `E-EXT-UNSUPPORTED`**, the renderer appears (a speaker button
+      reads the sentence aloud, "Show text" reveals it, a record control lets
+      the learner record themselves). With an uploaded reference clip: the
+      player plays that clip instead of on-device TTS. The saved lesson
+      carries `requires_extensions: ["ext:al-speak-and-record@1"]`.
+      **Regression:** dictation + image description still work unchanged,
+      including their "→ free text" conversion control (only speak & record
+      omits it, by design)
+- [ ] **Header updates badge (#2904):** an installed content set has a newer
+      version (e.g. tap "Update available" on a set in the content browser
+      OR bump the set's manifest version in the test repo). Reload/reopen
+      the app: **without** visiting `/content`, a header badge ("N updates")
+      appears next to the reviews badge, linking to `/content`. Click →
+      lands on `/content`, the affected set shows **"Update available"** in
+      its row (matches the badge's count). **No update available:** the
+      badge does **not** appear (no empty pill in the header). **Error
+      tolerance:** turn off the network at app launch → no crash, no error
+      toast, the header renders normally (the badge simply stays hidden —
+      it is supplementary chrome, never a blocking load state)
 - [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first

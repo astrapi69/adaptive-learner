@@ -30,7 +30,7 @@ import { useTestMode } from "../../../hooks/lesson/modes/useTestMode";
 import { stampHintUsage, wasHintUsed } from "../../../lib/hints/hint-usage";
 import { exerciseIdentityOf } from "../../../lib/srs/exercise-identity";
 import { stampExamAttempts } from "../../../lib/srs/exam-attempt";
-import { formatUserAnswer } from "../../../lib/lesson/result-export";
+import { formatUserAnswer } from "../../../lib/lesson/export/result-export";
 import { rewriteAnchors } from "../../../lib/lesson/lesson-anchors";
 import { getStorage } from "../../../storage";
 import type {

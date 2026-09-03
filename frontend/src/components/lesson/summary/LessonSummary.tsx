@@ -63,12 +63,12 @@ import { useErrorReplayScope } from "../../../hooks/lesson/interaction/useErrorR
 import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSessionErrors";
 import { buildExerciseBreakdown } from "../../../lib/lesson/lesson-summary";
 import { resolveSummaryScoreDisplay } from "../../../lib/lesson/correction-adjusted-score";
-import type { LessonResultLabels } from "../../../lib/lesson/result-export";
+import type { LessonResultLabels } from "../../../lib/lesson/export/result-export";
 import {
   buildLessonJsonExport,
   buildLessonMarkdownExport,
   downloadBlob,
-} from "../../../lib/lesson/result-download";
+} from "../../../lib/lesson/export/result-download";
 import { isFirstAttempt } from "../../../lib/gamification/first-attempt";
 import { calculateLessonSessionXp } from "../../../lib/gamification/lesson-xp";
 import { configForMode } from "../../../lib/learning/lessonModeConfig";
@@ -377,7 +377,7 @@ export default function LessonSummary({
   // Markdown so the learner can paste it into an AI assistant to
   // drill the weak spots. Both actions reuse the breakdown already
   // computed for the on-screen list; no new storage read. The
-  // builders live in lib/lesson/result-download (#354); only the
+  // builders live in lib/lesson/export/result-download (#354); only the
   // i18n label resolution stays here.
   const buildResultMarkdown = useCallback(() => {
     const labels: LessonResultLabels = {

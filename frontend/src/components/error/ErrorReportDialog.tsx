@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {copyToClipboard} from "../../utils/clipboard";
-import {downloadBlob} from "../../lib/lesson/result-download";
+import {downloadBlob} from "../../lib/lesson/export/result-download";
 import {
     eventRecorder,
     formatEventLog,

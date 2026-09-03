@@ -18,7 +18,7 @@ import {
     lessonResultFilename,
     type LessonResultLabels,
 } from "./result-export";
-import type {ContentLesson} from "../../storage/types";
+import type {ContentLesson} from "../../../storage/types";
 
 const LESSON: ContentLesson = {
     id: "01",
