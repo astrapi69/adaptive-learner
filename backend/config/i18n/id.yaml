@@ -757,9 +757,10 @@ settings:
   playful_combo_xp_description: "Mulai jawaban runtunan ketiga, setiap jawaban benar berturut-turut memberi +1 XP bonus, dengan batas per pelajaran. Jika mati, XP mode permainan tetap sama dengan mode normal."
   playful_combo_xp_cap: "Batas XP bonus per pelajaran"
   playful_arcade: "Arcade"
-  playful_arcade_description: "Mini-game singkat sebagai hadiah mode permainan: Memory Belajar dengan kartu pelajaranmu, plus Snake klasik yang dibuka dengan XP. Jika mati, kartu arcade dan permainan disembunyikan sepenuhnya."
+  playful_arcade_description: "Mini-game singkat sebagai hadiah mode permainan: Memory Belajar dengan kartu pelajaranmu, plus game klasik yang dibuka dengan XP. Jika mati, kartu arcade dan permainan disembunyikan sepenuhnya."
   playful_arcade_snake_seconds: "Durasi ronde Snake (detik)"
   playful_arcade_memory_pairs: "Pasangan Memory"
+  playful_arcade_simon_target: "Panjang target Simon"
   playful_special_rounds: "Ronde spesial"
   playful_special_rounds_description: "Menyelesaikan sebuah set (setiap pelajaran dengan minimal satu bintang) membuka ronde kilat dari kartu-kartu tersulitnya, dimainkan dengan cincin hitung mundur. Jika mati, kartu ronde kilat disembunyikan sepenuhnya."
   playful_flash_round_cards: "Kartu ronde kilat"
@@ -1485,6 +1486,16 @@ arcade:
     won: "Kamu menang: tiga sejajar!"
     lost: "Ronde ini milik aplikasi. Coba lagi!"
     draw: "Seri: pertahanan bagus!"
+  simon:
+    name: "Simon"
+    description: "Ulangi urutan warna yang terus bertambah - capai panjang target untuk menang."
+    watch: "Perhatikan urutannya ..."
+    your_turn: "Giliranmu - ulangi urutannya"
+    round_label: "Urutan {n} dari {m}"
+    board_aria: "Papan Simon: empat bidang warna"
+    pad_aria: "Bidang warna {n}"
+    won: "Berhasil: seluruh urutan!"
+    lost: "Ups: kamu mencapai panjang {n}. Coba lagi!"
 anki:
   title: Ekspor Anki
   intro: Tinjau kartu yang disarankan AI, terima yang Anda inginkan, lalu ekspor sebagai file .apkg untuk Anki.

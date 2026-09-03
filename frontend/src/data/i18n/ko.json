@@ -799,9 +799,10 @@
     "playful_combo_xp_description": "연속 세 번째 답변부터 연속 정답마다 +1 보너스 XP를 얻습니다(수업당 상한 있음). 끄면 게임 모드 XP가 일반 모드와 동일하게 유지됩니다.",
     "playful_combo_xp_cap": "수업당 보너스 XP 상한",
     "playful_arcade": "아케이드",
-    "playful_arcade_description": "게임 모드 보상인 짧은 미니 게임: 수업 카드로 즐기는 학습 메모리와 XP로 잠금 해제하는 클래식 스네이크. 끄면 아케이드 카드와 게임이 완전히 숨겨집니다.",
+    "playful_arcade_description": "게임 모드 보상인 짧은 미니 게임: 수업 카드로 즐기는 학습 메모리와 XP로 잠금 해제하는 클래식 게임들. 끄면 아케이드 카드와 게임이 완전히 숨겨집니다.",
     "playful_arcade_snake_seconds": "스네이크 라운드 길이(초)",
     "playful_arcade_memory_pairs": "메모리 짝 수",
+    "playful_arcade_simon_target": "사이먼 목표 길이",
     "playful_special_rounds": "스페셜 라운드",
     "playful_special_rounds_description": "세트를 완료하면(모든 수업 별 1개 이상) 가장 어려운 카드로 만든 플래시 라운드가 잠금 해제되며 카운트다운 링과 함께 플레이합니다. 끄면 플래시 라운드 카드가 완전히 숨겨집니다.",
     "playful_flash_round_cards": "플래시 라운드 카드 수",
@@ -1598,6 +1599,17 @@
       "won": "승리: 세 칸 나란히!",
       "lost": "이번 라운드는 앱이 가져갔어요. 바로 다시 도전!",
       "draw": "무승부: 잘 막았어요!"
+    },
+    "simon": {
+      "name": "사이먼",
+      "description": "점점 길어지는 색 순서를 따라 하세요 - 목표 길이에 도달하면 승리!",
+      "watch": "순서를 잘 보세요 ...",
+      "your_turn": "당신 차례 - 순서를 따라 하세요",
+      "round_label": "순서 {n} / {m}",
+      "board_aria": "사이먼 보드: 네 개의 색 판",
+      "pad_aria": "색 판 {n}",
+      "won": "해냈어요: 순서 전체 완성!",
+      "lost": "이런: 길이 {n}까지 도달했어요. 바로 다시 도전!"
     }
   },
   "anki": {

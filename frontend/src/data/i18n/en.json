@@ -795,9 +795,10 @@
     "playful_combo_xp_description": "From the third streak answer, every correct answer in a row earns +1 bonus XP, capped per lesson. Off keeps game-mode XP identical to normal mode.",
     "playful_combo_xp_cap": "Bonus XP cap per lesson",
     "playful_arcade": "Arcade",
-    "playful_arcade_description": "Short mini-games as a game-mode reward: Learn Memory with your lesson cards, plus the classic Snake as an XP unlock. Off hides the arcade card and games entirely.",
+    "playful_arcade_description": "Short mini-games as a game-mode reward: Learn Memory with your lesson cards, plus classic games unlockable with XP. Off hides the arcade card and games entirely.",
     "playful_arcade_snake_seconds": "Snake round length (seconds)",
     "playful_arcade_memory_pairs": "Memory pairs",
+    "playful_arcade_simon_target": "Simon target length",
     "playful_special_rounds": "Special rounds",
     "playful_special_rounds_description": "Finishing a set (every lesson with at least one star) unlocks a flash round built from its trickiest cards, played with the countdown ring. Off hides the flash-round card entirely.",
     "playful_flash_round_cards": "Flash-round cards",
@@ -1598,6 +1599,17 @@
       "won": "You won - three in a row!",
       "lost": "The app got this one - try again!",
       "draw": "A draw - well defended!"
+    },
+    "simon": {
+      "name": "Simon",
+      "description": "Repeat the growing color sequence - reach the target length to win.",
+      "watch": "Watch the sequence ...",
+      "your_turn": "Your turn - repeat the sequence",
+      "round_label": "Sequence {n} of {m}",
+      "board_aria": "Simon board - four color fields",
+      "pad_aria": "Color field {n}",
+      "won": "You did it - the whole sequence!",
+      "lost": "Oops - you reached length {n}. Try again!"
     }
   },
   "anki": {

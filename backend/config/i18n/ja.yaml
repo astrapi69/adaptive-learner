@@ -754,9 +754,10 @@ settings:
   playful_combo_xp_description: "連続3問目からは、連続する正解ごとに+1ボーナスXPを獲得します(レッスンごとに上限あり)。オフにするとゲームモードのXPは通常モードと同じになります。"
   playful_combo_xp_cap: "レッスンごとのボーナスXP上限"
   playful_arcade: "アーケード"
-  playful_arcade_description: "ゲームモードのごほうびとしての短いミニゲーム: レッスンカードで遊ぶ学習メモリーと、XPでアンロックするクラシックなスネーク。オフにするとアーケードカードとゲームは完全に非表示になります。"
+  playful_arcade_description: "ゲームモードのごほうびとしての短いミニゲーム: レッスンカードで遊ぶ学習メモリーと、XPでアンロックするクラシックゲーム。オフにするとアーケードカードとゲームは完全に非表示になります。"
   playful_arcade_snake_seconds: "スネークのラウンド時間(秒)"
   playful_arcade_memory_pairs: "メモリーのペア数"
+  playful_arcade_simon_target: "サイモンの目標の長さ"
   playful_special_rounds: "スペシャルラウンド"
   playful_special_rounds_description: "セットをクリア(全レッスンを星1つ以上)すると、最難関カードで作られたフラッシュラウンドがアンロックされ、カウントダウンリング付きでプレイできます。オフにするとフラッシュラウンドのカードは完全に非表示になります。"
   playful_flash_round_cards: "フラッシュラウンドのカード数"
@@ -1485,6 +1486,16 @@ arcade:
     won: "勝ち! 3つ並びました!"
     lost: "このラウンドはアプリの勝ち。すぐ再挑戦!"
     draw: "引き分け。よく守りました!"
+  simon:
+    name: "サイモン"
+    description: "伸びていく色の順番を覚えてなぞりましょう。目標の長さに届けば勝ちです。"
+    watch: "順番をよく見て ..."
+    your_turn: "あなたの番。順番どおりにタップ"
+    round_label: "順番 {n} / {m}"
+    board_aria: "サイモンの盤面。4つの色パッド"
+    pad_aria: "色パッド {n}"
+    won: "やりました! 全部の順番をクリア!"
+    lost: "残念! 長さ {n} まで届きました。すぐ再挑戦!"
 anki:
   title: Ankiエクスポート
   intro: AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。

@@ -795,9 +795,10 @@
     "playful_combo_xp_description": "À partir de la troisième réponse de la série, chaque bonne réponse d'affilée rapporte +1 XP bonus, plafonné par leçon. Désactivé, les XP du mode jeu restent identiques au mode normal.",
     "playful_combo_xp_cap": "Plafond d'XP bonus par leçon",
     "playful_arcade": "Arcade",
-    "playful_arcade_description": "De courts mini-jeux comme récompense du mode jeu : le Memory d'apprentissage avec tes cartes de leçon, plus le classique Snake à débloquer avec des XP. Désactivé masque entièrement la carte de l'arcade et les jeux.",
+    "playful_arcade_description": "De courts mini-jeux comme récompense du mode jeu : le Memory d'apprentissage avec tes cartes de leçon, plus des classiques à débloquer avec des XP. Désactivé masque entièrement la carte de l'arcade et les jeux.",
     "playful_arcade_snake_seconds": "Durée d'une manche de Snake (secondes)",
     "playful_arcade_memory_pairs": "Paires du Memory",
+    "playful_arcade_simon_target": "Longueur cible de Simon",
     "playful_special_rounds": "Manches spéciales",
     "playful_special_rounds_description": "Terminer un set (chaque leçon avec au moins une étoile) débloque une manche éclair construite avec ses cartes les plus difficiles, jouée avec l'anneau de compte à rebours. Désactivé masque entièrement la carte de la manche éclair.",
     "playful_flash_round_cards": "Cartes de la manche éclair",
@@ -1598,6 +1599,17 @@
       "won": "Gagné : trois en ligne !",
       "lost": "Cette manche est pour l'app. Réessaie tout de suite !",
       "draw": "Match nul : bien défendu !"
+    },
+    "simon": {
+      "name": "Simon",
+      "description": "Répète la séquence de couleurs qui s'allonge : atteins la longueur cible pour gagner.",
+      "watch": "Regarde la séquence ...",
+      "your_turn": "À toi de jouer : répète la séquence",
+      "round_label": "Séquence {n} sur {m}",
+      "board_aria": "Plateau de Simon : quatre cases de couleur",
+      "pad_aria": "Case de couleur {n}",
+      "won": "Bravo : toute la séquence !",
+      "lost": "Oups : tu es arrivé à la longueur {n}. Réessaie tout de suite !"
     }
   },
   "anki": {

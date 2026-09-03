@@ -795,9 +795,10 @@
     "playful_combo_xp_description": "Ab der dritten Serienantwort bringt jede weitere richtige Antwort in Folge +1 Bonus-XP, gedeckelt pro Lektion. Aus hält die XP im Spielmodus identisch zum normalen Modus.",
     "playful_combo_xp_cap": "Bonus-XP-Obergrenze pro Lektion",
     "playful_arcade": "Arcade",
-    "playful_arcade_description": "Kurze Minispiele als Spielmodus-Belohnung: Lern-Memory mit deinen Lektionskarten, dazu der Klassiker Snake als XP-Freischaltung. Aus blendet Arcade-Karte und Spiele komplett aus.",
+    "playful_arcade_description": "Kurze Minispiele als Spielmodus-Belohnung: Lern-Memory mit deinen Lektionskarten, dazu Spiele-Klassiker als XP-Freischaltung. Aus blendet Arcade-Karte und Spiele komplett aus.",
     "playful_arcade_snake_seconds": "Snake-Rundenlänge (Sekunden)",
     "playful_arcade_memory_pairs": "Memory-Paare",
+    "playful_arcade_simon_target": "Simon-Ziellänge",
     "playful_special_rounds": "Sonderrunden",
     "playful_special_rounds_description": "Der Abschluss eines Sets (jede Lektion mit mindestens einem Stern) schaltet eine Blitzrunde aus seinen kniffligsten Karten frei, gespielt mit dem Countdown-Ring. Aus blendet die Blitzrunden-Karte komplett aus.",
     "playful_flash_round_cards": "Blitzrunden-Karten",
@@ -1598,6 +1599,17 @@
       "won": "Gewonnen - drei in einer Reihe!",
       "lost": "Diese Runde ging an die App - versuch es gleich nochmal!",
       "draw": "Unentschieden - gut verteidigt!"
+    },
+    "simon": {
+      "name": "Simon",
+      "description": "Merke dir die wachsende Farbfolge und tippe sie nach - die Ziellänge gewinnt.",
+      "watch": "Schau dir die Folge an ...",
+      "your_turn": "Du bist dran - tippe die Folge nach",
+      "round_label": "Folge {n} von {m}",
+      "board_aria": "Simon-Spielfeld - vier Farbfelder",
+      "pad_aria": "Farbfeld {n}",
+      "won": "Geschafft - die ganze Folge!",
+      "lost": "Ups - du kamst bis Länge {n}. Versuch es gleich nochmal!"
     }
   },
   "anki": {
