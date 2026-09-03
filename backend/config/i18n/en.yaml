@@ -763,6 +763,8 @@ settings:
   playful_tickets: "Game tickets"
   playful_tickets_description: "Earn arcade tickets through performance: a lesson with a perfect score, a run survived with all hearts, and streak milestones (3/7/14/30 days). One ticket plays one round of a locked arcade game. Off leaves the arcade to XP unlocks only."
   playful_ticket_cap: "Maximum tickets"
+  playful_bonus_lessons: "Bonus lessons"
+  playful_bonus_lessons_description: "Sets can carry bonus lessons (lesson files starting with \"bonus-\"). While the game mode is on they show as locked in the set's lesson list until every regular lesson has at least one star. Off (or game mode off) treats them like normal lessons."
   feedback_intensity: "Feedback Intensity"
   feedback_intensity_description: "How loudly the app celebrates your progress."
   feedback_intensity_subtle: "Subtle"
@@ -2370,6 +2372,8 @@ content:
     download_start: "Download & start"
     lessons: "{n} lessons"
     lesson_list: "Lessons"
+    bonus_badge: "Bonus"
+    bonus_locked_tooltip: "Finish every regular lesson of this set with at least one star to unlock this bonus lesson."
     progress_done: "{done} of {total} lessons completed"
     current_lesson: "Continue here"
   repo_export:

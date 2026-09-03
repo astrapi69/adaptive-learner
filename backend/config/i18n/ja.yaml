@@ -763,6 +763,8 @@ settings:
   playful_tickets: "ゲームチケット"
   playful_tickets_description: "成績でアーケードチケットを獲得します。満点のレッスン、ハートを全部残したラン、連続記録の節目(3/7/14/30日)。チケット1枚でロック中のアーケードゲームを1ラウンドプレイできます。オフにするとアーケードはXPアンロックのみになります。"
   playful_ticket_cap: "チケットの上限"
+  playful_bonus_lessons: "ボーナスレッスン"
+  playful_bonus_lessons_description: "セットにはボーナスレッスン(\"bonus-\"で始まるレッスンファイル)を含められます。ゲームモードがオンの間は、通常レッスンすべてが星1つ以上になるまでセットのレッスン一覧でロック表示されます。オフ(またはゲームモードオフ)なら通常レッスンと同じ扱いです。"
   feedback_intensity: "フィードバックの強さ"
   feedback_intensity_description: "アプリがあなたの進歩をどれだけ盛大に祝うか。"
   feedback_intensity_subtle: "控えめ"
@@ -2359,6 +2361,8 @@ content:
     download_start: "ダウンロードして開始"
     lessons: "{n} レッスン"
     lesson_list: "レッスン"
+    bonus_badge: "ボーナス"
+    bonus_locked_tooltip: "このボーナスレッスンをアンロックするには、このセットの通常レッスンをすべて星1つ以上でクリアしてください。"
     progress_done: "{total} 件中 {done} 件のレッスンが完了"
     current_lesson: "ここから続ける"
   repo_export:

@@ -88,6 +88,10 @@ import {
     setPlayfulTickets,
     setTicketCap,
 } from "../../../../lib/learning/playful/playfulTicketsPref";
+import {
+    readPlayfulBonus,
+    setPlayfulBonus,
+} from "../../../../lib/learning/playful/playfulBonusPref";
 
 export default function PlayfulModeControl() {
     const {t} = useI18n();
@@ -203,6 +207,13 @@ export default function PlayfulModeControl() {
         const clamped = clampTicketCap(Number(raw));
         setTicketCapState(clamped);
         setTicketCap(clamped);
+    };
+
+    // #2890 - bonus lessons (the bonus- filename convention), DEFAULT ON.
+    const [bonusOn, setBonusOn] = useState<boolean>(() => readPlayfulBonus());
+    const handleBonusToggle = (next: boolean) => {
+        setBonusOn(next);
+        setPlayfulBonus(next);
     };
 
     // #2893 - combo bonus XP (the one decided XP exception, DEFAULT ON).
@@ -534,6 +545,26 @@ export default function PlayfulModeControl() {
                     disabled={!ticketsOn}
                     onChange={(e) => handleTicketCap(e.target.value)}
                     data-testid="settings-playful-ticket-cap"
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t("settings.playful_bonus_lessons", "Bonus lessons")}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.playful_bonus_lessons_description",
+                            "Sets can carry bonus lessons (lesson files starting with \"bonus-\"). While the game mode is on they show as locked in the set's lesson list until every regular lesson has at least one star. Off (or game mode off) treats them like normal lessons.",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-playful-bonus-toggle"
+                    checked={bonusOn}
+                    onChange={(e) => handleBonusToggle(e.target.checked)}
                 />
             </label>
             <MascotVariantControl />

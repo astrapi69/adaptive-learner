@@ -156,6 +156,32 @@ kann, bevor er es herunterlädt. Jeder Eintrag bewirbt die `id`, den
 den Set-Manifesten synchron; ein PR an das offizielle Repo
 regeneriert sie.
 
+## Bonus-Lektionen (App-Konvention)
+
+Eine Lektionsdatei, deren Name mit `bonus-` beginnt (zum Beispiel
+`bonus-vertiefung.json`), ist eine **Bonus-Lektion**. Das ist eine
+app-seitige Namenskonvention - die Lektionsdatei selbst folgt dem
+normalen Lektionsschema, an Engine oder Manifest ändert sich nichts.
+
+Was die App daraus macht:
+
+- Die Set-Seite sortiert Bonus-Lektionen ans Ende der Lektionsliste
+  und zeigt sie mit einem "Bonus"-Abzeichen.
+- Solange der Spielmodus (und sein Bonus-Schalter) aktiv ist, ist
+  eine Bonus-Lektion sichtbar, aber gesperrt, bis jede reguläre
+  Lektion des Sets mit mindestens einem Stern abgeschlossen ist; die
+  Freischalt-Bedingung erscheint als Tooltip.
+- Bei ausgeschaltetem Spielmodus verhält sich eine Bonus-Lektion wie
+  jede andere Lektion - das Gate ist Spielmodus-Dramaturgie, nie eine
+  Inhaltssperre.
+- Bonus-Lektionen zählen selbst nie zu Freischalt-Bedingungen: die
+  Blitzrunde des Sets und die Bonus-Freischaltung betrachten nur die
+  regulären Lektionen.
+
+Autoren-Hinweis: Bonus-Lektionen bleiben echt optional (Vertiefung,
+Kurioses, eine härtere Herausforderung) - das Set muss ohne sie
+vollständig sein.
+
 ## Manifest-Format
 
 Das Feld-Schema des Manifests, also das Root-`manifest.yaml`, das die

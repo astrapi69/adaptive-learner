@@ -145,6 +145,31 @@ flag, a `trust_level`, an optional companion `book`, and an
 `updated_at` timestamp. Keep it in sync with the set manifests; a
 PR to the official repo regenerates it.
 
+## Bonus lessons (app convention)
+
+A lesson file whose name starts with `bonus-` (for example
+`bonus-deep-dive.json`) is a **bonus lesson**. This is an app-side
+naming convention - the lesson file itself follows the normal lesson
+schema, nothing changes in the engine or the manifest.
+
+What the app does with it:
+
+- The set page sorts bonus lessons to the end of the lesson list and
+  shows them with a "Bonus" badge.
+- While the learner's game mode (and its bonus switch) is on, a bonus
+  lesson is visible but locked until every regular lesson of the set
+  is completed with at least one star; the unlock condition is shown
+  as a tooltip.
+- With the game mode off, a bonus lesson behaves like any other
+  lesson - the gate is game-mode dramaturgy, never a content wall.
+- Bonus lessons never count toward unlock conditions themselves: the
+  set's flash round and the bonus unlock both look at the regular
+  lessons only.
+
+Authoring guidance: keep bonus lessons genuinely optional (extra
+depth, curiosities, a harder challenge) - the set must stay complete
+without them.
+
 ## Manifest format
 
 The manifest field schema (the root `manifest.yaml` that lists the

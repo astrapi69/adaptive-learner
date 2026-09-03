@@ -36,6 +36,7 @@ import {
     readPlayfulTickets,
     readTicketCap,
 } from "../../../../lib/learning/playful/playfulTicketsPref";
+import {readPlayfulBonus} from "../../../../lib/learning/playful/playfulBonusPref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -312,5 +313,20 @@ describe("PlayfulModeControl: ticket economy (#2889)", () => {
             target: {value: "99"},
         });
         expect(readTicketCap()).toBe(10);
+    });
+});
+
+describe("PlayfulModeControl: bonus lessons (#2890)", () => {
+    it("renders the switch ON by default", () => {
+        render(<PlayfulModeControl />);
+        expect(
+            screen.getByTestId("settings-playful-bonus-toggle"),
+        ).toBeChecked();
+    });
+
+    it("disabling persists the pref", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(screen.getByTestId("settings-playful-bonus-toggle"));
+        expect(readPlayfulBonus()).toBe(false);
     });
 });

@@ -762,6 +762,28 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Backup-Export > Wipe > Import: der Ticket-Stand übersteht die
       Runde (localStorage-Snapshot)
 
+#### Bonus-Lektionen (#2890, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+      "Bonus-Lektionen" ist standardmäßig AN
+- [ ] Set mit einer bonus--Lektionsdatei (Dateiname beginnt mit
+      "bonus-"): auf der Set-Seite erscheint die Bonus-Lektion am
+      ENDE der Liste mit "Bonus"-Abzeichen, auch wenn die Datei
+      alphabetisch zuerst käme
+- [ ] Spielmodus an, Set unfertig: die Bonus-Zeile ist gesperrt
+      (Schloss, kein Link); der Tooltip nennt die Bedingung (jede
+      reguläre Lektion mit mindestens einem Stern)
+- [ ] Jede reguläre Lektion mit mindestens einem Stern abgeschlossen:
+      die Bonus-Zeile wird ein normaler Link und öffnet die Lektion
+- [ ] Bonus-Schalter aus ODER Spielmodus aus: die Bonus-Lektion ist
+      ein normaler Link (nur das Abzeichen bleibt) - kein Inhalt wird
+      vorenthalten
+- [ ] "Lernen starten" auf der Set-Seite öffnet die erste REGULÄRE
+      Lektion, nie die Bonus-Datei
+- [ ] Blitzrunde (#2888): eine noch gesperrte Bonus-Lektion blockiert
+      die Blitzrunden-Freischaltung NICHT (nur reguläre Lektionen
+      zählen)
+
 #### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
 
 - [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln
