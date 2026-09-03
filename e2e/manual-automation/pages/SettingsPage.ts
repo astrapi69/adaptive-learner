@@ -98,6 +98,24 @@ export class SettingsPage {
   avatarFrameBuy(id: string): Locator {
     return this.page.getByTestId(`settings-avatar-frame-buy-${id}`);
   }
+  get playfulSoundsToggle(): Locator {
+    return this.page.getByTestId("settings-playful-sounds-toggle");
+  }
+  get playfulSoundsOffer(): Locator {
+    return this.page.getByTestId("settings-playful-sounds-offer");
+  }
+  get playfulHeartsToggle(): Locator {
+    return this.page.getByTestId("settings-playful-hearts-toggle");
+  }
+  get playfulHeartsCount(): Locator {
+    return this.page.getByTestId("settings-playful-hearts-count");
+  }
+  get playfulCountdownToggle(): Locator {
+    return this.page.getByTestId("settings-playful-countdown-toggle");
+  }
+  get playfulCountdownSeconds(): Locator {
+    return this.page.getByTestId("settings-playful-countdown-seconds");
+  }
   get mascotVariants(): Locator {
     return this.page.getByTestId("settings-mascot-variants");
   }

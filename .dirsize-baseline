@@ -8,3 +8,5 @@
 # Punkt-5-Pruefung (#2135, 2026-07-29): zaehlt ausschliesslich
 # `git ls-files`, also den Commit-Stand, nicht den Arbeitsbaum. Zwei Laeufe
 # identisch. GEPRUEFT - nicht erneut pruefen.
+
+frontend/src/lib/lesson  # 16 flat sources, pre-existing on develop; split tracked in #2892

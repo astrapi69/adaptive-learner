@@ -10,8 +10,11 @@
  * fill and label are unchanged.
  */
 
+import { useEffect, useRef } from "react";
+
 import { cn } from "@/lib/utils";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import { emitCelebration } from "../../../lib/praise/celebration-bus";
 
 /** #2874 — checkpoint positions as fractions of the lesson. */
 const CHECKPOINTS = [1 / 3, 2 / 3];
@@ -38,6 +41,23 @@ export default function LessonProgressBar({
   const progressPct =
     totalSteps === 0 ? 100 : Math.round((currentStepIndex / totalSteps) * 100);
 
+  // #2875 — crossing a checkpoint emits one celebration event (the
+  // game-mode jingle; sound self-gates on the sound preferences).
+  // Backwards navigation lowers the count without re-emitting.
+  const showCheckpoints = playful && !isSummary && totalSteps >= 3;
+  const reachedCount = showCheckpoints
+    ? CHECKPOINTS.filter(
+        (fraction) => currentStepIndex / totalSteps >= fraction,
+      ).length
+    : 0;
+  const prevReached = useRef(reachedCount);
+  useEffect(() => {
+    if (reachedCount > prevReached.current) {
+      emitCelebration({ type: "checkpoint" });
+    }
+    prevReached.current = reachedCount;
+  }, [reachedCount]);
+
   return (
     <div
       className={cn("lesson-progress-bar", className)}
@@ -52,9 +72,7 @@ export default function LessonProgressBar({
         className="lesson-progress-fill"
         style={{ width: `${progressPct}%` }}
       />
-      {playful &&
-        !isSummary &&
-        totalSteps >= 3 &&
+      {showCheckpoints &&
         CHECKPOINTS.map((fraction) => {
           const reached = currentStepIndex / totalSteps >= fraction;
           return (

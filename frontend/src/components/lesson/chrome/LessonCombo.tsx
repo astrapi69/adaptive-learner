@@ -26,11 +26,15 @@ export interface LessonComboProps {
     combo: ComboState;
     /** Summary mode: show the lesson's best run instead of the live one. */
     showBest?: boolean;
+    /** #2893 - the combo bonus XP credited for this run; shown beside
+     *  the best-streak chip on the summary when > 0. */
+    bonusXp?: number;
 }
 
 export default function LessonCombo({
     combo,
     showBest = false,
+    bonusXp = 0,
 }: LessonComboProps) {
     const {t} = useI18n();
 
@@ -50,6 +54,18 @@ export default function LessonCombo({
                 {t("lesson.combo_best", "Best streak: {n}").replace(
                     "{n}",
                     String(combo.best),
+                )}
+                {bonusXp > 0 && (
+                    <span
+                        data-testid="lesson-combo-bonus"
+                        title={t(
+                            "lesson.combo_bonus_aria",
+                            "Streak bonus: {n} XP",
+                        ).replace("{n}", String(bonusXp))}
+                        className="text-[var(--success)]"
+                    >
+                        {"+" + String(bonusXp) + " XP"}
+                    </span>
                 )}
             </span>
         );

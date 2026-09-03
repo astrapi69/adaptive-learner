@@ -17,21 +17,21 @@ describe("useLessonCombo", () => {
             emitCelebration({type: "answer_correct"});
             emitCelebration({type: "answer_correct"});
         });
-        expect(result.current.combo).toEqual({current: 2, best: 2});
+        expect(result.current.combo).toEqual({current: 2, best: 2, bonusEligible: 0});
         act(() => emitCelebration({type: "answer_wrong"}));
-        expect(result.current.combo).toEqual({current: 0, best: 2});
+        expect(result.current.combo).toEqual({current: 0, best: 2, bonusEligible: 0});
     });
 
     it("ignores the bus while disabled", () => {
         const {result} = renderHook(() => useLessonCombo(false));
         act(() => emitCelebration({type: "answer_correct"}));
-        expect(result.current.combo).toEqual({current: 0, best: 0});
+        expect(result.current.combo).toEqual({current: 0, best: 0, bonusEligible: 0});
     });
 
     it("ignores non-answer celebrations", () => {
         const {result} = renderHook(() => useLessonCombo(true));
         act(() => emitCelebration({type: "level_up"}));
-        expect(result.current.combo).toEqual({current: 0, best: 0});
+        expect(result.current.combo).toEqual({current: 0, best: 0, bonusEligible: 0});
     });
 
     it("resets on demand (new lesson)", () => {
@@ -41,6 +41,6 @@ describe("useLessonCombo", () => {
             emitCelebration({type: "answer_correct"});
         });
         act(() => result.current.resetCombo());
-        expect(result.current.combo).toEqual({current: 0, best: 0});
+        expect(result.current.combo).toEqual({current: 0, best: 0, bonusEligible: 0});
     });
 });

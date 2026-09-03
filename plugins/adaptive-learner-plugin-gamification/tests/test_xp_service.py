@@ -408,3 +408,35 @@ def test_count_corrected_zero_wrong_in_run_is_zero() -> None:
 
 def test_count_corrected_empty_rows_is_zero() -> None:
     assert count_corrected_elements([], 4) == 0
+
+
+@pytest.mark.parametrize(
+    ("combo_bonus", "expected_extra"),
+    [
+        pytest.param(0, 0, id="no_bonus"),
+        pytest.param(5, 5, id="bonus_5"),
+        pytest.param(20, 20, id="at_hard_cap"),
+        pytest.param(25, 20, id="above_hard_cap_clamped"),
+        pytest.param(-3, 0, id="negative_clamped"),
+    ],
+)
+def test_lesson_xp_combo_bonus_additive_after_multiplier(
+    combo_bonus: int, expected_extra: int
+) -> None:
+    """#2893 - the game-mode combo bonus adds AFTER the multiplier and
+    clamps into [0, 20], so no mode/streak multiplier can inflate it."""
+    base = calculate_lesson_session_xp(
+        stars=3, first_attempt=True, streak_days=7, xp_multiplier=1.5
+    )
+    with_bonus = calculate_lesson_session_xp(
+        stars=3,
+        first_attempt=True,
+        streak_days=7,
+        xp_multiplier=1.5,
+        combo_bonus=combo_bonus,
+    )
+    assert with_bonus.xp_earned == base.xp_earned + expected_extra
+    if expected_extra > 0:
+        assert with_bonus.breakdown["combo_bonus"] == expected_extra
+    else:
+        assert "combo_bonus" not in with_bonus.breakdown

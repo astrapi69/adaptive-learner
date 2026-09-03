@@ -41,6 +41,8 @@ export interface XPBreakdown {
     /** Lesson-mode reward weight as a percent bonus (#1007 Phase 2),
      *  emitted only when the mode multiplier is not 1.0 (e.g. exam = 50). */
     mode_multiplier_pct?: number;
+    /** #2893 - game-mode combo bonus actually credited (post-clamp). */
+    combo_bonus?: number;
 }
 
 /**
@@ -65,6 +67,8 @@ export interface CalculateLessonSessionXpInput {
     /** Lesson-mode reward weight (#1007 Phase 2). Default 1.0; the
      *  caller passes ``MODE_CONFIGS[mode].xpMultiplier`` (exam = 1.5). */
     xp_multiplier?: number;
+    /** #2893 - game-mode combo bonus, clamped to [0, 20] in here. */
+    combo_bonus?: number;
 }
 
 /**
@@ -97,6 +101,10 @@ export function computeStars(correct: number, total: number): number {
  * up to ``N + 1``. This helper keeps the parity contract
  * regardless of which fixture cases land on ``.5``.
  */
+/** #2893 - defensive ceiling for the combo bonus (Python twin:
+ *  LESSON_COMBO_BONUS_HARD_CAP in xp_service.py). */
+export const LESSON_COMBO_BONUS_HARD_CAP = 20;
+
 function pythonRound(x: number): number {
     const floor = Math.floor(x);
     const diff = x - floor;
@@ -116,6 +124,9 @@ function pythonRound(x: number): number {
  * - Per-star bonus: 10 × clamp(stars, 0, 3)
  * - First-attempt 3-star bonus: +20 (stars==3 AND first_attempt)
  * - Streak multiplier: +25%/day capped at 7 days
+ * - Game-mode combo bonus (#2893): added AFTER the multiplier,
+ *   clamped to [0, LESSON_COMBO_BONUS_HARD_CAP] - the defensive
+ *   twin of the Python clamp.
  *
  * Caller resolves the DB-derived inputs (``streak_days`` from
  * ``current_streak_days`` over the activity-date set,
@@ -153,7 +164,14 @@ export function calculateLessonSessionXp(
     // so the float product and banker's-rounded result stay
     // byte-identical for the parity goldens.
     const multiplier = streak_multiplier * xp_multiplier;
-    const xp_earned = pythonRound(pre_multiplier * multiplier);
+    const clamped_bonus = Math.max(
+        0,
+        Math.min(LESSON_COMBO_BONUS_HARD_CAP, Math.trunc(input.combo_bonus ?? 0)),
+    );
+    const xp_earned = pythonRound(pre_multiplier * multiplier) + clamped_bonus;
+    if (clamped_bonus > 0) {
+        breakdown.combo_bonus = clamped_bonus;
+    }
     if (input.streak_days > 0) {
         breakdown.streak_multiplier_pct = pythonRound(
             (streak_multiplier - 1.0) * 100,

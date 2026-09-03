@@ -780,6 +780,30 @@
     "playful_mode_title": "Modo jogo",
     "playful_mode": "Lições lúdicas",
     "playful_mode_description": "Transforma as lições em um jogo: elogios a cada resposta correta, confete e celebrações de marcos. Funciona com todos os modos de lição; a pontuação e o progresso não mudam. Se o seu sistema reduz animações, o feedback continua discreto.",
+    "playful_sounds": "Sons do modo de jogo",
+    "playful_sounds_description": "Sons curtos no modo de jogo: um tom a cada resposta correta (com tom crescente por sequência), um toque nos pontos de controle e uma fanfarra na conclusão. Independentes do interruptor global de sons; o volume segue o controle.",
+    "playful_sounds_offer": "Jogar com som?",
+    "playful_sounds_offer_yes": "Sim, sons ativados",
+    "playful_sounds_offer_later": "Mais tarde",
+    "playful_hearts": "Corações (vidas)",
+    "playful_hearts_description": "Uma resposta errada custa um coração. Ao chegar a zero, a rodada termina com um convite amigável para tentar de novo: nada do que foi resolvido se perde. Desativado em lições de exame e contrarrelógio.",
+    "playful_hearts_count": "Corações por lição",
+    "playful_countdown": "Anel de contagem regressiva",
+    "playful_countdown_description": "Um pequeno anel de tempo por exercício. Se esgotar, a sequência quebra e um coração é perdido; o exercício continua aberto, nada é enviado automaticamente. Desativado em lições de exame e contrarrelógio (o modo contrarrelógio tem o seu próprio temporizador).",
+    "playful_countdown_seconds": "Segundos por exercício",
+    "playful_combo_xp": "XP de bónus por sequência",
+    "playful_combo_xp_description": "A partir da terceira resposta da sequência, cada resposta certa seguida dá +1 XP de bónus, com limite por lição. Desligado, os XP do modo jogo ficam idênticos ao modo normal.",
+    "playful_combo_xp_cap": "Limite de XP de bónus por lição",
+    "playful_arcade": "Arcade",
+    "playful_arcade_description": "Minijogos curtos como recompensa do modo jogo: Memory de aprendizagem com os teus cartões de lição e o clássico Snake como desbloqueio por XP. Desligado esconde por completo o cartão do arcade e os jogos.",
+    "playful_arcade_snake_seconds": "Duração da ronda de Snake (segundos)",
+    "playful_arcade_memory_pairs": "Pares do Memory",
+    "playful_special_rounds": "Rondas especiais",
+    "playful_special_rounds_description": "Terminar um conjunto (cada lição com pelo menos uma estrela) desbloqueia uma ronda relâmpago com os seus cartões mais difíceis, jogada com o anel de contagem decrescente. Desligado esconde por completo o cartão da ronda relâmpago.",
+    "playful_flash_round_cards": "Cartões da ronda relâmpago",
+    "playful_tickets": "Bilhetes de jogo",
+    "playful_tickets_description": "Ganha bilhetes de arcade pelo teu desempenho: uma lição com pontuação perfeita, uma ronda concluída com todos os corações e os marcos de sequência (3/7/14/30 dias). Um bilhete joga uma ronda de um jogo de arcade bloqueado. Desligado, o arcade fica só com os desbloqueios por XP.",
+    "playful_ticket_cap": "Bilhetes máximos",
     "feedback_intensity": "Intensidade do feedback",
     "feedback_intensity_description": "Com quanta efusividade o app celebra o seu progresso.",
     "feedback_intensity_subtle": "Discreto",
@@ -1523,6 +1547,47 @@
     "danger_zone_continue": "Continuar",
     "danger_zone_failed_toast": "Falha na redefinição:"
   },
+  "arcade": {
+    "title": "Arcade",
+    "subtitle": "Rondas curtas, de um a dois minutos: uma recompensa do modo jogo. Sem XP, só diversão.",
+    "card_description": "Rondas curtas de Memory de aprendizagem e Snake: a tua recompensa do modo jogo.",
+    "card_open": "Ir para o arcade",
+    "requires_playful": "O arcade faz parte do modo jogo. Ativa o modo jogo (e o interruptor do arcade) nas definições.",
+    "open_settings": "Abrir definições",
+    "play": "Jogar",
+    "pause": "Pausa",
+    "resume": "Continuar",
+    "restart": "Reiniciar",
+    "back_to_games": "Voltar aos jogos",
+    "unlock_for_xp": "Desbloquear por {n} XP",
+    "unlock_confirm": "Desbloquear mesmo por {n} XP?",
+    "unlock_not_enough_xp": "Ainda não tens XP suficientes: continua a aprender!",
+    "tickets_label": "Bilhetes: {n}",
+    "ticket_play": "Jogar uma ronda com um bilhete",
+    "tickets_hint": "Ganha bilhetes com lições perfeitas, rondas com todos os corações e marcos de sequência.",
+    "memory": {
+      "name": "Memory de aprendizagem",
+      "description": "Encontra os pares de termo e tradução das tuas lições.",
+      "set_label": "Conjunto de lições",
+      "loading": "A carregar cartões ...",
+      "empty": "Nenhum conjunto descarregado com cartões suficientes. Descarrega primeiro um conjunto de lições.",
+      "load_failed": "O carregamento dos cartões falhou. Tenta outro conjunto.",
+      "progress": "Pares: {a} / {b}",
+      "attempts": "Tentativas: {n}",
+      "won": "Todos os pares encontrados em {n} tentativas!"
+    },
+    "snake": {
+      "name": "Snake",
+      "description": "O clássico: apanha comida, cresce e não te mordas a ti próprio.",
+      "score": "Pontos: {n}",
+      "time_left": "Tempo: {n}s",
+      "goal": "Meta: {n} pontos",
+      "highscore": "Recorde: {n}",
+      "board_aria": "Tabuleiro de Snake: guia com as setas ou deslizando",
+      "won": "Ronda ganha: {n} pontos!",
+      "lost": "Ronda terminada: {n} pontos. Tenta outra vez!"
+    }
+  },
   "anki": {
     "title": "Exportação Anki",
     "intro": "Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.",
@@ -1908,7 +1973,19 @@
     "combo_chip": "x{n}",
     "combo_aria": "Sequência de respostas: {n} seguidas",
     "combo_best": "Melhor sequência: {n}",
+    "combo_bonus_aria": "Bónus de sequência: {n} XP",
+    "hearts": {
+      "aria": "Vidas: {n} de {max}",
+      "empty_heading": "Sem corações!",
+      "empty_body": "Tudo bem: nada se perde, tudo o que foi resolvido fica guardado. Respire fundo e tente a lição de novo.",
+      "action_retry": "Tentar de novo",
+      "action_exit": "Sair da lição"
+    },
+    "countdown": {
+      "aria": "Anel de tempo: faltam {n}s"
+    },
     "playful_hint_title": "Experimente o modo jogo",
+    "playful_hint_enable_sound": "Ativar com som",
     "playful_hint_body": "As lições celebram cada resposta correta com elogios e confete. Você pode mudar isso a qualquer momento nas configurações.",
     "playful_hint_activate": "Ativar",
     "playful_hint_dismiss": "Não mostrar novamente",
@@ -2275,6 +2352,15 @@
         "productive_hint": "Produzir a resposta"
       }
     },
+    "flash_round": {
+      "title": "Ronda relâmpago: {set}",
+      "card_title": "Ronda relâmpago",
+      "card_description": "Uma ronda rápida com os cartões mais difíceis deste conjunto, com o anel de contagem decrescente.",
+      "start": "Iniciar ronda relâmpago",
+      "locked_tooltip": "Termina cada lição deste conjunto com pelo menos uma estrela para desbloquear.",
+      "perfect_tooltip": "Sem cartões de erro: este conjunto já é perfeito!",
+      "no_content": "Nenhum cartão de erro jogável encontrado para este conjunto."
+    },
     "error_replay": {
       "title": "Repetir erros: {lesson}",
       "heading": "Repetição concluída",
@@ -2375,7 +2461,10 @@
       "encourage_0": "A prática leva à perfeição!",
       "encourage_1": "Bom começo - continue!",
       "encourage_2": "Quase perfeito!",
-      "encourage_3": "Pontuação perfeita!"
+      "encourage_3": "Pontuação perfeita!",
+      "ticket_earned_one": "Recompensa desbloqueada: um bilhete de jogo!",
+      "ticket_earned_many": "Recompensa desbloqueada: {n} bilhetes de jogo!",
+      "ticket_play_now": "Jogar agora"
     },
     "error": {
       "load_failed": "Não foi possível carregar a lição.",

@@ -29,6 +29,7 @@ import type {ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
+import {playfulDataAttr} from "../../../../lib/learning/lessonModeConfig";
 import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../../../lib/srs/element-attempt";
@@ -206,7 +207,7 @@ function MatchingExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t, lang} = useI18n();
-    const {showAnswerToggle} = useLessonMode();
+    const {showAnswerToggle, playful} = useLessonMode();
     const pairs = useMemo(() => exercise.pairs ?? [], [exercise.pairs]);
     const reviewedMatching =
         reviewed?.kind === "matching" ? reviewed : null;
@@ -527,6 +528,7 @@ function MatchingExercise(
         <section
             className="flex flex-col gap-3"
             data-testid="matching-exercise"
+            data-playful={playfulDataAttr(playful)}
         >
             <MatchingPrompt
                 prompt={exercise.prompt}
@@ -586,6 +588,7 @@ function MatchingExercise(
                                     productive,
                                 })}
                                 onClick={() => handleLeftClick(tile.index)}
+                                playful={playful}
                             />
                         ))}
                     </ul>
@@ -618,6 +621,7 @@ function MatchingExercise(
                                 })}
                                 submitted={submitted}
                                 onClick={() => handleRightClick(tile.originalIndex)}
+                                playful={playful}
                             />
                         ))}
                     </ul>
