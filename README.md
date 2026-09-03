@@ -83,19 +83,19 @@ summarizes). In short:
 <!-- CONTENT-STATS:START -->
 [![Content](https://img.shields.io/badge/content-25%20sets%2C%2012%20language%20pairs-brightgreen)](#bundled-content)
 
-**325 lessons · 28 sets · 2 domain(s)** (language, software) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**329 lessons · 28 sets · 2 domain(s)** (language, software) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons | Review |
 |-----|--------|--------|-------|--------:|--------|
 | Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 | authored |
-| Englisch A2 — Grundlagen | de | en | A2 | 15 | authored |
-| Englisch B1 — Mittelstufe | de | en | B1 | 15 | authored |
+| Englisch A2 - Grundlagen | de | en | A2 | 15 | authored |
+| Englisch B1 - Mittelstufe | de | en | B1 | 15 | authored |
 | Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 | authored |
-| Spanisch A2 — Grundlagen | de | es | A2 | 15 | authored |
-| Spanisch B1 — Mittelstufe | de | es | B1 | 15 | authored |
-| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 | authored |
-| Französisch A2 — Grundlagen | de | fr | A2 | 15 | authored |
-| Französisch B1 — Mittelstufe | de | fr | B1 | 15 | authored |
+| Spanisch A2 - Grundlagen | de | es | A2 | 15 | authored |
+| Spanisch B1 - Mittelstufe | de | es | B1 | 15 | authored |
+| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 16 | authored |
+| Französisch A2 - Grundlagen | de | fr | A2 | 16 | authored |
+| Französisch B1 - Mittelstufe | de | fr | B1 | 16 | authored |
 | Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 | authored |
 | Japanisch Schrift: Hiragana (Vorstufe) | de | ja | A0 | 10 | authored |
 | Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 | generated |
@@ -105,16 +105,16 @@ summarizes). In short:
 | German A1 (for English speakers) | en | de | A1 | 5 | authored |
 | German A2 (for English speakers) | en | de | A2 | 5 | authored |
 | Spanish A1 (for English speakers) | en | es | A1 | 15 | authored |
-| Spanish A2 — Elementary | en | es | A2 | 15 | authored |
-| Spanish B1 — Intermediate | en | es | B1 | 15 | authored |
+| Spanish A2 - Elementary | en | es | A2 | 15 | authored |
+| Spanish B1 - Intermediate | en | es | B1 | 15 | authored |
 | Spanish B2 (for English speakers) | en | es | B2 | 5 | authored |
-| French A1 (for English speakers) | en | fr | A1 | 15 | authored |
-| French A2 — Elementary | en | fr | A2 | 15 | authored |
+| French A1 (for English speakers) | en | fr | A1 | 16 | authored |
+| French A2 - Elementary | en | fr | A2 | 15 | authored |
 | French B1 (for English speakers) | en | fr | B1 | 5 | authored |
 | Γαλλικά A1 (για ελληνόφωνους) | el | fr | A1 | 8 | authored |
 | अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 | authored |
 | अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 | authored |
-| Adaptive Learner — App-Tutorial | de | de | none | 12 | authored |
+| Adaptive Learner - App-Tutorial | de | de | none | 12 | authored |
 
 _3 AI-generated sets excluded from the badge pending native-speaker review._
 <!-- CONTENT-STATS:END -->
