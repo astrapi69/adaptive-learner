@@ -242,15 +242,10 @@ function MatchingExercise(
         [pairs, productive],
     );
 
-    /** #2371 — both columns shuffle independently (distinct seed
-     *  suffixes) so neither side's authored order survives into the
-     *  display. ``leftTiles`` itself stays authored: index lookups
-     *  (prompt label, resolution view) rely on position == pair index. */
-    const displayLeftTiles: LeftTile[] = useMemo(
-        () => seededShuffle(leftTiles, `${shuffleSeed}#left`),
-        [leftTiles, shuffleSeed],
-    );
-
+    // #2882 — ONLY the right column shuffles. The left column always
+    // renders in authored order: a shuffled left reads as random noise
+    // to the learner (revises the #2371 left shuffle; the right shuffle
+    // alone prevents pairing by position).
     const rightTiles: RightTile[] = useMemo(() => {
         const indexed = pairs.map((p, i) => ({
             originalIndex: i,
@@ -387,19 +382,23 @@ function MatchingExercise(
     };
     const showUserAnswers = () => setView("user-answers");
 
-    /** The correct pairs in authored order, ready for the resolution
-     *  view (#824). ``slot`` uses the authored index for stable, distinct
-     *  per-pair colors; ``wasCorrect`` reflects the learner's own match. */
+    /** The correct pairs for the resolution view (#824), in the
+     *  displayed left-column order — which since #2882 IS the authored
+     *  order: solving must never reorder the column the learner just
+     *  saw (#2872); only the right side realigns to each row's correct
+     *  partner. ``slot`` is the row index, so the number badges read
+     *  1..n and the connect-effect line colors (indexed by row) match
+     *  the tiles. ``wasCorrect`` reflects the learner's own match. */
     const resolvedPairs: ResolvedPair[] = useMemo(
         () =>
-            leftTiles.map((tile) => {
+            leftTiles.map((tile, rowIdx) => {
                 const chosen = matches.get(tile.index);
                 return {
                     left: tile.label,
                     right: productive
                         ? (pairs[tile.index]?.left ?? "")
                         : (pairs[tile.index]?.right ?? ""),
-                    slot: tile.index,
+                    slot: rowIdx,
                     wasCorrect:
                         chosen !== undefined &&
                         matchingPairIsCorrect(
@@ -575,7 +574,7 @@ function MatchingExercise(
                         data-testid="matching-left"
                         aria-label={leftLabel}
                     >
-                        {displayLeftTiles.map((tile) => (
+                        {leftTiles.map((tile) => (
                             <MatchingLeftTile
                                 key={tile.index}
                                 tile={tile}

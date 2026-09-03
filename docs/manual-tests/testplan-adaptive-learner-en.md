@@ -353,6 +353,10 @@ Requires domain knowledge. Not automatable.
 ### Exercise types (check visually)
 - [ ] Matching: pairs SAME height (no visual offset)
 - [ ] Matching: "Resolve" animation looks good (test all 4 effects)
+- [ ] Matching: left column ALWAYS in lesson order (#2882), only the right
+      column is shuffled; on "Resolve" the left column keeps its order (no
+      jumping, #2872), each row shows the correct partner on the right,
+      number badges run 1..n
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
 - [ ] Word Tiles: on a CORRECT answer the built sentence stays visible (#2494):
       assemble a sentence correctly and check it. The composed sentence remains
