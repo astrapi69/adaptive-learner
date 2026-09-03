@@ -657,6 +657,20 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Reduced motion in the system: no flip/flash effects in either
       game
 
+#### Arcade: Tic-Tac-Toe (#2906, 100-XP unlock)
+
+- [ ] Arcade game list: Tic-Tac-Toe appears between Learn Memory and
+      Snake, locked behind "Unlock for 100 XP" (two-step confirm as
+      with Snake); a ticket plays one round without the purchase
+- [ ] A round: clicking places X, a short "the app is thinking"
+      beat, then the app places O; occupied cells and the thinking
+      beat are disabled
+- [ ] The AI is beatable: it does not block every winning chance -
+      over a few rounds you can win (three in a row highlighted,
+      friendly win message)
+- [ ] Losing and a draw end friendly with "Restart"; the game awards
+      no XP
+
 #### Flash rounds (#2888, default on, game mode only)
 
 - [ ] Settings > Learning > Game Mode: the "Special rounds" switch is
