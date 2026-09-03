@@ -1588,6 +1588,16 @@
       "board_aria": "Tabuleiro de Snake: guia com as setas ou deslizando",
       "won": "Ronda ganha: {n} pontos!",
       "lost": "Ronda terminada: {n} pontos. Tenta outra vez!"
+    },
+    "tictactoe": {
+      "name": "Jogo do galo",
+      "description": "Três em linha contra a app - e sim, dá para vencê-la.",
+      "your_turn": "É a tua vez (X)",
+      "ai_turn": "A app está a pensar ...",
+      "board_aria": "Tabuleiro do jogo do galo: escolhe uma casa livre",
+      "won": "Ganhaste: três em linha!",
+      "lost": "Esta ronda foi da app. Tenta já outra vez!",
+      "draw": "Empate: bem defendido!"
     }
   },
   "anki": {
