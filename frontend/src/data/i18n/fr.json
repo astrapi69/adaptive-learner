@@ -1624,7 +1624,10 @@
     "mic_permission_denied": "Accès au microphone refusé.",
     "mic_error": "Erreur de reconnaissance vocale.",
     "mic_no_device": "Aucun microphone détecté. Connecte-en un et réessaie.",
-    "mic_network": "La reconnaissance vocale est hors ligne. Vérifie ta connexion internet."
+    "mic_network": "La reconnaissance vocale est hors ligne. Vérifie ta connexion internet.",
+    "record_error": "L'enregistrement n'a pas fonctionné. Réessaie.",
+    "stop_recording": "Arrêter l'enregistrement",
+    "start_recording": "Démarrer l'enregistrement"
   },
   "pronunciation": {
     "title": "Pratique de Prononciation",
@@ -1672,6 +1675,9 @@
     "desktop_only": "Disponible uniquement avec l'application de bureau."
   },
   "ui": {
+    "cancel": "Annuler",
+    "hide_secret": "Masquer la valeur",
+    "show_secret": "Afficher la valeur",
     "info": {
       "show": "Afficher les informations"
     },
@@ -2232,6 +2238,22 @@
         "retry": "Réessayer",
         "empty": "Cet exercice à choix multiple n'a pas d'options."
       },
+      "al_audio_choice": {
+        "empty": "Cet exercice de choix audio n'a pas d'options.",
+        "result_correct": "Correct !",
+        "result_wrong": "Pas tout à fait - réécoute.",
+        "submit": "Vérifier la réponse",
+        "retry": "Réessayer",
+        "option_aria": "Lire l'option"
+      },
+      "al_audio_tiles": {
+        "empty": "Cet exercice de tuiles audio n'a pas de tuiles."
+      },
+      "type_matching": "Association",
+      "type_picture_choice": "Choix d'image",
+      "type_free_text": "Texte libre",
+      "type_word_tiles": "Tuiles de mots",
+      "type_cloze": "Texte à trous",
       "al_categorization": {
         "empty": "Cet exercice de catégorisation n'a pas de catégories.",
         "instructions": "Touche un élément, puis sa catégorie.",
@@ -2301,7 +2323,12 @@
         "submit": "Vérifier les réponses"
       },
       "al_speak_and_record": {
-        "recording_evicted": "Ton enregistrement précédent a été supprimé pour économiser de l'espace de stockage. Tu peux réenregistrer à tout moment."
+        "recording_evicted": "Ton enregistrement précédent a été supprimé pour économiser de l'espace de stockage. Tu peux réenregistrer à tout moment.",
+        "empty": "Cet exercice de parler et enregistrer n'a pas de phrase.",
+        "show": "Afficher le texte",
+        "saving": "Enregistrement…",
+        "done": "Terminé",
+        "record_again": "Réenregistrer"
       },
       "instruction": {
         "matching": {
@@ -2400,6 +2427,7 @@
       "view_all_answers": "Voir toutes les réponses ({n})",
       "export": {
         "copy": "Copier le résultat",
+        "correct_answer": "Correct",
         "download": "Enregistrer comme fichier",
         "download_json": "Exporter en JSON",
         "anki": "Exporter les cartes (Anki)",
@@ -3627,6 +3655,13 @@
       "receptive": "Réceptif seulement",
       "productive": "Productif seulement"
     },
+    "status": {
+      "not_started": "Non commencé",
+      "in_progress": "En cours",
+      "paused": "En pause",
+      "completed": "Terminé",
+      "mastered": "Maîtrisé"
+    },
     "stats": {
       "title": "Stats",
       "lessons": "Leçons",
@@ -3701,6 +3736,7 @@
     },
     "app": {
       "heading": "Partager l'application",
+      "download": "Télécharger",
       "qr_intro": "Partage l'application par code QR pour que d'autres puissent l'ouvrir.",
       "show_qr": "Afficher le code QR",
       "download_qr": "Télécharger le code QR",
@@ -4071,6 +4107,7 @@
     },
     "share": {
       "copied": "Lien copié.",
+      "tab_link": "Lien",
       "copy": "Copier",
       "copy_failed": "Copie impossible.",
       "hint": "Partage ce lien pour que d'autres puissent ajouter ce dépôt PUBLIC. Pour un dépôt privé, envoie l'URL et un jeton en lecture seule séparément.",
@@ -4116,6 +4153,12 @@
     "search_placeholder": "Espagnol, IA, psychologie…",
     "search_aria": "Rechercher dans le contenu disponible",
     "search_clear": "Effacer la recherche",
+    "badge": {
+      "new": "Nouveau"
+    },
+    "new": {
+      "count": "{n} nouveaux"
+    },
     "bar": {
       "search": "Rechercher",
       "filter": "Filtrer"

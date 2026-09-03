@@ -1510,6 +1510,9 @@ voice:
   mic_error: Konuşma tanıma hatası.
   mic_no_device: "Mikrofon bulunamadı. Bir tane bağlayıp tekrar deneyin."
   mic_network: "Konuşma tanıma çevrimdışı. İnternet bağlantını kontrol et."
+  record_error: "Kayıt çalışmadı. Lütfen tekrar dene."
+  stop_recording: "Kaydı durdur"
+  start_recording: "Kaydı başlat"
 pronunciation:
   title: Telaffuz Alıştırması
   intro: Bir cümle oluştur, yüksek sesle söyle ve anında geri bildirim al.
@@ -1554,6 +1557,9 @@ feature:
   api_key_required: "API anahtarı gerekli. Ayarlardan bir sağlayıcı yapılandırın."
   desktop_only: "Yalnızca masaüstü uygulamasıyla kullanılabilir."
 ui:
+  cancel: "İptal"
+  hide_secret: "Değeri gizle"
+  show_secret: "Değeri göster"
   info:
     show: "Bilgileri göster"
   themes:
@@ -2068,6 +2074,20 @@ lesson:
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"
       empty: "Bu çoktan seçmeli alıştırmada seçenek yok."
+    al_audio_choice:
+      empty: "Bu ses seçim alıştırmasında seçenek yok."
+      result_correct: "Doğru!"
+      result_wrong: "Tam olarak değil - tekrar dinle."
+      submit: "Cevabı kontrol et"
+      retry: "Tekrar dene"
+      option_aria: "Seçeneği çal"
+    al_audio_tiles:
+      empty: "Bu ses karo alıştırmasında karo yok."
+    type_matching: "Eşleştirme"
+    type_picture_choice: "Resim seçimi"
+    type_free_text: "Serbest metin"
+    type_word_tiles: "Kelime karoları"
+    type_cloze: "Boşluk doldurma"
     al_categorization:
       empty: "Bu sınıflandırma alıştırmasında kategori yok."
       instructions: "Bir ögeye, ardından kategorisine dokun."
@@ -2135,6 +2155,11 @@ lesson:
       # stay TSX-only fallbacks until the whole exercise type gets its
       # i18n block (a separate, larger task, out of scope here).
       recording_evicted: "Depolama alanından tasarruf etmek için önceki kaydın kaldırıldı. İstediğin zaman tekrar kaydedebilirsin."
+      empty: "Bu konuş-ve-kaydet alıştırmasında cümle yok."
+      show: "Metni göster"
+      saving: "Kaydediliyor…"
+      done: "Tamam"
+      record_again: "Tekrar kaydet"
     instruction:
       matching:
         receptive: Çiftleri eşleştir (Tanıma)
@@ -2221,6 +2246,7 @@ lesson:
     view_all_answers: "Tüm yanıtları gör ({n})"
     export:
       copy: "Sonucu kopyala"
+      correct_answer: "Doğru"
       download: "Dosya olarak kaydet"
       download_json: "JSON olarak dışa aktar"
       anki: "Kartları dışa aktar (Anki)"
@@ -3332,6 +3358,12 @@ learning_path:
     mastered: "Ustalaşıldı"
     receptive: "Yalnızca alımlayıcı"
     productive: "Yalnızca üretici"
+  status:
+    not_started: "Başlanmadı"
+    in_progress: "Devam ediyor"
+    paused: "Duraklatıldı"
+    completed: "Tamamlandı"
+    mastered: "Ustalaşıldı"
   stats:
     title: "İstatistikler"
     lessons: "Dersler"
@@ -3399,6 +3431,7 @@ share:
     copy: "Panoya kopyala"
   app:
     heading: "Uygulamayı paylaş"
+    download: "İndir"
     qr_intro: "Başkalarının doğrudan açabilmesi için uygulamayı QR koduyla paylaş."
     show_qr: "QR kodunu göster"
     download_qr: "QR kodunu indir"
@@ -3751,6 +3784,7 @@ content_repo:
     star: "5 üzerinden {n} ver"
   share:
     copied: "Bağlantı kopyalandı."
+    tab_link: "Bağlantı"
     copy: "Kopyala"
     copy_failed: "Kopyalanamadı."
     hint: "Başkalarının bu HERKESE AÇIK depoyu ekleyebilmesi için bu bağlantıyı paylaş. Özel bir depo için URL'yi ve salt okunur bir belirteci ayrı ayrı gönder."
@@ -3789,6 +3823,10 @@ discover:
   search_placeholder: "İspanyolca, yapay zeka, psikoloji…"
   search_aria: "Kullanılabilir içerikte ara"
   search_clear: "Aramayı temizle"
+  badge:
+    new: "Yeni"
+  new:
+    count: "{n} yeni"
   bar:
     search: "Ara"
     filter: "Filtrele"
