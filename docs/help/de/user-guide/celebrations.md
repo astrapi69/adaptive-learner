@@ -108,6 +108,12 @@ Mit aktivem Spielmodus:
   gesperrten Spiels, ohne den XP-Kauf. Die maximale Anzahl
   ansparbarer Tickets stellst du in den Spielmodus-Einstellungen
   ein.
+- **Bonus-Lektionen** (Standard an, abschaltbar): Sets können
+  besondere Lektionen enthalten, die auf der Set-Seite mit einem
+  "Bonus"-Abzeichen am Listenende erscheinen. Im Spielmodus sind sie
+  gesperrt, bis jede reguläre Lektion mindestens einen Stern hat -
+  die Belohnung fürs Durchziehen. Ohne Spielmodus sind sie normale
+  Lektionen.
 - **Lernfunke**, dein Lernbegleiter, sitzt als kleine Flammen-Figur
   neben der Fortschrittsleiste: Er jubelt bei richtigen Antworten,
   muntert bei falschen auf, feiert Meilensteine und verabschiedet
