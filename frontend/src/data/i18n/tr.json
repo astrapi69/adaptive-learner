@@ -2578,7 +2578,8 @@
       "bonus_badge": "Bonus",
       "bonus_locked_tooltip": "Bu bonus dersin kilidini açmak için bu setin her normal dersini en az bir yıldızla bitir.",
       "progress_done": "{total} dersten {done} tanesi tamamlandı",
-      "current_lesson": "Buradan devam et"
+      "current_lesson": "Buradan devam et",
+      "lesson_completed": "Tamamlandı"
     },
     "repo_export": {
       "button": "Depo olarak paylaş",

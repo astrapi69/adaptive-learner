@@ -1743,14 +1743,20 @@ jeder Karten-Zeile (`CardImageField`).
       Lektionen mit Nummer
 - [ ] Rechts oben an der Liste steht "{x} von {y} Lektionen
       abgeschlossen"
-- [ ] Abgeschlossene Lektionen zeigen ihre Punktzahl; die erste
-      unfertige trägt die Marke "Hier weitermachen"
+- [ ] Abgeschlossene Lektionen zeigen ein grünes Häkchen plus ihre
+      Punktzahl; die erste unfertige trägt die Marke "Hier weitermachen"
+      (#2935)
 - [ ] Ein Klick auf eine beliebige Zeile öffnet genau diese Lektion -
       auch eine weit zurückliegende
 - [ ] In einer laufenden Lektion ist der Set-Name in der Kopfzeile
       anklickbar und führt auf ebendiese Liste
 - [ ] Ohne angemeldeten Lernfortschritt erscheint die Liste trotzdem,
       nur ohne Markierungen
+- [ ] Ein paar Lektionen eines Sets abschließen, verlassen, die
+      Set-Seite erneut öffnen, "Lernen starten" drücken: es öffnet die
+      erste UNFERTIGE Lektion, nicht wieder Lektion 1 (#2935)
+- [ ] Jede Lektion eines Sets abschließen, dann erneut "Lernen starten"
+      drücken: es öffnet Lektion 1 (nichts mehr zum Fortsetzen)
 ### Zusammenfassung: Alle Antworten mit Frage (#2807)
 - [ ] Lektion beenden, "Alle Antworten ansehen" öffnen: jede Zeile mit
       etwas zu zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)

@@ -2578,7 +2578,8 @@
       "bonus_badge": "ボーナス",
       "bonus_locked_tooltip": "このボーナスレッスンをアンロックするには、このセットの通常レッスンをすべて星1つ以上でクリアしてください。",
       "progress_done": "{total} 件中 {done} 件のレッスンが完了",
-      "current_lesson": "ここから続ける"
+      "current_lesson": "ここから続ける",
+      "lesson_completed": "完了"
     },
     "repo_export": {
       "button": "リポジトリとして共有",

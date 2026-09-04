@@ -23,7 +23,7 @@
  * fallback the deploy workflow installs; no extra routing infra needed.
  */
 
-import { Loader2, Lock } from "lucide-react";
+import { CheckCircle2, Loader2, Lock } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 
@@ -183,17 +183,23 @@ export default function SetDeepLink() {
       // #2890 - "start learning" targets the first REGULAR lesson; a
       // bonus-only set (unusual) falls back to its first file.
       const first = baseLessons(listing.lessons)[0] ?? listing.lessons[0];
-      if (!first) {
+      // #2935 - resume where progress left off instead of always
+      // restarting at lesson 1. `currentFilename` is the same
+      // first-unfinished-lesson value already shown as the "Continue
+      // here" badge; falls back to `first` for a fresh set or once
+      // every lesson is completed (`currentFilename === null`).
+      const target = lessonList?.currentFilename ?? first;
+      if (!target) {
         notify.warning(t("content.warning.no_lessons_in_set", "This set has no lessons yet."));
         return;
       }
       navigate(
         `/lesson/${encodeURIComponent(setSlug(set.source))}/${encodeURIComponent(
           set.id,
-        )}/${encodeURIComponent(first)}`,
+        )}/${encodeURIComponent(target)}`,
       );
     },
-    [navigate, t],
+    [navigate, t, lessonList],
   );
 
   const handleStart = useCallback(async () => {
@@ -358,10 +364,23 @@ export default function SetDeepLink() {
                             aria-hidden="true"
                           />
                         ) : (
-                          lesson.status === "completed" &&
-                          lesson.scoreTotal !== null && (
-                            <span className="flex-none text-[var(--fg-muted)]">
-                              {lesson.scoreCorrect} / {lesson.scoreTotal}
+                          lesson.status === "completed" && (
+                            // #2935 - a plain score number read as "done"
+                            // only on close inspection; the checkmark
+                            // makes completion legible at a glance.
+                            <span
+                              className="flex flex-none items-center gap-1 text-[var(--fg-muted)]"
+                              data-testid={`set-lesson-done-${lesson.filename}`}
+                            >
+                              <CheckCircle2
+                                className="h-4 w-4 text-success"
+                                aria-label={t("content.set_link.lesson_completed", "Completed")}
+                              />
+                              {lesson.scoreTotal !== null && (
+                                <span>
+                                  {lesson.scoreCorrect} / {lesson.scoreTotal}
+                                </span>
+                              )}
                             </span>
                           )
                         )}
