@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-ai-perplexity"
-version = "2.13.0"
+version = "2.14.0"
 description = "Adaptive Learner: Perplexity sonar provider for the ai_complete hook (OpenAI-compatible)."
 authors = ["Asterios Raptis"]
 license = "MIT"
