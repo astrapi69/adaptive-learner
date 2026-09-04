@@ -1463,6 +1463,18 @@
             ],
             "title": "Examples"
           },
+          "explanation": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
           "ext_payload": {
             "anyOf": [
               {

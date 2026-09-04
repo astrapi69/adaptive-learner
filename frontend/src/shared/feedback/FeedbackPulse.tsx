@@ -66,7 +66,14 @@ export default function FeedbackPulse({
             duration: variant === "success" ? 360 : 420,
             easing: "ease-in-out",
         });
-        return () => anim.cancel();
+        return () => {
+            anim.cancel();
+            // Canceling rejects `finished` with an AbortError per spec (a
+            // cleanup-time cancel is expected here, not an error) - nobody
+            // reads `finished`, so swallow it before it surfaces as an
+            // unhandled rejection.
+            anim.finished?.catch(() => undefined);
+        };
     }, [variant]);
 
     return (
