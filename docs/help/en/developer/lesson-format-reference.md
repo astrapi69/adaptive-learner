@@ -91,6 +91,7 @@ One exercise step. Type-tagged via ``type``.
 | `direction` | `"source_to_target" | "target_to_source" | "both" | "random"` | no | - |
 | `distractors` | `string[]` | no | maxItems=20 |
 | `examples` | `InlineExample[] | null` | no | - |
+| `explanation` | `string | null` | no | - |
 | `ext_payload` | `object` | no | - |
 | `from_cards` | `boolean` | no | - |
 | `hint` | `string | null` | no | - |
