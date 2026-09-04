@@ -23,8 +23,19 @@ import {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 import {describe, expect, it} from "vitest";
 
-import {FALLBACK_CATALOGS, fallbackString} from "./fallbacks";
+import {FALLBACK_CATALOGS} from "./fallbacks";
+import {NAMESPACE, getI18n} from "./engine";
 import type {SupportedLanguage} from "../lib/constants";
+
+/**
+ * Resolve a key against ONE language's preloaded resources through the
+ * real production engine (#2797) - no fallback chain, so a language
+ * missing its own string surfaces as ``undefined`` instead of silently
+ * reading as covered via ``i18next``'s ``fallbackLng: "en"``.
+ */
+function resolveFirstPaint(lang: SupportedLanguage, key: string): unknown {
+  return getI18n().getResource(lang, NAMESPACE, key);
+}
 
 const SRC = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -73,7 +84,7 @@ describe("first-paint fallback coverage (#2796)", () => {
     "%s: every shell key resolves to a non-empty first-paint string",
     (lang) => {
       const missing = KEYS.filter((key) => {
-        const value = fallbackString(lang, key);
+        const value = resolveFirstPaint(lang, key);
         return typeof value !== "string" || value.trim() === "";
       });
       expect(missing).toEqual([]);
@@ -81,15 +92,17 @@ describe("first-paint fallback coverage (#2796)", () => {
   );
 
   it("resolves keys nested deeper than two levels (the #2796 root cause)", () => {
-    // ``fallbackString`` used to destructure into exactly [section, name], so
-    // three-level keys were structurally unreachable regardless of content.
-    expect(fallbackString("de", "update.banner.message")).toBeTruthy();
-    expect(fallbackString("de", "install.ios.title")).toBeTruthy();
+    // The hand-rolled lookup this gate used to call destructured into
+    // exactly [section, name], so three-level keys were structurally
+    // unreachable regardless of content. The real engine (#2797) resolves
+    // arbitrary depth natively.
+    expect(resolveFirstPaint("de", "update.banner.message")).toBeTruthy();
+    expect(resolveFirstPaint("de", "install.ios.title")).toBeTruthy();
   });
 
   it("keeps German German — a covered key never yields the English literal", () => {
-    expect(fallbackString("de", "update.banner.later")).not.toBe("Later");
-    expect(fallbackString("de", "install.ios.title")).not.toBe(
+    expect(resolveFirstPaint("de", "update.banner.later")).not.toBe("Later");
+    expect(resolveFirstPaint("de", "install.ios.title")).not.toBe(
       "Add to home screen",
     );
   });
