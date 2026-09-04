@@ -56,6 +56,7 @@
     "group_extra": "Data tambahan",
     "group_gamification": "Gamifikasi",
     "group_config": "Konfigurasi",
+    "group_media": "Media",
     "cat_projects": "Proyek pembelajaran (dengan sesi, peringkat, catatan)",
     "cat_curricula": "Kurikulum (dengan topik dan pelajaran)",
     "cat_progress": "Kemajuan pelajaran (dengan kesalahan / SRS)",
@@ -66,7 +67,8 @@
     "cat_questions": "Pertanyaan belajar",
     "cat_gamification": "XP, lencana, runtun, misi",
     "cat_settings": "Pengaturan",
-    "cat_ai_config": "Cadangan kunci AI"
+    "cat_ai_config": "Cadangan kunci AI",
+    "cat_speech_recordings": "Rekaman suara (latihan bicara-dan-rekam)"
   },
   "nav": {
     "group": {
@@ -401,6 +403,7 @@
     "another_round": "Putaran lagi",
     "your_answer": "Jawaban Anda:",
     "correct_answer": "Benar:",
+    "question_label": "Pertanyaan:",
     "summary_corrected": "{corrected} dari {total} diperbaiki",
     "summary_trend": "Bagus - titik lemah Anda semakin kuat.",
     "summary_next": "Item yang dikuasai keluar; sisanya akan kembali untuk ditinjau segera.",
@@ -656,6 +659,45 @@
     "username_placeholder": "Nama Anda",
     "username_save": "Simpan",
     "username_empty": "Nama tidak boleh kosong.",
+    "avatar_frames_title": "Bingkai avatar",
+    "avatar_frames_hint": "Hiasi avatarmu. Bingkai terbuka lewat level dan lencana, atau ditukar dengan XP.",
+    "avatar_frame_none": "Tanpa",
+    "avatar_frame_bronze": "Perunggu",
+    "avatar_frame_silver": "Perak",
+    "avatar_frame_gold": "Emas",
+    "avatar_frame_flame": "Api",
+    "avatar_frame_star": "Bintang",
+    "avatar_frame_accent": "Aksen",
+    "avatar_frame_locked_level": "Mulai level {level}",
+    "avatar_frame_locked_badge": "Memerlukan lencana runtunan 3 hari",
+    "avatar_frame_buy": "{xp} XP",
+    "avatar_frame_buy_confirm": "Konfirmasi",
+    "avatar_frame_buy_failed": "Pembelian gagal.",
+    "mascot_variants_title": "Varian maskot",
+    "mascot_variants_hint": "Pilih warna teman belajarmu di mode permainan. Varian terbuka lewat level dan lencana, atau ditukar dengan XP.",
+    "mascot_variant_funke": "Percikan",
+    "mascot_variant_ozean": "Samudra",
+    "mascot_variant_wald": "Hutan",
+    "mascot_variant_geist": "Hantu",
+    "mascot_variant_gold": "Emas",
+    "unlock_level": "Mulai level {level}",
+    "unlock_badge": "Memerlukan lencana: {badge}",
+    "unlock_buy": "{xp} XP",
+    "unlock_buy_confirm": "Konfirmasi",
+    "unlock_buy_failed": "Pembelian gagal.",
+    "avatar_presets_title": "Atau pilih tokoh",
+    "avatar_replace_photo_title": "Ganti fotomu?",
+    "avatar_replace_photo_message": "Foto yang kamu unggah akan diganti dengan figur. Foto tetap tersimpan dan bisa dipulihkan kapan saja.",
+    "avatar_replace_photo_confirm": "Pakai figur",
+    "avatar_restore_photo": "Pulihkan foto",
+    "avatar_preset_spark": "Percikan",
+    "avatar_preset_robot": "Robot",
+    "avatar_preset_star": "Bintang",
+    "avatar_preset_cat": "Kucing",
+    "avatar_preset_owl": "Burung hantu",
+    "avatar_preset_ghost": "Hantu",
+    "avatar_preset_bolt": "Petir",
+    "avatar_preset_heart": "Hati",
     "avatar_upload": "Unggah gambar",
     "avatar_remove": "Hapus",
     "avatar_crop_title": "Sesuaikan gambar Anda",
@@ -682,6 +724,7 @@
     "tab_plugins": "Plugin",
     "tab_data": "Data",
     "tab_help": "Bantuan",
+    "tab_diagnostics": "Diagnostik & Dukungan",
     "tab_about": "Tentang",
     "tabs_aria": "Bagian pengaturan",
     "section_feedback": "Umpan balik",
@@ -717,6 +760,57 @@
     "button_tooltips_description": "Tampilkan tooltip arahkan kursor pada tombol ikon yang menjelaskan fungsinya. Label pembaca layar tetap aktif terlepas dari ini.",
     "developer_mode": "Mode Pengembang",
     "developer_mode_description": "Tampilkan detail teknis lengkap (kode status, titik akhir, jejak tumpukan) dalam toast kesalahan. Lencana 'DEV' muncul di bilah navigasi saat ini aktif. Nonaktif secara bawaan; ikut serta untuk debugging.",
+    "section_diagnostics": "Diagnostik",
+    "vvdiag_toggle": "Probe ketukan & viewport",
+    "vvdiag_description": "Menampilkan bilah pengukuran dan menyimpan protokol persisten dari posisi ketukan serta perubahan viewport selama probe aktif. Membantu membuktikan bug tampilan yang sulit direproduksi (mis. ketukan yang jatuh di bawah target) setelah kejadian. Bisa juga diaktifkan lewat parameter URL ?vvdiag=1.",
+    "vvdiag_log_count": "{count} peristiwa terekam",
+    "vvdiag_copy_log": "Salin protokol",
+    "vvdiag_copied": "Disalin!",
+    "vvdiag_clear_log": "Bersihkan protokol",
+    "vvdiag_panel_toggle": "Tampilkan bilah pengukuran",
+    "vvdiag_panel_description": "Mati: probe terus merekam tanpa terlihat, tanpa menampilkan bilah di atas - header dan menu tetap sepenuhnya dapat diakses.",
+    "vvdiag_fab_toggle": "Tombol melayang untuk bilah pengukuran",
+    "vvdiag_fab_description": "Menampilkan tombol melayang yang menyalakan dan menyembunyikan bilah pengukuran dengan satu ketukan - praktis untuk mengganti bilah dengan cepat saat pengujian. Hanya terlihat selama probe aktif.",
+    "vvdiag_fab_position": "Posisi tombol",
+    "vvdiag_fab_pos_bottom_left": "Kiri bawah",
+    "vvdiag_fab_pos_bottom_right": "Kanan bawah",
+    "vvdiag_fab_pos_top_left": "Kiri atas",
+    "vvdiag_fab_pos_top_right": "Kanan atas",
+    "vvdiag_fab_aria": "Tampilkan atau sembunyikan bilah pengukuran",
+    "nav_position": "Posisi menu (seluler)",
+    "nav_position_description": "Letak navigasi utama di ponsel: di atas sebagai tombol menu (bawaan) atau di bawah sebagai bilah tab yang terjangkau ibu jari.",
+    "nav_position_top": "Atas (tombol menu)",
+    "nav_position_bottom": "Bawah (bilah tab)",
+    "playful_mode_title": "Mode permainan",
+    "playful_mode": "Pelajaran yang menyenangkan",
+    "playful_mode_description": "Mengubah pelajaran menjadi permainan: pujian di setiap jawaban benar, konfeti, dan perayaan pencapaian. Berfungsi dengan semua mode pelajaran; penilaian dan kemajuan tetap sama. Jika sistem Anda mengurangi animasi, umpan balik tetap sederhana.",
+    "playful_sounds": "Suara mode permainan",
+    "playful_sounds_description": "Suara singkat di mode permainan: nada pada setiap jawaban benar (nada naik per runtunan), jingle di titik pemeriksaan, dan fanfar saat selesai. Terpisah dari sakelar suara global; volume mengikuti penggeser.",
+    "playful_sounds_offer": "Main dengan suara?",
+    "playful_sounds_offer_yes": "Ya, suara aktif",
+    "playful_sounds_offer_later": "Nanti",
+    "playful_hearts": "Hati (nyawa)",
+    "playful_hearts_description": "Jawaban salah menghabiskan satu hati. Saat habis, ronde berakhir dengan tawaran ramah untuk mencoba lagi - tidak ada yang hilang dari yang sudah diselesaikan. Nonaktif di pelajaran ujian dan berwaktu.",
+    "playful_hearts_count": "Hati per pelajaran",
+    "playful_countdown": "Cincin hitung mundur",
+    "playful_countdown_description": "Cincin waktu kecil per latihan. Jika habis, rentetan putus dan satu hati hilang - latihan tetap terbuka, tidak ada yang dikirim otomatis. Nonaktif di pelajaran ujian dan berwaktu (mode berwaktu punya pengatur waktunya sendiri).",
+    "playful_countdown_seconds": "Detik per latihan",
+    "playful_combo_xp": "XP bonus runtunan",
+    "playful_combo_xp_description": "Mulai jawaban runtunan ketiga, setiap jawaban benar berturut-turut memberi +1 XP bonus, dengan batas per pelajaran. Jika mati, XP mode permainan tetap sama dengan mode normal.",
+    "playful_combo_xp_cap": "Batas XP bonus per pelajaran",
+    "playful_arcade": "Arcade",
+    "playful_arcade_description": "Mini-game singkat sebagai hadiah mode permainan: Memory Belajar dengan kartu pelajaranmu, plus game klasik yang dibuka dengan XP. Jika mati, kartu arcade dan permainan disembunyikan sepenuhnya.",
+    "playful_arcade_snake_seconds": "Durasi ronde Snake (detik)",
+    "playful_arcade_memory_pairs": "Pasangan Memory",
+    "playful_arcade_simon_target": "Panjang target Simon",
+    "playful_special_rounds": "Ronde spesial",
+    "playful_special_rounds_description": "Menyelesaikan sebuah set (setiap pelajaran dengan minimal satu bintang) membuka ronde kilat dari kartu-kartu tersulitnya, dimainkan dengan cincin hitung mundur. Jika mati, kartu ronde kilat disembunyikan sepenuhnya.",
+    "playful_flash_round_cards": "Kartu ronde kilat",
+    "playful_tickets": "Tiket permainan",
+    "playful_tickets_description": "Dapatkan tiket arcade lewat performa: pelajaran dengan skor sempurna, ronde yang diselesaikan dengan semua hati, dan tonggak runtunan (3/7/14/30 hari). Satu tiket memainkan satu ronde permainan arcade yang terkunci. Jika mati, arcade hanya memakai pembukaan XP.",
+    "playful_ticket_cap": "Tiket maksimum",
+    "playful_bonus_lessons": "Pelajaran bonus",
+    "playful_bonus_lessons_description": "Set dapat memuat pelajaran bonus (berkas pelajaran yang diawali \"bonus-\"). Saat mode permainan aktif, pelajaran itu tampil terkunci di daftar pelajaran set sampai setiap pelajaran reguler punya minimal satu bintang. Jika mati (atau mode permainan mati), diperlakukan seperti pelajaran biasa.",
     "feedback_intensity": "Intensitas Umpan Balik",
     "feedback_intensity_description": "Seberapa meriah aplikasi merayakan kemajuan Anda.",
     "feedback_intensity_subtle": "Halus",
@@ -1456,6 +1550,68 @@
     "danger_zone_continue": "Lanjutkan",
     "danger_zone_failed_toast": "Pengaturan ulang gagal:"
   },
+  "arcade": {
+    "title": "Arcade",
+    "subtitle": "Ronde singkat, satu sampai dua menit: hadiah mode permainan. Tanpa XP, hanya keseruan.",
+    "card_description": "Ronde singkat Memory Belajar dan Snake: hadiah mode permainanmu.",
+    "card_open": "Ke arcade",
+    "requires_playful": "Arcade adalah bagian dari mode permainan. Nyalakan mode permainan (dan sakelar arcade) di pengaturan.",
+    "open_settings": "Buka pengaturan",
+    "play": "Main",
+    "pause": "Jeda",
+    "resume": "Lanjutkan",
+    "restart": "Mulai ulang",
+    "back_to_games": "Kembali ke daftar permainan",
+    "unlock_for_xp": "Buka dengan {n} XP",
+    "unlock_confirm": "Benar-benar buka dengan {n} XP?",
+    "unlock_not_enough_xp": "XP belum cukup: terus belajar!",
+    "tickets_label": "Tiket: {n}",
+    "ticket_play": "Mainkan satu ronde dengan tiket",
+    "tickets_hint": "Dapatkan tiket dari pelajaran sempurna, ronde dengan semua hati, dan tonggak runtunan.",
+    "memory": {
+      "name": "Memory Belajar",
+      "description": "Temukan pasangan istilah dan terjemahan dari pelajaranmu.",
+      "set_label": "Set pelajaran",
+      "loading": "Memuat kartu ...",
+      "empty": "Tidak ada set terunduh dengan kartu yang cukup. Unduh set pelajaran terlebih dahulu.",
+      "load_failed": "Gagal memuat kartu. Coba set lain.",
+      "progress": "Pasangan: {a} / {b}",
+      "attempts": "Percobaan: {n}",
+      "won": "Semua pasangan ditemukan dalam {n} percobaan!"
+    },
+    "snake": {
+      "name": "Snake",
+      "description": "Permainan klasik: kumpulkan makanan, tumbuh, jangan gigit dirimu sendiri.",
+      "score": "Poin: {n}",
+      "time_left": "Waktu: {n}d",
+      "goal": "Target: {n} poin",
+      "highscore": "Terbaik: {n}",
+      "board_aria": "Papan Snake: kendalikan dengan tombol panah atau geser",
+      "won": "Ronde dimenangkan: {n} poin!",
+      "lost": "Ronde selesai: {n} poin. Coba lagi!"
+    },
+    "tictactoe": {
+      "name": "Tic-Tac-Toe",
+      "description": "Tiga sejajar melawan aplikasi - dan ya, dia bisa dikalahkan.",
+      "your_turn": "Giliranmu (X)",
+      "ai_turn": "Aplikasi sedang berpikir ...",
+      "board_aria": "Papan tic-tac-toe: pilih kotak kosong",
+      "won": "Kamu menang: tiga sejajar!",
+      "lost": "Ronde ini milik aplikasi. Coba lagi!",
+      "draw": "Seri: pertahanan bagus!"
+    },
+    "simon": {
+      "name": "Simon",
+      "description": "Ulangi urutan warna yang terus bertambah - capai panjang target untuk menang.",
+      "watch": "Perhatikan urutannya ...",
+      "your_turn": "Giliranmu - ulangi urutannya",
+      "round_label": "Urutan {n} dari {m}",
+      "board_aria": "Papan Simon: empat bidang warna",
+      "pad_aria": "Bidang warna {n}",
+      "won": "Berhasil: seluruh urutan!",
+      "lost": "Ups: kamu mencapai panjang {n}. Coba lagi!"
+    }
+  },
   "anki": {
     "title": "Ekspor Anki",
     "intro": "Tinjau kartu yang disarankan AI, terima yang Anda inginkan, lalu ekspor sebagai file .apkg untuk Anki.",
@@ -1490,7 +1646,10 @@
     "mic_permission_denied": "Akses mikrofon ditolak.",
     "mic_error": "Kesalahan pengenalan suara.",
     "mic_no_device": "Tidak ada mikrofon ditemukan. Sambungkan satu dan coba lagi.",
-    "mic_network": "Pengenalan suara sedang offline. Periksa koneksi internet Anda."
+    "mic_network": "Pengenalan suara sedang offline. Periksa koneksi internet Anda.",
+    "record_error": "Perekaman tidak berhasil. Coba lagi.",
+    "stop_recording": "Hentikan perekaman",
+    "start_recording": "Mulai merekam"
   },
   "pronunciation": {
     "title": "Latihan Pengucapan",
@@ -1538,6 +1697,9 @@
     "desktop_only": "Hanya tersedia dengan aplikasi desktop."
   },
   "ui": {
+    "cancel": "Batal",
+    "hide_secret": "Sembunyikan nilai",
+    "show_secret": "Tampilkan nilai",
     "info": {
       "show": "Tampilkan informasi"
     },
@@ -1831,6 +1993,27 @@
     }
   },
   "lesson": {
+    "mascot_label": "Teman belajarmu",
+    "combo_chip": "x{n}",
+    "combo_aria": "Runtunan jawaban: {n} berturut-turut",
+    "combo_best": "Runtunan terbaik: {n}",
+    "combo_bonus_aria": "Bonus runtunan: {n} XP",
+    "hearts": {
+      "aria": "Nyawa: {n} dari {max}",
+      "empty_heading": "Hati habis!",
+      "empty_body": "Tenang saja - tidak ada yang hilang, semua yang sudah diselesaikan tetap tersimpan. Tarik napas dan coba lagi pelajarannya.",
+      "action_retry": "Coba lagi",
+      "action_exit": "Keluar dari pelajaran"
+    },
+    "countdown": {
+      "aria": "Cincin waktu: tersisa {n} dtk"
+    },
+    "playful_hint_title": "Coba mode permainan",
+    "playful_hint_enable_sound": "Aktifkan dengan suara",
+    "playful_hint_body": "Pelajaran merayakan setiap jawaban benar dengan pujian dan konfeti. Anda dapat mengubahnya kapan saja di Pengaturan.",
+    "playful_hint_activate": "Aktifkan",
+    "playful_hint_dismiss": "Jangan tampilkan lagi",
+    "playful_hint_activated": "Mode permainan aktif. Selamat bersenang-senang!",
     "test_mode": {
       "title": "Mode uji",
       "description": "Jawaban tidak dinilai dan tidak ada kemajuan yang disimpan.",
@@ -1860,7 +2043,30 @@
       "endless": "Tanpa henti"
     },
     "options": {
-      "title": "Opsi"
+      "title": "Opsi",
+      "edit_in_editor": "Edit pelajaran ini di editor"
+    },
+    "mentor": {
+      "note_button": "Catatan mentor",
+      "note_edit": "Edit catatan mentor",
+      "category_label": "Kategori",
+      "category": {
+        "typo": "Salah ketik",
+        "unclear": "Rumusan tidak jelas",
+        "too_easy": "Terlalu mudah",
+        "too_hard": "Terlalu sulit",
+        "wrong_answer": "Jawaban dinilai salah",
+        "other": "Lainnya"
+      },
+      "placeholder": "Apa yang perlu diperbaiki pada langkah ini?",
+      "save": "Simpan catatan",
+      "remove": "Hapus catatan",
+      "summary_title": "Catatan mentor ({n})",
+      "summary_hint": "Anotasimu dari sesi ini. Buka pelajaran di editor untuk menindaklanjutinya.",
+      "edit_panel_title": "Catatan mentor untuk pelajaran ini ({n})",
+      "edit_panel_hint": "Anotasimu saat memainkan pelajaran ini. Hapus catatan setelah ditindaklanjuti.",
+      "suggest_label": "Saran AI",
+      "suggest_empty": "Tidak ada saran yang berguna. Coba lagi atau sesuaikan langkah secara manual."
     },
     "exam": {
       "passed": "Lulus",
@@ -1909,6 +2115,10 @@
     "contributed_by": "Dikontribusikan oleh {name}",
     "page_title": "Pelajaran",
     "set_label": "Set",
+    "position": "Pelajaran {current} dari {total}",
+    "nav_previous": "Pelajaran sebelumnya",
+    "nav_next": "Pelajaran berikutnya",
+    "nav_set_overview": "Semua pelajaran dalam set ini",
     "loading": "Memuat pelajaran…",
     "not_cached_body": "Pelajaran ini belum diunduh. Buka penjelajah konten dan unduh set terlebih dahulu.",
     "progress": {
@@ -2050,10 +2260,29 @@
         "retry": "Coba lagi",
         "empty": "Latihan pilihan ganda ini tidak memiliki opsi."
       },
+      "al_audio_choice": {
+        "empty": "Latihan pilihan audio ini tidak memiliki opsi.",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat - dengarkan lagi.",
+        "submit": "Periksa jawaban",
+        "retry": "Coba lagi",
+        "option_aria": "Putar opsi"
+      },
+      "al_audio_tiles": {
+        "empty": "Latihan ubin audio ini tidak memiliki ubin."
+      },
+      "type_matching": "Pencocokan",
+      "type_picture_choice": "Pilihan gambar",
+      "type_free_text": "Teks bebas",
+      "type_word_tiles": "Ubin kata",
+      "type_cloze": "Isian rumpang",
       "al_categorization": {
         "empty": "Latihan kategorisasi ini tidak memiliki kategori.",
         "instructions": "Ketuk sebuah item, lalu ketuk kategorinya.",
+        "my_answers": "Jawaban saya",
         "pool_label": "Item",
+        "resolve": "Selesaikan",
+        "resolve_announce": "Solusi ditampilkan. {correct} dari {total} item ditempatkan dengan benar.",
         "result_correct": "Benar!",
         "result_wrong": "Belum tepat. Periksa item yang ditandai.",
         "retry": "Coba lagi",
@@ -2074,6 +2303,7 @@
         "empty": "Latihan koreksi kesalahan ini tidak memiliki kalimat.",
         "input_label": "Koreksi",
         "instructions": "Ketuk kata yang salah, lalu ketik koreksinya.",
+        "resolve_announce": "Solusi ditampilkan. Kalimat yang sudah diperbaiki: {sentence}",
         "result_correct": "Benar!",
         "result_wrong": "Belum tepat. Lihat solusi di bawah.",
         "retry": "Coba lagi",
@@ -2113,6 +2343,14 @@
         "retry": "Coba lagi",
         "solution_label": "Solusi",
         "submit": "Periksa jawaban"
+      },
+      "al_speak_and_record": {
+        "recording_evicted": "Rekaman sebelumnya dihapus untuk menghemat ruang penyimpanan. Kamu bisa merekam lagi kapan saja.",
+        "empty": "Latihan bicara-dan-rekam ini tidak memiliki kalimat.",
+        "show": "Tampilkan teks",
+        "saving": "Menyimpan…",
+        "done": "Selesai",
+        "record_again": "Rekam lagi"
       },
       "instruction": {
         "matching": {
@@ -2156,6 +2394,7 @@
       "view_all_answers": "Lihat semua jawaban ({n})",
       "export": {
         "copy": "Salin hasil",
+        "correct_answer": "Benar",
         "download": "Simpan sebagai berkas",
         "download_json": "Ekspor sebagai JSON",
         "anki": "Ekspor kartu (Anki)",
@@ -2191,7 +2430,19 @@
       "encourage_0": "Latihan membuat sempurna!",
       "encourage_1": "Awal yang baik - terus lanjutkan!",
       "encourage_2": "Hampir sempurna!",
-      "encourage_3": "Skor sempurna!"
+      "encourage_3": "Skor sempurna!",
+      "ticket_earned_one": "Hadiah terbuka: satu tiket permainan!",
+      "ticket_earned_many": "Hadiah terbuka: {n} tiket permainan!",
+      "ticket_play_now": "Main sekarang"
+    },
+    "flash_round": {
+      "title": "Ronde kilat: {set}",
+      "card_title": "Ronde kilat",
+      "card_description": "Ronde cepat dengan kartu-kartu tersulit dari set ini, dengan cincin hitung mundur.",
+      "start": "Mulai ronde kilat",
+      "locked_tooltip": "Selesaikan setiap pelajaran set ini dengan minimal satu bintang untuk membuka.",
+      "perfect_tooltip": "Tidak ada kartu kesalahan: set ini sudah sempurna!",
+      "no_content": "Tidak ditemukan kartu kesalahan yang dapat dimainkan untuk set ini."
     },
     "error_replay": {
       "title": "Ulangi kesalahan: {lesson}",
@@ -2322,7 +2573,12 @@
       "go_discover": "Temukan konten",
       "start": "Mulai belajar",
       "download_start": "Unduh & mulai",
-      "lessons": "{n} pelajaran"
+      "lessons": "{n} pelajaran",
+      "lesson_list": "Pelajaran",
+      "bonus_badge": "Bonus",
+      "bonus_locked_tooltip": "Selesaikan setiap pelajaran reguler set ini dengan minimal satu bintang untuk membuka pelajaran bonus ini.",
+      "progress_done": "{done} dari {total} pelajaran selesai",
+      "current_lesson": "Lanjutkan di sini"
     },
     "repo_export": {
       "button": "Bagikan sebagai repositori",
@@ -2604,6 +2860,9 @@
       "mc_prompt": "Pilih terjemahan yang benar untuk: {word}"
     },
     "page_title": "Konten saya",
+    "updates_badge": "{n} pembaruan",
+    "updates_badge_tooltip": "Pembaruan konten tersedia",
+    "updates_badge_action": "lihat konten",
     "intro": "Set pelajaran siap pakai yang dapat kamu gunakan tanpa kunci API. Unduhan disimpan secara lokal dan dapat digunakan secara luring setelah pengambilan pertama.",
     "sources": "Sumber",
     "lessons": "pelajaran",
@@ -3192,7 +3451,8 @@
         "reading-comprehension": "Pemahaman bacaan",
         "graded-quiz": "Kuis bernilai",
         "dictation": "Dikte",
-        "image-description": "Deskripsi gambar"
+        "image-description": "Deskripsi gambar",
+        "speak-and-record": "Bicara & rekam"
       },
       "edit": {
         "prompt_label": "Instruksi / soal",
@@ -3220,6 +3480,7 @@
         "dict_accept_remove": "Hapus transkripsi",
         "dict_accept_placeholder": "Apa yang harus diketik pelajar",
         "err_image_description": "Tambahkan gambar dan setidaknya satu jawaban yang diterima.",
+        "err_speak_and_record": "Tambahkan kalimat untuk diucapkan (dan, opsional, klip audio referensi).",
         "imgdesc_image_label": "Gambar yang akan dideskripsikan",
         "imgdesc_image_preview_alt": "Gambar yang akan dideskripsikan",
         "imgdesc_image_budget_hint": "Gambar dikompresi dan disematkan (maks. ~150 KB, 512 px) agar latihan berfungsi offline dan ikut dalam cadangan. Tautan jarak jauh tidak diizinkan.",
@@ -3227,6 +3488,8 @@
         "imgdesc_accept_add": "Tambah",
         "imgdesc_accept_remove": "Hapus jawaban",
         "imgdesc_accept_placeholder": "Apa yang harus diketik pelajar",
+        "sar_sentence_label": "Kalimat untuk diucapkan",
+        "sar_sentence_placeholder": "Kalimat yang didengar dan diulang oleh pelajar",
         "q_list_label": "Pertanyaan",
         "q_prompt_label": "Pertanyaan",
         "q_prompt_placeholder": "Pertanyaan",
@@ -3421,6 +3684,13 @@
       "receptive": "Hanya reseptif",
       "productive": "Hanya produktif"
     },
+    "status": {
+      "not_started": "Belum dimulai",
+      "in_progress": "Sedang berlangsung",
+      "paused": "Dijeda",
+      "completed": "Selesai",
+      "mastered": "Dikuasai"
+    },
     "stats": {
       "title": "Statistik",
       "lessons": "Pelajaran",
@@ -3481,6 +3751,10 @@
     }
   },
   "share": {
+    "share_image": "Bagikan gambar saja",
+    "share_image_hint": "Membagikan kartu hasil sebagai gambar - untuk jaringan seperti Facebook yang pada tautan hanya menampilkan gambar aplikasi.",
+    "image_saved": "Gambar disimpan",
+    "image_failed": "Gambar tidak dapat dibuat.",
     "menu": {
       "heading": "Bagikan",
       "facebook": "Bagikan ke Facebook",
@@ -3491,6 +3765,7 @@
     },
     "app": {
       "heading": "Bagikan aplikasi",
+      "download": "Unduh",
       "qr_intro": "Bagikan aplikasi lewat kode QR agar orang lain bisa membukanya langsung.",
       "show_qr": "Tampilkan kode QR",
       "download_qr": "Unduh kode QR",
@@ -3861,6 +4136,7 @@
     },
     "share": {
       "copied": "Tautan disalin.",
+      "tab_link": "Tautan",
       "copy": "Salin",
       "copy_failed": "Tidak dapat menyalin.",
       "hint": "Bagikan tautan ini agar orang lain dapat menambahkan repo PUBLIK ini. Untuk repo privat, kirimkan URL + token hanya-baca secara terpisah.",
@@ -3906,6 +4182,12 @@
     "search_placeholder": "Spanyol, AI, psikologi…",
     "search_aria": "Cari konten yang tersedia",
     "search_clear": "Hapus pencarian",
+    "badge": {
+      "new": "Baru"
+    },
+    "new": {
+      "count": "{n} baru"
+    },
     "bar": {
       "search": "Cari",
       "filter": "Filter"
@@ -4189,5 +4471,21 @@
       },
       "aria": "Kesulitan: {tier} ({level} dari 5)"
     }
+  },
+  "set_summary": {
+    "title": "Evaluasi: {set}",
+    "subtitle": "Semua kesalahan dalam set ini sekilas",
+    "open": "Lihat evaluasi",
+    "total_errors": "Total kesalahan",
+    "mastered_share": "Dikuasai",
+    "elements_open": "Masih terbuka",
+    "time_spent": "Waktu belajar",
+    "by_lesson": "Kesalahan per pelajaran",
+    "by_type": "Kesalahan per jenis latihan",
+    "weak_areas": "Titik lemah terbesar",
+    "no_errors": "Tidak ada kesalahan tercatat - luar biasa!",
+    "lesson_errors": "{count} kesalahan",
+    "practice_errors": "Latih kesalahan",
+    "back_to_set": "Kembali ke set"
   }
 }

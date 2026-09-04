@@ -218,6 +218,22 @@ describe("LessonPage: ready state rendering", () => {
     expect(screen.getByText(/Welcome/)).toBeInTheDocument();
   });
 
+  // #2768 — mentor-mode Phase 2: the per-step note control renders for a
+  // lesson from the user-generated source and stays absent for downloaded
+  // content ("wired vs. working": the component alone existing proves
+  // nothing about the page actually mounting it).
+  it("mounts the mentor-note control for a user-generated lesson (#2768)", () => {
+    _ready(0);
+    renderAtPath("/lesson/user-generated/my-set/01-greetings.json");
+    expect(screen.getByTestId("lesson-mentor-note")).toBeInTheDocument();
+  });
+
+  it("mounts no mentor-note control for a downloaded lesson (#2768)", () => {
+    _ready(0);
+    renderAtPath(VALID_PATH);
+    expect(screen.queryByTestId("lesson-mentor-note")).toBeNull();
+  });
+
   it("renders the matching exercise on an exercise step (commit 6)", () => {
     // The LESSON fixture's exercise has no pairs, so the
     // matching component's empty-state surfaces. That's

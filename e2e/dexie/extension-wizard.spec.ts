@@ -42,6 +42,7 @@ test.describe("Create-Lesson extension wizard (#1852)", () => {
         await page.getByTestId("create-lesson-title").fill("E2E extensions");
 
         // Enter the extension path from the step-1 template card.
+        await page.getByTestId("create-lesson-templates-toggle").click();
         await page.getByTestId("template-extensions").click();
         await expect(
             page.getByTestId("create-lesson-extension-step"),
@@ -132,13 +133,43 @@ test.describe("Create-Lesson extension wizard (#1852)", () => {
             } else if (await page.getByTestId("error-correction-exercise").count()) {
                 sawErrorCorrection = true;
                 await page.getByTestId("error-correction-token-1").click();
-                await page.getByTestId("error-correction-input").fill("follows");
+                // Deliberately wrong correction (#2803) so the checked step
+                // offers the my-answer/solution toggle below; the correct
+                // grading path is covered by the Vitest suite.
+                await page.getByTestId("error-correction-input").fill("wrongword");
             }
 
             const check = page.getByTestId("lesson-check");
             if (await check.count()) {
                 await expect(check).toBeEnabled({timeout: 5000});
                 await check.click();
+            }
+            // #2772 — the first-bucket blanket assignment above is never
+            // fully correct, so the checked categorization offers the
+            // solve toggle; open the revealed assignment once.
+            if (
+                (await page.getByTestId("categorization-exercise").count()) &&
+                (await page.getByTestId("categorization-resolve").count())
+            ) {
+                await page.getByTestId("categorization-resolve").click();
+                await expect(
+                    page.getByTestId("categorization-resolution"),
+                ).toBeVisible();
+            }
+            // #2803 — the wrong error-correction answer above offers the
+            // solve toggle; the solution view renders the correction in
+            // the token row.
+            if (
+                (await page.getByTestId("error-correction-exercise").count()) &&
+                (await page.getByTestId("error-correction-solution").count())
+            ) {
+                await page.getByTestId("error-correction-solution").click();
+                await expect(
+                    page.getByTestId("error-correction-resolution"),
+                ).toBeVisible();
+                await expect(
+                    page.getByTestId("error-correction-resolved-correction"),
+                ).toContainText("follows");
             }
             const next = page.getByTestId("lesson-next");
             if (!(await next.count())) break;

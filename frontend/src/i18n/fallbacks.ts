@@ -15,14 +15,48 @@
 
 import type {SupportedLanguage} from "../lib/constants";
 
-type Catalog = Record<string, Record<string, string>>;
+/** A nested catalog: values are strings or deeper groups (#2796 - the app's
+ *  keys are not limited to two levels, e.g. ``update.banner.message``). */
+type CatalogNode = string | {[key: string]: CatalogNode};
+type Catalog = Record<string, CatalogNode>;
 
 const DE: Catalog = {
+    update: {
+        banner: {
+            later: "Später",
+            message: "Neue Version {version} verfügbar",
+            release_page: "Release-Seite",
+            whats_new: "Was ist neu?",
+            whats_new_title: "Was ist neu in {version}",
+        },
+    },
+    pwa: {
+        offline_dismiss: "Schließen",
+        offline_message: "Du bist offline. Gespeicherte Inhalte sind verfügbar.",
+        online_message: "Wieder online!",
+    },
+    install: {
+        aria_label: "Adaptive Learner installieren",
+        dismiss: "Nicht jetzt",
+        install: "Installieren",
+        subtitle: "Adaptive Learner als App installieren - für bessere Offline-Nutzung.",
+        title: "Zum Startbildschirm hinzufügen",
+        ios: {
+            aria_label: "Auf dem iPhone installieren",
+            dismiss: "Schließen",
+            steps: "Tippe auf das Teilen-Symbol und dann auf „Zum Home-Bildschirm“ - die App öffnet ohne Safari-Leiste.",
+            title: "Als App installieren",
+        },
+    },
     app: {
         name: "Adaptive Learner",
         tagline: "Adaptives Lernen nach dem Sechs-Methoden-Modell.",
     },
     landing: {
+        checking_session: "Willkommen zurück …",
+        port_change_hint: "Hast du Adaptive Learner schon einmal unter einem anderen Port verwendet? Deine Lerndaten bleiben an der vorherigen Web-Adresse. Wechsle zurück zum vorherigen Port, exportiere ein Backup und importiere es hier.",
+        port_change_link: "So nimmst du deine Daten mit",
+        recovered_toast: "Willkommen zurück! Deine Lerndaten sind noch da.",
         title: "Adaptive Learner",
         subtitle: "Lernen, das sich an dich anpasst.",
         intro: "Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Session.",
@@ -31,12 +65,16 @@ const DE: Catalog = {
         docs_link: "Dokumentation lesen",
     },
     nav: {
+        dev_badge: "DEV",
+        dev_badge_tooltip: "Entwicklermodus aktiv - Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar.",
+        menu: "Menü",
         dashboard: "Dashboard",
         session: "Session",
         progress: "Fortschritt",
         settings: "Einstellungen",
     },
     common: {
+        close: "Schließen",
         loading: "Lädt …",
         error: "Etwas ist schiefgegangen.",
         cancel: "Abbrechen",
@@ -112,11 +150,42 @@ const DE: Catalog = {
 };
 
 const EN: Catalog = {
+    update: {
+        banner: {
+            later: "Later",
+            message: "New version {version} available",
+            release_page: "Release page",
+            whats_new: "What's new?",
+            whats_new_title: "What's new in {version}",
+        },
+    },
+    pwa: {
+        offline_dismiss: "Dismiss",
+        offline_message: "You're offline. Saved content is available.",
+        online_message: "Back online!",
+    },
+    install: {
+        aria_label: "Install Adaptive Learner",
+        dismiss: "Not now",
+        install: "Install",
+        subtitle: "Install Adaptive Learner as an app for better offline use.",
+        title: "Add to home screen",
+        ios: {
+            aria_label: "Install on your iPhone",
+            dismiss: "Dismiss",
+            steps: "Tap the Share icon, then “Add to Home Screen” - it opens without the Safari bar.",
+            title: "Install as an app",
+        },
+    },
     app: {
         name: "Adaptive Learner",
         tagline: "Learning that adapts to you.",
     },
     landing: {
+        checking_session: "Welcome back…",
+        port_change_hint: "Used Adaptive Learner before on a different port? Your learning data stays with the previous web address. Go back to the previous port, export a backup, then import it here.",
+        port_change_link: "How to move your data",
+        recovered_toast: "Welcome back! Your learning data is still here.",
         title: "Adaptive Learner",
         subtitle: "Learning that adapts to you.",
         intro: "Adaptive Learner finds the method that fits you best from six research-backed learning approaches, and walks you through a seven-step cycle on every session.",
@@ -125,12 +194,16 @@ const EN: Catalog = {
         docs_link: "Read the documentation",
     },
     nav: {
+        dev_badge: "DEV",
+        dev_badge_tooltip: "Developer Mode is on - error toasts show full technical detail. Toggle in Settings.",
+        menu: "Menu",
         dashboard: "Dashboard",
         session: "Session",
         progress: "Progress",
         settings: "Settings",
     },
     common: {
+        close: "Close",
         loading: "Loading…",
         error: "Something went wrong.",
         cancel: "Cancel",
@@ -211,8 +284,39 @@ const EN: Catalog = {
 // catalog covers the full key set once /api/i18n/{lang} returns.
 
 const ES: Catalog = {
+    update: {
+        banner: {
+            later: "Más tarde",
+            message: "Nueva versión {version} disponible",
+            release_page: "Página de la versión",
+            whats_new: "¿Qué hay de nuevo?",
+            whats_new_title: "Novedades de {version}",
+        },
+    },
+    pwa: {
+        offline_dismiss: "Cerrar",
+        offline_message: "Estás sin conexión. El contenido guardado está disponible.",
+        online_message: "¡De nuevo en línea!",
+    },
+    install: {
+        aria_label: "Instalar Adaptive Learner",
+        dismiss: "Ahora no",
+        install: "Instalar",
+        subtitle: "Instala Adaptive Learner como app para un mejor uso sin conexión.",
+        title: "Añadir a la pantalla de inicio",
+        ios: {
+            aria_label: "Instalar en tu iPhone",
+            dismiss: "Cerrar",
+            steps: "Toca el icono Compartir y luego «Añadir a pantalla de inicio»: se abre sin la barra de Safari.",
+            title: "Instalar como app",
+        },
+    },
     app: {name: "Adaptive Learner", tagline: "Aprendizaje que se adapta a ti."},
     landing: {
+        checking_session: "Bienvenido de nuevo...",
+        port_change_hint: "¿Ya usaste Adaptive Learner en otro puerto? Tus datos de aprendizaje permanecen en la dirección web anterior. Vuelve al puerto anterior, exporta una copia de seguridad e impórtala aquí.",
+        port_change_link: "Cómo llevar tus datos contigo",
+        recovered_toast: "Bienvenido de nuevo. Tus datos de aprendizaje siguen aquí.",
         title: "Adaptive Learner",
         subtitle: "Aprendizaje que se adapta a ti.",
         intro: "Adaptive Learner encuentra el método que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigación, y te acompaña en un ciclo de siete pasos en cada sesión.",
@@ -221,12 +325,16 @@ const ES: Catalog = {
         docs_link: "Leer la documentación",
     },
     nav: {
+        dev_badge: "DEV",
+        dev_badge_tooltip: "Modo Desarrollador activo - los avisos de error muestran detalles técnicos. Cámbialo en Ajustes.",
+        menu: "Menú",
         dashboard: "Panel",
         session: "Sesion",
         progress: "Progreso",
         settings: "Ajustes",
     },
     common: {
+        close: "Cerrar",
         loading: "Cargando...",
         error: "Algo ha ido mal.",
         cancel: "Cancelar",
@@ -302,8 +410,39 @@ const ES: Catalog = {
 };
 
 const FR: Catalog = {
+    update: {
+        banner: {
+            later: "Plus tard",
+            message: "Nouvelle version {version} disponible",
+            release_page: "Page de la version",
+            whats_new: "Quoi de neuf ?",
+            whats_new_title: "Nouveautés de {version}",
+        },
+    },
+    pwa: {
+        offline_dismiss: "Fermer",
+        offline_message: "Tu es hors ligne. Le contenu enregistré reste disponible.",
+        online_message: "De nouveau en ligne !",
+    },
+    install: {
+        aria_label: "Installer Adaptive Learner",
+        dismiss: "Plus tard",
+        install: "Installer",
+        subtitle: "Installe Adaptive Learner comme une app pour une meilleure utilisation hors ligne.",
+        title: "Ajouter à l'écran d'accueil",
+        ios: {
+            aria_label: "Installer sur ton iPhone",
+            dismiss: "Fermer",
+            steps: "Touche l’icône Partager, puis « Sur l’écran d’accueil » - l’app s’ouvre sans la barre de Safari.",
+            title: "Installer comme une app",
+        },
+    },
     app: {name: "Adaptive Learner", tagline: "Un apprentissage qui s'adapte a toi."},
     landing: {
+        checking_session: "Bon retour...",
+        port_change_hint: "Vous avez déjà utilisé Adaptive Learner sur un autre port ? Vos données d'apprentissage restent liées à l'adresse web précédente. Revenez au port précédent, exportez une sauvegarde, puis importez-la ici.",
+        port_change_link: "Comment emporter vos données",
+        recovered_toast: "Bon retour ! Tes données d'apprentissage sont toujours là.",
         title: "Adaptive Learner",
         subtitle: "Un apprentissage qui s'adapte a toi.",
         intro: "Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basées sur la recherche et t'accompagne dans un cycle en sept étapes à chaque session.",
@@ -312,12 +451,16 @@ const FR: Catalog = {
         docs_link: "Lire la documentation",
     },
     nav: {
+        dev_badge: "DEV",
+        dev_badge_tooltip: "Mode développeur actif - les notifications d'erreur affichent les détails techniques. Désactive-le dans les Paramètres.",
+        menu: "Menu",
         dashboard: "Tableau de bord",
         session: "Session",
         progress: "Progres",
         settings: "Parametres",
     },
     common: {
+        close: "Fermer",
         loading: "Chargement...",
         error: "Une erreur est survenue.",
         cancel: "Annuler",
@@ -393,8 +536,39 @@ const FR: Catalog = {
 };
 
 const EL: Catalog = {
+    update: {
+        banner: {
+            later: "Αργότερα",
+            message: "Νέα έκδοση {version} διαθέσιμη",
+            release_page: "Σελίδα έκδοσης",
+            whats_new: "Τι νέο υπάρχει;",
+            whats_new_title: "Τι νέο υπάρχει στην {version}",
+        },
+    },
+    pwa: {
+        offline_dismiss: "Κλείσιμο",
+        offline_message: "Είστε εκτός σύνδεσης. Το αποθηκευμένο περιεχόμενο είναι διαθέσιμο.",
+        online_message: "Ξανά συνδεδεμένοι!",
+    },
+    install: {
+        aria_label: "Εγκατάσταση Adaptive Learner",
+        dismiss: "Όχι τώρα",
+        install: "Εγκατάσταση",
+        subtitle: "Εγκαταστήστε το Adaptive Learner ως εφαρμογή για καλύτερη χρήση εκτός σύνδεσης.",
+        title: "Προσθήκη στην αρχική οθόνη",
+        ios: {
+            aria_label: "Εγκατάσταση στο iPhone σας",
+            dismiss: "Κλείσιμο",
+            steps: "Πατήστε το εικονίδιο Κοινή χρήση και μετά «Προσθήκη στην οθόνη Αφετηρίας» - ανοίγει χωρίς τη γραμμή του Safari.",
+            title: "Εγκατάσταση ως εφαρμογή",
+        },
+    },
     app: {name: "Adaptive Learner", tagline: "Μάθηση που προσαρμόζεται σε σένα."},
     landing: {
+        checking_session: "Καλώς ήρθες ξανά...",
+        port_change_hint: "Χρησιμοποιήσατε ήδη το Adaptive Learner σε διαφορετική θύρα; Τα δεδομένα μάθησής σας παραμένουν στην προηγούμενη διεύθυνση web. Επιστρέψτε στην προηγούμενη θύρα, εξαγάγετε ένα αντίγραφο ασφαλείας και εισαγάγετέ το εδώ.",
+        port_change_link: "Πώς να μεταφέρετε τα δεδομένα σας",
+        recovered_toast: "Καλώς ήρθες ξανά! Τα δεδομένα μάθησής σου είναι ακόμα εδώ.",
         title: "Adaptive Learner",
         subtitle: "Μάθηση που προσαρμόζεται σε σένα.",
         intro: "Το Adaptive Learner βρίσκει τη μέθοδο που σου ταιριάζει καλύτερα από έξι ερευνητικά τεκμηριωμένες προσεγγίσεις και σε καθοδηγεί σε έναν κύκλο επτά βημάτων σε κάθε συνεδρία.",
@@ -403,12 +577,16 @@ const EL: Catalog = {
         docs_link: "Διαβάστε την τεκμηρίωση",
     },
     nav: {
+        dev_badge: "DEV",
+        dev_badge_tooltip: "Λειτουργία προγραμματιστή ενεργή - τα μηνύματα σφάλματος εμφανίζουν τεχνικές λεπτομέρειες. Αλλάξτε στις Ρυθμίσεις.",
+        menu: "Μενού",
         dashboard: "Πίνακας",
         session: "Συνεδρία",
         progress: "Πρόοδος",
         settings: "Ρυθμίσεις",
     },
     common: {
+        close: "Κλείσιμο",
         loading: "Φόρτωση...",
         error: "Κάτι πήγε στραβά.",
         cancel: "Άκυρο",
@@ -490,21 +668,5 @@ const FALLBACKS: Record<SupportedLanguage, Catalog> = {
     fr: FR,
     el: EL,
 };
-
-/**
- * Resolve a dot-notation key against the fallback catalog. Returns
- * ``undefined`` if neither bucket nor key match; callers compose
- * this with the API-backed strings so the lookup chain becomes:
- *
- *   backend strings -> hardcoded fallback -> caller-provided fallback -> key
- */
-export function fallbackString(
-    lang: SupportedLanguage,
-    key: string,
-): string | undefined {
-    const [section, name] = key.split(".");
-    if (!section || !name) return undefined;
-    return FALLBACKS[lang]?.[section]?.[name];
-}
 
 export const FALLBACK_CATALOGS = FALLBACKS;

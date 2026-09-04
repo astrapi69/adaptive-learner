@@ -19,7 +19,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -30,6 +29,8 @@ import { Button } from "@/components/ui/button";
 import FormHint from "../../../shared/forms/FormHint";
 import {CorrectionBlock} from "../../exercises";
 import LessonAnswersDetail from "./LessonAnswersDetail";
+import MentorNotesSummary from "./MentorNotesSummary";
+import SummaryTicketReward from "./SummaryTicketReward";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
 import {
@@ -60,18 +61,14 @@ import {
 } from "../../../lib/lesson/error-replay";
 import { useErrorReplayScope } from "../../../hooks/lesson/interaction/useErrorReplayScope";
 import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSessionErrors";
-import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
-import {
-  buildExerciseBreakdown,
-  type StarRating,
-} from "../../../lib/lesson/lesson-summary";
+import { buildExerciseBreakdown } from "../../../lib/lesson/lesson-summary";
 import { resolveSummaryScoreDisplay } from "../../../lib/lesson/correction-adjusted-score";
-import type { LessonResultLabels } from "../../../lib/lesson/result-export";
+import type { LessonResultLabels } from "../../../lib/lesson/export/result-export";
 import {
   buildLessonJsonExport,
   buildLessonMarkdownExport,
   downloadBlob,
-} from "../../../lib/lesson/result-download";
+} from "../../../lib/lesson/export/result-download";
 import { isFirstAttempt } from "../../../lib/gamification/first-attempt";
 import { calculateLessonSessionXp } from "../../../lib/gamification/lesson-xp";
 import { configForMode } from "../../../lib/learning/lessonModeConfig";
@@ -81,8 +78,7 @@ import {
   type LessonMode,
 } from "../../../lib/learning/lessonModePref";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
-import { emitCelebration } from "../../../lib/praise/celebration-bus";
-import { nextPraise } from "../../../lib/praise/phrase-picker";
+import { useSummaryCelebration } from "../../../hooks/lesson/useSummaryCelebration";
 import { getStorage } from "../../../storage";
 import type {
   ContentLesson,
@@ -121,6 +117,14 @@ interface LessonSummaryProps {
   /** Raw route slug (``--``-encoded), for the next-lesson href. */
   setSlug: string;
   lessonFilename: string;
+  /** #2893 - game-mode combo bonus for this run (already capped by
+   *  the client). Included in the displayed XP so the summary matches
+   *  the credited award. Default 0 keeps existing callers unaffected. */
+  comboBonusXp?: number;
+  /** #2889 - the hearts system ran and no heart was lost, the
+   *  full-hearts ticket condition. Default false keeps existing
+   *  callers unaffected. */
+  fullHeartsRun?: boolean;
   onMarkComplete: () => Promise<void> | void;
   onNextLesson: () => void;
   onRepeat: () => void;
@@ -173,6 +177,8 @@ export default function LessonSummary({
   source,
   setSlug,
   lessonFilename,
+  comboBonusXp = 0,
+  fullHeartsRun = false,
   onMarkComplete,
   onNextLesson,
   onRepeat,
@@ -307,8 +313,11 @@ export default function LessonSummary({
       // #1007 Phase 2 — show the mode-weighted XP (exam = 1.5×) so the
       // summary matches the XP actually awarded.
       xp_multiplier: configForMode(lessonMode).xpMultiplier,
+      // #2893 — the game-mode combo bonus rides the same calculator,
+      // so display and credit stay one number.
+      combo_bonus: comboBonusXp,
     }).xp_earned;
-  }, [total, progress, stars, streakDays, lessonMode]);
+  }, [total, progress, stars, streakDays, lessonMode, comboBonusXp]);
 
   // #1007 Phase 2 — the mode reward weight as a percent bonus (exam = 50),
   // surfaced in the exam result card. 0 for practice (no bonus note).
@@ -368,7 +377,7 @@ export default function LessonSummary({
   // Markdown so the learner can paste it into an AI assistant to
   // drill the weak spots. Both actions reuse the breakdown already
   // computed for the on-screen list; no new storage read. The
-  // builders live in lib/lesson/result-download (#354); only the
+  // builders live in lib/lesson/export/result-download (#354); only the
   // i18n label resolution stays here.
   const buildResultMarkdown = useCallback(() => {
     const labels: LessonResultLabels = {
@@ -443,48 +452,16 @@ export default function LessonSummary({
   // correction-adjusted final percentage.
   const animatedPct = useCountUp(displayScorePct, 1000, intensity !== "subtle");
 
-  // Confetti only on a perfect (3-star) lesson, and only when
-  // the intensity allows it. Self-dismisses after the burst. Uses the
-  // first-pass stars so the burst is tied to the completion moment (#2479),
-  // not re-triggered by a later correction.
-  const celebrateConfetti = immediateStars === 3 && allowsConfetti(intensity);
-
-  // The headline message. #2479 — follows the correction-adjusted final
-  // stars, so a learner who fixed every mistake is not told "Guter Anfang".
-  // The random "lesson_complete" praise phrase (perfect run + phrases
-  // allowed) is picked ONCE, at the mount moment, so it never reshuffles on a
-  // re-render; the per-star encouraging message is otherwise resolved live
-  // from the current final stars.
-  const ENCOURAGE_FALLBACK: Record<StarRating, string> = {
-    0: "Practice makes perfect!",
-    1: "Good start - keep going!",
-    2: "Almost perfect!",
-    3: "Perfect score!",
-  };
-  const [mountPraisePhrase] = useState<string | null>(() => {
-    if (immediateStars === 3 && intensity !== "subtle") {
-      return nextPraise("lesson_complete", lang)?.phrase ?? null;
-    }
-    return null;
+  // The mount celebration (confetti gate, once-picked praise phrase,
+  // per-star headline, one-shot bus emits). #2479 — the burst follows the
+  // first-pass stars, the headline the correction-adjusted final stars.
+  const { celebrateConfetti, celebrateMessage } = useSummaryCelebration({
+    immediateStars,
+    stars,
+    intensity,
+    lang,
+    t,
   });
-  const celebrateMessage =
-    stars === 3 && mountPraisePhrase
-      ? mountPraisePhrase
-      : t(`lesson.summary.encourage_${stars}`, ENCOURAGE_FALLBACK[stars]);
-
-  // Fire the lesson-complete celebration sounds once on mount.
-  // The star chime + confetti sparkle only on a perfect run.
-  const celebrationFired = useRef(false);
-  useEffect(() => {
-    if (celebrationFired.current) return;
-    celebrationFired.current = true;
-    emitCelebration({ type: "lesson_complete", payload: { stars: immediateStars } });
-    if (immediateStars === 3) {
-      emitCelebration({ type: "stars_earned" });
-      if (celebrateConfetti) emitCelebration({ type: "confetti" });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // #1426 — each configurable section as a self-contained render node, keyed
   // by its stable id. The panel renders them in the user-configured order
@@ -661,10 +638,28 @@ export default function LessonSummary({
       aria-label={t("lesson.summary.aria_label", "Lesson summary")}
     >
       <SummaryConfetti active={celebrateConfetti} />
-      <h2>
+      {/* #2761 — ``wrap-anywhere`` (not ``break-words``): this heading is
+          inline-flex, and only ``overflow-wrap: anywhere`` shrinks the text
+          item's min-content width so a long unbreakable title word wraps
+          instead of overflowing the viewport on mobile. */}
+      <h2 className="wrap-anywhere">
         {isCompleted ? <CheckCircle2 size={20} aria-hidden="true" /> : null}
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
       </h2>
+
+      {/* #2889 — the ticket-economy banner: banks the tickets this run
+          earned (full score / full hearts / streak milestones) and offers
+          the jump into the arcade. Self-gating (game mode + ticket switch
+          + something actually granted); the already-completed guard keeps
+          a revisited summary from re-awarding. */}
+      <SummaryTicketReward
+        userId={userId}
+        scoreCorrect={correct}
+        scoreTotal={total}
+        fullHeartsRun={fullHeartsRun}
+        alreadyCompleted={isCompleted}
+        streakDays={streakDays}
+      />
 
       {/* #1426 — the configurable sections, in the user-configured order.
           Only sections the config marks ON are rendered; each keeps its own
@@ -687,7 +682,11 @@ export default function LessonSummary({
         if (id === "correction") {
           return (
             <Fragment key={id}>
-              <SummaryExplanations sessionErrors={sessionErrors} t={t} />
+              <SummaryExplanations
+                sessionErrors={sessionErrors}
+                lesson={lesson}
+                t={t}
+              />
               {sectionNodes[id]}
             </Fragment>
           );
@@ -695,12 +694,25 @@ export default function LessonSummary({
         return <Fragment key={id}>{sectionNodes[id]}</Fragment>;
       })}
 
+      {/* #2768 — mentor-mode punch list: the author's per-step notes from
+          this run, with the editor deep link. Self-gated (own set + notes
+          present), deliberately outside the configurable-section registry. */}
+      <MentorNotesSummary
+        source={source}
+        setId={setId}
+        filename={lessonFilename}
+      />
+
       {/* When the correction section is disabled it is not rendered above, so
           the mistake review (#599) falls back to just above the continue-actions
           — it is gated by its own toggle and must never be lost with correction
           off. */}
       {!isSummarySectionEnabled(sections, "correction") && (
-        <SummaryExplanations sessionErrors={sessionErrors} t={t} />
+        <SummaryExplanations
+          sessionErrors={sessionErrors}
+          lesson={lesson}
+          t={t}
+        />
       )}
 
       {/* Essential completion navigation — never toggleable, never in the

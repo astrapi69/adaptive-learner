@@ -8,14 +8,20 @@ import ModeIndicator from "../../../../components/pwa/ModeIndicator";
 import UpdatesSettingsSection from "../../../../components/settings/UpdatesSettingsSection";
 import ThemePicker from "../../../../components/settings/appearance/ThemePicker";
 import AvatarUpload from "../../../../shared/media/AvatarUpload";
+import PresetAvatarPicker from "../../../../components/settings/controls/profile/PresetAvatarPicker";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../../../../hooks/settings/useButtonTooltips";
-import { setDevModeEnabled, useDevMode } from "../../../../hooks/settings/useDevMode";
+import { setNavPosition, useNavPosition } from "../../../../hooks/settings/useNavPosition";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import { buildLanguageOptions } from "../../../../lib/i18n/languages";
 import LanguagePicker from "../../../../shared/forms/LanguagePicker";
 import { readLearnerState, setLanguage } from "../../../../lib/learning/learnerState";
-import { notifyProfileUpdated } from "../../../../lib/learning/profileSignal";
+import { notifyProfileUpdated, PROFILE_UPDATED_EVENT } from "../../../../lib/learning/profileSignal";
+import { avatarFrameById } from "../../../../lib/avatar/avatar-frames";
+import { readAvatarFrameState } from "../../../../lib/avatar/avatar-frame-store";
+import { clearStashedAvatarPhoto } from "../../../../lib/avatar/avatar-photo-stash";
+import { isPresetAvatarDataUrl } from "../../../../lib/avatar/preset-avatars";
+import AvatarFrameControl from "../../../../components/settings/controls/profile/AvatarFrameControl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -80,19 +86,27 @@ export default function GeneralPanel({
     setButtonTooltipsEnabled(next);
   };
 
-  // DEV-MODE-FRIENDLY-ERRORS-01 — Developer Mode toggle.
-  // When ON, error toasts show full technical detail and the
-  // Navigation bar carries a DEV badge. Off by default —
-  // production users only see friendly status-code-mapped
-  // messages.
-  const devModeOn = useDevMode();
-  const handleDevModeToggle = (next: boolean) => {
-    setDevModeEnabled(next);
-  };
+  // #2786 — mobile nav position (top menu button vs restored bottom bar).
+  const navPositionValue = useNavPosition();
 
   // Per-operation busy marker for the language switch + profile edits.
   // The AI tab owns its own busy state inside ``useAiKeySettings``.
   const [busy, setBusy] = useState<string | null>(null);
+
+  // #2850 — the decorative avatar frame around the preview; re-read on
+  // the profile signal so a picker save applies without a reload.
+  const [frameRing, setFrameRing] = useState<string | null>(() =>
+    avatarFrameById(readAvatarFrameState(settings.user_id).selected).ring,
+  );
+  useEffect(() => {
+    const refresh = () =>
+      setFrameRing(
+        avatarFrameById(readAvatarFrameState(settings.user_id).selected).ring,
+      );
+    refresh();
+    window.addEventListener(PROFILE_UPDATED_EVENT, refresh);
+    return () => window.removeEventListener(PROFILE_UPDATED_EVENT, refresh);
+  }, [settings.user_id]);
 
   // Phase 10F: storage-mode toggle. ``currentMode`` reflects
   // what's active *right now* (snapshot at mount). Switching is
@@ -173,6 +187,11 @@ export default function GeneralPanel({
         avatar: dataUrl ?? "",
       });
       onSettingsChange(updated);
+      // #2862 — a real photo (fresh upload or restore) supersedes the
+      // stash; the parked copy would otherwise resurrect an older photo.
+      if (dataUrl && !isPresetAvatarDataUrl(dataUrl)) {
+        clearStashedAvatarPhoto(settings.user_id);
+      }
       // #579 — refresh the header NavAvatar live.
       notifyProfileUpdated();
       notify.success(t("settings.saved", "Saved."));
@@ -293,9 +312,19 @@ export default function GeneralPanel({
             onError={(key) =>
               notify.error(t(key, "Could not use that image. Try another file."))
             }
+            frameRing={frameRing}
             testId="settings-avatar-upload"
           />
         )}
+        {settings && (
+          <PresetAvatarPicker
+            userId={settings.user_id}
+            avatar={settings.avatar}
+            busy={busy === "avatar"}
+            onSave={(dataUrl) => void handleAvatarChange(dataUrl)}
+          />
+        )}
+        <AvatarFrameControl userId={settings.user_id} />
       </SettingsSection>
 
       <SettingsSection
@@ -361,24 +390,41 @@ export default function GeneralPanel({
             onChange={(e) => handleButtonTooltipsToggle(e.target.checked)}
           />
         </label>
-        <label className="flex items-center justify-between gap-2">
-          <span className="flex flex-col gap-0.5">
-            <span className="text-[0.95rem] font-medium">{t("settings.developer_mode", "Developer Mode")}</span>
-            <FormHint as="span">
-              {t(
-                "settings.developer_mode_description",
-                "Show full technical detail (status code, endpoint, stack trace) in error toasts. A 'DEV' badge appears in the navigation bar while this is on. Off by default; opt-in for debugging.",
-              )}
-            </FormHint>
+        <div className="flex flex-col gap-1">
+          <span className="text-[0.95rem] font-medium">
+            {t("settings.nav_position", "Menu position (mobile)")}
           </span>
-          <input
-            type="checkbox"
-            className="m-0 size-4 flex-none p-0"
-            data-testid="settings-developer-mode-toggle"
-            checked={devModeOn}
-            onChange={(e) => handleDevModeToggle(e.target.checked)}
-          />
-        </label>
+          <FormHint as="span">
+            {t(
+              "settings.nav_position_description",
+              "Where the primary navigation sits on the phone: at the top as a menu button (default) or at the bottom as a thumb-reach tab bar.",
+            )}
+          </FormHint>
+          <div className="mt-1 flex flex-wrap gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="nav-position"
+                className="m-0 size-4 flex-none p-0"
+                data-testid="settings-nav-position-top"
+                checked={navPositionValue === "top"}
+                onChange={() => setNavPosition("top")}
+              />
+              {t("settings.nav_position_top", "Top (menu button)")}
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="nav-position"
+                className="m-0 size-4 flex-none p-0"
+                data-testid="settings-nav-position-bottom"
+                checked={navPositionValue === "bottom"}
+                onChange={() => setNavPosition("bottom")}
+              />
+              {t("settings.nav_position_bottom", "Bottom (tab bar)")}
+            </label>
+          </div>
+        </div>
       </SettingsSection>
 
       <SettingsSection

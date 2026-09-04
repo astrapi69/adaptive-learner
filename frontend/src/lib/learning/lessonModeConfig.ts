@@ -24,6 +24,10 @@ import type {LessonMode} from "./lessonModePref";
 
 export interface LessonModeConfig {
     mode: LessonMode;
+    /** Playful mode (#2844): orthogonal to the mode — renderers opt into
+     *  game-like presentation. Overlaid live by ``LessonModeProvider``
+     *  from the playful-mode preference; ``false`` in the static rows. */
+    playful: boolean;
     showHints: boolean;
     showTheoryRecap: boolean;
     showReadAloud: boolean;
@@ -40,7 +44,18 @@ export interface LessonModeConfig {
     sessionEnd: "fixed" | "endless";
 }
 
+
+/**
+ * The value for a renderer root's ``data-playful`` attribute (#2876):
+ * ``"true"`` in game mode, absent otherwise. Shared so the branch lives
+ * here once instead of inside every renderer's render function.
+ */
+export function playfulDataAttr(playful: boolean): "true" | undefined {
+    return playful ? "true" : undefined;
+}
+
 const BASE: Omit<LessonModeConfig, "mode"> = {
+    playful: false,
     showHints: true,
     showTheoryRecap: true,
     showReadAloud: true,

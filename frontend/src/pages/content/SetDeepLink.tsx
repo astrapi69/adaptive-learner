@@ -23,16 +23,30 @@
  * fallback the deploy workflow installs; no extra routing infra needed.
  */
 
-import { Loader2 } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 import { Button } from "@/components/ui/button";
+
+import FlashRoundCard from "../../components/content/FlashRoundCard";
 import SetShareButton from "../../components/content/share/SetShareButton";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
-import { undismissSet } from "../../lib/content/browse/dismissed-sets";
+import {
+  baseLessons,
+  isBonusUnlocked,
+  orderWithBonusLast,
+} from "../../lib/content/browse/bonus-lessons";
+import {buildSetLessonList, type SetLessonList} from "../../lib/content/browse/set-lesson-list";
+import {readLearnerState} from "../../lib/learning/learnerState";
+import {PLAYFUL_MODE_CHANGE_EVENT} from "../../lib/learning/playful/playfulModePref";
+import {
+  PLAYFUL_BONUS_CHANGE_EVENT,
+  playfulBonusActive,
+} from "../../lib/learning/playful/playfulBonusPref";
+import { undismissSet } from "../../lib/content/browse/lifecycle/dismissed-sets";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import { notify } from "../../utils/notify";
@@ -53,6 +67,26 @@ export default function SetDeepLink() {
   const [entry, setEntry] = useState<ContentSetEntry | null>(null);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null);
+  // #2793 - the set page stops being a pure launcher: it lists the set's
+  // lessons with their state, so any lesson is one click away and "how far am
+  // I" is answered where the set actually appears.
+  const [lessonList, setLessonList] = useState<SetLessonList | null>(null);
+  // #2890 - the bonus-lesson gate (game mode AND the bonus switch),
+  // kept live so a settings flip updates the open page, plus the
+  // derived unlock state (every regular lesson at one star or better).
+  const [bonusGate, setBonusGate] = useState(() => playfulBonusActive());
+  const [bonusUnlocked, setBonusUnlocked] = useState(false);
+  useEffect(() => {
+    const refresh = () => setBonusGate(playfulBonusActive());
+    window.addEventListener(PLAYFUL_MODE_CHANGE_EVENT, refresh);
+    window.addEventListener(PLAYFUL_BONUS_CHANGE_EVENT, refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener(PLAYFUL_MODE_CHANGE_EVENT, refresh);
+      window.removeEventListener(PLAYFUL_BONUS_CHANGE_EVENT, refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,10 +115,74 @@ export default function SetDeepLink() {
     };
   }, [setId]);
 
+  // Load the lesson list + per-lesson progress once the set has resolved.
+  // Decoration, never a blocker: any failure simply leaves the list out.
+  useEffect(() => {
+    if (!entry) return;
+    const userId = readLearnerState().userId;
+    let cancelled = false;
+    void (async () => {
+      const storage = getStorage();
+      const [listing, progressRows] = await Promise.all([
+        storage.contentLoader
+          .listLessons(entry.source, entry.id)
+          .catch(() => ({ lessons: [] as string[] })),
+        userId
+          ? storage.lessonProgress.list(userId).catch(() => [])
+          : Promise.resolve([]),
+      ]);
+      if (cancelled) return;
+      // #2890 - bonus lessons sort to the end of the list (a plain
+      // directory listing would put "bonus-*" before "01-*"), and the
+      // derived unlock state rides the same progress read.
+      const ordered = orderWithBonusLast(listing.lessons);
+      setBonusUnlocked(
+        isBonusUnlocked(listing.lessons, progressRows, entry.id),
+      );
+      // #2835 - the list previously showed the raw filename. Fetch each
+      // lesson's title (mirroring SetLessonList.tsx's "Meine Lektionen"
+      // pattern); a per-lesson fetch failure just falls back to the
+      // filename for that one row instead of failing the whole list.
+      const titles = new Map<string, string>(
+        (
+          await Promise.all(
+            ordered.map(async (filename) => {
+              try {
+                const lesson = await storage.contentLoader.getLesson(
+                  entry.source,
+                  entry.id,
+                  filename,
+                );
+                const title = lesson.title?.trim();
+                return title ? ([filename, title] as const) : null;
+              } catch {
+                return null;
+              }
+            }),
+          )
+        ).filter((row): row is readonly [string, string] => row !== null),
+      );
+      if (cancelled) return;
+      setLessonList(
+        buildSetLessonList({
+          setId: entry.id,
+          lessons: ordered,
+          progress: progressRows,
+          titles,
+        }),
+      );
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [entry]);
+
   const openFirstLesson = useCallback(
     async (set: ContentSetEntry) => {
       const listing = await getStorage().contentLoader.listLessons(set.source, set.id);
-      const first = listing.lessons[0];
+      // #2890 - "start learning" targets the first REGULAR lesson; a
+      // bonus-only set (unusual) falls back to its first file.
+      const first = baseLessons(listing.lessons)[0] ?? listing.lessons[0];
       if (!first) {
         notify.warning(t("content.warning.no_lessons_in_set", "This set has no lessons yet."));
         return;
@@ -202,6 +300,122 @@ export default function SetDeepLink() {
                 )}
               </div>
             )}
+
+            {lessonList && lessonList.total > 0 && (
+              <section className="mt-5" data-testid="set-lesson-list">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 className="m-0 text-base font-semibold">
+                    {t("content.set_link.lesson_list", "Lessons")}
+                  </h2>
+                  <span
+                    className="text-sm text-[var(--fg-muted)]"
+                    data-testid="set-lesson-progress"
+                  >
+                    {t(
+                      "content.set_link.progress_done",
+                      "{done} of {total} lessons completed",
+                    )
+                      .replace("{done}", String(lessonList.completed))
+                      .replace("{total}", String(lessonList.total))}
+                  </span>
+                </div>
+                <ul className="mt-2 flex flex-col gap-1">
+                  {lessonList.lessons.map((lesson) => {
+                    // #2890 - a bonus lesson is visible-but-locked while
+                    // the game-mode bonus gate is on and the set's regular
+                    // lessons are not all at one star yet (feature-state
+                    // policy #335: the row stays, the unlock condition is
+                    // the tooltip). Gate off = a normal lesson.
+                    const locked =
+                      bonusGate && lesson.isBonus && !bonusUnlocked;
+                    const rowInner = (
+                      <>
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span className="flex-none text-[var(--fg-muted)]">
+                            {lesson.index}
+                          </span>
+                          <span className="truncate">{lesson.title}</span>
+                          {lesson.isBonus && (
+                            <span
+                              className="flex-none rounded-md bg-[var(--accent-subtle)] px-2 py-0.5 text-xs"
+                              data-testid="set-lesson-bonus-badge"
+                            >
+                              {t("content.set_link.bonus_badge", "Bonus")}
+                            </span>
+                          )}
+                          {lesson.isCurrent && (
+                            <span
+                              className="flex-none rounded-md bg-accent px-2 py-0.5 text-xs text-accent-foreground"
+                              data-testid="set-lesson-current"
+                            >
+                              {t("content.set_link.current_lesson", "Continue here")}
+                            </span>
+                          )}
+                        </span>
+                        {locked ? (
+                          <Lock
+                            className="h-4 w-4 flex-none text-[var(--fg-muted)]"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          lesson.status === "completed" &&
+                          lesson.scoreTotal !== null && (
+                            <span className="flex-none text-[var(--fg-muted)]">
+                              {lesson.scoreCorrect} / {lesson.scoreTotal}
+                            </span>
+                          )
+                        )}
+                      </>
+                    );
+                    const rowClass =
+                      "flex min-h-11 items-center justify-between gap-3 rounded-md border border-[var(--border)] px-3 py-2 text-sm";
+                    return (
+                      <li key={lesson.filename}>
+                        {locked ? (
+                          <span
+                            className={`${rowClass} cursor-not-allowed text-[var(--fg-muted)]`}
+                            title={t(
+                              "content.set_link.bonus_locked_tooltip",
+                              "Finish every regular lesson of this set with at least one star to unlock this bonus lesson.",
+                            )}
+                            aria-disabled="true"
+                            data-testid={`set-lesson-${lesson.index}`}
+                            data-status={lesson.status}
+                            data-locked="true"
+                          >
+                            {rowInner}
+                          </span>
+                        ) : (
+                          <Link
+                            to={`/lesson/${encodeURIComponent(
+                              setSlug(entry.source),
+                            )}/${encodeURIComponent(entry.id)}/${encodeURIComponent(
+                              lesson.filename,
+                            )}`}
+                            className={rowClass}
+                            data-testid={`set-lesson-${lesson.index}`}
+                            data-status={lesson.status}
+                            aria-current={lesson.isCurrent ? "step" : undefined}
+                          >
+                            {rowInner}
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            )}
+
+            {/* #2888 - the set's flash round: self-gating on the game
+                mode + special-rounds switch, locked until the set is
+                finished with at least one star everywhere. */}
+            <FlashRoundCard
+              source={entry.source}
+              setId={entry.id}
+              slug={setSlug(entry.source)}
+              setTitle={entry.title}
+            />
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <Button

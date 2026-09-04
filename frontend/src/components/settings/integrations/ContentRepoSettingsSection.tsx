@@ -33,7 +33,7 @@ import { readLearnerState } from "../../../lib/learning/learnerState";
 import {
   planRepoDataDeletion,
   type DeletionPlan,
-} from "../../../lib/content/browse/orphan-cleanup";
+} from "../../../lib/content/browse/lifecycle/orphan-cleanup";
 import RemoveRepoDialog from "./RemoveRepoDialog";
 import {
   OFFICIAL_SOURCE,

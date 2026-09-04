@@ -14,7 +14,7 @@ import {act, fireEvent, render, screen, within} from "@testing-library/react";
 import {createRef} from "react";
 import {describe, expect, it, vi} from "vitest";
 
-import ClozeExercise from "./ClozeExercise";
+import ClozeExercise from "./cloze/ClozeExercise";
 import type {ExerciseHandle} from "../shell/exercise-control";
 import type {ContentLessonExercise} from "../../../storage/types";
 

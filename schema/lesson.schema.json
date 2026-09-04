@@ -409,6 +409,20 @@
           "description": "Optional inline worked examples shown BEFORE the answer controls, to help the learner understand the task (schema v1.5, additive). Each is plain text or a syntax-highlighted code snippet (see ``InlineExample.language``). Author responsibility not to spoil the answer. Independent of the per-type fields; absent on exercises that need no example.",
           "title": "Examples"
         },
+        "explanation": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Markdown explanation of WHY the answer/grammar is what it is (e.g. word order, a grammatical case), shown AFTER the learner answers - regardless of correct or incorrect - unlike ``hint`` (on demand, before/during answering) and ``examples`` (worked examples shown before answering, must not spoil it). 2000 chars, twice ``hint``'s 1000: Markdown structure (a short list, bold terms) eats characters faster than a single-line nudge, and a real \"why\" often runs longer than a hint. Not restricted to any exercise type. Additive; schema_version 1.13.",
+          "title": "Explanation"
+        },
         "ext_payload": {
           "additionalProperties": true,
           "description": "Opaque per-exercise payload for an ``ext:`` extension type. The core engine does not interpret it; the registered extension validator does. Absent on core exercises.",
@@ -1244,5 +1258,5 @@
   ],
   "title": "Lesson",
   "type": "object",
-  "x-schema-version": "1.12"
+  "x-schema-version": "1.13"
 }

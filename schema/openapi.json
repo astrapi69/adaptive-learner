@@ -1463,6 +1463,18 @@
             ],
             "title": "Examples"
           },
+          "explanation": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
           "ext_payload": {
             "anyOf": [
               {
@@ -3531,6 +3543,14 @@
       "LessonProgressUpsert": {
         "description": "Body for the upsert endpoint.\n\nThe viewer calls this every time a step completes; the\nserver merges the new ``step_result`` into the existing\nJSON map and recomputes the aggregate score.\n\nPhase 63 widens the upsert body with the lifecycle controls\n(``mark_paused``, ``mark_abandoned``, ``mark_resumed``) so\nevery transition flows through the same endpoint the viewer\nalready uses for step completion. At most one of the four\n``mark_*`` flags may be true per call.",
         "properties": {
+          "combo_bonus_xp": {
+            "default": 0,
+            "description": "#2893 - game-mode combo bonus XP for this run, already capped by the client's configured limit; the schema clamps to the hard ceiling 20. Only read together with ``mark_completed``; never stored on the row.",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "title": "Combo Bonus Xp",
+            "type": "integer"
+          },
           "current_step": {
             "anyOf": [
               {
@@ -5282,6 +5302,129 @@
           }
         },
         "title": "SettingsPatchBody",
+        "type": "object"
+      },
+      "SpeechRecordingOut": {
+        "description": "Server-side speech-recording payload.",
+        "properties": {
+          "audio_base64": {
+            "title": "Audio Base64",
+            "type": "string"
+          },
+          "duration_ms": {
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "exercise_id": {
+            "title": "Exercise Id",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lesson_filename": {
+            "title": "Lesson Filename",
+            "type": "string"
+          },
+          "mime_type": {
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "set_id": {
+            "title": "Set Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "user_id": {
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "source",
+          "set_id",
+          "lesson_filename",
+          "exercise_id",
+          "audio_base64",
+          "mime_type",
+          "duration_ms",
+          "recorded_at",
+          "updated_at"
+        ],
+        "title": "SpeechRecordingOut",
+        "type": "object"
+      },
+      "SpeechRecordingUpsert": {
+        "description": "Body for the speech-recording upsert endpoint.\n\nRe-recording overwrites the existing clip for the same exercise (no\nhistory) - mirrors the \"one current answer\" model of every other\nexercise type's persisted state.",
+        "properties": {
+          "audio_base64": {
+            "maxLength": 400000,
+            "minLength": 1,
+            "title": "Audio Base64",
+            "type": "string"
+          },
+          "duration_ms": {
+            "minimum": 0.0,
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "exercise_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Exercise Id",
+            "type": "string"
+          },
+          "lesson_filename": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Lesson Filename",
+            "type": "string"
+          },
+          "mime_type": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "set_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Set Id",
+            "type": "string"
+          },
+          "source": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "set_id",
+          "lesson_filename",
+          "exercise_id",
+          "audio_base64",
+          "mime_type",
+          "duration_ms"
+        ],
+        "title": "SpeechRecordingUpsert",
         "type": "object"
       },
       "StartRunIn": {
@@ -14875,6 +15018,208 @@
           }
         },
         "summary": "Start Set Run",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/{user_id}/speech-recordings": {
+      "put": {
+        "description": "Save (or overwrite) the learner's recorded clip for one exercise.",
+        "operationId": "upsert_speech_recording_api_users__user_id__speech_recordings_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpeechRecordingUpsert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeechRecordingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upsert Speech Recording",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/{user_id}/speech-recordings/{source_slug}/{set_id}/{lesson_filename}/{exercise_id}": {
+      "delete": {
+        "description": "Delete the learner's recorded clip for one exercise (404 if none).",
+        "operationId": "delete_speech_recording_api_users__user_id__speech_recordings__source_slug___set_id___lesson_filename___exercise_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "source_slug",
+            "required": true,
+            "schema": {
+              "title": "Source Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "set_id",
+            "required": true,
+            "schema": {
+              "title": "Set Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "lesson_filename",
+            "required": true,
+            "schema": {
+              "title": "Lesson Filename",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Speech Recording",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "description": "Return the learner's recorded clip for one exercise (404 if none).",
+        "operationId": "get_speech_recording_api_users__user_id__speech_recordings__source_slug___set_id___lesson_filename___exercise_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "source_slug",
+            "required": true,
+            "schema": {
+              "title": "Source Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "set_id",
+            "required": true,
+            "schema": {
+              "title": "Set Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "lesson_filename",
+            "required": true,
+            "schema": {
+              "title": "Lesson Filename",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeechRecordingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Speech Recording",
         "tags": [
           "Users"
         ]

@@ -335,4 +335,32 @@
 # (@astrapi69/ai-key-vault-react rendert beide, #2477-Klasse) - vom
 # paket-bewussten Dead-Gate gefangen, nicht loeschbar bis das Paket
 # eigene Styles traegt.
-7439
+# 2026-08-29: 7439 -> 7449 (#2786 BottomTabBar-Restore): +10 Zeilen in
+# global.css - die in #1512 entfernte body.has-bottom-nav-#root-
+# Reservierung kehrt mit der wiederhergestellten, jetzt opt-in
+# Bottom-Tab-Bar zurueck (siehe Eintrag "7506 -> 7497 (#1512)" oben -
+# exakt dieselbe Regel). Fundament-Layout (Spacing auf #root, das keine
+# Komponente per Utility erreichen kann), kein Farb-/Theme-Stoff.
+# 2026-09-01: 7449 -> 7479 (#2849 Lernfunke-Maskottchen): +30 Zeilen -
+# neue styles/legacy/43-mascot.css (drei Pose-Keyframes lernfunke-hop/
+# -wiggle/-pop, 28 Zeilen inkl. 5 Kommentar) + die @import-Zeile in
+# global.css. Legitime Fundament-Erweiterung: @keyframes haben kein
+# Tailwind-Utility-Aequivalent (die Komponente konsumiert sie via
+# motion-safe:animate-[...] Arbitrary-Animations, Konvention aus
+# 16-feedback-intensity.css); alle sonstigen Styles des Maskottchens
+# sind token-backed Utilities an der Komponente. Keine Farben, kein
+# Selektor - reine Transform-Keyframes. Auf das Minimum kompaktiert
+# (Identitaets-Frames weggelassen, Blasen-Animation gestrichen).
+# 2026-09-01: 7479 -> 7486 (#2850 Avatar-Rahmen): +7 Zeilen in
+# 00-head.css - drei neue theme-agnostische Tokens --frame-bronze/
+# -silver/-gold (Identitaetsfarben der Progressions-Ringe, wie
+# --method-*) plus Kommentar. Exakt der Ausnahmefall der Regel oben:
+# "neue Farben als Token nach ... global.css :root". Die Ring-Styles
+# selbst sind inline box-shadows aus var()-Tokens an der Komponente,
+# kein weiteres CSS.
+# 2026-09-02 (#2874): +13 Zeilen fuer den juice-float-up-Keyframe in
+# 16-feedback-intensity.css (das "+1", das im Spielmodus von einer
+# richtigen Antwort aufsteigt). Fundament-Animation der Juice-Schicht;
+# alle uebrigen Juice-Animationen re-usen bestehende Keyframes
+# (lernfunke-hop/-pop, matching-shake) - bewusst KEIN neues CSS sonst.
+7499

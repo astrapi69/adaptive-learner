@@ -1,0 +1,311 @@
+# Chat-Journal - Session 2026-09-02
+
+Fortsetzung der Spielmodus-/Figuren-Session vom 2026-09-01 (gleiche
+Remote-Session, gepinnter Branch `claude/spielmodus-gamification-9d8311`).
+
+## 1. Maskottchen-Varianten (#2861) (08:15)
+
+- Original prompt: "ja mach die Maskottchen-Varianten als nächstes"
+- Optimierter Prompt: "Implementiere die im #2847-Abschluss notierte
+  Anschlussidee: freischaltbare Farbwelten des Lernfunke (#2849) mit
+  derselben Level/Badge/XP-Progressionsmechanik wie die Avatar-Rahmen
+  (#2850), inklusive Extraktion der jetzt doppelt gebrauchten
+  Unlock-/Store-/Kauf-Logik."
+- Ziel: Der Spielmodus-Begleiter wird personalisierbar und die
+  XP-Wirtschaft bekommt einen weiteren Konsumenten.
+- Ergebnis:
+  - Issue #2861 (GITHUB-ISSUE-PFLICHT), Branch neu von develop
+    (der #2860-Merge war der Endpunkt des vorherigen PR).
+  - i18n zuerst als eigener Commit (#2578-Reihenfolge): 12 Keys in
+    allen 11 Katalogen. Bewusste Entscheidung: die Bedingungs-/
+    Kauf-Strings heißen generisch `settings.unlock_*` (nicht
+    `mascot_*`), damit die dritte Cosmetics-Fläche keine weitere
+    Duplikat-Reihe anlegt; die Werte übernehmen die etablierte
+    Formulierung der Frame-Keys pro Katalog.
+  - DRY-Extraktion mit zweitem Konsumenten: `lib/gamification/
+    unlockables.ts` (Bedingungsmodell + reine Auswertung),
+    `lib/gamification/selection-store.ts` (Factory für den
+    localStorage+Dexie-Spiegel-Store, neu mit Change-Event pro
+    Schreibvorgang), `hooks/gamification/useXpPurchase.ts`
+    (zweistufiger, affordability-geprüfter Kauf). Die
+    #2850-Module delegieren; Storage-Key, Datenformat und die
+    bestehenden Tests blieben unverändert (und grün) - das ist der
+    Beweis, dass der Refactor verhaltensneutral war.
+  - Katalog `lib/mascot/mascot-variants.ts`: funke (frei), ozean
+    (Level 3), wald (Level 7), geist (Badge first_session), gold
+    (250 XP). Nur bestehende theme-agnostische Tokens, kein neues
+    CSS - der css-size-Ratchet bleibt unberührt.
+  - `LernfunkeFigure` bekommt optionale Farb-Props (Default =
+    bisherige Funke-Farben), `LessonMascot` liest die Variante live
+    über das Store-Event, `MascotVariantControl` rendert in der
+    Spielmodus-Sektion (Settings > Lernen).
+  - Persistenz: Key `adaptive-learner.mascot.variants` registriert
+    in `MANAGED_USER_DATA_KEYS` + `.alb`-Snapshot-Pin (die
+    #2053-Klasse vorbeugend geschlossen).
+  - TDD: 7 Unlockable-, 6 Factory-, 5 Katalog-, 4 Store-, 1 Figure-,
+    2 Mascot- und 5 Control-Tests waren rot vor der Implementierung.
+  - Testplan DE+EN um die Varianten-Sektion ergänzt
+    (TESTPLAN-PFLICHT).
+- Commits: 312fd8dc (i18n), 5fbfc11d (Feature), Testplan/Journal im
+  Doku-Commit; PR gegen develop folgt in dieser Session.
+
+## 2. Hilfe-Doku für den Spielmodus-Bogen (08:45)
+
+- Original prompt: "die Dokumentation entsprechend anpassen und sag
+  mir wo das in den Einstellungen ist?"
+- Ergebnis: celebrations.md + settings.md (DE+EN) dokumentieren
+  erstmals den ganzen Spielmodus-Bogen (Schalter, Lernfunke,
+  Varianten, Profil-Kosmetik). Boy-Scout-Korrektur: die Hilfe
+  behauptete "Einstellungen > Oberfläche" für Feedback-Intensität
+  und Töne - beide rendern im Lernen-Tab. Antwort an Aster:
+  Maskottchen-Variante liegt unter Einstellungen > Lernen >
+  Spielmodus, Avatar-Rahmen unter Allgemein > Profil.
+- Commit: e2fb13a2 (im #2863-PR gemerged).
+
+## 3. Foto-Bestätigungsdialog + Zwischenspeicher (#2862) (09:00)
+
+- Original prompt: "Wenn der user ein Bild hochgeladen hat soll wenn
+  eine Figur gewählt wird ein Bestätigungsdialog kommen das dass
+  foto gelöscht wird, aber der anwender kann das foto in ein
+  zwischenspeicher haben oder?"
+- Befund, der die Anforderung bestätigt: das Foto ist eine Data-URL
+  in `UserSettings.avatar`; der Figuren-Klick überschrieb es
+  stillschweigend und unwiederbringlich.
+- Ergebnis: Issue #2862; `avatar-photo-stash` (ein Slot pro Nutzer,
+  mentor-notes-Muster, MANAGED_USER_DATA_KEYS + Snapshot-Pin),
+  `isPresetAvatarDataUrl` am Katalog, neue Komponente
+  `PresetAvatarPicker` (Galerie + ConfirmDialog + Wiederherstellen -
+  extrahiert, damit der Flow ohne GeneralPanel-Gesamtkontext testbar
+  ist), Stash-Clear in `handleAvatarChange`, sobald wieder ein
+  echtes Foto aktiv ist (frischer Upload oder Restore). i18n (4 neue
+  Keys, Cancel via `common.cancel`), Testplan DE+EN (inkl. Korrektur
+  des Alt-Schritts "Figur wählen ersetzt das Foto"), Hilfe
+  settings.md DE+EN.
+- Konservative Annahme: der Slot hält genau EIN Foto (das zuletzt
+  verdrängte); Quota-Fehler beim Stash-Schreiben werden geschluckt
+  (etabliertes Store-Muster), der Wechsel schlägt dadurch nie fehl.
+- Commits: 715dac85 (i18n), 48c8477a (Feature), Doku-Commit folgt.
+
+## 4. Spielgefühl-Umbrella + Stufe A Juice-Paket (#2873/#2874) (12:00)
+
+- Original prompt: "Ich habe jetzt ... den Spieler Modus aktiviert ...
+  Aber der einzige Unterschied ist, dass ... das Maskottchen oben
+  angezeigt wird. ... ich spüre kein Spieleffekt Brainstorming, was
+  ist da am besten?"
+- Diagnose (bestätigt den Eindruck): der Modus hebt nur die
+  Feedback-Intensität; Töne sind eigener Opt-in; das playful-Flag in
+  LessonModeConfig hat KEINEN Renderer-Konsumenten - der Andockpunkt
+  ist leer.
+- Brainstorming-Ergebnis (AskUserQuestion, Aster wählte ALLE vier):
+  Umbrella #2873 mit A Juice (#2874), B Sounds (#2875), C Renderer
+  (#2876), D Herzen/Timer (#2878), Reihenfolge A->B->C->D.
+- Stufe A umgesetzt: combo.ts-Reducer + useLessonCombo (ein
+  Hook-Exemplar in Lesson.tsx, Chip und Summary lesen dieselbe
+  Serie), LessonCombo-Chip (ab x2, Summary zeigt "Beste Serie"
+  statt Prop-Drilling durch die Summary-Interfaces), "+1"-Float +
+  Häkchen-Hüpfer/X-Schütteln in AnswerCelebration (die EINE
+  gemeinsame Feedback-Stelle - alle 15 Renderer profitieren ohne
+  Einzelumbau), Checkpoint-Punkte bei 1/3 und 2/3 im
+  Fortschrittsbalken.
+- Bewusste Grenzen: kein Combo-Bonus-XP (Scoring unangetastet,
+  Entscheidung liegt bei #2878); nur EIN neuer Keyframe
+  (juice-float-up, css-size 7486->7499 mit Begründung), alle anderen
+  Animationen re-usen lernfunke-hop/-pop und matching-shake;
+  Prüfungsmodus bleibt still, weil der Bus dort nichts emittiert
+  (kein Extra-Gate nötig).
+- Commits: 1fc5090e (i18n), aaf2938b (Feature), Doku-Commit folgt.
+
+## 5. Stufe B Spielmodus-Sounds (#2875) (13:45)
+
+- Fortsetzung des #2873-Umbrellas nach dem #2874-Merge (PR #2879).
+- Ergebnis: `playfulSoundsPref` (zweiter, unabhängiger Opt-in neben
+  dem globalen Töne-Schalter, plus Einmal-Angebot-Flag);
+  `soundOutputEnabled()` in der Sound-Schicht (global ODER
+  Spielmodus+Sound-Flag), `playSound` mit `pitchSteps`
+  (Halbton-Faktor), zwei neue Synth-Rezepte (checkpoint, fanfare);
+  der Celebration-Bus verfolgt die Antwort-Serie selbst und hebt
+  die Tonhöhe des Correct-Tons pro Combo-Stufe (Kappung bei 8
+  Halbtönen, außerhalb des Spielmodus flach - klassisches
+  Verhalten unverändert); neuer Event-Typ `checkpoint` (emittiert
+  vom Fortschrittsbalken beim Überschreiten, ein Event pro
+  Navigation); Fanfare bei `lesson_complete` nur mit aktivem
+  Spielmodus-Sound. UI: Schalter + Einmal-Angebot in der
+  Spielmodus-Sektion, "Mit Sound einschalten"-Knopf im
+  Lektions-Banner.
+- Konservative Annahmen: Lautstärke bleibt der bestehende Regler
+  (kein zweiter); Prüfungsmodus bleibt pro Antwort stumm (der Bus
+  emittiert dort nichts), die Fanfare am Ende ist erlaubt; jeder
+  Klang hat ein sichtbares Pendant (Töne bleiben ergänzend).
+- Commits: d2092776 (i18n), Feature-/Doku-Commits folgen.
+
+## 6. Stufe C Spielerische Übungs-Renderer, erste Tranche (#2876) (15:00)
+
+- Original prompt: Fortsetzung des Umbrella-Beschlusses #2873 (Stufe C nach
+  Merge von Stufe B via PR #2880; dort fand die Baseline-Runde zusätzlich
+  einen Mobile-Umbruchfehler des Hinweis-Banners, im selben PR gefixt).
+- Optimized prompt: "Konsumiere das playful-Flag in den drei häufigsten
+  Übungs-Renderern als reine Präsentationsschicht: MC-Kacheln,
+  Lückentext-Wortsprung, Matching-Pop - gleiche Testids, gleiches Scoring,
+  motion-safe."
+- Ziel: Der Spielmodus verändert erstmals die Übungen selbst, ohne
+  Verhalten oder Bewertung anzufassen.
+- Ergebnis: MultipleChoiceExercise rendert im Spielmodus ein
+  Kachel-Raster (ab sm zweispaltig, Pop bei Wahl, Hüpfer/Schütteln auf dem
+  Urteil); ClozeSelectChoices lässt das gewählte Wort per lernfunke-hop in
+  die Satz-Lücke springen (Key-Wechsel wiederholt die Animation);
+  Matching-Kacheln ploppen beim Paaren und hüpfen bei richtiger Auflösung.
+  Alle drei Wurzeln tragen data-playful. Bewusste Abweichung vom
+  Issue-Wortlaut: "gelöste Paare fliegen ab" wäre eine Verhaltensänderung
+  (Antippen eines Paars löst es heute wieder) - stattdessen nur das
+  Zusammenschnappen; im PR dokumentiert. Keine neuen i18n-Strings (reine
+  Optik). Drei neue parametrisierte Paritäts-Testdateien (17 Tests),
+  Testplan DE+EN, Hilfe celebrations.md DE+EN erweitert.
+- Commit: siehe Feature- und Doku-Commit dieses PR (Refs #2876).
+
+## 7. Stufe D Spannungssysteme: Herzen + Countdown-Ring (#2878) (16:15)
+
+- Original prompt: Fortsetzung des Umbrella-Beschlusses #2873 (Stufe D
+  nach Merge von Stufe C via PR #2881).
+- Optimized prompt: "Baue Herzen und Countdown-Ring als opt-in
+  Spielmodus-Spannungsschicht: Bus-gespeist, Korrektur-Runde kostet
+  nichts, Ablauf ist ein Fehlversuch ohne Auto-Submit, Scoring/SRS
+  unangetastet."
+- Ziel: Echter Spannungsbogen für alle, die ihn wollen - für niemanden
+  sonst.
+- Ergebnis: playfulTensionPref (4 Keys, geklemmte Zahlen),
+  usePlayfulTension, useLessonHearts (answer_wrong-Subscription, aus
+  auf der Summary => Korrektur-Runde kostet nichts), useLessonCountdown
+  (1s-Intervall, Pause nach Check, EIN answer_wrong-Emit pro Ablauf,
+  Schrittwechsel setzt zurück), LessonHearts-Leiste,
+  LessonCountdownRing (SVG, Farbstufen wie der Auf-Zeit-Balken),
+  LessonHeartsDialog (erzwungene Wahl: Neustart mit Herz-Refill oder
+  Ausstieg), Settings-Erweiterung mit zwei Schaltern + zwei
+  Zahlenfeldern. Beide Systeme aus in Prüfungs- und Auf-Zeit-Modus;
+  der Ablauf-Emit läuft über denselben Bus wie echte Fehlantworten
+  (ein Mechanismus für Serie, Herz, Maskottchen, Ton). Endlos-Player
+  bleibt vorerst ohne Herzen (eigene Seite ohne Spielmodus-Chrome,
+  als Wechselwirkungs-Entscheidung im PR dokumentiert). Die vertagte
+  Combo-Bonus-XP-Entscheidung wird Aster als Frage vorgelegt, nicht
+  eigenmächtig gebaut.
+- Commit: 72f5b2a8 (i18n), aff232f1 (Feature); Doku-Commit folgt.
+
+## 8. Freischalt-Umbrella + Serien-Bonus-XP (#2886/#2893) (18:30)
+
+- Original prompt: Brainstorming zu Freischaltbarem (Bonus-Lektionen,
+  Sonderrunden, Minispiele wie Snake/TicTacToe, 1-2 Minuten); danach
+  "alles konfigurierbar in den Spielmodus-Einstellungen"; Combo-Frage
+  beantwortet mit "Ja, kleine Bonus-XP", ebenfalls konfigurierbar.
+- Optimized prompt: "Lege einen Freischalt-Umbrella mit vier
+  Bausteinen (Arcade, Sonderrunden, Ticket-Oekonomie, Bonus-Lektionen)
+  als Issues an, jede Funktion mit Schalter + geklemmten Zahlenfeldern
+  in den Spielmodus-Einstellungen. Implementiere zuerst die
+  beschlossenen Combo-Bonus-XP: +1 ab der dritten Serienantwort,
+  additiv NACH dem Multiplikator, Deckel konfigurierbar 5-20
+  (Standard 10, Schalter Standard AN), harte Obergrenze 20 in beiden
+  XP-Rechnern, Paritaets-Goldens, Vergabe in API- und Dexie-Modus."
+- Ziel: Umbrella #2886 mit Sub-Issues #2887-#2890; #2893 komplett
+  (Formel bis Settings-UI) auf einem PR.
+- Ergebnis: Formel-Kette in Python + TS mit vier neuen
+  Paritaets-Goldens (combo_bonus additiv nach dem Multiplikator,
+  Clamp [0,20]); transientes Feld combo_bonus_xp durch Schema (422
+  ueber 20), Router, Unification bis zum Gamification-Award; Dexie-
+  Award gleichwertig (#2053, eigene Tests); Combo-Reducer zaehlt
+  bonusEligible ab Serienlaenge 3; playfulComboXpPref (Standard AN,
+  Deckel 5-20); Lesson.tsx reicht EINEN Wert an Summary-Anzeige und
+  markCompleted (Anzeige = Vergabe); Summary-Chip "+N XP";
+  Settings-Block mit Schalter + geklemmtem Zahlenfeld; Testplan
+  DE+EN, Hilfe celebrations.md (Ausnahme vom
+  "presentation-only"-Satz dokumentiert).
+- Commit: a3a9ed62 (i18n), fd325987 (Formel + Paritaet), 8879b638
+  (Frontend-Verkabelung); Doku-Commit folgt.
+
+## 9. Arcade Stufe A: Lern-Memory + Snake (#2887) (22:45)
+
+- Original prompt: Fortsetzung des #2886-Programms nach dem
+  #2893-Merge - Stufe A laut Issue #2887.
+- Optimized prompt: "Baue die zwei beschlossenen Arcade-Minispiele:
+  reine Spielkerne per TDD (Snake-Schritt/Kollision mit injizierbarem
+  Zufall, Memory-Reducer mit Paar-Ziehung aus echten Lektionskarten),
+  Arcade-Pref (Schalter Standard AN, Snake 30-120s/60, Paare 4-12/8),
+  Snake als 200-XP-Freischaltung ueber unlockables + selection-store
+  (MANAGED_USER_DATA_KEYS + beide Pins), /arcade-Seite mit
+  Spieleliste und Gate-Hinweis, selbst-gatende Dashboard-Karte,
+  Settings-Block nach #2878-Muster, i18n zuerst, Testplan DE+EN."
+- Ziel: #2887 komplett auf einem PR; Checkbox A in #2886.
+- Ergebnis: lib/arcade (snake.ts, memory.ts, arcade-games.ts,
+  arcade-unlock-store.ts) mit 29 Logik-Tests; playfulArcadePref;
+  Dexie-Key adaptive-learner.arcade.unlocks registriert + beide
+  Backup-Pins; /arcade-Route mit XP-Kauf (zweistufig, useXpPurchase),
+  Snake als token-only DOM-Grid (Uhr, Pause, Tastatur+Wisch,
+  Bestwert lokal), Memory laedt nur gecachte Sets (#1816) mit
+  deterministischen Karten-Testids; ArcadeCard verschwindet komplett
+  bei Schalter aus (Issue-Entscheid), die Seite behaelt den
+  Hinweis-mit-Grund; 32 UI-Tests; arcade-i18n-Block (36 Keys x 11);
+  Testplan DE+EN, Hilfe celebrations.md.
+- Commit: 40c77cf6 (i18n), 96bca06b (Logik + Store), fb4eda88 (UI);
+  Doku-Commit folgt.
+
+## 10. Stufe B: Blitzrunden bei Set-Abschluss (#2888) (23:30)
+
+- Original prompt: Fortsetzung des #2886-Programms nach dem
+  #2895-Merge - Stufe B laut Issue #2888.
+- Optimized prompt: "Baue die Blitzrunde als Wiederverwendung des
+  Error-Replay-Players: reine Freischalt-Regel (jede Lektion des Sets
+  mit mindestens einem Stern), deterministische Auswahl der
+  fehlertraechtigsten Elemente aus den ElementError-Rows, Aufloesung
+  zu Uebungen aus den Quell-Lektionen; der Player bekommt per
+  Router-State einen optionalen Countdown-Modus (#2878-Semantik);
+  Einstiegskarte sichtbar-aber-gesperrt in der Set-Uebersicht;
+  Sonderrunden-Pref (Standard AN, Karten 5-20/10); i18n zuerst,
+  Testplan DE+EN."
+- Ziel: #2888 komplett auf einem PR; Checkbox B in #2886.
+- Ergebnis: lib/flash-round (Freischalt-Regel, Auswahl-Ranking,
+  Uebungs-Aufloesung; 9 Tests gegen echte Row-Shapes),
+  playfulSpecialRoundsPref (7 Tests); ErrorReplayLesson additiv um
+  flashRound-State erweitert (Ring, Titel, Ruecksprung; Paritaets-Test
+  fuer gewoehnliche Replays); FlashRoundCard in SetDeepLink mit
+  Gate-, Sperr-, Perfekt- und Start-Payload-Tests (5); Settings-Block
+  (3 Tests); i18n-Block (10 Keys x 11 Kataloge); Testplan DE+EN,
+  Hilfe celebrations.md.
+- Commit: 3e7dcbbd (i18n), e8620e6c + debe6574 (Regeln + Pref),
+  01811482 (UI); Doku-Commit folgt.
+
+## 11. Stufe C: Spiel-Tickets ueber Leistung + Streaks (#2889) (23:55)
+
+- Original prompt: autonome Fortsetzung des Freischalt-Umbrellas
+  #2886 nach dem Merge von Stufe B (PR #2896).
+- Optimierter Prompt: "Implementiere #2889: reine Vergaberegeln
+  (volle Punktzahl, alle Herzen, Streak-Meilensteine 3/7/14/30 mit
+  Dedupe), browser-lokaler Ticket-Store nach dem Cosmetics-Muster
+  (Cap gegen Horten, blockierte Meilensteine bleiben verfuegbar),
+  Vergabe einmalig auf dem Zusammenfassungs-Screen mit
+  Already-completed-Guard gegen Farmen, Ticket-Stand auf Arcade-Seite
+  und Dashboard-Karte, ein Ticket = eine Runde eines gesperrten
+  Spiels, Settings-Schalter + Obergrenze 1-10/5; i18n zuerst,
+  Testplan DE+EN."
+- Ziel: #2889 komplett auf einem PR; Checkbox C in #2886.
+- Ergebnis: lib/arcade/ticket-rules + ticket-store (parametrisierte
+  Regel-Tests, Store-Tests inkl. Cap-Nachreichung), playfulTicketsPref
+  (Standard AN, Cap 1-10/5), SummaryTicketReward im LessonSummary
+  (Banner + "Jetzt spielen", volle Herzen via
+  useLessonTension.fullHeartsRun), Ticket-Anzeige + Ticket-Runde in
+  Arcade/ArcadeCard, Settings-Block, Backup-Pins fuer den neuen Key;
+  49 neue Tests; i18n-Block (9 Keys x 11 Kataloge); Testplan DE+EN,
+  Hilfe celebrations.md.
+- Commit: 736db1c6 (i18n), d2daf400 (Regeln/Store/Pref), 0f2ebfe3
+  (UI); Doku-Commit folgt.
+
+## Fragen und Annahmen
+
+- Farbwahl der Varianten aus der bestehenden Markenpalette
+  (`--method-*`, `--frame-gold`) statt neuer Tokens - konservativ,
+  kein css-size-Ratchet-Raise nötig. Quelle: design-tokens.md
+  ("neue Farbe nur als Token"; hier existieren die Tokens bereits).
+- Freischalt-Schwellen (Level 3/7, Badge first_session, 250 XP) sind
+  Produktentscheidungen ohne Vorgabe; gewählt so, dass sie die
+  Frame-Schwellen (2/5/10, streak_3_days, 150/300) versetzt ergänzen
+  und früh einen erreichbaren Erfolg bieten. Im Issue dokumentiert.
+- Die Varianten-Galerie rendert INNERHALB der Spielmodus-Sektion
+  (nicht als eigene Sektion), weil das Maskottchen nur im Spielmodus
+  auftritt; sie bleibt aber auch bei ausgeschaltetem Spielmodus
+  sichtbar (Feature-State-Policy #335: nichts verstecken).

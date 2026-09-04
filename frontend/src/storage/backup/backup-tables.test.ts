@@ -19,6 +19,15 @@ import {
 } from "./backup-tables";
 
 describe("backup-tables parity", () => {
+    it("carries speech_recordings - a Dexie table that silently rode with no backup coverage (#2824)", () => {
+        // #2818/#2824: ext:al-speak-and-record (#2816) added the Dexie
+        // `speechRecordings` store, but never registered it here - every
+        // browser-mode export/import silently dropped every recording.
+        expect(BACKUP_TABLES).toHaveProperty("speech_recordings");
+        expect(BACKUP_TABLES.speech_recordings.store).toBe("speechRecordings");
+        expect(RESTORE_ORDER).toContain("speech_recordings");
+    });
+
     it("RESTORE_ORDER and BACKUP_TABLES carry exactly the same tables", () => {
         expect([...RESTORE_ORDER].sort()).toEqual(
             Object.keys(BACKUP_TABLES).sort(),

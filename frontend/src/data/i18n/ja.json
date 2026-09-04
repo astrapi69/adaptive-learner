@@ -56,6 +56,7 @@
     "group_extra": "追加データ",
     "group_gamification": "ゲーミフィケーション",
     "group_config": "設定",
+    "group_media": "メディア",
     "cat_projects": "学習プロジェクト（セッション・評価・メモを含む）",
     "cat_curricula": "カリキュラム（トピックとレッスンを含む）",
     "cat_progress": "レッスンの進捗（間違い / SRS を含む）",
@@ -66,7 +67,8 @@
     "cat_questions": "学習問題",
     "cat_gamification": "XP・バッジ・連続記録・ミッション",
     "cat_settings": "設定",
-    "cat_ai_config": "AI キーのバックアップ"
+    "cat_ai_config": "AI キーのバックアップ",
+    "cat_speech_recordings": "音声録音（話して録音する練習）"
   },
   "nav": {
     "group": {
@@ -399,6 +401,7 @@
   "review": {
     "your_answer": "あなたの回答:",
     "correct_answer": "正解:",
+    "question_label": "質問:",
     "summary_corrected": "{total}問中{corrected}問を修正",
     "summary_trend": "いいですね - 弱点が強くなっています。",
     "summary_next": "習得した項目は外れ、残りはまもなく復習に戻ります。",
@@ -652,6 +655,45 @@
     "username_placeholder": "あなたの名前",
     "username_save": "保存",
     "username_empty": "名前を空にできません。",
+    "avatar_frames_title": "アバターフレーム",
+    "avatar_frames_hint": "アバターを飾りましょう。フレームはレベルやバッジで解放されるほか、XPと交換できます。",
+    "avatar_frame_none": "なし",
+    "avatar_frame_bronze": "ブロンズ",
+    "avatar_frame_silver": "シルバー",
+    "avatar_frame_gold": "ゴールド",
+    "avatar_frame_flame": "フレイム",
+    "avatar_frame_star": "スター",
+    "avatar_frame_accent": "アクセント",
+    "avatar_frame_locked_level": "レベル{level}から",
+    "avatar_frame_locked_badge": "3日連続バッジが必要です",
+    "avatar_frame_buy": "{xp} XP",
+    "avatar_frame_buy_confirm": "確認",
+    "avatar_frame_buy_failed": "購入に失敗しました。",
+    "mascot_variants_title": "マスコットのバリエーション",
+    "mascot_variants_hint": "ゲームモードの学習パートナーの色を選びましょう。バリエーションはレベルやバッジで解放されるほか、XPと交換できます。",
+    "mascot_variant_funke": "スパーク",
+    "mascot_variant_ozean": "オーシャン",
+    "mascot_variant_wald": "フォレスト",
+    "mascot_variant_geist": "ゴースト",
+    "mascot_variant_gold": "ゴールド",
+    "unlock_level": "レベル{level}から",
+    "unlock_badge": "必要なバッジ: {badge}",
+    "unlock_buy": "{xp} XP",
+    "unlock_buy_confirm": "確認",
+    "unlock_buy_failed": "購入に失敗しました。",
+    "avatar_presets_title": "またはキャラクターを選ぶ",
+    "avatar_replace_photo_title": "写真を置き換えますか?",
+    "avatar_replace_photo_message": "アップロードした写真はフィギュアに置き換えられます。写真は保存されたままなので、いつでも元に戻せます。",
+    "avatar_replace_photo_confirm": "フィギュアを使う",
+    "avatar_restore_photo": "写真を元に戻す",
+    "avatar_preset_spark": "スパーク",
+    "avatar_preset_robot": "ロボット",
+    "avatar_preset_star": "星",
+    "avatar_preset_cat": "ねこ",
+    "avatar_preset_owl": "フクロウ",
+    "avatar_preset_ghost": "おばけ",
+    "avatar_preset_bolt": "かみなり",
+    "avatar_preset_heart": "ハート",
     "avatar_upload": "画像をアップロード",
     "avatar_remove": "削除",
     "avatar_crop_title": "画像を調整",
@@ -678,6 +720,7 @@
     "tab_plugins": "プラグイン",
     "tab_data": "データ",
     "tab_help": "ヘルプ",
+    "tab_diagnostics": "診断とサポート",
     "tab_about": "情報",
     "tabs_aria": "設定セクション",
     "section_feedback": "フィードバック",
@@ -713,6 +756,57 @@
     "button_tooltips_description": "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。",
     "developer_mode": "開発者モード",
     "developer_mode_description": "エラー通知に技術的な詳細（ステータスコード、エンドポイント、スタックトレース）をすべて表示します。有効中はナビゲーションバーに 'DEV' バッジが表示されます。既定は無効。デバッグ用にのみ有効化してください。",
+    "section_diagnostics": "診断",
+    "vvdiag_toggle": "タップ・ビューポート診断プローブ",
+    "vvdiag_description": "計測バーを表示し、プローブが有効な間、タップ位置とビューポートの変化を継続的に記録します。再現が難しい表示バグ（例：タップが対象の下にずれる）を後から特定するのに役立ちます。URLパラメータ ?vvdiag=1 でも有効化できます。",
+    "vvdiag_log_count": "{count} 件の記録イベント",
+    "vvdiag_copy_log": "記録をコピー",
+    "vvdiag_copied": "コピーしました！",
+    "vvdiag_clear_log": "記録を消去",
+    "vvdiag_panel_toggle": "計測バーを表示",
+    "vvdiag_panel_description": "オフ：プローブは上部のバーを表示せずに記録を続けます。ヘッダーとメニューは完全に操作できます。",
+    "vvdiag_fab_toggle": "計測バーのスティッキーボタン",
+    "vvdiag_fab_description": "計測バーをワンタップで表示・非表示にできるフローティングボタンを表示します。テスト中にバーを素早く切り替えるのに便利です。プローブが有効な間のみ表示されます。",
+    "vvdiag_fab_position": "ボタンの位置",
+    "vvdiag_fab_pos_bottom_left": "左下",
+    "vvdiag_fab_pos_bottom_right": "右下",
+    "vvdiag_fab_pos_top_left": "左上",
+    "vvdiag_fab_pos_top_right": "右上",
+    "vvdiag_fab_aria": "計測バーの表示を切り替える",
+    "nav_position": "メニューの位置（モバイル）",
+    "nav_position_description": "スマートフォンでのメインナビゲーションの位置：上部のメニューボタン（デフォルト）か、親指の届く下部のタブバーか。",
+    "nav_position_top": "上（メニューボタン）",
+    "nav_position_bottom": "下（タブバー）",
+    "playful_mode_title": "ゲームモード",
+    "playful_mode": "遊び心のあるレッスン",
+    "playful_mode_description": "レッスンをゲームのように楽しくします。正解のたびに称賛、紙吹雪、節目のお祝いがあります。どのレッスンモードでも使えます。採点と進捗は変わりません。システムで視覚効果を減らす設定が有効な場合、フィードバックは控えめのままです。",
+    "playful_sounds": "ゲームモードのサウンド",
+    "playful_sounds_description": "ゲームモードの短い効果音: 正解のたびに鳴る音(連続正解でピッチが上がります)、チェックポイントのジングル、完了のファンファーレ。全体のサウンド設定とは独立で、音量はスライダーに従います。",
+    "playful_sounds_offer": "サウンド付きで遊びますか?",
+    "playful_sounds_offer_yes": "はい、サウンドをオン",
+    "playful_sounds_offer_later": "あとで",
+    "playful_hearts": "ハート(ライフ)",
+    "playful_hearts_description": "不正解でハートが1つ減ります。ゼロになるとラウンドは終了し、やさしい再挑戦の案内が表示されます。解いた内容は失われません。試験・タイムアタックのレッスンでは無効です。",
+    "playful_hearts_count": "レッスンごとのハート数",
+    "playful_countdown": "カウントダウンリング",
+    "playful_countdown_description": "練習問題ごとの小さなタイムリングです。時間切れになると連続記録が途切れ、ハートを1つ失いますが、問題は開いたままで自動送信はされません。試験・タイムアタックのレッスンでは無効です(タイムアタックには専用タイマーがあります)。",
+    "playful_countdown_seconds": "練習問題ごとの秒数",
+    "playful_combo_xp": "連続ボーナスXP",
+    "playful_combo_xp_description": "連続3問目からは、連続する正解ごとに+1ボーナスXPを獲得します(レッスンごとに上限あり)。オフにするとゲームモードのXPは通常モードと同じになります。",
+    "playful_combo_xp_cap": "レッスンごとのボーナスXP上限",
+    "playful_arcade": "アーケード",
+    "playful_arcade_description": "ゲームモードのごほうびとしての短いミニゲーム: レッスンカードで遊ぶ学習メモリーと、XPでアンロックするクラシックゲーム。オフにするとアーケードカードとゲームは完全に非表示になります。",
+    "playful_arcade_snake_seconds": "スネークのラウンド時間(秒)",
+    "playful_arcade_memory_pairs": "メモリーのペア数",
+    "playful_arcade_simon_target": "サイモンの目標の長さ",
+    "playful_special_rounds": "スペシャルラウンド",
+    "playful_special_rounds_description": "セットをクリア(全レッスンを星1つ以上)すると、最難関カードで作られたフラッシュラウンドがアンロックされ、カウントダウンリング付きでプレイできます。オフにするとフラッシュラウンドのカードは完全に非表示になります。",
+    "playful_flash_round_cards": "フラッシュラウンドのカード数",
+    "playful_tickets": "ゲームチケット",
+    "playful_tickets_description": "成績でアーケードチケットを獲得します。満点のレッスン、ハートを全部残したラン、連続記録の節目(3/7/14/30日)。チケット1枚でロック中のアーケードゲームを1ラウンドプレイできます。オフにするとアーケードはXPアンロックのみになります。",
+    "playful_ticket_cap": "チケットの上限",
+    "playful_bonus_lessons": "ボーナスレッスン",
+    "playful_bonus_lessons_description": "セットにはボーナスレッスン(\"bonus-\"で始まるレッスンファイル)を含められます。ゲームモードがオンの間は、通常レッスンすべてが星1つ以上になるまでセットのレッスン一覧でロック表示されます。オフ(またはゲームモードオフ)なら通常レッスンと同じ扱いです。",
     "feedback_intensity": "フィードバックの強さ",
     "feedback_intensity_description": "アプリがあなたの進歩をどれだけ盛大に祝うか。",
     "feedback_intensity_subtle": "控えめ",
@@ -1456,6 +1550,68 @@
     "danger_zone_continue": "続行",
     "danger_zone_failed_toast": "リセットに失敗:"
   },
+  "arcade": {
+    "title": "アーケード",
+    "subtitle": "1〜2分の短いラウンド。ゲームモードのごほうびです。XPはなく、楽しむだけ。",
+    "card_description": "学習メモリーとスネークの短いラウンド。ゲームモードのごほうびです。",
+    "card_open": "アーケードへ",
+    "requires_playful": "アーケードはゲームモードの一部です。設定でゲームモード(とアーケードのスイッチ)をオンにしてください。",
+    "open_settings": "設定を開く",
+    "play": "プレイ",
+    "pause": "一時停止",
+    "resume": "再開",
+    "restart": "リスタート",
+    "back_to_games": "ゲーム一覧に戻る",
+    "unlock_for_xp": "{n} XPでアンロック",
+    "unlock_confirm": "本当に{n} XPでアンロックしますか?",
+    "unlock_not_enough_xp": "XPがまだ足りません。学習を続けましょう!",
+    "tickets_label": "チケット: {n}",
+    "ticket_play": "チケットで1ラウンドプレイ",
+    "tickets_hint": "パーフェクトなレッスン、ハートを全部残したラン、連続記録の節目でチケットを獲得。",
+    "memory": {
+      "name": "学習メモリー",
+      "description": "レッスンの単語と訳のペアを見つけましょう。",
+      "set_label": "レッスンセット",
+      "loading": "カードを読み込み中 ...",
+      "empty": "十分なカードのあるダウンロード済みセットが見つかりません。先にレッスンセットをダウンロードしてください。",
+      "load_failed": "カードの読み込みに失敗しました。別のセットを試してください。",
+      "progress": "ペア: {a} / {b}",
+      "attempts": "試行: {n}",
+      "won": "{n}回の試行で全ペアを発見!"
+    },
+    "snake": {
+      "name": "スネーク",
+      "description": "クラシックなゲーム: エサを集めて成長し、自分を噛まないように。",
+      "score": "ポイント: {n}",
+      "time_left": "残り時間: {n}秒",
+      "goal": "目標: {n}ポイント",
+      "highscore": "ベスト: {n}",
+      "board_aria": "スネークの盤面。矢印キーまたはスワイプで操作",
+      "won": "ラウンド勝利! {n}ポイント!",
+      "lost": "ラウンド終了。{n}ポイント。もう一度挑戦!"
+    },
+    "tictactoe": {
+      "name": "三目並べ",
+      "description": "アプリと三目並べ。ちゃんと勝てる相手です。",
+      "your_turn": "あなたの番 (X)",
+      "ai_turn": "アプリが考え中 ...",
+      "board_aria": "三目並べの盤面。空いているマスを選んでください",
+      "won": "勝ち! 3つ並びました!",
+      "lost": "このラウンドはアプリの勝ち。すぐ再挑戦!",
+      "draw": "引き分け。よく守りました!"
+    },
+    "simon": {
+      "name": "サイモン",
+      "description": "伸びていく色の順番を覚えてなぞりましょう。目標の長さに届けば勝ちです。",
+      "watch": "順番をよく見て ...",
+      "your_turn": "あなたの番。順番どおりにタップ",
+      "round_label": "順番 {n} / {m}",
+      "board_aria": "サイモンの盤面。4つの色パッド",
+      "pad_aria": "色パッド {n}",
+      "won": "やりました! 全部の順番をクリア!",
+      "lost": "残念! 長さ {n} まで届きました。すぐ再挑戦!"
+    }
+  },
   "anki": {
     "title": "Ankiエクスポート",
     "intro": "AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。",
@@ -1490,7 +1646,10 @@
     "mic_permission_denied": "マイクへのアクセスが拒否されました。",
     "mic_error": "音声認識エラー。",
     "mic_no_device": "マイクが見つかりません。接続してもう一度お試しください。",
-    "mic_network": "音声認識はオフラインです。インターネット接続を確認してください。"
+    "mic_network": "音声認識はオフラインです。インターネット接続を確認してください。",
+    "record_error": "録音に失敗しました。もう一度お試しください。",
+    "stop_recording": "録音を停止",
+    "start_recording": "録音を開始"
   },
   "pronunciation": {
     "title": "発音練習",
@@ -1538,6 +1697,9 @@
     "desktop_only": "デスクトップアプリでのみ利用できます。"
   },
   "ui": {
+    "cancel": "キャンセル",
+    "hide_secret": "値を隠す",
+    "show_secret": "値を表示",
     "info": {
       "show": "情報を表示"
     },
@@ -1831,6 +1993,27 @@
     }
   },
   "lesson": {
+    "mascot_label": "学習のおとも",
+    "combo_chip": "×{n}",
+    "combo_aria": "連続正解: {n}回連続",
+    "combo_best": "最高連続記録: {n}",
+    "combo_bonus_aria": "連続ボーナス: {n} XP",
+    "hearts": {
+      "aria": "ライフ: {max}中{n}",
+      "empty_heading": "ハートがなくなりました!",
+      "empty_body": "大丈夫、何も失われていません。解いた内容は保存されています。ひと息ついて、もう一度挑戦しましょう。",
+      "action_retry": "もう一度挑戦",
+      "action_exit": "レッスンを離れる"
+    },
+    "countdown": {
+      "aria": "タイムリング: 残り{n}秒"
+    },
+    "playful_hint_title": "ゲームモードを試す",
+    "playful_hint_enable_sound": "サウンド付きでオンにする",
+    "playful_hint_body": "正解のたびに称賛と紙吹雪でお祝いします。設定でいつでも変更できます。",
+    "playful_hint_activate": "オンにする",
+    "playful_hint_dismiss": "今後表示しない",
+    "playful_hint_activated": "ゲームモードがオンになりました。楽しんでください!",
     "test_mode": {
       "title": "テストモード",
       "description": "回答は採点されず、進捗は保存されません。",
@@ -1860,7 +2043,30 @@
       "endless": "エンドレス"
     },
     "options": {
-      "title": "オプション"
+      "title": "オプション",
+      "edit_in_editor": "このレッスンをエディタで編集"
+    },
+    "mentor": {
+      "note_button": "メンターメモ",
+      "note_edit": "メンターメモを編集",
+      "category_label": "カテゴリ",
+      "category": {
+        "typo": "誤字",
+        "unclear": "分かりにくい表現",
+        "too_easy": "簡単すぎる",
+        "too_hard": "難しすぎる",
+        "wrong_answer": "解答の判定が誤り",
+        "other": "その他"
+      },
+      "placeholder": "このステップで改善すべき点は?",
+      "save": "メモを保存",
+      "remove": "メモを削除",
+      "summary_title": "メンターメモ（{n}）",
+      "summary_hint": "この学習でのメモです。エディタでレッスンを開いて反映しましょう。",
+      "edit_panel_title": "このレッスンのメンターメモ（{n}）",
+      "edit_panel_hint": "このレッスンをプレイした際のメモです。対応済みのメモは削除してください。",
+      "suggest_label": "AI提案",
+      "suggest_empty": "使える提案が得られませんでした。もう一度試すか、手動でステップを調整してください。"
     },
     "exam": {
       "passed": "合格",
@@ -1909,6 +2115,10 @@
     "contributed_by": "{name}さんによる貢献",
     "page_title": "レッスン",
     "set_label": "セット",
+    "position": "レッスン {current} / {total}",
+    "nav_previous": "前のレッスン",
+    "nav_next": "次のレッスン",
+    "nav_set_overview": "このセットの全レッスン",
     "loading": "レッスンを読み込み中…",
     "not_cached_body": "このレッスンはまだダウンロードされていません。コンテンツブラウザを開いてセットをダウンロードしてください。",
     "progress": {
@@ -2050,10 +2260,29 @@
         "retry": "もう一度",
         "empty": "この選択問題には選択肢がありません。"
       },
+      "al_audio_choice": {
+        "empty": "この音声選択問題には選択肢がありません。",
+        "result_correct": "正解!",
+        "result_wrong": "惜しい - もう一度聞いてみましょう。",
+        "submit": "答えを確認",
+        "retry": "もう一度挑戦",
+        "option_aria": "選択肢を再生"
+      },
+      "al_audio_tiles": {
+        "empty": "この音声タイル問題にはタイルがありません。"
+      },
+      "type_matching": "マッチング",
+      "type_picture_choice": "画像選択",
+      "type_free_text": "自由記述",
+      "type_word_tiles": "単語タイル",
+      "type_cloze": "穴埋め",
       "al_categorization": {
         "empty": "この分類演習にはカテゴリーがありません。",
         "instructions": "項目をタップし、次にそのカテゴリーをタップします。",
+        "my_answers": "自分の回答",
         "pool_label": "項目",
+        "resolve": "解答を表示",
+        "resolve_announce": "解答を表示しました。{total} 項目中 {correct} 項目が正しく分類されていました。",
         "result_correct": "正解！",
         "result_wrong": "惜しい。ハイライトされた項目を確認してください。",
         "retry": "もう一度",
@@ -2074,6 +2303,7 @@
         "empty": "この誤り訂正演習には文がありません。",
         "input_label": "訂正",
         "instructions": "誤っている語をタップし、訂正を入力します。",
+        "resolve_announce": "解答を表示しました。訂正後の文：{sentence}",
         "result_correct": "正解！",
         "result_wrong": "惜しい。下の解答を確認してください。",
         "retry": "もう一度",
@@ -2114,6 +2344,14 @@
         "solution_label": "解答",
         "submit": "答えを確認"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "ストレージ容量を節約するため、以前の録音は削除されました。いつでも録り直せます。",
+        "empty": "この話して録音する問題には文がありません。",
+        "show": "テキストを表示",
+        "saving": "保存中…",
+        "done": "完了",
+        "record_again": "もう一度録音"
+      },
       "instruction": {
         "matching": {
           "receptive": "ペアを結ぶ（認識）",
@@ -2137,6 +2375,15 @@
         "receptive_hint": "意味を認識する",
         "productive_hint": "答えを産出する"
       }
+    },
+    "flash_round": {
+      "title": "フラッシュラウンド: {set}",
+      "card_title": "フラッシュラウンド",
+      "card_description": "このセットの最難関カードで挑む短いラウンド。カウントダウンリング付き。",
+      "start": "フラッシュラウンドを開始",
+      "locked_tooltip": "アンロックするには、このセットの全レッスンを星1つ以上でクリアしてください。",
+      "perfect_tooltip": "エラーカードなし。このセットはすでにパーフェクトです!",
+      "no_content": "このセットにプレイ可能なエラーカードが見つかりません。"
     },
     "error_replay": {
       "title": "間違いをやり直す：{lesson}",
@@ -2202,6 +2449,7 @@
       "view_all_answers": "すべての回答を見る ({n})",
       "export": {
         "copy": "結果をコピー",
+        "correct_answer": "正解",
         "download": "ファイルとして保存",
         "download_json": "JSONとしてエクスポート",
         "anki": "カードを書き出す (Anki)",
@@ -2237,7 +2485,10 @@
       "encourage_0": "練習あるのみ!",
       "encourage_1": "良いスタート、その調子!",
       "encourage_2": "もう少しで満点!",
-      "encourage_3": "満点!"
+      "encourage_3": "満点!",
+      "ticket_earned_one": "ごほうびアンロック: ゲームチケット1枚!",
+      "ticket_earned_many": "ごほうびアンロック: ゲームチケット{n}枚!",
+      "ticket_play_now": "今すぐプレイ"
     },
     "error": {
       "load_failed": "レッスンを読み込めませんでした。",
@@ -2322,7 +2573,12 @@
       "go_discover": "コンテンツを探す",
       "start": "学習を始める",
       "download_start": "ダウンロードして開始",
-      "lessons": "{n} レッスン"
+      "lessons": "{n} レッスン",
+      "lesson_list": "レッスン",
+      "bonus_badge": "ボーナス",
+      "bonus_locked_tooltip": "このボーナスレッスンをアンロックするには、このセットの通常レッスンをすべて星1つ以上でクリアしてください。",
+      "progress_done": "{total} 件中 {done} 件のレッスンが完了",
+      "current_lesson": "ここから続ける"
     },
     "repo_export": {
       "button": "リポジトリとして共有",
@@ -2604,6 +2860,9 @@
       "mc_prompt": "正しい訳を選んでください: {word}"
     },
     "page_title": "マイコンテンツ",
+    "updates_badge": "{n}件の更新",
+    "updates_badge_tooltip": "コンテンツの更新があります",
+    "updates_badge_action": "コンテンツを見る",
     "intro": "API キーがなくても使える既製のレッスンセットです。ダウンロードはローカルにキャッシュされ、初回取得後はオフラインでも動作します。",
     "sources": "ソース",
     "lessons": "レッスン",
@@ -3192,7 +3451,8 @@
         "reading-comprehension": "読解",
         "graded-quiz": "採点クイズ",
         "dictation": "ディクテーション",
-        "image-description": "画像の説明"
+        "image-description": "画像の説明",
+        "speak-and-record": "話す&録音"
       },
       "edit": {
         "prompt_label": "指示 / 問題文",
@@ -3220,6 +3480,7 @@
         "dict_accept_remove": "書き起こしを削除",
         "dict_accept_placeholder": "学習者が入力すべき内容",
         "err_image_description": "画像と、少なくとも1つの受理される回答を追加してください。",
+        "err_speak_and_record": "話す文を追加してください（任意で参照音声も追加できます）。",
         "imgdesc_image_label": "説明する画像",
         "imgdesc_image_preview_alt": "説明する画像",
         "imgdesc_image_budget_hint": "画像は圧縮して埋め込まれ（最大 ~150 KB、512 px）、演習がオフラインで動作しバックアップに含まれるようにします。リモートリンクは許可されていません。",
@@ -3227,6 +3488,8 @@
         "imgdesc_accept_add": "追加",
         "imgdesc_accept_remove": "回答を削除",
         "imgdesc_accept_placeholder": "学習者が入力すべき内容",
+        "sar_sentence_label": "話す文",
+        "sar_sentence_placeholder": "学習者が聞いて繰り返す文",
         "q_list_label": "設問",
         "q_prompt_label": "設問",
         "q_prompt_placeholder": "設問",
@@ -3421,6 +3684,13 @@
       "receptive": "受容のみ",
       "productive": "産出のみ"
     },
+    "status": {
+      "not_started": "未開始",
+      "in_progress": "進行中",
+      "paused": "一時停止",
+      "completed": "完了",
+      "mastered": "習得済み"
+    },
     "stats": {
       "title": "統計",
       "lessons": "レッスン",
@@ -3481,6 +3751,10 @@
     }
   },
   "share": {
+    "share_image": "画像だけ共有",
+    "share_image_hint": "結果カードを画像として共有します。リンクではアプリ画像しか表示しない Facebook などのサービス向けです。",
+    "image_saved": "画像を保存しました",
+    "image_failed": "画像を作成できませんでした。",
     "menu": {
       "heading": "共有",
       "facebook": "Facebookで共有",
@@ -3491,6 +3765,7 @@
     },
     "app": {
       "heading": "アプリを共有",
+      "download": "ダウンロード",
       "qr_intro": "QRコードでアプリを共有し、他の人がすぐに開けるようにします。",
       "show_qr": "QRコードを表示",
       "download_qr": "QRコードをダウンロード",
@@ -3861,6 +4136,7 @@
     },
     "share": {
       "copied": "リンクをコピーしました。",
+      "tab_link": "リンク",
       "copy": "コピー",
       "copy_failed": "コピーできませんでした。",
       "hint": "このリンクを共有すると、他の人がこの公開リポジトリを追加できます。プライベートリポジトリの場合は、URL と読み取り専用トークンを別々に送ってください。",
@@ -3906,6 +4182,12 @@
     "search_placeholder": "スペイン語、AI、心理学…",
     "search_aria": "利用可能なコンテンツを検索",
     "search_clear": "検索をクリア",
+    "badge": {
+      "new": "新着"
+    },
+    "new": {
+      "count": "新着{n}件"
+    },
     "bar": {
       "search": "検索",
       "filter": "フィルター"
@@ -4189,5 +4471,21 @@
       },
       "aria": "難易度: {tier}（5段階中{level}）"
     }
+  },
+  "set_summary": {
+    "title": "評価: {set}",
+    "subtitle": "このセットの間違いを一覧で",
+    "open": "評価を見る",
+    "total_errors": "間違いの合計",
+    "mastered_share": "習得済み",
+    "elements_open": "未習得",
+    "time_spent": "学習時間",
+    "by_lesson": "レッスン別の間違い",
+    "by_type": "問題タイプ別の間違い",
+    "weak_areas": "弱点トップ",
+    "no_errors": "間違いの記録はありません。素晴らしい！",
+    "lesson_errors": "{count} 件の間違い",
+    "practice_errors": "間違いを練習",
+    "back_to_set": "セットに戻る"
   }
 }

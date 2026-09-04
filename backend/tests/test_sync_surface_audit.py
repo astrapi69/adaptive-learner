@@ -78,6 +78,9 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # EXP-051 / #2125: Durchgang (run/pass) bookkeeping — a run row's
         # closed_at is stamped in place when the run closes.
         "set_runs",
+        # engine#68 idea 3: speak-and-record clip storage - re-recording
+        # overwrites the existing row in place (upsert, no history).
+        "speech_recordings",
     }
 )
 

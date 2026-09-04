@@ -25,7 +25,7 @@ import {
   type ValidationMarkdownRow,
 } from "../../../lib/ai/validation/validation-markdown";
 import { checkedWithLine } from "../../../lib/ai/validation/validation-provenance";
-import { downloadBlob } from "../../../lib/lesson/result-download";
+import { downloadBlob } from "../../../lib/lesson/export/result-download";
 import type { AIProvider } from "../../../lib/constants";
 import type { ContentSetEntry } from "../../../storage/types";
 

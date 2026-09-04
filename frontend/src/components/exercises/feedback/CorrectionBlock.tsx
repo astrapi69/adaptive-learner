@@ -74,7 +74,7 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "../shell/exercise-control";
-import ClozeExercise from "../renderers/ClozeExercise";
+import ClozeExercise from "../renderers/cloze/ClozeExercise";
 
 /** i18n lookup shape used by the presentational sub-components:
  *  ``(key, fallback) -> string``. */

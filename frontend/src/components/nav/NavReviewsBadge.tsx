@@ -18,7 +18,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import {
     buildContentAvailability,
     filterAvailableSetId,
-} from "../../lib/content/browse/content-availability";
+} from "../../lib/content/browse/lifecycle/content-availability";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {subscribeCelebration} from "../../lib/praise/celebration-bus";

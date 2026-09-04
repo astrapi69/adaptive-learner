@@ -25,6 +25,20 @@
 #              make_target / script_exists / called_in / no_warn
 
 checks:
+  - id: i18n-full-tree-key-coverage
+    verifies: every t() call site in frontend/src has a real, non-empty catalog entry in all 11 languages (static keys) or a plausible one (dynamic template-literal keys, prefix/suffix sanity match) - not just the 7-file first-paint subset #2798 covers (#2864, #2797 Teil A)
+    rule: none (extends the #2798 gate's approach tree-wide; i18next-parser adoption rejected, see #2864)
+    status: active
+    wired_in: frontend/src/i18n/full-tree-key-coverage.test.ts; make test
+    probe: script_exists=frontend/src/i18n/full-tree-key-coverage.test.ts
+
+  - id: dead-code-ratchet
+    verifies: no NEW unused Python functions/methods/classes (vulture, app+plugins one scope) or TS exports/types (knip) beyond the tracked list baseline (#2741)
+    rule: none (night-shift report; deletion discipline lives in the #2486 lesson)
+    status: active
+    wired_in: make check-dead-code; scripts/check_dead_code.py; .github/workflows/dead-code.yml
+    probe: make_target=check-dead-code
+
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics

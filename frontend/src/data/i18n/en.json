@@ -56,6 +56,7 @@
     "group_extra": "Extra data",
     "group_gamification": "Gamification",
     "group_config": "Configuration",
+    "group_media": "Media",
     "cat_projects": "Learning projects (with sessions, ratings, notes)",
     "cat_curricula": "Curricula (with topics and lessons)",
     "cat_progress": "Lesson progress (with mistakes / SRS)",
@@ -66,7 +67,8 @@
     "cat_questions": "Study questions",
     "cat_gamification": "XP, badges, streak, missions",
     "cat_settings": "Settings",
-    "cat_ai_config": "AI key backup"
+    "cat_ai_config": "AI key backup",
+    "cat_speech_recordings": "Speech recordings (speak-and-record exercises)"
   },
   "nav": {
     "group": {
@@ -399,6 +401,7 @@
   "review": {
     "your_answer": "Your answer:",
     "correct_answer": "Correct:",
+    "question_label": "Question:",
     "summary_corrected": "{corrected} of {total} corrected",
     "summary_trend": "Nice - your weak spots are getting stronger.",
     "summary_next": "Mastered items drop out; the rest return for review soon.",
@@ -652,6 +655,45 @@
     "username_placeholder": "Your name",
     "username_save": "Save",
     "username_empty": "Name cannot be empty.",
+    "avatar_frames_title": "Avatar frame",
+    "avatar_frames_hint": "Decorate your avatar. Frames unlock with levels and badges, or in exchange for XP.",
+    "avatar_frame_none": "None",
+    "avatar_frame_bronze": "Bronze",
+    "avatar_frame_silver": "Silver",
+    "avatar_frame_gold": "Gold",
+    "avatar_frame_flame": "Flame",
+    "avatar_frame_star": "Star",
+    "avatar_frame_accent": "Accent",
+    "avatar_frame_locked_level": "From level {level}",
+    "avatar_frame_locked_badge": "Needs the 3-day streak badge",
+    "avatar_frame_buy": "{xp} XP",
+    "avatar_frame_buy_confirm": "Confirm",
+    "avatar_frame_buy_failed": "Purchase failed.",
+    "mascot_variants_title": "Mascot variant",
+    "mascot_variants_hint": "Choose your learning companion's colors in game mode. Variants unlock with levels and badges, or in exchange for XP.",
+    "mascot_variant_funke": "Spark",
+    "mascot_variant_ozean": "Ocean",
+    "mascot_variant_wald": "Forest",
+    "mascot_variant_geist": "Ghost",
+    "mascot_variant_gold": "Gold",
+    "unlock_level": "From level {level}",
+    "unlock_badge": "Needs the badge: {badge}",
+    "unlock_buy": "{xp} XP",
+    "unlock_buy_confirm": "Confirm",
+    "unlock_buy_failed": "Purchase failed.",
+    "avatar_presets_title": "Or pick a figure",
+    "avatar_replace_photo_title": "Replace your photo?",
+    "avatar_replace_photo_message": "Your uploaded photo will be replaced by the figure. It stays cached and you can restore it anytime.",
+    "avatar_replace_photo_confirm": "Use figure",
+    "avatar_restore_photo": "Restore photo",
+    "avatar_preset_spark": "Spark",
+    "avatar_preset_robot": "Robot",
+    "avatar_preset_star": "Star",
+    "avatar_preset_cat": "Cat",
+    "avatar_preset_owl": "Owl",
+    "avatar_preset_ghost": "Ghost",
+    "avatar_preset_bolt": "Lightning",
+    "avatar_preset_heart": "Heart",
     "avatar_upload": "Upload picture",
     "avatar_remove": "Remove",
     "avatar_crop_title": "Adjust your picture",
@@ -678,6 +720,7 @@
     "tab_plugins": "Plugins",
     "tab_data": "Data",
     "tab_help": "Help",
+    "tab_diagnostics": "Diagnostics & Support",
     "tab_about": "About",
     "tabs_aria": "Settings sections",
     "section_feedback": "Feedback",
@@ -713,6 +756,57 @@
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
     "developer_mode": "Developer Mode",
     "developer_mode_description": "Show full technical detail (status code, endpoint, stack trace) in error toasts. A 'DEV' badge appears in the navigation bar while this is on. Off by default; opt-in for debugging.",
+    "section_diagnostics": "Diagnostics",
+    "vvdiag_toggle": "Tap & viewport probe",
+    "vvdiag_description": "Shows a measurement bar and keeps a persistent protocol of tap positions and viewport changes while the probe is on. Helps pin down hard-to-reproduce display bugs (e.g. taps landing below their target) after the fact. Can also be enabled via the ?vvdiag=1 URL parameter.",
+    "vvdiag_log_count": "{count} recorded events",
+    "vvdiag_copy_log": "Copy protocol",
+    "vvdiag_copied": "Copied!",
+    "vvdiag_clear_log": "Clear protocol",
+    "vvdiag_panel_toggle": "Show measurement bar",
+    "vvdiag_panel_description": "Off: the probe keeps recording invisibly without showing the bar at the top - the header and menu stay fully reachable.",
+    "vvdiag_fab_toggle": "Sticky button for the measurement bar",
+    "vvdiag_fab_description": "Shows a floating button that toggles the measurement bar with one tap - handy for quickly switching the bar on and off while testing. Visible only while the probe is on.",
+    "vvdiag_fab_position": "Button position",
+    "vvdiag_fab_pos_bottom_left": "Bottom left",
+    "vvdiag_fab_pos_bottom_right": "Bottom right",
+    "vvdiag_fab_pos_top_left": "Top left",
+    "vvdiag_fab_pos_top_right": "Top right",
+    "vvdiag_fab_aria": "Show or hide the measurement bar",
+    "nav_position": "Menu position (mobile)",
+    "nav_position_description": "Where the primary navigation sits on the phone: at the top as a menu button (default) or at the bottom as a thumb-reach tab bar.",
+    "nav_position_top": "Top (menu button)",
+    "nav_position_bottom": "Bottom (tab bar)",
+    "playful_mode_title": "Game Mode",
+    "playful_mode": "Playful lessons",
+    "playful_mode_description": "Turn lessons into a game: praise on every correct answer, confetti, and milestone celebrations. Works with every lesson mode; scoring and progress stay the same. Reduced-motion in your system still keeps feedback subtle.",
+    "playful_sounds": "Game mode sounds",
+    "playful_sounds_description": "Short sounds in game mode: a tone on every correct answer (rising pitch per streak), a checkpoint jingle, and a completion fanfare. Independent of the global sounds switch; volume follows the slider.",
+    "playful_sounds_offer": "Play with sound?",
+    "playful_sounds_offer_yes": "Yes, sounds on",
+    "playful_sounds_offer_later": "Later",
+    "playful_hearts": "Hearts (lives)",
+    "playful_hearts_description": "A wrong answer costs one heart. At zero the lesson run ends with a friendly retry offer - nothing you solved is lost. Off in exam and timed lessons.",
+    "playful_hearts_count": "Hearts per lesson",
+    "playful_countdown": "Countdown ring",
+    "playful_countdown_description": "A small time ring per exercise. When it runs out, the streak breaks and a heart is lost - the exercise stays open, nothing is auto-submitted. Off in exam and timed lessons (the timed mode has its own timer).",
+    "playful_countdown_seconds": "Seconds per exercise",
+    "playful_combo_xp": "Streak bonus XP",
+    "playful_combo_xp_description": "From the third streak answer, every correct answer in a row earns +1 bonus XP, capped per lesson. Off keeps game-mode XP identical to normal mode.",
+    "playful_combo_xp_cap": "Bonus XP cap per lesson",
+    "playful_arcade": "Arcade",
+    "playful_arcade_description": "Short mini-games as a game-mode reward: Learn Memory with your lesson cards, plus classic games unlockable with XP. Off hides the arcade card and games entirely.",
+    "playful_arcade_snake_seconds": "Snake round length (seconds)",
+    "playful_arcade_memory_pairs": "Memory pairs",
+    "playful_arcade_simon_target": "Simon target length",
+    "playful_special_rounds": "Special rounds",
+    "playful_special_rounds_description": "Finishing a set (every lesson with at least one star) unlocks a flash round built from its trickiest cards, played with the countdown ring. Off hides the flash-round card entirely.",
+    "playful_flash_round_cards": "Flash-round cards",
+    "playful_tickets": "Game tickets",
+    "playful_tickets_description": "Earn arcade tickets through performance: a lesson with a perfect score, a run survived with all hearts, and streak milestones (3/7/14/30 days). One ticket plays one round of a locked arcade game. Off leaves the arcade to XP unlocks only.",
+    "playful_ticket_cap": "Maximum tickets",
+    "playful_bonus_lessons": "Bonus lessons",
+    "playful_bonus_lessons_description": "Sets can carry bonus lessons (lesson files starting with \"bonus-\"). While the game mode is on they show as locked in the set's lesson list until every regular lesson has at least one star. Off (or game mode off) treats them like normal lessons.",
     "feedback_intensity": "Feedback Intensity",
     "feedback_intensity_description": "How loudly the app celebrates your progress.",
     "feedback_intensity_subtle": "Subtle",
@@ -1456,6 +1550,68 @@
     "danger_zone_continue": "Continue",
     "danger_zone_failed_toast": "Reset failed:"
   },
+  "arcade": {
+    "title": "Arcade",
+    "subtitle": "Short rounds, one to two minutes - a game-mode reward. No XP, just fun.",
+    "card_description": "Short rounds of Learn Memory and Snake - your game-mode reward.",
+    "card_open": "To the arcade",
+    "requires_playful": "The arcade is part of the game mode. Turn on the game mode (and the arcade switch) in the settings.",
+    "open_settings": "Open settings",
+    "play": "Play",
+    "pause": "Pause",
+    "resume": "Resume",
+    "restart": "Restart",
+    "back_to_games": "Back to the games",
+    "unlock_for_xp": "Unlock for {n} XP",
+    "unlock_confirm": "Really unlock for {n} XP?",
+    "unlock_not_enough_xp": "Not enough XP yet - keep learning!",
+    "tickets_label": "Tickets: {n}",
+    "ticket_play": "Play one round with a ticket",
+    "tickets_hint": "Earn tickets with perfect lessons, runs with all hearts, and streak milestones.",
+    "memory": {
+      "name": "Learn Memory",
+      "description": "Find the matching term and translation pairs from your lessons.",
+      "set_label": "Lesson set",
+      "loading": "Loading cards ...",
+      "empty": "No downloaded set with enough cards found. Download a lesson set first.",
+      "load_failed": "Loading the cards failed. Try another set.",
+      "progress": "Pairs: {a} / {b}",
+      "attempts": "Tries: {n}",
+      "won": "All pairs found in {n} tries!"
+    },
+    "snake": {
+      "name": "Snake",
+      "description": "The classic: collect food, grow, do not bite yourself.",
+      "score": "Points: {n}",
+      "time_left": "Time: {n}s",
+      "goal": "Goal: {n} points",
+      "highscore": "Best: {n}",
+      "board_aria": "Snake board - steer with the arrow keys or swipe",
+      "won": "Round won - {n} points!",
+      "lost": "Round over - {n} points. Try again!"
+    },
+    "tictactoe": {
+      "name": "Tic-Tac-Toe",
+      "description": "Three in a row against the app - and yes, it can be beaten.",
+      "your_turn": "Your turn (X)",
+      "ai_turn": "The app is thinking ...",
+      "board_aria": "Tic-tac-toe board - pick an empty cell",
+      "won": "You won - three in a row!",
+      "lost": "The app got this one - try again!",
+      "draw": "A draw - well defended!"
+    },
+    "simon": {
+      "name": "Simon",
+      "description": "Repeat the growing color sequence - reach the target length to win.",
+      "watch": "Watch the sequence ...",
+      "your_turn": "Your turn - repeat the sequence",
+      "round_label": "Sequence {n} of {m}",
+      "board_aria": "Simon board - four color fields",
+      "pad_aria": "Color field {n}",
+      "won": "You did it - the whole sequence!",
+      "lost": "Oops - you reached length {n}. Try again!"
+    }
+  },
   "anki": {
     "title": "Anki Export",
     "intro": "Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.",
@@ -1490,7 +1646,10 @@
     "mic_permission_denied": "Microphone access denied.",
     "mic_error": "Speech recognition error.",
     "mic_no_device": "No microphone found. Connect one and try again.",
-    "mic_network": "Speech recognition is offline. Check your internet connection."
+    "mic_network": "Speech recognition is offline. Check your internet connection.",
+    "record_error": "Recording didn't work. Please try again.",
+    "stop_recording": "Stop recording",
+    "start_recording": "Start recording"
   },
   "pronunciation": {
     "title": "Pronunciation Practice",
@@ -1538,6 +1697,9 @@
     "desktop_only": "Only available with the desktop app."
   },
   "ui": {
+    "cancel": "Cancel",
+    "hide_secret": "Hide value",
+    "show_secret": "Show value",
     "info": {
       "show": "Show information"
     },
@@ -1831,6 +1993,27 @@
     }
   },
   "lesson": {
+    "mascot_label": "Your learning companion",
+    "combo_chip": "x{n}",
+    "combo_aria": "Answer streak: {n} in a row",
+    "combo_best": "Best streak: {n}",
+    "combo_bonus_aria": "Streak bonus: {n} XP",
+    "hearts": {
+      "aria": "Lives: {n} of {max}",
+      "empty_heading": "Out of hearts!",
+      "empty_body": "No worries - nothing is lost, everything you solved stays saved. Take a breath and try the lesson again.",
+      "action_retry": "Try again",
+      "action_exit": "Leave lesson"
+    },
+    "countdown": {
+      "aria": "Time ring: {n}s left"
+    },
+    "playful_hint_title": "Try game mode",
+    "playful_hint_enable_sound": "Turn on with sound",
+    "playful_hint_body": "Lessons celebrate every correct answer with praise and confetti. You can change this any time in Settings.",
+    "playful_hint_activate": "Turn on",
+    "playful_hint_dismiss": "Don't show again",
+    "playful_hint_activated": "Game mode is on. Have fun!",
     "test_mode": {
       "title": "Test mode",
       "description": "Answers are not graded and no progress is saved.",
@@ -1860,7 +2043,30 @@
       "endless": "Endless"
     },
     "options": {
-      "title": "Options"
+      "title": "Options",
+      "edit_in_editor": "Edit this lesson in the editor"
+    },
+    "mentor": {
+      "note_button": "Mentor note",
+      "note_edit": "Edit mentor note",
+      "category_label": "Category",
+      "category": {
+        "typo": "Typo",
+        "unclear": "Unclear wording",
+        "too_easy": "Too easy",
+        "too_hard": "Too hard",
+        "wrong_answer": "Answer graded wrong",
+        "other": "Other"
+      },
+      "placeholder": "What should be improved on this step?",
+      "save": "Save note",
+      "remove": "Remove note",
+      "summary_title": "Mentor notes ({n})",
+      "summary_hint": "Your annotations from this run. Open the lesson in the editor to work them off.",
+      "edit_panel_title": "Mentor notes for this lesson ({n})",
+      "edit_panel_hint": "Your annotations from playing this lesson. Remove a note once it is addressed.",
+      "suggest_label": "AI suggestion",
+      "suggest_empty": "Nothing usable came back. Try again or adjust the step by hand."
     },
     "exam": {
       "passed": "Passed",
@@ -1909,6 +2115,10 @@
     "contributed_by": "Contributed by {name}",
     "page_title": "Lesson",
     "set_label": "Set",
+    "position": "Lesson {current} of {total}",
+    "nav_previous": "Previous lesson",
+    "nav_next": "Next lesson",
+    "nav_set_overview": "All lessons of this set",
     "loading": "Loading lesson…",
     "not_cached_body": "This lesson isn't downloaded yet. Open the content browser and download the set first.",
     "progress": {
@@ -2050,10 +2260,29 @@
         "retry": "Try again",
         "empty": "This multiple-choice exercise has no options."
       },
+      "al_audio_choice": {
+        "empty": "This audio-choice exercise has no options.",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite - listen again.",
+        "submit": "Check answer",
+        "retry": "Try again",
+        "option_aria": "Play option"
+      },
+      "al_audio_tiles": {
+        "empty": "This audio-tiles exercise has no tiles."
+      },
+      "type_matching": "Matching",
+      "type_picture_choice": "Picture choice",
+      "type_free_text": "Free text",
+      "type_word_tiles": "Word tiles",
+      "type_cloze": "Cloze",
       "al_categorization": {
         "empty": "This categorization exercise has no categories.",
         "instructions": "Tap an item, then tap its category.",
+        "my_answers": "My answers",
         "pool_label": "Items",
+        "resolve": "Solve",
+        "resolve_announce": "Solution shown. {correct} of {total} items were placed correctly.",
         "result_correct": "Correct!",
         "result_wrong": "Not quite. Review the highlighted items.",
         "retry": "Try again",
@@ -2074,6 +2303,7 @@
         "empty": "This error-correction exercise has no sentence.",
         "input_label": "Correction",
         "instructions": "Tap the wrong word, then type the correction.",
+        "resolve_announce": "Solution shown. The corrected sentence is: {sentence}",
         "result_correct": "Correct!",
         "result_wrong": "Not quite. Check the solution below.",
         "retry": "Try again",
@@ -2113,6 +2343,14 @@
         "retry": "Try again",
         "solution_label": "Solution",
         "submit": "Check answers"
+      },
+      "al_speak_and_record": {
+        "recording_evicted": "Your previous recording was removed to save storage space. Record again anytime.",
+        "empty": "This speak-and-record exercise has no sentence.",
+        "show": "Show text",
+        "saving": "Saving…",
+        "done": "Done",
+        "record_again": "Record again"
       },
       "instruction": {
         "matching": {
@@ -2156,6 +2394,7 @@
       "view_all_answers": "View all answers ({n})",
       "export": {
         "copy": "Copy result",
+        "correct_answer": "Correct",
         "download": "Save as file",
         "download_json": "Export as JSON",
         "anki": "Export cards (Anki)",
@@ -2191,7 +2430,19 @@
       "encourage_0": "Practice makes perfect!",
       "encourage_1": "Good start - keep going!",
       "encourage_2": "Almost perfect!",
-      "encourage_3": "Perfect score!"
+      "encourage_3": "Perfect score!",
+      "ticket_earned_one": "Reward unlocked: one game ticket!",
+      "ticket_earned_many": "Reward unlocked: {n} game tickets!",
+      "ticket_play_now": "Play now"
+    },
+    "flash_round": {
+      "title": "Flash round: {set}",
+      "card_title": "Flash round",
+      "card_description": "A quick round of this set's trickiest cards, with the countdown ring.",
+      "start": "Start flash round",
+      "locked_tooltip": "Finish every lesson of this set with at least one star to unlock.",
+      "perfect_tooltip": "No error cards - this set is already perfect!",
+      "no_content": "No playable error cards found for this set."
     },
     "error_replay": {
       "title": "Retry errors: {lesson}",
@@ -2322,7 +2573,12 @@
       "go_discover": "Discover content",
       "start": "Start learning",
       "download_start": "Download & start",
-      "lessons": "{n} lessons"
+      "lessons": "{n} lessons",
+      "lesson_list": "Lessons",
+      "bonus_badge": "Bonus",
+      "bonus_locked_tooltip": "Finish every regular lesson of this set with at least one star to unlock this bonus lesson.",
+      "progress_done": "{done} of {total} lessons completed",
+      "current_lesson": "Continue here"
     },
     "repo_export": {
       "button": "Share as repository",
@@ -2604,6 +2860,9 @@
       "mc_prompt": "Choose the correct translation of: {word}"
     },
     "page_title": "My content",
+    "updates_badge": "{n} updates",
+    "updates_badge_tooltip": "Content updates available",
+    "updates_badge_action": "view content",
     "intro": "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
     "sources": "Sources",
     "lessons": "lessons",
@@ -3192,7 +3451,8 @@
         "reading-comprehension": "Reading comprehension",
         "graded-quiz": "Graded quiz",
         "dictation": "Dictation",
-        "image-description": "Image description"
+        "image-description": "Image description",
+        "speak-and-record": "Speak & record"
       },
       "edit": {
         "prompt_label": "Instruction / prompt",
@@ -3220,6 +3480,7 @@
         "dict_accept_remove": "Remove transcription",
         "dict_accept_placeholder": "What the learner should type",
         "err_image_description": "Add an image and at least one accepted answer.",
+        "err_speak_and_record": "Add a sentence to speak (and, optionally, a reference clip).",
         "imgdesc_image_label": "Image to describe",
         "imgdesc_image_preview_alt": "Image to describe",
         "imgdesc_image_budget_hint": "The image is compressed and embedded (max ~150 KB, 512 px) so the exercise works offline and travels in the backup. Remote links are not allowed.",
@@ -3227,6 +3488,8 @@
         "imgdesc_accept_add": "Add",
         "imgdesc_accept_remove": "Remove answer",
         "imgdesc_accept_placeholder": "What the learner should type",
+        "sar_sentence_label": "Sentence to speak",
+        "sar_sentence_placeholder": "The sentence the learner hears and repeats",
         "q_list_label": "Questions",
         "q_prompt_label": "Question",
         "q_prompt_placeholder": "Question",
@@ -3421,6 +3684,13 @@
       "receptive": "Receptive only",
       "productive": "Productive only"
     },
+    "status": {
+      "not_started": "Not started",
+      "in_progress": "In progress",
+      "paused": "Paused",
+      "completed": "Completed",
+      "mastered": "Mastered"
+    },
     "stats": {
       "title": "Stats",
       "lessons": "Lessons",
@@ -3481,6 +3751,10 @@
     }
   },
   "share": {
+    "share_image": "Share image only",
+    "share_image_hint": "Shares the result card as an image - for networks like Facebook that show only the app image for links.",
+    "image_saved": "Image saved",
+    "image_failed": "The image could not be created.",
     "menu": {
       "heading": "Share",
       "facebook": "Share on Facebook",
@@ -3491,6 +3765,7 @@
     },
     "app": {
       "heading": "Share the app",
+      "download": "Download",
       "qr_intro": "Share the app via QR code so others can open it.",
       "show_qr": "Show QR code",
       "download_qr": "Download QR code",
@@ -3861,6 +4136,7 @@
     },
     "share": {
       "copied": "Link copied.",
+      "tab_link": "Link",
       "copy": "Copy",
       "copy_failed": "Could not copy.",
       "hint": "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately.",
@@ -3906,6 +4182,12 @@
     "search_placeholder": "Spanish, AI, psychology…",
     "search_aria": "Search available content",
     "search_clear": "Clear search",
+    "badge": {
+      "new": "New"
+    },
+    "new": {
+      "count": "{n} new"
+    },
     "bar": {
       "search": "Search",
       "filter": "Filter"
@@ -4189,5 +4471,21 @@
       },
       "aria": "Difficulty: {tier} ({level} of 5)"
     }
+  },
+  "set_summary": {
+    "title": "Review: {set}",
+    "subtitle": "Every mistake in this set at a glance",
+    "open": "View review",
+    "total_errors": "Total mistakes",
+    "mastered_share": "Mastered",
+    "elements_open": "Still open",
+    "time_spent": "Time spent",
+    "by_lesson": "Mistakes per lesson",
+    "by_type": "Mistakes per exercise type",
+    "weak_areas": "Biggest weak spots",
+    "no_errors": "No mistakes recorded - excellent!",
+    "lesson_errors": "{count} mistakes",
+    "practice_errors": "Practise mistakes",
+    "back_to_set": "Back to the set"
   }
 }

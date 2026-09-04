@@ -353,6 +353,10 @@ Requires domain knowledge. Not automatable.
 ### Exercise types (check visually)
 - [ ] Matching: pairs SAME height (no visual offset)
 - [ ] Matching: "Resolve" animation looks good (test all 4 effects)
+- [ ] Matching: left column ALWAYS in lesson order (#2882), only the right
+      column is shuffled; on "Resolve" the left column keeps its order (no
+      jumping, #2872), each row shows the correct partner on the right,
+      number badges run 1..n
 - [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
 - [ ] Word Tiles: on a CORRECT answer the built sentence stays visible (#2494):
       assemble a sentence correctly and check it. The composed sentence remains
@@ -443,6 +447,27 @@ preview delivery). In the regular build the mode does not exist.
 ### Learning modes (play each once)
 - [ ] Mode toggle reachable in the collapsible options panel (since #1628
       it lives behind the panel, no longer directly visible)
+- [ ] Options panel of an OWN lesson (created, imported, or an
+      "Edit as a copy" fork): entry "Edit this lesson in the editor"
+      visible; clicking lands in the editor with exactly this set and
+      lesson preloaded (#2766)
+- [ ] Options panel of a DOWNLOADED lesson and of an analysis lesson:
+      NO editor entry (#2766)
+- [ ] Mentor note (own lesson): below every step the "Mentor note"
+      button; save category + text, reopening shows the note prefilled,
+      removing deletes it (#2768)
+- [ ] Mentor notes survive a reload and re-entering the lesson
+      (localStorage store, identical in both storage modes) (#2768)
+- [ ] Summary of an own lesson with notes: "Mentor notes (n)" block with
+      category, text, per-row removal, and the editor link; without
+      notes and on non-own lessons the block does not appear (#2768)
+- [ ] Downloaded/analysis lesson: no mentor-note UI anywhere (#2768)
+- [ ] Editor of an own lesson with mentor notes: panel
+      "Mentor notes for this lesson (n)" above the wizard; removing a
+      note updates the panel, the runner and the summary (#2769)
+- [ ] "AI suggestion" per note: with a configured key a short text
+      proposal appears; without a key the BYOK hint; an empty reply
+      shows the "nothing usable" message (#2769)
 - [ ] "Options" button sits in the SAME ROW as the progress indicator
       ("Step n of m"), not below it (desktop: bar on the left, button
       beside it on the right; mobile: tightly packed or a clean wrap,
@@ -475,6 +500,316 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Regression, other types: free-text/cloze in "Retry errors" still show
       only the wrong elements
 
+### Game mode (#2844)
+- [ ] Settings -> Learning: "Game Mode" section with the "Playful
+      lessons" switch, default off
+- [ ] Lesson start (first step, game mode off, hint never dismissed):
+      "Try game mode" banner with "Turn on" and a close control
+- [ ] "Turn on" in the banner: success toast, banner disappears, the
+      Settings switch is on afterwards
+- [ ] Closing the banner ("Don't show again"): banner disappears and does
+      not come back on the next lesson; game mode stays off
+- [ ] Game mode on: praise phrase on EVERY correct answer (not just
+      periodically), confetti/milestone overlays allowed, regardless of
+      the configured feedback intensity
+- [ ] Game mode on + reduced motion in the system: feedback stays subtle
+      (reduced motion wins)
+- [ ] Game mode off: behaviour unchanged (feedback intensity applies as
+      before)
+- [ ] Toggling takes effect without a reload (change event) and behaves
+      identically in both storage modes (localStorage)
+
+#### Lernfunke mascot (#2849, only while game mode is on)
+
+- [ ] Game mode on, open a lesson: small flame figure next to the
+      progress bar (tooltip/screen reader: "Your learning companion");
+      game mode off: no figure, row unchanged
+- [ ] Correct answer: the figure cheers briefly (hop, happy eyes) and
+      returns to its resting pose
+- [ ] Wrong answer: the figure encourages (wiggle, surprised look), no
+      praise text at the figure (the praise line under the exercise
+      stays as before)
+- [ ] Milestone during the lesson (level-up, streak, badge): the figure
+      celebrates (star eyes + sparkles); the milestone overlay still
+      appears undisturbed at the top center
+- [ ] Lesson completion: the figure grows, celebrates, and shows ONE
+      localized praise phrase as a speech bubble; the bubble dismisses
+      itself
+- [ ] Reduced motion in the system: poses still change (expression),
+      but without hop/wiggle animation
+- [ ] Exam mode + game mode: no per-answer reactions (no immediate
+      feedback); the figure stays resting until completion
+- [ ] Narrow viewport (mobile): the figure does not crowd out the
+      progress bar; the row wraps cleanly
+
+#### Mascot variants (#2861, Lernfunke color schemes)
+
+- [ ] Settings -> Learning -> Game mode: below the switch, the "Mascot
+      variant" row with five mini figures (Spark, Ocean, Forest, Ghost,
+      Gold) plus a hint text
+- [ ] Fresh account (level 1, no badges, 0 XP): only Spark selectable;
+      Ocean "From level 3", Forest "From level 7", Ghost "Needs the
+      badge: First session", Gold with a "250 XP" button (disabled
+      while XP is insufficient)
+- [ ] At level 3+: Ocean clickable; the choice survives a reload
+      (highlight ring on the selected variant)
+- [ ] With a lesson open (game mode on), switch the variant: the flame
+      figure next to the progress bar recolors immediately, no reload
+- [ ] Gold purchase with enough XP: first click shows "Confirm", the
+      second deducts 250 XP (the header XP badge updates), the variant
+      is selected and permanently unlocked
+- [ ] Backup round-trip: export -> wipe -> import restores selected and
+      purchased variants (both storage modes)
+
+#### Game mode sounds (#2875)
+
+- [ ] Settings -> Learning -> Game mode: below the mode switch, the
+      "Game mode sounds" switch (default off) with a hint text
+- [ ] Turn game mode on without ever answering the sound question: the
+      "Play with sound?" offer with "Yes, sounds on" / "Later"; "Yes"
+      enables the sounds, "Later" does not - both make the offer
+      disappear permanently
+- [ ] Lesson-start banner (game mode off, never dismissed): next to
+      "Turn on", the "Turn on with sound" button - enables mode AND
+      sounds in one click
+- [ ] Sounds on, global sounds OFF: a correct answer plays a tone
+      (audibly rising with the streak), a wrong answer a low thud, a
+      checkpoint jingle on crossing, a fanfare on lesson completion;
+      volume follows the existing slider
+- [ ] Game mode sounds OFF and global sounds OFF: everything silent;
+      global sounds ON behave as before (no game-mode fanfare, no
+      streak rise outside game mode)
+- [ ] Exam mode + game mode + sounds: no per-answer tone (no immediate
+      feedback); the completion fanfare stays allowed
+
+#### Tension systems: hearts + countdown ring (#2878, opt-in, default off)
+
+- [ ] Settings > Learning > Game Mode: the "Hearts (lives)" and
+      "Countdown ring" switches are OFF by default; the number inputs
+      (hearts per lesson, seconds per exercise) only become editable
+      after enabling their switch and clamp to 1-5 / 5-120
+- [ ] Hearts on + game mode on: the hearts row appears next to the
+      streak chip (filled); every wrong answer empties one heart with
+      a short shake
+- [ ] At 0 hearts: a friendly "Out of hearts!" dialog offers "Try
+      again" (restarts the lesson, hearts refilled) and "Leave lesson"
+      (back to the overview); nothing solved is lost
+- [ ] Correction round on the summary: fixing mistakes costs NO
+      hearts (the row is hidden there)
+- [ ] Countdown ring on: a small ring runs per exercise (green >
+      yellow > red, pulse in the last 5 seconds); expiry breaks the
+      streak, costs a heart (if on) and plays the wrong tone - but
+      the exercise stays open and normally solvable, nothing is
+      auto-submitted; the ring pauses after checking
+- [ ] Exam mode and timed mode: neither hearts nor ring appear (the
+      timed mode keeps its own time bar)
+- [ ] Grading unchanged: score, stars and progress are identical with
+      and without the tension systems
+
+#### Streak bonus XP (#2893, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Streak bonus XP" switch is
+      ON by default; the "Bonus XP cap per lesson" number input is
+      editable, clamps to 5-20 (default 10) and is disabled while the
+      switch is off
+- [ ] Game mode on, play a lesson with a streak of at least 3 correct
+      answers in a row: the summary shows a green "+N XP" next to
+      "Best streak: N"; the displayed lesson XP include the bonus, and
+      "Mark as complete" credits exactly the same value (dashboard XP
+      rise by the displayed sum)
+- [ ] The bonus counts from the THIRD streak answer (+1 per further
+      correct answer in a row); a wrong answer stops the growth, a new
+      streak from 3 keeps counting
+- [ ] Cap: with the cap at 5 and a long streak, the summary shows at
+      most "+5 XP"
+- [ ] Switch off OR game mode off: no "+N XP" on the summary, XP are
+      identical to normal mode
+- [ ] Exam mode: no streak bonus (the exam multiplier is unchanged)
+
+#### Arcade mini-games (#2887, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Arcade" switch is ON by
+      default; the "Snake round length" (30-120, default 60) and
+      "Memory pairs" (4-12, default 8) number inputs clamp and are
+      disabled while the switch is off
+- [ ] Game mode on: the arcade card appears on the dashboard; "To the
+      arcade" opens the game list. Arcade switch off OR game mode off:
+      the card disappears entirely; visiting /arcade directly shows a
+      friendly notice with a link to the settings
+- [ ] Learn Memory (free): the set picker lists downloaded sets only
+      and is preselected with the most recently learned set (#2899),
+      not the first in the list; without any progress the first set
+      stays preselected;
+      the board has two cards per pair (term and translation from real
+      lesson cards); a matched pair stays open, a mismatch counts a
+      try and folds away on the next reveal; finding every pair shows
+      the win message with the try count
+- [ ] Snake (locked): the game card offers "Unlock for 200 XP"; with
+      too little XP the button is disabled (tooltip); the purchase
+      takes TWO clicks (confirm text), deducts 200 XP (header XP
+      drops) and Snake stays playable permanently (survives a reload
+      and rides the backup)
+- [ ] Playing Snake: arrow keys/WASD AND swipe gestures steer; pause
+      halts clock and snake; food grows the snake (+1 point); wall or
+      own body ends the round; the round clock running out shows the
+      result (won from 5 points); the local best score is display-only
+- [ ] Games award NO XP (header XP unchanged after a won round)
+- [ ] Reduced motion in the system: no flip/flash effects in either
+      game
+
+#### Arcade: Tic-Tac-Toe (#2906, 100-XP unlock)
+
+- [ ] Arcade game list: Tic-Tac-Toe appears between Learn Memory and
+      Snake, locked behind "Unlock for 100 XP" (two-step confirm as
+      with Snake); a ticket plays one round without the purchase
+- [ ] A round: clicking places X, a short "the app is thinking"
+      beat, then the app places O; occupied cells and the thinking
+      beat are disabled
+- [ ] The AI is beatable: it does not block every winning chance -
+      over a few rounds you can win (three in a row highlighted,
+      friendly win message)
+- [ ] Losing and a draw end friendly with "Restart"; the game awards
+      no XP
+
+#### Arcade: Simon (#2907, 300-XP unlock)
+
+- [ ] Arcade game list: Simon appears after Snake, locked behind
+      "Unlock for 300 XP" (two-step confirm); a ticket plays one
+      round without the purchase
+- [ ] A round: the app shows the color sequence field by field
+      (status "Watch the sequence"), then the four fields become
+      active ("Your turn"); during playback they are disabled
+- [ ] A correct input extends the sequence by one field and replays
+      it; the round label counts "Sequence {n} of {m}" up
+- [ ] A wrong input ends friendly with the reached length and
+      "Restart"; reaching the target length wins the round; the game
+      awards no XP
+- [ ] Sounds: with the sounds or game-mode-sounds switch on, each
+      field plays its own tone (playback and input); without the
+      opt-in the game stays silent and fully playable
+- [ ] Settings > Learning > Game Mode: the "Simon target length"
+      number input clamps to 5-15 (default 8) and is disabled while
+      the arcade is off
+- [ ] Reduced motion in the system: fields only change state
+      (ring/brightness), no flash/scale effect
+
+#### Flash rounds (#2888, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Special rounds" switch is
+      ON by default; the "Flash-round cards" number input clamps to
+      5-20 (default 10) and is disabled while the switch is off
+- [ ] Set overview (/content/set/...) with game mode on: the
+      flash-round card appears; while not every lesson of the set is
+      completed with at least one star, the start button is disabled
+      with the unlock-condition tooltip
+- [ ] Set finished (every lesson with at least one star) and error
+      cards present: starting opens the flash round - title
+      "Flash round: {set}", the countdown ring runs per exercise
+      (expiry breaks the streak, nothing is auto-submitted), the
+      exercises come from the set's most error-prone cards
+- [ ] The flash round's back button returns to the set overview (not
+      to a lesson)
+- [ ] Perfect set (no error cards): the start button stays disabled
+      with the perfect tooltip
+- [ ] Special-rounds switch off OR game mode off: the flash-round card
+      disappears entirely
+- [ ] A plain "Retry errors" from a lesson summary: unchanged, NO
+      countdown ring
+- [ ] Scoring/SRS: the flash round writes no lesson progress;
+      corrected error cards only advance the SRS state, as in retry
+      errors
+
+#### Game tickets (#2889, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Game tickets" switch is ON
+      by default; the "Maximum tickets" number input clamps to 1-10
+      (default 5) and is disabled while the switch is off
+- [ ] Finishing a lesson with a perfect score: the summary shows the
+      ticket banner ("Reward unlocked ...") with a "Play now" button
+      leading to the arcade
+- [ ] Hearts active (#2878) and a run finished without losing one:
+      one more ticket (perfect score + all hearts = 2 tickets)
+- [ ] Streak milestones (3/7/14/30 days): reaching one grants a bonus
+      ticket, each milestone only once
+- [ ] Cap: no more tickets than the maximum can be saved up; a
+      milestone blocked by the cap is granted later once a slot is
+      free
+- [ ] Revisiting the summary of an already-completed lesson: NO new
+      ticket (no farming); "Practice again" with a fresh perfect run
+      earns normally
+- [ ] The correction round and retry-errors award no tickets; a run
+      corrected after the fact never counts as a perfect score
+- [ ] Exam mode: a perfect score earns the ticket by the same rule
+- [ ] The arcade page and the dashboard arcade card show the balance
+      ("Tickets: N"); the line disappears while the ticket switch is
+      off
+- [ ] A locked game (snake without the XP purchase) with a balance:
+      the "Play one round with a ticket" button starts one round and
+      deducts exactly one ticket; without a balance the button is
+      absent
+- [ ] Ticket switch off: the arcade offers only the XP purchase /
+      existing unlocks
+- [ ] Backup export > wipe > import: the ticket balance survives the
+      round-trip (localStorage snapshot)
+
+#### Bonus lessons (#2890, default on, game mode only)
+
+- [ ] Settings > Learning > Game Mode: the "Bonus lessons" switch is
+      ON by default
+- [ ] A set with a bonus- lesson file (filename starts with
+      "bonus-"): the set page shows the bonus lesson at the END of
+      the list with a "Bonus" badge, even when the file would sort
+      first alphabetically
+- [ ] Game mode on, set unfinished: the bonus row is locked (lock
+      icon, no link); the tooltip names the condition (every regular
+      lesson with at least one star)
+- [ ] Every regular lesson completed with at least one star: the
+      bonus row becomes a normal link and opens the lesson
+- [ ] Bonus switch off OR game mode off: the bonus lesson is a normal
+      link (only the badge stays) - no content is withheld
+- [ ] "Start learning" on the set page opens the first REGULAR
+      lesson, never the bonus file
+- [ ] Flash round (#2888): a still-locked bonus lesson does NOT block
+      the flash-round unlock (only regular lessons count)
+
+#### Playful exercise renderers (#2876, only while game mode is on)
+
+- [ ] Multiple-choice exercise: the answers render as large tiles
+      (two columns from tablet width); the chosen tile pops briefly
+      and gets an accent border; after checking, the correctly chosen
+      tile hops and a wrongly chosen one shakes
+- [ ] Cloze with word choices: the tapped word "jumps" into the blank
+      in the sentence with a small hop; changing the pick replays the
+      hop with the new word
+- [ ] Matching exercise: a freshly formed pair "snaps" together with a
+      pop on both tiles; after checking, correct pairs hop briefly;
+      tapping a pair still undoes it
+- [ ] Behaviour unchanged: selection, checking, score and resolution
+      are identical to normal mode in all three exercise types
+- [ ] Game mode off: classic lists/chips/tiles without the game look;
+      reduced motion in the system: the shapes stay, all hop/pop
+      animations are suppressed
+
+#### Juice package (#2874, only while game mode is on)
+
+- [ ] Play a lesson, two correct answers in a row: the streak chip
+      (flame + "x2") appears next to the progress bar and hops on every
+      further correct answer ("x3", "x4", ...)
+- [ ] Wrong answer: the chip disappears (streak broken); the next two
+      correct answers rebuild it
+- [ ] Correct answer: a "+1" floats off the check mark and fades; the
+      check hops briefly; on a wrong answer the X shakes
+- [ ] Lesson with at least 3 steps: two checkpoint dots at 1/3 and 2/3
+      on the progress bar; crossing one lights it up in the accent
+      color (small pop)
+- [ ] Summary: instead of the live chip, "Best streak: N" is shown
+      (from streak 2; no chip without a real streak)
+- [ ] Exam mode + game mode: no chip, no "+1", no per-answer checkpoint
+      celebration (no immediate feedback)
+- [ ] Game mode off: none of this appears; reduced motion in the
+      system: chip/dots render without animation, the "+1" stays
+      invisible (pure motion decoration)
+
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the
       end-of-lesson correction round. The score bar shows two segments: what
@@ -493,6 +828,18 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] iOS PWA/Standalone: same check on the icon added to the home screen
       (the report came from there). Bar, stars, message and XP show the final
       state after correction.
+
+### "Why you missed these" shows the question (#2757)
+- [ ] Play a lesson with at least one wrongly answered element (explanations
+      enabled in Settings > Learning). In the "Why you missed these" section,
+      each answer comparison carries a "Question:" line above it showing what
+      was asked (the exercise prompt, the sentence with "___" for cloze, the
+      asked term for matching) - not just "Your answer" / "Correct".
+- [ ] Matching exercise with one wrong pair: the question shown is the asked
+      term (the pair's left side), never an internal ID.
+- [ ] When the question cannot be resolved (e.g. the content was updated in
+      the meantime), the entry renders as before without a question line -
+      no error, no empty line.
 
 ### One collapsed mistakes section (#2496)
 - [ ] Play a lesson with at least one mistake. On the summary the
@@ -522,8 +869,26 @@ preview delivery). In the regular build the mode does not exist.
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
-- [ ] ext:al-categorization: assign categories, readable resolution
+- [ ] ext:al-categorization: assign categories, readable resolution; after
+      "Check answer" the verdict chips including the red correction category
+      stay INSIDE their column (no bleeding into the neighbor column, #2771) -
+      the correction sits on its own line under the item
+- [ ] ext:al-categorization solve toggle (#2772): after a not-fully-correct
+      check, the "My answers" / "Solve" toggle appears next to the result
+      line (like the pairs exercise). "Solve" shows every category with its
+      correct items; items you had placed correctly yourself are tinted green
+      with a check mark. "My answers" returns to the graded view, "Try again"
+      resets to the interactive view. On a fully-correct answer NO toggle
+      appears (only "Continue")
 - [ ] ext:al-error-correction: find + correct errors
+- [ ] ext:al-error-correction solve view (#2803): after a wrong check,
+      the "My answer" / "Solution" toggle appears next to the result
+      line (like pairs/categories). "Solution" renders the sentence as
+      word tiles: the wrong word struck through in red with an X, the
+      canonical correction right beside it in green with a check mark -
+      you see WHERE in the sentence the error sat. "My answer" returns
+      to the graded view (incl. the solution line); "Try again" resets
+      to the interactive view. On a correct answer NO toggle appears
 - [ ] ext:al-reading-comprehension: text + questions
 - [ ] ext:al-reading-comprehension resolution (#2633): after "Check answers"
       the correct multiple-choice option is highlighted GREEN — with a check
@@ -549,6 +914,31 @@ preview delivery). In the regular build the mode does not exist.
       this type is visually gated by design (the answer IS the image
       description) — a screen reader hears a neutral image label, not the
       solution.
+- [ ] ext:al-speak-and-record (engine#68 idea 3): the sentence is read aloud
+      via TTS (falls back to speech synthesis when no authored `audio` is
+      present; with `audio` the authored clip plays instead); "Show text"
+      reveals the sentence only after clicking; "Record" requests the
+      microphone - test a REAL recording on a device with a microphone, the
+      automated suite can only mock MediaRecorder. After recording: a
+      playback player appears, "Done" becomes clickable. Re-recording
+      overwrites the previous clip (no history). Revisiting the step
+      replays the last saved clip automatically; a lesson with
+      `requires_extensions: ["ext:al-speak-and-record@1"]` loads (not
+      refused by the guard). Deliberately UNGRADED: no correct/incorrect
+      state, no SRS row after completion (unlike every other exercise
+      type). Microphone access denied yields a friendly error, no crash. No
+      microphone present disables/hides the record button accordingly, no
+      crash.
+- [ ] **Storage cap + eviction (#2841):** recordings are auto-evicted
+      oldest-first once total storage crosses a cap - practically
+      unreachable in normal use (~170 max-length recordings needed), so
+      only the regression check applies here: the normal record flow
+      (record -> playback -> re-record) keeps working unchanged. The
+      eviction logic itself is covered by automated tests
+      (`speech-recordings-dexie.test.ts`), not manually verified. If the
+      "Your previous recording was removed…" message ever appears: no
+      crash, "Record again" works normally and the message clears
+      afterwards.
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
 
@@ -695,7 +1085,16 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
 
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
-- [ ] **Book-text path (#1745):** Step 1 → the "Knowledge lesson from
+- [ ] **Step-1 order + template disclosure (#2755):** In step 1 the
+      required **Title field comes first** (right under the heading,
+      focused). The template picker behind it is a disclosure
+      "Start from a template", **collapsed by default**; the collapsed
+      row shows the current pick ("· Blank Lesson" is preselected).
+      Opening it shows the four template cards plus "Knowledge lesson
+      from text" and "Advanced exercise types"; picking a card marks it
+      pressed and the collapsed row then shows the new pick.
+- [ ] **Book-text path (#1745):** Step 1 → open the template disclosure
+      → the "Knowledge lesson from
       text" card (below the template grid) starts a 3-step flow
       (Metadata → Book text → Review); paste text + Generate → the AI
       rephrases theory in its own words + generates exercises; WITHOUT
@@ -914,16 +1313,18 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
 - [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
       the "Advanced exercise types" card starts a dedicated 3-step flow (author
       → review → save) with a non-blocking notice that these types are advanced.
-      Step 2: "Add extension exercise" offers six types — **categorization**,
+      Step 2: "Add extension exercise" offers seven types — **categorization**,
       **error correction**, **reading comprehension**, **graded quiz**,
-      **dictation**, **image description**. Each opens the inline editor with
+      **dictation**, **image description**, **speak & record**. Each opens the inline editor with
       type-specific fields;
       Save is disabled until the shipped validator passes (categorization: ≥2
       named buckets with items; error correction: ≥2 words + a marked error + a
       correction; reading comprehension: a passage + ≥1 complete question;
       graded quiz: ≥1 question with positive points; dictation: a non-empty
       audio path + ≥1 accepted transcription; image description: a non-empty
-      image + ≥1 accepted answer). Reading comprehension + graded
+      image + ≥1 accepted answer; speak & record: a non-empty sentence, the
+      audio reference is optional — ungraded, no "convert to free text" path).
+      Reading comprehension + graded
       quiz: per question toggle multiple-choice ⇄ free-text, MC options with a
       correct checkbox, graded quiz additionally points + partial credit + a
       pass threshold. Dictation (#1887): a typed `assets/audio/...` path (no
@@ -946,8 +1347,9 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       Step 3 "Generate exercises" → "Add exercise" opens the "Choose an exercise
       type" picker. Below the standard types (six core types + Dictation) a
       second, labelled group **"Extension types"** now appears with
-      Categorization, Error correction, Reading comprehension, Graded quiz and
-      Image description (Dictation is **not** shown twice). Click one of these →
+      Categorization, Error correction, Reading comprehension, Graded quiz,
+      Image description and **Speak & record** (#2817; Dictation is **not**
+      shown twice). Click one of these →
       an extension exercise is appended and opens straight in the extension
       editor. Image description is **selectable** here (the image is added in the
       editor). "Save locally" → the stored lesson carries
@@ -987,6 +1389,34 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       intact and the image displays with no network (proves the embedded image
       survives the iOS IndexedDB + backup round-trip, the known eviction-risk
       surface)
+- [ ] **Speak & record authoring (#2817):** In the extension wizard (Step 1 →
+      "Advanced exercise types") OR the core picker (Step 3, second group
+      "Extension types") pick **"Speak & record"**. The editor shows a text
+      field **"Sentence to speak"** and, below it, the (reused) audio field
+      from the dictation editor ("Upload audio" + a typed path, both
+      optional). Save is disabled while the sentence is empty; saving **with
+      no audio at all is allowed** (the exercise is deliberately ungraded —
+      no "convert"/type-conversion control appears, unlike dictation/image
+      description). Save the lesson, open it in the viewer: the lesson loads
+      **without `E-EXT-UNSUPPORTED`**, the renderer appears (a speaker button
+      reads the sentence aloud, "Show text" reveals it, a record control lets
+      the learner record themselves). With an uploaded reference clip: the
+      player plays that clip instead of on-device TTS. The saved lesson
+      carries `requires_extensions: ["ext:al-speak-and-record@1"]`.
+      **Regression:** dictation + image description still work unchanged,
+      including their "→ free text" conversion control (only speak & record
+      omits it, by design)
+- [ ] **Header updates badge (#2904):** an installed content set has a newer
+      version (e.g. tap "Update available" on a set in the content browser
+      OR bump the set's manifest version in the test repo). Reload/reopen
+      the app: **without** visiting `/content`, a header badge ("N updates")
+      appears next to the reviews badge, linking to `/content`. Click →
+      lands on `/content`, the affected set shows **"Update available"** in
+      its row (matches the badge's count). **No update available:** the
+      badge does **not** appear (no empty pill in the header). **Error
+      tolerance:** turn off the network at app launch → no crash, no error
+      toast, the header renders normally (the badge simply stays hidden —
+      it is supplementary chrome, never a blocking load state)
 - [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first
@@ -1123,6 +1553,141 @@ each card row (`CardImageField`).
       NOT the raw error dump (#1824)
 - [ ] With Developer Mode ON (Settings): the technical detail text is
       appended again
+
+### Diagnostics probe: Settings toggle + protocol (#2782)
+- [ ] Settings > Diagnostics & Support: enable the "Tap & viewport
+      probe" toggle - the measurement bar appears IMMEDIATELY at the
+      top (no reload); disabling removes it immediately
+- [ ] With the probe on: tap anywhere, then "Copy protocol" in
+      Settings - the clipboard holds the entry (a line with `tap` and
+      `deltaY=`); the counter next to it shows > 0 recorded events
+- [ ] Reload the page: the counter is preserved (the protocol survives
+      reloads); "Clear protocol" resets it to 0
+- [ ] Appending `?vvdiag=1` to the URL enables the same probe; the
+      Settings toggle then shows ON (one shared flag)
+- [ ] "Show measurement bar" OFF: the bar disappears immediately and
+      the header/menu are reachable again - but new taps still raise
+      the protocol counter (recording continues invisibly, #2785)
+
+### Sticky button for the measurement bar (#2799)
+- [ ] Settings > Diagnostics & Support: enable "Sticky button for the
+      measurement bar" (the probe must be ON) - a round floating
+      button appears IMMEDIATELY at the bottom left
+- [ ] Tap the button: the measurement bar disappears (exactly like
+      "Show measurement bar" OFF); tap again: it reappears - the
+      Settings "Show measurement bar" toggle mirrors every tap (one
+      shared flag)
+- [ ] The position choice (4 corners) appears under the toggle: pick
+      "Top right" - the button jumps to that corner immediately;
+      default is "Bottom left"
+- [ ] Taps ON the button do NOT enter the diagnostics protocol (the
+      counter in Settings stays put while toggling)
+- [ ] With the bottom tab bar active (#2786): the button in a bottom
+      corner floats ABOVE the tab bar, covering no tabs
+- [ ] Probe OFF: the button disappears with it (without the probe
+      there is no bar to toggle)
+
+### Mobile menu position: bottom tab bar as an option (#2786)
+- [ ] Settings > General > Interface: "Menu position (mobile)" is
+      "Top (menu button)" (default) - NO bottom bar
+- [ ] Pick "Bottom (tab bar)": the bar appears IMMEDIATELY at the
+      bottom (Learn/Content/Learning Path/Progress/More); content is
+      not hidden behind it (bottom scroll reserve)
+- [ ] With the bottom bar: the top hamburger menu still works
+- [ ] During an active lesson and on Landing/Onboarding/Assessment the
+      bar stays hidden (the lesson footer keeps the bottom edge)
+- [ ] Back to "Top": the bar disappears immediately; the choice
+      survives a reload
+
+### In-set position + navigation (#2793)
+- [ ] Inside a lesson from a set, the header shows "Lesson N of M"
+      with the correct number
+- [ ] The left arrow opens the PREVIOUS lesson of the set; the right
+      arrow the next one
+- [ ] On the first lesson the left arrow is absent (no dead button),
+      the readout stays; on the last one the right arrow is absent
+- [ ] After jumping, the readout shows the new position
+- [ ] For a standalone lesson without a set (e.g. an own lesson) the
+      position row is absent entirely
+
+### First paint: no language mix (#2796)
+- [ ] Reload the app with a German UI (clear the cache): landing page,
+      navigation, install hint, update banner and offline notice are
+      German immediately - no English text, no raw key like
+      `landing.intro`
+- [ ] Same in airplane mode / offline: the strings stay German (the
+      first paint needs no network)
+- [ ] Update banner: "Was ist neu?", "Release-Seite", "Später" carry
+      readable labels (not empty, sufficient contrast)
+
+### Set-completion review (#2792)
+- [ ] Finish the last lesson of a set: the completion card offers
+      "View review" as the first action, "View Set" beside it
+- [ ] The review shows four headline figures (total mistakes,
+      mastered percentage, still open, time spent) and below them
+      mistakes per lesson, per exercise type, and the biggest weak
+      spots with your own wrong answer next to the correct one
+- [ ] "Practise mistakes" leads into the set's review session,
+      "Back to the set" to the set page
+- [ ] A set with no recorded mistakes shows the friendly message
+      instead of empty sections
+- [ ] Check both in browser mode (no server) - the figures come from
+      the local database there
+
+### Set page: lesson list + progress (#2793 stages 2-3)
+- [ ] Open a set page (/content/set/<id> or via a shared link): below
+      the set details, ALL lessons are listed with their number
+- [ ] The list header shows "{x} of {y} lessons completed"
+- [ ] Completed lessons show their score; the first unfinished one
+      carries the "Continue here" marker
+- [ ] Clicking any row opens exactly that lesson - including one far
+      back in the set
+- [ ] Inside a running lesson the set name in the header is clickable
+      and leads to that same list
+- [ ] With no recorded progress the list still appears, just without
+      markers
+### Summary: all answers with their question (#2807)
+- [ ] Finish a lesson, open "View all answers": every row with something
+      to show is expandable (title + score stay visible)
+- [ ] Expanded, the QUESTION sits above the answers - including on a
+      partially correct row like "2 / 3", which previously showed nothing
+- [ ] Choice/matching exercises (no text answer) show question and
+      correct answer
+- [ ] Text answers keep the coloured token diff, plus your own answer
+      spelled out
+- [ ] A fully correct row shows its question but no mistake diff
+
+### Leaving a lesson returns to its set (#2811)
+- [ ] Pause and leave a set lesson: the app lands on the SET page with
+      the lesson list, not on "My content"
+- [ ] "Exit" after the summary: the set page too - the lesson just
+      finished is marked completed there
+- [ ] A lesson without a set (own lesson, standalone import) still
+      lands on "My content"
+
+### Share the result as an image (#2813)
+- [ ] After a lesson press "Share image only" next to "Share": the share
+      sheet opens WITH the result card and WITHOUT text or link
+- [ ] Pick Facebook: a photo post with the card appears (not the generic
+      app image)
+- [ ] WhatsApp still works through the normal "Share" button (card plus
+      text)
+- [ ] On desktop (no share sheet): the image downloads, toast "Image
+      saved"
+- [ ] Dismiss the share sheet: no file lands silently in the downloads
+
+### New "Diagnostics & Support" tab unites error report + probe (#2789)
+- [ ] Settings > Info: between "Help" and "About" there is now
+      "Diagnostics & Support"
+- [ ] It shows the Support section first ("Create error report",
+      formerly under "About"), then the Diagnostics section with
+      Developer Mode (formerly under "General > Interface") and the
+      tap/viewport probe (formerly under "General > Diagnostics")
+- [ ] "About" still shows version, strand and links, but no Support
+      button anymore
+- [ ] "General" still shows the menu position, but no Developer Mode
+      toggle and no Diagnostics section anymore
+- [ ] The direct link `?tab=diagnostics` opens the tab immediately
 
 ### Discover + Registry (since v2.2.0)
 - [ ] Source-language filter as a visible chip on first view
@@ -1801,6 +2366,75 @@ no numbers that could go stale, on purpose.
 - [ ] Mobile (narrow window): single column, no horizontal scrolling.
 - [ ] Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
+
+---
+
+## PRIO 10: Selective data export - speech recordings category (#2840)
+
+Location: Settings > Data > "Export selected data".
+
+- [ ] The "Media" group with the "Speech recordings" category is visible,
+      NOT checked by default (unlike Learning projects/Curricula/
+      Progress/Subjects, which are pre-selected)
+- [ ] Without checking it: the exported file contains NO
+      `speech_recordings` rows, even when some exist
+- [ ] Checking it + export: the file contains the user's
+      `speech_recordings` rows
+
+## PRIO 11: Preset avatar gallery (#2848)
+
+Location: Settings > General > Profile, below the photo upload.
+
+- [ ] "Or pick a figure" row with 8 figures visible (Spark, Robot,
+      Star, Cat, Owl, Ghost, Lightning, Heart), each with a speaking
+      tooltip/screen-reader name
+- [ ] Tapping a figure: success toast, the preview above and the header
+      avatar show the figure immediately (no reload)
+- [ ] The chosen figure is marked (ring); picking another moves the mark
+- [ ] Uploading a photo replaces the figure; afterwards NO figure is
+      marked; picking a figure over a photo asks first (see the photo
+      stash below)
+- [ ] "Remove" clears the avatar; the header falls back to the initials
+- [ ] Backup round-trip: pick a figure, export (`.alb`), wipe data,
+      import - the figure is set again
+- [ ] Both storage modes (server + browser) behave identically
+
+#### Photo stash on figure switch (#2862)
+
+- [ ] Upload and crop a photo, then tap a figure: a confirmation dialog
+      appears ("Replace your photo?"); cancel leaves photo and selection
+      unchanged
+- [ ] Confirm ("Use figure"): the figure is active and a "Restore photo"
+      button appears below the gallery
+- [ ] "Restore photo": the photo is back (preview + header), the button
+      disappears
+- [ ] Figure-to-figure switch: NO dialog (only a real photo is guarded)
+- [ ] Upload a NEW photo after picking a figure: the old stash is
+      cleared (no restore button with a stale photo)
+- [ ] Backup round-trip: with a filled stash export -> wipe -> import;
+      "Restore photo" still works (both storage modes)
+
+#### Avatar frames (#2850)
+
+Location: Settings > General > Profile, below the figure gallery.
+
+- [ ] "Avatar frame" row with 7 options (None, Bronze, Silver, Gold,
+      Flame, Star, Accent); locked ones show a lock and the condition
+      ("From level 5", "Needs the 3-day streak badge")
+- [ ] Level unlock: with a sufficient level the frame is selectable;
+      selecting puts the ring around the preview AND the header avatar
+      immediately (no reload)
+- [ ] XP purchase (Star 150 / Accent 300): the buy button shows the
+      price, first click "Confirm", second click deducts the XP (header
+      XP updates live); the frame is permanently unlocked and selected
+- [ ] Insufficient XP: the buy button is disabled, no deduction possible
+- [ ] Badge frame (Flame): selectable only after earning the 3-day
+      streak badge
+- [ ] The frame applies to photo avatars AND preset figures alike;
+      "None" removes the ring
+- [ ] Backup round-trip: pick a frame + buy one, export (`.alb`), wipe
+      data, import - selection and purchase are back
+- [ ] Both storage modes behave identically (XP deduction included)
 
 ---
 

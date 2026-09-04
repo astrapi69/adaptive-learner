@@ -30,7 +30,7 @@ import {
   tokenForSource,
 } from "./content-loader-sources";
 import { latestCachedRow } from "./content-loader-listing";
-import { storeImportLessonOrder } from "../../lib/content/browse/lesson-order-store";
+import { storeImportLessonOrder } from "../../lib/content/browse/prefs/lesson-order-store";
 
 export async function downloadSetDexie(
   source: string,

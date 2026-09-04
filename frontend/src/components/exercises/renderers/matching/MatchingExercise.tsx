@@ -1,0 +1,656 @@
+/**
+ * MatchingExercise (Phase 44 / EXP-002 / 3C — F-106).
+ *
+ * Two-column tap-to-pair exercise. Left column = terms in
+ * authored order; right column = definitions, shuffled.
+ * User taps a left tile (or selects via keyboard), then taps
+ * a right tile to create a pair. Tapping a paired tile undoes
+ * the pair. Submit enables once every pair is made.
+ *
+ * Accessibility:
+ * - Each tile is a real ``<button>`` with an aria-pressed
+ *   state. Keyboard users navigate via Tab; pairing happens
+ *   on Enter / Space.
+ * - aria-live announces the running pair count.
+ *
+ * Mobile-first: tap-to-pair. Drag-and-drop is an explicit
+ * non-goal for v1.28.0 — tap-to-pair works everywhere and
+ * keeps the touch surface above 44px without a DnD library.
+ *
+ * Result contract: the parent (viewer commit 6 wires this)
+ * passes ``onComplete({correct, total})``. The viewer then
+ * persists via ``recordStepResult`` and advances. Calling
+ * ``onComplete`` twice is safe — the parent dedupes via
+ * ``recordStepResult`` keyed by step id.
+ */
+
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import type {ReactNode, Ref} from "react";
+
+import {useI18n} from "../../../../hooks/ui/useI18n";
+import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
+import {playfulDataAttr} from "../../../../lib/learning/lessonModeConfig";
+import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
+import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
+import {deriveMatchingAttempts} from "../../../../lib/srs/element-attempt";
+import {prefersReducedMotion} from "../../../../lib/feedback/feedbackPref";
+import {
+    MATCHING_RESOLVE_PREF_CHANGE_EVENT,
+    readMatchingResolveEffect,
+    type MatchingResolveEffect,
+} from "../../../../lib/learning/matchingResolvePref";
+import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
+import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
+import {
+    useKeyboardShortcuts,
+    type ShortcutDefinition,
+} from "../../../../shared/hooks/useKeyboardShortcuts";
+import type {ContentLessonExercise} from "../../../../storage/types";
+import type {
+    ControlledExerciseProps,
+    ExerciseHandle,
+    ExerciseScored,
+} from "../../shell/exercise-control";
+import {
+    computeMatchingLabels,
+    computeLeftTileState,
+    computeRightTileState,
+    MatchingLeftTile,
+    MatchingRightTile,
+    MatchingColumnHeader,
+    MatchingPrompt,
+    MatchingResultFooter,
+    MatchingViewToggle,
+    matchingPairIsCorrect,
+    type LeftTile,
+    type RightTile,
+    type MatchingPairs,
+} from "./matching-parts";
+
+export {MATCHING_PAIR_COLORS, matchingPairColorVar} from "./matching-parts";
+
+export interface MatchingExerciseProps extends ControlledExerciseProps {
+    exercise: ContentLessonExercise;
+    /** Content-set id + lesson id — Phase 46B context the
+     *  exercise needs to derive per-element attempts for the
+     *  SRS layer. Optional in unit tests; required in
+     *  production (the viewer always passes them). Empty
+     *  strings still produce attempts; the viewer's guard
+     *  chain decides whether to persist. */
+    setId?: string;
+    lessonId?: string;
+    /** Called when the user submits answers AND the parent
+     *  should record the result. Receives the scored
+     *  outcome AND a per-pair ``attempts`` list the viewer
+     *  passes to ``elementErrors.recordBulk`` (Phase 46B). */
+    onComplete: (result: ExerciseScored) => void;
+    /** UX bugfix — BCP-47 codes of the lesson's language pair.
+     *  When provided, the column headers show the actual
+     *  language NAMES (e.g. "Français" / "Deutsch") instead of
+     *  the generic "Term" / "Translation". Optional; the
+     *  Review + AdaptiveLesson pages omit them and keep the
+     *  generic labels. */
+    targetLanguage?: string | null;
+    sourceLanguage?: string | null;
+    /** #149 — the lesson's domain. For a non-language domain (or a
+     *  source==target knowledge set) the renderer drops the
+     *  translation-specific wording: neutral Term / Definition
+     *  column labels, no language names, a "match each term to its
+     *  definition" instruction. Optional; absent = language behaviour. */
+    domain?: string | null;
+    /** #2453 — the chrome's conditional "Re-read theory" link (computed by
+     *  LessonStepView). Forwarded to MatchingPrompt so it shares the top
+     *  button row with the how-to disclosure instead of sitting on its own
+     *  line above the exercise. Null/absent when no theory chapter precedes
+     *  this step (or in Review / AdaptiveLesson, which omit it). */
+    theoryLink?: ReactNode;
+}
+
+
+/** Count correctly-matched pairs. A pair is correct when the matched
+ *  right tile's VALUE equals the value its left pair expects, so
+ *  duplicate right-column values (e.g. "el" for both libro + coche) are
+ *  interchangeable rather than index-bound. */
+function _scoreMatches(
+    matches: ReadonlyMap<number, number>,
+    pairs: MatchingPairs,
+    productive: boolean,
+): {correct: number; total: number} {
+    let correct = 0;
+    for (const [leftIdx, rightOriginal] of matches) {
+        if (matchingPairIsCorrect(pairs, productive, leftIdx, rightOriginal)) {
+            correct += 1;
+        }
+    }
+    return {correct, total: pairs.length};
+}
+
+
+/** Lowest non-negative slot not already assigned to a pair, so
+ *  colors + labels stay compact (1, 2, 3 …) and an existing pair
+ *  keeps its slot when another is added or removed. */
+function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
+    const used = new Set(slots.values());
+    let slot = 0;
+    while (used.has(slot)) slot += 1;
+    return slot;
+}
+
+
+
+
+
+
+/** Post-check toggle row: on a fully-correct match the #1218 success-merge
+ *  (badge + "Continue"); otherwise the My-answers / Solve view toggle.
+ *  Renders nothing pre-check or when the toggle is mode-hidden. Extracted
+ *  so the main renderer stays under the complexity gate. */
+function MatchingPostCheckToggle({
+    submitted,
+    showAnswerToggle,
+    isAllCorrect,
+    onAdvance,
+    advanceLabel,
+    view,
+    onShowUserAnswers,
+    onShowSolution,
+}: {
+    submitted: boolean;
+    showAnswerToggle: boolean;
+    isAllCorrect: boolean;
+    onAdvance?: () => void;
+    advanceLabel?: string;
+    view: "user-answers" | "solution";
+    onShowUserAnswers: () => void;
+    onShowSolution: () => void;
+}) {
+    const {t} = useI18n();
+    if (!submitted || !showAnswerToggle) return null;
+    if (isAllCorrect && onAdvance) {
+        return (
+            <ExerciseSuccessAdvance
+                onAdvance={onAdvance}
+                label={advanceLabel}
+                testIdPrefix="matching"
+            />
+        );
+    }
+    return (
+        <MatchingViewToggle
+            view={view}
+            onShowUserAnswers={onShowUserAnswers}
+            onShowSolution={onShowSolution}
+            myAnswersLabel={t("lesson.exercise.matching.my_answers", "My answers")}
+            solveLabel={t("lesson.exercise.matching.resolve", "Solve")}
+        />
+    );
+}
+
+function MatchingExercise(
+    {
+        exercise,
+        setId = "",
+        lessonId = "",
+        onComplete,
+        controlled = false,
+        onInteraction,
+        reviewed = null,
+        targetLanguage = null,
+        sourceLanguage = null,
+        domain = null,
+        ttsLang = null,
+        codeMode = false,
+        onAdvance,
+        advanceLabel,
+        theoryLink,
+    }: MatchingExerciseProps,
+    ref: Ref<ExerciseHandle>,
+) {
+    const {t, lang} = useI18n();
+    const {showAnswerToggle, playful} = useLessonMode();
+    const pairs = useMemo(() => exercise.pairs ?? [], [exercise.pairs]);
+    const reviewedMatching =
+        reviewed?.kind === "matching" ? reviewed : null;
+    // EXP-018 / Phase 62: a productive drill shows the source-language
+    // column on the left (the learner produces the target). Receptive
+    // keeps the authored orientation (target left, source right). Only
+    // the DISPLAYED label flips — pair indices (and thus scoring) are
+    // unchanged, so pair i still matches right i.
+    // #149 / EXP-018 — column labels + instruction (knowledge vs language,
+    // receptive vs productive) resolved in one pure helper.
+    const {productive, isKnowledge, leftLabel, rightLabel, instruction} =
+        computeMatchingLabels(exercise, {
+            uiLang: lang,
+            targetLanguage,
+            sourceLanguage,
+            domain,
+            t,
+        });
+
+    // Stable seed per-mount so reshuffling on every render
+    // doesn't move the columns under the user.
+    const [shuffleSeed] = useState(
+        () => `${exercise.id}#${Date.now() & 0xffff}`,
+    );
+
+    const leftTiles: LeftTile[] = useMemo(
+        () =>
+            pairs.map((p, i) => ({
+                index: i,
+                label: productive ? p.right : p.left,
+            })),
+        [pairs, productive],
+    );
+
+    // #2882 — ONLY the right column shuffles. The left column always
+    // renders in authored order: a shuffled left reads as random noise
+    // to the learner (revises the #2371 left shuffle; the right shuffle
+    // alone prevents pairing by position).
+    const rightTiles: RightTile[] = useMemo(() => {
+        const indexed = pairs.map((p, i) => ({
+            originalIndex: i,
+            label: productive ? p.left : p.right,
+        }));
+        return seededShuffle(indexed, `${shuffleSeed}#right`);
+    }, [pairs, shuffleSeed, productive]);
+
+    /** Currently-selected left index (waiting for a right
+     *  click to complete the pair). null when nothing is
+     *  selected. */
+    const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
+    /** Currently-selected right originalIndex — the symmetric
+     *  counterpart so a pair can be started from the B column too
+     *  (#507, bidirectional selection). At most one of selectedLeft /
+     *  selectedRight is set at a time; forming or undoing a pair clears
+     *  both. The pairing direction does not change the ``matches`` map
+     *  (always left → right originalIndex), so scoring + the #481
+     *  value-based validation are untouched. */
+    const [selectedRight, setSelectedRight] = useState<number | null>(null);
+    /** Map from left index → right's originalIndex. */
+    const [matches, setMatches] = useState<Map<number, number>>(
+        () =>
+            reviewedMatching
+                ? new Map(reviewedMatching.matches)
+                : new Map(),
+    );
+    /** #145 — per-pair color/label slot, keyed by left index.
+     *  Assigned when a pair is formed, freed when undone, so both
+     *  tiles of a pair share a stable color + number. Only consulted
+     *  before submit (graded tiles switch to correct/wrong colors). */
+    const [slotByLeft, setSlotByLeft] = useState<Map<number, number>>(
+        () => new Map(),
+    );
+    /** Wrong-flash trigger for visual feedback. */
+    const [wrongFlash, setWrongFlash] = useState<{
+        left: number;
+        right: number;
+    } | null>(null);
+
+    useEffect(() => {
+        if (wrongFlash === null) return;
+        const id = window.setTimeout(() => setWrongFlash(null), 600);
+        return () => window.clearTimeout(id);
+    }, [wrongFlash]);
+
+    /** #824 / #977 — after the answer is checked, the learner toggles
+     *  between their own graded answers ("user-answers") and the revealed
+     *  solution ("solution"). Default is the graded grid, which is what
+     *  the columns already render after submit. */
+    const [view, setView] = useState<"user-answers" | "solution">(
+        "user-answers",
+    );
+    /** Whether the solution view has been shown at least once, so the
+     *  reveal animation plays only on the FIRST switch (#977). A ref (not
+     *  state) so flipping it never triggers a re-render mid-animation. */
+    const solutionShownRef = useRef(false);
+    /** The animate flag handed to MatchingResolution for the current
+     *  solution view; set once per switch in ``showSolution``. */
+    const [animateSolution, setAnimateSolution] = useState(false);
+    const [resolveEffect, setResolveEffect] = useState<MatchingResolveEffect>(
+        () => readMatchingResolveEffect(),
+    );
+    useEffect(() => {
+        const refresh = () => setResolveEffect(readMatchingResolveEffect());
+        window.addEventListener("storage", refresh);
+        window.addEventListener(MATCHING_RESOLVE_PREF_CHANGE_EVENT, refresh);
+        return () => {
+            window.removeEventListener("storage", refresh);
+            window.removeEventListener(
+                MATCHING_RESOLVE_PREF_CHANGE_EVENT,
+                refresh,
+            );
+        };
+    }, []);
+    const reduceMotion = useMemo(() => prefersReducedMotion(), []);
+
+    const pairedRightIndices = useMemo(
+        () => new Set(matches.values()),
+        [matches],
+    );
+
+    const allPaired = matches.size === pairs.length;
+
+    const reviewedResult = reviewedMatching
+        ? _scoreMatches(new Map(reviewedMatching.matches), pairs, productive)
+        : null;
+
+    const {submitted, result, submit, reset} = useControlledExercise({
+        ref,
+        controlled,
+        isAnswerable: allPaired,
+        onInteraction,
+        onComplete,
+        reviewedResult,
+        score: (): ExerciseScored => {
+            const {correct} = _scoreMatches(matches, pairs, productive);
+            return {
+                correct,
+                total: pairs.length,
+                attempts: deriveMatchingAttempts(
+                    exercise,
+                    {setId, lessonId},
+                    matches,
+                    productive,
+                ),
+                raw_answer: {
+                    kind: "matching",
+                    matches: [...matches.entries()],
+                },
+            };
+        },
+        resetAnswer: () => {
+            setMatches(new Map());
+            setSlotByLeft(new Map());
+            setSelectedLeft(null);
+            setSelectedRight(null);
+            setView("user-answers");
+            solutionShownRef.current = false;
+            setAnimateSolution(false);
+        },
+    });
+
+    /** Switch to the revealed-solution view (#977). Animates only the
+     *  first time it is shown; toggling back to it later renders the end
+     *  result immediately. No-op when already on the solution view so a
+     *  repeat click can't restart a mid-play animation. */
+    const showSolution = () => {
+        if (view === "solution") return;
+        const firstTime = !solutionShownRef.current;
+        solutionShownRef.current = true;
+        setAnimateSolution(firstTime);
+        setView("solution");
+    };
+    const showUserAnswers = () => setView("user-answers");
+
+    /** The correct pairs for the resolution view (#824), in the
+     *  displayed left-column order — which since #2882 IS the authored
+     *  order: solving must never reorder the column the learner just
+     *  saw (#2872); only the right side realigns to each row's correct
+     *  partner. ``slot`` is the row index, so the number badges read
+     *  1..n and the connect-effect line colors (indexed by row) match
+     *  the tiles. ``wasCorrect`` reflects the learner's own match. */
+    const resolvedPairs: ResolvedPair[] = useMemo(
+        () =>
+            leftTiles.map((tile, rowIdx) => {
+                const chosen = matches.get(tile.index);
+                return {
+                    left: tile.label,
+                    right: productive
+                        ? (pairs[tile.index]?.left ?? "")
+                        : (pairs[tile.index]?.right ?? ""),
+                    slot: rowIdx,
+                    wasCorrect:
+                        chosen !== undefined &&
+                        matchingPairIsCorrect(
+                            pairs,
+                            productive,
+                            tile.index,
+                            chosen,
+                        ),
+                };
+            }),
+        [leftTiles, matches, pairs, productive],
+    );
+
+    const releaseSlot = (leftIdx: number) => {
+        setSlotByLeft((prev) => {
+            if (!prev.has(leftIdx)) return prev;
+            const next = new Map(prev);
+            next.delete(leftIdx);
+            return next;
+        });
+    };
+
+    /** Commit a left↔right pair (regardless of which side was tapped
+     *  first), assign it a color slot, and clear both selections. */
+    const formPair = (leftIdx: number, rightOriginal: number) => {
+        const next = new Map(matches);
+        next.set(leftIdx, rightOriginal);
+        setMatches(next);
+        setSlotByLeft((prev) => {
+            const nextSlots = new Map(prev);
+            nextSlots.set(leftIdx, _nextFreeSlot(prev));
+            return nextSlots;
+        });
+        setSelectedLeft(null);
+        setSelectedRight(null);
+    };
+
+    const handleLeftClick = (idx: number) => {
+        if (submitted) return;
+        // Tapping a paired left undoes the pair.
+        if (matches.has(idx)) {
+            const next = new Map(matches);
+            next.delete(idx);
+            setMatches(next);
+            releaseSlot(idx);
+            setSelectedLeft(null);
+            setSelectedRight(null);
+            return;
+        }
+        // A right tile is already selected → complete the pair (B → A).
+        if (selectedRight !== null) {
+            formPair(idx, selectedRight);
+            return;
+        }
+        setSelectedLeft(idx === selectedLeft ? null : idx);
+    };
+
+    const handleRightClick = (originalIndex: number) => {
+        if (submitted) return;
+        // Tapping a paired right undoes the pair.
+        const pairedLeft = [...matches.entries()].find(
+            ([, ri]) => ri === originalIndex,
+        );
+        if (pairedLeft) {
+            const next = new Map(matches);
+            next.delete(pairedLeft[0]);
+            setMatches(next);
+            releaseSlot(pairedLeft[0]);
+            setSelectedLeft(null);
+            setSelectedRight(null);
+            return;
+        }
+        // A left tile is already selected → complete the pair (A → B).
+        if (selectedLeft !== null) {
+            formPair(selectedLeft, originalIndex);
+            return;
+        }
+        setSelectedRight(originalIndex === selectedRight ? null : originalIndex);
+    };
+
+    // Lesson shortcut: Ctrl/⌘+Z undoes the most recently formed pair.
+    // ``matches`` is insertion-ordered, so the last key is the last
+    // pair the learner made. Disabled while submitted or empty so it
+    // never steals the browser's native undo when there is nothing to
+    // revert.
+    const undoShortcut = useMemo<ShortcutDefinition[]>(
+        () => [
+            {
+                id: "matching-undo",
+                key: "z",
+                modifiers: {ctrlOrMeta: true},
+                context: "lesson",
+                description: "Undo the last match",
+                action: () => {
+                    const lastLeft = [...matches.keys()].at(-1);
+                    if (lastLeft === undefined) return;
+                    setMatches((prev) => {
+                        const next = new Map(prev);
+                        next.delete(lastLeft);
+                        return next;
+                    });
+                    releaseSlot(lastLeft);
+                    setSelectedLeft(null);
+                    setSelectedRight(null);
+                },
+            },
+        ],
+        [matches],
+    );
+    useKeyboardShortcuts(undoShortcut, {
+        enabled: !submitted && matches.size > 0,
+    });
+
+    if (pairs.length === 0) {
+        return (
+            <div data-testid="matching-empty">
+                {t(
+                    "lesson.exercise.matching.empty",
+                    "This matching exercise has no pairs.",
+                )}
+            </div>
+        );
+    }
+
+    return (
+        <section
+            className="flex flex-col gap-3"
+            data-testid="matching-exercise"
+            data-playful={playfulDataAttr(playful)}
+        >
+            <MatchingPrompt
+                prompt={exercise.prompt}
+                ttsLang={ttsLang}
+                codeMode={codeMode}
+                instruction={instruction}
+                matchedCount={matches.size}
+                totalPairs={pairs.length}
+                selectedLeft={selectedLeft}
+                leftTiles={leftTiles}
+                isKnowledge={isKnowledge}
+                submitted={submitted}
+                leftLabel={leftLabel}
+                rightLabel={rightLabel}
+                theoryLink={theoryLink}
+            />
+
+            {/* #2443 — no hint affordance for matching. Both columns are
+                fully visible, so a generated hint (first letter of an
+                already-readable word) adds nothing yet charged XP. */}
+
+            <MatchingPostCheckToggle
+                submitted={submitted}
+                showAnswerToggle={showAnswerToggle}
+                isAllCorrect={result !== null && result.correct === pairs.length}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
+                view={view}
+                onShowUserAnswers={showUserAnswers}
+                onShowSolution={showSolution}
+            />
+
+            {view === "user-answers" && (
+            <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
+                <div className="flex min-w-0 flex-col gap-2">
+                    <MatchingColumnHeader
+                        side="a"
+                        label={leftLabel}
+                        showLabel={!isKnowledge}
+                        testId="matching-left-header"
+                    />
+                    <ul
+                        className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
+                        data-testid="matching-left"
+                        aria-label={leftLabel}
+                    >
+                        {leftTiles.map((tile) => (
+                            <MatchingLeftTile
+                                key={tile.index}
+                                tile={tile}
+                                state={computeLeftTileState(tile, {
+                                    selectedLeft,
+                                    matches,
+                                    submitted,
+                                    slotByLeft,
+                                    pairs,
+                                    productive,
+                                })}
+                                onClick={() => handleLeftClick(tile.index)}
+                                playful={playful}
+                            />
+                        ))}
+                    </ul>
+                </div>
+                <div className="flex min-w-0 flex-col gap-2">
+                    <MatchingColumnHeader
+                        side="b"
+                        label={rightLabel}
+                        showLabel={!isKnowledge}
+                        testId="matching-right-header"
+                    />
+                    <ul
+                        className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
+                        data-testid="matching-right"
+                        aria-label={rightLabel}
+                    >
+                        {rightTiles.map((tile) => (
+                            <MatchingRightTile
+                                key={tile.originalIndex}
+                                tile={tile}
+                                state={computeRightTileState(tile, {
+                                    pairedRightIndices,
+                                    matches,
+                                    slotByLeft,
+                                    submitted,
+                                    wrongFlash,
+                                    pairs,
+                                    productive,
+                                    selectedRight,
+                                })}
+                                submitted={submitted}
+                                onClick={() => handleRightClick(tile.originalIndex)}
+                                playful={playful}
+                            />
+                        ))}
+                    </ul>
+                </div>
+            </div>
+            )}
+
+            {view === "solution" && (
+                <MatchingResolution
+                    pairs={resolvedPairs}
+                    effect={resolveEffect}
+                    reduceMotion={reduceMotion}
+                    animate={animateSolution}
+                    correctCount={result?.correct ?? 0}
+                    totalCount={pairs.length}
+                    leftLabel={leftLabel}
+                    rightLabel={rightLabel}
+                />
+            )}
+
+            <MatchingResultFooter
+                submitted={submitted}
+                result={result}
+                controlled={controlled}
+                canCheck={allPaired}
+                onCheck={submit}
+                onRetry={reset}
+            />
+        </section>
+    );
+}
+
+export default forwardRef(MatchingExercise);

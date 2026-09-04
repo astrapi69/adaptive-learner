@@ -30,6 +30,80 @@ describe("captureLocalStorageSnapshot", () => {
         expect(snap["adaptive-learner.voice.tts_enabled"]).toBe("true");
     });
 
+    it("carries the avatar-frame state (#2850 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.avatar.frames",
+            '{"u1":{"selected":"gold","purchased":["star"]}}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.avatar.frames"]).toBe(
+            '{"u1":{"selected":"gold","purchased":["star"]}}',
+        );
+    });
+
+    it("carries the arcade-unlock state (#2887 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.arcade.unlocks",
+            '{"u1":{"selected":"memory","purchased":["snake"]}}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.arcade.unlocks"]).toBe(
+            '{"u1":{"selected":"memory","purchased":["snake"]}}',
+        );
+    });
+
+    it("carries the arcade-ticket state (#2889 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.arcade.tickets",
+            '{"u1":{"tickets":3,"milestones":[3,7]}}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.arcade.tickets"]).toBe(
+            '{"u1":{"tickets":3,"milestones":[3,7]}}',
+        );
+    });
+
+    it("carries the mascot-variant state (#2861 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.mascot.variants",
+            '{"u1":{"selected":"wald","purchased":["gold"]}}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.mascot.variants"]).toBe(
+            '{"u1":{"selected":"wald","purchased":["gold"]}}',
+        );
+    });
+
+    it("carries the avatar photo stash (#2862 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.avatar.photo-stash",
+            '{"u1":"data:image/jpeg;base64,AAA"}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.avatar.photo-stash"]).toBe(
+            '{"u1":"data:image/jpeg;base64,AAA"}',
+        );
+    });
+
+    it("carries the diagnostics + developer configuration (#2785 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem("adaptive-learner.developer_mode", "true");
+        localStorage.setItem("adaptive-learner.vv_diag", "1");
+        localStorage.setItem("adaptive-learner.vv_diag_panel", "0");
+        localStorage.setItem(
+            "adaptive-learner.vv_diag_log",
+            '[{"kind":"tap","ts":1,"fix":"off"}]',
+        );
+
+        const snap = captureLocalStorageSnapshot();
+
+        expect(snap["adaptive-learner.developer_mode"]).toBe("true");
+        expect(snap["adaptive-learner.vv_diag"]).toBe("1");
+        expect(snap["adaptive-learner.vv_diag_panel"]).toBe("0");
+        expect(snap["adaptive-learner.vv_diag_log"]).toBe(
+            '[{"kind":"tap","ts":1,"fix":"off"}]',
+        );
+    });
+
     it("excludes secret keys (tokens, api keys, passwords)", () => {
         localStorage.setItem("adaptive-learner.github_token", "ghp_secret");
         localStorage.setItem(
@@ -47,6 +121,12 @@ describe("captureLocalStorageSnapshot", () => {
         );
         expect(snap).not.toHaveProperty("adaptive-learner.some_api_key");
         expect(snap["adaptive-learner.theme"]).toBe("dark");
+    });
+
+    it("carries the mobile nav-position preference (#2786 pin, lessons #2053)", () => {
+        localStorage.setItem("adaptive-learner.nav_position", "bottom");
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.nav_position"]).toBe("bottom");
     });
 
     it("excludes the device-local storage_mode key", () => {

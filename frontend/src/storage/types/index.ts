@@ -27,6 +27,7 @@ export * from "./integrations/github";
 export * from "./core/session";
 export * from "./content/content";
 export * from "./content/lesson-progress";
+export * from "./content/speech-recording";
 export * from "./learning/element-errors";
 export * from "./learning/learning-data";
 export * from "./learning/missions";

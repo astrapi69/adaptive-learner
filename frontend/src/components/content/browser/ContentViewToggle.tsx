@@ -13,7 +13,7 @@ import { LayoutGrid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
-import type { ContentViewMode } from "../../../lib/content/browse/viewModePref";
+import type { ContentViewMode } from "../../../lib/content/browse/prefs/viewModePref";
 
 interface ContentViewToggleProps {
   mode: ContentViewMode;

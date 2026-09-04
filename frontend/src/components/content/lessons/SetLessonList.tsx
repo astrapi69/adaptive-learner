@@ -54,7 +54,7 @@ import {
   applyStoredLessonOrder,
   moveLessonOrder,
   type MoveDirection,
-} from "../../../lib/content/browse/lesson-order-store";
+} from "../../../lib/content/browse/prefs/lesson-order-store";
 import { getStorage } from "../../../storage";
 import type {
   BulkLessonDeleteTarget,

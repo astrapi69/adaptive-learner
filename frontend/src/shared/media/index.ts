@@ -12,6 +12,8 @@ export {default as FavoritesList} from "./FavoritesList";
 export * from "./ImageCropDialog";
 export {default as ImageCropDialog} from "./ImageCropDialog";
 export * from "./InitialsAvatar";
+export * from "./PresetAvatarGallery";
+export { default as PresetAvatarGallery } from "./PresetAvatarGallery";
 export {default as InitialsAvatar} from "./InitialsAvatar";
 export * from "./ResourceCard";
 export {default as ResourceCard} from "./ResourceCard";

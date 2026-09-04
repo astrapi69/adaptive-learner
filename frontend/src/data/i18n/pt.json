@@ -56,6 +56,7 @@
     "group_extra": "Dados adicionais",
     "group_gamification": "Gamificação",
     "group_config": "Configuração",
+    "group_media": "Mídia",
     "cat_projects": "Projetos de aprendizagem (com sessões, avaliações, notas)",
     "cat_curricula": "Currículos (com tópicos e lições)",
     "cat_progress": "Progresso das lições (com erros / SRS)",
@@ -66,7 +67,8 @@
     "cat_questions": "Perguntas de estudo",
     "cat_gamification": "XP, distintivos, sequência, missões",
     "cat_settings": "Configurações",
-    "cat_ai_config": "Backup de chave de IA"
+    "cat_ai_config": "Backup de chave de IA",
+    "cat_speech_recordings": "Gravações de voz (exercícios de falar e gravar)"
   },
   "nav": {
     "group": {
@@ -399,6 +401,7 @@
   "review": {
     "your_answer": "A sua resposta:",
     "correct_answer": "Correto:",
+    "question_label": "Pergunta:",
     "summary_corrected": "{corrected} de {total} corrigidos",
     "summary_trend": "Boa - os seus pontos fracos estão a melhorar.",
     "summary_next": "Os elementos dominados saem; os restantes voltam em breve para revisão.",
@@ -652,6 +655,45 @@
     "username_placeholder": "O teu nome",
     "username_save": "Guardar",
     "username_empty": "O nome não pode estar vazio.",
+    "avatar_frames_title": "Moldura do avatar",
+    "avatar_frames_hint": "Decore seu avatar. As molduras são desbloqueadas com níveis e emblemas, ou em troca de XP.",
+    "avatar_frame_none": "Nenhuma",
+    "avatar_frame_bronze": "Bronze",
+    "avatar_frame_silver": "Prata",
+    "avatar_frame_gold": "Ouro",
+    "avatar_frame_flame": "Chama",
+    "avatar_frame_star": "Estrela",
+    "avatar_frame_accent": "Acento",
+    "avatar_frame_locked_level": "A partir do nível {level}",
+    "avatar_frame_locked_badge": "Requer o emblema de sequência de 3 dias",
+    "avatar_frame_buy": "{xp} XP",
+    "avatar_frame_buy_confirm": "Confirmar",
+    "avatar_frame_buy_failed": "A compra falhou.",
+    "mascot_variants_title": "Variante do mascote",
+    "mascot_variants_hint": "Escolha as cores do seu companheiro de aprendizado no modo de jogo. As variantes são desbloqueadas com níveis e emblemas, ou em troca de XP.",
+    "mascot_variant_funke": "Faísca",
+    "mascot_variant_ozean": "Oceano",
+    "mascot_variant_wald": "Floresta",
+    "mascot_variant_geist": "Fantasma",
+    "mascot_variant_gold": "Ouro",
+    "unlock_level": "A partir do nível {level}",
+    "unlock_badge": "Requer o emblema: {badge}",
+    "unlock_buy": "{xp} XP",
+    "unlock_buy_confirm": "Confirmar",
+    "unlock_buy_failed": "A compra falhou.",
+    "avatar_presets_title": "Ou escolha uma figura",
+    "avatar_replace_photo_title": "Substituir sua foto?",
+    "avatar_replace_photo_message": "Sua foto enviada será substituída pela figura. Ela fica guardada e você pode restaurá-la a qualquer momento.",
+    "avatar_replace_photo_confirm": "Usar figura",
+    "avatar_restore_photo": "Restaurar foto",
+    "avatar_preset_spark": "Faísca",
+    "avatar_preset_robot": "Robô",
+    "avatar_preset_star": "Estrela",
+    "avatar_preset_cat": "Gato",
+    "avatar_preset_owl": "Coruja",
+    "avatar_preset_ghost": "Fantasma",
+    "avatar_preset_bolt": "Raio",
+    "avatar_preset_heart": "Coração",
     "avatar_upload": "Carregar imagem",
     "avatar_remove": "Remover",
     "avatar_crop_title": "Ajuste a sua imagem",
@@ -678,6 +720,7 @@
     "tab_plugins": "Plugins",
     "tab_data": "Dados",
     "tab_help": "Ajuda",
+    "tab_diagnostics": "Diagnóstico e suporte",
     "tab_about": "Sobre",
     "tabs_aria": "Seções de configurações",
     "section_feedback": "Feedback",
@@ -713,6 +756,57 @@
     "button_tooltips_description": "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de ecrã permanecem ativas independentemente.",
     "developer_mode": "Modo desenvolvedor",
     "developer_mode_description": "Mostra todos os detalhes técnicos (código de estado, endpoint, rastreio) nas notificações de erro. Aparece uma etiqueta 'DEV' na barra de navegação enquanto estiver ativo. Desativado por defeito; ativar apenas para depuração.",
+    "section_diagnostics": "Diagnóstico",
+    "vvdiag_toggle": "Sonda de toques e viewport",
+    "vvdiag_description": "Mostra uma barra de medição e mantém um protocolo persistente das posições dos toques e das mudanças do viewport enquanto a sonda está ativa. Ajuda a documentar depois erros de exibição difíceis de reproduzir (por ex. toques que caem abaixo do alvo). Também pode ser ativada pelo parâmetro de URL ?vvdiag=1.",
+    "vvdiag_log_count": "{count} eventos registrados",
+    "vvdiag_copy_log": "Copiar protocolo",
+    "vvdiag_copied": "Copiado!",
+    "vvdiag_clear_log": "Limpar protocolo",
+    "vvdiag_panel_toggle": "Mostrar barra de medição",
+    "vvdiag_panel_description": "Desligado: a sonda continua gravando de forma invisível sem mostrar a barra no topo - o cabeçalho e o menu ficam totalmente acessíveis.",
+    "vvdiag_fab_toggle": "Botão flutuante para a barra de medição",
+    "vvdiag_fab_description": "Mostra um botão flutuante que exibe e oculta a barra de medição com um toque - prático para alternar a barra rapidamente durante os testes. Visível apenas enquanto a sonda está ativa.",
+    "vvdiag_fab_position": "Posição do botão",
+    "vvdiag_fab_pos_bottom_left": "Inferior esquerdo",
+    "vvdiag_fab_pos_bottom_right": "Inferior direito",
+    "vvdiag_fab_pos_top_left": "Superior esquerdo",
+    "vvdiag_fab_pos_top_right": "Superior direito",
+    "vvdiag_fab_aria": "Mostrar ou ocultar a barra de medição",
+    "nav_position": "Posição do menu (celular)",
+    "nav_position_description": "Onde fica a navegação principal no celular: no topo como botão de menu (padrão) ou embaixo como barra de abas ao alcance do polegar.",
+    "nav_position_top": "Em cima (botão de menu)",
+    "nav_position_bottom": "Embaixo (barra de abas)",
+    "playful_mode_title": "Modo jogo",
+    "playful_mode": "Lições lúdicas",
+    "playful_mode_description": "Transforma as lições em um jogo: elogios a cada resposta correta, confete e celebrações de marcos. Funciona com todos os modos de lição; a pontuação e o progresso não mudam. Se o seu sistema reduz animações, o feedback continua discreto.",
+    "playful_sounds": "Sons do modo de jogo",
+    "playful_sounds_description": "Sons curtos no modo de jogo: um tom a cada resposta correta (com tom crescente por sequência), um toque nos pontos de controle e uma fanfarra na conclusão. Independentes do interruptor global de sons; o volume segue o controle.",
+    "playful_sounds_offer": "Jogar com som?",
+    "playful_sounds_offer_yes": "Sim, sons ativados",
+    "playful_sounds_offer_later": "Mais tarde",
+    "playful_hearts": "Corações (vidas)",
+    "playful_hearts_description": "Uma resposta errada custa um coração. Ao chegar a zero, a rodada termina com um convite amigável para tentar de novo: nada do que foi resolvido se perde. Desativado em lições de exame e contrarrelógio.",
+    "playful_hearts_count": "Corações por lição",
+    "playful_countdown": "Anel de contagem regressiva",
+    "playful_countdown_description": "Um pequeno anel de tempo por exercício. Se esgotar, a sequência quebra e um coração é perdido; o exercício continua aberto, nada é enviado automaticamente. Desativado em lições de exame e contrarrelógio (o modo contrarrelógio tem o seu próprio temporizador).",
+    "playful_countdown_seconds": "Segundos por exercício",
+    "playful_combo_xp": "XP de bónus por sequência",
+    "playful_combo_xp_description": "A partir da terceira resposta da sequência, cada resposta certa seguida dá +1 XP de bónus, com limite por lição. Desligado, os XP do modo jogo ficam idênticos ao modo normal.",
+    "playful_combo_xp_cap": "Limite de XP de bónus por lição",
+    "playful_arcade": "Arcade",
+    "playful_arcade_description": "Minijogos curtos como recompensa do modo jogo: Memory de aprendizagem com os teus cartões de lição e clássicos desbloqueáveis por XP. Desligado esconde por completo o cartão do arcade e os jogos.",
+    "playful_arcade_snake_seconds": "Duração da ronda de Snake (segundos)",
+    "playful_arcade_memory_pairs": "Pares do Memory",
+    "playful_arcade_simon_target": "Comprimento alvo do Simon",
+    "playful_special_rounds": "Rondas especiais",
+    "playful_special_rounds_description": "Terminar um conjunto (cada lição com pelo menos uma estrela) desbloqueia uma ronda relâmpago com os seus cartões mais difíceis, jogada com o anel de contagem decrescente. Desligado esconde por completo o cartão da ronda relâmpago.",
+    "playful_flash_round_cards": "Cartões da ronda relâmpago",
+    "playful_tickets": "Bilhetes de jogo",
+    "playful_tickets_description": "Ganha bilhetes de arcade pelo teu desempenho: uma lição com pontuação perfeita, uma ronda concluída com todos os corações e os marcos de sequência (3/7/14/30 dias). Um bilhete joga uma ronda de um jogo de arcade bloqueado. Desligado, o arcade fica só com os desbloqueios por XP.",
+    "playful_ticket_cap": "Bilhetes máximos",
+    "playful_bonus_lessons": "Lições bónus",
+    "playful_bonus_lessons_description": "Os conjuntos podem conter lições bónus (ficheiros de lição que começam por \"bonus-\"). Com o modo de jogo ativo aparecem bloqueadas na lista de lições do conjunto até cada lição normal ter pelo menos uma estrela. Desligado (ou com o modo de jogo desligado) são tratadas como lições normais.",
     "feedback_intensity": "Intensidade do feedback",
     "feedback_intensity_description": "Com quanta efusividade o app celebra o seu progresso.",
     "feedback_intensity_subtle": "Discreto",
@@ -1456,6 +1550,68 @@
     "danger_zone_continue": "Continuar",
     "danger_zone_failed_toast": "Falha na redefinição:"
   },
+  "arcade": {
+    "title": "Arcade",
+    "subtitle": "Rondas curtas, de um a dois minutos: uma recompensa do modo jogo. Sem XP, só diversão.",
+    "card_description": "Rondas curtas de Memory de aprendizagem e Snake: a tua recompensa do modo jogo.",
+    "card_open": "Ir para o arcade",
+    "requires_playful": "O arcade faz parte do modo jogo. Ativa o modo jogo (e o interruptor do arcade) nas definições.",
+    "open_settings": "Abrir definições",
+    "play": "Jogar",
+    "pause": "Pausa",
+    "resume": "Continuar",
+    "restart": "Reiniciar",
+    "back_to_games": "Voltar aos jogos",
+    "unlock_for_xp": "Desbloquear por {n} XP",
+    "unlock_confirm": "Desbloquear mesmo por {n} XP?",
+    "unlock_not_enough_xp": "Ainda não tens XP suficientes: continua a aprender!",
+    "tickets_label": "Bilhetes: {n}",
+    "ticket_play": "Jogar uma ronda com um bilhete",
+    "tickets_hint": "Ganha bilhetes com lições perfeitas, rondas com todos os corações e marcos de sequência.",
+    "memory": {
+      "name": "Memory de aprendizagem",
+      "description": "Encontra os pares de termo e tradução das tuas lições.",
+      "set_label": "Conjunto de lições",
+      "loading": "A carregar cartões ...",
+      "empty": "Nenhum conjunto descarregado com cartões suficientes. Descarrega primeiro um conjunto de lições.",
+      "load_failed": "O carregamento dos cartões falhou. Tenta outro conjunto.",
+      "progress": "Pares: {a} / {b}",
+      "attempts": "Tentativas: {n}",
+      "won": "Todos os pares encontrados em {n} tentativas!"
+    },
+    "snake": {
+      "name": "Snake",
+      "description": "O clássico: apanha comida, cresce e não te mordas a ti próprio.",
+      "score": "Pontos: {n}",
+      "time_left": "Tempo: {n}s",
+      "goal": "Meta: {n} pontos",
+      "highscore": "Recorde: {n}",
+      "board_aria": "Tabuleiro de Snake: guia com as setas ou deslizando",
+      "won": "Ronda ganha: {n} pontos!",
+      "lost": "Ronda terminada: {n} pontos. Tenta outra vez!"
+    },
+    "tictactoe": {
+      "name": "Jogo do galo",
+      "description": "Três em linha contra a app - e sim, dá para vencê-la.",
+      "your_turn": "É a tua vez (X)",
+      "ai_turn": "A app está a pensar ...",
+      "board_aria": "Tabuleiro do jogo do galo: escolhe uma casa livre",
+      "won": "Ganhaste: três em linha!",
+      "lost": "Esta ronda foi da app. Tenta já outra vez!",
+      "draw": "Empate: bem defendido!"
+    },
+    "simon": {
+      "name": "Simon",
+      "description": "Repete a sequência de cores que vai crescendo: alcança o comprimento alvo para ganhar.",
+      "watch": "Observa a sequência ...",
+      "your_turn": "É a tua vez: repete a sequência",
+      "round_label": "Sequência {n} de {m}",
+      "board_aria": "Tabuleiro do Simon: quatro campos de cor",
+      "pad_aria": "Campo de cor {n}",
+      "won": "Conseguiste: a sequência completa!",
+      "lost": "Ups: chegaste ao comprimento {n}. Tenta já outra vez!"
+    }
+  },
   "anki": {
     "title": "Exportação Anki",
     "intro": "Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.",
@@ -1490,7 +1646,10 @@
     "mic_permission_denied": "Acesso ao microfone negado.",
     "mic_error": "Erro de reconhecimento de voz.",
     "mic_no_device": "Nenhum microfone encontrado. Conecte um e tente novamente.",
-    "mic_network": "O reconhecimento de voz está offline. Verifique sua conexão com a internet."
+    "mic_network": "O reconhecimento de voz está offline. Verifique sua conexão com a internet.",
+    "record_error": "A gravação não funcionou. Tente novamente.",
+    "stop_recording": "Parar gravação",
+    "start_recording": "Iniciar gravação"
   },
   "pronunciation": {
     "title": "Prática de Pronúncia",
@@ -1538,6 +1697,9 @@
     "desktop_only": "Disponível apenas com o aplicativo para desktop."
   },
   "ui": {
+    "cancel": "Cancelar",
+    "hide_secret": "Ocultar valor",
+    "show_secret": "Mostrar valor",
     "info": {
       "show": "Mostrar informações"
     },
@@ -1831,6 +1993,27 @@
     }
   },
   "lesson": {
+    "mascot_label": "Seu companheiro de aprendizado",
+    "combo_chip": "x{n}",
+    "combo_aria": "Sequência de respostas: {n} seguidas",
+    "combo_best": "Melhor sequência: {n}",
+    "combo_bonus_aria": "Bónus de sequência: {n} XP",
+    "hearts": {
+      "aria": "Vidas: {n} de {max}",
+      "empty_heading": "Sem corações!",
+      "empty_body": "Tudo bem: nada se perde, tudo o que foi resolvido fica guardado. Respire fundo e tente a lição de novo.",
+      "action_retry": "Tentar de novo",
+      "action_exit": "Sair da lição"
+    },
+    "countdown": {
+      "aria": "Anel de tempo: faltam {n}s"
+    },
+    "playful_hint_title": "Experimente o modo jogo",
+    "playful_hint_enable_sound": "Ativar com som",
+    "playful_hint_body": "As lições celebram cada resposta correta com elogios e confete. Você pode mudar isso a qualquer momento nas configurações.",
+    "playful_hint_activate": "Ativar",
+    "playful_hint_dismiss": "Não mostrar novamente",
+    "playful_hint_activated": "O modo jogo está ativado. Divirta-se!",
     "test_mode": {
       "title": "Modo de teste",
       "description": "As respostas não são avaliadas e nenhum progresso é salvo.",
@@ -1860,7 +2043,30 @@
       "endless": "Infinito"
     },
     "options": {
-      "title": "Opções"
+      "title": "Opções",
+      "edit_in_editor": "Editar esta lição no editor"
+    },
+    "mentor": {
+      "note_button": "Nota de mentor",
+      "note_edit": "Editar nota de mentor",
+      "category_label": "Categoria",
+      "category": {
+        "typo": "Erro de digitação",
+        "unclear": "Formulação pouco clara",
+        "too_easy": "Fácil demais",
+        "too_hard": "Difícil demais",
+        "wrong_answer": "Resposta avaliada incorretamente",
+        "other": "Outro"
+      },
+      "placeholder": "O que deve ser melhorado neste passo?",
+      "save": "Salvar nota",
+      "remove": "Remover nota",
+      "summary_title": "Notas de mentor ({n})",
+      "summary_hint": "Suas anotações desta sessão. Abra a lição no editor para resolvê-las.",
+      "edit_panel_title": "Notas de mentor desta lição ({n})",
+      "edit_panel_hint": "Suas anotações ao jogar esta lição. Remova uma nota quando estiver resolvida.",
+      "suggest_label": "Sugestão de IA",
+      "suggest_empty": "Nada utilizável retornou. Tente novamente ou ajuste o passo manualmente."
     },
     "exam": {
       "passed": "Aprovado",
@@ -1909,6 +2115,10 @@
     "contributed_by": "Contribuído por {name}",
     "page_title": "Lição",
     "set_label": "Conjunto",
+    "position": "Lição {current} de {total}",
+    "nav_previous": "Lição anterior",
+    "nav_next": "Próxima lição",
+    "nav_set_overview": "Todas as lições deste conjunto",
     "loading": "A carregar a lição…",
     "not_cached_body": "Esta lição ainda não foi transferida. Abre o explorador de conteúdo e transfere primeiro o conjunto.",
     "progress": {
@@ -2050,10 +2260,29 @@
         "retry": "Tentar novamente",
         "empty": "Este exercício de múltipla escolha não tem opções."
       },
+      "al_audio_choice": {
+        "empty": "Este exercício de escolha de áudio não tem opções.",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase - ouça novamente.",
+        "submit": "Verificar resposta",
+        "retry": "Tentar novamente",
+        "option_aria": "Reproduzir opção"
+      },
+      "al_audio_tiles": {
+        "empty": "Este exercício de blocos de áudio não tem blocos."
+      },
+      "type_matching": "Correspondência",
+      "type_picture_choice": "Escolha de imagem",
+      "type_free_text": "Texto livre",
+      "type_word_tiles": "Blocos de palavras",
+      "type_cloze": "Preencher lacunas",
       "al_categorization": {
         "empty": "Este exercício de categorização não tem categorias.",
         "instructions": "Toca num item e depois na sua categoria.",
+        "my_answers": "Minhas respostas",
         "pool_label": "Itens",
+        "resolve": "Resolver",
+        "resolve_announce": "Solução exibida. {correct} de {total} itens estavam no lugar certo.",
         "result_correct": "Correto!",
         "result_wrong": "Quase. Revise os itens destacados.",
         "retry": "Tentar novamente",
@@ -2074,6 +2303,7 @@
         "empty": "Este exercício de correção não tem frase.",
         "input_label": "Correção",
         "instructions": "Toca na palavra errada e depois escreve a correção.",
+        "resolve_announce": "Solução exibida. A frase corrigida é: {sentence}",
         "result_correct": "Correto!",
         "result_wrong": "Quase. Vê a solução abaixo.",
         "retry": "Tentar novamente",
@@ -2114,6 +2344,14 @@
         "solution_label": "Solução",
         "submit": "Verificar respostas"
       },
+      "al_speak_and_record": {
+        "recording_evicted": "Sua gravação anterior foi removida para economizar espaço de armazenamento. Você pode gravar novamente quando quiser.",
+        "empty": "Este exercício de falar e gravar não tem frase.",
+        "show": "Mostrar texto",
+        "saving": "Salvando…",
+        "done": "Concluído",
+        "record_again": "Gravar novamente"
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",
@@ -2137,6 +2375,15 @@
         "receptive_hint": "Reconhecer o significado",
         "productive_hint": "Produzir a resposta"
       }
+    },
+    "flash_round": {
+      "title": "Ronda relâmpago: {set}",
+      "card_title": "Ronda relâmpago",
+      "card_description": "Uma ronda rápida com os cartões mais difíceis deste conjunto, com o anel de contagem decrescente.",
+      "start": "Iniciar ronda relâmpago",
+      "locked_tooltip": "Termina cada lição deste conjunto com pelo menos uma estrela para desbloquear.",
+      "perfect_tooltip": "Sem cartões de erro: este conjunto já é perfeito!",
+      "no_content": "Nenhum cartão de erro jogável encontrado para este conjunto."
     },
     "error_replay": {
       "title": "Repetir erros: {lesson}",
@@ -2202,6 +2449,7 @@
       "view_all_answers": "Ver todas as respostas ({n})",
       "export": {
         "copy": "Copiar resultado",
+        "correct_answer": "Correto",
         "download": "Salvar como arquivo",
         "download_json": "Exportar como JSON",
         "anki": "Exportar cartões (Anki)",
@@ -2237,7 +2485,10 @@
       "encourage_0": "A prática leva à perfeição!",
       "encourage_1": "Bom começo - continue!",
       "encourage_2": "Quase perfeito!",
-      "encourage_3": "Pontuação perfeita!"
+      "encourage_3": "Pontuação perfeita!",
+      "ticket_earned_one": "Recompensa desbloqueada: um bilhete de jogo!",
+      "ticket_earned_many": "Recompensa desbloqueada: {n} bilhetes de jogo!",
+      "ticket_play_now": "Jogar agora"
     },
     "error": {
       "load_failed": "Não foi possível carregar a lição.",
@@ -2322,7 +2573,12 @@
       "go_discover": "Descobrir conteúdo",
       "start": "Começar a aprender",
       "download_start": "Baixar e começar",
-      "lessons": "{n} lições"
+      "lessons": "{n} lições",
+      "lesson_list": "Lições",
+      "bonus_badge": "Bónus",
+      "bonus_locked_tooltip": "Termina cada lição normal deste conjunto com pelo menos uma estrela para desbloquear esta lição bónus.",
+      "progress_done": "{done} de {total} lições concluídas",
+      "current_lesson": "Continuar aqui"
     },
     "repo_export": {
       "button": "Partilhar como repositório",
@@ -2604,6 +2860,9 @@
       "mc_prompt": "Escolha a tradução correta de: {word}"
     },
     "page_title": "Meus conteúdos",
+    "updates_badge": "{n} atualizações",
+    "updates_badge_tooltip": "Atualizações de conteúdo disponíveis",
+    "updates_badge_action": "ver conteúdo",
     "intro": "Conjuntos de lições pré-construídos que podes usar sem chave API. Os downloads são armazenados localmente e funcionam offline após a primeira transferência.",
     "sources": "Fontes",
     "lessons": "lições",
@@ -3192,7 +3451,8 @@
         "reading-comprehension": "Compreensão de leitura",
         "graded-quiz": "Questionário avaliado",
         "dictation": "Ditado",
-        "image-description": "Descrição de imagem"
+        "image-description": "Descrição de imagem",
+        "speak-and-record": "Falar e gravar"
       },
       "edit": {
         "prompt_label": "Instrução / enunciado",
@@ -3220,6 +3480,7 @@
         "dict_accept_remove": "Remover transcrição",
         "dict_accept_placeholder": "O que o aluno deve digitar",
         "err_image_description": "Adicione uma imagem e pelo menos uma resposta aceita.",
+        "err_speak_and_record": "Adicione uma frase para falar (e, opcionalmente, um áudio de referência).",
         "imgdesc_image_label": "Imagem a descrever",
         "imgdesc_image_preview_alt": "Imagem a descrever",
         "imgdesc_image_budget_hint": "A imagem é compactada e incorporada (máx. ~150 KB, 512 px) para que o exercício funcione offline e seja incluído no backup. Links remotos não são permitidos.",
@@ -3227,6 +3488,8 @@
         "imgdesc_accept_add": "Adicionar",
         "imgdesc_accept_remove": "Remover resposta",
         "imgdesc_accept_placeholder": "O que o aluno deve digitar",
+        "sar_sentence_label": "Frase para falar",
+        "sar_sentence_placeholder": "A frase que o aluno ouve e repete",
         "q_list_label": "Perguntas",
         "q_prompt_label": "Pergunta",
         "q_prompt_placeholder": "Pergunta",
@@ -3421,6 +3684,13 @@
       "receptive": "Apenas recetivo",
       "productive": "Apenas produtivo"
     },
+    "status": {
+      "not_started": "Não iniciado",
+      "in_progress": "Em andamento",
+      "paused": "Pausado",
+      "completed": "Concluído",
+      "mastered": "Dominado"
+    },
     "stats": {
       "title": "Estatísticas",
       "lessons": "Lições",
@@ -3481,6 +3751,10 @@
     }
   },
   "share": {
+    "share_image": "Compartilhar só a imagem",
+    "share_image_hint": "Compartilha o cartão de resultado como imagem - para redes como o Facebook, que em links mostram apenas a imagem do aplicativo.",
+    "image_saved": "Imagem salva",
+    "image_failed": "Não foi possível criar a imagem.",
     "menu": {
       "heading": "Compartilhar",
       "facebook": "Compartilhar no Facebook",
@@ -3491,6 +3765,7 @@
     },
     "app": {
       "heading": "Compartilhar o app",
+      "download": "Baixar",
       "qr_intro": "Compartilhe o app por código QR para que outros possam abri-lo.",
       "show_qr": "Mostrar código QR",
       "download_qr": "Baixar código QR",
@@ -3861,6 +4136,7 @@
     },
     "share": {
       "copied": "Link copiado.",
+      "tab_link": "Link",
       "copy": "Copiar",
       "copy_failed": "Não foi possível copiar.",
       "hint": "Partilha este link para que outros possam adicionar este repositório PÚBLICO. Para um repositório privado, envia o URL e um token apenas de leitura separadamente.",
@@ -3906,6 +4182,12 @@
     "search_placeholder": "Espanhol, IA, psicologia…",
     "search_aria": "Pesquisar conteúdo disponível",
     "search_clear": "Limpar pesquisa",
+    "badge": {
+      "new": "Novo"
+    },
+    "new": {
+      "count": "{n} novos"
+    },
     "bar": {
       "search": "Pesquisar",
       "filter": "Filtrar"
@@ -4189,5 +4471,21 @@
       },
       "aria": "Dificuldade: {tier} ({level} de 5)"
     }
+  },
+  "set_summary": {
+    "title": "Avaliação: {set}",
+    "subtitle": "Todos os erros deste conjunto num relance",
+    "open": "Ver avaliação",
+    "total_errors": "Erros no total",
+    "mastered_share": "Dominado",
+    "elements_open": "Ainda em aberto",
+    "time_spent": "Tempo de estudo",
+    "by_lesson": "Erros por lição",
+    "by_type": "Erros por tipo de exercício",
+    "weak_areas": "Maiores pontos fracos",
+    "no_errors": "Nenhum erro registrado - excelente!",
+    "lesson_errors": "{count} erros",
+    "practice_errors": "Treinar erros",
+    "back_to_set": "Voltar ao conjunto"
   }
 }

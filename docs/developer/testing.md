@@ -42,6 +42,58 @@ once with per-channel diagnostics and the dexie-smoke project is skipped
 timeouts. Reproduce that failure state on demand with
 `CONTENT_PROBE_SIMULATE_UNOBTAINABLE=1`.
 
+### Programmatic backup round-trip proof, content-verified (#2818/#2824/#2828)
+
+BACKUP-AKZEPTANZTEST (`quality-checks.md`) requires a REAL manual
+Export/Import round-trip in `make dev` before any backup-touching PR
+merges - unit tests alone missed five consecutive "fixed" backup releases
+(#49, #57, #64, #115, #117). That manual pass is still the gate for
+device-specific behaviour (storage eviction, standalone mode); it is not
+replaced by anything below.
+
+What complements it, per the "Accepted alternative evidence" carve-out
+`quality-checks.md` added in #2828: a Playwright spec that drives the real
+app in a real browser, captures the real downloaded file, and inspects its
+real bytes - stronger than a `fake-indexeddb` unit test because it exercises
+the actual export/download/re-import UI path, and reproducible/CI-able
+unlike the manual pass. Accepted as evidence when the manual pass has
+already run once for the data shape (this becomes the regression pin), or
+when the project owner explicitly defers the manual pass for a given PR
+(their call, stated in the PR/issue) - see the rule for the exact two cases.
+
+Worked example: `e2e/dexie/backup-speech-recording-roundtrip.spec.ts`
+(written for the #2824 fix - `speech_recordings` silently missing from the
+Dexie `.alb` export). Pattern:
+
+1. **Seed real data via raw IndexedDB**, not a mock - open the app's own
+   live Dexie database (`indexedDB.open("adaptive-learner")` from
+   `page.evaluate`) and `put()` a row shaped exactly like the app's own
+   Dexie row type. Use this when the UI path to create the data needs
+   hardware Playwright can't provide (here: a microphone) - only the
+   capture step is bypassed, not the storage layer.
+2. **Drive the real export button**, capture the real download
+   (`page.waitForEvent("download")`), read the real file from disk
+   (`download.path()` + `readFileSync`).
+3. **Inspect the real bytes.** For a `.alb` (ZIP): `unzipSync` +
+   `strFromU8` (`fflate`, already a project dependency - added to
+   `e2e/package.json` as a devDependency rather than mocking the format).
+   Assert a real size lower bound tied to the seeded payload (not just
+   `> 0`) and the exact byte content of the seeded field inside
+   `data.json` - not a truncated preview, not a length check.
+4. **Wipe the store**, so the next step is provably doing the work.
+5. **Drive the real import**: `fileInput.setInputFiles({name, mimeType,
+   buffer})` with the exact bytes from step 2, confirm via the real
+   restore-summary UI, then read the row back via a second raw IndexedDB
+   read and assert it matches byte-for-byte.
+
+Verify the spec itself the same way any regression test is verified: break
+the fix under test (temporarily strip the relevant `BACKUP_TABLES` entry,
+rebuild `VITE_STORAGE_MODE=dexie`, re-run - confirm RED at the expected
+assertion), then restore and confirm GREEN. `git checkout -- <file>` after
+a hand-edit is safe here specifically because the file was clean
+(committed) before the edit - never do this on a file with real
+uncommitted changes.
+
 ## Visual regression vs per-feature screenshots
 
 Two complementary screenshot surfaces, both run against the **dexie preview
@@ -210,3 +262,23 @@ console overlay is just there, no query flag to remember. In plain
 desktop dev. The shipped build (production image, public GH-Pages)
 contains no eruda chunk at all — a debug console in the deployed
 artifact is an attack surface.
+
+**Tap/viewport probe (the ghost-bug recorder, #1569/#2340/#2782):** the
+`ViewportDiagnostic` overlay ships in EVERY build (it is query/setting
+gated, not build-gated). Three equivalent ways to enable it, all sharing
+one flag:
+
+- Settings > General > Diagnostics > "Tap & viewport probe" toggle
+  (takes effect live, no reload);
+- `?vvdiag=1` on any URL (persists; `?vvdiag=0` clears);
+- the `adaptive-learner.vv_diag` localStorage flag.
+
+While enabled, every tap (element, `ΔY`, `@winY`, `@vvTop`) and every
+significant viewport transition (keyboard open/close, scale change, a
+phantom offset appearing) is appended to a persistent ring-buffer
+protocol (`lib/diagnostics/vv-log`, capped at 500 entries, survives
+reloads). Export it from the same Settings section ("Copy protocol") or
+from the overlay's Copy button (last 8 taps only). Fix candidates for
+the tap-offset stay togglable at runtime via `?vvfix=<id>`
+(`novhd` / `vpheight` / `nolock` / `hardreset`, `?vvfix=off` clears); the
+active candidate is recorded with every protocol entry.

@@ -373,6 +373,10 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 ### Übungstypen (visuell prüfen)
 - [ ] Matching: Paare GLEICHE Höhe (kein visueller Versatz)
 - [ ] Matching: "Aufloesen" Animation sieht gut aus (4 Effekte testen)
+- [ ] Matching: linke Spalte IMMER in Lektions-Reihenfolge (#2882), nur die
+      rechte Spalte ist gemischt; beim "Aufloesen" behält die linke Spalte
+      ihre Reihenfolge (kein Springen, #2872), rechts steht zeilenweise der
+      korrekte Partner, Nummern-Badges laufen 1..n
 - [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
 - [ ] Word Tiles: bei RICHTIGER Lösung bleibt der gebaute Satz sichtbar (#2494):
       einen Satz korrekt zusammensetzen und prüfen. Der zusammengesetzte Satz
@@ -473,6 +477,28 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 ### Lern-Modi (jeden einmal durchspielen)
 - [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
       hinter dem Panel, nicht mehr direkt sichtbar)
+- [ ] Options-Panel einer EIGENEN Lektion (erstellt, importiert oder
+      "Als Kopie bearbeiten"-Fork): Eintrag "Diese Lektion im Editor
+      bearbeiten" sichtbar; Klick landet im Editor mit genau diesem Set
+      und dieser Lektion vorgeladen (#2766)
+- [ ] Options-Panel einer HERUNTERGELADENEN Lektion und einer
+      Analyse-Lektion: KEIN Editor-Eintrag (#2766)
+- [ ] Mentor-Notiz (eigene Lektion): unter jedem Schritt der Button
+      "Mentor-Notiz"; Kategorie + Text speichern, erneutes Öffnen zeigt
+      die Notiz vorausgefüllt, Entfernen löscht sie (#2768)
+- [ ] Mentor-Notizen überleben Reload und erneutes Betreten der Lektion
+      (LocalStorage-Store, in beiden Speicher-Modi identisch) (#2768)
+- [ ] Zusammenfassung einer eigenen Lektion mit Notizen: Block
+      "Mentor-Notizen (n)" mit Kategorie, Text, Entfernen je Zeile und
+      dem Editor-Link; ohne Notizen und bei fremden Lektionen erscheint
+      der Block nicht (#2768)
+- [ ] Heruntergeladene/Analyse-Lektion: nirgends Mentor-Notiz-UI (#2768)
+- [ ] Editor einer eigenen Lektion mit Mentor-Notizen: Panel
+      "Mentor-Notizen zu dieser Lektion (n)" über dem Wizard; Entfernen
+      einer Notiz aktualisiert Panel, Runner und Zusammenfassung (#2769)
+- [ ] "KI-Vorschlag" je Notiz: mit hinterlegtem Schlüssel erscheint ein
+      kurzer Textvorschlag; ohne Schlüssel der BYOK-Hinweis; leere
+      Antwort zeigt die "nichts Brauchbares"-Meldung (#2769)
 - [ ] "Optionen"-Button steht in DERSELBEN Zeile wie die Fortschritts-
       anzeige ("Schritt n von m"), nicht darunter (Desktop: Balken links,
       Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,
@@ -508,6 +534,331 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Regression andere Typen: Freitext/Lueckentext bei "Fehler
       wiederholen" weiterhin nur die falschen Elemente
 
+### Spielmodus (#2844)
+- [ ] Settings -> Lernen: Sektion "Spielmodus" mit Schalter "Spielerische
+      Lektionen" vorhanden, Standard: aus
+- [ ] Lektionsstart (erster Schritt, Spielmodus aus, Hinweis nie
+      ausgeblendet): Banner "Spielmodus ausprobieren" mit "Einschalten"
+      und Schließen-Knopf sichtbar
+- [ ] "Einschalten" im Banner: Erfolgs-Toast, Banner verschwindet, der
+      Schalter in den Einstellungen steht danach auf an
+- [ ] Banner schließen ("Nicht mehr anzeigen"): Banner verschwindet und
+      erscheint auch bei der nächsten Lektion nicht wieder; Spielmodus
+      bleibt aus
+- [ ] Spielmodus an: Lob-Phrase bei JEDER richtigen Antwort (nicht nur
+      periodisch), Konfetti/Meilenstein-Overlays erlaubt, unabhängig von
+      der eingestellten Feedback-Intensität
+- [ ] Spielmodus an + reduzierte Bewegung im System: Feedback bleibt
+      dezent (reduced motion gewinnt)
+- [ ] Spielmodus aus: Verhalten wie bisher (Feedback-Intensität greift
+      unverändert)
+- [ ] Umschalten wirkt ohne Reload (Change-Event) und verhält sich in
+      beiden Speicher-Modi identisch (localStorage)
+
+#### Lernfunke-Maskottchen (#2849, nur bei aktivem Spielmodus)
+
+- [ ] Spielmodus an, Lektion öffnen: kleine Flammen-Figur neben der
+      Fortschrittsleiste sichtbar (Tooltip/Screenreader: "Dein
+      Lernbegleiter"); Spielmodus aus: keine Figur, Zeile wie bisher
+- [ ] Richtige Antwort: Figur jubelt kurz (Hüpfer, fröhliche Augen)
+      und kehrt zur Ruhepose zurück
+- [ ] Falsche Antwort: Figur muntert auf (Wackeln, überraschter Blick),
+      kein Lob-Text an der Figur (das Lob unter der Aufgabe bleibt wie
+      gehabt)
+- [ ] Meilenstein während der Lektion (Level-up, Streak, Badge): Figur
+      feiert (Sternaugen + Funkeln), Milestone-Overlay erscheint
+      weiterhin ungestört oben mittig
+- [ ] Lektionsabschluss: Figur wird größer, feiert und zeigt EINE
+      lokalisierte Lob-Phrase als Sprechblase; Blase verschwindet von
+      selbst
+- [ ] Reduzierte Bewegung im System: Posen wechseln weiterhin (Mimik),
+      aber ohne Hüpf-/Wackel-Animation
+- [ ] Prüfungsmodus + Spielmodus: keine Reaktionen pro Antwort (kein
+      Sofort-Feedback), Figur bleibt in Ruhepose bis zum Abschluss
+- [ ] Schmaler Viewport (Mobile): Figur verdrängt die Fortschritts-
+      leiste nicht; die Zeile bricht sauber um
+
+#### Maskottchen-Varianten (#2861, Farbwelten des Lernfunke)
+
+- [ ] Settings -> Lernen -> Spielmodus: unter dem Schalter die Zeile
+      "Maskottchen-Variante" mit fünf Mini-Figuren (Funke, Ozean, Wald,
+      Geist, Gold) samt Hinweistext
+- [ ] Frischer Account (Level 1, keine Abzeichen, 0 XP): nur Funke
+      wählbar; Ozean "Ab Level 3", Wald "Ab Level 7", Geist "Benötigt
+      das Abzeichen: Erste Sitzung", Gold mit "250 XP"-Knopf
+      (deaktiviert, solange die XP nicht reichen)
+- [ ] Mit Level 3+: Ozean anklickbar; Auswahl bleibt nach Reload
+      erhalten (Markierungsring an der gewählten Variante)
+- [ ] Bei geöffneter Lektion (Spielmodus an) die Variante wechseln:
+      die Flammen-Figur neben der Fortschrittsleiste färbt sofort um,
+      ohne Reload
+- [ ] Gold-Kauf mit ausreichend XP: erster Klick zeigt "Bestätigen",
+      zweiter Klick zieht 250 XP ab (XP-Anzeige oben aktualisiert
+      sich), Variante ist gewählt und dauerhaft freigeschaltet
+- [ ] Backup-Roundtrip: Export -> Wipe -> Import stellt gewählte und
+      gekaufte Varianten wieder her (beide Speicher-Modi)
+
+#### Spielmodus-Sounds (#2875)
+
+- [ ] Settings -> Lernen -> Spielmodus: unter dem Modus-Schalter der
+      Schalter "Spielmodus-Sounds" (Standard aus) mit Hinweistext
+- [ ] Spielmodus einschalten, ohne die Sound-Frage je beantwortet zu
+      haben: Angebot "Mit Sound spielen?" mit "Ja, Sounds an" /
+      "Später"; "Ja" aktiviert die Sounds, "Später" nicht - beides
+      lässt das Angebot dauerhaft verschwinden
+- [ ] Lektionsstart-Banner (Spielmodus aus, nie ausgeblendet): neben
+      "Einschalten" der Knopf "Mit Sound einschalten" - aktiviert
+      Modus UND Sounds in einem Klick
+- [ ] Sounds an, globale Töne AUS: richtige Antwort klingt (Ton steigt
+      mit der Serie hörbar an), falsche Antwort dumpfer Ton,
+      Checkpoint-Jingle beim Überschreiten, Fanfare beim
+      Lektionsabschluss; Lautstärke folgt dem bestehenden Regler
+- [ ] Spielmodus-Sounds AUS und globale Töne AUS: alles still;
+      globale Töne AN verhalten sich wie bisher (keine
+      Spielmodus-Fanfare, kein Serien-Anstieg außerhalb des
+      Spielmodus)
+- [ ] Prüfungsmodus + Spielmodus + Sounds: kein Ton pro Antwort (kein
+      Sofort-Feedback); die Abschluss-Fanfare bleibt erlaubt
+
+#### Spannungssysteme: Herzen + Countdown-Ring (#2878, opt-in, Standard aus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: die Schalter "Herzen (Leben)"
+      und "Countdown-Ring" sind standardmäßig AUS; die Zahlenfelder
+      (Herzen pro Lektion, Sekunden pro Übung) sind erst nach dem
+      Einschalten des jeweiligen Schalters bedienbar und klemmen auf
+      1-5 bzw. 5-120
+- [ ] Herzen an + Spielmodus an: neben dem Serien-Chip erscheint die
+      Herz-Leiste (gefüllt); jede falsche Antwort leert ein Herz mit
+      kurzem Schütteln
+- [ ] Bei 0 Herzen: freundlicher Dialog "Keine Herzen mehr!" mit
+      "Nochmal versuchen" (startet die Lektion neu, Herzen voll) und
+      "Lektion verlassen" (zur Übersicht); nichts Gelöstes geht verloren
+- [ ] Korrektur-Runde in der Zusammenfassung: Fehler beheben kostet
+      KEINE Herzen (die Leiste ist dort ausgeblendet)
+- [ ] Countdown-Ring an: pro Übung läuft ein kleiner Ring (grün > gelb
+      > rot, Puls in den letzten 5 Sekunden); Ablauf reißt die Serie,
+      kostet ein Herz (falls an) und spielt den Fehl-Ton - die Übung
+      bleibt aber offen und normal lösbar, nichts wird automatisch
+      abgeschickt; nach dem Prüfen pausiert der Ring
+- [ ] Prüfungsmodus und Auf-Zeit-Modus: weder Herzen noch Ring
+      erscheinen (der Auf-Zeit-Modus behält seinen eigenen Zeitbalken)
+- [ ] Bewertung unverändert: Punktzahl, Sterne und Fortschritt sind
+      mit und ohne Spannungssysteme identisch
+
+#### Serien-Bonus-XP (#2893, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+      "Serien-Bonus-XP" ist standardmäßig AN; das Zahlenfeld
+      "Bonus-XP-Obergrenze pro Lektion" ist bedienbar, klemmt auf 5-20
+      (Standard 10) und wird beim Ausschalten des Schalters gesperrt
+- [ ] Spielmodus an, Lektion mit einer Serie von mindestens 3 richtigen
+      Antworten in Folge spielen: in der Zusammenfassung steht neben
+      "Beste Serie: N" ein grünes "+N XP"; die angezeigten Lektions-XP
+      enthalten den Bonus, und "Als erledigt markieren" schreibt exakt
+      denselben Wert gut (Dashboard-XP steigen um die angezeigte Summe)
+- [ ] Der Bonus zählt ab der DRITTEN Serienantwort (+1 pro weiterer
+      richtiger Antwort in Folge); eine falsche Antwort stoppt das
+      Wachstum, eine neue Serie ab 3 zählt weiter
+- [ ] Obergrenze: mit Deckel 5 und einer langen Serie zeigt die
+      Zusammenfassung höchstens "+5 XP"
+- [ ] Schalter aus ODER Spielmodus aus: kein "+N XP" in der
+      Zusammenfassung, die XP sind identisch zum normalen Modus
+- [ ] Prüfungsmodus: kein Serien-Bonus (der Prüfungs-Multiplikator
+      bleibt unverändert)
+
+#### Arcade-Minispiele (#2887, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Arcade" ist
+      standardmäßig AN; die Zahlenfelder "Snake-Rundenlänge" (30-120,
+      Standard 60) und "Memory-Paare" (4-12, Standard 8) klemmen und
+      sind bei ausgeschaltetem Schalter gesperrt
+- [ ] Spielmodus an: auf dem Dashboard erscheint die Arcade-Karte;
+      "Zur Arcade" öffnet die Spieleliste. Arcade-Schalter aus ODER
+      Spielmodus aus: die Karte verschwindet komplett; ein direkter
+      Aufruf von /arcade zeigt einen freundlichen Hinweis mit Link in
+      die Einstellungen
+- [ ] Lern-Memory (frei): Set-Auswahl zeigt nur heruntergeladene
+      Sets und ist mit dem zuletzt gelernten Set vorbelegt (#2899),
+      nicht mit dem ersten der Liste; ohne Lernfortschritt bleibt das
+      erste Set vorbelegt; das Brett hat zwei Karten pro Paar (Begriff und
+      Übersetzung aus echten Lektionskarten); ein Paar bleibt offen
+      liegen, ein Fehlversuch zählt hoch und klappt beim nächsten
+      Aufdecken zu; alle Paare gefunden zeigt die Gewinn-Meldung mit
+      Versuchszahl
+- [ ] Snake (gesperrt): auf der Spielkarte steht "Für 200 XP
+      freischalten"; mit zu wenig XP ist der Knopf gesperrt (Tooltip);
+      der Kauf braucht ZWEI Klicks (Bestätigungstext), zieht 200 XP ab
+      (Kopfzeilen-XP sinken) und Snake wird dauerhaft spielbar (bleibt
+      nach Reload freigeschaltet und reist im Backup mit)
+- [ ] Snake spielen: Steuerung mit Pfeiltasten/WASD UND Wischgesten;
+      Pause hält Uhr und Schlange an; Futter macht die Schlange
+      länger (+1 Punkt); Wand oder eigener Körper beendet die Runde;
+      Ablauf der Rundenzeit zeigt das Ergebnis (gewonnen ab 5
+      Punkten); der lokale Bestwert erscheint als reine Anzeige
+- [ ] Spiele vergeben KEINE XP (Kopfzeilen-XP unverändert nach einer
+      gewonnenen Runde)
+- [ ] Reduzierte Bewegung im System: keine Flip-/Blinkeffekte in
+      beiden Spielen
+
+#### Arcade: TicTacToe (#2906, 100-XP-Freischaltung)
+
+- [ ] Arcade-Spieleliste: Tic-Tac-Toe erscheint zwischen Lern-Memory
+      und Snake, gesperrt mit "Für 100 XP freischalten"
+      (zweistufige Bestätigung wie bei Snake); ein Ticket spielt eine
+      Runde ohne Kauf
+- [ ] Runde: Klick setzt X, kurze "Die App überlegt"-Pause, dann
+      setzt die App O; belegte Felder und die Denk-Pause sind
+      gesperrt
+- [ ] Die KI ist schlagbar: sie blockt nicht jede Gewinnchance -
+      über mehrere Runden lässt sich gewinnen (drei in einer Reihe
+      hervorgehoben, freundliche Gewinn-Meldung)
+- [ ] Verlieren und Unentschieden enden freundlich mit
+      "Neu starten"; keine XP-Vergabe durch das Spiel
+
+#### Arcade: Simon (#2907, 300-XP-Freischaltung)
+
+- [ ] Arcade-Spieleliste: Simon erscheint nach Snake, gesperrt mit
+      "Für 300 XP freischalten" (zweistufige Bestätigung); ein
+      Ticket spielt eine Runde ohne Kauf
+- [ ] Runde: die App zeigt die Farbfolge Feld für Feld (Status
+      "Schau dir die Folge an"), danach sind die vier Felder aktiv
+      ("Du bist dran"); während der Wiedergabe sind sie gesperrt
+- [ ] Richtige Eingabe verlängert die Folge um ein Feld und spielt
+      sie erneut ab; das Runden-Label zählt "Folge {n} von {m}" hoch
+- [ ] Falsche Eingabe endet freundlich mit der erreichten Länge und
+      "Neu starten"; das Erreichen der Ziellänge gewinnt die Runde;
+      keine XP-Vergabe durch das Spiel
+- [ ] Töne: mit aktiviertem Töne- oder Spielmodus-Sounds-Schalter
+      klingt jedes Feld mit eigenem Ton (Wiedergabe und Eingabe);
+      ohne Opt-in bleibt das Spiel stumm und voll spielbar
+- [ ] Einstellungen > Lernen > Spielmodus: das Zahlenfeld
+      "Simon-Ziellänge" klemmt auf 5-15 (Standard 8) und ist bei
+      ausgeschalteter Arcade gesperrt
+- [ ] Reduzierte Bewegung im System: Felder wechseln nur den
+      Zustand (Ring/Helligkeit), kein Aufblink-/Skalier-Effekt
+
+#### Blitzrunden (#2888, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Sonderrunden"
+      ist standardmäßig AN; das Zahlenfeld "Blitzrunden-Karten" klemmt
+      auf 5-20 (Standard 10) und ist bei ausgeschaltetem Schalter
+      gesperrt
+- [ ] Set-Übersicht (/content/set/...) bei aktivem Spielmodus: die
+      Blitzrunden-Karte erscheint; solange nicht jede Lektion des Sets
+      mit mindestens einem Stern abgeschlossen ist, ist der
+      Start-Knopf gesperrt mit Tooltip (Freischalt-Bedingung)
+- [ ] Set komplett (jede Lektion mit mindestens einem Stern) und
+      Fehlerkarten vorhanden: der Start öffnet die Blitzrunde - Titel
+      "Blitzrunde: {Set}", pro Übung läuft der Countdown-Ring (Ablauf
+      reißt die Serie, nichts wird automatisch abgeschickt), die
+      Übungen stammen aus den fehlerträchtigsten Karten des Sets
+- [ ] Der Zurück-Knopf der Blitzrunde führt zur Set-Übersicht zurück
+      (nicht zu einer Lektion)
+- [ ] Perfektes Set (keine Fehlerkarten): der Start-Knopf bleibt
+      gesperrt mit dem Perfekt-Tooltip
+- [ ] Sonderrunden-Schalter aus ODER Spielmodus aus: die
+      Blitzrunden-Karte verschwindet komplett
+- [ ] Gewöhnliches "Fehler wiederholen" aus der Zusammenfassung:
+      unverändert, KEIN Countdown-Ring
+- [ ] Scoring/SRS: die Blitzrunde schreibt keine Lektions-Fortschritte;
+      korrigierte Fehlerkarten verbessern wie beim Fehler-Wiederholen
+      nur den SRS-Stand
+
+#### Spiel-Tickets (#2889, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Spiel-Tickets"
+      ist standardmäßig AN; das Zahlenfeld "Maximale Tickets" klemmt
+      auf 1-10 (Standard 5) und ist bei ausgeschaltetem Schalter
+      gesperrt
+- [ ] Lektion mit voller Punktzahl abschließen: die Zusammenfassung
+      zeigt das Ticket-Banner ("Belohnung freigeschaltet ...") mit dem
+      Knopf "Jetzt spielen", der zur Arcade führt
+- [ ] Herzen aktiv (#2878) und Durchlauf ohne Herzverlust beendet: ein
+      weiteres Ticket (volle Punktzahl + alle Herzen = 2 Tickets)
+- [ ] Streak-Meilensteine (3/7/14/30 Tage): beim Erreichen gibt es je
+      ein Bonus-Ticket, jeder Meilenstein nur einmal
+- [ ] Obergrenze: mehr Tickets als das Maximum lassen sich nicht
+      ansparen; ein durch die Obergrenze blockierter Meilenstein wird
+      nachgereicht, sobald wieder Platz ist
+- [ ] Wiederbesuch der Zusammenfassung einer bereits abgeschlossenen
+      Lektion: KEIN neues Ticket (kein Farmen); "Nochmal üben" mit
+      neuem perfekten Durchlauf verdient regulär
+- [ ] Korrektur-Runde und Fehler-Wiederholen vergeben keine Tickets;
+      eine nachträglich korrigierte Lektion wird dadurch nicht
+      "voll bepunktet"
+- [ ] Prüfungsmodus: volle Punktzahl verdient das Ticket nach derselben
+      Regel
+- [ ] Arcade-Seite und Dashboard-Arcade-Karte zeigen den Ticket-Stand
+      ("Tickets: N"); die Anzeige verschwindet bei ausgeschaltetem
+      Ticket-Schalter
+- [ ] Gesperrtes Spiel (Snake ohne XP-Kauf) mit Ticket-Guthaben: der
+      Knopf "Eine Runde mit Ticket spielen" startet eine Runde und
+      zieht genau ein Ticket ab; ohne Guthaben fehlt der Knopf
+- [ ] Ticket-Schalter aus: die Arcade bietet nur den XP-Kauf bzw.
+      bestehende Freischaltungen an
+- [ ] Backup-Export > Wipe > Import: der Ticket-Stand übersteht die
+      Runde (localStorage-Snapshot)
+
+#### Bonus-Lektionen (#2890, Standard an, nur im Spielmodus)
+
+- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+      "Bonus-Lektionen" ist standardmäßig AN
+- [ ] Set mit einer bonus--Lektionsdatei (Dateiname beginnt mit
+      "bonus-"): auf der Set-Seite erscheint die Bonus-Lektion am
+      ENDE der Liste mit "Bonus"-Abzeichen, auch wenn die Datei
+      alphabetisch zuerst käme
+- [ ] Spielmodus an, Set unfertig: die Bonus-Zeile ist gesperrt
+      (Schloss, kein Link); der Tooltip nennt die Bedingung (jede
+      reguläre Lektion mit mindestens einem Stern)
+- [ ] Jede reguläre Lektion mit mindestens einem Stern abgeschlossen:
+      die Bonus-Zeile wird ein normaler Link und öffnet die Lektion
+- [ ] Bonus-Schalter aus ODER Spielmodus aus: die Bonus-Lektion ist
+      ein normaler Link (nur das Abzeichen bleibt) - kein Inhalt wird
+      vorenthalten
+- [ ] "Lernen starten" auf der Set-Seite öffnet die erste REGULÄRE
+      Lektion, nie die Bonus-Datei
+- [ ] Blitzrunde (#2888): eine noch gesperrte Bonus-Lektion blockiert
+      die Blitzrunden-Freischaltung NICHT (nur reguläre Lektionen
+      zählen)
+
+#### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
+
+- [ ] Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln
+      (ab Tablet-Breite zweispaltig); die gewählte Kachel ploppt kurz
+      und bekommt einen Akzentrahmen; nach dem Prüfen hüpft die richtig
+      gewählte Kachel, eine falsch gewählte schüttelt sich
+- [ ] Lückentext mit Wortauswahl: das angetippte Wort "springt" mit
+      einem kleinen Hüpfer in die Lücke im Satz; ein Wechsel der Wahl
+      wiederholt den Hüpfer mit dem neuen Wort
+- [ ] Zuordnungsübung: ein frisch gebildetes Paar "schnappt" mit einem
+      Pop auf beiden Kacheln zusammen; nach dem Prüfen hüpfen die
+      richtigen Paare kurz; das Antippen eines Paars löst es weiterhin
+- [ ] Verhalten unverändert: Auswahl, Prüfen, Punktzahl und Auflösung
+      sind in allen drei Übungstypen identisch zum normalen Modus
+- [ ] Spielmodus aus: klassische Listen/Chips/Kacheln ohne die
+      Spiel-Optik; reduzierte Bewegung im System: die Formen bleiben,
+      alle Hüpf-/Pop-Animationen entfallen
+
+#### Juice-Paket (#2874, nur bei aktivem Spielmodus)
+
+- [ ] Lektion spielen, zwei richtige Antworten in Folge: neben der
+      Fortschrittsleiste erscheint der Serien-Chip (Flamme + "x2") und
+      hüpft bei jeder weiteren richtigen Antwort ("x3", "x4", ...)
+- [ ] Falsche Antwort: der Chip verschwindet (Serie gerissen); die
+      nächsten zwei richtigen bauen ihn neu auf
+- [ ] Richtige Antwort: ein "+1" steigt vom Häkchen auf und verblasst;
+      das Häkchen hüpft kurz; bei falscher Antwort schüttelt das X
+- [ ] Lektion mit mindestens 3 Schritten: zwei Checkpoint-Punkte bei
+      1/3 und 2/3 auf der Fortschrittsleiste; beim Überschreiten
+      leuchtet der Punkt in Akzentfarbe auf (kleiner Pop)
+- [ ] Zusammenfassung: statt des Live-Chips steht "Beste Serie: N"
+      (ab Serie 2; ohne echte Serie kein Chip)
+- [ ] Prüfungsmodus + Spielmodus: kein Chip, kein "+1", keine
+      Checkpoint-Feier pro Antwort (kein Sofort-Feedback)
+- [ ] Spielmodus aus: nichts davon erscheint; reduzierte Bewegung im
+      System: Chip/Punkte erscheinen ohne Animation, das "+1" bleibt
+      unsichtbar (reine Bewegungs-Dekoration)
+
 ### Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der
       Korrektur-Runde am Ende die Fehler beheben. Der Punktzahl-Balken zeigt
@@ -528,6 +879,19 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] iOS PWA/Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm
       hinzugefügten Symbol (der Befund kam von dort). Balken, Sterne, Botschaft
       und XP zeigen den Endstand nach der Korrektur.
+
+### "Warum du diese verpasst hast" zeigt die Frage (#2757)
+- [ ] Eine Lektion mit mindestens einem falsch beantworteten Element spielen
+      (Erklärungen in Einstellungen > Lernen aktiv). Im Bereich "Warum du
+      diese verpasst hast" steht über jedem Antwort-Vergleich die Zeile
+      "Frage:" mit dem, was gefragt war (Aufgabentext, bei Lückentext der
+      Satz mit "___", bei Zuordnen der abgefragte Begriff) - nicht nur
+      "Deine Antwort" / "Richtig".
+- [ ] Zuordnen-Übung mit einem falschen Paar: Als Frage erscheint der
+      abgefragte Begriff (linke Seite des Paars), niemals eine interne ID.
+- [ ] Kann die Frage nicht ermittelt werden (z. B. Inhalt inzwischen
+      aktualisiert), erscheint der Eintrag wie bisher ohne Frage-Zeile -
+      kein Fehler, keine leere Zeile.
 
 ### Ein Fehler-Bereich, zugeklappt (#2496)
 - [ ] Eine Lektion mit mindestens einem Fehler spielen. Auf der
@@ -558,8 +922,28 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
-- [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar
+- [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar; nach
+      "Antwort prüfen" bleiben die Verdikt-Chips samt roter Korrektur-Kategorie
+      INNERHALB ihrer Spalte (kein Überlaufen in die Nachbarspalte, #2771) -
+      die Korrektur steht auf einer eigenen Zeile unter dem Element
+- [ ] ext:al-categorization Auflösen-Umschalter (#2772): nach einer nicht
+      komplett richtigen Prüfung erscheint neben der Ergebniszeile der
+      Umschalter "Meine Antworten" / "Auflösen" (wie bei den Paaren).
+      "Auflösen" zeigt jede Kategorie mit ihren richtigen Elementen; selbst
+      richtig zugeordnete Elemente sind grün getönt mit Häkchen. "Meine
+      Antworten" kehrt zur bewerteten Ansicht zurück, "Nochmal versuchen"
+      setzt auf die interaktive Ansicht zurück. Bei komplett richtiger
+      Antwort erscheint KEIN Umschalter (nur "Weiter")
 - [ ] ext:al-error-correction: Fehler finden + korrigieren
+- [ ] ext:al-error-correction Auflösung (#2803): nach einer falschen
+      Prüfung erscheint neben der Ergebniszeile der Umschalter "Meine
+      Antwort" / "Auflösung" (wie bei Paaren/Kategorien). "Auflösung"
+      zeigt den Satz als Wortkacheln: das falsche Wort rot
+      durchgestrichen mit X, direkt daneben die richtige Korrektur grün
+      mit Häkchen - man sieht, WO im Satz der Fehler lag. "Meine
+      Antwort" kehrt zur bewerteten Ansicht (inkl. Lösungszeile)
+      zurück; "Nochmal versuchen" setzt auf die interaktive Ansicht
+      zurück. Bei richtiger Antwort erscheint KEIN Umschalter
 - [ ] ext:al-reading-comprehension: Text + Fragen
 - [ ] ext:al-reading-comprehension Auflösung (#2633): nach "Antworten prüfen"
       wird die richtige Multiple-Choice-Option GRÜN hervorgehoben - mit Häkchen
@@ -586,6 +970,32 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Antwort). a11y-Hinweis: dieser Typ ist bewusst visuell voraussetzungs-
       behaftet (die Antwort IST die Bildbeschreibung) - ein Screenreader hört
       ein neutrales Bild-Label, nicht die Lösung.
+- [ ] ext:al-speak-and-record (engine#68 Idee 3): der Satz wird per TTS
+      vorgelesen (ohne autorisiertes `audio` fällt es auf die
+      Sprachsynthese zurück, mit `audio` spielt der authentische Clip ab);
+      "Text anzeigen" deckt den Satz erst nach Klick auf; "Aufnahme"
+      fordert das Mikrofon an - ECHTE Aufnahme auf einem Gerät mit
+      Mikrofon testen, die automatisierte Suite kann MediaRecorder nur
+      mocken. Nach der Aufnahme: Wiedergabe-Player erscheint, "Fertig" wird
+      klickbar. Erneut aufnehmen überschreibt den vorherigen Clip (keine
+      Historie). Schritt erneut besuchen -> der zuletzt gespeicherte Clip
+      spielt automatisch nach; eine Lektion mit
+      `requires_extensions: ["ext:al-speak-and-record@1"]` lädt (nicht vom
+      Guard abgelehnt). Bewusst UNGEWERTET: kein "richtig/falsch", keine
+      SRS-Zeile nach Abschluss (im Gegensatz zu jedem anderen Aufgabentyp).
+      Mikrofon-Zugriff verweigert -> freundliche Fehlermeldung, kein
+      Absturz. Kein Mikrofon vorhanden -> Aufnahme-Button entsprechend
+      deaktiviert/verborgen, kein Absturz.
+- [ ] **Speicherdeckel + Verdrängung (#2841):** Aufnahmen werden ab einem
+      Gesamtvolumen automatisch verdrängt (älteste zuerst) - im normalen
+      Gebrauch praktisch nicht erreichbar (~170 max-lange Aufnahmen nötig),
+      daher hier nur der Regressionscheck: normaler Aufnahme-Ablauf
+      (aufnehmen -> Wiedergabe -> erneut aufnehmen) funktioniert weiterhin
+      unverändert. Die Verdrängungslogik selbst ist durch automatisierte
+      Tests abgedeckt (`speech-recordings-dexie.test.ts`), nicht manuell
+      geprüft. Falls doch einmal die Meldung "Deine vorherige Aufnahme
+      wurde entfernt…" erscheint: kein Absturz, "Erneut aufnehmen"
+      funktioniert normal und die Meldung verschwindet danach.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
 
@@ -739,7 +1149,17 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 
 ### Create-Lesson-Wizard (`/create-lesson`, v2.3.0)
 
-- [ ] **Buchtext-Pfad (#1745):** Schritt 1 → Karte "Wissenslektion aus
+- [ ] **Schritt-1-Reihenfolge + Vorlagen-Aufklapper (#2755):** In Schritt 1
+      steht das Pflichtfeld **Titel als erstes** (direkt unter der
+      Überschrift, Fokus liegt darin). Die Vorlagen-Auswahl ist dahinter
+      als Aufklapper "Aus einer Vorlage starten" **standardmäßig
+      zugeklappt**; die zugeklappte Zeile zeigt die aktuelle Wahl
+      ("· Leere Lektion" ist vorausgewählt). Aufklappen zeigt die vier
+      Vorlagen-Karten plus "Wissenslektion aus Text" und "Erweiterte
+      Aufgabentypen"; eine Karte wählen markiert sie gedrückt und die
+      zugeklappte Zeile zeigt danach die neue Wahl.
+- [ ] **Buchtext-Pfad (#1745):** Schritt 1 → Vorlagen-Aufklapper öffnen →
+      Karte "Wissenslektion aus
       Text" (unter der Template-Auswahl) startet einen 3-Schritt-Flow
       (Metadaten → Buchtext → Review); Text einfügen + Generieren → KI
       formuliert Theorie in eigenen Worten + erzeugt Übungen; OHNE
@@ -974,20 +1394,21 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       praesentieren
 - [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare
       Titel (auch offline) + einen gedrueckten/ausgewählten Zustand
-- [ ] **Erweiterte Übungstypen / Extension-Wizard (#1852, #1887):** Schritt 1
+- [ ] **Erweiterte Übungstypen / Extension-Wizard (#1852, #1887, #2817):** Schritt 1
       → Karte "Erweiterte Übungstypen" startet einen eigenen 3-Schritt-Flow
       (Autoren → Review → Speichern) mit einem nicht-blockierenden Hinweis,
       dass diese Typen fortgeschritten sind. Schritt 2: "Erweiterungsuebung
-      hinzufügen" bietet sechs Typen — **Kategorisierung**, **Fehlerkorrektur**,
+      hinzufügen" bietet sieben Typen — **Kategorisierung**, **Fehlerkorrektur**,
       **Leseverständnis**, **Benotetes Quiz**, **Diktat**,
-      **Bildbeschreibung**. Je Typ öffnet der
+      **Bildbeschreibung**, **Sprechen & Aufnehmen**. Je Typ öffnet der
       Inline-Editor mit den passenden Feldern; Speichern ist deaktiviert bis der
       shipped Validator erfuellt ist (Kategorisierung: ≥2 benannte Buckets mit
       Items; Fehlerkorrektur: ≥2 Wörter + markierter Fehler + Korrektur;
       Leseverständnis: Text + ≥1 vollständige Frage; Benotetes Quiz: ≥1 Frage
       mit positiven Punkten; Diktat: nicht-leerer Audio-Pfad + ≥1 akzeptierte
       Transkription; Bildbeschreibung: nicht-leeres Bild + ≥1 akzeptierte
-      Antwort). Leseverständnis + Benotetes Quiz: pro Frage Umschalten
+      Antwort; Sprechen & Aufnehmen: nicht-leerer Satz, Audio-Referenz optional
+      — ungewertet, kein "Übernehmen in Freitext"-Pfad). Leseverständnis + Benotetes Quiz: pro Frage Umschalten
       Multiple-Choice ⇄ Freitext, MC-Optionen mit Richtig-Haken, Benotetes Quiz
       zusätzlich Punkte + Teilpunkte + Bestehensgrenze. Diktat (#1887): ein
       getippter `assets/audio/...`-Pfad (kein Upload in v1) + die Liste der
@@ -1011,8 +1432,9 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Schritt 3 "Übung generieren" → "Übung hinzufügen" öffnet "Übungstyp wählen".
       Unter den Standardtypen (sechs Core-Typen + Diktat) erscheint jetzt eine
       zweite, beschriftete Gruppe **"Erweiterungstypen"** mit Kategorisierung,
-      Fehlerkorrektur, Leseverständnis, Benotetes Quiz und Bildbeschreibung
-      (Diktat erscheint **nicht** doppelt). Klick auf einen dieser Knöpfe → eine
+      Fehlerkorrektur, Leseverständnis, Benotetes Quiz, Bildbeschreibung und
+      **Sprechen & Aufnehmen** (#2817; Diktat erscheint **nicht** doppelt).
+      Klick auf einen dieser Knöpfe → eine
       Erweiterungsübung wird angehängt und öffnet direkt im Extension-Editor.
       Bildbeschreibung ist hier **wählbar** (das Bild wird im Editor ergänzt).
       "Lokal speichern" → die gespeicherte Lektion trägt
@@ -1055,6 +1477,37 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       öffnen: Bild + akzeptierte Antworten sind intakt und das Bild wird ohne
       Netz angezeigt (beweist, dass das eingebettete Bild den iOS-IndexedDB- +
       Backup-Round-Trip überlebt, die bekannte Verdraengungs-Risikoflaeche)
+- [ ] **Sprechen & Aufnehmen-Authoring (#2817):** Im Extension-Wizard (Schritt
+      1 → "Erweiterte Übungstypen") ODER im Core-Picker (Schritt 3, zweite
+      Gruppe "Erweiterungstypen") **"Sprechen & Aufnehmen"** wählen. Der
+      Editor zeigt ein Textfeld **"Zu sprechender Satz"** und darunter das
+      (wiederverwendete) Audio-Feld aus dem Diktat-Editor ("Audio hochladen" +
+      getippter Pfad, beides optional). Speichern ist deaktiviert, solange der
+      Satz leer ist; ein Speichern **ohne jegliche Audio-Angabe ist erlaubt**
+      (die Übung ist bewusst ungewertet — kein "Übernehmen"/Konvertieren-Pfad
+      erscheint, anders als bei Diktat/Bildbeschreibung). Lektion speichern,
+      im Viewer öffnen: die Lektion lädt **ohne `E-EXT-UNSUPPORTED`**, der
+      Renderer erscheint (Lautsprecher-Button liest den Satz vor, "Text
+      anzeigen" deckt ihn auf, eine Aufnahme-Steuerung lässt die Lernperson
+      sich selbst aufnehmen). Mit hochgeladenem Referenz-Clip: der Player
+      spielt den eigenen Clip statt der Geräte-TTS. Die gespeicherte Lektion
+      trägt `requires_extensions: ["ext:al-speak-and-record@1"]`.
+      **Regression:** Diktat + Bildbeschreibung funktionieren unverändert,
+      insbesondere bleibt deren "→ Freitext"-Konvertierung sichtbar (nur bei
+      Sprechen & Aufnehmen fehlt sie, by design)
+- [ ] **Aktualisierungs-Badge in der Kopfzeile (#2904):** ein installiertes
+      Content-Set hat eine neuere Version (z. B. im Content-Browser bei einem
+      Set "Aktualisierung verfügbar" antippen ODER die Set-Manifest-Version
+      im Test-Repo erhöhen). Neu laden/App neu öffnen: **ohne** `/content`
+      zu besuchen erscheint in der Kopfzeile neben dem Wiederholungs-Badge
+      ein **Aktualisierungs-Badge** ("N Aktualisierungen") mit Link zu
+      `/content`. Klick → landet auf `/content`, das betroffene Set zeigt
+      dort **"Aktualisierung verfügbar"** in der Zeile (deckungsgleich mit
+      dem Badge-Wert). **Kein Update vorhanden:** Badge erscheint **nicht**
+      (kein leeres Pille-Element in der Kopfzeile). **Fehlertoleranz:**
+      Netz beim App-Start ausschalten → kein Absturz, kein Fehler-Toast, die
+      Kopfzeile rendert normal (das Badge bleibt einfach unsichtbar, es
+      handelt sich um Begleit-Chrome, kein blockierender Ladezustand)
 - [ ] **Multiple-Choice Single/Multi-Umschalter (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] Im MC-Inline-Editor
       (Schritt 3, `ExerciseEditor`) steht der Modus-Umschalter
       ("Wie viele Antworten sind richtig?") als Segmented-Control **ganz oben,
@@ -1201,6 +1654,148 @@ jeder Karten-Zeile (`CardImageField`).
       Daten … Autor kontaktieren"), NICHT den rohen Fehler-Dump (#1824)
 - [ ] Mit Entwicklermodus AN (Settings): der technische Detail-Text
       erscheint wieder angehängt
+
+### Diagnose-Sonde: Settings-Schalter + Protokoll (#2782)
+- [ ] Einstellungen > Diagnose & Support: Schalter "Tipp- und
+      Viewport-Sonde" einschalten - die Mess-Leiste erscheint SOFORT
+      oben (ohne Neuladen); ausschalten entfernt sie sofort
+- [ ] Mit aktiver Sonde: irgendwo tippen, dann in den Einstellungen
+      "Protokoll kopieren" - die Zwischenablage enthält den Eintrag
+      (Zeile mit `tap` und `deltaY=`); der Zähler daneben zeigt > 0
+      aufgezeichnete Ereignisse
+- [ ] Seite neu laden: der Zähler bleibt erhalten (Protokoll
+      überlebt Reload); "Protokoll leeren" setzt ihn auf 0
+- [ ] `?vvdiag=1` an die URL angehaengt aktiviert dieselbe Sonde;
+      der Settings-Schalter zeigt danach AN (ein gemeinsames Flag)
+- [ ] "Mess-Leiste anzeigen" AUS: die Leiste verschwindet sofort,
+      Kopfbereich/Menü sind wieder frei - aber neue Taps erhöhen
+      weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
+      weiter, #2785)
+
+### Sticky-Knopf für die Mess-Leiste (#2799)
+- [ ] Einstellungen > Diagnose & Support: "Sticky-Knopf für die
+      Mess-Leiste" einschalten (Sonde muss AN sein) - ein runder
+      schwebender Knopf erscheint SOFORT unten links
+- [ ] Knopf antippen: die Mess-Leiste verschwindet (genau wie
+      "Mess-Leiste anzeigen" AUS); erneut antippen: sie erscheint
+      wieder - der Settings-Schalter "Mess-Leiste anzeigen" spiegelt
+      jeden Tipp (ein gemeinsames Flag)
+- [ ] Unter dem Schalter erscheint die Positionswahl (4 Ecken):
+      "Oben rechts" wählen - der Knopf springt sofort in die Ecke;
+      Standard ist "Unten links"
+- [ ] Tipps AUF den Knopf tauchen NICHT im Diagnose-Protokoll auf
+      (der Zähler in den Einstellungen bleibt beim Umschalten stehen)
+- [ ] Mit aktiver unterer Tab-Leiste (#2786): der Knopf in einer
+      unteren Ecke schwebt ÜBER der Tab-Leiste, verdeckt keine Tabs
+- [ ] Sonde AUS: der Knopf verschwindet mit (ohne Sonde gibt es
+      keine Leiste zum Umschalten)
+
+### Menüposition mobil: untere Tab-Leiste als Option (#2786)
+- [ ] Einstellungen > Allgemein > Oberfläche: "Menüposition (mobil)"
+      steht auf "Oben (Menü-Knopf)" (Standard) - KEINE untere Leiste
+- [ ] "Unten (Tab-Leiste)" wählen: die Leiste erscheint SOFORT unten
+      (Lernen/Inhalte/Lernpfad/Fortschritt/Mehr); Inhalt wird nicht
+      von ihr verdeckt (Scroll-Reserve unten)
+- [ ] Mit unterer Leiste: Hamburger-Menü oben funktioniert weiterhin
+- [ ] In einer laufenden Lektion und auf Landing/Onboarding/Assessment
+      bleibt die Leiste verborgen (Lektions-Footer behält die Unterkante)
+- [ ] Zurück auf "Oben": Leiste verschwindet sofort; Einstellung
+      übersteht einen Reload
+### Position + Navigation im Set (#2793)
+- [ ] In einer Lektion aus einem Set steht oben "Lektion N von M" mit
+      der richtigen Nummer
+- [ ] Der Pfeil nach links öffnet die VORIGE Lektion des Sets; der
+      Pfeil nach rechts die nächste
+- [ ] In der ersten Lektion fehlt der Links-Pfeil (kein toter Knopf),
+      die Anzeige bleibt; in der letzten fehlt der Rechts-Pfeil
+- [ ] Nach dem Sprung zeigt die Anzeige die neue Position
+- [ ] Bei einer Einzel-Lektion ohne Set (z. B. eigene Lektion) fehlt
+      die Positionszeile vollständig
+
+### Erstanzeige: keine Sprachmischung (#2796)
+- [ ] App bei deutscher Oberfläche neu laden (Cache leeren): Startseite,
+      Navigation, Installations-Hinweis, Update-Banner und Offline-Meldung
+      sind sofort deutsch - kein englischer Text, kein roher Schlüssel
+      wie `landing.intro`
+- [ ] Dasselbe im Flugmodus/offline: die Texte bleiben deutsch (die
+      Erstanzeige braucht kein Netz)
+- [ ] Update-Banner: "Was ist neu?", "Release-Seite", "Später" sind
+      lesbar beschriftet (nicht leer, ausreichender Kontrast)
+
+### Auswertung am Set-Ende (#2792)
+- [ ] Letzte Lektion eines Sets abschließen: auf der Abschluss-Karte
+      steht "Auswertung ansehen" als erste Aktion, "Set ansehen"
+      daneben
+- [ ] Die Auswertung zeigt vier Kennzahlen (Fehler insgesamt,
+      gemeistert in Prozent, noch offen, Lernzeit) und darunter
+      Fehler nach Lektion, nach Aufgabentyp und die größten
+      Schwachstellen mit eigener falscher Antwort neben der richtigen
+- [ ] "Fehler trainieren" führt in die Wiederholung des Sets,
+      "Zurück zum Set" auf die Set-Seite
+- [ ] Ein Set ohne aufgezeichnete Fehler zeigt die freundliche
+      Meldung statt leerer Abschnitte
+- [ ] Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
+      kommen dort aus der lokalen Datenbank
+
+### Set-Seite: Lektionsliste + Fortschritt (#2793 Stufen 2-3)
+- [ ] Eine Set-Seite öffnen (/content/set/<id> oder über einen
+      geteilten Link): unter den Set-Angaben steht die Liste ALLER
+      Lektionen mit Nummer
+- [ ] Rechts oben an der Liste steht "{x} von {y} Lektionen
+      abgeschlossen"
+- [ ] Abgeschlossene Lektionen zeigen ihre Punktzahl; die erste
+      unfertige trägt die Marke "Hier weitermachen"
+- [ ] Ein Klick auf eine beliebige Zeile öffnet genau diese Lektion -
+      auch eine weit zurückliegende
+- [ ] In einer laufenden Lektion ist der Set-Name in der Kopfzeile
+      anklickbar und führt auf ebendiese Liste
+- [ ] Ohne angemeldeten Lernfortschritt erscheint die Liste trotzdem,
+      nur ohne Markierungen
+### Zusammenfassung: Alle Antworten mit Frage (#2807)
+- [ ] Lektion beenden, "Alle Antworten ansehen" öffnen: jede Zeile mit
+      etwas zu zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)
+- [ ] Aufgeklappt steht die FRAGE über den Antworten - auch bei einer
+      teilrichtigen Zeile wie "2 / 3", die vorher gar nichts zeigte
+- [ ] Bei Auswahl-/Zuordnungsaufgaben (ohne Textantwort) erscheinen
+      Frage und richtige Antwort
+- [ ] Bei Textantworten bleibt der farbige Wort-Vergleich, ergänzt um
+      die eigene Antwort im Klartext
+- [ ] Eine vollständig richtige Zeile zeigt ihre Frage, aber keinen
+      Fehler-Vergleich
+
+### Lektion verlassen führt zum Set (#2811)
+- [ ] In einer Set-Lektion pausieren und verlassen: die App landet auf
+      der SET-Seite mit der Lektionsliste, nicht auf "Meine Inhalte"
+- [ ] Nach der Zusammenfassung "Verlassen": ebenfalls die Set-Seite -
+      die gerade beendete Lektion ist dort als abgeschlossen markiert
+- [ ] Eine Lektion ohne Set (eigene Lektion, Einzelimport) landet
+      weiterhin auf "Meine Inhalte"
+
+### Ergebnis als Bild teilen (#2813)
+- [ ] Nach einer Lektion neben "Teilen" den Knopf "Nur Bild teilen"
+      drücken: die Teilen-Auswahl öffnet sich MIT der Ergebniskarte und
+      OHNE Text/Link
+- [ ] In Facebook auswählen: es entsteht ein Bild-Beitrag mit der Karte
+      (nicht das allgemeine App-Bild)
+- [ ] WhatsApp funktioniert weiterhin über den normalen "Teilen"-Knopf
+      (Karte plus Text)
+- [ ] Am Desktop (ohne Teilen-Auswahl): das Bild wird heruntergeladen,
+      Meldung "Bild gespeichert"
+- [ ] Teilen-Auswahl abbrechen: keine Datei landet still im
+      Download-Ordner
+
+### Neuer Tab "Diagnose & Support" vereint Fehlerbericht + Sonde (#2789)
+- [ ] Einstellungen > Info: zwischen "Hilfe" und "Über" steht jetzt
+      "Diagnose & Support"
+- [ ] Dort zuerst der Support-Abschnitt mit "Fehlerbericht erstellen"
+      (früher unter "Über"), darunter die Diagnose-Sektion mit
+      Entwicklermodus (früher unter "Allgemein > Oberfläche") und der
+      Tipp-/Viewport-Sonde (früher unter "Allgemein > Diagnose")
+- [ ] "Über" zeigt weiterhin Version, Strang und Links, aber keinen
+      Support-Knopf mehr
+- [ ] "Allgemein" zeigt weiterhin Menüposition, aber keinen
+      Entwicklermodus-Schalter und keine Diagnose-Sektion mehr
+- [ ] Direkter Link `?tab=diagnostics` öffnet den Tab unmittelbar
 
 ### Discover + Registry (seit v2.2.0)
 - [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
@@ -1915,6 +2510,80 @@ bewusst keine Zahlen, die veralten könnten.
 - [ ] Mobil (schmales Fenster): einspaltig, kein horizontales Scrollen.
 - [ ] Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
       Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
+
+---
+
+## PRIO 10: Selektiver Datenexport - Sprachaufnahmen-Kategorie (#2840)
+
+Ort: Einstellungen > Daten > "Ausgewählte Daten exportieren".
+
+- [ ] Gruppe "Medien" mit Kategorie "Sprachaufnahmen" ist sichtbar,
+      standardmäßig NICHT angehakt (im Gegensatz zu Lernprojekte/
+      Curricula/Fortschritt/Fächer, die vorausgewählt sind)
+- [ ] Ohne Anhaken: exportierte Datei enthält KEINE
+      `speech_recordings`-Zeilen, auch wenn welche vorhanden sind
+- [ ] Anhaken + Export: die Datei enthält die `speech_recordings`-Zeilen
+      des Nutzers
+
+## PRIO 11: Preset-Avatar-Galerie (#2848)
+
+Ort: Einstellungen > Allgemein > Profil, unter dem Foto-Upload.
+
+- [ ] Zeile "Oder wähle eine Figur" mit 8 Figuren sichtbar (Funke,
+      Roboter, Stern, Katze, Eule, Geist, Blitz, Herz), jede mit
+      sprechendem Tooltip/Screenreader-Namen
+- [ ] Figur antippen: Erfolgs-Toast, Vorschau oben und der Avatar in der
+      Kopfleiste zeigen die Figur sofort (ohne Reload)
+- [ ] Gewählte Figur ist markiert (Rahmen); eine andere wählen
+      verschiebt die Markierung
+- [ ] Foto hochladen ersetzt die Figur; danach ist KEINE Figur mehr
+      markiert; Figur wählen über einem Foto fragt erst nach (siehe
+      Foto-Zwischenspeicher unten)
+- [ ] "Entfernen" löscht den Avatar; die Kopfleiste fällt auf die
+      Initialen zurück
+- [ ] Backup-Round-trip: Figur wählen, Export (`.alb`), Daten löschen,
+      Import → die Figur ist wieder gesetzt
+- [ ] Beide Speicher-Modi (Server + Browser) verhalten sich identisch
+
+#### Foto-Zwischenspeicher beim Figuren-Wechsel (#2862)
+
+- [ ] Foto hochladen und zuschneiden, dann eine Figur antippen: ein
+      Bestätigungsdialog erscheint ("Foto ersetzen?"); Abbrechen lässt
+      Foto und Auswahl unverändert
+- [ ] Bestätigen ("Figur verwenden"): die Figur ist aktiv und unter der
+      Galerie erscheint der Knopf "Foto wiederherstellen"
+- [ ] "Foto wiederherstellen": das Foto ist zurück (Vorschau +
+      Kopfleiste), der Knopf verschwindet
+- [ ] Figur-zu-Figur-Wechsel: KEIN Dialog (nur ein echtes Foto wird
+      geschützt)
+- [ ] Nach Figur-Wahl ein NEUES Foto hochladen: der alte Zwischenspeicher
+      ist geleert (kein Wiederherstellen-Knopf mit veraltetem Foto)
+- [ ] Backup-Round-trip: mit gefülltem Zwischenspeicher Export -> Wipe ->
+      Import; "Foto wiederherstellen" funktioniert weiterhin (beide
+      Speicher-Modi)
+
+#### Avatar-Rahmen (#2850)
+
+Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
+
+- [ ] Zeile "Avatar-Rahmen" mit 7 Optionen (Ohne, Bronze, Silber, Gold,
+      Flamme, Stern, Akzent); gesperrte zeigen ein Schloss und die
+      Bedingung ("Ab Level 5", "Benötigt das 3-Tage-Serien-Abzeichen")
+- [ ] Level-Freischaltung: mit ausreichendem Level ist der Rahmen wählbar;
+      Auswahl legt den Ring sofort um die Vorschau UND den Avatar in der
+      Kopfleiste (ohne Reload)
+- [ ] XP-Kauf (Stern 150 / Akzent 300): Kauf-Knopf zeigt den Preis, erster
+      Klick "Bestätigen", zweiter Klick zieht die XP ab (Kopfleisten-XP
+      aktualisiert live), der Rahmen ist danach dauerhaft freigeschaltet
+      und gewählt
+- [ ] Zu wenig XP: der Kauf-Knopf ist deaktiviert, kein Abzug möglich
+- [ ] Badge-Rahmen (Flamme): erst nach verdientem 3-Tage-Streak-Abzeichen
+      wählbar
+- [ ] Rahmen wirkt auf Foto-Avatare UND Preset-Figuren gleichermaßen;
+      "Ohne" entfernt den Ring
+- [ ] Backup-Round-trip: Rahmen wählen + einen kaufen, Export (`.alb`),
+      Daten löschen, Import → Auswahl und Kauf sind wieder da
+- [ ] Beide Speicher-Modi verhalten sich identisch (XP-Abzug inklusive)
 
 ---
 

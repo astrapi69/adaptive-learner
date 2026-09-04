@@ -18,7 +18,7 @@ import { ModalCard, ModalOverlay, ModalTitle } from "@/shared/modal";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import DeleteProgressOption from "../browser/delete/DeleteProgressOption";
 import type { LessonDeleteTarget } from "../../../hooks/content/useContentSetActions";
-import type { DeletionPlan } from "../../../lib/content/browse/orphan-cleanup";
+import type { DeletionPlan } from "../../../lib/content/browse/lifecycle/orphan-cleanup";
 
 export interface DeleteLessonFromSetModalProps {
   /** The lesson to delete, or null when the dialog is closed. */

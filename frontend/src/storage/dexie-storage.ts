@@ -83,12 +83,18 @@ import {
 import {
   applyStoredLessonOrderToList,
   recordSavedSetOrder,
-} from "../lib/content/browse/lesson-order-store";
+} from "../lib/content/browse/prefs/lesson-order-store";
 import {
   getLessonProgressDexie,
   listLessonProgressDexie,
   upsertLessonProgressDexie,
 } from "./lessons/lesson-progress-dexie";
+import {
+  deleteSpeechRecordingDexie,
+  getSpeechRecordingDexie,
+  saveSpeechRecordingDexie,
+  wasEvictedDexie,
+} from "./lessons/speech-recordings-dexie";
 import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
 import {
   archiveRetiredDexie,
@@ -227,7 +233,7 @@ export const dexieStorage: IStorageService = {
       const justCompleted = updated.status === "completed" && !wasCompleted;
       if (justCompleted) {
         try {
-          await awardLessonXpDexie(userId, updated);
+          await awardLessonXpDexie(userId, updated, body.combo_bonus_xp ?? 0);
           // Evaluate badges so lesson-gated badges
           // (first_lesson, lessons_10, etc.) fire after
           // the XP write. Phase 50E lands the badge
@@ -241,6 +247,18 @@ export const dexieStorage: IStorageService = {
       }
       return updated;
     },
+  },
+
+  // --- Speech Recordings (engine#68 idea 3: speak-and-record) --------
+
+  speechRecordings: {
+    get: (userId, source, setId, lessonFilename, exerciseId) =>
+      getSpeechRecordingDexie(userId, source, setId, lessonFilename, exerciseId),
+    save: (userId, body) => saveSpeechRecordingDexie(userId, body),
+    delete: (userId, source, setId, lessonFilename, exerciseId) =>
+      deleteSpeechRecordingDexie(userId, source, setId, lessonFilename, exerciseId),
+    wasEvicted: (userId, source, setId, lessonFilename, exerciseId) =>
+      wasEvictedDexie(userId, source, setId, lessonFilename, exerciseId),
   },
 
   // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------

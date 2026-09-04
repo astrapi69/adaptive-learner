@@ -22,7 +22,7 @@ import {
   targetLanguageCounts,
   type DiscoverFilters,
 } from "./discover-index";
-import { normalizeSearchText } from "../browse/content-search";
+import { normalizeSearchText } from "../browse/discovery/content-search";
 import type { SearchableSet } from "./search-index-loader";
 
 function makeSet(over: Partial<SearchableSet>): SearchableSet {

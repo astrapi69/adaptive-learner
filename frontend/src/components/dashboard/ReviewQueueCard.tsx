@@ -24,7 +24,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import {
     buildContentAvailability,
     filterAvailableSetId,
-} from "../../lib/content/browse/content-availability";
+} from "../../lib/content/browse/lifecycle/content-availability";
 import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";
 import type {ReviewQueueItem} from "../../storage/types";

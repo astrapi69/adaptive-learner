@@ -23,13 +23,16 @@ import type {
     ContentLessonExercise,
     ContentLessonStep,
 } from "../../../storage/types";
-import CategorizationExercise from "../renderers/CategorizationExercise";
-import ErrorCorrectionExercise from "../renderers/ErrorCorrectionExercise";
+import CategorizationExercise from "../renderers/categorization/CategorizationExercise";
+import ErrorCorrectionExercise from "../renderers/error-correction/ErrorCorrectionExercise";
 import ReadingComprehensionExercise from "../renderers/reading-comprehension/ReadingComprehensionExercise";
-import GradedQuizExercise from "../renderers/GradedQuizExercise";
-import ClozeExercise from "../renderers/ClozeExercise";
-import DictationExercise from "../renderers/DictationExercise";
+import GradedQuizExercise from "../renderers/graded-quiz/GradedQuizExercise";
+import ClozeExercise from "../renderers/cloze/ClozeExercise";
+import DictationExercise from "../renderers/dictation/DictationExercise";
 import ImageDescriptionExercise from "../renderers/image-description/ImageDescriptionExercise";
+import SpeakAndRecordExercise from "../renderers/speak-and-record/SpeakAndRecordExercise";
+import AudioChoiceExercise from "../renderers/audio-choice/AudioChoiceExercise";
+import AudioTilesExercise from "../renderers/audio-tiles/AudioTilesExercise";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -37,11 +40,11 @@ import type {
 } from "./exercise-control";
 import ExerciseDifficultyBadge from "../shared/ExerciseDifficultyBadge";
 import ListenFirstAudio from "../shared/ListenFirstAudio";
-import FreeTextExercise from "../renderers/FreeTextExercise";
-import MatchingExercise from "../renderers/MatchingExercise";
-import MultipleChoiceExercise from "../renderers/MultipleChoiceExercise";
-import PictureChoiceExercise from "../renderers/PictureChoiceExercise";
-import WordTilesExercise from "../renderers/WordTilesExercise";
+import FreeTextExercise from "../renderers/free-text/FreeTextExercise";
+import MatchingExercise from "../renderers/matching/MatchingExercise";
+import MultipleChoiceExercise from "../renderers/multiple-choice/MultipleChoiceExercise";
+import PictureChoiceExercise from "../renderers/picture-choice/PictureChoiceExercise";
+import WordTilesExercise from "../renderers/word-tiles/WordTilesExercise";
 
 export const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "matching",
@@ -64,6 +67,9 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-graded-quiz",
     "ext:al-dictation",
     "ext:al-image-description",
+    "ext:al-speak-and-record",
+    "ext:al-audio-choice",
+    "ext:al-audio-tiles",
 ]);
 
 /** The prop bag every renderer shares (everything except the exercise, the
@@ -108,6 +114,25 @@ function renderAdoptedExtension(
         // self-contained and needs none). Review/adaptive routes pass an empty
         // source and get the no-image fallback.
         return <ImageDescriptionExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-speak-and-record") {
+        // Needs `source` for the same reason dictation/image-description do:
+        // an authored reference clip is an `assets/` path resolved by
+        // useAsset. The learner's OWN recording is loaded/saved via
+        // getStorage().speechRecordings inside the renderer itself, keyed
+        // by (source, setId, lessonId, exercise.id) - not threaded through
+        // props, since it is per-user storage, not a content asset.
+        return <SpeakAndRecordExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-audio-choice") {
+        // Needs `source` for the same reason dictation does: each option's
+        // audio can be an `assets/` path resolved by useAsset (an embedded
+        // data URI is self-contained and needs none).
+        return <AudioChoiceExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-audio-tiles") {
+        // Needs `source` for the sentence audio, same as audio-choice.
+        return <AudioTilesExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
     }
     return null;
 }

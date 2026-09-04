@@ -80,6 +80,20 @@ describe("ErrorReplayLesson", () => {
         expect(screen.getByText(/Greetings/)).toBeInTheDocument();
     });
 
+    it("wraps a long unbreakable title word instead of overflowing sideways (#2761)", () => {
+        renderWithState({
+            exercises: [FREE("ex-a", "hola")],
+            cards: [],
+            lessonTitle: "Arbeits- und Organisationspsychologie",
+        });
+        // ``wrap-anywhere`` (overflow-wrap: anywhere) lets the 24-char word
+        // break; without it the h1 widens the page horizontally and iOS
+        // WebKit clips the sticky footer's "Weiter" button (#1834 class).
+        expect(screen.getByRole("heading", {level: 1})).toHaveClass(
+            "wrap-anywhere",
+        );
+    });
+
     it("all correct after replay → celebration + score", async () => {
         renderWithState({
             exercises: [FREE("ex-a", "hola"), FREE("ex-b", "adios")],
@@ -161,5 +175,54 @@ describe("ErrorReplayLesson", () => {
         expect(
             await screen.findByTestId("error-replay-step-ex-b"),
         ).toBeInTheDocument();
+    });
+});
+
+describe("ErrorReplayLesson: flash round (#2888)", () => {
+    const FLASH_STATE = {
+        exercises: [FREE("ex-a", "hola")],
+        cards: [],
+        lessonTitle: "French A1",
+        flashRound: {seconds: 20, backTo: "/content/set/fr-a1"},
+    };
+
+    it("titles the round as a flash round and shows the countdown ring", () => {
+        renderWithState(FLASH_STATE);
+        expect(screen.getByText(/Flash round: French A1/)).toBeInTheDocument();
+        expect(
+            screen.getByTestId("lesson-countdown-ring"),
+        ).toBeInTheDocument();
+    });
+
+    it("a plain replay renders no countdown ring (parity)", () => {
+        renderWithState({
+            exercises: [FREE("ex-a", "hola")],
+            cards: [],
+            lessonTitle: "Greetings",
+        });
+        expect(
+            screen.queryByTestId("lesson-countdown-ring"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("the back button leaves to the flash round's origin", () => {
+        render(
+            <MemoryRouter
+                initialEntries={[{pathname: PATH, state: FLASH_STATE}]}
+            >
+                <Routes>
+                    <Route
+                        path="/error-replay/:setSlug/:setId/:filename"
+                        element={<ErrorReplayLesson />}
+                    />
+                    <Route
+                        path="/content/set/:setId"
+                        element={<div data-testid="set-overview" />}
+                    />
+                </Routes>
+            </MemoryRouter>,
+        );
+        fireEvent.click(screen.getByTestId("error-replay-back-btn"));
+        expect(screen.getByTestId("set-overview")).toBeInTheDocument();
     });
 });

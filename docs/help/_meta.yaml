@@ -597,6 +597,16 @@ navigation:
           ja: 概要
         slug: content-creation/overview
       - title:
+          de: Mentor-Modus
+          en: Mentor mode
+          es: Modo mentor
+          fr: Mode mentor
+          el: Λειτουργία μέντορα
+          pt: Modo mentor
+          tr: Mentor modu
+          ja: メンターモード
+        slug: content-creation/mentor-mode
+      - title:
           de: Content-Repos
           en: Content repos
           es: Repositorios de contenido

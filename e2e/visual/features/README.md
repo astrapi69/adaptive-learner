@@ -67,11 +67,17 @@ Baseline zu committen.
 | GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 |
 | QR-Code — App teilen | `qr-code/share-app.png` | — (Desktop-Dialog) | v1.94.1 |
 | Zusammenfassungs-Sektionen — Settings-Unterbereich (#1411) | `summary-sections/settings.png` | `summary-sections/settings.mobile.png` | v2.1.0 |
+| Mascot-Farbvarianten — Settings-Unterbereich, Level-/Badge-/XP-Freischaltung (#2861) | `mascot-variants/settings.png` | `mascot-variants/settings.mobile.png` | v2.13.0 |
 | Fehlerbericht — Dialog (#1480) | `error-report/dialog.png` | `error-report/dialog.mobile.png` | v2.1.0 |
 | Fehlerbericht — Aktionsverlauf geöffnet (#1480) | `error-report/verlauf.png` | `error-report/verlauf.mobile.png` | v2.1.0 |
 | Fehlerbericht — Vollvorschau (#1480) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | v2.1.0 |
 | Sync — Desktop-only-Hinweis, Dexie-Modus (#335/#1480) | `sync/desktop-only-hinweis.png` | `sync/desktop-only-hinweis.mobile.png` | v2.1.0 |
 | Create-Lesson — Buchtext-Datei-Upload mit Kapitel-Picker (#1927) | `create-lesson/buch-upload-picker.png` | `create-lesson/buch-upload-picker.mobile.png` | v2.5.0+ |
+| Viewport-Diagnose — Tap-Offset-Sonde, eingeklappt (#1569/#2779) | `viewport-diagnostic/eingeklappt.png` | `viewport-diagnostic/eingeklappt.mobile.png` | v2.13.0+ |
+| Viewport-Diagnose — Details-Block geöffnet (#1569/#2779) | `viewport-diagnostic/details.png` | `viewport-diagnostic/details.mobile.png` | v2.13.0+ |
+| Viewport-Diagnose — Settings-Sektion mit Schalter + Protokoll (#2782) | `viewport-diagnostic/settings-sektion.png` | `viewport-diagnostic/settings-sektion.mobile.png` | v2.13.0+ |
+| Untere Tab-Leiste — opt-in Menüposition unten (#2786) | — (Leiste ist md:hidden) | `bottom-tab-bar/leiste.mobile.png` | v2.13.0+ |
+| Lektions-Navigation — "Lektion N von M" mit Vor/Zurück (#2793) | `lesson-navigation/position-zeile.png` | `lesson-navigation/position-zeile.mobile.png` | v2.13.0+ |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
 > konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.

@@ -20,6 +20,9 @@ import {
 } from "../../lib/share/lesson-share";
 import {renderLessonShareImage} from "../../lib/share/lesson-share-image";
 import ShareButton from "../../shared/layout/ShareButton";
+import {Button} from "@/components/ui/button";
+import {ImageDown} from "lucide-react";
+import {shareImageOnly} from "../../lib/share/share-image";
 import {notify} from "../../utils/notify";
 
 export interface ShareResultButtonProps {
@@ -44,7 +47,27 @@ export default function ShareResultButton({
     const {t} = useI18n();
     const {text, url} = buildLessonShareText(result, t);
 
+    /** #2813 - share the card ALONE (no text, no link). A link-only target
+     *  like Facebook otherwise posts the link and scrapes the app's single
+     *  fixed preview image; with nothing but the file it creates a real photo
+     *  post. Falls back to a download where files cannot be shared. */
+    async function handleShareImage() {
+        const blob = await renderLessonShareImage(result, t);
+        const file = blob
+            ? new File([blob], "lesson-result.png", {type: "image/png"})
+            : null;
+        const outcome = await shareImageOnly(file);
+        if (outcome === "unavailable") {
+            notify.error(
+                t("share.image_failed", "The image could not be created."),
+            );
+        } else if (outcome === "downloaded") {
+            notify.success(t("share.image_saved", "Image saved"));
+        }
+    }
+
     return (
+        <div className="flex flex-wrap items-center gap-2">
         <ShareButton
             text={text}
             url={url}
@@ -75,5 +98,19 @@ export default function ShareResultButton({
             }}
             testId={testId}
         />
+        <Button
+            type="button"
+            variant="outline"
+            onClick={() => void handleShareImage()}
+            title={t(
+                "share.share_image_hint",
+                "Shares the result card as an image - for networks like Facebook that show only the app image for links.",
+            )}
+            data-testid="share-result-image"
+        >
+            <ImageDown aria-hidden="true" />
+            {t("share.share_image", "Share image only")}
+        </Button>
+        </div>
     );
 }

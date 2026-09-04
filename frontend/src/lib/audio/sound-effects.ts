@@ -19,6 +19,7 @@
  */
 
 import {readSoundEnabled, readSoundVolume} from "../feedback/feedbackPref";
+import {playfulSoundsActive} from "../learning/playful/playfulSoundsPref";
 
 export type SoundName =
     | "correct_answer"
@@ -26,7 +27,13 @@ export type SoundName =
     | "star_earned"
     | "confetti"
     | "badge_earned"
-    | "level_up";
+    | "level_up"
+    | "checkpoint"
+    | "fanfare"
+    | "simon_1"
+    | "simon_2"
+    | "simon_3"
+    | "simon_4";
 
 interface Tone {
     /** Frequency in Hz. Ignored for noise. */
@@ -88,6 +95,46 @@ const RECIPES: Record<SoundName, Recipe> = {
             {freq: C6, startMs: 320, durMs: 100, gain: 0.45},
         ],
     },
+    // #2875 game mode: two quick rising notes for a crossed
+    // checkpoint dot.
+    checkpoint: {
+        totalMs: 200,
+        tones: [
+            {freq: E5, startMs: 0, durMs: 90, gain: 0.4},
+            {freq: G5, startMs: 90, durMs: 100, gain: 0.45},
+        ],
+    },
+    // #2875 game mode: completion fanfare - a rise into a held triad.
+    fanfare: {
+        totalMs: 620,
+        tones: [
+            {freq: C5, startMs: 0, durMs: 90, gain: 0.35},
+            {freq: E5, startMs: 80, durMs: 90, gain: 0.35},
+            {freq: G5, startMs: 160, durMs: 90, gain: 0.35},
+            {freq: C6, startMs: 240, durMs: 120, gain: 0.4},
+            {freq: C5, startMs: 360, durMs: 250, gain: 0.28},
+            {freq: E5, startMs: 360, durMs: 250, gain: 0.28},
+            {freq: G5, startMs: 360, durMs: 250, gain: 0.28},
+        ],
+    },
+    // #2907 simon: one steady note per color pad (C major so any
+    // playback order sounds consonant), same shape for all four.
+    simon_1: {
+        totalMs: 220,
+        tones: [{freq: C5, startMs: 0, durMs: 200, gain: 0.4}],
+    },
+    simon_2: {
+        totalMs: 220,
+        tones: [{freq: E5, startMs: 0, durMs: 200, gain: 0.4}],
+    },
+    simon_3: {
+        totalMs: 220,
+        tones: [{freq: G5, startMs: 0, durMs: 200, gain: 0.4}],
+    },
+    simon_4: {
+        totalMs: 220,
+        tones: [{freq: C6, startMs: 0, durMs: 200, gain: 0.4}],
+    },
     // Triumphant major triad (C-E-G together).
     level_up: {
         totalMs: 520,
@@ -117,6 +164,7 @@ function envelope(tSec: number, durSec: number): number {
 export function renderSamples(
     name: SoundName,
     sampleRate = 44100,
+    pitchFactor = 1,
 ): Float32Array {
     const recipe = RECIPES[name];
     const length = Math.max(1, Math.round((recipe.totalMs / 1000) * sampleRate));
@@ -132,7 +180,8 @@ export function renderSamples(
             const env = envelope(tSec, durSec) * tone.gain;
             const sample = tone.noise
                 ? (Math.random() * 2 - 1) * env
-                : Math.sin(2 * Math.PI * tone.freq * tSec) * env;
+                : Math.sin(2 * Math.PI * tone.freq * pitchFactor * tSec) *
+                  env;
             out[idx] += sample;
         }
     }
@@ -177,18 +226,37 @@ function getAudioContext(): AudioContext | null {
 }
 
 /**
+ * Whether ANY sound opt-in is active: the global switch, or the
+ * game mode with its own sound flag (#2875). Volume stays the
+ * shared slider either way.
+ */
+export function soundOutputEnabled(): boolean {
+    return readSoundEnabled() || playfulSoundsActive();
+}
+
+export interface PlaySoundOptions {
+    /** Semitone steps to raise the pitch (#2875: the combo tone
+     *  rises with the streak). 0 = original pitch. */
+    pitchSteps?: number;
+}
+
+/**
  * Play a sound effect. No-op (returns false) when sounds are
  * disabled, the master volume is 0, or Web Audio is unavailable.
  * Returns true when playback was started.
  */
-export function playSound(name: SoundName): boolean {
-    if (!readSoundEnabled()) return false;
+export function playSound(
+    name: SoundName,
+    options: PlaySoundOptions = {},
+): boolean {
+    if (!soundOutputEnabled()) return false;
     const volume = readSoundVolume() / 100;
     if (volume <= 0) return false;
     const audio = getAudioContext();
     if (!audio) return false;
     try {
-        const samples = renderSamples(name, audio.sampleRate);
+        const pitchFactor = Math.pow(2, (options.pitchSteps ?? 0) / 12);
+        const samples = renderSamples(name, audio.sampleRate, pitchFactor);
         const buffer = audio.createBuffer(1, samples.length, audio.sampleRate);
         buffer.getChannelData(0).set(samples);
         const source = audio.createBufferSource();

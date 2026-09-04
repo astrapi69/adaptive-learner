@@ -16,7 +16,7 @@ import {
   readContentViewMode,
   writeContentViewMode,
   type ContentViewMode,
-} from "../../lib/content/browse/viewModePref";
+} from "../../lib/content/browse/prefs/viewModePref";
 
 /**
  * @returns A ``[mode, setMode]`` tuple. ``setMode`` persists the value

@@ -96,6 +96,11 @@ async function fillMetadata(page: Page, title: string, native: string): Promise<
 test("captures the extension-authoring path", async ({page}) => {
     await openCreator(page);
     await fillMetadata(page, "Coffee shop: advanced practice", "Im Café: erweiterte Übungen");
+    // #2756 collapsed the template row behind a toggle (Blank preselected) -
+    // open it before the shot so the caption's claim ("the four starter
+    // templates plus the book-text and Advanced exercise types entries")
+    // is what the screenshot actually shows.
+    await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("create-lesson-templates").scrollIntoViewIfNeeded();
     await shot(page, "e1-extensions-entry");
 
@@ -105,8 +110,8 @@ test("captures the extension-authoring path", async ({page}) => {
     await page.getByTestId("extension-add").click();
     const picker = page.getByTestId("extension-add-picker");
     await expect(picker).toBeVisible();
-    // Guards the article's central claim: all five adopted types are offered.
-    await expect(picker.getByRole("button")).toHaveCount(6); // 5 types + Cancel
+    // Guards the article's central claim: all adopted types are offered.
+    await expect(picker.getByRole("button")).toHaveCount(7); // 6 types + Cancel
     await shot(page, "e2-type-picker");
 
     await page.getByTestId("extension-add-type-dictation").click();
@@ -201,6 +206,10 @@ test("captures the core card and exercise steps", async ({page}) => {
 test("captures the book-text path", async ({page}) => {
     await openCreator(page);
     await fillMetadata(page, "Attention and memory", "Aufmerksamkeit und Gedächtnis");
+    // #2756 collapsed the template row behind a toggle (Blank preselected) -
+    // open it before the shot, same as e1, so the "Knowledge lesson from
+    // text" card the caption points at is actually visible.
+    await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("create-lesson-templates").scrollIntoViewIfNeeded();
     // The article shows the template row from the book path's point of view,
     // so this shot and e1 differ by which entry the reader is being pointed at.

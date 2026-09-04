@@ -51,6 +51,7 @@ test.describe("Create-Lesson extension wizard editors 3+4 (#1852)", () => {
 
         await openFresh(page);
         await page.getByTestId("create-lesson-title").fill("E2E extensions 3+4");
+        await page.getByTestId("create-lesson-templates-toggle").click();
         await page.getByTestId("template-extensions").click();
         await expect(
             page.getByTestId("create-lesson-extension-step"),

@@ -25,6 +25,7 @@ import InstallPrompt from "./components/pwa/InstallPrompt";
 import IosInstallHint from "./components/pwa/IosInstallHint";
 import ReminderScheduler from "./components/settings/controls/reminders/ReminderScheduler";
 import Navigation from "./components/nav/Navigation";
+import BottomTabBar from "./components/nav/BottomTabBar";
 import OfflineIndicator from "./components/pwa/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
@@ -32,6 +33,7 @@ import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
 import { useVisualViewportRealign } from "./hooks/ui/useVisualViewportRealign";
 import ViewportDiagnostic from "./components/dev/ViewportDiagnostic";
+import VvPanelToggleFab from "./components/dev/VvPanelToggleFab";
 import { useViewportFixExperiment } from "./components/dev/useViewportFixExperiment";
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/onboarding/Landing";
@@ -41,6 +43,7 @@ import SkipToContent from "./components/a11y/SkipToContent";
 // the entry route; everything else loads on first navigation. See
 // BUNDLE-SIZE-DYNAMIC-IMPORT-01.
 const AnkiPage = lazyWithReload(() => import("./pages/content/Anki"));
+const ArcadePage = lazyWithReload(() => import("./pages/arcade/Arcade"));
 const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"));
 // #856 — Discover + My-content + Import merged into one tabbed hub at /content.
 const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
@@ -48,6 +51,7 @@ const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
 const Contribute = lazyWithReload(() => import("./pages/content/Contribute"));
 // #892 — deep-link to a single content set (prerequisite for set-level QR).
 const SetDeepLink = lazyWithReload(() => import("./pages/content/SetDeepLink"));
+const SetSummary = lazyWithReload(() => import("./pages/content/SetSummary"));
 const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
 const RedeemInvite = lazyWithReload(() => import("./pages/content/RedeemInvite"));
 const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
@@ -179,6 +183,9 @@ export default function App() {
                 to nothing for normal users; pointer-events:none so it never
                 perturbs the hit-testing it measures. */}
             <ViewportDiagnostic />
+            {/* #2799 — opt-in sticky toggle for the probe's measurement bar.
+                Self-gates to nothing unless probe + fab pref are both on. */}
+            <VvPanelToggleFab />
             <UpdatePromptHost />
             <DesktopUpdateHost />
             <Navigation />
@@ -220,11 +227,14 @@ export default function App() {
                 <Route path="/content" element={<ContentHub />} />
                 {/* #892 — deep-link to a single set (set-level QR / share). */}
                 <Route path="/content/set/:setId" element={<SetDeepLink />} />
+                {/* #2792 - the set-completion review (all mistakes of one set). */}
+                <Route path="/set-summary/:setId" element={<SetSummary />} />
                 <Route path="/contribute" element={<Contribute />} />
                 <Route path="/content/import/:conversationId" element={<ImportDetail />} />
                 {/* Old import-detail link kept alive for existing bookmarks. */}
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />
+                <Route path="/arcade" element={<ArcadePage />} />
                 <Route path="/add-repo" element={<AddRepo />} />
                 <Route path="/invite" element={<RedeemInvite />} />
                 <Route path="/learning-path" element={<LearningPath />} />
@@ -247,6 +257,7 @@ export default function App() {
               </Routes>
             </Suspense>
             </ErrorBoundary>
+            <BottomTabBar />
             <InstallPrompt />
             <IosInstallHint />
             <MilestoneHost />

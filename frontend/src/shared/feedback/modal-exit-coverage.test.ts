@@ -67,9 +67,13 @@ const MODAL_REGISTRY: Record<string, ExitKind> = {
   "components/content/share/ShareWizard.tsx": "radix",
   "components/help/HelpDrawer.tsx": "radix",
   "components/lesson/dialogs/LessonExitDialog.tsx": "radix",
+  // #2878 — out-of-hearts forced choice (Escape/overlay == retry).
+  "components/lesson/dialogs/LessonHeartsDialog.tsx": "radix",
 
   // ConfirmDialog consumers (rendered directly or via the provider).
   "components/create-lesson/book/BookFileUpload.tsx": "confirm",
+  // #2862 — photo-replace guard around the preset gallery.
+  "components/settings/controls/profile/PresetAvatarPicker.tsx": "confirm",
   "components/settings/data/OrphanedDataSection.tsx": "confirm",
   "components/settings/integrations/RemoveRepoDialog.tsx": "confirm",
   "contexts/ConfirmContext.tsx": "confirm",
@@ -84,6 +88,10 @@ const MODAL_REGISTRY: Record<string, ExitKind> = {
   "components/sync/QRScannerModal.tsx": "custom",
   "components/sync/SyncConflictDialog.tsx": "custom",
   "components/nav/NavXpBadge.tsx": "custom",
+  // #2786 — the restored bottom bar's "More" sheet: Escape handler, backdrop
+  // click, an always-visible X, and a route-change auto-close; the panel is a
+  // short fixed list, so no height-dependent exit exists.
+  "components/nav/BottomTabBar.tsx": "custom",
 
   // Hand-rolled `.modal-overlay` — the ratchet. Each is tracked for
   // migration to a shell (#2266 follow-up); DesktopUpdateHost left it.

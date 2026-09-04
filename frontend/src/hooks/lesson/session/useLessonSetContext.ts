@@ -2,16 +2,18 @@
  * useLessonSetContext (#1790 — extracted from Lesson.tsx).
  *
  * The lesson page's set-level context reads, resolved once on mount:
- * the next lesson's filename (for the summary's "Next lesson"
- * button) and the parent set's display title / domain / manifest
- * book (header context + the "Vertiefe das Thema" section). Every
- * read degrades silently — the consuming UI simply omits the
+ * the lesson's POSITION in the set (#2793 — index, total and both
+ * neighbours, which drives "Lesson N of M" plus the backward /
+ * forward controls) and the parent set's display title / domain /
+ * manifest book (header context + the "Vertiefe das Thema" section).
+ * Every read degrades silently — the consuming UI simply omits the
  * matching element.
  */
 
 import {useEffect, useState} from "react";
 
 import {getStorage} from "../../../storage";
+import {resolveSetPosition, type SetPosition} from "../../../lib/lesson/set-position";
 import type {ContentSetBook} from "../../../storage/types";
 
 /**
@@ -38,12 +40,15 @@ export function useLessonSetContext({
     // ``null`` means "no next lesson" (last in set OR list not
     // yet loaded). Failures degrade silently — the button just
     // doesn't render.
-    const [nextLessonFilename, setNextLessonFilename] = useState<
-        string | null
-    >(null);
+    // #2793 — the same round-trip now yields the FULL position (index,
+    // total, both neighbours) instead of only the successor, so the runner
+    // can show "Lesson N of M" and navigate backwards. ``null`` means the
+    // list has not loaded or the lesson is not in it; every consumer omits
+    // its UI in that case.
+    const [position, setPosition] = useState<SetPosition | null>(null);
     useEffect(() => {
         if (!source || !setId || !filename) {
-            setNextLessonFilename(null);
+            setPosition(null);
             return;
         }
         let cancelled = false;
@@ -54,20 +59,17 @@ export function useLessonSetContext({
                     setId,
                 );
                 if (cancelled) return;
-                const idx = list.lessons.indexOf(filename);
-                if (idx >= 0 && idx < list.lessons.length - 1) {
-                    setNextLessonFilename(list.lessons[idx + 1]);
-                } else {
-                    setNextLessonFilename(null);
-                }
+                setPosition(resolveSetPosition(list.lessons, filename));
             } catch {
-                if (!cancelled) setNextLessonFilename(null);
+                if (!cancelled) setPosition(null);
             }
         })();
         return () => {
             cancelled = true;
         };
     }, [source, setId, filename]);
+    const nextLessonFilename = position?.next ?? null;
+    const prevLessonFilename = position?.previous ?? null;
 
     // Phase 51 bugfix — resolve the set's display title so the
     // header can show context above the lesson title
@@ -111,5 +113,12 @@ export function useLessonSetContext({
         };
     }, [setId]);
 
-    return {nextLessonFilename, setTitle, setDomain, setBook};
+    return {
+        nextLessonFilename,
+        prevLessonFilename,
+        position,
+        setTitle,
+        setDomain,
+        setBook,
+    };
 }

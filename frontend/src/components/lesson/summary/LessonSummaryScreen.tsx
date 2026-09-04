@@ -11,6 +11,7 @@
  * come from the hooks here.
  */
 
+import { exitRouteForLesson } from "../../../lib/content/browse/continue-learning";
 import type { ComponentProps } from "react";
 import { useNavigate } from "react-router";
 
@@ -40,6 +41,8 @@ type SummaryPassThroughProps = Pick<
   | "source"
   | "setSlug"
   | "lessonFilename"
+  | "comboBonusXp"
+  | "fullHeartsRun"
 >;
 
 export interface LessonSummaryScreenProps extends SummaryPassThroughProps {
@@ -48,7 +51,7 @@ export interface LessonSummaryScreenProps extends SummaryPassThroughProps {
   originalLesson: ContentLesson;
   setDomain: string | null;
   setBook: ContentSetBook | null;
-  markCompleted: () => Promise<unknown>;
+  markCompleted: (options?: {comboBonusXp?: number}) => Promise<unknown>;
   markRestarted: () => Promise<unknown>;
   goToStep: (stepIndex: number) => void;
 }
@@ -72,7 +75,8 @@ export default function LessonSummaryScreen({
 }: LessonSummaryScreenProps) {
   const navigate = useNavigate();
   const { t, lang } = useI18n();
-  const { userId, setSlug, setId, nextLessonFilename } = summaryProps;
+  const { userId, setSlug, setId, nextLessonFilename, comboBonusXp } =
+    summaryProps;
 
   const handleMarkComplete = async () => {
     // Snapshot gamification before completion so
@@ -80,7 +84,7 @@ export default function LessonSummaryScreen({
     // can be detected + celebrated afterwards.
     const before = await captureCelebrationSnapshot(userId);
     try {
-      await markCompleted();
+      await markCompleted({comboBonusXp});
     } catch (err) {
       // #1787 — a failed completion write was invisible on the
       // summary (the hook's error state only renders for load
@@ -146,7 +150,9 @@ export default function LessonSummaryScreen({
           // storage layer. Then jump back to the first step.
           void markRestarted().then(() => goToStep(0));
         }}
-        onExit={() => navigate("/content?tab=my")}
+        // #2811 - back to the set the learner just worked through, not a
+        // flat content list; a lesson without a set keeps the old target.
+        onExit={() => navigate(exitRouteForLesson(setId))}
       />
       <LessonResources
         lesson={originalLesson}

@@ -24,12 +24,19 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
 import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
+import CreateLessonHeader from "../../components/create-lesson/CreateLessonHeader";
+import MentorNotesEditPanel from "../../components/create-lesson/MentorNotesEditPanel";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
 import WizardSteps from "../../components/create-lesson/WizardSteps";
 import EditLoadState, {
     LessonPicker,
 } from "../../components/create-lesson/EditLoadState";
 import {MIN_CARDS} from "../../components/create-lesson/CardEditor";
+import {
+    decideNextStep,
+    wizardFlowOf,
+    type WizardFlow,
+} from "../../lib/lesson/wizard/advance";
 import {
     hasIncompleteExercise,
     minExercisesToAdvance,
@@ -121,17 +128,6 @@ function stepCountFor(compactFlow: boolean): number {
     return compactFlow ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
 }
 
-/** The wizard's page heading — "Edit lesson" when reopening an existing
- *  lesson, otherwise "Create a lesson". */
-function headerTitle(
-    editMode: boolean,
-    t: (key: string, fallback?: string) => string,
-): string {
-    return editMode
-        ? t("create_lesson.edit_title", "Edit lesson")
-        : t("create_lesson.title", "Create a lesson");
-}
-
 /** Build the default metadata, seeding source language from the
  *  app language and target from the first differing option. */
 function defaultMeta(appLang: string): LessonMeta {
@@ -200,7 +196,11 @@ export default function CreateLesson() {
     // #1756 — which card-based template was applied. Pure feedback state:
     // the templates fill cards/genConfig silently (visible only on step 2),
     // so the clicked card renders a pressed state.
-    const [selectedTemplate, setSelectedTemplate] = useState<LessonTemplateKey | null>(null);
+    // #2755 - "blank" starts PRESELECTED: applyTemplate("blank") yields
+    // exactly the initial wizard state (no cards, default gen config), so
+    // seeding the pressed state needs no template application - and the
+    // collapsed template disclosure can honestly summarise the pick.
+    const [selectedTemplate, setSelectedTemplate] = useState<LessonTemplateKey | null>("blank");
 
     // #1743 — book-text path state. ``bookMode`` switches the wizard to the
     // 3-step Metadata -> BookText -> Review flow; the AI produces the theory
@@ -220,7 +220,8 @@ export default function CreateLesson() {
     // runs the compact 3-step flow instead of the card-driven one. The
     // cardless-edit branch (#1967 — Metadata -> Exercises -> Review) is a third
     // compact flow, entered only when editing a card-free lesson.
-    const compactFlow = bookMode || extMode || cardlessEdit;
+    const flow: WizardFlow = wizardFlowOf(bookMode, extMode, cardlessEdit);
+    const compactFlow = flow !== "standard";
     const totalSteps = stepCountFor(compactFlow);
 
     /** Resolve the active AI provider seam, or ``null`` when no key /
@@ -336,83 +337,48 @@ export default function CreateLesson() {
     }
 
     function handleNext() {
-        if (step === 1) {
-            if (!metaValid) {
-                flagTitleError();
-                return;
-            }
-            setShowError(false);
-        }
-        if (bookMode) {
-            // Book flow: step 2 requires at least one generated lesson
-            // (single paste or batch) before advancing to Review.
-            if (step === 2) {
-                if (bookLessons.length === 0) {
-                    setExerciseError(true);
-                    return;
-                }
-                setExerciseError(false);
-            }
-            setStep((s) => Math.min(TOTAL_STEPS_BOOK, s + 1));
+        if (step === 1 && metaValid) setShowError(false);
+        const decision = decideNextStep(
+            {
+                step,
+                flow,
+                metaValid,
+                editMode,
+                bookLessonCount: bookLessons.length,
+                cardCount: cards.length,
+                minCards: MIN_CARDS,
+                exerciseCount: exercises.length,
+                totalSteps:
+                    flow === "standard"
+                        ? TOTAL_STEPS
+                        : flow === "extension"
+                          ? TOTAL_STEPS_EXT
+                          : TOTAL_STEPS_BOOK,
+            },
+            {
+                minExercisesToAdvance,
+                hasIncompleteExercise: () => hasIncompleteExercise(exercises),
+                hasInvalidExtensionExercise: () =>
+                    exercises.some((ex) => !validateExtensionExercise(ex).valid),
+            },
+        );
+        if (decision.kind === "flag-title") {
+            flagTitleError();
             return;
         }
-        if (extMode) {
-            // Extension flow: step 2 requires >= 1 extension exercise, all
-            // complete (reusing the shipped payload validators).
-            if (step === 2) {
-                if (
-                    exercises.length === 0 ||
-                    exercises.some((ex) => !validateExtensionExercise(ex).valid)
-                ) {
-                    setExerciseError(true);
-                    return;
-                }
-                setExerciseError(false);
-            }
-            setStep((s) => Math.min(TOTAL_STEPS_EXT, s + 1));
+        if (decision.kind === "card-error") {
+            setCardError(true);
             return;
         }
-        if (cardlessEdit) {
-            // #1967 — cardless edit flow: step 2 is the exercise editor, then
-            // Review. No card step in between. #1970 — cardlessEdit is edit-only,
-            // so the count floor is 1, not the create-time minimum; a
-            // half-filled exercise still blocks.
-            if (step === 2) {
-                if (
-                    exercises.length < minExercisesToAdvance(true) ||
-                    hasIncompleteExercise(exercises)
-                ) {
-                    setExerciseError(true);
-                    return;
-                }
-                setExerciseError(false);
-            }
-            setStep((s) => Math.min(TOTAL_STEPS_BOOK, s + 1));
+        if (decision.kind === "exercise-error") {
+            setExerciseError(true);
             return;
         }
-        if (step === 2) {
-            // #1970 — the card-count minimum is a create-time requirement;
-            // editing an existing lesson never re-imposes it.
-            if (!editMode && cards.length < MIN_CARDS) {
-                setCardError(true);
-                return;
-            }
-            setCardError(false);
-        }
-        if (step === 3) {
-            // Too few (create-time only, #1970), OR any exercise still
-            // incomplete — the completeness guard applies in both modes so a
-            // half-filled manual exercise can't slip into step 4.
-            if (
-                exercises.length < minExercisesToAdvance(editMode) ||
-                hasIncompleteExercise(exercises)
-            ) {
-                setExerciseError(true);
-                return;
-            }
-            setExerciseError(false);
-        }
-        setStep((s) => Math.min(TOTAL_STEPS, s + 1));
+        // Mirror the original per-step gate clears on a successful pass.
+        if (step === 2 && flow !== "standard") setExerciseError(false);
+        if (flow === "standard" && step === 2) setCardError(false);
+        if (flow === "standard" && step === 3) setExerciseError(false);
+        setStep(decision.nextStep);
     }
 
     function applyLessonTemplate(key: LessonTemplateKey) {
@@ -752,22 +718,18 @@ export default function CreateLesson() {
     // #1740 — "Save as a copy" is only offered in edit mode; shared by the
     // card-driven and cardless-edit flows so the ternary lives in one place.
     const onSaveCopyHandler = editMode ? () => void saveCopy() : undefined;
+    // #2773 - one readiness flag instead of repeating the two-part chain in
+    // every JSX gate below (each && repetition feeds the component's cc).
+    const contentReady = !editLoading && !editError;
 
     return (
         <PageContainer testId="create-lesson-page">
-            <header className="create-lesson-header mb-6 flex flex-col gap-1">
-                <h1>{headerTitle(editMode, t)}</h1>
-                {!editLoading && !editError && (
-                    <p
-                        className="create-lesson-step-indicator text-sm text-fg-muted"
-                        data-testid="create-lesson-step-indicator"
-                    >
-                        {t("create_lesson.step_of", "Step {current} of {total}")
-                            .replace("{current}", String(step))
-                            .replace("{total}", String(totalSteps))}
-                    </p>
-                )}
-            </header>
+            <CreateLessonHeader
+                editMode={editMode}
+                showStep={contentReady}
+                step={step}
+                totalSteps={totalSteps}
+            />
 
             <EditLoadState
                 loading={editLoading}
@@ -791,7 +753,26 @@ export default function CreateLesson() {
                 t={t}
             />
 
-            {!editLoading && !editError && step === 1 && (
+            {/* #2769 — mentor-mode Phase 3: the author's punch list from
+                playing this lesson (#2768), listed where they fix it.
+                Self-gating (own set + notes present); keyed by the lesson
+                so a multi-lesson switch re-reads the store. */}
+            {editContext && contentReady && !savedEntry && (
+                <MentorNotesEditPanel
+                    key={editContext.lessonId}
+                    source={editContext.source}
+                    setId={editContext.setId}
+                    filename={
+                        editContext.lessonId.endsWith(".json")
+                            ? editContext.lessonId
+                            : `${editContext.lessonId}.json`
+                    }
+                    lessonTitle={meta.title}
+                    exercises={exercises}
+                />
+            )}
+
+            {contentReady && step === 1 && (
                 <MetadataStep
                     meta={meta}
                     titleInputRef={titleInputRef}
@@ -911,7 +892,7 @@ export default function CreateLesson() {
                 />
             )}
 
-            {!savedEntry && !editLoading && !editError && (
+            {!savedEntry && contentReady && (
                 <WizardNav
                     step={step}
                     totalSteps={totalSteps}

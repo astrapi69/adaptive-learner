@@ -137,3 +137,44 @@ describe("playSound", () => {
         expect(playSound("correct_answer")).toBe(false);
     });
 });
+
+describe("game-mode additions (#2875)", async () => {
+    const {renderSamples} = await import("./sound-effects");
+
+    it("renders the checkpoint and fanfare recipes", () => {
+        for (const name of ["checkpoint", "fanfare"] as const) {
+            const samples = renderSamples(name, 8000);
+            expect(samples.length).toBeGreaterThan(0);
+            expect(samples.some((v) => v !== 0)).toBe(true);
+        }
+    });
+
+    it("renders the four simon pad recipes (#2907)", () => {
+        const pads = ["simon_1", "simon_2", "simon_3", "simon_4"] as const;
+        const rendered = pads.map((name) => renderSamples(name, 8000));
+        for (const samples of rendered) {
+            expect(samples.length).toBeGreaterThan(0);
+            expect(samples.some((v) => v !== 0)).toBe(true);
+        }
+        // Each pad carries a distinct pitch: no two waveforms match.
+        for (let a = 0; a < rendered.length; a++) {
+            for (let b = a + 1; b < rendered.length; b++) {
+                expect(rendered[a]).not.toEqual(rendered[b]);
+            }
+        }
+    });
+
+    it("a pitch factor changes the waveform but not the length", () => {
+        const flat = renderSamples("correct_answer", 8000, 1);
+        const raised = renderSamples("correct_answer", 8000, Math.pow(2, 4 / 12));
+        expect(raised.length).toBe(flat.length);
+        let differs = false;
+        for (let i = 0; i < flat.length; i++) {
+            if (flat[i] !== raised[i]) {
+                differs = true;
+                break;
+            }
+        }
+        expect(differs).toBe(true);
+    });
+});

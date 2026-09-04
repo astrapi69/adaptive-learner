@@ -156,6 +156,32 @@ kann, bevor er es herunterlädt. Jeder Eintrag bewirbt die `id`, den
 den Set-Manifesten synchron; ein PR an das offizielle Repo
 regeneriert sie.
 
+## Bonus-Lektionen (App-Konvention)
+
+Eine Lektionsdatei, deren Name mit `bonus-` beginnt (zum Beispiel
+`bonus-vertiefung.json`), ist eine **Bonus-Lektion**. Das ist eine
+app-seitige Namenskonvention - die Lektionsdatei selbst folgt dem
+normalen Lektionsschema, an Engine oder Manifest ändert sich nichts.
+
+Was die App daraus macht:
+
+- Die Set-Seite sortiert Bonus-Lektionen ans Ende der Lektionsliste
+  und zeigt sie mit einem "Bonus"-Abzeichen.
+- Solange der Spielmodus (und sein Bonus-Schalter) aktiv ist, ist
+  eine Bonus-Lektion sichtbar, aber gesperrt, bis jede reguläre
+  Lektion des Sets mit mindestens einem Stern abgeschlossen ist; die
+  Freischalt-Bedingung erscheint als Tooltip.
+- Bei ausgeschaltetem Spielmodus verhält sich eine Bonus-Lektion wie
+  jede andere Lektion - das Gate ist Spielmodus-Dramaturgie, nie eine
+  Inhaltssperre.
+- Bonus-Lektionen zählen selbst nie zu Freischalt-Bedingungen: die
+  Blitzrunde des Sets und die Bonus-Freischaltung betrachten nur die
+  regulären Lektionen.
+
+Autoren-Hinweis: Bonus-Lektionen bleiben echt optional (Vertiefung,
+Kurioses, eine härtere Herausforderung) - das Set muss ohne sie
+vollständig sein.
+
 ## Manifest-Format
 
 Das Feld-Schema des Manifests, also das Root-`manifest.yaml`, das die
@@ -287,7 +313,7 @@ Lektion, die sie nutzt, deklariert sie in `requires_extensions`, und die
 Payload validiert die registrierte Extension, nie das Core-Schema. Der
 Mechanismus ist in der Engine-Referenz
 [learn-content-engine - `docs/extensions.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/extensions.md)
-beschrieben. Die App hat fünf Extension-Typen adoptiert
+beschrieben. Die App hat neun Extension-Typen adoptiert
 (`SUPPORTED_EXT_EXERCISE_TYPES` im `ExerciseDispatcher`; ein
 Paritäts-Gate hält Dispatcher und Load-Guard synchron, sodass alles
 Ladbare renderbar ist):
@@ -299,17 +325,26 @@ Ladbare renderbar ist):
 | `ext:al-reading-comprehension` | Leseverständnis (Textpassage + Fragen) | `passage` + `questions[]` (je eine `multiple_choice`- / `free_text`-Teilfrage) | #1603 |
 | `ext:al-graded-quiz` | Benotetes Quiz | `questions[]` (je mit `points`) + optionale `pass_threshold` | #1616; das Demo-Referenz-Set ist in Entdecken / Meine Inhalte ausgeblendet (#1702) |
 | `ext:al-dictation` | Audio-Diktat (hören, dann transkribieren) | `audio` (ein `assets/`-Clip oder ein per Editor-Upload eingebetteter Daten-URI, #1911) + `accept[]` (toleranter Transkriptions-Abgleich) | #1881 (fünfte Adoption) |
+| `ext:al-image-description` | Bild beschreiben (Bild + Freitext-Beschreibung) | `image` (ein `assets/`-Pfad oder ein eingebetteter Daten-URI) + `accept[]` (toleranter Beschreibungs-Abgleich) | #2095 (sechste Adoption) |
+| `ext:al-speak-and-record` | Nachsprechen (Satz hören/anzeigen, eigene Aufnahme) | `sentence` + optionale `audio` (Referenz-Clip; ohne Clip Sprachsynthese) | engine#68 Idee 3 (siebte Adoption; bewusst UNGEWERTET - kein richtig/falsch, keine SRS-Zeile) |
+| `ext:al-audio-choice` | Lückensatz mit Audio-Optionen (hören, welches Wort passt) | `sentence` (mit `___`-Lücke) + `options[]` (je `audio` + optional `is_correct: "true"`, genau eine korrekte Option) | engine#68 Idee 1 (achte Adoption; kein `label` auf den Optionen - ein sichtbares Wort würde die Hörübung verraten) |
+| `ext:al-audio-tiles` | Übersetzung aus Wort-Kacheln bauen, nach Gehör | `audio` (Ausgangssprache) + `tiles[]` (Zielsprache) + optionale `accept_orderings[][]` | engine#68 Idee 2 (neunte Adoption; nutzt dieselbe Kachel-Mechanik wie `word_tiles`, nur mit Audio statt sichtbarem Ausgangssatz) |
 
 **Zwei Autorenwege.** Extension-Aufgaben lassen sich (a) direkt als
 Content-Repo-JSON schreiben (der kanonische Weg, in der Engine-Referenz
 beschrieben) oder (b) in der App. Der Lektions-Creator hat einen
 **Extension-Autoren-Wizard** bekommen (#1852), erreichbar über die Vorlage
-*Erweiterte Aufgabentypen* in Schritt 1, der alle fünf Typen abdeckt (#1859
-Kategorisierung + Fehlerkorrektur, #1865 Leseverständnis + Graded-Quiz, #1887
-Diktat). Diktat ist außerdem über den Core-Aufgabentyp-Picker in Schritt 3
-erreichbar, hinter einem verallgemeinerten `requires_extensions`-Gate (#1895).
-Beide Wege erzeugen dasselbe Lektions-JSON und setzen `requires_extensions`
-(versioniert, z. B. `ext:al-dictation@1`).
+*Erweiterte Aufgabentypen* in Schritt 1, der sechs der neun Typen abdeckt
+(#1859 Kategorisierung + Fehlerkorrektur, #1865 Leseverständnis +
+Graded-Quiz, #1887 Diktat, #2095 Bildbeschreibung). Diktat ist außerdem über
+den Core-Aufgabentyp-Picker in Schritt 3 erreichbar, hinter einem
+verallgemeinerten `requires_extensions`-Gate (#1895). **`ext:al-speak-and-record`,
+`ext:al-audio-choice` und `ext:al-audio-tiles` sind noch NICHT im Wizard** -
+nur Content-Repo-JSON (Weg a) kann sie heute anlegen; die Wizard-Anbindung
+ist ein eigener, benannter Vorgang (adaptive-learner#2817 - inzwischen alle
+drei audio-basierten Typen, nicht mehr nur Nachsprechen), keine
+stillschweigende Lücke. Beide Wege erzeugen dasselbe Lektions-JSON und
+setzen `requires_extensions` (versioniert, z. B. `ext:al-dictation@1`).
 
 #### Beispiel je Extension-Typ
 
@@ -396,6 +431,65 @@ ist die `docs/extensions.md` der Engine.
 }
 ```
 
+```json
+{
+  "type": "ext:al-image-description",
+  "prompt": "Sieh dir das Bild an und beschreibe es.",
+  "ext_payload": {
+    "image": "assets/images/maus.jpg",
+    "accept": ["Maus", "eine Maus"]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-speak-and-record",
+  "prompt": "Höre den Satz, zeige ihn dir an und nimm dich selbst auf.",
+  "ext_payload": {
+    "sentence": "Je suis ici.",
+    "audio": "assets/audio/je-suis-ici.mp3"
+  }
+}
+```
+
+`audio` ist bei `ext:al-speak-and-record` optional: fehlt er, liest die App
+den `sentence`-Text per Sprachsynthese vor statt einen Autoren-Clip
+abzuspielen. Kein `accept`-Feld - die Aufgabe ist ungewertet, es gibt nichts,
+wogegen die Aufnahme geprüft würde.
+
+```json
+{
+  "type": "ext:al-audio-choice",
+  "prompt": "Höre die Wörter und wähle das passende.",
+  "ext_payload": {
+    "sentence": "Je ___ ici.",
+    "options": [
+      {"audio": "assets/audio/suis.mp3", "is_correct": "true"},
+      {"audio": "assets/audio/es.mp3"},
+      {"audio": "assets/audio/sommes.mp3"}
+    ]
+  }
+}
+```
+
+```json
+{
+  "type": "ext:al-audio-tiles",
+  "prompt": "Höre den Satz, dann baue die Übersetzung.",
+  "ext_payload": {
+    "audio": "assets/audio/je-suis-ici.mp3",
+    "tiles": ["Je", "suis", "ici"]
+  }
+}
+```
+
+Beide Typen tragen bewusst kein sichtbares Wort neben dem Audio - bei
+`ext:al-audio-choice` hätte ein `label` auf einer Option dieselbe
+Verräter-Wirkung wie ein Alt-Text bei `ext:al-image-description`. Ihre
+`assets/`-Pfade lösen über dieselbe `useAsset`-Kette wie jeder andere
+Audio-Clip auf; ein eingebetteter `data:audio/…`-URI funktioniert genauso.
+
 ### Verfügbarkeit im Lektions-Wizard
 
 Spielbar (ein Renderer existiert), generierbar (der KI-Mix kann den Typ
@@ -419,9 +513,16 @@ hinzufügen**-Button (#1849, #1853).
 | `ext:al-error-correction` | ja | nein | über den Extension-Wizard (#1859) |
 | `ext:al-reading-comprehension` | ja | nein | über den Extension-Wizard (#1865) |
 | `ext:al-graded-quiz` | ja | nein | über den Extension-Wizard (#1865) |
+| `ext:al-image-description` | ja | nein | über den Extension-Wizard (#2095) |
+| `ext:al-speak-and-record` | ja | nein | nein - noch nicht im Wizard (adaptive-learner#2817); nur Content-Repo-JSON |
+| `ext:al-audio-choice` | ja | nein | nein - noch nicht im Wizard (adaptive-learner#2817); nur Content-Repo-JSON |
+| `ext:al-audio-tiles` | ja | nein | nein - noch nicht im Wizard (adaptive-learner#2817); nur Content-Repo-JSON |
 
-Die vier Nicht-Diktat-Extension-Typen werden im Extension-Wizard (oder als
-Content-Repo-JSON) angelegt, nie in die Core-KI-Generierung gemischt.
+Die sechs Nicht-Diktat-Extension-Typen werden im Extension-Wizard (oder als
+Content-Repo-JSON) angelegt, nie in die Core-KI-Generierung gemischt - bis
+auf die drei audio-basierten Typen (`ext:al-speak-and-record`,
+`ext:al-audio-choice`, `ext:al-audio-tiles`), die (Stand heute) NUR als
+Content-Repo-JSON anlegbar sind.
 
 **Listen-First ist ein Modus, kein Typ.** Seit #1687 (Entscheidung
 #1600, Option A) können `free_text`- und `matching`-Aufgaben ein
@@ -470,7 +571,7 @@ Autorenoberfläche, nicht nur ein KI-Generieren-Knopf:
 | Ausgeschlossen | Warum (ein Satz) |
 |----------------|------------------|
 | Essay / Langtext / Zeichnen / Formel / Peer-Review / freie Selbstbewertung | Nicht binär SRS-bewertbar; Selbstbewertung zurückgestellt (#1268). |
-| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. Einzige Ausnahme: kurze Diktat-Audio-Clips, die der Übungs-Editor als Daten-URI in die Lektion einbettet. |
+| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. Zwei benannte Ausnahmen: kurze Autoren-Audio-Clips (Diktat, Bildbeschreibung, sowie `ext:al-audio-choice`s Optionen und `ext:al-audio-tiles`s Satz-Audio), die der Übungs-Editor als Daten-URI in die Lektion einbettet oder die als `assets/`-Datei im Content-Repo mitgeliefert werden, und `ext:al-speak-and-record`s eigene Lernenden-Aufnahme (`MediaRecorder`, per-Nutzer in Dexie bzw. Backend gespeichert, NICHT in die Lektion selbst eingebettet) - mit explizit geprüftem Speicher-Fußabdruck (24kbps-Bitrate-Deckel, adaptive-learner#2818 verfolgt das noch offene Gesamt-Volumen-Risiko). |
 | Hotspot / Simulation / Memory / Kreuzworträtsel | Aufwand ohne SRS-Mehrwert (später ggf. eigene Entscheidung). |
 | Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
 | Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |

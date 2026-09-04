@@ -48,6 +48,39 @@ export const MANAGED_USER_DATA_KEYS = [
     // rename, so lesson identity (and thus progress/SRS) is untouched.
     // Mode-agnostic, survives a Dexie restore + rides the .alb backup.
     "adaptive-learner.lesson-order",
+    // #2768 — per-step mentor notes an author leaves while playing their
+    // OWN lesson (lib/lesson/mentor-notes-store). Local authoring aid,
+    // mode-agnostic, survives a Dexie restore + rides the .alb backup.
+    "adaptive-learner.mentor-notes",
+    // #2841 — speech-recording ids evicted for storage-cap reasons
+    // (lib/voice/speech-recording-evicted-store). Survives a Dexie
+    // restore + rides the .alb backup's localStorage snapshot.
+    "adaptive-learner.speech-recording-evicted",
+    // #2850 — selected + XP-purchased avatar frames per user
+    // (lib/avatar/avatar-frame-store). Decoration state without a
+    // backend column; mode-agnostic, survives a Dexie restore + rides
+    // the .alb backup's localStorage snapshot.
+    "adaptive-learner.avatar.frames",
+    // #2861 — selected + XP-purchased mascot variants per user
+    // (lib/mascot/mascot-variant-store). Same cosmetics pattern as
+    // the avatar frames: mode-agnostic, survives a Dexie restore +
+    // rides the .alb backup's localStorage snapshot.
+    "adaptive-learner.mascot.variants",
+    // #2862 — the uploaded photo displaced by choosing a preset figure
+    // (lib/avatar/avatar-photo-stash). One slot per user, restorable
+    // from Settings > General; mode-agnostic, survives a Dexie restore
+    // + rides the .alb backup's localStorage snapshot.
+    "adaptive-learner.avatar.photo-stash",
+    // #2887 — XP-purchased arcade games per user
+    // (lib/arcade/arcade-unlock-store). Same cosmetics pattern:
+    // mode-agnostic, survives a Dexie restore + rides the .alb
+    // backup's localStorage snapshot.
+    "adaptive-learner.arcade.unlocks",
+    // #2889 — arcade ticket balance + awarded streak milestones per
+    // user (lib/arcade/ticket-store). Same pattern: mode-agnostic,
+    // survives a Dexie restore + rides the .alb backup's
+    // localStorage snapshot.
+    "adaptive-learner.arcade.tickets",
 ] as const;
 
 /**

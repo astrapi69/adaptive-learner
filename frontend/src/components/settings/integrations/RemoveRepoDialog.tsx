@@ -22,7 +22,7 @@ import { useEffect, useId, useState } from "react";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import ConfirmDialog from "../../../shared/feedback/ConfirmDialog";
-import type { DeletionPlan } from "../../../lib/content/browse/orphan-cleanup";
+import type { DeletionPlan } from "../../../lib/content/browse/lifecycle/orphan-cleanup";
 import {
   userRepoSource,
   type UserContentRepo,

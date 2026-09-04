@@ -30,6 +30,7 @@ import {
   lessonCardsToAnki,
 } from "../../../lib/export/anki-export";
 import { explainError } from "../../../lib/review/explain-error";
+import { questionForError } from "../../../lib/review/error-question";
 import { readExplanationsEnabled } from "../../../lib/review/reviewPref";
 import type { LessonMode } from "../../../lib/learning/lessonModePref";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
@@ -487,9 +488,15 @@ export function SummaryXp({
  */
 export function SummaryExplanations({
   sessionErrors,
+  lesson,
   t,
 }: {
   sessionErrors: ElementError[];
+  /** #2757 — the finished lesson's content, used to resolve each mistake's
+   *  question text so the answers show with context. Optional: without it
+   *  (or when an error's exercise no longer resolves) the entry keeps the
+   *  answer-only rendering. */
+  lesson?: ContentLesson;
   t: TFn;
 }) {
   if (!readExplanationsEnabled()) return null;
@@ -515,12 +522,24 @@ export function SummaryExplanations({
       <ul className="flex flex-col gap-3">
         {mistakes.map((err) => {
           const expl = explainError(err);
+          const question = lesson ? questionForError(lesson, err) : null;
           return (
             <li
               key={err.id}
               className="flex flex-col gap-1"
               data-testid={`lesson-summary-explain-${err.id}`}
             >
+              {question && (
+                <p
+                  className="text-sm"
+                  data-testid={`lesson-summary-explain-question-${err.id}`}
+                >
+                  <span className="text-fg-muted">
+                    {t("review.question_label", "Question:")}{" "}
+                  </span>
+                  <span className="font-medium">{question}</span>
+                </p>
+              )}
               <AnswerDiff
                 userAnswer={err.user_answer}
                 correctAnswer={err.correct_answer}

@@ -72,6 +72,8 @@ EXPECTED_TABLES = {
     "api_key_backups",
     # EXP-051 / #2125 — Durchgang (run/pass) bookkeeping.
     "set_runs",
+    # engine#68 idea 3 - speak-and-record clip storage.
+    "speech_recordings",
 }
 
 

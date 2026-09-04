@@ -19,6 +19,8 @@ import { NavLink, useLocation } from "react-router";
 
 import InitialsAvatar from "../../shared/media/InitialsAvatar";
 import { useI18n } from "../../hooks/ui/useI18n";
+import { avatarFrameById } from "../../lib/avatar/avatar-frames";
+import { readAvatarFrameState } from "../../lib/avatar/avatar-frame-store";
 import { readLearnerState } from "../../lib/learning/learnerState";
 import { PROFILE_UPDATED_EVENT } from "../../lib/learning/profileSignal";
 import { getStorage } from "../../storage";
@@ -30,6 +32,7 @@ export default function NavAvatar() {
   const { pathname } = useLocation();
   const [name, setName] = useState<string | null>(null);
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [frameRing, setFrameRing] = useState<string | null>(null);
 
   useEffect(() => {
     const userId = readLearnerState().userId;
@@ -39,6 +42,11 @@ export default function NavAvatar() {
     }
     let cancelled = false;
     async function refresh() {
+      // #2850 — the decorative frame; read inside refresh so the
+      // PROFILE_UPDATED_EVENT after a picker save re-applies it live.
+      setFrameRing(
+        avatarFrameById(readAvatarFrameState(userId!).selected).ring,
+      );
       try {
         const [user, settings] = await Promise.all([
           getStorage().users.get(userId!),
@@ -74,17 +82,23 @@ export default function NavAvatar() {
       title={label}
       aria-label={label}
     >
-      {avatar ? (
-        <img
-          src={avatar}
-          alt=""
-          aria-hidden="true"
-          className="size-7 rounded-full object-cover"
-          data-testid="nav-avatar-image"
-        />
-      ) : (
-        <InitialsAvatar name={name} size={SIZE} testId="nav-avatar-initials" />
-      )}
+      <span
+        className="m-1 inline-flex rounded-full"
+        style={frameRing ? { boxShadow: frameRing } : undefined}
+        data-testid={frameRing ? "nav-avatar-frame" : undefined}
+      >
+        {avatar ? (
+          <img
+            src={avatar}
+            alt=""
+            aria-hidden="true"
+            className="size-7 rounded-full object-cover"
+            data-testid="nav-avatar-image"
+          />
+        ) : (
+          <InitialsAvatar name={name} size={SIZE} testId="nav-avatar-initials" />
+        )}
+      </span>
     </NavLink>
   );
 }

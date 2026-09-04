@@ -9,20 +9,81 @@
  * to the footer, so the header is now purely presentational.
  */
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router";
+
 import type { ContentLesson } from "../../../storage/types";
+import type { SetPosition } from "../../../lib/lesson/set-position";
 import { useI18n } from "../../../hooks/ui/useI18n";
 
 interface LessonHeaderProps {
   lesson: ContentLesson;
   setTitle: string | null;
+  /** Position of this lesson in its set (#2793); omitted when unknown. */
+  position?: SetPosition | null;
+  /** Route of the preceding lesson, when there is one (#2793). */
+  prevHref?: string | null;
+  /** Route of the following lesson, when there is one (#2793). */
+  nextHref?: string | null;
+  /** Route of the set's lesson list, when the set is known (#2793). */
+  setHref?: string | null;
 }
 
-/** Compact set / title / credit line. */
-export default function LessonHeader({ lesson, setTitle }: LessonHeaderProps) {
+/** Compact set / title / credit line, plus the in-set position row. */
+export default function LessonHeader({
+  lesson,
+  setTitle,
+  position = null,
+  prevHref = null,
+  nextHref = null,
+  setHref = null,
+}: LessonHeaderProps) {
   const { t } = useI18n();
 
   return (
     <header className="lesson-header">
+      {position && (
+        // #2793 — "how far am I" plus the backward step the app never had.
+        // Both arrows are plain router links, so the browser's own history
+        // and long-press "open in new tab" keep working; the disabled edge
+        // renders as inert text, never a dead-looking button.
+        <div
+          className="flex items-center gap-1 text-sm text-fg-muted"
+          data-testid="lesson-position-row"
+        >
+          {prevHref ? (
+            <Link
+              to={prevHref}
+              className="flex min-h-9 min-w-9 items-center justify-center rounded-app text-fg-secondary hover:bg-bg-elevated"
+              aria-label={t("lesson.nav_previous", "Previous lesson")}
+              title={t("lesson.nav_previous", "Previous lesson")}
+              data-testid="lesson-nav-previous"
+            >
+              <ChevronLeft size={18} aria-hidden="true" />
+            </Link>
+          ) : (
+            <span className="min-h-9 min-w-9" aria-hidden="true" />
+          )}
+          <span data-testid="lesson-position">
+            {t("lesson.position", "Lesson {current} of {total}")
+              .replace("{current}", String(position.index))
+              .replace("{total}", String(position.total))}
+          </span>
+          {nextHref ? (
+            <Link
+              to={nextHref}
+              className="flex min-h-9 min-w-9 items-center justify-center rounded-app text-fg-secondary hover:bg-bg-elevated"
+              aria-label={t("lesson.nav_next", "Next lesson")}
+              title={t("lesson.nav_next", "Next lesson")}
+              data-testid="lesson-nav-next"
+            >
+              <ChevronRight size={18} aria-hidden="true" />
+            </Link>
+          ) : (
+            <span className="min-h-9 min-w-9" aria-hidden="true" />
+          )}
+        </div>
+      )}
       {setTitle && (
         // #959 — keep the set context compact (smaller, single line with
         // ellipsis) so it never costs more than one row.
@@ -33,7 +94,20 @@ export default function LessonHeader({ lesson, setTitle }: LessonHeaderProps) {
           <span className="lesson-header-set-label">
             {t("lesson.set_label", "Set")}:
           </span>
-          {setTitle}
+          {/* #2793 - one click from inside a lesson to the set's lesson list,
+              instead of hunting for the set in the learning path. */}
+          {setHref ? (
+            <Link
+              to={setHref}
+              className="underline decoration-dotted underline-offset-2"
+              data-testid="lesson-header-set-link"
+              title={t("lesson.nav_set_overview", "All lessons of this set")}
+            >
+              {setTitle}
+            </Link>
+          ) : (
+            setTitle
+          )}
         </p>
       )}
       {/* #1633 — the title stays a semantic <h1> (a11y + document structure

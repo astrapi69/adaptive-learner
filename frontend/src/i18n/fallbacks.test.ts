@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {FALLBACK_CATALOGS, fallbackString} from "./fallbacks";
+import {FALLBACK_CATALOGS} from "./fallbacks";
 
 /**
  * The first-paint fallback catalog MUST mirror the landing keys the shell
@@ -30,7 +30,12 @@ describe("first-paint fallback catalog — landing keys (#1902)", () => {
     for (const [lang, catalog] of Object.entries(FALLBACK_CATALOGS)) {
         for (const key of REQUIRED_LANDING_KEYS) {
             it(`${lang}: landing.${key} is present and non-empty`, () => {
-                const value = catalog.landing?.[key];
+                // #2796 — catalog values are now a nested union, so read the
+                // group through a narrowing cast instead of a bare index.
+                const landing = catalog.landing as
+                    | Record<string, string>
+                    | undefined;
+                const value = landing?.[key];
                 expect(value, `fallbacks.ts landing.${key} missing for "${lang}"`).toBeTruthy();
                 expect(typeof value).toBe("string");
             });
@@ -38,7 +43,8 @@ describe("first-paint fallback catalog — landing keys (#1902)", () => {
     }
 
     it("de resolves landing.intro to German, not the raw key or English", () => {
-        const intro = fallbackString("de", "landing.intro");
+        const landing = FALLBACK_CATALOGS.de.landing as Record<string, string>;
+        const intro = landing.intro;
         expect(intro).toBeDefined();
         expect(intro).not.toBe("landing.intro");
         // Umlaut-carrying German copy — proves it is the localized string,
@@ -47,6 +53,7 @@ describe("first-paint fallback catalog — landing keys (#1902)", () => {
     });
 
     it("de resolves landing.docs_link to German, not English", () => {
-        expect(fallbackString("de", "landing.docs_link")).toBe("Dokumentation lesen");
+        const landing = FALLBACK_CATALOGS.de.landing as Record<string, string>;
+        expect(landing.docs_link).toBe("Dokumentation lesen");
     });
 });

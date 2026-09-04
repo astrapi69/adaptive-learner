@@ -38,7 +38,22 @@ export type RawAnswer =
    *  of the audio clip, persisted so a revisited, locked exercise restores
    *  its exact input. */
   | { kind: "al_dictation"; input: string }
-  | { kind: "al_image_description"; input: string };
+  | { kind: "al_image_description"; input: string }
+  /** engine#68 idea 3 - adopted extension ``ext:al-speak-and-record``:
+   *  whether the learner recorded a clip this step, persisted so a
+   *  revisited step shows the same completed state. The clip ITSELF
+   *  lives in the separate ``speechRecordings`` store (keyed by
+   *  exercise, not step-history) - this flag is only a locked-view
+   *  marker, mirroring every other ungraded step's minimal footprint. */
+  | { kind: "al_speak_and_record"; recorded: boolean }
+  /** adopted extension ``ext:al-audio-choice``: the selected option's audio
+   *  reference, persisted so a revisited, locked exercise restores its
+   *  exact selection. */
+  | { kind: "al_audio_choice"; selected_audio: string }
+  /** adopted extension ``ext:al-audio-tiles``: the learner's placed tile
+   *  order (indices into ``ext_payload.tiles``), mirroring core
+   *  ``word_tiles``'s own ``placed`` shape. */
+  | { kind: "al_audio_tiles"; placed: number[] };
 
 export interface LessonStepResult {
   step_id: string;
@@ -75,6 +90,9 @@ export interface LessonProgressUpsertBody {
    *  value unchanged. */
   current_step?: number;
   mark_completed?: boolean;
+  /** #2893 - transient game-mode combo bonus (client-capped, hard
+   *  ceiling 20 on both backends). Read only with mark_completed. */
+  combo_bonus_xp?: number;
   /** Phase 63A — flip the row to ``paused`` and stamp
    *  ``paused_at``. ``step_results`` stay intact for the resume. */
   mark_paused?: boolean;

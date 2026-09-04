@@ -27,7 +27,7 @@ import {
   applyStoredLessonOrder,
   getLessonOrder,
   storeLessonOrder,
-} from "../../lib/content/browse/lesson-order-store";
+} from "../../lib/content/browse/prefs/lesson-order-store";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
 const BRANCH = "main";

@@ -83,6 +83,57 @@ export class SettingsPage {
   get cropConfirm(): Locator {
     return this.page.getByTestId("crop-confirm");
   }
+  get avatarPresets(): Locator {
+    return this.page.getByTestId("settings-avatar-presets");
+  }
+  avatarPreset(id: string): Locator {
+    return this.page.getByTestId(`settings-avatar-preset-${id}`);
+  }
+  get avatarFrames(): Locator {
+    return this.page.getByTestId("settings-avatar-frames");
+  }
+  avatarFrame(id: string): Locator {
+    return this.page.getByTestId(`settings-avatar-frame-${id}`);
+  }
+  avatarFrameBuy(id: string): Locator {
+    return this.page.getByTestId(`settings-avatar-frame-buy-${id}`);
+  }
+  get playfulSoundsToggle(): Locator {
+    return this.page.getByTestId("settings-playful-sounds-toggle");
+  }
+  get playfulSoundsOffer(): Locator {
+    return this.page.getByTestId("settings-playful-sounds-offer");
+  }
+  get playfulHeartsToggle(): Locator {
+    return this.page.getByTestId("settings-playful-hearts-toggle");
+  }
+  get playfulHeartsCount(): Locator {
+    return this.page.getByTestId("settings-playful-hearts-count");
+  }
+  get playfulCountdownToggle(): Locator {
+    return this.page.getByTestId("settings-playful-countdown-toggle");
+  }
+  get playfulCountdownSeconds(): Locator {
+    return this.page.getByTestId("settings-playful-countdown-seconds");
+  }
+  get mascotVariants(): Locator {
+    return this.page.getByTestId("settings-mascot-variants");
+  }
+  mascotVariant(id: string): Locator {
+    return this.page.getByTestId(`settings-mascot-variant-${id}`);
+  }
+  mascotVariantBuy(id: string): Locator {
+    return this.page.getByTestId(`settings-mascot-variant-buy-${id}`);
+  }
+  get avatarReplaceDialog(): Locator {
+    return this.page.getByTestId("settings-avatar-replace-dialog");
+  }
+  get avatarReplaceConfirm(): Locator {
+    return this.page.getByTestId("settings-avatar-replace-dialog-confirm");
+  }
+  get avatarRestorePhoto(): Locator {
+    return this.page.getByTestId("settings-avatar-restore-photo");
+  }
   get selectiveExport(): Locator {
     return this.page.getByTestId("data-export-selective");
   }

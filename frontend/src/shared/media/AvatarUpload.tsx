@@ -83,6 +83,8 @@ export interface AvatarUploadProps {
   onChange: (dataUrl: string | null) => void;
   /** Receives a stable, translatable reason key on a processing failure. */
   onError?: (reasonKey: string) => void;
+  /** Decorative ``box-shadow`` ring around the preview (#2850). */
+  frameRing?: string | null;
   testId?: string;
 }
 
@@ -97,6 +99,7 @@ export default function AvatarUpload({
   avatarButtonLabel = "View or change profile picture",
   onChange,
   onError,
+  frameRing = null,
   testId,
 }: AvatarUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -161,6 +164,7 @@ export default function AvatarUpload({
         title={avatarButtonLabel}
         data-testid="avatar-trigger"
         className="group relative inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer rounded-full p-0 leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
+        style={frameRing ? { boxShadow: frameRing } : undefined}
       >
         {value ? (
           <img

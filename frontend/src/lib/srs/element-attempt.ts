@@ -33,6 +33,7 @@ import {asReadingComprehensionPayload, canonicalAnswer} from "../exercises/paylo
 import {asGradedQuizPayload, canonicalAnswer as gradedQuizCanonicalAnswer} from "../exercises/payload/graded-quiz";
 import {canonicalDictationAnswer} from "../exercises/payload/dictation";
 import {canonicalImageDescriptionAnswer} from "../exercises/payload/image-description";
+import {correctAudioChoiceOption} from "../exercises/payload/audio-choice";
 import {resolveConcreteDirection} from "../exercises/direction";
 import {elementKeysOf} from "./element-keys";
 import {elementIdentityKeysOf} from "./element-identity";
@@ -300,6 +301,55 @@ export function deriveImageDescriptionAttempt(
         element_key: canonical,
         element_type: "vocabulary",
         user_answer: userInput,
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}
+
+/** AUDIO_CHOICE: single attempt. element_key = the correct option's audio
+ *  reference (``correctAudioChoiceOption``) — there is no text label to key
+ *  on by design (a visible word would spoil the listening exercise), so the
+ *  audio path itself is the closest stable identifier. ``correct`` is
+ *  computed by AudioChoiceExercise by comparing the selected option's audio
+ *  against the same reference; the deriver doesn't re-validate. */
+export function deriveAudioChoiceAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    selectedAudio: string,
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical = elementKeysOf(exercise)?.[0] ?? correctAudioChoiceOption(exercise);
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "vocabulary",
+        user_answer: selectedAudio,
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}
+
+/** AUDIO_TILES: single attempt. element_key = the canonical
+ *  ``payload.tiles.join(" ")`` phrase — mirrors ``deriveWordTilesAttempt``,
+ *  but reads the tile list from the ext_payload (this type has no core
+ *  ``exercise.tiles`` field) rather than from the exercise itself. Always
+ *  ``grammar_rule``: unlike core word_tiles this type never carries a
+ *  single-tile payload (the engine rule requires >= 2 tiles), so the
+ *  ordering-tests-grammar reasoning always applies. */
+export function deriveAudioTilesAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    tiles: readonly string[],
+    placedOrder: readonly number[],
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical = elementKeysOf(exercise)?.[0] ?? tiles.join(" ");
+    const userAnswer = placedOrder.map((i) => tiles[i] ?? "").join(" ");
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "grammar_rule",
+        user_answer: userAnswer,
         correct_answer: canonical,
         correct: isCorrect,
     };

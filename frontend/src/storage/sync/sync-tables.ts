@@ -213,6 +213,54 @@ export const SYNC_TABLES: SyncTable[] = [
         timestampField: "updated_at",
         appendOnly: false,
     },
+    // #2827 — the six entries below existed in BACKUP_TABLES
+    // (storage/backup/backup-tables.ts) but were never added here,
+    // so LAN device-sync silently dropped them for every release
+    // since their introduction. All are direct user-scope rows with
+    // no cross-table FK inside the sync set (mirrors RESTORE_ORDER).
+    {
+        // v1.28.0 / Phase 44 — per-user content-lesson progress.
+        name: "lesson_progress",
+        dexieTable: "lessonProgress",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
+    {
+        // engine#68 idea 3 — speak-and-record clip storage.
+        // Re-recording overwrites the existing row in place.
+        name: "speech_recordings",
+        dexieTable: "speechRecordings",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
+    {
+        // v1.30.0 / Phase 46B / P-129 — element-level error tracking.
+        name: "element_errors",
+        dexieTable: "elementErrors",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
+    {
+        // v1.39.0 / Phase 56 / EXP-010 — daily mission assignment + progress.
+        name: "user_missions",
+        dexieTable: "userMissions",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
+    {
+        // EXP-051 / #2125 — Durchgang (run/pass) bookkeeping.
+        name: "set_runs",
+        dexieTable: "setRuns",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
+    {
+        // Phase 65 — API-key rollback cache, one row per (user, provider).
+        name: "api_key_backups",
+        dexieTable: "apiKeyBackups",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
 ];
 
 export const APPEND_ONLY_TABLES = new Set(

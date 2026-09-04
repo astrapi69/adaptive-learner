@@ -19,7 +19,7 @@ import ContentTree from "./ContentTree";
 import ContentViewToggle from "./ContentViewToggle";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import type { useSetSelection } from "../../../hooks/content/useSetSelection";
-import type { ContentViewMode } from "../../../lib/content/browse/viewModePref";
+import type { ContentViewMode } from "../../../lib/content/browse/prefs/viewModePref";
 import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 
 export interface ContentBrowsePanelProps {

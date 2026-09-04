@@ -42,8 +42,18 @@ import { maybeReverseLesson } from "../../lib/reverse/reverse-lesson";
 import LessonReverseNote from "../../components/lesson/chrome/LessonReverseNote";
 import LessonSummaryScreen from "../../components/lesson/summary/LessonSummaryScreen";
 import LessonHeader from "../../components/lesson/chrome/LessonHeader";
+import LessonMentorNote from "../../components/lesson/mentor/LessonMentorNote";
 import LessonOptionsBar from "../../components/lesson/chrome/LessonOptionsBar";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
+import PlayfulModeHint from "../../components/lesson/chrome/PlayfulModeHint";
+import LessonCombo from "../../components/lesson/chrome/LessonCombo";
+import LessonMascot from "../../components/lesson/mascot/LessonMascot";
+import { useLessonCombo } from "../../hooks/lesson/useLessonCombo";
+import { usePlayfulMode } from "../../hooks/settings/usePlayfulMode";
+import { useLessonTension } from "../../hooks/lesson/useLessonTension";
+import { comboBonusForRun } from "../../lib/learning/playful/playfulComboXpPref";
+import LessonTensionChrome from "../../components/lesson/chrome/tension/LessonTensionChrome";
+import LessonHeartsDialog from "../../components/lesson/dialogs/LessonHeartsDialog";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
@@ -58,6 +68,7 @@ import { useLessonFlowControl } from "../../hooks/lesson/session/useLessonFlowCo
 import { useLessonMotivation } from "../../hooks/lesson/session/useLessonMotivation";
 import { useLessonNavigation } from "../../hooks/lesson/session/useLessonNavigation";
 import { useLessonSetContext } from "../../hooks/lesson/session/useLessonSetContext";
+import { exitRouteForLesson, lessonRoute } from "../../lib/content/browse/continue-learning";
 import { useLessonStepState } from "../../hooks/lesson/session/useLessonStepState";
 import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrientationReanchor";
 import { clearHintUsage } from "../../lib/hints/hint-usage";
@@ -160,6 +171,21 @@ export default function LessonPage() {
     clearHintUsage();
   }, [source, setId, filename]);
 
+  // #2874 game-mode juice — the answer streak, fed by the celebration
+  // bus (exam mode emits no per-answer events, so it stays silent
+  // there by construction). One hook instance so the live chip and
+  // the summary's best-run chip read the same lesson.
+  const playful = usePlayfulMode();
+  const { combo, resetCombo } = useLessonCombo(playful);
+  // #2893 — the game-mode combo bonus for this run: the reducer's
+  // eligible-answer count through the user-configured cap; 0 while the
+  // combo-XP switch or the game mode is off. One number for both the
+  // summary display and the completion award.
+  const comboBonusXp = comboBonusForRun(combo.bonusEligible);
+  useEffect(() => {
+    resetCombo();
+  }, [source, setId, filename, resetCombo]);
+
   // The two-phase check state cluster (exercise handle, answerable /
   // checked / reviewed flags, render-phase per-step reset, Enter
   // shortcut) lives in the extracted hook (#1790).
@@ -188,6 +214,21 @@ export default function LessonPage() {
     progress,
     recordStepResult,
     goNext,
+  });
+
+  // #2878 game-mode tension - hearts + per-exercise countdown ring,
+  // both opt-in (default OFF). All gating (mode, summary, correction
+  // round) lives inside the hook.
+  const tension = useLessonTension({
+    playful,
+    lesson,
+    playedLesson,
+    currentStepIndex,
+    lessonMode,
+    checked,
+    source,
+    setId,
+    filename,
   });
 
   // Scroll-to-top on step change + the #140 theory back-link
@@ -244,8 +285,22 @@ export default function LessonPage() {
 
   // Next-lesson pointer + set title/domain/book (three silent-degrade
   // mount reads) live in the extracted hook (#1790).
-  const {nextLessonFilename, setTitle, setDomain, setBook} =
-    useLessonSetContext({source, setId, filename});
+  const {
+    nextLessonFilename,
+    prevLessonFilename,
+    position,
+    setTitle,
+    setDomain,
+    setBook,
+  } = useLessonSetContext({source, setId, filename});
+  // #2793 — the header's backward/forward links; the same route builder the
+  // rest of the app uses, so a neighbour opens exactly like any other lesson.
+  const prevLessonHref = prevLessonFilename
+    ? lessonRoute(source, setId, prevLessonFilename)
+    : null;
+  const nextLessonHref = nextLessonFilename
+    ? lessonRoute(source, setId, nextLessonFilename)
+    : null;
 
   const statusKind = resolveLessonStatusKind(
     source,
@@ -293,10 +348,21 @@ export default function LessonPage() {
       className="lesson-page flex flex-col min-h-full"
       data-testid="lesson-page"
     >
-      <LessonHeader lesson={lesson} setTitle={setTitle} />
+      <LessonHeader
+        lesson={lesson}
+        setTitle={setTitle}
+        position={position}
+        prevHref={prevLessonHref}
+        nextHref={nextLessonHref}
+        setHref={setId ? `/content/set/${encodeURIComponent(setId)}` : null}
+      />
 
       {/* #2319 — visible while test mode is active (preview build only). */}
       <TestModeBanner />
+
+      {/* #2844 — one-time playful-mode discovery hint at the lesson start;
+          the component gates itself on the pref + dismissal flags. */}
+      {!isSummary && currentStepIndex === 0 && <PlayfulModeHint />}
 
       {/* #1642 — the pause control moved into the footer; the exit dialog it
           opens is lifted here (portal, controlled by the lesson's exitOpen
@@ -322,6 +388,18 @@ export default function LessonPage() {
         lessonTitle={lesson.title}
         onResume={() => void handleResume()}
         onStartOver={() => void handleStartOver()}
+      />
+
+      {/* #2878 — out of hearts: the run ends with a friendly forced
+          choice. Retry restarts the run (recorded results stay) and
+          refills the hearts; exit returns to the lesson overview. */}
+      <LessonHeartsDialog
+        open={tension.depleted}
+        onRetry={() => {
+          tension.resetHearts();
+          void handleStartOver();
+        }}
+        onExit={() => navigate(exitRouteForLesson(setId))}
       />
 
       {/* #959 — scroll anchor: a step change scrolls this to the top of
@@ -357,9 +435,26 @@ export default function LessonPage() {
             isSummary={isSummary}
             currentStepIndex={currentStepIndex}
             totalSteps={totalSteps}
+            playful={playful}
             className="my-0 min-w-[8rem] flex-1"
           />
         </TestModeActivationZone>
+
+        {/* #2874 — the streak chip (game mode only): live run during the
+            lesson, the best run on the summary. */}
+        {playful && (
+          <LessonCombo combo={combo} showBest={isSummary} bonusXp={comboBonusXp} />
+        )}
+
+        {/* #2878 — the tension systems (both opt-in): the lives row and
+            the per-exercise countdown ring. Self-gating, hidden on the
+            summary. */}
+        <LessonTensionChrome tension={tension} />
+
+        {/* #2849 — the Lernfunke companion, playful mode only. Reacts to
+            the celebration bus (cheer/encourage/celebrate) and speaks one
+            praise phrase on lesson completion; grows on the summary. */}
+        <LessonMascot large={isSummary} />
 
         {/* #1625 — the lesson's mode/display SETTINGS (favorite, mode
             toggle, auto read-aloud) are bundled into one compact,
@@ -420,6 +515,8 @@ export default function LessonPage() {
           lessonFilename={filename}
           setDomain={setDomain}
           setBook={setBook}
+          comboBonusXp={comboBonusXp}
+          fullHeartsRun={tension.fullHeartsRun}
           markCompleted={markCompleted}
           markRestarted={markRestarted}
           goToStep={goToStep}
@@ -466,6 +563,16 @@ export default function LessonPage() {
               : t("lesson.button.next", "Continue")
           }
         />
+        {/* #2768 — mentor-mode Phase 2: per-step authoring note for OWN
+            lessons (self-gating, null for non-own sets). Keyed by the
+            step so a step change resets the disclosure + draft. */}
+        <LessonMentorNote
+          key={`mentor-${step!.id}`}
+          source={source}
+          setId={setId}
+          filename={filename}
+          stepId={step!.id}
+        />
         </>
       )}
       </LessonModeProvider>
@@ -486,7 +593,7 @@ export default function LessonPage() {
         delayedFeedback={!modeConfig.immediateFeedback}
         isInProgress={isInProgress}
         onPause={() => setExitOpen(true)}
-        onExit={() => navigate("/content?tab=my")}
+        onExit={() => navigate(exitRouteForLesson(setId))}
         goPrev={goPrev}
         goNext={goNext}
         onCheck={() => exerciseRef.current?.submit()}

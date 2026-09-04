@@ -10,7 +10,7 @@
  */
 
 import { useContentViewMode } from "../../../../hooks/content/useContentViewMode";
-import type { ContentViewMode } from "../../../../lib/content/browse/viewModePref";
+import type { ContentViewMode } from "../../../../lib/content/browse/prefs/viewModePref";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 

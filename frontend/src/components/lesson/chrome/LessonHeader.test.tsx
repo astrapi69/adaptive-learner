@@ -8,9 +8,11 @@
 
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
 
 import LessonHeader from "./LessonHeader";
+import type { SetPosition } from "../../../lib/lesson/set-position";
 import type { ContentLesson } from "../../../storage/types";
 
 const LESSON = {
@@ -31,6 +33,67 @@ function renderHeader(overrides: Record<string, unknown> = {}) {
     />,
   );
 }
+
+/** Render with the #2793 position row (needs a router for its links). */
+function renderWithPosition(
+  position: SetPosition,
+  hrefs: { prevHref?: string | null; nextHref?: string | null } = {},
+) {
+  return render(
+    <MemoryRouter>
+      <LessonHeader
+        lesson={LESSON}
+        setTitle="Die Währung des Geistes"
+        position={position}
+        prevHref={hrefs.prevHref ?? null}
+        nextHref={hrefs.nextHref ?? null}
+      />
+    </MemoryRouter>,
+  );
+}
+
+describe("LessonHeader in-set position (#2793)", () => {
+  it("shows no position row when the position is unknown", () => {
+    renderHeader();
+    expect(screen.queryByTestId("lesson-position-row")).not.toBeInTheDocument();
+  });
+
+  it("renders the position readout with both neighbours linked", () => {
+    renderWithPosition(
+      { index: 3, total: 12, previous: "02.json", next: "04.json" },
+      { prevHref: "/lesson/src/set/02.json", nextHref: "/lesson/src/set/04.json" },
+    );
+    expect(screen.getByTestId("lesson-position")).toHaveTextContent("3");
+    expect(screen.getByTestId("lesson-position")).toHaveTextContent("12");
+    expect(screen.getByTestId("lesson-nav-previous")).toHaveAttribute(
+      "href",
+      "/lesson/src/set/02.json",
+    );
+    expect(screen.getByTestId("lesson-nav-next")).toHaveAttribute(
+      "href",
+      "/lesson/src/set/04.json",
+    );
+  });
+
+  it("omits the backward link on the first lesson, keeps the readout", () => {
+    renderWithPosition(
+      { index: 1, total: 5, previous: null, next: "02.json" },
+      { nextHref: "/lesson/src/set/02.json" },
+    );
+    expect(screen.queryByTestId("lesson-nav-previous")).not.toBeInTheDocument();
+    expect(screen.getByTestId("lesson-nav-next")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-position")).toBeInTheDocument();
+  });
+
+  it("omits the forward link on the last lesson", () => {
+    renderWithPosition(
+      { index: 5, total: 5, previous: "04.json", next: null },
+      { prevHref: "/lesson/src/set/04.json" },
+    );
+    expect(screen.getByTestId("lesson-nav-previous")).toBeInTheDocument();
+    expect(screen.queryByTestId("lesson-nav-next")).not.toBeInTheDocument();
+  });
+});
 
 describe("LessonHeader", () => {
   it("keeps the lesson title as a level-1 heading for a11y", () => {
@@ -66,5 +129,29 @@ describe("LessonHeader", () => {
     renderHeader();
     expect(screen.queryByTestId("lesson-back-btn")).toBeNull();
     expect(screen.queryByTestId("lesson-pause-btn")).toBeNull();
+  });
+
+  it("links the set title to the set's lesson list when a route is given (#2793)", () => {
+    render(
+      <MemoryRouter>
+        <LessonHeader
+          lesson={LESSON}
+          setTitle="Die Währung des Geistes"
+          setHref="/content/set/waehrung"
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId("lesson-header-set-link")).toHaveAttribute(
+      "href",
+      "/content/set/waehrung",
+    );
+  });
+
+  it("renders the set title as plain text when no route is known (#2793)", () => {
+    renderHeader();
+    expect(screen.queryByTestId("lesson-header-set-link")).not.toBeInTheDocument();
+    expect(screen.getByTestId("lesson-header-set")).toHaveTextContent(
+      "Die Währung des Geistes",
+    );
   });
 });

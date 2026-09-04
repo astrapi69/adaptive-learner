@@ -362,6 +362,17 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // own lifetime; the 8s cap covers autoClose + exit fade with margin. A
     // surface that ever legitimately BASELINES a persistent toast would
     // time out here and must opt out explicitly instead of racing.
+    // #2898 - park the pointer in the neutral top-left corner BEFORE
+    // waiting the toasts out: the app's ToastContainer runs
+    // ``pauseOnHover`` at ``bottom-right`` (App.tsx), and the
+    // bundled-lesson walk leaves the mouse wherever its last
+    // ``lesson-next`` click landed - on the mobile viewport that is
+    // exactly where the motivation toast appears, so a still-fading
+    // toast freezes its autoClose under the parked pointer and
+    // outlives any cap. Moving the mouse lets every transient toast
+    // run its own lifetime; a genuinely persistent toast still trips
+    // the timeout below.
+    await page.mouse.move(0, 0);
     try {
         await page.waitForFunction(
             () => document.querySelectorAll(".Toastify__toast").length === 0,
@@ -663,6 +674,7 @@ async function authorExtensionLesson(page: Page): Promise<boolean> {
         await page.getByTestId("create-lesson-draft-fresh").click();
     }
     await page.getByTestId("create-lesson-title").fill("Visual: Extensions geprüft");
+    await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-extensions").click();
     await expect(page.getByTestId("create-lesson-extension-step")).toBeVisible();
 
@@ -924,6 +936,7 @@ export const SURFACE_NAMES = [
     "content-browser",
     "content-discover",
     "content-import",
+    "create-lesson",
     "set-detail",
     "lesson-theory",
     "lesson-cloze",
@@ -1211,6 +1224,23 @@ export async function gotoSurface(
             await expect(page.getByTestId("page-import")).toBeVisible({
                 timeout: 20_000,
             });
+            return true;
+        case "create-lesson":
+            // #2755 - wizard step 1: the required title leads the form and
+            // the template picker sits behind the collapsed disclosure;
+            // this motif IS the visual pin of that order (the checked-state
+            // motifs enter the wizard via the extensions path and never
+            // show step 1, which is why the #2755 rework produced a 0-diff
+            // sync until this surface existed).
+            await seedLearner(page);
+            await page.goto("/create-lesson");
+            await expect(page.getByTestId("create-lesson-step-1")).toBeVisible({
+                timeout: 15_000,
+            });
+            await expect(page.getByTestId("create-lesson-title")).toBeVisible();
+            await expect(
+                page.getByTestId("create-lesson-templates-toggle"),
+            ).toBeVisible();
             return true;
         case "set-detail":
             await seedLearner(page);

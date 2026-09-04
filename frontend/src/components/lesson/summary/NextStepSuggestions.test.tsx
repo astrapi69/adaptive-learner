@@ -16,7 +16,7 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter, useLocation} from "react-router";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
-import {setLessonShortcutsEnabled} from "../../../lib/lesson/lessonShortcutsPref";
+import {setLessonShortcutsEnabled} from "../../../lib/lesson/prefs/lessonShortcutsPref";
 
 const reducedMotionMock = vi.fn(() => false);
 vi.mock("../../../lib/feedback/feedbackPref", () => ({

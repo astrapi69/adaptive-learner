@@ -70,6 +70,7 @@ from app.routers.lesson_progress import router as lesson_progress_router
 from app.routers.projects import projects_router, users_projects_router
 from app.routers.reset import router as reset_router
 from app.routers.settings import router as settings_router
+from app.routers.speech_recordings import router as speech_recordings_router
 from app.routers.sync import router as sync_router
 from app.routers.system import router as system_router
 from app.routers.taxonomy import (
@@ -248,6 +249,7 @@ app.include_router(lessons_router, prefix="/api")
 app.include_router(users_imports_router, prefix="/api")
 app.include_router(imports_router, prefix="/api")
 app.include_router(lesson_progress_router, prefix="/api")
+app.include_router(speech_recordings_router, prefix="/api")
 app.include_router(element_errors_router, prefix="/api")
 app.include_router(learning_data_router, prefix="/api")
 app.include_router(subjects_router, prefix="/api")

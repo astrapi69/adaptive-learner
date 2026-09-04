@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import {
   ASK_AI_VISIBILITY_CHANGE_EVENT,
   readAskAiVisible,
-} from "../../../lib/lesson/askAiVisibilityPref";
+} from "../../../lib/lesson/prefs/askAiVisibilityPref";
 
 export function useAskAiVisible(): boolean {
   const [visible, setVisible] = useState<boolean>(() => readAskAiVisible());

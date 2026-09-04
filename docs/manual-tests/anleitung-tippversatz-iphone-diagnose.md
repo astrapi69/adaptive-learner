@@ -48,10 +48,32 @@ Bedeutung der Felder:
 |------|-----------|
 | `winY` | aktueller Fenster-Scroll (`window.scrollY`) |
 | `vvTop` | Versatz des sichtbaren Viewports (`visualViewport.offsetTop`) |
-| `scale` | Zoomstufe (1 = kein Pinch-Zoom) |
+| `scale` | Zoomstufe (1 = kein Zoom; unter 1 = Safari hat die Seite herausgezoomt) |
 | `kbd` | wie stark die Tastatur den sichtbaren Bereich verkleinert (px) |
+| `vvW` / `innerW` / `docW` | Breiten: sichtbarer Viewport, Fenster, Dokument - `docW` größer als `innerW` heißt, ein Element ist breiter als der Bildschirm |
 | `fix` | welcher Fix-Kandidat gerade aktiv ist (`off` = keiner) |
 | `letzter Tipp …` | beim letzten Tipp: das getroffene Element und **`ΔY`** |
+
+Jede Tipp-Zeile trägt zusätzlich den Zustand **zum Zeitpunkt des Tipps**
+(die Kopfzeile zeigt nur den Zustand danach): `t=` (Sekunden seit
+Sondenstart), `@winY`/`@vvTop` (die beiden Versatz-Kanäle), `@kbd` (war
+die Tastatur da gerade offen?), `@scale` (war die Seite gerade gezoomt?),
+`focus=` (welches Feld beim Tipp noch den Fokus hielt, `-` = keines),
+`@vvH`/`@innerH` (die Rohwerte hinter `@kbd`, um zu erkennen welcher von
+beiden sich bewegt hat) und `@rootY` (wie weit der App-Scroller `#root`
+gerade gescrollt war - die dritte Scroll-Quelle neben `winY` und `vvTop`).
+Die Kopfzeile trägt entsprechend `rootY` und `docH` (Gesamthöhe des
+Dokuments) sowie die Umgebung, nach der sonst gefragt werden müsste:
+`screenW`/`screenH`/`dpr` (aus `innerW × scale = screenW` folgt ein
+aktiver Safari-Seitenzoom, ohne das aA-Menü zu prüfen) und `standalone=`
+(1 = als Homescreen-App gestartet). Unter der Kopfzeile steht eine
+`ua=`-Zeile (Browser-/iOS-Version).
+
+Der Bericht enthält außerdem eine Sektion `events (newest first)`: jede
+deutliche Viewport-Änderung (Tastatur auf/zu, Zoomwechsel, ein Sprung der
+Versatz-Kanäle ab etwa einer Zeilenhöhe) mit `t=` und vollem Zustand.
+Damit ist auch sichtbar, was ZWISCHEN den Tipps passiert ist - der
+Versatz entsteht genau dort.
 
 Die Karte sammelt automatisch die letzten 8 Tipps (im Textfeld unten, neueste
 zuerst). Tipps auf die Karte selbst (den Kopier-Knopf, das Textfeld) zählen

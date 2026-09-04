@@ -14,7 +14,7 @@ import { enqueueRequest } from "../lib/pwa/sync-queue";
 import {
   applyStoredLessonOrderToList,
   recordSavedSetOrder,
-} from "../lib/content/browse/lesson-order-store";
+} from "../lib/content/browse/prefs/lesson-order-store";
 import type {
   ApiKeyTestResult,
   GitHubVerifyKind,
@@ -297,6 +297,36 @@ export const apiStorage: IStorageService = {
         throw err;
       }
     },
+  },
+
+  // --- Speech Recordings (engine#68 idea 3: speak-and-record) --------
+
+  speechRecordings: {
+    get: (userId, source, setId, lessonFilename, exerciseId) =>
+      api.speechRecordings.get(userId, source, setId, lessonFilename, exerciseId),
+    save: async (userId, body) => {
+      try {
+        return await api.speechRecordings.save(userId, body);
+      } catch (err) {
+        // Mirrors lessonProgress.upsert's offline queue (S3): a
+        // recording made while offline is not lost, it replays on
+        // reconnect. Online failures (5xx/4xx) are NOT queued.
+        if (typeof navigator !== "undefined" && !navigator.onLine) {
+          enqueueRequest(
+            `/users/${encodeURIComponent(userId)}/speech-recordings`,
+            "PUT",
+            body,
+          );
+        }
+        throw err;
+      }
+    },
+    delete: (userId, source, setId, lessonFilename, exerciseId) =>
+      api.speechRecordings.delete(userId, source, setId, lessonFilename, exerciseId),
+    // #2841 — API mode has no comparable browser-storage-quota risk (a
+    // real SQLite DB on the user's own machine, not an IndexedDB cap),
+    // so no cap/eviction exists here and nothing is ever "evicted".
+    wasEvicted: async () => false,
   },
 
   // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------

@@ -38,7 +38,7 @@ import {analyzeErrors} from "../../lib/adaptive/error-analyzer";
 import {
     buildContentAvailability,
     filterAvailableSetId,
-} from "../../lib/content/browse/content-availability";
+} from "../../lib/content/browse/lifecycle/content-availability";
 import {focusAreaTags} from "../../lib/adaptive/error-classifier";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
 import {masteryCounts, type MasteryCounts} from "../../lib/srs/mastery";

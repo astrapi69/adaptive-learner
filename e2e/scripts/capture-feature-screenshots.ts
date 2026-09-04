@@ -273,16 +273,37 @@ async function gotoSummarySections(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning scrolled to the Game Mode section's mascot
+ *  variant picker (#2861 — unlockable Lernfunke color schemes, level/
+ *  badge/XP-gated like the #2850 avatar frames). A fresh seeded learner
+ *  has only the free default unlocked, so this pins the realistic
+ *  mostly-locked first-look state, locks and all. */
+async function gotoMascotVariants(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const section = page.getByTestId("settings-mascot-variants");
+    try {
+        await section.waitFor({timeout: 15_000});
+    } catch {
+        return false;
+    }
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 /**
- * Open the proactive error-report dialog from Settings → About (#1480 —
- * baseline net for the inline-style-heavy dialog before its Tailwind
- * migration). The Support card's button dispatches the
+ * Open the proactive error-report dialog from Settings → Diagnostics &
+ * Support (#1480 — baseline net for the inline-style-heavy dialog before
+ * its Tailwind migration; moved here from Settings → About by #2789). The
+ * Support card's button dispatches the
  * ``adaptive-learner:open-error-report`` CustomEvent that App.tsx listens
  * on, so this exercises the real production path.
  */
 async function gotoErrorReportDialog(page: Page): Promise<boolean> {
     await seedLearner(page);
-    await page.goto("/settings?tab=about");
+    await page.goto("/settings?tab=diagnostics");
     await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
     const trigger = page.getByTestId("settings-create-error-report");
     if (!(await trigger.count())) return false;
@@ -339,6 +360,16 @@ async function gotoErrorReportFullPreview(page: Page): Promise<boolean> {
  * dexie-preview pipeline — baselining them needs an API-mode capture
  * project first (documented in #1480).
  */
+/** Open the dashboard with the opt-in tap-offset probe active (#1569/#2779). */
+async function gotoViewportDiagnostic(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/dashboard?vvdiag=1");
+    await expect(page.getByTestId("viewport-diagnostic")).toBeVisible({
+        timeout: 20_000,
+    });
+    return true;
+}
+
 async function gotoSyncDesktopOnlyNotice(page: Page): Promise<boolean> {
     await seedLearner(page);
     await page.goto("/settings?tab=data");
@@ -368,6 +399,7 @@ async function gotoBookUploadPicker(page: Page): Promise<boolean> {
         await page.getByTestId("create-lesson-draft-fresh").click();
     }
     await page.getByTestId("create-lesson-title").fill("Lernpsychologie");
+    await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-knowledge-from-text").click();
     await expect(page.getByTestId("create-lesson-book-step")).toBeVisible({
         timeout: 20_000,
@@ -600,6 +632,13 @@ const FEATURES: FeatureShot[] = [
     // --- Lesson-summary section toggles (#1411) --------------------------
     {path: "summary-sections/settings", setup: gotoSummarySections},
 
+    // --- Mascot color variants (#2861) -----------------------------------
+    {
+        path: "mascot-variants/settings",
+        setup: gotoMascotVariants,
+        pinTo: "settings-mascot-variants",
+    },
+
     // --- Error-report dialog (#1480 — pre-migration pixel net) ----------
     {path: "error-report/dialog", setup: gotoErrorReportDialog},
     {path: "error-report/verlauf", setup: gotoErrorReportHistory},
@@ -613,6 +652,73 @@ const FEATURES: FeatureShot[] = [
         path: "create-lesson/buch-upload-picker",
         setup: gotoBookUploadPicker,
         pinTo: "book-file-upload",
+    },
+
+    // --- Mobile bottom tab bar, opt-in (#2786 restore of #1512) ---------
+    {
+        path: "bottom-tab-bar/leiste",
+        setup: async (page) => {
+            // The bar is md:hidden — only the mobile viewport can show it.
+            const vp = page.viewportSize();
+            if (!vp || vp.width >= 768) return false;
+            await seedLearner(page);
+            await page.addInitScript(() => {
+                try {
+                    localStorage.setItem(
+                        "adaptive-learner.nav_position",
+                        "bottom",
+                    );
+                } catch {
+                    /* ignore */
+                }
+            });
+            await page.goto("/dashboard");
+            await expect(page.getByTestId("bottom-tab-bar")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        },
+    },
+
+    // --- In-set position + lesson navigation (#2793) --------------------
+    {
+        path: "lesson-navigation/position-zeile",
+        setup: async (page) => {
+            if (!(await gotoLessonRunner(page))) return false;
+            const row = page.getByTestId("lesson-position-row");
+            if (!(await row.count())) return false;
+            await expect(row).toBeVisible({timeout: 10_000});
+            return true;
+        },
+        pinTo: "lesson-position-row",
+    },
+
+    // --- Settings diagnostics section (#2782) ---------------------------
+    {
+        path: "viewport-diagnostic/settings-sektion",
+        setup: async (page) => {
+            await seedLearner(page);
+            // #2789 - moved from General to the new Diagnostics & Support tab.
+            await page.goto("/settings?tab=diagnostics");
+            const section = page.getByTestId("settings-diagnostics");
+            await expect(section).toBeVisible({timeout: 20_000});
+            return true;
+        },
+        pinTo: "settings-diagnostics",
+    },
+
+    // --- ViewportDiagnostic tap-offset probe (#1569, collapsed #2779) ---
+    {path: "viewport-diagnostic/eingeklappt", setup: gotoViewportDiagnostic},
+    {
+        path: "viewport-diagnostic/details",
+        setup: async (page) => {
+            if (!(await gotoViewportDiagnostic(page))) return false;
+            await page.getByTestId("viewport-diagnostic-toggle").click();
+            await expect(
+                page.getByTestId("viewport-diagnostic-report"),
+            ).toBeVisible();
+            return true;
+        },
     },
 ];
 
