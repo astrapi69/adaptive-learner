@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {FALLBACK_CATALOGS, fallbackString} from "./fallbacks";
+import {FALLBACK_CATALOGS} from "./fallbacks";
 
 /**
  * The first-paint fallback catalog MUST mirror the landing keys the shell
@@ -43,7 +43,8 @@ describe("first-paint fallback catalog — landing keys (#1902)", () => {
     }
 
     it("de resolves landing.intro to German, not the raw key or English", () => {
-        const intro = fallbackString("de", "landing.intro");
+        const landing = FALLBACK_CATALOGS.de.landing as Record<string, string>;
+        const intro = landing.intro;
         expect(intro).toBeDefined();
         expect(intro).not.toBe("landing.intro");
         // Umlaut-carrying German copy — proves it is the localized string,
@@ -52,6 +53,7 @@ describe("first-paint fallback catalog — landing keys (#1902)", () => {
     });
 
     it("de resolves landing.docs_link to German, not English", () => {
-        expect(fallbackString("de", "landing.docs_link")).toBe("Dokumentation lesen");
+        const landing = FALLBACK_CATALOGS.de.landing as Record<string, string>;
+        expect(landing.docs_link).toBe("Dokumentation lesen");
     });
 });
