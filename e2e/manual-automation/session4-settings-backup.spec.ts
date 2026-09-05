@@ -1,7 +1,7 @@
 /**
  * Session 4 — Settings + Backup (manual test plan automation, #616).
  *
- * Dexie build, no backend. Covers the 7-tab Settings page (sidebar +
+ * Dexie build, no backend. Covers the 9-tab Settings page (sidebar +
  * mobile + deep link), the backup export→import round-trip across two
  * isolated contexts (BACKUP-AKZEPTANZTEST logic), theme switching + every
  * theme loading clean, the avatar upload+crop, the username edit, the
@@ -15,13 +15,17 @@ import { seedLearner } from "./helpers/setup";
 import { SettingsPage, type SettingsTab } from "./pages/SettingsPage";
 import { NavBar } from "./pages/NavBar";
 
+/** Every Settings tab, in sidebar order. Source of truth: ``SETTINGS_TABS`` in
+ *  ``frontend/src/pages/system/Settings.tsx`` (#2963). */
 const TABS: SettingsTab[] = [
   "general",
   "ai",
   "learning",
   "plugins",
   "data",
+  "integrations",
   "help",
+  "diagnostics",
   "about",
 ];
 
@@ -45,7 +49,7 @@ async function forceDownloadFallback(page: import("@playwright/test").Page) {
 }
 
 test.describe("Session 4 — Settings + Backup", () => {
-  test("desktop sidebar activates all 7 tabs", async ({ page }) => {
+  test(`desktop sidebar activates all ${TABS.length} tabs`, async ({ page }) => {
     const errors = installErrorCollectors(page);
     const settings = new SettingsPage(page);
     await seedLearner(page);
