@@ -1595,7 +1595,12 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       ein **Aktualisierungs-Badge** ("N Aktualisierungen") mit Link zu
       `/content`. Klick → landet auf `/content`, das betroffene Set zeigt
       dort **"Aktualisierung verfügbar"** in der Zeile (deckungsgleich mit
-      dem Badge-Wert). **Kein Update vorhanden:** Badge erscheint **nicht**
+      dem Badge-Wert). **Nach dem Anwenden (#2985):** die Aktualisierung(en)
+      auf `/content` durchführen (oder die Repo-Quelle synchronisieren) →
+      der Badge-Zähler sinkt **sofort ohne Neuladen**; sind alle Updates
+      angewendet, verschwindet das Badge (zurückgehaltene Breaking-Updates
+      zählen weiter, bis sie manuell entschieden sind - das ist korrekt).
+      **Kein Update vorhanden:** Badge erscheint **nicht**
       (kein leeres Pille-Element in der Kopfzeile). **Fehlertoleranz:**
       Netz beim App-Start ausschalten → kein Absturz, kein Fehler-Toast, die
       Kopfzeile rendert normal (das Badge bleibt einfach unsichtbar, es

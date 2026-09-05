@@ -1499,7 +1499,11 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       the app: **without** visiting `/content`, a header badge ("N updates")
       appears next to the reviews badge, linking to `/content`. Click →
       lands on `/content`, the affected set shows **"Update available"** in
-      its row (matches the badge's count). **No update available:** the
+      its row (matches the badge's count). **After applying (#2985):** apply
+      the update(s) on `/content` (or sync the repo source) → the badge's
+      count drops **immediately, without a reload**; once every update is
+      applied the badge disappears (held breaking updates keep counting
+      until decided manually - that is correct). **No update available:** the
       badge does **not** appear (no empty pill in the header). **Error
       tolerance:** turn off the network at app launch → no crash, no error
       toast, the header renders normally (the badge simply stays hidden —

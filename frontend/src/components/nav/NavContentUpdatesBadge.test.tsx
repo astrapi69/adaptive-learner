@@ -5,7 +5,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen, waitFor} from "@testing-library/react";
+import {act, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -20,6 +20,7 @@ const getContentUpdateCountMock = vi.fn();
 
 vi.mock("../../lib/content/browse/content-updates-badge", () => ({
     getContentUpdateCount: () => getContentUpdateCountMock(),
+    CONTENT_UPDATES_CHANGED_EVENT: "adaptive-learner:content-updates-changed",
 }));
 
 import NavContentUpdatesBadge from "./NavContentUpdatesBadge";
@@ -52,6 +53,30 @@ describe("NavContentUpdatesBadge", () => {
         const badge = await screen.findByTestId("nav-content-updates-badge");
         expect(badge).toHaveTextContent("3");
         expect(badge).toHaveAttribute("href", "/content");
+    });
+
+    it("refreshes when the content-updates-changed event fires (#2985)", async () => {
+        // Repro: the badge showed "4 updates", the learner applied them on
+        // /content - the frozen once-per-mount read kept the stale count
+        // until a full app reload.
+        getContentUpdateCountMock.mockResolvedValueOnce(4);
+        render(
+            <MemoryRouter>
+                <NavContentUpdatesBadge />
+            </MemoryRouter>,
+        );
+        await screen.findByTestId("nav-content-updates-badge");
+        getContentUpdateCountMock.mockResolvedValueOnce(0);
+        act(() => {
+            window.dispatchEvent(
+                new Event("adaptive-learner:content-updates-changed"),
+            );
+        });
+        await waitFor(() =>
+            expect(
+                screen.queryByTestId("nav-content-updates-badge"),
+            ).not.toBeInTheDocument(),
+        );
     });
 
     it("composes the accessible name from the visible label plus the action", async () => {
