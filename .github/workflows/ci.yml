@@ -419,10 +419,39 @@ jobs:
       # Dependency vulnerability scan (#224). --audit-level=high so
       # moderate/low advisories surface in the log without blocking the
       # build; a high/critical advisory fails CI for immediate triage.
+      #
+      # #2933: the registry request behind `bun audit` dropped four times
+      # during the v2.14.0 release chain ("ConnectionClosed: audit request
+      # failed") with 0 advisories on every manual re-run, each costing a
+      # rerun of this 15-20 minute job. Bounded retry in the #2117 launcher
+      # shape, but ONLY on the transport signature: a real advisory exits
+      # non-zero without it and fails on the first attempt, so the retry
+      # can mask a dropped connection, never a finding. Each attempt is
+      # visible in the log; three transport failures in a row are an error.
       - name: npm audit (high+)
         if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
-        run: bun audit --audit-level=high
+        run: |
+          # Without pipefail the `| tee` below would report tee's exit code,
+          # and a failed audit would read as success.
+          set -o pipefail
+          log="$RUNNER_TEMP/bun-audit.log"
+          for attempt in 1 2 3; do
+            echo "::group::bun audit --audit-level=high (attempt $attempt/3)"
+            if bun audit --audit-level=high 2>&1 | tee "$log"; then
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "::endgroup::"
+            if ! grep -qiE "ConnectionClosed|audit request failed|ECONNRESET|ETIMEDOUT|fetch failed" "$log"; then
+              echo "::error::bun audit reported a finding (not the #2933 registry flake) - triage the advisory above"
+              exit 1
+            fi
+            echo "::warning::bun audit registry request failed on attempt $attempt/3 (#2933)"
+            sleep $((attempt * 15))
+          done
+          echo "::error::bun audit registry request failed three times - this is not the #2933 blip"
+          exit 1
 
   pre-commit:
     name: Pre-commit hooks
