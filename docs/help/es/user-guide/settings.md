@@ -15,10 +15,12 @@ código ni YAML. Secciones de arriba a abajo:
    red local.
 6. **Copia de seguridad** - exportar / importar / comparar.
 7. **Voz** - alternadores de TTS + STT + pronunciación.
-8. **Interfaz** - gestos + tema + densidad.
-9. **Gamificación** - notificaciones de XP / insignias + modo fin
-   de semana.
-10. **Acerca de** - versión, información del sistema, créditos,
+8. **Interfaz** - tema + densidad.
+9. **Aprendizaje** - cinco áreas: Fundamentos, En la lección, Lectura en
+   voz alta y dictado, Después de la lección, Motivación y rutina.
+10. **Gamificación** - notificaciones de XP / insignias + modo fin
+    de semana.
+11. **Acerca de** - versión, información del sistema, créditos,
     donaciones, licencia.
 
 ## Idioma
@@ -123,6 +125,25 @@ sesiones O cada 7 días (lo que ocurra primero). Cada instantánea
 tiene sus propios botones de Restaurar + Eliminar +
 Comparar-como-A/B.
 
+### Limpieza
+
+Dos ajustes del ciclo de vida de los datos están en la pestaña Datos,
+justo al lado del almacenamiento al que afectan:
+
+- **Tamaño máximo de lección** (justo debajo de *Caché sin conexión*):
+  cuando un análisis de chat largo se guarda como lección sin conexión,
+  las lecciones con más pasos que este número se dividen en varias
+  partes. *Pasos por parte* admite de 5 a 20; el predeterminado es 10.
+- **Retención de lecciones pausadas** (justo encima de la limpieza
+  *Contenido desconectado*, que solo aparece cuando hay algo que limpiar):
+  las lecciones pausadas más antiguas que este período se abandonan
+  automáticamente en la siguiente carga del Panel principal. Elige 7, 14,
+  30 o 60 días, o *Nunca*; el predeterminado es 30 días. Se conservan
+  hasta 10 lecciones pausadas independientemente de su antigüedad.
+
+Ambos valores se guardan en este navegador y se aplican por igual en el
+modo Servidor y en el modo Local.
+
 ## Voz
 
 Cuatro alternadores:
@@ -171,12 +192,115 @@ retroalimentación de ejercicios son legibles en todos ellos.
 
 ## Interfaz
 
-El **alternador de Gestos** (predeterminado
-ACTIVADO para dispositivos táctiles) cubre la navegación por
-deslizamiento de la Evaluación, el deslizamiento para revelar el
-tema del Plan de estudios y el vistazo del ciclo de Sesión.
-También aquí: información sobre herramientas de botones y Modo
-desarrollador.
+Dos controles: la **información sobre herramientas de los botones** (un
+tooltip al pasar el ratón sobre los botones de icono; las etiquetas para
+lectores de pantalla siguen activas de todos modos) y la **Posición del
+menú (móvil)** (arriba como botón de menú, el predeterminado, o abajo como
+barra de pestañas al alcance del pulgar). Los gestos de deslizamiento son
+un ajuste de lección y viven en *Aprendizaje > En la lección >
+Interacción*.
+
+El **Modo desarrollador** (en la pestaña **Diagnóstico y soporte**) tiene
+un valor predeterminado que depende de la rama de compilación: está
+**ACTIVADO por defecto en la rama Latest (vista previa)** y **DESACTIVADO
+en Main**, para que los probadores de la vista previa vean el detalle
+técnico completo de los errores mientras los usuarios de producción
+reciben mensajes amigables. Puedes cambiarlo en cualquier momento.
+
+## Aprendizaje
+
+La pestaña **Aprendizaje** agrupa sus tarjetas en cinco áreas
+etiquetadas, en el orden en que transcurre una lección. Cada área tiene un
+encabezado pequeño y una descripción de una línea; las tarjetas de dentro
+conservan sus propios títulos.
+
+### Fundamentos
+
+Quién aprende y en qué idiomas.
+
+- **Perfil de aprendizaje** - crear, continuar o repetir el perfil de
+  aprendizaje que hay detrás de los pesos de los seis métodos.
+- **Idiomas de origen adicionales** - qué idiomas de origen muestra el
+  árbol de contenidos además del idioma de la aplicación.
+
+### En la lección
+
+Cómo se comportan los ejercicios mientras respondes.
+
+- **Modo de lección** - el **Modo predeterminado** (Práctica / Examen /
+  Con tiempo), el **Umbral para aprobar** el examen y la **Dificultad del
+  modo con tiempo** (Rápido, Normal, Relajado); ver
+  [Lecciones y repasos](lessons.md).
+- **Pistas** - si aparece un botón de pista por etapas en cada ejercicio,
+  y el **coste en XP por pista** (0 para pistas gratuitas).
+- **Interacción** - los **Gestos de deslizamiento** (deslizar para navegar
+  en la Evaluación, la Sesión y el Plan de estudios; predeterminado
+  ACTIVADO en dispositivos táctiles), los **Atajos de teclado en las
+  lecciones** (Intro comprueba la respuesta, Intro de nuevo pasa a la
+  siguiente), **Avanzar automáticamente al acertar** y si se muestra el
+  botón **Preguntar a la IA**.
+- **Dirección de ejercicio preferida** - con qué dirección se abren los
+  ejercicios direccionales.
+- **Animación al resolver** - el efecto que reproduce un ejercicio de
+  emparejamiento resuelto.
+
+### Lectura en voz alta y dictado
+
+Voces, velocidad, micrófono y práctica de pronunciación.
+
+- **Voz** - los alternadores descritos arriba en *Voz*: texto a voz,
+  reproducción automática, voz a texto y práctica de pronunciación.
+
+Esta área solo aparece cuando el navegador admite al menos un lado de la
+Web Speech API (síntesis o reconocimiento). De lo contrario falta, título
+incluido, y *Después de la lección* sigue directamente a *En la lección*.
+
+### Después de la lección
+
+Sesiones de repaso, el resumen de la lección y la repetición de errores.
+
+- **Repaso** - las explicaciones de errores generadas automáticamente y el
+  número de preguntas por sesión de repaso. La tarjeta termina con el
+  bloque de solo lectura **Repetición espaciada**: el calendario de
+  intervalos (respuestas correctas seguidas frente a días hasta el
+  siguiente repaso), cuándo un elemento cuenta como dominado, y un enlace
+  al método de aprendizaje.
+- **Resumen tras las lecciones** - qué secciones muestra el resumen al
+  final de la lección, y en qué orden.
+- **Repetir errores** - qué errores recoge la ronda de repetición.
+
+### Motivación y rutina
+
+Modo de juego, comentarios, misiones diarias y recordatorios.
+
+- **Modo juego** - lecciones lúdicas, incluida la **Variante de la
+  mascota**, los esquemas de color de Lernfunke que se desbloquean con
+  niveles e insignias o a cambio de XP (las variantes bloqueadas muestran
+  su condición, las compras piden una confirmación en dos pasos). Lo que
+  cambia el modo de juego en detalle se explica en
+  [Elogios y celebraciones](celebrations.md).
+- **Comentarios** - intensidad de los comentarios y sonidos (volumen,
+  botón de prueba).
+- **Misiones diarias** - si las misiones están activas, cuántas por día,
+  la mezcla de dificultad y un reordenamiento de las misiones de hoy.
+- **Recordatorios** - la hora del recordatorio y los días en que se
+  aplica.
+
+La tarjeta del modo de juego muestra el interruptor principal, los sonidos
+del modo de juego y una línea de estado que cuenta cuántos extras están
+activados. **Detalles del modo de juego** (corazones, cuenta atrás,
+arcade, rondas especiales, tickets, lecciones extra, XP de racha y
+mascota) está plegado y recuerda tu elección; mientras **Lecciones
+lúdicas** está desactivado, las opciones de dentro aparecen atenuadas.
+
+La pestaña termina con los recordatorios. Los dos ajustes de limpieza -
+*Retención de lecciones pausadas* y *Tamaño máximo de lección* - son
+ajustes del ciclo de vida de los datos y viven en la pestaña **Datos**
+(ver *Limpieza* bajo Copia de seguridad).
+
+La **Vista de contenidos** (lista / cuadrícula) y el **Orden de las
+pestañas de Contenido** están en la pestaña **General** bajo
+*Apariencia*.
 
 ## Gamificación
 

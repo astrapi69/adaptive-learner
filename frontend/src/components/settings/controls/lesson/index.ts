@@ -26,5 +26,7 @@ export * from "./ReviewSettingsControl";
 export { default as ReviewSettingsControl } from "./ReviewSettingsControl";
 export * from "./SourceLanguagesControl";
 export { default as SourceLanguagesControl } from "./SourceLanguagesControl";
+export * from "./SrsTransparencySection";
+export { default as SrsTransparencySection } from "./SrsTransparencySection";
 export * from "./SummarySectionsControl";
 export { default as SummarySectionsControl } from "./SummarySectionsControl";

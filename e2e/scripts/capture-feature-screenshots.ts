@@ -527,7 +527,27 @@ async function gotoDataHousekeeping(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning scrolled to the "In der Lektion" cluster
+ *  (#2956 — the five labelled clusters). Pins the cluster whose heading +
+ *  description sit above the lesson-mode card, with the frequency-first
+ *  hints + interaction cards following it. */
+async function gotoLearningClusters(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const cluster = page.getByTestId("settings-cluster-lessons");
+    await cluster.scrollIntoViewIfNeeded();
+    await expect(cluster).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Learning-tab clusters (#2956) ------------------------------------
+    {
+        path: "learning-clusters/settings",
+        setup: gotoLearningClusters,
+        pinTo: "settings-cluster-lessons",
+    },
     // --- Data-tab housekeeping cards (#2955) ------------------------------
     {
         path: "data-housekeeping/settings",
@@ -701,7 +721,11 @@ const FEATURES: FeatureShot[] = [
     {path: "qr-code/share-app", setup: gotoQrModal, desktopOnly: true},
 
     // --- Lesson-summary section toggles (#1411) --------------------------
-    {path: "summary-sections/settings", setup: gotoSummarySections},
+    {
+        path: "summary-sections/settings",
+        setup: gotoSummarySections,
+        pinTo: "settings-section-summary-sections",
+    },
 
     // --- Mascot color variants (#2861) -----------------------------------
     {

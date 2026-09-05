@@ -227,7 +227,7 @@ neben dem Speicher, den sie betreffen:
 Beide Werte werden in diesem Browser gespeichert und gelten im Server-
 wie im Lokal-Modus.
 
-## Stimme
+## Sprachausgabe
 
 Drei Toggles:
 
@@ -245,9 +245,10 @@ Drei Toggles:
   `/pronunciation`-Seite vom Dashboard-Quick-Start für
   Sprachen-getaggte Projekte zum Vorschein.
 
-Der Stimme-Abschnitt blendet sich aus, wenn weder die
-Web-Speech-API-Synthese noch die -Erkennung vom Browser
-unterstützt wird.
+Die Karte **Sprachausgabe** liegt im **Lernen**-Tab im Bereich
+*Vorlesen und Diktieren*. Unterstützt der Browser weder die
+Web-Speech-API-Synthese noch die -Erkennung, fehlt der ganze Bereich
+samt Überschrift.
 
 ## Darstellung
 
@@ -270,14 +271,25 @@ ohne Neuladen und deine Wahl wird über Besuche hinweg gemerkt. Jedes
 Theme erfüllt den WCAG-2.1-AA-Kontrast, sodass Text, Diagramme,
 Plaketten und Übungs-Feedback überall lesbar bleiben.
 
+Ebenfalls in dieser Karte: die **Ansicht der Inhalte** - die globale
+Einstellung *Liste / Kacheln* für den Content-Hub (Standard **Liste**).
+Es ist dieselbe Einstellung wie der Ansicht-Umschalter in den Tabs
+*Meine Inhalte* / *Entdecken*, eine Änderung an einer Stelle hält also
+beide synchron. Direkt unter der Karte legst du die **Reihenfolge der
+Inhalte-Tabs** (Entdecken / Meine Inhalte / Importieren) fest, sodass
+der Hub auf dem von dir am häufigsten genutzten Tab öffnet.
+
 ## Oberfläche
 
-Der **Gesten-Toggle** (Standard EIN auf touch-fähigen
-Geräten) umfasst Assessment-Swipe-Navigation,
-Curriculum-Topic-Swipe-to-Reveal und Sitzungs-Zyklus-Peek. Ebenfalls
-hier: Button-Tooltips und der Entwicklermodus.
+Zwei Einstellungen: **Button-Tooltips anzeigen** (ein Hover-Tooltip auf
+Icon-Buttons; Screenreader-Beschriftungen bleiben unabhängig davon an)
+und die **Menüposition** auf dem Handy (oben als Menü-Button, der
+Standard, oder unten als daumennahe Tab-Leiste). Wischgesten sind eine
+Lektions-Einstellung und liegen unter *Lernen > In der Lektion >
+Interaktion*.
 
-Der Standard des **Entwicklermodus** hängt vom Build-Strang ab: Er
+Der **Entwicklermodus** (im Tab **Diagnose & Support**): sein Standard
+hängt vom Build-Strang ab: Er
 ist **standardmäßig EIN auf dem Latest-Strang (Vorschau)** und **AUS
 auf Haupt**, damit Vorschau-Tester volle technische Fehlerdetails
 sehen, während Produktionsnutzer freundliche Meldungen bekommen. Du
@@ -285,30 +297,80 @@ kannst ihn jederzeit umschalten.
 
 ## Lernen
 
-Der **Lernen**-Tab bündelt, wie Lektionen ablaufen: den
-**Standard-Lernmodus** (Üben / Prüfung / Auf Zeit / Reverse / Zufall
-/ Endlos), die Bestehensschwelle der Prüfung, die Zeit-Schwierigkeit
-(siehe [Lektionen und Wiederholungen](lessons.md)), Hinweise,
-Erinnerungen, das Enter-Tastenkürzel, die bevorzugte Übungsrichtung
-und die im Inhaltsbaum gezeigten Quellsprachen.
+Der **Lernen**-Tab gruppiert seine Karten in fünf beschriftete Bereiche,
+in der Reihenfolge, in der eine Lektion abläuft. Jeder Bereich hat eine
+kleine Überschrift und eine einzeilige Beschreibung; die Karten darin
+behalten ihre eigenen Titel.
 
-Hier liegt auch die **Inhalts-Ansicht** - die globale Einstellung
-*Liste ⇄ Kacheln* für den Content-Hub (Standard **Liste**). Es ist
-dieselbe Einstellung wie der Ansicht-Umschalter in den Tabs *Meine
-Inhalte* / *Entdecken*, eine Änderung an einer Stelle hält also
-beide synchron.
+### Grundlagen
 
-Außerdem lässt sich hier die **Reihenfolge der Inhalte-Tabs**
-(Entdecken / Meine Inhalte / Importieren) festlegen, sodass der Hub
-auf dem von dir am häufigsten genutzten Tab öffnet.
+Wer lernt, und in welchen Sprachen.
 
-Ebenfalls im Lernen-Tab: die **Feedback-Sektion**
-(Feedback-Intensität und Töne), der **Spielmodus** samt
-**Maskottchen-Variante** - Farbwelten des Lernfunke, die du über
-Level und Abzeichen freischaltest oder gegen XP eintauschst
-(gesperrte Varianten zeigen ihre Bedingung, Käufe fragen zweistufig
-nach) - sowie Missionen und Erinnerungen. Was der Spielmodus im
-Einzelnen ändert, steht unter [Lob und Belohnungen](celebrations.md).
+- **Lernprofil** - das Lernprofil hinter den Sechs-Methoden-Gewichten
+  anlegen, fortsetzen oder neu durchlaufen.
+- **Weitere Ausgangssprachen** - welche Ausgangssprachen der Inhaltsbaum
+  neben deiner App-Sprache zeigt.
+
+### In der Lektion
+
+Wie sich Übungen beim Beantworten verhalten.
+
+- **Lektionsmodus** - der **Standardmodus** (Üben / Prüfung / Auf Zeit),
+  die **Bestehens-Grenze** der Prüfung und die
+  **Zeitmodus-Schwierigkeit** (Schnell, Normal, Entspannt); siehe
+  [Lektionen und Wiederholungen](lessons.md).
+- **Tipps** - ob bei jeder Übung ein gestufter Tipp-Button erscheint,
+  und die **XP-Kosten pro Tipp** (0 = kostenlos).
+- **Interaktion** - **Wischgesten** (Wischen zum Navigieren in
+  Assessment, Session und Curriculum; Standard EIN auf touch-fähigen
+  Geräten), **Tastenkürzel in Lektionen** (Eingabetaste prüft die
+  Antwort, erneut drücken geht weiter), **bei richtiger Antwort
+  automatisch weiter** und ob der Button **KI fragen** angezeigt wird.
+- **Bevorzugte Übungsrichtung** - in welcher Richtung Übungen mit
+  Richtung starten.
+- **Auflösungs-Effekt** - der Effekt, mit dem eine gelöste
+  Zuordnungs-Übung aufgelöst wird.
+
+### Vorlesen und Diktieren
+
+Stimmen, Tempo, Mikrofon und Ausspracheübung.
+
+- **Sprachausgabe** - die oben unter *Sprachausgabe* beschriebenen
+  Schalter: Vorlesen, Auto-Wiedergabe, Spracherkennung und
+  Aussprache-Übung.
+
+Dieser Bereich erscheint nur, wenn der Browser mindestens eine Seite der
+Web Speech API unterstützt (Synthese oder Erkennung). Sonst fehlt er
+samt Überschrift, und *Nach der Lektion* folgt direkt auf *In der
+Lektion*.
+
+### Nach der Lektion
+
+Wiederholungen, die Zusammenfassung und das Nachholen von Fehlern.
+
+- **Wiederholung** - die automatisch erzeugten Fehler-Erklärungen und
+  die Zahl der Fragen pro Wiederholungs-Sitzung. Die Karte endet mit dem
+  schreibgeschützten Block **Verteilte Wiederholung**: der Intervall-Plan
+  (richtige Antworten in Folge gegen die Tage bis zur nächsten
+  Wiederholung), ab wann ein Element als beherrscht gilt, und ein Link
+  zur Lernmethode.
+- **Zusammenfassung nach Lektionen** - welche Abschnitte die
+  Zusammenfassung am Lektionsende zeigt, und in welcher Reihenfolge.
+- **Fehler wiederholen** - welche Fehler die Nachhol-Runde aufgreift.
+
+### Motivation und Routine
+
+Spielmodus, Feedback, tägliche Missionen und Erinnerungen.
+
+- **Spielmodus** - spielerische Lektionen, samt **Maskottchen-Variante**,
+  den Farbwelten des Lernfunke, die du über Level und Abzeichen
+  freischaltest oder gegen XP eintauschst (gesperrte Varianten zeigen
+  ihre Bedingung, Käufe fragen zweistufig nach). Was der Spielmodus im
+  Einzelnen ändert, steht unter [Lob und Belohnungen](celebrations.md).
+- **Feedback** - Feedback-Intensität und Töne (Lautstärke, Test-Knopf).
+- **Tägliche Missionen** - ob Missionen laufen, wie viele pro Tag, die
+  Schwierigkeits-Mischung und das Neumischen der heutigen Missionen.
+- **Erinnerungen** - die Erinnerungszeit und die Tage, an denen sie gilt.
 
 Die Spielmodus-Karte zeigt den Hauptschalter, die Spielmodus-Sounds und
 eine Statuszeile, wie viele der Extras an sind. **Details zum Spielmodus**
@@ -321,6 +383,9 @@ Der Tab endet mit den Erinnerungen. Die beiden Aufräum-Einstellungen -
 *Pausierte Lektionen aufbewahren* und *Maximale Lektionsgröße* -
 betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
 *Aufräumen* unter Backup).
+
+Die **Ansicht der Inhalte** (Liste / Kacheln) und die **Reihenfolge der
+Inhalte-Tabs** liegen im **Allgemein**-Tab unter *Darstellung*.
 
 ## Gamification
 

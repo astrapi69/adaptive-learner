@@ -841,6 +841,36 @@ preview delivery). In the regular build the mode does not exist.
       system: chip/dots render without animation, the "+1" stays
       invisible (pure motion decoration)
 
+### Learning tab: five clusters (#2956)
+
+- [ ] Settings > Learning: the cards sit in five labelled areas, each
+      with a small uppercase heading and a description line underneath,
+      in this order: "Basics" (Who is learning, and in which languages.),
+      "In the lesson" (How exercises behave while you answer.), "Reading
+      aloud and dictation" (Voices, speed, microphone and pronunciation
+      practice.), "After the lesson" (Review sessions, the lesson summary
+      and retrying mistakes.), "Motivation and routine" (Game mode,
+      feedback, daily missions and reminders.)
+- [ ] Basics: Learning profile, then Additional source languages
+- [ ] In the lesson: Lesson mode, Hints, Interaction, then Preferred
+      exercise direction and Solve animation (Hints and Interaction come
+      BEFORE direction and solve)
+- [ ] Reading aloud and dictation: only the "Voice" card; in a browser
+      without Web Speech support (neither synthesis nor recognition) the
+      whole area is absent, heading included, and "After the lesson"
+      follows "In the lesson" directly
+- [ ] After the lesson: Review, Lesson summary, Retry errors. "Spaced
+      repetition" is no longer a card of its own but the last block
+      inside the "Review" card (under a divider, smaller heading): the
+      interval schedule (correct answers in a row against days until the
+      next review), the note on when an item counts as mastered, and the
+      link to the learning method
+- [ ] Motivation and routine: Game Mode, Feedback, Daily Missions,
+      Reminders (last card of the tab)
+- [ ] Phone (375 px wide): area headings and descriptions wrap, nothing
+      scrolls horizontally; switching tabs and the ?tab=learning deep
+      link work as before
+
 ### Game mode: summary card + details (#2959)
 
 - [ ] Settings > Learning > Game Mode: the card shows the "Playful

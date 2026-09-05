@@ -165,7 +165,8 @@ export default function Settings() {
   }, [activeTab, pendingScroll]);
 
   // Shared nav model for both the desktop sidebar and the mobile menu
-  // (#546). The 8 existing tabs are grouped; tabs are never removed.
+  // (#546). The nine tabs are grouped into four groups; tabs are never
+  // removed.
   const sidebarGroups: SidebarGroup[] = useMemo(() => {
     const item = (tab: SettingsTab) => ({
       value: tab,
