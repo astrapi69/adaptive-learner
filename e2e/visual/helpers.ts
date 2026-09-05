@@ -948,6 +948,7 @@ export const SURFACE_NAMES = [
     "settings-data",
     "settings-about",
     "settings-ai",
+    "settings-learning",
     "shortcut-help",
 ] as const;
 
@@ -1308,6 +1309,17 @@ export async function gotoSurface(
             // stayed invisible to a dispatched 0-diff verify run.
             await seedLearner(page);
             await page.goto("/settings?tab=ai");
+            await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "settings-learning":
+            // #2953 - the Learning tab had no motif, so every Learning-tab
+            // PR could only ship under the visual-baselines-unaffected
+            // escape label (the #2486 class: a 0-diff verify run proves
+            // nothing about a surface that is not in the matrix).
+            await seedLearner(page);
+            await page.goto("/settings?tab=learning");
             await expect(page.getByTestId("settings")).toBeVisible({
                 timeout: 20_000,
             });
