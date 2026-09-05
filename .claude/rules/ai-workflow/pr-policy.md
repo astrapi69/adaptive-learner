@@ -42,7 +42,7 @@ Every PR follows the existing conventions:
 
 A changeset that is ENTIRELY a translation catalog (`backend/config/i18n/*.yaml`, the generated `frontend/src/data/i18n/*.json`) or ENTIRELY documentation (`docs/**`, `.claude/rules/**`, root `*.md`) gets its own PR, never mixed with a feature. A feature that incidentally touches a sentence of documentation stays one PR, this is for changesets with NOTHING else in them.
 
-**Order: translations and documentation ship first, the feature PR follows.** The feature then finds its strings and docs already in place, and the integration branch never carries a partially-translated feature. Verified before deciding this (2026-08-12): no gate in this repo checks an i18n key for "referenced by code", so a key pre-staged ahead of its feature does not trip anything. A docs PR that must name a not-yet-real path or make target uses the existing `<!-- doc-ref-exempt: reason -->` marker (doc-ref-existence gate, #2254), no new tolerance needed.
+**Order: translations and documentation ship first, the feature PR follows.** The feature then finds its strings and docs already in place, and the integration branch never carries a partially-translated feature. The gates run one way (#2977): a catalog key with no code consumer trips nothing, so pre-staging is free; a code-used key missing from any catalog fails `full-tree-key-coverage.test.ts` (#2864), so the code PR ships after its i18n PR. A docs PR naming a not-yet-real path or make target uses the `<!-- doc-ref-exempt: reason -->` marker (#2254).
 
 **Check scope: only checks that say something about text run in full.**
 
