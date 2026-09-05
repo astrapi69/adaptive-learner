@@ -676,6 +676,7 @@ settings:
   nav_aria: "設定ナビゲーション"
   tab_ai: "AI"
   tab_learning: "学習"
+  learning_nav_aria: "学習セクション"
   tab_plugins: "プラグイン"
   tab_data: "データ"
   tab_help: "ヘルプ"
