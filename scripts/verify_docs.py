@@ -607,6 +607,15 @@ def check_mkdocs(
 ROUTE_RE = re.compile(r'path="([^"]+)"')
 # Routes that intentionally have no dedicated help page.
 _ROUTE_NO_HELP = {"/", "*"}
+# Routes whose help page EXISTS but lives under a slug the keyword heuristic
+# below cannot derive (#2944: /review/:setId is documented in
+# user-guide/lessons.md, "Review sessions"). Unlike _ROUTE_NO_HELP this is a
+# claim, not an exclusion: the mapped slug must exist in BOTH en and de,
+# otherwise the entry is stale and the check FAILS - a route must never read
+# as covered by a page that is gone.
+_ROUTE_HELP_SLUG = {
+    "/review/:setId": "user-guide/lessons",
+}
 
 
 def _help_slugs(lang: str, help_root: Path | None = None) -> set[str]:
@@ -661,6 +670,16 @@ def check_help_coverage(
     uncovered: list[str] = []
     for route in ROUTE_RE.findall(read(app)):
         if route in _ROUTE_NO_HELP:
+            continue
+        mapped = _ROUTE_HELP_SLUG.get(route)
+        if mapped is not None:
+            if mapped not in en or mapped not in de:
+                report.fail(
+                    "help-coverage",
+                    f"{route} is mapped to help page '{mapped}' (_ROUTE_HELP_SLUG) but that "
+                    "page is missing in en and/or de - stale mapping, a route cannot be "
+                    "declared covered by a page that is gone",
+                )
             continue
         # The last static (non-param) segment is the route's identity.
         segments = [s for s in route.split("/") if s and not s.startswith(":")]
