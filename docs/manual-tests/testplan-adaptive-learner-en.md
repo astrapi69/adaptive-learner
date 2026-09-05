@@ -1656,6 +1656,19 @@ each card row (`CardImageField`).
 - [ ] Back to "Top": the bar disappears immediately; the choice
       survives a reload
 
+### Settings > Data: housekeeping cards (#2955)
+- [ ] Settings > Data: the "Maximum lesson size" card sits directly
+      below "Offline cache"; the "Paused lesson retention" card sits
+      directly above "Disconnected content" (with no disconnected
+      content, directly above the danger zone)
+- [ ] Settings > Learning ends with "Reminders"; neither card is there
+      any more
+- [ ] Set "Steps per part" to 15, reload the page: the value stays 15;
+      set "Keep paused lessons for" to "60 days", reload: the choice
+      stays "60 days"
+- [ ] Repeat both in browser mode (Settings > Data > storage mode): same
+      behaviour
+
 ### In-set position + navigation (#2793)
 - [ ] Inside a lesson from a set, the header shows "Lesson N of M"
       with the correct number

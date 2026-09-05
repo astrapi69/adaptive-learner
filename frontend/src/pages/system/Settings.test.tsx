@@ -113,6 +113,20 @@ function renderSettings(initialEntry = "/settings") {
   );
 }
 
+/**
+ * The section-root testids of ``ids`` that are present inside ``panel``,
+ * in DOM order, de-duplicated (a section root's own testid, not the
+ * nested ones it contains). Shared by the tab-order pins (#1451, #1459,
+ * #2955) so every pin measures the order the same way.
+ */
+function sectionRootsInDomOrder(panel: HTMLElement, ids: readonly string[]): string[] {
+  const seen = new Set<string>();
+  return Array.from(panel.querySelectorAll("[data-testid]"))
+    .map((el) => el.getAttribute("data-testid"))
+    .filter((id): id is string => id !== null && ids.includes(id))
+    .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+}
+
 describe("Settings page", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
@@ -176,12 +190,14 @@ describe("Settings page", () => {
   });
 
   // #1451 — the Data tab sections follow a FIXED causal order:
-  // source (content repos) -> sync -> what results (cache) ->
-  // securing (backup/export) -> reversible cleanup (orphaned data) ->
-  // irreversible danger zone LAST. Pinned by relative DOM order so a
-  // future edit cannot silently regress it (e.g. put the danger zone
-  // above Sync). "Install app" moved to the General tab in #1455 (it
-  // configures HOW the app runs, not WHAT it stores).
+  // source (content repos) -> sync -> what results (cache, and the
+  // max lesson size that shapes the offline lessons landing in it,
+  // #2955) -> securing (backup/export) -> retention policy + reversible
+  // cleanup (paused retention, orphaned data, #2955) -> irreversible
+  // danger zone LAST. Pinned by relative DOM order so a future edit
+  // cannot silently regress it (e.g. put the danger zone above Sync).
+  // "Install app" moved to the General tab in #1455 (it configures HOW
+  // the app runs, not WHAT it stores).
   it("orders the Data-tab sections causally (content repos first, danger zone last) (#1451)", async () => {
     storageState.mode = "api";
     apiGet.mockResolvedValue(BASE);
@@ -193,19 +209,15 @@ describe("Settings page", () => {
       "content-repo-section",
       "settings-sync",
       "settings-section-cache",
+      "settings-section-max-lesson-size",
       "settings-backup",
       "key-vault-section",
       "export-section",
+      "settings-section-paused-retention",
       "settings-section-orphaned",
       "settings-danger-zone",
     ];
-    // Collect the section roots present, in DOM order (de-duped: a
-    // section root's own testid, not the nested ones it contains).
-    const seen = new Set<string>();
-    const domOrder = Array.from(panel.querySelectorAll("[data-testid]"))
-      .map((el) => el.getAttribute("data-testid"))
-      .filter((id): id is string => id !== null && CAUSAL_ORDER.includes(id))
-      .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+    const domOrder = sectionRootsInDomOrder(panel, CAUSAL_ORDER);
     const expected = CAUSAL_ORDER.filter((id) => domOrder.includes(id));
     expect(domOrder).toEqual(expected);
     // Headline invariants (causality + safety).
@@ -216,15 +228,67 @@ describe("Settings page", () => {
     );
   });
 
+  // #2955 — the two rare-housekeeping cards moved from the Learning tab
+  // to the Data tab (the move #1459 parked). Max lesson size governs how
+  // a saved chat analysis is split into offline lessons (its only reader
+  // is SaveOfflineLessonModal), so it sits DIRECTLY after the offline
+  // cache (slot 3b); paused-lesson retention is a retention policy, so it
+  // sits DIRECTLY before the orphaned-data cleanup (slot 5a). Both are
+  // gone from the Learning tab.
+  it("hosts max lesson size after the cache and paused retention before orphaned data (#2955)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-data");
+    const SECTION_ROOTS = [
+      "content-repo-section",
+      "settings-sync",
+      "settings-section-cache",
+      "settings-section-max-lesson-size",
+      "settings-backup",
+      "key-vault-section",
+      "export-section",
+      "settings-section-paused-retention",
+      "settings-section-orphaned",
+      "settings-danger-zone",
+    ];
+    const domOrder = sectionRootsInDomOrder(panel, SECTION_ROOTS);
+    expect(domOrder).toContain("settings-section-max-lesson-size");
+    expect(domOrder).toContain("settings-section-paused-retention");
+    expect(domOrder.indexOf("settings-section-max-lesson-size")).toBe(
+      domOrder.indexOf("settings-section-cache") + 1,
+    );
+    // The orphaned card only mounts when there IS orphaned data (none in
+    // this fixture), so pin the slot rather than the neighbour: after the
+    // last securing card, and nothing but the cleanup card (when present)
+    // and the danger zone may follow paused retention.
+    const pausedIdx = domOrder.indexOf("settings-section-paused-retention");
+    expect(pausedIdx).toBeGreaterThan(domOrder.indexOf("export-section"));
+    expect(domOrder.slice(pausedIdx + 1)).toEqual(
+      ["settings-section-orphaned", "settings-danger-zone"].filter((id) =>
+        domOrder.includes(id),
+      ),
+    );
+    const learning = screen.getByTestId("settings-panel-learning");
+    expect(
+      learning.querySelector('[data-testid="settings-section-max-lesson-size"]'),
+    ).toBeNull();
+    expect(
+      learning.querySelector('[data-testid="settings-section-paused-retention"]'),
+    ).toBeNull();
+  });
+
   // #1459 — the Learning tab sections follow a FIXED causal order
   // (same principle as the #1451 Data-tab pin): foundation (profile,
   // source languages) -> in-lesson flow (mode, direction, hints,
   // matching effect, interaction toggles, voice) -> practice &
   // follow-up (review, SRS, summary) -> motivation (feedback,
-  // missions) -> reminders -> rare housekeeping LAST (paused
-  // retention, max lesson size). Pinned by relative DOM order so a
-  // future edit cannot silently regress it.
-  it("orders the Learning-tab sections causally (profile first, housekeeping last) (#1459)", async () => {
+  // missions) -> reminders LAST. The rare-housekeeping pair #1459
+  // parked at the end (paused retention, max lesson size) lives on the
+  // Data tab since #2955. Pinned by relative DOM order so a future edit
+  // cannot silently regress it.
+  it("orders the Learning-tab sections causally (profile first, reminders last) (#1459)", async () => {
     storageState.mode = "api";
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=learning");
@@ -248,16 +312,8 @@ describe("Settings page", () => {
       "settings-section-feedback",
       "settings-section-missions",
       "settings-section-reminders",
-      "settings-section-paused-retention",
-      "settings-section-max-lesson-size",
     ];
-    // Collect the section roots present, in DOM order (de-duped: a
-    // section root's own testid, not the nested ones it contains).
-    const seen = new Set<string>();
-    const domOrder = Array.from(panel.querySelectorAll("[data-testid]"))
-      .map((el) => el.getAttribute("data-testid"))
-      .filter((id): id is string => id !== null && CAUSAL_ORDER.includes(id))
-      .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+    const domOrder = sectionRootsInDomOrder(panel, CAUSAL_ORDER);
     // Voice hides itself when the environment supports neither TTS nor
     // STT (happy-dom does not), so compare against the present subset —
     // but require every other section explicitly, so a silently dropped
@@ -267,14 +323,14 @@ describe("Settings page", () => {
     expect(domOrder).toEqual(CAUSAL_ORDER.filter((id) => domOrder.includes(id)));
     // Headline invariants: the in-lesson interaction toggles sit with
     // the lesson-flow block (before Review), review and SRS are
-    // adjacent, and housekeeping is last.
+    // adjacent, and reminders are last (#2955).
     expect(domOrder.indexOf("settings-section-interaction")).toBeLessThan(
       domOrder.indexOf("settings-section-review"),
     );
     expect(domOrder.indexOf("settings-section-srs")).toBe(
       domOrder.indexOf("settings-section-review") + 1,
     );
-    expect(domOrder[domOrder.length - 1]).toBe("settings-section-max-lesson-size");
+    expect(domOrder[domOrder.length - 1]).toBe("settings-section-reminders");
   });
 
   // #1484 — the General + AI tabs wrap their sections in a

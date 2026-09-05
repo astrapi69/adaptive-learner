@@ -207,6 +207,26 @@ sieht den Klartext nie, daher ist der Eintrag **deaktiviert mit
 einem Hinweis**. Der Export ist außerdem deaktiviert, solange kein
 exportierbarer Schlüssel konfiguriert ist.
 
+### Aufräumen
+
+Zwei Einstellungen zum Daten-Lebenszyklus liegen im Daten-Tab direkt
+neben dem Speicher, den sie betreffen:
+
+- **Maximale Lektionsgröße** (direkt unter *Offline-Cache*): Wird eine
+  lange Chat-Analyse als Offline-Lektion gespeichert, werden Lektionen
+  mit mehr als dieser Anzahl an Schritten in mehrere Teile aufgeteilt.
+  *Schritte pro Teil* nimmt 5 bis 20 an; Standard ist 10.
+- **Pausierte Lektionen aufbewahren** (direkt über der Bereinigung
+  *Nicht verbundene Inhalte*, die nur erscheint, wenn es etwas zu
+  bereinigen gibt): Pausierte Lektionen, die älter sind als dieser
+  Zeitraum, werden beim nächsten Laden des Dashboards automatisch
+  aufgegeben. Zur Wahl stehen 7, 14, 30 oder 60 Tage oder *Nie*;
+  Standard sind 30 Tage. Bis zu 10 pausierte Lektionen bleiben
+  unabhängig vom Alter erhalten.
+
+Beide Werte werden in diesem Browser gespeichert und gelten im Server-
+wie im Lokal-Modus.
+
 ## Stimme
 
 Drei Toggles:
@@ -296,6 +316,11 @@ eine Statuszeile, wie viele der Extras an sind. **Details zum Spielmodus**
 Serien-XP und Maskottchen) ist eingeklappt und merkt sich deine Wahl;
 solange **Spielerische Lektionen** aus ist, sind die Optionen darin
 ausgegraut.
+
+Der Tab endet mit den Erinnerungen. Die beiden Aufräum-Einstellungen -
+*Pausierte Lektionen aufbewahren* und *Maximale Lektionsgröße* -
+betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
+*Aufräumen* unter Backup).
 
 ## Gamification
 

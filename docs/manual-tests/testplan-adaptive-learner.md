@@ -1761,6 +1761,20 @@ jeder Karten-Zeile (`CardImageField`).
       bleibt die Leiste verborgen (Lektions-Footer behält die Unterkante)
 - [ ] Zurück auf "Oben": Leiste verschwindet sofort; Einstellung
       übersteht einen Reload
+
+### Einstellungen > Daten: Aufräum-Karten (#2955)
+- [ ] Einstellungen > Daten: die Karte "Maximale Lektionsgröße" steht
+      direkt unter "Offline-Cache"; die Karte "Pausierte Lektionen
+      aufbewahren" steht direkt über "Nicht verbundene Inhalte" (gibt es
+      keine nicht verbundenen Inhalte, direkt über der Gefahrenzone)
+- [ ] Einstellungen > Lernen endet mit "Erinnerungen"; beide Karten sind
+      dort nicht mehr
+- [ ] "Schritte pro Teil" auf 15 setzen, Seite neu laden: der Wert
+      bleibt 15; "Pausierte Lektionen behalten für" auf "60 Tage"
+      stellen, neu laden: die Auswahl bleibt "60 Tage"
+- [ ] Beides im Browser-Modus wiederholen (Einstellungen > Daten >
+      Speichermodus): gleiches Verhalten
+
 ### Position + Navigation im Set (#2793)
 - [ ] In einer Lektion aus einem Set steht oben "Lektion N von M" mit
       der richtigen Nummer
