@@ -290,6 +290,13 @@ Level und Abzeichen freischaltest oder gegen XP eintauschst
 nach) - sowie Missionen und Erinnerungen. Was der Spielmodus im
 Einzelnen ändert, steht unter [Lob und Belohnungen](celebrations.md).
 
+Die Spielmodus-Karte zeigt den Hauptschalter, die Spielmodus-Sounds und
+eine Statuszeile, wie viele der Extras an sind. **Details zum Spielmodus**
+(Herzen, Countdown, Arcade, Sonderrunden, Tickets, Bonus-Lektionen,
+Serien-XP und Maskottchen) ist eingeklappt und merkt sich deine Wahl;
+solange **Spielerische Lektionen** aus ist, sind die Optionen darin
+ausgegraut.
+
 ## Gamification
 
 Toggles für XP- / Badge- / Level-Up-Benachrichtigungen
