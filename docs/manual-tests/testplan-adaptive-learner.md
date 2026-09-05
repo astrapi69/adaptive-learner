@@ -891,6 +891,38 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       System: Chip/Punkte erscheinen ohne Animation, das "+1" bleibt
       unsichtbar (reine Bewegungs-Dekoration)
 
+### Lernen-Tab: fünf Bereiche (#2956)
+
+- [ ] Einstellungen > Lernen: die Karten stehen in fünf beschrifteten
+      Bereichen, jeder mit einer kleinen Überschrift in Großbuchstaben
+      und einer Beschreibungszeile darunter, in dieser Reihenfolge:
+      "Grundlagen" (Wer lernt, und in welchen Sprachen.), "In der
+      Lektion" (Wie sich Übungen beim Beantworten verhalten.), "Vorlesen
+      und Diktieren" (Stimmen, Tempo, Mikrofon und Ausspracheübung.),
+      "Nach der Lektion" (Wiederholungen, die Zusammenfassung und das
+      Nachholen von Fehlern.), "Motivation und Routine" (Spielmodus,
+      Feedback, tägliche Missionen und Erinnerungen.)
+- [ ] Grundlagen: Lernprofil, dann Weitere Ausgangssprachen
+- [ ] In der Lektion: Lektionsmodus, Tipps, Interaktion, dann Bevorzugte
+      Übungsrichtung und Auflösungs-Effekt (Tipps und Interaktion stehen
+      VOR Richtung und Auflösung)
+- [ ] Vorlesen und Diktieren: nur die Karte "Sprachausgabe"; in einem
+      Browser ohne Web-Speech-Unterstützung (weder Vorlesen noch
+      Spracherkennung) fehlt der ganze Bereich samt Überschrift, und
+      "Nach der Lektion" folgt direkt auf "In der Lektion"
+- [ ] Nach der Lektion: Wiederholung, Zusammenfassung nach Lektionen,
+      Fehler wiederholen. "Verteilte Wiederholung" ist keine eigene Karte
+      mehr, sondern der letzte Block in der Karte "Wiederholung" (unter
+      einer Trennlinie, mit kleinerer Überschrift): der Intervall-Plan
+      (richtige Antworten in Folge gegen Tage bis zur nächsten
+      Wiederholung), der Hinweis, ab wann ein Element als beherrscht
+      gilt, und der Link zur Lernmethode
+- [ ] Motivation und Routine: Spielmodus, Feedback, Tägliche Missionen,
+      Erinnerungen (letzte Karte des Tabs)
+- [ ] Handy (375 px breit): Bereichs-Überschriften und Beschreibungen
+      brechen um, nichts scrollt horizontal; Tab-Wechsel und der
+      Deep-Link ?tab=learning funktionieren wie zuvor
+
 ### Spielmodus: Zusammenfassungskarte + Details (#2959)
 
 - [ ] Einstellungen > Lernen > Spielmodus: die Karte zeigt den Schalter

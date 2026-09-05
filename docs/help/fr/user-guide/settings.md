@@ -62,44 +62,88 @@ Pour chaque fournisseur, sélectionnez le modèle à utiliser (par ex.
 
 ## Apprentissage
 
-### Stratégie de direction des exercices
+L'onglet **Apprentissage** regroupe ses cartes en cinq zones étiquetées,
+dans l'ordre où se déroule une leçon. Chaque zone porte un petit titre
+et une description d'une ligne ; les cartes gardent leurs propres titres.
 
-Pour les leçons de contenu avec des exercices directionnels :
-- **Auto** - réceptif d'abord, puis productif une fois la reconnaissance
-  solide
-- **Réceptif en priorité** - toujours reconnaître avant de produire
-- **Focus productif** - orientation prioritaire vers la production
-- **Équilibré** - mélange dès le début
+### Bases
 
-### Paramètres d'auto-boucle
+Qui apprend, et dans quelles langues.
 
-- **Cycles maximum** - combien de cycles avant la pause (défaut : 5)
-- **Délai entre cycles** - secondes de pause entre les cycles
+- **Profil d'apprentissage** - créer, poursuivre ou refaire le profil
+  d'apprentissage derrière les poids des six méthodes.
+- **Langues source supplémentaires** - les langues source que l'arbre
+  de contenu affiche en plus de votre langue d'application.
 
-### Source de langues du contenu
+### Pendant la leçon
 
-Langues source supplémentaires à afficher dans l'explorateur de contenu
-en plus de votre langue d'application. Par défaut, seul le contenu dans
-votre langue d'application est affiché.
+Comment les exercices se comportent pendant que vous répondez.
 
----
+- **Mode de leçon** - le **mode par défaut** (Entraînement / Examen /
+  Chronométré), le **seuil de réussite** de l'examen et la **difficulté
+  du mode chronométré** (Rapide, Normal, Détendu).
+- **Indices** - si un bouton d'indice par paliers apparaît sur chaque
+  exercice, et le **coût en XP par indice** (0 = gratuit).
+- **Interaction** - les **gestes de balayage** (balayer pour naviguer
+  dans l'Évaluation, la Session et le Programme ; activés par défaut sur
+  les appareils tactiles), les **raccourcis clavier dans les leçons**
+  (Entrée vérifie la réponse, Entrée à nouveau passe à la suite), le
+  **passage automatique après une bonne réponse** et l'affichage du
+  bouton **Demander à l'IA**.
+- **Direction d'exercice préférée** - pour les leçons avec des exercices
+  directionnels : **Auto** (réceptif d'abord, puis productif une fois la
+  reconnaissance solide), **Réceptif en priorité**, **Focus productif**
+  ou **Équilibré**.
+- **Animation de résolution** - l'effet joué quand un exercice
+  d'association est résolu.
 
-## Interface
+### Lecture à voix haute et dictée
 
-### Intensité des retours
+Voix, vitesse, microphone et entraînement à la prononciation.
 
-Contrôle les animations et phrases de félicitations lors de bonnes réponses :
-- **Subtil** - animations minimales, pas de phrases
-- **Normal** - animations modérées et phrases occasionnelles
-- **Enthousiaste** - animations complètes et phrases fréquentes
+- **Voix** - synthèse vocale, lecture automatique des réponses de l'IA,
+  reconnaissance vocale et entraînement à la prononciation.
 
-L'option `prefers-reduced-motion` du système d'exploitation force **Subtil**
-quelle que soit la valeur configurée.
+Cette zone n'apparaît que si le navigateur prend en charge au moins un
+côté de la Web Speech API (synthèse ou reconnaissance). Sinon elle est
+absente, titre compris, et *Après la leçon* suit directement *Pendant la
+leçon*.
 
-### Sons
+### Après la leçon
 
-Active les effets sonores de synthèse lors des célébrations. Désactivé
-par défaut. Réglage du volume et bouton Test disponibles.
+Séances de révision, résumé de la leçon et reprise des erreurs.
+
+- **Révision** - les explications d'erreurs générées automatiquement et
+  le nombre de questions par séance de révision. La carte se termine par
+  le bloc en lecture seule **Répétition espacée** : le calendrier des
+  intervalles (bonnes réponses d'affilée contre jours avant la prochaine
+  révision), à partir de quand un élément compte comme maîtrisé, et un
+  lien vers la méthode d'apprentissage.
+- **Résumé après les leçons** - les sections que le résumé de fin de
+  leçon affiche, et dans quel ordre.
+- **Revoir les erreurs** - les erreurs que la reprise récupère.
+
+### Motivation et routine
+
+Mode jeu, retour, missions quotidiennes et rappels.
+
+- **Mode jeu** - les leçons ludiques, avec l'interrupteur principal, les
+  sons du mode jeu et un volet de détails replié qui mémorise votre
+  choix ; tant que les leçons ludiques sont désactivées, les options du
+  volet sont grisées.
+- **Retour** - l'**intensité des retours** (animations et phrases de
+  félicitations : Subtil, Normal, Enthousiaste ; l'option
+  `prefers-reduced-motion` du système force Subtil) et les **sons**
+  (désactivés par défaut, avec réglage du volume et bouton Test).
+- **Missions quotidiennes** - si les missions sont actives, combien par
+  jour, le mélange de difficulté et le remaniement des missions du jour.
+- **Rappels** - l'heure du rappel et les jours où il s'applique. C'est
+  la dernière carte de l'onglet.
+
+L'affichage du contenu (liste / grille) et l'ordre des onglets du hub de
+contenu se trouvent dans l'onglet **Général**, sous *Apparence*. Les deux
+réglages de nettoyage, *Conservation des leçons en pause* et *Taille
+maximale de leçon*, sont dans l'onglet **Données**.
 
 ---
 

@@ -227,8 +227,10 @@ Three toggles:
   `/pronunciation` page from the Dashboard quick-start for
   Languages-tagged projects.
 
-The Voice section hides itself when neither Web Speech API
-side (synth nor recognition) is supported by the browser.
+The **Voice** card sits on the **Learning** tab in its *Reading aloud
+and dictation* area. When the browser supports neither Web Speech API
+side (synthesis nor recognition), the whole area is absent, heading
+included.
 
 ## Appearance
 
@@ -251,42 +253,98 @@ no reload, and your choice is remembered across visits. Every theme is
 designed to meet WCAG 2.1 AA contrast, so text, charts, badges, and
 exercise feedback stay readable in all of them.
 
+Also in this card: the **content view** - the global *list / grid*
+preference for the Content hub (default **list**). It is the same
+preference as the in-tab view toggle on *My content* / *Discover*, so
+changing it in either place keeps both in sync. Directly below the card
+you set the **order of the Content-hub tabs** (Discover / My content /
+Import), so the hub opens on the tab you use most.
+
 ## Interface
 
-The **Gestures toggle** (default ON for touch-capable
-devices) covers Assessment swipe navigation, Curriculum topic
-swipe-to-reveal, and Session cycle peek. Also here: button tooltips and
-Developer Mode.
+Two controls: **Show button tooltips** (a hover tooltip on icon
+buttons; screen-reader labels stay on regardless) and the **menu
+position** on the phone (top as a menu button, the default, or bottom as
+a thumb-reach tab bar). Swipe gestures are a lesson setting and live
+under *Learning > In the lesson > Interaction*.
 
-**Developer Mode** default depends on the build strand: it is **ON by
+**Developer Mode** (on the **Diagnostics & Support** tab): its default
+depends on the build strand: it is **ON by
 default on the Latest (preview) strand** and **OFF on Main**, so
 preview testers see full technical error detail while production users
 get friendly messages. You can flip it either way.
 
 ## Learning
 
-The **Learning** tab collects how lessons play: the **default lesson
-mode** (Practice / Exam / Timed / Reverse / Shuffle / Endless), the
-exam pass threshold, timed-mode difficulty (see
-[Lessons and reviews](lessons.md)), hints, reminders, the Enter-key
-shortcut, the preferred exercise direction, and the source languages
-shown in the content tree.
+The **Learning** tab groups its cards into five labelled areas, in the
+order a lesson unfolds. Each area has a small heading and a one-line
+description; the cards inside keep their own titles.
 
-It also holds the **content view** control - the global *list ⇄ grid*
-preference for the Content hub (default **list**). It is the same
-preference as the in-tab view toggle on *My content* / *Discover*, so
-changing it in either place keeps both in sync.
+### Basics
 
-You can also set the **order of the Content-hub tabs** (Discover /
-My content / Import) here, so the hub opens on the tab you use most.
+Who is learning, and in which languages.
 
-Also on the Learning tab: the **feedback section** (feedback
-intensity and sounds), **game mode** with its **mascot variant** -
-color schemes for Lernfunke that unlock with levels and badges or in
-exchange for XP (locked variants show their condition, purchases ask
-for a two-step confirmation) - plus missions and reminders. What game
-mode changes in detail is covered in
-[Praise and rewards](celebrations.md).
+- **Learning profile** - create, continue or retake the learning
+  profile behind the six-method weights.
+- **Additional source languages** - which source languages the content
+  tree shows besides your app language.
+
+### In the lesson
+
+How exercises behave while you answer.
+
+- **Lesson mode** - the **default mode** (Practice / Exam / Timed), the
+  **exam pass threshold** and the **timed mode difficulty** (Fast,
+  Normal, Relaxed); see [Lessons and reviews](lessons.md).
+- **Hints** - whether a staged hint button appears on each exercise,
+  and the **XP cost per hint** (0 for free hints).
+- **Interaction** - **swipe gestures** (swipe to navigate in
+  Assessment, Session and Curriculum; default ON on touch-capable
+  devices), **lesson keyboard shortcuts** (Enter checks the answer,
+  Enter again moves on), **auto-advance on a correct answer**, and
+  whether the **Ask AI** button is shown.
+- **Preferred exercise direction** - which direction directional
+  exercises open with.
+- **Solve animation** - the effect a solved matching exercise plays.
+
+### Reading aloud and dictation
+
+Voices, speed, microphone and pronunciation practice.
+
+- **Voice** - the toggles described under *Voice* above: text-to-speech,
+  auto-play, speech-to-text and pronunciation practice.
+
+This area appears only when the browser supports at least one side of
+the Web Speech API (synthesis or recognition). Otherwise it is absent,
+heading included, and *After the lesson* follows *In the lesson*
+directly.
+
+### After the lesson
+
+Review sessions, the lesson summary and retrying mistakes.
+
+- **Review** - the auto-generated error explanations and the number of
+  questions per review session. The card ends with the read-only
+  **Spaced repetition** block: the interval schedule (correct answers
+  in a row against the days until the next review), when an item
+  counts as mastered, and a link to the learning method.
+- **Lesson summary** - which sections the end-of-lesson summary shows,
+  and in which order.
+- **Retry errors** - which mistakes the retry round picks up.
+
+### Motivation and routine
+
+Game mode, feedback, daily missions and reminders.
+
+- **Game Mode** - playful lessons, including the **mascot variant**,
+  color schemes for Lernfunke that unlock with levels and badges or in
+  exchange for XP (locked variants show their condition, purchases ask
+  for a two-step confirmation). What game mode changes in detail is
+  covered in [Praise and rewards](celebrations.md).
+- **Feedback** - feedback intensity and sounds (volume, test button).
+- **Daily Missions** - whether missions run, how many per day, the
+  difficulty mix, and a reshuffle of today's missions.
+- **Reminders** - the reminder time and the days it applies to.
 
 The game mode card shows the master switch, the game mode sounds and a
 status line counting how many of the extras are on. **Game mode details**
@@ -297,6 +355,9 @@ lessons** is off, the options inside are greyed out.
 The tab ends with the reminders. The two housekeeping settings -
 *Paused lesson retention* and *Maximum lesson size* - are data-lifecycle
 settings and live on the **Data** tab (see *Housekeeping* under Backup).
+
+The **content view** (list / grid) and the **order of the Content-hub
+tabs** are on the **General** tab under *Appearance*.
 
 ## Gamification
 
