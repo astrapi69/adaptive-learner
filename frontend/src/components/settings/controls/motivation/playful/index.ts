@@ -9,3 +9,4 @@ export {default as PlayfulTensionBlock} from "./PlayfulTensionBlock";
 export {default as PlayfulXpBlock} from "./PlayfulXpBlock";
 export * from "./SettingRows";
 export type {PlayfulBlockProps} from "./types";
+export * from "./usePlayfulExtras";

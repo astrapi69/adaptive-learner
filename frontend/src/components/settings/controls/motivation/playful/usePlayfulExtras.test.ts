@@ -8,15 +8,15 @@ import {act, renderHook} from "@testing-library/react";
 import {beforeEach, describe, expect, it} from "vitest";
 
 import {countPlayfulExtras, usePlayfulExtras} from "./usePlayfulExtras";
-import {setPlayfulArcade} from "../../lib/learning/playful/playfulArcadePref";
-import {setPlayfulBonus} from "../../lib/learning/playful/playfulBonusPref";
-import {setPlayfulComboXp} from "../../lib/learning/playful/playfulComboXpPref";
-import {setPlayfulSpecialRounds} from "../../lib/learning/playful/playfulSpecialRoundsPref";
+import {setPlayfulArcade} from "@/lib/learning/playful/playfulArcadePref";
+import {setPlayfulBonus} from "@/lib/learning/playful/playfulBonusPref";
+import {setPlayfulComboXp} from "@/lib/learning/playful/playfulComboXpPref";
+import {setPlayfulSpecialRounds} from "@/lib/learning/playful/playfulSpecialRoundsPref";
 import {
     setPlayfulCountdown,
     setPlayfulHearts,
-} from "../../lib/learning/playful/playfulTensionPref";
-import {setPlayfulTickets} from "../../lib/learning/playful/playfulTicketsPref";
+} from "@/lib/learning/playful/playfulTensionPref";
+import {setPlayfulTickets} from "@/lib/learning/playful/playfulTicketsPref";
 
 beforeEach(() => {
     localStorage.clear();

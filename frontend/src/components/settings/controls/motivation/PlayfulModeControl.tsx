@@ -28,7 +28,6 @@
 import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
-import {usePlayfulExtras} from "../../../../hooks/settings/usePlayfulExtras";
 import {usePlayfulMode} from "../../../../hooks/settings/usePlayfulMode";
 import FormHint from "../../../../shared/forms/FormHint";
 import {SettingsDisclosure} from "../../SettingsDisclosure";
@@ -38,6 +37,7 @@ import {
     PlayfulTensionBlock,
     PlayfulXpBlock,
     SettingSwitchRow,
+    usePlayfulExtras,
 } from "./playful";
 import {setPlayfulMode} from "../../../../lib/learning/playful/playfulModePref";
 import {

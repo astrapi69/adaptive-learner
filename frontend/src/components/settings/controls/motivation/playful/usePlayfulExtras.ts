@@ -6,8 +6,10 @@
  * special rounds, tickets, bonus lessons) are on. ``countPlayfulExtras``
  * is the pure read; the hook re-reads on every detail pref change event
  * (each pref module dispatches its own) and on the cross-tab ``storage``
- * event - same shape as {@link ./usePlayfulMode}, so the count follows
- * the switches inside the fold without a reload.
+ * event - same shape as ``hooks/settings/usePlayfulMode``, so the count
+ * follows the switches inside the fold without a reload. Lives next to
+ * the blocks it summarises (feature-local, one consumer), not in
+ * ``hooks/settings`` (the #809 god-folder guard caps that folder).
  */
 
 import {useEffect, useState} from "react";
@@ -15,28 +17,28 @@ import {useEffect, useState} from "react";
 import {
     PLAYFUL_ARCADE_CHANGE_EVENT,
     readPlayfulArcade,
-} from "../../lib/learning/playful/playfulArcadePref";
+} from "@/lib/learning/playful/playfulArcadePref";
 import {
     PLAYFUL_BONUS_CHANGE_EVENT,
     readPlayfulBonus,
-} from "../../lib/learning/playful/playfulBonusPref";
+} from "@/lib/learning/playful/playfulBonusPref";
 import {
     PLAYFUL_COMBO_XP_CHANGE_EVENT,
     readPlayfulComboXp,
-} from "../../lib/learning/playful/playfulComboXpPref";
+} from "@/lib/learning/playful/playfulComboXpPref";
 import {
     PLAYFUL_SPECIAL_ROUNDS_CHANGE_EVENT,
     readPlayfulSpecialRounds,
-} from "../../lib/learning/playful/playfulSpecialRoundsPref";
+} from "@/lib/learning/playful/playfulSpecialRoundsPref";
 import {
     PLAYFUL_TENSION_CHANGE_EVENT,
     readPlayfulCountdown,
     readPlayfulHearts,
-} from "../../lib/learning/playful/playfulTensionPref";
+} from "@/lib/learning/playful/playfulTensionPref";
 import {
     PLAYFUL_TICKETS_CHANGE_EVENT,
     readPlayfulTickets,
-} from "../../lib/learning/playful/playfulTicketsPref";
+} from "@/lib/learning/playful/playfulTicketsPref";
 
 export interface PlayfulExtras {
     /** Detail switches currently on. */
