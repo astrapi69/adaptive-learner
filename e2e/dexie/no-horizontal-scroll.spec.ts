@@ -54,7 +54,19 @@ const AUTH_ROUTES: ReadonlyArray<{ name: string; path: string; waitId: string }>
   { name: "AdaptiveLesson", path: "/adaptive-lesson/es-a1-from-en", waitId: "adaptive-lesson-page" },
 ];
 
-const SETTINGS_TABS = ["general", "ai", "learning", "plugins", "data", "help", "about"] as const;
+/** Every Settings tab, in sidebar order. Source of truth: ``SETTINGS_TABS`` in
+ *  ``frontend/src/pages/system/Settings.tsx`` (#2963). */
+const SETTINGS_TABS = [
+  "general",
+  "ai",
+  "learning",
+  "plugins",
+  "data",
+  "integrations",
+  "help",
+  "diagnostics",
+  "about",
+] as const;
 
 /**
  * Wait for layout to settle before measuring widths. This spec's whole

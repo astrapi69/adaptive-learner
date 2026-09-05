@@ -1,8 +1,9 @@
 /**
  * Settings tabs — sidebar/hamburger navigation + deep-link (E2E hardening).
  *
- * Dexie build, NO backend. Covers the 7-tab Settings page
- * (general / ai / learning / plugins / data / help / about):
+ * Dexie build, NO backend. Covers the 9-tab Settings page
+ * (general / ai / learning / plugins / data / integrations / help /
+ * diagnostics / about):
  *   - on desktop, the sidebar activates each tab (``aria-current="page"``)
  *     and reveals its panel,
  *   - a ``?tab=ai`` deep link opens the AI tab directly,
@@ -20,18 +21,23 @@ import {createTestUser} from "../helpers/onboarding";
 
 // Each tab + the stable testid that is only visible while that tab is
 // the active one (the panels use the HTML ``hidden`` attribute).
+// Source of truth for the tab set and its order: ``SETTINGS_TABS`` in
+// ``frontend/src/pages/system/Settings.tsx`` (#2963). Every tab renders
+// in the Dexie build (the panels are mounted unconditionally).
 const TABS: {tab: string; panel: string}[] = [
     {tab: "general", panel: "settings-section-appearance"},
     {tab: "ai", panel: "settings-provider"},
     {tab: "learning", panel: "settings-panel-learning"},
     {tab: "plugins", panel: "settings-panel-plugins"},
     {tab: "data", panel: "settings-panel-data"},
+    {tab: "integrations", panel: "settings-panel-integrations"},
     {tab: "help", panel: "settings-panel-help"},
+    {tab: "diagnostics", panel: "settings-panel-diagnostics"},
     {tab: "about", panel: "settings-panel-about"},
 ];
 
 test.describe("Settings — tabbed navigation", () => {
-    test("each of the 7 tabs activates and shows its panel", async ({
+    test(`each of the ${TABS.length} tabs activates and shows its panel`, async ({
         page,
     }) => {
         const errors: string[] = [];
@@ -43,6 +49,21 @@ test.describe("Settings — tabbed navigation", () => {
         await expect(page.getByTestId("settings-tabs")).toBeVisible({
             timeout: 15000,
         });
+
+        // Drift guard (#2963): the rendered sidebar is the oracle. A tab
+        // added to ``SETTINGS_TABS`` without an entry in ``TABS`` above
+        // fails here naming the missing id, instead of silently going
+        // unwalked. Scoped to the nav's buttons so no other prefixed
+        // testid (``settings-tabs``, ``settings-group-*``) can leak in.
+        const rendered = await page
+            .getByTestId("settings-tabs")
+            .locator('button[data-testid^="settings-tab-"]')
+            .evaluateAll((buttons) =>
+                buttons.map((button) => button.getAttribute("data-testid") ?? ""),
+            );
+        expect(rendered.sort()).toEqual(
+            TABS.map(({tab}) => `settings-tab-${tab}`).sort(),
+        );
 
         for (const {tab, panel} of TABS) {
             const trigger = page.getByTestId(`settings-tab-${tab}`);
