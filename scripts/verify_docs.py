@@ -344,31 +344,94 @@ def check_test_counts(report: Report, fix: bool, run_collection: bool) -> None:
             )
 
 
+def collect_pytest_count(report: Report, cwd: Path, cmd: list[str]) -> int:
+    """Run a pytest collection command in ``cwd`` and return the count.
+
+    A collection error (wrong interpreter, missing dependency, ...) never
+    silently reads as 0 - it is reported as a WARN with the exit code, so
+    "could not collect" can never look identical to "collected zero"
+    (gate contract point 3, #2946).
+    """
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            cmd,
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        report.warn("test-counts", f"pytest collection in {cwd} failed to run: {exc}")
+        return 0
+    m = re.search(r"(\d+) tests? collected", result.stdout) or re.search(
+        r"(\d+)/\d+ tests collected", result.stdout
+    )
+    if m:
+        return int(m.group(1))
+    report.warn(
+        "test-counts",
+        f"pytest collection in {cwd} produced no parseable count "
+        f"(exit {result.returncode}) - counted as 0, likely undercounted",
+    )
+    return 0
+
+
+def resolve_plugin_python(
+    report: Report, backend_dir: Path, env: dict[str, str] | None = None
+) -> str | None:
+    """The backend's own poetry venv python, shared by every plugin's tests.
+
+    Plugin dirs are tested against the BACKEND's shared venv - `make
+    test-plugins` resolves ``PLUGIN_PYTHON`` the same way - not each
+    plugin's own poetry environment: most plugin dirs have never had
+    `poetry install` run in their own venv, so `poetry run pytest` there
+    fails closed with ModuleNotFoundError instead of collecting anything
+    (#2946). ``env`` is exposed only so tests can point ``poetry`` at a
+    fake shim; production calls leave it as the inherited environment.
+    """
+    import os
+    import subprocess
+
+    try:
+        venv_path = subprocess.run(
+            ["poetry", "env", "info", "-p"],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            env=env if env is not None else os.environ,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError) as exc:
+        report.warn("test-counts", f"could not resolve the shared backend venv: {exc}")
+        return None
+    if not venv_path:
+        report.warn(
+            "test-counts",
+            "no backend venv resolved - plugin test count is 0/unreliable",
+        )
+        return None
+    return str(Path(venv_path) / "bin" / "python")
+
+
 def _collect_actual_test_counts(report: Report):
     """Collect real test counts via pytest/vitest. Slow; opt-in only."""
     import subprocess
 
-    def collect_pytest(cwd: Path) -> int:
-        try:
-            out = subprocess.run(
-                ["poetry", "run", "pytest", "--collect-only", "-q"],
-                cwd=cwd,
-                capture_output=True,
-                text=True,
-                timeout=600,
-            ).stdout
-        except (OSError, subprocess.SubprocessError) as exc:
-            report.note(f"test-counts: pytest collection in {cwd} failed: {exc}")
-            return 0
-        m = re.search(r"(\d+) tests? collected", out) or re.search(
-            r"(\d+)/\d+ tests collected", out
-        )
-        return int(m.group(1)) if m else 0
+    backend = collect_pytest_count(
+        report, REPO / "backend", ["poetry", "run", "pytest", "--collect-only", "-q"]
+    )
 
-    backend = collect_pytest(REPO / "backend")
+    plugin_python = resolve_plugin_python(report, REPO / "backend")
     plugins = 0
     for d in sorted((REPO / "plugins").glob("adaptive-learner-plugin-*")):
-        plugins += collect_pytest(d)
+        cmd = (
+            [plugin_python, "-m", "pytest", "--collect-only", "-q"]
+            if plugin_python
+            else ["poetry", "run", "pytest", "--collect-only", "-q"]
+        )
+        plugins += collect_pytest_count(report, d, cmd)
 
     vitest = 0
     try:
