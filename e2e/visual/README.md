@@ -11,7 +11,7 @@ each, not the full Cartesian product):
 | Spec | Matrix | Count |
 |------|--------|-------|
 | `theme-regression.spec.ts` (#244, Phase 2) | 5 views × 12 themes, desktop 1440×900 | 60 |
-| `critical-surfaces.spec.ts` (#705, Phase 1) | 16 surfaces × 3 viewports, default (light) theme | up to 48 |
+| `critical-surfaces.spec.ts` (#705, Phase 1) | 19 surfaces × 3 viewports, default (light) theme | up to 57 |
 
 ### Phase 2 — themes (#244)
 
@@ -20,13 +20,14 @@ lesson-result, settings) across all 12 registered themes.
 
 ### Phase 1 — critical surfaces × viewports (#705)
 
-16 surfaces at 3 responsive viewports — desktop `1920×1080`, tablet
+19 surfaces at 3 responsive viewports — desktop `1920×1080`, tablet
 `768×1024`, mobile `375×667`:
 
 dashboard (empty + populated), content-browser, content-discover,
-content-import (#1380), set-detail, lesson
+content-import (#1380), create-lesson, set-detail, lesson
 theory, lesson cloze, lesson matching, lesson summary, review session,
-statistics, settings (general/data/about), shortcut-help overlay.
+statistics, settings (general/data/about/ai/learning), shortcut-help
+overlay.
 
 A surface that can't be reached deterministically (e.g. the bundled set
 has no cloze exercise) is `test.skip`-ped rather than committing a
@@ -35,7 +36,7 @@ meaningless baseline.
 ## Layout
 
 - `theme-regression.spec.ts` — the 12 themes × 5 views matrix.
-- `critical-surfaces.spec.ts` — the 16 surfaces × 3 viewports matrix.
+- `critical-surfaces.spec.ts` — the 19 surfaces × 3 viewports matrix.
 - `helpers.ts` — `setTheme` (pins the theme before first paint via the
   real `adaptive-learner.theme` localStorage key), `freezeClock`,
   `settleForScreenshot`, and per-view/per-surface seeding (`gotoView`,
