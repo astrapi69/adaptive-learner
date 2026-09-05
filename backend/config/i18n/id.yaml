@@ -4141,3 +4141,7 @@ set_summary:
   lesson_errors: "{count} kesalahan"
   practice_errors: "Latih kesalahan"
   back_to_set: "Kembali ke set"
+  element_type:
+    vocabulary: "Kosakata"
+    grammar_rule: "Aturan tata bahasa"
+    unknown: "Tidak diketahui"

@@ -4131,3 +4131,7 @@ set_summary:
   lesson_errors: "{count} erros"
   practice_errors: "Treinar erros"
   back_to_set: "Voltar ao conjunto"
+  element_type:
+    vocabulary: "Vocabulário"
+    grammar_rule: "Regra gramatical"
+    unknown: "Desconhecido"
