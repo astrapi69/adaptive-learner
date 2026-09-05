@@ -273,15 +273,44 @@ async function gotoSummarySections(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning on the Game Mode summary card (#2959), put
+ *  the master "Playful lessons" switch into ``gameModeOn``, dismiss the
+ *  one-time sound offer the switch raises (#2875, so the card shows its
+ *  steady state), and unfold "Game mode details". The fold is collapsed
+ *  by default and remembers its state, so the open is idempotent. */
+async function gotoPlayfulDetails(
+    page: Page,
+    gameModeOn: boolean,
+): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const card = page.getByTestId("settings-section-playful");
+    if (!(await card.count())) return false;
+    await card.scrollIntoViewIfNeeded();
+    const master = page.getByTestId("settings-playful-mode-toggle");
+    if ((await master.isChecked()) !== gameModeOn) await master.click();
+    const later = page.getByTestId("settings-playful-sounds-offer-later");
+    if (await later.count()) await later.click();
+    const toggle = page.getByTestId("settings-playful-details-toggle");
+    if ((await toggle.getAttribute("aria-expanded")) !== "true") {
+        await toggle.click();
+    }
+    await expect(page.getByTestId("settings-playful-details-body")).toBeVisible({
+        timeout: 10_000,
+    });
+    return true;
+}
+
 /** Open Settings → Learning scrolled to the Game Mode section's mascot
  *  variant picker (#2861 — unlockable Lernfunke color schemes, level/
  *  badge/XP-gated like the #2850 avatar frames). A fresh seeded learner
  *  has only the free default unlocked, so this pins the realistic
- *  mostly-locked first-look state, locks and all. */
+ *  mostly-locked first-look state, locks and all. Since #2959 the picker
+ *  lives inside the "Game mode details" fold and is enabled only with
+ *  the master switch on, so both are switched first. */
 async function gotoMascotVariants(page: Page): Promise<boolean> {
-    await seedLearner(page);
-    await page.goto("/settings?tab=learning");
-    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    if (!(await gotoPlayfulDetails(page, true))) return false;
     const section = page.getByTestId("settings-mascot-variants");
     try {
         await section.waitFor({timeout: 15_000});
@@ -686,6 +715,18 @@ const FEATURES: FeatureShot[] = [
         path: "feedback-card/settings",
         setup: gotoFeedbackCard,
         pinTo: "settings-section-feedback",
+    },
+
+    // --- Game Mode summary card + details fold (#2959) -------------------
+    {
+        path: "playful-details/settings",
+        setup: (page) => gotoPlayfulDetails(page, true),
+        pinTo: "settings-section-playful",
+    },
+    {
+        path: "playful-details/settings-off",
+        setup: (page) => gotoPlayfulDetails(page, false),
+        pinTo: "settings-section-playful",
     },
 
     // --- Error-report dialog (#1480 — pre-migration pixel net) ----------
