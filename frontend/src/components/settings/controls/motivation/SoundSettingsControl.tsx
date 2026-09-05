@@ -1,10 +1,13 @@
 /**
  * SoundSettingsControl (EXP-008 / Phase 55F).
  *
- * Settings > Interface control for the synthesized feedback
- * sounds. Sound is OFF by default; turning it on reveals a master
- * volume slider and a test button (plays the "star earned"
- * chime). Sounds are always supplementary to the visual feedback.
+ * Settings > Learning control for the synthesized feedback
+ * sounds. Sound is OFF by default. The master volume slider and the
+ * test button (plays the "star earned" chime) are ALWAYS visible
+ * (#2957): ``soundOutputEnabled`` ORs this global toggle with the
+ * game-mode sounds toggle, so a learner with only game-mode sounds
+ * on still needs the volume control. A hint under the slider says
+ * so. Sounds are always supplementary to the visual feedback.
  */
 
 import {useState} from "react";
@@ -59,47 +62,52 @@ export default function SoundSettingsControl() {
                 />
             </label>
 
-            {enabled && (
-                <div
-                    className="flex flex-col items-stretch gap-1"
-                    data-testid="settings-sounds-volume-row"
+            <div
+                className="flex flex-col items-stretch gap-1"
+                data-testid="settings-sounds-volume-row"
+            >
+                <label
+                    className="text-[0.95rem] font-medium"
+                    htmlFor="settings-sounds-volume"
                 >
-                    <label
-                        className="text-[0.95rem] font-medium"
-                        htmlFor="settings-sounds-volume"
+                    {t("settings.sounds_volume", "Volume")}
+                </label>
+                <div className="sounds-volume-row">
+                    <input
+                        id="settings-sounds-volume"
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={5}
+                        value={volume}
+                        data-testid="settings-sounds-volume"
+                        onChange={(e) => handleVolume(Number(e.target.value))}
+                    />
+                    <span
+                        className="sounds-volume-value"
+                        data-testid="settings-sounds-volume-value"
                     >
-                        {t("settings.sounds_volume", "Volume")}
-                    </label>
-                    <div className="sounds-volume-row">
-                        <input
-                            id="settings-sounds-volume"
-                            type="range"
-                            min={0}
-                            max={100}
-                            step={5}
-                            value={volume}
-                            data-testid="settings-sounds-volume"
-                            onChange={(e) =>
-                                handleVolume(Number(e.target.value))
-                            }
-                        />
-                        <span
-                            className="sounds-volume-value"
-                            data-testid="settings-sounds-volume-value"
-                        >
-                            {volume}%
-                        </span>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            data-testid="settings-sounds-test"
-                            onClick={() => playSound("star_earned")}
-                        >
-                            {t("settings.sounds_test", "Test")}
-                        </Button>
-                    </div>
+                        {volume}%
+                    </span>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        data-testid="settings-sounds-test"
+                        onClick={() => playSound("star_earned")}
+                    >
+                        {t("settings.sounds_test", "Test")}
+                    </Button>
                 </div>
-            )}
+                <FormHint
+                    as="span"
+                    data-testid="settings-sounds-volume-shared-hint"
+                >
+                    {t(
+                        "settings.sounds_volume_shared_hint",
+                        "Also applies to the game-mode sounds.",
+                    )}
+                </FormHint>
+            </div>
         </div>
     );
 }

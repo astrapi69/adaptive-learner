@@ -9,7 +9,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {fireEvent, render, screen} from "@testing-library/react";
+import {act, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import FeedbackIntensityControl from "./FeedbackIntensityControl";
@@ -17,6 +17,7 @@ import {
     FEEDBACK_PREF_CHANGE_EVENT,
     readFeedbackIntensity,
 } from "../../../../lib/feedback/feedbackPref";
+import {setPlayfulMode} from "../../../../lib/learning/playful/playfulModePref";
 
 beforeEach(() => {
     localStorage.clear();
@@ -83,6 +84,30 @@ describe("FeedbackIntensityControl", () => {
             screen.queryByTestId(
                 "settings-feedback-intensity-reduced-hint",
             ),
+        ).not.toBeInTheDocument();
+    });
+
+    it("shows the game-mode hint while playful mode is on and removes it when the mode is switched off", () => {
+        setPlayfulMode(true);
+        render(<FeedbackIntensityControl />);
+        expect(
+            screen.getByTestId("settings-feedback-intensity-playful-hint"),
+        ).toHaveTextContent(
+            "Game mode is on, so feedback is always enthusiastic regardless of this setting.",
+        );
+
+        act(() => {
+            setPlayfulMode(false);
+        });
+        expect(
+            screen.queryByTestId("settings-feedback-intensity-playful-hint"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("hides the game-mode hint while playful mode is off", () => {
+        render(<FeedbackIntensityControl />);
+        expect(
+            screen.queryByTestId("settings-feedback-intensity-playful-hint"),
         ).not.toBeInTheDocument();
     });
 });
