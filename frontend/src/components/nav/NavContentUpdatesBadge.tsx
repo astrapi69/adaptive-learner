@@ -15,7 +15,10 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 
 import { useI18n } from "../../hooks/ui/useI18n";
-import { getContentUpdateCount } from "../../lib/content/browse/content-updates-badge";
+import {
+  CONTENT_UPDATES_CHANGED_EVENT,
+  getContentUpdateCount,
+} from "../../lib/content/browse/content-updates-badge";
 
 export default function NavContentUpdatesBadge() {
   const { t } = useI18n();
@@ -23,16 +26,24 @@ export default function NavContentUpdatesBadge() {
 
   useEffect(() => {
     let cancelled = false;
-    getContentUpdateCount()
-      .then((n) => {
-        if (!cancelled) setCount(n);
-      })
-      .catch(() => {
-        // Supplementary chrome — never surface a read failure (offline,
-        // a source repo unreachable, ...); the badge just stays hidden.
-      });
+    const refresh = () => {
+      getContentUpdateCount()
+        .then((n) => {
+          if (!cancelled) setCount(n);
+        })
+        .catch(() => {
+          // Supplementary chrome — never surface a read failure (offline,
+          // a source repo unreachable, ...); the badge just stays hidden.
+        });
+    };
+    refresh();
+    // #2985 — an applied update invalidates the session cache and fires
+    // this event; without it the badge froze on the pre-update count for
+    // the lifetime of the app shell.
+    window.addEventListener(CONTENT_UPDATES_CHANGED_EVENT, refresh);
     return () => {
       cancelled = true;
+      window.removeEventListener(CONTENT_UPDATES_CHANGED_EVENT, refresh);
     };
   }, []);
 
