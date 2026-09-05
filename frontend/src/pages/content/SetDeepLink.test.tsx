@@ -16,7 +16,7 @@
 
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router";
+import { MemoryRouter, Route, Routes, useParams } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { ContentSetEntry } from "../../storage/types";
@@ -76,19 +76,41 @@ function makeEntry(over: Partial<ContentSetEntry> & { id: string }): ContentSetE
   };
 }
 
+/** Renders the matched ``:filename`` so tests can assert exactly which
+ *  lesson "Start"/"Continue" navigated to, not just that navigation
+ *  happened. */
+function LessonPageProbe() {
+  const { filename } = useParams<{ filename: string }>();
+  return <div data-testid="lesson-page">{filename}</div>;
+}
+
 function renderAt(setId: string) {
   return render(
     <MemoryRouter initialEntries={[`/content/set/${setId}`]}>
       <Routes>
         <Route path="/content/set/:setId" element={<SetDeepLink />} />
         <Route path="/content" element={<div data-testid="content-page" />} />
-        <Route
-          path="/lesson/:setSlug/:setId/:filename"
-          element={<div data-testid="lesson-page" />}
-        />
+        <Route path="/lesson/:setSlug/:setId/:filename" element={<LessonPageProbe />} />
       </Routes>
     </MemoryRouter>,
   );
+}
+
+function progressRow(
+  filename: string,
+  status: "in_progress" | "paused" | "abandoned" | "completed",
+) {
+  return {
+    id: filename,
+    user_id: "u1",
+    source: "owner/repo",
+    set_id: "fr-a1",
+    lesson_filename: filename,
+    status,
+    step_results: {},
+    score_correct: 8,
+    score_total: 10,
+  };
 }
 
 beforeEach(() => {
@@ -120,6 +142,65 @@ describe("SetDeepLink (#892)", () => {
     await waitFor(() => expect(screen.getByTestId("lesson-page")).toBeInTheDocument());
     expect(downloadSetMock).not.toHaveBeenCalled();
     expect(listLessonsMock).toHaveBeenCalledWith("owner/repo", "fr-a1");
+  });
+
+  // #2935 — "Start learning" ignored existing progress and always
+  // restarted at lesson 1, forcing a manual click-through to resume.
+  it("resumes at the first unfinished lesson instead of restarting at lesson 1", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [makeEntry({ id: "fr-a1", cached_version: "1.0.0" })],
+    });
+    listLessonsMock.mockResolvedValue({ lessons: ["01.json", "02.json", "03.json"] });
+    localStorage.setItem("adaptive-learner.user_id", "u1");
+    listProgressMock.mockResolvedValue([progressRow("01.json", "completed")]);
+    renderAt("fr-a1");
+
+    await screen.findByTestId("set-lesson-list");
+    fireEvent.click(screen.getByTestId("set-deep-link-start"));
+    await waitFor(() => expect(screen.getByTestId("lesson-page")).toHaveTextContent("02.json"));
+  });
+
+  it("still opens lesson 1 on Start when the set has no progress yet", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [makeEntry({ id: "fr-a1", cached_version: "1.0.0" })],
+    });
+    localStorage.setItem("adaptive-learner.user_id", "u1");
+    renderAt("fr-a1");
+
+    await screen.findByTestId("set-lesson-list");
+    fireEvent.click(screen.getByTestId("set-deep-link-start"));
+    await waitFor(() => expect(screen.getByTestId("lesson-page")).toHaveTextContent("01.json"));
+  });
+
+  it("falls back to lesson 1 on Start once every lesson is completed", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [makeEntry({ id: "fr-a1", cached_version: "1.0.0" })],
+    });
+    localStorage.setItem("adaptive-learner.user_id", "u1");
+    listProgressMock.mockResolvedValue([
+      progressRow("01.json", "completed"),
+      progressRow("02.json", "completed"),
+    ]);
+    renderAt("fr-a1");
+
+    await screen.findByTestId("set-lesson-list");
+    fireEvent.click(screen.getByTestId("set-deep-link-start"));
+    await waitFor(() => expect(screen.getByTestId("lesson-page")).toHaveTextContent("01.json"));
+  });
+
+  // #2935 — a completed row showed only a muted score number, easy to
+  // miss as "done" at a glance.
+  it("marks a completed lesson row with a done indicator", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [makeEntry({ id: "fr-a1", cached_version: "1.0.0" })],
+    });
+    localStorage.setItem("adaptive-learner.user_id", "u1");
+    listProgressMock.mockResolvedValue([progressRow("01.json", "completed")]);
+    renderAt("fr-a1");
+
+    await screen.findByTestId("set-lesson-list");
+    expect(screen.getByTestId("set-lesson-done-01.json")).toBeInTheDocument();
+    expect(screen.queryByTestId("set-lesson-done-02.json")).not.toBeInTheDocument();
   });
 
   // #2835 — the list previously rendered the raw filename.
@@ -208,20 +289,6 @@ describe("SetDeepLink: bonus lessons (#2890)", () => {
     getLessonMock.mockResolvedValue({ title: "T" });
   }
 
-  function completedRow(filename: string) {
-    return {
-      id: filename,
-      user_id: "u1",
-      source: "owner/repo",
-      set_id: "fr-a1",
-      lesson_filename: filename,
-      status: "completed",
-      step_results: {},
-      score_correct: 8,
-      score_total: 10,
-    };
-  }
-
   it("sorts the bonus lesson last and locks it while the set is unfinished", async () => {
     setupBonusSet();
     renderAt("fr-a1");
@@ -242,7 +309,7 @@ describe("SetDeepLink: bonus lessons (#2890)", () => {
 
   it("unlocks the bonus lesson once every regular lesson has a star", async () => {
     setupBonusSet();
-    listProgressMock.mockResolvedValue([completedRow("01.json")]);
+    listProgressMock.mockResolvedValue([progressRow("01.json", "completed")]);
     renderAt("fr-a1");
     await screen.findByTestId("set-lesson-list");
     const bonusRow = screen.getByTestId("set-lesson-2");

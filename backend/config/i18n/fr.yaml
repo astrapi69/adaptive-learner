@@ -2387,6 +2387,7 @@ content:
     bonus_locked_tooltip: "Termine chaque leçon normale de ce set avec au moins une étoile pour débloquer cette leçon bonus."
     progress_done: "{done} leçons sur {total} terminées"
     current_lesson: "Continuer ici"
+    lesson_completed: "Terminé"
   repo_export:
     button: "Partager comme dépôt"
     title: "Partager comme dépôt"

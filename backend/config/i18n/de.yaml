@@ -2390,6 +2390,7 @@ content:
     bonus_locked_tooltip: "Schließe jede reguläre Lektion dieses Sets mit mindestens einem Stern ab, um diese Bonus-Lektion freizuschalten."
     progress_done: "{done} von {total} Lektionen abgeschlossen"
     current_lesson: "Hier weitermachen"
+    lesson_completed: "Abgeschlossen"
   repo_export:
     button: "Als Repository teilen"
     title: "Als Repository teilen"
