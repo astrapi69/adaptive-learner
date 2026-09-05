@@ -10,8 +10,6 @@ import ReviewSettingsControl from "../../../../components/settings/controls/less
 import SummarySectionsControl from "../../../../components/settings/controls/lesson/SummarySectionsControl";
 import ErrorReplayScopeControl from "../../../../components/settings/controls/lesson/ErrorReplayScopeControl";
 import LearningProfileControl from "../../../../components/assessment/LearningProfileControl";
-import MaxLessonSizeControl from "../../../../components/settings/controls/lesson/MaxLessonSizeControl";
-import PausedLessonsRetentionControl from "../../../../components/settings/controls/lesson/PausedLessonsRetentionControl";
 import MissionSettingsControl from "../../../../components/settings/controls/motivation/MissionSettingsControl";
 import PlayfulModeControl from "../../../../components/settings/controls/motivation/PlayfulModeControl";
 import SourceLanguagesControl from "../../../../components/settings/controls/lesson/SourceLanguagesControl";
@@ -31,11 +29,12 @@ interface LearningPanelProps {
  * (learning profile, source languages) -> in-lesson flow (lesson mode,
  * direction, hints, matching effect, interaction toggles, voice) ->
  * practice & follow-up (review, SRS, lesson summary) -> motivation
- * (feedback + sound, missions) -> reminders -> rare housekeeping LAST
- * (paused-lesson retention, max lesson size). The order is pinned by a
- * Settings.test.tsx regression test; the panel stays mounted (``hidden``
- * when inactive) so deep links and ``data-testid`` assertions keep
- * working.
+ * (feedback + sound, missions) -> reminders LAST. The two rare
+ * housekeeping cards #1459 parked here (paused-lesson retention, max
+ * lesson size) are data-lifecycle settings and live on the Data tab
+ * since #2955. The order is pinned by a Settings.test.tsx regression
+ * test; the panel stays mounted (``hidden`` when inactive) so deep links
+ * and ``data-testid`` assertions keep working.
  *
  * @example
  * <LearningPanel active={activeTab === "learning"} />
@@ -72,8 +71,6 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       </SettingsSection>
       <MissionSettingsControl />
       <DailyRemindersControl />
-      <PausedLessonsRetentionControl />
-      <MaxLessonSizeControl />
     </div>
   );
 }
