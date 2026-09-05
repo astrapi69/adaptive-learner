@@ -41,6 +41,7 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
+| Lernen-Tab - fünf Bereiche "Grundlagen / In der Lektion / Vorlesen und Diktieren / Nach der Lektion / Motivation und Routine", Verteilte Wiederholung in der Wiederholungs-Karte (#2956) | `learning-clusters/settings.png` | `learning-clusters/settings.mobile.png` | #2956 |
 | Daten-Tab - Aufräum-Karten "Pausierte Lektionen aufbewahren" + "Maximale Lektionsgröße" (#2955) | `data-housekeeping/settings.png` | `data-housekeeping/settings.mobile.png` | #2955 |
 | KI-Anbieter — Perplexity in der Übersicht, "Nur Desktop" (#2512) | `ai-providers/configured-with-perplexity.png` | `ai-providers/configured-with-perplexity.mobile.png` | #2514 |
 | KI-Schlüssel-Tresor — Export + Cross-App-Import (#2512) | `ai-providers/key-vault-import.png` | `ai-providers/key-vault-import.mobile.png` | #2514 |
