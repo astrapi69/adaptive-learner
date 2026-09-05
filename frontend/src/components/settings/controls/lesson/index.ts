@@ -12,6 +12,8 @@ export * from "./ErrorReplayScopeControl";
 export { default as ErrorReplayScopeControl } from "./ErrorReplayScopeControl";
 export * from "./HintSettingsControl";
 export { default as HintSettingsControl } from "./HintSettingsControl";
+export * from "./InteractionControl";
+export { default as InteractionControl } from "./InteractionControl";
 export * from "./LessonModeControl";
 export { default as LessonModeControl } from "./LessonModeControl";
 export * from "./MatchingResolveControl";
