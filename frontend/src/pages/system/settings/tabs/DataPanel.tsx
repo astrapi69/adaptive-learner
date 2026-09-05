@@ -10,6 +10,10 @@ import DangerZoneSection from "../../../../components/settings/data/DangerZoneSe
 import ExportSection from "../../../../components/settings/data/ExportSection";
 import { KeyVaultSection } from "@astrapi69/ai-key-vault-react";
 import SelectiveExportSection from "../../../../components/settings/data/SelectiveExportSection";
+import {
+  MaxLessonSizeControl,
+  PausedLessonsRetentionControl,
+} from "../../../../components/settings/controls";
 import SyncSection from "../../../../components/sync/SyncSection";
 import { Feature } from "@astrapi69/feature-strategy-react";
 import { FEATURES } from "../../../../features/featureConfig";
@@ -34,11 +38,21 @@ interface DataPanelProps {
  * 3. Offline cache (what results from the sources; "Install app" moved
  *    to the General tab in #1455 - it configures HOW the app runs, not
  *    WHAT it stores)
+ * 3b. Max lesson size (#2955): how a saved chat analysis becomes offline
+ *    lessons - its only reader is ``SaveOfflineLessonModal``, which
+ *    splits the analysis into parts of at most this many steps. It sits
+ *    right after the cache those lessons land in.
  * 4. Backup / export (securing the work, incl. the read-only identity
  *    recovery-file diagnostic, a recovery concern)
+ * 5a. Paused-lesson retention (#2955): the retention policy the
+ *    Dashboard's paused-lessons card applies, placed right beside the
+ *    cleanup it belongs with.
  * 5. Orphaned-data cleanup (#1445, reversible: only unusable data)
  * 6. Danger zone (delete everything) - irreversible, ALWAYS last, with a
  *    visual top-separation so its severity is obvious.
+ *
+ * 3b + 5a are the two rare-housekeeping cards #1459 parked on the
+ * Learning tab; they are data-lifecycle settings, not lesson-flow ones.
  *
  * The order is deliberately not configurable: a fixed position is what
  * makes a settings page citable, and a movable danger zone would be a
@@ -94,6 +108,10 @@ export default function DataPanel({ active }: DataPanelProps) {
           ("Install app" lives in the General tab, #1455.) */}
       <CacheManagementSection />
 
+      {/* 3b. How a saved chat analysis becomes offline lessons (#2955):
+          the split size SaveOfflineLessonModal applies. */}
+      <MaxLessonSizeControl />
+
       {/* 4. Securing the work: backup, the identity recovery-file
           diagnostic (a recovery concern, API-mode only), key export,
           selective + full export. */}
@@ -104,6 +122,10 @@ export default function DataPanel({ active }: DataPanelProps) {
         <SelectiveExportSection />
       </Feature>
       <ExportSection />
+
+      {/* 5a. Retention policy beside the cleanup action (#2955): how long
+          paused lessons are kept before they are abandoned. */}
+      <PausedLessonsRetentionControl />
 
       {/* 5. Reversible cleanup: orphaned progress from removed repos (#1445). */}
       <OrphanedDataSection />

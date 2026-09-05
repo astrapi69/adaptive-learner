@@ -191,6 +191,25 @@ the export is fully available (and is the main use case). In
 sees the plaintext, so the entry is **disabled with a hint**. The
 export is also disabled when no exportable key is configured yet.
 
+### Housekeeping
+
+Two data-lifecycle settings sit on the Data tab right next to the
+storage they govern:
+
+- **Maximum lesson size** (directly below *Offline cache*): when a long
+  chat analysis is saved as an offline lesson, lessons with more than
+  this many steps are split into several parts. *Steps per part* takes
+  5 to 20; the default is 10.
+- **Paused lesson retention** (directly above the *Disconnected content*
+  cleanup, which only appears when there is something to clean up):
+  paused lessons older than this are abandoned automatically on the
+  next Dashboard load. Choose 7, 14, 30 or 60 days, or *Never*; the
+  default is 30 days. Up to 10 paused lessons are kept regardless of
+  age.
+
+Both values are stored in this browser and apply in Server and Local
+mode alike.
+
 ## Voice
 
 Three toggles:
@@ -274,6 +293,10 @@ status line counting how many of the extras are on. **Game mode details**
 (hearts, countdown, arcade, special rounds, tickets, bonus lessons, streak
 XP and mascot) is collapsed and remembers your choice; while **Playful
 lessons** is off, the options inside are greyed out.
+
+The tab ends with the reminders. The two housekeeping settings -
+*Paused lesson retention* and *Maximum lesson size* - are data-lifecycle
+settings and live on the **Data** tab (see *Housekeeping* under Backup).
 
 ## Gamification
 

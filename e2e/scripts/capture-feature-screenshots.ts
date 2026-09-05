@@ -514,7 +514,26 @@ async function gotoKeyVaultSection(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings -> Data scrolled to the paused-lesson retention card,
+ *  which sits right before the cleanup slot since #2955 (its sibling,
+ *  max lesson size, sits right after the offline cache further up). */
+async function gotoDataHousekeeping(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=data");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const section = page.getByTestId("settings-section-paused-retention");
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Data-tab housekeeping cards (#2955) ------------------------------
+    {
+        path: "data-housekeeping/settings",
+        setup: gotoDataHousekeeping,
+        pinTo: "settings-section-paused-retention",
+    },
     // --- AI providers + cross-app key import (#2512) ---------------------
     {
         path: "ai-providers/configured-with-perplexity",

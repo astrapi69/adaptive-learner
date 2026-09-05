@@ -143,10 +143,23 @@ réseau local.
 Accès direct à la gestion des flashcards Anki - voir la [section Anki
 du guide](../user-guide/getting-started.md).
 
-### Durée de conservation des leçons en pause
+### Taille maximale de leçon
 
-Nombre de jours avant qu'une leçon en pause soit automatiquement abandonnée.
-Défaut : 30 jours. Plage : 7-90 jours.
+Carte placée juste sous le *Cache hors ligne*. Lorsqu'une longue analyse de
+conversation est enregistrée comme leçon hors ligne, les leçons de plus de
+ce nombre d'étapes sont découpées en plusieurs parties. *Étapes par
+partie* : de 5 à 20, défaut 10.
+
+### Conservation des leçons en pause
+
+Carte placée juste au-dessus du nettoyage *Contenu déconnecté* (qui
+n'apparaît que s'il y a quelque chose à nettoyer). Les leçons en pause plus
+anciennes que ce délai sont automatiquement abandonnées au prochain
+chargement du tableau de bord : 7, 14, 30 ou 60 jours, ou jamais. Défaut :
+30 jours. Au plus 10 leçons en pause sont conservées quel que soit leur âge.
+
+Les deux valeurs sont enregistrées dans ce navigateur et s'appliquent en
+mode API comme en mode Dexie.
 
 ---
 

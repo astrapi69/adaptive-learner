@@ -41,6 +41,7 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
+| Daten-Tab - Aufräum-Karten "Pausierte Lektionen aufbewahren" + "Maximale Lektionsgröße" (#2955) | `data-housekeeping/settings.png` | `data-housekeeping/settings.mobile.png` | #2955 |
 | KI-Anbieter — Perplexity in der Übersicht, "Nur Desktop" (#2512) | `ai-providers/configured-with-perplexity.png` | `ai-providers/configured-with-perplexity.mobile.png` | #2514 |
 | KI-Schlüssel-Tresor — Export + Cross-App-Import (#2512) | `ai-providers/key-vault-import.png` | `ai-providers/key-vault-import.mobile.png` | #2514 |
 | Landeseite (statisch, DE) | `landing-page/de.png` | `landing-page/de.mobile.png` | #2409 |
