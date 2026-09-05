@@ -26,6 +26,18 @@
  *     owns the reveal scroll there, and yanking it would hide the
  *     focused field. A smaller shrink is browser-UI territory
  *     (address bar), where realigning is safe and wanted.
+ *   - NEVER while a text-entry element holds focus (#2983). The shrink
+ *     guard alone is structurally wrong under
+ *     ``interactive-widget=resizes-content``: iOS (measured on 18.7,
+ *     standalone) flips the keyboard-open state between two coordinate
+ *     representations, and in the resized one ``innerHeight`` shrinks
+ *     WITH ``visualViewport.height`` — the shrink reads 0 while the
+ *     keyboard is open, the old hook fired ``scrollTo(0,0)`` into
+ *     Safari's focus-reveal, Safari restored it, and the fight repeated
+ *     (the oscillation logged in #1569 reading 5). The focused text
+ *     field is the representation-independent keyboard signal; a
+ *     focus move between two fields (``relatedTarget``) keeps the
+ *     guard closed.
  *   - Otherwise, a non-zero ``window.scrollX/Y`` is by construction a
  *     phantom (the shell is scroll-locked) and is reset. Desktop and
  *     Android engines honour the scroll lock, so the reset never fires
@@ -48,6 +60,33 @@ import {useEffect} from "react";
  */
 const KEYBOARD_OPEN_MIN_PX = 150;
 
+/**
+ * Input types that never open an on-screen keyboard — focus on these
+ * must not block the realign (the #1569 checkbox mis-tap is exactly the
+ * case the hook exists for).
+ */
+const NON_TEXT_INPUT_TYPES = new Set([
+    "button",
+    "checkbox",
+    "radio",
+    "range",
+    "color",
+    "submit",
+    "reset",
+    "file",
+]);
+
+/** Whether ``el`` is a text-entry element that summons the keyboard. */
+function isTextEntry(el: Element | null): boolean {
+    if (!el) return false;
+    const tag = el.tagName;
+    if (tag === "TEXTAREA" || tag === "SELECT") return true;
+    if (tag === "INPUT") {
+        return !NON_TEXT_INPUT_TYPES.has((el as HTMLInputElement).type);
+    }
+    return (el as HTMLElement).isContentEditable === true;
+}
+
 export function useVisualViewportRealign(): void {
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -65,20 +104,32 @@ export function useVisualViewportRealign(): void {
             if (window.innerHeight - viewport.height >= KEYBOARD_OPEN_MIN_PX) {
                 return;
             }
+            // A focused text field means the keyboard is (or is about to
+            // be) open even when the shrink reads 0 — the resized
+            // representation under interactive-widget=resizes-content
+            // (#2983). Safari owns the reveal for as long as it holds.
+            if (isTextEntry(document.activeElement)) return;
             if (window.scrollX !== 0 || window.scrollY !== 0) {
                 window.scrollTo(0, 0);
             }
         };
 
-        viewport.addEventListener("resize", realign);
-        viewport.addEventListener("scroll", realign);
         // Keyboard-close does not always fire a resize before the next tap
         // (e.g. focus moving between fields); focusout closes that gap.
-        window.addEventListener("focusout", realign);
+        // A move ONTO another text field is not a close (#2983) — the
+        // keyboard stays up and the reveal must not be yanked.
+        const onFocusOut = (event: FocusEvent) => {
+            if (isTextEntry(event.relatedTarget as Element | null)) return;
+            realign();
+        };
+
+        viewport.addEventListener("resize", realign);
+        viewport.addEventListener("scroll", realign);
+        window.addEventListener("focusout", onFocusOut);
         return () => {
             viewport.removeEventListener("resize", realign);
             viewport.removeEventListener("scroll", realign);
-            window.removeEventListener("focusout", realign);
+            window.removeEventListener("focusout", onFocusOut);
         };
     }, []);
 }
