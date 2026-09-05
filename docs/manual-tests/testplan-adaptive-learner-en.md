@@ -582,6 +582,25 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Exam mode + game mode + sounds: no per-answer tone (no immediate
       feedback); the completion fanfare stays allowed
 
+#### Feedback card: volume always visible + game-mode hint (#2957)
+
+- [ ] Settings -> Learning -> Feedback: the "Sounds" switch is OFF, yet
+      the volume slider, the percentage readout and the "Test" button
+      are visible; below the slider the hint "Also applies to the
+      game-mode sounds."
+- [ ] Sounds OFF, game-mode sounds ON: move the slider, play a lesson in
+      game mode - the game-mode tones follow the new volume; sounds OFF
+      + game-mode sounds OFF: "Test" stays silent
+- [ ] Turn game mode on (Settings -> Learning -> Game mode): below the
+      three intensity options the hint "Game mode is on, so feedback is
+      always enthusiastic regardless of this setting." appears
+      IMMEDIATELY, no reload
+- [ ] Turn game mode off again: the hint disappears immediately; the
+      selected intensity stays marked unchanged
+- [ ] Game mode on + reduced motion in the system: both hints (reduced
+      motion + game mode) are visible; feedback stays subtle (reduced
+      motion wins)
+
 #### Tension systems: hearts + countdown ring (#2878, opt-in, default off)
 
 - [ ] Settings > Learning > Game Mode: the "Hearts (lives)" and

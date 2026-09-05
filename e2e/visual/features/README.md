@@ -69,6 +69,7 @@ Baseline zu committen.
 | QR-Code — App teilen | `qr-code/share-app.png` | — (Desktop-Dialog) | v1.94.1 |
 | Zusammenfassungs-Sektionen — Settings-Unterbereich (#1411) | `summary-sections/settings.png` | `summary-sections/settings.mobile.png` | v2.1.0 |
 | Mascot-Farbvarianten — Settings-Unterbereich, Level-/Badge-/XP-Freischaltung (#2861) | `mascot-variants/settings.png` | `mascot-variants/settings.mobile.png` | v2.13.0 |
+| Feedback-Karte - Lautstärkeregler immer sichtbar, Spielmodus-Hinweis bei der Intensität (#2957) | `feedback-card/settings.png` | `feedback-card/settings.mobile.png` | v2.14.0+ |
 | Fehlerbericht — Dialog (#1480) | `error-report/dialog.png` | `error-report/dialog.mobile.png` | v2.1.0 |
 | Fehlerbericht — Aktionsverlauf geöffnet (#1480) | `error-report/verlauf.png` | `error-report/verlauf.mobile.png` | v2.1.0 |
 | Fehlerbericht — Vollvorschau (#1480) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | v2.1.0 |
