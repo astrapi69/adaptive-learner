@@ -293,6 +293,29 @@ async function gotoMascotVariants(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning scrolled to the Feedback card with game mode
+ *  seeded ON (#2957): the volume slider + shared-volume hint are always
+ *  visible, and the intensity radios carry the live "game mode overrides
+ *  this" hint. Seeded through the pref key (not the toggle) so the
+ *  one-time "Play with sound?" offer (#2875) does not render into the
+ *  shot. */
+async function gotoFeedbackCard(page: Page): Promise<boolean> {
+    await page.addInitScript(() => {
+        localStorage.setItem("adaptive-learner.lesson.playful_mode", "true");
+    });
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const section = page.getByTestId("settings-section-feedback");
+    if (!(await section.count())) return false;
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toBeVisible({timeout: 10_000});
+    await expect(
+        page.getByTestId("settings-feedback-intensity-playful-hint"),
+    ).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 /**
  * Open the proactive error-report dialog from Settings → Diagnostics &
  * Support (#1480 — baseline net for the inline-style-heavy dialog before
@@ -656,6 +679,13 @@ const FEATURES: FeatureShot[] = [
         path: "mascot-variants/settings",
         setup: gotoMascotVariants,
         pinTo: "settings-mascot-variants",
+    },
+
+    // --- Feedback card: shared volume + game-mode hint (#2957) -----------
+    {
+        path: "feedback-card/settings",
+        setup: gotoFeedbackCard,
+        pinTo: "settings-section-feedback",
     },
 
     // --- Error-report dialog (#1480 — pre-migration pixel net) ----------
