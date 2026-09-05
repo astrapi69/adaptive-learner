@@ -537,6 +537,11 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 ### Spielmodus (#2844)
 - [ ] Settings -> Lernen: Sektion "Spielmodus" mit Schalter "Spielerische
       Lektionen" vorhanden, Standard: aus
+- [ ] Vorbereitung für alle Detail-Schritte in diesem Abschnitt (#2959):
+      Einstellungen > Lernen > Spielmodus > "Details zum Spielmodus"
+      aufklappen (Standard: eingeklappt); die Detail-Schalter sind nur bei
+      eingeschaltetem Spielmodus bedienbar, also vorher "Spielerische
+      Lektionen" einschalten
 - [ ] Lektionsstart (erster Schritt, Spielmodus aus, Hinweis nie
       ausgeblendet): Banner "Spielmodus ausprobieren" mit "Einschalten"
       und Schließen-Knopf sichtbar
@@ -580,7 +585,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Maskottchen-Varianten (#2861, Farbwelten des Lernfunke)
 
-- [ ] Settings -> Lernen -> Spielmodus: unter dem Schalter die Zeile
+- [ ] Settings -> Lernen -> Spielmodus -> Details (aufgeklappt, siehe
+      Vorbereitungsschritt #2959), Block "XP und Maskottchen": die Zeile
       "Maskottchen-Variante" mit fünf Mini-Figuren (Funke, Ozean, Wald,
       Geist, Gold) samt Hinweistext
 - [ ] Frischer Account (Level 1, keine Abzeichen, 0 XP): nur Funke
@@ -641,7 +647,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Spannungssysteme: Herzen + Countdown-Ring (#2878, opt-in, Standard aus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: die Schalter "Herzen (Leben)"
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Spannung",
+      Vorbereitungsschritt #2959): die Schalter "Herzen (Leben)"
       und "Countdown-Ring" sind standardmäßig AUS; die Zahlenfelder
       (Herzen pro Lektion, Sekunden pro Übung) sind erst nach dem
       Einschalten des jeweiligen Schalters bedienbar und klemmen auf
@@ -666,7 +673,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Serien-Bonus-XP (#2893, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "XP und
+      Maskottchen", Vorbereitungsschritt #2959): der Schalter
       "Serien-Bonus-XP" ist standardmäßig AN; das Zahlenfeld
       "Bonus-XP-Obergrenze pro Lektion" ist bedienbar, klemmt auf 5-20
       (Standard 10) und wird beim Ausschalten des Schalters gesperrt
@@ -687,7 +695,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Arcade-Minispiele (#2887, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Arcade" ist
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): der Schalter "Arcade" ist
       standardmäßig AN; die Zahlenfelder "Snake-Rundenlänge" (30-120,
       Standard 60) und "Memory-Paare" (4-12, Standard 8) klemmen und
       sind bei ausgeschaltetem Schalter gesperrt
@@ -750,7 +759,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Töne: mit aktiviertem Töne- oder Spielmodus-Sounds-Schalter
       klingt jedes Feld mit eigenem Ton (Wiedergabe und Eingabe);
       ohne Opt-in bleibt das Spiel stumm und voll spielbar
-- [ ] Einstellungen > Lernen > Spielmodus: das Zahlenfeld
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): das Zahlenfeld
       "Simon-Ziellänge" klemmt auf 5-15 (Standard 8) und ist bei
       ausgeschalteter Arcade gesperrt
 - [ ] Reduzierte Bewegung im System: Felder wechseln nur den
@@ -758,7 +768,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Blitzrunden (#2888, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Sonderrunden"
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): der Schalter "Sonderrunden"
       ist standardmäßig AN; das Zahlenfeld "Blitzrunden-Karten" klemmt
       auf 5-20 (Standard 10) und ist bei ausgeschaltetem Schalter
       gesperrt
@@ -785,7 +796,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Spiel-Tickets (#2889, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Spiel-Tickets"
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): der Schalter "Spiel-Tickets"
       ist standardmäßig AN; das Zahlenfeld "Maximale Tickets" klemmt
       auf 1-10 (Standard 5) und ist bei ausgeschaltetem Schalter
       gesperrt
@@ -820,7 +832,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Bonus-Lektionen (#2890, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): der Schalter
       "Bonus-Lektionen" ist standardmäßig AN
 - [ ] Set mit einer bonus--Lektionsdatei (Dateiname beginnt mit
       "bonus-"): auf der Set-Seite erscheint die Bonus-Lektion am
@@ -877,6 +890,34 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Spielmodus aus: nichts davon erscheint; reduzierte Bewegung im
       System: Chip/Punkte erscheinen ohne Animation, das "+1" bleibt
       unsichtbar (reine Bewegungs-Dekoration)
+
+### Spielmodus: Zusammenfassungskarte + Details (#2959)
+
+- [ ] Einstellungen > Lernen > Spielmodus: die Karte zeigt den Schalter
+      "Spielerische Lektionen", die Spielmodus-Sounds und darunter die
+      Statuszeile "N von 7 Extras an" (frischer Stand: "5 von 7")
+- [ ] "Details zum Spielmodus" ist standardmäßig eingeklappt (Knopf mit
+      Pfeil, darunter der Hinweistext "Herzen, Countdown, Arcade,
+      Sonderrunden, Tickets, Bonus-Lektionen, Serien-XP und Maskottchen.");
+      Aufklappen zeigt die drei Blöcke "Spannung", "Arcade und
+      Belohnungen" und "XP und Maskottchen"
+- [ ] Aufgeklappt lassen und die Seite neu laden: der Bereich bleibt
+      aufgeklappt; eingeklappt lassen und neu laden: bleibt eingeklappt
+      (beide Speicher-Modi, localStorage)
+- [ ] Spielmodus AUS, Details aufgeklappt: jeder Schalter, jedes
+      Zahlenfeld und die Maskottchen-Knöpfe sind ausgegraut; oben im
+      Bereich steht der Hinweis "Schalte "Spielerische Lektionen" ein, um
+      diese Optionen zu ändern."
+- [ ] "Spielerische Lektionen" einschalten: der Hinweis verschwindet und
+      die Detail-Schalter werden ohne Reload bedienbar; Zahlenfelder
+      folgen weiterhin ihrem eigenen Schalter (z. B. "Herzen pro Lektion"
+      bleibt gesperrt, solange "Herzen (Leben)" aus ist); wieder
+      ausschalten sperrt alles erneut ohne Reload
+- [ ] Einen Detail-Schalter umschalten (z. B. Herzen an): die Statuszeile
+      zählt sofort mit ("6 von 7 Extras an")
+- [ ] Arcade-Hinweisseite (/arcade bei ausgeschalteter Arcade oder
+      ausgeschaltetem Spielmodus): der Link in die Einstellungen landet
+      weiterhin auf dem Lernen-Tab
 
 ### Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der
