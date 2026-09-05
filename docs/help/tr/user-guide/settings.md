@@ -17,9 +17,11 @@ her şeyi bir araya getirir. Bölümler, yukarıdan aşağıya:
    eşleştirin.
 6. **Yedek** - dışa aktar / içe aktar / karşılaştır.
 7. **Ses** - TTS + STT + telaffuz geçişleri.
-8. **Arayüz** - hareketler + tema + yoğunluk.
-9. **Oyunlaştırma** - XP / rozet bildirimleri + hafta sonu modu.
-10. **Hakkında** - sürüm, sistem bilgisi, katkıda bulunanlar,
+8. **Arayüz** - tema + yoğunluk.
+9. **Öğrenme** - beş alan: Temeller, Ders sırasında, Sesli okuma ve
+   dikte, Dersten sonra, Motivasyon ve rutin.
+10. **Oyunlaştırma** - XP / rozet bildirimleri + hafta sonu modu.
+11. **Hakkında** - sürüm, sistem bilgisi, katkıda bulunanlar,
     bağışlar, lisans.
 
 ## Dil
@@ -119,6 +121,25 @@ halka, her 10 oturumda BİR VEYA her 7 günde bir çalışır (her
 hangisi önce gelirse). Her anlık görüntünün kendi Geri Yükle +
 Sil + A/B Olarak Karşılaştır düğmeleri vardır.
 
+### Düzenleme
+
+İki veri yaşam döngüsü ayarı, Veri sekmesinde, ilgili oldukları depolamanın
+hemen yanında bulunur:
+
+- **Maksimum ders boyutu** (*Çevrimdışı önbellek* bölümünün hemen
+  altında): uzun bir sohbet analizi çevrimdışı ders olarak kaydedildiğinde,
+  bu sayıdan fazla adıma sahip dersler birden fazla parçaya bölünür. *Bölüm
+  başına adım sayısı* 5 ile 20 arasında değer alır; varsayılan 10'dur.
+- **Duraklatılmış ders saklama süresi** (yalnızca temizlenecek bir şey
+  olduğunda görünen *Bağlantısı kesilen içerik* temizliğinin hemen
+  üstünde): bundan daha eski duraklatılmış dersler, Gösterge Tablosu bir
+  sonraki yüklendiğinde otomatik olarak terk edilir. 7, 14, 30 veya 60 gün
+  ya da *Hiçbir zaman* seçin; varsayılan 30 gündür. Yaşına bakılmaksızın en
+  fazla 10 duraklatılmış ders saklanır.
+
+Her iki değer de bu tarayıcıda saklanır ve Sunucu modunda da Yerel modda da
+geçerlidir.
+
 ## Ses
 
 Üç geçiş:
@@ -164,10 +185,105 @@ geri bildirimi tümünde okunabilir kalır.
 
 ## Arayüz
 
-**Hareketler geçişi** (dokunmatik cihazlar için
-varsayılan AÇIK) Değerlendirme kaydırma navigasyonunu, Müfredat
-konu kaydırma-gösterme özelliğini ve Oturum döngüsü gözetlemeyi
-kapsar. Ayrıca burada: düğme araç ipuçları ve Geliştirici Modu.
+İki denetim: **düğme araç ipuçları** (simge düğmelerinin üzerine
+gelindiğinde bir araç ipucu; ekran okuyucu etiketleri her durumda açık
+kalır) ve **Menü konumu (mobil)** (üstte menü düğmesi olarak, varsayılan,
+ya da altta başparmağın erişebildiği bir sekme çubuğu olarak). Kaydırma
+hareketleri bir ders ayarıdır ve *Öğrenme > Ders sırasında > Etkileşim*
+altında bulunur.
+
+**Geliştirici Modu** (**Tanılama ve destek** sekmesinde): varsayılanı
+derleme koluna bağlıdır: **Latest (önizleme) kolunda varsayılan olarak
+AÇIK**, **Main'de KAPALI**; böylece önizleme test edenler tam teknik hata
+ayrıntılarını görürken üretim kullanıcıları anlaşılır mesajlar alır.
+İstediğiniz zaman değiştirebilirsiniz.
+
+## Öğrenme
+
+**Öğrenme** sekmesi kartlarını, bir dersin akış sırasına göre beş
+etiketli alanda gruplar. Her alanın küçük bir başlığı ve tek satırlık bir
+açıklaması vardır; içindeki kartlar kendi başlıklarını korur.
+
+### Temeller
+
+Kim öğreniyor ve hangi dillerde.
+
+- **Öğrenme profili** - altı yöntem ağırlığının arkasındaki öğrenme
+  profilini oluşturun, sürdürün veya yeniden yapın.
+- **Ek kaynak diller** - içerik ağacının uygulama dilinizin yanı sıra
+  hangi kaynak dilleri göstereceği.
+
+### Ders sırasında
+
+Siz yanıtlarken alıştırmaların nasıl davrandığı.
+
+- **Ders modu** - **Varsayılan mod** (Alıştırma / Sınav / Süreli), sınavın
+  **Geçme eşiği** ve **Süreli mod zorluğu** (Hızlı, Normal, Rahat);
+  bkz. [Dersler ve tekrarlar](lessons.md).
+- **İpuçları** - her alıştırmada kademeli bir ipucu düğmesinin görünüp
+  görünmeyeceği ve **ipucu başına XP maliyeti** (ücretsiz ipuçları için 0).
+- **Etkileşim** - **Kaydırma Hareketleri** (Değerlendirme, Oturum ve
+  Müfredat'ta kaydırarak gezinme; dokunmatik cihazlarda varsayılan AÇIK),
+  **Derslerde klavye kısayolları** (Enter cevabı kontrol eder, tekrar
+  Enter ilerler), **Doğru cevapta otomatik ilerle** ve **Yapay zekâya sor**
+  düğmesinin gösterilip gösterilmeyeceği.
+- **Tercih edilen alıştırma yönü** - yönlü alıştırmaların hangi yönle
+  açılacağı.
+- **Çözme animasyonu** - çözülen bir eşleştirme alıştırmasının oynattığı
+  efekt.
+
+### Sesli okuma ve dikte
+
+Sesler, hız, mikrofon ve telaffuz alıştırması.
+
+- **Ses** - yukarıda *Ses* altında anlatılan geçişler: metin okuma,
+  otomatik oynatma, konuşma tanıma ve telaffuz alıştırması.
+
+Bu alan yalnızca tarayıcı Web Speech API'nin en az bir tarafını (sentez
+veya tanıma) desteklediğinde görünür. Aksi halde başlığıyla birlikte
+yoktur ve *Dersten sonra* doğrudan *Ders sırasında* bölümünün ardından
+gelir.
+
+### Dersten sonra
+
+Tekrar oturumları, ders özeti ve hataların yeniden denenmesi.
+
+- **Tekrar** - otomatik oluşturulan hata açıklamaları ve tekrar oturumu
+  başına soru sayısı. Kart, salt okunur **Aralıklı tekrar** bloğuyla biter:
+  aralık planı (art arda doğru cevaplara karşılık bir sonraki tekrara kadar
+  geçen gün sayısı), bir öğenin ne zaman öğrenilmiş sayıldığı ve öğrenme
+  yöntemine bir bağlantı.
+- **Ders sonrası özet** - ders sonu özetinin hangi bölümleri hangi sırayla
+  göstereceği.
+- **Hataları tekrar et** - tekrar turunun hangi hataları alacağı.
+
+### Motivasyon ve rutin
+
+Oyun modu, geri bildirim, günlük görevler ve hatırlatıcılar.
+
+- **Oyun modu** - oyunlaştırılmış dersler; **Maskot çeşidi** ile birlikte,
+  seviye ve rozetlerle açılan ya da XP karşılığında alınan Lernfunke renk
+  şemaları dahil (kilitli çeşitler koşullarını gösterir, satın almalar iki
+  adımlı onay ister). Oyun modunun ayrıntıda neyi değiştirdiği
+  [Övgü ve kutlamalar](celebrations.md) sayfasında anlatılır.
+- **Geri bildirim** - geri bildirim yoğunluğu ve sesler (ses düzeyi, test
+  düğmesi).
+- **Günlük görevler** - görevlerin çalışıp çalışmadığı, günde kaç tane,
+  zorluk karışımı ve bugünün görevlerinin yeniden karıştırılması.
+- **Hatırlatıcılar** - hatırlatma saati ve geçerli olduğu günler.
+
+Oyun modu kartı ana anahtarı, oyun modu seslerini ve ekstralardan kaçının
+açık olduğunu sayan bir durum satırını gösterir. **Oyun modu ayrıntıları**
+(kalpler, geri sayım, arcade, özel turlar, biletler, bonus dersler, seri XP
+ve maskot) katlıdır ve seçiminizi hatırlar; **Oyunlaştırılmış dersler**
+kapalıyken içindeki seçenekler soluk görünür.
+
+Sekme hatırlatıcılarla biter. İki düzenleme ayarı - *Duraklatılmış ders
+saklama süresi* ve *Maksimum ders boyutu* - veri yaşam döngüsü ayarlarıdır
+ve **Veri** sekmesinde yer alır (bkz. Yedek altındaki *Düzenleme*).
+
+**İçerik görünümü** (liste / ızgara) ve **İçerik sekmeleri sırası**,
+**Genel** sekmesinde *Görünüm* altındadır.
 
 ## Oyunlaştırma
 
