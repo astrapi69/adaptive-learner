@@ -2380,6 +2380,7 @@ content:
     bonus_locked_tooltip: "इस बोनस पाठ को अनलॉक करने के लिए इस सेट का हर नियमित पाठ कम से कम एक स्टार के साथ पूरा करें।"
     progress_done: "{total} में से {done} पाठ पूरे"
     current_lesson: "यहाँ से जारी रखें"
+    lesson_completed: पूर्ण
   repo_export:
     button: "रिपॉज़िटरी के रूप में साझा करें"
     title: "रिपॉज़िटरी के रूप में साझा करें"

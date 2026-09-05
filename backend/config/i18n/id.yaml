@@ -2396,6 +2396,7 @@ content:
     bonus_locked_tooltip: "Selesaikan setiap pelajaran reguler set ini dengan minimal satu bintang untuk membuka pelajaran bonus ini."
     progress_done: "{done} dari {total} pelajaran selesai"
     current_lesson: "Lanjutkan di sini"
+    lesson_completed: "Selesai"
   repo_export:
     button: "Bagikan sebagai repositori"
     title: "Bagikan sebagai repositori"

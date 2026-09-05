@@ -2578,7 +2578,8 @@
       "bonus_badge": "Bónus",
       "bonus_locked_tooltip": "Termina cada lição normal deste conjunto com pelo menos uma estrela para desbloquear esta lição bónus.",
       "progress_done": "{done} de {total} lições concluídas",
-      "current_lesson": "Continuar aqui"
+      "current_lesson": "Continuar aqui",
+      "lesson_completed": "Concluído"
     },
     "repo_export": {
       "button": "Partilhar como repositório",

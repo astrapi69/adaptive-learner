@@ -2396,6 +2396,7 @@ content:
     bonus_locked_tooltip: "Finish every regular lesson of this set with at least one star to unlock this bonus lesson."
     progress_done: "{done} of {total} lessons completed"
     current_lesson: "Continue here"
+    lesson_completed: "Completed"
   repo_export:
     button: "Share as repository"
     title: "Share as repository"

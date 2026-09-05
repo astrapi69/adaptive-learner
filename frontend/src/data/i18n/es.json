@@ -2578,7 +2578,8 @@
       "bonus_badge": "Bonus",
       "bonus_locked_tooltip": "Termina cada lección regular de este set con al menos una estrella para desbloquear esta lección extra.",
       "progress_done": "{done} de {total} lecciones completadas",
-      "current_lesson": "Continuar aquí"
+      "current_lesson": "Continuar aquí",
+      "lesson_completed": "Completado"
     },
     "repo_export": {
       "button": "Compartir como repositorio",

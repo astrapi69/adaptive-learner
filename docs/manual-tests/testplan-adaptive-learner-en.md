@@ -1638,14 +1638,19 @@ each card row (`CardImageField`).
 - [ ] Open a set page (/content/set/<id> or via a shared link): below
       the set details, ALL lessons are listed with their number
 - [ ] The list header shows "{x} of {y} lessons completed"
-- [ ] Completed lessons show their score; the first unfinished one
-      carries the "Continue here" marker
+- [ ] Completed lessons show a green checkmark plus their score; the
+      first unfinished one carries the "Continue here" marker (#2935)
 - [ ] Clicking any row opens exactly that lesson - including one far
       back in the set
 - [ ] Inside a running lesson the set name in the header is clickable
       and leads to that same list
 - [ ] With no recorded progress the list still appears, just without
       markers
+- [ ] Finish a couple of lessons in a set, leave, reopen the set page,
+      press "Start learning": it opens the first UNFINISHED lesson, not
+      lesson 1 again (#2935)
+- [ ] Finish every lesson of a set, then press "Start learning" again:
+      it opens lesson 1 (nothing left to resume)
 ### Summary: all answers with their question (#2807)
 - [ ] Finish a lesson, open "View all answers": every row with something
       to show is expandable (title + score stay visible)
