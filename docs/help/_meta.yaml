@@ -323,6 +323,26 @@ navigation:
           tr: Yedekleme ve geri yükleme
           ja: バックアップと復元
         slug: features/backup
+      - title:
+          de: Arcade
+          en: Arcade
+          es: Arcade
+          fr: Arcade
+          el: Arcade
+          pt: Arcade
+          tr: Arcade
+          ja: アーケード
+        slug: features/arcade
+      - title:
+          de: Set-Abschluss-Übersicht
+          en: Set-completion review
+          es: Resumen de finalización de set
+          fr: Bilan de fin de set
+          el: Επισκόπηση ολοκλήρωσης σετ
+          pt: Revisão de conclusão de set
+          tr: Set tamamlama incelemesi
+          ja: セット完了レビュー
+        slug: features/set-summary
 
   - title:
       de: Konzept

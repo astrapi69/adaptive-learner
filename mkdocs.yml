@@ -80,6 +80,7 @@ plugins:
             KI-Übungsgenerierung: AI exercise generation
             Mehrere Content-Repositories: Multiple content repositories
             Backup und Wiederherstellung: Backup and restore
+            Set-Abschluss-Übersicht: Set-completion review
             Konzept: Concept
             Philosophie: Philosophy
             Die sechs Methoden: The six methods
@@ -143,6 +144,7 @@ plugins:
             KI-Übungsgenerierung: Generación de ejercicios con IA
             Mehrere Content-Repositories: Varios repositorios de contenido
             Backup und Wiederherstellung: Copia de seguridad y restauración
+            Set-Abschluss-Übersicht: Resumen de finalización de set
             Konzept: Concepto
             Philosophie: Filosofía
             Die sechs Methoden: Los seis métodos
@@ -206,6 +208,7 @@ plugins:
             KI-Übungsgenerierung: Génération d'exercices par IA
             Mehrere Content-Repositories: Plusieurs dépôts de contenu
             Backup und Wiederherstellung: Sauvegarde et restauration
+            Set-Abschluss-Übersicht: Bilan de fin de set
             Konzept: Concept
             Die sechs Methoden: Les six méthodes
             Der Sieben-Schritt-Zyklus: Le cycle en sept étapes
@@ -272,6 +275,7 @@ plugins:
             KI-Übungsgenerierung: Δημιουργία ασκήσεων με AI
             Mehrere Content-Repositories: Πολλαπλά αποθετήρια περιεχομένου
             Backup und Wiederherstellung: Αντίγραφο ασφαλείας και επαναφορά
+            Set-Abschluss-Übersicht: Επισκόπηση ολοκλήρωσης σετ
             Konzept: Έννοια
             Philosophie: Φιλοσοφία
             Die sechs Methoden: Οι έξι μέθοδοι
@@ -339,6 +343,7 @@ plugins:
             KI-Übungsgenerierung: Geração de exercícios por IA
             Mehrere Content-Repositories: Múltiplos repositórios de conteúdo
             Backup und Wiederherstellung: Backup e restauração
+            Set-Abschluss-Übersicht: Revisão de conclusão de set
             Konzept: Conceito
             Philosophie: Filosofia
             Die sechs Methoden: Os seis métodos
@@ -406,6 +411,7 @@ plugins:
             KI-Übungsgenerierung: Yapay zekâ ile alıştırma üretimi
             Mehrere Content-Repositories: Birden çok içerik deposu
             Backup und Wiederherstellung: Yedekleme ve geri yükleme
+            Set-Abschluss-Übersicht: Set tamamlama incelemesi
             Konzept: Kavram
             Philosophie: Felsefe
             Die sechs Methoden: Altı yöntem
@@ -473,6 +479,8 @@ plugins:
             KI-Übungsgenerierung: AI演習生成
             Mehrere Content-Repositories: 複数のコンテンツリポジトリ
             Backup und Wiederherstellung: バックアップと復元
+            Arcade: アーケード
+            Set-Abschluss-Übersicht: セット完了レビュー
             Konzept: コンセプト
             Philosophie: 理念
             Die sechs Methoden: 6つのメソッド
@@ -560,6 +568,8 @@ nav:
   - KI-Übungsgenerierung: de/features/ai-exercise-generation.md
   - Mehrere Content-Repositories: de/features/content-repos.md
   - Backup und Wiederherstellung: de/features/backup.md
+  - Arcade: de/features/arcade.md
+  - Set-Abschluss-Übersicht: de/features/set-summary.md
 - Konzept:
   - Philosophie: de/concept/philosophy.md
   - Die sechs Methoden: de/concept/six-methods.md
