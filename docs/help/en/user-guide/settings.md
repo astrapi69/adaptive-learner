@@ -288,6 +288,12 @@ for a two-step confirmation) - plus missions and reminders. What game
 mode changes in detail is covered in
 [Praise and rewards](celebrations.md).
 
+The game mode card shows the master switch, the game mode sounds and a
+status line counting how many of the extras are on. **Game mode details**
+(hearts, countdown, arcade, special rounds, tickets, bonus lessons, streak
+XP and mascot) is collapsed and remembers your choice; while **Playful
+lessons** is off, the options inside are greyed out.
+
 The tab ends with the reminders. The two housekeeping settings -
 *Paused lesson retention* and *Maximum lesson size* - are data-lifecycle
 settings and live on the **Data** tab (see *Housekeeping* under Backup).
