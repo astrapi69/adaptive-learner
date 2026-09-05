@@ -1,7 +1,12 @@
 /**
- * ReviewSettingsControl — Settings → Learning toggle for the
- * auto-generated error explanations shown after a lesson (#599).
- * Persists via lib/review/reviewPref (localStorage, mode-agnostic).
+ * ReviewSettingsControl - the Settings > Learning > Review card: the
+ * toggle for the auto-generated error explanations shown after a lesson
+ * (#599), the review length (#718), and, as its last block, the
+ * read-only spaced-repetition schedule (#2956: the SRS explanation has
+ * no input of its own, so it lives inside this card instead of as a
+ * card of its own between two "Review" headings). Persists via
+ * lib/review/reviewPref + lib/learning/reviewLimitPref (localStorage,
+ * mode-agnostic).
  */
 
 import {useState} from "react";
@@ -9,6 +14,7 @@ import {useState} from "react";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import {SettingsSection} from "../../SettingsSection";
+import SrsTransparencySection from "./SrsTransparencySection";
 import {
     readExplanationsEnabled,
     setExplanationsEnabled,
@@ -90,6 +96,7 @@ export default function ReviewSettingsControl() {
                     ))}
                 </select>
             </label>
+            <SrsTransparencySection />
         </SettingsSection>
     );
 }

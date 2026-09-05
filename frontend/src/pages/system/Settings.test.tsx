@@ -3,7 +3,7 @@
 // in-memory implementation so it resolves instead of throwing.
 import "fake-indexeddb/auto";
 
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -127,6 +127,36 @@ function sectionRootsInDomOrder(panel: HTMLElement, ids: readonly string[]): str
     .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
 }
 
+/**
+ * happy-dom exposes neither Web Speech API side, so the Voice card (and
+ * since #2956 its whole cluster) is absent by default. Define a minimal
+ * ``window.speechSynthesis`` so ``isSpeechSynthesisSupported()`` reports
+ * true; ``getVoices`` returns one voice so ``loadVoices()`` resolves at
+ * once instead of arming its 2 s ``voiceschanged`` timeout. Paired with
+ * {@link unstubSpeechSynthesis} in ``afterEach``.
+ */
+function stubSpeechSynthesis(): void {
+  Object.defineProperty(window, "speechSynthesis", {
+    configurable: true,
+    writable: true,
+    value: {
+      getVoices: () => [{ name: "Test Voice", lang: "de-DE" }],
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      speak: () => undefined,
+      cancel: () => undefined,
+      pause: () => undefined,
+      resume: () => undefined,
+      speaking: false,
+      pending: false,
+    },
+  });
+}
+
+function unstubSpeechSynthesis(): void {
+  delete (window as unknown as Record<string, unknown>).speechSynthesis;
+}
+
 describe("Settings page", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
@@ -159,6 +189,7 @@ describe("Settings page", () => {
   });
   afterEach(() => {
     vi.restoreAllMocks();
+    unstubSpeechSynthesis();
   });
 
   // #335 (supersedes #51) — Sync needs a reachable backend; in Dexie
@@ -281,13 +312,15 @@ describe("Settings page", () => {
 
   // #1459 — the Learning tab sections follow a FIXED causal order
   // (same principle as the #1451 Data-tab pin): foundation (profile,
-  // source languages) -> in-lesson flow (mode, direction, hints,
-  // matching effect, interaction toggles, voice) -> practice &
-  // follow-up (review, SRS, summary) -> motivation (feedback,
-  // missions) -> reminders LAST. The rare-housekeeping pair #1459
-  // parked at the end (paused retention, max lesson size) lives on the
-  // Data tab since #2955. Pinned by relative DOM order so a future edit
-  // cannot silently regress it.
+  // source languages) -> in-lesson flow (mode, hints, interaction
+  // toggles, direction, matching effect, voice) -> practice &
+  // follow-up (review with the SRS schedule inside it, summary, retry
+  // scope) -> motivation (game mode, feedback, missions) -> reminders
+  // LAST. #2956 grouped these into five clusters and made ONE relative
+  // change: hints + interaction now precede direction + matching. The
+  // rare-housekeeping pair #1459 parked at the end (paused retention,
+  // max lesson size) lives on the Data tab since #2955. Pinned by
+  // relative DOM order so a future edit cannot silently regress it.
   it("orders the Learning-tab sections causally (profile first, reminders last) (#1459)", async () => {
     storageState.mode = "api";
     apiGet.mockResolvedValue(BASE);
@@ -299,10 +332,10 @@ describe("Settings page", () => {
       "settings-section-learning-profile",
       "settings-section-source-languages",
       "settings-section-lesson-mode",
-      "settings-section-direction-strategy",
       "settings-section-hints",
-      "settings-section-matching-resolve",
       "settings-section-interaction",
+      "settings-section-direction-strategy",
+      "settings-section-matching-resolve",
       "settings-section-voice",
       "settings-section-review",
       "settings-section-srs",
@@ -331,6 +364,114 @@ describe("Settings page", () => {
       domOrder.indexOf("settings-section-review") + 1,
     );
     expect(domOrder[domOrder.length - 1]).toBe("settings-section-reminders");
+  });
+
+  // #2956 — the Learning tab groups its 16 cards into five labelled
+  // clusters (basics / lessons / voice / review / motivation), each a
+  // ``<section aria-labelledby>`` landmark with a ``settings-cluster-<id>``
+  // testid. Membership AND in-cluster order are pinned per cluster, and
+  // the cluster roots themselves follow the tab order. The single
+  // relative reorder vs #1459 lives inside the lessons cluster: hints +
+  // interaction now precede direction + matching (frequency-first).
+  it("places every Learning section inside its cluster (#2956)", async () => {
+    stubSpeechSynthesis();
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-learning");
+    const CLUSTER_MEMBERSHIP: Record<string, readonly string[]> = {
+      "settings-cluster-basics": [
+        "settings-section-learning-profile",
+        "settings-section-source-languages",
+      ],
+      "settings-cluster-lessons": [
+        "settings-section-lesson-mode",
+        "settings-section-hints",
+        "settings-section-interaction",
+        "settings-section-direction-strategy",
+        "settings-section-matching-resolve",
+      ],
+      "settings-cluster-voice": ["settings-section-voice"],
+      "settings-cluster-review": [
+        "settings-section-review",
+        "settings-section-srs",
+        "settings-section-summary-sections",
+        "settings-section-error-replay-scope",
+      ],
+      "settings-cluster-motivation": [
+        "settings-section-playful",
+        "settings-section-feedback",
+        "settings-section-missions",
+        "settings-section-reminders",
+      ],
+    };
+    expect(Object.values(CLUSTER_MEMBERSHIP).flat()).toHaveLength(16);
+    const clusterIds = Object.keys(CLUSTER_MEMBERSHIP);
+    expect(sectionRootsInDomOrder(panel, clusterIds)).toEqual(clusterIds);
+    for (const [clusterId, sectionIds] of Object.entries(CLUSTER_MEMBERSHIP)) {
+      const cluster = within(panel).getByTestId(clusterId);
+      expect(cluster.tagName).toBe("SECTION");
+      // Every card inside carries its own <h2>, so resolve the cluster's
+      // heading through the aria-labelledby id rather than by role.
+      const headingId = cluster.getAttribute("aria-labelledby");
+      expect(headingId).toBeTruthy();
+      const heading = document.getElementById(headingId!);
+      expect(heading?.tagName).toBe("H2");
+      expect(cluster.contains(heading)).toBe(true);
+      sectionIds.forEach((id) => within(cluster).getByTestId(id));
+      expect(sectionRootsInDomOrder(cluster, sectionIds)).toEqual(sectionIds);
+    }
+  });
+
+  // #2956 — the read-only SRS schedule has no input of its own, so it is
+  // no longer a card between two "Review" headings but the LAST block
+  // inside the Review card. Its testids (``settings-section-srs``,
+  // ``srs-schedule``, ``srs-methodology-link``) are unchanged.
+  it("nests the SRS schedule inside the Review card (#2956)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    const review = within(screen.getByTestId("settings-panel-learning")).getByTestId(
+      "settings-section-review",
+    );
+    const srs = within(review).getByTestId("settings-section-srs");
+    within(srs).getByTestId("srs-schedule");
+    within(srs).getByTestId("srs-methodology-link");
+    expect(review.lastElementChild).toBe(srs);
+    expect(screen.getAllByTestId("settings-section-srs")).toHaveLength(1);
+  });
+
+  // #2956 — the voice cluster is rendered only when the browser exposes
+  // at least one Web Speech API side (the same guard the Voice card uses
+  // inside), so an unsupported browser never shows a heading over
+  // nothing. happy-dom supports neither; stubbing ``window.speechSynthesis``
+  // brings the cluster (and the card inside it) back, between lessons and
+  // review.
+  it("omits the voice cluster without speech support and shows it with window.speechSynthesis stubbed (#2956)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    const unsupported = renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    expect(screen.getByTestId("settings-cluster-review")).toBeInTheDocument();
+    expect(screen.queryByTestId("settings-cluster-voice")).toBeNull();
+    expect(screen.queryByTestId("settings-section-voice")).toBeNull();
+    unsupported.unmount();
+
+    stubSpeechSynthesis();
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-learning");
+    const voice = within(panel).getByTestId("settings-cluster-voice");
+    within(voice).getByTestId("settings-section-voice");
+    expect(
+      sectionRootsInDomOrder(panel, [
+        "settings-cluster-lessons",
+        "settings-cluster-voice",
+        "settings-cluster-review",
+      ]),
+    ).toEqual(["settings-cluster-lessons", "settings-cluster-voice", "settings-cluster-review"]);
   });
 
   // #1484 — the General + AI tabs wrap their sections in a
