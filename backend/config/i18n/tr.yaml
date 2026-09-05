@@ -676,6 +676,7 @@ settings:
   nav_aria: "Ayarlar gezinmesi"
   tab_ai: "Yapay zeka"
   tab_learning: "Öğrenme"
+  learning_nav_aria: "Öğrenme bölümleri"
   tab_plugins: "Eklentiler"
   tab_data: "Veri"
   tab_help: "Yardım"
