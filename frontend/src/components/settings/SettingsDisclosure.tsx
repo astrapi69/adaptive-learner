@@ -22,7 +22,7 @@
  *   title={t("settings.playful_details", "Game mode details")}
  *   hint={t("settings.playful_details_hint", "Hearts, countdown, ...")}
  *   storageKey="adaptive-learner.settings.playful_details_open"
- *   testid="settings-playful-details-toggle"
+ *   testid="settings-playful-details"
  * >
  *   <PlayfulTensionBlock disabled={!playful} />
  * </SettingsDisclosure>
@@ -45,7 +45,7 @@ export interface SettingsDisclosureProps {
   storageKey: string;
   /** Initial state when nothing usable is stored. Default: collapsed. */
   defaultOpen?: boolean;
-  /** ``data-testid`` of the toggle button; the body gets ``<testid>-body``. */
+  /** Base ``data-testid``: the button gets ``<testid>-toggle``, the body ``<testid>-body``. */
   testid: string;
   /** The folded content - stays mounted while collapsed. */
   children: ReactNode;
@@ -78,7 +78,7 @@ export function SettingsDisclosure({
         aria-expanded={open}
         aria-controls={bodyId}
         onClick={handleToggle}
-        data-testid={testid}
+        data-testid={`${testid}-toggle`}
       >
         {open ? (
           <ChevronDown aria-hidden="true" className="size-4" />

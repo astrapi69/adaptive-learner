@@ -40,7 +40,7 @@ describe("SettingsDisclosure", () => {
 
   it("is collapsed by default, with the title, the hint and aria-expanded=false", () => {
     renderDisclosure();
-    const toggle = screen.getByTestId("disclosure-test");
+    const toggle = screen.getByTestId("disclosure-test-toggle");
     expect(toggle).toHaveTextContent("More details");
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByText("What the fold contains")).toBeInTheDocument();
@@ -54,7 +54,7 @@ describe("SettingsDisclosure", () => {
 
   it("click opens the body, sets aria-expanded and wires aria-controls to the body id", () => {
     renderDisclosure();
-    const toggle = screen.getByTestId("disclosure-test");
+    const toggle = screen.getByTestId("disclosure-test-toggle");
     fireEvent.click(toggle);
     const body = screen.getByTestId("disclosure-test-body");
     expect(toggle).toHaveAttribute("aria-expanded", "true");
@@ -68,22 +68,22 @@ describe("SettingsDisclosure", () => {
 
   it("persists the open state under the storage key", () => {
     renderDisclosure();
-    fireEvent.click(screen.getByTestId("disclosure-test"));
+    fireEvent.click(screen.getByTestId("disclosure-test-toggle"));
     expect(localStorage.getItem(KEY)).toBe("true");
-    fireEvent.click(screen.getByTestId("disclosure-test"));
+    fireEvent.click(screen.getByTestId("disclosure-test-toggle"));
     expect(localStorage.getItem(KEY)).toBe("false");
   });
 
   it("reads a persisted open state on mount", () => {
     localStorage.setItem(KEY, "true");
     renderDisclosure();
-    expect(screen.getByTestId("disclosure-test")).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("disclosure-test-toggle")).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByTestId("disclosure-test-body")).toBeVisible();
   });
 
   it("honours defaultOpen when nothing is stored", () => {
     renderDisclosure({ defaultOpen: true });
-    expect(screen.getByTestId("disclosure-test")).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("disclosure-test-toggle")).toHaveAttribute("aria-expanded", "true");
   });
 
   it("falls back to the default when the storage throws", () => {
@@ -96,7 +96,7 @@ describe("SettingsDisclosure", () => {
       },
     });
     renderDisclosure({ defaultOpen: true });
-    const toggle = screen.getByTestId("disclosure-test");
+    const toggle = screen.getByTestId("disclosure-test-toggle");
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     expect(() => fireEvent.click(toggle)).not.toThrow();
     expect(toggle).toHaveAttribute("aria-expanded", "false");

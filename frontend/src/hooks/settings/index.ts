@@ -6,5 +6,6 @@ export * from "./useButtonTooltips";
 export * from "./useDevMode";
 export * from "./useDirectionStrategy";
 export * from "./useFeedbackIntensity";
+export * from "./usePlayfulExtras";
 export * from "./usePlayfulMode";
 export * from "./useSourceLanguages";
