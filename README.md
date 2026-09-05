@@ -83,19 +83,19 @@ summarizes). In short:
 <!-- CONTENT-STATS:START -->
 [![Content](https://img.shields.io/badge/content-25%20sets%2C%2012%20language%20pairs-brightgreen)](#bundled-content)
 
-**329 lessons · 28 sets · 2 domain(s)** (language, software) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**325 lessons · 28 sets · 2 domain(s)** (language, software) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons | Review |
 |-----|--------|--------|-------|--------:|--------|
 | Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 | authored |
-| Englisch A2 - Grundlagen | de | en | A2 | 15 | authored |
-| Englisch B1 - Mittelstufe | de | en | B1 | 15 | authored |
+| Englisch A2 — Grundlagen | de | en | A2 | 15 | authored |
+| Englisch B1 — Mittelstufe | de | en | B1 | 15 | authored |
 | Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 | authored |
-| Spanisch A2 - Grundlagen | de | es | A2 | 15 | authored |
-| Spanisch B1 - Mittelstufe | de | es | B1 | 15 | authored |
-| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 16 | authored |
-| Französisch A2 - Grundlagen | de | fr | A2 | 16 | authored |
-| Französisch B1 - Mittelstufe | de | fr | B1 | 16 | authored |
+| Spanisch A2 — Grundlagen | de | es | A2 | 15 | authored |
+| Spanisch B1 — Mittelstufe | de | es | B1 | 15 | authored |
+| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 | authored |
+| Französisch A2 — Grundlagen | de | fr | A2 | 15 | authored |
+| Französisch B1 — Mittelstufe | de | fr | B1 | 15 | authored |
 | Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 | authored |
 | Japanisch Schrift: Hiragana (Vorstufe) | de | ja | A0 | 10 | authored |
 | Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 | generated |
@@ -105,16 +105,16 @@ summarizes). In short:
 | German A1 (for English speakers) | en | de | A1 | 5 | authored |
 | German A2 (for English speakers) | en | de | A2 | 5 | authored |
 | Spanish A1 (for English speakers) | en | es | A1 | 15 | authored |
-| Spanish A2 - Elementary | en | es | A2 | 15 | authored |
-| Spanish B1 - Intermediate | en | es | B1 | 15 | authored |
+| Spanish A2 — Elementary | en | es | A2 | 15 | authored |
+| Spanish B1 — Intermediate | en | es | B1 | 15 | authored |
 | Spanish B2 (for English speakers) | en | es | B2 | 5 | authored |
-| French A1 (for English speakers) | en | fr | A1 | 16 | authored |
-| French A2 - Elementary | en | fr | A2 | 15 | authored |
+| French A1 (for English speakers) | en | fr | A1 | 15 | authored |
+| French A2 — Elementary | en | fr | A2 | 15 | authored |
 | French B1 (for English speakers) | en | fr | B1 | 5 | authored |
 | Γαλλικά A1 (για ελληνόφωνους) | el | fr | A1 | 8 | authored |
 | अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 | authored |
 | अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 | authored |
-| Adaptive Learner - App-Tutorial | de | de | none | 12 | authored |
+| Adaptive Learner — App-Tutorial | de | de | none | 12 | authored |
 
 _3 AI-generated sets excluded from the badge pending native-speaker review._
 <!-- CONTENT-STATS:END -->
@@ -339,54 +339,46 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.14.0** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198, lesson-validator eval #2205; v2.8.1 was never published); the v2.8.0 headline
-is the **distribution switch**: the desktop launcher now **pulls a
-published, per-architecture verified image from GHCR** instead of
-building on the user's device (building from source stays for
-self-builders), guarded by a **volume-migration stop** that never
-chooses between two data sets silently. The app adds
-**image-description exercises** (`ext:al-image-description`),
-**single-lesson deletion**, and a **set-update guard** that stops
-content updates from silently orphaning learning progress (dialog in
-11 languages). Prior **v2.6.x** rebuilt the **session chat on
-assistant-ui**, made Create-Lesson's book path a real ingestion tool
-(**book-file upload** with chapter multi-select and batch generation),
-completed dictation authoring with an **audio-file upload**, and
-hardened CI. Prior **v2.5.0** turned **Create-Lesson into a full
-exercise authoring tool**: every core exercise type is editable,
-exercises can be added by hand, `multiple_choice` is authorable with
-a single/multi mode control, and an **extension-authoring wizard**
-covers all four AI-authored extension types, with
-**`ext:al-dictation` (audio dictation)** joining as the fifth
-extension type; the PWA update system and the AI key vault became
-**consumed npm packages** (`@astrapi69/pwa-update`,
-`@astrapi69/ai-key-vault`). Prior **v2.4.0** shipped a **Create-Lesson
-authoring upgrade** (a knowledge lesson from pasted textbook text,
-editing and combining your own lessons, and card image upload),
-**free-text multiple accepted answers** with an AI second opinion, an
-**AI key-import** shortcut on the settings AI tab, and the content
-**engine re-pinned to 0.13.0 (schema 1.8)** so uploaded images feed
-picture-choice exercises. Prior **v2.3.0** completed the **EXP-044 CSS concern-split** (`global.css`
-decomposed byte-identically into per-concern legacy files behind a
-byte-identity gate), reworked the **lesson-player UX** (collapsible
-options panel, footer pause control, slimmer title area), added
-**listen-first audio** exercises and an authored-difficulty
-cold-start prior for adaptive lessons, and hardened lesson/set
-**file import/export**. Prior **v2.2.0** added an
-**extension-exercise tier** (four AI-authored exercise types) and a
-native **multiple_choice** type, with the app consuming the lesson
-schema and TypeScript types from **`learn-content-engine`** (additive
-schema 1.5 -> 1.7), a **federated content-repository registry**, and
-a simpler mobile navigation. Recent feature
-work includes the **Content hub** redesign (Discover / My content /
-Import tabs, a global list ⇄ grid view toggle, and a compact
-search/filter bar), the full **lesson-mode system** (Practice / Exam /
-Timed / Reverse / Shuffle / Endless + train-errors), **cloze
-multiselect** "select all that apply", an exam-mode SRS interval
-boost, **passphrase-encrypted `.alk`** export of AI keys, and a
-single-primary-navigation cleanup (one nav per viewport: horizontal
-top bar on desktop, bottom tab bar on mobile). Per-release notes in
-[`changelog/releases/`](changelog/releases/).
+Active development. The current release is **v2.14.0**: an optional
+**Spielmodus (game mode)** with combo streaks, flying points,
+checkpoints, answer physics, and playful hearts/countdown tension,
+stackable with new **arcade minigames** (Lern-Memory, Snake,
+TicTacToe, a Simon color-sequence game) unlocked through XP, plus
+flash rounds at set completion. The **Lernfunke mascot** gains
+unlockable color variants, and avatars get a preset gallery, XP-gated
+frames, and a photo-staging confirmation dialog. **Content
+navigation** grew up: a set page lists its lessons with progress, a
+lesson shows its position in the set, and a set-completion review
+collects every mistake of a set in one place. Three new extension
+types are adoptable from the creation wizard: **al-speak-and-record**,
+**al-audio-choice**, **al-audio-tiles**. Full notes:
+[`changelog/releases/v2.14.0.md`](changelog/releases/v2.14.0.md).
+
+Earlier releases, newest first (full details in
+[`changelog/releases/`](changelog/releases/)):
+
+- **v2.13.0** - in-place exercise-type conversion in the lesson editor, a discoverable "Edit as a copy" action on downloaded content sets, a large UI-consolidation pass (shared Settings/Modal/DashboardCard components, shadcn Button), FastAPI 0.141 + TipTap 3.30 dependency refresh.
+- **v2.8.0** - distribution switch: the desktop launcher pulls a published, per-architecture verified image from GHCR instead of building on-device, guarded by a volume-migration stop; image-description exercises (`ext:al-image-description`), single-lesson deletion, a set-update guard against silently orphaning learning progress.
+- **v2.6.x** - session chat rebuilt on assistant-ui, Create-Lesson's book path became a real ingestion tool (book-file upload, chapter multi-select, batch generation), dictation authoring completed with audio-file upload.
+- **v2.5.0** - Create-Lesson became a full exercise authoring tool (every core type editable, hand-added exercises, an extension-authoring wizard for all AI-authored extension types plus `ext:al-dictation`); PWA updates and the AI key vault became consumed npm packages (`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`).
+- **v2.4.0** - Create-Lesson authoring upgrade (knowledge lesson from pasted text, editing/combining lessons, card image upload), free-text multiple accepted answers with an AI second opinion, engine re-pinned to 0.13.0 (schema 1.8) for picture-choice image uploads.
+- **v2.3.0** - EXP-044 CSS concern-split (byte-identity gated), reworked lesson-player UX, listen-first audio exercises, hardened lesson/set import/export.
+- **v2.2.0** - an extension-exercise tier (four AI-authored types), native `multiple_choice`, lesson schema/types consumed from `learn-content-engine`, a federated content-repository registry.
+
+Also shipped: the **Content hub** redesign (Discover / My content /
+Import tabs, list/grid toggle, a compact search/filter bar), the full
+**lesson-mode system** (Practice / Exam / Timed / Reverse / Shuffle /
+Endless + train-errors), **cloze multiselect**, an exam-mode SRS
+interval boost, **passphrase-encrypted `.alk`** key export, and a
+single-primary-navigation cleanup (one nav per viewport).
+
+## Support this project
+
+Adaptive Learner is built and maintained by a single developer. If it
+helps you, donations are welcome and go directly into development
+time - see [`DONATE.md`](DONATE.md) ([`DONATE-de.md`](DONATE-de.md)
+for German) for all channels (GitHub Sponsors, Liberapay, Ko-fi,
+PayPal) and the reasoning behind them.
 
 ## Origin
 
