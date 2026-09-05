@@ -106,6 +106,25 @@ export class SettingsPage {
   avatarFrameBuy(id: string): Locator {
     return this.page.getByTestId(`settings-avatar-frame-buy-${id}`);
   }
+  get playfulModeToggle(): Locator {
+    return this.page.getByTestId("settings-playful-mode-toggle");
+  }
+  /** The "N of M extras on" status line of the Game Mode card (#2959). */
+  get playfulSummary(): Locator {
+    return this.page.getByTestId("settings-playful-summary");
+  }
+  /** The "Game mode details" fold button (#2959); the detail controls
+   *  below (hearts, countdown, arcade, mascot, ...) live inside its body. */
+  get playfulDetailsToggle(): Locator {
+    return this.page.getByTestId("settings-playful-details-toggle");
+  }
+  get playfulDetailsBody(): Locator {
+    return this.page.getByTestId("settings-playful-details-body");
+  }
+  /** The notice shown inside the fold while the master switch is off. */
+  get playfulDetailsOffNotice(): Locator {
+    return this.page.getByTestId("settings-playful-details-off-notice");
+  }
   get playfulSoundsToggle(): Locator {
     return this.page.getByTestId("settings-playful-sounds-toggle");
   }
@@ -158,5 +177,17 @@ export class SettingsPage {
     await this.tab(tab).click();
     await expect(this.tab(tab)).toHaveAttribute("aria-current", "page");
     await expect(this.panel(tab)).toBeVisible();
+  }
+
+  /** Unfold "Game mode details" (#2959) when it is collapsed - the fold
+   *  is collapsed by default and remembers its state per viewer, so a
+   *  spec must never assume either state. Idempotent. */
+  async openPlayfulDetails(): Promise<void> {
+    await this.playfulDetailsToggle.scrollIntoViewIfNeeded();
+    if ((await this.playfulDetailsToggle.getAttribute("aria-expanded")) !== "true") {
+      await this.playfulDetailsToggle.click();
+    }
+    await expect(this.playfulDetailsToggle).toHaveAttribute("aria-expanded", "true");
+    await expect(this.playfulDetailsBody).toBeVisible();
   }
 }

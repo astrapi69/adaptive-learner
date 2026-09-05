@@ -503,6 +503,10 @@ preview delivery). In the regular build the mode does not exist.
 ### Game mode (#2844)
 - [ ] Settings -> Learning: "Game Mode" section with the "Playful
       lessons" switch, default off
+- [ ] Preparation for every detail step in this section (#2959):
+      Settings > Learning > Game Mode > unfold "Game mode details"
+      (collapsed by default); the detail switches are only usable while
+      game mode is on, so switch "Playful lessons" on first
 - [ ] Lesson start (first step, game mode off, hint never dismissed):
       "Try game mode" banner with "Turn on" and a close control
 - [ ] "Turn on" in the banner: success toast, banner disappears, the
@@ -544,7 +548,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Mascot variants (#2861, Lernfunke color schemes)
 
-- [ ] Settings -> Learning -> Game mode: below the switch, the "Mascot
+- [ ] Settings -> Learning -> Game mode -> details (unfolded, see the
+      preparation step #2959), "XP and mascot" block: the "Mascot
       variant" row with five mini figures (Spark, Ocean, Forest, Ghost,
       Gold) plus a hint text
 - [ ] Fresh account (level 1, no badges, 0 XP): only Spark selectable;
@@ -603,7 +608,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Tension systems: hearts + countdown ring (#2878, opt-in, default off)
 
-- [ ] Settings > Learning > Game Mode: the "Hearts (lives)" and
+- [ ] Settings > Learning > Game Mode > details ("Tension" block,
+      preparation step #2959): the "Hearts (lives)" and
       "Countdown ring" switches are OFF by default; the number inputs
       (hearts per lesson, seconds per exercise) only become editable
       after enabling their switch and clamp to 1-5 / 5-120
@@ -627,7 +633,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Streak bonus XP (#2893, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Streak bonus XP" switch is
+- [ ] Settings > Learning > Game Mode > details ("XP and mascot" block,
+      preparation step #2959): the "Streak bonus XP" switch is
       ON by default; the "Bonus XP cap per lesson" number input is
       editable, clamps to 5-20 (default 10) and is disabled while the
       switch is off
@@ -647,7 +654,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Arcade mini-games (#2887, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Arcade" switch is ON by
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Arcade" switch is ON by
       default; the "Snake round length" (30-120, default 60) and
       "Memory pairs" (4-12, default 8) number inputs clamp and are
       disabled while the switch is off
@@ -706,7 +714,8 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Sounds: with the sounds or game-mode-sounds switch on, each
       field plays its own tone (playback and input); without the
       opt-in the game stays silent and fully playable
-- [ ] Settings > Learning > Game Mode: the "Simon target length"
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Simon target length"
       number input clamps to 5-15 (default 8) and is disabled while
       the arcade is off
 - [ ] Reduced motion in the system: fields only change state
@@ -714,7 +723,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Flash rounds (#2888, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Special rounds" switch is
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Special rounds" switch is
       ON by default; the "Flash-round cards" number input clamps to
       5-20 (default 10) and is disabled while the switch is off
 - [ ] Set overview (/content/set/...) with game mode on: the
@@ -740,7 +750,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Game tickets (#2889, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Game tickets" switch is ON
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Game tickets" switch is ON
       by default; the "Maximum tickets" number input clamps to 1-10
       (default 5) and is disabled while the switch is off
 - [ ] Finishing a lesson with a perfect score: the summary shows the
@@ -773,7 +784,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Bonus lessons (#2890, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Bonus lessons" switch is
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Bonus lessons" switch is
       ON by default
 - [ ] A set with a bonus- lesson file (filename starts with
       "bonus-"): the set page shows the bonus lesson at the END of
@@ -828,6 +840,32 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Game mode off: none of this appears; reduced motion in the
       system: chip/dots render without animation, the "+1" stays
       invisible (pure motion decoration)
+
+### Game mode: summary card + details (#2959)
+
+- [ ] Settings > Learning > Game Mode: the card shows the "Playful
+      lessons" switch, the game mode sounds and, below them, the status
+      line "N of 7 extras on" (fresh state: "5 of 7")
+- [ ] "Game mode details" is collapsed by default (button with a
+      chevron, the hint "Hearts, countdown, arcade, special rounds,
+      tickets, bonus lessons, streak XP and mascot." underneath);
+      unfolding shows the three blocks "Tension", "Arcade and rewards"
+      and "XP and mascot"
+- [ ] Leave it unfolded and reload the page: the fold stays open; leave
+      it collapsed and reload: it stays collapsed (both storage modes,
+      localStorage)
+- [ ] Game mode OFF, details unfolded: every switch, every number input
+      and the mascot buttons are greyed out; the notice "Turn on "Playful
+      lessons" to change these options." sits at the top of the fold
+- [ ] Switch "Playful lessons" on: the notice disappears and the detail
+      switches become usable without a reload; number inputs still follow
+      their own switch (e.g. "Hearts per lesson" stays locked while
+      "Hearts (lives)" is off); switching off again locks everything
+      without a reload
+- [ ] Flip one detail switch (e.g. hearts on): the status line counts
+      along immediately ("6 of 7 extras on")
+- [ ] Arcade notice page (/arcade with the arcade or game mode off): the
+      link into the settings still lands on the Learning tab
 
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the
