@@ -19,6 +19,7 @@
  */
 
 import { getStorage } from "../../../storage";
+import { invalidateContentUpdateCount } from "../browse/content-updates-badge";
 import { readLearnerState } from "../../learning/learnerState";
 import { assessSetUpdate } from "../update/assess-set-update";
 import { migrateSetExerciseIds } from "../update/stable-id-migration";
@@ -442,5 +443,8 @@ export async function syncUserRepo(
     trust,
   };
   await writeUserRepos(repos);
+  // #2985 - the sync applied and/or re-assessed updates; drop the header
+  // badge's session cache so its count follows the new state live.
+  invalidateContentUpdateCount();
   return { setCount: manifestSets.length, lessonCount, trust, retiredArchived };
 }

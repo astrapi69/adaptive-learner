@@ -131,6 +131,70 @@ describe("useVisualViewportRealign (#1569)", () => {
         expect(scrollToSpy).not.toHaveBeenCalled();
     });
 
+    it("never resets while a text field holds focus, even when the shrink reads 0 (#2983)", () => {
+        // Measured on iOS 18.7 (reading 5): with interactive-widget=
+        // resizes-content the keyboard-open state ALSO appears as
+        // innerHeight === vv.height (both shrunk), so the shrink guard
+        // reads 0 and the old hook fired scrollTo(0,0) into Safari's
+        // reveal — the logged oscillation. The focused text field is the
+        // representation-independent signal.
+        const { getByTestId } = render(
+            <>
+                <Harness />
+                <input data-testid="field" />
+            </>,
+        );
+        (getByTestId("field") as HTMLInputElement).focus();
+        // Resized representation: layout viewport shrunk to the visual one.
+        viewport.height = LAYOUT_HEIGHT;
+        setWindowScroll(0, 474);
+        act(() => {
+            viewport.dispatchEvent(new Event("resize"));
+        });
+        expect(scrollToSpy).not.toHaveBeenCalled();
+    });
+
+    it("a focus move between two fields does not realign (#2983)", () => {
+        render(<Harness />);
+        setWindowScroll(0, 87);
+        const nextField = document.createElement("input");
+        document.body.appendChild(nextField);
+        try {
+            act(() => {
+                window.dispatchEvent(
+                    new FocusEvent("focusout", { relatedTarget: nextField }),
+                );
+            });
+            expect(scrollToSpy).not.toHaveBeenCalled();
+        } finally {
+            nextField.remove();
+        }
+    });
+
+    it("still realigns once the field is blurred for good (#2983)", () => {
+        render(<Harness />);
+        setWindowScroll(0, 87);
+        act(() => {
+            window.dispatchEvent(new FocusEvent("focusout", { relatedTarget: null }));
+        });
+        expect(scrollToSpy).toHaveBeenCalledWith(0, 0);
+    });
+
+    it("non-text-entry focus (a checkbox) does not block the realign (#2983)", () => {
+        const { getByTestId } = render(
+            <>
+                <Harness />
+                <input type="checkbox" data-testid="check" />
+            </>,
+        );
+        (getByTestId("check") as HTMLInputElement).focus();
+        setWindowScroll(0, 48);
+        act(() => {
+            viewport.dispatchEvent(new Event("resize"));
+        });
+        expect(scrollToSpy).toHaveBeenCalledWith(0, 0);
+    });
+
     it("is a no-op when the window is already aligned", () => {
         render(<Harness />);
         act(() => {

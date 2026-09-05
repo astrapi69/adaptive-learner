@@ -47,6 +47,7 @@ import {
   assessSetUpdate,
   type SetUpdateAssessment,
 } from "../../lib/content/update/assess-set-update";
+import { invalidateContentUpdateCount } from "../../lib/content/browse/content-updates-badge";
 import { planSetUpdate, type SetUpdatePlan } from "../../lib/content/update/plan-set-update";
 import type { UpdateImpact } from "../../lib/content/update/update-impact";
 import { removeFavorite } from "../../lib/favorites/favorites";
@@ -789,6 +790,10 @@ export function useContentSetActions({
       setSets((prev) =>
         prev.map((row) => (row.source === entry.source && row.id === entry.id ? updated : row)),
       );
+      // #2985 — the applied update lowers the header badge's count; drop
+      // the session cache so the badge refreshes live instead of showing
+      // the pre-update count until a full app reload.
+      invalidateContentUpdateCount();
       setPerSetState((prev) => ({ ...prev, [key]: "done" }));
       // #1410 — click-through: this toast sits bottom-right over the lesson
       // footer's action button when the user opens the set right away
