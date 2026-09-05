@@ -1,18 +1,24 @@
 /**
- * SettingsPage — Page Object for the 7-tab Settings page (#616). Real
- * selectors from ``pages/Settings.tsx`` + ``ThemePicker`` + avatar /
+ * SettingsPage — Page Object for the 9-tab Settings page (#616). Real
+ * selectors from ``pages/system/Settings.tsx`` + ``ThemePicker`` + avatar /
  * username / backup / selective-export controls.
  */
 
 import { expect, type Locator, type Page } from "@playwright/test";
 
+/** Every Settings tab, in sidebar order. Source of truth: ``SETTINGS_TABS`` in
+ *  ``frontend/src/pages/system/Settings.tsx`` (#2963). ``SETTINGS_PANELS`` is a
+ *  ``Record`` over this union, so a tab added here without a panel entry is a
+ *  type error. */
 export type SettingsTab =
   | "general"
   | "ai"
   | "learning"
   | "plugins"
   | "data"
+  | "integrations"
   | "help"
+  | "diagnostics"
   | "about";
 
 /** The panel testid revealed when each tab is active. */
@@ -22,7 +28,9 @@ export const SETTINGS_PANELS: Record<SettingsTab, string> = {
   learning: "settings-panel-learning",
   plugins: "settings-panel-plugins",
   data: "settings-panel-data",
+  integrations: "settings-panel-integrations",
   help: "settings-panel-help",
+  diagnostics: "settings-panel-diagnostics",
   about: "settings-panel-about",
 };
 
