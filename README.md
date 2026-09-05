@@ -4,7 +4,7 @@
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
-[![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-12729%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
@@ -305,14 +305,14 @@ testing (frontend logic layers, nightly interleaved shards via
 Stryker); its per-shard reports are CI artifacts, not a single rate,
 which is why no mutation-score badge exists (#2257).
 
-Verified 2026-07-24 (v2.6.0):
+Verified 2026-09-05 (v2.14.0):
 
 | Suite | Count |
 |---|---|
-| Backend (pytest) | 1475 |
-| Plugins (13 × pytest) | 1096 |
-| Frontend (Vitest 4) | 7722 |
-| **Total** | **10293** |
+| Backend (pytest) | 1824 |
+| Plugins (14 × pytest) | 1130 |
+| Frontend (Vitest) | 9775 |
+| **Total** | **12729** |
 
 Plus 17 Playwright smoke spec files covering: landing,
 onboarding+assessment, session (3-chunk SSE), curriculum,
