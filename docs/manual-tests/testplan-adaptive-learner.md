@@ -626,6 +626,25 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Prüfungsmodus + Spielmodus + Sounds: kein Ton pro Antwort (kein
       Sofort-Feedback); die Abschluss-Fanfare bleibt erlaubt
 
+#### Feedback-Karte: Lautstärke immer sichtbar + Spielmodus-Hinweis (#2957)
+
+- [ ] Settings -> Lernen -> Feedback: der Schalter "Töne" steht auf AUS,
+      trotzdem sind der Lautstärkeregler, die Prozentanzeige und die
+      "Test"-Taste sichtbar; unter dem Regler der Hinweis "Gilt auch für
+      die Spielmodus-Sounds."
+- [ ] Töne AUS, Spielmodus-Sounds AN: Regler verschieben, Lektion mit
+      Spielmodus spielen - die Spielmodus-Töne folgen der neuen
+      Lautstärke; Töne AUS + Spielmodus-Sounds AUS: "Test" bleibt still
+- [ ] Spielmodus einschalten (Settings -> Lernen -> Spielmodus): unter den
+      drei Intensitäts-Optionen erscheint SOFORT ohne Reload der Hinweis
+      "Der Spielmodus ist an, daher ist das Feedback unabhängig von
+      dieser Einstellung immer ausführlich."
+- [ ] Spielmodus wieder ausschalten: der Hinweis verschwindet sofort; die
+      gewählte Intensität bleibt unverändert markiert
+- [ ] Spielmodus an + reduzierte Bewegung im System: beide Hinweise
+      (reduzierte Bewegung + Spielmodus) sind sichtbar; das Feedback
+      bleibt dezent (reduced motion gewinnt)
+
 #### Spannungssysteme: Herzen + Countdown-Ring (#2878, opt-in, Standard aus)
 
 - [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Spannung",

@@ -38,9 +38,11 @@ this setting.
 
 Sounds are **off by default** - you are never surprised by audio.
 Turn them on in **Settings > Learning > Sounds**, then use the
-volume slider and the **Test** button to preview. Sounds are
-short synthesized chimes and are always supplementary: every cue
-they give is also shown on screen.
+volume slider and the **Test** button to preview. The volume slider
+is always visible, even while the sounds switch is off, and also
+governs the game-mode sounds. Sounds are short synthesized chimes
+and are always supplementary: every cue they give is also shown on
+screen.
 
 ## Game mode
 
