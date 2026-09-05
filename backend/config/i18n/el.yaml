@@ -676,6 +676,7 @@ settings:
   nav_aria: "Πλοήγηση ρυθμίσεων"
   tab_ai: "ΤΝ"
   tab_learning: "Μάθηση"
+  learning_nav_aria: "Ενότητες μάθησης"
   tab_plugins: "Πρόσθετα"
   tab_data: "Δεδομένα"
   tab_help: "Βοήθεια"

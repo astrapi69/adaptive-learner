@@ -676,6 +676,7 @@ settings:
   nav_aria: "Einstellungs-Navigation"
   tab_ai: "KI"
   tab_learning: "Lernen"
+  learning_nav_aria: "Lernbereiche"
   tab_plugins: "Plugins"
   tab_data: "Daten"
   tab_help: "Hilfe"
