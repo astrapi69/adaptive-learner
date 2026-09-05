@@ -4,7 +4,7 @@
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Nachtschicht](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
-[![Tests](https://img.shields.io/badge/tests-10293%20grün-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-12729%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -226,14 +226,14 @@ Tests. Wie viel die Suite tatsächlich fängt, prüft das Mutationstesten
 dessen Berichte sind CI-Artefakte je Shard, keine einzelne Rate -
 darum trägt die Mutationsrate kein Abzeichen (#2257).
 
-Verifiziert am 2026-07-24 (v2.6.0):
+Verifiziert am 2026-09-05 (v2.14.0):
 
 | Suite | Anzahl |
 |---|---|
-| Backend (pytest) | 1475 |
-| Plugins (13 × pytest) | 1096 |
-| Frontend (Vitest 4) | 7722 |
-| **Gesamt** | **10293** |
+| Backend (pytest) | 1824 |
+| Plugins (14 × pytest) | 1130 |
+| Frontend (Vitest) | 9775 |
+| **Gesamt** | **12729** |
 
 Plus 17 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
 Onboarding+Assessment, Sitzung (3-Chunk-SSE), Curriculum,
