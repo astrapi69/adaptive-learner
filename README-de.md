@@ -261,45 +261,49 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.14.0** (Sicherheits-Patch auf v2.8.0 - CSP #2197, Debug-Default #2198, Lesson-Validator-Eval #2205; v2.8.1 wurde nie veröffentlicht); das v2.8.0-Kernstück ist dessen
-Kernstück der **Vertriebswechsel** ist: Der Desktop-Launcher **bezieht
-jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der
-GHCR** statt auf dem Gerät zu bauen (Selbstbauen aus dem Quellbaum
-bleibt erhalten), abgesichert durch einen **Volume-Migrations-Stopp**,
-der nie still zwischen zwei Datenbeständen wählt. Die App ergänzt
-**Bildbeschreibungs-Aufgaben** (`ext:al-image-description`), das
-**Löschen einzelner Lektionen** und einen **Set-Update-Wächter**, der
-verhindert, dass Content-Updates Lernfortschritt still verwaisen
-lassen (Dialog in 11 Sprachen). Das vorige **v2.6.x** baute den
-**Sitzungs-Chat auf assistant-ui** neu auf, machte den Buch-Pfad von
-Create-Lesson zum echten Ingestion-Werkzeug (**Buchdatei-Upload** mit
-Kapitel-Mehrfachauswahl und Batch-Generierung), komplettierte das
-Diktat-Authoring mit **Audio-Upload** und härtete die CI. Das vorige
-**v2.5.0** machte **Create-Lesson zu
-einem vollwertigen Aufgaben-Editor**: jeder Kern-Aufgabentyp ist
-bearbeitbar, Aufgaben lassen sich von Hand ergänzen,
-`multiple_choice` ist mit einer Single/Multi-Umschaltung
-autorierbar, und ein **Extension-Authoring-Assistent** deckt alle
-vier KI-autorierten Extension-Typen ab; **`ext:al-dictation`
-(Audio-Diktat)** kam als fünfter Extension-Typ hinzu, und das
-PWA-Update-System sowie der KI-Schlüssel-Tresor werden als
-**veröffentlichte npm-Pakete konsumiert** (`@astrapi69/pwa-update`,
-`@astrapi69/ai-key-vault`). Das vorige **v2.4.0** brachte ein
-**Create-Lesson-Authoring-Upgrade** (eine Wissens-Lektion aus
-eingefügtem Lehrbuchtext, das Bearbeiten und Kombinieren eigener
-Lektionen sowie Karten-Bild-Upload),
-**Freitext-Aufgaben mit mehreren akzeptierten Antworten** samt einer
-KI-Zweitmeinung, einen **KI-Schlüssel-Import** direkt auf dem
-Einstellungen-KI-Tab und die auf **0.13.0 (Schema 1.8)** neu
-gepinnte Content-Engine. Das vorige **v2.3.0** vollendete den
-**EXP-044-CSS-Concern-Split** (`global.css` byte-identisch in
-Per-Concern-Legacy-Dateien zerlegt, hinter einem
-Byte-Identitäts-Gate), überarbeitete die **Lesson-Player-UX**
-(einklappbares Options-Panel, Pause-Steuerung im Footer, schlankerer
-Titelbereich), ergänzte **Listen-First-Audio** und einen
-Cold-Start-Prior aus der vom Autor gesetzten Schwierigkeit und
-härtete den Datei-Import/-Export von Lektionen/Sets. Per-Release-Notes
-in [`changelog/releases/`](changelog/releases/).
+Aktive Entwicklung. Das aktuelle Release ist **v2.14.0**: ein
+optionaler **Spielmodus** mit Combo-Streaks, fliegenden Punkten,
+Checkpoints, Antwort-Physik und spielerischer Herzen-/
+Countdown-Spannung, kombinierbar mit neuen **Arcade-Minispielen**
+(Lern-Memory, Snake, TicTacToe, ein Simon-Farbfolgenspiel), die per
+XP freigeschaltet werden, plus Blitzrunden bei Set-Abschluss. Das
+**Lernfunke-Maskottchen** bekommt freischaltbare Farbvarianten, und
+Avatare erhalten eine Preset-Galerie, XP-gebundene Rahmen und einen
+Foto-Zwischenspeicher mit Bestätigungsdialog. Die
+**Content-Navigation** ist gereift: eine Set-Seite listet ihre
+Lektionen mit Fortschritt, eine Lektion zeigt ihre Position im Set,
+und eine Set-Abschluss-Übersicht sammelt jeden Fehler eines Sets an
+einem Ort. Drei neue Extension-Typen sind erstmals über den
+Erstellungs-Assistenten wählbar: **al-speak-and-record**,
+**al-audio-choice**, **al-audio-tiles**. Vollständige Notizen:
+[`changelog/releases/v2.14.0.md`](changelog/releases/v2.14.0.md).
+
+Frühere Releases, neueste zuerst (vollständige Details in
+[`changelog/releases/`](changelog/releases/)):
+
+- **v2.13.0** - Aufgaben-Typ-Konvertierung direkt im Lesson-Editor, eine auffindbare "Als Kopie bearbeiten"-Aktion für heruntergeladene Content-Sets, eine große UI-Konsolidierung (gemeinsame Settings-/Modal-/DashboardCard-Komponenten, shadcn Button), FastAPI-0.141- + TipTap-3.30-Dependency-Auffrischung.
+- **v2.8.0** - Vertriebswechsel: der Desktop-Launcher bezieht jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der GHCR statt auf dem Gerät zu bauen, abgesichert durch einen Volume-Migrations-Stopp; Bildbeschreibungs-Aufgaben (`ext:al-image-description`), Löschen einzelner Lektionen, ein Set-Update-Wächter gegen still verwaisenden Lernfortschritt.
+- **v2.6.x** - Sitzungs-Chat neu auf assistant-ui aufgebaut, Buch-Pfad von Create-Lesson zum echten Ingestion-Werkzeug (Buchdatei-Upload, Kapitel-Mehrfachauswahl, Batch-Generierung), Diktat-Authoring mit Audio-Upload komplettiert.
+- **v2.5.0** - Create-Lesson wurde ein vollwertiger Aufgaben-Editor (jeder Kern-Aufgabentyp bearbeitbar, Aufgaben von Hand ergänzbar, ein Extension-Authoring-Assistent für alle KI-autorierten Extension-Typen plus `ext:al-dictation`); PWA-Updates und KI-Schlüssel-Tresor wurden als konsumierte npm-Pakete ausgelagert (`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`).
+- **v2.4.0** - Create-Lesson-Authoring-Upgrade (Wissens-Lektion aus eingefügtem Text, Bearbeiten/Kombinieren eigener Lektionen, Karten-Bild-Upload), Freitext-Aufgaben mit mehreren akzeptierten Antworten samt KI-Zweitmeinung, Engine neu auf 0.13.0 (Schema 1.8) gepinnt für Bild-Uploads in Bildauswahl-Aufgaben.
+- **v2.3.0** - EXP-044-CSS-Concern-Split (byte-identitätsgegated), überarbeitete Lesson-Player-UX, Listen-First-Audio-Aufgaben, gehärteter Lektions-/Set-Import/-Export.
+- **v2.2.0** - eine Extension-Aufgaben-Stufe (vier KI-autorierte Typen), natives `multiple_choice`, Lesson-Schema/-Typen aus `learn-content-engine` konsumiert, ein föderiertes Content-Repository-Register.
+
+Ebenfalls ausgeliefert: das **Content-Hub**-Redesign (Discover /
+Meine Inhalte / Import-Tabs, Listen-/Raster-Umschalter, eine kompakte
+Such-/Filterleiste), das vollständige **Lesson-Modus-System**
+(Practice / Exam / Timed / Reverse / Shuffle / Endless +
+Train-Errors), **Cloze-Mehrfachauswahl**, ein SRS-Intervall-Boost im
+Exam-Modus, **passphrasenverschlüsselter `.alk`**-Schlüsselexport und
+eine Bereinigung der primären Navigation (eine Nav pro Viewport).
+
+## Unterstütze dieses Projekt
+
+Adaptive Learner wird von einer einzelnen Person entwickelt und
+gepflegt. Wenn es dir hilft, sind Spenden willkommen und fließen
+direkt in Entwicklungszeit - siehe [`DONATE-de.md`](DONATE-de.md)
+([`DONATE.md`](DONATE.md) für Englisch) für alle Kanäle (GitHub
+Sponsors, Liberapay, Ko-fi, PayPal) und die Beweggründe dahinter.
 
 ## Herkunft
 
