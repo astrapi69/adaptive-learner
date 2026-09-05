@@ -5,6 +5,11 @@
  * the clamping and the persistence; these only lay out the row the
  * way every Settings > Learning control does.
  *
+ * The testid is taken as a literal ``data-testid`` prop (not a renamed
+ * ``testid``) on purpose: the testid-reference gate (#1661) scans for
+ * ``data-testid="..."`` literals, and these rows carry ids that e2e
+ * specs address - the literal must stay visible to it.
+ *
  * @example
  * <SettingSwitchRow
  *   label={t("settings.playful_hearts", "Hearts (lives)")}
@@ -12,7 +17,7 @@
  *   checked={hearts}
  *   disabled={disabled}
  *   onChange={handleHeartsToggle}
- *   testid="settings-playful-hearts-toggle"
+ *   data-testid="settings-playful-hearts-toggle"
  * />
  * <SettingNumberRow
  *   label={t("settings.playful_hearts_count", "Hearts per lesson")}
@@ -21,7 +26,7 @@
  *   max={MAX_HEARTS_COUNT}
  *   disabled={disabled || !hearts}
  *   onChange={handleHeartsCount}
- *   testid="settings-playful-hearts-count"
+ *   data-testid="settings-playful-hearts-count"
  * />
  */
 
@@ -38,7 +43,7 @@ export interface SettingSwitchRowProps {
     disabled?: boolean;
     onChange: (next: boolean) => void;
     /** ``data-testid`` of the checkbox. */
-    testid: string;
+    "data-testid": string;
 }
 
 /** A labelled checkbox row with an optional hint line. */
@@ -48,7 +53,7 @@ export function SettingSwitchRow({
     checked,
     disabled = false,
     onChange,
-    testid,
+    "data-testid": testid,
 }: SettingSwitchRowProps) {
     return (
         <label className="flex items-center justify-between gap-2">
@@ -78,7 +83,7 @@ export interface SettingNumberRowProps {
     /** Receives the raw input string; the caller clamps + persists. */
     onChange: (raw: string) => void;
     /** ``data-testid`` of the number input. */
-    testid: string;
+    "data-testid": string;
 }
 
 /** A labelled, bounded number-input row. */
@@ -89,7 +94,7 @@ export function SettingNumberRow({
     max,
     disabled = false,
     onChange,
-    testid,
+    "data-testid": testid,
 }: SettingNumberRowProps) {
     return (
         <label className="flex items-center justify-between gap-2">

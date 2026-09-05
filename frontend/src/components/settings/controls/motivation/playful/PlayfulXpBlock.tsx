@@ -57,7 +57,7 @@ export default function PlayfulXpBlock({disabled}: PlayfulBlockProps) {
                 checked={comboXp}
                 disabled={disabled}
                 onChange={handleComboXpToggle}
-                testid="settings-playful-combo-xp-toggle"
+                data-testid="settings-playful-combo-xp-toggle"
             />
             <SettingNumberRow
                 label={t("settings.playful_combo_xp_cap", "Bonus XP cap per lesson")}
@@ -66,7 +66,7 @@ export default function PlayfulXpBlock({disabled}: PlayfulBlockProps) {
                 max={MAX_COMBO_XP_CAP}
                 disabled={disabled || !comboXp}
                 onChange={handleComboCap}
-                testid="settings-playful-combo-xp-cap"
+                data-testid="settings-playful-combo-xp-cap"
             />
             <MascotVariantControl disabled={disabled} />
         </div>

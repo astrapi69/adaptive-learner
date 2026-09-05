@@ -88,7 +88,7 @@ export default function PlayfulModeControl() {
                 )}
                 checked={playful}
                 onChange={setPlayfulMode}
-                testid="settings-playful-mode-toggle"
+                data-testid="settings-playful-mode-toggle"
             />
             {playful && !prompted && (
                 <div
@@ -125,7 +125,7 @@ export default function PlayfulModeControl() {
                 )}
                 checked={sounds}
                 onChange={handleSoundsToggle}
-                testid="settings-playful-sounds-toggle"
+                data-testid="settings-playful-sounds-toggle"
             />
             <FormHint data-testid="settings-playful-summary">{summaryText}</FormHint>
             <SettingsDisclosure

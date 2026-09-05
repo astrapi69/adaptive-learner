@@ -143,7 +143,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 checked={arcade}
                 disabled={disabled}
                 onChange={handleArcadeToggle}
-                testid="settings-playful-arcade-toggle"
+                data-testid="settings-playful-arcade-toggle"
             />
             <SettingNumberRow
                 label={t(
@@ -155,7 +155,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 max={MAX_SNAKE_SECONDS}
                 disabled={disabled || !arcade}
                 onChange={handleSnakeSeconds}
-                testid="settings-playful-arcade-snake-seconds"
+                data-testid="settings-playful-arcade-snake-seconds"
             />
             <SettingNumberRow
                 label={t("settings.playful_arcade_memory_pairs", "Memory pairs")}
@@ -164,7 +164,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 max={MAX_MEMORY_PAIRS}
                 disabled={disabled || !arcade}
                 onChange={handleMemoryPairs}
-                testid="settings-playful-arcade-memory-pairs"
+                data-testid="settings-playful-arcade-memory-pairs"
             />
             <SettingNumberRow
                 label={t(
@@ -176,7 +176,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 max={MAX_SIMON_TARGET}
                 disabled={disabled || !arcade}
                 onChange={handleSimonTarget}
-                testid="settings-playful-arcade-simon-target"
+                data-testid="settings-playful-arcade-simon-target"
             />
             <SettingSwitchRow
                 label={t("settings.playful_special_rounds", "Special rounds")}
@@ -187,7 +187,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 checked={specialRounds}
                 disabled={disabled}
                 onChange={handleSpecialRoundsToggle}
-                testid="settings-playful-special-rounds-toggle"
+                data-testid="settings-playful-special-rounds-toggle"
             />
             <SettingNumberRow
                 label={t("settings.playful_flash_round_cards", "Flash-round cards")}
@@ -196,7 +196,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 max={MAX_FLASH_ROUND_CARDS}
                 disabled={disabled || !specialRounds}
                 onChange={handleFlashCards}
-                testid="settings-playful-flash-round-cards"
+                data-testid="settings-playful-flash-round-cards"
             />
             <SettingSwitchRow
                 label={t("settings.playful_tickets", "Game tickets")}
@@ -207,7 +207,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 checked={ticketsOn}
                 disabled={disabled}
                 onChange={handleTicketsToggle}
-                testid="settings-playful-tickets-toggle"
+                data-testid="settings-playful-tickets-toggle"
             />
             <SettingNumberRow
                 label={t("settings.playful_ticket_cap", "Maximum tickets")}
@@ -216,7 +216,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 max={MAX_TICKET_CAP}
                 disabled={disabled || !ticketsOn}
                 onChange={handleTicketCap}
-                testid="settings-playful-ticket-cap"
+                data-testid="settings-playful-ticket-cap"
             />
             <SettingSwitchRow
                 label={t("settings.playful_bonus_lessons", "Bonus lessons")}
@@ -227,7 +227,7 @@ export default function PlayfulArcadeBlock({disabled}: PlayfulBlockProps) {
                 checked={bonusOn}
                 disabled={disabled}
                 onChange={handleBonusToggle}
-                testid="settings-playful-bonus-toggle"
+                data-testid="settings-playful-bonus-toggle"
             />
         </div>
     );

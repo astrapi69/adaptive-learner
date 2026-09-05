@@ -81,7 +81,7 @@ export default function PlayfulTensionBlock({disabled}: PlayfulBlockProps) {
                 checked={hearts}
                 disabled={disabled}
                 onChange={handleHeartsToggle}
-                testid="settings-playful-hearts-toggle"
+                data-testid="settings-playful-hearts-toggle"
             />
             <SettingNumberRow
                 label={t("settings.playful_hearts_count", "Hearts per lesson")}
@@ -90,7 +90,7 @@ export default function PlayfulTensionBlock({disabled}: PlayfulBlockProps) {
                 max={MAX_HEARTS_COUNT}
                 disabled={disabled || !hearts}
                 onChange={handleHeartsCount}
-                testid="settings-playful-hearts-count"
+                data-testid="settings-playful-hearts-count"
             />
             <SettingSwitchRow
                 label={t("settings.playful_countdown", "Countdown ring")}
@@ -101,7 +101,7 @@ export default function PlayfulTensionBlock({disabled}: PlayfulBlockProps) {
                 checked={countdown}
                 disabled={disabled}
                 onChange={handleCountdownToggle}
-                testid="settings-playful-countdown-toggle"
+                data-testid="settings-playful-countdown-toggle"
             />
             <SettingNumberRow
                 label={t(
@@ -113,7 +113,7 @@ export default function PlayfulTensionBlock({disabled}: PlayfulBlockProps) {
                 max={MAX_COUNTDOWN_SECONDS}
                 disabled={disabled || !countdown}
                 onChange={handleCountdownSeconds}
-                testid="settings-playful-countdown-seconds"
+                data-testid="settings-playful-countdown-seconds"
             />
         </div>
     );
