@@ -23,8 +23,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
 
-from verify_docs import (  # noqa: E402
-    Report,
+from verify_docs import Report  # noqa: E402
+from verify_docs_test_counts import (  # noqa: E402
     collect_pytest_count,
     resolve_plugin_python,
 )

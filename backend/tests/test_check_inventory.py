@@ -82,7 +82,7 @@ def test_red_when_an_active_check_loses_its_make_target(mirror: Path) -> None:
 
 def test_red_when_a_check_degrades_into_a_no_op(mirror: Path) -> None:
     """The real incident: the count regex stops matching, the check warns and returns."""
-    docs = mirror / "scripts" / "verify_docs.py"
+    docs = mirror / "scripts" / "verify_docs_test_counts.py"
     text = docs.read_text(encoding="utf-8")
     broken = text.replace(r"= \*{0,2}(\d+) tests\*{0,2}", r"= \*\*(\d+) tests\*\*")
     assert broken != text, "the TEST_COUNT_RE line moved - update this test with it"
