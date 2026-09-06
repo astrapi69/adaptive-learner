@@ -12,6 +12,11 @@
  * request arrives, and the cluster only gets layout once it is visible.
  * Reduced motion turns the smooth scroll into an instant one.
  *
+ * The active chip (#2966) is the request while its scroll is in flight;
+ * once the scroll reports the cluster in view, the scroll-spy
+ * (``useScrollSpy``) takes over and the chip follows whatever cluster the
+ * viewport shows. Where no observer exists the request stays active.
+ *
  * @example
  * const { sections, activeSection, openSection } = useLearningSections({ active, speechSupported });
  */
@@ -20,6 +25,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { useDeferredScroll } from "../../../../hooks/settings/useDeferredScroll";
+import { useScrollSpy } from "../../../../hooks/settings/useScrollSpy";
 import { prefersReducedMotion } from "../../../../lib/feedback/feedbackPref";
 import {
   LEARNING_SECTIONS,
@@ -34,12 +40,14 @@ export interface LearningSectionsOptions {
   active: boolean;
   /** Whether the voice cluster is rendered. */
   speechSupported: boolean;
+  /** Sticky chrome height in px; the scroll-spy band starts below it. */
+  topOffset?: number;
 }
 
 export interface LearningSectionsState {
   /** The sections rendered right now, in tab order. */
   sections: readonly LearningSectionDef[];
-  /** The chip to mark active: the requested section, or ``null``. */
+  /** The chip to mark active: the in-flight request, else the spied cluster, else the request. */
   activeSection: LearningSectionId | null;
   /** Chip click handler: write ``?section=`` (replace) and scroll there. */
   openSection: (id: string) => void;
@@ -48,6 +56,7 @@ export interface LearningSectionsState {
 export function useLearningSections({
   active,
   speechSupported,
+  topOffset = 0,
 }: LearningSectionsOptions): LearningSectionsState {
   const [searchParams, setSearchParams] = useSearchParams();
   const sections = useMemo(
@@ -76,6 +85,15 @@ export function useLearningSections({
     behavior: prefersReducedMotion() ? "auto" : "smooth",
   });
 
+  const spied = useScrollSpy(
+    useMemo(() => sections.map((section) => section.id), [sections]),
+    {
+      enabled: active,
+      resolve: (id) => document.getElementById(learningSectionAnchorId(id)),
+      topOffset,
+    },
+  );
+
   const openSection = useCallback(
     (id: string) => {
       if (!isLearningSectionId(id)) return;
@@ -91,5 +109,5 @@ export function useLearningSections({
     [setSearchParams],
   );
 
-  return { sections, activeSection: requested, openSection };
+  return { sections, activeSection: pending ?? spied ?? requested, openSection };
 }

@@ -82,6 +82,7 @@ export default function LearningPanel({ active }: LearningPanelProps) {
   const { sections, activeSection, openSection } = useLearningSections({
     active,
     speechSupported,
+    topOffset: anchorOffset,
   });
 
   return (

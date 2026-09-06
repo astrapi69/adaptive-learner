@@ -312,7 +312,8 @@ der Lektion* (Kennungen: `basics`, `lessons`, `voice`, `review`,
 einen Verlaufseintrag anzulegen. Ein Wechsel in einen anderen Tab verwirft
 den Bereich wieder. Ein nicht gerenderter Bereich (Vorlesen und Diktieren
 in einem Browser ohne Web Speech) hat keinen Chip, eine unbekannte Kennung
-wird ignoriert.
+wird ignoriert. Beim Scrollen folgt der hervorgehobene Chip dem Bereich,
+der gerade im Bild ist.
 
 ### Grundlagen
 

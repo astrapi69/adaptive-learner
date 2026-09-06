@@ -11,7 +11,7 @@
 
 import "fake-indexeddb/auto";
 
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, useLocation, useNavigationType } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -109,6 +109,36 @@ function scrolledIds(spy: ReturnType<typeof vi.fn>): string[] {
 
 let scrollSpy: ReturnType<typeof vi.fn>;
 
+/** A recording IntersectionObserver stub (#2966): ``fireSpy`` drives it. */
+let spyCallbacks: IntersectionObserverCallback[] = [];
+function stubIntersectionObserver(): void {
+  spyCallbacks = [];
+  class FakeIntersectionObserver {
+    constructor(callback: IntersectionObserverCallback) {
+      spyCallbacks.push(callback);
+    }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords() {
+      return [];
+    }
+  }
+  vi.stubGlobal("IntersectionObserver", FakeIntersectionObserver);
+}
+function fireSpy(intersecting: Record<string, boolean>): void {
+  const entries = Object.entries(intersecting).map(
+    ([id, isIntersecting]) =>
+      ({
+        target: document.getElementById(`learning-${id}`),
+        isIntersecting,
+      }) as unknown as IntersectionObserverEntry,
+  );
+  act(() => {
+    for (const callback of spyCallbacks) callback(entries, {} as IntersectionObserver);
+  });
+}
+
 beforeEach(() => {
   mockNavigate.mockClear();
   apiGet.mockReset();
@@ -126,6 +156,7 @@ beforeEach(() => {
 
 afterEach(() => {
   localStorage.clear();
+  vi.unstubAllGlobals();
 });
 
 describe("Settings > Learning section bar (#2961)", () => {
@@ -210,5 +241,72 @@ describe("Settings > Learning section bar (#2961)", () => {
     expect(screen.getByTestId("location-probe").getAttribute("data-search")).toBe(
       "?tab=learning",
     );
+  });
+
+  // #2966 - scroll-spy: without a section request the chip follows the
+  // cluster the viewport shows; the request wins only while its scroll is
+  // still in flight, then hands over to the spy.
+  it("follows the visible cluster when no section is requested (#2966)", async () => {
+    stubIntersectionObserver();
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    expect(document.querySelector("[aria-current='location']")).toBeNull();
+    fireSpy({ lessons: true, review: true });
+    expect(screen.getByTestId("settings-subnav-lessons")).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+    fireSpy({ lessons: false });
+    expect(screen.getByTestId("settings-subnav-review")).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+    expect(screen.getByTestId("settings-subnav-lessons")).not.toHaveAttribute("aria-current");
+  });
+
+  it("lets the ?section= request win until its deferred scroll settles (#2966)", async () => {
+    stubIntersectionObserver();
+    // Freeze the deferred loop: no frame ever fires, so the request never settles.
+    vi.stubGlobal("requestAnimationFrame", () => 1);
+    vi.stubGlobal("cancelAnimationFrame", () => undefined);
+    renderSettings("/settings?tab=learning&section=motivation");
+    await screen.findByTestId("settings");
+    fireSpy({ basics: true });
+    expect(screen.getByTestId("settings-subnav-motivation")).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+    expect(screen.getByTestId("settings-subnav-basics")).not.toHaveAttribute("aria-current");
+  });
+
+  it("hands the active chip to the scroll-spy once the requested cluster is in view (#2966)", async () => {
+    stubIntersectionObserver();
+    // Report the requested cluster as laid out + in view, so the deferred
+    // loop settles on its first frame.
+    const inView = { height: 400, top: 80, bottom: 480 } as DOMRect;
+    const original = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function patched(this: Element) {
+      return this.id === "learning-review" ? inView : original.call(this);
+    };
+    try {
+      renderSettings("/settings?tab=learning&section=review");
+      await screen.findByTestId("settings");
+      await waitFor(() =>
+        expect(screen.getByTestId("settings-subnav-review")).toHaveAttribute(
+          "aria-current",
+          "location",
+        ),
+      );
+      // Settled: the spy now decides.
+      await new Promise((resolve) => setTimeout(resolve, 60));
+      fireSpy({ basics: true });
+      expect(screen.getByTestId("settings-subnav-basics")).toHaveAttribute(
+        "aria-current",
+        "location",
+      );
+      expect(screen.getByTestId("settings-subnav-review")).not.toHaveAttribute("aria-current");
+    } finally {
+      Element.prototype.getBoundingClientRect = original;
+    }
   });
 });

@@ -23,9 +23,17 @@
  * its ref to the `<section>` root (BackupSection scrolls to it after a
  * restore); every other `<section>` attribute (`style`, `hidden`, `id`,
  * `aria-busy`, ...) passes straight through via rest props.
+ *
+ * The title's heading level is `<h2>` on its own, `<h3>` inside a
+ * `SettingsCluster` (read from `SettingsHeadingLevelContext`, #2966) and
+ * whatever an explicit `headingLevel` prop says; the classname contract
+ * above is the same at every level.
  */
-import { forwardRef } from "react";
+import { forwardRef, useContext } from "react";
 import type { ComponentPropsWithoutRef, ReactNode, CSSProperties } from "react";
+
+import { SettingsHeadingLevelContext } from "./settings-heading-level";
+import type { SettingsHeadingLevel } from "./settings-heading-level";
 
 export interface SettingsSectionProps
   extends Omit<ComponentPropsWithoutRef<"section">, "title"> {
@@ -37,11 +45,14 @@ export interface SettingsSectionProps
   titleClassName?: string;
   /** Extra inline styles merged onto the `<h2>` title. */
   titleStyle?: CSSProperties;
+  /** Title heading level; defaults to the surrounding cluster's level (2 outside a cluster, 3 inside). */
+  headingLevel?: SettingsHeadingLevel;
 }
 
 /**
  * Renders a Settings card: `<section class="settings-section">` with an
- * optional `<h2 class="settings-section-title">` and the given children.
+ * optional `<h2 class="settings-section-title">` (an `<h3>` inside a
+ * cluster) and the given children.
  *
  * @example
  * ```tsx
@@ -52,9 +63,11 @@ export interface SettingsSectionProps
  */
 export const SettingsSection = forwardRef<HTMLElement, SettingsSectionProps>(
   function SettingsSection(
-    { title, testid, className, titleClassName, titleStyle, children, ...rest },
+    { title, testid, className, titleClassName, titleStyle, headingLevel, children, ...rest },
     ref,
   ) {
+    const contextLevel = useContext(SettingsHeadingLevelContext);
+    const Heading = (headingLevel ?? contextLevel) === 3 ? "h3" : "h2";
     const sectionClassName = className
       ? `settings-section ${className}`
       : "settings-section";
@@ -70,9 +83,9 @@ export const SettingsSection = forwardRef<HTMLElement, SettingsSectionProps>(
         {...rest}
       >
         {title !== undefined && (
-          <h2 className={titleClass} style={titleStyle}>
+          <Heading className={titleClass} style={titleStyle}>
             {title}
-          </h2>
+          </Heading>
         )}
         {children}
       </section>

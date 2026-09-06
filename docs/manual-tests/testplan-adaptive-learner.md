@@ -1000,6 +1000,16 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       hervorgehoben, keine Scrollbewegung
 - [ ] Systemeinstellung "Bewegung reduzieren" aktiv: der Sprung erfolgt
       ohne Animation (sofort), sonst weich
+- [ ] Ohne Auswahl langsam durch den Tab scrollen (#2966): der
+      hervorgehobene Chip folgt dem Bereich, dessen Überschrift gerade
+      oben im Bild steht (Grundlagen -> In der Lektion -> ... ->
+      Motivation und Routine); nach einem Chip-Klick bleibt der geklickte
+      Chip hervorgehoben, bis der Bereich im Bild ist, und folgt danach
+      wieder dem Scrollen. Die Adresse ändert sich beim Scrollen NICHT
+- [ ] Überschriften-Hierarchie (#2966, Screenreader / Browser-Outline):
+      im Lernen-Tab sind die Bereichs-Überschriften h2 und die
+      Karten-Titel darin h3; auf den anderen Tabs bleiben die Karten-Titel
+      h2
 - [ ] Beide Speicher-Modi (API + Dexie): Leiste und Deep-Link verhalten
       sich identisch
 

@@ -943,6 +943,15 @@ preview delivery). In the regular build the mode does not exist.
       scroll movement
 - [ ] System setting "reduce motion" on: the jump happens without
       animation (instant), otherwise smoothly
+- [ ] With no selection scroll slowly through the tab (#2966): the
+      highlighted chip follows the area whose heading is at the top of
+      the screen (Basics -> In the lesson -> ... -> Motivation and
+      routine); after a chip click the clicked chip stays highlighted
+      until its area is on screen, then follows the scrolling again. The
+      address does NOT change while scrolling
+- [ ] Heading hierarchy (#2966, screen reader / browser outline): on the
+      Learning tab the area headings are h2 and the card titles inside
+      are h3; on the other tabs the card titles stay h2
 - [ ] Both storage modes (API + Dexie): bar and deep link behave the same
 
 ### Summary counts corrections (#2479)

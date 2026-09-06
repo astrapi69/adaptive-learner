@@ -12,10 +12,14 @@
  * `learning-<id>`, the anchor a `?section=<id>` deep link targets; its
  * `scroll-margin-top` reads `--settings-anchor-offset` (set by the panel
  * from the measured sticky chrome, #2961) and falls back to 4rem so the
- * anchor stays clear of the sticky page header.
+ * anchor stays clear of the sticky page header. The group heading is the
+ * `<h2>`; the cards inside read `SettingsHeadingLevelContext` and render
+ * their titles as `<h3>` (#2966), so the outline stays a tree.
  */
 import { useId } from "react";
 import type { ReactNode } from "react";
+
+import { SettingsHeadingLevelContext } from "./settings-heading-level";
 
 export interface SettingsClusterProps {
   /** Anchor slug; the `<section>` gets the DOM id `learning-<id>`. */
@@ -74,7 +78,7 @@ export function SettingsCluster({
           <p className="m-0 text-sm text-fg-muted">{description}</p>
         )}
       </div>
-      {children}
+      <SettingsHeadingLevelContext.Provider value={3}>{children}</SettingsHeadingLevelContext.Provider>
     </section>
   );
 }

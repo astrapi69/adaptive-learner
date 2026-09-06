@@ -76,7 +76,8 @@ fait glisser latéralement. La barre reflète l'adresse :
 `motivation`), et un clic sur une puce met l'adresse à jour sans ajouter
 d'entrée à l'historique. Changer d'onglet abandonne la section. Une zone
 non affichée (la lecture à voix haute dans un navigateur sans Web Speech)
-n'a pas de puce, et un identifiant inconnu est ignoré.
+n'a pas de puce, et un identifiant inconnu est ignoré. Pendant le
+défilement, la puce mise en évidence suit la zone affichée à l'écran.
 
 ### Bases
 

@@ -289,6 +289,7 @@ opens the tab scrolled to *After the lesson* (ids: `basics`, `lessons`,
 without adding a history entry. Switching to another tab drops the
 section again. An area that is not rendered (the voice area in a browser
 without Web Speech) has no chip, and an unknown section is ignored.
+While you scroll, the highlighted chip follows the area on screen.
 
 ### Basics
 
