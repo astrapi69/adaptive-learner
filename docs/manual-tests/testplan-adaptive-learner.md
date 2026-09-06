@@ -1676,6 +1676,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       **Regression:** Diktat + Bildbeschreibung funktionieren unverändert,
       insbesondere bleibt deren "→ Freitext"-Konvertierung sichtbar (nur bei
       Sprechen & Aufnehmen fehlt sie, by design)
+- [ ] **Tastatur-Pre-Reveal (#3002, nur Touch-Geräte):** in einer Lektion
+      ein Freitext- oder Lückentext-Feld antippen, das in der UNTEREN
+      Bildschirmhälfte sitzt. Beim Fokussieren scrollt die Seite das Feld
+      SOFORT ins obere Drittel (eigener App-Scroll, kein Sprung des ganzen
+      Layouts), die Tastatur öffnet darunter, das Feld bleibt sichtbar.
+      Danach: andere Elemente antippen, während das Feld fokussiert ist -
+      die Tipps landen auf dem sichtbaren Ziel (kein 1-2-Zeilen-Versatz,
+      das ist der #1569-Kern). Ein Feld, das schon OBEN sitzt, wird beim
+      Fokussieren NICHT bewegt; Checkboxen/Radios/Dropdowns lösen keinen
+      Scroll aus. Desktop (Maus): kein Scroll beim Fokussieren
 - [ ] **Aktualisierungs-Badge in der Kopfzeile (#2904):** ein installiertes
       Content-Set hat eine neuere Version (z. B. im Content-Browser bei einem
       Set "Aktualisierung verfügbar" antippen ODER die Set-Manifest-Version

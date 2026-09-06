@@ -78,6 +78,13 @@ Versatz-Kanäle ab etwa einer Zeilenhöhe) mit `t=` und vollem Zustand.
 Damit ist auch sichtbar, was ZWISCHEN den Tipps passiert ist - der
 Versatz entsteht genau dort.
 
+Darunter steht die Sektion `hook (newest first)`: die Entscheidungen der
+App-eigenen Gegenmaßnahmen. `decision=reset` heißt, der Realign-Hook hat
+einen Phantom-Scroll zurückgesetzt; `hold:focus`/`hold:kbd`/`hold:zoom`
+heißt, ein fälliger Reset wurde absichtlich zurückgehalten;
+`prereveal` heißt, ein fokussiertes Feld wurde vor dem Tastatur-Öffnen
+in den sichtbaren Bereich gescrollt (mit `delta=` Pixeln).
+
 Die Karte sammelt automatisch die letzten 8 Tipps (im Textfeld unten, neueste
 zuerst). Tipps auf die Karte selbst (den Kopier-Knopf, das Textfeld) zählen
 nicht mit, verfälschen die Messung also nicht.
