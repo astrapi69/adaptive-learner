@@ -1669,9 +1669,11 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       im Test-Repo erhöhen). Neu laden/App neu öffnen: **ohne** `/content`
       zu besuchen erscheint in der Kopfzeile neben dem Wiederholungs-Badge
       ein **Aktualisierungs-Badge** ("N Aktualisierungen") mit Link zu
-      `/content`. Klick → landet auf `/content`, das betroffene Set zeigt
-      dort **"Aktualisierung verfügbar"** in der Zeile (deckungsgleich mit
-      dem Badge-Wert). **Nach dem Anwenden (#2985):** die Aktualisierung(en)
+      `/content?tab=my`. Klick → landet auf dem Tab **Meine Inhalte**
+      (#2998: unabhängig von der in Einstellungen → Allgemein konfigurierten
+      Tab-Reihenfolge, auch wenn Importieren oder Entdecken vorne steht),
+      das betroffene Set zeigt dort **"Aktualisierung verfügbar"** in der
+      Zeile (deckungsgleich mit dem Badge-Wert). **Nach dem Anwenden (#2985):** die Aktualisierung(en)
       auf `/content` durchführen (oder die Repo-Quelle synchronisieren) →
       der Badge-Zähler sinkt **sofort ohne Neuladen**; sind alle Updates
       angewendet, verschwindet das Badge (zurückgehaltene Breaking-Updates

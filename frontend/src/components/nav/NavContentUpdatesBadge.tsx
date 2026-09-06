@@ -8,6 +8,10 @@
  *
  * Renders nothing while nothing has an update, so it never adds header
  * clutter on a fresh install or a fully up-to-date library.
+ *
+ * The link deep-links to the "My content" tab (``?tab=my``, #2998): the
+ * per-row "Update available" markers render only there, and a bare
+ * ``/content`` opens whichever tab the learner configured first (#1378).
  */
 
 import { RefreshCw } from "lucide-react";
@@ -55,7 +59,7 @@ export default function NavContentUpdatesBadge() {
   );
   return (
     <NavLink
-      to="/content"
+      to="/content?tab=my"
       className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/15 px-2 py-0.5 text-xs font-medium text-accent"
       data-testid="nav-content-updates-badge"
       title={t("content.updates_badge_tooltip", "Content updates available")}

@@ -43,7 +43,10 @@ describe("NavContentUpdatesBadge", () => {
         ).not.toBeInTheDocument();
     });
 
-    it("shows the count and links to /content when updates exist", async () => {
+    it("shows the count and deep-links to the My-content tab when updates exist", async () => {
+        // Repro: the badge linked to bare /content, which opens the FIRST
+        // configured tab (#1378) - Importieren for the reporter, Entdecken
+        // by default. The update rows only render under Meine Inhalte.
         getContentUpdateCountMock.mockResolvedValueOnce(3);
         render(
             <MemoryRouter>
@@ -52,7 +55,7 @@ describe("NavContentUpdatesBadge", () => {
         );
         const badge = await screen.findByTestId("nav-content-updates-badge");
         expect(badge).toHaveTextContent("3");
-        expect(badge).toHaveAttribute("href", "/content");
+        expect(badge).toHaveAttribute("href", "/content?tab=my");
     });
 
     it("refreshes when the content-updates-changed event fires (#2985)", async () => {
