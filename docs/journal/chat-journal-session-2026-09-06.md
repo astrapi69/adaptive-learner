@@ -193,6 +193,13 @@ Container) auf dem vorgegebenen Branch
 - Innerhalb der Spielmodus-Karte tragen die drei Detail-Blöcke weiter
   `<h3>`; mit dem Kartentitel als `<h3>` ist das eine flache Stufe. Ein
   `<h4>` dort wäre ein eigener, kleiner Folge-Schritt (nicht im Issue).
+- Ordner-Watcher: `hooks/settings` ist bei 15 flachen Dateien gedeckelt;
+  die zwei Scroll-Hooks liegen deshalb in `hooks/ui` (neben
+  `useScrollDirection`), nicht bei den Settings-Hooks.
+- Visual-Baseline-Sync: zwei Labels in einem API-Aufruf setzen feuert
+  zwei `labeled`-Events; der Lauf für `refresh-visual-baselines` wurde von
+  der Concurrency-Gruppe gecancelt, der für `ui` übersprungen. Das Label
+  darum immer allein und nach dem letzten Push setzen.
 - Konservativ angenommen: `?section=` schreibt der Scroll-Spy nie in die
   Adresse (nur Chip-Klick und Deep-Link), damit Scrollen keinen
   replace-state-Sturm erzeugt.
