@@ -299,9 +299,9 @@ claude/explanation-field-brainstorm-wpkafg.
   - Issues: adaptive-learner #2991 (Rendering), #2992 (KI-Generierung
     und Editor, Phase 2), learn-content-engine #147 (Autorenrichtlinie).
   - Engine: Abschnitt "Writing a good explanation" in
-    `docs/lesson-format.md` (Regel, Wort für Wort, Beispiele, typischer
+    `docs/lesson-format.md` (Regel, Wort für Wort, Beispiele, typischer <!-- doc-ref-exempt: Pfad im Engine-Repo learn-content-engine -->
     Fehler, Budget, Übungstypen, Wiederholung, Domänen), CHANGELOG
-    Unreleased; `make prose-check` grün; PR learn-content-engine#148.
+    Unreleased; `make prose-check` grün; PR learn-content-engine#148. <!-- doc-ref-exempt: Make-Target im Engine-Repo -->
   - App: `ExerciseExplanation` (feedback/), EINMAL in der
     `ExerciseDispatcher`-Shell gemountet (alle Renderer inklusive
     Extensions, alle Flächen); aufgeklappt nach falscher Antwort,
