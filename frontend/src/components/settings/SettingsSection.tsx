@@ -27,7 +27,10 @@
  * The title's heading level is `<h2>` on its own, `<h3>` inside a
  * `SettingsCluster` (read from `SettingsHeadingLevelContext`, #2966) and
  * whatever an explicit `headingLevel` prop says; the classname contract
- * above is the same at every level.
+ * above is the same at every level. The card also reads
+ * `--settings-anchor-offset` into its `scroll-margin-top` (0 where the
+ * panel does not set it), so a `scrollIntoView` on a card under the
+ * Learning tab's sticky section bar (#2961) lands below the bar.
  */
 import { forwardRef, useContext } from "react";
 import type { ComponentPropsWithoutRef, ReactNode, CSSProperties } from "react";
@@ -68,9 +71,8 @@ export const SettingsSection = forwardRef<HTMLElement, SettingsSectionProps>(
   ) {
     const contextLevel = useContext(SettingsHeadingLevelContext);
     const Heading = (headingLevel ?? contextLevel) === 3 ? "h3" : "h2";
-    const sectionClassName = className
-      ? `settings-section ${className}`
-      : "settings-section";
+    const baseClassName = "settings-section scroll-mt-[var(--settings-anchor-offset,0px)]";
+    const sectionClassName = className ? `${baseClassName} ${className}` : baseClassName;
     const titleClass = titleClassName
       ? `settings-section-title ${titleClassName}`
       : "settings-section-title";

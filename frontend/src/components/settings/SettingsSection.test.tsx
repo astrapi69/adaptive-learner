@@ -15,6 +15,8 @@ describe("SettingsSection", () => {
     const section = screen.getByTestId("settings-section-profile");
     expect(section.tagName).toBe("SECTION");
     expect(section).toHaveClass("settings-section");
+    // #2961 - clears the Learning tab's sticky section bar on scrollIntoView.
+    expect(section).toHaveClass("scroll-mt-[var(--settings-anchor-offset,0px)]");
     expect(screen.getByRole("heading", { level: 2, name: "Profile" })).toHaveClass(
       "settings-section-title",
     );
