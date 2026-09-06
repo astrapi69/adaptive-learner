@@ -7,7 +7,7 @@ import SettingsSidebar from "../../components/settings/SettingsSidebar";
 import SettingsMobileMenu from "../../components/settings/SettingsMobileMenu";
 import type { SidebarGroup } from "../../lib/settings/sidebar-model";
 import { LEARNING_SECTION_PARAM } from "../../lib/settings/learning-sections";
-import { useDeferredScroll } from "../../hooks/settings/useDeferredScroll";
+import { useDeferredScroll } from "../../hooks/ui/useDeferredScroll";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { readLearnerState } from "../../lib/learning/learnerState";
 import { subscribeSettingsRefresh } from "../../lib/settings/settings-refresh-bus";

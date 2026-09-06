@@ -24,8 +24,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { useDeferredScroll } from "../../../../hooks/settings/useDeferredScroll";
-import { useScrollSpy } from "../../../../hooks/settings/useScrollSpy";
+import { useDeferredScroll } from "../../../../hooks/ui/useDeferredScroll";
+import { useScrollSpy } from "../../../../hooks/ui/useScrollSpy";
 import { prefersReducedMotion } from "../../../../lib/feedback/feedbackPref";
 import {
   LEARNING_SECTIONS,
