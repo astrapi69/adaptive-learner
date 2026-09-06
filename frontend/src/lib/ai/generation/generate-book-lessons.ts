@@ -103,6 +103,9 @@ export interface BookGenerationOptions {
     /** #2510 — the exercise types the user selected for the assistant. When
      *  present, only these types are requested + kept. Absent -> full mix. */
     types?: readonly string[];
+    /** #2992 - ask for a post-answer ``explanation`` per qualifying exercise
+     *  (opt-in, off by default: more output tokens). */
+    explanations?: boolean;
 }
 
 /**
@@ -137,6 +140,7 @@ export async function generateBookLessonContent(
         hasAssets: options.hasAssets ?? false,
         // #2510 — restrict to the user's selected types when given.
         types: options.types,
+        explanations: options.explanations,
     });
     const {exercises} = cardsToExercises(generated.cards, {
         clozePrompt: options.clozePrompt,

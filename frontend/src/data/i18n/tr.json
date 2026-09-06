@@ -3261,6 +3261,8 @@
         "unavailable_reason": "Görseller ve ses metinden oluşturulamaz. Bu türleri daha sonra düzenleyicide ekleyebilirsin.",
         "floor_hint": "En az bir alıştırma türü seçili kalmalıdır."
       },
+      "explanations_label": "Açıklama üret (cevaptan sonra gösterilir)",
+      "explanations_hint": "Her alıştırmaya bir kural, kelimesi kelimesine çeviri ve ek örnekler ekler. Alıştırma başına yaklaşık üçte bir ila yarı oranında daha fazla yapay zeka çıktısı.",
       "generate_to_advance": "Devam etmek için dersi metninizden üretin.",
       "review_theory": "{n} teori adımı",
       "review_exercises": "{n} alıştırma",
@@ -3454,7 +3456,13 @@
         "err_free_text": "En az bir kabul edilen yanıt ekleyin.",
         "err_cloze": "Her ___ işareti bir boşluk gerektirir ve her boşluk bir yanıt gerektirir.",
         "err_word_tiles": "En az 2 kart ekleyin.",
-        "err_picture_choice": "Her biri etiket ve görsel içeren en az 2 görsel ekleyin ve tam olarak birini doğru olarak işaretleyin."
+        "err_picture_choice": "Her biri etiket ve görsel içeren en az 2 görsel ekleyin ve tam olarak birini doğru olarak işaretleyin.",
+        "err_explanation": "Açıklama çok uzun (en fazla 2000 karakter).",
+        "explanation_label": "Cevaptan sonra açıklama (isteğe bağlı, Markdown)",
+        "explanation_hint": "Cevaptan sonra gösterilir: kural, kelimesi kelimesine, ek örnekler, tipik hata.",
+        "explanation_counter": "{n} / {max} karakter",
+        "explanation_template": "Şablon ekle",
+        "explanation_template_body": "**Kural:** \n\n**Kelimesi kelimesine:**\n- *kelime* - birebir anlam (dil bilgisi notu)\n\n**Ek örnekler:**\n- *cümle* - çeviri\n\n**Tipik hata:** "
       },
       "dir": {
         "auto": "Otomatik",
@@ -3489,6 +3497,7 @@
         "err_reading_comprehension": "Bir metin ve en az bir tam soru ekleyin (doğru seçeneği olan çoktan seçmeli veya kabul edilen yanıtı olan serbest metin).",
         "err_graded_quiz": "Pozitif puanlı en az bir tam soru ekleyin (doğru seçeneği olan çoktan seçmeli veya kabul edilen yanıtı olan serbest metin).",
         "err_dictation": "Bir ses dosyası yolu ve en az bir kabul edilen transkripsiyon ekleyin.",
+        "err_explanation": "Açıklama çok uzun (en fazla 2000 karakter).",
         "dict_audio_label": "Audio",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "Setin assets klasöründeki ses klibine giden göreli yol.",

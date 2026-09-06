@@ -580,3 +580,25 @@ describe("validateExtensionExercise — speak_and_record (reuses payload validat
         expect(res.code).toBe("speak_and_record");
     });
 });
+
+describe("explanation on the extension editor (#2992)", () => {
+    it("rejects an over-long explanation with the explanation code", () => {
+        const ex = sar({sentence: "Guten Tag"});
+        const res = validateExtensionExercise({
+            ...ex,
+            explanation: "x".repeat(2001),
+        });
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("explanation");
+    });
+
+    it("trims a kept explanation and drops a blank one on normalize", () => {
+        const ex = sar({sentence: "Guten Tag"});
+        expect(
+            normalizeExtensionExercise({...ex, explanation: " **Regel:** x "}).explanation,
+        ).toBe("**Regel:** x");
+        expect(
+            "explanation" in normalizeExtensionExercise({...ex, explanation: "  "}),
+        ).toBe(false);
+    });
+});

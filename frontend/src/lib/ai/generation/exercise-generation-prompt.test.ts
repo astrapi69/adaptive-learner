@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   ALLOWED_EXERCISE_TYPES,
+  EXPLANATION_CORE_TYPES,
+  EXPLANATION_PROMPT_BUDGET,
   buildExerciseGenerationPrompt,
   detectLanguageHint,
   recommendedCardCount,
@@ -250,5 +252,61 @@ describe("buildExerciseGenerationPrompt — regeneration (AIX-05)", () => {
     expect(prompt).toContain("Do NOT repeat");
     expect(prompt).toContain("What is X?");
     expect(prompt).toContain("Define Y.");
+  });
+});
+
+describe("buildExerciseGenerationPrompt — opt-in explanations (#2992)", () => {
+  it("carries NO explanation instruction by default (opt-in, token cost)", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).not.toMatch(/EXPLANATIONS/);
+    expect(prompt).not.toContain('"explanation"');
+  });
+
+  it("asks for the convention (rule, word for word, examples, mistake) when opted in", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, { explanations: true });
+    expect(prompt).toMatch(/EXPLANATIONS \(optional field "explanation"/);
+    expect(prompt).toMatch(/\*\*Rule:\*\*/);
+    expect(prompt).toMatch(/\*\*Word for word:\*\*/);
+    expect(prompt).toMatch(/\*\*Further examples:\*\*/);
+    expect(prompt).toMatch(/\*\*Typical mistake:\*\*/);
+    expect(prompt).toMatch(/shown AFTER the learner answers/);
+    // The worked example JSON carries the field on the cloze card.
+    expect(prompt).toContain('"explanation": "**Rule:**');
+  });
+
+  it("names only the qualifying types, never matching or picture_choice", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, { explanations: true });
+    const line = prompt.split("\n").find((l) => /^- Give every /.test(l)) ?? "";
+    for (const type of EXPLANATION_CORE_TYPES) expect(line).toContain(type);
+    expect(line).toContain("ext:al-error-correction");
+    expect(line).not.toContain("matching");
+    expect(line).not.toContain("picture_choice");
+    expect(prompt).toMatch(/Do NOT add\n {2}one to matching or picture_choice/);
+  });
+
+  it("respects the user's type allow-list: a deselected type is not named", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, {
+      explanations: true,
+      types: ["cloze", "matching"],
+    });
+    const line = prompt.split("\n").find((l) => /^- Give every /.test(l)) ?? "";
+    expect(line).toContain("cloze");
+    expect(line).not.toContain("word_tiles");
+    expect(line).not.toContain("ext:al-error-correction");
+  });
+
+  it("emits no block at all when no offered type qualifies (matching only)", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, {
+      explanations: true,
+      types: ["matching"],
+    });
+    expect(prompt).not.toMatch(/EXPLANATIONS/);
+    expect(prompt).not.toContain('"explanation"');
+  });
+
+  it("names the soft budget below the schema cap", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS, { explanations: true });
+    expect(prompt).toContain(`under ${EXPLANATION_PROMPT_BUDGET} characters`);
+    expect(EXPLANATION_PROMPT_BUDGET).toBeLessThan(2000);
   });
 });

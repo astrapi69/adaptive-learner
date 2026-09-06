@@ -213,6 +213,75 @@ async function gotoExerciseExplanation(page: Page): Promise<boolean> {
 }
 
 /**
+ * Opt-in explanations in the book-text assistant (#2992): the Create-Lesson
+ * book-text step with the "Generate explanations" checkbox ticked, pinned
+ * to the checkbox row right below the exercise-type selector.
+ */
+async function gotoBookExplanationsOptIn(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/create-lesson");
+    await expect(page.getByTestId("create-lesson-page")).toBeVisible({
+        timeout: 20_000,
+    });
+    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+        await page.getByTestId("create-lesson-draft-fresh").click();
+    }
+    await page.getByTestId("create-lesson-title").fill("Adjektivstellung");
+    await page.getByTestId("create-lesson-templates-toggle").click();
+    await page.getByTestId("template-knowledge-from-text").click();
+    await expect(page.getByTestId("create-lesson-book-step")).toBeVisible({
+        timeout: 20_000,
+    });
+    await page.getByTestId("book-explanations").check();
+    await expect(page.getByTestId("book-explanations")).toBeChecked();
+    return true;
+}
+
+/**
+ * The explanation field in the inline exercise editor (#2992): builds a
+ * four-card lesson, generates the exercises, opens the first row's editor
+ * and pastes the convention template, so the Markdown textarea, the counter
+ * and the (now consumed) template action are on screen.
+ */
+async function gotoExerciseEditorExplanation(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/create-lesson");
+    await expect(page.getByTestId("create-lesson-page")).toBeVisible({
+        timeout: 20_000,
+    });
+    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+        await page.getByTestId("create-lesson-draft-fresh").click();
+    }
+    await page.getByTestId("create-lesson-title").fill("Adjektivstellung");
+    await page.getByTestId("create-lesson-next").click();
+    const cards = [
+        {front: "el coche rojo", back: "das rote Auto"},
+        {front: "la casa blanca", back: "das weisse Haus"},
+        {front: "un libro interesante", back: "ein interessantes Buch"},
+        {front: "una ciudad grande", back: "eine grosse Stadt"},
+    ];
+    for (const card of cards) {
+        await page.getByTestId("card-front-input").fill(card.front);
+        await page.getByTestId("card-back-input").fill(card.back);
+        await page.getByTestId("card-add-button").click();
+    }
+    await page.getByTestId("create-lesson-next").click();
+    await expect(page.getByTestId("create-lesson-step-3")).toBeVisible();
+    await page.getByTestId("exercise-generate").click();
+    await expect(page.getByTestId("exercise-list")).toBeVisible();
+    const row = page.locator('[data-testid^="exercise-row-"]').first();
+    await expect(row).toBeVisible();
+    await row.locator('[data-testid^="exercise-edit-"]').first().click();
+    const template = page.locator('[data-testid$="-explanation-template"]').first();
+    await expect(template).toBeVisible({timeout: 10_000});
+    await template.click();
+    await expect(page.locator('[data-testid$="-explanation"]').first()).toHaveValue(
+        /Regel|Rule/,
+    );
+    return true;
+}
+
+/**
  * Advance the open lesson to the first matching exercise (unsolved).
  * Returns false when the bundled lesson has no matching step.
  */
@@ -851,6 +920,9 @@ const FEATURES: FeatureShot[] = [
 
     // --- Post-answer explanation (#2991) --------------------------------
     {path: "exercise-explanation/falsche-antwort", setup: gotoExerciseExplanation, pinTo: "exercise-explanation"},
+    // --- Explanation authoring: assistant opt-in + editor field (#2992) --
+    {path: "create-lesson/erklaerungen-opt-in", setup: gotoBookExplanationsOptIn, pinTo: "book-explanations-field"},
+    {path: "exercise-explanation/editor-feld", setup: gotoExerciseEditorExplanation, pinTo: "create-lesson-step-3"},
 
     // --- GitHub export (desktop dialog) ---------------------------------
     {path: "github-export/share-dialog", setup: gotoGithubExport, desktopOnly: true},

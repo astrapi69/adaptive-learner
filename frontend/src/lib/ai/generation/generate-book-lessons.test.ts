@@ -172,6 +172,25 @@ describe("generateBookLessonContent — asset gate (#2356)", () => {
         expect(seenOptions).toHaveLength(1);
         expect(seenOptions[0]?.hasAssets).toBe(false);
     });
+
+    it("forwards the explanations opt-in to the exercise generator (#2992)", async () => {
+        const seenOptions: (GenerateExercisesOptions | undefined)[] = [];
+        const generate = async (
+            _steps: TheoryStep[],
+            _provider: AiProvider,
+            options?: GenerateExercisesOptions,
+        ): Promise<ExerciseGenerationResult> => {
+            seenOptions.push(options);
+            return exercisesOk();
+        };
+        await generateBookLessonContent(
+            "some book prose",
+            PROVIDER,
+            {...OPTS, explanations: true},
+            {generateTheory: theoryOk("Reize"), generate},
+        );
+        expect(seenOptions[0]?.explanations).toBe(true);
+    });
 });
 
 describe("generateBookLessonsBatch — set-wide type coverage (#2356)", () => {
