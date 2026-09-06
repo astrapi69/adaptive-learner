@@ -2684,17 +2684,22 @@ content:
   action:
     refresh: "更新"
     refreshing: "更新中…"
+    refresh_hint: "リストを再読み込みし、利用可能なすべての更新を適用"
     download: "ダウンロード"
     update: "更新"
     installed: "インストール済み"
     open: "開く"
   toast:
     downloaded: "セットをダウンロードし、使用準備が整いました。"
+    updated_all: "{n} 件のセットを更新しました。"
+    updates_held: "{n} 件の更新は学習の進捗に影響するため保留されました。各セットの「更新」ボタンで個別に確認してください。"
+    all_up_to_date: "すべてのセットは最新です。"
   warning:
     no_lessons_in_set: "このセットにはまだレッスンがありません。"
   error:
     list_failed: "コンテンツセットを読み込めませんでした。"
     download_failed: "セットをダウンロードできませんでした。"
+    update_all_failed: "{n} 件の更新に失敗しました。"
     open_failed: "レッスンを開けませんでした。"
   tree:
     i_speak: 使用言語

@@ -84,7 +84,9 @@ export default function ImportActionsPanel() {
   const combine = useCombineLessons({
     userSets,
     fetchSetLessons: actions.fetchSetLessons,
-    reload: loadSets,
+    reload: async () => {
+      await loadSets();
+    },
   });
 
   return (

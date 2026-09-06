@@ -2906,13 +2906,17 @@
     "action": {
       "refresh": "Refresh",
       "refreshing": "Refreshing…",
+      "refresh_hint": "Reload the list and apply all available updates",
       "download": "Download",
       "update": "Update",
       "installed": "Installed",
       "open": "Open"
     },
     "toast": {
-      "downloaded": "Set downloaded and ready to use."
+      "downloaded": "Set downloaded and ready to use.",
+      "updated_all": "{n} sets updated.",
+      "updates_held": "{n} updates were held back because they would affect your progress. Confirm each one with its Update button.",
+      "all_up_to_date": "All sets are up to date."
     },
     "warning": {
       "no_lessons_in_set": "This set has no lessons yet."
@@ -2920,6 +2924,7 @@
     "error": {
       "list_failed": "Could not load content sets.",
       "download_failed": "Could not download the set.",
+      "update_all_failed": "{n} updates failed.",
       "open_failed": "Could not open the lesson."
     },
     "tree": {

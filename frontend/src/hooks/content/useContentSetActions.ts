@@ -56,6 +56,7 @@ import { migrateSetExerciseIds } from "../../lib/content/update/stable-id-migrat
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
 import { useEditAsCopy } from "./useEditAsCopy";
+import { useUpdateAllSets } from "./useUpdateAllSets";
 import { useI18n } from "../ui/useI18n";
 import { notify } from "../../utils/notify";
 
@@ -766,7 +767,14 @@ export function useContentSetActions({
     }
   };
 
-  const applyDownload = async (entry: ContentSetEntry, retiredIds: readonly string[] = []) => {
+  /** Download/update one set. ``quiet`` suppresses the per-set toasts so a
+   *  bulk caller (#3001) can report one summary instead; returns whether
+   *  the download succeeded. */
+  const applyDownload = async (
+    entry: ContentSetEntry,
+    retiredIds: readonly string[] = [],
+    quiet = false,
+  ): Promise<boolean> => {
     const key = setKey(entry);
     setPerSetState((prev) => ({ ...prev, [key]: "downloading" }));
     try {
@@ -799,17 +807,26 @@ export function useContentSetActions({
       // footer's action button when the user opens the set right away
       // (fully covering it in landscape); passThrough keeps the button
       // tappable for the toast's whole lifetime.
-      notify.success(
-        t("content.toast.downloaded", "Set downloaded and ready to use."),
-        { passThrough: true },
-      );
+      if (!quiet) {
+        notify.success(
+          t("content.toast.downloaded", "Set downloaded and ready to use."),
+          { passThrough: true },
+        );
+      }
+      return true;
     } catch (err) {
       setPerSetState((prev) => ({ ...prev, [key]: "error" }));
-      notify.error(t("content.error.download_failed", "Could not download the set."), {
-        apiError: err instanceof Error ? undefined : undefined,
-      });
+      if (!quiet) {
+        notify.error(t("content.error.download_failed", "Could not download the set."), {
+          apiError: err instanceof Error ? undefined : undefined,
+        });
+      }
+      return false;
     }
   };
+
+  // #3001 — header "Aktualisieren": apply every pending update in bulk.
+  const { updatingAll, handleUpdateAll } = useUpdateAllSets({ applyDownload });
 
   // #2128 — the learner confirmed a held update: apply it now.
   // #2308 — ``carryOver`` re-keys the rows the plan could assign with
@@ -857,6 +874,9 @@ export function useContentSetActions({
   const dismissUpdateGuard = () => setUpdateGuard(null);
 
   return {
+    // #3001 — header "Aktualisieren": apply every pending update.
+    updatingAll,
+    handleUpdateAll,
     // #2128 — held breaking-update confirmation.
     updateGuard,
     confirmUpdate,

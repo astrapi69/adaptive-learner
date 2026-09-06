@@ -469,3 +469,63 @@ develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
 - Keine neue Lektion in `.claude/rules`: der Fall ist eine Instanz des
   bestehenden Gate-Vertrags Punkt 4 (quality-checks.md, "reportiert, was
   es gemessen hat"); der neue Test setzt genau das um.
+
+## E. Meine Inhalte: Kopfzeilen-"Aktualisieren" wendet alle Updates an (#3001, Branch claude/button-update-top-bar-k1ogua)
+
+### 1. Frage und Befund (17:10)
+
+- Original prompt: "Wenn ich den Button klicke, werden dann automatisch
+  aktualisiert? Und wenn ja, sollte sich der Button in der oberen Leiste
+  updaten?" Dann: "Da gibt es einen Button Aktualisieren, wenn der
+  gedrückt wird, sollen alle aktualisiert werden."
+- Optimierter Prompt: "Was tut der Kopfzeilen-Knopf 'Aktualisieren' auf
+  Meine Inhalte heute, und warum senkt er das Header-Badge nicht?"
+- Ziel: den Weg vom Header-Badge (#2904) bis zum angewendeten Update
+  verstehen und die Lücke schließen.
+- Ergebnis: Das Badge ist ein reiner Link (`/content?tab=my`, #2998).
+  Der Kopfzeilen-Knopf `content-refresh` rief nur `listSets()` neu auf
+  (englisch "Refresh"); das Anwenden hing ausschließlich am Zeilen-Knopf
+  pro Set. Beide tragen im Deutschen dasselbe Label "Aktualisieren"
+  (`content.action.refresh` und `content.action.update`), der
+  Kopfzeilen-Knopf versprach also genau das, was nur der Zeilen-Knopf tat.
+  Die Fixes #2986 und #2999 liegen ausserdem noch nicht auf `main`, der
+  GitHub-Pages-Build zeigt bis zum nächsten Release das alte Verhalten.
+  Issue #3001 angelegt.
+
+### 2. Umsetzung (TDD)
+
+- RED: `useContentSetActions.update-all.test.ts` (5 Tests: alle
+  ausstehenden Sets, Breaking-Update wird übersprungen und gemeldet,
+  Fehler gezählt, nichts ausstehend, `updatingAll`-Flag),
+  `useContentSetsData.test.tsx` (+2: `handleRefresh` liefert die frische
+  Liste bzw. null), `Content.refresh-updates.test.tsx` (+2: Klick lädt
+  neu und lädt das ausstehende Set, Knopf bleibt bis zum Ende
+  deaktiviert). 9 rot, 7 Bestandstests grün.
+- GREEN: `loadSets`/`handleRefresh` geben die sichtbare Liste zurück;
+  `applyDownload` bekommt `quiet` und liefert `boolean`; neuer Hook
+  `useUpdateAllSets` (sequenziell, #2128-Guard: Breaking wird NICHT im
+  Bulk angewendet, ein Sammel-Toast pro Ergebnisklasse); `Content.tsx`
+  verkettet Neuladen und Bulk-Update, der Knopf ist während des Laufs
+  deaktiviert; Tooltip `content.action.refresh_hint`.
+  `ImportActionsPanel` wrappt `loadSets` für die `Promise<void>`-Prop.
+- Fünf i18n-Schlüssel in allen 11 Katalogen, `make sync-i18n`,
+  `test_i18n_parity.py` 51 grün, `verify-i18n-scripts` sauber.
+- Dateigrößen-Ratchet schlug an (`useContentSetActions.ts` 913 -> 987
+  Zeilen): Bulk-Logik in `useUpdateAllSets.ts` ausgelagert statt
+  Whitelist.
+- Testplan DE + EN am #2904-Eintrag ergänzt.
+- Commit: siehe PR.
+
+### Fragen und Annahmen
+
+- Bewusst KEIN "Alle aktualisieren" als zweiter Knopf: der Nutzer hat den
+  bestehenden Kopfzeilen-Knopf gemeint, und das deutsche Label
+  verspricht das Anwenden bereits. Wer nur die Liste neu laden will,
+  bekommt das weiterhin (ohne ausstehende Updates: Toast "Alle Sets sind
+  aktuell.").
+- Breaking-Updates im Bulk: übersprungen plus Hinweis-Toast, nicht der
+  Guard-Dialog in Serie. Der Guard hält genau ein Ziel; eine Warteschlange
+  wäre ein eigenes Design (#2128 bleibt die Einzelbestätigung).
+- Ein fehlgeschlagener Peek (`assessSetUpdate` wirft) gilt wie im
+  manuellen Pfad als "nicht breaking" und wird angewendet (der Nutzer hat
+  den Lauf ausgelöst; nur der stille Auto-Sync hält bei Peek-Fehlern).

@@ -1583,8 +1583,18 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       Click → lands on the **My content** tab (#2998: regardless of the tab
       order configured under Settings → General, even when Import or
       Discover comes first), the affected set shows **"Update available"**
-      in its row (matches the badge's count). **After applying (#2985):** apply
-      the update(s) on `/content` (or sync the repo source) → the badge's
+      in its row (matches the badge's count). **Apply all (#3001):** press
+      the header button **"Refresh"** (`content-refresh`) → the list is
+      reloaded AND every set showing "Update available" is updated one
+      after the other; the button stays disabled until the run is over,
+      then ONE summary toast "N sets updated." (no per-set toast). With
+      nothing pending: toast "All sets are up to date.", no download. A
+      breaking update (#2128, progress affected) is NOT applied by the
+      bulk run: info toast "N updates were held back …", the set keeps
+      "Update available" and is confirmed individually via its row
+      button. **After applying (#2985):** apply
+      the update(s) on `/content` (header button, row button, or sync the
+      repo source) → the badge's
       count drops **immediately, without a reload**; once every update is
       applied the badge disappears (held breaking updates keep counting
       until decided manually - that is correct). **No update available:** the
