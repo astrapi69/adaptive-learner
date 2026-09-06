@@ -48,7 +48,7 @@ import {
 } from "../../../../lib/learning/playful/playfulSoundsPref";
 
 /** localStorage key of the remembered "Game mode details" open state. */
-export const PLAYFUL_DETAILS_OPEN_KEY =
+const PLAYFUL_DETAILS_OPEN_KEY =
     "adaptive-learner.settings.playful_details_open";
 
 export default function PlayfulModeControl() {

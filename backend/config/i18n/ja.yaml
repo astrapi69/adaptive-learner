@@ -4135,3 +4135,7 @@ set_summary:
   lesson_errors: "{count} 件の間違い"
   practice_errors: "間違いを練習"
   back_to_set: "セットに戻る"
+  element_type:
+    vocabulary: "語彙"
+    grammar_rule: "文法ルール"
+    unknown: "不明"

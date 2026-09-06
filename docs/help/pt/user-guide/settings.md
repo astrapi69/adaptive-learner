@@ -287,7 +287,8 @@ rodadas especiais, tickets, lições bônus, XP de sequência e mascote) está
 recolhido e lembra a sua escolha; enquanto **Lições lúdicas** estiver
 desligado, as opções lá dentro ficam esbatidas.
 
-O separador termina com os lembretes. As duas definições de arrumação -
+O separador termina com a **Gamificação** (abaixo de uma linha divisória,
+porque esse cartão contém *Reiniciar progresso*). As duas definições de arrumação -
 *Retenção de aulas pausadas* e *Tamanho máximo de aula* - são definições
 do ciclo de vida dos dados e vivem no separador **Dados** (consulte
 *Arrumação* em Backup).
@@ -295,7 +296,7 @@ do ciclo de vida dos dados e vivem no separador **Dados** (consulte
 A **Visualização de conteúdo** (lista / grelha) e a **Ordem das abas de
 Conteúdo** estão no separador **Geral** em *Aparência*.
 
-## Gamificação
+### Gamificação
 
 Alternâncias para notificações de XP / emblemas / subida de
 nível (desligado silencia as notificações toast mas o sistema

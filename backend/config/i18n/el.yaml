@@ -4137,3 +4137,7 @@ set_summary:
   lesson_errors: "{count} λάθη"
   practice_errors: "Εξάσκηση στα λάθη"
   back_to_set: "Πίσω στο σετ"
+  element_type:
+    vocabulary: "Λεξιλόγιο"
+    grammar_rule: "Κανόνας γραμματικής"
+    unknown: "Άγνωστο"

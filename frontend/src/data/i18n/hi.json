@@ -4512,6 +4512,11 @@
     "no_errors": "कोई गलती दर्ज नहीं - बढ़िया!",
     "lesson_errors": "{count} गलतियाँ",
     "practice_errors": "गलतियों का अभ्यास करें",
-    "back_to_set": "सेट पर वापस"
+    "back_to_set": "सेट पर वापस",
+    "element_type": {
+      "vocabulary": "शब्दावली",
+      "grammar_rule": "व्याकरण नियम",
+      "unknown": "अज्ञात"
+    }
   }
 }

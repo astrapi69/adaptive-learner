@@ -9,11 +9,17 @@
  * imports, no i18n inside (the caller passes translated strings), token-
  * backed Tailwind utilities only. The heading id comes from `useId`, so
  * several clusters on one page never collide; the section's own DOM id is
- * `learning-<id>`, the anchor a `?section=<id>` deep link targets, and
- * `scroll-mt-16` keeps that anchor clear of the sticky page header.
+ * `learning-<id>`, the anchor a `?section=<id>` deep link targets; its
+ * `scroll-margin-top` reads `--settings-anchor-offset` (set by the panel
+ * from the measured sticky chrome, #2961) and falls back to 4rem so the
+ * anchor stays clear of the sticky page header. The group heading is the
+ * `<h2>`; the cards inside read `SettingsHeadingLevelContext` and render
+ * their titles as `<h3>` (#2966), so the outline stays a tree.
  */
 import { useId } from "react";
 import type { ReactNode } from "react";
+
+import { SettingsHeadingLevelContext } from "./settings-heading-level";
 
 export interface SettingsClusterProps {
   /** Anchor slug; the `<section>` gets the DOM id `learning-<id>`. */
@@ -59,7 +65,7 @@ export function SettingsCluster({
       id={`learning-${id}`}
       data-testid={testid}
       aria-labelledby={headingId}
-      className="scroll-mt-16 flex flex-col gap-[var(--space-5)]"
+      className="scroll-mt-[var(--settings-anchor-offset,4rem)] flex flex-col gap-[var(--space-5)]"
     >
       <div className="flex flex-col gap-1">
         <h2
@@ -72,7 +78,7 @@ export function SettingsCluster({
           <p className="m-0 text-sm text-fg-muted">{description}</p>
         )}
       </div>
-      {children}
+      <SettingsHeadingLevelContext.Provider value={3}>{children}</SettingsHeadingLevelContext.Provider>
     </section>
   );
 }

@@ -21,6 +21,10 @@ export type SettingsTab =
   | "diagnostics"
   | "about";
 
+/** The Learning tab's sections (#2961), in tab order; ``voice`` renders only
+ *  with Web Speech support. */
+export type LearningSection = "basics" | "lessons" | "voice" | "review" | "motivation";
+
 /** The panel testid revealed when each tab is active. */
 export const SETTINGS_PANELS: Record<SettingsTab, string> = {
   general: "settings-section-appearance",
@@ -170,6 +174,34 @@ export class SettingsPage {
 
   async goto(tab?: SettingsTab): Promise<void> {
     await this.page.goto(tab ? `/settings?tab=${tab}` : "/settings");
+  }
+
+  // Learning-tab section bar (#2961). Ids: ``LEARNING_SECTION_IDS`` in
+  // ``frontend/src/lib/settings/learning-sections.ts``.
+  get learningSubNav(): Locator {
+    return this.page.getByTestId("settings-subnav");
+  }
+  learningSectionChip(section: LearningSection): Locator {
+    return this.page.getByTestId(`settings-subnav-${section}`);
+  }
+  learningCluster(section: LearningSection): Locator {
+    return this.page.getByTestId(`settings-cluster-${section}`);
+  }
+
+  /** Open Settings > Learning through the ``?section=`` deep link and wait
+   *  until the chip is active and the cluster is on screen. */
+  async gotoLearningSection(section: LearningSection): Promise<void> {
+    await this.page.goto(`/settings?tab=learning&section=${section}`);
+    await expect(this.learningSectionChip(section)).toHaveAttribute("aria-current", "location");
+    await expect(this.learningCluster(section)).toBeVisible();
+  }
+
+  /** Click a section chip and wait for the URL + the cluster. */
+  async openLearningSection(section: LearningSection): Promise<void> {
+    await this.learningSectionChip(section).click();
+    await expect(this.learningSectionChip(section)).toHaveAttribute("aria-current", "location");
+    await expect(this.page).toHaveURL(new RegExp(`[?&]section=${section}(&|$)`));
+    await expect(this.learningCluster(section)).toBeVisible();
   }
 
   /** Click a desktop sidebar tab and wait for its panel. */

@@ -4512,6 +4512,11 @@
     "no_errors": "Kayıtlı hata yok - harika!",
     "lesson_errors": "{count} hata",
     "practice_errors": "Hataları çalış",
-    "back_to_set": "Sete dön"
+    "back_to_set": "Sete dön",
+    "element_type": {
+      "vocabulary": "Kelime bilgisi",
+      "grammar_rule": "Dil bilgisi kuralı",
+      "unknown": "Bilinmeyen"
+    }
   }
 }

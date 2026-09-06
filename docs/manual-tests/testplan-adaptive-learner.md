@@ -963,7 +963,69 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       zählt sofort mit ("6 von 7 Extras an")
 - [ ] Arcade-Hinweisseite (/arcade bei ausgeschalteter Arcade oder
       ausgeschaltetem Spielmodus): der Link in die Einstellungen landet
-      weiterhin auf dem Lernen-Tab
+      auf dem Lernen-Tab im Bereich "Motivation und Routine" (Chip aktiv,
+      Bereich im Bild, siehe #2961)
+
+### Gamification im Bereich "Motivation und Routine" (#2962)
+
+- [ ] Einstellungen > Lernen > "Motivation und Routine": die Karte
+      "Gamification" (XP-Benachrichtigungen, Abzeichen-Benachrichtigungen,
+      "Alle Abzeichen anzeigen", Wochenend-Modus, Tägliches Sessions-Ziel,
+      "Fortschritt zurücksetzen") ist die LETZTE Karte des Tabs, direkt
+      hinter "Erinnerungen", optisch abgesetzt durch eine dickere
+      Trennlinie mit Abstand darüber
+- [ ] Einstellungen > Plugins: nur noch die Karte "Lern-Repository";
+      keine Gamification-Karte mehr
+- [ ] Bereichsleiste, Chip "Motivation und Routine": der Sprung landet
+      auf der Bereichs-Überschrift, die Gamification-Karte gehört zum
+      Bereich (unter derselben Überschrift)
+- [ ] "Alle Abzeichen anzeigen" öffnet weiterhin die Abzeichen-Galerie;
+      "Fortschritt zurücksetzen" fragt weiterhin zweimal nach; der
+      Wochenend-Modus speichert (Reload) - in beiden Speicher-Modi
+- [ ] Handy (375 px): die Karte und die Trennlinie brechen sauber um,
+      nichts scrollt horizontal
+
+### Lernen-Tab: Bereichsleiste + Deep-Link (#2961)
+
+- [ ] Einstellungen > Lernen: über dem ersten Bereich steht eine Zeile
+      mit Chips "Grundlagen", "In der Lektion", "Vorlesen und Diktieren",
+      "Nach der Lektion", "Motivation und Routine" (in dieser Reihenfolge;
+      ohne Web-Speech-Unterstützung fehlt der Chip "Vorlesen und
+      Diktieren"). Ohne Auswahl ist kein Chip hervorgehoben
+- [ ] Chip "Nach der Lektion" anklicken: die Seite scrollt zum Bereich
+      "Nach der Lektion", die Bereichs-Überschrift liegt frei unter der
+      Kopfzeile (Desktop: unter Kopfzeile UND Leiste), der Chip ist
+      hervorgehoben, die Adresse endet auf `?tab=learning&section=review`
+      und der Browser-Zurück-Knopf führt NICHT zum vorherigen Chip zurück
+      (kein neuer Verlaufseintrag)
+- [ ] Desktop (>= 768 px): weiter nach unten scrollen - die Leiste bleibt
+      direkt unter der App-Kopfzeile sichtbar und überdeckt keinen Text.
+      Handy (375 px): die Leiste scrollt mit der Seite weg, die Chip-Zeile
+      lässt sich seitlich wischen, nichts scrollt horizontal auf
+      Seitenebene
+- [ ] Deep-Link `/settings?tab=learning&section=motivation` in einem neuen
+      Tab öffnen: der Lernen-Tab ist offen, der Bereich "Motivation und
+      Routine" im Bild, der Chip hervorgehoben; am Handy ist der aktive
+      Chip in der Zeile sichtbar (die Zeile wurde dorthin gescrollt)
+- [ ] `/settings?tab=learning&section=unsinn` öffnen: der Tab öffnet oben,
+      kein Chip hervorgehoben, kein Fehler
+- [ ] Mit aktivem Bereich in einen anderen Tab wechseln (z. B. Daten): die
+      Adresse trägt nur noch `?tab=data`; zurück auf Lernen: kein Chip
+      hervorgehoben, keine Scrollbewegung
+- [ ] Systemeinstellung "Bewegung reduzieren" aktiv: der Sprung erfolgt
+      ohne Animation (sofort), sonst weich
+- [ ] Ohne Auswahl langsam durch den Tab scrollen (#2966): der
+      hervorgehobene Chip folgt dem Bereich, dessen Überschrift gerade
+      oben im Bild steht (Grundlagen -> In der Lektion -> ... ->
+      Motivation und Routine); nach einem Chip-Klick bleibt der geklickte
+      Chip hervorgehoben, bis der Bereich im Bild ist, und folgt danach
+      wieder dem Scrollen. Die Adresse ändert sich beim Scrollen NICHT
+- [ ] Überschriften-Hierarchie (#2966, Screenreader / Browser-Outline):
+      im Lernen-Tab sind die Bereichs-Überschriften h2 und die
+      Karten-Titel darin h3; auf den anderen Tabs bleiben die Karten-Titel
+      h2
+- [ ] Beide Speicher-Modi (API + Dexie): Leiste und Deep-Link verhalten
+      sich identisch
 
 ### Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der

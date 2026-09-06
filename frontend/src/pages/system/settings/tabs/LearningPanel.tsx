@@ -1,3 +1,7 @@
+import { useRef } from "react";
+import type { CSSProperties } from "react";
+
+import GamificationSettingsSection from "../../../../components/settings/controls/motivation/GamificationSettingsSection";
 import FeedbackIntensityControl from "../../../../components/settings/controls/motivation/FeedbackIntensityControl";
 import DirectionStrategyControl from "../../../../components/settings/controls/lesson/DirectionStrategyControl";
 import MatchingResolveControl from "../../../../components/settings/controls/lesson/MatchingResolveControl";
@@ -16,9 +20,12 @@ import SoundSettingsControl from "../../../../components/settings/controls/motiv
 import VoiceSettingsSection from "../../../../components/voice/VoiceSettingsSection";
 import { SettingsCluster } from "../../../../components/settings/SettingsCluster";
 import { SettingsSection } from "../../../../components/settings/SettingsSection";
+import SettingsSubNav from "../../../../components/settings/SettingsSubNav";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import { isSpeechRecognitionSupported } from "../../../../lib/voice/speech-recognition";
 import { isSpeechSynthesisSupported } from "../../../../lib/voice/speech-synthesis";
+import { useLearningSections } from "./useLearningSections";
+import { useLearningAnchorOffset } from "./useLearningAnchorOffset";
 
 interface LearningPanelProps {
   /** Whether the Learning tab is the active tab (drives ``hidden``). */
@@ -26,7 +33,7 @@ interface LearningPanelProps {
 }
 
 /**
- * Learning tab of the Settings page: 16 cards in five labelled clusters
+ * Learning tab of the Settings page: 17 cards in five labelled clusters
  * (#2956), each a ``SettingsCluster`` landmark, in the FIXED causal order
  * #1459 established (mirroring the #1451 Data-tab principle):
  *
@@ -42,7 +49,10 @@ interface LearningPanelProps {
  * 4. After the lesson: review (which hosts the read-only SRS schedule as
  *    its last block), lesson summary sections, retry errors scope.
  * 5. Motivation and routine: game mode, feedback (intensity + sounds),
- *    daily missions, and the daily reminders LAST.
+ *    daily missions, the daily reminders, and (since #2962, moved in
+ *    from the Plugins tab as the final stage of the #2951 reorganisation)
+ *    the gamification card LAST, behind a separator because it holds the
+ *    destructive Reset progress.
  *
  * The two rare housekeeping cards #1459 parked here (paused-lesson
  * retention, max lesson size) live on the Data tab since #2955. Cluster
@@ -51,6 +61,15 @@ interface LearningPanelProps {
  * when inactive) so deep links and ``data-testid`` assertions keep
  * working.
  *
+ * A section bar above the clusters (#2961, ``SettingsSubNav``) jumps
+ * between them and mirrors ``?tab=learning&section=<id>``: the deep link
+ * scrolls the cluster into view once the panel is visible (the deferred
+ * loop, {@link useLearningSections}), a chip click writes the param with
+ * replace-state, and the Settings shell drops the param on a tab switch.
+ * The bar is sticky on ``md+`` below the app header; the measured offset
+ * of both strips feeds the clusters' ``scroll-margin-top`` through the
+ * ``--settings-anchor-offset`` custom property.
+ *
  * @example
  * <LearningPanel active={activeTab === "learning"} />
  */
@@ -58,6 +77,13 @@ export default function LearningPanel({ active }: LearningPanelProps) {
   const { t } = useI18n();
   const speechSupported =
     isSpeechSynthesisSupported() || isSpeechRecognitionSupported();
+  const subNavRef = useRef<HTMLElement>(null);
+  const { stickyTop, anchorOffset } = useLearningAnchorOffset(subNavRef);
+  const { sections, activeSection, openSection } = useLearningSections({
+    active,
+    speechSupported,
+    topOffset: anchorOffset,
+  });
 
   return (
     <div
@@ -65,7 +91,19 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       role="tabpanel"
       hidden={!active}
       data-testid="settings-panel-learning"
+      style={{ "--settings-anchor-offset": `${anchorOffset}px` } as CSSProperties}
     >
+      <SettingsSubNav
+        ref={subNavRef}
+        items={sections.map((section) => ({
+          id: section.id,
+          label: t(section.labelKey, section.fallback),
+        }))}
+        activeId={activeSection}
+        onSelect={openSection}
+        ariaLabel={t("settings.learning_nav_aria", "Learning sections")}
+        stickyTop={stickyTop}
+      />
       <SettingsCluster
         id="basics"
         testid="settings-cluster-basics"
@@ -142,6 +180,12 @@ export default function LearningPanel({ active }: LearningPanelProps) {
         </SettingsSection>
         <MissionSettingsControl />
         <DailyRemindersControl />
+        <div
+          data-testid="settings-gamification-separator"
+          className="mt-8 border-t-2 border-border pt-8"
+        >
+          <GamificationSettingsSection />
+        </div>
       </SettingsCluster>
     </div>
   );

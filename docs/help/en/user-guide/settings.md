@@ -280,6 +280,17 @@ The **Learning** tab groups its cards into five labelled areas, in the
 order a lesson unfolds. Each area has a small heading and a one-line
 description; the cards inside keep their own titles.
 
+A **section bar** above the areas lists them as chips: click one to jump
+to that area. On a desktop the bar stays visible below the app header
+while you scroll; on a phone it scrolls with the page and the row can be
+swiped sideways. The bar mirrors the address: `/settings?tab=learning&section=review`
+opens the tab scrolled to *After the lesson* (ids: `basics`, `lessons`,
+`voice`, `review`, `motivation`), and a chip click updates the address
+without adding a history entry. Switching to another tab drops the
+section again. An area that is not rendered (the voice area in a browser
+without Web Speech) has no chip, and an unknown section is ignored.
+While you scroll, the highlighted chip follows the area on screen.
+
 ### Basics
 
 Who is learning, and in which languages.
@@ -347,6 +358,8 @@ Game mode, feedback, daily missions and reminders.
 - **Daily Missions** - whether missions run, how many per day, the
   difficulty mix, and a reshuffle of today's missions.
 - **Reminders** - the reminder time and the days it applies to.
+- **Gamification** - XP / badge toasts, weekend mode, the daily session
+  goal and *Reset progress*; the last card, see below.
 
 The game mode card shows the master switch, the game mode sounds and a
 status line counting how many of the extras are on. **Game mode details**
@@ -354,14 +367,15 @@ status line counting how many of the extras are on. **Game mode details**
 XP and mascot) is collapsed and remembers your choice; while **Playful
 lessons** is off, the options inside are greyed out.
 
-The tab ends with the reminders. The two housekeeping settings -
+The tab ends with **Gamification** (below a separator, because that card
+holds *Reset progress*). The two housekeeping settings -
 *Paused lesson retention* and *Maximum lesson size* - are data-lifecycle
 settings and live on the **Data** tab (see *Housekeeping* under Backup).
 
 The **content view** (list / grid) and the **order of the Content-hub
 tabs** are on the **General** tab under *Appearance*.
 
-## Gamification
+### Gamification
 
 Toggles for XP / badge / level-up notifications (off
 silences toasts but the system still records state),

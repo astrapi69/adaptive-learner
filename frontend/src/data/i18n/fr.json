@@ -4512,6 +4512,11 @@
     "no_errors": "Aucune erreur enregistrée - excellent !",
     "lesson_errors": "{count} erreurs",
     "practice_errors": "Travailler les erreurs",
-    "back_to_set": "Retour au set"
+    "back_to_set": "Retour au set",
+    "element_type": {
+      "vocabulary": "Vocabulaire",
+      "grammar_rule": "Règle de grammaire",
+      "unknown": "Inconnu"
+    }
   }
 }
