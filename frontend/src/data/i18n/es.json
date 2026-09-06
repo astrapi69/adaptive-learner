@@ -4507,6 +4507,11 @@
     "no_errors": "Sin errores registrados. ¡Excelente!",
     "lesson_errors": "{count} errores",
     "practice_errors": "Practicar errores",
-    "back_to_set": "Volver al set"
+    "back_to_set": "Volver al set",
+    "element_type": {
+      "vocabulary": "Vocabulario",
+      "grammar_rule": "Regla gramatical",
+      "unknown": "Desconocido"
+    }
   }
 }

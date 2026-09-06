@@ -4141,3 +4141,7 @@ set_summary:
   lesson_errors: "{count} mistakes"
   practice_errors: "Practise mistakes"
   back_to_set: "Back to the set"
+  element_type:
+    vocabulary: "Vocabulary"
+    grammar_rule: "Grammar rule"
+    unknown: "Unknown"

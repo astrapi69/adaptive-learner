@@ -4141,3 +4141,7 @@ set_summary:
   lesson_errors: "오답 {count}개"
   practice_errors: "오답 연습"
   back_to_set: "세트로 돌아가기"
+  element_type:
+    vocabulary: "어휘"
+    grammar_rule: "문법 규칙"
+    unknown: "알 수 없음"
