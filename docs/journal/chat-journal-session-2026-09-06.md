@@ -90,7 +90,7 @@ Container) auf dem vorgegebenen Branch
 - Ergebnis: entfernt `useDirectionStrategy` (nur der Barrel), die Gates
   `playfulHeartsActive`/`playfulCountdownActive` (nur ihre Tests; der
   Lesson-Runner kombiniert `usePlayfulTension` mit `usePlayfulMode`)
-  und `LESSON_MODE_OPTIONS` (kein Konsument, Eintrag in
+  und `LESSON_MODE_OPTIONS` (kein Konsument, Eintrag in <!-- doc-ref-exempt: the removed dead export itself (#2964) -->
   `.dead-code-baseline.json` gebankt). Bewusst behalten: `DEFAULT_*`-
   Konstanten, `playfulComboXpActive`, `refreshApiKeyStatus` (intern
   gelesen). Nicht angefasst, weil außerhalb der Issue-Formulierung
