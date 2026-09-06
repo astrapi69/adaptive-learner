@@ -56,7 +56,7 @@ import { migrateSetExerciseIds } from "../../lib/content/update/stable-id-migrat
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
 import { useEditAsCopy } from "./useEditAsCopy";
-import { useUpdateAllSets } from "./useUpdateAllSets";
+import { useUpdateAllSets } from "./update";
 import { useI18n } from "../ui/useI18n";
 import { notify } from "../../utils/notify";
 

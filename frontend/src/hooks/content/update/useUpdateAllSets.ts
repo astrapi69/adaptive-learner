@@ -20,10 +20,10 @@ import { useState } from "react";
 import {
   assessSetUpdate,
   type SetUpdateAssessment,
-} from "../../lib/content/update/assess-set-update";
-import type { ContentSetEntry } from "../../storage/types";
-import { useI18n } from "../ui/useI18n";
-import { notify } from "../../utils/notify";
+} from "../../../lib/content/update/assess-set-update";
+import type { ContentSetEntry } from "../../../storage/types";
+import { useI18n } from "../../ui/useI18n";
+import { notify } from "../../../utils/notify";
 
 type UpdateOutcome = "applied" | "held" | "failed";
 type OutcomeCounts = Record<UpdateOutcome, number>;

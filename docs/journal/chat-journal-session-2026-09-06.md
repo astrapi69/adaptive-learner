@@ -512,7 +512,12 @@ develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
   `test_i18n_parity.py` 51 grün, `verify-i18n-scripts` sauber.
 - Dateigrößen-Ratchet schlug an (`useContentSetActions.ts` 913 -> 987
   Zeilen): Bulk-Logik in `useUpdateAllSets.ts` ausgelagert statt
-  Whitelist.
+  Whitelist. Der Ordner-Gate (`check-folder-size.sh`, 15 flache Dateien)
+  schlug daraufhin in CI an: die Datei liegt jetzt in
+  `hooks/content/update/` mit Barrel, nach dem Muster von `combine/`.
+- Visual-Baseline-Gate (#1640): Label `visual-baselines-unaffected` mit
+  Begründung im PR-Text (nur ein `title`-Attribut), Nachweis-Lauf von
+  `visual-regression.yml` ohne Baseline-Update auf dem Branch gestartet.
 - Testplan DE + EN am #2904-Eintrag ergänzt.
 - Commit: siehe PR.
 
