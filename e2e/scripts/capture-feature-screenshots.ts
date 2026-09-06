@@ -551,7 +551,11 @@ async function gotoLearningSubNav(page: Page): Promise<boolean> {
     await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
     const chip = page.getByTestId("settings-subnav-review");
     await expect(chip).toHaveAttribute("aria-current", "location", {timeout: 10_000});
-    await expect(page.getByTestId("settings-cluster-review")).toBeVisible({timeout: 10_000});
+    // Let the deep link's deferred smooth scroll ARRIVE before the shot
+    // helper resets the scroll position: an instant pin racing a smooth
+    // scroll that is still in flight lands off by the animation's remainder.
+    await expect(page.getByTestId("settings-cluster-review")).toBeInViewport({timeout: 10_000});
+    await page.waitForTimeout(400);
     return true;
 }
 

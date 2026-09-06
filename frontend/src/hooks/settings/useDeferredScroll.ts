@@ -9,9 +9,12 @@
  * (a section above the target resolving its data and changing height
  * pushes the target back out of view). So: retry across a bounded frame
  * window, re-issuing the scroll until the target is actually in the
- * viewport, then report. ``target`` is opaque to the hook - the caller
- * resolves it to an element each frame through ``findTarget`` (``null``
- * while it does not exist yet).
+ * viewport, then report. A scroll is re-issued only while the target
+ * stands still (its top did not move since the previous frame): a smooth
+ * scroll that is still animating is left alone instead of being restarted
+ * every frame, which would fight the animation. ``target`` is opaque to
+ * the hook - the caller resolves it to an element each frame through
+ * ``findTarget`` (``null`` while it does not exist yet).
  *
  * @example
  * useDeferredScroll({
@@ -42,8 +45,7 @@ export interface DeferredScrollOptions<T> {
   maxFrames?: number;
 }
 
-function isInView(el: Element): boolean {
-  const rect = el.getBoundingClientRect();
+function isInView(rect: DOMRect): boolean {
   return rect.height > 0 && rect.bottom > 0 && rect.top < window.innerHeight;
 }
 
@@ -69,15 +71,19 @@ export function useDeferredScroll<T>({
     if (!active || target === null) return;
     let raf = 0;
     let frame = 0;
+    let lastTop: number | null = null;
     const tick = () => {
       const { findTarget: find, onSettled: settle, block: b, behavior: bh, maxFrames: max } =
         latest.current;
       const el = find(target);
-      if (el && isInView(el)) {
+      const rect = el?.getBoundingClientRect();
+      if (rect && isInView(rect)) {
         settle(true);
         return;
       }
-      el?.scrollIntoView?.({ block: b, behavior: bh });
+      const moving = rect !== undefined && lastTop !== null && Math.abs(rect.top - lastTop) >= 1;
+      lastTop = rect?.top ?? null;
+      if (!moving) el?.scrollIntoView?.({ block: b, behavior: bh });
       frame += 1;
       if (frame < max) {
         raf = requestAnimationFrame(tick);

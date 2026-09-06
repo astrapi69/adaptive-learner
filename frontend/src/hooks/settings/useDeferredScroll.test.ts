@@ -87,6 +87,32 @@ describe("useDeferredScroll (#2961)", () => {
     expect(onSettled).toHaveBeenCalledWith(true);
   });
 
+  it("leaves a still-moving target alone instead of restarting its smooth scroll", () => {
+    const onSettled = vi.fn();
+    const el = document.createElement("div");
+    el.scrollIntoView = vi.fn();
+    let top = 2000;
+    el.getBoundingClientRect = () => ({ height: 40, top, bottom: top + 40 }) as DOMRect;
+    renderHook(() =>
+      useDeferredScroll({ active: true, target: "a", findTarget: () => el, onSettled, behavior: "smooth" }),
+    );
+    flushFrames(1);
+    expect(el.scrollIntoView).toHaveBeenCalledTimes(1);
+    // The animation is under way: the top moves every frame, no re-issue.
+    top = 1500;
+    flushFrames(1);
+    top = 1000;
+    flushFrames(1);
+    expect(el.scrollIntoView).toHaveBeenCalledTimes(1);
+    // It stalls short of the viewport (a layout shift): re-issue once it stands still.
+    flushFrames(1);
+    expect(el.scrollIntoView).toHaveBeenCalledTimes(2);
+    // Arrived.
+    top = 100;
+    flushFrames(1);
+    expect(onSettled).toHaveBeenCalledWith(true);
+  });
+
   it("gives up after maxFrames and reports the miss", () => {
     const onSettled = vi.fn();
     const offscreen = fakeTarget(false);
