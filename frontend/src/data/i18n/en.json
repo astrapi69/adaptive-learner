@@ -575,8 +575,8 @@
     },
     "section_review": "Review",
     "section_srs": "Spaced repetition",
-    "explanations_enabled": "Show error explanations",
-    "explanations_enabled_desc": "After a lesson, show a short rule tip for each mistake.",
+    "explanations_enabled": "Show explanations",
+    "explanations_enabled_desc": "After an answer, show the exercise's explanation; after a lesson, a short rule tip for each mistake.",
     "section_hints": "Hints",
     "section_lesson_summary": "Lesson summary",
     "summary_sections_desc": "Choose which sections the summary at the end of a lesson shows and in which order. The actions for continuing are always visible.",
@@ -2395,6 +2395,11 @@
         "receptive_hint": "Recognise the meaning",
         "productive_hint": "Produce the answer"
       }
+    },
+    "explanation": {
+      "title": "Explanation",
+      "show": "Why?",
+      "hide": "Hide explanation"
     },
     "summary": {
       "heading": "You finished",

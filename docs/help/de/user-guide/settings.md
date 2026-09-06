@@ -361,8 +361,10 @@ Lektion*.
 
 Wiederholungen, die Zusammenfassung und das Nachholen von Fehlern.
 
-- **Wiederholung** - die automatisch erzeugten Fehler-Erklärungen und
-  die Zahl der Fragen pro Wiederholungs-Sitzung. Die Karte endet mit dem
+- **Wiederholung** - Erklärungen nach der Antwort (die vom Autor der
+  Übung geschriebene Erklärung, die nach dem Prüfen unter der Übung
+  erscheint, und die automatisch erzeugten Regeltipps nach einer Lektion)
+  sowie die Zahl der Fragen pro Wiederholungs-Sitzung. Die Karte endet mit dem
   schreibgeschützten Block **Verteilte Wiederholung**: der Intervall-Plan
   (richtige Antworten in Folge gegen die Tage bis zur nächsten
   Wiederholung), ab wann ein Element als beherrscht gilt, und ein Link

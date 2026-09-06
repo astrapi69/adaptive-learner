@@ -536,8 +536,8 @@ settings:
     installed: "App installiert."
   section_review: "Wiederholung"
   section_srs: "Verteilte Wiederholung"
-  explanations_enabled: "Fehlererklärungen anzeigen"
-  explanations_enabled_desc: "Zeigt nach einer Lektion zu jedem Fehler einen kurzen Regeltipp."
+  explanations_enabled: "Erklärungen anzeigen"
+  explanations_enabled_desc: "Zeigt nach einer Antwort die Erklärung der Übung und nach einer Lektion zu jedem Fehler einen kurzen Regeltipp."
   section_hints: "Tipps"
   section_lesson_summary: "Zusammenfassung nach Lektionen"
   summary_sections_desc: "Wähle, welche Bereiche die Abschluss-Zusammenfassung einer Lektion zeigt und in welcher Reihenfolge. Die Aktionen zum Weitermachen sind immer sichtbar."
@@ -2222,6 +2222,10 @@ lesson:
     direction:
       receptive_hint: Bedeutung erkennen
       productive_hint: Antwort produzieren
+  explanation:
+    title: "Erklärung"
+    show: "Warum?"
+    hide: "Erklärung ausblenden"
   flash_round:
     title: "Blitzrunde: {set}"
     card_title: "Blitzrunde"

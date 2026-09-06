@@ -38,6 +38,8 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "./exercise-control";
+import ExerciseExplanation from "../feedback/ExerciseExplanation";
+import {useExplanationOutcome} from "../feedback/useExplanationOutcome";
 import ExerciseDifficultyBadge from "../shared/ExerciseDifficultyBadge";
 import ListenFirstAudio from "../shared/ListenFirstAudio";
 import FreeTextExercise from "../renderers/free-text/FreeTextExercise";
@@ -261,6 +263,10 @@ function ExerciseDispatcher(
     ref: Ref<ExerciseHandle>,
 ) {
     const ex: ContentLessonExercise | null = step.exercise ?? null;
+    // #2991 - the graded outcome drives the post-answer explanation fold
+    // state; held here in the shell so every renderer + surface gets the
+    // explanation from ONE mount.
+    const {outcome, recordScored} = useExplanationOutcome(ex, reviewed);
     if (ex === null) return <ExerciseStepPlaceholder step={step} />;
     const supported =
         SUPPORTED_EXERCISE_TYPES.has(ex.type) ||
@@ -276,10 +282,13 @@ function ExerciseDispatcher(
     const difficultyBadge = (
         <ExerciseDifficultyBadge level={resolveDifficulty(ex, cards)} />
     );
+    // #2991 - the shared chrome around every renderable exercise: the
+    // difficulty badge above, the authored post-answer explanation below.
     const withBadge = (body: ReactElement): ReactElement => (
         <>
             {difficultyBadge}
             {body}
+            <ExerciseExplanation explanation={ex.explanation} outcome={outcome} />
         </>
     );
     const shared = {
@@ -295,6 +304,7 @@ function ExerciseDispatcher(
         ttsLang: targetLanguage,
         codeMode,
         onComplete: (scored: ExerciseScored) => {
+            recordScored(scored);
             void onComplete(scored);
         },
     };

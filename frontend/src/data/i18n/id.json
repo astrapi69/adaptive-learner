@@ -579,8 +579,8 @@
     },
     "section_review": "Ulasan",
     "section_srs": "Pengulangan berjarak",
-    "explanations_enabled": "Tampilkan penjelasan kesalahan",
-    "explanations_enabled_desc": "Setelah pelajaran, tampilkan kiat aturan singkat untuk setiap kesalahan.",
+    "explanations_enabled": "Tampilkan penjelasan",
+    "explanations_enabled_desc": "Setelah menjawab, tampilkan penjelasan latihan; setelah pelajaran, kiat aturan singkat untuk setiap kesalahan.",
     "section_hints": "Petunjuk",
     "section_lesson_summary": "Ringkasan setelah pelajaran",
     "summary_sections_desc": "Pilih bagian mana yang ditampilkan ringkasan di akhir pelajaran dan dalam urutan apa. Tindakan untuk melanjutkan selalu terlihat.",
@@ -2395,6 +2395,11 @@
         "receptive_hint": "Kenali maknanya",
         "productive_hint": "Hasilkan jawabannya"
       }
+    },
+    "explanation": {
+      "title": "Penjelasan",
+      "show": "Mengapa?",
+      "hide": "Sembunyikan penjelasan"
     },
     "summary": {
       "heading": "Selesai",

@@ -389,6 +389,19 @@ Requires domain knowledge. Not automatable.
       free-text/cloze/word-tiles the hint button stays as before. iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
+- [ ] Explanation after the answer (#2991): open an exercise whose content
+      carries an explanation (the `explanation` field, e.g. the fixture
+      `e2e/fixtures/explanation-post-answer.lesson.json` through a connected
+      test repository). Before checking, NO explanation is visible. Answer
+      wrong and check: the "Explanation" box appears below the exercise,
+      EXPANDED, with rendered Markdown (bold "Rule", the word-by-word list, the
+      examples). Answer the next exercise correctly: the box appears COLLAPSED
+      with a "Why?" button; a click opens it, "Hide explanation" closes it
+      again. An exercise WITHOUT an explanation shows no box. Settings >
+      Learning > Review > "Show explanations" off: the box disappears at once,
+      also inside the running lesson; on brings it back. In exam mode it never
+      appears. No XP is deducted. iOS PWA/Standalone: repeat the check on the
+      web-app icon added to the Home Screen.
 - [ ] Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
       a matching exercise from a KNOWLEDGE set (non-language domain, or source ==
       target, e.g. senses to organs). NO subtitle "Match each term with its

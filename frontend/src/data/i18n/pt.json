@@ -575,8 +575,8 @@
     },
     "section_review": "Revisão",
     "section_srs": "Repetição espaçada",
-    "explanations_enabled": "Mostrar explicações de erros",
-    "explanations_enabled_desc": "Após uma lição, mostra uma breve dica de regra para cada erro.",
+    "explanations_enabled": "Mostrar explicações",
+    "explanations_enabled_desc": "Após uma resposta, mostra a explicação do exercício; após uma lição, uma breve dica de regra para cada erro.",
     "section_hints": "Dicas",
     "section_lesson_summary": "Resumo após as lições",
     "summary_sections_desc": "Escolha quais seções o resumo ao final de uma lição mostra e em que ordem. As ações para continuar ficam sempre visíveis.",
@@ -2395,6 +2395,11 @@
         "receptive_hint": "Reconhecer o significado",
         "productive_hint": "Produzir a resposta"
       }
+    },
+    "explanation": {
+      "title": "Explicação",
+      "show": "Por quê?",
+      "hide": "Ocultar explicação"
     },
     "flash_round": {
       "title": "Ronda relâmpago: {set}",

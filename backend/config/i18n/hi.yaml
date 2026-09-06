@@ -538,8 +538,8 @@ settings:
     installed: "ऐप इंस्टॉल हो गया।"
   section_review: "समीक्षा"
   section_srs: "अंतराल पुनरावृत्ति"
-  explanations_enabled: "त्रुटि स्पष्टीकरण दिखाएँ"
-  explanations_enabled_desc: "पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।"
+  explanations_enabled: "स्पष्टीकरण दिखाएँ"
+  explanations_enabled_desc: "उत्तर के बाद अभ्यास का स्पष्टीकरण और पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।"
   section_hints: "संकेत"
   section_lesson_summary: "पाठ के बाद सारांश"
   summary_sections_desc: "चुनें कि पाठ के अंत में सारांश कौन से खंड और किस क्रम में दिखाए। आगे बढ़ने की क्रियाएँ हमेशा दिखाई देती हैं।"
@@ -2213,6 +2213,10 @@ lesson:
     direction:
       receptive_hint: अर्थ पहचानें
       productive_hint: उत्तर बनाएँ
+  explanation:
+    title: "स्पष्टीकरण"
+    show: "क्यों?"
+    hide: "स्पष्टीकरण छिपाएँ"
   summary:
     heading: आपने पूरा किया
     aria_label: पाठ सारांश

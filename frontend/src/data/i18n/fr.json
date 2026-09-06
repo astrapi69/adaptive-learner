@@ -575,8 +575,8 @@
     },
     "section_review": "Révision",
     "section_srs": "Répétition espacée",
-    "explanations_enabled": "Afficher les explications d'erreur",
-    "explanations_enabled_desc": "Après une leçon, affiche un court conseil de règle pour chaque erreur.",
+    "explanations_enabled": "Afficher les explications",
+    "explanations_enabled_desc": "Après une réponse, affiche l'explication de l'exercice ; après une leçon, un court conseil de règle pour chaque erreur.",
     "section_hints": "Indices",
     "section_lesson_summary": "Résumé après les leçons",
     "summary_sections_desc": "Choisis quelles sections le résumé de fin de leçon affiche et dans quel ordre. Les actions pour continuer restent toujours visibles.",
@@ -2395,6 +2395,11 @@
         "receptive_hint": "Reconnaître le sens",
         "productive_hint": "Produire la réponse"
       }
+    },
+    "explanation": {
+      "title": "Explication",
+      "show": "Pourquoi ?",
+      "hide": "Masquer l'explication"
     },
     "flash_round": {
       "title": "Manche éclair : {set}",

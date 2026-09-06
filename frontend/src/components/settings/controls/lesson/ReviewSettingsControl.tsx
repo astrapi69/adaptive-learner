@@ -50,13 +50,13 @@ export default function ReviewSettingsControl() {
                     <span className="text-[0.95rem] font-medium">
                         {t(
                             "settings.explanations_enabled",
-                            "Show error explanations",
+                            "Show explanations",
                         )}
                     </span>
                     <FormHint as="span">
                         {t(
                             "settings.explanations_enabled_desc",
-                            "After a lesson, show a short rule tip for each mistake.",
+                            "After an answer, show the exercise's explanation; after a lesson, a short rule tip for each mistake.",
                         )}
                     </FormHint>
                 </span>

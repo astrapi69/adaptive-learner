@@ -575,8 +575,8 @@
     },
     "section_review": "復習",
     "section_srs": "間隔反復",
-    "explanations_enabled": "エラーの説明を表示",
-    "explanations_enabled_desc": "レッスン後に各間違いへ短いルールのヒントを表示します。",
+    "explanations_enabled": "解説を表示",
+    "explanations_enabled_desc": "回答後に練習問題の解説を、レッスン後に各間違いへ短いルールのヒントを表示します。",
     "section_hints": "ヒント",
     "section_lesson_summary": "レッスン後のまとめ",
     "summary_sections_desc": "レッスン終了時のまとめに表示するセクションと、その順序を選択します。続行するための操作は常に表示されます。",
@@ -2395,6 +2395,11 @@
         "receptive_hint": "意味を認識する",
         "productive_hint": "答えを産出する"
       }
+    },
+    "explanation": {
+      "title": "解説",
+      "show": "なぜ？",
+      "hide": "解説を隠す"
     },
     "flash_round": {
       "title": "フラッシュラウンド: {set}",

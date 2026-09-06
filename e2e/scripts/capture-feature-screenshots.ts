@@ -31,7 +31,10 @@
  * **launcher** (a native PyInstaller/Docker GUI, not a web route).
  */
 
-import {expect, test, type Page} from "@playwright/test";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+
+import {expect, test, type Page, type Route} from "@playwright/test";
 
 import {
     advanceLessonUntil,
@@ -117,6 +120,95 @@ async function gotoProgressTab(
 async function gotoLessonRunner(page: Page): Promise<boolean> {
     await seedLearner(page);
     await openFirstBundledLesson(page);
+    return true;
+}
+
+/**
+ * Post-answer explanation (#2991): the reference lesson
+ * ``e2e/fixtures/explanation-post-answer.lesson.json`` (one exercise WITH an
+ * authored ``explanation``) served through a page.route-mocked content repo,
+ * exactly as ``e2e/dexie/exercise-explanation.spec.ts`` does. Connects the
+ * repo, opens the lesson, answers the first exercise WRONG and checks it, so
+ * the explanation panel is on screen EXPANDED with rendered Markdown.
+ */
+const EXPLANATION_REPO = "e2e/explanation-post-answer";
+const EXPLANATION_SET_ID = "adjektivstellung-from-de";
+
+async function mockExplanationRepo(page: Page): Promise<void> {
+    const lesson = readFileSync(
+        join(__dirname, "..", "fixtures", "explanation-post-answer.lesson.json"),
+        "utf-8",
+    );
+    const rootManifest = [
+        'schema_version: "1.13"',
+        "sets:",
+        `  - id: ${EXPLANATION_SET_ID}`,
+        '    title: "Adjektivstellung"',
+        "    target_language: es",
+        "    source_language: de",
+        "    level: A1",
+        '    version: "1.0.0"',
+        "    lesson_count: 1",
+        "    domain: language",
+        "    path: sets/es/adjektivstellung",
+        "",
+    ].join("\n");
+    const setManifest = 'metadata:\n  lessons:\n    - "01-adjektivstellung.json"\n';
+    const emptyIndex = 'schema_version: "1.13"\nsets: []\n';
+    const emptyOfficial = (route: Route) => {
+        const url = route.request().url();
+        if (url.endsWith("/recommended-repos.json")) {
+            return route.fulfill({status: 200, body: '{"repos":[]}'});
+        }
+        if (url.endsWith("/books.yaml")) {
+            return route.fulfill({status: 200, body: "domains: {}\n"});
+        }
+        if (url.endsWith("/manifest.yaml")) {
+            return route.fulfill({status: 200, body: emptyIndex});
+        }
+        return route.fulfill({status: 404, body: ""});
+    };
+    await page.route("**/raw.githubusercontent.com/**", emptyOfficial);
+    await page.route("**/adaptive-learner-content/**", emptyOfficial);
+    await page.route(
+        `**/raw.githubusercontent.com/${EXPLANATION_REPO}/main/**`,
+        (route) => {
+            const url = route.request().url();
+            if (url.endsWith("/main/manifest.yaml")) {
+                return route.fulfill({status: 200, body: rootManifest});
+            }
+            if (url.endsWith("/sets/es/adjektivstellung/manifest.yaml")) {
+                return route.fulfill({status: 200, body: setManifest});
+            }
+            if (url.endsWith("/01-adjektivstellung.json")) {
+                return route.fulfill({status: 200, body: lesson});
+            }
+            return route.fulfill({status: 404, body: ""});
+        },
+    );
+}
+
+async function gotoExerciseExplanation(page: Page): Promise<boolean> {
+    await mockExplanationRepo(page);
+    await seedLearner(page);
+    await page.goto("/settings?tab=data");
+    await expect(page.getByTestId("content-repo-add")).toBeVisible({timeout: 60_000});
+    await page.getByTestId("content-repo-url").fill(`https://github.com/${EXPLANATION_REPO}`);
+    await page.getByTestId("content-repo-connect").click();
+    await expect(page.getByTestId("content-repo-result")).toContainText(/passed|erfolgreich/i);
+    await page.goto("/content?tab=my");
+    await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
+    const open = page.getByTestId(`content-set-${EXPLANATION_SET_ID}-open`);
+    await expect(open).toBeVisible({timeout: 15_000});
+    await open.click();
+    await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
+    await page.getByTestId("lesson-next").click();
+    await expect(page.getByTestId("multiple-choice-exercise")).toBeVisible({timeout: 10_000});
+    await page.getByRole("radio", {name: "el rojo coche"}).check();
+    const check = page.getByTestId("lesson-check");
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    await expect(page.getByTestId("exercise-explanation")).toHaveAttribute("data-state", "open");
     return true;
 }
 
@@ -756,6 +848,9 @@ const FEATURES: FeatureShot[] = [
     // --- Answer toggle (Meine Antwort / Auflösung) ----------------------
     {path: "answer-toggle/meine-antwort", setup: (p) => gotoAnswerToggle(p, "my-answer")},
     {path: "answer-toggle/aufloesung", setup: (p) => gotoAnswerToggle(p, "solution")},
+
+    // --- Post-answer explanation (#2991) --------------------------------
+    {path: "exercise-explanation/falsche-antwort", setup: gotoExerciseExplanation, pinTo: "exercise-explanation"},
 
     // --- GitHub export (desktop dialog) ---------------------------------
     {path: "github-export/share-dialog", setup: gotoGithubExport, desktopOnly: true},

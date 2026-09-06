@@ -2,6 +2,8 @@
 export {default as AnswerCelebration} from "./AnswerCelebration";
 export {default as DiffHighlight} from "./DiffHighlight";
 export {default as ExerciseHint} from "./ExerciseHint";
+export {default as ExerciseExplanation, type ExplanationOutcome} from "./ExerciseExplanation";
+export {useExplanationOutcome, isFullyCorrect} from "./useExplanationOutcome";
 export {default as ExerciseAnswerToggle, type AnswerView} from "./ExerciseAnswerToggle";
 export {default as DirectionInstruction} from "./DirectionInstruction";
 export {default as CorrectionBlock} from "./CorrectionBlock";
