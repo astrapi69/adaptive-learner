@@ -4507,6 +4507,11 @@
     "no_errors": "Keine Fehler aufgezeichnet - stark!",
     "lesson_errors": "{count} Fehler",
     "practice_errors": "Fehler trainieren",
-    "back_to_set": "Zurück zum Set"
+    "back_to_set": "Zurück zum Set",
+    "element_type": {
+      "vocabulary": "Wortschatz",
+      "grammar_rule": "Grammatikregel",
+      "unknown": "Unbekannt"
+    }
   }
 }

@@ -179,7 +179,8 @@ export default function SetSummary() {
                       key={entry.type}
                       className="rounded-app border border-border px-3 py-1 text-sm text-fg-secondary"
                     >
-                      {entry.type}: {entry.errors}
+                      {t(`set_summary.element_type.${entry.type}`, entry.type)}:{" "}
+                      {entry.errors}
                     </li>
                   ))}
                 </ul>
