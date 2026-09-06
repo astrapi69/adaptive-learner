@@ -120,7 +120,29 @@ Container) auf dem vorgegebenen Branch
   en/de/fr um die Folge-Hervorhebung ergänzt.
 - Commit: 43fb83b.
 
-## 6. Verifikation, Docs, PR
+## 6. Feature-Screenshots decken zwei Scroll-Befunde auf
+
+- Original prompt: Übergabe ("Feature-Screenshots, Visual-Baseline-Gate
+  bei UI-PRs").
+- Optimierter Prompt: "Nimm die neuen und die betroffenen Lernen-Tab-Shots
+  im Container auf (Chromium vorinstalliert, Playwright-Pin verlangt eine
+  andere Headless-Shell: executablePath per Session-Config überschreiben,
+  nicht committen) und sieh jede Aufnahme an, bevor sie ins Repo geht."
+- Ziel: die Shots als echte Prüfung nutzen, nicht als Pflichtabgabe.
+- Ergebnis: Zwei Befunde. (1) Der learning-subnav-Shot landete 86 px zu
+  tief: die Deferred-Scroll-Schleife gab den weichen scrollIntoView jede
+  Frame erneut aus und kämpfte damit gegen den Instant-Pin des
+  Shot-Helfers (live gemessen: der Deep-Link allein landet korrekt bei
+  129 px). Fix: erneut ausgeben nur, wenn das Ziel seit der letzten Frame
+  stillsteht (+1 Hook-Test); das Shot-Setup wartet bis der Cluster im
+  Viewport ist. (2) Karten innerhalb des Lernen-Tabs hatten keinen
+  Anker-Offset, ein scrollIntoView auf eine Karte landete unter der
+  sticky Leiste (sichtbar am feedback-card-Shot). Fix: jede
+  SettingsSection liest `--settings-anchor-offset` in ihre
+  scroll-margin-top (0 außerhalb des Lernen-Panels).
+- Commit: 9fe1751 (Scroll-Schleife), 8832e69 (Karten-Offset).
+
+## 7. Verifikation, Docs, PR
 
 - Original prompt: Übergabe ("Vollsuite, make check-testid-refs
   check-file-sizes verify-docs-discipline, push, PR, Visual-Gate-Label,
@@ -135,7 +157,8 @@ Container) auf dem vorgegebenen Branch
 
 - `bunx tsc --noEmit`: sauber. ESLint auf allen geänderten Dateien mit
   `--max-warnings=0`: sauber.
-- Vitest voll (`cd frontend && bun run test`): Ergebnis im PR-Text.
+- Vitest voll (`cd frontend && bun run test`): 948 Dateien, 9896 Tests,
+  alle grün (264 s).
 - `make check-file-sizes`: 0 Fehler (62 Warnungen, Bestand).
 - `scripts/testid_reference_gate.py --base origin/develop`: nicht
   anwendbar (kein testid entfernt oder umbenannt).
@@ -145,8 +168,11 @@ Container) auf dem vorgegebenen Branch
 - `scripts/verify_normative_changes.py --base origin/develop`: keine
   normativen Änderungen. Rule-Corpus-Ceiling bewusst um 463 Zeichen
   angehoben (architecture.md: Absatz zur Lernen-Tab-Navigation).
-- Feature-Screenshots: Dexie-Build + Playwright-Capture im Container
-  (Chromium vorinstalliert); Ergebnis und Review im PR-Text.
+- Feature-Screenshots: Dexie-Build + Playwright-Capture im Container mit
+  dem vorinstallierten Chromium (executablePath-Override in einer nicht
+  committeten Session-Config); neu: learning-subnav, gamification-card;
+  erneuert: learning-clusters, feedback-card, playful-details (2),
+  mascot-variants. Jede Aufnahme angesehen (siehe Eintrag 6).
 - Nicht gelaufen: `make test` (Backend + Plugins, kein venv; die
   Änderung berührt kein Python), `make test-dexie-smoke`.
 
