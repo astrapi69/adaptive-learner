@@ -3261,6 +3261,8 @@
         "unavailable_reason": "Las imágenes y el audio no se pueden generar a partir de texto. Puedes añadir estos tipos más tarde en el editor.",
         "floor_hint": "Debe permanecer seleccionado al menos un tipo de ejercicio."
       },
+      "explanations_label": "Generar explicaciones (se muestran después de la respuesta)",
+      "explanations_hint": "Añade a cada ejercicio una regla, una glosa palabra por palabra y más ejemplos. Aproximadamente entre un tercio y la mitad más de salida de IA por ejercicio.",
       "generate_to_advance": "Genera la lección a partir de tu texto para continuar.",
       "review_theory": "{n} paso(s) de teoría",
       "review_exercises": "{n} ejercicio(s)",
@@ -3454,7 +3456,13 @@
         "err_free_text": "Añade al menos una respuesta aceptada.",
         "err_cloze": "Cada marca ___ necesita un hueco, y cada hueco necesita una respuesta.",
         "err_word_tiles": "Añade al menos 2 fichas.",
-        "err_picture_choice": "Añade al menos 2 imágenes, cada una con etiqueta e imagen, y marca exactamente una como correcta."
+        "err_picture_choice": "Añade al menos 2 imágenes, cada una con etiqueta e imagen, y marca exactamente una como correcta.",
+        "err_explanation": "La explicación es demasiado larga (máximo 2000 caracteres).",
+        "explanation_label": "Explicación después de la respuesta (opcional, Markdown)",
+        "explanation_hint": "Se muestra después de responder: regla, palabra por palabra, más ejemplos, error típico.",
+        "explanation_counter": "{n} / {max} caracteres",
+        "explanation_template": "Insertar plantilla",
+        "explanation_template_body": "**Regla:** \n\n**Palabra por palabra:**\n- *palabra* - significado literal (nota gramatical)\n\n**Más ejemplos:**\n- *frase* - traducción\n\n**Error típico:** "
       },
       "dir": {
         "auto": "Automático",
@@ -3489,6 +3497,7 @@
         "err_reading_comprehension": "Añade un texto y al menos una pregunta completa (opción múltiple con una opción correcta, o texto libre con una respuesta aceptada).",
         "err_graded_quiz": "Añade al menos una pregunta completa con puntos positivos (opción múltiple con una opción correcta, o texto libre con una respuesta aceptada).",
         "err_dictation": "Añade una ruta de archivo de audio y al menos una transcripción aceptada.",
+        "err_explanation": "La explicación es demasiado larga (máximo 2000 caracteres).",
         "dict_audio_label": "Audio",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "Ruta relativa al clip de audio dentro de la carpeta assets del conjunto.",

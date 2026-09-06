@@ -21,6 +21,7 @@ import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
+import {ExplanationField} from "./fields";
 import {
     CATEGORIZATION_EXT_TYPE,
     DICTATION_EXT_TYPE,
@@ -255,6 +256,12 @@ export default function ExtensionExerciseEditor({
                     t={t}
                 />
             )}
+
+            <ExplanationField
+                value={draft.explanation}
+                onChange={(explanation) => patch({explanation})}
+                idPrefix={`exercise-ext-${id}`}
+            />
 
             {!issue.valid && issue.code && (
                 <FormHint

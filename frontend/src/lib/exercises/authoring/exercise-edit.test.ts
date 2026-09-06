@@ -11,6 +11,7 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    EXPLANATION_MAX_CHARS,
     FREE_TEXT_MIN_ACCEPT,
     MATCHING_MIN_PAIRS,
     MC_MIN_OPTIONS,
@@ -370,6 +371,64 @@ describe("normalizeExerciseEdit — multiple_choice (#1850)", () => {
             {text: "dog", correct: false},
         ]);
         expect(out.multiple).toBe(false);
+    });
+});
+
+describe("explanation on the core editor (#2992)", () => {
+    it("accepts an absent, blank or in-budget explanation", () => {
+        expect(validateExerciseEdit(base({accept: ["hello"]})).valid).toBe(true);
+        expect(
+            validateExerciseEdit(base({accept: ["hello"], explanation: "  "})).valid,
+        ).toBe(true);
+        expect(
+            validateExerciseEdit(
+                base({accept: ["hello"], explanation: "x".repeat(EXPLANATION_MAX_CHARS)}),
+            ).valid,
+        ).toBe(true);
+    });
+
+    it("rejects an explanation over the schema cap with the explanation code", () => {
+        const issue = validateExerciseEdit(
+            base({accept: ["hello"], explanation: "x".repeat(EXPLANATION_MAX_CHARS + 1)}),
+        );
+        expect(issue.valid).toBe(false);
+        expect(issue.code).toBe("explanation");
+    });
+
+    it("trims the explanation on normalize", () => {
+        const out = normalizeExerciseEdit(
+            base({accept: ["hello"], explanation: "  **Regel:** hinten.\n\n"}),
+        );
+        expect(out.explanation).toBe("**Regel:** hinten.");
+    });
+
+    it.each([
+        ["blank", "   "],
+        ["empty", ""],
+        ["null", null],
+    ])("drops a %s explanation key entirely", (_label, value) => {
+        const out = normalizeExerciseEdit(
+            base({accept: ["hello"], explanation: value as string | null}),
+        );
+        expect("explanation" in out).toBe(false);
+    });
+
+    it("leaves an exercise without the key untouched", () => {
+        const out = normalizeExerciseEdit(base({accept: ["hello"]}));
+        expect("explanation" in out).toBe(false);
+    });
+
+    it("keeps the explanation across every type-specific normalizer", () => {
+        const cloze = normalizeExerciseEdit(
+            base({
+                type: "cloze",
+                sentence: "el ___ rojo",
+                blanks: [{accept: [" coche "]}],
+                explanation: "**Regel:** hinten.",
+            }),
+        );
+        expect(cloze.explanation).toBe("**Regel:** hinten.");
+        expect(cloze.blanks).toEqual([{accept: ["coche"]}]);
     });
 });
 

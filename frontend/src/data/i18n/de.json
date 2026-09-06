@@ -3261,6 +3261,8 @@
         "unavailable_reason": "Aus einem Text lassen sich keine Bilder oder Audio erzeugen. Diese Typen kannst du im Editor nachträglich ergänzen.",
         "floor_hint": "Mindestens ein Aufgabentyp muss gewählt bleiben."
       },
+      "explanations_label": "Erklärungen generieren (werden nach der Antwort gezeigt)",
+      "explanations_hint": "Ergänzt jede Übung um Regel, Wort-für-Wort-Übersetzung und weitere Beispiele. Etwa ein Drittel bis die Hälfte mehr KI-Ausgabe pro Übung.",
       "generate_to_advance": "Generiere die Lektion aus deinem Text, um fortzufahren.",
       "review_theory": "{n} Theorie-Schritt(e)",
       "review_exercises": "{n} Übung(en)",
@@ -3454,7 +3456,13 @@
         "err_free_text": "Füge mindestens eine akzeptierte Antwort hinzu.",
         "err_cloze": "Jede ___-Markierung braucht eine Lücke, und jede Lücke braucht eine Antwort.",
         "err_word_tiles": "Füge mindestens 2 Kacheln hinzu.",
-        "err_picture_choice": "Füge mindestens 2 Bilder mit Bezeichnung und Bild hinzu und markiere genau eines als richtig."
+        "err_picture_choice": "Füge mindestens 2 Bilder mit Bezeichnung und Bild hinzu und markiere genau eines als richtig.",
+        "err_explanation": "Die Erklärung ist zu lang (höchstens 2000 Zeichen).",
+        "explanation_label": "Erklärung nach der Antwort (optional, Markdown)",
+        "explanation_hint": "Wird nach der Antwort gezeigt: Regel, Wort für Wort, weitere Beispiele, typischer Fehler.",
+        "explanation_counter": "{n} / {max} Zeichen",
+        "explanation_template": "Vorlage einfügen",
+        "explanation_template_body": "**Regel:** \n\n**Wort für Wort:**\n- *Wort* - wörtliche Bedeutung (grammatische Notiz)\n\n**Weitere Beispiele:**\n- *Satz* - Übersetzung\n\n**Typischer Fehler:** "
       },
       "dir": {
         "auto": "Automatisch",
@@ -3489,6 +3497,7 @@
         "err_reading_comprehension": "Füge einen Text und mindestens eine vollständige Frage hinzu (Multiple Choice mit einer richtigen Option oder Freitext mit einer akzeptierten Antwort).",
         "err_graded_quiz": "Füge mindestens eine vollständige Frage mit positiven Punkten hinzu (Multiple Choice mit einer richtigen Option oder Freitext mit einer akzeptierten Antwort).",
         "err_dictation": "Gib einen Audiodateipfad und mindestens eine akzeptierte Transkription an.",
+        "err_explanation": "Die Erklärung ist zu lang (höchstens 2000 Zeichen).",
         "dict_audio_label": "Audio",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "Relativer Pfad zur Audiodatei im assets-Ordner des Sets.",

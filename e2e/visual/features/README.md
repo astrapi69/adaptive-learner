@@ -86,6 +86,8 @@ Baseline zu committen.
 | Untere Tab-Leiste — opt-in Menüposition unten (#2786) | — (Leiste ist md:hidden) | `bottom-tab-bar/leiste.mobile.png` | v2.13.0+ |
 | Lektions-Navigation — "Lektion N von M" mit Vor/Zurück (#2793) | `lesson-navigation/position-zeile.png` | `lesson-navigation/position-zeile.mobile.png` | v2.13.0+ |
 | Erklärung nach der Antwort - Kasten „Erklärung" aufgeklappt nach falscher Antwort, gerendertes Markdown (#2991) | `exercise-explanation/falsche-antwort.png` | `exercise-explanation/falsche-antwort.mobile.png` | v2.15.0+ |
+| Erklärungen generieren - Opt-in-Kontrollkästchen unter der Aufgabentyp-Auswahl im Buchtext-Schritt (#2992) | `create-lesson/erklaerungen-opt-in.png` | `create-lesson/erklaerungen-opt-in.mobile.png` | v2.15.0+ |
+| Erklärung im Inline-Editor - Markdown-Feld mit Zähler und "Vorlage einfügen" (#2992) | `exercise-explanation/editor-feld.png` | `exercise-explanation/editor-feld.mobile.png` | v2.15.0+ |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
 > konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.

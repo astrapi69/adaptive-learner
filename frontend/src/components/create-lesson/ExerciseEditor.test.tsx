@@ -549,3 +549,64 @@ describe("ExerciseEditor — free_text completion conversions (EXP-050 Stage 3)"
         expect(saved.blanks).toEqual([{accept: ["danke"]}]);
     });
 });
+
+describe("ExerciseEditor — post-answer explanation (#2992)", () => {
+    const freeText = (): ContentLessonExercise =>
+        ({
+            id: "ex9",
+            type: "free_text",
+            prompt: "Wie heißt „das rote Auto\"?",
+            card_ids: [],
+            distractors: [],
+            accept: ["el coche rojo"],
+        }) as ContentLessonExercise;
+
+    it("round-trips a typed explanation through Save, trimmed", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={freeText()} onSaved={onSaved} />);
+        fireEvent.change(screen.getByTestId("exercise-edit-ex9-explanation"), {
+            target: {value: "  **Regel:** Adjektive stehen hinten.\n"},
+        });
+        fireEvent.click(saveButton("ex9"));
+        expect(onSaved.mock.calls[0][0].explanation).toBe(
+            "**Regel:** Adjektive stehen hinten.",
+        );
+    });
+
+    it("saves WITHOUT the key when the field stays empty", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={freeText()} onSaved={onSaved} />);
+        fireEvent.click(saveButton("ex9"));
+        expect("explanation" in onSaved.mock.calls[0][0]).toBe(false);
+    });
+
+    it("shows an existing explanation and lets the author clear it", () => {
+        const onSaved = vi.fn();
+        render(
+            <Harness
+                exercise={{...freeText(), explanation: "**Regel:** hinten."}}
+                onSaved={onSaved}
+            />,
+        );
+        const field = screen.getByTestId("exercise-edit-ex9-explanation") as HTMLTextAreaElement;
+        expect(field.value).toBe("**Regel:** hinten.");
+        fireEvent.change(field, {target: {value: ""}});
+        fireEvent.click(saveButton("ex9"));
+        expect("explanation" in onSaved.mock.calls[0][0]).toBe(false);
+    });
+
+    it("pastes the template into the empty field", () => {
+        render(<Harness exercise={freeText()} />);
+        fireEvent.click(screen.getByTestId("exercise-edit-ex9-explanation-template"));
+        const field = screen.getByTestId("exercise-edit-ex9-explanation") as HTMLTextAreaElement;
+        expect(field.value).toContain("**Word for word:**");
+    });
+
+    it("disables Save with the explanation error on an over-long value", () => {
+        render(
+            <Harness exercise={{...freeText(), explanation: "x".repeat(2001)}} />,
+        );
+        expect(saveButton("ex9")).toBeDisabled();
+        expect(screen.getByTestId("exercise-edit-error-ex9")).toBeInTheDocument();
+    });
+});

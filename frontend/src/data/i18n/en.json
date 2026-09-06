@@ -3261,6 +3261,8 @@
         "unavailable_reason": "Images and audio cannot be generated from text. You can add these types later in the editor.",
         "floor_hint": "At least one exercise type must stay selected."
       },
+      "explanations_label": "Generate explanations (shown after the answer)",
+      "explanations_hint": "Adds a rule, a word-for-word gloss and further examples to each exercise. Roughly a third to half more AI output per exercise.",
       "generate_to_advance": "Generate the lesson from your text to continue.",
       "review_theory": "{n} theory step(s)",
       "review_exercises": "{n} exercise(s)",
@@ -3454,7 +3456,13 @@
         "err_free_text": "Add at least one accepted answer.",
         "err_cloze": "Each ___ marker needs one accepted-answer blank, and every blank needs an answer.",
         "err_word_tiles": "Add at least 2 tiles.",
-        "err_picture_choice": "Add at least 2 images, each with a label and picture, and mark exactly one correct."
+        "err_picture_choice": "Add at least 2 images, each with a label and picture, and mark exactly one correct.",
+        "err_explanation": "The explanation is too long (at most 2000 characters).",
+        "explanation_label": "Explanation after the answer (optional, Markdown)",
+        "explanation_hint": "Shown after the learner answers: rule, word for word, further examples, typical mistake.",
+        "explanation_counter": "{n} / {max} characters",
+        "explanation_template": "Insert template",
+        "explanation_template_body": "**Rule:** \n\n**Word for word:**\n- *token* - literal meaning (grammatical note)\n\n**Further examples:**\n- *sentence* - translation\n\n**Typical mistake:** "
       },
       "dir": {
         "auto": "Auto",
@@ -3489,6 +3497,7 @@
         "err_reading_comprehension": "Add a passage and at least one complete question (multiple choice with a correct option, or free text with an accepted answer).",
         "err_graded_quiz": "Add at least one complete question with positive points (multiple choice with a correct option, or free text with an accepted answer).",
         "err_dictation": "Add an audio file path and at least one accepted transcription.",
+        "err_explanation": "The explanation is too long (at most 2000 characters).",
         "dict_audio_label": "Audio",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "Relative path to the audio clip inside the set's assets folder.",

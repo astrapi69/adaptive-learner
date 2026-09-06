@@ -66,6 +66,12 @@ export interface ExercisePromptOptions {
    *  is requested. Asset-bound types the caller cannot fulfil (picture_choice
    *  without assets) are already filtered by ``hasAssets``. */
   types?: readonly string[];
+  /** #2992 - ask for an optional Markdown ``explanation`` per exercise (rule,
+   *  word-for-word gloss, further examples; the engine's authoring
+   *  convention). Opt-in: it adds roughly a third to a half more output
+   *  tokens per exercise, so it is off unless the user asks. Only the types
+   *  that have something to explain get it (no matching / picture_choice). */
+  explanations?: boolean;
 }
 
 /** The six core exercise types the schema accepts and this generator can
@@ -293,6 +299,57 @@ function buildExtShapeBlock(allowedExt: string[]): string[] {
   ];
 }
 
+/** The core types that carry an ``explanation`` when the user opts in (#2992):
+ *  everything with a target sentence or a graded choice. ``matching`` and
+ *  ``picture_choice`` have nothing to gloss and are never asked for one. */
+export const EXPLANATION_CORE_TYPES: readonly GeneratedExerciseType[] = [
+  "cloze",
+  "word_tiles",
+  "free_text",
+  "multiple_choice",
+];
+
+/** Soft per-explanation budget named in the prompt; the parser's hard cap is
+ *  the schema's 2000 characters (``EXPLANATION_MAX_CHARS`` in the parser). */
+export const EXPLANATION_PROMPT_BUDGET = 1200;
+
+/** The EXPLANATIONS block (#2992): only when opted in, and only naming the
+ *  offered types that qualify, so it never contradicts the type allow-list.
+ *  Empty when opted out or when no qualifying type is offered. */
+function buildExplanationBlock(
+  options: ExercisePromptOptions,
+  allowedCore: string[],
+  allowedExt: string[],
+  language: string,
+): string[] {
+  if (!options.explanations) return [];
+  const eligible = [
+    ...allowedCore.filter((t) =>
+      (EXPLANATION_CORE_TYPES as readonly string[]).includes(t),
+    ),
+    ...allowedExt.filter((t) => t === ERROR_CORRECTION),
+  ];
+  if (eligible.length === 0) return [];
+  return [
+    "",
+    'EXPLANATIONS (optional field "explanation" per exercise)',
+    `- Give every ${eligible.join(", ")} exercise a Markdown "explanation".`,
+    "  It is shown AFTER the learner answers, so it may name the solution.",
+    `- Write it in the same language as the theory (${language}). Use only the`,
+    "  blocks that add something, in this order:",
+    "  1. **Rule:** one or two sentences naming exactly the rule this exercise",
+    "     tests (not the whole chapter).",
+    "  2. **Word for word:** one bullet per token of the target sentence,",
+    "     `*token* - literal meaning (grammatical note)`. Only for language",
+    "     content with a target sentence; omit it for other subjects.",
+    "  3. **Further examples:** two or three sentences with the same pattern,",
+    "     each with its translation.",
+    "  4. **Typical mistake:** optional, the error learners tend to make.",
+    `- Keep each explanation under ${EXPLANATION_PROMPT_BUDGET} characters. Do NOT add`,
+    "  one to matching or picture_choice exercises.",
+  ];
+}
+
 /**
  * Build the exercise-generation prompt from theory steps.
  *
@@ -320,6 +377,12 @@ export function buildExerciseGenerationPrompt(
     buildSelectionRuleLines(selected, allowedCore, allowedExt);
   const extRouting = buildExtRoutingLines(allowedExt);
   const extBlock = buildExtShapeBlock(allowedExt);
+  const explanationBlock = buildExplanationBlock(
+    options,
+    allowedCore,
+    allowedExt,
+    language,
+  );
 
   return [
     "You are an instructional designer. Read the THEORY below.",
@@ -374,10 +437,11 @@ export function buildExerciseGenerationPrompt(
     "                   texts, >= 1 correct), multiple (bool: false = one correct,",
     "                   true = select all correct)",
     ...extBlock,
+    ...explanationBlock,
     "",
     "OUTPUT",
     "Reply with JSON ONLY (no prose outside the JSON), shaped exactly:",
-    exampleJson(),
+    exampleJson(explanationBlock.length > 0),
     "",
     "THEORY",
     context,
@@ -402,8 +466,20 @@ function regenerationBlock(options: ExercisePromptOptions): string[] {
   return lines;
 }
 
-/** A compact, schema-correct example embedded in the prompt. */
-function exampleJson(): string {
+/** The worked ``explanation`` on the example cloze card (#2992): the
+ *  convention's rule + gloss + examples shape, so the model copies the
+ *  structure rather than inventing one. */
+const EXAMPLE_EXPLANATION = [
+  "**Rule:** `hosts:` names the target group; `all` is the built-in group of every managed host.",
+  "",
+  "**Further examples:**",
+  "- `hosts: webservers` - only the hosts in the webservers group",
+  "- `hosts: localhost` - the control node itself",
+].join("\n");
+
+/** A compact, schema-correct example embedded in the prompt. With
+ *  ``withExplanation`` the cloze card carries a worked ``explanation``. */
+function exampleJson(withExplanation = false): string {
   return JSON.stringify(
     {
       cards: [
@@ -417,6 +493,7 @@ function exampleJson(): string {
           question: "hosts: ___ targets every host.",
           answer: "all",
           distractors: ["localhost", "webservers"],
+          ...(withExplanation ? { explanation: EXAMPLE_EXPLANATION } : {}),
         },
         {
           type: "free_text",
