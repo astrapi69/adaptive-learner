@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  EXPLANATION_MAX_CHARS,
   extractCardsArray,
   parseGeneratedExercises,
 } from "./exercise-generation-parser";
@@ -397,6 +398,62 @@ describe("parseGeneratedExercises — mixed quality + duplicates", () => {
     );
     expect(result.cards).toEqual([]);
     expect(result.errors[0]).toMatch(/missing question/);
+  });
+});
+
+describe("parseGeneratedExercises — explanation (#2992)", () => {
+  const cloze = (explanation: unknown) =>
+    JSON.stringify({
+      cards: [
+        {
+          type: "cloze",
+          question: "hosts: ___ targets all hosts.",
+          answer: "all",
+          distractors: ["localhost"],
+          explanation,
+        },
+      ],
+    });
+
+  it("keeps a trimmed Markdown explanation on the card", () => {
+    const { cards } = parseGeneratedExercises(cloze("  **Rule:** all is every host.\n "));
+    expect(cards[0].explanation).toBe("**Rule:** all is every host.");
+  });
+
+  it("cuts an over-long explanation at the schema cap instead of dropping the card", () => {
+    const { cards, skipped } = parseGeneratedExercises(cloze("x".repeat(EXPLANATION_MAX_CHARS + 50)));
+    expect(skipped).toBe(0);
+    expect(cards[0].explanation).toHaveLength(EXPLANATION_MAX_CHARS);
+  });
+
+  it.each([
+    ["missing", undefined],
+    ["empty", "   "],
+    ["a number", 42],
+    ["an object", { rule: "x" }],
+  ])("drops a %s explanation silently and keeps the card", (_label, value) => {
+    const { cards, skipped, errors } = parseGeneratedExercises(cloze(value));
+    expect(skipped).toBe(0);
+    expect(errors).toEqual([]);
+    expect(cards).toHaveLength(1);
+    expect("explanation" in cards[0]).toBe(false);
+  });
+
+  it("attaches the explanation to a text extension card too", () => {
+    const raw = JSON.stringify({
+      cards: [
+        {
+          type: "ext:al-error-correction",
+          question: "Find the wrong word.",
+          tokens: ["el", "rojo", "coche"],
+          error_index: 1,
+          accept: ["coche rojo"],
+          explanation: "**Rule:** adjectives follow the noun.",
+        },
+      ],
+    });
+    const { cards } = parseGeneratedExercises(raw);
+    expect(cards[0].explanation).toBe("**Rule:** adjectives follow the noun.");
   });
 });
 

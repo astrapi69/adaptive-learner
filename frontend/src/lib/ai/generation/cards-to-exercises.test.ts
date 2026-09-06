@@ -189,6 +189,22 @@ describe("cardsToExercises", () => {
     expect(exercises.map((e) => e.id)).toEqual(["ai-ex-1-free-text", "ai-ex-2-word-tiles"]);
   });
 
+  it("carries a card's explanation onto the exercise and omits the key otherwise (#2992)", () => {
+    const cards: ValidCard[] = [
+      {
+        type: "cloze",
+        question: "hosts: ___",
+        answer: "all",
+        distractors: [],
+        explanation: "**Rule:** all is every host.",
+      },
+      { type: "word_tiles", question: "Q2", answer: "one two" },
+    ];
+    const { exercises } = cardsToExercises(cards);
+    expect(exercises[0].explanation).toBe("**Rule:** all is every host.");
+    expect("explanation" in exercises[1]).toBe(false);
+  });
+
   it("returns nothing for an empty card list", () => {
     expect(cardsToExercises([])).toEqual({ exercises: [], skipped: 0 });
   });

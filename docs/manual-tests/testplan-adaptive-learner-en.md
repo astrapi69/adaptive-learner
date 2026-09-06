@@ -1283,6 +1283,18 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       selector does not push it below the fold; after pasting a chapter the user
       need not scroll back up to find the types. DOM order matches the visible
       order (no axe regression).
+- [ ] **Generate explanations in the assistant (#2992):** In the book-text
+      step, right below the exercise-type selector, there is the checkbox
+      "Generate explanations (shown after the answer)" with the cost hint. It
+      is **unchecked** EVERY time the step opens (deliberately not remembered,
+      it costs AI output). Generate unchecked → the produced exercises carry NO
+      `explanation` field (the explanation field in the inline editor is
+      empty). Generate checked → cloze, word-tiles, free-text, multiple-choice
+      and error-correction exercises carry a Markdown explanation (rule, word
+      for word, further examples; in the text's language), matching carries
+      none; play the lesson and see the "Explanation" panel after an answer
+      (#2991). Check both paths: a single pasted text AND a file upload with
+      several sections (batch).
 - [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
       a title → click the "Knowledge lesson from text" card → stays on
       step 1 with the friendly "A title is required." message (NOT the
@@ -1567,9 +1579,11 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       version (e.g. tap "Update available" on a set in the content browser
       OR bump the set's manifest version in the test repo). Reload/reopen
       the app: **without** visiting `/content`, a header badge ("N updates")
-      appears next to the reviews badge, linking to `/content`. Click →
-      lands on `/content`, the affected set shows **"Update available"** in
-      its row (matches the badge's count). **After applying (#2985):** apply
+      appears next to the reviews badge, linking to `/content?tab=my`.
+      Click → lands on the **My content** tab (#2998: regardless of the tab
+      order configured under Settings → General, even when Import or
+      Discover comes first), the affected set shows **"Update available"**
+      in its row (matches the badge's count). **After applying (#2985):** apply
       the update(s) on `/content` (or sync the repo source) → the badge's
       count drops **immediately, without a reload**; once every update is
       applied the badge disappears (held breaking updates keep counting
@@ -1588,6 +1602,20 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       **playable** with multi-select. Switching back to "Allow one answer" →
       pruned to exactly one correct. An existing MC exercise with a set
       `multiple` value opens **unchanged** in its original state.
+- [ ] **Explanation in the inline editor (#2992):** In the inline editor of
+      every exercise (Step 3, `ExerciseEditor` AND `ExtensionExerciseEditor`),
+      below the type-specific fields, there is the Markdown textarea
+      **"Explanation after the answer (optional, Markdown)"** with a hint line
+      and the counter "n / 2000 characters". While the field is empty an
+      **"Insert template"** button is offered: one click fills in the skeleton
+      (**Rule**, **Word for word**, **Further examples**, **Typical mistake**)
+      and the button disappears. Type a text, save, reopen the row → the text
+      is there (trimmed); save the lesson and play it → after the answer the
+      "Explanation" panel shows the rendered Markdown (#2991). Clear the field
+      completely and save → the saved exercise carries NO `explanation` field
+      (no empty string in the JSON). More than 2000 characters cannot be typed
+      (maxlength); a loaded exercise with a longer explanation shows "The
+      explanation is too long …" and Save stays disabled until it is shortened.
 - [ ] **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
       inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
       **Multiple choice** exercise, a **"Exercise type"** select at the top

@@ -149,7 +149,11 @@ export function cardsToExercises(
       skipped++;
       continue;
     }
-    mapped.push(exercise);
+    // #2992 — the post-answer explanation is type-independent and rides
+    // along verbatim (the parser already trimmed + capped it).
+    mapped.push(
+      card.explanation ? { ...exercise, explanation: card.explanation } : exercise,
+    );
   }
   const exercises = mapped.map((exercise, index) => ({
     ...exercise,

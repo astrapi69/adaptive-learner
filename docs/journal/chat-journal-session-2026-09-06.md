@@ -323,6 +323,75 @@ claude/explanation-field-brainstorm-wpkafg.
     unberührt.
 - Commit: siehe PR-Zweig (#2991: i18n, Feature).
 
+### 3. Phase 2: Erklärungen generieren und bearbeiten (15:20)
+
+- Original prompt: "ist grün und gemerged, mach weiter".
+- Optimierter Prompt: "Setze Issue #2992 um: Opt-in-Erklärungen im
+  KI-Übungsgenerator (Prompt, Parser, Mapping, Kontrollkästchen im
+  Buchtext-Schritt) und ein Markdown-Feld mit Zähler und Vorlage im
+  Inline-Editor, mit Tests, i18n in 11 Katalogen und Testplan DE+EN."
+- Ziel: die App erzeugt das Feld, das Phase 1 sichtbar macht.
+- Ergebnis:
+  - Prompt (`exercise-generation-prompt.ts`): Option `explanations`;
+    nur dann ein EXPLANATIONS-Block, der die Konvention der Engine
+    (Regel, Wort für Wort, weitere Beispiele, typischer Fehler) und ein
+    weiches Budget von 1200 Zeichen nennt. Er nennt nur die angebotenen
+    Typen, die etwas zu erklären haben (Lückentext, Wortkacheln,
+    Freitext, Multiple Choice, Fehlerkorrektur), nie Zuordnung oder
+    Bildauswahl, und respektiert die Typ-Auswahl (#2510). Das
+    Beispiel-JSON trägt dann eine ausgearbeitete Erklärung.
+  - Pipeline: `generateExercises` reicht die Option durch und hebt den
+    Antwort-Deckel von 2000 auf 3200 Tokens, sonst schneidet das Modell
+    das JSON mitten in einer Karte ab. `generateBookLessonContent`
+    (Einzel- und Batch-Pfad) reicht sie ebenfalls durch.
+  - Parser: `explanation` wird auf jeder Karte (Kern und Text-Extension)
+    getrimmt übernommen und bei 2000 Zeichen abgeschnitten; alles, was
+    kein String ist, fällt still weg, die Karte bleibt. `cardsToExercises`
+    kopiert das Feld auf die Übung.
+  - Editor: `fields/ExplanationField` (Markdown-Textarea, Zähler
+    "n / 2000 Zeichen", "Vorlage einfügen" nur solange leer, die Vorlage
+    kommt lokalisiert aus dem Katalog), gemountet in `ExerciseEditor` UND
+    `ExtensionExerciseEditor`. `normalizeExerciseEdit` /
+    `normalizeExtensionExercise` trimmen und ENTFERNEN den Schlüssel bei
+    leerem Feld (kein `explanation: ""` im JSON); beide Validatoren
+    liefern den Code `explanation` bei mehr als 2000 Zeichen.
+  - Buchtext-Schritt: Kontrollkästchen "Erklärungen generieren" unter
+    der Typ-Auswahl, standardmäßig aus und bewusst NICHT gemerkt (es
+    kostet KI-Ausgabe, jeder Lauf fragt neu).
+  - i18n: `create_lesson.book.explanations_label/_hint`,
+    `create_lesson.exercises.edit.explanation_*` (fünf Schlüssel plus
+    `err_explanation`) und `create_lesson.extensions.edit.err_explanation`
+    in 11 Katalogen; die Vorlage ist ein Double-Quoted-String mit `\n`
+    (kein Block-Skalar, die Kataloge nutzen keine).
+  - Tests: Prompt (6), Pipeline (1), Buch-Pipeline (1), Parser (7, davon
+    ein `it.each` über vier Drop-Fälle), Mapping (1), Normalizer Kern (6)
+    und Extension (2), `ExplanationField` (4), `ExerciseEditor` (5),
+    `ExtensionExerciseEditor` (1), `BookTextStep` (3). Testplan DE+EN
+    (Assistent und Editor), zwei FeatureShot-Einträge
+    (`create-lesson/erklaerungen-opt-in`, `exercise-explanation/editor-feld`,
+    PNG-Aufnahme wie üblich auf der konsistenten Maschine).
+- Commit: siehe PR-Zweig (#2992: i18n, Feature).
+
+### Fragen und Annahmen (Phase 2)
+
+- Opt-in nicht gemerkt: die Typ-Auswahl (#2510) wird gemerkt, das
+  Erklärungs-Kontrollkästchen bewusst nicht. Begründung: ein gemerkter
+  Haken würde bei jedem späteren Lauf still Tokens kosten. Wer das
+  Gegenteil will, kann es über `saveAssistantTypes`-Muster nachrüsten.
+- Kürzen statt verwerfen: eine Erklärung über 2000 Zeichen wird im
+  Parser abgeschnitten, nicht die Karte verworfen. Ein hartes Ende mitten
+  in einer Liste ist hässlich, aber besser als eine verlorene Übung; das
+  Prompt-Budget von 1200 hält den Fall selten.
+- Sprache der Erklärung: der Prompt sagt "in der Sprache der Theorie".
+  Die Engine-Konvention verlangt die Sprache des Lernenden
+  (`source_language`); im Buchtext-Pfad ist das die Sprache des
+  eingefügten Textes, also dasselbe. Für eine Sprachlektion, deren Text
+  in der Zielsprache steht, wäre das falsch, dieser Pfad existiert im
+  Assistenten aber nicht (er erzeugt Wissenslektionen aus Text).
+- Kein Erklärungsfeld im reinen Karten-Generator (`generateExercises`
+  aus `lib/exercises`, deterministisch): der hat kein Modell, das eine
+  Regel formulieren könnte. Dort bleibt der Weg der Inline-Editor.
+
 ### Fragen und Annahmen
 
 - Setting: EIN Schalter für autorisierte Erklärungen und die

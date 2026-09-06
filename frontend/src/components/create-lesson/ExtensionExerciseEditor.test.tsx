@@ -472,3 +472,30 @@ describe("ExtensionExerciseEditor — type conversion (EXP-050 Stage 1)", () => 
         expect(screen.queryByTestId("exercise-ext-type-select-cd2")).toBeNull();
     });
 });
+
+describe("ExtensionExerciseEditor — post-answer explanation (#2992)", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "ec9",
+            type: ERROR_CORRECTION_EXT_TYPE,
+            prompt: "Fix the wrong word",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                tokens: ["el", "rojo", "coche"],
+                error_index: 1,
+                accept: ["coche rojo"],
+            },
+        }) as ContentLessonExercise;
+
+    it("round-trips the explanation through Save alongside the payload", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-ext-ec9-explanation"), {
+            target: {value: " **Regel:** Adjektive stehen hinten. "},
+        });
+        fireEvent.click(saveButton("ec9"));
+        const saved = JSON.parse(screen.getByTestId("saved-json").textContent ?? "{}");
+        expect(saved.explanation).toBe("**Regel:** Adjektive stehen hinten.");
+        expect(saved.ext_payload.accept).toEqual(["coche rojo"]);
+    });
+});

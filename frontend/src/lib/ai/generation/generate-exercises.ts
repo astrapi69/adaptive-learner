@@ -59,6 +59,10 @@ export interface GenerateExercisesOptions extends ExercisePromptOptions {
 
 /** Reply length cap for an exercise-generation call (~8 cards of JSON). */
 const GENERATION_MAX_TOKENS = 2000;
+/** The cap with explanations opted in (#2992): each qualifying card grows by
+ *  roughly a third to a half, so the reply needs headroom or the JSON is cut
+ *  mid-card and the parser drops the tail. */
+const GENERATION_MAX_TOKENS_WITH_EXPLANATIONS = 3200;
 
 /**
  * Outcome of a generation run. ``cards`` are the parser-valid cards that
@@ -108,10 +112,13 @@ export async function generateExercises(
     avoidQuestions: options.avoidQuestions,
     hasAssets: options.hasAssets,
     types: options.types,
+    explanations: options.explanations,
   });
   const raw = await provider.complete(prompt, {
     signal: options.signal,
-    maxTokens: GENERATION_MAX_TOKENS,
+    maxTokens: options.explanations
+      ? GENERATION_MAX_TOKENS_WITH_EXPLANATIONS
+      : GENERATION_MAX_TOKENS,
   });
   // AI -> Parser (AIX-01) -> Quality Gate (AIX-03) -> Distribution (AIX-04) -> Result.
   const parsed = parseGeneratedExercises(raw);

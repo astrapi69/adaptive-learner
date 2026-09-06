@@ -1360,6 +1360,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Scrollen** erreichbar - die Auswahl drückt es nicht unter die Falz; wer
       ein Kapitel einfügt, muss danach nicht nach oben scrollen, um die Typen zu
       finden. DOM-Reihenfolge entspricht der sichtbaren (keine Axe-Regression).
+- [ ] **Erklärungen im Assistenten generieren (#2992):** Im Buchtext-Schritt
+      steht direkt unter der Aufgabentyp-Auswahl das Kontrollkästchen
+      "Erklärungen generieren (werden nach der Antwort gezeigt)" mit dem
+      Hinweis zum Mehraufwand. Es ist bei JEDEM Öffnen des Schritts
+      **abgewählt** (bewusst nicht gemerkt, weil es KI-Ausgabe kostet).
+      Abgewählt generieren → die erzeugten Übungen tragen KEIN Feld
+      `explanation` (im Inline-Editor ist das Erklärungsfeld leer). Angehakt
+      generieren → Lückentext-, Wortkacheln-, Freitext-, Multiple-Choice- und
+      Fehlerkorrektur-Übungen tragen eine Markdown-Erklärung (Regel, Wort für
+      Wort, weitere Beispiele; in der Sprache des Textes), Zuordnung trägt
+      keine; die Lektion abspielen und nach einer Antwort den Kasten
+      „Erklärung" sehen (#2991). Beide Pfade prüfen: Einzeltext UND
+      Datei-Upload mit mehreren Abschnitten (Batch).
 - [ ] **Titel-Pflichtfeld im Buchtext-Pfad (#1946):** Schritt 1 OHNE
       Titel → Karte "Wissenslektion aus Text" klicken → bleibt auf
       Schritt 1 mit dem freundlichen Hinweis "Ein Titel ist
@@ -1669,9 +1682,11 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       im Test-Repo erhöhen). Neu laden/App neu öffnen: **ohne** `/content`
       zu besuchen erscheint in der Kopfzeile neben dem Wiederholungs-Badge
       ein **Aktualisierungs-Badge** ("N Aktualisierungen") mit Link zu
-      `/content`. Klick → landet auf `/content`, das betroffene Set zeigt
-      dort **"Aktualisierung verfügbar"** in der Zeile (deckungsgleich mit
-      dem Badge-Wert). **Nach dem Anwenden (#2985):** die Aktualisierung(en)
+      `/content?tab=my`. Klick → landet auf dem Tab **Meine Inhalte**
+      (#2998: unabhängig von der in Einstellungen → Allgemein konfigurierten
+      Tab-Reihenfolge, auch wenn Importieren oder Entdecken vorne steht),
+      das betroffene Set zeigt dort **"Aktualisierung verfügbar"** in der
+      Zeile (deckungsgleich mit dem Badge-Wert). **Nach dem Anwenden (#2985):** die Aktualisierung(en)
       auf `/content` durchführen (oder die Repo-Quelle synchronisieren) →
       der Badge-Zähler sinkt **sofort ohne Neuladen**; sind alle Updates
       angewendet, verschwindet das Badge (zurückgehaltene Breaking-Updates
@@ -1692,6 +1707,21 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       "Eine Antwort" → auf genau eine richtige reduziert. Eine bestehende
       MC-Übung mit gesetztem `multiple`-Wert öffnet **unverändert** in ihrem
       urspruenglichen Zustand.
+- [ ] **Erklärung im Inline-Editor (#2992):** Im Inline-Editor jeder Übung
+      (Schritt 3, `ExerciseEditor` UND `ExtensionExerciseEditor`) steht unter
+      den typspezifischen Feldern das Markdown-Textfeld **"Erklärung nach der
+      Antwort (optional, Markdown)"** mit Hinweiszeile und Zeichenzähler
+      "n / 2000 Zeichen". Solange das Feld leer ist, gibt es den Knopf
+      **"Vorlage einfügen"**: ein Klick füllt das Gerüst (**Regel**, **Wort für
+      Wort**, **Weitere Beispiele**, **Typischer Fehler**) ein und der Knopf
+      verschwindet. Text eintippen, speichern, die Zeile erneut öffnen → der
+      Text ist (getrimmt) da; die Lektion speichern und abspielen → nach der
+      Antwort erscheint der Kasten „Erklärung" mit gerendertem Markdown
+      (#2991). Feld komplett leeren und speichern → die gespeicherte Übung
+      trägt KEIN `explanation`-Feld (kein leerer String im JSON). Mehr als
+      2000 Zeichen sind nicht eintippbar (maxlength); eine geladene Übung mit
+      längerer Erklärung zeigt "Die Erklärung ist zu lang …" und Speichern ist
+      gesperrt, bis gekürzt wurde.
 - [ ] **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
       Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
       **Multiple-Choice**-Übung steht oben ein Auswahlfeld **"Aufgabentyp"** mit
