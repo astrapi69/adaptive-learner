@@ -6,7 +6,9 @@ jeu** activé (Paramètres → Apprentissage → Mode jeu) et
 l'interrupteur **Arcade** activé. Visiter la page directement avec
 l'interrupteur désactivé affiche un message convivial plutôt qu'une
 page morte - la fonctionnalité n'est jamais cachée, seulement
-désactivée avec une raison.
+désactivée avec une raison. Son lien **Ouvrir les paramètres** mène à la
+zone *Motivation et routine* de l'onglet Apprentissage, où se trouve la
+carte du mode jeu.
 
 Les jeux d'Arcade **ne donnent pas d'XP eux-mêmes** - ce sont une
 pause, pas un autre entraînement. Trois des quatre se débloquent en

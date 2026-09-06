@@ -280,6 +280,16 @@ The **Learning** tab groups its cards into five labelled areas, in the
 order a lesson unfolds. Each area has a small heading and a one-line
 description; the cards inside keep their own titles.
 
+A **section bar** above the areas lists them as chips: click one to jump
+to that area. On a desktop the bar stays visible below the app header
+while you scroll; on a phone it scrolls with the page and the row can be
+swiped sideways. The bar mirrors the address: `/settings?tab=learning&section=review`
+opens the tab scrolled to *After the lesson* (ids: `basics`, `lessons`,
+`voice`, `review`, `motivation`), and a chip click updates the address
+without adding a history entry. Switching to another tab drops the
+section again. An area that is not rendered (the voice area in a browser
+without Web Speech) has no chip, and an unknown section is ignored.
+
 ### Basics
 
 Who is learning, and in which languages.

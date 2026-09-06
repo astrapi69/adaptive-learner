@@ -5,6 +5,8 @@ a Dashboard card once **Game mode** is on (Settings → Learning →
 Game mode) and the **Arcade** switch is enabled. Visiting the page
 directly with the switch off shows a friendly notice instead of a
 dead page - the feature is never hidden, only disabled with a reason.
+Its **Open settings** link lands on the *Motivation and routine* area
+of the Learning tab, where the game mode card lives.
 
 Arcade games award **no XP themselves** - they are a break, not
 another grind. Three of the four are unlocked by spending XP you

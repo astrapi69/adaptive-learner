@@ -895,7 +895,37 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Flip one detail switch (e.g. hearts on): the status line counts
       along immediately ("6 of 7 extras on")
 - [ ] Arcade notice page (/arcade with the arcade or game mode off): the
-      link into the settings still lands on the Learning tab
+      link into the settings lands on the Learning tab's "Motivation and
+      routine" area (chip active, area on screen, see #2961)
+
+### Learning tab: section bar + deep link (#2961)
+
+- [ ] Settings > Learning: above the first area sits a row of chips
+      "Basics", "In the lesson", "Reading aloud and dictation", "After the
+      lesson", "Motivation and routine" (in this order; without Web Speech
+      support the "Reading aloud and dictation" chip is absent). With no
+      selection no chip is highlighted
+- [ ] Click the "After the lesson" chip: the page scrolls to the "After
+      the lesson" area, the area heading sits clear of the header (desktop:
+      clear of header AND bar), the chip is highlighted, the address ends
+      in `?tab=learning&section=review`, and the browser back button does
+      NOT return to the previous chip (no new history entry)
+- [ ] Desktop (>= 768 px): keep scrolling down - the bar stays visible
+      right below the app header and covers no text. Phone (375 px): the
+      bar scrolls away with the page, the chip row can be swiped sideways,
+      nothing scrolls horizontally at page level
+- [ ] Open the deep link `/settings?tab=learning&section=motivation` in a
+      new tab: the Learning tab is open, the "Motivation and routine" area
+      on screen, its chip highlighted; on the phone the active chip is
+      visible in the row (the row was scrolled to it)
+- [ ] Open `/settings?tab=learning&section=nonsense`: the tab opens at the
+      top, no chip highlighted, no error
+- [ ] With an active area switch to another tab (e.g. Data): the address
+      carries only `?tab=data`; back on Learning: no chip highlighted, no
+      scroll movement
+- [ ] System setting "reduce motion" on: the jump happens without
+      animation (instant), otherwise smoothly
+- [ ] Both storage modes (API + Dexie): bar and deep link behave the same
 
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the

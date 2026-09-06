@@ -541,7 +541,27 @@ async function gotoLearningClusters(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning through the ``?section=review`` deep link
+ *  (#2961 - the section bar). Pins the bar with the "Nach der Lektion"
+ *  chip active, sticky below the app header on desktop, scrolled to the
+ *  matching cluster. */
+async function gotoLearningSubNav(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning&section=review");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const chip = page.getByTestId("settings-subnav-review");
+    await expect(chip).toHaveAttribute("aria-current", "location", {timeout: 10_000});
+    await expect(page.getByTestId("settings-cluster-review")).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Learning-tab section bar (#2961) ---------------------------------
+    {
+        path: "learning-subnav/settings",
+        setup: gotoLearningSubNav,
+        pinTo: "settings-cluster-review",
+    },
     // --- Learning-tab clusters (#2956) ------------------------------------
     {
         path: "learning-clusters/settings",

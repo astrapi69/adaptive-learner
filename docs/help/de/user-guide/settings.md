@@ -302,6 +302,18 @@ in der Reihenfolge, in der eine Lektion abläuft. Jeder Bereich hat eine
 kleine Überschrift und eine einzeilige Beschreibung; die Karten darin
 behalten ihre eigenen Titel.
 
+Eine **Bereichsleiste** über den Bereichen listet sie als Chips: ein Klick
+springt zum jeweiligen Bereich. Am Desktop bleibt die Leiste beim Scrollen
+unter der App-Kopfzeile sichtbar; am Handy scrollt sie mit der Seite, und
+die Zeile lässt sich seitlich wischen. Die Leiste spiegelt die Adresse:
+`/settings?tab=learning&section=review` öffnet den Tab gescrollt zu *Nach
+der Lektion* (Kennungen: `basics`, `lessons`, `voice`, `review`,
+`motivation`), und ein Klick auf einen Chip aktualisiert die Adresse, ohne
+einen Verlaufseintrag anzulegen. Ein Wechsel in einen anderen Tab verwirft
+den Bereich wieder. Ein nicht gerenderter Bereich (Vorlesen und Diktieren
+in einem Browser ohne Web Speech) hat keinen Chip, eine unbekannte Kennung
+wird ignoriert.
+
 ### Grundlagen
 
 Wer lernt, und in welchen Sprachen.
