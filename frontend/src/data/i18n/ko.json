@@ -579,8 +579,8 @@
     },
     "section_review": "복습",
     "section_srs": "분산 반복",
-    "explanations_enabled": "오류 설명 표시",
-    "explanations_enabled_desc": "레슨 후 각 오답에 대해 짧은 규칙 팁을 표시합니다.",
+    "explanations_enabled": "설명 표시",
+    "explanations_enabled_desc": "답변 후 연습 문제의 설명을, 레슨 후 각 오답에 대한 짧은 규칙 팁을 표시합니다.",
     "section_hints": "힌트",
     "section_lesson_summary": "레슨 후 요약",
     "summary_sections_desc": "레슨이 끝날 때 요약에 표시할 섹션과 그 순서를 선택하세요. 계속 진행하기 위한 동작은 항상 표시됩니다.",
@@ -2395,6 +2395,11 @@
         "receptive_hint": "의미를 인식하세요",
         "productive_hint": "답을 산출하세요"
       }
+    },
+    "explanation": {
+      "title": "설명",
+      "show": "왜 그럴까요?",
+      "hide": "설명 숨기기"
     },
     "summary": {
       "heading": "완료했습니다",

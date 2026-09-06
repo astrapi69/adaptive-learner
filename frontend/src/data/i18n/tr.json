@@ -575,8 +575,8 @@
     },
     "section_review": "Tekrar",
     "section_srs": "Aralıklı tekrar",
-    "explanations_enabled": "Hata açıklamalarını göster",
-    "explanations_enabled_desc": "Bir dersten sonra her hata için kısa bir kural ipucu gösterir.",
+    "explanations_enabled": "Açıklamaları göster",
+    "explanations_enabled_desc": "Bir cevaptan sonra alıştırmanın açıklamasını, bir dersten sonra her hata için kısa bir kural ipucunu gösterir.",
     "section_hints": "İpuçları",
     "section_lesson_summary": "Ders sonrası özet",
     "summary_sections_desc": "Bir dersin sonunda özetin hangi bölümleri ve hangi sırayla göstereceğini seç. Devam etme eylemleri her zaman görünür.",
@@ -2395,6 +2395,11 @@
         "receptive_hint": "Anlamı tanı",
         "productive_hint": "Cevabı üret"
       }
+    },
+    "explanation": {
+      "title": "Açıklama",
+      "show": "Neden?",
+      "hide": "Açıklamayı gizle"
     },
     "flash_round": {
       "title": "Yıldırım turu: {set}",
