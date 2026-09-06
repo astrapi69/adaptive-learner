@@ -347,3 +347,56 @@ claude/explanation-field-brainstorm-wpkafg.
   keinen `ReadAloudController`.
 - Content-Audit (haben die Content-Repos schon `explanation`-Felder?)
   konnte nicht laufen: die Content-Repos sind nicht in der Session.
+
+## D. Guard lesson-types-source: falsche Wurzel statt Timeout-Problem (#2972, Branch claude/github-issue-2972-ufpp2o)
+
+Remote-Session (Cloud-Container) auf dem vorgegebenen Branch, PR gegen
+develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
+
+### 1. Reproduktion und Ursache
+
+- Original prompt: "jetzt machen wir den hier: #2972" (der Guard
+  `lesson-types-source.guard.test.ts` reißt unter Vollsuiten-Last das
+  5000-ms-Budget; Vorschlag im Issue: expliziter Timeout oder weniger
+  Arbeit).
+- Optimierter Prompt: "Miss die Phasen des Guards (Walk, Read, Regex)
+  einzeln im Vitest-Worker, bevor du einen Timeout setzt; vergleiche mit
+  einer Sonde, die dieselbe Arbeit über `frontend/src` macht."
+- Ziel: die Ursache messen statt das Symptom mit einem Timeout zu
+  kaschieren.
+- Ergebnis: Der Guard lief nie über `frontend/src`. `abs("../../../../")`
+  von `src/lib/content/engine/` aus landet in `frontend/`, der Kommentar
+  `// frontend/src` daneben war falsch. Damit las der Walk jede
+  `.ts`/`.tsx` unter `node_modules`, `dist` und `e2e` mit: im Container
+  15415 Dateien statt 2150 (siebenfach), Scan-Test 735-846 ms alleine.
+  Eine Sonde mit identischem Code über `frontend/src` brauchte 90-120 ms.
+  Die 2115 Dateien im Issue-Text waren aus dem Kommentar abgeleitet, nicht
+  gemessen. Die Geschwister-Guards (`full-tree-key-coverage`,
+  `modal-exit-coverage`, `no-hardcoded-colors`,
+  `lesson-schema-validator.standalone`) wurden mitgeprüft: alle Wurzeln
+  korrekt.
+
+### 2. Fix (TDD)
+
+- RED: neuer erster Test "scans frontend/src only": pinnt die Wurzel auf
+  `.../frontend/src`, verlangt null Pfade mit `/node_modules/`, verlangt
+  mehr als 500 Dateien (fail closed, Gate-Vertrag #2083 Punkt 4) und
+  druckt `[lesson-types-source] scanned N .ts/.tsx files under <root>`.
+  Gegen den alten Walk rot (Wurzel `.../frontend`).
+- GREEN: `SRC_ROOT = abs("../../../")`, Pfad-Join über `node:path` statt
+  `${SRC_ROOT}/${entry}` (Doppel-Slash), Docstring erklärt Scope und
+  Vorgeschichte. Scan-Test danach 80 ms (vorher 735-846 ms), 4/4 grün,
+  ESLint `--max-warnings=0` und `tsc --noEmit` sauber.
+- Bewusst KEIN expliziter Timeout: mit 80 ms gegen 5000 ms ist das Budget
+  60-fach; ein hochgesetzter Timeout hätte genau diese Klasse (falsche
+  Eingabemenge liest als "0 Befunde") wieder verdeckt.
+- Commit: siehe PR.
+
+### Fragen und Annahmen
+
+- Der Guard hat mit der falschen Wurzel nie einen falschen Befund
+  geliefert (0 Treffer in beiden Mengen), nur zu viel gelesen; kein
+  Folge-Issue nötig.
+- Keine neue Lektion in `.claude/rules`: der Fall ist eine Instanz des
+  bestehenden Gate-Vertrags Punkt 4 (quality-checks.md, "reportiert, was
+  es gemessen hat"); der neue Test setzt genau das um.
