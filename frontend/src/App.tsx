@@ -31,6 +31,7 @@ import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
 import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
+import { useKeyboardPreReveal } from "./hooks/ui/useKeyboardPreReveal";
 import { useVisualViewportRealign } from "./hooks/ui/useVisualViewportRealign";
 import ViewportDiagnostic from "./components/dev/ViewportDiagnostic";
 import VvPanelToggleFab from "./components/dev/VvPanelToggleFab";
@@ -109,6 +110,10 @@ export default function App() {
   // #1569 — reset the iOS phantom window scroll that lands taps ~2 lines
   // below their visible target (see the hook's TSDoc for the mechanism).
   useVisualViewportRealign();
+  // #3002 — reveal a focused text field in the app's own scroller BEFORE
+  // Safari pans the viewport for it; prevents the shifted tap grid the
+  // realign hook must not repair (Safari owns the reveal while focused).
+  useKeyboardPreReveal();
   // #1569 — opt-in on-device fix-candidate experiment (?vvfix=<id>). Inert for
   // normal users; lets a device trial each candidate remedy against ΔY.
   useViewportFixExperiment();

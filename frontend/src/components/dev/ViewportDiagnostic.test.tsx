@@ -201,6 +201,36 @@ describe("ViewportDiagnostic", () => {
     expect(report.value).toMatch(/branch=\S+/);
   });
 
+  it("the report renders the actors' hook decisions from the protocol (#3003)", async () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    const { appendVvLogEntry } = await import("../../lib/diagnostics/vv-log");
+    appendVvLogEntry({
+      kind: "hook",
+      ts: Date.now(),
+      fix: "off",
+      decision: "hold:focus",
+      winY: 440,
+    });
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId(
+      "viewport-diagnostic-report",
+    ) as HTMLTextAreaElement;
+    expect(report.value).toContain("hook (newest first):");
+    expect(report.value).toContain("decision=hold:focus");
+    expect(report.value).toContain("winY=440");
+  });
+
+  it("the hook section states its empty case instead of vanishing (#3003)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId(
+      "viewport-diagnostic-report",
+    ) as HTMLTextAreaElement;
+    expect(report.value).toContain("(no hook decisions yet)");
+  });
+
   it("tap lines carry the relative timestamp t= (#2883)", () => {
     localStorage.setItem("adaptive-learner.vv_diag", "1");
     render(

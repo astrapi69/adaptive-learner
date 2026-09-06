@@ -70,7 +70,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { appendVvLogEntry } from "../../lib/diagnostics/vv-log";
+import { appendVvLogEntry, readVvLog } from "../../lib/diagnostics/vv-log";
 import {
   useViewportDiagnostic,
   useVvPanelVisible,
@@ -304,11 +304,38 @@ function buildStamp(): string {
   return `v=${v} build=${hash} branch=${branch}`;
 }
 
+/** How many actor-decision lines the report renders at most (#3003). */
+const MAX_HOOK_LINES = 12;
+
+/**
+ * The instrumented actors' decisions since probe mount (#3003), rendered
+ * from the persistent protocol at copy time — the realign hook's
+ * reset/hold verdicts (#2995) and the pre-reveal's applied scrolls
+ * (#3002) were previously only in the Settings export, not in the report
+ * the tester actually pastes.
+ */
+function hookBody(mountTs: number): string {
+  const lines = readVvLog()
+    .filter((entry) => entry.kind === "hook" && entry.ts >= mountTs)
+    .slice(-MAX_HOOK_LINES)
+    .reverse()
+    .map((entry, i) => {
+      const { kind: _kind, ts, fix: _fix, ...rest } = entry;
+      const fields = Object.entries(rest)
+        .map(([k, v]) => `${k}=${v}`)
+        .join(" ");
+      const rel = Math.round((ts - mountTs) / 100) / 10;
+      return `${i + 1}. t=${rel} ${fields}`;
+    });
+  return lines.length ? lines.join("\n") : "(no hook decisions yet)";
+}
+
 /** The plain-text report the Copy button (and the selectable block) share. */
 function buildReport(
   snap: Snapshot,
   taps: TapInfo[],
   events: VvEventInfo[],
+  mountTs: number,
 ): string {
   const head =
     `[vvdiag] fix=${activeFix()} winY=${snap.winScrollY} vvTop=${snap.vvOffsetTop} ` +
@@ -326,7 +353,8 @@ function buildReport(
     : "(no events yet)";
   return (
     `${head}\n${ua}\ntaps (newest first):\n${tapBody}\n` +
-    `events (newest first):\n${eventBody}`
+    `events (newest first):\n${eventBody}\n` +
+    `hook (newest first):\n${hookBody(mountTs)}`
   );
 }
 
@@ -441,6 +469,7 @@ export default function ViewportDiagnostic() {
       snapRef.current ?? readSnapshot(),
       tapsRef.current,
       eventsRef.current,
+      startRef.current,
     );
     const done = () => {
       setCopied(true);
@@ -457,7 +486,7 @@ export default function ViewportDiagnostic() {
   // panel hidden (#2785) the probe keeps appending to the persistent
   // protocol while rendering nothing — the header/menu stay reachable.
   if (!enabled || !panelVisible || !snap) return null;
-  const report = buildReport(snap, taps, events);
+  const report = buildReport(snap, taps, events, startRef.current);
   return (
     <div
       className="pointer-events-none fixed inset-x-0 top-0 z-[9999] border-b border-border bg-card/95 px-2 py-1.5 font-mono text-[12px] leading-snug text-fg-primary"

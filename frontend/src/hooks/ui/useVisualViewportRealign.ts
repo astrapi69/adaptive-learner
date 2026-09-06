@@ -53,20 +53,8 @@
 
 import {useEffect} from "react";
 
-import {appendVvLogEntry} from "../../lib/diagnostics/vv-log";
-
-/** Same flag the ``?vvdiag=1`` probe persists (#2782). */
-const DIAG_FLAG_KEY = "adaptive-learner.vv_diag";
-
-/** Whether the diagnostics probe is enabled — hook decisions are logged
- *  only then (#2995); normal users pay nothing. */
-function diagEnabled(): boolean {
-    try {
-        return localStorage.getItem(DIAG_FLAG_KEY) === "1";
-    } catch {
-        return false;
-    }
-}
+import {appendVvLogEntry, vvDiagEnabled} from "../../lib/diagnostics/vv-log";
+import {isTextEntry} from "../../lib/viewport/keyboard-focus";
 
 /**
  * Minimum visual-viewport shrink (px) that counts as "keyboard open".
@@ -74,33 +62,6 @@ function diagEnabled(): boolean {
  * 250-400px tall, browser-UI (address-bar) reflows are well under 150px.
  */
 const KEYBOARD_OPEN_MIN_PX = 150;
-
-/**
- * Input types that never open an on-screen keyboard — focus on these
- * must not block the realign (the #1569 checkbox mis-tap is exactly the
- * case the hook exists for).
- */
-const NON_TEXT_INPUT_TYPES = new Set([
-    "button",
-    "checkbox",
-    "radio",
-    "range",
-    "color",
-    "submit",
-    "reset",
-    "file",
-]);
-
-/** Whether ``el`` is a text-entry element that summons the keyboard. */
-function isTextEntry(el: Element | null): boolean {
-    if (!el) return false;
-    const tag = el.tagName;
-    if (tag === "TEXTAREA" || tag === "SELECT") return true;
-    if (tag === "INPUT") {
-        return !NON_TEXT_INPUT_TYPES.has((el as HTMLInputElement).type);
-    }
-    return (el as HTMLElement).isContentEditable === true;
-}
 
 export function useVisualViewportRealign(): void {
     useEffect(() => {
@@ -122,7 +83,7 @@ export function useVisualViewportRealign(): void {
         const note = (decision: string) => {
             if (decision === lastDecision) return;
             lastDecision = decision;
-            if (!diagEnabled()) return;
+            if (!vvDiagEnabled()) return;
             appendVvLogEntry({
                 kind: "hook",
                 ts: Date.now(),
