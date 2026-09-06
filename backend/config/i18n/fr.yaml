@@ -2686,17 +2686,22 @@ content:
   action:
     refresh: "Rafraîchir"
     refreshing: "Rafraîchissement…"
+    refresh_hint: "Recharger la liste et appliquer toutes les mises à jour disponibles"
     download: "Télécharger"
     update: "Mettre à jour"
     installed: "Installé"
     open: "Ouvrir"
   toast:
     downloaded: "Set téléchargé et prêt à utiliser."
+    updated_all: "{n} sets mis à jour."
+    updates_held: "{n} mises à jour ont été retenues car elles affecteraient votre progression. Confirmez-les une par une avec le bouton Mettre à jour du set."
+    all_up_to_date: "Tous les sets sont à jour."
   warning:
     no_lessons_in_set: "Ce set n'a pas encore de leçons."
   error:
     list_failed: "Impossible de charger les sets de contenu."
     download_failed: "Impossible de télécharger le set."
+    update_all_failed: "{n} mises à jour ont échoué."
     open_failed: "Impossible d'ouvrir la leçon."
   tree:
     i_speak: Je parle

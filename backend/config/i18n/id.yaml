@@ -2695,17 +2695,22 @@ content:
   action:
     refresh: "Segarkan"
     refreshing: "Menyegarkan…"
+    refresh_hint: "Muat ulang daftar dan terapkan semua pembaruan yang tersedia"
     download: "Unduh"
     update: "Perbarui"
     installed: "Terpasang"
     open: "Buka"
   toast:
     downloaded: "Set diunduh dan siap digunakan."
+    updated_all: "{n} set diperbarui."
+    updates_held: "{n} pembaruan ditahan karena akan memengaruhi kemajuanmu. Konfirmasi satu per satu dengan tombol Perbarui pada set."
+    all_up_to_date: "Semua set sudah mutakhir."
   warning:
     no_lessons_in_set: "Set ini belum memiliki pelajaran."
   error:
     list_failed: "Tidak dapat memuat set konten."
     download_failed: "Tidak dapat mengunduh set."
+    update_all_failed: "{n} pembaruan gagal."
     open_failed: "Tidak dapat membuka pelajaran."
   tree:
     i_speak: Saya berbicara

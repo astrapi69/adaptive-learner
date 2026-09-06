@@ -1696,8 +1696,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       (#2998: unabhängig von der in Einstellungen → Allgemein konfigurierten
       Tab-Reihenfolge, auch wenn Importieren oder Entdecken vorne steht),
       das betroffene Set zeigt dort **"Aktualisierung verfügbar"** in der
-      Zeile (deckungsgleich mit dem Badge-Wert). **Nach dem Anwenden (#2985):** die Aktualisierung(en)
-      auf `/content` durchführen (oder die Repo-Quelle synchronisieren) →
+      Zeile (deckungsgleich mit dem Badge-Wert). **Alle anwenden (#3001):**
+      den Kopfzeilen-Knopf **"Aktualisieren"** (`content-refresh`) drücken
+      → die Liste wird neu geladen UND jedes Set mit "Aktualisierung
+      verfügbar" wird nacheinander aktualisiert; der Knopf bleibt bis zum
+      Ende deaktiviert, danach EIN Sammel-Toast "N Sets aktualisiert."
+      (kein Toast pro Set). Ohne ausstehende Updates: Toast "Alle Sets sind
+      aktuell.", kein Download. Ein Breaking-Update (#2128, Fortschritt
+      betroffen) wird dabei NICHT angewendet: Hinweis-Toast "N
+      Aktualisierungen wurden zurückgehalten …", das Set behält
+      "Aktualisierung verfügbar" und wird einzeln über den Zeilen-Knopf
+      bestätigt. **Nach dem Anwenden (#2985):** die Aktualisierung(en)
+      auf `/content` durchführen (Kopfzeilen-Knopf, Zeilen-Knopf oder die
+      Repo-Quelle synchronisieren) →
       der Badge-Zähler sinkt **sofort ohne Neuladen**; sind alle Updates
       angewendet, verschwindet das Badge (zurückgehaltene Breaking-Updates
       zählen weiter, bis sie manuell entschieden sind - das ist korrekt).

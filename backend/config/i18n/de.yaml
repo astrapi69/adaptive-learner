@@ -2689,17 +2689,22 @@ content:
   action:
     refresh: "Aktualisieren"
     refreshing: "Aktualisiere…"
+    refresh_hint: "Liste neu laden und alle verfügbaren Aktualisierungen anwenden"
     download: "Herunterladen"
     update: "Aktualisieren"
     installed: "Installiert"
     open: "Öffnen"
   toast:
     downloaded: "Set wurde heruntergeladen und ist einsatzbereit."
+    updated_all: "{n} Sets aktualisiert."
+    updates_held: "{n} Aktualisierungen wurden zurückgehalten, weil sie deinen Fortschritt betreffen würden. Bestätige sie einzeln über den Aktualisieren-Knopf des Sets."
+    all_up_to_date: "Alle Sets sind aktuell."
   warning:
     no_lessons_in_set: "Dieses Set enthält noch keine Lektionen."
   error:
     list_failed: "Inhalte konnten nicht geladen werden."
     download_failed: "Set konnte nicht heruntergeladen werden."
+    update_all_failed: "{n} Aktualisierungen sind fehlgeschlagen."
     open_failed: "Lektion konnte nicht geöffnet werden."
   tree:
     i_speak: Ich spreche

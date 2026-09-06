@@ -2906,13 +2906,17 @@
     "action": {
       "refresh": "Yenile",
       "refreshing": "Yenileniyor…",
+      "refresh_hint": "Listeyi yeniden yükle ve mevcut tüm güncellemeleri uygula",
       "download": "İndir",
       "update": "Güncelle",
       "installed": "Yüklendi",
       "open": "Aç"
     },
     "toast": {
-      "downloaded": "Set indirildi ve kullanıma hazır."
+      "downloaded": "Set indirildi ve kullanıma hazır.",
+      "updated_all": "{n} set güncellendi.",
+      "updates_held": "{n} güncelleme, ilerlemeni etkileyeceği için bekletildi. Her birini setin Güncelle düğmesiyle tek tek onayla.",
+      "all_up_to_date": "Tüm setler güncel."
     },
     "warning": {
       "no_lessons_in_set": "Bu sette henüz ders yok."
@@ -2920,6 +2924,7 @@
     "error": {
       "list_failed": "İçerik setleri yüklenemedi.",
       "download_failed": "Set indirilemedi.",
+      "update_all_failed": "{n} güncelleme başarısız oldu.",
       "open_failed": "Ders açılamadı."
     },
     "tree": {

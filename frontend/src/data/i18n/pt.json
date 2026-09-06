@@ -2906,13 +2906,17 @@
     "action": {
       "refresh": "Atualizar",
       "refreshing": "A atualizar…",
+      "refresh_hint": "Recarregar a lista e aplicar todas as atualizações disponíveis",
       "download": "Transferir",
       "update": "Atualizar",
       "installed": "Instalado",
       "open": "Abrir"
     },
     "toast": {
-      "downloaded": "Conjunto transferido e pronto a usar."
+      "downloaded": "Conjunto transferido e pronto a usar.",
+      "updated_all": "{n} conjuntos atualizados.",
+      "updates_held": "{n} atualizações foram retidas porque afetariam o teu progresso. Confirma-as uma a uma com o botão Atualizar do conjunto.",
+      "all_up_to_date": "Todos os conjuntos estão atualizados."
     },
     "warning": {
       "no_lessons_in_set": "Este conjunto ainda não tem lições."
@@ -2920,6 +2924,7 @@
     "error": {
       "list_failed": "Não foi possível carregar os conjuntos de conteúdo.",
       "download_failed": "Não foi possível transferir o conjunto.",
+      "update_all_failed": "{n} atualizações falharam.",
       "open_failed": "Não foi possível abrir a lição."
     },
     "tree": {
