@@ -355,6 +355,8 @@ Game mode, feedback, daily missions and reminders.
 - **Daily Missions** - whether missions run, how many per day, the
   difficulty mix, and a reshuffle of today's missions.
 - **Reminders** - the reminder time and the days it applies to.
+- **Gamification** - XP / badge toasts, weekend mode, the daily session
+  goal and *Reset progress*; the last card, see below.
 
 The game mode card shows the master switch, the game mode sounds and a
 status line counting how many of the extras are on. **Game mode details**
@@ -362,14 +364,15 @@ status line counting how many of the extras are on. **Game mode details**
 XP and mascot) is collapsed and remembers your choice; while **Playful
 lessons** is off, the options inside are greyed out.
 
-The tab ends with the reminders. The two housekeeping settings -
+The tab ends with **Gamification** (below a separator, because that card
+holds *Reset progress*). The two housekeeping settings -
 *Paused lesson retention* and *Maximum lesson size* - are data-lifecycle
 settings and live on the **Data** tab (see *Housekeeping* under Backup).
 
 The **content view** (list / grid) and the **order of the Content-hub
 tabs** are on the **General** tab under *Appearance*.
 
-## Gamification
+### Gamification
 
 Toggles for XP / badge / level-up notifications (off
 silences toasts but the system still records state),

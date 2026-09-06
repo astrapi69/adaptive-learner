@@ -278,14 +278,15 @@ açık olduğunu sayan bir durum satırını gösterir. **Oyun modu ayrıntılar
 ve maskot) katlıdır ve seçiminizi hatırlar; **Oyunlaştırılmış dersler**
 kapalıyken içindeki seçenekler soluk görünür.
 
-Sekme hatırlatıcılarla biter. İki düzenleme ayarı - *Duraklatılmış ders
+Sekme **Oyunlaştırma** ile biter (*İlerlemeyi sıfırla* orada olduğu için
+bir ayırıcı çizginin altında). İki düzenleme ayarı - *Duraklatılmış ders
 saklama süresi* ve *Maksimum ders boyutu* - veri yaşam döngüsü ayarlarıdır
 ve **Veri** sekmesinde yer alır (bkz. Yedek altındaki *Düzenleme*).
 
 **İçerik görünümü** (liste / ızgara) ve **İçerik sekmeleri sırası**,
 **Genel** sekmesinde *Görünüm* altındadır.
 
-## Oyunlaştırma
+### Oyunlaştırma
 
 XP / rozet / seviye atlama bildirimleri için geçişler (kapalı
 toast'ları susturur ama sistem durumu kaydetmeye devam eder),

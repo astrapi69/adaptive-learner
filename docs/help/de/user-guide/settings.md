@@ -383,6 +383,9 @@ Spielmodus, Feedback, tägliche Missionen und Erinnerungen.
 - **Tägliche Missionen** - ob Missionen laufen, wie viele pro Tag, die
   Schwierigkeits-Mischung und das Neumischen der heutigen Missionen.
 - **Erinnerungen** - die Erinnerungszeit und die Tage, an denen sie gilt.
+- **Gamification** - XP- und Abzeichen-Toasts, Wochenend-Modus, das
+  tägliche Sessions-Ziel und *Fortschritt zurücksetzen*; die letzte
+  Karte, siehe unten.
 
 Die Spielmodus-Karte zeigt den Hauptschalter, die Spielmodus-Sounds und
 eine Statuszeile, wie viele der Extras an sind. **Details zum Spielmodus**
@@ -391,7 +394,8 @@ Serien-XP und Maskottchen) ist eingeklappt und merkt sich deine Wahl;
 solange **Spielerische Lektionen** aus ist, sind die Optionen darin
 ausgegraut.
 
-Der Tab endet mit den Erinnerungen. Die beiden Aufräum-Einstellungen -
+Der Tab endet mit **Gamification** (unter einer Trennlinie, weil diese
+Karte *Fortschritt zurücksetzen* enthält). Die beiden Aufräum-Einstellungen -
 *Pausierte Lektionen aufbewahren* und *Maximale Lektionsgröße* -
 betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
 *Aufräumen* unter Backup).
@@ -399,7 +403,7 @@ betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
 Die **Ansicht der Inhalte** (Liste / Kacheln) und die **Reihenfolge der
 Inhalte-Tabs** liegen im **Allgemein**-Tab unter *Darstellung*.
 
-## Gamification
+### Gamification
 
 Toggles für XP- / Badge- / Level-Up-Benachrichtigungen
 (Aus stoppt Toasts, das System speichert den Zustand

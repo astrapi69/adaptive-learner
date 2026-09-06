@@ -41,6 +41,7 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
+| Lernen-Tab - Gamification-Karte als letzte Karte im Bereich "Motivation und Routine", hinter einer Trennlinie (#2962) | `gamification-card/settings.png` | `gamification-card/settings.mobile.png` | #2962 |
 | Lernen-Tab - Bereichsleiste über den fünf Bereichen, Deep-Link `?tab=learning&section=review`, Chip "Nach der Lektion" aktiv (#2961) | `learning-subnav/settings.png` | `learning-subnav/settings.mobile.png` | #2961 |
 | Lernen-Tab - fünf Bereiche "Grundlagen / In der Lektion / Vorlesen und Diktieren / Nach der Lektion / Motivation und Routine", Verteilte Wiederholung in der Wiederholungs-Karte (#2956) | `learning-clusters/settings.png` | `learning-clusters/settings.mobile.png` | #2956 |
 | Daten-Tab - Aufräum-Karten "Pausierte Lektionen aufbewahren" + "Maximale Lektionsgröße" (#2955) | `data-housekeeping/settings.png` | `data-housekeeping/settings.mobile.png` | #2955 |

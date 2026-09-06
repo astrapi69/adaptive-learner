@@ -315,13 +315,15 @@ describe("Settings page", () => {
   // source languages) -> in-lesson flow (mode, hints, interaction
   // toggles, direction, matching effect, voice) -> practice &
   // follow-up (review with the SRS schedule inside it, summary, retry
-  // scope) -> motivation (game mode, feedback, missions) -> reminders
-  // LAST. #2956 grouped these into five clusters and made ONE relative
+  // scope) -> motivation (game mode, feedback, missions) -> reminders,
+  // and since #2962 the gamification card LAST (moved in from the
+  // Plugins tab, behind a separator because it holds Reset progress).
+  // #2956 grouped these into five clusters and made ONE relative
   // change: hints + interaction now precede direction + matching. The
   // rare-housekeeping pair #1459 parked at the end (paused retention,
   // max lesson size) lives on the Data tab since #2955. Pinned by
   // relative DOM order so a future edit cannot silently regress it.
-  it("orders the Learning-tab sections causally (profile first, reminders last) (#1459)", async () => {
+  it("orders the Learning-tab sections causally (profile first, gamification last) (#1459)", async () => {
     storageState.mode = "api";
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=learning");
@@ -345,6 +347,7 @@ describe("Settings page", () => {
       "settings-section-feedback",
       "settings-section-missions",
       "settings-section-reminders",
+      "settings-section-gamification",
     ];
     const domOrder = sectionRootsInDomOrder(panel, CAUSAL_ORDER);
     // Voice hides itself when the environment supports neither TTS nor
@@ -356,14 +359,16 @@ describe("Settings page", () => {
     expect(domOrder).toEqual(CAUSAL_ORDER.filter((id) => domOrder.includes(id)));
     // Headline invariants: the in-lesson interaction toggles sit with
     // the lesson-flow block (before Review), review and SRS are
-    // adjacent, and reminders are last (#2955).
+    // adjacent, reminders close the routine block (#2955) and the
+    // gamification card is the last card of the tab (#2962).
     expect(domOrder.indexOf("settings-section-interaction")).toBeLessThan(
       domOrder.indexOf("settings-section-review"),
     );
     expect(domOrder.indexOf("settings-section-srs")).toBe(
       domOrder.indexOf("settings-section-review") + 1,
     );
-    expect(domOrder[domOrder.length - 1]).toBe("settings-section-reminders");
+    expect(domOrder[domOrder.length - 2]).toBe("settings-section-reminders");
+    expect(domOrder[domOrder.length - 1]).toBe("settings-section-gamification");
   });
 
   // #2956 — the Learning tab groups its 16 cards into five labelled
@@ -404,9 +409,10 @@ describe("Settings page", () => {
         "settings-section-feedback",
         "settings-section-missions",
         "settings-section-reminders",
+        "settings-section-gamification",
       ],
     };
-    expect(Object.values(CLUSTER_MEMBERSHIP).flat()).toHaveLength(16);
+    expect(Object.values(CLUSTER_MEMBERSHIP).flat()).toHaveLength(17);
     const clusterIds = Object.keys(CLUSTER_MEMBERSHIP);
     expect(sectionRootsInDomOrder(panel, clusterIds)).toEqual(clusterIds);
     for (const [clusterId, sectionIds] of Object.entries(CLUSTER_MEMBERSHIP)) {
@@ -422,6 +428,35 @@ describe("Settings page", () => {
       sectionIds.forEach((id) => within(cluster).getByTestId(id));
       expect(sectionRootsInDomOrder(cluster, sectionIds)).toEqual(sectionIds);
     }
+  });
+
+  // #2962 — Gamification (XP / badge toasts, weekend mode, daily goal,
+  // Reset progress) leaves the Plugins tab and becomes the LAST card of
+  // the motivation cluster, behind a separator because it carries the
+  // destructive reset. Its testids are unchanged; the Plugins tab keeps
+  // the Learning-Repository card only.
+  it("hosts Gamification as the last motivation card, behind a separator, not on Plugins (#2962)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    expect(screen.getAllByTestId("settings-section-gamification")).toHaveLength(1);
+    const gamification = screen.getByTestId("settings-section-gamification");
+    expect(screen.getByTestId("settings-panel-plugins").contains(gamification)).toBe(false);
+    const motivation = within(screen.getByTestId("settings-panel-learning")).getByTestId(
+      "settings-cluster-motivation",
+    );
+    expect(motivation.contains(gamification)).toBe(true);
+    expect(gamification).toBeVisible();
+    const separator = screen.getByTestId("settings-gamification-separator");
+    expect(separator).toHaveClass("mt-8", "border-t-2", "border-border", "pt-8");
+    expect(separator.contains(gamification)).toBe(true);
+    expect(motivation.lastElementChild).toBe(separator);
+    expect(within(motivation).getByTestId("settings-section-reminders").compareDocumentPosition(gamification) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // The Plugins tab still exists and still carries the Learning-Repository card.
+    fireEvent.click(screen.getByTestId("settings-tab-plugins"));
+    expect(screen.getByTestId("settings-panel-plugins")).toBeVisible();
+    expect(screen.getByTestId("settings-section-gamification")).not.toBeVisible();
   });
 
   // #2956 — the read-only SRS schedule has no input of its own, so it is

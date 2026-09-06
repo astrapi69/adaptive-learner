@@ -898,6 +898,24 @@ preview delivery). In the regular build the mode does not exist.
       link into the settings lands on the Learning tab's "Motivation and
       routine" area (chip active, area on screen, see #2961)
 
+### Gamification inside "Motivation and routine" (#2962)
+
+- [ ] Settings > Learning > "Motivation and routine": the "Gamification"
+      card (XP notifications, badge notifications, "View all badges",
+      weekend mode, daily session goal, "Reset progress") is the LAST
+      card of the tab, right behind "Reminders", set apart by a thicker
+      divider with extra space above it
+- [ ] Settings > Plugins: only the "Learning Repository" card remains; no
+      Gamification card any more
+- [ ] Section bar, chip "Motivation and routine": the jump lands on the
+      area heading, and the Gamification card belongs to the area (under
+      the same heading)
+- [ ] "View all badges" still opens the badge gallery; "Reset progress"
+      still asks twice; weekend mode persists (reload) - in both storage
+      modes
+- [ ] Phone (375 px): the card and the divider wrap cleanly, nothing
+      scrolls horizontally
+
 ### Learning tab: section bar + deep link (#2961)
 
 - [ ] Settings > Learning: above the first area sits a row of chips

@@ -293,7 +293,8 @@ arcade, rondas especiales, tickets, lecciones extra, XP de racha y
 mascota) está plegado y recuerda tu elección; mientras **Lecciones
 lúdicas** está desactivado, las opciones de dentro aparecen atenuadas.
 
-La pestaña termina con los recordatorios. Los dos ajustes de limpieza -
+La pestaña termina con **Gamificación** (bajo una línea separadora,
+porque esa tarjeta contiene *Reiniciar progreso*). Los dos ajustes de limpieza -
 *Retención de lecciones pausadas* y *Tamaño máximo de lección* - son
 ajustes del ciclo de vida de los datos y viven en la pestaña **Datos**
 (ver *Limpieza* bajo Copia de seguridad).
@@ -302,7 +303,7 @@ La **Vista de contenidos** (lista / cuadrícula) y el **Orden de las
 pestañas de Contenido** están en la pestaña **General** bajo
 *Apariencia*.
 
-## Gamificación
+### Gamificación
 
 Alternadores para notificaciones de XP / insignias / subida de
 nivel (desactivar silencia los toasts pero el sistema sigue

@@ -555,7 +555,26 @@ async function gotoLearningSubNav(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning scrolled to the gamification card (#2962 -
+ *  moved in from the Plugins tab as the last card of the motivation
+ *  cluster, behind a separator because it holds Reset progress). */
+async function gotoGamificationCard(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning&section=motivation");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const card = page.getByTestId("settings-section-gamification");
+    await card.scrollIntoViewIfNeeded();
+    await expect(card).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Gamification card inside the motivation cluster (#2962) ----------
+    {
+        path: "gamification-card/settings",
+        setup: gotoGamificationCard,
+        pinTo: "settings-gamification-separator",
+    },
     // --- Learning-tab section bar (#2961) ---------------------------------
     {
         path: "learning-subnav/settings",

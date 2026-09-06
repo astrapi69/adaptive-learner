@@ -149,29 +149,32 @@ Mode jeu, retour, missions quotidiennes et rappels.
   (désactivés par défaut, avec réglage du volume et bouton Test).
 - **Missions quotidiennes** - si les missions sont actives, combien par
   jour, le mélange de difficulté et le remaniement des missions du jour.
-- **Rappels** - l'heure du rappel et les jours où il s'applique. C'est
-  la dernière carte de l'onglet.
+- **Rappels** - l'heure du rappel et les jours où il s'applique.
+- **Gamification** - les notifications XP / badge, le mode week-end,
+  l'objectif de sessions quotidien et la réinitialisation ; c'est la
+  dernière carte de l'onglet, voir ci-dessous.
 
 L'affichage du contenu (liste / grille) et l'ordre des onglets du hub de
 contenu se trouvent dans l'onglet **Général**, sous *Apparence*. Les deux
 réglages de nettoyage, *Conservation des leçons en pause* et *Taille
 maximale de leçon*, sont dans l'onglet **Données**.
 
----
+### Gamification
 
-## Gamification
+La dernière carte de l'onglet, sous un séparateur parce qu'elle contient
+la réinitialisation.
 
-### Afficher la gamification
+#### Afficher la gamification
 
 Bascule la visibilité des éléments XP, badge et série sur le tableau
 de bord.
 
-### Galerie des badges
+#### Galerie des badges
 
 Ouvre la galerie de badges complète avec filtrage, tri et vue des
 critères de déverrouillage pour chaque badge.
 
-### Réinitialiser
+#### Réinitialiser
 
 Réinitialise les données XP, badge et série. Le curriculum, les sessions
 et les évaluations sont préservés. Nécessite une double confirmation.

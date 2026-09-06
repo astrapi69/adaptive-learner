@@ -952,6 +952,25 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       auf dem Lernen-Tab im Bereich "Motivation und Routine" (Chip aktiv,
       Bereich im Bild, siehe #2961)
 
+### Gamification im Bereich "Motivation und Routine" (#2962)
+
+- [ ] Einstellungen > Lernen > "Motivation und Routine": die Karte
+      "Gamification" (XP-Benachrichtigungen, Abzeichen-Benachrichtigungen,
+      "Alle Abzeichen anzeigen", Wochenend-Modus, Tägliches Sessions-Ziel,
+      "Fortschritt zurücksetzen") ist die LETZTE Karte des Tabs, direkt
+      hinter "Erinnerungen", optisch abgesetzt durch eine dickere
+      Trennlinie mit Abstand darüber
+- [ ] Einstellungen > Plugins: nur noch die Karte "Lern-Repository";
+      keine Gamification-Karte mehr
+- [ ] Bereichsleiste, Chip "Motivation und Routine": der Sprung landet
+      auf der Bereichs-Überschrift, die Gamification-Karte gehört zum
+      Bereich (unter derselben Überschrift)
+- [ ] "Alle Abzeichen anzeigen" öffnet weiterhin die Abzeichen-Galerie;
+      "Fortschritt zurücksetzen" fragt weiterhin zweimal nach; der
+      Wochenend-Modus speichert (Reload) - in beiden Speicher-Modi
+- [ ] Handy (375 px): die Karte und die Trennlinie brechen sauber um,
+      nichts scrollt horizontal
+
 ### Lernen-Tab: Bereichsleiste + Deep-Link (#2961)
 
 - [ ] Einstellungen > Lernen: über dem ersten Bereich steht eine Zeile

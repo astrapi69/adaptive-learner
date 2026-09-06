@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import type { CSSProperties } from "react";
 
+import GamificationSettingsSection from "../../../../components/settings/controls/motivation/GamificationSettingsSection";
 import FeedbackIntensityControl from "../../../../components/settings/controls/motivation/FeedbackIntensityControl";
 import DirectionStrategyControl from "../../../../components/settings/controls/lesson/DirectionStrategyControl";
 import MatchingResolveControl from "../../../../components/settings/controls/lesson/MatchingResolveControl";
@@ -32,7 +33,7 @@ interface LearningPanelProps {
 }
 
 /**
- * Learning tab of the Settings page: 16 cards in five labelled clusters
+ * Learning tab of the Settings page: 17 cards in five labelled clusters
  * (#2956), each a ``SettingsCluster`` landmark, in the FIXED causal order
  * #1459 established (mirroring the #1451 Data-tab principle):
  *
@@ -48,7 +49,10 @@ interface LearningPanelProps {
  * 4. After the lesson: review (which hosts the read-only SRS schedule as
  *    its last block), lesson summary sections, retry errors scope.
  * 5. Motivation and routine: game mode, feedback (intensity + sounds),
- *    daily missions, and the daily reminders LAST.
+ *    daily missions, the daily reminders, and (since #2962, moved in
+ *    from the Plugins tab as the final stage of the #2951 reorganisation)
+ *    the gamification card LAST, behind a separator because it holds the
+ *    destructive Reset progress.
  *
  * The two rare housekeeping cards #1459 parked here (paused-lesson
  * retention, max lesson size) live on the Data tab since #2955. Cluster
@@ -175,6 +179,12 @@ export default function LearningPanel({ active }: LearningPanelProps) {
         </SettingsSection>
         <MissionSettingsControl />
         <DailyRemindersControl />
+        <div
+          data-testid="settings-gamification-separator"
+          className="mt-8 border-t-2 border-border pt-8"
+        >
+          <GamificationSettingsSection />
+        </div>
       </SettingsCluster>
     </div>
   );
