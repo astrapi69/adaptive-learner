@@ -83,6 +83,7 @@ Baseline zu committen.
 | Viewport-Diagnose — Settings-Sektion mit Schalter + Protokoll (#2782) | `viewport-diagnostic/settings-sektion.png` | `viewport-diagnostic/settings-sektion.mobile.png` | v2.13.0+ |
 | Untere Tab-Leiste — opt-in Menüposition unten (#2786) | — (Leiste ist md:hidden) | `bottom-tab-bar/leiste.mobile.png` | v2.13.0+ |
 | Lektions-Navigation — "Lektion N von M" mit Vor/Zurück (#2793) | `lesson-navigation/position-zeile.png` | `lesson-navigation/position-zeile.mobile.png` | v2.13.0+ |
+| Erklärung nach der Antwort - Kasten „Erklärung" aufgeklappt nach falscher Antwort, gerendertes Markdown (#2991) | `exercise-explanation/falsche-antwort.png` | `exercise-explanation/falsche-antwort.mobile.png` | v2.15.0+ |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
 > konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.

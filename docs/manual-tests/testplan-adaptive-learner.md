@@ -413,6 +413,20 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       verrät nichts. Bei Freitext/Cloze/Wort-Kacheln bleibt der Tipp-Knopf wie
       bisher erhalten. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
       Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
+- [ ] Erklärung nach der Antwort (#2991): eine Übung öffnen, deren Inhalt eine
+      Erklärung trägt (Feld `explanation`, z. B. das Fixture
+      `e2e/fixtures/explanation-post-answer.lesson.json` über ein verbundenes
+      Test-Repository). Vor dem Prüfen ist KEINE Erklärung sichtbar. Falsch
+      antworten und prüfen: unter der Übung erscheint der Kasten „Erklärung"
+      AUFGEKLAPPT mit gerendertem Markdown (fette „Regel", die Wort-für-Wort-
+      Liste, die Beispiele). Nächste Übung richtig beantworten: der Kasten
+      erscheint EINGEKLAPPT mit dem Knopf „Warum?"; ein Klick öffnet ihn,
+      „Erklärung ausblenden" schließt ihn wieder. Eine Übung OHNE Erklärung
+      zeigt keinen Kasten. Einstellungen > Lernen > Wiederholung >
+      „Erklärungen anzeigen" ausschalten: der Kasten verschwindet sofort, auch
+      in der laufenden Lektion; einschalten bringt ihn zurück. Im Prüfungsmodus
+      erscheint er nie. Kein XP-Abzug. iOS PWA/Standalone: dieselbe Prüfung auf
+      dem zum Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
 - [ ] Zuordnung: kein falscher Untertitel/Spaltentitel bei Wissens-Sets (#2392):
       eine Zuordnungsübung eines WISSENS-Sets öffnen (nicht-sprachliche Domäne
       oder Quell- = Zielsprache, z. B. Sinne zu Organen). Es erscheint KEIN

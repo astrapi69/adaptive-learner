@@ -323,8 +323,10 @@ directly.
 
 Review sessions, the lesson summary and retrying mistakes.
 
-- **Review** - the auto-generated error explanations and the number of
-  questions per review session. The card ends with the read-only
+- **Review** - explanations after the answer (the explanation an exercise
+  author wrote, shown under the exercise once it is checked, and the
+  auto-generated rule tips after a lesson) and the number of questions per
+  review session. The card ends with the read-only
   **Spaced repetition** block: the interval schedule (correct answers
   in a row against the days until the next review), when an item
   counts as mastered, and a link to the learning method.
