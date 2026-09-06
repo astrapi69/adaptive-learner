@@ -1,11 +1,61 @@
 # Chat-Journal 2026-09-06
 
+Zwei Sessions an diesem Tag, je ein Branch und ein PR gegen develop:
+die CI-Rot-Session (Abschnitt A, PR #2989) und die Fortsetzung der
+Reorganisation Einstellungen > Lernen (Abschnitt B, PR #2990).
+
+## A. CI-Rot-Session (Branch claude/ci-rot-34ads1)
+
+CI-Rot-Session: drei rote Nacht-Läufe geprüft und behoben. Branch:
+claude/ci-rot-34ads1, PR gegen develop. Die Lifecycle-Matrix im
+Schwesterrepo docker-app-launcher (Issue docker-app-launcher#131) lief
+in derselben Session und ist dort dokumentiert.
+
+### 1. content-stats.yml rot: README CONTENT-STATS veraltet (#2987) (08:00)
+
+- Original prompt: "CI ist rot. Checken und fixen."
+- Optimierter Prompt: "Prüfe alle roten Workflow-Läufe beider Repos,
+  lies die Job-Logs, reproduziere lokal und behebe jede Ursache mit
+  Issue, Test und PR."
+- Ziel: den nächtlichen Content-Stats-Gate wieder grün bekommen.
+- Ergebnis: das Content-Repo ist auf 329 Lektionen gewachsen (vier
+  Französisch-Sets je +1) und acht Set-Titel wurden vom Gedankenstrich
+  auf Bindestrich umbenannt. Block mit
+  `validate_bundled_content.py --write-readme` gegen einen frischen
+  Checkout regeneriert, `--check-readme` danach grün. Keine App-Ursache.
+
+### 2. dead-code.yml rot: 23 neue knip-Funde, 1 aufgelöster (#2988) (08:05)
+
+- Ziel: den wöchentlichen Dead-Code-Ratchet wieder grün bekommen, ohne
+  blind zu banken oder blind zu löschen (#2486).
+- Ergebnis: alle 23 Funde einzeln gegen den Quellbaum geprüft. 20 sind
+  Barrel-Re-Exports der Settings-Controls (Regel reusability.md, #1275)
+  plus der öffentliche Label-Typ einer shared-Komponente, alle wie die
+  bereits gebankten Geschwister in die Baseline aufgenommen. Zwei echte
+  Tote gelöscht: der Default-Export von `SettingsDisclosure` (jeder
+  Konsument nutzt den benannten Export) und das `export` an
+  `PLAYFUL_DETAILS_OPEN_KEY` (nur dateiintern genutzt). Aufgelöster
+  Eintrag `i18n/engine.ts::NAMESPACE` via `--update-baseline` gebankt.
+  Lokal: `check_dead_code.py` sauber, tsc, eslint und die zwei
+  betroffenen Vitest-Dateien grün.
+
+### Zusammenfassung
+
+- Commits: 1 (README-Regenerat, Baseline, zwei Quell-Löschungen,
+  Journal), PR gegen develop.
+- Tests: 19 Vitest-Tests der beiden betroffenen Dateien grün, keine
+  neuen Tests (Ratchet-Resync und Docs-Regenerat, kein Verhalten).
+- Offene Fragen und Annahmen: Barrel-Exports werden gebankt und nicht
+  gelöscht, weil die Regel sie fordert; das Precedent ist #2917/#2920.
+
+## B. Einstellungen > Lernen, Stufe 3/4 (Branch claude/lernen-reorganisation-fortsetzung-vu3w29)
+
 Fortsetzung der Reorganisation Einstellungen > Lernen (Umbrella #2951):
 Stufe 3/4 und die zwei Housekeeping-Issues. Remote-Session (Cloud-
 Container) auf dem vorgegebenen Branch
 `claude/lernen-reorganisation-fortsetzung-vu3w29`, PR gegen develop.
 
-## 1. Bestandsaufnahme: die Agenten-Worktrees existieren hier nicht
+### 1. Bestandsaufnahme: die Agenten-Worktrees existieren hier nicht
 
 - Original prompt: die Übergabe-Notiz vom 2026-09-05 ("Weiterführung:
   Einstellungen > Lernen Reorganisation") mit vier unfertigen
@@ -22,7 +72,7 @@ Container) auf dem vorgegebenen Branch
   37/37 grün.
 - Commit: kein Code.
 
-## 2. #2961 Sektionsleiste + `?section=`-Deep-Link
+### 2. #2961 Sektionsleiste + `?section=`-Deep-Link
 
 - Original prompt: Issue #2961 plus Übergabe-Spec (SettingsSubNav
   props-driven, `aria-current="location"`, sticky nur md+, horizontal
@@ -55,7 +105,7 @@ Container) auf dem vorgegebenen Branch
   arcade.md), Testplan-Block DE+EN.
 - Commit: aa7f579 (Code), 9170ee9 (e2e/Docs).
 
-## 3. #2962 Gamification in den Motivation-Cluster
+### 3. #2962 Gamification in den Motivation-Cluster
 
 - Original prompt: Issue #2962 plus Übergabe-Spec (letzte Karte hinter
   Trenner `mt-8 border-t-2 border-border pt-8`, #1459-Literal +
@@ -78,7 +128,7 @@ Container) auf dem vorgegebenen Branch
   FeatureShot + README-Zeile.
 - Commit: 24f9c44.
 
-## 4. #2964 tote Settings-Exporte
+### 4. #2964 tote Settings-Exporte
 
 - Original prompt: Issue #2964 plus Übergabe ("jeden Kandidaten gegen
   den AKTUELLEN Baum prüfen; intern konsumiert bleibt").
@@ -98,7 +148,7 @@ Container) auf dem vorgegebenen Branch
   `isViewportDiagnosticEnabled` haben ebenfalls nur Test-Konsumenten.
 - Commit: b4e0edb.
 
-## 5. #2966 Scroll-Spy + `headingLevel`
+### 5. #2966 Scroll-Spy + `headingLevel`
 
 - Original prompt: Issue #2966 (IntersectionObserver-Scroll-Spy,
   `?section=`-Request gewinnt bis der deferred scroll "in view" meldet,
@@ -120,7 +170,7 @@ Container) auf dem vorgegebenen Branch
   en/de/fr um die Folge-Hervorhebung ergänzt.
 - Commit: 43fb83b.
 
-## 6. Feature-Screenshots decken zwei Scroll-Befunde auf
+### 6. Feature-Screenshots decken zwei Scroll-Befunde auf
 
 - Original prompt: Übergabe ("Feature-Screenshots, Visual-Baseline-Gate
   bei UI-PRs").
@@ -142,7 +192,7 @@ Container) auf dem vorgegebenen Branch
   scroll-margin-top (0 außerhalb des Lernen-Panels).
 - Commit: 9fe1751 (Scroll-Schleife), 8832e69 (Karten-Offset).
 
-## 7. Verifikation, Docs, PR
+### 7. Verifikation, Docs, PR
 
 - Original prompt: Übergabe ("Vollsuite, make check-testid-refs
   check-file-sizes verify-docs-discipline, push, PR, Visual-Gate-Label,
@@ -153,7 +203,7 @@ Container) auf dem vorgegebenen Branch
 - Ergebnis: siehe Abschnitt "Prüfläufe" und den PR-Text.
 - Commit: siehe Docs-Commit.
 
-## Prüfläufe
+### Prüfläufe
 
 - `bunx tsc --noEmit`: sauber. ESLint auf allen geänderten Dateien mit
   `--max-warnings=0`: sauber.
@@ -176,7 +226,7 @@ Container) auf dem vorgegebenen Branch
 - Nicht gelaufen: `make test` (Backend + Plugins, kein venv; die
   Änderung berührt kein Python), `make test-dexie-smoke`.
 
-## Fragen und Annahmen
+### Fragen und Annahmen
 
 - Ein Branch, ein PR: die Session-Vorgabe pinnt den Branch
   `claude/lernen-reorganisation-fortsetzung-vu3w29` und verbietet Pushes

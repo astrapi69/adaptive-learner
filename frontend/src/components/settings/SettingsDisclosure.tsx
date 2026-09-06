@@ -99,5 +99,3 @@ export function SettingsDisclosure({
     </div>
   );
 }
-
-export default SettingsDisclosure;
