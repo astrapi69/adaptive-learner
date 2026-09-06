@@ -14,7 +14,7 @@
  * any runtime type outside the closed union.
  */
 
-import {forwardRef, useEffect, useState} from "react";
+import {forwardRef} from "react";
 import type {ReactElement, ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -38,9 +38,8 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "./exercise-control";
-import ExerciseExplanation, {
-    type ExplanationOutcome,
-} from "../feedback/ExerciseExplanation";
+import ExerciseExplanation from "../feedback/ExerciseExplanation";
+import {useExplanationOutcome} from "../feedback/useExplanationOutcome";
 import ExerciseDifficultyBadge from "../shared/ExerciseDifficultyBadge";
 import ListenFirstAudio from "../shared/ListenFirstAudio";
 import FreeTextExercise from "../renderers/free-text/FreeTextExercise";
@@ -265,16 +264,9 @@ function ExerciseDispatcher(
 ) {
     const ex: ContentLessonExercise | null = step.exercise ?? null;
     // #2991 - the graded outcome drives the post-answer explanation fold
-    // state. A revisited step (``reviewed``) counts as answered; a new
-    // exercise (id change) starts unanswered again. Held here in the shell
-    // so every renderer + surface gets the explanation from ONE mount.
-    const [outcome, setOutcome] = useState<ExplanationOutcome | null>(
-        reviewed != null ? "reviewed" : null,
-    );
-    const exerciseId = ex?.id ?? null;
-    useEffect(() => {
-        setOutcome(reviewed != null ? "reviewed" : null);
-    }, [exerciseId, reviewed]);
+    // state; held here in the shell so every renderer + surface gets the
+    // explanation from ONE mount.
+    const {outcome, recordScored} = useExplanationOutcome(ex, reviewed);
     if (ex === null) return <ExerciseStepPlaceholder step={step} />;
     const supported =
         SUPPORTED_EXERCISE_TYPES.has(ex.type) ||
@@ -312,11 +304,7 @@ function ExerciseDispatcher(
         ttsLang: targetLanguage,
         codeMode,
         onComplete: (scored: ExerciseScored) => {
-            setOutcome(
-                scored.total > 0 && scored.correct >= scored.total
-                    ? "correct"
-                    : "incorrect",
-            );
+            recordScored(scored);
             void onComplete(scored);
         },
     };
