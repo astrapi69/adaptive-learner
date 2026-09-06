@@ -44,7 +44,6 @@ const VALID_THRESHOLDS: readonly ExamPassThreshold[] = [60, 70, 80];
 export const DEFAULT_LESSON_MODE: LessonMode = "practice";
 export const DEFAULT_EXAM_PASS_THRESHOLD: ExamPassThreshold = 60;
 
-export const LESSON_MODE_OPTIONS: readonly LessonMode[] = VALID_MODES;
 export const EXAM_PASS_THRESHOLD_OPTIONS: readonly ExamPassThreshold[] =
     VALID_THRESHOLDS;
 

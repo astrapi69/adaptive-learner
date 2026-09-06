@@ -1,4 +1,3 @@
-import GamificationSettingsSection from "../../../../components/settings/controls/motivation/GamificationSettingsSection";
 import LearningRepoSettingsSection from "../../../../components/settings/integrations/LearningRepoSettingsSection";
 
 interface PluginsPanelProps {
@@ -7,10 +6,11 @@ interface PluginsPanelProps {
 }
 
 /**
- * Plugins tab of the Settings page: gamification + Learning-Repository
- * plugin settings. Extracted verbatim from the Settings god-file (#1447);
- * every panel stays mounted (``hidden`` when inactive) so deep links and
- * ``data-testid`` assertions keep working.
+ * Plugins tab of the Settings page: the Learning-Repository plugin
+ * settings. Extracted verbatim from the Settings god-file (#1447); the
+ * gamification card moved into the Learning tab's motivation cluster
+ * (#2962). Every panel stays mounted (``hidden`` when inactive) so deep
+ * links and ``data-testid`` assertions keep working.
  *
  * @example
  * <PluginsPanel active={activeTab === "plugins"} />
@@ -23,7 +23,6 @@ export default function PluginsPanel({ active }: PluginsPanelProps) {
       hidden={!active}
       data-testid="settings-panel-plugins"
     >
-      <GamificationSettingsSection />
       <LearningRepoSettingsSection />
     </div>
   );

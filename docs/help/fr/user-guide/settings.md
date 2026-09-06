@@ -66,6 +66,19 @@ L'onglet **Apprentissage** regroupe ses cartes en cinq zones étiquetées,
 dans l'ordre où se déroule une leçon. Chaque zone porte un petit titre
 et une description d'une ligne ; les cartes gardent leurs propres titres.
 
+Une **barre de sections** au-dessus des zones les liste sous forme de
+puces : un clic saute à la zone correspondante. Sur un ordinateur, la
+barre reste visible sous l'en-tête de l'application pendant le
+défilement ; sur un téléphone, elle défile avec la page et la rangée se
+fait glisser latéralement. La barre reflète l'adresse :
+`/settings?tab=learning&section=review` ouvre l'onglet déjà positionné sur
+*Après la leçon* (identifiants : `basics`, `lessons`, `voice`, `review`,
+`motivation`), et un clic sur une puce met l'adresse à jour sans ajouter
+d'entrée à l'historique. Changer d'onglet abandonne la section. Une zone
+non affichée (la lecture à voix haute dans un navigateur sans Web Speech)
+n'a pas de puce, et un identifiant inconnu est ignoré. Pendant le
+défilement, la puce mise en évidence suit la zone affichée à l'écran.
+
 ### Bases
 
 Qui apprend, et dans quelles langues.
@@ -137,29 +150,32 @@ Mode jeu, retour, missions quotidiennes et rappels.
   (désactivés par défaut, avec réglage du volume et bouton Test).
 - **Missions quotidiennes** - si les missions sont actives, combien par
   jour, le mélange de difficulté et le remaniement des missions du jour.
-- **Rappels** - l'heure du rappel et les jours où il s'applique. C'est
-  la dernière carte de l'onglet.
+- **Rappels** - l'heure du rappel et les jours où il s'applique.
+- **Gamification** - les notifications XP / badge, le mode week-end,
+  l'objectif de sessions quotidien et la réinitialisation ; c'est la
+  dernière carte de l'onglet, voir ci-dessous.
 
 L'affichage du contenu (liste / grille) et l'ordre des onglets du hub de
 contenu se trouvent dans l'onglet **Général**, sous *Apparence*. Les deux
 réglages de nettoyage, *Conservation des leçons en pause* et *Taille
 maximale de leçon*, sont dans l'onglet **Données**.
 
----
+### Gamification
 
-## Gamification
+La dernière carte de l'onglet, sous un séparateur parce qu'elle contient
+la réinitialisation.
 
-### Afficher la gamification
+#### Afficher la gamification
 
 Bascule la visibilité des éléments XP, badge et série sur le tableau
 de bord.
 
-### Galerie des badges
+#### Galerie des badges
 
 Ouvre la galerie de badges complète avec filtrage, tri et vue des
 critères de déverrouillage pour chaque badge.
 
-### Réinitialiser
+#### Réinitialiser
 
 Réinitialise les données XP, badge et série. Le curriculum, les sessions
 et les évaluations sont préservés. Nécessite une double confirmation.

@@ -164,6 +164,8 @@ The Settings page is tab-grouped via a single shared model, rendered two ways so
 
 **Deep links**: `?tab=<id>` opens the matching tab directly (e.g. `/settings?tab=data`); the active tab reflects the URL param. All panels stay mounted (inactive ones `hidden`), so deep links and `data-testid` selectors keep working. The active tab carries `aria-current="page"`.
 
+**Learning tab (#2951)**: five `SettingsCluster` groups (`learning-<id>` anchors; cards inside render `<h3>` under the cluster `<h2>` via `SettingsHeadingLevelContext`) under a `SettingsSubNav` chip row. `&section=<id>` (`lib/settings/learning-sections.ts`) scrolls to a cluster through `useDeferredScroll`, a chip click writes it with replace-state, a tab switch drops it, and `useScrollSpy` moves the active chip (`aria-current="location"`) with the viewport.
+
 ### State management
 
 **Current**: React state + props + a few cross-cutting contexts (`I18nProvider`, theme, auto-backup signal). No global state management library.

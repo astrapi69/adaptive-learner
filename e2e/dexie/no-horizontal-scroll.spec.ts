@@ -192,10 +192,11 @@ test.describe("No horizontal scroll — authenticated pages (onboard first)", ()
         }
       }
 
-      // Badge gallery drawer (opened from the gamification settings
-      // under the plugins tab). Best-effort — skip if the trigger
-      // isn't present, but measure it when it is.
-      if (await pickTab("plugins")) {
+      // Badge gallery drawer (opened from the gamification card, the last
+      // card of the Learning tab's motivation cluster since #2962).
+      // Best-effort — skip if the trigger isn't present, but measure it
+      // when it is.
+      if (await pickTab("learning")) {
         await settleLayout(page);
         const viewAll = page.getByTestId("settings-view-all-badges");
         if (await viewAll.count()) {

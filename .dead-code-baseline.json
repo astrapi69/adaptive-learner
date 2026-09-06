@@ -507,7 +507,6 @@
     "frontend/src/lib/learning-path/personal-path.ts::SetActionMode::type",
     "frontend/src/lib/learning-repo/thresholds.ts::TRANSFER_OUT_OF_TEN_MIN::export",
     "frontend/src/lib/learning-repo/thresholds.ts::UNDERSTANDING_OUT_OF_TEN_MIN::export",
-    "frontend/src/lib/learning/lessonModePref.ts::LESSON_MODE_OPTIONS::export",
     "frontend/src/lib/learning/maxLessonSizePref.ts::MAX_LESSON_SIZE_PREF_KEY::export",
     "frontend/src/lib/learning/pausedRetentionPref.ts::DEFAULT_RETENTION_DAYS::export",
     "frontend/src/lib/learning/summarySectionsPref.ts::SummarySection::type",

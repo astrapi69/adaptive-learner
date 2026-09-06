@@ -6,7 +6,9 @@ aktiv ist (Einstellungen → Lernen → Spielmodus) und der
 **Arcade**-Schalter eingeschaltet ist. Ruft man die Seite direkt auf,
 während der Schalter aus ist, erscheint ein freundlicher Hinweis
 statt einer toten Seite - das Feature wird nie versteckt, nur mit
-Begründung deaktiviert.
+Begründung deaktiviert. Der Link **Einstellungen öffnen** landet im
+Bereich *Motivation und Routine* des Lernen-Tabs, wo die
+Spielmodus-Karte liegt.
 
 Arcade-Spiele geben **selbst keine XP** - sie sind eine Pause, kein
 weiterer Grind. Drei der vier werden mit bereits verdienten XP

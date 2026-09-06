@@ -541,7 +541,50 @@ async function gotoLearningClusters(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning through the ``?section=review`` deep link
+ *  (#2961 - the section bar). Pins the bar with the "Nach der Lektion"
+ *  chip active, sticky below the app header on desktop, scrolled to the
+ *  matching cluster. */
+async function gotoLearningSubNav(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning&section=review");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const chip = page.getByTestId("settings-subnav-review");
+    await expect(chip).toHaveAttribute("aria-current", "location", {timeout: 10_000});
+    // Let the deep link's deferred smooth scroll ARRIVE before the shot
+    // helper resets the scroll position: an instant pin racing a smooth
+    // scroll that is still in flight lands off by the animation's remainder.
+    await expect(page.getByTestId("settings-cluster-review")).toBeInViewport({timeout: 10_000});
+    await page.waitForTimeout(400);
+    return true;
+}
+
+/** Open Settings → Learning scrolled to the gamification card (#2962 -
+ *  moved in from the Plugins tab as the last card of the motivation
+ *  cluster, behind a separator because it holds Reset progress). */
+async function gotoGamificationCard(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning&section=motivation");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const card = page.getByTestId("settings-section-gamification");
+    await card.scrollIntoViewIfNeeded();
+    await expect(card).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Gamification card inside the motivation cluster (#2962) ----------
+    {
+        path: "gamification-card/settings",
+        setup: gotoGamificationCard,
+        pinTo: "settings-gamification-separator",
+    },
+    // --- Learning-tab section bar (#2961) ---------------------------------
+    {
+        path: "learning-subnav/settings",
+        setup: gotoLearningSubNav,
+        pinTo: "settings-cluster-review",
+    },
     // --- Learning-tab clusters (#2956) ------------------------------------
     {
         path: "learning-clusters/settings",

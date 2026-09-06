@@ -895,7 +895,64 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Flip one detail switch (e.g. hearts on): the status line counts
       along immediately ("6 of 7 extras on")
 - [ ] Arcade notice page (/arcade with the arcade or game mode off): the
-      link into the settings still lands on the Learning tab
+      link into the settings lands on the Learning tab's "Motivation and
+      routine" area (chip active, area on screen, see #2961)
+
+### Gamification inside "Motivation and routine" (#2962)
+
+- [ ] Settings > Learning > "Motivation and routine": the "Gamification"
+      card (XP notifications, badge notifications, "View all badges",
+      weekend mode, daily session goal, "Reset progress") is the LAST
+      card of the tab, right behind "Reminders", set apart by a thicker
+      divider with extra space above it
+- [ ] Settings > Plugins: only the "Learning Repository" card remains; no
+      Gamification card any more
+- [ ] Section bar, chip "Motivation and routine": the jump lands on the
+      area heading, and the Gamification card belongs to the area (under
+      the same heading)
+- [ ] "View all badges" still opens the badge gallery; "Reset progress"
+      still asks twice; weekend mode persists (reload) - in both storage
+      modes
+- [ ] Phone (375 px): the card and the divider wrap cleanly, nothing
+      scrolls horizontally
+
+### Learning tab: section bar + deep link (#2961)
+
+- [ ] Settings > Learning: above the first area sits a row of chips
+      "Basics", "In the lesson", "Reading aloud and dictation", "After the
+      lesson", "Motivation and routine" (in this order; without Web Speech
+      support the "Reading aloud and dictation" chip is absent). With no
+      selection no chip is highlighted
+- [ ] Click the "After the lesson" chip: the page scrolls to the "After
+      the lesson" area, the area heading sits clear of the header (desktop:
+      clear of header AND bar), the chip is highlighted, the address ends
+      in `?tab=learning&section=review`, and the browser back button does
+      NOT return to the previous chip (no new history entry)
+- [ ] Desktop (>= 768 px): keep scrolling down - the bar stays visible
+      right below the app header and covers no text. Phone (375 px): the
+      bar scrolls away with the page, the chip row can be swiped sideways,
+      nothing scrolls horizontally at page level
+- [ ] Open the deep link `/settings?tab=learning&section=motivation` in a
+      new tab: the Learning tab is open, the "Motivation and routine" area
+      on screen, its chip highlighted; on the phone the active chip is
+      visible in the row (the row was scrolled to it)
+- [ ] Open `/settings?tab=learning&section=nonsense`: the tab opens at the
+      top, no chip highlighted, no error
+- [ ] With an active area switch to another tab (e.g. Data): the address
+      carries only `?tab=data`; back on Learning: no chip highlighted, no
+      scroll movement
+- [ ] System setting "reduce motion" on: the jump happens without
+      animation (instant), otherwise smoothly
+- [ ] With no selection scroll slowly through the tab (#2966): the
+      highlighted chip follows the area whose heading is at the top of
+      the screen (Basics -> In the lesson -> ... -> Motivation and
+      routine); after a chip click the clicked chip stays highlighted
+      until its area is on screen, then follows the scrolling again. The
+      address does NOT change while scrolling
+- [ ] Heading hierarchy (#2966, screen reader / browser outline): on the
+      Learning tab the area headings are h2 and the card titles inside
+      are h3; on the other tabs the card titles stay h2
+- [ ] Both storage modes (API + Dexie): bar and deep link behave the same
 
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the

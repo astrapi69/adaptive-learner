@@ -302,6 +302,19 @@ in der Reihenfolge, in der eine Lektion abläuft. Jeder Bereich hat eine
 kleine Überschrift und eine einzeilige Beschreibung; die Karten darin
 behalten ihre eigenen Titel.
 
+Eine **Bereichsleiste** über den Bereichen listet sie als Chips: ein Klick
+springt zum jeweiligen Bereich. Am Desktop bleibt die Leiste beim Scrollen
+unter der App-Kopfzeile sichtbar; am Handy scrollt sie mit der Seite, und
+die Zeile lässt sich seitlich wischen. Die Leiste spiegelt die Adresse:
+`/settings?tab=learning&section=review` öffnet den Tab gescrollt zu *Nach
+der Lektion* (Kennungen: `basics`, `lessons`, `voice`, `review`,
+`motivation`), und ein Klick auf einen Chip aktualisiert die Adresse, ohne
+einen Verlaufseintrag anzulegen. Ein Wechsel in einen anderen Tab verwirft
+den Bereich wieder. Ein nicht gerenderter Bereich (Vorlesen und Diktieren
+in einem Browser ohne Web Speech) hat keinen Chip, eine unbekannte Kennung
+wird ignoriert. Beim Scrollen folgt der hervorgehobene Chip dem Bereich,
+der gerade im Bild ist.
+
 ### Grundlagen
 
 Wer lernt, und in welchen Sprachen.
@@ -371,6 +384,9 @@ Spielmodus, Feedback, tägliche Missionen und Erinnerungen.
 - **Tägliche Missionen** - ob Missionen laufen, wie viele pro Tag, die
   Schwierigkeits-Mischung und das Neumischen der heutigen Missionen.
 - **Erinnerungen** - die Erinnerungszeit und die Tage, an denen sie gilt.
+- **Gamification** - XP- und Abzeichen-Toasts, Wochenend-Modus, das
+  tägliche Sessions-Ziel und *Fortschritt zurücksetzen*; die letzte
+  Karte, siehe unten.
 
 Die Spielmodus-Karte zeigt den Hauptschalter, die Spielmodus-Sounds und
 eine Statuszeile, wie viele der Extras an sind. **Details zum Spielmodus**
@@ -379,7 +395,8 @@ Serien-XP und Maskottchen) ist eingeklappt und merkt sich deine Wahl;
 solange **Spielerische Lektionen** aus ist, sind die Optionen darin
 ausgegraut.
 
-Der Tab endet mit den Erinnerungen. Die beiden Aufräum-Einstellungen -
+Der Tab endet mit **Gamification** (unter einer Trennlinie, weil diese
+Karte *Fortschritt zurücksetzen* enthält). Die beiden Aufräum-Einstellungen -
 *Pausierte Lektionen aufbewahren* und *Maximale Lektionsgröße* -
 betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
 *Aufräumen* unter Backup).
@@ -387,7 +404,7 @@ betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
 Die **Ansicht der Inhalte** (Liste / Kacheln) und die **Reihenfolge der
 Inhalte-Tabs** liegen im **Allgemein**-Tab unter *Darstellung*.
 
-## Gamification
+### Gamification
 
 Toggles für XP- / Badge- / Level-Up-Benachrichtigungen
 (Aus stoppt Toasts, das System speichert den Zustand
